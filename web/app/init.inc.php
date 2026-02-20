@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Controllers\LoginController;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidCsrfTokenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
@@ -79,8 +78,6 @@ try {
     // END CSRF
 
     // Show helpful screen if database schema needs update
-    // FIXME ok just leaving this here for now but the cache of Config is still buggy
-    $Config->bustCache();
     $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/src/sql'))));
     // throws InvalidSchemaException if schema is incorrect
     $Update->checkSchema();
@@ -121,7 +118,7 @@ try {
     }
     $App->boot();
 
-} catch (UnauthorizedException | InvalidCsrfTokenException $e) {
+} catch (UnauthorizedException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
     $cookieOptions = array(
         'expires' => time() + 30,

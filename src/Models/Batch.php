@@ -16,10 +16,13 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Services\ApiParamsValidator;
 use Override;
 
 /**
@@ -34,15 +37,18 @@ final class Batch extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $action = Action::from($reqBody['action']);
-        $state = null;
-        // on Unarchive action, search for 'Archived' entities to perform the patch.
-        if ($action === Action::Unarchive) {
-            $state = State::Archived;
+        if ($this->requester->isAdmin === false) {
+            throw new ForbiddenException();
         }
-        // same - search for deleted items when we want to Restore them.
-        if ($action === Action::Restore) {
-            $state = State::Deleted;
+        // Unarchive action: search for 'Archived' entries to patch. For 'Restore' action, look for 'deleted' entries.
+        $state = match ($action) {
+            Action::Unarchive => State::Archived,
+            Action::Restore => State::Deleted,
+            default => null,
+        };
+        if ($action === Action::UpdateOwner) {
+            ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'team'), $reqBody);
+            ApiParamsValidator::ensurePositiveInts(array('userid', 'team'), $reqBody);
         }
         if ($reqBody['items_tags']) {
             $this->processTags($reqBody['items_tags'], new Items($this->requester), $action, $reqBody);
@@ -66,10 +72,13 @@ final class Batch extends AbstractRest
         if ($reqBody['experiments_tags']) {
             $this->processTags($reqBody['experiments_tags'], new Experiments($this->requester), $action, $reqBody);
         }
-        if ($reqBody['users']) {
-            // only process experiments
+        if ($reqBody['users_experiments']) {
             $model = new Experiments($this->requester);
-            $this->processEntities($reqBody['users'], $model, FilterableColumn::Owner, $action, $reqBody, $state);
+            $this->processEntities($reqBody['users_experiments'], $model, FilterableColumn::Owner, $action, $reqBody, $state);
+        }
+        if ($reqBody['users_resources']) {
+            $model = new Items($this->requester);
+            $this->processEntities($reqBody['users_resources'], $model, FilterableColumn::Owner, $action, $reqBody, $state);
         }
         return $this->processed;
     }
@@ -104,7 +113,6 @@ final class Batch extends AbstractRest
                 // this is needed so psalm is happy (might be a bug in psalm)
                 entityType: $model->entityType,
                 query: null,
-                limit: 100000,
                 states: $state ? array($state) : array(State::Normal),
             );
             $DisplayParams->appendFilterSql($column, $id);
@@ -116,18 +124,13 @@ final class Batch extends AbstractRest
 
     private function loopOverEntries(array $entries, AbstractConcreteEntity $model, Action $action, array $params): void
     {
-        // On transfer of ownership, only the target owner is required in params
-        if ($params['action'] === Action::UpdateOwner->value) {
-            $params = array('userid' => $params['target_owner'] ?? throw new ImproperActionException('Target owner is missing!'));
-            $action = Action::Update;
-        }
         foreach ($entries as $entry) {
             try {
                 $model->setId($entry['id']);
                 $model->patch($action, $params);
                 $this->processed++;
-            } catch (IllegalActionException) {
-                continue;
+            } catch (IllegalActionException | ImproperActionException | UnauthorizedException $e) {
+                throw $e;
             }
         }
     }

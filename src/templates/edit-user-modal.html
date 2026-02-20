@@ -21,14 +21,14 @@
           <input name='lastname' class='form-control' id='userInput-lastname' {{ disabledForAdmin }} />
           <label for='userInput-email'>{{ 'Email'|trans }}</label>
           <input name='email' type='email' class='form-control' id='userInput-email' {{ disabledForAdmin }} />
-          <label for='userInput-valid_until'>{{ 'Valid until'|trans }}</label>
-          <input name='valid_until' type='date' class='form-control' id='userInput-valid_until' />
+          <label for='userInput-valid_until'>{{ 'Valid until'|trans }}{{ App.Config.configArr.users_validity_is_externally_managed == '1' ? ' (' ~ 'externally managed'|trans ~ ')' }}</label>
+          <input name='valid_until' type='date' class='form-control' id='userInput-valid_until' {{ App.Config.configArr.users_validity_is_externally_managed == '1' ? 'disabled' }} />
           <label for='userInput-orgid'>{{ 'Internal ID'|trans }}</label>
           <input name='orgid' class='form-control' data-allow-empty='1' id='userInput-orgid' {{ disabledForAdmin }} />
           {# Toggle is_sysadmin slider #}
           <div class='d-flex justify-content-between'>
             <label for='userInput-is_sysadmin' class='col-form-label'>{{ 'Is Sysadmin'|trans }}</label>
-            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}' aria-label='{{ 'Is Sysadmin'|trans }}'>
               <input type='checkbox' id='userInput-is_sysadmin' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='is_sysadmin'>
               <span class='slider'></span>
             </label>
@@ -37,7 +37,7 @@
           {# Toggle can_manage_users2teams slider #}
           <div class='d-flex justify-content-between'>
             <label for='userInput-can_manage_users2teams' class='col-form-label'>{{ 'Can manage users/teams association'|trans }}</label>
-            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}' aria-label='{{ 'Can manage users/teams association'|trans }}'>
               <input type='checkbox' id='userInput-can_manage_users2teams' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='can_manage_users2teams'>
               <span class='slider'></span>
             </label>
@@ -47,7 +47,7 @@
           {# Toggle can_manage_compounds slider #}
           <div class='d-flex justify-content-between'>
             <label for='userInput-can_manage_compounds' class='col-form-label'>{{ 'Can manage compounds'|trans }}</label>
-            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}' aria-label='{{ 'Can manage compounds'|trans }}'>
               <input type='checkbox' id='userInput-can_manage_compounds' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='can_manage_compounds'>
               <span class='slider'></span>
             </label>
@@ -57,7 +57,7 @@
           {# Toggle can_manage_inventory-locations slider #}
           <div class='d-flex justify-content-between'>
             <label for='userInput-can_manage_inventory_locations' class='col-form-label'>{{ 'Can manage inventory locations'|trans }}</label>
-            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}'>
+            <label class='switch ucp-align {{- App.Users.userData.is_sysadmin == 0 ? ' disabled' }}' title='{{- App.Users.userData.is_sysadmin == 0 ? 'Only a Sysadmin can modify this.'|trans }}' aria-label='{{ 'Can manage inventory locations'|trans }}'>
               <input type='checkbox' id='userInput-can_manage_inventory_locations' autocomplete='off' {{ App.Users.userData.is_sysadmin == 0 ? "disabled='disabled'" }} name='can_manage_inventory_locations'>
               <span class='slider'></span>
             </label>
@@ -76,7 +76,7 @@
                   <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next' data-opened-icon='fa-minus-circle' data-closed-icon='fa-plus-circle'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
                   <span class='form-group form-inline mt-2' hidden>
                     {# options will be populated by js #}
-                    <select class='form-control' id='addTeamSelect'></select>
+                    <select class='form-control' id='addTeamSelect' aria-label='{{ 'Add team'|trans }}'></select>
                     <button type='button' data-action='create-user2team' class='btn btn-primary'>{{ 'Go'|trans }}</button>
                   </span>
                 </div>
@@ -91,8 +91,8 @@
               <div class='input-group my-2' id='resetUserPasswordForm'>
                 <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' required name='resetPassword' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }}' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' />
                 <div class='input-group-append'>
-                  <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
-                  <span class='btn btn-primary input-border' tabindex='-1' title='{{ 'Save'|trans }}' data-action='reset-user-password'><i class='fas fa-floppy-disk color-white' aria-hidden='true'></i></span>
+                  <button type='button' class='btn btn-ghost' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+                  <span class='btn btn-primary' tabindex='-1' title='{{ 'Save'|trans }}' data-action='reset-user-password'><i class='fas fa-floppy-disk color-white' aria-hidden='true'></i></span>
                 </div>
               </div>
               <h6>{{ 'Minimum password length'|trans }}</h6>

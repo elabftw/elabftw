@@ -27,6 +27,7 @@ final class UploadParams extends ContentParams
             'real_name' => $this->getRealName(),
             'comment' => Filter::title($this->asString()),
             'state' => $this->getEnum(State::class, $this->asInt())->value,
+            'userid' => $this->asInt(),
             default => throw new ImproperActionException('Incorrect upload parameter.'),
         };
     }

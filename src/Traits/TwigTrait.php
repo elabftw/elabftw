@@ -65,11 +65,8 @@ trait TwigTrait
             array('needs_context' => true)
         );
         $toDatetimeFilter = new TwigFilter('toDatetime', '\Elabftw\Elabftw\TwigFunctions::toDatetime', $filterOptions);
-        $extractJson = new TwigFilter('extractJson', '\Elabftw\Elabftw\TwigFunctions::extractJson', $filterOptions);
-        $extractDisplayMainText = new TwigFilter('extractDisplayMainText', '\Elabftw\Elabftw\TwigFunctions::extractDisplayMainText', $filterOptions);
         $isInJsonArray = new TwigFilter('isInJsonArray', '\Elabftw\Elabftw\TwigFunctions::isInJsonArray', $filterOptions);
         $canToHuman = new TwigFilter('canToHuman', '\Elabftw\Elabftw\TwigFunctions::canToHuman', $filterOptions);
-        $decrypt = new TwigFilter('decrypt', '\Elabftw\Elabftw\TwigFilters::decrypt', $filterOptions);
         $toSymbol = new TwigFilter('toSymbol', '\Elabftw\Elabftw\TwigFilters::toSymbol', $filterOptions);
         $formatMfaSecret = new TwigFilter('formatMfaSecret', '\Elabftw\Elabftw\TwigFilters::formatMfaSecret', $filterOptions);
 
@@ -105,11 +102,8 @@ trait TwigTrait
         $TwigEnvironment->addFilter($any2StringFilter);
         $TwigEnvironment->addFilter($transFilter);
         $TwigEnvironment->addFilter($toDatetimeFilter);
-        $TwigEnvironment->addFilter($extractJson);
-        $TwigEnvironment->addFilter($extractDisplayMainText);
         $TwigEnvironment->addFilter($isInJsonArray);
         $TwigEnvironment->addFilter($canToHuman);
-        $TwigEnvironment->addFilter($decrypt);
         $TwigEnvironment->addFilter($toSymbol);
         $TwigEnvironment->addFilter($formatMfaSecret);
         // functions

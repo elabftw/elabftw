@@ -72,6 +72,22 @@ enum EntityType: string
         return $prefix . '-status.php';
     }
 
+    public function toStatusTable(): string
+    {
+        return match ($this) {
+            self::Experiments, self::Templates => 'experiments_status',
+            self::Items, self::ItemsTypes => 'items_status',
+        };
+    }
+
+    public function toCategoryTable(): string
+    {
+        return match ($this) {
+            self::Experiments, self::Templates => 'experiments_categories',
+            self::Items, self::ItemsTypes => 'items_categories',
+        };
+    }
+
     // for use in the "genre" attribute of .eln node
     public function toGenre(): string
     {

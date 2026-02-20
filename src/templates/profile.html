@@ -25,7 +25,7 @@
     <div class='d-flex mb-4'>
 
       {# TEAMS #}
-      <div class='col-md-6 mr-2 box bg-white'>
+      <div class='col-md-6 mr-2 box'>
         <div class='mb-4'>
           <h5 class='d-inline mr-2'>{{ 'Teams'|trans }}</h5> <span class='counter'>{{ teamsArr|length }}</span>
         </div>
@@ -36,7 +36,7 @@
       </div>
 
       {# GROUPS #}
-      <div class='col-md-6 box bg-white'>
+      <div class='col-md-6 box'>
         <div class='mb-4'>
           <h5 class='d-inline mr-2'>{{ 'Groups'|trans }}</h5> <span class='counter'>{{ teamGroupsArr|length }}</span>
         </div>
@@ -171,13 +171,13 @@
   <h3 class='p-2 pl-3 section-title'>{{ 'Import'|trans }}</h3>
   <div class='pl-3 mt-2'>
     <p class='smallgrey'>
-      {{ 'You can import data from a .eln archive or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/import-export.html#importing-data' target='_blank' class='external-link' rel='noopener'>", "", '</a>')|raw }}
+      {{ 'You can import data from a .eln archive or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/docs/usage/import-export' target='_blank' class='external-link' rel='noopener'>", "", '</a>')|raw }}
     </p>
     <form class='form-group' id='importFileForm' enctype='multipart/form-data' action='api/v2/import' method='post' aria-label='{{ 'Import'|trans }}'>
       {{ App.Session.get('csrf')|csrf }}
       <div class='d-flex'>
         <div>
-          <input id='importFileInput' hidden required name='file' type='file' accept='.eln,vnd.eln+zip,.csv,text/csv' />
+          <input id='importFileInput' hidden required name='file' type='file' accept='.eln,vnd.eln+zip,.csv,text/csv' aria-label='{{ 'Import'|trans }}' />
           <div class='mb-4 d-flex flex-row'>
             <button type='button' class='btn btn-primary' data-action='show-file-input' >{{ 'Import from file'|trans }}</button>
           </div>
@@ -201,7 +201,7 @@
           </span>
           <span class='form-check form-check-inline'>
             <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioItems' value='items'>
-            <label class='form-check-label' for='entityTypeRadioItems'>{{ 'Resources'|trans }}</label>
+            <label class='form-check-label' for='entityTypeRadioItems'>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</label>
           </span>
           <span hidden data-showif='eln'>
             <span class='form-check form-check-inline'>
@@ -244,8 +244,8 @@
         {% endif %}
 
         <hr>
-        <label for='import_modal_canread'>{{ 'Set read permissions'|trans }}</label>
-        <select class='form-control' id='import_modal_canread' autocomplete='off' name='canread'>
+        <label for='importModalCanread'>{{ 'Set read permissions'|trans }}</label>
+        <select class='form-control' id='importModalCanread' autocomplete='off' name='canread_base'>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}'
             {{ 30 == key ? ' selected' }}
@@ -254,8 +254,8 @@
         </select>
 
         <hr>
-        <label for='import_modal_canwrite'>{{ 'Set write permissions'|trans }}</label>
-        <select class='form-control' id='import_modal_canwrite' autocomplete='off' name='canwrite'>
+        <label for='importModalCanwrite'>{{ 'Set write permissions'|trans }}</label>
+        <select class='form-control' id='importModalCanwrite' autocomplete='off' name='canwrite_base'>
           {% for key, value in visibilityArr %}
             <option value='{{ key }}'
             {{ 20 == key ? ' selected' }}
@@ -329,6 +329,26 @@
         </li>
       {% endfor %}
     </ul>
+  </div>
+
+  <h3 class='p-2 pl-3 section-title' id='compoundsUsageTitle'>{{ 'Compounds usage'|trans }}</h3>
+  <div class='pl-3 mt-2'>
+    <p class='smallgrey'>{{ 'Generate a CSV export of all compounds linked to experiments you own over a period of time.'|trans }}</p>
+    <form id='compoundsHistoryForm' aria-labelledby='compoundsUsageTitle'>
+      <div class='row'>
+        <div class='col-md-6'>
+        <label for='compoundsHistoryStart' class='col-form-label mr-3 required-label'>{{ 'Start date'|trans }}</label>
+        <input id='compoundsHistoryStart' type='date' name='start' class='form-control' required />
+        </div>
+        <div class='col-md-6'>
+          <label for='compoundsHistoryEnd' class='col-form-label mr-3 required-label'>{{ 'End date'|trans }}</label>
+          <input id='compoundsHistoryEnd' type='date' name='end' class='form-control' required />
+        </div>
+      </div>
+      <div class='mt-3 text-center'>
+        <button type='submit' data-action='get-compounds-history' class='btn btn-secondary'>{{ 'Generate CSV file'|trans }}</button>
+      </div>
+    </form>
   </div>
 </div>
 {% endblock body %}

@@ -3,6 +3,8 @@
 {% block body %}
 
 {% include('idp-modal.html') %}
+{% include('idp-certs-modal.html') %}
+{% include('idp-endpoints-modal.html') %}
 
 {# Modal for team creation #}
 <div class='modal fade' id='createTeamModal' tabindex='-1' role='dialog' aria-labelledby='createTeamModalLabel'>
@@ -14,14 +16,16 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        <label for='newTeamName'>{{ 'Name'|trans }}</label>
-        <input type='text' placeholder='{{ 'Enter team name'|trans }}' id='newTeamName' class='form-control' aria-label='{{ 'Enter team name'|trans }}'>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-action='create-team' class='btn btn-primary' data-dismiss='modal'>{{ 'Create'|trans }}</button>
-      </div>
+      <form aria-label='{{ 'Create team'|trans }}' id='createTeamForm'>
+        <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+          <label for='newTeamName'>{{ 'Name'|trans }}</label>
+          <input type='text' required placeholder='{{ 'Enter team name'|trans }}' name='name' id='newTeamName' class='form-control' aria-label='{{ 'Enter team name'|trans }}'>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' data-action='create-team' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -32,7 +36,7 @@
 
 {# show error if the email is not configured #}
 {% if App.Config.configArr.mail_from == 'notconfigured@example.com' %}
-    {{ 'Email configuration is required. Consult the documentation (%slink%s) for help.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#setting-up-email'>", "</a>")|msg('ko') }}
+    {{ 'Email configuration is required. Consult the documentation (%slink%s) for help.'|trans|format("<a href='https://doc.elabftw.net/docs/usage/sysadmin-guide#setting-up-email-required'>", "</a>")|msg('ko') }}
 {% endif %}
 
 <div id='versionNotifZone'></div>
@@ -65,7 +69,7 @@
   <div class='pl-3 mb-5'>
     <h4>{{ 'Users'|trans }}</h4>
     <div class='d-flex justify-content-between'>
-      <div>{{ 'Teams'|trans }}: {{ info.teams_count }} &ndash; {{ 'Members'|trans }}: {{ info.active_users_count }} &ndash; {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) &ndash; {{ 'Resources'|trans }}: {{ info.items_count }}</div>
+      <div>{{ 'Teams'|trans }}: {{ info.teams_count }} &ndash; {{ 'Members'|trans }}: {{ info.active_users_count }} &ndash; {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) &ndash; {% trans %}Resource{% plural info.items_count %}Resources{% endtrans %}: {{ info.items_count }}</div>
       <div><a href='/api/v2/reports?format=csv&scope=instance' class='btn btn-primary'>{{ 'Get users report'|trans }}</a></div>
     </div>
 
@@ -73,6 +77,19 @@
     <div class='d-flex justify-content-between'>
       <div>{{ 'Stored containers: %d bound to experiments and %d bound to resources'|trans|format(containersCount.experiments, containersCount.items) }}</div>
       <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
+    </div>
+
+    <h4>{{ 'Graphics'|trans }}</h4>
+    <button type='button' class='btn btn-secondary btn-sm' data-action='toggle-histograms' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+      <i class='fas fa-caret-right mr-1'></i>{{ 'Show usage histograms'|trans }}
+    </button>
+    <div hidden id='histograms'>
+      <h5 class='mt-3'>{{ 'Experiments creation over time'|trans }}</h5>
+      <div id='histDiv_experiments' class='chart' style='--max: {{ info.experiments_count }};'></div>
+      <h5 class='mt-3'>{{ 'Resources creation over time'|trans }}</h5>
+      <div id='histDiv_items' class='chart' style='--max: {{ info.items_count }};'></div>
+      <h5 class='mt-3'>{{ 'Users creation over time'|trans }}</h5>
+      <div id='histDiv_users' class='chart' style='--max: {{ info.all_users_count }};'></div>
     </div>
   </div>
 
@@ -154,27 +171,21 @@
 
     {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link.'|trans} %}
 
-    {% include 'binary-setting.html' with {'label': 'Switch this instance in open science mode'|trans, 'slug': 'open_science', 'help': 'This allows search engines to crawl the site. Visitors will be automatically logged in in the specified team.'|trans} %}
-
-    <div class='d-flex justify-content-between'>
-      <label for='open_team' class='col-form-label'>{{ 'Select which team will be open to the world in open science mode'|trans }}</label>
-      <select id='open_team' data-trigger='change' data-model='config' data-target='open_team' class='form-control col-md-3'>
-        {% for team in teamsArr %}
-          <option {{ App.Config.configArr.open_team == team.id ? ' selected' }} value='{{ team.id }}'>{{ team.name }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <p class='smallgray'>{{ 'This has no effect if open science mode is disabled.'|trans }}</p>
-    <hr>
-
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to add existing users to their team'|trans, 'slug': 'admins_import_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to archive users'|trans, 'slug': 'admins_archive_users'} %}
 
-
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>
       <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='user_msg_need_local_account_created' type='text' autocomplete='off' value='{{ App.Config.configArr.user_msg_need_local_account_created }}' id='user_msg_need_local_account_created' />
+    </div>
+    <hr>
+
+    {% include 'binary-setting.html' with {'label': 'Users validity date is externally managed: make "Valid until" attribute read-only'|trans, 'slug': 'users_validity_is_externally_managed', 'help': 'If you manage the validity date of user accounts externally, enable this option to make this attribute read-only on the user modal window.'|trans} %}
+
+    <div class='d-flex justify-content-between'>
+      <label for='admin_panel_custom_msg' class='col-form-label'>{{ 'Message displayed on Admin Panel for all Admins'|trans }}</label>
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='admin_panel_custom_msg' type='text' autocomplete='off' value='{{ App.Config.configArr.admin_panel_custom_msg }}' id='admin_panel_custom_msg' />
     </div>
     <hr>
   </div>
@@ -197,6 +208,39 @@
     <hr>
   </div>
 
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'DSpace repository configuration'|trans }}</h3>
+  <div class='pl-3' id='dspaceSettings'>
+    <div class='d-flex justify-content-between'>
+      <label for='dspace_host' class='col-form-label'>DSpace {{ 'Host'|trans }}</label>
+      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='dspace_host' autocomplete='off' placeholder='https://example.dspace.org/' value='{{ App.Config.configArr.dspace_host }}' id='dspace_host' />
+    </div>
+    <p class='smallgray'>{{ 'Base URL of your DSpace instance, e.g., https://elab.dspace.org'|trans }}</p>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='dspace_user' class='col-form-label'>DSpace {{ 'Username'|trans }}</label>
+      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='dspace_user' autocomplete='off' placeholder='dspacedemo+admin@example.com' value='{{ App.Config.configArr.dspace_user }}' id='dspace_user' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <!-- [html-validate-disable no-missing-references: if there is a dspace_password, the input is not shown] -->
+      <label for='dspace_password' class='col-form-label'>DSpace {{ 'Password'|trans }}</label>
+      {% if App.Config.configArr.dspace_password|length == 0 %}
+        <div class='input-group col-md-3 p-0'>
+          <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='dspace_password' id='dspace_password' autocomplete='off' />
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-ghost' data-action='toggle-password' data-target='dspace_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+          </div>
+        </div>
+      {% else %}
+        <p>
+          {{ 'A password is already set.'|trans }} <button type='button' class='btn btn-danger btn-sm' data-action='clear-password' data-target='dspace' data-reload='dspaceSettings'>{{ 'Clear'|trans }}</button>
+        </p>
+      {% endif %}
+    </div>
+    <hr>
+  </div>
 
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Information'|trans }}</h3>
   <div class='pl-3'>
@@ -221,7 +265,7 @@
   <h3 class='mb-3 p-2 pl-3 section-title' id='teamsSectionTitle'>{{ 'Teams list'|trans }}</h3>
   <div id='teamsDiv' class='pl-3'>
     <div class='mb-3 d-flex justify-content-between'>
-      <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }} (<a href='https://doc.elabftw.net/sysadmin-guide.html#configure-teams-optional' target='_blank' rel='noopener' class='external-link'>{{ 'Documentation'|trans|lower }}</a>)</p>
+      <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }} (<a href='https://doc.elabftw.net/docs/usage/sysadmin-guide#configure-teams-optional' target='_blank' rel='noopener' class='external-link'>{{ 'Documentation'|trans|lower }}</a>)</p>
       {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
         <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='createTeamModal'>{{ 'Create a team'|trans }}</button>
@@ -238,7 +282,7 @@
             <th scope='col'>{{ 'Organisation ID'|trans }}</th>
             <th scope='col'>{{ 'Creation date'|trans }}</th>
             <th scope='col'>{{ 'Visible'|trans }}</th>
-            <th scope='col'>{{ 'Actions'|trans }}</th>
+            <th scope='col' class='no-sort'><span class='sr-only'>{{ 'Actions'|trans }}</span></th>
           </tr>
         </thead>
         <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
@@ -385,7 +429,7 @@
         <div class='input-group col-md-3 p-0'>
           <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='smtp_password' id='smtp_password' autocomplete='off' />
           <div class='input-group-append'>
-            <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+            <button type='button' class='btn btn-ghost' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
           </div>
         </div>
       {% else %}
@@ -477,13 +521,13 @@
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>
       <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
-      <button type='submit' data-action='allowuntrusted' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='post2instance' data-target='allowuntrusted' {{- nologinUsersCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
 
     <div class='d-flex justify-content-between'>
       <span>{{ '%d devices are currently denied authentication.'|trans|format(lockoutDevicesCount) }}</span>
-      <button type='submit' data-action='clearlockedoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
+      <button type='submit' data-action='post2instance' data-target='clearlockedoutdevices' {{- lockoutDevicesCount == 0 ? ' disabled' }} class='btn btn-primary'>{{ 'Clear'|trans }}</button>
     </div>
     <hr>
   </div>
@@ -506,7 +550,7 @@
       {% if devMode -%}
         <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, require-sri: suppress errors from tinymce] -->
       {%- endif %}
-      <textarea id='{{ slug }}Input' class='mceditable'>
+      <textarea id='{{ slug }}Input' class='mceditable' aria-label='{{ 'Set your text here'|trans }}'>
         {{ configArr[slug]|default('Set your text here.')|raw }}
       </textarea>
       <div class='my-4 text-center'>
@@ -537,7 +581,7 @@
     {{ '%d files are stored on local filesystem and %d files are stored on S3.'|trans|format(uploadsStats.count_storage_local, uploadsStats.count_storage_s3) }}
   </div>
 
-  <h3 class='p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>
+  <h3 class='p-2 pl-3 section-title'>{{ 'File upload configuration'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
 
@@ -577,6 +621,39 @@
 
     {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 's3_verify_cert'} %}
     {% include 'binary-setting.html' with {'label': 'Use S3 Path-Style endpoint'|trans, 'slug': 's3_use_path_style_endpoint'} %}
+  </div>
+
+  <h3 class='p-2 pl-3 section-title'>{{ 'Exports configuration'|trans }}</h3>
+
+  <div class='pl-3 mt-2 mb-5'>
+    {% include 'binary-setting.html' with {'label': 'Use S3 for exports'|trans, 'slug': 's3_exports_toggle', 'help': 'Save user created export files to S3'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Use a dedicated bucket'|trans, 'slug': 's3_exports_use_dedicated_bucket', 'help': 'Active this option and configure another bucket below if your main uploads bucket has object locking enabled or retention policy that makes it unsuitable for short-lived objects such as user exports.'} %}
+    <div class='d-flex justify-content-between'>
+      <label for='s3_exports_bucket_name' class='col-form-label'>S3 bucket name</label>
+      <input class='form-control col-md-3' type='text' id='s3_exports_bucket_name' placeholder='some-bucket-name' data-trigger='blur' data-model='config' data-target='s3_exports_bucket_name' value='{{ App.Config.configArr.s3_exports_bucket_name }}' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_exports_region' class='col-form-label'>S3 region</label>
+      <input class='form-control col-md-3' type='text' id='s3_exports_region' placeholder='fr-par' data-trigger='blur' data-model='config' data-target='s3_exports_region' value='{{ App.Config.configArr.s3_exports_region }}' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_exports_endpoint' class='col-form-label'>S3 endpoint</label>
+      <input class='form-control col-md-3' type='url' id='s3_exports_endpoint' placeholder='https://s3.example.org' data-trigger='blur' data-model='config' data-target='s3_exports_endpoint' value='{{ App.Config.configArr.s3_exports_endpoint }}' />
+    </div>
+    <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='s3_exports_path_prefix' class='col-form-label'>S3 path prefix (optional)</label>
+      <input class='form-control col-md-3' type='text' id='s3_exports_path_prefix' placeholder='uploads' data-trigger='blur' data-model='config' data-target='s3_exports_path_prefix' value='{{ App.Config.configArr.s3_exports_path_prefix }}' />
+    </div>
+    <hr>
+
+    {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 's3_exports_verify_cert'} %}
+    {% include 'binary-setting.html' with {'label': 'Use S3 Path-Style endpoint'|trans, 'slug': 's3_exports_use_path_style_endpoint'} %}
 
   </div>
 </div>
@@ -600,7 +677,7 @@
   {# KEEEX #}
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Keeex configuration'|trans }}</h3>
   <div class='pl-3'>
-    <p class='smallgray'>{{ 'Requires a Keeex Fusion daemon running. %sSee documentation%s.'|trans|format("<a href='https://doc.elabftw.net/sysadmin-guide.html#configure-keeex'>", "</a>")|raw }}</p>
+    <p class='smallgray'>{{ 'Requires a Keeex Fusion daemon running. %sSee documentation%s.'|trans|format("<a href='https://doc.elabftw.net/docs/usage/integrations#keeex'>", "</a>")|raw }}</p>
 
     {% include 'binary-setting.html' with {'label': 'Enable Keeex'|trans, 'slug': 'keeex_enabled'} %}
 
@@ -664,7 +741,7 @@
 <div data-tabcontent='11' hidden>
   <div class='mb-2 d-flex justify-content-between'>
 
-    <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/saml.html'>{{ 'Link to documentation'|trans }}</a></p>
+    <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/install/post-install/authentication/saml'>{{ 'Link to documentation'|trans }}</a></p>
     {# VIEW METADATA.xml button: the div around the button is necessary or the button itself gets resized on small viewports #}
     <div>
       <a href='metadata.php' target='_blank' rel='noopener' class='btn btn-secondary'>{{ 'View metadata.xml'|trans }}</a>
@@ -692,24 +769,6 @@
     <div class='d-flex justify-content-between'>
       <label for='saml_entityid' class='col-form-label'>EntityId</label>
       <input class='form-control col-md-3' type='text' id='saml_entityid' data-trigger='blur' data-model='config' data-target='saml_entityid' placeholder='https://elabftw.example.org' value='{{ App.Config.configArr.saml_entityid }}' />
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='saml_acs_binding' class='col-form-label'>Assertion Consumer Service binding (only POST supported)</label>
-      <select class='form-control col-md-3' id='saml_acs_binding' data-trigger='change' data-model='config' data-target='saml_acs_binding'>
-        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ App.Config.configArr.saml_acs_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ App.Config.configArr.saml_acs_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-      </select>
-    </div>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='saml_slo_binding' class='col-form-label'>Single Logout Service binding (only Redirect supported)</label>
-      <select class='form-control col-md-3' id='saml_slo_binding' data-trigger='change' data-model='config' data-target='saml_slo_binding'>
-        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' {{ App.Config.configArr.saml_slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect' ? 'selected' }}>Redirect</option>
-        <option value='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' {{ App.Config.configArr.saml_slo_binding == 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST' ? 'selected' }}>POST</option>
-      </select>
     </div>
     <hr>
 
@@ -847,17 +906,18 @@
               </label>
               {{ idp.name|upper }} ({{ idp.entityid }})
             </h4>
-
             <div class='pl-3 m-2' hidden>
               <button type='button' class='btn btn-primary' data-action='display-idp-modal' data-id='{{ idp.id }}'>{{ 'Edit'|trans }}</button>
+              <button type='button' class='btn btn-primary' data-action='display-idp-certs-modal' data-id='{{ idp.id }}'>{{ 'Edit certificates'|trans }}</button>
+              <button type='button' class='btn btn-primary' data-action='display-idp-endpoints-modal' data-id='{{ idp.id }}'>{{ 'Edit endpoints'|trans }}</button>
               <button type='button' class='btn btn-danger' data-action='destroy-idp' data-id='{{ idp.id }}'>{{ 'Delete'|trans }}</button>
 
               {% if idp.source_url %}
+                <hr>
                 <div class='d-flex justify-content-between'>
                   <label for='source_{{ idp.id }}' class='col-form-label'>{{ 'Source'|trans }}</label>
                   <input class='form-control col-md-3' type='url' disabled readonly id='source_{{ idp.id }}' value='{{ idp.source_url }}' />
                 </div>
-                <hr>
               {% endif %}
 
             </div>
@@ -871,7 +931,7 @@
 
 {# TAB 12 LDAP #}
 <div data-tabcontent='12' id='ldapSettings' hidden>
-  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/ldap.html'>{{ 'Link to documentation'|trans }}</i></a></p>
+  <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/install/post-install/authentication/ldap'>{{ 'Link to documentation'|trans }}</i></a></p>
   <h3 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h3>
 
   <div class='pl-3 mt-2 mb-5'>
@@ -921,7 +981,7 @@
         <div class='input-group col-md-3 p-0'>
           <input class='form-control' type='password' data-trigger='blur' data-model='config' data-target='ldap_password' id='ldap_password' autocomplete='off' />
           <div class='input-group-append'>
-            <button type='button' class='btn btn-light input-border' data-action='toggle-password' data-target='ldap_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+            <button type='button' class='btn btn-ghost' data-action='toggle-password' data-target='ldap_password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
           </div>
         </div>
       {% else %}
@@ -950,7 +1010,8 @@
     </div>
     <hr>
 
-    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'saml_team_create', 'affix': '2'} %}
+    {% include 'binary-setting.html' with {'label': "Create team sent by server if it doesn't exist already"|trans, 'slug': 'ldap_team_create'} %}
+    {% include 'binary-setting.html' with {'label': 'Synchronize the local teams with the teams sent by LDAP server'|trans, 'slug': 'ldap_sync_teams'} %}
 
     <div class='d-flex justify-content-between'>
       <label for='ldap-team-default' class='col-form-label'>{{ 'If no team attribute is found, to which team user is assigned?'|trans }}</label>

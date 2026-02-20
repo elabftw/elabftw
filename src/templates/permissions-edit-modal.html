@@ -3,9 +3,18 @@
   {% set column = rw == 'canread' ? 'default_read' : 'default_write' %}
   {% set permissionsJson = App.Users.userData[column] %}
   {% set identifier = rw ~ 'defaultPermissions' %}
+  {% set base_target = rw == 'canwrite' ? 'default_write_base' : 'default_read_base' %}
 {% else %}
   {% set identifier = rw %}
   {% set permissionsJson = Entity.entityData[rw] %}
+  {% set can_base = Entity.entityData.canread_base %}
+  {% set base_target = rw == 'canread_target' ? 'canread_target_base' : rw ~ '_base' %}
+  {% if rw == 'canwrite' or rw == 'canwrite_target' %}
+    {% set can_base = Entity.entityData.canwrite_base %}
+    {% set base_target = rw == 'canwrite_target' ? 'canwrite_target_base' : rw ~ '_base' %}
+  {% elseif rw == 'canbook' %}
+    {% set can_base = Entity.entityData.canbook_base %}
+  {% endif %}
 {% endif %}
 
 {# default icon/label are for canread #}
@@ -35,10 +44,10 @@
         <div data-rw={{ rw }}>
           <label for='{{ identifier }}_select_base'>{{ 'Base'|trans }}</label>
           <p class='smallgray'>{{ 'This setting sets a baseline upon which you can add more permissions by selecting teams, user groups or users below.'|trans }}</p>
-          <select id='{{ identifier }}_select_base' class='form-control'>
+          <select id='{{ identifier }}_select_base' class='form-control' name='{{ base_target }}'>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'
-              {{ permissionsJson|extractJson('base') == key ? ' selected' }}
+              {{ can_base == key ? ' selected' }}
               >{{ value|trans }}</option>
             {% endfor %}
           </select>
@@ -104,9 +113,9 @@
           <div {{ not Entity.entityData.access_key ? 'hidden' }} id='anonymousAccessUrlDiv' class='mt-2'>
             <div class='input-group'>
               <div class='input-group-prepend'>
-                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='anonymousAccessUrlInput'><i class='fas fa-clone'></i></button>
+                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='anonymousAccessUrlInput'><i class='fas fa-clone'></i></button>
               </div>
-              <input type='url' class='form-control' readonly id='anonymousAccessUrlInput' value='{{ Entity.entityData.sharelink }}'>
+              <input type='url' class='form-control' readonly id='anonymousAccessUrlInput' value='{{ Entity.entityData.sharelink }}' aria-label='Anonymous access url input'>
             </div>
             <p class='smallgray'>{{ 'Anyone following this link can access this entry.'|trans }}</p>
           </div>

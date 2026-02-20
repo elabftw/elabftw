@@ -7,7 +7,7 @@
  */
 import $ from 'jquery';
 import { ApiC } from './api';
-import { Malle, InputType, Action as MalleAction, SelectOptions } from '@deltablot/malle';
+import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
@@ -18,6 +18,7 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
+  getSafeElementById,
   getRandomColor,
   listenTrigger,
   makeSortableGreatAgain,
@@ -33,11 +34,12 @@ import {
   TomSelect,
   updateEntityBody,
   updateCatStat,
+  makeMalleableColumnsGreatAgain,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
-import { Action, EntityType, Model, Target } from './interfaces';
+import { Action, EntityType, Model, LinkSubModel } from './interfaces';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -71,7 +73,20 @@ interface Status extends SelectOptions {
   id: number;
   color: string;
   title: string;
+  is_current_team: number;
 }
+
+on('toggle-dark-mode', (el: HTMLElement) => {
+  const currentTheme = parseInt(el.dataset.currentTheme, 10);
+  // Auto (0) and Light (1) should both toggle to Dark (2)
+  const targetTheme = currentTheme === 2 ? 1 : 2;
+  ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
+    const isDark = targetTheme === 2;
+    document.documentElement.classList.toggle('dark-mode', isDark);
+    document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
+    el.dataset.currentTheme = String(targetTheme);
+  });
+});
 
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated
@@ -140,7 +155,7 @@ const btn = document.createElement('button');
 btn.type = 'button';
 btn.dataset.action = 'scroll-top';
 // make it look like a button, and on the right side of the screen, not too close from the bottom
-btn.classList.add('btn', 'btn-neutral', 'floating-middle-right');
+btn.classList.add('btn', 'btn-secondary', 'floating-middle-right');
 // element is invisible at first so we can make it visible so it triggers a css transition and appears progressively
 btn.style.opacity = '0';
 // will not be shown for small screens, only large ones
@@ -188,36 +203,42 @@ if (needFocus) {
   needFocus.focus();
 }
 
-// Listen for malleable columns
-new Malle({
-  onEdit: (original, _, input) => {
-    if (original.innerText === 'unset') {
-      input.value = '';
-      original.classList.remove('font-italic');
-    }
-    if (original.dataset.inputType === 'number') {
-      // use setAttribute here because type is readonly property
-      input.setAttribute('type', 'number');
-    }
-    return true;
-  },
-  cancel : i18next.t('cancel'),
-  cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
-  inputClasses: ['form-control'],
-  fun: (value, original) => {
-    const params = {};
-    params[original.dataset.target] = value;
-    return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
-      .then(res => res.json())
-      .then(json => json[original.dataset.target]);
-  },
-  listenOn: '.malleableColumn',
-  returnedValueIsTrustedHtml: false,
-  submit : i18next.t('save'),
-  submitClasses: ['btn', 'btn-primary', 'mt-2'],
-  tooltip: i18next.t('click-to-edit'),
-}).listen();
+// START SAFARI DETECTION
+// iOS browsers often look like Safari UA; exclude by tokens:
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/User-Agent
+const FORBIDDEN_UA_TOKENS = [
+  'Chrome',
+  'CriOS',
+  'Edg',
+  'EdgiOS',
+  'OPT',
+  'OPiOS',
+  'Firefox',
+  'FxiOS',
+  'SamsungBrowser',
+];
 
+const isSafari = (): boolean => {
+  const ua = navigator.userAgent ?? '';
+  const vendor = navigator.vendor ?? '';
+
+  if (vendor !== 'Apple Computer, Inc.') return false;
+  if (!ua.includes('Safari/')) return false;
+  if (!ua.includes('Version/')) return false;
+
+  for (const token of FORBIDDEN_UA_TOKENS) {
+    if (ua.includes(token)) return false;
+  }
+  return true;
+};
+
+const isDismissedSafari = localStorage.getItem('dismiss_safari_warning_v1') === '1';
+if (isSafari() && !isDismissedSafari) {
+  document.getElementById('safariWarning').removeAttribute('hidden');
+}
+// END SAFARI DETECTION
+
+makeMalleableColumnsGreatAgain();
 
 // tom-select for team selection on login and register page, and idp selection
 ['init_team_select', 'team', 'team_selection_select', 'idp_login_select'].forEach(id =>{
@@ -230,40 +251,19 @@ new Malle({
       // we also remember the last selected one in localStorage
       onChange: rememberLastSelected(id),
       onInitialize: selectLastSelected(id),
+      // users get confused when their team doesn't show up (default is 50)
+      // so make it huge because otherwise one needs to explain that user needs to type to start filtering team names
+      // but users don't know how to type, only click and scroll, so it doesn't come to their mind.
+      maxOptions: 2222,
     });
   }
 });
 
-// MALLEABLE QTY_UNIT - we need a specific code to add the select options
-new Malle({
-  cancel : i18next.t('cancel'),
-  cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
-  inputClasses: ['form-control'],
-  inputType: InputType.Select,
-  selectOptions: [
-    {selected: false, text: '•', value: '•'},
-    {selected: false, text: 'μL', value: 'μL'},
-    {selected: false, text: 'mL', value: 'mL'},
-    {selected: false, text: 'L', value: 'L'},
-    {selected: false, text: 'μg', value: 'μg'},
-    {selected: false, text: 'mg', value: 'mg'},
-    {selected: false, text: 'g', value: 'g'},
-    {selected: false, text: 'kg', value: 'kg'},
-  ],
-  fun: (value, original) => {
-    return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
-      .then(res => res.json())
-      .then(json => json['qty_unit']);
-  },
-  listenOn: '.malleableQtyUnit',
-  returnedValueIsTrustedHtml: false,
-  submit : i18next.t('save'),
-  submitClasses: ['btn', 'btn-primary', 'mt-2'],
-  tooltip: i18next.t('click-to-edit'),
-}).listen();
-
 // only on entity page
 const pageMode = new URLSearchParams(document.location.search).get('mode');
+
+notify.flashSuccess();
+
 if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'edit')) {
   // MALLEABLE ENTITY TITLE
   new Malle({
@@ -289,14 +289,13 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
         .then(res => res.json())
         .then(json => json[original.dataset.target]);
     },
-    listenOn: '.malleableTitle',
+    listenOn: '.malleable-title',
     returnedValueIsTrustedHtml: false,
-    onBlur: MalleAction.Submit,
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
   // CATEGORY AND STATUS
-  const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd'};
+  const notsetOpts = {id: null, title: i18next.t('not-set'), color: 'bdbdbd', is_current_team: 1};
   let statusEndpoint = `${Model.Team}/current/items_status`;
   let categoryEndpoint = `${Model.Team}/current/resources_categories`;
   if (entity.type === EntityType.Experiment || entity.type === EntityType.Template) {
@@ -307,7 +306,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
   // this is a cache for category or status for malle
   const optionsCache = [];
   // this promise will fetch the categories or status on click
-  const getCatStatArr = (endpoint: string): Promise<SelectOptions[]> => {
+  const getCatStatArr = (endpoint: string): Promise<Status[]> => {
     if (!optionsCache[endpoint]) {
       optionsCache[endpoint] = ApiC.getJson(`${endpoint}?limit=9000`)
         .then(json => {
@@ -342,8 +341,6 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       }
       return true;
     },
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['btn', 'btn-danger', 'ml-1'],
     inputClasses: ['form-control', 'ml-2'],
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value).then(color => {
@@ -353,11 +350,11 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: () => getCatStatArr(statusEndpoint),
+    selectOptions: async () =>
+      ((await getCatStatArr(statusEndpoint)) as Status[])
+        .filter((status: Status) => status.is_current_team === 1),
     listenOn: '.malleableStatus',
     returnedValueIsTrustedHtml: false,
-    submit : i18next.t('save'),
-    submitClasses: ['btn', 'btn-primary', 'ml-1'],
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
@@ -371,39 +368,20 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       elem.style.setProperty('--bg', `#${splitValue[1]}`);
       return true;
     },
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['btn', 'btn-danger', 'mx-1'],
     inputClasses: ['form-control'],
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: () => getCatStatArr(categoryEndpoint),
+    selectOptions: async () =>
+      ((await getCatStatArr(categoryEndpoint)) as Status[])
+        .filter((cat: Status) => cat.is_current_team === 1),
     listenOn: '.malleableCategory',
     returnedValueIsTrustedHtml: false,
-    submit : i18next.t('save'),
-    submitClasses: ['btn', 'btn-primary', 'ml-1'],
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 }
-
-// validate the form upon change. fix #451
-// add to the input itself, not the form for more flexibility
-// for instance the tags input allow multiple selection, so we don't want to submit on change
-document.querySelectorAll('.autosubmit').forEach(el => {
-  el.addEventListener('change', event => {
-    // look for all the select that have an empty value and ignore them by setting the name to empty string
-    // this is done to avoid the "extended" being repeated with the last one possibly empty taking over the first one
-    document.querySelectorAll('select.autosubmit').forEach((sel: HTMLSelectElement) => {
-      if (sel.options[sel.selectedIndex].value === '') {
-        // using empty name is better than sel.disabled to avoid visual glitch during submit
-        sel.name = '';
-      }
-    });
-    (event.currentTarget as HTMLElement).closest('form').submit();
-  });
-});
 
 /**
  * Add listeners for filter bar on top of a table
@@ -497,7 +475,11 @@ on('show-policy', (el: HTMLElement) => {
 
 on('reload-on-click', (el: HTMLElement) => reloadElements([el.dataset.target]));
 on('switch-editor', () => getEditor().switch(entity).then(() => window.location.reload()));
-on('destroy-favtags', (el: HTMLElement) => ApiC.delete(`${Model.FavTag}/${el.dataset.id}`).then(() => reloadElements(['favtagsTagsDiv'])));
+on('destroy-favtags', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`${Model.FavTag}/${el.dataset.id}`).then(() => reloadElements(['favtagsTagsDiv']));
+  }
+});
 
 on('insert-param-and-reload', (el: HTMLElement) => {
   const params = new URLSearchParams(document.location.search.slice(1));
@@ -511,6 +493,13 @@ on('insert-param-and-reload', (el: HTMLElement) => {
   }
   window.history.replaceState({}, '', `?${params.toString()}`);
   handleReloads(el.dataset.reload);
+});
+
+// used on displayMessage divs: we save the fact that it was closed
+on('save-dismiss', (el: HTMLElement) => {
+  if (el.dataset.dismissKey) {
+    localStorage.setItem(`dismiss_${el.dataset.dismissKey}`, '1');
+  }
 });
 
 on('add-query-filter', (el: HTMLElement) => {
@@ -550,11 +539,13 @@ on('toggle-pin', (el: HTMLElement) => {
   });
 });
 
-on('transfer-ownership', () => {
-  const value = (document.getElementById('target_owner') as HTMLInputElement).value;
-  const params = {};
-  params[Target.UserId] = parseInt(value.split(' ')[0], 10);
-  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => window.location.reload());
+on('transfer-ownership', async () => {
+  const params = collectForm(document.getElementById('ownershipTransferForm'));
+  const userid = parseInt(params['targetUserId'].split(' ')[0] ?? '', 10);
+  ApiC.notifOnSaved = false;
+  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid });
+  sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
+  window.location.reload();
 });
 
 on(Action.Restore, () => {
@@ -620,11 +611,12 @@ on('save-permissions', (el: HTMLElement) => {
     .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
   params[el.dataset.rw] = permissionsToJson(
-    parseInt(($('#' + el.dataset.identifier + '_select_base').val() as string), 10),
     ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
       .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
       .concat(existingUsers),
   );
+  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
+  params[baseSelect.name] = baseSelect.value;
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
   if (el.dataset.isUserDefault) {
     // we need to replace canread/canwrite with default_read/default_write for user attribute
@@ -883,7 +875,7 @@ on('create-resource-from-compound', (el: HTMLElement) => {
   }
   ApiC.post2location('items', payload).then(id => {
     // now create a link with that compound
-    ApiC.post(`items/${id}/compounds/${compoundId}`).then(() => {
+    ApiC.post(`items/${id}/${LinkSubModel.CompoundsLinks}/${compoundId}`).then(() => {
       // also change the title
       const compoundName = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
       ApiC.patch(`items/${id}`, {title: compoundName}).then(() => {
@@ -957,9 +949,15 @@ on('toggle-password', (el: HTMLElement) => {
 });
 
 on('logout', () => {
-  clearLocalStorage();
+  localStorage.setItem('logout_msg', '1');
   window.location.href = 'app/logout.php';
 });
+
+const logoutMessageDiv = document.getElementById('logoutMessage');
+if (logoutMessageDiv  && localStorage.getItem('logout_msg')) {
+  logoutMessageDiv.removeAttribute('hidden');
+  clearLocalStorage();
+}
 
 on('ack-notif', (el: HTMLElement) => {
   if (el.parentElement.dataset.ack === '0') {
@@ -980,17 +978,12 @@ on('ack-notif', (el: HTMLElement) => {
 on('destroy-notif', () => ApiC.delete(`${Model.User}/me/${Model.Notification}`).then(() => reloadElements(['navbarNotifDiv'])));
 
 // CREATE EXPERIMENT, TEMPLATE or DATABASE item: main create button in top right
-on('create-entity', (el: HTMLElement, event: Event) => {
+on('create-entity', async (el: HTMLElement, event: Event) => {
   event.preventDefault();
-  let params = {};
-  if (el.dataset.hasTitle) {
-    params = collectForm(document.getElementById(el.dataset.formId));
-  }
+  const form = document.getElementById('createNewForm') as HTMLFormElement;
+  const params = collectForm(form);
   if (el.dataset.tplid) {
     params['template'] = parseInt(el.dataset.tplid, 10);
-  }
-  if (el.dataset.catid) {
-    params['category'] = parseInt(el.dataset.catid, 10);
   }
   // look for any tag present in the url, we will create the entry with these tags
   const urlParams = new URLSearchParams(document.location.search);
@@ -1009,21 +1002,11 @@ on('create-entity', (el: HTMLElement, event: Event) => {
     el.dataset.type = 'items';
     page = 'database.php';
   }
-  ApiC.post2location(`${el.dataset.type}`, params).then(id => {
-    window.location.href = `${page}?mode=edit&id=${id}`;
-  });
-});
-
-on('create-entity-ask-title', (el: HTMLElement) => {
-  // this is necessary to convey information between two modals
-  // hide previous modal first
-  $('.modal.show').modal('hide');
-  // then add the category id to the other create button
-  const targetButton = document.getElementById('askTitleButton') as HTMLButtonElement;
-  targetButton.dataset.catid = el.dataset.catid;
-  // also carry over the type as on Dashboard we have both types, but only one modal to ask title
-  targetButton.dataset.type = el.dataset.type;
-  $('#askTitleModal').modal('toggle');
+  const id = await ApiC.post2location(`${el.dataset.type}`, params);
+  if (params['compound']) {
+    await ApiC.post(`${el.dataset.type}/${id}/compounds_links/${params['compound']}`, {});
+  }
+  window.location.href = `${page}?mode=edit&id=${id}`;
 });
 
 on('report-bug', (el: HTMLElement, event: Event) => {
@@ -1084,7 +1067,7 @@ on('copy-to-clipboard', (el: HTMLElement) => {
 });
 
 // REMOVE COMPOUND LINK
-on('delete-compound-link', (el: HTMLElement) => ApiC.delete(`${entity.type}/${entity.id}/compounds/${el.dataset.id}`)
+on('delete-compound-link', (el: HTMLElement) => ApiC.delete(`${entity.type}/${entity.id}/${LinkSubModel.CompoundsLinks}/${el.dataset.id}`)
   .then(() => reloadElements(['compoundDiv'])));
 
 // CLICK the NOW button of a time or date extra field
@@ -1173,6 +1156,9 @@ on('autocomplete', (el: HTMLElement) => {
   if (el.dataset.target === 'users') {
     transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
   }
+  if (el.dataset.target === 'compounds') {
+    transformer = compound => `${compound.id} - ${compound.name} ${compound.cas_number ? ` (CAS: ${compound.cas_number})` : ''}`;
+  }
 
   // use autocomplete jquery-ui plugin
   $(el).autocomplete({
@@ -1192,7 +1178,22 @@ on('autocomplete', (el: HTMLElement) => {
       const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
         ? escapeExtendedQuery(term)
         : term;
-      ApiC.getJson(`${el.dataset.target}/?q=${encodeURIComponent(queryTerm)}`).then(json => {
+
+      const params = new URLSearchParams();
+      params.set('q', queryTerm);
+
+      // allow filtering users within a specific team
+      if (el.dataset.team) {
+        const teamId = document.getElementById(el.dataset.team) as HTMLInputElement | HTMLSelectElement;
+        if (teamId?.value) {
+          params.set('team', teamId.value);
+        }
+      }
+      ApiC.getJson(`${el.dataset.target}/?${params.toString()}`).then(json => {
+        if (!Array.isArray(json) || json.length === 0) {
+          response([i18next.t('not-found')]);
+          return;
+        }
         response(json.map(entry => transformer(entry)));
       });
     },

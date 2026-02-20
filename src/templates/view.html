@@ -14,11 +14,8 @@
           <span title='{{ 'Custom ID'|trans }}' class='color-medium'>{{ Entity.entityData.custom_id }}</span>
         {% endif %}
          <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
-        <span id='documentTitle' class='breakable {{ not Entity.isReadOnly ? 'malleableTitle hl-hover-gray' }} rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
+        <span id='documentTitle' class='breakable {{ not Entity.isReadOnly ? 'malleable-title hl-hover-gray' }} rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
       </h1>
-    </div>
-    <div class='ml-auto'>
-      {% include 'create-new.html' %}
     </div>
   </div>
   {% endblock %}
@@ -120,17 +117,16 @@
   {# BODY (show only if not empty) #}
   {% set body = Entity.entityData.body_html %}
   {% if body != '' %}
-      {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-      {# body in view mode is text-dark for more lisibility see github issue #52 #}
-      <div {{ not displayMainText ? 'hidden' }}>
+      <div {% if Entity.entityData.hide_main_text %}hidden='hidden'{% endif %}>
         <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-        <div id='body_view' class='pt-2 ml-3 text-dark overflow-auto' data-save-hidden='body_view'>{{ body|raw }}</div>
+        <div id='body_view' class='pt-2 ml-3 overflow-auto' data-save-hidden='body_view'>{{ body|raw }}</div>
         <hr>
       </div>
   {% endif %}
 
 </section>
 
+<section id='extraFieldsSection'>
 {# METADATA view #}
 {% if Entity.entityData.metadata %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='extraFieldsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Extra fields'|trans }}</h3>
@@ -139,19 +135,29 @@
   </div>
   <hr>
 {% endif %}
+</section>
 
-{% include 'uploads.html' %}
+{% if Entity.entityData.uploads %}
+  {% include 'uploads.html' %}
+{% endif %}
 
 {% include 'steps-view.html' %}
 
-{% include 'links.html' %}
+{# we only show this section in view mode if there are at least one link #}
+{% if Entity.entityData.experiments_links or Entity.entityData.items_links or Entity.entityData.compounds_links or Entity.entityData.related_experiments_links or Entity.entityData.related_items_links %}
+  {% include 'links.html' %}
+{% endif %}
 
-{% include 'storage-view-edit.html' %}
+{# same for storage #}
+{% if Entity.entityData.containers %}
+  {% include 'storage-view-edit.html' %}
+{% endif %}
 
 {# PERMISSIONS #}
 <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
 <div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
   {% include('edit-permissions.html') %}
+  {% include 'view-edit-target-permissions.html' %}
 </div>
 <hr>
 

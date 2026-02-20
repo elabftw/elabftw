@@ -165,6 +165,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
         MetadataC.read().then(metadata => {
           const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
           delete metadata.extra_fields[name];
+          MetadataC.cleanupMetadata(metadata as ValidMetadata);
           MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView({behavior: 'smooth'}));
         });
       }
@@ -207,6 +208,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
       case ExtraFieldInputType.Experiments:
       case ExtraFieldInputType.Items:
       case ExtraFieldInputType.Users:
+      case ExtraFieldInputType.Compounds:
         valueInput.setAttribute('type', fieldType);
         toggleContentDiv('classic');
         break;
@@ -389,7 +391,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
             const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
             field['value'] = val || prevField?.value || '';
-          } else if ([ExtraFieldInputType.Users, ExtraFieldInputType.Items, ExtraFieldInputType.Experiments].includes(field['type'])) {
+          } else if ([ExtraFieldInputType.Users, ExtraFieldInputType.Items, ExtraFieldInputType.Experiments, ExtraFieldInputType.Compounds].includes(field['type'])) {
             const elId = `newField${field['type']}Input`;
             const el = document.getElementById(elId) as HTMLInputElement | null;
             const val = (el?.value ?? '').trim();
@@ -450,6 +452,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
         const newGroup = document.createElement('div');
         newGroup.classList.add('input-group', 'mb-1');
         const newInput = document.createElement('input');
+        newInput.setAttribute('aria-labelledby', 'choicesInputLabel');
         // the is-extra-input class is used to remove them upon save
         newInput.classList.add('form-control', 'is-extra-input');
         const appendDiv = document.createElement('div');
@@ -567,26 +570,20 @@ if (document.getElementById('metadataDiv') && entity.id) {
 
           // Remove the group from `extra_fields_groups`
           metadata.elabftw.extra_fields_groups.splice(groupIndex, 1);
-          // Remove the group from the <select> dropdown
-          const optionToRemove = grpSel.querySelector(`option[value="${groupId}"]`);
-          if (optionToRemove) {
-            optionToRemove.remove();
-          }
-
-          // Update extra fields from deleted group by moving them to 'Undefined group'
-          for (const key in metadata.extra_fields) {
-            if (metadata.extra_fields[key].group_id === groupId) {
-              delete metadata.extra_fields[key].group_id;
+          // move fields to "undefined" group
+          if (metadata.extra_fields) {
+            for (const key in metadata.extra_fields) {
+              if (metadata.extra_fields[key].group_id === groupId) {
+                delete metadata.extra_fields[key].group_id;
+              }
             }
           }
-
-          // Remove the elabftw property if no groups remain
-          if (metadata.elabftw.extra_fields_groups.length === 0) {
-            delete metadata.elabftw;
-          }
-
-          MetadataC.update(metadata as ValidMetadata);
+          // cleanup empty structures
+          MetadataC.cleanupMetadata(metadata);
+          const optionToRemove = grpSel.querySelector(`option[value="${groupId}"]`);
+          optionToRemove?.remove();
           groupDiv.remove();
+          MetadataC.update(metadata as ValidMetadata);
         });
       }
     });

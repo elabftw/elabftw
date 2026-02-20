@@ -71,33 +71,37 @@ final class Handler extends AbstractRest
 
     private function getImporter(array $reqBody): ImportInterface
     {
-        $owner = (int) ($reqBody['owner'] ?? $this->requester->userid);
+        // if we come from api, the controller will
+        // use getInt to get owner, if it's unset it will be 0 and not null
+        // but if we call postAction from php code (like in tests) it can be null
+        $reqBody['owner'] ??= $this->requester->userid;
+        $owner = ($reqBody['owner'] === 0 ? $this->requester->userid : $reqBody['owner']) ?? throw new ImproperActionException('Could not find owner!');
         if ($owner !== $this->requester->userid && $this->requester->isAdminOf($owner)) {
             $this->requester = new Users($owner, $this->requester->team);
         }
-        $canread = $reqBody['canread'] ?? BasePermissions::Team->toJson();
-        $canwrite = $reqBody['canwrite'] ?? BasePermissions::User->toJson();
+        $canreadBase = BasePermissions::tryFrom((int) ($reqBody['canread_base'] ?? BasePermissions::Team->value)) ?? BasePermissions::Team;
+        $canwriteBase = BasePermissions::tryFrom((int) ($reqBody['canwrite_base'] ?? BasePermissions::User->value)) ?? BasePermissions::User;
         switch ($reqBody['file']->getClientOriginalExtension()) {
             case 'eln':
                 return new Eln(
                     $this->requester,
-                    $canread,
-                    $canwrite,
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,
                     EntityType::tryFrom((string) $reqBody['entity_type']), // can be null
                     category: (int) $reqBody['category'],
+                    canreadBase: $canreadBase,
+                    canwriteBase: $canwriteBase,
                 );
             case 'csv':
                 return new Csv(
                     $this->requester,
-                    $canread,
-                    $canwrite,
                     $reqBody['file'],
-                    $this->logger,
-                    EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,
+                    logger: $this->logger,
+                    entityType: EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,
                     category: (int) $reqBody['category'],
+                    canreadBase: $canreadBase,
+                    canwriteBase: $canwriteBase,
                 );
             default:
                 throw new ImproperActionException(sprintf(

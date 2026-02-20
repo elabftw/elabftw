@@ -11,9 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
-use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\S3Config;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
@@ -22,27 +20,14 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     private Config $Config;
 
-    private array $setupValues;
-
     protected function setUp(): void
     {
         $this->Config = Config::getConfig();
-        // TODO-Config: move to a new Config::getDecrypted() method.
-        // decrypt encrypted keys from config
-        $encryptedColumns = array('smtp_password', 'ldap_password', 'ts_password', 'remote_dir_config');
-        $secretKey = Env::asString('SECRET_KEY');
-        foreach ($encryptedColumns as $column) {
-            if (!empty($this->Config->configArr[$column])) {
-                $this->Config->configArr[$column] = Crypto::decrypt($this->Config->configArr[$column], Key::loadFromAsciiSafeString($secretKey));
-            }
-        }
-
-        $this->setupValues = $this->Config->configArr;
     }
 
     protected function tearDown(): void
     {
-        $this->Config->patch(Action::Update, $this->setupValues);
+        $this->Config->destroy();
     }
 
     public function testRead(): void
@@ -99,8 +84,9 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function testDsn(): void
     {
-        $this->Config->patch(Action::Update, array('smtp_password' => Crypto::encrypt($this->Config->configArr['smtp_password'], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')))));
-        $this->assertIsString($this->Config->getDsn());
+        $smtpPassword = 'some+smtp+password';
+        $this->Config->patch(Action::Update, array('smtp_password' => $smtpPassword));
+        $this->assertStringContainsString(urlencode($smtpPassword), $this->Config->getDsn());
     }
 
     public function testPostAction(): void
@@ -120,5 +106,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
             'allow_permission_organization' => '0',
             'allow_permission_useronly' => '0',
         ));
+    }
+
+    public function testGetS3ExportsConfig(): void
+    {
+        $S3Config = $this->Config->getS3ExportsConfig();
+        $this->assertInstanceOf(S3Config::class, $S3Config);
+        $this->assertSame('exports', $S3Config->pathPrefix);
     }
 }

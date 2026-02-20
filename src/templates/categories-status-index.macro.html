@@ -1,13 +1,9 @@
-{% macro catstatidx(type, table, subtitle, infotip, sourceArr, emptyWarning, modalTitle, newNamePlaceholder) %}
+{% macro catstatidx(type, table, subtitle, infotip, sourceArr, emptyWarning, modalTitle, newNamePlaceholder, teamName) %}
+<h2>{{ teamName }}</h2>
 <div class='mb-5 d-flex justify-content-between'>
   <div class='d-flex'>
     <p>{{ subtitle }}</p>
-    <div class='infotip'>
-      <span class='infotip-icon'>
-        <i class='ml-1 fas fa-circle-question'></i>
-      </span>
-      <p class='infotip-text'>{{ infotip }}</p>
-    </div>
+    {% include 'infotip.html' with {text: infotip} %}
   </div>
   {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
   <div>
@@ -19,7 +15,7 @@
   {% if sourceArr|length == 0 %}
     <p>{{ emptyWarning|raw }}</p>
   {% endif %}
-  <ul class='list-group sortable' data-axis='y' data-table='{{ table }}'>
+  <ul class='list-group sortable d-flex' data-axis='y' data-table='{{ table }}'>
     {% for cat in sourceArr %}
       <li id='expcat_{{ cat.id }}' data-statusid='expcat_{{ cat.id }}' class='list-group-item'>
         <ul class='list-inline'>
@@ -37,6 +33,14 @@
           <li class='list-inline-item align-top'>
             <label for='expcatColor_{{ cat.id }}'>{{ 'Color'|trans }}</label>
             <input class='form-control color-input' type='color' id='expcatColor_{{ cat.id }}' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='color' value='#{{ cat.color }}' />
+          </li>
+
+          <li class='list-inline-item'>
+            <label for='expcatIsPrivate_{{ cat.id }}'>{{ 'Mark as private'|trans }}</label>
+            <label class='switch ucp-align'><span class='sr-only'>{{ 'Mark as private'|trans }}</span>
+              <input type='checkbox' autocomplete='off' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='is_private' {{ cat.is_private ? 'checked="checked"' }} id='expcatIsPrivate_{{ cat.id }}'>
+              <span class='slider'></span>
+            </label>
           </li>
 
           <li class='list-inline-item'>
@@ -75,7 +79,7 @@
       </div>
 
       <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='button' data-endpoint='{{ type }}' data-action='create-catstat' class='btn btn-primary'>{{ 'Create'|trans }}</button>
       </div>
     </div>

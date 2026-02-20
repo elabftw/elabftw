@@ -18,20 +18,21 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
-use Elabftw\Services\Filter;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
 use Override;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 use function array_push;
-use function mb_substr;
 use function ksort;
 
 /**
@@ -41,7 +42,7 @@ class MakeEln extends AbstractMakeEln
 {
     use TwigTrait;
 
-    public function __construct(protected ZipStream $Zip, protected Users $requester, protected array $entityArr)
+    public function __construct(protected LoggerInterface $logger, ZipStream $Zip, protected Users $requester, protected array $entityArr)
     {
         parent::__construct($Zip);
     }
@@ -68,6 +69,17 @@ class MakeEln extends AbstractMakeEln
         // add a HTML preview file
         $this->Zip->addFile($this->root . '/ro-crate-preview.html', $this->crateToHtml($jsonLd, $rootNode));
         $this->Zip->finish();
+    }
+
+    public function writeToFile(string $absolutePath): void
+    {
+        $fileStream = fopen($absolutePath, 'wb');
+        if ($fileStream === false) {
+            throw new RuntimeException('Could not open output stream!');
+        }
+        $this->Zip = new ZipStream(outputStream: $fileStream, sendHttpHeaders: false);
+        $this->getStreamZip();
+        fclose($fileStream);
     }
 
     protected function processEntityArr(): void
@@ -124,19 +136,14 @@ class MakeEln extends AbstractMakeEln
         return sprintf('%s:%d', $entity->entityType->value, $entity->id ?? 0);
     }
 
-    protected static function getDatasetFolderName(array $entityData): string
+    protected static function getDatasetFolderName(): string
     {
-        $prefix = '';
-        if (!empty($entityData['category_title'])) {
-            $prefix = Filter::forFilesystem($entityData['category_title']) . ' - ';
-        }
-        // prevent a zip name with too many characters, see #3966
-        $prefixedTitle = mb_substr($prefix . Filter::forFilesystem($entityData['title']), 0, 103);
         // SHOULD end with /
-        return sprintf('%s - %s/', $prefixedTitle, Tools::getShortElabid($entityData['elabid'] ?? ''));
+        return sprintf('%s/', Tools::getUuidv4());
     }
 
-    protected function processEntity(AbstractEntity $entity): bool
+    // returns the datasetFolder
+    protected function processEntity(AbstractEntity $entity): string | false
     {
         // experiments:123 or items:123
         $slug = self::toSlug($entity);
@@ -146,7 +153,7 @@ class MakeEln extends AbstractMakeEln
         }
         $e = $entity->entityData;
         $hasPart = array();
-        $currentDatasetFolder = self::getDatasetFolderName($e);
+        $currentDatasetFolder = self::getDatasetFolderName();
         $this->processedEntities[] = $slug;
         $this->folder = $this->root . '/' . $currentDatasetFolder;
         $this->rootParts[] = array('@id' => './' . $currentDatasetFolder);
@@ -185,10 +192,11 @@ class MakeEln extends AbstractMakeEln
             try {
                 // this gets modified by the function so we have the correct real_names
                 $uploadedFilesArr = $this->addAttachedFiles($uploadedFilesArr);
-            } catch (UnableToReadFile) {
+            } catch (UnableToReadFile $ex) {
+                $this->logger->error($ex->getMessage());
             }
             foreach ($uploadedFilesArr as $file) {
-                $uploadAtId = './' . $currentDatasetFolder . $file['real_name'];
+                $uploadAtId = './' . $currentDatasetFolder . $file['uuid'];
                 $hasPart[] = array('@id' => $uploadAtId);
                 $fileNode = array(
                     '@id' => $uploadAtId,
@@ -220,9 +228,11 @@ class MakeEln extends AbstractMakeEln
                     } else {
                         $link = new Experiments($this->requester, $link['entityid'], $this->bypassReadPermission);
                     }
-                    $mentions[] = array('@id' => './' . self::getDatasetFolderName($link->entityData));
                     // WARNING: recursion!
-                    $this->processEntity($link);
+                    $linkAtId = $this->processEntity($link);
+                    if ($linkAtId !== false) {
+                        $mentions[] = array('@id' => './' . $linkAtId);
+                    }
                 } catch (IllegalActionException) {
                     continue;
                 }
@@ -289,7 +299,23 @@ class MakeEln extends AbstractMakeEln
         }
 
         $this->dataEntities[] = $datasetNode;
-        return true;
+        return $currentDatasetFolder;
+    }
+
+    #[Override]
+    protected function addAttachedFiles($filesArr): array
+    {
+        foreach ($filesArr as &$file) {
+            $storageFs = Storage::from($file['storage'])->getStorage()->getFs();
+            // make sure we have a hash
+            if (empty($file['hash'])) {
+                $file['hash'] = hash($this->hashAlgorithm, $storageFs->read($file['long_name']));
+            }
+            // add files to archive
+            $file['uuid'] = Tools::getUuidv4();
+            $this->addAttachedFileInZip($this->folder . '/' . $file['uuid'], $storageFs->readStream($file['long_name']));
+        }
+        return $filesArr;
     }
 
     protected static function addIfNotEmpty(array $datasetNode, array ...$nameValueArr): array

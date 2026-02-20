@@ -199,13 +199,17 @@ export function getTinymceBaseConfig(page: string): object {
   let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
   let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
+  let fileMenuItems = 'preview | print';
   if (page === 'edit') {
+    fileMenuItems = 'restoredraft | saveAndGoBack ' + fileMenuItems;
     plugins += ' autosave';
     // add Image button in toolbar
     toolbar1 = toolbar1.replace('link |', 'link image |');
     // let Image in menu
     removedMenuItems = 'newdocument, anchor';
   }
+
+  const isDark = document.documentElement.classList.contains('dark-mode');
 
   return {
     selector: '.mceditable',
@@ -216,8 +220,9 @@ export function getTinymceBaseConfig(page: string): object {
     table_column_resizing: 'resizetable',
     browser_spellcheck: true,
     // location of the skin directory
-    skin_url: '/assets/tinymce_skins',
-    content_css: '/assets/tinymce_content.min.css',
+    skin_url: isDark ? '/assets/tinymce_skins_dark' : '/assets/tinymce_skins',
+    skin: isDark ? 'oxide-dark' : 'oxide',
+    content_css: isDark ? ['/assets/tinymce_skins/content/dark/content.min.css', '/assets/tinymce_content.min.css'] : ['/assets/tinymce_content.min.css'],
     emoticons_database_url: 'assets/tinymce_emojis.js',
     // remove the "Upgrade" button
     promotion: false,
@@ -310,14 +315,9 @@ export function getTinymceBaseConfig(page: string): object {
         });
       },
       insert: function(selected): string {
-        if (selected.type === 'items') {
-          ApiC.post(`${entity.type}/${entity.id}/items_links/${selected.id}`)
-            .then(() => reloadElements(['linksDiv']));
-        }
-        if (selected.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
-          ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`)
-            .then(() => reloadElements(['linksExpDiv']));
-        }
+        const endpoint = selected.type === 'items' ? 'items_links' : 'experiments_links';
+        ApiC.post(`${entity.type}/${entity.id}/${endpoint}/${selected.id}`)
+          .then(() => reloadElements(['linksDiv']));
         const category = selected.category_title ? `${selected.category_title} - `: '';
         return `<span><a href='${selected.page}?mode=view&id=${selected.id}'>${category}${selected.title}</a></span>`;
       },
@@ -328,6 +328,9 @@ export function getTinymceBaseConfig(page: string): object {
     // use a custom function for the save button in toolbar
     save_onsavecallback: (): Promise<void> => updateEntityBody(),
     // keyboard shortcut to insert today's date at cursor in editor
+    menu: {
+      file: { title: 'File', items: fileMenuItems },
+    },
     setup: (editor: Editor): void => {
       // holds the timer setTimeout function
       let typingTimer;
@@ -411,6 +414,16 @@ export function getTinymceBaseConfig(page: string): object {
           editor.execCommand('mceSave');
         },
       });
+      // save and go back button for toolbar, inside "File" menu.
+      editor.ui.registry.addMenuItem('saveAndGoBack', {
+        text: i18next.t('save-and-go-back'),
+        icon: 'customSave',
+        onAction: () => {
+          const btn = document.querySelector('[data-action="update-entity-body"][data-redirect="view"]') as HTMLButtonElement;
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          btn ? btn.click() : editor.execCommand('mceSave');
+        },
+      });
       // some shortcuts
       editor.addShortcut('ctrl+shift+d', 'add date/time at cursor', addDatetimeOnCursor);
       editor.addShortcut('ctrl+=', 'subscript', () => editor.execCommand('subscript'));
@@ -426,7 +439,7 @@ export function getTinymceBaseConfig(page: string): object {
       }
 
       // sort down icon from COLLECTION: Dazzle Line Icons LICENSE: CC Attribution License AUTHOR: Dazzle UI
-      editor.ui.registry.addIcon('sort-amount-down-alt', '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 12h8m-8-4h8m-8 8h8M6 7v10m0 0-3-3m3 3 3-3" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'), // eslint-disable-line
+      editor.ui.registry.addIcon('sort-amount-down-alt', '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 12h8m-8-4h8m-8 8h8M6 7v10m0 0-3-3m3 3 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'), // eslint-disable-line
       // add toggle button for table sorting
       editor.ui.registry.addToggleButton('sort-table', {
         icon: 'sort-amount-down-alt',

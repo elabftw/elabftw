@@ -38,7 +38,7 @@
         {# TEAM #}
         <div class='row'>
           {% if App.devMode -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+            <!-- [html-validate-disable-block prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <label for='team'>{{ 'Team'|trans }}</label>
           <select name='team' class='form-control' id='team' required autocomplete='off' placeholder='{{ 'Select a team'|trans }}' aria-label='{{ 'Team'|trans }}'>
@@ -68,7 +68,7 @@
           <div class='input-group'>
             <input name='password' type='password' class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }} {{ passwordInputHelp|e('html_attr') }}' pattern='{{ passwordInputPattern|e('html_attr') }}' id='password' autocomplete='new-password' required />
             <div class='input-group-append'>
-              <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+              <button type='button' class='btn btn-ghost' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
             </div>
           </div>
         </div>

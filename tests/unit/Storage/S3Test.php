@@ -12,15 +12,34 @@ declare(strict_types=1);
 namespace Elabftw\Storage;
 
 use Aws\Credentials\Credentials;
-use Elabftw\Models\Config;
+use Elabftw\Elabftw\S3Config;
+use Elabftw\Interfaces\StorageInterface;
 use League\Flysystem\Filesystem;
 
 class S3Test extends \PHPUnit\Framework\TestCase
 {
+    protected Credentials $credentials;
+
+    protected StorageInterface $storage;
+
+    protected function setUp(): void
+    {
+        $this->credentials = new Credentials('access-key', 'secret-key');
+        $this->storage = new S3($this->credentials, new S3Config());
+    }
+
     public function testGetFs(): void
     {
-        $credentials = new Credentials('access-key', 'secret-key');
-        $Storage = new S3(Config::getConfig(), $credentials);
-        $this->assertInstanceOf(Filesystem::class, $Storage->getFs());
+        $this->assertInstanceOf(Filesystem::class, $this->storage->getFs());
+    }
+
+    public function testGetPath(): void
+    {
+        $this->assertIsString($this->storage->getPath());
+    }
+
+    public function testGetAbsoluteUri(): void
+    {
+        $this->assertStringStartsWith('s3://', $this->storage->getAbsoluteUri('some-path'));
     }
 }

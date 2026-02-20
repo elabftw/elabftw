@@ -15,6 +15,7 @@ namespace Elabftw\Import;
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
@@ -68,14 +69,16 @@ class Eln extends AbstractZip
 
     public function __construct(
         protected Users $requester,
-        // TODO nullable and have it in .eln export so it is not lost on import
-        protected string $canread,
-        protected string $canwrite,
         protected UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
         protected ?EntityType $entityType = null,
         protected ?int $category = null,
+        protected BasePermissions $canreadBase = BasePermissions::Team,
+        protected BasePermissions $canwriteBase = BasePermissions::User,
+        // TODO nullable and have it in .eln export so it is not lost on import
+        protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
+        protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
         private bool $verifyChecksum = true,
         private bool $checksumErrorSkip = true,
     ) {
@@ -294,7 +297,9 @@ class Eln extends AbstractZip
         }
 
         // CREATE ENTITY
-        $this->Entity->setId($this->Entity->create());
+        $entityId = $this->Entity->create();
+        $this->Entity->setId($entityId);
+        $this->logger->debug(sprintf('Created %s with id: %d', $this->Entity->entityType->value, $entityId));
 
         // DATE
         $date = date('Y-m-d');
@@ -309,6 +314,8 @@ class Eln extends AbstractZip
         $this->Entity->entityData['canread_is_immutable'] = 0;
         $this->Entity->entityData['canwrite_is_immutable'] = 0;
         // canread and canwrite patch must happen before bodyappend that contains a readOne()
+        $this->Entity->update(new EntityParams('canread_base', $this->canreadBase->value));
+        $this->Entity->update(new EntityParams('canwrite_base', $this->canwriteBase->value));
         $this->Entity->update(new EntityParams('canread', $this->canread));
         $this->Entity->update(new EntityParams('canwrite', $this->canwrite));
         // content_type

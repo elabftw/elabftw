@@ -15,9 +15,11 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
@@ -51,7 +53,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $new = $this->Experiments->create();
         $this->assertTrue((bool) Check::id($new));
         $this->Experiments->setId($new);
-        $this->Experiments->canOrExplode('write');
+        $this->Experiments->canOrExplode(AccessType::Write);
         // test archive too
         $exp = $this->Experiments->patch(Action::Archive, array());
         $this->assertIsArray($exp);
@@ -81,11 +83,11 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(State::Normal->value, $exp['state']);
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
-        $Templates->create(title: 'my template');
-        $new = $this->Experiments->createFromTemplate(1);
+        $tpl = $Templates->create(title: 'my template');
+        $new = $this->Experiments->createFromTemplate($tpl);
         $this->assertTrue((bool) Check::id($new));
-        $this->Experiments = new Experiments($this->Users, $new);
-        $this->Experiments->destroy();
+        $newExp = new Experiments($this->Users, $new);
+        $this->assertTrue($newExp->destroy());
     }
 
     public function testSetId(): void
@@ -107,10 +109,15 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $all = $this->Experiments->readAll($DisplayParams);
         $this->assertEquals(1, count($all));
         $this->Experiments->setId($new);
-        $this->Experiments->canOrExplode('read');
+        $this->Experiments->canOrExplode(AccessType::Read);
         $experiment = $this->Experiments->readOne();
         $this->assertTrue(is_array($experiment));
         $this->assertEquals($title, $experiment['title']);
+        $this->assertEquals(State::Normal->value, $experiment['state']);
+        // do a fastq read
+        $DisplayParams->getQuery()->add(array('fastq' => 1));
+        $fast = $this->Experiments->readAll($DisplayParams);
+        $this->assertNotEmpty($fast);
     }
 
     public function testUpdate(): void
@@ -157,19 +164,39 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateVisibility(): void
     {
-        $matrix = array('canread', 'canwrite');
+        $matrix = array('canread_base', 'canwrite_base');
         foreach ($matrix as $column) {
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Full->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Organization->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::Team->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::User->toJson())));
-            $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => BasePermissions::UserOnly->toJson())));
+            foreach (BasePermissions::cases() as $perm) {
+                $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => $perm->value)));
+            }
         }
     }
 
     public function testUpdateCategory(): void
     {
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '3')));
+    }
+
+    public function testUpdateOwnership(): void
+    {
+        $user1 = new Users(1, 1);
+        $user2 = new Users(2, 1);
+        $exp = $this->getFreshExperimentWithGivenUser($user1);
+        $params = array('users_experiments' => array($user1->userid), 'userid' => $user2->userid);
+        $exp->patch(Action::UpdateOwner, $params);
+        $this->assertEquals($exp->entityData['userid'], $user2->userid);
+        $this->assertEquals($exp->entityData['team'], $user2->team);
+    }
+
+    public function testUpdateOwnershipToDifferentTeamIsRestrictedToAdmins(): void
+    {
+        $user1 = new Users(1, 1);
+        $user1->isAdmin = false;
+        $user2 = new Users(2, 2);
+        $exp = $this->getFreshExperimentWithGivenUser($user1);
+        $params = array('users_experiments' => array($user1->userid), 'userid' => $user2->userid, 'team' => $user2->team);
+        $this->expectException(UnauthorizedException::class);
+        $exp->patch(Action::UpdateOwner, $params);
     }
 
     public function testUpdateWithNegativeInt(): void
@@ -215,11 +242,12 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments->ItemsLinks->setId(1);
         $this->Experiments->ExperimentsLinks->setId(1);
-        $this->Experiments->canOrExplode('read');
+        $this->Experiments->canOrExplode(AccessType::Read);
         // add specific permissions so we can check it later in the duplicated entry
-        $canread = BasePermissions::Organization->toJson();
-        $canwrite = BasePermissions::UserOnly->toJson();
-        $this->Experiments->patch(Action::Update, array('canread' => $canread, 'canwrite' => $canwrite));
+        $canread = BasePermissions::Organization;
+        $canwrite = BasePermissions::UserOnly;
+        // also add some custom settings like hiding main text
+        $this->Experiments->patch(Action::Update, array('canread_base' => $canread->value, 'canwrite_base' => $canwrite->value, 'hide_main_text' => 1));
         // add some steps and links in there, too
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
@@ -227,10 +255,9 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Experiments->postAction(Action::Duplicate, array());
         $this->assertIsInt($id);
         $new = new Experiments($this->Users, $id);
-        $actualCanread = json_decode($new->entityData['canread'], true);
-        $actualCanwrite = json_decode($new->entityData['canwrite'], true);
-        $this->assertEquals(BasePermissions::Organization->value, $actualCanread['base']);
-        $this->assertEquals(BasePermissions::UserOnly->value, $actualCanwrite['base']);
+        $this->assertEquals($canread->value, $new->entityData['canread_base']);
+        $this->assertEquals($canwrite->value, $new->entityData['canwrite_base']);
+        $this->assertEquals(1, $new->entityData['hide_main_text']);
     }
 
     public function testInsertTags(): void

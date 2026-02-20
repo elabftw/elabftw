@@ -44,6 +44,7 @@ use Elabftw\Services\MpdfQrProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use DateTimeImmutable;
 use ValueError;
 use ZipStream\ZipStream;
 use Override;
@@ -76,24 +77,25 @@ final class MakeController extends AbstractController
             case ExportFormat::Csv:
                 if (str_starts_with($this->Request->getPathInfo(), '/api/v2/teams/current/procurement_requests')) {
                     $ProcurementRequests = new ProcurementRequests(new Teams($this->requester), 1);
-                    return (new MakeProcurementRequestsCsv($ProcurementRequests))->getResponse();
+                    return new MakeProcurementRequestsCsv($ProcurementRequests)->getResponse();
                 }
                 if (str_starts_with($this->Request->getPathInfo(), '/api/v2/reports')) {
-                    return (new ReportsHandler($this->requester))->getResponse(
+                    return new ReportsHandler($this->requester)->getResponse(
                         ReportScopes::tryFrom($this->Request->query->getString('scope')) ??
-                        throw new ImproperActionException(sprintf('Invalid scope query parameter. Possible values are: %s.', ReportScopes::toCsList()))
+                                throw new ImproperActionException(sprintf('Invalid scope query parameter. Possible values are: %s.', ReportScopes::toCsList())),
+                        $this->Request->query,
                     );
                 }
-                return (new MakeCsv($this->entityArr))->getResponse();
+                return new MakeCsv($this->entityArr)->getResponse();
 
             case ExportFormat::Eln:
-                return $this->makeStreamZip(new MakeEln($this->getZipStreamLib(), $this->requester, $this->entityArr));
+                return $this->makeStreamZip(new MakeEln(App::getDefaultLogger(), $this->getZipStreamLib(), $this->requester, $this->entityArr));
 
             case ExportFormat::ElnHtml:
-                return (new MakeElnHtml($this->getZipStreamLib(), $this->requester, $this->entityArr))->getResponse();
+                return new MakeElnHtml(App::getDefaultLogger(), $this->getZipStreamLib(), $this->requester, $this->entityArr)->getResponse();
 
             case ExportFormat::Json:
-                return (new MakeJson($this->entityArr))->getResponse();
+                return new MakeJson($this->entityArr)->getResponse();
 
             case ExportFormat::PdfA:
                 $this->pdfa = true;
@@ -206,11 +208,17 @@ final class MakeController extends AbstractController
     {
         $defaultStart = '2018-12-23T00:00:00+01:00';
         $defaultEnd = '2119-12-23T00:00:00+01:00';
+
+        // add one day to include the end date selected, because picker will have time 00:00
+        $queryEndDate = ($this->Request->query->getString('end'))
+            ? new DateTimeImmutable($this->Request->query->getString('end'))->modify('+1 day')->format(DateTimeImmutable::ATOM)
+            : $defaultEnd;
+
         $Scheduler = new Scheduler(
             new Items($this->requester),
             null,
             $this->Request->query->getString('start', $defaultStart),
-            $this->Request->query->getString('end', $defaultEnd),
+            $queryEndDate
         );
         $queryParams = $Scheduler->getQueryParams($this->Request->query);
         return new MakeSchedulerReport($Scheduler, $queryParams)->getResponse();

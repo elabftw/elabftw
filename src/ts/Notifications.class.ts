@@ -16,6 +16,8 @@ enum NotificationType {
   Warning = 'warning'
 }
 
+const FLASH_PREFIX = 'flash_';
+
 type I18nOptions = Record<string, string | number | boolean>;
 
 /**
@@ -35,8 +37,8 @@ export class Notification {
 
   // log the error in console and show a translated readable notification.
   public error(msg: string|Error, options?: I18nOptions): void {
-    console.error(msg);
     const translated = i18next.t(String(msg), options);
+    console.error(translated);
     this.notify(translated, NotificationType.Error);
   }
 
@@ -52,6 +54,26 @@ export class Notification {
     (json.res === true
       ? this.success(json.msg)
       : this.error(json.msg));
+  }
+
+  /**
+   * Consume and display flash notifications stored in sessionStorage.
+   * Notifications are shown once and then removed. Intended to be called on page load.
+   * example usage:
+   * sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
+   * Location reloads and consumes the message.
+   */
+  public flashSuccess(): void {
+    Object.keys(sessionStorage).filter(key => key.startsWith(FLASH_PREFIX))
+      .forEach(key => {
+        const message = sessionStorage.getItem(key);
+        if (!message) {
+          sessionStorage.removeItem(key);
+          return;
+        }
+        this.notify(message, NotificationType.Success);
+        sessionStorage.removeItem(key);
+      });
   }
 
   private notify(message: string, type: NotificationType): void {
@@ -87,6 +109,5 @@ export class Notification {
     overlay.appendChild(p);
     p.appendChild(closeEl);
     container.appendChild(overlay);
-
   }
 }

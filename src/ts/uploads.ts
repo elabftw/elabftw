@@ -11,6 +11,7 @@ import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
 import { loadInSpreadsheetEditor } from './spreadsheet-utils';
 import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
+import DOMPurify from 'dompurify';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
 import i18next from './i18n';
@@ -92,6 +93,7 @@ const clickHandler = async (event: Event) => {
   } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
     ApiC.notifOnSaved = false;
     ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout})
+    // toggler needs to be reloaded too so the target value will be updated
       .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
 
   // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON
@@ -102,7 +104,7 @@ const clickHandler = async (event: Event) => {
     const response = await fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`);
     const plainTextContentDiv = document.getElementById('plainTextContentDiv');
     if (el.dataset.ext === 'md') {
-      plainTextContentDiv.innerHTML = await marked(await response.text());
+      plainTextContentDiv.innerHTML = DOMPurify.sanitize(await marked(await response.text()), { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });
     } else if (el.dataset.ext === 'json') {
       const preBlock = document.createElement('pre');
       preBlock.classList.add('language-json');

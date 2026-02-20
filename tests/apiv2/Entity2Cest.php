@@ -200,18 +200,4 @@ class Entity2Cest
         $I->sendGET('/items/196883');
         $I->seeResponseCodeIs(HttpCode::NOT_FOUND);
     }
-
-    public function extendedSearchTest(Apiv2Tester $I)
-    {
-        $I->wantTo('Use extended parameter to get experiments');
-        $I->sendPOST('/experiments');
-        $location = $I->grabHttpHeader('Location');
-        $path = parse_url($location, PHP_URL_PATH);
-        $id = basename($path);
-        $I->sendPatch("/experiments/{$id}", array('metadata' => '{"extra_fields": {"Raw data URL": {"type": "text", "value": "smb://yep"}}}'));
-        $I->sendGET('/experiments/?extended=extrafield:"Raw data URL":%');
-        $I->seeResponseCodeIs(HttpCode::OK);
-        $I->seeResponseIsJson();
-        $I->seeResponseContainsJson(array('id' => $id));
-    }
 }

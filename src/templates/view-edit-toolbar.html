@@ -8,26 +8,28 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-        {# SELECT ACTION #}
-        <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
-        <select id='requestActionActionSelect' class='form-control'>
-          {% for value, text in requestableActionArr|default([])|sort %}
-            <option value='{{ value }}'>{{ text }}</option>
-          {% endfor %}
-        </select>
-        {# SELECT USER #}
-        <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
-        {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
-        {# and autocomplete='off' doesn't work #}
-        <input type='password' disabled hidden />
-        <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users'>
-        <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
-      </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='requestaction'>{{ 'Save'|trans }}</button>
-      </div>
+      <form id='requestActionActionSelectForm'>
+        <div class='modal-body'>
+          {# SELECT ACTION #}
+          <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
+          <select id='requestActionActionSelect' class='form-control' name='requested_action'>
+            {% for value, text in requestableActionArr|default([])|sort %}
+              <option value='{{ value }}'>{{ text }}</option>
+            {% endfor %}
+          </select>
+          {# SELECT USER #}
+          <label for='requestActionUserSelect'>{{ 'Select collaborator'|trans }}</label>
+          {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
+          {# and autocomplete='off' doesn't work #}
+          <input type='password' disabled hidden aria-label='{{ 'Password'|trans }}' />
+          <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users' name='requested_user' required />
+          <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+          <button type='submit' class='btn btn-primary' data-action='requestaction'>{{ 'Save'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
@@ -108,7 +110,7 @@
               <div class='input-group'>
                 <input class='form-control' type='password' required name='passphrase' minlength='{{ App.Config.configArr.min_password_length }}' autocomplete='off' id='sigPassphraseInput' />
                 <div class='input-group-append'>
-                  <button type='button' class='btn btn-light input-border' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+                  <button type='button' class='btn btn-ghost' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
                 </div>
               </div>
           {% endif %}
@@ -169,12 +171,12 @@
 
   {% if mode == 'edit' %}
     {# VIEW button #}
-    <a title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='?mode=view&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 main-action-button lh-normal border-0'>
+    <a title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='?mode=view&amp;id={{ Entity.id }}' class='btn btn-primary hl-hover-gray p-2 mr-2  lh-normal border-0'>
       <i class='fas fa-eye fa-fw'></i>
     </a>
   {% else %}
     {# EDIT button #}
-    <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn hl-hover-gray p-2 mr-2 rounded main-action-button lh-normal border-0 {{ Entity.isReadOnly ? 'disabled' }}'>
+    <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn btn-primary hl-hover-gray p-2 mr-2 rounded lh-normal border-0 {{ Entity.isReadOnly ? 'disabled' }}'>
       <i class='fas fa-pencil fa-fw'></i>
     </a>
   {% endif %}
@@ -290,13 +292,21 @@
           <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='procurementParamsModal'><i class='fas fa-cart-shopping fa-fw' title='{{ 'Modify procurement parameters'|trans }}'></i> {{ 'Modify procurement parameters'|trans }}</button>
         {% endif %}
         {# TRANSFER OWNERSHIP #}
-        {% if Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
-          <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='ownerModal'><i class='fas fa-people-arrows fa-fw' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}</button>
-        {% endif %}
+        {% set canTransfer = Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
+        <button type='button' class='dropdown-item {{ (not canTransfer or Entity.isReadOnly) ? 'disabled' }}'
+          {% if canTransfer %}data-action='toggle-modal' data-target='ownerModal'{% endif %}>
+          <i class='fas fa-people-arrows fa-fw {{ (not canTransfer or Entity.isReadOnly) ? 'color-weak' }}' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}
+        </button>
         {# REVISIONS #}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
         {# CHANGELOG #}
         <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw' title='{{ 'See changelog'|trans }}'></i> {{ 'See changelog'|trans }}</a>
+        {# HIDE MAIN TEXT #}
+        {% set icon = Entity.entityData.hide_main_text ? 'fa-eye' : 'fa-eye-slash' %}
+        <button type='button' class='dropdown-item' data-trigger='blur' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='{{ Entity.entityData.hide_main_text ? 0 : 1 }}'>
+          <i class='fas {{ icon }}'></i>
+          {{ Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans }}
+        </button>
 
         {% if not App.Session.has('is_anon') %}
           {# ARCHIVE / UNARCHIVE #}
@@ -310,11 +320,12 @@
             </button>
           {% endif %}
         {% endif %}
-        <div class='dropdown-divider'></div>
         {# DELETE / RESTORE #}
         {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
+          <div class='dropdown-divider'></div>
           <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
         {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
+          <div class='dropdown-divider'></div>
           <button type='button' class='dropdown-item hover-danger' data-action='restore'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
         {% endif %}
       </div>

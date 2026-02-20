@@ -7,16 +7,279 @@ info:
 servers:
   - url: https://elab.local:3148/api/v2
     description: Local dev server
+  - url: https://demo.elabftw.net/api/v2
+    description: Official demo server
   - url: https://eln.example.org/api/v2
     description: Example base URL
+
+# COMPONENTS
 components:
+  parameters:
+
+    SearchQ:
+      name: q
+      in: query
+      schema:
+        type: string
+      description: |
+        Search for a term in title, body or elabid.
+      examples:
+        first:
+          summary: Search for all results with the word "test".
+          value: test
+
+    SearchExtended:
+      name: extended
+      in: query
+      schema:
+        type: string
+      description: |
+        Extended search (advanced query).
+      examples:
+        first:
+          summary: Search for all results with a rating of 2.
+          value: "rating:2"
+
+    SearchRelated:
+      name: related
+      in: query
+      schema:
+        type: integer
+      description: |
+        Look only for entries linked to this entry id.
+      examples:
+        first:
+          summary: Look for entries linked to entry with id 42.
+          value: 42
+
+    SearchRelatedOrigin:
+      name: related_origin
+      in: query
+      schema:
+        type: string
+        enum: ['experiments', 'items']
+      description: |
+        When using the "related" query parameter, select the type of the related ID (experiments or items)
+      examples:
+        items:
+          summary: The related entry is a resource.
+          value: items
+        experiments:
+          summary: The related entry is an experiment.
+          value: experiments
+
+    Category:
+      name: cat
+      in: query
+      schema:
+        type: string
+      description: |
+        Add a filter on the Category. Supports comma separated list of numbers, including "null".
+      examples:
+        first:
+          summary: Only display results with category ID 2
+          value: "2"
+        second:
+          summary: Display results with category ID 3 or 4 or not set (null)
+          value: "3,4,null"
+
+    Status:
+      name: status
+      in: query
+      schema:
+        type: string
+      description: |
+        Add a filter on the Status. Supports comma separated list of numbers, including "null".
+      examples:
+        first:
+          summary: Only display results with status ID 2
+          value: "2"
+        second:
+          summary: Display results with status ID 3 or 4 or not set (null)
+          value: "3,4,null"
+
+    Tags:
+      name: tags[]
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+      description: |
+        An array of tags for filtering results containing all of these tags.
+
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 15
+      description: |
+        Limit the number of results.
+      examples:
+        first:
+          summary: Limit number of results to 5.
+          value: 5
+    Offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        default: 0
+      description: |
+        Skip a number of results. Use with limit to work the pagination.
+      examples:
+        first:
+          summary: Skip 3 first results.
+          value: 3
+
+    Owner:
+      name: owner
+      in: query
+      schema:
+        type: string
+      description: |
+        Filter results by author (user id)
+      examples:
+        first:
+          summary: Only display results from user with id 2
+          value: "2"
+        second:
+          summary: Only display results from user with id 2 or 3
+          value: "2,3"
+
+    Scope:
+      name: scope
+      in: query
+      schema:
+        type: integer
+        enum: [1, 2, 3]
+      description: |
+        Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
+
+    Order:
+      name: order
+      in: query
+      schema:
+        type: string
+        enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
+      description: |
+        Change the ordering of the results.
+      examples:
+        first:
+          summary: Order by category
+          value: cat
+        second:
+          summary: Order by custom ID
+          value: customid
+
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum: ["asc", "desc"]
+      description: |
+        Change the sorting of results: ascending or descending.
+
+    State:
+      name: state
+      in: query
+      schema:
+        type: string
+        default: "1"
+      examples:
+        first:
+          summary: Display only archived entries
+          value: "2"
+        second:
+          summary: Display archived and deleted entries
+          value: "2,3"
+      description: |
+        Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
+  # end query parameters for entity
+
+  requestBodies:
+    PatchEntity:
+      description: Parameters for patching an entity
+      required: true
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: "#/components/schemas/PatchAction"
+              - $ref: "#/components/schemas/entity_editable"
+
+    PatchItem:
+      description: Parameters for patching an item
+      required: true
+      content:
+        application/json:
+          schema:
+            anyOf:
+              - $ref: "#/components/schemas/PatchAction"
+              - $ref: "#/components/schemas/EntityAndItemEditable"
   securitySchemes:
     token:
       in: header
       type: apiKey
       name: Authorization
       description: The Authorization header value must contain an API Key.
+
   schemas:
+    Error:
+      type: object
+      required: [code, message, description]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        description:
+          type: string
+
+
+    PatchAction:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+            - bloxberg
+            - exclusiveeditmode
+            - forcelock
+            - forceunlock
+            - lock
+            - pin
+            - sign
+            - timestamp
+            - updatemetadatafield
+            - update
+        passphrase:
+          type: string
+          description: >
+            The passphrase corresponding to your signature key.
+            Required when action is "sign".
+          example: hunter2
+        meaning:
+          type: integer
+          enum: [10, 20, 30, 40, 50]
+          description: |
+            Meaning of the signature (required when action is "sign"):
+            - 10: Approval
+            - 20: Authorship
+            - 30: Responsibility
+            - 40: Review
+            - 50: Safety
+          example: 40
+      required: [action]
+
+    EntityAndItemEditable:
+      allOf:
+        - $ref: "#/components/schemas/entity_editable"
+        - $ref: "#/components/schemas/item_editable"
+
+    # API KEY
     apikey:
       type: object
       properties:
@@ -36,6 +299,32 @@ components:
           type: integer
         team_name:
           type: string
+
+    # CHANGELOG
+    changelog:
+      type: object
+      properties:
+        created_at:
+          type: string
+          description: Timestamp when the change was recorded.
+          example: "2026-02-11 20:36:47"
+        target:
+          type: string
+          description: Field/attribute that was changed.
+          example: "timestamped_at"
+        content:
+          type: string
+          description: New value stored for the target field (may be a scalar or JSON-encoded string depending on target).
+          example: "2026-02-11 20:36:47"
+        fullname:
+          type: string
+          description: Full name of the user who made the change.
+          example: "Chewie"
+        userid:
+          type: integer
+          description: Userid of the user who made the change.
+          example: 3
+
     # COMPOUND
     compound:
       type: object
@@ -112,9 +401,8 @@ components:
           type: string
           nullable: true
         molecular_weight:
-          type: number
           # it's a string, see #5733
-          format: string
+          type: string
           example: "177.02"
         nci_code:
           type: string
@@ -241,25 +529,23 @@ components:
             - duplicate
         cid:
           type: integer
-          description: PubChem ID of the compound to import from PubChem
+          description: PubChem Compound ID (CID). Use it to find a compound via this unique identifier. Not compatible with `cas` parameter.
           example: 2519
         cas:
           type: string
-          description: CAS number of the compound to import from PubChem
-          example: 58-08-2
-      oneOf:
-        - required: [cid]
-        - required: [cas]
+          description: CAS number. Use it to find a compound via this unique identifier. Not compatible with `cid` parameter.
+          example: "58-08-2"
 
     CompoundCreateRequest:
       type: object
-      required:
-        - action
       properties:
         action:
           type: string
+          description: |
+            Note: the default value for `action` attribute is `create`, and as such it can be omitted.
           enum:
             - create
+          default: create
         name:
           type: string
         inchi:
@@ -328,222 +614,491 @@ components:
           type: string
         orcid:
           type: string
+
+    # CONFIG
     config:
       type: object
       properties:
-        admins_create_users:
-          type: string
-        admins_create_users_remote_dir:
-          type: string
-        admin_validate:
-          type: string
-        allow_permission_full:
-          type: string
-        allow_permission_organization:
-          type: string
-        allow_permission_team:
-          type: string
-        allow_permission_user:
-          type: string
-        allow_permission_useronly:
-          type: string
-        announcement:
-          description: This text will be shown on every page, including login page.
-          type: string
-        anon_users:
-          type: string
-        autologout_time:
-          type: string
-        blox_anon:
-          type: string
-        blox_enabled:
-          type: string
-        chat_url:
-          type: string
-        cookie_validity_time:
+          admins_create_users:
+            type: string
+            example: '1'
+            default: '1'
+          admins_create_users_remote_dir:
+            type: string
+            example: '0'
+            default: '0'
+          admin_panel_custom_msg:
+            type: string
+            example: 'Welcome to the Admin Panel. Please follow internal procedures.'
+            default: ''
+          admin_validate:
+            type: string
+            example: '0'
+            default: '0'
+          allow_permission_full:
+            type: string
+            example: '1'
+            default: '1'
+          allow_permission_organization:
+            type: string
+            example: '1'
+            default: '1'
+          allow_permission_team:
+            type: string
+            example: '1'
+            default: '1'
+          allow_permission_user:
+            type: string
+            example: '1'
+            default: '1'
+          allow_permission_useronly:
+            type: string
+            example: '1'
+            default: '1'
+          announcement:
+            description: This text will be shown on every page, including login page.
+            type: string
+            example: 'Scheduled maintenance on Saturday 02:00–03:00 UTC.'
+            default: null
+          anon_users:
+            type: string
+            example: '1'
+            default: '1'
+          autologout_time:
+            type: string
+            example: '0'
+            default: '0'
+          blox_anon:
+            type: string
+            example: '0'
+            default: '0'
+          blox_enabled:
+            type: string
+            example: '1'
+            default: '1'
+          chat_url:
+            type: string
+            example: 'https://univ-chat.example'
+            default: 'https://gitter.im/elabftw/elabftw'
+          cookie_validity_time:
+            type: integer
+            example: 43200
+            default: 43200
+          dspace_host:
+            description: URL for dspace host
+            example: "https://dspace.example.org"
+            default: "https://demo.dspace.org/"
+            type: string
+            format: uri
+          dspace_user:
+            description: Username for dspace integration
+            example: "dspace+user@example.org"
+            default: "dspacedemo+admin@gmail.com"
+            type: string
+          dspace_password:
+            description: Password for the corresponding dspace user
+            example: baguette1789
+            default: ""
+            type: string
+          email_domain:
+            type: string
+            example: 'null'
+            default: null
+          extauth_email:
+            type: string
+            example: ''
+            default: ''
+          extauth_firstname:
+            type: string
+            example: ''
+            default: ''
+          extauth_lastname:
+            type: string
+            example: ''
+            default: ''
+          extauth_remote_user:
+            type: string
+            example: ''
+            default: ''
+          extauth_teams:
+            type: string
+            example: ''
+            default: ''
+          lang:
+            type: string
+            example: 'en_GB'
+            default: 'en_GB'
+          ldap_base_dn:
+            type: string
+            example: 'dc=example,dc=org'
+            default: 'dc=example,dc=org'
+          ldap_search_attr:
+            type: string
+            example: 'mail'
+            default: 'mail'
+          ldap_email:
+            type: string
+            example: 'mail'
+            default: 'mail'
+          ldap_firstname:
+            type: string
+            example: 'givenname'
+            default: 'givenname'
+          ldap_host:
+            type: string
+            example: 'ldpa'
+            default: 'ldap'
+          ldap_lastname:
+            type: string
+            example: 'cn'
+            default: 'cn'
+          ldap_password:
+            type: string
+            example: 'admin'
+            default: 'admin'
+          ldap_port:
+            type: string
+            example: '389'
+            default: '389'
+          ldap_sync_teams:
+            type: string
+            example: '0'
+            default: '0'
+          ldap_team:
+            type: string
+            example: 'on'
+            default: 'on'
+          ldap_team_create:
+            type: string
+            example: '1'
+            default: '0'
+          ldap_toggle:
+            type: string
+            example: '0'
+            default: '0'
+          ldap_use_tls:
+            type: string
+            example: '0'
+            default: '0'
+          ldap_username:
+            type: string
+            example: 'cn=admin,dc=example,dc=org'
+            default: 'cn=admin,dc=example,dc=org'
+          local_login:
+            type: string
+            example: null
+            default: '1'
+          local_register:
+            type: string
+            example: '1'
+            default: '1'
+          login_announcement:
+            description: This text will only be shown on the login page.
+            type: string
+            example: null
+            default: null
+          login_tries:
+            type: string
+            example: '10'
+            default: '10'
+          logout_url:
+            type: string
+            example: ''
+            default: ''
+          mail_from:
+            type: string
+            example: 'otconfigured@example.com'
+            default: 'notconfigured@example.com'
+          max_revisions:
+            type: string
+            example: '10'
+            default: '10'
+          min_days_revisions:
+            type: string
+            example: '23'
+            default: '23'
+          min_delta_revisions:
+            description: Minimum number of characters changed required to trigger a revision save.
+            type: string
+            example: '100'
+            default: '100'
+          onboarding_email_active:
+            enum: [0, 1]
+            type: string
+            example: '1'
+            default: '1'
+          onboarding_email_admins_body:
+            type: string
+            example: '<p>Test email body for <strong>admins</strong>.</p>'
+            default: '<p>Test email body for <strong>admins</strong>.</p>'
+          onboarding_email_admins_subject:
+            type: string
+            example : 'subject for admins'
+            default: 'subject for admins'
+          onboarding_email_body:
+            type: string
+            example: '<p>Test email body for <strong>users</strong>.</p>'
+            default: '<p>Test email body for <strong>users</strong>.</p>'
+          onboarding_email_different_for_admins:
+            enum: [0, 1]
+            type: string
+            example: '1'
+            default: '1'
+          onboarding_email_subject:
+            type: string
+            example: 'test email subject'
+            default: 'test email subject'
+          privacy_policy:
+            type: string
+            example: ''
+            default: null
+          proxy:
+            type: string
+            example: ''
+            default: ''
+          remote_dir_config:
+            type: string
+            example: ''
+            default: ''
+          remote_dir_service:
+            type: string
+            example: 'eairef'
+            default: 'eairef'
+          s3_bucket_name:
+            type: string
+            example: ''
+            default: ''
+          s3_endpoint:
+            type: string
+            example: ''
+            default: ''
+          s3_path_prefix:
+            type: string
+            example: ''
+            default: ''
+          s3_region:
+            type: string
+            example: ''
+            default: 'fr-par-42'
+          s3_verify_cert:
+            type: string
+            example: '1'
+            default: '1'
+          saml_allowrepeatattributename:
+            type: string
+            example: '0'
+            default: '0'
+          saml_authnrequestssigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_baseurl:
+            type: string
+            example: ''
+            default: null
+          saml_debug:
+            type: string
+            example: '0'
+            default: '0'
+          saml_entityid:
+            type: string
+            example: ''
+            default: null
+          saml_logoutrequestsigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_logoutresponsesigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_lowercaseurlencoding:
+            type: string
+            example: '0'
+            default: '0'
+          saml_nameidencrypted:
+            type: string
+            example: '0'
+            default: '0'
+          saml_nameidformat:
+            type: string
+            example: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
+            default: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
+          saml_privatekey:
+            type: string
+            example: ''
+            default: null
+          saml_relaxdestinationvalidation:
+            type: string
+            example: '0'
+            default: '0'
+          saml_signmetadata:
+            type: string
+            example: '0'
+            default: '0'
+          saml_strict:
+            type: string
+            example: '1'
+            default: '1'
+          saml_sync_teams:
+            type: string
+            example: '0'
+            default: '0'
+          saml_team_create:
+            type: string
+            example: '1'
+            default: '1'
+          saml_team_default:
+            type: string
+            example: '-1'
+            default: '-1'
+          saml_toggle:
+            type: string
+            example: '0'
+            default: '0'
+          saml_user_default:
+            type: string
+            example: '1'
+            default: '1'
+          saml_wantassertionsencrypted:
+            type: string
+            example: '0'
+            default: '0'
+          saml_wantassertionssigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_wantmessagessigned:
+            type: string
+            example: '0'
+            default: '0'
+          saml_wantnameid:
+            type: string
+            example: '1'
+            default: '1'
+          saml_wantnameidencrypted:
+            type: string
+            example: '0'
+            default: '0'
+          saml_wantxmlvalidation:
+            type: string
+            example: '1'
+            default: '1'
+          saml_x509:
+            type: string
+            example: ''
+            default: null
+          saml_x509_new:
+            type: string
+            example: ''
+            default: null
+          schema:
+            type: string
+            example: '196'
+            default: '196'
+          smtp_address:
+            type: string
+            example: 'mail.smtp2go.com'
+            default: 'mail.smtp2go.com'
+          smtp_encryption:
+            type: string
+            example: 'ssl'
+            default: 'ssl'
+          smtp_password:
+            type: string
+            example: ''
+            default: ''
+          smtp_port:
+            type: string
+            example: '587'
+            default: '587'
+          smtp_username:
+            type: string
+            example: ''
+            default: ''
+          support_url:
+            type: string
+            example: 'https://github.com/elabftw/elabftw/issues'
+            default: 'https://github.com/elabftw/elabftw/issues'
+          ts_authority:
+            type: string
+            example: 'dfn'
+            default: 'dfn'
+          ts_cert:
+            type: string
+            example: ''
+            default: null
+          ts_hash:
+            type: string
+            example: 'sha256'
+            default: 'sha256'
+          ts_limit:
+            type: string
+            example: '0'
+            default: '0'
+          ts_login:
+            type: string
+            example: ''
+            default: null
+          ts_password:
+            type: string
+            example: ''
+            default: ''
+          ts_url:
+            type: string
+            example: ''
+            default: null
+          uploads_storage:
+            type: string
+            example: '1'
+            default: '1'
+          users_validity_is_externally_managed:
+            type: string
+            example: '0'
+            default: '0'
+
+    # CONTAINER
+    container:
+      type: object
+      description: A container represents the storage of an entity in a specific storage unit
+      properties:
+        id:
           type: integer
-        email_domain:
-          type: string
-        extauth_email:
-          type: string
-        extauth_firstname:
-          type: string
-        extauth_lastname:
-          type: string
-        extauth_remote_user:
-          type: string
-        extauth_teams:
-          type: string
-        lang:
-          type: string
-        ldap_base_dn:
-          type: string
-        ldap_search_attr:
-          type: string
-        ldap_email:
-          type: string
-        ldap_firstname:
-          type: string
-        ldap_host:
-          type: string
-        ldap_lastname:
-          type: string
-        ldap_password:
-          type: string
-        ldap_port:
-          type: string
-        ldap_team:
-          type: string
-        ldap_toggle:
-          type: string
-        ldap_use_tls:
-          type: string
-        ldap_username:
-          type: string
-        local_login:
-          type: string
-        local_register:
-          type: string
-        login_announcement:
-          description: This text will only be shown on the login page.
-          type: string
-        login_tries:
-          type: string
-        logout_url:
-          type: string
-        mail_from:
-          type: string
-        max_revisions:
-          type: string
-        min_days_revisions:
-          type: string
-        min_delta_revisions:
-          description: Minimum number of characters changed required to trigger a revision save.
-          type: string
-        onboarding_email_active:
-          enum: [0, 1]
-          type: string
-        onboarding_email_admins_body:
-          type: string
-        onboarding_email_admins_subject:
-          type: string
-        onboarding_email_body:
-          type: string
-        onboarding_email_different_for_admins:
-          enum: [0, 1]
-          type: string
-        onboarding_email_subject:
-          type: string
-        open_science:
-          type: string
-        open_team:
-          type: string
-        privacy_policy:
-          type: string
-        proxy:
-          type: string
-        remote_dir_config:
-          type: string
-        remote_dir_service:
-          type: string
-        s3_bucket_name:
-          type: string
-        s3_endpoint:
-          type: string
-        s3_path_prefix:
-          type: string
-        s3_region:
-          type: string
-        s3_verify_cert:
-          type: string
-        saml_acs_binding:
-          type: string
-        saml_allowrepeatattributename:
-          type: string
-        saml_authnrequestssigned:
-          type: string
-        saml_baseurl:
-          type: string
-        saml_debug:
-          type: string
-        saml_entityid:
-          type: string
-        saml_logoutrequestsigned:
-          type: string
-        saml_logoutresponsesigned:
-          type: string
-        saml_lowercaseurlencoding:
-          type: string
-        saml_nameidencrypted:
-          type: string
-        saml_nameidformat:
-          type: string
-        saml_privatekey:
-          type: string
-        saml_relaxdestinationvalidation:
-          type: string
-        saml_signmetadata:
-          type: string
-        saml_slo_binding:
-          type: string
-        saml_strict:
-          type: string
-        saml_sync_teams:
-          type: string
-        saml_team_create:
-          type: string
-        saml_team_default:
-          type: string
-        saml_toggle:
-          type: string
-        saml_user_default:
-          type: string
-        saml_wantassertionsencrypted:
-          type: string
-        saml_wantassertionssigned:
-          type: string
-        saml_wantmessagessigned:
-          type: string
-        saml_wantnameid:
-          type: string
-        saml_wantnameidencrypted:
-          type: string
-        saml_wantxmlvalidation:
-          type: string
-        saml_x509:
-          type: string
-        saml_x509_new:
-          type: string
-        schema:
-          type: string
-        smtp_address:
-          type: string
-        smtp_encryption:
-          type: string
-        smtp_password:
-          type: string
-        smtp_port:
-          type: string
-        smtp_username:
-          type: string
-        support_url:
-          type: string
-        ts_authority:
-          type: string
-        ts_cert:
-          type: string
-        ts_hash:
-          type: string
-        ts_limit:
-          type: string
-        ts_login:
-          type: string
-        ts_password:
-          type: string
-        ts_url:
-          type: string
-        uploads_storage:
-          type: string
+          description: The container link ID
+          example: 1
+        qty_stored:
+          type: string
+          description: Quantity stored in this container
+          example: 10.5
+        qty_unit:
+          type: string
+          description: Unit of the quantity stored
+          example: "mL"
+          enum: ["bar", "•", "m", "μL", "mL", "L", "μg", "mg", "g", "kg"]
+        storage_id:
+          type: integer
+          description: ID of the storage unit
+          example: 5
+        item_id:
+          type: integer
+          description: ID of the entity (experiment or resource)
+          example: 42
+        created_at:
+          type: string
+          description: When the container entry was created
+          example: "2024-05-28T02:42:19Z"
+        modified_at:
+          type: string
+          description: When the container entry was last modified
+          example: "2024-05-28T02:42:31Z"
+        storage_name:
+          type: string
+          description: Name of the storage unit
+          example: "Freezer A"
+        full_path:
+          type: string
+          description: Full hierarchical path of the storage unit
+          example: "Building A > Room 101 > Freezer A"
     # ENTITY COMPONENT: EXTENDS ENTITY_EDITABLE
     entity:
       description: The complete representation of an entity
@@ -563,11 +1118,15 @@ components:
             category_title:
               type: string
               nullable: true
+            changelog:
+              type: array
+              items:
+                $ref: '#/components/schemas/changelog'
             comments:
               type: array
               items:
                 $ref: '#/components/schemas/comment'
-            compounds:
+            compounds_links:
               type: array
               items:
                 $ref: '#/components/schemas/compound'
@@ -585,6 +1144,11 @@ components:
               type: string
             fullname:
               type: string
+            hide_main_text:
+              type: integer
+              enum: [ 0, 1 ]
+              description: Hide the main text of an entry. When applied to templates, this setting also applies to derived entries.
+              default: 0
             id:
               type: integer
             items_links:
@@ -670,16 +1234,42 @@ components:
           description: The main text content (HTML or Markdown)
           default: null
           example: "<h1>Section title</h1><p>Main text of resource</p>"
+        canread_base:
+          type: number
+          nullable: true
+          description: |
+            Base permission for read access:
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone including anonymous users
+          example: 20
+          enum: [10, 20, 30, 40, 50]
         canread:
           type: string
           nullable: true
           description: JSON permissions for reading the entry
-          default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+          default: '{"teams": [], "users": [], "teamgroups": []}'
+        canwrite_base:
+          type: number
+          nullable: true
+          description: |
+            Base permission for write access:
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone including anonymous users
+          example: 10
+          enum: [10, 20, 30, 40, 50]
         canwrite:
           type: string
           nullable: true
           description: JSON permissions for writing the entry
-          default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+          default: '{"teams": [], "users": [], "teamgroups": []}'
         category:
           type: integer
           nullable: true
@@ -692,8 +1282,14 @@ components:
           type: integer
           nullable: true
           description: |
-            Set the content type for main text: 1 for HTML (default) and 2 for Markdown
+            Set the content type for main text:
+              - 1: HTML (default)
+              - 2: Markdown
+
+            If unset, it will use the user's preference value.
           example: 1
+          default: 1
+          enum: [ 1, 2 ]
         custom_id:
           type: integer
           description: Cannot be negative. Can be reset with "0", null or empty string.
@@ -713,15 +1309,6 @@ components:
           description: Cannot be negative nor empty string. Can be reset with "0" and null.
           default: null
           example: 1
-        tags:
-          type: array
-          nullable: true
-          description: |
-            An array of tags to assign to the created entry.
-          items:
-            type: string
-          default: []
-          example: ["test", "confidential", "replication"]
         title:
           type: string
           nullable: true
@@ -736,23 +1323,59 @@ components:
           default: -1
         userid:
           type: integer
-          description: Userid of entity's owner
+          description: |
+            User ID of the entity owner.
+            When transferring ownership, the `team` field should also be provided (optional).
+        team:
+          type: integer
+          description: |
+            Optional team context for ownership transfer.
+            If omitted, the requester’s team is used by default.
+            If provided, the API validates that the target user is a member of the specified team.
+    # ENTITY DUPLICATE
+    entity_duplicate:
+      type: object
+      description: Parameters for duplicating an entry
+      properties:
+        action:
+          type: string
+          description: |
+            The "duplicate" action creates a new entity based from the given entity id.
+          default: 'duplicate'
+        copyFiles:
+          type: boolean
+          default: false
+          description: |
+            If "true", the action will import the files of the original entity.
+        linkToOriginal:
+          type: boolean
+          default: true
+          description: |
+            If "true", the action will create a link to the original entity.
     # EVENT
     event:
       type: object
       properties:
         title:
           type: string
+          description: Optional comment added to the event
         id:
           type: integer
+        item:
+          type: integer
+          description: ID of the Resource being booked
+          example: 12
         start:
           type: string
+          example: "2026-01-20 12:00:00"
         end:
           type: string
+          example: "2026-01-20 14:00:00"
         userid:
           type: integer
         item_title:
           type: string
+          description: Title of the Resource being booked
         color:
           type: string
         fullname:
@@ -788,6 +1411,28 @@ components:
       allOf:
         - $ref: '#/components/schemas/entity_template_editable'
         - $ref: '#/components/schemas/entity'
+    exclusive_edit_mode:
+      type: object
+      properties:
+        locked_by:
+          type: integer
+          description: Userid of the user having exclusive edition rights
+        locked_by_human:
+          type: string
+          description: Full name of the user having exclusive edition rights
+        locked_at:
+          type: string
+          description: Time when the exclusive edit mode was created
+        is_stale:
+          type: integer
+          description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
+    extra_fields_keys:
+      type: object
+      properties:
+        extra_fields_key:
+          type: string
+        frequency:
+          type: integer
     # EXPORT
     export:
       type: object
@@ -849,6 +1494,88 @@ components:
         format:
           type: string
           example: "pdf"
+    idp_cert:
+      type: object
+      description: X.509 certificate associated with a SAML IdP
+      properties:
+        id:
+          type: integer
+          example: 42
+        x509:
+          type: string
+          description: >
+            Base64 encoded DER representation of the X.509 certificate
+            (as stored in the database).
+          example: MIIGRzCCBC+gAwIBAgIUMeJZCXrKxA9Mc9Yam8Ni6OrvwQQwDQYJKoZIhvcNAQELBQAw...
+        sha256:
+          type: string
+          description: Hex encoded SHA 256 fingerprint of the certificate.
+          pattern: '^[0-9a-f]{64}$'
+          example: d789916e2e44323c91119bf4676e9d8bba3609d4ee50d8cb6367591dd4276c7e
+        purpose:
+          type: integer
+          description: >
+            Usage of the certificate. 0 for signing, 1 for encryption.
+          example: 0
+        not_before:
+          type: string
+          description: Validity starting date for certificate
+          example: '2019-04-15 18:18:00.000000'
+        not_after:
+          type: string
+          description: Validity end date for certificate
+          example: '2038-01-19 03:47:07.000000'
+        created_at:
+          type: string
+          description: Timestamp when the certificate was created.
+          example: '2025-11-16 21:00:23.000000'
+        modified_at:
+          type: string
+          description: Timestamp when the certificate was last modified.
+          example: '2025-11-16 21:00:23.000000'
+      required:
+        - id
+        - x509
+        - sha256
+        - purpose
+        - created_at
+        - modified_at
+    idp_endpoint:
+      type: object
+      description: SAML2 endpoint
+      properties:
+        id:
+          type: integer
+          example: 42
+        is_slo:
+          type: integer
+          description: >
+            Will be 1 if the endpoint is for SLO (otherwise it means it's SSO)
+          example: 0
+          enum: [ 0, 1 ]
+        binding:
+          type: integer
+          description: |
+            The type of binding: POST or redirect(see SamlBinding enum)
+          enum: [ 0, 1 ]
+          example: 0
+        location:
+          type: string
+          description: >
+            Actual URL
+          example: https://idp.uni-example.de/idp/profile/SAML2/POST/SLO
+        binding_urn:
+          type: string
+          description: URN corresponding to the `binding` field
+          example: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+        created_at:
+          type: string
+          description: Timestamp when the endpoint was created.
+          example: '2025-11-16 21:00:23.000000'
+        modified_at:
+          type: string
+          description: Timestamp when the endpoint was last modified.
+          example: '2025-11-16 21:00:23.000000'
     idp:
       type: object
       properties:
@@ -857,18 +1584,6 @@ components:
         name:
           type: string
         entityid:
-          type: string
-        sso_url:
-          type: string
-        sso_binding:
-          type: string
-        slo_url:
-          type: string
-        slo_binding:
-          type: string
-        x509:
-          type: string
-        x509_new:
           type: string
         enabled:
           type: integer
@@ -880,27 +1595,54 @@ components:
           type: string
         lname_attr:
           type: string
+        orgid_attr:
+          type: string
+        certs:
+          type: array
+          description: Certificates associated with this IdP.
+          items:
+            $ref: '#/components/schemas/idp_cert'
+        endpoints:
+          type: array
+          description: Endpoints associated with this IdP.
+          items:
+            $ref: '#/components/schemas/idp_endpoint'
+    item_editable:
+      type: object
+      properties:
+        is_bookable:
+          type: integer
+        canbook_base:
+          type: number
+          description: |
+            Base permission for booking access:
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone including anonymous users
+          example: 20
+          default: 30
+          enum: [10, 20, 30, 40, 50]
+        canbook:
+          type: string
+        book_max_minutes:
+          type: integer
+        book_max_slots:
+          type: integer
+        book_can_overlap:
+          type: integer
+        book_users_can_in_past:
+          type: integer
+        book_is_cancellable:
+          type: integer
+        book_cancel_minutes:
+          type: integer
+
     item:
       allOf:
         - $ref: '#/components/schemas/entity'
-        - type: object
-          properties:
-            is_bookable:
-              type: integer
-            canbook:
-              type: string
-            book_max_minutes:
-              type: integer
-            book_max_slots:
-              type: integer
-            book_can_overlap:
-              type: integer
-            book_users_can_in_past:
-              type: integer
-            book_is_cancellable:
-              type: integer
-            book_cancel_minutes:
-              type: integer
+        - $ref: '#/components/schemas/item_editable'
     link:
       type: object
       properties:
@@ -912,16 +1654,27 @@ components:
           type: integer
         link_state:
           type: integer
+        category_id:
+          type: integer
+          nullable: true
         category_color:
           type: string
+          nullable: true
         category_title:
           type: string
+          nullable: true
+        status_id:
+          type: integer
+          nullable: true
         status_color:
           type: string
+          nullable: true
         status_title:
           type: string
+          nullable: true
         custom_id:
           type: integer
+          nullable: true
         page:
           type: string
         type:
@@ -936,11 +1689,6 @@ components:
           type: object
           nullable: true
           properties:
-            display_main_text:
-              type: boolean
-              nullable: true
-              description: The main text will be hidden if set to false. Use it on templates to force the use of extra fields, and only them for the reports.
-              default: true
             extra_fields_groups:
               type: array
               nullable: true
@@ -956,7 +1704,7 @@ components:
         extra_fields:
           type: object
           nullable: true
-          description: See https://doc.elabftw.net/metadata.html#extra-fields-objects
+          description: See https://doc.elabftw.net/docs/usage/metadata#extra-fields-objects
           additionalProperties:
             type: object
             nullable: true
@@ -1045,6 +1793,31 @@ components:
           description: Only editable via templates. Immutability persists on derived experiments or resources.
           enum: [ 0, 1 ]
           type: integer
+    # STORAGE UNIT
+    storage_unit:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The storage unit ID
+          example: 1
+        name:
+          type: string
+          description: Name of the storage unit
+          example: "Freezer A"
+        parent_id:
+          type: integer
+          nullable: true
+          description: ID of the parent storage unit (null for root level)
+          example: null
+        full_path:
+          type: string
+          description: Full hierarchical path from root to this unit
+          example: "Building A > Room 101 > Freezer A"
+        level_depth:
+          type: integer
+          description: Depth level in the hierarchy (0 for root)
+          example: 2
     tag:
       type: object
       properties:
@@ -1228,6 +2001,44 @@ components:
             is_sysadmin:
               type: integer
               default: 0
+            default_read:
+                type: string
+                example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                default: '{"teams": [], "users": [], "teamgroups": []}'
+            default_read_base:
+                type: number
+                nullable: true
+                description: |
+                  Base permission for default read access:
+                    - 10: Owner only
+                    - 20: Owner + Admins
+                    - 30: Team members
+                    - 40: Everyone with an account
+                    - 50: Everyone including anonymous users
+                example: 20
+                enum: [10, 20, 30, 40, 50]
+            default_read_base_human:
+                type: string
+                description: Default read base permission as human readable value
+            default_write:
+                type: string
+                example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+                default: '{"teams": [], "users": [], "teamgroups": []}'
+            default_write_base:
+                type: number
+                nullable: true
+                description: |
+                  Base permission for default write access:
+                    - 10: Owner only
+                    - 20: Owner + Admins
+                    - 30: Team members
+                    - 40: Everyone with an account
+                    - 50: Everyone including anonymous users
+                example: 20
+                enum: [10, 20, 30, 40, 50]
+            default_write_base_human:
+                type: string
+                description: Default write base permission as human readable value
             teams:
               type: array
               items:
@@ -1243,33 +2054,569 @@ components:
                     type: integer
                   is_archived:
                     type: integer
-    extra_fields_keys:
-      type: object
-      properties:
-        extra_fields_key:
-          type: string
-        frequency:
-          type: integer
-    exclusive_edit_mode:
-      type: object
-      properties:
-        locked_by:
-          type: integer
-          description: Userid of the user having exclusive edition rights
-        locked_by_human:
-          type: string
-          description: Full name of the user having exclusive edition rights
-        locked_at:
-          type: string
-          description: Time when the exclusive edit mode was created
-        is_stale:
-          type: integer
-          description: Is 1 when the exclusive edit lock is longer than ExclusiveEditMode::EXPIRATION_MINUTES
+
+  # RESPONSES
+  responses:
+    BadRequest:
+      description: Bad request (syntax error, invalid request or missing field)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: '400'
+            message: |
+              Error decoding json payload: Syntax error
+            description: ""
+    Unauthorized:
+      description: Unauthorized (Authentication required)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: '401'
+            message: Authentication required
+            description: No corresponding API key found!
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: '403'
+            message: Forbidden
+            description: Insufficient permissions
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: '404'
+            message: Nothing to show with this id
+            description: ""
+    Unprocessable:
+      description: |
+        Unprocessable content: your request is valid but the server cannot process it.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: '422'
+            message: You must have at least one base permission active
+            description: ""
+    InternalServerError:
+      description: The server was unable to complete your request. Please try again later.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: '500'
+            message: Unexpected error
+            description: Hopefully something useful
+
+
+x-parameterGroups:
+  searchParams: &searchParams
+    - $ref: "#/components/parameters/SearchQ"
+    - $ref: "#/components/parameters/SearchExtended"
+    - $ref: '#/components/parameters/SearchRelated'
+    - $ref: '#/components/parameters/SearchRelatedOrigin'
+    - $ref: '#/components/parameters/Category'
+    - $ref: '#/components/parameters/Status'
+    - $ref: '#/components/parameters/Tags'
+    - $ref: '#/components/parameters/Limit'
+    - $ref: '#/components/parameters/Offset'
+    - $ref: '#/components/parameters/Owner'
+    - $ref: '#/components/parameters/Scope'
+    - $ref: '#/components/parameters/Order'
+    - $ref: '#/components/parameters/Sort'
+    - $ref: '#/components/parameters/State'
 
 security:
   - token:
       - token
+
 paths:
+  # CONTAINERS
+  /{entity_type}/{id}/containers:
+    summary: Manage containers for an entity in the inventory.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Containers']
+      summary: Read all containers for this entity.
+      description: Get a list of all storage locations (containers) where this entity is stored.
+      operationId: read-containers
+      responses:
+        '200':
+          description: A list of containers.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/container'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /{entity_type}/{id}/containers/{subid}:
+    summary: Actions on a specific container.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the container
+        required: true
+        schema:
+          type: integer
+    post:
+      tags: ['Containers']
+      summary: Create a container for this entity.
+      description: Store this entity in a storage unit with a specified quantity.
+      operationId: post-container
+      requestBody:
+        description: Parameters for creating a container.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['storage_id', 'qty_stored']
+              properties:
+                qty_stored:
+                  type: number
+                  description: Quantity stored.
+                  example: 10.5
+                qty_unit:
+                  type: string
+                  description: Unit of the quantity. Defaults to "unit" if not provided.
+                  example: "mL"
+                  # see Units enum
+                  enum: ['bar', '•', 'm', 'μL', 'mL', 'L', 'μg', 'mg', 'g', 'kg']
+      responses:
+        '201':
+          description: The container has been created.
+          headers:
+            location:
+              description: An URL to the container that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    get:
+      tags: ['Containers']
+      summary: Read a container.
+      description: Get details of a specific container entry.
+      operationId: read-container
+      responses:
+        '200':
+          description: A container.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/container'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Containers']
+      summary: Modify a container.
+      description: Update the quantity stored or the unit of a container.
+      operationId: patch-container
+      requestBody:
+        description: Parameters for modifying a container.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                qty_stored:
+                  type: number
+                  description: New quantity stored.
+                  example: 15.0
+                qty_unit:
+                  type: string
+                  description: New unit of the quantity.
+                  example: "g"
+      responses:
+        '200':
+          description: The updated container.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/container'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Containers']
+      summary: Delete a container.
+      description: Remove an entity from a storage unit.
+      operationId: delete-container
+      responses:
+        '204':
+          description: The container was deleted.
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # STORAGE UNITS
+  /storage_units:
+    summary: List containers.
+    get:
+      tags: ['Storage units']
+      summary: Read all containers. Yes, the name of this endpoint should be `containers`, but it's not, deal with it.
+      description: Get the full list of containers from entries you have access to.
+      operationId: read-storage-units
+      responses:
+        '200':
+          description: A list of containers attached to experiments or resources.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    entity_id:
+                      type: integer
+                      example: 211
+                    entity_title:
+                      type: string
+                      example: Some title
+                    entity_custom_id:
+                      nullable: true
+                      type: integer
+                      example: null
+                    page:
+                      type: string
+                      example: experiments
+                    container2item_id:
+                      type: integer
+                      example: 1
+                    qty_stored:
+                      type: string
+                      description: Quantity stored, formatted as a string (often decimal).
+                      example: "1.00"
+                    qty_unit:
+                      type: string
+                      description: Quantity unit (may contain special characters).
+                      example: "•"
+                    created_at:
+                      type: string
+                      description: Timestamp in `YYYY-MM-DD HH:MM:SS` format.
+                      example: "2026-01-23 16:10:41"
+                    modified_at:
+                      type: string
+                      description: Timestamp in `YYYY-MM-DD HH:MM:SS` format.
+                      example: "2026-01-23 16:10:41"
+                    firstname:
+                      type: string
+                      example: Ada
+                    lastname:
+                      type: string
+                      example: Lovelace
+                    fullname:
+                      type: string
+                      example: Ada Lovelace
+                    team_name:
+                      type: string
+                      example: BIOMEKA
+                    team_id:
+                      type: integer
+                      example: 1
+                    storage_id:
+                      type: integer
+                      example: 12
+                    storage_name:
+                      type: string
+                      example: 4th floor
+                    full_path:
+                      type: string
+                      description: Full storage path, formatted with separators.
+                      example: "Hospital > 4th floor"
+                    cas_number:
+                      type: string
+                      nullable: true
+                      example: null
+                    pubchem_cid:
+                      type: integer
+                      nullable: true
+                      example: null
+                    is_corrosive:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_serious_health_hazard:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_explosive:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_flammable:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_gas_under_pressure:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_hazardous2env:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_hazardous2health:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_oxidising:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_toxic:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_radioactive:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_antibiotic:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_antibiotic_precursor:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_drug:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_drug_precursor:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_explosive_precursor:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_cmr:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_nano:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_controlled:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_ed2health:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_ed2env:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_pbt:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_pmt:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_vpvb:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+                    is_vpvm:
+                      type: integer
+                      nullable: true
+                      enum: [0, 1]
+                      example: null
+
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: ['Storage units']
+      summary: Create a new storage unit.
+      description: Create a new storage unit. Requires permission to manage inventory locations.
+      operationId: post-storage-unit
+      requestBody:
+        required: true
+        description: Parameters for creating a storage unit.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['name']
+              properties:
+                name:
+                  type: string
+                  description: Name of the storage unit.
+                  example: "Freezer A"
+                parent_id:
+                  type: integer
+                  nullable: true
+                  description: ID of the parent storage unit. Set to null for a top-level unit.
+                  example: null
+      responses:
+        '201':
+          description: The storage unit has been created.
+          headers:
+            location:
+              description: An URL to the storage unit that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+  /storage_units/{id}:
+    summary: Actions on a specific storage unit.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the storage unit.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Storage units']
+      summary: Read a storage unit.
+      description: Get details of a specific storage unit including its full hierarchical path.
+      operationId: read-storage-unit
+      responses:
+        '200':
+          description: A storage unit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/storage_unit'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '404':
+           $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Storage units']
+      summary: Modify a storage unit.
+      description: Update the name of a storage unit. Requires permission to manage inventory locations.
+      operationId: patch-storage-unit
+      requestBody:
+        description: Parameters for modifying a storage unit.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['name']
+              properties:
+                name:
+                  type: string
+                  description: New name for the storage unit.
+                  example: "Freezer B"
+      responses:
+        '200':
+          description: The updated storage unit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/storage_unit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '404':
+           $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Storage units']
+      summary: Delete a storage unit.
+      description: |
+        Delete a storage unit. Requires permission to manage inventory locations.
+        Cannot delete a storage unit that has children or containers.
+      operationId: delete-storage-unit
+      responses:
+        '204':
+          description: The storage unit was deleted.
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+
+  # API KEYS
   /apikeys:
     summary: Manage API keys
     description: Handle operations on API keys.
@@ -1287,6 +2634,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/apikey'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
     post:
       tags: ['Api keys']
       summary: Create an API key
@@ -1317,6 +2668,14 @@ paths:
               description: A fake URL that contains the API key in cleartext
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '422':
+           $ref: '#/components/responses/Unprocessable'
   /apikeys/{id}:
     summary: Actions on an api key
     parameters:
@@ -1334,6 +2693,10 @@ paths:
       responses:
         '204':
           description: The key was deleted
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
 
   # COMPOUNDS
   /compounds:
@@ -1341,7 +2704,7 @@ paths:
     get:
       tags: ['Compounds']
       summary: Read compounds
-      description: Get a list of compounds
+      description: Get the list of all compounds
       operationId: get-compounds
       responses:
         '200':
@@ -1352,11 +2715,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/compound'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Compounds']
       summary: Create or import a compound
       description: |
-        Add a compound to the database. Add action => duplicate parameter with a CAS or PubChem CID to import from PubChem. If the action parameter is something else, the compound will be created directly.
+        - If `action=duplicate`, import (or match) a compound from PubChem using `cid` or `cas`. If both parameters are present, only the `cid` is used.
+        - Otherwise, create a compound directly from the provided fields.
+        - If a compound with the same unique identifier already exists (e.g `cas_number`, `pubchem_cid`), the API will return the existing compound instead of creating a new one.
       operationId: post-compounds
       requestBody:
         required: true
@@ -1367,14 +2734,28 @@ paths:
                 - $ref: '#/components/schemas/CompoundDuplicateRequest'
                 - $ref: '#/components/schemas/CompoundCreateRequest'
       responses:
-        '201':
-          description: The compound has been created.
+        '200':
+          description: OK
           headers:
             location:
-              description: URL to the created compound
+              description: OK
               schema:
                 type: string
-  # COMPOUND
+        '201':
+          description: Created compound or existing compound returned (match on unique identifier)
+          headers:
+            location:
+              description: URL to the created or matched compound
+              schema:
+                type: string
+        '400':
+           $ref: '#/components/responses/BadRequest'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '422':
+           $ref: '#/components/responses/Unprocessable'
   /compounds/{id}:
     parameters:
       - name: id
@@ -1395,6 +2776,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/compound'
+        '401':
+           $ref: '#/components/responses/Unauthorized'
+        '404':
+           $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Compounds']
       summary: Soft-delete a compound
@@ -1403,6 +2788,8 @@ paths:
       responses:
         '204':
           description: The compound was soft-deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   # CONFIG
   /config:
@@ -1418,6 +2805,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/config'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     patch:
       tags: ['Config']
       summary: Modify the config
@@ -1435,6 +2824,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/config'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
     delete:
       tags: ['Config']
       summary: Reset the config to default values
@@ -1442,6 +2837,10 @@ paths:
       responses:
         '204':
           description: The config was reset.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # EXPERIMENTS
   /experiments:
     summary: Actions on experiments
     post:
@@ -1453,71 +2852,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  type: string
-                  nullable: true
-                  description: The main text content (HTML or Markdown)
-                  default: null
-                  example: "<h1>Section title</h1><p>Main text of resource</p>"
-                canread:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for reading the entry
-                  default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
-                canwrite:
-                  type: string
-                  nullable: true
-                  description: JSON permissions for writing the entry
-                  default: '{"base": 20, "teams": [], "users": [1], "teamgroups": [1]}'
-                category:
-                  type: integer
-                  nullable: true
-                  description: The experiment category ID
-                  default: null
-                  example: 3
-                content_type:
-                  type: integer
-                  nullable: true
-                  description: |
-                    Set the content type for main text: 1 for HTML (default) and 2 for Markdown
-                  example: 1
-                metadata:
-                  $ref: '#/components/schemas/metadata'
-                rating:
-                  type: integer
-                  nullable: true
-                  description: Rating value from 0 to 5
-                  default: 0
-                status:
-                  type: integer
-                  nullable: true
-                  description: The experiment status ID
-                  default: null
-                  example: 1
-                tags:
-                  type: array
-                  nullable: true
-                  description: |
-                    An array of tags to assign to the created entry.
-                  items:
-                    type: string
-                  default: []
-                  example: ["test", "confidential", "replication"]
-                title:
-                  type: string
-                  nullable: true
-                  description: The title of the entry
-                  default: Untitled
-                  example: "Test replicating the results of Naomi"
-                template:
-                  type: integer
-                  description: |
-                    The template id to use, or 0 to use the common team
-                    template, or -1 to have an empty body.
-                  default: -1
-
+              $ref: '#/components/schemas/entity_editable'
       responses:
         '201':
           description: The experiment has been created.
@@ -1526,169 +2861,15 @@ paths:
               description: An URL to the experiment that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Experiments']
       summary: Read all experiments that are accessible
       operationId: read-experiments
-      # Note: this has to be repeated manually for now
-      # See https://github.com/OAI/OpenAPI-Specification/issues/445
-      parameters:
-        - name: q
-          in: query
-          schema:
-            type: string
-          description: |
-            Search for a term in title, body or elabid.
-          examples:
-            first:
-              summary: Search for all results with the word "test".
-              value: test
-        - name: extended
-          in: query
-          schema:
-            type: string
-          description: |
-            Extended search (advanced query).
-          examples:
-            first:
-              summary: Search for all results with a rating of 2.
-              value: "rating:2"
-        - name: related
-          in: query
-          schema:
-            type: integer
-          description: |
-            Look only for entries linked to this entry id.
-          examples:
-            first:
-              summary: Look for entries linked to entry with id 42.
-              value: 42
-        - name: related_origin
-          in: query
-          schema:
-            type: string
-            enum: ['experiments', 'items']
-          description: |
-            When using the "related" query parameter, select the type of the related ID (experiments or items)
-          examples:
-            items:
-              summary: The related entry is a resource.
-              value: items
-            experiments:
-              summary: The related entry is an experiment.
-              value: experiments
-        - name: cat
-          in: query
-          schema:
-            type: string
-          description: |
-            Add a filter on the Category. Supports comma separated list of numbers, including "null".
-          examples:
-            first:
-              summary: Only display results with category ID 2
-              value: "2"
-            second:
-              summary: Display results with category ID 3 or 4 or not set (null)
-              value: "3,4,null"
-        - name: status
-          in: query
-          schema:
-            type: string
-          description: |
-            Add a filter on the Status. Supports comma separated list of numbers, including "null".
-          examples:
-            first:
-              summary: Only display results with status ID 2
-              value: "2"
-            second:
-              summary: Display results with status ID 3 or 4 or not set (null)
-              value: "3,4,null"
-        - name: tags[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            An array of tags for filtering results containing all of these tags.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 15
-          description: |
-            Limit the number of results.
-          examples:
-            first:
-              summary: Limit number of results to 5.
-              value: 5
-        - name: offset
-          in: query
-          schema:
-            type: integer
-            default: 0
-          description: |
-            Skip a number of results. Use with limit to work the pagination.
-          examples:
-            first:
-              summary: Skip 3 first results.
-              value: 3
-        - name: owner
-          in: query
-          schema:
-            type: string
-          description: |
-            Filter results by author (user id)
-          examples:
-            first:
-              summary: Only display results from user with id 2
-              value: "2"
-            second:
-              summary: Only display results from user with id 2 or 3
-              value: "2,3"
-        - name: scope
-          in: query
-          schema:
-            type: integer
-            enum: [1, 2, 3]
-          description: |
-            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
-        - name: order
-          in: query
-          schema:
-            type: string
-            enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
-          description: |
-            Change the ordering of the results.
-          examples:
-            first:
-              summary: Order by category
-              value: cat
-            second:
-              summary: Order by custom ID
-              value: customid
-        - name: sort
-          in: query
-          schema:
-            type: string
-            enum: ["asc", "desc"]
-          description: |
-            Change the sorting of results: ascending or descending.
-        - name: state
-          in: query
-          schema:
-            type: string
-            default: "1"
-          examples:
-            first:
-              summary: Display only archived entries
-              value: "2"
-            second:
-              summary: Display archived and deleted entries
-              value: "2,3"
-          description: |
-            Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
-      # END need to copy part to items/
+      parameters: *searchParams
       responses:
         '200':
           description: A list of experiments
@@ -1698,6 +2879,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/experiment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /experiments/{id}:
     summary: Actions on a specific experiment
     parameters:
@@ -1723,23 +2908,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  description: |
-                    The "duplicate" action creates a new entity based from the given entity id.
-                  default: 'duplicate'
-                copyFiles:
-                  type: boolean
-                  default: false
-                  description: |
-                    If "true", the action will import the files of the original entity.
-                linkToOriginal:
-                  type: boolean
-                  default: true
-                  description: |
-                    If "true", the action will create a link to the original entity.
+              $ref: '#/components/schemas/entity_duplicate'
       responses:
         '201':
           description: The experiment has been duplicated.
@@ -1748,6 +2917,12 @@ paths:
               description: An URL to the experiment that was duplicated.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Experiments']
       summary: Read an experiment
@@ -1828,61 +3003,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/entity'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Experiments']
       summary: Modify an experiment
       operationId: patch-experiment
       requestBody:
-        description: Parameters for patching an experiment
-        content:
-          application/json:
-            schema:
-              anyOf:
-                - type: object
-                  properties:
-                    action:
-                      type: string
-                      enum: [
-                        'bloxberg',
-                        'exclusiveeditmode',
-                        'lock',
-                        'pin',
-                        'sign',
-                        'timestamp',
-                        'updatemetadatafield',
-                        'update',
-                      ]
-                    passphrase:
-                      type: string
-                      description: The passphrase corresponding to your signature key. This parameter is required when Action is "sign"
-                      example: hunter2
-                    meaning:
-                      type: integer
-                      enum: [ 10, 20, 30, 40, 50 ]
-                      description: |
-                        Meaning of the signature. This parameter is required when Action is "sign"
-                        - 10: Approval
-                        - 20: Authorship
-                        - 30: Responsibility
-                        - 40: Review
-                        - 50: Safety
-                      example: 40
-                - $ref: '#/components/schemas/entity_editable'
-            examples:
-              signature:
-                summary: Sign an entry with meaning "Approval"
-                value:
-                  action: sign
-                  passphrase: hunter2
-                  meaning: 10
-              bloxberg:
-                summary: Create a Bloxberg blockchain timestamp
-                value:
-                  action: bloxberg
-              timestamp:
-                summary: Create a timestamp archive
-                value:
-                  action: timestamp
+        $ref: '#/components/requestBodies/PatchEntity'
       responses:
         '200':
           description: The patched experiment
@@ -1890,6 +3020,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/experiment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
     delete:
       tags: ['Experiments']
       summary: Delete an experiment.
@@ -1898,6 +3036,10 @@ paths:
       responses:
         '204':
           description: The experiment was deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # INFO
   /info:
@@ -1907,59 +3049,121 @@ paths:
       summary: Get information about the instance.
       description: Get information about the instance.
       operationId: get-info
+      parameters:
+        - in: query
+          name: hist
+          required: false
+          description: |
+            Get usage information about the instance.
+
+            If `hist` is present, returns cumulative histogram data for experiments, items (resources), and users.
+          schema:
+            type: boolean
+          allowEmptyValue: true
+          example: true
+        - in: query
+          name: columns
+          required: false
+          description: Number of columns (buckets) to display in histogram outputs.
+          schema:
+            type: integer
+            minimum: 1
+          example: 120
       responses:
         '200':
           description: Information about the instance
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  elabftw_version:
-                    type: string
-                    description: Current eLabFTW version
-                    example: 4.8.0
-                  elabftw_version_int:
-                    type: integer
-                    description: Current eLabFTW version as an integer
-                    example: 50102
-                  ts_balance:
-                    type: integer
-                    description: Number of timestamp tokens left
-                    example: 461
-                  all_users_count:
-                    type: integer
-                    description: Total count of all users
-                    example: 389
-                  active_users_count:
-                    type: integer
-                    description: Total count of active users
-                    example: 311
-                  items_count:
-                    type: integer
-                    description: Total count of items
-                    example: 666
-                  teams_count:
-                    type: integer
-                    description: Total count of teams
-                    example: 18
-                  experiments_count:
-                    type: integer
-                    description: Total count of experiments
-                    example: 10189
-                  experiments_timestamped_count:
-                    type: integer
-                    description: Total count of experiments with timestamps
-                    example: 1601
-                  uploads_filesize_sum:
-                    type: integer
-                    description: Sum of stored filesize in MySQL for all uploads of the instance.
-                    example: 25681672
-                    format: int64
-                  uploads_filesize_sum_formatted:
-                    type: string
-                    description: Sum of stored filesize in MySQL for all uploads of the instance, formatted
-                    example: "24.49 MiB"
+                oneOf:
+                  - type: object
+                    properties:
+                      elabftw_version:
+                        type: string
+                        description: Current eLabFTW version
+                        example: 4.8.0
+                      elabftw_version_int:
+                        type: integer
+                        description: Current eLabFTW version as an integer
+                        example: 50102
+                      ts_balance:
+                        type: integer
+                        description: Number of timestamp tokens left
+                        example: 461
+                      all_users_count:
+                        type: integer
+                        description: Total count of all users
+                        example: 389
+                      active_users_count:
+                        type: integer
+                        description: Total count of active users
+                        example: 311
+                      items_count:
+                        type: integer
+                        description: Total count of items
+                        example: 666
+                      teams_count:
+                        type: integer
+                        description: Total count of teams
+                        example: 18
+                      experiments_count:
+                        type: integer
+                        description: Total count of experiments
+                        example: 10189
+                      experiments_timestamped_count:
+                        type: integer
+                        description: Total count of experiments with timestamps
+                        example: 1601
+                      uploads_filesize_sum:
+                        type: integer
+                        description: Sum of stored filesize in MySQL for all uploads of the instance.
+                        example: 25681672
+                        format: int64
+                      uploads_filesize_sum_formatted:
+                        type: string
+                        description: Sum of stored filesize in MySQL for all uploads of the instance, formatted
+                        example: "24.49 MiB"
+                  - type: object
+                    description: Histogram data (when `hist` is present).
+                    properties:
+                      experiments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            bucket_start:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            total:
+                              type: integer
+                              example: 120
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            bucket_start:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            total:
+                              type: integer
+                              example: 55
+                      users:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            bucket_start:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            total:
+                              type: integer
+                              example: 10
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   # ITEMS
   /items:
@@ -1982,168 +3186,15 @@ paths:
               description: An URL to the item that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Items']
       summary: Read all items that are accessible
       operationId: read-items
-      # start duplicate from GET /experiments
-      parameters:
-        - name: q
-          in: query
-          schema:
-            type: string
-          description: |
-            Search for a term in title, body or elabid.
-          examples:
-            first:
-              summary: Search for all results with the word "test".
-              value: test
-        - name: extended
-          in: query
-          schema:
-            type: string
-          description: |
-            Extended search (advanced query).
-          examples:
-            first:
-              summary: Search for all items with a rating of 2.
-              value: "rating:2"
-        - name: related
-          in: query
-          schema:
-            type: integer
-          description: |
-            Look only for entries linked to this item id.
-          examples:
-            first:
-              summary: Look for entries linked to item with id 42.
-              value: 42
-        - name: related_origin
-          in: query
-          schema:
-            type: string
-            enum: ['experiments', 'items']
-          description: |
-            When using the "related" query parameter, select the type of the related ID (experiments or items)
-          examples:
-            items:
-              summary: The related entry is a resource.
-              value: items
-            experiments:
-              summary: The related entry is an experiment.
-              value: experiments
-        - name: cat
-          in: query
-          schema:
-            type: string
-          description: |
-            Add a filter on the Category. Supports comma separated list of numbers, including "null".
-          examples:
-            first:
-              summary: Only display results with category ID 2
-              value: "2"
-            second:
-              summary: Display results with category ID 3 or 4 or not set (null)
-              value: "3,4,null"
-        - name: status
-          in: query
-          schema:
-            type: string
-          description: |
-            Add a filter on the Status. Supports comma separated list of numbers, including "null".
-          examples:
-            first:
-              summary: Only display results with status ID 2
-              value: "2"
-            second:
-              summary: Display results with status ID 3 or 4 or not set (null)
-              value: "3,4,null"
-        - name: tags[]
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: |
-            An array of tags for filtering results containing all of these tags.
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 15
-          description: |
-            Limit the number of results.
-          examples:
-            first:
-              summary: Limit number of results to 5.
-              value: 5
-        - name: offset
-          in: query
-          schema:
-            type: integer
-            default: 0
-          description: |
-            Skip a number of results. Use with limit to work the pagination.
-          examples:
-            first:
-              summary: Skip 3 first results.
-              value: 3
-        - name: owner
-          in: query
-          schema:
-            type: string
-          description: |
-            Filter results by author (user id)
-          examples:
-            first:
-              summary: Only display results from user with id 2
-              value: "2"
-            second:
-              summary: Only display results from user with id 2 or 3
-              value: "2,3"
-        - name: scope
-          in: query
-          schema:
-            type: integer
-            enum: [1, 2, 3]
-          description: |
-            Set the scope for the results. 1: self, 2: team, 3: everything. It defaults to the user value stored in preferences.
-        - name: order
-          in: query
-          schema:
-            type: string
-            enum: ["cat", "comment", "customid", "date", "id", "lastchange", "rating", "status", "title", "user"]
-          description: |
-            Change the ordering of the results.
-          examples:
-            first:
-              summary: Order by category
-              value: cat
-            second:
-              summary: Order by custom ID
-              value: customid
-        - name: sort
-          in: query
-          schema:
-            type: string
-            enum: ["asc", "desc"]
-          description: |
-            Change the sorting of results: ascending or descending.
-        - name: state
-          in: query
-          schema:
-            type: string
-            default: "1"
-          examples:
-            first:
-              summary: Display only archived entries
-              value: "2"
-            second:
-              summary: Display archived and deleted entries
-              value: "2,3"
-          description: |
-            Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
-      # end duplicate from GET /experiments
+      parameters: *searchParams
       responses:
         '200':
           description: A list of items
@@ -2153,6 +3204,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/item'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /items/{id}:
     summary: Actions on a specific item
     parameters:
@@ -2178,23 +3231,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  description: |
-                    The "duplicate" action creates a new item based from the given item id.
-                  default: 'duplicate'
-                copyFiles:
-                  type: boolean
-                  default: false
-                  description: |
-                    If "true", the action will import the files of the original item.
-                linkToOriginal:
-                  type: boolean
-                  default: true
-                  description: |
-                    If "true", the action will create a link to the original item.
+              $ref: '#/components/schemas/entity_duplicate'
       responses:
         '201':
           description: The item has been duplicated.
@@ -2203,6 +3240,12 @@ paths:
               description: An URL to the item that was duplicated.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Items']
       summary: Read an item
@@ -2285,61 +3328,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/entity'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Items']
       summary: Modify an item
       operationId: patch-item
       requestBody:
-        description: Parameters for patching an item
-        content:
-          application/json:
-            schema:
-              anyOf:
-                - type: object
-                  properties:
-                    action:
-                      type: string
-                      enum: [
-                        'bloxberg',
-                        'exclusiveeditmode',
-                        'lock',
-                        'pin',
-                        'sign',
-                        'updatemetadatafield',
-                        'update',
-                      ]
-                      example: sign
-                    passphrase:
-                      type: string
-                      description: The passphrase corresponding to your signature key. This parameter is required when Action is "sign"
-                      example: hunter2
-                    meaning:
-                      type: integer
-                      enum: [ 10, 20, 30, 40, 50 ]
-                      description: |
-                        Meaning of the signature. This parameter is required when Action is "sign"
-                        - 10: Approval
-                        - 20: Authorship
-                        - 30: Responsibility
-                        - 40: Review
-                        - 50: Safety
-                      example: 40
-                - $ref: '#/components/schemas/entity_editable'
-            examples:
-              signature:
-                summary: Sign an entry with meaning "Approval"
-                value:
-                  action: sign
-                  passphrase: hunter2
-                  meaning: 10
-              bloxberg:
-                summary: Create a Bloxberg blockchain timestamp
-                value:
-                  action: bloxberg
-              timestamp:
-                summary: Create a timestamp archive
-                value:
-                  action: timestamp
+        $ref: '#/components/requestBodies/PatchItem'
       responses:
         '200':
           description: The patched item
@@ -2347,6 +3345,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/item'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
     delete:
       tags: ['Items']
       summary: Delete an item.
@@ -2355,6 +3359,10 @@ paths:
       responses:
         '204':
           description: The key was deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # IMPORT
   /import:
@@ -2389,6 +3397,8 @@ paths:
                     description: value of MAX_UPLOAD_TIME env parameter
                     type: integer
                     example: 900000
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Import']
       summary: Send a file to import
@@ -2413,16 +3423,34 @@ paths:
                   type: integer
                   example: 6
                   description: The default category ID if no category is defined for a given entry
-                canread:
-                  type: string
-                  example: |
-                    {"base": 30, "teams": [3], "teamgroups": [], "users": [91, 32]}
-                  description: A JSON string representing read permissions
-                canwrite:
-                  type: string
-                  example: |
-                    {"base": 30, "teams": [3], "teamgroups": [], "users": [91, 32]}
-                  description: A JSON string representing write permissions
+                canread_base:
+                  type: number
+                  nullable: true
+                  description: |
+                    Base permission for read access:
+                      - 10: Owner only
+                      - 20: Owner + Admins
+                      - 30: Team members
+                      - 40: Everyone with an account
+                      - 50: Everyone including anonymous users
+                  example: 30
+                  enum: [10, 20, 30, 40, 50]
+                canwrite_base:
+                  type: number
+                  nullable: true
+                  description: |
+                    Base permission for write access:
+                      - 10: Owner only
+                      - 20: Owner + Admins
+                      - 30: Team members
+                      - 40: Everyone with an account
+                      - 50: Everyone including anonymous users
+                  example: 20
+                  enum: [10, 20, 30, 40, 50]
+                owner:
+                  type: integer
+                  example: 5
+                  description: Userid of future owner of imported data
       responses:
         '201':
           description: The import was successful
@@ -2431,6 +3459,11 @@ paths:
               description: The number at the end is the number of imported entries
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
   # EXPORT
   /exports:
     summary: Exported files
@@ -2447,6 +3480,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/export'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Exports']
       summary: Register an export request
@@ -2499,6 +3534,10 @@ paths:
               description: API URL for export record
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /exports/{id}:
     summary: An export request
     parameters:
@@ -2521,6 +3560,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/export'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Exports']
       summary: Remove an export request and its associated file
@@ -2529,6 +3572,11 @@ paths:
       responses:
         '204':
           description: The file was deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # COMMENTS
   /{entity_type}/{id}/comments:
     summary: Actions on comments of an entity
@@ -2568,6 +3616,12 @@ paths:
               description: An URL to the comment that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Comments']
       summary: Read all comments of that entity.
@@ -2581,6 +3635,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/comment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/comments/{subid}:
     summary: Actions on comment of an entity
     parameters:
@@ -2614,6 +3672,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/comment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Comments']
       summary: Modify an entity comment.
@@ -2631,6 +3693,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/comment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Comments']
       summary: Delete an entity comment.
@@ -2639,6 +3707,10 @@ paths:
       responses:
         '204':
           description: The comment was deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # ITEMS LINKS
   /{entity_type}/{id}/items_links:
@@ -2670,6 +3742,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/link'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/items_links/{subid}:
     summary: Actions on items link of an entity
     parameters:
@@ -2716,6 +3792,12 @@ paths:
               description: An URL to the link that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Links to items']
       summary: Delete an item link.
@@ -2724,6 +3806,10 @@ paths:
       responses:
         '204':
           description: The link was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXPERIMENTS LINKS
   /{entity_type}/{id}/experiments_links:
@@ -2755,6 +3841,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/link'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/experiments_links/{subid}:
     summary: Actions on experiments link of an entity
     parameters:
@@ -2801,6 +3891,12 @@ paths:
               description: An URL to the link that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Links to experiments']
       summary: Delete an experiment link.
@@ -2809,9 +3905,13 @@ paths:
       responses:
         '204':
           description: The link was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # COMPOUNDS LINKS
-  /{entity_type}/{id}/compounds:
+  /{entity_type}/{id}/compounds_links:
     summary: Compounds linked to that entity.
     parameters:
       - name: entity_type
@@ -2840,7 +3940,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/link'
-  /{entity_type}/{id}/compounds/{subid}:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /{entity_type}/{id}/compounds_links/{subid}:
     summary: Actions on compounds link of an entity
     parameters:
       - name: entity_type
@@ -2886,6 +3990,12 @@ paths:
               description: An URL to the link that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Links to compounds']
       summary: Delete a compound link.
@@ -2894,11 +4004,14 @@ paths:
       responses:
         '204':
           description: The link was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXPERIMENTS_TEMPLATES
   /experiments_templates:
     summary: Actions on experiments_templates
-    # POST EXPERIMENTS TEMPLATES
     post:
       tags: ['Experiments templates']
       summary: Create an experiment template
@@ -2917,13 +4030,15 @@ paths:
               description: An URL to the experiment template that was created.
               schema:
                 type: string
-    # END POST EXPERIMENTS TEMPLATES
-
-    # GET EXPERIMENTS TEMPLATES
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Experiments templates']
       summary: Read all experiments_templates that are accessible
       operationId: read-experiments_templates
+      parameters: *searchParams
       responses:
         '200':
           description: A list of experiments_templates
@@ -2933,6 +4048,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/entity_template'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /experiments_templates/{id}:
     summary: Actions on a specific experiment template
     parameters:
@@ -2958,18 +4075,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  description: |
-                    The "duplicate" action creates a new entity based from the given entity id.
-                  default: 'duplicate'
-                copyFiles:
-                  type: boolean
-                  default: false
-                  description: |
-                    If "true", the action will import the files of the original entity.
+              $ref: '#/components/schemas/entity_duplicate'
       responses:
         '201':
           description: The experiment template has been duplicated.
@@ -2978,6 +4084,12 @@ paths:
               description: An URL to the experiment template that was duplicated.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Experiments templates']
       summary: Read an experiment template
@@ -2989,6 +4101,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/entity_template'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Experiments templates']
       summary: Modify an experiment template
@@ -3012,6 +4128,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/entity_template'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Experiments templates']
       summary: Delete an experiment template.
@@ -3020,11 +4142,14 @@ paths:
       responses:
         '204':
           description: The entry was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # ITEMS_TYPES (Resources Templates)
   /items_types:
     summary: Actions on items_types (resources templates)
-    # POST EXPERIMENTS TEMPLATES
     post:
       tags: ['Items types (Resources Templates)']
       summary: Create a resource template
@@ -3043,13 +4168,15 @@ paths:
               description: An URL to the resource template that was created.
               schema:
                 type: string
-    # END POST ITEMS TYPES
-
-    # GET ITEMS TYPES
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags: ['Items types (Resources Templates)']
       summary: Read all resources templates that are accessible
       operationId: read-items_types
+      parameters: *searchParams
       responses:
         '200':
           description: A list of resources templates.
@@ -3059,6 +4186,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/entity_template'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /items_types/{id}:
     summary: Actions on a specific resource template
     parameters:
@@ -3084,18 +4213,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                action:
-                  type: string
-                  description: |
-                    The "duplicate" action creates a new entity based from the given entity id.
-                  default: 'duplicate'
-                copyFiles:
-                  type: boolean
-                  default: false
-                  description: |
-                    If "true", the action will import the files of the original entity.
+              $ref: '#/components/schemas/entity_duplicate'
       responses:
         '201':
           description: The resource template has been duplicated.
@@ -3104,6 +4222,12 @@ paths:
               description: An URL to the resource template that was duplicated.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags: ['Items types (Resources Templates)']
       summary: Read a resource template
@@ -3115,6 +4239,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/entity_template'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Items types (Resources Templates)']
       summary: Modify a resource template
@@ -3138,6 +4266,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/entity_template'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Items types (Resources Templates)']
       summary: Delete a resource template.
@@ -3146,6 +4280,10 @@ paths:
       responses:
         '204':
           description: The entry was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EVENTS
   /events:
@@ -3163,6 +4301,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/event'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /events/{id}:
     parameters:
       - name: id
@@ -3200,8 +4340,12 @@ paths:
               description: An URL to the booking slot that was created.
               schema:
                 type: string
-
-  # EVENT
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /event/{id}:
     summary: For scheduler booking.
     parameters:
@@ -3222,25 +4366,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/event'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Events']
-      summary: |
-        Modify a booking slot. Warning: only one value (target) can be edited at a time.
+      summary: Modify a booking slot.
       operationId: patch-event
       requestBody:
         description: Parameters for modifying an event.
+        required: true
         content:
           application/json:
             schema:
               oneOf:
                 - type: object
+                  required: [target, start, end]
                   properties:
                     target:
                       type: string
-                      enum: ['start_epoch', 'end_epoch']
-                    epoch:
+                      enum: ['datetime']
+                    start:
                       type: string
-                      description: Date-time in UNIX epoch format.
+                      format: date-time
+                      description: ISO 8601 date-time with timezone offset.
+                      example: "2026-02-19T13:30:00+01:00"
+                    end:
+                      type: string
+                      format: date-time
+                      description: ISO 8601 date-time with timezone offset.
+                      example: "2026-02-19T15:30:00+01:00"
                 - type: object
                   properties:
                     target:
@@ -3273,6 +4429,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
     delete:
       tags: ['Events']
       summary: Delete a booking slot.
@@ -3280,6 +4444,10 @@ paths:
       responses:
         '204':
           description: The event was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # FAVTAGS
   /favtags:
@@ -3302,6 +4470,8 @@ paths:
                     type: integer
                   tag:
                     type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Favorite tags']
       summary: Add a tag as favorite.
@@ -3325,6 +4495,10 @@ paths:
                 Favorite tags don't have an ID, so the returned URL in Location in invalid.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /favtags/{id}:
     summary: A particular favorite tag.
     parameters:
@@ -3341,6 +4515,8 @@ paths:
       responses:
         '204':
           description: The favorite tag was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   # REPORTS
   /reports:
@@ -3367,9 +4543,10 @@ paths:
           in: query
           schema:
             type: string
-            enum: ['compounds', 'instance', 'inventory', 'stored_compounds', 'team']
+            enum: ['compounds', 'compounds_history', 'instance', 'inventory', 'stored_compounds', 'team']
           description: |
             Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
+            If scope is `compounds_history`, you can also provide `start` and `end` (format `YYYY-MM-DD`).
           examples:
             instance:
               summary: Get instance level report
@@ -3377,6 +4554,25 @@ paths:
             team:
               summary: Get team level report
               value: team
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2012-01-01'
+          description: |
+            Start date (YYYY-MM-DD). Only used when scope is `compounds_history`.
+        - name: end
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2038-01-19'
+          description: |
+            End date (YYYY-MM-DD). Only used when scope is `compounds_history`.
+
       responses:
         '200':
           description: Get usage reports
@@ -3399,6 +4595,11 @@ paths:
             text/csv:
               schema:
                 type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+
   # TEAM TAGS
   /teams/{id}/tags:
     summary: Manage tags at the team level.
@@ -3422,6 +4623,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/tag'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Team tags']
       summary: Create a tag in the team.
@@ -3444,6 +4649,12 @@ paths:
               description: An URL ending with 0 if the tag was already here, or an URL to the newly created tag.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/tags/{subid}:
     summary: Retrieve a tag from its id.
     parameters:
@@ -3470,6 +4681,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Team tags']
       summary: |
@@ -3496,6 +4711,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Team tags']
       summary: Delete a tag.
@@ -3503,6 +4724,10 @@ paths:
       responses:
         '204':
           description: The tag was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # TEAMS
   /teams:
@@ -3520,6 +4745,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/team'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
     post:
       tags: ['Teams']
       summary: Create a new team.
@@ -3543,6 +4772,10 @@ paths:
               description: An URL to the team that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /teams/{id}:
     summary: Manage a team.
     parameters:
@@ -3573,6 +4806,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/team'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Teams']
       summary: |
@@ -3604,6 +4843,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/team'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXPERIMENTS CATEGORIES
   /teams/{id}/experiments_categories:
@@ -3627,6 +4872,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/statuslike'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Experiments categories']
       operationId: post-team-one-expcat
@@ -3656,7 +4905,12 @@ paths:
               description: An URL to the category that was created.
               schema:
                 type: string
-  # ONE EXPERIMENTS CATEGORY
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/experiments_categories/{subid}:
     parameters:
       - name: id
@@ -3682,6 +4936,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Experiments categories']
       operationId: patch-expcat
@@ -3699,6 +4957,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Experiments categories']
       summary: Delete a category.
@@ -3706,6 +4970,10 @@ paths:
       responses:
         '204':
           description: The category was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # RESOURCES CATEGORIES
   /teams/{id}/resources_categories:
@@ -3729,6 +4997,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/statuslike'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: [ 'Resources categories' ]
       operationId: post-team-one-rescat
@@ -3758,7 +5030,12 @@ paths:
               description: An URL to the category that was created.
               schema:
                 type: string
-  # ONE RESOURCE CATEGORY
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/resources_categories/{subid}:
     parameters:
       - name: id
@@ -3784,6 +5061,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: [ 'Resources categories' ]
       operationId: patch-rescat
@@ -3801,6 +5082,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: [ 'Resources categories' ]
       summary: Delete a category.
@@ -3808,6 +5095,10 @@ paths:
       responses:
         '204':
           description: The category was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXPERIMENTS STATUS
   /teams/{id}/experiments_status:
@@ -3831,6 +5122,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/statuslike'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Experiments status']
       operationId: post-team-one-expstatus
@@ -3860,7 +5155,12 @@ paths:
               description: An URL to the experiments status that was created.
               schema:
                 type: string
-  # ONE EXPERIMENTS STATUS
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/experiments_status/{subid}:
     parameters:
       - name: id
@@ -3886,6 +5186,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Experiments status']
       operationId: patch-expstatus
@@ -3903,6 +5207,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Experiments status']
       summary: Delete a status.
@@ -3910,7 +5220,12 @@ paths:
       responses:
         '204':
           description: The status was removed.
-  # ITEMS STATUS
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # TEAMS STATUS
   /teams/{id}/items_status:
     parameters:
       - name: id
@@ -3932,6 +5247,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/statuslike'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Resources status']
       operationId: post-team-one-resstat
@@ -3961,8 +5278,12 @@ paths:
               description: An URL to the resources status that was created.
               schema:
                 type: string
-
-  # ONE ITEMS STATUS
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/items_status/{subid}:
     parameters:
       - name: id
@@ -3988,6 +5309,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Resources status']
       operationId: patch-resstatus
@@ -4005,6 +5330,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/statuslike'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Resources status']
       summary: Delete a status.
@@ -4012,6 +5343,10 @@ paths:
       responses:
         '204':
           description: The status was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # TEAMGROUPS
   /teams/{id}/teamgroups:
@@ -4035,6 +5370,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/teamgroup'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Teamgroups']
       operationId: post-teamgroups
@@ -4057,6 +5396,12 @@ paths:
               description: An URL to the teamgroup that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /teams/{id}/teamgroups/{subid}:
     parameters:
       - name: id
@@ -4089,6 +5434,10 @@ paths:
                     type: string
                   team:
                     type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Teamgroups']
       operationId: patch-teamgroup
@@ -4117,6 +5466,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/teamgroup'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Teamgroups']
       summary: Delete a teamgroup.
@@ -4124,6 +5479,10 @@ paths:
       responses:
         '204':
           description: The teamgroup was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # TODOLIST
   /todolist:
@@ -4141,6 +5500,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/todoitem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Todolist']
       summary: Create a todo item
@@ -4163,6 +5524,12 @@ paths:
               description: An URL to the todo item that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /todolist/{id}:
     summary: Manage a todo entry.
     parameters:
@@ -4183,6 +5550,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/todoitem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Todolist']
       summary: |
@@ -4205,6 +5576,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/todoitem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Todolist']
       summary: Delete a todoitem.
@@ -4212,6 +5589,10 @@ paths:
       responses:
         '204':
           description: The todoitem was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # UNFINISHED STEPS
   /unfinished_steps:
@@ -4238,6 +5619,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/unfinished_steps'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   # USERS
   /users:
@@ -4315,6 +5698,8 @@ paths:
                       initials: "LC"
                       orcid: "0000-0002-7494-5555"
                       auth_service: 10
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Users']
       summary: Create a new user.
@@ -4359,6 +5744,12 @@ paths:
               description: An URL to the user that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /users/{id}:
     summary: Display information about a particular user.
     parameters:
@@ -4391,7 +5782,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/users'
-
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Users']
       summary: Modify a user.
@@ -4465,6 +5859,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/users'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
 
   # USERS UPLOADS
   /users/{id}/uploads:
@@ -4531,6 +5935,11 @@ paths:
                      page:
                        type: string
                        example: experiments
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # NOTIFICATIONS
   /users/{id}/notifications:
     parameters:
@@ -4574,6 +5983,10 @@ paths:
                     type: string
                   userid:
                     type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Notifications']
       summary: Delete all notifications of the user.
@@ -4582,6 +5995,10 @@ paths:
       responses:
         '204':
           description: The notifications were deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /users/{id}/notifications/{subid}:
     parameters:
       - name: id
@@ -4617,6 +6034,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/notification'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Notifications']
       summary: |
@@ -4629,6 +6050,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/notification'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # STEPS
   /{entity_type}/{id}/steps:
@@ -4660,6 +6087,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/step'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Steps']
       summary: Create a step.
@@ -4683,6 +6114,12 @@ paths:
               description: An URL to the step that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/steps/{subid}:
     summary: Actions on step of an entity
     parameters:
@@ -4745,6 +6182,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/step'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Steps']
       summary: Delete a step.
@@ -4753,6 +6196,10 @@ paths:
       responses:
         '204':
           description: The step was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # TAGS
   /{entity_type}/{id}/tags:
@@ -4784,6 +6231,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/tag'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Tags']
       summary: Create a tag.
@@ -4794,11 +6245,21 @@ paths:
           application/json:
             schema:
               type: object
-              properties:
-                tag:
-                  type: string
-                  description: |
-                    The text content of the tag.
+              oneOf:
+                - properties:
+                    tag:
+                      type: string
+                      description: The text content of a single tag.
+                  required: [tag]
+                - properties:
+                    tags:
+                      type: array
+                      description: A list of tags to create.
+                      items:
+                        type: string
+                  required: [tags]
+              example:
+                tags: ["Project Lambda", "Cell culture"]
       responses:
         '201':
           description: The tag has been created.
@@ -4807,6 +6268,12 @@ paths:
               description: An URL to the tag that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Tags']
       summary: Delete all tags.
@@ -4815,6 +6282,10 @@ paths:
       responses:
         '204':
           description: The tags were deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/tags/{subid}:
     summary: Actions on tag of an entity
     parameters:
@@ -4848,6 +6319,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Tags']
       summary: |
@@ -4871,6 +6346,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # UPLOADS
   /{entity_type}/{id}/uploads:
@@ -4915,6 +6398,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/upload'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Uploads']
       summary: Create an upload.
@@ -4942,6 +6429,12 @@ paths:
               description: An URL to the uploaded file that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/uploads/{subid}:
     parameters:
       - name: entity_type
@@ -4992,6 +6485,10 @@ paths:
               schema:
                 type: string
                 format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Uploads']
       summary: Replace an existing uploaded file. The existing file will be archived and the new one will be added.
@@ -5019,6 +6516,12 @@ paths:
               description: An URL to the uploaded file that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Uploads']
       summary: |
@@ -5055,6 +6558,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/upload'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Uploads']
       summary: Delete an upload.
@@ -5063,6 +6572,10 @@ paths:
       responses:
         '204':
           description: The upload was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # IDPS
   /idps:
@@ -5079,6 +6592,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/idp'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Idps']
       summary: Create an idp.
@@ -5089,7 +6604,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: ['name', 'entityid', 'sso_url', 'sso_binding', 'slo_url', 'slo_binding', 'x509', 'x509_new', 'email_attr']
+              required: ['name', 'entityid', 'email_attr']
               properties:
                 name:
                   type: string
@@ -5097,24 +6612,6 @@ paths:
                 entityid:
                   type: string
                   description: Entityid.
-                sso_url:
-                  type: string
-                  description: URL for Single Sign-On.
-                sso_binding:
-                  type: string
-                  description: Binding for SSO.
-                slo_url:
-                  type: string
-                  description: URL for Single Log-Out.
-                slo_binding:
-                  type: string
-                  description: Binding for SLO.
-                x509:
-                  type: string
-                  description: Certificate in PEM format.
-                x509_new:
-                  type: string
-                  description: Certificate in PEM format for renewal period.
                 email_attr:
                   type: string
                   description: What attribute to look for the email.
@@ -5138,6 +6635,10 @@ paths:
               description: An URL to the idp that was created.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /idps/{id}:
     parameters:
       - name: id
@@ -5157,6 +6658,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/idp'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Idps']
       summary: Actions on an idp.
@@ -5179,6 +6684,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/idp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Idps']
       summary: Delete an idp.
@@ -5187,6 +6698,10 @@ paths:
       responses:
         '204':
           description: The idp was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # REVISIONS
   /{entity_type}/{id}/revisions:
@@ -5227,6 +6742,10 @@ paths:
                       type: string
                     fullname:
                       type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/revisions/{subid}:
     summary: Actions on a revision of an entity
     parameters:
@@ -5260,6 +6779,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/revision'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Revisions']
       summary: Restore a revision.
@@ -5283,6 +6806,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/revision'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # EXTRA FIELDS KEYS
   /extra_fields_keys:
@@ -5316,3 +6845,303 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/extra_fields_keys'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  # DSPACE
+  /dspace:
+    summary: Interact with the connected DSpace repository.
+    get:
+      tags: ['DSpace']
+      summary: Read DSpace information.
+      operationId: dspace-read
+      parameters:
+        - name: action
+          in: query
+          description: |
+            Action to perform:
+              - `getcollections`: list available DSpace collections.
+              - `gettypes`: list DSpace item types (submission vocabularies).
+
+            If omitted or invalid, the endpoint returns an error explaining valid usage.
+          required: true
+          schema:
+            type: string
+            enum: ['getcollections', 'gettypes']
+      responses:
+        '200':
+          description: |
+            Result depends on the `action` parameter:
+              - `getcollections`: list of collections.
+              - `gettypes`: list of vocabulary entries.
+
+            **DSpace REST API documentation**
+            - https://wiki.lyrasis.org/display/DSDOC9x/Community+and+Collection+management
+            - https://github.com/DSpace/RestContract/blob/main/collections.md
+            - https://github.com/DSpace/RestContract/blob/main/entitytypes.md
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    description: Collections array returned by DSpace.
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - uuid
+                        - name
+                        - type
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: Collection identifier.
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+
+                        uuid:
+                          type: string
+                          format: uuid
+                          description: Collection UUID (same value as id).
+                          example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                        name:
+                          type: string
+                          description: Human-readable collection name.
+                          example: "your-collection"
+                        handle:
+                          type: string
+                          description: Persistent DSpace handle.
+                          example: "10673/1221"
+                        archivedItemsCount:
+                          type: integer
+                          description: Number of archived items in the collection.
+                          example: 27
+                        type:
+                          type: string
+                          example: "collection"
+                        metadata:
+                          type: object
+                          description: DSpace metadata fields grouped by key.
+                          additionalProperties:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                value:
+                                  type: string
+                                  example: "your-collection"
+                                language:
+                                  type: string
+                                  nullable: true
+                                  example: null
+                                authority:
+                                  type: string
+                                  nullable: true
+                                  example: null
+                                confidence:
+                                  type: integer
+                                  example: -1
+                                place:
+                                  type: integer
+                                  example: 0
+                        _links:
+                          type: object
+                          description: HAL links for the collection.
+                          properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  format: uri
+                            parentCommunity:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  format: uri
+                            workflowGroups:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                    example: "reviewer"
+                                  href:
+                                    type: string
+                                    format: uri
+                  - type: object
+                    description: Types returned by DSpace vocabulary endpoint.
+                    properties:
+                      _embedded:
+                        type: object
+                        properties:
+                          entries:
+                            type: array
+                            items:
+                              type: object
+                              required:
+                                - value
+                                - display
+                                - type
+                              properties:
+                                value:
+                                  type: string
+                                  description: Internal type value.
+                                  example: "Animation"
+                                display:
+                                  type: string
+                                  description: Human-readable label.
+                                  example: "Animation"
+                                type:
+                                  type: string
+                                  example: "vocabularyEntry"
+              example:
+                - id: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  uuid: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  name: "your-collection"
+                  handle: "10673/1221"
+                  archivedItemsCount: 27
+                  type: "collection"
+                  metadata:
+                    dc.title:
+                      - value: "your-collection"
+                        language: null
+                        authority: null
+                        confidence: -1
+                        place: 0
+                  _links:
+                    self:
+                      href: "https://demo.dspace.org/server/api/core/collections/1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                    workflowGroups:
+                      - name: "reviewer"
+                        href: "https://demo.dspace.org/server/api/core/collections/1abcd2c3-45db-6a7-aeee-8d932f883d70/workflowGroups/reviewer"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: ['DSpace']
+      summary: Create a new DSpace workspace item.
+      operationId: dspace-create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['collection', 'metadata']
+              properties:
+                collection:
+                  type: string
+                  description: UUID of the DSpace collection to submit to.
+                  example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                metadata:
+                  type: array
+                  description: Metadata fields to populate the submission.
+                  items:
+                    type: object
+                    required: ['key', 'value']
+                    properties:
+                      key:
+                        type: string
+                        example: "dc.title"
+                      value:
+                        type: string
+                        example: "The role of science in modern society"
+      responses:
+        '201':
+          description: The workspace was successfully created.
+          headers:
+            Location:
+              description: Last part of the URL is the workspace ID
+              schema:
+                type: string
+                format: uri
+              example: https://elab.local:3148/api/v2/dspace/1799
+            Cache-Control:
+              description: Cache policy applied to this response
+              schema:
+                type: string
+              example: max-age=0, private, must-revalidate, no-cache, private
+          content:
+            text/html:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    patch:
+      tags: ['DSpace']
+      summary: Submit an eLabFTW entry to DSpace.
+      operationId: dspace-submit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['collection', 'metadata', 'entity']
+              properties:
+                collection:
+                  type: string
+                  description: UUID of the collection.
+                  example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+
+                metadata:
+                  type: array
+                  description: >
+                    DSpace metadata entries. At minimum, dc.title is required
+                    by most DSpace configurations.
+                  items:
+                    type: object
+                    required: ['key', 'value']
+                    properties:
+                      key:
+                        type: string
+                        example: "dc.title"
+                      value:
+                        type: string
+                        example: "Ipsum quidem excepturi aut et aut sit vitae."
+                  example:
+                    - key: "dc.title"
+                      value: "Ipsum quidem excepturi aut et aut sit vitae."
+                    - key: "dc.type"
+                      value: "Dataset"
+                    - key: "dc.date.issued"
+                      value: "2025-12-19"
+                    - key: "dc.description.abstract"
+                      value: "This entry explores the impact of photonic materials."
+                entity:
+                  type: object
+                  required: ['type', 'id']
+                  properties:
+                    type:
+                      type: string
+                      description: eLabFTW entity type.
+                      example: "experiments"
+                    id:
+                      type: integer
+                      description: ID of the entity to export.
+                      example: 42
+      responses:
+        '200':
+          description: Submission was successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 123
+                  uuid:
+                    type: string
+                    example: "1abcd2c3-45db-6a7-aeee-8d932f883d70"
+                  publicUrl:
+                    type: string
+                    example: "https://demo.dspace.org/items/67e4e922-1d80-489f-9fd9-afba71ce6283"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'

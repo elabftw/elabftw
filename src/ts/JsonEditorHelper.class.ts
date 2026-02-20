@@ -31,6 +31,7 @@ export default class JsonEditorHelper {
     this.editorDiv = document.getElementById('jsonEditorContainer') as HTMLDivElement;
     this.MetadataC = new Metadata(entity, this);
     this.editorTitle = document.getElementById('jsonEditorTitle');
+
   }
 
   // INIT
@@ -63,6 +64,8 @@ export default class JsonEditorHelper {
     if (this.editorDiv.dataset.preloadJson === '1') {
       this.loadMetadata();
     }
+    // TODO: make a PR in upstream repo to implement proper label support
+    document.querySelector('.jsoneditor-frame input[type="text"]')?.setAttribute('aria-label', 'Search metadata');
   }
 
   refresh(metadata: ValidMetadata): void {
@@ -108,9 +111,9 @@ export default class JsonEditorHelper {
     this.editorDiv.dataset.what = 'metadata';
   }
 
-  saveMetadata(): void {
+  saveMetadata(): Promise<void> {
     try {
-      this.MetadataC.update(this.editor.get());
+      return this.MetadataC.update(this.editor.get());
     } catch (error) {
       notify.error(error);
     }
@@ -163,28 +166,6 @@ export default class JsonEditorHelper {
       body: formData,
     }).then(() => reloadElements(['uploadsDiv']));
     notify.success();
-  }
-
-  toggleDisplayMainText(): void {
-    let json = {};
-    // get the current metadata
-    this.MetadataC.read().then(metadata => {
-      if (metadata) {
-        json = metadata;
-      }
-      // add the namespace object 'elabftw' if it's not there
-      if (!Object.prototype.hasOwnProperty.call(json, 'elabftw')) {
-        json['elabftw'] = {};
-      }
-      // if it's not present, set it to false
-      if (!Object.prototype.hasOwnProperty.call(json['elabftw'], 'display_main_text')) {
-        json['elabftw']['display_main_text'] = false;
-      } else {
-        json['elabftw']['display_main_text'] = !json['elabftw']['display_main_text'];
-      }
-      this.editor.set(json);
-      this.saveMetadata();
-    });
   }
 
   clear(): void {

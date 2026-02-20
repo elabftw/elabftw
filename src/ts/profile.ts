@@ -33,6 +33,13 @@ if (window.location.pathname === '/profile.php') {
   on('destroy-export', (el: HTMLElement) => ApiC.delete(`exports/${el.dataset.id}`)
     .then(() => reloadElements(['exportedFilesTable'])));
 
+  on('get-compounds-history', (el: HTMLElement, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('compoundsHistoryForm');
+    const params = collectForm(form);
+    window.location.href = `/api/v2/reports?scope=compounds_history&format=csv&start=${encodeURIComponent(params['start'])}&end=${encodeURIComponent(params['end'])}`;
+  });
+
   document.getElementById('importFileInput')?.addEventListener('change', async function(event) {
     const importOptionsDiv = document.getElementById('importOptionsDiv') as HTMLElement;
     const attachedFile = document.getElementById('attachedFile') as HTMLElement;
@@ -123,7 +130,7 @@ if (window.location.pathname === '/profile.php') {
         notify.success('file-imported');
       } else {
         const error = await response.json();
-        notify.error(error.description);
+        notify.error(error.message);
       }
     }).catch(error => {
       notify.error(`Import error: ${error.message}`);

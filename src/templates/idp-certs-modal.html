@@ -1,0 +1,75 @@
+{# Modal for IDP certificates #}
+<div class='modal fade' id='idpModal_certs' tabindex='-1' role='dialog' aria-labelledby='idpCertsModalLabel'>
+  <div class='modal-dialog modal-xl' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='idpCertsModalLabel'>{{ 'Edit IDP associated certificates'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <h6 id='idpCertsTableLabel'>{{ 'Certificates associated with this IDP'|trans }}</h6>
+        <p class='smallgray'>{{ 'A single IDP can have multiple valid certificates at the same time.'|trans }}</p>
+        <div class='table-container'>
+          <table class='table' aria-describedby='idpCertsTableLabel' data-table-sort='true'>
+            <thead>
+            <tr>
+              <th scope='col'>{{ 'ID'|trans }}</th>
+              <th scope='col'>{{ 'Purpose'|trans }}</th>
+              <th scope='col'>{{ 'Not before'|trans }}</th>
+              <th scope='col'>{{ 'Not after'|trans }}</th>
+              <th scope='col'>{{ 'Created at'|trans }}</th>
+              <th scope='col'>{{ 'Modified at'|trans }}</th>
+              <th scope='col'>{{ 'Fingerprint (sha256)'|trans }}</th>
+              <th scope='col'>{{ 'Certificate'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody id='idpCertsTableBody'>
+            </tbody>
+          </table>
+        </div>
+        <template id='certRow'>
+          <tr>
+            {% for _ in 0..7 %}
+              {# twigcs use-var _ #}
+              <td></td>
+            {% endfor %}
+          </tr>
+        </template>
+        <hr>
+        <button type='button' class='btn btn-secondary bg-superlight btn-sm' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+          <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Add a certificate'|trans }}
+        </button>
+        <div hidden>
+          <form id='idpForm_certs'>
+            <label for='idpCertsModalNew' class='col-form-label'>{{ 'x509 certificate'|trans }}</label>
+            <textarea class='form-control' id='idpCertsModalNew' required placeholder='-----BEGIN CERTIFICATE-----MIIELDCC...CRGEJtD-----END CERTIFICATE-----' name='x509'></textarea>
+            <p class='smallgray'>{{ 'Paste PEM'|trans }}</p>
+            <div>
+              <input type='file' data-action='load-file-on-change' data-ignore='1' data-target='idpCertsModalNew' class='form-control' aria-label='File upload: x509 Certificate in PEM format' />
+              <p class='smallgray'>{{ 'Or upload PEM file'|trans }}</p>
+            </div>
+            <div class='text-center'>
+            <button type='submit' data-action='save-idp-submodel' data-submodel='certs' id='idpCertsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save certificate'|trans }}</button>
+            </div>
+          </form>
+        </div>
+        <button type='button' class='btn btn-danger btn-sm' id='deleteACertificateToggleBtn' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+          <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Delete a certificate'|trans }}
+        </button>
+        <div hidden>
+          <form id='idpDeleteForm_certs'>
+            <label for='idpCertDeleteSelect' class='col-form-label'>{{ 'Select a certificate to delete'|trans }}</label>
+            <select id='idpCertDeleteSelect' name='cert' class='form-control' required>
+            </select>
+            <button type='submit' data-action='delete-idp-submodel' data-submodel='certs' id='idpCertsModalDeleteButton' class='btn btn-danger ml-auto mb-2 mt-1'>{{ 'Delete certificate'|trans }}</button>
+          </form>
+        </div>
+        <div class='modal-footer mt-2'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

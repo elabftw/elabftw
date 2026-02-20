@@ -17,8 +17,10 @@ use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\AccessType;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\Links\Experiments2ExperimentsLinks;
 use Elabftw\Services\Filter;
@@ -40,21 +42,21 @@ final class Experiments extends AbstractConcreteEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::Team,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
     ): int {
-        $canread ??= $this->Users->userData['default_read'] ?? BasePermissions::Team->toJson();
-        $canwrite ??= $this->Users->userData['default_write'] ?? BasePermissions::User->toJson();
-
         // defaults
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
@@ -67,8 +69,8 @@ final class Experiments extends AbstractConcreteEntity
         $customId ??= $this->getNextCustomId($category);
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, metadata, custom_id, userid, content_type, rating)
-            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :metadata, :custom_id, :userid, :content_type, :rating)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread_base, canwrite_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, metadata, custom_id, userid, content_type, rating, hide_main_text)
+            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread_base, :canwrite_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :metadata, :custom_id, :userid, :content_type, :rating, :hide_main_text)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -77,8 +79,10 @@ final class Experiments extends AbstractConcreteEntity
         $req->bindValue(':category', $category);
         $req->bindValue(':status', $status);
         $req->bindValue(':elabid', Tools::generateElabid());
-        $req->bindParam(':canread', $canread);
-        $req->bindParam(':canwrite', $canwrite);
+        $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canread', $canread);
+        $req->bindValue(':canwrite', $canwrite);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
@@ -86,6 +90,7 @@ final class Experiments extends AbstractConcreteEntity
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
@@ -102,7 +107,7 @@ final class Experiments extends AbstractConcreteEntity
     #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
-        $this->canOrExplode('read');
+        $this->canOrExplode(AccessType::Read);
 
         $Teams = new Teams($this->Users);
         $Status = new ExperimentsStatus($Teams);
@@ -117,12 +122,15 @@ final class Experiments extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
+            canreadBase: BasePermissions::from($this->entityData['canread_base']),
+            canwriteBase: BasePermissions::from($this->entityData['canwrite_base']),
+            canread: $this->entityData['canread'],
+            canwrite: $this->entityData['canwrite'],
             category: $this->entityData['category'],
             // use default status instead of copying the current one
             status: $Status->getDefault(),
-            canread: $this->entityData['canread'],
-            canwrite: $this->entityData['canwrite'],
             metadata: $metadata,
+            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
             contentType: BodyContentType::from($this->entityData['content_type']),
         );
 
@@ -146,5 +154,11 @@ final class Experiments extends AbstractConcreteEntity
         }
 
         return $newId;
+    }
+
+    #[Override]
+    protected function getCreatePermissionKey(): string
+    {
+        return 'users_canwrite_experiments';
     }
 }

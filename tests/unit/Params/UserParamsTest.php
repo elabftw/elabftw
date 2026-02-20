@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Params;
 
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\ImproperActionException;
 
 class UserParamsTest extends \PHPUnit\Framework\TestCase
@@ -49,5 +50,19 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
         $params = new UserParams('orcid', $orcid);
         $this->expectException(ImproperActionException::class);
         $params->getContent();
+    }
+
+    public function testEntryPoint(): void
+    {
+        $entrypoint = Entrypoint::Experiments->value;
+        $params = new UserParams('entrypoint', $entrypoint);
+        $this->assertEquals($entrypoint, $params->getContent());
+    }
+
+    public function testInvalidEntryPointDefaultsToDashboard(): void
+    {
+        $entrypoint = 'test';
+        $params = new UserParams('entrypoint', $entrypoint);
+        $this->assertEquals(Entrypoint::Dashboard->value, $params->getContent());
     }
 }

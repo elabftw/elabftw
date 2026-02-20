@@ -134,14 +134,6 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Removed', $commandTester->getDisplay());
     }
 
-    public function testPruneRevisions(): void
-    {
-        $commandTester = new CommandTester(new PruneRevisions());
-        $commandTester->execute(array());
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Revisions pruning', $commandTester->getDisplay());
-    }
-
     public function testPruneUploads(): void
     {
         $commandTester = new CommandTester(new PruneUploads());

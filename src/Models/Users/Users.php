@@ -22,6 +22,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
+use Elabftw\Enums\Messages;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
@@ -30,6 +31,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
@@ -103,6 +105,8 @@ class Users extends AbstractRest
         $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
         $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
+        // make email lowercase every time
+        $email = strtolower($email);
         $EmailValidator = new EmailValidator($email, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain'], skipDomainValidation: $skipDomainValidation);
         $EmailValidator->validate();
 
@@ -117,8 +121,7 @@ class Users extends AbstractRest
         // is user validated automatically (true) or by an admin (false)?
         $isValidated = $automaticValidationEnabled || !$Config->configArr['admin_validate'] || $usergroup !== Usergroup::User;
 
-        $defaultRead = BasePermissions::Team->toJson();
-        $defaultWrite = BasePermissions::User->toJson();
+        $defaultCan = AbstractEntity::EMPTY_CAN_JSON;
 
         $sql = 'INSERT INTO users (
             `email`,
@@ -161,8 +164,8 @@ class Users extends AbstractRest
         $req->bindValue(':valid_until', $validUntil);
         $req->bindValue(':orgid', $orgid);
         $req->bindValue(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
-        $req->bindValue(':default_read', $defaultRead);
-        $req->bindValue(':default_write', $defaultWrite);
+        $req->bindValue(':default_read', $defaultCan);
+        $req->bindValue(':default_write', $defaultCan);
         $req->bindValue(':last_seen_version', App::INSTALLED_VERSION_INT);
         $req->bindValue(':can_manage_compounds', $canManageCompounds->value);
         $req->bindValue(':can_manage_inventory_locations', $canManageInventoryLocations->value);
@@ -187,7 +190,7 @@ class Users extends AbstractRest
         }
         if ($isValidated) {
             // send the instance level onboarding email
-            if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
+            if ($Config->configArr['onboarding_email_active'] === '1') {
                 new OnboardingEmail(-1)->create($userid);
             }
         } else {
@@ -323,12 +326,29 @@ class Users extends AbstractRest
         }
         $this->Db->execute($req);
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        return array_map(function (array $user): array {
+            $user['teams'] = json_decode($user['teams'], true, 3, JSON_THROW_ON_ERROR);
+            return $user;
+        }, $res);
     }
 
     public function readAllFromTeam(): array
     {
-        return $this->readFromQuery(teamId: $this->userData['team']);
+        $teamId = $this->userData['team'];
+        $users = $this->readFromQuery(teamId: $teamId);
+        // add a key to know if user is archived in current team
+        return array_map(function (array $user) use ($teamId): array {
+            $isArchivedInCurrentTeam = 0;
+            foreach ($user['teams'] as $team) {
+                if ($team['id'] === $teamId) {
+                    $isArchivedInCurrentTeam = $team['is_archived'];
+                    break;
+                }
+            }
+            $user['is_archived_in_current_team'] = $isArchivedInCurrentTeam;
+            return $user;
+        }, $users);
     }
 
     public function readAllActiveFromTeam(): array
@@ -357,7 +377,7 @@ class Users extends AbstractRest
         );
         // if the user is Admin somewhere (or Sysadmin), return a pretty complete response
         // Note: having something where you get different response depending if the user is part of your team or not seems too complex to implement and maintain
-        if ($this->requester->isAdminSomewhere() || $this->requester->userData['is_sysadmin'] === 1) {
+        if ($this->requester->isAdminSomewhere() || $this->requester->isSysadmin()) {
             return $users;
         }
         // otherwise, remove some more data, here we want only the super basic data for basic users
@@ -429,7 +449,7 @@ class Users extends AbstractRest
                 function () use ($params) {
                     // check instance config if admins are allowed to do that (if requester is not sysadmin)
                     $Config = Config::getConfig();
-                    $hasPermission = $this->requester->userData['is_sysadmin'] === 1 || $this->requester->userData['can_manage_users2teams'] === 1;
+                    $hasPermission = $this->requester->isSysadmin() || $this->requester->userData['can_manage_users2teams'] === 1;
                     if (!$hasPermission && $Config->configArr['admins_import_users'] === '0') {
                         throw new IllegalActionException('Adding a user in your team is disabled at the instance level (config: admins_import_users)');
                     }
@@ -450,7 +470,7 @@ class Users extends AbstractRest
             Action::Update => (
                 function () use ($params) {
                     // only a sysadmin can edit anything about another sysadmin
-                    if ($this->requester->userData['is_sysadmin'] === 0 && $this->userid !== $this->requester->userid && $this->userData['is_sysadmin'] === 1) {
+                    if (!$this->requester->isSysadmin() && $this->userid !== $this->requester->userid && $this->isSysadmin()) {
                         throw new IllegalActionException('A sysadmin level account is required to edit another sysadmin account.');
                     }
                     $Config = Config::getConfig();
@@ -461,7 +481,7 @@ class Users extends AbstractRest
                         // prevent modification of identity fields if we are not sysadmin
                         if (in_array($target, array('email', 'firstname', 'lastname', 'orgid'), true)
                             && $Config->configArr['allow_users_change_identity'] === '0'
-                            && $this->requester->userData['is_sysadmin'] === 0
+                            && !$this->requester->isSysadmin()
                         ) {
                             throw new ImproperActionException('Identity information can only be modified by Sysadmin.');
                         }
@@ -538,7 +558,7 @@ class Users extends AbstractRest
     public function isAdminOf(int $userid): bool
     {
         // consider that we are admin of ourselves and that if you have can_manage_users2teams you're kinda an Admin of the user
-        if ($this->userid === $userid || $this->userData['is_sysadmin'] === 1 || $this->userData['can_manage_users2teams']) {
+        if ($this->userid === $userid || $this->isSysadmin() || $this->userData['can_manage_users2teams']) {
             return true;
         }
         // check if in the teams we have in common, the potential admin is admin
@@ -642,16 +662,18 @@ class Users extends AbstractRest
         // email is filtered here because otherwise the check for existing email will throw exception
         if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
             // we can only edit our own email, or be sysadmin
-            if (($this->requester->userData['userid'] !== $this->userData['userid']) && ($this->requester->userData['is_sysadmin'] !== 1)) {
+            if (!$this->isSelf() && !$this->requester->isSysadmin()) {
                 throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
             }
-            Filter::email($params->getStringContent());
+            // run email validator
+            $Config = Config::getConfig();
+            $EmailValidator = new EmailValidator($params->getStringContent(), (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
+            $EmailValidator->validate();
         }
 
         // columns that can only be modified by Sysadmin requester
-        if (in_array($params->getTarget(), array('can_manage_compounds', 'can_manage_inventory_locations', 'can_manage_users2teams', 'is_sysadmin'), true)
-            && $this->requester->userData['is_sysadmin'] === 0) {
-            throw new IllegalActionException();
+        if (in_array($params->getTarget(), array('can_manage_compounds', 'can_manage_inventory_locations', 'can_manage_users2teams', 'is_sysadmin'), true)) {
+            $this->requester->isSysadminOrExplode();
         }
 
         // early bail out if existing and new values are the same
@@ -720,7 +742,33 @@ class Users extends AbstractRest
         $this->userData = $this->Db->fetch($req);
         $this->userData['team'] = $this->team;
         $this->userData['teams'] = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
+        $this->userData['default_read_base_human'] = BasePermissions::from($this->userData['default_read_base'])->toHuman();
+        $this->userData['default_write_base_human'] = BasePermissions::from($this->userData['default_write_base'])->toHuman();
         return $this->userData;
+    }
+
+    public function isSysadmin(): bool
+    {
+        return $this->userData['is_sysadmin'] === 1;
+    }
+
+    public function isSysadminOrExplode(): void
+    {
+        if ($this->isSysadmin() === false) {
+            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+        }
+    }
+
+    public function isSelf(): bool
+    {
+        return $this->userData['userid'] === $this->requester->userData['userid'];
+    }
+
+    public function isSelfOrExplode(): void
+    {
+        if ($this->isSelf() === false) {
+            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+        }
     }
 
     protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self
@@ -750,7 +798,7 @@ class Users extends AbstractRest
     private function disable2fa(): array
     {
         // only sysadmin or same user can disable 2fa
-        if ($this->requester->userData['userid'] === $this->userData['userid'] || $this->requester->userData['is_sysadmin'] === 1) {
+        if ($this->isSelf() || $this->requester->isSysadmin()) {
             $this->update(new UserParams('mfa_secret', null));
             return $this->readOne();
         }
@@ -760,10 +808,10 @@ class Users extends AbstractRest
     private function canReadOrExplode(): void
     {
         // it's ourself or we are sysadmin
-        if ($this->requester->userid === $this->userid || $this->requester->userData['is_sysadmin'] === 1) {
+        if ($this->requester->userid === $this->userid || $this->requester->isSysadmin()) {
             return;
         }
-        if (!$this->requester->isAdmin && $this->userid !== $this->userData['userid']) {
+        if (!$this->requester->isAdmin && !$this->isSelf()) {
             throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
         }
         // check we view user of our team, unless we are sysadmin and we can access it
@@ -775,7 +823,7 @@ class Users extends AbstractRest
     private function updatePassword(array $params, bool $isReset = false): bool
     {
         // a sysadmin or reset password page request doesn't need to provide the current password
-        if ($this->requester->userData['is_sysadmin'] !== 1 && $isReset === false) {
+        if (!$this->requester->isSysadmin() && $isReset === false) {
             $this->checkCurrentPasswordOrExplode($params['current_password']);
         }
         if (empty($params['password'])) {
@@ -807,7 +855,7 @@ class Users extends AbstractRest
      */
     private function canWriteOrExplode(?Action $action = null): void
     {
-        if ($this->requester->userData['is_sysadmin'] === 1) {
+        if ($this->requester->isSysadmin()) {
             return;
         }
         // if you have can_manage_users2teams you can add/unreference user
@@ -815,7 +863,7 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
-            throw new IllegalActionException();
+            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
         }
     }
 

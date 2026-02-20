@@ -62,7 +62,7 @@ The documentation explains everything:
 
 # Contributing
 
-**eLabFTW** is a collaborative project. Your contributions are very welcome! Have a look at the [contributing page](https://doc.elabftw.net/contributing.html) to see how you can help with translation or code.
+**eLabFTW** is a collaborative project. Your contributions are very welcome! Have a look at the [contributing page](https://doc.elabftw.net/docs/contributing/intro) to see how you can help with translation or code.
 
 # Security
 

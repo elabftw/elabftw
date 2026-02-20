@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ResourcesCategoriesController;
 use Elabftw\Exceptions\AppException;
+use Elabftw\Exceptions\ForbiddenException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,6 +26,9 @@ require_once 'app/init.inc.php';
 $Response = new Response();
 
 try {
+    if ($App->Teams->teamArr['users_canwrite_resources_categories'] === 0 && !$App->Users->isAdmin) {
+        throw new ForbiddenException();
+    }
     $Response = new ResourcesCategoriesController($App)->getResponse();
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);

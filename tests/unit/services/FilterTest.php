@@ -18,14 +18,6 @@ use function str_repeat;
 
 class FilterTest extends \PHPUnit\Framework\TestCase
 {
-    public function testKdate(): void
-    {
-        $this->assertEquals('1969-07-21', Filter::kdate('1969-07-21'));
-        $this->assertEquals(date('Y-m-d'), Filter::kdate('3902348923'));
-        $this->assertEquals(date('Y-m-d'), Filter::kdate('Sun is shining'));
-        $this->assertEquals(date('Y-m-d'), Filter::kdate("\n"));
-    }
-
     public function testFormatLocalDate(): void
     {
         $input = '2024-10-16 17:12:47';

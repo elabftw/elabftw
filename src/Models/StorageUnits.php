@@ -122,6 +122,7 @@ final class StorageUnits extends AbstractRest
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':storage_id', $storageId, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->requester->userid, PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll();
     }
@@ -138,13 +139,14 @@ final class StorageUnits extends AbstractRest
             compounds.name LIKE :query OR
             compounds.iupac_name LIKE :query OR
             sh.full_path LIKE :query)',
-        ) . sprintf(
-            ' ORDER BY storage_name, entity_title LIMIT %d',
-            $queryParams->getLimit(),
-        );
+        ) . ' ORDER BY storage_name, entity_title';
 
+        if ($queryParams->getLimit() > 0) {
+            $sql .= sprintf(' LIMIT %d', $queryParams->getLimit());
+        }
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
+        $req->bindValue(':userid', $this->requester->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -336,7 +338,7 @@ final class StorageUnits extends AbstractRest
         $this->canWriteOrExplode();
         return $this->create(
             $reqBody['name'] ?? throw new ImproperActionException('Missing value for "name"'),
-            Filter::intOrNull($reqBody['parent_id']),
+            Filter::intOrNull($reqBody['parent_id'] ?? 0),
         );
     }
 

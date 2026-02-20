@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use DOMDocument;
+use Elabftw\Elabftw\Env;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Users\UltraAdmin;
@@ -50,7 +51,7 @@ final class RefreshIdps extends Command
         $requester = new UltraAdmin();
         $IdpsSources = new IdpsSources($requester);
         $Idps = new Idps($requester);
-        $getter = new HttpGetter(new Client(), $this->proxy);
+        $getter = new HttpGetter(new Client(), $this->proxy, !Env::asBool('DEV_MODE'));
         $sources = $IdpsSources->readAllAutoRefreshable();
         foreach ($sources as $source) {
             $IdpsSources->setId($source['id']);

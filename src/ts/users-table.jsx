@@ -21,7 +21,6 @@ import { populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
-
 async function toggleUserModal(user) {
   const textParams = [
     'userid',
@@ -60,6 +59,7 @@ if (document.getElementById('users-table')) {
   const GridExample = () => {
     const [rowData, setRowData] = useState([]);
     const [gridApi, setGridApi] = useState(null);
+    const isDark = document.documentElement.classList.contains('dark-mode');
 
     const onGridReady = (params) => {
       setGridApi(params.api);
@@ -69,20 +69,13 @@ if (document.getElementById('users-table')) {
     };
     // renderer for teams column
     const TeamsRenderer = ({ value }) => {
-      try {
-        const teamsArray = JSON.parse(value);
-        const items = teamsArray
-          .map(team => (
-            <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium' : ''}`} key={team.id} data-id={team.id}>
-              {team.name}
-            </span>
-          ));
-        return <span>{items}</span>;
-
-      } catch (e) {
-        console.warn('Invalid teams JSON:', value);
-        return null;
-      }
+      const items = value
+        .map(team => (
+          <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`} key={team.id} data-id={team.id}>
+            {team.name}
+          </span>
+        ));
+      return <span>{items}</span>;
     };
 
     const LastLoginRenderer = ({ value }) => {
@@ -194,11 +187,10 @@ if (document.getElementById('users-table')) {
           placeholder={i18next.t('search')}
           onChange={onQuickFilterChange}
           className={'form-control mb-2'}
+          aria-label={i18next.t('search')}
         />
       <div
-        className={'ag-theme-alpine'}
-        style={{ height: 650 }}
-      >
+        className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}

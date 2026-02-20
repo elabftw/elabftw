@@ -19,8 +19,7 @@ enum Messages
     case GenericError;
     case UnauthorizedError;
     case InsufficientPermissions;
-    case DemoMode;
-    case InvalidAuthenticationCode;
+    case ResourceNotFound;
 
     public function toHttpCode(): int
     {
@@ -30,8 +29,7 @@ enum Messages
             $this::GenericError => 400,
             $this::UnauthorizedError => 401,
             $this::InsufficientPermissions => 403,
-            $this::DemoMode => 403,
-            $this::InvalidAuthenticationCode => 403,
+            $this::ResourceNotFound => 404,
         };
     }
 
@@ -43,8 +41,7 @@ enum Messages
             $this::GenericError => _('An error occurred!'),
             $this::UnauthorizedError => _('Authentication required'),
             $this::InsufficientPermissions => _('Sorry, you are not allowed to perform that action.'),
-            $this::DemoMode => _('Sorry, this action is disabled in demo mode.'),
-            $this::InvalidAuthenticationCode => _('Invalid authentication code.'),
+            $this::ResourceNotFound => _('Nothing to show with this id'),
         };
     }
 }

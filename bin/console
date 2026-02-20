@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
-use Elabftw\Storage\Exports;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 use Symfony\Component\Mailer\Mailer;
@@ -38,9 +38,13 @@ $logger = new ConsoleLogger(new ConsoleOutput());
 try {
     $Config = Config::getConfig();
 } catch (DatabaseErrorException $e) {
-    $logger->warning('Database is not yet installed. Run bin/init db:install.');
+    $logger->error('Database is not yet installed. Run bin/init db:install.');
+    exit;
+} catch (AppException $e) {
+    $logger->error($e->getMessage());
     exit;
 }
+
 try {
     $Email = new Email(
         new Mailer(Transport::fromDsn($Config->getDsn())),
@@ -48,9 +52,6 @@ try {
         $Config->configArr['mail_from'],
         Env::asBool('DEMO_MODE'),
     );
-} catch (WrongKeyOrModifiedCiphertextException $e) {
-    $logger->critical("It seems the SMTP password does not correspond to the current SECRET_KEY, and that is something that needs to be fixed. Try setting the 'smtp_password' to an empty string in the 'config' table: update config set conf_value = '' where conf_name = 'smtp_password';\nError message:\n" . $e->getMessage() . "\n");
-    exit;
 } catch (RfcComplianceException $e) {
     $logger->critical("It seems the configured sending email address is wrong. Try setting the 'mail_from' value to a valid email address: update config set conf_value = 'example@example.com' where conf_name = 'mail_from';\nError message:\n" . $e->getMessage() . "\n");
     exit;
@@ -59,7 +60,7 @@ try {
     exit;
 }
 
-$exportsFs = new Exports();
+$exportsFs = Storage::EXPORTS->getStorage();
 $sqlFs = FsTools::getFs(dirname(__DIR__) . '/src/sql');
 
 $Application->add(new InstallRedir());
@@ -82,7 +83,6 @@ $Application->add(new SnapFingers());
 $Application->add(new ForceSchema());
 $Application->add(new GenCache());
 $Application->add(new GenSchema($sqlFs));
-$Application->add(new PruneRevisions());
 $Application->add(new MfaCode());
 $Application->add(new RefreshIdps($Config->configArr['proxy']));
 $Application->add(new SendNotifications($Email));

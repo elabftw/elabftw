@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Models\Config;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -89,5 +90,39 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $Controller->canWrite = true;
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+    }
+
+    public function testGetCompounds(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/compounds', 'GET'));
+        $res = $Controller->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
+    }
+
+    public function testGetExports(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/exports', 'GET'));
+        $res = $Controller->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
+    }
+
+    public function testGetDspace(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/dspace&action=foo'));
+        $Config = Config::getConfig();
+        $Config->configArr['dspace_host'] = 'https://example.org';
+        $response = $controller->getResponse();
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $content = $response->getContent();
+        $this->assertIsString($content);
+        $data = json_decode($content, true);
+        $this->assertSame(400, $data['code']);
+        $this->assertSame(
+            'Unknown "action" value. Expected one of: getcollections, gettypes.',
+            $data['message']
+        );
     }
 }

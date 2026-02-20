@@ -9,11 +9,10 @@ import {
   clearForm,
   collectForm,
   getCheckedBoxes,
-  permissionsToJson,
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
-import { Action, Model } from './interfaces';
+import { Action, Model, LinkSubModel } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from './i18n';
 import { ApiC } from './api';
@@ -97,13 +96,15 @@ function addHiddenInputToMainSearchForm(name: string, value: string): void
   const input = document.createElement('input');
   input.hidden = true;
   input.name = name;
+  input.setAttribute('aria-label', name);
   input.value = value;
   input.id = hiddenInputId;
   form.appendChild(input);
 }
 
 function setExpandedAndSelectedEntities(): void {
-  const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities);
+  type ExpandedAndSelectedEntitiesState = { expanded: boolean; selectedEntities: string[]; expendedEntities: string[] };
+  const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities) as ExpandedAndSelectedEntitiesState;
   if (state.expanded) {
     const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
     linkEl.dataset.status = 'opened';
@@ -189,6 +190,23 @@ function getExpandedAndSelectedEntities(): void {
   document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
 }
 
+type TomSelectOptionLike = Record<string, unknown> & {
+  $option?: Element | null;
+};
+
+type ToggleableTomSelect = TomSelect & {
+  [key: string]: unknown;
+};
+
+type TomSelectWithAllOptions = ToggleableTomSelect & {
+  _allOptions?: TomSelectOptionLike[];
+};
+
+type AnyTS = TomSelectWithAllOptions & {
+  _showArchived?: boolean;
+};
+const bound = new WeakSet<Element>();
+
 // DOM
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('info')) {
@@ -211,13 +229,59 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
   SearchSyntaxHighlighting.init(searchInput);
 
-  // TomSelect for extra fields search select
-  new TomSelect('#metakey', {
-    plugins: [
-      'dropdown_input',
-      'remove_button',
-    ],
-  });
+  // TomSelect for extra fields & owner search select
+  if (document.getElementById('metakey')) {
+    new TomSelect('#metakey', {
+      maxOptions: 512,
+      plugins: [
+        'dropdown_input',
+        'remove_button',
+      ],
+    });
+  }
+  if (document.getElementById('filterOwner')) {
+    const tsFilterOwner = new TomSelect('#filterOwner', {
+      maxOptions: 512,
+      plugins: {
+        dropdown_header: {
+          title: 'Users',
+          html: buildDropdownToggleHeaderHtml(i18next.t('users'), 'ts-toggle-archived', i18next.t('show-archived')),
+        },
+        dropdown_input: {},
+        remove_button: {},
+      },
+      onInitialize(this: AnyTS) {
+        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
+        this._showArchived = false;
+        applyToggleFilter(this, '_showArchived', isArchivedOption);
+      },
+      render: {
+        option(data: AnyTS, escape: (s: string) => string) {
+          const optEl = data.$option as HTMLOptionElement | undefined;
+          const isArchived = optEl?.getAttribute('data-is-archived') === '1';
+          const icon = isArchived ? '<i class=\'fas fa-box-archive mr-1\'></i>' : '';
+          return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
+        },
+
+        // item is the selected option
+        item(data: AnyTS, escape: (s: string) => string) {
+          const optEl = data.$option as HTMLOptionElement | undefined;
+          const isArchived = optEl?.getAttribute('data-is-archived') === '1';
+          const icon = isArchived ? '<i class=\'fas fa-box-archive mr-1\'></i>' : '';
+          return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
+        },
+      },
+    }) as AnyTS;
+
+    tsFilterOwner.on('dropdown_open', () => {
+      bindDropdownToggle(tsFilterOwner, '.ts-toggle-archived', '_showArchived', () => {
+        applyToggleFilter(tsFilterOwner, '_showArchived', isArchivedOption);
+        tsFilterOwner.open();
+      });
+    });
+  }
+
+
   // add a change event listener to all elements that helps constructing the query string
   document.querySelectorAll('.filterHelper').forEach(el => {
     el.addEventListener('change', event => {
@@ -277,6 +341,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // FILTERS HANDLER FOR THE SHOW PAGE
   document.querySelectorAll('.filterAuto').forEach(el => {
     el.addEventListener('change', event => {
+      // prevent this listener to be active when toggling archived users
+      if ((event.target as HTMLElement).classList.contains('ts-toggle-archived')) return;
       const url = new URL(window.location.href);
       const elem = event.target as HTMLSelectElement;
       const elemValue = elem.options[elem.selectedIndex].value;
@@ -291,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // END SEARCH RELATED CODE
 
   // background color for selected entities
-  const bgColor = '#c4f9ff';
+  const bgColor = 'var(--lightblue)';
 
   if (document.getElementById('favtagsPanel')) {
     document.getElementById('favtagsPanel').addEventListener('keyup', event => {
@@ -388,16 +454,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       (el as HTMLButtonElement).disabled = true;
       ApiC.notifOnSaved = false;
-      const ajaxs = [];
+      const ajaxs: Promise<unknown>[] = [];
       const form = document.getElementById('multiChangesForm');
       const params = collectForm(form);
       clearForm(form);
-      ['canread', 'canwrite'].forEach(can => {
-        // TODO replace with hasOwn when https://github.com/microsoft/TypeScript/issues/44253 is closed
-        if (Object.prototype.hasOwnProperty.call(params, can)) {
-          params[can] = permissionsToJson(parseInt(params[can], 10), []);
-        }
-      });
       checked.forEach(chk => {
         const paramsCopy = Object.assign({}, params);
         // they do not have all the same endpoint: handle tags and links the generic patch method
@@ -405,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (key === 'tags') {
             ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${Model.Tag}`, {tag: paramsCopy[key]}));
             delete paramsCopy[key];
-          } else if (['items_links', 'experiments_links'].includes(key)) {
+          } else if (Object.values(LinkSubModel).includes(key as LinkSubModel)) {
             ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${key}/${parseInt(paramsCopy[key], 10)}`));
             delete paramsCopy[key];
           }
@@ -428,12 +488,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-items-layout"]')) {
       ApiC.notifOnSaved = false;
-      ApiC.getJson(`${Model.User}/me`).then(json => {
+      ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
         let target = 'it';
         if (json['display_mode'] === 'it') {
           target = 'tb';
         }
-        ApiC.patch(`${Model.User}/me`, {'display_mode': target}).then(() => {
+        ApiC.patch(`${Model.User}/me`, { display_mode: target }).then(() => {
+          document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
           reloadEntitiesShow();
         });
       });
@@ -596,25 +657,202 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  type TeamScopedTomSelect = TomSelectWithAllOptions & {
+    _showAll?: boolean;
+  };
+
+  function buildDropdownToggleHeaderHtml(
+    title: string,
+    checkboxClass: string,
+    label: string,
+  ) {
+    return (data: { headerClass: string; titleRowClass: string }) => `
+      <div class="${data.headerClass}">
+        <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
+          <div>${title}</div>
+          <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
+            <input type="checkbox" class="${checkboxClass}">
+            ${label}
+          </label>
+        </div>
+      </div>
+    `;
+  }
+
+  function getOptionFlag(opt: TomSelectOptionLike | undefined | null, attr: string): boolean {
+    const el = opt?.$option as HTMLOptionElement | undefined;
+    const raw = el?.getAttribute(attr) ?? '0';
+    return raw === '1';
+  }
+
+  function isCurrentTeamOption(opt: TomSelectOptionLike | undefined | null): boolean {
+    return getOptionFlag(opt, 'data-current-team');
+  }
+
+  function isArchivedOption(opt: TomSelectOptionLike | undefined | null): boolean {
+    return getOptionFlag(opt, 'data-is-archived');
+  }
+
+  function applyToggleFilter(
+    control: TomSelectWithAllOptions,
+    flagKey: string,
+    hideWhenFlagFalse: (opt: TomSelectOptionLike) => boolean,
+  ) {
+    const selected = new Set(control.items.map(String));
+    const flagOn = !!control[flagKey];
+
+    if (flagOn) {
+      for (const opt of control._allOptions ?? []) control.addOption(opt);
+    } else {
+      for (const opt of control._allOptions ?? []) {
+        const id = String(opt[control.settings.valueField]);
+        if (hideWhenFlagFalse(opt) && !selected.has(id)) {
+          control.removeOption(id);
+        }
+      }
+    }
+
+    control.refreshOptions(false);
+  }
+
+  function applyTeamFilter(control: TeamScopedTomSelect) {
+    applyToggleFilter(control, '_showAll', (opt) => !isCurrentTeamOption(opt));
+  }
+
+  function syncMultiSelectParam(param: string, value: string | string[] | null | undefined) {
+    const url = new URL(window.location.href);
+
+    // Tom Select gives an array for multi-select; normalize just in case
+    const selected = Array.isArray(value) ? value : value ? [value] : [];
+
+    if (selected.length === 0) {
+      url.searchParams.delete(param);
+      addHiddenInputToMainSearchForm(param, '');
+    } else {
+      const joined = selected.join(',');
+      url.searchParams.set(param, joined); // param=1,2,5
+      addHiddenInputToMainSearchForm(param, joined);
+    }
+
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  function bindDropdownToggle(
+    control: ToggleableTomSelect,
+    selector: string,
+    flagKey: string,
+    onToggle: (checked: boolean) => void,
+  ) {
+    const cb = control.dropdown?.querySelector(selector) as HTMLInputElement | null;
+    if (!cb) return;
+
+    // Always sync UI to current state when dropdown opens
+    cb.checked = !!control[flagKey];
+
+    // Bind once per checkbox element
+    if (bound.has(cb)) return;
+    bound.add(cb);
+
+    cb.addEventListener('change', (ev) => {
+      const checked = (ev.currentTarget as HTMLInputElement).checked;
+      control[flagKey] = checked;
+      onToggle(checked);
+    });
+  }
+
+  function bindShowAllToggle(control: TeamScopedTomSelect) {
+    bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', (checked) => {
+      const url = new URL(window.location.href);
+      if (checked) url.searchParams.set('scope', '3');
+      else url.searchParams.delete('scope');
+      window.history.replaceState({}, '', url.toString());
+
+      applyTeamFilter(control);
+      control.open(); // keep it open after filtering
+      reloadEntitiesShow();
+    });
+  }
+
+  function initTeamScopedFilter(cfg: {
+    selectId: string;         // e.g. "categoryFilter"
+    placeholderId: string;    // e.g. "categoryFilterPlaceholder"
+    title: string;            // e.g. "Categories"
+    param: string;            // e.g. "category"
+  }) {
+    const el = document.getElementById(cfg.selectId);
+    if (!el) return;
+
+    const control = new TomSelect(`#${cfg.selectId}`, {
+      maxOptions: 512,
+      plugins: {
+        dropdown_header: {
+          title: cfg.title,
+          html: buildDropdownToggleHeaderHtml(cfg.title, 'ts-toggle-show-all', i18next.t('show-all')),
+        },
+        dropdown_input: {},
+        remove_button: {},
+      },
+
+      onInitialize(this: TeamScopedTomSelect) {
+        document.getElementById(cfg.placeholderId)?.remove();
+
+        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
+        this._showAll = false;
+
+        applyTeamFilter(this);
+      },
+
+      onChange(value: string | string[] | null | undefined) {
+        syncMultiSelectParam(cfg.param, value);
+        reloadEntitiesShow();
+      },
+    }) as TeamScopedTomSelect;
+
+    control.on('dropdown_open', () => bindShowAllToggle(control));
+
+    return control;
+  }
+
+  // category tomSelect
+  initTeamScopedFilter({
+    selectId: 'categoryFilter',
+    placeholderId: 'categoryFilterPlaceholder',
+    title: i18next.t('categories'),
+    param: 'category',
+  });
+
+  // status tomSelect
+  initTeamScopedFilter({
+    selectId: 'statusFilter',
+    placeholderId: 'statusFilterPlaceholder',
+    title: i18next.t('status'),
+    param: 'status',
+  });
+
   new TomSelect('#tagFilter', {
     onInitialize: () => {
       // remove the placeholder input once the select is ready
       document.getElementById('tagFilterPlaceholder').remove();
     },
-    onChange: value => {
+    onChange: (value: unknown) => {
       const url = new URL(window.location.href);
       url.searchParams.delete('tags[]');
-      value.forEach(tag => {
+      (value as string[]).forEach(tag => {
         params.append('tags[]', tag);
         url.searchParams.append('tags[]', tag);
       });
-      if (value.length === 0) {
+      if ((value as string[]).length === 0) {
         url.searchParams.delete('tags[]');
       }
-      addHiddenInputToMainSearchForm('tags[]', value.toString());
+      addHiddenInputToMainSearchForm('tags[]', (value as string[]).toString());
 
       window.history.replaceState({}, '', url.toString());
       reloadEntitiesShow();
+    },
+    onItemAdd() {
+      this.setTextboxValue('');
+      // refresh the dropdown so it shows suggestions for new input
+      this.refreshOptions();
     },
     plugins: {
       clear_button: {},

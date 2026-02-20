@@ -14,11 +14,8 @@
             <span title='{{ 'Custom ID'|trans }}' class='color-medium'>{{ Entity.entityData.custom_id }}</span>
           {% endif %}
            <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
-          <span id='documentTitle' class='breakable malleableTitle hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
+          <span id='documentTitle' class='breakable malleable-title hl-hover-gray rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
         </h1>
-      </div>
-      <div class='ml-auto'>
-        {% include 'create-new.html' %}
       </div>
     </div>
   {% endblock %}
@@ -57,43 +54,60 @@
 
   {# BODY #}
   <hr>
-  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-{{ displayMainText ? 'down' : 'right' }} fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-  <div data-save-hidden='mainTextDiv' {{ not displayMainText ? 'hidden' }} id='mainTextDiv'>
-    <div class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
-      {# tinymce or markdown? #}
-      {% if Entity.entityData.content_type == '2' %}
-        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
-      {% else %}
-      {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-        {% if App.devMode -%}
-          <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
-        {%- endif %}
-        <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
-      {% endif %}
+  {% if Entity.entityData.hide_main_text %}
+    <div>
+      <h3 class='d-inline togglable-section-title color-disabled'><i class='fas fa-caret-right color-disabled fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+      {% set text = 'The Main Text feature has been disabled. Click the eye icon to re-enable it.'|trans %}
+      {% set label = Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans %}
+      <span class='ml-1 infotip' aria-label='{{ label }}' data-trigger='click' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='0'>
+      {% include 'infotip.html' with {icon: 'fa-eye-slash', text} %}
+    </span>
     </div>
-    <div class='d-flex ml-1'>
-      {# LAST SAVED #}
+  {% else %}
+    <div class='d-flex justify-content-between'>
       <div>
-        <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
-        <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
+        <h3 data-action='toggle-next' data-toggle-target-extra='mainTextEllipsis' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
       </div>
-      {# SWITCH EDITOR #}
-      <div class='ml-auto'>
-        <button type='button' class='btn btn-sm hl-hover-gray p-1 rounded' data-action='switch-editor'><i class='fas fa-pencil-alt fa-fw'></i> {{ 'Switch editor'|trans }}</button>
-        {# Display main text switch #}
-        <label class='ml-1 small' for='displayMainTextSliderInput'>{{ 'Display main text'|trans }}</label>
-        <label class='switch'>
-          <input type='checkbox' {{ Entity.entityData.metadata|extractDisplayMainText() ? 'checked="checked"' }} id='displayMainTextSliderInput'>
-          <span class='slider'></span>
-        </label>
+      <div class='dropdown' id='mainTextEllipsis'>
+        <button class='btn p-2 hl-hover-gray' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'Main text options'|trans }}' aria-label='{{ 'Main text options'|trans }}' type='button'>
+          <i class='fas fa-ellipsis-v fa-fw'></i>
+        </button>
+        <div class='dropdown-menu dropdown-menu-right'>
+          {# SWITCH EDITOR #}
+          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='switch-editor'>
+            <i class='mr-1 fas fa-pencil-alt fa-fw'></i> {{ Entity.entityData.content_type == 1 ? 'Switch to markdown editor'|trans : 'Switch to rich text editor'|trans }}
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class='mt-1 text-center'>
-      <button type='button' {{ not displayMainText ? 'hidden' }} data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-      <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
-    </div>
+    <div data-save-hidden='mainTextDiv' id='mainTextDiv'>
+      <div class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
+        {# tinymce or markdown? #}
+        {% if Entity.entityData.content_type == '2' %}
+          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+        {% else %}
+        {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+          {% if App.devMode -%}
+            <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+          {%- endif %}
+          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
+        {% endif %}
+      </div>
+      <div class='d-flex ml-1'>
+        {# LAST SAVED #}
+        <div>
+          <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
+          <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
+        </div>
+      </div>
+
+      <div class='mt-1 text-center'>
+        <button type='button' data-action='update-entity-body' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary'>{{ 'Save and go back'|trans }}</button>
+      </div>
   </div>
+  {% endif %}
 </section>
 
 <hr>
@@ -105,12 +119,10 @@
   <div id='metadataDiv'></div>
   <div class='mt-3 row'>
     <button type='button' data-action='toggle-modal' data-target='fieldBuilderModal' class='btn btn-secondary' data-cy='addMetadataField'>{{ 'Add field'|trans }}</button>
-    <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn hl-hover-gray' data-cy='loadMetadataFields'>{{ 'Load fields'|trans }}</button>
+    <button type='button' data-action='toggle-modal' data-target='fieldLoaderModal' class='ml-3 btn btn-ghost hl-hover-gray' data-cy='loadMetadataFields'>{{ 'Load fields'|trans }}</button>
   </div>
 </div>
 <hr>
-
-
 
 {% include 'uploads.html' %}
 
@@ -128,39 +140,8 @@
   {% if Entity.entityData.canread_target %}
     <h5>{{ 'Permissions for the template'|trans }}</h5>
   {% endif %}
-  {% include('edit-permissions.html') %}
-  {# templates also have a read/write target #}
-  {% if Entity.entityData.canread_target %}
-   {# TARGET PERMISSIONS #}
-    <h5>{{ 'Permissions for the derived entry'|trans }}</h5>
-    <p class='smallgray'>{{ 'Entries created from this template will inherit these permissions. If they are locked down, the permissions will not be modifiable by Users, only Admins.'|trans }}</p>
-    <div class='d-flex mb-2 align-items-center'>
-      {# CANREAD #}
-      {% set rw = 'canread_target' %}
-      {% set can = Entity.entityData.canread_target|canToHuman %}
-      {% include('view-permissions.html') %}
-    </div>
-    <div class='d-flex'>
-      <label for='canread_is_immutable' class='col-form-label mr-2'>{{ 'Lock down read permissions'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='canread_is_immutable' {{ Entity.entityData.canread_is_immutable ? 'checked="checked"' }} id='canread_is_immutable'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    <div class='d-flex mb-2 align-items-center'>
-      {# CANWRITE #}
-      {% set rw = 'canwrite_target' %}
-      {% set can = Entity.entityData.canwrite_target|canToHuman %}
-      {% include('view-permissions.html') %}
-    </div>
-    <div class='d-flex'>
-      <label for='canwrite_is_immutable' class='col-form-label mr-2'>{{ 'Lock down write permissions'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='canwrite_is_immutable' {{ Entity.entityData.canwrite_is_immutable ? 'checked="checked"' }} id='canwrite_is_immutable'>
-        <span class='slider'></span>
-      </label>
-    </div>
-  {% endif %}
+  {% include 'edit-permissions.html' %}
+  {% include 'view-edit-target-permissions.html' %}
 </div>
 <hr>
 

@@ -38,6 +38,21 @@ import { ApiC } from './api';
 import i18next from './i18n';
 import { Action } from './interfaces';
 import { TomSelect } from './misc';
+import { notify } from './notify';
+
+type Range = 'day' | 'week' | 'month';
+type SavedView = Range | 'listWeek';
+const GRID_VIEWS: Record<Range, string> = {
+  day: 'timeGridDay',
+  week: 'timeGridWeek',
+  month: 'dayGridMonth',
+};
+const TIMELINE_VIEWS: Record<Range, string> = {
+  day: 'timelineDay',
+  week: 'timelineWeek',
+  month: 'timelineMonth',
+};
+const LIST_WEEK_VIEW = 'listWeek';
 
 // transform a Date object into something we can put as a value of an input of type datetime-local
 function toDateTimeInputValueNumber(datetime: Date): number {
@@ -81,12 +96,22 @@ if (window.location.pathname === '/scheduler.php') {
 
   // bind to the element #scheduler
   const calendarEl: HTMLElement = document.getElementById('scheduler');
+  const currentUserId = Number(calendarEl?.dataset.userId);
+  const isAdmin = calendarEl?.dataset.isAdmin === 'true';
   if (calendarEl) {
-
     const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
     const layout = (layoutCheckbox && layoutCheckbox.checked)
       ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
       : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
+
+    // persist selected view type (day, week, month, and the layout)
+    const saved = localStorage.getItem('persistent_schedulerRange') as SavedView | null;
+    const range: Range = saved && saved !== LIST_WEEK_VIEW ? saved : 'week';
+    const viewMap = layoutCheckbox.checked ? TIMELINE_VIEWS : GRID_VIEWS;
+    const initialView =
+      saved === LIST_WEEK_VIEW
+        ? LIST_WEEK_VIEW
+        : viewMap[range];
 
     // clean up 'category' parameter on page refresh or else it keeps it as the only available value in the Select
     if (params.has('category')) {
@@ -148,10 +173,11 @@ if (window.location.pathname === '/scheduler.php') {
       badge.textContent = opt.textContent;
       badge.className = 'selected-item-badge';
       const rawColor = opt.dataset.color;
-      badge.style.setProperty('--badge-color', rawColor?.startsWith('#') ? rawColor : `#${rawColor || '000'}`);
+      badge.style.setProperty('--badge-color', rawColor?.startsWith('#') ? rawColor : `#${rawColor || '888'}`);
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
+      removeBtn.ariaLabel = i18next.t('filter-delete-warning');
       removeBtn.className = 'ml-2 close';
       const removeBtnIcon = document.createElement('i');
       removeBtnIcon.classList.add('fas', 'fa-xmark', 'fa-fw', 'color-white');
@@ -160,19 +186,12 @@ if (window.location.pathname === '/scheduler.php') {
       badge.appendChild(removeBtn);
       wrapper.appendChild(badge);
 
-      // Make badge keyboard-accessible
-      badge.setAttribute('tabindex', '0');
-      badge.setAttribute('role', 'button');
-      badge.setAttribute('aria-label', `Remove ${opt.textContent}`);
       // also handle keydown (enter)
       const removeBadgeHandler = e => {
         e.preventDefault();
         removeBadge(badge, tomSelect, id);
       };
       removeBtn.addEventListener('click', removeBadgeHandler);
-      removeBtn.addEventListener('keydown', e =>
-        ['Enter', ' '].includes(e.key) && removeBadgeHandler(e),
-      );
     };
 
     const removeBadge = (badge, tomSelect, id) => {
@@ -201,7 +220,15 @@ if (window.location.pathname === '/scheduler.php') {
           ],
         },
       },
-      initialView: layoutCheckbox.checked ? 'timelineWeek' : 'timeGridWeek',
+      initialView: initialView,
+      datesSet: (info) => {
+        const range =
+          info.view.type === 'listWeek' ? 'listWeek' :
+            info.view.type.includes('Day') ? 'day' :
+              info.view.type.includes('Month') ? 'month' :
+                'week';
+        localStorage.setItem('persistent_schedulerRange', range);
+      },
       themeSystem: 'bootstrap',
       // i18n
       // all available locales
@@ -229,12 +256,13 @@ if (window.location.pathname === '/scheduler.php') {
       firstDay: 1,
       // remove possibility to book whole day, might add it later
       allDaySlot: false,
-      // background color is $secondlevel for all and it changes after validation of event
-      // TODO maybe we could have an automatically generated .ts file exporting colors from _variables.scss
-      eventBackgroundColor: '#bdbdbd',
+      // background color before event validation
+      eventBackgroundColor: 'var(--secondlevel)',
       // user can see events as disabled if they don't have booking permissions. See #5930
       eventClassNames: (info) => {
-        return Number(info.event.extendedProps.canbook) === 0 ? ['calendar-event-disabled'] : '';
+        const canBook = Number(info.event.extendedProps.canbook);
+        const eventOwnerId = Number(info.event.extendedProps.userid);
+        return (canBook === 0 && currentUserId !== eventOwnerId) ? ['calendar-event-disabled'] : [];
       },
       // prevent any actions on disabled events
       eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1,
@@ -261,7 +289,11 @@ if (window.location.pathname === '/scheduler.php') {
               return;
             }
 
-            const postParams = { start: info.startStr, end: info.endStr };
+            const modal = confirmBtn.closest('.modal');
+            const titleInput = modal?.querySelector<HTMLInputElement>('input[id^="eventTitleInput"]');
+            const eventTitle = titleInput ? titleInput.value.trim() : '';
+
+            const postParams = { start: info.startStr, end: info.endStr, title: eventTitle };
             Promise.all(
               itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
             ).then(() => {
@@ -355,8 +387,10 @@ if (window.location.pathname === '/scheduler.php') {
       },
       // on click activate modal window
       eventClick: function(info): void {
-        if (Number(info.event.extendedProps.canbook) === 0) {
-          return; // do nothing if event is disabled
+        const canBook = Number(info.event.extendedProps.canbook);
+        const eventOwnerId = Number(info.event.extendedProps.userid);
+        if (canBook === 0 && currentUserId !== eventOwnerId) {
+          return;
         }
         $('[data-action="scheduler-rm-bind"]').hide();
         $('#eventModal').modal('toggle');
@@ -382,7 +416,6 @@ if (window.location.pathname === '/scheduler.php') {
         // cancel block: show if event is cancellable OR user is Admin)
         const cancelDiv = document.getElementById('isCancellableDiv') as HTMLElement;
         if (!cancelDiv) return;
-        const isAdmin = cancelDiv.dataset.isAdmin === 'true';
         const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
         const isCancellable = isAdmin || bookIsCancellable === 1;
         cancelDiv.classList.toggle('d-none', !isCancellable);
@@ -420,14 +453,37 @@ if (window.location.pathname === '/scheduler.php') {
     }
 
     // add on change event listener on datetime inputs
-    [startInput, endInput].forEach(input => {
-      input.addEventListener('change', event => {
-        const input = (event.currentTarget as HTMLInputElement);
-        // Note: valueAsDate was not working on Chromium
-        const dt = DateTime.fromMillis(input.valueAsNumber);
-        ApiC.patch(`event/${input.dataset.eventid}`, {'target': input.dataset.what, 'epoch': String(dt.toUnixInteger())}).then(() => {
-          calendar.refetchEvents();
-        }).catch(() => calendar.refetchEvents());
+    [startInput, endInput].forEach((input:HTMLInputElement) => {
+      // in case endTime is inferior to startTime, revert to last focus time
+      let originalValue;
+      input.addEventListener('focus', () => {
+        originalValue = input.value;
+      });
+      input.addEventListener('change', () => {
+        const startVal = startInput.valueAsNumber;
+        const endVal = endInput.valueAsNumber;
+        // start must be < end
+        if (!isNaN(startVal) && !isNaN(endVal) && endVal < startVal) {
+          notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
+          // revert to value on focus
+          if (originalValue) {
+            input.value = originalValue;
+          }
+          return;
+        }
+        const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
+        const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
+        if (!startDt.isValid || !endDt.isValid) {
+          notify.error('invalid-info');
+          if (originalValue) input.value = originalValue;
+          return;
+        }
+        // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
+        const startIso = startDt.toISO({ suppressMilliseconds: true });
+        const endIso = endDt.toISO({ suppressMilliseconds: true });
+        ApiC.patch(`event/${input.dataset.eventid}`, { target: 'datetime', start: startIso, end: endIso})
+          .then(() => calendar.refetchEvents())
+          .catch((err) => notify.error(err));
       });
     });
 

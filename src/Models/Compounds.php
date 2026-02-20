@@ -64,7 +64,7 @@ final class Compounds extends AbstractRest
         'wikipedia',
     );
 
-    public function __construct(protected HttpGetter $httpGetter, private Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights, ?int $id = null)
+    public function __construct(protected HttpGetter $httpGetter, public Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -522,7 +522,8 @@ final class Compounds extends AbstractRest
         if (!empty($reqBody['cid'])) {
             return $this->createFromCompound($this->searchPubChem((int) $reqBody['cid']));
         }
-        return $this->createFromCompound($this->searchPubChemCas($reqBody['cas'])[0]);
+        $cas = $reqBody['cas'] ?? throw new ImproperActionException('Missing pubchem_cid or cas_number');
+        return $this->createFromCompound($this->searchPubChemCas($cas)[0]);
     }
 
     private function getSelectBeforeWhere(): string

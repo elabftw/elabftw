@@ -22,6 +22,7 @@ use InvalidArgumentException;
 use Override;
 
 use function mb_strlen;
+use function filter_var;
 
 class ContentParams implements ContentParamsInterface
 {
@@ -76,6 +77,11 @@ class ContentParams implements ContentParamsInterface
     protected function getCanJson(): string
     {
         return Check::visibility($this->asString());
+    }
+
+    protected function getCanBase(): int
+    {
+        return Check::basePermission($this->asInt())->value;
     }
 
     protected function getState(): int

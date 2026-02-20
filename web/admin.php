@@ -13,10 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
+use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
@@ -52,10 +54,13 @@ try {
     $TeamGroups = new TeamGroups($App->Users);
     $PermissionsHelper = new PermissionsHelper();
     $teamStats = $App->Teams->getStats($App->Users->userData['team']);
+    $FavTags = new FavTags($App->Users);
+    $favTagsArr = $FavTags->readAll();
+
 
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
-        $ItemsTypes->canOrExplode('write');
+        $ItemsTypes->canOrExplode(AccessType::Write);
         $ContainersLinks = LinksFactory::getContainersLinks($ItemsTypes);
         $ItemsTypes->entityData['containers'] = $ContainersLinks->readAll();
     }
@@ -110,6 +115,7 @@ try {
         'allTeamgroupsArr' => $TeamGroups->readAllEverything(),
         'statusArr' => $statusArr,
         'itemsStatusArr' => $ItemsStatus->readAll(),
+        'favTagsArr' => $favTagsArr,
         'pageTitle' => _('Admin panel'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),
         'passwordInputPattern' => $passwordComplexity->toPattern(),

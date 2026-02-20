@@ -20,10 +20,9 @@
     {# SEARCH BAR #}
     {% set pageName = scriptName|replace({'.php': ''}) %}
     {% set searchTarget = pageName %}
-    {% set searchPlaceholder = 'Search in experiments'|trans %}
+    {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
     {% if pageName == 'database' %}
       {% set searchTarget = 'resources'|trans %}
-      {% set searchPlaceholder = 'Search in resources'|trans %}
     {% endif %}
     <form id='mainSearchForm' aria-label='{{ 'Search %s'|trans|format(searchTarget) }}' class='mb-2 flex-fill' method='get'>
       {# next div is wrapper to position pre below textarea #}
@@ -39,7 +38,7 @@
           value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
         <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
         <div class='input-group-append'>
-          <button class='btn btn-secondary' type='submit' aria-label='{{ 'Search'|trans }}' title='{{ 'Search'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>
+          <button class='btn btn-secondary' type='submit' aria-label='{{ 'Search'|trans }}' title='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass'></i></button>
         </div>
       </div>
     </form>
@@ -64,32 +63,65 @@
 
         <div id='visibleFiltersDiv' class='mt-1 flex-fill'>
           {# CATEGORY #}
-          <select name='category' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter category'|trans }}'>
-            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
+          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
+          <input placeholder='{{ 'Filter category'|trans }}' id='categoryFilterPlaceholder' class='form-control' aria-label='placeholder for category input' />
+          {% if App.devMode -%}
+            <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
+          {%- endif %}
+          <select hidden
+            id='categoryFilter'
+            name='category'
+            class='form-control'
+            multiple
+            aria-label='{{ 'Filter category'|trans }}'
+            placeholder='{{ 'Filter category'|trans }}'
+          >
+            <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
+            <option data-current-team='1' value='null'
+              {{- 'null' in App.Request.query.get('category')|split(',') ? ' selected' -}}
+            >
+            {{ 'No category set'|trans }}</option>
             {% for category in categoryArr %}
-              <option value='{{ category.id }}'
-                {{- App.Request.query.get('category') == category.id ? ' selected' -}}
+            <option data-current-team='{{ category.is_current_team }}' value='{{ category.id }}'
+                {{- category.id in App.Request.query.get('category')|split(',') ? ' selected' -}}
               >
-              {{ category.title }}</option>
+              {% if category.is_current_team == 0 %}{{ category.team_name }} - {% endif %}{{ category.title }}</option>
             {% endfor %}
           </select>
 
           {# STATUS #}
-          <select name='status' class='mr-1 form-control filterAuto' aria-label='{{ 'Filter status'|trans }}'>
-            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
+          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
+          <input placeholder='{{ 'Filter status'|trans }}' id='statusFilterPlaceholder' class='form-control' aria-label='placeholder for status input' />
+          {% if App.devMode -%}
+            <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
+          {%- endif %}
+          <select hidden
+            id='statusFilter'
+            name='status'
+            class='form-control'
+            multiple
+            aria-label='{{ 'Filter status'|trans }}'
+            placeholder='{{ 'Filter status'|trans }}'
+          >
+            <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
+            <option data-current-team='1' value='null'
+              {{- 'null' in App.Request.query.get('status')|split(',') ? ' selected' -}}
+            >
+            {{ 'No status set'|trans }}</option>
             {% for status in statusArr %}
-              <option value='{{ status.id }}'
-                {{- App.Request.query.get('status') == status.id ? ' selected' -}}
+              <option data-current-team='{{ status.is_current_team }}' value='{{ status.id }}'
+                {{- status.id in App.Request.query.get('status')|split(',') ? ' selected' -}}
               >
-              {{ status.title }}</option>
+              {% if status.is_current_team == 0 %}{{ status.team_name }} - {% endif %}{{ status.title }}</option>
             {% endfor %}
           </select>
 
           {# OWNER filter #}
-          <select name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
+          {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->{%- endif %}
+          <select id='filterOwner' name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
             <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
             {% for user in usersArr %}
-              <option value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
+            <option data-is-archived='{{ user.is_archived_in_current_team }}' value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
             {% endfor %}
           </select>
 
@@ -97,7 +129,7 @@
           {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
           <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' aria-label='placeholder for tags input' />
           {% if App.devMode -%}
-            <!-- [html-validate-disable-block input-missing-label, prefer-native-element: suppress error from tom-select] -->
+            <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
           {%- endif %}
           <select hidden
             id='tagFilter'
@@ -118,7 +150,7 @@
       {# TOGGLE MORE FILTERS BUTTON #}
       <div class='ml-auto'>
         <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv' title='{{ 'Show more filters'|trans }}'>
-          <i class='fas fa-sliders color-white'></i>
+          <i class='fas fa-sliders'></i>
         </button>
       </div>
     {# END ALWAYS VISIBLE FILTERS #}
@@ -130,7 +162,7 @@
       <div class='d-flex'>
         <div class='input-group d-flex flex-nowrap'>
           {% if App.devMode -%}
-            <!-- [html-validate-disable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+            <!-- [html-validate-disable prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <select
             aria-label='{{ 'Name of field'|trans }}'
@@ -146,7 +178,7 @@
             {% endfor %}
           </select>
           {% if App.devMode -%}
-            <!-- [html-validate-enable input-missing-label, prefer-native-element: suppress errors from tom-select] -->
+            <!-- [html-validate-enable prefer-native-element: suppress errors from tom-select] -->
           {%- endif %}
           <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
           <input
@@ -279,7 +311,7 @@
     <div class='d-flex'>
       {# ORDER (Sort) #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle hl-hover-gray' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle hl-hover-gray color-medium' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Sort'|trans }}</h6>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='date-desc'>{{ 'Newest'|trans }}</button>
@@ -305,7 +337,7 @@
       </div>
       {# LIMIT if there is nothing in the query params, take the user configured one #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle hl-hover-gray' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle hl-hover-gray color-medium' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Results per page'|trans }}</h6>
         {% for option in limitOptions(DisplayParams.limit) %}
@@ -376,7 +408,7 @@
               {{ 'Change category'|trans }}
             </option>
             <option value='0'>{{ 'Not set'|trans }}</option>
-            {% for category in categoryArr %}
+            {% for category in categoryArr|filter(c => c.is_current_team == 1) %}
                 <option value='{{ category.id }}'>{{ category.title }}</option>
             {% endfor %}
           </select>
@@ -386,19 +418,19 @@
               {{ 'Change status'|trans }}
             </option>
             <option value='0'>{{ 'Not set'|trans }}</option>
-            {% for status in statusArr %}
+            {% for status in statusArr|filter(s => s.is_current_team == 1) %}
                 <option value='{{ status.id }}'>{{ status.title }}</option>
             {% endfor %}
           </select>
-          {# CANREAD #}
-          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread' autocomplete='off' class='mr-1 mb-2 form-control'>
+          {# CANREAD BASE #}
+          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread_base' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled value=''>{{ 'Change read permissions'|trans }}</option>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'>{{ value }}</option>
             {% endfor %}
           </select>
-          {# CANWRITE #}
-          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite' autocomplete='off' class='mr-1 mb-2 form-control'>
+          {# CANWRITE BASE #}
+          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite_base' autocomplete='off' class='mr-1 mb-2 form-control'>
             <option selected disabled value=''>{{ 'Change write permissions'|trans }}</option>
             {% for key, value in visibilityArr %}
               <option value='{{ key }}'>{{ value }}</option>
@@ -408,7 +440,7 @@
           <input type='text' aria-label='{{ 'Add a tag'|trans }}' id='createTagInputMultiple' name='tags' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
           {# ADD A RESOURCE LINK #}
           <div class='input-group mb-2 mr-2'>
-            <input type='text' aria-label='{{ 'Add a link'|trans }}' id='addLinkItemsInput' name='items_links' class='form-control' placeholder='{{ 'Add a link'|trans }}' />
+            <input type='text' aria-label='{{ 'Link to a resource'|trans }}' id='addLinkItemsInput' name='items_links' class='form-control' placeholder='{{ 'Link to a resource'|trans }}' />
             <div class='input-group-append'>
               <select id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
                 <option selected value=''>{{ 'Any category'|trans }}</option>

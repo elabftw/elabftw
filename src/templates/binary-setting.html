@@ -6,7 +6,7 @@
 {% set slugId = slug ~ (affix ? '-' ~ affix) %}
 <div class='d-flex justify-content-between'>
   <label for='{{ slugId }}' class='col-form-label'>{{ label }}</label>
-  <label class='switch ucp-align'>
+  <label class='switch ucp-align'><span class='sr-only'>{{ label }}</span>
     <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ model|default('config') }}' data-target='{{ slug }}' {{ src[slug] ? 'checked="checked"' }} id='{{ slugId }}'>
     <span class='slider'></span>
   </label>

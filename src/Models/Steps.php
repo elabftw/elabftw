@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\StepDeadline;
@@ -23,6 +24,9 @@ use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use Override;
 use PDO;
+
+use function array_intersect;
+use function array_keys;
 
 /**
  * All about the steps
@@ -52,7 +56,7 @@ final class Steps extends AbstractRest
      */
     public function import(array $step): void
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
 
         $body = str_replace('|', ' ', $step['body']);
         $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering, finished, finished_time)
@@ -141,17 +145,18 @@ final class Steps extends AbstractRest
         if ($fromTemplate) {
             $table = ($this->Entity instanceof Experiments || $this->Entity instanceof Templates) ? 'experiments_templates' : 'items_types';
         }
-        $stepsql = 'SELECT body, ordering FROM ' . $table . '_steps WHERE item_id = :id';
+        $stepsql = 'SELECT body, ordering, is_immutable FROM ' . $table . '_steps WHERE item_id = :id';
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($stepreq);
 
-        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering) VALUES(:item_id, :body, :ordering)';
+        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering, is_immutable) VALUES(:item_id, :body, :ordering, :is_immutable)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
         while ($steps = $stepreq->fetch()) {
             $req->bindParam(':body', $steps['body']);
             $req->bindParam(':ordering', $steps['ordering'], PDO::PARAM_INT);
+            $req->bindParam(':is_immutable', $steps['is_immutable'], PDO::PARAM_INT);
             $this->Db->execute($req);
         }
     }
@@ -159,7 +164,7 @@ final class Steps extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
         match ($action) {
             Action::Finish => $this->toggleFinished(),
@@ -167,23 +172,39 @@ final class Steps extends AbstractRest
             Action::NotifDestroy => $this->destroyNotif(),
             Action::Update => (
                 function () use ($params) {
+                    // prevent updates to protected fields on immutable steps
+                    $protected = array('body', 'ordering', 'is_immutable');
+                    $enforceImmutability = in_array($this->Entity->entityType->value, array('experiments', 'items'), true);
+                    // if we're on experiments/items, prevent any change to is_immutable. It is only allowed on templates
+                    if ($enforceImmutability && array_key_exists('is_immutable', $params)) {
+                        throw new ImproperActionException(_('The immutability parameter cannot be modified from experiments or resources.'));
+                    }
+                    if ($enforceImmutability && $this->readOne()['is_immutable'] === 1
+                        && count(array_intersect(array_keys($params), $protected)) > 0) {
+                        throw new ImproperActionException(_('This step is immutable: it cannot be modified.'));
+                    }
                     foreach ($params as $key => $value) {
                         // value can be null with deadline removal
                         $this->update(new StepParams($key, $value ?? ''));
                     }
                 }
             )(),
+            Action::ForceLock => $this->setImmutable(1),
+            Action::ForceUnlock => $this->setImmutable(0),
             default => throw new ImproperActionException('Invalid action for steps.'),
         };
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams('steps', $action->value));
-        return $this->readOne();
+        if ($this->id) {
+            return $this->readOne();
+        }
+        return $this->readAll();
     }
 
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams('steps', $action->value));
@@ -193,7 +214,7 @@ final class Steps extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
         $Changelog = new Changelog($this->Entity);
         /** @psalm-suppress PossiblyNullArgument */
@@ -204,6 +225,18 @@ final class Steps extends AbstractRest
         $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    private function setImmutable(int $value): bool
+    {
+        $sql = sprintf(
+            'UPDATE %s_steps SET is_immutable = :content WHERE item_id = :item_id',
+            $this->Entity->entityType->value,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':content', $value, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

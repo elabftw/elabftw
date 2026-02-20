@@ -25,7 +25,9 @@
 {# CREATE USER ACCOUNT #}
 <h3 class='my-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
 <div class='pl-3'>
-  <p class='smallgray'>{{ 'Note: new user will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
+  {% if App.Config.configArr.saml_toggle == '0' and App.Config.configArr.ldap_toggle == '0' %}
+    <p class='smallgray'>{{ 'Note: new users will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
+  {% endif %}
   <form class='form-group' id='createUserForm'>
     <div class='row mb-2'>
       {# TEAM #}
@@ -53,22 +55,28 @@
     <div class='row mb-2'>
       {# FIRSTNAME #}
       <div class='col-md-6'>
-        <label for='firstname' class='col-form-label'>{{ 'Firstname'|trans }}</label>
+        <label for='firstname' class='col-form-label required-label'>{{ 'Firstname'|trans }}</label>
         <input name='firstname' class='form-control' type='text' id='firstname' required />
       </div>
 
       {# LASTNAME #}
       <div class='col-md-6'>
-        <label for='lastname' class='col-form-label'>{{ 'Lastname'|trans }}</label>
+        <label for='lastname' class='col-form-label required-label'>{{ 'Lastname'|trans }}</label>
         <input name='lastname' class='form-control' type='text' id='lastname' required />
       </div>
     </div>
 
     <div class='row mb-2'>
       {# EMAIL #}
-      <div class='col-md-12'>
-        <label for='email' class='col-form-label'>{{ 'Email'|trans }}</label>
+      <div class='col-md-6'>
+        <label for='email' class='col-form-label required-label'>{{ 'Email'|trans }}</label>
         <input name='email' class='form-control' type='email' id='email' required />
+      </div>
+
+      {# ORGID #}
+      <div class='col-md-6'>
+        <label for='orgid' class='col-form-label'>{{ 'Internal ID (optional)'|trans }}</label>
+        <input name='orgid' class='form-control' type='text' id='orgid' />
       </div>
     </div>
 

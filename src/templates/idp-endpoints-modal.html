@@ -1,0 +1,83 @@
+{# Modal for IDP endpoints #}
+<div class='modal fade' id='idpModal_endpoints' tabindex='-1' role='dialog' aria-labelledby='idpEndpointsModalLabel'>
+  <div class='modal-dialog modal-xl' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='idpEndpointsModalLabel'>{{ 'Edit IDP associated endpoints'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+        <h6 id='idpEndpointsTableLabel'>{{ 'Endpoints associated with this IDP'|trans }}</h6>
+        <div class='table-container'>
+          <table class='table' aria-describedby='idpEndpointsTableLabel' data-table-sort='true'>
+            <thead>
+            <tr>
+              <th scope='col'>{{ 'ID'|trans }}</th>
+              <th scope='col'>{{ 'Binding'|trans }}</th>
+              <th scope='col'>{{ 'Location'|trans }}</th>
+              <th scope='col'>{{ 'Service type'|trans }}</th>
+              <th scope='col'>{{ 'Created at'|trans }}</th>
+              <th scope='col'>{{ 'Modified at'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody id='idpEndpointsTableBody'>
+            </tbody>
+          </table>
+        </div>
+        <template id='endpointRow'>
+          <tr>
+            {% for _ in 0..5 %}
+              {# twigcs use-var _ #}
+              <td></td>
+            {% endfor %}
+          </tr>
+        </template>
+
+        <hr>
+        <button type='button' class='btn btn-secondary bg-superlight btn-sm' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+          <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Add an endpoint'|trans }}
+        </button>
+        <div hidden>
+          <p class='smallgray mt-2'>{{ 'Note: use HTTP-POST for SSO and HTTP-Redirect for SLO, they are the only bindings supported by eLabFTW. Only an SSO endpoint is strictly required.'|trans }}</p>
+          <form id='idpForm_endpoints'>
+            <label for='idpEndpointsModalNew' class='col-form-label'>{{ 'SAML Endpoint'|trans }}</label>
+            <input class='form-control' type='url' id='idpEndpointsModalNew' required placeholder='https://idp.example.fr/idp/profile/SAML2/POST/SSO' name='location' />
+            <p class='mt-2'>{{ 'Service type'|trans }}</p>
+            <div class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='is_slo' value='0' id='idpEndpointIsSloSso' checked> <label class='form-check-label' for='idpEndpointIsSloSso'>{{ 'Single Sign-On (SSO)'|trans }}</label>
+            </div>
+            <div class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='is_slo' value='1' id='idpEndpointIsSloSlo'> <label class='form-check-label' for='idpEndpointIsSloSlo'>{{ 'Single Log-Out (SLO)'|trans }}</label>
+            </div>
+            <p class='mt-2'>{{ 'Binding'|trans }}</p>
+            <div class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='binding' value='{{ enum('Elabftw\\Enums\\SamlBinding').HttpPost.value }}' id='idpEndpointBindingPost' checked> <label class='form-check-label' for='idpEndpointBindingPost'>{{ enum('Elabftw\\Enums\\SamlBinding').HttpPost.toUrn() }}</label>
+            </div>
+            <div class='form-check form-check-inline'>
+              <input class='form-check-input' type='radio' name='binding' value='{{ enum('Elabftw\\Enums\\SamlBinding').HttpRedirect.value }}' id='idpEndpointBindingRedirect'> <label class='form-check-label' for='idpEndpointBindingRedirect'>{{ enum('Elabftw\\Enums\\SamlBinding').HttpRedirect.toUrn() }}</label>
+            </div>
+            <div class='text-center'>
+            <button type='submit' data-action='save-idp-submodel' data-submodel='endpoints' id='idpEndpointsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save endpoint'|trans }}</button>
+            </div>
+          </form>
+        </div>
+        <button type='button' class='btn btn-danger btn-sm' id='deleteAnEndpointToggleBtn' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
+          <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Delete an endpoint'|trans }}
+        </button>
+        <div hidden>
+          <form id='idpDeleteForm_endpoints'>
+            <label for='idpEndpointDeleteSelect' class='col-form-label'>{{ 'Select an endpoint to delete'|trans }}</label>
+            <select id='idpEndpointDeleteSelect' name='endpoint' class='form-control' required>
+            </select>
+            <button type='submit' data-action='delete-idp-submodel' data-submodel='endpoints' id='idpEndpointsModalDeleteButton' class='btn btn-danger ml-auto mb-2 mt-1'>{{ 'Delete endpoint'|trans }}</button>
+          </form>
+        </div>
+        <div class='modal-footer mt-2'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

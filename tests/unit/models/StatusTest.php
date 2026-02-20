@@ -41,7 +41,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9', 'is_private' => 0));
         $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212'));
         $this->assertEquals('Updated', $status['title']);

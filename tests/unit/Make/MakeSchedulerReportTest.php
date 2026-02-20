@@ -29,6 +29,7 @@ class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getRandomUserInTeam(1);
         $Item = $this->getFreshItemWithGivenUser($user);
+        $Item->patch(Action::Update, array('is_bookable' => 1));
         $Scheduler = new Scheduler($Item);
         $d = new DateTimeImmutable('+3 hour');
         $start = $d->format('c');

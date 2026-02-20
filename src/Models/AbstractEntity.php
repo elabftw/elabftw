@@ -1010,7 +1010,7 @@ abstract class AbstractEntity extends AbstractRest
             return new AccessPermissions(read: true, write: true);
         }
         if ($this->bypassReadPermission) {
-            return new AccessPermissions(read: true, write: false);
+            return new AccessPermissions(read: true);
         }
         // make sure entityData is filled
         if (empty($this->entityData)) {

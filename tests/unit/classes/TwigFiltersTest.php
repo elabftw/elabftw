@@ -127,4 +127,16 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $json = '[]';
         $this->assertEquals(array(), TwigFilters::jsonDecode($json));
     }
+
+    public function testAnyToString(): void
+    {
+        $this->assertSame('1', TwigFilters::any2string('1'));
+        $this->assertSame('', TwigFilters::any2string(null));
+    }
+
+    public function testFormatMfaSecret(): void
+    {
+        $formatted = '44HN HIFE CEJC IBZO V4TR JZGM XVYM OYG6';
+        $this->assertSame($formatted, TwigFilters::formatMfaSecret('44HNHIFECEJCIBZOV4TRJZGMXVYMOYG6'));
+    }
 }

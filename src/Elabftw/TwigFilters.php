@@ -23,6 +23,7 @@ use Elabftw\Models\Users\Users;
 
 use function is_array;
 use function implode;
+use function hash;
 use function str_split;
 use function is_string;
 use function json_decode;
@@ -38,18 +39,24 @@ final class TwigFilters
      * For displaying messages using bootstrap alerts
      * $level can be a string when coming from a twig template
      */
-    public static function displayMessage(string $message, string|MessageLevels $level, bool $closable = true, string $dismissKey = ''): string
+    public static function displayMessage(string $message, string|MessageLevels $level, bool $closable = true): string
     {
         $level = $level instanceof MessageLevels ? $level : MessageLevels::from($level);
 
         $crossLink = '';
         if ($closable) {
-            $crossLink = sprintf("<a href='#' class='close' data-dismiss='alert' data-action='save-dismiss' data-dismiss-key='%s'>&times;</a>", $dismissKey);
+            // xxh3 is super fast and a good fit for this non-cryptographic use case
+            $crossLink = sprintf(
+                "<a href='#' class='close' data-dismiss='alert' data-action='save-dismiss' data-dismiss-key='%s'>&times;</a>",
+                hash('xxh3', $message),
+            );
         }
 
         // "status" role: see WCAG2.1 4.1.3
+        // we set it hidden to avoid a flash, js will make it visible or not depending on dismiss key value/presence
         return sprintf(
-            "<div role='status' class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>",
+            "<div role='status' %s class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>",
+            $closable ? 'hidden' : '',
             $level->toAlertClass(),
             $level->toFaIcon(),
             $level->toAlertClass(),

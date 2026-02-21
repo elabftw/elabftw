@@ -18,12 +18,15 @@
 {# ANNOUNCEMENTS #}
 {# general sysconfig announcement #}
 {%- if App.Config.configArr.announcement -%}
-  {{ App.Config.configArr.announcement|msg('warning', false) }}
+  {# compute the hash of the message so we only dismiss a given message, not all of them #}
+  {% set announcementHash = App.Config.configArr.announcement|md5 %}
+  {{ App.Config.configArr.announcement|msg('warning', true, announcementHash) }}
 {%- endif -%}
 
 {# team level announcement #}
 {%- if App.Teams.teamArr.announcement -%}
-  {{ App.Teams.teamArr.announcement|msg('warning', false) }}
+  {% set announcementHash = App.Teams.teamArr.announcement|md5 %}
+  {{ App.Teams.teamArr.announcement|msg('warning', true, announcementHash) }}
 {%- endif -%}
 <div id='output'></div>
 

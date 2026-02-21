@@ -48,8 +48,10 @@ final class TwigFilters
         }
 
         // "status" role: see WCAG2.1 4.1.3
+        // we set it hidden to avoid a flash, js will make it visible or not depending on dismiss key value/presence
         return sprintf(
-            "<div role='status' class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>",
+            "<div role='status' %s class='alert alert-%s'><i class='fa-fw fas %s color-%s'></i>%s %s</div>",
+            $closable ? 'hidden' : '',
             $level->toAlertClass(),
             $level->toFaIcon(),
             $level->toAlertClass(),
@@ -61,6 +63,11 @@ final class TwigFilters
     public static function toIcon(int $scope): string
     {
         return Scope::toIcon(Scope::from($scope));
+    }
+
+    public static function md5(string $input): string
+    {
+        return hash('md5', $input);
     }
 
     /**

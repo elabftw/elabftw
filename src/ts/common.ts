@@ -238,6 +238,13 @@ if (isSafari() && !isDismissedSafari) {
 }
 // END SAFARI DETECTION
 
+// generic announcement/admin announcement messages
+document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
+  if (localStorage.getItem(`dismiss_${msg.dataset.dismissKey}`) !== '1') {
+    msg.parentElement.removeAttribute('hidden');
+  }
+});
+
 makeMalleableColumnsGreatAgain();
 
 // tom-select for team selection on login and register page, and idp selection

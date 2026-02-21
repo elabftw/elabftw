@@ -23,6 +23,7 @@ use Elabftw\Models\Users\Users;
 
 use function is_array;
 use function implode;
+use function hash;
 use function str_split;
 use function is_string;
 use function json_decode;
@@ -38,13 +39,17 @@ final class TwigFilters
      * For displaying messages using bootstrap alerts
      * $level can be a string when coming from a twig template
      */
-    public static function displayMessage(string $message, string|MessageLevels $level, bool $closable = true, string $dismissKey = ''): string
+    public static function displayMessage(string $message, string|MessageLevels $level, bool $closable = true): string
     {
         $level = $level instanceof MessageLevels ? $level : MessageLevels::from($level);
 
         $crossLink = '';
         if ($closable) {
-            $crossLink = sprintf("<a href='#' class='close' data-dismiss='alert' data-action='save-dismiss' data-dismiss-key='%s'>&times;</a>", $dismissKey);
+            // xxh3 is super fast and a good fit for this non-cryptographic use case
+            $crossLink = sprintf(
+                "<a href='#' class='close' data-dismiss='alert' data-action='save-dismiss' data-dismiss-key='%s'>&times;</a>",
+                hash('xxh3', $message),
+            );
         }
 
         // "status" role: see WCAG2.1 4.1.3
@@ -63,11 +68,6 @@ final class TwigFilters
     public static function toIcon(int $scope): string
     {
         return Scope::toIcon(Scope::from($scope));
-    }
-
-    public static function md5(string $input): string
-    {
-        return hash('md5', $input);
     }
 
     /**

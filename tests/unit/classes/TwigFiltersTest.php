@@ -139,10 +139,4 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $formatted = '44HN HIFE CEJC IBZO V4TR JZGM XVYM OYG6';
         $this->assertSame($formatted, TwigFilters::formatMfaSecret('44HNHIFECEJCIBZOV4TRJZGMXVYMOYG6'));
     }
-
-    public function testMd5(): void
-    {
-        $input = 'stupid test is stupid';
-        $this->assertSame(hash('md5', $input), TwigFilters::md5($input));
-    }
 }

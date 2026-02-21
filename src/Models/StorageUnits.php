@@ -520,7 +520,7 @@ final class StorageUnits extends AbstractRest
                     users AS u ON (u.userid = entity.userid)
                 WHERE
                     -- can sql AND query or storage_id
-                    1=1 AND %s %s
+                    1=1 AND entity.state IN (1,2) AND %s %s
 
             UNION
                 SELECT
@@ -585,7 +585,7 @@ final class StorageUnits extends AbstractRest
                     users AS u ON (u.userid = entity.userid)
                 WHERE
                     -- can sql AND query or storage_id
-                    1=1 AND %s %s",
+                    1=1 AND entity.state IN (1,2) AND %s %s",
             $userid,
             $team,
             $discriminator,

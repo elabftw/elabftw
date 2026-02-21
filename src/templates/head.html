@@ -271,7 +271,7 @@
   <div id='realContainer' class='real-container {{ enableWide ? 'max-width-70' : '' }}'>
 
     <div id='safariWarning' hidden>
-      {{ 'Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s).'|trans|format("<a class='external-link' target='_blank' href='https://doc.elabftw.net/#what-are-the-technical-requirements'>", "</a>")|msg('warning', true) }}
+      {{ 'Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s).'|trans|format("<a class='external-link' target='_blank' href='https://doc.elabftw.net/#what-are-the-technical-requirements'>", "</a>")|msg('warning') }}
     </div>
 
     <noscript>{# show warning if javascript is disabled #}

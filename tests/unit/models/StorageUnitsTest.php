@@ -78,6 +78,10 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $res = $this->StorageUnits->readAllFromStorage($storageId);
         $this->assertCount(3, $res);
         $this->assertNotEmpty($res[0]['container2item_id']);
+        // now delete the resource and verify nothing shows up in results
+        $Item->destroy();
+        $res = $this->StorageUnits->readAllFromStorage($storageId);
+        $this->assertCount(0, $res);
     }
 
     public function testGetApiPath(): void

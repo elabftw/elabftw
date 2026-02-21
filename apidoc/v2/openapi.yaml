@@ -1638,6 +1638,12 @@ components:
           type: integer
         book_cancel_minutes:
           type: integer
+        book_price_notax:
+          type: number
+        book_price_tax:
+          type: number
+        book_price_currency:
+          type: integer
 
     item:
       allOf:

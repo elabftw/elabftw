@@ -23,6 +23,7 @@ use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -81,6 +82,15 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->classificationArr = Classification::getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
+
+        if (!empty($this->Entity->entityData)) {
+            if ($this->Entity->entityData['state'] === State::Normal->value) {
+                unset($this->requestableActionArr[RequestableAction::Unarchive->value]);
+            } elseif ($this->Entity->entityData['state'] === State::Archived->value) {
+                unset($this->requestableActionArr[RequestableAction::Archive->value]);
+            }
+        }
+
         $this->currencyArr = Currency::getAssociativeArray();
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
         $ExperimentsStatus = new ExperimentsStatus($App->Teams);

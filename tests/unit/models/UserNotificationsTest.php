@@ -46,16 +46,16 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadOne(): void
     {
-        $Notif = new SelfIsValidated();
-        $id = $Notif->create(1);
+        $Notif = new SelfIsValidated($this->Users);
+        $id = $Notif->create();
         $this->UserNotifications->setId($id);
         $this->assertIsArray($this->UserNotifications->readOne());
     }
 
     public function testPatch(): void
     {
-        $Notif = new SelfIsValidated();
-        $id = $Notif->create(1);
+        $Notif = new SelfIsValidated($this->Users);
+        $id = $Notif->create();
         $this->UserNotifications->setId($id);
         $this->assertIsArray($this->UserNotifications->patch(Action::Update, array()));
     }

@@ -23,6 +23,7 @@ use Elabftw\Models\Notifications\SelfNeedValidation;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
+use Elabftw\Models\Users\Users;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
@@ -30,24 +31,26 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
     public function testSendEmails(): void
     {
         // create a notification to fake send so there is something to process
-        $Notifications = new CommentCreated(EntityType::Experiments->toPage(), 1, 2);
-        $Notifications->create(1);
-        $Notifications = new UserCreated(3, 'Some team name');
-        $Notifications->create(1);
-        $Notifications = new UserNeedValidation(3, 'Some team name');
-        $Notifications->create(1);
-        $Notifications = new SelfNeedValidation();
-        $Notifications->create(1);
-        $Notifications = new SelfIsValidated();
-        $Notifications->create(1);
-        $Notifications = new MathjaxFailed(1, EntityType::Experiments->toPage());
-        $Notifications->create(1);
-        $Notifications = new PdfAppendmentFailed(1, EntityType::Experiments->toPage(), 'file1.pdf, file2.pdf');
-        $Notifications->create(1);
+        $targetUser = new Users(1);
+        $Notifications = new CommentCreated($targetUser, EntityType::Experiments->toPage(), 1, 2);
+        $Notifications->create();
+        $Notifications = new UserCreated($targetUser, 3, 'Some team name');
+        $Notifications->create();
+        $Notifications = new UserNeedValidation($targetUser, 3, 'Some team name');
+        $Notifications->create();
+        $Notifications = new SelfNeedValidation($targetUser);
+        $Notifications->create();
+        $Notifications = new SelfIsValidated($targetUser);
+        $Notifications->create();
+        $Notifications = new MathjaxFailed($targetUser, 1, EntityType::Experiments->toPage());
+        $Notifications->create();
+        $Notifications = new PdfAppendmentFailed($targetUser, 1, EntityType::Experiments->toPage(), 'file1.pdf, file2.pdf');
+        $Notifications->create();
 
         $d = new DateTime();
 
         $Notifications = new EventDeleted(
+            $targetUser,
             array('item' => 12, 'start' => $d->format('Y-m-d H:i:s'), 'end' => $d->format('Y-m-d H:i:s')),
             'Daniel Balavoine',
         );
@@ -66,11 +69,11 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 
         // create a deadline close to now
         $d->modify('+ 5 min');
-        $Notifications = new StepDeadline(1, 1, EntityType::Experiments->toPage(), $d->format('Y-m-d H:i:s'));
-        $Notifications->create(1);
+        $Notifications = new StepDeadline($targetUser, 1, 1, EntityType::Experiments->toPage(), $d->format('Y-m-d H:i:s'));
+        $Notifications->create();
         // create it several times to toggle it and go in all code paths
-        $Notifications->create(1);
-        $Notifications->create(1);
+        $Notifications->create();
+        $Notifications->create();
 
         $stub = $this->createStub(Email::class);
         $stub->method('sendEmail')->willReturn(true);

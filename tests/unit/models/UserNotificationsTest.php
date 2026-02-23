@@ -37,8 +37,8 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
     public function testReadAll(): void
     {
         // create one so we have something to read
-        $Notif = new StepDeadline(1, 1, 'experiments', '2023-02-28 01:24:21');
-        $Notif->create(1);
+        $Notif = new StepDeadline($this->Users, 1, 1, 'experiments', '2023-02-28 01:24:21');
+        $Notif->create();
         // also remove this setting so we go in all code paths
         $this->Users->userData['notif_step_deadline'] = 0;
         $this->assertIsArray($this->UserNotifications->readAll());

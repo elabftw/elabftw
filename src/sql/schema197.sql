@@ -28,18 +28,21 @@ ALTER TABLE users
 UPDATE experiments
 SET
   canread_base  = COALESCE(CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED), 30),
-  canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20);
+  canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20),
+  modified_at = modified_at;
 UPDATE experiments_templates
 SET
   canread_base  = COALESCE(CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED), 30),
   canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20),
   canread_target_base = COALESCE(CAST(JSON_EXTRACT(canread_target, '$.base') AS UNSIGNED), 30),
-  canwrite_target_base = COALESCE(CAST(JSON_EXTRACT(canwrite_target, '$.base') AS UNSIGNED), 20);
+  canwrite_target_base = COALESCE(CAST(JSON_EXTRACT(canwrite_target, '$.base') AS UNSIGNED), 20),
+  modified_at = modified_at;
 UPDATE items
 SET
   canread_base  = COALESCE(CAST(JSON_EXTRACT(canread,  '$.base') AS UNSIGNED), 30),
   canbook_base  = COALESCE(CAST(JSON_EXTRACT(canbook,  '$.base') AS UNSIGNED), 30),
-  canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20);
+  canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20),
+  modified_at = modified_at;
 -- here we use canread as canbook_base because items_types don't have canbook
 UPDATE items_types
 SET
@@ -47,7 +50,8 @@ SET
   canbook_base  = COALESCE(CAST(JSON_EXTRACT(canbook,  '$.base') AS UNSIGNED), 30),
   canwrite_base = COALESCE(CAST(JSON_EXTRACT(canwrite, '$.base') AS UNSIGNED), 20),
   canread_target_base = COALESCE(CAST(JSON_EXTRACT(canread_target, '$.base') AS UNSIGNED), 30),
-  canwrite_target_base = COALESCE(CAST(JSON_EXTRACT(canwrite_target, '$.base') AS UNSIGNED), 20);
+  canwrite_target_base = COALESCE(CAST(JSON_EXTRACT(canwrite_target, '$.base') AS UNSIGNED), 20),
+  modified_at = modified_at;
 
 -- for users defaults
 UPDATE users
@@ -59,27 +63,31 @@ SET
 UPDATE experiments
 SET
   canread  = JSON_REMOVE(canread,  '$.base'),
-  canwrite = JSON_REMOVE(canwrite, '$.base');
+  canwrite = JSON_REMOVE(canwrite, '$.base'),
+  modified_at = modified_at;
 
 UPDATE experiments_templates
 SET
   canread  = JSON_REMOVE(canread,  '$.base'),
   canwrite = JSON_REMOVE(canwrite, '$.base'),
   canread_target = JSON_REMOVE(canread_target, '$.base'),
-  canwrite_target = JSON_REMOVE(canwrite_target, '$.base');
+  canwrite_target = JSON_REMOVE(canwrite_target, '$.base'),
+  modified_at = modified_at;
 
 UPDATE items
 SET
   canread  = JSON_REMOVE(canread,  '$.base'),
   canbook  = JSON_REMOVE(canbook,  '$.base'),
-  canwrite = JSON_REMOVE(canwrite, '$.base');
+  canwrite = JSON_REMOVE(canwrite, '$.base'),
+  modified_at = modified_at;
 
 UPDATE items_types
 SET
   canread  = JSON_REMOVE(canread,  '$.base'),
   canwrite = JSON_REMOVE(canwrite, '$.base'),
   canread_target = JSON_REMOVE(canread_target, '$.base'),
-  canwrite_target = JSON_REMOVE(canwrite_target, '$.base');
+  canwrite_target = JSON_REMOVE(canwrite_target, '$.base'),
+  modified_at = modified_at;
 
 UPDATE users
 SET

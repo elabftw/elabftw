@@ -3,24 +3,28 @@
 UPDATE experiments
 SET
   canread  = JSON_SET(canread,  '$.base', canread_base),
-  canwrite = JSON_SET(canwrite, '$.base', canwrite_base);
+  canwrite = JSON_SET(canwrite, '$.base', canwrite_base),
+  modified_at = modified_at;
 
 UPDATE experiments_templates
 SET
   canread  = JSON_SET(canread,  '$.base', canread_base),
-  canwrite = JSON_SET(canwrite, '$.base', canwrite_base);
+  canwrite = JSON_SET(canwrite, '$.base', canwrite_base),
+  modified_at = modified_at;
 
 UPDATE items
 SET
   canread  = JSON_SET(canread,  '$.base', canread_base),
   canbook  = JSON_SET(canbook,  '$.base', canbook_base),
-  canwrite = JSON_SET(canwrite, '$.base', canwrite_base);
+  canwrite = JSON_SET(canwrite, '$.base', canwrite_base),
+  modified_at = modified_at;
 
 -- items_types has no canbook json; base for canbook is derived from canread_base
 UPDATE items_types
 SET
   canread  = JSON_SET(canread,  '$.base', canread_base),
-  canwrite = JSON_SET(canwrite, '$.base', canwrite_base);
+  canwrite = JSON_SET(canwrite, '$.base', canwrite_base),
+  modified_at = modified_at;
 
 UPDATE users
 SET

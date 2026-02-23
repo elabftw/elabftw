@@ -35,20 +35,15 @@ abstract class AbstractNotifications
 
     protected Db $Db;
 
-    private bool $isArchivedInAllTeams = false;
 
-    public function __construct(protected Users $targetUser, protected TeamsHelper $currentTeam)
-    {
+    public function __construct(protected Users $targetUser)
+   {
         $this->Db = Db::getConnection();
-
-        if ($this->targetUser->team != null && $this->targetUser->userid != null) {
-            $this->isArchivedInAllTeams = $currentTeam->isArchivedInAllTeams($this->targetUser->userid);
-        }
     }
 
     public function create(): int
     {
-        if ($this->isArchivedInAllTeams) {
+        if (TeamsHelper::isArchivedInAllTeams($this->targetUser->userid)) {
             return 0;
         }
 

@@ -14,7 +14,6 @@ namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Notifications;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\TeamsHelper;
 use Override;
 
 /**
@@ -24,9 +23,9 @@ final class PdfAppendmentFailed extends WebOnlyNotifications
 {
     protected Notifications $category = Notifications::PdfAppendmentFailed;
 
-    public function __construct(Users $targetUser, TeamsHelper $currentTeam, private int $entityId, private string $entityPage, private string $fileNames)
+    public function __construct(Users $targetUser, private int $entityId, private string $entityPage, private string $fileNames)
     {
-        parent::__construct($targetUser, $currentTeam);
+        parent::__construct($targetUser);
     }
 
     #[Override]

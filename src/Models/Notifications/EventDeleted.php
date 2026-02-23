@@ -19,10 +19,9 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
-use Elabftw\Services\TeamsHelper;
-use Elabftw\Models\Users\Users;
 use Override;
 
 final class EventDeleted extends AbstractNotifications implements MailableInterface, RestInterface
@@ -33,12 +32,11 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
 
     public function __construct(
         Users $targetUser,
-        TeamsHelper $currentTeam,
         private array $event,
         private string $msg = '',
         private EmailTarget $target = EmailTarget::BookableItem,
     ) {
-        parent::__construct($targetUser, $currentTeam);
+        parent::__construct($targetUser);
     }
 
     #[Override]

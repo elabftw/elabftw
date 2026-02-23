@@ -28,7 +28,6 @@ use Elabftw\Models\Notifications\PdfAppendmentFailed;
 use Elabftw\Models\Notifications\PdfGenericError;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
-use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\Tex2Svg;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\Filesystem;
@@ -109,12 +108,10 @@ class MakePdf extends AbstractMakePdf
     {
         $this->loopOverEntries();
         $output = $this->mpdf->OutputBinaryData();
-        $teamId = $this->Entity->entityData['team'];
-        $currentTeam = new TeamsHelper($teamId);
         // use strlen for binary data, not mb_strlen
         $this->contentSize = strlen($output);
         if ($this->errors && $this->notifications) {
-            $Notifications = new PdfGenericError($this->requester, $currentTeam);
+            $Notifications = new PdfGenericError($this->requester);
             $Notifications->create();
         }
         return $output;

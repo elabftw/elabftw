@@ -20,7 +20,6 @@ use Elabftw\Models\Notifications\CommentCreated;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\CommentParam;
 use Elabftw\Traits\SetIdTrait;
-use Elabftw\Services\TeamsHelper;
 use Override;
 use PDO;
 
@@ -159,7 +158,6 @@ class Comments extends AbstractRest
             $recipients[] = $comment['userid'];
         }
         $userids = array_values(array_unique($recipients));
-        $currentTeam = new TeamsHelper($this->Entity->entityData['team']);
         foreach ($userids as $userid) {
             // skip commenter
             if ($userid === $this->Entity->Users->userData['userid']) {
@@ -167,7 +165,7 @@ class Comments extends AbstractRest
             }
             $targetUser = new Users($userid);
             /** @psalm-suppress PossiblyNullArgument */
-            $Notif = new CommentCreated($targetUser, $currentTeam, $this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
+            $Notif = new CommentCreated($targetUser, $this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
             $Notif->create();
         }
     }

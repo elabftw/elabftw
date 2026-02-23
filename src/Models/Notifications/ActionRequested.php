@@ -18,7 +18,6 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\TeamsHelper;
 use Override;
 
 final class ActionRequested extends AbstractNotifications implements MailableInterface
@@ -27,9 +26,9 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
 
     protected Notifications $category = Notifications::ActionRequested;
 
-    public function __construct(Users $targetUser, TeamsHelper $currentTeam, private Users $requester, private RequestableAction $action, private AbstractEntity $entity)
+    public function __construct(Users $targetUser, private Users $requester, private RequestableAction $action, private AbstractEntity $entity)
     {
-        parent::__construct($targetUser, $currentTeam);
+        parent::__construct($targetUser);
     }
 
     #[Override]

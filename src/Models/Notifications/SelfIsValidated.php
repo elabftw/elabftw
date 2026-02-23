@@ -16,7 +16,6 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\TeamsHelper;
 use Override;
 
 /**
@@ -26,9 +25,9 @@ final class SelfIsValidated extends AbstractNotifications implements MailableInt
 {
     protected Notifications $category = Notifications::SelfIsValidated;
 
-    public function __construct(Users $targetUser, TeamsHelper $currentTeam)
+    public function __construct(Users $targetUser)
     {
-        parent::__construct($targetUser, $currentTeam);
+        parent::__construct($targetUser);
     }
 
     // Note: here the actor fullname is directly fed to the instance, instead of fetching it from a new Users() like others.

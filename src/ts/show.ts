@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // END SEARCH RELATED CODE
 
   // background color for selected entities
-  const bgColor = '#c4f9ff';
+  const bgColor = 'var(--lightblue)';
 
   if (document.getElementById('favtagsPanel')) {
     document.getElementById('favtagsPanel').addEventListener('keyup', event => {

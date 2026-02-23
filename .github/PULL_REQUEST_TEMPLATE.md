@@ -6,7 +6,7 @@ To help us review your pull request more efficiently, please go through the list
 
 - [ ] I have added **tests** for any new features.
 - [ ] I have mentioned the related **issue** (if applicable).
-- [ ] I have updated or verified the [relevant documentation](https://github.com/elabftw/elabdoc).
+- [ ] I have updated or verified the [relevant documentation](https://github.com/elabftw/documentation).
 ---
 
 ### Pull Request Description
@@ -24,7 +24,7 @@ Please provide **clear context** for your proposed change:
 
 ### Contribution Guidelines
 
-Make sure to read [the contributing documentation](https://doc.elabftw.net/contributing.html).
+Make sure to read [the contributing documentation](https://doc.elabftw.net/docs/contributing/intro).
 
 **IMPORTANT**: Base your PR off the `hypernext` branch for a feature, and the `next` branch for a bugfix.
 

@@ -16,6 +16,7 @@ use Elabftw\Controllers\DownloadController;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\CreateUploadFromUploadedFile;
+use Elabftw\Enums\AccessType;
 use Elabftw\Hash\ExistingHash;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Hash\StringHash;
@@ -66,10 +67,10 @@ final class Uploads extends AbstractRest
     public function create(CreateUploadParamsInterface $params, bool $isTimestamp = false): int
     {
         // by default we need write access to an entity to upload files
-        $rw = 'write';
+        $rw = AccessType::Write;
         // but timestamping/sign only needs read access
         if ($isTimestamp) {
-            $rw = 'read';
+            $rw = AccessType::Read;
         }
         $this->Entity->canOrExplode($rw);
 
@@ -299,7 +300,8 @@ final class Uploads extends AbstractRest
                 }
             )(),
             Action::Replace => $this->replace(new CreateUploadFromUploadedFile(
-                new UploadedFile($reqBody['filePath'], $reqBody['real_name'], $this->uploadData['comment'])
+                new UploadedFile($reqBody['filePath'], $reqBody['real_name']),
+                $this->uploadData['comment']
             )),
             default => throw new ImproperActionException('Invalid action for upload creation.'),
         };
@@ -444,7 +446,7 @@ final class Uploads extends AbstractRest
         if ($this->uploadData['immutable'] === 1) {
             throw new IllegalActionException('User tried to edit an immutable upload.');
         }
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
     }
 
     private function archive(): array

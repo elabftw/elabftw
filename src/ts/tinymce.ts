@@ -315,14 +315,9 @@ export function getTinymceBaseConfig(page: string): object {
         });
       },
       insert: function(selected): string {
-        if (selected.type === 'items') {
-          ApiC.post(`${entity.type}/${entity.id}/items_links/${selected.id}`)
-            .then(() => reloadElements(['linksDiv']));
-        }
-        if (selected.type === 'experiments' && (entity.type === EntityType.Experiment || entity.type === EntityType.Item)) {
-          ApiC.post(`${entity.type}/${entity.id}/experiments_links/${selected.id}`)
-            .then(() => reloadElements(['linksExpDiv']));
-        }
+        const endpoint = selected.type === 'items' ? 'items_links' : 'experiments_links';
+        ApiC.post(`${entity.type}/${entity.id}/${endpoint}/${selected.id}`)
+          .then(() => reloadElements(['linksDiv']));
         const category = selected.category_title ? `${selected.category_title} - `: '';
         return `<span><a href='${selected.page}?mode=view&id=${selected.id}'>${category}${selected.title}</a></span>`;
       },

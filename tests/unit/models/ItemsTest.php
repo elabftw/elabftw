@@ -15,6 +15,7 @@ use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -108,7 +109,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         $new = $this->Items->create();
         $this->Items->setId($new);
-        $this->Items->canOrExplode('read');
+        $this->Items->canOrExplode(AccessType::Read);
         $this->assertEquals('Untitled', $this->Items->entityData['title']);
         $this->assertEquals(date('Y-m-d'), $this->Items->entityData['date']);
         $this->assertEquals(State::Normal->value, $this->Items->entityData['state']);
@@ -143,7 +144,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Items->setId(null);
         $this->expectException(IllegalActionException::class);
-        $this->Items->canOrExplode('read');
+        $this->Items->canOrExplode(AccessType::Read);
     }
 
     public function testReadBookable(): void
@@ -168,7 +169,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
 
     public function testDuplicate(): void
     {
-        $this->Items->canOrExplode('read');
+        $this->Items->canOrExplode(AccessType::Read);
         $ResourcesCategories = new ResourcesCategories(new Teams($this->Items->Users, $this->Items->Users->team));
         $category = $ResourcesCategories->create(title: 'Used in tests');
         $this->Items->patch(Action::Update, array('category' => $category, 'hide_main_text' => 1));

@@ -1148,7 +1148,6 @@ components:
               type: integer
               enum: [ 0, 1 ]
               description: Hide the main text of an entry. When applied to templates, this setting also applies to derived entries.
-              default: 0
             id:
               type: integer
             items_links:
@@ -1288,7 +1287,6 @@ components:
 
             If unset, it will use the user's preference value.
           example: 1
-          default: 1
           enum: [ 1, 2 ]
         custom_id:
           type: integer
@@ -1622,7 +1620,6 @@ components:
               - 40: Everyone with an account
               - 50: Everyone including anonymous users
           example: 20
-          default: 30
           enum: [10, 20, 30, 40, 50]
         canbook:
           type: string

@@ -236,7 +236,6 @@ final class Scheduler extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        // bind actions stay explicit
         if (isset($params['target'])) {
             match ($params['target']) {
                 'experiment' => $this->bind('experiment', $params['id']),
@@ -244,11 +243,10 @@ final class Scheduler extends AbstractRest
                 default => null
             };
         }
-        // normal fields updates
+        // otherwise treat as normal field patch
         $this->updateFields($params);
         return $this->readOne();
     }
-
     private function updateFields(array $params): void
     {
         $updates = [];
@@ -259,10 +257,19 @@ final class Scheduler extends AbstractRest
             $bindings[':title'] = $this->filterTitle((string)$params['title']);
         }
         // handle datetime
-        $dateUpdate = $this->prepareDateTimeUpdate($params);
-        if (!empty($dateUpdate)) {
-            $updates = array_merge($updates, $dateUpdate['updates']);
-            $bindings = array_merge($bindings, $dateUpdate['bindings']);
+        if (array_key_exists('start', $params) || array_key_exists('end', $params)) {
+            if (!isset($params['start'], $params['end'])) {
+                throw new ImproperActionException('Start and end must both be provided.');
+            }
+            $start = $this->normalizeDate($params['start']);
+            $end = $this->normalizeDate($params['end'], true);
+            $this->isFutureOrExplode(new DateTimeImmutable($start));
+            $this->isFutureOrExplode(new DateTimeImmutable($end));
+            $this->checkConstraints($start, $end);
+            $updates[] = 'start = :start';
+            $updates[] = 'end = :end';
+            $bindings[':start'] = $start;
+            $bindings[':end'] = $end;
         }
         if (empty($updates)) {
             return; // nothing to update
@@ -275,27 +282,6 @@ final class Scheduler extends AbstractRest
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-    }
-
-    private function prepareDateTimeUpdate(array $params): array
-    {
-        // If neither key exists, nothing to do
-        if (!array_key_exists('start', $params) && !array_key_exists('end', $params)) {
-            return [];
-        }
-        // If one is present, both must be
-        if (!isset($params['start'], $params['end'])) {
-            throw new ImproperActionException('Start and end must both be provided.');
-        }
-        $start = $this->normalizeDate($params['start']);
-        $end = $this->normalizeDate($params['end'], true);
-        $this->isFutureOrExplode(new DateTimeImmutable($start));
-        $this->isFutureOrExplode(new DateTimeImmutable($end));
-        $this->checkConstraints($start, $end);
-        return [
-            'updates' => ['start = :start', 'end = :end'],
-            'bindings' => [':start' => $start, ':end'   => $end]
-        ];
     }
 
     /**

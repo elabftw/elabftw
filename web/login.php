@@ -70,6 +70,15 @@ try {
     }
 
     if ($App->Request->query->get('switch_team') === '1') {
+        $cookieOptions = array(
+            'expires' => time() - 3600,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        );
+        setcookie('token_team', '', $cookieOptions);
         $loggedInUser = new Users($App->Session->get('userid'));
         $App->Session->set('team_selection_required', true);
         $App->Session->set('team_selection', $loggedInUser->userData['teams']);

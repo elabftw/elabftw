@@ -18,12 +18,12 @@
 {# ANNOUNCEMENTS #}
 {# general sysconfig announcement #}
 {%- if App.Config.configArr.announcement -%}
-  {{ App.Config.configArr.announcement|msg('warning', false) }}
+  {{ App.Config.configArr.announcement|msg('warning') }}
 {%- endif -%}
 
 {# team level announcement #}
 {%- if App.Teams.teamArr.announcement -%}
-  {{ App.Teams.teamArr.announcement|msg('warning', false) }}
+  {{ App.Teams.teamArr.announcement|msg('warning') }}
 {%- endif -%}
 <div id='output'></div>
 

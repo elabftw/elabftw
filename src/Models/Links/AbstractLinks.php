@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -92,7 +93,7 @@ abstract class AbstractLinks extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
 
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE link_id = :link_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
@@ -133,7 +134,7 @@ abstract class AbstractLinks extends AbstractRest
     // Add a link to an entity
     public function create(): int
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         // don't insert a link to the same entity, make sure we check for the type too
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
             return 0;
@@ -202,7 +203,7 @@ abstract class AbstractLinks extends AbstractRest
     // On duplicate of an entity, copy its links (experiments, resources) into the new entity
     private function import(): int
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
 
         $tableTypes = array(
             // same entity type: exp2exp, res2res

@@ -15,6 +15,7 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\EntityType;
@@ -278,7 +279,7 @@ abstract class AbstractEntityController implements ControllerInterface
     protected function changelog(): Response
     {
         // check permissions
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(AccessType::Read);
 
         $renderArr = array(
             'changes' => $this->Entity->entityData['changelog'],

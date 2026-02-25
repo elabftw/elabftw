@@ -230,7 +230,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testPatchTitle(): void
     {
-        $res = $this->getFreshSchedulerWithEvent()->patch(Action::Update, array('target' => 'title', 'content' => 'new title'));
+        $res = $this->getFreshSchedulerWithEvent()->patch(Action::Update, array('title' => 'new title'));
         $this->assertEquals('new title', $res['title']);
     }
 

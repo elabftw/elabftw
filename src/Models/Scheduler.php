@@ -22,7 +22,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
-use Elabftw\Services\ApiParamsValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
@@ -31,8 +30,6 @@ use PDO;
 
 use function array_walk;
 use function preg_replace;
-use function strlen;
-use function mb_substr;
 
 /**
  * All about the team's scheduler
@@ -236,16 +233,16 @@ final class Scheduler extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-
-        match ($params['target']) {
-            'start' => $this->updateStart($params['delta']),
-            'end' => $this->updateEnd($params['delta']),
-            'experiment' => $this->bind('experiment', $params['id']),
-            'item_link' => $this->bind('item_link', $params['id']),
-            'title' => $this->updateTitle($params['content']),
-            'datetime' => $this->updateDateTime($params),
-            default => throw new ImproperActionException('Incorrect target parameter.'),
-        };
+        // explicit binding operations
+        if (isset($params['target'])) {
+            match ($params['target']) {
+                'experiment' => $this->bind('experiment', $params['id']),
+                'item_link' => $this->bind('item_link', $params['id']),
+                default => null
+            };
+        }
+        // otherwise treat as normal field patch
+        $this->updateFields($params);
         return $this->readOne();
     }
 
@@ -290,20 +287,41 @@ final class Scheduler extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    private function updateDateTime(array $params): bool
+    private function updateFields(array $params): void
     {
-        ApiParamsValidator::ensureRequiredKeysPresent(array('start', 'end'), $params);
-        $start = $this->normalizeDate($params['start']);
-        $end = $this->normalizeDate($params['end'], true);
-        $this->isFutureOrExplode(new DateTimeImmutable($start));
-        $this->isFutureOrExplode(new DateTimeImmutable($end));
-        $this->checkConstraints($start, $end);
-        $sql = 'UPDATE team_events SET start = :start, end = :end WHERE id = :id';
+        $updates = array();
+        $bindings = array();
+        // handle title
+        if (array_key_exists('title', $params)) {
+            $updates[] = 'title = :title';
+            $bindings[':title'] = $this->filterTitle((string) $params['title']);
+        }
+        // handle datetime
+        if (array_key_exists('start', $params) || array_key_exists('end', $params)) {
+            if (!isset($params['start'], $params['end'])) {
+                throw new ImproperActionException('Start and end must both be provided.');
+            }
+            $start = $this->normalizeDate($params['start']);
+            $end = $this->normalizeDate($params['end'], true);
+            $this->isFutureOrExplode(new DateTimeImmutable($start));
+            $this->isFutureOrExplode(new DateTimeImmutable($end));
+            $this->checkConstraints($start, $end);
+            $updates[] = 'start = :start';
+            $updates[] = 'end = :end';
+            $bindings[':start'] = $start;
+            $bindings[':end'] = $end;
+        }
+        if (empty($updates)) {
+            return; // nothing to update
+        }
+        $sql = 'UPDATE team_events SET ' . implode(', ', $updates) . ' WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':start', $start);
-        $req->bindValue(':end', $end);
+        foreach ($bindings as $key => $value) {
+            $req->bindValue($key, $value);
+        }
+        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $this->Db->execute($req);
     }
 
     private function appendItemsIdsToSql(array $itemsIds): void
@@ -401,72 +419,6 @@ final class Scheduler extends AbstractRest
         $event = $this->Db->fetch($req);
         $this->Items->setId($event['item']);
         return $event;
-    }
-
-    /**
-     * Update the start (and end) of an event (when you drag and drop it)
-     *
-     * @param array<string, string> $delta timedelta
-     */
-    private function updateStart(array $delta): bool
-    {
-        $event = $this->readOne();
-        $oldStart = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['start']);
-        $oldEnd = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['end']);
-        if (!$oldStart || !$oldEnd) {
-            throw new ImproperActionException('Invalid date format received.');
-        }
-        $seconds = '0';
-        if (strlen((string) $delta['milliseconds']) > 3) {
-            $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
-        }
-        $newStart = $oldStart->modify($delta['days'] . ' day')->modify($seconds . ' seconds');
-        $this->isFutureOrExplode($newStart);
-        $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds');
-        $this->isFutureOrExplode($newEnd);
-        $this->checkConstraints($newStart->format(self::DATETIME_FORMAT), $newEnd->format(self::DATETIME_FORMAT));
-
-        $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':start', $newStart->format(self::DATETIME_FORMAT));
-        $req->bindValue(':end', $newEnd->format(self::DATETIME_FORMAT));
-        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    /**
-     * Update the end of an event (when you resize it)
-     *
-     * @param array<string, string> $delta timedelta
-     */
-    private function updateEnd(array $delta): bool
-    {
-        $event = $this->readOne();
-        $oldEnd = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['end']);
-        $seconds = '0';
-        if (strlen((string) $delta['milliseconds']) > 3) {
-            $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
-        }
-        $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
-        $this->isFutureOrExplode($newEnd);
-        $this->checkConstraints($event['start'], $newEnd->format(self::DATETIME_FORMAT));
-
-        $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':end', $newEnd->format(self::DATETIME_FORMAT));
-        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
-    private function updateTitle(string $title): bool
-    {
-        $sql = 'UPDATE team_events SET title = :title WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':title', $this->filterTitle($title));
-        return $this->Db->execute($req);
     }
 
     /**

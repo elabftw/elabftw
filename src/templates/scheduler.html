@@ -66,25 +66,22 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
+    <form id='editEventForm' aria-label='{{ 'Edit event'|trans }}' data-item-id='{{ Entity.id }}'>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         {# "placeholder" will be replaced with real title by js #}
-        <label for='eventTitle'>{{ 'Comment'|trans }}</label>
+        <label for='title'>{{ 'Comment'|trans }}</label>
         <div class='input-group'>
           {# a data-eventid will get added to this element by js #}
-          <input class='form-control' type='text' id='eventTitle' value='placeholder' />
-          <div class='input-group-append'>
-            <button class='btn btn-primary' data-action='save-event-title' type='button'>{{ 'Save'|trans }}</button>
-          </div>
+          <input class='form-control' type='text' id='title' value='placeholder' name='title' />
         </div>
         <hr>
         {# START AND END TIMES #}
         <div class='mt-2'>
           <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
-          <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start_epoch' value='' />
+          <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start_epoch' value='' name='eventStart'/>
           <label for='schedulerEventModalEnd'>{{ 'End time'|trans }}</label>
-          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end_epoch' value='' />
+          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end_epoch' value='' name='eventEnd' />
         </div>
-
         {# BIND EXPERIMENT #}
         <div class='mt-2'>
           <i class='fas fa-link mr-1'></i><h5 class='d-inline' id='bindExpInputLabel'>{{ 'Bind an experiment'|trans }}</h5>
@@ -136,16 +133,20 @@
                 <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ teamgroup.id }}' value='teamgroup' id='targetCancelEventTeamgroup_{{ teamgroup.id }}'> <label class='form-check-label' for='targetCancelEventTeamgroup_{{ teamgroup.id }}'>{{ 'Members of teamgroup %s'|trans|format(teamgroup.name) }}</label>
               </div>
             {% endfor %}
-            <div class='mt-2'>
-              <button type='button' data-action='cancel-event-with-message' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
-              {# here we use Cancel booking instead of just Cancel so we can have a specific translated term in German #}
-              <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel booking'|trans }}</button>
-          </div>
         </div>
       </div>
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-      </div>
+        <div class='modal-footer d-flex'>
+            <div id='isCancellableButtons'>
+                {# here we use Cancel booking instead of just Cancel so we can have a specific translated term in German #}
+                <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel booking'|trans }}</button>
+                <button type='button' data-action='cancel-event-with-message' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
+            </div>
+            <div class='ml-auto'>
+                <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+                <button type='submit' class='btn btn-primary' data-action='edit-event'>{{ 'Save'|trans }}</button>
+            </div>
+        </div>
+    </form>
     </div>
   </div>
 </div>

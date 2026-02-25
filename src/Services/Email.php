@@ -145,7 +145,10 @@ class Email
             try {
                 if ($this->sendEmail($address, $subject, $content, replyTo: $replyTo)) {
                     $sentCount++;
+                    continue;
                 }
+                // send() returned false because sending is disabled for this Email instance
+                break;
                 // this will be thrown by send() method
             } catch (ImproperActionException) {
                 continue;

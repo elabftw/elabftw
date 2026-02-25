@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Info;
@@ -31,13 +32,17 @@ class EmailTest extends \PHPUnit\Framework\TestCase
 
     private Logger $Logger;
 
+    private SchemaVersionChecker $schemaVersionChecker;
+
     protected function setUp(): void
     {
         $this->Logger = new Logger('elabftw');
         // use NullHandler because we don't care about logs here
         $this->Logger->pushHandler(new NullHandler());
+        // we don't need to mock it, just give it the required schema as arg
+        $this->schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
         $MockMailer = $this->createMock(MailerInterface::class);
-        $this->Email = new Email($MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: false);
+        $this->Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: false);
     }
 
     public function testTestemailSendInDemo(): void
@@ -45,7 +50,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $Logger = new Logger('elabftw');
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $EmailInDemo = new Email($MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: true);
+        $EmailInDemo = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: true);
         $this->assertFalse($EmailInDemo->testemailSend('toto@example.com'));
     }
 
@@ -57,7 +62,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     public function testNotConfigured(): void
     {
         $MockMailer = $this->createMock(MailerInterface::class);
-        $NotConfiguredEmail = new Email($MockMailer, $this->Logger, 'notconfigured@example.com');
+        $NotConfiguredEmail = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'notconfigured@example.com');
         $this->assertFalse($NotConfiguredEmail->testemailSend('toto@example.com'));
     }
 
@@ -65,7 +70,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     {
         $MockMailer = $this->createMock(MailerInterface::class);
         $MockMailer->method('send')->willThrowException(new TransportException());
-        $Email = new Email($MockMailer, $this->Logger, 'yep@nope.blah');
+        $Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'yep@nope.blah');
         $this->expectException(ImproperActionException::class);
         $Email->testemailSend('toto@example.com');
 

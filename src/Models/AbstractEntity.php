@@ -23,6 +23,7 @@ use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Permissions;
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
@@ -1223,10 +1224,12 @@ abstract class AbstractEntity extends AbstractRest
         if (!$addresses) {
             return 0;
         }
+        $Config = Config::getConfig();
         $Email = new Email(
+            new SchemaVersionChecker((int) $Config->configArr['schema']),
             new Mailer(Transport::fromDsn(Config::getConfig()->getDsn())),
             App::getDefaultLogger(),
-            Config::getConfig()->configArr['mail_from'],
+            $Config->configArr['mail_from'],
             Env::asBool('DEMO_MODE'),
         );
         $subject = Filter::toPureString($params['subject']);

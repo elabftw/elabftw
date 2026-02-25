@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -35,7 +36,9 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
         // use NullHandler because we don't care about logs here
         $logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $this->email = new Email($MockMailer, $logger, 'toto@yopmail.com', demoMode: false);
+        // we don't need to mock it, just give it the required schema as arg
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
+        $this->email = new Email($schemaVersionChecker, $MockMailer, $logger, 'toto@yopmail.com', demoMode: false);
         $this->Instance = new Instance(new Users(1, 1), $this->email, true);
     }
 

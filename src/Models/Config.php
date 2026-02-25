@@ -18,7 +18,7 @@ use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\S3Config;
-use Elabftw\Elabftw\Update;
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\AppException;
@@ -213,7 +213,7 @@ final class Config extends AbstractRest
             ('dspace_password', '')";
 
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':schema', Update::REQUIRED_SCHEMA);
+        $req->bindValue(':schema', SchemaVersionChecker::REQUIRED_SCHEMA);
 
         return $this->Db->execute($req);
     }

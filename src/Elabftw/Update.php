@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\Config;
 use PDO;
 
@@ -25,7 +24,7 @@ use function sprintf;
 use function mb_substr;
 
 /**
- * Use this to check for latest version or update the database schema
+ * Run the update schema script
  *
  * How to modify the structure:
  * 1. Generate a schema with bin/console dev:genschema
@@ -36,24 +35,11 @@ use function mb_substr;
  */
 final class Update
 {
-    /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const int REQUIRED_SCHEMA = 203;
-
     private Db $Db;
 
-    public function __construct(private int $currentSchema, private Sql $Sql)
+    public function __construct(private readonly SchemaVersionChecker $schemaVersionChecker, private readonly Sql $Sql)
     {
         $this->Db = Db::getConnection();
-    }
-
-    /**
-     * Check if the Db structure needs updating
-     */
-    public function checkSchema(): void
-    {
-        if ($this->currentSchema !== self::REQUIRED_SCHEMA) {
-            throw new InvalidSchemaException();
-        }
     }
 
     /**
@@ -71,23 +57,23 @@ final class Update
         }
 
         // old style update functions have been removed, so add a block to prevent upgrade from very very old to newest directly
-        if ($this->currentSchema < 37) {
+        if ($this->schemaVersionChecker->currentSchema < 37) {
             throw new ImproperActionException('Please update first to latest version from 1.8 branch before updating to 2.0 branch! See documentation.');
         }
 
-        if ($this->currentSchema < 41) {
+        if ($this->schemaVersionChecker->currentSchema < 41) {
             throw new ImproperActionException('Please update first to latest version from 2.0 branch before updating to 3.0 branch! See documentation.');
         }
 
         // new style with SQL files instead of functions
         $Config = Config::getConfig();
-        while ($this->currentSchema < self::REQUIRED_SCHEMA) {
-            ++$this->currentSchema;
-            $this->Sql->execFile(sprintf('schema%d.sql', $this->currentSchema), $force);
+        while ($this->schemaVersionChecker->currentSchema < $this->schemaVersionChecker::REQUIRED_SCHEMA) {
+            ++$this->schemaVersionChecker->currentSchema;
+            $this->Sql->execFile(sprintf('schema%d.sql', $this->schemaVersionChecker->currentSchema), $force);
             // this will bust cache
-            $Config->patch(Action::Update, array('schema' => $this->currentSchema));
+            $Config->patch(Action::Update, array('schema' => $this->schemaVersionChecker->currentSchema));
             // schema57: add an elabid to existing database items
-            if ($this->currentSchema === 57) {
+            if ($this->schemaVersionChecker->currentSchema === 57) {
                 $this->addElabidToItems();
                 $this->fixExperimentsRevisions();
             }

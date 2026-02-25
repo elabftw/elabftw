@@ -48,6 +48,7 @@ try {
             $targetType = EmailTarget::TeamGroup;
         }
         $Email = new Email(
+            new SchemaVersionChecker((int) $App->Config->configArr['schema']),
             new Mailer(Transport::fromDsn($App->Config->getDsn())),
             $App->Log,
             $App->Config->configArr['mail_from'],

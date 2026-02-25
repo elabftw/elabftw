@@ -19,23 +19,44 @@
     <style>
       body {
         font-family: sans-serif;
-        background-color: #29aeb9;
+        background-color: #1e1e1e;
         color: #fff;
         width: 80%;
         margin: auto;
         margin-top: 10%;
       }
+      a {
+        color: #29aeb9;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
       pre {
         font-family: 'courier new', Courier, sans-serif;
-        background-color: #000;
+        background-color: #fafafa;
+        color: #1e1e1e;
         padding: 10px;
+        border-radius: 5px;
+      }
+      code {
+        font-family: 'courier new', Courier, sans-serif;
+        font-weight: bold;
+      }
+      .note {
+        padding: 15px;
+        margin-top: 15px;
+        background-color: #fbffa8;
+        color: black;
         border-radius: 5px;
       }
     </style>
 
     <h1>Almost there!</h1>
     <h2>To finish the update, run the "bin/console db:update" command:</h2>
-      <pre>docker exec -it elabftw bin/console db:update</pre>
-      <p>See <a href='https://doc.elabftw.net/docs/install/update'>documentation</a>.</p>
+    <pre>docker exec -it elabftw bin/console db:update</pre>
+    <p>See <a target='_blank' rel='noopener' href='https://doc.elabftw.net/docs/install/update'>documentation</a>.</p>
+
+    <div class='note'>Note: you can automate this step by setting <code>AUTO_DB_UPDATE=true</code> as an environment variable in the container.</div>
   </body>
 </html>

@@ -1610,7 +1610,6 @@ components:
       properties:
         is_bookable:
           type: integer
-          enum: [0, 1]
         canbook_base:
           type: number
           description: |
@@ -1630,19 +1629,14 @@ components:
           type: integer
         book_can_overlap:
           type: integer
-          enum: [0, 1]
         book_users_can_in_past:
           type: integer
-          enum: [0, 1]
         book_is_cancellable:
           type: integer
-          enum: [0, 1]
         book_cancel_minutes:
           type: integer
         booking_window_days:
           type: integer
-          minimum: 0
-          default: 0
           description: How many days in advance users can book an item. 0 means no limit.
 
     item:

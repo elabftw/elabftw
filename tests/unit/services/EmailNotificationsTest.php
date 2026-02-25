@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use DateTime;
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Models\Notifications\CommentCreated;
@@ -24,10 +25,14 @@ use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use PDO;
 
 class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     public function testSendEmails(): void
     {
         // create a notification to fake send so there is something to process
@@ -75,6 +80,41 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         $Notifications->create();
         $Notifications->create();
 
+        $this->stubEmail();
+    }
+
+    public function testDoNotSendEmailsToArchivedUserInAllTeams(): void
+    {
+        $randomUser = $this->getRandomUserInTeam(1, 0, 0);
+        $targetUser = new Users($randomUser->userid);
+
+        $Notifications = new CommentCreated($targetUser, EntityType::Experiments->toPage(), 1, 2);
+        $notif = $Notifications->create();
+
+        $this->stubEmail();
+
+        // Check if email is sent for non archived users
+        $Db = Db::getConnection();
+        $sql = 'SELECT email_sent, email_sent_at FROM notifications WHERE id = :id';
+        $req = $Db->prepare($sql);
+        $req->bindParam(':id', $notif, PDO::PARAM_INT);
+        $Db->execute($req);
+        $row = $req->fetch();
+        $this->assertSame(1, $row['email_sent']);
+        $this->assertNotNull($row['email_sent_at']);
+
+        // archive user
+        $this->UpdateArchiveStatus($targetUser->userid, 1);
+        $NotificationsFails = new CommentCreated($targetUser, EntityType::Experiments->toPage(), 1, 2);
+        $notifFails = $NotificationsFails->create();
+        $this->assertSame(0, $notifFails);
+
+        // Restore user archive status
+        $this->UpdateArchiveStatus($targetUser->userid, 0);
+    }
+
+    private function stubEmail(): void
+    {
         $stub = $this->createStub(Email::class);
         $stub->method('sendEmail')->willReturn(true);
         $EmailNotifications = new EmailNotifications($stub);

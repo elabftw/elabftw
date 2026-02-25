@@ -154,7 +154,7 @@ class Comments extends AbstractRest
     {
         $comments = $this->readAll();
         // add the owner
-        $recipients[] = $this->Entity->entityData['userid'];
+        $recipients = array($this->Entity->entityData['userid']);
         foreach ($comments as $comment) {
             $recipients[] = $comment['userid'];
         }

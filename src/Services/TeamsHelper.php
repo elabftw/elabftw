@@ -74,7 +74,6 @@ final class TeamsHelper
 
     public static function isArchivedInAllTeams(int $userid): bool
     {
-
         $Db = Db::getConnection();
         $sql = 'SELECT `users_id`,
                 MIN(is_archived) AS `all_archived`
@@ -92,7 +91,7 @@ final class TeamsHelper
     {
         $sql = 'SELECT `users_id`, `is_admin` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
         $req = $this->Db->prepare($sql);
-         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetch() ?: array();

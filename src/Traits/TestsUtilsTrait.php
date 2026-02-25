@@ -119,4 +119,14 @@ trait TestsUtilsTrait
         $Entity->setId($id);
         return $Entity;
     }
+
+    protected function UpdateArchiveStatus(int $userid, int $is_archived): void
+    {
+        $Db = Db::getConnection();
+        $sql = 'UPDATE users2teams SET is_archived = :is_archived WHERE users_id = :userid';
+        $req = $Db->prepare($sql);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindValue(':is_archived', $is_archived, PDO::PARAM_INT);
+        $req->execute();
+    }
 }

@@ -92,7 +92,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     {
         $info = _('A booked slot was deleted from the scheduler.');
         $url = Env::asUrl('SITE_URL') . '/team.php?item=' . $this->event['item'];
-        $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $this->$targetUser->userData['fullname'], $url, $this->event['start'], $this->event['end']);
+        $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $this->targetUser->userData['fullname'], $url, $this->event['start'], $this->event['end']);
         if (!empty($this->msg)) {
             $body .= "\n\n" . _('Message:') . "\n" . $this->msg;
         }

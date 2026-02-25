@@ -596,7 +596,6 @@ if (window.location.pathname === '/scheduler.php') {
         await ApiC.patch(`event/${info.event.id}`, {target: 'datetime', start: startIso, end: endIso});
       } catch (err) {
         info.revert();
-        notify.error(err);
       }
     }
 

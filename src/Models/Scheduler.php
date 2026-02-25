@@ -236,15 +236,66 @@ final class Scheduler extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-
-        match ($params['target']) {
-            'experiment' => $this->bind('experiment', $params['id']),
-            'item_link' => $this->bind('item_link', $params['id']),
-            'title' => $this->updateTitle($params['content']),
-            'datetime' => $this->updateDateTime($params),
-            default => throw new ImproperActionException('Incorrect target parameter.'),
-        };
+        // bind actions stay explicit
+        if (isset($params['target'])) {
+            match ($params['target']) {
+                'experiment' => $this->bind('experiment', $params['id']),
+                'item_link' => $this->bind('item_link', $params['id']),
+                default => null
+            };
+        }
+        // normal fields updates
+        $this->updateFields($params);
         return $this->readOne();
+    }
+
+    private function updateFields(array $params): void
+    {
+        $updates = [];
+        $bindings = [];
+        // handle title
+        if (isset($params['title'])) {
+            $updates[] = 'title = :title';
+            $bindings[':title'] = $params['title'];
+        }
+        // handle datetime
+        $dateUpdate = $this->prepareDateTimeUpdate($params);
+        if (!empty($dateUpdate)) {
+            $updates = array_merge($updates, $dateUpdate['updates']);
+            $bindings = array_merge($bindings, $dateUpdate['bindings']);
+        }
+        if (empty($updates)) {
+            return; // nothing to update
+        }
+        $sql = 'UPDATE team_events SET ' . implode(', ', $updates) . ' WHERE team = :team AND id = :id';
+        $req = $this->Db->prepare($sql);
+        foreach ($bindings as $key => $value) {
+            $req->bindValue($key, $value);
+        }
+        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+    }
+
+    private function prepareDateTimeUpdate(array $params): array
+    {
+        // If neither key exists, nothing to do
+        if (!array_key_exists('start', $params) && !array_key_exists('end', $params)) {
+            return [];
+        }
+        // If one is present, both must be
+        if (!isset($params['start'], $params['end'])) {
+            throw new ImproperActionException('Start and end must both be provided.');
+        }
+        $start = $this->normalizeDate($params['start']);
+        $end = $this->normalizeDate($params['end'], true);
+        $this->isFutureOrExplode(new DateTimeImmutable($start));
+        $this->isFutureOrExplode(new DateTimeImmutable($end));
+        $this->checkConstraints($start, $end);
+        return [
+            'updates' => ['start = :start', 'end = :end'],
+            'bindings' => [':start' => $start, ':end'   => $end]
+        ];
     }
 
     /**
@@ -285,22 +336,6 @@ final class Scheduler extends AbstractRest
             }
             $Notif->create($userid);
         });
-        return $this->Db->execute($req);
-    }
-
-    private function updateDateTime(array $params): bool
-    {
-        ApiParamsValidator::ensureRequiredKeysPresent(array('start', 'end'), $params);
-        $start = $this->normalizeDate($params['start']);
-        $end = $this->normalizeDate($params['end'], true);
-        $this->isFutureOrExplode(new DateTimeImmutable($start));
-        $this->isFutureOrExplode(new DateTimeImmutable($end));
-        $this->checkConstraints($start, $end);
-        $sql = 'UPDATE team_events SET start = :start, end = :end WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':start', $start);
-        $req->bindValue(':end', $end);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

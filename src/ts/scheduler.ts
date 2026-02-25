@@ -447,14 +447,10 @@ if (window.location.pathname === '/scheduler.php') {
       eventMouseLeave: function(info): void {
         info.el.classList.remove('calendar-event-hover');
       },
-      // a drop means we change start date
-      eventDrop: function(info): void {
-        ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta}).catch(() => info.revert());
-      },
-      // a resize means we change end date
-      eventResize: function(info): void {
-        ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta}).catch(() => info.revert());
-      },
+      // a drop means we change start date/time
+      eventDrop: handleEventDateChange,
+      // a resize means we change end date/time
+      eventResize: handleEventDateChange,
     });
 
     initTomSelect();
@@ -587,6 +583,21 @@ if (window.location.pathname === '/scheduler.php') {
         }
       });
       selectEl.tomselect.refreshOptions(false);
+    }
+
+    async function handleEventDateChange(info: any): Promise<void> {
+      try {
+        if (!info.event.start || !info.event.end) {
+          info.revert();
+          return;
+        }
+        const startIso = DateTime.fromJSDate(info.event.start, { zone: 'system' }).toISO({ suppressMilliseconds: true });
+        const endIso = DateTime.fromJSDate(info.event.end, { zone: 'system' }).toISO({ suppressMilliseconds: true });
+        await ApiC.patch(`event/${info.event.id}`, {target: 'datetime', start: startIso, end: endIso});
+      } catch (err) {
+        info.revert();
+        notify.error(err);
+      }
     }
 
     function initTomSelect(): void {

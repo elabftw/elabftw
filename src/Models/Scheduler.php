@@ -238,7 +238,6 @@ final class Scheduler extends AbstractRest
         $this->canWriteOrExplode();
 
         match ($params['target']) {
-            'start', 'end' => $this->updateDelta($params),
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
             'title' => $this->updateTitle($params['content']),
@@ -402,49 +401,6 @@ final class Scheduler extends AbstractRest
         return $event;
     }
 
-    // Update the start and end of an event on drag/drop and resize
-    private function updateDelta(array $params): bool
-    {
-        if (!isset($params['delta'])) {
-            throw new ImproperActionException('Missing delta.');
-        }
-        $event = $this->readOne();
-        $delta = $params['delta'];
-        $oldStart = new DateTimeImmutable($event['start']);
-        $oldEnd   = new DateTimeImmutable($event['end']);
-        $days = (int) ($delta['days'] ?? 0);
-        $seconds = 0;
-        if (!empty($delta['milliseconds'])) {
-            $seconds = (int) floor($delta['milliseconds'] / 1000);
-        }
-        // MOVE EVENT (drag)
-        if ($params['target'] === 'start') {
-            $newStart = $oldStart->modify("$days day")->modify("$seconds seconds");
-            $newEnd = $oldEnd->modify("$days day")->modify("$seconds seconds");
-        }
-        // RESIZE EVENT
-        elseif ($params['target'] === 'end') {
-            $newStart = $oldStart;
-            $newEnd = $oldEnd->modify("$days day")->modify("$seconds seconds");
-        }
-        else {
-            throw new ImproperActionException('Invalid delta target.');
-        }
-        // VALIDATION
-        $this->isFutureOrExplode($newStart);
-        $this->isFutureOrExplode($newEnd);
-        $startFormatted = $newStart->format(self::DATETIME_FORMAT);
-        $endFormatted = $newEnd->format(self::DATETIME_FORMAT);
-        $this->checkConstraints($startFormatted, $endFormatted);
-        // UPDATE
-        $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':start', $startFormatted);
-        $req->bindValue(':end', $endFormatted);
-        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
     private function updateTitle(string $title): bool
     {
         $sql = 'UPDATE team_events SET title = :title WHERE id = :id';

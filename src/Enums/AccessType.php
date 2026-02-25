@@ -16,4 +16,5 @@ enum AccessType: string
 {
     case Read = 'canread';
     case Write = 'canwrite';
+    case Book = 'canbook';
 }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models\Links;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -68,7 +69,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         return match ($action) {
             Action::Create => $this->create(),
             default => throw new ImproperActionException('Invalid action for links create.'),
@@ -93,7 +94,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE compound_id = :compound_id AND entity_id = :entity_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':compound_id', $this->id, PDO::PARAM_INT);
@@ -109,7 +110,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     // Add a compound to an entity
     public function create(): int
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (compound_id, entity_id) VALUES(:link_id, :item_id)';
         $req = $this->Db->prepare($sql);

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\StepDeadline;
@@ -55,7 +56,7 @@ final class Steps extends AbstractRest
      */
     public function import(array $step): void
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
 
         $body = str_replace('|', ' ', $step['body']);
         $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering, finished, finished_time)
@@ -163,7 +164,7 @@ final class Steps extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
         match ($action) {
             Action::Finish => $this->toggleFinished(),
@@ -203,7 +204,7 @@ final class Steps extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams('steps', $action->value));
@@ -213,7 +214,7 @@ final class Steps extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->Entity->canOrExplode('write');
+        $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
         $Changelog = new Changelog($this->Entity);
         /** @psalm-suppress PossiblyNullArgument */

@@ -17,7 +17,6 @@ use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\StepDeadline;
-use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\StepParams;
 use Elabftw\Services\Filter;
@@ -328,12 +327,11 @@ final class Steps extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    private function getStepDeadline(string $deadline = '', ?Users $user = null): StepDeadline
+    private function getStepDeadline(string $deadline = ''): StepDeadline
     {
-        $user ??= $this->Entity->Users;
         /** @psalm-suppress PossiblyNullArgument */
         return new StepDeadline(
-            $user,
+            $this->Entity->Users,
             $this->id,
             $this->Entity->id,
             $this->Entity->entityType->toPage(),

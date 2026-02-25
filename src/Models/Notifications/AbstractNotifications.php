@@ -42,11 +42,11 @@ abstract class AbstractNotifications
 
     public function create(): int
     {
-        if ($this->targetUser->userid !== null && TeamsHelper::isArchivedInAllTeams($this->targetUser->userid)) {
+        if (TeamsHelper::isArchivedInAllTeams($this->targetUser->userid ?? 0)) {
             return 0;
         }
 
-        [$webNotif, $sendEmail] = $this->getPref($this->targetUser);
+        [$webNotif, $sendEmail] = $this->getPref();
 
         $isAck = 1;
         if ($webNotif === 1) {
@@ -79,14 +79,14 @@ abstract class AbstractNotifications
     /**
      * @return array<int, int>
      */
-    protected function getPref(Users $targetUser): array
+    protected function getPref(): array
     {
         // only categories inferior to 20 have a user setting for email/web notif
         if ($this->category->value >= 20) {
             return array(1, 1);
         }
 
-        $userData = $targetUser->userData;
+        $userData = $this->targetUser->userData;
         return array($userData[$this::PREF], $userData[$this::PREF . '_email']);
     }
 }

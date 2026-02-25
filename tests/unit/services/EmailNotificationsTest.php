@@ -85,8 +85,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 
     public function testDoNotSendEmailsToArchivedUserInAllTeams(): void
     {
-        $randomUser = $this->getRandomUserInTeam(1, 0, 0);
-        $targetUser = new Users($randomUser->userid);
+        $targetUser = $this->getRandomUserInTeam(1);
 
         $Notifications = new CommentCreated($targetUser, EntityType::Experiments->toPage(), 1, 2);
         $notif = $Notifications->create();
@@ -104,13 +103,13 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotNull($row['email_sent_at']);
 
         // archive user
-        $this->UpdateArchiveStatus($targetUser->userid, 1);
+        $this->updateArchiveStatus($targetUser->userid, 1);
         $NotificationsFails = new CommentCreated($targetUser, EntityType::Experiments->toPage(), 1, 2);
         $notifFails = $NotificationsFails->create();
         $this->assertSame(0, $notifFails);
 
         // Restore user archive status
-        $this->UpdateArchiveStatus($targetUser->userid, 0);
+        $this->updateArchiveStatus($targetUser->userid, 0);
     }
 
     private function stubEmail(): void

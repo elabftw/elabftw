@@ -40,13 +40,13 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testIsArchivedInAllTeams(): void
     {
-        $target = $this->getRandomUserInTeam(1, 0, 0);
+        $target = $this->getRandomUserInTeam(1);
         $this->assertFalse(TeamsHelper::isArchivedInAllTeams($target->userid));
 
         // Archive user in all teams
-        $this->UpdateArchiveStatus($target->userid, 1);
+        $this->updateArchiveStatus($target->userid, 1);
         $this->assertTrue(TeamsHelper::isArchivedInAllTeams($target->userid));
         // Restore user archive status
-        $this->UpdateArchiveStatus($target->userid, 0);
+        $this->updateArchiveStatus($target->userid, 0);
     }
 }

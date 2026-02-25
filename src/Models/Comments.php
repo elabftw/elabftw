@@ -153,11 +153,13 @@ class Comments extends AbstractRest
     protected function createNotifications(): void
     {
         $comments = $this->readAll();
-        // add the owner
+        // start by adding the owner
         $recipients = array($this->Entity->entityData['userid']);
+        // then loop over comments to add participants
         foreach ($comments as $comment) {
             $recipients[] = $comment['userid'];
         }
+        // make sure everyone only gets one notification: remove duplicates
         $userids = array_values(array_unique($recipients));
         foreach ($userids as $userid) {
             // skip commenter

@@ -281,7 +281,6 @@ final class Scheduler extends AbstractRest
         $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
         $admins = $TeamsHelper->getAllAdminsUserid();
         foreach ($admins as $adminId) {
-            $adminId = (int) $adminId;
             if ($adminId === $this->Items->Users->userData['userid']) {
                 continue;
             }

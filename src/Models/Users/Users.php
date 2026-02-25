@@ -171,7 +171,6 @@ class Users extends AbstractRest
         $req->bindValue(':can_manage_inventory_locations', $canManageInventoryLocations->value);
         $this->Db->execute($req);
         $userid = $this->Db->lastInsertId();
-        $targetUser = new self($userid);
 
         // check if the team is empty before adding the user to the team
         $isFirstUser = $TeamsHelper->isFirstUserInTeam();
@@ -189,6 +188,7 @@ class Users extends AbstractRest
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $isValidated, $teams[0]['name']);
         }
+        $targetUser = new self($userid);
         if ($isValidated) {
             // send the instance level onboarding email
             if ($Config->configArr['onboarding_email_active'] === '1') {

@@ -120,7 +120,7 @@ trait TestsUtilsTrait
         return $Entity;
     }
 
-    protected function UpdateArchiveStatus(int $userid, int $is_archived): void
+    protected function updateArchiveStatus(int $userid, int $is_archived): void
     {
         $Db = Db::getConnection();
         $sql = 'UPDATE users2teams SET is_archived = :is_archived WHERE users_id = :userid';

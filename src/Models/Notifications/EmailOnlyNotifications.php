@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
 
-use Elabftw\Models\Users\Users;
 use Override;
 
 /**
@@ -22,7 +21,7 @@ use Override;
 class EmailOnlyNotifications extends AbstractNotifications
 {
     #[Override]
-    protected function getPref(Users $targetUser): array
+    protected function getPref(): array
     {
         // only mailable
         return array(0, 1);

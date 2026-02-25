@@ -48,7 +48,7 @@ final class Transform
                 ),
             Notifications::EventDeleted =>
                 sprintf(
-                    '<span data-action="ack-notif" data-id="%d" data-href="team.php?item=%d">%s (%s)</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="scheduler.php?item=%d">%s (%s)</span>' . $relativeMoment,
                     (int) $notif['id'],
                     (int) $notif['body']['event']['item'],
                     _('A booked slot was deleted from the scheduler.'),

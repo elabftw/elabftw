@@ -66,13 +66,13 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-    <form id='editEventModal' aria-label='{{ 'Edit event'|trans }}' data-item-id='{{ Entity.id }}'>
+    <form id='editEventForm' aria-label='{{ 'Edit event'|trans }}' data-item-id='{{ Entity.id }}'>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         {# "placeholder" will be replaced with real title by js #}
         <label for='eventTitle'>{{ 'Comment'|trans }}</label>
         <div class='input-group'>
           {# a data-eventid will get added to this element by js #}
-          <input class='form-control' type='text' id='eventTitle' value='placeholder' />
+          <input class='form-control' type='text' id='eventTitle' value='placeholder' name='eventTitle' />
           <div class='input-group-append'>
             <button class='btn btn-primary' data-action='save-event-title' type='button'>{{ 'Save'|trans }}</button>
           </div>
@@ -81,9 +81,9 @@
         {# START AND END TIMES #}
         <div class='mt-2'>
           <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
-          <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start_epoch' value='' />
+          <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start_epoch' value='' name='eventStart'/>
           <label for='schedulerEventModalEnd'>{{ 'End time'|trans }}</label>
-          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end_epoch' value='' />
+          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end_epoch' value='' name='eventEnd' />
         </div>
         {# BIND EXPERIMENT #}
         <div class='mt-2'>

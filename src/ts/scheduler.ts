@@ -61,6 +61,16 @@ function toDateTimeInputValueNumber(datetime: Date): number {
   return datetime.valueOf() - offset;
 }
 
+function clearBoundDiv(type: string) {
+  if (type === 'experiment') {
+    $('#eventBoundExp').html('');
+    $('[data-action="scheduler-rm-bind"][data-type="experiment"]').hide();
+    return;
+  }
+  $('#eventBoundDb').html('');
+  $('[data-action="scheduler-rm-bind"][data-type="item_link"]').hide();
+}
+
 function lockScopeButton(selectedItems: string[]): void {
   const scopeBtn = document.getElementById('scopeEventBtn');
   const lockedBtn = document.getElementById('scopeLocked');
@@ -455,51 +465,6 @@ if (window.location.pathname === '/scheduler.php') {
       calendar.updateSize();
     }
 
-    // add on change event listener on datetime inputs
-    [startInput, endInput].forEach((input:HTMLInputElement) => {
-      // in case endTime is inferior to startTime, revert to last focus time
-      let originalValue;
-      input.addEventListener('focus', () => {
-        originalValue = input.value;
-      });
-      input.addEventListener('change', () => {
-        const startVal = startInput.valueAsNumber;
-        const endVal = endInput.valueAsNumber;
-        // start must be < end
-        if (!isNaN(startVal) && !isNaN(endVal) && endVal < startVal) {
-          notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
-          // revert to value on focus
-          if (originalValue) {
-            input.value = originalValue;
-          }
-          return;
-        }
-        const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
-        const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
-        if (!startDt.isValid || !endDt.isValid) {
-          notify.error('invalid-info');
-          if (originalValue) input.value = originalValue;
-          return;
-        }
-        // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
-        const startIso = startDt.toISO({ suppressMilliseconds: true });
-        const endIso = endDt.toISO({ suppressMilliseconds: true });
-        ApiC.patch(`event/${input.dataset.eventid}`, { target: 'datetime', start: startIso, end: endIso})
-          .then(() => calendar.refetchEvents())
-          .catch((err) => notify.error(err));
-      });
-    });
-
-    function clearBoundDiv(type: string) {
-      if (type === 'experiment') {
-        $('#eventBoundExp').html('');
-        $('[data-action="scheduler-rm-bind"][data-type="experiment"]').hide();
-        return;
-      }
-      $('#eventBoundDb').html('');
-      $('[data-action="scheduler-rm-bind"][data-type="item_link"]').hide();
-    }
-
     on('cancel-event', (el: HTMLElement) => {
       ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
     });
@@ -510,6 +475,47 @@ if (window.location.pathname === '/scheduler.php') {
       ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
         ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
       });
+    });
+
+    on('edit-event', async (_, e: Event) => {
+      e.preventDefault();
+      const form = document.getElementById('editEventForm') as HTMLFormElement;
+      const params = collectForm(form);
+      const eventId = startInput.dataset.eventid;
+      if (!eventId) {
+        notify.error('form-validation-error');
+        return;
+      }
+      const startVal = startInput.valueAsNumber;
+      const endVal = endInput.valueAsNumber;
+
+      if (isNaN(startVal) || isNaN(endVal)) {
+        notify.error('Invalid date values.');
+        return;
+      }
+      // Validate start < end
+      if (endVal < startVal) {
+        notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
+        return;
+      }
+      // Convert to Luxon DateTime
+      const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
+      const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
+      if (!startDt.isValid || !endDt.isValid) {
+        notify.error('invalid-info');
+        return;
+      }
+      // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
+      params['start'] = startDt.toISO({ suppressMilliseconds: true });
+      params['end'] = endDt.toISO({ suppressMilliseconds: true });
+      params['target'] = 'datetime';
+      try {
+        await ApiC.patch(`event/${eventId}`, params);
+        calendar.refetchEvents();
+        $('#eventModal').modal('hide');
+      } catch (err) {
+        notify.error(err);
+      }
     });
 
     on('save-event-title', (el: HTMLElement) => {

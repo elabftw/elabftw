@@ -238,8 +238,7 @@ final class Scheduler extends AbstractRest
         $this->canWriteOrExplode();
 
         match ($params['target']) {
-            'start' => $this->updateStart($params['delta']),
-            'end' => $this->updateEnd($params['delta']),
+            'start', 'end' => $this->updateDelta($params),
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
             'title' => $this->updateTitle($params['content']),
@@ -403,63 +402,49 @@ final class Scheduler extends AbstractRest
         return $event;
     }
 
-    /**
-     * Update the start (and end) of an event (when you drag and drop it)
-     *
-     * @param array<string, string> $delta timedelta
-     */
-    private function updateStart(array $delta): bool
+    // Update the start and end of an event on drag/drop and resize
+    private function updateDelta(array $params): bool
     {
+        if (!isset($params['delta'])) {
+            throw new ImproperActionException('Missing delta.');
+        }
         $event = $this->readOne();
-        $oldStart = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['start']);
-        $oldEnd = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['end']);
-        if (!$oldStart || !$oldEnd) {
-            throw new ImproperActionException('Invalid date format received.');
+        $delta = $params['delta'];
+        $oldStart = new DateTimeImmutable($event['start']);
+        $oldEnd   = new DateTimeImmutable($event['end']);
+        $days = (int) ($delta['days'] ?? 0);
+        $seconds = 0;
+        if (!empty($delta['milliseconds'])) {
+            $seconds = (int) floor($delta['milliseconds'] / 1000);
         }
-        $seconds = '0';
-        if (strlen((string) $delta['milliseconds']) > 3) {
-            $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
+        // MOVE EVENT (drag)
+        if ($params['target'] === 'start') {
+            $newStart = $oldStart->modify("$days day")->modify("$seconds seconds");
+            $newEnd = $oldEnd->modify("$days day")->modify("$seconds seconds");
         }
-        $newStart = $oldStart->modify($delta['days'] . ' day')->modify($seconds . ' seconds');
+        // RESIZE EVENT
+        elseif ($params['target'] === 'end') {
+            $newStart = $oldStart;
+            $newEnd = $oldEnd->modify("$days day")->modify("$seconds seconds");
+        }
+        else {
+            throw new ImproperActionException('Invalid delta target.');
+        }
+        // VALIDATION
         $this->isFutureOrExplode($newStart);
-        $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds');
         $this->isFutureOrExplode($newEnd);
-        $this->checkConstraints($newStart->format(self::DATETIME_FORMAT), $newEnd->format(self::DATETIME_FORMAT));
-
+        $startFormatted = $newStart->format(self::DATETIME_FORMAT);
+        $endFormatted = $newEnd->format(self::DATETIME_FORMAT);
+        $this->checkConstraints($startFormatted, $endFormatted);
+        // UPDATE
         $sql = 'UPDATE team_events SET start = :start, end = :end WHERE team = :team AND id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':start', $newStart->format(self::DATETIME_FORMAT));
-        $req->bindValue(':end', $newEnd->format(self::DATETIME_FORMAT));
+        $req->bindValue(':start', $startFormatted);
+        $req->bindValue(':end', $endFormatted);
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
-
-    /**
-     * Update the end of an event (when you resize it)
-     *
-     * @param array<string, string> $delta timedelta
-     */
-    private function updateEnd(array $delta): bool
-    {
-        $event = $this->readOne();
-        $oldEnd = DateTime::createFromFormat(self::DATETIME_FORMAT, $event['end']);
-        $seconds = '0';
-        if (strlen((string) $delta['milliseconds']) > 3) {
-            $seconds = mb_substr((string) $delta['milliseconds'], 0, -3);
-        }
-        $newEnd = $oldEnd->modify($delta['days'] . ' day')->modify($seconds . ' seconds'); // @phpstan-ignore-line
-        $this->isFutureOrExplode($newEnd);
-        $this->checkConstraints($event['start'], $newEnd->format(self::DATETIME_FORMAT));
-
-        $sql = 'UPDATE team_events SET end = :end WHERE team = :team AND id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':end', $newEnd->format(self::DATETIME_FORMAT));
-        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
     private function updateTitle(string $title): bool
     {
         $sql = 'UPDATE team_events SET title = :title WHERE id = :id';

@@ -22,7 +22,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
-use Elabftw\Services\ApiParamsValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
@@ -31,8 +30,6 @@ use PDO;
 
 use function array_walk;
 use function preg_replace;
-use function strlen;
-use function mb_substr;
 
 /**
  * All about the team's scheduler
@@ -247,42 +244,6 @@ final class Scheduler extends AbstractRest
         $this->updateFields($params);
         return $this->readOne();
     }
-    private function updateFields(array $params): void
-    {
-        $updates = [];
-        $bindings = [];
-        // handle title
-        if (array_key_exists('title', $params)) {
-            $updates[] = 'title = :title';
-            $bindings[':title'] = $this->filterTitle((string)$params['title']);
-        }
-        // handle datetime
-        if (array_key_exists('start', $params) || array_key_exists('end', $params)) {
-            if (!isset($params['start'], $params['end'])) {
-                throw new ImproperActionException('Start and end must both be provided.');
-            }
-            $start = $this->normalizeDate($params['start']);
-            $end = $this->normalizeDate($params['end'], true);
-            $this->isFutureOrExplode(new DateTimeImmutable($start));
-            $this->isFutureOrExplode(new DateTimeImmutable($end));
-            $this->checkConstraints($start, $end);
-            $updates[] = 'start = :start';
-            $updates[] = 'end = :end';
-            $bindings[':start'] = $start;
-            $bindings[':end'] = $end;
-        }
-        if (empty($updates)) {
-            return; // nothing to update
-        }
-        $sql = 'UPDATE team_events SET ' . implode(', ', $updates) . ' WHERE team = :team AND id = :id';
-        $req = $this->Db->prepare($sql);
-        foreach ($bindings as $key => $value) {
-            $req->bindValue($key, $value);
-        }
-        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
 
     /**
      * Remove an event
@@ -323,6 +284,43 @@ final class Scheduler extends AbstractRest
             $Notif->create($userid);
         });
         return $this->Db->execute($req);
+    }
+
+    private function updateFields(array $params): void
+    {
+        $updates = array();
+        $bindings = array();
+        // handle title
+        if (array_key_exists('title', $params)) {
+            $updates[] = 'title = :title';
+            $bindings[':title'] = $this->filterTitle((string) $params['title']);
+        }
+        // handle datetime
+        if (array_key_exists('start', $params) || array_key_exists('end', $params)) {
+            if (!isset($params['start'], $params['end'])) {
+                throw new ImproperActionException('Start and end must both be provided.');
+            }
+            $start = $this->normalizeDate($params['start']);
+            $end = $this->normalizeDate($params['end'], true);
+            $this->isFutureOrExplode(new DateTimeImmutable($start));
+            $this->isFutureOrExplode(new DateTimeImmutable($end));
+            $this->checkConstraints($start, $end);
+            $updates[] = 'start = :start';
+            $updates[] = 'end = :end';
+            $bindings[':start'] = $start;
+            $bindings[':end'] = $end;
+        }
+        if (empty($updates)) {
+            return; // nothing to update
+        }
+        $sql = 'UPDATE team_events SET ' . implode(', ', $updates) . ' WHERE team = :team AND id = :id';
+        $req = $this->Db->prepare($sql);
+        foreach ($bindings as $key => $value) {
+            $req->bindValue($key, $value);
+        }
+        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
     }
 
     private function appendItemsIdsToSql(array $itemsIds): void
@@ -420,15 +418,6 @@ final class Scheduler extends AbstractRest
         $event = $this->Db->fetch($req);
         $this->Items->setId($event['item']);
         return $event;
-    }
-
-    private function updateTitle(string $title): bool
-    {
-        $sql = 'UPDATE team_events SET title = :title WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':title', $this->filterTitle($title));
-        return $this->Db->execute($req);
     }
 
     /**

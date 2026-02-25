@@ -585,7 +585,7 @@ if (window.location.pathname === '/scheduler.php') {
       selectEl.tomselect.refreshOptions(false);
     }
 
-    async function handleEventDateChange(info: any): Promise<void> {
+    async function handleEventDateChange(info): Promise<void> {
       try {
         if (!info.event.start || !info.event.end) {
           info.revert();
@@ -595,6 +595,7 @@ if (window.location.pathname === '/scheduler.php') {
         const endIso = DateTime.fromJSDate(info.event.end, { zone: 'system' }).toISO({ suppressMilliseconds: true });
         await ApiC.patch(`event/${info.event.id}`, {target: 'datetime', start: startIso, end: endIso});
       } catch (err) {
+        console.error(err);
         info.revert();
       }
     }

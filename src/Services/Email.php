@@ -135,21 +135,23 @@ class Email
             ->replyTo($replyTo)
             ->text($content);
 
-            $this->send($message);
-            return $addressesCount;
+            return $this->send($message) ? $addressesCount : 0;
         }
 
         // send emails one by one
+        $sentCount = 0;
         foreach ($addresses as $address) {
             // use a try catch so we finish the loop even if errors are encountered
             try {
-                $this->sendEmail($address, $subject, $content, replyTo: $replyTo);
+                if ($this->sendEmail($address, $subject, $content, replyTo: $replyTo)) {
+                    $sentCount++;
+                }
                 // this will be thrown by send() method
             } catch (ImproperActionException) {
                 continue;
             }
         }
-        return $addressesCount;
+        return $sentCount;
     }
 
     /**

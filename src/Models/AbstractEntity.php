@@ -1237,8 +1237,9 @@ abstract class AbstractEntity extends AbstractRest
         $sent = 0;
         foreach ($addresses as $address) {
             try {
-                $Email->sendEmail($address, $subject, $body, replyTo: $replyTo);
-                $sent++;
+                if ($Email->sendEmail($address, $subject, $body, replyTo: $replyTo)) {
+                    $sent++;
+                }
             } catch (ImproperActionException) {
                 continue;
             }

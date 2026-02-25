@@ -74,7 +74,7 @@ class Email
         if ($this->mailFrom === 'notconfigured@example.com') {
             $this->stopTrying = true;
             // we don't want to throw an exception here, just fail but log an error
-            $this->Log->warning('', array('Warning' => 'Cannot send email: From email address is not configured.'));
+            $this->Log->warning('', array('Warning' => 'Cannot send email: sender email address is not configured.'));
             return false;
         }
         // completely disable sending emails in demo mode

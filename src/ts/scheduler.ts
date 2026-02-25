@@ -37,7 +37,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { Action } from './interfaces';
-import { TomSelect } from './misc';
+import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
 
@@ -416,10 +416,12 @@ if (window.location.pathname === '/scheduler.php') {
 
         // cancel block: show if event is cancellable OR user is Admin)
         const cancelDiv = document.getElementById('isCancellableDiv') as HTMLElement;
+        const cancelDivButtons = document.getElementById('isCancellableButtons') as HTMLDivElement;
         if (!cancelDiv) return;
         const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
         const isCancellable = isAdmin || bookIsCancellable === 1;
         cancelDiv.classList.toggle('d-none', !isCancellable);
+        cancelDivButtons.classList.toggle('d-none', !isCancellable);
         // add event owner's id as target for cancel message
         const targetCancel = document.getElementById('targetCancelEventUsers');
         if (targetCancel) {

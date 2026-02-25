@@ -127,6 +127,6 @@ trait TestsUtilsTrait
         $req = $Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':is_archived', $is_archived, PDO::PARAM_INT);
-        $req->execute();
+        $Db->execute($req);
     }
 }

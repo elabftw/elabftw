@@ -33,6 +33,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     public function __construct(
         Users $targetUser,
         private array $event,
+        private string $actor,
         private string $msg = '',
         private EmailTarget $target = EmailTarget::BookableItem,
     ) {
@@ -62,7 +63,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid']);
         foreach ($userids as $userid) {
             $recipient = new Users($userid);
-            $Notif = new self($recipient, $this->event, $this->msg, $this->target);
+            $Notif = new self($recipient, $this->event, $this->actor, $this->msg, $this->target);
             $Notif->create();
         }
         return count($userids);
@@ -92,7 +93,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     {
         $info = _('A booked slot was deleted from the scheduler.');
         $url = Env::asUrl('SITE_URL') . '/scheduler.php?item=' . $this->event['item'];
-        $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $this->targetUser->userData['fullname'], $url, $this->event['start'], $this->event['end']);
+        $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $this->actor, $url, $this->event['start'], $this->event['end']);
         if (!empty($this->msg)) {
             $body .= "\n\n" . _('Message:') . "\n" . $this->msg;
         }
@@ -108,6 +109,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     {
         return array(
             'event' => $this->event,
+            'actor' => $this->actor,
             'msg' => $this->msg,
             'target' => $this->target,
         );

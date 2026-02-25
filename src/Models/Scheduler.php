@@ -285,7 +285,7 @@ final class Scheduler extends AbstractRest
                 continue;
             }
             $adminUser = new Users($adminId);
-            $Notif = new EventDeleted($adminUser, $event);
+            $Notif = new EventDeleted($adminUser, $event, $this->Items->Users->userData['fullname']);
             $Notif->create();
         }
         return $this->Db->execute($req);

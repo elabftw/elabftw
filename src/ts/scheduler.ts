@@ -514,11 +514,6 @@ if (window.location.pathname === '/scheduler.php') {
       }
     });
 
-    on('save-event-title', (el: HTMLElement) => {
-      const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
-      ApiC.patch(`event/${input.dataset.eventid}`, {target: 'title', content: input.value}).then(() => calendar.refetchEvents());
-    });
-
     on('scheduler-bind-entity', (el: HTMLElement) => {
       const inputEl = el.parentNode.parentNode.querySelector('input') as HTMLInputElement;
       const entityid = parseInt((inputEl.value as string), 10);

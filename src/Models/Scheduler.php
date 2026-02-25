@@ -254,9 +254,9 @@ final class Scheduler extends AbstractRest
         $updates = [];
         $bindings = [];
         // handle title
-        if (isset($params['title'])) {
+        if (array_key_exists('title', $params)) {
             $updates[] = 'title = :title';
-            $bindings[':title'] = $params['title'];
+            $bindings[':title'] = $this->filterTitle((string)$params['title']);
         }
         // handle datetime
         $dateUpdate = $this->prepareDateTimeUpdate($params);

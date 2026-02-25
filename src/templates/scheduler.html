@@ -69,10 +69,10 @@
     <form id='editEventForm' aria-label='{{ 'Edit event'|trans }}' data-item-id='{{ Entity.id }}'>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         {# "placeholder" will be replaced with real title by js #}
-        <label for='eventTitle'>{{ 'Comment'|trans }}</label>
+        <label for='title'>{{ 'Comment'|trans }}</label>
         <div class='input-group'>
           {# a data-eventid will get added to this element by js #}
-          <input class='form-control' type='text' id='eventTitle' value='placeholder' name='eventTitle' />
+          <input class='form-control' type='text' id='title' value='placeholder' name='title' />
           <div class='input-group-append'>
             <button class='btn btn-primary' data-action='save-event-title' type='button'>{{ 'Save'|trans }}</button>
           </div>

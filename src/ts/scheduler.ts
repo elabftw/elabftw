@@ -302,9 +302,9 @@ if (window.location.pathname === '/scheduler.php') {
 
             const modal = confirmBtn.closest('.modal');
             const titleInput = modal?.querySelector<HTMLInputElement>('input[id^="eventTitleInput"]');
-            const eventTitle = titleInput ? titleInput.value.trim() : '';
+            const title = titleInput ? titleInput.value.trim() : '';
 
-            const postParams = { start: info.startStr, end: info.endStr, title: eventTitle };
+            const postParams = { start: info.startStr, end: info.endStr, title };
             Promise.all(
               itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
             ).then(() => {
@@ -411,10 +411,10 @@ if (window.location.pathname === '/scheduler.php') {
         document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
 
         // title
-        const eventTitle = document.getElementById('eventTitle') as HTMLInputElement;
-        eventTitle.value = info.event.extendedProps.title_only;
+        const title = document.getElementById('title') as HTMLInputElement;
+        title.value = info.event.extendedProps.title_only;
         // set the event id on the title
-        eventTitle.dataset.eventid = info.event.id;
+        title.dataset.eventid = info.event.id;
 
         // start and end inputs values
         startInput.valueAsNumber = toDateTimeInputValueNumber(info.event.start);

@@ -20,7 +20,7 @@ use Elabftw\Exceptions\InvalidSchemaException;
 final class SchemaVersionChecker
 {
     /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const int REQUIRED_SCHEMA = 204;
+    public const int REQUIRED_SCHEMA = 203;
 
     public function __construct(public int $currentSchema) {}
 

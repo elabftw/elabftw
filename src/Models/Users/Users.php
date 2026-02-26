@@ -188,14 +188,15 @@ class Users extends AbstractRest
         if ($alertAdmin && !$isFirstUser) {
             $this->notifyAdmins($TeamsHelper->getAllAdminsUserid(), $userid, $isValidated, $teams[0]['name']);
         }
+        $targetUser = new self($userid);
         if ($isValidated) {
             // send the instance level onboarding email
             if ($Config->configArr['onboarding_email_active'] === '1') {
-                new OnboardingEmail(-1)->create($userid);
+                new OnboardingEmail($targetUser, -1)->create();
             }
         } else {
-            $Notifications = new SelfNeedValidation();
-            $Notifications->create($userid);
+            $Notifications = new SelfNeedValidation($targetUser);
+            $Notifications->create();
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
@@ -874,11 +875,11 @@ class Users extends AbstractRest
     private function validate(): array
     {
         $this->rawUpdate(UsersColumn::Validated, 1);
-        $Notifications = new SelfIsValidated();
-        $Notifications->create($this->userData['userid']);
+        $Notifications = new SelfIsValidated($this);
+        $Notifications->create();
         // send the instance level onboarding email only once the user is validated (avoid infoleak for untrusted users)
         if (Config::getConfig()->configArr['onboarding_email_active'] === '1') {
-            new OnboardingEmail(-1)->create($this->userData['userid']);
+            new OnboardingEmail($this, -1)->create();
         }
         // now send an email for each team the user is in
         foreach ($this->userData['teams'] as $team) {
@@ -890,12 +891,10 @@ class Users extends AbstractRest
 
     private function notifyAdmins(array $admins, int $userid, bool $isValidated, string $team): void
     {
-        $Notifications = new UserCreated($userid, $team);
-        if (!$isValidated) {
-            $Notifications = new UserNeedValidation($userid, $team);
-        }
         foreach ($admins as $admin) {
-            $Notifications->create($admin);
+            $adminUser = new self($admin);
+            $Notifications = $isValidated ? new UserCreated($adminUser, $userid, $team) : new UserNeedValidation($adminUser, $userid, $team);
+            $Notifications->create();
         }
     }
 }

@@ -18,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\CommentCreated;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\CommentParam;
 use Elabftw\Traits\SetIdTrait;
 use Override;
@@ -152,17 +153,23 @@ class Comments extends AbstractRest
     protected function createNotifications(): void
     {
         $comments = $this->readAll();
-        $userids = array_values(array_unique(array_column($comments, 'userid')));
-        // add the owner
-        $userids[] = $this->Entity->entityData['userid'];
+        // start by adding the owner
+        $recipients = array($this->Entity->entityData['userid']);
+        // then loop over comments to add participants
+        foreach ($comments as $comment) {
+            $recipients[] = $comment['userid'];
+        }
+        // make sure everyone only gets one notification: remove duplicates
+        $userids = array_values(array_unique($recipients));
         foreach ($userids as $userid) {
             // skip commenter
             if ($userid === $this->Entity->Users->userData['userid']) {
                 continue;
             }
+            $targetUser = new Users($userid);
             /** @psalm-suppress PossiblyNullArgument */
-            $Notif = new CommentCreated($this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
-            $Notif->create($userid);
+            $Notif = new CommentCreated($targetUser, $this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
+            $Notif->create();
         }
     }
 }

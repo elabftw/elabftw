@@ -86,7 +86,7 @@ final class Update
     {
         $sql = 'SELECT id, date FROM items';
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        $this->Db->execute($req);
         $items = $req->fetchAll();
         if (empty($items)) {
             return;
@@ -98,7 +98,7 @@ final class Update
             $elabid = $item['date'] . '-' . sha1(bin2hex(random_bytes(16)));
             $req->bindParam(':id', $item['id'], PDO::PARAM_INT);
             $req->bindParam(':elabid', $elabid);
-            $req->execute();
+            $this->Db->execute($req);
         }
     }
 
@@ -112,7 +112,7 @@ final class Update
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name1', 'fk_experiments_revisions_experiments_id');
         $req->bindValue(':name2', 'fk_experiments_revisions_users_userid');
-        $req->execute();
+        $this->Db->execute($req);
 
         if ($req->rowCount() === 0) {
             // Now, add the constraints

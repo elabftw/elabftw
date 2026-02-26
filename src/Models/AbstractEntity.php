@@ -781,7 +781,7 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
         $req->bindParam(':category', $category);
-        $req->execute();
+        $this->Db->execute($req);
 
         return array_column($req->fetchAll(), 'id');
     }
@@ -793,7 +793,7 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
 
         return array_column($req->fetchAll(), 'id');
     }

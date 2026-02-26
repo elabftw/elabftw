@@ -15,6 +15,7 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Notifications;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -34,14 +35,18 @@ abstract class AbstractNotifications
 
     protected Db $Db;
 
-    public function __construct()
+    public function __construct(protected Users $targetUser)
     {
         $this->Db = Db::getConnection();
     }
 
-    public function create(int $userid): int
+    public function create(): int
     {
-        [$webNotif, $sendEmail] = $this->getPref($userid);
+        if (TeamsHelper::isArchivedInAllTeams($this->targetUser->userid ?? 0)) {
+            return 0;
+        }
+
+        [$webNotif, $sendEmail] = $this->getPref();
 
         $isAck = 1;
         if ($webNotif === 1) {
@@ -52,7 +57,7 @@ abstract class AbstractNotifications
 
         $sql = 'INSERT INTO notifications(userid, category, send_email, body, is_ack) VALUES(:userid, :category, :send_email, :body, :is_ack)';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->targetUser->userid, PDO::PARAM_INT);
         $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
         $req->bindParam(':send_email', $sendEmail, PDO::PARAM_INT);
         $req->bindParam(':body', $jsonBody);
@@ -74,14 +79,14 @@ abstract class AbstractNotifications
     /**
      * @return array<int, int>
      */
-    protected function getPref(int $userid): array
+    protected function getPref(): array
     {
         // only categories inferior to 20 have a user setting for email/web notif
         if ($this->category->value >= 20) {
             return array(1, 1);
         }
 
-        $userData = (new Users($userid))->userData;
+        $userData = $this->targetUser->userData;
         return array($userData[$this::PREF], $userData[$this::PREF . '_email']);
     }
 }

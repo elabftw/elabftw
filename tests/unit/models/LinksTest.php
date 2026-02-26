@@ -296,7 +296,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $req->bindValue(':canbook', AbstractEntity::EMPTY_CAN_JSON);
         $req->bindValue(':canread_target', AbstractEntity::EMPTY_CAN_JSON);
         $req->bindValue(':canwrite_target', AbstractEntity::EMPTY_CAN_JSON);
-        $req->execute();
+        $this->Db->execute($req);
 
         $ItemsTypes = new ItemsTypes($User, $ItemB->id);
         $this->assertSame($ItemsTypes->id, $ItemB->id);

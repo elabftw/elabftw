@@ -585,7 +585,7 @@ final class Compounds extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         return $req->fetchAll();
     }
 

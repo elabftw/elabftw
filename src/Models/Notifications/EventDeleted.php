@@ -19,6 +19,7 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Override;
@@ -30,12 +31,13 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     protected Notifications $category = Notifications::EventDeleted;
 
     public function __construct(
+        Users $targetUser,
         private array $event,
         private string $actor,
         private string $msg = '',
         private EmailTarget $target = EmailTarget::BookableItem,
     ) {
-        parent::__construct();
+        parent::__construct($targetUser);
     }
 
     #[Override]
@@ -60,7 +62,9 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         $this->target = EmailTarget::from($reqBody['target']);
         $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid']);
         foreach ($userids as $userid) {
-            $this->create($userid);
+            $recipient = new Users($userid);
+            $Notif = new self($recipient, $this->event, $this->actor, $this->msg, $this->target);
+            $Notif->create();
         }
         return count($userids);
     }
@@ -84,7 +88,6 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         return false;
     }
 
-    // Note: here the actor fullname is directly fed to the instance, instead of fetching it from a new Users() like others.
     #[Override]
     public function getEmail(): array
     {

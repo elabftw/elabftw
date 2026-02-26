@@ -81,7 +81,7 @@ final class Templates extends AbstractTemplateEntity
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         $id = $this->Db->lastInsertId();
         $this->insertTags($tags, $id);
 

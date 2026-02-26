@@ -50,7 +50,7 @@ final class SigKeys extends AbstractRest
         $req->bindValue(':pubkey', $key->serializePk());
         $req->bindValue(':privkey', $key->serializeSk());
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $res = $req->execute();
+        $res = $this->Db->execute($req);
         $keyId = $this->Db->lastInsertId();
         if ($res) {
             AuditLogs::create(new SignatureKeysCreated($key->getIdHex(), $this->userid, $this->userid));

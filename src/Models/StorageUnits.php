@@ -93,7 +93,7 @@ final class StorageUnits extends AbstractRest
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
 
         return $this->Db->fetch($req);
     }
@@ -123,7 +123,7 @@ final class StorageUnits extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':storage_id', $storageId, PDO::PARAM_INT);
         $req->bindValue(':userid', $this->requester->userid, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         return $req->fetchAll();
     }
 

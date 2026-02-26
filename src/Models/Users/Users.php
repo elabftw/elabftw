@@ -519,7 +519,7 @@ class Users extends AbstractRest
         $sql = 'SELECT allow_untrusted, auth_lock_time > (NOW() - INTERVAL 1 HOUR) AS currently_locked FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         $res = $req->fetch();
 
         if ($res['allow_untrusted'] === 1) {
@@ -573,7 +573,7 @@ class Users extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':admin_userid', $this->userid, PDO::PARAM_INT);
         $req->bindParam(':user_userid', $userid, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         return $req->rowCount() >= 1;
     }
 

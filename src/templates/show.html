@@ -436,6 +436,12 @@
               <option value='{{ key }}'>{{ value }}</option>
             {% endfor %}
           </select>
+            {# CANBOOK #}
+            <select aria-label='{{ 'Change book permissions'|trans }}' name='is_bookable' autocomplete='off' class='mr-1 mb-2 form-control'>
+                <option selected disabled value=''>{{ 'Change book permissions'|trans }}</option>
+                <option value='1'>{{ 'Allow booking this resource'|trans }}</option>
+                <option value='0'>{{ 'Do not allow booking this resource'|trans }}</option>
+            </select>
           {# ADD A TAG #}
           <input type='text' aria-label='{{ 'Add a tag'|trans }}' id='createTagInputMultiple' name='tags' class='createTagInputMultiple mr-1 mb-2 form-control' data-autocomplete='tags' placeholder='{{ 'Add a tag'|trans }}' />
           {# ADD A RESOURCE LINK #}

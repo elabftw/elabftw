@@ -889,8 +889,8 @@ tr:first-child td {
   color: var(--medium);
 
   &:hover,
- &:active,
- &:focus {
+  &:active,
+  &:focus {
     background-color: var(--firstlevel) !important;
     color: var(--mediumstrong) !important;
   }

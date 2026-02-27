@@ -59,6 +59,6 @@ final class RevisionsCleaner implements CleanerInterface
                     ) rev
                 WHERE `rownum` % 2 = 0)';
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        $this->Db->execute($req);
     }
 }

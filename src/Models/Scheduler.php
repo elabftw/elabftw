@@ -22,6 +22,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\ApiParamsValidator;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
@@ -29,7 +30,6 @@ use Elabftw\Traits\EntityTrait;
 use Override;
 use PDO;
 
-use function array_walk;
 use function preg_replace;
 use function strlen;
 use function mb_substr;
@@ -279,14 +279,15 @@ final class Scheduler extends AbstractRest
 
         // send a notification to all team admins
         $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
-        $Notif = new EventDeleted($this->readOne(), $this->Items->Users->userData['fullname']);
         $admins = $TeamsHelper->getAllAdminsUserid();
-        array_walk($admins, function ($userid) use ($Notif) {
-            if ($userid === $this->Items->Users->userData['userid']) {
-                return;
+        foreach ($admins as $adminId) {
+            if ($adminId === $this->Items->Users->userData['userid']) {
+                continue;
             }
-            $Notif->create($userid);
-        });
+            $adminUser = new Users($adminId);
+            $Notif = new EventDeleted($adminUser, $event, $this->Items->Users->userData['fullname']);
+            $Notif->create();
+        }
         return $this->Db->execute($req);
     }
 

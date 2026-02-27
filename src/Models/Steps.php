@@ -299,8 +299,7 @@ final class Steps extends AbstractRest
 
     private function toggleNotif(): bool
     {
-        $this->getStepDeadline($this->readOne()['deadline'])
-            ->create($this->Entity->Users->userData['userid']);
+        $this->getStepDeadline($this->readOne()['deadline'])->create();
 
         return $this->setDeadlineNotif('!deadline_notif');
     }
@@ -332,6 +331,7 @@ final class Steps extends AbstractRest
     {
         /** @psalm-suppress PossiblyNullArgument */
         return new StepDeadline(
+            $this->Entity->Users,
             $this->id,
             $this->Entity->id,
             $this->Entity->entityType->toPage(),

@@ -23,6 +23,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\AccessType;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\Links\Experiments2ExperimentsLinks;
+use Elabftw\Params\ContentParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
@@ -95,6 +96,11 @@ final class Experiments extends AbstractConcreteEntity
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($tags, $newId);
+
+        // record the creation in the changelog
+        $this->setId($newId);
+        $Changelog = new Changelog($this);
+        $Changelog->create(new ContentParams('created', sprintf('%s created by %s', ucfirst($this->entityType->toGenre()), $this->Users->userData['fullname'])));
 
         return $newId;
     }

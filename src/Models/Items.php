@@ -182,21 +182,32 @@ final class Items extends AbstractConcreteEntity
         return $newId;
     }
 
-    // get users who booked current item in the 4 surrounding months
     #[Override]
-    public function getSurroundingBookers(): array
+    // get users who booked current item in the 4 surrounding months
+    protected function getSurroundingBookers(): array
     {
         // save a sql query if the resource is not bookable
         if (!$this->entityData['is_bookable']) {
             return array();
         }
-        // Note: this might reach users that had their account fully archived, but the problem will go away after 4 months.
-        $sql = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname
-            FROM team_events
-            INNER JOIN users ON users.userid = team_events.userid
-            WHERE team_events.item = :itemid
-              AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH) AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
-              AND users.validated = 1';
+        // Note: here we select past and future bookers but skip the ones that are archived in all teams
+        $sql = 'SELECT DISTINCT
+                u.email,
+                CONCAT(u.firstname, " ", u.lastname) AS fullname
+            FROM team_events te
+            JOIN users u
+              ON u.userid = te.userid
+            LEFT JOIN (
+                SELECT users_id, MIN(is_archived) AS all_archived
+                FROM users2teams
+                GROUP BY users_id
+            ) ut
+              ON ut.users_id = u.userid
+            WHERE te.item = :itemid
+              AND te.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH)
+                              AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
+              AND u.validated = 1
+              AND COALESCE(ut.all_archived, 0) = 0';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':itemid', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);

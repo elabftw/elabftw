@@ -27,6 +27,7 @@ enum Action: string
     case Disable2fa = 'disable2fa';
     case Duplicate = 'duplicate';
     case Email = 'email';
+    case EmailBookers = 'emailbookers';
     case Finish = 'finish';
     case ForceLock = 'forcelock';
     case ForceUnlock = 'forceunlock';

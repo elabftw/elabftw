@@ -286,7 +286,6 @@ abstract class AbstractEntity extends AbstractRest
                 }
             )(),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
-            Action::Notif => $this->notifyBookers($reqBody),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }
@@ -309,11 +308,6 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    public function getSurroundingBookers(): array
-    {
-        return array();
     }
 
     public function lock(): array
@@ -567,6 +561,11 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readShow($queryParams, true);
     }
 
+    protected function getSurroundingBookers(): array
+    {
+        return array();
+    }
+
     #[Override]
     public function readOne(): array
     {
@@ -628,6 +627,7 @@ abstract class AbstractEntity extends AbstractRest
         if (isset($this->entityData['canbook_base'])) {
             $this->entityData['canbook_base_human'] = BasePermissions::from($this->entityData['canbook_base'])->toHuman();
         }
+        $this->entityData['surrounding_bookers'] = $this->getSurroundingBookers();
 
         ksort($this->entityData);
         return $this->entityData;
@@ -1214,37 +1214,6 @@ abstract class AbstractEntity extends AbstractRest
         if (!empty($searchError)) {
             throw new ImproperActionException('Error with extended search: ' . $searchError);
         }
-    }
-
-    private function notifyBookers(array $params): int
-    {
-        $bookers = $this->getSurroundingBookers();
-        $replyTo = new Address($this->Users->userData['email'], $this->Users->userData['fullname']);
-        $addresses = array_map(fn($row) => new Address($row['email'], $row['fullname']), $bookers);
-        if (!$addresses) {
-            return 0;
-        }
-        $Config = Config::getConfig();
-        $Email = new Email(
-            new SchemaVersionChecker((int) $Config->configArr['schema']),
-            new Mailer(Transport::fromDsn(Config::getConfig()->getDsn())),
-            App::getDefaultLogger(),
-            $Config->configArr['mail_from'],
-            Env::asBool('DEMO_MODE'),
-        );
-        $subject = Filter::toPureString($params['subject']);
-        $body = Filter::toPureString($params['body']);
-        $sent = 0;
-        foreach ($addresses as $address) {
-            try {
-                if ($Email->sendEmail($address, $subject, $body, replyTo: $replyTo)) {
-                    $sent++;
-                }
-            } catch (ImproperActionException) {
-                continue;
-            }
-        }
-        return $sent;
     }
 
     // Check user permissions to create templates (team level)

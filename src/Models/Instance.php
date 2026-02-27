@@ -53,6 +53,12 @@ final class Instance extends AbstractRest
                 new Address($this->requester->userData['email'], $this->requester->userData['fullname']),
                 $this->emailSendGrouped,
             ),
+            Action::EmailBookers => $this->email->notifyBookers(
+                $this->requester,
+                $reqBody['subject'],
+                $reqBody['body'],
+                new Items($this->requester, $reqBody['entity_id']),
+            ),
             default => throw new ImproperActionException('Invalid action parameter sent.'),
         };
         return 0;

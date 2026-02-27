@@ -18,6 +18,8 @@ use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Users\Users;
 use PDO;
 use Psr\Log\LoggerInterface;
 use Stevebauman\Hypertext\Transformer;
@@ -52,6 +54,17 @@ class Email
     ) {
         $this->footer = $this->makeFooter();
         $this->from = new Address($mailFrom, 'eLabFTW');
+    }
+
+    public function notifyBookers(Users $requester, string $subject, string $content, AbstractEntity $entity): int
+    {
+        $bookers = $entity->readOne()['surrounding_bookers'];
+        $addresses = array_map(fn($row) => new Address($row['email'], $row['fullname']), $bookers);
+        if (!$addresses) {
+            return 0;
+        }
+        $replyTo = new Address($requester->userData['email'], $requester->userData['fullname']);
+        return $this->sendInLoop($addresses, $subject, $content, $replyTo);
     }
 
     /**
@@ -138,6 +151,13 @@ class Email
             return $this->send($message) ? $addressesCount : 0;
         }
 
+        // send emails one by one
+        return $this->sendInLoop($addresses, $subject, $content, $replyTo);
+    }
+
+    private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int {
+        $subject = Filter::toPureString($subject);
+        $content = Filter::toPureString($content);
         // send emails one by one
         $sentCount = 0;
         foreach ($addresses as $address) {

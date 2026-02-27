@@ -90,6 +90,7 @@ enum Action {
   CreateProcurementRequest = 'createprocurementrequest',
   Disable2fa = 'disable2fa',
   Duplicate = 'duplicate',
+  EmailBookers = 'emailbookers',
   Finish = 'finish',
   ForceLock = 'forcelock',
   ForceUnlock = 'forceunlock',

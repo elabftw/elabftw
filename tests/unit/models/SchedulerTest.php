@@ -266,7 +266,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testSlotTime(): void
     {
-        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_max_minutes' => 12));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');

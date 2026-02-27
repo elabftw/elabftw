@@ -52,6 +52,8 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $MockMailer = $this->createMock(MailerInterface::class);
         $EmailInDemo = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: true);
         $this->assertFalse($EmailInDemo->testemailSend('toto@example.com'));
+        // do it a secondtime to go into "stopTrying" mode
+        $this->assertFalse($EmailInDemo->testemailSend('toto@example.com'));
     }
 
     public function testTestemailSend(): void
@@ -97,6 +99,15 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($team1Stats['active_admins_count'], $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo, true));
     }
 
+    public function testMassEmailButDisabled(): void
+    {
+        $MockMailer = $this->createMock(MailerInterface::class);
+        $replyTo = new Address('sender@example.com', 'Sergent Garcia');
+        $NotConfiguredEmail = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'notconfigured@example.com');
+        // send it ungrouped
+        $this->assertSame(0, $NotConfiguredEmail->massEmail(EmailTarget::ActiveUsers, null, '', 'a', $replyTo, false));
+    }
+
     public function testSendEmail(): void
     {
         $this->assertTrue($this->Email->sendEmail(new Address('a@a.fr', 'blah'), 's', 'b'));
@@ -107,5 +118,24 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     public function testNotifySysadminsTsBalance(): void
     {
         $this->assertTrue($this->Email->notifySysadminsTsBalance(12));
+    }
+
+    public function testInvalidSchema(): void
+    {
+        $MockMailer = $this->createMock(MailerInterface::class);
+        // incorrect schema version
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA - 9000);
+        $Email = new Email($schemaVersionChecker, $MockMailer, $this->Logger, 'yep@nope.blah');
+        $this->assertFalse($Email->sendEmail(new Address('a@a.fr', 'b'), 's', 'b'));
+    }
+
+    public function testMailerExceptionThrowing(): void
+    {
+        $MockMailer = $this->createMock(MailerInterface::class);
+        $MockMailer->method('send')->willThrowException(new TransportException('nope'));
+        $replyTo = new Address('sender@example.com', 'Sergent Garcia');
+        $Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'yep@nope.blah');
+        $this->expectException(ImproperActionException::class);
+        $Email->massEmail(EmailTarget::ActiveUsers, null, '', 'a', $replyTo, false);
     }
 }

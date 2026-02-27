@@ -254,7 +254,7 @@ select:not([multiple]) {
   }
 
   // classes added by tinymce on code snippets (e.g., language-bash)
-  [class^="language-"] {
+  [class^='language-'] {
     background: var(--mainbackground);
     color: var(--mediumstrong);
   }
@@ -884,11 +884,13 @@ tr:first-child td {
 }
 
 .btn-neutral {
-  border: 1px solid var(--superlight);
   background-color: var(--superlight);
+  border: 1px solid var(--superlight);
   color: var(--medium);
 
-  &:hover, &:active, &:focus {
+  &:hover,
+ &:active,
+ &:focus {
     background-color: var(--firstlevel) !important;
     color: var(--mediumstrong) !important;
   }

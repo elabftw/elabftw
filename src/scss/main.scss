@@ -63,6 +63,7 @@ $text-muted: var(--medium);
 @import 'search-syntax-highlighting';
 @import 'tom-select';
 @import 'tinymce-custom';
+@import 'prism_custom';
 
 /* Font is Lato */
 @font-face {
@@ -247,16 +248,6 @@ select:not([multiple]) {
   .hover-danger:hover {
     background-color: var(--darkred);
     border-color: var(--lightred);
-  }
-
-  .token {
-    background-color: var(--mainbackground);
-  }
-
-  // classes added by tinymce on code snippets (e.g., language-bash)
-  [class^='language-'] {
-    background: var(--mainbackground);
-    color: var(--mediumstrong);
   }
 }
 

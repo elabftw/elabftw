@@ -1,0 +1,11 @@
+.dark-mode {
+  .token {
+    background-color: var(--mainbackground);
+  }
+
+  // classes added by tinymce on code snippets (e.g., language-bash)
+  [class^='language-'] {
+    background: var(--mainbackground);
+    color: var(--mediumstrong);
+  }
+}

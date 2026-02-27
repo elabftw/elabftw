@@ -23,6 +23,7 @@ enum RequestableAction: int
     case Review = 30;
     case Sign = 40;
     case Timestamp = 50;
+    case Unarchive = 60;
 
     public function toHuman(): string
     {
@@ -32,6 +33,7 @@ enum RequestableAction: int
             self::Review => _('review'),
             self::Sign => _('signing'),
             self::Timestamp => _('timestamping'),
+            self::Unarchive => _('unarchiving'),
         };
     }
 }

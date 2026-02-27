@@ -63,6 +63,21 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->StorageUnits->readAllRecursive());
         $this->assertIsArray($this->StorageUnits->readAllFromStorage(1));
         $this->assertIsArray($this->StorageUnits->readCount());
+
+        // Test hierarchy mode returns storage units, not container assignments
+        $parentId = $this->StorageUnits->create('Hierarchy test freezer');
+        $childId = $this->StorageUnits->create('Hierarchy test box', $parentId);
+
+        $queryParams = $this->StorageUnits->getQueryParams(new \Symfony\Component\HttpFoundation\InputBag(array('hierarchy' => 'true')));
+        $result = $this->StorageUnits->readAll($queryParams);
+
+        $this->assertIsArray($result);
+        $ids = array_column($result, 'id');
+        $this->assertContains($parentId, $ids);
+        $this->assertContains($childId, $ids);
+        $this->assertArrayHasKey('parent_id', $result[0]);
+        $this->assertArrayHasKey('children_count', $result[0]);
+        $this->assertArrayNotHasKey('entity_id', $result[0]);
     }
 
     public function testReadAllFromStorage(): void

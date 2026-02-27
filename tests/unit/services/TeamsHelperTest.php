@@ -15,9 +15,12 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class TeamsHelperTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private TeamsHelper $TeamsHelper;
 
     protected function setUp(): void
@@ -33,5 +36,17 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
         $team = $Teams->postAction(Action::Create, array('name' => 'New team'));
         $TeamsHelper = new TeamsHelper($team);
         $this->assertEquals(Usergroup::Admin, $TeamsHelper->getGroup());
+    }
+
+    public function testIsArchivedInAllTeams(): void
+    {
+        $target = $this->getRandomUserInTeam(1);
+        $this->assertFalse(TeamsHelper::isArchivedInAllTeams($target->userid));
+
+        // Archive user in all teams
+        $this->updateArchiveStatus($target->userid, 1);
+        $this->assertTrue(TeamsHelper::isArchivedInAllTeams($target->userid));
+        // Restore user archive status
+        $this->updateArchiveStatus($target->userid, 0);
     }
 }

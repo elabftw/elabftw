@@ -62,8 +62,8 @@ $text-muted: var(--medium);
 @import 'spreadsheet-editor';
 @import 'search-syntax-highlighting';
 @import 'tom-select';
-@import 'tinymce-custom';
-@import 'prism_custom';
+@import 'tinymce';
+@import 'prism';
 
 /* Font is Lato */
 @font-face {

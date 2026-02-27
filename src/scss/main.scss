@@ -248,6 +248,16 @@ select:not([multiple]) {
     background-color: var(--darkred);
     border-color: var(--lightred);
   }
+
+  .token {
+    background-color: var(--mainbackground);
+  }
+
+  // classes added by tinymce on code snippets (e.g., language-bash)
+  [class^="language-"] {
+    background: var(--mainbackground);
+    color: var(--mediumstrong);
+  }
 }
 
 .logo-dark { display: none; }
@@ -873,6 +883,17 @@ tr:first-child td {
   }
 }
 
+.btn-neutral {
+  border: 1px solid var(--superlight);
+  background-color: var(--superlight);
+  color: var(--medium);
+
+  &:hover, &:active, &:focus {
+    background-color: var(--firstlevel) !important;
+    color: var(--mediumstrong) !important;
+  }
+}
+
 /* SIDE PANEL */
 .sidepanel-btn {
   border-radius: 0 5px 5px 0;
@@ -1290,10 +1311,6 @@ the form-control fails to do that so we do the border ourselves */
   background-color: var(--firstlevel);
 }
 
-.bg-superlight {
-  background-color: var(--superlight);
-}
-
 /* print only the main div */
 @media print {
   /* overwrite bootstrap defaults
@@ -1658,7 +1675,7 @@ input[type='color'] {
   color: var(--medium);
 
   span {
-    color: var(--chrome-fg) !important;
+    color: var(--mediumstrong);
   }
 
   .relative-moment {
@@ -1949,6 +1966,7 @@ input:user-invalid {
   input {
     &:required:invalid {
       background-color: var(--mediumyellow);
+      color: var(--chrome-bg);
     }
   }
 }

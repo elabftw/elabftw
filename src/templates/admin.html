@@ -400,7 +400,7 @@
   {% for experimentsCategory in App.experimentsCategoryArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
       <label for='batch-experimentsCategories-{{ experimentsCategory.id }}' class='col-form-label clickable'>{{ experimentsCategory.title }}</label>
-      <label class='switch ucp-align'>
+      <label class='switch ucp-align'><span class='sr-only'>{{ experimentsCategory.title }}</span>
         <input type='checkbox' name='experiments_categories' value='{{ experimentsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsCategories-{{ experimentsCategory.id }}'>
         <span class='slider'></span>
       </label>
@@ -414,7 +414,7 @@
   {% for status in statusArr %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
       <label for='batch-experimentsStatus-{{ status.id }}' class='col-form-label clickable'>{{ status.title }}</label>
-      <label class='switch ucp-align'>
+      <label class='switch ucp-align'><span class='sr-only'>{{ status.title }}</span>
         <input type='checkbox' name='experiments_status' value='{{ status.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsStatus-{{ status.id }}'>
         <span class='slider'></span>
       </label>
@@ -428,7 +428,7 @@
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
     <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
         <label for='batch-experimentsTags-{{ tag.id }}' class='col-form-label clickable'>{{ tag.tag }}</label>
-        <label class='switch ucp-align'>
+        <label class='switch ucp-align'><span class='sr-only'>{{ tag.tag }}</span>
           <input type='checkbox' name='experiments_tags' value='{{ tag.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsTags-{{ tag.id }}'>
           <span class='slider'></span>
         </label>
@@ -443,7 +443,7 @@
     {% for user in users %}
       <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
         <label for='batch-{{ param }}-{{ user.userid }}' class='col-form-label clickable'>{{ user.fullname }} ({{ user.email }})</label>
-        <label class='switch ucp-align'>
+        <label class='switch ucp-align'><span class='sr-only'>{{ param }}-{{ user.userid }}</span>
           <input type='checkbox' name='{{ param }}' value='{{ user.userid }}' autocomplete='off' data-action='update-counter-value' id='batch-{{ param }}-{{ user.userid }}'>
           <span class='slider'></span>
         </label>

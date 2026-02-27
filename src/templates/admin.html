@@ -443,7 +443,7 @@
     {% for user in users %}
       <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
         <label for='batch-{{ param }}-{{ user.userid }}' class='col-form-label clickable'>{{ user.fullname }} ({{ user.email }})</label>
-        <label class='switch ucp-align'><span class='sr-only'>{{ param }}-{{ user.userid }}</span>
+        <label class='switch ucp-align'><span class='sr-only'>{{ user.fullname }}</span>
           <input type='checkbox' name='{{ param }}' value='{{ user.userid }}' autocomplete='off' data-action='update-counter-value' id='batch-{{ param }}-{{ user.userid }}'>
           <span class='slider'></span>
         </label>

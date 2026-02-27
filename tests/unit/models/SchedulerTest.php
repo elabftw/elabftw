@@ -436,7 +436,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCannotBookBeyondMaximumAdvanceDays(): void
     {
-        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
+        $Items = $this->getFreshBookableItem(2);
         // enable limit
         $Items->patch(Action::Update, array('booking_window_days' => 1));
         $start = new DateTime('+3 days')->format('c');

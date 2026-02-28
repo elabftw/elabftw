@@ -135,6 +135,9 @@ final class StorageUnits extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
+        if ($queryParams->getQuery()->getBoolean('hierarchy')) {
+            return $this->readHierarchyRows();
+        }
         $sql = $this->getRecursiveSql(
             (int) $this->requester->userData['userid'],
             (int) $this->requester->userData['team'],
@@ -251,54 +254,7 @@ final class StorageUnits extends AbstractRest
 
     public function readAllRecursive(): array
     {
-        $sql = "WITH RECURSIVE storage_hierarchy AS (
-            -- Base case: Select all top-level units (those with no parent)
-            SELECT
-                id,
-                name,
-                parent_id,
-                name AS full_path,
-                0 AS level_depth,
-                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
-            FROM
-                storage_units
-            WHERE
-                parent_id IS NULL
-
-            UNION
-
-            -- Recursive case: Select child units and append them to the parent's path
-            SELECT
-                child.id,
-                child.name,
-                child.parent_id,
-                CONCAT(parent.full_path, ' > ', child.name) AS full_path,
-                parent.level_depth + 1,
-                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
-            FROM
-                storage_units AS child
-            INNER JOIN
-                storage_hierarchy AS parent
-            ON
-                child.parent_id = parent.id
-        )
-
-        -- Query to view the full hierarchy
-        SELECT
-            id,
-            name,
-            full_path,
-            parent_id,
-            level_depth,
-            children_count
-        FROM
-            storage_hierarchy
-        ORDER BY
-            storage_hierarchy.name, parent_id";
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-        $all = $req->fetchAll();
+        $all = $this->readHierarchyRows();
         $groupedItems = array();
         foreach ($all as $item) {
             $groupedItems[$item['parent_id']][] = $item;
@@ -394,6 +350,57 @@ final class StorageUnits extends AbstractRest
         if (!$this->canWrite()) {
             throw new IllegalActionException();
         }
+    }
+
+    private function readHierarchyRows(): array
+    {
+        $sql = "WITH RECURSIVE storage_hierarchy AS (
+            -- Base case: Select all top-level units (those with no parent)
+            SELECT
+                id,
+                name,
+                parent_id,
+                name AS full_path,
+                0 AS level_depth,
+                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
+            FROM
+                storage_units
+            WHERE
+                parent_id IS NULL
+
+            UNION
+
+            -- Recursive case: Select child units and append them to the parent's path
+            SELECT
+                child.id,
+                child.name,
+                child.parent_id,
+                CONCAT(parent.full_path, ' > ', child.name) AS full_path,
+                parent.level_depth + 1,
+                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
+            FROM
+                storage_units AS child
+            INNER JOIN
+                storage_hierarchy AS parent
+            ON
+                child.parent_id = parent.id
+        )
+
+        -- Query to view the full hierarchy
+        SELECT
+            id,
+            name,
+            full_path,
+            parent_id,
+            level_depth,
+            children_count
+        FROM
+            storage_hierarchy
+        ORDER BY
+            storage_hierarchy.name, parent_id";
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     private function hasContainers(): bool

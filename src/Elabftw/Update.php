@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\Config;
 use PDO;
 
@@ -25,7 +24,7 @@ use function sprintf;
 use function mb_substr;
 
 /**
- * Use this to check for latest version or update the database schema
+ * Run the update schema script
  *
  * How to modify the structure:
  * 1. Generate a schema with bin/console dev:genschema
@@ -36,34 +35,18 @@ use function mb_substr;
  */
 final class Update
 {
-    /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const int REQUIRED_SCHEMA = 203;
-
     private Db $Db;
 
-    public function __construct(private int $currentSchema, private Sql $Sql)
+    public function __construct(private int $currentSchema, private readonly Sql $Sql)
     {
         $this->Db = Db::getConnection();
     }
 
     /**
-     * Check if the Db structure needs updating
-     */
-    public function checkSchema(): void
-    {
-        if ($this->currentSchema !== self::REQUIRED_SCHEMA) {
-            throw new InvalidSchemaException();
-        }
-    }
-
-    /**
      * Update the database schema if needed
      */
-    public function runUpdateScript(bool $force = false): array
+    public function runUpdateScript(bool $force = false): int
     {
-        // at the end of the update, warnings can be displayed for important information
-        $warn = array();
-
         // make sure we run MySQL version 8 at least
         $mysqlVersion = (int) mb_substr($this->Db->getAttribute(PDO::ATTR_SERVER_VERSION) ?? '1', 0, 1);
         if ($mysqlVersion < 8) {
@@ -81,7 +64,7 @@ final class Update
 
         // new style with SQL files instead of functions
         $Config = Config::getConfig();
-        while ($this->currentSchema < self::REQUIRED_SCHEMA) {
+        while ($this->currentSchema < SchemaVersionChecker::REQUIRED_SCHEMA) {
             ++$this->currentSchema;
             $this->Sql->execFile(sprintf('schema%d.sql', $this->currentSchema), $force);
             // this will bust cache
@@ -92,8 +75,7 @@ final class Update
                 $this->fixExperimentsRevisions();
             }
         }
-
-        return $warn;
+        return $this->currentSchema;
     }
 
     private function addElabidToItems(): void

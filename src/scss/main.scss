@@ -62,7 +62,8 @@ $text-muted: var(--medium);
 @import 'spreadsheet-editor';
 @import 'search-syntax-highlighting';
 @import 'tom-select';
-@import 'tinymce-custom';
+@import 'tinymce';
+@import 'prism';
 
 /* Font is Lato */
 @font-face {
@@ -873,6 +874,19 @@ tr:first-child td {
   }
 }
 
+.btn-neutral {
+  background-color: var(--superlight);
+  border: 1px solid var(--superlight);
+  color: var(--medium);
+
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: var(--firstlevel) !important;
+    color: var(--mediumstrong) !important;
+  }
+}
+
 /* SIDE PANEL */
 .sidepanel-btn {
   border-radius: 0 5px 5px 0;
@@ -1290,10 +1304,6 @@ the form-control fails to do that so we do the border ourselves */
   background-color: var(--firstlevel);
 }
 
-.bg-superlight {
-  background-color: var(--superlight);
-}
-
 /* print only the main div */
 @media print {
   /* overwrite bootstrap defaults
@@ -1658,7 +1668,7 @@ input[type='color'] {
   color: var(--medium);
 
   span {
-    color: var(--chrome-fg) !important;
+    color: var(--mediumstrong);
   }
 
   .relative-moment {
@@ -1949,6 +1959,7 @@ input:user-invalid {
   input {
     &:required:invalid {
       background-color: var(--mediumyellow);
+      color: var(--chrome-bg);
     }
   }
 }

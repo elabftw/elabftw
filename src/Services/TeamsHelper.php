@@ -125,10 +125,7 @@ final class TeamsHelper
         return $req->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    /**
-     * Are we the first user to register in a team?
-     */
-    public function isFirstUserInTeam(): bool
+    public function getUsersCount(): int
     {
         $sql = 'SELECT COUNT(users_id) AS usernb
                 FROM users2teams
@@ -137,8 +134,15 @@ final class TeamsHelper
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
         $test = $req->fetch();
+        return $test['usernb'];
+    }
 
-        return $test['usernb'] === 0;
+    /**
+     * Are we the first user to register in a team?
+     */
+    public function isFirstUserInTeam(): bool
+    {
+        return $this->getUsersCount() === 0;
     }
 
     /**

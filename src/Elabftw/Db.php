@@ -144,6 +144,12 @@ final class Db
         return $res;
     }
 
+    // little wrapper to return rowCount()
+    public function qToRowCount(string $sql): int
+    {
+        return $this->q($sql)->rowCount();
+    }
+
     /**
      * Return the last id inserted
      */

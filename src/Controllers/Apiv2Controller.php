@@ -14,6 +14,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\ApiSubModels;
@@ -335,6 +336,7 @@ final class Apiv2Controller extends AbstractApiController
     {
         $Config = Config::getConfig();
         return new Email(
+            new SchemaVersionChecker((int) $Config->configArr['schema']),
             new Mailer(Transport::fromDsn($Config->getDsn())),
             App::getDefaultLogger(),
             $Config->configArr['mail_from'],

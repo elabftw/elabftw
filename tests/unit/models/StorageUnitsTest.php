@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
+use Symfony\Component\HttpFoundation\InputBag;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
@@ -78,7 +79,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $parentId = $this->StorageUnits->create('Hierarchy test freezer');
         $childId = $this->StorageUnits->create('Hierarchy test box', $parentId);
 
-        $queryParams = $this->StorageUnits->getQueryParams(new \Symfony\Component\HttpFoundation\InputBag(array('hierarchy' => 'true')));
+        $queryParams = $this->StorageUnits->getQueryParams(new InputBag(array('hierarchy' => 'true')));
         $result = $this->StorageUnits->readAll($queryParams);
 
         $this->assertIsArray($result);

@@ -40,7 +40,9 @@ final class Instance extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->requester->isSysadminOrExplode();
+        if ($action !== Action::EmailBookers) {
+            $this->requester->isSysadminOrExplode();
+        }
         match ($action) {
             Action::AllowUntrusted => $this->Db->q('UPDATE users SET allow_untrusted = 1'),
             Action::ClearLockedOutDevices => $this->Db->q('DELETE FROM lockout_devices'),
@@ -57,7 +59,7 @@ final class Instance extends AbstractRest
                 $this->requester,
                 $reqBody['subject'],
                 $reqBody['body'],
-                new Items($this->requester, $reqBody['entity_id']),
+                new Items($this->requester, (int) $reqBody['entity_id']),
             ),
             default => throw new ImproperActionException('Invalid action parameter sent.'),
         };

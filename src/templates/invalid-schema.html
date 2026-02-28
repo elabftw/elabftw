@@ -52,10 +52,11 @@
     </style>
 
     <h1>Almost there!</h1>
+    <p>Your MySQL database structure needs to be updated. You are currently on schema version %CURRENT_SCHEMA% and the required schema is %REQUIRED_SCHEMA%.</p>
     <h2>To finish the update, run the "bin/console db:update" command:</h2>
     <pre>docker exec -it elabftw bin/console db:update</pre>
     <p>See <a target='_blank' rel='noopener' href='https://doc.elabftw.net/docs/install/update'>documentation</a>.</p>
 
-    <div class='note'>Note: you can automate this step by setting <code>AUTO_DB_UPDATE=true</code> as an environment variable in the container.</div>
+    <div class='note'>Note: you can trigger this step on container startup by setting <code>AUTO_DB_UPDATE=true</code> as an environment variable.</div>
   </body>
 </html>

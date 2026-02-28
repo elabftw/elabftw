@@ -30,7 +30,7 @@ final class SchemaVersionChecker
     public function checkSchema(): void
     {
         if ($this->currentSchema !== self::REQUIRED_SCHEMA) {
-            throw new InvalidSchemaException();
+            throw new InvalidSchemaException($this->currentSchema, self::REQUIRED_SCHEMA);
         }
     }
 }

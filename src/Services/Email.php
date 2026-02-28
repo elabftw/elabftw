@@ -155,28 +155,6 @@ class Email
         return $this->sendInLoop($addresses, $subject, $content, $replyTo);
     }
 
-    private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int {
-        $subject = Filter::toPureString($subject);
-        $content = Filter::toPureString($content);
-        // send emails one by one
-        $sentCount = 0;
-        foreach ($addresses as $address) {
-            // use a try catch so we finish the loop even if errors are encountered
-            try {
-                if ($this->sendEmail($address, $subject, $content, replyTo: $replyTo)) {
-                    $sentCount++;
-                    continue;
-                }
-                // send() returned false because sending is disabled for this Email instance
-                break;
-                // this will be thrown by send() method
-            } catch (ImproperActionException) {
-                continue;
-            }
-        }
-        return $sentCount;
-    }
-
     /**
      * @param null|(\Symfony\Component\Mime\Address|string)[] $cc
      */
@@ -254,6 +232,29 @@ class Email
             $emails[] = new Address($user['email'], $user['fullname']);
         }
         return $emails;
+    }
+
+    private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int
+    {
+        $subject = Filter::toPureString($subject);
+        $content = Filter::toPureString($content);
+        // send emails one by one
+        $sentCount = 0;
+        foreach ($addresses as $address) {
+            // use a try catch so we finish the loop even if errors are encountered
+            try {
+                if ($this->sendEmail($address, $subject, $content, replyTo: $replyTo)) {
+                    $sentCount++;
+                    continue;
+                }
+                // send() returned false because sending is disabled for this Email instance
+                break;
+                // this will be thrown by send() method
+            } catch (ImproperActionException) {
+                continue;
+            }
+        }
+        return $sentCount;
     }
 
     private function makeFooter(): string

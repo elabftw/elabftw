@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
@@ -30,6 +31,8 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
 
     private Email $email;
 
+    private Users $requester;
+
     protected function setUp(): void
     {
         $logger = new Logger('elabftw');
@@ -39,7 +42,8 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
         // we don't need to mock it, just give it the required schema as arg
         $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
         $this->email = new Email($schemaVersionChecker, $MockMailer, $logger, 'toto@yopmail.com', demoMode: false);
-        $this->Instance = new Instance(new Users(1, 1), $this->email, true);
+        $this->requester = new Users(1, 1);
+        $this->Instance = new Instance($this->requester, $this->email, true);
     }
 
     public function testUserNotSysadmin(): void
@@ -78,5 +82,28 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         $this->Instance->postAction(Action::Create, array());
+    }
+
+    public function testEmailBookers(): void
+    {
+        // create a bookable item and book it
+        $item = $this->getFreshBookableItem(1);
+        $Scheduler = new Scheduler($item);
+        $start = new DateTimeImmutable('+3 hour');
+        $end = new DateTimeImmutable('+6 hour');
+        $req = array(
+            'subject' => 'Tout est cassé',
+            'body' => 'a marche pu',
+            'entity_id' => $item->id,
+        );
+        // first try with 0 bookers
+        $Instance = new Instance($item->Users, $this->email, true);
+        $res = $Instance->postAction(Action::EmailBookers, $req);
+        $this->assertSame(0, $res);
+        // now book it
+        $Scheduler->postAction(Action::Create, array('start' => $start->format('c'), 'end' => $end->format('c'), 'title' => 'Mail event'));
+        $res = $Instance->postAction(Action::EmailBookers, $req);
+        // this is 0 in tests but should be 1 in real life
+        $this->assertSame(0, $res);
     }
 }

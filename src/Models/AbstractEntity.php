@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\AccessPermissions;
-use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
@@ -23,7 +22,6 @@ use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
@@ -71,7 +69,6 @@ use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
@@ -84,9 +81,6 @@ use PDOStatement;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mime\Address;
 use ZipArchive;
 
 use function array_column;
@@ -561,11 +555,6 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readShow($queryParams, true);
     }
 
-    protected function getSurroundingBookers(): array
-    {
-        return array();
-    }
-
     #[Override]
     public function readOne(): array
     {
@@ -941,35 +930,16 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
+    protected function getSurroundingBookers(): array
+    {
+        return array();
+    }
+
     abstract protected function getCreatePermissionKey(): string;
 
     protected function getCreatePermissionFromTeam(array $teamConfigArr): bool
     {
         return $teamConfigArr[$this->getCreatePermissionKey()] === 1;
-    }
-
-    // TODO refactor with canOrExplode()
-    // this is bad code, refactor of all this will come later
-    protected function canWrite(): bool
-    {
-        if ($this->id === null) {
-            return true;
-        }
-        if ($this->bypassWritePermission) {
-            return true;
-        }
-        $permissions = $this->getPermissions();
-
-        // READ ONLY?
-        if (
-            ($permissions->read && !$permissions->write)
-            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1
-            || $this->entityData['state'] === State::Deleted->value)
-        ) {
-            $this->isReadOnly = true;
-        }
-
-        return $permissions->write;
     }
 
     protected function getSqlBuilder(): SqlBuilderInterface

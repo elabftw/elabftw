@@ -24,7 +24,7 @@
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-          <button type='submit' {{ Entity.entityData.surrounding_bookers|length == 0 ? 'disabled' }} class='btn btn-primary' data-action='{{ enum('Elabftw\Elabftw\Action').EmailBookers.value }}'>{{ 'Send'|trans }}</button>
+          <button type='submit' {{ Entity.entityData.surrounding_bookers|length == 0 ? 'disabled' }} class='btn btn-primary' data-action='{{ enum('Elabftw\\Enums\\Action').EmailBookers.value }}'>{{ 'Send'|trans }}</button>
         </div>
       </form>
     </div>

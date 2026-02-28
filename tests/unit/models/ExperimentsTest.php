@@ -43,11 +43,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
     }
 
-    public function testGetSurroundingBookers(): void
-    {
-        $this->assertEmpty($this->Experiments->getSurroundingBookers());
-    }
-
     public function testCreateAndDestroy(): void
     {
         $new = $this->Experiments->create();

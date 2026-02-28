@@ -136,6 +136,6 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $replyTo = new Address('sender@example.com', 'Sergent Garcia');
         $Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'yep@nope.blah');
         $this->expectException(ImproperActionException::class);
-        $Email->massEmail(EmailTarget::ActiveUsers, null, '', 'a', $replyTo, false);
+        $Email->massEmail(EmailTarget::ActiveUsers, null, '', 'a', $replyTo, true);
     }
 }

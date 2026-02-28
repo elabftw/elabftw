@@ -18,6 +18,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
@@ -104,5 +105,13 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
         $Scheduler->postAction(Action::Create, array('start' => $start->format('c'), 'end' => $end->format('c'), 'title' => 'Mail event'));
         $res = $Instance->postAction(Action::EmailBookers, $req);
         $this->assertSame(1, $res);
+    }
+
+    public function testEmailTeam(): void
+    {
+        // count number of users in team
+        $TeamsHelper = new TeamsHelper(1);
+        $usersCount = $TeamsHelper->getUsersCount();
+        $this->assertSame($usersCount, $this->Instance->postAction(Action::EmailTeam, array('target' => 'team', 'subject' => 's', 'body' => 'b')));
     }
 }

@@ -60,22 +60,22 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
 
     public function testClearNoLogin(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::AllowUntrusted, array()));
+        $this->assertSame(1, $this->Instance->postAction(Action::AllowUntrusted, array()));
     }
 
     public function testClearLockoutDevices(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::ClearLockedOutDevices, array()));
+        $this->assertSame(1, $this->Instance->postAction(Action::ClearLockedOutDevices, array()));
     }
 
     public function testEmailTest(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::Test, array('email' => 'null@example.com')));
+        $this->assertSame(1, $this->Instance->postAction(Action::Test, array('email' => 'null@example.com')));
     }
 
     public function testMassEmail(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::Email, array('target' => 'sysadmins', 'subject' => 'a', 'body' => 'a')));
+        $this->assertSame(1, $this->Instance->postAction(Action::Email, array('target' => 'sysadmins', 'subject' => 'a', 'body' => 'a')));
     }
 
     public function testInvalidAction(): void
@@ -103,7 +103,6 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
         // now book it
         $Scheduler->postAction(Action::Create, array('start' => $start->format('c'), 'end' => $end->format('c'), 'title' => 'Mail event'));
         $res = $Instance->postAction(Action::EmailBookers, $req);
-        // this is 0 in tests but should be 1 in real life
-        $this->assertSame(0, $res);
+        $this->assertSame(1, $res);
     }
 }

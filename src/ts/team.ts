@@ -9,10 +9,11 @@ import i18next from './i18n';
 import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
-import { ProcurementState } from './interfaces';
+import { Action, ProcurementState } from './interfaces';
 import { ApiC } from './api';
-import { reloadElements } from './misc';
+import { collectForm, reloadElements } from './misc';
 import {on} from './handlers';
+import {notify} from './notify';
 
 if (window.location.pathname === '/team.php') {
 
@@ -47,4 +48,25 @@ if (window.location.pathname === '/team.php') {
       ApiC.delete(`teams/current/procurement_requests/${el.dataset.id}`).then(() => reloadElements(['procurementRequestsTable']));
     }
   });
+  on(Action.EmailTeam, (el: HTMLElement, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('emailTeamForm') as HTMLFormElement;
+    const params = collectForm(form);
+    params['action'] = Action.EmailTeam;
+    const button = (el as HTMLButtonElement);
+    const buttonText = button.innerText;
+    button.disabled = true;
+    button.innerText = i18next.t('please-wait');
+    ApiC.post2location('instance', params).then(sentNum => {
+      form.reset();
+      button.innerText = buttonText;
+      console.log(sentNum);
+      notify.success('email-sent-to-x', {num: sentNum});
+    }).catch(() => {
+      button.innerText = i18next.t('error');
+      // TODO don't hardcode colors
+      button.style.backgroundColor = '#e6614c';
+    }).finally(() => button.disabled = false);
+  });
+
 }

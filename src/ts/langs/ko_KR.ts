@@ -33,6 +33,7 @@ const t = {
     "edit": "수정",
     "edit-compound": "화합물 편집",
     "editing-metadata": "현재 이 항목에 첨부된 메타데이터를 편집하고 있습니다.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
     "email": "이메일",
     "enable-permission": "You must allow at least one permission setting.",

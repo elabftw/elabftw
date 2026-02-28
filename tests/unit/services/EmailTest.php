@@ -51,21 +51,21 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
         $EmailInDemo = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: true);
-        $this->assertFalse($EmailInDemo->testemailSend('toto@example.com'));
+        $this->assertSame(0, $EmailInDemo->testemailSend('toto@example.com'));
         // do it a secondtime to go into "stopTrying" mode
-        $this->assertFalse($EmailInDemo->testemailSend('toto@example.com'));
+        $this->assertSame(0, $EmailInDemo->testemailSend('toto@example.com'));
     }
 
     public function testTestemailSend(): void
     {
-        $this->assertTrue($this->Email->testemailSend('toto@example.com'));
+        $this->assertSame(1, $this->Email->testemailSend('toto@example.com'));
     }
 
     public function testNotConfigured(): void
     {
         $MockMailer = $this->createMock(MailerInterface::class);
         $NotConfiguredEmail = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'notconfigured@example.com');
-        $this->assertFalse($NotConfiguredEmail->testemailSend('toto@example.com'));
+        $this->assertSame(0, $NotConfiguredEmail->testemailSend('toto@example.com'));
     }
 
     public function testTransportException(): void

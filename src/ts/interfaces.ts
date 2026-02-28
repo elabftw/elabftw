@@ -91,6 +91,7 @@ enum Action {
   Disable2fa = 'disable2fa',
   Duplicate = 'duplicate',
   EmailBookers = 'emailbookers',
+  EmailTeam = 'emailteam',
   Finish = 'finish',
   ForceLock = 'forcelock',
   ForceUnlock = 'forceunlock',

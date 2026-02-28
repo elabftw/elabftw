@@ -33,6 +33,7 @@ const t = {
     "edit": "Wijzig",
     "edit-compound": "Bewerk samenstelling",
     "editing-metadata": "U bewerkt momenteel de metadata die aan dit item gekoppeld zijn.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
     "email": "E-mail",
     "enable-permission": "You must allow at least one permission setting.",

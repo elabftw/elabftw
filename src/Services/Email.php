@@ -109,7 +109,7 @@ class Email
     /**
      * Send a test email
      */
-    public function testemailSend(string $email): bool
+    public function testemailSend(string $email): int
     {
         $message = (new Memail())
         ->subject('[eLabFTW] ' . _('Test email'))
@@ -117,7 +117,7 @@ class Email
         ->to(new Address($email, 'Admin eLabFTW'))
         ->text('Congratulations, you correctly configured eLabFTW to send emails! :)' . $this->footer);
 
-        return $this->send($message);
+        return $this->send($message) ? 1 : 0;
     }
 
     /**

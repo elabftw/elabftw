@@ -40,12 +40,12 @@ final class Instance extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        if ($action !== Action::EmailBookers) {
+        if (!in_array($action, array(Action::EmailBookers, Action::EmailTeam), true)) {
             $this->requester->isSysadminOrExplode();
         }
-        match ($action) {
-            Action::AllowUntrusted => $this->Db->q('UPDATE users SET allow_untrusted = 1'),
-            Action::ClearLockedOutDevices => $this->Db->q('DELETE FROM lockout_devices'),
+        return match ($action) {
+            Action::AllowUntrusted => $this->Db->qToRowCount('UPDATE users SET allow_untrusted = 1'),
+            Action::ClearLockedOutDevices => $this->Db->qToRowCount('DELETE FROM lockout_devices'),
             Action::Test => $this->email->testemailSend((string) $reqBody['email']),
             Action::Email => $this->email->massEmail(
                 EmailTarget::from((string) $reqBody['target']),
@@ -61,8 +61,29 @@ final class Instance extends AbstractRest
                 $reqBody['body'],
                 new Items($this->requester, (int) $reqBody['entity_id']),
             ),
+            Action::EmailTeam => $this->emailTeam($reqBody),
             default => throw new ImproperActionException('Invalid action parameter sent.'),
         };
-        return 0;
+    }
+
+    private function emailTeam(array $reqBody): int
+    {
+        $target = (string) $reqBody['target'];
+        // default to team
+        $targetId = $this->requester->userData['team'];
+        $targetType = EmailTarget::Team;
+        if (str_starts_with($target, 'teamgroup')) {
+            $targetId = (int) explode('_', $target)[1];
+            $targetType = EmailTarget::TeamGroup;
+        }
+        $replyTo = new Address($this->requester->userData['email'], $this->requester->userData['fullname']);
+        return $this->email->massEmail(
+            $targetType,
+            $targetId,
+            $reqBody['subject'],
+            $reqBody['body'],
+            $replyTo,
+            $this->emailSendGrouped,
+        );
     }
 }

@@ -55,6 +55,16 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->StorageUnits->readOne());
         // directly test destroy function too
         $this->assertTrue($this->StorageUnits->destroy());
+
+        // Verify correct id and parent_id are returned for a child unit
+        $parentId = $this->StorageUnits->create('Test freezer');
+        $childId = $this->StorageUnits->create('Test box', $parentId);
+        $this->StorageUnits->setId($childId);
+        $result = $this->StorageUnits->readOne();
+        $this->assertEquals($childId, $result['id']);
+        $this->assertEquals($parentId, $result['parent_id']);
+        $this->assertStringContainsString('Test freezer', $result['full_path']);
+        $this->assertStringContainsString('Test box', $result['full_path']);
     }
 
     public function testReadAll(): void

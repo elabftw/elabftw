@@ -1136,15 +1136,18 @@ components:
               type: integer
               description: Id of the template used to create this entry.
               default: null
+              nullable: true
             created_from_type:
               type: integer
               description: |
                 Type of the entity used to create this entry: template or concrete type if duplicate
               default: null
+              nullable: true
             created_from_type_human:
               type: string
               description: Human readable version of created_from_type integer.
               default: null
+              nullable: true
             elabid:
               type: string
             exclusive_edit_mode:

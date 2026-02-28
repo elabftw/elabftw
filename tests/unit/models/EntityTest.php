@@ -33,10 +33,11 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($entity->entityData['created_from_type']);
         $this->assertNull($entity->entityData['created_from_id']);
         // now create from template
-        $tplId = 12;
-        $new = $entity->create(createdFromType: $entityType->toTemplateType(), createdFromId: $tplId);
+        $tplType = $entityType->asTemplateTypeOrNull();
+        $tplId = $tplType === null ? null : 12;
+        $new = $entity->create(createdFromType: $tplType, createdFromId: $tplId);
         $entity->setId($new);
-        $this->assertSame($entityType->toTemplateType()?->toInt(), $entity->entityData['created_from_type']);
+        $this->assertSame($entityType->asTemplateTypeOrNull()?->toInt(), $entity->entityData['created_from_type']);
         $this->assertSame($tplId, $entity->entityData['created_from_id']);
     }
 }

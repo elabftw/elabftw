@@ -47,13 +47,13 @@ enum EntityType: string
         };
     }
 
-    public function toTemplateType(): ?EntityType
+    public function asTemplateTypeOrNull(): ?EntityType
     {
         return match ($this) {
-            self::Experiments => null,
-            self::Templates  => self::Templates,
-            self::Items => null,
-            self::ItemsTypes => self::ItemsTypes,
+            self::Experiments => self::Templates,
+            self::Templates  => null,
+            self::Items => self::ItemsTypes,
+            self::ItemsTypes => null,
         };
     }
 

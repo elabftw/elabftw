@@ -37,7 +37,7 @@ final class Update
 {
     private Db $Db;
 
-    public function __construct(private readonly SchemaVersionChecker $schemaVersionChecker, private readonly Sql $Sql)
+    public function __construct(private int $currentSchema, private readonly Sql $Sql)
     {
         $this->Db = Db::getConnection();
     }
@@ -45,11 +45,8 @@ final class Update
     /**
      * Update the database schema if needed
      */
-    public function runUpdateScript(bool $force = false): array
+    public function runUpdateScript(bool $force = false): int
     {
-        // at the end of the update, warnings can be displayed for important information
-        $warn = array();
-
         // make sure we run MySQL version 8 at least
         $mysqlVersion = (int) mb_substr($this->Db->getAttribute(PDO::ATTR_SERVER_VERSION) ?? '1', 0, 1);
         if ($mysqlVersion < 8) {
@@ -57,29 +54,28 @@ final class Update
         }
 
         // old style update functions have been removed, so add a block to prevent upgrade from very very old to newest directly
-        if ($this->schemaVersionChecker->currentSchema < 37) {
+        if ($this->currentSchema < 37) {
             throw new ImproperActionException('Please update first to latest version from 1.8 branch before updating to 2.0 branch! See documentation.');
         }
 
-        if ($this->schemaVersionChecker->currentSchema < 41) {
+        if ($this->currentSchema < 41) {
             throw new ImproperActionException('Please update first to latest version from 2.0 branch before updating to 3.0 branch! See documentation.');
         }
 
         // new style with SQL files instead of functions
         $Config = Config::getConfig();
-        while ($this->schemaVersionChecker->currentSchema < $this->schemaVersionChecker::REQUIRED_SCHEMA) {
-            ++$this->schemaVersionChecker->currentSchema;
-            $this->Sql->execFile(sprintf('schema%d.sql', $this->schemaVersionChecker->currentSchema), $force);
+        while ($this->currentSchema < SchemaVersionChecker::REQUIRED_SCHEMA) {
+            ++$this->currentSchema;
+            $this->Sql->execFile(sprintf('schema%d.sql', $this->currentSchema), $force);
             // this will bust cache
-            $Config->patch(Action::Update, array('schema' => $this->schemaVersionChecker->currentSchema));
+            $Config->patch(Action::Update, array('schema' => $this->currentSchema));
             // schema57: add an elabid to existing database items
-            if ($this->schemaVersionChecker->currentSchema === 57) {
+            if ($this->currentSchema === 57) {
                 $this->addElabidToItems();
                 $this->fixExperimentsRevisions();
             }
         }
-
-        return $warn;
+        return $this->currentSchema;
     }
 
     private function addElabidToItems(): void

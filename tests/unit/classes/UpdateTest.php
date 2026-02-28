@@ -39,22 +39,20 @@ class UpdateTest extends \PHPUnit\Framework\TestCase
     {
         // create a fake schema file
         $this->Fs->write(sprintf('schema%d.sql', SchemaVersionChecker::REQUIRED_SCHEMA), 'SELECT 1');
-        $checker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA - 1);
-        $Update = new Update($checker, $this->Sql);
-        $this->assertIsArray($Update->runUpdateScript());
-        $this->assertSame(SchemaVersionChecker::REQUIRED_SCHEMA, $checker->currentSchema);
+        $Update = new Update(SchemaVersionChecker::REQUIRED_SCHEMA - 1, $this->Sql);
+        $this->assertSame(SchemaVersionChecker::REQUIRED_SCHEMA, $Update->runUpdateScript());
     }
 
     public function testOldAfInstance(): void
     {
-        $Update = new Update(new SchemaVersionChecker(36), $this->Sql);
+        $Update = new Update(36, $this->Sql);
         $this->expectException(ImproperActionException::class);
         $Update->runUpdateScript();
     }
 
     public function testVersion2(): void
     {
-        $Update = new Update(new SchemaVersionChecker(40), $this->Sql);
+        $Update = new Update(40, $this->Sql);
         $this->expectException(ImproperActionException::class);
         $Update->runUpdateScript();
     }

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Models\Config;
@@ -60,13 +59,9 @@ final class UpdateDatabase extends Command
             ));
 
             $Config = Config::getConfig();
-            $Update = new Update(new SchemaVersionChecker((int) $Config->configArr['schema']), new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output));
-            $warn = $Update->runUpdateScript($input->getOption('force'));
-            $output->writeln('<info>All done.</info>');
-            // display warning messages if any
-            foreach ($warn as $msg) {
-                $output->writeln('<bg=yellow;fg=black>NOTICE: ' . $msg . '</>');
-            }
+            $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output));
+            $newSchema = $Update->runUpdateScript($input->getOption('force'));
+            $output->writeln(sprintf('<info>Updated to schema %d.</info>', $newSchema));
         }
         return Command::SUCCESS;
     }

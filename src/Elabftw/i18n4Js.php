@@ -67,6 +67,7 @@ final class i18n4Js
             'edit' => _('Edit'),
             'edit-compound' => _('Edit compound'),
             'editing-metadata' => _('You are currently editing the metadata attached to this entry.'),
+            'email-sent-to-x' => _('Email sent to {{num, number}} users.'),
             'current-edit' => _('Currently editing'),
             'email' => _('Email'),
             'enable-permission' => _('You must allow at least one permission setting.'),

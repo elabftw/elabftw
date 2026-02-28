@@ -1249,16 +1249,17 @@ on('query', (el: HTMLElement) => {
   window.location.href = url.href;
 });
 
-on('notify-surrounding-bookers', (el: HTMLElement, event: Event) => {
+on(Action.EmailBookers, (el: HTMLElement, event: Event) => {
   event.preventDefault();
   const form = document.getElementById('notifySurroundingBookersForm') as HTMLFormElement;
   const params = collectForm(form);
-  params['action'] = Action.Notif;
+  params['action'] = Action.EmailBookers;
+  params['entity_id'] = entity.id;
   const button = (el as HTMLButtonElement);
   const buttonText = button.innerText;
   button.disabled = true;
   button.innerText = i18next.t('please-wait');
-  ApiC.post(`${entity.type}/${entity.id}`, params).then(() => {
+  ApiC.post('instance', params).then(() => {
     form.reset();
     $('#sendBookingsEmailModal').modal('hide');
     button.innerText = buttonText;

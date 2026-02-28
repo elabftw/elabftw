@@ -11,11 +11,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
@@ -29,14 +32,19 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
 
     private Email $email;
 
+    private Users $requester;
+
     protected function setUp(): void
     {
         $logger = new Logger('elabftw');
         // use NullHandler because we don't care about logs here
         $logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $this->email = new Email($MockMailer, $logger, 'toto@yopmail.com', demoMode: false);
-        $this->Instance = new Instance(new Users(1, 1), $this->email, true);
+        // we don't need to mock it, just give it the required schema as arg
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
+        $this->email = new Email($schemaVersionChecker, $MockMailer, $logger, 'toto@yopmail.com', demoMode: false);
+        $this->requester = new Users(1, 1);
+        $this->Instance = new Instance($this->requester, $this->email, true);
     }
 
     public function testUserNotSysadmin(): void
@@ -53,27 +61,57 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
 
     public function testClearNoLogin(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::AllowUntrusted, array()));
+        $this->assertSame(1, $this->Instance->postAction(Action::AllowUntrusted, array()));
     }
 
     public function testClearLockoutDevices(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::ClearLockedOutDevices, array()));
+        $this->assertSame(1, $this->Instance->postAction(Action::ClearLockedOutDevices, array()));
     }
 
     public function testEmailTest(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::Test, array('email' => 'null@example.com')));
+        $this->assertSame(1, $this->Instance->postAction(Action::Test, array('email' => 'null@example.com')));
     }
 
     public function testMassEmail(): void
     {
-        $this->assertSame(0, $this->Instance->postAction(Action::Email, array('target' => 'sysadmins', 'subject' => 'a', 'body' => 'a')));
+        $this->assertSame(1, $this->Instance->postAction(Action::Email, array('target' => 'sysadmins', 'subject' => 'a', 'body' => 'a')));
     }
 
     public function testInvalidAction(): void
     {
         $this->expectException(ImproperActionException::class);
         $this->Instance->postAction(Action::Create, array());
+    }
+
+    public function testEmailBookers(): void
+    {
+        // create a bookable item and book it
+        $item = $this->getFreshBookableItem(1);
+        $Scheduler = new Scheduler($item);
+        $start = new DateTimeImmutable('+3 hour');
+        $end = new DateTimeImmutable('+6 hour');
+        $req = array(
+            'subject' => 'Tout est cassé',
+            'body' => 'a marche pu',
+            'entity_id' => $item->id,
+        );
+        // first try with 0 bookers
+        $Instance = new Instance($item->Users, $this->email, true);
+        $res = $Instance->postAction(Action::EmailBookers, $req);
+        $this->assertSame(0, $res);
+        // now book it
+        $Scheduler->postAction(Action::Create, array('start' => $start->format('c'), 'end' => $end->format('c'), 'title' => 'Mail event'));
+        $res = $Instance->postAction(Action::EmailBookers, $req);
+        $this->assertSame(1, $res);
+    }
+
+    public function testEmailTeam(): void
+    {
+        // count number of users in team
+        $TeamsHelper = new TeamsHelper(1);
+        $usersCount = $TeamsHelper->getUsersCount();
+        $this->assertSame($usersCount, $this->Instance->postAction(Action::EmailTeam, array('target' => 'team', 'subject' => 's', 'body' => 'b')));
     }
 }

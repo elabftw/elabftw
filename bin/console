@@ -16,6 +16,7 @@ namespace Elabftw\Commands;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -47,6 +48,7 @@ try {
 
 try {
     $Email = new Email(
+        new SchemaVersionChecker((int) $Config->configArr['schema']),
         new Mailer(Transport::fromDsn($Config->getDsn())),
         App::getDefaultLogger(),
         $Config->configArr['mail_from'],

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\MfaHelper;
@@ -36,7 +37,8 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         // use NullHandler because we don't care about logs here
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $this->Email = new Email($MockMailer, $Logger, 'toto@yopmail.com', demoMode: false);
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
+        $this->Email = new Email($schemaVersionChecker, $MockMailer, $Logger, 'toto@yopmail.com', demoMode: false);
     }
 
     public function testCheckTsBalance(): void

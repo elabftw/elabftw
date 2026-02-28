@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Elabftw\Update;
+use Elabftw\Elabftw\SchemaVersionChecker;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -41,7 +41,7 @@ final class GenSchema extends Command
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $schemaNumber = Update::REQUIRED_SCHEMA + 1;
+        $schemaNumber = SchemaVersionChecker::REQUIRED_SCHEMA + 1;
         $output->writeln(sprintf('Generating schema %d', $schemaNumber));
         $filename = sprintf('schema%d.sql', $schemaNumber);
         $content = sprintf("-- schema %d\n\n", $schemaNumber);

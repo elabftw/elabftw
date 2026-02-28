@@ -201,7 +201,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
             'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
-            'surroundingBookers' => $this->Entity->getSurroundingBookers(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -263,7 +262,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
             'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
-            'surroundingBookers' => $this->Entity->getSurroundingBookers(),
             'templatesArr' => $Templates->readAllSimple($DisplayParamsTemplates),
             'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),

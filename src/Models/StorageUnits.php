@@ -54,8 +54,10 @@ final class StorageUnits extends AbstractRest
                 -- Base case: Start with the given id
                 SELECT
                     id,
+                    id AS original_id,
                     name,
                     parent_id,
+                    parent_id AS original_parent_id,
                     CAST(name AS CHAR(1000)) AS full_path,
                     0 AS level_depth
                 FROM
@@ -68,8 +70,10 @@ final class StorageUnits extends AbstractRest
                 -- Recursive case: Trace the path upwards by finding parent units
                 SELECT
                     parent.id,
+                    child.original_id,
                     child.name,
                     parent.parent_id,
+                    child.original_parent_id,
                     CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR(1000)) AS full_path,
                     child.level_depth + 1
                 FROM
@@ -80,10 +84,10 @@ final class StorageUnits extends AbstractRest
 
             -- Get the full path from the root to the given id
             SELECT
-                id,
+                original_id AS id,
                 name,
                 full_path,
-                parent_id,
+                original_parent_id AS parent_id,
                 level_depth
             FROM
                 storage_hierarchy

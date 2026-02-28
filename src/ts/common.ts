@@ -547,7 +547,7 @@ on('toggle-pin', (el: HTMLElement) => {
 });
 
 /*
- * Enable/disable dependant container based on its toggle
+ * Enable/disable dependent container based on its toggle
  * example usage:
  * <input type='checkbox' data-action='toggle-dependent' data-target-toggle='divToDisable' />
  * <div id='divToDisable'><input type='text' value='abcd'></div>

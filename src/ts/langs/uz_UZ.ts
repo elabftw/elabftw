@@ -33,6 +33,7 @@ const t = {
     "edit": "Tahrirlash",
     "edit-compound": "Kompleksni tahrirlash",
     "editing-metadata": "Siz hozirda ushbu yozuvga biriktirilgan metamaʼlumotlarni tahrir qilyapsiz.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
     "email": "Elektron pochta",
     "enable-permission": "You must allow at least one permission setting.",

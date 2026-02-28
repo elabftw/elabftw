@@ -33,6 +33,7 @@ const t = {
     "edit": "Muokkaa",
     "edit-compound": "Muokkaa yhdistettä",
     "editing-metadata": "Muokkaat tällä hetkellä tähän merkintään liitettyjä metatietoja.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
     "email": "Sähköposti",
     "enable-permission": "You must allow at least one permission setting.",

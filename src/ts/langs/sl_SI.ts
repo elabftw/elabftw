@@ -33,6 +33,7 @@ const t = {
     "edit": "Uredi",
     "edit-compound": "Uredi spojino",
     "editing-metadata": "Trenutno urejate metapodatke, priložene temu vnosu.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
     "email": "Elektronska pošta",
     "enable-permission": "You must allow at least one permission setting.",

@@ -33,6 +33,7 @@ const t = {
     "edit": "Редактировать",
     "edit-compound": "Редактировать соединение",
     "editing-metadata": "В настоящее время вы редактируете метаданные, прикрепленные к этой записи.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
     "email": "Email",
     "enable-permission": "You must allow at least one permission setting.",

@@ -33,6 +33,7 @@ const t = {
     "edit": "Editovať",
     "edit-compound": "Upraviť zlúčeninu",
     "editing-metadata": "Editujete metadáta pripojené k tejto položke.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
     "email": "Email",
     "enable-permission": "You must allow at least one permission setting.",

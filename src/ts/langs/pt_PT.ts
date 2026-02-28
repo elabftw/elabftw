@@ -33,6 +33,7 @@ const t = {
     "edit": "Editar",
     "edit-compound": "Editar composto",
     "editing-metadata": "Está atualmente a editar os metadados associados a esta entrada.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
     "email": "E-mail",
     "enable-permission": "You must allow at least one permission setting.",

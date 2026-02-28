@@ -1132,6 +1132,10 @@ components:
                 $ref: '#/components/schemas/compound'
             created_at:
               type: string
+            created_from_id:
+              type: integer
+            created_from_type:
+              type: integer
             elabid:
               type: string
             exclusive_edit_mode:

@@ -70,6 +70,8 @@ abstract class AbstractTemplateEntity extends AbstractEntity
             metadata: $this->entityData['metadata'],
             hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
             contentType: BodyContentType::from($this->entityData['content_type']),
+            createdFromType: $this->entityType,
+            createdFromId: $this->id,
         );
         // add missing can*_target
         $fresh = clone $this;

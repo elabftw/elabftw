@@ -177,13 +177,15 @@ abstract class AbstractEntity extends AbstractRest
         BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
+        ?EntityType $createdFromType = null,
+        ?int $createdFromId = null,
     ): int;
 
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
     public function createFromTemplate(int $templateId, ?string $title = null): int
     {
-        $TemplateType = $this->entityType->toTemplateType($this->Users, $templateId);
+        $TemplateType = $this->entityType->toTemplateEntity($this->Users, $templateId);
         $template = $TemplateType->readOne();
         $id = $this->create(
             title: $title ?? $template['title'],
@@ -200,6 +202,8 @@ abstract class AbstractEntity extends AbstractRest
             hideMainText: BinaryValue::from($template['hide_main_text']),
             rating: $template['rating'],
             contentType: BodyContentType::from($template['content_type']),
+            createdFromType: $TemplateType->entityType,
+            createdFromId: $templateId,
         );
         $tags = array_column($TemplateType->Tags->readAll(), 'tag');
         $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
@@ -933,6 +937,26 @@ abstract class AbstractEntity extends AbstractRest
     protected function getSurroundingBookers(): array
     {
         return array();
+    }
+
+    // record the creation in the changelog, possibly with info about provenance
+    protected function addCreationToChangelog(int $newId, ?EntityType $createdFromType, ?int $createdFromId): bool
+    {
+        $newEntity = new $this($this->Users, $newId);
+        $Changelog = new Changelog($newEntity);
+        $entityType = ucfirst($this->entityType->toGenre());
+        $log = sprintf('%s was created', $entityType);
+        if ($createdFromType !== null && $createdFromId !== null) {
+            $link = sprintf(
+                '<a href="%s?mode=view&amp;id=%d">%s #%d</a>',
+                $createdFromType->toPage(),
+                $createdFromId,
+                ucfirst($createdFromType->toGenre()),
+                $createdFromId,
+            );
+            $log = sprintf('%s was created from %s', $entityType, $link);
+        }
+        return $Changelog->create(new ContentParams('created', $log));
     }
 
     abstract protected function getCreatePermissionKey(): string;

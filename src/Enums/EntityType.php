@@ -36,13 +36,23 @@ enum EntityType: string
         };
     }
 
-    public function toTemplateType(Users $users, ?int $entityId = null, ?bool $bypassReadPermission = null, ?bool $bypassWritePermission = null): AbstractEntity
+    public function toTemplateEntity(Users $users, ?int $entityId = null, ?bool $bypassReadPermission = null, ?bool $bypassWritePermission = null): AbstractEntity
     {
         return match ($this) {
             self::Experiments,
             self::Templates  => new Templates($users, $entityId, $bypassReadPermission, $bypassWritePermission),
             self::Items,
             self::ItemsTypes => new ItemsTypes($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+        };
+    }
+
+    public function toTemplateType(): ?EntityType
+    {
+        return match ($this) {
+            self::Experiments => null,
+            self::Templates  => self::Templates,
+            self::Items => null,
+            self::ItemsTypes => self::ItemsTypes,
         };
     }
 
@@ -106,6 +116,16 @@ enum EntityType: string
             self::Items => 'database.php',
             self::Templates => 'templates.php',
             self::ItemsTypes => 'resources-templates.php',
+        };
+    }
+
+    public function toInt(): int
+    {
+        return match ($this) {
+            self::Experiments => 1,
+            self::Items => 2,
+            self::Templates => 3,
+            self::ItemsTypes => 4,
         };
     }
 }

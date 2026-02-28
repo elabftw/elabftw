@@ -17,7 +17,6 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
-use Elabftw\Params\ContentParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use Elabftw\Traits\SortableTrait;
@@ -54,6 +53,8 @@ final class Templates extends AbstractTemplateEntity
         BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
+        ?EntityType $createdFromType = null,
+        ?int $createdFromId = null,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
         $body = Filter::body($body);
@@ -61,8 +62,8 @@ final class Templates extends AbstractTemplateEntity
             $body = null;
         }
 
-        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread_base, canwrite_base, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable, hide_main_text)
-            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread_base, :canwrite_base, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable, :hide_main_text)';
+        $sql = 'INSERT INTO experiments_templates(team, title, body, userid, category, status, metadata, canread_base, canwrite_base, canread, canwrite, canread_target, canwrite_target, content_type, rating, canread_is_immutable, canwrite_is_immutable, hide_main_text, created_from_type, created_from_id)
+            VALUES(:team, :title, :body, :userid, :category, :status, :metadata, :canread_base, :canwrite_base, :canread, :canwrite, :canread_target, :canwrite_target, :content_type, :rating, :canread_is_immutable, :canwrite_is_immutable, :hide_main_text, :created_from_type, :created_from_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -82,16 +83,15 @@ final class Templates extends AbstractTemplateEntity
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+        $this->Db->bindNullableInt($req, ':created_from_type', $createdFromType?->toInt());
+        $this->Db->bindNullableInt($req, ':created_from_id', $createdFromId);
         $this->Db->execute($req);
-        $id = $this->Db->lastInsertId();
+        $newId = $this->Db->lastInsertId();
 
-        // record the creation in the changelog
-        $this->setId($id);
-        $Changelog = new Changelog($this);
-        $Changelog->create(new ContentParams('created', sprintf('%s was created', ucfirst($this->entityType->toGenre()))));
-        $this->insertTags($tags, $id);
+        $this->insertTags($tags, $newId);
+        $this->addCreationToChangelog($newId, $createdFromType, $createdFromId);
 
-        return $id;
+        return $newId;
     }
 
     #[Override]

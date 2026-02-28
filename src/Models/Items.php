@@ -194,17 +194,17 @@ final class Items extends AbstractConcreteEntity
         $sql = 'SELECT DISTINCT
                 u.email,
                 CONCAT(u.firstname, " ", u.lastname) AS fullname
-            FROM team_events te
+            FROM team_events tev
             JOIN users u
-              ON u.userid = te.userid
+              ON u.userid = tev.userid
             LEFT JOIN (
                 SELECT users_id, MIN(is_archived) AS all_archived
                 FROM users2teams
                 GROUP BY users_id
             ) ut
               ON ut.users_id = u.userid
-            WHERE te.item = :itemid
-              AND te.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH)
+            WHERE tev.item = :itemid
+              AND tev.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH)
                               AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
               AND u.validated = 1
               AND COALESCE(ut.all_archived, 0) = 0';

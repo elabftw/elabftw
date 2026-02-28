@@ -62,7 +62,7 @@
 </section>
 {% endif %}
 
-{% set links = entityData.experiments_links|merge(entityData.related_experiments_links) %}
+{% set links = entityData.experiments_links|default([])|merge(entityData.related_experiments_links|default([])) %}
 {% if links %}
   <section class='no-break'>
     <h3>{% trans %}
@@ -79,7 +79,7 @@
   </section>
 {% endif %}
 
-{% set links = entityData.items_links|merge(entityData.related_items_links) %}
+{% set links = entityData.items_links|default([])|merge(entityData.related_items_links|default([])) %}
 {% if links %}
   <section class='no-break'>
     <h3>{% trans %}

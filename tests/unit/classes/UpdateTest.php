@@ -30,17 +30,17 @@ class UpdateTest extends \PHPUnit\Framework\TestCase
 
     public function testCheckSchema(): void
     {
-        $Update = new Update(Update::REQUIRED_SCHEMA - 1, $this->Sql);
+        $checker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA - 1);
         $this->expectException(InvalidSchemaException::class);
-        $Update->checkSchema();
+        $checker->checkSchema();
     }
 
     public function testRunUpdateScript(): void
     {
         // create a fake schema file
-        $this->Fs->write(sprintf('schema%d.sql', Update::REQUIRED_SCHEMA), 'SELECT 1');
-        $Update = new Update(Update::REQUIRED_SCHEMA - 1, $this->Sql);
-        $this->assertIsArray($Update->runUpdateScript());
+        $this->Fs->write(sprintf('schema%d.sql', SchemaVersionChecker::REQUIRED_SCHEMA), 'SELECT 1');
+        $Update = new Update(SchemaVersionChecker::REQUIRED_SCHEMA - 1, $this->Sql);
+        $this->assertSame(SchemaVersionChecker::REQUIRED_SCHEMA, $Update->runUpdateScript());
     }
 
     public function testOldAfInstance(): void

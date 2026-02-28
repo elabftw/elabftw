@@ -10,21 +10,21 @@
       <form id='notifySurroundingBookersForm' aria-label='{{ 'Send an email to users who booked this resource'|trans }}'>
         <div class='modal-body'>
           <p>{{ 'Recipients are users with bookings up to 4 months past or future.'|trans }}</p>
-          {% if surroundingBookers|length == 0 %}
+          {% if Entity.entityData.surrounding_bookers|length == 0 %}
             <p>{{ 'There are no bookings associated with this resource.'|trans|msg('warning', false) }}</p>
           {% else %}
-            <p>{{ 'Email will be sent to %d users.'|trans|format(surroundingBookers|length) }}</p>
+            <p>{{ 'Email will be sent to %d users.'|trans|format(Entity.entityData.surrounding_bookers|length) }}</p>
           {% endif %}
           {# SUBJECT #}
           <label for='bookingsEmailSubject' class='col-form-label'>{{ 'Subject'|trans }}</label>
-          <input class='form-control' {{ surroundingBookers|length == 0 ? 'disabled' }} name='subject' type='text' id='bookingsEmailSubject' size='45' required maxlength='200'/>
+          <input class='form-control' {{ Entity.entityData.surrounding_bookers|length == 0 ? 'disabled' }} name='subject' type='text' id='bookingsEmailSubject' size='45' required maxlength='200'/>
           {# BODY #}
           <label for='bookingsEmailBody' class='col-form-label mt-2'>{{ 'Message'|trans }}</label>
-          <textarea class='form-control' {{ surroundingBookers|length == 0 ? 'disabled' }} name='body' id='bookingsEmailBody' maxlength='9000'></textarea>
+          <textarea class='form-control' {{ Entity.entityData.surrounding_bookers|length == 0 ? 'disabled' }} name='body' id='bookingsEmailBody' maxlength='9000'></textarea>
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-          <button type='submit' {{ surroundingBookers|length == 0 ? 'disabled' }} class='btn btn-primary' data-action='notify-surrounding-bookers'>{{ 'Send'|trans }}</button>
+          <button type='submit' {{ Entity.entityData.surrounding_bookers|length == 0 ? 'disabled' }} class='btn btn-primary' data-action='{{ enum('Elabftw\\Enums\\Action').EmailBookers.value }}'>{{ 'Send'|trans }}</button>
         </div>
       </form>
     </div>

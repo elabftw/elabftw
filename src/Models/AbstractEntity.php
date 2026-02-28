@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\AccessPermissions;
-use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
@@ -70,7 +69,6 @@ use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
@@ -83,9 +81,6 @@ use PDOStatement;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mime\Address;
 use ZipArchive;
 
 use function array_column;
@@ -285,7 +280,6 @@ abstract class AbstractEntity extends AbstractRest
                 }
             )(),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
-            Action::Notif => $this->notifyBookers($reqBody),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }
@@ -308,11 +302,6 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    public function getSurroundingBookers(): array
-    {
-        return array();
     }
 
     public function lock(): array
@@ -627,6 +616,7 @@ abstract class AbstractEntity extends AbstractRest
         if (isset($this->entityData['canbook_base'])) {
             $this->entityData['canbook_base_human'] = BasePermissions::from($this->entityData['canbook_base'])->toHuman();
         }
+        $this->entityData['surrounding_bookers'] = $this->getSurroundingBookers();
 
         ksort($this->entityData);
         return $this->entityData;
@@ -940,35 +930,16 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
+    protected function getSurroundingBookers(): array
+    {
+        return array();
+    }
+
     abstract protected function getCreatePermissionKey(): string;
 
     protected function getCreatePermissionFromTeam(array $teamConfigArr): bool
     {
         return $teamConfigArr[$this->getCreatePermissionKey()] === 1;
-    }
-
-    // TODO refactor with canOrExplode()
-    // this is bad code, refactor of all this will come later
-    protected function canWrite(): bool
-    {
-        if ($this->id === null) {
-            return true;
-        }
-        if ($this->bypassWritePermission) {
-            return true;
-        }
-        $permissions = $this->getPermissions();
-
-        // READ ONLY?
-        if (
-            ($permissions->read && !$permissions->write)
-            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1
-            || $this->entityData['state'] === State::Deleted->value)
-        ) {
-            $this->isReadOnly = true;
-        }
-
-        return $permissions->write;
     }
 
     protected function getSqlBuilder(): SqlBuilderInterface
@@ -1213,34 +1184,6 @@ abstract class AbstractEntity extends AbstractRest
         if (!empty($searchError)) {
             throw new ImproperActionException('Error with extended search: ' . $searchError);
         }
-    }
-
-    private function notifyBookers(array $params): int
-    {
-        $bookers = $this->getSurroundingBookers();
-        $replyTo = new Address($this->Users->userData['email'], $this->Users->userData['fullname']);
-        $addresses = array_map(fn($row) => new Address($row['email'], $row['fullname']), $bookers);
-        if (!$addresses) {
-            return 0;
-        }
-        $Email = new Email(
-            new Mailer(Transport::fromDsn(Config::getConfig()->getDsn())),
-            App::getDefaultLogger(),
-            Config::getConfig()->configArr['mail_from'],
-            Env::asBool('DEMO_MODE'),
-        );
-        $subject = Filter::toPureString($params['subject']);
-        $body = Filter::toPureString($params['body']);
-        $sent = 0;
-        foreach ($addresses as $address) {
-            try {
-                $Email->sendEmail($address, $subject, $body, replyTo: $replyTo);
-                $sent++;
-            } catch (ImproperActionException) {
-                continue;
-            }
-        }
-        return $sent;
     }
 
     // Check user permissions to create templates (team level)

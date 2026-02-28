@@ -19,8 +19,6 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\LoginHelper;
 use Exception;
-use League\Flysystem\Filesystem as Fs;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -78,9 +76,8 @@ try {
     // END CSRF
 
     // Show helpful screen if database schema needs update
-    $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__, 2) . '/src/sql'))));
     // throws InvalidSchemaException if schema is incorrect
-    $Update->checkSchema();
+    new SchemaVersionChecker((int) $Config->configArr['schema'])->checkSchema();
 
     $App = new App($Request, $Session, $Config, $Logger, new Users(), Env::asBool('DEV_MODE'), Env::asBool('DEMO_MODE'));
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//

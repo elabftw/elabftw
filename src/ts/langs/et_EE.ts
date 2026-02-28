@@ -33,6 +33,7 @@ const t = {
     "edit": "Redigeeri",
     "edit-compound": "Redigeeri ühendit",
     "editing-metadata": "Sa muudad praegu sellele kirjele lisatud metaandmeid.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Praegu toimetab",
     "email": "E-post",
     "enable-permission": "Peate lubama vähemalt ühe loa seadistuse.",

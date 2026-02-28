@@ -615,6 +615,7 @@ abstract class AbstractEntity extends AbstractRest
         }
         $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
         $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
+        $this->entityData['created_from_type_human'] = EntityType::fromInt($this->entityData['created_from_type'])?->toGenre();
         $this->entityData['canread_base_human'] = BasePermissions::from($this->entityData['canread_base'])->toHuman();
         $this->entityData['canwrite_base_human'] = BasePermissions::from($this->entityData['canwrite_base'])->toHuman();
         if (isset($this->entityData['canbook_base'])) {

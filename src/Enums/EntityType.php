@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
@@ -126,6 +127,18 @@ enum EntityType: string
             self::Items => 2,
             self::Templates => 3,
             self::ItemsTypes => 4,
+        };
+    }
+
+    public static function fromInt(?int $int): ?self
+    {
+        return match ($int) {
+            1 => self::Experiments,
+            2 => self::Items,
+            3 => self::Templates,
+            4 => self::ItemsTypes,
+            null => null,
+            default => throw new ImproperActionException('Invalid integer value for entityType'),
         };
     }
 }

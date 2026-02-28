@@ -546,6 +546,39 @@ on('toggle-pin', (el: HTMLElement) => {
   });
 });
 
+/*
+ * Enable/disable dependent container based on its toggle
+ * example usage:
+ * <input type='checkbox' data-action='toggle-dependent' data-target-toggle='divToDisable' />
+ * <div id='divToDisable'><input type='text' value='abcd'></div>
+ */
+on('toggle-dependent', (el: HTMLInputElement) => {
+  const targetId = el.dataset.targetToggle;
+  if (!targetId) return;
+  const container = document.getElementById(targetId);
+  if (!container) return;
+  const disabled = !el.checked;
+  container.style.opacity = disabled ? '0.5' : '';
+  container
+    .querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea')
+    .forEach(input => {
+      input.disabled = disabled;
+      // reset numeric fields when disabling
+      if (disabled && input.type === 'number') {
+        input.value = '0';
+      }
+    });
+});
+
+on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
+  e.preventDefault();
+  const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
+  const params = collectForm(form);
+  await ApiC.patch(`items/${form.dataset.itemId}`, params);
+  reloadElements(['topToolbar', 'permissionsDiv']);
+  $('#bookingParamsModal').modal('hide');
+});
+
 on('transfer-ownership', async () => {
   const params = collectForm(document.getElementById('ownershipTransferForm'));
   const userid = parseInt(params['targetUserId'].split(' ')[0] ?? '', 10);

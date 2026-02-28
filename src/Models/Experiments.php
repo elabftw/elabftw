@@ -100,7 +100,7 @@ final class Experiments extends AbstractConcreteEntity
         // record the creation in the changelog
         $this->setId($newId);
         $Changelog = new Changelog($this);
-        $Changelog->create(new ContentParams('created', sprintf('%s created by %s', ucfirst($this->entityType->toGenre()), $this->Users->userData['fullname'])));
+        $Changelog->create(new ContentParams('created', sprintf('%s was created', ucfirst($this->entityType->toGenre()))));
 
         return $newId;
     }

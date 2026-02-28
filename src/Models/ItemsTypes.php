@@ -17,6 +17,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
+use Elabftw\Params\ContentParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use Elabftw\Traits\RandomColorTrait;
@@ -87,6 +88,11 @@ final class ItemsTypes extends AbstractTemplateEntity
         $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         $id = $this->Db->lastInsertId();
+
+        // record the creation in the changelog
+        $this->setId($id);
+        $Changelog = new Changelog($this);
+        $Changelog->create(new ContentParams('created', sprintf('%s was created', ucfirst($this->entityType->toGenre()))));
 
         $this->insertTags($tags, $id);
 

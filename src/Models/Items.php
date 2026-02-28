@@ -101,6 +101,11 @@ final class Items extends AbstractConcreteEntity
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
+        // record the creation in the changelog
+        $this->setId($newId);
+        $Changelog = new Changelog($this);
+        $Changelog->create(new ContentParams('created', sprintf('%s was created', ucfirst($this->entityType->toGenre()))));
+
         $this->insertTags($tags, $newId);
 
         return $newId;

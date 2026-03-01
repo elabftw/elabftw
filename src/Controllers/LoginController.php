@@ -358,7 +358,7 @@ final class LoginController implements ControllerInterface
                 // MFA AUTH
             case AuthType::Mfa:
                 return new Mfa(
-                    new MfaHelper($this->Session->get('mfa_secret') ?? $this->Request->request->get('mfa_secret')),
+                    new MfaHelper($this->Session->get('mfa_secret')),
                     $this->Session->get('auth_userid'),
                     $this->Request->request->getAlnum('mfa_code'),
                 );

@@ -17,8 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Params\UserParams;
-use Elabftw\Services\MfaHelper;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

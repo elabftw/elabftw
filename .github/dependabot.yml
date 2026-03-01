@@ -7,7 +7,7 @@ updates:
     day: friday
     time: "02:00"
   open-pull-requests-limit: 10
-  target-branch: hypernext
+  target-branch: master
   ignore:
   - dependency-name: snyk
     versions:
@@ -19,4 +19,4 @@ updates:
     day: friday
     time: "02:00"
   open-pull-requests-limit: 10
-  target-branch: hypernext
+  target-branch: master

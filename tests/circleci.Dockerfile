@@ -2,7 +2,7 @@
 # Dockerfile for CircleCI
 FROM elabtmp
 
-# avoid carry-over from hypernext
+# avoid carry-over
 RUN rm -rf /elabftw/*
 
 # copy everything because we can't bind mount

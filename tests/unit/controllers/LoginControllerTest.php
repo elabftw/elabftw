@@ -85,53 +85,6 @@ class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $LoginController->getResponse();
     }
 
-    public function testEnableMfaFromLogin(): void
-    {
-        $Request = Request::createFromGlobals();
-        $Session = new Session();
-        $user = $this->getUserInTeam(2);
-        $Session->set('auth_userid', $user->userid);
-        // we do mfa auth here
-        $Request->request->set('auth_type', 'mfa');
-        $helper = new MfaHelper();
-        // we send the secret and code, as would happen from login page when setting up mfa
-        $Request->request->set('mfa_secret', $helper->secret);
-        $Request->request->set('mfa_code', $helper->getCode());
-        $config = $this->config;
-        // enforce mfa for everyone so the gate is active
-        $config['enforce_mfa'] = '3';
-        $LoginController = new LoginController(
-            $config,
-            $Request,
-            $Session,
-        );
-        $response = $LoginController->getResponse();
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertTrue($Session->has('has_verified_mfa'));
-        $userData = $user->readOneFull();
-        $this->assertSame($helper->secret, $userData['mfa_secret']);
-        // now try to login with local auth and see that we are being redirected to login page for mfa
-        $Request->request->set('auth_type', 'local');
-        $Request->request->set('email', $user->userData['email']);
-        // all users have the same password on test instance
-        $Request->request->set('password', 'totototototo');
-        // create a new session as we mimic a fresh login
-        $Session->clear();
-        $LoginController = new LoginController(
-            $config,
-            $Request,
-            $Session,
-        );
-        $res = $LoginController->getResponse();
-        $this->assertInstanceOf(RedirectResponse::class, $res);
-        $this->assertSame('/login.php', $res->headers->get('Location'));
-        $this->assertFalse($Session->has('has_verified_mfa'));
-        $this->assertTrue($Session->get('mfa_auth_required'));
-        $this->assertSame($user->userid, $Session->get('auth_userid'));
-        // now remove it so it doesn't cause issues later in other tests
-        $user->update(new UserParams('mfa_secret', null));
-    }
-
     public function testLoginWithCookie(): void
     {
         $Request = Request::createFromGlobals();

@@ -1,0 +1,1 @@
+ALTER TABLE `items` ADD `booking_window_days` TINYINT UNSIGNED NOT NULL DEFAULT 0;

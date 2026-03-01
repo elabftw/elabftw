@@ -1132,6 +1132,22 @@ components:
                 $ref: '#/components/schemas/compound'
             created_at:
               type: string
+            created_from_id:
+              type: integer
+              description: Id of the template used to create this entry.
+              default: null
+              nullable: true
+            created_from_type:
+              type: integer
+              description: |
+                Type of the entity used to create this entry: template or concrete type if duplicate
+              default: null
+              nullable: true
+            created_from_type_human:
+              type: string
+              description: Human readable version of created_from_type integer.
+              default: null
+              nullable: true
             elabid:
               type: string
             exclusive_edit_mode:
@@ -1635,6 +1651,9 @@ components:
           type: integer
         book_cancel_minutes:
           type: integer
+        booking_window_days:
+          type: integer
+          description: How many days in advance users can book an item. 0 means no limit.
 
     item:
       allOf:
@@ -2298,207 +2317,252 @@ paths:
 
   # STORAGE UNITS
   /storage_units:
-    summary: List containers.
+    summary: List containers or storage unit hierarchy.
     get:
       tags: ['Storage units']
-      summary: Read all containers. Yes, the name of this endpoint should be `containers`, but it's not, deal with it.
-      description: Get the full list of containers from entries you have access to.
+      summary: Read all containers, or the storage unit hierarchy when `?hierarchy=true`.
+      description: |
+        Without parameters, returns the full list of containers (assignments of experiments or resources to storage locations) that you have access to.
+
+        With `?hierarchy=true`, returns a flat list of all storage units (freezers, boxes, positions, etc.) with their hierarchy metadata (`id`, `name`, `parent_id`, `full_path`, `level_depth`, `children_count`). This allows clients to discover, traverse, or display the storage unit tree.
       operationId: read-storage-units
+      parameters:
+        - name: hierarchy
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: |
+            When true, returns a flat list of all storage units in the hierarchy
+            (id, name, parent_id, full_path, level_depth, children_count)
+            instead of the default container assignment list.
       responses:
         '200':
-          description: A list of containers attached to experiments or resources.
+          description: |
+            Without `hierarchy`: a list of containers attached to experiments or resources.
+            With `hierarchy=true`: a flat list of storage units with hierarchy metadata.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    entity_id:
-                      type: integer
-                      example: 211
-                    entity_title:
-                      type: string
-                      example: Some title
-                    entity_custom_id:
-                      nullable: true
-                      type: integer
-                      example: null
-                    page:
-                      type: string
-                      example: experiments
-                    container2item_id:
-                      type: integer
-                      example: 1
-                    qty_stored:
-                      type: string
-                      description: Quantity stored, formatted as a string (often decimal).
-                      example: "1.00"
-                    qty_unit:
-                      type: string
-                      description: Quantity unit (may contain special characters).
-                      example: "•"
-                    created_at:
-                      type: string
-                      description: Timestamp in `YYYY-MM-DD HH:MM:SS` format.
-                      example: "2026-01-23 16:10:41"
-                    modified_at:
-                      type: string
-                      description: Timestamp in `YYYY-MM-DD HH:MM:SS` format.
-                      example: "2026-01-23 16:10:41"
-                    firstname:
-                      type: string
-                      example: Ada
-                    lastname:
-                      type: string
-                      example: Lovelace
-                    fullname:
-                      type: string
-                      example: Ada Lovelace
-                    team_name:
-                      type: string
-                      example: BIOMEKA
-                    team_id:
-                      type: integer
-                      example: 1
-                    storage_id:
-                      type: integer
-                      example: 12
-                    storage_name:
-                      type: string
-                      example: 4th floor
-                    full_path:
-                      type: string
-                      description: Full storage path, formatted with separators.
-                      example: "Hospital > 4th floor"
-                    cas_number:
-                      type: string
-                      nullable: true
-                      example: null
-                    pubchem_cid:
-                      type: integer
-                      nullable: true
-                      example: null
-                    is_corrosive:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_serious_health_hazard:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_explosive:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_flammable:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_gas_under_pressure:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_hazardous2env:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_hazardous2health:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_oxidising:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_toxic:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_radioactive:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_antibiotic:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_antibiotic_precursor:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_drug:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_drug_precursor:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_explosive_precursor:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_cmr:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_nano:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_controlled:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_ed2health:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_ed2env:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_pbt:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_pmt:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_vpvb:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
-                    is_vpvm:
-                      type: integer
-                      nullable: true
-                      enum: [0, 1]
-                      example: null
+                oneOf:
+                  - description: Default mode — container assignments.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        entity_id:
+                          type: integer
+                          example: 211
+                        entity_title:
+                          type: string
+                          example: Some title
+                        entity_custom_id:
+                          nullable: true
+                          type: integer
+                          example: null
+                        page:
+                          type: string
+                          example: experiments
+                        container2item_id:
+                          type: integer
+                          example: 1
+                        qty_stored:
+                          type: string
+                          description: Quantity stored, formatted as a string (often decimal).
+                          example: "1.00"
+                        qty_unit:
+                          type: string
+                          description: Quantity unit (may contain special characters).
+                          example: "•"
+                        created_at:
+                          type: string
+                          description: Timestamp in `YYYY-MM-DD HH:MM:SS` format.
+                          example: "2026-01-23 16:10:41"
+                        modified_at:
+                          type: string
+                          description: Timestamp in `YYYY-MM-DD HH:MM:SS` format.
+                          example: "2026-01-23 16:10:41"
+                        firstname:
+                          type: string
+                          example: Ada
+                        lastname:
+                          type: string
+                          example: Lovelace
+                        fullname:
+                          type: string
+                          example: Ada Lovelace
+                        team_name:
+                          type: string
+                          example: BIOMEKA
+                        team_id:
+                          type: integer
+                          example: 1
+                        storage_id:
+                          type: integer
+                          example: 12
+                        storage_name:
+                          type: string
+                          example: 4th floor
+                        full_path:
+                          type: string
+                          description: Full storage path, formatted with separators.
+                          example: "Hospital > 4th floor"
+                        cas_number:
+                          type: string
+                          nullable: true
+                          example: null
+                        pubchem_cid:
+                          type: integer
+                          nullable: true
+                          example: null
+                        is_corrosive:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_serious_health_hazard:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_explosive:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_flammable:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_gas_under_pressure:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_hazardous2env:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_hazardous2health:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_oxidising:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_toxic:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_radioactive:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_antibiotic:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_antibiotic_precursor:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_drug:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_drug_precursor:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_explosive_precursor:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_cmr:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_nano:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_controlled:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_ed2health:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_ed2env:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_pbt:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_pmt:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_vpvb:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                        is_vpvm:
+                          type: integer
+                          nullable: true
+                          enum: [0, 1]
+                          example: null
+                  - description: Hierarchy mode (`?hierarchy=true`) — flat list of storage units.
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 5
+                        name:
+                          type: string
+                          example: Freezer A
+                        parent_id:
+                          type: integer
+                          nullable: true
+                          description: ID of parent storage unit, or null for root units.
+                          example: null
+                        full_path:
+                          type: string
+                          description: Full path from root to this unit, separated by " > ".
+                          example: "Hospital > 4th floor > Freezer A"
+                        level_depth:
+                          type: integer
+                          description: Depth in hierarchy (0 for root units).
+                          example: 2
+                        children_count:
+                          type: integer
+                          description: Number of direct children of this storage unit.
+                          example: 3
 
         '401':
            $ref: '#/components/responses/Unauthorized'

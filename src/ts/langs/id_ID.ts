@@ -33,6 +33,7 @@ const t = {
     "edit": "Sunting",
     "edit-compound": "Edit senyawa",
     "editing-metadata": "Anda sedang menyunting metadata yang dilampirkan ke entri ini.",
+    "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Sedang mengedit",
     "email": "Surel",
     "enable-permission": "Anda harus mengizinkan setidaknya satu pengaturan izin.",

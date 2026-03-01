@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
+use Symfony\Component\HttpFoundation\InputBag;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
@@ -55,6 +56,16 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->StorageUnits->readOne());
         // directly test destroy function too
         $this->assertTrue($this->StorageUnits->destroy());
+
+        // Verify correct id and parent_id are returned for a child unit
+        $parentId = $this->StorageUnits->create('Test freezer');
+        $childId = $this->StorageUnits->create('Test box', $parentId);
+        $this->StorageUnits->setId($childId);
+        $result = $this->StorageUnits->readOne();
+        $this->assertEquals($childId, $result['id']);
+        $this->assertEquals($parentId, $result['parent_id']);
+        $this->assertStringContainsString('Test freezer', $result['full_path']);
+        $this->assertStringContainsString('Test box', $result['full_path']);
     }
 
     public function testReadAll(): void
@@ -63,6 +74,21 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->StorageUnits->readAllRecursive());
         $this->assertIsArray($this->StorageUnits->readAllFromStorage(1));
         $this->assertIsArray($this->StorageUnits->readCount());
+
+        // Test hierarchy mode returns storage units, not container assignments
+        $parentId = $this->StorageUnits->create('Hierarchy test freezer');
+        $childId = $this->StorageUnits->create('Hierarchy test box', $parentId);
+
+        $queryParams = $this->StorageUnits->getQueryParams(new InputBag(array('hierarchy' => 'true')));
+        $result = $this->StorageUnits->readAll($queryParams);
+
+        $this->assertIsArray($result);
+        $ids = array_column($result, 'id');
+        $this->assertContains($parentId, $ids);
+        $this->assertContains($childId, $ids);
+        $this->assertArrayHasKey('parent_id', $result[0]);
+        $this->assertArrayHasKey('children_count', $result[0]);
+        $this->assertArrayNotHasKey('entity_id', $result[0]);
     }
 
     public function testReadAllFromStorage(): void

@@ -15,7 +15,7 @@
     <td>{{ change.target }}</td>
     <td>
       {# render raw HTML for safe, whitelisted targets #}
-      {%- if change.target in ['body', 'links'] -%}
+      {%- if change.target in ['body', 'links', 'created'] -%}
         {{ change.content|raw }}
       {%- else -%}
         {{ change.content }}

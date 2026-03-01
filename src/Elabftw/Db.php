@@ -144,6 +144,12 @@ final class Db
         return $res;
     }
 
+    // little wrapper to return rowCount()
+    public function qToRowCount(string $sql): int
+    {
+        return $this->q($sql)->rowCount();
+    }
+
     /**
      * Return the last id inserted
      */
@@ -163,5 +169,10 @@ final class Db
     public function getAttribute(int $attr): ?string
     {
         return $this->connection->getAttribute($attr);
+    }
+
+    public function bindNullableInt(PDOStatement $req, string $param, ?int $value): void
+    {
+        $req->bindValue($param, $value, $value === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
     }
 }

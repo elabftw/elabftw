@@ -266,7 +266,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testSlotTime(): void
     {
-        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_max_minutes' => 12));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -434,10 +434,24 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Scheduler->destroy());
     }
 
-    private function getFreshSchedulerWithEvent(): Scheduler
+    public function testCannotBookBeyondMaximumAdvanceDays(): void
     {
-        $Scheduler = new Scheduler($this->getFreshBookableItem(2));
-        $id = $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
+        $Items = $this->getFreshBookableItem(2);
+        // enable limit
+        $Items->patch(Action::Update, array('booking_window_days' => 1));
+        $start = new DateTime('+3 days')->format('c');
+        $end = new DateTime('+3 days +2 hours')->format('c');
+        $this->expectException(ImproperActionException::class);
+        $this->getFreshSchedulerWithEvent($Items, $start, $end);
+    }
+
+    private function getFreshSchedulerWithEvent(?Items $Items = null, ?string $start = null, ?string $end = null): Scheduler
+    {
+        $Items ??= $this->getFreshBookableItem(2);
+        $start ??= $this->start;
+        $end ??= $this->end;
+        $Scheduler = new Scheduler($Items);
+        $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end));
         $Scheduler->setId($id);
         return $Scheduler;
     }

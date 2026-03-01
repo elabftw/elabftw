@@ -61,6 +61,8 @@ final class Items extends AbstractConcreteEntity
         BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
+        ?EntityType $createdFromType = null,
+        ?int $createdFromId = null,
         // specific to Items
         string $canbook = self::EMPTY_CAN_JSON,
         BasePermissions $canbookBase = BasePermissions::Team,
@@ -74,8 +76,8 @@ final class Items extends AbstractConcreteEntity
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread_base, canwrite_base, canbook_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text)
-            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread_base, :canwrite_base, :canbook_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread_base, canwrite_base, canbook_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text, created_from_type, created_from_id)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread_base, :canwrite_base, :canbook_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text, :created_from_type, :created_from_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -98,10 +100,13 @@ final class Items extends AbstractConcreteEntity
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+        $this->Db->bindNullableInt($req, ':created_from_type', $createdFromType?->toInt());
+        $this->Db->bindNullableInt($req, ':created_from_id', $createdFromId);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($tags, $newId);
+        $this->addCreationToChangelog($newId, $createdFromType, $createdFromId);
 
         return $newId;
     }
@@ -155,6 +160,8 @@ final class Items extends AbstractConcreteEntity
             metadata: $metadata,
             hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
             contentType: BodyContentType::from($this->entityData['content_type']),
+            createdFromType: $this->entityType,
+            createdFromId: $this->id,
         );
 
         // add missing canbook
@@ -182,21 +189,32 @@ final class Items extends AbstractConcreteEntity
         return $newId;
     }
 
-    // get users who booked current item in the 4 surrounding months
     #[Override]
-    public function getSurroundingBookers(): array
+    // get users who booked current item in the 4 surrounding months
+    protected function getSurroundingBookers(): array
     {
         // save a sql query if the resource is not bookable
         if (!$this->entityData['is_bookable']) {
             return array();
         }
-        // Note: this might reach users that had their account fully archived, but the problem will go away after 4 months.
-        $sql = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname
-            FROM team_events
-            INNER JOIN users ON users.userid = team_events.userid
-            WHERE team_events.item = :itemid
-              AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH) AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
-              AND users.validated = 1';
+        // Note: here we select past and future bookers but skip the ones that are archived in all teams
+        $sql = 'SELECT DISTINCT
+                u.email,
+                CONCAT(u.firstname, " ", u.lastname) AS fullname
+            FROM team_events tev
+            JOIN users u
+              ON u.userid = tev.userid
+            LEFT JOIN (
+                SELECT users_id, MIN(is_archived) AS all_archived
+                FROM users2teams
+                GROUP BY users_id
+            ) ut
+              ON ut.users_id = u.userid
+            WHERE tev.item = :itemid
+              AND tev.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH)
+                              AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
+              AND u.validated = 1
+              AND COALESCE(ut.all_archived, 0) = 0';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':itemid', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);

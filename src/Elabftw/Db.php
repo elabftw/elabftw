@@ -170,4 +170,9 @@ final class Db
     {
         return $this->connection->getAttribute($attr);
     }
+
+    public function bindNullableInt(PDOStatement $req, string $param, ?int $value): void
+    {
+        $req->bindValue($param, $value, $value === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+    }
 }

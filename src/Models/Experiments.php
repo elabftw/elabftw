@@ -56,6 +56,8 @@ final class Experiments extends AbstractConcreteEntity
         BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
+        ?EntityType $createdFromType = null,
+        ?int $createdFromId = null,
     ): int {
         // defaults
         $title = Filter::title($title ?? _('Untitled'));
@@ -69,8 +71,8 @@ final class Experiments extends AbstractConcreteEntity
         $customId ??= $this->getNextCustomId($category);
 
         // SQL for create experiments
-        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread_base, canwrite_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, metadata, custom_id, userid, content_type, rating, hide_main_text)
-            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread_base, :canwrite_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :metadata, :custom_id, :userid, :content_type, :rating, :hide_main_text)';
+        $sql = 'INSERT INTO experiments(team, title, date, body, category, status, elabid, canread_base, canwrite_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, metadata, custom_id, userid, content_type, rating, hide_main_text, created_from_type, created_from_id)
+            VALUES(:team, :title, :date, :body, :category, :status, :elabid, :canread_base, :canwrite_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :metadata, :custom_id, :userid, :content_type, :rating, :hide_main_text, :created_from_type, :created_from_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -91,10 +93,13 @@ final class Experiments extends AbstractConcreteEntity
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+        $this->Db->bindNullableInt($req, ':created_from_type', $createdFromType?->toInt());
+        $this->Db->bindNullableInt($req, ':created_from_id', $createdFromId);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($tags, $newId);
+        $this->addCreationToChangelog($newId, $createdFromType, $createdFromId);
 
         return $newId;
     }
@@ -132,6 +137,8 @@ final class Experiments extends AbstractConcreteEntity
             metadata: $metadata,
             hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
             contentType: BodyContentType::from($this->entityData['content_type']),
+            createdFromType: $this->entityType,
+            createdFromId: $this->id,
         );
 
         $fresh = new self($this->Users, $newId);

@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-      - next
-      - hypernext
       - ird
 jobs:
   mirror:

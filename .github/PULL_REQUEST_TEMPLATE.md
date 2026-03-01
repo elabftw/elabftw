@@ -26,8 +26,6 @@ Please provide **clear context** for your proposed change:
 
 Make sure to read [the contributing documentation](https://doc.elabftw.net/docs/contributing/intro).
 
-**IMPORTANT**: Base your PR off the `hypernext` branch for a feature, and the `next` branch for a bugfix.
-
 **IMPORTANT**: All new features **MUST** have tests added.
 
 Please note that working on a PR doesn't automatically mean that your code will be merged.

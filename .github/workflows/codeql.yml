@@ -2,9 +2,9 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "hypernext" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "hypernext" ]
+    branches: [ "master" ]
 
 jobs:
   analyze:

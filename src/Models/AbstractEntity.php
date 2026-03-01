@@ -670,9 +670,9 @@ abstract class AbstractEntity extends AbstractRest
             LEFT JOIN users ON entity.userid = users.userid
             LEFT JOIN
                 users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)
-            WHERE
-                entity.title LIKE :query ' . $idSql . '
+            WHERE 1=1
             ' . $canFilter . '
+                AND (entity.title LIKE :query ' . $idSql . ')
             ' . $displayParams->getFilterSql() . '
             ' . $displayParams->getStatesSql('entity') . '
             ' . $displayParams->getSql();

@@ -263,7 +263,7 @@ final class Config extends AbstractRest
     {
         foreach (self::ENCRYPTED_KEYS as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
-                $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+                $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(Env::asStringFromFile('SECRET_KEY')));
                 // if it's not changed, it is sent anyway, but we don't want it in the final array as it will blank the existing one
             } elseif (isset($params[$password])) {
                 unset($params[$password]);
@@ -391,7 +391,7 @@ final class Config extends AbstractRest
         if (empty($encrypted)) {
             return '';
         }
-        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+        return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Env::asStringFromFile('SECRET_KEY')));
     }
 
     private function assertAtLeastOneBasePermissionEnabled(string $permissionName): void

@@ -99,8 +99,10 @@ final class Uploads extends AbstractRest
         if (empty($meta['seekable'])) {
             // make a seekable temp stream
             $tmp = fopen('php://temp', 'w+b');
-            stream_copy_to_stream($inputStream, $tmp);
-            $inputStream = $tmp;
+            if ($tmp !== false) {
+                stream_copy_to_stream($inputStream, $tmp);
+                $inputStream = $tmp;
+            }
         }
         rewind($inputStream);
         // we don't hash big files as this could take too much time/resources

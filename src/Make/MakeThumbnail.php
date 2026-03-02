@@ -33,6 +33,7 @@ class MakeThumbnail implements MakeThumbnailInterface
 {
     private const int THUMB_WIDTH = 100;
 
+    /** @param resource $sourceFile */
     public function __construct(private string $mime, protected $sourceFile, private string $longName, private Filesystem $storageFs) {}
 
     #[Override]

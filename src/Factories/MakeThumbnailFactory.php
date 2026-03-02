@@ -29,7 +29,8 @@ final class MakeThumbnailFactory
      * e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
      * image/x-ms-bmp
      */
-    public static function getMaker(string $mime, $filePath, string $longName, Filesystem $storageFs): MakeThumbnailInterface
+    /** @param resource $sourceFile */
+    public static function getMaker(string $mime, $sourceFile, string $longName, Filesystem $storageFs): MakeThumbnailInterface
     {
         return match ($mime) {
             'application/pdf',
@@ -43,8 +44,8 @@ final class MakeThumbnailFactory
             'image/bmp',
             'image/x-bmp',
             'image/png',
-            'image/svg+xml' => new MakeThumbnail($mime, $filePath, $longName, $storageFs),
-            default => new MakeNullThumbnail($mime, $filePath, $longName, $storageFs),
+            'image/svg+xml' => new MakeThumbnail($mime, $sourceFile, $longName, $storageFs),
+            default => new MakeNullThumbnail($mime, $sourceFile, $longName, $storageFs),
         };
     }
 }

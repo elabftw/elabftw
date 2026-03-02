@@ -30,6 +30,7 @@ use Override;
 use PDO;
 
 use function preg_replace;
+use function ksort;
 
 /**
  * All about the team's scheduler
@@ -427,6 +428,7 @@ final class Scheduler extends AbstractRest
         $this->Db->execute($req);
         $event = $this->Db->fetch($req);
         $this->Items->setId($event['item']);
+        ksort($event);
         return $event;
     }
 

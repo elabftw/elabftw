@@ -73,18 +73,14 @@
         <div class='input-group'>
           {# a data-eventid will get added to this element by js #}
             <input class='form-control' type='text' id='title' value='placeholder' name='title' />
-          <input class='form-control' type='text' id='eventTitle' value='placeholder' />
-          <div class='input-group-append'>
-            <button class='btn btn-primary' data-action='save-event-title' type='button'>{{ 'Save'|trans }}</button>
           </div>
-        </div>
         <hr>
         {# START AND END TIMES #}
         <div class='mt-2'>
           <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
           <input id='schedulerEventModalStart' class='form-control' type='datetime-local' data-what='start_epoch' value='' name='eventStart'/>
           <label for='schedulerEventModalEnd'>{{ 'End time'|trans }}</label>
-          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end_epoch' value='' name='eventEnd'/>
+          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' data-what='end_epoch' value='' name='eventEnd' />
         </div>
         {# BIND EXPERIMENT #}
         <div class='mt-2'>
@@ -140,17 +136,17 @@
         </div>
       </div>
         <div class='modal-footer d-flex'>
-            <div id='isCancellableButtons'>
-                {# here we use Cancel booking instead of just Cancel so we can have a specific translated term in German #}
-                <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel booking'|trans }}</button>
-                <button type='button' data-action='cancel-event-with-message' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
-            </div>
-            <div class='ml-auto'>
-                <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-                <button type='submit' class='btn btn-primary' data-action='edit-event'>{{ 'Save'|trans }}</button>
-            </div>
+          <div id='isCancellableButtons'>
+            {# here we use Cancel booking instead of just Cancel so we can have a specific translated term in German #}
+            <button type='button' data-action='cancel-event' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Cancel booking'|trans }}</button>
+            <button type='button' data-action='cancel-event-with-message' data-dismiss='modal' data-id='' class='btn btn-danger cancelEventBtn'>{{ 'Send message and cancel'|trans }}</button>
+          </div>
+          <div class='ml-auto'>
+            <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+            <button type='submit' class='btn btn-primary' data-action='edit-event'>{{ 'Save'|trans }}</button>
+          </div>
         </div>
-    </form>
+      </form>
     </div>
   </div>
 </div>

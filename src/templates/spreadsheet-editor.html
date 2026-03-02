@@ -12,8 +12,8 @@
     {% if App.devMode -%}
       <!-- [html-validate-disable-block unique-landmark, no-deprecated-attr, prefer-native-element: suppress errors from spreadsheet editor] -->
     {%- endif %}
-      {# allow-modals is needed for prompts asking the filename #}
-      <iframe id='spreadsheetIframe' title='{{ 'Spreadsheet Editor'|trans }}' src='/spreadsheet.html' sandbox='allow-scripts allow-same-origin allow-forms allow-downloads allow-modals'></iframe>
+    {# allow-modals is needed for prompts asking the filename #}
+    <iframe id='spreadsheetIframe' title='{{ 'Spreadsheet Editor'|trans }}' src='/spreadsheet.html' sandbox='allow-scripts allow-same-origin allow-forms allow-downloads allow-modals'></iframe>
   </div>
 </section>
 <hr>

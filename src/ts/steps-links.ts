@@ -99,6 +99,10 @@ if (document.getElementById('stepsDiv')) {
     }
   });
 
+  on('toggle-all-immutable', (el: HTMLInputElement) => {
+    ApiC.patch(`${entity.type}/${entity.id}/steps`, {action: el.checked ? Action.ForceLock : Action.ForceUnlock}).then(() => reloadElements(['stepsDiv']));
+  });
+
   on('import-links', (el: HTMLElement) => {
     Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(
       `${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`,

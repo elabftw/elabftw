@@ -12,7 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use DOMDocument;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 
 class Xml2IdpsTest extends \PHPUnit\Framework\TestCase
@@ -36,5 +39,15 @@ class Xml2IdpsTest extends \PHPUnit\Framework\TestCase
         $idps = $Xml2Idps->getIdpsFromDom();
         $this->assertIsArray($idps);
         $this->assertEquals(2, count($idps));
+    }
+
+    public function testProcessCert(): void
+    {
+        $cert = Storage::FIXTURES->getStorage()->getFs()->read('x509.crt');
+        $res = Xml2Idps::processCert($cert);
+        $this->assertSame(Filter::pem($cert), Filter::pem($res[0]));
+        $this->assertSame('6973a83ff6d8dbfa409159dcf2be83acf5322243c3bd53d476ccd10f7f08ca89', $res[1]);
+        $this->assertEquals(new DateTimeImmutable('2022-02-10T08:55:32', new DateTimeZone('UTC')), $res[2]);
+        $this->assertEquals(new DateTimeImmutable('2027-02-10T08:55:32', new DateTimeZone('UTC')), $res[3]);
     }
 }

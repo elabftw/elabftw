@@ -19,11 +19,11 @@ use Elabftw\Models\Config;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
 
-use function checkdate;
 use function filter_var;
-use function mb_strlen;
-use function mb_substr;
+use function grapheme_substr;
+use function grapheme_strlen;
 use function strlen;
+use function strtolower;
 use function trim;
 
 /**
@@ -51,6 +51,9 @@ final class Filter
     public static function toPureString(string $input): string
     {
         $config = HTMLPurifier_HTML5Config::createDefault();
+        // configure the cache for htmlpurifier
+        $tmpDir = FsTools::getCacheFolder('purifier');
+        $config->set('Cache.SerializerPath', $tmpDir);
         $config->set('HTML.Allowed', '');
         $config->set('AutoFormat.RemoveEmpty', true);
         return new HTMLPurifier($config)->purify(trim($input));
@@ -71,21 +74,6 @@ final class Filter
             return $key;
         }
         throw new ImproperActionException('Incorrect value: must be a letter.');
-    }
-
-    /**
-     * Make sure the date is correct (YYYY-MM-DD)
-     */
-    public static function kdate(string $input): string
-    {
-        // Check if day/month/year are good
-        $year = (int) mb_substr($input, 0, 4);
-        $month = (int) mb_substr($input, 5, 2);
-        $day = (int) mb_substr($input, 8, 2);
-        if (mb_strlen($input) !== 10 || !checkdate($month, $day, $year)) {
-            return date('Y-m-d');
-        }
-        return $input;
     }
 
     /**
@@ -120,15 +108,8 @@ final class Filter
         if ($output === false) {
             return '';
         }
-        return $output;
-    }
-
-    public static function email(string $input): string
-    {
-        // if the sent email is different from the existing one, check it's valid (not duplicate and respects domain constraint)
-        $Config = Config::getConfig();
-        $EmailValidator = new EmailValidator($input, (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
-        return $EmailValidator->validate();
+        // make it lowercase every time
+        return trim(strtolower($output));
     }
 
     /**
@@ -144,7 +125,15 @@ final class Filter
             return _('Untitled');
         }
         // remove linebreak to avoid problem in javascript link list generation on editXP
-        return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
+        $title = str_replace(array("\r\n", "\n", "\r"), ' ', $title);
+        $maxCharacters = 255;
+        if (grapheme_strlen($title) > $maxCharacters) {
+            $title = grapheme_substr($title, 0, $maxCharacters);
+            if ($title === false) {
+                throw new ImproperActionException('Error reducing title size!');
+            }
+        }
+        return $title;
     }
 
     public static function toAsciiSlug(string $input): string
@@ -276,5 +265,18 @@ final class Filter
 
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($input);
+    }
+
+    public static function pem(string $pem): string
+    {
+        // Trim outer whitespace
+        $pem = trim($pem);
+
+        // Drop the header and footer lines if present
+        $pem = preg_replace('/-----BEGIN CERTIFICATE-----/', '', $pem);
+        $pem = preg_replace('/-----END CERTIFICATE-----/', '', $pem ?? '');
+
+        // Remove all whitespace (newlines, spaces, tabs)
+        return str_replace(array("\r", "\n", ' ', "\t"), '', $pem ?? '');
     }
 }

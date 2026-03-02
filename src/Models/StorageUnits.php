@@ -54,8 +54,10 @@ final class StorageUnits extends AbstractRest
                 -- Base case: Start with the given id
                 SELECT
                     id,
+                    id AS original_id,
                     name,
                     parent_id,
+                    parent_id AS original_parent_id,
                     CAST(name AS CHAR(1000)) AS full_path,
                     0 AS level_depth
                 FROM
@@ -68,8 +70,10 @@ final class StorageUnits extends AbstractRest
                 -- Recursive case: Trace the path upwards by finding parent units
                 SELECT
                     parent.id,
+                    child.original_id,
                     child.name,
                     parent.parent_id,
+                    child.original_parent_id,
                     CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR(1000)) AS full_path,
                     child.level_depth + 1
                 FROM
@@ -80,10 +84,10 @@ final class StorageUnits extends AbstractRest
 
             -- Get the full path from the root to the given id
             SELECT
-                id,
+                original_id AS id,
                 name,
                 full_path,
-                parent_id,
+                original_parent_id AS parent_id,
                 level_depth
             FROM
                 storage_hierarchy
@@ -93,7 +97,7 @@ final class StorageUnits extends AbstractRest
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
 
         return $this->Db->fetch($req);
     }
@@ -122,7 +126,8 @@ final class StorageUnits extends AbstractRest
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':storage_id', $storageId, PDO::PARAM_INT);
-        $req->execute();
+        $req->bindValue(':userid', $this->requester->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
         return $req->fetchAll();
     }
 
@@ -130,6 +135,9 @@ final class StorageUnits extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
+        if ($queryParams->getQuery()->getBoolean('hierarchy')) {
+            return $this->readHierarchyRows();
+        }
         $sql = $this->getRecursiveSql(
             (int) $this->requester->userData['userid'],
             (int) $this->requester->userData['team'],
@@ -138,13 +146,14 @@ final class StorageUnits extends AbstractRest
             compounds.name LIKE :query OR
             compounds.iupac_name LIKE :query OR
             sh.full_path LIKE :query)',
-        ) . sprintf(
-            ' ORDER BY storage_id, entity_title LIMIT %d',
-            $queryParams->getLimit(),
-        );
+        ) . ' ORDER BY storage_name, entity_title';
 
+        if ($queryParams->getLimit() > 0) {
+            $sql .= sprintf(' LIMIT %d', $queryParams->getLimit());
+        }
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
+        $req->bindValue(':userid', $this->requester->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -160,6 +169,7 @@ final class StorageUnits extends AbstractRest
             storage_units.name AS storage_name,
             items.id AS entity_id,
             items.title AS entity_title,
+            items.custom_id AS entity_custom_id,
             c2i.qty_stored,
             c2i.qty_unit,
             compounds.cas_number,
@@ -202,6 +212,7 @@ final class StorageUnits extends AbstractRest
             storage_units.name AS storage_name,
             experiments.id AS entity_id,
             experiments.title AS entity_title,
+            experiments.custom_id AS entity_custom_id,
             c2e.qty_stored,
             c2e.qty_unit,
             compounds.cas_number,
@@ -243,54 +254,7 @@ final class StorageUnits extends AbstractRest
 
     public function readAllRecursive(): array
     {
-        $sql = "WITH RECURSIVE storage_hierarchy AS (
-            -- Base case: Select all top-level units (those with no parent)
-            SELECT
-                id,
-                name,
-                parent_id,
-                name AS full_path,
-                0 AS level_depth,
-                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
-            FROM
-                storage_units
-            WHERE
-                parent_id IS NULL
-
-            UNION
-
-            -- Recursive case: Select child units and append them to the parent's path
-            SELECT
-                child.id,
-                child.name,
-                child.parent_id,
-                CONCAT(parent.full_path, ' > ', child.name) AS full_path,
-                parent.level_depth + 1,
-                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
-            FROM
-                storage_units AS child
-            INNER JOIN
-                storage_hierarchy AS parent
-            ON
-                child.parent_id = parent.id
-        )
-
-        -- Query to view the full hierarchy
-        SELECT
-            id,
-            name,
-            full_path,
-            parent_id,
-            level_depth,
-            children_count
-        FROM
-            storage_hierarchy
-        ORDER BY
-            parent_id";
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-        $all = $req->fetchAll();
+        $all = $this->readHierarchyRows();
         $groupedItems = array();
         foreach ($all as $item) {
             $groupedItems[$item['parent_id']][] = $item;
@@ -334,7 +298,7 @@ final class StorageUnits extends AbstractRest
         $this->canWriteOrExplode();
         return $this->create(
             $reqBody['name'] ?? throw new ImproperActionException('Missing value for "name"'),
-            Filter::intOrNull($reqBody['parent_id']),
+            Filter::intOrNull($reqBody['parent_id'] ?? 0),
         );
     }
 
@@ -386,6 +350,57 @@ final class StorageUnits extends AbstractRest
         if (!$this->canWrite()) {
             throw new IllegalActionException();
         }
+    }
+
+    private function readHierarchyRows(): array
+    {
+        $sql = "WITH RECURSIVE storage_hierarchy AS (
+            -- Base case: Select all top-level units (those with no parent)
+            SELECT
+                id,
+                name,
+                parent_id,
+                name AS full_path,
+                0 AS level_depth,
+                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
+            FROM
+                storage_units
+            WHERE
+                parent_id IS NULL
+
+            UNION
+
+            -- Recursive case: Select child units and append them to the parent's path
+            SELECT
+                child.id,
+                child.name,
+                child.parent_id,
+                CONCAT(parent.full_path, ' > ', child.name) AS full_path,
+                parent.level_depth + 1,
+                (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
+            FROM
+                storage_units AS child
+            INNER JOIN
+                storage_hierarchy AS parent
+            ON
+                child.parent_id = parent.id
+        )
+
+        -- Query to view the full hierarchy
+        SELECT
+            id,
+            name,
+            full_path,
+            parent_id,
+            level_depth,
+            children_count
+        FROM
+            storage_hierarchy
+        ORDER BY
+            storage_hierarchy.name, parent_id";
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     private function hasContainers(): bool
@@ -457,6 +472,7 @@ final class StorageUnits extends AbstractRest
                 SELECT
                     entity.id AS entity_id,
                     entity.title AS entity_title,
+                    entity.custom_id AS entity_custom_id,
                     'database' AS page,
                     c2i.id AS container2item_id,
                     c2i.qty_stored,
@@ -515,12 +531,13 @@ final class StorageUnits extends AbstractRest
                     users AS u ON (u.userid = entity.userid)
                 WHERE
                     -- can sql AND query or storage_id
-                    1=1 AND %s %s
+                    1=1 AND entity.state IN (1,2) AND %s %s
 
             UNION
                 SELECT
                     entity.id AS entity_id,
                     entity.title AS entity_title,
+                    entity.custom_id AS entity_custom_id,
                     'experiments' AS page,
                     c2e.id AS container2experiment_id,
                     c2e.qty_stored,
@@ -579,7 +596,7 @@ final class StorageUnits extends AbstractRest
                     users AS u ON (u.userid = entity.userid)
                 WHERE
                     -- can sql AND query or storage_id
-                    1=1 AND %s %s",
+                    1=1 AND entity.state IN (1,2) AND %s %s",
             $userid,
             $team,
             $discriminator,

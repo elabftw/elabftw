@@ -20,7 +20,7 @@ use Override;
 class WebOnlyNotifications extends AbstractNotifications
 {
     #[Override]
-    protected function getPref(int $userid): array
+    protected function getPref(): array
     {
         // not mailable
         return array(1, 0);

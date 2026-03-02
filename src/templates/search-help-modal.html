@@ -18,7 +18,6 @@
         <div class='row'>
           <div class='col-md-6'>
             <ul class='list-unstyled'>
-              <li class='mb-2'><kbd>attachment:</kbd> {{ 'yes, no, simple or quoted term'|trans }}</li>
               <li class='mb-2'><kbd>body:</kbd> {{ 'simple or quoted term'|trans }}</li>
               <li class='mb-2'><kbd>category:</kbd> {{ 'simple or quoted term'|trans }}</li>
               <li class='mb-2'><kbd>custom_id:</kbd> {{ 'number'|trans }}</li>
@@ -121,14 +120,6 @@
         <p>Basic syntax <code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token string'>value</span></code></p>
         <p>By default wildcards are added to Terms and Quoted terms. The strict switch (<code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>value</span></code>) disables the wildcards.</p>
         <dl>
-          <dt><span class='token keyword'>attachment</span></dt>
-          <dd><span class='token boolean'>yes</span> or <span class='token boolean'>no</span>,
-              <span class='token boolean'>true</span> or <span class='token boolean'>false</span>,
-              <span class='token number'>1</span> or <span class='token number'>0</span>,
-              <span class='token boolean'>on</span> or <span class='token boolean'>off</span>:<br>
-              search entries with/out attachments<br>
-              Term or Quoted term:<br>
-              search in filenames and comments of attachments</dd>
           <dt><span class='token keyword'>body</span></dt>
           <dd>Term or Quoted term</dd>
           <dt><span class='token keyword'>category</span></dt>

@@ -12,9 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
-use Elabftw\Elabftw\Env;
 use Elabftw\Exceptions\ImproperActionException;
 use Override;
 
@@ -45,7 +42,7 @@ final class MakeDgnTimestamp extends AbstractMakeTrustedTimestamp
         if (empty($config['ts_password'])) {
             throw new ImproperActionException('DGN timestamping requires a password!');
         }
-        $password = Crypto::decrypt($config['ts_password'], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+        $password = $config['ts_password'];
 
         return array(
             'ts_login' => $config['ts_login'],

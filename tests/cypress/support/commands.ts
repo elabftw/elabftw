@@ -86,3 +86,49 @@ Cypress.Commands.add('getExperimentId', () => {
         });
     });
 });
+// create new entity (experiment or item. default: experiment)
+Cypress.Commands.add('createEntity', (
+  type: 'experiment' | 'item' = 'experiment',
+  title = `Cypress ${type} ${Date.now()}`,
+) => {
+  const config = {
+    experiment: { page: '/experiments.php', modal: '#createModal' },
+    item: { page: '/database.php', modal: '#createModal' },
+  }[type];
+  cy.visit(config.page);
+  cy.get('[data-action="toggle-create-modal"]').last().click();
+  cy.get(config.modal).should('be.visible');
+  // create modal -> enter title & confirm
+  // do not use .type() here or for some reason the title won't be complete...
+  cy.get('#createNewFormTitle')
+    .invoke('val', title)
+    .trigger('input');
+  cy.get('[data-cy="create-entity"]').click();
+  // ensure we navigated to the new entry
+  cy.get('#documentTitle').should('contain', title);
+  cy.url().should('include', 'mode=edit');
+});
+// metadata helpers
+Cypress.Commands.add('addMetadataField', (fieldName: string, type: string) => {
+  cy.get('[data-cy="addMetadataField"]').first().click();
+  cy.get('#fieldBuilderModal').should('be.visible');
+  cy.get('#newFieldTypeSelect').select(type);
+  cy.get('#newFieldKeyInput').wait(500).type(fieldName);
+  cy.get('[data-action="save-new-field"]').click();
+  cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+  cy.get('#metadataDiv').should('be.visible').should('contain', fieldName);
+});
+Cypress.Commands.add('addTextMetadataField', (fieldName: string) => {
+  cy.addMetadataField(fieldName, 'text');
+});
+Cypress.Commands.add('addUserMetadataField', (fieldName: string, username = 'Titi') => {
+  cy.addMetadataField(fieldName, 'users');
+  cy.get(`[data-field="${fieldName}"][data-target="users"]`).wait(500).type(`${username}{enter}`);
+  cy.get('ul.ui-autocomplete').should('be.visible').contains('div.ui-menu-item-wrapper', username).click();
+  cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+});
+Cypress.Commands.add('removeMetadataField', () => {
+  cy.get('#metadataDiv').should('be.visible');
+  cy.on('window:confirm', () => true);
+  cy.get('[data-action="metadata-rm-field"]').click();
+});

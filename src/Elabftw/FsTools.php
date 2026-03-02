@@ -18,10 +18,6 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Visibility;
 
-use function bin2hex;
-use function hash;
-use function random_bytes;
-
 /**
  * For filesystem related helpers
  */
@@ -44,12 +40,7 @@ final class FsTools
      */
     public static function getCacheFile(): string
     {
-        return self::getCacheFolder('elab') . '/' . self::getUniqueString();
-    }
-
-    public static function getUniqueString(): string
-    {
-        return hash('sha512', bin2hex(random_bytes(16)));
+        return self::getCacheFolder('elab') . '/' . Tools::getUuidv4();
     }
 
     public static function getFs(string $path): FilesystemOperator

@@ -1,7 +1,4 @@
 {# RIGHT MENU: CREATE NEW BUTTON #}
-{% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last|replace({'.php': ''})) %}
 {% if not App.Session.get('is_anon') %}
-  <button type='button' data-action='toggle-modal' data-target='createModal_{{ entityPage }}' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+<button type='button' data-action='toggle-create-modal' data-type='{{ entityType|default('') }}' class='btn btn-primary'>{{ 'Create'|trans }}</button>
 {% endif %}
-{% include 'create-new-item-modal.html' %}
-{% include 'ask-title-modal.html' %}

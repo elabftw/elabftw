@@ -16,6 +16,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\Config;
 
@@ -36,6 +37,14 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(42, Check::id(42));
     }
 
+    public function testUnit(): void
+    {
+        $this->assertEquals('g', Check::unit('g'));
+        $this->assertEquals('mg', Check::unit('mg'));
+        $this->expectException(ImproperActionException::class);
+        Check::unit('invalid_unit');
+    }
+
     public function testColor(): void
     {
         $this->assertEquals('AABBCC', Check::color('#AABBCC'));
@@ -46,21 +55,21 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testVisibility(): void
     {
-        $this->assertEquals(BasePermissions::Team->toJson(), Check::visibility(BasePermissions::Team->toJson()));
+        $this->assertEquals(AbstractEntity::EMPTY_CAN_JSON, Check::visibility(AbstractEntity::EMPTY_CAN_JSON));
         $this->expectException(ImproperActionException::class);
         Check::visibility('pwet');
     }
 
-    public function testVisibilityIncorrectBase(): void
+    public function testIncorrectBase(): void
     {
         $this->expectException(ImproperActionException::class);
-        Check::visibility('{"base": 12}');
+        Check::basePermission(12);
     }
 
     public function testVisibilityIncorrectArray(): void
     {
         $this->expectException(ImproperActionException::class);
-        Check::visibility('{"base": 10, "teams": "yep"}');
+        Check::visibility('{"teams": "yep"}');
     }
 
     public function testAk(): void
@@ -87,6 +96,14 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Usergroup::User, Check::usergroup($requester, $usergroup));
     }
 
+    public function testUsergroupPromotionThrows(): void
+    {
+        // simulate a non-sysadmin trying to promote to sysadmin
+        $requester = new Users(3, 2);
+        $this->expectException(ImproperActionException::class);
+        Check::usergroup($requester, Usergroup::Sysadmin);
+    }
+
     public function testVisibilityBaseNotAllowed(): void
     {
         // simulate config with only 'allow_permission_user' enabled
@@ -99,9 +116,9 @@ class CheckTest extends \PHPUnit\Framework\TestCase
             'allow_permission_useronly' => '0',
         ));
         // Team is not in allowed list
-        $json = BasePermissions::Team->toJson();
+        $base = BasePermissions::Team;
         $this->expectException(UnprocessableContentException::class);
-        Check::visibility($json);
+        Check::basePermission($base->value);
     }
 
     public function testVisibilityBaseAllowed(): void
@@ -114,7 +131,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
             'allow_permission_full' => '1',
             'allow_permission_useronly' => '1',
         ));
-        $json = BasePermissions::Team->toJson();
-        $this->assertEquals($json, Check::visibility($json));
+        $base = BasePermissions::Team;
+        $this->assertEquals($base, Check::basePermission($base->value));
     }
 }

@@ -7,10 +7,11 @@
   'experiments_categories',
   'Create and modify the categories available to experiments.'|trans,
   'Experiments categories can be associated with an Experiment or an Experiment Template as a Category. They belong to a team and have two main properties: name and color. Examples: Analysis, Measurement, Test, Project XYZ, etc...'|trans,
-  App.experimentsCategoryArr,
+  App.experimentsCategoryArr|filter(c => c.is_current_team == 1),
   'No experiments categories have been created in this team yet.'|trans|msg('warning', false),
   'Create new experiments category'|trans,
   'Category name'|trans,
+  App.Teams.teamArr.name,
   ) }}
 
 {% endblock body %}

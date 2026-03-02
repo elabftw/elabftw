@@ -1,0 +1,20 @@
+/* spreadsheet editor iframe*/
+#spreadsheetEditorRoot {
+  background: $mainbackground;
+
+  :focus {
+    outline: none;
+  }
+}
+
+#spreadsheetEditorDiv {
+  height: 467px;
+  overflow: auto;
+  resize: both;
+
+  iframe {
+    border: 0;
+    height: 100%;
+    width: 100%;
+  }
+}

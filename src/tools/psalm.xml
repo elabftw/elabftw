@@ -17,6 +17,7 @@
     <projectFiles>
         <directory name="../../bin" />
         <directory name="../../src" />
+        <directory name="../../var" />
         <directory name="../../tests" />
         <directory name="../../web" />
         <ignoreFiles>

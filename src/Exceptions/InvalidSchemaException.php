@@ -16,6 +16,8 @@ use Exception;
 
 use function dirname;
 use function file_get_contents;
+use function sprintf;
+use function strtr;
 
 /**
  * When the database schema is wrong.
@@ -25,12 +27,17 @@ final class InvalidSchemaException extends Exception
     /**
      * The message will always be the same here
      */
-    public function __construct()
+    public function __construct(int $currentSchema, int $requiredSchema)
     {
         $htmlPage = file_get_contents(dirname(__DIR__) . '/templates/invalid-schema.html');
+
         if ($htmlPage === false) {
-            $htmlPage = 'Run the bin/console db:update command to finish the update!';
+            $htmlPage = sprintf('Run the bin/console db:update command to finish the update! (%d => %d)', $currentSchema, $requiredSchema);
         }
-        parent::__construct($htmlPage);
+        $html = strtr($htmlPage, array(
+            '%CURRENT_SCHEMA%'  => (string) $currentSchema,
+            '%REQUIRED_SCHEMA%' => (string) $requiredSchema,
+        ));
+        parent::__construct($html);
     }
 }

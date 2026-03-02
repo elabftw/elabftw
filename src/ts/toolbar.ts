@@ -5,18 +5,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import {
-  collectForm,
-  relativeMoment,
-  reloadElements,
-} from './misc';
-import i18next from './i18n';
 import $ from 'jquery';
-import { Action, Model } from './interfaces';
-import { notify } from './notify';
 import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import i18next from './i18n';
+import { Action, Model } from './interfaces';
+import { collectForm, reloadElements } from './misc';
+import { notify } from './notify';
 
 if (document.getElementById('topToolbar')) {
   on(Action.Duplicate, () => {
@@ -75,17 +71,24 @@ if (document.getElementById('topToolbar')) {
     });
   });
 
-  on(Action.RequestAction, () => {
-    const actionSelect = (document.getElementById('requestActionActionSelect') as HTMLSelectElement);
-    const userSelect = (document.getElementById('requestActionUserSelect') as HTMLSelectElement);
+  on(Action.RequestAction, (_, event: Event) => {
+    event.preventDefault();
+    const form = document.getElementById('requestActionActionSelectForm') as HTMLFormElement;
+    const params = collectForm(form);
+    const rawUser = String(params['requested_user'] ?? '').trim();
+    const userId = parseInt(rawUser.split(' ')[0], 10);
+    if (!Number.isFinite(userId)) {
+      notify.error(i18next.t('invalid-info'));
+      return;
+    }
     ApiC.post(`${entity.type}/${entity.id}/request_actions`, {
-      action: Action.Create,
-      target_action: actionSelect.value,
-      target_userid: parseInt(userSelect.value.split(' ')[0], 10),
-    }).then(() => reloadElements(['requestActionsDiv']))
-      .then(() => relativeMoment())
-      // the request gets rejected if repeated
-      .catch(error => console.error(error.message));
+      action: Action.RequestAction,
+      target_action: params['requested_action'],
+      target_userid: userId,
+    }).then(() => {
+      reloadElements(['requestActionsDiv']);
+      $('#requestActionModal').modal('hide');
+    }).catch(error => notify.error(error));
   });
 
   on('do-requestable-action', (el: HTMLElement) => {

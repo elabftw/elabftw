@@ -118,6 +118,12 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $Compounds->postAction(Action::Create, array());
     }
 
+    public function testPostActionBadParam(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->Compounds->postAction(Action::Duplicate, array());
+    }
+
     public function testRestoreCompound(): void
     {
         // create a compound

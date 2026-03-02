@@ -57,6 +57,7 @@ final class Extensions
         'gif',
         'heic',
         'jpeg',
+        'bmp',
         'jpg',
         'png',
         'tif',
@@ -96,15 +97,11 @@ final class Extensions
     );
 
     public const array SPREADSHEET = array(
+        'csv',
+        'ods',
         'xls',
         'xlsx',
         'xlsb',
-        'xlsm',
-        'csv',
-        'tsv',
-        'ods',
-        'ots',
-        'fods',
     );
 
     public const array VIDEO = array(

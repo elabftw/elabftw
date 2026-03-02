@@ -38,7 +38,7 @@ final class DeviceTokenValidator
             $sql = 'SELECT COUNT(id) FROM lockout_devices WHERE device_token = :device_token AND locked_at > (NOW() - INTERVAL 1 HOUR)';
             $req = $Db->prepare($sql);
             $req->bindParam(':device_token', $this->deviceToken);
-            $req->execute();
+            $Db->execute($req);
             if ($req->fetchColumn() > 0) {
                 return false;
             }

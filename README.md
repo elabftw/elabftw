@@ -10,7 +10,7 @@
 
 [![CircleCI](https://circleci.com/gh/elabftw/elabftw/tree/master.svg?style=svg)](https://circleci.com/gh/elabftw/elabftw/tree/master)
 
-[![Code Coverage](https://codecov.io/gh/elabftw/elabftw/branch/hypernext/graph/badge.svg?token=SHSZuaxt17)](https://codecov.io/gh/elabftw/elabftw)
+[![Code Coverage](https://codecov.io/gh/elabftw/elabftw/branch/master/graph/badge.svg?token=SHSZuaxt17)](https://codecov.io/gh/elabftw/elabftw)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2766/badge)](https://bestpractices.coreinfrastructure.org/projects/2766)
 [![Join the chat at https://gitter.im/elabftw/elabftw](https://badges.gitter.im/elabftw/elabftw.svg)](https://gitter.im/elabftw/elabftw?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License](https://img.shields.io/badge/license-AGPL-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
@@ -62,7 +62,7 @@ The documentation explains everything:
 
 # Contributing
 
-**eLabFTW** is a collaborative project. Your contributions are very welcome! Have a look at the [contributing page](https://doc.elabftw.net/contributing.html) to see how you can help with translation or code.
+**eLabFTW** is a collaborative project. Your contributions are very welcome! Have a look at the [contributing page](https://doc.elabftw.net/docs/contributing/intro) to see how you can help with translation or code.
 
 # Security
 
@@ -112,6 +112,7 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 * Vrije Universiteit Brussel
 * Institute of Medical Biometry and Statistics, Faculty of Medicine and Medical Center – University of Freiburg, Germany
 * Georg-August-University Goettingen - Institute of Inorganic Chemistry
+* [Lablynx](https://www.lablynx.com/)
 
 # Related projects
 

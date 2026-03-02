@@ -13,8 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DOMDocument;
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
@@ -36,43 +37,43 @@ final class IdpsSources extends AbstractRest
     public function __construct(private Users $requester, ?int $id = null)
     {
         parent::__construct();
-        if ($this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('Only a Sysadmin can access this!');
-        }
         $this->setId($id);
     }
 
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->requester->isSysadminOrExplode();
         return $this->create($reqBody['url']);
     }
 
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        $this->requester->isSysadminOrExplode();
         if ($this->id === null) {
             throw new ImproperActionException('No id was set!');
         }
-        return match ($action) {
+        match ($action) {
             // currently only one aspect is modifiable, the auto_refresh
             Action::Update => $this->toggleAutoRefresh(),
             Action::Replace => (
                 function () {
                     $source = $this->readOne();
                     $Config = Config::getConfig();
-                    $getter = new HttpGetter(new Client(), $Config->configArr['proxy']);
+                    $getter = new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE'));
                     $Url2Xml = new Url2Xml($getter, $source['url'], new DOMDocument());
                     $dom = $Url2Xml->getXmlDocument();
                     $Xml2Idps = new Xml2Idps($dom);
                     $Idps = new Idps($this->requester);
-                    return $this->refresh($Xml2Idps, $Idps);
+                    $this->refresh($Xml2Idps, $Idps);
                 }
             )(),
-            Action::Validate => $this->toggleEnable(1),
-            Action::Finish => $this->toggleEnable(0),
+            Action::Validate => $this->setEnabled(BinaryValue::True),
+            Action::Finish => $this->setEnabled(BinaryValue::False),
             default => throw new ImproperActionException('Incorrect action parameter'),
         };
+        return $this->readOne();
     }
 
     #[Override]
@@ -84,6 +85,7 @@ final class IdpsSources extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $this->requester->isSysadminOrExplode();
         $sql = 'SELECT idps_sources.id, idps_sources.url, idps_sources.auto_refresh,
             idps_sources.last_fetched_at, COALESCE(COUNT(idps.id), 0) AS idps_count,
             CAST(COALESCE(SUM(CASE WHEN idps.enabled = 1 THEN 1 ELSE 0 END), 0) AS UNSIGNED) AS idps_count_enabled
@@ -105,6 +107,7 @@ final class IdpsSources extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        $this->requester->isSysadminOrExplode();
         $sql = 'SELECT idps_sources.id, idps_sources.url, idps_sources.auto_refresh,
             idps_sources.last_fetched_at, COALESCE(COUNT(idps.id), 0) AS idps_count,
             CAST(COALESCE(SUM(CASE WHEN idps.enabled = 1 THEN 1 ELSE 0 END), 0) AS UNSIGNED) AS idps_count_enabled
@@ -119,6 +122,7 @@ final class IdpsSources extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        $this->requester->isSysadminOrExplode();
         $sql = 'DELETE FROM idps_sources WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
@@ -139,27 +143,27 @@ final class IdpsSources extends AbstractRest
         return $this->Db->lastInsertId();
     }
 
-    public function refresh(Xml2Idps $Xml2Idps, Idps $Idps): array
+    public function refresh(Xml2Idps $Xml2Idps, Idps $Idps): bool
     {
-        $Idps->upsert($this->id ?? 0, $Xml2Idps);
-        $this->touch();
-        return $this->readOne();
+        $Idps->upsert($this->id ?? 0, $Xml2Idps->getIdpsFromDom());
+        return $this->touch();
     }
 
-    private function toggleAutoRefresh(): array
+    private function toggleAutoRefresh(): bool
     {
         $sql = 'UPDATE idps_sources SET auto_refresh = auto_refresh XOR 1 WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $this->readOne();
+        return $this->Db->execute($req);
     }
 
-    private function toggleEnable(int $enabled): array
+    private function setEnabled(BinaryValue $enabled): bool
     {
-        $Idps = new Idps($this->requester);
-        $Idps->toggleEnabledFromSource($this->id ?? -1, $enabled);
-        return $this->readOne();
+        $sql = 'UPDATE idps SET enabled = :enabled WHERE source = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':enabled', $enabled->value, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     private function touch(): bool

@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Services\Filter;
@@ -38,44 +39,68 @@ final class ItemsTypes extends AbstractTemplateEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::Team,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
+        ?EntityType $createdFromType = null,
+        ?int $createdFromId = null,
+        string $canbook = self::EMPTY_CAN_JSON,
+        BasePermissions $canbookBase = BasePermissions::Team,
     ): int {
         $title = Filter::title($title ?? _('Default'));
-        $defaultPermissions = BasePermissions::Team->toJson();
+        $body = Filter::body($body);
+        if (empty($body)) {
+            $body = null;
+        }
 
-        $sql = 'INSERT INTO items_types(userid, title, body, team, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata)
-            VALUES(:userid, :title, :body, :team, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata)';
+        $sql = 'INSERT INTO items_types(userid, title, body, team, canread_base, canwrite_base, canbook_base, canread, canwrite, canbook, canread_is_immutable, canwrite_is_immutable, canread_target, canwrite_target, category, content_type, status, rating, metadata, hide_main_text, created_from_type, created_from_id)
+            VALUES(:userid, :title, :body, :team, :canread_base, :canwrite_base, :canbook_base, :canread, :canwrite, :canbook, :canread_is_immutable, :canwrite_is_immutable, :canread_target, :canwrite_target, :category, :content_type, :status, :rating, :metadata, :hide_main_text, :created_from_type, :created_from_id)';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
         $req->bindValue(':body', $body);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
-        $req->bindParam(':canread', $defaultPermissions);
-        $req->bindParam(':canwrite', $defaultPermissions);
+        $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
+        $req->bindParam(':canread', $canread);
+        $req->bindParam(':canwrite', $canwrite);
+        $req->bindParam(':canbook', $canbook);
+        $req->bindValue(':canbook_base', $canbookBase->value, PDO::PARAM_INT);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
-        $req->bindParam(':canread_target', $defaultPermissions);
-        $req->bindParam(':canwrite_target', $defaultPermissions);
+        $req->bindParam(':canread_target', $canread);
+        $req->bindParam(':canwrite_target', $canwrite);
         $req->bindParam(':category', $category);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':status', $status);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
+        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+        $this->Db->bindNullableInt($req, ':created_from_type', $createdFromType?->toInt());
+        $this->Db->bindNullableInt($req, ':created_from_id', $createdFromId);
         $this->Db->execute($req);
-        $id = $this->Db->lastInsertId();
+        $newId = $this->Db->lastInsertId();
 
-        $this->insertTags($tags, $id);
+        $this->insertTags($tags, $newId);
+        $this->addCreationToChangelog($newId, $createdFromType, $createdFromId);
 
-        return $id;
+        return $newId;
+    }
+
+    #[Override]
+    protected function getCreatePermissionKey(): string
+    {
+        return 'users_canwrite_resources_templates';
     }
 }

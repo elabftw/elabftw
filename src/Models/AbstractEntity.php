@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\AccessPermissions;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
@@ -26,6 +26,8 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
@@ -34,7 +36,9 @@ use Elabftw\Enums\Messages;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -65,10 +69,10 @@ use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
-use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\EntityTrait;
 use GuzzleHttp\Client;
@@ -77,19 +81,18 @@ use PDOStatement;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mime\Address;
 use ZipArchive;
 
 use function array_column;
 use function array_merge;
 use function implode;
+use function in_array;
 use function is_bool;
 use function json_encode;
 use function ksort;
 use function mb_substr;
 use function sprintf;
+use function str_contains;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -100,6 +103,8 @@ use const JSON_THROW_ON_ERROR;
 abstract class AbstractEntity extends AbstractRest
 {
     use EntityTrait;
+
+    public const string EMPTY_CAN_JSON = '{"teams": [], "teamgroups": [], "users": []}';
 
     public Comments $Comments;
 
@@ -158,28 +163,35 @@ abstract class AbstractEntity extends AbstractRest
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::User,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
+        ?EntityType $createdFromType = null,
+        ?int $createdFromId = null,
     ): int;
 
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
     public function createFromTemplate(int $templateId, ?string $title = null): int
     {
-        $TemplateType = $this->entityType->toTemplateType($this->Users, $templateId);
+        $TemplateType = $this->entityType->toTemplateEntity($this->Users, $templateId);
         $template = $TemplateType->readOne();
         $id = $this->create(
             title: $title ?? $template['title'],
             body: $template['body'],
+            canreadBase: BasePermissions::from($template['canread_target_base']),
+            canwriteBase: BasePermissions::from($template['canwrite_target_base']),
             canread: $template['canread_target'],
             canwrite: $template['canwrite_target'],
             canreadIsImmutable: (bool) $template['canread_is_immutable'],
@@ -187,8 +199,11 @@ abstract class AbstractEntity extends AbstractRest
             category: $template['category'],
             status: $template['status'],
             metadata: $template['metadata'],
+            hideMainText: BinaryValue::from($template['hide_main_text']),
             rating: $template['rating'],
             contentType: BodyContentType::from($template['content_type']),
+            createdFromType: $TemplateType->entityType,
+            createdFromId: $templateId,
         );
         $tags = array_column($TemplateType->Tags->readAll(), 'tag');
         $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
@@ -207,11 +222,14 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        if (in_array($action, array(Action::Create, Action::Duplicate), true)) {
+            $this->guardTemplateCreation();
+        }
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
-                        return $this->createFromTemplate((int) $reqBody['template']);
+                        return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
                     }
                     // check if use of template is enforced at team level for experiments
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
@@ -234,23 +252,38 @@ abstract class AbstractEntity extends AbstractRest
                     if (is_string($tags)) {
                         $tags = array($tags);
                     }
+                    // for backward compatibility, see if there is a base param in the json and use that, and fallback on default if not
+                    $canreadBase = $this->getCanBaseFromJson($reqBody['canread'] ?? null, BasePermissions::from($this->Users->userData['default_read_base']));
+                    $canwriteBase = $this->getCanBaseFromJson($reqBody['canwrite'] ?? null, BasePermissions::from($this->Users->userData['default_write_base']));
+                    // now override this with the modern canread_base param if it's sent
+                    if (array_key_exists('canread_base', $reqBody)) {
+                        $canreadBase = BasePermissions::tryFrom((int) ($reqBody['canread_base'])) ?? throw new ImproperActionException('Invalid canread_base parameter');
+                    }
+                    if (array_key_exists('canwrite_base', $reqBody)) {
+                        $canwriteBase = BasePermissions::tryFrom((int) ($reqBody['canwrite_base'])) ?? throw new ImproperActionException('Invalid canwrite_base parameter');
+                    }
+                    $useMarkdown = $this->Users->userData['use_markdown'] === 1;
+                    $contentType = isset($reqBody['content_type'])
+                        ? BodyContentType::from($reqBody['content_type'])
+                        : ($useMarkdown ? BodyContentType::Markdown : BodyContentType::Html);
                     return $this->create(
-                        body: $reqBody['body'] ?? null,
                         title: $reqBody['title'] ?? null,
-                        canread: $reqBody['canread'] ?? null,
-                        canwrite: $reqBody['canwrite'] ?? null,
+                        body: $reqBody['body'] ?? null,
+                        canreadBase: $canreadBase,
+                        canwriteBase: $canwriteBase,
+                        canread: $reqBody['canread'] ?? $this->Users->userData['default_read'],
+                        canwrite: $reqBody['canwrite'] ?? $this->Users->userData['default_write'],
                         canreadIsImmutable: (bool) ($reqBody['canread_is_immutable'] ?? false),
                         canwriteIsImmutable: (bool) ($reqBody['canwrite_is_immutable'] ?? false),
                         tags: $tags ?? array(),
                         category: $category,
                         status: $status,
                         metadata: $metadata,
-                        contentType: $this->Users->userData['use_markdown'] === 1 ? BodyContentType::Markdown : BodyContentType::Html,
+                        contentType: $contentType,
                     );
                 }
             )(),
             Action::Duplicate => $this->duplicate((bool) ($reqBody['copyFiles'] ?? false), (bool) ($reqBody['linkToOriginal'] ?? false)),
-            Action::Notif => $this->notifyBookers($reqBody),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
     }
@@ -273,11 +306,6 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    public function getSurroundingBookers(): array
-    {
-        return array();
     }
 
     public function lock(): array
@@ -453,10 +481,16 @@ abstract class AbstractEntity extends AbstractRest
         if ($state === State::Archived->value && $action !== Action::Unarchive) {
             throw new UnprocessableContentException(_('Only the Unarchive action is allowed on an archived entity.'));
         }
-        // the toggle pin action doesn't require write access to the entity
-        if ($action !== Action::Pin) {
-            $this->canOrExplode('write');
+
+        $requiredAccess = AccessType::Write;
+        // some actions only require read access even if they are using PATCH verb
+        $readAccessActions = array(Action::Pin, Action::Sign, Action::Timestamp, Action::Bloxberg);
+        if (in_array($action, $readAccessActions, true)) {
+            $requiredAccess = AccessType::Read;
+            // allow uploading a file to that entity too
+            $this->Uploads->Entity->bypassWritePermission = true;
         }
+        $this->canOrExplode($requiredAccess);
         // if there is an active exclusive edit mode, entity cannot be modified
         // only user who locked can do everything
         // (sys)admin can remove locks
@@ -478,7 +512,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
             Action::Pin => $this->Pins->togglePin(),
-            Action::Restore => $this->update(new EntityParams('state', State::Normal->value)),
+            Action::Restore => $this->restore(),
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanread => $this->update(new EntityParams('canread', $params['can'])),
             Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
@@ -496,6 +530,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
+            Action::UpdateOwner => $this->updateOwnership((int) $params['userid'], (int) $params['team']),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -518,6 +553,9 @@ abstract class AbstractEntity extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $queryParams ??= $this->getQueryParams();
+        if ($queryParams->getFastq()) {
+            return $this->readAllSimple($queryParams);
+        }
         return $this->readShow($queryParams, true);
     }
 
@@ -542,17 +580,18 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->entityData['id'] === null) {
             throw new ResourceNotFoundException();
         }
-        $this->canOrExplode('read');
+        $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = $this->Steps->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
+        $this->entityData['changelog'] = new Changelog($this)->readAll();
         $this->entityData['comments'] = $this->Comments->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $this->entityData['compounds'] = $CompoundsLinks->readAll();
+        $this->entityData['compounds_links'] = $CompoundsLinks->readAll();
         $ContainersLinks = LinksFactory::getContainersLinks($this);
         $this->entityData['containers'] = $ContainersLinks->readAll();
         $this->entityData['sharelink'] = sprintf(
@@ -576,6 +615,14 @@ abstract class AbstractEntity extends AbstractRest
         }
         $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
         $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
+        $this->entityData['created_from_type_human'] = EntityType::fromInt($this->entityData['created_from_type'])?->toGenre();
+        $this->entityData['canread_base_human'] = BasePermissions::from($this->entityData['canread_base'])->toHuman();
+        $this->entityData['canwrite_base_human'] = BasePermissions::from($this->entityData['canwrite_base'])->toHuman();
+        if (isset($this->entityData['canbook_base'])) {
+            $this->entityData['canbook_base_human'] = BasePermissions::from($this->entityData['canbook_base'])->toHuman();
+        }
+        $this->entityData['surrounding_bookers'] = $this->getSurroundingBookers();
+
         ksort($this->entityData);
         return $this->entityData;
     }
@@ -584,7 +631,6 @@ abstract class AbstractEntity extends AbstractRest
     {
         $base = $this->readOne();
         $base['revisions'] = (new Revisions($this))->readAll();
-        $base['changelog'] = (new Changelog($this))->readAll();
         // we want to include ALL uploaded files
         $base['uploads'] = (new Uploads($this))->readAll(
             $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
@@ -595,9 +641,6 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $categoryTable = in_array($this->entityType->value, array('items', 'items_types'), true)
-            ? 'items_categories'
-            : 'experiments_categories';
         $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
         $displayParams->setSkipOrderPinned(true);
@@ -608,7 +651,7 @@ abstract class AbstractEntity extends AbstractRest
             $idSql = 'OR entity.id = :intQuery OR entity.custom_id = :intQuery';
         }
 
-        $sql = 'SELECT entity.id, entity.title, entity.custom_id, entity.state,
+        $sql = 'SELECT entity.id, entity.title, entity.custom_id, entity.state, entity.category,
             categoryt.color AS category_color,
             categoryt.title AS category_title,
             statust.color AS status_color,
@@ -617,14 +660,14 @@ abstract class AbstractEntity extends AbstractRest
             "' . $this->entityType->value . '" AS type,
             "' . $this->entityType->toPage() . '" AS page
             FROM ' . $this->entityType->value . ' AS entity
-            LEFT JOIN ' . $categoryTable . ' AS categoryt ON entity.category = categoryt.id
-            LEFT JOIN ' . $this->entityType->value . '_status AS statust ON entity.status = statust.id
+            LEFT JOIN ' . $this->entityType->toCategoryTable() . ' AS categoryt ON entity.category = categoryt.id
+            LEFT JOIN ' . $this->entityType->toStatusTable() . ' AS statust ON entity.status = statust.id
             LEFT JOIN users ON entity.userid = users.userid
             LEFT JOIN
                 users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)
-            WHERE
-                entity.title LIKE :query ' . $idSql . '
+            WHERE 1=1
             ' . $canFilter . '
+                AND (entity.title LIKE :query ' . $idSql . ')
             ' . $displayParams->getFilterSql() . '
             ' . $displayParams->getStatesSql('entity') . '
             ' . $displayParams->getSql();
@@ -640,30 +683,30 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     // Check if we have the permission to read/write or throw an exception
-    public function canOrExplode(string $rw): void
+    public function canOrExplode(AccessType $rw): void
     {
         if ($this->id === null) {
             throw new IllegalActionException('Cannot check permissions without an id!');
         }
-        if ($this->bypassWritePermission && $rw === 'write') {
+        if ($this->bypassWritePermission && $rw === AccessType::Write) {
             return;
         }
-        if ($this->bypassReadPermission && $rw === 'read') {
+        if ($this->bypassReadPermission && $rw === AccessType::Read) {
             return;
         }
         $permissions = $this->getPermissions();
 
         // READ ONLY?
         if (
-            ($permissions['read'] && !$permissions['write'])
+            ($permissions->read && !$permissions->write)
             || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1
             || $this->entityData['state'] === State::Deleted->value)
         ) {
             $this->isReadOnly = true;
         }
 
-        if (!$permissions[$rw]) {
-            throw new UnauthorizedException(Messages::InsufficientPermissions->toHuman());
+        if (!$permissions->fromCan($rw)) {
+            throw new ForbiddenException();
         }
     }
 
@@ -732,7 +775,7 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
         $req->bindParam(':category', $category);
-        $req->execute();
+        $this->Db->execute($req);
 
         return array_column($req->fetchAll(), 'id');
     }
@@ -744,7 +787,7 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindValue(':statenormal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':statearchived', State::Archived->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
 
         return array_column($req->fetchAll(), 'id');
     }
@@ -752,18 +795,25 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->canOrExplode('write');
+        $this->canOrExplode(AccessType::Write);
         // remove the custom_id upon deletion
         $this->update(new EntityParams('custom_id', ''));
         // delete from pinned too
         $this->Pins->cleanup();
-        // set state to deleted
+        $this->Uploads->destroyAll();
         return $this->update(new EntityParams('state', State::Deleted->value));
+    }
+
+    public function restore(): bool
+    {
+        $this->canOrExplode(AccessType::Write);
+        $this->Uploads->restoreAll();
+        return $this->update(new EntityParams('state', State::Normal->value));
     }
 
     public function updateExtraFieldsOrdering(ExtraFieldsOrderingParams $params): array
     {
-        $this->canOrExplode('write');
+        $this->canOrExplode(AccessType::Write);
         $sql = 'UPDATE ' . $this->entityType->value . ' SET metadata = JSON_SET(metadata, :field, :value) WHERE id = :id';
         $req = $this->Db->prepare($sql);
         foreach ($params->ordering as $ordering => $name) {
@@ -791,8 +841,9 @@ abstract class AbstractEntity extends AbstractRest
         }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
-        if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite') {
-            if (($this->entityData[$params->getTarget() . '_is_immutable'] ?? 0) === 1
+        if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite' || $params->getTarget() === 'canread_base' || $params->getTarget() === 'canwrite_base') {
+            $immutableKey = str_replace('_base', '', $params->getTarget()) . '_is_immutable';
+            if (($this->entityData[$immutableKey] ?? 0) === 1
                 && !($this instanceof AbstractTemplateEntity)
                 && !($this->Users->isAdmin)
             ) {
@@ -872,31 +923,48 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Timestamp);
 
+        // force create a revision
+        $Revisions = new Revisions(
+            $this,
+            (int) $Config->configArr['max_revisions'],
+            (int) $Config->configArr['min_delta_revisions'],
+            (int) $Config->configArr['min_days_revisions'],
+        );
+        $Revisions->dbInsert($this->entityData['body']);
+
         return $this->readOne();
     }
 
-    // TODO refactor with canOrExplode()
-    // this is bad code, refactor of all this will come later
-    protected function canWrite(): bool
+    protected function getSurroundingBookers(): array
     {
-        if ($this->id === null) {
-            return true;
-        }
-        if ($this->bypassWritePermission) {
-            return true;
-        }
-        $permissions = $this->getPermissions();
+        return array();
+    }
 
-        // READ ONLY?
-        if (
-            ($permissions['read'] && !$permissions['write'])
-            || (array_key_exists('locked', $this->entityData) && $this->entityData['locked'] === 1
-            || $this->entityData['state'] === State::Deleted->value)
-        ) {
-            $this->isReadOnly = true;
+    // record the creation in the changelog, possibly with info about provenance
+    protected function addCreationToChangelog(int $newId, ?EntityType $createdFromType, ?int $createdFromId): bool
+    {
+        $newEntity = new $this($this->Users, $newId);
+        $Changelog = new Changelog($newEntity);
+        $entityType = ucfirst($this->entityType->toGenre());
+        $log = sprintf('%s was created', $entityType);
+        if ($createdFromType !== null && $createdFromId !== null) {
+            $link = sprintf(
+                '<a href="%s?mode=view&amp;id=%d">%s #%d</a>',
+                $createdFromType->toPage(),
+                $createdFromId,
+                ucfirst($createdFromType->toGenre()),
+                $createdFromId,
+            );
+            $log = sprintf('%s was created from %s', $entityType, $link);
         }
+        return $Changelog->create(new ContentParams('created', $log));
+    }
 
-        return $permissions['write'];
+    abstract protected function getCreatePermissionKey(): string;
+
+    protected function getCreatePermissionFromTeam(array $teamConfigArr): bool
+    {
+        return $teamConfigArr[$this->getCreatePermissionKey()] === 1;
     }
 
     protected function getSqlBuilder(): SqlBuilderInterface
@@ -932,26 +1000,26 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    protected function getPermissions(): array
+    protected function getPermissions(): AccessPermissions
     {
         if ($this->bypassWritePermission) {
-            return array('read' => true, 'write' => true);
+            return new AccessPermissions(read: true, write: true);
         }
         if ($this->bypassReadPermission) {
-            return array('read' => true, 'write' => false);
+            return new AccessPermissions(read: true);
         }
         // make sure entityData is filled
         if (empty($this->entityData)) {
             $this->readOne();
         }
 
-        return (new Permissions($this->Users, $this->entityData))->forEntity();
+        return new Permissions($this->Users, $this->entityData)->forEntity();
     }
 
     protected function bloxberg(): array
     {
         $configArr = Config::getConfig()->configArr;
-        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy']);
+        $HttpGetter = new HttpGetter(new Client(), $configArr['proxy'], !Env::asBool('DEV_MODE'));
         $Maker = new MakeBloxberg(
             $this->Users,
             $this,
@@ -997,13 +1065,14 @@ abstract class AbstractEntity extends AbstractRest
         $ZipArchive->addFromString('key.pub', $this->Users->userData['sig_pubkey']);
         $ZipArchive->addFromString('verify.sh', "#!/bin/sh\nminisign -H -V -p key.pub -m data.json\n");
         $ZipArchive->close();
-        // allow uploading a file to that entity because sign action only requires read access
-        $this->Uploads->Entity->bypassWritePermission = true;
         $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $this->Uploads->create(new CreateUploadFromLocalFile('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
+        // force create a revision
+        $Revisions = new Revisions($this, 9000, 0, 0);
+        $Revisions->dbInsert($this->entityData['body']);
         return $this->readOne();
     }
 
@@ -1038,6 +1107,23 @@ abstract class AbstractEntity extends AbstractRest
         return $this->getCurrentHighestCustomId($this->entityData['category']) + 1;
     }
 
+    /**
+     * This function exists for backward compatibility for older permissions
+     * JSON with base key. It allows extracting the base param from that JSON.
+     * Base permission is now in a dedicated parameter.
+     */
+    protected function getCanBaseFromJson(?string $can, BasePermissions $default): BasePermissions
+    {
+        if ($can === null) {
+            return $default;
+        }
+        $decoded = json_decode($can, true, 3);
+        if (array_key_exists('base', $decoded)) {
+            return BasePermissions::tryFrom($decoded['base']) ?? $default;
+        }
+        return $default;
+    }
+
     // Archive a normal entity, Unarchive an archived entity.
     private function handleArchivedState(State $from, State $to, callable $toggleLock): void
     {
@@ -1047,6 +1133,23 @@ abstract class AbstractEntity extends AbstractRest
             $toggleLock();
         }
         $this->update(new EntityParams('state', (string) $targetState->value));
+    }
+
+    private function updateOwnership(int $userid, int $team): void
+    {
+        // if there's no team provided, assign the current user's team
+        if ($team === 0) {
+            $team = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());
+        }
+        $TeamsHelper = new TeamsHelper($team);
+        if (!$TeamsHelper->isUserInTeam($userid)) {
+            throw new UnauthorizedException(_('The selected user cannot be assigned ownership in the current team context.'));
+        }
+        $this->update(new EntityParams('userid', $userid));
+        $this->update(new EntityParams('team', $team));
+        // transfer entity's uploads as well
+        $this->bypassWritePermission = true;
+        $this->Uploads->transferOwnership($userid);
     }
 
     private function addToExtendedFilter(string $extendedFilter, array $extendedValues = array()): void
@@ -1108,31 +1211,16 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    private function notifyBookers(array $params): int
+    // Check user permissions to create templates (team level)
+    private function guardTemplateCreation(): void
     {
-        $bookers = $this->getSurroundingBookers();
-        $replyTo = new Address($this->Users->userData['email'], $this->Users->userData['fullname']);
-        $addresses = array_map(fn($row) => new Address($row['email'], $row['fullname']), $bookers);
-        if (!$addresses) {
-            return 0;
+        // admins are always allowed
+        if ($this->Users->isAdmin) {
+            return;
         }
-        $Email = new Email(
-            new Mailer(Transport::fromDsn(Config::getConfig()->getDsn())),
-            App::getDefaultLogger(),
-            Config::getConfig()->configArr['mail_from'],
-            Env::asBool('DEMO_MODE'),
-        );
-        $subject = Filter::toPureString($params['subject']);
-        $body = Filter::toPureString($params['body']);
-        $sent = 0;
-        foreach ($addresses as $address) {
-            try {
-                $Email->sendEmail($address, $subject, $body, replyTo: $replyTo);
-                $sent++;
-            } catch (ImproperActionException) {
-                continue;
-            }
+        $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
+        if ($this->getCreatePermissionFromTeam($teamConfigArr) === false) {
+            throw new ForbiddenException();
         }
-        return $sent;
     }
 }

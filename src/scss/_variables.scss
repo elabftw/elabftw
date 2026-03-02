@@ -5,36 +5,91 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-/* going from less contrasted to more contrasted */
+
+:root {
+  --mainbackground: #f2f2f2; // original light background
+  --white: #fff;
+  --highlighted: #ebfbff;
+  --superlight: #e6e6e6;
+  --firstlevel: #dbdbdb;
+  --secondlevel: #bdbdbd;
+  --thirdlevel: #6f6f6f;
+  --medium: #4d4c4c;
+  --mediumstrong: #343434;
+  --strongest: #000;
+
+  /* COLORS */
+  --primary: #29aeb9;
+  --secondary: #4d4c4c;
+  --secondary-muted: #d9d9d9;
+  --elabblue: #29aeb9;
+  --lightblue: #c4f9ff;
+  --darkblue: #1f8591;
+  --lightred: #ffc1b7;
+  --dangerred: #e6614c;
+  --darkred: #dd1e00;
+  --warningbg: #fff3cd;
+  --green: #54aa08;
+  --lessbrightorange: #ffe6b8;
+  --brightorange: #ffa500;
+  --orange: #ffa500;
+  --mediumyellow: #fae588;
+
+  --lightgold: #eddec6;
+  --gold: #d4ae75;
+  --darkgold: #856404;
+
+  /* Colors that stay the same in both modes (like navbar) */
+  --chrome-bg: #2b2b2b;
+  --chrome-fg: #fff;
+  --chrome-muted: #9aa0a6;
+  --disabled: #888;
+}
+
+.dark-mode {
+  --white: #131313;
+  --mainbackground: #1e1e1e;
+  --highlighted: #2a2a2a;
+  --superlight: #2d2d2d;
+  --firstlevel: #13181c;
+  --secondlevel: #bdbdbd;
+  --thirdlevel: #666;
+  --medium: #d8dae0;
+  --mediumstrong: #ccc;
+  --strongest: #f0f6fc;
+
+  --primary: #2196f3;
+  // secondary with opacity for borders of inputs
+  --secondary-muted: rgba(146, 146, 146, 0.34);
+  --elabblue: #29aeb9;
+  --lightblue: #003769;
+  --darkblue: #1f8591;
+
+  --lightred: #ff7b72;
+  --dangerred: #f85149;
+  --darkred: #da3633;
+
+  --warningbg: #d29922;
+
+  --green: #81c784;
+  --lessbrightorange: #e3b341;
+  --brightorange: #d18616;
+  --orange: #f0883e;
+  --mediumyellow: #f2cc60;
+
+  --lightgold: #e3b341;
+  --gold: #c69026;
+  --darkgold: #7e5f00;
+}
+
+/* COLORS for specific cases like pdf export (var(--) does not apply) */
 $white: #fff;
 $mainbackground: #f2f2f2;
-$superlight: #e6e6e6;
-$firstlevel: #dbdbdb;
-$disabled: #868585;
-$secondlevel: #bdbdbd;
-$medium: #4d4c4c;
-$mediumstrong: #343434;
 $strongest: #000;
-
-/* COLORS */
+/* override bootstrap theme */
 $elabblue: #29aeb9;
-$lightblue: #c4f9ff;
-$darkblue: #1f8591;
-
-$lightred: #ffc1b7;
+$medium: #4d4c4c;
 $dangerred: #e6614c;
-$darkred: #dd1e00;
-
-$warningbg: #fff3cd;
-
-$green: #54aa08;
-$lessbrightorange: #ffe6b8;
-$brightorange: #ffa500;
-$orange: #ffa500;
-
-$lightgold: #eddec6;
-$gold: #d4ae75;
-$darkgold: #856404;
-
+$firstlevel: #dbdbdb;
 /* font awesome */
 $fa-font-path: '/assets/fonts';

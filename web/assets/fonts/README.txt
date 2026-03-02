@@ -1,4 +1,3 @@
-
 Lato font family
 
 ================
@@ -18,12 +17,6 @@ License URL: http://scripts.sil.org/OFL
 ================
 
 Lato is a sanserif typeface family designed in the Summer 2010 and extended in the Summer 2013 by Warsaw-based designer Lukasz Dziedzic ("Lato" means "Summer" in Polish). It tries to carefully balance some potentially conflicting priorities: it should seem quite "transparent" when used in body text but would display some original traits when used in larger sizes. The classical proportions, particularly visible in the uppercase, give the letterforms familiar harmony and elegance. At the same time, its sleek sanserif look makes evident the fact that Lato was designed in the 2010s, even though it does not follow any current trend. The semi-rounded details of the letters give Lato a feeling of warmth, while the strong structure provides stability and seriousness. In 2013-2014, the family was greatly extended (with the help of Adam Twardoch and Botio Nikoltchev) to cover 3000+ glyphs over nine weights with italics. It now supports 100+ Latin-based languages, 50+ Cyrillic-based languages as well as Greek and IPA phonetics. The Lato fonts are available free of charge under the SIL Open Font License from http://www.latofonts.com/
-
-================
-
-CONTENTS:
-
-This folder contains 18 font files in OpenType TT (.ttf) format. You can install these fonts on your computer and use in any desktop applications (such as Word, InDesign, Illustrator, Photoshop, Keynote or Pages).
 
 ================
 

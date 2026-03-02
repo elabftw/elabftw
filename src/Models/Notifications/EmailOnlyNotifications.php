@@ -21,7 +21,7 @@ use Override;
 class EmailOnlyNotifications extends AbstractNotifications
 {
     #[Override]
-    protected function getPref(int $userid): array
+    protected function getPref(): array
     {
         // only mailable
         return array(0, 1);

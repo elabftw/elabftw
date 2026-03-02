@@ -1,0 +1,14 @@
+// overrides of prism.js code highlighting library
+
+.dark-mode {
+  // this can also be seen in the search help modal
+  .token {
+    background-color: var(--mainbackground);
+  }
+
+  // classes added by tinymce on code snippets (e.g., language-bash)
+  [class^='language-'] {
+    background: var(--mainbackground);
+    color: var(--mediumstrong);
+  }
+}

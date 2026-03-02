@@ -3,9 +3,9 @@ name: Codespell
 
 on:
   push:
-    branches: [master,hypernext,next]
+    branches: [master]
   pull_request:
-    branches: [master,hypernext,next]
+    branches: [master]
 
 jobs:
   codespell:
@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # codespell github action does not yet allow for --config option
       # https://github.com/codespell-project/actions-codespell/issues/67
       # so we need to install and invoke "manually"

@@ -66,7 +66,7 @@ final class ExperimentsTimestamp extends Command
 
         $req = $Db->prepare($sql);
         $req->bindValue(':m', $dateTimeImmutable->format('Y-m-d H:i:s'));
-        $req->execute();
+        $Db->execute($req);
         $expArr = $req->fetchAll();
         if ($output->isVerbose()) {
             $output->writeln(sprintf('Found %d experiments to timestamp.', count($expArr)));

@@ -44,6 +44,10 @@ export function rememberLastSelected(elementId: string) {
 // get back the value of last selected option from localStorage
 export function selectLastSelected(elementId: string) {
   return function() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('switch_team') === '1') {
+      return;
+    }
     const last = localStorage.getItem(`persistent_${elementId}_last`);
     if (last) {
       this.setValue(last);

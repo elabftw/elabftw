@@ -9,7 +9,7 @@
 @use './variables';
 
 .navbar {
-  background-color: variables.$mediumstrong;
+  background-color: var(--chrome-bg);
   border: 0;
   border-radius: 0;
   margin-bottom: 10px;
@@ -21,7 +21,7 @@
 }
 
 .nav-link {
-  color: variables.$secondlevel;
+  color: var(--secondlevel);
   font-size: 90%;
   line-height: 40px;
   margin-left: 15px;
@@ -37,20 +37,20 @@
 
   /* blue on hover */
   &:hover {
-    color: variables.$elabblue !important;
+    color: var(--primary) !important;
     transition-duration: 500ms;
   }
 
   /* selected nav entry */
   &.active {
-    background-image: linear-gradient(to top, variables.$elabblue 0%, variables.$elabblue 100%);
+    background-image: linear-gradient(to top, var(--primary) 0%, var(--primary) 100%);
     background-position: center bottom;
     background-repeat: no-repeat;
     background-size: 100% 6px;
   }
 
   i {
-    color: variables.$secondlevel;
+    color: var(--secondlevel);
   }
 }
 

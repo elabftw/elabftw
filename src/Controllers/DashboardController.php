@@ -16,9 +16,9 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Orderby;
-use Elabftw\Enums\State;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsStatus;
+use Elabftw\Models\FavTags;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
@@ -77,19 +77,11 @@ final class DashboardController extends AbstractHtmlController
         $ItemsStatus = new ItemsStatus($this->app->Teams);
         $UserRequestActions = new UserRequestActions($this->app->Users);
 
-        $DisplayParamsTemplates = new DisplayParams(
-            $this->app->Users,
-            EntityType::Templates,
-            limit: 9999,
-            states: array(State::Normal)
-        );
+        $DisplayParamsTemplates = new DisplayParams($this->app->Users, EntityType::Templates);
+        $DisplayParamsItemsTypes = new DisplayParams($this->app->Users, EntityType::ItemsTypes);
 
-        $DisplayParamsItemsTypes = new DisplayParams(
-            $this->app->Users,
-            EntityType::ItemsTypes,
-            limit: 9999,
-            states: array(State::Normal)
-        );
+        $FavTags = new FavTags($this->app->Users);
+        $favTagsArr = $FavTags->readAll();
 
         return array_merge(
             parent::getData(),
@@ -98,6 +90,7 @@ final class DashboardController extends AbstractHtmlController
                 'itemsStatusArr' => $ItemsStatus->readAll(),
                 'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
                 'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999)))),
+                'favTagsArr' => $favTagsArr,
                 'itemsArr' => $Items->readShow($DisplayParamsItems),
                 'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
                 'requestActionsArr' => $UserRequestActions->readAllFull(),

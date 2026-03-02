@@ -53,8 +53,10 @@ final class LoginHelper
         // if we run a version newer than the last time the user logged in, create a notification
         // but only if it's a minor version
         if ((App::INSTALLED_VERSION_INT - $this->getLastSeenVersion() >= 100) && !$this->AuthResponse->isAnonymous()) {
-            $Notifications = new NewVersionInstalled();
-            $Notifications->create($this->AuthResponse->getAuthUserid());
+            $authUserid = $this->AuthResponse->getAuthUserid();
+            $authUser = new Users($authUserid);
+            $Notifications = new NewVersionInstalled($authUser);
+            $Notifications->create();
         }
         $this->updateLast();
         $this->setDeviceToken();
@@ -149,8 +151,7 @@ final class LoginHelper
             return;
         }
         $user = new Users($this->AuthResponse->getAuthUserid(), $this->AuthResponse->getSelectedTeam());
-        $teams = json_decode($user->userData['teams'], true, 3);
-        $lookup = array_column($teams, 'is_archived', 'id');
+        $lookup = array_column($user->userData['teams'], 'is_archived', 'id');
         if ($lookup[$this->AuthResponse->getSelectedTeam()] === 1) {
             throw new ImproperActionException(_('This account is archived in this team and cannot login.'));
         }

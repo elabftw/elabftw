@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Info;
@@ -31,13 +32,17 @@ class EmailTest extends \PHPUnit\Framework\TestCase
 
     private Logger $Logger;
 
+    private SchemaVersionChecker $schemaVersionChecker;
+
     protected function setUp(): void
     {
         $this->Logger = new Logger('elabftw');
         // use NullHandler because we don't care about logs here
         $this->Logger->pushHandler(new NullHandler());
+        // we don't need to mock it, just give it the required schema as arg
+        $this->schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
         $MockMailer = $this->createMock(MailerInterface::class);
-        $this->Email = new Email($MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: false);
+        $this->Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: false);
     }
 
     public function testTestemailSendInDemo(): void
@@ -45,27 +50,29 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $Logger = new Logger('elabftw');
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $EmailInDemo = new Email($MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: true);
-        $this->assertFalse($EmailInDemo->testemailSend('toto@example.com'));
+        $EmailInDemo = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: true);
+        $this->assertSame(0, $EmailInDemo->testemailSend('toto@example.com'));
+        // do it a secondtime to go into "stopTrying" mode
+        $this->assertSame(0, $EmailInDemo->testemailSend('toto@example.com'));
     }
 
     public function testTestemailSend(): void
     {
-        $this->assertTrue($this->Email->testemailSend('toto@example.com'));
+        $this->assertSame(1, $this->Email->testemailSend('toto@example.com'));
     }
 
     public function testNotConfigured(): void
     {
         $MockMailer = $this->createMock(MailerInterface::class);
-        $NotConfiguredEmail = new Email($MockMailer, $this->Logger, 'notconfigured@example.com');
-        $this->assertFalse($NotConfiguredEmail->testemailSend('toto@example.com'));
+        $NotConfiguredEmail = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'notconfigured@example.com');
+        $this->assertSame(0, $NotConfiguredEmail->testemailSend('toto@example.com'));
     }
 
     public function testTransportException(): void
     {
         $MockMailer = $this->createMock(MailerInterface::class);
         $MockMailer->method('send')->willThrowException(new TransportException());
-        $Email = new Email($MockMailer, $this->Logger, 'yep@nope.blah');
+        $Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'yep@nope.blah');
         $this->expectException(ImproperActionException::class);
         $Email->testemailSend('toto@example.com');
 
@@ -92,6 +99,15 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($team1Stats['active_admins_count'], $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo, true));
     }
 
+    public function testMassEmailButDisabled(): void
+    {
+        $MockMailer = $this->createMock(MailerInterface::class);
+        $replyTo = new Address('sender@example.com', 'Sergent Garcia');
+        $NotConfiguredEmail = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'notconfigured@example.com');
+        // send it ungrouped
+        $this->assertSame(0, $NotConfiguredEmail->massEmail(EmailTarget::ActiveUsers, null, '', 'a', $replyTo, false));
+    }
+
     public function testSendEmail(): void
     {
         $this->assertTrue($this->Email->sendEmail(new Address('a@a.fr', 'blah'), 's', 'b'));
@@ -102,5 +118,24 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     public function testNotifySysadminsTsBalance(): void
     {
         $this->assertTrue($this->Email->notifySysadminsTsBalance(12));
+    }
+
+    public function testInvalidSchema(): void
+    {
+        $MockMailer = $this->createMock(MailerInterface::class);
+        // incorrect schema version
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA - 9000);
+        $Email = new Email($schemaVersionChecker, $MockMailer, $this->Logger, 'yep@nope.blah');
+        $this->assertFalse($Email->sendEmail(new Address('a@a.fr', 'b'), 's', 'b'));
+    }
+
+    public function testMailerExceptionThrowing(): void
+    {
+        $MockMailer = $this->createMock(MailerInterface::class);
+        $MockMailer->method('send')->willThrowException(new TransportException('nope'));
+        $replyTo = new Address('sender@example.com', 'Sergent Garcia');
+        $Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'yep@nope.blah');
+        $this->expectException(ImproperActionException::class);
+        $Email->massEmail(EmailTarget::ActiveUsers, null, '', 'a', $replyTo, true);
     }
 }

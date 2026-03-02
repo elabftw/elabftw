@@ -17,6 +17,7 @@ export interface ExtraField {
 
 export enum ExtraFieldInputType {
   Checkbox = 'checkbox',
+  Compounds = 'compounds',
   Date = 'date',
   DateTime = 'datetime-local',
   Email = 'email',
@@ -49,7 +50,6 @@ export interface ExtraFieldProperties {
 
 export interface MetadataElabftw {
   extra_fields_groups?: Array<ExtraFieldsGroup>,
-  display_main_text?: boolean,
 }
 
 export interface ExtraFieldsGroup {

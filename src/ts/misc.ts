@@ -13,6 +13,7 @@ import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
+import { Malle, InputType } from '@deltablot/malle';
 import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
@@ -20,15 +21,15 @@ import { getEditor } from './Editor.class';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
+import TomSelectDropdownHeader from 'tom-select/dist/esm/plugins/dropdown_header/plugin.js';
 import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/plugin.js';
 import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
 import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
+import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
   const url = new URL(window.location.href);
-  // remove any scope query param present in url, otherwise it gets taken into account for the reload
-  url.searchParams.delete('scope');
   if (tag) {
     url.searchParams.delete('tags[]');
     url.searchParams.set('tags[]', tag);
@@ -63,48 +64,69 @@ export function relativeMoment(): void {
 // Add a listener for all elements triggered by an event
 // and POST an update request
 // select will be on change, text inputs on blur
-function triggerHandler(event: Event, el: HTMLInputElement): void {
+async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void> {
   event.preventDefault();
   el.classList.remove('is-invalid');
+  const isCheckbox = el.type === 'checkbox';
+  // save the real boolean state so we can revert correctly on error
+  // use the inverse of the checked state because it's already changed!
+  const originalChecked = isCheckbox ? !el.checked : undefined;
   // for a checkbox element, look at the checked attribute, not the value
-  let value = el.type === 'checkbox' ? el.checked ? '1' : '0' : el.value;
-  let userid = document.getElementById('editUserModal')?.dataset.userid;
-  if (!userid) {
-    userid = el.dataset.userid;
-  }
-  // store original value to revert the permission switches
-  const originalValue = value;
+  let value: string | number = isCheckbox ? (el.checked ? '1' : '0') : el.value;
 
-  // CUSTOM ACTIONS
-  if (el.dataset.customAction === 'patch-user2team-is') {
-    ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: el.dataset.target, content: value})
-      .then(() => document.dispatchEvent(new CustomEvent('dataReload')));
+  const userid = document.getElementById('editUserModal')?.dataset.userid ?? el.dataset.userid;
+
+  // CUSTOM ACTIONS not doing API calls
+  // Idea: maybe have a data-dispatch with the custom event name in data-target
+  if (el.dataset.customAction === 'show-all-users') {
+    document.dispatchEvent(new CustomEvent('dataReload'));
     return;
   }
   // END CUSTOM ACTIONS
 
   if (el.dataset.transform === 'permissionsToJson') {
-    value = permissionsToJson(parseInt(value, 10), []);
+    value = permissionsToJson([]);
   }
   if (el.dataset.value) {
     value = el.dataset.value;
   }
-  const params = {};
-  params[el.dataset.target] = value;
-  ApiC.patch(`${el.dataset.model}`, params).then(() => {
+
+  // use a run function to be able to have a single error handler
+  const run = async () => {
+    if (el.dataset.customAction === 'patch-user2team-is') {
+      await ApiC.patch(`${Model.User}/${userid}`, {
+        action: Action.PatchUser2Team,
+        team: el.dataset.team,
+        target: el.dataset.target,
+        content: value,
+      });
+      // success side-effect for this path
+      document.dispatchEvent(new CustomEvent('dataReload'));
+      return;
+    }
+
+    const params: Record<string, unknown> = {};
+    params[el.dataset.target as string] = value;
+
+    await ApiC.patch(`${el.dataset.model}`, params);
+
+    // success side-effect for the generic path
     if (el.dataset.reload) {
       handleReloads(el.dataset.reload);
     }
-  }).catch(error => {
-    // restore the original value for checkboxes
-    if (el.type === 'checkbox') {
-      el.checked = Boolean(originalValue);
-      return;
+  };
+
+  try {
+    await run();
+  } catch (error) {
+    // if input is a checkbox we revert the change
+    if (isCheckbox && originalChecked !== undefined) {
+      el.checked = originalChecked;
     }
-    if (el.dataset.target === Target.Customid && error.message === i18next.t('custom-id-in-use')) {
+    if (el.dataset.target === Target.Customid && error?.message === i18next.t('custom-id-in-use')) {
       el.classList.add('is-invalid');
     }
-  });
+  }
 }
 
 // data-reload can be "page" for full page, "reloadEntitiesShow" for entities in show mode,
@@ -122,7 +144,7 @@ export function handleReloads(reloadAttributes: string | undefined): void {
     if (toReload === 'reloadEntitiesShow') {
       reloadEntitiesShow();
     } else {
-      reloadElements([toReload]).then(() => relativeMoment());
+      reloadElements([toReload]);
     }
   });
 }
@@ -145,6 +167,7 @@ export function listenTrigger(elementId: string = ''): void {
  * Loop over all the input and select elements of an element and collect their value
  * Returns an object with name => value
  * Add data-ignore='1' to elements that should not be considered
+ * Add data-allow-empty='1' to elements that can be empty (e.g. orgid)
  */
 export function collectForm(form: HTMLElement): object {
   const inputs = [];
@@ -171,12 +194,12 @@ export function collectForm(form: HTMLElement): object {
     if (el.type === 'checkbox') {
       value = el.checked ? 'on' : 'off';
     }
-    if (el.dataset.ignore !== '1' && el.disabled === false) {
-      params = Object.assign(params, {[input.name]: value});
+    if (el.dataset.ignore !== '1' && el.disabled === false && (value !== '' || el.dataset.allowEmpty === '1')) {
+      params = Object.assign(params, {[el.name]: value});
     }
   });
 
-  return removeEmpty(params);
+  return params;
 }
 
 export function clearForm(form: HTMLElement): void {
@@ -192,35 +215,98 @@ export function clearForm(form: HTMLElement): void {
   });
 }
 
-// for view or edit mode, get type and id from the page to construct the entity object
-export function getEntity(): Entity {
-  let entityType: EntityType;
-  let entityId = null;
-
-  switch (window.location.pathname) {
-  case '/experiments.php':
-    entityType = EntityType.Experiment;
-    break;
-  case '/database.php':
-    entityType = EntityType.Item;
-    break;
-  case '/templates.php':
-    entityType = EntityType.Template;
-    break;
-  case '/resources-templates.php':
-    entityType = EntityType.ItemType;
-    break;
+export function getEntityTypeFromPage(loc: Location): EntityType {
+  const scriptName = loc.pathname.split('/').pop() || '';
+  switch (scriptName) {
+  case 'experiments.php':
+    return EntityType.Experiment;
+  case 'database.php':
+    return EntityType.Item;
+  case 'templates.php':
+    return EntityType.Template;
+  case 'resources-templates.php':
+    return EntityType.ItemType;
   default:
-    return {type: EntityType.Other, id: entityId};
+    return EntityType.Other;
   }
-  const params = new URLSearchParams(document.location.search);
+}
+
+// for view or edit mode, get type and id from the page to construct the entity object
+// enable usage with parent Window for iframe cases (e.g., with spreadsheet editor)
+export function getEntity(useParent: boolean = false): Entity {
+  let entityId: number | null = null;
+  // pick the right location (parent or self)
+  const loc = useParent ? window.parent.location : window.location;
+  const entityType: EntityType = getEntityTypeFromPage(loc);
+  const params = new URLSearchParams(loc.search);
   if (params.has('id')) {
-    entityId = parseInt(params.get('id'));
+    entityId = parseInt(params.get('id')!, 10);
   }
   return {
     type: entityType,
     id: entityId,
   };
+}
+
+// Listen for malleable columns
+export function makeMalleableColumnsGreatAgain() {
+  new Malle({
+    onEdit: (original, _, input) => {
+      if (original.innerText === 'unset') {
+        input.value = '';
+        original.classList.remove('font-italic');
+      }
+      if (original.dataset.inputType === 'number') {
+        // use setAttribute here because type is readonly property
+        input.setAttribute('type', 'number');
+      }
+      return true;
+    },
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    fun: (value, original) => {
+      const params = {};
+      params[original.dataset.target] = value;
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, params)
+        .then(res => res.json())
+        .then(json => json[original.dataset.target]);
+    },
+    listenOn: '.malleableColumn',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
+  // MALLEABLE QTY_UNIT - we need a specific code to add the select options
+  new Malle({
+    cancel : i18next.t('cancel'),
+    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+    inputClasses: ['form-control'],
+    inputType: InputType.Select,
+    selectOptions: [
+      {selected: false, text: '•', value: '•'},
+      {selected: false, text: 'μL', value: 'μL'},
+      {selected: false, text: 'mL', value: 'mL'},
+      {selected: false, text: 'L', value: 'L'},
+      {selected: false, text: 'μg', value: 'μg'},
+      {selected: false, text: 'mg', value: 'mg'},
+      {selected: false, text: 'g', value: 'g'},
+      {selected: false, text: 'kg', value: 'kg'},
+    ],
+    fun: (value, original) => {
+      return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
+        .then(res => res.json())
+        .then(json => json['qty_unit']);
+    },
+    listenOn: '.malleableQtyUnit',
+    returnedValueIsTrustedHtml: false,
+    submit : i18next.t('save'),
+    submitClasses: ['btn', 'btn-primary', 'mt-2'],
+    tooltip: i18next.t('click-to-edit'),
+  }).listen();
+
 }
 
 // SORTABLE ELEMENTS
@@ -284,6 +370,13 @@ export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
   addAutocompleteToTagInputs();
   // listen to data-trigger elements
   listenTrigger();
+  // and set relative moments
+  relativeMoment();
+}
+
+export function getSafeElementById(id: string): HTMLElement {
+  return document.getElementById(id)
+    ?? (() => { throw new Error(`Element could not be found: '${id}'`); })();
 }
 
 export async function reloadElements(elementIds: string[]): Promise<void> {
@@ -311,6 +404,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
   });
   (new TableSorting()).init();
   makeSortableGreatAgain();
+  makeMalleableColumnsGreatAgain();
   relativeMoment();
 }
 
@@ -378,7 +472,7 @@ export function addAutocompleteToLinkInputs(): void {
             response(res);
             return;
           }
-          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&q=${escapeExtendedQuery(request.term)}&scope=3`).then(json => {
+          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&fastq=${escapeExtendedQuery(request.term)}&scope=3`).then(json => {
             cache[object.selectElid][term] = json;
             const res = [];
             json.forEach(entity => {
@@ -463,15 +557,6 @@ export function normalizeFieldName(input: string): string {
   return input.replace(/['"]/g, '').trim().replace(/\s+/g, ' ');
 }
 
-function removeEmpty(params: object): object {
-  for (const [key, value] of Object.entries(params)) {
-    if (value === '') {
-      delete params[key];
-    }
-  }
-  return params;
-}
-
 export function askFileName(extension: FileType): string | undefined {
   const realName = prompt(i18next.t('request-filename'));
   // user hits cancel: exit silently
@@ -486,15 +571,12 @@ export function askFileName(extension: FileType): string | undefined {
   return realName + ext;
 }
 
-export function permissionsToJson(base: number, extra: string[]): string {
+export function permissionsToJson(extra: string[]): string {
   const json = {
-    'base': 0,
     'teams': [],
     'teamgroups': [],
     'users': [],
   };
-
-  json.base = base;
 
   extra.forEach(val => {
     if (val.startsWith('team:')) {
@@ -584,13 +666,31 @@ export function replaceWithTitle(): void {
       changedAttribute = 'value';
     }
     ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
-      // view mode for Experiments or Resources
-      let value = el.dataset.endpoint === Model.User ? json.fullname : json.title;
-      // edit mode
-      if (el instanceof HTMLInputElement) {
-        value = `${json.id} - ${json.title}`;
-        if (el.dataset.endpoint === Model.User) {
+      // VIEW MODE (non-input): default = 'entity title'
+      let value;
+      const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';
+      if (!(el instanceof HTMLInputElement)) {
+        switch (el.dataset.endpoint) {
+        case Model.User:
+          value = json.fullname;
+          break;
+        case Model.Compounds:
+          value = json.name + casNumber;
+          break;
+        default:
+          value = json.title ?? json.name;
+        }
+      } else {
+        // EDIT MODE (input): default = 'id - entity title'
+        switch (el.dataset.endpoint) {
+        case Model.User:
           value = `${json.userid} - ${json.fullname}`;
+          break;
+        case Model.Compounds:
+          value = `${json.id} - ${json.name}` + casNumber;
+          break;
+        default:
+          value = `${json.id} - ${json.title ?? json.name}`;
         }
       }
       el[changedAttribute] = value;
@@ -631,7 +731,7 @@ export async function updateEntityBody(): Promise<void> {
     const lastSavedAt = document.getElementById('lastSavedAt');
     if (lastSavedAt) {
       lastSavedAt.title = json.modified_at;
-      reloadElements(['lastSavedAt']).then(() => relativeMoment());
+      reloadElements(['lastSavedAt']);
     }
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)
@@ -648,9 +748,11 @@ export async function updateEntityBody(): Promise<void> {
 // bind used plugins to TomSelect
 TomSelect.define('checkbox_options', TomSelectCheckboxOptions);
 TomSelect.define('clear_button', TomSelectClearButton);
+TomSelect.define('dropdown_header', TomSelectDropdownHeader);
 TomSelect.define('dropdown_input', TomSelectDropdownInput);
 TomSelect.define('no_active_items', TomSelectNoActiveItems);
 TomSelect.define('remove_button', TomSelectRemoveButton);
+TomSelect.define('no_backspace_delete', TomSelectNoBackspaceDelete);
 export { TomSelect };
 
 // toggle appearance of button
@@ -768,7 +870,8 @@ export async function populateUserModal(user: Record<string, string|number>) {
     return;
   }
   const requester = await ApiC.getJson('users/me');
-  const userTeams = JSON.parse(String(user.teams));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userTeams = user.teams as any;
   // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
   document.getElementById('editUserModal').dataset.userid = String(user.userid);
   // manage teams block

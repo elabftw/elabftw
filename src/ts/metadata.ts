@@ -102,7 +102,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
         // prefill switches
         (document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked = !!fieldData.blank_value_on_duplicate;
         (document.getElementById('requiredSwitch') as HTMLInputElement).checked = !!fieldData.required;
-        (document.getElementById('readonlySwitch') as HTMLInputElement).checked = !!fieldData.readonly;
         (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked = !!fieldData.allow_multi_values;
 
         let containerId, sourceArray, toggleDiv;
@@ -166,6 +165,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
         MetadataC.read().then(metadata => {
           const name = el.parentElement.parentElement.closest('div').querySelector('label').innerText.trim();
           delete metadata.extra_fields[name];
+          MetadataC.cleanupMetadata(metadata as ValidMetadata);
           MetadataC.update(metadata as ValidMetadata).then(() => document.getElementById('metadataDiv').scrollIntoView({behavior: 'smooth'}));
         });
       }
@@ -208,6 +208,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
       case ExtraFieldInputType.Experiments:
       case ExtraFieldInputType.Items:
       case ExtraFieldInputType.Users:
+      case ExtraFieldInputType.Compounds:
         valueInput.setAttribute('type', fieldType);
         toggleContentDiv('classic');
         break;
@@ -330,9 +331,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
             field['required'] = true;
           }
-          if ((document.getElementById('readonlySwitch') as HTMLInputElement).checked) {
-            field['readonly'] = true;
-          }
           if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
             field['allow_multi_values'] = true;
           }
@@ -373,10 +371,10 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if (metadata) {
             json = metadata;
           }
-          // If the key (name) is being changed, remove previous field else it will create two separate ones
-          if (originalFieldKey && originalFieldKey !== newFieldKey) {
-            delete json['extra_fields'][originalFieldKey];
-          }
+          // if the extra field's name (also acting as key) is updated, replace existing entry and keep the content
+          const prevField = json['extra_fields']?.[
+            originalFieldKey && originalFieldKey !== newFieldKey ? originalFieldKey : newFieldKey
+          ];
           const field = {};
           // handle field inputs : type, desc, and different type values
           field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
@@ -391,52 +389,62 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if (field['type'] === ExtraFieldInputType.Text) {
             field['value'] = textAreaField.value.trim();
           } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
-            field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
-          } else if (['select', 'radio'].includes(field['type'])) {
+            const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+            field['value'] = val || prevField?.value || '';
+          } else if ([ExtraFieldInputType.Users, ExtraFieldInputType.Items, ExtraFieldInputType.Experiments, ExtraFieldInputType.Compounds].includes(field['type'])) {
+            const elId = `newField${field['type']}Input`;
+            const el = document.getElementById(elId) as HTMLInputElement | null;
+            const val = (el?.value ?? '').trim();
+            field['value'] = val || prevField?.value || '';
+          } else if ([ExtraFieldInputType.Select, ExtraFieldInputType.Radio].includes(field['type'])) {
+            const prevVal = prevField?.value || '';
             field['options'] = [];
             document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => {
-              if (opt.value.trim()) {
-                field['options'].push(opt.value.trim());
-              }
+              const val = (opt as HTMLInputElement).value.trim();
+              if (val) field['options'].push(val);
             });
-            // make sure at least one value is set
-            field['value'] = field['options'][0] || '';
+            // keep old value if no new option is provided
+            field['value'] = field['options'].includes(prevVal) ? prevVal : (field['options'][0] || '');
           } else if (field['type'] === ExtraFieldInputType.Number) {
-            field['value'] = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+            const prevVal = prevField?.value || '';
+            const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
+            field['value'] = val || prevVal;
             field['units'] = [];
             document.getElementById('unitChoicesInputDiv').querySelectorAll('input').forEach(opt => {
               if (opt.value.trim()) {
                 field['units'].push(opt.value.trim());
               }
             });
-            field['unit'] = field['units'].length > 0 ? field['units'][0] : '';
+            const prevUnit = prevField?.unit || '';
+            field['unit'] = field['units'].length === 0
+              ? prevUnit
+              : (field['units'].includes(prevUnit) ? prevUnit : field['units'][0]);
           } else if (field['type'] === ExtraFieldInputType.Checkbox) {
             field['value'] = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
           }
-
-          // deal with the blank_on_value
-          if ((document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked) {
-            field['blank_value_on_duplicate'] = true;
+          // deal with modal SWITCHES (key: id, value: field's 'value')
+          const switches: Record<string, string> = {
+            blankValueOnDuplicateSwitch: 'blank_value_on_duplicate',
+            requiredSwitch: 'required',
+            newFieldAllowMultiSelect: 'allow_multi_values',
+          };
+          for (const [id, key] of Object.entries(switches)) {
+            const el = document.getElementById(id) as HTMLInputElement | null;
+            if (el?.checked) field[key] = true;
           }
-          // deal with the required attribute
-          if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
-            field['required'] = true;
+          // preserve readonly
+          if (prevField?.readonly === true) field['readonly'] = true;
+          // ensure the old extra field is replaced
+          if (!json['extra_fields']) json['extra_fields'] = {};
+          if (originalFieldKey && originalFieldKey !== newFieldKey) {
+            delete json['extra_fields'][originalFieldKey];
           }
-          // deal with the readonly attribute
-          if ((document.getElementById('readonlySwitch') as HTMLInputElement).checked) {
-            field['readonly'] = true;
-          }
-          // deal with the multi select
-          if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
-            field['allow_multi_values'] = true;
-          }
-
           json['extra_fields'][newFieldKey] = field;
 
           MetadataC.update(json as ValidMetadata).then(() => {
             $('#fieldBuilderModal').modal('toggle');
             // focus on the newly added element
-            document.querySelector(`[data-name="${newFieldKey}"`).scrollIntoView({behavior: 'smooth'});
+            document.querySelector(`[data-name="${newFieldKey}"]`).scrollIntoView({behavior: 'smooth'});
           });
         });
       // ADD OPTION FOR SELECT OR RADIO
@@ -444,6 +452,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
         const newGroup = document.createElement('div');
         newGroup.classList.add('input-group', 'mb-1');
         const newInput = document.createElement('input');
+        newInput.setAttribute('aria-labelledby', 'choicesInputLabel');
         // the is-extra-input class is used to remove them upon save
         newInput.classList.add('form-control', 'is-extra-input');
         const appendDiv = document.createElement('div');
@@ -561,26 +570,20 @@ if (document.getElementById('metadataDiv') && entity.id) {
 
           // Remove the group from `extra_fields_groups`
           metadata.elabftw.extra_fields_groups.splice(groupIndex, 1);
-          // Remove the group from the <select> dropdown
-          const optionToRemove = grpSel.querySelector(`option[value="${groupId}"]`);
-          if (optionToRemove) {
-            optionToRemove.remove();
-          }
-
-          // Update extra fields from deleted group by moving them to 'Undefined group'
-          for (const key in metadata.extra_fields) {
-            if (metadata.extra_fields[key].group_id === groupId) {
-              delete metadata.extra_fields[key].group_id;
+          // move fields to "undefined" group
+          if (metadata.extra_fields) {
+            for (const key in metadata.extra_fields) {
+              if (metadata.extra_fields[key].group_id === groupId) {
+                delete metadata.extra_fields[key].group_id;
+              }
             }
           }
-
-          // Remove the elabftw property if no groups remain
-          if (metadata.elabftw.extra_fields_groups.length === 0) {
-            delete metadata.elabftw;
-          }
-
-          MetadataC.update(metadata as ValidMetadata);
+          // cleanup empty structures
+          MetadataC.cleanupMetadata(metadata);
+          const optionToRemove = grpSel.querySelector(`option[value="${groupId}"]`);
+          optionToRemove?.remove();
           groupDiv.remove();
+          MetadataC.update(metadata as ValidMetadata);
         });
       }
     });

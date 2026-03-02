@@ -47,7 +47,7 @@ final class Tags2Entity
         }
         $req->bindValue(':type', $this->entityType->value);
         $req->bindValue(':count', count($tags), PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         return $req->fetchAll(PDO::FETCH_COLUMN);
     }
 

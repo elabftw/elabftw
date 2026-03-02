@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use Elabftw\Exceptions\QuantumException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\AuthResponseInterface;
@@ -55,7 +55,7 @@ final class Demo implements AuthInterface
     private function validateEmail(string $email): string
     {
         if (!in_array($email, self::ALLOWED_EMAILS, true)) {
-            throw new QuantumException(_('Invalid email/password combination.'));
+            throw new InvalidCredentialsException();
         }
         return $email;
     }
@@ -65,8 +65,8 @@ final class Demo implements AuthInterface
         try {
             $Users = ExistingUser::fromEmail($this->email);
         } catch (ResourceNotFoundException) {
-            // here we rethrow an quantum exception because we don't want to let the user know if the email exists or not
-            throw new QuantumException(_('Invalid email/password combination.'));
+            // here we rethrow an exception because we don't want to let the user know if the email exists or not
+            throw new InvalidCredentialsException();
         }
         return $Users->userData['userid'];
     }

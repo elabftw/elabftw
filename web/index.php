@@ -40,15 +40,33 @@ try {
         $IdpsHelper = new IdpsHelper($App->Config, new Idps($App->Users));
         $tmpSettings = $IdpsHelper->getSettings(); // get temporary settings to decode message
         $resp = new SamlResponse(new SamlSettings($tmpSettings), $App->Request->request->getString('SAMLResponse'));
-        $entId = $resp->getIssuers()[0]; // getIssuers returns always one or two entity ids
-
-        $settings = $IdpsHelper->getSettingsByEntityId($entId);
+        $issuers = $resp->getIssuers(); // getIssuers returns one or two entity ids as an array
+        if (empty($issuers)) {
+            throw new ImproperActionException('Could not find an Issuer in the response sent by the IdP!');
+        }
+        // use the first issuer found in the response
+        $settings = $IdpsHelper->getSettingsByEntityId($issuers[0]);
         $idpId = $settings['idp_id'];
         $AuthService = new SamlAuth(new SamlAuthLib($settings), $App->Config->configArr, $settings);
 
         $AuthResponse = $AuthService->assertIdpResponse();
 
         // START copy pasta from LoginController: there is still more work to be done to improve all this code...
+        // no team was found so user must select one
+        if ($AuthResponse->initTeamRequired()) {
+            $info = $AuthResponse->getInitTeamInfo();
+            // TODO store the array directly!
+            $App->Session->set('initial_team_selection_required', true);
+            $App->Session->set('teaminit_email', $info['email'] ?? '');
+            $App->Session->set('teaminit_firstname', $info['firstname'] ?? '');
+            $App->Session->set('teaminit_lastname', $info['lastname'] ?? '');
+            $App->Session->set('teaminit_orgid', $info['orgid'] ?? '');
+            $location = '/login.php';
+            $Response = new RedirectResponse($location);
+            $Response->send();
+            exit;
+        }
+
         $loggingInUser = $AuthResponse->getUser();
 
         /////////
@@ -99,19 +117,8 @@ try {
 
         setcookie('saml_token', $AuthService->encodeToken($idpId), $cookieOptions);
 
-        // no team was found so user must select one
-        if ($AuthResponse->initTeamRequired()) {
-            $info = $AuthResponse->getInitTeamInfo();
-            // TODO store the array directly!
-            $App->Session->set('initial_team_selection_required', true);
-            $App->Session->set('teaminit_email', $info['email'] ?? '');
-            $App->Session->set('teaminit_firstname', $info['firstname'] ?? '');
-            $App->Session->set('teaminit_lastname', $info['lastname'] ?? '');
-            $App->Session->set('teaminit_orgid', $info['orgid'] ?? '');
-            $location = '/login.php';
-
-            // if the user is in several teams, we need to redirect to the team selection
-        } elseif ($AuthResponse->isInSeveralTeams()) {
+        // if the user is in several teams, we need to redirect to the team selection
+        if ($AuthResponse->isInSeveralTeams()) {
             $App->Session->set('team_selection_required', true);
             $App->Session->set('team_selection', $AuthResponse->getSelectableTeams());
             $App->Session->set('auth_userid', $AuthResponse->getAuthUserid());

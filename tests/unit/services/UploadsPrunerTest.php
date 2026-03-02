@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
+use Elabftw\Enums\Action;
+use Elabftw\Models\Config;
 use Elabftw\Traits\TestsUtilsTrait;
 use League\Flysystem\UnableToDeleteFile;
 
@@ -28,6 +30,7 @@ class UploadsPrunerTest extends \PHPUnit\Framework\TestCase
         $Experiments->Uploads->destroy();
 
         $Cleaner = new UploadsPruner();
+        Config::getConfig()->patch(Action::Update, array('s3_region' => 'us-west-2'));
         // FIXME put this here for now until the issue with s3 in tests is solved (by proper mock class)
         $this->expectException(UnableToDeleteFile::class);
         $this->assertEquals(1, $Cleaner->cleanup());

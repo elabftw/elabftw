@@ -18,9 +18,11 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
+use Elabftw\Enums\AccessType;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\ContentParams;
@@ -45,31 +47,37 @@ final class Items extends AbstractConcreteEntity
         ?string $title = null,
         ?string $body = null,
         ?DateTimeImmutable $date = null,
-        ?string $canread = null,
-        ?string $canwrite = null,
-        ?bool $canreadIsImmutable = false,
-        ?bool $canwriteIsImmutable = false,
+        BasePermissions $canreadBase = BasePermissions::Team,
+        BasePermissions $canwriteBase = BasePermissions::User,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
+        bool $canreadIsImmutable = false,
+        bool $canwriteIsImmutable = false,
         array $tags = array(),
         ?int $category = null,
         ?int $status = null,
         ?int $customId = null,
         ?string $metadata = null,
+        BinaryValue $hideMainText = BinaryValue::False,
         int $rating = 0,
         BodyContentType $contentType = BodyContentType::Html,
+        ?EntityType $createdFromType = null,
+        ?int $createdFromId = null,
         // specific to Items
-        ?string $canbook = '',
+        string $canbook = self::EMPTY_CAN_JSON,
+        BasePermissions $canbookBase = BasePermissions::Team,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
         $body = Filter::body($body);
-        $canread ??= BasePermissions::Team->toJson();
-        $canwrite ??= BasePermissions::Team->toJson();
-        $canbook = $canread;
+        if (empty($body)) {
+            $body = null;
+        }
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating)
-            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread_base, canwrite_base, canbook_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text, created_from_type, created_from_id)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread_base, :canwrite_base, :canbook_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text, :created_from_type, :created_from_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -79,6 +87,9 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid());
+        $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canbook_base', $canbookBase->value, PDO::PARAM_INT);
         $req->bindParam(':canread', $canread);
         $req->bindParam(':canwrite', $canwrite);
         $req->bindParam(':canread_is_immutable', $canreadIsImmutable, PDO::PARAM_INT);
@@ -88,10 +99,14 @@ final class Items extends AbstractConcreteEntity
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+        $this->Db->bindNullableInt($req, ':created_from_type', $createdFromType?->toInt());
+        $this->Db->bindNullableInt($req, ':created_from_id', $createdFromId);
         $this->Db->execute($req);
         $newId = $this->Db->lastInsertId();
 
         $this->insertTags($tags, $newId);
+        $this->addCreationToChangelog($newId, $createdFromType, $createdFromId);
 
         return $newId;
     }
@@ -105,20 +120,17 @@ final class Items extends AbstractConcreteEntity
         $DisplayParams = new DisplayParams($this->Users, EntityType::Items, $Request->query);
         // we only want the bookable type of items
         $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
-        // make limit very big because we want to see ALL the bookable items here
-        $DisplayParams->limit = 900000;
         // filter on the canbook or canread depending on query param
         if ($Request->query->has('canbook')) {
             return $this->readShow($DisplayParams, true, 'canbook');
         }
-        return $this->readShow($DisplayParams, true, 'canread');
+        return $this->readShow($DisplayParams, true);
     }
 
     public function canBook(): bool
     {
         $Permissions = new Permissions($this->Users, $this->entityData);
-        $can = json_decode($this->entityData['canbook'], true, 512, JSON_THROW_ON_ERROR);
-        return $Permissions->getCan($can);
+        return $Permissions->forEntity()->book ?? false;
     }
 
     public function canBookInPast(): bool
@@ -129,7 +141,7 @@ final class Items extends AbstractConcreteEntity
     #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
-        $this->canOrExplode('read');
+        $this->canOrExplode(AccessType::Read);
 
         $title = $this->entityData['title'] . ' I';
         // handle the blank_value_on_duplicate attribute on extra fields
@@ -137,12 +149,19 @@ final class Items extends AbstractConcreteEntity
         $newId = $this->create(
             title: $title,
             body: $this->entityData['body'],
-            category: $this->entityData['category'],
+            canreadBase: BasePermissions::from($this->entityData['canread_base']),
+            canwriteBase: BasePermissions::from($this->entityData['canwrite_base']),
+            canbookBase: BasePermissions::from($this->entityData['canbook_base']),
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
-            contentType: BodyContentType::from($this->entityData['content_type']),
-            metadata: $metadata,
+            canbook: $this->entityData['canbook'],
+            category: $this->entityData['category'],
             status: $this->entityData['status'],
+            metadata: $metadata,
+            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
+            contentType: BodyContentType::from($this->entityData['content_type']),
+            createdFromType: $this->entityType,
+            createdFromId: $this->id,
         );
 
         // add missing canbook
@@ -170,24 +189,41 @@ final class Items extends AbstractConcreteEntity
         return $newId;
     }
 
-    // get users who booked current item in the 4 surrounding months
     #[Override]
-    public function getSurroundingBookers(): array
+    // get users who booked current item in the 4 surrounding months
+    protected function getSurroundingBookers(): array
     {
         // save a sql query if the resource is not bookable
         if (!$this->entityData['is_bookable']) {
             return array();
         }
-        // Note: this might reach users that had their account fully archived, but the problem will go away after 4 months.
-        $sql = 'SELECT DISTINCT email, CONCAT(firstname, " ", lastname) AS fullname
-            FROM team_events
-            INNER JOIN users ON users.userid = team_events.userid
-            WHERE team_events.item = :itemid
-              AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH) AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
-              AND users.validated = 1';
+        // Note: here we select past and future bookers but skip the ones that are archived in all teams
+        $sql = 'SELECT DISTINCT
+                u.email,
+                CONCAT(u.firstname, " ", u.lastname) AS fullname
+            FROM team_events tev
+            JOIN users u
+              ON u.userid = tev.userid
+            LEFT JOIN (
+                SELECT users_id, MIN(is_archived) AS all_archived
+                FROM users2teams
+                GROUP BY users_id
+            ) ut
+              ON ut.users_id = u.userid
+            WHERE tev.item = :itemid
+              AND tev.start BETWEEN DATE_SUB(NOW(), INTERVAL 4 MONTH)
+                              AND DATE_ADD(NOW(), INTERVAL 4 MONTH)
+              AND u.validated = 1
+              AND COALESCE(ut.all_archived, 0) = 0';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':itemid', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    #[Override]
+    protected function getCreatePermissionKey(): string
+    {
+        return 'users_canwrite_resources';
     }
 }

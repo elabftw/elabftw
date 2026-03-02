@@ -4,7 +4,7 @@
 <div class='mt-2 countable hl-hover-superlight p-2 rounded'>
   {% set randomId = random() %}
   <div class='d-flex mb-1 align-items-center' id='parent_{{ randomId }}'>
-    <a href='{{ link.page }}?mode=view&amp;id={{ link.entityid }}' class='text-dark mr-auto'>
+    <a href='{{ link.page }}?mode=view&amp;id={{ link.entityid }}' class='color-strong mr-auto'>
       <i class='fas fa-arrow-{{ isRelated|default(false) ? 'left' : 'right' }} fa-fw mr-2' aria-hidden='true'></i>
       {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
       {% if link.category_title %}

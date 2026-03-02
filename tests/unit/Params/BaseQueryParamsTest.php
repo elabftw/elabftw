@@ -21,6 +21,7 @@ class BaseQueryParamsTest extends \PHPUnit\Framework\TestCase
         $params = new BaseQueryParams(new InputBag(array('offset' => 1)));
         $this->assertSame(1, $params->offset);
         $this->assertFalse($params->isFast());
+        $this->assertEquals(0, $params->getLimit());
         $this->assertEmpty($params->getFastq());
         $this->assertFalse($params->hasUserQuery());
         $this->assertEmpty($params->getUserQuery());

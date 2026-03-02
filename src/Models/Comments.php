@@ -13,10 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\CommentCreated;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\CommentParam;
 use Elabftw\Traits\SetIdTrait;
 use Override;
@@ -46,7 +48,7 @@ class Comments extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(AccessType::Read);
         $sql = 'SELECT ' . $this->Entity->entityType->value . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.firstname, users.lastname, users.orcid, users.email
@@ -63,7 +65,7 @@ class Comments extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(AccessType::Read);
         $sql = 'SELECT ' . $this->Entity->entityType->value . "_comments.*,
             CONCAT(users.firstname, ' ', users.lastname) AS fullname,
             users.firstname, users.lastname, users.orcid, users.email
@@ -92,7 +94,7 @@ class Comments extends AbstractRest
 
     public function update(CommentParam $params): bool
     {
-        $this->Entity->canOrExplode('read');
+        $this->Entity->canOrExplode(AccessType::Read);
         $this->canWriteOrExplode();
         // note: we're using a strict WHERE clause here to prevent writing comments from someone else
         $sql = 'UPDATE ' . $this->Entity->entityType->value . '_comments SET
@@ -151,17 +153,23 @@ class Comments extends AbstractRest
     protected function createNotifications(): void
     {
         $comments = $this->readAll();
-        $userids = array_values(array_unique(array_column($comments, 'userid')));
-        // add the owner
-        $userids[] = $this->Entity->entityData['userid'];
+        // start by adding the owner
+        $recipients = array($this->Entity->entityData['userid']);
+        // then loop over comments to add participants
+        foreach ($comments as $comment) {
+            $recipients[] = $comment['userid'];
+        }
+        // make sure everyone only gets one notification: remove duplicates
+        $userids = array_values(array_unique($recipients));
         foreach ($userids as $userid) {
             // skip commenter
             if ($userid === $this->Entity->Users->userData['userid']) {
                 continue;
             }
+            $targetUser = new Users($userid);
             /** @psalm-suppress PossiblyNullArgument */
-            $Notif = new CommentCreated($this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
-            $Notif->create($userid);
+            $Notif = new CommentCreated($targetUser, $this->Entity->entityType->toPage(), $this->Entity->id, $this->Entity->Users->userData['userid']);
+            $Notif->create();
         }
     }
 }

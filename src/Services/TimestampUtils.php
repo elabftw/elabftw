@@ -154,7 +154,6 @@ final class TimestampUtils
             '-untrusted',
             $this->tsConfig['ts_cert'],
         ));
-        // a ProcessFailedException will be thrown if it fails
         return true;
     }
 }

@@ -15,8 +15,10 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\PermissionsHelper;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\Currency;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
@@ -24,17 +26,18 @@ use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Changelog;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\TeamTags;
+use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\BaseQueryParams;
@@ -45,6 +48,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 
 /**
  * For displaying an entity in show, view or edit mode
+ * Preloads shared data like templates (experiments/items), statuses, team info.
  */
 abstract class AbstractEntityController implements ControllerInterface
 {
@@ -66,8 +70,6 @@ abstract class AbstractEntityController implements ControllerInterface
     protected array $requestableActionArr = array();
 
     protected array $currencyArr = array();
-
-    protected array $templatesArr = array();
 
     protected array $scopedTeamgroupsArr = array();
 
@@ -122,11 +124,11 @@ abstract class AbstractEntityController implements ControllerInterface
         $skipOrderPinned = $this->App->Request->query->getBoolean('skip_pinned');
         $DisplayParams = new DisplayParams(
             requester: $this->App->Users,
-            query: $this->App->Request->query,
             entityType: $this->Entity->entityType,
-            limit: $this->App->Users->userData['limit_nb'],
+            query: $this->App->Request->query,
             orderby: $orderBy,
             sort: Sort::tryFrom($this->App->Users->userData['sort']) ?? Sort::Desc,
+            limit: $this->App->Users->userData['limit_nb'],
             skipOrderPinned: $skipOrderPinned,
         );
         $itemsArr = $this->Entity->readShow($DisplayParams);
@@ -161,7 +163,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),
-            'templatesArr' => $this->templatesArr,
             'usersArr' => $this->App->Users->readAllFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -188,8 +189,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
-            // Do we display the main body of a concrete entity? Default is true
-            'displayMainText' => (new Metadata($this->Entity->entityData['metadata']))->getDisplayMainText(),
             'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             'pageTitle' => $this->getPageTitle(),
@@ -197,13 +196,11 @@ abstract class AbstractEntityController implements ControllerInterface
             'hideTitle' => true,
             'teamsArr' => $this->App->Teams->readAllVisible(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
-            'templatesArr' => $this->templatesArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
             'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
-            'surroundingBookers' => $this->Entity->getSurroundingBookers(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -242,6 +239,11 @@ abstract class AbstractEntityController implements ControllerInterface
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $baseQueryParams = new BaseQueryParams($this->App->Request->query);
+        // used in field builder modal, TODO we might want to make it dynamic loading later
+        $Templates = new Templates($this->App->Users);
+        $ItemsTypes = new ItemsTypes($this->App->Users);
+        $DisplayParamsTemplates = new DisplayParams($this->App->Users, EntityType::Templates);
+        $DisplayParamsItemsTypes = new DisplayParams($this->App->Users, EntityType::ItemsTypes);
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'classificationArr' => $this->classificationArr,
@@ -249,8 +251,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'Entity' => $this->Entity,
             'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
-            // Do we display the main body of a concrete entity? Default is true
-            'displayMainText' => $Metadata->getDisplayMainText(),
             'hideTitle' => true,
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
@@ -262,8 +262,8 @@ abstract class AbstractEntityController implements ControllerInterface
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
             'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
-            'surroundingBookers' => $this->Entity->getSurroundingBookers(),
-            'templatesArr' => $this->templatesArr,
+            'templatesArr' => $Templates->readAllSimple($DisplayParamsTemplates),
+            'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -277,12 +277,10 @@ abstract class AbstractEntityController implements ControllerInterface
     protected function changelog(): Response
     {
         // check permissions
-        $this->Entity->canOrExplode('read');
-
-        $Changelog = new Changelog($this->Entity);
+        $this->Entity->canOrExplode(AccessType::Read);
 
         $renderArr = array(
-            'changes' => $Changelog->readAll(),
+            'changes' => $this->Entity->entityData['changelog'],
             'Entity' => $this->Entity,
         );
 

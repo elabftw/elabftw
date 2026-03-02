@@ -12,12 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
-use Elabftw\Enums\Messages;
+use Override;
 
 /**
  * For things disabled by demo_mode
  */
-final class DemoModeException extends AppException
+final class DemoModeException extends ForbiddenException
 {
-    protected Messages $error = Messages::DemoMode;
+    #[Override]
+    protected function getErrorMessage(): string
+    {
+        return _('Sorry, this action is disabled in demo mode.');
+    }
 }

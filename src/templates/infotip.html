@@ -1,0 +1,8 @@
+{% set icon = icon|default('fa-question-circle') %}
+{% set iconClass = iconClass|default('ml-1') %}
+<div class="infotip">
+  <span class="infotip-icon">
+    <i class="{{ iconClass }} fas {{ icon }}" aria-hidden="true"></i>
+  </span>
+  <p class="infotip-text">{{ text|trans }}</p>
+</div>

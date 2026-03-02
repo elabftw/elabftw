@@ -1,0 +1,128 @@
+{% set canWriteExperiments = App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments %}
+{% set canWriteResources = App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources %}
+{% set canWriteExperimentsTemplates = App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments_templates %}
+{% set canWriteResourcesTemplates = App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources_templates %}
+{# Modal window for creating a new entity #}
+<div class='modal fade' id='createModal' tabindex='-1' role='dialog' aria-labelledby='createModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='createModalLabel'>{{ 'Create a new entry'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form id='createNewForm' aria-label='{{ 'Create a new entry'|trans }}'>
+        <input id='createNewCompoundInput' type='hidden' name='compound' value='' />
+        <div class='modal-body mb-3'>
+          <div class='mb-4'>
+            <label class='d-block'>{{ 'Select a type'|trans }}</label>
+            {% macro createTypeOption(value, id, label, canWrite) %}
+              <div class='form-check-inline'>
+                {% set disabled = not canWrite %}
+                <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='{{ value }}' id='{{ id }}' {{ disabled ? 'disabled' }}/>
+                <div class='{{ disabled ? 'infotip' }}'>
+                  <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='{{ id }}'>{{ label|trans }}</label>
+                  {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
+                </div>
+              </div>
+            {% endmacro %}
+            {{ _self.createTypeOption('experiments', 'createNewTypeExperiments', 'Experiment', canWriteExperiments) }}
+            {{ _self.createTypeOption('items', 'createNewTypeItems', 'Resource', canWriteResources) }}
+            {{ _self.createTypeOption('experiments_templates', 'createNewTypeExperimentsTemplates', 'Experiment template', canWriteExperimentsTemplates) }}
+            {{ _self.createTypeOption('items_types', 'createNewTypeItemsTypes', 'Resource template', canWriteResourcesTemplates) }}
+          </div>
+          <div class='my-2'>
+            <label for='createNewFormTitle'>{{ 'Enter a title'|trans }}</label>
+            <input name='title' placeholder='{{ 'Type a descriptive title...'|trans }}' class='form-control' type='text' id='createNewFormTitle' />
+          </div>
+          <hr>
+          <div class='d-lg-flex'>
+            <div>
+              <button type='button' data-action='toggle-templates' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='btn btn-ghost mt-1' id='createTplToggleBtn'>
+               <i class='fas fa-caret-right mr-1'></i>{{ 'Start from a template'|trans }}
+              </button>
+            </div>
+            <div class='ml-auto'>
+              <button type='submit' data-cy='create-entity' data-action='create-entity' data-type='' class='btn btn-secondary mt-1' id='createNoTplBtn'>{{ 'Create without template'|trans }}</button>
+            </div>
+          </div>
+          <div id='createNewTemplatesDiv' class='mt-2' hidden>
+            <h6>{{ 'Select a template'|trans }}</h6>
+            <p class='smallgray'>{{ 'Adjust the scope and select a category to filter results.'|trans }}</p>
+              <div class='d-flex flex-row justify-content-between mb-2'>
+                <div id='createNewScopeSelect' class='btn-group mr-1'>
+                  <button class='btn btn-ghost hl-hover-gray dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' title='{{ 'Scope'|trans }}' aria-expanded='false'>{{ 'Scope'|trans }}<i class='fas fa-user fa-fw mx-1'></i></button>
+                  <div class='dropdown-menu'>
+                    <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>
+                    <button type='button' data-value='1' class='btn btn-dropdown-item dropdown-item createNewScopeBtn active'>
+                      <i class='fas fa-user fa-fw mr-1 color-white'></i>{{ 'Self'|trans }}
+                    </button>
+                    <button type='button' data-value='2' class='btn btn-dropdown-item dropdown-item createNewScopeBtn'>
+                      <i class='fas fa-users fa-fw mr-1'></i>{{ 'Team'|trans }}
+                    </button>
+                    <button type='button' data-value='3' class='btn btn-dropdown-item dropdown-item createNewScopeBtn'>
+                      <i class='fas fa-globe fa-fw mr-1'></i>{{ 'Everything'|trans }}
+                    </button>
+                  </div>
+                </div>
+                {# Warning: repetition of the two select because the data is available in the html already: saves us from populating it in js #}
+                <select class='form-control createNewCategoryList' data-endpoint='items_types' aria-label='{{ 'Filter category'|trans }}' id='createNewCategoryList_items' hidden>
+                  <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
+                  <option value='null'>{{ 'No category'|trans }}</option>
+                  {% for category in App.itemsCategoryArr %}
+                    <option value='{{ category.id }}'>{{ category.title }}</option>
+                  {% endfor %}
+                </select>
+
+                <select class='form-control createNewCategoryList' data-endpoint='experiments_templates' aria-label='{{ 'Filter category'|trans }}' id='createNewCategoryList_experiments' hidden>
+                  <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
+                  <option value='null'>{{ 'No category'|trans }}</option>
+                  {% for category in App.experimentsCategoryArr %}
+                    <option value='{{ category.id }}'>{{ category.title }}</option>
+                  {% endfor %}
+                </select>
+                {# end code duplication #}
+              </div>
+
+              {% include 'filter-input-snippet.html' with {'target': 'tplCreateNewTable', 'placeholder': 'Search a template...'|trans} %}
+              <div id='tplCreateNewDiv' class='vertically-limited mt-2'>
+                <table class='table' aria-describedby='createModalLabel' data-table-sort='true'>
+                  <thead>
+                  <tr>
+                    <th scope='col'>{{ 'Title'|trans }}</th>
+                    <th scope='col'>{{ 'Owner'|trans }}</th>
+                    <th scope='col' class='no-sort'><span class='sr-only'>{{ 'Actions'|trans }}</span></th>
+                  </tr>
+                  </thead>
+                  <tbody id='tplCreateNewTable'>
+                  </tbody>
+                </table>
+              <template id='templateRow'>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td><span class='sr-only'>{{ 'Actions'|trans }}</span>
+                    <div class='d-flex flex-nowrap'>
+                      <button type='submit' class='btn btn-primary mr-1' data-action='create-entity' title='{{ 'Create from template'|trans }}' data-type='' data-tplid='' ><i class='fas fa-file-circle-plus color-white'></i></button>
+                      <a href='replacedinjs' class='btn btn-ghost' title='{{ 'View template'|trans }}' aria-label='{{ 'View template'|trans }}'>
+                        <i class='fas fa-eye fa-fw'></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </div>
+            <a href='replacedinjs' class='btn btn-ghost' id='manageTplLink'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
+          </div>
+        </div>
+        <div class='modal-footer d-flex'>
+          <div class='ml-auto'>
+            <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{# end modal #}

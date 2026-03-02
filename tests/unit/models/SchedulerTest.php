@@ -20,6 +20,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -42,8 +43,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Items = $this->getFreshBookableItem(2);
         $d = new DateTimeImmutable('+3 hour');
         $this->start = $d->format('c');
-        $d->add(new DateInterval('PT2H'));
-        $this->end = $d->format('c');
+        $this->end = $d->add(new DateInterval('PT2H'))->format('c');
         $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         $this->delta = array(
             'years' => '0',
@@ -74,8 +74,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testPostActionCannotBook(): void
     {
         $RestrictedBookableItem = $this->getFreshBookableItem(2);
-        $RestrictedBookableItem->update(new EntityParams('canread', BasePermissions::Full->toJson()));
-        $RestrictedBookableItem->update(new EntityParams('canbook', BasePermissions::UserOnly->toJson()));
+        $RestrictedBookableItem->update(new EntityParams('canread_base', BasePermissions::Full->value));
+        $RestrictedBookableItem->update(new EntityParams('canbook_base', BasePermissions::UserOnly->value));
         $Scheduler = new Scheduler(new Items($this->getRandomUserInTeam(1), $RestrictedBookableItem->id));
         $this->expectException(ImproperActionException::class);
         $Scheduler->postAction(Action::Create, array());
@@ -86,6 +86,13 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => 'Yep'));
         $this->assertIsInt($id);
         return $id;
+    }
+
+    public function testPostActionWithNegativeTimeSlots(): void
+    {
+        $end = new DateTimeImmutable('-1 hour')->format('c');
+        $this->expectException(UnprocessableContentException::class);
+        $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $end, 'title' => 'Yep'));
     }
 
     public function testFailure(): void
@@ -101,7 +108,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Scheduler->readAll());
         $Items = $this->getFreshBookableItem(1);
         $this->Scheduler = new Scheduler($Items, null, $this->start, $this->end);
+        $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
         $this->assertIsArray($this->Scheduler->readOne());
+        $this->assertNotEmpty($this->Scheduler->readOne());
     }
 
     public function testReadAllWithVariousScopes(): void
@@ -109,11 +118,10 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         foreach (array(Scope::User->value, Scope::Team->value, Scope::Everything->value) as $scope) {
             $Users = $this->getUserInTeam(2, admin: 1);
             $Users->userData['scope_events'] = $scope;
-
             $Items = $this->getFreshItemWithGivenUser($Users);
+            $Items->patch(Action::Update, array('is_bookable' => 1));
             $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
             $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
-
             $this->assertReadAllReturnsValidEvents($Scheduler, $scope);
         }
     }
@@ -128,8 +136,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         // grant user 2 'canread' permissions only. Prevents 'access entity without permission'
         $Items->patch(Action::Update, array(
+            'is_bookable' => 1,
+            'canread_base' => BasePermissions::User->value,
             'canread' => json_encode(array(
-                'base' => BasePermissions::User->value,
                 'users' => array($User2->userid),
                 'teams' => array(),
                 'teamgroups' => array(),
@@ -149,24 +158,16 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $events = $Scheduler2->readAll();
         $this->assertIsArray($events);
         $eventsIds = array_column($events, 'id');
-        $this->assertNotContains($eventId, $eventsIds, 'User 2 should not see events due to lack of book permission.');
-
-        // now make it visible for user in the other team
-        $Items->patch(Action::Update, array(
-            'canbook' => json_encode(array(
-                'base' => BasePermissions::User->value,
-                'users' => array($User2->userid),
-                'teams' => array(),
-                'teamgroups' => array(),
-            )),
-        ));
-
-        // Refresh scheduler then User 2 retries after being granted book permission
-        $Scheduler2 = new Scheduler($Items2, null, $this->start, $this->end);
-        $eventsAfterGrant = $Scheduler2->readAll();
-        $this->assertIsArray($eventsAfterGrant);
-        $eventsIds = array_column($eventsAfterGrant, 'id');
-        $this->assertContains($eventId, $eventsIds, 'User 2 should now see the event.');
+        $this->assertContains($eventId, $eventsIds, 'User 2 should see the event, but it remains non-bookable.');
+        foreach ($events as $event) {
+            if ($event['id'] === $eventId) {
+                $this->assertSame(0, (int) $event['canbook'], 'User 2 should not be able to book the event.');
+            }
+        }
+        // Ensure User 2 can not perform any action on visible(non-bookable) event.
+        $Scheduler2->setId($eventId);
+        $this->expectException(IllegalActionException::class);
+        $Scheduler2->patch(Action::Update, array('target' => 'end', 'delta' => $this->delta));
     }
 
     public function testReadAllWithFilters(): void
@@ -200,27 +201,31 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($titleItem2, $filteredCatEvents[1]['title_only']);
     }
 
-    public function testPatchEpoch(): Scheduler
+    public function testPatchDatetime(): void
     {
         $Scheduler = $this->getFreshSchedulerWithEvent();
-        $newEpoch = new DateTimeImmutable('+6 hour')->format('U');
-        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => $newEpoch)));
-        $this->assertIsArray($Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => $newEpoch)));
-        return $Scheduler;
+        $newStart = new DateTimeImmutable('+6 hour');
+        $newEnd = $newStart->add(new DateInterval('PT2H'));
+        $res = $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $newStart->format('c'), 'end' => $newEnd->format('c')));
+        $this->assertIsArray($res);
+        $this->assertEquals($newStart->format('Y-m-d H:i:s'), $res['start']);
+        $this->assertEquals($newEnd->format('Y-m-d H:i:s'), $res['end']);
     }
 
-    public function testPatchEpochInvalidTarget(): void
+    public function testPatchDatetimeEndBeforeStart(): void
     {
-        $Scheduler = $this->testPatchEpoch();
-        $this->expectException(ImproperActionException::class);
-        $Scheduler->patch(Action::Update, array('target' => 'oops', 'epoch' => date('U')));
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $start = new DateTimeImmutable('+10 hour');
+        $end = new DateTimeImmutable('+6 hour');
+        $this->expectException(UnprocessableContentException::class);
+        $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $start->format('c'), 'end' => $end->format('c')));
     }
 
-    public function testPatchEpochInvalidEpoch(): void
+    public function testPatchDatetimeInvalidFormat(): void
     {
-        $Scheduler = $this->testPatchEpoch();
+        $Scheduler = $this->getFreshSchedulerWithEvent();
         $this->expectException(ImproperActionException::class);
-        $Scheduler->patch(Action::Update, array('target' => 'end_epoch', 'epoch' => ''));
+        $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => '', 'end' => ''));
     }
 
     public function testPatchTitle(): void
@@ -231,8 +236,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroyNonCancellableEvent(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_is_cancellable' => 0));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('tomorrow');
@@ -247,8 +251,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCancelTooClose(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_cancel_minutes' => 666));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -263,8 +266,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testSlotTime(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_max_minutes' => 12));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -277,8 +279,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testOverlap(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_can_overlap' => 0));
         $Scheduler = new Scheduler($Items);
         // first one
@@ -298,9 +299,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testOverlapWhileChangingExisting(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
-        $Items->patch(Action::Update, array('book_can_overlap' => 0));
+        $Items = $this->getFreshItemWithGivenUser($this->getRandomUserInTeam(2));
+        $Items->patch(Action::Update, array('book_can_overlap' => 0, 'is_bookable' => 1));
         $Scheduler = new Scheduler($Items);
         // first one
         $d = new DateTime('5 minutes');
@@ -316,13 +316,14 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
         $Scheduler->setId($id);
         $this->expectException(ImproperActionException::class);
-        $Scheduler->patch(Action::Update, array('target' => 'start_epoch', 'epoch' => (string) time()));
+        $newStart = new DateTimeImmutable('+10 minutes');
+        $newEnd = $newStart->add(new DateInterval('PT2H'));
+        $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $newStart->format('c'), 'end' => $newEnd->format('c')));
     }
 
     public function testCheckMaxSlots(): void
     {
-        $Items = $this->getFreshItem(2);
-        $Items->Users = $this->getRandomUserInTeam(2);
+        $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_max_slots' => 2));
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('5 minutes');
@@ -358,7 +359,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCanWriteAndWeAreAdmin(): void
     {
-        $Items = $this->getFreshItem(2);
+        $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items, null, $this->start, $this->end);
         // create with user, make sure it's in the future!
         $d = new DateTime('now');
@@ -378,6 +379,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     {
         $Admin = $this->getUserInTeam(2, admin: 1);
         $Items = $this->getFreshItemWithGivenUser($Admin);
+        $Items->patch(Action::Update, array('is_bookable' => 1));
         $AdminScheduler = new Scheduler($Items);
         $adminEventId = $AdminScheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
         $User = $this->getUserInTeam(2);
@@ -421,7 +423,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testCanCancelDuringGracePeriod(): void
     {
-        $Items = $this->getFreshItem();
+        $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items);
         $d = new DateTime('+1 hour');
         $start = $d->format('c');
@@ -432,10 +434,24 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Scheduler->destroy());
     }
 
-    private function getFreshSchedulerWithEvent(): Scheduler
+    public function testCannotBookBeyondMaximumAdvanceDays(): void
     {
-        $Scheduler = new Scheduler($this->getFreshBookableItem(2));
-        $id = $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end));
+        $Items = $this->getFreshBookableItem(2);
+        // enable limit
+        $Items->patch(Action::Update, array('booking_window_days' => 1));
+        $start = new DateTime('+3 days')->format('c');
+        $end = new DateTime('+3 days +2 hours')->format('c');
+        $this->expectException(ImproperActionException::class);
+        $this->getFreshSchedulerWithEvent($Items, $start, $end);
+    }
+
+    private function getFreshSchedulerWithEvent(?Items $Items = null, ?string $start = null, ?string $end = null): Scheduler
+    {
+        $Items ??= $this->getFreshBookableItem(2);
+        $start ??= $this->start;
+        $end ??= $this->end;
+        $Scheduler = new Scheduler($Items);
+        $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end));
         $Scheduler->setId($id);
         return $Scheduler;
     }

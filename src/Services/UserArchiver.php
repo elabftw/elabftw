@@ -19,6 +19,7 @@ use Elabftw\Enums\State;
 use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
@@ -60,7 +61,7 @@ final class UserArchiver
             throw new ImproperActionException(_('You are trying to archive an unvalidated user. Maybe you want to delete the account?'));
         }
         if ($this->target->userData['is_sysadmin'] === 1) {
-            throw new ImproperActionException(_('A sysadmin account cannot be archived.'));
+            throw new UnprocessableContentException(_('A sysadmin account cannot be archived.'));
         }
         $this->target->invalidateToken();
         // if we are archiving a user, also lock all experiments (if asked)

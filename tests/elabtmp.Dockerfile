@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for CI image
 # we allow specifying a base image branch so the build will happen on the corresponding branch of elabimg
-ARG BASE_IMAGE_VERSION=hypernext
+ARG BASE_IMAGE_VERSION=master
 FROM elabftw/elabimg:$BASE_IMAGE_VERSION
 
 # Install xdebug for coverage

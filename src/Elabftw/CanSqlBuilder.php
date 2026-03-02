@@ -16,7 +16,6 @@ use Elabftw\Enums\AccessType;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\UsersHelper;
 
 use function array_column;
 use function implode;
@@ -54,7 +53,7 @@ final class CanSqlBuilder
     protected function canBasePubOrg(): string
     {
         return sprintf(
-            "entity.%s->'$.base' IN (%d, %d)",
+            'entity.%s_base IN (%d, %d)',
             $this->accessType->value,
             BasePermissions::Full->value,
             BasePermissions::Organization->value,
@@ -67,8 +66,8 @@ final class CanSqlBuilder
     protected function canBaseTeam(): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND entity.team = %d)",
+            '(entity.%s_base = %d
+                AND entity.team = %d)',
             $this->accessType->value,
             BasePermissions::Team->value,
             $this->requester->team ?? 0,
@@ -82,14 +81,19 @@ final class CanSqlBuilder
     protected function canBaseUser(): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND entity.userid = %d
-                OR (users2teams.teams_id = entity.team AND users2teams.is_admin = 1))",
+            '(entity.%s_base = %d
+                AND (entity.userid = :userid
+                    OR EXISTS (
+                        SELECT 1
+                        FROM users2teams u2t
+                        WHERE u2t.users_id = :userid
+                          AND u2t.teams_id = entity.team
+                          AND u2t.is_admin = 1
+                      )
+                )
+            )',
             $this->accessType->value,
             BasePermissions::User->value,
-            $this->requester->isAdmin
-                ? 'users2teams.users_id'
-                : $this->requester->userid ?? 0,
         );
     }
 
@@ -100,8 +104,8 @@ final class CanSqlBuilder
     protected function canBaseUserOnly(): string
     {
         return sprintf(
-            "(entity.%s->'$.base' = %d
-                AND entity.userid = %d)",
+            '(entity.%s_base = %d
+                AND entity.userid = %d)',
             $this->accessType->value,
             BasePermissions::UserOnly->value,
             $this->requester->userid ?? 0,
@@ -113,15 +117,13 @@ final class CanSqlBuilder
      */
     protected function canTeams(): string
     {
-        $UsersHelper = new UsersHelper($this->requester->userid ?? 0);
-        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        if (!empty($teamsOfUser)) {
+        if (!empty($this->requester->userData['teams'])) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
             return sprintf(
                 "JSON_OVERLAPS(entity.%s->'$.teams', CAST('[%s]' AS JSON))",
                 $this->accessType->value,
-                implode(', ', $teamsOfUser),
+                implode(', ', array_column($this->requester->userData['teams'], 'id')),
             );
         }
         return '1=2';
@@ -132,6 +134,7 @@ final class CanSqlBuilder
      */
     protected function canTeamGroups(): string
     {
+        // TODO include the teamgroups in Users->readOneFull
         $TeamGroups = new TeamGroups($this->requester);
         $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {

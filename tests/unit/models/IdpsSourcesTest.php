@@ -20,6 +20,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\Url2Xml;
 use Elabftw\Services\Xml2Idps;
+use GuzzleHttp\Psr7\Response;
 
 class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,8 +41,9 @@ class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
 
     public function testNotSysadmin(): void
     {
+        $IdpsSources = new IdpsSources(new Users(2, 1));
         $this->expectException(IllegalActionException::class);
-        new IdpsSources(new Users(2, 1));
+        $IdpsSources->readAll();
     }
 
     public function testPatchNoId(): void
@@ -72,7 +74,8 @@ class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
         $Idps = new Idps($this->requester);
         $getterStub = $this->createStub(HttpGetter::class);
         $xmlContent = (string) file_get_contents(dirname(__DIR__, 2) . '/_data/idp-metadata.xml');
-        $getterStub->method('get')->willReturn($xmlContent);
+        $response = new Response(200, array(), $xmlContent);
+        $getterStub->method('get')->willReturn($response);
         $source = $this->IdpsSources->readOne();
         $Url2Xml = new Url2Xml($getterStub, $source['url'], new DOMDocument());
         $dom = $Url2Xml->getXmlDocument();

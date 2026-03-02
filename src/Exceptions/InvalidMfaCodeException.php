@@ -13,15 +13,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
-use Elabftw\Enums\Messages;
+use Override;
 
 /**
  * Throw this if the MFA code verification failed
  */
-final class InvalidMfaCodeException extends AppException
+final class InvalidMfaCodeException extends UnauthorizedException
 {
-    public function __construct()
+    #[Override]
+    protected function getErrorMessage(): string
     {
-        parent::__construct(Messages::InvalidAuthenticationCode->toHuman(), Messages::InvalidAuthenticationCode->toHttpCode());
+        return _('Invalid authentication code.');
     }
 }

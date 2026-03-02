@@ -25,6 +25,8 @@ interface QueryParamsInterface
 
     public function getStatesSql(string $tableName): string;
 
+    public function getStates(): array;
+
     public function isFast(): bool;
 
     public function getFastq(): string;

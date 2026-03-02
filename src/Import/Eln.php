@@ -15,6 +15,8 @@ namespace Elabftw\Import;
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
@@ -34,7 +36,9 @@ use Override;
 
 use function array_find;
 use function basename;
+use function is_array;
 use function json_decode;
+use function rawurlencode;
 use function sprintf;
 use function strtr;
 
@@ -65,14 +69,16 @@ class Eln extends AbstractZip
 
     public function __construct(
         protected Users $requester,
-        // TODO nullable and have it in .eln export so it is not lost on import
-        protected string $canread,
-        protected string $canwrite,
         protected UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
         protected ?EntityType $entityType = null,
         protected ?int $category = null,
+        protected BasePermissions $canreadBase = BasePermissions::Team,
+        protected BasePermissions $canwriteBase = BasePermissions::User,
+        // TODO nullable and have it in .eln export so it is not lost on import
+        protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
+        protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
         private bool $verifyChecksum = true,
         private bool $checksumErrorSkip = true,
     ) {
@@ -272,6 +278,10 @@ class Eln extends AbstractZip
      */
     private function importRootDataset(array $dataset): void
     {
+        if (($dataset['@type'] ?? null) !== 'Dataset') {
+            $this->logger->debug(sprintf('Skipping import of non-dataset %s', $dataset['@id'] ?? ''));
+            return;
+        }
         $Author = $this->getAuthor($dataset);
 
         // a .eln can contain mixed types: experiments, resources, or templates.
@@ -287,7 +297,9 @@ class Eln extends AbstractZip
         }
 
         // CREATE ENTITY
-        $this->Entity->setId($this->Entity->create());
+        $entityId = $this->Entity->create();
+        $this->Entity->setId($entityId);
+        $this->logger->debug(sprintf('Created %s with id: %d', $this->Entity->entityType->value, $entityId));
 
         // DATE
         $date = date('Y-m-d');
@@ -302,8 +314,13 @@ class Eln extends AbstractZip
         $this->Entity->entityData['canread_is_immutable'] = 0;
         $this->Entity->entityData['canwrite_is_immutable'] = 0;
         // canread and canwrite patch must happen before bodyappend that contains a readOne()
+        $this->Entity->update(new EntityParams('canread_base', $this->canreadBase->value));
+        $this->Entity->update(new EntityParams('canwrite_base', $this->canwriteBase->value));
         $this->Entity->update(new EntityParams('canread', $this->canread));
         $this->Entity->update(new EntityParams('canwrite', $this->canwrite));
+        // content_type
+        $contentType = ($dataset['encodingFormat'] ?? 'text/html') === 'text/markdown' ? BodyContentType::Markdown : BodyContentType::Html;
+        $this->Entity->update(new EntityParams('content_type', $contentType->value));
         // here we use "text" or "description" attribute as main text
         $this->Entity->update(new EntityParams('bodyappend', ($dataset['text'] ?? '') . ($dataset['description'] ?? '')));
         // TITLE
@@ -353,7 +370,7 @@ class Eln extends AbstractZip
                         // for backward compatibility with elabftw's .eln from before 4.9, the "mention" attribute MAY contain all, instead of just being a link with an @id
                         // after 4.9 the "mention" attribute contains only a link to an @type: Dataset node
                         // after 5.1 the "mention" will point to a Dataset contained in the .eln
-                        if (count($mention) === 1) {
+                        if (is_array($mention) && count($mention) === 1) {
                             // store a reference for the link to create. We cannot create it now as link might or might not exist yet.
                             $this->linksToCreate[] = array(
                                 'origin_entity_type' => $this->Entity->entityType,
@@ -473,15 +490,15 @@ class Eln extends AbstractZip
 
     private function importPart(array $part): void
     {
-        if (empty($part['@type'])) {
+        if (!array_key_exists('@type', $part) || empty($part['@type'])) {
             return;
         }
 
         switch ($part['@type']) {
             case 'Dataset':
                 $this->Entity->patch(Action::Update, array('bodyappend' => $this->part2html($part)));
-                foreach ($part['hasPart'] as $subpart) {
-                    if ($subpart['@type'] === 'File') {
+                foreach ($part['hasPart'] ?? array() as $subpart) {
+                    if (($subpart['@type'] ?? '') === 'File') {
                         $this->importFile($subpart);
                     }
                 }
@@ -506,6 +523,7 @@ class Eln extends AbstractZip
         $filepath = strtr($filepath, ':', '_');
         // quick patch to fix issue with | in the title, but we will need a proper fix to avoid the need for such patches...
         $filepath = strtr($filepath, '|', '_');
+        $filepath = strtr($filepath, '"', '_');
 
         $hasher = new LocalFileHash($filepath);
         $hash = $hasher->getHash();
@@ -528,13 +546,15 @@ class Eln extends AbstractZip
             $filepath,
             $hasher,
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
+            state: ($file['creativeWorkStatus'] ?? '') === State::Archived->name ? State::Archived : State::Normal
         ));
         // the alternateName holds the previous long_name of the file
         if (!empty($file['alternateName'])) {
             // read the newly created upload so we can get the new long_name to replace the old in the body
             $Uploads = new Uploads($this->Entity, $newUploadId);
             $currentBody = $this->Entity->readOne()['body'];
-            $newBody = str_replace($file['alternateName'], $Uploads->uploadData['long_name'], $currentBody);
+            // also search for url encoded filename
+            $newBody = str_replace(array(rawurlencode($file['alternateName']), $file['alternateName']), $Uploads->uploadData['long_name'], $currentBody);
             $this->Entity->patch(Action::Update, array('body' => $newBody));
         }
     }
@@ -543,7 +563,7 @@ class Eln extends AbstractZip
     {
         $html = sprintf('<p>%s<br>%s', $part['name'] ?? '', $part['dateCreated'] ?? '');
         $html .= '<ul>';
-        foreach ($part['hasPart'] as $subpart) {
+        foreach ($part['hasPart'] ?? array() as $subpart) {
             $html .= sprintf(
                 '<li>%s %s</li>',
                 basename($subpart['@id']),

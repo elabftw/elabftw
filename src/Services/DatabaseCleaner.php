@@ -78,7 +78,7 @@ final class DatabaseCleaner implements CleanerInterface
             LEFT JOIN ' . $foreignTable . ' ON (' . $table . '.' . $foreignKey . ' = ' . $foreignTable . '.' . $foreignId . ')
             WHERE ' . $foreignTable . '.' . $foreignId . ' IS NULL';
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        $this->Db->execute($req);
         $res = $req->fetchAll();
         if (!empty($res)) {
             echo sprintf("Found %d rows to delete in %s\n", count($res), $table);
@@ -98,7 +98,7 @@ final class DatabaseCleaner implements CleanerInterface
         $req = $this->Db->prepare($sql);
         foreach ($results as $orphan) {
             $req->bindParam(':id', $orphan['id']);
-            $req->execute();
+            $this->Db->execute($req);
         }
     }
 }

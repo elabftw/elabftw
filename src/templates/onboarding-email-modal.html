@@ -9,7 +9,7 @@
       </div>
       <div class='modal-body'>
         <label for='sendOnboardingEmailToUsers'>{{ 'Select users to whom the onboarding email will be sent.'|trans }}</label>
-        <select id='sendOnboardingEmailToUsers' multiple placeholder='{{ 'Search users...'|trans }}' autocomplete='off'>
+        <select id='sendOnboardingEmailToUsers' multiple placeholder='{{ 'Search users...'|trans }}' autocomplete='off' aria-label='{{ 'Search users...'|trans }}'>
           {% for user in allTeamUsersArr|filter(user => user.archived == 0) %}
             <option value='{{ user.userid }}'>{{ user.fullname }} ({{ user.email }})</option>
           {% endfor %}

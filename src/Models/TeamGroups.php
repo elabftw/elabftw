@@ -26,8 +26,9 @@ use Override;
 use PDO;
 
 use function array_map;
-use function explode;
 use function json_decode;
+use function trim;
+use function sprintf;
 
 /**
  * Everything related to the team groups
@@ -45,6 +46,9 @@ final class TeamGroups extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        if (!$this->Users->isAdmin) {
+            throw new IllegalActionException();
+        }
         return $this->create($reqBody['name'] ?? _('Untitled'));
     }
 
@@ -62,42 +66,48 @@ final class TeamGroups extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = "SELECT team_groups.id,
-                team_groups.name,
-                GROUP_CONCAT(users.userid ORDER BY users.firstname, users.lastname) AS userids,
-                GROUP_CONCAT(CONCAT(users.firstname, ' ', users.lastname) ORDER BY users.firstname, users.lastname SEPARATOR '|') AS fullnames
-            FROM team_groups
-            LEFT JOIN users2team_groups ON (
-                users2team_groups.groupid = team_groups.id
+        $sql = 'SELECT
+              tg.id,
+              tg.name,
+              u.userid,
+              u.firstname,
+              u.lastname
+            FROM team_groups AS tg
+            LEFT JOIN users2team_groups AS ug ON (
+                ug.groupid = tg.id
             )
-            LEFT JOIN users USING (userid)
-            WHERE team_groups.team = :team
-            GROUP BY team_groups.id
-            ORDER BY team_groups.name ASC";
+            LEFT JOIN users AS u ON ug.userid = u.userid
+            WHERE tg.team = :team
+            ORDER BY
+                tg.id,
+                CASE WHEN u.userid IS NULL THEN 1 ELSE 0 END,
+                u.firstname,
+                u.lastname';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $fullGroups = array();
+        $groups = array();
         while ($group = $req->fetch()) {
-            $fullGroups[] = array(
-                'id' => $group['id'],
-                'name' => $group['name'],
-                'users' => isset($group['userids'])
-                    ? array_map(
-                        fn(string $userid, ?string $fullname): array => array(
-                            'userid' => (int) $userid,
-                            'fullname' => $fullname,
-                        ),
-                        explode(',', $group['userids']),
-                        explode('|', $group['fullnames'])
-                    )
-                    : array(),
-            );
+            $gid = $group['id'];
+            if (!isset($groups[$gid])) {
+                $groups[$gid] = array(
+                    'id'    => $gid,
+                    'name'  => $group['name'],
+                    'users' => array(),
+                );
+            }
+            if ($group['userid'] !== null) {
+                $fullname = trim(sprintf('%s %s', $group['firstname'] ?? '', $group['lastname'] ?? ''));
+                $groups[$gid]['users'][] = array(
+                    'userid'   => $group['userid'],
+                    'fullname' => $fullname,
+                );
+            }
         }
 
-        return $fullGroups;
+        return $groups;
     }
 
     public function readAllUser(): array
@@ -278,11 +288,8 @@ final class TeamGroups extends AbstractRest
         return $fullGroups;
     }
 
-    private function create(string $name): int
+    public function create(string $name): int
     {
-        if (!$this->Users->isAdmin) {
-            throw new IllegalActionException();
-        }
         $name = Filter::title($name);
         $sql = 'INSERT INTO team_groups(name, team) VALUES(:content, :team)';
         $req = $this->Db->prepare($sql);
@@ -293,22 +300,11 @@ final class TeamGroups extends AbstractRest
         return $this->Db->lastInsertId();
     }
 
-    private function update(TeamGroupParams $params): bool
-    {
-        $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':name', $params->getContent());
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-
-        return $this->Db->execute($req);
-    }
-
     /**
      * Add or remove a member from a team group
      * How is add or rm
      */
-    private function updateMember(array $params): array
+    public function updateMember(array $params): array
     {
         if ($params['how'] === Action::Add->value) {
             $sql = 'INSERT IGNORE INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)';
@@ -323,6 +319,17 @@ final class TeamGroups extends AbstractRest
         $req->bindValue(':groupid', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->readOne();
+    }
+
+    private function update(TeamGroupParams $params): bool
+    {
+        $sql = 'UPDATE team_groups SET name = :name WHERE id = :id AND team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':name', $params->getContent());
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        return $this->Db->execute($req);
     }
 
     /**

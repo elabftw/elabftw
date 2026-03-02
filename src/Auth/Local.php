@@ -17,7 +17,6 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
-use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\AuthInterface;
 use Elabftw\Interfaces\AuthResponseInterface;
@@ -54,7 +53,7 @@ final class Local implements AuthInterface
         private readonly int $maxLoginAttempts = 3,
     ) {
         if (empty($password)) {
-            throw new QuantumException(_('Invalid email/password combination.'));
+            throw new InvalidCredentialsException();
         }
         $this->Db = Db::getConnection();
         $this->email = Filter::sanitizeEmail($email);
@@ -78,7 +77,7 @@ final class Local implements AuthInterface
 
         // verify password
         if (password_verify($this->password, $this->result['password_hash']) !== true) {
-            throw new InvalidCredentialsException($this->userid);
+            throw new InvalidCredentialsException();
         }
         // check if it needs rehash (new algo)
         if (password_needs_rehash($this->result['password_hash'], PASSWORD_DEFAULT)) {
@@ -140,8 +139,8 @@ final class Local implements AuthInterface
         try {
             $Users = ExistingUser::fromEmail($this->email);
         } catch (ResourceNotFoundException) {
-            // here we rethrow an quantum exception because we don't want to let the user know if the email exists or not
-            throw new QuantumException(_('Invalid email/password combination.'));
+            // here we rethrow an exception because we don't want to let the user know if the email exists or not
+            throw new InvalidCredentialsException();
         }
         return $Users->userData['userid'];
     }

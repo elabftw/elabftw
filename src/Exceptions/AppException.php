@@ -25,10 +25,16 @@ class AppException extends Exception
 {
     protected Messages $error = Messages::GenericError;
 
-    public function __construct(?string $message = null, int $code = 0, ?Exception $previous = null)
+    public function __construct(?string $message = null, ?int $code = null, ?Exception $previous = null, private ?string $description = null)
     {
-        $message ??= $this->error->toHuman();
+        $message ??= $this->getErrorMessage();
+        $code ??= $this->getHttpCode();
         parent::__construct($message, $code, $previous);
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description ?? '';
     }
 
     public function getResponseFromException(App $app): Response
@@ -41,6 +47,16 @@ class AppException extends Exception
         // use explicit toHttpCode here as we could have a code that is different from an http one
         $Response->setStatusCode($this->error->toHttpCode());
         return $Response;
+    }
+
+    public function getHttpCode(): int
+    {
+        return $this->error->toHttpCode();
+    }
+
+    protected function getErrorMessage(): string
+    {
+        return $this->error->toHuman();
     }
 
     // the default is to not emit log, and some exceptions can override this to log something

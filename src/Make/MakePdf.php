@@ -48,6 +48,8 @@ class MakePdf extends AbstractMakePdf
 {
     use TwigTrait;
 
+    private const string GHS_FOLDER = '/elabftw/web/assets/images/ghs';
+
     public array $failedAppendPdfs = array();
 
     // collect paths of files to delete
@@ -109,8 +111,8 @@ class MakePdf extends AbstractMakePdf
         // use strlen for binary data, not mb_strlen
         $this->contentSize = strlen($output);
         if ($this->errors && $this->notifications) {
-            $Notifications = new PdfGenericError();
-            $Notifications->create($this->requester->userData['userid']);
+            $Notifications = new PdfGenericError($this->requester);
+            $Notifications->create();
         }
         return $output;
     }
@@ -170,9 +172,10 @@ class MakePdf extends AbstractMakePdf
             if ($this->failedAppendPdfs) {
                 /** @psalm-suppress PossiblyNullArgument */
                 $this->errors[] = new PdfAppendmentFailed(
+                    $this->requester,
                     $this->Entity->id,
                     $this->Entity->entityType->toPage(),
-                    implode(', ', $this->failedAppendPdfs)
+                    implode(', ', $this->failedAppendPdfs),
                 );
             }
         }
@@ -189,7 +192,7 @@ class MakePdf extends AbstractMakePdf
         // Inform user that there was a problem with Tex rendering
         if ($Tex2Svg->mathJaxFailed) {
             /** @psalm-suppress PossiblyNullArgument */
-            $this->errors[] = new MathjaxFailed($this->Entity->id, $this->Entity->entityType->toPage());
+            $this->errors[] = new MathjaxFailed($this->requester, $this->Entity->id, $this->Entity->entityType->toPage());
         }
         return $content;
     }
@@ -241,6 +244,7 @@ class MakePdf extends AbstractMakePdf
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,
             'includeChangelog' => $this->includeChangelog,
+            'ghsImagesPath' => self::GHS_FOLDER,
             'includeFiles' => $this->includeAttachments,
             'locked' => $locked,
             'lockDate' => $lockDate['date'],
@@ -284,7 +288,15 @@ class MakePdf extends AbstractMakePdf
         // the slash (/) in the f parameter might be url encoded (%2F), see https://github.com/elabftw/elabftw/issues/4961
         // a generic regex that asserts that the f parameter is present and well formatted but ignores the order of parameters
         $matches = array();
-        preg_match_all('/app\/download\.php\?(?=.*?f=[[:alnum:]]{2}(?:\/|%2F)[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp))[^"]+/i', $body, $matches);
+        preg_match_all(
+            '/app\/download\.php\?(?=.*?f=(?:' .
+            '[[:alnum:]]{2}(?:\/|%2F)[[:alnum:]]{128}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)' .
+            '|' .
+            '[[:alnum:]]{2}(?:\/|%2F)[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.(?:jpe?g|gif|png|svg|webp|wmf|bmp)' .
+          '))[^"]+/i',
+            $body,
+            $matches
+        );
         foreach ($matches[0] as $src) {
             // src will look similar to: app/download.php?f=c2/c2741a{...}016a3.png&amp;storage=1
             // ampersand (&) in html attributes should be encoded (&amp;) so we decode first

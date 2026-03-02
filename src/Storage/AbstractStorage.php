@@ -30,6 +30,12 @@ abstract class AbstractStorage implements StorageInterface
         return new Filesystem($this->getAdapter());
     }
 
+    #[Override]
+    public function getAbsoluteUri(string $path): string
+    {
+        return $this->getPath($path);
+    }
+
     /**
      * Get the absolute path of a resource
      * @param string $relativePath A relative path or filename. e.g. folder/file.txt or file.txt

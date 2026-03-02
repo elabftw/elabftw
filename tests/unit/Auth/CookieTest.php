@@ -41,7 +41,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $req = $this->Db->prepare('UPDATE users SET token = :token, token_created_at = DATE_SUB(NOW(), INTERVAL 4 MINUTE) WHERE userid = :userid');
         $req->bindValue(':token', $this->CookieToken->getToken());
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         // now try login but our cookie isn't valid anymore
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();
@@ -70,7 +70,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = :userid');
         $req->bindValue(':token', $this->CookieToken->getToken());
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();
     }

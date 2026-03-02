@@ -12,15 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
-use Exception;
+use Override;
 
 /**
  * Throw this if the auth is not good
  */
-final class InvalidCredentialsException extends Exception
+final class InvalidCredentialsException extends UnauthorizedException
 {
-    public function __construct(int $userid)
+    #[Override]
+    protected function getErrorMessage(): string
     {
-        parent::__construct(_('Invalid email/password combination.'), $userid);
+        return _('Invalid email/password combination.');
     }
 }

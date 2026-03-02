@@ -185,7 +185,7 @@ final class Saml implements AuthInterface
 
         // synchronize the teams from the IDP
         // because teams can change since the time the user was created
-        if ($this->configArr['saml_sync_teams']) {
+        if ($this->configArr['saml_sync_teams'] === '1') {
             $Teams = new Teams($Users);
             $Teams->synchronize($userid, $this->getTeamsFromIdpResponse());
         }

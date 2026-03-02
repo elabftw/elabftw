@@ -28,6 +28,8 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function sprintf;
+use function strcasecmp;
+use function trim;
 
 /**
  * Import a CSV into compounds
@@ -55,6 +57,16 @@ final class CompoundsCsv extends AbstractCsv
         $this->output->writeln(sprintf('[info] Found %d rows to import', $count));
 
         $loopIndex = 0;
+
+        // find out the correct case for CAS and keep it so if it's imported as custom field it has correct case
+        // but do this so we can match any case for pubchem import
+        $casKey = null;
+        foreach ($this->reader->getHeader() as $h) {
+            if (strcasecmp($h, 'cas') === 0) {
+                $casKey = $h;
+                break;
+            }
+        }
         foreach ($this->reader->getRecords() as $row) {
             // this might store the compound from pubchem
             $compound = false;
@@ -68,8 +80,11 @@ final class CompoundsCsv extends AbstractCsv
                     }
 
                     // cas will likely return several compounds cid !
-                    if (empty($cid) && !empty($row['cas'])) {
-                        $cids = $this->PubChemImporter->getCidFromCas($row['cas']);
+                    if ($casKey !== null) {
+                        $casValue = trim($row[$casKey] ?? '');
+                        if ($casValue !== '' && empty($cid)) {
+                            $cids = $this->PubChemImporter->getCidFromCas($casValue);
+                        }
                     }
 
                     foreach ($cids as $cid) {
@@ -79,7 +94,7 @@ final class CompoundsCsv extends AbstractCsv
                     }
                 } else {
                     $ids[] = $this->Compounds->create(
-                        casNumber: $row['cas'] ?? null,
+                        casNumber: $casKey !== null && isset($row[$casKey]) ? trim($row[$casKey]) : null,
                         ecNumber: $row['ec_number'] ?? null,
                         inchi: $row['inchi'] ?? null,
                         inchiKey: $row['inchikey'] ?? null,
@@ -156,6 +171,14 @@ final class CompoundsCsv extends AbstractCsv
                         $Containers2ItemsLinks = new Containers2ItemsLinks($this->Items, $id);
                         $Containers2ItemsLinks->createWithQuantity((float) ($row['quantity'] ?? 1.0), $row['unit'] ?? '•');
                     }
+                    // process custom_id
+                    if (isset($row['custom_id']) && !empty($row['custom_id'])) {
+                        try {
+                            $this->Items->update(new EntityParams('custom_id', (int) $row['custom_id']));
+                        } catch (ImproperActionException $e) {
+                            $this->output->writeln(sprintf('[error] Custom id %s: %s', $row['custom_id'], $e->getMessage()));
+                        }
+                    }
                 }
 
                 // optionally link with an existing Resource that we match with the extra field
@@ -211,6 +234,7 @@ final class CompoundsCsv extends AbstractCsv
             'name',
             'title',
             'comment',
+            'custom_id',
             'chebi_id',
             'chembl_id',
             'dea_number',

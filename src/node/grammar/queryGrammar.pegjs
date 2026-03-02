@@ -65,7 +65,6 @@ Fields
   / FieldTimestamp
   / FieldBoolean
   / FieldRating
-  / FieldAttachment
   / FieldId
   / FieldMetadata
 
@@ -153,18 +152,6 @@ FieldRating
   = 'rating'i ':' term:($([0-5]) / 'unrated'i { return '0';})
   {
     return new Field('rating', new SimpleValueWrapper($term));
-  }
-
-FieldAttachment
-  = 'attachment'i ':' strict:StrictOperator term:(
-    bool:Boolean
-      {
-        return new SimpleValueWrapper($bool);
-      }
-    / @(List / LiteralInField)
-  )
-  {
-    return new Field('attachment', $term, $strict);
   }
 
 FieldMetadata

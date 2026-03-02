@@ -1,0 +1,68 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2025 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+.chart {
+  --h: 220px;
+  --gap: 4px;
+  align-items: flex-end;
+  /* horizontal gridlines */
+  background:
+    repeating-linear-gradient(to top,
+    $firstlevel 0 1px,
+    transparent 1px 20%);
+  border: 1px solid $firstlevel;
+  border-radius: 8px;
+  display: flex;
+  gap: var(--gap);
+  height: var(--h);
+  padding: 8px;
+
+}
+
+.bar {
+  --safe-max: max(var(--max, 1), 1);
+  --t: calc(var(--v) / var(--safe-max));
+  --h: calc(var(--t) * 280deg);
+
+  background: linear-gradient(to top, hsl(var(--h) 90% 45%), hsl(var(--h) 95% 65%));
+  border-radius: 4px 4px 0 0;
+  flex: 1 0 auto;
+  height: calc(var(--t) * 100%);
+  max-width: 42px;
+  position: relative;
+  transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease;
+  will-change: transform, filter;
+}
+
+/* hover tooltip */
+.bar::after {
+  background: $strongest;
+  border-radius: 4px;
+  bottom: 100%;
+  color: $white;
+  content: var(--label);
+  font-size: 1rem;
+  left: 50%;
+  margin-bottom: 6px;
+  opacity: 0;
+  padding: 4px 6px;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.bar:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+  filter: brightness(1.12) saturate(1.18);
+  transform: translateY(-4px) scale(1.03);
+}
+
+.bar:hover::after {
+  opacity: 1;
+}

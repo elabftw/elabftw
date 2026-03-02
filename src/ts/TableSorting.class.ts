@@ -69,7 +69,7 @@ export default class TableSorting {
     }
 
     const hasThead = table.tHead ? true : false;
-    const headSelector = ':scope > ' + (hasThead ? 'thead' : 'tbody') + ' > tr:first-of-type > th';
+    const headSelector = ':scope > ' + (hasThead ? 'thead' : 'tbody') + ' > tr:first-of-type > th:not(.no-sort)';
     let prevSortIcon: HTMLElement;
     table.querySelectorAll(headSelector).forEach((th: HTMLTableCellElement) => {
       // add sort button

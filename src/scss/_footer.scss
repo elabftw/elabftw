@@ -7,17 +7,17 @@
  */
 
 footer {
-  border-top: solid 1px $firstlevel;
+  border-top: solid 1px var(--secondary-muted);
   font-size: 0.8rem;
   margin: 60px 5px;
   padding-top: 10px;
 
   a {
-    color: $medium;
+    color: var(--medium);
     font-size: 0.8rem;
 
     &:hover {
-      color: $elabblue;
+      color: var(--primary);
     }
   }
 
@@ -27,7 +27,7 @@ footer {
     text-transform: uppercase;
 
     a {
-      border-right: 1px #ccc solid;
+      border-right: 1px var(--secondlevel) solid;
       padding: 0 5px;
     }
   }
@@ -37,5 +37,4 @@ footer {
     margin: 0 0 20px;
     text-align: right;
   }
-
 }

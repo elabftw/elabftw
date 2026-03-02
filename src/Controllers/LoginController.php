@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Elabftw\Auth\Anon;
 use Elabftw\Auth\Cookie;
 use Elabftw\Auth\CookieToken;
@@ -32,9 +30,10 @@ use Elabftw\Enums\AuthType;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Entrypoint;
 use Elabftw\Enums\Language;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
-use Elabftw\Exceptions\QuantumException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthInterface;
@@ -62,7 +61,9 @@ use Override;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
+use function rawurldecode;
 use function setcookie;
+use function str_starts_with;
 
 /**
  * For all your authentication/login needs
@@ -78,29 +79,41 @@ final class LoginController implements ControllerInterface
 
     public function getAuthResponse(): AuthResponseInterface
     {
+        // try to login with the cookie if we have one in the request
+        // but don't let the exception bubble up if the cookie is invalid
+        try {
+            if ($this->Request->cookies->has('token')) {
+                return new Cookie(
+                    (int) $this->config['cookie_validity_time'],
+                    new CookieToken($this->Request->cookies->getString('token')),
+                    $this->Request->cookies->getInt('token_team'),
+                )->tryAuth();
+            }
+        } catch (UnauthorizedException | IllegalActionException) {
+        }
+
         return $this->getAuthService()->tryAuth();
     }
 
     #[Override]
     public function getResponse(): Response
     {
-        // store the rememberme choice in a cookie, not the session as it won't follow up for saml
-        $icanhazcookies = '0';
-        if ($this->Request->request->has('rememberme') && $this->config['remember_me_allowed'] === '1') {
-            $icanhazcookies = '1';
-        }
-        $cookieOptions = array(
-            'expires' => time() + 300,
-            'path' => '/',
-            'domain' => '',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Lax',
-        );
-        setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
+        $icanhazcookies = $this->setRememberMeCookie();
 
         // Get an AuthResponse from an AuthService
         $AuthResponse = $this->getAuthResponse();
+
+        // user does not exist and no team was found so user must select one
+        $info = $AuthResponse->getInitTeamInfo();
+        if ($AuthResponse->initTeamRequired()) {
+            $this->Session->set('initial_team_selection_required', true);
+            $this->Session->set('teaminit_email', $info['email']);
+            $this->Session->set('teaminit_firstname', $info['firstname']);
+            $this->Session->set('teaminit_lastname', $info['lastname']);
+            $this->Session->set('teaminit_orgid', $info['orgid'] ?? '');
+            return new RedirectResponse('/login.php');
+        }
+
         // First part of login is done, so we have a userid.
         // Next, we need to do other steps (possibly), before the full login in app
         $loggingInUser = $AuthResponse->getUser();
@@ -151,17 +164,6 @@ final class LoginController implements ControllerInterface
             return new RedirectResponse('/login.php');
         }
 
-        // user does not exist and no team was found so user must select one
-        $info = $AuthResponse->getInitTeamInfo();
-        if ($AuthResponse->initTeamRequired()) {
-            $this->Session->set('initial_team_selection_required', true);
-            $this->Session->set('teaminit_email', $info['email']);
-            $this->Session->set('teaminit_firstname', $info['firstname']);
-            $this->Session->set('teaminit_lastname', $info['lastname']);
-            $this->Session->set('teaminit_orgid', $info['orgid'] ?? '');
-            return new RedirectResponse('/login.php');
-        }
-
         // user exists but no team was found so user must select one
         if ($AuthResponse->teamRequestSelectionRequired()) {
             $this->Session->set('team_request_selection_required', true);
@@ -176,17 +178,46 @@ final class LoginController implements ControllerInterface
 
         // All good now we can login the user
         $LoginHelper = new LoginHelper($AuthResponse, $this->Session, (int) $this->config['cookie_validity_time']);
-        $LoginHelper->login((bool) $icanhazcookies);
+        $LoginHelper->login($icanhazcookies);
 
         // cleanup
         $this->Session->remove('auth_userid');
 
         // we redirect to index that will then redirect to the correct entrypoint set by user
         $location = '/index.php';
-        if ($this->Session->has('post_login_redirect')) {
-            $location = $this->Session->get('post_login_redirect');
+        if ($this->Request->cookies->has('elab_redirect')) {
+            // make sure we have a relative path
+            $candidate = rawurldecode($this->Request->cookies->getString('elab_redirect', $location));
+            if (str_starts_with($candidate, '/') && !str_starts_with($candidate, '//')) {
+                $location = $candidate;
+            }
         }
         return new RedirectResponse($location);
+    }
+
+    /**
+     * Store the rememberme choice in a cookie, not the session as it won't follow up for saml
+     */
+    private function setRememberMeCookie(): bool
+    {
+        if ($this->config['remember_me_allowed'] === '0') {
+            return false;
+        }
+        // avoid setting it if it's present
+        if ($this->Request->cookies->has('icanhazcookies')) {
+            return $this->Request->cookies->getBoolean('icanhazcookies');
+        }
+        $icanhazcookies = $this->Request->request->has('rememberme') ? '1' : '0';
+        $cookieOptions = array(
+            'expires' => time() + 300,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        );
+        setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
+        return $icanhazcookies === '1';
     }
 
     /**
@@ -209,7 +240,7 @@ final class LoginController implements ControllerInterface
             try {
                 $Users = ExistingUser::fromEmail($this->Request->request->getString('email'));
             } catch (ResourceNotFoundException) {
-                throw new QuantumException(_('Invalid email/password combination.'));
+                throw new InvalidCredentialsException();
             }
             // check if authentication is locked for untrusted clients for that user
             if ($Users->allowUntrustedLogin() === false) {
@@ -240,29 +271,6 @@ final class LoginController implements ControllerInterface
             return new Anon((bool) $this->config['anon_users'], $team, Language::EnglishGB);
         }
 
-        // try to login with the cookie if we have one in the request
-        if ($this->Request->cookies->has('token')) {
-            return new Cookie(
-                (int) $this->config['cookie_validity_time'],
-                new CookieToken($this->Request->cookies->getString('token')),
-                $this->Request->cookies->getInt('token_team'),
-            );
-        }
-
-        // autologin as anon if it's allowed by sysadmin
-        if ($this->config['open_science']) {
-            // don't do it if we have elabid in url
-            // only autologin on selected pages and if we are not authenticated with an account
-            $autoAnon = array(
-                Entrypoint::Experiments->toPage(),
-                Entrypoint::Database->toPage(),
-            );
-            if (in_array(basename($this->Request->getScriptName()), $autoAnon, true)) {
-                return new Anon((bool) $this->config['anon_users'], (int) ($this->config['open_team'] ?? 1), Language::EnglishGB);
-            }
-            throw new UnauthorizedException();
-        }
-
         // now the other types of Auth like Local, Ldap, Saml, etc...
         $authType = AuthType::tryFrom($this->Request->request->getAlpha('auth_type'));
         switch ($authType) {
@@ -278,9 +286,8 @@ final class LoginController implements ControllerInterface
                 $this->Session->set('auth_service', AuthType::Ldap->asService());
                 $c = $this->config;
                 $ldapPassword = null;
-                // assume there is a password to decrypt if username is not null
-                if ($c['ldap_username']) {
-                    $ldapPassword = Crypto::decrypt($c['ldap_password'], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+                if (!empty($c['ldap_password'])) {
+                    $ldapPassword = $c['ldap_password'];
                 }
                 $ldapConfig = array(
                     'protocol' => $c['ldap_scheme'] . '://',
@@ -351,7 +358,7 @@ final class LoginController implements ControllerInterface
                 // MFA AUTH
             case AuthType::Mfa:
                 return new Mfa(
-                    new MfaHelper($this->Session->get('mfa_secret') ?? $this->Request->request->get('mfa_secret')),
+                    new MfaHelper($this->Session->get('mfa_secret')),
                     $this->Session->get('auth_userid'),
                     $this->Request->request->getAlnum('mfa_code'),
                 );

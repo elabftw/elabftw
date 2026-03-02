@@ -156,9 +156,13 @@ function resetModifiers() {
 };
 
 function filter(event){
-  const tagName = (event.target || event.srcElement).tagName;
+  const target = event.target as HTMLElement;
+  if (!(target instanceof HTMLElement)) {
+    return true;
+  }
+  const tagName = target.tagName;
   // ignore keypressed in any elements that support keyboard data input
-  return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || (event.target || event.srcElement).hasAttribute('contenteditable'));
+  return !(tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || target.hasAttribute('contenteditable'));
 }
 
 // initialize key.<modifier> to false

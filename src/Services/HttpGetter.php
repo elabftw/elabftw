@@ -15,6 +15,7 @@ namespace Elabftw\Services;
 use Elabftw\Exceptions\ImproperActionException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * HTTP wrapper
@@ -26,43 +27,63 @@ class HttpGetter
 
     private const int SUCCESS = 200;
 
+    private const int SUCCESS_NO_CONTENT = 204;
+
     public function __construct(public Client $client, private string $proxy = '', private bool $verifyTls = true) {}
 
-    public function get(string $url): string
+    public function get(string $url, ?array $headers = array()): ResponseInterface
     {
+        $options = array(
+            'proxy'   => $this->proxy,
+            'timeout' => self::REQUEST_TIMEOUT,
+            'verify'  => $this->verifyTls,
+        );
+        if ($headers !== null) {
+            $options['headers'] = $headers;
+        }
         try {
-            $res = $this->client->get($url, array(
-                // add proxy if there is one
-                'proxy' => $this->proxy,
-                'timeout' => self::REQUEST_TIMEOUT,
-                'verify' => $this->verifyTls,
-            ));
+            $res = $this->client->get($url, $options);
         } catch (ConnectException $e) {
             throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
         }
-        if ($res->getStatusCode() !== self::SUCCESS) {
+        $status = $res->getStatusCode();
+        if (!in_array($status, array(self::SUCCESS, self::SUCCESS_NO_CONTENT), true)) {
             throw new ImproperActionException(sprintf('Error fetching remote content (%d).', $res->getStatusCode()));
         }
-        return (string) $res->getBody();
+        return $res;
     }
 
-    public function postJson(string $url, array $json, array $headers = array()): string
+    public function post(string $url, array $options = array()): ResponseInterface
     {
         try {
-            $res = $this->client->post($url, array(
-                // add proxy if there is one
-                'proxy' => $this->proxy,
-                'timeout' => self::REQUEST_TIMEOUT,
-                'headers' => $headers,
-                'json' => $json,
-                'verify' => $this->verifyTls,
+            $res = $this->client->post($url, array_merge(
+                array(
+                    'proxy' => $this->proxy,
+                    'timeout' => self::REQUEST_TIMEOUT,
+                    'verify' => $this->verifyTls,
+                ),
+                $options,
             ));
         } catch (ConnectException $e) {
             throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
         }
-        if ($res->getStatusCode() !== self::SUCCESS) {
-            throw new ImproperActionException(sprintf('Error fetching remote content (%d).', $res->getStatusCode()));
+        return $res;
+    }
+
+    public function patch(string $url, array $options = array()): ResponseInterface
+    {
+        try {
+            $res = $this->client->request('PATCH', $url, array_merge(
+                array(
+                    'proxy' => $this->proxy,
+                    'timeout' => self::REQUEST_TIMEOUT,
+                    'verify' => $this->verifyTls,
+                ),
+                $options,
+            ));
+        } catch (ConnectException $e) {
+            throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
         }
-        return $res->getBody()->getContents();
+        return $res;
     }
 }

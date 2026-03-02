@@ -12,7 +12,7 @@
       {% endif %}
       {{ label|trans }}</label>
     </div>
-    <label class='switch ucp-align {{ disabled ? 'disabled' }} '>
+    <label class='switch ucp-align {{ disabled ? 'disabled' }} '><span class='sr-only'>{{ label }}</span>
       <input name='{{ target }}' type='checkbox' {{ disabled ? 'disabled' }} autocomplete='off' id='addCompound{{ target }}'>
       <span class='slider'></span>
     </label>
@@ -23,7 +23,7 @@
   <label for='compoundInput-{{ target }}' {{ required ? "class='required-label'" }}>{{ label }}</label>
   <div class='input-group mb-2'>
     <div class='input-group-prepend'>
-      <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
+      <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
     </div>
     <input name='{{ target }}' {{ disabled ? 'readonly' }} {{ type == 'number' ? "type='number' step='0.01'" }} placeholder='{{ placeholder }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
   </div>
@@ -44,11 +44,16 @@
       </div>
       <form aria-label='{{ 'Edit compound'|trans }}' id='editCompoundForm'>
         <div class='modal-body'>
-          <div class='d-flex justify-content-between'>
+          <div>
             <button type='button' class='btn btn-secondary btn-sm' data-action='search-entity-from-compound' data-page='database'>{{ 'Search associated resources'|trans }}</button>
-            <button type='button' class='ml-2 btn btn-secondary btn-sm' data-action='search-entity-from-compound' data-page='experiments'>{{ 'Search associated experiments'|trans }}</button>
-            <button type='button' class='btn btn-primary btn-sm ml-auto' data-action='toggle-modal' data-dismiss='modal' data-target='createResourceFromCompoundModal'>{{ 'Create resource from compound'|trans }}</button>
+            <button type='button' class='btn btn-secondary btn-sm' data-action='search-entity-from-compound' data-page='experiments'>{{ 'Search associated experiments'|trans }}</button>
           </div>
+
+          <div class='mt-1'>
+            <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='items' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-cubes-stacked fa-fw mr-1 color-white'></i>{{ 'Create resource linked to compound'|trans }}</button>
+            <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='experiments' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-flask fa-fw mr-1 color-white'></i>{{ 'Create experiment linked to compound'|trans }}</button>
+          </div>
+          <hr>
           <div class='my-2' id='editCompoundInputs'>
             {{ _self.textParam('name', 'Name'|trans, compoundsDisabled, 'required') }}
             {{ _self.textParam('iupac_name', 'IUPAC Name'|trans, compoundsDisabled) }}
@@ -56,14 +61,14 @@
             <label for='compoundInput-cas_number'>{{ 'CAS number'|trans }}</label>
             <div class='input-group mb-2'>
               <div class='input-group-prepend'>
-                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-cas_number'><i class='fas fa-clone'></i></button>
+                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='compoundInput-cas_number'><i class='fas fa-clone'></i></button>
               </div>
               <input name='cas_number' {{ compoundsDisabled ? 'readonly' }} pattern='^\d{2,7}-\d{2}-\d$' inputmode='numeric' title='{{ 'Please enter a valid CAS number (e.g., 58-08-2)'|trans }}' placeholder='58-08-2' class='form-control' id='compoundInput-cas_number' />
             </div>
             <label for='compoundInput-ec_number'>{{ 'EC number'|trans }}</label>
             <div class='input-group mb-2'>
               <div class='input-group-prepend'>
-                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-outline-secondary' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i></button>
+                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i></button>
               </div>
               <input name='ec_number' {{ compoundsDisabled ? 'readonly' }} pattern='^\d{3}-\d{3}-\d$' inputmode='numeric' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
             </div>

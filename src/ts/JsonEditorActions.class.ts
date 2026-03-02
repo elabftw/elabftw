@@ -16,11 +16,6 @@ export class JsonEditorActions {
   init(JsonEditorHelperC: JsonEditorHelper, editable: boolean) {
     JsonEditorHelperC.init(editable);
 
-    const displayMainTextSliderInput = document.getElementById('displayMainTextSliderInput') as HTMLInputElement;
-    displayMainTextSliderInput?.addEventListener('change', () => {
-      JsonEditorHelperC.toggleDisplayMainText();
-    });
-
     // LISTENERS
     document.querySelector('.real-container').addEventListener('click', (event) => {
       const el = (event.target as HTMLElement);

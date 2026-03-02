@@ -51,7 +51,7 @@ final class AuthFail
     {
         $sql = 'SELECT COUNT(id) FROM lockout_devices WHERE locked_at > (NOW() - INTERVAL 1 HOUR)';
         $req = $this->Db->prepare($sql);
-        $req->execute();
+        $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }
 
@@ -82,7 +82,7 @@ final class AuthFail
         $sql = 'INSERT INTO lockout_devices (device_token) VALUES (:device_token)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':device_token', $this->deviceToken);
-        return $req->execute();
+        return $this->Db->execute($req);
     }
 
     /**
@@ -94,7 +94,7 @@ final class AuthFail
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->userid, PDO::PARAM_INT);
         $req->bindParam(':device_token', $this->deviceToken);
-        return $req->execute();
+        return $this->Db->execute($req);
     }
 
     /**
@@ -105,7 +105,7 @@ final class AuthFail
         $sql = 'SELECT COUNT(id) FROM authfail WHERE device_token = :device_token AND attempt_time > (NOW() - INTERVAL 1 HOUR)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':device_token', $this->deviceToken);
-        $req->execute();
+        $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }
 
@@ -117,7 +117,7 @@ final class AuthFail
         $sql = 'SELECT COUNT(id) FROM authfail WHERE users_id = :users_id AND attempt_time > (NOW() - INTERVAL 1 HOUR)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':users_id', $this->userid, PDO::PARAM_INT);
-        $req->execute();
+        $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }
 

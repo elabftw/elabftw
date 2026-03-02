@@ -14,20 +14,17 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ExperimentsStatusController;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Experiments categories
- */
 require_once 'app/init.inc.php';
 
 $Response = new Response();
 
 try {
     if ($App->Teams->teamArr['users_canwrite_experiments_status'] === 0 && !$App->Users->isAdmin) {
-        throw new ImproperActionException(_('Sorry, edition of experiments status has been disabled for users by your team Admin.'));
+        throw new ForbiddenException();
     }
     $Response = new ExperimentsStatusController($App)->getResponse();
 } catch (AppException $e) {

@@ -6,6 +6,8 @@
  * @package elabftw
  */
 
+type BinaryValue = 0 | 1;
+
 interface ResponseMsg {
   res: boolean;
   msg: string;
@@ -49,10 +51,13 @@ interface Selected {
   items_status: number[];
   items_tags: number[];
   experiments_tags: number[];
-  users: number[];
+  users_experiments: number[];
+  users_resources: number[];
   tags: number[];
-  target_owner: number;
+  userid: number;
+  team: number;
   can: string;
+  can_base: number;
 }
 
 enum Method {
@@ -85,6 +90,8 @@ enum Action {
   CreateProcurementRequest = 'createprocurementrequest',
   Disable2fa = 'disable2fa',
   Duplicate = 'duplicate',
+  EmailBookers = 'emailbookers',
+  EmailTeam = 'emailteam',
   Finish = 'finish',
   ForceLock = 'forcelock',
   ForceUnlock = 'forceunlock',
@@ -107,7 +114,11 @@ enum Action {
   UpdateMetadataField = 'updatemetadatafield',
   UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',
+  UpdateOwner = 'updateowner',
   Validate = 'validate',
+  // Dspace Actions
+  GetCollections = 'getcollections',
+  GetTypes = 'gettypes',
 }
 
 enum Model {
@@ -134,6 +145,12 @@ enum Model {
   Upload = 'uploads',
   User = 'users',
   User2Team = 'user2team',
+}
+
+enum LinkSubModel {
+  CompoundsLinks = 'compounds_links',
+  ExperimentsLinks = 'experiments_links',
+  ItemsLinks = 'items_links',
 }
 
 // Match php enum EntityType
@@ -168,11 +185,12 @@ enum Target {
   State = 'state',
   Title = 'title',
   UserId = 'userid',
+  Team = 'team',
 }
 
 enum FileType {
   Csv = 'csv',
-  Fods = 'fods',
+  Eln = 'eln',
   Html = 'html',
   Json = 'json',
   Ods = 'ods',
@@ -186,30 +204,20 @@ interface Entity {
   id: number;
 }
 
-// for Spreadsheet editor
-interface GridColumn {
-  field: string;
-  editable: boolean;
-}
-
-interface GridRow {
-  [key: string]: string | number | boolean | null;
-}
-
 export {
   Action,
+  BinaryValue,
   Categories,
   CheckableItem,
   Entity,
   EntityType,
   FileType,
-  GridColumn,
-  GridRow,
   Method,
   Model,
   ProcurementState,
   ResponseMsg,
   Selected,
+  LinkSubModel,
   Target,
   Todoitem,
   UnfinishedEntities,

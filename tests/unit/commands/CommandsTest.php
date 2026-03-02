@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\MfaHelper;
@@ -36,7 +37,8 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         // use NullHandler because we don't care about logs here
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $this->Email = new Email($MockMailer, $Logger, 'toto@yopmail.com', demoMode: false);
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
+        $this->Email = new Email($schemaVersionChecker, $MockMailer, $Logger, 'toto@yopmail.com', demoMode: false);
     }
 
     public function testCheckTsBalance(): void
@@ -134,14 +136,6 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Removed', $commandTester->getDisplay());
     }
 
-    public function testPruneRevisions(): void
-    {
-        $commandTester = new CommandTester(new PruneRevisions());
-        $commandTester->execute(array());
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Revisions pruning', $commandTester->getDisplay());
-    }
-
     public function testPruneUploads(): void
     {
         $commandTester = new CommandTester(new PruneUploads());
@@ -236,6 +230,22 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     public function testRefreshIdps(): void
     {
         $commandTester = new CommandTester(new RefreshIdps(''));
+        $commandTester->execute(array());
+        $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testFingerprintCompounds(): void
+    {
+        $commandTester = new CommandTester(new FingerprintCompounds());
+        $commandTester->execute(array(
+            '--dry-run' => true,
+        ));
+        $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testClearNotifications(): void
+    {
+        $commandTester = new CommandTester(new ClearNotifications());
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
     }

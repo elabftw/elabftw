@@ -21,6 +21,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Usergroup;
+use Elabftw\Enums\UsersColumn;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
@@ -37,6 +38,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users\UltraAdmin;
@@ -122,8 +124,23 @@ final class Populate
             if ($this->fast) {
                 $iter = 2;
             }
-            for ($i = 0; $i <= $iter; $i++) {
+            for ($i = 0; $i < $iter; $i++) {
                 $this->createUser($teamid, array());
+            }
+
+            // USER GROUPS
+            foreach ($team['user_groups'] ?? array() as $group) {
+                $teamScopedAdmin = new UltraAdmin($Users->userData['userid'], $teamid);
+                $Teamgroups = new TeamGroups($teamScopedAdmin);
+                $id = $Teamgroups->create($group['name']);
+                $Teamgroups->setId($id);
+                foreach ($group['users'] as $userid) {
+                    $Teamgroups->updateMember(array(
+                        'how' => Action::Add->value,
+                        'userid' => $userid,
+                    ));
+                }
+                $this->output->writeln(sprintf('├ + teamgroup: %s (id: %d in team: %d)', $group['name'], $id, $teamid));
             }
 
             // EXPERIMENTS CATEGORIES
@@ -193,15 +210,12 @@ final class Populate
             foreach ($team['items_types'] ?? array() as $items_types) {
                 $Admin = $this->getRandomUserInTeam($teamid, admin: 1);
                 $ItemsTypes = new ItemsTypes($Admin);
-                $defaultPermissions = BasePermissions::Team->toJson();
                 $category = array_key_exists('category', $items_types) ? $ResourcesCategories->getIdempotentIdFromTitle($items_types['category']) : null;
                 $itemTypeId = $ItemsTypes->create(
                     title: $items_types['name'],
                     body: $items_types['template'] ?? '',
                     category: $category,
                     date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
-                    canread: $defaultPermissions,
-                    canwrite: $defaultPermissions,
                     metadata: $items_types['metadata'] ?? '{}',
                 );
                 $this->output->writeln(sprintf('├ + resource template: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
@@ -257,6 +271,8 @@ final class Populate
             }
 
             // randomize the entries so they look like they are not added at once
+
+            // ITEMS
             if (isset($team['items'])) {
                 shuffle($team['items']);
                 foreach ($team['items'] as $item) {
@@ -345,13 +361,7 @@ final class Populate
         $statusArr = $Status->readAll();
 
         // we will randomly pick from these for canread and canwrite
-        $visibilityArr = array(
-            BasePermissions::Full->toJson(),
-            BasePermissions::Organization->toJson(),
-            BasePermissions::Team->toJson(),
-            BasePermissions::User->toJson(),
-            BasePermissions::UserOnly->toJson(),
-        );
+        $visibilityArr = BasePermissions::cases();
 
         $tagsArr = array(
             'Project X',
@@ -411,8 +421,8 @@ final class Populate
             $id = $Entity->create(
                 category: $category,
                 status: $this->faker->randomElement($statusArr)['id'],
-                canread: $this->faker->randomElement($visibilityArr),
-                canwrite: $this->faker->randomElement($visibilityArr),
+                canreadBase: $this->faker->randomElement($visibilityArr),
+                canwriteBase: $this->faker->randomElement($visibilityArr),
                 title: $this->faker->sentence(),
                 date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                 body: $this->faker->realText(1000),
@@ -492,11 +502,11 @@ final class Populate
         $Users = new Users($userid, $team);
 
         if ($user['is_sysadmin'] ?? false) {
-            $Users->update(new UserParams('is_sysadmin', 1));
+            $Users->rawUpdate(UsersColumn::IsSysadmin, 1);
         }
 
         if (isset($user['validated']) && !$user['validated']) {
-            $Users->update(new UserParams('validated', 0));
+            $Users->rawUpdate(UsersColumn::Validated, 0);
         }
 
         if ($user['create_mfa_secret'] ?? false) {

@@ -23,6 +23,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use ZipStream\ZipStream;
 use Override;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 
 /**
  * Export data in .eln format
@@ -62,7 +63,7 @@ final class ExportEln extends Command
         $ZipStream = new ZipStream(sendHttpHeaders: false, outputStream: $fileStream);
         $users = array_map('intval', $input->getOption('users'));
         $resourcesCategories = array_map('intval', $input->getOption('rcat'));
-        $Maker = new MakeTeamEln($ZipStream, $teamid, $users, $resourcesCategories);
+        $Maker = new MakeTeamEln(new ConsoleLogger($output), $ZipStream, $teamid, $users, $resourcesCategories);
         $Maker->getStreamZip();
 
         fclose($fileStream);

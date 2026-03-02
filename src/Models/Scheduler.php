@@ -233,7 +233,7 @@ final class Scheduler extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        // explicit binding operations
+        // binding entities
         if (isset($params['target'])) {
             match ($params['target']) {
                 'experiment' => $this->bind('experiment', $params['id']),
@@ -241,8 +241,8 @@ final class Scheduler extends AbstractRest
                 default => null
             };
         }
-        // otherwise treat as normal field patch
-        $this->updateFields($params);
+        // other fields patch
+        $this->update($params);
         return $this->readOne();
     }
 
@@ -288,16 +288,35 @@ final class Scheduler extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    private function updateFields(array $params): void
+    private function update(array $params): void
     {
         $updates = array();
         $bindings = array();
-        // handle title
+        $this->updateTitle($params, $updates, $bindings);
+        $this->updateDateTime($params, $updates, $bindings);
+        if (empty($updates)) {
+            return; // nothing to update
+        }
+        $sql = 'UPDATE team_events SET ' . implode(', ', $updates) . ' WHERE team = :team AND id = :id';
+        $req = $this->Db->prepare($sql);
+        foreach ($bindings as $key => $value) {
+            $req->bindValue($key, $value);
+        }
+        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+    }
+
+    private function updateTitle(array $params, array &$updates, array &$bindings): void
+    {
         if (array_key_exists('title', $params)) {
             $updates[] = 'title = :title';
             $bindings[':title'] = $this->filterTitle((string) $params['title']);
         }
-        // handle datetime
+    }
+
+    private function updateDateTime(array $params, array &$updates, array &$bindings): void
+    {
         if (array_key_exists('start', $params) || array_key_exists('end', $params)) {
             if (!isset($params['start'], $params['end'])) {
                 throw new ImproperActionException('Start and end must both be provided.');
@@ -312,17 +331,6 @@ final class Scheduler extends AbstractRest
             $bindings[':start'] = $start;
             $bindings[':end'] = $end;
         }
-        if (empty($updates)) {
-            return; // nothing to update
-        }
-        $sql = 'UPDATE team_events SET ' . implode(', ', $updates) . ' WHERE team = :team AND id = :id';
-        $req = $this->Db->prepare($sql);
-        foreach ($bindings as $key => $value) {
-            $req->bindValue($key, $value);
-        }
-        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 
     private function appendItemsIdsToSql(array $itemsIds): void

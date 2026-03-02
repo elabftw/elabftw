@@ -35,6 +35,7 @@ const t = {
     "editing-metadata": "No momento, você está editando os metadados anexados a este registro.",
     "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
+    "documentation": "Documentação",
     "email": "E-mail",
     "enable-permission": "You must allow at least one permission setting.",
     "encryption": "Encryption",

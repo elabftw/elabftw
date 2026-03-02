@@ -35,6 +35,7 @@ const t = {
     "editing-metadata": "Anda sedang menyunting metadata yang dilampirkan ke entri ini.",
     "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Sedang mengedit",
+    "documentation": "Dokumentasi",
     "email": "Surel",
     "enable-permission": "Anda harus mengizinkan setidaknya satu pengaturan izin.",
     "encryption": "Encryption",

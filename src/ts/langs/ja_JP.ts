@@ -35,6 +35,7 @@ const t = {
     "editing-metadata": "現在、このエントリーに添付されているメタデータを編集中です。",
     "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "現在編集中",
+    "documentation": "公式ドキュメント",
     "email": "Eメールアドレス",
     "enable-permission": "少なくとも1つのパーミッション設定を許可する必要があります。",
     "encryption": "Encryption",

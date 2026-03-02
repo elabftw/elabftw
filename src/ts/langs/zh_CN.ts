@@ -35,6 +35,7 @@ const t = {
     "editing-metadata": "当前正在编辑附加到此项的元数据。",
     "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "目前正在编辑",
+    "documentation": "文档",
     "email": "Email",
     "enable-permission": "您必须允许至少一个权限设置。",
     "encryption": "加密",

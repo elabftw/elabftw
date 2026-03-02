@@ -35,6 +35,7 @@ const t = {
     "editing-metadata": "Editujete metadáta pripojené k tejto položke.",
     "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
+    "documentation": "Dokumentácia",
     "email": "Email",
     "enable-permission": "You must allow at least one permission setting.",
     "encryption": "Encryption",

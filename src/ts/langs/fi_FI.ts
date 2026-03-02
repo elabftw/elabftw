@@ -35,6 +35,7 @@ const t = {
     "editing-metadata": "Muokkaat tällä hetkellä tähän merkintään liitettyjä metatietoja.",
     "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
+    "documentation": "Dokumentaatio",
     "email": "Sähköposti",
     "enable-permission": "You must allow at least one permission setting.",
     "encryption": "Encryption",

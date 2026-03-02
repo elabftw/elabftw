@@ -35,6 +35,7 @@ const t = {
     "editing-metadata": "Αυτήν τη στιγμή επεξεργάζεστε τα μεταδεδομένα που επισυνάπτονται σε αυτήν την καταχώριση.",
     "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
+    "documentation": "Τεκμηρίωση",
     "email": "Ηλεκτρονικό ταχυδρομείο",
     "enable-permission": "You must allow at least one permission setting.",
     "encryption": "Encryption",

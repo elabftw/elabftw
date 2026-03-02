@@ -146,8 +146,10 @@ function SpreadsheetEditor() {
     };
     // we render the spreadsheet in an iframe, so we'll also use a custom fullscreen button
     const fullscreenBtn = { type: 'icon', class: 'mx-2 fas fa-expand', tooltip: i18next.t('fullscreen'), onclick: () => toggleFullscreen()};
-    const clearBtn = { type: 'icon', class: 'ml-2 fas fa-trash', tooltip: i18next.t('clear'), onclick: clearSpreadsheet };
+    const clearBtn = { type: 'icon', class: 'mx-2 fas fa-trash', tooltip: i18next.t('clear'), onclick: clearSpreadsheet };
     const importBtn = { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() };
+    const docUrl = 'https://doc.elabftw.net/docs/usage/user-guide/experiments#spreadsheet-editor';
+    const docBtn = { type: 'icon', class: 'ml-2 fa-solid fa-book-atlas', tooltip: i18next.t('documentation'), onclick: () => window.top.open(docUrl, '_blank')};
     // replace original save & fullscreen buttons with our custom functions
     Object.assign(saveBtn, {
       content: '',
@@ -157,7 +159,7 @@ function SpreadsheetEditor() {
       onclick: isSaving ? undefined : onSaveOrReplace,
     });
 
-    tb.items.push(fullscreenBtn, importBtn, exportBtn, clearBtn );
+    tb.items.push(fullscreenBtn, importBtn, exportBtn, clearBtn, {type: 'divisor'}, docBtn );
     return tb;
   };
   // pass a dynamic key to force SpreadsheetInner to remount when data shape changes

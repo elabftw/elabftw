@@ -35,6 +35,7 @@ const t = {
     "editing-metadata": "Sa muudad praegu sellele kirjele lisatud metaandmeid.",
     "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Praegu toimetab",
+    "documentation": "Dokumentatsioon",
     "email": "E-post",
     "enable-permission": "Peate lubama vähemalt ühe loa seadistuse.",
     "encryption": "Encryption",

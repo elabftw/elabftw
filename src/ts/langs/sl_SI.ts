@@ -35,6 +35,7 @@ const t = {
     "editing-metadata": "Trenutno urejate metapodatke, priložene temu vnosu.",
     "email-sent-to-x": "Email sent to {{num, number}} users.",
     "current-edit": "Currently editing",
+    "documentation": "Dokumentacija",
     "email": "Elektronska pošta",
     "enable-permission": "You must allow at least one permission setting.",
     "encryption": "Encryption",

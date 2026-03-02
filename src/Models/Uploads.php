@@ -124,7 +124,8 @@ final class Uploads extends AbstractRest
             }
         }
 
-        // actual writing of the file in its destination
+        // actual writing of the file in its destination, after rewinding file
+        rewind($inputStream);
         $storageFs->createDirectory($folder);
         $storageFs->writeStream($longName, $inputStream);
 

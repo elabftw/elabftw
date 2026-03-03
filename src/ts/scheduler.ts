@@ -61,6 +61,20 @@ function toDateTimeInputValueNumber(datetime: Date): number {
   return datetime.valueOf() - offset;
 }
 
+function setViewMode() {
+    document.getElementById('eventViewMode').classList.remove('d-none');
+    document.getElementById('editEventForm').classList.add('d-none');
+}
+
+function setEditMode() {
+    document.getElementById('eventViewMode').classList.add('d-none');
+    document.getElementById('editEventForm').classList.remove('d-none');
+}
+
+document.getElementById('editEventBtn')?.addEventListener('click', () => {
+    setEditMode();
+});
+
 function clearBoundDiv(type: string) {
   if (type === 'experiment') {
     $('#eventBoundExp').html('');
@@ -403,8 +417,9 @@ if (window.location.pathname === '/scheduler.php') {
         if (canBook === 0 && currentUserId !== eventOwnerId) {
           return;
         }
+        setViewMode();
         $('[data-action="scheduler-rm-bind"]').hide();
-        $('#eventModal').modal('toggle');
+        $('#eventModal').modal('show');
         // set the event id on the various elements
         document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
         document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
@@ -437,6 +452,22 @@ if (window.location.pathname === '/scheduler.php') {
         if (targetCancel) {
           targetCancel.dataset.targetid = info.event.extendedProps.items_id;
         }
+        // populate view section
+        const start = info.event.start!;
+        const end = info.event.end!;
+        // format date using fullcalendar locale
+        const dateLine = calendar.formatDate(start, { weekday: 'long',  year: 'numeric',  month: 'long',  day: 'numeric' });
+        const startTime = calendar.formatDate(start, { hour: '2-digit',  minute: '2-digit' });
+        const endTime = calendar.formatDate(end, { hour: '2-digit',  minute: '2-digit' });
+        const timeLine = `${startTime} – ${endTime}`;
+        // duration in minutes
+        const durationMinutes = Math.round(
+          (end.getTime() - start.getTime()) / 60000
+        );
+        // Set modal content
+        document.getElementById('viewTitle')!.textContent = info.event.extendedProps.title_only;
+        document.getElementById('viewDatetime')!.innerHTML = `${dateLine}<br>` +
+          `${timeLine} (${durationMinutes} ${i18next.t('minutes')})`;
       },
       // on mouse enter add shadow and show title
       eventMouseEnter: function(info): void {

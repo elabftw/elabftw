@@ -6,23 +6,23 @@ FROM elabtmp
 RUN rm -rf /elabftw/*
 
 # copy everything because we can't bind mount
-COPY .. /elabftw
-COPY ../bin /elabftw/bin
-COPY ../src /elabftw/src
-COPY ../tests /elabftw/tests
-COPY ../web /elabftw/web
-COPY ../eslint.config.mjs /elabftw
-COPY ../.php-cs-fixer.dist.php /elabftw
-COPY ../.stylelintrc.json /elabftw
-COPY ../builder.js /elabftw
-COPY ../codeception.yml /elabftw
-COPY ../composer.json /elabftw
-COPY ../composer.lock /elabftw
-COPY ../cypress.config.ts /elabftw
-COPY ../node-builder.js /elabftw
-COPY ../package.json /elabftw
-COPY ../tsconfig.json /elabftw
-COPY ../yarn.lock /elabftw
+COPY . /elabftw
+COPY ./bin /elabftw/bin
+COPY ./src /elabftw/src
+COPY ./tests /elabftw/tests
+COPY ./web /elabftw/web
+COPY ./eslint.config.mjs /elabftw
+COPY ./.php-cs-fixer.dist.php /elabftw
+COPY ./.stylelintrc.json /elabftw
+COPY ./builder.js /elabftw
+COPY ./codeception.yml /elabftw
+COPY ./composer.json /elabftw
+COPY ./composer.lock /elabftw
+COPY ./cypress.config.ts /elabftw
+COPY ./node-builder.js /elabftw
+COPY ./package.json /elabftw
+COPY ./tsconfig.json /elabftw
+COPY ./yarn.lock /elabftw
 
 # install phpDocumentor
 # https://github.com/phpDocumentor/phpDocumentor/releases/

@@ -61,29 +61,18 @@ function toDateTimeInputValueNumber(datetime: Date): number {
   return datetime.valueOf() - offset;
 }
 
-function setViewMode() {
-  document.getElementById('eventViewMode').classList.remove('d-none');
-  document.getElementById('editEventForm').classList.add('d-none');
-  document.getElementById('eventDeleteMode').classList.add('d-none');
+function setSchedulerMode(mode: 'view' | 'edit' | 'delete'): void {
+  document.getElementById('eventViewMode')!.classList.toggle('d-none', mode !== 'view');
+  document.getElementById('editEventForm')!.classList.toggle('d-none', mode !== 'edit');
+  document.getElementById('eventDeleteMode')!.classList.toggle('d-none', mode !== 'delete');
 }
 
-function setEditMode() {
-  document.getElementById('eventViewMode').classList.add('d-none');
-  document.getElementById('eventDeleteMode').classList.add('d-none');
-  document.getElementById('editEventForm').classList.remove('d-none');
-}
-
-function setDeleteMode() {
-  document.getElementById('eventViewMode').classList.add('d-none');
-  document.getElementById('editEventForm').classList.add('d-none');
-  document.getElementById('eventDeleteMode').classList.remove('d-none');
-}
-
-document.getElementById('deleteEventBtn')?.addEventListener('click', () => {
-  setDeleteMode();
+on('scheduler-edit-mode', () => {
+  setSchedulerMode('edit');
 });
-document.getElementById('editEventBtn')?.addEventListener('click', () => {
-  setEditMode();
+
+on('scheduler-delete-mode', () => {
+  setSchedulerMode('delete');
 });
 
 function clearBoundDiv(type: string) {
@@ -428,7 +417,7 @@ if (window.location.pathname === '/scheduler.php') {
         if (canBook === 0 && currentUserId !== eventOwnerId) {
           return;
         }
-        setViewMode();
+        setSchedulerMode('view');
         $('[data-action="scheduler-rm-bind"]').hide();
         $('#eventModal').modal('show');
         // set the event id on the various elements

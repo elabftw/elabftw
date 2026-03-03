@@ -1435,7 +1435,7 @@ components:
           description: The experiment that has been bound to the event.
           nullable: true
           example: 'Effect of temperature on enzyme activity'
-        item:
+        items_id:
           type: integer
           description: ID of the Resource being booked
           example: 124
@@ -4444,7 +4444,8 @@ paths:
                 title:
                   type: string
                   description: A name for this booking slot.
-                  default: This is an event.
+                  default: Untitled.
+                  example: 'This is an event.'
                 start:
                   type: string
                   format: date-time

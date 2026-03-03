@@ -40,10 +40,10 @@
           <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Add an endpoint'|trans }}
         </button>
         <div hidden>
-          <p class='smallgray mt-2'>{{ 'Note: use HTTP-POST for SSO and HTTP-Redirect for SLO, they are the only bindings supported by eLabFTW. Only an SSO endpoint is strictly required.'|trans }}</p>
+          <p class='smallgray mt-2'>{{ 'Note: use HTTP-Redirect for SSO and HTTP-Redirect for SLO, they are the only bindings supported by eLabFTW. Only an SSO endpoint is strictly required.'|trans }}</p>
           <form id='idpForm_endpoints'>
             <label for='idpEndpointsModalNew' class='col-form-label'>{{ 'SAML Endpoint'|trans }}</label>
-            <input class='form-control' type='url' id='idpEndpointsModalNew' required placeholder='https://idp.example.fr/idp/profile/SAML2/POST/SSO' name='location' />
+            <input class='form-control' type='url' id='idpEndpointsModalNew' required placeholder='https://idp.example.fr/idp/profile/SAML2/Redirect/SSO' name='location' />
             <p class='mt-2'>{{ 'Service type'|trans }}</p>
             <div class='form-check form-check-inline'>
               <input class='form-check-input' type='radio' name='is_slo' value='0' id='idpEndpointIsSloSso' checked> <label class='form-check-label' for='idpEndpointIsSloSso'>{{ 'Single Sign-On (SSO)'|trans }}</label>
@@ -53,10 +53,10 @@
             </div>
             <p class='mt-2'>{{ 'Binding'|trans }}</p>
             <div class='form-check form-check-inline'>
-              <input class='form-check-input' type='radio' name='binding' value='{{ enum('Elabftw\\Enums\\SamlBinding').HttpPost.value }}' id='idpEndpointBindingPost' checked> <label class='form-check-label' for='idpEndpointBindingPost'>{{ enum('Elabftw\\Enums\\SamlBinding').HttpPost.toUrn() }}</label>
+              <input class='form-check-input' type='radio' name='binding' value='{{ enum('Elabftw\\Enums\\SamlBinding').HttpRedirect.value }}' id='idpEndpointBindingRedirect' checked> <label class='form-check-label' for='idpEndpointBindingRedirect'>{{ enum('Elabftw\\Enums\\SamlBinding').HttpRedirect.toUrn() }}</label>
             </div>
             <div class='form-check form-check-inline'>
-              <input class='form-check-input' type='radio' name='binding' value='{{ enum('Elabftw\\Enums\\SamlBinding').HttpRedirect.value }}' id='idpEndpointBindingRedirect'> <label class='form-check-label' for='idpEndpointBindingRedirect'>{{ enum('Elabftw\\Enums\\SamlBinding').HttpRedirect.toUrn() }}</label>
+              <input class='form-check-input' type='radio' name='binding' value='{{ enum('Elabftw\\Enums\\SamlBinding').HttpPost.value }}' id='idpEndpointBindingPost'> <label class='form-check-label' for='idpEndpointBindingPost'>{{ enum('Elabftw\\Enums\\SamlBinding').HttpPost.toUrn() }}</label>
             </div>
             <div class='text-center'>
             <button type='submit' data-action='save-idp-submodel' data-submodel='endpoints' id='idpEndpointsModalSaveButton' class='btn btn-primary ml-auto mb-2 mt-1'>{{ 'Save endpoint'|trans }}</button>

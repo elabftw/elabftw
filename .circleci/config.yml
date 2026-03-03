@@ -70,7 +70,7 @@ commands:
     steps:
       - run:
           name: Start elabtmp container
-          command: docker compose -f tests/elabtmp-compose.yml up -d
+          command: docker compose -f containers/elabtmp/docker-compose.yml up -d
 
   start_mysql:
     steps:
@@ -82,7 +82,7 @@ commands:
     steps:
       - run:
           name: Start cypress container
-          command: docker compose -f tests/cypress-compose.yml up -d
+          command: docker compose -f containers/cypress/docker-compose.yml up -d
 
   install_js_php_dependencies:
     steps:

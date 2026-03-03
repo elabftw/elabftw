@@ -62,17 +62,28 @@ function toDateTimeInputValueNumber(datetime: Date): number {
 }
 
 function setViewMode() {
-    document.getElementById('eventViewMode').classList.remove('d-none');
-    document.getElementById('editEventForm').classList.add('d-none');
+  document.getElementById('eventViewMode').classList.remove('d-none');
+  document.getElementById('editEventForm').classList.add('d-none');
+  document.getElementById('eventDeleteMode').classList.add('d-none');
 }
 
 function setEditMode() {
-    document.getElementById('eventViewMode').classList.add('d-none');
-    document.getElementById('editEventForm').classList.remove('d-none');
+  document.getElementById('eventViewMode').classList.add('d-none');
+  document.getElementById('eventDeleteMode').classList.add('d-none');
+  document.getElementById('editEventForm').classList.remove('d-none');
 }
 
+function setDeleteMode() {
+  document.getElementById('eventViewMode').classList.add('d-none');
+  document.getElementById('editEventForm').classList.add('d-none');
+  document.getElementById('eventDeleteMode').classList.remove('d-none');
+}
+
+document.getElementById('deleteEventBtn')?.addEventListener('click', () => {
+  setDeleteMode();
+});
 document.getElementById('editEventBtn')?.addEventListener('click', () => {
-    setEditMode();
+  setEditMode();
 });
 
 function clearBoundDiv(type: string) {
@@ -423,7 +434,8 @@ if (window.location.pathname === '/scheduler.php') {
         // set the event id on the various elements
         document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
         document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
-        document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
+        document.querySelectorAll('[data-action="cancel-event"], [data-action="cancel-event-with-message"]')
+          .forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
 
         // title
         const title = document.getElementById('title') as HTMLInputElement;
@@ -440,13 +452,12 @@ if (window.location.pathname === '/scheduler.php') {
         refreshBoundDivs(info.event.extendedProps);
 
         // cancel block: show if event is cancellable OR user is Admin)
-        const cancelDiv = document.getElementById('isCancellableDiv') as HTMLElement;
-        const cancelDivButtons = document.getElementById('isCancellableButtons') as HTMLDivElement;
-        if (!cancelDiv) return;
         const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
         const isCancellable = isAdmin || bookIsCancellable === 1;
-        cancelDiv.classList.toggle('d-none', !isCancellable);
-        cancelDivButtons.classList.toggle('d-none', !isCancellable);
+        const deleteBtn = document.getElementById('deleteEventBtn');
+        if (deleteBtn) {
+          deleteBtn.classList.toggle('d-none', !isCancellable);
+        }
         // add event owner's id as target for cancel message
         const targetCancel = document.getElementById('targetCancelEventUsers');
         if (targetCancel) {
@@ -462,7 +473,7 @@ if (window.location.pathname === '/scheduler.php') {
         const timeLine = `${startTime} – ${endTime}`;
         // duration in minutes
         const durationMinutes = Math.round(
-          (end.getTime() - start.getTime()) / 60000
+          (end.getTime() - start.getTime()) / 60000,
         );
         // Set modal content
         document.getElementById('viewTitle')!.textContent = info.event.extendedProps.title_only;

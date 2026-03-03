@@ -4444,7 +4444,7 @@ paths:
                 title:
                   type: string
                   description: A name for this booking slot.
-                  default: Untitled.
+                  default: Untitled
                   example: 'This is an event.'
                 start:
                   type: string

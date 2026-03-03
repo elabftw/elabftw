@@ -40,7 +40,7 @@
           <i class='fas fa-caret-right color-white mr-1'></i>{{ 'Add an endpoint'|trans }}
         </button>
         <div hidden>
-          <p class='smallgray mt-2'>{{ 'Note: use HTTP-POST for SSO and HTTP-Redirect for SLO, they are the only bindings supported by eLabFTW. Only an SSO endpoint is strictly required.'|trans }}</p>
+          <p class='smallgray mt-2'>{{ 'Note: use HTTP-Redirect for SSO and HTTP-Redirect for SLO, they are the only bindings supported by eLabFTW. Only an SSO endpoint is strictly required.'|trans }}</p>
           <form id='idpForm_endpoints'>
             <label for='idpEndpointsModalNew' class='col-form-label'>{{ 'SAML Endpoint'|trans }}</label>
             <input class='form-control' type='url' id='idpEndpointsModalNew' required placeholder='https://idp.example.fr/idp/profile/SAML2/POST/SSO' name='location' />

@@ -234,16 +234,12 @@ final class Scheduler extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        // binding entities
-        if (isset($params['target'])) {
-            match ($params['target']) {
-                'experiment' => $this->bind('experiment', $params['id']),
-                'item_link' => $this->bind('item_link', $params['id']),
-                default => null
-            };
-        }
-        // other fields patch
-        $this->update($params);
+        match ($params['target']) {
+            'experiment' => $this->bind('experiment', $params['id']),
+            'item_link' => $this->bind('item_link', $params['id']),
+            'title', 'datetime' => $this->update($params),
+            default => throw new ImproperActionException('Invalid target.'),
+        };
         return $this->readOne();
     }
 

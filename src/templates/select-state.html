@@ -6,9 +6,8 @@
   '': 'Select state'|trans,
   (State.Normal.value): 'Normal'|trans,
   (State.Archived.value): 'Archived'|trans,
-  (State.Deleted.value): 'Deleted'|trans,
   (State.Normal.value ~ ',' ~ State.Archived.value): 'Normal or Archived'|trans,
-  (State.Normal.value ~ ',' ~ State.Archived.value ~ ',' ~ State.Deleted.value): 'Any'|trans
+  (State.Deleted.value): 'Deleted'|trans,
 } %}
 {# here we have filterHelper and filterAuto that are only meaningful on show mode #}
 <select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterHelper filterAuto' autocomplete='off'>

@@ -76,7 +76,7 @@ function getFilterValueFromElement(element: HTMLElement): string {
       return handleMetadata();
     }
   }
-  return '😶';
+  return '';
 }
 
 // don't add quotes unless we need them (space or some special chars exist)

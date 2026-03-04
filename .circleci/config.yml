@@ -55,6 +55,7 @@ commands:
           command: |
             docker build -t elabftw/elabimg:ci --build-arg BUILD_ALL=0 -f containers/elabimg/Dockerfile .
             docker build -t elabtmp -f containers/elabtmp/Dockerfile .
+            docker build -t elabtmp -f containers/circleci/Dockerfile .
             printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > containers/elabtmp/elabftw-user.env
 
   build_cypress:

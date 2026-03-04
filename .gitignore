@@ -33,7 +33,6 @@ uploads
 .sass-cache
 src/ts/langs/*.js
 *.gz
-tests/elabftw-user.env
 containers/elabimg/elabftw-user.env
 containers/elabtmp/elabftw-user.env
 /todo

@@ -2,6 +2,22 @@
 # Dockerfile for CI image
 FROM elabftw/elabimg:ci
 
+# add tests related folders and files to the image
+COPY ./tests /elabftw/tests
+COPY ./eslint.config.mjs /elabftw
+COPY ./.php-cs-fixer.dist.php /elabftw
+COPY ./.stylelintrc.json /elabftw
+COPY ./codeception.yml /elabftw
+COPY ./cypress.config.ts /elabftw
+
+# install phpDocumentor
+# https://github.com/phpDocumentor/phpDocumentor/releases/
+ARG PHP_DOCUMENTOR_VERSION=v3.7.1
+ADD --chmod=755 https://github.com/phpDocumentor/phpDocumentor/releases/download/$PHP_DOCUMENTOR_VERSION/phpDocumentor.phar phpdoc
+
+# phpDocumentor requires ext-iconv and plantuml, graphviz for generating the svg graph
+RUN apk add --update --no-cache plantuml graphviz php84-iconv
+
 # Install xdebug for coverage
 RUN apk add --update php84-pecl-xdebug
 RUN printf "zend_extension=xdebug.so\nxdebug.mode=coverage" > /etc/php84/conf.d/50_xdebug.ini

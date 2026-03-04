@@ -29,14 +29,16 @@ fi
 
 # launch a fresh environment if needed
 if [ -z "$(docker ps -q -f name=mysqltmp)" ]; then
-    docker compose -f tests/docker-compose.yml up -d --quiet-pull
+    docker compose -f containers/mysqltmp/docker-compose.yml up -d --quiet-pull
+    docker compose -f containers/elabtmp/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
     echo -n "Waiting for containers to start..."
     while [ "$(docker inspect -f {{.State.Health.Status}} elabtmp)" != "healthy" ]; do echo -n .; sleep 2; done; echo
 fi
 
-# run yarn install in elabtmp
+# run yarn and composer install in elabtmp
 docker exec -it elabtmp yarn install
+docker exec -it elabtmp composer install
 
 if [ "${SKIP_TWIGCS:-0}" -ne 1 ]; then
     echo "▶ Running twigcs. Use SKIP_TWIGCS=1 to disable."

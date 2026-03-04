@@ -1142,6 +1142,10 @@ abstract class AbstractEntity extends AbstractRest
             $team = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());
         }
         $TeamsHelper = new TeamsHelper($team);
+        // Transfer to another team isn't possible unless user is Admin
+        if ($this->Users->isAdmin === false) {
+            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+        }
         if (!$TeamsHelper->isUserInTeam($userid)) {
             throw new UnauthorizedException(_('The selected user cannot be assigned ownership in the current team context.'));
         }

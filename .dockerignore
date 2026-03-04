@@ -1,16 +1,10 @@
 apidoc
-c3.php
 cache
 CHANGELOG.md
 CITATION.cff
-codeception.yml
-codecov.yml
 codemeta.json
 containers/elabimg/docker-compose-EXAMPLE.yml
 CONTRIBUTING.md
-cypress
-cypress.config.ts
-eslint.config.mjs
 exports
 FUNDING.yml
 GOVERNANCE.md
@@ -21,7 +15,6 @@ paper.md
 README.md
 SECURITY.md
 sonar-project.properties
-tests
 todo
 TRADEMARK.md
 uploads

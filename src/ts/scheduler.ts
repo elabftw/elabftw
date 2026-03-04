@@ -67,13 +67,9 @@ function setSchedulerMode(mode: 'view' | 'edit' | 'delete'): void {
   document.getElementById('eventDeleteMode')!.classList.toggle('d-none', mode !== 'delete');
 }
 
-on('scheduler-edit-mode', () => {
-  setSchedulerMode('edit');
-});
-
-on('scheduler-delete-mode', () => {
-  setSchedulerMode('delete');
-});
+on('scheduler-edit-mode', () => setSchedulerMode('edit'));
+on('scheduler-delete-mode', () => setSchedulerMode('delete'));
+on('back-to-event', () => setSchedulerMode('view'));
 
 function clearBoundDiv(type: string) {
   if (type === 'experiment') {

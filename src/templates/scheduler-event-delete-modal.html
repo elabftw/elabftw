@@ -21,6 +21,7 @@
     {% endfor %}
   </div>
   <div class='modal-footer d-flex justify-content-end'>
+    <button type='button' class='btn btn-ghost' data-action='back-to-event'><i class='fas fa-arrow-left fa-fw mr-2'></i>{{ 'Back'|trans }}</button>
     <button type='button' class='btn btn-secondary' data-action='cancel-event' data-id='' data-dismiss='modal'>{{ 'Delete without message'|trans }}</button>
     <button type='button' class='btn btn-danger' data-action='cancel-event-with-message' data-id='' data-dismiss='modal'>{{ 'Delete and notify'|trans }}</button>
   </div>

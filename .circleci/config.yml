@@ -70,7 +70,7 @@ commands:
     steps:
       - run:
           name: Start elabtmp container
-          command: docker compose -f containers/elabtmp/docker-compose.yml up -d
+          command: docker compose -f containers/circleci/docker-compose.yml up -d
 
   start_mysql:
     steps:

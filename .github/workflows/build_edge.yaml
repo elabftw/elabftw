@@ -1,9 +1,10 @@
-name: Build edge image on tag
+name: Build edge image on pre-release
 
+# triggered by publishing a release
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [published]
+
 
 ## GITHUB_TOKEN authentication
 permissions:
@@ -14,6 +15,8 @@ jobs:
         #runs-on: ubuntu-latest
         # temporary revert for arm build
         runs-on: ubuntu-22.04
+        # only on pre-releases
+        if: github.event.release.prerelease == true
         steps:
             # https://github.com/CycodeLabs/cimon-action
             - name: Cimon supply chain attack protection

@@ -1,2 +1,2 @@
 #!/command/with-contenv sh
-exec /usr/sbin/docker-entrypoint.sh
+/command/with-contenv /usr/sbin/docker-entrypoint.sh

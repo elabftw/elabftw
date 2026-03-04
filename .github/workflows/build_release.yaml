@@ -71,8 +71,9 @@ jobs:
                 file: containers/elabimg/Dockerfile
                 platforms: linux/arm64,linux/amd64
                 push: true
-                cache-from: type=gha
-                cache-to: type=gha,mode=max
+                # the scope parameter is necessary when doing multi arch builds or we'll always miss cache
+                cache-from: type=gha,scope=${{ runner.os }}-${{ runner.arch }}
+                cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}
                 sbom: true
                 build-args: |
                     ELABFTW_VERSION=${{ github.ref_name }}

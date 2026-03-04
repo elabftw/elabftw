@@ -11,6 +11,6 @@ services:
       dockerfile: ./containers/cypress/Dockerfile
     container_name: elab-cypress
     volumes:
-      - ./tests/cypress:/home/node/tests/cypress
+      - ../../tests/cypress:/home/node/tests/cypress
     networks:
       - elabftw-net

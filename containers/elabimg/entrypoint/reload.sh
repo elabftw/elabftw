@@ -5,7 +5,10 @@
 
 function reload {
     echo "Reloading $1 service..."
-    /package/admin/s6/command/s6-svc -r /run/service/"$1"
+    if ! /package/admin/s6/command/s6-svc -r "/run/service/$1"; then
+        echo "ERROR: failed to reload $1 service" >&2
+        exit 1
+    fi
     echo "$1 reloaded"
 }
 

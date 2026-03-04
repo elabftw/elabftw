@@ -2,7 +2,7 @@
 # Dockerfile for CircleCI
 FROM elabtmp
 
-# add tests related folders to the image
+# add tests related folders and files to the image
 COPY ./tests /elabftw/tests
 COPY ./eslint.config.mjs /elabftw
 COPY ./.php-cs-fixer.dist.php /elabftw

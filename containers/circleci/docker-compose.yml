@@ -6,7 +6,7 @@ services:
     image: elabtmp
     build:
       context: ../..
-      dockerfile: ./containers/elabtmp/Dockerfile
+      dockerfile: ./containers/circleci/Dockerfile
     container_name: elabtmp
     cap_drop:
       - ALL
@@ -36,8 +36,6 @@ services:
       - ELAB_AWS_ACCESS_KEY=yep
       - ELAB_AWS_SECRET_KEY=yop
       - MAX_PHP_MEMORY=512M
-    volumes:
-      - ../..:/elabftw
     healthcheck:
       test: /etc/nginx/healthcheck.sh
       interval: 10s

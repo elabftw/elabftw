@@ -97,4 +97,4 @@ jobs:
 
             - name: Send request to webhook to trigger update of demo
               run: |
-                curl -v -H 'X-Hook-Secret: ${{ secrets.HOOK_SECRET }}' ${{ secrets.HOOK_URL }}
+                curl -H 'X-Hook-Secret: ${{ secrets.HOOK_SECRET }}' ${{ secrets.HOOK_URL }}

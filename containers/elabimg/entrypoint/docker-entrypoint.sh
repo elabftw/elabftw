@@ -85,8 +85,8 @@ createUser() {
     # so let's delete them
     deluser klogd 2>/dev/null || true
     delgroup klogd 2>/dev/null || true
-    getent group "${elabftw_group}" 2>&1 > /dev/null || /usr/sbin/addgroup -g "${elabftw_groupid}" "${elabftw_group}"
-    getent shadow "${elabftw_user}" 2>&1 > /dev/null || /usr/sbin/adduser -u "${elabftw_userid}" -G "${elabftw_group}" "${elabftw_user}"
+    getent group "${elabftw_group}" > /dev/null 2>&1 || /usr/sbin/addgroup -g "${elabftw_groupid}" "${elabftw_group}"
+    getent shadow "${elabftw_user}" > /dev/null 2>&1 || /usr/sbin/adduser -u "${elabftw_userid}" -G "${elabftw_group}" "${elabftw_user}"
     # run invoker with the specific user
     mkdir -p /run/invoker
     chown "${elabftw_user}":"${elabftw_group}" /run/invoker

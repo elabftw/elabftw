@@ -76,7 +76,7 @@ commands:
     steps:
       - run:
           name: Start mysql container
-          command: docker compose -f containers/mysql/docker-compose.yml up -d
+          command: docker compose -f containers/mysqltmp/docker-compose.yml up -d
 
   start_cypress:
     steps:

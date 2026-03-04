@@ -14,7 +14,7 @@ jobs:
         #runs-on: ubuntu-latest
         # temporary revert for arm build
         runs-on: ubuntu-22.04
-        # only run on stable releases AND only if the release targets a release/* branch
+        # only run on stable releases
         if: github.event.release.prerelease == false
         steps:
             # https://github.com/CycodeLabs/cimon-action

@@ -18,8 +18,8 @@ cleanup() {
 trap cleanup EXIT
 
 # if there are no custom env_file, touch one, as this will trigger an error
-if [ ! -f tests/elabftw-user.env ]; then
-    touch tests/elabftw-user.env
+if [ ! -f containers/elabtmp/elabftw-user.env ]; then
+    touch containers/elabtmp/elabftw-user.env
 fi
 
 # launch a fresh environment if needed

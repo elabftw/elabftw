@@ -7,7 +7,7 @@ services:
         image: elabtmp
         build:
           context: ..
-          dockerfile: ./tests/elabtmp.Dockerfile
+          dockerfile: ./containers/elabtmp/Dockerfile
         container_name: elabtmp
         cap_drop:
             - ALL

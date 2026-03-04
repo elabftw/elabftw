@@ -1,0 +1,106 @@
+name: Build nigthly elabimg
+
+on:
+  schedule:
+    - cron: "42 01 * * *"
+
+## GITHUB_TOKEN authentication
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  buildandpush:
+    runs-on: ubuntu-latest
+    name: Build images and push to Docker Hub
+    steps:
+      # https://github.com/CycodeLabs/cimon-action
+      - name: Cimon supply chain attack protection
+        uses: cycodelabs/cimon-action@v0
+        with:
+          prevent: true
+          allowed-hosts: >
+            auth.docker.io
+            codeload.github.com
+            get.trivy.dev
+            check.trivy.dev
+            dl-cdn.alpinelinux.org
+            docker.io
+            ghcr.io
+            index.docker.io
+            mirror.gcr.io
+            nginx.org
+            packagist.org
+            pkg-containers.githubusercontent.com
+            production.cloudflare.docker.com
+            raw.githubusercontent.com
+            registry.yarnpkg.com
+            registry-1.docker.io
+            repo.yarnpkg.com
+            registry.npmjs.org
+            *.sigstore.dev
+            hooks.deltablot.dev
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # https://github.com/marketplace/actions/docker-setup-buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # https://github.com/docker/login-action#docker-hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      # https://github.com/docker/build-push-action#multi-platform-image
+      - name: Build nightly and push to docker
+        uses: docker/build-push-action@v6
+        id: push
+        with:
+          context: .
+          file: containers/elabimg/Dockerfile
+          # the scope parameter is necessary when doing multi arch builds or we'll always miss cache
+          cache-from: type=gha,scope=${{ matrix.os }}-${{ matrix.arch }}
+          cache-to:   type=gha,mode=max,scope=${{ matrix.os }}-${{ matrix.arch }}
+          platforms: linux/arm64,linux/amd64
+          sbom: true
+          push: true
+          build-args: |
+              ELABFTW_VERSION=${{ github.ref_name }}
+          tags: |
+              elabftw/elabimg:nightly
+
+      # VULN SCAN
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: elabftw/elabimg:nigthly
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          # use only the vuln scanner to avoid OOM kill with secrets scanning
+          #not working: scanners: 'vuln'
+          severity: 'CRITICAL,HIGH'
+
+      # SBOM
+      - name: Run Trivy in GitHub SBOM mode and submit results to Dependency Graph
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          format: 'github'
+          output: 'dependency-results.sbom.json'
+          scan-ref: '.'
+          github-pat: ${{ secrets.GITHUB_TOKEN }}
+
+      # ATTESTATION
+      - name: Create build provenance attestation
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: index.docker.io/elabftw/elabimg
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true

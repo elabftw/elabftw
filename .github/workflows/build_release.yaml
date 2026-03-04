@@ -1,0 +1,99 @@
+name: Build and push the stable image
+
+# triggered by publishing a release
+on:
+  release:
+    types: [published]
+
+## GITHUB_TOKEN authentication
+permissions:
+  contents: write
+
+jobs:
+    buildandpush:
+        #runs-on: ubuntu-latest
+        # temporary revert for arm build
+        runs-on: ubuntu-22.04
+        # only run on stable releases AND only if the release targets a release/* branch
+        if: github.event.release.prerelease == false
+        steps:
+            # https://github.com/CycodeLabs/cimon-action
+            - name: Cimon supply chain attack protection
+              uses: cycodelabs/cimon-action@v0
+              with:
+                prevent: true
+                allowed-hosts: >
+                  auth.docker.io
+                  codeload.github.com
+                  get.trivy.dev
+                  check.trivy.dev
+                  dl-cdn.alpinelinux.org
+                  docker.io
+                  ghcr.io
+                  index.docker.io
+                  mirror.gcr.io
+                  nginx.org
+                  packagist.org
+                  pkg-containers.githubusercontent.com
+                  production.cloudflare.docker.com
+                  raw.githubusercontent.com
+                  registry.yarnpkg.com
+                  repo.yarnpkg.com
+                  registry.npmjs.org
+                  hooks.deltablot.dev
+
+            - name: Checkout elabimg repo
+              uses: actions/checkout@v4
+              with:
+                ref: ${{ github.ref_name }}
+
+            # https://github.com/marketplace/actions/docker-setup-buildx
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+
+            # https://github.com/docker/setup-qemu-action#usage
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v2
+
+            # https://github.com/docker/login-action#docker-hub
+            - name: Login to Docker Hub
+              uses: docker/login-action@v2
+              with:
+                username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+            # https://github.com/docker/build-push-action#multi-platform-image
+            # https://docs.docker.com/build/ci/github-actions/cache/
+            - name: Build latest release for all platforms and push to Docker Hub
+              uses: docker/build-push-action@v4
+              with:
+                context: .
+                file: containers/elabimg/Dockerfile
+                platforms: linux/arm64,linux/amd64
+                push: true
+                cache-from: type=gha
+                cache-to: type=gha,mode=max
+                sbom: true
+                build-args: |
+                    ELABFTW_VERSION=${{ github.ref_name }}
+                tags: |
+                    elabftw/elabimg:stable
+                    elabftw/elabimg:latest
+
+            # build the IRD branch
+            - name: Build IRD image
+              uses: docker/build-push-action@v6
+              with:
+                context: .
+                cache-from: type=gha
+                cache-to: type=gha,mode=max
+                platforms: linux/amd64
+                push: true
+                build-args: |
+                    ELABFTW_VERSION=ird
+                tags: |
+                    elabftw/elabimg:ird-${{ github.ref_name }}
+
+            - name: Send request to webhook to trigger update of demo
+              run: |
+                curl -v -H 'X-Hook-Secret: ${{ secrets.HOOK_SECRET }}' ${{ secrets.HOOK_URL }}

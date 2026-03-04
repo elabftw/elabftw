@@ -4,14 +4,30 @@
     <h5>{{ 'Cancel booking slot'|trans }}</h5>
     <h6><label for='cancelEventTextarea'>{{ 'Add a custom message'|trans }}</label></h6>
     <textarea id='cancelEventTextarea' class='form-control'></textarea>
-    <label>{{ 'Send to'|trans }}</label>
-    <div class='form-check'>
-      <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='' value='bookable_item' id='targetCancelEventUsers' checked>
-      <label class='form-check-label' for='targetCancelEventUsers'>{{ 'Past and future users who booked this resource'|trans }}</label>
-    </div>
+    <hr>
+    <h5>{{ 'Send to'|trans }}</h5>
     <div class='form-check'>
       <input class='form-check-input' type='radio' name='targetCancelEvent' data-targetid='{{ App.Teams.teamArr.id }}' value='team' id='targetCancelEventTeam'>
       <label class='form-check-label' for='targetCancelEventTeam'>{{ 'Members of team %s'|trans|format(App.Teams.teamArr.name) }}</label>
+    </div>
+
+    <div class='form-check'>
+      <input class='form-check-input' type='radio' name='targetCancelEvent' value='bookable_item_f' id='targetCancelEventUsersRange' checked>
+      <label class='form-check-label' for='targetCancelEventUsersRange'>
+        {{ 'Users who booked this resource'|trans }}
+      </label>
+      <div class='d-flex align-items-center mt-2'>
+        <select class='form-control col-md-3 mr-2' aria-label='{{ 'Time direction'|trans }}'>
+          <option value='past'>{{ 'in the last'|trans }}</option>
+          <option value='future'>{{ 'in the next'|trans }}</option>
+        </select>
+        <input type='number' class='form-control col-md-3 mr-2' min='1' value='7' aria-label=''{{ 'Number of days'|trans }}'>
+        <select class='form-control col-md-3 mr-2' aria-label='{{ 'Time direction'|trans }}'>
+          <option value='days'>{{ 'days'|trans }}</option>
+          <option value='month'>{{ 'month'|trans }}</option>
+          <option value='years'>{{ 'years'|trans }}</option>
+        </select>
+      </div>
     </div>
     {% for teamgroup in teamGroupsArr %}
       <div class='form-check'>

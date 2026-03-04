@@ -1,5 +1,6 @@
 networks:
-    elabftw-net:
+  default:
+    name: elabftw-net
 services:
     web:
         image: elabtmp

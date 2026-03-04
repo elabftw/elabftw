@@ -1,5 +1,6 @@
 networks:
-    elabftw-net:
+  default:
+    name: elabftw-net
 services:
     mysql:
         image: mysql:8.4

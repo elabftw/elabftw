@@ -2,6 +2,10 @@
 # it will spawn temporary containers to test things out
 # https://www.elabftw.net
 
+networks:
+  default:
+    name: elabftw-net
+
 services:
     web:
         image: elabtmp
@@ -101,6 +105,3 @@ services:
             - mysql
         networks:
             - elabftw-net
-
-networks:
-    elabftw-net:

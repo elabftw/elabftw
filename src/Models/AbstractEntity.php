@@ -1137,15 +1137,16 @@ abstract class AbstractEntity extends AbstractRest
 
     private function updateOwnership(int $userid, int $team): void
     {
-        // if there's no team provided, assign the current user's team
-        if ($team === 0) {
-            $team = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());
+        $currentUserTeam = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());
+        // non-admins cannot transfer to another team
+        if (!$this->Users->isAdmin) {
+            $team = $currentUserTeam;
+        } elseif ($team === 0) {
+            // admin but no team specified → default to current team
+            $team = $currentUserTeam;
         }
         $TeamsHelper = new TeamsHelper($team);
-        // Transfer to another team isn't possible unless user is Admin
-        if ($this->Users->isAdmin === false) {
-            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
-        }
+        // target user must belong to the destination team
         if (!$TeamsHelper->isUserInTeam($userid)) {
             throw new UnauthorizedException(_('The selected user cannot be assigned ownership in the current team context.'));
         }

@@ -245,6 +245,7 @@ export function getTinymceBaseConfig(page: string): object {
     // use undocumented callback function to asynchronously get the templates
     // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
     templates: (callback): void => {
+      if (entity.type === EntityType.Experiment) {
       ApiC.getJson(`${EntityType.Template}`).then(json => {
         const res = [];
         json.forEach(tpl => {
@@ -252,6 +253,15 @@ export function getTinymceBaseConfig(page: string): object {
         });
         callback(res);
       });
+      } else if (entity.type === EntityType.Item) {
+      ApiC.getJson(`${EntityType.ItemType}`).then(json => {
+        const res = [];
+        json.forEach(tpl => {
+          res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
+        });
+        callback(res);
+      });
+      }
     },
     contextmenu: false,
     paste_data_images: Boolean(page === 'edit'),

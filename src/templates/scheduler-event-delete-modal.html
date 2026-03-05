@@ -12,17 +12,18 @@
     </div>
 
     <div class='form-check'>
+      {# a data-targetid will get added to this element by js #}
       <input class='form-check-input' type='radio' name='targetCancelEvent' value='bookable_item_f' id='targetCancelEventUsersRange' checked>
       <label class='form-check-label' for='targetCancelEventUsersRange'>
         {{ 'Users who booked this resource'|trans }}
       </label>
       <div class='d-flex align-items-center mt-2'>
-        <select class='form-control col-md-3 mr-2' aria-label='{{ 'Time direction'|trans }}'>
+        <select id='cancelEventRangeDirection' class='form-control col-md-3 mr-2' aria-label='{{ 'Time direction'|trans }}'>
           <option value='past'>{{ 'in the last'|trans }}</option>
           <option value='future'>{{ 'in the next'|trans }}</option>
         </select>
-        <input type='number' class='form-control col-md-3 mr-2' min='1' value='7' aria-label=''{{ 'Number of days'|trans }}'>
-        <select class='form-control col-md-3 mr-2' aria-label='{{ 'Time direction'|trans }}'>
+        <input id='cancelEventRangeValue' type='number' class='form-control col-md-3 mr-2' min='1' value='7' aria-label='{{ 'Number of days'|trans }}'>
+        <select id='cancelEventRangeUnit' class='form-control col-md-3 mr-2' aria-label='{{ 'Time direction'|trans }}'>
           <option value='days'>{{ 'days'|trans }}</option>
           <option value='month'>{{ 'month'|trans }}</option>
           <option value='years'>{{ 'years'|trans }}</option>

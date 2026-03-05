@@ -60,7 +60,12 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         }
         // target can be bookable_item, team or teamgroup
         $this->target = EmailTarget::from($reqBody['target']);
-        $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid']);
+        $range = array(
+            'direction' => $reqBody['range_direction'] ?? null,
+            'value' => $reqBody['range_value'] ?? null,
+            'unit' => $reqBody['range_unit'] ?? null,
+        );
+        $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid'], $range);
         foreach ($userids as $userid) {
             $recipient = new Users($userid);
             $Notif = new self($recipient, $this->event, $this->actor, $this->msg, $this->target);

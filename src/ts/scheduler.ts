@@ -41,6 +41,15 @@ import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
 
+type CancelNotificationPayload = {
+  action: Action;
+  msg: string;
+  target: string;
+  targetid: number;
+  range_direction?: string;
+  range_value?: number;
+  range_unit?: string;
+};
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
 const GRID_VIEWS: Record<Range, string> = {
@@ -443,11 +452,13 @@ if (window.location.pathname === '/scheduler.php') {
         if (deleteBtn) {
           deleteBtn.classList.toggle('d-none', !isCancellable);
         }
-        // add event owner's id as target for cancel message
-        const targetCancel = document.getElementById('targetCancelEventUsers');
-        if (targetCancel) {
-          targetCancel.dataset.targetid = info.event.extendedProps.items_id;
-        }
+        // add owner ids as target for cancel message
+        ['targetCancelEventUsers', 'targetCancelEventUsersRange'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.dataset.targetid = info.event.extendedProps.items_id;
+          }
+        });
         // populate view section
         const start = info.event.start!;
         const end = info.event.end!;
@@ -495,7 +506,19 @@ if (window.location.pathname === '/scheduler.php') {
     on('cancel-event-with-message', (el: HTMLElement) => {
       const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
       const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
-      ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
+      const payload: CancelNotificationPayload = {
+        action: Action.Create,
+        msg: msg,
+        target: target.value,
+        targetid: parseInt(target.dataset.targetid, 10),
+      };
+      console.log(payload);
+      if (target.value === 'bookable_item_f') {
+        payload.range_direction = (document.getElementById('cancelEventRangeDirection') as HTMLSelectElement).value;
+        payload.range_value = parseInt((document.getElementById('cancelEventRangeValue') as HTMLInputElement).value, 10);
+        payload.range_unit = (document.getElementById('cancelEventRangeUnit') as HTMLSelectElement).value;
+      }
+      ApiC.post(`event/${el.dataset.id}/notifications`, payload).then(() => {
         ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
       });
     });

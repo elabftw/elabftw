@@ -18,19 +18,28 @@ cleanup() {
 trap cleanup EXIT
 
 # if there are no custom env_file, touch one, as this will trigger an error
-if [ ! -f tests/elabftw-user.env ]; then
-    touch tests/elabftw-user.env
+if [ ! -f containers/elabtmp/elabftw-user.env ]; then
+    touch containers/elabtmp/elabftw-user.env
+fi
+
+# make sure elabftw/elabimg:ci exists locally (elabtmp depends on it)
+if ! docker image inspect elabftw/elabimg:ci >/dev/null 2>&1; then
+    docker build -t elabftw/elabimg:ci --build-arg BUILD_ALL=0 -f containers/elabimg/Dockerfile .
 fi
 
 # launch a fresh environment if needed
 if [ -z "$(docker ps -q -f name=mysqltmp)" ]; then
-    docker compose -f tests/docker-compose.yml up -d --quiet-pull
+    docker compose -f containers/mysqltmp/docker-compose.yml up -d --quiet-pull
+    docker compose -f containers/elabtmp/docker-compose.yml up -d --quiet-pull
     # give some time for containers to start
     echo -n "Waiting for containers to start..."
     while [ "$(docker inspect -f {{.State.Health.Status}} elabtmp)" != "healthy" ]; do echo -n .; sleep 2; done; echo
 fi
-# we need to add the parser because it's in cache/ and it's tmpfs mounted now
-docker exec -it elabtmp yarn buildparser
+
+# run yarn and composer install in elabtmp
+docker exec -it elabtmp yarn install
+docker exec -it elabtmp composer install
+
 if [ "${SKIP_TWIGCS:-0}" -ne 1 ]; then
     echo "▶ Running twigcs. Use SKIP_TWIGCS=1 to disable."
     docker exec -it elabtmp yarn twigcs

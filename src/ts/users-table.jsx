@@ -21,6 +21,15 @@ import { populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
+
+// allow filtering by values for cells that render icons or badges (team, isSysadmin, etc.,)
+const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
+const enabledDisabled = v => v === 1 ? i18next.t('enabled') : i18next.t('disabled');
+const lastLoginText = v => v === null ? i18next.t('never') : v;
+const validUntilText = v => v === null ? i18next.t('forever') : v;
+// allow filtering for "admin" as well as team name
+const teamsText = teams => teams?.map(t => `${t.name} ${t.is_admin ? 'admin' : 'user'}`).join(' ') ?? '';
+
 async function toggleUserModal(user) {
   const textParams = [
     'userid',
@@ -69,55 +78,55 @@ if (document.getElementById('users-table')) {
     };
     // renderer for teams column
     const TeamsRenderer = ({ value }) => {
-      const items = value
-        .map(team => (
-          <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`} key={team.id} data-id={team.id}>
-            {team.name}
-          </span>
-        ));
+      if (!value) return null;
+      const items = value.map(team => (
+        <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`} key={team.id} data-id={team.id}>
+          {team.name}
+        </span>
+      ));
       return <span>{items}</span>;
     };
 
     const LastLoginRenderer = ({ value }) => {
-      return value === null
-        ? <span className='font-italic'>{i18next.t('never')}</span>
+      return value === i18next.t('never')
+        ? <span className='font-italic'>{value}</span>
         : <span>{value}</span>;
     };
 
     const ValidUntilRenderer = ({ value }) => {
-      return value === null
-        ? <span className='font-italic'>{i18next.t('forever')}</span>
+      return value === i18next.t('forever')
+        ? <span className='font-italic'>{value}</span>
         : <span>{value}</span>;
     };
 
     const HasMfaEnabledRenderer = ({ value }) => {
-      return value === 1
-        ? <span title={i18next.t('enabled')}><i title={i18next.t('enabled')} className='fas fa-user-shield mr-2'></i>{i18next.t('enabled')}</span>
-        : <span className='font-italic' title='disabled'>{i18next.t('disabled')}</span>;
+      return value === i18next.t('enabled')
+        ? <span title={value}><i className='fas fa-user-shield mr-2'></i>{value}</span>
+        : <span className='font-italic' title={value}>{value}</span>;
     };
 
     const BinaryRenderer = ({ value }) => {
-      return value === 1
-        ? <span title={i18next.t('yes')}><i title={i18next.t('yes')} className='fas fa-circle-check mr-2 color-blue'></i>{i18next.t('yes')}</span>
-        : <span title={i18next.t('no')}><i title={i18next.t('no')} className='fas fa-circle-xmark mr-2'></i>{i18next.t('no')}</span>
+      return value === i18next.t('yes')
+        ? <span title={value}><i className='fas fa-circle-check mr-2 color-blue'></i>{value}</span>
+        : <span title={value}><i className='fas fa-circle-xmark mr-2'></i>{value}</span>;
     };
 
     const [columnDefs] = useState([
         { field: 'userid', headerName: i18next.t('userid'), pinned: 'left' },
-        { field: 'teams', headerName: i18next.t('teams'), cellRenderer: TeamsRenderer },
+        { field: 'teams', headerName: i18next.t('teams'), cellRenderer: TeamsRenderer, filterValueGetter: p => teamsText(p.data.teams) },
         { field: 'firstname', headerName: i18next.t('firstname') },
         { field: 'lastname', headerName: i18next.t('lastname') },
         { field: 'email', headerName: i18next.t('email') },
-        { field: 'last_login', headerName: i18next.t('last-login'), cellRenderer: LastLoginRenderer },
-        { field: 'is_sysadmin', headerName: i18next.t('is-sysadmin'), cellRenderer: BinaryRenderer},
-        { field: 'has_mfa_enabled', headerName: i18next.t('2FA'), cellRenderer: HasMfaEnabledRenderer },
-        { field: 'valid_until', headerName: i18next.t('Valid until'), cellRenderer: ValidUntilRenderer },
-        { field: 'validated', headerName: i18next.t('Validated'), cellRenderer: BinaryRenderer},
+        { field: 'last_login', headerName: i18next.t('last-login'), valueGetter: p => lastLoginText(p.data.last_login), filterValueGetter: p => lastLoginText(p.data.last_login), cellRenderer: LastLoginRenderer },
+        { field: 'is_sysadmin', headerName: i18next.t('is-sysadmin'), valueGetter: p => yesNo(p.data.is_sysadmin), filterValueGetter: p => yesNo(p.data.is_sysadmin), cellRenderer: BinaryRenderer },
+        { field: 'has_mfa_enabled', headerName: i18next.t('2FA'), valueGetter: p => enabledDisabled(p.data.has_mfa_enabled), filterValueGetter: p => enabledDisabled(p.data.has_mfa_enabled), cellRenderer: HasMfaEnabledRenderer },
+        { field: 'valid_until', headerName: i18next.t('Valid until'), valueGetter: p => validUntilText(p.data.valid_until), filterValueGetter: p => validUntilText(p.data.valid_until), cellRenderer: ValidUntilRenderer },
+        { field: 'validated', headerName: i18next.t('Validated'), valueGetter: p => yesNo(p.data.validated), filterValueGetter: p => yesNo(p.data.validated), cellRenderer: BinaryRenderer },
         { field: 'orgid', headerName: i18next.t('Internal id') },
         { field: 'orcid', headerName: 'ORCID' },
-        { field: 'can_manage_users2teams', headerName: i18next.t('can-manage-users2teams'), cellRenderer: BinaryRenderer},
-        { field: 'can_manage_compounds', headerName: i18next.t('can-manage-compounds'), cellRenderer: BinaryRenderer},
-        { field: 'can_manage_inventory_locations', headerName: i18next.t('can-manage-inventory-locations'), cellRenderer: BinaryRenderer},
+        { field: 'can_manage_users2teams', headerName: i18next.t('can-manage-users2teams'), valueGetter: p => yesNo(p.data.can_manage_users2teams), filterValueGetter: p => yesNo(p.data.can_manage_users2teams), cellRenderer: BinaryRenderer },
+        { field: 'can_manage_compounds', headerName: i18next.t('can-manage-compounds'), valueGetter: p => yesNo(p.data.can_manage_compounds), filterValueGetter: p => yesNo(p.data.can_manage_compounds), cellRenderer: BinaryRenderer },
+        { field: 'can_manage_inventory_locations', headerName: i18next.t('can-manage-inventory-locations'), valueGetter: p => yesNo(p.data.can_manage_inventory_locations), filterValueGetter: p => yesNo(p.data.can_manage_inventory_locations), cellRenderer: BinaryRenderer },
     ]);
 
     // Load data on component mount

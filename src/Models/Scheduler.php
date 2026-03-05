@@ -238,7 +238,7 @@ final class Scheduler extends AbstractRest
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
             'title', 'datetime' => $this->update($params),
-            default => throw new ImproperActionException('Invalid target.'),
+            default => throw new ImproperActionException('Incorrect target parameter.'),
         };
         return $this->readOne();
     }

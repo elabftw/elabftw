@@ -230,6 +230,31 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => '', 'end' => ''));
     }
 
+    public function testPatchInvalidTarget(): void
+    {
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->patch(Action::Update, array('target' => 'banana'));
+    }
+
+    public function testPatchNothingToUpdate(): void
+    {
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $res = $Scheduler->patch(Action::Update, array('target' => 'datetime'));
+        $this->assertIsArray($res);
+    }
+
+    public function testPatchDatetimeMissingStartOrEnd(): void
+    {
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->patch(Action::Update, array(
+            'target' => 'datetime',
+            'start' => new DateTimeImmutable('+1 hour')->format('c'),
+            // missing end
+        ));
+    }
+
     public function testDestroyNonCancellableEvent(): void
     {
         $Items = $this->getFreshBookableItem(2);

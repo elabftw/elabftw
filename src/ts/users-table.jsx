@@ -28,7 +28,7 @@ const enabledDisabled = v => v === 1 ? i18next.t('enabled') : i18next.t('disable
 const lastLoginText = v => v === null ? i18next.t('never') : v;
 const validUntilText = v => v === null ? i18next.t('forever') : v;
 // allow filtering for "admin" as well as team name
-const teamsText = teams => teams?.map(t => `${t.name} ${t.is_admin ? 'admin' : 'user'}`).join(' ') ?? '';
+const teamsText = teams => teams?.map(t => `${t.name} ${t.is_admin ? i18next.t('admin') : i18next.t('user')}`).join(' ') ?? '';
 
 async function toggleUserModal(user) {
   const textParams = [
@@ -78,13 +78,11 @@ if (document.getElementById('users-table')) {
     };
     // renderer for teams column
     const TeamsRenderer = ({ value }) => {
-      if (!value) return null;
-      const items = value.map(team => (
-        <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`} key={team.id} data-id={team.id}>
-          {team.name}
+      return (
+        <span>{value.map(team => (
+          <span key={team.id} data-id={team.id} className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`}>{team.name}</span>))}
         </span>
-      ));
-      return <span>{items}</span>;
+      );
     };
 
     const LastLoginRenderer = ({ value }) => {

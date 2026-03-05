@@ -45,6 +45,8 @@ const t = {
     "error-no-filename": "Nama file tidak ada.",
     "error-fetch-request": "Terjadi kesalahan saat mengambil data yang diminta: {{error}}",
     "error-parsing-metadata": "Terjadi kesalahan saat mem-parsing metadata (bidang tambahan). Kesalahan lengkap telah dicatat ke konsol browser.",
+    "event-bound-experiment": "Event is bound to an experiment: {{- link }}.",
+    "event-bound-item": "Event is bound to an item: {{- link }}.",
     "export": "Ekspor",
     "export-success": "Export successful.",
     "extra-fields": "Kolom tambahan",

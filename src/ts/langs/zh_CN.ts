@@ -45,6 +45,8 @@ const t = {
     "error-no-filename": "文件名缺失。",
     "error-fetch-request": "在获取请求的数据时发生错误：{{error}}",
     "error-parsing-metadata": "解析元数据（额外字段）时发生错误。完整错误已记录到浏览器控制台。",
+    "event-bound-experiment": "Event is bound to an experiment: {{- link }}.",
+    "event-bound-item": "Event is bound to an item: {{- link }}.",
     "export": "导出",
     "export-success": "导出成功。",
     "extra-fields": "额外字段",

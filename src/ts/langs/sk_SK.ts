@@ -45,6 +45,8 @@ const t = {
     "error-no-filename": "File name is missing.",
     "error-fetch-request": "There was an error while fetching the requested data: {{error}}",
     "error-parsing-metadata": "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.",
+    "event-bound-experiment": "Event is bound to an experiment: {{- link }}.",
+    "event-bound-item": "Event is bound to an item: {{- link }}.",
     "export": "Export",
     "export-success": "Export successful.",
     "extra-fields": "Extra polia",

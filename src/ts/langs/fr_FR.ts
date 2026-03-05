@@ -45,6 +45,8 @@ const t = {
     "error-no-filename": "Le nom du fichier est manquant.",
     "error-fetch-request": "Une erreur s'est produite lors de l'extraction des données demandées : {{error}}",
     "error-parsing-metadata": "Une erreur s'est produite lors de l'analyse des métadonnées (champs supplémentaires). L'erreur complète a été enregistrée dans la console du navigateur.",
+    "event-bound-experiment": "Event is bound to an experiment: {{- link }}.",
+    "event-bound-item": "Event is bound to an item: {{- link }}.",
     "export": "Export",
     "export-success": "Exportation réussie.",
     "extra-fields": "Champs supplémentaires",

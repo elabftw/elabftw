@@ -185,11 +185,13 @@ if (window.location.pathname === '/scheduler.php') {
       $('#eventBoundExp').html('');
       $('#eventBoundDb').html('');
       if (extendedProps.experiment != null) {
-        $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>.`);
+        const link = `<a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>`;
+        $('#eventBoundExp').html(i18next.t('event-bound-experiment', { link }));
         $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
       }
       if (extendedProps.item_link != null) {
-        $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>.`);
+        const link = `<a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>`;
+        $('#eventBoundDb').html(i18next.t('event-bound-item', { link }));
         $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
       }
     }

@@ -45,6 +45,8 @@ const t = {
     "error-no-filename": "ファイル名がありません。",
     "error-fetch-request": "要求されたデータのフェッチ中にエラーが発生しました：{{error}}",
     "error-parsing-metadata": "メタデータ（余分なフィールド）の解析中にエラーが発生しました。完全なエラーがブラウザコンソールに記録されました。",
+    "event-bound-experiment": "Event is bound to an experiment: {{- link }}.",
+    "event-bound-item": "Event is bound to an item: {{- link }}.",
     "export": "書き出す",
     "export-success": "Export successful.",
     "extra-fields": "追加項目",

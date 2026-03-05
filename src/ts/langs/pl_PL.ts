@@ -45,6 +45,8 @@ const t = {
     "error-no-filename": "Brak nazwy pliku",
     "error-fetch-request": "Wystąpił błąd podczas pobierania żądanych danych: ",
     "error-parsing-metadata": "Wystąpił błąd podczas analizowania metadanych (dodatkowe pola). Pełny błąd został zarejestrowany w konsoli przeglądarki.",
+    "event-bound-experiment": "Event is bound to an experiment: {{- link }}.",
+    "event-bound-item": "Event is bound to an item: {{- link }}.",
     "export": "Eksport",
     "export-success": "Eksport wykonany z sukcesem",
     "extra-fields": "Dodatkowe pola",

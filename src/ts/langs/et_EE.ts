@@ -45,6 +45,8 @@ const t = {
     "error-no-filename": "Failinimi puudub.",
     "error-fetch-request": "Taotletud andmete toomisel ilmnes viga: {{error}}",
     "error-parsing-metadata": "Metaandmete (lisaväljade) töötlemisel ilmnes viga. Täielik viga logiti brauseri konsooli.",
+    "event-bound-experiment": "Event is bound to an experiment: {{- link }}.",
+    "event-bound-item": "Event is bound to an item: {{- link }}.",
     "export": "Ekspordi",
     "export-success": "Export successful.",
     "extra-fields": "Lisaväljad",

@@ -45,6 +45,8 @@ const t = {
     "error-no-filename": "Falta el nom d'arxiu.",
     "error-fetch-request": "Hi ha hagut un error d'obtenció de les dades requerides: {{error}}",
     "error-parsing-metadata": "Hi ha hagut un error analitzant les metadades (camps extra). S'ha registrat l'error complert a la consola del navegador.",
+    "event-bound-experiment": "Event is bound to an experiment: {{- link }}.",
+    "event-bound-item": "Event is bound to an item: {{- link }}.",
     "export": "Exporta",
     "export-success": "Exportat amb èxit.",
     "extra-fields": "Camps extra",

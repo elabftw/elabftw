@@ -210,7 +210,7 @@ export function getTinymceBaseConfig(page: string): object {
   }
 
   const isDark = document.documentElement.classList.contains('dark-mode');
-  const endpoint = entity.type === EntityType.Experiment ? EntityType.Experiment : EntityType.ItemType;
+  const endpoint = entity.type === EntityType.Experiment ? EntityType.Template : EntityType.ItemType;
 
   return {
     selector: '.mceditable',

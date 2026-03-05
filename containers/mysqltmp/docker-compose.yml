@@ -1,0 +1,28 @@
+networks:
+  default:
+    name: elabftw-net
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysqltmp
+    healthcheck:
+      test: "/usr/bin/mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --execute 'SHOW DATABASES;'"
+      interval: 2s
+      timeout: 5s
+      retries: 20
+    cap_drop:
+      - AUDIT_WRITE
+      - MKNOD
+      - SYS_CHROOT
+      - SETFCAP
+      - NET_RAW
+    environment:
+      - MYSQL_ROOT_PASSWORD=phpunit
+      - MYSQL_DATABASE=phpunit
+      - MYSQL_USER=phpunit
+      - MYSQL_PASSWORD=phpunit
+      - TZ=Europe/Paris
+    # run the full database in tmpfs!
+    tmpfs:
+      - /var/lib/mysql:rw,noexec,nosuid,size=600m
+      - /tmp:rw,noexec,nosuid,size=50m

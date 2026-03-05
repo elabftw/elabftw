@@ -293,18 +293,16 @@ class Email
                 $map = array('days' => 'DAY', 'month' => 'MONTH', 'years' => 'YEAR');
                 $unit = $map[$range['unit'] ?? 'days'] ?? 'DAY';
                 $direction = $range['direction'] ?? 'past';
-                if ($direction === 'past') {
-                    $filter = "AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL $value $unit) AND NOW()
-                    AND team_events.item = :id";
-                } elseif ($direction === 'future') {
-                    $filter = "AND team_events.start BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL $value $unit)
-                    AND team_events.item = :id";
-                } else {
-                    // both past & future
-                    $filter = "AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL $value $unit)
-                    AND DATE_ADD(NOW(), INTERVAL $value $unit)
-                    AND team_events.item = :id";
+                $start = 'NOW()';
+                $end = 'NOW()';
+                if ($direction !== 'future') {
+                    $start = "DATE_SUB(NOW(), INTERVAL $value $unit)";
                 }
+                if ($direction !== 'past') {
+                    $end = "DATE_ADD(NOW(), INTERVAL $value $unit)";
+                }
+                $filter = "AND team_events.start BETWEEN $start AND $end
+                AND team_events.item = :id";
                 break;
             default:
                 $filter = '';

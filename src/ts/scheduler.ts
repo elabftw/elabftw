@@ -512,7 +512,6 @@ if (window.location.pathname === '/scheduler.php') {
         target: target.value,
         targetid: parseInt(target.dataset.targetid, 10),
       };
-      console.log(payload);
       if (target.value === 'bookable_item_f') {
         payload.range_direction = (document.getElementById('cancelEventRangeDirection') as HTMLSelectElement).value;
         payload.range_value = parseInt((document.getElementById('cancelEventRangeValue') as HTMLInputElement).value, 10);

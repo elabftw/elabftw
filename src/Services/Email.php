@@ -292,11 +292,17 @@ class Email
                 $value = (int) ($range['value'] ?? 7);
                 $map = array('days' => 'DAY', 'month' => 'MONTH', 'years' => 'YEAR');
                 $unit = $map[$range['unit'] ?? 'days'] ?? 'DAY';
-                if (($range['direction'] ?? 'past') === 'past') {
+                $direction = $range['direction'] ?? 'past';
+                if ($direction === 'past') {
                     $filter = "AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL $value $unit) AND NOW()
                     AND team_events.item = :id";
-                } else {
+                } elseif ($direction === 'future') {
                     $filter = "AND team_events.start BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL $value $unit)
+                    AND team_events.item = :id";
+                } else {
+                    // both past & future
+                    $filter = "AND team_events.start BETWEEN DATE_SUB(NOW(), INTERVAL $value $unit)
+                    AND DATE_ADD(NOW(), INTERVAL $value $unit)
                     AND team_events.item = :id";
                 }
                 break;
@@ -307,7 +313,6 @@ class Email
         $sql = sprintf('%s %s %s', $select, $where, $filter);
         $Db = Db::getConnection();
         $req = $Db->prepare($sql);
-        error_log($sql);
         if ($target->needsId()) {
             $req->bindParam(':id', $targetId, PDO::PARAM_INT);
         }

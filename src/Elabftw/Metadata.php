@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
-
 use Elabftw\Exceptions\ImproperActionException;
+
 use function array_column;
 use function array_combine;
 use function count;

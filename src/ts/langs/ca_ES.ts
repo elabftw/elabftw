@@ -76,7 +76,6 @@ const t = {
     "name": "Nom",
     "new-spreadsheet": "Nou full de càlcul",
     "no-self-links": "No es permet enllaçar un element amb ell mateix. Seleccioneu un objectiu diferent.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No s'han trobat resultats coincidents.",
     "not-set": "No configurat",
     "nothing-selected": "Res seleccionat!",

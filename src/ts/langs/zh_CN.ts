@@ -76,7 +76,6 @@ const t = {
     "name": "名称",
     "new-spreadsheet": "新建电子表格",
     "no-self-links": "不允许链接到资源自身。请选择不同的目标。",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "没有找到匹配的结果。",
     "not-set": "未设置",
     "nothing-selected": "未选中任何选项！",

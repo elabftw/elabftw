@@ -76,7 +76,6 @@ const t = {
     "name": "Nazwa",
     "new-spreadsheet": "Nowy arkusz",
     "no-self-links": "Łączenie elementu ze sobą jest niedozwolone. Wybierz inny cel.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "Brak pasujących wyników",
     "not-set": "Nie ustawiony",
     "nothing-selected": "Niczego nie wybrano!",

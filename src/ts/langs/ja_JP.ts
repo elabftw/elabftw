@@ -76,7 +76,6 @@ const t = {
     "name": "名前",
     "new-spreadsheet": "新しいスプレッドシート",
     "no-self-links": "アイテムをそれ自体にリンクすることはできません。別のターゲットを選択してください。",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "一致する結果が見つかりませんでした。",
     "not-set": "設定されていない",
     "nothing-selected": "何も選択されていません！",

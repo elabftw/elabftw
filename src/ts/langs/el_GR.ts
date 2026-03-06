@@ -76,7 +76,6 @@ const t = {
     "name": "Όνομα",
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Δεν επιτρέπεται η σύνδεση ενός στοιχείου με τον εαυτό του. Επιλέξτε διαφορετικό στόχο.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No matching result found.",
     "not-set": "Δεν ρυθμίστηκε",
     "nothing-selected": "Τίποτα επιλεγμένο!",

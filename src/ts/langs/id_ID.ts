@@ -76,7 +76,6 @@ const t = {
     "name": "Nama",
     "new-spreadsheet": "Spreadsheet baru",
     "no-self-links": "Tidak diperbolehkan menautkan item ke item itu sendiri. Silakan pilih target yang berbeda.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No matching result found.",
     "not-set": "Tidak diatur",
     "nothing-selected": "Tidak ada yang dipilih!",

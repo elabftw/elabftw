@@ -76,7 +76,6 @@ const t = {
     "name": "Meno",
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Prepojenie položky so sebou samým nie je povolené. Vyberte iný cieľ.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No matching result found.",
     "not-set": "Nenastavené",
     "nothing-selected": "Nič nevybrané!",

@@ -76,7 +76,6 @@ const t = {
     "name": "Nome",
     "new-spreadsheet": "Nuovo foglio di calcolo",
     "no-self-links": "Non è consentito collegare un elemento a se stesso. Seleziona un target diverso.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "Non è stato trovato alcun risultato corrispondente.",
     "not-set": "Non impostato",
     "nothing-selected": "Nessuna selezione!",

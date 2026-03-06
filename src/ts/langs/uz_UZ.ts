@@ -76,7 +76,6 @@ const t = {
     "name": "Ism",
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Elementni o'ziga bog'lashga ruxsat berilmaydi. Boshqa maqsadni tanlang.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No matching result found.",
     "not-set": "Belgilanmagan",
     "nothing-selected": "Hech narsa tanlanmagan!",

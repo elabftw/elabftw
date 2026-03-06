@@ -76,7 +76,6 @@ const t = {
     "name": "Nimi",
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Kohteen linkittäminen itseensä ei ole sallittua. Valitse toinen kohde.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No matching result found.",
     "not-set": "Ei valittu",
     "nothing-selected": "Ei valittu mitään!",

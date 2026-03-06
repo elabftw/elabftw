@@ -76,7 +76,6 @@ const t = {
     "name": "Name",
     "new-spreadsheet": "Neue Tabelle",
     "no-self-links": "Eine Ressource kann nicht mit sich selbst verknüpft werden. Bitte wählen Sie ein anderes Ziel.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "Kein passendes Ergebnis gefunden.",
     "not-set": "Nicht festgelegt",
     "nothing-selected": "Nichts ausgewählt!",

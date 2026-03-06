@@ -112,7 +112,6 @@ final class i18n4Js
             'name' => _('Name'),
             'new-spreadsheet' => _('New spreadsheet'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
-            'no-entity-bound' => _('There is no {{entity, string}} bound.'),
             'not-found' => _('No matching result found.'),
             'not-set' => _('Not set'),
             'nothing-selected' => _('Nothing selected!'),

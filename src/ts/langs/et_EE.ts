@@ -76,7 +76,6 @@ const t = {
     "name": "Nimi",
     "new-spreadsheet": "Uus arvutustabel",
     "no-self-links": "Üksuse iseendaga linkimine pole lubatud. Palun valige mõni muu sihtmärk.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "Sobivat tulemust ei leitud.",
     "not-set": "Pole määratud",
     "nothing-selected": "Midagi pole valitud!",

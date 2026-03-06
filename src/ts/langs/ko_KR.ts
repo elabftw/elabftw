@@ -76,7 +76,6 @@ const t = {
     "name": "이름",
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "항목 자체를 링크하는 것은 허용되지 않습니다. 다른 타겟을 선택하세요.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No matching result found.",
     "not-set": "설정되지 않음",
     "nothing-selected": "아무 것도 선택되지 않았습니다!",

@@ -76,7 +76,6 @@ const t = {
     "name": "Jméno",
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Propojení položky se sebou samou není povoleno. Vyberte prosím jiný cíl.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No matching result found.",
     "not-set": "Nenastavený",
     "nothing-selected": "Nic není vybráno!",

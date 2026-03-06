@@ -76,7 +76,6 @@ const t = {
     "name": "Ime",
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Povezovanje predmeta samega s seboj ni dovoljeno. Izberite drug cilj.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No matching result found.",
     "not-set": "Ni nastavljeno",
     "nothing-selected": "Nič izbranega!",

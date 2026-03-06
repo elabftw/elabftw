@@ -76,7 +76,6 @@ const t = {
     "name": "Имя",
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Связывание элемента с самим собой не допускается. Пожалуйста, выберите другую цель.",
-    "no-entity-bound": "There is no {{entity, string}} bound.",
     "not-found": "No matching result found.",
     "not-set": "Не задано",
     "nothing-selected": "Ничего не выбрано!",

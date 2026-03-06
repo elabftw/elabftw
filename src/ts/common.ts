@@ -583,7 +583,7 @@ on('transfer-ownership', async () => {
   const params = collectForm(document.getElementById('ownershipTransferForm'));
   const userid = parseInt(params['targetUserId'].split(' ')[0] ?? '', 10);
   ApiC.notifOnSaved = false;
-  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid });
+  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid, team: parseInt(params['targetTeamId']) });
   sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
   window.location.reload();
 });

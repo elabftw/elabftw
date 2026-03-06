@@ -1968,3 +1968,9 @@ input:user-invalid {
 #doodleCanvas {
   touch-action: none;
 }
+
+// on sysconfig page
+.logo-preview svg {
+  height: 100px;
+  width: 300px;
+}

@@ -138,6 +138,27 @@ function renderEndpoints(endpoints: Endpoint[]): void {
   });
 }
 
+function pickSvgText(): Promise<string | null> {
+  return new Promise((resolve, reject) => {
+    const i = document.createElement('input');
+    i.type = 'file';
+    i.accept = '.svg,image/svg+xml';
+
+    i.onchange = async () => {
+      const f = i.files?.[0];
+      if (!f) return resolve(null);
+      if (!f.name.toLowerCase().endsWith('.svg') && f.type && f.type !== 'image/svg+xml') {
+        return reject(new Error('Please choose an SVG file.'));
+      }
+      const text = await f.text();
+      if (!text.includes('<svg')) return reject(new Error('Not valid SVG.'));
+      resolve(text);
+    };
+
+    i.click();
+  });
+}
+
 // GET the latest version information
 function checkForUpdate() {
   const updateUrl = 'https://get.elabftw.net/updates.json';
@@ -196,6 +217,26 @@ function checkForUpdate() {
 if (window.location.pathname === '/sysconfig.php') {
 
   checkForUpdate();
+
+  on('edit-logo', async (el: HTMLElement) => {
+    const picked = await pickSvgText();
+    if (!picked) return; // cancelled
+    ApiC.patch('config', {[el.dataset.target!]: picked}).then(() => reloadElements(['brandingLogos']));
+  });
+
+  on('reset-logo', async (el: HTMLElement) => {
+    // map config key -> default asset path
+    const defaults: Record<string, string> = {
+      logo_header_svg: '/assets/images/logo-header.svg',
+      logo_light_svg: '/assets/images/logo-light.svg',
+      logo_dark_svg: '/assets/images/logo-dark.svg',
+      favicon_svg: '/assets/images/favicon.svg',
+    };
+    const url = defaults[el.dataset.target];
+    const res = await fetch(url, { cache: 'no-cache' });
+    const defaultSvg = await res.text();
+    ApiC.patch('config', {[el.dataset.target!]: defaultSvg}).then(() => reloadElements(['brandingLogos']));
+  });
 
   // TEST EMAIL
   on('send-test-email', async (el: HTMLElement, event: Event) => {

@@ -58,10 +58,15 @@ final class Config extends AbstractRest
 
     /**
      * Insert the default values in the sql config table
-     * Only run once of first ever page load
+     * Only run once on first ever page load
      */
     public function create(): bool
     {
+        $logoHeaderSvg = file_get_contents(dirname(__DIR__, 2) . '/web/assets/images/logo-header.svg');
+        $logoLightSvg = file_get_contents(dirname(__DIR__, 2) . '/web/assets/images/logo-light.svg');
+        $logoDarkSvg = file_get_contents(dirname(__DIR__, 2) . '/web/assets/images/logo-dark.svg');
+        $faviconSvg = file_get_contents(dirname(__DIR__, 2) . '/web/assets/images/favicon.svg');
+
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
             ('admin_panel_custom_msg', ''),
@@ -210,7 +215,11 @@ final class Config extends AbstractRest
             ('users_validity_is_externally_managed', '0'),
             ('dspace_host', ''),
             ('dspace_user', ''),
-            ('dspace_password', '')";
+            ('dspace_password', ''),
+            ('logo_header_svg', $logoHeaderSvg),
+            ('logo_light_svg', $logoLightSvg),
+            ('logo_dark_svg', $logoDarkSvg),
+            ('favicon_svg', $faviconSvg)";
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', SchemaVersionChecker::REQUIRED_SCHEMA);

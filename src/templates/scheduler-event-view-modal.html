@@ -3,40 +3,91 @@
     {# "Event" will be replaced with real title name by js #}
     <h4 id='viewTitle'>{{ 'Title'|trans }}</h4>
     <div id='viewDatetime' class='mb-3'></div>
+
+
+
+
+
+
+
+
+
+
     <hr>
-    <h5>{{ 'Binding'|trans }}</h5>
-    {# =============== BIND EXPERIMENT =============== #}
-    <div class='mt-2'>
-      <i class='fas fa-link mr-1'></i><span class='d-inline' id='bindExpInputLabel'>{{ 'Bind an experiment'|trans }}</span>
-      <div id='eventBoundExp'></div>
-      <div class='input-group mb-3'>
-        <div class='input-group-prepend'>
-          <button class='btn btn-danger' data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' type='button'>{{ 'Unbind'|trans }}</button>
-          <span class='input-group-text'>{{ 'Search'|trans }}</span>
-        </div>
-        <input type='text' data-action='autocomplete' data-target='experiments' data-identifier='binddivexp' class='form-control bindInput' aria-labelledby='bindExpInputLabel' />
-        <div class='input-group-append'>
-          <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
-        </div>
-      </div>
-      <div id='autocompleteAnchorDiv_binddivexp'></div>
-    </div>
-    {# =============== BIND ITEM =============== #}
-    <div class='mt-2'>
-      <i class='fas fa-link mr-1'></i><span class='d-inline' id='bindItemInputLabel'>{{ 'Bind a resource'|trans }}</span>
-      <div id='eventBoundDb'></div>
-      <div class='input-group mb-3'>
-        <div class='input-group-prepend'>
-          <button class='btn btn-danger' data-action='scheduler-rm-bind' data-type='item_link' data-eventid='' type='button'>{{ 'Unbind'|trans }}</button>
-          <span class='input-group-text'>{{ 'Search'|trans }}</span>
-        </div>
-        <input type='text' data-action='autocomplete' data-target='items' data-identifier='binddivdb' class='form-control bindInput' aria-labelledby='bindItemInputLabel' />
-        <div class='input-group-append'>
-          <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
+    <h4>{{ 'Bindings'|trans }}</h4>
+    <div class='smallgray mb-2'>{{ 'Connect this event to experiments or resources.'|trans }}</div>
+    <h6>{{ 'Current bindings'|trans }}</h6>
+    <div class='box sm mb-4'>
+      {# =============== CURRENT BIND EXPERIMENT =============== #}
+      <span class='font-weight-bold'><i class='fas fa-flask mr-1'></i>{{ 'Experiment'|trans }}</span>
+      <div class='d-flex justify-content-between box sm mb-4'>
+        {# TODO: TITLE for VIEW in done in ts #}
+        <span>Experiment 15X</span>
+        <div>
+          {# TODO: link for VIEW in done in ts #}
+          <button class='btn btn-ghost btn-sm mr-2'><i class='fas fa-eye fa-fw mr-1'></i>{{ 'View'|trans }}</button>
+          <button class='btn btn-danger btn-sm' data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' type='button'><i class='fas fa-link mr-1 color-white'></i>{{ 'Unbind'|trans }}</button>
         </div>
       </div>
-      <div id='autocompleteAnchorDiv_binddivdb'></div>
+      {# =============== CURRENT BIND RESOURCE =============== #}
+      <span class='font-weight-bold mt-2'><i class='fas fa-cubes-stacked mr-1'></i>{{ 'Resource'|trans }}</span>
+      <div class='d-flex justify-content-between box sm'>
+        {# TODO: TITLE for VIEW in done in ts #}
+        <span>Resource 15X</span>
+        <div>
+          {# TODO: link for VIEW in done in ts #}
+          <button class='btn btn-ghost btn-sm mr-2'><i class='fas fa-eye fa-fw mr-1'></i>{{ 'View'|trans }}</button>
+          <button class='btn btn-danger btn-sm' data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' type='button'><i class='fas fa-link mr-1 color-white'></i>{{ 'Unbind'|trans }}</button>
+        </div>
+      </div>
     </div>
+
+    <h6>{{ 'Add bindings'|trans }}</h6>
+    <div class='smallgray mb-4'>{{ 'If an experiment or resource is currently bound, it will be replaced.'|trans }}</div>
+    {# =============== BIND NEW EXPERIMENT =============== #}
+    <div class='box sm'>
+      <div class='mt-2'>
+      <div class='font-weight-bold mb-2' id='bindExpInputLabel'><i class='fas fa-flask mr-1'></i>{{ 'Bind an experiment'|trans }}</div>
+        <div id='eventBoundExp'></div>
+        <div class='input-group mb-3'>
+          <div class='input-group-prepend'>
+            <span class='input-group-text'>{{ 'Search'|trans }}</span>
+          </div>
+          <input type='text' data-action='autocomplete' data-target='experiments' data-identifier='binddivexp' class='form-control bindInput' aria-labelledby='bindExpInputLabel' />
+          <div class='input-group-append'>
+            <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
+          </div>
+        </div>
+        <div id='autocompleteAnchorDiv_binddivexp'></div>
+      </div>
+      {# =============== BIND NEW ITEM =============== #}
+      <div class='mt-2'>
+      <div class='font-weight-bold mb-2' id='bindItemInputLabel'><i class='fas fa-cubes-stacked mr-1'></i>{{ 'Bind an resource'|trans }}</div>
+
+        <div id='eventBoundDb'></div>
+        <div class='input-group mb-3'>
+          <div class='input-group-prepend'>
+            <span class='input-group-text'>{{ 'Search'|trans }}</span>
+          </div>
+          <input type='text' data-action='autocomplete' data-target='items' data-identifier='binddivdb' class='form-control bindInput' aria-labelledby='bindItemInputLabel' />
+          <div class='input-group-append'>
+            <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
+          </div>
+        </div>
+        <div id='autocompleteAnchorDiv_binddivdb'></div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
   </div>
   <div class='modal-footer d-flex justify-content-end'>
     <button type='button' class='btn btn-secondary mr-2' data-action='scheduler-edit-mode'>{{ 'Edit'|trans }}</button>

@@ -1006,6 +1006,10 @@ tr:first-child td {
   margin-top: 10px;
   overflow: auto;
   padding: 20px;
+
+  &.sm {
+    padding: 12px;
+  }
 }
 
 .box section {

@@ -91,6 +91,24 @@ function clearBoundDiv(entity: 'experiment' | 'item') {
   view.removeAttribute('href');
 }
 
+function createBoundDiv(
+  entity: 'experiment' | 'item',
+  title: string,
+  url: string
+) {
+  const suffix = entity === 'experiment' ? 'Exp' : 'Item';
+
+  $(`#eventBound${suffix}`).html(title);
+
+  const view = document.getElementById(`viewBind${suffix}`) as HTMLAnchorElement;
+  view.href = url;
+  view.classList.remove('disabled');
+
+  ['editBind', 'unbind'].forEach(id =>
+    document.getElementById(`${id}${suffix}`).toggleAttribute('disabled', false)
+  );
+}
+
 function lockScopeButton(selectedItems: string[]): void {
   const scopeBtn = document.getElementById('scopeEventBtn');
   const lockedBtn = document.getElementById('scopeLocked');
@@ -185,26 +203,40 @@ if (window.location.pathname === '/scheduler.php') {
       // start by clearing the divs
       clearBoundDiv('experiment');
       clearBoundDiv('item');
-      if (extendedProps.experiment != null) {
-        const viewBtn = document.getElementById('viewBindExp') as HTMLAnchorElement;
-        viewBtn.href = `experiments.php?mode=view&id=${extendedProps.experiment}`;
-        viewBtn.classList.remove('disabled');
-        $('#eventBoundExp').html(extendedProps.experiment_title);
-        document.getElementById('viewBindExp').removeAttribute('disabled');
-        document.getElementById('editBindExp').removeAttribute('disabled');
-        document.getElementById('unbindExp').removeAttribute('disabled');
-          $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+      // if (extendedProps.experiment != null) {
+      //   const viewBtn = document.getElementById('viewBindExp') as HTMLAnchorElement;
+      //   viewBtn.href = `experiments.php?mode=view&id=${extendedProps.experiment}`;
+      //   viewBtn.classList.remove('disabled');
+      //   $('#eventBoundExp').html(extendedProps.experiment_title);
+      //   document.getElementById('viewBindExp').removeAttribute('disabled');
+      //   document.getElementById('editBindExp').removeAttribute('disabled');
+      //   document.getElementById('unbindExp').removeAttribute('disabled');
+      //     $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+      // }
+      if (extendedProps.experiment) {
+        createBoundDiv(
+          'experiment',
+          extendedProps.experiment_title,
+          `experiments.php?mode=view&id=${extendedProps.experiment}`
+        );
       }
-      if (extendedProps.item_link != null) {
-        const viewBtn = document.getElementById('viewBindItem') as HTMLAnchorElement;
-        viewBtn.href = `database.php?mode=view&id=${extendedProps.item_link}`;
-        viewBtn.classList.remove('disabled');
-        $('#eventBoundItem').html(extendedProps.item_link_title);
-        document.getElementById('viewBindItem').removeAttribute('disabled');
-        document.getElementById('editBindItem').removeAttribute('disabled');
-        document.getElementById('unbindItem').removeAttribute('disabled');
-        $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
+      if (extendedProps.item_link) {
+        createBoundDiv(
+          'item',
+          extendedProps.item_link_title,
+          `database.php?mode=view&id=${extendedProps.item_link}`
+        );
       }
+      // if (extendedProps.item_link != null) {
+      //   const viewBtn = document.getElementById('viewBindItem') as HTMLAnchorElement;
+      //   viewBtn.href = `database.php?mode=view&id=${extendedProps.item_link}`;
+      //   viewBtn.classList.remove('disabled');
+      //   $('#eventBoundItem').html(extendedProps.item_link_title);
+      //   document.getElementById('viewBindItem').removeAttribute('disabled');
+      //   document.getElementById('editBindItem').removeAttribute('disabled');
+      //   document.getElementById('unbindItem').removeAttribute('disabled');
+      //   $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
+      // }
     }
 
     // create self-removable badge for selected items (in scheduler & modal)

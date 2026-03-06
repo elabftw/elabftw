@@ -35,6 +35,7 @@
     <div class='smallgray'>{{ 'If an experiment or resource is currently bound, it will be replaced.'|trans }}</div>
     {# =============== BIND NEW EXPERIMENT =============== #}
     <div class='box sm'>
+      <div id='bindInputsExp'>
       <div class='font-weight-bold mb-2' id='bindExpInputLabel'><i class='fas fa-flask mr-1'></i>{{ 'Bind an experiment'|trans }}</div>
         <div class='input-group '>
           <div class='input-group-prepend'>
@@ -46,18 +47,21 @@
           </div>
         </div>
         <div id='autocompleteAnchorDiv_binddivexp'></div>
+      </div>
       {# =============== BIND NEW ITEM =============== #}
-      <div class='font-weight-bold my-2' id='bindItemInputLabel'><i class='fas fa-cubes-stacked mr-1'></i>{{ 'Bind an resource'|trans }}</div>
-        <div class='input-group'>
-          <div class='input-group-prepend'>
-            <span class='input-group-text'>{{ 'Search'|trans }}</span>
+      <div id='bindInputsExp'>
+        <div class='font-weight-bold my-2' id='bindItemInputLabel'><i class='fas fa-cubes-stacked mr-1'></i>{{ 'Bind an resource'|trans }}</div>
+          <div class='input-group'>
+            <div class='input-group-prepend'>
+              <span class='input-group-text'>{{ 'Search'|trans }}</span>
+            </div>
+            <input type='text' data-action='autocomplete' data-target='items' data-identifier='binddivdb' class='form-control bindInput' aria-labelledby='bindItemInputLabel' />
+            <div class='input-group-append'>
+              <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
+            </div>
           </div>
-          <input type='text' data-action='autocomplete' data-target='items' data-identifier='binddivdb' class='form-control bindInput' aria-labelledby='bindItemInputLabel' />
-          <div class='input-group-append'>
-            <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
-          </div>
+          <div id='autocompleteAnchorDiv_binddivdb'></div>
         </div>
-        <div id='autocompleteAnchorDiv_binddivdb'></div>
     </div>
 
 

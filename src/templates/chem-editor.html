@@ -2,10 +2,7 @@
 {% block body %}
 {% include('create-compound-modal.html') %}
 {% include('edit-compound-modal.html') %}
-{# loading spinner #}
-<div class='d-flex justify-content-center' id='loading-spinner'>
-  <div class='lds-dual-ring'></div>
-</div>
+{% include 'loading-spinner.html' %}
 <div id='ketcher-root' class='my-2'></div>
 <div id='ketcher-actions'>
   <div class='input-group my-2'>

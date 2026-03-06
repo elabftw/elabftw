@@ -1370,38 +1370,96 @@ components:
     event:
       type: object
       properties:
+        id:
+          type: integer
+          example: 13
+        team:
+          type: integer
+          example: 1
+        team_name:
+          type: string
+          example: 'Alpha'
         title:
           type: string
           description: Optional comment added to the event
-        id:
+          example: '[pET-32a(+)] Afternoon experiment. (Titi Koelpin)'
+        title_only:
+          type: string
+          description: Title of the event.
+          nullable: true
+          example: 'Afternoon experiment'
+        book_cancel_minutes:
           type: integer
-        item:
+          nullable: true
+          description: Minutes before start when cancellation is allowed
+        book_is_cancellable:
           type: integer
-          description: ID of the Resource being booked
-          example: 12
+          description: Whether the booking can be cancelled (1 = yes, 0 = no)
+          example: 1
+        canbook:
+          type: integer
+          description: Whether the event is bookable (1 = yes, 0 = no)
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-03-02 16:14:14'
+        modified_at:
+          type: string
+          format: date-time
+          example: '2026-03-02 16:29:27'
         start:
           type: string
-          example: "2026-01-20 12:00:00"
+          format: date-time
+          example: '2026-03-04 17:30:00'
         end:
           type: string
-          example: "2026-01-20 14:00:00"
+          format: date-time
+          example: '2026-03-04 20:00:00'
+        event_duration_minutes:
+          type: integer
+          example: 150
         userid:
           type: integer
-        item_title:
-          type: string
-          description: Title of the Resource being booked
-        color:
-          type: string
+          example: 2
         fullname:
           type: string
-        item_link:
-          type: integer
-        item_link_title:
-          type: string
+          description: Full name of the user who created the event.
+          example: 'Titi Koelpin'
         experiment:
           type: integer
+          nullable: true
+          example: 20
         experiment_title:
           type: string
+          description: The experiment that has been bound to the event.
+          nullable: true
+          example: 'Effect of temperature on enzyme activity'
+        items_id:
+          type: integer
+          description: ID of the Resource being booked
+          example: 124
+        item_title:
+          type: string
+          example: 'pET-32a(+)'
+        items_category:
+          type: integer
+          nullable: true
+        items_category_title:
+          type: string
+          nullable: true
+        item_link:
+          type: integer
+          nullable: true
+          example: 132
+        item_link_title:
+          type: string
+          description: The item that has been bound to the event.
+          nullable: true
+          example: 'HEK293T'
+        color:
+          type: string
+          nullable: true
     experiment:
       allOf:
         - $ref: '#/components/schemas/entity'
@@ -4387,12 +4445,17 @@ paths:
                   type: string
                   description: A name for this booking slot.
                   default: Untitled
+                  example: 'This is an event.'
                 start:
                   type: string
-                  description: A starting date-time in ISO 8601 format.
+                  format: date-time
+                  description: ISO 8601 date-time with timezone offset.
+                  example: '2026-03-15T13:30:00+01:00'
                 end:
                   type: string
-                  description: An end date-time in ISO 8601 format.
+                  format: date-time
+                  description: ISO 8601 date-time with timezone offset.
+                  example: '2026-03-15T15:30:00+01:00'
       responses:
         '201':
           description: The booking slot has been created.
@@ -4447,6 +4510,7 @@ paths:
                   properties:
                     target:
                       type: string
+                      nullable: true
                       enum: ['datetime']
                     start:
                       type: string

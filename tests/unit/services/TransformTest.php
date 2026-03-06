@@ -54,7 +54,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
                     'created_at' => 'DATE',
                     'body' => array('event' => array('item' => 42), 'actor' => 'John'),
                 ),
-                '<span data-action="ack-notif" data-id="1" data-href="scheduler.php?item=42">'
+                '<span data-action="ack-notif" data-id="1" data-href="scheduler.php?items[]=42">'
                 . 'A booked slot was deleted from the scheduler. (John)'
                 . '</span><br><span class="relative-moment" title="DATE"></span>',
             ),

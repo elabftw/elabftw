@@ -63,7 +63,7 @@ final class Metadata
         $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
         foreach ($extraFields as $key => $field) {
             if (!is_array($field)) {
-              throw new ImproperActionException(sprintf('Invalid extra field: expected array, got %s', $key));
+                throw new ImproperActionException(sprintf('Invalid extra field: expected array, got %s', $key));
             }
         }
         uasort(

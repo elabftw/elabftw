@@ -82,12 +82,22 @@ on('back-to-event', () => setSchedulerMode('view'));
 
 function clearBoundDiv(type: string) {
   if (type === 'experiment') {
-    $('#eventBoundExp').html('');
-    $('[data-action="scheduler-rm-bind"][data-type="experiment"]').hide();
+    // TODO replace with i18n by the way i forgot to remove the previous one i added
+    $('#eventBoundExp').html('<span class="smallgray">No experiment attached.</span>');
+    // view is an anchor, doesn't support disabled
+    document.getElementById('viewBindExp').classList.add('disabled');
+    document.getElementById('viewBindExp').removeAttribute('href');
+    document.getElementById('editBindExp').setAttribute('disabled', 'disabled');
+    document.getElementById('unbindExp').setAttribute('disabled', 'disabled');
     return;
   }
-  $('#eventBoundDb').html('');
-  $('[data-action="scheduler-rm-bind"][data-type="item_link"]').hide();
+  $('#eventBoundItem').html('<span class="smallgray">No resource attached.</span>');
+  // document.getElementById('viewBindItem').setAttribute('disabled', 'disabled');
+  document.getElementById('viewBindItem').classList.add('disabled');
+  document.getElementById('viewBindItem').removeAttribute('href');
+  document.getElementById('editBindItem').setAttribute('disabled', 'disabled');
+  document.getElementById('unbindItem').setAttribute('disabled', 'disabled');
+  // $('[data-action="scheduler-rm-bind"][data-type="item_link"]').disable();
 }
 
 function lockScopeButton(selectedItems: string[]): void {
@@ -182,16 +192,24 @@ if (window.location.pathname === '/scheduler.php') {
 
     function refreshBoundDivs(extendedProps) {
       // start by clearing the divs
-      $('#eventBoundExp').html('');
-      $('#eventBoundDb').html('');
+      clearBoundDiv('experiment');
+      clearBoundDiv('item');
       if (extendedProps.experiment != null) {
-        const link = `<a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>`;
-        $('#eventBoundExp').html(i18next.t('event-bound-experiment', { link }));
-        $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+        const viewBtn = document.getElementById('viewBindExp') as HTMLAnchorElement;
+        viewBtn.href = `experiments.php?mode=view&id=${extendedProps.experiment}`;
+        $('#eventBoundExp').html(extendedProps.experiment_title);
+        document.getElementById('viewBindExp').removeAttribute('disabled');
+        document.getElementById('editBindExp').removeAttribute('disabled');
+        document.getElementById('unbindExp').removeAttribute('disabled');
+          $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
       }
       if (extendedProps.item_link != null) {
-        const link = `<a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>`;
-        $('#eventBoundDb').html(i18next.t('event-bound-item', { link }));
+        const viewBtn = document.getElementById('viewBindItem') as HTMLAnchorElement;
+        viewBtn.href = `database.php?mode=view&id=${extendedProps.item_link}`;
+        $('#eventBoundItem').html(extendedProps.item_link_title);
+        document.getElementById('viewBindItem').removeAttribute('disabled');
+        document.getElementById('editBindItem').removeAttribute('disabled');
+        document.getElementById('unbindItem').removeAttribute('disabled');
         $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
       }
     }
@@ -425,7 +443,6 @@ if (window.location.pathname === '/scheduler.php') {
           return;
         }
         setSchedulerMode('view');
-        $('[data-action="scheduler-rm-bind"]').hide();
         $('#eventModal').modal('show');
         // set the event id on the various elements
         document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);

@@ -3,16 +3,7 @@
     {# "Event" will be replaced with real title name by js #}
     <h4 id='viewTitle'>{{ 'Title'|trans }}</h4>
     <div id='viewDatetime' class='mb-3'></div>
-
-
-
-
-
-
-
-
-
-
+    {# =============== BINDINGS SECTION =============== #}
     <hr>
     <h4>{{ 'Bindings'|trans }}</h4>
     <div class='smallgray mb-2'>{{ 'Connect this event to experiments or resources.'|trans }}</div>
@@ -20,36 +11,32 @@
     <div class='box sm mb-4'>
       {# =============== CURRENT BIND EXPERIMENT =============== #}
       <span class='font-weight-bold'><i class='fas fa-flask mr-1'></i>{{ 'Experiment'|trans }}</span>
-      <div class='d-flex justify-content-between box sm mb-4'>
-        {# TODO: TITLE for VIEW in done in ts #}
-        <span>Experiment 15X</span>
+      <div class='d-flex justify-content-between box sm mb-2'>
+        <div id='eventBoundExp'></div>
         <div>
-          {# TODO: link for VIEW in done in ts #}
-          <button class='btn btn-ghost btn-sm mr-2'><i class='fas fa-eye fa-fw mr-1'></i>{{ 'View'|trans }}</button>
-          <button class='btn btn-danger btn-sm' data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' type='button'><i class='fas fa-link mr-1 color-white'></i>{{ 'Unbind'|trans }}</button>
+          <a id='viewBindExp' class='btn btn-ghost btn-sm mr-2' target='_blank'><i class="fas fa-eye fa-fw mr-1"></i> {{ 'View'|trans }}</a>
+          <button id='editBindExp' class='btn btn-secondary btn-sm mr-2'><i class='fas fa-pencil fa-fw mr-1'></i>{{ 'Edit'|trans }}</button>
+          <button id='unbindExp' class='btn btn-danger btn-sm' data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' type='button'><i class='fas fa-link mr-1 color-white'></i>{{ 'Unbind'|trans }}</button>
         </div>
       </div>
       {# =============== CURRENT BIND RESOURCE =============== #}
       <span class='font-weight-bold mt-2'><i class='fas fa-cubes-stacked mr-1'></i>{{ 'Resource'|trans }}</span>
       <div class='d-flex justify-content-between box sm'>
-        {# TODO: TITLE for VIEW in done in ts #}
-        <span>Resource 15X</span>
+        <div id='eventBoundItem'></div>
         <div>
-          {# TODO: link for VIEW in done in ts #}
-          <button class='btn btn-ghost btn-sm mr-2'><i class='fas fa-eye fa-fw mr-1'></i>{{ 'View'|trans }}</button>
-          <button class='btn btn-danger btn-sm' data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' type='button'><i class='fas fa-link mr-1 color-white'></i>{{ 'Unbind'|trans }}</button>
+          <a id='viewBindItem' class='btn btn-ghost btn-sm mr-2' target='_blank'><i class="fas fa-eye fa-fw mr-1"></i> {{ 'View'|trans }}</a>
+          <button id='editBindItem' class='btn btn-secondary btn-sm mr-2'><i class='fas fa-pencil fa-fw mr-1'></i>{{ 'Edit'|trans }}</button>
+          <button id='unbindItem' class='btn btn-danger btn-sm' data-action='scheduler-rm-bind' data-type='item_link' data-eventid='' type='button'><i class='fas fa-link mr-1 color-white'></i>{{ 'Unbind'|trans }}</button>
         </div>
       </div>
     </div>
 
     <h6>{{ 'Add bindings'|trans }}</h6>
-    <div class='smallgray mb-4'>{{ 'If an experiment or resource is currently bound, it will be replaced.'|trans }}</div>
+    <div class='smallgray'>{{ 'If an experiment or resource is currently bound, it will be replaced.'|trans }}</div>
     {# =============== BIND NEW EXPERIMENT =============== #}
     <div class='box sm'>
-      <div class='mt-2'>
       <div class='font-weight-bold mb-2' id='bindExpInputLabel'><i class='fas fa-flask mr-1'></i>{{ 'Bind an experiment'|trans }}</div>
-        <div id='eventBoundExp'></div>
-        <div class='input-group mb-3'>
+        <div class='input-group '>
           <div class='input-group-prepend'>
             <span class='input-group-text'>{{ 'Search'|trans }}</span>
           </div>
@@ -59,13 +46,9 @@
           </div>
         </div>
         <div id='autocompleteAnchorDiv_binddivexp'></div>
-      </div>
       {# =============== BIND NEW ITEM =============== #}
-      <div class='mt-2'>
-      <div class='font-weight-bold mb-2' id='bindItemInputLabel'><i class='fas fa-cubes-stacked mr-1'></i>{{ 'Bind an resource'|trans }}</div>
-
-        <div id='eventBoundDb'></div>
-        <div class='input-group mb-3'>
+      <div class='font-weight-bold my-2' id='bindItemInputLabel'><i class='fas fa-cubes-stacked mr-1'></i>{{ 'Bind an resource'|trans }}</div>
+        <div class='input-group'>
           <div class='input-group-prepend'>
             <span class='input-group-text'>{{ 'Search'|trans }}</span>
           </div>
@@ -75,7 +58,6 @@
           </div>
         </div>
         <div id='autocompleteAnchorDiv_binddivdb'></div>
-      </div>
     </div>
 
 

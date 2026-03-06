@@ -40,6 +40,7 @@ import { Action } from './interfaces';
 import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
+import {entity} from "./getEntity";
 
 type CancelNotificationPayload = {
   action: Action;
@@ -80,24 +81,14 @@ on('scheduler-edit-mode', () => setSchedulerMode('edit'));
 on('scheduler-delete-mode', () => setSchedulerMode('delete'));
 on('back-to-event', () => setSchedulerMode('view'));
 
-function clearBoundDiv(type: string) {
-  if (type === 'experiment') {
-    // TODO replace with i18n by the way i forgot to remove the previous one i added
-    $('#eventBoundExp').html('<span class="smallgray">No experiment attached.</span>');
-    // view is an anchor, doesn't support disabled
-    document.getElementById('viewBindExp').classList.add('disabled');
-    document.getElementById('viewBindExp').removeAttribute('href');
-    document.getElementById('editBindExp').setAttribute('disabled', 'disabled');
-    document.getElementById('unbindExp').setAttribute('disabled', 'disabled');
-    return;
-  }
-  $('#eventBoundItem').html('<span class="smallgray">No resource attached.</span>');
-  // document.getElementById('viewBindItem').setAttribute('disabled', 'disabled');
-  document.getElementById('viewBindItem').classList.add('disabled');
-  document.getElementById('viewBindItem').removeAttribute('href');
-  document.getElementById('editBindItem').setAttribute('disabled', 'disabled');
-  document.getElementById('unbindItem').setAttribute('disabled', 'disabled');
-  // $('[data-action="scheduler-rm-bind"][data-type="item_link"]').disable();
+function clearBoundDiv(entity: 'experiment' | 'item') {
+  const suffix = entity === 'experiment' ? 'Exp' : 'Item';
+  $(`#eventBound${suffix}`).html(`<span class="smallgray">${i18next.t('no-entity-bound', { entity })}</span>`);
+  ['editBind', 'unbind'].forEach(id => document.getElementById(`${id}${suffix}`).toggleAttribute('disabled', true));
+  // view is Anchor, there's no "disabled" supported
+  const view = document.getElementById(`viewBind${suffix}`);
+  view.classList.add('disabled');
+  view.removeAttribute('href');
 }
 
 function lockScopeButton(selectedItems: string[]): void {
@@ -197,6 +188,7 @@ if (window.location.pathname === '/scheduler.php') {
       if (extendedProps.experiment != null) {
         const viewBtn = document.getElementById('viewBindExp') as HTMLAnchorElement;
         viewBtn.href = `experiments.php?mode=view&id=${extendedProps.experiment}`;
+        viewBtn.classList.remove('disabled');
         $('#eventBoundExp').html(extendedProps.experiment_title);
         document.getElementById('viewBindExp').removeAttribute('disabled');
         document.getElementById('editBindExp').removeAttribute('disabled');
@@ -206,6 +198,7 @@ if (window.location.pathname === '/scheduler.php') {
       if (extendedProps.item_link != null) {
         const viewBtn = document.getElementById('viewBindItem') as HTMLAnchorElement;
         viewBtn.href = `database.php?mode=view&id=${extendedProps.item_link}`;
+        viewBtn.classList.remove('disabled');
         $('#eventBoundItem').html(extendedProps.item_link_title);
         document.getElementById('viewBindItem').removeAttribute('disabled');
         document.getElementById('editBindItem').removeAttribute('disabled');
@@ -597,7 +590,7 @@ if (window.location.pathname === '/scheduler.php') {
     on('scheduler-rm-bind', (el: HTMLElement) => {
       const bindType = el.dataset.type;
       ApiC.patch(`event/${el.dataset.eventid}`, {'target': bindType, 'id': null}).then(() => {
-        clearBoundDiv(bindType);
+        clearBoundDiv(bindType as 'experiment' | 'item');
         // clear the inputs
         document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
         calendar.refetchEvents();

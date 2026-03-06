@@ -14,40 +14,6 @@
       <label for='schedulerEventModalEnd'>{{ 'End time'|trans }}</label>
       <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' />
     </div>
-    <hr>
-    <h5>{{ 'Binding'|trans }}</h5>
-    {# BIND EXPERIMENT #}
-    <div class='mt-2'>
-      <i class='fas fa-link mr-1'></i><span class='d-inline' id='bindExpInputLabel'>{{ 'Bind an experiment'|trans }}</span>
-      <div id='eventBoundExp'></div>
-      <div class='input-group mb-3'>
-        <div class='input-group-prepend'>
-          <button class='btn btn-danger' data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' type='button'>{{ 'Unbind'|trans }}</button>
-          <span class='input-group-text'>{{ 'Search'|trans }}</span>
-        </div>
-        <input type='text' data-action='autocomplete' data-target='experiments' data-identifier='binddivexp' class='form-control bindInput' aria-labelledby='bindExpInputLabel' />
-        <div class='input-group-append'>
-          <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
-        </div>
-      </div>
-      <div id='autocompleteAnchorDiv_binddivexp'></div>
-    </div>
-    {# BIND ITEM #}
-    <div class='mt-2'>
-      <i class='fas fa-link mr-1'></i><span class='d-inline' id='bindItemInputLabel'>{{ 'Bind a resource'|trans }}</span>
-      <div id='eventBoundDb'></div>
-      <div class='input-group mb-3'>
-        <div class='input-group-prepend'>
-          <button class='btn btn-danger' data-action='scheduler-rm-bind' data-type='item_link' data-eventid='' type='button'>{{ 'Unbind'|trans }}</button>
-          <span class='input-group-text'>{{ 'Search'|trans }}</span>
-        </div>
-        <input type='text' data-action='autocomplete' data-target='items' data-identifier='binddivdb' class='form-control bindInput' aria-labelledby='bindItemInputLabel' />
-        <div class='input-group-append'>
-          <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
-        </div>
-      </div>
-      <div id='autocompleteAnchorDiv_binddivdb'></div>
-    </div>
   </div>
   <div class='modal-footer d-flex justify-content-end'>
     <button type='button' class='btn btn-ghost' data-action='back-to-event'><i class='fas fa-arrow-left fa-fw mr-2'></i>{{ 'Back'|trans }}</button>

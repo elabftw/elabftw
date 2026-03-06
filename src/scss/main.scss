@@ -31,6 +31,27 @@ $theme-colors: (
   .fa { color: var(--chrome-fg) !important; }
 }
 
+.btn-danger-ghost {
+  border: 1px solid var(--dangerred) !important;
+  color: var(--dangerred) !important;
+
+  .fas,
+  .fa {
+    color: var(--dangerred) !important;
+  }
+
+  &:hover {
+    background-color: var(--dangerred);
+    border-color: var(--secondlevel);
+    color: var(--chrome-fg) !important;
+
+    .fas,
+    .fa {
+      color: var(--chrome-fg) !important;
+    }
+  }
+}
+
 $dropdown-link-active-bg: var(--primary);
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: var(--secondlevel);

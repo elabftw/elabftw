@@ -40,7 +40,6 @@ import { Action } from './interfaces';
 import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
-import {entity} from "./getEntity";
 
 type CancelNotificationPayload = {
   action: Action;
@@ -83,28 +82,24 @@ on('back-to-event', () => setSchedulerMode('view'));
 
 function clearBoundDiv(entity: 'experiment' | 'item') {
   const suffix = entity === 'experiment' ? 'Exp' : 'Item';
-  $(`#eventBound${suffix}`).html(`<span class="smallgray">${i18next.t('no-entity-bound', { entity })}</span>`);
-  ['editBind', 'unbind'].forEach(id => document.getElementById(`${id}${suffix}`).toggleAttribute('disabled', true));
-  // view is Anchor, there's no "disabled" supported
+  document.getElementById(`eventBound${suffix}`)!.textContent = '';
   const view = document.getElementById(`viewBind${suffix}`) as HTMLAnchorElement;
-  view.classList.add('disabled');
   view.removeAttribute('href');
-  toggleBindInputs(entity, true);
+  toggleBindState(entity, false);
 }
 
 function createBoundDiv(entity: 'experiment' | 'item', title: string, url: string) {
   const suffix = entity === 'experiment' ? 'Exp' : 'Item';
-  $(`#eventBound${suffix}`).text(title);
+  document.getElementById(`eventBound${suffix}`)!.textContent = title;
   const view = document.getElementById(`viewBind${suffix}`) as HTMLAnchorElement;
   view.href = url;
-  view.classList.remove('disabled');
-  ['editBind', 'unbind'].forEach(id => document.getElementById(`${id}${suffix}`).toggleAttribute('disabled', false));
-  toggleBindInputs(entity, false);
+  toggleBindState(entity, true);
 }
 
-function toggleBindInputs(entity: 'experiment' | 'item', show: boolean) {
+function toggleBindState(entity: 'experiment' | 'item', bound: boolean) {
   const suffix = entity === 'experiment' ? 'Exp' : 'Item';
-  document.getElementById(`bindInputs${suffix}`)?.classList.toggle('d-none', !show);
+  document.getElementById(`boundInputs${suffix}`)?.classList.toggle('d-none', !bound);
+  document.getElementById(`bindInputs${suffix}`)?.classList.toggle('d-none', bound);
 }
 
 function lockScopeButton(selectedItems: string[]): void {
@@ -487,8 +482,8 @@ if (window.location.pathname === '/scheduler.php') {
         );
         // Set modal content
         document.getElementById('viewTitle')!.textContent = info.event.extendedProps.title_only;
-        document.getElementById('viewDatetime')!.innerHTML = `${dateLine}<br>` +
-          `${timeLine} (${durationMinutes} ${i18next.t('minutes')})`;
+        document.getElementById('viewDatetime')!.innerHTML = `${dateLine}<br class='mb-2'>` +
+          `<strong>${timeLine}</strong> (${durationMinutes} ${i18next.t('minutes')})`;
       },
       // on mouse enter add shadow and show title
       eventMouseEnter: function(info): void {

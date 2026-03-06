@@ -18,7 +18,6 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Models\Changelog;
 use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Override;

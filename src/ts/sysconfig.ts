@@ -147,11 +147,16 @@ function pickSvgText(): Promise<string | null> {
     i.onchange = async () => {
       const f = i.files?.[0];
       if (!f) return resolve(null);
-      if (!f.name.toLowerCase().endsWith('.svg') && f.type && f.type !== 'image/svg+xml') {
+      const isSvgExt = f.name.toLowerCase().endsWith('.svg');
+      const isSvgMime = f.type === 'image/svg+xml';
+      if (!isSvgExt && !isSvgMime) {
         return reject(new Error('Please choose an SVG file.'));
       }
       const text = await f.text();
-      if (!text.includes('<svg')) return reject(new Error('Not valid SVG.'));
+      const xml = new DOMParser().parseFromString(text, 'image/svg+xml');
+      if (xml.querySelector('parsererror') || xml.documentElement?.nodeName !== 'svg') {
+        return reject(new Error('Not valid SVG.'));
+      }
       resolve(text);
     };
 

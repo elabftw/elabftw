@@ -66,6 +66,9 @@ final class Config extends AbstractRest
         $logoLightSvg = file_get_contents(dirname(__DIR__, 2) . '/web/assets/images/logo-light.svg');
         $logoDarkSvg = file_get_contents(dirname(__DIR__, 2) . '/web/assets/images/logo-dark.svg');
         $faviconSvg = file_get_contents(dirname(__DIR__, 2) . '/web/assets/images/favicon.svg');
+        if ($logoHeaderSvg === false || $logoLightSvg === false || $logoDarkSvg === false || $faviconSvg === false) {
+            throw new AppException('Could not load default branding SVG assets.', 500);
+        }
 
         $sql = "INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
             ('admin_validate', '1'),
@@ -216,13 +219,17 @@ final class Config extends AbstractRest
             ('dspace_host', ''),
             ('dspace_user', ''),
             ('dspace_password', ''),
-            ('logo_header_svg', $logoHeaderSvg),
-            ('logo_light_svg', $logoLightSvg),
-            ('logo_dark_svg', $logoDarkSvg),
-            ('favicon_svg', $faviconSvg)";
+            ('logo_header_svg', :logo_header_svg),
+            ('logo_light_svg', :logo_light_svg),
+            ('logo_dark_svg', :logo_dark_svg),
+            ('favicon_svg', :favicon_svg)";
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', SchemaVersionChecker::REQUIRED_SCHEMA);
+        $req->bindValue(':logo_header_svg', $logoHeaderSvg);
+        $req->bindValue(':logo_light_svg', $logoLightSvg);
+        $req->bindValue(':logo_dark_svg', $logoDarkSvg);
+        $req->bindValue(':favicon_svg', $faviconSvg);
 
         return $this->Db->execute($req);
     }

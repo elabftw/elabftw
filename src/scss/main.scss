@@ -1674,16 +1674,15 @@ input[type='color'] {
   .relative-moment {
     font-size: 80%;
   }
-}
 
-.notification[data-ack='0'] {
-  background-color: var(--primary);
+  &[data-ack='0'] {
+    background-color: var(--primary);
 
-  span {
-    color: var(--mainbackground);
+    span {
+      color: var(--chrome-fg);
+    }
   }
 }
-
 
 /* The switch - the box around the slider */
 .switch {

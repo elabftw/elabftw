@@ -15,6 +15,7 @@ import { ApiC } from './api';
 import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
 import { on } from './handlers';
+import DOMPurify from 'dompurify';
 
 function updateTsFieldsVisibility(select: HTMLSelectElement) {
   const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
@@ -153,11 +154,12 @@ function pickSvgText(): Promise<string | null> {
         return reject(new Error('Please choose an SVG file.'));
       }
       const text = await f.text();
-      const xml = new DOMParser().parseFromString(text, 'image/svg+xml');
+      const sanitizedText = DOMPurify.sanitize(text, { USE_PROFILES: { svg: true, svgFilters: true } });
+      const xml = new DOMParser().parseFromString(sanitizedText, 'image/svg+xml');
       if (xml.querySelector('parsererror') || xml.documentElement?.nodeName !== 'svg') {
         return reject(new Error('Not valid SVG.'));
       }
-      resolve(text);
+      resolve(sanitizedText);
     };
 
     i.click();

@@ -210,6 +210,7 @@ export function getTinymceBaseConfig(page: string): object {
   }
 
   const isDark = document.documentElement.classList.contains('dark-mode');
+  const templateEndpoint = entity.type === EntityType.Experiment ? EntityType.Template : EntityType.ItemType;
 
   return {
     selector: '.mceditable',
@@ -245,7 +246,7 @@ export function getTinymceBaseConfig(page: string): object {
     // use undocumented callback function to asynchronously get the templates
     // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
     templates: (callback): void => {
-      ApiC.getJson(`${EntityType.Template}`).then(json => {
+      ApiC.getJson(templateEndpoint).then(json => {
         const res = [];
         json.forEach(tpl => {
           res.push({'title': tpl.title, 'description': '', 'content': tpl.body});

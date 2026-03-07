@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Exceptions\ImproperActionException;
 
 use function array_column;
 use function array_combine;
@@ -60,6 +61,11 @@ final class Metadata
         }
         // sort the elements based on the position attribute. If not set, will be at the end.
         $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
+        foreach ($extraFields as $key => $field) {
+            if (!is_array($field)) {
+                throw new ImproperActionException(sprintf('Invalid extra field: expected array, got %s', $key));
+            }
+        }
         uasort(
             $extraFields,
             fn(array $a, array $b): int => ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999),

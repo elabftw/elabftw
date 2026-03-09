@@ -265,10 +265,10 @@ workflows:
       - prepare_workspace
       - code_linters:
           requires:
-            - setup
+            - prepare_workspace
       - php_unit_tests:
           requires:
-            - setup
+            - prepare_workspace
       - cypress_e2e_tests:
           requires:
-            - setup
+            - prepare_workspace

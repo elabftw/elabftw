@@ -120,7 +120,12 @@ final class Metadata
      */
     public function blankExtraFieldsValueOnDuplicate(): ?string
     {
-        $extraFields = $this->getExtraFields();
+        try {
+            $extraFields = $this->getExtraFields();
+        } catch (ImproperActionException) {
+            return null;
+        }
+
         if (empty($extraFields)) {
             return null;
         }

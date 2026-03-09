@@ -123,7 +123,8 @@ final class Metadata
         try {
             $extraFields = $this->getExtraFields();
         } catch (ImproperActionException) {
-            return null;
+            // return the original metadata so no values are lost
+            return json_encode($this->metadata, JSON_THROW_ON_ERROR);
         }
 
         if (empty($extraFields)) {

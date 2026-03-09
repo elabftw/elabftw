@@ -263,11 +263,6 @@ workflows:
   build_and_test:
     jobs:
       - setup:
-          filters:
-            branches:
-              ignore:
-                - demo
-                - ird
       - code_linters:
           requires:
             - setup

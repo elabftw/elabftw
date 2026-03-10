@@ -62,4 +62,14 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
 
         $this->assertNull((new Metadata(null))->blankExtraFieldsValueOnDuplicate());
     }
+
+    public function testBlankValueOnDuplicateExceptionThrowing(): void
+    {
+        $json = '{"extra_fields":{"YYYYYYYYY": "","XXXXXXXXXXX": {"type": "text","value": "","group_id": 1,"position": 1,"required": true}}}';
+        $metadata = new Metadata($json);
+        $result = $metadata->blankExtraFieldsValueOnDuplicate();
+        $current = json_decode($json, true);
+        $expected = json_decode($result, true);
+        $this->assertSame($expected, $current);
+    }
 }

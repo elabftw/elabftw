@@ -42,7 +42,6 @@ use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -530,7 +529,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
-            Action::UpdateOwner => $this->updateOwnership((int) $params['userid'], (int) $params['team']),
+            Action::UpdateOwner => $this->updateOwnership((int) $params['userid'], (int) ($params['team'] ?? 0)),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -1137,17 +1136,20 @@ abstract class AbstractEntity extends AbstractRest
 
     private function updateOwnership(int $userid, int $team): void
     {
-        // if there's no team provided, assign the current user's team
-        if ($team === 0) {
-            $team = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());
+        $currentUserTeam = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());
+        $destinationTeam = $team ?: $currentUserTeam;
+        // non-admins cannot transfer outside their own team
+        if (!$this->Users->isAdmin && $destinationTeam !== $currentUserTeam) {
+            throw new IllegalActionException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
         }
-        $TeamsHelper = new TeamsHelper($team);
-        if (!$TeamsHelper->isUserInTeam($userid)) {
-            throw new UnauthorizedException(_('The selected user cannot be assigned ownership in the current team context.'));
+        $teamsHelper = new TeamsHelper($destinationTeam);
+        // target user must belong to destination team
+        if (!$teamsHelper->isUserInTeam($userid)) {
+            throw new UnprocessableContentException(_('The selected user is not a member of your team or the specified target team.'));
         }
         $this->update(new EntityParams('userid', $userid));
-        $this->update(new EntityParams('team', $team));
-        // transfer entity's uploads as well
+        $this->update(new EntityParams('team', $destinationTeam));
+        // transfer uploads
         $this->bypassWritePermission = true;
         $this->Uploads->transferOwnership($userid);
     }

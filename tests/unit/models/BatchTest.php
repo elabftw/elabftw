@@ -18,7 +18,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\MissingRequiredKeyException;
-use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -79,7 +79,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = 99;
-        $this->expectException(UnauthorizedException::class);
+        $this->expectException(UnprocessableContentException::class);
         $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
 

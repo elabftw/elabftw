@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\ImproperActionException;
+
 class MetadataTest extends \PHPUnit\Framework\TestCase
 {
     public function testNoMetadata(): void
@@ -63,13 +65,19 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertNull((new Metadata(null))->blankExtraFieldsValueOnDuplicate());
     }
 
+    public function testGetExtraFieldsExceptionThrowing(): void
+    {
+        $invalidJson = '{"extra_fields":{"YYYYYYYYY": "","XXXXXXXXXXX": {"type": "text","value": "","group_id": 1,"position": 1,"required": true}}}';
+        $metadataJson = new Metadata($invalidJson);
+        $this->expectException(ImproperActionException::class);
+        $metadataJson->getExtraFields();
+    }
+
     public function testBlankValueOnDuplicateExceptionThrowing(): void
     {
-        $json = '{"extra_fields":{"YYYYYYYYY": "","XXXXXXXXXXX": {"type": "text","value": "","group_id": 1,"position": 1,"required": true}}}';
-        $metadata = new Metadata($json);
+        $invalidJson = '{"extra_fields":{"YYYYYYYYY": "","XXXXXXXXXXX": {"type": "text","value": "","group_id": 1,"position": 1,"required": true}}}';
+        $metadata = new Metadata($invalidJson);
         $result = $metadata->blankExtraFieldsValueOnDuplicate();
-        $current = json_decode($json, true);
-        $expected = json_decode($result, true);
-        $this->assertSame($expected, $current);
+        $this->assertJsonStringEqualsJsonString($invalidJson, $result);
     }
 }

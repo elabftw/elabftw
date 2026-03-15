@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\MessageLevels;
-use Elabftw\Exceptions\ImproperActionException;
 
 class TwigFiltersTest extends \PHPUnit\Framework\TestCase
 {
@@ -133,9 +132,9 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
           }
          }
         }';
-        $metadataJson = new Metadata($metadataJsonFailed);
-        $this->expectException(ImproperActionException::class);
-        $metadataJson->getExtraFields();
+        $result = TwigFilters::formatMetadata($metadataJsonFailed);
+        $this->assertIsString($result);
+        $this->assertStringContainsString('Invalid extra field', $result);
     }
 
     public function testFormatMetadataEmptyExtrafields(): void

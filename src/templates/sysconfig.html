@@ -58,10 +58,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='14'>{{ 'Audit Logs'|trans }}</button></li>
 </ul>
 
-{# loading spinner #}
-<div class='d-flex justify-content-center' id='loading-spinner'>
-  <div class='lds-dual-ring'></div>
-</div>
+{% include 'loading-spinner.html' %}
 
 {# TAB 1 SERVER #}
 <div data-tabcontent='1' hidden>

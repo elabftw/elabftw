@@ -201,15 +201,17 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($titleItem2, $filteredCatEvents[1]['title_only']);
     }
 
-    public function testPatchDatetime(): void
+    public function testPatch(): void
     {
         $Scheduler = $this->getFreshSchedulerWithEvent();
         $newStart = new DateTimeImmutable('+6 hour');
         $newEnd = $newStart->add(new DateInterval('PT2H'));
-        $res = $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $newStart->format('c'), 'end' => $newEnd->format('c')));
+        $newTitle = 'Afternoon experiment for Toto.';
+        $res = $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $newStart->format('c'), 'end' => $newEnd->format('c'), 'title' => $newTitle));
         $this->assertIsArray($res);
         $this->assertEquals($newStart->format('Y-m-d H:i:s'), $res['start']);
         $this->assertEquals($newEnd->format('Y-m-d H:i:s'), $res['end']);
+        $this->assertEquals($newTitle, $res['title']);
     }
 
     public function testPatchDatetimeEndBeforeStart(): void
@@ -228,10 +230,29 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => '', 'end' => ''));
     }
 
-    public function testPatchTitle(): void
+    public function testPatchInvalidTarget(): void
     {
-        $res = $this->getFreshSchedulerWithEvent()->patch(Action::Update, array('target' => 'title', 'content' => 'new title'));
-        $this->assertEquals('new title', $res['title']);
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->patch(Action::Update, array('target' => 'banana'));
+    }
+
+    public function testPatchNothingToUpdate(): void
+    {
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $res = $Scheduler->patch(Action::Update, array('target' => 'datetime'));
+        $this->assertIsArray($res);
+    }
+
+    public function testPatchDatetimeMissingStartOrEnd(): void
+    {
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->patch(Action::Update, array(
+            'target' => 'datetime',
+            'start' => new DateTimeImmutable('+1 hour')->format('c'),
+            // missing end
+        ));
     }
 
     public function testDestroyNonCancellableEvent(): void
@@ -388,32 +409,6 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         // try write event created by admin as user
         $this->expectException(IllegalActionException::class);
         $UserScheduler->patch(Action::Update, array('target' => 'experiment', 'id' => 3));
-    }
-
-    public function testUpdateStart(): void
-    {
-        $this->Scheduler->setId($this->testPostAction());
-        $this->Scheduler->patch(Action::Update, array('target' => 'start', 'delta' => $this->delta));
-        $delta = array(
-            'years' => '0',
-            'months' => '0',
-            'days' => '1',
-            'milliseconds' => '1111',
-        );
-        $this->Scheduler->patch(Action::Update, array('target' => 'start', 'delta' => $delta));
-    }
-
-    public function testUpdateEnd(): void
-    {
-        $this->Scheduler->setId($this->testPostAction());
-        $this->Scheduler->patch(Action::Update, array('target' => 'end', 'delta' => $this->delta));
-        $delta = array(
-            'years' => '0',
-            'months' => '0',
-            'days' => '1',
-            'milliseconds' => '1111',
-        );
-        $this->Scheduler->patch(Action::Update, array('target' => 'end', 'delta' => $delta));
     }
 
     public function testDestroy(): void

@@ -216,9 +216,9 @@ class Email
      * Get ids of all active users on instance, in team or teamgroup
      * @return int[]
      */
-    public static function getIdsOfRecipients(EmailTarget $target, ?int $targetId = null): array
+    public static function getIdsOfRecipients(EmailTarget $target, ?int $targetId = null, ?array $range = null): array
     {
-        return array_column(self::getAllEmailAddressesRawData($target, $targetId), 'userid');
+        return array_column(self::getAllEmailAddressesRawData($target, $targetId, $range), 'userid');
     }
 
     /**
@@ -262,7 +262,7 @@ class Email
         return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL'));
     }
 
-    private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null): array
+    private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null, ?array $range = null): array
     {
         $select = 'SELECT DISTINCT users.userid, email, CONCAT(firstname, " ", lastname) AS fullname FROM users
             LEFT JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.is_archived = 0)
@@ -284,8 +284,25 @@ class Email
             case EmailTarget::Sysadmins:
                 $filter = 'AND users.is_sysadmin = 1';
                 break;
+                // legacy (past & future users who booked this item)
             case EmailTarget::BookableItem:
                 $filter = 'AND team_events.start BETWEEN NOW() - INTERVAL 2 MONTH AND NOW() + INTERVAL 1 MONTH AND team_events.item = :id';
+                break;
+            case EmailTarget::BookableItemRange:
+                $value = (int) ($range['value'] ?? 7);
+                $map = array('days' => 'DAY', 'month' => 'MONTH', 'years' => 'YEAR');
+                $unit = $map[$range['unit'] ?? 'days'] ?? 'DAY';
+                $direction = $range['direction'] ?? 'past';
+                $start = 'NOW()';
+                $end = 'NOW()';
+                if ($direction !== 'future') {
+                    $start = "DATE_SUB(NOW(), INTERVAL $value $unit)";
+                }
+                if ($direction !== 'past') {
+                    $end = "DATE_ADD(NOW(), INTERVAL $value $unit)";
+                }
+                $filter = "AND team_events.start BETWEEN $start AND $end
+                AND team_events.item = :id";
                 break;
             default:
                 $filter = '';

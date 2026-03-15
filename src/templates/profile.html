@@ -9,11 +9,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Export'|trans }}</button></li>
 </ul>
 
-{# loading spinner #}
-<div class='d-flex justify-content-center' id='loading-spinner'>
-  <div class='lds-dual-ring'></div>
-</div>
-
+{% include 'loading-spinner.html' %}
 
 {# TAB 1 INFORMATION #}
 <div data-tabcontent='1' hidden>

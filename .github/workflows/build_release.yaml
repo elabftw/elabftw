@@ -80,6 +80,7 @@ jobs:
                 tags: |
                     elabftw/elabimg:stable
                     elabftw/elabimg:latest
+                    elabftw/elabimg:${{ github.ref_name }}
 
             - name: Send request to webhook to trigger update of demo
               run: |

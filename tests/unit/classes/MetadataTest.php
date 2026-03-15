@@ -67,7 +67,7 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
 
     public function testGetExtraFieldsExceptionThrowing(): void
     {
-        $invalidJson = '{"extra_fields":{"YYYYYYYYY": "","XXXXXXXXXXX": {"type": "text","value": "","group_id": 1,"position": 1,"required": true}}}';
+        $invalidJson = '{"extra_fields":{"YYYYYYYYY": "","XXXXXXXXXXX": {"type": "text","value": "test","group_id": 1,"position": 1,"required": true}}}';
         $metadataJson = new Metadata($invalidJson);
         $this->expectException(ImproperActionException::class);
         $metadataJson->getExtraFields();
@@ -75,7 +75,7 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
 
     public function testBlankValueOnDuplicateExceptionThrowing(): void
     {
-        $invalidJson = '{"extra_fields":{"YYYYYYYYY": "","XXXXXXXXXXX": {"type": "text","value": "","group_id": 1,"position": 1,"required": true}}}';
+        $invalidJson = '{"extra_fields":{"YYYYYYYYY": "","XXXXXXXXXXX": {"type": "text","value": "test","group_id": 1,"position": 1,"blank_value_on_duplicate": true}}}';
         $metadata = new Metadata($invalidJson);
         $result = $metadata->blankExtraFieldsValueOnDuplicate();
         $this->assertJsonStringEqualsJsonString($invalidJson, $result);

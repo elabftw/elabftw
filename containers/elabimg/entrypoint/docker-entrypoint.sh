@@ -73,8 +73,6 @@ getEnv() {
     use_persistent_mysql_conn=${USE_PERSISTENT_MYSQL_CONN:-true}
     pubchem_pug_url=${PUBCHEM_PUG_URL:-https://pubchem.ncbi.nlm.nih.gov/rest/pug}
     pubchem_pug_view_url=${PUBCHEM_PUG_VIEW_URL:-https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data}
-
-    unset DB_PASSWORD SECRET_KEY ELAB_AWS_SECRET_KEY REDIS_PASSWORD STATUS_PASSWORD
 }
 
 # Create the user that will run nginx/php/helpers

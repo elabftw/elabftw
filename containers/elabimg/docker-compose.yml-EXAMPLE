@@ -293,6 +293,10 @@ services:
         # default value: false
         #- DEMO_MODE=false
 
+        # set to true to set the instance in maintenance mode, displaying an informative page, thereby disabling all user interaction
+        # default value: false
+        #- MAINTENANCE_MODE=false
+
         ###########
         # PLUGINS #
         ###########

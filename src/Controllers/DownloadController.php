@@ -112,7 +112,6 @@ final class DownloadController implements ControllerInterface
             stream_copy_to_stream($fileStream, $outputStream);
         });
         // set the correct Content-Type header based on mime type
-        $mime = $this->getMimeType();
         $Response->headers->set('Content-Type', $mime);
 
         // force the download of everything (regardless of the forceDownload parameter)
@@ -159,6 +158,17 @@ final class DownloadController implements ControllerInterface
         if ($rangeHeader !== null && preg_match('/bytes=(\d*)-(\d*)/', $rangeHeader, $matches)) {
             $start = $matches[1] !== '' ? (int) $matches[1] : 0;
             $end = $matches[2] !== '' ? (int) $matches[2] : $fileSize - 1;
+
+            if ($end >= $fileSize) {
+                $end = $fileSize - 1;
+            }
+
+            if ($start > $end || $start >= $fileSize) {
+                $response = new Response('', Response::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
+                $response->headers->set('Content-Range', sprintf('bytes */%d', $fileSize));
+                return $response;
+            }
+
             $statusCode = Response::HTTP_PARTIAL_CONTENT;
         }
 
@@ -194,6 +204,11 @@ final class DownloadController implements ControllerInterface
         $Response->headers->set('Content-Type', $mime);
         $Response->headers->set('Content-Length', (string) $length);
         $Response->headers->set('Accept-Ranges', 'bytes');
+        $Response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_INLINE,
+            $this->realName,
+            $this->realNameFallback,
+        ));
         if ($statusCode === Response::HTTP_PARTIAL_CONTENT) {
             $Response->headers->set('Content-Range', sprintf('bytes %d-%d/%d', $start, $end, $fileSize));
         }

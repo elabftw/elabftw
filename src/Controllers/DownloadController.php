@@ -18,14 +18,19 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
 use Symfony\Component\HttpFoundation\HeaderUtils;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Override;
 
 use function basename;
 use function fopen;
+use function fread;
+use function fseek;
 use function in_array;
+use function str_starts_with;
 use function stream_copy_to_stream;
+use function strlen;
 use function mb_substr;
 
 /**
@@ -66,20 +71,37 @@ final class DownloadController implements ControllerInterface
     }
 
     #[Override]
-    public function getResponse(): Response
+    public function getResponse(?Request $request = null): Response
     {
         // this will disable output buffering and prevent issues when downloading big files
         if (ob_get_level()) {
             ob_end_clean();
         }
+
+        $mime = $this->getMimeType();
+        $filePath = $this->getFilePath();
+
+        // Handle Range requests for video files to enable seeking
+        if ($request !== null && str_starts_with($mime, 'video/')) {
+            try {
+                $fileSize = $this->fs->fileSize($filePath);
+            } catch (UnableToRetrieveMetadata) {
+                $fileSize = 0;
+            }
+
+            if ($fileSize > 0) {
+                return $this->buildRangeResponse($request, $filePath, $mime, $fileSize);
+            }
+        }
+
         // we stream the response to the client
-        $Response = new StreamedResponse(function () {
+        $Response = new StreamedResponse(function () use ($filePath) {
             $outputStream = fopen('php://output', 'wb');
             if ($outputStream === false) {
                 return;
             }
             try {
-                $fileStream = $this->fs->readStream($this->getFilePath());
+                $fileStream = $this->fs->readStream($filePath);
             } catch (UnableToReadFile) {
                 // display a thumbnail if the real thumbnail cannot be found
                 $fileStream = fopen(dirname(__DIR__, 2) . '/web/assets/images/fallback-thumb.png', 'rb');
@@ -120,6 +142,61 @@ final class DownloadController implements ControllerInterface
             $this->realNameFallback,
         );
         $Response->headers->set('Content-Disposition', $dispositionHeader);
+
+        return $Response;
+    }
+
+    /**
+     * Build a response that supports HTTP Range requests for video seeking.
+     */
+    private function buildRangeResponse(Request $request, string $filePath, string $mime, int $fileSize): Response
+    {
+        $start = 0;
+        $end = $fileSize - 1;
+        $statusCode = Response::HTTP_OK;
+
+        $rangeHeader = $request->headers->get('Range');
+        if ($rangeHeader !== null && preg_match('/bytes=(\d*)-(\d*)/', $rangeHeader, $matches)) {
+            $start = $matches[1] !== '' ? (int) $matches[1] : 0;
+            $end = $matches[2] !== '' ? (int) $matches[2] : $fileSize - 1;
+            $statusCode = Response::HTTP_PARTIAL_CONTENT;
+        }
+
+        $length = $end - $start + 1;
+
+        $Response = new StreamedResponse(function () use ($filePath, $start, $length) {
+            $outputStream = fopen('php://output', 'wb');
+            if ($outputStream === false) {
+                return;
+            }
+            try {
+                $fileStream = $this->fs->readStream($filePath);
+            } catch (UnableToReadFile) {
+                return;
+            }
+            if ($start > 0) {
+                // Use fseek if the stream supports it, otherwise read and discard bytes.
+                // S3 streams (s3:// wrapper) may not support fseek.
+                if (fseek($fileStream, $start) !== 0) {
+                    $remaining = $start;
+                    while ($remaining > 0) {
+                        $chunk = fread($fileStream, min(8192, $remaining));
+                        if ($chunk === false || $chunk === '') {
+                            return;
+                        }
+                        $remaining -= strlen($chunk);
+                    }
+                }
+            }
+            stream_copy_to_stream($fileStream, $outputStream, $length);
+        }, $statusCode);
+
+        $Response->headers->set('Content-Type', $mime);
+        $Response->headers->set('Content-Length', (string) $length);
+        $Response->headers->set('Accept-Ranges', 'bytes');
+        if ($statusCode === Response::HTTP_PARTIAL_CONTENT) {
+            $Response->headers->set('Content-Range', sprintf('bytes %d-%d/%d', $start, $end, $fileSize));
+        }
 
         return $Response;
     }

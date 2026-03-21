@@ -262,10 +262,10 @@
 
       {# LOCK #}
       {% set lockIcon = 'fa-lock-open' %}
-      {% set alt = 'Lock/Unlock item'|trans %}
+      {% set alt = 'Lock item'|trans %}
       {% if Entity.entityData.locked %}
           {% set lockIcon = 'fa-lock' %}
-          {% set alt = Entity.entityData.locked_at %}
+          {% set alt = 'Unlock item'|trans %}
       {% endif %}
       <button type='button' title='{{ alt }}' aria-label='{{ alt }}' data-action='do-requestable-action' data-target='lock' class='btn {{ Entity.entityData.locked ? 'bgnd-gray' : 'hl-hover-gray' }} p-2 mr-2 lh-normal border-0'>
         <i class='fas {{ lockIcon }} fa-fw'></i>

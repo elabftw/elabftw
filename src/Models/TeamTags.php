@@ -138,9 +138,10 @@ final class TeamTags extends AbstractRest
         $this->Db->execute($req);
 
         // now delete it from the tags table
-        $sql = 'DELETE FROM tags WHERE id = :tag_id';
+        $sql = 'DELETE FROM tags WHERE id = :tag_id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

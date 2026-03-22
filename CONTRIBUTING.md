@@ -15,5 +15,5 @@ How to best label new issues:
 
 Then answer:
 
-- For bugs: write a brief message explaining wether it's reproducible or not.
+- For bugs: write a brief message explaining whether it's reproducible or not.
 - For feature requests, simply acknowledge the request with a generic message: "Thank you for your request, we will look into it".

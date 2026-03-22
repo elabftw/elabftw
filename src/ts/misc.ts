@@ -205,7 +205,7 @@ export function collectForm(form: HTMLElement): object {
 export function clearForm(form: HTMLElement): void {
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      if (input.dataset.noBlank !== '1') {
+      if (input.dataset.noBlank !== '1' && input.type !== 'radio') {
         input.value = '';
         if (input.type === 'checkbox') {
           input.checked = false;

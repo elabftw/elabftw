@@ -10,7 +10,7 @@
             <li class='list-group-item countable'>
               <div class='d-flex flex align-items-center'>
                 <div>
-                  <span class='mr-2'><span class='malleableColumn hl-hover-gray p-1 rounded' data-ma-type='number' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}' data-target='qty_stored'>{{ container.qty_stored }}</span> <span class='mr-2'><span class='malleableQtyUnit hl-hover-gray p-1 rounded' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}'>{{ container.qty_unit }}</span> {{ 'in'|trans }} {{ container.full_path }}</span>
+                  <span class='mr-2'><span class='malleableColumn hl-hover-gray p-1 rounded' data-ma-type='float' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}' data-target='qty_stored'>{{ container.qty_stored }}</span> <span class='mr-2'><span class='malleableQtyUnit hl-hover-gray p-1 rounded' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}'>{{ container.qty_unit }}</span> {{ 'in'|trans }} {{ container.full_path }}</span>
                 </div>
                 <div class='ml-auto'>
                   <a href='inventory.php?storage_unit={{ container.storage_id }}' class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-magnifying-glass'></i></a>

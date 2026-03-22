@@ -2,7 +2,7 @@
 
 eLabFTW is a community project governed by the [Deltablot company](https://www.deltablot.com). This means that the software remains 100% free for all users, but the major decisions regarding strategic vision are handled by members from Deltablot.
 
-This mode of operation ensures the software is regularly updated, with bug fixed and new features implemented, while providing financial support for developers to work on it full-time.
+This mode of operation ensures the software is regularly updated, with bugs fixed and new features implemented, while providing financial support for developers to work on it full-time.
 
 ## Key contributors
 
@@ -12,8 +12,8 @@ This mode of operation ensures the software is regularly updated, with bug fixed
 ## Deltablot employees
 
 - Sydney Koke @sjkoke: customer success manager and community manager at Deltablot
-- Moustapha Camara @MoustaphaCamara: full stack developer at Deltablot
-- Elsa Touma @eltouma: full stack developer at Deltablot
+- Moustapha Camara @MoustaphaCamara: full-stack developer at Deltablot
+- Elsa Touma @eltouma: full-stack developer at Deltablot
 
 ## Decision making
 

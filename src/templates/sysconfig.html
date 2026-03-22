@@ -187,6 +187,49 @@
     <hr>
   </div>
 
+  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Organization branding'|trans }}</h3>
+
+  {% macro logo_block(title, key, svg, darkPreview) %}
+    <h4>{{ title }}
+      <span class='text-nowrap'>
+        <button
+          data-action='edit-logo'
+          data-target='{{ key }}'
+          type='button'
+          title='{{ 'Edit'|trans }}'
+          class='btn btn-sm hl-hover-gray p-2'
+          aria-label='{{ 'Edit'|trans }}'
+        >
+          <i class='fas fa-pencil-alt'></i>
+        </button>
+
+        <button
+          data-action='reset-logo'
+          data-target='{{ key }}'
+          type='button'
+          title='{{ 'Restore default'|trans }}'
+          class='btn btn-sm hl-hover-gray p-2'
+          aria-label='{{ 'Restore default'|trans }}'
+        >
+          <i class='fas fa-rotate-left'></i>
+        </button>
+      </span>
+    </h4>
+
+    <div class='{{ darkPreview ? 'bg-dark' : '' }} col-md-6 p-3 logo-preview'>
+      {{ svg|raw }}
+    </div>
+
+    <hr>
+  {% endmacro %}
+
+  <div class='pl-3' id='brandingLogos'>
+    {{ _self.logo_block('Header logo (110x40px)'|trans, 'logo_header_svg', App.Config.configArr.logo_header_svg, true) }}
+    {{ _self.logo_block('Login page logo (light theme)'|trans, 'logo_light_svg', App.Config.configArr.logo_light_svg, false) }}
+    {{ _self.logo_block('Login page logo (dark theme)'|trans, 'logo_dark_svg', App.Config.configArr.logo_dark_svg, true) }}
+    {{ _self.logo_block('Favicon'|trans, 'favicon_svg', App.Config.configArr.favicon_svg, false) }}
+  </div>
+
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Remote directory configuration'|trans }}</h3>
   <div class='pl-3'>
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts from remote directory'|trans, 'slug': 'admins_create_users_remote_dir'} %}

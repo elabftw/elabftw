@@ -80,20 +80,7 @@ jobs:
                 tags: |
                     elabftw/elabimg:stable
                     elabftw/elabimg:latest
-
-            # build the IRD branch
-            - name: Build IRD image
-              uses: docker/build-push-action@v6
-              with:
-                context: .
-                cache-from: type=gha
-                cache-to: type=gha,mode=max
-                platforms: linux/amd64
-                push: true
-                build-args: |
-                    ELABFTW_VERSION=ird
-                tags: |
-                    elabftw/elabimg:ird-${{ github.ref_name }}
+                    elabftw/elabimg:${{ github.ref_name }}
 
             - name: Send request to webhook to trigger update of demo
               run: |

@@ -53,6 +53,7 @@ getEnv() {
     silent_init=${SILENT_INIT:-false}
     dev_mode=${DEV_MODE:-false}
     demo_mode=${DEMO_MODE:-false}
+    maintenance_mode=${MAINTENANCE_MODE:-false}
     auto_db_init=${AUTO_DB_INIT:-false}
     auto_db_update=${AUTO_DB_UPDATE:-false}
     aws_ak=${ELAB_AWS_ACCESS_KEY:-}
@@ -72,8 +73,6 @@ getEnv() {
     use_persistent_mysql_conn=${USE_PERSISTENT_MYSQL_CONN:-true}
     pubchem_pug_url=${PUBCHEM_PUG_URL:-https://pubchem.ncbi.nlm.nih.gov/rest/pug}
     pubchem_pug_view_url=${PUBCHEM_PUG_VIEW_URL:-https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data}
-
-    unset DB_PASSWORD SECRET_KEY ELAB_AWS_SECRET_KEY REDIS_PASSWORD STATUS_PASSWORD
 }
 
 # Create the user that will run nginx/php/helpers
@@ -135,6 +134,8 @@ nginxConf() {
     if ($disable_https); then
         # activate an HTTP server listening on port 443
         ln -fs /etc/nginx/http.conf /etc/nginx/conf.d/elabftw.conf
+
+    # HTTPS
     else
         mkdir -p /etc/nginx/certs
         # generate a selfsigned certificate if we don't use Let's Encrypt
@@ -156,6 +157,11 @@ nginxConf() {
     # works also for the ssl config if ssl is enabled
     # here elabftw.conf is a symbolic link to either http.conf or https.conf
     sed -i -e "s/%SERVER_NAME%/${server_name}/" /etc/nginx/conf.d/elabftw.conf
+
+    # for maintenance mode we replace common.conf with maintenance.conf
+    if ($maintenance_mode); then
+        ln -fs /etc/nginx/maintenance.conf /etc/nginx/common.conf
+    fi
 
     # set the list of php files that can be processed by php-fpm
     php_files_nginx_allowlist=$(find /elabftw/web -type f -name '*.php' | sed 's:/elabftw/web/::' | tr '\n' '|' | sed 's/|$//')

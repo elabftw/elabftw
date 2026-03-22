@@ -405,11 +405,13 @@ populatePhpEnv() {
 # display a friendly message with running versions
 startupMessage() {
     nginx_version=$(/usr/sbin/nginx -v 2>&1)
+    http_mode=$([ "$disable_https" = true ] && echo "HTTP" || echo "HTTPS")
     say "elabimg: info: eLabFTW version: %ELABFTW_VERSION%"
     say "elabimg: info: image version: %ELABIMG_VERSION%"
     say "elabimg: info: ${nginx_version}"
     say "elabimg: info: s6-overlay version: %S6_OVERLAY_VERSION%"
     say "elabimg: info: runtime configuration successfully finished"
+    say "elabimg: info: starting server listening internally on port 443 in ${http_mode}"
 }
 
 # Automatically initialize the database structure

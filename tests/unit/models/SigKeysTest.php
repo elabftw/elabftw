@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
 
 class SigKeysTest extends \PHPUnit\Framework\TestCase
@@ -49,6 +50,17 @@ class SigKeysTest extends \PHPUnit\Framework\TestCase
     public function testPatch(): void
     {
         $this->assertIsArray($this->SigKeys->patch(Action::Update, array('passphrase' => self::PASSPHRASE)));
+    }
+
+    public function testReadFromOtherUser(): void
+    {
+        $id = $this->SigKeys->postAction(
+            Action::Create,
+            array('passphrase' => self::PASSPHRASE)
+        );
+        $OtherUserSigKeys = new SigKeys(new Users(2, 1), $id);
+        $this->expectException(ResourceNotFoundException::class);
+        $OtherUserSigKeys->readOne();
     }
 
     public function testGetApiPath(): void

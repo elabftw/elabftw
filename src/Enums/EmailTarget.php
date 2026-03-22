@@ -19,7 +19,7 @@ enum EmailTarget: string
     case Admins = 'admins';
     case Sysadmins = 'sysadmins';
     case BookableItem = 'bookable_item';
-    case BookableItemRange = 'bookable_item_f';
+    case BookableItemRange = 'bookable_item_range';
     case ActiveUsers = 'active_users';
     case AdminsOfTeam = 'admins_of_team';
 

@@ -287,9 +287,6 @@ RUN if [ "$BUILD_ALL" = "1" ]; then yarn install \
 # they will still be overridden by runtime env, but if they are not declared here, php-cli won't see them ever
 ENV PUBCHEM_PUG_URL=https://pubchem.ncbi.nlm.nih.gov/rest/pug
 ENV PUBCHEM_PUG_VIEW_URL=https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data
-
-# generate build info with app version
-RUN php /elabftw/src/tools/mkbuildinfo.php
 # END ELABFTW
 
 # NGINX PART 2

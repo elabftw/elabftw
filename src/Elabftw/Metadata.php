@@ -61,6 +61,9 @@ final class Metadata
         }
         // sort the elements based on the position attribute. If not set, will be at the end.
         $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
+        if (!is_array($extraFields)) {
+            throw new ImproperActionException('Invalid extra field');
+        }
         foreach ($extraFields as $key => $field) {
             if (!is_array($field)) {
                 throw new ImproperActionException(sprintf('Invalid extra field: expected array, got %s', $key));

@@ -65,7 +65,15 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertNull((new Metadata(null))->blankExtraFieldsValueOnDuplicate());
     }
 
-    public function testGetExtraFieldsExceptionThrowing(): void
+    public function testGetExtraFieldsThrowsIfIsNotAnArray(): void
+    {
+        $invalidJson = '{"extra_fields": "nope"}';
+        $metadataJson = new Metadata($invalidJson);
+        $this->expectException(ImproperActionException::class);
+        $metadataJson->getExtraFields();
+    }
+
+    public function testGetExtraFieldsThrowsOnInvalidElements(): void
     {
         $invalidJson = '{"extra_fields":{"YYYYYYYYY": "","XXXXXXXXXXX": {"type": "text","value": "test","group_id": 1,"position": 1,"required": true}}}';
         $metadataJson = new Metadata($invalidJson);

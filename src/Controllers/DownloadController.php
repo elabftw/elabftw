@@ -156,8 +156,14 @@ final class DownloadController implements ControllerInterface
 
         $rangeHeader = $request->headers->get('Range');
         if ($rangeHeader !== null && preg_match('/bytes=(\d*)-(\d*)/', $rangeHeader, $matches)) {
-            $start = $matches[1] !== '' ? (int) $matches[1] : 0;
-            $end = $matches[2] !== '' ? (int) $matches[2] : $fileSize - 1;
+            if ($matches[1] === '' && $matches[2] !== '') {
+                // suffix-byte-range: bytes=-N means the last N bytes (RFC 7233)
+                $start = max(0, $fileSize - (int) $matches[2]);
+                $end = $fileSize - 1;
+            } else {
+                $start = $matches[1] !== '' ? (int) $matches[1] : 0;
+                $end = $matches[2] !== '' ? (int) $matches[2] : $fileSize - 1;
+            }
 
             if ($end >= $fileSize) {
                 $end = $fileSize - 1;

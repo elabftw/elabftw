@@ -126,13 +126,12 @@ RUN make install
 #############################
 FROM alpine:3.23
 
-# the target elabftw version is passed with --build-arg
-# it is a mandatory ARG
-ARG ELABFTW_VERSION
+# set build version with --build-arg ELABFTW_VERSION=X.Y.Z
+ARG ELABFTW_VERSION=dev
 ENV ELABFTW_VERSION=$ELABFTW_VERSION
 
 LABEL net.elabftw.name="elabftw" \
-    net.elabftw.description="Run nginx and php-fpm to serve elabftw" \
+    net.elabftw.description="eLabFTW web service" \
     net.elabftw.url="https://www.elabftw.net" \
     net.elabftw.vcs-url="https://github.com/elabftw/elabftw" \
     net.elabftw.elabftw-version=$ELABFTW_VERSION

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use ZipStream\ZipStream;
 use Override;
 
@@ -111,7 +111,7 @@ abstract class AbstractMakeEln extends AbstractMakeZip
                 '@id' => 'https://www.elabftw.net',
                 '@type' => 'SoftwareApplication',
                 'name' => 'eLabFTW',
-                'version' => App::INSTALLED_VERSION,
+                'version' => BuildInfo::VERSION,
                 'identifier' => 'https://www.elabftw.net',
             ),
         );

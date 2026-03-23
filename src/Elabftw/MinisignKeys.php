@@ -149,7 +149,7 @@ final readonly class MinisignKeys
         $firstLine = sprintf(
             "%selabftw/%d: encrypted secret key %s\n",
             SignatureHelper::UNTRUSTED_COMMENT_PREFIX,
-            App::INSTALLED_VERSION_INT,
+            BuildInfo::VERSION_INT,
             $this->getIdHex(),
         );
         $toEncode = self::SIGNATURE_ALGO . self::KDF_ALGO . self::CKSUM_ALGO . $this->salt;
@@ -171,7 +171,7 @@ final readonly class MinisignKeys
         return sprintf(
             "%selabftw/%d: public key %s\n%s\n",
             SignatureHelper::UNTRUSTED_COMMENT_PREFIX,
-            App::INSTALLED_VERSION_INT,
+            BuildInfo::VERSION_INT,
             $this->getIdHex(),
             Base64::encodeUnpadded(self::SIGNATURE_ALGO . $this->id . $this->pub),
         );

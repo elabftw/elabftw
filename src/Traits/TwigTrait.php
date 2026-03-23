@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\FsTools;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
@@ -118,8 +118,7 @@ trait TwigTrait
 
         // use the image BUILD_ID to use as parameter for loading assets
         // this helps with busting the cache in browsers
-        $elabimgBuildId = getenv('ELABIMG_BUILD_ID') ?: App::INSTALLED_VERSION;
-        $TwigEnvironment->addGlobal('v', $elabimgBuildId);
+        $TwigEnvironment->addGlobal('v', BuildInfo::ID);
 
         return $TwigEnvironment;
     }

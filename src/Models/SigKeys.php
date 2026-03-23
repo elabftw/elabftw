@@ -93,9 +93,10 @@ final class SigKeys extends AbstractRest
     public function readOne(): array
     {
         $sql = 'SELECT id, pubkey, privkey, created_at, last_used_at, userid, state
-            FROM sig_keys WHERE id = :id';
+            FROM sig_keys WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);

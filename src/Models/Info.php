@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
@@ -43,8 +43,8 @@ final class Info extends AbstractRest
         $Uploads = new Uploads(new Experiments(new Users()));
         $Uploads->readFilesizeSum();
         $base = array(
-            'elabftw_version' => App::INSTALLED_VERSION,
-            'elabftw_version_int' => App::INSTALLED_VERSION_INT,
+            'elabftw_version' => BuildInfo::VERSION,
+            'elabftw_version_int' => BuildInfo::VERSION_INT,
             'ts_balance' => (int) $Config->configArr['ts_balance'],
             'ts_limit' => (int) $Config->configArr['ts_limit'],
             'uploads_filesize_sum' => $Uploads->readFilesizeSum(),

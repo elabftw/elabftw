@@ -10,8 +10,8 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <p>{{ 'eLabFTW is a free and open source electronic laboratory notebook crafted by %s and contributors.'|trans|format("<a href='https://www.deltablot.com' class='external-link' target='_blank' rel='noopener'>Deltablot</a>")|raw }}</p>
-        {% set releaseUrl = 'https://github.com/elabftw/elabftw/releases/tag/' ~ constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION') %}
-        {% set releaseLink = "<a href='%s' class='external-link' target='_blank' rel='noopener'>%s</a>"|format(releaseUrl, constant('Elabftw\\Elabftw\\App::INSTALLED_VERSION')) %}
+        {% set releaseUrl = 'https://github.com/elabftw/elabftw/releases/tag/' ~ constant('Elabftw\\Elabftw\\BuildInfo::VERSION') %}
+        {% set releaseLink = "<a href='%s' class='external-link' target='_blank' rel='noopener'>%s</a>"|format(releaseUrl, constant('Elabftw\\Elabftw\\BuildInfo::VERSION')) %}
         <p>{{ 'Running version: %s'|trans|format(releaseLink)|raw }}</p>
         <p>{{ 'License: %s'|trans|format("<a href='https://github.com/elabftw/elabftw/?tab=AGPL-3.0-1-ov-file#readme' class='external-link' target='_blank' rel='noopener'>Affero GPL v3</a>")|raw }}</p>
         <p>{{ 'Source code: %s'|trans|format("<a href='https://github.com/elabftw/elabftw/' class='external-link' target='_blank' rel='noopener'>GitHub repository</a>")|raw }}</p>

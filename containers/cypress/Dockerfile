@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for Cypress
-FROM cypress/included:14.5.4
+# cypress/included:cypress-15.12.0-node-24.14.0-chrome-146.0.7680.80-1-ff-148.0.2-edge-146.0.3856.62-1
+# https://hub.docker.com/layers/cypress/included/cypress-15.12.0-node-24.14.0-chrome-146.0.7680.80-1-ff-148.0.2-edge-146.0.3856.62-1/images/sha256-22677aed206249ca225b9d5300513964370ef6c74a998672a7c06f2770e37b38
+FROM cypress/included@sha256:22677aed206249ca225b9d5300513964370ef6c74a998672a7c06f2770e37b38
 
 WORKDIR /home/node
 

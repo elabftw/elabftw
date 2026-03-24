@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for Cypress
-# cypress/included:cypress-15.12.0-node-24.14.0-chrome-146.0.7680.80-1-ff-148.0.2-edge-146.0.3856.62-1
-# https://hub.docker.com/layers/cypress/included/cypress-15.12.0-node-24.14.0-chrome-146.0.7680.80-1-ff-148.0.2-edge-146.0.3856.62-1/images/sha256-22677aed206249ca225b9d5300513964370ef6c74a998672a7c06f2770e37b38
-FROM cypress/included@sha256:22677aed206249ca225b9d5300513964370ef6c74a998672a7c06f2770e37b38
+# https://hub.docker.com/layers/cypress/included/cypress-14.5.4-node-22.18.0-chrome-139.0.7258.127-1-ff-141.0.3-edge-139.0.3405.86-1/images/sha256-620a38f0522a1bc90a941b697239a35567d6f2c305d6b119a8f82e81b906ad79
+# we use the index digest
+FROM cypress/included@sha256:848fb0d361178e695aa3ebd0f9632f2966232907c0fc02fbd6432e07d4d08d8b
 
 WORKDIR /home/node
 

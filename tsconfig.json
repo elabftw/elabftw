@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "NodeNext",
+    "ignoreDeprecations": "6.0",
     "esModuleInterop": true,
     "moduleResolution": "NodeNext",
     "strict": false,

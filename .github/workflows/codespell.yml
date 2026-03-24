@@ -14,12 +14,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       # codespell github action does not yet allow for --config option
       # https://github.com/codespell-project/actions-codespell/issues/67
       # so we need to install and invoke "manually"
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4
       - name: Install codespell
         run: |
             python -m pip install codespell

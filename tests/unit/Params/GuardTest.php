@@ -26,11 +26,8 @@ class GuardTest extends \PHPUnit\Framework\TestCase
 
     public function testAllRequiredKeysPresent(): void
     {
-        Guard::ensureRequiredKeysPresent(
-            $this->expectedKeys,
-            array('userid' => 3, 'team' => 1),
-        );
-        $this->assertTrue(true);
+        $input = array('userid' => 3, 'team' => 1);
+        $this->assertSame($input, Guard::ensureRequiredKeysPresent($this->expectedKeys, $input));
     }
 
     public function testMissingRequiredKeyThrowsException(): void
@@ -67,6 +64,7 @@ class GuardTest extends \PHPUnit\Framework\TestCase
 
     public function testGetNonEmptyStringValueOfRequiredParamWithEmptyValue(): void
     {
+        $this->assertSame('yep', Guard::getNonEmptyStringValueOfRequiredParam('k', array('k' => 'yep')));
         $this->expectException(ImproperActionException::class);
         Guard::getNonEmptyStringValueOfRequiredParam('key', array('key' => ''));
     }

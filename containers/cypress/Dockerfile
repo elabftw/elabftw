@@ -6,7 +6,6 @@ FROM cypress/included@sha256:848fb0d361178e695aa3ebd0f9632f2966232907c0fc02fbd64
 
 WORKDIR /home/node
 
-# copy everything because we can't bind mount in CI
 COPY tsconfig.json .
 COPY cypress.config.ts .
 COPY tests/cypress/ ./tests/cypress/
@@ -20,7 +19,7 @@ RUN chown -R node:node tests/cypress
 USER node
 
 # add html validation tools to cypress
-RUN npm install typescript html-validate@^8 cypress-html-validate@^7 cypress-terminal-report
+RUN npm install typescript@^5 html-validate@^8 cypress-html-validate@^7 cypress-terminal-report
 
 # overwrite default 'cypress run' entry point, will call it manually later
 # https://github.com/cypress-io/cypress-docker-images/tree/master/included#keep-the-container

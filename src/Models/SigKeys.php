@@ -19,6 +19,7 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\Guard;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
@@ -42,7 +43,7 @@ final class SigKeys extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $key = MinisignKeys::generate($reqBody['passphrase'] ?? throw new ImproperActionException(_('The mandatory "passphrase" parameter was not provided!')));
+        $key = MinisignKeys::generate(Guard::getNonEmptyStringValueOfRequiredParam('passphrase', $reqBody));
 
         $this->destroy();
         $sql = 'INSERT INTO sig_keys (pubkey, privkey, userid) VALUES (:pubkey, :privkey, :userid)';

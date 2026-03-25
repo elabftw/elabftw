@@ -95,7 +95,6 @@ try {
         Db::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION),
     );
 
-    $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
     $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
     array_walk($auditLogsArr, function (array &$event) {
         try {
@@ -112,7 +111,6 @@ try {
         'containersCount' => $StorageUnits->readCount(),
         'nologinUsersCount' => $AuthFail->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
-        'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
         'idpsSources' => $idpsSources,
         'pageTitle' => _('Instance settings'),

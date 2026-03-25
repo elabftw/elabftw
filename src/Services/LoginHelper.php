@@ -14,7 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\AuditEvent\UserLogin;
 use Elabftw\Auth\CookieToken;
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\AuthResponseInterface;
@@ -52,7 +52,7 @@ final class LoginHelper
         }
         // if we run a version newer than the last time the user logged in, create a notification
         // but only if it's a minor version
-        if ((App::INSTALLED_VERSION_INT - $this->getLastSeenVersion() >= 100) && !$this->AuthResponse->isAnonymous()) {
+        if ((BuildInfo::VERSION_INT - $this->getLastSeenVersion() >= 100) && !$this->AuthResponse->isAnonymous()) {
             $authUserid = $this->AuthResponse->getAuthUserid();
             $authUser = new Users($authUserid);
             $Notifications = new NewVersionInstalled($authUser);
@@ -121,7 +121,7 @@ final class LoginHelper
     {
         $sql = 'UPDATE users SET last_login = NOW(), last_seen_version = :version WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':version', App::INSTALLED_VERSION_INT, PDO::PARAM_INT);
+        $req->bindValue(':version', BuildInfo::VERSION_INT, PDO::PARAM_INT);
         $req->bindValue(':userid', $this->AuthResponse->getAuthUserid(), PDO::PARAM_INT);
         $this->Db->execute($req);
     }

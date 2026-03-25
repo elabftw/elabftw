@@ -14,6 +14,7 @@ namespace Elabftw\Make;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Enums\Classification;
 use League\Flysystem\UnableToReadFile;
 use Elabftw\Services\MpdfProvider;
@@ -101,8 +102,8 @@ class MakeStreamZip extends AbstractMakeZip
     {
         $creationDateTime = new DateTimeImmutable();
         return array(
-            'elabftw_producer_version' => App::INSTALLED_VERSION,
-            'elabftw_producer_version_int' => App::INSTALLED_VERSION_INT,
+            'elabftw_producer_version' => BuildInfo::VERSION,
+            'elabftw_producer_version_int' => BuildInfo::VERSION_INT,
             'dateCreated' => $creationDateTime->format(DateTimeImmutable::ATOM),
         );
     }

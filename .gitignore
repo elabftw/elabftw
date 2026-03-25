@@ -31,9 +31,11 @@ tests/cypress/videos
 uploads
 /vendor/
 .sass-cache
+src/Elabftw/BuildInfo.php
 src/ts/langs/*.js
 *.gz
-tests/elabftw-user.env
+containers/elabimg/elabftw-user.env
+containers/elabtmp/elabftw-user.env
 /todo
 /ideas
 .yarn

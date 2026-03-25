@@ -17,7 +17,7 @@ use Elabftw\AuditEvent\UserAttributeChanged;
 use Elabftw\AuditEvent\UserDeleted;
 use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -166,7 +166,7 @@ class Users extends AbstractRest
         $req->bindValue(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
         $req->bindValue(':default_read', $defaultCan);
         $req->bindValue(':default_write', $defaultCan);
-        $req->bindValue(':last_seen_version', App::INSTALLED_VERSION_INT);
+        $req->bindValue(':last_seen_version', BuildInfo::VERSION_INT);
         $req->bindValue(':can_manage_compounds', $canManageCompounds->value);
         $req->bindValue(':can_manage_inventory_locations', $canManageInventoryLocations->value);
         $this->Db->execute($req);

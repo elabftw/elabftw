@@ -4,7 +4,7 @@
   {# DATE #}
   <td class='item-date'>
     {# checkbox #}
-    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' aria-label='{{ 'Select'|trans }}' style='width:15px;' />
+    <input autocomplete='off' type='checkbox' data-action='checkbox-entity' data-id='{{ item.id }}' data-randomid='{{ randomId }}' data-type='{{ Entity.entityType.value }}' data-state='{{ item.state }}' aria-label='{{ 'Select'|trans }}' style='width:15px;' />
    {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
         {{ item.created_at|date('Y-m-d') }}
    {% else %}
@@ -27,6 +27,10 @@
     {# archived icon #}
     {% if item.state == enum('Elabftw\\Enums\\State').Archived.value %}
       <i class='fas fa-box-archive fa-fw'></i>
+    {% endif %}
+    {# deleted icon #}
+    {% if item.state == enum('Elabftw\\Enums\\State').Deleted.value %}
+      <i class='fas fa-ban fa-fw color-danger'></i>
     {% endif %}
     {# toggle body #}
     <button class='btn p-2 hl-hover-gray lh-normal border-0 my-n2' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-randid={{ randomId }} data-action='toggle-body' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
@@ -87,7 +91,7 @@
 {# a random id is used because with the favorites the item can appear two times on the page so the old blah_123 doesn't work well #}
 <tr hidden id='{{ randomId }}' style='border-left: 4px solid #{{ item.category_color }}'>
   <td colspan='8'>
-    <div style='overflow:auto;margin: 10px 0 0 20px'></div>
+    <div class='d-flex flex-column align-items-start'></div>
   </td>
 </tr>
 

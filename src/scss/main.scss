@@ -1674,16 +1674,15 @@ input[type='color'] {
   .relative-moment {
     font-size: 80%;
   }
-}
 
-.notification[data-ack='0'] {
-  background-color: var(--primary);
+  &[data-ack='0'] {
+    background-color: var(--primary);
 
-  span {
-    color: var(--mainbackground);
+    span {
+      color: var(--chrome-fg);
+    }
   }
 }
-
 
 /* The switch - the box around the slider */
 .switch {
@@ -1967,4 +1966,10 @@ input:user-invalid {
 // disable touch action for doodle canvas
 #doodleCanvas {
   touch-action: none;
+}
+
+// on sysconfig page
+.logo-preview svg {
+  height: 100px;
+  width: 300px;
 }

@@ -21,24 +21,21 @@ import { populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
+
+// allow filtering by values for cells that render icons or badges (team, isSysadmin, etc.,)
+const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
+const enabledDisabled = v => v === 1 ? i18next.t('enabled') : i18next.t('disabled');
+const lastLoginText = v => v === null ? i18next.t('never') : v;
+const validUntilText = v => v === null ? i18next.t('forever') : v;
+// allow filtering for "admin" as well as team name
+const teamsText = teams => teams?.map(t => `${t.name} ${t.is_admin ? i18next.t('admin') : i18next.t('user')}`).join(' ') ?? '';
+
 async function toggleUserModal(user) {
-  const textParams = [
-    'userid',
-    'firstname',
-    'lastname',
-    'email',
-    'valid_until',
-    'orgid',
-  ];
+  const textParams = ['userid', 'firstname', 'lastname', 'email', 'valid_until', 'orgid'];
   textParams.forEach(param => {
     (document.getElementById(`userInput-${param}`)).value = user[param];
   });
-  const binaryParams = [
-    'is_sysadmin',
-    'can_manage_users2teams',
-    'can_manage_compounds',
-    'can_manage_inventory_locations',
-  ];
+  const binaryParams = ['is_sysadmin', 'can_manage_users2teams', 'can_manage_compounds', 'can_manage_inventory_locations'];
   binaryParams.forEach(param => {
     const input = (document.getElementById(`userInput-${param}`));
     input.checked = user[param] === 1;
@@ -52,8 +49,8 @@ if (document.getElementById('users-table')) {
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
   const rowSelection = {
-      mode: 'multiRow',
-      headerCheckbox: false,
+    mode: 'multiRow',
+    headerCheckbox: false,
   };
 
   const GridExample = () => {
@@ -69,60 +66,58 @@ if (document.getElementById('users-table')) {
     };
     // renderer for teams column
     const TeamsRenderer = ({ value }) => {
-      const items = value
-        .map(team => (
-          <span className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`} key={team.id} data-id={team.id}>
-            {team.name}
-          </span>
-        ));
-      return <span>{items}</span>;
+      return (
+        <span>{value.map(team => (
+          <span key={team.id} data-id={team.id} className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`}>{team.name}</span>))}
+        </span>
+      );
     };
 
     const LastLoginRenderer = ({ value }) => {
-      return value === null
-        ? <span className='font-italic'>{i18next.t('never')}</span>
+      return value === i18next.t('never')
+        ? <span className='font-italic'>{value}</span>
         : <span>{value}</span>;
     };
 
     const ValidUntilRenderer = ({ value }) => {
-      return value === null
-        ? <span className='font-italic'>{i18next.t('forever')}</span>
+      return value === i18next.t('forever')
+        ? <span className='font-italic'>{value}</span>
         : <span>{value}</span>;
     };
 
     const HasMfaEnabledRenderer = ({ value }) => {
-      return value === 1
-        ? <span title={i18next.t('enabled')}><i title={i18next.t('enabled')} className='fas fa-user-shield mr-2'></i>{i18next.t('enabled')}</span>
-        : <span className='font-italic' title='disabled'>{i18next.t('disabled')}</span>;
+      return value === i18next.t('enabled')
+        ? <span title={value}><i className='fas fa-user-shield mr-2'></i>{value}</span>
+        : <span className='font-italic' title={value}>{value}</span>;
     };
 
     const BinaryRenderer = ({ value }) => {
-      return value === 1
-        ? <span title={i18next.t('yes')}><i title={i18next.t('yes')} className='fas fa-circle-check mr-2 color-blue'></i>{i18next.t('yes')}</span>
-        : <span title={i18next.t('no')}><i title={i18next.t('no')} className='fas fa-circle-xmark mr-2'></i>{i18next.t('no')}</span>
+      return value === i18next.t('yes')
+        ? <span title={value}><i className='fas fa-circle-check mr-2 color-blue'></i>{value}</span>
+        : <span title={value}><i className='fas fa-circle-xmark mr-2'></i>{value}</span>;
     };
 
     const [columnDefs] = useState([
-        { field: 'userid', headerName: i18next.t('userid'), pinned: 'left' },
-        { field: 'teams', headerName: i18next.t('teams'), cellRenderer: TeamsRenderer },
-        { field: 'firstname', headerName: i18next.t('firstname') },
-        { field: 'lastname', headerName: i18next.t('lastname') },
-        { field: 'email', headerName: i18next.t('email') },
-        { field: 'last_login', headerName: i18next.t('last-login'), cellRenderer: LastLoginRenderer },
-        { field: 'is_sysadmin', headerName: i18next.t('is-sysadmin'), cellRenderer: BinaryRenderer},
-        { field: 'has_mfa_enabled', headerName: i18next.t('2FA'), cellRenderer: HasMfaEnabledRenderer },
-        { field: 'valid_until', headerName: i18next.t('Valid until'), cellRenderer: ValidUntilRenderer },
-        { field: 'validated', headerName: i18next.t('Validated'), cellRenderer: BinaryRenderer},
-        { field: 'orgid', headerName: i18next.t('Internal id') },
-        { field: 'orcid', headerName: 'ORCID' },
-        { field: 'can_manage_users2teams', headerName: i18next.t('can-manage-users2teams'), cellRenderer: BinaryRenderer},
-        { field: 'can_manage_compounds', headerName: i18next.t('can-manage-compounds'), cellRenderer: BinaryRenderer},
-        { field: 'can_manage_inventory_locations', headerName: i18next.t('can-manage-inventory-locations'), cellRenderer: BinaryRenderer},
+      { field: 'userid', headerName: i18next.t('userid'), pinned: 'left' },
+      { field: 'teams', headerName: i18next.t('teams'), cellRenderer: TeamsRenderer, filterValueGetter: p => teamsText(p.data.teams) },
+      { field: 'firstname', headerName: i18next.t('firstname') },
+      { field: 'lastname', headerName: i18next.t('lastname') },
+      { field: 'email', headerName: i18next.t('email') },
+      { field: 'last_login', headerName: i18next.t('last-login'), valueGetter: p => lastLoginText(p.data.last_login), filterValueGetter: p => lastLoginText(p.data.last_login), cellRenderer: LastLoginRenderer },
+      { field: 'is_sysadmin', headerName: i18next.t('is-sysadmin'), valueGetter: p => yesNo(p.data.is_sysadmin), filterValueGetter: p => yesNo(p.data.is_sysadmin), cellRenderer: BinaryRenderer },
+      { field: 'has_mfa_enabled', headerName: i18next.t('2FA'), valueGetter: p => enabledDisabled(p.data.has_mfa_enabled), filterValueGetter: p => enabledDisabled(p.data.has_mfa_enabled), cellRenderer: HasMfaEnabledRenderer },
+      { field: 'valid_until', headerName: i18next.t('Valid until'), valueGetter: p => validUntilText(p.data.valid_until), filterValueGetter: p => validUntilText(p.data.valid_until), cellRenderer: ValidUntilRenderer },
+      { field: 'validated', headerName: i18next.t('Validated'), valueGetter: p => yesNo(p.data.validated), filterValueGetter: p => yesNo(p.data.validated), cellRenderer: BinaryRenderer },
+      { field: 'orgid', headerName: i18next.t('Internal id') },
+      { field: 'orcid', headerName: 'ORCID' },
+      { field: 'can_manage_users2teams', headerName: i18next.t('can-manage-users2teams'), valueGetter: p => yesNo(p.data.can_manage_users2teams), filterValueGetter: p => yesNo(p.data.can_manage_users2teams), cellRenderer: BinaryRenderer },
+      { field: 'can_manage_compounds', headerName: i18next.t('can-manage-compounds'), valueGetter: p => yesNo(p.data.can_manage_compounds), filterValueGetter: p => yesNo(p.data.can_manage_compounds), cellRenderer: BinaryRenderer },
+      { field: 'can_manage_inventory_locations', headerName: i18next.t('can-manage-inventory-locations'), valueGetter: p => yesNo(p.data.can_manage_inventory_locations), filterValueGetter: p => yesNo(p.data.can_manage_inventory_locations), cellRenderer: BinaryRenderer },
     ]);
 
     // Load data on component mount
     useEffect(() => {
-        fetchData();
+      fetchData();
     }, []);
 
     // all the users are loaded in the table, which does client side pagination
@@ -149,15 +144,15 @@ if (document.getElementById('users-table')) {
     };
 
     const defaultColDef = useMemo(() => {
-        return {
-            filter: 'agTextColumnFilter',
-            floatingFilter: true,
-            onCellValueChanged: (event) => {
-              const params = {};
-              params[event.column.colId] = event.newValue;
-              ApiC.patch(`users/${event.data.id}`, params);
-            }
-        };
+      return {
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
+        onCellValueChanged: (event) => {
+          const params = {};
+          params[event.column.colId] = event.newValue;
+          ApiC.patch(`users/${event.data.id}`, params);
+        }
+      };
     }, []);
 
     // when a row is selected with the checkbox
@@ -183,39 +178,39 @@ if (document.getElementById('users-table')) {
     return (
       <>
         <input
-          type="text"
+          type='text'
           placeholder={i18next.t('search')}
           onChange={onQuickFilterChange}
           className={'form-control mb-2'}
           aria-label={i18next.t('search')}
         />
-      <div
-        className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
-        <AgGridReact
-          rowData={rowData}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          onGridReady={onGridReady}
-          rowSelection={rowSelection}
-          onCellDoubleClicked={cellDoubleClicked}
-          onSelectionChanged={selectionChanged}
-          pagination={true}
-          paginationPageSize={15}
-          paginationPageSizeSelector={[15, 50, 100, 500]}
-        />
-      </div>
-      <div className='d-flex justify-content-start my-2'>
-        <button
-          data-action='import-users-in-team'
-          id='importUsersBtn'
-          type='button'
-          disabled='disabled'
-          className={'btn btn-sm btn-secondary'}
-        >
-        {i18next.t('add-to-team')}
-        </button>
-      </div>
-    </>
+        <div
+          className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
+          <AgGridReact
+            rowData={rowData}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            onGridReady={onGridReady}
+            rowSelection={rowSelection}
+            onCellDoubleClicked={cellDoubleClicked}
+            onSelectionChanged={selectionChanged}
+            pagination={true}
+            paginationPageSize={15}
+            paginationPageSizeSelector={[15, 50, 100, 500]}
+          />
+        </div>
+        <div className='d-flex justify-content-start my-2'>
+          <button
+            data-action='import-users-in-team'
+            id='importUsersBtn'
+            type='button'
+            disabled='disabled'
+            className={'btn btn-sm btn-secondary'}
+          >
+            {i18next.t('add-to-team')}
+          </button>
+        </div>
+      </>
     );
   };
 
@@ -225,11 +220,11 @@ if (document.getElementById('users-table')) {
     const [reloadKey, setReloadKey] = useState(0);
     // trigger this with document.dispatchEvent(new CustomEvent('dataReload'))
     document.addEventListener('dataReload', () => setReloadKey(prevKey => prevKey + 1));
-    return <GridExample key={reloadKey} />;
+    return <GridExample key={reloadKey}/>;
   };
 
   const root = createRoot(document.getElementById('users-table'));
   root.render(
-    <App />
+    <App/>
   );
 }

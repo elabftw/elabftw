@@ -56,6 +56,7 @@ try {
             $MfaHelper = new MfaHelper();
             $mfaQRCodeImageDataUri = $MfaHelper->getQRCodeImageAsDataUri($halfLoggedInUser->userData['email']);
             $mfaNewSecret = $MfaHelper->secret;
+            $App->Session->set('mfa_secret', $mfaNewSecret);
         }
 
         $Response->setContent($App->render('mfa.html', array(

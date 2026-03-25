@@ -132,9 +132,14 @@ final class TeamTags extends AbstractRest
             throw new IllegalActionException('Only an admin can delete a tag!');
         }
         // first unreference the tag
-        $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id';
+        $sql = 'DELETE tags2entity
+            FROM tags2entity
+            INNER JOIN tags ON tags.id = tags2entity.tag_id
+            WHERE tags2entity.tag_id = :tag_id
+              AND tags.team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         // now delete it from the tags table

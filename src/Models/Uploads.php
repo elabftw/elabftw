@@ -30,6 +30,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\Guard;
 use Elabftw\Params\UploadParams;
 use Elabftw\Services\Check;
 use ImagickException;
@@ -280,15 +281,13 @@ final class Uploads extends AbstractRest
         if ($this->id !== null) {
             $action = Action::Replace;
         }
-        if (empty($reqBody['real_name'])) {
-            throw new ImproperActionException('Cannot create an upload with an empty real_name value.');
-        }
+        $realName = Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody);
         return match ($action) {
             Action::Create => $this->create(
-                new CreateUploadFromUploadedFile(new UploadedFile($reqBody['filePath'], $reqBody['real_name']), $reqBody['comment'])
+                new CreateUploadFromUploadedFile(new UploadedFile($reqBody['filePath'], $realName), $reqBody['comment'])
             ),
             Action::CreateFromString => (
-                function () use ($reqBody) {
+                function () use ($reqBody, $realName) {
                     $fileType = FileFromString::tryFrom($reqBody['file_type']);
                     if ($fileType === null) {
                         throw new ImproperActionException(sprintf('Invalid file_type parameter. Valid values are: %s.', FileFromString::toCsList()));
@@ -296,11 +295,11 @@ final class Uploads extends AbstractRest
                     if (empty($reqBody['content'])) {
                         throw new ImproperActionException('Cannot create file from string with empty content!');
                     }
-                    return $this->createFromString($fileType, $reqBody['real_name'], $reqBody['content']);
+                    return $this->createFromString($fileType, $realName, $reqBody['content']);
                 }
             )(),
             Action::Replace => $this->replace(new CreateUploadFromUploadedFile(
-                new UploadedFile($reqBody['filePath'], $reqBody['real_name']),
+                new UploadedFile($reqBody['filePath'], $realName),
                 $this->uploadData['comment']
             )),
             default => throw new ImproperActionException('Invalid action for upload creation.'),

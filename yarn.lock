@@ -4320,35 +4320,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ag-charts-types@npm:11.3.2":
-  version: 11.3.2
-  resolution: "ag-charts-types@npm:11.3.2"
-  checksum: 10c0/94c93b008e24d641e0a6035b211beb6e0a3dc1257ed333781476df6f244d7af14bf6f4b793640b5bdcbd085b591dc94b88e96986db311ebc97f9a72090421912
-  languageName: node
-  linkType: hard
-
-"ag-grid-community@npm:33.3.2, ag-grid-community@npm:^33.3.2":
-  version: 33.3.2
-  resolution: "ag-grid-community@npm:33.3.2"
-  dependencies:
-    ag-charts-types: "npm:11.3.2"
-  checksum: 10c0/9fbeebccf963a28d2a1dbe14e3d49c853a4f48787a3b466a2a859e1a5ed6d2c04a4b2cadf65dbffde895bc87eed480edba3d427e72cef5970b3180989d9f7b29
-  languageName: node
-  linkType: hard
-
-"ag-grid-react@npm:^33.3.2":
-  version: 33.3.2
-  resolution: "ag-grid-react@npm:33.3.2"
-  dependencies:
-    ag-grid-community: "npm:33.3.2"
-    prop-types: "npm:^15.8.1"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/06d404206905d4bf760d1e0a1877f3111d2093f10868e835d6cbd9725590bf2b7229803734e16d1d93dcf74c0e08b72a09bd11a5c9831bf41811fc056060aa6f
-  languageName: node
-  linkType: hard
-
 "agent-base@npm:^7.1.0, agent-base@npm:^7.1.2":
   version: 7.1.3
   resolution: "agent-base@npm:7.1.3"
@@ -6709,8 +6680,6 @@ __metadata:
     "@yarnpkg/core": "npm:^4.6.0"
     "@yarnpkg/fslib": "npm:^3.1.5"
     "@yarnpkg/libzip": "npm:^3.2.2"
-    ag-grid-community: "npm:^33.3.2"
-    ag-grid-react: "npm:^33.3.2"
     babel-loader: "npm:^10.1.1"
     bootstrap: "npm:^4.6.2"
     bootstrap-markdown-fa5: "npm:^2.10.2"

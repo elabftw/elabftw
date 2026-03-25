@@ -39,8 +39,6 @@
     "@yarnpkg/core": "^4.6.0",
     "@yarnpkg/fslib": "^3.1.5",
     "@yarnpkg/libzip": "^3.2.2",
-    "ag-grid-community": "^33.3.2",
-    "ag-grid-react": "^33.3.2",
     "bootstrap": "^4.6.2",
     "bootstrap-markdown-fa5": "^2.10.2",
     "css-loader": "^7.1.4",

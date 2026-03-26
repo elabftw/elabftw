@@ -17,7 +17,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
 # Note: no need to chain the RUN commands here as it's a builder image and nothing will be kept
 FROM alpine:3.23 AS nginx-builder
 
-ENV NGINX_VERSION=1.28.2
+ENV NGINX_VERSION=1.28.3
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
 # BROKEN HASH: ENV NGX_BROTLI_COMMIT_HASH=63ca02abdcf79c9e788d2eedcc388d2335902e52

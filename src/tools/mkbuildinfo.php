@@ -22,7 +22,7 @@ $version = getenv('ELABFTW_VERSION') ?: 'dev';
 // major is untouched, and minor and patch are padded with one 0 each
 // we should be pretty safe from ever reaching 100 as a minor or patch version!
 
-$versionInt = 99999;
+$versionInt = 0;
 if (preg_match('/^(\d+)\.(\d+)\.(\d+)(?:-(alpha|beta|rc)\d*)?$/', $version, $m)) {
     $versionInt = ((int) $m[1]) * 10000 + ((int) $m[2]) * 100 + (int) $m[3];
 }

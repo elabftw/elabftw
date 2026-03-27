@@ -63,22 +63,19 @@
             {% endfor %}
           </select>
           {# USER GROUPS #}
-          <label for='{{ identifier }}_select_teamgroups' class='mt-2'>+ {{ 'User Groups'|trans }}</label>
+          {% set identifierTeamGroups = identifier ~ '_select_teamgroups' %}
+          <label for='{{ identifierTeamGroups }}' class='mt-2'>+ {{ 'User Groups'|trans }}</label>
           <div class='d-flex'>
             <p class='smallgray'>{{ '(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)'|trans|format('<kbd>', '</kbd>', '<kbd>', '</kbd>')|raw }}</p>
             <div class='ml-auto'>
-              <details closed>
-                <summary class='p-2 rounded hl-hover-gray'>{{ 'Set scope'|trans }}</summary>
-                <select aria-label='{{ 'Set scope'|trans }}' data-trigger='change' data-model='users/me' data-reload='{{ identifier }}_select_teamgroups' data-target='scope_teamgroups' class='form-control'>
-                  {% for case in enum('Elabftw\\Enums\\Scope').cases %}
-                    <option value='{{ case.value }}' {{ App.Users.userData.scope_teamgroups == case.value ? ' selected' }}>{{ case.toHuman() }}</option>
-                  {% endfor %}
-                </select>
-              </details>
+              {# SCOPE BUTTON #}
+              {% set scopeBtnId = 'scope' ~ identifier %}
+              {% set toReload = [identifierTeamGroups, scopeBtnId]|join(',') %}
+              {% include 'scope-button.html' with {'btnId': scopeBtnId, 'reload': toReload, 'target': 'scope_teamgroups', 'withLabel': 1} %}
             </div>
           </div>
           <p class='smallgray'>{{ 'Selecting a user group here will give access to all users part of this user group.'|trans }}</p>
-          <select {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off'>
+          <select {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifierTeamGroups }}' multiple class='form-control' autocomplete='off'>
             {% for tg in scopedTeamgroupsArr %}
               <option value='teamgroup:{{ tg.id }}'
               {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}

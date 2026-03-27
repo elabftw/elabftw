@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Enums\Notifications;
 use Elabftw\Exceptions\ImproperActionException;
 
@@ -109,7 +110,7 @@ final class Transform
             Notifications::NewVersionInstalled =>
                 sprintf(
                     '<a class="color-white" href="%s" target="_blank">%s</a>' . $relativeMoment,
-                    App::getWhatsnewLink(App::INSTALLED_VERSION_INT),
+                    App::getWhatsnewLink(BuildInfo::VERSION_INT),
                     sprintf(_('A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message.'), '<br>'),
                     $notif['created_at'],
                 ),

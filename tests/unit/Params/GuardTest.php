@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 /**
- * @author Nicolas CARPi <nico-git@deltablot.email>
- * @author Moustapha <Deltablot>
+ * @author Nicolas CARPi / Deltablot
  * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Params;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\MissingRequiredKeyException;
 
-class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
+class GuardTest extends \PHPUnit\Framework\TestCase
 {
     private array $expectedKeys;
 
@@ -26,17 +26,14 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testAllRequiredKeysPresent(): void
     {
-        ApiParamsValidator::ensureRequiredKeysPresent(
-            $this->expectedKeys,
-            array('userid' => 3, 'team' => 1),
-        );
-        $this->assertTrue(true);
+        $input = array('userid' => 3, 'team' => 1);
+        $this->assertSame($input, Guard::ensureRequiredKeysPresent($this->expectedKeys, $input));
     }
 
     public function testMissingRequiredKeyThrowsException(): void
     {
         $this->expectException(MissingRequiredKeyException::class);
-        ApiParamsValidator::ensureRequiredKeysPresent(
+        Guard::ensureRequiredKeysPresent(
             $this->expectedKeys,
             array('userid' => 3),
         );
@@ -45,7 +42,7 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     public function testNullValueIsConsideredMissing(): void
     {
         $this->expectException(MissingRequiredKeyException::class);
-        ApiParamsValidator::ensureRequiredKeysPresent(
+        Guard::ensureRequiredKeysPresent(
             $this->expectedKeys,
             array('userid' => 3, 'team' => null),
         );
@@ -54,7 +51,7 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
     public function testMultipleMissingKeys(): void
     {
         try {
-            ApiParamsValidator::ensureRequiredKeysPresent(
+            Guard::ensureRequiredKeysPresent(
                 $this->expectedKeys,
                 array(),
             );
@@ -63,5 +60,18 @@ class MissingRequiredKeyValidatorTest extends \PHPUnit\Framework\TestCase
             $this->assertStringContainsString('userid', $e->getMessage());
             $this->assertStringContainsString('team', $e->getMessage());
         }
+    }
+
+    public function testGetNonEmptyStringValueOfRequiredParamWithEmptyValue(): void
+    {
+        $this->assertSame('yep', Guard::getNonEmptyStringValueOfRequiredParam('k', array('k' => 'yep')));
+        $this->expectException(ImproperActionException::class);
+        Guard::getNonEmptyStringValueOfRequiredParam('key', array('key' => ''));
+    }
+
+    public function testEnsurePositiveInts(): void
+    {
+        $this->expectException(MissingRequiredKeyException::class);
+        Guard::ensurePositiveInts(array('k', 'kk'), array('k' => 3, 'kk' => -12));
     }
 }

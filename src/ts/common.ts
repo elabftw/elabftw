@@ -247,6 +247,17 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 
 makeMalleableColumnsGreatAgain();
 
+export function initPermissionsTomSelects() {
+  document.querySelectorAll('[id$="_select_teamgroups"], [id$="_select_teams"]')?.forEach((el) => {
+    const select = el as HTMLSelectElement & { tomselect?: TomSelect };
+    if (select.tomselect) {
+      select.tomselect.destroy();
+    }
+    new TomSelect(select, { plugins: ['dropdown_input', 'remove_button', 'clear_button']});
+  });
+}
+initPermissionsTomSelects();
+
 // tom-select for team selection on login and register page, and idp selection
 ['init_team_select', 'team', 'team_selection_select', 'idp_login_select'].forEach(id =>{
   if (document.getElementById(id)) {
@@ -1290,6 +1301,8 @@ on('scope-change', (el: HTMLElement) => {
   userParams[el.dataset.target] = el.dataset.value;
   ApiC.patch('users/me', userParams).then(() => {
     handleReloads(el.dataset.reload);
+    // todo: wip, not updating the tomselect populate
+    initPermissionsTomSelects();
   });
 });
 

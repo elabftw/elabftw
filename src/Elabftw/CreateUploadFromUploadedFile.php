@@ -24,11 +24,11 @@ final class CreateUploadFromUploadedFile extends CreateUpload
 {
     public function __construct(
         private readonly UploadedFile $uploadedFile,
-        private readonly ?string $comment = null,
-        private readonly int $immutable = 0,
-        private readonly State $state = State::Normal,
+        ?string $comment = null,
+        int $immutable = 0,
+        State $state = State::Normal,
     ) {
-        parent::__construct($this->getFilename(), $this->getFilePath(), $this->getHasher(), $this->comment, $this->immutable, $this->state);
+        parent::__construct($this->getFilename(), $this->getFilePath(), $this->getHasher(), $comment, $immutable, $state);
     }
 
     #[Override]

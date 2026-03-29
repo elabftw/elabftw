@@ -16,7 +16,7 @@ use Elabftw\Enums\State;
 use Elabftw\Hash\FileHash;
 use Elabftw\Interfaces\HashInterface;
 use Elabftw\Storage\Tmp;
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 use Override;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -50,7 +50,7 @@ final class CreateUploadFromUploadedFile extends CreateUpload
     }
 
     #[Override]
-    public function getSourceFs(): Filesystem
+    public function getSourceFs(): FilesystemOperator
     {
         return new Tmp()->getFs();
     }

@@ -29,7 +29,7 @@ use RuntimeException;
 abstract class AbstractZip extends AbstractImport
 {
     // the folder name where we extract the archive
-    protected string $tmpDir;
+    protected string $tmpDir = '';
 
     protected array $allowedMimes = array(
         'application/zip',
@@ -67,6 +67,9 @@ abstract class AbstractZip extends AbstractImport
      */
     public function __destruct()
     {
+        if ($this->tmpDir === '') {
+            return;
+        }
         $this->tmpFs->deleteDirectory($this->tmpDir);
     }
 

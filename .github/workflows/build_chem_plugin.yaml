@@ -25,22 +25,26 @@ jobs:
               with:
                 prevent: true
                 allowed-hosts: >
+                  archive.ubuntu.com
                   auth.docker.io
                   codeload.github.com
                   dl-cdn.alpinelinux.org
                   docker.io
+                  files.pythonhosted.org
                   ghcr.io
+                  hooks.deltablot.dev
                   index.docker.io
                   mirror.gcr.io
                   nginx.org
                   packagist.org
                   pkg-containers.githubusercontent.com
+                  pypi.org
                   production.cloudflare.docker.com
                   raw.githubusercontent.com
                   registry.yarnpkg.com
                   repo.yarnpkg.com
                   registry.npmjs.org
-                  hooks.deltablot.dev
+                  security.ubuntu.com
 
             - name: Checkout repo
               uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -51,6 +55,7 @@ jobs:
 
             # https://github.com/docker/login-action#docker-hub
             - name: Login to Docker Hub
+              if: github.event_name == 'push' && github.ref == 'refs/heads/master'
               uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4
               with:
                 username: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -64,8 +69,8 @@ jobs:
                 context: .
                 file: containers/chem-plugin/Dockerfile
                 platforms: linux/amd64,linux/arm64
-                # only push on push event, not PR
-                push: ${{ github.event_name == 'push' }}
+                # only push on push event from master, not PR
+                push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
                 # the scope parameter is necessary when doing multi arch builds or we'll always miss cache
                 cache-from: type=gha,scope=${{ runner.os }}-${{ runner.arch }}
                 cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}
@@ -73,4 +78,3 @@ jobs:
                 tags: |
                     elabftw/chem-plugin:stable
                     elabftw/chem-plugin:latest
-                    elabftw/chem-plugin:${{ github.ref_name }}

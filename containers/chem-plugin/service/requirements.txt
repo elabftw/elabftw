@@ -1,0 +1,14 @@
+celery==5.6.3
+epam-indigo==1.40.0
+flasgger==0.9.7.1
+Flask==2.3.2
+Flask-HTTPAuth==4.8.0
+gunicorn==23.0.0
+marshmallow==3.19.0
+openbabel-wheel==3.1.1.23
+pyparsing==3.0.9
+psycopg2-binary==2.9.6
+redis==4.5.5
+SQLAlchemy==2.0.15
+tzdata==2025.3
+uvicorn==0.42.0

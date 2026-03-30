@@ -1,0 +1,88 @@
+version = 1
+revision = 3
+requires-python = ">=3.13"
+
+[[package]]
+name = "click"
+version = "8.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3d/fa/656b739db8587d7b5dfa22e22ed02566950fbfbcdc20311993483657a5c0/click-8.3.1.tar.gz", hash = "sha256:12ff4785d337a1bb490bb7e9c2b1ee5da3112e94a8622f26a6c77f5d2fc6842a", size = 295065, upload-time = "2025-11-15T20:45:42.706Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl", hash = "sha256:981153a64e25f12d547d3426c367a4857371575ee7ad18df2a6183ab0545b2a6", size = 108274, upload-time = "2025-11-15T20:45:41.139Z" },
+]
+
+[[package]]
+name = "colorama"
+version = "0.4.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44", size = 27697, upload-time = "2022-10-25T02:36:22.414Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6", size = 25335, upload-time = "2022-10-25T02:36:20.889Z" },
+]
+
+[[package]]
+name = "fingerprinter"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "openbabel-wheel" },
+    { name = "uvicorn" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "openbabel-wheel", specifier = "==3.1.1.23" },
+    { name = "uvicorn", specifier = "==0.42.0" },
+]
+
+[[package]]
+name = "h11"
+version = "0.16.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/01/ee/02a2c011bdab74c6fb3c75474d40b3052059d95df7e73351460c8588d963/h11-0.16.0.tar.gz", hash = "sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1", size = 101250, upload-time = "2025-04-24T03:35:25.427Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl", hash = "sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86", size = 37515, upload-time = "2025-04-24T03:35:24.344Z" },
+]
+
+[[package]]
+name = "openbabel-wheel"
+version = "3.1.1.23"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/63/2d/720579ccff6247aa8fd2d397a7bd592dae72ef0f0133fe6cce2323ea13a2/openbabel_wheel-3.1.1.23.tar.gz", hash = "sha256:68fd86540ff0895d36b26f25721187399fb6073f874f6ae474a574e6acf8759d", size = 13256, upload-time = "2026-03-06T01:31:11.497Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c3/97/a2fa3962b36d26fb2ac1969671c287bb521124c4d0d9d73e250640902722/openbabel_wheel-3.1.1.23-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:26652b12f5eefdcf2399b9305b4fc4d588af0af64ef089237074d81f59a5a73b", size = 11607808, upload-time = "2026-02-17T13:18:08.501Z" },
+    { url = "https://files.pythonhosted.org/packages/c9/a2/3f50177535df26da55cc713470c45d4e0bb2707b29de6bdeaed84b2e33fb/openbabel_wheel-3.1.1.23-cp313-cp313-macosx_14_0_x86_64.whl", hash = "sha256:14f7d321d50661cd89a495f4f5601df7f4faeda944ed702459339bf1fdb0edbf", size = 12218456, upload-time = "2026-02-17T13:18:10.624Z" },
+    { url = "https://files.pythonhosted.org/packages/2a/c8/2ee60db27b572d20f2c9a4239df35f5230b1687d738b52c4b0671561f6b8/openbabel_wheel-3.1.1.23-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:5395eb3fd4ce660a45c3693c65dd8155027a593c9f1fd192dccf69ed01c5295c", size = 15636511, upload-time = "2026-02-17T13:18:12.74Z" },
+    { url = "https://files.pythonhosted.org/packages/22/40/a885b253b15f95460d272a11be9aa039badbdc507dcd7f73256dca8cc339/openbabel_wheel-3.1.1.23-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:b20aae66b907da10489bdee3912571d50b85986cfce8845d4f53f9c855bc2494", size = 16084796, upload-time = "2026-02-17T13:18:14.847Z" },
+    { url = "https://files.pythonhosted.org/packages/98/41/d3c3c237fc2dbb161ae9fa9ee3f69a7fd700a9890c1d0e26652c9c6ec605/openbabel_wheel-3.1.1.23-cp313-cp313-win_amd64.whl", hash = "sha256:5d19a91d741b6a724735aa8d07dea80b4255f87bf75ed89ecb28ad57e4716f74", size = 5069328, upload-time = "2026-02-17T13:18:17.087Z" },
+    { url = "https://files.pythonhosted.org/packages/ce/18/52b95fe0ff9b97c0e0f51a6dd2949270d427dd3db51e350d37776d68d8be/openbabel_wheel-3.1.1.23-cp313-cp313t-macosx_14_0_arm64.whl", hash = "sha256:578e4b033690ec27431f7239b80721b6cfb2f592d9270d764b6166ff5ef08232", size = 11623468, upload-time = "2026-02-17T13:18:18.896Z" },
+    { url = "https://files.pythonhosted.org/packages/e3/e0/f7d1154f1b3a1e550927e8f3dc73f604991f26a96d9e7ce77ac7a39f2fdb/openbabel_wheel-3.1.1.23-cp313-cp313t-macosx_14_0_x86_64.whl", hash = "sha256:9af2d09ad3c7e105c0e2de1c74b97a6c265c0c8e990a929edad032d5f1e10b8e", size = 12239256, upload-time = "2026-02-17T13:18:20.847Z" },
+    { url = "https://files.pythonhosted.org/packages/26/d8/2cef68780788bc420b0a6c8b0f3d8bfb41cd14900cca43873c744f3d886e/openbabel_wheel-3.1.1.23-cp313-cp313t-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:3a9912e5b32ff3139e653db746a43ea4b7da0ce1b5b68b6e63f10f028c5d8a2d", size = 15641869, upload-time = "2026-02-17T13:18:22.976Z" },
+    { url = "https://files.pythonhosted.org/packages/c7/5c/875704cbbc314dd0c6ff0a2d689308a3d626cd64c7c6b48cf299874f484f/openbabel_wheel-3.1.1.23-cp313-cp313t-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:0f56d0ae28e6bbbaaca483abe35dd21d4d2c7f3b1b6f602593f419b2b5f067ac", size = 16067368, upload-time = "2026-02-17T13:18:25.182Z" },
+    { url = "https://files.pythonhosted.org/packages/96/01/e6d4c2be84ceb8d05e73ee18840cda353e3d862f0961745345ff51a890c1/openbabel_wheel-3.1.1.23-cp313-cp313t-win_amd64.whl", hash = "sha256:a65c577f3f78f535accc504e09733bc42d4eb2f36c9d711e4dd783e05c610af9", size = 5148217, upload-time = "2026-02-17T13:18:27.694Z" },
+    { url = "https://files.pythonhosted.org/packages/15/4d/2ddd716e4e760769806457abae3e8cedad73ff04575dc79005a5f5f69f97/openbabel_wheel-3.1.1.23-cp314-cp314-macosx_14_0_arm64.whl", hash = "sha256:305fb0b7fe2bf44da8133cf6d58cd1cdf19d123469cde8ca16a83f8d4c4900ee", size = 11607818, upload-time = "2026-02-17T13:18:29.674Z" },
+    { url = "https://files.pythonhosted.org/packages/89/9a/8f3d74ff656dadabd3b0c39f4439936a457c358f7948059c462911dfb44c/openbabel_wheel-3.1.1.23-cp314-cp314-macosx_14_0_x86_64.whl", hash = "sha256:0ce98ced58fda97ec0f159177c85996cbfaad63e1ee0eff360ce0e5e62eaf478", size = 12219080, upload-time = "2026-02-17T13:18:31.724Z" },
+    { url = "https://files.pythonhosted.org/packages/7d/41/bf28930bc29c427bc7015376f20836553c2617099ea95fbaca810ca27ee6/openbabel_wheel-3.1.1.23-cp314-cp314-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:5696be0fdc271670a540b50baba4d6bf005557b8c52e955122c2df7f05455320", size = 15637730, upload-time = "2026-02-17T13:18:34.006Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/fa/d99287bd9ea00f6c0506d88d5c79cf7fc2b34865955e4e4b8e81fc2637a8/openbabel_wheel-3.1.1.23-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:14b007a4d233a32267298a0100787fa74b0edb1f264b480268b95490abd27969", size = 16084576, upload-time = "2026-02-17T13:18:36.183Z" },
+    { url = "https://files.pythonhosted.org/packages/4f/94/5f3aba19af7161ff3aefc90b60ae881e82cf35226a785aca105c845e57ce/openbabel_wheel-3.1.1.23-cp314-cp314-win_amd64.whl", hash = "sha256:b2b94575bdf20ef400505db6549e304fb13cc1fd45faa710fcda14706936076b", size = 5196055, upload-time = "2026-02-17T13:18:38.185Z" },
+    { url = "https://files.pythonhosted.org/packages/39/6d/f36fdee19006947caa2076573f21fa410297e80650ac1dfeee53e25da1b1/openbabel_wheel-3.1.1.23-cp314-cp314t-macosx_14_0_arm64.whl", hash = "sha256:ff34dc00cff8730e70026a39ab3f70417028cecb364ac461cc7a24af84e95e5e", size = 11623410, upload-time = "2026-02-17T13:18:39.763Z" },
+    { url = "https://files.pythonhosted.org/packages/9c/54/20b1641c938c268bf811d7c797226e310bc68bc76ea7e6c223644176c701/openbabel_wheel-3.1.1.23-cp314-cp314t-macosx_14_0_x86_64.whl", hash = "sha256:fe8221e4cbe28d6e82a32dc8e8ed92e65457845f661628e35d3faf318e9d25db", size = 12239214, upload-time = "2026-02-17T13:18:42.148Z" },
+    { url = "https://files.pythonhosted.org/packages/0b/62/0ea5523964930b5f6f049133d0262cfba037668d2fa3559a5535b383a2d2/openbabel_wheel-3.1.1.23-cp314-cp314t-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:050f973fa4c355f55ad8ef57fd6ea6694965449ad64593f62adc7cc37242b0a9", size = 15641856, upload-time = "2026-02-17T13:18:44.263Z" },
+    { url = "https://files.pythonhosted.org/packages/88/a1/f2a65bedad51230965963e92cff0409d6647e5245a4b00fa5ad537de4f09/openbabel_wheel-3.1.1.23-cp314-cp314t-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:68f23116535003fba5daf25ff364782b283d41bd3db16f6a57113942c7ae9f2a", size = 16067392, upload-time = "2026-02-17T13:18:46.477Z" },
+]
+
+[[package]]
+name = "uvicorn"
+version = "0.42.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+    { name = "h11" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e3/ad/4a96c425be6fb67e0621e62d86c402b4a17ab2be7f7c055d9bd2f638b9e2/uvicorn-0.42.0.tar.gz", hash = "sha256:9b1f190ce15a2dd22e7758651d9b6d12df09a13d51ba5bf4fc33c383a48e1775", size = 85393, upload-time = "2026-03-16T06:19:50.077Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0a/89/f8827ccff89c1586027a105e5630ff6139a64da2515e24dafe860bd9ae4d/uvicorn-0.42.0-py3-none-any.whl", hash = "sha256:96c30f5c7abe6f74ae8900a70e92b85ad6613b745d4879eb9b16ccad15645359", size = 68830, upload-time = "2026-03-16T06:19:48.325Z" },
+]

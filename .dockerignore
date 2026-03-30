@@ -4,6 +4,10 @@ CHANGELOG.md
 CITATION.cff
 codemeta.json
 containers/elabimg/docker-compose-EXAMPLE.yml
+containers/chem-plugin/fingerprinter/.venv
+containers/chem-plugin/fingerprinter/__pycache__
+containers/chem-plugin/indigo/.venv
+containers/chem-plugin/indigo/__pycache__
 CONTRIBUTING.md
 exports
 FUNDING.yml

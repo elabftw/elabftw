@@ -1,76 +1,52 @@
 # indigo-service + elab chem
-FROM ubuntu:22.04
+# https://hub.docker.com/hardened-images/catalog/dhi/python/images/python%2Fdebian-13%2F3.13/sha256-31c804314f84ac566f2ada1a64cfa17ba365e9da16eac4da7e219b20552fafae
+# Python 3.13.x hardened image
+FROM dhi.io/python@sha256:61594a3427b191f6978131c2d94b2d90113e413126f5a17ab9e048ccd3863248
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV HOME=/home/nobody
+ENV UV_CACHE_DIR=/home/nobody/.cache
+
+# distroless image
+COPY --from=ghcr.io/astral-sh/uv:0.11.2 /uv /uvx /bin/
 
 RUN apt-get update && \
-    apt-get upgrade -y
-RUN apt-get install -y --no-install-recommends \
-        ca-certificates \
-        curl \
-        libfreetype6-dev \
-        libfontconfig1-dev \
+    apt-get install -y --no-install-recommends \
         openbabel \
-        python3 \
-        python3-openbabel \
-        python3-pip \
-        python3-wheel \
-        python3-setuptools \
-        supervisor \
-        unzip \
-        uwsgi \
-        uwsgi-plugin-python3
+        supervisor && \
+    apt-get autoremove -y && \
+      rm -rf /var/lib/apt/lists/*
 
 # supervisord config
 COPY containers/chem-plugin/conf/supervisord.conf /etc/supervisor/supervisord.conf
+RUN mkdir -p /var/log/supervisor /tmp/supervisor \
+ && chown -R nobody:nobody /var/log/supervisor /tmp/supervisor
 
-# Setup gunicorn
+# Indigo API
+WORKDIR /srv/indigo
+COPY containers/chem-plugin/indigo/.python-version .
+COPY containers/chem-plugin/indigo/pyproject.toml .
+COPY containers/chem-plugin/indigo/uv.lock .
+COPY containers/chem-plugin/indigo/service/v2/ /srv/indigo/v2/
+COPY containers/chem-plugin/indigo/service/*.py /srv/indigo/
+COPY containers/chem-plugin/indigo/service/v2/common/*.py /srv/indigo/
+RUN uv sync --frozen --no-dev --no-editable
+# supervisor service for indigo api using gunicorn
 COPY containers/chem-plugin/conf/gunicorn.auto.conf /etc/supervisor/conf.d/
 
-COPY containers/chem-plugin/service/v2/ /srv/api/v2/
-COPY containers/chem-plugin/service/*.py /srv/api/
-COPY containers/chem-plugin/service/v2/common/*.py /srv/api/
-
-# Install python dependencies using pip
-COPY containers/chem-plugin/service/requirements.txt /opt/
-RUN pip3 install --no-cache-dir -r /opt/requirements.txt
-
-# Clean
-RUN apt-get --purge remove -y \
-    curl \
-    libbrotli-dev \
-    libc-dev-bin \
-    libc6-dev \
-    libcrypt-dev \
-    libexpat1-dev \
-    libfontconfig-dev \
-    libfontconfig1-dev \
-    libfreetype-dev \
-    libfreetype6-dev \
-    libnsl-dev \
-    libpng-dev \
-    libtirpc-dev \
-    linux-libc-dev \
-    python3-pip \
-    python3-wheel \
-    unzip \
-    uuid-dev \
-    zlib1g-dev \
-    && apt-get autoremove -y && \
-      rm -rf /opt/* /var/lib/apt/lists/*
-
-RUN chown nobody:nogroup /srv/api
-RUN mkdir -p /var/log/supervisor /tmp/supervisor \
- && chown -R nobody:nogroup /var/log/supervisor /tmp/supervisor
-
-WORKDIR /app
-RUN mkdir fingerprinter
-COPY containers/chem-plugin/src/main.py fingerprinter/main.py
+# FINGERPRINTER
+WORKDIR /srv/fingerprinter
+COPY containers/chem-plugin/fingerprinter .
+COPY --chmod=755 containers/chem-plugin/fingerprinter-entrypoint.sh /usr/local/bin/
+RUN uv sync --frozen --no-dev --no-editable
+# supervisor service for fingerprinter api using uvicorn
 COPY containers/chem-plugin/conf/fingerprinter.auto.conf /etc/supervisor/conf.d/
-COPY containers/chem-plugin/fingerprinter-entrypoint.sh /usr/local/bin
+
+# chown is necessary to fix permission issue on cache folder when executing as nobody
+RUN chown -R nobody:nobody /home/nobody/.cache
 
 USER nobody
 
-EXPOSE 8080
-WORKDIR /srv/api
+EXPOSE 8000 8080
+WORKDIR /srv
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]

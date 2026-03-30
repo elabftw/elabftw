@@ -1,0 +1,12 @@
+[project]
+name = "indigo"
+version = "0.1.0"
+description = "Indigo API"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "epam-indigo==1.40.0",
+    "flask==2.3.3",
+    "gunicorn==23.0.0",
+    "marshmallow==3.19.0",
+]

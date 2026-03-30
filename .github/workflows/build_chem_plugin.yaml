@@ -11,7 +11,9 @@ on:
 
 ## GITHUB_TOKEN authentication
 permissions:
-  contents: read
+  contents: write
+  id-token: write
+  attestations: write
 
 jobs:
     buildandpush:
@@ -63,7 +65,7 @@ jobs:
               with:
                 context: .
                 file: containers/chem-plugin/Dockerfile
-                platforms: linux/amd64
+                platforms: linux/amd64,linux/arm64
                 # only push on push event, not PR
                 push: ${{ github.event_name == 'push' }}
                 # the scope parameter is necessary when doing multi arch builds or we'll always miss cache

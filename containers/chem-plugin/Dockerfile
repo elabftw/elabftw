@@ -37,16 +37,6 @@ COPY containers/chem-plugin/conf/redis.auto.conf /etc/supervisor/conf.d/
 # Setup gunicorn
 COPY containers/chem-plugin/conf/gunicorn.auto.conf /etc/supervisor/conf.d/
 
-# Install Imago
-RUN set -eux; \
-    mkdir -p /srv/imago/imago-console-2.0.0 && \
-    cd /srv/imago/imago-console-2.0.0 && \
-    curl https://lifescience.opensource.epam.com/downloads/imago-2.0.0/imago-2.0.0-linux64-console.zip -o imago-2.0.0-linux64-console.zip && \
-    echo "5c8cc3c1dbf18cb5809386594882da940a0f8cda0afcd4116404bdc115daa9aa imago-2.0.0-linux64-console.zip" | sha256sum -c -; \
-    unzip imago-2.0.0-linux64-console.zip && \
-    rm imago-2.0.0-linux64-console.zip && \
-    chmod -R a+rx imago_console
-
 COPY containers/chem-plugin/service/v2/ /srv/api/v2/
 COPY containers/chem-plugin/service/*.py /srv/api/
 COPY containers/chem-plugin/service/v2/common/*.py /srv/api/

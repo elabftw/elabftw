@@ -8,6 +8,7 @@ from time import time
 from typing import List
 
 from flask import Blueprint, request  # type: ignore
+from werkzeug.exceptions import Gone # type: ignore
 from indigo import Indigo  # type: ignore
 from indigo.inchi import IndigoInchi  # type: ignore
 from indigo.renderer import IndigoRenderer  # type: ignore
@@ -243,6 +244,12 @@ def imago_upload_post():
                     error:
                         type: string
     """
+
+    ####################################################################
+    # eLabFTW: disable imago because it's too insecure and problematic #
+    raise Gone("This endpoint has been disabled for security reasons.")
+    ####################################################################
+
     args = []
     full_mime_type = request.headers.get("Content-Type")
     params = request.args
@@ -381,6 +388,10 @@ def upload_status_get(upload_id):
                 $ref: "#/definitions/Error"
 
     """
+    ####################################################################
+    # eLabFTW: disable imago because it's too insecure and problematic #
+    raise Gone("This endpoint has been disabled for security reasons.")
+    ####################################################################
     imago_api_logger.info("[REQUEST] GET /imago/uploads/{0}".format(upload_id))
     try:
         # retrieve recognized molecule in mol_format
@@ -448,6 +459,10 @@ def upload_status_post(upload_id):
                 $ref: "#/definitions/Error"
 
     """
+    ####################################################################
+    # eLabFTW: disable imago because it's too insecure and problematic #
+    raise Gone("This endpoint has been disabled for security reasons.")
+    ####################################################################
     params = request.args
     imago_api_logger.info(
         "[REQUEST] POST /imago/uploads/{0}".format(upload_id)

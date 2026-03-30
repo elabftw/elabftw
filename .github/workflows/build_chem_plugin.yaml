@@ -56,10 +56,10 @@ jobs:
             # https://github.com/docker/login-action#docker-hub
             - name: Login to dhi.io
               uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4
-              registry: dhi.io
               with:
+                registry: dhi.io
                 username: ${{ secrets.DOCKER_HUB_USERNAME }}
-                password: ${{ secrets.DOCKER_HUB_TOKEN }}
+                password: ${{ secrets.DOCKER_HUB_PULLPUBTOKEN }}
 
             # https://github.com/docker/build-push-action#multi-platform-image
             # https://docs.docker.com/build/ci/github-actions/cache/

@@ -27,6 +27,7 @@ jobs:
                 allowed-hosts: >
                   archive.ubuntu.com
                   auth.docker.io
+                  dhi.io
                   files.pythonhosted.org
                   ghcr.io
                   index.docker.io

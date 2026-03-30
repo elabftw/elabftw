@@ -1533,7 +1533,7 @@ def check():
 @check_exceptions
 def calculate():
     """
-    Calculate properites for input structure
+    Calculate properties for input structure
     ---
     tags:
     - indigo

@@ -472,7 +472,7 @@ def upload_status_post(upload_id):
         imago_api_logger.error(
             "[RESPONSE-400] Parameter action not in request."
         )
-        return {"error": "Paramter action not in request."}, 400
+        return {"error": "Parameter action not in request."}, 400
 
     try:
         # Retrieve arguments for imago console command by task id.

@@ -275,7 +275,7 @@ def library_id_get(library_id=None):
         "[REQUEST] GET /libraries/{0}".format(library_id)
     )
     if not library_id:
-        return {"error": "Libary ID should be specified"}, 400
+        return {"error": "Library ID should be specified"}, 400
     if not LibraryMeta.query.filter(
         LibraryMeta.library_id == library_id
     ).first():

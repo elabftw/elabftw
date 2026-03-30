@@ -20,7 +20,7 @@ def version():
       - version
     responses:
       200:
-        description: JSON with service, indigo, bingo and imago vesrions
+        description: JSON with service, indigo, bingo and imago versions
     """
     versions = {}
     if db_session is not None:

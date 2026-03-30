@@ -35,7 +35,6 @@ getEnv() {
     set_real_ip=${SET_REAL_IP:-false}
     set_real_ip_from=${SET_REAL_IP_FROM:-192.168.31.48}
     php_max_children=${PHP_MAX_CHILDREN:-50}
-    elabimg_version=${ELABIMG_VERSION:-0.0.0}
     php_max_execution_time=${PHP_MAX_EXECUTION_TIME:-120}
     use_redis=${USE_REDIS:-false}
     redis_host=${REDIS_HOST:-redis}
@@ -270,8 +269,6 @@ phpfpmConf() {
     sed -i -e "s/%PHP_MAX_CHILDREN%/${php_max_children}/" $f
     # allow using more memory for php-fpm
     sed -i -e "s/%PHP_MAX_MEMORY%/${max_php_memory}/" $f
-    # add container version in env (named env or it will get replaced by Docker build instruction
-    sed -i -e "s/%ELABIMG_VERSION_ENV%/${elabimg_version}/" $f
     # external services, we want to easily know from php app if they are available
     sed -i -e "s/%USE_INDIGO%/${use_indigo}/" $f
     sed -i -e "s/%USE_FINGERPRINTER%/${use_fingerprinter}/" $f
@@ -405,11 +402,12 @@ populatePhpEnv() {
 # display a friendly message with running versions
 startupMessage() {
     nginx_version=$(/usr/sbin/nginx -v 2>&1)
-    say "elabimg: info: eLabFTW version: %ELABFTW_VERSION%"
-    say "elabimg: info: image version: %ELABIMG_VERSION%"
+    http_mode=$([ "$disable_https" = true ] && echo "HTTP" || echo "HTTPS")
+    say "elabimg: info: eLabFTW version: ${ELABFTW_VERSION}"
     say "elabimg: info: ${nginx_version}"
-    say "elabimg: info: s6-overlay version: %S6_OVERLAY_VERSION%"
+    say "elabimg: info: s6-overlay version: ${S6_OVERLAY_VERSION}"
     say "elabimg: info: runtime configuration successfully finished"
+    say "elabimg: info: starting server listening internally on port 443 in ${http_mode}"
 }
 
 # Automatically initialize the database structure

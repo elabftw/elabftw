@@ -28,6 +28,7 @@ import slSI from './langs/sl_SI';
 import skSK from './langs/sk_SK';
 import uzUZ from './langs/uz_UZ';
 import zhCN from './langs/zh_CN';
+import zhTW from './langs/zh_TW';
 
 i18next.init({
   lng: 'en_GB',
@@ -54,6 +55,7 @@ i18next.init({
     'sk_SK',
     'uz_UZ',
     'zh_CN',
+    'zh_TW',
   ],
   fallbackLng: 'en_GB',
   resources: {
@@ -79,6 +81,7 @@ i18next.init({
     sl_SI: slSI,
     uz_UZ: uzUZ,
     zh_CN: zhCN,
+    zh_TW: zhTW,
   },
 });
 const userPrefs = document.getElementById('user-prefs');

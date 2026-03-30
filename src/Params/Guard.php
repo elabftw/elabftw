@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @author Nicolas CARPi <nico-git@deltablot.email>
- * @author Moustapha <Deltablot>
+ * @author Nicolas CARPi / Deltablot
+ * @author Moustapha / Deltablot
  * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -11,16 +11,31 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Services;
+namespace Elabftw\Params;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\MissingRequiredKeyException;
 
 use function array_filter;
 use function array_key_exists;
 
-final class ApiParamsValidator
+final class Guard
 {
-    public static function ensureRequiredKeysPresent(array $requiredKeys, array $params): void
+    public static function getValueOfRequiredParam(string $requiredKey, array $params): mixed
+    {
+        return self::ensureRequiredKeysPresent(array($requiredKey), $params)[$requiredKey];
+    }
+
+    public static function getNonEmptyStringValueOfRequiredParam(string $requiredKey, array $params): string
+    {
+        $value = self::getValueOfRequiredParam($requiredKey, $params);
+        if (is_string($value) && !empty($value)) {
+            return $value;
+        }
+        throw new ImproperActionException(sprintf('Empty value found for %s', $requiredKey));
+    }
+
+    public static function ensureRequiredKeysPresent(array $requiredKeys, array $params): array
     {
         $missing = array_filter(
             $requiredKeys,
@@ -33,6 +48,7 @@ final class ApiParamsValidator
                 $requiredKeys,
             );
         }
+        return $params;
     }
 
     public static function ensurePositiveInts(array $keys, array $params): void

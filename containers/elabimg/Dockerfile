@@ -17,7 +17,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
 # Note: no need to chain the RUN commands here as it's a builder image and nothing will be kept
 FROM alpine:3.23 AS nginx-builder
 
-ENV NGINX_VERSION=1.28.2
+ENV NGINX_VERSION=1.28.3
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
 # BROKEN HASH: ENV NGX_BROTLI_COMMIT_HASH=63ca02abdcf79c9e788d2eedcc388d2335902e52
@@ -126,19 +126,15 @@ RUN make install
 #############################
 FROM alpine:3.23
 
-# this is versioning for the container image
-ENV ELABIMG_VERSION=5.8.0
-
-# the target elabftw version is passed with --build-arg
-# it is a mandatory ARG
-ARG ELABFTW_VERSION
+# set build version with --build-arg ELABFTW_VERSION=X.Y.Z
+ARG ELABFTW_VERSION=dev
+ENV ELABFTW_VERSION=$ELABFTW_VERSION
 
 LABEL net.elabftw.name="elabftw" \
-    net.elabftw.description="Run nginx and php-fpm to serve elabftw" \
+    net.elabftw.description="eLabFTW web service" \
     net.elabftw.url="https://www.elabftw.net" \
-    net.elabftw.vcs-url="https://github.com/elabftw/elabimg" \
-    net.elabftw.elabftw-version=$ELABFTW_VERSION \
-    net.elabftw.image-version=$ELABIMG_VERSION
+    net.elabftw.vcs-url="https://github.com/elabftw/elabftw" \
+    net.elabftw.elabftw-version=$ELABFTW_VERSION
 
 # NGINX
 # copy our nginx from the build image
@@ -235,12 +231,6 @@ COPY ./containers/elabimg/php/run /etc/s6-overlay/s6-rc.d/php/
 RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/php
 # END S6-OVERLAY
 
-# PHP
-COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini
-COPY ./containers/elabimg/php/php-fpm.conf /etc/php84/php-fpm.conf
-COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf
-# END PHP
-
 # ELABFTW
 RUN mkdir /elabftw
 WORKDIR /elabftw
@@ -283,8 +273,14 @@ RUN corepack enable
 RUN if [ "$BUILD_ALL" = "1" ]; then yarn install \
     && yarn run buildall:prod \
     && yarn workspaces focus -A --production \
-    && /usr/bin/php84 -d memory_limit=256M -d open_basedir='' /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a \
+    && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a \
     && yarn cache clean && rm -r /root/.cache /root/.yarn; fi
+
+# PHP: add php config after composer step so open_basedir is not an issue
+COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini
+COPY ./containers/elabimg/php/php-fpm.conf /etc/php84/php-fpm.conf
+COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf
+# END PHP
 
 # declare a default value for these ENV values so they are accessible in php-cli
 # they will still be overridden by runtime env, but if they are not declared here, php-cli won't see them ever
@@ -313,10 +309,6 @@ RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/nginx/dependencies
 RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/php/dependencies
 
 COPY ./containers/elabimg/entrypoint/docker-entrypoint.sh /usr/sbin/docker-entrypoint.sh
-# these values are not in env and cannot be accessed by script so modify them here
-RUN sed -i -e "s/%ELABIMG_VERSION%/$ELABIMG_VERSION/" \
-    -e "s/%ELABFTW_VERSION%/$ELABFTW_VERSION/" \
-    -e "s/%S6_OVERLAY_VERSION%/$S6_OVERLAY_VERSION/" /usr/sbin/docker-entrypoint.sh
 # END DOCKER-ENTRYPOINT.SH
 
 # INVOKER
@@ -331,16 +323,11 @@ RUN chmod 755 /usr/local/bin/chronos
 COPY ./containers/elabimg/entrypoint/reload.sh /usr/local/bin/reload
 RUN chmod 700 /usr/local/bin/reload
 
-# generate a build-id that we use for cache busting assets
-RUN openssl rand -hex 4 > /etc/elabimg-build-id
-
-# this is unique to the build and is better than the previously used elabftw version for asset cache busting
-RUN sed -i -e "s/%ELABIMG_BUILD_ID%/$(cat /etc/elabimg-build-id)/" /etc/php84/php-fpm.d/elabpool.conf
 # this file contains secrets
 RUN chmod 400 /etc/php84/php-fpm.d/elabpool.conf
 
 # add a cache busting query param for spreadsheet iframe assets
-RUN sed -i -e "s/%REPLACED_AT_BUILD_TIME%/$(cat /etc/elabimg-build-id)/" /elabftw/web/spreadsheet.html
+RUN sed -i -e "s/%REPLACED_AT_BUILD_TIME%/$(openssl rand -hex 4)/" /elabftw/web/spreadsheet.html
 
 # start s6
 ENTRYPOINT ["/init"]

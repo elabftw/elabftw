@@ -53,7 +53,8 @@
     "psr/http-message": "^2.0",
     "psr/log": "^3.0",
     "setasign/fpdi": "^2.6",
-    "symfony/validator": "^7.3"
+    "symfony/validator": "^7.3",
+    "league/flysystem-ziparchive": "^3.31"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -81,6 +82,9 @@
   },
   "license": "AGPL-3.0-or-later",
   "scripts": {
+    "pre-autoload-dump": [
+      "@php src/tools/mkbuildinfo.php"
+    ],
     "psalm": "./vendor/bin/psalm --no-progress -c=src/tools/psalm.xml",
     "psalm-clear-cache": "./vendor/bin/psalm --clear-cache -c=src/tools/psalm.xml",
     "phpstan": "./vendor/bin/phpstan analyse --no-progress --memory-limit 4G -c src/tools/phpstan.neon"

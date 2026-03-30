@@ -248,7 +248,9 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 makeMalleableColumnsGreatAgain();
 
 function initPermissionsTomSelects() {
-  document.querySelectorAll('[id$="_select_teamgroups"], [id$="_select_teams"]').forEach((el) => {
+  const selects = document.querySelectorAll('[id$="_select_teamgroups"], [id$="_select_teams"]');
+  if (selects.length === 0) return;
+  selects.forEach((el) => {
     const select = el as HTMLSelectElement & { tomselect?: TomSelect };
     if (select.tomselect) {
       select.tomselect.destroy();
@@ -257,7 +259,15 @@ function initPermissionsTomSelects() {
     const isTeamGroups = select.id.endsWith('_select_teamgroups');
     if (isTeams || isTeamGroups) {
       const wrapper = isTeams ? '#team-select-wrapper' : '#teamgroups-select-wrapper';
+      const wrapperDiv = document.querySelector(wrapper);
       const input = isTeams ? '#team-select-input' : '#teamgroups-select-input';
+      const inputDiv = document.querySelector(wrapper);
+      if (!wrapperDiv || !inputDiv) {
+        new TomSelect(select, {
+          plugins: ['remove_button', 'clear_button'],
+        });
+        return;
+      }
       new TomSelect(select, {
         plugins: ['remove_button', 'no_backspace_delete', 'clear_button'],
         controlInput: input,

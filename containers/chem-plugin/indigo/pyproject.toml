@@ -10,3 +10,20 @@ dependencies = [
     "gunicorn==23.0.0",
     "marshmallow==3.19.0",
 ]
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.flake8]
+max-line-length = 79
+extend-ignore = "E203, E501"
+
+[dependency-groups]
+dev = [
+    "black>=26.3.1",
+    "flake8>=7.3.0",
+    "isort>=8.0.1",
+]

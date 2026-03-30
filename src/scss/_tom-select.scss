@@ -148,6 +148,24 @@
   }
 }
 
+// team select wrappers for permissions modal
+#team-select-wrapper,
+#teamgroups-select-wrapper {
+  position: relative;
+
+  .ts-control {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    display: flex;
+    flex-wrap: wrap !important;
+
+    .item {
+      white-space: normal;
+    }
+  }
+}
+
 .selected-item-badge {
   background-color: var(--badge-color, var(--mainbackground));
   border-radius: 999px;

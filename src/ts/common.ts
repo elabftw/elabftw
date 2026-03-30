@@ -247,13 +247,26 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 
 makeMalleableColumnsGreatAgain();
 
-export function initPermissionsTomSelects() {
-  document.querySelectorAll('[id$="_select_teamgroups"], [id$="_select_teams"]')?.forEach((el) => {
+function initPermissionsTomSelects() {
+  document.querySelectorAll('[id$="_select_teamgroups"], [id$="_select_teams"]').forEach((el) => {
     const select = el as HTMLSelectElement & { tomselect?: TomSelect };
     if (select.tomselect) {
       select.tomselect.destroy();
     }
-    new TomSelect(select, { plugins: ['dropdown_input', 'remove_button', 'clear_button']});
+    const isTeams = select.id.endsWith('_select_teams');
+    const isTeamGroups = select.id.endsWith('_select_teamgroups');
+    if (isTeams || isTeamGroups) {
+      const wrapper = isTeams ? '#team-select-wrapper' : '#teamgroups-select-wrapper';
+      const input = isTeams ? '#team-select-input' : '#teamgroups-select-input';
+      new TomSelect(select, {
+        plugins: ['remove_button', 'no_backspace_delete', 'clear_button'],
+        controlInput: input,
+        dropdownParent: wrapper,
+        onItemAdd() {
+          this.setTextboxValue('');
+        },
+      });
+    }
   });
 }
 initPermissionsTomSelects();

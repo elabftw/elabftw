@@ -38,6 +38,7 @@ jobs:
                   nginx.org
                   packagist.org
                   pkg-containers.githubusercontent.com
+                  ports.ubuntu.com
                   pypi.org
                   production.cloudflare.docker.com
                   raw.githubusercontent.com
@@ -48,6 +49,10 @@ jobs:
 
             - name: Checkout repo
               uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+            # https://github.com/docker/setup-qemu-action#usage
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4
 
             # https://github.com/marketplace/actions/docker-setup-buildx
             - name: Set up Docker Buildx

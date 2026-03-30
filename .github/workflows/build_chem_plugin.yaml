@@ -64,7 +64,8 @@ jobs:
                 context: .
                 file: containers/chem-plugin/Dockerfile
                 platforms: linux/amd64
-                push: true
+                # only push on push event, not PR
+                push: ${{ github.event_name == 'push' }}
                 # the scope parameter is necessary when doing multi arch builds or we'll always miss cache
                 cache-from: type=gha,scope=${{ runner.os }}-${{ runner.arch }}
                 cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}

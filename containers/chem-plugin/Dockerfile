@@ -23,19 +23,19 @@ RUN apt-get install -y --no-install-recommends \
         uwsgi-plugin-python3
 
 # supervisord config
-COPY ./conf/supervisord.conf /etc/supervisor/supervisord.conf
+COPY containers/chem-plugin/conf/supervisord.conf /etc/supervisor/supervisord.conf
 
 # Setup celery
-COPY ./conf/celeryd.conf /etc/default/celeryd
+COPY containers/chem-plugin/conf/celeryd.conf /etc/default/celeryd
 RUN useradd -ms /bin/bash celery
 RUN chmod 640 /etc/default/celeryd
-COPY ./conf/celery.auto.conf /etc/supervisor/conf.d/
+COPY containers/chem-plugin/conf/celery.auto.conf /etc/supervisor/conf.d/
 
 # Setup redis
-COPY ./conf/redis.auto.conf /etc/supervisor/conf.d/
+COPY containers/chem-plugin/conf/redis.auto.conf /etc/supervisor/conf.d/
 
 # Setup gunicorn
-COPY ./conf/gunicorn.auto.conf /etc/supervisor/conf.d/
+COPY containers/chem-plugin/conf/gunicorn.auto.conf /etc/supervisor/conf.d/
 
 # Install Imago
 RUN set -eux; \
@@ -47,12 +47,12 @@ RUN set -eux; \
     rm imago-2.0.0-linux64-console.zip && \
     chmod -R a+rx imago_console
 
-COPY ./service/v2/ /srv/api/v2/
-COPY ./service/*.py /srv/api/
-COPY ./service/v2/common/*.py /srv/api/
+COPY containers/chem-plugin/service/v2/ /srv/api/v2/
+COPY containers/chem-plugin/service/*.py /srv/api/
+COPY containers/chem-plugin/service/v2/common/*.py /srv/api/
 
 # Install python dependencies using pip
-COPY ./service/requirements.txt /opt/
+COPY containers/chem-plugin/service/requirements.txt /opt/
 RUN pip3 install --no-cache-dir -r /opt/requirements.txt
 
 # Clean
@@ -85,9 +85,9 @@ RUN mkdir -p /var/log/supervisor /tmp/supervisor \
 
 WORKDIR /app
 RUN mkdir fingerprinter
-COPY src/main.py fingerprinter/main.py
-COPY fingerprinter.auto.conf /etc/supervisor/conf.d/
-COPY fingerprinter-entrypoint.sh /usr/local/bin
+COPY containers/chem-plugin/src/main.py fingerprinter/main.py
+COPY containers/chem-plugin/fingerprinter.auto.conf /etc/supervisor/conf.d/
+COPY containers/chem-plugin/fingerprinter-entrypoint.sh /usr/local/bin
 
 USER nobody
 

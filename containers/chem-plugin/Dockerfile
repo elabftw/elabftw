@@ -16,7 +16,6 @@ RUN apt-get install -y --no-install-recommends \
         python3-pip \
         python3-wheel \
         python3-setuptools \
-        redis-server \
         supervisor \
         unzip \
         uwsgi \
@@ -24,15 +23,6 @@ RUN apt-get install -y --no-install-recommends \
 
 # supervisord config
 COPY containers/chem-plugin/conf/supervisord.conf /etc/supervisor/supervisord.conf
-
-# Setup celery
-COPY containers/chem-plugin/conf/celeryd.conf /etc/default/celeryd
-RUN useradd -ms /bin/bash celery
-RUN chmod 640 /etc/default/celeryd
-COPY containers/chem-plugin/conf/celery.auto.conf /etc/supervisor/conf.d/
-
-# Setup redis
-COPY containers/chem-plugin/conf/redis.auto.conf /etc/supervisor/conf.d/
 
 # Setup gunicorn
 COPY containers/chem-plugin/conf/gunicorn.auto.conf /etc/supervisor/conf.d/
@@ -76,7 +66,7 @@ RUN mkdir -p /var/log/supervisor /tmp/supervisor \
 WORKDIR /app
 RUN mkdir fingerprinter
 COPY containers/chem-plugin/src/main.py fingerprinter/main.py
-COPY containers/chem-plugin/fingerprinter.auto.conf /etc/supervisor/conf.d/
+COPY containers/chem-plugin/conf/fingerprinter.auto.conf /etc/supervisor/conf.d/
 COPY containers/chem-plugin/fingerprinter-entrypoint.sh /usr/local/bin
 
 USER nobody

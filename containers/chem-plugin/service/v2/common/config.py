@@ -18,7 +18,8 @@ ALLOWED_EXTENSIONS = ("sdf", "sd", "gz")
 # Celery config
 CELERY_broker_url = "redis://localhost:6379/0"
 result_backend = "redis://localhost:6379/0"
-imports = ("v2.imago_api", "v2.libraries_api")
+#imports = ("v2.imago_api", "v2.libraries_api")
+imports = ()
 accept_content = ("json",)
 task_serializer = "json"
 result_serializer = "json"

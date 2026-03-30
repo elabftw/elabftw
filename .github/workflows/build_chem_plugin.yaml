@@ -21,30 +21,17 @@ jobs:
         steps:
             # https://github.com/CycodeLabs/cimon-action
             - name: Cimon supply chain attack protection
-              uses: cycodelabs/cimon-action@v0
+              uses: cycodelabs/cimon-action@f99ad5557cb80964bc2b2e76a47bf4b5ba6e323b # v0.10
               with:
                 prevent: true
                 allowed-hosts: >
                   archive.ubuntu.com
                   auth.docker.io
-                  codeload.github.com
-                  dl-cdn.alpinelinux.org
-                  docker.io
                   files.pythonhosted.org
                   ghcr.io
-                  hooks.deltablot.dev
                   index.docker.io
-                  mirror.gcr.io
-                  nginx.org
-                  packagist.org
-                  pkg-containers.githubusercontent.com
                   ports.ubuntu.com
                   pypi.org
-                  production.cloudflare.docker.com
-                  raw.githubusercontent.com
-                  registry.yarnpkg.com
-                  repo.yarnpkg.com
-                  registry.npmjs.org
                   security.ubuntu.com
 
             - name: Checkout repo

@@ -14,7 +14,7 @@
                 </div>
                 <div class='ml-auto'>
                     <a href='inventory.php?storage_unit={{ container.storage_id }}' class='hl-hover-gray rounded p-1 ml-auto' aria-label='{{ 'Go to inventory'|trans }}'><i class='fas fa-magnifying-glass'></i></a>
-                    <span data-action='destroy-container' data-id='{{ container.id }}' class='hl-hover-gray rounded p-1 ml-auto' aria-label='{{ 'Delete storage'|trans }}'><i class='fas fa-trash-alt'></i></span>
+                    <button type='button' data-action='destroy-container' data-id='{{ container.id }}' class='btn hl-hover-gray rounded p-1 ml-auto' aria-label='{{ 'Delete storage'|trans }}' title='{{ 'Delete storage'|trans }}'><i class='fas fa-trash-alt'></i></button>
                 </div>
               </div>
             </li>

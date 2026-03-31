@@ -11,11 +11,15 @@ async def app(scope, receive, send):
     body = await read_body(receive)
     try:
         data = json.loads(body)
-    except json.JSONDecodeError:
+    except (UnicodeDecodeError, json.JSONDecodeError):
         message = {
             'error': 'Invalid JSON'
         }
         await send_response(send, 400, message)
+        return
+
+    if not isinstance(data, dict):
+        await send_response(send, 400, {'error': 'JSON body must be an object.'})
         return
 
     fmt = data.get('fmt')
@@ -27,7 +31,7 @@ async def app(scope, receive, send):
         return
 
     content = data.get('data')
-    if not content:
+    if not isinstance(content, str) or not content.strip():
         message = {
             "error": "Missing data!"
         }
@@ -46,7 +50,7 @@ async def app(scope, receive, send):
     response_data = json.dumps({"data": list(fp.fp)}).encode('UTF-8')
 
     response_headers = [
-        (b'content-type', b'application/javascript'),
+        (b'content-type', b'application/json'),
         (b'content-length', str(len(response_data)).encode())
     ]
     await send({

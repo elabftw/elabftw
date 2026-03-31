@@ -7,8 +7,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/home/nobody
 ENV UV_CACHE_DIR=/home/nobody/.cache
 
-# distroless image
-COPY --from=ghcr.io/astral-sh/uv:0.11.2 /uv /uvx /bin/
+# distroless image 0.11.2
+# got index digest with "docker buildx imagetools inspect docker.io/astral/uv:0.11.2"
+COPY --from=ghcr.io/astral-sh/uv@sha256:c4f5de312ee66d46810635ffc5df34a1973ba753e7241ce3a08ef979ddd7bea5 /uv /uvx /bin/
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

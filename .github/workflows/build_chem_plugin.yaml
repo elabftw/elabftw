@@ -5,9 +5,11 @@ on:
   push:
     paths:
       - 'containers/chem-plugin/**'
+      - '.github/workflows/build_chem_plugin.yaml'
   pull_request:
     paths:
       - 'containers/chem-plugin/**'
+      - '.github/workflows/build_chem_plugin.yaml'
 
 ## GITHUB_TOKEN authentication
 permissions:
@@ -56,6 +58,7 @@ jobs:
 
             # https://github.com/docker/login-action#docker-hub
             - name: Login to dhi.io
+              if: github.event_name == 'push' && github.ref == 'refs/heads/master'
               uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4
               with:
                 registry: dhi.io

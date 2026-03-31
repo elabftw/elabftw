@@ -11,9 +11,7 @@ on:
 
 ## GITHUB_TOKEN authentication
 permissions:
-  contents: write
-  id-token: write
-  attestations: write
+  contents: read
 
 jobs:
     buildandpush:

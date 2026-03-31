@@ -11,7 +11,7 @@ from v2.common_api import common_api
 from v2.indigo_api import indigo_api
 
 app = Flask(__name__)
-app.config.from_pyfile("config.py")
+app.config.from_object("v2.common.config")
 app.register_blueprint(indigo_api, url_prefix="/v2/indigo")
 app.register_blueprint(common_api, url_prefix="/v2")
 
@@ -21,15 +21,14 @@ logging.basicConfig(
     level=app.config.get("LOG_LEVEL"),
 )
 
-
-def run_server(port):
+def run_server(port, host="127.0.0.1", debug=False):
     run_simple(
-        "0.0.0.0",
+        host,
         port,
         app,
-        use_reloader=True,
-        use_debugger=True,
-        use_evalex=True,
+        use_reloader=debug,
+        use_debugger=debug,
+        use_evalex=debug,
     )
 
 if __name__ == "__main__":

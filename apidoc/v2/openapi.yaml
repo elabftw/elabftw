@@ -6827,6 +6827,13 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
   /idps_sources/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idps source
+        required: true
+        schema:
+          type: integer
     get:
       tags: ['Idps Sources']
       summary: Read an IdPs source

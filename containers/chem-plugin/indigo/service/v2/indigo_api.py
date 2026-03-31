@@ -87,8 +87,8 @@ def indigo_init(options={}):
             tls.indigo.setOption(option, value)
         return tls.indigo
     except Exception as e:
-        indigo_api_logger.error("indigo-init: {0}".format(e))
-        return None
+        indigo_api_logger.error("indigo-init: {0}".format(e), exc_info=True)
+        raise
 
 
 class MolData:
@@ -528,7 +528,7 @@ class HttpException(Exception):
 
 def get_request_data(request):
     request_data = {}
-    if request.content_type == "application/json":
+    if request.is_json:
         request_data = json.loads(request.data.decode("utf-8"))
         request_data["json_output"] = True
     else:
@@ -592,7 +592,7 @@ def check_exceptions(f):
             and request.headers["Accept"] == "application/json"
         ) or (
             "Content-Type" in request.headers
-            and request.headers["Content-Type"] == "application/json"
+            and request.is_json
         )
         try:
             return f(*args, **kwargs)
@@ -776,7 +776,7 @@ def aromatize():
     """
 
     request_data = get_request_data(request)
-    indigo_api_logger.info("[RAW REQUEST] {}".format(request_data))
+    indigo_api_logger.debug("[RAW REQUEST] {}".format(request_data))
 
     data = IndigoRequestSchema().load(request_data)
 
@@ -1696,7 +1696,7 @@ def render():
         request.data,
     )
     try:
-        if "application/json" in request.headers["Content-Type"]:
+        if request.is_json:
             input_dict = json.loads(request.data.decode())
         else:
             input_dict = {
@@ -1873,7 +1873,7 @@ def calculateMacroProperties():
     """
 
     request_data = get_request_data(request)
-    indigo_api_logger.info("[RAW REQUEST] {}".format(request_data))
+    indigo_api_logger.debug("[RAW REQUEST] {}".format(request_data))
 
     data = IndigoRequestSchema().load(request_data)
 
@@ -1989,7 +1989,7 @@ def expand():
     """
 
     request_data = get_request_data(request)
-    indigo_api_logger.info("[RAW REQUEST] {}".format(request_data))
+    indigo_api_logger.debug("[RAW REQUEST] {}".format(request_data))
 
     data = IndigoRequestSchema().load(request_data)
 

@@ -1621,6 +1621,24 @@ components:
           description: Endpoints associated with this IdP.
           items:
             $ref: '#/components/schemas/idp_endpoint'
+    idp_source:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        auto_refresh:
+          type: integer
+        last_fetched_at:
+          type: string
+          format: date-time
+          nullable: true
+        idps_count:
+          type: integer
+        idps_count_enabled:
+          type: integer
+
     item_editable:
       type: object
       properties:
@@ -6759,6 +6777,114 @@ paths:
       responses:
         '204':
           description: The idp was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # IDPS SOURCES
+  /idps_sources:
+    get:
+      tags: ['Idps Sources']
+      summary: Read all IDPs sources
+      operationId: read-idps-sources
+      responses:
+        '200':
+          description: A list of idps sources.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/idp_source'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: ['Idps Sources']
+      summary: Create an idp source.
+      operationId: post-idp-source
+      requestBody:
+        description: Parameters for creating an idp source.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['url']
+              properties:
+                url:
+                  type: string
+                  description: URL to the public XML metadata file
+      responses:
+        '201':
+          description: The idp source has been created.
+          headers:
+            location:
+              description: An URL to the idp source that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /idps_sources/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idps source
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Idps Sources']
+      summary: Read an IdPs source
+      operationId: read-idps-source
+      responses:
+        '200':
+          description: An IdPs source
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp_source'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      tags: ['Idps Sources']
+      summary: Patch an idp source.
+      operationId: patch-idps-source
+      requestBody:
+        description: Parameters for patching an idp source.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['action']
+              properties:
+                action:
+                  type: string
+                  description: |
+                    Use `update` to toggle autorefresh, `replace` to load IdPs, `validate` to enable all associated IdPs, `finish` to invalidate all associated IdPs.
+                  enum: ['update', 'replace', 'validate', 'finish']
+      responses:
+        '200':
+          description: The updated idp source.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp_source'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Idps Sources']
+      summary: Delete an idp source.
+      description: The idp source gets deleted.
+      operationId: delete-idps-source
+      responses:
+        '204':
+          description: The idp source was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

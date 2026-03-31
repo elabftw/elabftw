@@ -42,6 +42,7 @@ final class Csv extends AbstractCsv
         parent::__construct(
             $requester,
             $UploadedFile,
+            $logger,
         );
         // we might have been forced to cast to int a null value, so bring it back to null
         if ($this->category === 0) {

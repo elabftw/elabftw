@@ -23,8 +23,9 @@ use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Console\Output\OutputInterface;
 use Override;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function sprintf;
@@ -37,7 +38,7 @@ use function trim;
 final class CompoundsCsv extends AbstractCsv
 {
     public function __construct(
-        private OutputInterface $output,
+        protected LoggerInterface $logger,
         protected Items $Items,
         protected UploadedFile $UploadedFile,
         protected Compounds $Compounds,
@@ -46,7 +47,7 @@ final class CompoundsCsv extends AbstractCsv
         protected string $locationSplitter = '/',
         protected ?string $matchWith = null,
     ) {
-        parent::__construct($Items->Users, $UploadedFile);
+        parent::__construct($Items->Users, $UploadedFile, $logger);
     }
 
     #[Override]
@@ -54,7 +55,7 @@ final class CompoundsCsv extends AbstractCsv
     {
         // number of rows is stored in a var so we can decrement it when a compound is not imported
         $count = $countAll = $this->getCount();
-        $this->output->writeln(sprintf('[info] Found %d rows to import', $count));
+        $this->emitLog(sprintf('Found %d rows to import', $count));
 
         $loopIndex = 0;
 
@@ -88,7 +89,7 @@ final class CompoundsCsv extends AbstractCsv
                     }
 
                     foreach ($cids as $cid) {
-                        $this->output->writeln(sprintf('[info] Importing compound with CID %d', $cid));
+                        $this->emitLog(sprintf('Importing compound with CID %d', $cid));
                         $compound = $this->PubChemImporter->fromPugView($cid);
                         $ids[] = $this->Compounds->createFromCompound($compound);
                     }
@@ -176,7 +177,7 @@ final class CompoundsCsv extends AbstractCsv
                         try {
                             $this->Items->update(new EntityParams('custom_id', (int) $row['custom_id']));
                         } catch (ImproperActionException $e) {
-                            $this->output->writeln(sprintf('[error] Custom id %s: %s', $row['custom_id'], $e->getMessage()));
+                            $this->emitLog(sprintf('Custom id %s: %s', $row['custom_id'], $e->getMessage()), LogLevel::ERROR);
                         }
                     }
                 }
@@ -193,12 +194,12 @@ final class CompoundsCsv extends AbstractCsv
                     }
                 }
             } catch (ImproperActionException | RequestException $e) {
-                $this->output->writeln($e->getMessage());
+                $this->emitLog($e->getMessage(), LogLevel::ERROR);
                 // decrement the count so we can give a correct number
                 --$count;
             }
             ++$loopIndex;
-            $this->output->writeln(sprintf('[info] Imported %d/%d', $loopIndex, $countAll));
+            $this->emitLog(sprintf('Imported %d/%d', $loopIndex, $countAll));
         }
         return $count;
     }
@@ -213,7 +214,7 @@ final class CompoundsCsv extends AbstractCsv
         $DisplayParams = new DisplayParams($this->Items->Users, $this->Items->entityType, $query);
         $results = $this->Items->readShow($DisplayParams);
         if (count($results) > 1) {
-            $this->output->writeln(sprintf('[warning] Found %d matches for %s. Linking with first one found.', count($results), $value));
+            $this->emitLog(sprintf('Found %d matches for %s. Linking with first one found.', count($results), $value), LogLevel::WARNING);
         }
         return $results[0] ?? null;
     }

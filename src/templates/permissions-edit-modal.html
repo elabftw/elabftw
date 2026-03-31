@@ -56,8 +56,13 @@
           {# TEAMS #}
           <h5><label for='{{ identifier }}_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label></h5>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
-          <div id='team-select-wrapper'>
-            <input type='text' class='form-control mt-2' id='team-select-input' placeholder='{{ 'Search for user team'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>
+          <div class="team-select-wrapper">
+            <input
+              type="text"
+              class="form-control mt-2 team-select-input"
+              id="{{ identifier }}-team-select-input"
+              placeholder="{{ 'Search for user team'|trans }}"
+            >
             <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>
               {% for team in teamsArr %}
                 <option value='team:{{ team.id }}' {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}>
@@ -66,6 +71,16 @@
               {% endfor %}
             </select>
           </div>
+{#          <div id='team-select-wrapper'>#}
+{#            <input type='text' class='form-control mt-2' id='{{ identifier }}-team-select-input' placeholder='{{ 'Search for user team'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>#}
+{#            <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>#}
+{#              {% for team in teamsArr %}#}
+{#                <option value='team:{{ team.id }}' {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}>#}
+{#                  {{ 'Team'|trans }} - {{ team.name }}#}
+{#                </option>#}
+{#              {% endfor %}#}
+{#            </select>#}
+{#          </div>#}
           <hr>
           {# USER GROUPS #}
           {% set identifierTeamGroups = identifier ~ '_select_teamgroups' %}
@@ -75,7 +90,7 @@
           {% set scopeBtnId = 'scope' ~ identifier %}
           {% set toReload = [identifierTeamGroups, scopeBtnId]|join(',') %}
           {% include 'scope-button.html' with {'btnId': scopeBtnId, 'reload': toReload, 'target': 'scope_teamgroups', 'withLabel': 1} %}
-          <div id='teamgroups-select-wrapper'>
+          <div class='teamgroups-select-wrapper'>
             <input type='text' class='form-control mt-2' id='teamgroups-select-input' placeholder='{{ 'Search for user group'|trans }}' aria-label='{{ 'Search for user group'|trans }}'>
             <select {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifierTeamGroups }}' multiple class='form-control' autocomplete='off'>
               {% for tg in scopedTeamgroupsArr %}

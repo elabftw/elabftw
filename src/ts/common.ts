@@ -248,35 +248,42 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 makeMalleableColumnsGreatAgain();
 
 function initPermissionsTomSelects() {
-  const selects = document.querySelectorAll('[id$="_select_teamgroups"], [id$="_select_teams"]');
+  const selects = document.querySelectorAll<HTMLSelectElement>(
+    '[id$="_select_teamgroups"], [id$="_select_teams"]'
+  );
   if (selects.length === 0) return;
-  selects.forEach((el) => {
-    const select = el as HTMLSelectElement & { tomselect?: TomSelect };
-    if (select.tomselect) {
-      select.tomselect.destroy();
+  selects.forEach((select) => {
+    const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
+    if (tsSelect.tomselect) {
+      tsSelect.tomselect.destroy();
     }
     const isTeams = select.id.endsWith('_select_teams');
     const isTeamGroups = select.id.endsWith('_select_teamgroups');
-    if (isTeams || isTeamGroups) {
-      const wrapper = isTeams ? '#team-select-wrapper' : '#teamgroups-select-wrapper';
-      const wrapperDiv = document.querySelector(wrapper);
-      const input = isTeams ? '#team-select-input' : '#teamgroups-select-input';
-      const inputDiv = document.querySelector(wrapper);
-      if (!wrapperDiv || !inputDiv) {
-        new TomSelect(select, {
-          plugins: ['remove_button', 'clear_button'],
-        });
-        return;
-      }
-      new TomSelect(select, {
-        plugins: ['remove_button', 'no_backspace_delete', 'clear_button'],
-        controlInput: input,
-        dropdownParent: wrapper,
-        onItemAdd() {
-          this.setTextboxValue('');
-        },
-      });
+    if (!isTeams && !isTeamGroups) return;
+    const wrapper = select.closest(
+      isTeams ? '.team-select-wrapper' : '.teamgroups-select-wrapper'
+    );
+    if (!(wrapper instanceof HTMLElement)) {
+      new TomSelect(select, { plugins: ['remove_button', 'clear_button'] });
+      return;
     }
+    const input = wrapper.querySelector(
+      isTeams ? '.team-select-input' : '.teamgroups-select-input'
+    );
+    // build config for tomselect
+    const config: TomSelect.Options = {
+      plugins: ['remove_button', 'no_backspace_delete', 'clear_button'],
+      onItemAdd() { this.setTextboxValue('') },
+    };
+    // only set controlInput if valid
+    if (input instanceof HTMLInputElement && input.id) {
+      config.controlInput = `#${CSS.escape(input.id)}`;
+    }
+    // only set dropdownParent if wrapper has id
+    if (wrapper.id) {
+      config.dropdownParent = `#${CSS.escape(wrapper.id)}`;
+    }
+    new TomSelect(select, config);
   });
 }
 initPermissionsTomSelects();

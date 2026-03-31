@@ -36,6 +36,7 @@ use Elabftw\Services\NullFingerprinter;
 use Elabftw\Services\PubChemImporter;
 use GuzzleHttp\Client;
 use Override;
+use Symfony\Component\Console\Input\ArgvInput;
 
 use function sprintf;
 
@@ -106,6 +107,10 @@ final class ImportCompoundsCsv extends Command
         $matchWith = null;
         if ($input->getOption('match-with')) {
             $matchWith = $input->getOption('match-with');
+        }
+        $commandLine = $input instanceof ArgvInput ? (string) $input : null;
+        if ($commandLine) {
+            $logger->info(sprintf('Command arguments used: %s', $commandLine));
         }
         $Importer = new CompoundsCsv(
             $logger,

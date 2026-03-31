@@ -5,10 +5,22 @@ import base64
 from openbabel import pybel
 from typing import Dict
 
+MAX_BODY_BYTES = 1024 * 1024
+
+
+class PayloadTooLargeError(Exception):
+    pass
+
+
 async def app(scope, receive, send):
     assert scope['type'] == 'http'
 
-    body = await read_body(receive)
+    try:
+        body = await read_body(receive)
+    except PayloadTooLargeError:
+        await send_response(send, 413, {'error': 'Request body too large.'})
+        return
+
     try:
         data = json.loads(body)
     except (UnicodeDecodeError, json.JSONDecodeError):
@@ -63,19 +75,23 @@ async def app(scope, receive, send):
         'body': response_data,
     })
 
+
 async def read_body(receive):
     """
     Read and return the entire body from an incoming ASGI message.
     """
-    body = b''
+    body = bytearray()
     more_body = True
 
     while more_body:
         message = await receive()
-        body += message.get('body', b'')
+        body.extend(message.get('body', b''))
+        if len(body) > MAX_BODY_BYTES:
+            raise PayloadTooLargeError()
         more_body = message.get('more_body', False)
 
-    return body
+    return bytes(body)
+
 
 async def send_response(send, status: int, message: Dict[str, str]):
     await send({

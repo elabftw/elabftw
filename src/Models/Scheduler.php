@@ -23,7 +23,7 @@ use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\ApiParamsValidator;
+use Elabftw\Params\Guard;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
@@ -293,7 +293,7 @@ final class Scheduler extends AbstractRest
 
     private function updateDateTime(array $params): bool
     {
-        ApiParamsValidator::ensureRequiredKeysPresent(array('start', 'end'), $params);
+        Guard::ensureRequiredKeysPresent(array('start', 'end'), $params);
         $start = $this->normalizeDate($params['start']);
         $end = $this->normalizeDate($params['end'], true);
         $this->isFutureOrExplode(new DateTimeImmutable($start));

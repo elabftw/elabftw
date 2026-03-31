@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\CreateUpload;
+use Elabftw\Elabftw\CreateUploadFromFs;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
@@ -21,6 +21,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Hash\FileHash;
 use Elabftw\Hash\LocalFileHash;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Uploads;
@@ -86,6 +87,7 @@ class Eln extends AbstractZip
             $requester,
             $UploadedFile,
             $fs,
+            $logger,
         );
         $this->count = $this->preProcess();
         // we might have been forced to cast to int a null value, so bring it back to null
@@ -215,7 +217,6 @@ class Eln extends AbstractZip
 
     private function preProcess(): int
     {
-        $this->logger->debug(sprintf('temporary directory in cache: %s', $this->tmpDir));
         $this->root = $this->getRootDirectory();
         $this->graph = $this->getGraph();
 
@@ -251,7 +252,7 @@ class Eln extends AbstractZip
     {
         $listing = $this->tmpFs->listContents($this->tmpDir);
         foreach ($listing as $item) {
-            if ($item instanceof \League\Flysystem\DirectoryAttributes) {
+            if ($item->isDir()) {
                 $this->logger->debug(sprintf('Found root directory in archive: %s', basename($item->path())));
                 return $item->path();
             }
@@ -517,15 +518,17 @@ class Eln extends AbstractZip
 
     private function importFile(array $file): void
     {
-        // note: path transversal vuln is detected and handled by flysystem
-        $filepath = $this->tmpPath . '/' . basename($this->root) . '/' . $file['@id'];
+        // note: we cannot have path transversal vuln here because we use a temporary filesystem that cannot be escaped
+        $filepath = $this->tmpDir . '/' . basename($this->root) . '/' . $file['@id'];
+        $this->logger->debug(sprintf('Importing file: %s', $filepath));
         // fix for bloxberg attachments containing : character
         $filepath = strtr($filepath, ':', '_');
         // quick patch to fix issue with | in the title, but we will need a proper fix to avoid the need for such patches...
         $filepath = strtr($filepath, '|', '_');
         $filepath = strtr($filepath, '"', '_');
 
-        $hasher = new LocalFileHash($filepath);
+        //$hasher = new LocalFileHash($filepath);
+        $hasher = new FileHash($this->tmpFs, $filepath);
         $hash = $hasher->getHash();
         // CHECKSUM
         if ($this->verifyChecksum && $hash !== $file['sha256']) {
@@ -541,12 +544,13 @@ class Eln extends AbstractZip
             }
         }
         // CREATE
-        $newUploadId = $this->Entity->Uploads->create(new CreateUpload(
+        $newUploadId = $this->Entity->Uploads->create(new CreateUploadFromFs(
+            $this->tmpFs,
             $file['name'] ?? basename($file['@id']),
             $filepath,
             $hasher,
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
-            state: ($file['creativeWorkStatus'] ?? '') === State::Archived->name ? State::Archived : State::Normal
+            state: ($file['creativeWorkStatus'] ?? '') === State::Archived->name ? State::Archived : State::Normal,
         ));
         // the alternateName holds the previous long_name of the file
         if (!empty($file['alternateName'])) {

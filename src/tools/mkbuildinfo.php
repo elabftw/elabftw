@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use function bin2hex;
-use function fwrite;
 use function preg_match;
 use function random_bytes;
 
@@ -23,13 +22,9 @@ $version = getenv('ELABFTW_VERSION') ?: 'dev';
 // major is untouched, and minor and patch are padded with one 0 each
 // we should be pretty safe from ever reaching 100 as a minor or patch version!
 
-if ($version === 'dev') {
-    $versionInt = 0;
-} elseif (preg_match('/^(\d+)\.(\d+)\.(\d+)(?:-(alpha|beta|rc)\d*)?$/', $version, $m)) {
+$versionInt = 0;
+if (preg_match('/^(\d+)\.(\d+)\.(\d+)(?:-(alpha|beta|rc)\d*)?$/', $version, $m)) {
     $versionInt = ((int) $m[1]) * 10000 + ((int) $m[2]) * 100 + (int) $m[3];
-} else {
-    fwrite(STDERR, "Invalid version: $version\n");
-    exit(1);
 }
 
 $id = bin2hex(random_bytes(4));

@@ -131,9 +131,13 @@ final class Uploads extends AbstractRest
         }
 
         // actual writing of the file in its destination, after rewinding file
-        rewind($inputStream);
+        $isRewind = rewind($inputStream);
+        if ($isRewind === false) {
+            throw new RuntimeException('Could not rewind stream.');
+        }
         $storageFs->createDirectory($folder);
         $storageFs->writeStream($longName, $inputStream);
+        fclose($inputStream);
 
         $this->Entity->touch();
 

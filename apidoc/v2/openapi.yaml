@@ -1730,6 +1730,15 @@ components:
         booking_window_days:
           type: integer
           description: How many days in advance users can book an item. 0 means no limit.
+        booking_hourly_rate_notax:
+          type: number
+          description: The hourly rate of booked resource, without taxes.
+        booking_hourly_rate_tax:
+          type: number
+          description: The hourly rate of booked resource, with taxes.
+        booking_hourly_rate_currency:
+          type: integer
+          description: The currency of the hourly rate.
 
     item:
       allOf:

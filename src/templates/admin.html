@@ -32,10 +32,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='6'>{{ 'Batch actions'|trans }}</button></li>
 </ul>
 
-{# loading spinner #}
-<div class='d-flex justify-content-center' id='loading-spinner'>
-  <div class='lds-dual-ring'></div>
-</div>
+{% include 'loading-spinner.html' %}
 
 {#
 {% include 'create-statuslike-modal.html' with {'target': 'items_status', 'title': 'Create new resources status'|trans} %}

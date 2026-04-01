@@ -100,12 +100,17 @@ final class Uploads extends AbstractRest
         if (empty($meta['seekable'])) {
             // make a seekable temp stream
             $tmp = fopen('php://temp', 'w+b');
-            if ($tmp !== false) {
-                stream_copy_to_stream($inputStream, $tmp);
-                $inputStream = $tmp;
+            if ($tmp === false) {
+                throw new RuntimeException('Could not create temporary seekable stream.');
             }
+            stream_copy_to_stream($inputStream, $tmp);
+            fclose($inputStream);
+            $inputStream = $tmp;
         }
-        rewind($inputStream);
+        $isRewind = rewind($inputStream);
+        if ($isRewind === false) {
+            throw new RuntimeException('Could not rewind stream.');
+        }
         // we don't hash big files as this could take too much time/resources
         // same with thumbnails
         // TODO add the filesize check inside the makethumnailclass like we did for hasher

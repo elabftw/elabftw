@@ -6724,7 +6724,7 @@ __metadata:
     stylelint-order: "npm:^8.1.1"
     terser: "npm:^5.46.1"
     terser-webpack-plugin: "npm:^5.4.0"
-    tinymce: "npm:^6.8.6"
+    tinymce: "npm:^8.4.0"
     tom-select: "npm:^2.5.2"
     ts-loader: "npm:^9.5.4"
     typescript: "npm:5.9.3"
@@ -13903,10 +13903,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinymce@npm:^6.8.6":
-  version: 6.8.6
-  resolution: "tinymce@npm:6.8.6"
-  checksum: 10c0/69d48677366fa95dc7126f8474db92f2903ebc8b1f287541ac0c3a19e9fcd0eee8515278d6424a4a4c9fb7e6313de985c00dc37fcaa01ae676139634d793e2ee
+"tinymce@npm:^8.4.0":
+  version: 8.4.0
+  resolution: "tinymce@npm:8.4.0"
+  checksum: 10c0/858e7496508edde243f253bb8e1c3c6d2fa80e767ae91e3db80bb20c703ed1e213cc62c897297b613f804eafd175bd2e1e663ad4345c22aa33bf68cc0dceb5b7
   languageName: node
   linkType: hard
 

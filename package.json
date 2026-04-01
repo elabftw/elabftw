@@ -70,7 +70,7 @@
     "sass": "^1.98.0",
     "terser": "^5.46.1",
     "terser-webpack-plugin": "^5.4.0",
-    "tinymce": "^6.8.6",
+    "tinymce": "^8.4.0",
     "tom-select": "^2.5.2",
     "ts-loader": "^9.5.4",
     "typescript": "5.9.3",

@@ -31,7 +31,8 @@
   {% set modalTitle = 'Select who can book this entry'|trans %}
 {% endif %}
 {# Modal for permission edit #}
-<div class='modal fade' id='permModal-{{ identifier }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel_{{ identifier }}'>
+<div class='' id='permModal-{{ identifier }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel_{{ identifier }}'>
+{#<div class='modal fade' id='permModal-{{ identifier }}' tabindex='-1' role='dialog' aria-labelledby='permModalLabel_{{ identifier }}'>#}
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -56,13 +57,8 @@
           {# TEAMS #}
           <h5><label for='{{ identifier }}_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label></h5>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
-          <div class="team-select-wrapper">
-            <input
-              type="text"
-              class="form-control mt-2 team-select-input"
-              id="{{ identifier }}-team-select-input"
-              placeholder="{{ 'Search for user team'|trans }}"
-            >
+          <div class='team-select-wrapper'>
+            <input type='text' class='form-control mt-2 team-select-input' id='{{ identifier }}-team-select-input' placeholder='{{ 'Search for user team'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>
             <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>
               {% for team in teamsArr %}
                 <option value='team:{{ team.id }}' {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}>
@@ -71,28 +67,18 @@
               {% endfor %}
             </select>
           </div>
-{#          <div id='team-select-wrapper'>#}
-{#            <input type='text' class='form-control mt-2' id='{{ identifier }}-team-select-input' placeholder='{{ 'Search for user team'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>#}
-{#            <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>#}
-{#              {% for team in teamsArr %}#}
-{#                <option value='team:{{ team.id }}' {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}>#}
-{#                  {{ 'Team'|trans }} - {{ team.name }}#}
-{#                </option>#}
-{#              {% endfor %}#}
-{#            </select>#}
-{#          </div>#}
           <hr>
           {# USER GROUPS #}
-          {% set identifierTeamGroups = identifier ~ '_select_teamgroups' %}
-          <h5><label for='{{ identifierTeamGroups }}' class='mt-2'>+ {{ 'User Groups'|trans }}</label></h5>
+          <h5><label for='{{ identifier }}_select_teamgroups' class='mt-2'>+ {{ 'User Groups'|trans }}</label></h5>
           <p class='smallgray'>{{ 'Selecting a user group here will give access to all users part of this user group.'|trans }}</p>
-          {# SCOPE BUTTON #}
+          {# SCOPE BUTTON #} {#
           {% set scopeBtnId = 'scope' ~ identifier %}
+          {% set identifierTeamGroups = identifier ~ '_select_teamgroups' %}
           {% set toReload = [identifierTeamGroups, scopeBtnId]|join(',') %}
-          {% include 'scope-button.html' with {'btnId': scopeBtnId, 'reload': toReload, 'target': 'scope_teamgroups', 'withLabel': 1} %}
+          {% include 'scope-button.html' with {'btnId': scopeBtnId, 'reload': toReload, 'target': 'scope_teamgroups', 'withLabel': 1} %}  #}
           <div class='teamgroups-select-wrapper'>
-            <input type='text' class='form-control mt-2' id='teamgroups-select-input' placeholder='{{ 'Search for user group'|trans }}' aria-label='{{ 'Search for user group'|trans }}'>
-            <select {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} id='{{ identifierTeamGroups }}' multiple class='form-control' autocomplete='off'>
+            <input type='text' class='form-control mt-2 teamgroups-select-input' id='{{ identifier }}-teamgroups-select-input' placeholder='{{ 'Search for user group'|trans }}' aria-label='{{ 'Search for user group'|trans }}'>
+            <select id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off' {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} >
               {% for tg in scopedTeamgroupsArr %}
                 <option value='teamgroup:{{ tg.id }}'
                 {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}>{{ tg.team_name }} - {{ tg.name }}</option>
@@ -103,14 +89,6 @@
           {# USERS #}
           <h5><label for='{{ identifier }}_select_users' class='mt-2'>+ {{ 'Users'|trans }}</label></h5>
           <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.'|trans }}</p>
-          <ul class='list-group mb-1' id='{{ identifier }}_list_users'>
-            {% set humanCan = permissionsJson|canToHuman %}
-            {% for user in humanCan.users %}
-              <li class='list-group-item w-100' data-id='{{ user.userid }}'>
-                <i class='fas fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i> {{ user.fullname }} ({{ user.email }}) <span data-action='remove-parent' class='hover-danger'><i class='fas fa-xmark'></i></span>
-              </li>
-            {% endfor %}
-          </ul>
           {# add user to permissions input #}
           <div class='input-group'>
             <input id='{{ identifier }}_select_users' type='text' data-identifier='{{ identifier }}' data-action='autocomplete' data-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
@@ -119,6 +97,18 @@
             </div>
           </div>
           <div id='autocompleteAnchorDiv_{{ identifier }}'></div>
+          {# list of added users #}
+          {# TODO: 'Add users' button should create element with user badge too see common.ts  // eye or pencil icon #}
+          <div class='d-flex flex-wrap' id='{{ identifier }}_list_users'>
+            {% set humanCan = permissionsJson|canToHuman %}
+            {% for user in humanCan.users %}
+              <div class='user-badge mr-2' data-id='{{ user.userid }}'>
+                <i class='mr-2 fas fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i>
+                {{ user.fullname }} ({{ user.email }}) <span class='color-weak'>|</span>
+                <span data-action='remove-parent' class='hover-danger'><i class='fas fa-xmark'></i></span>
+              </div>
+            {% endfor %}
+          </div>
         </div>
         {% if rw == 'canread' and App.Config.configArr.anon_users and not ucpPage %}
           <hr>

@@ -271,17 +271,21 @@ function initPermissionsTomSelects() {
       isTeams ? '.team-select-input' : '.teamgroups-select-input'
     );
     // build config for tomselect
-    const config: TomSelect.Options = {
-      plugins: ['remove_button', 'no_backspace_delete', 'clear_button'],
+    const config = {
+      plugins: {
+        clear_button: {},
+        no_backspace_delete: {},
+        remove_button: {},
+      },
       onItemAdd() { this.setTextboxValue('') },
     };
     // only set controlInput if valid
     if (input instanceof HTMLInputElement && input.id) {
-      config.controlInput = `#${CSS.escape(input.id)}`;
+      config['controlInput'] = `#${CSS.escape(input.id)}`;
     }
     // only set dropdownParent if wrapper has id
     if (wrapper.id) {
-      config.dropdownParent = `#${CSS.escape(wrapper.id)}`;
+      config['dropdownParent'] = `#${CSS.escape(wrapper.id)}`;
     }
     new TomSelect(select, config);
   });
@@ -1331,8 +1335,6 @@ on('scope-change', (el: HTMLElement) => {
   userParams[el.dataset.target] = el.dataset.value;
   ApiC.patch('users/me', userParams).then(() => {
     handleReloads(el.dataset.reload);
-    // todo: wip, not updating the tomselect populate
-    initPermissionsTomSelects();
   });
 });
 

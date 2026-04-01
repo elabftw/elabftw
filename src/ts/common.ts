@@ -249,7 +249,7 @@ makeMalleableColumnsGreatAgain();
 
 function initPermissionsTomSelects() {
   const selects = document.querySelectorAll<HTMLSelectElement>(
-    '[id$="_select_teamgroups"], [id$="_select_teams"]'
+    '[id$="_select_teamgroups"], [id$="_select_teams"]',
   );
   if (selects.length === 0) return;
   selects.forEach((select) => {
@@ -261,14 +261,14 @@ function initPermissionsTomSelects() {
     const isTeamGroups = select.id.endsWith('_select_teamgroups');
     if (!isTeams && !isTeamGroups) return;
     const wrapper = select.closest(
-      isTeams ? '.team-select-wrapper' : '.teamgroups-select-wrapper'
+      isTeams ? '.team-select-wrapper' : '.teamgroups-select-wrapper',
     );
     if (!(wrapper instanceof HTMLElement)) {
       new TomSelect(select, { plugins: ['remove_button', 'clear_button'] });
       return;
     }
     const input = wrapper.querySelector(
-      isTeams ? '.team-select-input' : '.teamgroups-select-input'
+      isTeams ? '.team-select-input' : '.teamgroups-select-input',
     );
     // build config for tomselect
     const config = {
@@ -277,7 +277,7 @@ function initPermissionsTomSelects() {
         no_backspace_delete: {},
         remove_button: {},
       },
-      onItemAdd() { this.setTextboxValue('') },
+      onItemAdd() { this.setTextboxValue(''); },
     };
     // only set controlInput if valid
     if (input instanceof HTMLInputElement && input.id) {

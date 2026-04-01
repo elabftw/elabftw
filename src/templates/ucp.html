@@ -7,10 +7,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Notifications'|trans }}</button></li>
 </ul>
 
-{# loading spinner #}
-<div class='d-flex justify-content-center' id='loading-spinner'>
-  <div class='lds-dual-ring'></div>
-</div>
+{% include 'loading-spinner.html' %}
 
 {# Modal for regenerating sigkeys #}
 <div class='modal fade' id='regenerateSigkeysModal' tabindex='-1' role='dialog' aria-labelledby='regenerateSigkeysModalLabel'>

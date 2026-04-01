@@ -1,0 +1,23 @@
+<div class='modal fade' id='schedulerSettingsModal' tabindex='-1' role='dialog' aria-labelledby='schedulerSettingsModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h4 class='modal-title' id='schedulerSettingsModalLabel'><i class='fas fa-fw fa-calendar-days'></i> {{ 'Scheduler settings'|trans }}</h4>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {# schedulerSettings #}
+        <div class='mb-2'>
+          {% include 'binary-setting.html' with {'label': 'Show weekends'|trans, 'model': 'users/me', 'slug': 'show_weekends', 'src': src} %}
+          {% include 'binary-setting.html' with {'label': 'Layout: timeline'|trans, 'model': 'users/me', 'slug': 'scheduler_layout', 'src': src} %}
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-action='reload-page'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

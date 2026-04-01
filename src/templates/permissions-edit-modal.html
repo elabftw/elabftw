@@ -89,7 +89,7 @@
           <h5><label for='{{ identifier }}_select_users' class='mt-2'>+ {{ 'Users'|trans }}</label></h5>
           <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.'|trans }}</p>
           {# add user to permissions input #}
-          <div class='input-group'>
+          <div class='input-group mb-1'>
             <input id='{{ identifier }}_select_users' type='text' data-identifier='{{ identifier }}' data-action='autocomplete' data-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>
             <div class='input-group-append'>
               <button class='btn btn-primary' type='button' data-rw='{{ rw }}' data-identifier='{{ identifier }}' data-action='add-user-to-permissions'>{{ 'Add'|trans }}</button>
@@ -98,7 +98,7 @@
           <div id='autocompleteAnchorDiv_{{ identifier }}'></div>
           {# list of added users #}
           {# TODO: 'Add users' button should create element with user badge too see common.ts  // eye or pencil icon #}
-          <div class='d-flex flex-wrap' id='{{ identifier }}_list_users'>
+          <div class='d-flex flex-wrap ml-2' id='{{ identifier }}_list_users'>
             {% set humanCan = permissionsJson|canToHuman %}
             {% for user in humanCan.users %}
               <div class='user-badge mr-2' data-id='{{ user.userid }}'>

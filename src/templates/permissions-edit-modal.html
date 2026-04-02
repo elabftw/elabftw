@@ -42,7 +42,7 @@
       </div>
       <div class='modal-body'>
         <div data-rw={{ rw }}>
-          <h5><label for='{{ identifier }}_select_base'>{{ 'Base'|trans }}</label></h5>
+          <label for='{{ identifier }}_select_base'><strong><i class='fas fa-user-shield mr-2'></i>{{ 'Base'|trans }}</strong></label>
           <p class='smallgray'>{{ 'This setting sets a baseline upon which you can add more permissions by selecting teams, user groups or users below.'|trans }}</p>
           <select id='{{ identifier }}_select_base' class='form-control mb-2' name='{{ base_target }}'>
             {% for key, value in visibilityArr %}
@@ -54,7 +54,7 @@
           <span class='smallgray'>{{ 'Additionally, you can pair the Base permissions with specific combinations of teams, users, or user groups.'|trans }}</span>
           <hr>
           {# TEAMS #}
-          <h5><label for='{{ identifier }}_select_teams' class='mt-2'>+ {{ 'Teams'|trans }}</label></h5>
+          <label for='{{ identifier }}_select_teams' class='mt-2'><strong><i class='fas fa-users mr-2'></i>+ {{ 'Teams'|trans }}</strong></label>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
           <div class='team-select-wrapper'>
             <input type='text' class='form-control mt-2 team-select-input' id='{{ identifier }}-team-select-input' placeholder='{{ 'Search for user team'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>
@@ -66,9 +66,8 @@
               {% endfor %}
             </select>
           </div>
-          <hr>
           {# USER GROUPS #}
-          <h5><label for='{{ identifier }}_select_teamgroups' class='mt-2'>+ {{ 'User Groups'|trans }}</label></h5>
+          <label for='{{ identifier }}_select_teamgroups' class='mt-2'><strong><i class='fas fa-user-group mr-2'></i>+ {{ 'User Groups'|trans }}</strong></label>
           <p class='smallgray'>{{ 'Selecting a user group here will give access to all users part of this user group.'|trans }}</p>
           {# SCOPE BUTTON #} {#
           {% set scopeBtnId = 'scope' ~ identifier %}
@@ -84,9 +83,8 @@
               {% endfor %}
             </select>
           </div>
-          <hr>
           {# USERS #}
-          <h5><label for='{{ identifier }}_select_users' class='mt-2'>+ {{ 'Users'|trans }}</label></h5>
+          <label for='{{ identifier }}_select_users' class='mt-2'><strong><i class='fas fa-user-plus mr-2'></i>{{ 'Users'|trans }}</strong></label>
           <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.'|trans }}</p>
           {# add user to permissions input #}
           <div class='input-group mb-1'>

@@ -1733,12 +1733,27 @@ components:
         booking_hourly_rate_notax:
           type: number
           description: The hourly rate of booked resource, without taxes.
+          minimum: 0
         booking_hourly_rate_tax:
           type: number
           description: The hourly rate of booked resource, with taxes.
+          minimum: 0
         booking_hourly_rate_currency:
           type: integer
-          description: The currency of the hourly rate.
+          description: |
+            The currency of the hourly rate:
+              - 0: CAD
+              - 1: CHF
+              - 2: CNY
+              - 3: DKK
+              - 4: EUR
+              - 5: GBP
+              - 6: JPY
+              - 7: USD
+              - 8: SEK
+              - 9: NOK
+          example: 0
+          enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
     item:
       allOf:

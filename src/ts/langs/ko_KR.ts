@@ -119,6 +119,7 @@ const t = {
     "upload-file-comment": "파일 코멘트",
     "userid": "Userid",
     "users": "사용자",
+    "user-already-added": "User already added",
     "valid-until": "까지 유효",
     "validated": "검증됨",
     "view-template": "View template",

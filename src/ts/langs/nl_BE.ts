@@ -119,6 +119,7 @@ const t = {
     "upload-file-comment": "Bestandscommentaar",
     "userid": "Userid",
     "users": "Gebruikers",
+    "user-already-added": "User already added",
     "valid-until": "Geldig tot",
     "validated": "Gevalideerd",
     "view-template": "View template",

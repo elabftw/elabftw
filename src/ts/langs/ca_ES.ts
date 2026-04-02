@@ -119,6 +119,7 @@ const t = {
     "upload-file-comment": "Comentari d’arxiu",
     "userid": "ID d'usuari",
     "users": "Usuaris",
+    "user-already-added": "User already added",
     "valid-until": "Vàlid fins",
     "validated": "Validat",
     "view-template": "Mira plantilla",

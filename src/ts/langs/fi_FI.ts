@@ -119,6 +119,7 @@ const t = {
     "upload-file-comment": "Tiedoston kommentti",
     "userid": "Userid",
     "users": "Käyttäjät",
+    "user-already-added": "User already added",
     "valid-until": "Voimassa asti",
     "validated": "Vahvistettu",
     "view-template": "View template",

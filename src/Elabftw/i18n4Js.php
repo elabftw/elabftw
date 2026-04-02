@@ -155,6 +155,7 @@ final class i18n4Js
             'upload-file-comment' => _('File comment'),
             'userid' => _('Userid'),
             'users' => _('Users'),
+            'user-already-added' => _('User already added'),
             'valid-until' => _('Valid until'),
             'validated' => _('Validated'),
             'view-template' => _('View template'),

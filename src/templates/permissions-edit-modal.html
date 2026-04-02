@@ -95,14 +95,21 @@
           </div>
           <div id='autocompleteAnchorDiv_{{ identifier }}'></div>
           {# list of added users #}
-          {# TODO: 'Add users' button should create element with user badge too see common.ts  // eye or pencil icon #}
-          <div class='d-flex flex-wrap ml-2' id='{{ identifier }}_list_users'>
+          <template id="user-badge-template">
+            <div class="user-badge mr-2" data-id="">
+              <i class="mr-2 fas"></i>
+              <span class="user-text"></span>
+              <span data-action="remove-parent" class="hover-danger ml-2">
+                <i class="fas fa-xmark"></i>
+              </span>
+            </div>
+          </template>
+          <div class='d-flex flex-wrap ml-1' id='{{ identifier }}_list_users'>
             {% set humanCan = permissionsJson|canToHuman %}
             {% for user in humanCan.users %}
-              <div class='user-badge mr-2' data-id='{{ user.userid }}'>
+              <div class='user-badge m-1' data-id='{{ user.userid }}'>
                 <i class='mr-2 fas fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i>
-                {{ user.fullname }} ({{ user.email }}) <span class='color-weak'>|</span>
-                <span data-action='remove-parent' class='hover-danger'><i class='fas fa-xmark'></i></span>
+                {{ user.fullname }} ({{ user.email }}) <span data-action='remove-parent' class='hover-danger ml-2'><i class='fas fa-xmark'></i></span>
               </div>
             {% endfor %}
           </div>

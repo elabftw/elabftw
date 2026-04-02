@@ -119,6 +119,7 @@ const t = {
     "upload-file-comment": "Komentár k súboru",
     "userid": "Userid",
     "users": "Užívatelia",
+    "user-already-added": "User already added",
     "valid-until": "Platné do",
     "validated": "Overené",
     "view-template": "View template",

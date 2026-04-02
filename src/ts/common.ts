@@ -640,44 +640,33 @@ on(Action.Restore, () => {
 
 on('add-user-to-permissions', (el: HTMLElement) => {
   // collect userid + name + email from input
-  const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
-  const userid = parseInt(addUserPermissionsInput.value, 10);
+  const input = document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement;
+  const userid = parseInt(input.value, 10);
   if (isNaN(userid)) {
     notify.error('add-user-error');
     return;
   }
-  const userName = addUserPermissionsInput.value.split(' - ')[1];
-
-  // create a new li element in the list of existing users, so it is collected at Save action
-  const li = document.createElement('li');
-  li.classList.add('list-group-item');
-  li.dataset.id = String(userid);
-
-  // eye or pencil icon
-  const rwIcon = document.createElement('i');
-  rwIcon.classList.add('fas');
-  const iconClass = el.dataset.rw === 'canread' ? 'eye' : 'pencil-alt';
-  rwIcon.classList.add(`fa-${iconClass}`);
-
-  // delete icon
-  const deleteSpan = document.createElement('span');
-  deleteSpan.dataset.action = 'remove-parent';
-  deleteSpan.classList.add('hover-danger');
-  const xIcon = document.createElement('i');
-  xIcon.classList.add('fas');
-  xIcon.classList.add('fa-xmark');
-  deleteSpan.insertAdjacentElement('afterbegin', xIcon);
-
-  // construct the li element with all its content
-  li.insertAdjacentElement('afterbegin', rwIcon);
-  li.insertAdjacentText('beforeend', ' ' + userName + ' ');
-  li.insertAdjacentElement('beforeend', deleteSpan);
-
-  // and insert it into the list
-  document.getElementById(`${el.dataset.identifier}_list_users`).appendChild(li);
-
-  // clear input
-  addUserPermissionsInput.value = '';
+  // split and assign the later part (without 123 in "123 - John Doe (john@email.com)"
+  const [, userLabel] = input.value.split(' - ');
+  // prevent duplicates (optional but recommended)
+  const container = document.getElementById(`${el.dataset.identifier}_list_users`);
+  if (container?.querySelector(`[data-id="${userid}"]`)) {
+    notify.warning('user-already-added');
+    input.value = '';
+    return;
+  }
+  const template = document.getElementById('user-badge-template') as HTMLTemplateElement;
+  const clone = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+  clone.dataset.id = String(userid);
+  // eye/pencil icon for view/edit rights
+  const icon = clone.querySelector('i.fas') as HTMLElement;
+  const iconClass = el.dataset.rw === 'canread' ? 'fa-eye' : 'fa-pencil-alt';
+  icon.classList.add(iconClass);
+  // set text and clear input
+  const textSpan = clone.querySelector('.user-text') as HTMLElement;
+  textSpan.textContent = userLabel;
+  container?.appendChild(clone);
+  input.value = '';
 });
 
 on('reload-page', () => location.reload());

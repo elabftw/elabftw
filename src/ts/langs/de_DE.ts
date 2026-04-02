@@ -119,6 +119,7 @@ const t = {
     "upload-file-comment": "Dateikommentar",
     "userid": "User-ID",
     "users": "Benutzer",
+    "user-already-added": "User already added",
     "valid-until": "Gültig bis",
     "validated": "Bestätigt",
     "view-template": "Vorlage anschauen",

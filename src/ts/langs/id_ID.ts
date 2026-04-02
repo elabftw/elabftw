@@ -119,6 +119,7 @@ const t = {
     "upload-file-comment": "File komentar",
     "userid": "ID pengguna",
     "users": "Pengguna",
+    "user-already-added": "User already added",
     "valid-until": "Berlaku hingga",
     "validated": "Tervalidasi",
     "view-template": "Lihat templat",

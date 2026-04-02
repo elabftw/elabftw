@@ -119,6 +119,7 @@ const t = {
     "upload-file-comment": "Komentar datoteke",
     "userid": "Userid",
     "users": "Uporabniki",
+    "user-already-added": "User already added",
     "valid-until": "Veljavno do",
     "validated": "Potrjeno",
     "view-template": "View template",

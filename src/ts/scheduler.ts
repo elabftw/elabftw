@@ -209,7 +209,10 @@ if (window.location.pathname === '/scheduler.php') {
       const opt = selectInput.querySelector(`option[value="${id}"]`) as HTMLOptionElement;
       if (!opt) return;
 
-      const badge = document.createElement('span');
+      const badge = document.createElement('a');
+      badge.textContent = opt.textContent;
+      badge.href = `/database.php?mode=view&id=${id}`;
+      badge.target='_blank';
       badge.textContent = opt.textContent;
       badge.className = 'selected-item-badge';
       const rawColor = opt.dataset.color;

@@ -663,10 +663,10 @@ on('add-user-to-permissions', (el: HTMLElement) => {
   // const iconClass = el.dataset.rw === 'canread' ? 'fa-eye' : 'fa-pencil-alt';
   let iconClass = 'fa-pencil-alt';
   if (el.dataset.rw === 'canread') {
-     iconClass = 'fa-eye';
-   } else if (el.dataset.rw === 'canbook') {
-     iconClass = 'fa-calendar-plus';
-   }
+    iconClass = 'fa-eye';
+  } else if (el.dataset.rw === 'canbook') {
+    iconClass = 'fa-calendar-plus';
+  }
   icon.classList.add(iconClass);
   // set text and clear input
   const textSpan = clone.querySelector('.user-text') as HTMLElement;

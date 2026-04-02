@@ -74,28 +74,30 @@ jobs:
           tags: |
               elabftw/elabimg:nightly
 
+
+      # TRIVY scans disabled because of https://socket.dev/blog/trivy-under-attack-again-github-actions-compromise
       # VULN SCAN
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: elabftw/elabimg:nightly
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          # use only the vuln scanner to avoid OOM kill with secrets scanning
-          #not working: scanners: 'vuln'
-          severity: 'CRITICAL,HIGH'
+      #- name: Run Trivy vulnerability scanner
+      #  uses: aquasecurity/trivy-action@master
+      #  with:
+      #    image-ref: elabftw/elabimg:nightly
+      #    format: 'table'
+      #    exit-code: '1'
+      #    ignore-unfixed: true
+      #    vuln-type: 'os,library'
+      #    # use only the vuln scanner to avoid OOM kill with secrets scanning
+      #    #not working: scanners: 'vuln'
+      #    severity: 'CRITICAL,HIGH'
 
       # SBOM
-      - name: Run Trivy in GitHub SBOM mode and submit results to Dependency Graph
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          format: 'github'
-          output: 'dependency-results.sbom.json'
-          scan-ref: '.'
-          github-pat: ${{ secrets.GITHUB_TOKEN }}
+      #- name: Run Trivy in GitHub SBOM mode and submit results to Dependency Graph
+      #  uses: aquasecurity/trivy-action@master
+      #  with:
+      #    scan-type: 'fs'
+      #    format: 'github'
+      #    output: 'dependency-results.sbom.json'
+      #    scan-ref: '.'
+      #    github-pat: ${{ secrets.GITHUB_TOKEN }}
 
       # ATTESTATION
       - name: Create build provenance attestation

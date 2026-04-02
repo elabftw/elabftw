@@ -4,8 +4,12 @@
 
 <div class='text-center'>
   <div class='col-md-3 mx-auto'>
-    <img src='/assets/images/logo.png' alt='logo elabftw' class='logo logo-light img-fluid'/>
-    <img src='/assets/images/logo-white.png' alt='logo elabftw' class='logo logo-dark img-fluid'/>
+    <div class='logo logo-light'>
+      {{ App.Config.configArr.logo_light_svg|raw }}
+    </div>
+    <div class='logo logo-dark'>
+      {{ App.Config.configArr.logo_dark_svg|raw }}
+    </div>
   </div>
 </div>
 <div class='separator col-md-4 mx-auto'></div>

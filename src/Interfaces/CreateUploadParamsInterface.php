@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 use Elabftw\Enums\State;
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 
 /**
  * Interface for creating an upload
@@ -28,7 +28,7 @@ interface CreateUploadParamsInterface
 
     public function getTmpFilePath(): string;
 
-    public function getSourceFs(): Filesystem;
+    public function getSourceFs(): FilesystemOperator;
 
     public function getImmutable(): int;
 

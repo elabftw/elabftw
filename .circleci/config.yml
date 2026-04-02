@@ -95,7 +95,7 @@ commands:
           name: Composer install
           command: docker exec -it elabtmp composer install
 jobs:
-  setup:
+  prepare_workspace:
     executor: elab-executor
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
@@ -262,18 +262,13 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - setup:
-          filters:
-            branches:
-              ignore:
-                - demo
-                - ird
+      - prepare_workspace
       - code_linters:
           requires:
-            - setup
+            - prepare_workspace
       - php_unit_tests:
           requires:
-            - setup
+            - prepare_workspace
       - cypress_e2e_tests:
           requires:
-            - setup
+            - prepare_workspace

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Storage;
@@ -107,7 +107,7 @@ final class TimestampUtils
             // add user agent
             // http://developer.github.com/v3/#user-agent-required
             'headers' => array(
-                'User-Agent' => 'Elabftw/' . App::INSTALLED_VERSION,
+                'User-Agent' => 'Elabftw/' . BuildInfo::VERSION,
                 'Content-Type' => 'application/timestamp-query',
                 'Content-Transfer-Encoding' => 'base64',
             ),

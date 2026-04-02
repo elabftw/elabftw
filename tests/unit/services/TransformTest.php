@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Notifications;
 use ValueError;
@@ -54,7 +55,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
                     'created_at' => 'DATE',
                     'body' => array('event' => array('item' => 42), 'actor' => 'John'),
                 ),
-                '<span data-action="ack-notif" data-id="1" data-href="scheduler.php?item=42">'
+                '<span data-action="ack-notif" data-id="1" data-href="scheduler.php?items[]=42">'
                 . 'A booked slot was deleted from the scheduler. (John)'
                 . '</span><br><span class="relative-moment" title="DATE"></span>',
             ),
@@ -112,7 +113,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
             'NewVersionInstalled' => array(
                 array('category' => Notifications::NewVersionInstalled->value, 'created_at' => 'DATE'),
                 '<a class="color-white" href="'
-                . App::getWhatsnewLink(App::INSTALLED_VERSION_INT)
+                . App::getWhatsnewLink(BuildInfo::VERSION_INT)
                 . '" target="_blank">'
                 . sprintf('A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message.', '<br>')
                 . '</a><br><span class="relative-moment" title="DATE"></span>',

@@ -20,6 +20,7 @@ use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
+use Exception;
 
 use function is_array;
 use function implode;
@@ -76,13 +77,17 @@ final class TwigFilters
      */
     public static function formatMetadata(string $json): string
     {
-        $final = '';
-        $Metadata = new Metadata($json);
-        $extraFields = $Metadata->getExtraFields();
+        try {
+            $Metadata = new Metadata($json);
+            $extraFields = $Metadata->getExtraFields();
+        } catch (Exception $e) {
+            return self::displayMessage($e->getMessage(), 'ko', false);
+        }
         if (empty($extraFields)) {
             return $Metadata->getRaw();
         }
 
+        $final = '';
         $grouped = $Metadata->getGroupedExtraFields();
 
         foreach ($grouped as $group) {

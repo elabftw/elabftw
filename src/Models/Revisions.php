@@ -18,6 +18,7 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
@@ -85,7 +86,8 @@ final class Revisions extends AbstractRest
         }
 
         $rev = $this->readOne();
-
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams('restore', sprintf('Restored from revision %d', $rev['id'])));
         $sql = 'UPDATE ' . $this->Entity->entityType->value . ' SET body = :body WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':body', $rev['body']);

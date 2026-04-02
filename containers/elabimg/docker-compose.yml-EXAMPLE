@@ -293,6 +293,10 @@ services:
         # default value: false
         #- DEMO_MODE=false
 
+        # set to true to set the instance in maintenance mode, displaying an informative page, thereby disabling all user interaction
+        # default value: false
+        #- MAINTENANCE_MODE=false
+
         ###########
         # PLUGINS #
         ###########
@@ -451,6 +455,12 @@ services:
   # By default (i.e., if this environment variable is unset or empty), all external repositories are enabled.
   # To restrict which external repositories users can access, set this variable to a comma-separated list of allowed base URLs.
   #    - ALLOWED_EXTERNAL_URLS=https://www.addgene.org/,https://media.addgene.org/,https://seva-plasmids.com/,https://api.ncbi.nlm.nih.gov/datasets/v2alpha/,https://eutils.ncbi.nlm.nih.gov/entrez/eutils/,https://www.snapgene.com/local/fetch.php,https://benchling.com/,https://assets.opencloning.org/annotated-igem-distribution,http://www.euroscarf.de/
+  # Get this to valid addgene username / password if you want to be able to access addgene plasmids
+  # For details, see https://github.com/manulera/OpenCloning_backend?tab=readme-ov-file#addgene-authenticated-access
+  # These variables are only used in requests made by the backend, so they are not exposed to users of the frontend.
+  # default value: unset
+  #     - ADDGENE_USERNAME=your_addgene_username
+  #     - ADDGENE_PASSWORD=your_addgene_password
 
 
   # example of a redis container

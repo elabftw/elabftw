@@ -103,7 +103,7 @@
             {% set humanCan = permissionsJson|canToHuman %}
             {% for user in humanCan.users %}
               <div class='user-badge m-1' data-id='{{ user.userid }}'>
-                <i class='mr-2 fas fa-{{ rw == 'canread' ? 'eye' : 'pencil-alt' }}'></i>
+                <i class='mr-2 fas fa-{{ rw == 'canread' ? 'eye' : rw == 'canwrite' ? 'pencil-alt' : 'calendar-plus' }}'></i>
                 {{ user.fullname }} ({{ user.email }}) <span data-action='remove-parent' class='hover-danger ml-2'><i class='fas fa-xmark'></i></span>
               </div>
             {% endfor %}

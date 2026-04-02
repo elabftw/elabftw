@@ -89,6 +89,11 @@ const clickHandler = async (event: Event) => {
     filenameLink.replaceWith(filenameInput);
     filenameInput.focus();
 
+  // DUPLICATE UPLOADS
+  } else if (el.matches('[data-action="duplicate-upload"]')) {
+    const uploadId = parseInt(el.dataset.uploadid, 10);
+    ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}/${uploadId}`, { action: Action.Duplicate })
+      .then(() => reloadElements(['uploadsDiv']));
   // TOGGLE DISPLAY
   } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
     ApiC.notifOnSaved = false;

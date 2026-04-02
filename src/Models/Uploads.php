@@ -171,12 +171,7 @@ final class Uploads extends AbstractRest
     {
         $uploads = $this->selectAll();
         foreach ($uploads as $upload) {
-            if ($upload['storage'] === Storage::LOCAL->value) {
-                $prefix = '/elabftw/uploads/';
-                $param = new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
-            } else {
-                $param = new CreateUploadFromS3($upload['real_name'], $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
-            }
+            $param = $this->makeCreateUploadParam($upload);
             $id = $entity->Uploads->create($param);
             $fresh = new self($entity, $id);
             // replace links in body with the new long_name
@@ -187,6 +182,13 @@ final class Uploads extends AbstractRest
             $newBody = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $entity->entityData['body']);
             $entity->patch(Action::Update, array('body' => $newBody));
         }
+    }
+
+    public function duplicateOne(): int
+    {
+        $this->canWriteOrExplode();
+        $param = $this->makeCreateUploadParam($this->uploadData);
+        return $this->Entity->Uploads->create($param);
     }
 
     /**
@@ -278,10 +280,11 @@ final class Uploads extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         $this->Entity->touch();
-        if ($this->id !== null) {
+        // Somehow, we cannot pass the Action.Replace to the formData in edit.ts "replace-uploaded-file"
+        if ($this->id !== null && $action !== Action::Duplicate) {
             $action = Action::Replace;
         }
-        $realName = Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody);
+        $realName = $this->uploadData['real_name'] ?? Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody);
         return match ($action) {
             Action::Create => $this->create(
                 new CreateUploadFromUploadedFile(new UploadedFile($reqBody['filePath'], $realName), $reqBody['comment'])
@@ -298,6 +301,7 @@ final class Uploads extends AbstractRest
                     return $this->createFromString($fileType, $realName, $reqBody['content']);
                 }
             )(),
+            Action::Duplicate => $this->duplicateOne(),
             Action::Replace => $this->replace(new CreateUploadFromUploadedFile(
                 new UploadedFile($reqBody['filePath'], $realName),
                 $this->uploadData['comment']
@@ -416,6 +420,15 @@ final class Uploads extends AbstractRest
             $this->setId($upload['id']);
             $this->patch(Action::Update, array('userid' => $userid));
         }
+    }
+
+    private function makeCreateUploadParam(array $upload): CreateUploadParamsInterface
+    {
+        if ($upload['storage'] === Storage::LOCAL->value) {
+            $prefix = '/elabftw/uploads/';
+            return new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
+        }
+        return new CreateUploadFromS3($upload['real_name'], $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
     }
 
     private function update(UploadParams $params): bool

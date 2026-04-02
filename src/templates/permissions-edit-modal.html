@@ -69,11 +69,6 @@
           {# USER GROUPS #}
           <label for='{{ identifier }}_select_teamgroups' class='mt-2'><strong><i class='fas fa-user-group mr-2'></i>+ {{ 'User Groups'|trans }}</strong></label>
           <p class='smallgray'>{{ 'Selecting a user group here will give access to all users part of this user group.'|trans }}</p>
-          {# SCOPE BUTTON #} {#
-          {% set scopeBtnId = 'scope' ~ identifier %}
-          {% set identifierTeamGroups = identifier ~ '_select_teamgroups' %}
-          {% set toReload = [identifierTeamGroups, scopeBtnId]|join(',') %}
-          {% include 'scope-button.html' with {'btnId': scopeBtnId, 'reload': toReload, 'target': 'scope_teamgroups', 'withLabel': 1} %}  #}
           <div class='teamgroups-select-wrapper'>
             <input type='text' class='form-control mt-2 teamgroups-select-input' id='{{ identifier }}-teamgroups-select-input' placeholder='{{ 'Search for user group'|trans }}' aria-label='{{ 'Search for user group'|trans }}'>
             <select id='{{ identifier }}_select_teamgroups' multiple class='form-control' autocomplete='off' {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} >
@@ -85,7 +80,7 @@
           </div>
           {# USERS #}
           <label for='{{ identifier }}_select_users' class='mt-2'><strong><i class='fas fa-user-plus mr-2'></i>{{ 'Users'|trans }}</strong></label>
-          <p class='smallgray d-inline'>{{ 'Allow individual users to access this entry.'|trans }}</p>
+          <p class='smallgray d-inline'>{{ rw == 'canbook' ? 'Allow individual users to book this entry.'|trans : 'Allow individual users to access this entry.'|trans }}</p>
           {# add user to permissions input #}
           <div class='input-group mb-1'>
             <input id='{{ identifier }}_select_users' type='text' data-identifier='{{ identifier }}' data-action='autocomplete' data-target='users' class='form-control' placeholder='{{ 'Add user'|trans }}' autocomplete='off'>

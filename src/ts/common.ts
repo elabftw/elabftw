@@ -585,7 +585,14 @@ on('transfer-ownership', async () => {
   ApiC.notifOnSaved = false;
   await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid, team: parseInt(params['targetTeamId']) });
   sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
-  window.location.reload();
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes('experiment')) {
+    window.location.href = 'experiments.php';
+  } else if (path.includes('database') || path.includes('resource')) {
+    window.location.href = 'database.php';
+  } else {
+    window.location.href = 'dashboard.php';
+  }
 });
 
 on(Action.Restore, () => {

@@ -161,9 +161,10 @@ if (document.getElementById('users-table')) {
       if (confirm('Are you sure you want to remove permanently this user and all associated data?')) {
         ApiC.delete(`users/${userid}`)
           .then(() => {
-            reloadElements(['editUsersBox', 'unvalidatedUsersBox']);
-            $('#editUserModal').modal('toggle');
-            document.dispatchEvent(new CustomEvent('dataReload'));
+            reloadElements(['unvalidatedUsersBox']).then(() => {
+              $('#editUserModal').modal('hide');
+              document.dispatchEvent(new CustomEvent('dataReload'));
+            });
           });
       }
     // ADD USER TO TEAM

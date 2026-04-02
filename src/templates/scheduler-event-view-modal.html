@@ -1,0 +1,70 @@
+<div id='eventViewMode'>
+  <div class='modal-body'>
+    {# "Title" and Date time will be replaced with real title name by js #}
+    <h4 id='viewTitle'>{{ 'Title'|trans }}</h4>
+    <div id='viewDatetime' class='mb-3'></div>
+    {# =============== BINDINGS SECTION =============== #}
+    <hr>
+    <h4>{{ 'Bindings'|trans }}</h4>
+    <div class='smallgray mb-2'>{{ 'Connect this event to experiments or resources.'|trans }}</div>
+    <div class='box sm mb-4'>
+      {# =============== BOUND EXPERIMENT =============== #}
+      <div id='boundInputsExp' class='mb-4'>
+        <span class='font-weight-bold'><i class='fas fa-flask mr-1'></i>{{ 'Experiment'|trans }}</span>
+        <div id='boundBlockExp' class='d-flex justify-content-between box sm mb-2 d-none'>
+          <div id='eventBoundExp'></div>
+          <div>
+            <a href='#' id='viewBindExp' class='btn btn-ghost btn-sm mr-2' target='_blank'><i class='fas fa-eye fa-fw mr-1'></i>{{ 'View'|trans }}</a>
+            <button id='unbindExp' class='btn btn-danger-ghost btn-sm' data-action='scheduler-rm-bind' data-type='experiment' data-eventid='' type='button'><i class='fas fa-link mr-1 color-white'></i>{{ 'Unbind'|trans }}</button>
+          </div>
+        </div>
+      </div>
+      {# =============== BIND NEW EXPERIMENT =============== #}
+      <div id='bindInputsExp' class='mb-4'>
+        <div class='font-weight-bold mb-2'><i class='fas fa-flask mr-1'></i>{{ 'Bind an experiment'|trans }}</div>
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <span class='input-group-text'>{{ 'Search'|trans }}</span>
+          </div>
+          <label for='bindItemSearchExp' class='sr-only'>{{ 'Search in resources'|trans }}</label>
+          <input id='bindItemSearchExp' type='text' placeholder='{{ 'Search in experiments'|trans }}' data-action='autocomplete' data-target='experiments' data-identifier='binddivexp' class='form-control bindInput' />
+          <div class='input-group-append'>
+            <button class='btn btn-primary' data-input='bindexpinput' data-action='scheduler-bind-entity' data-type='experiment' type='button'>{{ 'Attach'|trans }}</button>
+          </div>
+        </div>
+        <div id='autocompleteAnchorDiv_binddivexp'></div>
+      </div>
+      {# =============== BOUND RESOURCE =============== #}
+      <div id='boundInputsItem'>
+        <span class='font-weight-bold mt-2'><i class='fas fa-cubes-stacked mr-1'></i>{{ 'Resource'|trans }}</span>
+        <div id='boundBlockItem' class='d-flex justify-content-between box sm d-none'>
+          <div id='eventBoundItem'></div>
+          <div>
+            <a href='#' id='viewBindItem' class='btn btn-ghost btn-sm mr-2' target='_blank'><i class='fas fa-eye fa-fw mr-1'></i>{{ 'View'|trans }}</a>
+            <button id='unbindItem' class='btn btn-danger-ghost btn-sm' data-action='scheduler-rm-bind' data-type='item_link' data-eventid='' type='button'><i class='fas fa-link mr-1 color-white'></i>{{ 'Unbind'|trans }}</button>
+          </div>
+        </div>
+      </div>
+      {# =============== BIND NEW RESOURCE =============== #}
+      <div id='bindInputsItem'>
+        <div class='font-weight-bold my-2'><i class='fas fa-cubes-stacked mr-1'></i>{{ 'Bind a resource'|trans }}</div>
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <span class='input-group-text'>{{ 'Search'|trans }}</span>
+          </div>
+          <label for='bindItemSearchItem' class='sr-only'>{{ 'Search in resources'|trans }}</label>
+          <input id='bindItemSearchItem' type='text' placeholder='{{ 'Search in resources'|trans }}' data-action='autocomplete' data-target='items' data-identifier='binddivdb' class='form-control bindInput' />
+          <div class='input-group-append'>
+            <button class='btn btn-primary' data-input='binddbinput' data-action='scheduler-bind-entity' data-type='item_link' type='button'>{{ 'Attach'|trans }}</button>
+          </div>
+        </div>
+        <div id='autocompleteAnchorDiv_binddivdb'></div>
+      </div>
+      {# =============== end of bind resource div =============== #}
+    </div>
+  </div>
+  <div class='modal-footer d-flex justify-content-end'>
+    <button type='button' class='btn btn-secondary mr-2' data-action='scheduler-edit-mode'>{{ 'Edit'|trans }}</button>
+    <button type='button' class='btn btn-danger' data-action='scheduler-delete-mode'>{{ 'Delete'|trans }}</button>
+  </div>
+</div>

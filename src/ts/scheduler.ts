@@ -37,9 +37,19 @@ import 'jquery-ui/ui/widgets/autocomplete';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { Action } from './interfaces';
-import { TomSelect } from './misc';
+import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
+import { on } from './handlers';
 
+type CancelNotificationPayload = {
+  action: Action;
+  msg: string;
+  target: string;
+  targetid: number;
+  range_direction?: string;
+  range_value?: number;
+  range_unit?: string;
+};
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
 const GRID_VIEWS: Record<Range, string> = {
@@ -58,6 +68,38 @@ const LIST_WEEK_VIEW = 'listWeek';
 function toDateTimeInputValueNumber(datetime: Date): number {
   const offset = datetime.getTimezoneOffset() * 60 * 1000;
   return datetime.valueOf() - offset;
+}
+
+function setSchedulerMode(mode: 'view' | 'edit' | 'delete'): void {
+  document.getElementById('eventViewMode')!.classList.toggle('d-none', mode !== 'view');
+  document.getElementById('editEventForm')!.classList.toggle('d-none', mode !== 'edit');
+  document.getElementById('eventDeleteMode')!.classList.toggle('d-none', mode !== 'delete');
+}
+
+on('scheduler-edit-mode', () => setSchedulerMode('edit'));
+on('scheduler-delete-mode', () => setSchedulerMode('delete'));
+on('back-to-event', () => setSchedulerMode('view'));
+
+function clearBoundDiv(entity: 'experiment' | 'item') {
+  const suffix = entity === 'experiment' ? 'Exp' : 'Item';
+  document.getElementById(`eventBound${suffix}`)!.textContent = '';
+  const view = document.getElementById(`viewBind${suffix}`) as HTMLAnchorElement;
+  view.removeAttribute('href');
+  toggleBindState(entity, false);
+}
+
+function createBoundDiv(entity: 'experiment' | 'item', title: string, url: string) {
+  const suffix = entity === 'experiment' ? 'Exp' : 'Item';
+  document.getElementById(`eventBound${suffix}`)!.textContent = title;
+  const view = document.getElementById(`viewBind${suffix}`) as HTMLAnchorElement;
+  view.href = url;
+  toggleBindState(entity, true);
+}
+
+function toggleBindState(entity: 'experiment' | 'item', bound: boolean) {
+  const suffix = entity === 'experiment' ? 'Exp' : 'Item';
+  document.getElementById(`boundInputs${suffix}`)?.classList.toggle('d-none', !bound);
+  document.getElementById(`bindInputs${suffix}`)?.classList.toggle('d-none', bound);
 }
 
 function lockScopeButton(selectedItems: string[]): void {
@@ -152,15 +194,13 @@ if (window.location.pathname === '/scheduler.php') {
 
     function refreshBoundDivs(extendedProps) {
       // start by clearing the divs
-      $('#eventBoundExp').html('');
-      $('#eventBoundDb').html('');
-      if (extendedProps.experiment != null) {
-        $('#eventBoundExp').html(`Event is bound to an experiment: <a href="experiments.php?mode=view&id=${extendedProps.experiment}">${extendedProps.experiment_title}</a>.`);
-        $('[data-action="scheduler-rm-bind"][data-type="experiment"]').show();
+      clearBoundDiv('experiment');
+      clearBoundDiv('item');
+      if (extendedProps.experiment) {
+        createBoundDiv('experiment', extendedProps.experiment_title, `experiments.php?mode=view&id=${extendedProps.experiment}`);
       }
-      if (extendedProps.item_link != null) {
-        $('#eventBoundDb').html(`Event is bound to an item: <a href="database.php?mode=view&id=${extendedProps.item_link}">${extendedProps.item_link_title}</a>.`);
-        $('[data-action="scheduler-rm-bind"][data-type="item_link"]').show();
+      if (extendedProps.item_link) {
+        createBoundDiv('item', extendedProps.item_link_title, `database.php?mode=view&id=${extendedProps.item_link}`);
       }
     }
 
@@ -291,9 +331,9 @@ if (window.location.pathname === '/scheduler.php') {
 
             const modal = confirmBtn.closest('.modal');
             const titleInput = modal?.querySelector<HTMLInputElement>('input[id^="eventTitleInput"]');
-            const eventTitle = titleInput ? titleInput.value.trim() : '';
+            const title = titleInput ? titleInput.value.trim() : '';
 
-            const postParams = { start: info.startStr, end: info.endStr, title: eventTitle };
+            const postParams = { start: info.startStr, end: info.endStr, title };
             Promise.all(
               itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
             ).then(() => {
@@ -392,18 +432,19 @@ if (window.location.pathname === '/scheduler.php') {
         if (canBook === 0 && currentUserId !== eventOwnerId) {
           return;
         }
-        $('[data-action="scheduler-rm-bind"]').hide();
-        $('#eventModal').modal('toggle');
+        setSchedulerMode('view');
+        $('#eventModal').modal('show');
         // set the event id on the various elements
         document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
         document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
-        document.querySelectorAll('.cancelEventBtn').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
+        document.querySelectorAll('[data-action="cancel-event"], [data-action="cancel-event-with-message"]')
+          .forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
 
         // title
-        const eventTitle = document.getElementById('eventTitle') as HTMLInputElement;
-        eventTitle.value = info.event.extendedProps.title_only;
+        const title = document.getElementById('title') as HTMLInputElement;
+        title.value = info.event.extendedProps.title_only;
         // set the event id on the title
-        eventTitle.dataset.eventid = info.event.id;
+        title.dataset.eventid = info.event.id;
 
         // start and end inputs values
         startInput.valueAsNumber = toDateTimeInputValueNumber(info.event.start);
@@ -414,16 +455,35 @@ if (window.location.pathname === '/scheduler.php') {
         refreshBoundDivs(info.event.extendedProps);
 
         // cancel block: show if event is cancellable OR user is Admin)
-        const cancelDiv = document.getElementById('isCancellableDiv') as HTMLElement;
-        if (!cancelDiv) return;
         const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
         const isCancellable = isAdmin || bookIsCancellable === 1;
-        cancelDiv.classList.toggle('d-none', !isCancellable);
-        // add event owner's id as target for cancel message
-        const targetCancel = document.getElementById('targetCancelEventUsers');
-        if (targetCancel) {
-          targetCancel.dataset.targetid = info.event.extendedProps.items_id;
+        const deleteBtn = document.getElementById('deleteEventBtn');
+        if (deleteBtn) {
+          deleteBtn.classList.toggle('d-none', !isCancellable);
         }
+        // add owner ids as target for cancel message
+        ['targetCancelEventUsers', 'targetCancelEventUsersRange'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.dataset.targetid = info.event.extendedProps.items_id;
+          }
+        });
+        // populate view section
+        const start = info.event.start!;
+        const end = info.event.end!;
+        // format date using fullcalendar locale
+        const dateLine = calendar.formatDate(start, { weekday: 'long',  year: 'numeric',  month: 'long',  day: 'numeric' });
+        const startTime = calendar.formatDate(start, { hour: '2-digit',  minute: '2-digit' });
+        const endTime = calendar.formatDate(end, { hour: '2-digit',  minute: '2-digit' });
+        const timeLine = `${startTime} – ${endTime}`;
+        // duration in minutes
+        const durationMinutes = Math.round(
+          (end.getTime() - start.getTime()) / 60000,
+        );
+        // Set modal content
+        document.getElementById('viewTitle')!.textContent = info.event.extendedProps.title_only;
+        document.getElementById('viewDatetime')!.innerHTML = `${dateLine}<br class='mb-2'>` +
+          `<strong>${timeLine}</strong> (${durationMinutes} ${i18next.t('minutes')})`;
       },
       // on mouse enter add shadow and show title
       eventMouseEnter: function(info): void {
@@ -434,14 +494,10 @@ if (window.location.pathname === '/scheduler.php') {
       eventMouseLeave: function(info): void {
         info.el.classList.remove('calendar-event-hover');
       },
-      // a drop means we change start date
-      eventDrop: function(info): void {
-        ApiC.patch(`event/${info.event.id}`, {'target': 'start', 'delta': info.delta}).catch(() => info.revert());
-      },
-      // a resize means we change end date
-      eventResize: function(info): void {
-        ApiC.patch(`event/${info.event.id}`, {'target': 'end', 'delta': info.endDelta}).catch(() => info.revert());
-      },
+      // a drop means we change start date/time
+      eventDrop: handleEventDateChange,
+      // a resize means we change end date/time
+      eventResize: handleEventDateChange,
     });
 
     initTomSelect();
@@ -452,117 +508,117 @@ if (window.location.pathname === '/scheduler.php') {
       calendar.updateSize();
     }
 
-    // add on change event listener on datetime inputs
-    [startInput, endInput].forEach((input:HTMLInputElement) => {
-      // in case endTime is inferior to startTime, revert to last focus time
-      let originalValue;
-      input.addEventListener('focus', () => {
-        originalValue = input.value;
-      });
-      input.addEventListener('change', () => {
-        const startVal = startInput.valueAsNumber;
-        const endVal = endInput.valueAsNumber;
-        // start must be < end
-        if (!isNaN(startVal) && !isNaN(endVal) && endVal < startVal) {
-          notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
-          // revert to value on focus
-          if (originalValue) {
-            input.value = originalValue;
-          }
-          return;
-        }
-        const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
-        const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
-        if (!startDt.isValid || !endDt.isValid) {
-          notify.error('invalid-info');
-          if (originalValue) input.value = originalValue;
-          return;
-        }
-        // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
-        const startIso = startDt.toISO({ suppressMilliseconds: true });
-        const endIso = endDt.toISO({ suppressMilliseconds: true });
-        ApiC.patch(`event/${input.dataset.eventid}`, { target: 'datetime', start: startIso, end: endIso})
-          .then(() => calendar.refetchEvents())
-          .catch((err) => notify.error(err));
+    on('cancel-event', (el: HTMLElement) => {
+      ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
+    });
+
+    on('cancel-event-with-message', (el: HTMLElement) => {
+      const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
+      const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
+      const payload: CancelNotificationPayload = {
+        action: Action.Create,
+        msg: msg,
+        target: target.value,
+        targetid: parseInt(target.dataset.targetid, 10),
+      };
+      if (target.value === 'bookable_item_range') {
+        payload.range_direction = (document.getElementById('cancelEventRangeDirection') as HTMLSelectElement).value;
+        payload.range_value = parseInt((document.getElementById('cancelEventRangeValue') as HTMLInputElement).value, 10);
+        payload.range_unit = (document.getElementById('cancelEventRangeUnit') as HTMLSelectElement).value;
+      }
+      ApiC.post(`event/${el.dataset.id}/notifications`, payload).then(() => {
+        ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
       });
     });
 
-    function clearBoundDiv(type: string) {
-      if (type === 'experiment') {
-        $('#eventBoundExp').html('');
-        $('[data-action="scheduler-rm-bind"][data-type="experiment"]').hide();
+    on('edit-event', async (_, e: Event) => {
+      e.preventDefault();
+      const form = document.getElementById('editEventForm') as HTMLFormElement;
+      const params = collectForm(form);
+      const eventId = startInput.dataset.eventid;
+      if (!eventId) {
+        notify.error('form-validation-error');
         return;
       }
-      $('#eventBoundDb').html('');
-      $('[data-action="scheduler-rm-bind"][data-type="item_link"]').hide();
-    }
+      const startVal = startInput.valueAsNumber;
+      const endVal = endInput.valueAsNumber;
 
-    // Add click listener and do action based on which element is clicked
-    document.querySelector('.real-container').addEventListener('click', (event) => {
-      const el = (event.target as HTMLElement);
-      // CANCEL EVENT ACTION
-      if (el.matches('[data-action="cancel-event"]')) {
-        ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
-      // CANCEL EVENT ACTION WITH MESSAGE
-      } else if (el.matches('[data-action="cancel-event-with-message"]')) {
-        const target = document.querySelector('input[name="targetCancelEvent"]:checked') as HTMLInputElement;
-        const msg = (document.getElementById('cancelEventTextarea') as HTMLTextAreaElement).value;
-        ApiC.post(`event/${el.dataset.id}/notifications`, {action: Action.Create, msg: msg, target: target.value, targetid: parseInt(target.dataset.targetid, 10)}).then(() => {
-          ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
-        });
-      // SAVE EVENT TITLE
-      } else if (el.matches('[data-action="save-event-title"]')) {
-        const input = el.parentElement.parentElement.querySelector('input') as HTMLInputElement;
-        ApiC.patch(`event/${input.dataset.eventid}`, {target: 'title', content: input.value}).then(() => calendar.refetchEvents());
-
-      // BIND AN ENTITY TO THE EVENT
-      } else if (el.matches('[data-action="scheduler-bind-entity"]')) {
-        const inputEl = el.parentNode.parentNode.querySelector('input') as HTMLInputElement;
-        const entityid = parseInt((inputEl.value as string), 10);
-        if (entityid > 0) {
-          ApiC.patch(`event/${el.dataset.id}`, {target: el.dataset.type, id: entityid}).then(res => res.json()).then(json => {
-            calendar.refetchEvents();
-            refreshBoundDivs(json);
-            inputEl.value = '';
-          });
-        }
-      // REMOVE BIND
-      } else if (el.matches('[data-action="scheduler-rm-bind"]')) {
-        const bindType = el.dataset.type;
-        ApiC.patch(`event/${el.dataset.eventid}`, {'target': bindType, 'id': null}).then(() => {
-          clearBoundDiv(bindType);
-          // clear the inputs
-          document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
-          calendar.refetchEvents();
-        });
-      // FILTER OWNER
-      } else if (el.matches('[data-action="filter-owner"]')) {
-        reloadCalendarEvents();
-      // EXPORTS
-      } else if (el.matches('[data-action="export-scheduler"]')) {
-        const from = (document.getElementById('schedulerDateFrom') as HTMLInputElement).value;
-        const to = (document.getElementById('schedulerDateTo') as HTMLInputElement).value;
-        const currentParams = new URLSearchParams(window.location.search);
-        // make an export based on the scheduler's current filters
-        const exportUrl = new URL('make.php', window.location.origin);
-        exportUrl.searchParams.set('format', 'schedulerReport');
-        exportUrl.searchParams.set('start', from);
-        exportUrl.searchParams.set('end', to);
-        // append item filters
-        const items = currentParams.getAll('items[]');
-        items.forEach(id => exportUrl.searchParams.append('items[]', id));
-        // append category if present
-        const category = currentParams.get('category');
-        if (category && category !== 'all') {
-          exportUrl.searchParams.set('category', category);
-        }
-        // append owner if present
-        const owner = currentParams.get('eventOwner');
-        if (owner && owner !== 'all') {
-          exportUrl.searchParams.set('eventOwner', owner);
-        }
-        window.location.href = exportUrl.toString();
+      if (isNaN(startVal) || isNaN(endVal)) {
+        notify.error('Invalid date values.');
+        return;
       }
+      // Validate start < end
+      if (endVal < startVal) {
+        notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
+        return;
+      }
+      // Convert to Luxon DateTime
+      const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
+      const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
+      if (!startDt.isValid || !endDt.isValid) {
+        notify.error('invalid-info');
+        return;
+      }
+      // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
+      params['start'] = startDt.toISO({ suppressMilliseconds: true });
+      params['end'] = endDt.toISO({ suppressMilliseconds: true });
+      params['target'] = 'datetime';
+      try {
+        await ApiC.patch(`event/${eventId}`, params);
+        calendar.refetchEvents();
+        $('#eventModal').modal('hide');
+      } catch (err) {
+        notify.error(err);
+      }
+    });
+
+    on('scheduler-bind-entity', (el: HTMLElement) => {
+      const inputEl = el.parentNode.parentNode.querySelector('input') as HTMLInputElement;
+      const entityid = parseInt((inputEl.value as string), 10);
+      if (entityid > 0) {
+        ApiC.patch(`event/${el.dataset.id}`, {target: el.dataset.type, id: entityid}).then(res => res.json()).then(json => {
+          calendar.refetchEvents();
+          refreshBoundDivs(json);
+          inputEl.value = '';
+        });
+      }
+    });
+
+    on('scheduler-rm-bind', (el: HTMLElement) => {
+      const bindType = el.dataset.type;
+      ApiC.patch(`event/${el.dataset.eventid}`, {'target': bindType, 'id': null}).then(() => {
+        clearBoundDiv(bindType as 'experiment' | 'item');
+        // clear the inputs
+        document.querySelectorAll('.bindInput').forEach((input:HTMLInputElement) => input.value = '');
+        calendar.refetchEvents();
+      });
+    });
+
+    on('filter-owner', () => reloadCalendarEvents());
+
+    on('export-scheduler', () => {
+      const from = (document.getElementById('schedulerDateFrom') as HTMLInputElement).value;
+      const to = (document.getElementById('schedulerDateTo') as HTMLInputElement).value;
+      const currentParams = new URLSearchParams(window.location.search);
+      // make an export based on the scheduler's current filters
+      const exportUrl = new URL('make.php', window.location.origin);
+      exportUrl.searchParams.set('format', 'schedulerReport');
+      exportUrl.searchParams.set('start', from);
+      exportUrl.searchParams.set('end', to);
+      // append item filters
+      const items = currentParams.getAll('items[]');
+      items.forEach(id => exportUrl.searchParams.append('items[]', id));
+      // append category if present
+      const category = currentParams.get('category');
+      if (category && category !== 'all') {
+        exportUrl.searchParams.set('category', category);
+      }
+      // append owner if present
+      const owner = currentParams.get('eventOwner');
+      if (owner && owner !== 'all') {
+        exportUrl.searchParams.set('eventOwner', owner);
+      }
+      window.location.href = exportUrl.toString();
     });
 
     // Filters & repopulates the item TomSelect dropdown with options that match the selected category
@@ -580,6 +636,21 @@ if (window.location.pathname === '/scheduler.php') {
         }
       });
       selectEl.tomselect.refreshOptions(false);
+    }
+
+    async function handleEventDateChange(info): Promise<void> {
+      try {
+        if (!info.event.start || !info.event.end) {
+          info.revert();
+          return;
+        }
+        const startIso = DateTime.fromJSDate(info.event.start, { zone: 'system' }).toISO({ suppressMilliseconds: true });
+        const endIso = DateTime.fromJSDate(info.event.end, { zone: 'system' }).toISO({ suppressMilliseconds: true });
+        await ApiC.patch(`event/${info.event.id}`, {target: 'datetime', start: startIso, end: endIso});
+      } catch (err) {
+        console.error(err);
+        info.revert();
+      }
     }
 
     function initTomSelect(): void {

@@ -111,6 +111,32 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, TwigFilters::formatMetadata($metadataJson));
     }
 
+    public function testFormatMetadataFailed(): void
+    {
+        $metadataJsonFailed = '{
+        "extra_fields": {
+          "XXXXXXXXXXX": {
+            "type": "text",
+            "value": "",
+            "group_id": 1,
+            "position": 4,
+            "required": true
+          },
+          "YYYYYYYYY": "",
+          "XXXXXXXXXX": {
+           "type": "date",
+           "value": "",
+           "group_id": 1,
+           "position": 3,
+           "required": true
+          }
+         }
+        }';
+        $result = TwigFilters::formatMetadata($metadataJsonFailed);
+        $this->assertIsString($result);
+        $this->assertStringContainsString('Invalid extra field', $result);
+    }
+
     public function testFormatMetadataEmptyExtrafields(): void
     {
         $metadata = '{"hello": "friend"}';

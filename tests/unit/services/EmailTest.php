@@ -95,8 +95,24 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         //$this->assertEquals(9, $this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo, true));
         $this->assertTrue($this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo, true) > 1);
         $this->assertEquals(1, $this->Email->massEmail(EmailTarget::Sysadmins, null, 'Important message to sysadmins', 'yep', $replyTo, true));
+        // legacy behaviour
         $this->assertEquals(0, $this->Email->massEmail(EmailTarget::BookableItem, 1, 'Oops', 'My cells died', $replyTo, true));
+        // new range-based target
+        $this->assertIsInt($this->Email->massEmail(EmailTarget::BookableItemRange, 1, 'Oops', 'My cells died', $replyTo, true));
         $this->assertEquals($team1Stats['active_admins_count'], $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo, true));
+    }
+
+    public function testGetIdsOfRecipientsBookableItemRange(): void
+    {
+        $rangePast = array('direction' => 'past', 'value' => 7, 'unit' => 'days');
+        $rangeFuture = array('direction' => 'future', 'value' => 7, 'unit' => 'days');
+        $rangeBoth = array('direction' => 'both', 'value' => 7, 'unit' => 'days');
+        $past = Email::getIdsOfRecipients(EmailTarget::BookableItemRange, 1, $rangePast);
+        $future = Email::getIdsOfRecipients(EmailTarget::BookableItemRange, 1, $rangeFuture);
+        $both = Email::getIdsOfRecipients(EmailTarget::BookableItemRange, 1, $rangeBoth);
+        $this->assertGreaterThanOrEqual(0, count($past));
+        $this->assertGreaterThanOrEqual(0, count($future));
+        $this->assertGreaterThanOrEqual(0, count($both));
     }
 
     public function testMassEmailButDisabled(): void

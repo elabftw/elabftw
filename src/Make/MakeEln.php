@@ -313,7 +313,7 @@ class MakeEln extends AbstractMakeEln
             }
             // add files to archive
             $file['uuid'] = Tools::getUuidv4();
-            $this->addAttachedFileInZip($this->folder . '/' . $file['uuid'], $storageFs->readStream($file['long_name']));
+            $this->addAttachedFileInZip($this->folder . $file['uuid'], $storageFs->readStream($file['long_name']));
         }
         return $filesArr;
     }

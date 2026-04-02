@@ -19,6 +19,7 @@ enum EmailTarget: string
     case Admins = 'admins';
     case Sysadmins = 'sysadmins';
     case BookableItem = 'bookable_item';
+    case BookableItemRange = 'bookable_item_range';
     case ActiveUsers = 'active_users';
     case AdminsOfTeam = 'admins_of_team';
 
@@ -27,6 +28,7 @@ enum EmailTarget: string
         return $this === self::Team
             || $this === self::TeamGroup
             || $this === self::BookableItem
+            || $this === self::BookableItemRange
             || $this === self::AdminsOfTeam;
     }
 }

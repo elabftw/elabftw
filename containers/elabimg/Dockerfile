@@ -231,12 +231,6 @@ COPY ./containers/elabimg/php/run /etc/s6-overlay/s6-rc.d/php/
 RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/php
 # END S6-OVERLAY
 
-# PHP
-COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini
-COPY ./containers/elabimg/php/php-fpm.conf /etc/php84/php-fpm.conf
-COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf
-# END PHP
-
 # ELABFTW
 RUN mkdir /elabftw
 WORKDIR /elabftw
@@ -279,8 +273,14 @@ RUN corepack enable
 RUN if [ "$BUILD_ALL" = "1" ]; then yarn install \
     && yarn run buildall:prod \
     && yarn workspaces focus -A --production \
-    && /usr/bin/php84 -d memory_limit=256M -d open_basedir='' /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a \
+    && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a \
     && yarn cache clean && rm -r /root/.cache /root/.yarn; fi
+
+# PHP: add php config after composer step so open_basedir is not an issue
+COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini
+COPY ./containers/elabimg/php/php-fpm.conf /etc/php84/php-fpm.conf
+COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf
+# END PHP
 
 # declare a default value for these ENV values so they are accessible in php-cli
 # they will still be overridden by runtime env, but if they are not declared here, php-cli won't see them ever

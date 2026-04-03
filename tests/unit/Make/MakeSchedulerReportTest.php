@@ -31,7 +31,7 @@ class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
         $Item = $this->getFreshItemWithGivenUser($user);
         $Item->patch(Action::Update, array(
             'is_bookable' => 1,
-            'booking_hourly_rate_notax' => (float) 10.00
+            'booking_hourly_rate_notax' => (float) 10.00,
         ));
         $Scheduler = new Scheduler($Item);
         $d = new DateTimeImmutable('+3 hour');
@@ -100,10 +100,9 @@ class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
         $this->assertSame((string) $Items->id, $row[$idxItem], 'Item ID should match');
         $this->assertNotEmpty($row[$idxUser], 'User full name should be present');
         $this->assertEquals(
-          (float) $row[$idxBookingCostNoTax],
-          ((float) $row[$idxHourlyRateNoTax] * (int) $row[$idxEventDurationMinutes]) / 60,
-          'Booking cost calculation should be equal'
+            (float) $row[$idxBookingCostNoTax],
+            ((float) $row[$idxHourlyRateNoTax] * (int) $row[$idxEventDurationMinutes]) / 60,
+            'Booking cost calculation should be equal',
         );
     }
-
 }

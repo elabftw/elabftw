@@ -100,8 +100,8 @@ class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
         $this->assertSame((string) $Items->id, $row[$idxItem], 'Item ID should match');
         $this->assertNotEmpty($row[$idxUser], 'User full name should be present');
         $this->assertEquals(
-          (int) $row[$idxBookingCostNoTax],
-          ((int) $row[$idxHourlyRateNoTax] * (int) $row[$idxEventDurationMinutes]) / 60,
+          (float) $row[$idxBookingCostNoTax],
+          ((float) $row[$idxHourlyRateNoTax] * (int) $row[$idxEventDurationMinutes]) / 60,
           'Booking cost calculation should be equal'
         );
     }

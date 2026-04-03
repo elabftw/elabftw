@@ -100,7 +100,11 @@ trait TestsUtilsTrait
         $Item = $this->getFreshItem($team);
         $ResourcesCategories = new ResourcesCategories(new Teams($Item->Users, $team));
         $category = (string) $ResourcesCategories->readAll()[0]['id'];
-        $Item->patch(Action::Update, array('is_bookable' => '1', 'category' => $category));
+        $Item->patch(Action::Update, array(
+            'is_bookable' => '1',
+            'booking_hourly_rate_notax' => (float) 10.00,
+            'category' => $category
+        ));
         return $Item;
     }
 

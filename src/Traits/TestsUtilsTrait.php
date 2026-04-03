@@ -102,7 +102,7 @@ trait TestsUtilsTrait
         $category = (string) $ResourcesCategories->readAll()[0]['id'];
         $Item->patch(Action::Update, array(
             'is_bookable' => '1',
-            'booking_hourly_rate_notax' => (float) 10.00,
+            'booking_hourly_rate_notax' => 10.00,
             'category' => $category,
         ));
         return $Item;

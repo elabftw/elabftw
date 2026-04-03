@@ -7,10 +7,7 @@
   <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Procurement requests'|trans }}</button><span class='beta'>beta</span></li>
 </ul>
 
-{# loading spinner #}
-<div class='d-flex justify-content-center' id='loading-spinner'>
-  <div class='lds-dual-ring'></div>
-</div>
+{% include 'loading-spinner.html' %}
 
 {# TAB 1 MEMBERS #}
 <div data-tabcontent='1' hidden>

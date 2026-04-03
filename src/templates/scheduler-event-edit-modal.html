@@ -1,0 +1,23 @@
+<form id='editEventForm' aria-label='{{ 'Edit event'|trans }}' class='d-none' id='eventEditMode'>
+  <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+    {# "placeholder" will be replaced with real title by js #}
+    <label for='title'>{{ 'Comment'|trans }}</label>
+    <div class='input-group'>
+      {# a data-eventid will get added to this element by js #}
+      <input class='form-control' type='text' id='title' value='placeholder' name='title' />
+    </div>
+    <hr>
+    {# START AND END TIMES #}
+    <div class='mt-2'>
+      <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
+      <input id='schedulerEventModalStart' class='form-control' type='datetime-local'/>
+      <label for='schedulerEventModalEnd'>{{ 'End time'|trans }}</label>
+      <input id='schedulerEventModalEnd' class='form-control' type='datetime-local' />
+    </div>
+  </div>
+  <div class='modal-footer d-flex justify-content-end'>
+    <button type='button' class='btn btn-ghost' data-action='back-to-event'><i class='fas fa-arrow-left fa-fw mr-2'></i>{{ 'Back'|trans }}</button>
+    <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+    <button type='submit' class='btn btn-primary' data-action='edit-event'>{{ 'Save'|trans }}</button>
+  </div>
+</form>

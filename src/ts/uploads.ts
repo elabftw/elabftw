@@ -232,20 +232,6 @@ if (uploadsDiv) {
   });
   malleableFilecomment.listen();
 
-  $('#uploadsDiv').on('show.bs.dropdown', '.dropdown', function() {
-    const wrapper = (this as HTMLElement).closest('.countable');
-    wrapper?.classList.add('dropdown-open');
-    this.style.zIndex = '11';
-    this.style.position = 'relative';
-  });
-
-  $('#uploadsDiv').on('hide.bs.dropdown', '.dropdown', function() {
-    const wrapper = (this as HTMLElement).closest('.countable');
-    wrapper?.classList.remove('dropdown-open');
-    this.style.zIndex = '';
-    this.style.position = '';
-  });
-
   document.querySelector('.real-container').addEventListener('click', async (event) => clickHandler(event));
   // reload uploads div when using spreadsheet editor (iframe sends message to parent window)
   window.addEventListener('message', (event) => {

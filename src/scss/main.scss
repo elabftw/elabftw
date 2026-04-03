@@ -1433,7 +1433,6 @@ the form-control fails to do that so we do the border ourselves */
 // raise above .viewer-ove
 .thumbnail > .dropdown {
   position: relative;
-  z-index: 10;
 }
 
 /* icon overlay for uploaded file icons */

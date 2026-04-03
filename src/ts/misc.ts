@@ -188,7 +188,7 @@ export function collectForm(form: HTMLElement): object {
       el.classList.add('border-danger');
       el.focus();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      throw new Error('Invalid input found! Aborting.');
+      notify.error('invalid-info');
     }
     let value = el.value;
     if (el.type === 'checkbox') {

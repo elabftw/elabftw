@@ -190,6 +190,7 @@ export function collectForm(form: HTMLElement): object {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       // TODO maybe have "Input validation failed" or something more user friendly. That Invalid syntax error is weird.
       notify.error('invalid-info');
+      throw new Error(i18next.t('invalid-info'));
     }
     let value = el.value;
     if (el.type === 'checkbox') {

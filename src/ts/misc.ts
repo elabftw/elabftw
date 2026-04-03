@@ -189,6 +189,7 @@ export function collectForm(form: HTMLElement): object {
       el.focus();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       notify.error('invalid-info');
+      throw new Error(i18next.t('invalid-info'));
     }
     let value = el.value;
     if (el.type === 'checkbox') {

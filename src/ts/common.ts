@@ -583,10 +583,6 @@ on('transfer-ownership', async () => {
   const params = collectForm(document.getElementById('ownershipTransferForm'));
   const userid = Number.parseInt(String(params['targetUserId'] ?? '').split(' ')[0], 10);
   const team = Number.parseInt(String(params['targetTeamId'] ?? ''), 10);
-  if (Number.isNaN(userid) || Number.isNaN(team) || userid <= 0 || team <= 0) {
-    notify.warning('Please ensure both team and user information are provided.');
-    return;
-  }
   ApiC.notifOnSaved = false;
   await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid, team });
   sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));

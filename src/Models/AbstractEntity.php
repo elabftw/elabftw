@@ -32,11 +32,9 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
-use Elabftw\Enums\Messages;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -65,6 +63,7 @@ use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
+use Elabftw\Params\Guard;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
@@ -139,6 +138,8 @@ abstract class AbstractEntity extends AbstractRest
 
     // inserted in sql
     private string $extendedFilter = '';
+
+    private bool $readAfterPatch = true;
 
     public function __construct(public Users $Users, public ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
     {
@@ -529,7 +530,10 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
-            Action::UpdateOwner => $this->updateOwnership((int) $params['userid'], (int) ($params['team'] ?? 0)),
+            Action::UpdateOwner => $this->updateOwnership(
+                Guard::getNonZeroPositiveIntValueOfRequiredParam('userid', $params),
+                Guard::getNonZeroPositiveIntValueOfRequiredParam('team', $params),
+            ),
             Action::Update => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -539,7 +543,10 @@ abstract class AbstractEntity extends AbstractRest
             )(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-        return $this->readOne();
+        if ($this->readAfterPatch) {
+            return $this->readOne();
+        }
+        return array();
     }
 
     #[Override]
@@ -1134,12 +1141,10 @@ abstract class AbstractEntity extends AbstractRest
         $this->update(new EntityParams('state', (string) $targetState->value));
     }
 
-    private function updateOwnership(int $userid, int $team): void
+    private function updateOwnership(int $userid, int $destinationTeam): void
     {
-        $currentUserTeam = $this->Users->team ?? throw new AppException(Messages::GenericError->toHuman());
-        $destinationTeam = $team ?: $currentUserTeam;
         // non-admins cannot transfer outside their own team
-        if (!$this->Users->isAdmin && $destinationTeam !== $currentUserTeam) {
+        if (!$this->Users->isAdmin && $destinationTeam !== $this->Users->getTeam()) {
             throw new IllegalActionException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
         }
         $teamsHelper = new TeamsHelper($destinationTeam);
@@ -1147,10 +1152,11 @@ abstract class AbstractEntity extends AbstractRest
         if (!$teamsHelper->isUserInTeam($userid)) {
             throw new UnprocessableContentException(_('The selected user is not a member of your team or the specified target team.'));
         }
+        // we might lose read access after the transfer, so don't readOne() after patch()
+        $this->readAfterPatch = false;
         $this->update(new EntityParams('userid', $userid));
         $this->update(new EntityParams('team', $destinationTeam));
-        // transfer uploads
-        $this->bypassWritePermission = true;
+        // transfer uploads, too
         $this->Uploads->transferOwnership($userid);
     }
 

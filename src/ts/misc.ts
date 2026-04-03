@@ -188,6 +188,7 @@ export function collectForm(form: HTMLElement): object {
       el.classList.add('border-danger');
       el.focus();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // TODO maybe have "Input validation failed" or something more user friendly. That Invalid syntax error is weird.
       notify.error('invalid-info');
     }
     let value = el.value;

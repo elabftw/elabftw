@@ -176,10 +176,12 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $user1 = new Users(1, 1);
         $user2 = new Users(2, 1);
         $exp = $this->getFreshExperimentWithGivenUser($user1);
-        $params = array('userid' => $user2->userid);
+        $params = array('userid' => $user2->userid, 'team' => $user2->getTeam());
+        // no readOne after ownership change
         $exp->patch(Action::UpdateOwner, $params);
-        $this->assertEquals($exp->entityData['userid'], $user2->userid);
-        $this->assertEquals($exp->entityData['team'], $user2->team);
+        $entityData = $exp->readOne();
+        $this->assertEquals($user2->userid, $entityData['userid']);
+        $this->assertEquals($user2->team, $entityData['team']);
     }
 
     public function testUpdateOwnershipWrongTeamCombination(): void

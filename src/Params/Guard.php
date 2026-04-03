@@ -35,6 +35,15 @@ final class Guard
         throw new ImproperActionException(sprintf('Empty value found for %s', $requiredKey));
     }
 
+    public static function getNonZeroPositiveIntValueOfRequiredParam(string $requiredKey, array $params): int
+    {
+        $value = (int) self::getValueOfRequiredParam($requiredKey, $params);
+        if ($value > 0) {
+            return $value;
+        }
+        throw new ImproperActionException(sprintf('Wrong value found for %s', $requiredKey));
+    }
+
     public static function ensureRequiredKeysPresent(array $requiredKeys, array $params): array
     {
         $missing = array_filter(

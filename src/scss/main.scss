@@ -1430,11 +1430,6 @@ the form-control fails to do that so we do the border ourselves */
   }
 }
 
-// raise above .viewer-ove
-.thumbnail > .dropdown {
-  position: relative;
-}
-
 /* icon overlay for uploaded file icons */
 .icon-overlay {
   display: block;

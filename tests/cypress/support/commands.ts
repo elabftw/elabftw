@@ -123,7 +123,7 @@ Cypress.Commands.add('removeMetadataField', () => {
 Cypress.Commands.add('getAllBookings', () => {
   cy.request({
     method: 'GET',
-    url: '/api/v2/events'
+    url: '/api/v2/events',
   }).then(response => {
     expect(response.status).to.eq(200);
     const events = response.body;
@@ -138,7 +138,7 @@ Cypress.Commands.add('removeAllBookings', () => {
       for (const event of events) {
         cy.request({
           method: 'DELETE',
-          url: `/api/v2/event/${event.id}`
+          url: `/api/v2/event/${event.id}`,
         }).then(response => {
           expect(response.status).to.eq(204);
         });
@@ -148,7 +148,7 @@ Cypress.Commands.add('removeAllBookings', () => {
 });
 Cypress.Commands.add('createBooking', () => {
   const now = DateTime.local();
-  const format = "yyyy-MM-dd HH:mm:ss";
+  const format = 'yyyy-MM-dd HH:mm:ss';
   const start = now.toFormat(format);
   const end = now.plus({ hours: 3 }).toFormat(format);
 
@@ -156,7 +156,7 @@ Cypress.Commands.add('createBooking', () => {
     cy.extractIdFromLocation(response).then(itemId => {
       cy.editResource({
         itemId,
-        body: { is_bookable: 1 }
+        body: { is_bookable: 1 },
       });
       cy.request({
         method: 'POST',
@@ -165,7 +165,7 @@ Cypress.Commands.add('createBooking', () => {
           title: `Cypress booking of itemId:${itemId}`,
           start,
           end,
-        }
+        },
       }).then((response) => {
         expect(response.status).to.eq(201);
         return cy.wrap(itemId);
@@ -179,7 +179,7 @@ Cypress.Commands.add('createResource', () => {
   cy.request({
     method: 'POST',
     url: '/api/v2/items',
-    body: { title: `Cypress booked resource ${Date.now()}` }
+    body: { title: `Cypress booked resource ${Date.now()}` },
   }).then((response) => {
     expect(response.status).to.eq(201);
     return cy.wrap(response);
@@ -187,12 +187,12 @@ Cypress.Commands.add('createResource', () => {
 });
 Cypress.Commands.add('editResource', ({
   itemId,
-  body
+  body,
 }) => {
   cy.request({
     method: 'PATCH',
     url: `/api/v2/items/${itemId}`,
-    body
+    body,
   }).then((response) => {
     expect(response.status).to.eq(200);
   });

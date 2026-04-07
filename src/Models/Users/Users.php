@@ -51,6 +51,7 @@ use Elabftw\Services\UsersHelper;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
+use RuntimeException;
 
 /**
  * Users
@@ -355,6 +356,16 @@ class Users extends AbstractRest
     public function readAllActiveFromTeam(): array
     {
         return $this->readFromQuery(teamId: $this->userData['team'], onlyActive: true);
+    }
+
+    public function getTeam(): int
+    {
+        return $this->team ?? throw new RuntimeException('User has no team attribute!');
+    }
+
+    public function getUserid(): int
+    {
+        return $this->userid ?? throw new RuntimeException('User has no userid attribute!');
     }
 
     /**

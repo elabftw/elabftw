@@ -24,6 +24,8 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+import { DateTime } from 'luxon';
+
 Cypress.Commands.add('login', (email = 'toto@yopmail.com', password = 'totototototo') => {
   cy.request('/login.php')
     .its('body')
@@ -65,24 +67,9 @@ Cypress.Commands.add('getExperimentId', () => {
       // toto won't have any experiment by default
       return cy
         .request({ method: 'POST', url: '/api/v2/experiments', body: {} })
-        .then((postRes) => {
+        .then(postRes => {
           expect(postRes.status).to.eq(201);
-
-          // Extract Location header
-          const locationHeader = postRes.headers['location'] || postRes.headers['Location'];
-          if (!locationHeader) {
-            throw new Error('Location header not found in create experiment response');
-          }
-
-          // The Location header may include ports and full paths, e.g. https://elab.local:3148/api/v2/experiments/17
-          // Split the URL by '/' and take the last segment as the ID
-          const segments = locationHeader.split('/');
-          const idSegment = segments.pop();
-          const id = idSegment && !isNaN(Number(idSegment)) ? Number(idSegment) : null;
-          if (id === null) {
-            throw new Error(`Cannot parse experiment ID from Location header: ${locationHeader}`);
-          }
-          return id;
+          return cy.extractIdFromLocation(postRes);
         });
     });
 });
@@ -132,3 +119,100 @@ Cypress.Commands.add('removeMetadataField', () => {
   cy.on('window:confirm', () => true);
   cy.get('[data-action="metadata-rm-field"]').click();
 });
+
+Cypress.Commands.add('getAllBookings', () => {
+  cy.request({
+    method: 'GET',
+    url: '/api/v2/events'
+  }).then(response => {
+    expect(response.status).to.eq(200);
+    const events = response.body;
+    return (Array.isArray(events) && events.length > 0)
+      ? events
+      : [];
+  });
+});
+Cypress.Commands.add('removeAllBookings', () => {
+  cy.getAllBookings().then(events => {
+    if (events.length > 0) {
+      for (const event of events) {
+        cy.request({
+          method: 'DELETE',
+          url: `/api/v2/event/${event.id}`
+        }).then(response => {
+          expect(response.status).to.eq(204);
+        });
+      }
+    }
+  });
+});
+Cypress.Commands.add('createBooking', () => {
+  const now = DateTime.local();
+  const format = "yyyy-MM-dd HH:mm:ss";
+  const start = now.toFormat(format);
+  const end = now.plus({ hours: 3 }).toFormat(format);
+
+  cy.createResource().then((response) => {
+    cy.extractIdFromLocation(response).then(itemId => {
+      cy.editResource({
+        itemId,
+        body: { is_bookable: 1 }
+      });
+      cy.request({
+        method: 'POST',
+        url: `/api/v2/events/${itemId}`,
+        body: {
+          title: `Cypress booking of itemId:${itemId}`,
+          start,
+          end,
+        }
+      }).then((response) => {
+        expect(response.status).to.eq(201);
+        return cy.wrap(itemId);
+      });
+    });
+  });
+});
+
+Cypress.Commands.add('createResource', () => {
+  // standalone function, not relying on cy.createEntity(), as ID needs to be returned
+  cy.request({
+    method: 'POST',
+    url: '/api/v2/items',
+    body: { title: `Cypress booked resource ${Date.now()}` }
+  }).then((response) => {
+    expect(response.status).to.eq(201);
+    return cy.wrap(response);
+  });
+});
+Cypress.Commands.add('editResource', ({
+  itemId,
+  body
+}) => {
+  cy.request({
+    method: 'PATCH',
+    url: `/api/v2/items/${itemId}`,
+    body
+  }).then((response) => {
+    expect(response.status).to.eq(200);
+  });
+});
+
+Cypress.Commands.add('extractIdFromLocation', response => {
+  // Extract Location header
+  const locationHeader = response.headers['location'] || response.headers['Location'];
+  if (!locationHeader) {
+    throw new Error('Location header not found in response');
+  }
+
+  // The Location header may include ports and full paths, e.g. https://elab.local:3148/api/v2/experiments/17
+  // Split the URL by '/' and take the last segment as the ID
+  const segments = locationHeader.split('/');
+  const idSegment = segments.pop();
+  const id = idSegment && !isNaN(Number(idSegment)) ? Number(idSegment) : null;
+  if (id === null) {
+    throw new Error(`Cannot parse ID from Location header: ${locationHeader}`);
+  }
+  return cy.wrap(id);
+});
+

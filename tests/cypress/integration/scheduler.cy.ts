@@ -11,10 +11,12 @@ describe('Scheduler', () => {
     cy.htmlvalidate();
   });
 
-  it ('Display Scheduler with selected item', () => {
-    // Scheduler with selected item
-    cy.visit('/scheduler.php?items[]=1');
-    cy.get('#loading-spinner').should('not.exist');
-    cy.htmlvalidate();
+  it('Display Scheduler with selected item', () => {
+    // TODO: itemId currently has no real active use
+    cy.createBooking().then(itemId => {
+      cy.visit(`/scheduler.php?items[]=${itemId}`);
+      cy.get('#loading-spinner').should('not.exist');
+      cy.get('[data-cy="selected-items-display"]').should('contain', 'Cypress booked resource');
+    });
   });
 });

@@ -563,10 +563,6 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     .querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea')
     .forEach(input => {
       input.disabled = disabled;
-      // reset numeric fields when disabling
-      if (disabled && input.type === 'number') {
-        input.value = '0';
-      }
     });
 });
 

@@ -1,0 +1,10 @@
+Indigo Chemistry Toolkit
+Copyright 2024 EPAM Systems
+Licensed under the Apache License, Version 2.0
+
+This software contains modified portions of the Indigo Toolkit from:
+https://github.com/epam/indigo
+
+Modifications made by eLabFTW:
+- Removed unnecessary components for eLabFTW integration
+- Adapted to use uv package manager

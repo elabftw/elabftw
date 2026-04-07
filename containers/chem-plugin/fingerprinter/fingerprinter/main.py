@@ -14,7 +14,7 @@ class PayloadTooLargeError(Exception):
 
 async def app(scope, receive, send):
     if scope.get('type') != 'http':
-+        return
+        return
 
     try:
         body = await read_body(receive)

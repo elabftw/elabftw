@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# This file was modified for eLabFTW
+# Apache 2.0 LICENSE
 
 import logging
 import sys

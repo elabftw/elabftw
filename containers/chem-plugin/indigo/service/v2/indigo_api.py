@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
+# This file was modified for eLabFTW
+# Apache 2.0 LICENSE
 
 import base64
 import collections

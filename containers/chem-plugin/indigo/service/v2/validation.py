@@ -1,3 +1,5 @@
+# This file was modified for eLabFTW
+# Apache 2.0 LICENSE
 from marshmallow import Schema, fields  # type: ignore
 from marshmallow.decorators import (  # type: ignore
     post_load,

@@ -191,7 +191,7 @@ class IndigoConvertExplicitHydrogensSchema(IndigoRequestSchema):
 
 class SearcherSchema(Schema):
     type = fields.Str(
-        load_from="type",
+        data_key="type",
         required=True,
         validate=OneOf(["sub", "exact", "sim", "molFormula"]),
     )
@@ -200,8 +200,8 @@ class SearcherSchema(Schema):
     query_text = fields.Str(missing="")
     limit = fields.Integer(missing=10, validate=lambda n: 0 < n <= 100)
     offset = fields.Integer(missing=0)
-    min_sim = fields.Number(load_from="min", missing=0)
-    max_sim = fields.Number(load_from="max", missing=1)
+    min_sim = fields.Number(data_key="min", missing=0)
+    max_sim = fields.Number(data_key="max", missing=1)
     metric = fields.Str(missing="")
     options = fields.Str(missing="")
 

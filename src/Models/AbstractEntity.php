@@ -514,8 +514,8 @@ abstract class AbstractEntity extends AbstractRest
             Action::Pin => $this->Pins->togglePin(),
             Action::Restore => $this->restore(),
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
-            Action::SetCanread => $this->update(new EntityParams('canread', $params['can'])),
-            Action::SetCanwrite => $this->update(new EntityParams('canwrite', $params['can'])),
+            Action::SetCanRead  => $this->handleCanUpdate($params, AccessType::Read),
+            Action::SetCanWrite => $this->handleCanUpdate($params, AccessType::Write),
             Action::SetNextCustomId => $this->update(new EntityParams('custom_id', $this->getNextIdempotentCustomId())),
             Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
@@ -1122,6 +1122,14 @@ abstract class AbstractEntity extends AbstractRest
             return BasePermissions::tryFrom($decoded['base']) ?? $default;
         }
         return $default;
+    }
+
+    private function handleCanUpdate(array $params, AccessType $type): void
+    {
+        Guard::ensureRequiredKeysPresent(array('can', 'can_base'), $params);
+        $key = $type->value;
+        $this->update(new EntityParams($key, (string) $params['can']));
+        $this->update(new EntityParams($key . '_base', (int) $params['can_base']));
     }
 
     // Archive a normal entity, Unarchive an archived entity.

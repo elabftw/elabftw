@@ -1,0 +1,10 @@
+[project]
+name = "fingerprinter"
+version = "0.1.0"
+description = "Fingerprinter plugin for eLabFTW"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "openbabel-wheel==3.1.1.23",
+    "uvicorn==0.42.0",
+]

@@ -25,8 +25,9 @@
         {# LOCK/UNLOCK A STEP #}
         {% set steps_table = '%s/%d/steps'|format(Entity.entityType.value, Entity.id) %}
         {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
+        {% set label = (step.is_immutable ? 'Unlock' : 'Lock')|trans %}
         <div class='input-group-prepend'>
-          <label class='btn btn-ghost d-flex align-items-center mb-0'>
+          <label class='btn btn-ghost d-flex align-items-center mb-0' title='{{ label }}'>
             <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ steps_table ~ '/' ~ step.id }}' data-target='is_immutable' id='stepIsImmutable_{{ step.id }}' {{ step.is_immutable ? 'checked' }} data-reload='step_{{ step.id }}' class='d-none'>
             <i class='fas fa-lock {{ not step.is_immutable ? 'd-none' }}'></i>
             <i class='fas fa-lock-open {{ step.is_immutable ? 'd-none' }}'></i>

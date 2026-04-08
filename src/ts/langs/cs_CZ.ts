@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Přidat",
     "add-compound": "Přidat sloučeninu",
+    "add-task": "Add task",
     "add-team": "Přidat tým",
     "add-to-team": "Add selected users to team",
     "archive-user": "Archivovat uživatele",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Smazat",
     "delete-confirmation": "Delete {{num, number}} line(s)?",
     "delete-selected": "Delete selected rows",
+    "done": "Done",
     "dropzone-upload-area": "Pro nahrání přetáhni soubory sem",
     "dropzone-filesize-limit": "Omezení velikosti souboru:",
     "edit": "Upravit",

@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Aggiungi",
     "add-compound": "Aggiungi composto",
+    "add-task": "Add task",
     "add-team": "Aggiungi team",
     "add-to-team": "Aggiungere gli utenti selezionati al team",
     "archive-user": "Archivia utente",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Elimina",
     "delete-confirmation": "Cancellare le righe {{num, number}}?",
     "delete-selected": "Cancellare le righe selezionate",
+    "done": "Done",
     "dropzone-upload-area": "Trascina qui i file da allegare",
     "dropzone-filesize-limit": "Limite di dimensione dei file:",
     "edit": "Modifica",

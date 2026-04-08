@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Add",
     "add-compound": "Add compound",
+    "add-task": "Add task",
     "add-team": "Add team",
     "add-to-team": "Add selected users to team",
     "archive-user": "Archive user",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Delete",
     "delete-confirmation": "Delete {{num, number}} line(s)?",
     "delete-selected": "Delete selected rows",
+    "done": "Done",
     "dropzone-upload-area": "Drop files here to upload",
     "dropzone-filesize-limit": "File size limit:",
     "edit": "Edit",

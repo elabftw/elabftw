@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "추가",
     "add-compound": "화합물 추가",
+    "add-task": "Add task",
     "add-team": "팀 추가",
     "add-to-team": "Add selected users to team",
     "archive-user": "사용자 차단",
@@ -28,6 +30,7 @@ const t = {
     "delete": "삭제",
     "delete-confirmation": "Delete {{num, number}} line(s)?",
     "delete-selected": "Delete selected rows",
+    "done": "Done",
     "dropzone-upload-area": "업로드 하려는 파일을 여기에 드롭하세요",
     "dropzone-filesize-limit": "파일 크기 제한:",
     "edit": "수정",

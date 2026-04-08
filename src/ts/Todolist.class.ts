@@ -5,9 +5,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Model, Todoitem, EntityType, UnfinishedEntities } from './interfaces';
+import { Model, EntityType, UnfinishedEntities } from './interfaces';
 import SidePanel from './SidePanel.class';
-import { relativeMoment, makeSortableGreatAgain, escapeHTML } from './misc';
+import { escapeHTML } from './misc';
 import FavTag from './FavTag.class';
 import { ApiC } from './api';
 import { Malle } from '@deltablot/malle';
@@ -49,27 +49,6 @@ export default class Todolist extends SidePanel {
     return ApiC.getJson(`${this.model}`);
   }
 
-  display(): Promise<void> {
-    return this.readAll().then(json => {
-      let html = '';
-      for (const entry of json as Array<Todoitem>) {
-        html += `<div data-todoitemid=${entry.id} id='todoItem_${entry.id}' class='side-panel-item d-flex align-items-center'>
-        <div>
-          <div>
-            <span class='draggable sortableHandle'><i class='fas fa-grip-vertical fa-fw mr-1'></i></span>
-            <input type='checkbox' class='mr-2' data-action='destroy-todoitem' data-todoitemid='${entry.id}' />
-            <span class='todoItem editable' data-todoitemid='${entry.id}'>${escapeHTML(entry.body)}</span></div>
-            <div class='relative-moment' title='${entry.creation_time}'></div>
-          </div>
-        </div>`;
-      }
-      document.getElementById('todoItems').innerHTML = html;
-      makeSortableGreatAgain();
-      relativeMoment();
-      this.mallemalleable.listen();
-    });
-  }
-
   toggleUnfinishedStepsScope(): void {
     localStorage.setItem(this.model + 'StepsShowTeam', (localStorage.getItem(this.model + 'StepsShowTeam') === '1' ? '0' : '1'));
     this.unfinishedStepsScope = (this.unfinishedStepsScope === 'user' ? 'team' : 'user');
@@ -105,9 +84,9 @@ export default class Todolist extends SidePanel {
     super.toggle();
     // lazy load content only once
     if (!document.getElementById(this.panelId).hasAttribute('hidden') && this.initialLoad) {
-      this.display();
+      //this.display();
       this.loadUnfinishedStep();
-      this.mallemalleable.listen();
+      //this.mallemalleable.listen();
       this.initialLoad = false;
     }
   }

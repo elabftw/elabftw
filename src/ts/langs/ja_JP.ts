@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA (二要素認証)",
+    "add": "追加",
     "add-compound": "化合物を追加する",
+    "add-task": "Add task",
     "add-team": "チームを追加",
     "add-to-team": "選択したユーザーをチームに追加",
     "archive-user": "アーカイブユーザー",
@@ -28,6 +30,7 @@ const t = {
     "delete": "削除",
     "delete-confirmation": "num, number}}行を削除しますか？",
     "delete-selected": "選択した行を削除する",
+    "done": "Done",
     "dropzone-upload-area": "ファイルをドロップしてアップロード",
     "dropzone-filesize-limit": "サイズ上限: ",
     "edit": "編集",

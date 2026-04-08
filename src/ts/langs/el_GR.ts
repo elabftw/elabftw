@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Προσθήκη",
     "add-compound": "Προσθήκη ένωσης",
+    "add-task": "Add task",
     "add-team": "Προσθήκη Ομάδας",
     "add-to-team": "Add selected users to team",
     "archive-user": "Αρχειοθέτηση χρήστη",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Διαγραφή",
     "delete-confirmation": "Delete {{num, number}} line(s)?",
     "delete-selected": "Delete selected rows",
+    "done": "Done",
     "dropzone-upload-area": "Αποθέστε τα αρχεία εδώ για να μεταφορτώσετε",
     "dropzone-filesize-limit": "Όριο μεγέθους αρχείου:",
     "edit": "Επεξεργασία",

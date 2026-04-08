@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Afegeix",
     "add-compound": "Afegir compost",
+    "add-task": "Add task",
     "add-team": "Afegir equip",
     "add-to-team": "Afegeix els usuaris seleccionats a l'equip",
     "archive-user": "Usuari actiu",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Esborrar",
     "delete-confirmation": "Eliminar {{num, number}} línia(es)?",
     "delete-selected": "Elimina les files seleccionades",
+    "done": "Done",
     "dropzone-upload-area": "Arrossega els fitxers fins aquí per a adjuntar-los",
     "dropzone-filesize-limit": "Límit de mida del fitxer:",
     "edit": "Editar",

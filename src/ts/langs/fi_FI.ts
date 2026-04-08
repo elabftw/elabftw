@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Lisää",
     "add-compound": "Lisää yhdiste",
+    "add-task": "Add task",
     "add-team": "Lisää tiimi",
     "add-to-team": "Add selected users to team",
     "archive-user": "Arkistoi käyttäjä",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Poista",
     "delete-confirmation": "Delete {{num, number}} line(s)?",
     "delete-selected": "Delete selected rows",
+    "done": "Done",
     "dropzone-upload-area": "Pudota tiedostot tähän ladattavaksi",
     "dropzone-filesize-limit": "Tiedoston kokorajoitus:",
     "edit": "Muokkaa",

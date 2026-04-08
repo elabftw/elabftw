@@ -959,8 +959,6 @@ tr:first-child td {
   top: 0;
   width: max(24%, 330px);
 
-  .fas,
-  .far,
   h3 {
     color: var(--chrome-fg);
   }
@@ -982,11 +980,6 @@ tr:first-child td {
 
     &:hover:not(.selected) {
       background-color: var(--disabled);
-    }
-
-    .relative-moment {
-      color: var(--secondlevel);
-      font-size: 80%;
     }
   }
 

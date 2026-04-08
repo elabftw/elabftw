@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Lisa",
     "add-compound": "Lisa ühend",
+    "add-task": "Add task",
     "add-team": "Lisa meeskond",
     "add-to-team": "Valitud kasutajate lisamine meeskonda",
     "archive-user": "Arhiivi kasutaja",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Kustuta",
     "delete-confirmation": "Kustutada {{num, number}} rida?",
     "delete-selected": "Kustutada valitud read",
+    "done": "Done",
     "dropzone-upload-area": "Lohista failid siia üleslaadimiseks",
     "dropzone-filesize-limit": "Faili suuruse piirang:",
     "edit": "Redigeeri",

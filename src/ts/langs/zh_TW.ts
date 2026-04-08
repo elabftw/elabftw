@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "雙因素認證",
+    "add": "添加",
     "add-compound": "添加化合物",
+    "add-task": "Add task",
     "add-team": "新增團隊",
     "add-to-team": "將選定的用戶新增至團隊",
     "archive-user": "封存用戶",
@@ -28,6 +30,7 @@ const t = {
     "delete": "刪除",
     "delete-confirmation": "刪除 {{num, number}} 行？",
     "delete-selected": "刪除選取的行",
+    "done": "Done",
     "dropzone-upload-area": "文件拖放到這裡即可上傳",
     "dropzone-filesize-limit": "檔案大小限制：",
     "edit": "編輯",

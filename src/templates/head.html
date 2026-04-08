@@ -101,7 +101,7 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <a id='navResourcesDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['database.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='menu' aria-expanded='false'>
+              <a id='navResourcesDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['database.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               {% trans %}Resource{% plural 2 %}Resources{% endtrans %}
               </a>
               <div class='dropdown-menu'>
@@ -150,7 +150,7 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <a id='navToolsDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['compounds.php', 'chem-editor.php', 'syc.php', 'inventory.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='menu' aria-expanded='false'>
+              <a id='navToolsDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['compounds.php', 'chem-editor.php', 'syc.php', 'inventory.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               {{ 'Tools'|trans }}
               </a>
               <div class='dropdown-menu'>

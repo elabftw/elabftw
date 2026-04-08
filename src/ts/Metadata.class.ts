@@ -684,6 +684,7 @@ export class Metadata {
             handleIconSpan.classList.add('draggable', 'sortableHandle');
             const handleIcon = document.createElement('i');
             handleIcon.classList.add('fas', 'fa-grip-vertical');
+            handleIcon.setAttribute('aria-label', i18next.t('sort'));
             handleIconSpan.appendChild(handleIcon);
             handle.appendChild(handleIconSpan);
 

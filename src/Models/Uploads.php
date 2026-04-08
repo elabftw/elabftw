@@ -93,6 +93,24 @@ final class Uploads extends AbstractRest
 
         $tmpFilename = $params->getTmpFilePath();
         $filesize = $sourceFs->filesize($tmpFilename);
+        // read the file as a stream
+        $inputStream = $sourceFs->readStream($tmpFilename);
+        // get metadata about the stream to see if it's seekable
+        $meta = stream_get_meta_data($inputStream);
+        if (empty($meta['seekable'])) {
+            // make a seekable temp stream
+            $tmp = fopen('php://temp', 'w+b');
+            if ($tmp === false) {
+                throw new RuntimeException('Could not create temporary seekable stream.');
+            }
+            stream_copy_to_stream($inputStream, $tmp);
+            fclose($inputStream);
+            $inputStream = $tmp;
+        }
+        $isRewind = rewind($inputStream);
+        if ($isRewind === false) {
+            throw new RuntimeException('Could not rewind stream.');
+        }
         // we don't hash big files as this could take too much time/resources
         // same with thumbnails
         // TODO add the filesize check inside the makethumnailclass like we did for hasher
@@ -102,7 +120,7 @@ final class Uploads extends AbstractRest
             try {
                 MakeThumbnailFactory::getMaker(
                     $sourceFs->mimeType($tmpFilename),
-                    $params->getFilePath(),
+                    $inputStream,
                     $longName,
                     $storageFs,
                 )->saveThumb();
@@ -111,11 +129,15 @@ final class Uploads extends AbstractRest
                 // if imagick/imagemagick causes problems ignore it and upload file without thumbnail
             }
         }
-        // read the file as a stream so we can copy it
-        $inputStream = $sourceFs->readStream($tmpFilename);
 
+        // actual writing of the file in its destination, after rewinding file
+        $isRewind = rewind($inputStream);
+        if ($isRewind === false) {
+            throw new RuntimeException('Could not rewind stream.');
+        }
         $storageFs->createDirectory($folder);
         $storageFs->writeStream($longName, $inputStream);
+        fclose($inputStream);
 
         $this->Entity->touch();
 
@@ -406,16 +428,14 @@ final class Uploads extends AbstractRest
     }
 
     // transfer ownership of all uploaded files for an entity, except immutable ones
-    public function transferOwnership(int $userid): void
+    public function transferOwnership(int $userid): bool
     {
-        $uploadArr = $this->selectAll();
-        foreach ($uploadArr as $upload) {
-            if ($upload['immutable'] === 1) {
-                continue;
-            }
-            $this->setId($upload['id']);
-            $this->patch(Action::Update, array('userid' => $userid));
-        }
+        $sql = 'UPDATE uploads SET userid = :userid WHERE item_id = :item_id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $userid);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':type', $this->Entity->entityType->value);
+        return $this->Db->execute($req);
     }
 
     private function update(UploadParams $params): bool

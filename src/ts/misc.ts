@@ -188,7 +188,9 @@ export function collectForm(form: HTMLElement): object {
       el.classList.add('border-danger');
       el.focus();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      throw new Error('Invalid input found! Aborting.');
+      // TODO maybe have "Input validation failed" or something more user friendly. That Invalid syntax error is weird.
+      notify.error('invalid-info');
+      throw new Error(i18next.t('invalid-info'));
     }
     let value = el.value;
     if (el.type === 'checkbox') {

@@ -117,6 +117,7 @@ final class i18n4Js
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-found' => _('No matching result found.'),
             'not-set' => _('Not set'),
+            'no-tasks-yet' => _('No tasks yet.'),
             'nothing-selected' => _('Nothing selected!'),
             'now' => _('Now'),
             'oc-version-warning' => _('Warning: current OpenCloning version is incompatible with this version of eLabFTW.'),

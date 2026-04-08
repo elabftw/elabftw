@@ -83,17 +83,17 @@
     class='form-control'
     bind:value={draft}
     on:keydown={(e) => e.key === 'Enter' && create()}
-    placeholder={t('Add task')}
+    placeholder={t('add-task')}
   />
   <div class='input-group-append'>
-    <button class='btn btn-primary' on:click={create} aria-label={t('add')}>
+    <button type='button' class='btn btn-primary' on:click={create} aria-label={t('add')}>
       <i class='fas fa-plus fa-fw' title={t('add')}></i>
     </button>
   </div>
 </div>
 
 {#if items.length === 0}
-  <p class='mb-0'>No tasks yet.</p>
+  <p class='mb-0'>{t('no-tasks-yet')}</p>
 {:else}
   <ul class='list-group color-medium sortable' data-axis='y' data-table='todolist'>
     {#each items as item (item.id)}
@@ -110,6 +110,7 @@
           </div>
         </div>
         <button
+          type='button'
           class='btn btn-sm btn-outline-secondary'
           on:click={() => destroy(item.id)}
         >

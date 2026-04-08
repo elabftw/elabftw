@@ -64,10 +64,10 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <a id='navExperimentsDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['experiments.php', 'templates.php', 'experiments-categories.php', 'experiments-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='menu' aria-expanded='false'>
+              <a id='navExperimentsDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['experiments.php', 'templates.php', 'experiments-categories.php', 'experiments-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               {% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}
               </a>
-              <div class='dropdown-menu' aria-labelledby='navExperimentsDropdown'>
+              <div class='dropdown-menu'>
                 <form class='dropdown-item form-inline' action='experiments.php' aria-label='{{ 'Quick search experiments'|trans }}'>
                   <label for='nav-search-experiments' class='sr-only'>{{ 'Search experiments'|trans }}</label>
                   <div class='input-group'>
@@ -101,10 +101,10 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <a id='navResourcesDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['database.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='menu' aria-expanded='false'>
+              <a id='navResourcesDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['database.php', 'resources-templates.php', 'resources-categories.php', 'resources-status.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               {% trans %}Resource{% plural 2 %}Resources{% endtrans %}
               </a>
-              <div class='dropdown-menu' aria-labelledby='navResourcesDropdown'>
+              <div class='dropdown-menu'>
                 <form class='dropdown-item form-inline' action='database.php' aria-label='{{ 'Quick search resources'|trans }}'>
                   <label for='nav-search-resources' class='sr-only'>{{ 'Search resources'|trans }}</label>
                   <div class='input-group'>
@@ -150,10 +150,10 @@
               {% if App.devMode -%}
                 <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
               {%- endif %}
-              <a id='navToolsDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['compounds.php', 'chem-editor.php', 'syc.php', 'inventory.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='menu' aria-expanded='false'>
+              <a id='navToolsDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName in ['compounds.php', 'chem-editor.php', 'syc.php', 'inventory.php'] ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               {{ 'Tools'|trans }}
               </a>
-              <div class='dropdown-menu' aria-labelledby='navToolsDropdown'>
+              <div class='dropdown-menu'>
                 {% set isActive = scriptName == 'compounds.php' %}
                 <a class='dropdown-item {{ isActive ? 'active' }}' href='compounds.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-flask fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Compounds'|trans }}</a>
                 {% set isActive = scriptName == 'chem-editor.php' %}
@@ -171,7 +171,7 @@
         <div class='ml-auto mt-2 d-flex'>
         <div class='nav-item dropdown ml-auto'>
           <button class='btn nav-link' id='createNewDropdown' type='button' aria-label='{{ 'Create new...'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-plus fa-2x'></i></button>
-          <div class='dropdown-menu dropdown-menu-right' id='navbar-create-dropdown' aria-labelledby='createNewDropdown'><span class='dropdown-header'>{{ 'Create new...'|trans }}</span>
+          <div class='dropdown-menu dropdown-menu-right' id='navbar-create-dropdown'><span class='dropdown-header'>{{ 'Create new...'|trans }}</span>
             <div data-action='toggle-create-modal' data-type='experiments' class='dropdown-item'><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Experiment'|trans }}</div>
             <div data-action='toggle-create-modal' data-type='items' class='dropdown-item'><i class='fas fa-cubes-stacked fa-fw mr-1'></i>{{ 'Resource'|trans }}</div>
           </div>
@@ -180,7 +180,7 @@
         {# Notification bell #}
         <div class='nav-item dropdown' id='navbarNotifDiv'>
           <button class='btn nav-link' id='navbarNotifDropdown' type='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}'></i></button>
-          <div class='dropdown-menu dropdown-menu-right' id='navbar-notif-dropdown' aria-labelledby='navbarNotifDropdown'><span class='dropdown-header'>{{ 'Notifications'|trans }}</span>
+          <div class='dropdown-menu dropdown-menu-right' id='navbar-notif-dropdown'><span class='dropdown-header'>{{ 'Notifications'|trans }}</span>
             {% if App.notifsArr %}
               {% for notif in App.notifsArr %}
                 <div class='notification p-3' data-ack='{{ notif.is_ack }}'>{{ notif|notifWeb }}</div>
@@ -199,7 +199,7 @@
         {# Help/Community dropdown #}
         <div class='nav-item dropdown {{ App.Session.has('is_anon') ? 'ml-auto' }}'>
           <button class='btn nav-link border-0' id='navbarDropdownHelp' type='button' aria-label='{{ 'Help menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-circle-question fa-2x'></i></button>
-          <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdownHelp'>
+          <div class='dropdown-menu dropdown-menu-right'>
             <a class='dropdown-item' href='{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\BuildInfo::VERSION_INT')) }}' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> {{ 'Documentation'|trans }}</a>
             <a class='dropdown-item' href='https://doc.elabftw.net/docs/usage/api' target='_blank' rel='noopener'><i class='fas fa-book fa-fw'></i> API {{ 'Documentation'|trans }}</a>
@@ -217,7 +217,7 @@
         {# User dropdown #}
         <div class='nav-item dropdown'>
           <button class='btn nav-link border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><span class='initials'>{{ App.Users.userData.initials }}</span></button>
-          <div class='dropdown-menu dropdown-menu-right' aria-labelledby='navbarDropdown'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.Teams.teamArr.name }}</h6>
+          <div class='dropdown-menu dropdown-menu-right'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.Teams.teamArr.name }}</h6>
             {% if App.Users.userData.teams|default([])|length > 1 %}
               <a href='login.php?switch_team=1' class='dropdown-item'><i class='fas fa-repeat fa-fw'></i> {{ 'Switch team'|trans }}</a>
             {% endif %}
@@ -229,8 +229,8 @@
               <a class='dropdown-item' href='/profile.php?tab=3'><i class='fas fa-file-arrow-up fa-fw'></i> {{ 'Import'|trans }}</a>
               <a class='dropdown-item' href='/profile.php?tab=4'><i class='fas fa-file-arrow-down fa-fw'></i> {{ 'Export'|trans }}</a>
               <a class='dropdown-item' href='/ucp.php'><i class='fas fa-cogs fa-fw'></i> {{ 'Settings'|trans }}</a>
-              <div class='dropdown-item' data-action='toggle-dark-mode' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-circle-half-stroke fa-fw'></i> {{ 'Change theme'|trans }}
-              </div>
+              <button type='button' class='dropdown-item' data-action='toggle-dark-mode' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-circle-half-stroke fa-fw'></i> {{ 'Change theme'|trans }}
+              </button>
               {% if App.Users.isAdmin %}
                 <a class='dropdown-item' href='admin.php'><i class='fas fa-tools fa-fw'></i> {{ 'Admin panel'|trans }}</a>
               {% endif %}

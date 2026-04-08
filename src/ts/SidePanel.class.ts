@@ -28,6 +28,7 @@ export default class SidePanel {
     opener.classList.remove('bounce-left');
     opener.classList.remove('sidepanel-opened');
     opener.classList.add('sidepanel-closed');
+    opener.setAttribute('aria-expanded', 'false');
   }
 
   show(): void {
@@ -41,6 +42,7 @@ export default class SidePanel {
     opener.classList.add('bounce-left');
     opener.classList.add('sidepanel-opened');
     opener.classList.remove('sidepanel-closed');
+    opener.setAttribute('aria-expanded', 'true');
   }
 
   // TOGGLE PANEL VISIBILITY

@@ -36,6 +36,7 @@ use Elabftw\Services\NullFingerprinter;
 use Elabftw\Services\PubChemImporter;
 use GuzzleHttp\Client;
 use Override;
+use Symfony\Component\Console\Input\ArgvInput;
 
 use function sprintf;
 
@@ -97,7 +98,7 @@ final class ImportCompoundsCsv extends Command
         $usePubchem = (bool) $input->getOption('use-pubchem');
         $pubChemImporter = null;
         if ($usePubchem) {
-            $output->writeln('[info] Using Pubchem to complete data: this might take a long time.');
+            $logger->info('Using Pubchem to complete data: this might take a long time.');
             $pubChemImporter = new PubChemImporter($httpGetter, Env::asUrl('PUBCHEM_PUG_URL'), Env::asUrl('PUBCHEM_PUG_VIEW_URL'));
         }
         $Items = new Items($user, bypassReadPermission: true, bypassWritePermission: true);
@@ -107,8 +108,12 @@ final class ImportCompoundsCsv extends Command
         if ($input->getOption('match-with')) {
             $matchWith = $input->getOption('match-with');
         }
+        $commandLine = $input instanceof ArgvInput ? (string) $input : null;
+        if ($commandLine) {
+            $logger->info(sprintf('Command arguments used: %s', $commandLine));
+        }
         $Importer = new CompoundsCsv(
-            $output,
+            $logger,
             $Items,
             $UploadedFile,
             $Compounds,
@@ -128,7 +133,7 @@ final class ImportCompoundsCsv extends Command
         $logger->info(sprintf('Done importing %d records', $count));
         $logger->info(sprintf('Import finished for Team with ID %d%s', $teamid, $infoTrailer));
         $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('[*] Delete imported file? (y/N) ', false);
+        $question = new ConfirmationQuestion('[?] Delete imported file? (y/N) ', false);
         /** @phpstan-ignore-next-line ask method is part of QuestionHelper which extends HelperInterface */
         if ($helper->ask($input, $output, $question)) {
             $this->Fs->getFs()->delete((string) $input->getArgument('file'));

@@ -222,9 +222,11 @@ final class Populate
             }
 
             // generate random experiments before the defined ones
-            if (!$this->fast) {
-                $user = $this->getRandomUserInTeam($teamid);
+            $user = $this->getRandomUserInTeam($teamid);
+            if ($this->yaml['generate_random_experiments']) {
                 $this->generate(new Experiments($user));
+            }
+            if ($this->yaml['generate_random_resources']) {
                 $this->generate(new Items($user));
             }
 
@@ -344,10 +346,14 @@ final class Populate
     }
 
     /**
-     * Populate the db with fake experiments or items
+     * Populate the db with fake experiments or resources
      */
-    public function generate(Experiments | Items $Entity, ?int $iterations = null): void
+    private function generate(Experiments | Items $Entity, ?int $iterations = null): void
     {
+        // do nothing in fast mode
+        if ($this->fast) {
+            return;
+        }
         $iterations ??= $this->iterations;
         $Teams = new Teams($Entity->Users, $Entity->Users->team, bypassWritePermission: true);
         if ($Entity instanceof Experiments) {

@@ -1,4 +1,4 @@
-name: Build and push the chem plugin image
+name: Build the chem plugin image and push edge tag
 
 # Triggered by change in the corresponding folder
 on:
@@ -73,5 +73,4 @@ jobs:
                 cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}
                 sbom: true
                 tags: |
-                    elabftw/chem-plugin:stable
-                    elabftw/chem-plugin:latest
+                    elabftw/chem-plugin:edge

@@ -23,22 +23,28 @@ jobs:
               with:
                 prevent: true
                 allowed-hosts: >
+                  archive.ubuntu.com
                   auth.docker.io
                   codeload.github.com
+                  dhi.io
                   dl-cdn.alpinelinux.org
                   docker.io
+                  files.pythonhosted.org
                   ghcr.io
+                  hooks.deltablot.dev
                   index.docker.io
                   mirror.gcr.io
                   nginx.org
                   packagist.org
                   pkg-containers.githubusercontent.com
+                  ports.ubuntu.com
                   production.cloudflare.docker.com
+                  pypi.org
                   raw.githubusercontent.com
                   registry.yarnpkg.com
                   repo.yarnpkg.com
                   registry.npmjs.org
-                  hooks.deltablot.dev
+                  security.ubuntu.com
 
             - name: Checkout elabimg repo
               uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -83,3 +89,20 @@ jobs:
             - name: Send request to webhook to trigger update of demo
               run: |
                 curl -H 'X-Hook-Secret: ${{ secrets.HOOK_SECRET }}' ${{ secrets.HOOK_URL }}
+
+            # build chem-plugin with correct tag
+            - name: Build chem plugin with version tag
+              uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7
+              with:
+                context: .
+                file: containers/chem-plugin/Dockerfile
+                platforms: linux/amd64,linux/arm64
+                push: true
+                # the scope parameter is necessary when doing multi arch builds or we'll always miss cache
+                cache-from: type=gha,scope=${{ runner.os }}-${{ runner.arch }}
+                cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}
+                sbom: true
+                tags: |
+                    elabftw/chem-plugin:${{ github.ref_name }}
+                    elabftw/chem-plugin:stable
+                    elabftw/chem-plugin:latest

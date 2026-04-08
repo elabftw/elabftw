@@ -35,14 +35,14 @@
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='permModalLabel_{{ identifier }}'><i class='fas fa-fw fa-{{ icon }}' title='{{ label }}'></i> {{ modalTitle }}</h5>
+        <h5 class='modal-title' id='permModalLabel_{{ identifier }}'><i class='fas fa-fw fa-{{ icon }}' aria-hidden='true' title='{{ label }}'></i> {{ modalTitle }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <div class='modal-body'>
         <div data-rw={{ rw }}>
-          <label for='{{ identifier }}_select_base'><strong><i class='fas fa-user-shield mr-2'></i>{{ 'Base'|trans }}</strong></label>
+          <label for='{{ identifier }}_select_base'><strong><i class='fas fa-user-shield mr-2' aria-hidden='true'></i>{{ 'Base'|trans }}</strong></label>
           <p class='smallgray'>{{ 'This setting sets a baseline upon which you can add more permissions by selecting teams, user groups or users below.'|trans }}</p>
           <select id='{{ identifier }}_select_base' class='form-control mb-2' name='{{ base_target }}'>
             {% for key, value in visibilityArr %}
@@ -54,7 +54,7 @@
           <span class='smallgray'>{{ 'Additionally, you can pair the Base permissions with specific combinations of teams, users, or user groups.'|trans }}</span>
           <hr>
           {# TEAMS #}
-          <label for='{{ identifier }}_select_teams' class='mt-2'><strong><i class='fas fa-users mr-2'></i>+ {{ 'Teams'|trans }}</strong></label>
+          <label for='{{ identifier }}_select_teams' class='mt-2'><strong><i class='fas fa-users mr-2' aria-hidden='true'></i>+ {{ 'Teams'|trans }}</strong></label>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
           <div class='team-select-wrapper'>
             <input type='text' class='form-control mt-2 team-select-input' id='{{ identifier }}-team-select-input' placeholder='{{ 'Search for user team'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>
@@ -67,7 +67,7 @@
             </select>
           </div>
           {# USER GROUPS #}
-          <label for='{{ identifier }}_select_teamgroups' class='mt-2'><strong><i class='fas fa-user-group mr-2'></i>+ {{ 'User Groups'|trans }}</strong></label>
+          <label for='{{ identifier }}_select_teamgroups' class='mt-2'><strong><i class='fas fa-user-group mr-2' aria-hidden='true'></i>+ {{ 'User Groups'|trans }}</strong></label>
           <p class='smallgray'>{{ 'Selecting a user group here will give access to all users part of this user group.'|trans }}</p>
           <div class='teamgroups-select-wrapper'>
             <input type='text' class='form-control mt-2 teamgroups-select-input' id='{{ identifier }}-teamgroups-select-input' placeholder='{{ 'Search for user group'|trans }}' aria-label='{{ 'Search for user group'|trans }}'>
@@ -79,7 +79,7 @@
             </select>
           </div>
           {# USERS #}
-          <label for='{{ identifier }}_select_users' class='mt-2'><strong><i class='fas fa-user-plus mr-2'></i>{{ 'Users'|trans }}</strong></label>
+          <label for='{{ identifier }}_select_users' class='mt-2'><strong><i class='fas fa-user-plus mr-2' aria-hidden='true'></i>{{ 'Users'|trans }}</strong></label>
           <p class='smallgray d-inline'>{{ rw == 'canbook' ? 'Allow individual users to book this entry.'|trans : 'Allow individual users to access this entry.'|trans }}</p>
           {# add user to permissions input #}
           <div class='input-group mb-1'>
@@ -90,12 +90,12 @@
           </div>
           <div id='autocompleteAnchorDiv_{{ identifier }}'></div>
           {# list of added users #}
-          <template id="user-badge-template">
-            <div class="user-badge mr-2" data-id="">
-              <i class="mr-2 fas"></i>
-              <span class="user-text"></span>
-              <span data-action="remove-parent" class="hover-danger ml-2">
-                <i class="fas fa-xmark"></i>
+          <template id='user-badge-template'>
+            <div class='user-badge mr-2' data-id=''>
+              <i class='mr-2 fas'></i>
+              <span class='user-text'></span>
+              <span data-action='remove-parent' class='hover-danger ml-2'>
+                <i class='fas fa-xmark' aria-hidden='true'></i>
               </span>
             </div>
           </template>

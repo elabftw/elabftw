@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "Elementni o'ziga bog'lashga ruxsat berilmaydi. Boshqa maqsadni tanlang.",
     "not-found": "No matching result found.",
     "not-set": "Belgilanmagan",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Hech narsa tanlanmagan!",
     "now": "Hozir",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "Δεν επιτρέπεται η σύνδεση ενός στοιχείου με τον εαυτό του. Επιλέξτε διαφορετικό στόχο.",
     "not-found": "No matching result found.",
     "not-set": "Δεν ρυθμίστηκε",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Τίποτα επιλεγμένο!",
     "now": "Τώρα",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

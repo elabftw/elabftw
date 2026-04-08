@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "항목 자체를 링크하는 것은 허용되지 않습니다. 다른 타겟을 선택하세요.",
     "not-found": "No matching result found.",
     "not-set": "설정되지 않음",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "아무 것도 선택되지 않았습니다!",
     "now": "지금",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

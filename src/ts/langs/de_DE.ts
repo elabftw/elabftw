@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "Eine Ressource kann nicht mit sich selbst verknüpft werden. Bitte wählen Sie ein anderes Ziel.",
     "not-found": "Kein passendes Ergebnis gefunden.",
     "not-set": "Nicht festgelegt",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nichts ausgewählt!",
     "now": "Jetzt",
     "oc-version-warning": "Warnung: Die aktuelle OpenCloning-Version ist mit dieser Version von eLabFTW nicht kompatibel.",

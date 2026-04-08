@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "不允许链接到资源自身。请选择不同的目标。",
     "not-found": "没有找到匹配的结果。",
     "not-set": "未设置",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "未选中任何选项！",
     "now": "现在",
     "oc-version-warning": "警告：当前的 OpenCloning 版本与此版本的 eLabFTW 不兼容。",

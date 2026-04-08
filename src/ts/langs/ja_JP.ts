@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "アイテムをそれ自体にリンクすることはできません。別のターゲットを選択してください。",
     "not-found": "一致する結果が見つかりませんでした。",
     "not-set": "設定されていない",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "何も選択されていません！",
     "now": "現在",
     "oc-version-warning": "警告：現在のOpenCloningのバージョンはeLabFTWのこのバージョンと互換性がありません。",

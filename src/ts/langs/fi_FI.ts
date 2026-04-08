@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "Kohteen linkittäminen itseensä ei ole sallittua. Valitse toinen kohde.",
     "not-found": "No matching result found.",
     "not-set": "Ei valittu",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Ei valittu mitään!",
     "now": "Nyt",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

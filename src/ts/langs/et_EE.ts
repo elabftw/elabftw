@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "Üksuse iseendaga linkimine pole lubatud. Palun valige mõni muu sihtmärk.",
     "not-found": "Sobivat tulemust ei leitud.",
     "not-set": "Pole määratud",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Midagi pole valitud!",
     "now": "Nüüd",
     "oc-version-warning": "Hoiatus: praegune OpenCloningi versioon ei ühildu selle eLabFTW versiooniga.",

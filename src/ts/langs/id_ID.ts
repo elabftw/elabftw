@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "Tidak diperbolehkan menautkan item ke item itu sendiri. Silakan pilih target yang berbeda.",
     "not-found": "No matching result found.",
     "not-set": "Tidak diatur",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Tidak ada yang dipilih!",
     "now": "Sekarang",
     "oc-version-warning": "Peringatan: versi OpenCloning saat ini tidak kompatibel dengan versi eLabFTW ini.",

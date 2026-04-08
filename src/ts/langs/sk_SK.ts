@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "Prepojenie položky so sebou samým nie je povolené. Vyberte iný cieľ.",
     "not-found": "No matching result found.",
     "not-set": "Nenastavené",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nič nevybrané!",
     "now": "Teraz",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

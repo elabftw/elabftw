@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "Povezovanje predmeta samega s seboj ni dovoljeno. Izberite drug cilj.",
     "not-found": "No matching result found.",
     "not-set": "Ni nastavljeno",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nič izbranega!",
     "now": "zdaj",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

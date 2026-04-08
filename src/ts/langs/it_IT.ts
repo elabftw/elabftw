@@ -81,6 +81,7 @@ const t = {
     "no-self-links": "Non è consentito collegare un elemento a se stesso. Seleziona un target diverso.",
     "not-found": "Non è stato trovato alcun risultato corrispondente.",
     "not-set": "Non impostato",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nessuna selezione!",
     "now": "Subito",
     "oc-version-warning": "Attenzione: la versione attuale di OpenCloning è incompatibile con questa versione di eLabFTW.",

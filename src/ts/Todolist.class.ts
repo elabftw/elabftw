@@ -10,43 +10,16 @@ import SidePanel from './SidePanel.class';
 import { escapeHTML } from './misc';
 import FavTag from './FavTag.class';
 import { ApiC } from './api';
-import { Malle } from '@deltablot/malle';
-import i18next from './i18n';
 
 export default class Todolist extends SidePanel {
 
   unfinishedStepsScope: string;
   initialLoad = true;
-  mallemalleable: Malle;
 
   constructor() {
     super(Model.Todolist);
     this.panelId = 'todolistPanel';
     this.unfinishedStepsScope = 'user';
-
-    // UPDATE TODOITEM
-    this.mallemalleable = new Malle({
-      // will only work if the editable class is present (class is removed on check)
-      before: original => {
-        return original.classList.contains('editable');
-      },
-      inputClasses: ['form-control'],
-      fun: async (value, original) => {
-        return ApiC.patch(`${Model.Todolist}/${original.dataset.todoitemid}`, {'content': value})
-          .then(resp => resp.json()).then(json => json.body);
-      },
-      returnedValueIsTrustedHtml: false,
-      listenOn: '.todoItem',
-      tooltip: i18next.t('click-to-edit'),
-    });
-  }
-
-  create(content: string): Promise<Response> {
-    return ApiC.post(`${this.model}`, {'content': content});
-  }
-
-  readAll() {
-    return ApiC.getJson(`${this.model}`);
   }
 
   toggleUnfinishedStepsScope(): void {
@@ -84,14 +57,8 @@ export default class Todolist extends SidePanel {
     super.toggle();
     // lazy load content only once
     if (!document.getElementById(this.panelId).hasAttribute('hidden') && this.initialLoad) {
-      //this.display();
       this.loadUnfinishedStep();
-      //this.mallemalleable.listen();
       this.initialLoad = false;
     }
-  }
-
-  destroy(id: number): Promise<Response> {
-    return ApiC.delete(`${this.model}/${id}`);
   }
 }

@@ -165,10 +165,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
         // User 1 creates experiment A that is visible to the team
         $Experiments = $this->getFreshExperiment();
-        $ExperimentAId = $Experiments->create(
-            title: 'Experiment A',
-            canreadBase: BasePermissions::Team,
-        );
+        $ExperimentAId = $Experiments->create(title: 'Experiment A');
 
         // User 1 creates experiment B that is visible only to themself
         $secretTitle = 'Experiment B - This title shall not be visible to user 2 after importing links';
@@ -184,10 +181,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
         // User 2 creates experiment C and adds a link to experiment A
         $Experiments = new Experiments(new Users(2, 1));
-        $ExperimentCId = $Experiments->create(
-            title: 'Experiment C',
-            canreadBase: BasePermissions::Team,
-        );
+        $ExperimentCId = $Experiments->create(title: 'Experiment C');
         $Experiments->setId($ExperimentCId);
         $Experiments->ExperimentsLinks->setId($ExperimentAId);
         $Experiments->ExperimentsLinks->postAction(Action::Create, array());
@@ -221,10 +215,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
 
         // User 1 creates experiment B that is visible to their team
         $secretTitle = 'Experiment B - This title shall not be visible to user 5 after importing links';
-        $ExperimentBId = $Experiments->create(
-            title: $secretTitle,
-            canreadBase: BasePermissions::Team,
-        );
+        $ExperimentBId = $Experiments->create(title: $secretTitle);
 
         // Experiment A links to experiment B
         $Experiments->setId($ExperimentAId);

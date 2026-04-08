@@ -428,16 +428,14 @@ final class Uploads extends AbstractRest
     }
 
     // transfer ownership of all uploaded files for an entity, except immutable ones
-    public function transferOwnership(int $userid): void
+    public function transferOwnership(int $userid): bool
     {
-        $uploadArr = $this->selectAll();
-        foreach ($uploadArr as $upload) {
-            if ($upload['immutable'] === 1) {
-                continue;
-            }
-            $this->setId($upload['id']);
-            $this->patch(Action::Update, array('userid' => $userid));
-        }
+        $sql = 'UPDATE uploads SET userid = :userid WHERE item_id = :item_id AND type = :type';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':userid', $userid);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':type', $this->Entity->entityType->value);
+        return $this->Db->execute($req);
     }
 
     private function update(UploadParams $params): bool

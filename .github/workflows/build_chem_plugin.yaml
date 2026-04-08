@@ -1,22 +1,21 @@
-name: Build edge image on pre-release
+name: Build and push the chem plugin image
 
-# triggered by publishing a release
+# Triggered by change in the corresponding folder
 on:
-  release:
-    types: [published]
-
+  push:
+    branches:
+      - master
+    paths:
+      - 'containers/chem-plugin/**'
+      - '.github/workflows/build_chem_plugin.yaml'
 
 ## GITHUB_TOKEN authentication
 permissions:
-  contents: write
+  contents: read
 
 jobs:
     buildandpush:
-        #runs-on: ubuntu-latest
-        # temporary revert for arm build
-        runs-on: ubuntu-22.04
-        # only on pre-releases
-        if: github.event.release.prerelease == true
+        runs-on: ubuntu-latest
         steps:
             # https://github.com/CycodeLabs/cimon-action
             - name: Cimon supply chain attack protection
@@ -24,59 +23,55 @@ jobs:
               with:
                 prevent: true
                 allowed-hosts: >
+                  archive.ubuntu.com
                   auth.docker.io
-                  codeload.github.com
-                  dl-cdn.alpinelinux.org
-                  docker.io
+                  dhi.io
+                  files.pythonhosted.org
                   ghcr.io
                   index.docker.io
-                  mirror.gcr.io
-                  nginx.org
-                  packagist.org
-                  pkg-containers.githubusercontent.com
-                  production.cloudflare.docker.com
-                  raw.githubusercontent.com
-                  registry.yarnpkg.com
-                  repo.yarnpkg.com
-                  registry.npmjs.org
-                  hooks.deltablot.dev
+                  ports.ubuntu.com
+                  pypi.org
+                  security.ubuntu.com
 
-            - name: Checkout elabimg repo
+            - name: Checkout repo
               uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-              with:
-                ref: ${{ github.ref_name }}
-
-            # https://github.com/marketplace/actions/docker-setup-buildx
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
 
             # https://github.com/docker/setup-qemu-action#usage
             - name: Set up QEMU
               uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4
 
+            # https://github.com/marketplace/actions/docker-setup-buildx
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
+
             # https://github.com/docker/login-action#docker-hub
             - name: Login to Docker Hub
-              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
+              uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4
               with:
                 username: ${{ secrets.DOCKER_HUB_USERNAME }}
                 password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
+            # https://github.com/docker/login-action#docker-hub
+            - name: Login to dhi.io
+              uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4
+              with:
+                registry: dhi.io
+                username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                password: ${{ secrets.DOCKER_HUB_PULLPUBTOKEN }}
+
             # https://github.com/docker/build-push-action#multi-platform-image
             # https://docs.docker.com/build/ci/github-actions/cache/
-            - name: Build release for all platforms and push to Docker Hub
+            - name: Build latest release for all platforms and push to Docker Hub
               uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7
               with:
                 context: .
-                file: containers/elabimg/Dockerfile
-                platforms: linux/arm64,linux/amd64
+                file: containers/chem-plugin/Dockerfile
+                platforms: linux/amd64,linux/arm64
                 push: true
                 # the scope parameter is necessary when doing multi arch builds or we'll always miss cache
                 cache-from: type=gha,scope=${{ runner.os }}-${{ runner.arch }}
                 cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}
                 sbom: true
-                build-args: |
-                    ELABFTW_VERSION=${{ github.ref_name }}
                 tags: |
-                    elabftw/elabimg:edge
-                    elabftw/elabimg:${{ github.ref_name }}
-
+                    elabftw/chem-plugin:stable
+                    elabftw/chem-plugin:latest

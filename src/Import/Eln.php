@@ -22,7 +22,6 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Hash\FileHash;
-use Elabftw\Hash\LocalFileHash;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;

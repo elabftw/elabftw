@@ -12,6 +12,8 @@
 
 # set to true to skip confirmation
 skip_confirm: false
+generate_random_experiments: true
+generate_random_resources: true
 
 # put some config options that fit with a dev env
 # so we don't have to put them back in again after a populate command

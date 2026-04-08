@@ -223,10 +223,10 @@ final class Populate
 
             // generate random experiments before the defined ones
             $user = $this->getRandomUserInTeam($teamid);
-            if ($this->yaml['generate_random_experiments']) {
+            if ($this->yaml['generate_random_experiments'] ?? false) {
                 $this->generate(new Experiments($user));
             }
-            if ($this->yaml['generate_random_resources']) {
+            if ($this->yaml['generate_random_resources'] ?? false) {
                 $this->generate(new Items($user));
             }
 

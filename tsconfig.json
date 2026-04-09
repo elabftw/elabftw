@@ -8,8 +8,7 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "lib": ["es2022", "es2022.intl", "dom"],
-    "types": ["svelte"]
+    "lib": ["es2022", "es2022.intl", "dom"]
   },
   "include": [
     "src/**/*.ts",

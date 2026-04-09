@@ -1,10 +1,11 @@
 declare global {
   interface JQuery {
-    autocomplete(...args: any[]): any;
-    dropdown(...args: any[]): any;
-    fancybox(...args: any[]): any;
-    modal(...args: any[]): any;
-    sortable(...args: any[]): any;
+    autocomplete(options: any): this;
+    dropdown(method: string, ...args: any[]): this;
+    fancybox(options?: any): this;
+    modal(method?: string): this;
+    sortable(options: any): this;
+    sortable(method: 'toArray', options?: any): string[];
   }
 }
 

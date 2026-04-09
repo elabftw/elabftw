@@ -291,7 +291,7 @@ abstract class AbstractEntityController implements ControllerInterface
         return $Response;
     }
 
-    protected function buildRequestableActionArr()
+    protected function buildRequestableActionArr(): array
     {
         /*
             An archived entity will show only the Unarchive option in the dropdown
@@ -318,7 +318,7 @@ abstract class AbstractEntityController implements ControllerInterface
         return array_intersect_key(
             $this->requestableActionArr,
             array_flip(array_map(
-                static fn (RequestableAction $action): int => $action->value,
+                static fn(RequestableAction $action): int => $action->value,
                 $allowedActions,
             )),
         );

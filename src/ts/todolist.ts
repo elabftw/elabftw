@@ -8,17 +8,8 @@
 import Todolistc from './Todolist.class';
 import { Model } from './interfaces';
 import { core } from './core';
-import { mount } from 'svelte';
-import Todolist from './components/Todolist.svelte';
 
 if (document.getElementById('todolistPanel') && !core.isAnon) {
-
-  const host = document.getElementById('todolist');
-  if (host) {
-    mount(Todolist, {
-      target: host,
-    });
-  }
 
   let unfinishedStepsScope = 'user';
   // unfinished steps scopeSwitch i.e. user (0) or team (1)

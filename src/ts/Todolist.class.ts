@@ -10,6 +10,8 @@ import SidePanel from './SidePanel.class';
 import { escapeHTML } from './misc';
 import FavTag from './FavTag.class';
 import { ApiC } from './api';
+import { mount } from 'svelte';
+import TodolistSv from './components/Todolist.svelte';
 
 export default class Todolist extends SidePanel {
 
@@ -57,6 +59,13 @@ export default class Todolist extends SidePanel {
     super.toggle();
     // lazy load content only once
     if (!document.getElementById(this.panelId).hasAttribute('hidden') && this.initialLoad) {
+      const host = document.getElementById('todolist');
+      if (host) {
+        mount(TodolistSv, {
+          target: host,
+        });
+      }
+
       this.loadUnfinishedStep();
       this.initialLoad = false;
     }

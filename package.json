@@ -116,6 +116,8 @@
     "stylelint-config-sass-guidelines": "^13.0.0",
     "stylelint-declaration-strict-value": "^1.11.1",
     "stylelint-order": "^8.1.1",
+    "svelte-check": "^4.4.6",
+    "svelte-language-server": "^0.17.30",
     "svelte-loader": "^3.2.4",
     "svelte-preprocess": "^6.0.3",
     "webpack-bundle-analyzer": "^5.2.0"

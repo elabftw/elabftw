@@ -24,7 +24,7 @@
       before: (original) => original.classList.contains('editable'),
       inputClasses: ['form-control'],
       fun: async (value, original) => {
-        const id = original.getAttribute('data-id');
+        const id = original.dataset.id;
         if (!id) {
           throw new Error('Missing todo id on editable element');
         }

@@ -13,7 +13,7 @@ import Todolist from './components/Todolist.svelte';
 
 if (document.getElementById('todolistPanel') && !core.isAnon) {
 
-  const host = document.getElementById('todolist-svelte');
+  const host = document.getElementById('todolist');
   if (host) {
     mount(Todolist, {
       target: host,

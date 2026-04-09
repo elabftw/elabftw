@@ -430,9 +430,18 @@ services:
       - elabftw-net
 
   #chem-plugin:
-  #  image: elabftw/chem-plugin
+  #  # note: use elabftw version here instead of latest tag
+  #  # e.g. image: elabftw/chem-plugin:5.6.2
+  #  image: elabftw/chem-plugin:latest
   #  container_name: chem-plugin
   #  restart: always
+  #  read_only: true
+  #  cap_drop:
+  #      - ALL
+  #  tmpfs:
+  #    - /tmp
+  #  security_opt:
+  #    - no-new-privileges:true
   #  networks:
   #    - elabftw-net
 

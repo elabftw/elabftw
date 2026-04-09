@@ -81,16 +81,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->classificationArr = Classification::getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
-        $this->requestableActionArr = RequestableAction::getAssociativeArray();
-
-        if (!empty($this->Entity->entityData)) {
-            if ($this->Entity->entityData['state'] === State::Normal->value) {
-                unset($this->requestableActionArr[RequestableAction::Unarchive->value]);
-            } elseif ($this->Entity->entityData['state'] === State::Archived->value) {
-                unset($this->requestableActionArr[RequestableAction::Archive->value]);
-            }
-        }
-
+        $this->requestableActionArr = $this->buildRequestableActionArr();
         $this->currencyArr = Currency::getAssociativeArray();
         $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
         $ExperimentsStatus = new ExperimentsStatus($App->Teams);
@@ -298,5 +289,38 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('changelog.html', $renderArr));
         return $Response;
+    }
+
+    protected function buildRequestableActionArr()
+    {
+        /*
+            An archived entity will show only the Unarchive option in the dropdown
+            of the Request Action modal.
+            See also AbstractEntity::patch()
+        */
+
+        $this->requestableActionArr = RequestableAction::getAssociativeArray();
+
+        $allowedActions = match ($this->Entity->entityData['state']) {
+            State::Normal->value => array(
+                RequestableAction::Archive,
+                RequestableAction::Lock,
+                RequestableAction::Review,
+                RequestableAction::Sign,
+                RequestableAction::Timestamp,
+            ),
+            State::Archived->value => array(
+                RequestableAction::Unarchive,
+            ),
+            default => array(),
+        };
+
+        return array_intersect_key(
+            $this->requestableActionArr,
+            array_flip(array_map(
+                static fn (RequestableAction $action): int => $action->value,
+                $allowedActions,
+            )),
+        );
     }
 }

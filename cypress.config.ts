@@ -36,6 +36,8 @@ export default defineConfig({
             '#scheduler', // scheduler on the team page has several violations
             'h3[data-action="toggle-next"]', // these get the attribute role='button' ...
             'h4[data-action="toggle-next"]', // ... hence, trigger prefer-native-element
+            "[class*='ts-']", // Tom Select classes
+            "[role='listbox']", // Tom Select dropdown
           ],
         },
       );

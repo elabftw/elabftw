@@ -47,7 +47,7 @@
     <label for='ts_url' class='col-form-label'>{{ 'URL for external timestamping service:'|trans }}</label>
     <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_url' type='url' placeholder='https://tsa.example.com' value='{{ App.Config.configArr.ts_url }}' id='ts_url' autocomplete='off' />
   </div>
-  <p class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a href='https://tools.ietf.org/html/rfc3161'>", "</a>")|raw }}</p>
+  <p class='smallgray'>{{ 'This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://www.rfc-editor.org/rfc/rfc3161.html'>", "</a>")|raw }}</p>
   <hr>
 </div>
 

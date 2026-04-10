@@ -33,7 +33,7 @@ abstract class AbstractMakeAuthenticatedTimestamp extends AbstractMakeTrustedTim
     protected function getPassword(): string
     {
         if (empty($this->configArr['ts_password'])) {
-            throw new ImproperActionException('Login value for timestamp service is not set!');
+            throw new ImproperActionException('Password value for timestamp service is not set!');
         }
         return $this->configArr['ts_password'];
     }

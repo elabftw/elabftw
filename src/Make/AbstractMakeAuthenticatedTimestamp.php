@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\Guard;
 use Override;
 
 /**
@@ -23,18 +23,12 @@ abstract class AbstractMakeAuthenticatedTimestamp extends AbstractMakeTrustedTim
     #[Override]
     protected function getLogin(): string
     {
-        if (empty($this->configArr['ts_login'])) {
-            throw new ImproperActionException('Login value for timestamp service is not set!');
-        }
-        return $this->configArr['ts_login'];
+        return Guard::getNonEmptyStringValueOfRequiredParam('ts_login', $this->configArr);
     }
 
     #[Override]
     protected function getPassword(): string
     {
-        if (empty($this->configArr['ts_password'])) {
-            throw new ImproperActionException('Password value for timestamp service is not set!');
-        }
-        return $this->configArr['ts_password'];
+        return Guard::getNonEmptyStringValueOfRequiredParam('ts_password', $this->configArr);
     }
 }

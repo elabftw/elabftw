@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Params\Guard;
 use Override;
 
 /**
@@ -33,10 +33,7 @@ final class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
     #[Override]
     protected function getUrl(): string
     {
-        if (empty($this->configArr['ts_url'])) {
-            throw new ImproperActionException('Custom timestamp service URL is not configured!');
-        }
-        return $this->configArr['ts_url'];
+        return Guard::getNonEmptyStringValueOfRequiredParam('ts_url', $this->configArr);
     }
 
     #[Override]

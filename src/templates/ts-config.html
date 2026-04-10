@@ -8,6 +8,7 @@
     <option value='digicert' {{ App.Config.configArr.ts_authority == 'digicert' ? 'selected' }}>Digicert.com {{ '(free, no account required)'|trans }}</option>
     <option value='sectigo' {{ App.Config.configArr.ts_authority == 'sectigo' ? 'selected' }}>Sectigo.com {{ '(free, no account required)'|trans }}</option>
     <option value='globalsign' {{ App.Config.configArr.ts_authority == 'globalsign' ? 'selected' }}>GlobalSign.com {{ '(free, no account required)'|trans }}</option>
+    <option value='evidency' {{ App.Config.configArr.ts_authority == 'evidency' ? 'selected' }}>Evidency.io {{ '(requires account)'|trans }}</option>
     <option value='custom' {{ App.Config.configArr.ts_authority == 'custom' ? 'selected' }}>{{ 'Custom TSA'|trans }}</option>
   </select>
 </div>

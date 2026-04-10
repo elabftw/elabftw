@@ -17,6 +17,8 @@ use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\MakeTrustedTimestampInterface;
+use Elabftw\Services\TimestampUtils;
+use GuzzleHttp\Client;
 use ZipArchive;
 use Override;
 
@@ -34,6 +36,17 @@ use function trim;
  */
 abstract class AbstractMakeTrustedTimestamp extends AbstractMakeTimestamp implements MakeTrustedTimestampInterface
 {
+    #[Override]
+    public function getTimestampUtils(): TimestampUtils
+    {
+        return new TimestampUtils(
+            new Client(),
+            $this->generateData(),
+            $this->getTimestampParameters(),
+            new TimestampResponse(),
+        );
+    }
+
     /**
      * Create a zip archive with the timestamped data and the asn1 token
      */

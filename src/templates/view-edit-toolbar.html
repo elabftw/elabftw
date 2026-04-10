@@ -1,5 +1,5 @@
 {# Modal for request action #}
-<div class='modal fade' id='requestActionModal' tabindex='-1' role='dialog' aria-labelledby='requestActionModalLabel'>
+<div class='modal fade' id='requestActionModal' tabindex='-1' role='dialog' aria-labelledby='requestActionModalLabel' data-cy='request-action-modal'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -12,7 +12,7 @@
         <div class='modal-body'>
           {# SELECT ACTION #}
           <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
-          <select id='requestActionActionSelect' class='form-control' name='requested_action'>
+          <select id='requestActionActionSelect' class='form-control' name='requested_action' data-cy='requested-action-select'>
             {% for value, text in requestableActionArr|default([])|sort %}
               <option value='{{ value }}'>{{ text }}</option>
             {% endfor %}
@@ -26,8 +26,8 @@
           <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
         </div>
         <div class='modal-footer'>
-          <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-          <button type='submit' class='btn btn-primary' data-action='requestaction'>{{ 'Save'|trans }}</button>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal' data-cy='request-action-modal-close'>{{ 'Close'|trans }}</button>
+          <button type='submit' class='btn btn-primary' data-action='requestaction' data-cy='request-action-modal-save'>{{ 'Save'|trans }}</button>
         </div>
       </form>
     </div>
@@ -273,7 +273,7 @@
     {% endif %}
 
     {# REQUEST ACTION #}
-    <button type='button' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal'>
+    <button type='button' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal' data-cy='request-action-modal-open'>
       <i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i>
     </button>
 
@@ -311,11 +311,11 @@
         {% if not App.Session.has('is_anon') %}
           {# ARCHIVE / UNARCHIVE #}
           {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
-            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive'>
+            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive' cy-data='do-requestable-action-archive'>
               <i class='fas fa-fw fa-box-archive' title='{{ 'Archive'|trans }}'></i> {{ 'Archive'|trans }}
             </button>
           {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
-            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive'>
+            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive' cy-data='do-requestable-action-unarchive'>
               <i class='fas fa-fw fa-box-archive' title='{{ 'Unarchive'|trans }}'></i> {{ 'Unarchive'|trans }}
             </button>
           {% endif %}

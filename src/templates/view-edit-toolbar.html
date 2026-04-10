@@ -22,7 +22,7 @@
           {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
           {# and autocomplete='off' doesn't work #}
           <input type='password' disabled hidden aria-label='{{ 'Password'|trans }}' />
-          <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users' name='requested_user' required />
+          <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users' name='requested_user' data-cy='request-action-user-select' required />
           <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
         </div>
         <div class='modal-footer'>

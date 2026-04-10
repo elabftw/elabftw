@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import Todolist from './Todolist.class';
+import Todolistc from './Todolist.class';
 import { Model } from './interfaces';
 import { core } from './core';
 
@@ -30,56 +30,13 @@ if (document.getElementById('todolistPanel') && !core.isAnon) {
     unfinishedStepsScope = 'team';
   }
 
-  const TodolistC = new Todolist();
+  const TodolistC = new Todolistc();
   TodolistC.unfinishedStepsScope = unfinishedStepsScope;
 
   scopeSwitch = document.getElementById(TodolistC.model + 'StepsShowTeam') as HTMLInputElement;
   scopeSwitch.addEventListener('change', () => {
     if (!document.getElementById(TodolistC.panelId).hasAttribute('hidden')){
       TodolistC.toggleUnfinishedStepsScope();
-    }
-  });
-
-  // to avoid duplicating code between listeners (keydown and click on add)
-  function createTodoitem(): void {
-    const todoInput = (document.getElementById('todo') as HTMLInputElement);
-    const content = todoInput.value;
-    if (!content) { return; }
-
-    TodolistC.create(content).then(() => {
-      // reload the todolist
-      TodolistC.display();
-      // and clear the input
-      todoInput.value = '';
-    });
-  }
-
-  // save todo on enter
-  document.getElementById('todo').addEventListener('keydown', (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      createTodoitem();
-    }
-  });
-
-  // Add click listener and do action based on which element is clicked
-  document.getElementById('container').addEventListener('click', event => {
-    const el = (event.target as HTMLElement);
-    // CREATE TODOITEM
-    if (el.matches('[data-action="create-todoitem"]')) {
-      createTodoitem();
-
-    // DESTROY TODOITEM
-    } else if (el.matches('[data-action="destroy-todoitem"]')) {
-      const todoitemId = parseInt(el.dataset.todoitemid);
-      TodolistC.destroy(todoitemId).then(() => {
-        // check item text
-        const content = (el.nextElementSibling as HTMLSpanElement);
-        content.style.textDecoration = 'line-through';
-        // make it non editable (before function checks for that in malle)
-        content.classList.remove('editable');
-        // disable the checkbox
-        (el as HTMLInputElement).disabled = true;
-      });
     }
   });
 }

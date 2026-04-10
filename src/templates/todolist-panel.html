@@ -4,17 +4,7 @@
     <h3 title='{{ 'Toggle visibility'|trans }}' tabindex='0' role='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='mb-3 py-2'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Todolist'|trans }}</h3>
 
     <div data-save-hidden='todolistMainDiv'>
-      <div class='input-group mt-2 mb-3'>
-        <input id='todo' type='text' class='form-control form-inline' aria-label='{{ 'Add'|trans }}' placeholder='{{ 'Add a new task'|trans }}'>
-        <div class='input-group-append'>
-          <button class='btn btn-primary' type='button' title='{{ 'Add'|trans }}' data-action='create-todoitem' aria-label='{{ 'Add'|trans }}'>
-            <i class='fas fa-plus fa-fw' title='{{ 'Add'|trans }}'></i>
-          </button>
-        </div>
-      </div>
-
-      {# this will be filled with the to-do items by js #}
-      <div id='todoItems' class='sortable d-flex flex-column' data-axis='y' data-table='todolist'></div>
+        <div id='todolist'></div>
     </div>
 
     <div class='clear'><hr></div>

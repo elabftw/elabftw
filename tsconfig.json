@@ -11,6 +11,8 @@
     "lib": ["es2022", "es2022.intl", "dom"]
   },
   "include": [
-    "src/ts/**/*"
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.svelte"
   ]
 }

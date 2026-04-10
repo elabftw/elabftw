@@ -37,7 +37,9 @@ final class i18n4Js
     {
         return array(
             '2FA' => _('2FA'),
+            'add' => _('Add'),
             'add-compound' => _('Add compound'),
+            'add-task' => _('Add task'),
             'add-team' => _('Add team'),
             'add-to-team' => _('Add selected users to team'),
             'archive-user' => _('Archive user'),
@@ -62,6 +64,7 @@ final class i18n4Js
             'delete' => _('Delete'),
             'delete-confirmation' => _('Delete {{num, number}} line(s)?'),
             'delete-selected' => _('Delete selected rows'),
+            'done' => _('Done'),
             'dropzone-upload-area' => _('Drop files here to upload'),
             'dropzone-filesize-limit' => _('File size limit:'),
             'edit' => _('Edit'),
@@ -114,6 +117,7 @@ final class i18n4Js
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-found' => _('No matching result found.'),
             'not-set' => _('Not set'),
+            'no-tasks-yet' => _('No tasks yet.'),
             'nothing-selected' => _('Nothing selected!'),
             'now' => _('Now'),
             'oc-version-warning' => _('Warning: current OpenCloning version is incompatible with this version of eLabFTW.'),

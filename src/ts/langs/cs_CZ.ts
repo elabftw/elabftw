@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Přidat",
     "add-compound": "Přidat sloučeninu",
+    "add-task": "Add task",
     "add-team": "Přidat tým",
     "add-to-team": "Add selected users to team",
     "archive-user": "Archivovat uživatele",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Smazat",
     "delete-confirmation": "Delete {{num, number}} line(s)?",
     "delete-selected": "Delete selected rows",
+    "done": "Done",
     "dropzone-upload-area": "Pro nahrání přetáhni soubory sem",
     "dropzone-filesize-limit": "Omezení velikosti souboru:",
     "edit": "Upravit",
@@ -78,6 +81,7 @@ const t = {
     "no-self-links": "Propojení položky se sebou samou není povoleno. Vyberte prosím jiný cíl.",
     "not-found": "No matching result found.",
     "not-set": "Nenastavený",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nic není vybráno!",
     "now": "Nyní",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

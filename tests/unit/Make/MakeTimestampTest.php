@@ -17,6 +17,7 @@ use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase
@@ -218,6 +219,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             $config,
             $this->dataFormat,
         );
+        $this->assertInstanceOf(TimestampUtils::class, $Maker->getTimestampUtils());
         $Maker->generateData();
         /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
@@ -238,6 +240,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
             $config,
             $this->dataFormat,
         );
+        $this->assertInstanceOf(TimestampUtils::class, $Maker->getTimestampUtils());
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
 

@@ -52,7 +52,6 @@ final class Users2Teams
         $req->bindValue(':is_admin', $isAdmin->value, PDO::PARAM_INT);
         $res = $this->Db->execute($req);
 
-        var_dump($userid);
         AuditLogs::create(new TeamAddition($teamid, $isAdmin->value, $this->requester->userid ?? 0, $userid));
         if ($isValidated) {
             new Teams($this->requester, $teamid)->sendOnboardingEmailToUser($userid, $isAdmin);

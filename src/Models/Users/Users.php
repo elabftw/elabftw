@@ -201,7 +201,8 @@ class Users extends AbstractRest
             // set a flag to show correct message to user
             $this->needValidation = true;
         }
-        AuditLogs::create(new UserRegister($this->requester->getUserid(), $this->userid));
+        // it's okay to not have requester for this (register page)
+        AuditLogs::create(new UserRegister($this->requester->userid ?? 0, $this->userid));
         return $this->userid;
     }
 

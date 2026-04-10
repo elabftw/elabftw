@@ -126,7 +126,7 @@ final class ApiKeys extends AbstractRest
         $req->bindValue(':userid', $this->Users->requester->getUserid(), PDO::PARAM_INT);
 
         if ($res = $this->Db->execute($req)) {
-            AuditLogs::create(new ApiKeyDeleted($this->Users->requester->getUserid(), $this->Users->userid ?? 0));
+            AuditLogs::create(new ApiKeyDeleted($this->Users->requester->getUserid(), $this->Users->getUserid()));
         }
         return $res;
     }
@@ -142,7 +142,7 @@ final class ApiKeys extends AbstractRest
         $req->bindValue(':userid', $this->Users->requester->userid ?? 0, PDO::PARAM_INT);
 
         if ($res = $this->Db->execute($req)) {
-            AuditLogs::create(new ApiKeyDeleted($this->Users->requester->userid ?? 0, $this->Users->userid ?? 0));
+            AuditLogs::create(new ApiKeyDeleted($this->Users->requester->getUserid(), $this->Users->getUserid()));
         }
         return $res;
     }

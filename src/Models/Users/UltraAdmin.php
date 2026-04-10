@@ -19,7 +19,7 @@ use Override;
  */
 final class UltraAdmin extends Users
 {
-    public function __construct(public ?int $userid = null, public ?int $team = null)
+    public function __construct(public ?int $userid = 1, public ?int $team = null)
     {
         $this->userData['is_sysadmin'] = 1;
         $this->userData['userid'] = $userid;
@@ -35,6 +35,6 @@ final class UltraAdmin extends Users
     #[Override]
     public function getUserid(): int
     {
-        return 1;
+        return $this->userid ?? 1;
     }
 }

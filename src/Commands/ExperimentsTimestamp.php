@@ -60,6 +60,14 @@ final class ExperimentsTimestamp extends Command
             $output->writeln(sprintf('Computed origin date: %s', $dateTimeImmutable->format('Y-m-d H:i:s')));
         }
         $Db = Db::getConnection();
+         $sql = sprintf('SELECT id FROM experiments
+             WHERE (
+                 timestamped_at IS NULL
+                 OR (
+                     modified_at > :m
+                     AND ABS(TIMESTAMPDIFF(SECOND, timestamped_at, modified_at)) > %d
+                 )
+             )', self::TOLERANCE);
         $sql = sprintf('SELECT id FROM experiments
             WHERE timestamped_at IS NULL
                OR (

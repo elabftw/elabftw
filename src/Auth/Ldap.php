@@ -117,7 +117,7 @@ final class Ldap implements AuthInterface
         if ($this->configArr['ldap_sync_teams'] === '1' && $teamFromLdap !== null && !empty($teamFromLdap)) {
             $Teams = new Teams($Users);
             $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teamFromLdap, $allowTeamCreation);
-            $Teams->synchronize($Users->userid ?? 0, $teams);
+            $Teams->synchronize($Users->getUserid(), $teams);
         }
 
         return $AuthResponse->setAuthenticatedUserid($Users->userData['userid'])

@@ -31,6 +31,14 @@ use PDO;
 
 use function preg_replace;
 use function ksort;
+use function _;
+use function array_filter;
+use function array_key_exists;
+use function array_map;
+use function implode;
+use function sprintf;
+use function str_replace;
+use function trim;
 
 /**
  * All about the team's scheduler

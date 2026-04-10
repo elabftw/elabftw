@@ -15,6 +15,8 @@ namespace Elabftw\Exceptions;
 
 use Override;
 
+use function _;
+
 /**
  * Throw this if the MFA code verification failed
  */

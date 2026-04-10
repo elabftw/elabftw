@@ -28,6 +28,8 @@ use GuzzleHttp\Client;
 use Override;
 use PDO;
 
+use function sprintf;
+
 /**
  * For IDPS sources: .xml urls
  */

@@ -26,6 +26,10 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function _;
+use function sprintf;
+use function trim;
+
 /**
  * All about storage_units
  */

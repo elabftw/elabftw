@@ -29,6 +29,7 @@ use function header;
 use function in_array;
 use function setcookie;
 use function stripos;
+use function time;
 
 /**
  *   _       _ _

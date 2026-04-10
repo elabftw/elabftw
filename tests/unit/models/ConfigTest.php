@@ -16,6 +16,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 
+use function urlencode;
+
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     private Config $Config;

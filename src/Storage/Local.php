@@ -16,6 +16,8 @@ use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Override;
 
+use function dirname;
+
 /**
  * For locally stored uploads
  */

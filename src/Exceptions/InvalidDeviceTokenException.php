@@ -14,6 +14,8 @@ namespace Elabftw\Exceptions;
 
 use Exception;
 
+use function _;
+
 /**
  * Throw this if the device token is not valid
  */

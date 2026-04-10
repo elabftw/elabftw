@@ -31,6 +31,9 @@ use PDO;
 
 use function intval;
 use function json_encode;
+use function _;
+use function array_all;
+use function sprintf;
 
 /**
  * All about Links

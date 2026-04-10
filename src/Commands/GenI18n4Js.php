@@ -20,6 +20,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function dirname;
+
 /**
  * Generate the translation files for typescript/javascript
  */

@@ -16,6 +16,8 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 
+use function json_encode;
+
 class EairefRemoteDirectoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testSearch(): void

@@ -20,6 +20,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function sprintf;
+
 /**
  * Send the notifications emails for accounts close to expiration
  */

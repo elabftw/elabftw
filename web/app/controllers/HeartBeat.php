@@ -14,6 +14,9 @@ namespace Elabftw\Elabftw;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+use function dirname;
+use function time;
+
 /**
  * Make sure that the user is still logged in
  */

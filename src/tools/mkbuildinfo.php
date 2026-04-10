@@ -15,6 +15,9 @@ namespace Elabftw\Elabftw;
 use function bin2hex;
 use function preg_match;
 use function random_bytes;
+use function dirname;
+use function file_put_contents;
+use function getenv;
 
 $version = getenv('ELABFTW_VERSION') ?: 'dev';
 

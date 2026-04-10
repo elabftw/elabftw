@@ -18,6 +18,8 @@ use PDO;
 
 use function array_sum;
 use function count;
+use function rtrim;
+use function sprintf;
 
 /**
  * Fingerprints for compounds

@@ -23,6 +23,8 @@ use Elabftw\Models\Users\ValidatedUser;
 use function explode;
 use function implode;
 use function sprintf;
+use function _;
+use function count;
 
 /**
  * Generator and validator for key in reset password feature

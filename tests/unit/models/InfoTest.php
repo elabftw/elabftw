@@ -14,6 +14,8 @@ namespace Elabftw\Models;
 use Elabftw\Params\BaseQueryParams;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function is_array;
+
 class InfoTest extends \PHPUnit\Framework\TestCase
 {
     private Info $Info;

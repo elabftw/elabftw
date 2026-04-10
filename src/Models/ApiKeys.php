@@ -27,6 +27,10 @@ use function bin2hex;
 use function password_hash;
 use function password_verify;
 use function random_bytes;
+use function _;
+use function explode;
+use function sprintf;
+use function str_contains;
 
 /**
  * Api keys CRUD class

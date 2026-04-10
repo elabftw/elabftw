@@ -16,6 +16,12 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ParamInterface;
 use Override;
 
+use function _;
+use function mb_strlen;
+use function sprintf;
+use function str_replace;
+use function trim;
+
 final class TagParam implements ParamInterface
 {
     protected const int MIN_CONTENT_SIZE = 1;

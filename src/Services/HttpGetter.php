@@ -17,6 +17,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use Psr\Http\Message\ResponseInterface;
 
+use function array_merge;
+use function in_array;
+use function sprintf;
+
 /**
  * HTTP wrapper
  * @final mocked in tests

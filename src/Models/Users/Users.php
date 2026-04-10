@@ -53,6 +53,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Override;
 use RuntimeException;
 
+use function _;
+use function array_column;
+use function array_map;
+use function implode;
+use function in_array;
+use function json_decode;
+use function sprintf;
+use function strtolower;
+
 /**
  * Users
  */

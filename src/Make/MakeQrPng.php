@@ -22,6 +22,11 @@ use RobThree\Auth\Providers\Qr\IQRCodeProvider;
 use Override;
 
 use function strlen;
+use function count;
+use function dirname;
+use function mb_strlen;
+use function mb_substr;
+use function sprintf;
 
 /**
  * Generate a PNG image with a QR Code pointing to the URL of the Entity, and optionally include the title

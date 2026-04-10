@@ -20,6 +20,8 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Override;
 
+use function dirname;
+
 final class CreateUploadFromLocalFile extends CreateUpload
 {
     public function __construct(

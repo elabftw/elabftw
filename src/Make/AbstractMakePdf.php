@@ -19,6 +19,8 @@ use Elabftw\Enums\Classification;
 use Mpdf\Mpdf;
 use Override;
 
+use function dirname;
+
 /**
  * Mother class of the Make*Pdf services
  */

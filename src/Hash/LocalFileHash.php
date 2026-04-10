@@ -15,6 +15,9 @@ namespace Elabftw\Hash;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
+use function basename;
+use function dirname;
+
 /**
  * To hash a file stored on local filesystem
  */

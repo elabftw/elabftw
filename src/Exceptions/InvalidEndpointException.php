@@ -14,6 +14,9 @@ namespace Elabftw\Exceptions;
 
 use Elabftw\Enums\ApiEndpoint;
 
+use function implode;
+use function sprintf;
+
 /**
  * For invalid api endpoint
  */

@@ -17,6 +17,8 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Notifications;
 use ValueError;
 
+use function sprintf;
+
 class TransformTest extends \PHPUnit\Framework\TestCase
 {
     public function testCsrf(): void

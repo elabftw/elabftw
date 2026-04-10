@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 use function array_filter;
+use function _;
 
 /**
  * Administration panel of a team

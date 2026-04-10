@@ -51,6 +51,9 @@ use Override;
 
 use function array_map;
 use function count;
+use function explode;
+use function sprintf;
+use function str_starts_with;
 
 /**
  * Create zip, csv, pdf or report

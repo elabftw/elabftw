@@ -30,6 +30,11 @@ use Symfony\Component\Mime\Email as Memail;
 use Symfony\Component\Mime\RawMessage;
 
 use function count;
+use function _;
+use function array_column;
+use function array_map;
+use function preg_replace;
+use function sprintf;
 
 /**
  * Email service

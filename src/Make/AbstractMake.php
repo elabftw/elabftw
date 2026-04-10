@@ -17,6 +17,8 @@ use Elabftw\Interfaces\FileMakerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Override;
 
+use function gmdate;
+
 /**
  * Mother class of the Make* services
  */

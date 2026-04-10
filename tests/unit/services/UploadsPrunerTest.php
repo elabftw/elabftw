@@ -17,6 +17,8 @@ use Elabftw\Models\Config;
 use Elabftw\Traits\TestsUtilsTrait;
 use League\Flysystem\UnableToDeleteFile;
 
+use function dirname;
+
 class UploadsPrunerTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

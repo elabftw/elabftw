@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function sha1;
+
 class MpdfQrProviderTest extends \PHPUnit\Framework\TestCase
 {
     private MpdfQrProvider $Provider;

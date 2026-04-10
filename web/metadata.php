@@ -22,6 +22,8 @@ use OneLogin\Saml2\Error;
 use OneLogin\Saml2\Settings;
 use Symfony\Component\HttpFoundation\Response;
 
+use function implode;
+
 /**
  *  This page displays an XML file with all the settings of the Service Provider
  */

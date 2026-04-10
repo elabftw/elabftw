@@ -29,6 +29,9 @@ use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Models\Users\Users;
 
+use function json_decode;
+use function sprintf;
+
 /**
  * Get a Notification instance based on data from sql row
  */

@@ -20,6 +20,8 @@ use Override;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function sprintf;
+
 final class UserUploads extends AbstractRest
 {
     public function __construct(private Users $owner, private ?int $id = null)

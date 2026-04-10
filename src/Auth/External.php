@@ -21,6 +21,8 @@ use Elabftw\Models\Users\ValidatedUser;
 use Elabftw\Services\UsersHelper;
 use Override;
 
+use function _;
+
 /**
  * Authenticate with server provided values
  */

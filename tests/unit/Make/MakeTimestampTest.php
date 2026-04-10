@@ -19,6 +19,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function dirname;
+
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

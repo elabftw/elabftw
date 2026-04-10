@@ -19,6 +19,8 @@ use Elabftw\Models\Users\ValidatedUser;
 use Override;
 
 use function sprintf;
+use function array_key_exists;
+use function is_array;
 
 /**
  * Import a trusted .eln file: the Author will be respected, and users created

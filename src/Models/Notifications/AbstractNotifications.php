@@ -20,6 +20,8 @@ use Elabftw\Traits\QueryParamsTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
 
+use function json_encode;
+
 /**
  * Mother class for notifications that can be sent to a user
  */

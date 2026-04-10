@@ -21,6 +21,10 @@ use Elabftw\Services\UsersHelper;
 use Override;
 use PDO;
 
+use function array_column;
+use function explode;
+use function sprintf;
+
 /**
  * Read the unfinished steps of items or experiments to display in to-do list.
  * By default the unfinished steps of a user are returned.

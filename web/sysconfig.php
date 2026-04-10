@@ -34,6 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
 use ValueError;
 
 use function array_walk;
+use function _;
+use function ini_get;
 
 /**
  * Instance level settings and tools

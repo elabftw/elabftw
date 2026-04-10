@@ -18,6 +18,10 @@ use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
 use GuzzleHttp\Client;
 
+use function dirname;
+use function microtime;
+use function printf;
+
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 $smiles = array(

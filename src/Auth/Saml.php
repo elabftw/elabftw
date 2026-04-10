@@ -41,6 +41,10 @@ use Override;
 
 use function is_array;
 use function is_string;
+use function _;
+use function implode;
+use function is_int;
+use function sprintf;
 
 /**
  * SAML auth service

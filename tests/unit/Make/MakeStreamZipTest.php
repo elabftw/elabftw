@@ -15,6 +15,9 @@ use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Traits\TestsUtilsTrait;
 use ZipStream\ZipStream;
 
+use function dirname;
+use function str_ends_with;
+
 class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

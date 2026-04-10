@@ -24,6 +24,8 @@ use GuzzleHttp\Exception\RequestException;
 use League\Flysystem\FilesystemOperator;
 
 use function is_readable;
+use function basename;
+use function file_get_contents;
 
 /**
  * Trusted Timestamping (RFC3161) utility class

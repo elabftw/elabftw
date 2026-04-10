@@ -19,6 +19,9 @@ use Elabftw\Models\Users\Users;
 use PDO;
 use Override;
 
+use function _;
+use function sprintf;
+
 final class StepDeadline extends AbstractNotifications implements MailableInterface
 {
     /**

@@ -15,6 +15,8 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\Users2TeamsTargets;
 use Override;
 
+use function sprintf;
+
 final class PermissionLevelChanged extends AbstractUsers2TeamsModifiedEvent
 {
     public function __construct(int $requesterUserid, int $userid, private Users2TeamsTargets $target, private int $value, private int $teamid)

@@ -23,6 +23,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function dirname;
+
 /**
  * Prepare the database for the 3.4 update
  * Issue: for old databases, the FK fk_users_teams_id will not exist and cause error

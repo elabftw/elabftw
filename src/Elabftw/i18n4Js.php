@@ -16,6 +16,14 @@ use Elabftw\Enums\Language;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\FilesystemOperator;
 
+use function _;
+use function bind_textdomain_codeset;
+use function bindtextdomain;
+use function dirname;
+use function putenv;
+use function setlocale;
+use function textdomain;
+
 /**
  * This class is used to generate the translations files for i18next (javascript)
  * Use it with: bin/console dev:i18n4js

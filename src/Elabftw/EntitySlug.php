@@ -14,6 +14,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EntityType;
 
+use function explode;
+
 final class EntitySlug
 {
     public function __construct(public readonly EntityType $type, public readonly int $id) {}

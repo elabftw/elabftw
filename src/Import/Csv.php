@@ -23,6 +23,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 
+use function array_key_exists;
+use function explode;
+
 /**
  * Import entries from a csv file.
  */

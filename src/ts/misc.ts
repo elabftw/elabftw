@@ -149,6 +149,26 @@ export function handleReloads(reloadAttributes: string | undefined): void {
   });
 }
 
+// refresh tomSelect options when DOM changes
+export function rebuildTomSelectOptions(
+  selectEl: HTMLSelectElement & { tomselect?: TomSelect },
+  filter?: (option: HTMLOptionElement) => boolean,
+): void {
+  const ts = selectEl.tomselect;
+  if (!ts) return;
+  // keep current selection
+  const selected = Array.from(selectEl.selectedOptions).map(o => o.value);
+  ts.clearOptions();
+  ts.clear();
+  Array.from(selectEl.options).forEach(option => {
+    if (!filter || filter(option)) {
+      ts.addOption({ value: option.value, text: option.textContent ?? ''});
+    }
+  });
+  ts.setValue(selected, true);
+  ts.refreshOptions(false);
+}
+
 export function listenTrigger(elementId: string = ''): void {
   let elems: NodeList;
   if (elementId) {

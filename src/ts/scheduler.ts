@@ -40,6 +40,7 @@ import { Action } from './interfaces';
 import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
+import { rebuildTomSelectOptions } from './misc';
 
 type CancelNotificationPayload = {
   action: Action;
@@ -631,16 +632,7 @@ if (window.location.pathname === '/scheduler.php') {
       selectEl: HTMLSelectElement & { tomselect?: TomSelect },
       category: string,
     ): void {
-      if (!selectEl.tomselect) return;
-      selectEl.tomselect.clearOptions();
-
-      Array.from(selectEl.options).forEach(option => {
-        if (!category || option.dataset.category === category) {
-          selectEl.tomselect.addOption({ value: option.value, text: option.textContent ?? '',
-          });
-        }
-      });
-      selectEl.tomselect.refreshOptions(false);
+      rebuildTomSelectOptions(selectEl, (option) => !category || option.dataset.category === category);
     }
 
     async function handleEventDateChange(info): Promise<void> {

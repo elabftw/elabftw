@@ -34,7 +34,7 @@ import {
   TomSelect,
   updateEntityBody,
   updateCatStat,
-  makeMalleableColumnsGreatAgain,
+  makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -255,7 +255,7 @@ function initPermissionsTomSelects() {
   selects.forEach((select) => {
     const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
     if (tsSelect.tomselect) {
-      tsSelect.tomselect.destroy();
+      return;
     }
     const isTeams = select.id.endsWith('_select_teams');
     const isTeamGroups = select.id.endsWith('_select_teamgroups');
@@ -288,6 +288,7 @@ function initPermissionsTomSelects() {
       config['dropdownParent'] = `#${CSS.escape(wrapper.id)}`;
     }
     new TomSelect(select, config);
+    on('scope-change', () => setTimeout(() => rebuildTomSelectOptions(select), 100));
   });
 }
 initPermissionsTomSelects();

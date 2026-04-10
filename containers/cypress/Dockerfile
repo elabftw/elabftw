@@ -11,7 +11,7 @@ COPY cypress.config.ts .
 COPY tests/cypress/ ./tests/cypress/
 COPY tests/_data/ ./tests/_data/
 COPY containers/cypress/package.json .
-COPY containers/cypress/package.lock .
+COPY containers/cypress/package-lock.json .
 
 # create cypress output folders
 # use bash so we can expand the command (RUN will use sh)

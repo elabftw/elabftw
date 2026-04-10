@@ -2,7 +2,7 @@
 
 /**
  * @author Nicolas CARPi / Deltablot
- * @copyright 2015 Nicolas CARPi, Alexander Minges
+ * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 /**
- * Same as parent with just the TS_URL different
+ * Sandbox env which is used in DEV_MODE
  * https://docs.evidency.io/reference/v3projecttimestamp
  */
 final class MakeEvidencyTimestampDev extends MakeEvidencyTimestamp

@@ -4,20 +4,13 @@
   import i18next from '../i18n';
   import { Model } from '../interfaces';
   import { Malle } from '@deltablot/malle';
-  import { DateTime } from 'luxon';
-  import { makeSortableGreatAgain } from '../misc';
+  import { makeSortableGreatAgain, toRelative } from '../misc';
 
   const t = i18next.t.bind(i18next);
+  let locale = 'en-gb';
 
-  function toRelative(title: string): string {
-    return (
-      DateTime
-        .fromFormat(title, 'yyyy-MM-dd HH:mm:ss')
-        .toRelative() ?? ''
-    );
-  }
-
-    let malleable: Malle | null = null;
+  let malleable: Malle | null = null;
+  const relative = (date: string): string => toRelative(date, locale);
 
   function setupMalle(): void {
     malleable = new Malle({
@@ -74,6 +67,8 @@
   }
 
   onMount(() => {
+    const prefs = document.getElementById('user-prefs');
+    locale = prefs?.dataset?.jslang || 'en-gb';
     void load();
   });
 </script>
@@ -99,14 +94,15 @@
     {#each items as item (item.id)}
       <li class='list-group-item d-flex justify-content-between align-items-center' id='todoItem_{item.id}'>
         <div class='d-flex align-items-start flex-grow-1 mr-3'>
-        <span class='draggable sortableHandle mr-2'>
-          <i class='fas fa-grip-vertical fa-fw'></i>
-        </span>
+          <span class='draggable sortableHandle mr-2'>
+            <i class='fas fa-grip-vertical fa-fw'></i>
+          </span>
 
-        <div class='d-flex flex-column flex-grow-1'>
-          <span class='editable todoItem' data-id={item.id}>{item.body}</span>
-          <div class='relative-moment small text-muted' title={item.creation_time}>
-            {toRelative(item.creation_time)}
+          <div class='d-flex flex-column flex-grow-1'>
+            <span class='editable todoItem' data-id={item.id}>{item.body}</span>
+            <div class='relative-moment small text-muted' title={item.creation_time}>
+              {relative(item.creation_time)}
+            </div>
           </div>
         </div>
         <button

@@ -56,7 +56,9 @@ describe('Experiments', () => {
     // not proceeding here with collaborator actioning, just trigger the Archived state
     cy.get('[data-cy="cancel-requestable-action"]').click();
     cy.get('button[title="More options"]').click();
-    cy.get('[cy-data="do-requestable-action-archive"]').click();
+    cy.get('[cy-data="do-requestable-action-archive"]')
+      .click()
+      .wait(500);
     // check also that Request action dropdown has only Unarchive
     cy.get('[data-cy="request-action-modal-open"]').click();
     cy.get('[data-cy="request-action-modal"]').should('be.visible');
@@ -184,7 +186,8 @@ describe('Experiments', () => {
         cy.get('button[title="More options"]').click();
         cy.get('[cy-data="do-requestable-action-unarchive"]').should('not.exist');
         cy.get('[cy-data="do-requestable-action-archive"]').should('be.visible')
-          .click();
+          .click()
+          .wait(500);
         cy.get('[cy-data="is-archived-div"]').should('be.visible');
         // Unarchived state
         cy.get('button[title="More options"]').click();

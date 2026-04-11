@@ -24,7 +24,7 @@ import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 
-const target = document.getElementById('itemList');
+const target = document.getElementById('entityList');
 
 const initialQ = new URL(window.location.href).searchParams.get('q') ?? '';
 const searchQuery = writable(initialQ);

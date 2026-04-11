@@ -131,7 +131,9 @@ abstract class AbstractEntityController implements ControllerInterface
             limit: $this->App->Users->userData['limit_nb'],
             skipOrderPinned: $skipOrderPinned,
         );
+        /*
         $itemsArr = $this->Entity->readShow($DisplayParams);
+         */
 
         // get tags separately
         $tagsArr = array();
@@ -155,7 +157,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'categoryArr' => $this->categoryArr,
             'statusArr' => $this->statusArr,
             'favTagsArr' => $favTagsArr,
-            'itemsArr' => $itemsArr,
             'pageTitle' => $this->getPageTitle(),
             'metakeyArrForSelect' => array_column($ExtraFieldsKeys->readAll(), 'extra_fields_key'),
             'requestActionsArr' => $UserRequestActions->readAllFull(),

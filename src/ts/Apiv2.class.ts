@@ -92,8 +92,11 @@ export class Api {
     }
     return fetch(`api/v2/${query}${urlParams}`, options).then(async response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
-        // if there is an error we will get the message in the reply body
-        return response.json().then(json => { throw new Error(json.message || json.description); });
+        return response.json().then(json => {
+          const error = new Error(json.message || json.description) as Error & { status?: number };
+          error.status = response.status;
+          throw error;
+        });
       }
       return response;
     }).then(response => {
@@ -105,7 +108,10 @@ export class Api {
       if (this.notifOnError) {
         notify.error(error.message);
       }
-      return Promise.reject(new Error(error.message));
+
+      const wrappedError = new Error(error.message) as Error & { status?: number };
+      wrappedError.status = error.status;
+      return Promise.reject(wrappedError);
     });
   }
 

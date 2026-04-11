@@ -86,6 +86,9 @@
     isLoading = true;
     error = '';
 
+    const previousNotifOnError = ApiC.notifOnError;
+    ApiC.notifOnError = false;
+
     try {
       const params: Record<string, string | number> = {
         limit: currentLimit,
@@ -107,8 +110,17 @@
         return;
       }
 
-      error = err instanceof Error ? err.message : t('Failed to load entries');
+      const apiError = err as Error & { status?: number };
+
+      if (apiError.status === 400) {
+        error = '';
+        return;
+      }
+
+      error = apiError.message || t('Failed to load entries');
     } finally {
+      ApiC.notifOnError = previousNotifOnError;
+
       if (seq === requestSeq) {
         isLoading = false;
       }

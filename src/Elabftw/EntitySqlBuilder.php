@@ -343,62 +343,47 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         return ":userid MEMBER OF (entity.$can->>'$.users')";
     }
 
-private function tags(): void
-{
-    $this->selectSql[] = 'GROUP_CONCAT(
-            DISTINCT tags.tag
-            ORDER BY tags.id SEPARATOR \'|\'
-        ) AS tags,
-        GROUP_CONCAT(
-            DISTINCT tags.id
-            ORDER BY tags.id
-        ) AS tags_id,
-        COALESCE((
-            SELECT JSON_ARRAYAGG(
-                JSON_OBJECT(
-                    \'id\', decoded_tags.id,
-                    \'tag\', decoded_tags.tag,
-                    \'is_favorite\', decoded_tags.is_favorite
-                )
-            )
-            FROM (
-                SELECT DISTINCT
-                    t.id,
-                    t.tag,
-                    (ft.tags_id IS NOT NULL) AS is_favorite
-                FROM tags2entity AS t2e
-                LEFT JOIN tags AS t
-                    ON (t.id = t2e.tag_id)
-                LEFT JOIN favtags2users AS ft
-                    ON (ft.users_id = :userid
-                        AND ft.tags_id = t.id)
-                WHERE t2e.item_id = entity.id
-                    AND t2e.item_type = \'%1$s\'
-                ORDER BY t.tag
-            ) AS decoded_tags
-        ), JSON_ARRAY()) AS tags_decoded';
-
-    $this->joinsSql[] = 'LEFT JOIN tags2entity
-            ON (tags2entity.item_id = entity.id
-                AND tags2entity.item_type = \'%1$s\')
-        LEFT JOIN tags
-            ON (tags.id = tags2entity.tag_id)';
-}
-/*
     private function tags(): void
     {
-        $this->selectSql[] = "GROUP_CONCAT(
+        $this->selectSql[] = 'GROUP_CONCAT(
                 DISTINCT tags.tag
-                ORDER BY tags.id SEPARATOR '|'
-            ) as tags,
-            GROUP_CONCAT(DISTINCT tags.id) as tags_id";
+                ORDER BY tags.id SEPARATOR \'|\'
+            ) AS tags,
+            GROUP_CONCAT(
+                DISTINCT tags.id
+                ORDER BY tags.id
+            ) AS tags_id,
+            COALESCE((
+                SELECT JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        \'id\', decoded_tags.id,
+                        \'tag\', decoded_tags.tag,
+                        \'is_favorite\', decoded_tags.is_favorite
+                    )
+                )
+                FROM (
+                    SELECT DISTINCT
+                        t.id,
+                        t.tag,
+                        (ft.tags_id IS NOT NULL) AS is_favorite
+                    FROM tags2entity AS t2e
+                    LEFT JOIN tags AS t
+                        ON (t.id = t2e.tag_id)
+                    LEFT JOIN favtags2users AS ft
+                        ON (ft.users_id = :userid
+                            AND ft.tags_id = t.id)
+                    WHERE t2e.item_id = entity.id
+                        AND t2e.item_type = \'%1$s\'
+                    ORDER BY t.tag
+                ) AS decoded_tags
+            ), JSON_ARRAY()) AS tags_decoded';
+
         $this->joinsSql[] = 'LEFT JOIN tags2entity
                 ON (tags2entity.item_id = entity.id
                     AND tags2entity.item_type = \'%1$s\')
             LEFT JOIN tags
                 ON (tags.id = tags2entity.tag_id)';
     }
- */
 
     private function teamEvents(): void
     {

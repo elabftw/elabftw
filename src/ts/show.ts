@@ -25,11 +25,15 @@ import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 
 const target = document.getElementById('entityList');
-
+const skeleton = document.getElementById('itemListSkeleton');
 const initialQ = new URL(window.location.href).searchParams.get('q') ?? '';
 const searchQuery = writable(initialQ);
 
 let debounceTimer: number | undefined;
+
+function handleInitialLoadDone(): void {
+  skeleton?.remove();
+}
 
 searchQuery.subscribe(value => {
   window.clearTimeout(debounceTimer);
@@ -57,6 +61,7 @@ if (target) {
       entityType: entity.type,
       limit: 15,
       searchQuery,
+      onInitialLoadDone: handleInitialLoadDone,
     },
   });
 }

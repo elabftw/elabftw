@@ -4,15 +4,13 @@
   import i18next from '../i18n';
   import type { Writable } from 'svelte/store';
 
-  const t = i18next.t.bind(i18next);
-
   type EntityType = 'experiments' | 'items' | 'experiments_templates' | 'items_types';
 
   interface EntityTag {
-  tag: string;
-  id: number;
-  is_favorite: boolean;
-}
+    tag: string;
+    id: number;
+    is_favorite: boolean;
+  }
 
   interface EntityListItem {
     id: number;
@@ -40,9 +38,10 @@
     tags_decoded?: EntityTag[] | null;
   }
 
+  const t = i18next.t.bind(i18next);
+
   let {
     entityType = 'experiments',
-    toPage,
     limit = 15,
     searchQuery,
     currentUserId = null,
@@ -51,9 +50,9 @@
     isAnon = false,
     archivedStateValue = 2,
     deletedStateValue = 3,
+    onInitialLoadDone,
   } = $props<{
     entityType?: EntityType;
-    toPage?: string;
     limit?: number;
     searchQuery: Writable<string>;
     currentUserId?: number | null;
@@ -62,14 +61,13 @@
     isAnon?: boolean;
     archivedStateValue?: number | string;
     deletedStateValue?: number | string;
+    onInitialLoadDone?: () => void;
   }>();
 
+  let hasReportedInitialLoad = false;
   let entities = $state<EntityListItem[]>([]);
-  let isLoading = $state(true);
   let error = $state('');
   let requestSeq = 0;
-
-  const resolvedToPage = $derived(toPage ?? getDefaultPage(entityType));
 
   let urlVersion = $state(0);
 
@@ -190,7 +188,6 @@ $effect(() => {
     currentOwner: string,
   ): Promise<void> {
     const seq = ++requestSeq;
-    isLoading = true;
     error = '';
 
     const previousNotifOnError = ApiC.notifOnError;
@@ -227,6 +224,8 @@ $effect(() => {
 
       const apiError = err as Error & { status?: number };
 
+      // this will happen while user types an extended query that is incomplete
+      // so we ignore it
       if (apiError.status === 400) {
         error = '';
         return;
@@ -235,15 +234,11 @@ $effect(() => {
       error = apiError.message || t('Failed to load entries');
     } finally {
       ApiC.notifOnError = previousNotifOnError;
-
-      if (seq === requestSeq) {
-        isLoading = false;
+      if (seq === requestSeq && !hasReportedInitialLoad) {
+        hasReportedInitialLoad = true;
+        onInitialLoadDone?.();
       }
     }
-  }
-
-  function getDefaultPage(type: EntityType): string {
-    return type === 'items' || type === 'items_types' ? 'database.php' : 'experiments.php';
   }
 
   function isTemplateType(type: EntityType): boolean {
@@ -322,9 +317,7 @@ $effect(() => {
 });
 </script>
 
-{#if isLoading && entities.length === 0}
-  <div>{t('Loading...')}</div>
-{:else if error && entities.length === 0}
+{#if error && entities.length === 0}
   <div class='alert alert-danger'>{error}</div>
 {:else}
   <div class='d-flex flex-column' id='itemList'>
@@ -418,7 +411,7 @@ $effect(() => {
               </span>
             {/if}
 
-            <a href={`${resolvedToPage}?mode=view&id=${entity.id}`}>
+            <a href={`?mode=view&id=${entity.id}`}>
               {getDisplayTitle(entity)}
             </a>
           </div>
@@ -429,7 +422,7 @@ $effect(() => {
               <a
                 class={`owner ${selectedOwner === String(entity.userid) ? 'owner-selected' : ''}`}
                 href={`?owner=${entity.userid}`}
-                onclick={event => handleOwnerClick(event, entity.userid!)}
+                onclick={event => handleOwnerClick(event, entity.userid)}
               >
                 {entity.fullname}
               </a>
@@ -456,7 +449,7 @@ $effect(() => {
                 {#each entity.tags_decoded ?? [] as tag, tagIndex (`${entity.id}-${tag.id}-${tagIndex}`)}
                   <a
                     class={`tag mathjax-ignore margin-1px ${tag.is_favorite ? 'favorite' : ''} ${selectedTags.includes(tag.tag) ? 'tag-selected' : ''}`}
-                    href={`${resolvedToPage}?mode=show&tags%5B%5D=${encodeURIComponent(tag.tag)}`}
+                    href={`?mode=show&tags%5B%5D=${encodeURIComponent(tag.tag)}`}
                     onclick={event => handleTagClick(event, tag.tag)}
                   >
                     {tag.tag}
@@ -497,7 +490,7 @@ $effect(() => {
               </div>
             {:else if canEditEntity(entity)}
               <a
-                href={`${resolvedToPage}?mode=edit&id=${entity.id}`}
+                href={`?mode=edit&id=${entity.id}`}
                 class='btn btn-secondary left-icon mr-1 lh-normal p-2 border-0'
                 title={t('Edit')}
                 aria-label={t('Edit')}
@@ -506,7 +499,7 @@ $effect(() => {
               </a>
             {:else}
               <a
-                href={`${resolvedToPage}?mode=view&id=${entity.id}`}
+                href={`?mode=view&id=${entity.id}`}
                 class='btn btn-secondary left-icon mr-1 lh-normal p-2 border-0'
                 title={t('View')}
                 aria-label={t('View')}

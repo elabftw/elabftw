@@ -1987,3 +1987,16 @@ input:user-invalid {
   height: 100px;
   width: 300px;
 }
+
+
+.filter-menu {
+  min-width: 18rem;
+}
+
+.filter-menu .ts-wrapper {
+  width: 100%;
+}
+
+.filter-menu .ts-control {
+  min-height: 2.25rem;
+}

@@ -20,6 +20,7 @@ import { notify } from './notify';
 import { entity } from './getEntity';
 import { mount } from 'svelte';
 import SearchBarSv from './components/SearchBar.svelte';
+import $ from 'jquery';
 
 const params = new URLSearchParams(document.location.search.slice(1));
 
@@ -37,76 +38,6 @@ if (searchBar) {
     },
   });
 }
-
-/*
-// a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
-function getFilterValueFromElement(element: HTMLElement): string {
-  const escapeDoubleQuotes = (string: string): string => {
-    // escape double quotes if not already escaped
-    return string.replace(/(?<!\\)"/g, '\\"');
-  };
-  const handleDate = (): string => {
-    const date = (document.getElementById('date') as HTMLInputElement).value;
-    const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
-    const dateOperatorEl = document.getElementById('dateOperator') as HTMLSelectElement;
-    const dateOperator = dateOperatorEl.options[dateOperatorEl.selectedIndex].value;
-    if (date === '') {
-      return '';
-    }
-    if (dateTo === '') {
-      return dateOperator + date;
-    }
-    return date + '..' + dateTo;
-  };
-  const handleMetadata = (): string => {
-    const metakeyEl = document.getElementById('metakey') as HTMLSelectElement;
-    const metakey = metakeyEl.options[metakeyEl.selectedIndex].value;
-    const metavalue = (document.getElementById('metavalue') as HTMLInputElement).value;
-    if (metakey === '' || metavalue === '') {
-      return '';
-    }
-    const keyQuotes = getQuotes(metakey);
-    const valueQuotes = getQuotes(metavalue);
-    return keyQuotes + escapeDoubleQuotes(metakey) + keyQuotes + ':' + valueQuotes + escapeDoubleQuotes(metavalue) + valueQuotes;
-  };
-  if (element instanceof HTMLSelectElement) {
-    // clear action
-    if (element.options[element.selectedIndex].dataset.action === 'clear') {
-      return '';
-    }
-    if (element.id === 'dateOperator') {
-      return handleDate();
-    }
-    if (element.id === 'metakey') {
-      return handleMetadata();
-    }
-    return escapeDoubleQuotes(element.options[element.selectedIndex].value);
-  }
-  if (element instanceof HTMLInputElement) {
-    if (element.id === 'date') {
-      return handleDate();
-    }
-    if (element.id === 'dateTo') {
-      return handleDate();
-    }
-    if (element.id === 'metavalue') {
-      return handleMetadata();
-    }
-  }
-  return '';
-}
-*/
-
-/*
-// don't add quotes unless we need them (space or some special chars exist)
-function getQuotes(filterValue: string): string {
-  let quotes = '';
-  if ([' ', '&', '|', '!', ':', '(', ')', '\'', '"'].some(value => filterValue.includes(value))) {
-    quotes = '"';
-  }
-  return quotes;
-}
-*/
 
 function addHiddenInputToMainSearchForm(name: string, value: string): void
 {
@@ -258,22 +189,31 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
     });
   }
+
   if (document.getElementById('filterOwner')) {
+    const dropdownRoot = document.getElementById('filterOwnerDropdown');
+    const menu = document.getElementById('filterOwnerMenu');
+
     const tsFilterOwner = new TomSelect('#filterOwner', {
+      dropdownParent: '#filterOwnerMenu',
       maxOptions: 512,
       plugins: {
         dropdown_header: {
           title: 'Users',
           html: buildDropdownToggleHeaderHtml(i18next.t('users'), 'ts-toggle-archived', i18next.t('show-archived')),
         },
-        dropdown_input: {},
         remove_button: {},
       },
+
       onInitialize(this: AnyTS) {
         this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
         this._showArchived = false;
         applyToggleFilter(this, '_showArchived', isArchivedOption);
+
+        this.wrapper.classList.add('w-100');
+        this.control.classList.add('w-100');
       },
+
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam('owner', value);
 
@@ -291,15 +231,14 @@ document.addEventListener('DOMContentLoaded', () => {
         option(data: AnyTS, escape: (s: string) => string) {
           const optEl = data.$option as HTMLOptionElement | undefined;
           const isArchived = optEl?.getAttribute('data-is-archived') === '1';
-          const icon = isArchived ? '<i class=\'fas fa-box-archive mr-1\'></i>' : '';
+          const icon = isArchived ? '<i class="fas fa-box-archive mr-1"></i>' : '';
           return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
         },
 
-        // item is the selected option
         item(data: AnyTS, escape: (s: string) => string) {
           const optEl = data.$option as HTMLOptionElement | undefined;
           const isArchived = optEl?.getAttribute('data-is-archived') === '1';
-          const icon = isArchived ? '<i class=\'fas fa-box-archive mr-1\'></i>' : '';
+          const icon = isArchived ? '<i class="fas fa-box-archive mr-1"></i>' : '';
           return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
         },
       },
@@ -311,67 +250,35 @@ document.addEventListener('DOMContentLoaded', () => {
         tsFilterOwner.open();
       });
     });
+
+    if (dropdownRoot) {
+      $(dropdownRoot).on('shown.bs.dropdown', function() {
+        tsFilterOwner.open();
+
+        window.requestAnimationFrame(() => {
+          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
+          input?.focus();
+        });
+
+        bindDropdownToggle(tsFilterOwner, '.ts-toggle-archived', '_showArchived', () => {
+          applyToggleFilter(tsFilterOwner, '_showArchived', isArchivedOption);
+          tsFilterOwner.open();
+        });
+      });
+
+      $(dropdownRoot).on('hide.bs.dropdown', function() {
+        tsFilterOwner.close();
+        tsFilterOwner.blur();
+      });
+    }
+
+    if (menu) {
+      $(menu).on('click', function(event) {
+        event.stopPropagation();
+      });
+    }
   }
 
-
-  /*
-  // add a change event listener to all elements that helps constructing the query string
-  document.querySelectorAll('.filterHelper').forEach(el => {
-    el.addEventListener('change', event => {
-      const elem = event.currentTarget as HTMLElement;
-      const curVal = (document.getElementById('extendedArea') as HTMLInputElement).value;
-      const hasInput = curVal.length != 0;
-      const hasSpace = curVal.endsWith(' ');
-      const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
-      let filterName = elem.dataset.filter ? elem.dataset.filter : (elem as HTMLInputElement).name;
-
-      // look if the filter key already exists in the search input
-      // paste the regex on regex101.com to understand it
-      const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
-      const operatorRegex = '(?:[<>]=?|!?=)?';
-      let valueRegex = baseRegex;
-
-      if (filterName === 'date') {
-        // date can use operator
-        valueRegex = operatorRegex + baseRegex;
-      }
-      if (filterName === 'extrafield') {
-        // extrafield has key and value so we need the regex above twice
-        valueRegex = baseRegex + ':' + baseRegex;
-      }
-      const regex = new RegExp(filterName + ':' + valueRegex + '\\s?');
-      const found = curVal.match(regex);
-      // default value is clearing everything
-      let filter = '';
-      let filterValue = getFilterValueFromElement(elem as HTMLElement);
-      let quotes = getQuotes(filterValue);
-      // but if we have a correct value, we add the filter
-      if (filterValue !== '') {
-        if (filterName === 'date') {
-          quotes = '';
-        }
-
-        if (filterName === '(?:author|group)') {
-          filterName = filterValue.split(':')[0];
-          filterValue = filterValue.substring(filterName.length + 1);
-        }
-
-        filter = filterName + ':' + quotes + filterValue + quotes;
-
-        if (filterName === 'extrafield') {
-          filter = `${filterName}:${filterValue}`;
-        }
-      }
-
-      if (found) {
-        searchInput.value = curVal.replace(regex, filter + (filter === '' ? '' : ' '));
-      } else {
-        searchInput.value = searchInput.value + addSpace + filter;
-      }
-      //SearchSyntaxHighlighting.update(searchInput.value);
-    });
-  });
- */
   // FILTERS HANDLER FOR THE SHOW PAGE
   document.querySelectorAll('.filterAuto').forEach(el => {
     el.addEventListener('change', event => {
@@ -809,105 +716,110 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   function setSearchQuery(newValue: string): void {
-  document.dispatchEvent(new CustomEvent('search-query:set', {
-    detail: newValue,
-  }));
-}
-
-  function getQuotes(filterValue: string): string {
-  if (filterValue === '') {
-    return '';
+    document.dispatchEvent(new CustomEvent('search-query:set', {
+      detail: newValue,
+    }));
   }
 
-  if (/[\s()&|!:]/.test(filterValue)) {
-    if (!filterValue.includes('"')) {
+  function getQuotes(filterValue: string): string {
+    if (filterValue === '') {
+      return '';
+    }
+
+    if (/[\s()&|!:]/.test(filterValue)) {
+      if (!filterValue.includes('"')) {
+        return '"';
+      }
+
+      if (!filterValue.includes('\'')) {
+        return '\'';
+      }
+
       return '"';
     }
 
-    if (!filterValue.includes('\'')) {
-      return '\'';
-    }
-
-    return '"';
+    return '';
   }
 
-  return '';
-}
+  function updateSearchQueryFromFilter(filterName: string, rawFilterValue: string): string {
+    const curVal = (document.getElementById('extendedArea') as HTMLInputElement).value;
+    const hasInput = curVal.length !== 0;
+    const hasSpace = curVal.endsWith(' ');
+    const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
 
-function updateSearchQueryFromFilter(filterName: string, rawFilterValue: string): string {
-  const curVal = (document.getElementById('extendedArea') as HTMLInputElement).value;
-  const hasInput = curVal.length !== 0;
-  const hasSpace = curVal.endsWith(' ');
-  const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
+    const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
+    const operatorRegex = '(?:[<>]=?|!?=)?';
+    let valueRegex = baseRegex;
 
-  const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
-  const operatorRegex = '(?:[<>]=?|!?=)?';
-  let valueRegex = baseRegex;
-
-  if (filterName === 'date') {
-    valueRegex = operatorRegex + baseRegex;
-  }
-
-  if (filterName === 'extrafield') {
-    valueRegex = baseRegex + ':' + baseRegex;
-  }
-
-  const regex = new RegExp(filterName + ':' + valueRegex + '\\s?');
-  const found = curVal.match(regex);
-
-  let filter = '';
-  let filterValue = rawFilterValue;
-  let quotes = getQuotes(filterValue);
-
-  if (filterValue !== '') {
     if (filterName === 'date') {
-      quotes = '';
+      valueRegex = operatorRegex + baseRegex;
     }
-
-    if (filterName === '(?:author|group)') {
-      filterName = filterValue.split(':')[0];
-      filterValue = filterValue.substring(filterName.length + 1);
-    }
-
-    filter = filterName + ':' + quotes + filterValue + quotes;
 
     if (filterName === 'extrafield') {
-      filter = `${filterName}:${filterValue}`;
+      valueRegex = baseRegex + ':' + baseRegex;
     }
+
+    const regex = new RegExp(filterName + ':' + valueRegex + '\\s?');
+    const found = curVal.match(regex);
+
+    let filter = '';
+    let filterValue = rawFilterValue;
+    let quotes = getQuotes(filterValue);
+
+    if (filterValue !== '') {
+      if (filterName === 'date') {
+        quotes = '';
+      }
+
+      if (filterName === '(?:author|group)') {
+        filterName = filterValue.split(':')[0];
+        filterValue = filterValue.substring(filterName.length + 1);
+      }
+
+      filter = filterName + ':' + quotes + filterValue + quotes;
+
+      if (filterName === 'extrafield') {
+        filter = `${filterName}:${filterValue}`;
+      }
+    }
+
+    return found
+      ? curVal.replace(regex, filter + (filter === '' ? '' : ' '))
+      : curVal + addSpace + filter;
   }
 
-   return found
-    ? curVal.replace(regex, filter + (filter === '' ? '' : ' '))
-    : curVal + addSpace + filter;
-}
-
   function initTeamScopedFilter(cfg: {
-    selectId: string;         // e.g. "categoryFilter"
-    placeholderId: string;    // e.g. "categoryFilterPlaceholder"
-    title: string;            // e.g. "Categories"
-    param: string;            // e.g. "category"
+    selectId: string;
+    dropdownId: string;
+    menuId: string;
+    title: string;
+    param: string;
   }) {
-    const el = document.getElementById(cfg.selectId);
+    const el = document.getElementById(cfg.selectId) as HTMLSelectElement | null;
     if (!el) return;
 
-    const control = new TomSelect(`#${cfg.selectId}`, {
+    const dropdownRoot = document.getElementById(cfg.dropdownId);
+    const menu = document.getElementById(cfg.menuId);
+
+    const control = new TomSelect(el, {
+      dropdownParent: `#${cfg.menuId}`,
       maxOptions: 512,
       plugins: {
         dropdown_header: {
           title: cfg.title,
           html: buildDropdownToggleHeaderHtml(cfg.title, 'ts-toggle-show-all', i18next.t('show-all')),
         },
-        dropdown_input: {},
         remove_button: {},
       },
 
       onInitialize(this: TeamScopedTomSelect) {
-        document.getElementById(cfg.placeholderId)?.remove();
-
         this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
         this._showAll = false;
 
         applyTeamFilter(this);
+
+        this.wrapper.classList.add('w-100');
+        this.control.classList.add('w-100');
       },
 
       onChange(value: string | string[] | null | undefined) {
@@ -922,16 +834,28 @@ function updateSearchQueryFromFilter(filterName: string, rawFilterValue: string)
 
         reloadEntitiesShow();
       },
-
-      /*
-      onChange(value: string | string[] | null | undefined) {
-        syncMultiSelectParam(cfg.param, value);
-        reloadEntitiesShow();
-      },
-     */
     }) as TeamScopedTomSelect;
 
     control.on('dropdown_open', () => bindShowAllToggle(control));
+
+    if (dropdownRoot) {
+      $(dropdownRoot).on('shown.bs.dropdown', function() {
+        control.open();
+
+        window.requestAnimationFrame(() => {
+          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
+          input?.focus();
+        });
+
+        bindShowAllToggle(control);
+      });
+    }
+
+    if (menu) {
+      $(menu).on('click', function(event) {
+        event.stopPropagation();
+      });
+    }
 
     return control;
   }
@@ -939,49 +863,84 @@ function updateSearchQueryFromFilter(filterName: string, rawFilterValue: string)
   // category tomSelect
   initTeamScopedFilter({
     selectId: 'categoryFilter',
-    placeholderId: 'categoryFilterPlaceholder',
+    dropdownId: 'categoryFilterDropdown',
+    menuId: 'categoryFilterMenu',
     title: i18next.t('categories'),
     param: 'category',
   });
-
   // status tomSelect
   initTeamScopedFilter({
     selectId: 'statusFilter',
-    placeholderId: 'statusFilterPlaceholder',
+    dropdownId: 'statusFilterDropdown',
+    menuId: 'statusFilterMenu',
     title: i18next.t('status'),
     param: 'status',
   });
 
-  new TomSelect('#tagFilter', {
-    onInitialize: () => {
-      // remove the placeholder input once the select is ready
-      document.getElementById('tagFilterPlaceholder').remove();
-    },
-    onChange: (value: unknown) => {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('tags[]');
-      (value as string[]).forEach(tag => {
-        params.append('tags[]', tag);
-        url.searchParams.append('tags[]', tag);
-      });
-      if ((value as string[]).length === 0) {
-        url.searchParams.delete('tags[]');
-      }
-      addHiddenInputToMainSearchForm('tags[]', (value as string[]).toString());
 
-      window.history.replaceState({}, '', url.toString());
-      reloadEntitiesShow();
-    },
-    onItemAdd() {
-      this.setTextboxValue('');
-      // refresh the dropdown so it shows suggestions for new input
-      this.refreshOptions();
-    },
-    plugins: {
-      clear_button: {},
-      dropdown_input: {},
-      no_active_items: {},
-      remove_button: {},
-    },
-  });
+  if (document.getElementById('tagFilter')) {
+    const dropdownRoot = document.getElementById('tagFilterDropdown');
+    const menu = document.getElementById('tagFilterMenu');
+
+    const tsTagFilter = new TomSelect('#tagFilter', {
+      dropdownParent: '#tagFilterMenu',
+
+      onInitialize(this: AnyTS) {
+        this.wrapper.classList.add('w-100');
+        this.control.classList.add('w-100');
+      },
+
+      onChange: (value: unknown) => {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('tags[]');
+
+        (value as string[]).forEach(tag => {
+          params.append('tags[]', tag);
+          url.searchParams.append('tags[]', tag);
+        });
+
+        if ((value as string[]).length === 0) {
+          url.searchParams.delete('tags[]');
+        }
+
+        addHiddenInputToMainSearchForm('tags[]', (value as string[]).toString());
+
+        window.history.replaceState({}, '', url.toString());
+        reloadEntitiesShow();
+      },
+
+      onItemAdd() {
+        this.setTextboxValue('');
+        this.refreshOptions();
+      },
+
+      plugins: {
+        clear_button: {},
+        no_active_items: {},
+        remove_button: {},
+      },
+    });
+
+    if (dropdownRoot) {
+      $(dropdownRoot).on('shown.bs.dropdown', function() {
+        tsTagFilter.open();
+
+        window.requestAnimationFrame(() => {
+          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
+          input?.focus();
+        });
+      });
+
+      $(dropdownRoot).on('hide.bs.dropdown', function() {
+        tsTagFilter.close();
+        tsTagFilter.blur();
+      });
+    }
+
+    if (menu) {
+      $(menu).on('click', function(event) {
+        event.stopPropagation();
+      });
+    }
+  }
 });

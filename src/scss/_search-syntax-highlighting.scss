@@ -8,25 +8,26 @@
  */
 
 .search-bar-input-group {
+  background-color: #fff;
   width: 100%;
 }
 
 .search-highlight-input {
+  flex: 1 1 auto;
   min-width: 0;
   position: relative;
   width: 1%;
-  flex: 1 1 auto;
 }
 
 .search-highlight-input .highlight-layer,
 .search-highlight-input .syntax-input {
   box-sizing: border-box;
   display: block;
-  width: 100%;
+  line-height: 1.5;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: pre;
-  line-height: 1.5;
+  width: 100%;
 }
 
 .search-highlight-input .highlight-layer {
@@ -41,8 +42,8 @@
   padding: 0.375rem 0.75rem;
   pointer-events: none;
   position: absolute;
-  z-index: 1;
   scrollbar-width: none;
+  z-index: 1;
 }
 
 .search-highlight-input .highlight-layer::-webkit-scrollbar {

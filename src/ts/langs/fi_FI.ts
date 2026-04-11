@@ -115,6 +115,7 @@ const t = {
     "teams": "Tiimit",
     "template-title": "Malliotsikko",
     "today": "Tänään",
+    "toggle-pin": "Vaihda kiinnitys",
     "type-3-chars": "Hakuun vaaditaan vähintään 3 merkkiä",
     "unarchive-and-add-to-team": "Poista arkistosta ja lisää tiimiin {{team, string}}",
     "undefined-group": "Määrittelemätön ryhmä",

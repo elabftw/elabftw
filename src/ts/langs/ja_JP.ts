@@ -115,6 +115,7 @@ const t = {
     "teams": "チーム",
     "template-title": "テンプレートタイトル",
     "today": "今日",
+    "toggle-pin": "ピンを切り替え",
     "type-3-chars": "検索には少なくとも3文字が必要です",
     "unarchive-and-add-to-team": "アーカイブを解除してチーム {{team, string}} に追加",
     "undefined-group": "未定義のグループ",

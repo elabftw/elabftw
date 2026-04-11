@@ -77,11 +77,53 @@
   urlVersion += 1;
 }
 
-function getCurrentUrlTags(): string[] {
+  function getCurrentUrlOwner(): string {
+  return new URL(window.location.href).searchParams.get('owner')?.trim() ?? '';
+}
+
+function setOwnerInUrl(ownerId: number): void {
+  const url = new URL(window.location.href);
+  url.searchParams.set('owner', String(ownerId));
+
+  window.history.replaceState({}, '', url.toString());
+  bumpUrlVersion();
+}
+
+function handleOwnerClick(event: MouseEvent, ownerId: number): void {
+  if (
+    event.button !== 0 ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+  if (isOwnerSelected(ownerId)) {
+    clearInUrl('owner');
+    return;
+  }
+  setOwnerInUrl(ownerId);
+}
+
+  function isOwnerSelected(ownerId: number): boolean {
+  return getCurrentUrlOwner() === String(ownerId);
+}
+
+  function getCurrentUrlTags(): string[] {
   return new URL(window.location.href).searchParams
     .getAll('tags[]')
     .map(tag => tag.trim())
     .filter(Boolean);
+}
+
+function clearInUrl(param: string): void {
+  const url = new URL(window.location.href);
+  url.searchParams.delete(param);
+  window.history.replaceState({}, '', url.toString());
+  bumpUrlVersion();
 }
 
 function setSingleTagInUrl(tag: string): void {
@@ -92,6 +134,15 @@ function setSingleTagInUrl(tag: string): void {
   window.history.replaceState({}, '', url.toString());
   bumpUrlVersion();
 }
+
+  function isTagSelected(tag: string): boolean {
+    return getCurrentUrlTags().includes(tag);
+  }
+
+  const selectedOwner = $derived.by(() => {
+    urlVersion;
+    return getCurrentUrlOwner();
+  });
 
 function handleTagClick(event: MouseEvent, tag: string): void {
   if (
@@ -105,25 +156,38 @@ function handleTagClick(event: MouseEvent, tag: string): void {
   }
 
   event.preventDefault();
+
+  if (isTagSelected(tag)) {
+    clearInUrl('tags[]');
+    return;
+  }
+
   setSingleTagInUrl(tag);
 }
 
-  $effect(() => {
-    urlVersion;
+  const selectedTags = $derived.by(() => {
+  urlVersion;
+  return getCurrentUrlTags();
+});
 
-    const currentType = entityType;
-    const currentLimit = limit;
-    const currentQ = $searchQuery.trim();
-    const currentTags = getCurrentUrlTags();
 
-    void loadEntities(currentType, currentLimit, currentQ, currentTags);
-  });
+$effect(() => {
+  urlVersion;
 
+  const currentType = entityType;
+  const currentLimit = limit;
+  const currentQ = $searchQuery.trim();
+  const currentTags = getCurrentUrlTags();
+  const currentOwner = getCurrentUrlOwner();
+
+  void loadEntities(currentType, currentLimit, currentQ, currentTags, currentOwner);
+});
   async function loadEntities(
     currentType: EntityType,
     currentLimit: number,
     currentQ: string,
     currentTags: string[],
+    currentOwner: string,
   ): Promise<void> {
     const seq = ++requestSeq;
     isLoading = true;
@@ -143,6 +207,10 @@ function handleTagClick(event: MouseEvent, tag: string): void {
 
       if (currentTags.length > 0) {
         params['tags[]'] = currentTags;
+      }
+
+      if (currentOwner.length > 0) {
+        params.owner = currentOwner;
       }
 
       const payload = await ApiC.getJson(currentType, params) as EntityListItem[] | { items?: EntityListItem[] };
@@ -357,7 +425,14 @@ function handleTagClick(event: MouseEvent, tag: string): void {
 
           <div class='owner'>
             {#if entity.userid != null && currentUserId !== entity.userid && !isAnon}
-              {t('by')} <a href={`?owner=${entity.userid}`}>{entity.fullname}</a>
+              {t('by')}
+              <a
+                class={`owner ${selectedOwner === String(entity.userid) ? 'owner-selected' : ''}`}
+                href={`?owner=${entity.userid}`}
+                onclick={event => handleOwnerClick(event, entity.userid!)}
+              >
+                {entity.fullname}
+              </a>
             {/if}
 
             {#if entity.team != null && currentTeam !== entity.team && !isAnon && entity.team_name}
@@ -374,13 +449,13 @@ function handleTagClick(event: MouseEvent, tag: string): void {
 
 
           <p class='my-2'>
-            {#if entity.tags_decoded.length > 0}
+            {#if (entity.tags_decoded?.length ?? 0) > 0}
               <span class='d-inline-flex flex-wrap'>
                 <i class='fas fa-tags mr-1 fa-fw'></i>
 
-                {#each entity.tags_decoded as tag, tagIndex (`${entity.id}-${tag.id ?? tag.tag}-${tagIndex}`)}
+                {#each entity.tags_decoded ?? [] as tag, tagIndex (`${entity.id}-${tag.id}-${tagIndex}`)}
                   <a
-                    class={`tag mathjax-ignore margin-1px ${tag.is_favorite === 1 ? 'favorite' : ''}`}
+                    class={`tag mathjax-ignore margin-1px ${tag.is_favorite ? 'favorite' : ''} ${selectedTags.includes(tag.tag) ? 'tag-selected' : ''}`}
                     href={`${resolvedToPage}?mode=show&tags%5B%5D=${encodeURIComponent(tag.tag)}`}
                     onclick={event => handleTagClick(event, tag.tag)}
                   >
@@ -473,7 +548,16 @@ function handleTagClick(event: MouseEvent, tag: string): void {
 
         <div class='d-flex justify-content-end ml-auto text-nowrap'>
           <div>
-            <!-- toggle-pin intentionally left out for now -->
+            <button
+              type='button'
+              title={t('toggle-pin')}
+              aria-label={t('toggle-pin')}
+              data-action='toggle-pin'
+              data-id={entity.id}
+              class={`btn ${entity.is_pinned ? 'bgnd-gray' : 'hl-hover-gray'} p-2 mr-2 lh-normal border-0`}
+            >
+              <i class={`fas fa-thumbtack ${!entity.is_pinned ? 'color-weak' : ''} fa-fw`}></i>
+            </button>
           </div>
         </div>
       </section>

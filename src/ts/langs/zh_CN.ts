@@ -115,6 +115,7 @@ const t = {
     "teams": "团队",
     "template-title": "模板标题",
     "today": "今天",
+    "toggle-pin": "切换固定状态",
     "type-3-chars": "至少需要 3 个字符才能搜索",
     "unarchive-and-add-to-team": "取消存档并添加到团队 {{team, string}}",
     "undefined-group": "默认分组",

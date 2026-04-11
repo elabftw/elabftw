@@ -115,6 +115,7 @@ const t = {
     "teams": "Týmy",
     "template-title": "Název šablony",
     "today": "Dnes",
+    "toggle-pin": "Přepínací pin",
     "type-3-chars": "Pro vyhledávání jsou vyžadovány alespoň 3 znaky",
     "unarchive-and-add-to-team": "Rozarchivovat a přidat do týmu {{team, string}}",
     "undefined-group": "Nedefinovaná skupina",

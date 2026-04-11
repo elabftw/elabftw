@@ -115,6 +115,7 @@ const t = {
     "teams": "Meeskonnad",
     "template-title": "Malli pealkiri",
     "today": "Täna",
+    "toggle-pin": "Kinnita/lahti",
     "type-3-chars": "Otsimiseks on vaja vähemalt 3 tähemärki",
     "unarchive-and-add-to-team": "Tühista arhiivist ja lisa meeskonda {{team, string}}",
     "undefined-group": "Määratlemata rühm",

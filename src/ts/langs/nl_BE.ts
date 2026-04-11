@@ -115,6 +115,7 @@ const t = {
     "teams": "Teams",
     "template-title": "Sjabloon titel",
     "today": "Vandaag",
+    "toggle-pin": "Wijzig pin",
     "type-3-chars": "Er zijn minimaal 3 tekens nodig om te zoeken",
     "unarchive-and-add-to-team": "Uit het archief halen en toevoegen aan team {{team, string}}",
     "undefined-group": "Ongedefinieerde groep",

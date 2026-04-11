@@ -115,6 +115,7 @@ const t = {
     "teams": "Команды",
     "template-title": "Название шаблона",
     "today": "Сегодня",
+    "toggle-pin": "Переключить контакт",
     "type-3-chars": "Для поиска требуется не менее 3 символов.",
     "unarchive-and-add-to-team": "Разархивировать и добавить в команду {{team, string}}",
     "undefined-group": "Неопределенная группа",

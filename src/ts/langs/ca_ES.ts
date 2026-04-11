@@ -115,6 +115,7 @@ const t = {
     "teams": "Equips",
     "template-title": "Títol de la plantilla",
     "today": "Avui",
+    "toggle-pin": "Activa/desactiva el pin",
     "type-3-chars": "Calen almenys 3 caràcters per cercar",
     "unarchive-and-add-to-team": "Desarxivar i afegir a l'equip {{team, string}}",
     "undefined-group": "Grup no definit",

@@ -115,6 +115,7 @@ const t = {
     "teams": "Jamoalar",
     "template-title": "Shablon sarlavhasi",
     "today": "Bugun",
+    "toggle-pin": "PIN-kodni almashtirish",
     "type-3-chars": "Qidiruv uchun kamida 3 ta belgi kerak",
     "unarchive-and-add-to-team": "Arxivdan chiqaring va {{team, string}} jamoasiga qo'shing",
     "undefined-group": "Belgilanmagan guruh",

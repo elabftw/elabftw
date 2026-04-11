@@ -115,6 +115,7 @@ const t = {
     "teams": "Zespoły",
     "template-title": "Tytuł szablonu",
     "today": "Dzisiaj",
+    "toggle-pin": "Przełącz pinezkę",
     "type-3-chars": "Do wyszukiwania wymagane są co najmniej 3 znaki",
     "unarchive-and-add-to-team": "Wypakuj z archiwum i dodaj do zespołu {{team, string}}",
     "undefined-group": "Niezdefiniowana grupa",

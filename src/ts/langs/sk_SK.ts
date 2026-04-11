@@ -115,6 +115,7 @@ const t = {
     "teams": "Timy",
     "template-title": "Názov šablóny",
     "today": "Dnes",
+    "toggle-pin": "Prepnúť pripnúť",
     "type-3-chars": "Na vyhľadávanie sú potrebné aspoň 3 znaky",
     "unarchive-and-add-to-team": "Zrušiť archiváciu a pridať do tímu {{team, string}}",
     "undefined-group": "Nedefinovaná skupina",

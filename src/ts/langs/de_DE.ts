@@ -115,6 +115,7 @@ const t = {
     "teams": "Teams",
     "template-title": "Titel der Vorlage",
     "today": "Heute",
+    "toggle-pin": "Pin umschalten",
     "type-3-chars": "Mindestens 3 Zeichen sind für die Suche erforderlich",
     "unarchive-and-add-to-team": "Entarchivieren und hinzufügen zu Team {{team, string}}",
     "undefined-group": "Unbestimmte Gruppe",

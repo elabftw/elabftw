@@ -115,6 +115,7 @@ const t = {
     "teams": "팀",
     "template-title": "템플릿 제목",
     "today": "오늘",
+    "toggle-pin": "핀 전환",
     "type-3-chars": "검색하려면 최소 3자가 필요합니다.",
     "unarchive-and-add-to-team": "보관을 해제하고 팀 {{team, string}}에 추가",
     "undefined-group": "정의되지 않은 그룹",

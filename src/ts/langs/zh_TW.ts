@@ -115,6 +115,7 @@ const t = {
     "teams": "團隊",
     "template-title": "模板標題",
     "today": "今天",
+    "toggle-pin": "更改釘選狀態",
     "type-3-chars": "搜尋至少需要 3 個字元。",
     "unarchive-and-add-to-team": "解壓縮並加入到團隊 {{team, string}}",
     "undefined-group": "未定義的群組",

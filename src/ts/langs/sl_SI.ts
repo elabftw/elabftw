@@ -115,6 +115,7 @@ const t = {
     "teams": "Ekipe",
     "template-title": "Naslov predloge",
     "today": "Danes",
+    "toggle-pin": "Preklopni žebljiček",
     "type-3-chars": "Za iskanje so potrebni vsaj 3 znaki",
     "unarchive-and-add-to-team": "Razarhiviraj in dodaj ekipi {{team, string}}",
     "undefined-group": "Nedefinirana skupina",

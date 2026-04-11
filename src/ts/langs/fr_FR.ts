@@ -115,6 +115,7 @@ const t = {
     "teams": "Équipes",
     "template-title": "Titre du modèle",
     "today": "Aujourd’hui",
+    "toggle-pin": "Épingler/Désépingler",
     "type-3-chars": "Au moins 3 caractères sont nécessaires pour effectuer une recherche",
     "unarchive-and-add-to-team": "Désarchiver et ajouter à l'équipe {{team, string}}",
     "undefined-group": "Groupe non défini",

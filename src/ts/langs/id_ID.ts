@@ -115,6 +115,7 @@ const t = {
     "teams": "Tim",
     "template-title": "Judul templat",
     "today": "Hari ini",
+    "toggle-pin": "Alihkan pin",
     "type-3-chars": "Setidaknya 3 karakter diperlukan untuk mencari",
     "unarchive-and-add-to-team": "Buka arsip dan tambahkan ke tim {{tim, string}}",
     "undefined-group": "Kelompok yang tidak terdefinisi",

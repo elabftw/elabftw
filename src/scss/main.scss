@@ -1269,6 +1269,8 @@ the form-control fails to do that so we do the border ourselves */
 /* TAGS */
 .tag {
   background-color: var(--firstlevel);
+  /* selected tag will get orange border */
+  border: 1px solid transparent;
   border-radius: 5px;
   color: var(--mediumstrong);
   font: bold 80% Verdana, Arial, Helvetica, sans-serif;
@@ -1999,4 +2001,20 @@ input:user-invalid {
 
 .filter-menu .ts-control {
   min-height: 2.25rem;
+}
+
+.tag-selected {
+  border: 1px solid var(--orange);
+  box-shadow: inset 0 0 0 1px var(--orange);
+}
+
+.owner {
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 1px;
+}
+
+.owner-selected {
+  border: 1px solid var(--orange);
+  box-shadow: inset 0 0 0 1px var(--orange);
 }

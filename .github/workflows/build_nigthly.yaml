@@ -9,6 +9,7 @@ permissions:
   contents: write
   id-token: write
   attestations: write
+  artifact-metadata: write
 
 jobs:
   buildandpush:
@@ -101,8 +102,8 @@ jobs:
 
       # ATTESTATION
       - name: Create build provenance attestation
-        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
         with:
-          subject-name: index.docker.io/elabftw/elabimg
+          subject-name: docker.io/elabftw/elabimg
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true

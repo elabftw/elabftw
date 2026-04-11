@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Qo'shish",
     "add-compound": "Murakkab qo'shing",
+    "add-task": "Add task",
     "add-team": "Jamoa qo'shing",
     "add-to-team": "Add selected users to team",
     "archive-user": "Arxiv foydalanuvchisi",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Oʻchirish",
     "delete-confirmation": "Delete {{num, number}} line(s)?",
     "delete-selected": "Delete selected rows",
+    "done": "Done",
     "dropzone-upload-area": "Yuklash uchun fayllarni bu yerga tashlang",
     "dropzone-filesize-limit": "Fayl hajmi chegarasi:",
     "edit": "Tahrirlash",
@@ -78,6 +81,7 @@ const t = {
     "no-self-links": "Elementni o'ziga bog'lashga ruxsat berilmaydi. Boshqa maqsadni tanlang.",
     "not-found": "No matching result found.",
     "not-set": "Belgilanmagan",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Hech narsa tanlanmagan!",
     "now": "Hozir",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

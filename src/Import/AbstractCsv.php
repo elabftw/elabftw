@@ -17,6 +17,7 @@ use League\Csv\Reader;
 use League\Csv\Info as CsvInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
+use Psr\Log\LoggerInterface;
 
 use function arsort;
 use function array_diff_key;
@@ -45,8 +46,9 @@ abstract class AbstractCsv extends AbstractImport
     public function __construct(
         protected Users $requester,
         protected UploadedFile $UploadedFile,
+        protected LoggerInterface $logger,
     ) {
-        parent::__construct($requester, $UploadedFile);
+        parent::__construct($requester, $UploadedFile, $logger);
         $this->reader = $this->preProcess();
     }
 

@@ -10,6 +10,8 @@ COPY tsconfig.json .
 COPY cypress.config.ts .
 COPY tests/cypress/ ./tests/cypress/
 COPY tests/_data/ ./tests/_data/
+COPY containers/cypress/package.json .
+COPY containers/cypress/package-lock.json .
 
 # create cypress output folders
 # use bash so we can expand the command (RUN will use sh)
@@ -19,7 +21,7 @@ RUN chown -R node:node tests/cypress
 USER node
 
 # add html validation tools to cypress
-RUN npm install typescript@^5 html-validate@^8 cypress-html-validate@^7 cypress-terminal-report
+RUN npm ci --ignore-scripts
 
 # overwrite default 'cypress run' entry point, will call it manually later
 # https://github.com/cypress-io/cypress-docker-images/tree/master/included#keep-the-container

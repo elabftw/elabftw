@@ -263,14 +263,18 @@ document.addEventListener('DOMContentLoaded', () => {
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam('owner', value);
 
+        /*
         const filterValue = Array.isArray(value)
           ? value.join(',')
           : (value ?? '');
 
-        const newQuery = updateSearchQueryFromFilter('owner', filterValue);
-        setSearchQuery(newQuery);
+         */
+        //const newQuery = updateSearchQueryFromFilter('owner', filterValue);
+        //setSearchQuery(newQuery);
 
-        reloadEntitiesShow();
+        /*
+        window.dispatchEvent(new CustomEvent('entity-filters-changed'));
+       */
       },
 
       render: {
@@ -722,6 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.history.replaceState({}, '', url.toString());
+    window.dispatchEvent(new CustomEvent('entity-filters-changed'));
   }
 
   function bindDropdownToggle(
@@ -871,14 +876,17 @@ document.addEventListener('DOMContentLoaded', () => {
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam(cfg.param, value);
 
+        /*
         const filterValue = Array.isArray(value)
           ? value.join(',')
           : (value ?? '');
+          window.dispatchEvent(new CustomEvent('entity-filters-changed'));
+         */
 
-        const newQuery = updateSearchQueryFromFilter(cfg.param, filterValue);
-        setSearchQuery(newQuery);
+        //const newQuery = updateSearchQueryFromFilter(cfg.param, filterValue);
+        //setSearchQuery(newQuery);
 
-        reloadEntitiesShow();
+        //reloadEntitiesShow();
       },
     }) as TeamScopedTomSelect;
 
@@ -952,7 +960,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addHiddenInputToMainSearchForm('tags[]', (value as string[]).toString());
 
         window.history.replaceState({}, '', url.toString());
-        reloadEntitiesShow();
+        window.dispatchEvent(new CustomEvent('entity-filters-changed'));
       },
 
       onItemAdd() {

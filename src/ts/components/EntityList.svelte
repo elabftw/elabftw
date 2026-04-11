@@ -70,14 +70,17 @@
   let requestSeq = 0;
 
   let urlVersion = $state(0);
+  let isLoading = $state(false);
+let isLoadingMore = $state(false);
+let hasMore = $state(true);
+let offset = $state(0);
+let sentinelEl: HTMLDivElement | null = null;
+let currentQueryKey = '';
 
   function bumpUrlVersion(): void {
-  urlVersion += 1;
-}
+    urlVersion += 1;
+  }
 
-  function getCurrentUrlOwner(): string {
-  return new URL(window.location.href).searchParams.get('owner')?.trim() ?? '';
-}
 
 function setOwnerInUrl(ownerId: number): void {
   const url = new URL(window.location.href);
@@ -107,8 +110,17 @@ function handleOwnerClick(event: MouseEvent, ownerId: number): void {
 }
 
   function isOwnerSelected(ownerId: number): boolean {
-  return getCurrentUrlOwner() === String(ownerId);
-}
+    return getCurrentUrlOwner() === String(ownerId);
+  }
+  function getCurrentUrlCategory(): string {
+    return new URL(window.location.href).searchParams.get('category')?.trim() ?? '';
+  }
+  function getCurrentUrlStatus(): string {
+    return new URL(window.location.href).searchParams.get('status')?.trim() ?? '';
+  }
+  function getCurrentUrlOwner(): string {
+    return new URL(window.location.href).searchParams.get('owner')?.trim() ?? '';
+  }
 
   function getCurrentUrlTags(): string[] {
   return new URL(window.location.href).searchParams
@@ -164,31 +176,73 @@ function handleTagClick(event: MouseEvent, tag: string): void {
 }
 
   const selectedTags = $derived.by(() => {
-  urlVersion;
-  return getCurrentUrlTags();
-});
+    urlVersion;
+    return getCurrentUrlTags();
+  });
 
-
-$effect(() => {
+  $effect(() => {
   urlVersion;
 
   const currentType = entityType;
   const currentLimit = limit;
   const currentQ = $searchQuery.trim();
-  const currentTags = getCurrentUrlTags();
+  const currentCategory = getCurrentUrlCategory();
+    const currentStatus = getCurrentUrlStatus();
   const currentOwner = getCurrentUrlOwner();
+  const currentTags = getCurrentUrlTags();
 
-  void loadEntities(currentType, currentLimit, currentQ, currentTags, currentOwner);
+  const nextQueryKey = JSON.stringify([
+    currentType,
+    currentLimit,
+    currentQ,
+    currentStatus,
+    currentCategory,
+    currentOwner,
+    currentTags,
+  ]);
+
+  if (nextQueryKey === currentQueryKey) {
+    return;
+  }
+
+  currentQueryKey = nextQueryKey;
+  offset = 0;
+  hasMore = true;
+  entities = [];
+
+  void loadEntities(
+    currentType,
+    currentLimit,
+    currentQ,
+    currentCategory,
+    currentStatus,
+    currentOwner,
+    currentTags,
+    0,
+    true,
+  );
 });
+
+
   async function loadEntities(
     currentType: EntityType,
     currentLimit: number,
     currentQ: string,
-    currentTags: string[],
+    currentCategory: string,
+    currentStatus: string,
     currentOwner: string,
+    currentTags: string[],
+    currentOffset: number,
+    replace: boolean,
   ): Promise<void> {
     const seq = ++requestSeq;
     error = '';
+
+    if (replace) {
+      isLoading = true;
+    } else {
+      isLoadingMore = true;
+    }
 
     const previousNotifOnError = ApiC.notifOnError;
     ApiC.notifOnError = false;
@@ -196,27 +250,47 @@ $effect(() => {
     try {
       const params: Record<string, string | number | string[]> = {
         limit: currentLimit,
+        offset: currentOffset,
       };
 
       if (currentQ.length > 0) {
         params.q = currentQ;
       }
 
+      if (currentCategory.length > 0) {
+        params['category'] = currentCategory;
+      }
+      if (currentStatus.length > 0) {
+        params['status'] = currentStatus;
+      }
+      if (currentOwner.length > 0) {
+        params['owner'] = currentOwner;
+      }
+
       if (currentTags.length > 0) {
         params['tags[]'] = currentTags;
       }
 
-      if (currentOwner.length > 0) {
-        params.owner = currentOwner;
-      }
-
+      // fetch entries
       const payload = await ApiC.getJson(currentType, params) as EntityListItem[] | { items?: EntityListItem[] };
 
       if (seq !== requestSeq) {
         return;
       }
 
-      entities = Array.isArray(payload) ? payload : (payload.items ?? []);
+      const nextEntities = Array.isArray(payload) ? payload : (payload.items ?? []);
+
+      if (replace) {
+        entities = nextEntities;
+      } else {
+        const existingIds = new Set(entities.map(item => item.id));
+        entities = [
+          ...entities,
+          ...nextEntities.filter(item => !existingIds.has(item.id)),
+        ];
+      }
+
+      hasMore = nextEntities.length === currentLimit;
     } catch (err) {
       if (seq !== requestSeq) {
         return;
@@ -224,8 +298,6 @@ $effect(() => {
 
       const apiError = err as Error & { status?: number };
 
-      // this will happen while user types an extended query that is incomplete
-      // so we ignore it
       if (apiError.status === 400) {
         error = '';
         return;
@@ -234,9 +306,18 @@ $effect(() => {
       error = apiError.message || t('Failed to load entries');
     } finally {
       ApiC.notifOnError = previousNotifOnError;
-      if (seq === requestSeq && !hasReportedInitialLoad) {
-        hasReportedInitialLoad = true;
-        onInitialLoadDone?.();
+
+      if (seq === requestSeq) {
+        if (replace) {
+          isLoading = false;
+        } else {
+          isLoadingMore = false;
+        }
+
+        if (!hasReportedInitialLoad) {
+          hasReportedInitialLoad = true;
+          onInitialLoadDone?.();
+        }
       }
     }
   }
@@ -304,17 +385,74 @@ $effect(() => {
     return entity.title || t('Untitled');
   }
 
-  onMount(() => {
+  $effect(() => {
+  if (!sentinelEl) {
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    entries => {
+      const entry = entries[0];
+
+      if (!entry?.isIntersecting) {
+        return;
+      }
+
+      if (isLoading || isLoadingMore || !hasMore || entities.length === 0) {
+        return;
+      }
+
+      const currentType = entityType;
+      const currentLimit = limit;
+      const currentQ = $searchQuery.trim();
+  const currentCategory = getCurrentUrlCategory();
+    const currentStatus = getCurrentUrlStatus();
+  const currentOwner = getCurrentUrlOwner();
+      const currentTags = getCurrentUrlTags();
+      const nextOffset = entities.length;
+
+      void loadEntities(
+        currentType,
+        currentLimit,
+        currentQ,
+        currentCategory,
+        currentStatus,
+        currentOwner,
+        currentTags,
+        nextOffset,
+        false,
+      );
+    },
+    {
+      rootMargin: '600px 0px',
+    },
+  );
+
+  observer.observe(sentinelEl);
+
+  return () => {
+    observer.disconnect();
+  };
+});
+
+onMount(() => {
   const handlePopState = (): void => {
     bumpUrlVersion();
   };
 
+   const handleFiltersChanged = (): void => {
+    bumpUrlVersion();
+  };
+
   window.addEventListener('popstate', handlePopState);
+  window.addEventListener('entity-filters-changed', handleFiltersChanged);
 
   return () => {
     window.removeEventListener('popstate', handlePopState);
+    window.removeEventListener('entity-filters-changed', handleFiltersChanged);
   };
 });
+
 </script>
 
 {#if error && entities.length === 0}
@@ -555,5 +693,12 @@ $effect(() => {
         </div>
       </section>
     {/each}
+  {#if hasMore}
+      <div bind:this={sentinelEl} class='py-3 text-center color-medium'>
+        {#if isLoadingMore}
+          {t('Loading...')}
+        {/if}
+      </div>
+    {/if}
   </div>
 {/if}

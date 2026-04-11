@@ -16,37 +16,68 @@
 
   <hr>
 
-  <div class='d-flex'>
     {# SEARCH BAR #}
-    {% set pageName = scriptName|replace({'.php': ''}) %}
-    {% set searchTarget = pageName %}
-    {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
-    {% if pageName == 'database' %}
-      {% set searchTarget = 'resources'|trans %}
-    {% endif %}
-    <form id='mainSearchForm' aria-label='{{ 'Search %s'|trans|format(searchTarget) }}' class='mb-2 flex-fill' method='get'>
-      {# next div is wrapper to position pre below textarea #}
-      <div class='input-group' style='position:relative;'>
-        <input
-          id='extendedArea'
-          name='q'
-          type='text'
-          class='form-control'
-          placeholder="{{ searchPlaceholder }}"
-          spellcheck='false'
-          aria-label="{{ searchPlaceholder }}"
-          value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
-        <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
-        <div class='input-group-append'>
-          <button class='btn btn-secondary' type='submit' aria-label='{{ 'Search'|trans }}' title='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass'></i></button>
-        </div>
-      </div>
-    </form>
-    {# wrap button into a div or it appears too tall #}
-    <div>
-      <button type='button' class='btn btn-neutral ml-2' aria-label='{{ 'Show full syntax'|trans }}' title='{{ 'Show full syntax'|trans }}' data-action='toggle-modal' data-target='advancedSearchModal'><i class='color-medium fa-regular fa-circle-question'></i></button>
+  <div class='d-flex'>
+  {% set pageName = scriptName|replace({'.php': ''}) %}
+  {% set searchTarget = pageName %}
+  {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
+  {% if pageName == 'database' %}
+    {% set searchTarget = 'resources'|trans %}
+  {% endif %}
+
+  <form
+    id='mainSearchForm'
+    aria-label='{{ 'Search %s'|trans|format(searchTarget) }}'
+    class='mb-2 flex-fill'
+    method='get'
+  >
+  <div
+  id='searchBar'
+  data-name='q'
+  data-value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
+  data-placeholder='{{ searchPlaceholder|e('html_attr') }}'
+  data-aria-label='{{ searchPlaceholder|e('html_attr') }}'
+  data-button-label='{{ 'Search'|trans|e('html_attr') }}'
+>
+  <div class='input-group w-100 search-bar-input-group search-bar-fallback'>
+    <input
+      id='extendedArea'
+      name='q'
+      type='text'
+      class='form-control'
+      placeholder='{{ searchPlaceholder|e('html_attr') }}'
+      aria-label='{{ searchPlaceholder|e('html_attr') }}'
+      spellcheck='false'
+      value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
+    />
+    <div class='input-group-append'>
+      <button
+        class='btn btn-secondary'
+        type='submit'
+        aria-label='{{ 'Search'|trans }}'
+        title='{{ 'Search'|trans }}'
+      >
+        <i class='fas fa-magnifying-glass'></i>
+      </button>
     </div>
   </div>
+</div>
+  </form>
+
+  <div>
+    <button
+      type='button'
+      class='btn btn-neutral ml-2'
+      aria-label='{{ 'Show full syntax'|trans }}'
+      title='{{ 'Show full syntax'|trans }}'
+      data-action='toggle-modal'
+      data-target='advancedSearchModal'
+    >
+      <i class='color-medium fa-regular fa-circle-question'></i>
+    </button>
+  </div>
+</div>
+
   {# END SEARCH BAR #}
 
   {# QUERY FILTERS #}

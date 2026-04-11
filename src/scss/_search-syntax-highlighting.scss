@@ -7,43 +7,83 @@
  * @package elabftw
  */
 
-@use './variables';
+.search-bar-input-group {
+  width: 100%;
+}
 
-#extendedArea {
+.search-highlight-input {
+  min-width: 0;
+  position: relative;
+  width: 1%;
+  flex: 1 1 auto;
+}
+
+.search-highlight-input .highlight-layer,
+.search-highlight-input .syntax-input {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: pre;
+  line-height: 1.5;
+}
+
+.search-highlight-input .highlight-layer {
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0;
+  color: inherit;
+  inset: 0;
+  padding: 0.375rem 0.75rem;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+  scrollbar-width: none;
+}
+
+.search-highlight-input .highlight-layer::-webkit-scrollbar {
+  display: none;
+}
+
+.search-highlight-input .highlight-layer code {
+  display: block;
+  font: inherit;
+  min-width: 100%;
+  white-space: pre;
+  width: max-content;
+}
+
+.search-highlight-input .highlight-layer.is-empty {
+  opacity: 0;
+}
+
+.search-highlight-input .syntax-input {
+  background-color: transparent;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  caret-color: var(--mediumstrong);
+  color: transparent;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+
+#extendedArea,
+.search-highlight-input .syntax-input {
+  background-color: transparent;
+}
+
+.search-highlight-input .syntax-input:focus {
   background-color: transparent;
   caret-color: var(--mediumstrong);
   color: transparent;
-  position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 
-#search-highlighting {
-  border-radius: 0.25rem;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 0;
-}
-
-#extendedArea,
-#search-highlighting {
-  margin: 0;
-  overflow: auto;
-  resize: vertical;
-}
-
-#extendedArea,
-#search-highlighting,
-#search-highlighting * {
-  font-family: monospace;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  overflow-wrap: break-word;
-  tab-size: 2;
-  white-space: pre-wrap;
-  word-break: normal;
-  word-spacing: normal;
-  word-wrap: break-word;
+.search-highlight-input .syntax-input::placeholder {
+  color: var(--secondary-color, #6c757d);
 }

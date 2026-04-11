@@ -17,11 +17,28 @@ import 'bootstrap/js/src/modal.js';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { notify } from './notify';
-import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
 import { entity } from './getEntity';
+import { mount } from 'svelte';
+import SearchBarSv from './components/SearchBar.svelte';
 
 const params = new URLSearchParams(document.location.search.slice(1));
 
+const searchBar = document.getElementById('searchBar');
+if (searchBar) {
+  searchBar.innerHTML = '';
+  mount(SearchBarSv, {
+    target: searchBar,
+    props: {
+      name: searchBar.dataset.name ?? 'q',
+      value: searchBar.dataset.value ?? '',
+      placeholder: searchBar.dataset.placeholder ?? 'Search',
+      ariaLabel: searchBar.dataset.ariaLabel ?? 'Search',
+      buttonLabel: searchBar.dataset.buttonLabel ?? 'Search',
+    },
+  });
+}
+
+/*
 // a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
 function getFilterValueFromElement(element: HTMLElement): string {
   const escapeDoubleQuotes = (string: string): string => {
@@ -78,7 +95,9 @@ function getFilterValueFromElement(element: HTMLElement): string {
   }
   return '';
 }
+*/
 
+/*
 // don't add quotes unless we need them (space or some special chars exist)
 function getQuotes(filterValue: string): string {
   let quotes = '';
@@ -87,6 +106,7 @@ function getQuotes(filterValue: string): string {
   }
   return quotes;
 }
+*/
 
 function addHiddenInputToMainSearchForm(name: string, value: string): void
 {
@@ -226,8 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // SEARCH RELATED CODE
-  const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
-  SearchSyntaxHighlighting.init(searchInput);
+  //const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
 
   // TomSelect for extra fields & owner search select
   if (document.getElementById('metakey')) {
@@ -255,6 +274,19 @@ document.addEventListener('DOMContentLoaded', () => {
         this._showArchived = false;
         applyToggleFilter(this, '_showArchived', isArchivedOption);
       },
+      onChange(value: string | string[] | null | undefined) {
+        syncMultiSelectParam('owner', value);
+
+        const filterValue = Array.isArray(value)
+          ? value.join(',')
+          : (value ?? '');
+
+        const newQuery = updateSearchQueryFromFilter('owner', filterValue);
+        setSearchQuery(newQuery);
+
+        reloadEntitiesShow();
+      },
+
       render: {
         option(data: AnyTS, escape: (s: string) => string) {
           const optEl = data.$option as HTMLOptionElement | undefined;
@@ -282,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
+  /*
   // add a change event listener to all elements that helps constructing the query string
   document.querySelectorAll('.filterHelper').forEach(el => {
     el.addEventListener('change', event => {
@@ -335,9 +368,10 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         searchInput.value = searchInput.value + addSpace + filter;
       }
-      SearchSyntaxHighlighting.update(searchInput.value);
+      //SearchSyntaxHighlighting.update(searchInput.value);
     });
   });
+ */
   // FILTERS HANDLER FOR THE SHOW PAGE
   document.querySelectorAll('.filterAuto').forEach(el => {
     el.addEventListener('change', event => {
@@ -773,6 +807,80 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+
+  function setSearchQuery(newValue: string): void {
+  document.dispatchEvent(new CustomEvent('search-query:set', {
+    detail: newValue,
+  }));
+}
+
+  function getQuotes(filterValue: string): string {
+  if (filterValue === '') {
+    return '';
+  }
+
+  if (/[\s()&|!:]/.test(filterValue)) {
+    if (!filterValue.includes('"')) {
+      return '"';
+    }
+
+    if (!filterValue.includes('\'')) {
+      return '\'';
+    }
+
+    return '"';
+  }
+
+  return '';
+}
+
+function updateSearchQueryFromFilter(filterName: string, rawFilterValue: string): string {
+  const curVal = (document.getElementById('extendedArea') as HTMLInputElement).value;
+  const hasInput = curVal.length !== 0;
+  const hasSpace = curVal.endsWith(' ');
+  const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
+
+  const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
+  const operatorRegex = '(?:[<>]=?|!?=)?';
+  let valueRegex = baseRegex;
+
+  if (filterName === 'date') {
+    valueRegex = operatorRegex + baseRegex;
+  }
+
+  if (filterName === 'extrafield') {
+    valueRegex = baseRegex + ':' + baseRegex;
+  }
+
+  const regex = new RegExp(filterName + ':' + valueRegex + '\\s?');
+  const found = curVal.match(regex);
+
+  let filter = '';
+  let filterValue = rawFilterValue;
+  let quotes = getQuotes(filterValue);
+
+  if (filterValue !== '') {
+    if (filterName === 'date') {
+      quotes = '';
+    }
+
+    if (filterName === '(?:author|group)') {
+      filterName = filterValue.split(':')[0];
+      filterValue = filterValue.substring(filterName.length + 1);
+    }
+
+    filter = filterName + ':' + quotes + filterValue + quotes;
+
+    if (filterName === 'extrafield') {
+      filter = `${filterName}:${filterValue}`;
+    }
+  }
+
+   return found
+    ? curVal.replace(regex, filter + (filter === '' ? '' : ' '))
+    : curVal + addSpace + filter;
+}
+
   function initTeamScopedFilter(cfg: {
     selectId: string;         // e.g. "categoryFilter"
     placeholderId: string;    // e.g. "categoryFilterPlaceholder"
@@ -804,8 +912,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam(cfg.param, value);
+
+        const filterValue = Array.isArray(value)
+          ? value.join(',')
+          : (value ?? '');
+
+        const newQuery = updateSearchQueryFromFilter(cfg.param, filterValue);
+        setSearchQuery(newQuery);
+
         reloadEntitiesShow();
       },
+
+      /*
+      onChange(value: string | string[] | null | undefined) {
+        syncMultiSelectParam(cfg.param, value);
+        reloadEntitiesShow();
+      },
+     */
     }) as TeamScopedTomSelect;
 
     control.on('dropdown_open', () => bindShowAllToggle(control));

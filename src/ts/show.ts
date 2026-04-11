@@ -19,19 +19,60 @@ import { ApiC } from './api';
 import { notify } from './notify';
 import { entity } from './getEntity';
 import { mount } from 'svelte';
+import { writable } from 'svelte/store';
 import SearchBarSv from './components/SearchBar.svelte';
+import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
+
+const target = document.getElementById('itemList');
+
+const initialQ = new URL(window.location.href).searchParams.get('q') ?? '';
+const searchQuery = writable(initialQ);
+
+let debounceTimer: number | undefined;
+
+searchQuery.subscribe(value => {
+  window.clearTimeout(debounceTimer);
+
+  debounceTimer = window.setTimeout(() => {
+    const trimmedValue = value.trim();
+    const url = new URL(window.location.href);
+
+    if (trimmedValue.length > 0) {
+      url.searchParams.set('q', trimmedValue);
+    } else {
+      url.searchParams.delete('q');
+    }
+
+    window.history.replaceState({}, '', url.toString());
+  }, 250);
+});
+
+if (target) {
+  target.innerHTML = '';
+
+  mount(EntityListSv, {
+    target,
+    props: {
+      entityType: entity.type,
+      limit: 15,
+      searchQuery,
+    },
+  });
+}
 
 const params = new URLSearchParams(document.location.search.slice(1));
 
 const searchBar = document.getElementById('searchBar');
 if (searchBar) {
+  // remove placeholder input
   searchBar.innerHTML = '';
   mount(SearchBarSv, {
     target: searchBar,
     props: {
       name: searchBar.dataset.name ?? 'q',
-      value: searchBar.dataset.value ?? '',
+      value: searchQuery,
+      searchQuery,
       placeholder: searchBar.dataset.placeholder ?? 'Search',
       ariaLabel: searchBar.dataset.ariaLabel ?? 'Search',
       buttonLabel: searchBar.dataset.buttonLabel ?? 'Search',

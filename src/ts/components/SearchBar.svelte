@@ -1,11 +1,12 @@
 <script lang='ts'>
   import { onMount } from 'svelte';
   import Prism from 'prismjs';
+  import { writable, type Writable } from 'svelte/store';
   import '../prism-elabftwquery';
 
   type Props = {
     name?: string;
-    value?: string;
+    searchQuery?: Writable<string>;
     placeholder?: string;
     ariaLabel?: string;
     buttonLabel?: string;
@@ -13,7 +14,7 @@
 
   const {
     name = 'q',
-    value: initialValue = '',
+    searchQuery = writable(''),
     placeholder = 'Search',
     ariaLabel = 'Search',
     buttonLabel = 'Search',
@@ -21,11 +22,12 @@
 
   let inputEl: HTMLInputElement;
   let overlayEl: HTMLDivElement;
-  let value = $state(initialValue);
+
+  const currentQuery = $derived($searchQuery ?? '');
 
   const highlighted = $derived(
     Prism.highlight(
-      value.length > 0 ? value : ' ',
+      currentQuery.length > 0 ? currentQuery : ' ',
       Prism.languages.elabftwquery,
       'elabftwquery',
     ),
@@ -39,7 +41,7 @@
   };
 
   const handleInput = (): void => {
-    value = inputEl.value;
+    searchQuery.set(inputEl.value);
     syncScroll();
   };
 
@@ -48,11 +50,11 @@
 
     const handleExternalSet = (event: Event): void => {
       const customEvent = event as CustomEvent<string>;
-      value = customEvent.detail ?? '';
+      searchQuery.set(customEvent.detail ?? '');
+
       queueMicrotask(() => {
         if (inputEl) {
-          inputEl.value = value;
-          inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+          inputEl.value = currentQuery;
           syncScroll();
         }
       });
@@ -70,7 +72,7 @@
   <div class='search-highlight-input'>
     <div
       class='highlight-layer'
-      class:is-empty={!value}
+      class:is-empty={!currentQuery}
       bind:this={overlayEl}
       aria-hidden='true'
     >
@@ -89,7 +91,7 @@
       autocomplete='off'
       autocapitalize='off'
       autocorrect='off'
-      value={value}
+      value={currentQuery}
       oninput={handleInput}
       onscroll={syncScroll}
     />

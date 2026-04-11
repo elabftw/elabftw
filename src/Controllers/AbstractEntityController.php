@@ -137,9 +137,11 @@ abstract class AbstractEntityController implements ControllerInterface
 
         // get tags separately
         $tagsArr = array();
+        /*
         if (!empty($itemsArr)) {
             $tagsArr = $this->Entity->getTags($itemsArr);
         }
+         */
 
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->getQueryString());

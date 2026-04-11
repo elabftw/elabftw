@@ -428,7 +428,11 @@ abstract class AbstractEntity extends AbstractRest
         $this->bindExtendedValues($req);
         $this->Db->execute($req);
 
-        return $req->fetchAll();
+        $res = $req->fetchAll();
+        foreach ($res as &$entity) {
+            $entity['tags_decoded'] = json_decode($entity['tags_decoded'], true, 12, JSON_THROW_ON_ERROR);
+        }
+        return $res;
     }
 
     /**

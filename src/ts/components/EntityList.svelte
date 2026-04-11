@@ -1,5 +1,6 @@
 <script lang='ts'>
   import { ApiC } from '../api';
+  import { onMount } from 'svelte';
   import i18next from '../i18n';
   import type { Writable } from 'svelte/store';
 
@@ -9,8 +10,8 @@
 
   interface EntityTag {
   tag: string;
-  id?: number;
-  is_favorite?: boolean;
+  id: number;
+  is_favorite: boolean;
 }
 
   interface EntityListItem {
@@ -36,8 +37,7 @@
     date?: string | null;
     created_at?: string | null;
     is_pinned?: boolean;
-    tags?: EntityTag[] | string | null;
-    tags_id?: string | null;
+    tags_decoded?: EntityTag[] | null;
   }
 
   let {
@@ -51,7 +51,6 @@
     isAnon = false,
     archivedStateValue = 2,
     deletedStateValue = 3,
-    tagsByEntityId = {},
   } = $props<{
     entityType?: EntityType;
     toPage?: string;
@@ -63,7 +62,6 @@
     isAnon?: boolean;
     archivedStateValue?: number | string;
     deletedStateValue?: number | string;
-    tagsByEntityId?: Record<number, EntityTag[]>;
   }>();
 
   let entities = $state<EntityListItem[]>([]);
@@ -73,15 +71,60 @@
 
   const resolvedToPage = $derived(toPage ?? getDefaultPage(entityType));
 
+  let urlVersion = $state(0);
+
+  function bumpUrlVersion(): void {
+  urlVersion += 1;
+}
+
+function getCurrentUrlTags(): string[] {
+  return new URL(window.location.href).searchParams
+    .getAll('tags[]')
+    .map(tag => tag.trim())
+    .filter(Boolean);
+}
+
+function setSingleTagInUrl(tag: string): void {
+  const url = new URL(window.location.href);
+  url.searchParams.delete('tags[]');
+  url.searchParams.append('tags[]', tag);
+
+  window.history.replaceState({}, '', url.toString());
+  bumpUrlVersion();
+}
+
+function handleTagClick(event: MouseEvent, tag: string): void {
+  if (
+    event.button !== 0 ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+  setSingleTagInUrl(tag);
+}
+
   $effect(() => {
+    urlVersion;
+
     const currentType = entityType;
     const currentLimit = limit;
     const currentQ = $searchQuery.trim();
+    const currentTags = getCurrentUrlTags();
 
-    void loadEntities(currentType, currentLimit, currentQ);
+    void loadEntities(currentType, currentLimit, currentQ, currentTags);
   });
 
-  async function loadEntities(currentType: EntityType, currentLimit: number, currentQ: string): Promise<void> {
+  async function loadEntities(
+    currentType: EntityType,
+    currentLimit: number,
+    currentQ: string,
+    currentTags: string[],
+  ): Promise<void> {
     const seq = ++requestSeq;
     isLoading = true;
     error = '';
@@ -90,12 +133,16 @@
     ApiC.notifOnError = false;
 
     try {
-      const params: Record<string, string | number> = {
+      const params: Record<string, string | number | string[]> = {
         limit: currentLimit,
       };
 
       if (currentQ.length > 0) {
         params.q = currentQ;
+      }
+
+      if (currentTags.length > 0) {
+        params['tags[]'] = currentTags;
       }
 
       const payload = await ApiC.getJson(currentType, params) as EntityListItem[] | { items?: EntityListItem[] };
@@ -190,34 +237,21 @@
     return entity.userid === currentUserId || entityType === 'items' || isAdmin;
   }
 
-function getTags(entity: EntityListItem): EntityTag[] {
-  if (Array.isArray(entity.tags)) {
-    return entity.tags;
-  }
-
-  if (typeof entity.tags === 'string' && entity.tags.length > 0) {
-    const tagNames = entity.tags
-      .split('|')
-      .map(tag => tag.trim())
-      .filter(Boolean);
-
-    const tagIds = (entity.tags_id ?? '')
-      .split(',')
-      .map(id => id.trim())
-      .filter(Boolean);
-
-    return tagNames.map((tag, index) => ({
-      tag,
-      id: tagIds[index] ? Number(tagIds[index]) : undefined,
-      is_favorite: false,
-    }));
-  }
-
-  return tagsByEntityId[entity.id] ?? [];
-}
   function getDisplayTitle(entity: EntityListItem): string {
     return entity.title || t('Untitled');
   }
+
+  onMount(() => {
+  const handlePopState = (): void => {
+    bumpUrlVersion();
+  };
+
+  window.addEventListener('popstate', handlePopState);
+
+  return () => {
+    window.removeEventListener('popstate', handlePopState);
+  };
+});
 </script>
 
 {#if isLoading && entities.length === 0}
@@ -232,7 +266,6 @@ function getTags(entity: EntityListItem): EntityTag[] {
       {@const statusDateLabel = getStatusDateLabel(entityType)}
       {@const dateValue = template ? entity.created_at : entity.date}
       {@const nextStep = firstNextStep(entity.next_step)}
-      {@const itemTags = getTags(entity)}
       {@const createLabel = getCreateLabel(entityType)}
       {@const createDataType = getCreateDataType(entityType)}
 
@@ -341,21 +374,22 @@ function getTags(entity: EntityListItem): EntityTag[] {
 
 
           <p class='my-2'>
-  {#if itemTags.length > 0}
-    <span class='d-inline-flex flex-wrap'>
-      <i class='fas fa-tags mr-1 fa-fw'></i>
+            {#if entity.tags_decoded.length > 0}
+              <span class='d-inline-flex flex-wrap'>
+                <i class='fas fa-tags mr-1 fa-fw'></i>
 
-      {#each itemTags as tag, tagIndex (`${entity.id}-${tag.id ?? tag.tag}-${tagIndex}`)}
-        <a
-          class={`tag mathjax-ignore margin-1px ${tag.is_favorite ? 'favorite' : ''}`}
-          href={`${resolvedToPage}?mode=show&tags%5B%5D=${encodeURIComponent(tag.tag)}`}
-        >
-          {tag.tag}
-        </a>
-      {/each}
-    </span>
-  {/if}
-</p>
+                {#each entity.tags_decoded as tag, tagIndex (`${entity.id}-${tag.id ?? tag.tag}-${tagIndex}`)}
+                  <a
+                    class={`tag mathjax-ignore margin-1px ${tag.is_favorite === 1 ? 'favorite' : ''}`}
+                    href={`${resolvedToPage}?mode=show&tags%5B%5D=${encodeURIComponent(tag.tag)}`}
+                    onclick={event => handleTagClick(event, tag.tag)}
+                  >
+                    {tag.tag}
+                  </a>
+                {/each}
+              </span>
+            {/if}
+          </p>
 
           <div class='d-flex flex-row'>
             {#if template}

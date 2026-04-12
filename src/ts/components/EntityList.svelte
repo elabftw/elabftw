@@ -208,7 +208,6 @@ function handleTagClick(event: MouseEvent, tag: string): void {
   currentQueryKey = nextQueryKey;
   offset = 0;
   hasMore = true;
-  entities = [];
 
   void loadEntities(
     currentType,

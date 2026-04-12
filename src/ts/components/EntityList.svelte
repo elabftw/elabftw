@@ -1,8 +1,8 @@
 <script lang='ts'>
-  import { ApiC } from '../api';
   import { onMount } from 'svelte';
-  import i18next from '../i18n';
   import type { Writable } from 'svelte/store';
+  import { ApiC } from '../api';
+  import i18next from '../i18n';
 
   type EntityType = 'experiments' | 'items' | 'experiments_templates' | 'items_types';
 

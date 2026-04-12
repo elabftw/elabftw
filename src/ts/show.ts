@@ -23,6 +23,7 @@ import { writable } from 'svelte/store';
 import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
+import { core } from './core';
 
 const target = document.getElementById('entityList');
 const skeleton = document.getElementById('itemListSkeleton');
@@ -61,6 +62,10 @@ if (target) {
       entityType: entity.type,
       limit: 15,
       searchQuery,
+      currentUserId: core.currentUserid,
+      currentTeam: core.currentTeam,
+      isAdmin: core.isAdmin,
+      isAnon: core.isAnon,
       onInitialLoadDone: handleInitialLoadDone,
     },
   });

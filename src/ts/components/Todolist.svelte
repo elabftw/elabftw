@@ -7,6 +7,7 @@
   import { makeSortableGreatAgain, toRelative } from '../misc';
 
   const t = i18next.t.bind(i18next);
+
   let locale = 'en-gb';
 
   let malleable: Malle | null = null;

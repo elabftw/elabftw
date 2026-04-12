@@ -3,6 +3,10 @@
   import type { Writable } from 'svelte/store';
   import { ApiC } from '../api';
   import i18next from '../i18n';
+  import { State, type StateValue } from '../state.auto';
+  //
+  // this is only used in the template, so it is stripped by svelte, copy it so it stays
+  const EntityState = State;
 
   type EntityType = 'experiments' | 'items' | 'experiments_templates' | 'items_types';
 
@@ -15,7 +19,7 @@
   interface EntityListItem {
     id: number;
     title: string | null;
-    state?: number | string | null;
+    state: StateValue;
     category?: string | null;
     category_title?: string | null;
     category_color?: string | null;
@@ -48,8 +52,6 @@
     currentTeam = null,
     isAdmin = false,
     isAnon = false,
-    archivedStateValue = 2,
-    deletedStateValue = 3,
     onInitialLoadDone,
   } = $props<{
     entityType?: EntityType;
@@ -59,8 +61,6 @@
     currentTeam?: number | null;
     isAdmin?: boolean;
     isAnon?: boolean;
-    archivedStateValue?: number | string;
-    deletedStateValue?: number | string;
     onInitialLoadDone?: () => void;
   }>();
 
@@ -71,11 +71,11 @@
 
   let urlVersion = $state(0);
   let isLoading = $state(false);
-let isLoadingMore = $state(false);
-let hasMore = $state(true);
-let offset = $state(0);
-let sentinelEl: HTMLDivElement | null = null;
-let currentQueryKey = '';
+  let isLoadingMore = $state(false);
+  let hasMore = $state(true);
+  let offset = $state(0);
+  let sentinelEl: HTMLDivElement | null = null;
+  let currentQueryKey = '';
 
   function bumpUrlVersion(): void {
     urlVersion += 1;
@@ -218,7 +218,7 @@ function handleTagClick(event: MouseEvent, tag: string): void {
     currentStatus,
     currentOwner,
     currentTags,
-    0,
+    offset,
     true,
   );
 });
@@ -369,14 +369,6 @@ function handleTagClick(event: MouseEvent, tag: string): void {
     return entity.category_color || 'bdbdbd';
   }
 
-  function isArchivedState(state: string | number | null | undefined): boolean {
-    return state === archivedStateValue || state === 'archived';
-  }
-
-  function isDeletedState(state: string | number | null | undefined): boolean {
-    return state === deletedStateValue || state === 'deleted';
-  }
-
   function canEditEntity(entity: EntityListItem): boolean {
     return entity.userid === currentUserId || entityType === 'items' || isAdmin;
   }
@@ -386,73 +378,72 @@ function handleTagClick(event: MouseEvent, tag: string): void {
   }
 
   $effect(() => {
-  if (!sentinelEl) {
-    return;
-  }
+    if (!sentinelEl) {
+      return;
+    }
 
-  const observer = new IntersectionObserver(
-    entries => {
-      const entry = entries[0];
+    const observer = new IntersectionObserver(
+      entries => {
+        const entry = entries[0];
 
-      if (!entry?.isIntersecting) {
-        return;
-      }
+        if (!entry?.isIntersecting) {
+          return;
+        }
 
-      if (isLoading || isLoadingMore || !hasMore || entities.length === 0) {
-        return;
-      }
+        if (isLoading || isLoadingMore || !hasMore || entities.length === 0) {
+          return;
+        }
 
-      const currentType = entityType;
-      const currentLimit = limit;
-      const currentQ = $searchQuery.trim();
-  const currentCategory = getCurrentUrlCategory();
-    const currentStatus = getCurrentUrlStatus();
-  const currentOwner = getCurrentUrlOwner();
-      const currentTags = getCurrentUrlTags();
-      const nextOffset = entities.length;
+        const currentType = entityType;
+        const currentLimit = limit;
+        const currentQ = $searchQuery.trim();
+        const currentCategory = getCurrentUrlCategory();
+        const currentStatus = getCurrentUrlStatus();
+        const currentOwner = getCurrentUrlOwner();
+        const currentTags = getCurrentUrlTags();
+        const nextOffset = entities.length;
 
-      void loadEntities(
-        currentType,
-        currentLimit,
-        currentQ,
-        currentCategory,
-        currentStatus,
-        currentOwner,
-        currentTags,
-        nextOffset,
-        false,
-      );
-    },
-    {
-      rootMargin: '600px 0px',
-    },
-  );
+        void loadEntities(
+          currentType,
+          currentLimit,
+          currentQ,
+          currentCategory,
+          currentStatus,
+          currentOwner,
+          currentTags,
+          nextOffset,
+          false,
+        );
+      },
+      {
+        rootMargin: '600px 0px',
+      },
+    );
 
-  observer.observe(sentinelEl);
+    observer.observe(sentinelEl);
 
-  return () => {
-    observer.disconnect();
-  };
-});
+    return () => {
+      observer.disconnect();
+    };
+  });
 
-onMount(() => {
-  const handlePopState = (): void => {
-    bumpUrlVersion();
-  };
+  onMount(() => {
+    const handlePopState = (): void => {
+      bumpUrlVersion();
+    };
 
    const handleFiltersChanged = (): void => {
-    bumpUrlVersion();
-  };
+      bumpUrlVersion();
+    };
 
-  window.addEventListener('popstate', handlePopState);
-  window.addEventListener('entity-filters-changed', handleFiltersChanged);
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('entity-filters-changed', handleFiltersChanged);
 
-  return () => {
-    window.removeEventListener('popstate', handlePopState);
-    window.removeEventListener('entity-filters-changed', handleFiltersChanged);
-  };
-});
-
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('entity-filters-changed', handleFiltersChanged);
+    };
+  });
 </script>
 
 {#if error && entities.length === 0}
@@ -497,11 +488,11 @@ onMount(() => {
               ></i>
             {/if}
 
-            {#if isArchivedState(entity.state)}
+            {#if entity.state === EntityState.Archived}
               <i class='fas fa-box-archive fa-fw'></i>
             {/if}
 
-            {#if isDeletedState(entity.state)}
+            {#if entity.state === EntityState.Deleted}
               <i class='fas fa-ban fa-fw color-danger'></i>
             {/if}
 
@@ -616,7 +607,7 @@ onMount(() => {
               <div class='btn left-icon mr-1 lh-normal p-2 border-0 bgnd-gray disabled'>
                 <i class='fas fa-lock fa-fw'></i>
               </div>
-            {:else if isDeletedState(entity.state)}
+            {:else if entity.state === EntityState.Deleted}
               <div
                 class='btn btn-secondary mr-1 lh-normal p-2 border-0'
                 data-action='restore-entity-showmode'

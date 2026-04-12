@@ -13,7 +13,9 @@
 type Core = {
   isAnon: boolean;
   isAuth: boolean;
+  isAdmin: boolean;
   currentTeam: number;
+  currentUserid: number;
 };
 
 const el = document.getElementById('core') as HTMLScriptElement | null;

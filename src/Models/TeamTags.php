@@ -179,20 +179,19 @@ final class TeamTags extends AbstractRest
         // pop one out and keep this one
         $idToKeep = array_pop($idsArr);
 
-        $sql = 'UPDATE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
+        $sql = 'UPDATE IGNORE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
         $updateReq = $this->Db->prepare($sql);
         $updateReq->bindParam(':target_tag_id', $idToKeep, PDO::PARAM_INT);
         $sql = 'DELETE FROM tags WHERE id = :id';
         $deleteReq = $this->Db->prepare($sql);
 
         foreach ($idsArr as $id) {
+            // delete first that id from the tags table
+            $deleteReq->bindParam(':id', $id, PDO::PARAM_INT);
+            $this->Db->execute($deleteReq);
             // update the references with the id that we keep
             $updateReq->bindParam(':tag_id', $id, PDO::PARAM_INT);
             $this->Db->execute($updateReq);
-
-            // and delete that id from the tags table
-            $deleteReq->bindParam(':id', $id, PDO::PARAM_INT);
-            $this->Db->execute($deleteReq);
         }
     }
 

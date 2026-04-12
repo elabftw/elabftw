@@ -131,9 +131,7 @@ abstract class AbstractEntityController implements ControllerInterface
             limit: $this->App->Users->userData['limit_nb'],
             skipOrderPinned: $skipOrderPinned,
         );
-        /*
-        $itemsArr = $this->Entity->readShow($DisplayParams);
-         */
+        // $itemsArr = $this->Entity->readShow($DisplayParams);
 
         // get tags separately
         $tagsArr = array();

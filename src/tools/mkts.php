@@ -15,13 +15,13 @@ if ($contents === false) {
 
 preg_match_all('/case\s+([A-Za-z_][A-Za-z0-9_]*)\s*=\s*([0-9]+)\s*;/', $contents, $matches, PREG_SET_ORDER);
 
-if ($matches === []) {
+if ($matches === array()) {
     fwrite(STDERR, 'No enum cases found in: ' . $input . PHP_EOL);
     exit(1);
 }
 
-$stateLines = [];
-$labelLines = [];
+$stateLines = array();
+$labelLines = array();
 
 foreach ($matches as $match) {
     $name = $match[1];
@@ -31,7 +31,7 @@ foreach ($matches as $match) {
     $labelLines[] = sprintf("  [State.%s]: '%s',", $name, $name);
 }
 
-$generated = implode(PHP_EOL, [
+$generated = implode(PHP_EOL, array(
     '// This file is auto-generated from src/Enums/State.php by src/tools/mkts.php',
     '// Do not edit manually.',
     '',
@@ -46,7 +46,7 @@ $generated = implode(PHP_EOL, [
     implode(PHP_EOL, $labelLines),
     '};',
     '',
-]);
+));
 
 if (file_put_contents($output, $generated) === false) {
     fwrite(STDERR, 'Failed to write: ' . $output . PHP_EOL);

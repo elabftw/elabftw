@@ -267,19 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam('owner', value);
-
-        /*
-        const filterValue = Array.isArray(value)
-          ? value.join(',')
-          : (value ?? '');
-
-         */
-        //const newQuery = updateSearchQueryFromFilter('owner', filterValue);
-        //setSearchQuery(newQuery);
-
-        /*
-        window.dispatchEvent(new CustomEvent('entity-filters-changed'));
-       */
       },
 
       render: {
@@ -505,7 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el.classList.remove('selected');
       });
       el.classList.add('selected');
-      reloadEntitiesShow(el.dataset.tag);
+      reloadEntitiesShow();
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {
@@ -707,7 +694,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-
     control.refreshOptions(false);
   }
 
@@ -770,80 +756,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-
-  function setSearchQuery(newValue: string): void {
-    document.dispatchEvent(new CustomEvent('search-query:set', {
-      detail: newValue,
-    }));
-  }
-
-  function getQuotes(filterValue: string): string {
-    if (filterValue === '') {
-      return '';
-    }
-
-    if (/[\s()&|!:]/.test(filterValue)) {
-      if (!filterValue.includes('"')) {
-        return '"';
-      }
-
-      if (!filterValue.includes('\'')) {
-        return '\'';
-      }
-
-      return '"';
-    }
-
-    return '';
-  }
-
-  function updateSearchQueryFromFilter(filterName: string, rawFilterValue: string): string {
-    const curVal = (document.getElementById('extendedArea') as HTMLInputElement).value;
-    const hasInput = curVal.length !== 0;
-    const hasSpace = curVal.endsWith(' ');
-    const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
-
-    const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
-    const operatorRegex = '(?:[<>]=?|!?=)?';
-    let valueRegex = baseRegex;
-
-    if (filterName === 'date') {
-      valueRegex = operatorRegex + baseRegex;
-    }
-
-    if (filterName === 'extrafield') {
-      valueRegex = baseRegex + ':' + baseRegex;
-    }
-
-    const regex = new RegExp(filterName + ':' + valueRegex + '\\s?');
-    const found = curVal.match(regex);
-
-    let filter = '';
-    let filterValue = rawFilterValue;
-    let quotes = getQuotes(filterValue);
-
-    if (filterValue !== '') {
-      if (filterName === 'date') {
-        quotes = '';
-      }
-
-      if (filterName === '(?:author|group)') {
-        filterName = filterValue.split(':')[0];
-        filterValue = filterValue.substring(filterName.length + 1);
-      }
-
-      filter = filterName + ':' + quotes + filterValue + quotes;
-
-      if (filterName === 'extrafield') {
-        filter = `${filterName}:${filterValue}`;
-      }
-    }
-
-    return found
-      ? curVal.replace(regex, filter + (filter === '' ? '' : ' '))
-      : curVal + addSpace + filter;
-  }
-
   function initTeamScopedFilter(cfg: {
     selectId: string;
     dropdownId: string;
@@ -880,18 +792,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam(cfg.param, value);
-
-        /*
-        const filterValue = Array.isArray(value)
-          ? value.join(',')
-          : (value ?? '');
-          window.dispatchEvent(new CustomEvent('entity-filters-changed'));
-         */
-
-        //const newQuery = updateSearchQueryFromFilter(cfg.param, filterValue);
-        //setSearchQuery(newQuery);
-
-        //reloadEntitiesShow();
       },
     }) as TeamScopedTomSelect;
 
@@ -937,6 +837,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
+  // tags tomselect
   if (document.getElementById('tagFilter')) {
     const dropdownRoot = document.getElementById('tagFilterDropdown');
     const menu = document.getElementById('tagFilterMenu');

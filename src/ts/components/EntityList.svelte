@@ -4,8 +4,9 @@
   import { ApiC } from '../api';
   import i18next from '../i18n';
   import { State, type StateValue } from '../state.auto';
-  //
-  // this is only used in the template, so it is stripped by svelte, copy it so it stays
+
+  // this is only used in the template, so it is stripped by svelte during compilation
+  // copy it so it stays available
   const EntityState = State;
 
   type EntityType = 'experiments' | 'items' | 'experiments_templates' | 'items_types';
@@ -180,48 +181,56 @@ function handleTagClick(event: MouseEvent, tag: string): void {
     return getCurrentUrlTags();
   });
 
-  $effect(() => {
-  urlVersion;
+  let reloadVersion = $state(0);
 
-  const currentType = entityType;
-  const currentLimit = limit;
-  const currentQ = $searchQuery.trim();
-  const currentCategory = getCurrentUrlCategory();
-    const currentStatus = getCurrentUrlStatus();
-  const currentOwner = getCurrentUrlOwner();
-  const currentTags = getCurrentUrlTags();
-
-  const nextQueryKey = JSON.stringify([
-    currentType,
-    currentLimit,
-    currentQ,
-    currentStatus,
-    currentCategory,
-    currentOwner,
-    currentTags,
-  ]);
-
-  if (nextQueryKey === currentQueryKey) {
-    return;
+  function bumpReloadVersion(): void {
+    reloadVersion += 1;
   }
 
-  currentQueryKey = nextQueryKey;
-  offset = 0;
-  hasMore = true;
+  $effect(() => {
+    urlVersion;
+    reloadVersion;
 
-  void loadEntities(
-    currentType,
-    currentLimit,
-    currentQ,
-    currentCategory,
-    currentStatus,
-    currentOwner,
-    currentTags,
-    offset,
-    true,
-  );
-});
+    const currentType = entityType;
+    const currentLimit = limit;
+    const currentQ = $searchQuery.trim();
+    const currentCategory = getCurrentUrlCategory();
+    const currentStatus = getCurrentUrlStatus();
+    const currentOwner = getCurrentUrlOwner();
+    const currentTags = getCurrentUrlTags();
 
+     const nextQueryKey = JSON.stringify([
+      currentType,
+      currentLimit,
+      currentQ,
+      currentStatus,
+      currentCategory,
+      currentOwner,
+      currentTags,
+      reloadVersion,
+    ]);
+
+    if (nextQueryKey === currentQueryKey) {
+      console.log('aborting');
+      return;
+    }
+
+    currentQueryKey = nextQueryKey;
+    offset = 0;
+    hasMore = true;
+
+    void loadEntities(
+      currentType,
+      currentLimit,
+      currentQ,
+      currentCategory,
+      currentStatus,
+      currentOwner,
+      currentTags,
+      offset,
+      true,
+    );
+  });
 
   async function loadEntities(
     currentType: EntityType,
@@ -432,7 +441,8 @@ function handleTagClick(event: MouseEvent, tag: string): void {
     };
 
    const handleFiltersChanged = (): void => {
-      bumpUrlVersion();
+     console.log('handling filters changed');
+     bumpReloadVersion();
     };
 
     window.addEventListener('popstate', handlePopState);

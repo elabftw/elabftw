@@ -54,11 +54,18 @@
           <span class='smallgray'>{{ 'Additionally, you can pair the Base permissions with specific combinations of teams, users, or user groups.'|trans }}</span>
           <hr>
           {# TEAMS #}
-          <label for='{{ identifier }}_select_teams' class='mt-2'><strong><i class='fas fa-users mr-2' aria-hidden='true'></i>+ {{ 'Teams'|trans }}</strong></label>
-          <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
+          {% set identifierTeams = identifier ~ '_select_teams' %}
+          <label for='{{ identifierTeams }}' class='mt-2'><strong><i class='fas fa-users mr-2' aria-hidden='true'></i>+ {{ 'Teams'|trans }}</strong></label>
+          <div class='d-flex justify-content-between align-items-center'>
+            <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
+            {# SCOPE BUTTON #}
+            {% set scopeBtnTeamsId = 'scope' ~ identifier %}
+            {% set toReloadTeams = [identifierTeams, scopeBtnTeamsId]|join(',') %}
+            {% include 'scope-button.html' with {'btnId': scopeBtnTeamsId, 'reload': toReloadTeams, 'target': 'scope_teams', 'withLabel': 1} %}
+          </div>
           <div class='team-select-wrapper'>
             <input type='text' class='form-control mt-2 team-select-input' id='{{ identifier }}-team-select-input' placeholder='{{ 'Search for user team'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>
-            <select id='{{ identifier }}_select_teams' multiple class='form-control' autocomplete='off'>
+            <select id='{{ identifierTeams }}' multiple class='form-control' autocomplete='off'>
               {% for team in teamsArr %}
                 <option value='team:{{ team.id }}' {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}>
                   {{ 'Team'|trans }} - {{ team.name }}
@@ -69,12 +76,14 @@
           {# USER GROUPS #}
           {% set identifierTeamGroups = identifier ~ '_select_teamgroups' %}
           <label for='{{ identifierTeamGroups }}' class='mt-2'><strong><i class='fas fa-user-group mr-2' aria-hidden='true'></i>+ {{ 'User Groups'|trans }}</strong></label>
-          <p class='smallgray'>{{ 'Selecting a user group here will give access to all users part of this user group.'|trans }}</p>
-          <div class='teamgroups-select-wrapper'>
+          <div class='d-flex justify-content-between align-items-center'>
+            <p class='smallgray'>{{ 'Selecting a user group here will give access to all users part of this user group.'|trans }}</p>
             {# SCOPE BUTTON #}
             {% set scopeBtnId = 'scope' ~ identifier %}
             {% set toReload = [identifierTeamGroups, scopeBtnId]|join(',') %}
             {% include 'scope-button.html' with {'btnId': scopeBtnId, 'reload': toReload, 'target': 'scope_teamgroups', 'withLabel': 1} %}
+          </div>
+          <div class='teamgroups-select-wrapper'>
             <input type='text' class='form-control mt-2 teamgroups-select-input' id='{{ identifier }}-teamgroups-select-input' placeholder='{{ 'Search for user group'|trans }}' aria-label='{{ 'Search for user group'|trans }}'>
             <select id='{{ identifierTeamGroups }}' multiple class='form-control' autocomplete='off' {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} >
               {% for tg in scopedTeamgroupsArr %}

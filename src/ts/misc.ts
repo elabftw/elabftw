@@ -139,7 +139,7 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
 
 // data-reload can be "page" for full page, "reloadEntitiesShow" for entities in show mode,
 // or a comma separated list of ids of elements to reload
-export function handleReloads(reloadAttributes: string | undefined): void {
+export async function handleReloads(reloadAttributes: string | undefined): Promise<void> {
   if (!reloadAttributes) return;
 
   if (reloadAttributes === 'page') {
@@ -148,13 +148,13 @@ export function handleReloads(reloadAttributes: string | undefined): void {
   }
 
   const reloadTargets = reloadAttributes.split(',');
-  reloadTargets.forEach((toReload) => {
+  for (const toReload of reloadTargets) {
     if (toReload === 'reloadEntitiesShow') {
-      reloadEntitiesShow();
+      await reloadEntitiesShow();
     } else {
-      reloadElements([toReload]);
+      await reloadElements([toReload]);
     }
-  });
+  }
 }
 
 // refresh tomSelect options when DOM changes

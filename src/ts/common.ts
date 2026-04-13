@@ -247,12 +247,13 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 
 makeMalleableColumnsGreatAgain();
 
+const permissionSelects = document.querySelectorAll<HTMLSelectElement>(
+  '[id$="_select_teamgroups"], [id$="_select_teams"]',
+);
+
 function initPermissionsTomSelects() {
-  const selects = document.querySelectorAll<HTMLSelectElement>(
-    '[id$="_select_teamgroups"], [id$="_select_teams"]',
-  );
-  if (selects.length === 0) return;
-  selects.forEach((select) => {
+  if (permissionSelects.length === 0) return;
+  permissionSelects.forEach((select) => {
     const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
     if (tsSelect.tomselect) {
       return;
@@ -288,10 +289,13 @@ function initPermissionsTomSelects() {
       config['dropdownParent'] = `#${CSS.escape(wrapper.id)}`;
     }
     new TomSelect(select, config);
-    on('scope-change', () => setTimeout(() => rebuildTomSelectOptions(select), 100));
   });
 }
 initPermissionsTomSelects();
+
+document.addEventListener('scope-changed', () => {
+  permissionSelects.forEach((select => rebuildTomSelectOptions(select)));
+});
 
 // tom-select for team selection on login and register page, and idp selection
 ['init_team_select', 'team', 'team_selection_select', 'idp_login_select'].forEach(id =>{
@@ -534,7 +538,7 @@ on('destroy-favtags', (el: HTMLElement) => {
   }
 });
 
-on('insert-param-and-reload', (el: HTMLElement) => {
+on('insert-param-and-reload', async (el: HTMLElement) => {
   const params = new URLSearchParams(document.location.search.slice(1));
   const target = el.dataset.target;
   const value = (el as HTMLInputElement).value;
@@ -545,7 +549,7 @@ on('insert-param-and-reload', (el: HTMLElement) => {
     params.delete(target);
   }
   window.history.replaceState({}, '', `?${params.toString()}`);
-  handleReloads(el.dataset.reload);
+  await handleReloads(el.dataset.reload);
 });
 
 // used on displayMessage divs: we save the fact that it was closed
@@ -1328,7 +1332,7 @@ on('delete-compounds', (el: HTMLElement) => {
   document.dispatchEvent(new CustomEvent('dataReload'));
 });
 
-on('scope-change', (el: HTMLElement) => {
+on('scope-change', async (el: HTMLElement) => {
   // only set it in query if we want to, which prevents an issue on dashboard where value was taken from query param "scope"
   if (el.dataset.setQueryParam === '1') {
     const params = new URLSearchParams(document.location.search);
@@ -1337,9 +1341,9 @@ on('scope-change', (el: HTMLElement) => {
   }
   const userParams = {};
   userParams[el.dataset.target] = el.dataset.value;
-  ApiC.patch('users/me', userParams).then(() => {
-    handleReloads(el.dataset.reload);
-  });
+  await ApiC.patch('users/me', userParams);
+  await handleReloads(el.dataset.reload);
+  document.dispatchEvent(new Event('scope-changed'));
 });
 
 /**

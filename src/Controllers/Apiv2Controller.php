@@ -328,7 +328,7 @@ final class Apiv2Controller extends AbstractApiController
                 $this->requester,
                 $this->Request->query->get('scope') === 'team',
             ),
-            ApiEndpoint::Users => new Users($this->id, $this->requester->team, $this->requester),
+            ApiEndpoint::Users => new Users($this->id, $this->requester->getTeam(), $this->requester),
         };
     }
 

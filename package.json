@@ -68,6 +68,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sass": "^1.98.0",
+    "svelte": "^5.55.2",
     "terser": "^5.46.1",
     "terser-webpack-plugin": "^5.4.0",
     "tinymce": "^6.8.6",
@@ -79,7 +80,7 @@
     "webpack-cli": "^7.0.2"
   },
   "resolutions": {
-    "fast-xml-parser": "^5.5.6",
+    "fast-xml-parser": "^5.5.7",
     "micromatch": "^4.0.8",
     "path-to-regexp": "^1.9.0",
     "cross-spawn": "^7.0.5",
@@ -115,6 +116,8 @@
     "stylelint-config-sass-guidelines": "^13.0.0",
     "stylelint-declaration-strict-value": "^1.11.1",
     "stylelint-order": "^8.1.1",
+    "svelte-loader": "^3.2.4",
+    "svelte-preprocess": "^6.0.3",
     "webpack-bundle-analyzer": "^5.2.0"
   },
   "scripts": {

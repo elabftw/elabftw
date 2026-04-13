@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "雙因素認證",
+    "add": "添加",
     "add-compound": "添加化合物",
+    "add-task": "Add task",
     "add-team": "新增團隊",
     "add-to-team": "將選定的用戶新增至團隊",
     "archive-user": "封存用戶",
@@ -28,6 +30,7 @@ const t = {
     "delete": "刪除",
     "delete-confirmation": "刪除 {{num, number}} 行？",
     "delete-selected": "刪除選取的行",
+    "done": "Done",
     "dropzone-upload-area": "文件拖放到這裡即可上傳",
     "dropzone-filesize-limit": "檔案大小限制：",
     "edit": "編輯",
@@ -78,6 +81,7 @@ const t = {
     "no-self-links": "不允許將項目連結到自身。請選擇其他目標。",
     "not-found": "未找到匹配結果。",
     "not-set": "未設定",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "未選擇任何內容！",
     "now": "現在",
     "oc-version-warning": "警告：目前 OpenCloning 版本與此版本的 eLabFTW 不相容。",

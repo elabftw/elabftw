@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Adicionar",
     "add-compound": "Adicionar composto",
+    "add-task": "Add task",
     "add-team": "Adicionar equipa",
     "add-to-team": "Add selected users to team",
     "archive-user": "Arquivar utilizador",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Eliminar",
     "delete-confirmation": "Delete {{num, number}} line(s)?",
     "delete-selected": "Delete selected rows",
+    "done": "Done",
     "dropzone-upload-area": "Arraste os ficheiros para aqui para os carregar",
     "dropzone-filesize-limit": "Limite de tamanho do ficheiro:",
     "edit": "Editar",
@@ -78,6 +81,7 @@ const t = {
     "no-self-links": "Não é permitido associar um item a si próprio. Por favor, seleccione um destino diferente.",
     "not-found": "No matching result found.",
     "not-set": "Não definido",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nada selecionado!",
     "now": "Agora",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

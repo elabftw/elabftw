@@ -57,8 +57,16 @@ export function relativeMoment(): void {
     if (span.innerText) {
       return;
     }
-    span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
+    span.innerText = toRelative(span.title, locale);
   });
+}
+
+export function toRelative(title: string, locale: string): string {
+  return (
+    DateTime
+      .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale})
+      .toRelative() ?? ''
+  );
 }
 
 // Add a listener for all elements triggered by an event

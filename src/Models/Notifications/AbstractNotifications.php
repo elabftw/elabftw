@@ -42,7 +42,7 @@ abstract class AbstractNotifications
 
     public function create(): int
     {
-        if (TeamsHelper::isArchivedInAllTeams($this->targetUser->userid ?? 0)) {
+        if (TeamsHelper::isArchivedInAllTeams($this->targetUser->getUserid())) {
             return 0;
         }
 

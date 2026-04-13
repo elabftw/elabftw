@@ -55,8 +55,8 @@ final class Tags2Entity
     {
         return match ($scope) {
             Scope::Everything => '',
-            Scope::Team => sprintf('AND entity.team = %d', $this->requester->team ?? 0),
-            Scope::User => sprintf('AND entity.userid = %d', $this->requester->userid ?? 0),
+            Scope::Team => sprintf('AND entity.team = %d', $this->requester->getTeam()),
+            Scope::User => sprintf('AND entity.userid = %d', $this->requester->getUserid()),
         };
     }
 }

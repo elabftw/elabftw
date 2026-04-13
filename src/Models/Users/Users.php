@@ -70,7 +70,7 @@ class Users extends AbstractRest
     {
         parent::__construct();
         if ($team !== null && $userid !== null) {
-            $TeamsHelper = new TeamsHelper($this->team ?? 0);
+            $TeamsHelper = new TeamsHelper($this->getTeam());
             $this->isAdmin = $TeamsHelper->isAdmin($userid);
         }
         if ($userid !== null) {
@@ -202,7 +202,7 @@ class Users extends AbstractRest
             $this->needValidation = true;
         }
         // it's okay to not have requester for this (register page)
-        AuditLogs::create(new UserRegister($this->requester->userid ?? 0, $this->userid));
+        AuditLogs::create(new UserRegister($this->requester->getUserid(), $this->userid));
         return $this->userid;
     }
 
@@ -380,7 +380,7 @@ class Users extends AbstractRest
         $team = $Request->query->getInt('team', 0);
         $currentTeam = $Request->query->getInt('currentTeam');
         if ($currentTeam === 1) {
-            $team = $this->requester->team ?? 0;
+            $team = $this->requester->getTeam();
         }
         $users = $this->readFromQuery(
             $Request->query->getString('q'),

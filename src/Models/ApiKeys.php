@@ -139,7 +139,7 @@ final class ApiKeys extends AbstractRest
         $sql = 'DELETE FROM api_keys WHERE team = :team AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':team', $team, PDO::PARAM_INT);
-        $req->bindValue(':userid', $this->Users->requester->userid ?? 0, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->Users->requester->getUserid(), PDO::PARAM_INT);
 
         if ($res = $this->Db->execute($req)) {
             AuditLogs::create(new ApiKeyDeleted($this->Users->requester->getUserid(), $this->Users->getUserid()));

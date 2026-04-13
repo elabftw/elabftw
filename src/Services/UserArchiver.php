@@ -109,7 +109,7 @@ final class UserArchiver
             throw new IllegalActionException();
         }
         // make sure requester is admin of target user
-        if (!$this->requester->isAdminOf($this->target->userid ?? 0) && $this->requester->userData['can_manage_users2teams'] === 0) {
+        if (!$this->requester->isAdminOf($this->target->getUserId()) && $this->requester->userData['can_manage_users2teams'] === 0) {
             throw new IllegalActionException('User tried to patch is_archived of another user but they are not admin');
         }
     }

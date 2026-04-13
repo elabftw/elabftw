@@ -70,7 +70,7 @@ final class CanSqlBuilder
                 AND entity.team = %d)',
             $this->accessType->value,
             BasePermissions::Team->value,
-            $this->requester->team ?? 0,
+            $this->requester->getTeam(),
         );
     }
 
@@ -108,7 +108,7 @@ final class CanSqlBuilder
                 AND entity.userid = %d)',
             $this->accessType->value,
             BasePermissions::UserOnly->value,
-            $this->requester->userid ?? 0,
+            $this->requester->getUserid(),
         );
     }
 
@@ -154,6 +154,6 @@ final class CanSqlBuilder
      */
     protected function canUsers(): string
     {
-        return sprintf("%d MEMBER OF (entity.%s->>'$.users')", $this->requester->userid ?? 0, $this->accessType->value);
+        return sprintf("%d MEMBER OF (entity.%s->>'$.users')", $this->requester->getUserid(), $this->accessType->value);
     }
 }

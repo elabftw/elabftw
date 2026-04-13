@@ -58,7 +58,7 @@ final class Handler extends AbstractRest
         $inserted = $Importer->getInserted();
         if ($inserted > self::AUDIT_THRESHOLD) {
             /** @psalm-suppress RedundantCast had an error during eln import where userid was a string for some reason... */
-            AuditLogs::create(new AuditEventImport((int) ($this->requester->userid ?? 0), $inserted));
+            AuditLogs::create(new AuditEventImport((int) ($this->requester->getUserid()), $inserted));
         }
         return $inserted;
     }

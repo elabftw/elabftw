@@ -47,7 +47,7 @@ final class TrustedEln extends Eln
         try {
             $Author = ExistingUser::fromEmail($author['email'] ?? 'nope');
         } catch (ResourceNotFoundException) {
-            $Author = ValidatedUser::createFromPerson($author, $this->requester->team ?? 0);
+            $Author = ValidatedUser::createFromPerson($author, $this->requester->getTeam());
             $this->logger->info(sprintf('Created user with email: %s', $author['email']));
         }
         $Author->team = $this->requester->team;

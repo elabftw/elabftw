@@ -31,7 +31,7 @@ final class Guard
     public static function getNonEmptyStringValueOfRequiredParam(string $requiredKey, array $params): string
     {
         $value = self::getValueOfRequiredParam($requiredKey, $params);
-        if (is_string($value) && !empty($value)) {
+        if (is_string($value) && $value !== '') {
             return $value;
         }
         throw new ImproperActionException(sprintf('Empty value found for %s', $requiredKey));

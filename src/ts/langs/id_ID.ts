@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "Tambah",
     "add-compound": "Tambahkan senyawa",
+    "add-task": "Add task",
     "add-team": "Tambahkan tim",
     "add-to-team": "Menambahkan pengguna yang dipilih ke tim",
     "archive-user": "Arsipkan pengguna",
@@ -28,6 +30,7 @@ const t = {
     "delete": "Hapus",
     "delete-confirmation": "Hapus baris {{num, number}}?",
     "delete-selected": "Menghapus baris yang dipilih",
+    "done": "Done",
     "dropzone-upload-area": "Taruh berkas di sini untuk mengunggah",
     "dropzone-filesize-limit": "Batas ukuran berkas:",
     "edit": "Sunting",
@@ -78,6 +81,7 @@ const t = {
     "no-self-links": "Tidak diperbolehkan menautkan item ke item itu sendiri. Silakan pilih target yang berbeda.",
     "not-found": "No matching result found.",
     "not-set": "Tidak diatur",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Tidak ada yang dipilih!",
     "now": "Sekarang",
     "oc-version-warning": "Peringatan: versi OpenCloning saat ini tidak kompatibel dengan versi eLabFTW ini.",

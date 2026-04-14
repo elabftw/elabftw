@@ -3,7 +3,9 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "add": "추가",
     "add-compound": "화합물 추가",
+    "add-task": "Add task",
     "add-team": "팀 추가",
     "add-to-team": "Add selected users to team",
     "archive-user": "사용자 차단",
@@ -28,6 +30,7 @@ const t = {
     "delete": "삭제",
     "delete-confirmation": "Delete {{num, number}} line(s)?",
     "delete-selected": "Delete selected rows",
+    "done": "Done",
     "dropzone-upload-area": "업로드 하려는 파일을 여기에 드롭하세요",
     "dropzone-filesize-limit": "파일 크기 제한:",
     "edit": "수정",
@@ -78,6 +81,7 @@ const t = {
     "no-self-links": "항목 자체를 링크하는 것은 허용되지 않습니다. 다른 타겟을 선택하세요.",
     "not-found": "No matching result found.",
     "not-set": "설정되지 않음",
+    "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "아무 것도 선택되지 않았습니다!",
     "now": "지금",
     "oc-version-warning": "Warning: current OpenCloning version is incompatible with this version of eLabFTW.",

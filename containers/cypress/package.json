@@ -1,0 +1,18 @@
+{
+  "name": "elabftw-cypress",
+  "version": "1.0.0",
+  "description": "packages for cypress",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cypress-html-validate": "^7.2.0",
+    "cypress-terminal-report": "^7.3.3",
+    "html-validate": "^8.29.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -6,6 +6,8 @@ FROM dhi.io/python@sha256:61594a3427b191f6978131c2d94b2d90113e413126f5a17ab9e048
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/home/nobody
 ENV UV_CACHE_DIR=/home/nobody/.cache
+# https://docs.astral.sh/uv/guides/integration/docker/#compiling-bytecode
+ENV UV_COMPILE_BYTECODE=1
 
 # distroless image 0.11.2
 # got index digest with "docker buildx imagetools inspect docker.io/astral/uv:0.11.2"

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Params\Guard;
 use Override;
 
 /**
@@ -19,37 +20,35 @@ use Override;
  */
 final class MakeCustomTimestamp extends AbstractMakeTrustedTimestamp
 {
-    /** default hash algo for file */
-    private const string TS_HASH = 'sha256';
-
-    /**
-     * Return the needed parameters to request/verify a timestamp
-     *
-     * @return array<string,string>
-     */
     #[Override]
-    public function getTimestampParameters(): array
+    protected function getPassword(): string
     {
-        $config = $this->configArr;
-
         $password = '';
-        if (($config['ts_password'] ?? '') !== '') {
-            $password = $config['ts_password'];
+        if (($this->configArr['ts_password'] ?? '') !== '') {
+            $password = $this->configArr['ts_password'];
         }
+        return $password;
+    }
 
-        $hash = $config['ts_hash'];
-        $allowedAlgos = array('sha256', 'sha384', 'sha512');
-        if (!in_array($hash, $allowedAlgos, true)) {
-            $hash = self::TS_HASH;
+    #[Override]
+    protected function getUrl(): string
+    {
+        return Guard::getNonEmptyStringValueOfRequiredParam('ts_url', $this->configArr);
+    }
+
+    #[Override]
+    protected function getChain(): string
+    {
+        return '/etc/ssl/cert.pem';
+    }
+
+    #[Override]
+    protected function getHash(): string
+    {
+        $hash = $this->configArr['ts_hash'];
+        if (!in_array($hash, self::ALLOWED_HASH_ALGOS, true)) {
+            return self::TS_HASH;
         }
-
-        return array(
-            'ts_login' => $config['ts_login'],
-            'ts_password' => $password,
-            'ts_url' => $config['ts_url'],
-            'ts_cert' => $config['ts_cert'],
-            'ts_hash' => $hash,
-            'ts_chain' => '/etc/ssl/cert.pem',
-        );
+        return $hash;
     }
 }

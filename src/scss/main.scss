@@ -983,11 +983,6 @@ tr:first-child td {
     &:hover:not(.selected) {
       background-color: var(--disabled);
     }
-
-    .relative-moment {
-      color: var(--secondlevel);
-      font-size: 80%;
-    }
   }
 
   /* Make the titles that you can click on to toggle the steps visibly clickable */

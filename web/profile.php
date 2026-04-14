@@ -23,6 +23,9 @@ use Exception;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
+use function _;
+use function ini_get;
+
 /**
  * Display profile of current user
  */

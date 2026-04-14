@@ -28,6 +28,11 @@ use Elabftw\Services\Check;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function count;
+use function is_array;
+use function json_decode;
+use function sprintf;
+
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

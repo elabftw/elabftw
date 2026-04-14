@@ -21,6 +21,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Override;
 
+use function count;
+use function sprintf;
+
 /**
  * Check uploaded files
  */

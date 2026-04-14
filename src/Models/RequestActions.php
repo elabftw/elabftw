@@ -25,6 +25,12 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function _;
+use function array_map;
+use function preg_replace;
+use function sprintf;
+use function strtolower;
+
 /**
  * Request action for users
  */

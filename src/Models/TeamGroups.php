@@ -29,6 +29,8 @@ use function array_map;
 use function json_decode;
 use function trim;
 use function sprintf;
+use function _;
+use function implode;
 
 /**
  * Everything related to the team groups

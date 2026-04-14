@@ -24,6 +24,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function implode;
+use function sprintf;
+
 /**
  * Synchronize tags between teams
  */

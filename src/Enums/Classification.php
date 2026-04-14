@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use function _;
+
 enum Classification: int
 {
     case None = 0;

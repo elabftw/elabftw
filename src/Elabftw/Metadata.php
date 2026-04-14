@@ -21,6 +21,12 @@ use function array_combine;
 use function count;
 use function json_decode;
 use function json_encode;
+use function _;
+use function array_merge;
+use function in_array;
+use function is_array;
+use function sprintf;
+use function uasort;
 
 final class Metadata
 {

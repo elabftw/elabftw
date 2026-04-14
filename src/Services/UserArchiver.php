@@ -25,6 +25,8 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use PDO;
 
+use function _;
+
 /**
  * Archive/Unarchive a user
  */

@@ -42,6 +42,20 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 use function mb_substr;
+use function _;
+use function array_map;
+use function base64_decode;
+use function basename;
+use function dirname;
+use function fclose;
+use function fopen;
+use function implode;
+use function rewind;
+use function sprintf;
+use function str_replace;
+use function stream_copy_to_stream;
+use function stream_get_meta_data;
+use function strpos;
 
 /**
  * All about the file uploads

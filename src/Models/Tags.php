@@ -23,6 +23,11 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function _;
+use function is_array;
+use function is_string;
+use function sprintf;
+
 /**
  * All about the tag
  */

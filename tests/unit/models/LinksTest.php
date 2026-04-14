@@ -21,6 +21,10 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
 
+use function array_column;
+use function count;
+use function sprintf;
+
 class LinksTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

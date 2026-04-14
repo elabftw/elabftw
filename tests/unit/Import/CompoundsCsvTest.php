@@ -26,6 +26,8 @@ use GuzzleHttp\Psr7\Response;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use function dirname;
+
 use const UPLOAD_ERR_OK;
 
 class CompoundsCsvTest extends \PHPUnit\Framework\TestCase

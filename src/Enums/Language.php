@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Enums;
 
 use function array_map;
+use function array_combine;
 
 enum Language: string
 {

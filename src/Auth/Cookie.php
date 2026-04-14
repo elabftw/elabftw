@@ -19,6 +19,8 @@ use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Services\TeamsHelper;
 use Override;
 
+use function sprintf;
+
 /**
  * Authenticate with the cookie
  */

@@ -15,6 +15,9 @@ namespace Elabftw\Make;
 use DateTimeImmutable;
 use Override;
 
+use function _;
+use function sprintf;
+
 /**
  * Create a pdf from several Entities
  */

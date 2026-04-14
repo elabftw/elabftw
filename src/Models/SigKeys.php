@@ -24,6 +24,8 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function sprintf;
+
 /**
  * Signature keys CRUD class
  */

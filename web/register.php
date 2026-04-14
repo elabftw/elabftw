@@ -19,6 +19,9 @@ use Elabftw\Exceptions\ImproperActionException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
+use function _;
+use function sprintf;
+
 /**
  * Local account creation page
  */

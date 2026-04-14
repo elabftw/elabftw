@@ -17,6 +17,9 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Templates;
 use Override;
 
+use function _;
+use function ngettext;
+
 /**
  * For experiments.php
  */

@@ -64,6 +64,10 @@ use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use function rawurldecode;
 use function setcookie;
 use function str_starts_with;
+use function _;
+use function basename;
+use function explode;
+use function time;
 
 /**
  * For all your authentication/login needs

@@ -23,6 +23,8 @@ use Elabftw\Traits\RandomColorTrait;
 use Override;
 use PDO;
 
+use function _;
+
 /**
  * The kind of items you can have in the database for a team
  * TODO rename ResourcesTemplates

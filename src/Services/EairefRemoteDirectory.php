@@ -17,6 +17,10 @@ use Override;
 
 use function in_array;
 use function strtolower;
+use function array_merge;
+use function json_decode;
+use function preg_quote;
+use function str_replace;
 
 /**
  * Implements requests to EAIREF directory

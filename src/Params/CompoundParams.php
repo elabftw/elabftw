@@ -19,6 +19,9 @@ use Override;
 use function array_map;
 use function str_split;
 use function trim;
+use function count;
+use function explode;
+use function preg_match;
 
 final class CompoundParams extends ContentParams
 {

@@ -17,6 +17,7 @@ use Elabftw\Models\StorageUnits;
 use Override;
 
 use function date;
+use function _;
 
 /**
  * Make a CSV file with all the inventory

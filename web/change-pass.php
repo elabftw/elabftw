@@ -22,6 +22,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 use function time;
+use function _;
 
 /**
  * Form to reset the password

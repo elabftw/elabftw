@@ -22,6 +22,7 @@ use Override;
 use PDO;
 
 use function json_decode;
+use function sprintf;
 
 /**
  * Notifications for a user

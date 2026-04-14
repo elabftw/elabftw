@@ -16,6 +16,8 @@ use Elabftw\Enums\AuditCategory;
 use Elabftw\Interfaces\AuditEventInterface;
 use Override;
 
+use function json_encode;
+
 abstract class AbstractAuditEvent implements AuditEventInterface
 {
     public function __construct(private int $requesterUserid = 0, private int $targetUserid = 0) {}

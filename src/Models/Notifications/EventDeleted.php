@@ -24,6 +24,10 @@ use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Override;
 
+use function _;
+use function count;
+use function sprintf;
+
 final class EventDeleted extends AbstractNotifications implements MailableInterface, RestInterface
 {
     protected const PREF = 'notif_event_deleted';

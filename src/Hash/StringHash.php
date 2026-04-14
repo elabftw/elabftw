@@ -14,6 +14,8 @@ namespace Elabftw\Hash;
 
 use Override;
 
+use function mb_strlen;
+
 class StringHash extends AbstractHash
 {
     // length of input above which we don't process it

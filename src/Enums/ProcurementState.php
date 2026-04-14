@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use function _;
+
 enum ProcurementState: int
 {
     case Pending = 10;

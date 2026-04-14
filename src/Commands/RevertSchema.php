@@ -22,6 +22,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function sprintf;
+
 /**
  * Use this to revert a specific schema
  */

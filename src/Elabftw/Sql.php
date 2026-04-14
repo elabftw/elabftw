@@ -25,6 +25,8 @@ use function str_repeat;
 use function strlen;
 use function strtoupper;
 use function trim;
+use function preg_match;
+use function sprintf;
 
 /**
  * For SQL operations from files

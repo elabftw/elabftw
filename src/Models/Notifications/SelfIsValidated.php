@@ -17,6 +17,9 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Override;
 
+use function _;
+use function sprintf;
+
 /**
  * When our account has been validated
  */

@@ -26,6 +26,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function count;
+use function implode;
+use function sprintf;
+use function strtotime;
+
 /**
  * Timestamp experiments in bulk
  */

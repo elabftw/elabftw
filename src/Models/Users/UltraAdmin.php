@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Users;
 
+use Override;
+
 /**
  * A user interacting with the app from CLI, so has full rights on everything
  */
 final class UltraAdmin extends Users
 {
-    public function __construct(public ?int $userid = null, public ?int $team = null)
+    public function __construct(public ?int $userid = 1, public ?int $team = null)
     {
         $this->userData['is_sysadmin'] = 1;
         $this->userData['userid'] = $userid;
@@ -28,5 +30,11 @@ final class UltraAdmin extends Users
         $this->userData['scope_items'] = 3;
         $this->userData['scope_items_types'] = 3;
         $this->userData['scope_teamgroups'] = 3;
+    }
+
+    #[Override]
+    public function getUserid(): int
+    {
+        return $this->userid ?? 1;
     }
 }

@@ -185,7 +185,7 @@ final class MakeController extends AbstractController
         // generate audit log event if exporting more than $threshold entries
         $count = count($this->entityArr);
         if ($count > self::AUDIT_THRESHOLD) {
-            AuditLogs::create(new Export($this->requester->userid ?? 0, $count));
+            AuditLogs::create(new Export($this->requester->getUserid(), $count));
         }
     }
 

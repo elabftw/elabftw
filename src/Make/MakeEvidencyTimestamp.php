@@ -17,6 +17,8 @@ use Elabftw\Services\EvidencyTimestampUtils;
 use GuzzleHttp\Client;
 use Override;
 
+use function sprintf;
+
 /**
  * RFC3161 timestamping with Evidency service
  * https://docs.evidency.io/docs/timestamping-service#timestamp-rfc3161-request

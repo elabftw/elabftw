@@ -29,7 +29,7 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
     {
         $entityId = 3;
         $entityType = EntityType::Items;
-        $id = $this->pr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body', 'quote' => 12));
+        $id = $this->pr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body' => '', 'quote' => 12));
         $this->assertIsInt($id);
         $this->pr->setId($id);
         $this->assertIsArray($this->pr->readOne());
@@ -40,7 +40,7 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
     public function testProcurementIsLimitedToItems(): void
     {
         $entityId = 3;
-        $id = $this->pr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body', 'quote' => 12));
+        $id = $this->pr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body' => '', 'quote' => 12));
         $this->pr->setId($id);
         $this->assertEmpty($this->pr->readActiveForEntity($entityId, EntityType::Experiments));
         $this->assertNotEmpty($this->pr->readActiveForEntity($entityId, EntityType::Items));

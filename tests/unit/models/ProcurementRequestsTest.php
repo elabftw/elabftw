@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ProcurementState;
 use Elabftw\Models\Users\Users;
 
@@ -27,12 +28,22 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
     public function testCreate(): void
     {
         $entityId = 3;
+        $entityType = EntityType::Items;
         $id = $this->pr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body', 'quote' => 12));
         $this->assertIsInt($id);
         $this->pr->setId($id);
         $this->assertIsArray($this->pr->readOne());
-        $this->assertIsArray($this->pr->readActiveForEntity($entityId));
+        $this->assertIsArray($this->pr->readActiveForEntity($entityId, $entityType));
         $this->assertIsArray($this->pr->patch(Action::Update, array('qty_received' => 2)));
+    }
+
+    public function testProcurementIsLimitedToItems(): void
+    {
+        $entityId = 3;
+        $id = $this->pr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body', 'quote' => 12));
+        $this->pr->setId($id);
+        $this->assertEmpty($this->pr->readActiveForEntity($entityId, EntityType::Experiments));
+        $this->assertNotEmpty($this->pr->readActiveForEntity($entityId, EntityType::Items));
     }
 
     public function testRead(): void

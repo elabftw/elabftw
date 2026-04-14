@@ -32,13 +32,15 @@ use Override;
 #[AsCommand(name: 'experiments:timestamp')]
 final class ExperimentsTimestamp extends Command
 {
+    private const int TOLERANCE = 5;
+
     #[Override]
     protected function configure(): void
     {
         $this->setDescription('Timestamp experiments in bulk')
              ->setHelp('Look at experiments modified since a certain time and timestamp them with RFC3161 timestamping.')
              ->addArgument('user', InputArgument::REQUIRED, 'Userid of the user doing the timestamp action.')
-             ->addOption('modified-since', 'm', InputOption::VALUE_REQUIRED, 'How long back in time we look for modified experiments to timestamp.', '1 week')
+             ->addOption('modified-since', 'm', InputOption::VALUE_REQUIRED, 'How long back in time we look for modified experiments to timestamp. Note: all experiments previously not timestamped will get timestamped too.', '1 week')
              ->addOption('dry-run', 'd', InputOption::VALUE_NONE, "Just count the number of experiments but don't actually timestamp them. Use with -vv.")
              ->addOption('teams', 't', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Only timestamp experiments from these teams', array());
     }
@@ -58,7 +60,12 @@ final class ExperimentsTimestamp extends Command
             $output->writeln(sprintf('Computed origin date: %s', $dateTimeImmutable->format('Y-m-d H:i:s')));
         }
         $Db = Db::getConnection();
-        $sql = 'SELECT id FROM experiments WHERE modified_at > :m AND IFNULL(timestamped_at, NOW()) != modified_at';
+        $sql = sprintf('SELECT id FROM experiments
+            WHERE timestamped_at IS NULL
+               OR (
+                   modified_at > :m
+                   AND ABS(TIMESTAMPDIFF(SECOND, timestamped_at, modified_at)) > %d
+                 )', self::TOLERANCE);
         $teams = $input->getOption('teams');
         if ($teams) {
             $sql .= sprintf(' AND team IN (%s)', implode(',', $teams));

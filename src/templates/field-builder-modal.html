@@ -7,7 +7,7 @@
       {%- endif %}
       <form id ='newFieldForm' class='new-field-form' aria-label='new extra field'>
         <div class='modal-header'>
-          <h5 class='modal-title' id='fieldBuilderLabel'><i class='fas fa-fw fa-trowel'></i> {{ 'Add an extra field'|trans }}</h5>
+          <h5 class='modal-title' id='fieldBuilderLabel'><i class='fas fa-fw fa-trowel'></i> {{ 'Add a custom field'|trans }}</h5>
           <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
             <span aria-hidden='true'>&times;</span>
           </button>
@@ -50,7 +50,7 @@
             {% endfor %}
           </select>
           <hr>
-          <h5>{{ 'Add an extra field'|trans }}</h5>
+          <h5>{{ 'Add a custom field'|trans }}</h5>
           <label for='newFieldTypeSelect'>{{ 'Field type'|trans }}</label>
           <select id='newFieldTypeSelect' class='form-control' autocomplete='off'>
             <option value='text'>{{ 'Text'|trans }}</option>

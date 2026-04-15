@@ -78,12 +78,12 @@
             {# Hourly rate of booked resource, without taxes #}
             <div class='d-flex justify-content-between mb-2'>
               <label for='booking_hourly_rate_notax' class='col-form-label'>{{ 'Hourly rate, without taxes'|trans }}</label>
-              <input id='booking_hourly_rate_notax' name='booking_hourly_rate_notax' class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='booking_hourly_rate_notax' type='number' min='0' value='{{ Entity.entityData.booking_hourly_rate_notax }}' step='0.01' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} />
+              <input id='booking_hourly_rate_notax' name='booking_hourly_rate_notax' class='form-control col-md-4' data-model='items/{{ Entity.id }}' data-target='booking_hourly_rate_notax' type='number' min='0' value='{{ Entity.entityData.booking_hourly_rate_notax }}' step='0.01' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} />
             </div>
             {# Hourly rate of booked resource, with taxes #}
             <div class='d-flex justify-content-between mb-2'>
               <label for='booking_hourly_rate_tax' class='col-form-label'>{{ 'Hourly rate, with taxes'|trans }}</label>
-              <input id='booking_hourly_rate_tax' name='booking_hourly_rate_tax' class='form-control col-md-4' data-trigger='blur' data-model='items/{{ Entity.id }}' data-target='booking_hourly_rate_tax' type='number' min='0' value='{{ Entity.entityData.booking_hourly_rate_tax }}' step='0.01' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} />
+              <input id='booking_hourly_rate_tax' name='booking_hourly_rate_tax' class='form-control col-md-4' data-model='items/{{ Entity.id }}' data-target='booking_hourly_rate_tax' type='number' min='0' value='{{ Entity.entityData.booking_hourly_rate_tax }}' step='0.01' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} />
             </div>
             {# Hourly rate's currency #}
             <div class='d-flex justify-content-between mb-2'>

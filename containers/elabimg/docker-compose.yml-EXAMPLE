@@ -307,7 +307,7 @@ services:
         #
         # This service is necessary for the Chemical structure editor (Ketcher)
         #- USE_INDIGO=false
-        #- INDIGO_URL=http://chem-plugin/
+        #- INDIGO_URL=http://chem-plugin:8080/
         # The fingerprinter is necessary to create a fingerprint of chemical compounds so we can do sub-structure search
         #- USE_FINGERPRINTER=false
         #- FINGERPRINTER_URL=http://chem-plugin:8000/

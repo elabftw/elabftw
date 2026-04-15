@@ -172,9 +172,21 @@ final class Uploads extends AbstractRest
         foreach ($uploads as $upload) {
             if ($upload['storage'] === Storage::LOCAL->value) {
                 $prefix = '/elabftw/uploads/';
-                $param = new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
+                $param = new CreateUpload(
+                    realName: $upload['real_name'],
+                    filePath: $prefix . $upload['long_name'],
+                    hasher: new ExistingHash($upload['hash']),
+                    comment: $upload['comment'],
+                    state: State::from($upload['state']),
+                );
             } else {
-                $param = new CreateUploadFromS3($upload['real_name'], $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
+                $param = new CreateUploadFromS3(
+                    realName: $upload['real_name'],
+                    filePath: $upload['long_name'],
+                    hasher: new ExistingHash($upload['hash']),
+                    comment: $upload['comment'],
+                    state: State::from($upload['state']),
+                );
             }
             $id = $entity->Uploads->create($param);
             $fresh = new self($entity, $id);

@@ -214,7 +214,7 @@ final class Uploads extends AbstractRest
                     filePath: $prefix . $upload['long_name'],
                     hasher: new ExistingHash($upload['hash']),
                     comment: $upload['comment'],
-                    state: State::from((int) $upload['state']),
+                    state: State::from($upload['state']),
                 );
             } else {
                 $param = new CreateUploadFromS3(
@@ -222,7 +222,7 @@ final class Uploads extends AbstractRest
                     filePath: $upload['long_name'],
                     hasher: new ExistingHash($upload['hash']),
                     comment: $upload['comment'],
-                    state: State::from((int) $upload['state']),
+                    state: State::from($upload['state']),
                 );
             }
             $id = $entity->Uploads->create($param);

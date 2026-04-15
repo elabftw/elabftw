@@ -19,6 +19,8 @@ export class KeyboardShortcuts {
   favorite: string;
   search: string;
   page: string;
+  private todolist: Todolist;
+  private favTag: FavTag;
 
   constructor(create: string, edit: string, todo: string, favorite: string, search: string) {
     this.create = create;
@@ -27,6 +29,8 @@ export class KeyboardShortcuts {
     this.favorite = favorite;
     this.search = search;
     this.page = document.location.pathname;
+    this.todolist = new Todolist();
+    this.favTag = new FavTag();
   }
 
   init() {
@@ -59,10 +63,10 @@ export class KeyboardShortcuts {
     });
 
     // TODOLIST TOGGLE
-    assignKey(this.todo, () => (new Todolist()).toggle());
+    assignKey(this.todo, () => this.todolist.toggle());
 
     // FAVORITE TAGS TOGGLE
-    assignKey(this.favorite, () => (new FavTag()).toggle());
+    assignKey(this.favorite, () => this.favTag.toggle());
 
     // SEARCH BAR FOCUS
     assignKey(this.search, (event: Event) => {

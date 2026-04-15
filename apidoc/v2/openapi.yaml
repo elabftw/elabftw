@@ -1775,7 +1775,7 @@ components:
     metadata:
       type: object
       nullable: true
-      description: The metadata is a JSON type attribute that is mainly used to hold the extra fields, but it can hold anything you want
+      description: The metadata is a JSON type attribute that is mainly used to hold the custom fields, but it can hold anything you want
       properties:
         elabftw:
           type: object
@@ -1784,7 +1784,7 @@ components:
             extra_fields_groups:
               type: array
               nullable: true
-              description: This array stores the extra fields groups
+              description: This array stores the custom fields groups
               default: []
               items:
                 type: object
@@ -7066,30 +7066,30 @@ paths:
 
   # EXTRA FIELDS KEYS
   /extra_fields_keys:
-    summary: Search for extra fields keys used by a team. Results are sorted by frequency.
+    summary: Search for custom fields keys used by a team. Results are sorted by frequency.
     parameters:
       - name: q
         in: query
         description: |
-          Search for a term in the extra fields keys.
+          Search for a term in the custom fields keys.
         schema:
           type: string
           default: ''
       - name: limit
         in: query
         description: |
-          Number of extra fields keys that will be returned. Value >= -1; -1: no limit, 0: users default setting from UCP.
+          Number of custom fields keys that will be returned. Value >= -1; -1: no limit, 0: users default setting from UCP.
         schema:
           type: integer
           default: 0
 
     get:
-      tags: ['Extra Fields Keys']
-      summary: Read extra fields keys.
-      operationId: extra-fields-keys
+      tags: ['Custom Fields Keys']
+      summary: Read custom fields keys.
+      operationId: custom-fields-keys
       responses:
         '200':
-          description: A list of extra fields keys and their frequency.
+          description: A list of custom fields keys and their frequency.
           content:
             application/json:
               schema:

@@ -24,6 +24,8 @@ use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 
+use function count;
+
 class EmailTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

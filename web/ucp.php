@@ -26,6 +26,8 @@ use Elabftw\Services\MfaHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
+use function _;
+
 /**
  * Settings for user
  */

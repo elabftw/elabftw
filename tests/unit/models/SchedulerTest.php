@@ -26,6 +26,10 @@ use Elabftw\Params\EntityParams;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_column;
+use function json_encode;
+use function sprintf;
+
 class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

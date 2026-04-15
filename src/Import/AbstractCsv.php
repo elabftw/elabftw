@@ -24,6 +24,7 @@ use function array_diff_key;
 use function array_flip;
 use function json_encode;
 use function filter_var;
+use function key;
 
 /**
  * Parent class for processing a CSV file during import

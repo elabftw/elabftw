@@ -15,6 +15,17 @@ namespace Elabftw\Elabftw;
 use Elabftw\Models\Info;
 use Symfony\Component\HttpFoundation\Response;
 
+use function apcu_entry;
+use function implode;
+use function ini_set;
+use function is_float;
+use function is_int;
+use function is_numeric;
+use function rtrim;
+use function setlocale;
+use function sprintf;
+use function time;
+
 class OpenMetrics
 {
     private const METRICS_TTL_SECONDS = 60;

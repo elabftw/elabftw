@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use function mb_strlen;
 use function preg_match;
 use function sprintf;
+use function _;
 
 /**
  * Validate a password against instance configuration for length and complexity

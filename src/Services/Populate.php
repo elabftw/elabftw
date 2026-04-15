@@ -58,6 +58,8 @@ use function bin2hex;
 use function dirname;
 use function random_bytes;
 use function sprintf;
+use function explode;
+use function shuffle;
 
 /**
  * This is used to generate data for dev purposes

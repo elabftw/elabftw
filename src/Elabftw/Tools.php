@@ -25,6 +25,14 @@ use function mb_substr;
 use function sha1;
 use function str_split;
 use function trim;
+use function chr;
+use function explode;
+use function floor;
+use function is_array;
+use function ord;
+use function sprintf;
+use function strlen;
+use function vsprintf;
 
 /**
  * Toolbelt full of useful functions

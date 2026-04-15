@@ -23,6 +23,8 @@ use Elabftw\Models\Templates;
 use Elabftw\Models\Users\Users;
 use PDO;
 
+use function array_rand;
+
 trait TestsUtilsTrait
 {
     protected function getUserInTeam(int $team, int $admin = 0, int $archived = 0): AuthenticatedUser

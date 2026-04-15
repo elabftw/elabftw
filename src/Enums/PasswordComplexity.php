@@ -15,6 +15,7 @@ namespace Elabftw\Enums;
 use function array_column;
 use function array_combine;
 use function array_map;
+use function _;
 
 enum PasswordComplexity: int
 {

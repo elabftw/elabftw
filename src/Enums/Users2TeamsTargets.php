@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use function _;
+
 enum Users2TeamsTargets: string
 {
     case IsAdmin = 'is_admin';

@@ -18,6 +18,10 @@ use Elabftw\Models\Users\Users;
 use PDO;
 
 use function sprintf;
+use function array_column;
+use function array_map;
+use function is_int;
+use function str_contains;
 
 final class EntitySlugsSqlBuilder
 {

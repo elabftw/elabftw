@@ -27,6 +27,10 @@ use GuzzleHttp\Client;
 use PDO;
 use Override;
 
+use function _;
+use function date;
+use function sprintf;
+
 /**
  * Mother class for all timestamping actions (trusted or blockchain)
  */

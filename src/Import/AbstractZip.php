@@ -24,6 +24,10 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use RuntimeException;
 
+use function fclose;
+use function sprintf;
+use function str_replace;
+
 /**
  * Mother class for importing zip file
  */

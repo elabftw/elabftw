@@ -25,6 +25,7 @@ use Elabftw\Services\Check;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function date;
+use function array_column;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
 {

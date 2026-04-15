@@ -17,6 +17,8 @@ use JsonException;
 
 use function usleep;
 use function rawurlencode;
+use function json_decode;
+use function sprintf;
 
 /**
  * Import a compound from PubChem

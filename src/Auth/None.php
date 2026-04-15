@@ -18,6 +18,8 @@ use Elabftw\Interfaces\AuthResponseInterface;
 use Override;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
+use function _;
+
 /**
  * When you're not logged in at all, or abandon a login
  */

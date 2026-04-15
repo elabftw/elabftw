@@ -18,6 +18,7 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function sprintf;
+use function _;
 
 /**
  * When values need to be transformed before display

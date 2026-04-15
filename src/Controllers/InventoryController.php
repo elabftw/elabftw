@@ -17,6 +17,7 @@ use Elabftw\Models\StorageUnits;
 use Override;
 
 use function array_merge;
+use function _;
 
 final class InventoryController extends AbstractHtmlController
 {

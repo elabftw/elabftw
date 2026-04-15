@@ -28,6 +28,9 @@ use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 use Override;
 
+use function _;
+use function sprintf;
+
 /**
  * Status for experiments or items
  */

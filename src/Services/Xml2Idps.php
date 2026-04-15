@@ -20,6 +20,12 @@ use Elabftw\Enums\SamlBinding;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function openssl_x509_parse;
+use function count;
+use function openssl_error_string;
+use function openssl_x509_export;
+use function openssl_x509_fingerprint;
+use function openssl_x509_read;
+use function sprintf;
 
 /**
  * Convert XML metadata about IDPs into eLabFTW's IDP

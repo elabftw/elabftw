@@ -28,6 +28,9 @@ use Symfony\Component\HttpFoundation\InputBag;
 use function explode;
 use function sprintf;
 use function trim;
+use function implode;
+use function rtrim;
+use function strtolower;
 
 /**
  * This class holds the values for limit, offset, order and sort

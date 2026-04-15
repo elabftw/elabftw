@@ -17,6 +17,10 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\RequestableAction;
 use Override;
 
+use function array_merge;
+use function json_encode;
+use function sprintf;
+
 final class ActionRequested extends AbstractAuditEvent
 {
     public function __construct(int $requesterUserid, int $targetUserid, private int $entityId, private EntityType $entityType, private RequestableAction $action)

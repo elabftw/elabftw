@@ -39,6 +39,12 @@ use ValueError;
 use ZipStream\ZipStream;
 
 use function hash_file;
+use function _;
+use function count;
+use function date;
+use function fclose;
+use function fopen;
+use function sprintf;
 
 /**
  * Handle data exports

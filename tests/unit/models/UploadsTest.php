@@ -25,6 +25,9 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
+use function count;
+use function dirname;
+
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

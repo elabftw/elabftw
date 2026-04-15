@@ -18,6 +18,10 @@ use DOMDocument;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 
+use function count;
+use function dirname;
+use function file_get_contents;
+
 class Xml2IdpsTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetIdpsFromDomNoEntityDescriptor(): void

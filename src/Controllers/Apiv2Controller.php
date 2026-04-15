@@ -85,6 +85,13 @@ use Override;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 
+use function implode;
+use function in_array;
+use function json_decode;
+use function sprintf;
+use function str_starts_with;
+use function trim;
+
 /**
  * For API V2 requests
  */

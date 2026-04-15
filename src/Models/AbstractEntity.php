@@ -91,6 +91,16 @@ use function ksort;
 use function mb_substr;
 use function sprintf;
 use function str_contains;
+use function _;
+use function array_key_exists;
+use function explode;
+use function intval;
+use function is_array;
+use function is_string;
+use function json_decode;
+use function str_ends_with;
+use function str_replace;
+use function ucfirst;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;

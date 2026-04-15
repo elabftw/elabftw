@@ -17,6 +17,8 @@ use Elabftw\Enums\State;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 
+use function json_decode;
+
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
     private Templates $Templates;

@@ -19,6 +19,7 @@ use PDO;
 use Override;
 
 use function date;
+use function implode;
 
 /**
  * Create a report of usage for users provided in construct

@@ -20,6 +20,7 @@ use PDO;
 use function bin2hex;
 use function hash;
 use function random_bytes;
+use function mb_strlen;
 
 /**
  * The cookie "token" acts as a key to login back thanks to the cookie value and the value stored in database

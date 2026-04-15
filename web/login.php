@@ -21,6 +21,10 @@ use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+use function _;
+use function setcookie;
+use function time;
+
 /**
  * Login page
  */

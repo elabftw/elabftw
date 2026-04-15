@@ -27,6 +27,12 @@ use PDO;
 
 use function array_intersect;
 use function array_keys;
+use function _;
+use function array_key_exists;
+use function count;
+use function in_array;
+use function sprintf;
+use function str_replace;
 
 /**
  * All about the steps

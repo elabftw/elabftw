@@ -34,6 +34,14 @@ use function array_merge;
 use function bin2hex;
 use function random_bytes;
 use function ucfirst;
+use function array_column;
+use function array_push;
+use function array_unique;
+use function htmlspecialchars;
+use function implode;
+use function in_array;
+use function json_encode;
+use function sprintf;
 
 /** @psalm-suppress UnusedParam */
 final class QueryBuilderVisitor implements Visitor

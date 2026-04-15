@@ -24,6 +24,9 @@ use Override;
 use PDO;
 
 use function mb_strlen;
+use function _;
+use function abs;
+use function sprintf;
 
 /**
  * All about the revisions

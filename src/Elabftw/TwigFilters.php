@@ -30,6 +30,9 @@ use function is_string;
 use function json_decode;
 use function sprintf;
 use function nl2br;
+use function _;
+use function array_key_exists;
+use function in_array;
 
 /**
  * Twig filters

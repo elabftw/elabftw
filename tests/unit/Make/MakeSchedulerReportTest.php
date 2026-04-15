@@ -19,6 +19,13 @@ use Elabftw\Models\Scheduler;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_filter;
+use function array_map;
+use function array_search;
+use function count;
+use function explode;
+use function str_getcsv;
+
 class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

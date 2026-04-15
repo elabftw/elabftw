@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use function array_map;
+use function _;
+use function implode;
+use function sprintf;
 
 trait EnumsTrait
 {

@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
@@ -21,12 +22,19 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\Check;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
+
+use function count;
+use function is_array;
+use function json_decode;
+use function sprintf;
+use function array_column;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -257,12 +265,23 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
-        $id = $this->Experiments->postAction(Action::Duplicate, array());
+        // add some uploads
+        $this->Experiments->Uploads->createFromString(FileFromString::Json, 'normal.json', '{}');
+        $archivedId = $this->Experiments->Uploads->createFromString(FileFromString::Json, 'archived.json', '{}');
+        $this->Experiments->Uploads->setId($archivedId);
+        $this->Experiments->Uploads->patch(Action::Archive, array());
+        $id = $this->Experiments->postAction(Action::Duplicate, array('copyFiles' => 1));
         $this->assertIsInt($id);
         $new = new Experiments($this->Users, $id);
         $this->assertEquals($canread->value, $new->entityData['canread_base']);
         $this->assertEquals($canwrite->value, $new->entityData['canwrite_base']);
         $this->assertEquals(1, $new->entityData['hide_main_text']);
+        // assert uploads' states persist
+        $newUploads = $new->Uploads->readAll(new BaseQueryParams(states: array(State::Normal, State::Archived), ));
+        $this->assertCount(2, $newUploads);
+        $states = array_column($newUploads, 'state');
+        $this->assertContains(State::Normal->value, $states);
+        $this->assertContains(State::Archived->value, $states);
     }
 
     public function testInsertTags(): void

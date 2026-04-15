@@ -61,6 +61,11 @@ return (new Config())
             'import_functions' => true,
             'import_constants' => true,
         ],
+        'native_function_invocation' => [
+            'include' => ['@internal'],
+            'scope' => 'namespaced',
+            'strict' => true,
+        ],
     ))
     ->setFinder($finder)
     ->setRiskyAllowed(true)

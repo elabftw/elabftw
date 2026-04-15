@@ -19,6 +19,8 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_column;
+
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

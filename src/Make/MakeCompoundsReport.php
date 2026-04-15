@@ -18,6 +18,7 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function date;
+use function _;
 
 /**
  * Make a CSV file with all the compounds

@@ -15,6 +15,8 @@ namespace Elabftw\Make;
 use Elabftw\Params\Guard;
 use Override;
 
+use function in_array;
+
 /**
  * RFC3161 timestamping with a custom TSA
  */

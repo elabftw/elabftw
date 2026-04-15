@@ -22,6 +22,8 @@ use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use function dirname;
+use function _;
+use function filter_var;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 

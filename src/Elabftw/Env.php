@@ -19,6 +19,8 @@ use Symfony\Component\Validator\Validation;
 use function getenv;
 use function strtolower;
 use function trim;
+use function count;
+use function sprintf;
 
 /**
  * For dealing with Environment values passed to php-fpm

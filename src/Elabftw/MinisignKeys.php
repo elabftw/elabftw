@@ -24,6 +24,14 @@ use function preg_match;
 use function sodium_crypto_generichash;
 use function sodium_memzero;
 use function unpack;
+use function _;
+use function pack;
+use function random_bytes;
+use function sodium_crypto_pwhash_scryptsalsa208sha256;
+use function sodium_crypto_sign_keypair;
+use function sodium_crypto_sign_publickey;
+use function sodium_crypto_sign_secretkey;
+use function sprintf;
 
 use const SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES;
 use const SODIUM_CRYPTO_SIGN_SECRETKEYBYTES;

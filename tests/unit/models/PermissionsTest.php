@@ -17,6 +17,9 @@ use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function json_decode;
+use function json_encode;
+
 class PermissionsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

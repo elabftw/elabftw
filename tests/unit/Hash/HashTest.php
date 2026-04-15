@@ -14,6 +14,8 @@ namespace Elabftw\Hash;
 
 use Elabftw\Storage\Memory;
 
+use function str_repeat;
+
 class HashTest extends \PHPUnit\Framework\TestCase
 {
     public function testHash(): void

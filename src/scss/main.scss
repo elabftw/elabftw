@@ -648,6 +648,19 @@ tr:first-child td {
   tr {
     border: 1px solid var(--secondary-muted);
   }
+
+  table tr:nth-child(even),
+  table tr:nth-child(odd) {
+    background-color: unset !important;
+  }
+
+  table tbody {
+    background-color: transparent !important;
+  }
+
+  table td {
+    background-color: inherit !important;
+  }
 }
 
 /* required labels/input */

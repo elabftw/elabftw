@@ -119,6 +119,7 @@ enum Action {
   // Dspace Actions
   GetCollections = 'getcollections',
   GetTypes = 'gettypes',
+  GetSubmissionForms = 'getsubmissionforms',
 }
 
 enum Model {

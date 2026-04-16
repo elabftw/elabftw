@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Enums\DSpaceAction;
 use Elabftw\Models\Config;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +20,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use function json_decode;
+use function array_column;
+use function implode;
+use function sprintf;
 
 /**
  * To emulate nginx rewrite rule, query is done with req param
@@ -123,7 +127,10 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $data = json_decode($content, true);
         $this->assertSame(400, $data['code']);
         $this->assertSame(
-            'Unknown "action" value. Expected one of: getcollections, gettypes.',
+            sprintf(
+                'Unknown "action" value. Expected one of: %s.',
+                implode(', ', array_column(DSpaceAction::cases(), 'value'))
+            ),
             $data['message']
         );
     }

@@ -16,4 +16,5 @@ enum DSpaceAction: string
 {
     case GetCollections = 'getcollections';
     case GetTypes = 'gettypes';
+    case GetSubmissionForms = 'getsubmissionforms';
 }

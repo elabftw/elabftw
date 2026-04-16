@@ -49,10 +49,6 @@ use function trim;
  */
 final class Dspace extends AbstractRest
 {
-    private const string DEFAULT_SECTION = 'traditionalpageone';
-
-    private const string ABSTRACT_SECTION = 'traditionalpagetwo';
-
     private ?array $headers = null;
 
     private string $host;
@@ -80,6 +76,7 @@ final class Dspace extends AbstractRest
         return match (DSpaceAction::tryFrom($queryParams?->getQuery()->getString('action'))) {
             DSpaceAction::GetCollections => $this->getCollections(),
             DSpaceAction::GetTypes => $this->getTypes(),
+            DSpaceAction::GetSubmissionForms => $this->getSubmissionForms(),
             default => throw new ImproperActionException(
                 sprintf('Unknown "action" value. Expected one of: %s.', implode(', ', array_column(DSpaceAction::cases(), 'value')))
             ),
@@ -218,6 +215,15 @@ final class Dspace extends AbstractRest
         return $this->fetchAllPaginated($endpoint, 'entries');
     }
 
+    private function getSubmissionForms(): array
+    {
+        $headers = $this->getAuthHeaders();
+        $url = $this->host . 'config/submissionforms';
+        $res = $this->httpGetter->get($url, $headers);
+        $body = json_decode($res->getBody()->getContents(), true);
+        return $body['_embedded']['submissionforms'] ?? array();
+    }
+
     private function fetchAllPaginated(string $endpoint, string $key): array
     {
         $results = array();
@@ -329,12 +335,12 @@ final class Dspace extends AbstractRest
     {
         $patch = array();
         foreach ($metadata as $item) {
-            $key = $item['key']   ?? null;
+            $key = $item['key'] ?? null;
             $value = $item['value'] ?? null;
-            if ($key === null || $value === null || $value === '') {
+            $section = $item['section'] ?? null;
+            if ($key === null || $value === null || $value === '' || $section === null) {
                 continue;
             }
-            $section = ($key === 'dc.description.abstract') ? self::ABSTRACT_SECTION : self::DEFAULT_SECTION;
             $patch[] = array(
                 'op' => 'add',
                 'path' => sprintf('/sections/%s/%s', $section, $key),

@@ -72,10 +72,12 @@ class DspaceTest extends \PHPUnit\Framework\TestCase
                     array('value' => 'book', 'display' => 'Book'),
                 ),
             ),
+            'page' => array('totalPages' => 1),
         ));
         $this->assertIsArray($result);
-        $this->assertArrayHasKey('_embedded', $result);
-        $this->assertCount(2, $result['_embedded']['entries']);
+        $this->assertCount(2, $result);
+        $this->assertEquals('article', $result[0]['value']);
+        $this->assertEquals('Article', $result[0]['display']);
     }
 
     public function testReadAllWithUnhandledAction(): void

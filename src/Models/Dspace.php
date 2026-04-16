@@ -24,6 +24,7 @@ use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Override;
+use RuntimeException;
 use ZipStream\ZipStream;
 
 use function str_starts_with;
@@ -208,28 +209,33 @@ final class Dspace extends AbstractRest
 
     private function getCollections(): array
     {
-        $collections = array();
-        $page = 0;
-        $pageSize = 20;
-        do {
-            $res = $this->httpGetter->get($this->host . 'core/collections?page=' . $page . '&size=' . $pageSize);
-            $body = json_decode($res->getBody()->getContents(), true);
-            // append collections from each page
-            if (isset($body['_embedded']['collections'])) {
-                $collections = array_merge($collections, $body['_embedded']['collections']);
-            }
-            // stop if we're on the last page
-            $totalPages = $body['page']['totalPages'] ?? 1;
-            $page++;
-        } while ($page < $totalPages);
-        return $collections;
+        return $this->fetchAllPaginated('core/collections', 'collections');
     }
 
     private function getTypes(): array
     {
-        $res = $this->httpGetter->get($this->host . 'submission/vocabularies/common_types/entries');
-        $body = $res->getBody()->getContents();
-        return json_decode($body, true);
+        $endpoint = 'submission/vocabularies/common_types/entries';
+        return $this->fetchAllPaginated($endpoint, 'entries');
+    }
+
+    private function fetchAllPaginated(string $endpoint, string $key): array
+    {
+        $results = array();
+        $page = 0;
+        $pageSize = 20;
+        do {
+            $url = sprintf('%s%s?page=%d&size=%d', $this->host, $endpoint, $page, $pageSize);
+            $res = $this->httpGetter->get($url);
+            $body = json_decode($res->getBody()->getContents(), true);
+            if (!isset($body['_embedded'][$key])) {
+                throw new RuntimeException("Missing _embedded.$key in response");
+            }
+            $results = array_merge($results, $body['_embedded'][$key]);
+            // stop if we're on the last page
+            $totalPages = $body['page']['totalPages'] ?? 1;
+            $page++;
+        } while ($page < $totalPages);
+        return $results;
     }
 
     // 1. create the workspace in DSpace, returns the $workspaceId

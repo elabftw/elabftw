@@ -54,13 +54,6 @@ interface DspaceVocabularyEntry {
   [key: string]: unknown;
 }
 
-interface DspaceVocabularyEntryList {
-  _embedded: {
-    entries: DspaceVocabularyEntry[];
-  };
-  [key: string]: unknown;
-}
-
 on('export-to-dspace', async (el, event: Event) => {
   const btn = el as HTMLButtonElement;
   event.preventDefault();
@@ -103,11 +96,10 @@ on('open-dspace-modal', async () => {
   collectionSelect.innerHTML = `<option disabled selected>${i18next.t('loading')}...</option>`;
   typeSelect.innerHTML = `<option disabled selected>${i18next.t('loading')}...</option>`;
   try {
-    const [collections, typesJson] = await Promise.all([
+    const [collections, types] = await Promise.all([
       ApiC.getJson<DspaceCollection[]>('dspace', {action: Action.GetCollections}),
-      ApiC.getJson<DspaceVocabularyEntryList>('dspace', {action: Action.GetTypes}),
+      ApiC.getJson<DspaceVocabularyEntry[]>('dspace', {action: Action.GetTypes}),
     ]);
-    const types = typesJson._embedded.entries;
 
     // clear existing TomSelect if any
     if (collectionSelect?.tomselect) collectionSelect.tomselect.destroy();

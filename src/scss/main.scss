@@ -655,6 +655,7 @@ tr:first-child td {
   }
 
   table tbody {
+    /* table in view mode, allow custom color configuration via tinyMce plugin, see #6476 */
     background-color: transparent !important;
   }
 

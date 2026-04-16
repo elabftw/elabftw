@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Currency;
-use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ProcurementState;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -79,11 +78,8 @@ final class ProcurementRequests extends AbstractRest
         return $this->Db->fetch($req);
     }
 
-    public function readActiveForEntity(int $entityId, EntityType $entityType): array
+    public function readActiveForEntity(int $entityId): array
     {
-        if ($entityType !== EntityType::Items) {
-            return array();
-        }
         $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname, pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.body, pr.quote, pr.email_sent, pr.state
             FROM procurement_requests AS pr LEFT JOIN users ON (requester_userid = users.userid) WHERE entity_id = :entity_id AND state NOT IN (:state_received, :state_archived)";
         $req = $this->Db->prepare($sql);

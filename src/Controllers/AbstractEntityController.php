@@ -32,7 +32,6 @@ use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
-use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
@@ -178,21 +177,25 @@ abstract class AbstractEntityController implements ControllerInterface
 
     abstract protected function getPageTitle(): string;
 
+    // only available only for items
+    protected function getEntityProcurementRequestsArr(): array
+    {
+        return array();
+    }
+
     /**
      * View mode (one item displayed)
      */
     protected function view(): Response
     {
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
-        $ProcurementRequests = new ProcurementRequests($this->App->Teams);
-
         // the mode parameter is for the uploads tpl
         $renderArr = array(
             'categoryArr' => $this->categoryArr,
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
-            'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0, $this->Entity->entityType),
+            'entityProcurementRequestsArr' => $this->getEntityProcurementRequestsArr(),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             'pageTitle' => $this->getPageTitle(),
             'mode' => 'view',
@@ -236,9 +239,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->Entity->ExclusiveEditMode->activate();
 
         $TeamTags = new TeamTags($this->App->Users);
-
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
-        $ProcurementRequests = new ProcurementRequests($this->App->Teams);
 
         $Metadata = new Metadata($this->Entity->entityData['metadata']);
         $baseQueryParams = new BaseQueryParams($this->App->Request->query);
@@ -252,7 +253,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
             'Entity' => $this->Entity,
-            'entityProcurementRequestsArr' => $ProcurementRequests->readActiveForEntity($this->Entity->id ?? 0, $this->Entity->entityType),
+            'entityProcurementRequestsArr' => $this->getEntityProcurementRequestsArr(),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
             'hideTitle' => true,
             'metadataGroups' => $Metadata->getGroups(),

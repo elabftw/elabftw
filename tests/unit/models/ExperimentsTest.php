@@ -276,9 +276,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($canread->value, $new->entityData['canread_base']);
         $this->assertEquals($canwrite->value, $new->entityData['canwrite_base']);
         $this->assertEquals(1, $new->entityData['hide_main_text']);
-        // assert only active files are duplicated
-        $newUploads = $new->Uploads->readAll();
-        $this->assertCount(1, $newUploads);
+        // only active files are duplicated
+        $this->assertCount(1, $new->Uploads->readAll());
     }
 
     public function testInsertTags(): void

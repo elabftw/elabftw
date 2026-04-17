@@ -20,9 +20,14 @@ $theme-colors: (
 .btn-primary { background-color: var(--primary) !important; }
 .btn-secondary { background-color: var(--secondary) !important; }
 
+.btn-primary:hover {
+  background-color: var(--darkblue) !important;
+  border-color: var(--darkblue) !important;
+}
+
 .btn-secondary:hover {
-  background-color: var(--chrome-muted) !important;
-  border-color: var(--chrome-muted) !important;
+  background-color: var(--chrome-bg) !important;
+  border-color: var(--chrome-bg) !important;
 }
 
 .btn-primary,
@@ -200,7 +205,7 @@ a,
 
 a:hover,
 .link-like:hover {
-  color: var(--primary);
+  color: var(--darkblue);
   text-decoration: none;
 }
 
@@ -430,11 +435,11 @@ h5 {
 
 .alert-success {
   background-color: var(--lightblue);
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: var(--darkblue);
+  color: var(--darkblue);
 
   .close {
-    color: var(--primary);
+    color: var(--darkblue);
   }
 }
 

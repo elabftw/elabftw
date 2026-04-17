@@ -74,8 +74,8 @@ final class Dspace extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         return match (DSpaceAction::tryFrom($queryParams?->getQuery()->getString('action'))) {
-            DSpaceAction::GetCollections => $this->getCollections(),
-            DSpaceAction::GetTypes => $this->getTypes(),
+            DSpaceAction::GetCollections => $this->fetchAllPaginated('core/collections', 'collections'),
+            DSpaceAction::GetTypes => $this->fetchAllPaginated(endpoint:'submission/vocabularies/common_types/entries', key:'entries'),
             DSpaceAction::GetSubmissionForms => $this->getSubmissionForms(),
             default => throw new ImproperActionException(
                 sprintf('Unknown "action" value. Expected one of: %s.', implode(', ', array_column(DSpaceAction::cases(), 'value')))
@@ -202,17 +202,6 @@ final class Dspace extends AbstractRest
             throw new ImproperActionException(_('DSpace login did not return an Authorization header.'));
         }
         return $auth;
-    }
-
-    private function getCollections(): array
-    {
-        return $this->fetchAllPaginated('core/collections', 'collections');
-    }
-
-    private function getTypes(): array
-    {
-        $endpoint = 'submission/vocabularies/common_types/entries';
-        return $this->fetchAllPaginated($endpoint, 'entries');
     }
 
     private function getSubmissionForms(): array

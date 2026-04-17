@@ -43,7 +43,7 @@
         {# FINISH/UNFINISH #}
         <div class='input-group-prepend'>
           <button class='btn btn-ghost'>
-            <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
+            <input aria-label='{{ 'Toggle completion for step: %s'|trans|format(step.body) }}'  type='checkbox' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
           </button>
         </div>
         <div class='pl-2 step-static form-control-plaintext d-flex flex-wrap'>

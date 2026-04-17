@@ -208,34 +208,20 @@ final class Uploads extends AbstractRest
     public function duplicate(AbstractEntity $entity): void
     {
         $uploads = $this->selectAll();
+        $body = $entity->entityData['body'];
         foreach ($uploads as $upload) {
-            if ($upload['storage'] === Storage::LOCAL->value) {
-                $prefix = '/elabftw/uploads/';
-                $param = new CreateUpload(
-                    realName: $upload['real_name'],
-                    filePath: $prefix . $upload['long_name'],
-                    hasher: new ExistingHash($upload['hash']),
-                    comment: $upload['comment'],
-                    state: State::from($upload['state']),
-                );
-            } else {
-                $param = new CreateUploadFromS3(
-                    realName: $upload['real_name'],
-                    filePath: $upload['long_name'],
-                    hasher: new ExistingHash($upload['hash']),
-                    comment: $upload['comment'],
-                    state: State::from($upload['state']),
-                );
-            }
+            $param = $this->makeCreateUploadParam($upload);
             $id = $entity->Uploads->create($param);
             $fresh = new self($entity, $id);
-            // replace links in body with the new long_name
-            // don't bother if body is null
-            if ($entity->entityData['body'] === null) {
+            // skip body early if null
+            if ($body === null) {
                 continue;
             }
-            $newBody = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $entity->entityData['body']);
-            $entity->patch(Action::Update, array('body' => $newBody));
+            $body = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $body);
+        }
+        // patch once instead of every loop
+        if ($body !== null && $body !== $entity->entityData['body']) {
+            $entity->patch(Action::Update, array('body' => $body));
         }
     }
 
@@ -479,9 +465,21 @@ final class Uploads extends AbstractRest
     {
         if ($upload['storage'] === Storage::LOCAL->value) {
             $prefix = '/elabftw/uploads/';
-            return new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
+            return new CreateUpload(
+                realName: $upload['real_name'],
+                filePath: $prefix . $upload['long_name'],
+                hasher: new ExistingHash($upload['hash']),
+                comment: $upload['comment'],
+                state: State::from($upload['state']),
+            );
         }
-        return new CreateUploadFromS3($upload['real_name'], $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
+        return new CreateUploadFromS3(
+            realName: $upload['real_name'],
+            filePath: $upload['long_name'],
+            hasher: new ExistingHash($upload['hash']),
+            comment: $upload['comment'],
+            state: State::from($upload['state']),
+        );
     }
 
     private function update(UploadParams $params): bool

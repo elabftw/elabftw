@@ -207,7 +207,7 @@ final class Uploads extends AbstractRest
     // entity is target entity
     public function duplicate(AbstractEntity $entity): void
     {
-        $uploads = $this->selectAll();
+        $uploads = $this->selectAll(array(State::Normal));
         $body = $entity->entityData['body'];
         foreach ($uploads as $upload) {
             $param = $this->makeCreateUploadParam($upload);

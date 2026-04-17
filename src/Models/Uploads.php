@@ -205,7 +205,7 @@ final class Uploads extends AbstractRest
     // entity is target entity
     public function duplicate(AbstractEntity $entity): void
     {
-        $uploads = $this->selectAll();
+        $uploads = $this->selectAll([State::Normal]);
         foreach ($uploads as $upload) {
             if ($upload['storage'] === Storage::LOCAL->value) {
                 $prefix = '/elabftw/uploads/';

@@ -210,14 +210,18 @@ final class DownloadController implements ControllerInterface
         $Response->headers->set('Content-Type', $mime);
         $Response->headers->set('Content-Length', (string) $length);
         $Response->headers->set('Accept-Ranges', 'bytes');
-        $Response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(
-            HeaderUtils::DISPOSITION_INLINE,
-            $this->realName,
-            $this->realNameFallback,
-        ));
         if ($statusCode === Response::HTTP_PARTIAL_CONTENT) {
             $Response->headers->set('Content-Range', sprintf('bytes %d-%d/%d', $start, $end, $fileSize));
         }
+
+        // Preserve existing disposition logic: forceDownload and MIME-based decisions
+        $disposition = $this->forceDownload ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE;
+        $dispositionHeader = HeaderUtils::makeDisposition(
+            $disposition,
+            $this->realName,
+            $this->realNameFallback,
+        );
+        $Response->headers->set('Content-Disposition', $dispositionHeader);
 
         return $Response;
     }

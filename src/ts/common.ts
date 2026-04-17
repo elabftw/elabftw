@@ -247,6 +247,8 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 
 makeMalleableColumnsGreatAgain();
 
+// TODO: need to svelte all this part later on, tomselects and DOM refreshes from API fetches are a mess
+// selector for all {permission}_select (canread, canwrite, canbook)
 const permissionSelects = document.querySelectorAll<HTMLSelectElement>(
   '[id$="_select_teamgroups"], [id$="_select_teams"]',
 );
@@ -261,16 +263,12 @@ function initPermissionsTomSelects() {
     const isTeams = select.id.endsWith('_select_teams');
     const isTeamGroups = select.id.endsWith('_select_teamgroups');
     if (!isTeams && !isTeamGroups) return;
-    const wrapper = select.closest(
-      isTeams ? '.team-select-wrapper' : '.teamgroups-select-wrapper',
-    );
+    const wrapper = select.closest(isTeams ? '.team-select-wrapper' : '.teamgroups-select-wrapper');
     if (!(wrapper instanceof HTMLElement)) {
       new TomSelect(select, { plugins: ['remove_button', 'clear_button'] });
       return;
     }
-    const input = wrapper.querySelector(
-      isTeams ? '.team-select-input' : '.teamgroups-select-input',
-    );
+    const input = wrapper.querySelector(isTeams ? '.team-select-input' : '.teamgroups-select-input');
     // build config for tomselect
     const config = {
       plugins: {

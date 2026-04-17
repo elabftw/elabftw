@@ -592,12 +592,12 @@ button:disabled {
   }
 }
 
-/* color one row every other row */
-tr:nth-child(even) {
+/* zebra only when the actual table does not have inline background-color */
+table:not([style*='background-color']) > tbody > tr:nth-child(even) {
   background-color: var(--white);
 }
 
-tr:nth-child(odd) {
+table:not([style*='background-color']) > tbody > tr:nth-child(odd) {
   background-color: var(--mainbackground);
 }
 
@@ -647,20 +647,6 @@ tr:first-child td {
   td,
   tr {
     border: 1px solid var(--secondary-muted);
-  }
-
-  table tr:nth-child(even),
-  table tr:nth-child(odd) {
-    background-color: unset !important;
-  }
-
-  table tbody {
-    /* table in view mode, allow custom color configuration via tinyMce plugin, see #6476 */
-    background-color: transparent !important;
-  }
-
-  table td {
-    background-color: inherit !important;
   }
 }
 

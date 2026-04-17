@@ -298,6 +298,16 @@ on('team-scope-change', async (el: HTMLElement) => {
   const identifier = el.dataset.identifier;
   if (!identifier) return;
   // custom scope button for team select
+  const menu = el.parentElement;
+  if (menu) {
+    menu.querySelectorAll('.dropdown-item').forEach((item) => {
+      item.classList.remove('active');
+      item.querySelector('i')?.classList.remove('color-white');
+    });
+  }
+  el.classList.add('active');
+  el.querySelector('i')?.classList.add('color-white');
+
   const btn = el.closest('.btn-group')?.querySelector('button.dropdown-toggle');
   if (btn) {
     btn.innerHTML = `

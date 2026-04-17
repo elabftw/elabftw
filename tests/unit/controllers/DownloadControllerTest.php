@@ -34,7 +34,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(StreamedResponse::class, $controller->getResponse());
     }
 
-    public function testGetResponseForceDownload(): void
+    public function testGetResponseStreamsContent(): void
     {
         $longName = 'aa/aacc.docx';
         $this->fs->write($longName, 'blah');

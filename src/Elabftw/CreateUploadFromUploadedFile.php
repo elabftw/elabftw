@@ -20,6 +20,8 @@ use League\Flysystem\FilesystemOperator;
 use Override;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use function basename;
+
 final class CreateUploadFromUploadedFile extends CreateUpload
 {
     public function __construct(

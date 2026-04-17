@@ -33,6 +33,17 @@ use Override;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function _;
+use function array_flip;
+use function array_intersect_key;
+use function array_keys;
+use function array_map;
+use function array_sum;
+use function implode;
+use function rtrim;
+use function sprintf;
+use function str_contains;
+
 /**
  * Compounds are chemical entities stored in the `compounds` SQL table
  */

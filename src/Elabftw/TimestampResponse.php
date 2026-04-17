@@ -15,6 +15,12 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\ProcessTrait;
 
+use function explode;
+use function is_readable;
+use function json_encode;
+use function preg_match;
+use function sprintf;
+
 /**
  * Trusted Timestamping (RFC3161) response object
  * @final mocked in tests

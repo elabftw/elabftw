@@ -51,6 +51,9 @@ use Override;
 
 use function array_map;
 use function count;
+use function explode;
+use function sprintf;
+use function str_starts_with;
 
 /**
  * Create zip, csv, pdf or report
@@ -185,7 +188,7 @@ final class MakeController extends AbstractController
         // generate audit log event if exporting more than $threshold entries
         $count = count($this->entityArr);
         if ($count > self::AUDIT_THRESHOLD) {
-            AuditLogs::create(new Export($this->requester->userid ?? 0, $count));
+            AuditLogs::create(new Export($this->requester->getUserid(), $count));
         }
     }
 

@@ -14,6 +14,8 @@ namespace Elabftw\AuditEvent;
 
 use Override;
 
+use function sprintf;
+
 final class TeamAddition extends AbstractUsers2TeamsModifiedEvent
 {
     public function __construct(private int $teamid, private int $isAdmin, int $requester, int $userid)

@@ -23,6 +23,8 @@ use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function sprintf;
+
 class BatchTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

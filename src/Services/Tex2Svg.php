@@ -28,6 +28,9 @@ use function preg_match_all;
 use function preg_replace;
 use function str_replace;
 use function unlink;
+use function base64_encode;
+use function sprintf;
+use function substr_count;
 
 /**
  * Process HTML and transform tex into svg

@@ -18,6 +18,10 @@ use Elabftw\Exceptions\InvalidEndpointException;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
 
+use function explode;
+use function rtrim;
+use function trim;
+
 /**
  * For API requests
  */

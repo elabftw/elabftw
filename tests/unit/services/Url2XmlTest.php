@@ -19,6 +19,9 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 
+use function dirname;
+use function file_get_contents;
+
 class Url2XmlTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetEmptyResponse(): void

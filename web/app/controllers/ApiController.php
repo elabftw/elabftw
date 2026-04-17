@@ -22,6 +22,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use function dirname;
+use function str_contains;
+use function str_starts_with;
 
 /**
  * Entrypoint for API requests. Nginx redirects all the /api/vN requests here.

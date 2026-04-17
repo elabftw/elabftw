@@ -17,6 +17,8 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\UsersHelper;
 use Override;
 
+use function count;
+
 /**
  * Response object sent by an Auth service
  */

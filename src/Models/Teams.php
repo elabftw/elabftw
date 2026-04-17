@@ -31,6 +31,11 @@ use RuntimeException;
 
 use function array_diff;
 use function trim;
+use function array_column;
+use function array_intersect;
+use function array_map;
+use function implode;
+use function is_array;
 
 /**
  * All about the teams
@@ -130,7 +135,7 @@ final class Teams extends AbstractRest
         // allow sysadmin to read any team from api, but a non sysadmin can only query a team they are part of
         $TeamsHelper = new TeamsHelper($this->id ?? -1);
 
-        if (!$TeamsHelper->isUserInTeam($this->Users->userid ?? -1) && !$this->Users->userData['is_sysadmin']) {
+        if (!$TeamsHelper->isUserInTeam($this->Users->getUserid()) && !$this->Users->userData['is_sysadmin']) {
             throw new ImproperActionException('Cannot query team information if not part of that team or not Sysadmin!');
         }
         return $this->selectOne();

@@ -24,6 +24,12 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function array_fill_keys;
+use function array_filter;
+use function array_map;
+use function array_values;
+use function sprintf;
+
 /**
  * For IDPS certificates
  */

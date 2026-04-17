@@ -16,6 +16,7 @@ use Elabftw\Models\ItemsTypes;
 use Override;
 
 use function array_merge;
+use function _;
 
 final class ChemEditorController extends AbstractHtmlController
 {

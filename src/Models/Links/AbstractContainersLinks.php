@@ -29,6 +29,7 @@ use PDO;
 
 use function intval;
 use function json_encode;
+use function sprintf;
 
 /**
  * All about containers links with entities

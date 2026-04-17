@@ -20,6 +20,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function sprintf;
+
 class IdpsEndpointsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

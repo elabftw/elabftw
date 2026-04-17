@@ -19,6 +19,9 @@ use Elabftw\Models\Users\Users;
 use Override;
 use PDO;
 
+use function array_merge;
+use function json_decode;
+
 /**
  * Display information about the instance
  */

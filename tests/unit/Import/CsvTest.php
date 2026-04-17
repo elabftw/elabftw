@@ -21,6 +21,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function dirname;
+
 use const UPLOAD_ERR_OK;
 
 class CsvTest extends \PHPUnit\Framework\TestCase

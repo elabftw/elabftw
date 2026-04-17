@@ -14,6 +14,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\ImproperActionException;
 
+use function count;
+
 class MetadataTest extends \PHPUnit\Framework\TestCase
 {
     public function testNoMetadata(): void

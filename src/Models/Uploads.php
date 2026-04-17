@@ -42,6 +42,20 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
 use function mb_substr;
+use function _;
+use function array_map;
+use function base64_decode;
+use function basename;
+use function dirname;
+use function fclose;
+use function fopen;
+use function implode;
+use function rewind;
+use function sprintf;
+use function str_replace;
+use function stream_copy_to_stream;
+use function stream_get_meta_data;
+use function strpos;
 
 /**
  * All about the file uploads
@@ -195,9 +209,21 @@ final class Uploads extends AbstractRest
         foreach ($uploads as $upload) {
             if ($upload['storage'] === Storage::LOCAL->value) {
                 $prefix = '/elabftw/uploads/';
-                $param = new CreateUpload($upload['real_name'], $prefix . $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
+                $param = new CreateUpload(
+                    realName: $upload['real_name'],
+                    filePath: $prefix . $upload['long_name'],
+                    hasher: new ExistingHash($upload['hash']),
+                    comment: $upload['comment'],
+                    state: State::from($upload['state']),
+                );
             } else {
-                $param = new CreateUploadFromS3($upload['real_name'], $upload['long_name'], new ExistingHash($upload['hash']), $upload['comment']);
+                $param = new CreateUploadFromS3(
+                    realName: $upload['real_name'],
+                    filePath: $upload['long_name'],
+                    hasher: new ExistingHash($upload['hash']),
+                    comment: $upload['comment'],
+                    state: State::from($upload['state']),
+                );
             }
             $id = $entity->Uploads->create($param);
             $fresh = new self($entity, $id);

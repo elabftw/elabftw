@@ -29,6 +29,7 @@ use function is_string;
 use function floor;
 use function microtime;
 use function sprintf;
+use function str_repeat;
 
 /**
  * Populate the database with example data. Useful to get a fresh dev env.

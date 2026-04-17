@@ -16,6 +16,8 @@ use Elabftw\Exceptions\InvalidSchemaException;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 
+use function sprintf;
+
 class UpdateTest extends \PHPUnit\Framework\TestCase
 {
     private Fs $Fs;

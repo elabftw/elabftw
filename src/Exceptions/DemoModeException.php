@@ -14,6 +14,8 @@ namespace Elabftw\Exceptions;
 
 use Override;
 
+use function _;
+
 /**
  * For things disabled by demo_mode
  */

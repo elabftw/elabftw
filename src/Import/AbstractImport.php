@@ -28,6 +28,9 @@ use Override;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
+use function in_array;
+use function sprintf;
+
 /**
  * Import data from a file
  */

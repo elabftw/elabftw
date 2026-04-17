@@ -17,6 +17,9 @@ use Elabftw\Elabftw\Env;
 use RobThree\Auth\Algorithm;
 use RobThree\Auth\TwoFactorAuth;
 
+use function parse_url;
+use function sprintf;
+
 /**
  * Provide methods for multi/two-factor authentication
  */

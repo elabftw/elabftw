@@ -18,6 +18,10 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TwigTrait;
 use Override;
 
+use function html_entity_decode;
+use function sprintf;
+use function strlen;
+
 /**
  * Make a PDF from several experiments or db items showing only minimal info with QR codes
  */

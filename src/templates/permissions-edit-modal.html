@@ -58,10 +58,23 @@
           <label for='{{ identifierTeams }}' class='mt-2'><strong><i class='fas fa-users mr-2' aria-hidden='true'></i>+ {{ 'Teams'|trans }}</strong></label>
           <div class='d-flex justify-content-between align-items-center'>
             <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
-            {# SCOPE BUTTON #}
-            {% set scopeBtnTeamsId = 'scope' ~ identifier %}
-            {% set toReloadTeams = [identifierTeams, scopeBtnTeamsId]|join(',') %}
-            {% include 'scope-button.html' with {'btnId': scopeBtnTeamsId, 'reload': toReloadTeams, 'target': 'scope_teams', 'withLabel': 1} %}
+            {# SPECIFIC SCOPE BUTTON FOR TEAMS: Need only 'My teams' or 'All teams' #}
+            {% set teamScope = App.Request.query.getInt('team_scope') ?: 1 %}
+            <div class='btn-group'>
+              <button class='btn color-medium hl-hover-gray dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                <i class='fas fa-fw {{ teamScope == 1 ? 'fa-user' : 'fa-globe' }} mx-1'></i>
+                {{ teamScope == 1 ? 'My teams'|trans : 'All teams'|trans }}
+              </button>
+              <div class='dropdown-menu'>
+                <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>
+                <button type='button' class='dropdown-item {{ teamScope == 1 ? 'active' }}' data-action='team-scope-change' data-value='1' data-identifier='{{ identifier }}'>
+                  <i class='fas fa-user fa-fw mr-2 {{ teamScope == 1 ? 'color-white' }}'></i>{{ 'My teams'|trans }}
+                </button>
+                <button type='button' class='dropdown-item {{ teamScope == 3 ? 'active' }}' data-action='team-scope-change' data-value='3' data-identifier='{{ identifier }}'>
+                  <i class='fas fa-globe fa-fw mr-2 {{ teamScope == 3 ? 'color-white' }}'></i>{{ 'All teams'|trans }}
+                </button>
+              </div>
+            </div>
           </div>
           <div class='team-select-wrapper'>
             <input type='text' class='form-control mt-2 team-select-input' id='{{ identifier }}-team-select-input' placeholder='{{ 'Search for user team'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>

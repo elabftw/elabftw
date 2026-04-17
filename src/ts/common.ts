@@ -293,8 +293,39 @@ function initPermissionsTomSelects() {
 }
 initPermissionsTomSelects();
 
+on('team-scope-change', async (el: HTMLElement) => {
+  const scope = Number(el.dataset.value);
+  const identifier = el.dataset.identifier;
+  if (!identifier) return;
+  // custom scope button for team select
+  const btn = el.closest('.btn-group')?.querySelector('button.dropdown-toggle');
+  if (btn) {
+    btn.innerHTML = `
+      <i class="fas fa-fw ${scope === 1 ? 'fa-user' : 'fa-globe'} mx-1"></i>
+      ${scope === 1 ? 'My teams' : 'All teams'}
+    `;
+  }
+  let teams = [];
+
+  if (scope === 1) {
+    const user = await ApiC.getJson(`${Model.User}/me`);
+    teams = user.teams;
+  } else {
+    const allTeams = await ApiC.getJson('teams');
+    teams = allTeams.filter((t) => t.visible === 1);
+  }
+  const select = document.querySelector(`#${identifier}_select_teams`) as HTMLSelectElement;
+  if (!select) return;
+  rebuildTomSelectOptions(select, {
+    options: teams.map(team => ({
+      value: `team:${team.id}`,
+      text: team.name,
+    })),
+  });
+});
+
 document.addEventListener('scope-changed', () => {
-  permissionSelects.forEach((select => rebuildTomSelectOptions(select)));
+  permissionSelects.forEach(select => rebuildTomSelectOptions(select));
 });
 
 // tom-select for team selection on login and register page, and idp selection

@@ -632,7 +632,9 @@ if (window.location.pathname === '/scheduler.php') {
       selectEl: HTMLSelectElement & { tomselect?: TomSelect },
       category: string,
     ): void {
-      rebuildTomSelectOptions(selectEl, (option) => !category || option.dataset.category === category);
+      rebuildTomSelectOptions(selectEl, {
+        filter: (option) => !category || option.dataset.category === category,
+      });
     }
 
     async function handleEventDateChange(info): Promise<void> {

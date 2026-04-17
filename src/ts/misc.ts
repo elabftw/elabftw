@@ -157,23 +157,49 @@ export async function handleReloads(reloadAttributes: string | undefined): Promi
   }
 }
 
-// refresh tomSelect options when DOM changes
+type TomSelectOption = {
+  value: string;
+  text: string;
+};
+
+type RebuildSource =
+  | { filter?: (option: HTMLOptionElement) => boolean }
+  | { options: TomSelectOption[] };
+
 export function rebuildTomSelectOptions(
   selectEl: HTMLSelectElement & { tomselect?: TomSelect },
-  filter?: (option: HTMLOptionElement) => boolean,
+  source: RebuildSource = {},
 ): void {
   const ts = selectEl.tomselect;
   if (!ts) return;
-  // keep current selection
-  const selected = Array.from(selectEl.selectedOptions).map(o => o.value);
+
+  const rawSelected = ts.getValue();
+  const selected = Array.isArray(rawSelected) ? rawSelected : [rawSelected];
+
+  let nextOptions: TomSelectOption[] = [];
+
+  if ('options' in source) {
+    nextOptions = source.options;
+  } else {
+    const filter = source.filter;
+    nextOptions = Array.from(selectEl.options)
+      .filter((option) => !filter || filter(option))
+      .map((option) => ({
+        value: option.value,
+        text: option.textContent ?? '',
+      }));
+  }
+
   ts.clearOptions();
   ts.clear();
-  Array.from(selectEl.options).forEach(option => {
-    if (!filter || filter(option)) {
-      ts.addOption({ value: option.value, text: option.textContent ?? ''});
-    }
+
+  nextOptions.forEach((option) => {
+    ts.addOption(option);
   });
-  ts.setValue(selected, true);
+  const validValues = selected.filter((value) =>
+    nextOptions.some((option) => option.value === value),
+  );
+  ts.setValue(validValues, true);
   ts.refreshOptions(false);
 }
 

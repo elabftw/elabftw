@@ -328,7 +328,7 @@ class Users extends AbstractRest
 
         ORDER BY
           MIN(u2t_all.teams_id) ASC,
-          u.lastname       ASC;';
+          u.created_at DESC;';
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');

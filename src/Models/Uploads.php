@@ -320,10 +320,6 @@ final class Uploads extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         $this->Entity->touch();
-        // Somehow, we cannot pass the Action.Replace to the formData in edit.ts "replace-uploaded-file"
-        if ($this->id !== null && $action !== Action::Duplicate) {
-            $action = Action::Replace;
-        }
         $realName = ($action === Action::Replace || $action === Action::Create)
             ? Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody)
             : ($this->uploadData['real_name']

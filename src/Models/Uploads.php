@@ -143,8 +143,6 @@ final class Uploads extends AbstractRest
                 // if imagick/imagemagick causes problems ignore it and upload file without thumbnail
             }
         }
-        // read the file as a stream so we can copy it
-        $inputStream = $sourceFs->readStream($tmpFilename);
 
         // actual writing of the file in its destination, after rewinding file
         $isRewind = rewind($inputStream);

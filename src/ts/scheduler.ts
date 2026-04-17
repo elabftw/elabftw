@@ -210,8 +210,13 @@ if (window.location.pathname === '/scheduler.php') {
       if (!opt) return;
 
       const badge = document.createElement('span');
-      badge.textContent = opt.textContent;
       badge.className = 'selected-item-badge';
+      const link = document.createElement('a');
+      link.textContent = opt.textContent;
+      link.className = 'always-white';
+      link.href = `database.php?mode=view&id=${encodeURIComponent(id)}`;
+      link.target = '_blank';
+      link.rel = 'noopener';
       const rawColor = opt.dataset.color;
       badge.style.setProperty('--badge-color', rawColor?.startsWith('#') ? rawColor : `#${rawColor || '888'}`);
 
@@ -223,7 +228,7 @@ if (window.location.pathname === '/scheduler.php') {
       removeBtnIcon.classList.add('fas', 'fa-xmark', 'fa-fw', 'color-white');
       removeBtn.appendChild(removeBtnIcon);
 
-      badge.appendChild(removeBtn);
+      badge.append(link, removeBtn);
       wrapper.appendChild(badge);
 
       // also handle keydown (enter)

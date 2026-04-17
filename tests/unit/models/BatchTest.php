@@ -14,13 +14,16 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\MissingRequiredKeyException;
-use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
+
+use function sprintf;
 
 class BatchTest extends \PHPUnit\Framework\TestCase
 {
@@ -43,6 +46,8 @@ class BatchTest extends \PHPUnit\Framework\TestCase
             'experiments_tags' => array(),
             'users_experiments' => array(),
             'users_resources' => array(),
+            'can' => '{}',
+            'can_base' => BasePermissions::Organization,
             'team' => null,
             'userid' => null,
         );
@@ -58,6 +63,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $user = $this->getRandomUserInTeam(1);
         $this->getFreshExperimentWithGivenUser($user);
         $this->baseReqBody['users_experiments'] = array($user->userid);
+        $this->baseReqBody['can_base'] = BasePermissions::UserOnly->value;
         $this->assertBatchProcessed(Action::ForceLock, $this->baseReqBody);
     }
 
@@ -79,7 +85,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['userid'] = $user->userid;
         $this->baseReqBody['team'] = 99;
-        $this->expectException(UnauthorizedException::class);
+        $this->expectException(UnprocessableContentException::class);
         $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
 

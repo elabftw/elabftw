@@ -36,6 +36,7 @@ use Elabftw\Services\NullFingerprinter;
 use Elabftw\Services\PubChemImporter;
 use GuzzleHttp\Client;
 use Override;
+use Symfony\Component\Console\Input\ArgvInput;
 
 use function sprintf;
 
@@ -61,7 +62,7 @@ final class ImportCompoundsCsv extends Command
             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the file, but do not actually import things, display what would be done')
             ->addOption('use-pubchem', 'p', InputOption::VALUE_NONE, 'Use PubChem to complete information. Use the CAS number or Pubchem CID to fetch data from PubChem and complement existing data.')
             ->addOption('create-resource', 'c', InputOption::VALUE_REQUIRED, 'Create a resource linked to that compound with the resource template ID provided')
-            ->addOption('match-with', 'm', InputOption::VALUE_REQUIRED, 'Match existing resources with the value of the provided extra field. For example: "--match-with cas" will link Compounds to Resources having an extra field "cas" with the same value as the Compound\'s CAS number.')
+            ->addOption('match-with', 'm', InputOption::VALUE_REQUIRED, 'Match existing resources with the value of the provided custom field. For example: "--match-with cas" will link Compounds to Resources having a custom field "cas" with the same value as the Compound\'s CAS number.')
             ->addOption('location-splitter', 'l', InputOption::VALUE_REQUIRED, 'Set a character to split the location column values on.', '/');
     }
 
@@ -97,7 +98,7 @@ final class ImportCompoundsCsv extends Command
         $usePubchem = (bool) $input->getOption('use-pubchem');
         $pubChemImporter = null;
         if ($usePubchem) {
-            $output->writeln('[info] Using Pubchem to complete data: this might take a long time.');
+            $logger->info('Using Pubchem to complete data: this might take a long time.');
             $pubChemImporter = new PubChemImporter($httpGetter, Env::asUrl('PUBCHEM_PUG_URL'), Env::asUrl('PUBCHEM_PUG_VIEW_URL'));
         }
         $Items = new Items($user, bypassReadPermission: true, bypassWritePermission: true);
@@ -107,8 +108,12 @@ final class ImportCompoundsCsv extends Command
         if ($input->getOption('match-with')) {
             $matchWith = $input->getOption('match-with');
         }
+        $commandLine = $input instanceof ArgvInput ? (string) $input : null;
+        if ($commandLine) {
+            $logger->info(sprintf('Command arguments used: %s', $commandLine));
+        }
         $Importer = new CompoundsCsv(
-            $output,
+            $logger,
             $Items,
             $UploadedFile,
             $Compounds,
@@ -128,7 +133,7 @@ final class ImportCompoundsCsv extends Command
         $logger->info(sprintf('Done importing %d records', $count));
         $logger->info(sprintf('Import finished for Team with ID %d%s', $teamid, $infoTrailer));
         $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('[*] Delete imported file? (y/N) ', false);
+        $question = new ConfirmationQuestion('[?] Delete imported file? (y/N) ', false);
         /** @phpstan-ignore-next-line ask method is part of QuestionHelper which extends HelperInterface */
         if ($helper->ask($input, $output, $question)) {
             $this->Fs->getFs()->delete((string) $input->getArgument('file'));

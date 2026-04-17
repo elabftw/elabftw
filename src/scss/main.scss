@@ -983,11 +983,6 @@ tr:first-child td {
     &:hover:not(.selected) {
       background-color: var(--disabled);
     }
-
-    .relative-moment {
-      color: var(--secondlevel);
-      font-size: 80%;
-    }
   }
 
   /* Make the titles that you can click on to toggle the steps visibly clickable */
@@ -1058,6 +1053,11 @@ the form-control fails to do that so we do the border ourselves */
 .thumbnail {
   overflow: hidden;
   overflow-wrap: break-word;
+
+  .dropdown button {
+    position: relative;
+    z-index: 10;
+  }
 }
 
 .thumb {
@@ -1428,12 +1428,6 @@ the form-control fails to do that so we do the border ourselves */
   #itemList section {
     break-inside: avoid;
   }
-}
-
-// raise above .viewer-ove
-.thumbnail > .dropdown {
-  position: relative;
-  z-index: 10;
 }
 
 /* icon overlay for uploaded file icons */

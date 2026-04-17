@@ -46,6 +46,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_column;
+use function sprintf;
+
 /**
  * For displaying an entity in show, view or edit mode
  * Preloads shared data like templates (experiments/items), statuses, team info.

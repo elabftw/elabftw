@@ -17,6 +17,10 @@ use Elabftw\Interfaces\ZipMakerInterface;
 use ZipStream\ZipStream;
 use Override;
 
+use function hash;
+use function in_array;
+use function sprintf;
+
 /**
  * Mother class of the Make*Zip services
  */

@@ -25,6 +25,12 @@ use ZipStream\ZipStream;
 use Override;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 
+use function array_map;
+use function date;
+use function fclose;
+use function fopen;
+use function sprintf;
+
 /**
  * Export data in .eln format
  */

@@ -20,6 +20,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function sprintf;
+
 /**
  * To move local filesystem uploads to S3 storage
  */

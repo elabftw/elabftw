@@ -28,6 +28,11 @@ use OneLogin\Saml2\Settings as SamlSettings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+use function _;
+use function session_get_cookie_params;
+use function setcookie;
+use function time;
+
 require_once 'app/init.inc.php';
 
 $Response = new Response();

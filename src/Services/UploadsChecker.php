@@ -21,6 +21,10 @@ use League\Flysystem\UnableToRetrieveMetadata;
 use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function count;
+use function dirname;
+use function sprintf;
+
 /**
  * Check uploads for correct hash and filesize
  */

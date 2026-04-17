@@ -22,6 +22,9 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function count;
+use function is_array;
+
 class UsersTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

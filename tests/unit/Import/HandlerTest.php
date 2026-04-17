@@ -19,6 +19,8 @@ use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use function dirname;
+
 class HandlerTest extends \PHPUnit\Framework\TestCase
 {
     private Handler $handler;

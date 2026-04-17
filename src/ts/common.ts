@@ -563,10 +563,6 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     .querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea')
     .forEach(input => {
       input.disabled = disabled;
-      // reset numeric fields when disabling
-      if (disabled && input.type === 'number') {
-        input.value = '0';
-      }
     });
 });
 
@@ -579,13 +575,25 @@ on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   $('#bookingParamsModal').modal('hide');
 });
 
-on('transfer-ownership', async () => {
+on('transfer-ownership', async (_, e:Event) => {
+  e.preventDefault();
   const params = collectForm(document.getElementById('ownershipTransferForm'));
-  const userid = parseInt(params['targetUserId'].split(' ')[0] ?? '', 10);
+  if (!params['targetUserId'] || !params['targetTeamId']) {
+    return;
+  }
+  const userid = Number.parseInt(String(params['targetUserId']).split(' ')[0], 10);
+  const team = Number.parseInt(String(params['targetTeamId']), 10);
   ApiC.notifOnSaved = false;
-  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid });
+  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid, team });
   sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
-  window.location.reload();
+  const path = window.location.pathname.toLowerCase();
+  if (path.includes('experiment')) {
+    window.location.href = 'experiments.php';
+  } else if (path.includes('database') || path.includes('resource')) {
+    window.location.href = 'database.php';
+  } else {
+    window.location.href = 'dashboard.php';
+  }
 });
 
 on(Action.Restore, () => {

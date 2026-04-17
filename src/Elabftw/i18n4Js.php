@@ -16,6 +16,14 @@ use Elabftw\Enums\Language;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\FilesystemOperator;
 
+use function _;
+use function bind_textdomain_codeset;
+use function bindtextdomain;
+use function dirname;
+use function putenv;
+use function setlocale;
+use function textdomain;
+
 /**
  * This class is used to generate the translations files for i18next (javascript)
  * Use it with: bin/console dev:i18n4js
@@ -37,7 +45,9 @@ final class i18n4Js
     {
         return array(
             '2FA' => _('2FA'),
+            'add' => _('Add'),
             'add-compound' => _('Add compound'),
+            'add-task' => _('Add task'),
             'add-team' => _('Add team'),
             'add-to-team' => _('Add selected users to team'),
             'archive-user' => _('Archive user'),
@@ -59,16 +69,18 @@ final class i18n4Js
             'create-one-items' => _('Create a resource without using a template'),
             'create-one-experiments_templates' => _('Create an experiment template'),
             'create-one-items_types' => _('Create a resource template'),
+            'current-edit' => _('Currently editing'),
+            'custom-fields' => _('Custom fields'),
             'delete' => _('Delete'),
             'delete-confirmation' => _('Delete {{num, number}} line(s)?'),
             'delete-selected' => _('Delete selected rows'),
+            'done' => _('Done'),
             'dropzone-upload-area' => _('Drop files here to upload'),
             'dropzone-filesize-limit' => _('File size limit:'),
             'edit' => _('Edit'),
             'edit-compound' => _('Edit compound'),
             'editing-metadata' => _('You are currently editing the metadata attached to this entry.'),
             'email-sent-to-x' => _('Email sent to {{num, number}} users.'),
-            'current-edit' => _('Currently editing'),
             'email' => _('Email'),
             'enable-permission' => _('You must allow at least one permission setting.'),
             'encryption' => _('Encryption'),
@@ -78,10 +90,9 @@ final class i18n4Js
             'error' => _('Error'),
             'error-no-filename' => _('File name is missing.'),
             'error-fetch-request' => _('There was an error while fetching the requested data: {{error}}'),
-            'error-parsing-metadata' => _('There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.'),
+            'error-parsing-metadata' => _('There was an error while parsing metadata (custom fields). Full error has been logged to the browser console.'),
             'export' => _('Export'),
             'export-success' => _('Export successful.'),
-            'extra-fields' => _('Extra fields'),
             'filename' => _('Filename'),
             'firstname' => _('Firstname'),
             'format' => _('Format'),
@@ -114,6 +125,7 @@ final class i18n4Js
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-found' => _('No matching result found.'),
             'not-set' => _('Not set'),
+            'no-tasks-yet' => _('No tasks yet.'),
             'nothing-selected' => _('Nothing selected!'),
             'now' => _('Now'),
             'oc-version-warning' => _('Warning: current OpenCloning version is incompatible with this version of eLabFTW.'),

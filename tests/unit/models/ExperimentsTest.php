@@ -14,20 +14,27 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
 use Elabftw\Services\Check;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
+
+use function count;
+use function is_array;
+use function json_decode;
+use function sprintf;
+use function array_column;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -177,10 +184,22 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $user1 = new Users(1, 1);
         $user2 = new Users(2, 1);
         $exp = $this->getFreshExperimentWithGivenUser($user1);
-        $params = array('users_experiments' => array($user1->userid), 'userid' => $user2->userid);
+        $params = array('userid' => $user2->userid, 'team' => $user2->getTeam());
+        // no readOne after ownership change
         $exp->patch(Action::UpdateOwner, $params);
-        $this->assertEquals($exp->entityData['userid'], $user2->userid);
-        $this->assertEquals($exp->entityData['team'], $user2->team);
+        $entityData = $exp->readOne();
+        $this->assertEquals($user2->userid, $entityData['userid']);
+        $this->assertEquals($user2->team, $entityData['team']);
+    }
+
+    public function testUpdateOwnershipWrongTeamCombination(): void
+    {
+        $user1 = new Users(1, 1);
+        $user2 = new Users(2, 2);
+        $exp = $this->getFreshExperimentWithGivenUser($user1);
+        $params = array('userid' => $user2->userid, 'team' => 17);
+        $this->expectException(UnprocessableContentException::class);
+        $exp->patch(Action::UpdateOwner, $params);
     }
 
     public function testUpdateOwnershipToDifferentTeamIsRestrictedToAdmins(): void
@@ -189,9 +208,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $user1->isAdmin = false;
         $user2 = new Users(2, 2);
         $exp = $this->getFreshExperimentWithGivenUser($user1);
-        $params = array('users_experiments' => array($user1->userid), 'userid' => $user2->userid, 'team' => $user2->team);
-        $this->expectException(UnauthorizedException::class);
-        $exp->patch(Action::UpdateOwner, $params);
+        $this->expectException(IllegalActionException::class);
+        $exp->patch(Action::UpdateOwner, array('userid' => $user2->userid, 'team' => 2));
     }
 
     public function testUpdateWithNegativeInt(): void
@@ -247,12 +265,23 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
-        $id = $this->Experiments->postAction(Action::Duplicate, array());
+        // add some uploads
+        $this->Experiments->Uploads->createFromString(FileFromString::Json, 'normal.json', '{}');
+        $archivedId = $this->Experiments->Uploads->createFromString(FileFromString::Json, 'archived.json', '{}');
+        $this->Experiments->Uploads->setId($archivedId);
+        $this->Experiments->Uploads->patch(Action::Archive, array());
+        $id = $this->Experiments->postAction(Action::Duplicate, array('copyFiles' => 1));
         $this->assertIsInt($id);
         $new = new Experiments($this->Users, $id);
         $this->assertEquals($canread->value, $new->entityData['canread_base']);
         $this->assertEquals($canwrite->value, $new->entityData['canwrite_base']);
         $this->assertEquals(1, $new->entityData['hide_main_text']);
+        // assert uploads' states persist
+        $newUploads = $new->Uploads->readAll(new BaseQueryParams(states: array(State::Normal, State::Archived), ));
+        $this->assertCount(2, $newUploads);
+        $states = array_column($newUploads, 'state');
+        $this->assertContains(State::Normal->value, $states);
+        $this->assertContains(State::Archived->value, $states);
     }
 
     public function testInsertTags(): void
@@ -270,7 +299,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTimestampThisMonth(): void
     {
-        $this->assertEquals(4, $this->Experiments->getTimestampLastMonth());
+        $this->assertEquals(5, $this->Experiments->getTimestampLastMonth());
     }
 
     public function testUpdateJsonField(): void

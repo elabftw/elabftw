@@ -17,6 +17,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function strlen;
+
 class ExclusiveEditModeTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

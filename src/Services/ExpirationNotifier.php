@@ -19,6 +19,10 @@ use Symfony\Component\Mime\Address;
 use Override;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function _;
+use function implode;
+use function sprintf;
+
 /**
  * Warn users and their Admins about account expiration
  * Note: this class structure isn't great, and full of nested foreach. While it is possible to do everything in one nice query (probably), it's difficult and error prone, so we adopt the pragmatic approach of doing inefficient code because this code runs from CLI once a week so we don't really care if it takes long

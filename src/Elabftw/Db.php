@@ -18,6 +18,8 @@ use PDO;
 use PDOException;
 use PDOStatement;
 
+use function debug_print_backtrace;
+
 /**
  * Connect to the database with a singleton class
  */

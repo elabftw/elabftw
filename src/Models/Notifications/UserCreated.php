@@ -17,6 +17,9 @@ use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users\Users;
 use Override;
 
+use function _;
+use function sprintf;
+
 class UserCreated extends AbstractNotifications implements MailableInterface
 {
     protected const PREF = 'notif_user_created';

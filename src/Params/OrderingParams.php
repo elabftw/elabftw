@@ -16,6 +16,7 @@ use Elabftw\Enums\Orderable;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function array_map;
+use function explode;
 
 /**
  * Parameters passed for ordering stuff

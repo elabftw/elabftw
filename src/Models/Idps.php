@@ -22,6 +22,11 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function array_map;
+use function count;
+use function json_decode;
+use function sprintf;
+
 /**
  * An IDP is an Identity Provider. Used in SAML2 authentication context.
  */

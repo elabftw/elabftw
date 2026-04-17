@@ -16,6 +16,8 @@ use Elabftw\Models\AbstractStatus;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_merge;
+
 /**
  * For {experiments|resources}-status.php
  */

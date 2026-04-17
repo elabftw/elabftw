@@ -18,6 +18,8 @@ use Override;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
+use function json_encode;
+
 /**
  * Make an ELN html file
  */

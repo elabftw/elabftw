@@ -22,7 +22,6 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Hash\FileHash;
-use Elabftw\Hash\LocalFileHash;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
@@ -42,6 +41,20 @@ use function json_decode;
 use function rawurlencode;
 use function sprintf;
 use function strtr;
+use function _;
+use function array_key_exists;
+use function count;
+use function date;
+use function explode;
+use function filter_var;
+use function is_string;
+use function json_encode;
+use function parse_str;
+use function parse_url;
+use function preg_replace;
+use function str_replace;
+use function str_starts_with;
+use function ucfirst;
 
 /**
  * Import a .eln file.

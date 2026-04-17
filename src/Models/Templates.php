@@ -23,6 +23,8 @@ use Elabftw\Traits\SortableTrait;
 use Override;
 use PDO;
 
+use function _;
+
 /**
  * All about the templates
  */

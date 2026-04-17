@@ -20,6 +20,10 @@ use Elabftw\Models\Users\Users;
 use Override;
 use PDO;
 
+use function array_map;
+use function implode;
+use function sprintf;
+
 /**
  * Request action for users
  */

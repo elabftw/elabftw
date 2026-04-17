@@ -23,8 +23,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use Symfony\Component\Console\Output\NullOutput;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+use function dirname;
 
 use const UPLOAD_ERR_OK;
 
@@ -53,7 +55,7 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
         $cid = 3345;
         $compoundId = $Compounds->postAction(Action::Duplicate, array('cid' => $cid));
         $Compounds->setId($compoundId);
-        $Import = new CompoundsCsv(new NullOutput(), $Items, $uploadedFile, $Compounds, 1);
+        $Import = new CompoundsCsv(new NullLogger(), $Items, $uploadedFile, $Compounds, 1);
         $this->assertTrue($Import->import() > 1);
     }
 }

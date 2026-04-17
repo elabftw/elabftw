@@ -18,6 +18,8 @@ use Override;
 
 use function mb_strlen;
 use function str_replace;
+use function _;
+use function sprintf;
 
 final class StepParams extends ContentParams
 {

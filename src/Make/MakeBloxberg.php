@@ -26,6 +26,14 @@ use ZipArchive;
 
 use function json_decode;
 use function json_encode;
+use function _;
+use function basename;
+use function date;
+use function dirname;
+use function hash;
+use function implode;
+use function sprintf;
+use function trim;
 
 /**
  * Send data to Bloxberg server

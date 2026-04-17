@@ -15,6 +15,8 @@ namespace Elabftw\Services\AdvancedSearchQuery\Exceptions;
 
 use Exception;
 
+use function _;
+
 final class LimitDepthIsExceededException extends Exception
 {
     public function __construct()

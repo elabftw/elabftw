@@ -23,6 +23,11 @@ use Symfony\Component\HttpFoundation\Request;
 use function memory_get_usage;
 use function microtime;
 use function round;
+use function array_rand;
+use function array_splice;
+use function count;
+use function in_array;
+use function json_decode;
 
 /**
  * Functions used by Twig in templates

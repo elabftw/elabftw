@@ -17,6 +17,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
 use function dirname;
+use function printf;
 
 /**
  * This is used to find out if there are untracked files that should have been deleted

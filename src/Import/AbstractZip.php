@@ -21,7 +21,12 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use League\Flysystem\ZipArchive\FilesystemZipArchiveProvider;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use RuntimeException;
+
+use function fclose;
+use function sprintf;
+use function str_replace;
 
 /**
  * Mother class for importing zip file
@@ -49,10 +54,10 @@ abstract class AbstractZip extends AbstractImport
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
     ) {
-        parent::__construct($requester, $UploadedFile);
+        parent::__construct($requester, $UploadedFile, $logger);
         // we extract everything into a temporary directory
         $this->tmpDir = Tools::getUuidv4();
-        $this->logger->debug(sprintf('temporary directory: %s', $this->tmpDir));
+        $this->emitLog(sprintf('temporary directory: %s', $this->tmpDir), LogLevel::DEBUG);
         // we use the Exports storage to store decompressed data
         $this->tmpFs = Storage::EXPORTS->getStorage()->getFs();
 
@@ -109,13 +114,13 @@ abstract class AbstractZip extends AbstractImport
         foreach ($zipFs->listContents('', true) as $item) {
 
             $rawPath = $item->path();
-            $this->logger->debug(sprintf('ZIP: extracting: %s', $rawPath));
+            $this->emitLog(sprintf('ZIP: extracting: %s', $rawPath), LogLevel::DEBUG);
 
             // fix eln v < 106 with duplicated / in path for uploaded files
             $targetPath = $this->tmpDir . '/' . str_replace('//', '/', $rawPath);
 
             if ($item->isDir()) {
-                $this->logger->debug(sprintf('ZIP: creating directory %s', $targetPath));
+                $this->emitLog(sprintf('ZIP: creating directory %s', $targetPath), LogLevel::DEBUG);
                 $this->tmpFs->createDirectory($targetPath);
                 continue;
             }

@@ -14,6 +14,11 @@ namespace Elabftw\Elabftw;
 
 use RuntimeException;
 
+use function fclose;
+use function fwrite;
+use function sprintf;
+use function stream_socket_client;
+
 final class Invoker
 {
     private const string SOCKET_PATH = 'unix:///run/invoker/invoker.sock';

@@ -23,6 +23,12 @@ use Elabftw\Services\AdvancedSearchQuery\Visitors\FieldValidatorVisitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\QueryBuilderVisitor;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
+use function _;
+use function array_slice;
+use function explode;
+use function implode;
+use function sprintf;
+
 final class AdvancedSearchQuery
 {
     protected string $exception = '';

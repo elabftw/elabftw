@@ -19,6 +19,8 @@ use Elabftw\Models\Revisions;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
+use function _;
+
 /**
  * Show history of body of experiment or db item
  */

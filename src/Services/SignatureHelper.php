@@ -22,6 +22,9 @@ use Elabftw\Models\Users\Users;
 use ParagonIE\ConstantTime\Base64;
 
 use function sodium_crypto_generichash;
+use function json_encode;
+use function sodium_crypto_sign_detached;
+use function sprintf;
 
 use const SODIUM_CRYPTO_GENERICHASH_BYTES_MAX;
 use const JSON_THROW_ON_ERROR;

@@ -307,7 +307,7 @@ services:
         #
         # This service is necessary for the Chemical structure editor (Ketcher)
         #- USE_INDIGO=false
-        #- INDIGO_URL=http://chem-plugin/
+        #- INDIGO_URL=http://chem-plugin:8080/
         # The fingerprinter is necessary to create a fingerprint of chemical compounds so we can do sub-structure search
         #- USE_FINGERPRINTER=false
         #- FINGERPRINTER_URL=http://chem-plugin:8000/
@@ -430,9 +430,18 @@ services:
       - elabftw-net
 
   #chem-plugin:
-  #  image: elabftw/chem-plugin
+  #  # note: use elabftw version here instead of latest tag
+  #  # e.g. image: elabftw/chem-plugin:5.6.2
+  #  image: elabftw/chem-plugin:latest
   #  container_name: chem-plugin
   #  restart: always
+  #  read_only: true
+  #  cap_drop:
+  #      - ALL
+  #  tmpfs:
+  #    - /tmp
+  #  security_opt:
+  #    - no-new-privileges:true
   #  networks:
   #    - elabftw-net
 

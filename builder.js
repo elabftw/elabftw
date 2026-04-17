@@ -16,6 +16,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
+const sveltePreprocess = require('svelte-preprocess');
 
 module.exports = (env) => {
   return {
@@ -108,7 +109,8 @@ module.exports = (env) => {
     plugins: [
       new MiniCssExtractPlugin(
         {
-          filename: 'vendor.min.css',
+          filename: '[name].min.css',
+          chunkFilename: '[name].min.css',
         }
       ),
       // required to make process work in the browser
@@ -117,7 +119,8 @@ module.exports = (env) => {
       }),
     ],
     resolve: {
-      extensions: ['.ts', '.js', '.jsx'],
+      extensions: ['.ts', '.js', '.jsx', '.svelte'],
+      mainFields: ['svelte', 'browser', 'module', 'main'],
       fallback: {
         // required by react 18
         process: require.resolve('process/browser'),
@@ -134,6 +137,17 @@ module.exports = (env) => {
               // in prod, we don't have the types of some libs, use transpileOnly to avoid errors
               transpileOnly: env.production
               }
+          },
+        },
+        // svelte loader
+        {
+          test: /\.svelte$/,
+          use: {
+            loader: 'svelte-loader',
+            options: {
+              emitCss: true,
+              preprocess: sveltePreprocess(),
+            },
           },
         },
         { // CSS LOADER

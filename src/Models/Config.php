@@ -31,6 +31,12 @@ use Override;
 use function array_map;
 use function urlencode;
 use function in_array;
+use function array_key_exists;
+use function count;
+use function dirname;
+use function file_get_contents;
+use function sprintf;
+use function str_starts_with;
 
 /**
  * The general config table

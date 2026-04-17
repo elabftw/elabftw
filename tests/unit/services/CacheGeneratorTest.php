@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use function dirname;
+
 class CacheGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     public function testGenerate(): void

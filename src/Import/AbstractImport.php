@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
@@ -24,6 +25,11 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+
+use function in_array;
+use function sprintf;
 
 /**
  * Import data from a file
@@ -44,6 +50,7 @@ abstract class AbstractImport implements ImportInterface
     public function __construct(
         protected Users $requester,
         protected UploadedFile $UploadedFile,
+        protected LoggerInterface $logger,
     ) {
         $this->Db = Db::getConnection();
         // yes, the bypassWritePermission opens it up to normal users that normally cannot create status and category,
@@ -59,6 +66,13 @@ abstract class AbstractImport implements ImportInterface
     public function getInserted(): int
     {
         return $this->inserted;
+    }
+
+    protected function emitLog(string $message, string $level = LogLevel::INFO): void
+    {
+        $timestamp = new DateTimeImmutable()->format('c');
+        $log = sprintf('%s %s', $timestamp, $message);
+        $this->logger->log($level, $log);
     }
 
     protected function getStatusId(EntityType $type, string $status): int

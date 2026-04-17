@@ -7,7 +7,7 @@ describe('Users tab in Admin page', () => {
   it('cannot create user with empty fields', () => {
     // create user without filling
     cy.get('#initialCreateUserBtn').should('exist').click();
-    cy.get('.overlay').first().should('be.visible').should('contain', 'Invalid input found! Aborting');
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Invalid');
   });
 
   it('creates user', () => {

@@ -1,0 +1,78 @@
+name: Build the chem plugin image and push edge tag
+
+# Triggered by change in the corresponding folder
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'containers/chem-plugin/**'
+      - '.github/workflows/build_chem_plugin.yaml'
+
+## GITHUB_TOKEN authentication
+permissions:
+  contents: read
+
+jobs:
+    buildandpush:
+        runs-on: ubuntu-latest
+        steps:
+            # https://github.com/CycodeLabs/cimon-action
+            - name: Cimon supply chain attack protection
+              uses: cycodelabs/cimon-action@f99ad5557cb80964bc2b2e76a47bf4b5ba6e323b # v0.10
+              with:
+                prevent: true
+                allowed-hosts: >
+                  archive.ubuntu.com
+                  auth.docker.io
+                  dhi.io
+                  files.pythonhosted.org
+                  ghcr.io
+                  index.docker.io
+                  ports.ubuntu.com
+                  pypi.org
+                  security.ubuntu.com
+
+            - name: Checkout repo
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+              with:
+                persist-credentials: false
+
+            # https://github.com/docker/setup-qemu-action#usage
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4
+
+            # https://github.com/marketplace/actions/docker-setup-buildx
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
+
+            # https://github.com/docker/login-action#docker-hub
+            - name: Login to Docker Hub
+              uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4
+              with:
+                username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+            # https://github.com/docker/login-action#docker-hub
+            - name: Login to dhi.io
+              uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4
+              with:
+                registry: dhi.io
+                username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                password: ${{ secrets.DOCKER_HUB_PULLPUBTOKEN }}
+
+            # https://github.com/docker/build-push-action#multi-platform-image
+            # https://docs.docker.com/build/ci/github-actions/cache/
+            - name: Build latest release for all platforms and push to Docker Hub
+              uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7
+              with:
+                context: .
+                file: containers/chem-plugin/Dockerfile
+                platforms: linux/amd64,linux/arm64
+                push: true
+                # the scope parameter is necessary when doing multi arch builds or we'll always miss cache
+                cache-from: type=gha,scope=${{ runner.os }}-${{ runner.arch }}
+                cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}
+                sbom: true
+                tags: |
+                    elabftw/chem-plugin:edge

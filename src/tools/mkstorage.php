@@ -15,6 +15,8 @@ namespace Elabftw\Elabftw;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\Users;
 
+use function dirname;
+
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 $StorageUnits = new StorageUnits(new Users(1, 1), false);

@@ -15,9 +15,9 @@
 .#{$fa-css-prefix}-regular,
 .fab,
 .#{$fa-css-prefix}-brands {
+  display: var(--#{$fa-css-prefix}-display, #{$fa-display});
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  display: var(--#{$fa-css-prefix}-display, #{$fa-display});
   font-style: normal;
   font-variant: normal;
   line-height: 1;

@@ -2018,88 +2018,89 @@ input:user-invalid {
   border: 1px solid var(--orange);
   box-shadow: inset 0 0 0 1px var(--orange);
 }
-  .entity-skeleton {
-    pointer-events: none;
-    opacity: 0.9;
+
+.entity-skeleton {
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.skeleton-box {
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.06) 25%,
+    rgba(0, 0, 0, 0.12) 37%,
+    rgba(0, 0, 0, 0.06) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 0.25rem;
+  display: inline-block;
+}
+
+.skeleton-checkbox {
+  height: 1rem;
+  margin-top: 0.15rem;
+  width: 1rem;
+}
+
+.skeleton-pill {
+  height: 1.6rem;
+  width: 5.5rem;
+}
+
+.skeleton-pill-small {
+  width: 2.5rem;
+}
+
+.skeleton-custom-id {
+  height: 1rem;
+  width: 3.5rem;
+}
+
+.skeleton-title {
+  height: 1.25rem;
+  max-width: 100%;
+  width: min(28rem, 60vw);
+}
+
+.skeleton-owner {
+  height: 1rem;
+  width: 8rem;
+}
+
+.skeleton-tag {
+  border-radius: 999px;
+  height: 1.5rem;
+  width: 4.5rem;
+}
+
+.skeleton-icon-btn {
+  border-radius: 0.25rem;
+  height: 2rem;
+  width: 2rem;
+}
+
+.skeleton-date {
+  height: 0.9rem;
+  width: 8rem;
+}
+
+.skeleton-date-small {
+  width: 6rem;
+}
+
+.skeleton-pin {
+  border-radius: 0.25rem;
+  height: 2rem;
+  width: 2rem;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
   }
 
-  .skeleton-box {
-    display: inline-block;
-    border-radius: 0.25rem;
-    background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.06) 25%,
-      rgba(0, 0, 0, 0.12) 37%,
-      rgba(0, 0, 0, 0.06) 63%
-    );
-    background-size: 400% 100%;
-    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  100% {
+    background-position: 0 0;
   }
-
-  .skeleton-checkbox {
-    width: 1rem;
-    height: 1rem;
-    margin-top: 0.15rem;
-  }
-
-  .skeleton-pill {
-    width: 5.5rem;
-    height: 1.6rem;
-  }
-
-  .skeleton-pill-small {
-    width: 2.5rem;
-  }
-
-  .skeleton-custom-id {
-    width: 3.5rem;
-    height: 1rem;
-  }
-
-  .skeleton-title {
-    width: min(28rem, 60vw);
-    max-width: 100%;
-    height: 1.25rem;
-  }
-
-  .skeleton-owner {
-    width: 8rem;
-    height: 1rem;
-  }
-
-  .skeleton-tag {
-    width: 4.5rem;
-    height: 1.5rem;
-    border-radius: 999px;
-  }
-
-  .skeleton-icon-btn {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.25rem;
-  }
-
-  .skeleton-date {
-    width: 8rem;
-    height: 0.9rem;
-  }
-
-  .skeleton-date-small {
-    width: 6rem;
-  }
-
-  .skeleton-pin {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.25rem;
-  }
-
-  @keyframes skeleton-shimmer {
-    0% {
-      background-position: 100% 0;
-    }
-
-    100% {
-      background-position: 0 0;
-    }
-  }
+}

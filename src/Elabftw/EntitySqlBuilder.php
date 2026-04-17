@@ -381,7 +381,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
             'LEFT JOIN users2teams
                 ON (users2teams.users_id = entity.userid and users2teams.teams_id = %d)
             LEFT JOIN teams ON (entity.team = teams.id)',
-            $this->entity->Users->team ?? 0,
+            $this->entity->Users->getTeam(),
         );
     }
 }

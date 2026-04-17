@@ -34,6 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
 use ValueError;
 
 use function array_walk;
+use function _;
+use function ini_get;
 
 /**
  * Instance level settings and tools
@@ -51,7 +53,7 @@ try {
     $idpsArr = $Idps->readAllLight();
     $IdpsSources = new IdpsSources($App->Users);
     $idpsSources = $IdpsSources->readAll();
-    $teamsArr = $App->Teams->readAllComplete();
+    $teamsArr = $App->Teams->selectAll();
     $Experiments = new Experiments($App->Users);
 
     // Remote directory search

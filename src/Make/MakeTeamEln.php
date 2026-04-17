@@ -19,6 +19,11 @@ use ZipStream\ZipStream;
 use Override;
 use Psr\Log\LoggerInterface;
 
+use function array_column;
+use function array_map;
+use function implode;
+use function sprintf;
+
 /**
  * Make an ELN archive for a full team. Only accessible from command line.
  */

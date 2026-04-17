@@ -27,6 +27,11 @@ use OneLogin\Saml2\Settings as SamlSettings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+use function count;
+use function implode;
+use function setcookie;
+use function time;
+
 require_once 'init.inc.php';
 
 $redirectUrl = '/login.php';

@@ -21,6 +21,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function sprintf;
+
 /**
  * For dev purposes: force the schema to a particular version
  */

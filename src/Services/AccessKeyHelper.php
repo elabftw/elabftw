@@ -16,6 +16,8 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
 use PDO;
 
+use function is_int;
+
 /**
  * A utility class to deal with access key stuff
  */

@@ -16,6 +16,9 @@ use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\EntityType;
 use Override;
 
+use function array_merge;
+use function json_encode;
+
 final class SignatureCreated extends AbstractAuditEvent
 {
     public function __construct(int $requesterUserid, private int $entityId, private EntityType $entityType)

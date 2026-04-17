@@ -14,6 +14,8 @@ namespace Elabftw\Controllers;
 
 use Override;
 
+use function _;
+
 /**
  * For resources-categories.php
  */

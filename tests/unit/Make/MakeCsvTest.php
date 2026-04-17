@@ -21,6 +21,8 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\Response;
 
+use function str_ends_with;
+
 class MakeCsvTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

@@ -24,6 +24,8 @@ use Override;
 use PDO;
 use RuntimeException;
 
+use function array_map;
+
 /**
  * Procurement requests are purchase orders in a team
  */

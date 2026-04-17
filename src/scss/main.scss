@@ -1053,6 +1053,11 @@ the form-control fails to do that so we do the border ourselves */
 .thumbnail {
   overflow: hidden;
   overflow-wrap: break-word;
+
+  .dropdown button {
+    position: relative;
+    z-index: 10;
+  }
 }
 
 .thumb {

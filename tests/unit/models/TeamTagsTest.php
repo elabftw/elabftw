@@ -17,6 +17,8 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Params\TagParam;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function count;
+
 class TeamTagsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

@@ -20,6 +20,8 @@ use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Services\UsersHelper;
 use Override;
 
+use function in_array;
+
 /**
  * Demo auth service: auto login with just an email
  */

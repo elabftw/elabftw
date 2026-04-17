@@ -31,6 +31,9 @@ use Symfony\Component\HttpFoundation\InputBag;
 use function sprintf;
 use function strcasecmp;
 use function trim;
+use function count;
+use function explode;
+use function is_array;
 
 /**
  * Import a CSV into compounds

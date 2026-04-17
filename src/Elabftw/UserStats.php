@@ -23,6 +23,7 @@ use function array_key_last;
 use function implode;
 use function round;
 use function sprintf;
+use function _;
 
 /**
  * Generate experiments statistics for a user (shown on profile page)

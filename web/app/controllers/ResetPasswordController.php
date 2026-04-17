@@ -33,6 +33,9 @@ use function nl2br;
 use function random_int;
 use function sleep;
 use function time;
+use function _;
+use function filter_var;
+use function sprintf;
 
 require_once dirname(__DIR__) . '/init.inc.php';
 

@@ -17,6 +17,9 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Override;
 
+use function _;
+use function ngettext;
+
 /**
  * For database.php
  */

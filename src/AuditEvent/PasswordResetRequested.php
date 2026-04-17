@@ -15,6 +15,8 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\AuditCategory;
 use Override;
 
+use function sprintf;
+
 final class PasswordResetRequested extends AbstractAuditEvent
 {
     public function __construct(private string $email)

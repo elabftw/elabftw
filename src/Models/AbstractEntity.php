@@ -22,7 +22,6 @@ use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Permissions;
-use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
@@ -51,6 +50,8 @@ use Elabftw\Make\MakeCustomTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Make\MakeDgnTimestamp;
 use Elabftw\Make\MakeDigicertTimestamp;
+use Elabftw\Make\MakeEvidencyTimestamp;
+use Elabftw\Make\MakeEvidencyTimestampDev;
 use Elabftw\Make\MakeFullJson;
 use Elabftw\Make\MakeGlobalSignTimestamp;
 use Elabftw\Make\MakeSectigoTimestamp;
@@ -71,7 +72,6 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
 use Elabftw\Services\TeamsHelper;
-use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\EntityTrait;
 use GuzzleHttp\Client;
 use PDO;
@@ -91,6 +91,16 @@ use function ksort;
 use function mb_substr;
 use function sprintf;
 use function str_contains;
+use function _;
+use function array_key_exists;
+use function explode;
+use function intval;
+use function is_array;
+use function is_string;
+use function json_decode;
+use function str_ends_with;
+use function str_replace;
+use function ucfirst;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -909,12 +919,7 @@ abstract class AbstractEntity extends AbstractRest
 
         // select the timestamp service and do the timestamp request to TSA
         $Maker = $this->getTimestampMaker($Config->configArr, $dataFormat);
-        $TimestampUtils = new TimestampUtils(
-            new Client(),
-            $Maker->generateData(),
-            $Maker->getTimestampParameters(),
-            new TimestampResponse(),
-        );
+        $TimestampUtils = $Maker->getTimestampUtils();
 
         // save the token and data in a zip archive
         $zipName = $Maker->getFileName();
@@ -1151,6 +1156,7 @@ abstract class AbstractEntity extends AbstractRest
             'digicert' => new MakeDigicertTimestamp($this->Users, $this, $config, $dataFormat),
             'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
             'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
+            'evidency' => Env::asBool('DEV_MODE') ? new MakeEvidencyTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeEvidencyTimestamp($this->Users, $this, $config, $dataFormat),
             'custom' => new MakeCustomTimestamp($this->Users, $this, $config, $dataFormat),
             default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
         };

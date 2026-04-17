@@ -24,6 +24,10 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function array_unique;
+use function array_values;
+use function sprintf;
+
 /**
  * All about the comments
  */

@@ -31,6 +31,11 @@ use Override;
 
 use function sprintf;
 use function ucfirst;
+use function array_column;
+use function array_merge;
+use function implode;
+use function in_array;
+use function intval;
 
 /** @psalm-suppress UnusedParam */
 final class FieldValidatorVisitor implements Visitor

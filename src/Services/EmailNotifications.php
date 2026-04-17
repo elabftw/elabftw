@@ -29,6 +29,8 @@ use function dirname;
 use function putenv;
 use function setlocale;
 use function textdomain;
+use function array_key_exists;
+use function sprintf;
 
 /**
  * Email notification system

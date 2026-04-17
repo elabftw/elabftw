@@ -21,6 +21,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use function dirname;
+use function _;
 
 /**
  * Deal with requests sent from the user control panel

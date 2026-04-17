@@ -28,6 +28,8 @@ use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Override;
 
+use function _;
+
 /**
  * All about the experiments
  */

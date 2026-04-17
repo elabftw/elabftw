@@ -22,6 +22,10 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function array_pop;
+use function explode;
+use function sprintf;
+
 /**
  * All about the tag but seen from a team perspective, not an entity
  */

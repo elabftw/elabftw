@@ -19,6 +19,7 @@ use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function count;
+use function sprintf;
 
 /**
  * Migrate uploads to S3

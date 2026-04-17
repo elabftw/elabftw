@@ -21,6 +21,10 @@ use Elabftw\Services\Filter;
 use Override;
 use Symfony\Component\Mime\Address;
 
+use function explode;
+use function in_array;
+use function str_starts_with;
+
 /**
  * Instance level actions
  */

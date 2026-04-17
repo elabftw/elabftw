@@ -24,27 +24,15 @@ final class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
 {
     protected const string TS_URL = 'https://zeitstempel.dfn.de';
 
-    protected const string TS_CERT = 'dfn.pem';
-
-    protected const string TS_CHAIN = 'dfn-chain.pem';
-
-    protected const string TS_HASH = 'sha256';
-
-    /**
-     * Return the needed parameters to request/verify a timestamp
-     *
-     * @return array<string,string>
-     */
     #[Override]
-    public function getTimestampParameters(): array
+    protected function getChain(): string
     {
-        return array(
-            'ts_login' => '',
-            'ts_password' => '',
-            'ts_url' => self::TS_URL,
-            'ts_cert' => dirname(__DIR__) . '/certs/' . self::TS_CERT,
-            'ts_hash' => self::TS_HASH,
-            'ts_chain' => dirname(__DIR__) . '/certs/' . self::TS_CHAIN,
-        );
+        return dirname(__DIR__) . '/certs/dfn-chain.pem';
+    }
+
+    #[Override]
+    protected function getCert(): string
+    {
+        return dirname(__DIR__) . '/certs/dfn.pem';
     }
 }

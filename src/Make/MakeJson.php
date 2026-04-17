@@ -21,6 +21,7 @@ use Override;
 
 use function json_encode;
 use function ksort;
+use function mb_strlen;
 
 /**
  * Make a JSON export from one or several entities

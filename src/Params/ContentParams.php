@@ -23,6 +23,9 @@ use Override;
 
 use function mb_strlen;
 use function filter_var;
+use function _;
+use function is_subclass_of;
+use function sprintf;
 
 class ContentParams implements ContentParamsInterface
 {

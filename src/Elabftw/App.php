@@ -44,6 +44,9 @@ use function intdiv;
 use function putenv;
 use function setlocale;
 use function textdomain;
+use function array_merge;
+use function bind_textdomain_codeset;
+use function sprintf;
 
 /**
  * This is a super class holding various global objects

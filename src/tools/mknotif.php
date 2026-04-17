@@ -20,6 +20,8 @@ use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Models\Users\Users;
 
+use function dirname;
+
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 $user = new Users(1);

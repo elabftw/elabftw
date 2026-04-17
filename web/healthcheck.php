@@ -14,6 +14,8 @@ namespace Elabftw\Elabftw;
 
 use Symfony\Component\HttpFoundation\Response;
 
+use function dirname;
+
 /**
  * Make sure everything is fine and dandy as far as we can tell
  * This page exists because other monitoring endpoints are not complete (they do not include the db)

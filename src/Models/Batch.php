@@ -25,6 +25,9 @@ use Elabftw\Params\DisplayParams;
 use Elabftw\Params\Guard;
 use Override;
 
+use function array_map;
+use function array_merge;
+
 /**
  * Process a single request targeting multiple entities
  */

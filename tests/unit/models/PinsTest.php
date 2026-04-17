@@ -13,6 +13,8 @@ namespace Elabftw\Models;
 
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function count;
+
 class PinsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

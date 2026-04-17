@@ -16,7 +16,8 @@ import TodolistSv from './components/Todolist.svelte';
 export default class Todolist extends SidePanel {
 
   unfinishedStepsScope: string;
-  initialLoad = true;
+  private static mounted = false;
+
 
   constructor() {
     super(Model.Todolist);
@@ -55,19 +56,22 @@ export default class Todolist extends SidePanel {
   // TOGGLE TODOLIST VISIBILITY
   toggle(): void {
     // force favtags to close if it's open
-    (new FavTag).hide();
+    (new FavTag()).hide();
     super.toggle();
-    // lazy load content only once
-    if (!document.getElementById(this.panelId).hasAttribute('hidden') && this.initialLoad) {
+    const panel = document.getElementById(this.panelId);
+    const isOpen = !!panel && !panel.hasAttribute('hidden');
+    if (isOpen) {
       const host = document.getElementById('todolist');
-      if (host) {
+      // Prevent mounting the Svelte component multiple times
+      // (can happen when toggling via both click and keyboard shortcut)
+      if (host && !Todolist.mounted && host.childElementCount === 0) {
         mount(TodolistSv, {
           target: host,
         });
+        Todolist.mounted = true;
       }
 
       this.loadUnfinishedStep();
-      this.initialLoad = false;
     }
   }
 }

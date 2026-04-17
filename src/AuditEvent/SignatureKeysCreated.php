@@ -16,6 +16,8 @@ use Elabftw\Enums\AuditCategory;
 use Override;
 
 use function array_merge;
+use function json_encode;
+use function sprintf;
 
 final class SignatureKeysCreated extends AbstractAuditEvent
 {

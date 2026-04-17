@@ -55,7 +55,7 @@ use function sprintf;
 use function str_replace;
 use function stream_copy_to_stream;
 use function stream_get_meta_data;
-use function strpos;
+use function str_contains;
 
 /**
  * All about the file uploads
@@ -213,13 +213,12 @@ final class Uploads extends AbstractRest
             $param = $this->makeCreateUploadParam($upload);
             $id = $entity->Uploads->create($param);
             $fresh = new self($entity, $id);
-            // skip body early if null
+            // replace links in body with the new long_name. Skip if body is null
             if ($body === null) {
                 continue;
             }
             $body = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $body);
         }
-        // patch once instead of every loop
         if ($body !== null && $body !== $entity->entityData['body']) {
             $entity->patch(Action::Update, array('body' => $body));
         }
@@ -325,7 +324,10 @@ final class Uploads extends AbstractRest
         if ($this->id !== null && $action !== Action::Duplicate) {
             $action = Action::Replace;
         }
-        $realName = $this->uploadData['real_name'] ?? Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody);
+        $realName = ($action === Action::Replace || $action === Action::Create)
+            ? Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody)
+            : ($this->uploadData['real_name']
+                ?? Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody));
         return match ($action) {
             Action::Create => $this->create(
                 new CreateUploadFromUploadedFile(new UploadedFile($reqBody['filePath'], $realName), $reqBody['comment'])
@@ -357,18 +359,12 @@ final class Uploads extends AbstractRest
         return sprintf('%s%d/uploads/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
-    /**
-     * Make a body check and then remove upload
-     */
     #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
         $this->Entity->touch();
-        // check that the filename is not in the body. see #432
-        if (strpos($this->Entity->entityData['body'] ?? '', $this->uploadData['long_name'])) {
-            throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
-        }
+        $this->checkUploadIsNotReferenced();
         return $this->nuke();
     }
 
@@ -461,6 +457,15 @@ final class Uploads extends AbstractRest
         return $this->Db->execute($req);
     }
 
+    // check that the filename is not in the body. see #432
+    private function checkUploadIsNotReferenced(): void
+    {
+        $body = $this->Entity->entityData['body'] ?? '';
+        if (str_contains($body, $this->uploadData['long_name'])) {
+            throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
+        }
+    }
+
     private function makeCreateUploadParam(array $upload): CreateUploadParamsInterface
     {
         if ($upload['storage'] === Storage::LOCAL->value) {
@@ -515,6 +520,7 @@ final class Uploads extends AbstractRest
     private function archive(): array
     {
         $this->canWriteOrExplode();
+        $this->checkUploadIsNotReferenced();
         $targetState = State::Archived->value;
         // if already archived, unarchive
         if ($this->uploadData['state'] === State::Archived->value) {

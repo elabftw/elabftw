@@ -140,8 +140,8 @@
     </a>
     <hr>
     {% set isDisabled = App.Config.configArr.dspace_host == '' or Entity.isReadOnly %}
-    <button type='button' class='dropdown-item {{ isDisabled ? 'disabled' }}' data-action='open-dspace-modal'{{ isDisabled ? 'disabled aria-disabled="true"' : '' }}>
-      <i class='fas fa-file-export fa-fw {{ isDisabled ? 'color-weak' }}'></i>{{ 'Export to DSpace'|trans }}
+    <button type='button' class='dropdown-item {{ isDisabled ? 'disabled' }}' data-action='open-dspace-modal' {{ isDisabled ? 'disabled aria-disabled="true"' : '' }}>
+      <i class='fas fa-file-export fa-fw {{ isDisabled ? 'color-weak' }}'></i> {{ 'Export to DSpace'|trans }}
     </button>
   </div>
 </div>

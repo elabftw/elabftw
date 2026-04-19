@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block body %}
+This page exists to have a single page holding all buttons, links and notifications so it's easier to work on the CSS.
+
+<div class='my-3'>
+<button type='button' class='btn btn-primary' data-action='toggle-dark-mode' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-circle-half-stroke fa-fw'></i> {{ 'Change theme'|trans }}
+</button>
+</div>
+
+<p>This is normal text. <a href='#'>And this is a link</a></p>
+
+<div class='my-3'>
+<button type='button' class='btn btn-primary'><i class='fas fa-pencil mr-1'></i>Primary button</button>
+<button type='button' class='btn btn-secondary'><i class='fas fa-pencil mr-1'></i>Secondary button</button>
+<button type='button' class='btn btn-ghost'><i class='fas fa-pencil mr-1'></i>Ghost button</button>
+<button type='button' class='btn btn-danger-ghost'><i class='fas fa-pencil mr-1'></i>Danger Ghost button</button>
+<button type='button' class='btn btn-neutral'><i class='fas fa-pencil mr-1'></i>Neutral button</button>
+</div>
+
+{{ 'Informational message %s'|format("<a href='#'>(link)</a>")|raw|msg('ok') }}
+{{ 'Warning message %s'|format("<a href='#'>(link)</a>")|raw|msg('warning') }}
+{{ 'Error message %s'|format("<a href='#'>(link)</a>")|raw|msg('ko') }}
+
+<div class='my-3'>
+  <div class='dropdown'>
+    <button type='button' class='btn btn-primary' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='Dropdown menu' aria-label='Dropdown menu'>
+      <i class='far fa-square-caret-down mr-1'></i>Dropdown menu
+    </button>
+
+    <div class='dropdown-menu dropdown-menu-right'>
+        <button type='button' class='dropdown-item'>
+          <i class='fas fa-fw fa-image mr-1'></i>Normal item
+        </button>
+        <button type='button' class='btn btn-dropdown-item dropdown-item'>
+          <i class='fas fa-fw fa-image mr-1'></i>With btn-dropdown-item
+        </button>
+      <div class='dropdown-divider'></div>
+      <button type='button' class='dropdown-item hover-warning'>
+        <i class='fas fa-fw fa-box-archive mr-1'></i>Hover warning
+      </button>
+      <button type='button' class='dropdown-item hover-danger'>
+        <i class='fas fa-fw fa-trash-alt mr-1'></i>Hover danger
+      </button>
+    </div>
+  </div>
+</div>
+
+{# rating #}
+<span class='rating-show rounded p-1 mr-3'><i class='fas fa-star' title='☻'></i>5</span>
+
+<div class='my-3'>
+  <ul class='list-group'>
+    <li class='list-group-item'>List-group-item</li>
+    <li class='list-group-item'>List-group-item</li>
+    <li class='list-group-item'>List-group-item</li>
+  </ul>
+</div>
+
+<div class='input-group my-3'>
+  <input class='form-control' placeholder='Placeholder text'>
+  <div class='input-group-append'>
+    <select class='custom-select brl-none'>
+      <option>Panthère</option>
+      <option>Rose</option>
+    </select>
+  </div>
+</div>
+<input class='form-control' disabled placeholder='Disabled input' value='Disabled input'>
+
+{% endblock body %}

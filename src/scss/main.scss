@@ -17,46 +17,6 @@ $theme-colors: (
   'neutral': $medium,
 );
 
-.btn-primary { background-color: var(--primary) !important; }
-.btn-secondary { background-color: var(--secondary) !important; }
-
-.btn-primary:hover {
-  background-color: var(--darkblue) !important;
-  border-color: var(--darkblue) !important;
-}
-
-.btn-secondary:hover {
-  background-color: var(--chrome-bg) !important;
-  border-color: var(--chrome-bg) !important;
-}
-
-.btn-primary,
-.btn-secondary {
-  .fas,
-  .fa { color: var(--chrome-fg) !important; }
-}
-
-.btn-danger-ghost {
-  border: 1px solid var(--dangerred) !important;
-  color: var(--dangerred) !important;
-
-  .fas,
-  .fa {
-    color: var(--dangerred) !important;
-  }
-
-  &:hover {
-    background-color: var(--dangerred);
-    border-color: var(--secondlevel);
-    color: var(--chrome-fg) !important;
-
-    .fas,
-    .fa {
-      color: var(--chrome-fg) !important;
-    }
-  }
-}
-
 $dropdown-link-active-bg: var(--primary);
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: var(--secondlevel);
@@ -201,12 +161,11 @@ a,
 .link-like {
   color: var(--primary);
   text-decoration: none;
-}
 
-a:hover,
-.link-like:hover {
-  color: var(--darkblue);
-  text-decoration: none;
+  &:hover {
+    color: color-mix(in srgb, var(--primary) 85%, $white);
+    text-decoration: underline;
+  }
 }
 
 /* add arrow going out of square icon after external links */
@@ -222,24 +181,21 @@ a:hover,
 select:not([multiple]) {
   appearance: none;
   background: var(--white) url('images/ico-arrow.png') no-repeat 97% 56%;
+  border: 1px solid var(--secondary);
+  color: var(--mediumstrong);
 }
 
 .form-control {
   background-color: var(--white);
-  border: 1px solid var(--secondary-muted);
+  border: 1px solid var(--secondary);
+  color: var(--strongest);
 }
 
 .dark-mode {
-  .form-control {
-    background-color: var(--mainbackground);
-    color: var(--mediumstrong);
-  }
-
   :where(input, textarea).form-control:read-only,
   .form-control:disabled {
-    background-color: var(--secondary-muted);
-    color: var(--mediumstrong);
-    opacity: 1;
+    background-color: var(--firstlevel);
+    color: var(--strongest);
   }
 
   .modal-content {
@@ -255,20 +211,6 @@ select:not([multiple]) {
   .form-control-plaintext,
   pre {
     color: var(--mediumstrong);
-  }
-
-  .alert,
-  .alert .close {
-    color: var(--mainbackground);
-  }
-
-  .alert-success,
-  .alert-success .close {
-    color: var(--strongest);
-  }
-
-  .alert a {
-    color: var(--strongest);
   }
 
   .hover-danger:hover {
@@ -289,8 +231,10 @@ select.form-control {
 }
 
 .form-control:focus {
+  background-color: var(--white);
   border-color: var(--primary);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
+  color: var(--strongest);
   z-index: 3;
 }
 
@@ -428,11 +372,6 @@ h5 {
   margin-top: 20px;
 }
 
-.alert a,
-.alert a:hover {
-  color: var(--mediumstrong);
-}
-
 .alert-success {
   background-color: var(--lightblue);
   border-color: var(--darkblue);
@@ -445,6 +384,7 @@ h5 {
 
 .alert-warning {
   border-color: var(--darkgold);
+  color: var(--darkgold);
 
   .close {
     color: var(--darkgold);
@@ -470,7 +410,7 @@ h5 {
 }
 
 .hover-warning:hover {
-  background-color: var(--warningbg);
+  background-color: var(--lightgold);
 }
 
 .hover-action:hover {
@@ -679,17 +619,6 @@ tr:first-child td {
   }
 }
 
-/* SHOW MODE */
-.rating-show {
-  background-color: var(--lightgold);
-  color: var(--chrome-bg) !important;
-  font-size: 75%;
-
-  i {
-    color: var(--gold);
-  }
-}
-
 /* NOTIFICATIONS */
 
 /* container for notifications in top left of screen */
@@ -751,7 +680,7 @@ tr:first-child td {
 }
 
 .overlay-warning {
-  background-color: var(--warningbg);
+  background-color: var(--lightgold);
 }
 
 .overlay-error p,
@@ -879,7 +808,7 @@ tr:first-child td {
   background-color: var(--firstlevel);
 }
 
-/* make the text of buttons in bold to increase readability because contrast ratio is not great */
+/* make the text of buttons in bold to increase readability */
 .btn {
   font-weight: bold;
 }
@@ -889,14 +818,44 @@ tr:first-child td {
   line-height: normal;
 }
 
+.btn-primary,
+.btn-secondary {
+  .fas,
+  .far,
+  .fa { color: var(--chrome-fg) !important; }
+}
+
 .btn-ghost {
-  border: 1px solid var(--secondary-muted);
-  color: var(--mediumstrong);
+  border: 1px solid var(--secondary);
+  color: var(--secondary);
 
   &:hover {
-    background-color: var(--firstlevel);
+    background-color: var(--thirdlevel);
     border-color: var(--secondlevel);
-    color: var(--mediumstrong);
+    color: var(--chrome-fg);
+  }
+}
+
+.btn-danger-ghost {
+  border: 1px solid var(--dangerred);
+  color: var(--dangerred);
+
+  .fas,
+  .far,
+  .fa {
+    color: var(--dangerred);
+  }
+
+  &:hover {
+    background-color: var(--dangerred);
+    border-color: var(--secondlevel);
+    color: var(--chrome-fg);
+
+    .fas,
+    .far,
+    .fa {
+      color: var(--chrome-fg) !important;
+    }
   }
 }
 
@@ -908,8 +867,8 @@ tr:first-child td {
   &:hover,
   &:active,
   &:focus {
-    background-color: var(--firstlevel) !important;
-    color: var(--mediumstrong) !important;
+    background-color: var(--firstlevel);
+    color: var(--mediumstrong);
   }
 }
 
@@ -948,7 +907,7 @@ tr:first-child td {
 
 .list-group-item {
   background-color: var(--white);
-  border: 1px solid var(--secondary-muted);
+  border: 1px solid var(--secondary);
 }
 
 .side-panel {

@@ -44,3 +44,14 @@
     color: var(--gold);
   }
 }
+
+/* SHOW MODE */
+.rating-show {
+  background-color: var(--lightgold);
+  color: var(--darkgold);
+  font-size: 85%;
+
+  i {
+    color: var(--darkgold);
+  }
+}

@@ -181,13 +181,13 @@ a,
 select:not([multiple]) {
   appearance: none;
   background: var(--white) url('images/ico-arrow.png') no-repeat 97% 56%;
-  border: 1px solid var(--secondary);
+  border: 1px solid var(--firstlevel);
   color: var(--mediumstrong);
 }
 
 .form-control {
   background-color: var(--white);
-  border: 1px solid var(--secondary);
+  border: 1px solid var(--firstlevel);
   color: var(--strongest);
 }
 

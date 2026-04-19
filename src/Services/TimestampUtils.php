@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\Storage;
@@ -24,11 +24,13 @@ use GuzzleHttp\Exception\RequestException;
 use League\Flysystem\FilesystemOperator;
 
 use function is_readable;
+use function basename;
+use function file_get_contents;
 
 /**
  * Trusted Timestamping (RFC3161) utility class
  */
-final class TimestampUtils
+class TimestampUtils
 {
     use ProcessTrait;
 
@@ -41,7 +43,7 @@ final class TimestampUtils
     public function __construct(
         private ClientInterface $client,
         string $data,
-        private array $tsConfig,
+        protected array $tsConfig,
         private TimestampResponse $tsResponse,
     ) {
         // save the data inside a temporary file so openssl can act on it
@@ -72,6 +74,17 @@ final class TimestampUtils
         $this->cacheFs->write(basename($this->tsResponse->tokenPath), $response->getBody()->getContents());
         $this->verify();
         return $this->tsResponse;
+    }
+
+    protected function addAuthToRequest(array $options): array
+    {
+        if ($this->tsConfig['ts_login'] && $this->tsConfig['ts_password']) {
+            $options['auth'] = array(
+                $this->tsConfig['ts_login'],
+                $this->tsConfig['ts_password'],
+            );
+        }
+        return $options;
     }
 
     /**
@@ -107,7 +120,7 @@ final class TimestampUtils
             // add user agent
             // http://developer.github.com/v3/#user-agent-required
             'headers' => array(
-                'User-Agent' => 'Elabftw/' . App::INSTALLED_VERSION,
+                'User-Agent' => 'Elabftw/' . BuildInfo::VERSION,
                 'Content-Type' => 'application/timestamp-query',
                 'Content-Transfer-Encoding' => 'base64',
             ),
@@ -118,12 +131,7 @@ final class TimestampUtils
             'body' => file_get_contents($requestFilePath),
         );
 
-        if ($this->tsConfig['ts_login'] && $this->tsConfig['ts_password']) {
-            $options['auth'] = array(
-                $this->tsConfig['ts_login'],
-                $this->tsConfig['ts_password'],
-            );
-        }
+        $options = $this->addAuthToRequest($options);
 
         try {
             return $this->client->request('POST', $this->tsConfig['ts_url'], $options);

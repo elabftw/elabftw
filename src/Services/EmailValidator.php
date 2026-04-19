@@ -18,6 +18,10 @@ use Elabftw\Exceptions\ImproperActionException;
 use function array_map;
 use function filter_var;
 use function in_array;
+use function _;
+use function explode;
+use function implode;
+use function sprintf;
 
 /**
  * Validate an email address for several parameters

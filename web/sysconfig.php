@@ -34,6 +34,8 @@ use Symfony\Component\HttpFoundation\Response;
 use ValueError;
 
 use function array_walk;
+use function _;
+use function ini_get;
 
 /**
  * Instance level settings and tools
@@ -51,7 +53,7 @@ try {
     $idpsArr = $Idps->readAllLight();
     $IdpsSources = new IdpsSources($App->Users);
     $idpsSources = $IdpsSources->readAll();
-    $teamsArr = $App->Teams->readAllComplete();
+    $teamsArr = $App->Teams->selectAll();
     $Experiments = new Experiments($App->Users);
 
     // Remote directory search
@@ -95,7 +97,6 @@ try {
         Db::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION),
     );
 
-    $elabimgVersion = getenv('ELABIMG_VERSION') ?: 'Not in Docker';
     $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
     array_walk($auditLogsArr, function (array &$event) {
         try {
@@ -112,7 +113,6 @@ try {
         'containersCount' => $StorageUnits->readCount(),
         'nologinUsersCount' => $AuthFail->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),
-        'elabimgVersion' => $elabimgVersion,
         'idpsArr' => $idpsArr,
         'idpsSources' => $idpsSources,
         'pageTitle' => _('Instance settings'),

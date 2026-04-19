@@ -22,6 +22,8 @@ use Elabftw\Services\Filter;
 use Elabftw\Services\Xml2Idps;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function sprintf;
+
 class IdpsCertsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

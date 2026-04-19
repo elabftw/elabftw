@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\StringMakerInterface;
@@ -21,6 +21,7 @@ use Override;
 
 use function json_encode;
 use function ksort;
+use function mb_strlen;
 
 /**
  * Make a JSON export from one or several entities
@@ -61,8 +62,8 @@ class MakeJson extends AbstractMake implements StringMakerInterface
             try {
                 $all = $this->getEntityData($entity);
                 // add eLabFTW version number
-                $all['elabftw_version'] = App::INSTALLED_VERSION;
-                $all['elabftw_version_int'] = App::INSTALLED_VERSION_INT;
+                $all['elabftw_version'] = BuildInfo::VERSION;
+                $all['elabftw_version_int'] = BuildInfo::VERSION_INT;
                 ksort($all);
             } catch (IllegalActionException | ResourceNotFoundException) {
                 continue;

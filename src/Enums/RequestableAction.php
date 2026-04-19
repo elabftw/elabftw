@@ -14,6 +14,8 @@ namespace Elabftw\Enums;
 
 use Elabftw\Traits\EnumsTrait;
 
+use function _;
+
 enum RequestableAction: int
 {
     use EnumsTrait;

@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
 use function array_filter;
+use function _;
 
 /**
  * Administration panel of a team
@@ -124,7 +125,7 @@ try {
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'teamStats' => $teamStats,
-        'teamsArr' => $App->Teams->readAllComplete(),
+        'teamsArr' => $App->Teams->selectAll(),
         'visibleTeamsArr' => $App->Teams->readAllVisible(),
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,

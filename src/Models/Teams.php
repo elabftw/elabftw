@@ -31,6 +31,11 @@ use RuntimeException;
 
 use function array_diff;
 use function trim;
+use function array_column;
+use function array_intersect;
+use function array_map;
+use function implode;
+use function is_array;
 
 /**
  * All about the teams
@@ -46,7 +51,7 @@ final class Teams extends AbstractRest
         parent::__construct();
         $this->setId($id);
         if ($this->id) {
-            $this->teamArr = $this->readOneComplete();
+            $this->teamArr = $this->selectOne();
         }
     }
 
@@ -69,7 +74,7 @@ final class Teams extends AbstractRest
             if ($team === false && $allowTeamCreation === true) {
                 $this->bypassWritePermission = true;
                 $freshTeam = new self($this->Users, $this->create($query));
-                $team = $freshTeam->readOneComplete();
+                $team = $freshTeam->selectOne();
             }
             // this prevents adding a bool(false)
             if (is_array($team)) {
@@ -130,13 +135,13 @@ final class Teams extends AbstractRest
         // allow sysadmin to read any team from api, but a non sysadmin can only query a team they are part of
         $TeamsHelper = new TeamsHelper($this->id ?? -1);
 
-        if (!$TeamsHelper->isUserInTeam($this->Users->userid ?? -1) && !$this->Users->userData['is_sysadmin']) {
+        if (!$TeamsHelper->isUserInTeam($this->Users->getUserid()) && !$this->Users->userData['is_sysadmin']) {
             throw new ImproperActionException('Cannot query team information if not part of that team or not Sysadmin!');
         }
-        return $this->readOneComplete();
+        return $this->selectOne();
     }
 
-    public function readOneComplete(): array
+    public function selectOne(): array
     {
         $sql = 'SELECT * FROM `teams` WHERE id = :id';
         $req = $this->Db->prepare($sql);
@@ -152,14 +157,14 @@ final class Teams extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        if ($this->Users->requester->userData['is_sysadmin']) {
-            return $this->readAllComplete();
+        if ($this->Users->requester->isSysadmin()) {
+            return $this->selectAll();
         }
         return $this->readAllVisible();
     }
 
     // for sysadmin via api or if we need all
-    public function readAllComplete(): array
+    public function selectAll(): array
     {
         $sql = 'SELECT * FROM teams ORDER BY name ASC';
         $req = $this->Db->prepare($sql);
@@ -311,7 +316,7 @@ final class Teams extends AbstractRest
 
     public function canWriteOrExplode(): void
     {
-        if ($this->bypassWritePermission || ($this->Users->userData['is_sysadmin'] ?? 0) === 1) {
+        if ($this->bypassWritePermission || $this->Users->isSysadmin()) {
             return;
         }
         if ($this->id === null) {
@@ -319,7 +324,7 @@ final class Teams extends AbstractRest
         }
         $TeamsHelper = new TeamsHelper($this->id);
 
-        if ($TeamsHelper->isAdminInTeam($this->Users->userData['userid'])) {
+        if ($TeamsHelper->isAdminInTeam($this->Users->getUserid())) {
             return;
         }
         throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');

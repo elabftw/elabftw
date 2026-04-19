@@ -18,6 +18,8 @@ use Elabftw\Models\TeamGroups;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
+use function _;
+
 /**
  * The TEAM page
  */

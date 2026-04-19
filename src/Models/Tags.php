@@ -23,6 +23,11 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function _;
+use function is_array;
+use function is_string;
+use function sprintf;
+
 /**
  * All about the tag
  */
@@ -46,8 +51,8 @@ final class Tags extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         // check if we can actually create tags (for non-admins)
-        $teamConfigArr = (new Teams($this->Entity->Users, $this->Entity->Users->team))->readOne();
-        $TeamsHelper = new TeamsHelper($this->Entity->Users->team ?? 0);
+        $teamConfigArr = (new Teams($this->Entity->Users, $this->Entity->Users->getTeam()))->readOne();
+        $TeamsHelper = new TeamsHelper($this->Entity->Users->getTeam());
         $canCreate = $teamConfigArr['user_create_tag'] === 1 || $TeamsHelper->isAdminInTeam($this->Entity->Users->userData['userid']);
         $tags = array();
         if (isset($reqBody['tag']) && is_string($reqBody['tag'])) {

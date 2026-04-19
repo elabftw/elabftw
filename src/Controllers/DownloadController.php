@@ -32,6 +32,10 @@ use function str_starts_with;
 use function stream_copy_to_stream;
 use function strlen;
 use function mb_substr;
+use function dirname;
+use function ob_end_clean;
+use function ob_get_level;
+use function strtolower;
 
 /**
  * To download uploaded files

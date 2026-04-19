@@ -16,6 +16,8 @@ use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\Users2TeamsTargets;
 use Override;
 
+use function sprintf;
+
 final class TeamStatusModified extends AbstractUsers2TeamsModifiedEvent
 {
     public function __construct(private int $teamid, private Users2TeamsTargets $target, private BinaryValue $content, int $requester, int $userid)

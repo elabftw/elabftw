@@ -16,6 +16,8 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Override;
 
+use function _;
+
 /**
  * Send an email to a new user to notify that admin validation is required.
  * This exists because experience shows that users don't read the notification and expect

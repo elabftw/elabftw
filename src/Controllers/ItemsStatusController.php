@@ -15,6 +15,8 @@ namespace Elabftw\Controllers;
 use Elabftw\Models\ItemsStatus;
 use Override;
 
+use function _;
+
 /**
  * For resources-status.php
  */

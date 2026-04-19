@@ -15,18 +15,24 @@ namespace Elabftw\Import;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Storage;
 use Elabftw\Models\Users\Users;
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use ZipArchive;
+use League\Flysystem\ZipArchive\FilesystemZipArchiveProvider;
+use League\Flysystem\ZipArchive\ZipArchiveAdapter;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use RuntimeException;
+
+use function fclose;
+use function sprintf;
+use function str_replace;
 
 /**
  * Mother class for importing zip file
  */
 abstract class AbstractZip extends AbstractImport
 {
-    // path where we extract the archive content (subfolder of cache/elab)
-    protected string $tmpPath;
-
     // the folder name where we extract the archive
     protected string $tmpDir = '';
 
@@ -46,18 +52,19 @@ abstract class AbstractZip extends AbstractImport
         Users $requester,
         UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
+        protected LoggerInterface $logger,
     ) {
-        parent::__construct($requester, $UploadedFile);
-        // set up a temporary directory in the cache to extract the archive to
+        parent::__construct($requester, $UploadedFile, $logger);
+        // we extract everything into a temporary directory
         $this->tmpDir = Tools::getUuidv4();
-        // do not use Storage::CACHE here, but the possibly bind-mounted exports folder instead
-        $cacheStorage = Storage::EXPORTS->getStorage();
-        $this->tmpPath = $cacheStorage->getPath() . '/' . $this->tmpDir;
-        $this->tmpFs = $cacheStorage->getFs();
+        $this->emitLog(sprintf('temporary directory: %s', $this->tmpDir), LogLevel::DEBUG);
+        // we use the Exports storage to store decompressed data
+        $this->tmpFs = Storage::EXPORTS->getStorage()->getFs();
 
-        $Zip = new ZipArchive();
-        $Zip->open($this->UploadedFile->getPathname());
-        $Zip->extractTo($this->tmpPath);
+        $adapter = new ZipArchiveAdapter(
+            new FilesystemZipArchiveProvider($this->UploadedFile->getPathname())
+        );
+        $this->extractZipFilesystemToDir($adapter);
     }
 
     /**
@@ -65,7 +72,10 @@ abstract class AbstractZip extends AbstractImport
      */
     public function __destruct()
     {
-        $this->fs->deleteDirectory($this->tmpPath);
+        if ($this->tmpDir === '') {
+            return;
+        }
+        $this->tmpFs->deleteDirectory($this->tmpDir);
     }
 
     /**
@@ -93,5 +103,39 @@ abstract class AbstractZip extends AbstractImport
             $replace,
             $subject,
         );
+    }
+
+    /**
+     * Extract everything from a ZIP-backed Flysystem into another directory
+     * on any Flysystem backend (local, S3, etc).
+     */
+    private function extractZipFilesystemToDir(FilesystemAdapter $zipFs): void
+    {
+        foreach ($zipFs->listContents('', true) as $item) {
+
+            $rawPath = $item->path();
+            $this->emitLog(sprintf('ZIP: extracting: %s', $rawPath), LogLevel::DEBUG);
+
+            // fix eln v < 106 with duplicated / in path for uploaded files
+            $targetPath = $this->tmpDir . '/' . str_replace('//', '/', $rawPath);
+
+            if ($item->isDir()) {
+                $this->emitLog(sprintf('ZIP: creating directory %s', $targetPath), LogLevel::DEBUG);
+                $this->tmpFs->createDirectory($targetPath);
+                continue;
+            }
+
+            $stream = $zipFs->readStream($rawPath);
+
+            if ($stream === false) {
+                throw new RuntimeException(sprintf('Failed to read stream for: %s', $rawPath));
+            }
+
+            try {
+                $this->tmpFs->writeStream($targetPath, $stream);
+            } finally {
+                fclose($stream);
+            }
+        }
     }
 }

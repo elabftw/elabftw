@@ -30,6 +30,7 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_merge;
+use function _;
 
 /**
  * For dashboard.php

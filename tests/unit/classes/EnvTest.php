@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function putenv;
+use function sprintf;
 
 class EnvTest extends \PHPUnit\Framework\TestCase
 {

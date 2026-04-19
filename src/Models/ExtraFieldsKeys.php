@@ -21,6 +21,9 @@ use Elabftw\Models\Users\Users;
 use Override;
 use PDO;
 
+use function implode;
+use function sprintf;
+
 /**
  * Get extra fields keys of items and experiments used for autocomplete on search page.
  */

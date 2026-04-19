@@ -17,12 +17,14 @@ use League\Csv\Reader;
 use League\Csv\Info as CsvInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
+use Psr\Log\LoggerInterface;
 
 use function arsort;
 use function array_diff_key;
 use function array_flip;
 use function json_encode;
 use function filter_var;
+use function key;
 
 /**
  * Parent class for processing a CSV file during import
@@ -45,8 +47,9 @@ abstract class AbstractCsv extends AbstractImport
     public function __construct(
         protected Users $requester,
         protected UploadedFile $UploadedFile,
+        protected LoggerInterface $logger,
     ) {
-        parent::__construct($requester, $UploadedFile);
+        parent::__construct($requester, $UploadedFile, $logger);
         $this->reader = $this->preProcess();
     }
 

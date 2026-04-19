@@ -17,6 +17,9 @@ use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
 
+use function is_int;
+use function sprintf;
+
 /**
  * A category is a status for experiments and item type for db item
  */

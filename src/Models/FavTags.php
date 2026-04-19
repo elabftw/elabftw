@@ -21,6 +21,8 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function _;
+
 /**
  * The favorite tags of a user
  */

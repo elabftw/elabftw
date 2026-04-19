@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Enums;
 
 use function array_map;
+use function array_combine;
 
 enum Language: string
 {
@@ -40,6 +41,7 @@ enum Language: string
     case Slovak = 'sk_SK';
     case Uzbek = 'uz_UZ';
     case Chinese = 'zh_CN';
+    case ChineseTraditional = 'zh_TW';
 
     public static function getAllHuman(): array
     {
@@ -75,6 +77,7 @@ enum Language: string
             self::Slovak => 'sk',
             self::Uzbek => 'uz',
             self::Chinese => 'zh-cn',
+            self::ChineseTraditional => 'zh-tw',
         };
     }
 
@@ -104,6 +107,7 @@ enum Language: string
             self::Slovak => 'Slovak',
             self::Uzbek => 'Uzbek',
             self::Chinese => 'Chinese Simplified',
+            self::ChineseTraditional => 'Chinese Traditional',
         };
     }
 }

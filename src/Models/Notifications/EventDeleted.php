@@ -24,6 +24,10 @@ use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
 use Override;
 
+use function _;
+use function count;
+use function sprintf;
+
 final class EventDeleted extends AbstractNotifications implements MailableInterface, RestInterface
 {
     protected const PREF = 'notif_event_deleted';
@@ -60,7 +64,12 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         }
         // target can be bookable_item, team or teamgroup
         $this->target = EmailTarget::from($reqBody['target']);
-        $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid']);
+        $range = array(
+            'direction' => $reqBody['range_direction'] ?? null,
+            'value' => $reqBody['range_value'] ?? null,
+            'unit' => $reqBody['range_unit'] ?? null,
+        );
+        $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid'], $range);
         foreach ($userids as $userid) {
             $recipient = new Users($userid);
             $Notif = new self($recipient, $this->event, $this->actor, $this->msg, $this->target);
@@ -92,7 +101,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     public function getEmail(): array
     {
         $info = _('A booked slot was deleted from the scheduler.');
-        $url = Env::asUrl('SITE_URL') . '/scheduler.php?item=' . $this->event['item'];
+        $url = Env::asUrl('SITE_URL') . '/scheduler.php?items[]=' . $this->event['item'];
         $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $this->actor, $url, $this->event['start'], $this->event['end']);
         if (!empty($this->msg)) {
             $body .= "\n\n" . _('Message:') . "\n" . $this->msg;

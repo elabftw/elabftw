@@ -16,24 +16,27 @@ use Elabftw\Enums\State;
 use Elabftw\Hash\LocalFileHash;
 use Elabftw\Interfaces\HashInterface;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Override;
+
+use function dirname;
 
 final class CreateUploadFromLocalFile extends CreateUpload
 {
     public function __construct(
         string $realName,
         string $filePath,
-        private readonly ?string $comment = null,
-        private readonly int $immutable = 0,
-        private readonly State $state = State::Normal,
+        ?string $comment = null,
+        int $immutable = 0,
+        State $state = State::Normal,
     ) {
         $this->filePath = $filePath;
-        parent::__construct($realName, $filePath, $this->getHasher(), $this->comment, $this->immutable, $this->state);
+        parent::__construct($realName, $filePath, $this->getHasher(), $comment, $immutable, $state);
     }
 
     #[Override]
-    public function getSourceFs(): Filesystem
+    public function getSourceFs(): FilesystemOperator
     {
         return new Filesystem(new LocalFilesystemAdapter(dirname($this->filePath)));
     }

@@ -13,13 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Storage;
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 use Override;
 
 final class CreateUploadFromS3 extends CreateUpload
 {
     #[Override]
-    public function getSourceFs(): Filesystem
+    public function getSourceFs(): FilesystemOperator
     {
         return Storage::from(Storage::S3->value)->getStorage()->getFs();
     }

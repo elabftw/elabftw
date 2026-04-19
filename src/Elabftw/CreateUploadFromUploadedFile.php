@@ -16,19 +16,21 @@ use Elabftw\Enums\State;
 use Elabftw\Hash\FileHash;
 use Elabftw\Interfaces\HashInterface;
 use Elabftw\Storage\Tmp;
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 use Override;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+use function basename;
 
 final class CreateUploadFromUploadedFile extends CreateUpload
 {
     public function __construct(
         private readonly UploadedFile $uploadedFile,
-        private readonly ?string $comment = null,
-        private readonly int $immutable = 0,
-        private readonly State $state = State::Normal,
+        ?string $comment = null,
+        int $immutable = 0,
+        State $state = State::Normal,
     ) {
-        parent::__construct($this->getFilename(), $this->getFilePath(), $this->getHasher(), $this->comment, $this->immutable, $this->state);
+        parent::__construct($this->getFilename(), $this->getFilePath(), $this->getHasher(), $comment, $immutable, $state);
     }
 
     #[Override]
@@ -50,7 +52,7 @@ final class CreateUploadFromUploadedFile extends CreateUpload
     }
 
     #[Override]
-    public function getSourceFs(): Filesystem
+    public function getSourceFs(): FilesystemOperator
     {
         return new Tmp()->getFs();
     }

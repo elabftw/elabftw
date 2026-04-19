@@ -22,6 +22,9 @@ use Elabftw\Services\Url2Xml;
 use Elabftw\Services\Xml2Idps;
 use GuzzleHttp\Psr7\Response;
 
+use function dirname;
+use function file_get_contents;
+
 class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
 {
     private IdpsSources $IdpsSources;

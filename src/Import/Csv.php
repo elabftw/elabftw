@@ -23,6 +23,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 
+use function array_key_exists;
+use function explode;
+
 /**
  * Import entries from a csv file.
  */
@@ -42,6 +45,7 @@ final class Csv extends AbstractCsv
         parent::__construct(
             $requester,
             $UploadedFile,
+            $logger,
         );
         // we might have been forced to cast to int a null value, so bring it back to null
         if ($this->category === 0) {

@@ -23,13 +23,17 @@ use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Console\Output\OutputInterface;
 use Override;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function sprintf;
 use function strcasecmp;
 use function trim;
+use function count;
+use function explode;
+use function is_array;
 
 /**
  * Import a CSV into compounds
@@ -37,7 +41,7 @@ use function trim;
 final class CompoundsCsv extends AbstractCsv
 {
     public function __construct(
-        private OutputInterface $output,
+        protected LoggerInterface $logger,
         protected Items $Items,
         protected UploadedFile $UploadedFile,
         protected Compounds $Compounds,
@@ -46,7 +50,7 @@ final class CompoundsCsv extends AbstractCsv
         protected string $locationSplitter = '/',
         protected ?string $matchWith = null,
     ) {
-        parent::__construct($Items->Users, $UploadedFile);
+        parent::__construct($Items->Users, $UploadedFile, $logger);
     }
 
     #[Override]
@@ -54,7 +58,7 @@ final class CompoundsCsv extends AbstractCsv
     {
         // number of rows is stored in a var so we can decrement it when a compound is not imported
         $count = $countAll = $this->getCount();
-        $this->output->writeln(sprintf('[info] Found %d rows to import', $count));
+        $this->emitLog(sprintf('Found %d rows to import', $count));
 
         $loopIndex = 0;
 
@@ -83,73 +87,29 @@ final class CompoundsCsv extends AbstractCsv
                     if ($casKey !== null) {
                         $casValue = trim($row[$casKey] ?? '');
                         if ($casValue !== '' && empty($cid)) {
-                            $cids = $this->PubChemImporter->getCidFromCas($casValue);
+                            try {
+                                $cids = $this->PubChemImporter->getCidFromCas($casValue);
+                            } catch (RequestException $e) {
+                                $this->emitLog(sprintf('Could not find CID from CAS: %s', $casValue), LogLevel::WARNING);
+                                $this->emitLog($e->getMessage(), LogLevel::WARNING);
+                                $this->emitLog(sprintf('Importing compound %s without PubChem data', $casValue), LogLevel::NOTICE);
+                                $ids[] = $this->createCompound($casKey, $row);
+                            }
                         }
                     }
 
                     foreach ($cids as $cid) {
-                        $this->output->writeln(sprintf('[info] Importing compound with CID %d', $cid));
+                        $this->emitLog(sprintf('Importing compound with CID %d', $cid));
                         $compound = $this->PubChemImporter->fromPugView($cid);
                         $ids[] = $this->Compounds->createFromCompound($compound);
                     }
                 } else {
-                    $ids[] = $this->Compounds->create(
-                        casNumber: $casKey !== null && isset($row[$casKey]) ? trim($row[$casKey]) : null,
-                        ecNumber: $row['ec_number'] ?? null,
-                        inchi: $row['inchi'] ?? null,
-                        inchiKey: $row['inchikey'] ?? null,
-                        iupacName: $row['iupacname'] ?? null,
-                        name: $row['name'] ?? $row['title'] ?? null,
-                        chebiId: $row['chebi_id'] ?? null,
-                        chemblId: $row['chembl_id'] ?? null,
-                        deaNumber: $row['dea_number'] ?? null,
-                        drugbankId: $row['drugbank_id'] ?? null,
-                        dsstoxId: $row['dsstox_id'] ?? null,
-                        hmdbId: $row['hmdb_id'] ?? null,
-                        keggId: $row['kegg_id'] ?? null,
-                        metabolomicsWbId: $row['metabolomics_wb_id'] ?? null,
-                        molecularFormula: $row['molecularformula'] ?? null,
-                        molecularWeight: isset($row['molecularweight']) ? (float) $row['molecularweight'] : 0.00,
-                        nciCode: $row['nci_code'] ?? null,
-                        nikkajiNumber: $row['nikkaji_number'] ?? null,
-                        pharmGkbId: $row['pharmgkb_id'] ?? null,
-                        pharosLigandId: $row['pharos_ligand_id'] ?? null,
-                        pubchemCid: empty($row['pubchemcid']) ? null : (int) $row['pubchemcid'],
-                        rxcui: $row['rxcui'] ?? null,
-                        smiles: $row['smiles'] ?? null,
-                        unii: $row['unii'] ?? null,
-                        wikidata: $row['wikidata'] ?? null,
-                        wikipedia: $row['wikipedia'] ?? null,
-                        isCorrosive: (bool) ($row['is_corrosive'] ?? false),
-                        isExplosive: (bool) ($row['is_explosive'] ?? false),
-                        isFlammable: (bool) ($row['is_flammable'] ?? false),
-                        isGasUnderPressure: (bool) ($row['is_gas_under_pressure'] ?? false),
-                        isHazardous2env: (bool) ($row['is_hazardous2env'] ?? false),
-                        isHazardous2health: (bool) ($row['is_hazardous2health'] ?? false),
-                        isOxidising: (bool) ($row['is_oxidising'] ?? false),
-                        isSeriousHealthHazard: (bool) ($row['is_serious_health_hazard'] ?? false),
-                        isToxic: (bool) ($row['is_toxic'] ?? false),
-                        isRadioactive: (bool) ($row['is_radioactive'] ?? false),
-                        isAntibiotic: (bool) ($row['is_antibiotic'] ?? false),
-                        isAntibioticPrecursor: (bool) ($row['is_antibiotic_precursor'] ?? false),
-                        isDrug: (bool) ($row['is_drug'] ?? false),
-                        isDrugPrecursor: (bool) ($row['is_drug_precursor'] ?? false),
-                        isExplosivePrecursor: (bool) ($row['is_explosive_precursor'] ?? false),
-                        isCmr: (bool) ($row['is_cmr'] ?? false),
-                        isNano: (bool) ($row['is_nano'] ?? false),
-                        isControlled: (bool) ($row['is_controlled'] ?? false),
-                        isEd2health: (bool) ($row['is_ed2health'] ?? false),
-                        isEd2env: (bool) ($row['is_ed2env'] ?? false),
-                        isPbt: (bool) ($row['is_pbt'] ?? false),
-                        isPmt: (bool) ($row['is_pmt'] ?? false),
-                        isVpvb: (bool) ($row['is_vpvb'] ?? false),
-                        isVpvm: (bool) ($row['is_vpvm'] ?? false),
-                    );
+                    $ids[] = $this->createCompound($casKey, $row);
                 }
 
                 // optionally create Resource
                 if ($this->resourceTemplate !== null) {
-                    $title = $row['name'] ?? $row['iupacname'] ?? null;
+                    $title = $row['name'] ?? $row['title'] ?? $row['iupacname'] ?? null;
                     if ($title === null && $compound) {
                         $title = $compound->name ?? $compound->iupacName;
                     }
@@ -176,7 +136,7 @@ final class CompoundsCsv extends AbstractCsv
                         try {
                             $this->Items->update(new EntityParams('custom_id', (int) $row['custom_id']));
                         } catch (ImproperActionException $e) {
-                            $this->output->writeln(sprintf('[error] Custom id %s: %s', $row['custom_id'], $e->getMessage()));
+                            $this->emitLog(sprintf('Custom id %s: %s', $row['custom_id'], $e->getMessage()), LogLevel::ERROR);
                         }
                     }
                 }
@@ -193,12 +153,12 @@ final class CompoundsCsv extends AbstractCsv
                     }
                 }
             } catch (ImproperActionException | RequestException $e) {
-                $this->output->writeln($e->getMessage());
+                $this->emitLog($e->getMessage(), LogLevel::ERROR);
                 // decrement the count so we can give a correct number
                 --$count;
             }
             ++$loopIndex;
-            $this->output->writeln(sprintf('[info] Imported %d/%d', $loopIndex, $countAll));
+            $this->emitLog(sprintf('Imported %d/%d', $loopIndex, $countAll));
         }
         return $count;
     }
@@ -213,7 +173,7 @@ final class CompoundsCsv extends AbstractCsv
         $DisplayParams = new DisplayParams($this->Items->Users, $this->Items->entityType, $query);
         $results = $this->Items->readShow($DisplayParams);
         if (count($results) > 1) {
-            $this->output->writeln(sprintf('[warning] Found %d matches for %s. Linking with first one found.', count($results), $value));
+            $this->emitLog(sprintf('Found %d matches for %s. Linking with first one found.', count($results), $value), LogLevel::WARNING);
         }
         return $results[0] ?? null;
     }
@@ -271,6 +231,62 @@ final class CompoundsCsv extends AbstractCsv
             'is_cmr',
             'is_nano',
             'is_controlled',
+        );
+    }
+
+    private function createCompound(?string $casKey, array $row): int
+    {
+        return $this->Compounds->create(
+            casNumber: $casKey !== null && isset($row[$casKey]) ? trim($row[$casKey]) : null,
+            ecNumber: $row['ec_number'] ?? null,
+            inchi: $row['inchi'] ?? null,
+            inchiKey: $row['inchi_key'] ?? null,
+            iupacName: $row['iupacname'] ?? null,
+            name: $row['name'] ?? $row['title'] ?? null,
+            chebiId: $row['chebi_id'] ?? null,
+            chemblId: $row['chembl_id'] ?? null,
+            deaNumber: $row['dea_number'] ?? null,
+            drugbankId: $row['drugbank_id'] ?? null,
+            dsstoxId: $row['dsstox_id'] ?? null,
+            hmdbId: $row['hmdb_id'] ?? null,
+            keggId: $row['kegg_id'] ?? null,
+            metabolomicsWbId: $row['metabolomics_wb_id'] ?? null,
+            molecularFormula: $row['molecularformula'] ?? null,
+            molecularWeight: isset($row['molecular_weight']) ? (float) $row['molecular_weight'] : 0.00,
+            nciCode: $row['nci_code'] ?? null,
+            nikkajiNumber: $row['nikkaji_number'] ?? null,
+            pharmGkbId: $row['pharmgkb_id'] ?? null,
+            pharosLigandId: $row['pharos_ligand_id'] ?? null,
+            pubchemCid: empty($row['pubchemcid']) ? null : (int) $row['pubchemcid'],
+            rxcui: $row['rxcui'] ?? null,
+            smiles: $row['smiles'] ?? null,
+            unii: $row['unii'] ?? null,
+            wikidata: $row['wikidata'] ?? null,
+            wikipedia: $row['wikipedia'] ?? null,
+            isCorrosive: (bool) ($row['is_corrosive'] ?? false),
+            isExplosive: (bool) ($row['is_explosive'] ?? false),
+            isFlammable: (bool) ($row['is_flammable'] ?? false),
+            isGasUnderPressure: (bool) ($row['is_gas_under_pressure'] ?? false),
+            isHazardous2env: (bool) ($row['is_hazardous2env'] ?? false),
+            isHazardous2health: (bool) ($row['is_hazardous2health'] ?? false),
+            isOxidising: (bool) ($row['is_oxidising'] ?? false),
+            isSeriousHealthHazard: (bool) ($row['is_serious_health_hazard'] ?? false),
+            isToxic: (bool) ($row['is_toxic'] ?? false),
+            isRadioactive: (bool) ($row['is_radioactive'] ?? false),
+            isAntibiotic: (bool) ($row['is_antibiotic'] ?? false),
+            isAntibioticPrecursor: (bool) ($row['is_antibiotic_precursor'] ?? false),
+            isDrug: (bool) ($row['is_drug'] ?? false),
+            isDrugPrecursor: (bool) ($row['is_drug_precursor'] ?? false),
+            isExplosivePrecursor: (bool) ($row['is_explosive_precursor'] ?? false),
+            isCmr: (bool) ($row['is_cmr'] ?? false),
+            isNano: (bool) ($row['is_nano'] ?? false),
+            isControlled: (bool) ($row['is_controlled'] ?? false),
+            isEd2health: (bool) ($row['is_ed2health'] ?? false),
+            isEd2env: (bool) ($row['is_ed2env'] ?? false),
+            isPbt: (bool) ($row['is_pbt'] ?? false),
+            isPmt: (bool) ($row['is_pmt'] ?? false),
+            isVpvb: (bool) ($row['is_vpvb'] ?? false),
+            isVpvm: (bool) ($row['is_vpvm'] ?? false),
         );
     }
 }

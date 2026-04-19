@@ -18,6 +18,7 @@ use Elabftw\Models\Users\Users;
 use PDO;
 
 use function array_column;
+use function sprintf;
 
 /**
  * When we want to check for something.

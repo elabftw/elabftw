@@ -14,6 +14,8 @@ namespace Elabftw\Models;
 use Elabftw\Params\BaseQueryParams;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function is_array;
+
 class InfoTest extends \PHPUnit\Framework\TestCase
 {
     private Info $Info;
@@ -32,7 +34,7 @@ class InfoTest extends \PHPUnit\Framework\TestCase
     {
         $info = $this->Info->readOne();
         $this->assertTrue(is_array($info));
-        $this->assertEquals(4, $info['experiments_timestamped_count']);
+        $this->assertEquals(5, $info['experiments_timestamped_count']);
     }
 
     public function testHist(): void

@@ -15,6 +15,8 @@ namespace Elabftw\Controllers;
 use Elabftw\Models\ExperimentsStatus;
 use Override;
 
+use function _;
+
 /**
  * For experiments-status.php
  */

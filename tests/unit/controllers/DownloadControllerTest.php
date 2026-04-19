@@ -17,6 +17,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+use function ob_end_clean;
+use function ob_get_contents;
+use function ob_start;
+
 class DownloadControllerTest extends \PHPUnit\Framework\TestCase
 {
     private Filesystem $fs;

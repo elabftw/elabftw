@@ -34,6 +34,8 @@ use JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use function dirname;
+use function _;
+use function json_decode;
 
 /**
  * Update ordering of various things

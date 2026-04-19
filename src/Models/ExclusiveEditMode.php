@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 use function sprintf;
+use function _;
 
 /**
  * For dealing with exclusive edit mode aka write lock

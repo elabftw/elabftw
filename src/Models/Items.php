@@ -33,6 +33,8 @@ use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
 
+use function _;
+
 /**
  * All about the database items
  */

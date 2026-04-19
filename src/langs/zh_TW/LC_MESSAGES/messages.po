@@ -1,0 +1,6244 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: elabftw\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Nicolas CARPi\n"
+"Language-Team: \n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.6\n"
+"X-Poedit-Mapping: php=gettext:PHP;html=twig\n"
+"X-Poedit-Basepath: ../../../..\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: web\n"
+"X-Poedit-SearchPathExcluded-0: web/assets\n"
+
+#: src/templates/show.html:229 src/templates/show.html:237
+msgid "Yes"
+msgstr "好的"
+
+#: src/templates/show.html:230 src/templates/show.html:238
+msgid "No"
+msgstr "不了"
+
+#: web/app/controllers/RegisterController.php:52
+msgid "A mandatory field is missing!"
+msgstr "缺少必填欄位！"
+
+#: src/templates/login-full.html:103 src/templates/register.html:67
+#: src/templates/sysconfig.html:228 src/templates/sysconfig.html:979
+#: src/templates/view-edit-toolbar.html:24
+msgid "Password"
+msgstr "密碼"
+
+#: src/Elabftw/i18n4Js.php:85
+msgid "Firstname"
+msgstr "名字"
+
+#: src/Elabftw/i18n4Js.php:93
+msgid "Lastname"
+msgstr "姓氏"
+
+#: src/Elabftw/i18n4Js.php:71
+msgid "Email"
+msgstr "電子郵件"
+
+#: src/Controllers/ExperimentsController.php:37
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] "實驗"
+
+#: src/Enums/Scope.php:34 web/team.php:35
+msgid "Team"
+msgstr "團隊"
+
+#: src/templates/changelog-table.html:4
+#: src/templates/field-builder-modal.html:59 src/templates/pdf.html:32
+#: src/templates/show.html:484 src/templates/ucp.html:87
+msgid "Date"
+msgstr "日期"
+
+#: src/templates/create-new-modal.html:93
+#: src/templates/export-menu-dspace-modal.html:22
+#: src/templates/scheduler.html:253 src/templates/show.html:490
+#: src/templates/ucp.html:88
+msgid "Title"
+msgstr "標題"
+
+#: src/Elabftw/i18n4Js.php:142
+msgid "Status"
+msgstr "狀態"
+
+#: src/Elabftw/i18n4Js.php:67
+msgid "Edit"
+msgstr "編輯"
+
+#: src/Elabftw/i18n4Js.php:131
+msgid "Save"
+msgstr "儲存"
+
+#: src/Elabftw/i18n4Js.php:134
+#: web/app/controllers/SortableAjaxController.php:46
+msgid "Saved"
+msgstr "已儲存"
+
+#: src/Elabftw/i18n4Js.php:50
+msgid "Cancel"
+msgstr "取消"
+
+#: src/templates/ucp.html:130 src/templates/ucp.html:518
+#: src/templates/ucp.html:529
+msgid "Action"
+msgstr "動作"
+
+#: src/templates/ucp.html:141
+msgid "Shortcut"
+msgstr "快捷鍵"
+
+#: src/templates/admin.html:170
+#: src/templates/categories-status-index.macro.html:10
+#: src/templates/categories-status-index.macro.html:83
+#: src/templates/create-new.html:3 src/templates/editusers.html:85
+#: src/templates/export-modal.html:100 src/templates/register.html:102
+#: src/templates/sysconfig.html:26 src/templates/ucp.html:132
+#: src/templates/ucp.html:142
+msgid "Create"
+msgstr "創建"
+
+#: src/templates/ucp.html:135 src/templates/ucp.html:154
+msgid "TODO list"
+msgstr "待辦事項清單"
+
+#: src/Elabftw/i18n4Js.php:111
+msgid "Name"
+msgstr "姓名"
+
+#: src/templates/admin.html:8
+msgid "There are users waiting for validation of their account:"
+msgstr "有用戶正在等待帳戶驗證："
+
+#: src/Elabftw/i18n4Js.php:156
+msgid "Users"
+msgstr "使用者"
+
+#: src/templates/change-pass.html:31
+msgid "Save new password"
+msgstr "儲存新密碼"
+
+#: src/Elabftw/i18n4Js.php:74 src/Import/Eln.php:327
+#: src/Models/AbstractStatus.php:58 src/Models/Experiments.php:60
+#: src/Models/Items.php:67 src/Models/TeamGroups.php:52
+#: src/Models/Templates.php:57 src/Services/Filter.php:125
+msgid "Untitled"
+msgstr "無標題"
+
+#: src/Models/AbstractEntity.php:984
+msgid "You don't have the rights to lock/unlock this."
+msgstr "您沒有鎖定/解鎖此功能的權限。"
+
+#: web/login.php:109
+msgid "Login"
+msgstr "登入"
+
+#: src/templates/login-base.html:18
+msgid "Enter your email address"
+msgstr "請輸入您的電子郵件地址"
+
+#: web/app/controllers/RegisterController.php:71
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "註冊成功 :)<br>歡迎來到 eLabFTW o/"
+
+#: src/templates/register.html:5
+msgid "go back to login page"
+msgstr "返回登入頁面"
+
+#: src/templates/register.html:30
+msgid "Create your account"
+msgstr "建立您的帳戶"
+
+#: src/templates/admin.html:468 src/templates/revisions.html:33
+#: src/templates/show.html:401
+msgid "Restore"
+msgstr "恢復"
+
+#: src/Elabftw/i18n4Js.php:135
+msgid "Search"
+msgstr "搜尋"
+
+#: src/templates/show.html:245
+msgid "Unrated"
+msgstr "未評級"
+
+#: src/templates/show.html:367
+msgid "Sorry. I couldn't find anything :("
+msgstr "抱歉，我什麼也沒找到 :("
+
+#: src/templates/sysconfig.html:45
+msgid "Server"
+msgstr "伺服器"
+
+#: src/templates/show.html:397 src/templates/sysconfig.html:53
+#: src/templates/view-edit-toolbar.html:54
+#: src/templates/view-edit-toolbar.html:78
+#: src/templates/view-edit-toolbar.html:216
+msgid "Timestamp"
+msgstr "時間戳"
+
+#: src/templates/sysconfig.html:50
+msgid "Security"
+msgstr "安全"
+
+#: src/templates/admin.html:56 src/templates/sysconfig.html:72
+#: src/templates/team.html:5 src/templates/team.html:19
+#: src/templates/team.html:22
+msgid "Members"
+msgstr "成員"
+
+#: src/templates/sysconfig.html:496
+msgid "Number of allowed login attempts:"
+msgstr "允許的登入嘗試次數："
+
+#: src/templates/sysconfig.html:499
+msgid "3 might be too few. See for yourself :)"
+msgstr "3 個可能太少了。您自己看看吧 :)"
+
+#: src/templates/sysconfig.html:417
+msgid "Default is 587."
+msgstr "預設值為 587。"
+
+#: src/templates/sysconfig.html:427
+msgid "SMTP password"
+msgstr "SMTP 密碼"
+
+#: src/templates/ucp.html:5
+msgid "Account"
+msgstr "帳戶"
+
+#: src/templates/ucp.html:48
+msgid "Preferences"
+msgstr "偏好"
+
+#: src/templates/export-modal.html:21
+msgid "Templates"
+msgstr "模板"
+
+#: src/templates/ucp.html:329
+msgid "Modify your password"
+msgstr "修改您的密碼"
+
+#: src/templates/change-pass.html:17
+msgid "New password"
+msgstr "新密碼"
+
+#: src/templates/footer.html:59 src/templates/sysconfig.html:100
+#: src/templates/ucp.html:51
+msgid "Language"
+msgstr "語言"
+
+#: src/templates/pdf.html:220 src/templates/view.html:202
+msgid "Unique eLabID:"
+msgstr "唯一 eLabID："
+
+#: src/templates/view.html:165
+msgid "Comments"
+msgstr "註解"
+
+#: src/Elabftw/i18n4Js.php:55
+msgid "Add a comment"
+msgstr "新增註解"
+
+#: src/Elabftw/i18n4Js.php:98
+msgid "Delete this?"
+msgstr "要刪除這個嗎？"
+
+#: src/templates/profile.html:60
+msgid "No statistics available yet."
+msgstr "目前尚無統計數據。"
+
+#: src/templates/show.html:94 src/templates/show.html:103
+#: src/templates/show.html:104 src/templates/show.html:106
+msgid "Filter status"
+msgstr "篩選狀態"
+
+#: src/templates/edit-tags.html:3 src/templates/pdf.html:35
+#: src/templates/show.html:130 src/templates/show.html:139
+#: src/templates/show.html:140 src/templates/show.html:509
+#: src/templates/view.html:79
+msgid "Tags"
+msgstr "標籤"
+
+#: src/templates/admin.html:296 src/templates/admin.html:300
+#: src/templates/edit-tags.html:11 src/templates/show.html:440
+msgid "Add a tag"
+msgstr "添加標籤"
+
+#: src/templates/links.html:37 src/templates/links.html:77
+msgid "Add a link"
+msgstr "添加連結"
+
+#: web/ucp.php:114
+msgid "Settings"
+msgstr "設定"
+
+#: src/templates/head.html:242
+msgid "Logout"
+msgstr "登出"
+
+#: src/templates/head.html:237
+msgid "Sysadmin panel"
+msgstr "系統管理員面板"
+
+#: web/admin.php:113
+msgid "Admin panel"
+msgstr "管理員面板"
+
+#: src/templates/footer.html:35
+msgid "Powered by"
+msgstr "由我們提供技術支持"
+
+#: src/Elabftw/i18n4Js.php:146
+msgid "Teams"
+msgstr "團隊"
+
+#: src/templates/ts-config.html:46
+msgid "URL for external timestamping service:"
+msgstr "外部時間戳服務的網址："
+
+#: web/app/controllers/RegisterController.php:69
+msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
+msgstr "註冊成功 :)<br>您的帳戶現在需要管理員驗證。 <br>驗證完成後，您將收到一封電子郵件。"
+
+#: src/templates/pdf.html:176 src/templates/profile.html:185
+#: src/templates/uploads.html:27
+msgid "Attached file"
+msgid_plural "Attached files"
+msgstr[0] "附件"
+
+#: src/Elabftw/i18n4Js.php:65
+msgid "Drop files here to upload"
+msgstr "文件拖放到這裡即可上傳"
+
+#: src/Models/Revisions.php:83
+msgid "You cannot restore a revision of a locked item!"
+msgstr "您無法恢復已鎖定項目的版本！"
+
+#: src/templates/ts-config.html:49
+msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
+msgstr "這是用於符合 %sRFC 3161%s 標準的時間戳請求的 URL。"
+
+#: src/templates/sysconfig.html:33
+msgid "Installed version:"
+msgstr "已安裝版本："
+
+#: src/templates/ucp.html:230
+msgid "Miscellaneous"
+msgstr "其它"
+
+#: src/templates/footer.html:40
+msgid "seconds"
+msgstr "秒"
+
+#: src/templates/profile.html:128 src/templates/profile.html:129
+#: src/templates/show.html:314 src/templates/show.html:316
+#: src/templates/ucp.html:95
+msgid "Sort"
+msgstr "分類"
+
+#: src/templates/login-full.html:116
+msgid "Remember me"
+msgstr "記住我的帳號"
+
+#: web/app/controllers/ResetPasswordController.php:122
+msgid "New password inserted. You can now login."
+msgstr "您已輸入新密碼。現在您可以登入了。"
+
+#: src/templates/view-edit-toolbar.html:265
+msgid "Lock/Unlock item"
+msgstr "鎖定/解鎖物件"
+
+#: src/templates/sysconfig.html:456 src/templates/sysconfig.html:457
+msgid "Send a test email"
+msgstr "發送測試郵件"
+
+#: src/templates/bookings-email-modal.html:27
+#: src/templates/onboarding-email-modal.html:20
+#: src/templates/sysconfig.html:396 src/templates/sysconfig.html:463
+#: src/templates/team.html:78
+msgid "Send"
+msgstr "傳送"
+
+#: src/templates/pdf.html:41 src/templates/show.html:321
+#: src/templates/show.html:498 src/templates/sysconfig.html:1144
+#: src/templates/ucp.html:86
+msgid "Category"
+msgstr "類別"
+
+#: src/templates/show.html:514
+msgid "Rating"
+msgstr "等級"
+
+#: src/templates/ucp.html:99
+msgid "DESC"
+msgstr "降序"
+
+#: src/templates/ucp.html:98
+msgid "ASC"
+msgstr "升序"
+
+#: src/templates/categories-status-index.macro.html:34
+#: src/templates/categories-status-index.macro.html:73
+#: src/templates/edit.html:186
+msgid "Color"
+msgstr "顏色"
+
+#: src/Elabftw/i18n4Js.php:62
+msgid "Delete"
+msgstr "刪除"
+
+#: src/templates/sysconfig.html:374 src/templates/sysconfig.html:375
+msgid "Send a Mass Email"
+msgstr "發送群發郵件"
+
+#: src/templates/sysconfig.html:390
+msgid "Email Subject"
+msgstr "電子郵件主旨"
+
+#: src/templates/sysconfig.html:393
+msgid "Email Body"
+msgstr "郵件正文"
+
+#: src/Enums/Messages.php:41
+msgid "An error occurred!"
+msgstr "發生錯誤！"
+
+#: src/templates/uploads.html:195
+msgid "Stick"
+msgstr "棍狀圖表"
+
+#: src/templates/uploads.html:177
+msgid "Style"
+msgstr "風格"
+
+#: src/Elabftw/i18n4Js.php:129 src/Enums/Messages.php:44
+msgid "Nothing to show with this id"
+msgstr "此 ID 沒有顯示任何內容。"
+
+#: src/templates/changelog.html:7 src/templates/revisions.html:10
+msgid "Go back"
+msgstr "回上一頁"
+
+#: web/scheduler.php:44
+msgid "Scheduler"
+msgstr "調度表"
+
+#: src/templates/scheduler.html:264
+msgid "No bookable items."
+msgstr "沒有可預約的物件。"
+
+#: src/templates/ucp.html:64
+msgid "Display"
+msgstr "顯示"
+
+#: src/templates/ucp.html:125
+msgid "Keyboard Shortcuts"
+msgstr "鍵盤快捷鍵"
+
+#: src/templates/admin.html:12
+msgid "Validate"
+msgstr "驗證"
+
+#: src/templates/profile.html:41 src/templates/view-permissions-details.html:14
+msgid "Groups"
+msgstr "群組"
+
+#: src/templates/admin.html:73
+msgid "Configure your Team"
+msgstr "配置您的團隊"
+
+#: src/templates/change-pass.html:9
+msgid "characters minimum"
+msgstr "最少字元數"
+
+#: src/templates/admin.html:504 src/templates/compounds-view-edit.html:107
+#: src/templates/favtags-panel.html:24 src/templates/links.html:39
+#: src/templates/links.html:79 src/templates/permissions-edit-modal.html:102
+#: src/templates/todolist-panel.html:8 src/templates/todolist-panel.html:10
+#: src/templates/todolist-panel.html:11
+msgid "Add"
+msgstr "添加"
+
+#: src/templates/admin.html:52 src/templates/sysconfig.html:68
+msgid "Usage Statistics"
+msgstr "使用情況統計"
+
+#: src/templates/sysconfig.html:248
+msgid "Operating System"
+msgstr "作業系統"
+
+#: src/templates/sysconfig.html:250
+msgid "PHP Version"
+msgstr "PHP 版本"
+
+#: src/templates/sysconfig.html:253
+msgid "Largest integer supported"
+msgstr "支援的最大整數"
+
+#: src/templates/sysconfig.html:254
+msgid "PHP configuration directory"
+msgstr "PHP 配置目錄"
+
+#: src/templates/sysconfig.html:663
+msgid "Timestamping Configuration"
+msgstr "時間戳配置"
+
+#: src/templates/sysconfig.html:471
+msgid "Security Settings"
+msgstr "安全設定"
+
+#: src/templates/sysconfig.html:404
+msgid "E-mail Settings"
+msgstr "電子郵件設定"
+
+#: src/templates/footer.html:42
+msgid "Memory usage:"
+msgstr "記憶體使用情況："
+
+#: src/templates/footer.html:43
+msgid "bytes"
+msgstr "位元組"
+
+#: src/templates/login-full.html:153
+msgid "Login through your institution"
+msgstr "透過您的機構登入"
+
+#: src/templates/ucp.html:504
+msgid "Generate an API Key"
+msgstr "產生 API 金鑰"
+
+#: src/templates/duplicate-modal.html:34
+#: src/templates/view-edit-toolbar.html:187
+msgid "Duplicate"
+msgstr "複製"
+
+#: src/templates/show-item.html:72 src/templates/show.html:494
+#: src/templates/view.html:113
+msgid "Next step"
+msgstr "下一步"
+
+#: src/templates/steps-edit.html:105 src/templates/steps-edit.html:107
+#: src/templates/steps-edit.html:109
+msgid "Add a step"
+msgstr "新增步驟"
+
+#: src/templates/edit.html:177
+msgid "Draw something"
+msgstr "在此繪製"
+
+#: src/Elabftw/i18n4Js.php:52
+msgid "Clear"
+msgstr "清除"
+
+#: src/templates/sysconfig.html:238 src/templates/sysconfig.html:437
+#: src/templates/sysconfig.html:989 src/templates/ts-config.html:37
+msgid "A password is already set."
+msgstr "密碼已設定。"
+
+#: src/templates/ucp.html:97
+msgid "Use default"
+msgstr "使用預設值"
+
+#: src/templates/pdf.html:200 src/templates/scheduler.html:71
+#: src/templates/scheduler.html:226 src/templates/scheduler.html:254
+#: src/templates/team.html:105 src/templates/team.html:128
+#: src/templates/ucp.html:89 src/templates/uploads.html:65
+msgid "Comment"
+msgid_plural "Comments"
+msgstr[0] "註解"
+
+#: src/templates/ucp.html:164
+msgid "Only lowercase letters are allowed."
+msgstr "只允許使用小寫字母。"
+
+#: src/templates/ucp.html:234
+msgid "Disable the rich text editor and write Markdown directly"
+msgstr "停用富文本編輯器，直接編寫 Markdown 程式碼。"
+
+#: src/templates/ucp.html:252
+msgid "Default visibility for new experiments"
+msgstr "新實驗的預設可見性"
+
+#: src/Enums/Usergroup.php:26
+msgid "User"
+msgstr "使用者"
+
+#: src/templates/sysconfig.html:114
+msgid "If you are behind a firewall/proxy, enter the address here. Example: http://proxy.example.com:3128"
+msgstr "如果您位於防火牆/代理伺服器之後，請在此輸入位址。例如：http://proxy.example.com:3128"
+
+#: src/templates/back-to-previous.html:7 src/templates/back-to-previous.html:8
+msgid "Back to listing"
+msgstr "返回列表"
+
+#: src/templates/show.html:284
+msgid "Select all"
+msgstr "全選"
+
+#: src/templates/show.html:287
+msgid "Invert selection"
+msgstr "反向選擇"
+
+#: src/templates/admin.html:458 src/templates/show.html:381
+msgid "With selected:"
+msgstr "已選擇："
+
+#: src/templates/show.html:416 src/templates/show.html:418
+msgid "Change status"
+msgstr "更改狀態"
+
+#: src/Models/Uploads.php:324
+msgid "Please make sure to remove any reference to this file in the body!"
+msgstr "請務必刪除正文中所有對此文件的引用！"
+
+#: src/templates/upload-dropdown-menu.html:13
+#: src/templates/upload-dropdown-menu.html:20
+#: src/templates/upload-dropdown-menu.html:27
+#: src/templates/upload-dropdown-menu.html:34
+msgid "Insert in text at cursor position"
+msgstr "在游標位置插入文字"
+
+#: src/Elabftw/i18n4Js.php:43
+msgid "Archive user"
+msgstr "封存用戶"
+
+#: src/templates/login-full.html:175
+msgid "Login as anonymous visitor"
+msgstr "以匿名訪客身分登入"
+
+#: src/templates/ucp.html:179
+msgid "PDF configuration"
+msgstr "PDF 配置"
+
+#: src/templates/ucp.html:182
+msgid "Select paper format for PDF"
+msgstr "選擇 PDF 的紙張格式"
+
+#: src/templates/upload-dropdown-menu.html:72 src/templates/uploads.html:108
+msgid "Upload a new version of this file"
+msgstr "上傳此文件的新版本"
+
+#: src/templates/uploads.html:183
+msgid "Cartoon (proteins only)"
+msgstr "卡通樣式（僅限蛋白質）"
+
+#: src/templates/uploads.html:186
+msgid "Cross"
+msgstr "十字"
+
+#: src/templates/uploads.html:189
+msgid "Line"
+msgstr "線"
+
+#: src/templates/uploads.html:192
+msgid "Sphere"
+msgstr "球狀"
+
+#: src/templates/sysconfig.html:255
+msgid "Maximum file size for uploaded files"
+msgstr "上傳檔案的最大檔案大小"
+
+#: src/templates/sysconfig.html:257
+msgid "Timezone"
+msgstr "時區"
+
+#: src/templates/json-editor.html:48 src/templates/profile.html:6
+#: src/templates/sysconfig.html:245 src/templates/sysconfig.html:572
+msgid "Information"
+msgstr "資訊"
+
+#: src/templates/steps-edit.html:52 src/templates/steps-view.html:13
+msgid "completed"
+msgstr "已完成"
+
+#: src/templates/view.html:170
+msgid "commented"
+msgstr "已註解"
+
+#: src/templates/about-elabftw-modal.html:7
+#: src/templates/about-elabftw-modal.html:20
+#: src/templates/add-container-modal.html:7
+#: src/templates/add-container-modal.html:42 src/templates/base.html:56
+#: src/templates/base.html:63 src/templates/booking-params-modal.html:7
+#: src/templates/booking-params-modal.html:65
+#: src/templates/bookings-email-modal.html:6
+#: src/templates/categories-status-index.macro.html:61
+#: src/templates/create-compound-modal.html:8
+#: src/templates/create-new-modal.html:11 src/templates/duplicate-modal.html:7
+#: src/templates/edit-compound-modal.html:41
+#: src/templates/edit-user-modal.html:9
+#: src/templates/export-menu-dspace-modal.html:7
+#: src/templates/export-menu.html:7 src/templates/export-menu.html:28
+#: src/templates/export-menu.html:62 src/templates/export-modal.html:7
+#: src/templates/export-modal.html:99 src/templates/favtags-panel.html:2
+#: src/templates/field-builder-modal.html:11
+#: src/templates/field-builder-modal.html:154
+#: src/templates/field-builder-modal.html:168
+#: src/templates/field-builder-modal.html:202 src/templates/footer.html:54
+#: src/templates/idp-certs-modal.html:7 src/templates/idp-certs-modal.html:70
+#: src/templates/idp-endpoints-modal.html:7
+#: src/templates/idp-endpoints-modal.html:78 src/templates/idp-modal.html:7
+#: src/templates/import-pubchem-modal.html:7
+#: src/templates/import-pubchem-modal.html:56 src/templates/login-base.html:11
+#: src/templates/login-base.html:25 src/templates/onboarding-email-modal.html:6
+#: src/templates/ownership-transfer-modal.html:16
+#: src/templates/ownership-transfer-modal.html:54
+#: src/templates/permissions-edit-modal.html:39
+#: src/templates/permissions-edit-modal.html:125
+#: src/templates/procurement-params-modal.html:7
+#: src/templates/procurement-params-modal.html:47
+#: src/templates/register.html:14 src/templates/register.html:22
+#: src/templates/scheduler.html:10 src/templates/scheduler.html:23
+#: src/templates/scheduler.html:34 src/templates/scheduler.html:53
+#: src/templates/scheduler.html:65 src/templates/scheduler.html:147
+#: src/templates/scheduler.html:214 src/templates/scheduler.html:244
+#: src/templates/search-help-modal.html:6
+#: src/templates/search-help-modal.html:218 src/templates/sysconfig.html:15
+#: src/templates/todolist-panel.html:2 src/templates/ucp.html:21
+#: src/templates/uploads.html:8 src/templates/uploads.html:16
+#: src/templates/view-edit-toolbar.html:7
+#: src/templates/view-edit-toolbar.html:29
+#: src/templates/view-edit-toolbar.html:43
+#: src/templates/view-edit-toolbar.html:66
+#: src/templates/view-edit-toolbar.html:90
+#: src/templates/view-edit-toolbar.html:140
+msgid "Close"
+msgstr "關閉"
+
+#: src/templates/head.html:227 src/templates/todolist-panel.html:4
+msgid "Todolist"
+msgstr "待辦事項清單"
+
+#: src/Elabftw/i18n4Js.php:101
+msgid "Import"
+msgstr "匯入"
+
+#: src/templates/admin.html:31
+msgid "Tag manager"
+msgstr "標籤管理"
+
+#: src/templates/admin.html:307
+msgid "Manage tags of the team"
+msgstr "管理團隊標籤"
+
+#: src/templates/show.html:244
+msgid "Select number of stars"
+msgstr "選擇星級數量"
+
+#: src/templates/login-full.html:21 src/templates/login-full.html:23
+#: src/templates/login-full.html:44 src/templates/login-full.html:46
+#: src/templates/login-full.html:181 src/templates/login-full.html:184
+#: src/templates/ownership-transfer-modal.html:25
+#: src/templates/ownership-transfer-modal.html:28
+#: src/templates/register.html:44 src/templates/register.html:45
+msgid "Select a team"
+msgstr "選擇一個團隊"
+
+#: src/templates/register.html:13
+msgid "Privacy policy"
+msgstr "隱私權政策"
+
+#: src/templates/admin.html:69
+msgid "Generate report"
+msgstr "產生報告"
+
+#: src/templates/sysconfig.html:403
+msgid "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."
+msgstr "如果無法透過有效的方式傳送電子郵件，使用者將無法重設密碼。建議建立一個專門的 %ssmtp2go.com%s 帳戶，並將相關資訊新增至該帳戶。"
+
+#: src/templates/sysconfig.html:548
+msgid "Note: the text below is a template and must be edited and saved."
+msgstr "注意：以下文字為模板，必須編輯並儲存。"
+
+#: src/templates/edit-user-modal.html:16
+msgid "User ID"
+msgstr "使用者的 ID"
+
+#: src/templates/edit-user-modal.html:115
+msgid "Delete user"
+msgstr "刪除用戶"
+
+#: src/templates/login-full.html:162
+msgid "Select an identity provider"
+msgstr "選擇身分提供者"
+
+#: src/Elabftw/i18n4Js.php:75
+msgid "The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?"
+msgstr "所選項目及其所有關聯資料將永久刪除。此操作無法撤銷。您確定嗎？"
+
+#: src/Elabftw/i18n4Js.php:145
+msgid "Delete this tag?"
+msgstr "是否刪除此標籤？"
+
+#: src/templates/revisions.html:30 src/templates/show-item.html:58
+msgid "by"
+msgstr "由"
+
+#: src/templates/scheduler.html:213 src/templates/view-edit-toolbar.html:194
+msgid "Book item"
+msgstr "預約此物件"
+
+#: src/templates/ucp.html:310
+msgid "Enter your password to edit your profile."
+msgstr "請輸入密碼以編輯個人資料。"
+
+#: src/templates/ucp.html:6
+msgid "API keys"
+msgstr "API 金鑰"
+
+#: src/templates/ucp.html:509
+msgid "Existing keys"
+msgstr "現有密鑰"
+
+#: src/templates/edit.html:138 src/templates/ucp.html:495
+#: src/templates/ucp.html:515 src/templates/ucp.html:526
+#: src/templates/view.html:157
+msgid "Permissions"
+msgstr "權限"
+
+#: src/templates/profile.html:121 src/templates/profile.html:149
+#: src/templates/profile.html:158 src/templates/sysconfig.html:283
+#: src/templates/ucp.html:516 src/templates/ucp.html:527
+#: src/templates/uploads.html:66
+msgid "Creation date"
+msgstr "建立日期"
+
+#: src/templates/ucp.html:498 src/templates/ucp.html:526
+msgid "Read/Write"
+msgstr "讀/寫"
+
+#: src/templates/ucp.html:497 src/templates/ucp.html:526
+msgid "Read Only"
+msgstr "唯讀"
+
+#: src/templates/ucp.html:473
+msgid "Create new key"
+msgstr "建立新密鑰"
+
+#: src/templates/team.html:18
+msgid "You belong to the %s team."
+msgstr "您屬於 %s 團隊。"
+
+#: src/templates/bookings-email-modal.html:19
+#: src/templates/onboarding-email.html:13
+#: src/templates/onboarding-email.html:56 src/templates/team.html:72
+msgid "Subject"
+msgstr "主旨"
+
+#: src/templates/onboarding-email.html:25
+#: src/templates/onboarding-email.html:68 src/templates/sysconfig.html:1146
+#: src/templates/team.html:74
+msgid "Content"
+msgstr "內容"
+
+#: web/app/controllers/TeamController.php:65
+msgid "Email sent to %d users"
+msgstr "已向 %d 位用戶發送電子郵件"
+
+#: web/app/controllers/RegisterController.php:34
+msgid "Registration is disabled."
+msgstr "註冊功能已關閉。"
+
+#: web/app/controllers/ResetPasswordController.php:59
+msgid "Email provided is invalid."
+msgstr "提供的電子郵件地址無效。"
+
+#: src/Params/ContentParams.php:45 src/Params/StepParams.php:41
+#: src/Params/TagParam.php:35
+msgid "Input is too short! (minimum: %d)"
+msgstr "輸入內容過短！ （最少：%d）"
+
+#: src/Models/AbstractEntity.php:1001
+msgid "This experiment was locked by %s. You don't have the rights to unlock this."
+msgstr "此實驗已被 %s 鎖定。您沒有權限解鎖。"
+
+#: src/Elabftw/i18n4Js.php:152
+msgid "Unarchive user"
+msgstr "取消封存用戶"
+
+#: src/templates/upload-dropdown-menu.html:51
+msgid "Annotate this image"
+msgstr "為這張圖片加上註解"
+
+#: src/templates/admin.html:77 src/templates/sysconfig.html:340
+msgid "Announcement"
+msgstr "公告"
+
+#: src/templates/admin.html:80 src/templates/sysconfig.html:342
+msgid "The following text will be displayed to all users on all pages while it's active."
+msgstr "啟動後，以下文字將顯示給所有頁面上的所有使用者。"
+
+#: src/templates/pdf.html:164 src/templates/steps-edit.html:2
+#: src/templates/steps-view.html:5
+msgid "Steps"
+msgstr "步驟"
+
+#: src/templates/profile.html:135 src/templates/profile.html:136
+#: src/templates/show.html:340 src/templates/show.html:342
+msgid "Results per page"
+msgstr "每頁結果數"
+
+#: src/templates/edit.html:193
+msgid "Stroke width"
+msgstr "筆畫寬度"
+
+#: src/templates/edit.html:200
+msgid "Eraser"
+msgstr "橡皮擦"
+
+#: src/Elabftw/i18n4Js.php:143
+msgid "Delete this step?"
+msgstr "是否刪除此步驟？"
+
+#: src/Elabftw/i18n4Js.php:107
+msgid "Delete this link?"
+msgstr "是否刪除此連結？"
+
+#: src/templates/json-editor.html:2 src/templates/json-editor.html:4
+msgid "JSON Editor"
+msgstr "JSON 編輯器"
+
+#: src/templates/show-item.html:3
+msgid "Create experiment from template"
+msgstr "從模板創建實驗"
+
+#: src/templates/admin.html:502 src/templates/permissions-edit-modal.html:100
+msgid "Add user"
+msgstr "新增用戶"
+
+#: src/templates/storage-list.html:5
+msgid "Expand all"
+msgstr "全部展開"
+
+#: src/templates/head.html:188
+msgid "Clear all"
+msgstr "全部清除"
+
+#: src/templates/sysconfig.html:488
+msgid "Enforce a domain name for emails"
+msgstr "強制使用域名作為電子郵件域名"
+
+#: src/templates/sysconfig.html:491
+msgid "Only email addresses at this domain will be allowed to register an account."
+msgstr "只有該網域下的電子郵件地址才能註冊帳號。"
+
+#: src/templates/editusers.html:26
+msgid "Add account"
+msgstr "新增帳戶"
+
+#: src/templates/scheduler.html:64
+msgid "Edit event"
+msgstr "編輯事件"
+
+#: src/templates/scheduler.html:92 src/templates/scheduler.html:108
+msgid "Unbind"
+msgstr "解除綁定"
+
+#: src/templates/scheduler.html:90
+msgid "Bind an experiment"
+msgstr "綁定一個實驗"
+
+#: src/templates/scheduler.html:99 src/templates/scheduler.html:115
+msgid "Attach"
+msgstr "綁定"
+
+#: src/templates/upload-dropdown-menu.html:58
+msgid "Load into JSON Editor"
+msgstr "載入到 JSON 編輯器"
+
+#: src/templates/ucp.html:265
+msgid "Default write permission for new experiments"
+msgstr "新實驗的預設寫入權限"
+
+#: src/templates/register.html:60
+msgid "Only emails @%s are authorized to register"
+msgstr "只有郵箱地址為 @%s 的郵箱才能註冊"
+
+#: src/Services/Check.php:56 src/Services/PasswordValidator.php:32
+msgid "Password must contain at least %d characters."
+msgstr "密碼必須至少包含 %d 個字元。"
+
+#: src/templates/steps-edit.html:55 src/templates/ucp.html:427
+#: src/templates/upload-dropdown-menu.html:3
+#: src/templates/view-edit-toolbar.html:283
+msgid "More options"
+msgstr "更多選項"
+
+#: src/templates/login-base.html:10
+msgid "Reset your password"
+msgstr "重設密碼"
+
+#: src/templates/login-base.html:20
+msgid "Send reset link"
+msgstr "發送重新設定連結"
+
+#: src/templates/login-full.html:99
+msgid "Login to your account"
+msgstr "登入您的帳戶"
+
+#: src/templates/login-full.html:121
+msgid "Forgot password?"
+msgstr "忘記密碼？"
+
+#: src/templates/login-full.html:146
+msgid "Don't have an account? %sRegister%s now!"
+msgstr "還沒有帳號？立即註冊！"
+
+#: src/templates/login-full.html:74
+msgid "Your account is linked to several teams. Select in which team you want to log in"
+msgstr "您的帳號已屬於多個團隊，請選擇您要登入的團隊。"
+
+#: src/Exceptions/InvalidCredentialsException.php:25
+msgid "Invalid email/password combination."
+msgstr "電子郵件信箱 / 密碼組合無效。"
+
+#: src/Elabftw/i18n4Js.php:41
+msgid "Add team"
+msgstr "新增團隊"
+
+#: web/login.php:103
+msgid "Your session expired."
+msgstr "您的執行階段已過期。"
+
+#: src/templates/footer.html:6
+msgid "Code repository on GitHub"
+msgstr "GitHub 上的程式碼倉庫"
+
+#: src/templates/footer.html:10
+msgid "Join the discussion on Gitter"
+msgstr "加入 Gitter 上的討論"
+
+#: src/templates/sysconfig.html:169
+msgid "Registration and authentication configuration"
+msgstr "註冊和身份驗證配置"
+
+#: src/Elabftw/i18n4Js.php:81
+msgid "Export"
+msgstr "匯出"
+
+#: web/app/controllers/ResetPasswordController.php:84 web/change-pass.php:54
+msgid "Reset password"
+msgstr "重設密碼"
+
+#: web/register.php:54
+msgid "Register"
+msgstr "註冊"
+
+#: web/register.php:34
+msgid "Please %slogout%s before you register another account."
+msgstr "請先登出 %slogout%s 再註冊其他帳號。"
+
+#: web/register.php:42
+msgid "No local account creation is allowed!"
+msgstr "不允許建立本機帳戶！"
+
+#: web/profile.php:64
+msgid "Profile"
+msgstr "個人資料"
+
+#: web/revisions.php:44
+msgid "Revisions"
+msgstr "修訂"
+
+#: src/templates/show-item.html:124 src/templates/ucp.html:85
+msgid "Last modified"
+msgstr "最後修改時間"
+
+#: src/templates/register.html:94
+msgid "I agree with the %sPrivacy Policy%s"
+msgstr "我同意%s隱私權政策%s"
+
+#: src/templates/related-snippet.html:6
+msgid "Related experiments"
+msgstr "相關實驗"
+
+#: src/templates/view-edit-toolbar.html:174
+msgid "View mode"
+msgstr "檢視模式"
+
+#: src/templates/link-view-one.html:22 src/templates/revisions.html:27
+#: src/templates/show-item-table.html:32 src/templates/show-item.html:117
+msgid "Toggle content"
+msgstr "切換內容"
+
+#: src/templates/sysconfig.html:57
+msgid "External auth"
+msgstr "外部認證"
+
+#: src/templates/sysconfig.html:144
+msgid "Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored."
+msgstr "將此值設為較低有助於減小資料庫大小。將其設為 0 將允許儲存無限數量的修訂版本。"
+
+#: src/templates/sysconfig.html:1059
+msgid "External authentication mapping"
+msgstr "外部身份驗證映射"
+
+#: src/templates/compounds-view-edit.html:2 src/templates/edit.html:138
+#: src/templates/related-snippet.html:6 src/templates/related-snippet.html:23
+#: src/templates/steps-view.html:5 src/templates/storage-view-edit.html:4
+#: src/templates/todolist-panel.html:4 src/templates/todolist-panel.html:38
+#: src/templates/todolist-panel.html:45 src/templates/uploads.html:26
+#: src/templates/view.html:132 src/templates/view.html:157
+#: src/templates/view.html:165
+msgid "Toggle visibility"
+msgstr "更改可見性"
+
+#: src/templates/toggle-pin.html:6
+msgid "Toggle pin"
+msgstr "更改釘選狀態"
+
+#: src/templates/view.html:199
+msgid "Last modified on %s"
+msgstr "最後修改於 %s"
+
+#: src/Elabftw/i18n4Js.php:154
+msgid "File comment"
+msgstr "文件註解"
+
+#: src/Models/Notifications/SelfNeedValidation.php:33
+msgid "Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done."
+msgstr "您好。您的帳戶已創建，但目前處於非活躍狀態（無法登入）。團隊管理員已收到通知，將驗證您的帳戶。驗證完成後，您將收到一封電子郵件。"
+
+#: src/templates/sysconfig.html:492
+msgid "You can add several domains by separating them with a comma."
+msgstr "您可以透過用逗號分隔來新增多個網域。"
+
+#: src/templates/sysconfig.html:1064
+msgid "Remote user"
+msgstr "遠端使用者"
+
+#: src/templates/sysconfig.html:1095
+msgid "Logout URL"
+msgstr "登出的網址"
+
+#: src/templates/edit-user-modal.html:80
+msgid "Go"
+msgstr "去"
+
+#: src/templates/todolist-panel.html:23
+msgid "Unfinished steps"
+msgstr "未完成的步驟"
+
+#: src/Elabftw/i18n4Js.php:122
+msgid "Please wait…"
+msgstr "請稍等…"
+
+#: src/templates/json-editor.html:17 src/templates/json-editor.html:20
+#: src/templates/profile.html:182
+msgid "Import from file"
+msgstr "從檔案匯入"
+
+#: src/Elabftw/i18n4Js.php:84
+msgid "Filename"
+msgstr "檔案名稱"
+
+#: src/Elabftw/i18n4Js.php:128
+msgid "Enter name of the file"
+msgstr "請輸入檔案名稱"
+
+#: web/login.php:64
+msgid "Two Factor Authentication"
+msgstr "雙重身份驗證"
+
+#: src/templates/mfa.html:60
+msgid "Verify"
+msgstr "驗證"
+
+#: src/templates/ucp.html:76
+msgid "Item list (default)"
+msgstr "項目清單（預設）"
+
+#: src/templates/ucp.html:77
+msgid "Tabular"
+msgstr "表格"
+
+#: src/templates/sysconfig.html:939
+msgid "Toggle LDAP login"
+msgstr "切換 LDAP 登入"
+
+#: src/templates/sysconfig.html:950
+msgid "LDAP Host"
+msgstr "LDAP 主機"
+
+#: src/templates/sysconfig.html:957
+msgid "LDAP Port"
+msgstr "LDAP 連接埠"
+
+#: src/templates/sysconfig.html:960
+msgid "Default: 389 LDAPS: 636"
+msgstr "預設值：389 LDAPS：636"
+
+#: src/templates/sysconfig.html:221 src/templates/sysconfig.html:972
+msgid "Username"
+msgstr "使用者名稱"
+
+#: src/templates/sysconfig.html:963
+msgid "Use TLS"
+msgstr "使用 TLS"
+
+#: src/templates/login-full.html:89
+msgid "You are already authenticated"
+msgstr "您已通過身份驗證。"
+
+#: src/templates/create-compound-modal.html:26 src/templates/login-full.html:60
+#: src/templates/login-full.html:91
+msgid "Continue"
+msgstr "繼續"
+
+#: src/templates/login-full.html:131
+msgid "Local"
+msgstr "本地的"
+
+#: src/templates/admin.html:462 src/templates/show.html:395
+msgid "Lock"
+msgstr "鎖住"
+
+#: src/templates/create-new-modal.html:95
+#: src/templates/create-new-modal.html:105 src/templates/sysconfig.html:285
+#: src/templates/team.html:108 src/templates/team.html:138
+#: src/templates/uploads.html:68
+msgid "Actions"
+msgstr "動作"
+
+#: src/Models/Notifications/UserCreated.php:36
+#: src/Models/Notifications/UserNeedValidation.php:38
+msgid "Hi. A new user registered an account on eLabFTW: %s (%s)."
+msgstr "您好。一位新用戶在 eLabFTW 上註冊了帳戶：%s (%s)。"
+
+#: src/Models/Notifications/UserNeedValidation.php:43
+msgid "Head to the admin panel to validate the account: %s"
+msgstr "請前往管理面板驗證帳戶：%s"
+
+#: src/Enums/Messages.php:42
+msgid "Authentication required"
+msgstr "需要身份驗證"
+
+#: src/Elabftw/i18n4Js.php:116
+msgid "Nothing selected!"
+msgstr "未選擇任何內容！"
+
+#: src/Elabftw/i18n4Js.php:126
+msgid "Do you want to replace the file on the server with this edit?"
+msgstr "您是否要用此次修改替換伺服器上的檔案？"
+
+#: src/templates/sysconfig.html:151
+msgid "Setting this to a high value will help keeping the database size small."
+msgstr "將此值設為高有助於保持資料庫大小較小。"
+
+#: src/templates/sysconfig.html:506 src/templates/sysconfig.html:734
+msgid "Set to 0 to disable this feature."
+msgstr "設定為 0 可停用此功能。"
+
+#: src/templates/pdf.html:46
+msgid "Created by"
+msgstr "由…創建"
+
+#: src/Services/EmailValidator.php:73
+msgid "This email domain is not allowed. Allowed domains: %s"
+msgstr "此電子郵件網域未被允許。允許的網域：%s"
+
+#: src/Elabftw/i18n4Js.php:83
+msgid "Extra fields"
+msgstr "額外字段"
+
+#: src/Elabftw/i18n4Js.php:147
+msgid "Template title"
+msgstr "模板標題"
+
+#: src/templates/edit.html:35 src/templates/show-item.html:6
+#: src/templates/view.html:55
+msgid "Started on"
+msgstr "開始於"
+
+#: src/templates/view-edit-toolbar.html:223
+msgid "Add to blockchain"
+msgstr "加入到區塊鏈"
+
+#: src/templates/sysconfig.html:354
+msgid "Login page announcement"
+msgstr "登入頁面公告"
+
+#: src/templates/sysconfig.html:356
+msgid "The following text will be displayed only on the login page."
+msgstr "以下文字僅顯示在登入頁面上。"
+
+#: src/templates/upload-dropdown-menu.html:42 src/templates/uploads.html:104
+msgid "Edit filename"
+msgstr "編輯檔案名稱"
+
+#: src/Services/Email.php:215
+msgid "Sent from eLabFTW"
+msgstr "從 eLabFTW 發送"
+
+#: src/Models/Tags.php:149
+msgid "Users cannot create tags."
+msgstr "使用者無法建立標籤。"
+
+#: src/templates/ucp.html:243
+msgid "Use ISO datetime in the text editor instead of localized one"
+msgstr "在文字編輯器中使用 ISO 日期時間格式而非本機日期時間格式"
+
+#: src/templates/admin.html:464 src/templates/ownership-transfer-modal.html:13
+#: src/templates/ownership-transfer-modal.html:20
+#: src/templates/ownership-transfer-modal.html:56
+#: src/templates/ownership-transfer-modal.html:58
+#: src/templates/view-edit-toolbar.html:298
+msgid "Transfer ownership"
+msgstr "所有權轉移"
+
+#: src/templates/edit.html:88 src/templates/edit.html:94
+msgid "Main content"
+msgstr "主要內容"
+
+#: src/templates/steps-edit.html:45 src/templates/steps-view.html:10
+msgid "Toggle completion"
+msgstr "更改完成狀態"
+
+#: src/templates/head.html:218
+msgid "User menu"
+msgstr "使用者選單"
+
+#: src/Enums/Usergroup.php:25 src/Enums/Users2TeamsTargets.php:24
+msgid "Admin"
+msgstr "管理員"
+
+#: src/Enums/Users2TeamsTargets.php:26
+msgid "Owner"
+msgstr "擁有者"
+
+#: src/Elabftw/i18n4Js.php:132
+msgid "Save and go back"
+msgstr "儲存並返回"
+
+#: src/Elabftw/i18n4Js.php:137
+msgid "Show all"
+msgstr "顯示全部"
+
+#: src/templates/upload-replace-form.html:6
+msgid "OK"
+msgstr "好的"
+
+#: src/templates/sysconfig.html:158
+msgid "If the last change is at least this days old, a revision will be created regardless of the minimum characters setting."
+msgstr "如果上次變更時間已超過此天數，則無論最小字元數設定為何，都會建立修訂版本。"
+
+#: src/templates/sysconfig.html:523
+msgid "%d users are currently prevented from logging in from unknown devices."
+msgstr "目前有 %d 位用戶無法從未知裝置登入。"
+
+#: src/templates/sysconfig.html:529
+msgid "%d devices are currently denied authentication."
+msgstr "目前有 %d 台裝置被拒絕驗證。"
+
+#: src/templates/ucp.html:85 src/templates/ucp.html:108
+msgid "(default)"
+msgstr "(預設)"
+
+#: web/app/controllers/ResetPasswordController.php:69
+#: web/app/controllers/ResetPasswordController.php:104
+msgid "If the account exists, an email has been sent."
+msgstr "如果帳戶存在，則會傳送電子郵件。"
+
+#: src/Controllers/LoginController.php:176
+#: web/app/controllers/ResetPasswordController.php:77 web/index.php:129
+msgid "Your account is not validated. An admin of your team needs to validate it!"
+msgstr "您的帳戶尚未驗證。需要您團隊的管理員進行驗證！"
+
+#: web/app/controllers/ResetPasswordController.php:86
+msgid "Hi. Someone (probably you) requested a new password on eLabFTW.%s Please follow this link to reset your password: %s %sThis link is only valid for %s minutes."
+msgstr "您好。有人（可能是您）在 eLabFTW 上要求重設密碼。請點擊此連結重設您的密碼：此連結僅在 %s 分鐘內有效。"
+
+#: src/Services/ResetPasswordKey.php:73
+msgid "This link has expired! Password reset links are only valid for %s minutes."
+msgstr "此連結已過期！密碼重設連結僅在 %s 分鐘內有效。"
+
+#: src/Exceptions/InvalidDeviceTokenException.php:24
+msgid "This browser cannot login anymore because of too many failed attempts."
+msgstr "由於登入嘗試次數過多，此瀏覽器無法再登入。"
+
+#: src/Models/AbstractEntity.php:237
+msgid "Experiments must use a template!"
+msgstr "實驗必須使用指定模板！"
+
+#: src/templates/show.html:168 src/templates/show.html:174
+msgid "Name of field"
+msgstr "欄位名稱"
+
+#: src/templates/show.html:185 src/templates/show.html:190
+msgid "Value"
+msgstr "值"
+
+#: src/templates/admin.html:221
+msgid "Export database items"
+msgstr "匯出資料庫物件"
+
+#: src/templates/ts-config.html:11
+msgid "Custom TSA"
+msgstr "自訂時間戳提供者"
+
+#: src/templates/favtags-panel.html:4 src/templates/ucp.html:134
+#: src/templates/ucp.html:150
+msgid "Favorite tags"
+msgstr "收藏標籤"
+
+#: src/templates/filter-input-snippet.html:3
+#: src/templates/filter-input-snippet.html:5
+msgid "Filter"
+msgstr "篩選"
+
+#: src/templates/favtags-panel.html:21
+msgid "Add a tag as favorite"
+msgstr "新增標籤為收藏"
+
+#: src/templates/show.html:446
+msgid "Any category"
+msgstr "任何類別"
+
+#: src/Elabftw/i18n4Js.php:144
+msgid "Are you sure you want to undo this step?"
+msgstr "您確定要復原此步驟嗎？"
+
+#: src/Services/Email.php:81
+msgid "Test email"
+msgstr "測試郵件"
+
+#: src/Models/Notifications/CommentCreated.php:44
+msgid "New comment posted"
+msgstr "新註解已發布"
+
+#: src/Services/Transform.php:62
+msgid "New user added to your team"
+msgstr "您的團隊已新增用戶"
+
+#: src/Models/Notifications/UserNeedValidation.php:35
+msgid "[ACTION REQUIRED]"
+msgstr "【需要採取動作】"
+
+#: src/Models/Notifications/SelfNeedValidation.php:32
+msgid "Your account has been created"
+msgstr "您的帳戶已建立"
+
+#: src/Models/Notifications/SelfIsValidated.php:31
+msgid "Account validated"
+msgstr "帳戶已驗證"
+
+#: src/Models/Notifications/StepDeadline.php:58
+msgid "Hello. A step deadline is approaching: "
+msgstr "您好。某個步驟的截止日期即將到來： "
+
+#: src/Services/Transform.php:69
+msgid "A user needs account validation."
+msgstr "用戶需要進行帳戶驗證。"
+
+#: src/Services/Transform.php:76
+msgid "There was a problem during PDF creation."
+msgstr "PDF 建立過程中出現問題。"
+
+#: src/Services/Transform.php:85
+msgid "Tex rendering failed during PDF generation. The raw tex commands are retained but you might want to carefully check the generated PDF."
+msgstr "PDF 產生過程中 TeX 渲染失敗。原始 TeX 命令已保留，但建議您仔細檢查生成的 PDF 文件。"
+
+#: src/Services/Transform.php:94
+msgid "Some attached PDFs could not be appended."
+msgstr "有些附上的 PDF 文件無法附加。"
+
+#: src/Services/AdvancedSearchQuery/Exceptions/LimitDepthIsExceededException.php:22
+msgid "Query is too complex!"
+msgstr "查詢過於複雜！"
+
+#: web/ucp.php:60
+msgid "New comment notification"
+msgstr "新註解通知"
+
+#: web/ucp.php:64
+msgid "Step deadline"
+msgstr "步驟截止日期"
+
+#: web/ucp.php:72
+msgid "New user created"
+msgstr "已建立新用戶"
+
+#: web/ucp.php:77
+msgid "New user need validation"
+msgstr "新用戶需要驗證"
+
+#: src/templates/admin.html:251
+msgid "Export experiments of user"
+msgstr "使用者匯出實驗"
+
+#: src/templates/head.html:181 src/templates/head.html:182
+#: src/templates/ucp.html:7
+msgid "Notifications"
+msgstr "通知"
+
+#: src/templates/head.html:190
+msgid "No new notifications to show."
+msgstr "沒有新通知顯示。"
+
+#: src/templates/head.html:193 src/templates/ucp.html:538
+msgid "Notifications settings"
+msgstr "通知設定"
+
+#: src/templates/login-full.html:15 src/templates/login-full.html:38
+msgid "Request access to a team"
+msgstr "請求存取團隊"
+
+#: src/templates/login-full.html:33 src/templates/login-full.html:51
+msgid "Request access"
+msgstr "請求存取"
+
+#: src/templates/login-full.html:57
+msgid "Your account has been created and will need to be validated by an admin."
+msgstr "您的帳戶已創建，需要管理員進行驗證。"
+
+#: src/Services/AdvancedSearchQuery.php:65
+#: src/Services/AdvancedSearchQuery.php:67
+msgid "Search query"
+msgstr "搜尋查詢"
+
+#: src/templates/show.html:256
+msgid "Date from"
+msgstr "日期"
+
+#: src/templates/show.html:260
+msgid "less than"
+msgstr "少於"
+
+#: src/templates/show.html:261
+msgid "less than or equal to"
+msgstr "小於或等於"
+
+#: src/templates/show.html:262
+msgid "equal to"
+msgstr "等於"
+
+#: src/templates/show.html:263
+msgid "greater than or equal to"
+msgstr "大於或等於"
+
+#: src/templates/show.html:264
+msgid "greater than"
+msgstr "大於"
+
+#: src/templates/show.html:265
+msgid "not equal to"
+msgstr "不等於"
+
+#: src/templates/show.html:270
+msgid "Date to (optional)"
+msgstr "日期（可選）"
+
+#: src/templates/show.html:227 src/templates/show.html:228
+msgid "Select lock status"
+msgstr "選擇鎖定狀態"
+
+#: src/templates/show.html:235
+msgid "Timestamped"
+msgstr "帶時間戳"
+
+#: src/templates/show.html:236
+msgid "Select timestamp status"
+msgstr "選擇時間戳狀態"
+
+#: src/templates/steps-edit.html:59
+msgid "Completion time:"
+msgstr "完成時間："
+
+#: src/templates/steps-edit.html:63
+msgid "Not finished"
+msgstr "未完成"
+
+#: src/templates/steps-edit.html:69 src/templates/steps-view.html:18
+msgid "Deadline:"
+msgstr "最後期限："
+
+#: src/templates/steps-edit.html:74
+msgid "Toggle notifications"
+msgstr "切換通知"
+
+#: src/templates/steps-edit.html:78
+msgid "Clear deadline"
+msgstr "明確的截止日期"
+
+#: src/templates/steps-edit.html:85
+msgid "Set deadline in"
+msgstr "設定截止日期"
+
+#: src/templates/sysconfig.html:52
+msgid "Uploads"
+msgstr "上傳"
+
+#: src/templates/sysconfig.html:669
+msgid "Blockchain timestamp configuration"
+msgstr "區塊鏈時間戳配置"
+
+#: src/templates/sysconfig.html:589
+msgid "Where user uploaded files are stored:"
+msgstr "用戶上傳的文件儲存位置："
+
+#: src/templates/sysconfig.html:591 src/templates/upload-more-info.html:1
+msgid "Local filesystem"
+msgstr "本機檔案系統"
+
+#: src/templates/sysconfig.html:592
+msgid "S3 bucket"
+msgstr "S3 儲存槽"
+
+#: src/templates/sysconfig.html:595
+msgid "You can select where uploaded files will be stored. The default is local storage but you can configure any S3 compatible object storage."
+msgstr "您可以選擇上傳檔案的儲存位置。預設為本機存儲，但您可以配置任何與 S3 相容的物件儲存。"
+
+#: src/templates/ucp.html:545
+msgid "Web"
+msgstr "網站"
+
+#: src/templates/upload-dropdown-menu.html:95 src/templates/uploads.html:75
+msgid "More information"
+msgstr "更多資訊"
+
+#: src/templates/upload-more-info.html:1
+msgid "Storage:"
+msgstr "貯存："
+
+#: src/Models/Scheduler.php:596
+msgid "Creation/modification of events in the past is not allowed!"
+msgstr "不允許創建/修改過去的事件！"
+
+#: src/Models/Notifications/EventDeleted.php:91 src/Services/Transform.php:54
+msgid "A booked slot was deleted from the scheduler."
+msgstr "已預訂的時段已從日程表中刪除。"
+
+#: src/Models/Notifications/EventDeleted.php:93
+msgid "Hi. %s (%s). See item: %s. It was booked from %s to %s."
+msgstr "您好。 %s (%s)。請查看項目：%s。預訂時間為 %s 至 %s。"
+
+#: web/ucp.php:82
+msgid "Booking event cancelled"
+msgstr "預訂活動取消"
+
+#: src/templates/scheduler.html:33
+msgid "Export bookings"
+msgstr "匯出預訂"
+
+#: src/templates/link-view-one.html:26
+msgid "Import links"
+msgstr "匯入連結"
+
+#: src/Make/AbstractMakeTimestamp.php:138
+msgid "Number of timestamps this past month reached the limit!"
+msgstr "上個月的時間戳數量已達上限！"
+
+#: src/templates/admin.html:317 src/templates/admin.html:329
+#: src/templates/admin.html:330
+msgid "Show tagged experiments"
+msgstr "顯示已標記的實驗"
+
+#: src/templates/edit.html:205
+msgid "Use %sCtrl%s + click to add text"
+msgstr "使用 %sCtrl%s + 點擊新增文本"
+
+#: src/templates/json-editor.html:48
+msgid "See documentation about extra fields."
+msgstr "請參閱有關額外欄位的文件。"
+
+#: src/templates/sysconfig.html:251
+msgid "MySQL Version"
+msgstr "MySQL 版本"
+
+#: src/templates/ts-config.html:54
+msgid "Number of allowed timestamps per month (0 means no limit):"
+msgstr "每月允許的時間戳數量（0 表示無限制）："
+
+#: src/Import/Handler.php:108
+msgid "Error: invalid file extension for import. Allowed extensions: %s."
+msgstr "錯誤：匯入的檔案副檔名無效。允許的擴展名：%s。"
+
+#: src/Models/AbstractStatus.php:69
+msgid "Running"
+msgstr "正在實作"
+
+#: src/Models/AbstractStatus.php:70
+msgid "Success"
+msgstr "成功"
+
+#: src/Models/AbstractStatus.php:71
+msgid "Need to be redone"
+msgstr "需要重做"
+
+#: src/Models/AbstractStatus.php:72
+msgid "Fail"
+msgstr "失敗"
+
+#: src/Make/MakeBloxberg.php:87 src/Models/AbstractEntity.php:917
+msgid "Timestamp archive by %s"
+msgstr "時間戳存檔者 %s"
+
+#: src/Import/Eln.php:269
+msgid "Error: could not read archive file properly! (missing %s)"
+msgstr "錯誤：無法正確讀取封存檔案！ （缺少 %s）"
+
+#: src/Services/LoginHelper.php:141
+msgid "Your account has expired. Contact your team Admin to extend its validity."
+msgstr "您的帳戶已過期。請聯絡您的團隊管理員以延長帳戶有效期限。"
+
+#: src/templates/admin.html:236 src/templates/admin.html:267
+#: src/templates/export-menu.html:125 src/templates/show.html:387
+msgid "ELN Archive"
+msgstr "ELN 檔案"
+
+#: src/templates/admin.html:237 src/templates/admin.html:268
+#: src/templates/export-menu.html:124 src/templates/show.html:388
+msgid "ZIP Archive"
+msgstr "ZIP 壓縮檔案"
+
+#: src/templates/admin.html:238 src/templates/admin.html:269
+#: src/templates/export-menu.html:126 src/templates/show.html:389
+msgid "CSV File"
+msgstr "CSV 檔案"
+
+#: src/templates/admin.html:239 src/templates/admin.html:270
+#: src/templates/export-menu.html:123 src/templates/show.html:390
+msgid "PDF File"
+msgstr "PDF 文件"
+
+#: src/templates/admin.html:240 src/templates/admin.html:271
+#: src/templates/show.html:391
+msgid "QR codes PDF"
+msgstr "含 QR 圖碼的 PDF"
+
+#: src/templates/admin.html:241 src/templates/admin.html:272
+#: src/templates/export-menu.html:128 src/templates/profile.html:309
+#: src/templates/show.html:392
+msgid "JSON"
+msgstr "JSON"
+
+#: src/templates/editusers.html:45
+msgid "Permission group"
+msgstr "權限群組"
+
+#: src/Elabftw/i18n4Js.php:157
+msgid "Valid until"
+msgstr "有效期限至"
+
+#: src/templates/scheduler.html:182 src/templates/scheduler.html:185
+#: src/templates/show.html:121 src/templates/show.html:122
+msgid "Filter owner"
+msgstr "過濾器擁有者"
+
+#: src/templates/show.html:212 src/templates/show.html:213
+msgid "Filter visibility"
+msgstr "篩選器可見性"
+
+#: src/templates/footer.html:14 src/templates/head.html:209
+msgid "Submit feedback"
+msgstr "提交回饋"
+
+#: src/templates/head.html:200
+msgid "Help menu"
+msgstr "幫助選單"
+
+#: src/templates/head.html:202
+msgid "What's new"
+msgstr "新增功能"
+
+#: src/templates/head.html:205
+msgid "Support"
+msgstr "支援"
+
+#: src/templates/head.html:206
+msgid "Community forum"
+msgstr "社群論壇"
+
+#: src/templates/head.html:207
+msgid "Chat room"
+msgstr "聊天室"
+
+#: src/templates/head.html:210
+msgid "Contribute to eLabFTW"
+msgstr "為 eLabFTW 做出貢獻"
+
+#: src/templates/head.html:219
+msgid "Logged in as %s in:"
+msgstr "以 %s 登入："
+
+#: src/templates/head.html:221
+msgid "Switch team"
+msgstr "切換團隊"
+
+#: src/templates/head.html:226
+msgid "My profile"
+msgstr "我的個人資料"
+
+#: src/templates/login-full.html:59
+msgid "Your account has been created and is now active. Try logging in again."
+msgstr "您的帳戶已建立並啟動。請嘗試再次登入。"
+
+#: src/templates/pdf.html:68
+msgid "Linked experiment"
+msgid_plural "Linked experiments"
+msgstr[0] "關聯實驗"
+
+#: src/templates/show.html:317
+msgid "Newest"
+msgstr "最新"
+
+#: src/templates/show.html:318
+msgid "Oldest"
+msgstr "最老"
+
+#: src/templates/show.html:319
+msgid "Recently modified"
+msgstr "最近修改"
+
+#: src/templates/show.html:320
+msgid "Least recently modified"
+msgstr "最近修改次數最少"
+
+#: src/templates/show.html:322
+msgid "Category (inverted)"
+msgstr "類別（倒序）"
+
+#: src/templates/show.html:325
+msgid "Highest ID"
+msgstr "最高 ID"
+
+#: src/templates/show.html:326
+msgid "Lowest ID"
+msgstr "最低 ID"
+
+#: src/templates/show.html:329
+msgid "Recently commented"
+msgstr "最近被註解過"
+
+#: src/templates/show.html:330
+msgid "Title (alphabetical)"
+msgstr "標題（按字母順序排列）"
+
+#: src/templates/show.html:331
+msgid "Title (inverted)"
+msgstr "標題（倒置）"
+
+#: src/templates/show.html:332
+msgid "User (alphabetical)"
+msgstr "使用者（按字母順序排列）"
+
+#: src/templates/show.html:333
+msgid "User (inverted)"
+msgstr "用戶（倒置）"
+
+#: src/templates/show.html:334
+msgid "Highest rating"
+msgstr "最高評分"
+
+#: src/templates/show.html:335
+msgid "Lowest rating"
+msgstr "最低評分"
+
+#: src/templates/show.html:455
+msgid "Link to an experiment"
+msgstr "實驗連結"
+
+#: src/templates/show.html:458
+msgid "Any author"
+msgstr "任何作者"
+
+#: src/templates/scheduler.html:82
+msgid "Start time"
+msgstr "開始時間"
+
+#: src/templates/scheduler.html:84
+msgid "End time"
+msgstr "結束時間"
+
+#: src/templates/ts-config.html:57
+msgid "Number of timestamps over the last 30 days: %d"
+msgstr "過去 30 天內的時間戳數量：%d"
+
+#: src/templates/upload-comment.html:6
+msgid "Click to add a comment"
+msgstr "點擊新增註解"
+
+#: src/templates/upload-dropdown-menu.html:81
+msgid "Show content of file"
+msgstr "顯示文件內容"
+
+#: src/templates/upload-more-info.html:3
+msgid "Uploaded by %s"
+msgstr "上傳者：%s"
+
+#: src/templates/view.html:173
+msgid "edited"
+msgstr "已編輯"
+
+#: src/Models/Notifications/StepDeadline.php:67 src/Services/Transform.php:106
+msgid "A step deadline is approaching."
+msgstr "有個步驟即將截止。"
+
+#: src/templates/head.html:203 src/templates/head.html:204
+#: src/templates/sysconfig.html:268
+msgid "Documentation"
+msgstr "文件"
+
+#: src/templates/steps-edit.html:98
+msgid "Copy step to cursor position"
+msgstr "將步驟複製到游標位置"
+
+#: src/templates/upload-dropdown-menu.html:88
+msgid "Open in NMRium"
+msgstr "在 NMRium 中打開"
+
+#: src/Models/FavTags.php:84
+msgid "Could not find tag. Please enter an existing tag."
+msgstr "找不到標籤。請輸入一個已存在的標籤。"
+
+#: src/templates/changelog.html:10 src/templates/pdf.html:242
+#: src/templates/profile.html:307
+msgid "Changelog"
+msgstr "更新日誌"
+
+#: src/templates/changelog-table.html:6
+msgid "Property changed"
+msgstr "屬性變更"
+
+#: src/templates/changelog-table.html:7
+msgid "New value"
+msgstr "新的值"
+
+#: src/templates/sysconfig.html:35
+msgid "Latest stable version:"
+msgstr "最新穩定版本："
+
+#: src/templates/admin.html:160 src/templates/sysconfig.html:744
+#: src/templates/sysconfig.html:934 src/templates/ucp.html:472
+msgid "Link to documentation"
+msgstr "文件連結"
+
+#: src/templates/view-edit-toolbar.html:303
+msgid "See changelog"
+msgstr "查看更新日誌"
+
+#: src/templates/field-builder-modal.html:10
+#: src/templates/field-builder-modal.html:53
+msgid "Add an extra field"
+msgstr "新增額外字段"
+
+#: src/templates/field-builder-modal.html:54
+msgid "Field type"
+msgstr "字段類型"
+
+#: src/templates/field-builder-modal.html:56
+msgid "Text"
+msgstr "文字"
+
+#: src/templates/field-builder-modal.html:57
+msgid "Dropdown menu"
+msgstr "下拉式選單"
+
+#: src/templates/field-builder-modal.html:58
+msgid "Radio buttons"
+msgstr "單選按鈕"
+
+#: src/templates/field-builder-modal.html:63
+msgid "Checkbox"
+msgstr "複選框"
+
+#: src/templates/field-builder-modal.html:64
+msgid "Number"
+msgstr "數值"
+
+#: src/templates/create-compound-modal.html:15
+#: src/templates/field-builder-modal.html:73
+msgid "required"
+msgstr "必填的"
+
+#: src/templates/field-builder-modal.html:78
+msgid "Description"
+msgstr "描述"
+
+#: src/templates/field-builder-modal.html:79
+msgid "Enter a description for this field"
+msgstr "請輸入此欄位的描述"
+
+#: src/templates/field-builder-modal.html:83
+#: src/templates/field-builder-modal.html:89
+#: src/templates/field-builder-modal.html:116
+msgid "Default value"
+msgstr "預設值"
+
+#: src/templates/field-builder-modal.html:90
+msgid "Enter a default value"
+msgstr "請輸入預設值"
+
+#: src/templates/field-builder-modal.html:95
+msgid "Choices"
+msgstr "選擇"
+
+#: src/templates/field-builder-modal.html:101
+#: src/templates/field-builder-modal.html:111
+msgid "Add another choice"
+msgstr "新增另一個選項"
+
+#: src/templates/field-builder-modal.html:118
+msgid "Unchecked"
+msgstr "未勾選"
+
+#: src/templates/field-builder-modal.html:119
+msgid "Checked"
+msgstr "已勾選"
+
+#: src/templates/edit.html:121 src/templates/json-editor.html:10
+msgid "Add field"
+msgstr "新增字段"
+
+#: src/templates/admin.html:474 src/templates/permissions-edit-modal.html:45
+msgid "Base"
+msgstr "基準"
+
+#: src/templates/admin.html:483 src/templates/permissions-edit-modal.html:56
+msgid "Selecting a team here will give access to all members of this team."
+msgstr "在此選擇一個團隊，即可存取該團隊的所有成員。"
+
+#: src/templates/admin.html:491
+msgid "Selecting a teamgroup here will give access to all users part of this teamgroup."
+msgstr "在此選擇一個團隊群組，即可存取該團隊群組中的所有使用者。"
+
+#: src/templates/admin.html:494
+msgid "Teamgroup"
+msgstr "團隊組"
+
+#: src/templates/permissions-edit-modal.html:111
+msgid "Allow read access for anonymous users"
+msgstr "允許匿名使用者讀取權限"
+
+#: src/templates/compounds-view-edit.html:10
+#: src/templates/edit-compound-modal.html:26
+#: src/templates/edit-compound-modal.html:64
+#: src/templates/edit-compound-modal.html:71 src/templates/mfa.html:35
+#: src/templates/permissions-edit-modal.html:116 src/templates/ucp.html:364
+#: src/templates/ucp.html:480
+msgid "Copy to clipboard"
+msgstr "複製到剪貼簿"
+
+#: src/templates/permissions-edit-modal.html:120
+msgid "Anyone following this link can access this entry."
+msgstr "任何人點擊此連結皆可存取此條目。"
+
+#: src/templates/field-builder-modal.html:144
+#: src/templates/field-builder-modal.html:145
+msgid "Allow selection of multiple values?"
+msgstr "允許選擇多個值嗎？"
+
+#: src/templates/ts-config.html:62
+msgid "Available timestamps left (0 means no balance):"
+msgstr "剩餘可用時間戳記（0 表示沒有可用時間戳）："
+
+#: src/templates/ts-config.html:65
+msgid "You can set a number of available timestamps here and it will be decremented by 1 on every timestamp."
+msgstr "您可以在此處設定可用時間戳的數量，並且每個時間戳都會遞減 1。"
+
+#: src/Elabftw/Metadata.php:103 src/Elabftw/i18n4Js.php:151
+msgid "Undefined group"
+msgstr "未定義的群組"
+
+#: src/Enums/EnforceMfa.php:30
+msgid "Disabled"
+msgstr "已停用"
+
+#: src/Enums/EnforceMfa.php:31
+msgid "Sysadmins"
+msgstr "系統管理員"
+
+#: src/Enums/EnforceMfa.php:32
+msgid "Admins"
+msgstr "管理員"
+
+#: src/Enums/EnforceMfa.php:33
+msgid "Everyone"
+msgstr "每個人"
+
+#: src/Enums/Usergroup.php:24
+msgid "Sysadmin"
+msgstr "系統管理員"
+
+#: src/Exceptions/InvalidMfaCodeException.php:26
+#: web/app/controllers/UcpController.php:61
+msgid "Invalid authentication code."
+msgstr "驗證碼無效。"
+
+#: src/Elabftw/i18n4Js.php:66
+msgid "File size limit:"
+msgstr "檔案大小限制："
+
+#: src/Elabftw/i18n4Js.php:69
+msgid "You are currently editing the metadata attached to this entry."
+msgstr "您目前正在編輯此條目的元資料。"
+
+#: src/Models/ItemsTypes.php:59
+msgid "Default"
+msgstr "預設"
+
+#: src/Models/Notifications/UserCreated.php:41
+#: src/Models/Notifications/UserNeedValidation.php:35
+msgid "New user added to team: %s"
+msgstr "團隊新增用戶：%s"
+
+#: web/admin.php:95 web/sysconfig.php:67
+msgid "No users found. Try another search."
+msgstr "未找到用戶。請嘗試其他搜尋。"
+
+#: src/templates/search-help-modal.html:13
+msgid "Advanced search"
+msgstr "進階搜尋"
+
+#: src/templates/admin.html:85
+msgid "Force experiment template use"
+msgstr "強制實驗模板的使用"
+
+#: src/templates/admin.html:164
+msgid "Add a group"
+msgstr "新增一個群組"
+
+#: src/templates/admin.html:201
+msgid "User name"
+msgstr "使用者名稱"
+
+#: src/templates/admin.html:224
+msgid "Select what to export"
+msgstr "選擇要匯出的內容"
+
+#: src/templates/admin.html:234 src/templates/admin.html:265
+msgid "Select an export format"
+msgstr "選擇匯出格式"
+
+#: src/templates/admin.html:255
+msgid "Select user"
+msgstr "選擇用戶"
+
+#: src/templates/admin.html:315 src/templates/admin.html:327
+msgid "Tag"
+msgstr "標籤"
+
+#: src/templates/admin.html:316 src/templates/admin.html:328
+msgid "Occurence"
+msgstr "發生"
+
+#: src/templates/sysconfig.html:890
+msgid "Add new IDP"
+msgstr "新增的身分提供者"
+
+#: src/templates/idp-modal.html:14
+msgid "Friendly name"
+msgstr "友善名稱"
+
+#: src/templates/editusers.html:3
+msgid "Users list"
+msgstr "使用者列表"
+
+#: src/templates/edit-user-modal.html:70
+msgid "Manage teams for user"
+msgstr "管理用戶團隊"
+
+#: src/Elabftw/i18n4Js.php:90
+msgid "Is Owner"
+msgstr "是所有者"
+
+#: src/Elabftw/i18n4Js.php:92
+msgid "Last login"
+msgstr "上次登入"
+
+#: src/templates/edit-user-modal.html:26 src/templates/editusers.html:130
+#: src/templates/editusers.html:140
+msgid "Internal ID"
+msgstr "內部 ID"
+
+#: src/Elabftw/i18n4Js.php:91
+msgid "Is Sysadmin"
+msgstr "是系統管理員"
+
+#: src/templates/ucp.html:528
+msgid "never"
+msgstr "從未"
+
+#: src/templates/edit-user-modal.html:92
+msgid "Set new password"
+msgstr "設定新密碼"
+
+#: src/templates/editusers.html:101
+msgid "Add account from external directory"
+msgstr "從外部目錄新增帳戶"
+
+#: src/templates/editusers.html:126 src/templates/editusers.html:136
+msgid "Selection"
+msgstr "選擇項目"
+
+#: src/templates/editusers.html:160
+msgid "Add selected"
+msgstr "新增所選內容"
+
+#: src/templates/favtags-panel.html:9
+msgid "No favorite tags are present. Add an existing tag with the form below."
+msgstr "目前沒有收藏標籤。請使用下方表單新增現有標籤。"
+
+#: src/templates/field-builder-modal.html:35
+msgid "Add group"
+msgstr "新增群組"
+
+#: src/templates/field-builder-modal.html:38
+msgid "New group name"
+msgstr "新群組名"
+
+#: src/templates/field-builder-modal.html:127
+#: src/templates/field-builder-modal.html:128
+msgid "Blank value on duplicate"
+msgstr "重複項為空值"
+
+#: src/templates/head.html:260
+msgid "Toggle favorite tags"
+msgstr "切換收藏標籤"
+
+#: src/templates/head.html:263
+msgid "Toggle todolist"
+msgstr "切換待辦事項列表"
+
+#: src/templates/json-editor.html:23
+msgid "Save as…"
+msgstr "另存為…"
+
+#: src/Elabftw/i18n4Js.php:133
+msgid "Save as attachment"
+msgstr "另存為附件"
+
+#: src/templates/mfa.html:21
+msgid "It is mandatory to activate 2FA."
+msgstr "必須啟用雙重驗證。"
+
+#: src/templates/admin.html:498 src/templates/permissions-edit-modal.html:89
+msgid "Allow individual users to access this entry."
+msgstr "允許個人使用者存取此條目。"
+
+#: src/templates/revisions.html:5
+msgid "This server is configured to store %d revisions per entry maximum."
+msgstr "此伺服器配置為每個條目最多儲存 %d 個修訂版本。"
+
+#: src/templates/show.html:47
+msgid "Show full syntax"
+msgstr "顯示完整語法"
+
+#: src/templates/show-item.html:112
+msgid "View"
+msgstr "檢視"
+
+#: src/templates/show.html:152
+msgid "Toggle filters"
+msgstr "切換篩選器"
+
+#: src/templates/steps-edit.html:82
+msgid "Add a deadline"
+msgstr "設定截止日期"
+
+#: src/templates/steps-edit.html:86
+msgid "%d hour"
+msgstr "%d 小時"
+
+#: src/templates/steps-edit.html:87
+msgid "%d day"
+msgstr "%d 天"
+
+#: src/templates/steps-edit.html:88
+msgid "%d week"
+msgstr "%d 週"
+
+#: src/templates/steps-edit.html:89
+msgid "%d month"
+msgstr "%d 個月"
+
+#: src/templates/steps-edit.html:90
+msgid "%d year"
+msgstr "%d 年"
+
+#: src/templates/show.html:371
+msgid "Search in experiments"
+msgstr "在實驗中搜尋"
+
+#: src/templates/sysconfig.html:14 src/templates/sysconfig.html:19
+msgid "Create team"
+msgstr "創建團隊"
+
+#: src/templates/sysconfig.html:22
+msgid "Enter team name"
+msgstr "輸入團隊名稱"
+
+#: src/templates/sysconfig.html:48
+msgid "Communication"
+msgstr "交際"
+
+#: src/templates/sysconfig.html:51
+msgid "Policies"
+msgstr "政策"
+
+#: src/templates/sysconfig.html:111
+msgid "Address of the Proxy"
+msgstr "代理地址"
+
+#: src/templates/sysconfig.html:141
+msgid "Maximum number of stored revisions per entry"
+msgstr "每個條目儲存的最大修訂版本數"
+
+#: src/templates/sysconfig.html:148
+msgid "Minimum number of characters that need to be changed in order to create a new revision per entry"
+msgstr "每個條目建立新修訂版本所需變更的最少字元數"
+
+#: src/templates/sysconfig.html:155
+msgid "Number of days between changes to automatically create a revision"
+msgstr "自動建立修訂版本的兩次變更之間的天數"
+
+#: src/templates/sysconfig.html:118
+msgid "URL where the Support menu entry from Help dropdown points"
+msgstr "幫助下拉選單中「支援」選單項目所在的 URL"
+
+#: src/templates/sysconfig.html:172
+msgid "Allow anonymous visitors to login and see Public experiments"
+msgstr "允許匿名訪客登入並查看公開實驗"
+
+#: src/templates/sysconfig.html:705
+msgid "Enable local account creation"
+msgstr "啟用本機帳戶建立"
+
+#: src/templates/sysconfig.html:174
+msgid "Admins can create local accounts"
+msgstr "管理員可以建立本機帳戶"
+
+#: src/templates/sysconfig.html:706
+msgid "Show local login form"
+msgstr "顯示本機登入表單"
+
+#: src/templates/sysconfig.html:193 src/templates/sysconfig.html:204
+msgid "Remote directory configuration"
+msgstr "遠端目錄配置"
+
+#: src/templates/sysconfig.html:195
+msgid "Admins can create local accounts from remote directory"
+msgstr "管理員可以從遠端目錄建立本機帳戶"
+
+#: src/templates/sysconfig.html:198
+msgid "Remote directory service"
+msgstr "遠端目錄服務"
+
+#: src/templates/sysconfig.html:207
+msgid "Use a JSON string for configuration. This setting is stored encrypted."
+msgstr "使用 JSON 字串進行設定。此設定將加密儲存。"
+
+#: src/templates/sysconfig.html:249
+msgid "Docker image version"
+msgstr "Docker 映像版本"
+
+#: src/templates/sysconfig.html:252
+msgid "MySQL database structure version"
+msgstr "MySQL資料庫結構版本"
+
+#: src/templates/sysconfig.html:265
+msgid "Teams list"
+msgstr "團隊列表"
+
+#: src/templates/sysconfig.html:268
+msgid "This page allows you to edit the teams present on this instance."
+msgstr "此頁面可讓您編輯存在的團隊。"
+
+#: src/templates/sysconfig.html:271
+msgid "Create a team"
+msgstr "組建團隊"
+
+#: src/templates/sysconfig.html:282
+msgid "Organisation ID"
+msgstr "組織 ID"
+
+#: src/templates/sysconfig.html:284 src/templates/sysconfig.html:313
+msgid "Visible"
+msgstr "可見的"
+
+#: src/Elabftw/UserStats.php:95 src/Elabftw/i18n4Js.php:115
+msgid "Not set"
+msgstr "未設定"
+
+#: src/templates/sysconfig.html:408
+msgid "Address of the SMTP server"
+msgstr "SMTP 伺服器的位址"
+
+#: src/templates/sysconfig.html:414
+msgid "SMTP Port"
+msgstr "SMTP 連接埠"
+
+#: src/templates/sysconfig.html:421
+msgid "SMTP username"
+msgstr "SMTP 使用者名稱"
+
+#: src/templates/sysconfig.html:444
+msgid "Sender address"
+msgstr "寄件者地址"
+
+#: src/templates/sysconfig.html:449 src/templates/sysconfig.html:622
+#: src/templates/sysconfig.html:655
+msgid "Verify TLS certificate"
+msgstr "驗證 TLS 證書"
+
+#: src/templates/sysconfig.html:474
+msgid "Users need validation by admin after registration"
+msgstr "用戶註冊後需要管理員驗證。"
+
+#: src/templates/sysconfig.html:477
+msgid "Enforce 2FA"
+msgstr "強制執行雙重認證"
+
+#: src/templates/sysconfig.html:503
+msgid "Time after which inactive sessions are invalidated (force logout) (in seconds)"
+msgstr "閒置階段失效（強制登出）所需時間（秒）"
+
+#: src/templates/sysconfig.html:520
+msgid "Bruteforce login protection"
+msgstr "暴力破解登入保護"
+
+#: src/templates/sysconfig.html:672
+msgid "Enable blockchain timestamping with Bloxberg"
+msgstr "使用 Bloxberg 啟用區塊鏈時間戳"
+
+#: src/templates/sysconfig.html:673
+msgid "Anonymize author for GDPR compliance"
+msgstr "為符合 GDPR 規定，請對作者進行匿名化處理"
+
+#: src/templates/sysconfig.html:678
+msgid "Keeex configuration"
+msgstr "Keeex 配置"
+
+#: src/templates/sysconfig.html:680
+msgid "Requires a Keeex Fusion daemon running. %sSee documentation%s."
+msgstr "需要執行 Keeex Fusion 守護程式。 %s參見文檔%s。"
+
+#: src/templates/sysconfig.html:682
+msgid "Enable Keeex"
+msgstr "啟用 Keeex"
+
+#: src/templates/sysconfig.html:685
+msgid "Keeex host"
+msgstr "Keeex 主機"
+
+#: src/templates/sysconfig.html:688
+msgid "Address (hostname or IP) of the Keeex service."
+msgstr "Keeex 服務的位址（主機名稱或 IP 位址）。"
+
+#: src/templates/sysconfig.html:692
+msgid "Keeex port"
+msgstr "基克斯連接埠"
+
+#: src/templates/sysconfig.html:695
+msgid "Default port is 8080."
+msgstr "預設連接埠為 8080。"
+
+#: src/templates/sysconfig.html:747
+msgid "View metadata.xml"
+msgstr "查看 metadata.xml"
+
+#: src/templates/sysconfig.html:751
+msgid "General settings"
+msgstr "常規設定"
+
+#: src/templates/sysconfig.html:754
+msgid "Enable SAML authentication"
+msgstr "啟用 SAML 身份驗證"
+
+#: src/templates/sysconfig.html:755
+msgid "Strict mode"
+msgstr "嚴格模式"
+
+#: src/templates/sysconfig.html:756
+msgid "Debug mode"
+msgstr "偵錯模式"
+
+#: src/templates/sysconfig.html:760
+msgid "Service provider"
+msgstr "服務提供者"
+
+#: src/templates/sysconfig.html:764
+msgid "Base URL"
+msgstr "基本 URL"
+
+#: src/templates/sysconfig.html:810
+msgid "Teams settings"
+msgstr "團隊設定"
+
+#: src/templates/sysconfig.html:813
+msgid "Fallback to internal id if existing user cannot be matched with email"
+msgstr "如果現有使用者無法與電子郵件地址相符，則回退到內部 ID。"
+
+#: src/templates/sysconfig.html:814
+msgid "If user is matched with internal id, update the email sent by IDP?"
+msgstr "如果使用者與內部 ID 匹配，是否更新身分提供者 (IDP) 發送的電子郵件？"
+
+#: src/templates/sysconfig.html:815
+msgid "Synchronize the local teams with the teams sent by IDP"
+msgstr "將本地團隊與IDP派出的團隊同步。"
+
+#: src/templates/sysconfig.html:816
+msgid "Create team sent by IDP if it doesn't exist already"
+msgstr "如果 IDP 派遣的團隊尚不存在，則建立該團隊。"
+
+#: src/templates/sysconfig.html:819 src/templates/sysconfig.html:1017
+#: src/templates/sysconfig.html:1101
+msgid "If no team attribute is found, to which team user is assigned?"
+msgstr "如果沒有找到團隊屬性，則將使用者指派到哪個團隊？"
+
+#: src/templates/sysconfig.html:824 src/templates/sysconfig.html:1022
+#: src/templates/sysconfig.html:1106
+msgid "Throw error"
+msgstr "拋出錯誤"
+
+#: src/templates/sysconfig.html:825 src/templates/sysconfig.html:1023
+msgid "Let user select a team"
+msgstr "允許使用者選擇隊伍"
+
+#: src/templates/sysconfig.html:831 src/templates/sysconfig.html:1029
+#: src/templates/sysconfig.html:1112
+msgid "If the user doesn't exist yet, what to do?"
+msgstr "如果用戶尚不存在，該怎麼辦？"
+
+#: src/templates/sysconfig.html:833 src/templates/sysconfig.html:1031
+#: src/templates/sysconfig.html:1114
+msgid "Create the user on the fly"
+msgstr "即時建立用戶"
+
+#: src/templates/sysconfig.html:834 src/templates/sysconfig.html:1032
+#: src/templates/sysconfig.html:1115
+msgid "Throw error, allowing a sysadmin to create the user"
+msgstr "拋出錯誤，允許系統管理員建立用戶"
+
+#: src/templates/sysconfig.html:840
+msgid "Security settings"
+msgstr "安全設定"
+
+#: src/templates/sysconfig.html:935
+msgid "LDAP server configuration"
+msgstr "LDAP 伺服器配置"
+
+#: src/templates/sysconfig.html:997
+msgid "eLabFTW LDAP configuration"
+msgstr "eLabFTW LDAP 配置"
+
+#: src/templates/sysconfig.html:1001
+msgid "By which LDAP attribute the user will be found (default is 'mail')."
+msgstr "透過 LDAP 屬性尋找使用者（預設值為「mail」）。"
+
+#: src/templates/sysconfig.html:1004
+msgid "You can search for several attributes by separating them with a comma (e.g. uid,mail)."
+msgstr "您可以透過以逗號分隔來搜尋多個屬性（例如 uid,mail）。"
+
+#: src/templates/sysconfig.html:1008
+msgid "What attribute to look for the team name"
+msgstr "應該尋找團隊名稱的哪個屬性"
+
+#: src/templates/sysconfig.html:1013 src/templates/sysconfig.html:1120
+msgid "Create team sent by server if it doesn't exist already"
+msgstr "如果伺服器發送的團隊尚不存在，則建立該團隊。"
+
+#: src/templates/sysconfig.html:1038
+msgid "What attribute to look for the email"
+msgstr "應該要尋找電子郵件的哪個屬性"
+
+#: src/templates/sysconfig.html:1044
+msgid "What attribute to look for the firstname"
+msgstr "應該要找出名字的哪個屬性"
+
+#: src/templates/sysconfig.html:1050
+msgid "What attribute to look for the lastname"
+msgstr "應該要找出姓氏的哪個屬性"
+
+#: src/templates/sysconfig.html:1061
+msgid "If authentication is handled by an upstream server, configure here the request headers mappings and behaviors."
+msgstr "如果身份驗證由上游伺服器處理，請在此處設定請求標頭對應和行為。"
+
+#: src/templates/sysconfig.html:1067
+msgid "Use this to detect if the user is logged in from upstream server (value is not used, only presence)."
+msgstr "使用此功能檢測使用者是否已從上游伺服器登入（不使用值，僅檢測是否存在）。"
+
+#: src/templates/team.html:58
+msgid "Send an email to users"
+msgstr "向使用者發送電子郵件"
+
+#: src/templates/scheduler.html:126 src/templates/sysconfig.html:378
+#: src/templates/team.html:62
+msgid "Send to"
+msgstr "發送至"
+
+#: src/templates/scheduler.html:132 src/templates/team.html:64
+msgid "Members of team %s"
+msgstr "團隊 %s 的成員"
+
+#: src/templates/scheduler.html:136 src/templates/team.html:68
+msgid "Members of teamgroup %s"
+msgstr "團隊組 %s 的成員"
+
+#: src/templates/todolist-panel.html:8
+msgid "Add a new task"
+msgstr "新增任務"
+
+#: src/templates/todolist-panel.html:29 src/templates/todolist-panel.html:30
+msgid "Show steps for team"
+msgstr "展示團隊步驟"
+
+#: src/templates/ts-config.html:3
+msgid "Select timestamping authority (TSA)"
+msgstr "選擇時間戳機構 (TSA)"
+
+#: src/templates/ts-config.html:19
+msgid "Login for external timestamping service"
+msgstr "登入外部時間戳服務"
+
+#: src/templates/ts-config.html:26
+msgid "Password for external timestamping service"
+msgstr "外部時間戳服務的密碼"
+
+#: src/templates/ucp.html:4
+msgid "General"
+msgstr "一般的"
+
+#: src/templates/ucp.html:60
+msgid "Help us translate eLabFTW!"
+msgstr "請協助我們翻譯 eLabFTW！"
+
+#: src/templates/ucp.html:68
+msgid "Items per page"
+msgstr "每頁項目數"
+
+#: src/templates/ucp.html:74
+msgid "Display mode"
+msgstr "檢視模式"
+
+#: src/templates/profile.html:118 src/templates/profile.html:119
+#: src/templates/ucp.html:83
+msgid "Order by"
+msgstr "按順序"
+
+#: src/templates/ucp.html:193
+msgid "Enable Chinese, Japanese and Korean fonts in PDF generation"
+msgstr "在 PDF 生成中啟用中文、日文和韓文字體"
+
+#: src/templates/ucp.html:194
+msgid "WARNING: this will dramatically increase the file size unless you disable PDF/A"
+msgstr "警告：除非停用 PDF/A，否則這將顯著增加檔案大小。"
+
+#: src/templates/ucp.html:204 src/templates/ucp.html:205
+msgid "Add attached files summary to the PDF"
+msgstr "將附件摘要新增至 PDF 檔案。"
+
+#: src/templates/ucp.html:213
+msgid "Append attached PDFs to exported PDF"
+msgstr "將附件中的 PDF 檔案新增至匯出的 PDF 檔案中。"
+
+#: src/templates/ucp.html:222
+msgid "Enable french style signature block in PDF Export"
+msgstr "在 PDF 匯出中啟用法式簽名區塊"
+
+#: src/templates/ucp.html:399
+msgid "Your identity"
+msgstr "你的身分"
+
+#: src/templates/export-menu.html:127
+msgid "QR Code"
+msgstr "QR 圖碼"
+
+#: src/templates/pdf.html:224 src/templates/view.html:47
+msgid "Locked by %s on %s at %s"
+msgstr "%s 於 %s 鎖定 %s"
+
+#: src/Auth/External.php:57 src/Auth/Ldap.php:70 src/Auth/Saml.php:328
+msgid "Could not find an existing user. Ask a Sysadmin to create your account."
+msgstr "找不到現有用戶。請聯絡系統管理員建立您的帳戶。"
+
+#: src/Elabftw/i18n4Js.php:49
+msgid "Click to edit"
+msgstr "點選編輯"
+
+#: src/Elabftw/i18n4Js.php:117
+msgid "Now"
+msgstr "現在"
+
+#: src/Elabftw/i18n4Js.php:148
+msgid "Today"
+msgstr "今天"
+
+#: src/Enums/BasePermissions.php:31
+msgid "Only owner and admins"
+msgstr "僅限所有者和管理員"
+
+#: src/Enums/BasePermissions.php:32
+msgid "Only owner"
+msgstr "唯一所有者"
+
+#: src/Models/Notifications/SelfIsValidated.php:33
+msgid "Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: %s"
+msgstr "您好。您的 eLabFTW 帳戶已通過管理員驗證。請點擊此連結登入：%s"
+
+#: src/Controllers/DashboardController.php:49
+msgid "Dashboard"
+msgstr "控制面板"
+
+#: src/Controllers/DatabaseController.php:37
+msgid "Resource"
+msgid_plural "Resources"
+msgstr[0] "實驗用資源"
+
+#: src/Controllers/ResourcesCategoriesController.php:31
+msgid "Resources categories"
+msgstr "實驗用資源類別"
+
+#: src/templates/edit.html:122
+msgid "Load fields"
+msgstr "載入字段"
+
+#: src/templates/dashboard.html:6
+msgid "Welcome %s"
+msgstr "歡迎 %s"
+
+#: src/templates/edit-tags.html:15
+msgid "Suggested tags"
+msgstr "建議標籤"
+
+#: src/templates/edit-user-modal.html:107
+msgid "Validate user"
+msgstr "驗證用戶"
+
+#: src/templates/field-builder-modal.html:62
+msgid "Time"
+msgstr "時間"
+
+#: src/templates/field-builder-modal.html:167
+msgid "Load extra fields"
+msgstr "載入額外字段"
+
+#: src/templates/field-builder-modal.html:181
+#: src/templates/field-builder-modal.html:193
+msgid "Load"
+msgstr "載入"
+
+#: src/templates/field-builder-modal.html:185
+msgid "Load from an experiment template"
+msgstr "從實驗模板載入"
+
+#: src/templates/field-builder-modal.html:197
+#: src/templates/field-builder-modal.html:198
+msgid "Metadata preview"
+msgstr "元資料預覽"
+
+#: src/templates/field-builder-modal.html:203
+msgid "Apply"
+msgstr "套用"
+
+#: src/templates/head.html:54 src/templates/head.html:60
+#: src/templates/head.html:61
+msgid "Go to dashboard"
+msgstr "前往控制面板"
+
+#: src/templates/revisions.html:6
+msgid "A change of at least %d characters is required to trigger a revision save."
+msgstr "至少需要更改 %d 個字元才能觸發版本儲存。"
+
+#: src/templates/revisions.html:13 src/templates/revisions.html:14
+msgid "Compare revisions"
+msgstr "比較修訂版本"
+
+#: src/templates/revisions.html:26
+msgid "Revision ID"
+msgstr "修訂 ID"
+
+#: src/templates/show.html:305 src/templates/uploads.html:36
+msgid "Switch layout"
+msgstr "切換佈局"
+
+#: src/Elabftw/i18n4Js.php:138
+msgid "Show archived"
+msgstr "顯示已封存內容"
+
+#: src/templates/sysconfig.html:179
+msgid "Message shown to user after successful external auth but local account provisioning is required"
+msgstr "顯示這些訊息給成功通過外部驗證後但仍需進行本機帳戶配置的使用者"
+
+#: src/templates/sysconfig.html:322
+msgid "None available"
+msgstr "暫無可用資訊"
+
+#: src/templates/sysconfig.html:380
+msgid "All active users"
+msgstr "所有活躍用戶"
+
+#: src/templates/sysconfig.html:384
+msgid "All active admins"
+msgstr "所有活躍管理員"
+
+#: src/templates/sysconfig.html:388
+msgid "All active sysadmins"
+msgstr "所有活躍的系統管理員"
+
+#: src/templates/sysconfig.html:509
+msgid "Allow setting an authentication cookie"
+msgstr "允許設定身份驗證 Cookie"
+
+#: src/templates/sysconfig.html:509
+msgid "Disabling this setting will hide the \"remember me\" checkbox on login page."
+msgstr "停用此設定將隱藏登入頁面上的「記住我」複選框。"
+
+#: src/templates/sysconfig.html:511
+msgid "Check the \"remember me\" box on login page by default"
+msgstr "預設情況下，登入頁面上的「記住我」複選框會被選取"
+
+#: src/templates/sysconfig.html:514
+msgid "Validity period of an authentication cookie (in minutes)"
+msgstr "身份驗證 cookie 的有效期限（以分鐘為單位）"
+
+#: src/templates/sysconfig.html:543
+msgid "Link name"
+msgstr "連結名稱"
+
+#: src/templates/ucp.html:105
+msgid "Which page will be loaded first"
+msgstr "哪個頁面會先載入？"
+
+#: src/templates/ucp.html:169
+msgid "Disable all shortcuts"
+msgstr "停用所有快速鍵"
+
+#: src/templates/upload-dropdown-menu.html:103 src/templates/uploads.html:115
+msgid "Archive/Unarchive"
+msgstr "封存/取消封存"
+
+#: src/Enums/ProcurementState.php:31 src/Enums/Users2TeamsTargets.php:25
+msgid "Archived"
+msgstr "已封存"
+
+#: src/templates/view-edit-toolbar.html:301
+msgid "See revisions"
+msgstr "請參閱修訂版。"
+
+#: src/templates/view-edit.html:20
+msgid "This entry is archived: it will not appear in the listings by default."
+msgstr "此項目已封存：預設不會顯示在清單中。"
+
+#: src/templates/ucp.html:477
+msgid "This is the only time the key will be shown! Make sure to copy it somewhere safe as you won't be able to see it again:"
+msgstr "這是唯一一次顯示密鑰的機會！請務必將其複製到安全的地方，因為您之後將無法再次看到它："
+
+#: src/Enums/BasePermissions.php:28
+msgid "Everyone including anonymous users"
+msgstr "包括匿名用戶在內的所有人"
+
+#: src/Enums/BasePermissions.php:29
+msgid "Everyone with an account"
+msgstr "所有擁有帳戶的人"
+
+#: src/Models/Scheduler.php:105
+msgid "You do not have the permission to book this entry."
+msgstr "您沒有權限預訂此物件。"
+
+#: src/Models/Scheduler.php:265
+msgid "Event cancellation is not permitted."
+msgstr "這項動作不允許取消。"
+
+#: src/Models/Scheduler.php:273
+msgid "Cannot cancel slot less than %d minutes before its start."
+msgstr "距離開始時間不到 %d 分鐘無法取消。"
+
+#: src/Models/Scheduler.php:522
+msgid "You cannot book any more slots. Maximum of %d reached."
+msgstr "您無法再預訂更多時段。已達最大預訂量 %d。"
+
+#: src/Models/Scheduler.php:577
+msgid "Overlapping booking slots is not permitted."
+msgstr "不允許預約時段重疊。"
+
+#: src/Models/Notifications/EventDeleted.php:95
+msgid "Message:"
+msgstr "訊息:"
+
+#: src/templates/booking-params-modal.html:6
+#: src/templates/view-edit-toolbar.html:201
+#: src/templates/view-edit-toolbar.html:290
+msgid "Modify booking parameters"
+msgstr "修改預訂參數"
+
+#: src/templates/booking-params-modal.html:14
+#: src/templates/booking-params-modal.html:15
+msgid "Allow booking this resource"
+msgstr "允許預訂此資源"
+
+#: src/templates/booking-params-modal.html:22
+#: src/templates/booking-params-modal.html:23
+msgid "Allow overlapping slots"
+msgstr "允許預約時段重疊"
+
+#: src/templates/booking-params-modal.html:37
+msgid "Maximum per-user future slot allowed"
+msgstr "每個用戶允許的最大未來插槽數量"
+
+#: src/templates/booking-params-modal.html:52
+#: src/templates/booking-params-modal.html:53
+msgid "Allow cancelling a booking slot"
+msgstr "允許取消預訂時段"
+
+#: src/templates/booking-params-modal.html:59
+msgid "Minimum time before a slot can be cancelled (in minutes)"
+msgstr "取消預約所需的最短時間（分鐘）"
+
+#: src/templates/edit.html:59 src/templates/edit.html:69
+#: src/templates/view.html:121
+msgid "Main text"
+msgstr "正文"
+
+#: src/templates/field-builder-modal.html:60
+msgid "Date and time"
+msgstr "日期和時間"
+
+#: src/templates/field-builder-modal.html:135
+#: src/templates/field-builder-modal.html:136
+msgid "Required"
+msgstr "必需的"
+
+#: src/templates/permissions-edit-modal.html:31
+#: src/templates/view-permissions.html:16
+msgid "Select who can book this entry"
+msgstr "選擇誰可以預訂此物件"
+
+#: src/templates/scheduler.html:123
+msgid "Cancel booking slot"
+msgstr "取消預訂時段"
+
+#: src/templates/scheduler.html:124
+msgid "Add a custom message"
+msgstr "新增自訂訊息"
+
+#: src/templates/scheduler.html:129
+msgid "Past and future users who booked this resource"
+msgstr "過去和未來的用戶都曾預訂過此資源"
+
+#: src/templates/scheduler.html:140
+msgid "Send message and cancel"
+msgstr "發送訊息並取消"
+
+#: src/templates/permissions-edit-modal.html:30
+#: src/templates/view-permissions.html:15
+msgid "Can book"
+msgstr "可預訂"
+
+#: src/templates/dashboard.html:111
+msgid "Scheduled bookings"
+msgstr "已安排的預訂"
+
+#: src/templates/field-builder-modal.html:106
+msgid "Available units"
+msgstr "現有單元"
+
+#: src/templates/json-editor.html:39
+msgid "You have unsaved changes"
+msgstr "您有未儲存的更改"
+
+#: src/templates/permissions-edit-modal.html:22
+#: src/templates/view-permissions.html:6
+msgid "Visibility"
+msgstr "能見度"
+
+#: src/templates/permissions-edit-modal.html:23
+#: src/templates/view-permissions.html:7
+msgid "Select who can see this entry"
+msgstr "選擇誰可以查看此條目"
+
+#: src/templates/permissions-edit-modal.html:26
+#: src/templates/view-permissions.html:11
+msgid "Can write"
+msgstr "能寫"
+
+#: src/templates/permissions-edit-modal.html:27
+#: src/templates/view-permissions.html:12
+msgid "Select who can edit this entry"
+msgstr "選擇誰可以編輯此條目"
+
+#: src/templates/sysconfig.html:107
+msgid "The default language of this instance. It can be overridden by each user."
+msgstr "預設語言。每個用戶都可以更改此設定。"
+
+#: src/Make/MakeMultiPdf.php:32
+msgid "Multientry eLabFTW PDF"
+msgstr "多入口 eLabFTW PDF"
+
+#: src/templates/experiments-categories.html:12
+msgid "Create new experiments category"
+msgstr "建立新的實驗類別"
+
+#: src/templates/experiments-status.html:12
+msgid "Create new experiments status"
+msgstr "建立新實驗狀態"
+
+#: src/templates/resources-status.html:12
+msgid "Create new resources status"
+msgstr "建立新資源狀態"
+
+#: src/Controllers/ExperimentsCategoriesController.php:31
+msgid "Experiments categories"
+msgstr "實驗類別"
+
+#: src/templates/experiments-categories.html:8
+msgid "Create and modify the categories available to experiments."
+msgstr "建立和修改實驗可用的類別。"
+
+#: src/templates/edit-user-modal.html:112
+msgid "Disable 2FA"
+msgstr "禁用雙重認證"
+
+#: src/Elabftw/i18n4Js.php:123
+msgid "Read-only"
+msgstr "唯讀"
+
+#: src/templates/create-new-modal.html:70
+#: src/templates/create-new-modal.html:71
+#: src/templates/create-new-modal.html:78
+#: src/templates/create-new-modal.html:79 src/templates/links.html:71
+#: src/templates/show.html:67 src/templates/show.html:76
+#: src/templates/show.html:77 src/templates/show.html:79
+msgid "Filter category"
+msgstr "篩選類別"
+
+#: src/templates/show.html:406 src/templates/show.html:408
+msgid "Change category"
+msgstr "更改類別"
+
+#: src/templates/scheduler.html:106
+msgid "Bind a resource"
+msgstr "綁定資源"
+
+#: src/templates/ucp.html:517 src/templates/ucp.html:528
+msgid "Last used"
+msgstr "上次使用"
+
+#: src/Models/AbstractEntity.php:1106
+msgid "A category is required to fetch the next Custom ID"
+msgstr "需要指定類別才能取得下一個自訂 ID"
+
+#: src/templates/experiments-status.html:8
+msgid "Create and modify the status available to experiments."
+msgstr "建立和修改實驗可用的狀態。"
+
+#: src/templates/resources-status.html:8
+msgid "Create and modify the status available to resources."
+msgstr "建立和修改資源的可用狀態。"
+
+#: src/Elabftw/i18n4Js.php:153
+msgid "Unarchiving a user means their account will be restored. This action is reversible."
+msgstr "取消封存該用戶意味著該用戶的帳戶將被恢復。此操作可撤銷。"
+
+#: src/Elabftw/i18n4Js.php:44
+msgid "Archiving a user means their account will be disabled. This action is reversible."
+msgstr "將使用者封存意味著其帳戶將被停用。此操作可撤銷。"
+
+#: src/templates/dashboard.html:29 src/templates/dashboard.html:78
+msgid "Browse by category"
+msgstr "按類別瀏覽"
+
+#: src/templates/dashboard.html:38 src/templates/dashboard.html:86
+msgid "Browse by status"
+msgstr "按狀態瀏覽"
+
+#: src/templates/dashboard.html:47
+msgid "Last modified experiments"
+msgstr "最後修改的實驗"
+
+#: src/templates/dashboard.html:95
+msgid "Last modified resources"
+msgstr "最後修改的資源"
+
+#: src/templates/idp-certs-modal.html:18
+#: src/templates/idp-endpoints-modal.html:17 src/templates/sysconfig.html:280
+#: src/templates/upload-more-info.html:4
+msgid "ID"
+msgstr "ID"
+
+#: src/templates/edit.html:14 src/templates/edit.html:41
+#: src/templates/link-view-one.html:17 src/templates/show-item-table.html:34
+#: src/templates/show-item.html:51 src/templates/view.html:14
+msgid "Custom ID"
+msgstr "自訂 ID"
+
+#: src/templates/edit.html:44
+msgid "Get next"
+msgstr "下一個"
+
+#: src/templates/editusers.html:109
+#: src/templates/ownership-transfer-modal.html:50
+#: src/templates/view-edit-toolbar.html:25
+msgid "Search user"
+msgstr "搜尋用戶"
+
+#: src/templates/search-help-modal.html:14
+msgid "field"
+msgstr "欄位"
+
+#: src/templates/search-help-modal.html:14
+msgid "value"
+msgstr "數值"
+
+#: src/templates/search-help-modal.html:21
+#: src/templates/search-help-modal.html:22
+#: src/templates/search-help-modal.html:25
+#: src/templates/search-help-modal.html:26
+#: src/templates/search-help-modal.html:32
+#: src/templates/search-help-modal.html:34
+#: src/templates/search-help-modal.html:36
+#: src/templates/search-help-modal.html:38
+#: src/templates/search-help-modal.html:39
+msgid "simple or quoted term"
+msgstr "單字或引號的詞"
+
+#: src/templates/search-help-modal.html:24
+msgid "see date format"
+msgstr "請參閱日期格式"
+
+#: src/templates/search-help-modal.html:33
+#: src/templates/search-help-modal.html:37
+msgid "yes or no"
+msgstr "是或否"
+
+#: src/templates/search-help-modal.html:35
+msgid "1, 2, 3, 4, 5, or unrated or 0"
+msgstr "1、2、3、4、5，或未評級或0"
+
+#: src/templates/show.html:324
+msgid "Status (inverted)"
+msgstr "狀態（倒序）"
+
+#: src/templates/show.html:327
+msgid "Highest Custom ID"
+msgstr "最高自訂 ID"
+
+#: src/templates/show.html:328
+msgid "Lowest Custom ID"
+msgstr "最低自訂 ID"
+
+#: src/templates/sysconfig.html:175
+msgid "Allow Admins to add existing users to their team"
+msgstr "允許管理員將現有使用者新增至他們的團隊"
+
+#: src/Elabftw/i18n4Js.php:141
+msgid "Sort by column"
+msgstr "按欄位排序"
+
+#: src/Elabftw/i18n4Js.php:57 src/Models/AbstractEntity.php:887
+msgid "Custom ID is already used! Try another one."
+msgstr "自訂 ID 已被使用！請嘗試其他 ID。"
+
+#: src/Services/ExpirationNotifier.php:41
+msgid "Account expiration warning"
+msgstr "帳戶到期警告"
+
+#: src/Services/ExpirationNotifier.php:46
+msgid "Your account on %s is due to expire on %s and become inaccessible (archived) passed this date. All your data will still be visible to others, but you will not be able to access it through this account."
+msgstr "您在%s上的帳戶將於%s到期，到期後將無法存取（會被封存）。您的所有資料仍將對其他人可見，但您將無法透過此帳戶存取這些資料。"
+
+#: src/Services/ExpirationNotifier.php:68
+msgid "Account expiration information"
+msgstr "帳戶到期資訊"
+
+#: src/Services/ExpirationNotifier.php:78
+msgid "One or several user accounts in your team will expire soon. Their account will become inaccessible (archived). All their data will still be visible to others."
+msgstr "團隊中一個或多個用戶帳戶即將過期。這些帳戶將無法存取（會被封存）。但其他用戶仍可查看其所有數據。"
+
+#: src/Services/Transform.php:113
+msgid "A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message."
+msgstr "自您上次造訪以來，已安裝了新版本的 eLabFTW。點擊此訊息即可閱讀發行說明。"
+
+#: src/Services/UserArchiver.php:61
+msgid "You are trying to archive an unvalidated user. Maybe you want to delete the account?"
+msgstr "您嘗試封存一個未經驗證的使用者。或許您想刪除該帳號？"
+
+#: src/Services/UserArchiver.php:64
+msgid "A sysadmin account cannot be archived."
+msgstr "系統管理員帳戶無法被封存。"
+
+#: src/templates/admin.html:312
+msgid "Tags of the team"
+msgstr "團隊標籤"
+
+#: src/templates/editusers.html:123
+msgid "Remote directory users list"
+msgstr "遠端目錄使用者列表"
+
+#: src/templates/footer.html:14
+msgid "Report bug"
+msgstr "報告這項錯誤"
+
+#: src/templates/footer.html:53 src/templates/head.html:251
+msgid "Select language"
+msgstr "選擇語言"
+
+#: src/templates/head.html:46
+msgid "Main menu"
+msgstr "主選單"
+
+#: src/templates/head.html:49
+msgid "Toggle navigation"
+msgstr "更改導覽選項"
+
+#: src/templates/change-pass.html:21 src/templates/edit-user-modal.html:94
+#: src/templates/login-full.html:107 src/templates/register.html:71
+#: src/templates/sysconfig.html:233 src/templates/sysconfig.html:432
+#: src/templates/sysconfig.html:984 src/templates/ts-config.html:32
+#: src/templates/ucp.html:32 src/templates/ucp.html:314
+#: src/templates/ucp.html:452 src/templates/view-edit-toolbar.html:113
+msgid "Show password"
+msgstr "顯示密碼"
+
+#: src/templates/profile.html:298 src/templates/team.html:90
+#: src/templates/uploads.html:98
+msgid "Download"
+msgstr "下載"
+
+#: src/templates/register.html:58
+msgid "Display allowed email domains"
+msgstr "顯示允許的電子郵件域名"
+
+#: src/templates/revisions.html:25 src/templates/show-item-table.html:7
+#: src/templates/show-item.html:13
+msgid "Select"
+msgstr "選擇"
+
+#: src/templates/create-new-modal.html:55
+#: src/templates/create-new-modal.html:57 src/templates/scope-button.html:13
+#: src/templates/scope-button.html:15
+msgid "Scope"
+msgstr "範圍"
+
+#: src/Enums/Scope.php:33
+msgid "Self"
+msgstr "自己"
+
+#: src/Enums/Scope.php:35
+msgid "Everything"
+msgstr "全部項目"
+
+#: src/templates/show.html:259
+msgid "Date operator"
+msgstr "日期運算符"
+
+#: src/templates/show-item-table.html:2 src/templates/show-item.html:9
+msgid "Entry"
+msgstr "輸入"
+
+#: src/templates/show.html:57
+msgid "Query filters"
+msgstr "查詢篩選器"
+
+#: src/templates/links.html:70 src/templates/show.html:445
+msgid "Limit category"
+msgstr "限制類別"
+
+#: src/templates/show.html:457
+msgid "Limit author"
+msgstr "限製作者"
+
+#: src/templates/show.html:537
+msgid "Load more"
+msgstr "載入更多"
+
+#: src/templates/steps-edit.html:21
+msgid "Drag to reorder"
+msgstr "拖曳即可重新排序"
+
+#: src/templates/sysconfig.html:39
+msgid "Email configuration is required. Consult the documentation (%slink%s) for help."
+msgstr "需要進行電子郵件設定。請參閱文件（%slink%s）以取得協助。"
+
+#: src/templates/sysconfig.html:58 src/templates/sysconfig.html:1131
+msgid "Audit Logs"
+msgstr "審計日誌"
+
+#: src/templates/sysconfig.html:124
+msgid "URL where the Chat room menu entry from Help dropdown points"
+msgstr "幫助下拉選單中「聊天室」選單項目所在的 URL"
+
+#: src/templates/sysconfig.html:176
+msgid "Allow Admins to archive users"
+msgstr "允許管理員封存用戶"
+
+#: src/templates/sysconfig.html:461
+msgid "Email address"
+msgstr "電子郵件"
+
+#: src/templates/sysconfig.html:1126
+msgid "Audit Logs configuration"
+msgstr "審計日誌配置"
+
+#: src/templates/sysconfig.html:1128
+msgid "Emit audit logs with PHP error log"
+msgstr "發出包含 PHP 錯誤日誌的稽核日誌"
+
+#: src/templates/sysconfig.html:1133
+msgid "This table lists the most recent events recorded in the application and worth keeping a trace of."
+msgstr "此表列出了應用程式中記錄的最新事件，這些事件值得追蹤。"
+
+#: src/templates/profile.html:288 src/templates/sysconfig.html:874
+#: src/templates/sysconfig.html:1136
+msgid "Refresh"
+msgstr "重新整理"
+
+#: src/templates/idp-certs-modal.html:22
+#: src/templates/idp-endpoints-modal.html:21 src/templates/sysconfig.html:1145
+msgid "Created at"
+msgstr "創建於"
+
+#: src/templates/sysconfig.html:1147
+msgid "Actor"
+msgstr "執行動作者"
+
+#: src/templates/sysconfig.html:1148
+msgid "Target user"
+msgstr "目標用戶"
+
+#: src/Elabftw/i18n4Js.php:96
+msgid "Filter by category"
+msgstr "按類別篩選"
+
+#: src/Elabftw/i18n4Js.php:136
+msgid "Select a resource"
+msgstr "選擇資源"
+
+#: src/templates/team.html:59
+msgid "Mass email form"
+msgstr "群發郵件表單"
+
+#: src/templates/ucp.html:351
+msgid "User information"
+msgstr "使用者資訊"
+
+#: src/templates/upload-more-info.html:2
+msgid "Not calculated"
+msgstr "未計算"
+
+#: src/templates/profile.html:97 src/templates/uploads.html:61
+msgid "Attached files"
+msgstr "附件"
+
+#: src/templates/uploads.html:67
+msgid "Filesize"
+msgstr "文件大小"
+
+#: src/templates/edit.html:141
+msgid "Permissions for the template"
+msgstr "模板權限"
+
+#: src/templates/view-edit-toolbar.html:42
+#: src/templates/view-edit-toolbar.html:65
+msgid "Timestamp Entry"
+msgstr "時間戳條目"
+
+#: src/templates/view-edit-toolbar.html:48
+#: src/templates/view-edit-toolbar.html:72
+msgid "Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment."
+msgstr "為條目添加時間戳將創建無可辯駁的證據，證明該數據在當時存在。您可以根據需要多次為條目添加時間戳：每次都會建立一個不可更改的時間戳存檔，並將其作為附件儲存。"
+
+#: src/templates/view-edit-toolbar.html:49
+msgid "With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key."
+msgstr "使用可信任時間戳記（RFC3161），您的資料會被產生加密雜湊值，並發送給可信任的第三方。他們會回覆一個包含當前時間的令牌，並使用他們的私鑰對該令牌進行簽署。"
+
+#: src/templates/view-edit-toolbar.html:73
+msgid "With Blockchain Timestamping, the cryptographic fingerprint of your data is added to a blockchain that is impossible to modify. This function uses the Bloxberg Consortium blockchain based on Ethereum."
+msgstr "區塊鏈時間戳功能會將您的資料加密指紋添加到無法竄改的區塊鏈中。此功能使用基於以太坊的 Bloxberg 聯盟區塊鏈。"
+
+#: src/templates/view.html:42
+msgid "Entry was timestamped by %s on %s at %s"
+msgstr "條目由 %s 於 %s 的 %s 時刻添加時間戳"
+
+#: src/Elabftw/i18n4Js.php:113 src/Models/AbstractEntity.php:1172
+msgid "Linking an item to itself is not allowed. Please select a different target."
+msgstr "不允許將項目連結到自身。請選擇其他目標。"
+
+#: src/Enums/BasePermissions.php:30
+msgid "Only members of the team"
+msgstr "僅限團隊成員"
+
+#: src/Enums/PasswordComplexity.php:29
+msgid "Minimum password length"
+msgstr "密碼長度最小值"
+
+#: src/Enums/PasswordComplexity.php:30
+msgid "Must have at least one upper and one lower case letter, if your alphabet allows"
+msgstr "如果你的字母表允許，則必須至少包含一個大寫字母和一個小寫字母。"
+
+#: src/Enums/PasswordComplexity.php:31
+msgid "Must have at least one upper and one lower case letter, if your alphabet allows, and one digit"
+msgstr "如果你的字母表允許，則必須至少包含一個大寫字母、一個小寫字母和一個數字。"
+
+#: src/Enums/PasswordComplexity.php:32
+msgid "Must have at least one upper and one lower case letter, if your alphabet allows, one special character, and one digit"
+msgstr "必須至少包含一個大寫字母、一個小寫字母（如果你的字母表允許的話）、一個特殊字元和一個數字。"
+
+#: src/Models/Users/Users.php:591
+msgid "New password must not be the same as the current one."
+msgstr "新密碼不能與目前密碼相同。"
+
+#: src/Services/PasswordValidator.php:36
+msgid "Password does not match requirement: %s"
+msgstr "密碼不符合要求：%s"
+
+#: src/templates/change-pass.html:19 src/templates/edit-user-modal.html:92
+#: src/templates/register.html:69 src/templates/ucp.html:331
+msgid "Minimum password length: %d."
+msgstr "密碼最小長度：%d。"
+
+#: src/templates/search-help-modal.html:23
+msgid "number"
+msgstr "數值"
+
+#: src/templates/show.html:175
+msgid "All fields"
+msgstr "所有字段"
+
+#: src/templates/show.html:198
+msgid "Tip: you can use '%' as wildcard in value"
+msgstr "提示：您可以使用“%”作為值中的通配符。"
+
+#: src/templates/links.html:19 src/templates/related-snippet.html:15
+msgid "Show related experiments"
+msgstr "顯示相關實驗"
+
+#: src/templates/sysconfig.html:711
+msgid "Password policy"
+msgstr "密碼規則"
+
+#: src/templates/edit-user-modal.html:100 src/templates/sysconfig.html:720
+msgid "Password complexity requirement"
+msgstr "密碼複雜度要求"
+
+#: src/templates/sysconfig.html:727
+msgid "The minimum password length is always enforced."
+msgstr "密碼長度必須達到最小限制。"
+
+#: src/templates/sysconfig.html:731
+msgid "Maximum number of days since last password change"
+msgstr "自上次更改密碼以來的最大天數"
+
+#: src/templates/ucp.html:305 src/templates/ucp.html:320
+msgid "Personal information"
+msgstr "個人資訊"
+
+#: src/Enums/Currency.php:31
+msgid "Canadian Dollar (CAD)"
+msgstr "加元（CAD）"
+
+#: src/Enums/Currency.php:32
+msgid "Swiss Franc (CHF)"
+msgstr "瑞士法郎（CHF）"
+
+#: src/Enums/Currency.php:33
+msgid "Chinese Yuan (CNY)"
+msgstr "人民幣（CNY）"
+
+#: src/Enums/Currency.php:34
+msgid "Danish Krone (DKK)"
+msgstr "丹麥克朗（DKK）"
+
+#: src/Enums/Currency.php:35
+msgid "Euro (EUR)"
+msgstr "歐元（EUR）"
+
+#: src/Enums/Currency.php:36
+msgid "British Pound Sterling (GBP)"
+msgstr "英鎊（GBP）"
+
+#: src/Enums/Currency.php:37
+msgid "Japanese Yen (JPY)"
+msgstr "日元（JPY）"
+
+#: src/Enums/Currency.php:38
+msgid "United States Dollar (USD)"
+msgstr "美元（USD）"
+
+#: src/Enums/Currency.php:39
+msgid "Swedish Krona (SEK)"
+msgstr "瑞典克朗（SEK）"
+
+#: src/Enums/Currency.php:40
+msgid "Norwegian Krone (NOK)"
+msgstr "挪威克朗（NOK）"
+
+#: src/Enums/ProcurementState.php:27
+msgid "Pending"
+msgstr "待辦的"
+
+#: src/Elabftw/i18n4Js.php:158 src/Enums/ProcurementState.php:28
+msgid "Validated"
+msgstr "已驗證"
+
+#: src/Enums/ProcurementState.php:29
+msgid "Partially received"
+msgstr "部分收到"
+
+#: src/Enums/ProcurementState.php:30
+msgid "Received"
+msgstr "已收到"
+
+#: src/Make/MakeCompoundsReport.php:50 src/Make/MakeInventoryReport.php:56
+#: src/Make/MakeProcurementRequestsCsv.php:30
+msgid "Nothing to export!"
+msgstr "沒有可匯出的項目！"
+
+#: src/Elabftw/MinisignKeys.php:107
+msgid "Invalid secret key format!"
+msgstr "密鑰格式無效！"
+
+#: src/Elabftw/MinisignKeys.php:135
+msgid "Could not decrypt private key. Are you certain of the passphrase?"
+msgstr "無法解密私鑰。您確定密碼正確嗎？"
+
+#: src/Elabftw/TwigFilters.php:144
+msgid "User could not be found."
+msgstr "找不到該用戶。"
+
+#: src/Elabftw/i18n4Js.php:119
+msgid "Onboarding email(s) will soon be sent."
+msgstr "歡迎（群發）郵件即將發出。"
+
+#: src/Controllers/LoginController.php:392
+msgid "Your account has been associated successfully to a team. Please authenticate again."
+msgstr "您的帳號已成功關聯至團隊。請再次驗證身份。"
+
+#: src/Models/AbstractEntity.php:1060
+msgid "Signed by %s (%s)"
+msgstr "由 %s (%s) 簽名"
+
+#: src/Models/AbstractEntity.php:1071
+msgid "Signature archive by %s (%s)"
+msgstr "簽名存檔者 %s (%s)"
+
+#: src/Models/SigKeys.php:45
+msgid "The mandatory \"passphrase\" parameter was not provided!"
+msgstr "未提供必填的 “密碼” 參數！"
+
+#: src/Services/Transform.php:46
+msgid "New comment on your entry."
+msgstr "您文章下有了新註解。"
+
+#: src/templates/booking-params-modal.html:43
+#: src/templates/booking-params-modal.html:44
+msgid "Allow users booking in past"
+msgstr "允許用戶預訂過去之項目"
+
+#: src/templates/edit.html:100
+msgid "Last saved:"
+msgstr "上次保存時間："
+
+#: src/templates/onboarding-email-modal.html:5
+msgid "Resend onboarding email"
+msgstr "重新發送歡迎郵件"
+
+#: src/templates/onboarding-email-modal.html:11
+msgid "Select users to whom the onboarding email will be sent."
+msgstr "選擇要傳送新使用者歡迎郵件的使用者。"
+
+#: src/templates/onboarding-email-modal.html:12
+msgid "Search users..."
+msgstr "搜尋用戶..."
+
+#: src/templates/onboarding-email.html:1
+msgid "Onboarding email"
+msgstr "歡迎郵件"
+
+#: src/templates/onboarding-email.html:4
+msgid "This email will be sent to new users."
+msgstr "此郵件將發送給新使用者。"
+
+#: src/templates/onboarding-email.html:10
+msgid "Send onboarding emails"
+msgstr "發送歡迎郵件"
+
+#: src/templates/onboarding-email.html:41
+msgid "Resend email to selected users"
+msgstr "重新向選定使用者發送電子郵件"
+
+#: src/templates/onboarding-email.html:51
+msgid "Send a different email for (sys)admins."
+msgstr "請向（系統）管理員發送不同的電子郵件。"
+
+#: src/templates/onboarding-email.html:54
+msgid "This email will be sent to new (sys)admins."
+msgstr "此郵件將發送給新任（系統）管理員。"
+
+#: src/templates/procurement-params-modal.html:6
+#: src/templates/view-edit-toolbar.html:230
+#: src/templates/view-edit-toolbar.html:292
+msgid "Modify procurement parameters"
+msgstr "修改採購參數"
+
+#: src/templates/procurement-params-modal.html:14
+#: src/templates/procurement-params-modal.html:15
+msgid "Allow procurement of this resource"
+msgstr "允許採購此資源"
+
+#: src/templates/procurement-params-modal.html:22
+msgid "Packaging quantity"
+msgstr "包裝數量"
+
+#: src/templates/procurement-params-modal.html:27
+msgid "Price without taxes"
+msgstr "未稅價格"
+
+#: src/templates/procurement-params-modal.html:32
+msgid "Price with taxes"
+msgstr "含稅價格"
+
+#: src/templates/procurement-params-modal.html:37
+msgid "Currency"
+msgstr "貨幣"
+
+#: src/templates/admin.html:465 src/templates/show.html:398
+#: src/templates/view-edit-toolbar.html:315
+msgid "Archive"
+msgstr "檔案"
+
+#: src/templates/sysconfig.html:172
+msgid "This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link."
+msgstr "這樣一來，沒有帳號的使用者也能登入團隊，查看公開可見的實驗結果。用戶還可以透過特殊連結分享特定的實驗條目。"
+
+#: src/templates/team.html:7 src/templates/team.html:85
+#: src/templates/team.html:96
+msgid "Procurement requests"
+msgstr "採購申請"
+
+#: src/templates/team.html:100 src/templates/team.html:120
+msgid "Requester"
+msgstr "請求者"
+
+#: src/templates/team.html:101 src/templates/team.html:122
+msgid "Ordered"
+msgstr "已訂購"
+
+#: src/templates/team.html:102 src/templates/team.html:124
+msgid "Quantity ordered"
+msgstr "訂購數量"
+
+#: src/templates/team.html:103 src/templates/team.html:126
+msgid "Total"
+msgstr "全部的"
+
+#: src/templates/team.html:104 src/templates/team.html:127
+msgid "Quantity received"
+msgstr "收到的數量"
+
+#: src/templates/team.html:106
+msgid "Quote"
+msgstr "引用"
+
+#: src/templates/select-state.html:14 src/templates/team.html:107
+#: src/templates/team.html:136
+msgid "State"
+msgstr "狀態"
+
+#: src/templates/team.html:128
+msgid "unset"
+msgstr "未設定"
+
+#: src/templates/team.html:140
+msgid "Cancel order"
+msgstr "取消訂單"
+
+#: src/templates/team.html:152
+msgid "No procurement requests have been made yet."
+msgstr "目前尚未提出任何採購申請。"
+
+#: src/templates/ts-config.html:5 src/templates/ts-config.html:8
+#: src/templates/ts-config.html:9 src/templates/ts-config.html:10
+msgid "(free, no account required)"
+msgstr "（免費，無需註冊）"
+
+#: src/templates/ts-config.html:6 src/templates/ts-config.html:7
+msgid "(requires account)"
+msgstr "（需要帳號）"
+
+#: src/templates/ucp.html:20 src/templates/ucp.html:25
+#: src/templates/ucp.html:38 src/templates/ucp.html:439
+msgid "Regenerate signature keys"
+msgstr "重新產生簽署金鑰"
+
+#: src/templates/ucp.html:27
+msgid "Warning: regenerating your signature keys means the current key will be archived and will not be available anymore."
+msgstr "警告：重新產生簽署金鑰意味著目前金鑰將被封存，不再可用。"
+
+#: src/templates/ucp.html:28
+msgid "Enter a passphrase:"
+msgstr "請輸入密碼："
+
+#: src/templates/ucp.html:424
+msgid "Signature keys"
+msgstr "簽署金鑰"
+
+#: src/templates/ucp.html:432
+msgid "Download private key"
+msgstr "下載私鑰"
+
+#: src/templates/ucp.html:435
+msgid "Download public key"
+msgstr "下載公鑰"
+
+#: src/templates/ucp.html:443
+msgid "Signature keys are a highly secure public-key signature system that allows you to cryptographically sign experiments or resources. Signing an entry will generate an immutable archive."
+msgstr "簽署金鑰是一種高度安全的公鑰簽署系統，可讓您對實驗或資源進行加密簽署。對條目進行簽名後，將產生一個不可篡改的存檔。"
+
+#: src/templates/ucp.html:444
+msgid "To learn more about signature keys, have a look at the %scomplete documentation%s."
+msgstr "要了解有關簽名密鑰的更多信息，請查看 %scomplete documentation%s。"
+
+#: src/templates/ucp.html:446
+msgid "You do not have a key pair associated with your account yet."
+msgstr "您的帳戶目前還沒有關聯的金鑰對。"
+
+#: src/templates/ucp.html:448
+msgid "To generate a key pair, enter a passphrase below and click the button:"
+msgstr "若要產生金鑰對，請在下方輸入密碼短語，然後按一下按鈕："
+
+#: src/templates/ucp.html:447 src/templates/ucp.html:453
+msgid "Generate signature keys"
+msgstr "產生簽署金鑰"
+
+#: src/templates/ucp.html:460
+msgid "Tip: use a password manager or a passphrase that you can remember, see %sthis XKCD comic%s."
+msgstr "提示：使用密碼管理器或你能記住的密碼短語，請參閱 %sthis XKCD comic%s。"
+
+#: src/templates/ucp.html:462
+msgid "Your account is already associated with a keypair."
+msgstr "您的帳戶已關聯密鑰對。"
+
+#: src/templates/ucp.html:463
+msgid "Here is your public key. You can share it with the world:"
+msgstr "這是您的公鑰。您可以將其分享給全世界："
+
+#: src/templates/view-edit-toolbar.html:6
+#: src/templates/view-edit-toolbar.html:276
+#: src/templates/view-edit-toolbar.html:277
+msgid "Request action"
+msgstr "請求操作"
+
+#: src/templates/view-edit-toolbar.html:14
+msgid "Select action"
+msgstr "選擇操作"
+
+#: src/templates/view-edit-toolbar.html:21
+msgid "Select collaborator"
+msgstr "選擇合作者"
+
+#: src/templates/view-edit-toolbar.html:89
+#: src/templates/view-edit-toolbar.html:210
+msgid "Add signature"
+msgstr "添加簽名"
+
+#: src/templates/view-edit-toolbar.html:98
+msgid "Adding your signature will cryptographically sign the content of this entry, and the signature will be stored alongside the content at the time of signature, in an archive, visible as attachment (masked by default because archived)."
+msgstr "新增您的簽名將對該條目的內容進行加密簽名，簽名將在簽名時與內容一起儲存在存檔中，以附件形式顯示（預設會被封鎖，因為已封存）。"
+
+#: src/templates/view-edit-toolbar.html:100
+msgid "Your account is missing a cryptographic key pair, necessary for signature. You must generate one from your User Control Panel before you can sign an entry."
+msgstr "您的帳戶缺少用於簽署的加密金鑰對。您必須先從使用者控制台產生金鑰對，才能簽署條目。"
+
+#: src/templates/view-edit-toolbar.html:102
+msgid "Select a meaning for this signature"
+msgstr "請為這個簽名選擇一個意義"
+
+#: src/templates/view-edit-toolbar.html:109
+msgid "Enter your passphrase to unlock your secret key:"
+msgstr "請輸入您的密碼短語以解鎖您的密鑰："
+
+#: src/templates/view-edit-toolbar.html:95
+#: src/templates/view-edit-toolbar.html:121
+msgid "Add your signature"
+msgstr "新增您的簽名"
+
+#: src/templates/view-edit-toolbar.html:123
+msgid "Go to Settings"
+msgstr "前往設定"
+
+#: src/templates/view-edit-toolbar.html:139
+msgid "Create procurement request"
+msgstr "建立採購申請"
+
+#: src/templates/view-edit-toolbar.html:146
+msgid "Enter a quantity to purchase"
+msgstr "請輸入購買數量"
+
+#: src/templates/view-edit-toolbar.html:151
+#: src/templates/view-edit-toolbar.html:230
+msgid "Place order"
+msgstr "下單"
+
+#: src/Enums/RequestableAction.php:30
+msgid "archiving"
+msgstr "封存檔案"
+
+#: src/Enums/RequestableAction.php:31
+msgid "locking"
+msgstr "鎖定"
+
+#: src/Enums/RequestableAction.php:33
+msgid "signing"
+msgstr "簽名"
+
+#: src/Enums/RequestableAction.php:34
+msgid "timestamping"
+msgstr "時間戳"
+
+#: src/Make/Exports.php:107
+msgid "Cannot store more than %d exports. Delete previous exports to be permitted to create new ones."
+msgstr "無法儲存超過 %d 個匯出檔案。請刪除先前的匯出文件，以便建立新的匯出文件。"
+
+#: src/Elabftw/i18n4Js.php:110
+msgid "Apply to {{num, number}} entries?"
+msgstr "適用於 {{num, number}} 個條目？"
+
+#: src/Models/RequestActions.php:114
+msgid "This action has been requested already."
+msgstr "此操作已提出過請求。"
+
+#: src/templates/admin.html:32
+msgid "Batch actions"
+msgstr "批量操作"
+
+#: src/templates/admin.html:127 src/templates/show-view-edit.html:6
+msgid "Newcomer banner"
+msgstr "新人橫幅"
+
+#: src/templates/admin.html:131
+msgid "Activate newcomer banner"
+msgstr "啟動新人橫幅"
+
+#: src/templates/admin.html:132
+msgid "Display a message to users that recently joined the team."
+msgstr "向最近加入團隊的使用者顯示一則訊息。"
+
+#: src/templates/admin.html:135
+msgid "Number of days after registration where a user is considered a newcomer"
+msgstr "用戶註冊後被視為新用戶的天數"
+
+#: src/templates/admin.html:140
+msgid "Message to display"
+msgstr "要顯示的訊息"
+
+#: src/templates/admin.html:352
+msgid "From here you can perform actions on entire group of entries at once."
+msgstr "在這裡，您可以一次對整組條目執行操作。"
+
+#: src/templates/admin.html:354 src/templates/admin.html:368
+#: src/templates/admin.html:382 src/templates/admin.html:397
+#: src/templates/admin.html:411 src/templates/admin.html:425
+#: src/templates/admin.html:440
+msgid "Toggle display"
+msgstr "切換顯示"
+
+#: src/templates/admin.html:354 src/templates/admin.html:368
+#: src/templates/admin.html:382 src/templates/admin.html:397
+#: src/templates/admin.html:411 src/templates/admin.html:425
+#: src/templates/admin.html:440
+msgid "selected"
+msgstr "選定"
+
+#: src/Controllers/ItemsStatusController.php:32
+msgid "Resources status"
+msgstr "資源狀態"
+
+#: src/Controllers/ExperimentsStatusController.php:32
+msgid "Experiments status"
+msgstr "實驗狀態"
+
+#: src/templates/admin.html:463 src/templates/show.html:396
+msgid "Unlock"
+msgstr "解鎖"
+
+#: src/templates/admin.html:471
+msgid "Set permissions"
+msgstr "設定權限"
+
+#: src/templates/admin.html:512 src/templates/profile.html:247
+msgid "Set read permissions"
+msgstr "設定讀取權限"
+
+#: src/templates/admin.html:513 src/templates/profile.html:257
+msgid "Set write permissions"
+msgstr "設定寫入權限"
+
+#: src/templates/show-view-edit.html:6
+msgid "You are seeing this because your account is less than %d days old."
+msgstr "您看到此訊息是因為您的帳戶註冊時間不到 %d 天。"
+
+#: src/templates/export-modal.html:6
+msgid "Create export"
+msgstr "建立匯出項目"
+
+#: src/templates/export-modal.html:12
+msgid "Export source"
+msgstr "匯出項目的來源"
+
+#: src/templates/export-modal.html:33
+msgid "Export format"
+msgstr "匯出格式"
+
+#: src/templates/export-modal.html:37
+msgid "Select a format"
+msgstr "選擇一種格式"
+
+#: src/templates/export-modal.html:39
+msgid "ELN archive"
+msgstr "ELN 檔案"
+
+#: src/templates/export-modal.html:40
+msgid "JSON file"
+msgstr "JSON 文件"
+
+#: src/templates/export-modal.html:41
+msgid "PDF document"
+msgstr "PDF 文件"
+
+#: src/templates/export-modal.html:42
+msgid "ZIP archive"
+msgstr "ZIP 壓縮檔案"
+
+#: src/templates/export-modal.html:46
+msgid "Options"
+msgstr "選項"
+
+#: src/templates/export-menu-options.html:5
+#: src/templates/export-menu-options.html:8 src/templates/export-modal.html:51
+#: src/templates/export-modal.html:54
+msgid "Include changelog"
+msgstr "包含變更日誌"
+
+#: src/templates/export-menu-options.html:6 src/templates/export-modal.html:52
+msgid "The PDF files will contain the changelog."
+msgstr "PDF 文件將包含變更日誌。"
+
+#: src/templates/export-menu-options.html:17
+#: src/templates/export-menu-options.html:20 src/templates/export-modal.html:63
+#: src/templates/export-modal.html:66
+msgid "Use PDF/A"
+msgstr "使用 PDF/A"
+
+#: src/templates/export-menu-options.html:18 src/templates/export-modal.html:64
+msgid "For long term archiving. Warning: using this option will make the files much bigger!"
+msgstr "用於長期存檔。警告：使用此選項會使檔案大小大幅增大！"
+
+#: src/templates/export-menu.html:38 src/templates/export-menu.html:41
+#: src/templates/export-modal.html:75 src/templates/export-modal.html:78
+msgid "Include JSON"
+msgstr "包含 JSON"
+
+#: src/templates/export-menu.html:39 src/templates/export-modal.html:76
+msgid "Only for ZIP: include a full JSON export for each entry."
+msgstr "僅適用於 ZIP 檔案：每個條目都應包含完整的 JSON 匯出。"
+
+#: src/templates/mfa.html:18 src/templates/ucp.html:353
+msgid "Enable two factor authentication for your account to increase its security. %sSee documentation%s."
+msgstr "為您的帳戶啟用雙重認證以提高其安全性。 %s請參閱文檔%s。"
+
+#: src/templates/mfa.html:25
+msgid "Open your authenticator application and scan the QR code"
+msgstr "打開您的身份驗證器應用程式並掃描二維碼"
+
+#: src/templates/mfa.html:31 src/templates/ucp.html:360
+msgid "Display secret for manual setup"
+msgstr "顯示手動設定的秘密"
+
+#: src/templates/mfa.html:47 src/templates/ucp.html:371
+msgid "Open your authenticator application"
+msgstr "打開您的身份驗證器應用程式"
+
+#: src/templates/mfa.html:53 src/templates/ucp.html:382
+msgid "Enter the 6 digits displayed on your phone"
+msgstr "請輸入手機上顯示的 6 位數"
+
+#: src/templates/permissions-edit-modal.html:71
+#: src/templates/permissions-edit-modal.html:72
+msgid "Set scope"
+msgstr "設定範圍"
+
+#: src/templates/profile.html:7
+msgid "Attachments"
+msgstr "附件"
+
+#: src/templates/profile.html:102
+msgid "Displaying %d of %d attached files."
+msgstr "正在顯示 %d 個附件中的 %d 個。"
+
+#: src/templates/profile.html:122 src/templates/profile.html:148
+#: src/templates/profile.html:157
+msgid "File name"
+msgstr "檔案名稱"
+
+#: src/templates/profile.html:150 src/templates/profile.html:159
+msgid "Parent entry"
+msgstr "父級條目"
+
+#: src/templates/profile.html:120 src/templates/profile.html:151
+#: src/templates/profile.html:160
+msgid "File size"
+msgstr "文件大小"
+
+#: src/templates/profile.html:174
+msgid "You can import data from a .eln archive or a .csv file. %sSee documentation %s%s."
+msgstr "您可以從 .eln 歸檔檔案或 .csv 檔案匯入資料。 %s參見文檔 %s%s。"
+
+#: src/templates/profile.html:188
+msgid "Allowed extensions: .eln, .csv"
+msgstr "允許的檔案副檔名：.eln、.csv"
+
+#: src/templates/profile.html:195
+msgid "Select where the entries will be created"
+msgstr "選擇條目建立位置。"
+
+#: src/templates/profile.html:224
+msgid "Select a category"
+msgstr "選擇一個類別"
+
+#: src/templates/profile.html:236
+msgid "Select owner of imported elements"
+msgstr "選擇導入元素的擁有者"
+
+#: src/templates/profile.html:280
+msgid "This page allows you to export your data in different formats."
+msgstr "此頁面可讓您以不同格式匯出資料。"
+
+#: src/templates/profile.html:282
+msgid "Create new export"
+msgstr "建立新匯出"
+
+#: src/templates/profile.html:285
+msgid "Exported files"
+msgstr "匯出文件"
+
+#: src/templates/profile.html:295
+msgid "Show more"
+msgstr "顯示更多"
+
+#: src/templates/profile.html:303 src/templates/profile.html:321
+msgid "File is not ready"
+msgstr "文件尚未準備就緒"
+
+#: src/templates/profile.html:308
+msgid "PDF/A"
+msgstr "PDF/A"
+
+#: src/Elabftw/i18n4Js.php:77
+msgid "Error"
+msgstr "錯誤"
+
+#: src/templates/related-snippet.html:23
+msgid "Related resources"
+msgstr "相關資源"
+
+#: src/templates/links.html:60 src/templates/related-snippet.html:31
+msgid "Show related resources"
+msgstr "顯示相關資源"
+
+#: src/templates/request-actions-show.html:9
+msgid "%s is requesting %s for"
+msgstr "%s 正在請求 %s 的"
+
+#: src/templates/show.html:426 src/templates/show.html:427
+msgid "Change read permissions"
+msgstr "更改讀取權限"
+
+#: src/templates/show.html:433 src/templates/show.html:434
+msgid "Change write permissions"
+msgstr "變更寫入權限"
+
+#: src/templates/show.html:467
+msgid "Reset"
+msgstr "重置"
+
+#: src/templates/ucp.html:278
+msgid "Always display your own entries, regardless of the current team"
+msgstr "無論當前所屬團隊為何，始終展示您的物件"
+
+#: src/templates/ucp.html:288
+msgid "Select the scope for teamgroups"
+msgstr "選擇團隊組的範圍"
+
+#: src/templates/ucp.html:289
+msgid "This setting controls which teamgroups will be listed in the permission settings window."
+msgstr "此設定控制哪些團隊群組將顯示在權限設定視窗中。"
+
+#: src/templates/view-edit.html:33
+msgid "%s has requested %s for this entity from %s"
+msgstr "%s 已向 %s 請求此實體的 %s。"
+
+#: src/templates/duplicate-modal.html:6
+msgid "Duplicate entry"
+msgstr "重複條目"
+
+#: src/templates/duplicate-modal.html:12
+msgid "Duplicating an entry will create a new entry with the same attributes."
+msgstr "複製條目將建立一個具有相同屬性的新條目。"
+
+#: src/templates/duplicate-modal.html:14 src/templates/duplicate-modal.html:15
+msgid "Copy attached files"
+msgstr "複製附件文件"
+
+#: src/Enums/Classification.php:26
+msgid "None"
+msgstr "沒有任何"
+
+#: src/Enums/Classification.php:27
+msgid "Restricted"
+msgstr "受限制的"
+
+#: src/Enums/Classification.php:28
+msgid "Confidential"
+msgstr "機密的"
+
+#: src/Enums/Classification.php:29
+msgid "Secret"
+msgstr "秘密"
+
+#: src/Enums/Classification.php:30
+msgid "Top Secret"
+msgstr "絕密"
+
+#: src/Enums/RequestableAction.php:32
+msgid "review"
+msgstr "審閱"
+
+#: src/Elabftw/i18n4Js.php:124
+msgid "Remove"
+msgstr "清除"
+
+#: src/Models/Notifications/ActionRequested.php:39
+#: src/Services/Transform.php:123
+msgid "%s has requested %s from you."
+msgstr "%s 已向您請求 %s。"
+
+#: src/Models/Notifications/ActionRequested.php:44
+msgid "You can review the request here: %s"
+msgstr "您可以在這裡查看請求：%s"
+
+#: src/Models/Notifications/ActionRequested.php:48
+msgid "Action requested"
+msgstr "請求採取行動"
+
+#: src/templates/admin.html:482 src/templates/admin.html:490
+#: src/templates/permissions-edit-modal.html:55
+#: src/templates/permissions-edit-modal.html:68
+msgid "(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)"
+msgstr "（按住 %sctrl%s 鍵可選擇多個條目，按住 %sctrl%s 鍵並點選可取消選取已選取條目）"
+
+#: src/templates/export-menu-options.html:28
+msgid "Classification"
+msgstr "分類"
+
+#: src/templates/export-menu-options.html:29
+msgid "Add a classification level in the footer."
+msgstr "在頁腳中新增分類等級。"
+
+#: src/templates/export-menu.html:6
+msgid "Export as PDF"
+msgstr "匯出為 PDF"
+
+#: src/templates/export-menu.html:27
+msgid "Export as ZIP"
+msgstr "匯出為 ZIP 文件"
+
+#: src/templates/export-menu.html:61
+msgid "Create a QR Code"
+msgstr "建立二維碼"
+
+#: src/templates/export-menu.html:67
+msgid "The QR code image will encode the URL of the resource in view mode. It is scannable by any device recognizing QR codes."
+msgstr "二維碼影像會在檢視模式下對資源的URL進行編碼。任何能夠識別二維碼的設備都可以掃描它。"
+
+#: src/templates/export-menu.html:71
+msgid "Size"
+msgstr "尺寸"
+
+#: src/templates/export-menu.html:72
+msgid "Select image size (in pixels)"
+msgstr "選擇影像尺寸（以像素為單位）"
+
+#: src/templates/export-menu.html:80 src/templates/export-menu.html:82
+msgid "Include title"
+msgstr "包含標題"
+
+#: src/templates/idp-modal.html:6
+msgid "Edit IDP"
+msgstr "編輯 IDP"
+
+#: src/templates/profile.html:196
+msgid "A .eln file can contain different types of entries. You can either force them all to be of a given type, or let eLabFTW decide the types, based on the 'genre' attribute of each entry. By default, Resources will be created if no genre can be found and no type has been imposed."
+msgstr "一個 .eln 檔案可以包含不同類型的條目。您可以強制所有條目都屬於同一類型，也可以讓 eLabFTW 根據每個條目的「genre」屬性自動決定類型。預設情況下，如果找不到類型且未指定類型，則會建立資源。"
+
+#: src/templates/profile.html:217
+msgid "Do not force type"
+msgstr "不要強制輸入"
+
+#: src/templates/profile.html:226
+msgid "Do not force a category"
+msgstr "不要強制選擇類別"
+
+#: src/templates/sysconfig.html:54
+msgid "Local auth"
+msgstr "本地授權"
+
+#: src/templates/sysconfig.html:451
+msgid "Send mass emails grouped"
+msgstr "群發郵件"
+
+#: src/templates/sysconfig.html:580
+msgid "This instance has %d files uploaded using %s of disk space."
+msgstr "此實例已上傳 %d 個文件，使用了 %s 個磁碟空間。"
+
+#: src/templates/admin.html:288
+msgid "Configuration"
+msgstr "配置"
+
+#: src/templates/sysconfig.html:702
+msgid "Local authentication configuration"
+msgstr "本地身份驗證配置"
+
+#: src/templates/sysconfig.html:704
+msgid "Enable local authentication"
+msgstr "啟用本機身份驗證"
+
+#: src/templates/sysconfig.html:704
+msgid "Toggle local authentication method (email + password). Warning: disabling this method might lock you out!"
+msgstr "切換本地身份驗證方式（郵箱+密碼）。警告：停用此方式可能會導致您無法登入！"
+
+#: src/templates/sysconfig.html:705
+msgid "Allow users to create accounts through the registration page. You probably want to disable this if you use an external authentication/provisioning method."
+msgstr "允許使用者透過註冊頁面建立帳戶。如果您使用外部身份驗證/設定方法，則可能需要停用此功能。"
+
+#: src/templates/sysconfig.html:706
+msgid "This setting will hide the local authentication fields from the login page, but one can still display them by appending ?letmein to the login page URL."
+msgstr "此設定將隱藏登入頁面上的本機驗證字段，但仍可以透過在登入頁面 URL 後附加 ?letmein 來顯示它們。"
+
+#: src/templates/sysconfig.html:848
+msgid "Identity providers"
+msgstr "身分提供者"
+
+#: src/templates/sysconfig.html:850
+msgid "Add IDP(s) from URL"
+msgstr "從 URL 新增身分提供者"
+
+#: src/templates/sysconfig.html:851
+msgid "You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata. If Auto-refresh is enabled, the IDPs metadata will be refreshed every 24h automatically."
+msgstr "您可以註冊一個遠端 URL，該 URL 對應於包含身分提供者 (IDP) 清單或單一 IDP 元資料的 XML 元資料檔案。如果啟用自動刷新，IDP 元資料將每 24 小時自動刷新一次。"
+
+#: src/templates/sysconfig.html:869
+msgid "Auto-refresh"
+msgstr "自動重新整理"
+
+#: src/templates/sysconfig.html:875
+msgid "Enable all"
+msgstr "全部啟用"
+
+#: src/templates/sysconfig.html:876
+msgid "Disable all"
+msgstr "全部禁用"
+
+#: src/templates/sysconfig.html:880
+msgid "Associated with %d IDPs (%d enabled)"
+msgstr "與 %d 個 IDP 關聯（%d 個已啟用）"
+
+#: src/templates/sysconfig.html:886
+msgid "Add IDP manually"
+msgstr "手動新增身分提供者"
+
+#: src/templates/sysconfig.html:887
+msgid "You can also add a new IDP manually. A manually added IDP will not have its metadata automatically refreshed."
+msgstr "您也可以手動新增的身分提供者 (IDP)。手動新增的 IDP 的元資料不會自動刷新。"
+
+#: src/templates/sysconfig.html:895
+msgid "IDPs list"
+msgstr "身分提供者名單"
+
+#: src/templates/sysconfig.html:896
+msgid "Currently %d IDPs are configured."
+msgstr "目前已配置 %d 個 IDP。"
+
+#: src/templates/sysconfig.html:918
+msgid "Source"
+msgstr "來源"
+
+#: src/templates/sysconfig.html:942
+msgid "LDAP Scheme"
+msgstr "LDAP 方案"
+
+#: src/templates/sysconfig.html:945
+msgid "Ldap scheme can be set regardless of the SSL/TLS settings. Valid values are \"ldap\" or \"ldaps\". Default is \"ldap\"."
+msgstr "無論 SSL/TLS 設定如何，都可以設定 LDAP 方案。有效值為“ldap”或“ldaps”。預設值為“ldap”。"
+
+#: src/Enums/ProcurementState.php:32
+msgid "Cancelled"
+msgstr "取消"
+
+#: src/Elabftw/Metadata.php:73
+msgid "Default group"
+msgstr "預設群組"
+
+#: src/Elabftw/i18n4Js.php:40
+msgid "Add compound"
+msgstr "添加化合物"
+
+#: src/Elabftw/i18n4Js.php:68
+msgid "Edit compound"
+msgstr "編輯化合物"
+
+#: src/Elabftw/i18n4Js.php:108
+msgid "Location name"
+msgstr "地點名稱"
+
+#: src/Elabftw/i18n4Js.php:149
+msgid "At least 3 characters are required to search"
+msgstr "搜尋至少需要 3 個字元。"
+
+#: src/Elabftw/i18n4Js.php:150
+msgid "Unarchive and add to team {{team, string}}"
+msgstr "解壓縮並加入到團隊 {{team, string}}"
+
+#: src/Controllers/ChemEditorController.php:31
+msgid "Chemical Structure Editor"
+msgstr "化學結構編輯器"
+
+#: src/Controllers/CompoundsController.php:28
+msgid "Compounds"
+msgstr "化合物"
+
+#: src/Controllers/ExperimentsController.php:39
+msgid "Experiment templates"
+msgstr "實驗模板"
+
+#: src/Controllers/InventoryController.php:32
+msgid "Inventory"
+msgstr "存貨"
+
+#: src/Controllers/SycController.php:28
+msgid "OpenCloning"
+msgstr "OpenCloning"
+
+#: src/Models/ApiKeys.php:117
+msgid "No corresponding API key found!"
+msgstr "未找到對應的API金鑰！"
+
+#: src/Models/ExclusiveEditMode.php:91
+msgid "This entry is being edited by %s."
+msgstr "此條目正在由 %s 編輯。"
+
+#: web/sysconfig.php:118
+msgid "Instance settings"
+msgstr "實例設定"
+
+#: src/templates/add-container-modal.html:6
+#: src/templates/storage-view-edit.html:29
+msgid "Add container"
+msgstr "添加容器"
+
+#: src/templates/add-container-modal.html:14
+msgid "Adjust container capacity and unit"
+msgstr "調整容器容量和單位"
+
+#: src/templates/add-container-modal.html:19
+msgid "Quantity unit"
+msgstr "數量單位"
+
+#: src/templates/add-container-modal.html:34
+msgid "Adjust number of containers stored"
+msgstr "調整儲存容器的數量"
+
+#: src/templates/add-container-modal.html:36
+msgid "Select a storage location below"
+msgstr "請在下方選擇儲存位置。"
+
+#: src/templates/admin.html:28 src/templates/admin.html:490
+#: src/templates/permissions-edit-modal.html:66
+msgid "User Groups"
+msgstr "使用者群組"
+
+#: src/templates/admin.html:159
+msgid "A User Group can contain users from different teams. Its main use is to later allow giving permissions to this group."
+msgstr "使用者群組可以包含來自不同團隊的使用者。其主要用途是方便後續向該群組使用者授予權限。"
+
+#: src/templates/admin.html:161
+msgid "Create user group"
+msgstr "建立使用者群組"
+
+#: src/templates/admin.html:176
+msgid "Existing user groups"
+msgstr "現有使用者群組"
+
+#: src/templates/admin.html:179
+msgid "No user group created yet."
+msgstr "尚未建立用戶群組。"
+
+#: src/templates/edit.html:154
+msgid "Lock down read permissions"
+msgstr "鎖定讀取權限"
+
+#: src/templates/edit.html:165
+msgid "Lock down write permissions"
+msgstr "鎖定寫入權限"
+
+#: src/templates/admin.html:287
+msgid "From here you can add, edit or delete the tags for your team. Click the tag to edit it."
+msgstr "您可以在這裡新增、編輯或刪除團隊標籤。點擊標籤即可編輯。"
+
+#: src/templates/admin.html:292
+msgid "Allow users to create new tags"
+msgstr "允許用戶建立新標籤"
+
+#: src/templates/admin.html:293
+msgid "An admin account will always be able to create new tags."
+msgstr "管理員帳號始終可以建立新標籤。"
+
+#: src/templates/admin.html:382
+msgid "Resources tags"
+msgstr "資源標籤"
+
+#: src/templates/admin.html:425
+msgid "Experiments tags"
+msgstr "實驗標籤"
+
+#: src/templates/admin.html:475 src/templates/permissions-edit-modal.html:46
+msgid "This setting sets a baseline upon which you can add more permissions by selecting teams, user groups or users below."
+msgstr "此設定設定了一個基準，您可以在此基礎上透過選擇下面的團隊、使用者群組或使用者來新增更多權限。"
+
+#: src/templates/chem-editor.html:12
+msgid "Add to compounds database"
+msgstr "加入到化合物資料庫"
+
+#: src/templates/chem-editor.html:14
+msgid "Search similar structures"
+msgstr "搜尋相似結構"
+
+#: src/templates/chem-editor.html:16 src/templates/compounds.html:49
+msgid "Search exact structure"
+msgstr "搜尋精確結構"
+
+#: src/templates/chem-editor.html:16
+msgid "Exact structure"
+msgstr "精確結構"
+
+#: src/templates/chem-editor.html:22
+msgid "Compounds substructure search results"
+msgstr "化合物亞結構搜尋結果"
+
+#: src/templates/compounds-view-edit.html:64 src/templates/pdf.html:136
+msgid "Name unset"
+msgstr "名稱未設定"
+
+#: src/templates/compounds-view-edit.html:70
+#: src/templates/edit-compound-modal.html:75 src/templates/pdf.html:155
+msgid "Molecular formula"
+msgstr "分子式"
+
+#: src/templates/compounds-view-edit.html:78 src/templates/compounds.html:47
+msgid "Search similar compounds"
+msgstr "搜尋類似化合物"
+
+#: src/templates/compounds-view-edit.html:81
+msgid "View in JSON"
+msgstr "以 JSON 格式查看"
+
+#: src/templates/compounds-view-edit.html:84
+msgid "View on PubChem"
+msgstr "在 PubChem 上查看"
+
+#: src/templates/compounds-view-edit.html:93
+msgid "Remove compound"
+msgstr "化合物"
+
+#: src/templates/compounds-view-edit.html:105
+msgid "Link with compound"
+msgstr "與化合物連接"
+
+#: src/templates/compounds-view-edit.html:105
+msgid "Search in local compounds database"
+msgstr "在本地化合物資料庫中搜尋"
+
+#: src/templates/compounds.html:7
+msgid "Export to CSV"
+msgstr "匯出為 CSV"
+
+#: src/templates/compounds.html:18
+msgid "Compounds are chemical entities associated with properties such as a CAS number, a molecular formula, SMILES or InChI representations, hazardous properties, etc... This page allows you to manage your compounds database, which is shared to everyone on the instance. Once created, a compound can be associated with a Resource (or Experiment)."
+msgstr "化合物是與CAS編號、分子式、SMILES或InChI表示、危險特性等屬性相關的化學實體。此頁面可讓您管理化合物資料庫，該資料庫對執行個體中的所有使用者共用。化合物創建後，可以將其與資源（或實驗）關聯。"
+
+#: src/templates/compounds.html:25 src/templates/import-pubchem-modal.html:6
+msgid "Import from PubChem"
+msgstr "從 PubChem 導入"
+
+#: src/templates/compounds.html:39 src/templates/compounds.html:45
+msgid "Substructure search from SMILES"
+msgstr "基於 SMILES 的子結構搜索"
+
+#: src/templates/compounds.html:49
+msgid "Exact"
+msgstr "精確的"
+
+#: src/templates/compounds.html:32
+msgid "Delete selected compounds"
+msgstr "刪除選定的化合物"
+
+#: src/templates/create-new-modal.html:36
+msgid "Enter a title"
+msgstr "輸入標題"
+
+#: src/templates/edit-compound-modal.html:48
+msgid "Search associated resources"
+msgstr "搜尋相關資源"
+
+#: src/templates/edit-compound-modal.html:49
+msgid "Search associated experiments"
+msgstr "搜尋相關實驗"
+
+#: src/templates/edit-compound-modal.html:59
+msgid "IUPAC Name"
+msgstr "國際純粹與應用化學聯合會名稱"
+
+#: src/templates/edit-compound-modal.html:61
+#: src/templates/import-pubchem-modal.html:40
+msgid "CAS number"
+msgstr "CAS編號"
+
+#: src/templates/edit-compound-modal.html:66
+#: src/templates/import-pubchem-modal.html:45
+msgid "Please enter a valid CAS number (e.g., 58-08-2)"
+msgstr "請輸入有效的CAS編號（例如，58-08-2）"
+
+#: src/templates/edit-compound-modal.html:68
+msgid "EC number"
+msgstr "EC編號"
+
+#: src/templates/edit-compound-modal.html:73
+msgid "Please enter a valid EC number (e.g., 200-362-1)"
+msgstr "請輸入有效的歐盟編號（例如，200-362-1）"
+
+#: src/templates/compounds-view-edit.html:69
+#: src/templates/edit-compound-modal.html:76 src/templates/pdf.html:156
+msgid "Molecular weight"
+msgstr "分子量"
+
+#: src/templates/edit-compound-modal.html:82
+msgid "Safety information"
+msgstr "安全資訊"
+
+#: src/templates/edit-compound-modal.html:111
+msgid "Immutable information"
+msgstr "不可篡改的訊息"
+
+#: src/templates/editusers.html:89
+msgid "Found archived users with same email address:"
+msgstr "發現已封存的使用者使用相同的電子郵件地址："
+
+#: src/templates/editusers.html:93
+msgid "Create a new account anyway"
+msgstr "仍要建立一個新帳戶"
+
+#: src/templates/export-menu.html:91
+msgid "Number of lines for title"
+msgstr "標題行數"
+
+#: src/templates/export-menu.html:92
+msgid "Split the title into this many lines"
+msgstr "將標題拆分成這麼多行"
+
+#: src/templates/export-menu.html:100
+msgid "Number of characters per line"
+msgstr "每行字元數"
+
+#: src/templates/export-menu.html:101
+msgid "Adjust how the title is displayed"
+msgstr "調整標題的顯示方式"
+
+#: src/templates/field-builder-modal.html:17
+msgid "Manage field groups"
+msgstr "管理字段組"
+
+#: src/templates/field-builder-modal.html:18
+msgid "Use this feature to group related fields."
+msgstr "使用此功能可將相關欄位分組。"
+
+#: src/templates/field-builder-modal.html:24
+#: src/templates/field-builder-modal.html:156
+msgid "Update"
+msgstr "更新"
+
+#: src/templates/field-builder-modal.html:46
+msgid "Selected field group"
+msgstr "選定字段組"
+
+#: src/templates/footer.html:3
+msgid "Connect with us on the fediverse!"
+msgstr "在 fediverse 中與我們互動！"
+
+#: src/templates/head.html:38
+msgid "Skip to content"
+msgstr "跳至內容"
+
+#: src/templates/head.html:153
+msgid "Tools"
+msgstr "工具"
+
+#: src/templates/inventory.html:15
+msgid "Search containers or locations"
+msgstr "搜尋容器或位置"
+
+#: src/templates/inventory.html:25
+msgid "No results found"
+msgstr "未找到結果"
+
+#: src/templates/inventory.html:46
+msgid "Browse inventory locations"
+msgstr "瀏覽庫存位置"
+
+#: src/templates/inventory.html:48
+msgid "Add root element"
+msgstr "加入根元素"
+
+#: src/templates/pdf.html:53
+msgid "This document has been timestamped by %s on %s."
+msgstr "本文件已由 %s 於 %s 新增時間戳記。"
+
+#: src/templates/pdf.html:229
+msgid "Timestamped by %s on %s at %s"
+msgstr "由 %s 於 %s 於 %s 時間 %s 添加時間戳"
+
+#: src/templates/permissions-edit-modal.html:80
+msgid "Selecting a user group here will give access to all users part of this user group."
+msgstr "在此選擇使用者群組，將授予該使用者群組內所有使用者存取權限。"
+
+#: src/templates/edit-user-modal.html:89
+msgid "Set user password"
+msgstr "設定用戶密碼"
+
+#: src/templates/scheduler.html:9
+msgid "Scheduler settings"
+msgstr "調度表設定"
+
+#: src/templates/scheduler.html:17 src/templates/ucp.html:121
+msgid "Show weekends"
+msgstr "顯示週末"
+
+#: src/templates/scheduler.html:18
+msgid "Layout: timeline"
+msgstr "佈局：時間軸"
+
+#: src/templates/scheduler.html:142
+msgid "Cancel booking"
+msgstr "取消預訂"
+
+#: src/templates/search-help-modal.html:5
+msgid "Search help"
+msgstr "搜尋幫助"
+
+#: src/templates/search-help-modal.html:11
+msgid "Simple search"
+msgstr "簡單搜尋"
+
+#: src/templates/search-help-modal.html:12
+msgid "When searching a term in the search bar, results will contain this term in the title, main text, date or elabid."
+msgstr "在搜尋欄中搜尋某個詞條時，搜尋結果的標題、正文、日期或詳細說明中將包含該詞條。"
+
+#: src/templates/search-help-modal.html:15
+msgid "The search bar supports searching with specific constraints such as \"title:Something\" and \"category:Tests\" (%s). You can combine them with logical expressions (AND, OR, NOT...) and group with parenthesis."
+msgstr "搜尋欄支援使用特定約束條件進行搜索，例如“title:Something”和“category:Tests”（%s）。您可以將這些約束條件與邏輯表達式（AND、OR、NOT 等）結合使用，並使用括號進行分組。"
+
+#: src/templates/search-help-modal.html:16
+msgid "To search in extra fields (metadata), use the dedicated helper to build your query. For example, to search all entries where \"Temperature\" is 37, you would use: \"extrafield:Temperature:37\" in the search bar."
+msgstr "若要在額外欄位（元資料）中搜索，請使用專用輔助函數建立查詢。例如，要搜尋所有「溫度」值為 37 的條目，您需要在搜尋欄中使用：「extrafield:Temperature:37」。"
+
+#: src/templates/search-help-modal.html:17
+msgid "Available fields"
+msgstr "可用字段"
+
+#: src/templates/show-item.html:101 src/templates/view-edit-toolbar.html:329
+#: src/templates/view.html:209
+msgid "Restore entry"
+msgstr "恢復條目"
+
+#: src/templates/show.html:25
+msgid "resources"
+msgstr "資源"
+
+#: src/templates/show.html:27
+msgid "Search %s"
+msgstr "搜尋 %s"
+
+#: src/templates/select-state.html:6
+msgid "Select state"
+msgstr "選擇狀態"
+
+#: src/templates/select-state.html:7
+msgid "Normal"
+msgstr "普通的"
+
+#: src/templates/select-state.html:9
+msgid "Deleted"
+msgstr "已刪除"
+
+#: src/templates/select-state.html:10
+msgid "Normal or Archived"
+msgstr "正常或已封存"
+
+#: src/templates/select-state.html:11
+msgid "Any"
+msgstr "任何"
+
+#: src/templates/show.html:291
+msgid "Toggle main text"
+msgstr "切換主文本"
+
+#: src/templates/show.html:371
+msgid "Search in resources"
+msgstr "在資源中搜尋"
+
+#: src/templates/steps-links-edit.html:68
+msgid "+1 week"
+msgstr "+1 週"
+
+#: src/templates/steps-links-edit.html:69
+msgid "+1 month"
+msgstr "+1 個月"
+
+#: src/templates/steps-links-edit.html:70
+msgid "+1 year"
+msgstr "+1 年"
+
+#: src/templates/storage-list.html:23 src/templates/storage-list.html:53
+msgid "Display content"
+msgstr "顯示內容"
+
+#: src/templates/storage-list.html:26 src/templates/storage-list.html:51
+msgid "Add children to %s"
+msgstr "將子物件加入 %s"
+
+#: src/templates/storage-list.html:28
+msgid "Delete %s and its children"
+msgstr "刪除 %s 及其子項"
+
+#: src/templates/storage-list.html:21
+msgid "Store in %s"
+msgstr "以 %s 存儲"
+
+#: src/templates/storage-list.html:44
+msgid "Inventory location"
+msgstr "庫存位置"
+
+#: src/templates/storage-view-edit.html:4
+msgid "Containers"
+msgstr "容器"
+
+#: src/templates/storage-view-edit.html:13
+msgid "in"
+msgstr "在"
+
+#: src/templates/storage-view-edit.html:24
+msgid "No containers stored"
+msgstr "沒有存放容器"
+
+#: src/templates/storage-view-edit.html:28
+msgid "Modify storage"
+msgstr "修改儲存"
+
+#: src/templates/sysconfig.html:73
+msgid "Get users report"
+msgstr "取得用戶報告"
+
+#: src/templates/sysconfig.html:76
+msgid "Stored containers"
+msgstr "儲存容器"
+
+#: src/templates/sysconfig.html:78
+msgid "Stored containers: %d bound to experiments and %d bound to resources"
+msgstr "已儲存的容器：%d 個容器綁定到實驗，%d 個容器綁定到資源"
+
+#: src/templates/sysconfig.html:79
+msgid "Get inventory report"
+msgstr "取得庫存報告"
+
+#: src/templates/sysconfig.html:953
+msgid "Domain name or IP address. You can specify multiple entries for redundancy, separated by commas."
+msgstr "網域名稱或IP位址。您可以指定多個條目以實現冗餘，條目之間以逗號分隔。"
+
+#: src/templates/sysconfig.html:1114
+msgid "No places have been defined yet. Head to the %sInventory page%s to add places."
+msgstr "目前尚未定義任何地點。請前往 %sInventory 頁面%s 新增地點。"
+
+#: src/Elabftw/i18n4Js.php:99
+msgid "Hide deleted"
+msgstr "隱藏已刪除"
+
+#: src/Elabftw/i18n4Js.php:139
+msgid "Show deleted"
+msgstr "顯示已刪除"
+
+#: src/Models/Notifications/CommentCreated.php:39
+msgid "Hi. %s left a comment. Have a look: %s"
+msgstr "您好。 %s 留下了註解。請查看：%s"
+
+#: src/templates/create-new-item-modal.html:35
+msgid "Note: only pinned templates are displayed below."
+msgstr "注意：下方僅顯示已置頂的範本。"
+
+#: src/Elabftw/i18n4Js.php:88
+msgid "Is Admin"
+msgstr "管理員"
+
+#: src/templates/scheduler.html:160
+msgid "Select a scope and search bookable resources."
+msgstr "選擇範圍並搜尋可預訂的資源。"
+
+#: src/templates/scheduler.html:182
+msgid "Filter events by owner"
+msgstr "按所有者篩選事件"
+
+#: src/templates/scheduler.html:199
+msgid "Selected resource:"
+msgstr "選定資源："
+
+#: src/Elabftw/i18n4Js.php:45
+msgid "Use the autocompletion menu to add users."
+msgstr "使用自動完成選單新增使用者。"
+
+#: src/Elabftw/i18n4Js.php:53
+msgid "Copied to clipboard."
+msgstr "已複製到剪貼簿。"
+
+#: src/Elabftw/i18n4Js.php:54
+msgid "Please check required fields."
+msgstr "請勾選必填項。"
+
+#: src/Elabftw/i18n4Js.php:76
+msgid "{{num, number}} entries processed"
+msgstr "已處理 {{num, number}} 筆記錄"
+
+#: src/Elabftw/i18n4Js.php:79
+msgid "There was an error while fetching the requested data: {{error}}"
+msgstr "取得請求的資料時出錯：{{error}}"
+
+#: src/Elabftw/i18n4Js.php:94
+msgid "File imported successfully"
+msgstr "文件匯入成功"
+
+#: src/Elabftw/i18n4Js.php:95
+msgid "Error: file is too large!"
+msgstr "錯誤：文件過大！"
+
+#: src/Elabftw/i18n4Js.php:97
+msgid "Error validating the form."
+msgstr "表單驗證出錯。"
+
+#: src/Elabftw/i18n4Js.php:104
+msgid "Error during import. Please check the console for more information."
+msgstr "匯入過程中發生錯誤。請查看控制台以取得更多資訊。"
+
+#: src/Elabftw/i18n4Js.php:105
+msgid "Invalid syntax or information provided."
+msgstr "提供的語法或資訊無效。"
+
+#: src/Elabftw/i18n4Js.php:114
+msgid "No matching result found."
+msgstr "未找到匹配結果。"
+
+#: src/Elabftw/i18n4Js.php:130
+msgid "Select two revisions to compare them."
+msgstr "選擇兩個版本進行比較。"
+
+#: src/Services/EmailValidator.php:50
+msgid "An active account already exists with this email. Use the Sysconfig Panel to add user to the requested team."
+msgstr "此郵箱已關聯一個有效帳戶。請使用系統配置面板將使用者新增至所需團隊。"
+
+#: src/Services/EmailValidator.php:52
+msgid "An active account already exists with this email. Search for user in the input above without a team filter and use \"Add to team\" action to add the user to your team."
+msgstr "此郵箱已關聯一個有效帳戶。請在上方輸入框中搜尋該使用者（無需團隊篩選），然後使用「新增至團隊」操作將該使用者新增至您的團隊。"
+
+#: src/templates/about-elabftw-modal.html:12
+msgid "eLabFTW is a free and open source electronic laboratory notebook crafted by %s and contributors."
+msgstr "eLabFTW 是由 %s 和貢獻者共同打造的免費開源電子實驗室筆記本。"
+
+#: src/templates/about-elabftw-modal.html:15
+msgid "Running version: %s"
+msgstr "運行版本：%s"
+
+#: src/templates/about-elabftw-modal.html:16
+msgid "License: %s"
+msgstr "許可證：%s"
+
+#: src/templates/about-elabftw-modal.html:17
+msgid "Source code: %s"
+msgstr "原始碼：%s"
+
+#: src/templates/compounds.html:33
+msgid "Restore selected compounds"
+msgstr "恢復選定的化合物"
+
+#: src/templates/create-new-item-modal.html:35
+msgid "Note: only templates that you have pinned are displayed below."
+msgstr "注意：下方僅顯示您已收藏的範本。"
+
+#: src/templates/head.html:212
+msgid "About eLabFTW"
+msgstr "關於 eLabFTW"
+
+#: src/templates/pdf.html:83
+msgid "Linked resource"
+msgid_plural "Linked resources"
+msgstr[0] "關聯資源"
+
+#: src/Auth/Local.php:71
+msgid "Only a Sysadmin account can use local authentication when it is hidden."
+msgstr "只有系統管理員帳戶才能在隱藏狀態下使用本機身份驗證。"
+
+#: src/Auth/Local.php:75
+msgid "Only a Sysadmin account can use local authentication."
+msgstr "只有系統管理員帳戶才能使用本機身份驗證。"
+
+#: src/Auth/Local.php:129
+msgid "Too many authentication tries in the last minute. Please try later."
+msgstr "最後一分鐘內嘗試身份驗證次數過多，請稍後再試。"
+
+#: src/Controllers/DatabaseController.php:39
+msgid "Resources templates"
+msgstr "資源模板"
+
+#: src/Elabftw/i18n4Js.php:39
+msgid "2FA"
+msgstr "雙因素認證"
+
+#: src/Elabftw/i18n4Js.php:48
+msgid "Can manage users to teams"
+msgstr "可以管理團隊用戶"
+
+#: src/Elabftw/i18n4Js.php:72
+msgid "You must allow at least one permission setting."
+msgstr "您必須至少允許一項權限設定。"
+
+#: src/Elabftw/i18n4Js.php:80
+msgid "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console."
+msgstr "解析元資料（額外欄位）時發生錯誤。完整錯誤訊息已記錄到瀏覽器控制台。"
+
+#: src/Elabftw/i18n4Js.php:87
+msgid "This action cannot apply to current selection"
+msgstr "此操作無法套用於目前選擇。"
+
+#: src/Elabftw/i18n4Js.php:89
+msgid "Is Archived"
+msgstr "已封存"
+
+#: src/Elabftw/i18n4Js.php:120
+msgid "Only a Sysadmin can modify this."
+msgstr "只有系統管理員才能修改此設定。"
+
+#: src/Elabftw/i18n4Js.php:155
+msgid "Userid"
+msgstr "使用者身分"
+
+#: src/Enums/Messages.php:39
+msgid "An internal error occurred. This should never happen! Please contact support with the following identifier:"
+msgstr "發生內部錯誤。這種情況不應該發生！請使用以下識別碼聯絡支援團隊："
+
+#: src/Enums/Messages.php:40
+msgid "Sorry, there was an issue executing your request. Please try again later."
+msgstr "抱歉，您的請求執行失敗，請稍後再試。"
+
+#: src/Enums/Messages.php:43
+msgid "Sorry, you are not allowed to perform that action."
+msgstr "抱歉，您無權執行此操作。"
+
+#: src/Exceptions/DemoModeException.php:25
+msgid "Sorry, this action is disabled in demo mode."
+msgstr "抱歉，此操作在展示模式下已被停用。"
+
+#: src/Models/AbstractEntity.php:485
+msgid "Only the Restore action is allowed on a deleted entity."
+msgstr "僅允許對已刪除的實體執行復原操作。"
+
+#: src/Models/AbstractEntity.php:488
+msgid "Only the Unarchive action is allowed on an archived entity."
+msgstr "僅允許對已封存實體執行取消封存的操作。"
+
+#: src/Models/AbstractEntity.php:854
+msgid "Cannot modify permissions on entry with immutable permissions."
+msgstr "無法修改具有不可變權限的條目的權限。"
+
+#: src/Models/AbstractEntity.php:859
+msgid "Cannot modify permissions immutability settings."
+msgstr "無法修改權限不可變性設定。"
+
+#: src/Models/Compounds.php:228
+msgid "Cannot delete a linked compound."
+msgstr "無法刪除已連結的化合物。"
+
+#: src/Models/StorageUnits.php:371
+msgid "Cannot delete a storage unit with children!"
+msgstr "無法刪除有子項目的收納單元！"
+
+#: src/Models/StorageUnits.php:374
+msgid "Cannot delete a storage unit with containers!"
+msgstr "無法刪除帶有容器的儲存單元！"
+
+#: src/Services/LoginHelper.php:154
+msgid "This account is archived in this team and cannot login."
+msgstr "該帳號已在本團隊中被封存，無法登入。"
+
+#: web/experiments-categories.php:30
+msgid "Sorry, edition of experiments categories has been disabled for users by your team Admin."
+msgstr "抱歉，您的團隊管理員已停用使用者編輯實驗類別的功能。"
+
+#: web/experiments-status.php:30
+msgid "Sorry, edition of experiments status has been disabled for users by your team Admin."
+msgstr "抱歉，您的團隊管理員已停用使用者編輯實驗狀態的功能。"
+
+#: web/resources-status.php:31
+msgid "Sorry, edition of resources status has been disabled for users by your team Admin."
+msgstr "抱歉，您的團隊管理員已停用使用者編輯資源狀態的功能。"
+
+#: src/templates/admin.html:86
+msgid "Users will be forced to select an existing Template, and will not be able to create a blank entry."
+msgstr "使用者將被強制選擇現有模板，而無法建立空白條目。"
+
+#: src/templates/admin.html:95
+msgid "Allow users to create and edit experiments categories"
+msgstr "允許使用者建立和編輯實驗類別"
+
+#: src/templates/admin.html:99
+msgid "Allow users to create and edit experiments status"
+msgstr "允許使用者建立和編輯實驗狀態"
+
+#: src/templates/admin.html:112
+msgid "Allow users to create and edit resources categories"
+msgstr "允許使用者建立和編輯資源類別"
+
+#: src/templates/admin.html:116
+msgid "Allow users to create and edit resources status"
+msgstr "允許使用者建立和編輯資源狀態"
+
+#: src/templates/admin.html:354
+msgid "Resources by category"
+msgstr "按類別瀏覽資源"
+
+#: src/templates/admin.html:466 src/templates/show.html:399
+#: src/templates/view-edit-toolbar.html:319
+msgid "Unarchive"
+msgstr "取消封存"
+
+#: src/templates/create-new-modal.html:10
+#: src/templates/create-new-modal.html:15
+msgid "Create a new entry"
+msgstr "建立新條目"
+
+#: src/templates/catstat-view-edit.html:7
+msgid "Add category"
+msgstr "新增類別"
+
+#: src/templates/catstat-view-edit.html:9
+msgid "Add status"
+msgstr "新增狀態"
+
+#: src/templates/create-new-item-modal.html:8
+msgid "Select a template below"
+msgstr "請在下方選擇模板"
+
+#: src/templates/create-new-modal.html:116
+msgid "Manage templates"
+msgstr "管理模板"
+
+#: src/templates/show-item.html:3
+msgid "Create resource from template"
+msgstr "從模板建立資源"
+
+#: src/templates/create-new-modal.html:108
+msgid "View template"
+msgstr "查看模板"
+
+#: src/templates/create-new-item-modal.html:66
+msgid "Or create a blank entry"
+msgstr "或建立一個空白條目"
+
+#: src/templates/create-new-modal.html:72
+#: src/templates/create-new-modal.html:80
+msgid "No category"
+msgstr "無類別"
+
+#: src/templates/edit-compound-modal.html:114
+msgid "See on PubChem"
+msgstr "參見 PubChem"
+
+#: src/templates/edit-user-modal.html:7
+msgid "Edit user"
+msgstr "編輯使用者"
+
+#: src/templates/edit-user-modal.html:36
+msgid "Enabling Sysadmin rights authorizes unrestricted system changes. Exercise due diligence."
+msgstr "啟用系統管理員權限將授權對系統進行不受限制的變更。請務必謹慎行事。"
+
+#: src/templates/edit-user-modal.html:39 src/templates/edit-user-modal.html:40
+msgid "Can manage users/teams association"
+msgstr "可以管理使用者/團隊關聯"
+
+#: src/templates/edit-user-modal.html:45
+msgid "Enable this to allow user to manage association between users and teams. Note: user must be Admin in at least one team."
+msgstr "啟用此功能後，使用者可以管理使用者與團隊之間的關聯。注意：使用者必須至少在一個團隊中擔任管理員。"
+
+#: src/templates/edit.html:147
+msgid "Permissions for the derived entry"
+msgstr "衍生條目的權限"
+
+#: src/templates/editusers.html:6
+msgid "Double-click a row in the table below to edit user."
+msgstr "雙擊下表中的某一行即可編輯使用者。"
+
+#: src/templates/experiments-categories.html:9
+msgid "Experiments categories can be associated with an Experiment or an Experiment Template as a Category. They belong to a team and have two main properties: name and color. Examples: Analysis, Measurement, Test, Project XYZ, etc..."
+msgstr "實驗類別可以作為類別與實驗或實驗模板關聯。它們屬於某個團隊，並具有兩個主要屬性：名稱和顏色。例如：分析、測量、測試、XYZ 項目等。"
+
+#: src/templates/experiments-categories.html:11
+msgid "No experiments categories have been created in this team yet."
+msgstr "該團隊目前尚未創建任何實驗類別。"
+
+#: src/templates/experiments-categories.html:13
+#: src/templates/resources-categories.html:13
+msgid "Category name"
+msgstr "類別名稱"
+
+#: src/templates/experiments-status.html:9
+msgid "Experiments status can be associated with an Experiment or an Experiment Template as a Status. They belong to a team and have two main properties: name and color. Examples: Running, Done, Need to be redone, Failed, etc..."
+msgstr "實驗狀態可以關聯到實驗本身或實驗模板。它們屬於某個團隊，並具有兩個主要屬性：名稱和顏色。例如：運行中、完成、需要重做、失敗等等。"
+
+#: src/templates/experiments-status.html:11
+msgid "No experiments status have been created in this team yet."
+msgstr "該團隊目前尚未創建任何實驗狀態。"
+
+#: src/templates/experiments-status.html:13
+#: src/templates/resources-status.html:13
+msgid "Status name"
+msgstr "狀態名稱"
+
+#: src/templates/head.html:84
+msgid "All experiments"
+msgstr "所有實驗"
+
+#: src/templates/head.html:80
+msgid "My experiments"
+msgstr "我的實驗"
+
+#: src/templates/profile.html:209
+msgid "Experiments templates"
+msgstr "實驗模板"
+
+#: src/templates/head.html:121
+msgid "All resources"
+msgstr "所有資源"
+
+#: src/templates/head.html:117
+msgid "My resources"
+msgstr "我的資源"
+
+#: src/templates/head.html:123
+msgid "Bookable resources"
+msgstr "可預約資源"
+
+#: src/templates/import-pubchem-modal.html:13
+msgid "Import a chemical compound from %sPubChem online database%s: you can specify directly the CID of the compound you wish to import, or search from its CAS number or name."
+msgstr "從 %sPubChem 線上資料庫%s 匯入化合物：您可以直接指定要匯入的化合物的 CID，或透過其 CAS 編號或名稱進行搜尋。"
+
+#: src/templates/import-pubchem-modal.html:16
+msgid "Compound name"
+msgstr "複合名稱"
+
+#: src/templates/links.html:2
+msgid "Links"
+msgstr "連結"
+
+#: src/templates/links.html:5
+msgid "Experiment links"
+msgstr "實驗連結"
+
+#: src/templates/links.html:31
+msgid "Filter author"
+msgstr "篩選作者"
+
+#: src/templates/links.html:37 src/templates/links.html:39
+msgid "Add link to an experiment"
+msgstr "添加實驗鏈接"
+
+#: src/templates/links.html:46
+msgid "Resource links"
+msgstr "實驗資源連結"
+
+#: src/templates/links.html:77 src/templates/links.html:79
+msgid "Add link to a resource"
+msgstr "新增實驗資源連結"
+
+#: src/templates/links.html:79
+msgid "Add item link"
+msgstr "新增項目連結"
+
+#: src/templates/login-demo.html:18
+msgid "Login as Admin"
+msgstr "以管理員身分登入"
+
+#: src/templates/login-demo.html:24
+msgid "Login as User"
+msgstr "以使用者登入"
+
+#: src/templates/login-demo.html:30
+msgid "Welcome to the demo!"
+msgstr "歡迎體驗展示模式！"
+
+#: src/templates/login-demo.html:31
+msgid "Explore real-life examples of teams in eLabFTW. Select a profile suited to your activity below."
+msgstr "探索 eLabFTW 中團隊的真實案例。請在下方選擇適合您活動的個人資料。"
+
+#: src/templates/profile.html:130
+msgid "Asc"
+msgstr "升序"
+
+#: src/templates/profile.html:131
+msgid "Desc"
+msgstr "降序"
+
+#: src/templates/resources-categories.html:8
+msgid "Create and modify the categories available to resources."
+msgstr "建立和修改資源可用的類別。"
+
+#: src/templates/resources-categories.html:9
+msgid "Resources categories can be associated with a Resource or a Resource Template as a Category. They belong to a team and have two main properties: name and color. Examples: Equipment, Chemical, Cell line, Plasmid, Antibody, Microscope, etc..."
+msgstr "資源類別可以與資源或資源範本關聯，作為類別。它們屬於某個團隊，並具有兩個主要屬性：名稱和顏色。例如：設備、化學物質、細胞系、質粒、抗體、顯微鏡等。"
+
+#: src/templates/resources-categories.html:11
+msgid "No resources categories have been created in this team yet."
+msgstr "該團隊尚未創建任何資源類別。"
+
+#: src/templates/resources-categories.html:12
+msgid "Create new resources category"
+msgstr "建立新的資源類別"
+
+#: src/templates/resources-status.html:9
+msgid "Resources status can be associated with a Resource or a Resource Template. They belong to a team and have two main properties: name and color. Examples: In stock, Operational, Maintenance, Processed, etc..."
+msgstr "資源狀態可以與資源或資源範本關聯。它們屬於某個團隊，並具有兩個主要屬性：名稱和顏色。例如：庫存中、運作中、維護中、已處理中等等。"
+
+#: src/templates/resources-status.html:11
+msgid "No resources status have been created in this team yet."
+msgstr "該團隊中尚未建立任何資源狀態。"
+
+#: src/templates/scheduler.html:153
+msgid "Book a resource by clicking on the scheduler."
+msgstr "點擊日程安排器即可預訂資源。"
+
+#: src/templates/scheduler.html:172
+msgid "Select a scope and search for events."
+msgstr "選擇範圍並蒐索事件。"
+
+#: src/templates/scheduler.html:203 src/templates/scheduler.html:221
+msgid "Selected items:"
+msgstr "已選項目："
+
+#: src/templates/scheduler.html:232 src/templates/scheduler.html:258
+msgid "Create event(s)"
+msgstr "建立事件"
+
+#: src/templates/scheduler.html:243
+msgid "Review selected items"
+msgstr "已選項目"
+
+#: src/templates/show.html:152
+msgid "Show more filters"
+msgstr "顯示更多篩選條件"
+
+#: src/templates/show.html:322
+msgid "No resources categories have been defined for your team. Create some from this page: %sResources Categories%s."
+msgstr "您的團隊尚未定義任何資源類別。請從此頁面建立一些：%s資源類別%s。"
+
+#: src/templates/show.html:395
+msgid "Lock the selected entities"
+msgstr "鎖定所選實體"
+
+#: src/templates/show.html:396
+msgid "Unlock the selected entities"
+msgstr "解鎖所選實​​體"
+
+#: src/templates/show.html:397
+msgid "Timestamp the selected entities"
+msgstr "為選取的實體新增時間戳"
+
+#: src/templates/show.html:398
+msgid "Archive the selected entities"
+msgstr "將選取的實體歸檔"
+
+#: src/templates/show.html:399
+msgid "Unarchive the selected entities"
+msgstr "取消封存所選實體"
+
+#: src/templates/show.html:400
+msgid "Delete the selected entities"
+msgstr "刪除選取的實體"
+
+#: src/templates/show.html:401
+msgid "Restore the selected entities"
+msgstr "恢復所選實體"
+
+#: src/templates/storage-list.html:6
+msgid "Collapse all"
+msgstr "全部收起"
+
+#: src/templates/storage-list.html:27
+msgid "Rename"
+msgstr "重新命名"
+
+#: src/templates/storage-view-edit.html:4
+msgid "Storage"
+msgstr "貯存"
+
+#: src/templates/sysconfig.html:138
+msgid "Revisions system configuration"
+msgstr "修訂系統配置"
+
+#: src/templates/sysconfig.html:162
+msgid "Permissions settings"
+msgstr "權限設定"
+
+#: src/templates/sysconfig.html:623 src/templates/sysconfig.html:656
+msgid "Use S3 Path-Style endpoint"
+msgstr "使用 S3 路徑樣式端點"
+
+#: src/templates/sysconfig.html:707
+msgid "Only allow a Sysadmin to login when local login form is hidden"
+msgstr "僅當本機登入表單隱藏時才允許系統管理員登入。"
+
+#: src/templates/sysconfig.html:707
+msgid "Enable this setting to prevent non-sysadmin users to authenticate using local auth when the form is hidden."
+msgstr "啟用此設定可防止非系統管理員使用者在表單隱藏時使用本機身份驗證進行身份驗證。"
+
+#: src/templates/sysconfig.html:708
+msgid "Only allow a Sysadmin to login with local login form"
+msgstr "僅允許系統管理員使用本機登入表單登入。"
+
+#: src/templates/sysconfig.html:708
+msgid "Only a Sysadmin account can use the local login regardless if the local login form is hidden or not. Only activate it if you have another authentication method enabled for users."
+msgstr "只有系統管理員帳戶才能使用本機登錄，無論本機登入表單是否隱藏。僅當您為使用者啟用了其他身份驗證方法時才啟動此功能。"
+
+#: src/templates/sysconfig.html:1128
+msgid "Enable to include audit logs events as INFO event in PHP logs."
+msgstr "啟用此功能後，稽核日誌事件將作為 INFO 事件包含在 PHP 日誌中。"
+
+#: src/templates/view-edit-toolbar.html:165
+msgid "Create entry from template"
+msgstr "從範本建立條目"
+
+#: src/templates/view.html:208
+msgid "This entry has been deleted."
+msgstr "此條目已被刪除。"
+
+#: src/Auth/None.php:34
+msgid "The authentication was interrupted before completion."
+msgstr "身份驗證在完成前中斷。"
+
+#: src/Elabftw/MinisignKeys.php:72
+msgid "Empty passphrase provided!"
+msgstr "提供的密碼短語為空！"
+
+#: src/Elabftw/i18n4Js.php:41
+msgid "Add column"
+msgstr "新增欄位"
+
+#: src/Elabftw/i18n4Js.php:42
+msgid "Add row"
+msgstr "新增一列"
+
+#: src/Elabftw/i18n4Js.php:46
+msgid "Can manage compounds"
+msgstr "可管理化合物"
+
+#: src/Elabftw/i18n4Js.php:47
+msgid "Can manage inventory locations"
+msgstr "可以管理庫存位置"
+
+#: src/Elabftw/i18n4Js.php:56
+msgid "Discard current spreadsheet? All unsaved changes will be lost."
+msgstr "是否捨棄當前電子表格？所有未儲存的變更都將遺失。"
+
+#: src/Elabftw/i18n4Js.php:63
+msgid "Delete {{num, number}} line(s)?"
+msgstr "刪除 {{num, number}} 行？"
+
+#: src/Elabftw/i18n4Js.php:64
+msgid "Delete selected rows"
+msgstr "刪除選取的行"
+
+#: src/Elabftw/i18n4Js.php:70
+msgid "Currently editing"
+msgstr "正在編輯"
+
+#: src/Elabftw/i18n4Js.php:78
+msgid "File name is missing."
+msgstr "文件名缺失。"
+
+#: src/Elabftw/i18n4Js.php:86
+msgid "Format"
+msgstr "格式"
+
+#: src/Elabftw/i18n4Js.php:102
+msgid "Import a spreadsheet (xls, csv, ods, ...)"
+msgstr "導入電子表格（xls、csv、ods 等）"
+
+#: src/Elabftw/i18n4Js.php:112
+msgid "New spreadsheet"
+msgstr "新電子表格"
+
+#: src/Elabftw/i18n4Js.php:125
+msgid "New title for the column"
+msgstr "專欄新標題"
+
+#: src/Elabftw/i18n4Js.php:127
+msgid "Overwrite original file"
+msgstr "覆蓋原文件"
+
+#: src/Models/Links/AbstractCompoundsLinks.php:140
+#: src/Models/Links/AbstractLinks.php:188
+msgid "Removed"
+msgstr "已移除"
+
+#: src/Models/Links/AbstractCompoundsLinks.php:140
+#: src/Models/Links/AbstractLinks.php:188
+msgid "Added"
+msgstr "已新增"
+
+#: src/Models/Links/AbstractCompoundsLinks.php:144
+msgid "%s link to compound: %s (CAS Number: %s) with id: %d"
+msgstr "化合物 %s 連結到化合物 %s（CAS 編號：%s），ID 為：%d"
+
+#: src/Models/Links/AbstractLinks.php:198
+msgid "%s link to %s: %s"
+msgstr "%s 連結到 %s：%s"
+
+#: web/app/controllers/UcpController.php:50
+msgid "Password successfully changed."
+msgstr "密碼已成功更改。"
+
+#: web/app/controllers/UcpController.php:59
+msgid "Two-factor authentication has been successfully enabled for your account."
+msgstr "您的帳戶已成功啟用雙重認證。"
+
+#: src/templates/admin.html:168
+msgid "Project Monoco"
+msgstr "Project Monoco"
+
+#: src/templates/admin.html:168
+msgid "Teamgroup name"
+msgstr "團隊組名稱"
+
+#: src/templates/admin.html:197 src/templates/admin.html:203
+msgid "Add user to teamgroup"
+msgstr "將使用者新增至團隊群組"
+
+#: src/templates/bookings-email-modal.html:5
+#: src/templates/bookings-email-modal.html:10
+msgid "Send an email to users who booked this resource"
+msgstr "向預訂過此資源的用戶發送電子郵件"
+
+#: src/templates/bookings-email-modal.html:12
+msgid "Recipients are users with bookings up to 4 months past or future."
+msgstr "收件者為過去或未來 4 個月內有預訂的用戶。"
+
+#: src/templates/bookings-email-modal.html:14
+msgid "There are no bookings associated with this resource."
+msgstr "此資源目前沒有任何預訂記錄。"
+
+#: src/templates/bookings-email-modal.html:16
+msgid "Email will be sent to %d users."
+msgstr "郵件將發送給 %d 位使用者。"
+
+#: src/templates/bookings-email-modal.html:22
+msgid "Message"
+msgstr "訊息"
+
+#: src/templates/compounds-view-edit.html:107
+msgid "Add link to a compound"
+msgstr "添加化合物的鏈接"
+
+#: src/templates/compounds.html:20
+msgid "Note: only users who were given permission to edit the common compounds table can modify the compounds (add/edit/remove)."
+msgstr "注意：只有被授予編輯常用化合物表權限的使用者才能修改化合物（新增/編輯/刪除）。"
+
+#: src/templates/compounds.html:28
+msgid "Double-click a row in the table below to view complete information about a compound."
+msgstr "雙擊下表中的某一行，即可查看有關該化合物的完整資訊。"
+
+#: src/templates/create-new-item-modal-body.html:6
+msgid "No templates found."
+msgstr "未找到模板。"
+
+#: src/templates/create-new-item-modal-body.html:48
+msgid "Or select a category"
+msgstr "或選擇一個類別"
+
+#: src/templates/create-new-item-modal-body.html:50
+msgid "Manage categories"
+msgstr "管理類別"
+
+#: src/templates/create-new-item-from-compound-modal.html:15
+msgid "Select a resource template"
+msgstr "選擇資源模板"
+
+#: src/templates/edit-user-modal.html:55
+msgid "Enable this to allow user to manage compounds."
+msgstr "啟用此功能後，使用者可以管理化合物。"
+
+#: src/templates/edit-user-modal.html:65
+msgid "Enable this to allow user to manage inventory locations."
+msgstr "啟用此功能後，使用者可以管理庫存位置。"
+
+#: src/templates/edit.html:148
+msgid "Entries created from this template will inherit these permissions. If they are locked down, the permissions will not be modifiable by Users, only Admins."
+msgstr "使用此範本建立的條目將繼承這些權限。如果條目被鎖定，則只有管理員才能修改權限，使用者無法修改。"
+
+#: src/templates/dashboard.html:18 src/templates/head.html:70
+msgid "Quick search experiments"
+msgstr "快速搜尋實驗"
+
+#: src/templates/dashboard.html:19 src/templates/head.html:71
+msgid "Search experiments"
+msgstr "搜尋實驗"
+
+#: src/templates/dashboard.html:68 src/templates/head.html:107
+msgid "Quick search resources"
+msgstr "快速搜尋資源"
+
+#: src/templates/dashboard.html:69 src/templates/head.html:108
+msgid "Search resources"
+msgstr "搜尋資源"
+
+#: src/templates/inventory.html:42
+msgid "Note: only users who were given permission to edit the inventory locations can modify the locations (add/edit/remove)."
+msgstr "注意：只有被授予編輯庫存位置權限的使用者才能修改位置（新增/編輯/刪除）。"
+
+#: src/templates/load-spreadsheet-modal.html:6
+msgid "Choose header option"
+msgstr "選擇標題選項"
+
+#: src/templates/load-spreadsheet-modal.html:12
+msgid "Do you want to use the first row of your file as column headers?"
+msgstr "您是否想將文件的第一行用作列標題？"
+
+#: src/templates/show.html:358
+msgid "Tip: %screate categories%s to start organizing your work."
+msgstr "提示：建立類別以開始整理您的工作。"
+
+#: src/templates/show.html:376
+msgid "Nothing here yet. Start by clicking Create (top-right) to add your first %s."
+msgstr "這裡目前還沒有任何內容。請點擊右上角的「建立」按鈕，新增您的第一個 %s。"
+
+#: src/templates/spreadsheet-editor.html:1
+msgid "Beta Notice: The spreadsheet editor is currently in beta (preview release) and should be used with caution. Please avoid saving any precious data within it. Additionally, files containing formulas or calculations will not be rendered as they originally appear, since the editor functions more as a text-based tool at this stage rather than a full spreadsheet engine. Yes, we will add calculation eventually. As you can imagine, re-implementing a spreadsheet editor takes time."
+msgstr "測試版通知：電子表格編輯器目前處於測試版（預覽版）階段，請謹慎使用。請勿在其中保存任何重要資料。此外，由於該編輯器目前更像是文字工具而非完整的電子表格引擎，因此包含公式或計算的文件將無法按原樣顯示。我們最終會添加計算功能。正如您所想，重新實作一個電子表格編輯器需要時間。"
+
+#: src/templates/spreadsheet-editor.html:2
+#: src/templates/spreadsheet-editor.html:4
+#: src/templates/spreadsheet-editor.html:13
+msgid "Spreadsheet Editor"
+msgstr "試算表編輯器"
+
+#: src/templates/sysconfig.html:484
+msgid "Force certain accounts to enable multi-factor authentication."
+msgstr "強制某些帳戶啟用多重身份驗證。"
+
+#: src/templates/sysconfig.html:581
+msgid "%d files are stored on local filesystem and %d files are stored on S3."
+msgstr "%d 個檔案儲存在本機檔案系統中，%d 個檔案儲存在 S3 上。"
+
+#: src/templates/ucp.html:344
+msgid "Two-factor Authentication"
+msgstr "雙重身份驗證"
+
+#: src/templates/ucp.html:347
+msgid "Two-factor authentication is enabled for your account."
+msgstr "您的帳戶已啟用雙重認證。"
+
+#: src/templates/ucp.html:348
+msgid "Disable two-factor authentication"
+msgstr "禁用雙重認證"
+
+#: src/templates/ucp.html:355
+msgid "Setup second factor"
+msgstr "設定第二個因素"
+
+#: src/templates/ucp.html:376
+msgid "Scan the QR code with the application"
+msgstr "使用應用程式掃描二維碼"
+
+#: src/templates/ucp.html:458
+msgid "Note: this passphrase protects your private key and is not your account password. You will need it each time you sign an entry."
+msgstr "注意：此密碼短語用於保護您的私鑰，並非您的帳戶密碼。每次簽署條目時都需要使用它。"
+
+#: src/templates/upload-dropdown-menu.html:65
+msgid "Load into Spreadsheet Editor"
+msgstr "載入到電子表格編輯器"
+
+#: src/templates/view-edit-toolbar.html:197
+msgid "Send an email to users who have booked this resource within the 4 last & upcoming months."
+msgstr "向過去 4 個月及未來 4 個月內預訂過此資源的用戶發送電子郵件。"
+
+#: src/templates/view.html:32
+msgid "Override lock"
+msgstr "覆蓋鎖定"
+
+#: src/Elabftw/i18n4Js.php:42
+msgid "Add selected users to team"
+msgstr "將選定的用戶新增至團隊"
+
+#: src/Elabftw/i18n4Js.php:118
+msgid "Warning: current OpenCloning version is incompatible with this version of eLabFTW."
+msgstr "警告：目前 OpenCloning 版本與此版本的 eLabFTW 不相容。"
+
+#: src/templates/edit-user-modal.html:55
+msgid "Enable this to allow user to manage compounds. This has no effect if compounds edition is not restricted globally."
+msgstr "啟用此功能後，使用者可以管理化合物。如果化合物的編輯未受到全域限制，則此功能無效。"
+
+#: src/templates/edit-user-modal.html:65
+msgid "Enable this to allow user to manage inventory locations. This has no effect if inventory locations edition is not restricted globally."
+msgstr "啟用此功能後，使用者可以管理庫存位置。如果庫存位置的編輯未受到全域限制，則此功能無效。"
+
+#: src/templates/editusers.html:9
+msgid "Show users from all teams"
+msgstr "顯示所有團隊的用戶"
+
+#: src/templates/head.html:82
+msgid "Team experiments"
+msgstr "團隊實驗"
+
+#: src/templates/head.html:94
+msgid "Experiment categories"
+msgstr "實驗類別"
+
+#: src/templates/head.html:96
+msgid "Experiment status"
+msgstr "實驗狀態"
+
+#: src/templates/head.html:119
+msgid "Team resources"
+msgstr "團隊資源"
+
+#: src/templates/head.html:131
+msgid "Resource templates"
+msgstr "資源模板"
+
+#: src/templates/head.html:133
+msgid "Resource categories"
+msgstr "資源類別"
+
+#: src/templates/head.html:135
+msgid "Resource status"
+msgstr "資源狀態"
+
+#: src/templates/spreadsheet-editor.html:1
+msgid "Beta Notice: The spreadsheet editor is currently in beta (preview release) and should be used with caution. Please avoid storing important data in it. Additionally, files that include styling or advanced features such as graphics may not display as they originally appear. This editor is best suited for simple calculations and handling formulas. We welcome any feedback you may have."
+msgstr "測試版通知：此電子表格編輯器目前處於測試版（預覽版）階段，請謹慎使用。請勿在其中儲存重要資料。此外，包含樣式或進階功能（例如圖形）的檔案可能無法如實顯示。此編輯器最適合進行簡單的計算和處理公式。歡迎您提出任何回饋意見。"
+
+#: src/templates/sysconfig.html:129
+msgid "Allow users to change their first name, last name, internal id or email address"
+msgstr "允許使用者更改其名字、姓氏、內部 ID 或電子郵件地址"
+
+#: src/templates/sysconfig.html:129
+msgid "When disabled, only a Sysadmin will be allowed to modify these parameters."
+msgstr "停用此功能後，只有系統管理員才能修改這些參數。"
+
+#: src/templates/sysconfig.html:131
+msgid "Prevent modification of global compounds database unless user is given explicit rights."
+msgstr "除非明確授予使用者權限，否則禁止修改全球化合物資料庫。"
+
+#: src/templates/sysconfig.html:131
+msgid "When enabled, a Sysadmin will need to give edit rights to all users that should be able to edit the common compounds database. All other users will access it in read-only."
+msgstr "啟用此功能後，系統管理員需要授予所有需要編輯通用化合物資料庫的使用者編輯權限。其他所有使用者將以唯讀方式存取該資料庫。"
+
+#: src/templates/sysconfig.html:133
+msgid "Prevent modification of inventory locations unless user is given explicit rights."
+msgstr "除非明確授予使用者權限，否則禁止修改庫存位置。"
+
+#: src/templates/sysconfig.html:133
+msgid "When enabled, a Sysadmin will need to give edit rights to all users that should be able to edit the inventory locations. All other users will access it in read-only."
+msgstr "啟用此功能後，系統管理員需要授予所有需要編輯庫存位置的使用者編輯權限。其他所有使用者將以唯讀方式存取。"
+
+#: src/Elabftw/i18n4Js.php:100
+msgid "Remove this filter?"
+msgstr "移除此篩選條件？"
+
+#: src/templates/profile.html:340 src/templates/scheduler.html:42
+msgid "Start date"
+msgstr "開始日期"
+
+#: src/templates/profile.html:344 src/templates/scheduler.html:46
+msgid "End date"
+msgstr "結束日期"
+
+#: src/templates/scheduler.html:50
+msgid "Note: the export reflects the current scheduler view, including all active filters."
+msgstr "注意：匯出內容反映目前排程器視圖，包括所有活動篩選器。"
+
+#: src/Elabftw/i18n4Js.php:58
+msgid "Create an experiment without using a template"
+msgstr "建立一個不使用模板的實驗"
+
+#: src/Elabftw/i18n4Js.php:59
+msgid "Create a resource without using a template"
+msgstr "建立資源時不使用模板"
+
+#: src/Elabftw/i18n4Js.php:60
+msgid "Create an experiment template"
+msgstr "建立實驗模板"
+
+#: src/Elabftw/i18n4Js.php:61
+msgid "Create a resource template"
+msgstr "建立資源模板"
+
+#: src/Elabftw/i18n4Js.php:73
+msgid "Encryption"
+msgstr "加密"
+
+#: src/Elabftw/i18n4Js.php:82
+msgid "Export successful."
+msgstr "匯出成功。"
+
+#: src/Elabftw/i18n4Js.php:106
+msgid "Loading"
+msgstr "載入中"
+
+#: src/Elabftw/i18n4Js.php:121
+msgid "Your entry has been successfully transferred to the selected user."
+msgstr "您的物件已成功轉交給指定使用者。"
+
+#: src/Elabftw/i18n4Js.php:140
+msgid "Signing"
+msgstr "簽名"
+
+#: src/Models/AbstractEntity.php:1149
+msgid "The selected user cannot be assigned ownership in the current team context."
+msgstr "在目前團隊環境中無法為選定使用者分配所有權。"
+
+#: src/Models/Dspace.php:193
+msgid "DSpace login did not return an Authorization header."
+msgstr "DSpace 登入未傳回 Authorization 標頭。"
+
+#: src/Models/Scheduler.php:505
+msgid "Each time slot is limited to %d minutes."
+msgstr "每個時段限制為 %d 分鐘。"
+
+#: src/Models/Scheduler.php:549
+msgid "End time %s cannot be before start time %s."
+msgstr "結束時間 %s 不能早於開始時間 %s。"
+
+#: src/Models/Steps.php:179
+msgid "The immutability parameter cannot be modified from experiments or resources."
+msgstr "不可更改參數無法透過實驗或資源進行修改。"
+
+#: src/Models/Steps.php:183
+msgid "This step is immutable: it cannot be modified."
+msgstr "這步驟是不可更改的：不能修改。"
+
+#: web/resources-categories.php:30
+msgid "Sorry, edition of resources categories has been disabled for users by your team Admin."
+msgstr "抱歉，您的團隊管理員已停用使用者編輯資源分類的功能。"
+
+#: src/templates/admin.html:318 src/templates/admin.html:334
+#: src/templates/admin.html:335
+msgid "Show tagged resources"
+msgstr "顯示已標記的資源"
+
+#: src/templates/booking-params-modal.html:31
+msgid "Maximum time per slot (in minutes)"
+msgstr "每個時段最長使用時間（分鐘）"
+
+#: src/templates/create-new-modal.html:19
+msgid "Select a type"
+msgstr "選擇類型"
+
+#: src/templates/create-new-modal.html:26
+msgid "Experiment template"
+msgstr "實驗模板"
+
+#: src/templates/create-new-modal.html:30
+msgid "Resource template"
+msgstr "資源模板"
+
+#: src/templates/create-new-modal.html:37
+msgid "Type a descriptive title..."
+msgstr "輸入一個描述性標題…"
+
+#: src/templates/create-new-modal.html:43
+msgid "Start from a template"
+msgstr "從模板開始"
+
+#: src/templates/create-new-modal.html:47
+msgid "Create without template"
+msgstr "建立時無需模板"
+
+#: src/templates/create-new-modal.html:51
+msgid "Select a template"
+msgstr "選擇模板"
+
+#: src/templates/create-new-modal.html:52
+msgid "Adjust the scope and select a category to filter results."
+msgstr "調整篩選範圍並選擇類別以篩選結果。"
+
+#: src/templates/create-new-modal.html:88
+msgid "Search a template..."
+msgstr "搜尋模板…"
+
+#: src/templates/create-new-modal.html:107
+msgid "Create from template"
+msgstr "從模板創建"
+
+#: src/templates/edit-compound-modal.html:53
+msgid "Create resource linked to compound"
+msgstr "創建與化合物關聯的資源"
+
+#: src/templates/edit-compound-modal.html:54
+msgid "Create experiment linked to compound"
+msgstr "創建與化合物相關的實驗"
+
+#: src/templates/edit-user-modal.html:24
+msgid "externally managed"
+msgstr "外部管理"
+
+#: src/templates/edit.html:60
+msgid "The Main Text feature has been disabled. Click the eye icon to re-enable it."
+msgstr "正文功能已停用。點擊眼睛圖示即可重新啟用。"
+
+#: src/templates/edit.html:61 src/templates/view-edit-toolbar.html:308
+msgid "Show main text"
+msgstr "顯示正文"
+
+#: src/templates/edit.html:61 src/templates/view-edit-toolbar.html:308
+msgid "Hide main text"
+msgstr "隱藏正文"
+
+#: src/templates/edit.html:72
+msgid "Main text options"
+msgstr "主要文字選項"
+
+#: src/templates/edit.html:78
+msgid "Switch to markdown editor"
+msgstr "切換到 Markdown 編輯器"
+
+#: src/templates/edit.html:78
+msgid "Switch to rich text editor"
+msgstr "切換到富文本編輯器"
+
+#: src/templates/editusers.html:29
+msgid "Note: new users will need to use the \"Forgot password\" button on the login page to set a password."
+msgstr "注意：新使用者需要使用登入頁面上的「忘記密碼」按鈕來設定密碼。"
+
+#: src/templates/editusers.html:78
+msgid "Internal ID (optional)"
+msgstr "內部 ID（可選）"
+
+#: src/templates/export-menu-dspace-modal.html:6
+#: src/templates/export-menu.html:130
+msgid "Export to DSpace"
+msgstr "匯出到 DSpace"
+
+#: src/templates/export-menu-dspace-modal.html:14
+msgid "Target Collection"
+msgstr "Target Collection"
+
+#: src/templates/export-menu-dspace-modal.html:18
+msgid "Author"
+msgstr "作者"
+
+#: src/templates/export-menu-dspace-modal.html:26
+msgid "Date of Issue"
+msgstr "簽發日期"
+
+#: src/templates/export-menu-dspace-modal.html:30
+msgid "Type"
+msgstr "類型"
+
+#: src/templates/export-menu-dspace-modal.html:34
+msgid "Abstract"
+msgstr "抽象的"
+
+#: src/templates/export-menu-dspace-modal.html:40
+msgid "I accept the DSpace license"
+msgstr "我接受 DSpace 許可協議。"
+
+#: src/templates/field-builder-modal.html:68
+msgid "Compound"
+msgstr "化合物"
+
+#: src/templates/field-builder-modal.html:173
+msgid "Load from a resource template"
+msgstr "從資源模板加載"
+
+#: src/templates/head.html:172 src/templates/head.html:173
+msgid "Create new..."
+msgstr "建立新的..."
+
+#: src/templates/head.html:273
+msgid "Warning: you are using an unsupported browser known to cause issues (Safari). Please use a supported browser (see %sdocumentation%s)."
+msgstr "警告：您正在使用不支援的瀏覽器（Safari），已知瀏覽器會導致問題。請使用受支援的瀏覽器（請參閱 %sdocumentation%s）。"
+
+#: src/templates/idp-certs-modal.html:6
+msgid "Edit IDP associated certificates"
+msgstr "編輯身分提供者關聯的證書"
+
+#: src/templates/idp-certs-modal.html:12
+msgid "Certificates associated with this IDP"
+msgstr "與此識別程式相關的證書"
+
+#: src/templates/idp-certs-modal.html:13
+msgid "A single IDP can have multiple valid certificates at the same time."
+msgstr "單一身分提供者可以同時擁有多個有效憑證。"
+
+#: src/templates/idp-certs-modal.html:19
+msgid "Purpose"
+msgstr "目的"
+
+#: src/templates/idp-certs-modal.html:20
+msgid "Not before"
+msgstr "並非先前"
+
+#: src/templates/idp-certs-modal.html:21
+msgid "Not after"
+msgstr "並非之後"
+
+#: src/templates/idp-certs-modal.html:23
+#: src/templates/idp-endpoints-modal.html:22
+msgid "Modified at"
+msgstr "修改於"
+
+#: src/templates/idp-certs-modal.html:24
+msgid "Fingerprint (sha256)"
+msgstr "指紋（SHA256）"
+
+#: src/templates/idp-certs-modal.html:25
+msgid "Certificate"
+msgstr "證書"
+
+#: src/templates/idp-certs-modal.html:42
+msgid "Add a certificate"
+msgstr "新增證書"
+
+#: src/templates/idp-certs-modal.html:46
+msgid "x509 certificate"
+msgstr "x509證書"
+
+#: src/templates/idp-certs-modal.html:48
+msgid "Paste PEM"
+msgstr "貼上PEM"
+
+#: src/templates/idp-certs-modal.html:51
+msgid "Or upload PEM file"
+msgstr "或上傳PEM文件"
+
+#: src/templates/idp-certs-modal.html:54
+msgid "Save certificate"
+msgstr "儲存證書"
+
+#: src/templates/idp-certs-modal.html:59
+msgid "Delete a certificate"
+msgstr "刪除證書"
+
+#: src/templates/idp-certs-modal.html:63
+msgid "Select a certificate to delete"
+msgstr "選擇要刪除的證書"
+
+#: src/templates/idp-certs-modal.html:66
+msgid "Delete certificate"
+msgstr "刪除證書"
+
+#: src/templates/idp-endpoints-modal.html:6
+msgid "Edit IDP associated endpoints"
+msgstr "編輯身分提供者關聯的端點"
+
+#: src/templates/idp-endpoints-modal.html:12
+msgid "Endpoints associated with this IDP"
+msgstr "與此身分提供者相關的端點"
+
+#: src/templates/idp-endpoints-modal.html:18
+#: src/templates/idp-endpoints-modal.html:54
+msgid "Binding"
+msgstr "結合"
+
+#: src/templates/idp-endpoints-modal.html:19
+msgid "Location"
+msgstr "地點"
+
+#: src/templates/idp-endpoints-modal.html:20
+#: src/templates/idp-endpoints-modal.html:47
+msgid "Service type"
+msgstr "服務類型"
+
+#: src/templates/idp-endpoints-modal.html:40
+msgid "Add an endpoint"
+msgstr "增加一個端點"
+
+#: src/templates/idp-endpoints-modal.html:43
+msgid "Note: use HTTP-POST for SSO and HTTP-Redirect for SLO, they are the only bindings supported by eLabFTW. Only an SSO endpoint is strictly required."
+msgstr "注意：單一登入 (SSO) 請使用 HTTP-POST，單一登入 (SLO) 請使用 HTTP-Redirect，eLabFTW 僅支援這兩種綁定方式。僅需一個 SSO 端點。"
+
+#: src/templates/idp-endpoints-modal.html:45
+msgid "SAML Endpoint"
+msgstr "SAML 端點"
+
+#: src/templates/idp-endpoints-modal.html:49
+msgid "Single Sign-On (SSO)"
+msgstr "單一登入 (SSO)"
+
+#: src/templates/idp-endpoints-modal.html:52
+msgid "Single Log-Out (SLO)"
+msgstr "單點註銷 (SLO)"
+
+#: src/templates/idp-endpoints-modal.html:62
+msgid "Save endpoint"
+msgstr "儲存端點"
+
+#: src/templates/idp-endpoints-modal.html:67
+msgid "Delete an endpoint"
+msgstr "刪除端點"
+
+#: src/templates/idp-endpoints-modal.html:71
+msgid "Select an endpoint to delete"
+msgstr "選擇要刪除的端點"
+
+#: src/templates/idp-endpoints-modal.html:74
+msgid "Delete endpoint"
+msgstr "刪除端點"
+
+#: src/templates/idp-modal.html:26
+msgid "Which attribute should be used for the email?"
+msgstr "電子郵件應該使用哪個屬性？"
+
+#: src/templates/idp-modal.html:29 src/templates/idp-modal.html:36
+#: src/templates/idp-modal.html:43 src/templates/idp-modal.html:50
+#: src/templates/idp-modal.html:57
+msgid "Note: this attribute will not be synchronized from refresh action."
+msgstr "注意：此屬性不會透過刷新操作進行同步。"
+
+#: src/templates/idp-modal.html:33
+msgid "Which attribute should be used for the firstname?"
+msgstr "名字應該使用哪個屬性？"
+
+#: src/templates/idp-modal.html:40
+msgid "Which attribute should be used for the lastname?"
+msgstr "姓氏應該使用哪個屬性？"
+
+#: src/templates/idp-modal.html:47
+msgid "Which attribute should be used for the team name? (optional)"
+msgstr "團隊名稱應該使用哪個屬性？ （可選）"
+
+#: src/templates/idp-modal.html:54
+msgid "Which attribute should be used for the internal id (optional)"
+msgstr "內部 ID 應該使用哪個屬性（可選）"
+
+#: src/templates/ownership-transfer-modal.html:4
+msgid "You are about to transfer ownership of the selected entries to another user. Ownership of the entries and all associated content (including uploads, comments, and links) will be transferred."
+msgstr "您即將把所選條目的所有權轉讓給另一位使用者。條目及其所有相關內容（包括上傳內容、評論和連結）的所有權都將一併轉讓。"
+
+#: src/templates/ownership-transfer-modal.html:6
+msgid "You are about to transfer ownership of this entry to another user. After the transfer, they will become the owner, and you may lose access if you do not have permission to view it."
+msgstr "您即將把此條目的所有權轉讓給其他使用者。轉讓後，該用戶將成為所有者，如果您沒有查看權限，您可能會失去存取權限。"
+
+#: src/templates/ownership-transfer-modal.html:24
+msgid "As an admin, you can select the team associated with the user who will receive ownership. Please note that once transferred to another team, the entry is managed by that team’s administrators."
+msgstr "身為管理員，您可以選擇將所有權授予的使用者所屬的團隊。請注意，一旦轉移到其他團隊，該條目將由該團隊的管理員管理。"
+
+#: src/templates/ownership-transfer-modal.html:41
+msgid "Current owner"
+msgstr "現任所有者"
+
+#: src/templates/ownership-transfer-modal.html:49
+msgid "Select new owner"
+msgstr "選擇新所有者"
+
+#: src/templates/profile.html:334
+msgid "Compounds usage"
+msgstr "化合物用途"
+
+#: src/templates/profile.html:336
+msgid "Generate a CSV export of all compounds linked to experiments you own over a period of time."
+msgstr "產生一份 CSV 文件，其中包含您在一段時間內擁有的所有實驗所關聯的所有化合物。"
+
+#: src/templates/profile.html:349
+msgid "Generate CSV file"
+msgstr "產生 CSV 文件"
+
+#: src/templates/scheduler.html:227
+msgid "Add details (optional)…"
+msgstr "新增詳情（可選）…"
+
+#: src/templates/show-item.html:6
+msgid "Created on"
+msgstr "創建於"
+
+#: src/templates/show.html:23
+msgid "Search in %s"
+msgstr "在 %s 中搜尋"
+
+#: src/templates/show.html:83
+msgid "No category set"
+msgstr "未設定類別"
+
+#: src/templates/show.html:110
+msgid "No status set"
+msgstr "未設定狀態"
+
+#: src/templates/show.html:443
+msgid "Link to a resource"
+msgstr "資源連結"
+
+#: src/templates/steps-edit.html:9
+msgid "Lock / Unlock all steps"
+msgstr "鎖定/解鎖所有步驟"
+
+#: src/templates/sysconfig.html:82
+msgid "Graphics"
+msgstr "圖形"
+
+#: src/templates/sysconfig.html:84
+msgid "Show usage histograms"
+msgstr "顯示使用量直方圖"
+
+#: src/templates/sysconfig.html:87
+msgid "Experiments creation over time"
+msgstr "實驗創建隨時間推移"
+
+#: src/templates/sysconfig.html:89
+msgid "Resources creation over time"
+msgstr "資源隨時間而創造"
+
+#: src/templates/sysconfig.html:91
+msgid "Users creation over time"
+msgstr "用戶創建隨時間推移"
+
+#: src/templates/sysconfig.html:184
+msgid "Users validity date is externally managed: make \"Valid until\" attribute read-only"
+msgstr "使用者有效期限由外部管理：將「有效期至」屬性設為唯讀"
+
+#: src/templates/sysconfig.html:184
+msgid "If you manage the validity date of user accounts externally, enable this option to make this attribute read-only on the user modal window."
+msgstr "如果您在外部管理使用者帳戶的有效期，請啟用此選項，使使用者模態視窗中的此屬性變為唯讀。"
+
+#: src/templates/sysconfig.html:187
+msgid "Message displayed on Admin Panel for all Admins"
+msgstr "管理員面板上顯示的訊息"
+
+#: src/templates/sysconfig.html:211
+msgid "DSpace repository configuration"
+msgstr "DSpace 儲存庫配置"
+
+#: src/templates/sysconfig.html:214
+msgid "Host"
+msgstr "主持人"
+
+#: src/templates/sysconfig.html:217
+msgid "Base URL of your DSpace instance, e.g., https://elab.dspace.org"
+msgstr "您的 DSpace 實例的基本 URL，例如 https://elab.dspace.org"
+
+#: src/templates/sysconfig.html:584
+msgid "File upload configuration"
+msgstr "文件上傳配置"
+
+#: src/templates/sysconfig.html:626
+msgid "Exports configuration"
+msgstr "匯出配置"
+
+#: src/templates/sysconfig.html:629
+msgid "Use S3 for exports"
+msgstr "使用 S3 進行導出"
+
+#: src/templates/sysconfig.html:629
+msgid "Save user created export files to S3"
+msgstr "將使用者建立的匯出檔案儲存到 S3"
+
+#: src/templates/sysconfig.html:630
+msgid "Use a dedicated bucket"
+msgstr "使用專用的儲存槽"
+
+#: src/templates/sysconfig.html:911
+msgid "Edit certificates"
+msgstr "編輯證書"
+
+#: src/templates/sysconfig.html:912
+msgid "Edit endpoints"
+msgstr "編輯端點"
+
+#: src/Elabftw/i18n4Js.php:51
+msgid "Categories"
+msgstr "類別"
+
+#: src/templates/admin.html:91
+msgid "Allow users to create experiments"
+msgstr "允許使用者創建實驗"
+
+#: src/templates/admin.html:103
+msgid "Allow users to create experiments templates"
+msgstr "允許使用者建立實驗模板"
+
+#: src/templates/admin.html:108
+msgid "Allow users to create resources"
+msgstr "允許使用者創建資源"
+
+#: src/templates/admin.html:120
+msgid "Allow users to create resources templates"
+msgstr "允許使用者建立資源模板"
+
+#: src/templates/categories-status-index.macro.html:39
+#: src/templates/categories-status-index.macro.html:40
+msgid "Mark as private"
+msgstr "標記為私有"
+
+#: src/templates/create-new-modal.html:26
+msgid "This option has been disabled by your admin."
+msgstr "此選項已被管理員停用。"
+
+#: src/templates/duplicate-modal.html:23 src/templates/duplicate-modal.html:24
+msgid "Duplicate link to original entry"
+msgstr "重複連結至原條目"
+
+#: src/templates/head.html:231
+msgid "Change theme"
+msgstr "更改主題"
+
+#: src/templates/login-full.html:2
+msgid "You are logged out. Please close your browser to clear cached pages and prevent access to previous content."
+msgstr "您已登出。請關閉瀏覽器以清除快取頁面，並阻止存取先前的內容。"
+
+#: src/templates/pdf.html:99
+msgid "Linked compound"
+msgid_plural "Linked compounds"
+msgstr[0] "連接化合物"
+
+#: src/templates/sysconfig.html:553
+msgid "Set your text here"
+msgstr "在此輸入文字"
+
+#: src/templates/sysconfig.html:1014
+msgid "Synchronize the local teams with the teams sent by LDAP server"
+msgstr "將本機團隊與 LDAP 伺服器發送的團隊同步"
+
+#: src/templates/ucp.html:366
+msgid "Multi-factor authentication secret"
+msgstr "多因素身份驗證金鑰"
+
+#: src/templates/ucp.html:386
+msgid "Multi-factor authentication code"
+msgstr "多因素身份驗證碼"
+
+#: src/templates/ucp.html:482
+msgid "New API key"
+msgstr "新 API 金鑰"

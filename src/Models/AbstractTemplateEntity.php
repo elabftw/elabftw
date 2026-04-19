@@ -22,6 +22,8 @@ use Elabftw\Factories\LinksFactory;
 use Override;
 use PDO;
 
+use function is_int;
+
 /**
  * An entity like Templates or ItemsTypes. Template as opposed to Concrete: Experiments and Items
  */

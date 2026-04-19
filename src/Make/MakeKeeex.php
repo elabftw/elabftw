@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Exceptions\ImproperActionException;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7;
+
+use function sprintf;
 
 /**
  * Keeex a file
@@ -48,7 +50,7 @@ final class MakeKeeex
         $options = array(
             'headers' => array(
                 // add user agent, because we're polite
-                'User-Agent' => 'Elabftw/' . App::INSTALLED_VERSION,
+                'User-Agent' => 'Elabftw/' . BuildInfo::VERSION,
                 // Note: don't send the Content-Type header with 'multipart/form-data' as the boundary will not be properly set
                 // see: https://github.com/guzzle/guzzle/issues/1885
             ),

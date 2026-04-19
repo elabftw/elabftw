@@ -20,6 +20,8 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\TeamsHelper;
 
 use function json_decode;
+use function array_column;
+use function in_array;
 
 /**
  * Determine read and write access for a user and an entity

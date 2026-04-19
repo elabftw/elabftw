@@ -21,6 +21,10 @@ use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+use function _;
+use function setcookie;
+use function time;
+
 /**
  * Login page
  */
@@ -56,6 +60,7 @@ try {
             $MfaHelper = new MfaHelper();
             $mfaQRCodeImageDataUri = $MfaHelper->getQRCodeImageAsDataUri($halfLoggedInUser->userData['email']);
             $mfaNewSecret = $MfaHelper->secret;
+            $App->Session->set('mfa_secret', $mfaNewSecret);
         }
 
         $Response->setContent($App->render('mfa.html', array(

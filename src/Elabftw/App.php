@@ -44,6 +44,9 @@ use function intdiv;
 use function putenv;
 use function setlocale;
 use function textdomain;
+use function array_merge;
+use function bind_textdomain_codeset;
+use function sprintf;
 
 /**
  * This is a super class holding various global objects
@@ -51,13 +54,6 @@ use function textdomain;
 final class App
 {
     use TwigTrait;
-
-    public const string INSTALLED_VERSION = '5.5.0-alpha2';
-
-    // this version format is used to compare with last_seen_version of users
-    // major is untouched, and minor and patch are padded with one 0 each
-    // we should be pretty safe from ever reaching 100 as a minor or patch version!
-    public const int INSTALLED_VERSION_INT = 50500;
 
     /** @psalm-suppress PossiblyUnusedProperty this property is used in twig templates */
     public array $notifsArr = array();

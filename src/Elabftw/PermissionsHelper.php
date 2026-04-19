@@ -20,6 +20,8 @@ use Elabftw\Models\Teams;
 
 use function array_flip;
 use function array_map;
+use function array_key_exists;
+use function json_decode;
 
 /**
  * Help with translation of permission json into meaningful data

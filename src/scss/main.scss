@@ -31,6 +31,27 @@ $theme-colors: (
   .fa { color: var(--chrome-fg) !important; }
 }
 
+.btn-danger-ghost {
+  border: 1px solid var(--dangerred) !important;
+  color: var(--dangerred) !important;
+
+  .fas,
+  .fa {
+    color: var(--dangerred) !important;
+  }
+
+  &:hover {
+    background-color: var(--dangerred);
+    border-color: var(--secondlevel);
+    color: var(--chrome-fg) !important;
+
+    .fas,
+    .fa {
+      color: var(--chrome-fg) !important;
+    }
+  }
+}
+
 $dropdown-link-active-bg: var(--primary);
 /* make the non active link in navbar have slightly more contrast */
 $navbar-dark-color: var(--secondlevel);
@@ -962,11 +983,6 @@ tr:first-child td {
     &:hover:not(.selected) {
       background-color: var(--disabled);
     }
-
-    .relative-moment {
-      color: var(--secondlevel);
-      font-size: 80%;
-    }
   }
 
   /* Make the titles that you can click on to toggle the steps visibly clickable */
@@ -1006,6 +1022,10 @@ tr:first-child td {
   margin-top: 10px;
   overflow: auto;
   padding: 20px;
+
+  &.sm {
+    padding: 12px;
+  }
 }
 
 .box section {
@@ -1033,6 +1053,11 @@ the form-control fails to do that so we do the border ourselves */
 .thumbnail {
   overflow: hidden;
   overflow-wrap: break-word;
+
+  .dropdown button {
+    position: relative;
+    z-index: 10;
+  }
 }
 
 .thumb {
@@ -1403,12 +1428,6 @@ the form-control fails to do that so we do the border ourselves */
   #itemList section {
     break-inside: avoid;
   }
-}
-
-// raise above .viewer-ove
-.thumbnail > .dropdown {
-  position: relative;
-  z-index: 10;
 }
 
 /* icon overlay for uploaded file icons */

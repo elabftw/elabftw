@@ -17,18 +17,22 @@ use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\HashInterface;
 use Elabftw\Services\Filter;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Override;
+
+use function basename;
+use function dirname;
 
 class CreateUpload implements CreateUploadParamsInterface
 {
     public function __construct(
-        private readonly string $realName,
+        protected readonly string $realName,
         protected string $filePath,
         public readonly HashInterface $hasher,
-        private readonly ?string $comment = null,
-        private readonly int $immutable = 0,
-        private readonly State $state = State::Normal,
+        protected readonly ?string $comment = null,
+        protected readonly int $immutable = 0,
+        protected readonly State $state = State::Normal,
     ) {}
 
     #[Override]
@@ -59,7 +63,7 @@ class CreateUpload implements CreateUploadParamsInterface
     }
 
     #[Override]
-    public function getSourceFs(): Filesystem
+    public function getSourceFs(): FilesystemOperator
     {
         return new Filesystem(new LocalFilesystemAdapter(dirname($this->filePath)));
     }

@@ -19,6 +19,7 @@ use Mpdf\Mpdf;
 use Override;
 
 use function dirname;
+use function array_merge;
 
 /**
  * Get an instance of mpdf

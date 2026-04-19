@@ -22,8 +22,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
-use Elabftw\Services\ApiParamsValidator;
+use Elabftw\Params\Guard;
 use Override;
+
+use function array_map;
+use function array_merge;
 
 /**
  * Process a single request targeting multiple entities
@@ -47,8 +50,8 @@ final class Batch extends AbstractRest
             default => null,
         };
         if ($action === Action::UpdateOwner) {
-            ApiParamsValidator::ensureRequiredKeysPresent(array('userid', 'team'), $reqBody);
-            ApiParamsValidator::ensurePositiveInts(array('userid', 'team'), $reqBody);
+            Guard::ensureRequiredKeysPresent(array('userid', 'team'), $reqBody);
+            Guard::ensurePositiveInts(array('userid', 'team'), $reqBody);
         }
         if ($reqBody['items_tags']) {
             $this->processTags($reqBody['items_tags'], new Items($this->requester), $action, $reqBody);

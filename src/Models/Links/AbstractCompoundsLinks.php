@@ -27,6 +27,9 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function _;
+use function sprintf;
+
 /**
  * Compounds linking to entities
  */

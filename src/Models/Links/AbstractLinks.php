@@ -31,6 +31,9 @@ use PDO;
 
 use function intval;
 use function json_encode;
+use function _;
+use function array_all;
+use function sprintf;
 
 /**
  * All about Links
@@ -300,7 +303,7 @@ abstract class AbstractLinks extends AbstractRest
     private function prepareBindExecuteFetch(string $sql): array
     {
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':team_id', $this->Entity->Users->team ?? 0, PDO::PARAM_INT);
+        $req->bindValue(':team_id', $this->Entity->Users->getTeam(), PDO::PARAM_INT);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);

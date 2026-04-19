@@ -24,6 +24,14 @@ use function preg_match;
 use function sodium_crypto_generichash;
 use function sodium_memzero;
 use function unpack;
+use function _;
+use function pack;
+use function random_bytes;
+use function sodium_crypto_pwhash_scryptsalsa208sha256;
+use function sodium_crypto_sign_keypair;
+use function sodium_crypto_sign_publickey;
+use function sodium_crypto_sign_secretkey;
+use function sprintf;
 
 use const SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES;
 use const SODIUM_CRYPTO_SIGN_SECRETKEYBYTES;
@@ -149,7 +157,7 @@ final readonly class MinisignKeys
         $firstLine = sprintf(
             "%selabftw/%d: encrypted secret key %s\n",
             SignatureHelper::UNTRUSTED_COMMENT_PREFIX,
-            App::INSTALLED_VERSION_INT,
+            BuildInfo::VERSION_INT,
             $this->getIdHex(),
         );
         $toEncode = self::SIGNATURE_ALGO . self::KDF_ALGO . self::CKSUM_ALGO . $this->salt;
@@ -171,7 +179,7 @@ final readonly class MinisignKeys
         return sprintf(
             "%selabftw/%d: public key %s\n%s\n",
             SignatureHelper::UNTRUSTED_COMMENT_PREFIX,
-            App::INSTALLED_VERSION_INT,
+            BuildInfo::VERSION_INT,
             $this->getIdHex(),
             Base64::encodeUnpadded(self::SIGNATURE_ALGO . $this->id . $this->pub),
         );

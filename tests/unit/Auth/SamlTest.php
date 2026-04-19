@@ -28,6 +28,8 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
+use function count;
+
 class SamlTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

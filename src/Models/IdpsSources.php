@@ -19,6 +19,7 @@ use Elabftw\Enums\BinaryValue;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\Guard;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\Url2Xml;
 use Elabftw\Services\Xml2Idps;
@@ -26,6 +27,8 @@ use Elabftw\Traits\SetIdTrait;
 use GuzzleHttp\Client;
 use Override;
 use PDO;
+
+use function sprintf;
 
 /**
  * For IDPS sources: .xml urls
@@ -44,7 +47,7 @@ final class IdpsSources extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         $this->requester->isSysadminOrExplode();
-        return $this->create($reqBody['url']);
+        return $this->create(Guard::getNonEmptyStringValueOfRequiredParam('url', $reqBody));
     }
 
     #[Override]

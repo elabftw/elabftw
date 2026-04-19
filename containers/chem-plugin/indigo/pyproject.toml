@@ -1,0 +1,29 @@
+[project]
+name = "indigo"
+version = "0.1.0"
+description = "Indigo API"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "epam-indigo==1.40.0",
+    "flask==3.1.3",
+    "gunicorn==25.1.0",
+    "marshmallow==3.26.2",
+]
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.flake8]
+max-line-length = 79
+extend-ignore = "E203, E501"
+
+[dependency-groups]
+dev = [
+    "black>=26.3.1",
+    "flake8>=7.3.0",
+    "isort>=8.0.1",
+]

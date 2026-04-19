@@ -17,6 +17,9 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\CommentParam;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function count;
+use function sprintf;
+
 class CommentsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

@@ -14,7 +14,10 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\TagParam;
 use Elabftw\Traits\TestsUtilsTrait;
+
+use function count;
 
 class TeamTagsTest extends \PHPUnit\Framework\TestCase
 {
@@ -101,5 +104,17 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $this->assertTrue($this->TeamTags->destroy());
+    }
+
+    public function testDestroyTagFromOtherTeam(): void
+    {
+        $tag = 'cross team test';
+        // create the tag in team 1
+        $id = $this->TeamTags->create(new TagParam($tag));
+        $this->TeamTags->setId($id);
+        // now we try and delete it from team 2
+        new TeamTags($this->getUserInTeam(2, 1), $id)->destroy();
+        // tag has not been destroyed: we can still read it
+        $this->assertSame($tag, $this->TeamTags->readOne()['tag']);
     }
 }

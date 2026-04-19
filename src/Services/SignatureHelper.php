@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\App;
+use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\MinisignKeys;
 use Elabftw\Enums\Meaning;
@@ -21,6 +22,9 @@ use Elabftw\Models\Users\Users;
 use ParagonIE\ConstantTime\Base64;
 
 use function sodium_crypto_generichash;
+use function json_encode;
+use function sodium_crypto_sign_detached;
+use function sprintf;
 
 use const SODIUM_CRYPTO_GENERICHASH_BYTES_MAX;
 use const JSON_THROW_ON_ERROR;
@@ -60,7 +64,7 @@ final class SignatureHelper
             'email' => $this->Users->userData['email'],
             'created_at' => (new DateTimeImmutable())->format(DateTimeImmutable::ATOM),
             'site_url' => Env::asUrl('SITE_URL'),
-            'created_by' => sprintf('eLabFTW %d', App::INSTALLED_VERSION_INT),
+            'created_by' => sprintf('eLabFTW %d', BuildInfo::VERSION_INT),
             'meaning' => $meaning->name,
         );
         $trustedCommentJson = json_encode($trustedCommentArr, JSON_THROW_ON_ERROR);
@@ -70,7 +74,7 @@ final class SignatureHelper
         $firstLine = sprintf(
             "%selabftw/%d: signature from key %s\n",
             self::UNTRUSTED_COMMENT_PREFIX,
-            App::INSTALLED_VERSION_INT,
+            BuildInfo::VERSION_INT,
             $Key->getIdHex(),
         );
 

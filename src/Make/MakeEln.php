@@ -34,6 +34,24 @@ use RuntimeException;
 
 use function array_push;
 use function ksort;
+use function array_column;
+use function array_key_exists;
+use function array_key_first;
+use function array_merge;
+use function array_reduce;
+use function date;
+use function explode;
+use function fclose;
+use function fopen;
+use function hash;
+use function hash_file;
+use function implode;
+use function in_array;
+use function json_decode;
+use function json_encode;
+use function random_bytes;
+use function sprintf;
+use function strtr;
 
 /**
  * Make an ELN archive
@@ -313,7 +331,7 @@ class MakeEln extends AbstractMakeEln
             }
             // add files to archive
             $file['uuid'] = Tools::getUuidv4();
-            $this->addAttachedFileInZip($this->folder . '/' . $file['uuid'], $storageFs->readStream($file['long_name']));
+            $this->addAttachedFileInZip($this->folder . $file['uuid'], $storageFs->readStream($file['long_name']));
         }
         return $filesArr;
     }

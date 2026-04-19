@@ -19,9 +19,12 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\Guard;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
+
+use function sprintf;
 
 /**
  * Signature keys CRUD class
@@ -42,7 +45,7 @@ final class SigKeys extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $key = MinisignKeys::generate($reqBody['passphrase'] ?? throw new ImproperActionException(_('The mandatory "passphrase" parameter was not provided!')));
+        $key = MinisignKeys::generate(Guard::getNonEmptyStringValueOfRequiredParam('passphrase', $reqBody));
 
         $this->destroy();
         $sql = 'INSERT INTO sig_keys (pubkey, privkey, userid) VALUES (:pubkey, :privkey, :userid)';
@@ -93,9 +96,10 @@ final class SigKeys extends AbstractRest
     public function readOne(): array
     {
         $sql = 'SELECT id, pubkey, privkey, created_at, last_used_at, userid, state
-            FROM sig_keys WHERE id = :id';
+            FROM sig_keys WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);

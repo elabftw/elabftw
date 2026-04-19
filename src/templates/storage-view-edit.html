@@ -10,11 +10,11 @@
             <li class='list-group-item countable'>
               <div class='d-flex flex align-items-center'>
                 <div>
-                  <span class='mr-2'><span class='malleableColumn hl-hover-gray p-1 rounded' data-ma-type='number' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}' data-target='qty_stored'>{{ container.qty_stored }}</span> <span class='mr-2'><span class='malleableQtyUnit hl-hover-gray p-1 rounded' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}'>{{ container.qty_unit }}</span> {{ 'in'|trans }} {{ container.full_path }}</span>
+                  <span class='mr-2'><span class='malleableColumn hl-hover-gray p-1 rounded' data-ma-type='float' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}' data-target='qty_stored'>{{ container.qty_stored }}</span></span> <span class='mr-2'><span class='malleableQtyUnit hl-hover-gray p-1 rounded' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}'>{{ container.qty_unit }}</span> {{ 'in'|trans }} {{ container.full_path }}</span>
                 </div>
                 <div class='ml-auto'>
-                  <a href='inventory.php?storage_unit={{ container.storage_id }}' class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-magnifying-glass'></i></a>
-                  <span data-action='destroy-container' data-id='{{ container.id }}' class='hl-hover-gray rounded p-1 ml-auto'><i class='fas fa-trash-alt'></i></span>
+                  <a href='inventory.php?storage_unit={{ container.storage_id }}' class='btn hl-hover-gray rounded p-1 ml-auto' aria-label='{{ 'Go to inventory'|trans }}' title='{{ 'Go to inventory'|trans }}'><i class='fas fa-magnifying-glass'></i></a>
+                  <button type='button' data-action='destroy-container' data-id='{{ container.id }}' class='btn hl-hover-gray rounded p-1 ml-auto' aria-label='{{ 'Delete'|trans }}' title='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
                 </div>
               </div>
             </li>
@@ -25,7 +25,7 @@
     {% endif %}
     {% if not Entity.isReadOnly %}
       <div>
-        <button type='button' title='{{ 'Modify storage'|trans }}' aria-label='{{ 'Modify storage'|trans }}' class='btn btn-ghost my-2' data-action='toggle-modal' data-target='storageModal'>
+        <button type='button' title='{{ 'Add container'|trans }}' aria-label='{{ 'Add container'|trans }}' class='btn btn-ghost my-2' data-action='toggle-modal' data-target='storageModal'>
           <i class='fas fa-fw fa-square-plus mr-2'></i>{{ 'Add container'|trans }}
         </button>
       </div>

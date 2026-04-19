@@ -30,6 +30,10 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 
+use function array_map;
+use function implode;
+use function sprintf;
+
 /**
  * Import an ELN archive
  */

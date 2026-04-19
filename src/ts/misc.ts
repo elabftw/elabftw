@@ -57,8 +57,16 @@ export function relativeMoment(): void {
     if (span.innerText) {
       return;
     }
-    span.innerText = DateTime.fromFormat(span.title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale}).toRelative();
+    span.innerText = toRelative(span.title, locale);
   });
+}
+
+export function toRelative(title: string, locale: string): string {
+  return (
+    DateTime
+      .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale})
+      .toRelative() ?? ''
+  );
 }
 
 // Add a listener for all elements triggered by an event
@@ -188,7 +196,9 @@ export function collectForm(form: HTMLElement): object {
       el.classList.add('border-danger');
       el.focus();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      throw new Error('Invalid input found! Aborting.');
+      // TODO maybe have "Input validation failed" or something more user friendly. That Invalid syntax error is weird.
+      notify.error('invalid-info');
+      throw new Error(i18next.t('invalid-info'));
     }
     let value = el.value;
     if (el.type === 'checkbox') {
@@ -205,7 +215,7 @@ export function collectForm(form: HTMLElement): object {
 export function clearForm(form: HTMLElement): void {
   ['input', 'select', 'textarea'].forEach(inp => {
     form.querySelectorAll(inp).forEach((input: HTMLInputElement) => {
-      if (input.dataset.noBlank !== '1') {
+      if (input.dataset.noBlank !== '1' && input.type !== 'radio') {
         input.value = '';
         if (input.type === 'checkbox') {
           input.checked = false;

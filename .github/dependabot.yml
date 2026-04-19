@@ -4,19 +4,45 @@ updates:
   directory: "/"
   schedule:
     interval: monthly
-    day: friday
-    time: "02:00"
+    day: wednesday
+    time: "06:12"
   open-pull-requests-limit: 10
-  target-branch: master
-  ignore:
-  - dependency-name: snyk
-    versions:
-    - ">= 0"
+  cooldown:
+      default-days: 12
+      semver-major-days: 32
+      semver-minor-days: 24
+      semver-patch-days: 3
 - package-ecosystem: composer
   directory: "/"
   schedule:
     interval: monthly
-    day: friday
-    time: "02:00"
+    day: wednesday
+    time: "06:12"
   open-pull-requests-limit: 10
-  target-branch: master
+  cooldown:
+      default-days: 12
+      semver-major-days: 32
+      semver-minor-days: 24
+      semver-patch-days: 3
+- package-ecosystem: uv
+  schedule:
+    interval: monthly
+    day: wednesday
+    time: "06:12"
+  directory: "/containers/chem-plugin/fingerprinter"
+  cooldown:
+      default-days: 12
+      semver-major-days: 32
+      semver-minor-days: 24
+      semver-patch-days: 3
+- package-ecosystem: uv
+  schedule:
+    interval: monthly
+    day: wednesday
+    time: "06:12"
+  directory: "/containers/chem-plugin/indigo"
+  cooldown:
+      default-days: 12
+      semver-major-days: 32
+      semver-minor-days: 24
+      semver-patch-days: 3

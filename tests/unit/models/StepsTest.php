@@ -15,6 +15,9 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function array_filter;
+use function array_values;
+
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

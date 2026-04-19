@@ -85,6 +85,13 @@ use Override;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 
+use function implode;
+use function in_array;
+use function json_decode;
+use function sprintf;
+use function str_starts_with;
+use function trim;
+
 /**
  * For API V2 requests
  */
@@ -328,7 +335,7 @@ final class Apiv2Controller extends AbstractApiController
                 $this->requester,
                 $this->Request->query->get('scope') === 'team',
             ),
-            ApiEndpoint::Users => new Users($this->id, $this->requester->team, $this->requester),
+            ApiEndpoint::Users => new Users($this->id, $this->requester->getTeam(), $this->requester),
         };
     }
 

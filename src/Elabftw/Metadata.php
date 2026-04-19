@@ -14,12 +14,19 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Exceptions\ImproperActionException;
 
 use function array_column;
 use function array_combine;
 use function count;
 use function json_decode;
 use function json_encode;
+use function _;
+use function array_merge;
+use function in_array;
+use function is_array;
+use function sprintf;
+use function uasort;
 
 final class Metadata
 {
@@ -60,6 +67,14 @@ final class Metadata
         }
         // sort the elements based on the position attribute. If not set, will be at the end.
         $extraFields = $this->metadata[MetadataEnum::ExtraFields->value];
+        if (!is_array($extraFields)) {
+            throw new ImproperActionException('Invalid custom field');
+        }
+        foreach ($extraFields as $key => $field) {
+            if (!is_array($field)) {
+                throw new ImproperActionException(sprintf('Invalid custom field: expected array, got %s', $key));
+            }
+        }
         uasort(
             $extraFields,
             fn(array $a, array $b): int => ($a['position'] ?? 9999) <=> ($b['position'] ?? 9999),
@@ -114,7 +129,13 @@ final class Metadata
      */
     public function blankExtraFieldsValueOnDuplicate(): ?string
     {
-        $extraFields = $this->getExtraFields();
+        try {
+            $extraFields = $this->getExtraFields();
+        } catch (ImproperActionException) {
+            // return the original metadata so no values are lost
+            return json_encode($this->metadata, JSON_THROW_ON_ERROR);
+        }
+
         if (empty($extraFields)) {
             return null;
         }

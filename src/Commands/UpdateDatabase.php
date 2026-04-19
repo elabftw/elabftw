@@ -25,6 +25,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function dirname;
+use function sprintf;
+
 /**
  * Update the database schema
  */

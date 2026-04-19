@@ -18,6 +18,7 @@ use League\Csv\Writer;
 use Override;
 
 use function strlen;
+use function array_keys;
 
 /**
  * Mother class of the Make*Csv services

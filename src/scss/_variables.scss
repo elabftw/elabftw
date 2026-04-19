@@ -36,7 +36,7 @@
 
   --lightgold: #eddec6;
   --gold: #d4ae75;
-  --darkgold: #684e03;
+  --darkgold: #594303;
 
   /* Colors that stay the same in both modes (like navbar) */
   --chrome-bg: #2b2b2b;
@@ -65,15 +65,17 @@
   --lightblue: #003769;
   --darkblue: #2bd8ff;
 
+  --darkred: #ffc1b7;
+  --lightred: #7b1100;
+
   --green: #81c784;
   --lessbrightorange: #e3b341;
   --brightorange: #d18616;
   --orange: #f0883e;
   --mediumyellow: #f2cc60;
 
-  --lightgold: #e3b341;
-  --gold: #c69026;
-  --darkgold: #684e03;
+  --lightgold: #594303;
+  --darkgold: #e3b341;
 }
 
 /* COLORS for specific cases like pdf export (var(--) does not apply) */

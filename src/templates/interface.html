@@ -45,6 +45,39 @@ This page exists to have a single page holding all buttons, links and notificati
   </div>
 </div>
 
+<div class='my-3'>
+  <label for='input-1' class='col-form-label'>An input</label>
+  <div class='input-group'>
+    <input id='input-1' class='form-control' placeholder='Placeholder text'>
+    <div class='input-group-append'>
+      <select class='custom-select brl-none'>
+        <option>Panthère</option>
+        <option>Rose</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<input class='form-control my-2' disabled placeholder='Disabled input' value='Disabled text input'>
+
+
+<div class='my-3'>
+  <label for='select-1' class='col-form-label'>A select</label>
+  <div class='d-flex'>
+    <div class='flex-fill mr-3'>
+      <select id='select-1' class='form-control'>
+        <option>Select</option>
+        <option>An option</option>
+        <option disabled>Disabled option</option>
+      </select>
+    </div>
+
+    <div class='flex-fill'>
+      {% include 'binary-setting.html' with {'label': 'Binary setting', 'slug': 'nope', 'help': 'Help text for binary setting.'} %}
+    </div>
+  </div>
+</div>
+
 {# rating #}
 <span class='rating-show rounded p-1 mr-3'><i class='fas fa-star' title='☻'></i>5</span>
 
@@ -55,16 +88,5 @@ This page exists to have a single page holding all buttons, links and notificati
     <li class='list-group-item'>List-group-item</li>
   </ul>
 </div>
-
-<div class='input-group my-3'>
-  <input class='form-control' placeholder='Placeholder text'>
-  <div class='input-group-append'>
-    <select class='custom-select brl-none'>
-      <option>Panthère</option>
-      <option>Rose</option>
-    </select>
-  </div>
-</div>
-<input class='form-control' disabled placeholder='Disabled input' value='Disabled input'>
 
 {% endblock body %}

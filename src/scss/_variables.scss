@@ -26,7 +26,7 @@
   --lightblue: #c4f9ff;
   --darkblue: #0d5861;
   --lightred: #ffc1b7;
-  --dangerred: #e6614c;
+  --dangerred: #82352b;
   --darkred: #7b1100;
   --green: #54aa08;
   --lessbrightorange: #ffe6b8;
@@ -63,10 +63,11 @@
   --secondary-muted: rgba(146, 146, 146, 0.34);
   --elabblue: #0f94fd;
   --lightblue: #003769;
-  --darkblue: #2bd8ff;
+  --darkblue: #7cddff;
 
   --darkred: #ffc1b7;
   --lightred: #7b1100;
+  --dangerred: #e6614c;
 
   --green: #81c784;
   --lessbrightorange: #e3b341;
@@ -75,7 +76,7 @@
   --mediumyellow: #f2cc60;
 
   --lightgold: #594303;
-  --darkgold: #e3b341;
+  --darkgold: #ecdeab;
 }
 
 /* COLORS for specific cases like pdf export (var(--) does not apply) */

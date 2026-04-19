@@ -159,7 +159,7 @@ hr {
 /* LINKS */
 a,
 .link-like {
-  color: var(--primary);
+  color: var(--elabblue);
   text-decoration: none;
 
   &:hover {
@@ -379,6 +379,21 @@ h5 {
 
   .close {
     color: var(--darkblue);
+    opacity: 1;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--strongest);
+    }
+  }
+
+  a {
+    color: var(--strongest);
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
   }
 }
 
@@ -389,8 +404,22 @@ h5 {
 
   .close {
     color: var(--darkgold);
+    opacity: 1;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--strongest);
+    }
   }
 
+  a {
+    color: var(--strongest);
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .alert-danger {
@@ -400,8 +429,22 @@ h5 {
 
   .close {
     color: var(--darkred);
+    opacity: 1;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--strongest);
+    }
   }
 
+  a {
+    color: var(--strongest);
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .hover-danger:hover {
@@ -833,7 +876,13 @@ tr:first-child td {
   &:hover {
     background-color: var(--thirdlevel);
     border-color: var(--secondlevel);
-    color: var(--chrome-fg);
+    color: var(--white);
+
+    .fas,
+    .far,
+    .fa {
+      color: var(--white);
+    }
   }
 }
 
@@ -849,13 +898,13 @@ tr:first-child td {
 
   &:hover {
     background-color: var(--dangerred);
-    border-color: var(--secondlevel);
+    border-color: var(--dangerred);
     color: var(--chrome-fg);
 
     .fas,
     .far,
     .fa {
-      color: var(--chrome-fg) !important;
+      color: var(--chrome-fg);
     }
   }
 }
@@ -1134,11 +1183,11 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .color-success {
-  color: var(--primary) !important;
+  color: var(--darkblue) !important;
 }
 
 .color-danger {
-  color: var(--dangerred) !important;
+  color: var(--darkred) !important;
 }
 
 .border-danger {
@@ -1146,7 +1195,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .color-warning {
-  color: var(--gold) !important;
+  color: var(--darkgold) !important;
 }
 
 .lh-150 {

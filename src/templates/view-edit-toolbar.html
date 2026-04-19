@@ -171,12 +171,12 @@
 
   {% if mode == 'edit' %}
     {# VIEW button #}
-    <a title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='?mode=view&amp;id={{ Entity.id }}' class='btn btn-primary hl-hover-gray p-2 mr-2  lh-normal border-0'>
+    <button type='button' title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='?mode=view&amp;id={{ Entity.id }}' class='btn btn-primary p-2 mr-2 lh-normal'>
       <i class='fas fa-eye fa-fw'></i>
-    </a>
+    </button>
   {% else %}
     {# EDIT button #}
-    <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn btn-primary hl-hover-gray p-2 mr-2 rounded lh-normal border-0 {{ Entity.isReadOnly ? 'disabled' }}'>
+    <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn btn-primary p-2 mr-2 rounded lh-normal border-0 {{ Entity.isReadOnly ? 'disabled' }}'>
       <i class='fas fa-pencil fa-fw'></i>
     </a>
   {% endif %}

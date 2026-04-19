@@ -855,6 +855,10 @@ tr:first-child td {
 /* make the text of buttons in bold to increase readability */
 .btn {
   font-weight: bold;
+
+  &:hover {
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
+  }
 }
 
 .btn-dropdown-item {
@@ -866,7 +870,27 @@ tr:first-child td {
 .btn-secondary {
   .fas,
   .far,
-  .fa { color: var(--chrome-fg) !important; }
+  .fa { color: var(--chrome-fg); }
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  background-color: var(--mainbackground);
+  color: var(--strongest);
+
+  .fas,
+  .far,
+  .fa {
+    color: var(--strongest);
+  }
+}
+
+.btn-primary:hover {
+  border-color: var(--primary);
+}
+
+.btn-secondary:hover {
+  border-color: var(--secondary);
 }
 
 .btn-ghost {
@@ -1090,12 +1114,20 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .hl-hover-gray:hover {
-  background-color: var(--firstlevel);
-  color: var(--medium);
+  background-color: var(--medium);
+  color: var(--white);
+}
+
+.hl-hover-gray:hover i {
+  color: var(--white);
 }
 
 .hl-hover-superlight:hover {
   background-color: var(--superlight);
+}
+
+.hl-hover-superlight:hover i {
+  color: var(--strongest);
 }
 
 .hl-hover-gray:focus-visible {

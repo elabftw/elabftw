@@ -12,9 +12,18 @@ This page exists to have a single page holding all buttons, links and notificati
 <div class='my-3'>
 <button type='button' class='btn btn-primary'><i class='fas fa-pencil mr-1'></i>Primary button</button>
 <button type='button' class='btn btn-secondary'><i class='fas fa-pencil mr-1'></i>Secondary button</button>
+<a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-primary p-2 mr-2 rounded lh-normal border-0 disabled'>
+  <i class='fas fa-pencil fa-fw mr-1'></i>primary disabled
+</a>
+<a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-secondary p-2 mr-2 rounded lh-normal border-0 disabled'>
+  <i class='fas fa-pencil fa-fw mr-1'></i>secondary disabled
+</a>
 <button type='button' class='btn btn-ghost'><i class='fas fa-pencil mr-1'></i>Ghost button</button>
 <button type='button' class='btn btn-danger-ghost'><i class='fas fa-pencil mr-1'></i>Danger Ghost button</button>
 <button type='button' class='btn btn-neutral'><i class='fas fa-pencil mr-1'></i>Neutral button</button>
+<a title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='#' class='btn btn-primary hl-hover-gray p-2 mr-2  lh-normal border-0'>
+  <i class='fas fa-eye fa-fw mr-1'></i>hl-hover-gray
+</a>
 </div>
 
 {{ 'Informational message %s'|format("<a href='#'>(link)</a>")|raw|msg('ok') }}

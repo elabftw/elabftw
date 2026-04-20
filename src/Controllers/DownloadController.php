@@ -36,6 +36,10 @@ use function dirname;
 use function ob_end_clean;
 use function ob_get_level;
 use function strtolower;
+use function max;
+use function min;
+use function preg_match;
+use function sprintf;
 
 /**
  * To download uploaded files

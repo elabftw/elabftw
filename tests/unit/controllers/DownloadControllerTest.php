@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use function ob_end_clean;
 use function ob_get_contents;
 use function ob_start;
+use function str_repeat;
 
 class DownloadControllerTest extends \PHPUnit\Framework\TestCase
 {

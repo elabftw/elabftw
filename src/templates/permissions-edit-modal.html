@@ -62,8 +62,8 @@
             {% set teamScope = App.Request.query.getInt('team_scope') ?: 1 %}
             <div class='btn-group'>
               <button class='btn color-medium hl-hover-gray dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                <i class='fas fa-fw {{ teamScope == 1 ? 'fa-user' : 'fa-globe' }} mx-1'></i>
                 {{ teamScope == 1 ? 'My teams'|trans : 'All teams'|trans }}
+                <i class='fas fa-fw {{ teamScope == 1 ? 'fa-user' : 'fa-globe' }} mx-1'></i>
               </button>
               <div class='dropdown-menu'>
                 <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>

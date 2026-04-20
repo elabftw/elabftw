@@ -123,7 +123,7 @@ const t = {
     "upload-file-comment": "Dateikommentar",
     "userid": "User-ID",
     "users": "Benutzer",
-    "user-already-added": "User already added",
+    "user-already-added": "User has already been added.",
     "valid-until": "Gültig bis",
     "validated": "Bestätigt",
     "view-template": "Vorlage anschauen",

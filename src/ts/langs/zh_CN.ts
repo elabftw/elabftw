@@ -123,7 +123,7 @@ const t = {
     "upload-file-comment": "文件评论",
     "userid": "用户 ID",
     "users": "用户",
-    "user-already-added": "User already added",
+    "user-already-added": "User has already been added.",
     "valid-until": "有效期至",
     "validated": "已验证",
     "view-template": "查看模板",

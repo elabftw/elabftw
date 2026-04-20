@@ -123,7 +123,7 @@ const t = {
     "upload-file-comment": "Файловый комментарий",
     "userid": "Userid",
     "users": "Пользователи",
-    "user-already-added": "User already added",
+    "user-already-added": "User has already been added.",
     "valid-until": "Годен до",
     "validated": "проверено",
     "view-template": "View template",

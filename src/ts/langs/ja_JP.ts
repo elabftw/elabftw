@@ -123,7 +123,7 @@ const t = {
     "upload-file-comment": "ファイルコメント",
     "userid": "ユーザーID",
     "users": "ユーザー",
-    "user-already-added": "User already added",
+    "user-already-added": "User has already been added.",
     "valid-until": "有効期限",
     "validated": "検証済み",
     "view-template": "テンプレートを確認する",

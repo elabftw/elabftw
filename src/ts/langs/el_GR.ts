@@ -123,7 +123,7 @@ const t = {
     "upload-file-comment": "Σχόλιο αρχείου",
     "userid": "Userid",
     "users": "Χρήστες",
-    "user-already-added": "User already added",
+    "user-already-added": "User has already been added.",
     "valid-until": "Ισχύει έως",
     "validated": "Επικυρώθηκε",
     "view-template": "View template",

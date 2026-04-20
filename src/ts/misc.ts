@@ -190,9 +190,6 @@ export function rebuildTomSelectOptions(
       }));
   }
 
-  ts.clearOptions();
-  ts.clear();
-
   nextOptions.forEach((option) => {
     ts.addOption(option);
   });

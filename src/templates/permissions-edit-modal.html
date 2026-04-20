@@ -59,7 +59,7 @@
           <div class='d-flex justify-content-between align-items-center mb-2'>
             <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
             {# SPECIFIC SCOPE BUTTON FOR TEAMS: Need only 'My teams' or 'All teams' #}
-            {% set teamScope = App.Request.query.getInt('team_scope') ?: 1 %}
+            {% set teamScope = App.Request.query.getInt('team_scope') ?: 3 %}
             <div class='btn-group'>
               <button class='btn color-medium hl-hover-gray dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                 {{ teamScope == 1 ? 'My teams'|trans : 'All teams'|trans }}

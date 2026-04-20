@@ -314,7 +314,7 @@ on('team-scope-change', async (el: HTMLElement) => {
     teams = user.teams;
   } else {
     const allTeams = await ApiC.getJson('teams');
-    teams = allTeams.filter((t) => t.visible === 1);
+    teams = allTeams.filter((t) => t.visible !== 0);
   }
   const select = document.querySelector(`#${identifier}_select_teams`) as HTMLSelectElement;
   if (!select) return;

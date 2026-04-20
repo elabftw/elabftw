@@ -571,12 +571,12 @@ button:disabled {
   }
 }
 
-/* color one row every other row */
-tr:nth-child(even) {
+/* zebra only when the actual table does not have inline background-color */
+table:not([style*='background-color']) > tbody > tr:nth-child(even) {
   background-color: var(--white);
 }
 
-tr:nth-child(odd) {
+table:not([style*='background-color']) > tbody > tr:nth-child(odd) {
   background-color: var(--mainbackground);
 }
 

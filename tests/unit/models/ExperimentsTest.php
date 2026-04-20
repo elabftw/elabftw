@@ -22,7 +22,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
-use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
@@ -34,7 +33,6 @@ use function count;
 use function is_array;
 use function json_decode;
 use function sprintf;
-use function array_column;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {

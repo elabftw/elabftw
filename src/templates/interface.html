@@ -82,7 +82,14 @@ This page exists to have a single page holding all buttons, links and notificati
     </div>
 
     <div class='flex-fill'>
-      {% include 'binary-setting.html' with {'label': 'Binary setting', 'slug': 'nope', 'help': 'Help text for binary setting.'} %}
+      <div class='d-flex justify-content-between'>
+        <label for='binary' class='col-form-label'>Label</label>
+        <label class='switch ucp-align'><span class='sr-only'>Some label</span>
+          <input type='checkbox' autocomplete='off' id='binary'>
+          <span class='slider'></span>
+        </label>
+      </div>
+        <p class='smallgray'>Help text for binary setting.</p>
     </div>
   </div>
 </div>

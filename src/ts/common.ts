@@ -278,14 +278,8 @@ function initPermissionsTomSelects() {
       },
       onItemAdd() { this.setTextboxValue(''); },
     };
-    // only set controlInput if valid
-    if (input instanceof HTMLInputElement && input.id) {
-      config['controlInput'] = `#${CSS.escape(input.id)}`;
-    }
-    // only set dropdownParent if wrapper has id
-    if (wrapper.id) {
-      config['dropdownParent'] = `#${CSS.escape(wrapper.id)}`;
-    }
+    config['controlInput'] = input;
+    config['dropdownParent'] = wrapper;
     new TomSelect(select, config);
   });
 }

@@ -60,7 +60,6 @@
 }
 
 .ts-wrapper {
-  max-width: clamp(var(--breakpoint-sm), 50vw, 90vw);
 
   .ts-control .item {
     background: var(--mainbackground);
@@ -151,18 +150,11 @@
 // team select wrappers for permissions modal
 .team-select-wrapper,
 .teamgroups-select-wrapper {
-  position: relative;
+  position: relative; /* see https://tom-select.js.org/plugins/no-backspace-delete/ */
 
   .ts-control {
-    background: transparent;
-    border: 0;
-    box-shadow: none;
     display: flex;
     flex-wrap: wrap !important;
-
-    .item {
-      white-space: normal;
-    }
   }
 }
 

@@ -276,12 +276,12 @@ function initPermissionsTomSelects() {
         no_backspace_delete: {},
         remove_button: {},
       },
-      onInitialize() { updateVisibility(this) },
+      onInitialize() { updateVisibility(this); },
       onItemAdd() {
         this.setTextboxValue('');
         updateVisibility(this);
       },
-      onItemRemove() { updateVisibility(this) }
+      onItemRemove() { updateVisibility(this); },
     };
     config['controlInput'] = input;
     config['dropdownParent'] = wrapper;

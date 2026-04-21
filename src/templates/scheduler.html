@@ -45,9 +45,9 @@
     {# RIGHT PART: SETTINGS #}
     {# div is necessary to prevent the link being too high, align-self-end to put it at bottom #}
     <div class='align-self-end'>
-      <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0'>
+      <button type='button' class='btn btn-ghost' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' >
         <i class='fas fa-cogs fa-fw'></i>
-      </a>
+      </button>
       <button type='button' data-action='toggle-modal' data-target='schedulerExportsModal' class='btn btn-secondary' aria-label='{{ 'Export'|trans }}' title='{{ 'Export'|trans }}'>
         {{ 'Export'|trans }}
       </button>

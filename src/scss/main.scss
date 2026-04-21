@@ -852,100 +852,6 @@ tr:first-child td {
   background-color: var(--firstlevel);
 }
 
-/* make the text of buttons in bold to increase readability */
-.btn {
-  font-weight: bold;
-
-  &:hover {
-    box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
-  }
-}
-
-.btn-dropdown-item {
-  font-weight: 400;
-  line-height: normal;
-}
-
-.btn-primary,
-.btn-secondary {
-  .fas,
-  .far,
-  .fa { color: var(--chrome-fg); }
-}
-
-.btn-primary:hover,
-.btn-secondary:hover {
-  background-color: var(--mainbackground);
-  color: var(--strongest);
-
-  .fas,
-  .far,
-  .fa {
-    color: var(--strongest);
-  }
-}
-
-.btn-primary:hover {
-  border-color: var(--primary);
-}
-
-.btn-secondary:hover {
-  border-color: var(--secondary);
-}
-
-.btn-ghost {
-  border: 1px solid var(--secondary);
-  color: var(--secondary);
-
-  &:hover {
-    background-color: var(--thirdlevel);
-    border-color: var(--secondlevel);
-    color: var(--white);
-
-    .fas,
-    .far,
-    .fa {
-      color: var(--white);
-    }
-  }
-}
-
-.btn-danger-ghost {
-  border: 1px solid var(--dangerred);
-  color: var(--dangerred);
-
-  .fas,
-  .far,
-  .fa {
-    color: var(--dangerred);
-  }
-
-  &:hover {
-    background-color: var(--dangerred);
-    border-color: var(--dangerred);
-    color: var(--chrome-fg);
-
-    .fas,
-    .far,
-    .fa {
-      color: var(--chrome-fg);
-    }
-  }
-}
-
-.btn-neutral {
-  background-color: var(--superlight);
-  border: 1px solid var(--superlight);
-  color: var(--medium);
-
-  &:hover,
-  &:active,
-  &:focus {
-    background-color: var(--firstlevel);
-    color: var(--mediumstrong);
-  }
-}
-
 /* SIDE PANEL */
 .sidepanel-btn {
   border-radius: 0 5px 5px 0;
@@ -1106,6 +1012,101 @@ the form-control fails to do that so we do the border ourselves */
   width: 100px;
 }
 
+/* make the text of buttons in bold to increase readability */
+.btn {
+  font-weight: bold;
+
+  &:hover {
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
+  }
+}
+
+.btn-dropdown-item {
+  font-weight: 400;
+  line-height: normal;
+}
+
+.btn-primary,
+.btn-secondary {
+  .fas,
+  .far,
+  .fa { color: var(--chrome-fg); }
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  background-color: var(--mainbackground);
+  color: var(--strongest);
+
+  .fas,
+  .far,
+  .fa {
+    color: var(--strongest);
+  }
+}
+
+.btn-primary:hover {
+  border-color: var(--primary);
+}
+
+.btn-secondary:hover {
+  border-color: var(--secondary);
+}
+
+.btn-ghost {
+  border: 1px solid var(--secondary);
+  color: var(--secondary);
+
+  &:hover {
+    background-color: var(--thirdlevel);
+    border-color: var(--secondlevel);
+    color: var(--white);
+
+    .fas,
+    .far,
+    .fa {
+      color: var(--white);
+    }
+  }
+}
+
+.btn-danger-ghost {
+  border: 1px solid var(--dangerred);
+  color: var(--dangerred);
+
+  .fas,
+  .far,
+  .fa {
+    color: var(--dangerred);
+  }
+
+  &:hover {
+    background-color: var(--dangerred);
+    border-color: var(--dangerred);
+    color: var(--chrome-fg);
+
+    .fas,
+    .far,
+    .fa {
+      color: var(--chrome-fg);
+    }
+  }
+}
+
+.btn-neutral {
+  background-color: var(--superlight);
+  border: 1px solid var(--superlight);
+  color: var(--medium);
+
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: var(--firstlevel);
+    color: var(--mediumstrong);
+  }
+}
+
+
 /* highlight on hover: for editable/malleable elements
  * it's $primary but less opaque
  */
@@ -1116,18 +1117,18 @@ the form-control fails to do that so we do the border ourselves */
 .hl-hover-gray:hover {
   background-color: var(--medium);
   color: var(--white);
+  i {
+    color: red ;
+  }
 }
 
-.hl-hover-gray:hover i {
-  color: var(--white);
-}
 
 .hl-hover-superlight:hover {
   background-color: var(--superlight);
+ i {
+  color: var(--strongest);
 }
 
-.hl-hover-superlight:hover i {
-  color: var(--strongest);
 }
 
 .hl-hover-gray:focus-visible {
@@ -2037,4 +2038,30 @@ input:user-invalid {
 .logo-preview svg {
   height: 100px;
   width: 300px;
+}
+
+.malleable {
+  position: relative;
+  display: inline-block;
+  padding-right: 1.2rem;
+  cursor: pointer;
+
+  &::after {
+    content: '\f044'; // fa-pen-to-square
+    font: var(--fa-font-solid);
+    display: inline-block;
+    text-rendering: auto;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
 }

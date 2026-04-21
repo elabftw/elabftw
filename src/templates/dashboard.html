@@ -49,7 +49,7 @@
     </div>
     <div class='list-group mt-1' id='lastModifiedExp'>
       {% for experiment in experimentsArr %}
-        <a href='experiments.php?mode=view&amp;id={{ experiment.id }}' class='list-group-item hl-hover-gray breakable'>
+        <a href='experiments.php?mode=view&amp;id={{ experiment.id }}' class='list-group-item breakable'>
           {%- if experiment.category_title -%}
             <span style='--bg: #{{ experiment.category_color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ experiment.category_title }}</span>
           {%- endif -%}
@@ -97,7 +97,7 @@
     </div>
     <div class='list-group mt-1' id='lastModifiedResources'>
       {% for item in itemsArr %}
-        <a href='database.php?mode=view&amp;id={{ item.id }}' class='list-group-item hl-hover-gray breakable'>
+        <a href='database.php?mode=view&amp;id={{ item.id }}' class='list-group-item breakable'>
           {% if item.category_title %}
             <span style='--bg: #{{ item.category_color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ item.category_title }}</span>
           {% endif %}
@@ -117,7 +117,7 @@
     <hr>
     <div class='list-group mt-1' id='scheduledBookings'>
       {% for booking in bookingsArr %}
-        <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray breakable color-strong'>
+        <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item breakable'>
           {% if booking.items_category_title %}
             <span style='--bg: {{ booking.color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ booking.items_category_title }}</span>
           {% endif %}

@@ -247,10 +247,9 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 
 makeMalleableColumnsGreatAgain();
 
-// TODO: need to svelte all this part later on, tomselects and DOM refreshes from API fetches are a mess
 // selector for all {permission}_select (canread, canwrite, canbook)
 const permissionSelects = document.querySelectorAll<HTMLSelectElement>(
-  '[id$="_select_teamgroups"], [id$="_select_teams"]',
+  '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]'
 );
 
 function initPermissionsTomSelects() {
@@ -262,14 +261,30 @@ function initPermissionsTomSelects() {
     }
     const isTeams = select.id.endsWith('_select_teams');
     const isTeamGroups = select.id.endsWith('_select_teamgroups');
-    if (!isTeams && !isTeamGroups) return;
-    const wrapper = select.closest(isTeams ? '.team-select-wrapper' : '.teamgroups-select-wrapper');
+    const isUsers = select.id.endsWith('_select_users');
+
+    if (!isTeams && !isTeamGroups && !isUsers) return;
+
+    const wrapper = select.closest(
+      isTeams
+        ? '.team-select-wrapper'
+        : isTeamGroups
+          ? '.teamgroups-select-wrapper'
+          : '.users-select-wrapper'
+    );
+
     if (!(wrapper instanceof HTMLElement)) {
       new TomSelect(select, { plugins: ['remove_button', 'clear_button'] });
       return;
     }
-    const input = wrapper.querySelector(isTeams ? '.team-select-input' : '.teamgroups-select-input');
-    // build config for tomselect
+    const input = wrapper.querySelector(
+      isTeams
+        ? '.team-select-input'
+        : isTeamGroups
+          ? '.teamgroups-select-input'
+          : '.users-select-input'
+    );
+
     const config = {
       plugins: {
         clear_button: {},
@@ -285,13 +300,28 @@ function initPermissionsTomSelects() {
     };
     config['controlInput'] = input;
     config['dropdownParent'] = wrapper;
+    if (isUsers) {
+      config['load'] = (query: string, callback) => {
+        if (!query.length) return callback();
+        fetchUsers(query).then(callback).catch(() => callback());
+      };
+    }
     new TomSelect(select, config);
   });
 }
+
 initPermissionsTomSelects();
-// helper to update visibility of selected items in TomSelect divs
+// update visibility of selected items in TomSelect divs
 function updateVisibility(instance) {
   instance.control.style.display = instance.items.length ? 'flex' : 'none';
+}
+
+async function fetchUsers(query: string) {
+  const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
+  return users.map((u: any) => ({
+    value: `user:${u.userid}`,
+    text: `${u.fullname} (${u.email})`,
+  }));
 }
 
 on('team-scope-change', async (el: HTMLElement) => {
@@ -693,43 +723,6 @@ on(Action.Restore, () => {
     .then(() => window.location.href = `?mode=view&id=${entity.id}`);
 });
 
-on('add-user-to-permissions', (el: HTMLElement) => {
-  // collect userid + name + email from input
-  const input = document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement;
-  const userid = parseInt(input.value, 10);
-  if (isNaN(userid)) {
-    notify.error('add-user-error');
-    return;
-  }
-  // split and assign the later part (without 123 in "123 - John Doe (john@email.com)"
-  const [, userLabel] = input.value.split(' - ');
-  // prevent duplicates (optional but recommended)
-  const container = document.getElementById(`${el.dataset.identifier}_list_users`);
-  if (container?.querySelector(`[data-id="${userid}"]`)) {
-    notify.warning('user-already-added');
-    input.value = '';
-    return;
-  }
-  const template = document.getElementById('user-badge-template') as HTMLTemplateElement;
-  const clone = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
-  clone.dataset.id = String(userid);
-  // eye/pencil icon for view/edit rights
-  const icon = clone.querySelector('i.fas') as HTMLElement;
-  // const iconClass = el.dataset.rw === 'canread' ? 'fa-eye' : 'fa-pencil-alt';
-  let iconClass = 'fa-pencil-alt';
-  if (el.dataset.rw === 'canread') {
-    iconClass = 'fa-eye';
-  } else if (el.dataset.rw === 'canbook') {
-    iconClass = 'fa-calendar-plus';
-  }
-  icon.classList.add(iconClass);
-  // set text and clear input
-  const textSpan = clone.querySelector('.user-text') as HTMLElement;
-  textSpan.textContent = userLabel;
-  container?.appendChild(clone);
-  input.value = '';
-});
-
 on('reload-page', () => location.reload());
 on('remove-parent', (el: HTMLElement) => el.parentElement.remove());
 
@@ -741,14 +734,11 @@ on('clear-form', (el: HTMLElement) => {
 
 on('save-permissions', (el: HTMLElement) => {
   const params = {};
-  // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
-  const existingUsers = Array.from(document.getElementById(`${el.dataset.identifier}_list_users`).children)
-    .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
   params[el.dataset.rw] = permissionsToJson(
     ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
       .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
-      .concat(existingUsers),
+      .concat($('#' + el.dataset.identifier + '_select_users').val() as string[]),
   );
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   params[baseSelect.name] = baseSelect.value;

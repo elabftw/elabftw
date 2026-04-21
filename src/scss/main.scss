@@ -343,9 +343,9 @@ h5 {
     display: inline;
 
     button {
+      border-bottom: 6px solid var(--mainbackground);
       font-weight: 500;
       text-transform: uppercase;
-      border-bottom: 6px solid var(--mainbackground);
     }
 
     .selected {

@@ -179,7 +179,7 @@
 
         {# Notification bell #}
         <div class='nav-item dropdown' id='navbarNotifDiv'>
-          <button class='btn nav-link' id='navbarNotifDropdown' type='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}'></i></button>
+          <button class='btn nav-link  {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}' id='navbarNotifDropdown' type='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x'></i></button>
           <div class='dropdown-menu dropdown-menu-right' id='navbar-notif-dropdown'><span class='dropdown-header'>{{ 'Notifications'|trans }}</span>
             {% if App.notifsArr %}
               {% for notif in App.notifsArr %}

@@ -190,9 +190,8 @@ export function rebuildTomSelectOptions(
       }));
   }
 
-  nextOptions.forEach((option) => {
-    ts.addOption(option);
-  });
+  ts.clearOptions();
+  ts.addOptions(nextOptions);
   const validValues = selected.filter((value) =>
     nextOptions.some((option) => option.value === value),
   );

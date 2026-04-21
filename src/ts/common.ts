@@ -249,7 +249,7 @@ makeMalleableColumnsGreatAgain();
 
 // selector for all {permission}_select (canread, canwrite, canbook)
 const permissionSelects = document.querySelectorAll<HTMLSelectElement>(
-  '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]'
+  '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]',
 );
 
 function initPermissionsTomSelects() {
@@ -270,7 +270,7 @@ function initPermissionsTomSelects() {
         ? '.team-select-wrapper'
         : isTeamGroups
           ? '.teamgroups-select-wrapper'
-          : '.users-select-wrapper'
+          : '.users-select-wrapper',
     );
 
     if (!(wrapper instanceof HTMLElement)) {
@@ -282,7 +282,7 @@ function initPermissionsTomSelects() {
         ? '.team-select-input'
         : isTeamGroups
           ? '.teamgroups-select-input'
-          : '.users-select-input'
+          : '.users-select-input',
     );
 
     const config = {
@@ -318,7 +318,7 @@ function updateVisibility(instance) {
 
 async function fetchUsers(query: string) {
   const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
-  return users.map((u: any) => ({
+  return users.map((u) => ({
     value: `user:${u.userid}`,
     text: `${u.fullname} (${u.email})`,
   }));

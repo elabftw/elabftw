@@ -79,6 +79,7 @@
     position: relative;
 
     .ts-control {
+      position: relative;
       color: var(--mediumstrong);
       flex-wrap: nowrap;
       gap: 4px;
@@ -97,12 +98,9 @@
       }
 
       .clear-button {
+        position: absolute;
         background-color: var(--secondlevel);
         color: var(--mediumstrong);
-        position: sticky;
-        right: -2rem;
-        // top attribute not applying
-        transform: translateY(0);
       }
     }
   }
@@ -152,8 +150,12 @@
   position: relative; /* see https://tom-select.js.org/plugins/no-backspace-delete/ */
 
   .ts-control {
-    display: flex;
+    // will appear when at least one item is selected, controlled by js
+    display: none;
     flex-wrap: wrap !important;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
   }
 }
 

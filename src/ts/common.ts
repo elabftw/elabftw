@@ -276,7 +276,19 @@ function initPermissionsTomSelects() {
         no_backspace_delete: {},
         remove_button: {},
       },
-      onItemAdd() { this.setTextboxValue(''); },
+      onItemAdd() {
+        this.setTextboxValue('');
+        // only run when going from 0 -> 1
+        if (this.items.length === 1) {
+          this.control.style.display = 'flex';
+        }
+      },
+      onItemRemove() {
+        // when going from 1 -> 0
+        if (this.items.length === 0) {
+          this.control.style.display = 'none';
+        }
+      }
     };
     config['controlInput'] = input;
     config['dropdownParent'] = wrapper;

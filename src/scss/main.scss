@@ -337,26 +337,15 @@ h5 {
 .tabbed-menu {
   border-bottom: 1px solid var(--firstlevel);
   line-height: 200%;
-  margin: 30px 0 20px;
   padding: 0;
 
   li {
     display: inline;
-    margin: 0;
-    margin-right: 2%;
 
     button {
-      border: 0;
-      border-radius: 0;
-      color: var(--medium);
       font-weight: 500;
-      margin-bottom: 6px;
-      padding: 0;
       text-transform: uppercase;
-
-      &:hover {
-        color: var(--strongest);
-      }
+      border-bottom: 6px solid var(--mainbackground);
     }
 
     .selected {
@@ -1015,6 +1004,10 @@ the form-control fails to do that so we do the border ourselves */
 /* make the text of buttons in bold to increase readability */
 .btn {
   font-weight: bold;
+
+  &:hover {
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
+  }
 }
 
 .btn-dropdown-item {

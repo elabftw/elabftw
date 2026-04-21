@@ -276,19 +276,12 @@ function initPermissionsTomSelects() {
         no_backspace_delete: {},
         remove_button: {},
       },
+      onInitialize() { updateVisibility(this) },
       onItemAdd() {
         this.setTextboxValue('');
-        // only run when going from 0 -> 1
-        if (this.items.length === 1) {
-          this.control.style.display = 'flex';
-        }
+        updateVisibility(this);
       },
-      onItemRemove() {
-        // when going from 1 -> 0
-        if (this.items.length === 0) {
-          this.control.style.display = 'none';
-        }
-      }
+      onItemRemove() { updateVisibility(this) }
     };
     config['controlInput'] = input;
     config['dropdownParent'] = wrapper;
@@ -296,6 +289,10 @@ function initPermissionsTomSelects() {
   });
 }
 initPermissionsTomSelects();
+// helper to update visibility of selected items in TomSelect divs
+function updateVisibility(instance) {
+  instance.control.style.display = instance.items.length ? 'flex' : 'none';
+}
 
 on('team-scope-change', async (el: HTMLElement) => {
   const scope = Number(el.dataset.value);

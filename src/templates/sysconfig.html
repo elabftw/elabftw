@@ -190,14 +190,14 @@
   <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Organization branding'|trans }}</h3>
 
   {% macro logo_block(title, key, svg, darkPreview) %}
-    <h4>{{ title }}
+    <h4>
       <span class='text-nowrap'>
         <button
           data-action='edit-logo'
           data-target='{{ key }}'
           type='button'
           title='{{ 'Edit'|trans }}'
-          class='btn btn-sm hl-hover-gray p-2'
+          class='btn btn-secondary'
           aria-label='{{ 'Edit'|trans }}'
         >
           <i class='fas fa-pencil-alt'></i>
@@ -208,12 +208,12 @@
           data-target='{{ key }}'
           type='button'
           title='{{ 'Restore default'|trans }}'
-          class='btn btn-sm hl-hover-gray p-2'
+          class='btn btn-danger-ghost'
           aria-label='{{ 'Restore default'|trans }}'
         >
           <i class='fas fa-rotate-left'></i>
         </button>
-      </span>
+      </span>{{ title }}
     </h4>
 
     <div class='{{ darkPreview ? 'bg-dark' : '' }} col-md-6 p-3 logo-preview'>
@@ -331,7 +331,7 @@
           {#{% set count = Teams.getStats(team.id) %}#}
             <tr>
               <td>{{ team.id }}</td>
-              <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
+              <td><span class='hl-hover p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
                 {#
                 <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} &ndash;
                 {% trans %}
@@ -343,7 +343,7 @@
                 #}
 
               </td>
-              <td><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='orgid'>{{ team.orgid|default('Not set'|trans) }}</span></td>
+              <td><span class='hl-hover p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='orgid'>{{ team.orgid|default('Not set'|trans) }}</span></td>
               <td>{{ team.created_at }}</td>
               <td>
                 <label class='switch ucp-align'>
@@ -1195,14 +1195,14 @@
               <td>{{ log.body }}</td>
               <td>
                 {%- if log.requester_userid != 0 -%}
-                  <a class='p-1 rounded hl-hover-gray' href='?tab=3&amp;q=&amp;userid={{ log.requester_userid }}'>{{ log.requester_userid }}</a>
+                  <a class='btn btn-ghost' href='?tab=3&amp;q=&amp;userid={{ log.requester_userid }}'>{{ log.requester_userid }}</a>
                 {%- else -%}
                   <span class='p-1'>&ndash;</span>
                 {%- endif -%}
               </td>
               <td>
                 {%- if log.target_userid != 0 -%}
-                  <a class='p-1 rounded hl-hover-gray' href='?tab=3&amp;q=&amp;userid={{ log.target_userid }}'>{{ log.target_userid }}</a>
+                  <a class='btn btn-ghost' href='?tab=3&amp;q=&amp;userid={{ log.target_userid }}'>{{ log.target_userid }}</a>
                 {%- else -%}
                   <span class='p-1'>&ndash;</span>
                 {%- endif -%}

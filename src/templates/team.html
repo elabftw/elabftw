@@ -108,8 +108,8 @@
             {% for req in teamProcurementRequestsArr %}
               <tr>
                 <td class='no-wrap' data-label='{{ 'Resource'|trans }}'>
-                  <a href='/database.php?mode=view&amp;id={{ req.entity_id }}'>
-                    <span class='hl-hover-gray p-2 mr-2 rounded'><i class='fas fa-eye'></i></span>
+                  <a href='/database.php?mode=view&amp;id={{ req.entity_id }}' class='btn btn-ghost mr-2'>
+                    <i class='fas fa-eye'></i>
                   </a>{{ req.entity_title }}</td>
                 {# REQUESTER #}
                 <td data-label='{{ 'Requester'|trans }}'>{{ req.requester_fullname }}</td>
@@ -119,20 +119,13 @@
                 <td data-label='{{ 'Quantity ordered'|trans }}'>{{ req.qty_ordered }}</td>
                 {# TOTAL #}
                 <td data-label='{{ 'Total'|trans }}'>{{ req.total }} {{ req.symbol }}</td>
-                <td data-label='{{ 'Quantity received'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams/current/procurement_requests' data-target='qty_received' data-input-type='number' data-id='{{ req.id }}'>{{ req.qty_received }}</span></td>
-                <td data-label='{{ 'Comment'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn {{ not req.body ? 'font-italic' }}' data-endpoint='teams/current/procurement_requests' data-target='body' data-id='{{ req.id }}'>{{ req.body|default('unset'|trans) }}</span></td>
-                {# hide quote column until it is actually implemented
-                <td data-label='{{ 'Quote'|trans }}'>
-                  <a target='_blank' href='/api/v2/uploads/{{ req.quote }}?format=binary'>
-                    <span class='hl-hover-gray p-1 mr-2 rounded'>{{ req.quote ? "<i class='fas fa-download'></i>" }}</span>
-                  </a>
-                </td>
-                #}
-                <td data-label='{{ 'State'|trans }}'><span class='hl-hover-gray p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
+                <td data-label='{{ 'Quantity received'|trans }}'><span class='hl-hover p-1 rounded malleableColumn' data-endpoint='teams/current/procurement_requests' data-target='qty_received' data-input-type='number' data-id='{{ req.id }}'>{{ req.qty_received }}</span></td>
+                <td data-label='{{ 'Comment'|trans }}'><span class='hl-hover p-1 rounded malleableColumn {{ not req.body ? 'font-italic' }}' data-endpoint='teams/current/procurement_requests' data-target='body' data-id='{{ req.id }}'>{{ req.body|default('unset'|trans) }}</span></td>
+                <td data-label='{{ 'State'|trans }}'><span class='hl-hover p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
                 {# delete will actually cancel it #}
                 <td><span class='sr-only'>{{ 'Actions'|trans }}</span>
                   {% if req.state != enum('Elabftw\\Enums\\ProcurementState').Cancelled.value %}
-                    <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
+                    <button class='btn btn-danger-ghost' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
                       <i class='fas fa-trash-alt'></i>
                     </button>
                 {% endif %}

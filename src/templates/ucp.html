@@ -421,7 +421,7 @@
   <h2 class='p-2 pl-3 section-title mt-4'>{{ 'Signature keys'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5' id='ucp-sigkeys'>
     <div class='dropdown float-right'>
-      <button class='btn p-2 hl-hover-gray' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button'>
+      <button class='btn btn-ghost' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button'>
         <i class='fas fa-ellipsis-v fa-fw'></i>
       </button>
       <div class='dropdown-menu dropdown-menu-right'>
@@ -523,7 +523,7 @@
           <td data-label='{{ 'Permissions'|trans }}'>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
           <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ key.created_at }}'></span></td>
           <td data-label='{{ 'Last used'|trans }}'><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
-          <td><span class='sr-only'>{{ 'Action'|trans }}</span><button type='button' class='btn hl-hover-gray lh-normal border-0 p-2 m-0 my-n2' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
+          <td><span class='sr-only'>{{ 'Action'|trans }}</span><button type='button' class='btn btn-danger-ghost' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
         </tr>
       {% endfor %}
     </tbody>

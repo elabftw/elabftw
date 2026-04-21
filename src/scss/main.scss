@@ -1015,10 +1015,6 @@ the form-control fails to do that so we do the border ourselves */
 /* make the text of buttons in bold to increase readability */
 .btn {
   font-weight: bold;
-
-  &:hover {
-    box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
-  }
 }
 
 .btn-dropdown-item {
@@ -1026,31 +1022,37 @@ the form-control fails to do that so we do the border ourselves */
   line-height: normal;
 }
 
-.btn-primary,
+.btn-primary {
+  .fas,
+  .far,
+  .fa { color: var(--chrome-fg); }
+
+  &:hover {
+    background-color: var(--mainbackground);
+    border-color: var(--primary);
+    color: var(--strongest);
+
+    .fas,
+    .far,
+    .fa { color: var(--primary); }
+  }
+}
+
 .btn-secondary {
   .fas,
   .far,
   .fa { color: var(--chrome-fg); }
-}
 
-.btn-primary:hover,
-.btn-secondary:hover {
-  background-color: var(--mainbackground);
-  color: var(--strongest);
-
-  .fas,
-  .far,
-  .fa {
+  &:hover {
+    background-color: var(--mainbackground);
+    border-color: var(--strongest);
+    border-color: var(--strongest);
     color: var(--strongest);
+
+    .fas,
+    .far,
+    .fa { color: var(--strongest); }
   }
-}
-
-.btn-primary:hover {
-  border-color: var(--primary);
-}
-
-.btn-secondary:hover {
-  border-color: var(--secondary);
 }
 
 .btn-ghost {
@@ -1059,13 +1061,47 @@ the form-control fails to do that so we do the border ourselves */
 
   &:hover {
     background-color: var(--thirdlevel);
-    border-color: var(--secondlevel);
+    border-color: var(--strongest);
     color: var(--white);
 
     .fas,
     .far,
     .fa {
       color: var(--white);
+    }
+  }
+}
+
+.btn-transparent {
+  border: 1px solid var(--mainbackground);
+  color: var(--secondary);
+
+  &:hover {
+    border-color: var(--strongest);
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
+  }
+}
+
+.btn-danger {
+  background-color: var(--lightred);
+  border: 1px solid var(--dangerred);
+  color: var(--chrom-fg);
+
+  .fas,
+  .far,
+  .fa {
+    color: var(--medium);
+  }
+
+  &:hover {
+    background-color: var(--dangerred);
+    border-color: var(--dangerred);
+    color: var(--chrome-fg);
+
+    .fas,
+    .far,
+    .fa {
+      color: var(--chrome-fg);
     }
   }
 }
@@ -1114,34 +1150,19 @@ the form-control fails to do that so we do the border ourselves */
   background-color: rgba(41, 174, 185, 0.5);
 }
 
-.hl-hover-gray:hover {
-  background-color: var(--medium);
-  color: var(--white);
-  i {
-    color: red ;
-  }
-}
-
-
 .hl-hover-superlight:hover {
   background-color: var(--superlight);
- i {
-  color: var(--strongest);
-}
 
-}
+  i {
+    color: var(--strongest);
+  }
 
-.hl-hover-gray:focus-visible {
-  background-color: var(--firstlevel);
-  outline: none;
 }
 
 /* COMMENTS */
 .comment-header {
   background-color: var(--firstlevel);
 }
-
-
 /* END COMMENTS */
 
 @mixin breakable {
@@ -2041,24 +2062,24 @@ input:user-invalid {
 }
 
 .malleable {
-  position: relative;
+  cursor: pointer;
   display: inline-block;
   padding-right: 1.2rem;
-  cursor: pointer;
+  position: relative;
 
   &::after {
     content: '\f044'; // fa-pen-to-square
-    font: var(--fa-font-solid);
     display: inline-block;
-    text-rendering: auto;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    font: var(--fa-font-solid);
     font-size: 0.8rem;
     opacity: 0;
-    transition: opacity 0.15s ease;
     pointer-events: none;
+    position: absolute;
+    right: 0;
+    text-rendering: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: opacity 0.15s ease;
   }
 
   &:hover::after {

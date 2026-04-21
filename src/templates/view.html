@@ -14,7 +14,7 @@
           <span title='{{ 'Custom ID'|trans }}' class='color-medium'>{{ Entity.entityData.custom_id }}</span>
         {% endif %}
          <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
-        <span id='documentTitle' class='breakable {{ not Entity.isReadOnly ? 'malleable-title hl-hover-gray' }} rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
+        <span id='documentTitle' class='breakable {{ not Entity.isReadOnly ? 'malleable-title malleable' }} rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
       </h1>
     </div>
   </div>
@@ -167,15 +167,17 @@
   <div class='mt-2' id='commentsDiv' data-count-for='commentsCount' data-save-hidden='commentsDiv'>
       {% for comment in Entity.entityData.comments %}
         <div class='box countable'>
-          <div class='comment-header text-muted p-2'>
+          <div class='comment-header text-muted p-2 d-flex flex align-items-center'>
+            <div>
             {{ comment.fullname }} {{ 'commented'|trans }}
             <span title='{{ comment.created_at }}' class='relative-moment'></span>
             {% if comment.created_at != comment.modified_at %}
               ({{ 'edited'|trans }} <span title='{{ comment.modified_at }}' class='relative-moment'></span>)
             {% endif %}
+            </div>
             {% if comment.userid == Entity.Users.userData.userid and comment.immutable == 0 %}
-              <button type='button' class='btn float-right lh-normal border-0 m-0 p-2 my-n2 hl-hover-gray' data-action='destroy-comment' data-id='{{ comment.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'>
-                <i class='fas fa-fw fa-trash-alt fa-lg'></i>
+              <button type='button' class='btn btn-danger-ghost ml-auto' data-action='destroy-comment' data-id='{{ comment.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'>
+                <i class='fas fa-fw fa-trash-alt'></i>
               </button>
             {% endif %}
           </div>

@@ -283,14 +283,14 @@
   <div class='d-flex'>
     {# LEFT #}
     <div class='d-flex'>
-      <a title='{{ 'Select all'|trans }}' aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn hl-hover-gray p-2 lh-normal border-0'>
+      <a title='{{ 'Select all'|trans }}' aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn btn-ghost border-0'>
         <i class='far fa-square'></i>
       </a>
-      <a hidden title='{{ 'Invert selection'|trans }}' aria-label='{{ 'Invert selection'|trans }}' data-action='invert-entities-selection' href='#' class='ml-2 btn hl-hover-gray p-2 lh-normal border-0'>
+      <a hidden title='{{ 'Invert selection'|trans }}' aria-label='{{ 'Invert selection'|trans }}' data-action='invert-entities-selection' href='#' class='ml-2 btn btn-ghost border-0'>
         <i class='fas fa-arrows-turn-to-dots'></i>
       </a>
       <div class='vertical-separator'></div>
-      <a title='{{ 'Toggle main text'|trans }}' aria-label='{{ 'Toggle main text'|trans }}' data-action='expand-all-entities' data-status='closed' href='#' class='btn hl-hover-gray p-2 lh-normal border-0'>
+      <a title='{{ 'Toggle main text'|trans }}' aria-label='{{ 'Toggle main text'|trans }}' data-action='expand-all-entities' data-status='closed' href='#' class='btn btn-ghost border-0'>
         <i class='fas fa-maximize'></i>
       </a>
     </div>
@@ -304,7 +304,7 @@
     <div class='vertical-separator'></div>
     <div class='d-flex'>
       {# SWITCH LAYOUT #}
-      <button title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' type='button' class='btn hl-hover-gray p-1 mr-1' data-action='toggle-items-layout'>
+      <button title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' type='button' class='btn btn-ghost border-0 mr-1' data-action='toggle-items-layout'>
         <i class='fas fa-fw fa-list'></i>
         <i class='fas fa-fw fa-table'></i>
       </button>
@@ -313,7 +313,7 @@
     <div class='d-flex'>
       {# ORDER (Sort) #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle hl-hover-gray color-medium' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle btn-ghost border-0' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Sort'|trans }}</h6>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='date-desc'>{{ 'Newest'|trans }}</button>
@@ -339,7 +339,7 @@
       </div>
       {# LIMIT if there is nothing in the query params, take the user configured one #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle hl-hover-gray color-medium' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle btn-ghost border-0' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Results per page'|trans }}</h6>
         {% for option in limitOptions(DisplayParams.limit) %}

@@ -32,11 +32,11 @@
     </div>
 
     <div id='uploadsViewToggler'>
-      <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn btn-ghost border-0' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
+      <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn btn-transparent' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
         <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
         <i class='fas fa-fw fa-table-cells'></i>
       </button>
-      <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn border-0 {{ App.Request.query.has('state') ? 'btn-secondary' : 'btn-ghost' }}' data-action='toggle-uploads-show-archived'>
+      <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn {{ App.Request.query.has('state') ? 'btn-secondary' : 'btn-transparent' }}' data-action='toggle-uploads-show-archived'>
         <i class='fas fa-fw fa-box-archive'></i>
       </button>
     </div>
@@ -71,6 +71,7 @@
             {% for upload in Entity.entityData.uploads %}
               <tr class='countable' id='uploadDiv_{{ upload.id }}'>
                 <td>
+                  {# keep btn-ghost border-0 here because in table with zebra #}
                   <button type='button' class='btn btn-ghost border-0 mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
                     <i class='fas fa-caret-right fa-fw'></i>
                   </button>

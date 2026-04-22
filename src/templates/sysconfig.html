@@ -11,7 +11,7 @@
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='createTeamModalLabel'>{{ 'Create team'|trans }}</h5>
+        <h4 class='modal-title' id='createTeamModalLabel'>{{ 'Create team'|trans }}</h4>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
@@ -62,35 +62,35 @@
 
 {# TAB 1 SERVER #}
 <div data-tabcontent='1' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h2>
   <div class='pl-3 mb-5'>
-    <h4>{{ 'Users'|trans }}</h4>
+    <h3>{{ 'Users'|trans }}</h3>
     <div class='d-flex justify-content-between'>
       <div>{{ 'Teams'|trans }}: {{ info.teams_count }} &ndash; {{ 'Members'|trans }}: {{ info.active_users_count }} &ndash; {% trans %}Experiment{% plural info.experiments_count %}Experiments{% endtrans %}: {{ info.experiments_count }} ({{ info.experiments_timestamped_count }} timestamped) &ndash; {% trans %}Resource{% plural info.items_count %}Resources{% endtrans %}: {{ info.items_count }}</div>
       <div><a href='/api/v2/reports?format=csv&scope=instance' class='btn btn-primary'>{{ 'Get users report'|trans }}</a></div>
     </div>
 
-    <h4>{{ 'Stored containers'|trans }}</h4>
+    <h3>{{ 'Stored containers'|trans }}</h3>
     <div class='d-flex justify-content-between'>
       <div>{{ 'Stored containers: %d bound to experiments and %d bound to resources'|trans|format(containersCount.experiments, containersCount.items) }}</div>
       <div><a href='/api/v2/reports?format=csv&scope=stored_compounds' class='btn btn-primary'>{{ 'Get inventory report'|trans }}</a></div>
     </div>
 
-    <h4>{{ 'Graphics'|trans }}</h4>
+    <h3>{{ 'Graphics'|trans }}</h3>
     <button type='button' class='btn btn-secondary btn-sm' data-action='toggle-histograms' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right'>
       <i class='fas fa-caret-right mr-1'></i>{{ 'Show usage histograms'|trans }}
     </button>
     <div hidden id='histograms'>
-      <h5 class='mt-3'>{{ 'Experiments creation over time'|trans }}</h5>
+      <h4 class='mt-3'>{{ 'Experiments creation over time'|trans }}</h4>
       <div id='histDiv_experiments' class='chart' style='--max: {{ info.experiments_count }};'></div>
-      <h5 class='mt-3'>{{ 'Resources creation over time'|trans }}</h5>
+      <h4 class='mt-3'>{{ 'Resources creation over time'|trans }}</h4>
       <div id='histDiv_items' class='chart' style='--max: {{ info.items_count }};'></div>
-      <h5 class='mt-3'>{{ 'Users creation over time'|trans }}</h5>
+      <h4 class='mt-3'>{{ 'Users creation over time'|trans }}</h4>
       <div id='histDiv_users' class='chart' style='--max: {{ info.all_users_count }};'></div>
     </div>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Settings'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Settings'|trans }}</h2>
   <div class='pl-3'>
 
     <div class='d-flex justify-content-between'>
@@ -132,7 +132,7 @@
   </div>
 
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Revisions system configuration'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Revisions system configuration'|trans }}</h2>
   <div class='pl-3'>
     <div class='d-flex justify-content-between'>
       <label for='max_revisions' class='col-form-label'>{{ 'Maximum number of stored revisions per entry'|trans }}</label>
@@ -156,14 +156,14 @@
     <hr>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Permissions settings'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Permissions settings'|trans }}</h2>
   <div id='permissionsSettingsDiv' class='pl-3'>
     {% for perm in permissions %}
       {% include 'binary-setting.html' with {'label': 'Allow the base permission setting «' ~ perm.toHuman|trans ~ '»', 'slug': perm.configKey} %}
     {% endfor %}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Registration and authentication configuration'|trans }}</h2>
   <div class='pl-3'>
 
     {% include 'binary-setting.html' with {'label': 'Allow anonymous visitors to login and see Public experiments'|trans, 'slug': 'anon_users', 'help': 'This allows users without an account to login into a team and see the experiments with public visibility. It also enables users to share specific entries with a special link.'|trans} %}
@@ -187,10 +187,10 @@
     <hr>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Organization branding'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Organization branding'|trans }}</h2>
 
   {% macro logo_block(title, key, svg, darkPreview) %}
-    <h4>
+    <h3>
       <span class='text-nowrap'>
         <button
           data-action='edit-logo'
@@ -214,7 +214,7 @@
           <i class='fas fa-rotate-left'></i>
         </button>
       </span>{{ title }}
-    </h4>
+    </h3>
 
     <div class='{{ darkPreview ? 'bg-dark' : '' }} col-md-6 p-3 logo-preview'>
       {{ svg|raw }}
@@ -230,7 +230,7 @@
     {{ _self.logo_block('Favicon'|trans, 'favicon_svg', App.Config.configArr.favicon_svg, false) }}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Remote directory configuration'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Remote directory configuration'|trans }}</h2>
   <div class='pl-3'>
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts from remote directory'|trans, 'slug': 'admins_create_users_remote_dir'} %}
 
@@ -248,7 +248,7 @@
     <hr>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'DSpace repository configuration'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'DSpace repository configuration'|trans }}</h2>
   <div class='pl-3' id='dspaceSettings'>
     <div class='d-flex justify-content-between'>
       <label for='dspace_host' class='col-form-label'>DSpace {{ 'Host'|trans }}</label>
@@ -282,7 +282,7 @@
     <hr>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Information'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Information'|trans }}</h2>
   <div class='pl-3'>
     <ul class='list-group'>
       <li class='list-group-item'>{{ 'Operating System'|trans }}: {{ phpInfos.0 }}</li>
@@ -301,7 +301,7 @@
 
 {# TAB 2 TEAMS #}
 <div data-tabcontent='2' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title' id='teamsSectionTitle'>{{ 'Teams list'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title' id='teamsSectionTitle'>{{ 'Teams list'|trans }}</h2>
   <div id='teamsDiv' class='pl-3'>
     <div class='mb-3 d-flex justify-content-between'>
       <p class='col-form-label'>{{ 'This page allows you to edit the teams present on this instance.'|trans }} (<a href='https://doc.elabftw.net/docs/usage/sysadmin-guide#configure-teams-optional' target='_blank' rel='noopener' class='external-link'>{{ 'Documentation'|trans|lower }}</a>)</p>
@@ -376,7 +376,7 @@
 
 {# TAB 4 - Communication #}
 <div data-tabcontent='4' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Announcement'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Announcement'|trans }}</h2>
   <div class='pl-3 mb-5'>
     <label for='announcementInput' class='mb-3'>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</label>
     <div class='input-group'>
@@ -390,7 +390,7 @@
     </div>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Login page announcement'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Login page announcement'|trans }}</h2>
   <div class='pl-3 mb-5'>
     <label for='loginAnnouncementInput' class='mb-3'>{{ 'The following text will be displayed only on the login page.'|trans }}</label>
     <div class='input-group'>
@@ -410,7 +410,7 @@
   {% include 'onboarding-email.html' %}
 
   {# MASS EMAIL #}
-  <h3 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Send a Mass Email'|trans }}</h2>
   <form class='pl-3 mt-2 mb-5' aria-label='{{ 'Send a Mass Email'|trans }}' id='massEmailForm'>
     {{ App.Session.get('csrf')|csrf }}
     <input type='hidden' name='action' value='email'>
@@ -440,7 +440,7 @@
 {# TAB 5 EMAIL #}
 <div data-tabcontent='5' hidden>
   <p>{{ "Without a valid way to send emails, users won't be able to reset their password. It is recommended to create a specific %ssmtp2go.com%s account and add the information here."|trans|format("<a href='https://www.smtp2go.com/?s=eLabFTW'>", "</a>")|raw }}</p>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'E-mail Settings'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'E-mail Settings'|trans }}</h2>
   <div class='pl-3' id='emailSettings'>
 
     <div class='d-flex justify-content-between'>
@@ -492,7 +492,7 @@
   </div>
 
   {# TEST EMAIL #}
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Send a test email'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Send a test email'|trans }}</h2>
   <form class='pl-3' aria-label='{{ 'Send a test email'|trans }}' id='testEmailForm'>
     {{ App.Session.get('csrf')|csrf }}
     <input type='hidden' name='action' value='test'>
@@ -507,7 +507,7 @@
 
 {# TAB 6 SECURITY #}
 <div data-tabcontent='6' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Security Settings'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Security Settings'|trans }}</h2>
   <div class='pl-3 mb-5'>
 
     {% include 'binary-setting.html' with {'label': 'Users need validation by admin after registration'|trans, 'slug': 'admin_validate'} %}
@@ -556,7 +556,7 @@
     <hr>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Bruteforce login protection'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Bruteforce login protection'|trans }}</h2>
   <div id='bruteforceDiv' class='pl-3'>
     <div class='d-flex justify-content-between'>
       <span>{{ '%d users are currently prevented from logging in from unknown devices.'|trans|format(nologinUsersCount) }}</span>
@@ -576,7 +576,7 @@
 <div data-tabcontent='7' hidden>
 
   {% macro policy(title, slug, configArr, devMode) %}
-    <h3 class='mb-3 p-2 pl-3 section-title'>{{ title|trans }}</h3>
+    <h2 class='mb-3 p-2 pl-3 section-title'>{{ title|trans }}</h2>
     <div class='pl-3'>
       <div class='d-flex justify-content-between'>
         <label for='{{ slug }}_name' class='col-form-label'>{{ 'Link name'|trans }}</label>
@@ -608,7 +608,7 @@
 
 {# TAB 8 UPLOADS #}
 <div data-tabcontent='8' hidden>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Information'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Information'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5'>
     {% if uploadsStats.count_null_hash > 0 %}
       {{ 'Warning: %d files are missing a hash value. Fix it with %sbin/console uploads:check%s command.'|format(uploadsStats.count_null_hash, '<code>', '</code>')|msg('warning', false) }}
@@ -620,7 +620,7 @@
     {{ '%d files are stored on local filesystem and %d files are stored on S3.'|trans|format(uploadsStats.count_storage_local, uploadsStats.count_storage_s3) }}
   </div>
 
-  <h3 class='p-2 pl-3 section-title'>{{ 'File upload configuration'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'File upload configuration'|trans }}</h2>
 
   <div class='pl-3 mt-2 mb-5'>
 
@@ -662,7 +662,7 @@
     {% include 'binary-setting.html' with {'label': 'Use S3 Path-Style endpoint'|trans, 'slug': 's3_use_path_style_endpoint'} %}
   </div>
 
-  <h3 class='p-2 pl-3 section-title'>{{ 'Exports configuration'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Exports configuration'|trans }}</h2>
 
   <div class='pl-3 mt-2 mb-5'>
     {% include 'binary-setting.html' with {'label': 'Use S3 for exports'|trans, 'slug': 's3_exports_toggle', 'help': 'Save user created export files to S3'|trans} %}
@@ -699,13 +699,13 @@
 
 {# TAB 9 TIMESTAMP #}
 <div data-tabcontent='9' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Timestamping Configuration'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Timestamping Configuration'|trans }}</h2>
   <div class='pl-3 mb-5'>
     {% include 'ts-config.html' %}
   </div>
 
   {# BLOXBERG #}
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Blockchain timestamp configuration'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Blockchain timestamp configuration'|trans }}</h2>
   <div class='pl-3'>
 
     {% include 'binary-setting.html' with {'label': 'Enable blockchain timestamping with Bloxberg'|trans, 'slug': 'blox_enabled'} %}
@@ -714,7 +714,7 @@
   </div>
 
   {# KEEEX #}
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Keeex configuration'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Keeex configuration'|trans }}</h2>
   <div class='pl-3'>
     <p class='smallgray'>{{ 'Requires a Keeex Fusion daemon running. %sSee documentation%s.'|trans|format("<a href='https://doc.elabftw.net/docs/usage/integrations#keeex'>", "</a>")|raw }}</p>
 
@@ -738,7 +738,7 @@
 
 {# TAB 10 LOCAL AUTH #}
 <div data-tabcontent='10' hidden>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Local authentication configuration'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Local authentication configuration'|trans }}</h2>
   <div class='pl-3 mt-2 mb-5'>
     {% include 'binary-setting.html' with {'label': 'Enable local authentication'|trans, 'slug': 'local_auth_enabled', 'help': 'Toggle local authentication method (email + password). Warning: disabling this method might lock you out!'|trans} %}
     {% include 'binary-setting.html' with {'label': 'Enable local account creation'|trans, 'slug': 'local_register', 'help': 'Allow users to create accounts through the registration page. You probably want to disable this if you use an external authentication/provisioning method.'|trans} %}
@@ -747,7 +747,7 @@
     {% include 'binary-setting.html' with {'label': 'Only allow a Sysadmin to login with local login form'|trans, 'slug': 'local_login_only_sysadmin', 'help': 'Only a Sysadmin account can use the local login regardless if the local login form is hidden or not. Only activate it if you have another authentication method enabled for users.'|trans} %}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Password policy'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Password policy'|trans }}</h2>
   <div class='pl-3'>
     <div class='d-flex justify-content-between'>
       <label for='min_password_length' class='col-form-label'>{{ 'Minimum password length'|trans }}</label>
@@ -787,7 +787,7 @@
     </div>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'General settings'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'General settings'|trans }}</h2>
   <div class='pl-3 mb-5'>
 
     {% include 'binary-setting.html' with {'label': 'Enable SAML authentication'|trans, 'slug': 'saml_toggle'} %}
@@ -796,7 +796,7 @@
 
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Service provider'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Service provider'|trans }}</h2>
   <div class='pl-3 mb-5'>
 
     <div class='d-flex justify-content-between'>
@@ -846,7 +846,7 @@
 
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Teams settings'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Teams settings'|trans }}</h2>
   <div class='pl-3 mb-5'>
 
     {% include 'binary-setting.html' with {'label': 'Fallback to internal id if existing user cannot be matched with email'|trans, 'slug': 'saml_fallback_orgid'} %}
@@ -876,7 +876,7 @@
     <hr>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Security settings'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Security settings'|trans }}</h2>
   <div class='pl-3 mb-5'>
 
     {% for setting in samlSecuritySettings %}
@@ -884,9 +884,9 @@
     {% endfor %}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity providers'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Identity providers'|trans }}</h2>
   <div class='pl-3 mb-5'>
-    <h5 id='addIdpsSourcesInputLabel'>{{ 'Add IDP(s) from URL'|trans }}</h5>
+    <h3 id='addIdpsSourcesInputLabel'>{{ 'Add IDP(s) from URL'|trans }}</h3>
     <p class='smallgray'>{{ 'You can register a remote URL corresponding to an XML metadata file containing a list of IDPs or a single IDP metadata. If Auto-refresh is enabled, the IDPs metadata will be refreshed every 24h automatically.'|trans }}</p>
     <ul class='list-group' id='idpsSourcesDiv'>
       <li class='list-group-item'>
@@ -922,7 +922,7 @@
     </ul>
 
     <div class='my-3'>
-      <h5>{{ 'Add IDP manually'|trans }}</h5>
+      <h3>{{ 'Add IDP manually'|trans }}</h3>
       <p class='col-form-label'>{{ 'You can also add a new IDP manually. A manually added IDP will not have its metadata automatically refreshed.'|trans }}</p>
       {# CREATE NEW BUTTON the div around the button is necessary or the button itself gets resized on small viewports #}
       <div>
@@ -931,20 +931,20 @@
     </div>
 
     <div class='my-3'>
-      <h5>{{ 'IDPs list'|trans }}</h5>
+      <h3>{{ 'IDPs list'|trans }}</h3>
       <p class='col-form-label'>{{ 'Currently %d IDPs are configured.'|trans|format(idpsArr|length) }}</p>
       {% include 'filter-input-snippet.html' with {'target': 'idpsDiv', 'targetType': 'li'} %}
       <ul class='list-group' id='idpsDiv'>
         {% for idp in idpsArr %}
           <li class='list-group-item'>
-            <h4 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button'>
+            <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button'>
               <i class='fas fa-caret-right fa-fw mr-2'></i>
               <label class='switch ucp-align'>
                 <input type='checkbox' autocomplete='off' data-trigger='change' data-model='idps/{{ idp.id }}' data-target='enabled' {{ idp.enabled ? 'checked="checked"' }} id='enabled_{{ idp.id }}'>
                 <span class='slider'></span>
               </label>
               {{ idp.name|upper }} ({{ idp.entityid }})
-            </h4>
+            </h3>
             <div class='pl-3 m-2' hidden>
               <button type='button' class='btn btn-primary' data-action='display-idp-modal' data-id='{{ idp.id }}'>{{ 'Edit'|trans }}</button>
               <button type='button' class='btn btn-primary' data-action='display-idp-certs-modal' data-id='{{ idp.id }}'>{{ 'Edit certificates'|trans }}</button>
@@ -971,7 +971,7 @@
 {# TAB 12 LDAP #}
 <div data-tabcontent='12' id='ldapSettings' hidden>
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/install/post-install/authentication/ldap'>{{ 'Link to documentation'|trans }}</i></a></p>
-  <h3 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'LDAP server configuration'|trans }}</h2>
 
   <div class='pl-3 mt-2 mb-5'>
 
@@ -1033,7 +1033,7 @@
 
   </div>
 
-  <h3 class='p-2 pl-3 section-title'>{{ 'eLabFTW LDAP configuration'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'eLabFTW LDAP configuration'|trans }}</h2>
 
   <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
@@ -1095,7 +1095,7 @@
 
 {# TAB 13 EXTERNAL AUTH #}
 <div data-tabcontent='13' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'External authentication mapping'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'External authentication mapping'|trans }}</h2>
   <div class='pl-3'>
     <p class='smallgray'>{{ 'If authentication is handled by an upstream server, configure here the request headers mappings and behaviors.'|trans }}</p>
 
@@ -1162,12 +1162,12 @@
 
 {# TAB 14: AUDIT LOGS #}
 <div data-tabcontent='14' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs configuration'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs configuration'|trans }}</h2>
   <div class='pl-3 mb-5'>
     {% include 'binary-setting.html' with {'label': 'Emit audit logs with PHP error log'|trans, 'slug': 'emit_audit_logs', 'help': 'Enable to include audit logs events as INFO event in PHP logs.'|trans} %}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs'|trans }}</h2>
   <div class='pl-3 mb-5'>
     <p id='auditLogsTableLabel'>{{ 'This table lists the most recent events recorded in the application and worth keeping a trace of.'|trans }}</p>
     {# Refresh button #}

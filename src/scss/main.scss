@@ -307,17 +307,17 @@ h6,
   margin-top: 0;
 }
 
-h1 { font-size: 200%; }
+h1 { font-size: 180%; }
 
-h2 { font-size: 180%; }
+h2 { font-size: 160%; }
 
-h3 { font-size: 160%; }
+h3 { font-size: 150%; }
 
-h4 { font-size: 150%; }
+h4 { font-size: 140%; }
 
 h5 {
   border-bottom: 0;
-  font-size: 130%;
+  font-size: 120%;
 }
 
 /* HEAD */
@@ -1839,7 +1839,6 @@ input:user-invalid {
 
 .section-title {
   background-color: var(--firstlevel);
-  font-size: 120%;
 }
 
 /* PROFILE page */

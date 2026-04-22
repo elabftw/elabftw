@@ -13,9 +13,9 @@
 
 {# TAB 1 INFORMATION #}
 <div data-tabcontent='1' hidden>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Profile'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Profile'|trans }}</h2>
   <div class='pl-3 mt-2'>
-    <h4>{{ App.Users.userData.fullname }}</h4>
+    <h3>{{ App.Users.userData.fullname }}</h3>
     <p class='smallgray'>{{ App.Users.userData.email }}</p>
 
     <div class='d-flex mb-4'>
@@ -23,7 +23,7 @@
       {# TEAMS #}
       <div class='col-md-6 mr-2 box'>
         <div class='mb-4'>
-          <h5 class='d-inline mr-2'>{{ 'Teams'|trans }}</h5> <span class='counter'>{{ teamsArr|length }}</span>
+          <h4 class='d-inline mr-2'>{{ 'Teams'|trans }}</h4> <span class='counter'>{{ teamsArr|length }}</span>
         </div>
         {% for team in teamsArr %}
           <span class=''>{{ team.name }}</span>
@@ -34,7 +34,7 @@
       {# GROUPS #}
       <div class='col-md-6 box'>
         <div class='mb-4'>
-          <h5 class='d-inline mr-2'>{{ 'Groups'|trans }}</h5> <span class='counter'>{{ teamGroupsArr|length }}</span>
+          <h4 class='d-inline mr-2'>{{ 'Groups'|trans }}</h4> <span class='counter'>{{ teamGroupsArr|length }}</span>
         </div>
         {% for teamGroup in teamGroupsArr %}
           <details>
@@ -56,11 +56,11 @@
         {{ 'No statistics available yet.'|trans }}
       {% else %}
         <div class='mb-4'>
-          <h5 class='d-inline mr-2'>{% trans %}
+          <h4 class='d-inline mr-2'>{% trans %}
               Experiment
               {% plural 2 %}
               Experiments
-              {% endtrans %}</h5> <span class='counter'>{{ count }}</span>
+              {% endtrans %}</h4> <span class='counter'>{{ count }}</span>
         </div>
 
         {# TODO show register date back #}
@@ -90,7 +90,7 @@
 
 {# TAB 2 ATTACHMENTS #}
 <div data-tabcontent='2' hidden>
-  <h3 class='p-2 pl-3 section-title' id='attachedFiles'>{{ 'Attached files'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title' id='attachedFiles'>{{ 'Attached files'|trans }}</h2>
   <div class='pl-3 mt-2'>
     {% set currentLimit = App.Request.query.get('limit')|default(42) %}
     {% set currentOrderBy = App.Request.query.get('order')|default('created_at') %}
@@ -164,7 +164,7 @@
 
 {# TAB 3 IMPORT #}
 <div data-tabcontent='3' hidden>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Import'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Import'|trans }}</h2>
   <div class='pl-3 mt-2'>
     <p class='smallgrey'>
       {{ 'You can import data from a .eln archive or a .csv file. %sSee documentation %s%s.'|trans|format("<a href='https://doc.elabftw.net/docs/usage/import-export' target='_blank' class='external-link' rel='noopener'>", "", '</a>')|raw }}
@@ -271,14 +271,14 @@
 
 {# TAB 4 EXPORT #}
 <div data-tabcontent='4' hidden>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Export'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Export'|trans }}</h2>
   <div class='pl-3 mt-2'>
     <p class='smallgrey'>{{ 'This page allows you to export your data in different formats.'|trans }}</p>
     <div class='mb-4 d-flex flex-row'>
       <button type='button' class='btn btn-primary' data-action='toggle-modal' data-target='exportModal'>{{ 'Create new export'|trans }}</button>
     </div>
 
-    <h4 id='exportedFiles'>{{ 'Exported files'|trans }}</h4>
+    <h3 id='exportedFiles'>{{ 'Exported files'|trans }}</h3>
     {# Refresh button #}
     <div class='text-center'>
       <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-action='reload-on-click' data-target='exportedFilesTable'><i class='fas fa-rotate color-white mr-1'></i>{{ 'Refresh'|trans }}</button>
@@ -327,7 +327,7 @@
     </ul>
   </div>
 
-  <h3 class='p-2 pl-3 section-title' id='compoundsUsageTitle'>{{ 'Compounds usage'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title' id='compoundsUsageTitle'>{{ 'Compounds usage'|trans }}</h2>
   <div class='pl-3 mt-2'>
     <p class='smallgrey'>{{ 'Generate a CSV export of all compounds linked to experiments you own over a period of time.'|trans }}</p>
     <form id='compoundsHistoryForm' aria-labelledby='compoundsUsageTitle'>

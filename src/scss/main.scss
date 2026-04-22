@@ -1034,12 +1034,12 @@ the form-control fails to do that so we do the border ourselves */
   &:hover {
     background-color: var(--thirdlevel);
     border-color: var(--strongest);
-    color: var(--white);
+    color: var(--chrome-fg);
 
     .fas,
     .far,
     .fa {
-      color: var(--white);
+      color: var(--chrome-fg);
     }
   }
 }
@@ -1067,7 +1067,6 @@ the form-control fails to do that so we do the border ourselves */
   }
 }
 
-/* FIXME: in dark mode such buttons with dropdown-toggle class and a caret will make caret invisible on hover */
 .btn-transparent {
   border: 1px solid var(--mainbackground);
   color: var(--secondary);
@@ -1075,13 +1074,20 @@ the form-control fails to do that so we do the border ourselves */
   &:hover {
     border-color: var(--strongest);
     box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
+    color: var(--strongest);
+
+    .fas,
+    .far,
+    .fa {
+      color: var(--strongest);
+    }
   }
 }
 
 .btn-danger {
   background-color: var(--lightred);
   border: 1px solid var(--dangerred);
-  color: var(--chrom-fg);
+  color: var(--chrome-fg);
 
   .fas,
   .far,

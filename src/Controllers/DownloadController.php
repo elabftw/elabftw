@@ -167,24 +167,29 @@ final class DownloadController implements ControllerInterface
         $length = $end - $start + 1;
 
         $Response = new StreamedResponse(fn() => $this->streamRange($filePath, $start, $length), $statusCode);
+        $this->setRangeHeaders($Response, $mime, $length, $statusCode, $start, $end, $fileSize);
 
-        $Response->headers->set('Content-Type', $mime);
-        $Response->headers->set('Content-Length', (string) $length);
-        $Response->headers->set('Accept-Ranges', 'bytes');
+        return $Response;
+    }
+
+    private function setRangeHeaders(StreamedResponse $response, string $mime, int $length, int $statusCode, int $start, int $end, int $fileSize): void
+    {
+        $response->headers->set('Content-Type', $mime);
+        $response->headers->set('Content-Length', (string) $length);
+        $response->headers->set('Accept-Ranges', 'bytes');
+
         if ($statusCode === Response::HTTP_PARTIAL_CONTENT) {
-            $Response->headers->set('Content-Range', sprintf('bytes %d-%d/%d', $start, $end, $fileSize));
+            $response->headers->set('Content-Range', sprintf('bytes %d-%d/%d', $start, $end, $fileSize));
         }
 
         // Preserve existing disposition logic: forceDownload and MIME-based decisions
         $disposition = $this->forceDownload ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE;
-        $dispositionHeader = HeaderUtils::makeDisposition(
+
+        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(
             $disposition,
             $this->realName,
             $this->realNameFallback,
-        );
-        $Response->headers->set('Content-Disposition', $dispositionHeader);
-
-        return $Response;
+        ));
     }
 
     private function resolveRange(Request $request, int $fileSize): array|Response
@@ -196,6 +201,7 @@ final class DownloadController implements ControllerInterface
         $rangeHeader = $request->headers->get('Range');
         if ($rangeHeader !== null && preg_match('/bytes=(\d*)-(\d*)/', $rangeHeader, $matches)) {
             if ($matches[1] === '' && $matches[2] !== '') {
+                // suffix-byte-range: bytes=-N means the last N bytes (RFC 7233)
                 $start = max(0, $fileSize - (int) $matches[2]);
             } else {
                 $start = $matches[1] !== '' ? (int) $matches[1] : 0;

@@ -794,11 +794,6 @@ tr:first-child td {
       color: var(--white);
     }
 
-    .fa-lock {
-      background-color: var(--firstlevel);
-      color: var(--medium);
-    }
-
     &.bgnd-blue {
       background-color: var(--primary);
 
@@ -835,10 +830,6 @@ tr:first-child td {
   top: 0;
   width: 100%;
   z-index: 19850;
-}
-
-.bgnd-gray {
-  background-color: var(--firstlevel);
 }
 
 /* SIDE PANEL */

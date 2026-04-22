@@ -93,7 +93,7 @@
       {% endif %}
       {# lock icon #}
       {% if item.locked %}
-        <div class='btn left-icon mr-1 lh-normal p-2 border-0 bgnd-gray disabled'>
+        <div class='btn btn-secondary left-icon mr-1 disabled'>
           <i class='fas fa-lock fa-fw'></i>
         </div>
       {# deleted entry: show restore icon #}
@@ -114,8 +114,8 @@
           </a>
         {% endif %}
       {% endif %}
-      <button type='button' class='btn btn-neutral mr-2 lh-normal' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
-        <i class='fas fa-caret-right'></i>
+      <button type='button' class='btn btn-neutral mr-2' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
+        <i class='fas fa-caret-right fa-fw'></i>
       </button>
       {# date #}
       <div class='d-flex flex-column small'>

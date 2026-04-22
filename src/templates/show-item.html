@@ -69,7 +69,7 @@
       {% set stepsArr = item.next_step|split('|') %}
       {% set next = stepsArr|first %}
       <p class='item-next my-2'>
-      <span class='to-upper'>{{ 'Next step'|trans }}:</span> {{ next }}
+      <span class='text-uppercase'>{{ 'Next step'|trans }}:</span> {{ next }}
       </p>
     {% endif %}
 

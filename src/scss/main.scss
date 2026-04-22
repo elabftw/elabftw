@@ -919,10 +919,6 @@ tr:first-child td {
   padding-left: 20px;
 }
 
-.to-upper {
-  text-transform: uppercase;
-}
-
 /* for steps highlight, because .active only works on list-group-item */
 .highlighted {
   border: 1px solid var(--primary);

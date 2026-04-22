@@ -1,6 +1,6 @@
 {% include 'edit-user-modal.html' %}
 <div>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Users list'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Users list'|trans }}</h2>
   <div class='pl-3'>
     <div class='d-flex justify-content-between align-items-baseline'>
       <p>{{ 'Double-click a row in the table below to edit user.'|trans }}</p>
@@ -23,7 +23,7 @@
 
 {% if App.Config.configArr.admins_create_users or App.Request.getScriptName|split('/')|last == 'sysconfig.php' %}
 {# CREATE USER ACCOUNT #}
-<h3 class='my-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h3>
+<h2 class='my-3 p-2 pl-3 section-title'>{{ 'Add account'|trans }}</h2>
 <div class='pl-3'>
   {% if App.Config.configArr.saml_toggle == '0' and App.Config.configArr.ldap_toggle == '0' %}
     <p class='smallgray'>{{ 'Note: new users will need to use the "Forgot password" button on the login page to set a password.'|trans }}</p>
@@ -86,7 +86,7 @@
     </div>
   </form>
   <div hidden class='box mb-3' id='archivedUsersFound'>
-    <i class='fas fa-warning mr-1'></i><h5 class='d-inline'>{{ 'Found archived users with same email address:'|trans }}</h5>
+    <i class='fas fa-warning mr-1'></i><h4 class='d-inline'>{{ 'Found archived users with same email address:'|trans }}</h4>
     <ul id='archivedUsersFoundList' class='list-group mt-2'>
     </ul>
     <div class='text-center mt-2'>
@@ -98,7 +98,7 @@
 
 {% if App.Config.configArr.admins_create_users_remote_dir %}
   {# CREATE USER ACCOUNT through remote API call #}
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account from external directory'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Add account from external directory'|trans }}</h2>
   <div class='pl-3'>
     <form method='GET'>
       <input type='hidden' name='tab' value='3' />

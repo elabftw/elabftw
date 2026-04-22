@@ -210,23 +210,28 @@ if (window.location.pathname === '/scheduler.php') {
       const opt = selectInput.querySelector(`option[value="${id}"]`) as HTMLOptionElement;
       if (!opt) return;
 
+      const colorCircle = document.createElement('i');
+      colorCircle.classList.add('fas', 'fa-circle');
+      const rawColor = opt.dataset.color;
+      const categoryColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor || 'fff'}`;
+      colorCircle.style.color = categoryColor;
       const badge = document.createElement('span');
+      badge.appendChild(colorCircle);
       badge.className = 'selected-item-badge';
       const link = document.createElement('a');
       link.textContent = opt.textContent;
-      link.className = 'always-white';
       link.href = `database.php?mode=view&id=${encodeURIComponent(id)}`;
       link.target = '_blank';
       link.rel = 'noopener';
-      const rawColor = opt.dataset.color;
-      badge.style.setProperty('--badge-color', rawColor?.startsWith('#') ? rawColor : `#${rawColor || '888'}`);
+      // firstlevel
+      badge.style.setProperty('--badge-color', '#dbdbdb');
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.ariaLabel = i18next.t('filter-delete-warning');
       removeBtn.className = 'ml-2 close';
       const removeBtnIcon = document.createElement('i');
-      removeBtnIcon.classList.add('fas', 'fa-xmark', 'fa-fw', 'color-white');
+      removeBtnIcon.classList.add('fas', 'fa-xmark', 'fa-fw');
       removeBtn.appendChild(removeBtnIcon);
 
       badge.append(link, removeBtn);

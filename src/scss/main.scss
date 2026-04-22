@@ -1067,6 +1067,7 @@ the form-control fails to do that so we do the border ourselves */
   }
 }
 
+/* FIXME: in dark mode such buttons with dropdown-toggle class and a caret will make caret invisible on hover */
 .btn-transparent {
   border: 1px solid var(--mainbackground);
   color: var(--secondary);

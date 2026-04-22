@@ -130,6 +130,8 @@ if (mode === 'edit') {
       content = '<img src="' + url + '" />';
     }
     editor.setContent(content);
+    // save to prevent destroy/archive actions on the uploads before they're considered part of the body
+    updateEntityBody();
   });
   on('insert-video-in-body', (el: HTMLElement) => {
     // link to the video file
@@ -181,6 +183,7 @@ if (mode === 'edit') {
       const formData = new FormData(formElement);
       // prevent the browser from redirecting us
       formData.set('extraParam', 'noRedirect');
+      formData.append('action', Action.Replace);
       fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${el.dataset.uploadid}`, {
         method: 'POST',
         body: formData,

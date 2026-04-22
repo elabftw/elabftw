@@ -113,6 +113,19 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test.json', $targetArr[0]['real_name']);
     }
 
+    public function testDuplicateOne(): void
+    {
+        $Uploads = new Uploads($this->Entity);
+        $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Uploads->setId($id);
+        $longName = $Uploads->uploadData['long_name'];
+        $duplicate = $Uploads->postAction(Action::Duplicate, $Uploads->uploadData);
+        $Uploads->setId($duplicate);
+        $this->assertNotEquals($id, $Uploads->uploadData['id']);
+        $this->assertSame('example.png', $Uploads->uploadData['real_name']);
+        $this->assertNotEquals($longName, $Uploads->uploadData['long_name']);
+    }
+
     public function testUploadingPhpFile(): void
     {
         $this->expectException(ImproperActionException::class);

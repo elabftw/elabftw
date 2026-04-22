@@ -365,13 +365,13 @@
   <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchStatusDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
   <div hidden class='mt-2' id='batchStatusDiv'>
   {% for status in itemsStatusArr %}
-    <button type='button' class='btn btn-ghost'>
+    <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
       <label for='batch-itemsStatus-{{ status.id }}' class='col-form-label clickable'>{{ status.title }}</label>
       <label class='switch ucp-align'><span class='sr-only'>{{ status.title }}</span>
         <input type='checkbox' name='items_status' value='{{ status.id }}' autocomplete='off' data-action='update-counter-value' id='batch-itemsStatus-{{ status.id }}'>
         <span class='slider'></span>
       </label>
-    </button>
+    </div>
   {% endfor %}
   </div>
   <hr>
@@ -380,14 +380,14 @@
   <div hidden class='mt-2' id='batchTagsDiv'>
     {# for this tab, sort the tags in alphabetical order, case-insensitive #}
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
-      <button type='button' class='btn btn-ghost'>
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
         <label for='batch-itemsTags-{{ tag.id }}' class='col-form-label clickable'>{{ tag.tag }}</label>
         <label class='switch ucp-align'><span class='sr-only'>{{ tag.tag }}</span>
 
           <input type='checkbox' name='items_tags' value='{{ tag.id }}' autocomplete='off' data-action='update-counter-value' id='batch-itemsTags-{{ tag.id }}'>
           <span class='slider'></span>
         </label>
-      </button>
+      </div>
     {% endfor %}
   </div>
   <hr>
@@ -395,13 +395,13 @@
   <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchExpCatDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
   <div hidden class='mt-2' id='batchExpCatDiv'>
     {% for experimentsCategory in App.experimentsCategoryArr %}
-      <button type='button' class='btn btn-ghost'>
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
         <label for='batch-experimentsCategories-{{ experimentsCategory.id }}' class='col-form-label clickable'>{{ experimentsCategory.title }}</label>
         <label class='switch ucp-align'><span class='sr-only'>{{ experimentsCategory.title }}</span>
           <input type='checkbox' name='experiments_categories' value='{{ experimentsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsCategories-{{ experimentsCategory.id }}'>
           <span class='slider'></span>
         </label>
-      </button>
+      </div>
     {% endfor %}
   </div>
   <hr>
@@ -409,13 +409,13 @@
   <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchExpStatusDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
   <div hidden class='mt-2' id='batchExpStatusDiv'>
     {% for status in statusArr %}
-      <button type='button' class='btn btn-ghost'>
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
         <label for='batch-experimentsStatus-{{ status.id }}' class='col-form-label clickable'>{{ status.title }}</label>
         <label class='switch ucp-align'><span class='sr-only'>{{ status.title }}</span>
           <input type='checkbox' name='experiments_status' value='{{ status.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsStatus-{{ status.id }}'>
           <span class='slider'></span>
         </label>
-      </button>
+      </div>
     {% endfor %}
   </div>
   <hr>
@@ -423,13 +423,13 @@
   <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchExpTagsDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
   <div hidden class='mt-2' id='batchExpTagsDiv'>
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
-      <button type='button' class='btn btn-ghost'>
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
         <label for='batch-experimentsTags-{{ tag.id }}' class='col-form-label clickable'>{{ tag.tag }}</label>
         <label class='switch ucp-align'><span class='sr-only'>{{ tag.tag }}</span>
           <input type='checkbox' name='experiments_tags' value='{{ tag.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsTags-{{ tag.id }}'>
           <span class='slider'></span>
         </label>
-      </button>
+      </div>
     {% endfor %}
   </div>
   <hr>
@@ -438,13 +438,13 @@
   <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batch{{ param }}Div' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
   <div hidden class='mt-2' id='batch{{ param }}Div'>
     {% for user in users %}
-      <button type='button' class='btn btn-ghost'>
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
         <label for='batch-{{ param }}-{{ user.userid }}' class='col-form-label clickable'>{{ user.fullname }} ({{ user.email }})</label>
         <label class='switch ucp-align'><span class='sr-only'>{{ user.fullname }}</span>
           <input type='checkbox' name='{{ param }}' value='{{ user.userid }}' autocomplete='off' data-action='update-counter-value' id='batch-{{ param }}-{{ user.userid }}'>
           <span class='slider'></span>
         </label>
-      </button>
+      </div>
     {% endfor %}
   </div>
   <hr>

@@ -2,21 +2,19 @@
 
 {% block body %}
 <ul class='tabbed-menu'>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Members'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'Email'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Procurement requests'|trans }}</button><span class='beta'>beta</span></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='1'>{{ 'Members'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='2'>{{ 'Email'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='3'>{{ 'Procurement requests'|trans }}</button><span class='beta'>beta</span></li>
 </ul>
 
 {% include 'loading-spinner.html' %}
 
 {# TAB 1 MEMBERS #}
 <div data-tabcontent='1' hidden>
-  <div class='alert alert-success'><i class='fas fa-info-circle fa-fw color-success'></i>
-  {{ 'You belong to the %s team.'|trans|format(App.Teams.teamArr.name) }}
-  {{ 'Members'|trans }}: {{ teamsStats.active_users_count }} &ndash; {% trans %}Experiment{% plural teamsStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {% trans %}Resource{% plural teamStats.totdb %}Resources{% endtrans %}: {{ teamsStats.totdb }}
-  </div>
+  <h2 class='p-2 pl-3 mb-3 section-title'>{{ App.Teams.teamArr.name }}</h2>
+    {{ 'Members'|trans }}: {{ teamsStats.active_users_count }} &ndash; {% trans %}Experiment{% plural teamsStats.totxp %}Experiments{% endtrans %}: {{ teamsStats.totxp }} ({{ teamsStats.totxpts }} timestamped) &ndash; {% trans %}Resource{% plural teamStats.totdb %}Resources{% endtrans %}: {{ teamsStats.totdb }}
 
-  <h3 class='p-2 pl-3 mb-3 section-title'>{{ 'Members'|trans }}</h3>
+  <h2 class='p-2 pl-3 mb-3 mt-3 section-title'>{{ 'Members'|trans }}</h2>
   {% include 'filter-input-snippet.html' with {'target': 'teamTable'} %}
   <div class='table-container'>
     <table class='table' aria-describedby='pageTitle' data-table-sort='true'>
@@ -52,7 +50,7 @@
 
 {# TAB 2 EMAIL #}
 <div data-tabcontent='2' hidden>
-  <h3 class='p-2 pl-3 mb-3 section-title'>{{ 'Send an email to users'|trans }}</h3>
+  <h2 class='p-2 pl-3 mb-3 section-title'>{{ 'Send an email to users'|trans }}</h2>
   <form class='pl-3' id='emailTeamForm' aria-label='{{ 'Mass email form'|trans }}'>
     <label>{{ 'Send to'|trans }}</label>
     <div class='form-check'>
@@ -77,7 +75,7 @@
 
 {# TAB 3 PROCUREMENT REQUESTS #}
 <div data-tabcontent='3' hidden>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Procurement requests'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Procurement requests'|trans }}</h2>
   <div class='pl-3 my-2'>
     {% if teamProcurementRequestsArr %}
       {# DOWNLOAD as CSV #}
@@ -108,8 +106,8 @@
             {% for req in teamProcurementRequestsArr %}
               <tr>
                 <td class='no-wrap' data-label='{{ 'Resource'|trans }}'>
-                  <a href='/database.php?mode=view&amp;id={{ req.entity_id }}'>
-                    <span class='hl-hover-gray p-2 mr-2 rounded'><i class='fas fa-eye'></i></span>
+                  <a href='/database.php?mode=view&amp;id={{ req.entity_id }}' class='btn btn-ghost mr-2'>
+                    <i class='fas fa-eye'></i>
                   </a>{{ req.entity_title }}</td>
                 {# REQUESTER #}
                 <td data-label='{{ 'Requester'|trans }}'>{{ req.requester_fullname }}</td>
@@ -119,20 +117,13 @@
                 <td data-label='{{ 'Quantity ordered'|trans }}'>{{ req.qty_ordered }}</td>
                 {# TOTAL #}
                 <td data-label='{{ 'Total'|trans }}'>{{ req.total }} {{ req.symbol }}</td>
-                <td data-label='{{ 'Quantity received'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn' data-endpoint='teams/current/procurement_requests' data-target='qty_received' data-input-type='number' data-id='{{ req.id }}'>{{ req.qty_received }}</span></td>
-                <td data-label='{{ 'Comment'|trans }}'><span class='hl-hover-gray p-1 rounded malleableColumn {{ not req.body ? 'font-italic' }}' data-endpoint='teams/current/procurement_requests' data-target='body' data-id='{{ req.id }}'>{{ req.body|default('unset'|trans) }}</span></td>
-                {# hide quote column until it is actually implemented
-                <td data-label='{{ 'Quote'|trans }}'>
-                  <a target='_blank' href='/api/v2/uploads/{{ req.quote }}?format=binary'>
-                    <span class='hl-hover-gray p-1 mr-2 rounded'>{{ req.quote ? "<i class='fas fa-download'></i>" }}</span>
-                  </a>
-                </td>
-                #}
-                <td data-label='{{ 'State'|trans }}'><span class='hl-hover-gray p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
+                <td data-label='{{ 'Quantity received'|trans }}'><span class='hl-hover p-1 rounded malleableColumn' data-endpoint='teams/current/procurement_requests' data-target='qty_received' data-input-type='number' data-id='{{ req.id }}'>{{ req.qty_received }}</span></td>
+                <td data-label='{{ 'Comment'|trans }}'><span class='hl-hover p-1 rounded malleableColumn {{ not req.body ? 'font-italic' }}' data-endpoint='teams/current/procurement_requests' data-target='body' data-id='{{ req.id }}'>{{ req.body|default('unset'|trans) }}</span></td>
+                <td data-label='{{ 'State'|trans }}'><span class='hl-hover p-1 rounded malleableState' data-id='{{ req.id }}'>{{ req.state_human }}</span></td>
                 {# delete will actually cancel it #}
                 <td><span class='sr-only'>{{ 'Actions'|trans }}</span>
                   {% if req.state != enum('Elabftw\\Enums\\ProcurementState').Cancelled.value %}
-                    <button class='btn hl-hover-gray p-1 rounded hover-danger lh-normal' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
+                    <button class='btn btn-danger-ghost' title='{{ 'Cancel order'|trans }}' data-action='cancel-procurement-request' aria-label='{{ 'Cancel order'|trans }}' type='button' data-id='{{ req.id }}'>
                       <i class='fas fa-trash-alt'></i>
                     </button>
                 {% endif %}

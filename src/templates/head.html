@@ -73,7 +73,7 @@
                   <div class='input-group'>
                     <input id='nav-search-experiments' class='form-control' type='search' name='q' placeholder='{{ 'Search'|trans }}' aria-label='{{ 'Search'|trans }}' />
                     <div class='input-group-append'>
-                      <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
+                      <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass' aria-hidden='true'></i></button>
                     </div>
                   </div>
                 </form>
@@ -110,7 +110,7 @@
                   <div class='input-group'>
                     <input id='nav-search-resources' class='form-control' type='search' name='q' placeholder='{{ 'Search'|trans }}' />
                     <div class='input-group-append'>
-                      <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass color-white' aria-hidden='true'></i></button>
+                      <button type='submit' class='btn btn-sm btn-primary' aria-label='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass' aria-hidden='true'></i></button>
                     </div>
                   </div>
                 </form>
@@ -179,7 +179,7 @@
 
         {# Notification bell #}
         <div class='nav-item dropdown' id='navbarNotifDiv'>
-          <button class='btn nav-link' id='navbarNotifDropdown' type='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}'></i></button>
+          <button class='btn nav-link {{ App.notifsArr|filter(n => n.is_ack == 0)|length ? 'active' }}' id='navbarNotifDropdown' type='button' aria-label='{{ 'Notifications'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-bell fa-2x'></i></button>
           <div class='dropdown-menu dropdown-menu-right' id='navbar-notif-dropdown'><span class='dropdown-header'>{{ 'Notifications'|trans }}</span>
             {% if App.notifsArr %}
               {% for notif in App.notifsArr %}
@@ -217,7 +217,7 @@
         {# User dropdown #}
         <div class='nav-item dropdown'>
           <button class='btn nav-link border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><span class='initials'>{{ App.Users.userData.initials }}</span></button>
-          <div class='dropdown-menu dropdown-menu-right'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.Teams.teamArr.name }}</h6>
+          <div class='dropdown-menu dropdown-menu-right'><div class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.Teams.teamArr.name }}</div>
             {% if App.Users.userData.teams|default([])|length > 1 %}
               <a href='login.php?switch_team=1' class='dropdown-item'><i class='fas fa-repeat fa-fw'></i> {{ 'Switch team'|trans }}</a>
             {% endif %}
@@ -248,8 +248,8 @@
     {% include 'create-new-modal.html' %}
   {% else %} {# not auth #}
     <div class='nav-item ml-auto'>
-      <a href='#' class='always-white hl-hover-gray p-2 rounded' data-action='toggle-modal' data-target='selectLanguageModal'>
-        <i title='Select language' class='fas fa-language fa-lg always-white mr-2'></i>{{ 'Select language'|trans }}
+      <a href='#' class='btn btn-ghost-chrome-inverted' data-action='toggle-modal' data-target='selectLanguageModal'>
+        <i title='Select language' class='fas fa-language fa-lg mr-2'></i>{{ 'Select language'|trans }}
       </a>
     </div>
   {% endif %}

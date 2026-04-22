@@ -17,44 +17,9 @@ $theme-colors: (
   'neutral': $medium,
 );
 
-.btn-primary { background-color: var(--primary) !important; }
-.btn-secondary { background-color: var(--secondary) !important; }
-
-.btn-secondary:hover {
-  background-color: var(--chrome-muted) !important;
-  border-color: var(--chrome-muted) !important;
-}
-
-.btn-primary,
-.btn-secondary {
-  .fas,
-  .fa { color: var(--chrome-fg) !important; }
-}
-
-.btn-danger-ghost {
-  border: 1px solid var(--dangerred) !important;
-  color: var(--dangerred) !important;
-
-  .fas,
-  .fa {
-    color: var(--dangerred) !important;
-  }
-
-  &:hover {
-    background-color: var(--dangerred);
-    border-color: var(--secondlevel);
-    color: var(--chrome-fg) !important;
-
-    .fas,
-    .fa {
-      color: var(--chrome-fg) !important;
-    }
-  }
-}
-
 $dropdown-link-active-bg: var(--primary);
 /* make the non active link in navbar have slightly more contrast */
-$navbar-dark-color: var(--secondlevel);
+$navbar-dark-color: var(--chrome-fg);
 $text-muted: var(--medium);
 @import 'bootstrap/scss/bootstrap';
 @import 'prismjs/themes/prism';
@@ -74,6 +39,7 @@ $text-muted: var(--medium);
 
 @import 'animations';
 @import 'autocomplete';
+@import 'buttons';
 @import 'charts';
 @import 'footer';
 @import 'header';
@@ -196,12 +162,11 @@ a,
 .link-like {
   color: var(--primary);
   text-decoration: none;
-}
 
-a:hover,
-.link-like:hover {
-  color: var(--primary);
-  text-decoration: none;
+  &:hover {
+    color: color-mix(in srgb, var(--primary) 85%, $white);
+    text-decoration: underline;
+  }
 }
 
 /* add arrow going out of square icon after external links */
@@ -217,24 +182,21 @@ a:hover,
 select:not([multiple]) {
   appearance: none;
   background: var(--white) url('images/ico-arrow.png') no-repeat 97% 56%;
+  border: 1px solid var(--firstlevel);
+  color: var(--mediumstrong);
 }
 
 .form-control {
   background-color: var(--white);
-  border: 1px solid var(--secondary-muted);
+  border: 1px solid var(--firstlevel);
+  color: var(--strongest);
 }
 
 .dark-mode {
-  .form-control {
-    background-color: var(--mainbackground);
-    color: var(--mediumstrong);
-  }
-
   :where(input, textarea).form-control:read-only,
   .form-control:disabled {
-    background-color: var(--secondary-muted);
-    color: var(--mediumstrong);
-    opacity: 1;
+    background-color: var(--firstlevel);
+    color: var(--strongest);
   }
 
   .modal-content {
@@ -250,20 +212,6 @@ select:not([multiple]) {
   .form-control-plaintext,
   pre {
     color: var(--mediumstrong);
-  }
-
-  .alert,
-  .alert .close {
-    color: var(--mainbackground);
-  }
-
-  .alert-success,
-  .alert-success .close {
-    color: var(--strongest);
-  }
-
-  .alert a {
-    color: var(--strongest);
   }
 
   .hover-danger:hover {
@@ -284,8 +232,10 @@ select.form-control {
 }
 
 .form-control:focus {
+  background-color: var(--white);
   border-color: var(--primary);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(41, 174, 185, 0.6);
+  color: var(--strongest);
   z-index: 3;
 }
 
@@ -358,17 +308,17 @@ h6,
   margin-top: 0;
 }
 
-h1 { font-size: 200%; }
+h1 { font-size: 180%; }
 
-h2 { font-size: 180%; }
+h2 { font-size: 160%; }
 
-h3 { font-size: 160%; }
+h3 { font-size: 150%; }
 
-h4 { font-size: 150%; }
+h4 { font-size: 140%; }
 
 h5 {
   border-bottom: 0;
-  font-size: 130%;
+  font-size: 120%;
 }
 
 /* HEAD */
@@ -388,26 +338,15 @@ h5 {
 .tabbed-menu {
   border-bottom: 1px solid var(--firstlevel);
   line-height: 200%;
-  margin: 30px 0 20px;
   padding: 0;
 
   li {
     display: inline;
-    margin: 0;
-    margin-right: 2%;
 
     button {
-      border: 0;
-      border-radius: 0;
-      color: var(--medium);
+      border-bottom: 6px solid var(--mainbackground);
       font-weight: 500;
-      margin-bottom: 6px;
-      padding: 0;
       text-transform: uppercase;
-
-      &:hover {
-        color: var(--strongest);
-      }
     }
 
     .selected {
@@ -423,28 +362,54 @@ h5 {
   margin-top: 20px;
 }
 
-.alert a,
-.alert a:hover {
-  color: var(--mediumstrong);
-}
-
 .alert-success {
   background-color: var(--lightblue);
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: var(--darkblue);
+  color: var(--darkblue);
 
   .close {
-    color: var(--primary);
+    color: var(--darkblue);
+    opacity: 1;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--strongest);
+    }
+  }
+
+  a {
+    color: var(--strongest);
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
   }
 }
 
 .alert-warning {
+  background-color: var(--lightgold);
   border-color: var(--darkgold);
+  color: var(--darkgold);
 
   .close {
     color: var(--darkgold);
+    opacity: 1;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--strongest);
+    }
   }
 
+  a {
+    color: var(--strongest);
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .alert-danger {
@@ -454,8 +419,22 @@ h5 {
 
   .close {
     color: var(--darkred);
+    opacity: 1;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--strongest);
+    }
   }
 
+  a {
+    color: var(--strongest);
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .hover-danger:hover {
@@ -465,7 +444,7 @@ h5 {
 }
 
 .hover-warning:hover {
-  background-color: var(--warningbg);
+  background-color: var(--lightgold);
 }
 
 .hover-action:hover {
@@ -674,17 +653,6 @@ tr:first-child td {
   }
 }
 
-/* SHOW MODE */
-.rating-show {
-  background-color: var(--lightgold);
-  color: var(--chrome-bg) !important;
-  font-size: 75%;
-
-  i {
-    color: var(--gold);
-  }
-}
-
 /* NOTIFICATIONS */
 
 /* container for notifications in top left of screen */
@@ -746,7 +714,7 @@ tr:first-child td {
 }
 
 .overlay-warning {
-  background-color: var(--warningbg);
+  background-color: var(--lightgold);
 }
 
 .overlay-error p,
@@ -823,15 +791,6 @@ tr:first-child td {
   }
 
   .left-icon {
-    i:not(.fa-lock) {
-      color: var(--white);
-    }
-
-    .fa-lock {
-      background-color: var(--firstlevel);
-      color: var(--medium);
-    }
-
     &.bgnd-blue {
       background-color: var(--primary);
 
@@ -870,44 +829,6 @@ tr:first-child td {
   z-index: 19850;
 }
 
-.bgnd-gray {
-  background-color: var(--firstlevel);
-}
-
-/* make the text of buttons in bold to increase readability because contrast ratio is not great */
-.btn {
-  font-weight: bold;
-}
-
-.btn-dropdown-item {
-  font-weight: 400;
-  line-height: normal;
-}
-
-.btn-ghost {
-  border: 1px solid var(--secondary-muted);
-  color: var(--mediumstrong);
-
-  &:hover {
-    background-color: var(--firstlevel);
-    border-color: var(--secondlevel);
-    color: var(--mediumstrong);
-  }
-}
-
-.btn-neutral {
-  background-color: var(--superlight);
-  border: 1px solid var(--superlight);
-  color: var(--medium);
-
-  &:hover,
-  &:active,
-  &:focus {
-    background-color: var(--firstlevel) !important;
-    color: var(--mediumstrong) !important;
-  }
-}
-
 /* SIDE PANEL */
 .sidepanel-btn {
   border-radius: 0 5px 5px 0;
@@ -943,7 +864,7 @@ tr:first-child td {
 
 .list-group-item {
   background-color: var(--white);
-  border: 1px solid var(--secondary-muted);
+  border: 1px solid var(--secondary);
 }
 
 .side-panel {
@@ -995,21 +916,9 @@ tr:first-child td {
   padding-left: 20px;
 }
 
-.next-step-text {
-  color: var(--medium);
-  font-size: 80%;
-  text-transform: uppercase;
-}
-
 /* for steps highlight, because .active only works on list-group-item */
 .highlighted {
   border: 1px solid var(--primary);
-}
-
-.item-next {
-  .item-next-step {
-    color: var(--strongest);
-  }
 }
 
 .item a p:hover {
@@ -1075,26 +984,19 @@ the form-control fails to do that so we do the border ourselves */
   background-color: rgba(41, 174, 185, 0.5);
 }
 
-.hl-hover-gray:hover {
-  background-color: var(--firstlevel);
-  color: var(--medium);
-}
-
 .hl-hover-superlight:hover {
   background-color: var(--superlight);
-}
 
-.hl-hover-gray:focus-visible {
-  background-color: var(--firstlevel);
-  outline: none;
+  i {
+    color: var(--strongest);
+  }
+
 }
 
 /* COMMENTS */
 .comment-header {
   background-color: var(--firstlevel);
 }
-
-
 /* END COMMENTS */
 
 @mixin breakable {
@@ -1130,7 +1032,7 @@ the form-control fails to do that so we do the border ourselves */
     color: var(--mediumstrong);
 
     &:hover {
-      color: var(--secondlevel);
+      color: var(--strongest);
     }
   }
 }
@@ -1144,36 +1046,12 @@ the form-control fails to do that so we do the border ourselves */
   color: var(--disabled) !important;
 }
 
-.color-thirdlevel {
-  color: var(--thirdlevel) !important;
-}
-
-.color-medium {
-  color: var(--medium);
-}
-
-.color-strong {
-  color: var(--mediumstrong);
-}
-
 .color-white {
   color: var(--white) !important;
 }
 
-.always-white {
-  color: var(--chrome-fg) !important;
-}
-
-.color-blue {
-  color: var(--primary) !important;
-}
-
-.color-success {
-  color: var(--primary) !important;
-}
-
 .color-danger {
-  color: var(--dangerred) !important;
+  color: var(--darkred) !important;
 }
 
 .border-danger {
@@ -1181,7 +1059,7 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 .color-warning {
-  color: var(--gold) !important;
+  color: var(--darkgold) !important;
 }
 
 .lh-150 {
@@ -1778,7 +1656,6 @@ input:user-invalid {
 
 .section-title {
   background-color: var(--firstlevel);
-  font-size: 120%;
 }
 
 /* PROFILE page */
@@ -1991,4 +1868,30 @@ input:user-invalid {
 .logo-preview svg {
   height: 100px;
   width: 300px;
+}
+
+.malleable {
+  cursor: pointer;
+  display: inline-block;
+  padding-right: 1.2rem;
+  position: relative;
+
+  &::after {
+    content: '\f044'; // fa-pen-to-square
+    display: inline-block;
+    font: var(--fa-font-solid);
+    font-size: 0.8rem;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    text-rendering: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: opacity 0.15s ease;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
 }

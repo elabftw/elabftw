@@ -32,11 +32,11 @@
     </div>
 
     <div id='uploadsViewToggler'>
-      <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
+      <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn btn-transparent' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
         <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
         <i class='fas fa-fw fa-table-cells'></i>
       </button>
-      <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn hl-hover-gray p-1 lh-normal border-0 my-n1 {{- App.Request.query.has('state') ? ' bgnd-gray' }}' data-action='toggle-uploads-show-archived'>
+      <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn {{ App.Request.query.has('state') ? 'btn-secondary' : 'btn-transparent' }}' data-action='toggle-uploads-show-archived'>
         <i class='fas fa-fw fa-box-archive'></i>
       </button>
     </div>
@@ -49,14 +49,14 @@
         {% if App.devMode -%}
           <!-- [html-validate-disable-next wcag/h32: no submit button for dropzone input] -->
         {%- endif %}
-        <form action='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}/uploads' class='dropzone hl-hover-gray my-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
+        <form action='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}/uploads' class='dropzone my-2 rounded' id='elabftw-dropzone' aria-label='file attachment form'></form>
       </div>
     {% endif %}
 
     {# TABLE LAYOUT (0) #}
     {% if App.Users.userData.uploads_layout == 0 and Entity.entityData.uploads %}
       {% include 'filter-input-snippet.html' with {'target': 'uploadsTable'} %}
-      <div class='table-container'>
+      <div class='table'>
         <table class='table mt-3' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
           <thead>
             <tr>
@@ -71,7 +71,8 @@
             {% for upload in Entity.entityData.uploads %}
               <tr class='countable' id='uploadDiv_{{ upload.id }}'>
                 <td>
-                  <button type='button' class='btn lh-normal hl-hover-gray p-1 mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
+                  {# keep btn-ghost border-0 here because in table with zebra #}
+                  <button type='button' class='btn btn-ghost border-0 mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
                     <i class='fas fa-caret-right fa-fw'></i>
                   </button>
                   {% if upload.state == enum('Elabftw\\Enums\\State').Archived.value %}
@@ -94,28 +95,28 @@
                   {% if loop.first %}
                     <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
                   {% endif %}
-                  <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn hl-hover-gray p-1 mr-1'>
+                  <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn btn-ghost mr-1'>
                     <i class='fas fa-download fa-fw'></i>
                   </a>
                   {% if not upload.immutable %}
                     {% if mode == 'edit' %}
                       {# EDIT FILENAME #}
-                      <button type='button' title='{{ 'Edit filename'|trans }}' aria-label='{{ 'Edit filename'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='rename-upload' data-id='{{ upload.id }}'>
+                      <button type='button' title='{{ 'Edit filename'|trans }}' aria-label='{{ 'Edit filename'|trans }}' class='btn btn-ghost' data-action='rename-upload' data-id='{{ upload.id }}'>
                         <i class='fas fa-fw fa-pencil-alt'></i>
                       </button>
                       {# UPLOAD NEW VERSION #}
-                      <button type='button' title='{{ 'Upload a new version of this file'|trans }}' aria-label='{{ 'Upload a new version of this file'|trans }}' class='btn hl-hover-gray p-1 mr-1' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
+                      <button type='button' title='{{ 'Upload a new version of this file'|trans }}' aria-label='{{ 'Upload a new version of this file'|trans }}' class='btn btn-ghost' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
                         <i class='fas fa-fw fa-sync-alt'></i>
                       </button>
                       {% include('upload-replace-form.html') %}
                     {% endif %}
                     {% if not Entity.isReadOnly %}
                       {# ARCHIVE #}
-                      <button type='button' title='{{ 'Archive/Unarchive'|trans }}' aria-label='{{ 'Archive/Unarchive'|trans }}' class='btn hover-warning p-1 mr-1' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
+                      <button type='button' title='{{ 'Archive/Unarchive'|trans }}' aria-label='{{ 'Archive/Unarchive'|trans }}' class='btn btn-danger-ghost' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
                         <i class='fas fa-box-archive'></i>
                       </button>
                       {# DESTROY #}
-                      <button type='button' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' class='btn hover-danger p-1 mr-1' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
+                      <button type='button' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' class='btn btn-danger' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
                         <i class='fas fa-trash-alt'></i>
                       </button>
                     {% endif %}

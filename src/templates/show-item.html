@@ -104,7 +104,7 @@
       {% else %}
         {# edit icon #}
         {% if (item.userid == App.Users.userData.userid or Entity.entityType.value == 'items' or App.Users.isAdmin) %}
-          <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='btn btn-secondary left-icon mr-1 lh-normal p-2 border-0' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
+          <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='btn btn-secondary left-icon mr-1' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
             <i class='fas fa-pencil fa-fw'></i>
           </a>
         {% else %}

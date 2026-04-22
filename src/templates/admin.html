@@ -348,7 +348,7 @@
 <div data-tabcontent='6' id='batchActions' hidden>
   <p>{{ 'From here you can perform actions on entire group of entries at once.'|trans }}</p>
   <hr>
-  <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchCategoriesDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchCategoriesDiv' class='btn btn-ghost togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchCategoriesDiv'>
   {% for itemsCategory in App.itemsCategoryArr %}
     <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>

@@ -48,10 +48,10 @@
         </div>
         {% if storage_editable %}
           <div class='ml-auto'>
-            <button type='button' class='btn btn-secondary btn-sm' title='{{ 'Add children to %s'|trans|format(root.name) }}' aria-label='{{ 'Add children to %s'|trans|format(root.name) }}' data-parent-id='{{ root.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle color-white'></i></button>
+            <button type='button' class='btn btn-secondary btn-sm' title='{{ 'Add children to %s'|trans|format(root.name) }}' aria-label='{{ 'Add children to %s'|trans|format(root.name) }}' data-parent-id='{{ root.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle'></i></button>
             {# search with name instead of id for parent #}
-            <a class='btn btn-secondary btn-sm' title='{{ 'Display content'|trans }}' href='?q={{ root.name }}'><i class='fas fa-magnifying-glass color-white'></i></a>
-            <a class='btn btn-danger btn-sm' data-action='delete-storage-root' data-id='{{ root.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-xmark color-white'></i></a>
+            <a class='btn btn-secondary btn-sm' title='{{ 'Display content'|trans }}' href='?q={{ root.name }}'><i class='fas fa-magnifying-glass'></i></a>
+            <a class='btn btn-danger btn-sm' data-action='delete-storage-root' data-id='{{ root.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-xmark'></i></a>
           </div>
         {% endif %}
       </div>

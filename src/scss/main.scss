@@ -39,6 +39,7 @@ $text-muted: var(--medium);
 
 @import 'animations';
 @import 'autocomplete';
+@import 'buttons';
 @import 'charts';
 @import 'footer';
 @import 'header';
@@ -790,10 +791,6 @@ tr:first-child td {
   }
 
   .left-icon {
-    i:not(.fa-lock) {
-      color: var(--white);
-    }
-
     &.bgnd-blue {
       background-color: var(--primary);
 
@@ -979,171 +976,6 @@ the form-control fails to do that so we do the border ourselves */
   min-width: 50px;
   width: 100px;
 }
-
-/* make the text of buttons in bold to increase readability */
-.btn {
-  font-weight: bold;
-
-  &:hover {
-    box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
-  }
-}
-
-.btn-dropdown-item {
-  font-weight: 400;
-  line-height: normal;
-}
-
-.btn-primary {
-  .fas,
-  .far,
-  .fa { color: var(--chrome-fg); }
-
-  &:hover {
-    background-color: var(--mainbackground);
-    border-color: var(--primary);
-    color: var(--strongest);
-
-    .fas,
-    .far,
-    .fa { color: var(--primary); }
-  }
-}
-
-.btn-secondary {
-  .fas,
-  .far,
-  .fa { color: var(--chrome-fg); }
-
-  &:hover {
-    background-color: var(--mainbackground);
-    border-color: var(--strongest);
-    border-color: var(--strongest);
-    color: var(--strongest);
-
-    .fas,
-    .far,
-    .fa { color: var(--strongest); }
-  }
-}
-
-.btn-ghost {
-  border: 1px solid var(--secondary);
-  color: var(--secondary);
-
-  &:hover {
-    background-color: var(--thirdlevel);
-    border-color: var(--strongest);
-    color: var(--chrome-fg);
-
-    .fas,
-    .far,
-    .fa {
-      color: var(--chrome-fg);
-    }
-  }
-}
-
-// for when you are on dark bg like header
-.btn-ghost-chrome-inverted {
-  border: 1px solid $mainbackground;
-  color: $white;
-
-  .fas,
-  .far,
-  .fa {
-    color: $white;
-  }
-
-  &:hover {
-    background-color: $mainbackground;
-    color: $strongest;
-
-    .fas,
-    .far,
-    .fa {
-      color: $strongest;
-    }
-  }
-}
-
-.btn-transparent {
-  border: 1px solid var(--mainbackground);
-  color: var(--secondary);
-
-  &:hover {
-    border-color: var(--strongest);
-    box-shadow: 0 4px 10px rgb(0 0 0 / 0.12);
-    color: var(--strongest);
-
-    .fas,
-    .far,
-    .fa {
-      color: var(--strongest);
-    }
-  }
-}
-
-.btn-danger {
-  background-color: var(--lightred);
-  border: 1px solid var(--dangerred);
-  color: var(--chrome-fg);
-
-  .fas,
-  .far,
-  .fa {
-    color: var(--medium);
-  }
-
-  &:hover {
-    background-color: var(--dangerred);
-    border-color: var(--dangerred);
-    color: var(--chrome-fg);
-
-    .fas,
-    .far,
-    .fa {
-      color: var(--chrome-fg);
-    }
-  }
-}
-
-.btn-danger-ghost {
-  border: 1px solid var(--dangerred);
-  color: var(--dangerred);
-
-  .fas,
-  .far,
-  .fa {
-    color: var(--dangerred);
-  }
-
-  &:hover {
-    background-color: var(--dangerred);
-    border-color: var(--dangerred);
-    color: var(--chrome-fg);
-
-    .fas,
-    .far,
-    .fa {
-      color: var(--chrome-fg);
-    }
-  }
-}
-
-.btn-neutral {
-  background-color: var(--superlight);
-  border: 1px solid var(--superlight);
-  color: var(--medium);
-
-  &:hover,
-  &:active,
-  &:focus {
-    background-color: var(--firstlevel);
-    color: var(--mediumstrong);
-  }
-}
-
 
 /* highlight on hover: for editable/malleable elements
  * it's $primary but less opaque

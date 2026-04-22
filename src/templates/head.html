@@ -217,7 +217,7 @@
         {# User dropdown #}
         <div class='nav-item dropdown'>
           <button class='btn nav-link border-0' id='navbarDropdown' type='button' aria-label='{{ 'User menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><span class='initials'>{{ App.Users.userData.initials }}</span></button>
-          <div class='dropdown-menu dropdown-menu-right'><h6 class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.Teams.teamArr.name }}</h6>
+          <div class='dropdown-menu dropdown-menu-right'><div class='dropdown-header'>{{ 'Logged in as %s in:'|trans|format(App.Users.userData.firstname|default('Anonymous')) }}<br>{{ App.Teams.teamArr.name }}</div>
             {% if App.Users.userData.teams|default([])|length > 1 %}
               <a href='login.php?switch_team=1' class='dropdown-item'><i class='fas fa-repeat fa-fw'></i> {{ 'Switch team'|trans }}</a>
             {% endif %}

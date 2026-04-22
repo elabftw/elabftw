@@ -351,13 +351,13 @@
   <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchCategoriesDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
   <div hidden class='mt-2' id='batchCategoriesDiv'>
   {% for itemsCategory in App.itemsCategoryArr %}
-    <button type='button' class='btn btn-ghost'>
-      <label for='batch-itemsTypes-{{ itemsCategory.id }}' class='col-form-label clickable'>{{ itemsCategory.title }}</label>
+    <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
+      <label for='batch-itemsTypes-{{ itemsCategory.id }}' class='flex-grow-1 col-form-label clickable'>{{ itemsCategory.title }}</label>
       <label class='switch ucp-align'><span class='sr-only'>{{ itemsCategory.title }}</span>
         <input type='checkbox' name='items_categories' value='{{ itemsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-itemsTypes-{{ itemsCategory.id }}'>
         <span class='slider'></span>
       </label>
-    </button>
+    </div>
   {% endfor %}
   </div>
   <hr>

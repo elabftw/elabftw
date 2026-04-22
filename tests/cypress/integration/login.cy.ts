@@ -34,7 +34,7 @@ describe('Login page', () => {
     });
     cy.getCookie('devicetoken').should('exist');
     // UI should reflect this user being logged in
-    cy.get('h6.dropdown-header').should('contain', 'Toto');
+    cy.get('.navbar-nav.dropdown-header').should('contain', 'Toto');
   });
 
   function fillEmailAddress(email: string): void {

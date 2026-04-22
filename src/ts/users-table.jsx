@@ -93,7 +93,7 @@ if (document.getElementById('users-table')) {
 
     const BinaryRenderer = ({ value }) => {
       return value === i18next.t('yes')
-        ? <span title={value}><i className='fas fa-circle-check mr-2 color-blue'></i>{value}</span>
+        ? <span title={value}><i className='fas fa-circle-check mr-2'></i>{value}</span>
         : <span title={value}><i className='fas fa-circle-xmark mr-2'></i>{value}</span>;
     };
 

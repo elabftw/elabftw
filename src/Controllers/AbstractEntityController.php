@@ -177,7 +177,7 @@ abstract class AbstractEntityController implements ControllerInterface
 
     abstract protected function getPageTitle(): string;
 
-    // only available only for items
+    // empty by default because only for items
     protected function getEntityProcurementRequestsArr(): array
     {
         return array();

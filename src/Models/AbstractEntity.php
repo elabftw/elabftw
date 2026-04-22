@@ -243,9 +243,8 @@ abstract class AbstractEntity extends AbstractRest
                     }
                     // check if use of template is enforced at team level for experiments
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
-                    if ($teamConfigArr['force_exp_tpl'] === 1 && $this instanceof Experiments) {
-                        throw new ImproperActionException(_('Experiments must use a template!'));
-                    }
+                    $this->enforceTemplate($teamConfigArr, 'force_exp_tpl', 'Experiments must use a template!', Experiments::class);
+                    $this->enforceTemplate($teamConfigArr, 'force_res_tpl', 'Resources must use a template!', Items::class);
                     if (!isset($reqBody['category']) || $reqBody['category'] === -1) {
                         $reqBody['category'] = null;
                     }
@@ -1134,6 +1133,13 @@ abstract class AbstractEntity extends AbstractRest
             return BasePermissions::tryFrom($decoded['base']) ?? $default;
         }
         return $default;
+    }
+
+    private function enforceTemplate(array $teamConfigArr, string $key, string $message, string $class): void
+    {
+        if ($this instanceof $class && (int) ($teamConfigArr[$key] ?? 0) === 1) {
+            throw new ImproperActionException(_($message));
+        }
     }
 
     private function handleCanUpdate(array $params, AccessType $type): void

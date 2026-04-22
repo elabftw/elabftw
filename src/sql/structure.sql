@@ -1179,6 +1179,7 @@ CREATE TABLE `teams` (
   `name` varchar(255) NOT NULL,
   `user_create_tag` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `force_exp_tpl` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `force_res_tpl` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `users_canwrite_experiments` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_experiments_categories` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `users_canwrite_experiments_status` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,

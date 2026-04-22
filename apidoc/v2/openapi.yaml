@@ -1934,6 +1934,8 @@ components:
           type: integer
         force_exp_tpl:
           type: integer
+        force_res_tpl:
+          type: integer
         created_at:
           type: string
         orgid:

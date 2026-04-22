@@ -158,34 +158,12 @@ final class DownloadController implements ControllerInterface
      */
     private function buildRangeResponse(Request $request, string $filePath, string $mime, int $fileSize): Response
     {
-        $start = 0;
-        $end = $fileSize - 1;
-        $statusCode = Response::HTTP_OK;
-
-        $rangeHeader = $request->headers->get('Range');
-        if ($rangeHeader !== null && preg_match('/bytes=(\d*)-(\d*)/', $rangeHeader, $matches)) {
-            if ($matches[1] === '' && $matches[2] !== '') {
-                // suffix-byte-range: bytes=-N means the last N bytes (RFC 7233)
-                $start = max(0, $fileSize - (int) $matches[2]);
-                $end = $fileSize - 1;
-            } else {
-                $start = $matches[1] !== '' ? (int) $matches[1] : 0;
-                $end = $matches[2] !== '' ? (int) $matches[2] : $fileSize - 1;
-            }
-
-            if ($end >= $fileSize) {
-                $end = $fileSize - 1;
-            }
-
-            if ($start > $end || $start >= $fileSize) {
-                $response = new Response('', Response::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
-                $response->headers->set('Content-Range', sprintf('bytes */%d', $fileSize));
-                return $response;
-            }
-
-            $statusCode = Response::HTTP_PARTIAL_CONTENT;
+        $result = $this->resolveRange($request, $fileSize);
+        if ($result instanceof Response) {
+            return $result;
         }
 
+        [$start, $end, $statusCode] = $result;
         $length = $end - $start + 1;
 
         $Response = new StreamedResponse(function () use ($filePath, $start, $length) {
@@ -232,6 +210,37 @@ final class DownloadController implements ControllerInterface
         $Response->headers->set('Content-Disposition', $dispositionHeader);
 
         return $Response;
+    }
+
+    private function resolveRange(Request $request, int $fileSize): array|Response
+    {
+        $start = 0;
+        $end = $fileSize - 1;
+        $statusCode = Response::HTTP_OK;
+
+        $rangeHeader = $request->headers->get('Range');
+        if ($rangeHeader !== null && preg_match('/bytes=(\d*)-(\d*)/', $rangeHeader, $matches)) {
+            if ($matches[1] === '' && $matches[2] !== '') {
+                $start = max(0, $fileSize - (int) $matches[2]);
+            } else {
+                $start = $matches[1] !== '' ? (int) $matches[1] : 0;
+                $end = $matches[2] !== '' ? (int) $matches[2] : $fileSize - 1;
+            }
+
+            if ($end >= $fileSize) {
+                $end = $fileSize - 1;
+            }
+
+            if ($start > $end || $start >= $fileSize) {
+                $response = new Response('', Response::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
+                $response->headers->set('Content-Range', sprintf('bytes */%d', $fileSize));
+                return $response;
+            }
+
+            $statusCode = Response::HTTP_PARTIAL_CONTENT;
+        }
+
+        return [$start, $end, $statusCode];
     }
 
     /**

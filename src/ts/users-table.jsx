@@ -68,7 +68,7 @@ if (document.getElementById('users-table')) {
     const TeamsRenderer = ({ value }) => {
       return (
         <span>{value.map(team => (
-          <span key={team.id} data-id={team.id} className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`}>{team.name}</span>))}
+          <span key={team.id} data-id={team.id} className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium' : ''}`}>{team.name}</span>))}
         </span>
       );
     };

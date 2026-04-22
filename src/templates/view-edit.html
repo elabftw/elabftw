@@ -28,7 +28,7 @@
       {% for action in entityRequestActionsArr %}
         <li class='list-group-item'>
           <div class='d-flex'>
-            <i class='fas fa-person-circle-exclamation color-blue mr-2'></i>
+            <i class='fas fa-person-circle-exclamation mr-2'></i>
             <div>
               {{- '%s has requested %s for this entity from %s'|trans|format(
                 action.requester_fullname,

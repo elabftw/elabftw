@@ -22,7 +22,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
-use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\ExtraFieldsOrderingParams;
@@ -34,7 +33,6 @@ use function count;
 use function is_array;
 use function json_decode;
 use function sprintf;
-use function array_column;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -276,12 +274,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($canread->value, $new->entityData['canread_base']);
         $this->assertEquals($canwrite->value, $new->entityData['canwrite_base']);
         $this->assertEquals(1, $new->entityData['hide_main_text']);
-        // assert uploads' states persist
-        $newUploads = $new->Uploads->readAll(new BaseQueryParams(states: array(State::Normal, State::Archived), ));
-        $this->assertCount(2, $newUploads);
-        $states = array_column($newUploads, 'state');
-        $this->assertContains(State::Normal->value, $states);
-        $this->assertContains(State::Archived->value, $states);
+        // only active files are duplicated
+        $this->assertCount(1, $new->Uploads->readAll());
     }
 
     public function testInsertTags(): void

@@ -767,7 +767,7 @@ export { TomSelect };
 
 // toggle appearance of button
 export function toggleGrayClasses(classList: DOMTokenList): void {
-  ['bgnd-gray', 'hl-hover-gray'].forEach(btnClass => classList.toggle(btnClass, !classList.contains(btnClass)));
+  ['btn-secondary', 'btn-ghost'].forEach(btnClass => classList.toggle(btnClass, !classList.contains(btnClass)));
 }
 
 export function getNewIdFromPostRequest(response: Response): number {
@@ -895,12 +895,12 @@ export async function populateUserModal(user: Record<string, string|number>) {
     // prevent deleting association of the team we are currently logged in, allow it for other users
     if (team.id !== requester.team || user.userid !== requester.userid) {
       const removeTeamBtn = document.createElement('span');
-      removeTeamBtn.classList.add('hl-hover-gray', 'p-1', 'rounded', 'clickable', 'm-1');
+      removeTeamBtn.classList.add('btn', 'btn-danger-ghost', 'btn-sm', 'ml-2');
       removeTeamBtn.title = i18next.t('delete');
       removeTeamBtn.dataset.action = 'destroy-user2team';
       removeTeamBtn.dataset.teamid = team.id;
       const removeTeamIcon = document.createElement('i');
-      removeTeamIcon.classList.add('fas', 'fa-xmark', 'color-blue');
+      removeTeamIcon.classList.add('fas', 'fa-xmark');
       removeTeamBtn.appendChild(removeTeamIcon);
       teamBadge.appendChild(removeTeamBtn);
     }

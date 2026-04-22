@@ -68,12 +68,12 @@ if (document.getElementById('users-table')) {
     const TeamsRenderer = ({ value }) => {
       return (
         <span>{value.map(team => (
-          <span key={team.id} data-id={team.id} className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium color-thirdlevel' : ''}`}>{team.name}</span>))}
+          <span key={team.id} data-id={team.id} className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'bg-medium' : ''}`}>{team.name}</span>))}
         </span>
       );
     };
 
-    const LastLoginRenderer = ({ value }) => {
+    const PastDateRenderer = ({ value }) => {
       return value === i18next.t('never')
         ? <span className='font-italic'>{value}</span>
         : <span>{value}</span>;
@@ -93,7 +93,7 @@ if (document.getElementById('users-table')) {
 
     const BinaryRenderer = ({ value }) => {
       return value === i18next.t('yes')
-        ? <span title={value}><i className='fas fa-circle-check mr-2 color-blue'></i>{value}</span>
+        ? <span title={value}><i className='fas fa-circle-check mr-2'></i>{value}</span>
         : <span title={value}><i className='fas fa-circle-xmark mr-2'></i>{value}</span>;
     };
 
@@ -103,7 +103,7 @@ if (document.getElementById('users-table')) {
       { field: 'firstname', headerName: i18next.t('firstname') },
       { field: 'lastname', headerName: i18next.t('lastname') },
       { field: 'email', headerName: i18next.t('email') },
-      { field: 'last_login', headerName: i18next.t('last-login'), valueGetter: p => lastLoginText(p.data.last_login), filterValueGetter: p => lastLoginText(p.data.last_login), cellRenderer: LastLoginRenderer },
+      { field: 'last_login', headerName: i18next.t('last-login'), valueGetter: p => lastLoginText(p.data.last_login), filterValueGetter: p => lastLoginText(p.data.last_login), cellRenderer: PastDateRenderer},
       { field: 'is_sysadmin', headerName: i18next.t('is-sysadmin'), valueGetter: p => yesNo(p.data.is_sysadmin), filterValueGetter: p => yesNo(p.data.is_sysadmin), cellRenderer: BinaryRenderer },
       { field: 'has_mfa_enabled', headerName: i18next.t('2FA'), valueGetter: p => enabledDisabled(p.data.has_mfa_enabled), filterValueGetter: p => enabledDisabled(p.data.has_mfa_enabled), cellRenderer: HasMfaEnabledRenderer },
       { field: 'valid_until', headerName: i18next.t('Valid until'), valueGetter: p => validUntilText(p.data.valid_until), filterValueGetter: p => validUntilText(p.data.valid_until), cellRenderer: ValidUntilRenderer },
@@ -113,6 +113,8 @@ if (document.getElementById('users-table')) {
       { field: 'can_manage_users2teams', headerName: i18next.t('can-manage-users2teams'), valueGetter: p => yesNo(p.data.can_manage_users2teams), filterValueGetter: p => yesNo(p.data.can_manage_users2teams), cellRenderer: BinaryRenderer },
       { field: 'can_manage_compounds', headerName: i18next.t('can-manage-compounds'), valueGetter: p => yesNo(p.data.can_manage_compounds), filterValueGetter: p => yesNo(p.data.can_manage_compounds), cellRenderer: BinaryRenderer },
       { field: 'can_manage_inventory_locations', headerName: i18next.t('can-manage-inventory-locations'), valueGetter: p => yesNo(p.data.can_manage_inventory_locations), filterValueGetter: p => yesNo(p.data.can_manage_inventory_locations), cellRenderer: BinaryRenderer },
+      { field: 'created_at', headerName: i18next.t('created-at'), valueGetter: p => lastLoginText(p.data.created_at), filterValueGetter: p => lastLoginText(p.data.created_at), cellRenderer: PastDateRenderer},
+      //TODO when field exists { field: 'modified_at', headerName: i18next.t('modified-at'), valueGetter: p => lastLoginText(p.data.modified_at), filterValueGetter: p => lastLoginText(p.data.last_login), cellRenderer: PastDateRenderer},
     ]);
 
     // Load data on component mount

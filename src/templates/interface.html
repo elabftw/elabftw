@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block body %}
+This page exists to have a single page holding all buttons, links and notifications so it's easier to work on the CSS.
+
+<div class='my-3'>
+<button type='button' class='btn btn-primary' data-action='toggle-dark-mode' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-circle-half-stroke fa-fw'></i> {{ 'Change theme'|trans }}
+</button>
+</div>
+
+<p>This is normal text. <a href='#' class='external-link'>And this is an external link</a>.</p>
+
+<div class='my-3'>
+<button type='button' class='btn btn-primary'><i class='fas fa-pencil mr-1'></i>Primary button</button>
+<button type='button' class='btn btn-secondary'><i class='fas fa-pencil mr-1'></i>Secondary button</button>
+<a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-primary p-2 mr-2 rounded lh-normal border-0 disabled'>
+  <i class='fas fa-pencil fa-fw mr-1'></i>primary disabled
+</a>
+<a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-secondary p-2 mr-2 rounded lh-normal border-0 disabled'>
+  <i class='fas fa-pencil fa-fw mr-1'></i>secondary disabled
+</a>
+<button type='button' class='btn btn-ghost'><i class='fas fa-pencil mr-1'></i>Ghost button</button>
+<button type='button' class='btn btn-danger-ghost'><i class='fas fa-pencil mr-1'></i>Danger Ghost button</button>
+<button type='button' class='btn btn-neutral'><i class='fas fa-pencil mr-1'></i>Neutral button</button>
+<button type='button' class='btn btn-transparent'><i class='fas fa-pencil mr-1'></i>btn-transparent</button>
+</div>
+
+{{ 'Informational message %s'|format("<a href='#'>(link)</a>")|raw|msg('ok') }}
+{{ 'Warning message %s'|format("<a href='#'>(link)</a>")|raw|msg('warning') }}
+{{ 'Error message %s'|format("<a href='#'>(link)</a>")|raw|msg('ko') }}
+
+<div class='my-3'>
+  <div class='dropdown'>
+    <button type='button' class='btn btn-primary' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='Dropdown menu' aria-label='Dropdown menu'>
+      <i class='far fa-square-caret-down mr-1'></i>Dropdown menu
+    </button>
+
+    <div class='dropdown-menu dropdown-menu-right'>
+        <button type='button' class='dropdown-item'>
+          <i class='fas fa-fw fa-image mr-1'></i>Normal item
+        </button>
+        <button type='button' class='btn btn-dropdown-item dropdown-item'>
+          <i class='fas fa-fw fa-image mr-1'></i>With btn-dropdown-item
+        </button>
+      <div class='dropdown-divider'></div>
+      <button type='button' class='dropdown-item hover-warning'>
+        <i class='fas fa-fw fa-box-archive mr-1'></i>Hover warning
+      </button>
+      <button type='button' class='dropdown-item hover-danger'>
+        <i class='fas fa-fw fa-trash-alt mr-1'></i>Hover danger
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class='my-3'>
+  <label for='input-1' class='col-form-label'>An input</label>
+  <div class='input-group'>
+    <input id='input-1' class='form-control' placeholder='Placeholder text'>
+    <div class='input-group-append'>
+      <select class='custom-select brl-none' aria-label='animal'>
+        <option>Panthère</option>
+        <option>Rose</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<input class='form-control my-2' disabled placeholder='Disabled input' value='Disabled text input'>
+
+
+<div class='my-3'>
+  <label for='select-1' class='col-form-label'>A select</label>
+  <div class='d-flex'>
+    <div class='flex-fill mr-3'>
+      <select id='select-1' class='form-control'>
+        <option>Select</option>
+        <option>An option</option>
+        <option disabled>Disabled option</option>
+      </select>
+    </div>
+
+    <div class='flex-fill'>
+      <div class='d-flex justify-content-between'>
+        <label for='binary' class='col-form-label'>Label</label>
+        <label class='switch ucp-align'><span class='sr-only'>Some label</span>
+          <input type='checkbox' autocomplete='off' id='binary'>
+          <span class='slider'></span>
+        </label>
+      </div>
+        <p class='smallgray'>Help text for binary setting.</p>
+    </div>
+  </div>
+</div>
+
+{# rating #}
+<span class='rating-show rounded p-1 mr-3'><i class='fas fa-star'></i>5</span>
+
+<div class='my-3'>
+  <ul class='list-group'>
+    <li class='list-group-item'>List-group-item</li>
+    <li class='list-group-item'>List-group-item</li>
+    <li class='list-group-item'>List-group-item</li>
+  </ul>
+</div>
+
+{% endblock body %}

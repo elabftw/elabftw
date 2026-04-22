@@ -10,7 +10,7 @@
 <div class='row'>
   <div class='col-md-4'>
     <div class='d-flex justify-content-between'>
-      <h4><a href='experiments.php' class='color-medium'><i class='fas fa-flask mr-1'></i>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a></h4>
+      <h3><a href='experiments.php'><i class='fas fa-flask mr-1'></i>{% trans %}Experiment{% plural 2 %}Experiments{% endtrans %}</a></h3>
       <div>
         {% include 'create-new.html' with {'entityType': 'experiments'} %}
       </div>
@@ -26,7 +26,7 @@
     </form>
     <hr>
     {% if App.experimentsCategoryArr|filter(c => c.is_current_team == 1) %}
-      <h5>{{ 'Browse by category'|trans }}</h5>
+      <h4>{{ 'Browse by category'|trans }}</h4>
       <div class='d-flex my-2 flex-wrap lh-150'>
         {% for category in App.experimentsCategoryArr|filter(c => c.is_current_team == 1) -%}
           <a href='experiments.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
@@ -35,7 +35,7 @@
       <hr>
     {% endif %}
     {% if experimentsStatusArr|filter(c => c.is_current_team == 1) %}
-      <h5>{{ 'Browse by status'|trans }}</h5>
+      <h4>{{ 'Browse by status'|trans }}</h4>
       <div class='d-flex my-2 flex-wrap lh-150'>
         {% for status in experimentsStatusArr|filter(c => c.is_current_team == 1) -%}
           <a href='experiments.php?mode=show&amp;status={{ status.id }}' class='btn mr-2 catstat-btn status-btn mb-1' style='--bg: #{{ status.color }}'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title }}</a>
@@ -44,12 +44,12 @@
       <hr>
     {% endif %}
     <div class='d-flex justify-content-between'>
-      <h5 class='mb-0 mt-1'>{{ 'Last modified experiments'|trans }}</h5>
+      <h4 class='mb-0 mt-1'>{{ 'Last modified experiments'|trans }}</h4>
       {% include 'scope-button.html' with {'btnId': 'scopeExp', 'reload': 'lastModifiedExp,scopeExp', 'target': 'scope_experiments'} %}
     </div>
     <div class='list-group mt-1' id='lastModifiedExp'>
       {% for experiment in experimentsArr %}
-        <a href='experiments.php?mode=view&amp;id={{ experiment.id }}' class='list-group-item hl-hover-gray breakable'>
+        <a href='experiments.php?mode=view&amp;id={{ experiment.id }}' class='list-group-item breakable'>
           {%- if experiment.category_title -%}
             <span style='--bg: #{{ experiment.category_color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ experiment.category_title }}</span>
           {%- endif -%}
@@ -60,7 +60,7 @@
   </div>
   <div class='col-md-4 mt-2 mt-md-0'>
     <div class='d-flex justify-content-between'>
-      <h4><a href='database.php' class='color-medium'><i class='fas fa-cubes-stacked mr-1'></i>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</a></h4>
+      <h3><a href='database.php'><i class='fas fa-cubes-stacked mr-1'></i>{% trans %}Resource{% plural 2 %}Resources{% endtrans %}</a></h3>
       <div>
         {% include 'create-new.html' with {'entityType': 'items'} %}
       </div>
@@ -75,7 +75,7 @@
       </div>
     </form>
     <hr>
-    <h5>{{ 'Browse by category'|trans }}</h5>
+    <h4>{{ 'Browse by category'|trans }}</h4>
     <div class='d-flex my-2 flex-wrap lh-150'>
       {% for category in App.itemsCategoryArr|filter(c => c.is_current_team == 1) -%}
         <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
@@ -83,7 +83,7 @@
     </div>
     <hr>
     {% if itemsStatusArr|filter(c => c.is_current_team == 1) %}
-      <h5>{{ 'Browse by status'|trans }}</h5>
+      <h4>{{ 'Browse by status'|trans }}</h4>
       <div class='d-flex my-2 flex-wrap lh-150'>
         {% for status in itemsStatusArr|filter(c => c.is_current_team == 1) -%}
           <a href='database.php?mode=show&amp;status={{ status.id }}' class='btn mr-2 catstat-btn status-btn lh-normal border-0 mb-1' style='--bg: #{{ status.color }}'><i class='fas fa-circle fa-fw' style='--bg:#{{ status.color }}'></i> {{ status.title }}</a>
@@ -92,12 +92,12 @@
       <hr>
     {% endif %}
     <div class='d-flex justify-content-between'>
-      <h5 class='mb-0 mt-1'>{{ 'Last modified resources'|trans }}</h5>
+      <h4 class='mb-0 mt-1'>{{ 'Last modified resources'|trans }}</h4>
       {% include 'scope-button.html' with {'btnId': 'scopeItems', 'reload': 'lastModifiedResources,scopeItems', 'target': 'scope_items'} %}
     </div>
     <div class='list-group mt-1' id='lastModifiedResources'>
       {% for item in itemsArr %}
-        <a href='database.php?mode=view&amp;id={{ item.id }}' class='list-group-item hl-hover-gray breakable'>
+        <a href='database.php?mode=view&amp;id={{ item.id }}' class='list-group-item breakable'>
           {% if item.category_title %}
             <span style='--bg: #{{ item.category_color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ item.category_title }}</span>
           {% endif %}
@@ -108,7 +108,7 @@
   </div>
   <div class='col-md-4 mt-2 mt-md-0'>
     <div class='d-flex justify-content-between'>
-      <h4><a href='scheduler.php' class='color-medium'><i class='far fa-calendar-alt mr-1'></i>{{ 'Scheduled bookings'|trans }}</a></h4>
+      <h3><a href='scheduler.php'><i class='far fa-calendar-alt mr-1'></i>{{ 'Scheduled bookings'|trans }}</a></h3>
       <div>
         {% include 'scope-button.html' with {'btnId': 'scopeEvent', 'reload': 'scheduledBookings,scopeEvent', 'target': 'scope_events'} %}
         <a href='scheduler.php' class='btn btn-secondary'>{{ 'Scheduler'|trans }}</a>
@@ -117,7 +117,7 @@
     <hr>
     <div class='list-group mt-1' id='scheduledBookings'>
       {% for booking in bookingsArr %}
-        <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item hl-hover-gray breakable color-strong'>
+        <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item breakable'>
           {% if booking.items_category_title %}
             <span style='--bg: {{ booking.color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ booking.items_category_title }}</span>
           {% endif %}

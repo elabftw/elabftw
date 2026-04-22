@@ -679,7 +679,7 @@ export class Metadata {
             // add a button to set the position of the field
             const handle = document.createElement('div');
             handle.dataset.action = 'metadata-reposition-field';
-            handle.classList.add('btn', 'p-0', 'mr-3', 'border-0', 'lh-normal');
+            handle.classList.add('btn', 'mr-2');
             const handleIconSpan = document.createElement('span');
             handleIconSpan.classList.add('draggable', 'sortableHandle');
             const handleIcon = document.createElement('i');
@@ -692,7 +692,7 @@ export class Metadata {
             const editBtn = document.createElement('button');
             editBtn.dataset.action = 'metadata-edit-field';
             editBtn.dataset.target = 'fieldBuilderModal';
-            editBtn.classList.add('btn', 'p-2', 'mr-2', 'hl-hover-gray', 'border-0', 'lh-normal');
+            editBtn.classList.add('btn', 'btn-transparent', 'mr-2');
             editBtn.type = 'button';
             editBtn.setAttribute('aria-label', i18next.t('edit'));
             editBtn.setAttribute('title', i18next.t('edit'));
@@ -702,7 +702,7 @@ export class Metadata {
 
             // add a button to toggle read-only
             const readonlyBtn = document.createElement('button');
-            readonlyBtn.classList.add('btn', 'p-2', 'mr-2', 'hl-hover-gray', 'border-0', 'lh-normal');
+            readonlyBtn.classList.add('btn', 'btn-transparent', 'mr-2');
             readonlyBtn.type = 'button';
             readonlyBtn.setAttribute('aria-label', i18next.t('readonly'));
             readonlyBtn.setAttribute('title', i18next.t('readonly'));
@@ -723,7 +723,7 @@ export class Metadata {
             // add a button to delete the field
             const deleteBtn = document.createElement('button');
             deleteBtn.dataset.action = 'metadata-rm-field';
-            deleteBtn.classList.add('btn', 'p-2', 'hl-hover-gray', 'border-0', 'lh-normal');
+            deleteBtn.classList.add('btn', 'btn-transparent');
             deleteBtn.type = 'button';
             deleteBtn.setAttribute('aria-label', i18next.t('remove'));
             deleteBtn.setAttribute('title', i18next.t('remove'));

@@ -166,32 +166,7 @@ final class DownloadController implements ControllerInterface
         [$start, $end, $statusCode] = $result;
         $length = $end - $start + 1;
 
-        $Response = new StreamedResponse(function () use ($filePath, $start, $length) {
-            $outputStream = fopen('php://output', 'wb');
-            if ($outputStream === false) {
-                return;
-            }
-            try {
-                $fileStream = $this->fs->readStream($filePath);
-            } catch (UnableToReadFile) {
-                return;
-            }
-            if ($start > 0) {
-                // Use fseek if the stream supports it, otherwise read and discard bytes.
-                // S3 streams (s3:// wrapper) may not support fseek.
-                if (fseek($fileStream, $start) !== 0) {
-                    $remaining = $start;
-                    while ($remaining > 0) {
-                        $chunk = fread($fileStream, min(8192, $remaining));
-                        if ($chunk === false || $chunk === '') {
-                            return;
-                        }
-                        $remaining -= strlen($chunk);
-                    }
-                }
-            }
-            stream_copy_to_stream($fileStream, $outputStream, $length);
-        }, $statusCode);
+        $Response = new StreamedResponse(fn() => $this->streamRange($filePath, $start, $length), $statusCode);
 
         $Response->headers->set('Content-Type', $mime);
         $Response->headers->set('Content-Length', (string) $length);
@@ -240,7 +215,37 @@ final class DownloadController implements ControllerInterface
             $statusCode = Response::HTTP_PARTIAL_CONTENT;
         }
 
-        return [$start, $end, $statusCode];
+        return array($start, $end, $statusCode);
+    }
+
+    private function streamRange(string $filePath, int $start, int $length): void
+    {
+        $outputStream = fopen('php://output', 'wb');
+        if ($outputStream === false) {
+            return;
+        }
+
+        try {
+            $fileStream = $this->fs->readStream($filePath);
+        } catch (UnableToReadFile) {
+            return;
+        }
+        if ($start > 0) {
+            // Use fseek if the stream supports it, otherwise read and discard bytes.
+            // S3 streams (s3:// wrapper) may not support fseek.
+            if (fseek($fileStream, $start) !== 0) {
+                $remaining = $start;
+                while ($remaining > 0) {
+                    $chunk = fread($fileStream, min(8192, $remaining));
+                    if ($chunk === false || $chunk === '') {
+                        return;
+                    }
+                    $remaining -= strlen($chunk);
+                }
+            }
+        }
+
+        stream_copy_to_stream($fileStream, $outputStream, $length);
     }
 
     /**

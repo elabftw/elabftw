@@ -348,7 +348,7 @@
 <div data-tabcontent='6' id='batchActions' hidden>
   <p>{{ 'From here you can perform actions on entire group of entries at once.'|trans }}</p>
   <hr>
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchCategoriesDiv' class='btn btn-ghost togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchCategoriesDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchCategoriesDiv'>
   {% for itemsCategory in App.itemsCategoryArr %}
     <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -362,7 +362,7 @@
   </div>
   <hr>
 
-  <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchStatusDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchStatusDiv'>
   {% for status in itemsStatusArr %}
     <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -376,7 +376,7 @@
   </div>
   <hr>
 
-  <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchTagsDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchTagsDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchTagsDiv'>
     {# for this tab, sort the tags in alphabetical order, case-insensitive #}
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
@@ -392,7 +392,7 @@
   </div>
   <hr>
 
-  <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchExpCatDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpCatDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchExpCatDiv'>
     {% for experimentsCategory in App.experimentsCategoryArr %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -406,7 +406,7 @@
   </div>
   <hr>
 
-  <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchExpStatusDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchExpStatusDiv'>
     {% for status in statusArr %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -420,7 +420,7 @@
   </div>
   <hr>
 
-  <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batchExpTagsDiv' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpTagsDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchExpTagsDiv'>
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -435,7 +435,7 @@
   <hr>
 
   {% macro batchTransferOwnership(target, param, users) %}
-  <h2 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' role='button' aria-expanded='false' aria-controls='batch{{ param }}Div' class='togglable-section-title'><i class='fas fa-caret-right fa-fw'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</h2>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batch{{ param }}Div' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batch{{ param }}Div'>
     {% for user in users %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -463,7 +463,7 @@
     <button data-action='run-action-selected' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
     <button data-action='run-action-selected' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Unarchive'|trans }}</button>
     <button data-action='run-action-selected' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
-    <button data-action='run-action-selected' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Restore'|trans }}</button>
+    <button data-action='run-action-selected' data-what='restore' type='button' class='btn btn-neutral mr-1 mb-2'>{{ 'Restore'|trans }}</button>
   </div>
 
   <h2>{{ 'Set permissions'|trans }}</h2>

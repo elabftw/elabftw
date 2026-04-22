@@ -11,7 +11,7 @@
       {# TITLE #}
       <h1 class='text-dark' >
         {% if Entity.entityData.custom_id %}
-          <span title='{{ 'Custom ID'|trans }}' class='color-medium'>{{ Entity.entityData.custom_id }}</span>
+          <span title='{{ 'Custom ID'|trans }}'>{{ Entity.entityData.custom_id }}</span>
         {% endif %}
          <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
         <span id='documentTitle' class='breakable {{ not Entity.isReadOnly ? 'malleable-title malleable' }} rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>
@@ -51,7 +51,7 @@
 
   {# DATE #}
   {% if Entity.entityType.value != 'experiments_templates' %}
-    <div class='color-medium mb-2'>
+    <div class='mb-2'>
       {{ 'Started on'|trans }} {{ Entity.entityData.date|date('Y-m-d') }}
     </div>
   {% endif %}
@@ -110,7 +110,7 @@
       {% set nextStepsArr = next_step|split('|') %}
       {% set next = nextStepsArr|first %}
       <p>
-      <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='color-strong'>{{ next }}</span>
+      <span class='to-upper'>{{ 'Next step'|trans }}:</span> {{ next }}
       </p>
   {% endif %}
 

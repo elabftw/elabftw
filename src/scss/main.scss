@@ -928,21 +928,13 @@ tr:first-child td {
   padding-left: 20px;
 }
 
-.next-step-text {
-  color: var(--medium);
-  font-size: 80%;
+.to-upper {
   text-transform: uppercase;
 }
 
 /* for steps highlight, because .active only works on list-group-item */
 .highlighted {
   border: 1px solid var(--primary);
-}
-
-.item-next {
-  .item-next-step {
-    color: var(--strongest);
-  }
 }
 
 .item a p:hover {
@@ -1061,6 +1053,29 @@ the form-control fails to do that so we do the border ourselves */
     .far,
     .fa {
       color: var(--white);
+    }
+  }
+}
+
+// for when you are on dark bg like header
+.btn-ghost-chrome-inverted {
+  border: 1px solid $mainbackground;
+  color: $white;
+
+  .fas,
+  .far,
+  .fa {
+    color: $white;
+  }
+
+  &:hover {
+    background-color: $mainbackground;
+    color: $strongest;
+
+    .fas,
+    .far,
+    .fa {
+      color: $strongest;
     }
   }
 }
@@ -1209,20 +1224,8 @@ the form-control fails to do that so we do the border ourselves */
   color: var(--thirdlevel) !important;
 }
 
-.color-medium {
-  color: var(--medium);
-}
-
-.color-strong {
-  color: var(--mediumstrong);
-}
-
 .color-white {
   color: var(--white) !important;
-}
-
-.always-white {
-  color: var(--chrome-fg) !important;
 }
 
 .color-blue {

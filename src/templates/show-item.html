@@ -48,7 +48,7 @@
     {# second line: title #}
     <div class='d-flex title flex-nowrap my-2'>
       {% if item.custom_id %}
-        <span class='color-medium mr-1 text-nowrap' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+        <span class='mr-1 text-nowrap' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
       <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
     </div>
@@ -69,7 +69,7 @@
       {% set stepsArr = item.next_step|split('|') %}
       {% set next = stepsArr|first %}
       <p class='item-next my-2'>
-      <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='item-next-step'>{{ next }}</span>
+      <span class='to-upper'>{{ 'Next step'|trans }}:</span> {{ next }}
       </p>
     {% endif %}
 
@@ -115,10 +115,10 @@
         {% endif %}
       {% endif %}
       <button type='button' class='btn btn-neutral mr-2 lh-normal' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
-        <i class='fas fa-caret-right color-medium'></i>
+        <i class='fas fa-caret-right'></i>
       </button>
       {# date #}
-      <div class='d-flex flex-column color-medium small'>
+      <div class='d-flex flex-column small'>
         <span class='item-date'>{{ statusDateLabel }} {{ dateValue|date('Y-m-d') }}</span>
         <span class='item-date'>
           {{ 'Last modified'|trans }} <span title='{{ item.modified_at }}' class='relative-moment'></span>

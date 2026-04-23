@@ -212,7 +212,7 @@ if (window.location.pathname === '/scheduler.php') {
       const colorCircle = document.createElement('i');
       colorCircle.classList.add('fas', 'fa-circle');
       const rawColor = opt.dataset.color;
-      colorCircle.style.color = rawColor?.startsWith('#') ? rawColor : `#${rawColor || 'fff'}`;
+      colorCircle.style.color = rawColor?.startsWith('#') ? rawColor : `#${rawColor || '# 0c58ab'}`;
       const badge = document.createElement('span');
       badge.appendChild(colorCircle);
       badge.className = 'selected-item-badge';

@@ -540,7 +540,7 @@ if (window.location.pathname === '/scheduler.php') {
       ApiC.notifOnSaved = false;
       ApiC.post(`event/${el.dataset.id}/notifications`, payload)
         .then(() => ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch())
-        .then(() => notify.success());
+        .then(() => notify.success()).finally(() => ApiC.notifOnSaved = true);
     });
 
     on('edit-event', async (_, e: Event) => {

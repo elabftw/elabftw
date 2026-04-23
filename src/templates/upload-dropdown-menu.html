@@ -66,6 +66,13 @@
       </button>
     {% endif %}
 
+    {# Duplicate an upload #}
+    {% if not upload.immutable and not Entity.isReadOnly and App.Users.userData.uploads_layout != 0 %}
+      <button type='button' class='dropdown-item' data-action='duplicate-upload' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}'>
+        <i class='fas fa-fw fa-clone mr-1'></i>{{ 'Duplicate'|trans }}
+      </button>
+    {% endif %}
+
     {# Upload a new version: only in edit mode because currently it'll look into the editor to change the image, but it might be convenient to also have it in view mode #}
     {% if not upload.immutable %}
       <button type='button' class='dropdown-item' data-action='replace-upload' data-uploadid='{{ upload.id }}'>

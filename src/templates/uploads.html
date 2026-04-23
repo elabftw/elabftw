@@ -111,6 +111,10 @@
                       {% include('upload-replace-form.html') %}
                     {% endif %}
                     {% if not Entity.isReadOnly %}
+                      {# DUPLICATE #}
+                      <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' class='btn p-1 mr-1' data-action='duplicate-upload' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}'>
+                        <i class='fas fa-clone'></i>
+                      </button>
                       {# ARCHIVE #}
                       <button type='button' title='{{ 'Archive/Unarchive'|trans }}' aria-label='{{ 'Archive/Unarchive'|trans }}' class='btn btn-danger-ghost' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
                         <i class='fas fa-box-archive'></i>

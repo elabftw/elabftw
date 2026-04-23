@@ -371,7 +371,7 @@ final class Scheduler extends AbstractRest
         $sql = "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title,
             team_events.title AS title_only,
-            CONCAT('#', items_categories.color) AS color,
+            COALESCE(NULLIF(CONCAT('#', items_categories.color), '#'), '#0c58ab') AS color,
             experiments.title AS experiment_title,
             items_linkt.title AS item_link_title,
             items.title AS item_title, items.book_is_cancellable

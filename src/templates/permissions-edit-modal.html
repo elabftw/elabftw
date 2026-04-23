@@ -60,7 +60,7 @@
             {# SPECIFIC SCOPE BUTTON FOR TEAMS: Need only 'My teams' or 'All teams' #}
             {% set teamScope = App.Request.query.getInt('team_scope') ?: 3 %}
             <div class='btn-group'>
-              <button class='btn color-medium hl-hover-gray dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+              <button class='btn btn-transparent dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                 {{ teamScope == 1 ? 'My teams'|trans : 'All teams'|trans }}
                 <i class='fas fa-fw {{ teamScope == 1 ? 'fa-user' : 'fa-globe' }} mx-1'></i>
               </button>
@@ -89,7 +89,7 @@
           {# USER GROUPS #}
           {% set identifierTeamGroups = identifier ~ '_select_teamgroups' %}
           <div class='d-flex justify-content-between align-items-center mb-2'>
-            <label for='{{ identifierTeamGroups }}' class='mt-2'><strong><i class='fas fa-user-group mr-2' aria-hidden='true'></i>+ {{ 'User Groups'|trans }}</strong></label>
+            <label for='{{ identifierTeamGroups }}' class='mt-3'><strong><i class='fas fa-user-group mr-2' aria-hidden='true'></i>+ {{ 'User Groups'|trans }}</strong></label>
             {# SCOPE BUTTON #}
             {% set scopeBtnId = 'scope' ~ identifier %}
             {% set toReload = [identifierTeamGroups, scopeBtnId]|join(',') %}

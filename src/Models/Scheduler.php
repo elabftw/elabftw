@@ -204,7 +204,7 @@ final class Scheduler extends AbstractRest
                 CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
                 items.title AS item_title,
                 items.book_is_cancellable,
-                CONCAT('#', items_categories.color) AS color,
+                COALESCE(NULLIF(CONCAT('#', items_categories.color), '#'), '#0c58ab') AS color,
                 items_categories.title AS items_category_title,
                 team_events.experiment,
                 items.category AS items_category,

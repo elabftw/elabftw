@@ -20,6 +20,8 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users\Users;
 
+use function _;
+
 enum EntityType: string
 {
     case Experiments = 'experiments';

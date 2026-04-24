@@ -13,6 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ImproperActionException;
+use Override;
+
+use function _;
+use function sprintf;
 
 /**
  * An entity like Experiments or Items. Concrete as opposed to TemplateEntity for experiments templates or items types
@@ -43,6 +47,7 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return $res + 1;
     }
 
+    #[Override]
     protected function enforceTemplate(array $teamConfigArr): void
     {
         $message = sprintf(_('Your team administrator has disabled creating %s without using a template.'), $this->entityType->toHuman());

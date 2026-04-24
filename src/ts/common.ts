@@ -272,7 +272,7 @@ function initPermissionsTomSelects() {
     };
     const wrapper = select.closest('.ts-wrapper');
     config['dropdownParent'] = wrapper;
-    config['controlInput'] = wrapper?.querySelector('.ts-input');
+    config['controlInput'] = wrapper?.querySelector('input');
     // for users, we return a formatted response with id - user (email)
     if (select.id.endsWith('_select_users')) {
       config['load'] = (query: string, callback) => {
@@ -296,7 +296,7 @@ async function fetchUsers(query: string) {
   const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
   return users.map((u) => ({
     value: `user:${u.userid}`,
-    text: `${u.userid} - ${u.fullname} (${u.email})`,
+    text: `${u.fullname} (${u.email})`,
   }));
 }
 

@@ -48,14 +48,14 @@
       <button type='button' class='btn btn-ghost' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' >
         <i class='fas fa-cogs fa-fw'></i>
       </button>
-      <button type='button' data-action='toggle-modal' data-target='schedulerExportsModal' class='btn btn-secondary' aria-label='{{ 'Export'|trans }}' title='{{ 'Export'|trans }}'>
+      <button type='button' data-action='toggle-modal' data-target='schedulerExportsModal' data-cy='schedulerExportsModal' class='btn btn-secondary' aria-label='{{ 'Export'|trans }}' title='{{ 'Export'|trans }}'>
         {{ 'Export'|trans }}
       </button>
     </div>
   </div>
   <div id='selectedItemsContainer' class='m-4 d-none'>
     <strong class='d-block mb-2'>{{ 'Selected items:'|trans }}</strong>
-    <div id='selectedItemsDisplay' class='d-flex flex-wrap'></div>
+    <div id='selectedItemsDisplay' data-cy='selectedItemsDisplay' class='d-flex flex-wrap'></div>
   </div>
   <hr>
   {# Click on the scheduler: Search items to book #}

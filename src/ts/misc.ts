@@ -173,9 +173,6 @@ export function rebuildTomSelectOptions(
   const ts = selectEl.tomselect;
   if (!ts) return;
 
-  const rawSelected = ts.getValue();
-  const selected = Array.isArray(rawSelected) ? rawSelected : [rawSelected];
-
   let nextOptions: TomSelectOption[] = [];
 
   if ('options' in source) {
@@ -192,10 +189,6 @@ export function rebuildTomSelectOptions(
 
   ts.clearOptions();
   ts.addOptions(nextOptions);
-  const validValues = selected.filter((value) =>
-    nextOptions.some((option) => option.value === value),
-  );
-  ts.setValue(validValues, true);
   ts.refreshOptions(false);
 }
 

@@ -144,19 +144,13 @@
   }
 }
 
-// team select wrappers for permissions modal
-.team-select-wrapper,
-.users-select-wrapper,
-.teamgroups-select-wrapper {
+// div containing the selected items from tom-select multi-inputs (permissions modal)
+.ts-wrapper {
   position: relative; /* see https://tom-select.js.org/plugins/no-backspace-delete/ */
 
   .ts-control {
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-    // will appear when at least one item is selected, controlled by js
     display: flex;
-    flex-wrap: wrap !important;
+    flex-wrap: wrap !important; // override forced default
   }
 }
 

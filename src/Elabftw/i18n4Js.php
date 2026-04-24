@@ -50,6 +50,7 @@ final class i18n4Js
             'add-task' => _('Add task'),
             'add-team' => _('Add team'),
             'add-to-team' => _('Add selected users to team'),
+            'all-teams' => _('All teams'),
             'archive-user' => _('Archive user'),
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),
             'add-user-error' => _('Use the autocompletion menu to add users.'),
@@ -122,6 +123,7 @@ final class i18n4Js
             'modified-at' => _('Modified at'),
             // https://www.i18next.com/translation-function/formatting
             'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
+            'my-teams' => _('My teams'),
             'name' => _('Name'),
             'new-spreadsheet' => _('New spreadsheet'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),

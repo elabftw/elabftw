@@ -256,51 +256,25 @@ function initPermissionsTomSelects() {
   if (permissionSelects.length === 0) return;
   permissionSelects.forEach((select) => {
     const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
-    if (tsSelect.tomselect) {
-      return;
-    }
-    const isTeams = select.id.endsWith('_select_teams');
-    const isTeamGroups = select.id.endsWith('_select_teamgroups');
-    const isUsers = select.id.endsWith('_select_users');
-
-    if (!isTeams && !isTeamGroups && !isUsers) return;
-
-    const wrapper = select.closest(
-      isTeams
-        ? '.team-select-wrapper'
-        : isTeamGroups
-          ? '.teamgroups-select-wrapper'
-          : '.users-select-wrapper',
-    );
-
-    if (!(wrapper instanceof HTMLElement)) {
-      new TomSelect(select, { plugins: ['remove_button', 'clear_button'] });
-      return;
-    }
-    const input = wrapper.querySelector(
-      isTeams
-        ? '.team-select-input'
-        : isTeamGroups
-          ? '.teamgroups-select-input'
-          : '.users-select-input',
-    );
-
+    // avoid re-init of tomselect if already exists
+    if (tsSelect.tomselect) return;
     const config = {
       plugins: {
-        clear_button: {},
         no_backspace_delete: {},
         remove_button: {},
       },
-      onInitialize() { updateVisibility(this); },
+      onInitialize() { setSelectedItemsDivVisibility(this); },
       onItemAdd() {
         this.setTextboxValue('');
-        updateVisibility(this);
+        setSelectedItemsDivVisibility(this);
       },
-      onItemRemove() { updateVisibility(this); },
+      onItemRemove() { setSelectedItemsDivVisibility(this); },
     };
-    config['controlInput'] = input;
+    const wrapper = select.closest('.ts-wrapper');
     config['dropdownParent'] = wrapper;
-    if (isUsers) {
+    config['controlInput'] = wrapper?.querySelector('.ts-input');
+    // for users, we return a formatted response with id - user (email)
+    if (select.id.endsWith('_select_users')) {
       config['load'] = (query: string, callback) => {
         if (!query.length) return callback();
         fetchUsers(query).then(callback).catch(() => callback());
@@ -311,16 +285,18 @@ function initPermissionsTomSelects() {
 }
 
 initPermissionsTomSelects();
-// update visibility of selected items in TomSelect divs
-function updateVisibility(instance) {
+
+// make the div holding selected items disappear when empty and vice versa.
+function setSelectedItemsDivVisibility(instance) {
   instance.control.style.display = instance.items.length ? 'flex' : 'none';
 }
 
+// fetch users and return in an id - username (email) format
 async function fetchUsers(query: string) {
   const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
   return users.map((u) => ({
     value: `user:${u.userid}`,
-    text: `${u.fullname} (${u.email})`,
+    text: `${u.userid} - ${u.fullname} (${u.email})`,
   }));
 }
 
@@ -341,10 +317,12 @@ on('team-scope-change', async (el: HTMLElement) => {
 
   const btn = el.closest('.btn-group')?.querySelector('button.dropdown-toggle');
   if (btn) {
-    btn.innerHTML = `
-      <i class="fas fa-fw ${scope === 1 ? 'fa-user' : 'fa-globe'} mx-1"></i>
-      ${scope === 1 ? 'My teams' : 'All teams'}
-    `;
+    // clear existing content
+    btn.replaceChildren();
+    const icon = document.createElement('i');
+    icon.classList.add('fas', 'fa-fw', scope === 1 ? 'fa-user' : 'fa-globe', 'mx-1');
+    const text = document.createTextNode(scope === 1 ? i18next.t('my-teams') : i18next.t('all-teams'));
+    btn.append(text, icon);
   }
   let teams = [];
 

@@ -76,7 +76,7 @@
             </div>
           </div>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
-          <div class='team-select-wrapper'>
+          <div class='ts-wrapper'>
             {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
             <select id='{{ identifierTeams }}' multiple class='form-control' autocomplete='off' aria-label='{{ 'Search for user team'|trans }}'>
               {% for team in teamsArr %}
@@ -85,7 +85,7 @@
                 </option>
               {% endfor %}
             </select>
-            <input type='text' class='form-control mb-2 team-select-input' id='{{ identifier }}-team-select-input' placeholder='{{ 'Search for teams'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>
+            <input type='text' class='form-control mb-2 ts-input' id='{{ identifier }}-team-select-input' placeholder='{{ 'Search for teams'|trans }}' aria-label='{{ 'Search for user team'|trans }}'>
           </div>
           {# USER GROUPS #}
           {% set identifierTeamGroups = identifier ~ '_select_teamgroups' %}
@@ -97,7 +97,7 @@
             {% include 'scope-button.html' with {'btnId': scopeBtnId, 'reload': toReload, 'target': 'scope_teamgroups', 'withLabel': 1} %}
           </div>
           <p class='smallgray'>{{ 'Selecting a user group here will give access to all users of this group.'|trans }}</p>
-          <div class='teamgroups-select-wrapper'>
+          <div class='ts-wrapper'>
             {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
             <select id='{{ identifierTeamGroups }}' multiple class='form-control' autocomplete='off' {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} aria-label='{{ 'Search for user group'|trans }}'>
               {% for tg in scopedTeamgroupsArr %}
@@ -105,12 +105,12 @@
                 {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}>{{ tg.team_name }} - {{ tg.name }}</option>
               {% endfor %}
             </select>
-            <input type='text' class='form-control mb-2 teamgroups-select-input' id='{{ identifier }}-teamgroups-select-input' placeholder='{{ 'Search for user groups'|trans }}' aria-label='{{ 'Search for user group'|trans }}'>
+            <input type='text' class='form-control mb-2 ts-input' id='{{ identifier }}-teamgroups-select-input' placeholder='{{ 'Search for user groups'|trans }}' aria-label='{{ 'Search for user group'|trans }}'>
           </div>
           {# USERS #}
           <label for='{{ identifier }}_select_users' class='mt-2'><strong><i class='fas fa-user mt-2 mr-2' aria-hidden='true'></i>+ {{ 'Users'|trans }}</strong></label>
           <p class='smallgray'>{{ 'You can select specific users to give access to.'|trans }}</p>
-          <div class='users-select-wrapper'>
+          <div class='ts-wrapper'>
             {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
             <select id='{{ identifier }}_select_users' multiple class='form-control' autocomplete='off' aria-label='{{ 'Search for users'|trans }}'>
               {% set humanCan = permissionsJson|canToHuman %}
@@ -120,7 +120,7 @@
                 </option>
               {% endfor %}
             </select>
-            <input type='text' class='form-control mt-2 users-select-input' id='{{ identifier }}-users-select-input' placeholder='{{ 'Search for users'|trans }}' aria-label='{{ 'Search for users'|trans }}'>
+            <input type='text' class='form-control mt-2 ts-input' id='{{ identifier }}-users-select-input' placeholder='{{ 'Search for users'|trans }}' aria-label='{{ 'Search for users'|trans }}'>
           </div>
         </div>
         {% if rw == 'canread' and App.Config.configArr.anon_users and not ucpPage %}

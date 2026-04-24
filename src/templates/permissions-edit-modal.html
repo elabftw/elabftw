@@ -77,6 +77,9 @@
           </div>
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
           <div class='team-select-wrapper'>
+            {% if App.devMode -%}
+              <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+            {%- endif %}
             <select id='{{ identifierTeams }}' multiple class='form-control' autocomplete='off'>
               {% for team in teamsArr %}
                 <option value='team:{{ team.id }}' {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}>
@@ -97,6 +100,9 @@
           </div>
           <p class='smallgray'>{{ 'Selecting a user group here will give access to all users of this group.'|trans }}</p>
           <div class='teamgroups-select-wrapper'>
+            {% if App.devMode -%}
+              <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+            {%- endif %}
             <select id='{{ identifierTeamGroups }}' multiple class='form-control' autocomplete='off' {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} >
               {% for tg in scopedTeamgroupsArr %}
                 <option value='teamgroup:{{ tg.id }}'
@@ -109,6 +115,9 @@
           <label for='{{ identifier }}_select_users' class='mt-2'><strong><i class='fas fa-user mt-2 mr-2' aria-hidden='true'></i>+ {{ 'Users'|trans }}</strong></label>
           <p class='smallgray'>{{ 'You can select specific users to give access to.'|trans }}</p>
           <div class='users-select-wrapper'>
+            {% if App.devMode -%}
+              <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+            {%- endif %}
             <select id='{{ identifier }}_select_users' multiple class='form-control' autocomplete='off'>
               {% set humanCan = permissionsJson|canToHuman %}
               {% for user in humanCan.users %}

@@ -535,9 +535,11 @@ if (window.location.pathname === '/scheduler.php') {
         payload.range_value = parseInt((document.getElementById('cancelEventRangeValue') as HTMLInputElement).value, 10);
         payload.range_unit = (document.getElementById('cancelEventRangeUnit') as HTMLSelectElement).value;
       }
-      ApiC.post(`event/${el.dataset.id}/notifications`, payload).then(() => {
-        ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
-      });
+      // The notification must be sent before deletion, otherwise the event ID is lost (Nothing to show with this id)
+      ApiC.notifOnSaved = false;
+      ApiC.post(`event/${el.dataset.id}/notifications`, payload)
+        .then(() => ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch())
+        .then(() => notify.success()).finally(() => ApiC.notifOnSaved = true);
     });
 
     on('edit-event', async (_, e: Event) => {

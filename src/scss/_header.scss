@@ -60,3 +60,19 @@
 #navbar-notif-dropdown {
   min-width: 15vw;
 }
+
+#navbarNotifDropdown {
+  position: relative;
+}
+
+#navbarNotifDropdown.notif-active::after {
+  background-color: var(--red);
+  border: 2px solid var(--chrome-fg);
+  border-radius: 50%;
+  content: '';
+  height: 10px;
+  position: absolute;
+  right: 3px;
+  top: 8px;
+  width: 10px;
+}

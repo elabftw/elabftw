@@ -74,21 +74,21 @@
             </div>
             <hr>
             <h4>{{ 'Booking costs'|trans }}</h4>
-            <div class='smallgray mb-4'>{{ 'Calculate resource use based on Scheduler into Export CSV.'|trans }}</div>
+            <div class='smallgray mb-4'>{{ 'Calculate the %shourly%s cost of booked resources based on scheduling data, and export the results as a CSV file from the Scheduler page.'|trans|format('<strong>', '</strong>')|raw }}</div>
             {# Hourly rate of booked resource, without taxes #}
             <div class='d-flex justify-content-between mb-2'>
-              <label for='booking_hourly_rate_notax' class='col-form-label'>{{ 'Hourly rate, without taxes'|trans }}</label>
-              <input id='booking_hourly_rate_notax' name='booking_hourly_rate_notax' class='form-control col-md-4' data-model='items/{{ Entity.id }}' data-target='booking_hourly_rate_notax' type='number' min='0' value='{{ Entity.entityData.booking_hourly_rate_notax }}' step='0.01' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} />
+              <label for='booking_hourly_rate_notax' class='col-form-label'>{{ 'Price without taxes'|trans }}</label>
+              <input id='booking_hourly_rate_notax' name='booking_hourly_rate_notax' class='form-control col-md-4' data-target='booking_hourly_rate_notax' type='number' min='0' value='{{ Entity.entityData.booking_hourly_rate_notax }}' step='0.01' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} />
             </div>
             {# Hourly rate of booked resource, with taxes #}
             <div class='d-flex justify-content-between mb-2'>
-              <label for='booking_hourly_rate_tax' class='col-form-label'>{{ 'Hourly rate, with taxes'|trans }}</label>
-              <input id='booking_hourly_rate_tax' name='booking_hourly_rate_tax' class='form-control col-md-4' data-model='items/{{ Entity.id }}' data-target='booking_hourly_rate_tax' type='number' min='0' value='{{ Entity.entityData.booking_hourly_rate_tax }}' step='0.01' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} />
+              <label for='booking_hourly_rate_tax' class='col-form-label'>{{ 'Price with taxes'|trans }}</label>
+              <input id='booking_hourly_rate_tax' name='booking_hourly_rate_tax' class='form-control col-md-4' data-target='booking_hourly_rate_tax' type='number' min='0' value='{{ Entity.entityData.booking_hourly_rate_tax }}' step='0.01' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} />
             </div>
             {# Hourly rate's currency #}
             <div class='d-flex justify-content-between mb-2'>
-              <label for='booking_hourly_rate_currency' class='col-form-label'>{{ 'Currency of the hourly rate'|trans }}</label>
-              <select id='booking_hourly_rate_currency' name='booking_hourly_rate_currency' class='form-control col-md-4' data-trigger='change' data-model='items/{{ Entity.id }}' data-target='booking_hourly_rate_currency' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} >
+              <label for='booking_hourly_rate_currency' class='col-form-label'>{{ 'Currency'|trans }}</label>
+              <select id='booking_hourly_rate_currency' name='booking_hourly_rate_currency' class='form-control col-md-4' data-target='booking_hourly_rate_currency' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} >
                 {% for value, text in currencyArr %}
                   <option value='{{ value }}' {{ value == Entity.entityData.booking_hourly_rate_currency ? 'selected' }}>{{ text }}</option>
                 {% endfor %}

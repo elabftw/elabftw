@@ -96,8 +96,8 @@ describe('Make', () => {
   it('scheduler report: with events', () => {
     cy.createBooking();
     cy.visit('/scheduler.php');
-    cy.get('[data-cy="scheduler-exports-modal"]').click();
-    cy.get('[data-cy="export-scheduler"]').click();
+    cy.get('[data-cy="schedulerExportsModal"]').click();
+    cy.get('[data-cy="exportScheduler"]').click();
     cy.intercept('GET', '/make.php?format=schedulerReport').as('download');
   });
 });

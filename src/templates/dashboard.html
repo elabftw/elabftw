@@ -116,7 +116,7 @@
     </div>
     <hr>
     <div class='list-group mt-1' id='scheduledBookings'>
-      {% for booking in bookingsArr %}
+      {% for booking in bookingsArr|sort((a, b) => (a.start|date('U')) - (b.start|date('U'))) %}
         <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item breakable'>
           {% if booking.items_category_title %}
             <span style='--bg: {{ booking.color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ booking.items_category_title }}</span>

@@ -28,6 +28,7 @@ final class TeamParam extends ContentParams
             'onboarding_email_body' => $this->getNullableContent(),
             'user_create_tag',
             'force_exp_tpl',
+            'force_res_tpl',
             'users_canwrite_experiments',
             'users_canwrite_experiments_categories',
             'users_canwrite_experiments_status',

@@ -20,6 +20,8 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Users\Users;
 
+use function _;
+
 enum EntityType: string
 {
     case Experiments = 'experiments';
@@ -139,6 +141,16 @@ enum EntityType: string
             4 => self::ItemsTypes,
             null => null,
             default => throw new ImproperActionException('Invalid integer value for entityType'),
+        };
+    }
+
+    public function toHuman(): string
+    {
+        return match ($this) {
+            self::Experiments => _('Experiments'),
+            self::Items => _('Resources'),
+            self::Templates => _('Experiment templates'),
+            self::ItemsTypes => _('Resource templates'),
         };
     }
 }

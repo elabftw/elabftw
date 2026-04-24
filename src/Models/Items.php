@@ -42,6 +42,8 @@ final class Items extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
+    protected const string FORCE_TEMPLATE_KEY = 'force_res_tpl';
+
     public EntityType $entityType = EntityType::Items;
 
     #[Override]

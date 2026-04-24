@@ -79,6 +79,11 @@
       'label': 'Force experiment template use'|trans,
       'help': 'Users will be forced to select an existing Template, and will not be able to create a blank entry.'|trans} %}
 
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'force_res_tpl',
+      'label': 'Force resource template use'|trans,
+      'help': 'Users will be forced to select an existing Resource Template, and will not be able to create a blank entry.'|trans} %}
+
     {# EXPERIMENTS (& status, categories, templates #}
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_experiments',

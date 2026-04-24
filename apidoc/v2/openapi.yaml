@@ -1958,6 +1958,12 @@ components:
           type: integer
         force_exp_tpl:
           type: integer
+          default: 0
+          description: Binary toggle to force usage of templates.
+        force_res_tpl:
+          type: integer
+          default: 0
+          description: Binary toggle to force usage of templates.
         created_at:
           type: string
         orgid:

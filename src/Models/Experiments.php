@@ -37,6 +37,8 @@ final class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
 
+    protected const string FORCE_TEMPLATE_KEY = 'force_exp_tpl';
+
     public EntityType $entityType = EntityType::Experiments;
 
     #[Override]
@@ -68,7 +70,6 @@ final class Experiments extends AbstractConcreteEntity
         if (empty($body)) {
             $body = null;
         }
-
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 

@@ -141,4 +141,14 @@ enum EntityType: string
             default => throw new ImproperActionException('Invalid integer value for entityType'),
         };
     }
+
+    public function toHuman(): string
+    {
+        return match ($this) {
+            self::Experiments => _('Experiments'),
+            self::Items => _('Resources'),
+            self::Templates => _('Experiment templates'),
+            self::ItemsTypes => _('Resource templates'),
+        };
+    }
 }

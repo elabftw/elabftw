@@ -1072,10 +1072,6 @@ on('toggle-anonymous-access', () => {
 });
 
 on('reload-color', (el: HTMLElement) => {
-  el.classList.add('flash');
-  setTimeout(() => {
-    el.classList.remove('flash');
-  }, 100);
   (el.nextElementSibling as HTMLInputElement).value = getRandomColor();
 });
 

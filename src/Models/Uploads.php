@@ -55,7 +55,7 @@ use function sprintf;
 use function str_replace;
 use function stream_copy_to_stream;
 use function stream_get_meta_data;
-use function strpos;
+use function str_contains;
 
 /**
  * All about the file uploads
@@ -206,35 +206,27 @@ final class Uploads extends AbstractRest
     public function duplicate(AbstractEntity $entity): void
     {
         $uploads = $this->selectAll(array(State::Normal));
+        $body = $entity->entityData['body'];
         foreach ($uploads as $upload) {
-            if ($upload['storage'] === Storage::LOCAL->value) {
-                $prefix = '/elabftw/uploads/';
-                $param = new CreateUpload(
-                    realName: $upload['real_name'],
-                    filePath: $prefix . $upload['long_name'],
-                    hasher: new ExistingHash($upload['hash']),
-                    comment: $upload['comment'],
-                    state: State::from($upload['state']),
-                );
-            } else {
-                $param = new CreateUploadFromS3(
-                    realName: $upload['real_name'],
-                    filePath: $upload['long_name'],
-                    hasher: new ExistingHash($upload['hash']),
-                    comment: $upload['comment'],
-                    state: State::from($upload['state']),
-                );
-            }
+            $param = $this->makeCreateUploadParam($upload);
             $id = $entity->Uploads->create($param);
             $fresh = new self($entity, $id);
-            // replace links in body with the new long_name
-            // don't bother if body is null
-            if ($entity->entityData['body'] === null) {
+            // replace links in body with the new long_name. Skip if body is null
+            if ($body === null) {
                 continue;
             }
-            $newBody = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $entity->entityData['body']);
-            $entity->patch(Action::Update, array('body' => $newBody));
+            $body = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $body);
         }
+        if ($body !== null && $body !== $entity->entityData['body']) {
+            $entity->patch(Action::Update, array('body' => $body));
+        }
+    }
+
+    public function duplicateOne(): int
+    {
+        $this->canWriteOrExplode();
+        $param = $this->makeCreateUploadParam($this->uploadData);
+        return $this->Entity->Uploads->create($param);
     }
 
     /**
@@ -326,10 +318,10 @@ final class Uploads extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         $this->Entity->touch();
-        if ($this->id !== null) {
-            $action = Action::Replace;
-        }
-        $realName = Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody);
+        $realName = ($action === Action::Replace || $action === Action::Create)
+            ? Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody)
+            : ($this->uploadData['real_name']
+                ?? Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody));
         return match ($action) {
             Action::Create => $this->create(
                 new CreateUploadFromUploadedFile(new UploadedFile($reqBody['filePath'], $realName), $reqBody['comment'])
@@ -346,6 +338,7 @@ final class Uploads extends AbstractRest
                     return $this->createFromString($fileType, $realName, $reqBody['content']);
                 }
             )(),
+            Action::Duplicate => $this->duplicateOne(),
             Action::Replace => $this->replace(new CreateUploadFromUploadedFile(
                 new UploadedFile($reqBody['filePath'], $realName),
                 $this->uploadData['comment']
@@ -360,18 +353,12 @@ final class Uploads extends AbstractRest
         return sprintf('%s%d/uploads/', $this->Entity->getApiPath(), $this->Entity->id ?? 0);
     }
 
-    /**
-     * Make a body check and then remove upload
-     */
     #[Override]
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
         $this->Entity->touch();
-        // check that the filename is not in the body. see #432
-        if (strpos($this->Entity->entityData['body'] ?? '', $this->uploadData['long_name'])) {
-            throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
-        }
+        $this->checkUploadIsNotReferenced();
         return $this->nuke();
     }
 
@@ -464,6 +451,36 @@ final class Uploads extends AbstractRest
         return $this->Db->execute($req);
     }
 
+    // check that the filename is not in the body. see #432
+    private function checkUploadIsNotReferenced(): void
+    {
+        $body = $this->Entity->entityData['body'] ?? '';
+        if (str_contains($body, $this->uploadData['long_name'])) {
+            throw new ImproperActionException(_('Please make sure to remove any reference to this file in the body!'));
+        }
+    }
+
+    private function makeCreateUploadParam(array $upload): CreateUploadParamsInterface
+    {
+        if ($upload['storage'] === Storage::LOCAL->value) {
+            $prefix = '/elabftw/uploads/';
+            return new CreateUpload(
+                realName: $upload['real_name'],
+                filePath: $prefix . $upload['long_name'],
+                hasher: new ExistingHash($upload['hash']),
+                comment: $upload['comment'],
+                state: State::from($upload['state']),
+            );
+        }
+        return new CreateUploadFromS3(
+            realName: $upload['real_name'],
+            filePath: $upload['long_name'],
+            hasher: new ExistingHash($upload['hash']),
+            comment: $upload['comment'],
+            state: State::from($upload['state']),
+        );
+    }
+
     private function update(UploadParams $params): bool
     {
         $sql = 'UPDATE uploads SET ' . $params->getColumn() . ' = :content WHERE id = :id';
@@ -497,6 +514,7 @@ final class Uploads extends AbstractRest
     private function archive(): array
     {
         $this->canWriteOrExplode();
+        $this->checkUploadIsNotReferenced();
         $targetState = State::Archived->value;
         // if already archived, unarchive
         if ($this->uploadData['state'] === State::Archived->value) {

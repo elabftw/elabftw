@@ -24,19 +24,16 @@
 
 {# ADMIN PANEL MAIN MENU #}
 <ul class='tabbed-menu'>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='2'>{{ 'User Groups'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='4'>{{ 'Export'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='5'>{{ 'Tag manager'|trans }}</button></li>
-  <li><button type='button' class='btn' data-action='switch-tab' data-tabtarget='6'>{{ 'Batch actions'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='1'>{{ 'Team'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='2'>{{ 'User Groups'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='3'>{{ 'Users'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='4'>{{ 'Export'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='5'>{{ 'Tag manager'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='6'>{{ 'Batch actions'|trans }}</button></li>
 </ul>
 
 {% include 'loading-spinner.html' %}
 
-{#
-{% include 'create-statuslike-modal.html' with {'target': 'items_status', 'title': 'Create new resources status'|trans} %}
-#}
 {% include 'ownership-transfer-modal.html' %}
 {% include 'onboarding-email-modal.html' %}
 
@@ -46,7 +43,7 @@
 
 {# TAB 1 TEAM CONFIG #}
 <div data-tabcontent='1' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Usage Statistics'|trans }}</h2>
   <div class='pl-3 mb-5'>
     <div class='d-flex justify-content-between'>
       <div>
@@ -67,7 +64,7 @@
     </div>
   </div>
 
-  <h3 class='p-2 pl-3 section-title'>{{ 'Configure your Team'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Configure your Team'|trans }}</h2>
 
   <div class='pl-3 mt-2'>
     <div class='d-flex justify-content-between'>
@@ -126,7 +123,7 @@
   {% include 'onboarding-email.html' %}
 
   {# FRESH USER INFO #}
-  <h3 class='p-2 pl-3 section-title'>{{ 'Newcomer banner'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Newcomer banner'|trans }}</h2>
   <div class='pl-3 mt-2'>
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'newcomer_banner_active',
@@ -160,7 +157,7 @@
 <div data-tabcontent='2' hidden>
   <p>{{ 'A User Group can contain users from different teams. Its main use is to later allow giving permissions to this group.'|trans }}</p>
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/usage/admin-guide#user-groups-tab'>{{ 'Link to documentation'|trans }}</a></p>
-  <h3 class='p-2 pl-3 section-title'>{{ 'Create user group'|trans }}</h3>
+  <h2 class='p-2 pl-3 section-title'>{{ 'Create user group'|trans }}</h2>
 
   {# CREATE A GROUP #}
   <form class='pl-3 mt-2 mb-5 input-group' id='createGroupForm' aria-label='{{ 'Add a group'|trans }}'>
@@ -175,24 +172,24 @@
 
   {# SHOW EXISTING USER GROUPS #}
   <div id='team_groups_div'>
-    <h3 class='p-2 pl-3 section-title'>{{ 'Existing user groups'|trans }}</h3>
+    <h2 class='p-2 pl-3 section-title'>{{ 'Existing user groups'|trans }}</h2>
     <div class='pl-3'>
       {% if not teamGroupsArr %}
         <p class='mt-3'>{{ 'No user group created yet.'|trans }}</p>
       {% endif %}
       {% for teamGroup in teamGroupsArr %}
         <div class='box'>
-          <button type='button' class='btn float-right border-0 hl-hover-gray rounded p-2 lh-normal m-0' data-action='destroy-teamgroup' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
+          <button type='button' class='btn btn-danger-ghost float-right' data-action='destroy-teamgroup' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
             <i class='fas fa-trash-alt'></i>
           </button>
           {% if App.devMode -%}
             <!-- [html-validate-disable-block prefer-native-element] -->
           {%- endif %}
-          <h5><i class='fas fa-users'></i> <span data-id='{{ teamGroup.id }}' class='malleableTeamgroupName hl-hover'>{{ teamGroup.name }}</span></h5>
+          <h3><i class='fas fa-users'></i> <span data-id='{{ teamGroup.id }}' class='malleableTeamgroupName hl-hover'>{{ teamGroup.name }}</span></h3>
           <hr>
           <div class='d-flex flex-wrap'>
             {% for user in teamGroup.users %}
-            <div class='user-badge mr-2'>{{ user.fullname }} <span title='{{ 'Delete'|trans }}' class='m-1' data-action='rmuser-teamgroup' data-userid='{{ user.userid }}' data-groupid='{{ teamGroup.id }}'><i class='fas fa-xmark color-blue'></i></span></div>
+            <div class='user-badge mr-2'>{{ user.fullname }} <span title='{{ 'Delete'|trans }}' class='m-1 btn btn-danger-ghost btn-sm' data-action='rmuser-teamgroup' data-userid='{{ user.userid }}' data-groupid='{{ teamGroup.id }}'><i class='fas fa-xmark'></i></span></div>
             {% endfor %}
           </div>
           {# ADD USER #}
@@ -220,7 +217,7 @@
 
 {# TAB 6 EXPORT #}
 <div data-tabcontent='4' hidden>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Export database items'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Export database items'|trans }}</h2>
   <div class='pl-3 mb-5'>
     <div class='d-flex justify-content-between'>
       <label for='categoryExport' class='col-form-label'>{{ 'Select what to export'|trans }}</label>
@@ -250,7 +247,7 @@
     </div>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Export experiments of user'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Export experiments of user'|trans }}</h2>
   <div class='pl-3 mb-5'>
 
     <div class='d-flex justify-content-between'>
@@ -287,7 +284,7 @@
 {# TAB 7 TAG MANAGER #}
 <div data-tabcontent='5' hidden>
   <p>{{ 'From here you can add, edit or delete the tags for your team. Click the tag to edit it.'|trans }}</p>
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Configuration'|trans }}</h2>
   <div class='pl-3 mb-5'>
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'user_create_tag',
@@ -295,7 +292,7 @@
       'help': 'An admin account will always be able to create new tags.'|trans} %}
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Add a tag'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Add a tag'|trans }}</h2>
   <div class='pl-3 mb-5'>
 
     <div class='input-group'>
@@ -306,7 +303,7 @@
     </div>
   </div>
 
-  <h3 class='mb-3 p-2 pl-3 section-title'>{{ 'Manage tags of the team'|trans }}</h3>
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Manage tags of the team'|trans }}</h2>
   <div class='pl-3'>
 
     <div class='mt-2 table-container' id='tagMgrDiv'>
@@ -329,17 +326,17 @@
               <th data-label='{{ 'Tag'|trans }}' scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag }}</button></th>
               <td data-label='{{ 'Occurence'|trans }}' class='align-middle'>{{ tag.item_count }}</td>
               <td data-label='{{ 'Show tagged experiments'|trans }}'>
-                <a title='{{ 'Show tagged experiments'|trans }}' aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}&amp;scope=3' class='btn hl-hover-gray lh-normal p-1 my-n1'>
+                <a title='{{ 'Show tagged experiments'|trans }}' aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}&amp;scope=3' class='btn btn-ghost btn-sm'>
                   <i class='fas fa-flask'></i>
                 </a>
               </td>
               <td data-label='{{ 'Show tagged resources'|trans }}'>
-                <a title='{{ 'Show tagged resources'|trans }}' aria-label='{{ 'Show tagged resources'|trans }}' href='database.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}&amp;scope=3' class='btn hl-hover-gray lh-normal p-1 my-n1'>
+                <a title='{{ 'Show tagged resources'|trans }}' aria-label='{{ 'Show tagged resources'|trans }}' href='database.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}&amp;scope=3' class='btn btn-ghost btn-sm'>
                   <i class='fas fa-cubes-stacked'></i>
                 </a>
               </td>
               <td data-label='{{ 'Delete'|trans }}'>
-                <button type='button' class='btn hl-hover-gray lh-normal p-1 my-n1' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
+                <button type='button' class='btn btn-danger-ghost btn-sm' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
               </td>
             </tr>
           {% endfor %}
@@ -353,24 +350,24 @@
 <div data-tabcontent='6' id='batchActions' hidden>
   <p>{{ 'From here you can perform actions on entire group of entries at once.'|trans }}</p>
   <hr>
-  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
-  <div hidden class='mt-2'>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchCategoriesDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2' id='batchCategoriesDiv'>
   {% for itemsCategory in App.itemsCategoryArr %}
-    <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
-      <label for='batch-itemsTypes-{{ itemsCategory.id }}' class='col-form-label clickable'>{{ itemsCategory.title }}</label>
+    <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
+      <label for='batch-itemsTypes-{{ itemsCategory.id }}' class='flex-grow-1 col-form-label clickable'>{{ itemsCategory.title }}</label>
       <label class='switch ucp-align'><span class='sr-only'>{{ itemsCategory.title }}</span>
         <input type='checkbox' name='items_categories' value='{{ itemsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-itemsTypes-{{ itemsCategory.id }}'>
         <span class='slider'></span>
       </label>
     </div>
   {% endfor %}
-    </div>
-    <hr>
+  </div>
+  <hr>
 
-  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
-  <div hidden class='mt-2'>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2' id='batchStatusDiv'>
   {% for status in itemsStatusArr %}
-    <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+    <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
       <label for='batch-itemsStatus-{{ status.id }}' class='col-form-label clickable'>{{ status.title }}</label>
       <label class='switch ucp-align'><span class='sr-only'>{{ status.title }}</span>
         <input type='checkbox' name='items_status' value='{{ status.id }}' autocomplete='off' data-action='update-counter-value' id='batch-itemsStatus-{{ status.id }}'>
@@ -378,14 +375,14 @@
       </label>
     </div>
   {% endfor %}
-    </div>
-
+  </div>
   <hr>
-  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
-  <div hidden class='mt-2'>
+
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchTagsDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2' id='batchTagsDiv'>
     {# for this tab, sort the tags in alphabetical order, case-insensitive #}
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
-      <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
         <label for='batch-itemsTags-{{ tag.id }}' class='col-form-label clickable'>{{ tag.tag }}</label>
         <label class='switch ucp-align'><span class='sr-only'>{{ tag.tag }}</span>
 
@@ -395,40 +392,40 @@
       </div>
     {% endfor %}
   </div>
-
   <hr>
-  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
-  <div hidden class='mt-2'>
-  {% for experimentsCategory in App.experimentsCategoryArr %}
-    <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
-      <label for='batch-experimentsCategories-{{ experimentsCategory.id }}' class='col-form-label clickable'>{{ experimentsCategory.title }}</label>
-      <label class='switch ucp-align'><span class='sr-only'>{{ experimentsCategory.title }}</span>
-        <input type='checkbox' name='experiments_categories' value='{{ experimentsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsCategories-{{ experimentsCategory.id }}'>
-        <span class='slider'></span>
-      </label>
-    </div>
-  {% endfor %}
-    </div>
-    <hr>
 
-  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
-  <div hidden class='mt-2'>
-  {% for status in statusArr %}
-    <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
-      <label for='batch-experimentsStatus-{{ status.id }}' class='col-form-label clickable'>{{ status.title }}</label>
-      <label class='switch ucp-align'><span class='sr-only'>{{ status.title }}</span>
-        <input type='checkbox' name='experiments_status' value='{{ status.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsStatus-{{ status.id }}'>
-        <span class='slider'></span>
-      </label>
-    </div>
-  {% endfor %}
-    </div>
-
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpCatDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2' id='batchExpCatDiv'>
+    {% for experimentsCategory in App.experimentsCategoryArr %}
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
+        <label for='batch-experimentsCategories-{{ experimentsCategory.id }}' class='col-form-label clickable'>{{ experimentsCategory.title }}</label>
+        <label class='switch ucp-align'><span class='sr-only'>{{ experimentsCategory.title }}</span>
+          <input type='checkbox' name='experiments_categories' value='{{ experimentsCategory.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsCategories-{{ experimentsCategory.id }}'>
+          <span class='slider'></span>
+        </label>
+      </div>
+    {% endfor %}
+  </div>
   <hr>
-  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
-  <div hidden class='mt-2'>
+
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2' id='batchExpStatusDiv'>
+    {% for status in statusArr %}
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
+        <label for='batch-experimentsStatus-{{ status.id }}' class='col-form-label clickable'>{{ status.title }}</label>
+        <label class='switch ucp-align'><span class='sr-only'>{{ status.title }}</span>
+          <input type='checkbox' name='experiments_status' value='{{ status.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsStatus-{{ status.id }}'>
+          <span class='slider'></span>
+        </label>
+      </div>
+    {% endfor %}
+  </div>
+  <hr>
+
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpTagsDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2' id='batchExpTagsDiv'>
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
-    <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
         <label for='batch-experimentsTags-{{ tag.id }}' class='col-form-label clickable'>{{ tag.tag }}</label>
         <label class='switch ucp-align'><span class='sr-only'>{{ tag.tag }}</span>
           <input type='checkbox' name='experiments_tags' value='{{ tag.id }}' autocomplete='off' data-action='update-counter-value' id='batch-experimentsTags-{{ tag.id }}'>
@@ -440,10 +437,10 @@
   <hr>
 
   {% macro batchTransferOwnership(target, param, users) %}
-  <button type='button' class='btn color-strong p-2 hl-hover-gray lh-normal border-0 my-n2' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}'><i class='fas fa-square-plus fa-fw link-like mr-2'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
-  <div hidden class='mt-2'>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batch{{ param }}Div' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2' id='batch{{ param }}Div'>
     {% for user in users %}
-      <div class='d-flex justify-content-between p-1 rounded hl-hover-gray'>
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
         <label for='batch-{{ param }}-{{ user.userid }}' class='col-form-label clickable'>{{ user.fullname }} ({{ user.email }})</label>
         <label class='switch ucp-align'><span class='sr-only'>{{ user.fullname }}</span>
           <input type='checkbox' name='{{ param }}' value='{{ user.userid }}' autocomplete='off' data-action='update-counter-value' id='batch-{{ param }}-{{ user.userid }}'>
@@ -468,10 +465,10 @@
     <button data-action='run-action-selected' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Archive'|trans }}</button>
     <button data-action='run-action-selected' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2'>{{ 'Unarchive'|trans }}</button>
     <button data-action='run-action-selected' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2'>{{ 'Delete'|trans }}</button>
-    <button data-action='run-action-selected' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Restore'|trans }}</button>
+    <button data-action='run-action-selected' data-what='restore' type='button' class='btn btn-neutral mr-1 mb-2'>{{ 'Restore'|trans }}</button>
   </div>
 
-  <h4>{{ 'Set permissions'|trans }}</h4>
+  <h2>{{ 'Set permissions'|trans }}</h2>
   <div class='row'>
     <div class='col-md-6 mb-3'>
       <label for='masscan_select_base'>{{ 'Base'|trans }}</label>

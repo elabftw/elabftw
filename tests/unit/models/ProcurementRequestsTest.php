@@ -27,11 +27,12 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
     public function testCreate(): void
     {
         $entityId = 3;
-        $id = $this->pr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body', 'quote' => 12));
+        $id = $this->pr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body' => '', 'quote' => 12));
         $this->assertIsInt($id);
         $this->pr->setId($id);
         $this->assertIsArray($this->pr->readOne());
         $this->assertIsArray($this->pr->readActiveForEntity($entityId));
+        $this->assertNotEmpty($this->pr->readActiveForEntity($entityId));
         $this->assertIsArray($this->pr->patch(Action::Update, array('qty_received' => 2)));
     }
 

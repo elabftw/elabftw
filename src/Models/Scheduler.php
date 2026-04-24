@@ -208,7 +208,7 @@ final class Scheduler extends AbstractRest
                 items.booking_hourly_rate_tax,
                 (items.booking_hourly_rate_notax * TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end)) / 60 AS booking_cost_notax,
                 (items.booking_hourly_rate_tax * TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end)) / 60 AS booking_cost_tax,
-                CONCAT('#', items_categories.color) AS color,
+                COALESCE(NULLIF(CONCAT('#', items_categories.color), '#'), '#0c58ab') AS color,
                 items_categories.title AS items_category_title,
                 team_events.experiment,
                 items.category AS items_category,

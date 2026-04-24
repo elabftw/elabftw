@@ -90,7 +90,7 @@
         </details>
         {# DELETE #}
         {% if not Entity.isReadOnly %}
-          <button type='button' data-action='delete-compound-link'  aria-label='{{ 'Remove compound'|trans }}' data-id='{{ fp.id }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'><i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
+          <button type='button' data-action='delete-compound-link'  aria-label='{{ 'Remove compound'|trans }}' data-id='{{ fp.id }}' class='btn btn-danger-ghost'><i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
         {% endif %}
         </div>
       {% endfor %}

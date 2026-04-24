@@ -80,7 +80,7 @@ elif [ "${1:-}" = "api" ]; then
 elif [ "${1:-}" = "cy" ]; then
     if [ -z "$(docker images -q elab-cypress 2>/dev/null)" ]; then
         echo "Building fresh cypress image..."
-        docker build -q -t elab-cypress -f tests/elab-cypress.Dockerfile .
+        docker build -q -t elab-cypress -f containers/cypress/Dockerfile .
     fi
     if [ -z "$(docker container ls -aq -f name=^elab-cypress$)" ]; then
         echo "Launching fresh cypress container..."

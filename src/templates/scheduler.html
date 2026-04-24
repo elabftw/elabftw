@@ -36,7 +36,7 @@
           <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-action='autocomplete' data-target='users'>
           <div id='autocompleteAnchorDiv_eventOwnerSelect'></div>
           <div class='input-group-append'>
-            <button class='btn btn-secondary' type='button' aria-label='{{ 'Filter owner'|trans }}' data-action='filter-owner' title='{{ 'Filter owner'|trans }}'><i class='color-white fas fa-magnifying-glass'></i></button>
+            <button class='btn btn-secondary' type='button' aria-label='{{ 'Filter owner'|trans }}' data-action='filter-owner' title='{{ 'Filter owner'|trans }}'><i class='fas fa-magnifying-glass'></i></button>
           </div>
         </div>
       </div>
@@ -45,9 +45,9 @@
     {# RIGHT PART: SETTINGS #}
     {# div is necessary to prevent the link being too high, align-self-end to put it at bottom #}
     <div class='align-self-end'>
-      <a href='#' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0'>
+      <button type='button' class='btn btn-ghost' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' >
         <i class='fas fa-cogs fa-fw'></i>
-      </a>
+      </button>
       <button type='button' data-action='toggle-modal' data-target='schedulerExportsModal' data-cy='scheduler-exports-modal' class='btn btn-secondary' aria-label='{{ 'Export'|trans }}' title='{{ 'Export'|trans }}'>
         {{ 'Export'|trans }}
       </button>

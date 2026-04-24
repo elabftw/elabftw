@@ -15,6 +15,7 @@ namespace Elabftw\Controllers;
 use Elabftw\Elabftw\App;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\ProcurementRequests;
 use Override;
 
 /**
@@ -37,5 +38,14 @@ final class DatabaseController extends AbstractEntityController
             return ngettext('Resource', 'Resources', 2);
         }
         return _('Resources templates');
+    }
+
+    #[Override]
+    protected function getEntityProcurementRequestsArr(): array
+    {
+        if (!$this->Entity instanceof Items) {
+            return array();
+        }
+        return new ProcurementRequests($this->App->Teams)->readActiveForEntity($this->Entity->id ?? 0);
     }
 }

@@ -139,7 +139,7 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
 
 // data-reload can be "page" for full page, "reloadEntitiesShow" for entities in show mode,
 // or a comma separated list of ids of elements to reload
-export function handleReloads(reloadAttributes: string | undefined): void {
+export async function handleReloads(reloadAttributes: string | undefined): Promise<void> {
   if (!reloadAttributes) return;
 
   if (reloadAttributes === 'page') {
@@ -148,13 +148,48 @@ export function handleReloads(reloadAttributes: string | undefined): void {
   }
 
   const reloadTargets = reloadAttributes.split(',');
-  reloadTargets.forEach((toReload) => {
+  for (const toReload of reloadTargets) {
     if (toReload === 'reloadEntitiesShow') {
-      reloadEntitiesShow();
+      await reloadEntitiesShow();
     } else {
-      reloadElements([toReload]);
+      await reloadElements([toReload]);
     }
-  });
+  }
+}
+
+type TomSelectOption = {
+  value: string;
+  text: string;
+};
+
+type RebuildSource =
+  | { filter?: (option: HTMLOptionElement) => boolean }
+  | { options: TomSelectOption[] };
+
+export function rebuildTomSelectOptions(
+  selectEl: HTMLSelectElement & { tomselect?: TomSelect },
+  source: RebuildSource = {},
+): void {
+  const ts = selectEl.tomselect;
+  if (!ts) return;
+
+  let nextOptions: TomSelectOption[] = [];
+
+  if ('options' in source) {
+    nextOptions = source.options;
+  } else {
+    const filter = source.filter;
+    nextOptions = Array.from(selectEl.options)
+      .filter((option) => !filter || filter(option))
+      .map((option) => ({
+        value: option.value,
+        text: option.textContent ?? '',
+      }));
+  }
+
+  ts.clearOptions();
+  ts.addOptions(nextOptions);
+  ts.refreshOptions(false);
 }
 
 export function listenTrigger(elementId: string = ''): void {

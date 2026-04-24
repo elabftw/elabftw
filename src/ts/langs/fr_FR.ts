@@ -125,7 +125,6 @@ const t = {
     "upload-file-comment": "Commentaire du fichier",
     "userid": "Userid",
     "users": "Utilisateurs",
-    "user-already-added": "User has already been added.",
     "valid-until": "Valide jusqu'à",
     "validated": "Validé",
     "view-template": "Voir le modèle",

@@ -125,7 +125,6 @@ const t = {
     "upload-file-comment": "文件註解",
     "userid": "使用者身分",
     "users": "使用者",
-    "user-already-added": "User has already been added.",
     "valid-until": "有效期限至",
     "validated": "已驗證",
     "view-template": "查看模板",

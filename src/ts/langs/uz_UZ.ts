@@ -125,7 +125,6 @@ const t = {
     "upload-file-comment": "Fayl sharhi",
     "userid": "Userid",
     "users": "Foydalanuvchilar",
-    "user-already-added": "User has already been added.",
     "valid-until": "Yaroqlilik muddati",
     "validated": "Tasdiqlangan",
     "view-template": "View template",

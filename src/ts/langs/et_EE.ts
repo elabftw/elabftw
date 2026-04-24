@@ -125,7 +125,6 @@ const t = {
     "upload-file-comment": "Faili kommentaar",
     "userid": "Kasutaja ID",
     "users": "Kasutajad",
-    "user-already-added": "User has already been added.",
     "valid-until": "Kehtiv kuni",
     "validated": "Valideeritud",
     "view-template": "Kuva mall",

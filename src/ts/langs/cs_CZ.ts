@@ -125,7 +125,6 @@ const t = {
     "upload-file-comment": "Komentář k souboru",
     "userid": "Userid",
     "users": "Uživatelé",
-    "user-already-added": "User has already been added.",
     "valid-until": "Platné do",
     "validated": "Tasdiqlangan",
     "view-template": "View template",

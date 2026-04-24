@@ -212,8 +212,7 @@ if (window.location.pathname === '/scheduler.php') {
       const colorCircle = document.createElement('i');
       colorCircle.classList.add('fas', 'fa-circle');
       const rawColor = opt.dataset.color;
-      const categoryColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor || 'fff'}`;
-      colorCircle.style.color = categoryColor;
+      colorCircle.style.color = rawColor?.startsWith('#') ? rawColor : `#${rawColor || '0c58ab'}`;
       const badge = document.createElement('span');
       badge.appendChild(colorCircle);
       badge.className = 'selected-item-badge';
@@ -222,8 +221,8 @@ if (window.location.pathname === '/scheduler.php') {
       link.href = `database.php?mode=view&id=${encodeURIComponent(id)}`;
       link.target = '_blank';
       link.rel = 'noopener';
-      // firstlevel
-      badge.style.setProperty('--badge-color', '#dbdbdb');
+      // background color for badges
+      badge.style.backgroundColor = 'var(--superlight)';
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
@@ -307,7 +306,7 @@ if (window.location.pathname === '/scheduler.php') {
       // remove possibility to book whole day, might add it later
       allDaySlot: false,
       // background color before event validation
-      eventBackgroundColor: 'var(--secondlevel)',
+      eventBackgroundColor: 'var(--chrome-bg)',
       // user can see events as disabled if they don't have booking permissions. See #5930
       eventClassNames: (info) => {
         const canBook = Number(info.event.extendedProps.canbook);

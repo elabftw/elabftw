@@ -263,6 +263,8 @@ function initPermissionsTomSelects() {
         no_backspace_delete: {},
         remove_button: {},
       },
+      // display many things or users will be confused what they search is not displayed right away
+      maxOptions: 2222,
       onInitialize() { setSelectedItemsDivVisibility(this); },
       onItemAdd() {
         this.setTextboxValue('');

@@ -52,11 +52,11 @@
             <p class='smallgray'>{{ 'Adjust the scope and select a category to filter results.'|trans }}</p>
               <div class='d-flex flex-row justify-content-between mb-2'>
                 <div id='createNewScopeSelect' class='btn-group mr-1'>
-                  <button class='btn btn-ghost hl-hover-gray dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' title='{{ 'Scope'|trans }}' aria-expanded='false'>{{ 'Scope'|trans }}<i class='fas fa-user fa-fw mx-1'></i></button>
+                  <button class='btn btn-ghost dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' title='{{ 'Scope'|trans }}' aria-expanded='false'>{{ 'Scope'|trans }}<i class='fas fa-user fa-fw mx-1'></i></button>
                   <div class='dropdown-menu'>
                     <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>
                     <button type='button' data-value='1' class='btn btn-dropdown-item dropdown-item createNewScopeBtn active'>
-                      <i class='fas fa-user fa-fw mr-1 color-white'></i>{{ 'Self'|trans }}
+                      <i class='fas fa-user fa-fw mr-1'></i>{{ 'Self'|trans }}
                     </button>
                     <button type='button' data-value='2' class='btn btn-dropdown-item dropdown-item createNewScopeBtn'>
                       <i class='fas fa-users fa-fw mr-1'></i>{{ 'Team'|trans }}
@@ -104,7 +104,7 @@
                   <td></td>
                   <td><span class='sr-only'>{{ 'Actions'|trans }}</span>
                     <div class='d-flex flex-nowrap'>
-                      <button type='submit' class='btn btn-primary mr-1' data-action='create-entity' title='{{ 'Create from template'|trans }}' data-type='' data-tplid='' ><i class='fas fa-file-circle-plus color-white'></i></button>
+                      <button type='submit' class='btn btn-primary mr-1' data-action='create-entity' title='{{ 'Create from template'|trans }}' data-type='' data-tplid='' ><i class='fas fa-file-circle-plus'></i></button>
                       <a href='replacedinjs' class='btn btn-ghost' title='{{ 'View template'|trans }}' aria-label='{{ 'View template'|trans }}'>
                         <i class='fas fa-eye fa-fw'></i>
                       </a>

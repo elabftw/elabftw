@@ -21,6 +21,8 @@
 }
 
 .nav-link {
+  border: 1px solid transparent;
+  border-bottom: 6px;
   color: var(--secondlevel);
   font-size: 90%;
   line-height: 40px;
@@ -30,23 +32,23 @@
   min-height: 43px;
   /* we want the border bottom to be same width as the text
        and the text centered on the bar */
-  padding: 0 !important;
+  padding: 0 5px !important;
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
 
-  /* blue on hover */
   &:hover {
-    color: var(--primary) !important;
-    transition-duration: 500ms;
+    border-color: $mainbackground !important;
+    color: $mainbackground !important;
   }
 
   /* selected nav entry */
   &.active {
-    background-image: linear-gradient(to top, var(--primary) 0%, var(--primary) 100%);
+    background-image: linear-gradient(to top, $mainbackground 0%, $mainbackground 100%);
     background-position: center bottom;
     background-repeat: no-repeat;
     background-size: 100% 6px;
+    border-color: $mainbackground !important;
   }
 
   i {

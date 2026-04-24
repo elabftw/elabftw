@@ -16,7 +16,7 @@
           {% include 'link-view-one.html' with {'isRelated': true} %}
         {% endfor %}
         <div class='mt-2'>
-          <a href='experiments.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.entityType.value }}' class='p-2 rounded hl-hover-gray'><i class='fas fa-list mr-1 fa-fw'></i>{{ 'Show related experiments'|trans }}</a>
+          <a href='experiments.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.entityType.value }}'><button type='button' class='btn btn-ghost'><i class='fas fa-list mr-1 fa-fw'></i>{{ 'Show related experiments'|trans }}</button></a>
         </div>
       {% endif %}
     </div>
@@ -57,7 +57,7 @@
         {% endfor %}
 
         <div class='mt-2'>
-          <a href='database.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.entityType.value }}' class='p-2 rounded hl-hover-gray'><i class='fas fa-list mr-1 fa-fw'></i>{{ 'Show related resources'|trans }}</a>
+          <a href='database.php?mode=show&amp;related={{ Entity.id }}&amp;related_origin={{ Entity.entityType.value }}'><button type='button' class='btn btn-ghost'><i class='fas fa-list mr-1 fa-fw'></i>{{ 'Show related resources'|trans }}</button></a>
         </div>
       {% endif %}
       {% if mode == 'edit' %}

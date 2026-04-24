@@ -4,7 +4,7 @@
 <div class='mt-2 countable hl-hover-superlight p-2 rounded'>
   {% set randomId = random() %}
   <div class='d-flex mb-1 align-items-center' id='parent_{{ randomId }}'>
-    <a href='{{ link.page }}?mode=view&amp;id={{ link.entityid }}' class='color-strong mr-auto'>
+    <a href='{{ link.page }}?mode=view&amp;id={{ link.entityid }}' class='mr-auto'>
       <i class='fas fa-arrow-{{ isRelated|default(false) ? 'left' : 'right' }} fa-fw mr-2' aria-hidden='true'></i>
       {% if link.link_state == 2 %}<i class='fas fa-fw fa-box-archive fa-fw mr-1'></i>{% endif %}
       {% if link.category_title %}
@@ -14,22 +14,22 @@
         <span class='catstat-btn status-btn mr-1' style='--bg: #{{ link.status_color }}'>{{ link.status_title }}</span>
       {% endif %}
       {% if link.custom_id %}
-        <span class='color-medium' title='{{ 'Custom ID'|trans }}'>{{ link.custom_id }}</span>
+        <span title='{{ 'Custom ID'|trans }}'>{{ link.custom_id }}</span>
       {% endif %}
       {{ link.title }}
     </a>
     {# toggle body #}
-    <button type='button' data-type='{{ link.type }}' data-action='toggle-body' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn p-2 hl-hover-gray mr-3 lh-normal border-0 my-n2'>
+    <button type='button' data-type='{{ link.type }}' data-action='toggle-body' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' data-id='{{ link.entityid }}' data-randid='{{ randomId }}' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}' class='btn btn-ghost btn-sm mr-2'>
       <i class='fas fa-fw fa-square-plus'></i>
     </button>
     {% if mode == 'edit' %}
-      <button type='button' data-action='import-links' data-target='{{ link.entityid }}' aria-label='{{ 'Import links'|trans }}' title='{{ 'Import links'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
+      <button type='button' data-action='import-links' data-target='{{ link.entityid }}' aria-label='{{ 'Import links'|trans }}' title='{{ 'Import links'|trans }}' class='btn btn-ghost btn-sm mr-2'>
         <i class='fas fa-fw fa-arrows-down-to-line'></i></button>
-      <button type='button' data-action='import-link-body' data-endpoint='{{ link.type }}' data-target='{{ link.entityid }}' aria-label='{{ 'Import'|trans }}' title='{{ 'Import'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
+      <button type='button' data-action='import-link-body' data-endpoint='{{ link.type }}' data-target='{{ link.entityid }}' aria-label='{{ 'Import'|trans }}' title='{{ 'Import'|trans }}' class='btn btn-ghost btn-sm mr-2'>
         <i class='fas fa-fw fa-lg fa-file-import'></i></button>
     {% endif %}
     {% if not Entity.isReadOnly %}
-      <button type='button' data-action='destroy-{{ isRelated|default(false) ? 'related-' }}link' data-endpoint='{{ link.type }}_links' data-target='{{ link.entityid }}' aria-label='{{ 'Delete'|trans }}' title='{{ 'Delete'|trans }}' class='btn p-2 hl-hover-gray lh-normal border-0 my-n2'>
+      <button type='button' data-action='destroy-{{ isRelated|default(false) ? 'related-' }}link' data-endpoint='{{ link.type }}_links' data-target='{{ link.entityid }}' aria-label='{{ 'Delete'|trans }}' title='{{ 'Delete'|trans }}' class='btn btn-danger-ghost btn-sm'>
         <i class='fas fa-fw fa-lg fa-trash-alt'></i>
       </button>
     {% endif %}

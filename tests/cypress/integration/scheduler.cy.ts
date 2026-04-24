@@ -16,7 +16,7 @@ describe('Scheduler', () => {
     cy.createBooking().then(itemId => {
       cy.visit(`/scheduler.php?items[]=${itemId}`);
       cy.get('#loading-spinner').should('not.exist');
-      cy.get('[data-cy="selected-items-display"]').should('contain', 'Cypress booked resource');
+      cy.get('[data-cy="selectedItemsDisplay"]').should('contain', 'Cypress booked resource');
     });
   });
 });

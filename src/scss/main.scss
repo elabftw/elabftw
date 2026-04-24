@@ -707,10 +707,6 @@ tr:first-child td {
 
 .overlay-error {
   background-color: var(--lightred);
-
-  p {
-    color: var(--chrome-bg) !important;
-  }
 }
 
 .overlay-warning {
@@ -945,9 +941,8 @@ tr:first-child td {
 /* this is a hack to make the steps that are long work fine in multiline
 the form-control fails to do that so we do the border ourselves */
 .step-static {
-  border: 1px solid var(--secondary-muted);
-  border-bottom-right-radius: 4px;
-  border-top-right-radius: 4px;
+  border: 1px solid var(--secondary);
+  border-radius: 0 4px 4px 0;
 }
 
 .finished {
@@ -1192,11 +1187,6 @@ the form-control fails to do that so we do the border ourselves */
 
 .box {
   background-color: var(--white);
-}
-
-/* background for archived users */
-.bg-medium {
-  background-color: var(--secondlevel) !important;
 }
 
 .border-secondlevel {
@@ -1796,11 +1786,6 @@ input:user-invalid {
 
 .calendar-event-disabled {
   opacity: 0.5;
-}
-
-.flash:hover {
-  background-color: var(--primary);
-  transition: background-color 0.1s ease;
 }
 
 .color-input {

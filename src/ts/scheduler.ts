@@ -213,8 +213,7 @@ if (window.location.pathname === '/scheduler.php') {
       const colorCircle = document.createElement('i');
       colorCircle.classList.add('fas', 'fa-circle');
       const rawColor = opt.dataset.color;
-      const categoryColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor || 'fff'}`;
-      colorCircle.style.color = categoryColor;
+      colorCircle.style.color = rawColor?.startsWith('#') ? rawColor : `#${rawColor || '0c58ab'}`;
       const badge = document.createElement('span');
       badge.appendChild(colorCircle);
       badge.className = 'selected-item-badge';
@@ -223,8 +222,8 @@ if (window.location.pathname === '/scheduler.php') {
       link.href = `database.php?mode=view&id=${encodeURIComponent(id)}`;
       link.target = '_blank';
       link.rel = 'noopener';
-      // firstlevel
-      badge.style.setProperty('--badge-color', '#dbdbdb');
+      // background color for badges
+      badge.style.backgroundColor = 'var(--superlight)';
 
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
@@ -308,7 +307,7 @@ if (window.location.pathname === '/scheduler.php') {
       // remove possibility to book whole day, might add it later
       allDaySlot: false,
       // background color before event validation
-      eventBackgroundColor: 'var(--secondlevel)',
+      eventBackgroundColor: 'var(--chrome-bg)',
       // user can see events as disabled if they don't have booking permissions. See #5930
       eventClassNames: (info) => {
         const canBook = Number(info.event.extendedProps.canbook);
@@ -537,9 +536,11 @@ if (window.location.pathname === '/scheduler.php') {
         payload.range_value = parseInt((document.getElementById('cancelEventRangeValue') as HTMLInputElement).value, 10);
         payload.range_unit = (document.getElementById('cancelEventRangeUnit') as HTMLSelectElement).value;
       }
-      ApiC.post(`event/${el.dataset.id}/notifications`, payload).then(() => {
-        ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
-      });
+      // The notification must be sent before deletion, otherwise the event ID is lost (Nothing to show with this id)
+      ApiC.notifOnSaved = false;
+      ApiC.post(`event/${el.dataset.id}/notifications`, payload)
+        .then(() => ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch())
+        .then(() => notify.success()).finally(() => ApiC.notifOnSaved = true);
     });
 
     on('edit-event', async (_, e: Event) => {

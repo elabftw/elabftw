@@ -16,57 +16,54 @@
 
   <hr>
 
-    {# SEARCH BAR #}
+  {# SEARCH BAR #}
   <div class='d-flex'>
-  {% set pageName = scriptName|replace({'.php': ''}) %}
-  {% set searchTarget = pageName %}
-  {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
-  {% if pageName == 'database' %}
-    {% set searchTarget = 'resources'|trans %}
-  {% endif %}
+    {% set pageName = scriptName|replace({'.php': ''}) %}
+    {% set searchTarget = pageName %}
+    {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
+    {% if pageName == 'database' %}
+      {% set searchTarget = 'resources'|trans %}
+    {% endif %}
 
-  <form
-    id='mainSearchForm'
-    aria-label='{{ 'Search %s'|trans|format(searchTarget) }}'
-    class='flex-fill'
-    method='get'
-  >
-  <div
-    id='searchBar'
-    data-name='q'
-    data-value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
-    data-placeholder='{{ searchPlaceholder|e('html_attr') }}'
-    data-aria-label='{{ searchPlaceholder|e('html_attr') }}'
-    data-button-label='{{ 'Search'|trans|e('html_attr') }}'
-  >
-  <div class='input-group w-100 search-bar-input-group search-bar-fallback'>
-    <input
-      id='extendedArea'
-      name='q'
-      type='text'
-      class='form-control'
-      placeholder='{{ searchPlaceholder|e('html_attr') }}'
-      aria-label='{{ searchPlaceholder|e('html_attr') }}'
-      spellcheck='false'
-      value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
-    />
-    <div class='input-group-append'>
-      <button
-        class='btn btn-secondary'
-        type='submit'
-        aria-label='{{ 'Search'|trans }}'
-        title='{{ 'Search'|trans }}'
+    <form
+      id='mainSearchForm'
+      aria-label='{{ 'Search %s'|trans|format(searchTarget) }}'
+      class='flex-fill'
+      method='get'
+    >
+      <div
+        id='searchBar'
+        data-name='q'
+        data-value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
+        data-placeholder='{{ searchPlaceholder|e('html_attr') }}'
+        data-aria-label='{{ searchPlaceholder|e('html_attr') }}'
+        data-button-label='{{ 'Search'|trans|e('html_attr') }}'
       >
-        <i class='fas fa-magnifying-glass'></i>
-      </button>
-    </form>
-    {# wrap button into a div or it appears too tall #}
-    <div>
-      <button type='button' class='btn btn-neutral ml-2' aria-label='{{ 'Show full syntax'|trans }}' title='{{ 'Show full syntax'|trans }}' data-action='toggle-modal' data-target='advancedSearchModal'><i class='fa-regular fa-circle-question'></i></button>
+        <div class='input-group w-100 search-bar-input-group search-bar-fallback'>
+          <input
+            id='extendedArea'
+            name='q'
+            type='text'
+            class='form-control'
+            placeholder='{{ searchPlaceholder|e('html_attr') }}'
+            aria-label='{{ searchPlaceholder|e('html_attr') }}'
+            spellcheck='false'
+            value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
+          />
+          <div class='input-group-append'>
+            <button
+              class='btn btn-secondary'
+              type='submit'
+              aria-label='{{ 'Search'|trans }}'
+              title='{{ 'Search'|trans }}'
+            >
+              <i class='fas fa-magnifying-glass'></i>
+            </button>
+          </div>
+        </div>
+      </form>
+      {# wrap button into a div or it appears too tall #}
     </div>
-  </div>
-</div>
-  </form>
 
   <div>
     <button
@@ -503,26 +500,6 @@
   {% endif %}
 
   <div id='showModeContent'>
-    {# Show message if we're looking for something (query parameters are present), but the number of results is 0 #}
-    {#
-    {% if App.Request.query.all|length > 0 %}
-    <div class='row display-flex' id='itemList'>
-      {% set otherPage = Entity.entityType.value == 'experiments' ? 'database' : 'experiments' %}
-      {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
-    </div>
-    <div class='row d-flex'>
-      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q')|trim|e('url') }}'>
-        <button class='btn btn-primary' type='button'>{{ Entity.entityType.value == 'items' ? 'Search in experiments'|trans : 'Search in resources'|trans }}</button>
-      </a>
-    </div>
-    {#
-  {% elseif (App.Request.query.all|length == 0) and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
-    <div class='row display-flex' id='itemList'>
-      <h3>{{ 'Nothing here yet. Start by clicking Create (top-right) to add your first %s.'|trans|format(Entity.entityType.toGenre()) }}</h3>
-    </div>
-  {% else %}
-    #}
-
       <div id='withSelected' class='d-none'>
         <div class='row mx-0'><p>{{ 'With selected:'|trans }}</p></div>
         {# First line #}
@@ -734,12 +711,6 @@
           </table>
         </div>
         {#{% endif %}#}
-
-      {# LOAD MORE button #}
-      <div class='text-center page-buttons mt-2'>
-        <button class='btn btn-primary ' type='button' id='loadMoreBtn' data-action='load-more'>{{ 'Load more'|trans }}</button>
-      </div>
-
   {% endif %}
 
   <div id='info'

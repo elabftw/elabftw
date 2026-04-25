@@ -133,15 +133,6 @@ abstract class AbstractEntityController implements ControllerInterface
             limit: $this->App->Users->userData['limit_nb'],
             skipOrderPinned: $skipOrderPinned,
         );
-        // $itemsArr = $this->Entity->readShow($DisplayParams);
-
-        // get tags separately
-        $tagsArr = array();
-        /*
-        if (!empty($itemsArr)) {
-            $tagsArr = $this->Entity->getTags($itemsArr);
-        }
-         */
 
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->getQueryString());
@@ -163,7 +154,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'metakeyArrForSelect' => array_column($ExtraFieldsKeys->readAll(), 'extra_fields_key'),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
-            'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),
             'usersArr' => $this->App->Users->readAllFromTeam(),

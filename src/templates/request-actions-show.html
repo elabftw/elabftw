@@ -4,7 +4,7 @@
     {% for action in requestActionsArr %}
       <li class='list-group-item'>
         <div class='d-flex'>
-          <i class='fas fa-person-circle-exclamation color-blue mr-2'></i>
+          <i class='fas fa-person-circle-exclamation mr-2'></i>
           <div>
             {{ '%s is requesting %s for'|trans|format(action.requester_firstname, action.action) }}
             {% set url = '/%s?mode=%s&id=%d' %}

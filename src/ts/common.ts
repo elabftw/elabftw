@@ -34,7 +34,7 @@ import {
   TomSelect,
   updateEntityBody,
   updateCatStat,
-  makeMalleableColumnsGreatAgain,
+  makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -246,6 +246,108 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 });
 
 makeMalleableColumnsGreatAgain();
+
+// selector for all {permission}_select (canread, canwrite, canbook)
+const permissionSelects = document.querySelectorAll<HTMLSelectElement>(
+  '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]',
+);
+
+function initPermissionsTomSelects() {
+  if (permissionSelects.length === 0) return;
+  permissionSelects.forEach((select) => {
+    const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
+    // avoid re-init of tomselect if already exists
+    if (tsSelect.tomselect) return;
+    const config = {
+      plugins: {
+        no_backspace_delete: {},
+        remove_button: {},
+      },
+      // display many things or users will be confused what they search is not displayed right away
+      maxOptions: 2222,
+      onInitialize() { setSelectedItemsDivVisibility(this); },
+      onItemAdd() {
+        this.setTextboxValue('');
+        setSelectedItemsDivVisibility(this);
+      },
+      onItemRemove() { setSelectedItemsDivVisibility(this); },
+    };
+    const wrapper = select.closest('.ts-wrapper');
+    config['dropdownParent'] = wrapper;
+    config['controlInput'] = wrapper?.querySelector('input');
+    // for users, we return a formatted response with id - user (email)
+    if (select.id.endsWith('_select_users')) {
+      config['load'] = (query: string, callback) => {
+        if (!query.length) return callback();
+        fetchUsers(query).then(callback).catch(() => callback());
+      };
+    }
+    new TomSelect(select, config);
+  });
+}
+
+initPermissionsTomSelects();
+
+// make the div holding selected items disappear when empty and vice versa.
+function setSelectedItemsDivVisibility(instance) {
+  instance.control.style.display = instance.items.length ? 'flex' : 'none';
+}
+
+// fetch users and return in an id - username (email) format
+async function fetchUsers(query: string) {
+  const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
+  return users.map((u) => ({
+    value: `user:${u.userid}`,
+    text: `${u.fullname} (${u.email})`,
+  }));
+}
+
+on('team-scope-change', async (el: HTMLElement) => {
+  const scope = Number(el.dataset.value);
+  const identifier = el.dataset.identifier;
+  if (!identifier) return;
+  // custom scope button for team select
+  const menu = el.parentElement;
+  if (menu) {
+    menu.querySelectorAll('.dropdown-item').forEach((item) => {
+      item.classList.remove('active');
+      item.querySelector('i')?.classList.remove('color-white');
+    });
+  }
+  el.classList.add('active');
+  el.querySelector('i')?.classList.add('color-white');
+
+  const btn = el.closest('.btn-group')?.querySelector('button.dropdown-toggle');
+  if (btn) {
+    // clear existing content
+    btn.replaceChildren();
+    const icon = document.createElement('i');
+    icon.classList.add('fas', 'fa-fw', scope === 1 ? 'fa-user' : 'fa-globe', 'mx-1');
+    const text = document.createTextNode(scope === 1 ? i18next.t('my-teams') : i18next.t('all-teams'));
+    btn.append(text, icon);
+  }
+  let teams = [];
+
+  if (scope === 1) {
+    const user = await ApiC.getJson(`${Model.User}/me`);
+    teams = user.teams;
+  } else {
+    const allTeams = await ApiC.getJson('teams');
+    teams = allTeams.filter((t) => t.visible !== 0);
+  }
+  const select = document.querySelector(`#${identifier}_select_teams`) as HTMLSelectElement;
+  if (!select) return;
+  rebuildTomSelectOptions(select, {
+    options: teams.map(team => ({
+      value: `team:${team.id}`,
+      text: team.name,
+    })),
+  });
+});
+
+document.addEventListener('scope-changed', () => {
+  permissionSelects.forEach(select => rebuildTomSelectOptions(select));
+});
 
 // tom-select for team selection on login and register page, and idp selection
 ['init_team_select', 'team', 'team_selection_select', 'idp_login_select'].forEach(id =>{
@@ -488,7 +590,7 @@ on('destroy-favtags', (el: HTMLElement) => {
   }
 });
 
-on('insert-param-and-reload', (el: HTMLElement) => {
+on('insert-param-and-reload', async (el: HTMLElement) => {
   const params = new URLSearchParams(document.location.search.slice(1));
   const target = el.dataset.target;
   const value = (el as HTMLInputElement).value;
@@ -499,7 +601,7 @@ on('insert-param-and-reload', (el: HTMLElement) => {
     params.delete(target);
   }
   window.history.replaceState({}, '', `?${params.toString()}`);
-  handleReloads(el.dataset.reload);
+  await handleReloads(el.dataset.reload);
 });
 
 // used on displayMessage divs: we save the fact that it was closed
@@ -601,48 +703,6 @@ on(Action.Restore, () => {
     .then(() => window.location.href = `?mode=view&id=${entity.id}`);
 });
 
-on('add-user-to-permissions', (el: HTMLElement) => {
-  // collect userid + name + email from input
-  const addUserPermissionsInput = (document.getElementById(`${el.dataset.identifier}_select_users`) as HTMLInputElement);
-  const userid = parseInt(addUserPermissionsInput.value, 10);
-  if (isNaN(userid)) {
-    notify.error('add-user-error');
-    return;
-  }
-  const userName = addUserPermissionsInput.value.split(' - ')[1];
-
-  // create a new li element in the list of existing users, so it is collected at Save action
-  const li = document.createElement('li');
-  li.classList.add('list-group-item');
-  li.dataset.id = String(userid);
-
-  // eye or pencil icon
-  const rwIcon = document.createElement('i');
-  rwIcon.classList.add('fas');
-  const iconClass = el.dataset.rw === 'canread' ? 'eye' : 'pencil-alt';
-  rwIcon.classList.add(`fa-${iconClass}`);
-
-  // delete icon
-  const deleteSpan = document.createElement('span');
-  deleteSpan.dataset.action = 'remove-parent';
-  deleteSpan.classList.add('hover-danger');
-  const xIcon = document.createElement('i');
-  xIcon.classList.add('fas');
-  xIcon.classList.add('fa-xmark');
-  deleteSpan.insertAdjacentElement('afterbegin', xIcon);
-
-  // construct the li element with all its content
-  li.insertAdjacentElement('afterbegin', rwIcon);
-  li.insertAdjacentText('beforeend', ' ' + userName + ' ');
-  li.insertAdjacentElement('beforeend', deleteSpan);
-
-  // and insert it into the list
-  document.getElementById(`${el.dataset.identifier}_list_users`).appendChild(li);
-
-  // clear input
-  addUserPermissionsInput.value = '';
-});
-
 on('reload-page', () => location.reload());
 on('remove-parent', (el: HTMLElement) => el.parentElement.remove());
 
@@ -654,14 +714,11 @@ on('clear-form', (el: HTMLElement) => {
 
 on('save-permissions', (el: HTMLElement) => {
   const params = {};
-  // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
-  const existingUsers = Array.from(document.getElementById(`${el.dataset.identifier}_list_users`).children)
-    .map(u => `user:${(u as HTMLElement).dataset.id}`);
 
   params[el.dataset.rw] = permissionsToJson(
     ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
       .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
-      .concat(existingUsers),
+      .concat($('#' + el.dataset.identifier + '_select_users').val() as string[]),
   );
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   params[baseSelect.name] = baseSelect.value;
@@ -1072,10 +1129,6 @@ on('toggle-anonymous-access', () => {
 });
 
 on('reload-color', (el: HTMLElement) => {
-  el.classList.add('flash');
-  setTimeout(() => {
-    el.classList.remove('flash');
-  }, 100);
   (el.nextElementSibling as HTMLInputElement).value = getRandomColor();
 });
 
@@ -1287,7 +1340,7 @@ on('delete-compounds', (el: HTMLElement) => {
   document.dispatchEvent(new CustomEvent('dataReload'));
 });
 
-on('scope-change', (el: HTMLElement) => {
+on('scope-change', async (el: HTMLElement) => {
   // only set it in query if we want to, which prevents an issue on dashboard where value was taken from query param "scope"
   if (el.dataset.setQueryParam === '1') {
     const params = new URLSearchParams(document.location.search);
@@ -1296,9 +1349,9 @@ on('scope-change', (el: HTMLElement) => {
   }
   const userParams = {};
   userParams[el.dataset.target] = el.dataset.value;
-  ApiC.patch('users/me', userParams).then(() => {
-    handleReloads(el.dataset.reload);
-  });
+  await ApiC.patch('users/me', userParams);
+  await handleReloads(el.dataset.reload);
+  document.dispatchEvent(new Event('scope-changed'));
 });
 
 /**

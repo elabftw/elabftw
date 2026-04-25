@@ -85,9 +85,19 @@ describe('Make', () => {
     });
   });
 
-  it('scheduler report', () => {
+  it('scheduler report: without events', () => {
+    // ensure test runs fresh
+    cy.removeAllBookings();
     // will be status code 400
     cy.visit('/make.php?format=schedulerReport', { failOnStatusCode: false });
     cy.get('div.alert.alert-danger').should('contain', 'There are no events to report');
+  });
+
+  it('scheduler report: with events', () => {
+    cy.createBooking();
+    cy.visit('/scheduler.php');
+    cy.get('[data-cy="schedulerExportsModal"]').click();
+    cy.get('[data-cy="exportScheduler"]').click();
+    cy.intercept('GET', '/make.php?format=schedulerReport').as('download');
   });
 });

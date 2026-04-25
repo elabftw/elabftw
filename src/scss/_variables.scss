@@ -19,16 +19,15 @@
   --strongest: #000;
 
   /* COLORS */
-  --primary: #29aeb9;
+  --primary: #0c58ab;
   --secondary: #4d4c4c;
   --secondary-muted: #d9d9d9;
-  --elabblue: #29aeb9;
+  --elabblue: #0c58ab;
   --lightblue: #c4f9ff;
-  --darkblue: #1f8591;
+  --darkblue: #0d5861;
   --lightred: #ffc1b7;
-  --dangerred: #e6614c;
-  --darkred: #dd1e00;
-  --warningbg: #fff3cd;
+  --dangerred: #82352b;
+  --darkred: #7b1100;
   --green: #54aa08;
   --lessbrightorange: #ffe6b8;
   --brightorange: #ffa500;
@@ -37,7 +36,7 @@
 
   --lightgold: #eddec6;
   --gold: #d4ae75;
-  --darkgold: #856404;
+  --darkgold: #594303;
 
   /* Colors that stay the same in both modes (like navbar) */
   --chrome-bg: #2b2b2b;
@@ -55,21 +54,20 @@
   --secondlevel: #bdbdbd;
   --thirdlevel: #666;
   --medium: #d8dae0;
-  --mediumstrong: #ccc;
+  --mediumstrong: #d3d3d3;
   --strongest: #f0f6fc;
 
-  --primary: #2196f3;
+  --primary: #0f94fd;
+  --secondary: #afafaf;
   // secondary with opacity for borders of inputs
   --secondary-muted: rgba(146, 146, 146, 0.34);
-  --elabblue: #29aeb9;
+  --elabblue: #0f94fd;
   --lightblue: #003769;
-  --darkblue: #1f8591;
+  --darkblue: #7cddff;
 
-  --lightred: #ff7b72;
-  --dangerred: #f85149;
-  --darkred: #da3633;
-
-  --warningbg: #d29922;
+  --darkred: #ffc1b7;
+  --lightred: #7b1100;
+  --dangerred: #e6614c;
 
   --green: #81c784;
   --lessbrightorange: #e3b341;
@@ -77,9 +75,8 @@
   --orange: #f0883e;
   --mediumyellow: #f2cc60;
 
-  --lightgold: #e3b341;
-  --gold: #c69026;
-  --darkgold: #7e5f00;
+  --lightgold: #594303;
+  --darkgold: #ecdeab;
 }
 
 /* COLORS for specific cases like pdf export (var(--) does not apply) */
@@ -87,7 +84,7 @@ $white: #fff;
 $mainbackground: #f2f2f2;
 $strongest: #000;
 /* override bootstrap theme */
-$elabblue: #29aeb9;
+$elabblue: #0c58ab;
 $medium: #4d4c4c;
 $dangerred: #e6614c;
 $firstlevel: #dbdbdb;

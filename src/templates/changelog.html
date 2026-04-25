@@ -3,8 +3,10 @@
 {% block body %}
 
 {% set query = '?mode=view&' %}
-<a href='{{ Entity.entityType.toPage ~ query }}id={{ Entity.id }}' class='btn hl-hover-gray'>
-  <i class='fas fa-chevron-left mr-1 fa-fw'></i>{{ 'Go back'|trans }}
+<a href='{{ Entity.entityType.toPage ~ query }}id={{ Entity.id }}'>
+  <button type='button' class='btn btn-ghost'>
+    <i class='fas fa-chevron-left mr-1 fa-fw'></i>{{ 'Go back'|trans }}
+  </button>
 </a>
 
 <h3 class='my-3 p-2 pl-3 section-title' id='pageSubTitle'>{{ 'Changelog'|trans }}</h3>

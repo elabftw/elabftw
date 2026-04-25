@@ -91,7 +91,7 @@
 {#if items.length === 0}
   <p class='mb-0'>{t('no-tasks-yet')}</p>
 {:else}
-  <ul class='list-group color-medium sortable' data-axis='y' data-table='todolist'>
+  <ul class='list-group sortable' data-axis='y' data-table='todolist'>
     {#each items as item (item.id)}
       <li class='list-group-item d-flex justify-content-between align-items-center' id='todoItem_{item.id}'>
         <div class='d-flex align-items-start flex-grow-1 mr-3'>

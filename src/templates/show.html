@@ -59,6 +59,10 @@
       >
         <i class='fas fa-magnifying-glass'></i>
       </button>
+    </form>
+    {# wrap button into a div or it appears too tall #}
+    <div>
+      <button type='button' class='btn btn-neutral ml-2' aria-label='{{ 'Show full syntax'|trans }}' title='{{ 'Show full syntax'|trans }}' data-action='toggle-modal' data-target='advancedSearchModal'><i class='fa-regular fa-circle-question'></i></button>
     </div>
   </div>
 </div>
@@ -227,14 +231,14 @@
   <div class='d-flex'>
     {# LEFT #}
     <div class='d-flex'>
-      <a title='{{ 'Select all'|trans }}' aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn hl-hover-gray p-2 lh-normal border-0'>
+      <a title='{{ 'Select all'|trans }}' aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn btn-transparent'>
         <i class='far fa-square'></i>
       </a>
-      <a hidden title='{{ 'Invert selection'|trans }}' aria-label='{{ 'Invert selection'|trans }}' data-action='invert-entities-selection' href='#' class='ml-2 btn hl-hover-gray p-2 lh-normal border-0'>
+      <a hidden title='{{ 'Invert selection'|trans }}' aria-label='{{ 'Invert selection'|trans }}' data-action='invert-entities-selection' href='#' class='ml-2 btn btn-transparent'>
         <i class='fas fa-arrows-turn-to-dots'></i>
       </a>
       <div class='vertical-separator'></div>
-      <a title='{{ 'Toggle main text'|trans }}' aria-label='{{ 'Toggle main text'|trans }}' data-action='expand-all-entities' data-status='closed' href='#' class='btn hl-hover-gray p-2 lh-normal border-0'>
+      <a title='{{ 'Toggle main text'|trans }}' aria-label='{{ 'Toggle main text'|trans }}' data-action='expand-all-entities' data-status='closed' href='#' class='btn btn-transparent'>
         <i class='fas fa-maximize'></i>
       </a>
     </div>
@@ -443,7 +447,7 @@
     <div class='vertical-separator'></div>
     <div class='d-flex'>
       {# SWITCH LAYOUT #}
-      <button title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' type='button' class='btn hl-hover-gray p-1 mr-1' data-action='toggle-items-layout'>
+      <button title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' type='button' class='btn btn-transparent mr-1' data-action='toggle-items-layout'>
         <i class='fas fa-fw fa-list'></i>
         <i class='fas fa-fw fa-table'></i>
       </button>
@@ -452,7 +456,7 @@
     <div class='d-flex'>
       {# ORDER (Sort) #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle hl-hover-gray color-medium' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle btn-transparent' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Sort'|trans }}</h6>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='date-desc'>{{ 'Newest'|trans }}</button>
@@ -478,7 +482,7 @@
       </div>
       {# LIMIT if there is nothing in the query params, take the user configured one #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle hl-hover-gray color-medium' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle btn-transparent' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Results per page'|trans }}</h6>
         {% for option in limitOptions(DisplayParams.limit) %}
@@ -539,7 +543,7 @@
           <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Timestamp the selected entities'|trans }}' title='{{ 'Timestamp the selected entities'|trans }}'>{{ 'Timestamp'|trans }}</button>
           <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Archive the selected entities'|trans }}' title='{{ 'Archive the selected entities'|trans }}'>{{ 'Archive'|trans }}</button>
           <button data-action='patch-selected-entities' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Unarchive the selected entities'|trans }}' title='{{ 'Unarchive the selected entities'|trans }}'>{{ 'Unarchive'|trans }}</button>
-          <button data-action='patch-selected-entities' data-what='destroy' type='button' class='btn btn-danger mr-1 mb-2' aria-label='{{ 'Delete the selected entities'|trans }}' title='{{ 'Delete the selected entities'|trans }}'>{{ 'Delete'|trans }}</button>
+          <button data-action='patch-selected-entities' data-what='destroy' type='button' class='btn btn-danger-ghost mr-1 mb-2' aria-label='{{ 'Delete the selected entities'|trans }}' title='{{ 'Delete the selected entities'|trans }}'>{{ 'Delete'|trans }}</button>
           <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Restore the selected entities'|trans }}' title='{{ 'Restore the selected entities'|trans }}'>{{ 'Restore'|trans }}</button>
         </div>
 
@@ -614,7 +618,7 @@
           </div>
           {# SAVE AND RESET BUTTONS #}
           <button data-action='save-multi-changes' type='submit' class='btn btn-primary mr-1 mb-2'>{{ 'Save'|trans }}</button>
-          <button data-action='clear-form' data-target='multiChangesForm' type='reset' class='btn btn-ghost mb-2'>{{ 'Reset'|trans }}</button>
+          <button data-action='clear-form' data-target='multiChangesForm' type='reset' class='btn btn-danger-ghost mb-2'>{{ 'Reset'|trans }}</button>
         </form>
       </div>
 

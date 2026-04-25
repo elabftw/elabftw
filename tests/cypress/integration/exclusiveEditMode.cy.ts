@@ -14,7 +14,7 @@ describe('Exclusive edit mode', () => {
     });
     cy.createEntity();
     cy.get('#documentTitle').click();
-    cy.get('h1.text-dark').find('input').clear().type(title).blur();
+    cy.get('h1').find('input').clear().type(title).blur();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     // edit mode is always exclusive as of 2025/03, without clicking on a specific button
     cy.get('#date_input').type('2024-04-20').blur();

@@ -21,6 +21,7 @@ import Prism from 'prismjs';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
 import { read as readXlsx, utils as xlsxUtils } from '@e965/xlsx';
+import { on } from './handlers';
 type Cell = string | number | boolean | null;
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
@@ -67,140 +68,146 @@ async function blob2table(blob: Blob, container: HTMLDivElement, sheetName: stri
   container.replaceChildren(table);
 }
 
-const clickHandler = async (event: Event) => {
-  const el = (event.target as HTMLElement);
-  // RENAME UPLOAD
-  if (el.matches('[data-action="rename-upload"]')) {
-    // find the corresponding filename element
-    // we replace the parent span to also remove the link for download
-    const filenameLink = document.getElementById('upload-filename_' + el.dataset.id);
-    const filenameInput = document.createElement('input');
-    filenameInput.dataset.id = el.dataset.id;
-    filenameInput.classList.add('form-control');
-    filenameInput.value = filenameLink.textContent;
-    const parentSpan = filenameLink.parentElement;
-    parentSpan.classList.add('form-inline');
-    filenameInput.addEventListener('blur', event => {
-      processNewFilename(event, filenameLink, parentSpan);
-    });
-    filenameInput.addEventListener('keypress', event => {
-      processNewFilename(event, filenameLink, parentSpan);
-    });
-    filenameLink.replaceWith(filenameInput);
-    filenameInput.focus();
+on('rename-upload', (el: HTMLElement) => {
+  // find the corresponding filename element
+  // we replace the parent span to also remove the link for download
+  const filenameLink = document.getElementById('upload-filename_' + el.dataset.id);
+  const filenameInput = document.createElement('input');
+  filenameInput.dataset.id = el.dataset.id;
+  filenameInput.classList.add('form-control');
+  filenameInput.value = filenameLink.textContent;
+  const parentSpan = filenameLink.parentElement;
+  parentSpan.classList.add('form-inline');
+  filenameInput.addEventListener('blur', event => {
+    processNewFilename(event, filenameLink, parentSpan);
+  });
+  filenameInput.addEventListener('keypress', event => {
+    processNewFilename(event, filenameLink, parentSpan);
+  });
+  filenameLink.replaceWith(filenameInput);
+  filenameInput.focus();
+});
 
-  // TOGGLE DISPLAY
-  } else if (el.matches('[data-action="toggle-uploads-layout"]')) {
-    ApiC.notifOnSaved = false;
-    ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout})
+on('duplicate-upload', (el: HTMLElement) => {
+  const uploadId = parseInt(el.dataset.uploadid, 10);
+  ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}/${uploadId}`, { action: Action.Duplicate })
+    .then(() => reloadElements(['uploadsDiv']));
+});
+
+on('toggle-uploads-layout', (el: HTMLElement) => {
+  ApiC.notifOnSaved = false;
+  ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout})
     // toggler needs to be reloaded too so the target value will be updated
-      .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
+    .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
+});
 
-  // SHOW CONTENT OF TEXT FILES, MARKDOWN OR JSON
-  } else if (el.matches('[data-action="toggle-modal"][data-target="plainTextModal"]')) {
-    // set the title for modal window
-    document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
-    // get the file content
-    const response = await fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`);
-    const plainTextContentDiv = document.getElementById('plainTextContentDiv');
-    if (el.dataset.ext === 'md') {
-      plainTextContentDiv.innerHTML = DOMPurify.sanitize(await marked(await response.text()), { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });
-    } else if (el.dataset.ext === 'json') {
-      const preBlock = document.createElement('pre');
-      preBlock.classList.add('language-json');
-      const codeBlock = document.createElement('code');
-      codeBlock.classList.add('language-json');
-      preBlock.appendChild(codeBlock);
-      response.json().then(content => {
-        // use prismjs to display highlighted pretty-printed json content
-        codeBlock.innerHTML = `${Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json')}`;
-        // make sure to blank any previous content before appending
-        plainTextContentDiv.innerHTML = '';
-        plainTextContentDiv.appendChild(preBlock);
-      });
-    } else if (el.dataset.ext === 'table') {
-      const blob = await response.blob();
-      blob2table(blob, plainTextContentDiv as HTMLDivElement);
-    } else { // TXT
-      response.text().then(content => plainTextContentDiv.innerText = content);
-    }
-
-  // TOGGLE SHOW ARCHIVED
-  } else if (el.matches('[data-action="toggle-uploads-show-archived"]')) {
-    const url = new URL(window.location.href);
-    const queryParams = new URLSearchParams(url.search);
-
-    // set the state query param to include normal and archived
-    if (queryParams.has('state')) {
-      queryParams.delete('state');
-    } else {
-      queryParams.set('state', '1,2');
-    }
-
-    // Update the query parameters in the URL
-    url.search = queryParams.toString();
-    url.hash = 'filesDiv';
-    const modifiedUrl = url.toString();
-    window.location.replace(modifiedUrl);
-
-  // REPLACE UPLOAD
-  } else if (el.matches('[data-action="replace-upload"]')) {
-    document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;
-
-  // MORE INFORMATION
-  } else if (el.matches('[data-action="more-info-upload"]')) {
-    document.getElementById('moreInfo_' + el.dataset.uploadid).classList.remove('d-none');
-
-  // OPEN IN NMRIUM
-  } else if (el.matches('[data-action="open-in-nmrium"]')) {
-    ApiC.get(`${entity.type}/${entity.id}/${Model.Upload}/${el.dataset.uploadid}?format=binary`).then(response => {
-      response.text().then(content => {
-        window.open(`https://www.nmrium.org/nmrium#?rawJcamp=${encodeURIComponent(content)}`, '_blank');
-      });
-    });
-
-  // SAVE MOL AS PNG
-  } else if (el.matches('[data-action="save-mol-as-png"]')) {
-    const params = {
-      'action': Action.CreateFromString,
-      'file_type': 'png',
-      'real_name': el.dataset.name + '.png',
-      'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
-    };
-    ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params)
-      .then(() => reloadElements(['uploadsDiv']));
-
-  // CHANGE 3DMOL FILES VISUALIZATION STYLE
-  } else if (el.matches('[data-action="set-3dmol-style"]')) {
-    const targetStyle = el.dataset.style;
-    let options = {};
-    const style = {};
-    if (targetStyle === 'cartoon') {
-      options = { color: 'spectrum' };
-    }
-    style[targetStyle] = options;
-    get3dmol().then(($3Dmol) => $3Dmol.viewers[el.dataset.divid].setStyle(style).render());
-
-  // LOAD SPREADSHEET FILE
-  } else if (el.matches('[data-action="xls-load-file"]')) {
-    await loadInSpreadsheetEditor(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
-    ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
-
-  // ARCHIVE UPLOAD
-  } else if (el.matches('[data-action="archive-upload"]')) {
-    const uploadid = parseInt(el.dataset.uploadid, 10);
-    ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
-      .then(() => reloadElements(['uploadsDiv']));
-
-  // DESTROY UPLOAD
-  } else if (el.matches('[data-action="destroy-upload"]')) {
-    const uploadid = parseInt(el.dataset.uploadid, 10);
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`)
-        .then(() => document.getElementById(`uploadDiv_${uploadid}`).remove());
-    }
+on('toggle-uploads-show-archived', () => {
+  const url = new URL(window.location.href);
+  const queryParams = new URLSearchParams(url.search);
+  // set the state query param to include normal and archived
+  if (queryParams.has('state')) {
+    queryParams.delete('state');
+  } else {
+    queryParams.set('state', '1,2');
   }
-};
+  // Update the query parameters in the URL
+  url.search = queryParams.toString();
+  url.hash = 'filesDiv';
+  const modifiedUrl = url.toString();
+  window.location.replace(modifiedUrl);
+});
+
+on('replace-upload', (el: HTMLElement) => {
+  document.getElementById('replaceUploadForm_' + el.dataset.uploadid).hidden = false;
+});
+
+on('more-info-upload', (el: HTMLElement) => {
+  document.getElementById('moreInfo_' + el.dataset.uploadid).classList.remove('d-none');
+});
+
+on('open-in-nmrium', (el: HTMLElement) => {
+  ApiC.get(`${entity.type}/${entity.id}/${Model.Upload}/${el.dataset.uploadid}?format=binary`).then(response => {
+    response.text().then(content => {
+      window.open(`https://www.nmrium.org/nmrium#?rawJcamp=${encodeURIComponent(content)}`, '_blank');
+    });
+  });
+});
+
+// SAVE MOL AS PNG
+on('save-mol-as-png', (el: HTMLElement) => {
+  const params = {
+    'action': Action.CreateFromString,
+    'file_type': 'png',
+    'real_name': el.dataset.name + '.png',
+    'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
+  };
+  ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params)
+    .then(() => reloadElements(['uploadsDiv']));
+});
+
+// CHANGE 3DMOL FILES VISUALIZATION STYLE
+on('set-3dmol-style', (el: HTMLElement) => {
+  const targetStyle = el.dataset.style;
+  let options = {};
+  const style = {};
+  if (targetStyle === 'cartoon') {
+    options = { color: 'spectrum' };
+  }
+  style[targetStyle] = options;
+  get3dmol().then(($3Dmol) => $3Dmol.viewers[el.dataset.divid].setStyle(style).render());
+});
+
+// LOAD SPREADSHEET FILE
+on('xls-load-file', async (el: HTMLElement) => {
+  await loadInSpreadsheetEditor(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
+  ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
+});
+
+// ARCHIVE UPLOAD
+on('archive-upload', (el: HTMLElement) => {
+  const uploadid = parseInt(el.dataset.uploadid, 10);
+  ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
+    .then(() => reloadElements(['uploadsDiv']));
+});
+
+// DESTROY UPLOAD
+on('destroy-upload', (el: HTMLElement) => {
+  const uploadid = parseInt(el.dataset.uploadid, 10);
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`)
+      .then(() => document.getElementById(`uploadDiv_${uploadid}`).remove());
+  }
+});
+
+on('toggle-modal', async (el: HTMLElement) => {
+  if (el.dataset.target !== 'plainTextModal') return;
+  // set the title for modal window
+  document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
+  // get the file content
+  const response = await fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`);
+  const plainTextContentDiv = document.getElementById('plainTextContentDiv');
+  if (el.dataset.ext === 'md') {
+    plainTextContentDiv.innerHTML = DOMPurify.sanitize(await marked(await response.text()), { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });
+  } else if (el.dataset.ext === 'json') {
+    const preBlock = document.createElement('pre');
+    preBlock.classList.add('language-json');
+    const codeBlock = document.createElement('code');
+    codeBlock.classList.add('language-json');
+    preBlock.appendChild(codeBlock);
+    response.json().then(content => {
+      // use prismjs to display highlighted pretty-printed json content
+      codeBlock.innerHTML = `${Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json')}`;
+      // make sure to blank any previous content before appending
+      plainTextContentDiv.innerHTML = '';
+      plainTextContentDiv.appendChild(preBlock);
+    });
+  } else if (el.dataset.ext === 'table') {
+    const blob = await response.blob();
+    blob2table(blob, plainTextContentDiv as HTMLDivElement);
+  } else { // TXT
+    response.text().then(content => plainTextContentDiv.innerText = content);
+  }
+});
 
 const uploadsDiv = document.getElementById('uploadsDiv');
 if (uploadsDiv) {
@@ -232,7 +239,6 @@ if (uploadsDiv) {
   });
   malleableFilecomment.listen();
 
-  document.querySelector('.real-container').addEventListener('click', async (event) => clickHandler(event));
   // reload uploads div when using spreadsheet editor (iframe sends message to parent window)
   window.addEventListener('message', (event) => {
     if (event.origin !== window.location.origin) return;

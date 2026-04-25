@@ -1,0 +1,2 @@
+-- schema 208
+ALTER TABLE `teams` ADD COLUMN `force_res_tpl` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0;

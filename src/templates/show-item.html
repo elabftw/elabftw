@@ -48,7 +48,7 @@
     {# second line: title #}
     <div class='d-flex title flex-nowrap my-2'>
       {% if item.custom_id %}
-        <span class='color-medium mr-1 text-nowrap' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
+        <span class='mr-1 text-nowrap' title='{{ 'Custom ID'|trans }}'>{{ item.custom_id }}</span>
       {% endif %}
       <a href='{{ Entity.entityType.toPage }}?mode=view&amp;id={{ item.id }}'>{{ item.title }}</a>
     </div>
@@ -69,7 +69,7 @@
       {% set stepsArr = item.next_step|split('|') %}
       {% set next = stepsArr|first %}
       <p class='item-next my-2'>
-      <span class='next-step-text'>{{ 'Next step'|trans }}:</span> <span class='item-next-step'>{{ next }}</span>
+      <span class='text-uppercase'>{{ 'Next step'|trans }}:</span> {{ next }}
       </p>
     {% endif %}
 
@@ -87,13 +87,13 @@
     <div class='d-flex flex-row'>
       {# for templates: create from button #}
       {% if isTemplate %}
-      <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='btn btn-primary left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray' title='{{ label }}' aria-label='{{ label }}'>
+      <a data-action='create-entity' data-type={{ dataType }} data-tplid='{{ item.id }}' href='#' class='btn btn-primary left-icon mr-1' title='{{ label }}' aria-label='{{ label }}'>
         <i class='fas fa-file-circle-plus fa-fw'></i>
       </a>
       {% endif %}
       {# lock icon #}
       {% if item.locked %}
-        <div class='btn left-icon mr-1 lh-normal p-2 border-0 bgnd-gray disabled'>
+        <div class='btn btn-secondary left-icon mr-1 disabled'>
           <i class='fas fa-lock fa-fw'></i>
         </div>
       {# deleted entry: show restore icon #}
@@ -104,7 +104,7 @@
       {% else %}
         {# edit icon #}
         {% if (item.userid == App.Users.userData.userid or Entity.entityType.value == 'items' or App.Users.isAdmin) %}
-          <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='btn btn-secondary left-icon mr-1 lh-normal p-2 border-0' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
+          <a href='{{ Entity.entityType.toPage }}?mode=edit&amp;id={{ item.id }}' class='btn btn-secondary left-icon mr-1' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}'>
             <i class='fas fa-pencil fa-fw'></i>
           </a>
         {% else %}
@@ -114,11 +114,11 @@
           </a>
         {% endif %}
       {% endif %}
-      <button type='button' class='btn btn-neutral mr-2 lh-normal' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
-        <i class='fas fa-caret-right color-medium'></i>
+      <button type='button' class='btn btn-neutral mr-2' data-type='{{ Entity.entityType.value }}' data-id='{{ item.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-randid={{ randomId }} data-action='toggle-body' title='{{ 'Toggle content'|trans }}' aria-label='{{ 'Toggle content'|trans }}'>
+        <i class='fas fa-caret-right fa-fw'></i>
       </button>
       {# date #}
-      <div class='d-flex flex-column color-medium small'>
+      <div class='d-flex flex-column small'>
         <span class='item-date'>{{ statusDateLabel }} {{ dateValue|date('Y-m-d') }}</span>
         <span class='item-date'>
           {{ 'Last modified'|trans }} <span title='{{ item.modified_at }}' class='relative-moment'></span>

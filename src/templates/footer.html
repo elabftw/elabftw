@@ -33,9 +33,9 @@
 
   <p class='footer-right'>
   {{ 'Powered by'|trans }}
-    <a href='https://www.elabftw.net' target='_blank' rel='noopener'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\BuildInfo::VERSION_INT')) }}" target='_blank' rel='noopener'>{{ constant('Elabftw\\Elabftw\\BuildInfo::VERSION') }}</a>{% endif %}{% if App.demoMode %} | Demo mode{% endif %}
+    <a href='https://www.elabftw.net' target='_blank' rel='noopener' class='link-like'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\BuildInfo::VERSION_INT')) }}" target='_blank' rel='noopener' class='link-like'>{{ constant('Elabftw\\Elabftw\\BuildInfo::VERSION') }}</a>{% endif %}{% if App.demoMode %} | Demo mode{% endif %}
     <br>
-    Made with ♥ by <a href='https://www.deltablot.com' target='_blank' rel='noopener'>Deltablot</a>
+    Made with ♥ by <a href='https://www.deltablot.com' target='_blank' rel='noopener' class='link-like'>Deltablot</a>
     {% if App.devMode -%}
       <br>{{ 'Page generated in' }} {{ generationTime() }} {{ 'seconds'|trans }}
       ({{ numberOfQueries() }} SQL)

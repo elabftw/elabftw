@@ -10,6 +10,10 @@ describe('Users tab in Admin page', () => {
     cy.get('.overlay').first().should('be.visible').should('contain', 'Invalid');
   });
 
+  it('cannot create user directly as sysadmin', () => {
+    cy.get('#create-user-group option[value="1"]').should('not.exist');
+  });
+
   it('creates user', () => {
     // Team & Permission group are already filled on this form, by default
     cy.get('#firstname').type('theNewToto');

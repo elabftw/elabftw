@@ -44,9 +44,6 @@
       <div class='col-md-6'>
         <label for='create-user-group' class='col-form-label'>{{ 'Permission group'|trans }}</label>
         <select class='form-control custom-control-inline' name='usergroup' id='create-user-group' data-no-blank='1'>
-          {% if App.Users.userData.is_sysadmin %}
-            <option value='1'>Sysadmins</option>
-          {% endif %}
           <option value='2'>Admins</option>
           <option value='4' selected='selected'>Users</option>
         </select>

@@ -10,7 +10,7 @@ describe('Users tab in Admin page', () => {
     cy.get('.overlay').first().should('be.visible').should('contain', 'Invalid');
   });
 
-  it('cannot create user directly as sysadmin', () => {
+  it('does not offer sysadmin in the create-user permission group dropdown', () => {
     cy.get('#create-user-group option[value="1"]').should('not.exist');
   });
 

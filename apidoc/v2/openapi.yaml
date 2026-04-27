@@ -7031,7 +7031,6 @@ paths:
                   type: integer
                   description: |
                     Purpose for this cert: `0` for Signing, `1` for Encryption.
-                  default: 0
                   enum: [0, 1]
       responses:
         '201':

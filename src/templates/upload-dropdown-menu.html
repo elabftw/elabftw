@@ -1,118 +1,90 @@
-{# DROPDOWN MENU FOR UPLOAD #}
+{% set isGrid = layout is defined and layout == 'grid' %}
+{% if not isGrid %}
 <div class='dropdown'>
   <button type='button' class='btn btn-transparent float-right' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
     <i class='fas fa-ellipsis-v fa-fw'></i>
   </button>
-
   <div class='dropdown-menu dropdown-menu-right'>
+{% endif %}
 
   {% if mode == 'edit' %}
     {# INSERT IN TEXT in edit mode for images #}
     {% if ext matches '/(jpg|jpeg|png|gif|svg|bmp)$/i' %}
-      <button type='button' class='dropdown-item' data-action='insert-image-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'>
-        <i class='fas fa-fw fa-image mr-1'></i>{{ 'Insert in text at cursor position'|trans }}
-      </button>
+      <button type='button' title='{{ 'Insert in text at cursor position'|trans }}' aria-label='{{ 'Insert in text at cursor position'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='insert-image-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-image {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Insert in text at cursor position'|trans }}{% endif %}</button>
     {% endif %}
 
     {# INSERT IN TEXT in edit mode for videos #}
     {% if ext matches '/(mkv|mp4|ogv|webm)$/i' %}
-      <button type='button' class='dropdown-item' data-action='insert-video-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'>
-        <i class='fas fa-fw fa-video mr-1'></i>{{ 'Insert in text at cursor position'|trans }}
-      </button>
+      <button type='button' title='{{ 'Insert in text at cursor position'|trans }}' aria-label='{{ 'Insert in text at cursor position'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='insert-video-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-video {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Insert in text at cursor position'|trans }}{% endif %}</button>
     {% endif %}
 
     {# INSERT IN TEXT in edit mode for audio #}
     {% if ext matches '/(aac|flac|mp3|ogg|opus|wav)$/i' %}
-      <button type='button' class='dropdown-item' data-action='insert-audio-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'>
-        <i class='fas fa-fw fa-volume-low mr-1'></i>{{ 'Insert in text at cursor position'|trans }}
-      </button>
+      <button type='button' title='{{ 'Insert in text at cursor position'|trans }}' aria-label='{{ 'Insert in text at cursor position'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='insert-audio-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-volume-low {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Insert in text at cursor position'|trans }}{% endif %}</button>
     {% endif %}
 
     {# INSERT IN TEXT in edit mode for plain text #}
     {% if ext matches '/txt$/i' %}
-      <button type='button' class='dropdown-item' data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}'>
-        <i class='fas fa-fw fa-file-import mr-1'></i>{{ 'Insert in text at cursor position'|trans }}
-      </button>
+      <button type='button' title='{{ 'Insert in text at cursor position'|trans }}' aria-label='{{ 'Insert in text at cursor position'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}'><i class='fas fa-fw fa-file-import {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Insert in text at cursor position'|trans }}{% endif %}</button>
     {% endif %}
   {% endif %}
 
   {# Edit filename (available in view mode too) #}
   {% if not upload.immutable and not Entity.isReadOnly and App.Users.userData.uploads_layout != 0 %}
-    <button type='button' class='dropdown-item' data-action='rename-upload' data-id='{{ upload.id }}'>
-      <i class='fas fa-fw fa-pencil-alt mr-1'></i>{{ 'Edit filename'|trans }}
-    </button>
+    <button type='button' title='{{ 'Edit filename'|trans }}' aria-label='{{ 'Edit filename'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='rename-upload' data-id='{{ upload.id }}'><i class='fas fa-fw fa-pencil-alt {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Edit filename'|trans }}{% endif %}</button>
   {% endif %}
 
   {% if mode == 'edit' %}
 
     {# Annotate image #}
     {% if ext matches '/(jpg|jpeg|png|gif|bmp)$/i' %}
-      <button type='button' class='dropdown-item' data-action='annotate-image' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}'>
-        <i class='fas fa-fw fa-paint-brush mr-1'></i>{{ 'Annotate this image'|trans }}
-      </button>
+      <button type='button' title='{{ 'Annotate this image'|trans }}' aria-label='{{ 'Annotate this image'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='annotate-image' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}'><i class='fas fa-fw fa-paint-brush {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Annotate this image'|trans }}{% endif %}</button>
     {% endif %}
 
     {# LOAD IN JSON EDITOR #}
     {% if ext matches '/(json)$/i' %}
-      <button type='button' class='dropdown-item' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}' data-link='{{ upload.long_name|e('html_attr') }}' data-action='json-load-file'>
-        <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>{{ 'Load into JSON Editor'|trans }}
-      </button>
+      <button type='button' title='{{ 'Load into JSON Editor'|trans }}' aria-label='{{ 'Load into JSON Editor'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}' data-link='{{ upload.long_name|e('html_attr') }}' data-action='json-load-file'><i class='fas fa-fw fa-{{ mode == 'edit' ? 'file-code' : 'eye' }} {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Load into JSON Editor'|trans }}{% endif %}</button>
     {% endif %}
 
     {# LOAD IN SHEET EDITOR #}
     {% if ext in constant('Elabftw\\Elabftw\\Extensions::SPREADSHEET') %}
-      <button type='button' class='dropdown-item' data-action='xls-load-file' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}' data-path='{{ upload.long_name|e('html_attr') }}' data-storage='{{ upload.storage }}'>
-        <i class='fas fa-fw fa-{{ mode == 'edit' ? 'pencil-alt' : 'eye' }} mr-1'></i>{{ 'Load into Spreadsheet Editor'|trans }}
-      </button>
+      <button type='button' title='{{ 'Load into Spreadsheet Editor'|trans }}' aria-label='{{ 'Load into Spreadsheet Editor'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='xls-load-file' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}' data-path='{{ upload.long_name|e('html_attr') }}' data-storage='{{ upload.storage }}'><i class='fas fa-fw fa-{{ mode == 'edit' ? 'file-excel' : 'eye' }} {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Load into Spreadsheet Editor'|trans }}{% endif %}</button>
     {% endif %}
 
     {# Duplicate an upload #}
-    {% if not upload.immutable and not Entity.isReadOnly and App.Users.userData.uploads_layout != 0 %}
-      <button type='button' class='dropdown-item' data-action='duplicate-upload' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}'>
-        <i class='fas fa-fw fa-clone mr-1'></i>{{ 'Duplicate'|trans }}
-      </button>
+    {% if not upload.immutable and not Entity.isReadOnly %}
+      <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='duplicate-upload' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}'><i class='fas fa-fw fa-clone {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Duplicate'|trans }}{% endif %}</button>
     {% endif %}
 
     {# Upload a new version: only in edit mode because currently it'll look into the editor to change the image, but it might be convenient to also have it in view mode #}
     {% if not upload.immutable %}
-      <button type='button' class='dropdown-item' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
-        <i class='fas fa-fw fa-sync-alt mr-1'></i>{{ 'Upload a new version of this file'|trans }}
-      </button>
+      <button type='button' title='{{ 'Upload a new version of this file'|trans }}' aria-label='{{ 'Upload a new version of this file'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='replace-upload' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-sync-alt {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Upload a new version of this file'|trans }}{% endif %}</button>
     {% endif %}
-
   {% endif %}
 
   {# Show content of plain text #}
   {% if ext matches '/(txt|md|json)$/i' %}
-    <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}'>
-      <i class='fas fa-fw fa-eye mr-1'></i>{{ 'Show content of file'|trans }}
-    </button>
+    <button type='button' title='{{ 'Show content of file'|trans }}' aria-label='{{ 'Show content of file'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='toggle-modal' data-target='plainTextModal' data-ext='{{ ext }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}'><i class='fas fa-fw fa-eye {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Show content of file'|trans }}{% endif %}</button>
   {% endif %}
 
   {# Load in NMRium #}
   {% if ext matches '/jdx$/i' %}
-    <button type='button' class='dropdown-item' data-uploadid='{{ upload.id }}' data-action='open-in-nmrium'>
-      <i class='fas fa-fw fa-square-poll-vertical mr-1'></i>{{ 'Open in NMRium'|trans }}
-    </button>
+    <button type='button' title='{{ 'Open in NMRium'|trans }}' aria-label='{{ 'Open in NMRium'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-uploadid='{{ upload.id }}' data-action='open-in-nmrium'><i class='fas fa-fw fa-square-poll-vertical {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Open in NMRium'|trans }}{% endif %}</button>
   {% endif %}
 
   {# More info #}
   {% if App.Users.userData.uploads_layout != 0 %}
-    <button type='button' class='dropdown-item' data-action='more-info-upload' data-uploadid='{{ upload.id }}'>
-      <i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}
-    </button>
+    <button type='button' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}' class='{{ isGrid ? 'btn btn-ghost' : 'dropdown-item' }}' data-action='more-info-upload' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-info-circle {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'More information'|trans }}{% endif %}</button>
   {% endif %}
 
   {% if not upload.immutable and not Entity.isReadOnly %}
+    {% if not isGrid %}<div class='dropdown-divider'></div>{% endif %}
     {# ARCHIVE #}
-    <div class='dropdown-divider'></div>
-    <button type='button' class='dropdown-item hover-warning' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
-      <i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archive/Unarchive'|trans }}
-    </button>
+    <button type='button' title='{{ 'Archive/Unarchive'|trans }}' aria-label='{{ 'Archive/Unarchive'|trans }}' class='{{ isGrid ? 'btn btn-danger-ghost' : 'dropdown-item hover-warning' }}' data-action='archive-upload' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-box-archive {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Archive/Unarchive'|trans }}{% endif %}</button>
     {# DESTROY #}
-    <button type='button' class='dropdown-item hover-danger' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
-      <i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete'|trans }}
-    </button>
+    <button type='button' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' class='{{ isGrid ? 'btn btn-danger' : 'dropdown-item hover-danger' }}' data-action='destroy-upload' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-trash-alt {{ isGrid ? '' : 'mr-1' }}'></i>{% if not isGrid %}{{ 'Delete'|trans }}{% endif %}</button>
   {% endif %}
+  {% if not isGrid %}
   </div>
 </div>
+{% endif %}

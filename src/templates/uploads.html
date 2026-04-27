@@ -69,6 +69,7 @@
           </thead>
           <tbody id='uploadsTable'>
             {% for upload in Entity.entityData.uploads %}
+              {% set ext = upload.real_name|getExt %}
               <tr class='countable' id='uploadDiv_{{ upload.id }}'>
                 <td>
                   {# keep btn-ghost border-0 here because in table with zebra #}
@@ -95,7 +96,7 @@
                   {% if loop.first %}
                     <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
                   {% endif %}
-                  <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn btn-ghost mr-1'>
+                  <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn btn-ghost'>
                     <i class='fas fa-download fa-fw'></i>
                   </a>
                   {% if not upload.immutable %}
@@ -105,24 +106,9 @@
                         <i class='fas fa-fw fa-pencil-alt'></i>
                       </button>
                       {# UPLOAD NEW VERSION #}
-                      <button type='button' title='{{ 'Upload a new version of this file'|trans }}' aria-label='{{ 'Upload a new version of this file'|trans }}' class='btn btn-ghost' data-action='replace-upload' data-uploadid='{{ upload.id }}'>
-                        <i class='fas fa-fw fa-sync-alt'></i>
-                      </button>
+                      {% include('upload-dropdown-menu.html') with {layout: 'grid'} %}
+                      {# UPLOAD NEW VERSION OF A FILE #}
                       {% include('upload-replace-form.html') %}
-                    {% endif %}
-                    {% if not Entity.isReadOnly %}
-                      {# DUPLICATE #}
-                      <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' class='btn p-1 mr-1' data-action='duplicate-upload' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}'>
-                        <i class='fas fa-clone'></i>
-                      </button>
-                      {# ARCHIVE #}
-                      <button type='button' title='{{ 'Archive/Unarchive'|trans }}' aria-label='{{ 'Archive/Unarchive'|trans }}' class='btn btn-danger-ghost' data-action='archive-upload' data-uploadid='{{ upload.id }}'>
-                        <i class='fas fa-box-archive'></i>
-                      </button>
-                      {# DESTROY #}
-                      <button type='button' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' class='btn btn-danger' data-action='destroy-upload' data-uploadid='{{ upload.id }}'>
-                        <i class='fas fa-trash-alt'></i>
-                      </button>
                     {% endif %}
                   {% endif %}
                 </td>
@@ -141,7 +127,7 @@
             <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name }}' hidden></div>
           {% endif %}
           <div class='thumbnail box {{ upload.state == enum('Elabftw\\Enums\\State').Archived.value ? 'bg-light' }}' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' style='overflow: visible'>
-            {% include('upload-dropdown-menu.html') %}
+            {% include('upload-dropdown-menu.html') with {layout: 'dropdown'} %}
             {% if upload.state == enum('Elabftw\\Enums\\State').Archived.value %}
             <p class='mb-0'><i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Archived'|trans }}</p>
             {% endif %}

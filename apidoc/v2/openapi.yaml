@@ -1669,6 +1669,9 @@ components:
           type: string
         orgid_attr:
           type: string
+        source:
+          type: int
+          nullable: true
         certs:
           type: array
           description: Certificates associated with this IdP.

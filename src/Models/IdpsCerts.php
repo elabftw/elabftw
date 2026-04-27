@@ -138,9 +138,10 @@ final class IdpsCerts extends AbstractRest
     public function destroy(): bool
     {
         $this->requester->isSysadminOrExplode();
-        $sql = 'DELETE FROM idps_certs WHERE id = :id';
+        $sql = 'DELETE FROM idps_certs WHERE id = :id AND idp = :idp';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':idp', $this->idpId, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

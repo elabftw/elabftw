@@ -6965,7 +6965,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/idp_cert'
+                $ref: '#/components/schemas/idp_endpoint'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Idps']
       summary: Delete an idp endpoint.
@@ -6973,7 +6977,7 @@ paths:
       operationId: delete-idp-endpoint
       responses:
         '204':
-          description: The idp was deleted.
+          description: The idp endpoint was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -7020,6 +7024,12 @@ paths:
                 x509:
                   type: string
                   description: PEM representation of the certificate
+                purpose:
+                  type: integer
+                  description: |
+                    Purpose for this cert: `0` for Signing, `1` for Encryption.
+                  default: 0
+                  enum: [0, 1]
       responses:
         '201':
           description: The idp cert has been created.

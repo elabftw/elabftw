@@ -1,23 +1,27 @@
 <script lang='ts'>
+  /**
+   * @author Nicolas CARPi / Deltablot
+   * @copyright 2026 Nicolas CARPi
+   * @see https://www.elabftw.net Official website
+   * @license AGPL-3.0
+   * @package elabftw
+   */
   import { onMount } from 'svelte';
   import Prism from 'prismjs';
   import { writable, type Writable } from 'svelte/store';
   import '../prism-elabftwquery';
+  import i18next from '../i18n';
 
   type Props = {
-    name?: string;
     searchQuery?: Writable<string>;
-    placeholder?: string;
-    ariaLabel?: string;
     buttonLabel?: string;
   };
 
+  const t = i18next.t.bind(i18next);
+
   const {
-    name = 'q',
     searchQuery = writable(''),
-    placeholder = 'Search',
-    ariaLabel = 'Search',
-    buttonLabel = 'Search',
+    buttonLabel = t('search'),
   }: Props = $props();
 
   let inputEl: HTMLInputElement;
@@ -82,11 +86,11 @@
     <input
       bind:this={inputEl}
       id='extendedArea'
-      name={name}
+      name='q'
       type='text'
       class='form-control syntax-input'
-      {placeholder}
-      aria-label={ariaLabel}
+      placeholder={t('search')}
+      aria-label={t('search')}
       spellcheck='false'
       autocomplete='off'
       autocapitalize='off'

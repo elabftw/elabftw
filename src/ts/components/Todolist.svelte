@@ -1,4 +1,11 @@
-<script lang="ts">
+<script lang='ts'>
+  /**
+   * @author Nicolas CARPi / Deltablot
+   * @copyright 2026 Nicolas CARPi
+   * @see https://www.elabftw.net Official website
+   * @license AGPL-3.0
+   * @package elabftw
+   */
   import { onMount, tick } from 'svelte';
   import { ApiC } from '../api';
   import i18next from '../i18n';

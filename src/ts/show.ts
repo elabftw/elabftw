@@ -227,9 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // SEARCH RELATED CODE
-  //const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
-
   // TomSelect for extra fields & owner search select
   if (document.getElementById('metakey')) {
     new TomSelect('#metakey', {
@@ -260,9 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
         this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
         this._showArchived = false;
         applyToggleFilter(this, '_showArchived', isArchivedOption);
-
-        this.wrapper.classList.add('w-100');
-        this.control.classList.add('w-100');
       },
 
       onChange(value: string | string[] | null | undefined) {
@@ -785,9 +779,6 @@ document.addEventListener('DOMContentLoaded', () => {
         this._showAll = false;
 
         applyTeamFilter(this);
-
-        this.wrapper.classList.add('w-100');
-        this.control.classList.add('w-100');
       },
 
       onChange(value: string | string[] | null | undefined) {
@@ -844,11 +835,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tsTagFilter = new TomSelect('#tagFilter', {
       dropdownParent: '#tagFilterMenu',
-
-      onInitialize(this: AnyTS) {
-        this.wrapper.classList.add('w-100');
-        this.control.classList.add('w-100');
-      },
 
       onChange: (value: unknown) => {
         const url = new URL(window.location.href);

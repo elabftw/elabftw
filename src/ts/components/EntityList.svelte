@@ -304,6 +304,7 @@ function handleTagClick(event: MouseEvent, tag: string): void {
         return;
       }
 
+      // example: type "title:" in search bar, it's incomplete, we ignore the error
       const apiError = err as Error & { status?: number };
 
       if (apiError.status === 400) {
@@ -436,21 +437,12 @@ function handleTagClick(event: MouseEvent, tag: string): void {
   });
 
   onMount(() => {
-    const handlePopState = (): void => {
-      bumpUrlVersion();
-    };
-
-   const handleFiltersChanged = (): void => {
-     console.log('handling filters changed');
-     bumpReloadVersion();
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    window.addEventListener('entity-filters-changed', handleFiltersChanged);
+    window.addEventListener('popstate', bumpUrlVersion);
+    window.addEventListener('entity-filters-changed', bumpReloadVersion);
 
     return () => {
-      window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('entity-filters-changed', handleFiltersChanged);
+      window.removeEventListener('popstate', bumpUrlVersion);
+      window.removeEventListener('entity-filters-changed', bumpReloadVersion);
     };
   });
 </script>

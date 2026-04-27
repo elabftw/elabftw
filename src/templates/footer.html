@@ -91,7 +91,7 @@
     "isAnon": {{ App.Session.has('is_anon') ? 'true' : 'false' }},
     "isAuth": {{ App.Session.has('is_auth') ? 'true' : 'false' }},
     "isAdmin": {{ App.Users.isAdmin }},
-    "currentTeam": {{ App.Users.getTeam()|default(-1) }},
-    "currentUserid": {{ App.Users.getUserid()|default(-1) }}
+    "currentTeam": {{ App.Users.userData.team|default(-1) }},
+    "currentUserid": {{ App.Users.userid|default(-1) }}
   }
 </script>

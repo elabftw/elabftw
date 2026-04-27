@@ -99,35 +99,17 @@ function setOwnerInUrl(ownerId: number): void {
 }
 
 function handleOwnerClick(event: MouseEvent, ownerId: number): void {
-  if (
-    event.button !== 0 ||
-    event.metaKey ||
-    event.ctrlKey ||
-    event.shiftKey ||
-    event.altKey
-  ) {
-    return;
-  }
-
   event.preventDefault();
-  if (isOwnerSelected(ownerId)) {
+  // allow unselecting a previously added filter
+  if (getCurrentUrlParam('owner') === String(ownerId)) {
     clearInUrl('owner');
     return;
   }
   setOwnerInUrl(ownerId);
 }
 
-  function isOwnerSelected(ownerId: number): boolean {
-    return getCurrentUrlOwner() === String(ownerId);
-  }
-  function getCurrentUrlCategory(): string {
-    return new URL(window.location.href).searchParams.get('category')?.trim() ?? '';
-  }
-  function getCurrentUrlStatus(): string {
-    return new URL(window.location.href).searchParams.get('status')?.trim() ?? '';
-  }
-  function getCurrentUrlOwner(): string {
-    return new URL(window.location.href).searchParams.get('owner')?.trim() ?? '';
+  function getCurrentUrlParam(param: string): string {
+    return new URL(window.location.href).searchParams.get(param)?.trim() ?? '';
   }
 
   function getCurrentUrlTags(): string[] {
@@ -153,29 +135,16 @@ function setSingleTagInUrl(tag: string): void {
   bumpUrlVersion();
 }
 
-  function isTagSelected(tag: string): boolean {
-    return getCurrentUrlTags().includes(tag);
-  }
-
+  // TODO remove once we add filters line
   const selectedOwner = $derived.by(() => {
     urlVersion;
-    return getCurrentUrlOwner();
+    return getCurrentUrlParam('owner');
   });
 
 function handleTagClick(event: MouseEvent, tag: string): void {
-  if (
-    event.button !== 0 ||
-    event.metaKey ||
-    event.ctrlKey ||
-    event.shiftKey ||
-    event.altKey
-  ) {
-    return;
-  }
-
   event.preventDefault();
 
-  if (isTagSelected(tag)) {
+  if (getCurrentUrlTags().includes(tag)) {
     clearInUrl('tags[]');
     return;
   }
@@ -201,9 +170,9 @@ function handleTagClick(event: MouseEvent, tag: string): void {
     const currentType = entityType;
     const currentLimit = limit;
     const currentQ = $searchQuery.trim();
-    const currentCategory = getCurrentUrlCategory();
-    const currentStatus = getCurrentUrlStatus();
-    const currentOwner = getCurrentUrlOwner();
+    const currentCategory = getCurrentUrlParam('category');
+    const currentStatus = getCurrentUrlParam('status');
+    const currentOwner = getCurrentUrlParam('owner');
     const currentTags = getCurrentUrlTags();
 
      const nextQueryKey = JSON.stringify([
@@ -393,9 +362,9 @@ function handleTagClick(event: MouseEvent, tag: string): void {
         const currentType = entityType;
         const currentLimit = limit;
         const currentQ = $searchQuery.trim();
-        const currentCategory = getCurrentUrlCategory();
-        const currentStatus = getCurrentUrlStatus();
-        const currentOwner = getCurrentUrlOwner();
+        const currentCategory = getCurrentUrlParam('category');
+        const currentStatus = getCurrentUrlParam('status');
+        const currentOwner = getCurrentUrlParam('owner');
         const currentTags = getCurrentUrlTags();
         const nextOffset = entities.length;
 

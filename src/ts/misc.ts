@@ -405,12 +405,6 @@ export function getCheckedBoxes(): Array<CheckableItem> {
 export async function reloadEntitiesShow(): Promise<void | Response> {
   console.log('dispatching entity-filters-changed custom event');
   window.dispatchEvent(new CustomEvent('entity-filters-changed'));
-  /*
-  // get the html
-  const html = await fetchCurrentPage(tag);
-  // reload items
-  document.getElementById('showModeContent').innerHTML = html.getElementById('showModeContent').innerHTML;
- */
   // ask mathjax to reparse the page
   MathJax.typeset();
   // rebind autocomplete for links input

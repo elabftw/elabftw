@@ -312,7 +312,7 @@ function handleTagClick(event: MouseEvent, tag: string): void {
         return;
       }
 
-      error = apiError.message || t('Failed to load entries');
+      error = apiError.message || t('error');
     } finally {
       ApiC.notifOnError = previousNotifOnError;
 
@@ -337,16 +337,12 @@ function handleTagClick(event: MouseEvent, tag: string): void {
 
   function getCreateLabel(type: EntityType): string {
     return type === 'items_types'
-      ? t('Create resource from template')
-      : t('Create experiment from template');
+      ? t('create-resource-from-template')
+      : t('create-experiment-from-template');
   }
 
   function getCreateDataType(type: EntityType): 'experiments' | 'database' {
     return type === 'experiments_templates' ? 'experiments' : 'database';
-  }
-
-  function getStatusDateLabel(type: EntityType): string {
-    return isTemplateType(type) ? t('Created on') : t('Started on');
   }
 
   function formatDate(value: string | null | undefined): string {
@@ -362,28 +358,12 @@ function handleTagClick(event: MouseEvent, tag: string): void {
     return date.toISOString().slice(0, 10);
   }
 
-  function firstNextStep(value: string | null | undefined): string {
-    if (!value) {
-      return '';
-    }
-
-    return value.split('|')[0]?.trim() ?? '';
-  }
-
-  function getBodyId(entity: EntityListItem, index: number): string {
-    return `entity-body-${entity.id}-${index}`;
-  }
-
   function getLeftColor(entity: EntityListItem): string {
     return entity.category_color || 'bdbdbd';
   }
 
   function canEditEntity(entity: EntityListItem): boolean {
     return entity.userid === currentUserId || entityType === 'items' || isAdmin;
-  }
-
-  function getDisplayTitle(entity: EntityListItem): string {
-    return entity.title || t('Untitled');
   }
 
   $effect(() => {
@@ -453,10 +433,9 @@ function handleTagClick(event: MouseEvent, tag: string): void {
   <div class='d-flex flex-column' id='itemList'>
     {#each entities as entity, index (`${entity.id}-${index}`)}
       {@const template = isTemplateType(entityType)}
-      {@const bodyId = getBodyId(entity, index)}
-      {@const statusDateLabel = getStatusDateLabel(entityType)}
+      {@const bodyId = `entity-body-${entity.id}-${index}`}
+      {@const statusDateLabel = isTemplateType(entityType) ? t('created-on') : t('started-on')}
       {@const dateValue = template ? entity.created_at : entity.date}
-      {@const nextStep = firstNextStep(entity.next_step)}
       {@const createLabel = getCreateLabel(entityType)}
       {@const createDataType = getCreateDataType(entityType)}
 
@@ -542,7 +521,7 @@ function handleTagClick(event: MouseEvent, tag: string): void {
             {/if}
 
             <a href={`?mode=view&id=${entity.id}`}>
-              {getDisplayTitle(entity)}
+              {entity.title || t('entity-default-title')}
             </a>
           </div>
 
@@ -563,10 +542,10 @@ function handleTagClick(event: MouseEvent, tag: string): void {
             {/if}
           </div>
 
-          {#if nextStep}
+          {#if entity.next_step}
             <p class='item-next my-2'>
               <span class='next-step-text'>{t('Next step')}:</span>
-              <span class='item-next-step'> {nextStep}</span>
+              <span class='item-next-step'> {entity.next_step}</span>
             </p>
           {/if}
 

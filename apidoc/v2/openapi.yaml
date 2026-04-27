@@ -6876,6 +6876,179 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # IDP ENDPOINTS
+  /idps/{id}/endpoints:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Idps']
+      summary: Read all endpoints for an IdP.
+      operationId: read-idp-endpoints
+      responses:
+        '200':
+          description: A list of endpoints for this IdP.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/idp_endpoint'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: ['Idps']
+      summary: Add an endpoint to this IdP.
+      operationId: post-idp-endpoint
+      requestBody:
+        description: Parameters for adding an endpoint to an IdP.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['location']
+              properties:
+                location:
+                  type: string
+                binding:
+                  type: string
+                  enum: [
+                    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
+                  ]
+                is_slo:
+                  type: integer
+                  enum: [0, 1]
+      responses:
+        '201':
+          description: The idp endpoint has been created.
+          headers:
+            location:
+              description: An URL to the idp that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # IDP ENDPOINT WITH ID
+  /idps/{id}/endpoints/{endpoint_id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+      - name: endpoint_id
+        in: path
+        description: ID of the idp endpoint
+        required: true
+        schema:
+          type: integer
+    delete:
+      tags: ['Idps']
+      summary: Delete an idp endpoint.
+      description: The idp endpoint gets deleted.
+      operationId: delete-idp-endpoint
+      responses:
+        '204':
+          description: The idp was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # IDP CERTS
+  /idps/{id}/certs:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Idps']
+      summary: Read all certs for an IdP.
+      operationId: read-idp-certs
+      responses:
+        '200':
+          description: A list of certs for this IdP.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/idp_cert'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: ['Idps']
+      summary: Add a cert to this IdP.
+      operationId: post-idp-cert
+      requestBody:
+        description: Parameters for adding a cert to an IdP.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['x509']
+              properties:
+                x509:
+                  type: string
+                  description: PEM representation of the certificate
+      responses:
+        '201':
+          description: The idp cert has been created.
+          headers:
+            location:
+              description: An URL to the idp that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # IDP cert WITH ID
+  /idps/{id}/certs/{cert_id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+      - name: cert_id
+        in: path
+        description: ID of the idp cert
+        required: true
+        schema:
+          type: integer
+    delete:
+      tags: ['Idps']
+      summary: Delete an idp cert.
+      description: The idp cert gets deleted.
+      operationId: delete-idp-cert
+      responses:
+        '204':
+          description: The idp was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
   # IDPS SOURCES
   /idps_sources:
     get:

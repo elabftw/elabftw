@@ -6930,13 +6930,15 @@ paths:
           description: The idp endpoint has been created.
           headers:
             location:
-              description: An URL to the idp that was created.
+              description: An URL to the idp endpoint that was created.
               schema:
                 type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # IDP ENDPOINT WITH ID
   /idps/{id}/endpoints/{endpoint_id}:
@@ -6953,6 +6955,17 @@ paths:
         required: true
         schema:
           type: integer
+    get:
+      tags: ['Idps']
+      summary: Read an endpoint for an IdP.
+      operationId: read-idp-endpoint
+      responses:
+        '200':
+          description: IdP endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp_cert'
     delete:
       tags: ['Idps']
       summary: Delete an idp endpoint.
@@ -7012,13 +7025,15 @@ paths:
           description: The idp cert has been created.
           headers:
             location:
-              description: An URL to the idp that was created.
+              description: An URL to the idp cert that was created.
               schema:
                 type: string
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # IDP cert WITH ID
   /idps/{id}/certs/{cert_id}:
@@ -7035,6 +7050,21 @@ paths:
         required: true
         schema:
           type: integer
+    get:
+      tags: ['Idps']
+      summary: Read a cert for an IdP.
+      operationId: read-idp-cert
+      responses:
+        '200':
+          description: IdP certificate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp_cert'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Idps']
       summary: Delete an idp cert.
@@ -7042,7 +7072,7 @@ paths:
       operationId: delete-idp-cert
       responses:
         '204':
-          description: The idp was deleted.
+          description: The idp cert was deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

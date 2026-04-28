@@ -90,72 +90,78 @@
   }
 
 
-function setOwnerInUrl(ownerId: number): void {
-  const url = new URL(window.location.href);
-  url.searchParams.set('owner', String(ownerId));
+  function setOwnerInUrl(ownerId: number): void {
+    const url = new URL(window.location.href);
+    url.searchParams.set('owner', String(ownerId));
 
-  window.history.replaceState({}, '', url.toString());
-  bumpUrlVersion();
-}
-
-function handleOwnerClick(event: MouseEvent, ownerId: number): void {
-  event.preventDefault();
-  // allow unselecting a previously added filter
-  if (getCurrentUrlParam('owner') === String(ownerId)) {
-    clearInUrl('owner');
-    return;
-  }
-  setOwnerInUrl(ownerId);
-}
-
-  function getCurrentUrlParam(param: string): string {
-    return new URL(window.location.href).searchParams.get(param)?.trim() ?? '';
+    window.history.replaceState({}, '', url.toString());
+    bumpUrlVersion();
   }
 
-  function getCurrentUrlTags(): string[] {
-  return new URL(window.location.href).searchParams
-    .getAll('tags[]')
-    .map(tag => tag.trim())
-    .filter(Boolean);
-}
-
-function clearInUrl(param: string): void {
-  const url = new URL(window.location.href);
-  url.searchParams.delete(param);
-  window.history.replaceState({}, '', url.toString());
-  bumpUrlVersion();
-}
-
-function setSingleTagInUrl(tag: string): void {
-  const url = new URL(window.location.href);
-  url.searchParams.delete('tags[]');
-  url.searchParams.append('tags[]', tag);
-
-  window.history.replaceState({}, '', url.toString());
-  bumpUrlVersion();
-}
-
-  // TODO remove once we add filters line
-  const selectedOwner = $derived.by(() => {
-    urlVersion;
-    return getCurrentUrlParam('owner');
-  });
-
-function handleTagClick(event: MouseEvent, tag: string): void {
-  event.preventDefault();
-
-  if (getCurrentUrlTags().includes(tag)) {
-    clearInUrl('tags[]');
-    return;
+  function setOwnerInActiveFilters(fullname: string): void {
+    const filter = document.createElement('div');
+    filter.dataset.param = 'owner';
+    filter.classList.add('active-filter-badge');
+    filter.textContent = `${t('owner')}: ${fullname}`;
+    const activeFiltersDiv = document.getElementById('activeFiltersDiv');
+    clearInActiveFilters('owner');
+    activeFiltersDiv.appendChild(filter);
   }
 
-  setSingleTagInUrl(tag);
-}
+  function handleOwnerClick(event: MouseEvent, ownerId: number, fullname: string): void {
+    event.preventDefault();
+    // allow unselecting a previously added filter
+    if (getCurrentUrlParam('owner') === String(ownerId)) {
+      clearInUrl('owner');
+      clearInActiveFilters('owner');
+      return;
+    }
+    setOwnerInUrl(ownerId);
+    setOwnerInActiveFilters(fullname);
+  }
 
-  const selectedTags = $derived.by(() => {
-    urlVersion;
-    return getCurrentUrlTags();
-  });
+    function getCurrentUrlParam(param: string): string {
+      return new URL(window.location.href).searchParams.get(param)?.trim() ?? '';
+    }
+
+    function getCurrentUrlTags(): string[] {
+    return new URL(window.location.href).searchParams
+      .getAll('tags[]')
+      .map(tag => tag.trim())
+      .filter(Boolean);
+  }
+
+  function clearInUrl(param: string): void {
+    const url = new URL(window.location.href);
+    url.searchParams.delete(param);
+    window.history.replaceState({}, '', url.toString());
+    bumpUrlVersion();
+  }
+
+  function clearInActiveFilters(param: string): void {
+    const activeFiltersDiv = document.getElementById('activeFiltersDiv');
+    activeFiltersDiv.querySelector(`[data-param="${param}"]`)?.remove();
+  }
+
+  function setSingleTagInUrl(tag: string): void {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('tags[]');
+    url.searchParams.append('tags[]', tag);
+
+    window.history.replaceState({}, '', url.toString());
+    bumpUrlVersion();
+  }
+
+  function handleTagClick(event: MouseEvent, tag: string): void {
+    event.preventDefault();
+
+    if (getCurrentUrlTags().includes(tag)) {
+      clearInUrl('tags[]');
+      return;
+    }
+
+    setSingleTagInUrl(tag);
+  }
 
   let reloadVersion = $state(0);
 
@@ -505,9 +511,9 @@ function handleTagClick(event: MouseEvent, tag: string): void {
             {#if entity.userid != null && currentUserId !== entity.userid && !isAnon}
               {t('by')}
               <a
-                class={`owner ${selectedOwner === String(entity.userid) ? 'owner-selected' : ''}`}
+                class={'owner'}
                 href={`?owner=${entity.userid}`}
-                onclick={event => handleOwnerClick(event, entity.userid)}
+                onclick={event => handleOwnerClick(event, entity.userid, entity.fullname)}
               >
                 {entity.fullname}
               </a>
@@ -533,7 +539,7 @@ function handleTagClick(event: MouseEvent, tag: string): void {
 
                 {#each entity.tags_decoded ?? [] as tag, tagIndex (`${entity.id}-${tag.id}-${tagIndex}`)}
                   <a
-                    class={`tag mathjax-ignore margin-1px ${tag.is_favorite ? 'favorite' : ''} ${selectedTags.includes(tag.tag) ? 'tag-selected' : ''}`}
+                    class={`tag mathjax-ignore margin-1px ${tag.is_favorite ? 'favorite' : ''}`}
                     href={`?mode=show&tags%5B%5D=${encodeURIComponent(tag.tag)}`}
                     onclick={event => handleTagClick(event, tag.tag)}
                   >

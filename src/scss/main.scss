@@ -1869,20 +1869,17 @@ input:user-invalid {
   min-height: 2.25rem;
 }
 
-.tag-selected {
-  border: 1px solid var(--orange);
-  box-shadow: inset 0 0 0 1px var(--orange);
-}
-
 .owner {
   border: 1px solid transparent;
   border-radius: 5px;
   padding: 1px;
 }
 
-.owner-selected {
-  border: 1px solid var(--orange);
-  box-shadow: inset 0 0 0 1px var(--orange);
+.active-filter-badge {
+  border-radius: 5px;
+  border: 1px solid var(--secondlevel);
+  background-color: var(--firstlevel);
+  padding: 0.25rem;
 }
 
 .entity-skeleton {

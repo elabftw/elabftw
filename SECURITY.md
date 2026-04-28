@@ -102,7 +102,7 @@ A reverse proxy in front of an eLabFTW container can allow you to enable additio
 
 ### Enable 2FA
 
-You can enforce multi factor authentication (with TOTP mechanism) for Sysadmins, Admins or all users. It is also important to educate users on the importance of password managers and the use of unique and long passwords.
+You can enforce multi factor authentication (with TOTP mechanism) for Sysadmins, Admins, local users only or all users. It is also important to educate users on the importance of password managers and the use of unique and long passwords.
 
 ### Using single sign-on? Turn off local user (password) registration and login
 

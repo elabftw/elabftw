@@ -741,6 +741,10 @@ msgstr "Administrateurs"
 msgid "Everyone"
 msgstr "Tout le monde"
 
+#: src/Enums/EnforceMfa.php:36
+msgid "Local users"
+msgstr "Comptes locaux"
+
 #: src/Enums/Messages.php:39
 msgid ""
 "An internal error occurred. This should never happen! Please contact support "

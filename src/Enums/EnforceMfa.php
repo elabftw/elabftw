@@ -24,6 +24,7 @@ enum EnforceMfa: int
     case SysAdmins = 1;
     case Admins = 2;
     case Everyone = 3;
+    case LocalUsers = 4;
 
     public static function toHuman(self $case): string
     {
@@ -32,6 +33,7 @@ enum EnforceMfa: int
             EnforceMfa::SysAdmins => _('Sysadmins'),
             EnforceMfa::Admins => _('Admins'),
             EnforceMfa::Everyone => _('Everyone'),
+            EnforceMfa::LocalUsers => _('Local users'),
         };
     }
 

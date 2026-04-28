@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Enums\EnforceMfa;
+use Elabftw\Enums\AuthType;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 
@@ -36,6 +37,7 @@ final class MfaGate
             EnforceMfa::Everyone => true,
             EnforceMfa::SysAdmins => $loggingInUser->userData['is_sysadmin'] === 1,
             EnforceMfa::Admins => $loggingInUser->isAdminSomewhere(),
+            EnforceMfa::LocalUsers => ($loggingInUser->userData['auth_service'] ?? 0) === AuthType::Local->asService(),
             EnforceMfa::Disabled => false,
         };
     }

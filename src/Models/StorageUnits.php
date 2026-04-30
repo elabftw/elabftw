@@ -27,6 +27,9 @@ use Override;
 use PDO;
 
 use function _;
+use function array_key_exists;
+use function array_map;
+use function in_array;
 use function sprintf;
 use function trim;
 
@@ -270,11 +273,53 @@ final class StorageUnits extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        if (empty($params['name'])) {
-            throw new ImproperActionException('Name must not be empty!');
+        if (!empty($params['name'])) {
+            $this->update(new CommentParam($params['name']));
         }
-        $this->update(new CommentParam($params['name']));
+        if (array_key_exists('parent_id', $params)) {
+            $this->move(Filter::intOrNull($params['parent_id'] ?? 0));
+        }
+        if (empty($params['name']) && !array_key_exists('parent_id', $params)) {
+            throw new ImproperActionException('No valid update target provided.');
+        }
         return $this->readOne();
+    }
+
+    public function move(?int $newParentId): bool
+    {
+        if ($newParentId !== null) {
+            if ($newParentId <= 0) {
+                throw new ImproperActionException('Invalid parent_id');
+            }
+            if ($newParentId === $this->id) {
+                throw new ImproperActionException('A storage unit cannot be its own parent.');
+            }
+            // existence check + cycle detection: walk the destination's ancestor chain
+            $sql = 'WITH RECURSIVE ancestors AS (
+                    SELECT id, parent_id FROM storage_units WHERE id = :start
+                    UNION
+                    SELECT su.id, su.parent_id
+                    FROM storage_units AS su
+                    INNER JOIN ancestors AS a ON su.id = a.parent_id
+                )
+                SELECT id FROM ancestors';
+            $req = $this->Db->prepare($sql);
+            $req->bindValue(':start', $newParentId, PDO::PARAM_INT);
+            $this->Db->execute($req);
+            $ancestorIds = array_map(static fn(array $row): int => (int) $row['id'], $req->fetchAll());
+            if (empty($ancestorIds)) {
+                throw new ImproperActionException('Destination storage unit does not exist.');
+            }
+            if (in_array($this->id, $ancestorIds, true)) {
+                throw new ImproperActionException('Cannot move a storage unit into one of its descendants.');
+            }
+        }
+
+        $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     public function createImmutable(array $locations): int

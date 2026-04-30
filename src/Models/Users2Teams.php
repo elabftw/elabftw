@@ -52,14 +52,19 @@ final class Users2Teams
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         $req->bindValue(':is_admin', $isAdmin->value, PDO::PARAM_INT);
-        $res = $this->Db->execute($req);
+        $this->Db->execute($req);
+        // INSERT IGNORE silently skips duplicate rows; rowCount() = 0 means the user was already in the team
+        $wasInserted = $req->rowCount() > 0;
 
-        AuditLogs::create(new TeamAddition($teamid, $isAdmin->value, $this->requester->userid ?? 0, $userid));
-        if ($isValidated) {
-            new Teams($this->requester, $teamid)->sendOnboardingEmailToUser($userid, $isAdmin);
+        // only audit and notify when an actual new assignment was created
+        if ($wasInserted) {
+            AuditLogs::create(new TeamAddition($teamid, $isAdmin->value, $this->requester->userid ?? 0, $userid));
+            if ($isValidated) {
+                new Teams($this->requester, $teamid)->sendOnboardingEmailToUser($userid, $isAdmin);
+            }
         }
 
-        return $res;
+        return $wasInserted;
     }
 
     public function patchUser2Team(array $params, int $targetUserid): int

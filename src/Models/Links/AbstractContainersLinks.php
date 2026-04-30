@@ -179,7 +179,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
 
     public function update(
         string $column,
-        int|string $value,
+        int|float|string $value,
     ): bool {
         if ($column !== 'qty_stored' && $column !== 'qty_unit' && $column !== 'storage_id') {
             throw new ImproperActionException('Invalid update target');
@@ -260,7 +260,9 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $destinationData = $Destination->readOne();
 
         // resolve old full_path for the changelog (do not require edit rights here)
-        $oldPath = (new StorageUnits($this->Entity->Users, false))->setId($oldStorageId)->readOne()['full_path'] ?? '';
+        $Old = new StorageUnits($this->Entity->Users, false);
+        $Old->setId($oldStorageId);
+        $oldPath = $Old->readOne()['full_path'] ?? '';
 
         $this->update('storage_id', $newStorageId);
         $this->Entity->touch();

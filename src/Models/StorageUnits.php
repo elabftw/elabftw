@@ -344,12 +344,12 @@ final class StorageUnits extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    protected function canWrite(): bool
+    public function canWrite(): bool
     {
         return $this->requester->userData['can_manage_inventory_locations'] === 1 || $this->requireEditRights === false;
     }
 
-    protected function canWriteOrExplode(): void
+    public function canWriteOrExplode(): void
     {
         if (!$this->canWrite()) {
             throw new IllegalActionException();

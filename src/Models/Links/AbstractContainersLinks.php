@@ -20,10 +20,13 @@ use Elabftw\Enums\State;
 use Elabftw\Enums\Units;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Changelog;
+use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\StorageUnits;
+use Elabftw\Params\ContentParams;
 use Override;
 use PDO;
 
@@ -142,11 +145,14 @@ abstract class AbstractContainersLinks extends AbstractLinks
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        //$this->canOrExplode(AccessType::Write);
-        if ($params['qty_stored']) {
+        $this->Entity->canOrExplode(AccessType::Write);
+        if (isset($params['storage_id'])) {
+            $this->moveToStorage((int) $params['storage_id']);
+        }
+        if (!empty($params['qty_stored'])) {
             $this->update('qty_stored', $params['qty_stored']);
         }
-        if ($params['qty_unit']) {
+        if (!empty($params['qty_unit'])) {
             $this->update('qty_unit', $params['qty_unit']);
         }
         return $this->readOne();
@@ -175,7 +181,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
         string $column,
         int|string $value,
     ): bool {
-        if ($column !== 'qty_stored' && $column !== 'qty_unit') {
+        if ($column !== 'qty_stored' && $column !== 'qty_unit' && $column !== 'storage_id') {
             throw new ImproperActionException('Invalid update target');
         }
         $sql = sprintf(
@@ -233,6 +239,36 @@ abstract class AbstractContainersLinks extends AbstractLinks
 
         return $this->Entity->entityType->value === $extraFieldType
             && $this->Entity->id === intval($targetId);
+    }
+
+    private function moveToStorage(int $newStorageId): void
+    {
+        if ($newStorageId <= 0) {
+            throw new ImproperActionException('Invalid storage_id');
+        }
+        $current = $this->readOne();
+        $oldStorageId = (int) $current['storage_id'];
+        if ($oldStorageId === $newStorageId) {
+            return;
+        }
+
+        // resolve destination (enforces existence via readOne) and require inventory edit rights
+        $requireInventoryRights = Config::getConfig()->configArr['inventory_require_edit_rights'] === '1';
+        $Destination = new StorageUnits($this->Entity->Users, $requireInventoryRights);
+        $Destination->setId($newStorageId);
+        $Destination->canWriteOrExplode();
+        $destinationData = $Destination->readOne();
+
+        // resolve old full_path for the changelog (do not require edit rights here)
+        $oldPath = (new StorageUnits($this->Entity->Users, false))->setId($oldStorageId)->readOne()['full_path'] ?? '';
+
+        $this->update('storage_id', $newStorageId);
+        $this->Entity->touch();
+
+        new Changelog($this->Entity)->create(new ContentParams(
+            'container_moved',
+            sprintf('From "%s" to "%s"', $oldPath, $destinationData['full_path'] ?? ''),
+        ));
     }
 
     public function createWithQuantity(float $qty, string $unit): int

@@ -124,4 +124,76 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         // a second time to ensure we get the same number
         $this->assertEquals($resultsNumber, $this->StorageUnits->createImmutable($locations));
     }
+
+    public function testMoveToAnotherParent(): void
+    {
+        $shelfA = $this->StorageUnits->create('Shelf A');
+        $shelfB = $this->StorageUnits->create('Shelf B');
+        $boxId = $this->StorageUnits->create('Box', $shelfA);
+
+        $this->StorageUnits->setId($boxId);
+        $result = $this->StorageUnits->patch(Action::Update, array('parent_id' => $shelfB));
+        $this->assertEquals($shelfB, $result['parent_id']);
+        $this->assertStringContainsString('Shelf B', $result['full_path']);
+    }
+
+    public function testMoveToRoot(): void
+    {
+        $shelf = $this->StorageUnits->create('Shelf C');
+        $boxId = $this->StorageUnits->create('Box C', $shelf);
+
+        $this->StorageUnits->setId($boxId);
+        $result = $this->StorageUnits->patch(Action::Update, array('parent_id' => null));
+        $this->assertNull($result['parent_id']);
+    }
+
+    public function testMoveToSelfIsRejected(): void
+    {
+        $unitId = $this->StorageUnits->create('Self-parent test');
+        $this->StorageUnits->setId($unitId);
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->move($unitId);
+    }
+
+    public function testMoveToDescendantIsRejected(): void
+    {
+        $parentId = $this->StorageUnits->create('Cycle parent');
+        $childId = $this->StorageUnits->create('Cycle child', $parentId);
+        $grandchildId = $this->StorageUnits->create('Cycle grandchild', $childId);
+
+        $this->StorageUnits->setId($parentId);
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->move($grandchildId);
+    }
+
+    public function testMoveToNonExistentParentIsRejected(): void
+    {
+        $unitId = $this->StorageUnits->create('No-such-parent test');
+        $this->StorageUnits->setId($unitId);
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->move(PHP_INT_MAX);
+    }
+
+    public function testMoveWithoutInventoryRightsIsRejected(): void
+    {
+        // build a unit while we still have rights
+        $unitId = $this->StorageUnits->create('Perms test');
+        $newParentId = $this->StorageUnits->create('Perms test parent');
+
+        // pick a non-admin user; instantiate with requireEditRights=true and
+        // verify that patch() bails out before any DB mutation
+        $user = $this->getRandomUserInTeam(2);
+        $StorageUnitsAsUser = new StorageUnits($user, true);
+        $StorageUnitsAsUser->setId($unitId);
+        $this->expectException(\Elabftw\Exceptions\IllegalActionException::class);
+        $StorageUnitsAsUser->patch(Action::Update, array('parent_id' => $newParentId));
+    }
+
+    public function testPatchWithNoTargetIsRejected(): void
+    {
+        $unitId = $this->StorageUnits->create('Patch nothing');
+        $this->StorageUnits->setId($unitId);
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->patch(Action::Update, array());
+    }
 }

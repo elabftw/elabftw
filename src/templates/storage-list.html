@@ -1,6 +1,8 @@
 {# var: storage_editable bool #}
 {# var: is_entity bool #}
+{# var: is_move bool — when true, render a "Move here" button targeting move-container-target instead of "Store in X" #}
 {# var: storageUnitsArr array #}
+{% set is_move = is_move|default(false) %}
 <div class='mb-2'>
   <button type='button' class='btn btn-transparent' data-action='toggle-all-storage' data-expand='1'>{{ 'Expand all'|trans }}</button>
   <button type='button' class='btn btn-transparent' data-action='toggle-all-storage'>{{ 'Collapse all'|trans }}</button>
@@ -9,7 +11,7 @@
   <!-- [html-validate-disable-block prefer-native-element: suppress errors] -->
 {%- endif %}
 <div id='storageDiv'>
-  {% macro render_items(items, groupedItems, storage_editable, is_entity=true) %}
+  {% macro render_items(items, groupedItems, storage_editable, is_entity=true, is_move=false) %}
     <ul class='list-group'>
       {% for item in items %}
         <li class='list-group-item py-1'>
@@ -17,7 +19,9 @@
           <details data-id='{{ item.id }}'>
             <summary>{{ item.name }} {% if item.children_count > 0 %}({{ item.children_count }}){% endif %}</summary>
             <div class='mb-1'>
-              {% if is_entity %}
+              {% if is_entity and is_move %}
+                <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(item.name) }}</button>
+              {% elseif is_entity %}
                 <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='create-container'><i class='fas fa-location-dot mr-1'></i>{{ 'Store in %s'|trans|format(item.name) }}</button>
               {% else %}
                 <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1'></i>{{ 'Display content'|trans }}</a>
@@ -30,7 +34,7 @@
             </div>
             {% if groupedItems[item.id] is defined %}
               {# Recursively render the children #}
-              {{ _self.render_items(groupedItems[item.id], groupedItems, storage_editable, is_entity) }}
+              {{ _self.render_items(groupedItems[item.id], groupedItems, storage_editable, is_entity, is_move) }}
             {% endif %}
           </details>
         </li>
@@ -57,7 +61,7 @@
       </div>
       <hr>
       {# now render the children of this root element #}
-      {{ _self.render_items(storageUnitsArr[root.id], storageUnitsArr, storage_editable, is_entity) }}
+      {{ _self.render_items(storageUnitsArr[root.id], storageUnitsArr, storage_editable, is_entity, is_move) }}
     </div>
   {% endfor %}
 </div>

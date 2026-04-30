@@ -844,6 +844,23 @@ on('destroy-container', (el: HTMLElement) => {
   }
 });
 
+on('move-container', (el: HTMLElement) => {
+  const modal = document.getElementById('moveStorageModal');
+  if (!modal) return;
+  modal.dataset.containerId = el.dataset.id;
+  $('#moveStorageModal').modal('show');
+});
+
+on('move-container-target', (el: HTMLElement) => {
+  const modal = document.getElementById('moveStorageModal');
+  const containerId = modal?.dataset.containerId;
+  const newStorageId = el.dataset.id;
+  if (!containerId || !newStorageId) return;
+  ApiC.patch(`${entity.type}/${entity.id}/containers/${containerId}`, { storage_id: parseInt(newStorageId, 10) })
+    .then(() => reloadElements(['storageDivContent']))
+    .catch((error) => notify.error(error));
+});
+
 on('destroy-storage', (el: HTMLElement) => {
   if (confirm(i18next.t('generic-delete-warning'))) {
     ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));

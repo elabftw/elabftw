@@ -12,6 +12,7 @@
 # get env values
 # and unset the sensitive ones so they cannot be accessed by a rogue process
 getEnv() {
+    custom_connect_src=${CUSTOM_CONNECT_SRC:-}
     db_host=${DB_HOST:-localhost}
     db_port=${DB_PORT:-3306}
     db_name=${DB_NAME:-elabftw}
@@ -226,6 +227,8 @@ nginxConf() {
     fi
     # set unsafe-eval in CSP
     sed -i -e "s/%UNSAFE-EVAL4DEV%/${unsafe_eval}/" /etc/nginx/common.conf
+    # set custom connect-src in CSP (use # as sed separator because urls will contain /)
+    sed -i -e "s#%CUSTOM_CONNECT_SRC%#${custom_connect_src}#" /etc/nginx/common.conf
     # put a random short string as the server header to prevent fingerprinting
     server_header=$(openssl rand -hex 2 | cut -c1-3)
     sed -i -e "s/%SERVER_HEADER%/${server_header}/" /etc/nginx/common.conf

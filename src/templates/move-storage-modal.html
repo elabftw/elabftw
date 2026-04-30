@@ -1,0 +1,25 @@
+{# Move a storage unit modal — pick a new parent for an existing storage unit #}
+<div class='modal fade' id='moveStorageUnitModal' tabindex='-1' role='dialog' aria-labelledby='moveStorageUnitModalLabel' data-storage-id=''>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h4 class='modal-title' id='moveStorageUnitModalLabel'><i class='fas fa-fw fa-warehouse'></i> {{ 'Move storage unit'|trans }}</h4>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div class='mb-2'>
+          <h5>{{ 'Pick a new parent location'|trans }}</h5>
+          <div class='mb-2'>
+            <button type='button' class='btn btn-ghost btn-sm' data-action='move-storage-to-root' data-dismiss='modal'><i class='fas fa-arrow-up mr-1'></i>{{ 'Move to root'|trans }}</button>
+          </div>
+          {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': false, 'is_move_storage': true} %}
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

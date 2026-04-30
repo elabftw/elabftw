@@ -1,8 +1,10 @@
 {# var: storage_editable bool #}
 {# var: is_entity bool #}
 {# var: is_move bool — when true, render a "Move here" button targeting move-container-target instead of "Store in X" #}
+{# var: is_move_storage bool — when true, render a "Move here" button targeting move-storage-target (admin context) #}
 {# var: storageUnitsArr array #}
 {% set is_move = is_move|default(false) %}
+{% set is_move_storage = is_move_storage|default(false) %}
 <div class='mb-2'>
   <button type='button' class='btn btn-transparent' data-action='toggle-all-storage' data-expand='1'>{{ 'Expand all'|trans }}</button>
   <button type='button' class='btn btn-transparent' data-action='toggle-all-storage'>{{ 'Collapse all'|trans }}</button>
@@ -11,7 +13,7 @@
   <!-- [html-validate-disable-block prefer-native-element: suppress errors] -->
 {%- endif %}
 <div id='storageDiv'>
-  {% macro render_items(items, groupedItems, storage_editable, is_entity=true, is_move=false) %}
+  {% macro render_items(items, groupedItems, storage_editable, is_entity=true, is_move=false, is_move_storage=false) %}
     <ul class='list-group'>
       {% for item in items %}
         <li class='list-group-item py-1'>
@@ -19,7 +21,9 @@
           <details data-id='{{ item.id }}'>
             <summary>{{ item.name }} {% if item.children_count > 0 %}({{ item.children_count }}){% endif %}</summary>
             <div class='mb-1'>
-              {% if is_entity and is_move %}
+              {% if is_move_storage %}
+                <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='move-storage-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(item.name) }}</button>
+              {% elseif is_entity and is_move %}
                 <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(item.name) }}</button>
               {% elseif is_entity %}
                 <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='create-container'><i class='fas fa-location-dot mr-1'></i>{{ 'Store in %s'|trans|format(item.name) }}</button>
@@ -29,12 +33,13 @@
               {% if storage_editable %}
                 <button type='button' class='btn btn-ghost btn-sm' data-parent-id='{{ item.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1'></i>{{ 'Add children to %s'|trans|format(item.name) }}</button>
                 <button type='button' class='btn btn-ghost btn-sm' data-action='rename-storage' data-id='{{ item.id }}'><i class='fas fa-pencil-alt mr-1'></i>{{ 'Rename'|trans }}</button>
+                <button type='button' class='btn btn-ghost btn-sm' data-action='move-storage' data-id='{{ item.id }}'><i class='fas fa-arrows-up-down-left-right mr-1'></i>{{ 'Move'|trans }}</button>
                 <button type='button' class='btn btn-danger-ghost btn-sm' data-id='{{ item.id }}' data-action='destroy-storage'><i class='fas fa-minus-circle mr-1'></i>{{ 'Delete %s and its children'|trans|format(item.name) }}</button>
               {% endif %}
             </div>
             {% if groupedItems[item.id] is defined %}
               {# Recursively render the children #}
-              {{ _self.render_items(groupedItems[item.id], groupedItems, storage_editable, is_entity, is_move) }}
+              {{ _self.render_items(groupedItems[item.id], groupedItems, storage_editable, is_entity, is_move, is_move_storage) }}
             {% endif %}
           </details>
         </li>
@@ -44,7 +49,7 @@
 
   {# Start rendering from the root level, which has parent_id = null #}
   {% for root in storageUnitsArr[null] %}
-    <div class='box'>
+    <div class='box' data-root-id='{{ root.id }}'>
       <p class='smallgray'>{{ 'Inventory location'|trans }}</p>
       <div class='d-flex'>
         <div>
@@ -58,10 +63,15 @@
             <a class='btn btn-danger btn-sm' data-action='delete-storage-root' data-id='{{ root.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-xmark'></i></a>
           </div>
         {% endif %}
+        {% if is_move_storage %}
+          <div class='ml-auto'>
+            <button type='button' class='btn btn-primary btn-sm' data-id='{{ root.id }}' data-dismiss='modal' data-action='move-storage-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(root.name) }}</button>
+          </div>
+        {% endif %}
       </div>
       <hr>
       {# now render the children of this root element #}
-      {{ _self.render_items(storageUnitsArr[root.id], storageUnitsArr, storage_editable, is_entity, is_move) }}
+      {{ _self.render_items(storageUnitsArr[root.id], storageUnitsArr, storage_editable, is_entity, is_move, is_move_storage) }}
     </div>
   {% endfor %}
 </div>

@@ -50,4 +50,7 @@
     </div>
     {% include 'storage-list.html' with {'storage_editable': not inventoryDisabled, 'is_entity': false} %}
   </div>
+  {% if not inventoryDisabled %}
+    {% include 'move-storage-modal.html' %}
+  {% endif %}
 {% endblock body %}

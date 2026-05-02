@@ -300,7 +300,7 @@ services:
         # add the possibility to connect to other systems from the frontend
         # default value: unset (empty)
         # example value: https://example.com https://example.org
-        # CUSTOM_CONNECT_SRC=
+        #- CUSTOM_CONNECT_SRC=
 
         ###########
         # PLUGINS #

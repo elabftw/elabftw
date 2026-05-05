@@ -101,10 +101,6 @@
                   </a>
                   {% if not upload.immutable %}
                     {% if mode == 'edit' %}
-                      {# EDIT FILENAME #}
-                      <button type='button' title='{{ 'Edit filename'|trans }}' aria-label='{{ 'Edit filename'|trans }}' class='btn btn-ghost' data-action='rename-upload' data-id='{{ upload.id }}'>
-                        <i class='fas fa-fw fa-pencil-alt'></i>
-                      </button>
                       {# UPLOAD NEW VERSION #}
                       {% include('upload-dropdown-menu.html') with {layout: 'grid'} %}
                       {# UPLOAD NEW VERSION OF A FILE #}

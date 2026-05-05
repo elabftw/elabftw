@@ -1,6 +1,6 @@
 {% import _self as ui %}
-{% macro action_btn(action, icon, uploadId, extra='') %}
-  <button type='button' class='btn btn-ghost {{ extra }}' data-action='{{ action }}' data-uploadid='{{ uploadId }}'>
+{% macro action_btn(action, icon, label, uploadId, extra='') %}
+  <button type='button' class='btn btn-ghost {{ extra }}' data-action='{{ action }}' data-uploadid='{{ uploadId }}' title='{{ label }}'>
     <i class='fas fa-fw fa-{{ icon }}'></i>
   </button>
 {% endmacro %}
@@ -14,10 +14,10 @@
 
 {# In grid mode, primary buttons are inline #}
 {% if isGrid %}
-  {{ ui.action_btn('rename-upload', 'pencil-alt', upload.id) }}
+  {{ ui.action_btn('rename-upload', 'pencil-alt', 'Edit filename'|trans, upload.id) }}
   {% if not upload.immutable and not Entity.isReadOnly %}
-    {{ ui.action_btn('archive-upload', 'box-archive', upload.id) }}
-    {{ ui.action_btn('destroy-upload', 'trash-alt', upload.id, 'btn-danger') }}
+    {{ ui.action_btn('archive-upload', 'box-archive', 'Archive/Unarchive'|trans, upload.id) }}
+    {{ ui.action_btn('destroy-upload', 'trash-alt', 'Delete'|trans, upload.id, 'btn-danger') }}
   {% endif %}
 {% endif %}
 

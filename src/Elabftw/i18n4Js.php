@@ -16,6 +16,14 @@ use Elabftw\Enums\Language;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\FilesystemOperator;
 
+use function _;
+use function bind_textdomain_codeset;
+use function bindtextdomain;
+use function dirname;
+use function putenv;
+use function setlocale;
+use function textdomain;
+
 /**
  * This class is used to generate the translations files for i18next (javascript)
  * Use it with: bin/console dev:i18n4js
@@ -42,25 +50,29 @@ final class i18n4Js
             'add-task' => _('Add task'),
             'add-team' => _('Add team'),
             'add-to-team' => _('Add selected users to team'),
+            'all-teams' => _('All teams'),
             'archive-user' => _('Archive user'),
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),
             'add-user-error' => _('Use the autocompletion menu to add users.'),
             'can-manage-compounds' => _('Can manage compounds'),
             'can-manage-inventory-locations' => _('Can manage inventory locations'),
             'can-manage-users2teams' => _('Can manage users to teams'),
-            'click-to-edit' => _('Click to edit'),
             'cancel' => _('Cancel'),
             'categories' => _('Categories'),
             'clear' => _('Clear'),
-            'copied' => _('Copied to clipboard.'),
+            'click-to-edit' => _('Click to edit'),
             'check-required' => _('Please check required fields.'),
+            'copied' => _('Copied to clipboard.'),
             'comment-add' => _('Add a comment'),
             'confirm-clear-spreadsheet' => _('Discard current spreadsheet? All unsaved changes will be lost.'),
             'custom-id-in-use' => _('Custom ID is already used! Try another one.'),
+            'created-at' => _('Created at'),
             'create-one-experiments' => _('Create an experiment without using a template'),
             'create-one-items' => _('Create a resource without using a template'),
             'create-one-experiments_templates' => _('Create an experiment template'),
             'create-one-items_types' => _('Create a resource template'),
+            'current-edit' => _('Currently editing'),
+            'custom-fields' => _('Custom fields'),
             'delete' => _('Delete'),
             'delete-confirmation' => _('Delete {{num, number}} line(s)?'),
             'delete-selected' => _('Delete selected rows'),
@@ -71,7 +83,6 @@ final class i18n4Js
             'edit-compound' => _('Edit compound'),
             'editing-metadata' => _('You are currently editing the metadata attached to this entry.'),
             'email-sent-to-x' => _('Email sent to {{num, number}} users.'),
-            'current-edit' => _('Currently editing'),
             'email' => _('Email'),
             'enable-permission' => _('You must allow at least one permission setting.'),
             'encryption' => _('Encryption'),
@@ -81,10 +92,9 @@ final class i18n4Js
             'error' => _('Error'),
             'error-no-filename' => _('File name is missing.'),
             'error-fetch-request' => _('There was an error while fetching the requested data: {{error}}'),
-            'error-parsing-metadata' => _('There was an error while parsing metadata (extra fields). Full error has been logged to the browser console.'),
+            'error-parsing-metadata' => _('There was an error while parsing metadata (custom fields). Full error has been logged to the browser console.'),
             'export' => _('Export'),
             'export-success' => _('Export successful.'),
-            'extra-fields' => _('Extra fields'),
             'filename' => _('Filename'),
             'firstname' => _('Firstname'),
             'format' => _('Format'),
@@ -110,8 +120,10 @@ final class i18n4Js
             'loading' => _('Loading'),
             'link-delete-warning' => _('Delete this link?'),
             'location-name' => _('Location name'),
+            'modified-at' => _('Modified at'),
             // https://www.i18next.com/translation-function/formatting
             'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
+            'my-teams' => _('My teams'),
             'name' => _('Name'),
             'new-spreadsheet' => _('New spreadsheet'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),

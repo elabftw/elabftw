@@ -15,6 +15,8 @@ namespace Elabftw\AuditEvent;
 use Elabftw\Enums\AuditCategory;
 use Override;
 
+use function sprintf;
+
 class UserAttributeChanged extends AbstractAuditEvent
 {
     public function __construct(

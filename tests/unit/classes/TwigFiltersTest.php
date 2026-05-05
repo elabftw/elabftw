@@ -134,7 +134,7 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         }';
         $result = TwigFilters::formatMetadata($metadataJsonFailed);
         $this->assertIsString($result);
-        $this->assertStringContainsString('Invalid extra field', $result);
+        $this->assertStringContainsString('Invalid custom field', $result);
     }
 
     public function testFormatMetadataEmptyExtrafields(): void

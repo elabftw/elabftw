@@ -31,6 +31,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\Question;
 
 use function dirname;
+use function sprintf;
 
 /**
  * Import database structure

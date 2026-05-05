@@ -31,6 +31,11 @@ use RuntimeException;
 
 use function array_diff;
 use function trim;
+use function array_column;
+use function array_intersect;
+use function array_map;
+use function implode;
+use function is_array;
 
 /**
  * All about the teams

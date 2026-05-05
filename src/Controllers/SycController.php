@@ -14,6 +14,8 @@ namespace Elabftw\Controllers;
 
 use Override;
 
+use function _;
+
 final class SycController extends AbstractHtmlController
 {
     #[Override]

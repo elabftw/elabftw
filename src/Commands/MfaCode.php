@@ -21,6 +21,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function sprintf;
+use function str_replace;
+
 /**
  * Command line tool to emulate a 2FA phone app. It returns a 2FA code calculated from the provided secret.
  */

@@ -19,6 +19,13 @@ use Elabftw\Models\Scheduler;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_filter;
+use function array_map;
+use function array_search;
+use function count;
+use function explode;
+use function str_getcsv;
+
 class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
@@ -29,7 +36,10 @@ class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getRandomUserInTeam(1);
         $Item = $this->getFreshItemWithGivenUser($user);
-        $Item->patch(Action::Update, array('is_bookable' => 1));
+        $Item->patch(Action::Update, array(
+            'is_bookable' => 1,
+            'booking_hourly_rate_notax' => (float) 10.00,
+        ));
         $Scheduler = new Scheduler($Item);
         $d = new DateTimeImmutable('+3 hour');
         $start = $d->format('c');
@@ -84,13 +94,22 @@ class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
         // simple sanity check: header contains known columns
         $this->assertContains('title_only', $header);
         $this->assertContains('items_id', $header);
+        $this->assertContains('booking_hourly_rate_notax', $header);
         // extract indexes to check row values
         $idxTitle = array_search('title_only', $header, true);
         $idxItem = array_search('items_id', $header, true);
         $idxUser = array_search('fullname', $header, true);
+        $idxEventDurationMinutes = array_search('event_duration_minutes', $header, true);
+        $idxHourlyRateNoTax = array_search('booking_hourly_rate_notax', $header, true);
+        $idxBookingCostNoTax = array_search('booking_cost_notax', $header, true);
         // assertions on the row data
         $this->assertSame($title, $row[$idxTitle], 'Event title should match');
         $this->assertSame((string) $Items->id, $row[$idxItem], 'Item ID should match');
         $this->assertNotEmpty($row[$idxUser], 'User full name should be present');
+        $this->assertEquals(
+            (float) $row[$idxBookingCostNoTax],
+            ((float) $row[$idxHourlyRateNoTax] * (int) $row[$idxEventDurationMinutes]) / 60,
+            'Booking cost calculation should be equal',
+        );
     }
 }

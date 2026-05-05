@@ -20,6 +20,8 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function dirname;
+
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

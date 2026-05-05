@@ -24,8 +24,8 @@
     {% set permissionsIsDisabled = true %}
   {% endif %}
   {# show the button as disabled and without any action related #}
-  <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn border-0 lh-normal {{ not permissionsIsDisabled ? 'hl-hover-gray' }}' data-action='{{ not permissionsIsDisabled ? 'toggle-modal' }}' data-target='permModal-{{ rw }}' {{ permissionsIsDisabled ? 'disabled' }}>
-    <i class='fas fa-fw fa-square-plus fa-2x'></i>
+  <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn {{ not permissionsIsDisabled ? 'btn-transparent' }}' data-action='{{ not permissionsIsDisabled ? 'toggle-modal' }}' data-target='permModal-{{ rw }}' {{ permissionsIsDisabled ? 'disabled' }}>
+    <i class='fas fa-fw fa-square-plus'></i>
   </button>
 {% endif %}
 <div class='vertical-separator'></div>

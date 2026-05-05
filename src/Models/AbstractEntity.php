@@ -91,6 +91,16 @@ use function ksort;
 use function mb_substr;
 use function sprintf;
 use function str_contains;
+use function _;
+use function array_key_exists;
+use function explode;
+use function intval;
+use function is_array;
+use function is_string;
+use function json_decode;
+use function str_ends_with;
+use function str_replace;
+use function ucfirst;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -103,6 +113,8 @@ abstract class AbstractEntity extends AbstractRest
     use EntityTrait;
 
     public const string EMPTY_CAN_JSON = '{"teams": [], "teamgroups": [], "users": []}';
+
+    protected const string FORCE_TEMPLATE_KEY = '';
 
     public Comments $Comments;
 
@@ -231,11 +243,9 @@ abstract class AbstractEntity extends AbstractRest
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
                         return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
                     }
-                    // check if use of template is enforced at team level for experiments
-                    $teamConfigArr = new Teams($this->Users, $this->Users->team)->readOne();
-                    if ($teamConfigArr['force_exp_tpl'] === 1 && $this instanceof Experiments) {
-                        throw new ImproperActionException(_('Experiments must use a template!'));
-                    }
+                    // check if use of template is enforced at team level for this entity
+                    $teamConfigArr = new Teams($this->Users, $this->Users->team)->selectOne();
+                    $this->enforceTemplate($teamConfigArr);
                     if (!isset($reqBody['category']) || $reqBody['category'] === -1) {
                         $reqBody['category'] = null;
                     }
@@ -1140,6 +1150,8 @@ abstract class AbstractEntity extends AbstractRest
         }
         return $default;
     }
+
+    protected function enforceTemplate(array $teamConfigArr): void {}
 
     private function handleCanUpdate(array $params, AccessType $type): void
     {

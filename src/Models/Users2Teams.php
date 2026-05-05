@@ -27,6 +27,8 @@ use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserArchiver;
 use PDO;
 
+use function count;
+
 /**
  * Manage the link between users and teams
  */

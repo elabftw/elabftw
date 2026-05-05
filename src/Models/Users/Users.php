@@ -53,6 +53,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Override;
 use RuntimeException;
 
+use function _;
+use function array_column;
+use function array_map;
+use function implode;
+use function in_array;
+use function json_decode;
+use function sprintf;
+use function strtolower;
+
 /**
  * Users
  */
@@ -319,7 +328,7 @@ class Users extends AbstractRest
 
         ORDER BY
           MIN(u2t_all.teams_id) ASC,
-          u.lastname       ASC;';
+          u.created_at DESC;';
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');

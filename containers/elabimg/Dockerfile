@@ -251,11 +251,8 @@ COPY ./.yarnrc.yml /elabftw
 
 # COMPOSER
 ENV COMPOSER_HOME=/composer
-COPY --from=composer:2.9.5 /usr/bin/composer /usr/local/bin/composer
-# Run this to get the shasum:
-# docker run --rm composer:latest sha256sum /usr/bin/composer
-ENV COMPOSER_SHA256=c86ce603fe836bf0861a38c93ac566c8f1e69ac44b2445d9b7a6a17ea2e9972a
-RUN echo "${COMPOSER_SHA256} /usr/local/bin/composer" | sha256sum -c -
+# 2.9.7
+COPY --from=composer@sha256:dc292c5c0f95f526b051d4c341bf08e7e2b18504c74625e3203d7f123050e318 /usr/bin/composer /usr/local/bin/composer
 
 # this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
 # pass it to build command with --build-arg BUILD_ALL=0

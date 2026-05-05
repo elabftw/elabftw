@@ -31,6 +31,9 @@ use Override;
 
 use function explode;
 use function is_array;
+use function _;
+use function is_string;
+use function trim;
 
 /**
  * LDAP auth service

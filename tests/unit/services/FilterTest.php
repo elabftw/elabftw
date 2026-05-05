@@ -15,6 +15,8 @@ use DateTimeImmutable;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function str_repeat;
+use function hash;
+use function uniqid;
 
 class FilterTest extends \PHPUnit\Framework\TestCase
 {

@@ -21,6 +21,8 @@ use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 
+use function dirname;
+
 class MakePdfTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

@@ -25,6 +25,8 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function json_encode;
+
 class DspaceTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;

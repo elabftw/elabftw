@@ -15,10 +15,13 @@ namespace Elabftw\Elabftw;
 use DateTimeImmutable;
 use Elabftw\Enums\EntityType;
 use Elabftw\Models\Notifications\CommentCreated;
+use Elabftw\Models\Notifications\NewVersionInstalled;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Models\Users\Users;
+
+use function dirname;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
@@ -28,6 +31,8 @@ $Notifications->create();
 $Notifications = new UserCreated($user, 3, 'Some team name');
 $Notifications->create();
 $Notifications = new UserNeedValidation($user, 3, 'Some team name');
+$Notifications->create();
+$Notifications = new NewVersionInstalled($user);
 $Notifications->create();
 $d = new DateTimeImmutable();
 $Notifications = new StepDeadline($user, 1, 1, EntityType::Items->toPage(), $d->format('Y-m-d H:i:s'));

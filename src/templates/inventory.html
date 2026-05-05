@@ -31,7 +31,7 @@
     {% set uniqueById = containersArr|reduce((acc, r) => acc|merge((acc[(r.page ~ ':' ~ r.entity_id ~ ':' ~ r.storage_id)] is defined) ? {} : {(r.page ~ ':' ~ r.entity_id ~ ':' ~ r.storage_id): r}), {}) %}
     {% for container in uniqueById %}
       <li class='list-group-item'>
-        {% if container.entity_custom_id %}<span class='mr-1 color-medium'>{{ container.entity_custom_id }}</span>{% endif %}<a href='{{ container.page }}.php?mode=view&id={{ container.entity_id }}'>{{ container.entity_title }}</a> {{ container.qty_stored }} {{ container.qty_unit }} in {{ container.full_path }}
+        {% if container.entity_custom_id %}<span class='mr-1'>{{ container.entity_custom_id }}</span>{% endif %}<a href='{{ container.page }}.php?mode=view&id={{ container.entity_id }}'>{{ container.entity_title }}</a> {{ container.qty_stored }} {{ container.qty_unit }} in {{ container.full_path }}
       </li>
     {% endfor %}
     </ul>
@@ -45,7 +45,7 @@
     <div class='d-flex'>
       <h4>{{ 'Browse inventory locations'|trans }}</h4>
       <div class='ml-auto'>
-        <button type='button' {{ inventoryDisabled ? 'disabled' }} class='btn btn-secondary btn-sm' data-parent-id='' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1 color-white'></i>{{ 'Add root element'|trans }}</button>
+        <button type='button' {{ inventoryDisabled ? 'disabled' }} class='btn btn-secondary btn-sm' data-parent-id='' data-action='add-storage-children'><i class='fas fa-plus-circle mr-1'></i>{{ 'Add root element'|trans }}</button>
       </div>
     </div>
     {% include 'storage-list.html' with {'storage_editable': not inventoryDisabled, 'is_entity': false} %}

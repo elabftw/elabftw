@@ -14,6 +14,8 @@ namespace Elabftw\Enums;
 
 use InvalidArgumentException;
 
+use function _;
+
 enum BasePermissions: int
 {
     case Full = 50;

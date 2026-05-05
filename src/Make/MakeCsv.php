@@ -15,6 +15,9 @@ namespace Elabftw\Make;
 use Override;
 
 use function date;
+use function html_entity_decode;
+use function htmlspecialchars_decode;
+use function strip_tags;
 
 /**
  * Export entities as CSV

@@ -25,6 +25,9 @@ use PDO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use function time;
+use function _;
+use function array_column;
+use function setcookie;
 
 /**
  * Methods to login the user (once the authentication is done)

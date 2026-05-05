@@ -7,7 +7,7 @@
       {%- endif %}
       <form id ='newFieldForm' class='new-field-form' aria-label='new extra field'>
         <div class='modal-header'>
-          <h5 class='modal-title' id='fieldBuilderLabel'><i class='fas fa-fw fa-trowel'></i> {{ 'Add an extra field'|trans }}</h5>
+          <h5 class='modal-title' id='fieldBuilderLabel'><i class='fas fa-fw fa-trowel'></i> {{ 'Add a custom field'|trans }}</h5>
           <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
             <span aria-hidden='true'>&times;</span>
           </button>
@@ -32,7 +32,7 @@
               {% endfor %}
             </div>
             {# ADD GROUP #}
-            <button type='button' class='btn btn-secondary btn-sm' id='newFieldsGroupKeyInputLabel' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus'><i class='fas fa-square-plus fa-fw color-white mr-1'></i>{{ 'Add group'|trans }}</button>
+            <button type='button' class='btn btn-secondary btn-sm' id='newFieldsGroupKeyInputLabel' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus'><i class='fas fa-square-plus fa-fw mr-1'></i>{{ 'Add group'|trans }}</button>
             <div hidden class='mb-3'>
               <div class='input-group mt-1'>
                 <input type='text' autocomplete='off' placeholder='{{ 'New group name'|trans }}' id='newFieldsGroupKeyInput' class='form-control' aria-labelledby='newFieldsGroupKeyInputLabel'>
@@ -50,7 +50,7 @@
             {% endfor %}
           </select>
           <hr>
-          <h5>{{ 'Add an extra field'|trans }}</h5>
+          <h5>{{ 'Add a custom field'|trans }}</h5>
           <label for='newFieldTypeSelect'>{{ 'Field type'|trans }}</label>
           <select id='newFieldTypeSelect' class='form-control' autocomplete='off'>
             <option value='text'>{{ 'Text'|trans }}</option>
@@ -164,7 +164,7 @@
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content new-field-form'>
       <div class='modal-header'>
-        <h4 class='modal-title' id='fieldLoaderLabel'><i class='fas fa-fw fa-truck-ramp-box'></i> {{ 'Load extra fields'|trans }}</h4>
+        <h4 class='modal-title' id='fieldLoaderLabel'><i class='fas fa-fw fa-truck-ramp-box'></i> {{ 'Load custom fields'|trans }}</h4>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>

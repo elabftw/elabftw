@@ -25,6 +25,9 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
+use function count;
+use function dirname;
+
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
@@ -108,6 +111,19 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
         $targetArr = $target->Uploads->readAll();
         $this->assertEquals('test.json', $targetArr[0]['real_name']);
+    }
+
+    public function testDuplicateOne(): void
+    {
+        $Uploads = new Uploads($this->Entity);
+        $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Uploads->setId($id);
+        $longName = $Uploads->uploadData['long_name'];
+        $duplicate = $Uploads->postAction(Action::Duplicate, $Uploads->uploadData);
+        $Uploads->setId($duplicate);
+        $this->assertNotEquals($id, $Uploads->uploadData['id']);
+        $this->assertSame('example.png', $Uploads->uploadData['real_name']);
+        $this->assertNotEquals($longName, $Uploads->uploadData['long_name']);
     }
 
     public function testUploadingPhpFile(): void

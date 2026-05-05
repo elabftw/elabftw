@@ -29,6 +29,7 @@ use function preg_last_error_msg;
 use function preg_replace;
 use function sprintf;
 use function trim;
+use function str_replace;
 
 /**
  * Timestamp an experiment with RFC 3161 protocol: https://www.ietf.org/rfc/rfc3161.txt

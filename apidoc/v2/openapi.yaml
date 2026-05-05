@@ -1669,6 +1669,9 @@ components:
           type: string
         orgid_attr:
           type: string
+        source:
+          type: int
+          nullable: true
         certs:
           type: array
           description: Certificates associated with this IdP.
@@ -1730,6 +1733,30 @@ components:
         booking_window_days:
           type: integer
           description: How many days in advance users can book an item. 0 means no limit.
+        booking_hourly_rate_notax:
+          type: number
+          description: The hourly rate of booked resource, without taxes.
+          minimum: 0
+        booking_hourly_rate_tax:
+          type: number
+          description: The hourly rate of booked resource, with taxes.
+          minimum: 0
+        booking_hourly_rate_currency:
+          type: integer
+          description: |
+            The currency of the hourly rate:
+              - 0: CAD
+              - 1: CHF
+              - 2: CNY
+              - 3: DKK
+              - 4: EUR
+              - 5: GBP
+              - 6: JPY
+              - 7: USD
+              - 8: SEK
+              - 9: NOK
+          example: 0
+          enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
     item:
       allOf:
@@ -1775,7 +1802,7 @@ components:
     metadata:
       type: object
       nullable: true
-      description: The metadata is a JSON type attribute that is mainly used to hold the extra fields, but it can hold anything you want
+      description: The metadata is a JSON type attribute that is mainly used to hold the custom fields, but it can hold anything you want
       properties:
         elabftw:
           type: object
@@ -1784,7 +1811,7 @@ components:
             extra_fields_groups:
               type: array
               nullable: true
-              description: This array stores the extra fields groups
+              description: This array stores the custom fields groups
               default: []
               items:
                 type: object
@@ -1934,6 +1961,12 @@ components:
           type: integer
         force_exp_tpl:
           type: integer
+          default: 0
+          description: Binary toggle to force usage of templates.
+        force_res_tpl:
+          type: integer
+          default: 0
+          description: Binary toggle to force usage of templates.
         created_at:
           type: string
         orgid:
@@ -6846,6 +6879,218 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # IDP ENDPOINTS
+  /idps/{id}/endpoints:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Idps']
+      summary: Read all endpoints for an IdP.
+      operationId: read-idp-endpoints
+      responses:
+        '200':
+          description: A list of endpoints for this IdP.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/idp_endpoint'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: ['Idps']
+      summary: Add an endpoint to this IdP.
+      operationId: post-idp-endpoint
+      requestBody:
+        description: Parameters for adding an endpoint to an IdP.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['location']
+              properties:
+                location:
+                  type: string
+                binding:
+                  type: string
+                  enum: [
+                    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                    'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
+                  ]
+                is_slo:
+                  type: integer
+                  enum: [0, 1]
+      responses:
+        '201':
+          description: The idp endpoint has been created.
+          headers:
+            location:
+              description: An URL to the idp endpoint that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # IDP ENDPOINT WITH ID
+  /idps/{id}/endpoints/{endpoint_id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+      - name: endpoint_id
+        in: path
+        description: ID of the idp endpoint
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Idps']
+      summary: Read an endpoint for an IdP.
+      operationId: read-idp-endpoint
+      responses:
+        '200':
+          description: IdP endpoint
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp_endpoint'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Idps']
+      summary: Delete an idp endpoint.
+      description: The idp endpoint gets deleted.
+      operationId: delete-idp-endpoint
+      responses:
+        '204':
+          description: The idp endpoint was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # IDP CERTS
+  /idps/{id}/certs:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Idps']
+      summary: Read all certs for an IdP.
+      operationId: read-idp-certs
+      responses:
+        '200':
+          description: A list of certs for this IdP.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/idp_cert'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: ['Idps']
+      summary: Add a cert to this IdP.
+      operationId: post-idp-cert
+      requestBody:
+        description: Parameters for adding a cert to an IdP.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['x509']
+              properties:
+                x509:
+                  type: string
+                  description: PEM representation of the certificate
+                purpose:
+                  type: integer
+                  description: |
+                    Purpose for this cert: `0` for Signing, `1` for Encryption.
+                  enum: [0, 1]
+      responses:
+        '201':
+          description: The idp cert has been created.
+          headers:
+            location:
+              description: An URL to the idp cert that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # IDP cert WITH ID
+  /idps/{id}/certs/{cert_id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of the idp
+        required: true
+        schema:
+          type: integer
+      - name: cert_id
+        in: path
+        description: ID of the idp cert
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Idps']
+      summary: Read a cert for an IdP.
+      operationId: read-idp-cert
+      responses:
+        '200':
+          description: IdP certificate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/idp_cert'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Idps']
+      summary: Delete an idp cert.
+      description: The idp cert gets deleted.
+      operationId: delete-idp-cert
+      responses:
+        '204':
+          description: The idp cert was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
   # IDPS SOURCES
   /idps_sources:
     get:
@@ -7066,30 +7311,30 @@ paths:
 
   # EXTRA FIELDS KEYS
   /extra_fields_keys:
-    summary: Search for extra fields keys used by a team. Results are sorted by frequency.
+    summary: Search for custom fields keys used by a team. Results are sorted by frequency.
     parameters:
       - name: q
         in: query
         description: |
-          Search for a term in the extra fields keys.
+          Search for a term in the custom fields keys.
         schema:
           type: string
           default: ''
       - name: limit
         in: query
         description: |
-          Number of extra fields keys that will be returned. Value >= -1; -1: no limit, 0: users default setting from UCP.
+          Number of custom fields keys that will be returned. Value >= -1; -1: no limit, 0: users default setting from UCP.
         schema:
           type: integer
           default: 0
 
     get:
-      tags: ['Extra Fields Keys']
-      summary: Read extra fields keys.
-      operationId: extra-fields-keys
+      tags: ['Custom Fields Keys']
+      summary: Read custom fields keys.
+      operationId: custom-fields-keys
       responses:
         '200':
-          description: A list of extra fields keys and their frequency.
+          description: A list of custom fields keys and their frequency.
           content:
             application/json:
               schema:

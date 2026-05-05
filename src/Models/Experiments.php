@@ -28,12 +28,16 @@ use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Override;
 
+use function _;
+
 /**
  * All about the experiments
  */
 final class Experiments extends AbstractConcreteEntity
 {
     use InsertTagsTrait;
+
+    protected const string FORCE_TEMPLATE_KEY = 'force_exp_tpl';
 
     public EntityType $entityType = EntityType::Experiments;
 
@@ -66,7 +70,6 @@ final class Experiments extends AbstractConcreteEntity
         if (empty($body)) {
             $body = null;
         }
-
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 

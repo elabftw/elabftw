@@ -19,6 +19,8 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7;
 
+use function sprintf;
+
 /**
  * Keeex a file
  */

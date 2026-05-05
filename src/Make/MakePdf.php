@@ -40,6 +40,16 @@ use function implode;
 use function str_replace;
 use function strlen;
 use function strtolower;
+use function base64_encode;
+use function basename;
+use function count;
+use function error_reporting;
+use function htmlspecialchars_decode;
+use function is_array;
+use function parse_str;
+use function parse_url;
+use function preg_match_all;
+use function sprintf;
 
 /**
  * Create a pdf from an Entity

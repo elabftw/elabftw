@@ -17,6 +17,9 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use PDO;
 
+use function array_column;
+use function sprintf;
+
 /**
  * For dealing with pinned items
  */

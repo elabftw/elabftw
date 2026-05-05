@@ -26,6 +26,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 use Throwable;
 
+use function count;
+use function is_array;
+use function sprintf;
+
 /**
  * (Re)calculate fingerprints for stored compounds
  */

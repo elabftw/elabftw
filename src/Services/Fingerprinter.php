@@ -17,6 +17,9 @@ use Elabftw\Interfaces\FingerprinterInterface;
 use JsonException;
 use Override;
 
+use function json_decode;
+use function trim;
+
 /**
  * Use an external fingerprinting service to calculate compounds fingerprints
  */

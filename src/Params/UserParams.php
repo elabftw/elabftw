@@ -29,6 +29,10 @@ use Elabftw\Services\PasswordValidator;
 use Override;
 
 use function mb_substr;
+use function password_hash;
+use function preg_match;
+use function str_replace;
+use function strlen;
 
 final class UserParams extends ContentParams
 {

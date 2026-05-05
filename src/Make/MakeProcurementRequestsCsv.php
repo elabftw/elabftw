@@ -17,6 +17,7 @@ use Elabftw\Models\ProcurementRequests;
 use Override;
 
 use function date;
+use function _;
 
 /**
  * Make a CSV file from the team's procurement requests

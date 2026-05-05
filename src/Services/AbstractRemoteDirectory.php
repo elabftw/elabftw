@@ -15,6 +15,8 @@ namespace Elabftw\Services;
 use Elabftw\Interfaces\RemoteDirectoryInterface;
 use GuzzleHttp\ClientInterface;
 
+use function json_decode;
+
 /**
  * Search a remote directory for users that can be added to the local database.
  */

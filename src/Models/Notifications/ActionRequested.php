@@ -20,6 +20,9 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
 use Override;
 
+use function _;
+use function sprintf;
+
 final class ActionRequested extends AbstractNotifications implements MailableInterface
 {
     protected const PREF = 'notif_action_requested';

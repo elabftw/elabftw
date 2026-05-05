@@ -69,11 +69,10 @@
 
       {# JSON EDITOR #}
       {% set isJson = ext matches '/(json)$/i' %}
-      <button type='button' class='dropdown-item' {% if not isJson %}disabled{% endif %} data-action='json-load-file' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-file-code mr-1'></i>{{ 'JSON editor'|trans }}</button>
-
+      <button type='button' class='dropdown-item' {% if not isJson %}disabled{% endif %} data-action='json-load-file' data-uploadid='{{ upload.id }}' data-link='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}'><i class='fas fa-fw fa-file-code mr-1'></i>{{ 'JSON editor'|trans }}</button>
       {# SHEET EDITOR #}
       {% set isSheet = ext in constant('Elabftw\\Elabftw\\Extensions::SPREADSHEET') %}
-      <button type='button' class='dropdown-item' {% if not isSheet %}disabled{% endif %} data-action='xls-load-file' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-file-excel mr-1'></i>{{ 'Spreadsheet editor'|trans }}</button>
+      <button type='button' class='dropdown-item' {% if not isSheet %}disabled{% endif %} data-action='xls-load-file' data-uploadid='{{ upload.id }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}'><i class='fas fa-fw fa-file-excel mr-1'></i>{{ 'Spreadsheet editor'|trans }}</button>
 
       {# NMRium #}
       {% set isJdx = ext matches '/jdx$/i' %}
@@ -83,7 +82,7 @@
     {% endif %}
     {# Preview #}
     {% set isPreview = ext matches '/(txt|md|json)$/i' %}
-    <button type='button' class='dropdown-item' {% if not isPreview %}disabled{% endif %} data-action='toggle-modal' data-target='plainTextModal' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-eye mr-1'></i>{{ 'Preview'|trans }}</button>
+    <button type='button' class='dropdown-item' {% if not isPreview %}disabled{% endif %} data-action='toggle-modal' data-target='plainTextModal' data-uploadid='{{ upload.id }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}' data-ext='{{ ext }}'><i class='fas fa-fw fa-eye mr-1'></i>{{ 'Preview'|trans }}</button>
 
     {% if App.Users.userData.uploads_layout != 0 %}
       <button type='button' class='dropdown-item' data-action='more-info-upload' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</button>

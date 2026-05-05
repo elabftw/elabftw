@@ -242,38 +242,6 @@ abstract class AbstractContainersLinks extends AbstractLinks
             && $this->Entity->id === intval($targetId);
     }
 
-    private function moveToStorage(int $newStorageId): void
-    {
-        if ($newStorageId <= 0) {
-            throw new ImproperActionException('Invalid storage_id');
-        }
-        $current = $this->readOne();
-        $oldStorageId = (int) $current['storage_id'];
-        if ($oldStorageId === $newStorageId) {
-            return;
-        }
-
-        // resolve destination (enforces existence via readOne) and require inventory edit rights
-        $requireInventoryRights = Config::getConfig()->configArr['inventory_require_edit_rights'] === '1';
-        $Destination = new StorageUnits($this->Entity->Users, $requireInventoryRights);
-        $Destination->setId($newStorageId);
-        $Destination->canWriteOrExplode();
-        $destinationData = $Destination->readOne();
-
-        // resolve old full_path for the changelog (do not require edit rights here)
-        $Old = new StorageUnits($this->Entity->Users, false);
-        $Old->setId($oldStorageId);
-        $oldPath = $Old->readOne()['full_path'] ?? '';
-
-        $this->update('storage_id', $newStorageId);
-        $this->Entity->touch();
-
-        new Changelog($this->Entity)->create(new ContentParams(
-            'container_moved',
-            sprintf('From "%s" to "%s"', $oldPath, $destinationData['full_path'] ?? ''),
-        ));
-    }
-
     public function createWithQuantity(float $qty, string $unit): int
     {
         $this->Entity->touch();
@@ -335,6 +303,38 @@ abstract class AbstractContainersLinks extends AbstractLinks
             return 'containers2experiments';
         }
         return 'containers2items';
+    }
+
+    private function moveToStorage(int $newStorageId): void
+    {
+        if ($newStorageId <= 0) {
+            throw new ImproperActionException('Invalid storage_id');
+        }
+        $current = $this->readOne();
+        $oldStorageId = (int) $current['storage_id'];
+        if ($oldStorageId === $newStorageId) {
+            return;
+        }
+
+        // resolve destination (enforces existence via readOne) and require inventory edit rights
+        $requireInventoryRights = Config::getConfig()->configArr['inventory_require_edit_rights'] === '1';
+        $Destination = new StorageUnits($this->Entity->Users, $requireInventoryRights);
+        $Destination->setId($newStorageId);
+        $Destination->canWriteOrExplode();
+        $destinationData = $Destination->readOne();
+
+        // resolve old full_path for the changelog (do not require edit rights here)
+        $Old = new StorageUnits($this->Entity->Users, false);
+        $Old->setId($oldStorageId);
+        $oldPath = $Old->readOne()['full_path'] ?? '';
+
+        $this->update('storage_id', $newStorageId);
+        $this->Entity->touch();
+
+        new Changelog($this->Entity)->create(new ContentParams(
+            'container_moved',
+            sprintf('From "%s" to "%s"', $oldPath, $destinationData['full_path'] ?? ''),
+        ));
     }
 
     /**

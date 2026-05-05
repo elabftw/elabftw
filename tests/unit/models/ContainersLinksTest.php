@@ -17,6 +17,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
+use PDO;
 
 class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 {
@@ -105,7 +106,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
     {
         $Db = \Elabftw\Elabftw\Db::getConnection();
         $req = $Db->prepare('SELECT id FROM ' . $table . ' WHERE item_id = :item_id ORDER BY id DESC LIMIT 1');
-        $req->bindValue(':item_id', $itemId, \PDO::PARAM_INT);
+        $req->bindValue(':item_id', $itemId, PDO::PARAM_INT);
         $Db->execute($req);
         return (int) $req->fetchColumn();
     }

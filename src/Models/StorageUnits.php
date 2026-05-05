@@ -25,6 +25,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
+use Throwable;
 
 use function _;
 use function array_key_exists;
@@ -301,101 +302,6 @@ final class StorageUnits extends AbstractRest
         return $this->applyMove($newParentId);
     }
 
-    private function normalizeParentId(mixed $raw): ?int
-    {
-        if ($raw === null) {
-            return null;
-        }
-        if (is_int($raw)) {
-            return $raw === 0 ? null : $raw;
-        }
-        if (is_string($raw) && filter_var($raw, FILTER_VALIDATE_INT) !== false) {
-            $parsed = (int) $raw;
-            return $parsed === 0 ? null : $parsed;
-        }
-        throw new ImproperActionException('Invalid parent_id');
-    }
-
-    private function validateMoveTarget(?int $newParentId): void
-    {
-        if ($newParentId === null) {
-            return;
-        }
-        if ($newParentId <= 0) {
-            throw new ImproperActionException('Invalid parent_id');
-        }
-        if ($newParentId === $this->id) {
-            throw new ImproperActionException('A storage unit cannot be its own parent.');
-        }
-        // existence check + cycle detection: walk the destination's ancestor chain
-        $sql = 'WITH RECURSIVE ancestors AS (
-                SELECT id, parent_id FROM storage_units WHERE id = :start
-                UNION
-                SELECT su.id, su.parent_id
-                FROM storage_units AS su
-                INNER JOIN ancestors AS a ON su.id = a.parent_id
-            )
-            SELECT id FROM ancestors';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':start', $newParentId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $ancestorIds = array_map(static fn(array $row): int => (int) $row['id'], $req->fetchAll());
-        if (empty($ancestorIds)) {
-            throw new ImproperActionException('Destination storage unit does not exist.');
-        }
-        if (in_array($this->id, $ancestorIds, true)) {
-            throw new ImproperActionException('Cannot move a storage unit into one of its descendants.');
-        }
-    }
-
-    private function applyMove(?int $newParentId): bool
-    {
-        $oldParentId = $this->readCurrentParentId();
-        if ($oldParentId === $newParentId) {
-            return true;
-        }
-        $this->Db->beginTransaction();
-        try {
-            $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
-            $req = $this->Db->prepare($sql);
-            $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
-            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-            $ok = $this->Db->execute($req);
-            $this->recordMove($oldParentId, $newParentId);
-            $this->Db->commit();
-            return $ok;
-        } catch (\Throwable $e) {
-            $this->Db->rollBack();
-            throw $e;
-        }
-    }
-
-    private function readCurrentParentId(): ?int
-    {
-        $sql = 'SELECT parent_id FROM storage_units WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $row = $req->fetch();
-        if ($row === false) {
-            throw new ResourceNotFoundException();
-        }
-        return $row['parent_id'] !== null ? (int) $row['parent_id'] : null;
-    }
-
-    private function recordMove(?int $oldParentId, ?int $newParentId): void
-    {
-        $sql = 'INSERT INTO storage_units_history
-            (storage_unit_id, old_parent_id, new_parent_id, users_id)
-            VALUES (:id, :old, :new, :uid)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindValue(':old', $oldParentId, $oldParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
-        $req->bindValue(':new', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
-        $req->bindValue(':uid', $this->requester->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
     public function readHistory(): array
     {
         $this->canWriteOrExplode();
@@ -486,6 +392,101 @@ final class StorageUnits extends AbstractRest
         if (!$this->canWrite()) {
             throw new IllegalActionException();
         }
+    }
+
+    private function normalizeParentId(mixed $raw): ?int
+    {
+        if ($raw === null) {
+            return null;
+        }
+        if (is_int($raw)) {
+            return $raw === 0 ? null : $raw;
+        }
+        if (is_string($raw) && filter_var($raw, FILTER_VALIDATE_INT) !== false) {
+            $parsed = (int) $raw;
+            return $parsed === 0 ? null : $parsed;
+        }
+        throw new ImproperActionException('Invalid parent_id');
+    }
+
+    private function validateMoveTarget(?int $newParentId): void
+    {
+        if ($newParentId === null) {
+            return;
+        }
+        if ($newParentId <= 0) {
+            throw new ImproperActionException('Invalid parent_id');
+        }
+        if ($newParentId === $this->id) {
+            throw new ImproperActionException('A storage unit cannot be its own parent.');
+        }
+        // existence check + cycle detection: walk the destination's ancestor chain
+        $sql = 'WITH RECURSIVE ancestors AS (
+                SELECT id, parent_id FROM storage_units WHERE id = :start
+                UNION
+                SELECT su.id, su.parent_id
+                FROM storage_units AS su
+                INNER JOIN ancestors AS a ON su.id = a.parent_id
+            )
+            SELECT id FROM ancestors';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':start', $newParentId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $ancestorIds = array_map(static fn(array $row): int => (int) $row['id'], $req->fetchAll());
+        if (empty($ancestorIds)) {
+            throw new ImproperActionException('Destination storage unit does not exist.');
+        }
+        if (in_array($this->id, $ancestorIds, true)) {
+            throw new ImproperActionException('Cannot move a storage unit into one of its descendants.');
+        }
+    }
+
+    private function applyMove(?int $newParentId): bool
+    {
+        $oldParentId = $this->readCurrentParentId();
+        if ($oldParentId === $newParentId) {
+            return true;
+        }
+        $this->Db->beginTransaction();
+        try {
+            $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
+            $req = $this->Db->prepare($sql);
+            $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $ok = $this->Db->execute($req);
+            $this->recordMove($oldParentId, $newParentId);
+            $this->Db->commit();
+            return $ok;
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
+    }
+
+    private function readCurrentParentId(): ?int
+    {
+        $sql = 'SELECT parent_id FROM storage_units WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $row = $req->fetch();
+        if ($row === false) {
+            throw new ResourceNotFoundException();
+        }
+        return $row['parent_id'] !== null ? (int) $row['parent_id'] : null;
+    }
+
+    private function recordMove(?int $oldParentId, ?int $newParentId): void
+    {
+        $sql = 'INSERT INTO storage_units_history
+            (storage_unit_id, old_parent_id, new_parent_id, users_id)
+            VALUES (:id, :old, :new, :uid)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':old', $oldParentId, $oldParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindValue(':new', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindValue(':uid', $this->requester->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
     }
 
     private function readHierarchyRows(): array

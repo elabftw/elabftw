@@ -196,4 +196,31 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $this->StorageUnits->patch(Action::Update, array());
     }
+
+    public function testPatchWithNonNumericParentIdIsRejected(): void
+    {
+        $unitId = $this->StorageUnits->create('Bogus parent test');
+        $this->StorageUnits->setId($unitId);
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->patch(Action::Update, array('parent_id' => 'bogus'));
+    }
+
+    public function testPatchDoesNotPersistRenameWhenMoveFails(): void
+    {
+        $original = 'Atomicity test original';
+        $unitId = $this->StorageUnits->create($original);
+        $this->StorageUnits->setId($unitId);
+
+        try {
+            $this->StorageUnits->patch(Action::Update, array(
+                'name' => 'Atomicity test renamed',
+                'parent_id' => PHP_INT_MAX,
+            ));
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException) {
+            // expected
+        }
+
+        $this->assertEquals($original, $this->StorageUnits->readOne()['name']);
+    }
 }

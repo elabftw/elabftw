@@ -30,6 +30,7 @@ use Elabftw\Params\ContentParams;
 use Override;
 use PDO;
 
+use function array_key_exists;
 use function intval;
 use function json_encode;
 use function sprintf;
@@ -149,10 +150,10 @@ abstract class AbstractContainersLinks extends AbstractLinks
         if (isset($params['storage_id'])) {
             $this->moveToStorage((int) $params['storage_id']);
         }
-        if (!empty($params['qty_stored'])) {
+        if (array_key_exists('qty_stored', $params) && $params['qty_stored'] !== null && $params['qty_stored'] !== '') {
             $this->update('qty_stored', $params['qty_stored']);
         }
-        if (!empty($params['qty_unit'])) {
+        if (array_key_exists('qty_unit', $params) && $params['qty_unit'] !== null && $params['qty_unit'] !== '') {
             $this->update('qty_unit', $params['qty_unit']);
         }
         return $this->readOne();

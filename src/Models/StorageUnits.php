@@ -29,7 +29,10 @@ use PDO;
 use function _;
 use function array_key_exists;
 use function array_map;
+use function filter_var;
 use function in_array;
+use function is_int;
+use function is_string;
 use function sprintf;
 use function trim;
 
@@ -273,48 +276,80 @@ final class StorageUnits extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        if (!empty($params['name'])) {
+        $hasName = !empty($params['name']);
+        $hasParent = array_key_exists('parent_id', $params);
+        if (!$hasName && !$hasParent) {
+            throw new ImproperActionException('No valid update target provided.');
+        }
+        $newParentId = null;
+        if ($hasParent) {
+            $newParentId = $this->normalizeParentId($params['parent_id']);
+            $this->validateMoveTarget($newParentId);
+        }
+        if ($hasName) {
             $this->update(new CommentParam($params['name']));
         }
-        if (array_key_exists('parent_id', $params)) {
-            $this->move(Filter::intOrNull($params['parent_id'] ?? 0));
-        }
-        if (empty($params['name']) && !array_key_exists('parent_id', $params)) {
-            throw new ImproperActionException('No valid update target provided.');
+        if ($hasParent) {
+            $this->applyMove($newParentId);
         }
         return $this->readOne();
     }
 
     public function move(?int $newParentId): bool
     {
-        if ($newParentId !== null) {
-            if ($newParentId <= 0) {
-                throw new ImproperActionException('Invalid parent_id');
-            }
-            if ($newParentId === $this->id) {
-                throw new ImproperActionException('A storage unit cannot be its own parent.');
-            }
-            // existence check + cycle detection: walk the destination's ancestor chain
-            $sql = 'WITH RECURSIVE ancestors AS (
-                    SELECT id, parent_id FROM storage_units WHERE id = :start
-                    UNION
-                    SELECT su.id, su.parent_id
-                    FROM storage_units AS su
-                    INNER JOIN ancestors AS a ON su.id = a.parent_id
-                )
-                SELECT id FROM ancestors';
-            $req = $this->Db->prepare($sql);
-            $req->bindValue(':start', $newParentId, PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $ancestorIds = array_map(static fn(array $row): int => (int) $row['id'], $req->fetchAll());
-            if (empty($ancestorIds)) {
-                throw new ImproperActionException('Destination storage unit does not exist.');
-            }
-            if (in_array($this->id, $ancestorIds, true)) {
-                throw new ImproperActionException('Cannot move a storage unit into one of its descendants.');
-            }
-        }
+        $this->validateMoveTarget($newParentId);
+        return $this->applyMove($newParentId);
+    }
 
+    private function normalizeParentId(mixed $raw): ?int
+    {
+        if ($raw === null) {
+            return null;
+        }
+        if (is_int($raw)) {
+            return $raw === 0 ? null : $raw;
+        }
+        if (is_string($raw) && filter_var($raw, FILTER_VALIDATE_INT) !== false) {
+            $parsed = (int) $raw;
+            return $parsed === 0 ? null : $parsed;
+        }
+        throw new ImproperActionException('Invalid parent_id');
+    }
+
+    private function validateMoveTarget(?int $newParentId): void
+    {
+        if ($newParentId === null) {
+            return;
+        }
+        if ($newParentId <= 0) {
+            throw new ImproperActionException('Invalid parent_id');
+        }
+        if ($newParentId === $this->id) {
+            throw new ImproperActionException('A storage unit cannot be its own parent.');
+        }
+        // existence check + cycle detection: walk the destination's ancestor chain
+        $sql = 'WITH RECURSIVE ancestors AS (
+                SELECT id, parent_id FROM storage_units WHERE id = :start
+                UNION
+                SELECT su.id, su.parent_id
+                FROM storage_units AS su
+                INNER JOIN ancestors AS a ON su.id = a.parent_id
+            )
+            SELECT id FROM ancestors';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':start', $newParentId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $ancestorIds = array_map(static fn(array $row): int => (int) $row['id'], $req->fetchAll());
+        if (empty($ancestorIds)) {
+            throw new ImproperActionException('Destination storage unit does not exist.');
+        }
+        if (in_array($this->id, $ancestorIds, true)) {
+            throw new ImproperActionException('Cannot move a storage unit into one of its descendants.');
+        }
+    }
+
+    private function applyMove(?int $newParentId): bool
+    {
         $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);

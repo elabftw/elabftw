@@ -67,6 +67,10 @@
           <div class='ml-auto'>
             <button type='button' class='btn btn-primary btn-sm' data-id='{{ root.id }}' data-dismiss='modal' data-action='move-storage-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(root.name) }}</button>
           </div>
+        {% elseif is_entity and is_move %}
+          <div class='ml-auto'>
+            <button type='button' class='btn btn-primary btn-sm' data-id='{{ root.id }}' data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(root.name) }}</button>
+          </div>
         {% endif %}
       </div>
       <hr>

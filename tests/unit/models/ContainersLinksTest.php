@@ -88,6 +88,19 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('mg', $result['qty_unit']);
     }
 
+    public function testPatchQtyZeroIsPersisted(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for qty zero test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(10.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $result = $Links->patch(Action::Update, array('qty_stored' => 0));
+        $this->assertEquals(0.0, (float) $result['qty_stored']);
+    }
+
     private function latestContainerRowId(string $table, int $itemId): int
     {
         $Db = \Elabftw\Elabftw\Db::getConnection();

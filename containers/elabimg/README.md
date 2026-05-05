@@ -34,7 +34,7 @@ For dev, add `--build-arg BUILD_ALL=0` to skip the installation of dependencies 
 
 ## Usage
 
-An example configuration file for docker-compose can be fetched like this:
+An example configuration file for docker compose can be fetched like this:
 
 ~~~bash
 curl -so docker-compose.yml "https://get.elabftw.net/?config"

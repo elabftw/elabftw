@@ -354,13 +354,20 @@ final class StorageUnits extends AbstractRest
         if ($oldParentId === $newParentId) {
             return true;
         }
-        $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $ok = $this->Db->execute($req);
-        $this->recordMove($oldParentId, $newParentId);
-        return $ok;
+        $this->Db->beginTransaction();
+        try {
+            $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
+            $req = $this->Db->prepare($sql);
+            $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $ok = $this->Db->execute($req);
+            $this->recordMove($oldParentId, $newParentId);
+            $this->Db->commit();
+            return $ok;
+        } catch (\Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
     }
 
     private function readCurrentParentId(): ?int
@@ -370,10 +377,10 @@ final class StorageUnits extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $row = $req->fetch();
-        if ($row === false || $row['parent_id'] === null) {
-            return null;
+        if ($row === false) {
+            throw new ResourceNotFoundException();
         }
-        return (int) $row['parent_id'];
+        return $row['parent_id'] !== null ? (int) $row['parent_id'] : null;
     }
 
     private function recordMove(?int $oldParentId, ?int $newParentId): void
@@ -391,6 +398,7 @@ final class StorageUnits extends AbstractRest
 
     public function readHistory(): array
     {
+        $this->canWriteOrExplode();
         $sql = 'SELECT id, old_parent_id, new_parent_id, users_id, created_at
             FROM storage_units_history
             WHERE storage_unit_id = :id

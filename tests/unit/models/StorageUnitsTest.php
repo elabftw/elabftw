@@ -183,6 +183,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         // pick a non-admin user; instantiate with requireEditRights=true and
         // verify that patch() bails out before any DB mutation
         $user = $this->getRandomUserInTeam(2);
+        $this->assertSame(0, (int) $user->userData['can_manage_inventory_locations'], 'Test fixture changed: expected an unprivileged user.');
         $StorageUnitsAsUser = new StorageUnits($user, true);
         $StorageUnitsAsUser->setId($unitId);
         $this->expectException(\Elabftw\Exceptions\IllegalActionException::class);
@@ -277,6 +278,46 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
             'parent_id' => $shelfB,
         ));
 
+        $history = $this->StorageUnits->readHistory();
+        $this->assertCount(1, $history);
+        $this->assertEquals($shelfA, (int) $history[0]['old_parent_id']);
+        $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
+    }
+
+    public function testMoveOnDeletedUnitThrowsResourceNotFound(): void
+    {
+        $unitId = $this->StorageUnits->create('Will be deleted');
+        $this->StorageUnits->setId($unitId);
+        $this->StorageUnits->destroy();
+        $this->expectException(\Elabftw\Exceptions\ResourceNotFoundException::class);
+        $this->StorageUnits->move(null);
+    }
+
+    public function testReadHistoryRequiresWriteRights(): void
+    {
+        $unitId = $this->StorageUnits->create('History auth test');
+        $user = $this->getRandomUserInTeam(2);
+        $this->assertSame(0, (int) $user->userData['can_manage_inventory_locations'], 'Test fixture changed: expected an unprivileged user.');
+        $StorageUnitsAsUser = new StorageUnits($user, true);
+        $StorageUnitsAsUser->setId($unitId);
+        $this->expectException(\Elabftw\Exceptions\IllegalActionException::class);
+        $StorageUnitsAsUser->readHistory();
+    }
+
+    public function testHistorySurvivesUnitDeletion(): void
+    {
+        $shelfA = $this->StorageUnits->create('Survival shelf A');
+        $shelfB = $this->StorageUnits->create('Survival shelf B');
+        $boxId = $this->StorageUnits->create('Survival box', $shelfA);
+
+        $this->StorageUnits->setId($boxId);
+        $this->StorageUnits->move($shelfB);
+        $this->assertCount(1, $this->StorageUnits->readHistory());
+
+        $this->StorageUnits->destroy();
+
+        // re-set the (now-orphaned) id and confirm the audit row is still there
+        $this->StorageUnits->setId($boxId);
         $history = $this->StorageUnits->readHistory();
         $this->assertCount(1, $history);
         $this->assertEquals($shelfA, (int) $history[0]['old_parent_id']);

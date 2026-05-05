@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS `storage_units_history` (
     `users_id` INT UNSIGNED NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    KEY (`storage_unit_id`, `created_at`),
-    FOREIGN KEY (`storage_unit_id`) REFERENCES `storage_units`(`id`) ON DELETE CASCADE
-);
+    KEY (`storage_unit_id`, `created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 UPDATE config SET conf_value = 209 WHERE conf_name = 'schema';

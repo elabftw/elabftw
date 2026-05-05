@@ -223,4 +223,63 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($original, $this->StorageUnits->readOne()['name']);
     }
+
+    public function testMoveRecordsHistoryRow(): void
+    {
+        $shelfA = $this->StorageUnits->create('History shelf A');
+        $shelfB = $this->StorageUnits->create('History shelf B');
+        $boxId = $this->StorageUnits->create('History box', $shelfA);
+
+        $this->StorageUnits->setId($boxId);
+        $this->StorageUnits->move($shelfB);
+
+        $history = $this->StorageUnits->readHistory();
+        $this->assertCount(1, $history);
+        $this->assertEquals($shelfA, (int) $history[0]['old_parent_id']);
+        $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
+        $this->assertEquals(1, (int) $history[0]['users_id']);
+    }
+
+    public function testMoveToRootRecordsNullNewParent(): void
+    {
+        $shelf = $this->StorageUnits->create('History shelf for root move');
+        $boxId = $this->StorageUnits->create('History box for root move', $shelf);
+
+        $this->StorageUnits->setId($boxId);
+        $this->StorageUnits->move(null);
+
+        $history = $this->StorageUnits->readHistory();
+        $this->assertCount(1, $history);
+        $this->assertEquals($shelf, (int) $history[0]['old_parent_id']);
+        $this->assertNull($history[0]['new_parent_id']);
+    }
+
+    public function testNoOpMoveDoesNotRecordHistory(): void
+    {
+        $shelf = $this->StorageUnits->create('History no-op shelf');
+        $boxId = $this->StorageUnits->create('History no-op box', $shelf);
+
+        $this->StorageUnits->setId($boxId);
+        $this->StorageUnits->move($shelf);
+
+        $this->assertCount(0, $this->StorageUnits->readHistory());
+    }
+
+    public function testPatchWithNameAndParentRecordsOneMove(): void
+    {
+        $shelfA = $this->StorageUnits->create('History combined shelf A');
+        $shelfB = $this->StorageUnits->create('History combined shelf B');
+        $boxId = $this->StorageUnits->create('History combined box', $shelfA);
+
+        $this->StorageUnits->setId($boxId);
+        $this->StorageUnits->patch(Action::Update, array(
+            'name' => 'History combined box renamed',
+            'parent_id' => $shelfB,
+        ));
+
+        $history = $this->StorageUnits->readHistory();
+        $this->assertCount(1, $history);
+        $this->assertEquals($shelfA, (int) $history[0]['old_parent_id']);
+        $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
+    }
 }

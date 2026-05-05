@@ -350,11 +350,55 @@ final class StorageUnits extends AbstractRest
 
     private function applyMove(?int $newParentId): bool
     {
+        $oldParentId = $this->readCurrentParentId();
+        if ($oldParentId === $newParentId) {
+            return true;
+        }
         $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $ok = $this->Db->execute($req);
+        $this->recordMove($oldParentId, $newParentId);
+        return $ok;
+    }
+
+    private function readCurrentParentId(): ?int
+    {
+        $sql = 'SELECT parent_id FROM storage_units WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $row = $req->fetch();
+        if ($row === false || $row['parent_id'] === null) {
+            return null;
+        }
+        return (int) $row['parent_id'];
+    }
+
+    private function recordMove(?int $oldParentId, ?int $newParentId): void
+    {
+        $sql = 'INSERT INTO storage_units_history
+            (storage_unit_id, old_parent_id, new_parent_id, users_id)
+            VALUES (:id, :old, :new, :uid)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':old', $oldParentId, $oldParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindValue(':new', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindValue(':uid', $this->requester->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+    }
+
+    public function readHistory(): array
+    {
+        $sql = 'SELECT id, old_parent_id, new_parent_id, users_id, created_at
+            FROM storage_units_history
+            WHERE storage_unit_id = :id
+            ORDER BY created_at ASC, id ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     public function createImmutable(array $locations): int

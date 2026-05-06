@@ -158,6 +158,42 @@ final class DownloadController implements ControllerInterface
      */
     private function buildRangeResponse(Request $request, string $filePath, string $mime, int $fileSize): Response
     {
+        $result = $this->resolveRange($request, $fileSize);
+        if ($result instanceof Response) {
+            return $result;
+        }
+
+        [$start, $end, $statusCode] = $result;
+        $length = $end - $start + 1;
+
+        $Response = new StreamedResponse(fn() => $this->streamRange($filePath, $start, $length), $statusCode);
+        $this->setRangeHeaders($Response, $mime, $length, $statusCode, $start, $end, $fileSize);
+
+        return $Response;
+    }
+
+    private function setRangeHeaders(StreamedResponse $response, string $mime, int $length, int $statusCode, int $start, int $end, int $fileSize): void
+    {
+        $response->headers->set('Content-Type', $mime);
+        $response->headers->set('Content-Length', (string) $length);
+        $response->headers->set('Accept-Ranges', 'bytes');
+
+        if ($statusCode === Response::HTTP_PARTIAL_CONTENT) {
+            $response->headers->set('Content-Range', sprintf('bytes %d-%d/%d', $start, $end, $fileSize));
+        }
+
+        // Preserve existing disposition logic: forceDownload and MIME-based decisions
+        $disposition = $this->forceDownload ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE;
+
+        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(
+            $disposition,
+            $this->realName,
+            $this->realNameFallback,
+        ));
+    }
+
+    private function resolveRange(Request $request, int $fileSize): array|Response
+    {
         $start = 0;
         $end = $fileSize - 1;
         $statusCode = Response::HTTP_OK;
@@ -167,7 +203,6 @@ final class DownloadController implements ControllerInterface
             if ($matches[1] === '' && $matches[2] !== '') {
                 // suffix-byte-range: bytes=-N means the last N bytes (RFC 7233)
                 $start = max(0, $fileSize - (int) $matches[2]);
-                $end = $fileSize - 1;
             } else {
                 $start = $matches[1] !== '' ? (int) $matches[1] : 0;
                 $end = $matches[2] !== '' ? (int) $matches[2] : $fileSize - 1;
@@ -186,52 +221,37 @@ final class DownloadController implements ControllerInterface
             $statusCode = Response::HTTP_PARTIAL_CONTENT;
         }
 
-        $length = $end - $start + 1;
+        return array($start, $end, $statusCode);
+    }
 
-        $Response = new StreamedResponse(function () use ($filePath, $start, $length) {
-            $outputStream = fopen('php://output', 'wb');
-            if ($outputStream === false) {
-                return;
-            }
-            try {
-                $fileStream = $this->fs->readStream($filePath);
-            } catch (UnableToReadFile) {
-                return;
-            }
-            if ($start > 0) {
-                // Use fseek if the stream supports it, otherwise read and discard bytes.
-                // S3 streams (s3:// wrapper) may not support fseek.
-                if (fseek($fileStream, $start) !== 0) {
-                    $remaining = $start;
-                    while ($remaining > 0) {
-                        $chunk = fread($fileStream, min(8192, $remaining));
-                        if ($chunk === false || $chunk === '') {
-                            return;
-                        }
-                        $remaining -= strlen($chunk);
-                    }
-                }
-            }
-            stream_copy_to_stream($fileStream, $outputStream, $length);
-        }, $statusCode);
-
-        $Response->headers->set('Content-Type', $mime);
-        $Response->headers->set('Content-Length', (string) $length);
-        $Response->headers->set('Accept-Ranges', 'bytes');
-        if ($statusCode === Response::HTTP_PARTIAL_CONTENT) {
-            $Response->headers->set('Content-Range', sprintf('bytes %d-%d/%d', $start, $end, $fileSize));
+    private function streamRange(string $filePath, int $start, int $length): void
+    {
+        $outputStream = fopen('php://output', 'wb');
+        if ($outputStream === false) {
+            return;
         }
 
-        // Preserve existing disposition logic: forceDownload and MIME-based decisions
-        $disposition = $this->forceDownload ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE;
-        $dispositionHeader = HeaderUtils::makeDisposition(
-            $disposition,
-            $this->realName,
-            $this->realNameFallback,
-        );
-        $Response->headers->set('Content-Disposition', $dispositionHeader);
+        try {
+            $fileStream = $this->fs->readStream($filePath);
+        } catch (UnableToReadFile) {
+            return;
+        }
+        if ($start > 0) {
+            // Use fseek if the stream supports it, otherwise read and discard bytes.
+            // S3 streams (s3:// wrapper) may not support fseek.
+            if (fseek($fileStream, $start) !== 0) {
+                $remaining = $start;
+                while ($remaining > 0) {
+                    $chunk = fread($fileStream, min(8192, $remaining));
+                    if ($chunk === false || $chunk === '') {
+                        return;
+                    }
+                    $remaining -= strlen($chunk);
+                }
+            }
+        }
 
-        return $Response;
+        stream_copy_to_stream($fileStream, $outputStream, $length);
     }
 
     /**

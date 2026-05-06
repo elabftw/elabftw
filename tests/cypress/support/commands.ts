@@ -90,7 +90,7 @@ Cypress.Commands.add('createEntity', (
   cy.get('#createNewFormTitle')
     .invoke('val', title)
     .trigger('input');
-  cy.get('[data-cy="create-entity"]').click();
+  cy.get('[data-cy="createEntity"]').click();
   // ensure we navigated to the new entry
   cy.get('#documentTitle').should('contain', title);
   cy.url().should('include', 'mode=edit');

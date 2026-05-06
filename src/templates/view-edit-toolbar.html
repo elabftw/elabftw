@@ -1,5 +1,5 @@
 {# Modal for request action #}
-<div class='modal fade' id='requestActionModal' tabindex='-1' role='dialog' aria-labelledby='requestActionModalLabel' data-cy='request-action-modal'>
+<div class='modal fade' id='requestActionModal' tabindex='-1' role='dialog' aria-labelledby='requestActionModalLabel' data-cy='requestActionModal'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -12,7 +12,7 @@
         <div class='modal-body'>
           {# SELECT ACTION #}
           <label for='requestActionActionSelect'>{{ 'Select action'|trans }}</label>
-          <select id='requestActionActionSelect' class='form-control' name='requested_action' data-cy='requested-action-select'>
+          <select id='requestActionActionSelect' class='form-control' name='requested_action' data-cy='requestedActionSelect'>
             {% for value, text in requestableActionArr|default([])|sort %}
               <option value='{{ value }}'>{{ text }}</option>
             {% endfor %}
@@ -22,12 +22,12 @@
           {# this exists so Firefox doesn't process the Search user field as password. No idea why it would do it in the first place though... #}
           {# and autocomplete='off' doesn't work #}
           <input type='password' disabled hidden aria-label='{{ 'Password'|trans }}' />
-          <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users' name='requested_user' data-cy='request-action-user-select' required />
+          <input type='text' placeholder='{{ 'Search user'|trans }}' id='requestActionUserSelect' class='form-control' data-identifier='requestActionUserSelect' data-action='autocomplete' data-target='users' name='requested_user' data-cy='requestActionUserSelect' required />
           <div id='autocompleteAnchorDiv_requestActionUserSelect'></div>
         </div>
         <div class='modal-footer'>
-          <button type='button' class='btn btn-secondary' data-dismiss='modal' data-cy='request-action-modal-close'>{{ 'Close'|trans }}</button>
-          <button type='submit' class='btn btn-primary' data-action='requestaction' data-cy='request-action-modal-save'>{{ 'Save'|trans }}</button>
+          <button type='button' class='btn btn-secondary' data-dismiss='modal' data-cy='requestActionModalClose'>{{ 'Close'|trans }}</button>
+          <button type='submit' class='btn btn-primary' data-action='requestaction' data-cy='requestActionModalSave'>{{ 'Save'|trans }}</button>
         </div>
       </form>
     </div>
@@ -273,7 +273,7 @@
     {% endif %}
 
     {# REQUEST ACTION #}
-    <button type='button' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal' data-cy='request-action-modal-open'>
+    <button type='button' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal' data-cy='requestActionModalOpen'>
       <i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i>
     </button>
 
@@ -311,11 +311,11 @@
         {% if not App.Session.has('is_anon') %}
           {# ARCHIVE / UNARCHIVE #}
           {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
-            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive' data-cy='do-requestable-action-archive'>
+            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive' data-cy='doRequestableActionArchive'>
               <i class='fas fa-fw fa-box-archive' title='{{ 'Archive'|trans }}'></i> {{ 'Archive'|trans }}
             </button>
           {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
-            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive' data-cy='do-requestable-action-unarchive'>
+            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive' data-cy='doRequestableActionUnarchive'>
               <i class='fas fa-fw fa-box-archive' title='{{ 'Unarchive'|trans }}'></i> {{ 'Unarchive'|trans }}
             </button>
           {% endif %}

@@ -48,6 +48,9 @@ use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
 use function sprintf;
+use function array_flip;
+use function array_intersect_key;
+use function array_map;
 
 /**
  * For displaying an entity in show, view or edit mode

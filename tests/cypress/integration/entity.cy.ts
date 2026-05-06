@@ -56,7 +56,7 @@ describe('Experiments', () => {
     // not proceeding here with collaborator actioning, just trigger the Archived state
     cy.get('[data-cy="cancel-requestable-action"]').click();
     cy.get('button[title="More options"]').click();
-    cy.get('[cy-data="do-requestable-action-archive"]')
+    cy.get('[data-cy="do-requestable-action-archive"]')
       .click()
       .wait(500);
     // check also that Request action dropdown has only Unarchive
@@ -73,7 +73,7 @@ describe('Experiments', () => {
     // not proceeding here with collaborator actioning, just trigger the Unarchived state
     // to be able to delete the entity
     cy.get('button[title="More options"]').click();
-    cy.get('[cy-data="do-requestable-action-unarchive"]')
+    cy.get('[data-cy="do-requestable-action-unarchive"]')
       .click()
       .wait(500);
   };
@@ -184,15 +184,15 @@ describe('Experiments', () => {
       .then(() => {
         // Archived state
         cy.get('button[title="More options"]').click();
-        cy.get('[cy-data="do-requestable-action-unarchive"]').should('not.exist');
-        cy.get('[cy-data="do-requestable-action-archive"]').should('be.visible')
+        cy.get('[data-cy="do-requestable-action-unarchive"]').should('not.exist');
+        cy.get('[data-cy="do-requestable-action-archive"]').should('be.visible')
           .click()
           .wait(500);
-        cy.get('[cy-data="is-archived-div"]').should('be.visible');
+        cy.get('[data-cy="is-archived-div"]').should('be.visible');
         // Unarchived state
         cy.get('button[title="More options"]').click();
-        cy.get('[cy-data="do-requestable-action-archive"]').should('not.exist');
-        cy.get('[cy-data="do-requestable-action-unarchive"]').should('be.visible')
+        cy.get('[data-cy="do-requestable-action-archive"]').should('not.exist');
+        cy.get('[data-cy="do-requestable-action-unarchive"]').should('be.visible')
           .click()
           .wait(500);
         entityDestroy();

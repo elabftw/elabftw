@@ -311,11 +311,11 @@
         {% if not App.Session.has('is_anon') %}
           {# ARCHIVE / UNARCHIVE #}
           {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
-            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive' cy-data='do-requestable-action-archive'>
+            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive' data-cy='do-requestable-action-archive'>
               <i class='fas fa-fw fa-box-archive' title='{{ 'Archive'|trans }}'></i> {{ 'Archive'|trans }}
             </button>
           {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
-            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive' cy-data='do-requestable-action-unarchive'>
+            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive' data-cy='do-requestable-action-unarchive'>
               <i class='fas fa-fw fa-box-archive' title='{{ 'Unarchive'|trans }}'></i> {{ 'Unarchive'|trans }}
             </button>
           {% endif %}

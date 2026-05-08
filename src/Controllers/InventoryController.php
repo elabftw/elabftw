@@ -18,44 +18,10 @@ use Override;
 
 use function array_merge;
 use function _;
+use function array_values;
 
 final class InventoryController extends AbstractHtmlController
 {
-    #[Override]
-    protected function getTemplate(): string
-    {
-        return 'inventory.html';
-    }
-
-    #[Override]
-    protected function getPageTitle(): string
-    {
-        return _('Inventory');
-    }
-
-    #[Override]
-    protected function getData(): array
-    {
-        $StorageUnits = new StorageUnits($this->app->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1');
-        $containersArr = array();
-        // only make a query if we do a search
-        // set the 'limit' parameter for both readAll and readAllFromStorage. see #6116
-        $this->app->Request->query->set('limit', 9999);
-        if ($this->app->Request->query->has('q')) {
-            $containersArr = $StorageUnits->readAll($StorageUnits->getQueryParams($this->app->Request->query));
-        }
-        if ($this->app->Request->query->has('storage_unit')) {
-            $containersArr = $StorageUnits->readAllFromStorage($this->app->Request->query->getInt('storage_unit'));
-        }
-        return array_merge(
-            parent::getData(),
-            array(
-                'containersArr' => self::aggregateContainers($containersArr),
-                'storageUnitsArr' => $StorageUnits->readAllRecursive(),
-            ),
-        );
-    }
-
     /**
      * Collapse the raw SQL output into one row per (page, entity, storage).
      *
@@ -90,5 +56,40 @@ final class InventoryController extends AbstractHtmlController
             }
         }
         return array_values($grouped);
+    }
+
+    #[Override]
+    protected function getTemplate(): string
+    {
+        return 'inventory.html';
+    }
+
+    #[Override]
+    protected function getPageTitle(): string
+    {
+        return _('Inventory');
+    }
+
+    #[Override]
+    protected function getData(): array
+    {
+        $StorageUnits = new StorageUnits($this->app->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1');
+        $containersArr = array();
+        // only make a query if we do a search
+        // set the 'limit' parameter for both readAll and readAllFromStorage. see #6116
+        $this->app->Request->query->set('limit', 9999);
+        if ($this->app->Request->query->has('q')) {
+            $containersArr = $StorageUnits->readAll($StorageUnits->getQueryParams($this->app->Request->query));
+        }
+        if ($this->app->Request->query->has('storage_unit')) {
+            $containersArr = $StorageUnits->readAllFromStorage($this->app->Request->query->getInt('storage_unit'));
+        }
+        return array_merge(
+            parent::getData(),
+            array(
+                'containersArr' => self::aggregateContainers($containersArr),
+                'storageUnitsArr' => $StorageUnits->readAllRecursive(),
+            ),
+        );
     }
 }

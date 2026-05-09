@@ -21,7 +21,7 @@ use function stream_socket_client;
 
 final class Invoker
 {
-    private const string SOCKET_PATH = 'unix:///run/invoker/invoker.sock';
+    private const string SOCKET_PATH = 'unix:///run/elabftw/invoker.sock';
 
     /**
     * @var resource invoker socket

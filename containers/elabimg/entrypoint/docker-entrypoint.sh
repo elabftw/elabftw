@@ -42,15 +42,8 @@ getEnv() {
     redis_port=${REDIS_PORT:-6379}
     redis_username=${REDIS_USERNAME:-}
     redis_password=${REDIS_PASSWORD:-}
-    enable_ipv6=${ENABLE_IPV6:-false}
-    elabftw_user=${ELABFTW_USER:-nginx}
-    elabftw_group=${ELABFTW_GROUP:-nginx}
-    elabftw_userid=${ELABFTW_USERID:-101}
-    elabftw_groupid=${ELABFTW_GROUPID:-101}
     # value for nginx's worker_processes setting
     nginx_work_proc=${NGINX_WORK_PROC:-auto}
-    # allow limiting log pollution on startup
-    silent_init=${SILENT_INIT:-false}
     dev_mode=${DEV_MODE:-false}
     demo_mode=${DEMO_MODE:-false}
     maintenance_mode=${MAINTENANCE_MODE:-false}
@@ -75,37 +68,27 @@ getEnv() {
     pubchem_pug_view_url=${PUBCHEM_PUG_VIEW_URL:-https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data}
 }
 
-# Create the user that will run nginx/php/helpers
-createUser() {
-    # in CI (CircleCI), we might have klogd user/group there with GID 101, which is an issue
-    # it is not clear where this klogd is coming from in that image, as it doesn't appear locally
-    # apk info -v alpine-baselayout shows the same for local image or ci
-    # no package installing klogd could be found in the installed packages list
-    # so let's delete them
-    deluser klogd 2>/dev/null || true
-    delgroup klogd 2>/dev/null || true
-    getent group "${elabftw_group}" > /dev/null 2>&1 || /usr/sbin/addgroup -g "${elabftw_groupid}" "${elabftw_group}"
-    getent shadow "${elabftw_user}" > /dev/null 2>&1 || /usr/sbin/adduser -u "${elabftw_userid}" -G "${elabftw_group}" "${elabftw_user}"
-    # run invoker with the specific user
-    mkdir -p /run/invoker
-    chown "${elabftw_user}":"${elabftw_group}" /run/invoker
-    INVOKER_PSK=$(openssl rand -base64 42)
-    export INVOKER_PSK
-    # allow php to read it. use | separator as / is in base64
-    sed -i -e "s|^env\[INVOKER_PSK\] = .*|env[INVOKER_PSK] = ${INVOKER_PSK}|" /etc/php84/php-fpm.d/elabpool.conf
-    su -p -c "/usr/local/bin/invoker &" -s /bin/sh "${elabftw_user}"
-    su -p -c "/usr/local/bin/chronos &" -s /bin/sh "${elabftw_user}"
-}
-
 checkSiteUrl() {
     if [ "${site_url}" == "https://localhost" ]; then
         echo "docker-entrypoint.sh: notice: SITE_URL variable is set to default value. Make sure to configure this environment variable correctly." >&2
     fi
 }
 
+copyConf() {
+    mkdir -pv /run/php
+    f="/run/php/elabpool.conf"
+    cp -v /etc/php84/php-fpm.d/elabpool.conf.tpl $f
+    chmod -v 600 $f
+    mkdir -pv /run/nginx
+    n="/run/nginx/nginx.conf"
+    cp -v /etc/nginx/nginx.conf.tpl $n
+    chmod -v 600 $n
+}
+
 # fullchain.pem and privkey.pem should be in a volume linked to /ssl
 generateCert() {
-    if [ ! -f /etc/nginx/certs/server.crt ]; then
+    mkdir -pv /run/elabftw/nginx/certs
+    if [ ! -f /run/elabftw/nginx/certs/server.crt ]; then
 
         # here we generate a random CN because of this bug:
         # https://bugzilla.redhat.com/show_bug.cgi?id=1204670
@@ -119,8 +102,8 @@ generateCert() {
             -nodes \
             -x509 \
             -subj "/C=FR/ST=France/L=Paris/O=elabftw/CN=$randcn" \
-            -keyout /etc/nginx/certs/server.key \
-            -out /etc/nginx/certs/server.crt
+            -keyout /run/elabftw/nginx/certs/server.key \
+            -out /run/elabftw/nginx/certs/server.crt
     fi
 }
 
@@ -129,11 +112,15 @@ escape_sed_repl() {
 }
 
 nginxConf() {
+    mkdir -pv /run/nginx/conf.d
+    cp -v /etc/nginx/common.conf.tpl /run/nginx/common.conf
+    conf="/run/nginx/conf.d"
+    server_conf="${conf}/server.conf"
     # Switch http or https
     # false by default
     if ($disable_https); then
         # activate an HTTP server listening on port 443
-        ln -fs /etc/nginx/http.conf /etc/nginx/conf.d/elabftw.conf
+        cp -v /etc/nginx/http.conf $server_conf
 
     # HTTPS
     else
@@ -143,47 +130,48 @@ nginxConf() {
             generateCert
         fi
         # activate an HTTPS server listening on port 443
-        ln -fs /etc/nginx/https.conf /etc/nginx/conf.d/elabftw.conf
+        cp -v /etc/nginx/https.conf /run/nginx/conf.d/server.conf
         if ($enable_letsencrypt); then
             mkdir -p /ssl
-            sed -i -e "s:%CERT_PATH%:/ssl/live/${server_name}/fullchain.pem:" /etc/nginx/conf.d/elabftw.conf
-            sed -i -e "s:%KEY_PATH%:/ssl/live/${server_name}/privkey.pem:" /etc/nginx/conf.d/elabftw.conf
+            sed -i -e "s:%CERT_PATH%:/ssl/live/${server_name}/fullchain.pem:" $server_conf
+            sed -i -e "s:%KEY_PATH%:/ssl/live/${server_name}/privkey.pem:" $server_conf
         else
-            sed -i -e "s:%CERT_PATH%:/etc/nginx/certs/server.crt:" /etc/nginx/conf.d/elabftw.conf
-            sed -i -e "s:%KEY_PATH%:/etc/nginx/certs/server.key:" /etc/nginx/conf.d/elabftw.conf
+            sed -i -e "s:%CERT_PATH%:/run/elabftw/nginx/certs/server.crt:" $server_conf
+            sed -i -e "s:%KEY_PATH%:/run/elabftw/nginx/certs/server.key:" $server_conf
         fi
     fi
     # set the server name in nginx config
     # works also for the ssl config if ssl is enabled
-    # here elabftw.conf is a symbolic link to either http.conf or https.conf
-    sed -i -e "s/%SERVER_NAME%/${server_name}/" /etc/nginx/conf.d/elabftw.conf
+    sed -i -e "s/%SERVER_NAME%/${server_name}/" $server_conf
 
     # for maintenance mode we replace common.conf with maintenance.conf
     if ($maintenance_mode); then
-        ln -fs /etc/nginx/maintenance.conf /etc/nginx/common.conf
+        ln -fs /etc/nginx/maintenance.conf /run/nginx/common.conf
     fi
 
     # set the list of php files that can be processed by php-fpm
     php_files_nginx_allowlist=$(find /elabftw/web -type f -name '*.php' | sed 's:/elabftw/web/::' | tr '\n' '|' | sed 's/|$//')
     # use : because of the / in the list of files
-    sed -i -e "s:%PHP_FILES_NGINX_ALLOWLIST%:${php_files_nginx_allowlist}:" /etc/nginx/common.conf
+    sed -i -e "s:%PHP_FILES_NGINX_ALLOWLIST%:${php_files_nginx_allowlist}:" /run/nginx/common.conf
 
     # adjust keepalive_timeout
-    sed -i -e "s/%KEEPALIVE_TIMEOUT%/${keepalive_timeout}/" /etc/nginx/nginx.conf
+    sed -i -e "s/%KEEPALIVE_TIMEOUT%/${keepalive_timeout}/" /run/nginx/nginx.conf
 
     # adjust client_max_body_size
-    sed -i -e "s/%CLIENT_MAX_BODY_SIZE%/${max_upload_size}/" /etc/nginx/nginx.conf
+    sed -i -e "s/%CLIENT_MAX_BODY_SIZE%/${max_upload_size}/" /run/nginx/nginx.conf
 
     # ADJUST PLUGINS
     if [ "$indigo_url" != "false" ] && [ -n "$indigo_url" ] && [ "$use_indigo" != "false" ] && [ -n "$use_indigo" ]; then
-        sed -i -e "s|^#\s*include /etc/nginx/indigo.conf|include /etc/nginx/indigo.conf|" /etc/nginx/common.conf
-        sed -i -e "s|%INDIGO_URL%|${indigo_url}|" /etc/nginx/indigo.conf
+        cp -v /etc/nginx/indigo.conf.tpl /run/nginx/indigo.conf
+        sed -i -e "s|^#\s*include /etc/nginx/indigo.conf|include /etc/nginx/indigo.conf|" /run/nginx/common.conf
+        sed -i -e "s|%INDIGO_URL%|${indigo_url}|" /run/nginx/indigo.conf
     fi
     if [ "$opencloning_url" != "false" ] && [ -n "$opencloning_url" ] && [ "$use_opencloning" != "false" ] && [ -n "$use_opencloning" ]; then
+        cp -v /etc/nginx/opencloning.conf.tpl /run/nginx/opencloning.conf
         # remove the trailing / if it exists, or it doesn't work
         oc_url=${opencloning_url%/}
-        sed -i -e "s|^#\s*include /etc/nginx/opencloning.conf|include /etc/nginx/opencloning.conf|" /etc/nginx/common.conf
-        sed -i -e "s|%OPENCLONING_URL%|${oc_url}|" /etc/nginx/opencloning.conf
+        sed -i -e "s|^#\s*include /etc/nginx/opencloning.conf|include /etc/nginx/opencloning.conf|" /run/nginx/common.conf
+        sed -i -e "s|%OPENCLONING_URL%|${oc_url}|" /run/nginx/opencloning.conf
     fi
 
     # SET REAL IP CONFIG
@@ -196,23 +184,14 @@ nginxConf() {
             conf_string+="set_real_ip_from ${element};"
         done
         # use pipe for sed separation because CIDR might have a /
-        sed -i -e "s|#%REAL_IP_CONF%|${conf_string}|" /etc/nginx/common.conf
+        sed -i -e "s|#%REAL_IP_CONF%|${conf_string}|" /run/nginx/common.conf
         # enable real_ip_header config
-        sed -i -e "s/#real_ip_header X-Forwarded-For;/real_ip_header X-Forwarded-For;/" /etc/nginx/common.conf
-        sed -i -e "s/#real_ip_recursive on;/real_ip_recursive on;/" /etc/nginx/common.conf
+        sed -i -e "s/#real_ip_header X-Forwarded-For;/real_ip_header X-Forwarded-For;/" /run/nginx/common.conf
+        sed -i -e "s/#real_ip_recursive on;/real_ip_recursive on;/" /run/nginx/common.conf
     fi
-
-    # IPV6 CONFIG
-    if ($enable_ipv6); then
-        sed -i -e "s/#listen \[::\]:443;/listen \[::\]:443;/" /etc/nginx/conf.d/elabftw.conf
-        sed -i -e "s/#listen \[::\]:443 ssl http2;/listen \[::\]:443 ssl http2;/" /etc/nginx/conf.d/elabftw.conf
-    fi
-
-    # CHANGE NGINX USER
-    sed -i -e "s/%USER-GROUP%/${elabftw_user} ${elabftw_group}/" /etc/nginx/nginx.conf
 
     # SET WORKER PROCESSES (default is auto)
-    sed -i -e "s/%WORKER_PROCESSES%/${nginx_work_proc}/" /etc/nginx/nginx.conf
+    sed -i -e "s/%WORKER_PROCESSES%/${nginx_work_proc}/" /run/nginx/nginx.conf
 
     # no unsafe-eval in prod
     unsafe_eval=""
@@ -226,29 +205,29 @@ nginxConf() {
         git config --global --add safe.directory /elabftw
     fi
     # set unsafe-eval in CSP
-    sed -i -e "s/%UNSAFE-EVAL4DEV%/${unsafe_eval}/" /etc/nginx/common.conf
-    sed -i -e "s/%CUSTOM_CONNECT_SRC%/$(escape_sed_repl "${custom_connect_src}")/" /etc/nginx/common.conf
+    sed -i -e "s/%UNSAFE-EVAL4DEV%/${unsafe_eval}/" /run/nginx/common.conf
+    sed -i -e "s/%CUSTOM_CONNECT_SRC%/$(escape_sed_repl "${custom_connect_src}")/" /run/nginx/common.conf
     # put a random short string as the server header to prevent fingerprinting
     server_header=$(openssl rand -hex 2 | cut -c1-3)
-    sed -i -e "s/%SERVER_HEADER%/${server_header}/" /etc/nginx/common.conf
+    sed -i -e "s/%SERVER_HEADER%/${server_header}/" /run/nginx/common.conf
     # add Access-Control-Allow-Origin header if enabled
     acao_header=""
     if [ -n "$allow_origin" ]; then
         acao_header="more_set_headers 'Access-Control-Allow-Origin: ${allow_origin}';"
     fi
-    sed -i -e "s#%ACAO_HEADER%#${acao_header}#" /etc/nginx/common.conf
+    sed -i -e "s#%ACAO_HEADER%#${acao_header}#" /run/nginx/common.conf
     # add Access-Control-Allow-Methods header if enabled
     acam_header=""
     if [ -n "$allow_methods" ]; then
         acam_header="more_set_headers 'Access-Control-Allow-Methods: ${allow_methods}';"
     fi
-    sed -i -e "s/%ACAM_HEADER%/${acam_header}/" /etc/nginx/common.conf
+    sed -i -e "s/%ACAM_HEADER%/${acam_header}/" /run/nginx/common.conf
     # add Access-Control-Allow-Headers header if enabled
     acah_header=""
     if [ -n "$allow_headers" ]; then
         acah_header="more_set_headers 'Access-Control-Allow-Headers: ${allow_headers}';"
     fi
-    sed -i -e "s/%ACAH_HEADER%/${acah_header}/" /etc/nginx/common.conf
+    sed -i -e "s/%ACAH_HEADER%/${acah_header}/" /run/nginx/common.conf
 
     # create a password file for /php-status endpoint
     if [ -z "$status_password" ]; then
@@ -256,17 +235,17 @@ nginxConf() {
         status_password=$(openssl rand -hex 16)
     fi
     # instead of installing htpasswd, use openssl that is already here
-    printf "elabftw:%s\n" "$(openssl passwd -apr1 "$status_password")" > /etc/nginx/passwords
-    chown "${elabftw_user}":"${elabftw_group}" /etc/nginx/passwords
-    chmod 400 /etc/nginx/passwords
+    printf "elabftw:%s\n" "$(openssl passwd -apr1 "$status_password")" > /run/nginx/passwords
+    chmod 400 /run/nginx/passwords
 }
 
 # PHP-FPM CONFIG
 phpfpmConf() {
-    f="/etc/php84/php-fpm.d/elabpool.conf"
-    # set nginx as user for php-fpm
-    sed -i -e "s/%ELABFTW_USER%/${elabftw_user}/" $f
-    sed -i -e "s/%ELABFTW_GROUP%/${elabftw_group}/" $f
+    f="/run/php/elabpool.conf"
+    # create a PSK for invoker
+    INVOKER_PSK=$(openssl rand -base64 42)
+    # allow php to read it. use | separator as / is in base64
+    sed -i -e "s|^env\[INVOKER_PSK\] = .*|env[INVOKER_PSK] = ${INVOKER_PSK}|" $f
     # increase max number of simultaneous requests
     sed -i -e "s/%PHP_MAX_CHILDREN%/${php_max_children}/" $f
     # allow using more memory for php-fpm
@@ -308,7 +287,9 @@ getRedisUri() {
 
 # PHP CONFIG
 phpConf() {
-    f="/etc/php84/php.ini"
+    src="/etc/php84/php.ini.tpl"
+    f="/run/php/php.ini"
+    cp -v $src $f
     # allow using more memory for php
     sed -i -e "s/%PHP_MEMORY_LIMIT%/${max_php_memory}/" $f
     # change upload_max_filesize and post_max_size
@@ -317,16 +298,15 @@ phpConf() {
     # PHP SESSIONS
     # default values for sessions (with files)
     sess_save_handler="files"
-    sess_save_path="/sessions"
+    sess_save_path="/run/elabftw/sessions"
     # if we use redis then sessions are handled differently
     if ($use_redis); then
         sess_save_handler="redis"
         sess_save_path=$(getRedisUri)
     else
         # create the custom session dir
-        mkdir -p /sessions
-        chown "${elabftw_user}":"${elabftw_group}" /sessions
-        chmod 700 /sessions
+        mkdir -p "$sess_save_path"
+        chmod 700 "$sess_save_path"
     fi
     # now set the values
     sed -i -e "s:%SESSION_SAVE_HANDLER%:${sess_save_handler}:" $f
@@ -340,7 +320,7 @@ phpConf() {
     # production open_basedir conf value
     # /etc/ssl/cert.pem is for openssl and timestamp related functions
     # for /run/s6-rc... see elabftw/elabftw#5249
-    open_basedir="/.dockerenv:/elabftw/:/tmp/:/usr/bin/unzip:/etc/ssl/cert.pem:/run/s6-rc/servicedirs/s6rc-oneshot-runner"
+    open_basedir="/.dockerenv:/elabftw/:/tmp/:/run/elabftw/cache:/usr/bin/unzip:/etc/ssl/cert.pem:/run/s6-rc/servicedirs/s6rc-oneshot-runner"
     # DEV MODE
     if ($dev_mode); then
         # we don't want to use opcache as we want our changes to be immediately visible
@@ -355,11 +335,9 @@ phpConf() {
 }
 
 elabftwConf() {
-    mkdir -p /elabftw/uploads /elabftw/cache/elab /elabftw/cache/mpdf /elabftw/cache/twig /elabftw/cache/purifier/CSS /elabftw/cache/purifier/HTML /elabftw/cache/purifier/URI /elabftw/exports
-    chown -R "${elabftw_userid}":"${elabftw_groupid}" /elabftw/cache /elabftw/exports
-    # no recursive flag for uploads
-    chown "${elabftw_userid}":"${elabftw_groupid}" /elabftw/uploads
-    chmod 700 /elabftw/uploads /elabftw/cache /elabftw/exports
+    mkdir -p /run/elabftw/uploads /run/elabftw/cache/elab /run/elabftw/cache/mpdf /run/elabftw/cache/twig /run/elabftw/cache/purifier/CSS /run/elabftw/cache/purifier/HTML /run/elabftw/cache/purifier/URI /run/elabftw/exports
+    # necessary so php user can write to it in podman rootless
+    chmod -R g+w /run/elabftw/cache
 }
 
 ldapConf() {
@@ -373,31 +351,32 @@ ldapConf() {
 
 populatePhpEnv() {
 
-    sed -i -e "s/%DB_HOST%/${db_host}/" /etc/php84/php-fpm.d/elabpool.conf
-    sed -i -e "s/%DB_PORT%/${db_port}/" /etc/php84/php-fpm.d/elabpool.conf
-    sed -i -e "s/%DB_NAME%/${db_name}/" /etc/php84/php-fpm.d/elabpool.conf
-    sed -i -e "s/%DB_USER%/${db_user}/" /etc/php84/php-fpm.d/elabpool.conf
-    sed -i -e "s/%DB_PASSWORD%/$(escape_sed_repl "${db_password}")/" /etc/php84/php-fpm.d/elabpool.conf
+    f="/run/php/elabpool.conf"
+    sed -i -e "s/%DB_HOST%/${db_host}/" $f
+    sed -i -e "s/%DB_PORT%/${db_port}/" $f
+    sed -i -e "s/%DB_NAME%/${db_name}/" $f
+    sed -i -e "s/%DB_USER%/${db_user}/" $f
+    sed -i -e "s/%DB_PASSWORD%/$(escape_sed_repl "${db_password}")/" $f
     # don't add empty stuff
     if [ -n "$db_cert_path" ]; then
         # use # as separator instead of slash
-        sed -i -e "s#%DB_CERT_PATH%#${db_cert_path}#" /etc/php84/php-fpm.d/elabpool.conf
+        sed -i -e "s#%DB_CERT_PATH%#${db_cert_path}#" $f
     else
         # remove this if not in use
-        sed -i -e "/%DB_CERT_PATH%/d" /etc/php84/php-fpm.d/elabpool.conf
+        sed -i -e "/%DB_CERT_PATH%/d" $f
     fi
-    sed -i -e "s/%SECRET_KEY%/${secret_key}/" /etc/php84/php-fpm.d/elabpool.conf
-    sed -i -e "s/%MAX_UPLOAD_SIZE%/${max_upload_size}/" /etc/php84/php-fpm.d/elabpool.conf
-    sed -i -e "s/%MAX_UPLOAD_TIME%/${max_upload_time}/" /etc/php84/php-fpm.d/elabpool.conf
+    sed -i -e "s/%SECRET_KEY%/${secret_key}/" $f
+    sed -i -e "s/%MAX_UPLOAD_SIZE%/${max_upload_size}/" $f
+    sed -i -e "s/%MAX_UPLOAD_TIME%/${max_upload_time}/" $f
     # use # as separator instead of slash
-    sed -i -e "s#%SITE_URL%#${site_url}#" /etc/php84/php-fpm.d/elabpool.conf
+    sed -i -e "s#%SITE_URL%#${site_url}#" $f
     # assume that if ak is set, then sk is too
     if [ -n "$aws_ak" ]; then
-        sed -i -e "s|%ELAB_AWS_ACCESS_KEY%|${aws_ak}|" /etc/php84/php-fpm.d/elabpool.conf
-        sed -i -e "s|%ELAB_AWS_SECRET_KEY%|${aws_sk}|" /etc/php84/php-fpm.d/elabpool.conf
+        sed -i -e "s|%ELAB_AWS_ACCESS_KEY%|${aws_ak}|" $f
+        sed -i -e "s|%ELAB_AWS_SECRET_KEY%|${aws_sk}|" $f
     else
-        sed -i -e "/%ELAB_AWS_ACCESS_KEY%/d" /etc/php84/php-fpm.d/elabpool.conf
-        sed -i -e "/%ELAB_AWS_SECRET_KEY%/d" /etc/php84/php-fpm.d/elabpool.conf
+        sed -i -e "/%ELAB_AWS_ACCESS_KEY%/d" $f
+        sed -i -e "/%ELAB_AWS_SECRET_KEY%/d" $f
     fi
 }
 
@@ -405,17 +384,17 @@ populatePhpEnv() {
 startupMessage() {
     nginx_version=$(/usr/sbin/nginx -v 2>&1)
     http_mode=$([ "$disable_https" = true ] && echo "HTTP" || echo "HTTPS")
-    say "elabimg: info: eLabFTW version: ${ELABFTW_VERSION}"
-    say "elabimg: info: ${nginx_version}"
-    say "elabimg: info: s6-overlay version: ${S6_OVERLAY_VERSION}"
-    say "elabimg: info: runtime configuration successfully finished"
-    say "elabimg: info: starting server listening internally on port 443 in ${http_mode}"
+    say "info: eLabFTW version: ${ELABFTW_VERSION}"
+    say "info: ${nginx_version}"
+    say "info: s6-overlay version: ${S6_OVERLAY_VERSION}"
+    say "info: runtime configuration successfully finished"
+    say "info: starting server listening internally on port 8080 in ${http_mode}"
 }
 
 # Automatically initialize the database structure
 dbInit() {
     if ($auto_db_init); then
-        say "elabimg: info: initializing database structure"
+        say "info: initializing database structure"
         /elabftw/bin/init db:install
     fi
 }
@@ -423,21 +402,29 @@ dbInit() {
 # Automatically update the database schema
 dbUpdate() {
     if ($auto_db_update); then
-        say "elabimg: info: updating database structure"
+        say "info: updating database structure"
         /elabftw/bin/console db:update
     fi
 }
 
 say() {
-    if (! $silent_init); then
-        echo "$1"
-    fi
+    echo "entrypoint: $1"
+}
+
+warnDeprecated() {
+    local var_name
+
+    for var_name in "$@"; do
+        if [[ -v "$var_name" ]]; then
+            say "Warning: environment variable $var_name is deprecated and will be ignored. Please remove it from your container configuration."
+        fi
+    done
 }
 
 # SCRIPT START
 getEnv
 checkSiteUrl
-createUser
+copyConf
 nginxConf
 phpfpmConf
 phpConf
@@ -447,3 +434,11 @@ populatePhpEnv
 dbInit
 dbUpdate
 startupMessage
+# add it at the end so it's maybe more visible
+warnDeprecated \
+    ENABLE_IPV6 \
+    ELABFTW_USER \
+    ELABFTW_GROUP \
+    ELABFTW_USERID \
+    ELABFTW_GROUPID \
+    SILENT_INIT

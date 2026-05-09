@@ -71,9 +71,9 @@ async function blob2table(blob: Blob, container: HTMLDivElement, sheetName: stri
 on('rename-upload', (el: HTMLElement) => {
   // find the corresponding filename element
   // we replace the parent span to also remove the link for download
-  const filenameLink = document.getElementById('upload-filename_' + el.dataset.id);
+  const filenameLink = document.getElementById('upload-filename_' + el.dataset.uploadid);
   const filenameInput = document.createElement('input');
-  filenameInput.dataset.id = el.dataset.id;
+  filenameInput.dataset.id = el.dataset.uploadid;
   filenameInput.classList.add('form-control');
   filenameInput.value = filenameLink.textContent;
   const parentSpan = filenameLink.parentElement;

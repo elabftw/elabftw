@@ -1,5 +1,5 @@
 # docker-elabftw configuration file
-# use : "docker-compose up -d" to start containers
+# use : "docker compose up -d" to start containers
 # this config file contains all the possible configuration options, shown with default values
 # https://hub.docker.com/r/elabftw/elabimg/
 # https://www.elabftw.net
@@ -38,7 +38,7 @@ services:
 
     # limit number of processes
     # this option is commented out because it is not in v3 of compose files, only v2
-    # even though it works as expected in a v3 file with recent docker-compose
+    # even though it works as expected in a v3 file with recent docker compose
     #pids_limit: 42
 
     # add a security flag to prevent a process gaining new privileges
@@ -296,6 +296,11 @@ services:
         # set to true to set the instance in maintenance mode, displaying an informative page, thereby disabling all user interaction
         # default value: false
         #- MAINTENANCE_MODE=false
+
+        # add the possibility to connect to other systems from the frontend
+        # default value: unset (empty)
+        # example value: https://example.com https://example.org
+        #- CUSTOM_CONNECT_SRC=
 
         ###########
         # PLUGINS #

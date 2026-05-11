@@ -124,6 +124,7 @@ const t = {
     "undefined-group": "Grup no definit",
     "unarchive-user": "Usuari poc efectiu",
     "unarchive-user-description": "Desarxivar un usuari significa que el seu compte es restaurarà. Aquesta acció és reversible.",
+    "unsaved-changes": "Tens canvis no desats",
     "upload-file-comment": "Comentari d’arxiu",
     "userid": "ID d'usuari",
     "users": "Usuaris",

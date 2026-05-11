@@ -124,6 +124,7 @@ const t = {
     "undefined-group": "Undefined group",
     "unarchive-user": "Unarchive user",
     "unarchive-user-description": "Unarchiving a user means their account will be restored. This action is reversible.",
+    "unsaved-changes": "You have unsaved changes",
     "upload-file-comment": "File comment",
     "userid": "Userid",
     "users": "Users",

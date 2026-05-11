@@ -124,6 +124,7 @@ const t = {
     "undefined-group": "未定義のグループ",
     "unarchive-user": "ユーザーのアーカイブ解除",
     "unarchive-user-description": "ユーザーのアーカイブを解除すると、そのユーザーのアカウントが復元されます。この操作は元に戻すことができます。",
+    "unsaved-changes": "保存されていない変更があります",
     "upload-file-comment": "ファイルコメント",
     "userid": "ユーザーID",
     "users": "ユーザー",

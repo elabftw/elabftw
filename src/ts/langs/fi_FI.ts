@@ -124,6 +124,7 @@ const t = {
     "undefined-group": "Määrittelemätön ryhmä",
     "unarchive-user": "Palauta käyttäjä arkistosta",
     "unarchive-user-description": "Käyttäjän arkistoinnin poistaminen tarkoittaa, että hänen tilinsä palautetaan. Tämä toiminto on peruutettava.",
+    "unsaved-changes": "Sinulla on tallentamattomia muutoksia",
     "upload-file-comment": "Tiedoston kommentti",
     "userid": "Userid",
     "users": "Käyttäjät",

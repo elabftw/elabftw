@@ -124,6 +124,7 @@ const t = {
     "undefined-group": "Ongedefinieerde groep",
     "unarchive-user": "Gebruiker herstellen",
     "unarchive-user-description": "Als u een gebruiker uit het archief haalt, wordt zijn of haar account hersteld. Deze actie is omkeerbaar.",
+    "unsaved-changes": "U heeft niet-opgeslagen wijzigingen",
     "upload-file-comment": "Bestandscommentaar",
     "userid": "Userid",
     "users": "Gebruikers",

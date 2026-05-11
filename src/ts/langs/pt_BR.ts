@@ -124,6 +124,7 @@ const t = {
     "undefined-group": "Grupo não definido",
     "unarchive-user": "Usuário não arquivado",
     "unarchive-user-description": "O desarquivamento de um usuário significa que sua conta será restaurada. Essa ação É reversível.",
+    "unsaved-changes": "Você tem alterações que não foram salvas",
     "upload-file-comment": "Comentário no arquivo",
     "userid": "Userid",
     "users": "Usuários",

@@ -124,6 +124,7 @@ const t = {
     "undefined-group": "Nedefinirana skupina",
     "unarchive-user": "Odstrani uporabnika iz arhiva",
     "unarchive-user-description": "Odstranitev iz arhiva uporabnika pomeni, da bo njegov račun obnovljen. To dejanje je reverzibilno.",
+    "unsaved-changes": "Imate neshranjene spremembe",
     "upload-file-comment": "Komentar datoteke",
     "userid": "Userid",
     "users": "Uporabniki",

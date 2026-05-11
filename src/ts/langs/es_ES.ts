@@ -124,6 +124,7 @@ const t = {
     "undefined-group": "Grupo indefinido",
     "unarchive-user": "Desarchivar usuario",
     "unarchive-user-description": "Desarchivar a un usuario significa que su cuenta será restaurada. Esta acción es reversible.",
+    "unsaved-changes": "Tiene cambios sin guardar",
     "upload-file-comment": "Comentario de archivo",
     "userid": "ID de usuario",
     "users": "Usuarios",

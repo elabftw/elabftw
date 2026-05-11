@@ -39,6 +39,15 @@ function SpreadsheetEditor() {
   const replaceNameRef = useRef(null);
   useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
   useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
+  // on changes in the spreadsheet, notify that there's unsaved changes
+  const unsavedChangesWarningRef = useRef(null);
+
+  const setUnsavedWarning = (visible) => {
+    if (unsavedChangesWarningRef.current) {
+      unsavedChangesWarningRef.current.hidden = !visible;
+    }
+  };
+  const markUnsaved = () => setUnsavedWarning(true);
 
   const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
   const entity = getEntity(true);
@@ -66,6 +75,7 @@ function SpreadsheetEditor() {
         res = await saveAsAttachment(aoa, entity.type, entity.id);
       }
       keepResult(res);
+      setUnsavedWarning(false);
     } finally {
       window.parent.postMessage('uploadsDiv', window.location.origin);
       setIsSaving(false);
@@ -167,15 +177,15 @@ function SpreadsheetEditor() {
     <>
       <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
       {/* move Spreadsheet into a child component to safely re-init on file uploads */}
-      <SpreadsheetInner key={spreadsheetKey} data={data} buildToolbar={buildToolbar} />
+      <span ref={unsavedChangesWarningRef} hidden className='text-danger'>{i18next.t('unsaved-changes')}</span>
+      <SpreadsheetInner key={spreadsheetKey} data={data} buildToolbar={buildToolbar} onSpreadsheetChange={markUnsaved} />
     </>
   );
 }
-
-function SpreadsheetInner({ data, buildToolbar }) {
+function SpreadsheetInner({ data, buildToolbar, onSpreadsheetChange }) {
   const spreadsheetRef = useRef(null);
   return (
-    <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
+    <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar} onchange={onSpreadsheetChange}>
       <Worksheet data={data} minDimensions={[
           Math.max(12, data[0]?.length || 0),
           Math.max(12, data.length)

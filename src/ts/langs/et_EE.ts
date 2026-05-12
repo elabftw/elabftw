@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "Määratlemata rühm",
     "unarchive-user": "Kasutaja arhiivist eemaldamine",
     "unarchive-user-description": "Kasutaja arhiivist eemaldamine tähendab tema konto taastamist. See toiming on tagasipööratav.",
-    "unsaved-changes": "Teil on salvestamata muudatusi",
     "upload-file-comment": "Faili kommentaar",
     "userid": "Kasutaja ID",
     "users": "Kasutajad",

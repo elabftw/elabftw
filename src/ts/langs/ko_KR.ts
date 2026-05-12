@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "정의되지 않은 그룹",
     "unarchive-user": "사용자 활성화",
     "unarchive-user-description": "사용자를 보관 취소하면 해당 사용자의 계정이 복원됩니다. 이 작업은 되돌릴 수 있습니다.",
-    "unsaved-changes": "저장되지 않은 변경사항이 있습니다",
     "upload-file-comment": "파일 코멘트",
     "userid": "Userid",
     "users": "사용자",

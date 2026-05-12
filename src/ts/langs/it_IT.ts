@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "Gruppo non definito",
     "unarchive-user": "Ripristina utente dall'archivio",
     "unarchive-user-description": "Annullare l'archiviazione di un utente significa che il suo account verrà ripristinato. Questa azione è reversibile.",
-    "unsaved-changes": "Avete modifiche non salvate",
     "upload-file-comment": "Commento sul file",
     "userid": "Utente",
     "users": "Utenti",

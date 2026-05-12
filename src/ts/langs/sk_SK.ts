@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "Nedefinovaná skupina",
     "unarchive-user": "Odarchivovať užívateľa",
     "unarchive-user-description": "Zrušenie archivácie používateľa znamená, že jeho účet bude obnovený. Táto akcia je reverzibilná.",
-    "unsaved-changes": "Máte neuložené zmeny",
     "upload-file-comment": "Komentár k súboru",
     "userid": "Userid",
     "users": "Užívatelia",

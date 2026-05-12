@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "未定義的群組",
     "unarchive-user": "取消封存用戶",
     "unarchive-user-description": "取消封存該用戶意味著該用戶的帳戶將被恢復。此操作可撤銷。",
-    "unsaved-changes": "您有未儲存的更改",
     "upload-file-comment": "文件註解",
     "userid": "使用者身分",
     "users": "使用者",

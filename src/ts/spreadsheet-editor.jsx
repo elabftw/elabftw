@@ -40,11 +40,10 @@ function SpreadsheetEditor() {
   useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
   useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
   // on changes in the spreadsheet, notify that there's unsaved changes
-  const unsavedChangesWarningRef = useRef(null);
-
   const setUnsavedWarning = (visible) => {
-    if (unsavedChangesWarningRef.current) {
-      unsavedChangesWarningRef.current.hidden = !visible;
+    const unsavedChangesWarning = window.parent.document.getElementById('spreadsheetEditorUnsavedChanges',);
+    if (unsavedChangesWarning) {
+      unsavedChangesWarning.hidden = !visible;
     }
   };
   const markUnsaved = () => setUnsavedWarning(true);
@@ -177,7 +176,6 @@ function SpreadsheetEditor() {
     <>
       <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
       {/* move Spreadsheet into a child component to safely re-init on file uploads */}
-      <span ref={unsavedChangesWarningRef} hidden className='text-danger'>{i18next.t('unsaved-changes')}</span>
       <SpreadsheetInner key={spreadsheetKey} data={data} buildToolbar={buildToolbar} onSpreadsheetChange={markUnsaved}/>
     </>
   );

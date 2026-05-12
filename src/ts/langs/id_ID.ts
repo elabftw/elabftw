@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "Kelompok yang tidak terdefinisi",
     "unarchive-user": "Batalkan pengarsipan pengguna",
     "unarchive-user-description": "Memindah pengguna dari terarsip berarti akun mereka akan dipulihkan. Tindakan ini dapat dibatalkan.",
-    "unsaved-changes": "Anda memiliki perubahan yang belum tersimpan",
     "upload-file-comment": "File komentar",
     "userid": "ID pengguna",
     "users": "Pengguna",

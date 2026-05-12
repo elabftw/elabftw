@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "Unbestimmte Gruppe",
     "unarchive-user": "Benutzer entarchivieren",
     "unarchive-user-description": "De-Archivierung eines Benutzers stellt den Zugang wieder her. Dies ist umkehrbar.",
-    "unsaved-changes": "Sie haben ungespeicherte Änderungen",
     "upload-file-comment": "Dateikommentar",
     "userid": "User-ID",
     "users": "Benutzer",

@@ -168,7 +168,6 @@ final class i18n4Js
             'undefined-group' => _('Undefined group'),
             'unarchive-user' => _('Unarchive user'),
             'unarchive-user-description' => _('Unarchiving a user means their account will be restored. This action is reversible.'),
-            'unsaved-changes' => _('You have unsaved changes'),
             'upload-file-comment' => _('File comment'),
             'userid' => _('Userid'),
             'users' => _('Users'),

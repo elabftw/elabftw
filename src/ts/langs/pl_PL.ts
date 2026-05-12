@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "Niezdefiniowana grupa",
     "unarchive-user": "Odtwórz z archiwum",
     "unarchive-user-description": "Przywrócenie archiwizacji użytkownika oznacza przywrócenie jego konta. To działanie jest odwracalne.",
-    "unsaved-changes": "masz niezapisane zmiany",
     "upload-file-comment": "Komentarz do pliku",
     "userid": "Id iżytkownika",
     "users": "Użytkownicy",

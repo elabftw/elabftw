@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "Belgilanmagan guruh",
     "unarchive-user": "Foydalanuvchini arxivdan chiqarish",
     "unarchive-user-description": "Agar foydalanuvchi arxivdan chiqarilsa, uning hisobi tiklanadi. Bu harakat qaytarilishi mumkin.",
-    "unsaved-changes": "Sizda saqlanmagan oʻzgarishlar bor",
     "upload-file-comment": "Fayl sharhi",
     "userid": "Userid",
     "users": "Foydalanuvchilar",

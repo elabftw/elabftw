@@ -124,7 +124,6 @@ const t = {
     "undefined-group": "默认分组",
     "unarchive-user": "解档用户",
     "unarchive-user-description": "解档用户意味着他们的帐户将被还原。此操作是可逆的。",
-    "unsaved-changes": "您有未保存的更改",
     "upload-file-comment": "文件评论",
     "userid": "用户 ID",
     "users": "用户",

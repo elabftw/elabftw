@@ -156,7 +156,7 @@ final class Tags extends AbstractRest
         }
         $tagId = $TeamTags->create($params);
         // now link the tag with the entity
-        $sql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
+        $sql = 'INSERT IGNORE INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':item_type', $this->Entity->entityType->value);

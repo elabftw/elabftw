@@ -178,17 +178,12 @@ function SpreadsheetEditor() {
       <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
       {/* move Spreadsheet into a child component to safely re-init on file uploads */}
       <span ref={unsavedChangesWarningRef} hidden className='text-danger'>{i18next.t('unsaved-changes')}</span>
-      <SpreadsheetInner
-        key={spreadsheetKey}
-        data={data}
-        buildToolbar={buildToolbar}
-        onSpreadsheetChange={markUnsaved}
-        spreadsheetRef={spreadsheetRef}
-      />
+      <SpreadsheetInner key={spreadsheetKey} data={data} buildToolbar={buildToolbar} onSpreadsheetChange={markUnsaved}/>
     </>
   );
 }
-function SpreadsheetInner({ data, buildToolbar, onSpreadsheetChange, spreadsheetRef }) {
+function SpreadsheetInner({ data, buildToolbar, onSpreadsheetChange }) {
+  const spreadsheetRef = useRef(null);
   return (
     <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar} onchange={onSpreadsheetChange}>
       <Worksheet data={data} minDimensions={[

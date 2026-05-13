@@ -37,16 +37,35 @@ function SpreadsheetEditor() {
   // refs that always have the latest values (for toolbar onclick)
   const replaceIdRef = useRef(null);
   const replaceNameRef = useRef(null);
+  const isDirtyRef = useRef(false);
+
   useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
   useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
   // on changes in the spreadsheet, notify that there's unsaved changes
   const setUnsavedWarning = (visible) => {
-    const unsavedChangesWarning = window.parent.document.getElementById('spreadsheetEditorUnsavedChanges',);
+    isDirtyRef.current = visible;
+    const unsavedChangesWarning = window.parent.document.getElementById('spreadsheetEditorUnsavedChanges');
     if (unsavedChangesWarning) {
       unsavedChangesWarning.hidden = !visible;
     }
   };
+
   const markUnsaved = () => setUnsavedWarning(true);
+
+  // if Dirty state, ask user if he wants to save before leaving the page
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (!isDirtyRef.current) {
+        return;
+      }
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.parent.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.parent.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
   const entity = getEntity(true);

@@ -844,6 +844,67 @@ on('destroy-container', (el: HTMLElement) => {
   }
 });
 
+on('move-container', (el: HTMLElement) => {
+  const modal = document.getElementById('moveStorageModal');
+  if (!modal) return;
+  modal.dataset.containerId = el.dataset.id;
+  $('#moveStorageModal').modal('show');
+});
+
+on('move-storage', (el: HTMLElement) => {
+  const modal = document.getElementById('moveStorageUnitModal');
+  if (!modal) return;
+  const storageId = el.dataset.id;
+  modal.dataset.storageId = storageId;
+  // disable self + descendants as valid targets
+  modal.querySelectorAll('button[data-action="move-storage-target"]').forEach((btn: HTMLButtonElement) => {
+    btn.disabled = false;
+  });
+  const selfDetails = modal.querySelector(`details[data-id="${storageId}"]`) as HTMLDetailsElement | null;
+  const selfRoot = modal.querySelector(`.box[data-root-id="${storageId}"]`);
+  const scope = selfDetails ?? selfRoot;
+  if (scope) {
+    scope.querySelectorAll('button[data-action="move-storage-target"]').forEach((btn: HTMLButtonElement) => {
+      btn.disabled = true;
+    });
+    // also disable the root-level "Move here" if this unit is itself a root
+    if (selfRoot) {
+      const rootBtn = selfRoot.querySelector(':scope > div > div > button[data-action="move-storage-target"]') as HTMLButtonElement | null;
+      if (rootBtn) rootBtn.disabled = true;
+    }
+  }
+  $('#moveStorageUnitModal').modal('show');
+});
+
+on('move-storage-target', (el: HTMLElement) => {
+  const modal = document.getElementById('moveStorageUnitModal');
+  const storageId = modal?.dataset.storageId;
+  const newParentId = el.dataset.id;
+  if (!storageId || !newParentId) return;
+  ApiC.patch(`storage_units/${storageId}`, { parent_id: parseInt(newParentId, 10) })
+    .then(() => reloadElements(['storageDiv']))
+    .catch((error) => notify.error(error));
+});
+
+on('move-storage-to-root', () => {
+  const modal = document.getElementById('moveStorageUnitModal');
+  const storageId = modal?.dataset.storageId;
+  if (!storageId) return;
+  ApiC.patch(`storage_units/${storageId}`, { parent_id: null })
+    .then(() => reloadElements(['storageDiv']))
+    .catch((error) => notify.error(error));
+});
+
+on('move-container-target', (el: HTMLElement) => {
+  const modal = document.getElementById('moveStorageModal');
+  const containerId = modal?.dataset.containerId;
+  const newStorageId = el.dataset.id;
+  if (!containerId || !newStorageId) return;
+  ApiC.patch(`${entity.type}/${entity.id}/containers/${containerId}`, { storage_id: parseInt(newStorageId, 10) })
+    .then(() => reloadElements(['storageDivContent']))
+    .catch((error) => notify.error(error));
+});
+
 on('destroy-storage', (el: HTMLElement) => {
   if (confirm(i18next.t('generic-delete-warning'))) {
     ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));

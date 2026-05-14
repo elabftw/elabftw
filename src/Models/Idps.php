@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\CertPurpose;
 use Elabftw\Enums\IdpsPatchableColumns;
 use Elabftw\Enums\SamlBinding;
+use Elabftw\Interfaces\IdpsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\SetIdTrait;
@@ -30,7 +31,7 @@ use function sprintf;
 /**
  * An IDP is an Identity Provider. Used in SAML2 authentication context.
  */
-final class Idps extends AbstractRest
+final class Idps extends AbstractRest implements IdpsInterface
 {
     use SetIdTrait;
 
@@ -78,6 +79,7 @@ final class Idps extends AbstractRest
         return $this->selectOne();
     }
 
+    #[Override]
     public function selectOne(): array
     {
         $sql = sprintf($this->getReadSql(), 'WHERE idps.id = :id');
@@ -102,6 +104,7 @@ final class Idps extends AbstractRest
     /**
      * Used to get a list of enabled IDP for the login page, without having to load too much data
      */
+    #[Override]
     public function readAllSimpleEnabled(): array
     {
         $sql = 'SELECT idps.id, idps.name FROM idps WHERE idps.enabled = 1 ORDER BY name ASC';
@@ -114,6 +117,7 @@ final class Idps extends AbstractRest
     /**
      * Used to get a list of IDP for the sysconfig page, without having to load too much data
      */
+    #[Override]
     public function readAllLight(): array
     {
         $sql = 'SELECT idps.id, idps.name, idps.entityid, idps.enabled, idps_sources.url AS source_url
@@ -137,6 +141,7 @@ final class Idps extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function fullUpdate(array $idp): array
     {
         $IdpsCerts = new IdpsCerts($this->requester, $this->id);
@@ -151,6 +156,7 @@ final class Idps extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function upsert(int $sourceId, array $idps): int
     {
         foreach ($idps as $idp) {
@@ -177,6 +183,7 @@ final class Idps extends AbstractRest
         return count($idps);
     }
 
+    #[Override]
     public function getEnabled(?int $id = null): int
     {
         $sql = 'SELECT id FROM idps WHERE enabled = 1';
@@ -191,6 +198,7 @@ final class Idps extends AbstractRest
         return (int) $req->fetchColumn();
     }
 
+    #[Override]
     public function getEnabledByEntityId(string $entId): int
     {
         $sql = 'SELECT id FROM idps WHERE enabled = 1 AND entityid = :entId';
@@ -211,6 +219,7 @@ final class Idps extends AbstractRest
         return $this->Db->execute($req);
     }
 
+    #[Override]
     public function create(
         string $name,
         string $entityid,
@@ -241,6 +250,7 @@ final class Idps extends AbstractRest
         return $idpId;
     }
 
+    #[Override]
     public function findByEntityId(string $entityId): int
     {
         $sql = 'SELECT id FROM idps WHERE entityid = :entityId';

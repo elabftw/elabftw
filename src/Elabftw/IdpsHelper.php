@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\CertPurpose;
 use Elabftw\Enums\SamlBinding;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Idps;
 
@@ -39,6 +40,10 @@ final class IdpsHelper
     {
         $idpId = $this->Idps->getEnabled($id);
 
+        // no active IdP
+        if ($idpId === 0) {
+            throw new ResourceNotFoundException();
+        }
         return $this->getSettingsByIdp($idpId);
     }
 

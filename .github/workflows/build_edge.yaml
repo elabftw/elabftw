@@ -69,6 +69,7 @@ jobs:
       # https://docs.docker.com/build/ci/github-actions/cache/
       - name: Build release for all platforms and push to Docker Hub
         uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7
+        id: push
         with:
           context: .
           file: containers/elabimg/Dockerfile

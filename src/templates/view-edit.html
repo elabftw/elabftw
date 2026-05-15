@@ -15,7 +15,7 @@
   {% include 'bookings-email-modal.html' %}
 {% endif %}
 
-<div id='isArchivedDiv'>
+<div id='isArchivedDiv' data-cy='isArchivedDiv'>
 {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
   {{ 'This entry is archived: it will not appear in the listings by default.'|trans|msg('ok', false) }}
 {% endif %}
@@ -28,8 +28,8 @@
       {% for action in entityRequestActionsArr %}
         <li class='list-group-item'>
           <div class='d-flex'>
-            <i class='fas fa-person-circle-exclamation mr-2'></i>
-            <div>
+            <i class='fas fa-person-circle-exclamation color-blue mr-2'></i>
+            <div data-cy='hasRequestedAction'>
               {{- '%s has requested %s for this entity from %s'|trans|format(
                 action.requester_fullname,
                 action.description,
@@ -37,10 +37,10 @@
               ) }} <span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span>
               <div class='mt-2'>
                 {% if action.target_userid == App.Users.userData.userid %}
-                  <button type='button' class='btn btn-primary btn-sm mr-2' data-action='do-requestable-action' data-target='{{ action.target }}'>{{ action.action }}</button>
+                  <button type='button' class='btn btn-primary btn-sm mr-2' data-action='doRequestableAction' data-target='{{ action.target }}'>{{ action.action }}</button>
                 {% endif %}
                 {% if action.requester_userid == App.Users.userData.userid or action.target_userid == App.Users.userData.userid %}
-                  <button type='button' class='btn btn-sm btn-ghost' data-action='cancelrequestableaction' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
+                  <button type='button' class='btn btn-sm btn-ghost' data-action='cancelrequestableaction' data-cy='cancelRequestableAction' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>
                 {% endif %}
               </div>
             </div>

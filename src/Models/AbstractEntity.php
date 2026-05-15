@@ -510,7 +510,11 @@ abstract class AbstractEntity extends AbstractRest
             Action::AccessKey => (new AccessKeyHelper($this->entityType, $this->id))->toggleAccessKey(),
             Action::Archive => (
                 function () {
-                    $this->handleArchivedState(State::Normal, State::Archived, fn() => $this->lock());
+                    $this->handleArchivedState(
+                        from: State::Normal,
+                        to: State::Archived,
+                        toggleLock: fn() => $this->lock()
+                    );
                     // clear any request action
                     $RequestActions = new RequestActions($this->Users, $this);
                     $RequestActions->remove(RequestableAction::Archive);
@@ -529,7 +533,18 @@ abstract class AbstractEntity extends AbstractRest
             Action::SetNextCustomId => $this->update(new EntityParams('custom_id', $this->getNextIdempotentCustomId())),
             Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
-            Action::Unarchive => $this->handleArchivedState(from: State::Archived, to: State::Normal, toggleLock: fn() => $this->unlock()),
+            Action::Unarchive => (
+                function () {
+                    $this->handleArchivedState(
+                        from: State::Archived,
+                        to: State::Normal,
+                        toggleLock: fn() => $this->unlock()
+                    );
+                    // clear any request action
+                    $requestActions = new RequestActions($this->Users, $this);
+                    $requestActions->remove(RequestableAction::Unarchive);
+                }
+            )(),
             Action::UpdateMetadataField => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {

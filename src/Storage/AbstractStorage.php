@@ -44,7 +44,7 @@ abstract class AbstractStorage implements StorageInterface
     #[Override]
     public function getPath(string $relativePath = ''): string
     {
-        return '/elabftw/' . static::FOLDER . ($relativePath !== '' ? '/' . $relativePath : '');
+        return static::FOLDER . ($relativePath !== '' ? '/' . $relativePath : '');
     }
 
     abstract protected function getAdapter(): FilesystemAdapter;

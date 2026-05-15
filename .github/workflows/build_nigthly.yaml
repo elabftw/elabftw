@@ -6,7 +6,7 @@ on:
 
 ## GITHUB_TOKEN authentication
 permissions:
-  contents: write
+  contents: read
   id-token: write
   attestations: write
   artifact-metadata: write

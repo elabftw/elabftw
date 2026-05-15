@@ -7,7 +7,10 @@ on:
 
 ## GITHUB_TOKEN authentication
 permissions:
-  contents: write
+  contents: read
+  id-token: write
+  attestations: write
+  artifact-metadata: write
 
 jobs:
     buildandpush:
@@ -71,6 +74,7 @@ jobs:
             # https://docs.docker.com/build/ci/github-actions/cache/
             - name: Build latest release for all platforms and push to Docker Hub
               uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7
+              id: push
               with:
                 context: .
                 file: containers/elabimg/Dockerfile
@@ -107,3 +111,11 @@ jobs:
                     elabftw/chem-plugin:${{ github.ref_name }}
                     elabftw/chem-plugin:stable
                     elabftw/chem-plugin:latest
+
+            # ATTESTATION
+            - name: Create build provenance attestation
+              uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+              with:
+                subject-name: docker.io/elabftw/elabimg
+                subject-digest: ${{ steps.push.outputs.digest }}
+                push-to-registry: true

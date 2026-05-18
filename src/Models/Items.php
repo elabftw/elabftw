@@ -73,7 +73,9 @@ final class Items extends AbstractConcreteEntity
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
-        $body = Filter::body($body);
+        $body = $contentType === BodyContentType::Markdown
+            ? Filter::bodyMarkdown($body)
+            : Filter::body($body);
         if (empty($body)) {
             $body = null;
         }

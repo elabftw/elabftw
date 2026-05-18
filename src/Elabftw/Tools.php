@@ -20,10 +20,13 @@ use function date;
 use function htmlspecialchars;
 use function implode;
 use function pathinfo;
+use function count;
+use function preg_replace_callback;
 use function random_bytes;
 use function mb_substr;
 use function sha1;
 use function str_split;
+use function strtr;
 use function trim;
 use function chr;
 use function explode;
@@ -39,6 +42,9 @@ use function vsprintf;
  */
 final class Tools
 {
+    private const string DISPLAY_MATH_REGEX = '/(^|\R)([ \t]*(?:\$\$[ \t]*\R[\s\S]*?\R[ \t]*\$\$|\\\\\[[ \t]*\R[\s\S]*?\R[ \t]*\\\\\])[ \t]*(?=\R|$))/';
+    private const string MATH_BLOCK_PLACEHOLDER = 'ELABFTW_MATH_BLOCK_';
+
     public static function getUuidv4(): string
     {
         // 16 bytes = 128 bits of random data
@@ -60,15 +66,46 @@ final class Tools
             'allow_unsafe_links' => false,
             'max_nesting_level' => 42,
         );
+        $originalMd = $md;
+        [$md, $displayMathBlocks] = self::protectDisplayMathBlocks($md);
 
         try {
             $converter = new GithubFlavoredMarkdownConverter($config);
-            return trim($converter->convert($md)->getContent(), "\n");
+            $html = trim($converter->convert($md)->getContent(), "\n");
+            return self::restoreDisplayMathBlocks($html, $displayMathBlocks);
         } catch (UnexpectedEncodingException) {
             // fix for incorrect utf8 encoding, just return md and hope it's html
             // so at least the thing is displayed instead of triggering a fatal error
-            return $md;
+            return $originalMd;
         }
+    }
+
+    /**
+     * Keep Markdown parsers from interpreting TeX control sequences inside display math.
+     *
+     * @return array{0: string, 1: array<string, string>}
+     */
+    private static function protectDisplayMathBlocks(string $markdown): array
+    {
+        $mathBlocks = array();
+        $protectedMarkdown = preg_replace_callback(self::DISPLAY_MATH_REGEX, function (array $matches) use (&$mathBlocks): string {
+            $placeholder = self::MATH_BLOCK_PLACEHOLDER . count($mathBlocks) . '__';
+            $mathBlocks[$placeholder] = self::eLabHtmlspecialchars($matches[2]);
+            return $matches[1] . $placeholder;
+        }, $markdown);
+
+        return array($protectedMarkdown ?? $markdown, $mathBlocks);
+    }
+
+    /**
+     * @param array<string, string> $mathBlocks
+     */
+    private static function restoreDisplayMathBlocks(string $html, array $mathBlocks): string
+    {
+        if (empty($mathBlocks)) {
+            return $html;
+        }
+        return strtr($html, $mathBlocks);
     }
 
     /**

@@ -197,10 +197,7 @@ final class Filter
         if ($input === null) {
             return '';
         }
-        // use strlen() instead of mb_strlen() because we want the size in bytes
-        if (strlen($input) > self::MAX_BODY_SIZE) {
-            throw new ImproperActionException('Content is too big! Cannot save!');
-        }
+        self::validateBodySize($input);
         // create base config for html5
         $config = HTMLPurifier_HTML5Config::createDefault();
         // allow only certain elements
@@ -274,6 +271,18 @@ final class Filter
         return $purifier->purify($input);
     }
 
+    /**
+     * Validate a Markdown body without treating the Markdown source as HTML.
+     */
+    public static function bodyMarkdown(?string $input = null): string
+    {
+        if ($input === null) {
+            return '';
+        }
+        self::validateBodySize($input);
+        return $input;
+    }
+
     public static function pem(string $pem): string
     {
         // Trim outer whitespace
@@ -285,5 +294,13 @@ final class Filter
 
         // Remove all whitespace (newlines, spaces, tabs)
         return str_replace(array("\r", "\n", ' ', "\t"), '', $pem ?? '');
+    }
+
+    private static function validateBodySize(string $input): void
+    {
+        // use strlen() instead of mb_strlen() because we want the size in bytes
+        if (strlen($input) > self::MAX_BODY_SIZE) {
+            throw new ImproperActionException('Content is too big! Cannot save!');
+        }
     }
 }

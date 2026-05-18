@@ -14,6 +14,9 @@ import { Entity, Target } from './interfaces';
 import { ApiC } from './api';
 declare const MathJax: MathJaxObject;
 
+const DISPLAY_MATH_REGEX = /(^|\r\n|\r|\n)([ \t]*(?:\$\$[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\$\$|\\\[[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\\\])[ \t]*(?=\r\n|\r|\n|$))/g;
+const MATH_BLOCK_PLACEHOLDER = 'ELABFTW_MATH_BLOCK_';
+
 interface EditorInterface {
   type: string;
   typeAsInt: number;
@@ -32,6 +35,43 @@ class Editor {
     params[Target.ContentType] = this.type === 'tiny' ? 2 : 1;
     return ApiC.patch(`${entity.type}/${entity.id}`, params);
   }
+}
+
+interface ProtectedMath {
+  markdown: string;
+  mathBlocks: Record<string, string>;
+}
+
+function protectDisplayMathBlocks(markdown: string): ProtectedMath {
+  const mathBlocks: Record<string, string> = {};
+  let index = 0;
+  const protectedMarkdown = markdown.replace(DISPLAY_MATH_REGEX, (match, lineBreak, math) => {
+    const placeholder = `${MATH_BLOCK_PLACEHOLDER}${index}__`;
+    mathBlocks[placeholder] = escapeMathForHtml(math);
+    index++;
+    return lineBreak + placeholder;
+  });
+
+  return {
+    markdown: protectedMarkdown,
+    mathBlocks,
+  };
+}
+
+function restoreDisplayMathBlocks(html: string, mathBlocks: Record<string, string>): string {
+  Object.entries(mathBlocks).forEach(([placeholder, math]) => {
+    html = html.split(placeholder).join(math);
+  });
+  return html;
+}
+
+function escapeMathForHtml(math: string): string {
+  return math
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 class TinyEditor extends Editor implements EditorInterface {
@@ -71,7 +111,8 @@ export class MdEditor extends Editor implements EditorInterface {
           MathJax.typeset();
         }, 1);
         // parse with marked and return the html
-        return marked(ed.$textarea.val());
+        const protectedMath = protectDisplayMathBlocks(ed.$textarea.val() as string);
+        return restoreDisplayMathBlocks(marked(protectedMath.markdown) as string, protectedMath.mathBlocks);
       },
     });
   }

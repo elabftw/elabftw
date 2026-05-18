@@ -41,6 +41,57 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($html, Tools::md2html($md));
     }
 
+    public function testMd2htmlPreservesDisplayMathLineBreaks(): void
+    {
+        $md = <<<'MD'
+**matrix**
+
+$$
+\begin{bmatrix}
+H & \mathbf{1} \\
+\mathbf{1}^{T} & 0
+\end{bmatrix}
+$$
+MD;
+        $expected = <<<'HTML'
+$$
+\begin{bmatrix}
+H &amp; \mathbf{1} \\
+\mathbf{1}^{T} &amp; 0
+\end{bmatrix}
+$$
+HTML;
+        $html = Tools::md2html($md);
+
+        $this->assertStringContainsString('<strong>matrix</strong>', $html);
+        $this->assertStringContainsString($expected, $html);
+        $this->assertStringNotContainsString('<br', $html);
+    }
+
+    public function testMd2htmlPreservesBracketedDisplayMathLineBreaks(): void
+    {
+        $md = <<<'MD'
+\[
+\begin{align}
+a &= b \\
+c &= d
+\end{align}
+\]
+MD;
+        $expected = <<<'HTML'
+\[
+\begin{align}
+a &amp;= b \\
+c &amp;= d
+\end{align}
+\]
+HTML;
+        $html = Tools::md2html($md);
+
+        $this->assertStringContainsString($expected, $html);
+        $this->assertStringNotContainsString('<br', $html);
+    }
+
     public function testGetShortElabid(): void
     {
         $this->assertEquals('7995340c', Tools::getShortElabid('20220627-7995340c1921f38fd833c447be50b7101e4f852c'));

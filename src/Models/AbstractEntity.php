@@ -546,8 +546,9 @@ abstract class AbstractEntity extends AbstractRest
             ),
             Action::Update => (
                 function () use ($params) {
+                    $bodyContentType = isset($params['content_type']) ? (int) $params['content_type'] : null;
                     foreach ($params as $key => $value) {
-                        $this->update(new EntityParams($key, (string) $value));
+                        $this->update(new EntityParams($key, (string) $value, $bodyContentType));
                     }
                 }
             )(),
@@ -623,8 +624,8 @@ abstract class AbstractEntity extends AbstractRest
         // add the body as html
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
-        if ($this->entityData['content_type'] === BodyContentType::Markdown->value) {
-            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
+        if ((int) $this->entityData['content_type'] === BodyContentType::Markdown->value) {
+            $this->entityData['body_html'] = Filter::body(Tools::md2html($this->entityData['body'] ?? ''));
         }
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
@@ -851,7 +852,7 @@ abstract class AbstractEntity extends AbstractRest
     // Update an entity. The revision is saved before so it can easily compare old and new body.
     public function update(ContentParamsInterface $params): bool
     {
-        $content = $params->getContent();
+        $content = $this->getContentForUpdate($params);
         if ($params->getTarget() === 'bodyappend') {
             $content = $this->readOne()['body'] . $content;
         }
@@ -900,6 +901,20 @@ abstract class AbstractEntity extends AbstractRest
             }
             throw $e;
         }
+    }
+
+    private function getContentForUpdate(ContentParamsInterface $params): mixed
+    {
+        $bodyContentType = $params instanceof EntityParams
+            ? ($params->getBodyContentType() ?? $this->entityData['content_type'] ?? null)
+            : ($this->entityData['content_type'] ?? null);
+        if (
+            ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend')
+            && (int) $bodyContentType === BodyContentType::Markdown->value
+        ) {
+            return Filter::bodyMarkdown($params->getUnfilteredContent());
+        }
+        return $params->getContent();
     }
 
     public function timestamp(): array

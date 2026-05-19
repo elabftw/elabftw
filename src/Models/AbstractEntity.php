@@ -94,14 +94,17 @@ use function str_contains;
 use function _;
 use function array_key_exists;
 use function explode;
+use function filter_var;
 use function intval;
 use function is_array;
+use function is_int;
 use function is_string;
 use function json_decode;
 use function str_ends_with;
 use function str_replace;
 use function ucfirst;
 
+use const FILTER_VALIDATE_INT;
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
 
@@ -546,7 +549,7 @@ abstract class AbstractEntity extends AbstractRest
             ),
             Action::Update => (
                 function () use ($params) {
-                    $bodyContentType = isset($params['content_type']) ? (int) $params['content_type'] : null;
+                    $bodyContentType = $this->getBodyContentTypeFromParams($params);
                     foreach ($params as $key => $value) {
                         $this->update(new EntityParams($key, (string) $value, $bodyContentType));
                     }
@@ -903,20 +906,6 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    private function getContentForUpdate(ContentParamsInterface $params): mixed
-    {
-        $bodyContentType = $params instanceof EntityParams
-            ? ($params->getBodyContentType() ?? $this->entityData['content_type'] ?? null)
-            : ($this->entityData['content_type'] ?? null);
-        if (
-            ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend')
-            && (int) $bodyContentType === BodyContentType::Markdown->value
-        ) {
-            return Filter::bodyMarkdown($params->getUnfilteredContent());
-        }
-        return $params->getContent();
-    }
-
     public function timestamp(): array
     {
         $Config = Config::getConfig();
@@ -1151,7 +1140,38 @@ abstract class AbstractEntity extends AbstractRest
         return $default;
     }
 
-    protected function enforceTemplate(array $teamConfigArr): void {}
+    protected function enforceTemplate(array $teamConfigArr): void
+    {
+    }
+
+    private function getBodyContentTypeFromParams(array $params): ?BodyContentType
+    {
+        if (!isset($params['content_type'])) {
+            return null;
+        }
+        $contentType = $params['content_type'];
+        if (is_string($contentType)) {
+            $contentType = filter_var($contentType, FILTER_VALIDATE_INT);
+        }
+        if (!is_int($contentType)) {
+            throw new ImproperActionException('Invalid content_type parameter.');
+        }
+        return BodyContentType::tryFrom($contentType) ?? throw new ImproperActionException('Invalid content_type parameter.');
+    }
+
+    private function getContentForUpdate(ContentParamsInterface $params): mixed
+    {
+        $bodyContentType = $params instanceof EntityParams
+            ? ($params->getBodyContentType() ?? BodyContentType::tryFrom((int) ($this->entityData['content_type'] ?? 0)))
+            : BodyContentType::tryFrom((int) ($this->entityData['content_type'] ?? 0));
+        if (
+            ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend')
+            && $bodyContentType === BodyContentType::Markdown
+        ) {
+            return Filter::bodyMarkdown($params->getUnfilteredContent());
+        }
+        return $params->getContent();
+    }
 
     private function handleCanUpdate(array $params, AccessType $type): void
     {

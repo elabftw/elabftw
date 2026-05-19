@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Params;
 
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\Currency;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ContentParamsInterface;
@@ -19,9 +20,15 @@ use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Override;
 
+use function filter_var;
+use function is_int;
+use function is_string;
+
+use const FILTER_VALIDATE_INT;
+
 final class EntityParams extends ContentParams implements ContentParamsInterface
 {
-    public function __construct(string $target, mixed $content, private readonly ?int $bodyContentType = null)
+    public function __construct(string $target, mixed $content, private readonly ?BodyContentType $bodyContentType = null)
     {
         parent::__construct($target, $content);
     }
@@ -38,7 +45,8 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
             'canread', 'canwrite', 'canbook', 'canread_target', 'canwrite_target' => $this->getCanJson(),
             'canread_base', 'canwrite_base', 'canbook_base', 'canread_target_base', 'canwrite_target_base', 'canbook_target_base' => $this->getCanBase(),
             'color' => Check::color($this->asString()),
-            'book_max_minutes', 'book_max_slots', 'book_cancel_minutes', 'booking_window_days', 'content_type', 'proc_pack_qty', 'rating', 'userid', 'team' => $this->asInt(),
+            'book_max_minutes', 'book_max_slots', 'book_cancel_minutes', 'booking_window_days', 'proc_pack_qty', 'rating', 'userid', 'team' => $this->asInt(),
+            'content_type' => $this->getContentType(),
             'state' => $this->getState(),
             'custom_id', 'status', 'category', 'storage', 'qty_stored' => $this->getPositiveIntOrNull(),
             'is_procurable', 'book_can_overlap', 'book_is_cancellable', 'book_users_can_in_past', 'is_bookable', 'canread_is_immutable', 'canwrite_is_immutable', 'hide_main_text' => $this->getBinary(),
@@ -56,8 +64,20 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
         return parent::getColumn();
     }
 
-    public function getBodyContentType(): ?int
+    public function getBodyContentType(): ?BodyContentType
     {
         return $this->bodyContentType;
+    }
+
+    private function getContentType(): int
+    {
+        $contentType = $this->content;
+        if (is_string($contentType)) {
+            $contentType = filter_var($contentType, FILTER_VALIDATE_INT);
+        }
+        if (!is_int($contentType)) {
+            throw new ImproperActionException('Invalid content_type parameter.');
+        }
+        return BodyContentType::tryFrom($contentType)?->value ?? throw new ImproperActionException('Invalid content_type parameter.');
     }
 }

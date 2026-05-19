@@ -81,34 +81,6 @@ final class Tools
     }
 
     /**
-     * Keep Markdown parsers from interpreting TeX control sequences inside display math.
-     *
-     * @return array{0: string, 1: array<string, string>}
-     */
-    private static function protectDisplayMathBlocks(string $markdown): array
-    {
-        $mathBlocks = array();
-        $protectedMarkdown = preg_replace_callback(self::DISPLAY_MATH_REGEX, function (array $matches) use (&$mathBlocks): string {
-            $placeholder = self::MATH_BLOCK_PLACEHOLDER . count($mathBlocks) . '__';
-            $mathBlocks[$placeholder] = self::eLabHtmlspecialchars($matches[2]);
-            return $matches[1] . $placeholder;
-        }, $markdown);
-
-        return array($protectedMarkdown ?? $markdown, $mathBlocks);
-    }
-
-    /**
-     * @param array<string, string> $mathBlocks
-     */
-    private static function restoreDisplayMathBlocks(string $html, array $mathBlocks): string
-    {
-        if (empty($mathBlocks)) {
-            return $html;
-        }
-        return strtr($html, $mathBlocks);
-    }
-
-    /**
      * Show the units in human format from bytes.
      *
      * @param int $bytes size in bytes
@@ -195,5 +167,33 @@ final class Tools
     public static function eLabHtmlspecialchars(mixed $string): string
     {
         return htmlspecialchars((string) $string, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false);
+    }
+
+    /**
+     * Keep Markdown parsers from interpreting TeX control sequences inside display math.
+     *
+     * @return array{0: string, 1: array<string, string>}
+     */
+    private static function protectDisplayMathBlocks(string $markdown): array
+    {
+        $mathBlocks = array();
+        $protectedMarkdown = preg_replace_callback(self::DISPLAY_MATH_REGEX, function (array $matches) use (&$mathBlocks): string {
+            $placeholder = self::MATH_BLOCK_PLACEHOLDER . count($mathBlocks) . '__';
+            $mathBlocks[$placeholder] = self::eLabHtmlspecialchars($matches[2]);
+            return $matches[1] . $placeholder;
+        }, $markdown);
+
+        return array($protectedMarkdown ?? $markdown, $mathBlocks);
+    }
+
+    /**
+     * @param array<string, string> $mathBlocks
+     */
+    private static function restoreDisplayMathBlocks(string $html, array $mathBlocks): string
+    {
+        if (empty($mathBlocks)) {
+            return $html;
+        }
+        return strtr($html, $mathBlocks);
     }
 }

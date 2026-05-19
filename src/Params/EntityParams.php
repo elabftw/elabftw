@@ -78,6 +78,6 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
         if (!is_int($contentType)) {
             throw new ImproperActionException('Invalid content_type parameter.');
         }
-        return BodyContentType::tryFrom($contentType)?->value ?? throw new ImproperActionException('Invalid content_type parameter.');
+        return BodyContentType::tryFrom($contentType)->value ?? throw new ImproperActionException('Invalid content_type parameter.');
     }
 }

@@ -1140,9 +1140,7 @@ abstract class AbstractEntity extends AbstractRest
         return $default;
     }
 
-    protected function enforceTemplate(array $teamConfigArr): void
-    {
-    }
+    protected function enforceTemplate(array $teamConfigArr): void {}
 
     private function getBodyContentTypeFromParams(array $params): ?BodyContentType
     {

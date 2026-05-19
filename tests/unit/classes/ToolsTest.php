@@ -44,23 +44,23 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
     public function testMd2htmlPreservesDisplayMathLineBreaks(): void
     {
         $md = <<<'MD'
-**matrix**
+            **matrix**
 
-$$
-\begin{bmatrix}
-H & \mathbf{1} \\
-\mathbf{1}^{T} & 0
-\end{bmatrix}
-$$
-MD;
+            $$
+            \begin{bmatrix}
+            H & \mathbf{1} \\
+            \mathbf{1}^{T} & 0
+            \end{bmatrix}
+            $$
+            MD;
         $expected = <<<'HTML'
-$$
-\begin{bmatrix}
-H &amp; \mathbf{1} \\
-\mathbf{1}^{T} &amp; 0
-\end{bmatrix}
-$$
-HTML;
+            $$
+            \begin{bmatrix}
+            H &amp; \mathbf{1} \\
+            \mathbf{1}^{T} &amp; 0
+            \end{bmatrix}
+            $$
+            HTML;
         $html = Tools::md2html($md);
 
         $this->assertStringContainsString('<strong>matrix</strong>', $html);
@@ -71,21 +71,21 @@ HTML;
     public function testMd2htmlPreservesBracketedDisplayMathLineBreaks(): void
     {
         $md = <<<'MD'
-\[
-\begin{align}
-a &= b \\
-c &= d
-\end{align}
-\]
-MD;
+            \[
+            \begin{align}
+            a &= b \\
+            c &= d
+            \end{align}
+            \]
+            MD;
         $expected = <<<'HTML'
-\[
-\begin{align}
-a &amp;= b \\
-c &amp;= d
-\end{align}
-\]
-HTML;
+            \[
+            \begin{align}
+            a &amp;= b \\
+            c &amp;= d
+            \end{align}
+            \]
+            HTML;
         $html = Tools::md2html($md);
 
         $this->assertStringContainsString($expected, $html);

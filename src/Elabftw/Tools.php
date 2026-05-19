@@ -43,6 +43,7 @@ use function vsprintf;
 final class Tools
 {
     private const string DISPLAY_MATH_REGEX = '/(^|\R)([ \t]*(?:\$\$[ \t]*\R[\s\S]*?\R[ \t]*\$\$|\\\\\[[ \t]*\R[\s\S]*?\R[ \t]*\\\\\])[ \t]*(?=\R|$))/';
+
     private const string MATH_BLOCK_PLACEHOLDER = 'ELABFTW_MATH_BLOCK_';
 
     public static function getUuidv4(): string

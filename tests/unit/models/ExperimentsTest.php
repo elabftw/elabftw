@@ -34,6 +34,7 @@ use function count;
 use function is_array;
 use function json_decode;
 use function sprintf;
+use function str_replace;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -136,13 +137,13 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testMarkdownBodyPreservesLatexAlignmentAmpersands(): void
     {
         $body = <<<'MD'
-$$
-\begin{bmatrix}
-H & \mathbf{1} \\
-\mathbf{1}^{T} & 0
-\end{bmatrix}
-$$
-MD;
+            $$
+            \begin{bmatrix}
+            H & \mathbf{1} \\
+            \mathbf{1}^{T} & 0
+            \end{bmatrix}
+            $$
+            MD;
         $new = $this->Experiments->create(body: $body, contentType: BodyContentType::Markdown);
         $this->Experiments->setId($new);
         $entityData = $this->Experiments->readOne();
@@ -161,13 +162,13 @@ MD;
     public function testMarkdownBodyPreservesLatexAlignmentAmpersandsWhenSwitchingContentType(): void
     {
         $body = <<<'MD'
-$$
-\begin{bmatrix}
-H & \mathbf{1} \\
-\mathbf{1}^{T} & 0
-\end{bmatrix}
-$$
-MD;
+            $$
+            \begin{bmatrix}
+            H & \mathbf{1} \\
+            \mathbf{1}^{T} & 0
+            \end{bmatrix}
+            $$
+            MD;
         $new = $this->Experiments->create();
         $this->Experiments->setId($new);
         $entityData = $this->Experiments->patch(Action::Update, array(

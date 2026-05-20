@@ -20,216 +20,200 @@ import { ApiC } from './api';
 import { notify } from './notify';
 import i18next from './i18n';
 
-// allow filtering by values for cells that render icons or badges (team, isSysadmin, etc.,)
+// allow filtering by displayed values for cells that render their raw value differently
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
 const lastLoginText = v => v === null ? i18next.t('never') : v;
-// allow filtering for "admin" as well as team name
-//const teamsText = teams => teams?.map(t => `${t.name} ${t.is_admin ? i18next.t('admin') : i18next.t('user')}`).join(' ') ?? '';
+let entitiesTableRoot = null;
 
-if (document.getElementById('entities-table')) {
-  ModuleRegistry.registerModules([ClientSideRowModelModule]);
+const rowSelection = {
+  mode: 'multiRow',
+  headerCheckbox: false,
+};
 
-  const rowSelection = {
-    mode: 'multiRow',
-    headerCheckbox: false,
+const EntitiesTable = () => {
+  const [rowData, setRowData] = useState([]);
+  const [gridApi, setGridApi] = useState(null);
+  const isDark = document.documentElement.classList.contains('dark-mode');
+
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+    fetchData();
+  };
+  const onQuickFilterChange = (e) => {
+    gridApi.setGridOption('quickFilterText', e.target.value);
+  };
+  const PastDateRenderer = ({ value }) => {
+    return value === i18next.t('never')
+      ? <span className='font-italic'>{value}</span>
+      : <span>{value}</span>;
   };
 
-  const EntitiesTable = () => {
-    const [rowData, setRowData] = useState([]);
-    const [gridApi, setGridApi] = useState(null);
-    const isDark = document.documentElement.classList.contains('dark-mode');
+  const BinaryRenderer = ({ value }) => {
+    return value === i18next.t('yes')
+      ? <span title={value}><i className='fas fa-circle-check mr-2'></i>{value}</span>
+      : <span title={value}><i className='fas fa-circle-xmark mr-2'></i>{value}</span>;
+  };
 
-    const onGridReady = (params) => {
-      setGridApi(params.api);
-      fetchData();
-    };
-    const onQuickFilterChange = (e) => {
-      gridApi.setGridOption('quickFilterText', e.target.value);
-    };
-    const PastDateRenderer = ({ value }) => {
-      return value === i18next.t('never')
-        ? <span className='font-italic'>{value}</span>
-        : <span>{value}</span>;
-    };
+  const TagsRenderer = ({ value }) => {
+    const tags = Array.isArray(value) ? value : [];
 
-    const BinaryRenderer = ({ value }) => {
-      return value === i18next.t('yes')
-        ? <span title={value}><i className='fas fa-circle-check mr-2'></i>{value}</span>
-        : <span title={value}><i className='fas fa-circle-xmark mr-2'></i>{value}</span>;
-    };
-
-    const TagsRenderer = ({ value }) => {
-      const tags = Array.isArray(value) ? value : [];
-
-      if (tags.length === 0) {
-        return null;
-      }
-
-      return (
-        <span className='d-flex flex-wrap'>
-          {tags.map(tagData => {
-            const params = new URLSearchParams();
-            params.set('mode', 'show');
-            params.append('tags[]', tagData.tag);
-
-            return (
-              <a
-                key={tagData.id ?? tagData.tag}
-                className={`tag margin-1px${tagData.is_favorite ? ' favorite' : ''}`}
-                href={`${window.location.pathname}?${params.toString()}`}
-                onClick={event => event.stopPropagation()}
-              >
-                {tagData.tag}
-              </a>
-            );
-          })}
-        </span>
-      );
-    };
-
-    const [columnDefs] = useState([
-      { field: 'id', headerName: i18next.t('id'), pinned: 'left' },
-      { field: 'title', headerName: i18next.t('title') },
-      { field: 'team_name', headerName: i18next.t('team') },
-      { field: 'date', headerName: i18next.t('started-at'), valueGetter: p => lastLoginText(p.data.date), filterValueGetter: p => lastLoginText(p.data.date), cellRenderer: PastDateRenderer},
-      { field: 'category', headerName: i18next.t('category'), valueGetter: p => p.data.category_title },
-      { field: 'status', headerName: i18next.t('status'), valueGetter: p => p.data.status_title  },
-      { field: 'tags_decoded', headerName: i18next.t('tags'), valueGetter: p => p.data.tags_decoded, cellRenderer: TagsRenderer },
-      { field: 'fullname', headerName: i18next.t('owner') },
-      { field: 'timestamped', headerName: i18next.t('Is timestamped'), valueGetter: p => yesNo(p.data.timestamped), filterValueGetter: p => yesNo(p.data.timestamped), cellRenderer: BinaryRenderer },
-      { field: 'locked', headerName: i18next.t('Is locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },
-    ]);
-
-     const getEntityFilterParams = event => {
-      const detail = event?.detail;
-
-      if (detail instanceof URLSearchParams) {
-        return detail;
-      }
-
-      if (typeof detail === 'string') {
-        return new URLSearchParams(detail);
-      }
-
-      if (detail?.params) {
-        return new URLSearchParams(detail.params);
-      }
-
-      if (detail?.search) {
-        return new URLSearchParams(detail.search);
-      }
-
-      return new URLSearchParams(document.location.search);
-    };
-
-    // all the entries are loaded in the table, which does client side pagination
-    const fetchData = useCallback(async event => {
-      console.log('fetching data');
-      const params = getEntityFilterParams(event);
-      const queryString = params.toString();
-
-      try {
-        const entities = await ApiC.getJson(`experiments?limit=999999${queryString ? `&${queryString}` : ''}`);
-        console.log(queryString);
-        setRowData(entities);
-      } catch (error) {
-        notify.error(error);
-        console.error(`Could not load entities: ${error}`);
-      }
-    }, []);
-
-
-    // Load data on component mount and reload when entity filters change
-    useEffect(() => {
-      const handleEntityFiltersChanged = event => {
-        fetchData(event);
-      };
-
-      document.addEventListener('entity-filters-changed', handleEntityFiltersChanged);
-
-      return () => {
-        document.removeEventListener('entity-filters-changed', handleEntityFiltersChanged);
-      };
-    }, [fetchData]);
-
-    /*
-    // Load data on component mount
-    useEffect(() => {
-      fetchData();
-    }, []);
-
-    // all the entries are loaded in the table, which does client side pagination
-    const fetchData = async () => {
-      const params = new URLSearchParams(document.location.search);
-      try {
-        const entities = await ApiC.getJson(`experiments?limit=999999&${params.toString()}`);
-        setRowData(entities);
-      } catch (error) {
-        notify.error(error);
-        console.error(`Could not load entities: ${error}`);
-      }
-    };
-    */
-
-    // when a row is selected with the checkbox
-    const selectionChanged = (event) => {
-      // we store the selected rows as data-target string on the delete and restore buttons
-      const selectedRows = event.api.getSelectedRows();
-      // TODO
-
-    };
-
-    const defaultColDef = useMemo(() => {
-      return {
-        filter: 'agTextColumnFilter',
-        floatingFilter: true,
-        onCellValueChanged: (event) => {
-          const params = {};
-          params[event.column.colId] = event.newValue;
-          ApiC.patch(`users/${event.data.id}`, params);
-        }
-      };
-    }, []);
-
-    const cellDoubleClicked = (event) => {
-      window.location = `?mode=view&id=${event.data.id}`;
-    };
+    if (tags.length === 0) {
+      return null;
+    }
 
     return (
-      <>
-        <div
-          className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
-          <AgGridReact
-            rowData={rowData}
-            columnDefs={columnDefs}
-            defaultColDef={defaultColDef}
-            onGridReady={onGridReady}
-            rowSelection={rowSelection}
-            onCellDoubleClicked={cellDoubleClicked}
-            onSelectionChanged={selectionChanged}
-            pagination={true}
-            paginationPageSize={15}
-            paginationPageSizeSelector={[15, 50, 100, 500]}
-          />
-        </div>
-      </>
+      <span className='d-flex flex-wrap'>
+        {tags.map(tagData => {
+          const params = new URLSearchParams();
+          params.set('mode', 'show');
+          params.append('tags[]', tagData.tag);
+
+          return (
+            <a
+              key={tagData.id ?? tagData.tag}
+              className={`tag margin-1px${tagData.is_favorite ? ' favorite' : ''}`}
+              href={`${window.location.pathname}?${params.toString()}`}
+              onClick={event => event.stopPropagation()}
+            >
+              {tagData.tag}
+            </a>
+          );
+        })}
+      </span>
     );
   };
 
-  // In order to reload the table, we wrap it in another element with a key that is incremented when a dataReload event happens
-  // This change will trigger a full remount of the element, and the table will be updated
-  const App = () => <EntitiesTable/>;
-  /*
-  const App = () => {
-    const [reloadKey, setReloadKey] = useState(0);
-    // trigger this with document.dispatchEvent(new CustomEvent('entity-filters-changed'))
-    document.addEventListener('entity-filters-changed', () => setReloadKey(prevKey => prevKey + 1));
-    return <GridExample key={reloadKey}/>;
-  };
-  */
+  const [columnDefs] = useState([
+    { field: 'id', headerName: i18next.t('id'), pinned: 'left' },
+    { field: 'title', headerName: i18next.t('title') },
+    { field: 'team_name', headerName: i18next.t('team') },
+    { field: 'date', headerName: i18next.t('started-at'), valueGetter: p => lastLoginText(p.data.date), filterValueGetter: p => lastLoginText(p.data.date), cellRenderer: PastDateRenderer},
+    { field: 'category', headerName: i18next.t('category'), valueGetter: p => p.data.category_title },
+    { field: 'status', headerName: i18next.t('status'), valueGetter: p => p.data.status_title  },
+    { field: 'tags_decoded', headerName: i18next.t('tags'), valueGetter: p => p.data.tags_decoded, cellRenderer: TagsRenderer },
+    { field: 'fullname', headerName: i18next.t('owner') },
+    { field: 'timestamped', headerName: i18next.t('Is timestamped'), valueGetter: p => yesNo(p.data.timestamped), filterValueGetter: p => yesNo(p.data.timestamped), cellRenderer: BinaryRenderer },
+    { field: 'locked', headerName: i18next.t('Is locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },
+  ]);
 
-  const root = createRoot(document.getElementById('entities-table'));
-  root.render(
-    <App/>
+   const getEntityFilterParams = event => {
+    const detail = event?.detail;
+
+    if (detail instanceof URLSearchParams) {
+      return detail;
+    }
+
+    if (typeof detail === 'string') {
+      return new URLSearchParams(detail);
+    }
+
+    if (detail?.params) {
+      return new URLSearchParams(detail.params);
+    }
+
+    if (detail?.search) {
+      return new URLSearchParams(detail.search);
+    }
+
+    return new URLSearchParams(document.location.search);
+  };
+
+  // all the entries are loaded in the table, which does client side pagination
+  const fetchData = useCallback(async event => {
+    const params = getEntityFilterParams(event);
+    const queryString = params.toString();
+
+    try {
+      const entities = await ApiC.getJson(`experiments?${queryString ? `&${queryString}` : ''}`);
+      setRowData(entities);
+    } catch (error) {
+      notify.error(error);
+      console.error(`Could not load entities: ${error}`);
+    }
+  }, []);
+
+
+  // Load data on component mount and reload when entity filters change
+  useEffect(() => {
+    const handleEntityFiltersChanged = event => {
+      fetchData(event);
+    };
+
+    document.addEventListener('entity-filters-changed', handleEntityFiltersChanged);
+
+    return () => {
+      document.removeEventListener('entity-filters-changed', handleEntityFiltersChanged);
+    };
+  }, [fetchData]);
+
+  // when a row is selected with the checkbox
+  const selectionChanged = (event) => {
+    // we store the selected rows as data-target string on the delete and restore buttons
+    const selectedRows = event.api.getSelectedRows();
+    // TODO
+
+  };
+
+  const defaultColDef = useMemo(() => {
+    return {
+      filter: 'agTextColumnFilter',
+      floatingFilter: true,
+      onCellValueChanged: (event) => {
+        const params = {};
+        params[event.column.colId] = event.newValue;
+        ApiC.patch(`users/${event.data.id}`, params);
+      }
+    };
+  }, []);
+
+  const cellDoubleClicked = (event) => {
+    window.location = `?mode=view&id=${event.data.id}`;
+  };
+
+  return (
+    <>
+      <div
+        className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
+        <AgGridReact
+          rowData={rowData}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          onGridReady={onGridReady}
+          rowSelection={rowSelection}
+          onCellDoubleClicked={cellDoubleClicked}
+          onSelectionChanged={selectionChanged}
+          pagination={true}
+          paginationPageSize={15}
+          paginationPageSizeSelector={[15, 50, 100, 500]}
+        />
+      </div>
+    </>
   );
-}
+};
+
+const App = () => <EntitiesTable/>;
+
+export const mountEntitiesTable = rootElement => {
+  if (!rootElement) {
+    return null;
+  }
+
+  ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
+  if (!entitiesTableRoot) {
+    entitiesTableRoot = createRoot(rootElement);
+  }
+
+  entitiesTableRoot.render(<App/>);
+
+  return entitiesTableRoot;
+};
+
+export const unmountEntitiesTable = () => {
+  if (!entitiesTableRoot) {
+    return;
+  }
+
+  entitiesTableRoot.unmount();
+  entitiesTableRoot = null;
+};

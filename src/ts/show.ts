@@ -18,19 +18,21 @@ import i18next from './i18n';
 import { ApiC } from './api';
 import { notify } from './notify';
 import { entity } from './getEntity';
-import { mount } from 'svelte';
+import { mountEntitiesTable, unmountEntitiesTable } from './entities-table';
+import { mount, unmount } from 'svelte';
 import { writable } from 'svelte/store';
 import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
 
-const target = document.getElementById('entityList');
 const skeleton = document.getElementById('itemListSkeleton');
 const initialQ = new URL(window.location.href).searchParams.get('q') ?? '';
 const searchQuery = writable(initialQ);
 
 let debounceTimer: number | undefined;
+
+let entityListSvComponent: Record<string, unknown> | null = null;
 
 function handleInitialLoadDone(): void {
   skeleton?.remove();
@@ -76,10 +78,21 @@ searchQuery.subscribe(value => {
   }, 250);
 });
 
-if (target) {
+async function getDisplayMode() {
+  return ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
+    return json['display_mode'];
+  });
+}
+
+const mountEntityListSv = (target: HTMLElement): void => {
+  if (entityListSvComponent) {
+    return;
+  }
+
+  // remove skeleton
   target.innerHTML = '';
 
-  mount(EntityListSv, {
+  entityListSvComponent = mount(EntityListSv, {
     target,
     props: {
       entityType: entity.type,
@@ -92,6 +105,26 @@ if (target) {
       onInitialLoadDone: handleInitialLoadDone,
     },
   });
+};
+
+const unmountEntityListSv = async (): Promise<void> => {
+  if (!entityListSvComponent) {
+    return;
+  }
+
+  await unmount(entityListSvComponent, { outro: true });
+  entityListSvComponent = null;
+};
+
+async function displayEntities(mode: string) {
+  if (mode === 'tb') {
+    unmountEntityListSv();
+    mountEntitiesTable(document.getElementById('entities-table'));
+  } else {
+    mountEntityListSv(document.getElementById('entityList'));
+    unmountEntitiesTable();
+  }
+  reloadEntitiesShow();
 }
 
 const params = new URLSearchParams(document.location.search.slice(1));
@@ -242,6 +275,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (about.page !== 'show') {
     return;
   }
+  handleInitialLoadDone();
+  // can't have await at top level, so wrap it
+  void (async (): Promise<void> => {
+    const displayMode = await getDisplayMode();
+    displayEntities(displayMode);
+  })();
+
 
   // Preserve filters from navbar dropdown (e.g., category, scope, bookable) when performing a search. #6284
   ['category', 'scope', 'bookable'].forEach(param => {
@@ -411,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /////////////////////////
   // MAIN CLICK LISTENER //
   /////////////////////////
-  document.getElementById('container').addEventListener('click', event => {
+  document.getElementById('container').addEventListener('click', async event => {
     const el = (event.target as HTMLElement);
     const params = new URLSearchParams(document.location.search);
     // LOAD MORE
@@ -497,17 +537,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-items-layout"]')) {
+      let target = 'it';
+      const currentMode = await getDisplayMode();
+      if (currentMode === 'it') {
+        target = 'tb';
+      }
       ApiC.notifOnSaved = false;
-      ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
-        let target = 'it';
-        if (json['display_mode'] === 'it') {
-          target = 'tb';
-        }
-        ApiC.patch(`${Model.User}/me`, { display_mode: target }).then(() => {
-          document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
-          reloadEntitiesShow();
-        });
-      });
+      ApiC.patch(`${Model.User}/me`, { display_mode: target}).then(() => {
+        document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
+        displayEntities(target);
+      }).finally(() => ApiC.notifOnSaved = true);
 
     // a tag has been clicked/selected, add it in url and load the page
     } else if (el.matches('[data-action="add-tag-filter"]')) {

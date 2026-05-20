@@ -1870,9 +1870,9 @@ input:user-invalid {
 }
 
 .active-filter-badge {
-  border-radius: 5px;
-  border: 1px solid var(--secondlevel);
   background-color: var(--firstlevel);
+  border: 1px solid var(--secondlevel);
+  border-radius: 5px;
   padding: 0.25rem;
 }
 

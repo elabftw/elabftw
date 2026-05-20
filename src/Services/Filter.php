@@ -229,6 +229,7 @@ final class Filter
             'language-makefile',
             'language-matlab',
             'language-perl',
+            'language-php',
             'language-python',
             'language-r',
             'language-ruby',

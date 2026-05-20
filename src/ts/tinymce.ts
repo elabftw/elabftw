@@ -282,6 +282,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Makefile', value: 'makefile'},
       {text: 'Matlab', value: 'matlab'},
       {text: 'Perl', value: 'perl'},
+      {text: 'PHP', value: 'php'},
       {text: 'Python', value: 'python'},
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'},

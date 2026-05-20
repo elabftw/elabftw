@@ -177,4 +177,19 @@ final class Db
     {
         $req->bindValue($param, $value, $value === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
     }
+
+    public function beginTransaction(): bool
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    public function commit(): bool
+    {
+        return $this->connection->commit();
+    }
+
+    public function rollBack(): bool
+    {
+        return $this->connection->rollBack();
+    }
 }

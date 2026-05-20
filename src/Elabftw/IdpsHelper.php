@@ -15,8 +15,9 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\CertPurpose;
 use Elabftw\Enums\SamlBinding;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\IdpsInterface;
 use Elabftw\Models\Config;
-use Elabftw\Models\Idps;
 
 use function rtrim;
 
@@ -25,7 +26,7 @@ use function rtrim;
  */
 final class IdpsHelper
 {
-    public function __construct(public Config $Config, private Idps $Idps) {}
+    public function __construct(public Config $Config, private IdpsInterface $Idps) {}
 
     /**
      * Get the settings array
@@ -39,6 +40,10 @@ final class IdpsHelper
     {
         $idpId = $this->Idps->getEnabled($id);
 
+        // no active IdP
+        if ($idpId === 0) {
+            throw new ResourceNotFoundException();
+        }
         return $this->getSettingsByIdp($idpId);
     }
 

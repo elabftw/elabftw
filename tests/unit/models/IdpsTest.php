@@ -14,6 +14,8 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\SamlBinding;
+use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\IdpsInterface;
 use Elabftw\Models\Users\Users;
 
 class IdpsTest extends \PHPUnit\Framework\TestCase
@@ -28,6 +30,15 @@ class IdpsTest extends \PHPUnit\Framework\TestCase
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/idps/', $this->Idps->getApiPath());
+    }
+
+    public function testGetSettingsNoIdpFound(): void
+    {
+        $Idps = $this->createStub(IdpsInterface::class);
+        $Idps->method('getEnabled')->willReturn(0);
+        $helper = new IdpsHelper(Config::getConfig(), $Idps);
+        $this->expectException(ResourceNotFoundException::class);
+        $helper->getSettings();
     }
 
     public function testCreate(): void

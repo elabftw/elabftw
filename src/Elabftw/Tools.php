@@ -42,7 +42,10 @@ use function vsprintf;
  */
 final class Tools
 {
-    private const string DISPLAY_MATH_REGEX = '/(^|\R)([ \t]*(?:\$\$[ \t]*\R[\s\S]*?\R[ \t]*\$\$|\\\\\[[ \t]*\R[\s\S]*?\R[ \t]*\\\\\])[ \t]*(?=\R|$))/';
+    private const array DISPLAY_MATH_REGEXES = array(
+        '/(^|\R)([ \t]*\$\$[ \t]*\R[\s\S]*?\R[ \t]*\$\$[ \t]*(?=\R|$))/',
+        '/(^|\R)([ \t]*\\\\\[[ \t]*\R[\s\S]*?\R[ \t]*\\\\\][ \t]*(?=\R|$))/',
+    );
 
     private const string MATH_BLOCK_PLACEHOLDER = 'ELABFTW_MATH_BLOCK_';
 
@@ -178,13 +181,16 @@ final class Tools
     private static function protectDisplayMathBlocks(string $markdown): array
     {
         $mathBlocks = array();
-        $protectedMarkdown = preg_replace_callback(self::DISPLAY_MATH_REGEX, function (array $matches) use (&$mathBlocks): string {
-            $placeholder = self::MATH_BLOCK_PLACEHOLDER . count($mathBlocks) . '__';
-            $mathBlocks[$placeholder] = self::eLabHtmlspecialchars($matches[2]);
-            return $matches[1] . $placeholder;
-        }, $markdown);
+        $protectedMarkdown = $markdown;
+        foreach (self::DISPLAY_MATH_REGEXES as $displayMathRegex) {
+            $protectedMarkdown = preg_replace_callback($displayMathRegex, function (array $matches) use (&$mathBlocks): string {
+                $placeholder = self::MATH_BLOCK_PLACEHOLDER . count($mathBlocks) . '__';
+                $mathBlocks[$placeholder] = self::eLabHtmlspecialchars($matches[2]);
+                return $matches[1] . $placeholder;
+            }, $protectedMarkdown) ?? $protectedMarkdown;
+        }
 
-        return array($protectedMarkdown ?? $markdown, $mathBlocks);
+        return array($protectedMarkdown, $mathBlocks);
     }
 
     /**

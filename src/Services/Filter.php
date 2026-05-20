@@ -197,7 +197,10 @@ final class Filter
         if ($input === null) {
             return '';
         }
-        self::validateBodySize($input);
+        // use strlen() instead of mb_strlen() because we want the size in bytes
+        if (strlen($input) > self::MAX_BODY_SIZE) {
+            throw new ImproperActionException('Content is too big! Cannot save!');
+        }
         // create base config for html5
         $config = HTMLPurifier_HTML5Config::createDefault();
         // allow only certain elements
@@ -279,7 +282,10 @@ final class Filter
         if ($input === null) {
             return '';
         }
-        self::validateBodySize($input);
+        // use strlen() instead of mb_strlen() because we want the size in bytes
+        if (strlen($input) > self::MAX_BODY_SIZE) {
+            throw new ImproperActionException('Content is too big! Cannot save!');
+        }
         return $input;
     }
 
@@ -294,13 +300,5 @@ final class Filter
 
         // Remove all whitespace (newlines, spaces, tabs)
         return str_replace(array("\r", "\n", ' ', "\t"), '', $pem ?? '');
-    }
-
-    private static function validateBodySize(string $input): void
-    {
-        // use strlen() instead of mb_strlen() because we want the size in bytes
-        if (strlen($input) > self::MAX_BODY_SIZE) {
-            throw new ImproperActionException('Content is too big! Cannot save!');
-        }
     }
 }

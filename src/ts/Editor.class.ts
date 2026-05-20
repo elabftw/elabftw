@@ -14,7 +14,10 @@ import { Entity, Target } from './interfaces';
 import { ApiC } from './api';
 declare const MathJax: MathJaxObject;
 
-const DISPLAY_MATH_REGEX = /(^|\r\n|\r|\n)([ \t]*(?:\$\$[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\$\$|\\\[[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\\\])[ \t]*(?=\r\n|\r|\n|$))/g;
+const DISPLAY_MATH_REGEXES = [
+  /(^|\r\n|\r|\n)([ \t]*\$\$[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\$\$[ \t]*(?=\r\n|\r|\n|$))/g,
+  /(^|\r\n|\r|\n)([ \t]*\\\[[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\\\][ \t]*(?=\r\n|\r|\n|$))/g,
+];
 const MATH_BLOCK_PLACEHOLDER = 'ELABFTW_MATH_BLOCK_';
 
 interface EditorInterface {
@@ -45,11 +48,14 @@ interface ProtectedMath {
 function protectDisplayMathBlocks(markdown: string): ProtectedMath {
   const mathBlocks: Record<string, string> = {};
   let index = 0;
-  const protectedMarkdown = markdown.replace(DISPLAY_MATH_REGEX, (match, lineBreak, math) => {
-    const placeholder = `${MATH_BLOCK_PLACEHOLDER}${index}__`;
-    mathBlocks[placeholder] = escapeMathForHtml(math);
-    index++;
-    return lineBreak + placeholder;
+  let protectedMarkdown = markdown;
+  DISPLAY_MATH_REGEXES.forEach(displayMathRegex => {
+    protectedMarkdown = protectedMarkdown.replace(displayMathRegex, (_match, lineBreak, math) => {
+      const placeholder = `${MATH_BLOCK_PLACEHOLDER}${index}__`;
+      mathBlocks[placeholder] = escapeMathForHtml(math);
+      index++;
+      return lineBreak + placeholder;
+    });
   });
 
   return {

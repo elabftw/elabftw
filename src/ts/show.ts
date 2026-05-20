@@ -120,11 +120,10 @@ async function displayEntities(mode: string) {
   if (mode === 'tb') {
     unmountEntityListSv();
     mountEntitiesTable(document.getElementById('entities-table'));
-  } else {
-    mountEntityListSv(document.getElementById('entityList'));
-    unmountEntitiesTable();
+    return;
   }
-  reloadEntitiesShow();
+  mountEntityListSv(document.getElementById('entityList'));
+  unmountEntitiesTable();
 }
 
 const params = new URLSearchParams(document.location.search.slice(1));
@@ -780,7 +779,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.history.replaceState({}, '', url.toString());
-    document.dispatchEvent(new CustomEvent('entity-filters-changed'));
+    window.dispatchEvent(new CustomEvent('entity-filters-changed'));
   }
 
   function bindExternalFilterRequest(

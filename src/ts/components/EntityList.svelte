@@ -89,42 +89,35 @@
     urlVersion += 1;
   }
 
+  type FilterParam = 'owner' | 'category' | 'status';
 
-  function setOwnerInUrl(ownerId: number): void {
-    const url = new URL(window.location.href);
-    url.searchParams.set('owner', String(ownerId));
-
-    window.history.replaceState({}, '', url.toString());
-    bumpUrlVersion();
-  }
-
-  function setOwnerInActiveFilters(fullname: string): void {
-    const filter = document.createElement('div');
-    filter.dataset.param = 'owner';
-    filter.classList.add('active-filter-badge');
-    filter.textContent = `${t('owner')}: ${fullname}`;
-    const activeFiltersDiv = document.getElementById('activeFiltersDiv');
-    clearInActiveFilters('owner');
-    activeFiltersDiv.appendChild(filter);
-  }
-
-  function handleOwnerClick(event: MouseEvent, ownerId: number, fullname: string): void {
+  function handleFilterClick(
+    event: MouseEvent,
+    param: FilterParam,
+    value: string | number | null | undefined,
+    label: string | null | undefined,
+  ): void {
     event.preventDefault();
-    // allow unselecting a previously added filter
-    if (getCurrentUrlParam('owner') === String(ownerId)) {
-      clearInUrl('owner');
-      clearInActiveFilters('owner');
+    event.stopPropagation();
+
+    if (value == null || String(value).length === 0) {
       return;
     }
-    setOwnerInUrl(ownerId);
-    setOwnerInActiveFilters(fullname);
+
+    window.dispatchEvent(new CustomEvent('entity-filter-requested', {
+      detail: {
+        param,
+        value: String(value),
+        label: label ?? String(value),
+      },
+    }));
   }
 
-    function getCurrentUrlParam(param: string): string {
-      return new URL(window.location.href).searchParams.get(param)?.trim() ?? '';
-    }
+  function getCurrentUrlParam(param: string): string {
+    return new URL(window.location.href).searchParams.get(param)?.trim() ?? '';
+  }
 
-    function getCurrentUrlTags(): string[] {
+  function getCurrentUrlTags(): string[] {
     return new URL(window.location.href).searchParams
       .getAll('tags[]')
       .map(tag => tag.trim())
@@ -136,11 +129,6 @@
     url.searchParams.delete(param);
     window.history.replaceState({}, '', url.toString());
     bumpUrlVersion();
-  }
-
-  function clearInActiveFilters(param: string): void {
-    const activeFiltersDiv = document.getElementById('activeFiltersDiv');
-    activeFiltersDiv.querySelector(`[data-param="${param}"]`)?.remove();
   }
 
   function setSingleTagInUrl(tag: string): void {
@@ -463,9 +451,9 @@
                 class='btn catstat-btn category-btn mr-1'
                 type='button'
                 style={`--bg: #${getLeftColor(entity)};line-height:normal;`}
-                data-action='add-query-filter'
                 data-key='category'
                 data-value={entity.category}
+                onclick={event => handleFilterClick(event, 'category', entity.category, entity.category_title)}
               >
                 {entity.category_title}
               </button>
@@ -475,10 +463,10 @@
               <button
                 class='btn catstat-btn mr-1 status-btn bg-firstlevel'
                 type='button'
-                data-action='add-query-filter'
                 data-key='status'
                 data-value={entity.status}
                 style='line-height:normal;'
+                onclick={event => handleFilterClick(event, 'status', entity.status, entity.status_title)}
               >
                 <i
                   class='fas fa-circle fa-fw'
@@ -513,7 +501,7 @@
               <a
                 class={'owner'}
                 href={`?owner=${entity.userid}`}
-                onclick={event => handleOwnerClick(event, entity.userid, entity.fullname)}
+                onclick={event => handleFilterClick(event, 'owner', entity.userid, entity.fullname)}
               >
                 {entity.fullname}
               </a>

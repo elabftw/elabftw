@@ -36,6 +36,29 @@ function handleInitialLoadDone(): void {
   skeleton?.remove();
 }
 
+const activeFilters = document.getElementById('activeFiltersDiv');
+
+type TeamScopedTomSelect = TomSelectWithAllOptions & {
+  _showAll?: boolean;
+};
+
+type ActiveFilterControl = {
+  control: TeamScopedTomSelect;
+  param: string;
+  title: string;
+};
+
+const filterControls: ActiveFilterControl[] = [];
+
+
+type EntityFilterParam = 'owner' | 'category' | 'status';
+
+type EntityFilterRequestedDetail = {
+  param: EntityFilterParam;
+  value: string;
+  label?: string | null;
+};
+
 searchQuery.subscribe(value => {
   window.clearTimeout(debounceTimer);
 
@@ -242,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropdownRoot = document.getElementById('filterOwnerDropdown');
     const menu = document.getElementById('filterOwnerMenu');
 
-    const tsFilterOwner = new TomSelect('#filterOwner', {
+    const control = new TomSelect('#filterOwner', {
       dropdownParent: '#filterOwnerMenu',
       maxOptions: 512,
       plugins: {
@@ -261,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam('owner', value);
+        renderActiveFilters();
       },
 
       render: {
@@ -280,31 +304,40 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     }) as AnyTS;
 
-    tsFilterOwner.on('dropdown_open', () => {
-      bindDropdownToggle(tsFilterOwner, '.ts-toggle-archived', '_showArchived', () => {
-        applyToggleFilter(tsFilterOwner, '_showArchived', isArchivedOption);
-        tsFilterOwner.open();
+    filterControls.push({
+      control,
+      param: 'owner',
+      title: 'Owner',
+    });
+    renderActiveFilters();
+
+    bindExternalFilterRequest(control, 'owner');
+
+    control.on('dropdown_open', () => {
+      bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
+        applyToggleFilter(control, '_showArchived', isArchivedOption);
+        control.open();
       });
     });
 
     if (dropdownRoot) {
       $(dropdownRoot).on('shown.bs.dropdown', function() {
-        tsFilterOwner.open();
+        control.open();
 
         window.requestAnimationFrame(() => {
           const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
           input?.focus();
         });
 
-        bindDropdownToggle(tsFilterOwner, '.ts-toggle-archived', '_showArchived', () => {
-          applyToggleFilter(tsFilterOwner, '_showArchived', isArchivedOption);
-          tsFilterOwner.open();
+        bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
+          applyToggleFilter(control, '_showArchived', isArchivedOption);
+          control.open();
         });
       });
 
       $(dropdownRoot).on('hide.bs.dropdown', function() {
-        tsFilterOwner.close();
-        tsFilterOwner.blur();
+        control.close();
+        control.blur();
       });
     }
 
@@ -634,9 +667,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  type TeamScopedTomSelect = TomSelectWithAllOptions & {
-    _showAll?: boolean;
-  };
 
   function buildDropdownToggleHeaderHtml(
     title: string,
@@ -714,6 +744,105 @@ document.addEventListener('DOMContentLoaded', () => {
     window.dispatchEvent(new CustomEvent('entity-filters-changed'));
   }
 
+  function bindExternalFilterRequest(
+    control: TomSelectWithAllOptions,
+    param: EntityFilterParam,
+  ): void {
+    window.addEventListener('entity-filter-requested', event => {
+      const customEvent = event as CustomEvent<EntityFilterRequestedDetail>;
+      const detail = customEvent.detail;
+
+      if (detail?.param !== param || !detail.value) {
+        return;
+      }
+
+      toggleTomSelectItem(
+        control,
+        detail.value,
+        detail.label ?? detail.value,
+      );
+    });
+  }
+
+  function ensureTomSelectOption(
+      control: TomSelectWithAllOptions,
+      value: string,
+      label: string,
+    ): void {
+      if (control.options[value]) {
+        return;
+      }
+
+      const valueField = control.settings.valueField || 'value';
+      const labelField = control.settings.labelField || 'text';
+
+      const knownOption = (control._allOptions ?? []).find(option => (
+        String(option[valueField]) === value
+      ));
+
+      if (knownOption) {
+        control.addOption(knownOption);
+      } else {
+        control.addOption({
+          [valueField]: value,
+          [labelField]: label,
+        });
+      }
+
+      control.refreshOptions(false);
+    }
+
+    function toggleTomSelectItem(
+      control: TomSelectWithAllOptions,
+      value: string,
+      label: string,
+    ): void {
+      ensureTomSelectOption(control, value, label);
+
+      if (control.items.map(String).includes(value)) {
+        control.removeItem(value);
+        return;
+      }
+
+      control.addItem(value);
+    }
+
+  function renderActiveFilters() {
+    activeFilters.replaceChildren();
+
+    for (const { control, title } of filterControls) {
+      for (const value of control.items) {
+        const option = control.options[value];
+        const labelField = control.settings.labelField || 'text';
+        const label = String(option?.[labelField] ?? value);
+
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'btn btn-sm btn-outline-secondary me-2 mb-2';
+        chip.setAttribute('aria-label', `Remove ${title}: ${label}`);
+
+        const chipText = document.createElement('span');
+        chipText.textContent = `${title}: ${label}`;
+
+        const removeIcon = document.createElement('span');
+        removeIcon.className = 'ms-1';
+        removeIcon.setAttribute('aria-hidden', 'true');
+        removeIcon.textContent = '×';
+
+        chip.append(chipText, removeIcon);
+
+        chip.addEventListener('click', () => {
+          control.removeItem(value);
+        });
+
+        activeFilters.appendChild(chip);
+      }
+    }
+
+    activeFilters.hidden = activeFilters.children.length === 0;
+  }
+
+
   function bindDropdownToggle(
     control: ToggleableTomSelect,
     selector: string,
@@ -783,10 +912,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam(cfg.param, value);
+        renderActiveFilters();
       },
     }) as TeamScopedTomSelect;
 
     control.on('dropdown_open', () => bindShowAllToggle(control));
+    filterControls.push({
+      control,
+      param: cfg.param,
+      title: cfg.title,
+    });
+    renderActiveFilters();
+
+    if (cfg.param === 'category' || cfg.param === 'status') {
+      bindExternalFilterRequest(control, cfg.param);
+    }
 
     if (dropdownRoot) {
       $(dropdownRoot).on('shown.bs.dropdown', function() {

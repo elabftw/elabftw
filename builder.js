@@ -31,6 +31,7 @@ module.exports = (env) => {
         './src/ts/dspace.ts',
         './src/ts/ketcher-editor.jsx',
         './src/ts/compounds-table.jsx',
+        './src/ts/entities-table.jsx',
         './src/ts/users-table.jsx',
         './src/ts/tags.ts',
         './src/ts/admin.ts',

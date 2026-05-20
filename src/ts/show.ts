@@ -741,7 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.history.replaceState({}, '', url.toString());
-    window.dispatchEvent(new CustomEvent('entity-filters-changed'));
+    document.dispatchEvent(new CustomEvent('entity-filters-changed'));
   }
 
   function bindExternalFilterRequest(

@@ -403,7 +403,6 @@ export function getCheckedBoxes(): Array<CheckableItem> {
 
 // reload the entities in show mode
 export async function reloadEntitiesShow(): Promise<void | Response> {
-  console.log('dispatching entity-filters-changed custom event');
   window.dispatchEvent(new CustomEvent('entity-filters-changed'));
   // ask mathjax to reparse the page
   MathJax.typeset();

@@ -171,9 +171,10 @@ abstract class AbstractContainersLinks extends AbstractLinks
             main.created_at,
             main.modified_at
             FROM ' . $this->getTable() . ' AS main
-            WHERE main.id = :id;';
+            WHERE main.id = :id AND main.item_id = :item_id;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
     }
@@ -186,12 +187,13 @@ abstract class AbstractContainersLinks extends AbstractLinks
             throw new ImproperActionException('Invalid update target');
         }
         $sql = sprintf(
-            'UPDATE %s SET %s = :value WHERE id = :id',
+            'UPDATE %s SET %s = :value WHERE id = :id AND item_id = :item_id',
             $this->getTable(),
             $column,
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':value', $value);
 
         return $this->Db->execute($req);
@@ -244,6 +246,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
 
     public function createWithQuantity(float $qty, string $unit): int
     {
+        $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
 
         // use IGNORE to avoid failure due to a key constraint violations

@@ -168,8 +168,9 @@
     const currentStatus = getCurrentUrlParam('status');
     const currentOwner = getCurrentUrlParam('owner');
     const currentTags = getCurrentUrlTags();
+    const currentState = getCurrentUrlParam('state');
 
-     const nextQueryKey = JSON.stringify([
+    const nextQueryKey = JSON.stringify([
       currentType,
       currentLimit,
       currentQ,
@@ -177,6 +178,7 @@
       currentCategory,
       currentOwner,
       currentTags,
+      currentState,
       reloadVersion,
     ]);
 
@@ -197,6 +199,7 @@
       currentStatus,
       currentOwner,
       currentTags,
+      currentState,
       offset,
       true,
     );
@@ -210,6 +213,7 @@
     currentStatus: string,
     currentOwner: string,
     currentTags: string[],
+    currentState: string,
     currentOffset: number,
     replace: boolean,
   ): Promise<void> {
@@ -247,6 +251,10 @@
 
       if (currentTags.length > 0) {
         params['tags[]'] = currentTags;
+      }
+
+      if (currentState.length > 0) {
+        params['state'] = currentState;
       }
 
       // fetch entries
@@ -360,6 +368,7 @@
         const currentStatus = getCurrentUrlParam('status');
         const currentOwner = getCurrentUrlParam('owner');
         const currentTags = getCurrentUrlTags();
+        const currentState = getCurrentUrlParam('state');
         const nextOffset = entities.length;
 
         void loadEntities(
@@ -370,6 +379,7 @@
           currentStatus,
           currentOwner,
           currentTags,
+          currentState,
           nextOffset,
           false,
         );

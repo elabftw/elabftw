@@ -765,47 +765,47 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function ensureTomSelectOption(
-      control: TomSelectWithAllOptions,
-      value: string,
-      label: string,
-    ): void {
-      if (control.options[value]) {
-        return;
-      }
-
-      const valueField = control.settings.valueField || 'value';
-      const labelField = control.settings.labelField || 'text';
-
-      const knownOption = (control._allOptions ?? []).find(option => (
-        String(option[valueField]) === value
-      ));
-
-      if (knownOption) {
-        control.addOption(knownOption);
-      } else {
-        control.addOption({
-          [valueField]: value,
-          [labelField]: label,
-        });
-      }
-
-      control.refreshOptions(false);
+    control: TomSelectWithAllOptions,
+    value: string,
+    label: string,
+  ): void {
+    if (control.options[value]) {
+      return;
     }
 
-    function toggleTomSelectItem(
-      control: TomSelectWithAllOptions,
-      value: string,
-      label: string,
-    ): void {
-      ensureTomSelectOption(control, value, label);
+    const valueField = control.settings.valueField || 'value';
+    const labelField = control.settings.labelField || 'text';
 
-      if (control.items.map(String).includes(value)) {
-        control.removeItem(value);
-        return;
-      }
+    const knownOption = (control._allOptions ?? []).find(option => (
+      String(option[valueField]) === value
+    ));
 
-      control.addItem(value);
+    if (knownOption) {
+      control.addOption(knownOption);
+    } else {
+      control.addOption({
+        [valueField]: value,
+        [labelField]: label,
+      });
     }
+
+    control.refreshOptions(false);
+  }
+
+  function toggleTomSelectItem(
+    control: TomSelectWithAllOptions,
+    value: string,
+    label: string,
+  ): void {
+    ensureTomSelectOption(control, value, label);
+
+    if (control.items.map(String).includes(value)) {
+      control.removeItem(value);
+      return;
+    }
+
+    control.addItem(value);
+  }
 
   function renderActiveFilters() {
     activeFilters.replaceChildren();

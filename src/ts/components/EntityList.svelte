@@ -81,15 +81,27 @@
   let isLoading = $state(false);
   let isLoadingMore = $state(false);
   let hasMore = $state(true);
-  let offset = $state(0);
+  //let offset = $state(0);
   let sentinelEl: HTMLDivElement | null = null;
   let currentQueryKey = '';
+  let reloadVersion = $state(0);
 
   function bumpUrlVersion(): void {
     urlVersion += 1;
   }
 
   type FilterParam = 'owner' | 'category' | 'status';
+
+  type EntityQueryContext = {
+    currentType: EntityType;
+    currentLimit: number;
+    currentQ: string;
+    currentCategory: string;
+    currentStatus: string;
+    currentOwner: string;
+    currentTags: string[];
+    currentState: string;
+  };
 
   function handleFilterClick(
     event: MouseEvent,
@@ -151,72 +163,104 @@
     setSingleTagInUrl(tag);
   }
 
-  let reloadVersion = $state(0);
-
   function bumpReloadVersion(): void {
     reloadVersion += 1;
   }
 
+  function getEntityQueryContext(): EntityQueryContext {
+    return {
+      currentType: entityType,
+      currentLimit: limit,
+      currentQ: $searchQuery.trim(),
+      currentCategory: getCurrentUrlParam('category'),
+      currentStatus: getCurrentUrlParam('status'),
+      currentOwner: getCurrentUrlParam('owner'),
+      currentTags: getCurrentUrlTags(),
+      currentState: getCurrentUrlParam('state'),
+    };
+  }
+
+  function getEntityQueryKey(
+    context: EntityQueryContext,
+    currentReloadVersion: number,
+  ): string {
+    return JSON.stringify([
+      context.currentType,
+      context.currentLimit,
+      context.currentQ,
+      context.currentStatus,
+      context.currentCategory,
+      context.currentOwner,
+      context.currentTags,
+      context.currentState,
+      currentReloadVersion,
+    ]);
+  }
+
   $effect(() => {
     urlVersion;
-    reloadVersion;
 
-    const currentType = entityType;
-    const currentLimit = limit;
-    const currentQ = $searchQuery.trim();
-    const currentCategory = getCurrentUrlParam('category');
-    const currentStatus = getCurrentUrlParam('status');
-    const currentOwner = getCurrentUrlParam('owner');
-    const currentTags = getCurrentUrlTags();
-    const currentState = getCurrentUrlParam('state');
+    const currentReloadVersion = reloadVersion;
+    const context = getEntityQueryContext();
+    const nextQueryKey = getEntityQueryKey(context, currentReloadVersion);
 
-    const nextQueryKey = JSON.stringify([
-      currentType,
-      currentLimit,
-      currentQ,
-      currentStatus,
-      currentCategory,
-      currentOwner,
-      currentTags,
-      currentState,
-      reloadVersion,
-    ]);
+    if (nextQueryKey !== currentQueryKey) {
+      currentQueryKey = nextQueryKey;
+      hasMore = true;
 
-    if (nextQueryKey === currentQueryKey) {
-      console.log('aborting');
+      void loadEntities(context, 0, true);
+    }
+
+    if (!sentinelEl) {
       return;
     }
 
-    currentQueryKey = nextQueryKey;
-    offset = 0;
-    hasMore = true;
+    const observer = new IntersectionObserver(
+      entries => {
+        const entry = entries[0];
 
-    void loadEntities(
-      currentType,
-      currentLimit,
-      currentQ,
-      currentCategory,
-      currentStatus,
-      currentOwner,
-      currentTags,
-      currentState,
-      offset,
-      true,
+        if (!entry?.isIntersecting) {
+          return;
+        }
+
+        if (isLoading || isLoadingMore || !hasMore || entities.length === 0) {
+          return;
+        }
+
+        void loadEntities(
+          getEntityQueryContext(),
+          entities.length,
+          false,
+        );
+      },
+      {
+        rootMargin: '600px 0px',
+      },
     );
+
+    observer.observe(sentinelEl);
+
+    return () => {
+      observer.disconnect();
+    };
   });
 
   async function loadEntities(
-    currentType: EntityType,
-    currentLimit: number,
-    currentQ: string,
-    currentCategory: string,
-    currentStatus: string,
-    currentOwner: string,
-    currentTags: string[],
-    currentState: string,
+    context: EntityQueryContext,
     currentOffset: number,
     replace: boolean,
   ): Promise<void> {
+
+    const {
+    currentType,
+    currentLimit,
+    currentQ,
+    currentCategory,
+    currentStatus,
+    currentOwner,
+    currentTags,
+    currentState,
+  } = context;
     const seq = ++requestSeq;
     error = '';
 
@@ -343,58 +387,6 @@
   function canEditEntity(entity: EntityListItem): boolean {
     return entity.userid === currentUserId || entityType === 'items' || isAdmin;
   }
-
-  $effect(() => {
-    if (!sentinelEl) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      entries => {
-        const entry = entries[0];
-
-        if (!entry?.isIntersecting) {
-          return;
-        }
-
-        if (isLoading || isLoadingMore || !hasMore || entities.length === 0) {
-          return;
-        }
-
-        const currentType = entityType;
-        const currentLimit = limit;
-        const currentQ = $searchQuery.trim();
-        const currentCategory = getCurrentUrlParam('category');
-        const currentStatus = getCurrentUrlParam('status');
-        const currentOwner = getCurrentUrlParam('owner');
-        const currentTags = getCurrentUrlTags();
-        const currentState = getCurrentUrlParam('state');
-        const nextOffset = entities.length;
-
-        void loadEntities(
-          currentType,
-          currentLimit,
-          currentQ,
-          currentCategory,
-          currentStatus,
-          currentOwner,
-          currentTags,
-          currentState,
-          nextOffset,
-          false,
-        );
-      },
-      {
-        rootMargin: '600px 0px',
-      },
-    );
-
-    observer.observe(sentinelEl);
-
-    return () => {
-      observer.disconnect();
-    };
-  });
 
   onMount(() => {
     window.addEventListener('popstate', bumpUrlVersion);

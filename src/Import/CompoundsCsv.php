@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use DateTimeImmutable;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Links\Compounds2ItemsLinks;
@@ -25,6 +26,7 @@ use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
+use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function sprintf;
@@ -172,6 +174,14 @@ final class CompoundsCsv extends AbstractCsv
             $this->output->writeln(sprintf('[warning] Found %d matches for %s. Linking with first one found.', count($results), $value));
         }
         return $results[0] ?? null;
+    }
+
+    // this is only for 5.5
+    protected function emitLog(string $message, string $level): void
+    {
+        $timestamp = new DateTimeImmutable()->format('c');
+        $log = sprintf('%s %s', $timestamp, $message);
+        $this->output->writeln($log);
     }
 
     #[Override]

@@ -70,9 +70,10 @@ final class ProcurementRequests extends AbstractRest
     public function readOne(): array
     {
         $sql = 'SELECT id, created_at, team, requester_userid, entity_id, qty_ordered, qty_received, body, quote, email_sent, state
-            FROM procurement_requests WHERE id = :id';
+            FROM procurement_requests WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
@@ -137,10 +138,11 @@ final class ProcurementRequests extends AbstractRest
 
     private function update(ProcurementRequestParams $params): bool
     {
-        $sql = 'UPDATE procurement_requests SET ' . $params->getColumn() . ' = :value WHERE id = :id';
+        $sql = 'UPDATE procurement_requests SET ' . $params->getColumn() . ' = :value WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':value', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
@@ -150,5 +152,8 @@ final class ProcurementRequests extends AbstractRest
         if ($TeamsHelper->isUserInTeam($this->Teams->Users->userData['userid']) === false) {
             throw new ImproperActionException('Cannot delete from a team you do not belong in.');
         }
+
+        // Ensure the record exists and belongs to the current team.
+        $this->readOne();
     }
 }

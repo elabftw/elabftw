@@ -13,7 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -102,6 +104,54 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0.0, (float) $result['qty_stored']);
     }
 
+    public function testCannotCreateContainerWithoutParentWriteAccess(): void
+    {
+        $Item = $this->getFreshItemWithGivenUser($this->getUserInTeam(1, 1));
+        $box = $this->StorageUnits->create('Box for create authorization test');
+        $ReadOnlyItem = new Items($this->getUserInTeam(1), $Item->id);
+
+        $Links = new Containers2ItemsLinks($ReadOnlyItem, $box);
+        $this->expectException(ForbiddenException::class);
+        $Links->createWithQuantity(1.0, 'g');
+    }
+
+    public function testCannotPatchContainerWithoutParentWriteAccess(): void
+    {
+        $Item = $this->getFreshItemWithGivenUser($this->getUserInTeam(1, 1));
+        $box = $this->StorageUnits->create('Box for patch authorization test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(1.0, 'g');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $ReadOnlyItem = new Items($this->getUserInTeam(1), $Item->id);
+        $Links = new Containers2ItemsLinks($ReadOnlyItem, $rowId);
+        $this->expectException(ForbiddenException::class);
+        $Links->patch(Action::Update, array('qty_stored' => 999));
+    }
+
+    public function testCannotPatchContainerFromAnotherParentItem(): void
+    {
+        $ItemA = $this->getFreshItemWithGivenUser($this->getUserInTeam(1, 1));
+        $ItemB = $this->getFreshItemWithGivenUser($this->getUserInTeam(1, 1));
+        $box = $this->StorageUnits->create('Box for parent binding test');
+
+        $LinksA = new Containers2ItemsLinks($ItemA, $box);
+        $LinksA->createWithQuantity(1.0, 'g');
+        $LinksB = new Containers2ItemsLinks($ItemB, $box);
+        $LinksB->createWithQuantity(2.0, 'g');
+        $rowB = $this->latestContainerRowId('containers2items', $ItemB->id);
+
+        $Links = new Containers2ItemsLinks($ItemA, $rowB);
+        try {
+            $Links->patch(Action::Update, array('qty_stored' => 999));
+            $this->fail('Expected ResourceNotFoundException was not thrown.');
+        } catch (ResourceNotFoundException) {
+            $this->addToAssertionCount(1);
+        }
+
+        $this->assertEquals(2.0, $this->readContainerQty('containers2items', $rowB));
+    }
+
     private function latestContainerRowId(string $table, int $itemId): int
     {
         $Db = \Elabftw\Elabftw\Db::getConnection();
@@ -109,5 +159,14 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $req->bindValue(':item_id', $itemId, PDO::PARAM_INT);
         $Db->execute($req);
         return (int) $req->fetchColumn();
+    }
+
+    private function readContainerQty(string $table, int $id): float
+    {
+        $Db = \Elabftw\Elabftw\Db::getConnection();
+        $req = $Db->prepare('SELECT qty_stored FROM ' . $table . ' WHERE id = :id');
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $Db->execute($req);
+        return (float) $req->fetchColumn();
     }
 }

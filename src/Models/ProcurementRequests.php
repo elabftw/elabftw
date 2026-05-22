@@ -136,6 +136,7 @@ final class ProcurementRequests extends AbstractRest
         return $this->update(new ProcurementRequestParams('state', (string) ProcurementState::Cancelled->value));
     }
 
+    // Concatenate but getColumn() is necessarily correct because getContent() matches the target
     private function update(ProcurementRequestParams $params): bool
     {
         $sql = 'UPDATE procurement_requests SET ' . $params->getColumn() . ' = :value WHERE id = :id AND team = :team';

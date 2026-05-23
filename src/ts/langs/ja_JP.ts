@@ -24,6 +24,7 @@ const t = {
     "copied": "クリップボードにコピーしました。",
     "comment-add": "コメントを追加",
     "confirm-clear-spreadsheet": "現在のスプレッドシートを破棄しますか？保存されていない変更はすべて失われます。",
+    "custom-id": "カスタムID",
     "custom-id-in-use": "カスタム ID はすでに使用されています。別の ID を試してください。",
     "created-at": "作成日",
     "created-on": "Created on",

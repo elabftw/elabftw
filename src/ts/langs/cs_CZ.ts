@@ -24,6 +24,7 @@ const t = {
     "copied": "Copied to clipboard.",
     "comment-add": "Přidat komentář",
     "confirm-clear-spreadsheet": "Discard current spreadsheet? All unsaved changes will be lost.",
+    "custom-id": "Vastní ID",
     "custom-id-in-use": "Vlastní ID je již použito! Zkuste jiné.",
     "created-at": "Vytvořeno",
     "created-on": "Created on",

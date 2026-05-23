@@ -24,6 +24,7 @@ const t = {
     "copied": "Skopiowano do schowka",
     "comment-add": "Dodaj komentarz",
     "confirm-clear-spreadsheet": "Odrzucić bieżący arkusz ? Wszystkie niezapisane zmiany zostaną utracone.",
+    "custom-id": "Niestandardowy identyfikator",
     "custom-id-in-use": "Niestandardowy identyfikator jest już używany! Spróbuj następnego.",
     "created-at": "Utworzono o godz",
     "created-on": "Utworzony przez",

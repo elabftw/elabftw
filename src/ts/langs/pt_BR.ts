@@ -24,6 +24,7 @@ const t = {
     "copied": "Copied to clipboard.",
     "comment-add": "Adicionar um comentário",
     "confirm-clear-spreadsheet": "Discard current spreadsheet? All unsaved changes will be lost.",
+    "custom-id": "ID personalizado",
     "custom-id-in-use": "A ID personalizada já foi usada! Tente outra.",
     "created-at": "Criado em",
     "created-on": "Created on",

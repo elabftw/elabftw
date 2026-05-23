@@ -24,6 +24,7 @@ const t = {
     "copied": "In Zwischenablage kopiert.",
     "comment-add": "Einen Kommentar hinzufügen",
     "confirm-clear-spreadsheet": "Aktuelle Tabelle verwerfen? Alle nicht gespeicherten Änderungen gehen verloren.",
+    "custom-id": "Selbstgewählte ID",
     "custom-id-in-use": "Benutzerdefinierte ID wird bereits verwendet! Bitte andere verwenden.",
     "created-at": "Erstellt am",
     "created-on": "Erstellt am",

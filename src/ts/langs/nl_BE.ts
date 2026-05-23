@@ -24,6 +24,7 @@ const t = {
     "copied": "Copied to clipboard.",
     "comment-add": "Voeg een opmerking toe",
     "confirm-clear-spreadsheet": "Discard current spreadsheet? All unsaved changes will be lost.",
+    "custom-id": "Aangepaste ID",
     "custom-id-in-use": "Aangepaste ID wordt al gebruikt! Probeer een andere.",
     "created-at": "Gemaakt op",
     "created-on": "Created on",

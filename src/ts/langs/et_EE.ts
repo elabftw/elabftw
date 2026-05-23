@@ -24,6 +24,7 @@ const t = {
     "copied": "Lõikelauale kopeeritud.",
     "comment-add": "Lisa kommentaar",
     "confirm-clear-spreadsheet": "Kas tühistada praegune arvutustabel? Kõik salvestamata muudatused kaovad.",
+    "custom-id": "Kohandatud ID",
     "custom-id-in-use": "Kohandatud ID on juba kasutusel! Proovige teist.",
     "created-at": "Loodud",
     "created-on": "Created on",

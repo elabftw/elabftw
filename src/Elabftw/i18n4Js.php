@@ -66,6 +66,7 @@ final class i18n4Js
             'copied' => _('Copied to clipboard.'),
             'comment-add' => _('Add a comment'),
             'confirm-clear-spreadsheet' => _('Discard current spreadsheet? All unsaved changes will be lost.'),
+            'custom-id' => _('Custom ID'),
             'custom-id-in-use' => _('Custom ID is already used! Try another one.'),
             'created-at' => _('Created at'),
             'created-on' => _('Created on'),

@@ -24,6 +24,7 @@ const t = {
     "copied": "Copiado al portapapeles.",
     "comment-add": "Añadir un comentario",
     "confirm-clear-spreadsheet": "¿Descartar la hoja de cálculo actual? Se perderán todos los cambios sin guardar.",
+    "custom-id": "Identificación personalizada",
     "custom-id-in-use": "¡La identificación personalizada ya está en uso! Prueba otro.",
     "created-at": "Creado en",
     "created-on": "Creado a",

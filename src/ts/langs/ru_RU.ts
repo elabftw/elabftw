@@ -24,6 +24,7 @@ const t = {
     "copied": "Copied to clipboard.",
     "comment-add": "Добавить комментарий",
     "confirm-clear-spreadsheet": "Discard current spreadsheet? All unsaved changes will be lost.",
+    "custom-id": "Пользовательский идентификатор",
     "custom-id-in-use": "Пользовательский идентификатор уже используется! Попробуйте другой.",
     "created-at": "Создан в",
     "created-on": "Created on",

@@ -24,6 +24,7 @@ const t = {
     "copied": "Copied to clipboard.",
     "comment-add": "Προσθέστε κάποιο σχόλιο",
     "confirm-clear-spreadsheet": "Discard current spreadsheet? All unsaved changes will be lost.",
+    "custom-id": "Προσαρμοσμένο αναγνωριστικό",
     "custom-id-in-use": "Αυτό το προσαρμοσμένο αναγνωριστικό χρησιμοποιείται ήδη! Δοκιμάστε ένα άλλο.",
     "created-at": "Δημιουργήθηκε στις",
     "created-on": "Created on",

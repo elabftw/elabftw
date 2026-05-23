@@ -24,6 +24,7 @@ const t = {
     "copied": "Copiato negli appunti.",
     "comment-add": "Aggiungi un commento",
     "confirm-clear-spreadsheet": "Eliminare il foglio di calcolo corrente? Tutte le modifiche non salvate andranno perse.",
+    "custom-id": "ID personalizzato",
     "custom-id-in-use": "L'ID personalizzato è già utilizzato! Provane un'altro.",
     "created-at": "Creato a",
     "created-on": "Creato il",

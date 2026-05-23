@@ -24,6 +24,7 @@ const t = {
     "copied": "Copied to clipboard.",
     "comment-add": "Lisää kommentti",
     "confirm-clear-spreadsheet": "Discard current spreadsheet? All unsaved changes will be lost.",
+    "custom-id": "Muokattu tunnus",
     "custom-id-in-use": "ID on jo käytössä! Kokeile toista.",
     "created-at": "Luotu klo",
     "created-on": "Created on",

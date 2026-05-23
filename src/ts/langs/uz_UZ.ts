@@ -24,6 +24,7 @@ const t = {
     "copied": "Copied to clipboard.",
     "comment-add": "Fikr qo'shing",
     "confirm-clear-spreadsheet": "Discard current spreadsheet? All unsaved changes will be lost.",
+    "custom-id": "Maxsus ID",
     "custom-id-in-use": "Maxsus ID allaqachon ishlatilgan! Boshqasini sinab ko'ring.",
     "created-at": "Yaratilgan",
     "created-on": "Created on",

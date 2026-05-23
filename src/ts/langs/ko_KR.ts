@@ -24,6 +24,7 @@ const t = {
     "copied": "Copied to clipboard.",
     "comment-add": "의견 추가",
     "confirm-clear-spreadsheet": "Discard current spreadsheet? All unsaved changes will be lost.",
+    "custom-id": "커스텀 ID",
     "custom-id-in-use": "맞춤 ID가 이미 사용되었습니다. 다른 것을 시도해 보세요.",
     "created-at": "생성 날짜",
     "created-on": "Created on",

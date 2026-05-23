@@ -89,13 +89,14 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
   };
 
   const [columnDefs] = useState([
-    { field: 'id', headerName: i18next.t('id'), pinned: 'left' },
     { field: 'title', headerName: i18next.t('title') },
     { field: 'team_name', headerName: i18next.t('team') },
     { field: 'date', headerName: i18next.t('started-on'), valueGetter: p => lastLoginText(p.data.date), filterValueGetter: p => lastLoginText(p.data.date), cellRenderer: PastDateRenderer},
     { field: 'category', headerName: i18next.t('category'), valueGetter: p => p.data.category_title },
     { field: 'status', headerName: i18next.t('status'), valueGetter: p => p.data.status_title  },
     { field: 'tags_decoded', headerName: i18next.t('tags'), valueGetter: p => p.data.tags_decoded, cellRenderer: TagsRenderer },
+    { field: 'id', headerName: i18next.t('id') },
+    { field: 'custom_id', headerName: i18next.t('custom-id') },
     { field: 'fullname', headerName: i18next.t('owner') },
     { field: 'timestamped', headerName: i18next.t('Is timestamped'), valueGetter: p => yesNo(p.data.timestamped), filterValueGetter: p => yesNo(p.data.timestamped), cellRenderer: BinaryRenderer },
     { field: 'locked', headerName: i18next.t('Is locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },

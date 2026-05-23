@@ -24,6 +24,7 @@ const t = {
     "copied": "Disalin ke papan klip.",
     "comment-add": "Tambahkan komentar",
     "confirm-clear-spreadsheet": "Buang spreadsheet ini? Semua perubahan yang belum disimpan akan hilang.",
+    "custom-id": "ID Kustom",
     "custom-id-in-use": "ID kustom sudah digunakan! Coba yang lain.",
     "created-at": "Dibuat pada",
     "created-on": "Created on",

@@ -24,6 +24,7 @@ const t = {
     "copied": "Copiat al portapapers.",
     "comment-add": "Afegir un comentari",
     "confirm-clear-spreadsheet": "Descartar el full de càlcul actual? Es perdran tots els canvis no guardats.",
+    "custom-id": "ID personalitzat",
     "custom-id-in-use": "L'identificador personalitzat ja s'utilitza! Proveu-ne un altre.",
     "created-at": "Creat a",
     "created-on": "Creat a",

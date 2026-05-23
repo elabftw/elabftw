@@ -24,6 +24,7 @@ const t = {
     "copied": "Copié dans le presse-papiers.",
     "comment-add": "Ajouter un commentaire",
     "confirm-clear-spreadsheet": "Abandonner la feuille de calcul actuelle ? Toutes les modifications non enregistrées seront perdues.",
+    "custom-id": "ID personnalisé",
     "custom-id-in-use": "L'identifiant personnalisé est déjà utilisé ! Essayez-en un autre.",
     "created-at": "Créé à",
     "created-on": "Créé le",

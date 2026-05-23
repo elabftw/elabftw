@@ -24,6 +24,7 @@ const t = {
     "copied": "已複製到剪貼簿。",
     "comment-add": "新增註解",
     "confirm-clear-spreadsheet": "是否捨棄當前電子表格？所有未儲存的變更都將遺失。",
+    "custom-id": "自訂 ID",
     "custom-id-in-use": "自訂 ID 已被使用！請嘗試其他 ID。",
     "created-at": "創建於",
     "created-on": "創建於",

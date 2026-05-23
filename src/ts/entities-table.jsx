@@ -14,7 +14,8 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { get } from 'svelte/store';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import { notify } from './notify';
@@ -30,18 +31,21 @@ const rowSelection = {
   headerCheckbox: false,
 };
 
-const EntitiesTable = () => {
+const EntitiesTable = ({ searchQuery }) => {
   const [rowData, setRowData] = useState([]);
-  const [gridApi, setGridApi] = useState(null);
+  const gridApiRef = useRef(null);
   const isDark = document.documentElement.classList.contains('dark-mode');
 
   const onGridReady = (params) => {
-    setGridApi(params.api);
+    gridApiRef.current = params.api;
+
+    if (searchQuery) {
+      params.api.setGridOption('quickFilterText', get(searchQuery));
+    }
+
     fetchData();
   };
-  const onQuickFilterChange = (e) => {
-    gridApi.setGridOption('quickFilterText', e.target.value);
-  };
+
   const PastDateRenderer = ({ value }) => {
     return value === i18next.t('never')
       ? <span className='font-italic'>{value}</span>
@@ -132,7 +136,6 @@ const EntitiesTable = () => {
     }
   }, []);
 
-
   // Load data on component mount and reload when entity filters change
   useEffect(() => {
     const handleEntityFiltersChanged = event => {
@@ -145,6 +148,18 @@ const EntitiesTable = () => {
       document.removeEventListener('entity-filters-changed', handleEntityFiltersChanged);
     };
   }, [fetchData]);
+
+  useEffect(() => {
+    if (!searchQuery) {
+      return undefined;
+    }
+
+    const unsubscribe = searchQuery.subscribe(value => {
+      gridApiRef.current?.setGridOption('quickFilterText', value);
+    });
+
+    return unsubscribe;
+  }, [searchQuery]);
 
   // when a row is selected with the checkbox
   const selectionChanged = (event) => {
@@ -191,9 +206,9 @@ const EntitiesTable = () => {
   );
 };
 
-const App = () => <EntitiesTable/>;
+const App = ({ searchQuery }) => <EntitiesTable searchQuery={searchQuery}/>;
 
-export const mountEntitiesTable = rootElement => {
+export const mountEntitiesTable = (rootElement, searchQuery) => {
   if (!rootElement) {
     return null;
   }
@@ -204,7 +219,7 @@ export const mountEntitiesTable = rootElement => {
     entitiesTableRoot = createRoot(rootElement);
   }
 
-  entitiesTableRoot.render(<App/>);
+  entitiesTableRoot.render(<App searchQuery={searchQuery}/>);
 
   return entitiesTableRoot;
 };

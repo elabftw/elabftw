@@ -119,7 +119,7 @@ const unmountEntityListSv = async (): Promise<void> => {
 async function displayEntities(mode: string) {
   if (mode === 'tb') {
     unmountEntityListSv();
-    mountEntitiesTable(document.getElementById('entities-table'));
+    mountEntitiesTable(document.getElementById('entities-table'), searchQuery);
     return;
   }
   mountEntityListSv(document.getElementById('entityList'));

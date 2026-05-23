@@ -461,9 +461,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const format = el.value;
+       const allowedFormats = new Set(['eln', 'zip', 'csv', 'pdf', 'qrpdf', 'json']);
+       if (!allowedFormats.has(format)) {
+         notify.error('invalid-info');
+         return;
+       }
       // reset selection so button can be used again with same format
       el.selectedIndex = 0;
-      window.location.href = `make.php?format=${format}&type=${entity.type}&id=${checked.join('+')}`;
+      const params = new URLSearchParams({
+        format,
+        type: entity.type,
+        id: checked.join('+'),
+      });
+      window.location.href = `make.php?${params.toString()}`;
     }
   });
 

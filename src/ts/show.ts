@@ -554,6 +554,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (el.matches('[data-action="clear-form"]')) {
       clearForm(document.getElementById(el.dataset.target));
 
+      if (el.dataset.target === 'multiChangesForm') {
+        selectedEntities.set([]);
+
+        document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked').forEach(checkbox => {
+          checkbox.checked = false;
+          (checkbox.closest('.entity') as HTMLElement).style.backgroundColor = '';
+        });
+
+        document.getElementById('withSelected')?.classList.add('d-none');
+        document.querySelector('a[data-action="invert-entities-selection"]')?.setAttribute('hidden', 'hidden');
+        toggleActionButtonsDependingOnSelected();
+      }
+
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-items-layout"]')) {
       let target = 'it';

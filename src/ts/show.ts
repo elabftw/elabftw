@@ -147,18 +147,39 @@ if (searchBar) {
   });
 }
 
-function addHiddenInputToMainSearchForm(name: string, value: string): void
+function removeHiddenInputsFromMainSearchForm(name: string): void
 {
   const form = document.getElementById('mainSearchForm');
-  const hiddenInputId = `${name}_hiddenInput`;
-  document.getElementById(hiddenInputId)?.remove();
+  if (!form) {
+    return;
+  }
+
+  form.querySelectorAll<HTMLInputElement>('input[hidden]').forEach(input => {
+    if (input.name === name) {
+      input.remove();
+    }
+  });
+}
+
+function appendHiddenInputToMainSearchForm(name: string, value: string): void
+{
+  const form = document.getElementById('mainSearchForm');
+  if (!form) {
+    return;
+  }
+
   const input = document.createElement('input');
   input.hidden = true;
   input.name = name;
   input.setAttribute('aria-label', name);
   input.value = value;
-  input.id = hiddenInputId;
   form.appendChild(input);
+}
+
+function addHiddenInputToMainSearchForm(name: string, value: string): void
+{
+  removeHiddenInputsFromMainSearchForm(name);
+  appendHiddenInputToMainSearchForm(name, value);
 }
 
 function setExpandedAndSelectedEntities(): void {
@@ -1067,19 +1088,16 @@ document.addEventListener('DOMContentLoaded', () => {
       dropdownParent: '#tagFilterMenu',
 
       onChange: (value: unknown) => {
+        const selectedTags = Array.isArray(value) ? value as string[] : [];
         const url = new URL(window.location.href);
+
         url.searchParams.delete('tags[]');
+        removeHiddenInputsFromMainSearchForm('tags[]');
 
-        (value as string[]).forEach(tag => {
-          params.append('tags[]', tag);
+        selectedTags.forEach(tag => {
           url.searchParams.append('tags[]', tag);
+          appendHiddenInputToMainSearchForm('tags[]', tag);
         });
-
-        if ((value as string[]).length === 0) {
-          url.searchParams.delete('tags[]');
-        }
-
-        addHiddenInputToMainSearchForm('tags[]', (value as string[]).toString());
 
         window.history.replaceState({}, '', url.toString());
         window.dispatchEvent(new CustomEvent('entity-filters-changed'));

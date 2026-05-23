@@ -553,7 +553,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       (el as HTMLButtonElement).disabled = true;
-      ApiC.notifOnSaved = false;
       const ajaxs: Promise<unknown>[] = [];
       const form = document.getElementById('multiChangesForm');
       const params = collectForm(form);
@@ -563,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // they do not have all the same endpoint: handle tags and links the generic patch method
         for (const key in paramsCopy) {
           if (key === 'tags') {
-            ajaxs.push(ApiC.post(`${entity.type}/${chk}/${Model.Tag}`, {tag: paramsCopy[key]}));
+            ajaxs.push(ApiC.post(`${entity.type}/${chk}/${Model.Tag}`, {notifOnSaved: 0, tag: paramsCopy[key]}));
             delete paramsCopy[key];
           } else if (Object.values(LinkSubModel).includes(key as LinkSubModel)) {
             ajaxs.push(ApiC.post(`${entity.type}/${chk}/${key}/${parseInt(paramsCopy[key], 10)}`));
@@ -578,7 +577,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // reload the page once it's done
       Promise.all(ajaxs).then(() => {
         notify.success();
-        ApiC.notifOnSaved = true;
         reloadEntitiesShow();
       }).finally(() => (el as HTMLButtonElement).disabled = false);
 
@@ -605,11 +603,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentMode === 'it') {
         target = 'tb';
       }
-      ApiC.notifOnSaved = false;
-      ApiC.patch(`${Model.User}/me`, { display_mode: target}).then(() => {
+      ApiC.patch(`${Model.User}/me`, { notifOnSaved: 0, display_mode: target}).then(() => {
         document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
         displayEntities(target);
-      }).finally(() => ApiC.notifOnSaved = true);
+      });
 
     // a tag has been clicked/selected, add it in url and load the page
     } else if (el.matches('[data-action="add-tag-filter"]')) {
@@ -755,25 +752,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // perform deletes
         const deletes = checked.map(chk =>
-          ApiC.delete(`${entity.type}/${chk}`),
+          ApiC.delete(`${entity.type}/${chk}`, { notifOnSaved:0 }),
         );
-        ApiC.notifOnSaved = false;
         Promise.all(deletes).then(() => {
           notify.success();
           reloadEntitiesShow();
-          ApiC.notifOnSaved = true;
         });
         return;
       }
       // handle all other PATCH with selected action
       const results = checked.map(chk =>
-        ApiC.patch(`${entity.type}/${chk}`, {action}),
+        ApiC.patch(`${entity.type}/${chk}`, { notifOnSaved: 0, action }),
       );
-      ApiC.notifOnSaved = false;
       Promise.all(results).then(() => {
         notify.success();
         reloadEntitiesShow();
-        ApiC.notifOnSaved = true;
       });
     }
   });

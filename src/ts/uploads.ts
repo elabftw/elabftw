@@ -95,8 +95,7 @@ on('duplicate-upload', (el: HTMLElement) => {
 });
 
 on('toggle-uploads-layout', (el: HTMLElement) => {
-  ApiC.notifOnSaved = false;
-  ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout})
+  ApiC.patch(`${Model.User}/me`, { notifOnSaved: 0, uploads_layout: el.dataset.targetLayout })
     // toggler needs to be reloaded too so the target value will be updated
     .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
 });

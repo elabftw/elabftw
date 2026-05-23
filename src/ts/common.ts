@@ -685,8 +685,7 @@ on('transfer-ownership', async (_, e:Event) => {
   }
   const userid = Number.parseInt(String(params['targetUserId']).split(' ')[0], 10);
   const team = Number.parseInt(String(params['targetTeamId']), 10);
-  ApiC.notifOnSaved = false;
-  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid, team });
+  await ApiC.patch(`${entity.type}/${entity.id}`, { notifOnSaved: 0, action: Action.UpdateOwner, userid, team });
   sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
   const path = window.location.pathname.toLowerCase();
   if (path.includes('experiment')) {
@@ -941,8 +940,7 @@ on('search-pubchem', (el: HTMLElement) => {
   const elOldHTML = mkSpin(el);
   const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
   // we will handle errors differently here
-  ApiC.notifOnError = false;
-  ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
+  ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`, { notifOnError: 0 }).then(json => {
     const compounds = Array.isArray(json) ? json : [json];
     const table = document.createElement('table');
     table.classList.add('table');
@@ -1002,7 +1000,6 @@ on('search-pubchem', (el: HTMLElement) => {
     console.error(err);
     resultTableDiv.innerText = err;
   }).finally(() => {
-    ApiC.notifOnError = true;
     mkSpinStop(el, elOldHTML);
   });
 });

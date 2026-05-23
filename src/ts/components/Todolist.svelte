@@ -55,9 +55,7 @@
     const content = draft.trim();
     if (!content) return;
 
-    ApiC.notifOnSaved = false;
-    await ApiC.post(Model.Todolist, { content });
-    ApiC.notifOnSaved = true;
+    await ApiC.post(`${Model.Todolist}`, { notifOnSaved: 0, content });
     draft = '';
     await load();
   }

@@ -699,15 +699,13 @@ export function escapeExtendedQuery(searchTerm: string): string {
 
 export function replaceWithTitle(): void {
   document.querySelectorAll('[data-replace-with-title="true"]').forEach((el: HTMLElement) => {
-    // mask error notifications
-    ApiC.notifOnError = false;
     // view mode is innerText
     let changedAttribute = 'innerText';
     // edit mode is value because it's an input
     if (el instanceof HTMLInputElement) {
       changedAttribute = 'value';
     }
-    ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
+    ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`, { notifOnError: 0 }).then(json => {
       // VIEW MODE (non-input): default = 'entity title'
       let value;
       const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';

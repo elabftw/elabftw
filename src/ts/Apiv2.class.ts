@@ -10,9 +10,6 @@ import { getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';
 
 export class Api {
-  // set this to false to prevent the "Saved" notification from showing up
-  notifOnSaved = true;
-  notifOnError = true;
   // allow forcing the browser to make the request even if page is closed − useful for clearing exclusive edit on window unload
   // it is false by default for two reasons:
   // 1. It is not needed
@@ -62,17 +59,29 @@ export class Api {
     return this.send(Method.POST, query, params);
   }
 
-  post2location(query: string, params = {}): Promise<number> {
+  async post2location(query: string, params = {}): Promise<number> {
     return this.send(Method.POST, query, params).then(res => getNewIdFromPostRequest(res));
   }
 
 
-  delete(query: string): Promise<Response> {
-    return this.send(Method.DELETE, query);
+  delete(query: string, params = {}): Promise<Response> {
+    return this.send(Method.DELETE, query, params);
   }
 
   // private method: use patch/post/delete instead
-  send(method: Method, query: string, params = {}): Promise<Response> {
+  private async send(method: Method, query: string, params = {}): Promise<Response> {
+    // allow toggle notifs off by sending notifOn(Saved|Error)=0 as param
+    let notifOnSaved = true;
+    if (params['notifOnSaved'] === 0) {
+      notifOnSaved = false;
+    }
+    delete params['notifOnSaved'];
+    let notifOnError = true;
+    if (params['notifOnError'] === 0) {
+      notifOnError = false;
+    }
+    delete params['notifOnError'];
+
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const options = {
       method: method,
@@ -90,6 +99,7 @@ export class Api {
     if (method === Method.GET && Object.keys(params).length > 0) {
       urlParams = `?${new URLSearchParams(params).toString()}`;
     }
+
     return fetch(`api/v2/${query}${urlParams}`, options).then(async response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
         return response.json().then(json => {
@@ -100,12 +110,12 @@ export class Api {
       }
       return response;
     }).then(response => {
-      if (method !== Method.GET && this.notifOnSaved) {
+      if (method !== Method.GET && notifOnSaved) {
         notify.success();
       }
       return response;
     }).catch(error => {
-      if (this.notifOnError) {
+      if (notifOnError) {
         notify.error(error.message);
       }
 
@@ -115,7 +125,7 @@ export class Api {
     });
   }
 
-  getOkStatusFromMethod(method: Method): number {
+  private getOkStatusFromMethod(method: Method): number {
     switch (method) {
     case Method.GET:
     case Method.PATCH:

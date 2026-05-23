@@ -272,9 +272,6 @@
       isLoadingMore = true;
     }
 
-    const previousNotifOnError = ApiC.notifOnError;
-    ApiC.notifOnError = false;
-
     try {
       const params: Record<string, string | number | string[]> = {
         limit: currentLimit,
@@ -338,7 +335,6 @@
 
       error = apiError.message || t('error');
     } finally {
-      ApiC.notifOnError = previousNotifOnError;
 
       if (seq === requestSeq) {
         if (replace) {

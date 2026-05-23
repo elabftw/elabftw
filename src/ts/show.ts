@@ -315,7 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (about.page !== 'show') {
     return;
   }
-  handleInitialLoadDone();
   // can't have await at top level, so wrap it
   void (async (): Promise<void> => {
     const displayMode = await getDisplayMode();

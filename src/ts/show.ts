@@ -8,7 +8,6 @@
 import {
   clearForm,
   collectForm,
-  getCheckedBoxes,
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
@@ -19,6 +18,7 @@ import { ApiC } from './api';
 import { notify } from './notify';
 import { entity } from './getEntity';
 import { mountEntitiesTable, unmountEntitiesTable } from './entities-table';
+import { get } from 'svelte/store';
 import { mount, unmount } from 'svelte';
 import { writable } from 'svelte/store';
 import SearchBarSv from './components/SearchBar.svelte';
@@ -29,6 +29,7 @@ import { core } from './core';
 const skeleton = document.getElementById('itemListSkeleton');
 const initialQ = new URL(window.location.href).searchParams.get('q') ?? '';
 const searchQuery = writable(initialQ);
+const selectedEntities = writable<string[]>([]);
 
 let debounceTimer: number | undefined;
 
@@ -98,6 +99,7 @@ const mountEntityListSv = (target: HTMLElement): void => {
       entityType: entity.type,
       limit: 15,
       searchQuery,
+      selectedEntities,
       currentUserId: core.currentUserid,
       currentTeam: core.currentTeam,
       isAdmin: core.isAdmin,
@@ -119,7 +121,7 @@ const unmountEntityListSv = async (): Promise<void> => {
 async function displayEntities(mode: string) {
   if (mode === 'tb') {
     unmountEntityListSv();
-    mountEntitiesTable(document.getElementById('entities-table'), searchQuery);
+    mountEntitiesTable(document.getElementById('entities-table'), searchQuery, selectedEntities);
     return;
   }
   mountEntityListSv(document.getElementById('entityList'));
@@ -435,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLSelectElement);
     // EXPORT SELECTED
     if (el.matches('[data-action="export-selected-entities"]')) {
-      const checked = getCheckedBoxes();
+      const checked = get(selectedEntities);
       if (checked.length === 0) {
         notify.error('nothing-selected');
         return;
@@ -443,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const format = el.value;
       // reset selection so button can be used again with same format
       el.selectedIndex = 0;
-      window.location.href = `make.php?format=${format}&type=${entity.type}&id=${checked.map(value => value.id).join('+')}`;
+      window.location.href = `make.php?format=${format}&type=${entity.type}&id=${checked.join('+')}`;
     }
   });
 
@@ -492,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
 
       // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
+      const checked = get(selectedEntities);
       if (checked.length === 0) {
         notify.error('nothing-selected');
         return;
@@ -512,16 +514,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // they do not have all the same endpoint: handle tags and links the generic patch method
         for (const key in paramsCopy) {
           if (key === 'tags') {
-            ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${Model.Tag}`, {tag: paramsCopy[key]}));
+            ajaxs.push(ApiC.post(`${entity.type}/${chk}/${Model.Tag}`, {tag: paramsCopy[key]}));
             delete paramsCopy[key];
           } else if (Object.values(LinkSubModel).includes(key as LinkSubModel)) {
-            ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${key}/${parseInt(paramsCopy[key], 10)}`));
+            ajaxs.push(ApiC.post(`${entity.type}/${chk}/${key}/${parseInt(paramsCopy[key], 10)}`));
             delete paramsCopy[key];
           }
         }
         // patch whatever is left
         if (Object.entries(paramsCopy).length > 0) {
-          ajaxs.push(ApiC.patch(`${entity.type}/${chk.id}`, paramsCopy));
+          ajaxs.push(ApiC.patch(`${entity.type}/${chk}`, paramsCopy));
         }
       });
       // reload the page once it's done
@@ -672,7 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // PATCH ACTIONS FOR CHECKED BOXES : lock, unlock, timestamp, archive
     } else if (el.matches('[data-action="patch-selected-entities"]')) {
       // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
+      const checked = get(selectedEntities);
       if (checked.length === 0) {
         notify.error('nothing-selected');
         return;
@@ -684,17 +686,20 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         // perform deletes
-        checked.forEach(chk => {
-          ApiC.delete(`${entity.type}/${chk.id}`).then(() => {
-            // use curly braces to avoid implicit return
-            document.getElementById(`parent_${chk.randomid}`)?.remove();
-          });
+        const deletes = checked.map(chk =>
+          ApiC.delete(`${entity.type}/${chk}`),
+        );
+        ApiC.notifOnSaved = false;
+        Promise.all(deletes).then(() => {
+          notify.success();
+          reloadEntitiesShow();
+          ApiC.notifOnSaved = true;
         });
         return;
       }
       // handle all other PATCH with selected action
       const results = checked.map(chk =>
-        ApiC.patch(`${entity.type}/${chk.id}`, {action}),
+        ApiC.patch(`${entity.type}/${chk}`, {action}),
       );
       ApiC.notifOnSaved = false;
       Promise.all(results).then(() => {

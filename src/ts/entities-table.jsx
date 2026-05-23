@@ -31,7 +31,7 @@ const rowSelection = {
   headerCheckbox: false,
 };
 
-const EntitiesTable = ({ searchQuery }) => {
+const EntitiesTable = ({ searchQuery, selectedEntities }) => {
   const [rowData, setRowData] = useState([]);
   const gridApiRef = useRef(null);
   const isDark = document.documentElement.classList.contains('dark-mode');
@@ -142,10 +142,10 @@ const EntitiesTable = ({ searchQuery }) => {
       fetchData(event);
     };
 
-    document.addEventListener('entity-filters-changed', handleEntityFiltersChanged);
+    window.addEventListener('entity-filters-changed', handleEntityFiltersChanged);
 
     return () => {
-      document.removeEventListener('entity-filters-changed', handleEntityFiltersChanged);
+      window.removeEventListener('entity-filters-changed', handleEntityFiltersChanged);
     };
   }, [fetchData]);
 
@@ -163,10 +163,21 @@ const EntitiesTable = ({ searchQuery }) => {
 
   // when a row is selected with the checkbox
   const selectionChanged = (event) => {
-    // we store the selected rows as data-target string on the delete and restore buttons
     const selectedRows = event.api.getSelectedRows();
-    // TODO
+    const selectedIds = selectedRows.map(row => String(row.id));
 
+    selectedEntities?.set(selectedIds);
+
+    const withSelected = document.getElementById('withSelected');
+    if (!withSelected) {
+      return;
+    }
+
+    if (selectedIds.length > 0) {
+      withSelected.classList.remove('d-none');
+    } else {
+      withSelected.classList.add('d-none');
+    }
   };
 
   const defaultColDef = useMemo(() => {
@@ -206,9 +217,14 @@ const EntitiesTable = ({ searchQuery }) => {
   );
 };
 
-const App = ({ searchQuery }) => <EntitiesTable searchQuery={searchQuery}/>;
+const App = ({ searchQuery, selectedEntities }) => (
+  <EntitiesTable
+    searchQuery={searchQuery}
+    selectedEntities={selectedEntities}
+  />
+);
 
-export const mountEntitiesTable = (rootElement, searchQuery) => {
+export const mountEntitiesTable = (rootElement, searchQuery, selectedEntities) => {
   if (!rootElement) {
     return null;
   }
@@ -219,7 +235,12 @@ export const mountEntitiesTable = (rootElement, searchQuery) => {
     entitiesTableRoot = createRoot(rootElement);
   }
 
-  entitiesTableRoot.render(<App searchQuery={searchQuery}/>);
+  entitiesTableRoot.render(
+  <App
+    searchQuery={searchQuery}
+    selectedEntities={selectedEntities}
+  />
+);
 
   return entitiesTableRoot;
 };

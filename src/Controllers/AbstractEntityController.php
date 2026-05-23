@@ -111,11 +111,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
         $ExtraFieldsKeys = new ExtraFieldsKeys($this->App->Users, '', -1);
 
-        // only show public to anon
-        if ($this->App->Session->get('is_anon')) {
-            $this->Entity->isAnon = true;
-        }
-
         // must be before the call to readShow
         if (($this->App->Users->userData['always_show_owned'] ?? null) === 1) {
             $this->Entity->alwaysShowOwned = true;

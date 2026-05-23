@@ -81,7 +81,7 @@ searchQuery.subscribe(value => {
 async function getDisplayMode() {
   return ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
     return json['display_mode'];
-  });
+  }).catch(() => 'it');
 }
 
 const mountEntityListSv = (target: HTMLElement): void => {

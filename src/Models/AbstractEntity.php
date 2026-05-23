@@ -144,8 +144,6 @@ abstract class AbstractEntity extends AbstractRest
 
     public bool $isReadOnly = false;
 
-    public bool $isAnon = false;
-
     // inserted in sql
     public array $extendedValues = array();
 

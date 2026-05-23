@@ -68,6 +68,7 @@ use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
 use Elabftw\Services\Email;
@@ -336,7 +337,7 @@ final class Apiv2Controller extends AbstractApiController
                 $this->requester,
                 $this->Request->query->get('scope') === 'team',
             ),
-            ApiEndpoint::Users => new Users($this->id, $this->requester->getTeam(), $this->requester),
+            ApiEndpoint::Users => $this->requester instanceof AnonymousUser ? $this->requester : new Users($this->id, $this->requester->getTeam(), $this->requester),
         };
     }
 

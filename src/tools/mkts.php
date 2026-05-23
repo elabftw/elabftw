@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 $src = dirname(__DIR__);
-$input = $root . '/Enums/State.php';
-$outputDir = $root . '/ts';
+$input = $src . '/Enums/State.php';
+$outputDir = $src . '/ts';
 $output = $outputDir . '/state.auto.ts';
 
 $contents = file_get_contents($input);

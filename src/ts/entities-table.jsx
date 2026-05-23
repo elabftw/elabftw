@@ -136,6 +136,8 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
     }
   }, []);
 
+  const getRowId = useCallback(params => String(params.data.id), []);
+
   // Load data on component mount and reload when entity filters change
   useEffect(() => {
     const handleEntityFiltersChanged = event => {
@@ -204,6 +206,7 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
           rowData={rowData}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
+          getRowId={getRowId}
           onGridReady={onGridReady}
           rowSelection={rowSelection}
           onCellDoubleClicked={cellDoubleClicked}

@@ -5,6 +5,7 @@
     "module": "NodeNext",
     "esModuleInterop": true,
     "moduleResolution": "NodeNext",
+    "jsx": "react-jsx",
     "strict": false,
     "removeComments": true,
     "preserveConstEnums": true,

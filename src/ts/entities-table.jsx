@@ -92,7 +92,7 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
     { field: 'id', headerName: i18next.t('id'), pinned: 'left' },
     { field: 'title', headerName: i18next.t('title') },
     { field: 'team_name', headerName: i18next.t('team') },
-    { field: 'date', headerName: i18next.t('started-at'), valueGetter: p => lastLoginText(p.data.date), filterValueGetter: p => lastLoginText(p.data.date), cellRenderer: PastDateRenderer},
+    { field: 'date', headerName: i18next.t('started-on'), valueGetter: p => lastLoginText(p.data.date), filterValueGetter: p => lastLoginText(p.data.date), cellRenderer: PastDateRenderer},
     { field: 'category', headerName: i18next.t('category'), valueGetter: p => p.data.category_title },
     { field: 'status', headerName: i18next.t('status'), valueGetter: p => p.data.status_title  },
     { field: 'tags_decoded', headerName: i18next.t('tags'), valueGetter: p => p.data.tags_decoded, cellRenderer: TagsRenderer },

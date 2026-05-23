@@ -28,7 +28,8 @@ let entitiesTableRoot = null;
 
 const rowSelection = {
   mode: 'multiRow',
-  headerCheckbox: false,
+  headerCheckbox: true,
+  selectAll: 'currentPage',
 };
 
 const EntitiesTable = ({ searchQuery, selectedEntities }) => {

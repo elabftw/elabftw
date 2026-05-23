@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-$root = dirname(__DIR__);
-$input = $root . '../../src/Enums/State.php';
-$outputDir = $root . '../../src/ts';
+$src = dirname(__DIR__);
+$input = $root . '/Enums/State.php';
+$outputDir = $root . '/ts';
 $output = $outputDir . '/state.auto.ts';
 
 $contents = file_get_contents($input);

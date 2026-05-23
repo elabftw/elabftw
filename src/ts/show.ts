@@ -164,6 +164,9 @@ function addHiddenInputToMainSearchForm(name: string, value: string): void
 function setExpandedAndSelectedEntities(): void {
   type ExpandedAndSelectedEntitiesState = { expanded: boolean; selectedEntities: string[]; expendedEntities: string[] };
   const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities) as ExpandedAndSelectedEntitiesState;
+
+  selectedEntities.set(state.selectedEntities);
+
   if (state.expanded) {
     const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
     linkEl.dataset.status = 'opened';
@@ -182,6 +185,14 @@ function setExpandedAndSelectedEntities(): void {
       (document.querySelector(`[data-action="toggle-body"][data-id="${item.dataset.id}"]`) as HTMLButtonElement).click();
     }
   });
+}
+
+function syncSelectedEntitiesFromDom(): void {
+  const selectedIds = Array.from(
+    document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked'),
+  ).map(item => item.dataset.id).filter(Boolean);
+
+  selectedEntities.set(selectedIds);
 }
 
 // dynamically handle the available actions depending the state of selected entities
@@ -237,16 +248,23 @@ function getParamNum(param: string): number {
 function getExpandedAndSelectedEntities(): void {
   const expanded = (document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement).dataset.status === 'opened';
   const expendedEntities: string[] = [];
-  const selectedEntities: string[] = [];
+  const selectedEntityIds: string[] = [];
   document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
     if (item.checked) {
-      selectedEntities.push(item.dataset.id);
+      selectedEntityIds.push(item.dataset.id);
     }
     if (!document.getElementById(item.dataset.randomid).hidden) {
       expendedEntities.push(item.dataset.id);
     }
   });
-  document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
+
+  document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({
+    expanded,
+    selectedEntities: selectedEntityIds,
+    expendedEntities,
+  });
+
+  selectedEntities.set(selectedEntityIds);
 }
 
 type TomSelectOptionLike = Record<string, unknown> & {
@@ -585,13 +603,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       toggleActionButtonsDependingOnSelected();
+      syncSelectedEntitiesFromDom();
       if ((el as HTMLInputElement).checked) {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
       }
       // show invert select if any checkbox is selected
-      const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
+      const anyChecked = get(selectedEntities).length > 0;
       const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]') as HTMLAnchorElement;
       if (anyChecked) {
         invertSelections?.removeAttribute('hidden');
@@ -650,6 +669,8 @@ document.addEventListener('DOMContentLoaded', () => {
       icon.classList.toggle('fa-square');
       icon.classList.toggle('fa-square-check');
       el.nextElementSibling.removeAttribute('hidden');
+      syncSelectedEntitiesFromDom();
+      toggleActionButtonsDependingOnSelected();
 
     // INVERT SELECTION
     } else if (el.matches('[data-action="invert-entities-selection"]')) {
@@ -662,8 +683,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
       });
+      syncSelectedEntitiesFromDom();
+      toggleActionButtonsDependingOnSelected();
+
+      const anyChecked = get(selectedEntities).length > 0;
       // Remove withSelected actions if there are no more checked checkboxes
-      const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
       const withSelected = document.getElementById('withSelected') as HTMLDivElement;
       if (anyChecked) {
         withSelected.classList.remove('d-none');

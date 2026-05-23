@@ -56,6 +56,7 @@
     entityType = 'experiments',
     limit = 15,
     searchQuery,
+    selectedEntities = [],
     currentUserId = null,
     currentTeam = null,
     isAdmin = false,
@@ -65,6 +66,7 @@
     entityType?: EntityType;
     limit?: number;
     searchQuery: Writable<string>;
+    selectedEntities: Writable<string[]>;
     currentUserId?: number | null;
     currentTeam?: number | null;
     isAdmin?: boolean;

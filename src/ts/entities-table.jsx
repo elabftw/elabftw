@@ -198,8 +198,17 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
     };
   }, []);
 
-  const cellDoubleClicked = (event) => {
-    window.location = `?mode=view&id=${event.data.id}`;
+  const cellClicked = event => {
+    const target = event.event?.target;
+
+    if (
+      target instanceof HTMLElement
+      && target.closest('input, button, a, .ag-selection-checkbox')
+    ) {
+      return;
+    }
+
+    window.location = `?mode=view&id=${encodeURIComponent(event.data.id)}`;
   };
 
   return (
@@ -213,7 +222,7 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
           getRowId={getRowId}
           onGridReady={onGridReady}
           rowSelection={rowSelection}
-          onCellDoubleClicked={cellDoubleClicked}
+          onCellClicked={cellClicked}
           onSelectionChanged={selectionChanged}
           pagination={true}
           paginationPageSize={15}

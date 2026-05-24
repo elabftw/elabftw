@@ -6,7 +6,7 @@
    * @license AGPL-3.0
    * @package elabftw
    */
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import { ApiC } from '../api';
   import i18next from '../i18n';
@@ -83,7 +83,6 @@
   let isLoading = $state(false);
   let isLoadingMore = $state(false);
   let hasMore = $state(true);
-  //let offset = $state(0);
   let sentinelEl: HTMLDivElement | null = null;
   let currentQueryKey = '';
   let reloadVersion = $state(0);
@@ -345,6 +344,7 @@
 
         if (!hasReportedInitialLoad) {
           hasReportedInitialLoad = true;
+          await tick();
           onInitialLoadDone?.();
         }
       }

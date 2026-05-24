@@ -1,0 +1,92 @@
+/**
+ * @author Nicolas CARPi / Deltablot
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+@use 'sass:list';
+
+/* for all things skeletons: what we see before components are mounted */
+/* ITEM MODE SKELETON */
+.entity-skeleton {
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.skeleton-box {
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.06) 25%,
+    rgba(0, 0, 0, 0.12) 37%,
+    rgba(0, 0, 0, 0.06) 63%
+  );
+  background-size: 400% 100%;
+  border-radius: 0.25rem;
+  display: inline-block;
+
+  $sizes: (
+    checkbox: (1rem, 1rem),
+    pill: (5.5rem, 1.6rem),
+    pill-sm: (2.5rem, 1.6rem),
+    custom-id: (3.5rem, 1rem),
+    title: (min(28rem, 60vw), 1.25rem),
+    owner: (8rem, 1rem),
+    tag: (4.5rem, 1.5rem),
+    icon: (2rem, 2rem),
+    date: (8rem, 0.9rem),
+    date-sm: (6rem, 0.9rem),
+  );
+
+  @each $name, $size in $sizes {
+    &[data-skeleton='#{$name}'] {
+      height: list.nth($size, 2);
+      width: list.nth($size, 1);
+    }
+  }
+
+  &[data-skeleton='checkbox'] {
+    margin-top: 0.15rem;
+  }
+
+  &[data-skeleton='tag'] {
+    border-radius: 999px;
+  }
+
+  &[data-skeleton='title'] {
+    max-width: 100%;
+  }
+}
+
+/* TABLE MODE SKELETON */
+.entity-table-skeleton {
+  td {
+    height: 42px;
+    vertical-align: middle;
+
+    .skeleton-box:not(.skeleton-checkbox, .skeleton-tag) {
+      height: 16px;
+    }
+
+    &:nth-child(2) .skeleton-box { width: 150px; }
+    &:nth-child(3) .skeleton-box { width: 70px; }
+    &:nth-child(4) .skeleton-box { width: 90px; }
+    &:nth-child(5) .skeleton-box { width: 140px; }
+    &:nth-child(6) .skeleton-box { width: 80px; }
+    &:nth-child(8) .skeleton-box { width: 32px; }
+    &:nth-child(9) .skeleton-box { width: 50px; }
+    &:nth-child(10) .skeleton-box { width: 120px; }
+  }
+}
+
+/* ANIMATION */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}

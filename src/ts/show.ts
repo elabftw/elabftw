@@ -26,7 +26,6 @@ import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
 
-const skeleton = document.getElementById('itemListSkeleton');
 const initialQ = new URL(window.location.href).searchParams.get('q') ?? '';
 const searchQuery = writable(initialQ);
 const selectedEntities = writable<string[]>([]);
@@ -36,7 +35,8 @@ let debounceTimer: number | undefined;
 let entityListSvComponent: Record<string, unknown> | null = null;
 
 function handleInitialLoadDone(): void {
-  skeleton?.remove();
+  // remove skeleton
+  document.getElementById('itemListSkeleton')?.remove();
 }
 
 const activeFilters = document.getElementById('activeFiltersDiv');
@@ -90,9 +90,6 @@ const mountEntityListSv = (target: HTMLElement): void => {
     return;
   }
 
-  // remove skeleton
-  target.innerHTML = '';
-
   entityListSvComponent = mount(EntityListSv, {
     target,
     props: {
@@ -119,13 +116,15 @@ const unmountEntityListSv = async (): Promise<void> => {
 };
 
 async function displayEntities(mode: string) {
+  const rootEl = document.getElementById('entityList');
   if (mode === 'tb') {
     unmountEntityListSv();
-    mountEntitiesTable(document.getElementById('entities-table'), searchQuery, selectedEntities);
+    mountEntitiesTable(rootEl, searchQuery, selectedEntities);
+    handleInitialLoadDone();
     return;
   }
-  mountEntityListSv(document.getElementById('entityList'));
   unmountEntitiesTable();
+  mountEntityListSv(rootEl);
 }
 
 const params = new URLSearchParams(document.location.search.slice(1));
@@ -182,32 +181,6 @@ function addHiddenInputToMainSearchForm(name: string, value: string): void
   appendHiddenInputToMainSearchForm(name, value);
 }
 
-function setExpandedAndSelectedEntities(): void {
-  type ExpandedAndSelectedEntitiesState = { expanded: boolean; selectedEntities: string[]; expendedEntities: string[] };
-  const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities) as ExpandedAndSelectedEntitiesState;
-
-  selectedEntities.set(state.selectedEntities);
-
-  if (state.expanded) {
-    const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
-    linkEl.dataset.status = 'opened';
-    document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLButtonElement) => {
-      toggleButton.click();
-    });
-  }
-  if (state.selectedEntities.length > 0) {
-    document.getElementById('withSelected').classList.remove('d-none');
-  }
-  document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
-    if (state.selectedEntities.includes(item.dataset.id)) {
-      item.click();
-    }
-    if (!state.expanded && state.expendedEntities.includes(item.dataset.id)) {
-      (document.querySelector(`[data-action="toggle-body"][data-id="${item.dataset.id}"]`) as HTMLButtonElement).click();
-    }
-  });
-}
-
 function syncSelectedEntitiesFromDom(): void {
   const selectedIds = Array.from(
     document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked'),
@@ -252,40 +225,6 @@ function toggleActionButtonsDependingOnSelected(): void {
       btn.setAttribute('title', cannotAction);
     }
   });
-}
-
-// get query param value as number
-function getParamNum(param: string): number {
-  const params = new URLSearchParams(document.location.search);
-  let val = params.get(param);
-  if (!val) {
-    val = '0';
-  }
-  return parseInt(val, 10);
-}
-
-// the "load more" button triggers a reloading of div#showModeContent
-// so we keep track of the expanded and selected entities
-function getExpandedAndSelectedEntities(): void {
-  const expanded = (document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement).dataset.status === 'opened';
-  const expendedEntities: string[] = [];
-  const selectedEntityIds: string[] = [];
-  document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
-    if (item.checked) {
-      selectedEntityIds.push(item.dataset.id);
-    }
-    if (!document.getElementById(item.dataset.randomid).hidden) {
-      expendedEntities.push(item.dataset.id);
-    }
-  });
-
-  document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({
-    expanded,
-    selectedEntities: selectedEntityIds,
-    expendedEntities,
-  });
-
-  selectedEntities.set(selectedEntityIds);
 }
 
 type TomSelectOptionLike = Record<string, unknown> & {
@@ -503,40 +442,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('container').addEventListener('click', async event => {
     const el = (event.target as HTMLElement);
     const params = new URLSearchParams(document.location.search);
-    // LOAD MORE
-    if (el.matches('[data-action="load-more"]')) {
-      // we keep track of the expanded and selected entities
-      getExpandedAndSelectedEntities();
-      // NOTE: in an ideal world, we can request the delta elements in json via api and inject them in page
-      // this would avoid having to re-query all items every time, especially after a few clicks where limit is a few hundreds, might bring strain on mysql servers
-      // so here the strategy is simply to increase the "limit" to show more stuff
-
-      // we want to know if the newly applied limit actually brought new items
-      // because if not, we disable the button
-      // so simply count them
-      const previousNumber = document.querySelectorAll('.entity').length;
-      // this will be 0 if the button has not been clicked yet
-      const queryLimit = getParamNum('limit');
-      const usualLimit = parseInt(about.limit, 10);
-      let newLimit = queryLimit + usualLimit;
-      // handle edge case for first click
-      if (queryLimit < usualLimit) {
-        newLimit = usualLimit * 2;
-      }
-      params.set('limit', String(newLimit));
-      history.replaceState(null, '', `?${params.toString()}`);
-      reloadEntitiesShow().then(() => {
-        // expand and select what was expanded and selected
-        setExpandedAndSelectedEntities();
-        // remove Load more button if no new entries appeared
-        const newNumber = document.querySelectorAll('.entity').length;
-        if (previousNumber === newNumber) {
-          document.getElementById('loadMoreBtn').remove();
-        }
-      });
-
     // SAVE MULTI CHANGES
-    } else if (el.matches('[data-action="save-multi-changes"]')) {
+    if (el.matches('[data-action="save-multi-changes"]')) {
 
       // prevent form submission
       event.preventDefault();

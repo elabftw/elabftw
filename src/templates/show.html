@@ -603,65 +603,90 @@
         </form>
       </div>
 
-      {# classic view skeleton #}
+      {# SKELETONS #}
       <div id='itemListSkeleton' class='d-flex flex-column' aria-hidden='true'>
-        {% for i in 1..DisplayParams.limit %}
-          <section data-twiglinterstfu='{{ i }}' class='entity entity-skeleton pl-3 py-3 d-flex'>
-            <div class='d-flex align-items-start mt-1'>
-              <div class='skeleton-box skeleton-checkbox mr-3'></div>
-            </div>
-
-            <div class='align-self-center flex-grow-1'>
-              <div class='mb-2'>
-                <span class='skeleton-box skeleton-pill mr-1'></span>
-                <span class='skeleton-box skeleton-pill mr-1'></span>
-                <span class='skeleton-box skeleton-pill skeleton-pill-small'></span>
+        {% if App.Users.userData.display_mode == 'it' %}
+          {% for i in 1..DisplayParams.limit %}
+            <section data-twiglinterstfu='{{ i }}' class='entity entity-skeleton pl-3 py-3 d-flex'>
+              <div class='mt-1 mr-3'>
+                <span class='skeleton-box' data-skeleton='checkbox'></span>
               </div>
 
-              <div class='d-flex title flex-nowrap my-2 align-items-center'>
-                <span class='skeleton-box skeleton-custom-id mr-1'></span>
-                <span class='skeleton-box skeleton-title'></span>
-              </div>
+              <div class='align-self-center flex-grow-1'>
+                <div class='mb-2'>
+                  <span class='skeleton-box mr-1' data-skeleton='pill'></span>
+                  <span class='skeleton-box mr-1' data-skeleton='pill'></span>
+                  <span class='skeleton-box' data-skeleton='pill-sm'></span>
+                </div>
 
-              <div class='owner mb-2'>
-                <span class='skeleton-box skeleton-owner'></span>
-              </div>
+                <div class='d-flex title flex-nowrap my-2 align-items-center'>
+                  <span class='skeleton-box mr-1' data-skeleton='custom-id'></span>
+                  <span class='skeleton-box' data-skeleton='title'></span>
+                </div>
 
-              <p class='my-2'>
-                <span class='d-inline-flex flex-wrap'>
-                  <span class='skeleton-box skeleton-tag mr-1'></span>
-                  <span class='skeleton-box skeleton-tag mr-1'></span>
-                  <span class='skeleton-box skeleton-tag'></span>
-                </span>
-              </p>
+                <div class='mb-2'>
+                  <span class='skeleton-box' data-skeleton='owner'></span>
+                </div>
 
-              <div class='d-flex flex-row align-items-start'>
-                <span class='skeleton-box skeleton-icon-btn mr-1'></span>
-                <span class='skeleton-box skeleton-icon-btn mr-2'></span>
+                <p class='my-2'>
+                  <span class='d-inline-flex flex-wrap'>
+                    <span class='skeleton-box mr-1' data-skeleton='tag'></span>
+                    <span class='skeleton-box mr-1' data-skeleton='tag'></span>
+                    <span class='skeleton-box' data-skeleton='tag'></span>
+                  </span>
+                </p>
 
-                <div class='d-flex flex-column'>
-                  <span class='skeleton-box skeleton-date mb-1'></span>
-                  <span class='skeleton-box skeleton-date skeleton-date-small'></span>
+                <div class='d-flex flex-row align-items-start'>
+                  <span class='skeleton-box mr-1' data-skeleton='icon'></span>
+                  <span class='skeleton-box mr-2' data-skeleton='icon'></span>
+
+                  <div class='d-flex flex-column'>
+                    <span class='skeleton-box mb-1' data-skeleton='date'></span>
+                    <span class='skeleton-box' data-skeleton='date-sm'></span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class='d-flex justify-content-end ml-auto text-nowrap'>
-              <div>
-                <span class='skeleton-box skeleton-pin'></span>
+              <div class='d-flex justify-content-end ml-auto text-nowrap'>
+                <span class='skeleton-box' data-skeleton='icon'></span>
               </div>
-            </div>
-          </section>
-        {% endfor %}
-      </div>
-      <div id='entityList'></div>
+            </section>
+          {% endfor %}
 
-      {# table view #}
-      <div id='entities-table'></div>
+        {% else %}
+          <div class='table-responsive'>
+            <table class='table table-sm entity-table-skeleton mb-0'>
+              <tbody>
+                {% for i in 1..DisplayParams.limit %}
+                  <tr data-twiglinterstfu='{{ i }}'>
+                    <td><span class='skeleton-box skeleton-checkbox'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td>
+                      <span class='d-inline-flex flex-wrap'>
+                        <span class='skeleton-box skeleton-tag mr-1'></span>
+                        <span class='skeleton-box skeleton-tag mr-1'></span>
+                        <span class='skeleton-box skeleton-tag'></span>
+                      </span>
+                    </td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+      </div>
+      {# this is where components will be mounted #}
+      <div id='entityList'></div>
 
   <div id='info'
       data-page='show'
-      data-type='{{ Entity.entityType.value }}'
       data-limit='{{ DisplayParams.limit }}'
   >
   </div>

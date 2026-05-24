@@ -26,21 +26,6 @@ import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
 
-const initialQ = new URL(window.location.href).searchParams.get('q') ?? '';
-const searchQuery = writable(initialQ);
-const selectedEntities = writable<string[]>([]);
-
-let debounceTimer: number | undefined;
-
-let entityListSvComponent: Record<string, unknown> | null = null;
-
-function handleInitialLoadDone(): void {
-  // remove skeleton
-  document.getElementById('itemListSkeleton')?.remove();
-}
-
-const activeFilters = document.getElementById('activeFiltersDiv');
-
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
   _showAll?: boolean;
 };
@@ -51,8 +36,6 @@ type ActiveFilterControl = {
   title: string;
 };
 
-const filterControls: ActiveFilterControl[] = [];
-
 
 type EntityFilterParam = 'owner' | 'category' | 'status';
 
@@ -61,6 +44,14 @@ type EntityFilterRequestedDetail = {
   value: string;
   label?: string | null;
 };
+
+const activeFilters = document.getElementById('activeFiltersDiv');
+let debounceTimer: number | undefined;
+let entityListSvComponent: Record<string, unknown> | null = null;
+const initialQ = new URL(window.location.href).searchParams.get('q') ?? '';
+const filterControls: ActiveFilterControl[] = [];
+const searchQuery = writable(initialQ);
+const selectedEntities = writable<string[]>([]);
 
 searchQuery.subscribe(value => {
   window.clearTimeout(debounceTimer);
@@ -78,6 +69,11 @@ searchQuery.subscribe(value => {
     window.history.replaceState({}, '', url.toString());
   }, 250);
 });
+
+function handleInitialLoadDone(): void {
+  // remove skeleton
+  document.getElementById('itemListSkeleton')?.remove();
+}
 
 async function getDisplayMode() {
   return ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
@@ -828,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const chip = document.createElement('button');
         chip.type = 'button';
-        chip.className = 'btn btn-sm btn-outline-secondary me-2 mb-2';
+        chip.className = 'btn btn-sm btn-outline-secondary me-2 mb-2 mr-2';
         chip.setAttribute('aria-label', `Remove ${title}: ${label}`);
 
         const chipText = document.createElement('span');
@@ -851,7 +847,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     activeFilters.hidden = activeFilters.children.length === 0;
   }
-
 
   function bindDropdownToggle(
     control: ToggleableTomSelect,

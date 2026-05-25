@@ -23,7 +23,7 @@ func main() {
 	log.Println("starting invoker...")
 	// this var lets us authenticate that messages come from the php app
 	psk := os.Getenv("INVOKER_PSK")
-	socketPath := "/run/invoker/invoker.sock"
+	socketPath := "/run/elabftw/invoker.sock"
 
 	// Remove the socket if it already exists
 	if err := os.RemoveAll(socketPath); err != nil {

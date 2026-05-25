@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\BuildInfo;
-use Elabftw\Elabftw\FsTools;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
@@ -39,7 +38,7 @@ trait TwigTrait
 
         $options = array(
             // use local cache
-            'cache' => FsTools::getCacheFolder('twig'),
+            'cache' => '/run/elabftw/cache/twig',
             // debug mode means the cache is not used (useful in dev of course)
             'debug' => $debug,
         );

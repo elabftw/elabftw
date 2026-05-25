@@ -5,6 +5,7 @@
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     strictBinaryOperands="true"
+    cacheDirectory="/run/elabftw/psalm"
     checkForThrowsInGlobalScope="true"
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"
@@ -21,7 +22,6 @@
         <directory name="../../tests" />
         <directory name="../../web" />
         <ignoreFiles>
-            <directory name="../../cache" />
             <directory name="../../uploads" />
             <directory name="../../vendor" />
             <directory name="../../tests" />

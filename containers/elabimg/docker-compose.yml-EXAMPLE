@@ -23,6 +23,15 @@ services:
     # example: elabftw/elabimg:4.0.5
     # default value: elabftw/elabimg:stable
     image: elabftw/elabimg:stable
+
+    # create a dedicated user to run the service as user mode and set it here
+    # useradd --system --no-create-home --shell /usr/sbin/nologin elabftw-worker
+    user: elabftw-worker:elabftw-worker
+
+    # this allows the container to run with a read-only filesystem
+    # default value: true
+    read_only: true
+
     # this ensures the container will be restarted after a reboot of the server
     # default value: always
     restart: always
@@ -44,6 +53,13 @@ services:
     # add a security flag to prevent a process gaining new privileges
     security_opt:
       - no-new-privileges:true
+
+    # the /run folder is mounted as tmpfs, which is memory backed storage
+    # we need a mutable folder to hold configuration (which is modified at runtime), and things like pid files
+    # here we use uid/gid 1000, replace with the real userid and groupid of your user running the service
+    # use the command: "id elabftw-worker" to get that information
+    tmpfs:
+      - /run:mode=755,uid=1000,gid=1000,exec,nosuid,nodev
 
     # restrict capabilities of the root user to the strict minimum
     # see CIS Docker Benchmark v1.5 5.3
@@ -172,7 +188,7 @@ services:
         # example value: elab.uni.edu
         - SERVER_NAME=localhost
 
-        # optional: disable https, use this to have an http server listening on port 443
+        # optional: disable https, use this to have an http server listening on port 8080
         # useful if the SSL stack is handled by haproxy or something alike
         # default value: false
         - DISABLE_HTTPS=false
@@ -181,25 +197,6 @@ services:
         # note: does nothing if DISABLE_HTTPS is set to true
         # default value: false
         - ENABLE_LETSENCRYPT=false
-
-        # optional: enable ipv6 (make sure you have an AAAA dns record!)
-        # default value: false
-        #- ENABLE_IPV6=false
-
-        # optional: adjust the user/group that will own the uploaded files (and run the webserver)
-        # useful if your files are stored on an NFS mount point where the files ownership are imposed by the NFS server
-        # default value: nginx
-        # example value: nobody
-        #- ELABFTW_USER=nginx
-        # default value: nginx
-        # example value: nobody
-        #- ELABFTW_GROUP=nginx
-        # default value: 101
-        # example value: 65534
-        #- ELABFTW_USERID=101
-        # default value: 101
-        # example value: 65534
-        #- ELABFTW_GROUPID=101
 
         # optional: enable if you want nginx to be configured with set_real_ip_from directives
         # default value: false
@@ -277,10 +274,6 @@ services:
         #################
         # MISCELLANEOUS #
         #################
-        # optional: be less verbose during init
-        # default value: false
-        #- SILENT_INIT=false
-
         # optional: automatically install the database structure on container start
         # default value: false
         #- AUTO_DB_INIT=false
@@ -337,11 +330,15 @@ services:
         #
         # if you want elabftw to run on a different port, change the first number
         # host:container
-        - '443:443'
-        # if you are aiming for running multiple instances of this container you can put a range like so:
-        # - "3100-3200:443"
-        # use redis for session storage if that is the case, or configure your load balancer with sticky sessions
+        - '443:8080'
+        # if you are running the container on the same network than a reverse proxy, you don't need to expose ports at all
     volumes:
+        # this volume is necessary for nginx to work (remember, we use a read-only filesystem)
+        # make sure this folder is writable by the service user
+        # mkdir -p /var/elabftw/.cache/nginx
+        # chown elabftw-worker:elabftw-worker /var/elabftw/.cache/nginx
+        - /var/elabftw/.cache/nginx:/var/cache/nginx
+
         # this is where you will keep the uploaded files persistently
         # for Windows users it might look like this
         # - D:\Users\Nico\elab-data\web:/elabftw/uploads

@@ -156,6 +156,14 @@ final class ProcurementRequests extends AbstractRest
         }
 
         // Ensure the record exists and belongs to the current team.
-        $this->readOne();
+        $sql = 'SELECT 1 FROM procurement_requests WHERE id = :id AND team = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $result = $this->Db->fetch($req);
+        if (!$result) {
+            throw new ImproperActionException('Procurement request does not exist or does not belong to the current team.');
+        }
     }
 }

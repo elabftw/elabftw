@@ -570,11 +570,7 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $queryParams ??= $this->getQueryParams();
-        if ($queryParams->getFastq()) {
-            return $this->readAllSimple($queryParams);
-        }
-        return $this->readShow($queryParams, true);
+        return $this->readShow($this->getQueryParams());
     }
 
     #[Override]

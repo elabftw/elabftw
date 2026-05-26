@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ProcurementState;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
 
 class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
@@ -44,6 +45,13 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsString($res[0]['state_human']);
     }
 
+    public function testReadNonAccessibleRecord(): void
+    {
+        $this->pr->setId(2);
+        $this->expectException(ResourceNotFoundException::class);
+        $this->pr->readOne();
+    }
+
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/teams/current/procurement_requests/', $this->pr->getApiPath());
@@ -54,5 +62,12 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
         $this->pr->setId(1);
         $this->assertTrue($this->pr->destroy());
         $this->assertEquals(ProcurementState::Cancelled->value, $this->pr->readOne()['state']);
+    }
+
+    public function testUpdateNonAccessibleRecord(): void
+    {
+        $this->pr->setId(3);
+        $this->expectException(ResourceNotFoundException::class);
+        $this->pr->patch(Action::Update, array('qty_received' => 2));
     }
 }

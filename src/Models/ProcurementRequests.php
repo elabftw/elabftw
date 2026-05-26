@@ -156,7 +156,7 @@ final class ProcurementRequests extends AbstractRest
         }
 
         // Ensure the record exists and belongs to the current team.
-        $sql = 'SELECT 1 FROM procurement_requests WHERE id = :id AND team = :team';
+        $sql = 'SELECT id, team FROM procurement_requests WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);

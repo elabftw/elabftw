@@ -420,8 +420,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $User2Scheduler->setId($eventId);
 
         $event = $User2Scheduler->readOne();
-
-        $this->assertSame($PrivateExperiment->id, (int) $event['experiment']);
+        // the experiment's ID is also not shown
+        $this->assertEquals(0, (int) $event['experiment']);
         $this->assertNull($event['experiment_title']);
     }
 

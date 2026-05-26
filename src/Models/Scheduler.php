@@ -227,7 +227,8 @@ final class Scheduler extends AbstractRest
                 AND team_events.start <= :end
                 AND team_events.end >= :start
                 %s",
-            $boundSelects['experiment'], $boundSelects['item_link'],
+            $boundSelects['experiment'],
+            $boundSelects['item_link'],
             $canBookExpr,
             implode(' ', $this->filterSqlParts)
         );
@@ -390,7 +391,8 @@ final class Scheduler extends AbstractRest
             WHERE team_events.item = :item
                 AND team_events.start <= :end
                 AND team_events.end >= :start",
-            $boundSelects['experiment'], $boundSelects['item_link'],
+            $boundSelects['experiment'],
+            $boundSelects['item_link'],
         );
 
         $req = $this->Db->prepare($sql);
@@ -439,7 +441,8 @@ final class Scheduler extends AbstractRest
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
             LEFT JOIN users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = team_events.team)
             WHERE team_events.id = :id',
-            $boundSelects['experiment'], $boundSelects['item_link'],
+            $boundSelects['experiment'],
+            $boundSelects['item_link'],
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -676,7 +679,11 @@ final class Scheduler extends AbstractRest
         $canRead = str_replace('entity.', $table . '.', $builder->getCanFilter('canread'));
         return sprintf(
             'CASE WHEN %1$s.id IS NOT NULL %2$s THEN %3$s ELSE NULL END AS %4$s, CASE WHEN %1$s.id IS NOT NULL %2$s THEN %1$s.title ELSE NULL END AS %5$s',
-            $table, $canRead, $idColumn, $idField, $titleField
+            $table,
+            $canRead,
+            $idColumn,
+            $idField,
+            $titleField
         );
     }
 

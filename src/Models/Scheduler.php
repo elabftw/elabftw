@@ -440,7 +440,7 @@ final class Scheduler extends AbstractRest
                 items.book_is_cancellable,
                 items.book_cancel_minutes,
                 team_events.title AS title_only,
-                %s, %s,
+                %s, %s
             FROM team_events
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)

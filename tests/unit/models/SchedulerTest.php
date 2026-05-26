@@ -382,6 +382,49 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'item_link', 'id' => null)));
     }
 
+    public function testReadOneDoesNotLeakPrivateBoundEntityTitles(): void
+    {
+        $Owner = $this->getUserInTeam(1);
+        $User2 = $this->getUserInTeam(2);
+
+        $BookableItem = $this->getFreshItemWithGivenUser($Owner);
+        $BookableItem->patch(Action::Update, array(
+            'is_bookable' => 1,
+            'canread_base' => BasePermissions::User->value,
+            'canread' => json_encode(array(
+                'users' => array($User2->userid),
+                'teams' => array(),
+                'teamgroups' => array(),
+            )),
+        ));
+
+        $PrivateExperiment = $this->getFreshExperimentWithGivenUser($Owner);
+        $PrivateExperiment->patch(Action::Update, array(
+            'canread_base' => BasePermissions::UserOnly->value,
+            'canwrite_base' => BasePermissions::UserOnly->value,
+        ));
+
+        $OwnerScheduler = new Scheduler($BookableItem);
+        $eventId = $OwnerScheduler->postAction(Action::Create, array(
+            'start' => $this->start,
+            'end' => $this->end,
+        ));
+
+        $OwnerScheduler->setId($eventId);
+        $OwnerScheduler->patch(Action::Update, array(
+            'target' => 'experiment',
+            'id' => $PrivateExperiment->id,
+        ));
+
+        $User2Scheduler = new Scheduler(new Items($User2, $BookableItem->id));
+        $User2Scheduler->setId($eventId);
+
+        $event = $User2Scheduler->readOne();
+
+        $this->assertSame($PrivateExperiment->id, (int) $event['experiment']);
+        $this->assertNull($event['experiment_title']);
+    }
+
     public function testCanWriteAndWeAreAdmin(): void
     {
         $Items = $this->getFreshBookableItem(2);

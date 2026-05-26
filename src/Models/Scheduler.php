@@ -187,11 +187,8 @@ final class Scheduler extends AbstractRest
             $canBookExpr = '0';
         }
 
-        $builderExperiments = new EntitySqlBuilder(new Experiments($this->Items->Users));
-        $experimentCanRead = str_replace('entity.', 'experiments.', $builderExperiments->getCanFilter('canread'));
-
-        $builderItemsLink = new EntitySqlBuilder($this->Items);
-        $itemLinkCanRead = str_replace('entity.', 'items_linkt.', $builderItemsLink->getCanFilter('canread'));
+        $experimentTitleSelect = $this->getBoundTitleSelect(new Experiments($this->Items->Users), 'experiments', 'experiment_title');
+        $itemLinkTitleSelect = $this->getBoundTitleSelect($this->Items, 'items_linkt', 'item_link_title');
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
             "SELECT
@@ -218,9 +215,9 @@ final class Scheduler extends AbstractRest
                 team_events.experiment,
                 items.category AS items_category,
                 items.id AS items_id,
-                CASE WHEN experiments.id IS NOT NULL %s THEN experiments.title ELSE NULL END AS experiment_title,
+                %s,
                 team_events.item_link,
-                CASE WHEN items_linkt.id IS NOT NULL %s THEN items_linkt.title ELSE NULL END AS item_link_title,
+                %s,
                 CASE WHEN %s THEN 1 ELSE 0 END AS canbook
             FROM team_events
             LEFT JOIN teams ON (team_events.team = teams.id)
@@ -234,8 +231,8 @@ final class Scheduler extends AbstractRest
                 AND team_events.start <= :end
                 AND team_events.end >= :start
                 %s",
-            $experimentCanRead,
-            $itemLinkCanRead,
+            $experimentTitleSelect,
+            $itemLinkTitleSelect,
             $canBookExpr,
             implode(' ', $this->filterSqlParts)
         );
@@ -379,19 +376,14 @@ final class Scheduler extends AbstractRest
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
         // the color is used by fullcalendar for the bg color of the event
-        $builderExperiments = new EntitySqlBuilder(new Experiments($this->Items->Users));
-        $experimentCanRead = str_replace('entity.', 'experiments.', $builderExperiments->getCanFilter('canread'));
-
-        $builderItemsLink = new EntitySqlBuilder($this->Items);
-        $itemLinkCanRead = str_replace('entity.', 'items_linkt.', $builderItemsLink->getCanFilter('canread'));
-
+        $experimentTitleSelect = $this->getBoundTitleSelect(new Experiments($this->Items->Users), 'experiments', 'experiment_title');
+        $itemLinkTitleSelect = $this->getBoundTitleSelect($this->Items, 'items_linkt', 'item_link_title');
         $sql = sprintf(
             "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
             team_events.title AS title_only,
             COALESCE(NULLIF(CONCAT('#', items_categories.color), '#'), '#0c58ab') AS color,
-            CASE WHEN experiments.id IS NOT NULL %s THEN experiments.title ELSE NULL END AS experiment_title,
-            CASE WHEN items_linkt.id IS NOT NULL %s THEN items_linkt.title ELSE NULL END AS item_link_title,
+            %s, %s,
             items.title AS item_title,
             items.book_is_cancellable
             FROM team_events
@@ -404,8 +396,8 @@ final class Scheduler extends AbstractRest
             WHERE team_events.item = :item
                 AND team_events.start <= :end
                 AND team_events.end >= :start",
-            $experimentCanRead,
-            $itemLinkCanRead
+            $experimentTitleSelect,
+            $itemLinkTitleSelect
         );
 
         $req = $this->Db->prepare($sql);
@@ -430,11 +422,8 @@ final class Scheduler extends AbstractRest
 
     private function readOneEvent(): array
     {
-        $builderExperiments = new EntitySqlBuilder(new Experiments($this->Items->Users));
-        $experimentCanRead = str_replace('entity.', 'experiments.', $builderExperiments->getCanFilter('canread'));
-
-        $builderItemsLink = new EntitySqlBuilder($this->Items);
-        $itemLinkCanRead = str_replace('entity.', 'items_linkt.', $builderItemsLink->getCanFilter('canread'));
+        $experimentTitleSelect = $this->getBoundTitleSelect(new Experiments($this->Items->Users), 'experiments', 'experiment_title');
+        $itemLinkTitleSelect = $this->getBoundTitleSelect($this->Items, 'items_linkt', 'item_link_title');
         $sql = sprintf(
             'SELECT
                 team_events.id,
@@ -451,16 +440,15 @@ final class Scheduler extends AbstractRest
                 items.book_is_cancellable,
                 items.book_cancel_minutes,
                 team_events.title AS title_only,
-                CASE WHEN experiments.id IS NOT NULL %s THEN experiments.title ELSE NULL END AS experiment_title,
-                CASE WHEN items_linkt.id IS NOT NULL %s THEN items_linkt.title ELSE NULL END AS item_link_title
+                %s, %s,
             FROM team_events
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
             LEFT JOIN users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = team_events.team)
             WHERE team_events.id = :id',
-            $experimentCanRead,
-            $itemLinkCanRead
+            $experimentTitleSelect,
+            $itemLinkTitleSelect
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -684,5 +672,23 @@ final class Scheduler extends AbstractRest
         }
         $this->filterSqlParts[] = sprintf('AND %s = :%s', $column, $paramName);
         $this->filterBindings[$paramName] = $value;
+    }
+
+    /**
+     * Bound entities have their own read permissions, independent from the scheduler event.
+     * The event itself can be visible to the user, but the linked experiment/item may still be private.
+     * Only expose the bound entity title when the current user can read that entity.
+     */
+    private function getBoundTitleSelect(AbstractEntity $entity, string $table, string $field): string
+    {
+        $builder = new EntitySqlBuilder($entity);
+        $canRead = str_replace('entity.', $table . '.', $builder->getCanFilter('canread'));
+        return sprintf(
+            'CASE WHEN %s.id IS NOT NULL %s THEN %s.title ELSE NULL END AS %s',
+            $table,
+            $canRead,
+            $table,
+            $field
+        );
     }
 }

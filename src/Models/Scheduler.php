@@ -65,10 +65,6 @@ final class Scheduler extends AbstractRest
 
     private array $filterBindings = array();
 
-    private ?string $experimentTitleSelect = null;
-
-    private ?string $itemLinkTitleSelect = null;
-
     public function __construct(
         AbstractEntity $Items,
         ?int $id = null,
@@ -190,9 +186,7 @@ final class Scheduler extends AbstractRest
         if ($canBookExpr === '') {
             $canBookExpr = '0';
         }
-
-        $experimentTitleSelect = $this->getExperimentTitleSelect();
-        $itemLinkTitleSelect = $this->getItemLinkTitleSelect();
+        $boundSelects = $this->getBoundSelects();
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
             "SELECT
@@ -216,11 +210,9 @@ final class Scheduler extends AbstractRest
                 (items.booking_hourly_rate_tax * TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end)) / 60.0 AS booking_cost_tax,
                 COALESCE(NULLIF(CONCAT('#', items_categories.color), '#'), '#0c58ab') AS color,
                 items_categories.title AS items_category_title,
-                team_events.experiment,
+                %s,
                 items.category AS items_category,
                 items.id AS items_id,
-                %s,
-                team_events.item_link,
                 %s,
                 CASE WHEN %s THEN 1 ELSE 0 END AS canbook
             FROM team_events
@@ -235,8 +227,7 @@ final class Scheduler extends AbstractRest
                 AND team_events.start <= :end
                 AND team_events.end >= :start
                 %s",
-            $experimentTitleSelect,
-            $itemLinkTitleSelect,
+            $boundSelects['experiment'], $boundSelects['item_link'],
             $canBookExpr,
             implode(' ', $this->filterSqlParts)
         );
@@ -380,8 +371,7 @@ final class Scheduler extends AbstractRest
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
         // the color is used by fullcalendar for the bg color of the event
-        $experimentTitleSelect = $this->getExperimentTitleSelect();
-        $itemLinkTitleSelect = $this->getItemLinkTitleSelect();
+        $boundSelects = $this->getBoundSelects();
         $sql = sprintf(
             "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
@@ -400,8 +390,7 @@ final class Scheduler extends AbstractRest
             WHERE team_events.item = :item
                 AND team_events.start <= :end
                 AND team_events.end >= :start",
-            $experimentTitleSelect,
-            $itemLinkTitleSelect
+            $boundSelects['experiment'], $boundSelects['item_link'],
         );
 
         $req = $this->Db->prepare($sql);
@@ -426,8 +415,7 @@ final class Scheduler extends AbstractRest
 
     private function readOneEvent(): array
     {
-        $experimentTitleSelect = $this->getExperimentTitleSelect();
-        $itemLinkTitleSelect = $this->getItemLinkTitleSelect();
+        $boundSelects = $this->getBoundSelects();
         $sql = sprintf(
             'SELECT
                 team_events.id,
@@ -451,8 +439,7 @@ final class Scheduler extends AbstractRest
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
             LEFT JOIN users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = team_events.team)
             WHERE team_events.id = :id',
-            $experimentTitleSelect,
-            $itemLinkTitleSelect
+            $boundSelects['experiment'], $boundSelects['item_link'],
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -681,28 +668,23 @@ final class Scheduler extends AbstractRest
     /**
      * Bound entities have their own read permissions, independent from the scheduler event.
      * The event itself can be visible to the user, but the linked experiment/item may still be private.
-     * Only expose the bound entity title when the current user can read that entity.
+     * Only expose the bound entity id and title when the current user can read that entity.
      */
-    private function getBoundTitleSelect(AbstractEntity $entity, string $table, string $field): string
+    private function getBoundSelect(AbstractEntity $entity, string $table, string $idColumn, string $idField, string $titleField): string
     {
         $builder = new EntitySqlBuilder($entity);
         $canRead = str_replace('entity.', $table . '.', $builder->getCanFilter('canread'));
         return sprintf(
-            'CASE WHEN %s.id IS NOT NULL %s THEN %s.title ELSE NULL END AS %s',
-            $table,
-            $canRead,
-            $table,
-            $field
+            'CASE WHEN %1$s.id IS NOT NULL %2$s THEN %3$s ELSE NULL END AS %4$s, CASE WHEN %1$s.id IS NOT NULL %2$s THEN %1$s.title ELSE NULL END AS %5$s',
+            $table, $canRead, $idColumn, $idField, $titleField
         );
     }
 
-    private function getExperimentTitleSelect(): string
+    private function getBoundSelects(): array
     {
-        return $this->experimentTitleSelect ??= $this->getBoundTitleSelect(new Experiments($this->Items->Users), 'experiments', 'experiment_title');
-    }
-
-    private function getItemLinkTitleSelect(): string
-    {
-        return $this->itemLinkTitleSelect ??= $this->getBoundTitleSelect($this->Items, 'items_linkt', 'item_link_title');
+        return array(
+            'experiment' => $this->getBoundSelect(new Experiments($this->Items->Users), 'experiments', 'team_events.experiment', 'experiment', 'experiment_title'),
+            'item_link' => $this->getBoundSelect($this->Items, 'items_linkt', 'team_events.item_link', 'item_link', 'item_link_title'),
+        );
     }
 }

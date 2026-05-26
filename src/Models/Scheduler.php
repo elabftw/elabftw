@@ -65,6 +65,10 @@ final class Scheduler extends AbstractRest
 
     private array $filterBindings = array();
 
+    private ?string $experimentTitleSelect = null;
+
+    private ?string $itemLinkTitleSelect = null;
+
     public function __construct(
         AbstractEntity $Items,
         ?int $id = null,
@@ -187,8 +191,8 @@ final class Scheduler extends AbstractRest
             $canBookExpr = '0';
         }
 
-        $experimentTitleSelect = $this->getBoundTitleSelect(new Experiments($this->Items->Users), 'experiments', 'experiment_title');
-        $itemLinkTitleSelect = $this->getBoundTitleSelect($this->Items, 'items_linkt', 'item_link_title');
+        $experimentTitleSelect = $this->getExperimentTitleSelect();
+        $itemLinkTitleSelect = $this->getItemLinkTitleSelect();
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
             "SELECT
@@ -376,8 +380,8 @@ final class Scheduler extends AbstractRest
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
         // the color is used by fullcalendar for the bg color of the event
-        $experimentTitleSelect = $this->getBoundTitleSelect(new Experiments($this->Items->Users), 'experiments', 'experiment_title');
-        $itemLinkTitleSelect = $this->getBoundTitleSelect($this->Items, 'items_linkt', 'item_link_title');
+        $experimentTitleSelect = $this->getExperimentTitleSelect();
+        $itemLinkTitleSelect = $this->getItemLinkTitleSelect();
         $sql = sprintf(
             "SELECT team_events.*,
             CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
@@ -422,8 +426,8 @@ final class Scheduler extends AbstractRest
 
     private function readOneEvent(): array
     {
-        $experimentTitleSelect = $this->getBoundTitleSelect(new Experiments($this->Items->Users), 'experiments', 'experiment_title');
-        $itemLinkTitleSelect = $this->getBoundTitleSelect($this->Items, 'items_linkt', 'item_link_title');
+        $experimentTitleSelect = $this->getExperimentTitleSelect();
+        $itemLinkTitleSelect = $this->getItemLinkTitleSelect();
         $sql = sprintf(
             'SELECT
                 team_events.id,
@@ -690,5 +694,15 @@ final class Scheduler extends AbstractRest
             $table,
             $field
         );
+    }
+
+    private function getExperimentTitleSelect(): string
+    {
+        return $this->experimentTitleSelect ??= $this->getBoundTitleSelect(new Experiments($this->Items->Users), 'experiments', 'experiment_title');
+    }
+
+    private function getItemLinkTitleSelect(): string
+    {
+        return $this->itemLinkTitleSelect ??= $this->getBoundTitleSelect($this->Items, 'items_linkt', 'item_link_title');
     }
 }

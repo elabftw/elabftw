@@ -49,20 +49,18 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $Notif = new StepDeadline($this->Users, 1, 1, 'experiments', '2023-02-28 01:24:21');
         $Notif->create();
         // also remove this setting so we go in all code paths
-        $this->Users->userData['notif_step_deadline'] = 0;
+        $this->Users->userData['rnotif_step_deadline'] = 0;
         $this->assertIsArray($this->UserNotifications->readAll());
     }
 
     public function testReadAllNotifsOfAnotherUser(): void
     {
         // create one so we have something to read
-        $Notif = new StepDeadline($this->Users, 1, 1, 'experiments', '2026-05-27 03:29:21');
+        $Notif = new StepDeadline($this->OtherUsers, 1, 1, 'experiments', '2026-05-27 03:29:21');
         $Notif->create();
-        // also remove this setting so we go in all code paths
-        $this->OtherUserNotificationsUsers->userData['notif_step_deadline'] = 0;
+        $this->OtherUsers->requester = $this->Users->requester;
         $this->expectException(IllegalActionException::class);
-        // dd($this->OtherUserNotifications->readAll());
-        $this->assertIsArray($this->OtherUserNotifications->readAll());
+        $this->OtherUserNotifications->readAll();
     }
 
     public function testReadOne(): void
@@ -77,8 +75,10 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
     {
         $Notif = new SelfIsValidated($this->Users);
         $id = $Notif->create();
+
+        $this->OtherUsers->requester = $this->Users->requester;
         $this->OtherUserNotifications->setId($id);
-        $this->expectException(ResourceNotFoundException::class);
+        $this->expectException(IllegalActionException::class);
         $this->assertIsArray($this->OtherUserNotifications->readOne());
     }
 
@@ -90,8 +90,29 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->UserNotifications->patch(Action::Update, array()));
     }
 
+    public function testPatchNotifOfAnotherUser(): void
+    {
+        $Notif = new SelfIsValidated($this->Users);
+        $id = $Notif->create();
+
+        $this->OtherUsers->requester = $this->Users->requester;
+        $this->OtherUserNotifications->setId($id);
+        $this->expectException(ResourceNotFoundException::class);
+        $this->UserNotifications->patch(Action::Update, array());
+    }
+
     public function testDestroy(): void
     {
         $this->assertTrue($this->UserNotifications->destroy());
+    }
+
+    public function testDestroyNotifOfAnotherUser(): void
+    {
+        $Notif = new SelfIsValidated($this->Users);
+        $id = $Notif->create();
+
+        $this->OtherUsers->requester = $this->Users->requester;
+        $this->expectException(IllegalActionException::class);
+        $this->assertFalse($this->OtherUserNotifications->destroy());
     }
 }

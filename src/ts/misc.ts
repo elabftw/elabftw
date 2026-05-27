@@ -173,7 +173,7 @@ export function rebuildTomSelectOptions(
   const ts = selectEl.tomselect;
   if (!ts) return;
 
-  let nextOptions: TomSelectOption[] = [];
+  let nextOptions: TomSelectOption[];
 
   if ('options' in source) {
     nextOptions = source.options;
@@ -587,6 +587,7 @@ export async function updateCatStat(target: string, entity: Entity, value: strin
   const newEntity = await ApiC.patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
   // return a string separated with | with the id first so we can use it in data-id of new element
   let response = value + '|';
+  /* eslint-disable-next-line */
   return response += (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 

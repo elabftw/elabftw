@@ -6238,9 +6238,19 @@ paths:
           $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Notifications']
-      summary: |
-        Actions on a notification. Only changing `is_ack` column is possible.
+      summary: Update the acknowledgment status of a notification.
       operationId: patch-notification
+      requestBody:
+        description: Defines whether the notification is acknowledged.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_ack:
+                  type: integer
+                  description: Set to `1` to acknowledge the notification.
+                  enum: [ 0, 1 ]
       responses:
         '200':
           description: The updated notification.

@@ -85,12 +85,11 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        // currently the only update action is to ack it, so no need to check for anything else
-        // permission is checked with the userid AND
-        $sql = 'UPDATE notifications SET is_ack = 1 WHERE id = :id AND userid = :userid';
+        $sql = 'UPDATE notifications SET is_ack = :is_ack WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':is_ack', $params['is_ack'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->readOne();
     }

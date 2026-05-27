@@ -129,6 +129,7 @@ final class Tags extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        $this->Entity->canOrExplode(AccessType::Write);
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id AND item_type = :type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);

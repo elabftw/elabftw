@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -88,5 +89,18 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $this->assertTrue($this->Experiments->Tags->destroy());
+    }
+
+    public function testDestroyWithoutWriteAccess(): void
+    {
+        $owner = $this->getRandomUserInTeam(1, admin: 1);
+        $experiment = $this->getFreshExperimentWithGivenUser($owner);
+        $experiment->Tags->postAction(Action::Create, array('tag' => 'secure-tag'));
+
+        $otherUser = $this->getRandomUserInTeam(1);
+        // instantiate the same experiment with the other user
+        $experimentAsOtherUser = new Experiments($otherUser, $experiment->id);
+        $this->expectException(ForbiddenException::class);
+        $experimentAsOtherUser->Tags->destroy();
     }
 }

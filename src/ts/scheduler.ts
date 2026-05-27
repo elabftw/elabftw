@@ -197,10 +197,10 @@ if (window.location.pathname === '/scheduler.php') {
       // start by clearing the divs
       clearBoundDiv('experiment');
       clearBoundDiv('item');
-      if (extendedProps.experiment) {
+      if (extendedProps.experiment && extendedProps.experiment_title) {
         createBoundDiv('experiment', extendedProps.experiment_title, `experiments.php?mode=view&id=${extendedProps.experiment}`);
       }
-      if (extendedProps.item_link) {
+      if (extendedProps.item_link && extendedProps.item_link_title) {
         createBoundDiv('item', extendedProps.item_link_title, `database.php?mode=view&id=${extendedProps.item_link}`);
       }
     }

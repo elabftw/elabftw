@@ -9880,31 +9880,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mdn-data@npm:2.0.28":
-  version: 2.0.28
-  resolution: "mdn-data@npm:2.0.28"
-  checksum: 10c0/20000932bc4cd1cde9cba4e23f08cc4f816398af4c15ec81040ed25421d6bf07b5cf6b17095972577fb498988f40f4cb589e3169b9357bb436a12d8e07e5ea7b
-  languageName: node
-  linkType: hard
-
-"mdn-data@npm:2.0.30":
-  version: 2.0.30
-  resolution: "mdn-data@npm:2.0.30"
-  checksum: 10c0/a2c472ea16cee3911ae742593715aa4c634eb3d4b9f1e6ada0902aa90df13dcbb7285d19435f3ff213ebaa3b2e0c0265c1eb0e3fb278fda7f8919f046a410cd9
-  languageName: node
-  linkType: hard
-
-"mdn-data@npm:2.12.2":
-  version: 2.12.2
-  resolution: "mdn-data@npm:2.12.2"
-  checksum: 10c0/b22443b71d70f72ccc3c6ba1608035431a8fc18c3c8fc53523f06d20e05c2ac10f9b53092759a2ca85cf02f0d37036f310b581ce03e7b99ac74d388ef8152ade
-  languageName: node
-  linkType: hard
-
-"mdn-data@npm:2.27.1, mdn-data@npm:^2.25.0":
-  version: 2.27.1
-  resolution: "mdn-data@npm:2.27.1"
-  checksum: 10c0/eb8abf5d22e4d1e090346f5e81b67d23cef14c83940e445da5c44541ad874dc8fb9f6ca236e8258c3a489d9fb5884188a4d7d58773adb9089ac2c0b966796393
+"mdn-data@npm:^2.28.1":
+  version: 2.28.1
+  resolution: "mdn-data@npm:2.28.1"
+  checksum: 10c0/bdcb43bb4471495133259c8f0b4747e0f2633a06da1b346097aa5d6020a194efcb7fbed3bf0d8adbe7b3bcb831c42a5e01485588528135f85314485d031929a8
   languageName: node
   linkType: hard
 

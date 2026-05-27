@@ -698,8 +698,8 @@ class Users extends AbstractRest
             $this->requester->isSysadminOrExplode();
         }
         // columns that can only be modified by admin requester
-        if (in_array($params->getTarget(), array('validated'), true) && !$this->requester->isAdmin) {
-            throw new IllegalActionException();
+        if (in_array($params->getTarget(), array('validated'), true)) {
+            $this->requester->isAdminOrExplode();
         }
         // early bail out if existing and new values are the same
         if ($params->getContent() === $this->userData[$params->getColumn()]) {
@@ -780,6 +780,18 @@ class Users extends AbstractRest
     public function isSysadminOrExplode(): void
     {
         if ($this->isSysadmin() === false) {
+            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+        }
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->isAdmin === true;
+    }
+
+    public function isAdminOrExplode(): void
+    {
+        if ($this->isAdmin() === false) {
             throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
         }
     }
@@ -898,9 +910,7 @@ class Users extends AbstractRest
      */
     private function validate(): array
     {
-        if (!$this->requester->isAdmin) {
-            throw new IllegalActionException();
-        }
+        $this->requester->isAdminOrExplode();
         $this->rawUpdate(UsersColumn::Validated, 1);
         $Notifications = new SelfIsValidated($this);
         $Notifications->create();

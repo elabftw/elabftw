@@ -326,7 +326,7 @@ on('team-scope-change', async (el: HTMLElement) => {
     const text = document.createTextNode(scope === 1 ? i18next.t('my-teams') : i18next.t('all-teams'));
     btn.append(text, icon);
   }
-  let teams = [];
+  let teams;
 
   if (scope === 1) {
     const user = await ApiC.getJson(`${Model.User}/me`);

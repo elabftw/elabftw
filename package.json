@@ -101,8 +101,6 @@
     "@types/jqueryui": "^1.12.24",
     "@types/luxon": "^3.7.1",
     "@types/react": "^18.3.28",
-    "@typescript-eslint/eslint-plugin": "^8.59.3",
-    "@typescript-eslint/parser": "^8.59.3",
     "babel-loader": "^10.1.1",
     "cypress": "^15.13.0",
     "cypress-html-validate": "^8.1.0",

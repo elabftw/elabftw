@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserNotifications;
@@ -21,12 +23,19 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 {
     private UserNotifications $UserNotifications;
 
+    private UserNotifications $OtherUserNotifications;
+
     private Users $Users;
+
+    private Users $OtherUsers;
 
     protected function setUp(): void
     {
         $this->Users = new Users(1, 1);
         $this->UserNotifications = new UserNotifications($this->Users, 1);
+
+        $this->OtherUsers = new Users(2, 2);
+        $this->OtherUserNotifications = new UserNotifications($this->OtherUsers, 1);
     }
 
     public function testGetApiPath(): void
@@ -44,12 +53,33 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->UserNotifications->readAll());
     }
 
+    public function testReadAllNotifsOfAnotherUser(): void
+    {
+        // create one so we have something to read
+        $Notif = new StepDeadline($this->Users, 1, 1, 'experiments', '2026-05-27 03:29:21');
+        $Notif->create();
+        // also remove this setting so we go in all code paths
+        $this->OtherUserNotificationsUsers->userData['notif_step_deadline'] = 0;
+        $this->expectException(IllegalActionException::class);
+        // dd($this->OtherUserNotifications->readAll());
+        $this->assertIsArray($this->OtherUserNotifications->readAll());
+    }
+
     public function testReadOne(): void
     {
         $Notif = new SelfIsValidated($this->Users);
         $id = $Notif->create();
         $this->UserNotifications->setId($id);
         $this->assertIsArray($this->UserNotifications->readOne());
+    }
+
+    public function testReadOneNotifOfAnotherUser(): void
+    {
+        $Notif = new SelfIsValidated($this->Users);
+        $id = $Notif->create();
+        $this->OtherUserNotifications->setId($id);
+        $this->expectException(ResourceNotFoundException::class);
+        $this->assertIsArray($this->OtherUserNotifications->readOne());
     }
 
     public function testPatch(): void

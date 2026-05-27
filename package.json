@@ -81,7 +81,6 @@
   },
   "resolutions": {
     "fast-xml-parser": "^5.5.7",
-    "mdn-data": "^2.28.1",
     "micromatch": "^4.0.8",
     "path-to-regexp": "^1.9.0",
     "cross-spawn": "^7.0.5",
@@ -113,7 +112,7 @@
     "postcss": "^8.5.8",
     "postcss-scss": "^4.0.9",
     "sass-loader": "^16.0.7",
-    "stylelint": "^17.5.0",
+    "stylelint": "^17.11.1",
     "stylelint-config-sass-guidelines": "^13.0.0",
     "stylelint-declaration-strict-value": "^1.11.1",
     "stylelint-order": "^8.1.1",

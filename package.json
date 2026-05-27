@@ -36,7 +36,7 @@
     "@jspreadsheet-ce/react": "^5.0.2",
     "@teselagen/bio-parsers": "^0.4.36",
     "@teselagen/ove": "^0.8.39",
-    "@yarnpkg/core": "^4.6.0",
+    "@yarnpkg/core": "^4.7.0",
     "@yarnpkg/fslib": "^3.1.5",
     "@yarnpkg/libzip": "^3.2.2",
     "bootstrap": "^4.6.2",
@@ -93,7 +93,7 @@
     "@babel/preset-env": "^7.29.2",
     "@babel/preset-react": "^7.28.5",
     "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^9.39.4",
+    "@eslint/js": "^10.0.1",
     "@types/bootstrap": "^5.2.10",
     "@types/dropzone": "^5.7.9",
     "@types/fancybox": "^3.5.7",
@@ -101,23 +101,22 @@
     "@types/jqueryui": "^1.12.24",
     "@types/luxon": "^3.7.1",
     "@types/react": "^18.3.28",
-    "@typescript-eslint/eslint-plugin": "^8.57.2",
-    "@typescript-eslint/parser": "^8.57.2",
     "babel-loader": "^10.1.1",
     "cypress": "^15.13.0",
     "cypress-html-validate": "^8.1.0",
-    "eslint": "^9.39.4",
+    "eslint": "^10.3.0",
     "globals": "^17.4.0",
     "html-validate": "^10.11.2",
     "postcss": "^8.5.8",
     "postcss-scss": "^4.0.9",
     "sass-loader": "^16.0.7",
-    "stylelint": "^17.5.0",
+    "stylelint": "^17.11.1",
     "stylelint-config-sass-guidelines": "^13.0.0",
     "stylelint-declaration-strict-value": "^1.11.1",
     "stylelint-order": "^8.1.1",
     "svelte-loader": "^3.2.4",
     "svelte-preprocess": "^6.0.3",
+    "typescript-eslint": "^8.59.3",
     "webpack-bundle-analyzer": "^5.2.0"
   },
   "scripts": {
@@ -170,5 +169,5 @@
     "url": "https://github.com/elabftw/elabftw/issues"
   },
   "homepage": "https://www.elabftw.net",
-  "packageManager": "yarn@4.13.0"
+  "packageManager": "yarn@4.15.0"
 }

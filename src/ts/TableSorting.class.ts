@@ -159,7 +159,7 @@ export default class TableSorting {
     // handle colspans
     const cells: HTMLTableCellElement[] = Array.from(tr.querySelectorAll(':scope > th, :scope > td'));
     let idxMax = 0;
-    let idxMin = 0;
+    let idxMin;
     for (const cell of cells) {
       idxMin = idxMax;
       idxMax += cell.colSpan;

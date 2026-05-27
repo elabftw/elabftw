@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractRest;
@@ -85,7 +86,7 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $is_ack = $params['is_ack'] ?? 1;
+        $is_ack = $params['is_ack'] ?? BinaryValue::True;
         $sql = 'UPDATE notifications SET is_ack = :is_ack WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

@@ -28,5 +28,6 @@ final class UltraAdmin extends Users
         $this->userData['scope_items'] = 3;
         $this->userData['scope_items_types'] = 3;
         $this->userData['scope_teamgroups'] = 3;
+        $this->isAdmin = true;
     }
 }

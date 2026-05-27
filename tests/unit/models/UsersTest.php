@@ -216,6 +216,13 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($Users->patch(Action::UpdatePassword, array('password' => 'demodemodemo', 'current_password' => 'testPassword')));
     }
 
+    public function testUpdateValidatedAsNonAdmin(): void
+    {
+        $Users = $this->getUserInTeam(1);
+        $this->expectException(IllegalActionException::class);
+        $Users->patch(Action::Update, array('validated' => 1));
+    }
+
     public function testResetPassword(): void
     {
         $Users = new Users(4, 2, new Users(4, 2));

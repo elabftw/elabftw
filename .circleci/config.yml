@@ -13,7 +13,9 @@ executors:
     # To see the list of pre-built images that CircleCI provides for most common languages see
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
-      - image: cimg/base:current
+      #- image: cimg/base:current
+      # see https://github.com/nodejs/node/issues/62012
+      - image: cimg/node:25.6.1
     resource_class: large
       # ignore login credentials for now
       #  auth:

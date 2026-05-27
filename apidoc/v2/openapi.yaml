@@ -6249,7 +6249,7 @@ paths:
               properties:
                 is_ack:
                   type: integer
-                  description: Set to `1` to acknowledge the notification.
+                  description: Set to `1` to acknowledge the notification. Default is `1`.
                   enum: [ 0, 1 ]
       responses:
         '200':

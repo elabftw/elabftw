@@ -85,11 +85,12 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        $is_ack = $params['is_ack'] ?? 1;
         $sql = 'UPDATE notifications SET is_ack = :is_ack WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $req->bindParam(':is_ack', $params['is_ack'], PDO::PARAM_INT);
+        $req->bindValue(':is_ack', $is_ack, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->readOne();
     }

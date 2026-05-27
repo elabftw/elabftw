@@ -129,7 +129,7 @@ jobs:
           name: Run SCSS linter
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              docker exec -e NODE_OPTIONS=--no-require-module elabtmp yarn csslint
+              docker exec elabtmp yarn csslint
             fi
       - run:
           name: Run Javascript linter

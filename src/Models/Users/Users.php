@@ -697,7 +697,10 @@ class Users extends AbstractRest
         if (in_array($params->getTarget(), array('can_manage_compounds', 'can_manage_inventory_locations', 'can_manage_users2teams', 'is_sysadmin'), true)) {
             $this->requester->isSysadminOrExplode();
         }
-
+        // columns that can only be modified by admin requester
+        if (in_array($params->getTarget(), array('validated'), true) && !$this->requester->isAdmin) {
+            throw new IllegalActionException();
+        }
         // early bail out if existing and new values are the same
         if ($params->getContent() === $this->userData[$params->getColumn()]) {
             return true;
@@ -895,6 +898,9 @@ class Users extends AbstractRest
      */
     private function validate(): array
     {
+        if (!$this->requester->isAdmin) {
+            throw new IllegalActionException();
+        }
         $this->rawUpdate(UsersColumn::Validated, 1);
         $Notifications = new SelfIsValidated($this);
         $Notifications->create();

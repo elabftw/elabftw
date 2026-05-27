@@ -186,7 +186,7 @@ final class Scheduler extends AbstractRest
         if ($canBookExpr === '') {
             $canBookExpr = '0';
         }
-
+        $boundSelects = $this->getBoundSelects();
         // the title of the event is title + Firstname Lastname of the user who booked it
         $sql = sprintf(
             "SELECT
@@ -210,12 +210,10 @@ final class Scheduler extends AbstractRest
                 (items.booking_hourly_rate_tax * TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end)) / 60.0 AS booking_cost_tax,
                 COALESCE(NULLIF(CONCAT('#', items_categories.color), '#'), '#0c58ab') AS color,
                 items_categories.title AS items_category_title,
-                team_events.experiment,
+                %s,
                 items.category AS items_category,
                 items.id AS items_id,
-                experiments.title AS experiment_title,
-                team_events.item_link,
-                items_linkt.title AS item_link_title,
+                %s,
                 CASE WHEN %s THEN 1 ELSE 0 END AS canbook
             FROM team_events
             LEFT JOIN teams ON (team_events.team = teams.id)
@@ -229,6 +227,8 @@ final class Scheduler extends AbstractRest
                 AND team_events.start <= :end
                 AND team_events.end >= :start
                 %s",
+            $boundSelects['experiment'],
+            $boundSelects['item_link'],
             $canBookExpr,
             implode(' ', $this->filterSqlParts)
         );
@@ -372,26 +372,34 @@ final class Scheduler extends AbstractRest
     {
         // the title of the event is title + Firstname Lastname of the user who booked it
         // the color is used by fullcalendar for the bg color of the event
-        $sql = "SELECT team_events.*,
-            CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ') ', COALESCE(experiments.title, '')) AS title,
+        $boundSelects = $this->getBoundSelects();
+        $sql = sprintf(
+            "SELECT team_events.*,
+            CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
             team_events.title AS title_only,
             COALESCE(NULLIF(CONCAT('#', items_categories.color), '#'), '#0c58ab') AS color,
-            experiments.title AS experiment_title,
-            items_linkt.title AS item_link_title,
-            items.title AS item_title, items.book_is_cancellable
+            %s, %s,
+            items.title AS item_title,
+            items.book_is_cancellable
             FROM team_events
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)
             LEFT JOIN items_categories ON (items.category = items_categories.id)
             LEFT JOIN users AS u ON team_events.userid = u.userid
+            LEFT JOIN users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = team_events.team)
             WHERE team_events.item = :item
                 AND team_events.start <= :end
-                AND team_events.end >= :start";
+                AND team_events.end >= :start",
+            $boundSelects['experiment'],
+            $boundSelects['item_link'],
+        );
+
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
         $req->bindValue(':start', $this->normalizeDate($this->start));
         $req->bindValue(':end', $this->normalizeDate($this->end, true));
+        $req->bindValue(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -409,7 +417,9 @@ final class Scheduler extends AbstractRest
 
     private function readOneEvent(): array
     {
-        $sql = 'SELECT
+        $boundSelects = $this->getBoundSelects();
+        $sql = sprintf(
+            'SELECT
                 team_events.id,
                 team_events.team,
                 team_events.item,
@@ -424,16 +434,21 @@ final class Scheduler extends AbstractRest
                 items.book_is_cancellable,
                 items.book_cancel_minutes,
                 team_events.title AS title_only,
-                experiments.title AS experiment_title,
-                items_linkt.title AS item_link_title
+                %s, %s
             FROM team_events
             LEFT JOIN items ON (team_events.item = items.id)
             LEFT JOIN experiments ON (experiments.id = team_events.experiment)
             LEFT JOIN items AS items_linkt ON (team_events.item_link = items_linkt.id)
-            WHERE team_events.id = :id';
+            LEFT JOIN users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = team_events.team)
+            WHERE team_events.id = :id',
+            $boundSelects['experiment'],
+            $boundSelects['item_link'],
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
+
         $event = $this->Db->fetch($req);
         $this->Items->setId($event['item']);
         ksort($event);
@@ -651,5 +666,32 @@ final class Scheduler extends AbstractRest
         }
         $this->filterSqlParts[] = sprintf('AND %s = :%s', $column, $paramName);
         $this->filterBindings[$paramName] = $value;
+    }
+
+    /**
+     * Bound entities have their own read permissions, independent from the scheduler event.
+     * The event itself can be visible to the user, but the linked experiment/item may still be private.
+     * Only expose the bound entity id and title when the current user can read that entity.
+     */
+    private function getBoundSelect(AbstractEntity $entity, string $table, string $idColumn, string $idField, string $titleField): string
+    {
+        $builder = new EntitySqlBuilder($entity);
+        $canRead = str_replace('entity.', $table . '.', $builder->getCanFilter('canread'));
+        return sprintf(
+            'CASE WHEN %1$s.id IS NOT NULL %2$s THEN %3$s ELSE NULL END AS %4$s, CASE WHEN %1$s.id IS NOT NULL %2$s THEN %1$s.title ELSE NULL END AS %5$s',
+            $table,
+            $canRead,
+            $idColumn,
+            $idField,
+            $titleField
+        );
+    }
+
+    private function getBoundSelects(): array
+    {
+        return array(
+            'experiment' => $this->getBoundSelect(new Experiments($this->Items->Users), 'experiments', 'team_events.experiment', 'experiment', 'experiment_title'),
+            'item_link' => $this->getBoundSelect($this->Items, 'items_linkt', 'team_events.item_link', 'item_link', 'item_link_title'),
+        );
     }
 }

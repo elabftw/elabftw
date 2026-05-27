@@ -33,7 +33,7 @@ commands:
       - run:
           name: Populate the database
           command: |
-            docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
+            docker exec elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
 
   fix_permissions:
     description: Fix the permissions after populating database
@@ -41,12 +41,12 @@ commands:
       - run:
           name: Fix permissions
           command: |
-            docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-            docker exec -it elabtmp chown -R nginx:nginx cache
-            docker exec -it elabtmp chmod -R 777 cache
-            docker exec -it elabtmp chmod -R 777 tests/_output
-            docker exec -it elabtmp chown -R nginx:nginx uploads
-            docker exec -it elabtmp chmod -R 777 uploads
+            docker exec elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+            docker exec elabtmp chown -R nginx:nginx cache
+            docker exec elabtmp chmod -R 777 cache
+            docker exec elabtmp chmod -R 777 tests/_output
+            docker exec elabtmp chown -R nginx:nginx uploads
+            docker exec elabtmp chmod -R 777 uploads
 
   build_elabtmp:
     steps:
@@ -89,11 +89,11 @@ commands:
       - run:
           name: Build JS
           command: |
-            docker exec -it elabtmp yarn install
-            docker exec -it elabtmp yarn buildall:ci
+            docker exec elabtmp yarn install
+            docker exec elabtmp yarn buildall:ci
       - run:
           name: Composer install
-          command: docker exec -it elabtmp composer install
+          command: docker exec elabtmp composer install
 jobs:
   prepare_workspace:
     executor: elab-executor
@@ -129,37 +129,37 @@ jobs:
           name: Run SCSS linter
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              docker exec -it elabtmp yarn csslint
+              docker exec elabtmp yarn csslint
             fi
       - run:
           name: Run Javascript linter
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
-              docker exec -it elabtmp yarn jslint
+              docker exec elabtmp yarn jslint
             fi
       - run:
           name: Run PHP-CS-Fixer
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "2" ]; then
-              docker exec -it elabtmp yarn phpcs-dry
+              docker exec elabtmp yarn phpcs-dry
             fi
       - run:
           name: Run Twig linter
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "3" ]; then
-              docker exec -it elabtmp yarn twigcs
+              docker exec elabtmp yarn twigcs
             fi
       - run:
           name: Run PSALM
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "4" ]; then
-              docker exec -it elabtmp yarn psalm
+              docker exec elabtmp yarn psalm
             fi
       - run:
           name: Run PHPStan
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "5" ]; then
-              docker exec -it elabtmp yarn phpstan
+              docker exec elabtmp yarn phpstan
             fi
 
   php_unit_tests:
@@ -180,7 +180,7 @@ jobs:
       - fix_permissions
       - run:
           name: Run unit and apiv2 tests
-          command: docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
+          command: docker exec elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
       - run:
           name: Extract coverage report
           command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
@@ -190,7 +190,7 @@ jobs:
       - run:
           name: Generate the php documentation
           # Note:  --setting=graphs.enabled=true has been removed because the graphs are too large
-          command: docker exec -it elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html
+          command: docker exec elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html
       - run:
           name: Extract the php documentation
           command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
@@ -229,25 +229,25 @@ jobs:
       #    name: Run Cypress e2e tests on Firefox
       #    command: |
       #      if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-      #        docker exec -it elab-cypress cypress run --browser firefox
+      #        docker exec elab-cypress cypress run --browser firefox
       #      fi
       - run:
           name: Run Cypress e2e tests on Chrome
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              docker exec -it elab-cypress cypress run --browser chrome
+              docker exec elab-cypress cypress run --browser chrome
             fi
       - run:
           name: Run Cypress e2e tests on Electron
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
-              docker exec -it elab-cypress cypress run --browser electron
+              docker exec elab-cypress cypress run --browser electron
             fi
       - run:
           name: Run Cypress e2e tests on Edge
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "2" ]; then
-              docker exec -it elab-cypress cypress run --browser edge
+              docker exec elab-cypress cypress run --browser edge
             fi
       - run:
           name: Extract cypress screenshots and videos in case it is enabled again to debug a faulty run

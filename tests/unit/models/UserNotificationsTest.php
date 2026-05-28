@@ -78,7 +78,7 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->OtherUsers->requester = $this->Users->requester;
         $this->OtherUserNotifications->setId($id);
         $this->expectException(IllegalActionException::class);
-        $this->assertIsArray($this->OtherUserNotifications->readOne());
+        $this->OtherUserNotifications->readOne();
     }
 
     public function testPatch(): void

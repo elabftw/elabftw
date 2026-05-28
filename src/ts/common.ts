@@ -1150,6 +1150,8 @@ on('create-entity', async (el: HTMLElement, event: Event) => {
   const params = collectForm(form);
   if (el.dataset.tplid) {
     params['template'] = parseInt(el.dataset.tplid, 10);
+  } else if (el.dataset.entityid) {
+    params['entity'] = parseInt(el.dataset.entityid, 10);
   }
   // look for any tag present in the url, we will create the entry with these tags
   const urlParams = new URLSearchParams(document.location.search);

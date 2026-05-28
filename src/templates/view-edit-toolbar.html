@@ -240,6 +240,14 @@
   {# DOWNLOAD / EXPORT MENU #}
   {% include 'export-menu.html' %}
 
+  <div class='vertical-separator'></div>
+  {# for entities(experiments & templates): create template from entity #}
+  {% if Entity.entityType.value == 'experiments' or Entity.entityType.value == 'items' %}
+    <a data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments' ? 'experiments_templates' : 'items_types' }}' data-entityid='{{ Entity.id }}' href='#' class='btn btn-secondary ml-2' title='{{ 'Create template from entry'|trans }}' aria-label='{{ 'Create template from entry'|trans }}'>
+      <i class='fas fa-file-circle-plus fa-fw'></i>
+    </a>
+  {% endif %}
+
   <div class='ml-auto d-flex flex-wrap align-items-center'>
     {% if not App.Session.has('is_anon') %}
     {% if mode == 'edit' %}

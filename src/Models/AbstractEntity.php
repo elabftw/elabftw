@@ -195,6 +195,7 @@ abstract class AbstractEntity extends AbstractRest
 
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
+    // create an entity from a template
     public function createFromTemplate(int $templateId, ?string $title = null): int
     {
         $TemplateType = $this->entityType->toTemplateEntity($this->Users, $templateId);
@@ -231,6 +232,51 @@ abstract class AbstractEntity extends AbstractRest
         return $id;
     }
 
+    // create a template from an entity
+    public function createTemplateFrom(int $entityId, ?string $title = null): int
+    {
+        $SourceEntity = $this->entityType->toConcreteEntity($this->Users, $entityId);
+        $source = $SourceEntity->readOne();
+
+        $id = $this->create(
+            title: $title ?? $source['title'],
+            body: $source['body'],
+            canreadBase: BasePermissions::from($source['canread_base']),
+            canwriteBase: BasePermissions::from($source['canwrite_base']),
+            canread: $source['canread'],
+            canwrite: $source['canwrite'],
+            canreadIsImmutable: (bool) $source['canread_is_immutable'],
+            canwriteIsImmutable: (bool) $source['canwrite_is_immutable'],
+            category: $source['category'],
+            status: $source['status'],
+            metadata: $source['metadata'],
+            hideMainText: BinaryValue::from($source['hide_main_text']),
+            rating: $source['rating'],
+            contentType: BodyContentType::from($source['content_type']),
+            createdFromType: $SourceEntity->entityType,
+            createdFromId: $entityId,
+        );
+
+        // copy links, compounds & tags
+        $freshSelf = new $this($this->Users, $id);
+        $ItemsLinks = LinksFactory::getItemsLinks($SourceEntity);
+        $ItemsLinks->duplicate($entityId, $id, toTemplate: true);
+
+        $ExperimentsLinks = LinksFactory::getExperimentsLinks($SourceEntity);
+        $ExperimentsLinks->duplicate($entityId, $id, toTemplate: true);
+
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($SourceEntity);
+        $CompoundsLinks->duplicate($entityId, $id, toTemplate: true);
+
+        $SourceEntity->Uploads->duplicate($freshSelf);
+
+        $tags = array_column($SourceEntity->Tags->readAll(), 'tag');
+        foreach ($tags as $tag) {
+            $freshSelf->Tags->postAction(Action::Create, array('tag' => $tag));
+        }
+        return $id;
+    }
+
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
@@ -242,6 +288,9 @@ abstract class AbstractEntity extends AbstractRest
                 function () use ($reqBody) {
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
                         return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
+                    }
+                    if (isset($reqBody['entity']) && ((int) $reqBody['entity']) !== -1) {
+                        return $this->createTemplateFrom((int) $reqBody['entity'], $reqBody['title'] ?? null);
                     }
                     // check if use of template is enforced at team level for this entity
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->selectOne();

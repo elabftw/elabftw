@@ -80,12 +80,13 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     }
 
     // Copy Compounds from one entity to another
-    public function duplicate(int $id, int $newId, bool $fromTemplate = false): int
+    public function duplicate(int $id, int $newId, bool $fromTemplate = false, bool $toTemplate = false): int
     {
-        $table = $fromTemplate ? $this->getTemplateTable() : $this->getTable();
-        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (entity_id, compound_id)
+        $sourceTable = $fromTemplate ? $this->getTemplateTable() : $this->getTable();
+        $targetTable = $toTemplate ? $this->getTemplateTable() : $this->getTable();
+        $sql = 'INSERT IGNORE INTO ' . $targetTable . ' (entity_id, compound_id)
             SELECT :new_id, compound_id
-            FROM ' . $table . '
+            FROM ' . $sourceTable . '
             WHERE entity_id = :old_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':new_id', $newId, PDO::PARAM_INT);

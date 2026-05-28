@@ -16,10 +16,13 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Traits\TestsUtilsTrait;
 use Elabftw\Models\Users\Users;
 
 class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private UserNotifications $UserNotifications;
 
     private UserNotifications $OtherUserNotifications;
@@ -30,10 +33,10 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
+        $this->Users = $this->getRandomUserInTeam(1, 1);
         $this->UserNotifications = new UserNotifications($this->Users, 1);
 
-        $this->OtherUsers = new Users(2);
+        $this->OtherUsers = $this->getRandomUserInTeam(2);
         $this->OtherUserNotifications = new UserNotifications($this->OtherUsers, 1);
     }
 

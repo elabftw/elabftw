@@ -34,7 +34,7 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->Users = new Users(1, 1);
         $this->UserNotifications = new UserNotifications($this->Users, 1);
 
-        $this->OtherUsers = new Users(2, 2);
+        $this->OtherUsers = new Users(2);
         $this->OtherUserNotifications = new UserNotifications($this->OtherUsers, 1);
     }
 

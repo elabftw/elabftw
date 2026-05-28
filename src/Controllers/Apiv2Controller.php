@@ -354,6 +354,7 @@ final class Apiv2Controller extends AbstractApiController
 
     private function getSubModel(?ApiSubModels $submodel): RestInterface
     {
+        $this->Model->readOne();
         if ($this->Model instanceof AbstractEntity) {
             $Config = Config::getConfig();
             return match ($submodel) {

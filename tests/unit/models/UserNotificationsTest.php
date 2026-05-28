@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserNotifications;
@@ -97,8 +96,8 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 
         $this->OtherUsers->requester = $this->Users->requester;
         $this->OtherUserNotifications->setId($id);
-        $this->expectException(ResourceNotFoundException::class);
-        $this->UserNotifications->patch(Action::Update, array());
+        $this->expectException(IllegalActionException::class);
+        $this->OtherUserNotifications->patch(Action::Update, array());
     }
 
     public function testDestroy(): void
@@ -109,10 +108,10 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
     public function testDestroyNotifOfAnotherUser(): void
     {
         $Notif = new SelfIsValidated($this->Users);
-        $id = $Notif->create();
+        $Notif->create();
 
         $this->OtherUsers->requester = $this->Users->requester;
         $this->expectException(IllegalActionException::class);
-        $this->assertFalse($this->OtherUserNotifications->destroy());
+        $this->OtherUserNotifications->destroy();
     }
 }

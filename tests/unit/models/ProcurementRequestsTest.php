@@ -13,20 +13,21 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ProcurementState;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private ProcurementRequests $pr;
 
     private ProcurementRequests $otherTeamPr;
 
     protected function setUp(): void
     {
-        $this->pr = new ProcurementRequests(new Teams(new Users(1, 1), 1));
-        $this->otherTeamPr = new ProcurementRequests(new Teams(new Users(2, 2), 2));
+        $this->pr = new ProcurementRequests(new Teams($this->getRandomUserInTeam(1), 1));
+        $this->otherTeamPr = new ProcurementRequests(new Teams($this->getRandomUserInTeam(2), 2));
     }
 
     public function testCreate(): void
@@ -85,7 +86,7 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
     public function testUpdateNonAccessibleRecord(): void
     {
         $this->otherTeamPr->setId(1);
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(ResourceNotFoundException::class);
         $this->otherTeamPr->patch(Action::Update, array('qty_received' => 2));
     }
 }

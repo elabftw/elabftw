@@ -446,7 +446,7 @@ if (window.location.pathname === '/scheduler.php') {
         $('#eventModal').modal('show');
         // set the event id on the various elements
         document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
-        document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
+        document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn: HTMLButtonElement) => btn.dataset.eventid = info.event.id);
         document.querySelectorAll('[data-action="cancel-event"], [data-action="cancel-event-with-message"]')
           .forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
 
@@ -492,8 +492,17 @@ if (window.location.pathname === '/scheduler.php') {
         );
         // Set modal content
         document.getElementById('viewTitle')!.textContent = info.event.extendedProps.title_only;
-        document.getElementById('viewDatetime')!.innerHTML = `${dateLine}<br class='mb-2'>` +
-          `<strong>${timeLine}</strong> (${durationMinutes} ${i18next.t('minutes')})`;
+        const viewDatetime = document.getElementById('viewDatetime')!;
+        const br = document.createElement('br');
+        br.classList.add('mb-2');
+        const strong = document.createElement('strong');
+        strong.textContent = timeLine;
+        viewDatetime.replaceChildren(
+          dateLine,
+          br,
+          strong,
+          ` (${durationMinutes} ${i18next.t('minutes')})`,
+        );
       },
       // on mouse enter add shadow and show title
       eventMouseEnter: function(info): void {

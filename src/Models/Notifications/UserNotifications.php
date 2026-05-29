@@ -42,6 +42,7 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $this->users->isSelfOrExplode();
         $sql = 'SELECT id, category, body, is_ack, created_at, userid
             FROM notifications
             WHERE userid = :userid
@@ -72,6 +73,7 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        $this->users->isSelfOrExplode();
         $sql = 'SELECT * FROM notifications WHERE userid = :userid AND id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
@@ -84,6 +86,7 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        $this->users->isSelfOrExplode();
         // currently the only update action is to ack it, so no need to check for anything else
         // permission is checked with the userid AND
         $sql = 'UPDATE notifications SET is_ack = 1 WHERE id = :id AND userid = :userid';
@@ -106,6 +109,7 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        $this->users->isSelfOrExplode();
         $sql = 'DELETE FROM notifications WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);

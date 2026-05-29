@@ -22,6 +22,9 @@ final class MakeStoredCompoundsReport extends MakeInventoryReport
     #[Override]
     protected function getData(): array
     {
-        return $this->storageUnits->readEverythingWithNoLimit();
+        if ($this->storageUnits->requester->isSysadmin()) {
+            return $this->storageUnits->readEverythingWithNoLimit();
+        }
+        return $this->storageUnits->readAll();
     }
 }

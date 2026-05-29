@@ -33,7 +33,7 @@ final class StorageUnits extends AbstractRest
 {
     use SetIdTrait;
 
-    public function __construct(private Users $requester, private bool $requireEditRights, ?int $id = null)
+    public function __construct(public Users $requester, private bool $requireEditRights, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);

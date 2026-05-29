@@ -89,7 +89,10 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $Notif = new SelfIsValidated($this->Users);
         $id = $Notif->create();
         $this->UserNotifications->setId($id);
-        $this->assertIsArray($this->UserNotifications->patch(Action::Update, array()));
+        $this->UserNotifications->patch(Action::Update, array('is_ack' => 1));
+        $this->assertEquals(1, $this->UserNotifications->readOne()['is_ack']);
+        $this->UserNotifications->patch(Action::Update, array('is_ack' => 0));
+        $this->assertEquals(0, $this->UserNotifications->readOne()['is_ack']);
     }
 
     public function testPatchNotifOfAnotherUser(): void

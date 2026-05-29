@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractRest;
@@ -88,12 +89,12 @@ final class UserNotifications extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->users->isSelfOrExplode();
-        // currently the only update action is to ack it, so no need to check for anything else
-        // permission is checked with the userid AND
-        $sql = 'UPDATE notifications SET is_ack = 1 WHERE id = :id AND userid = :userid';
+        $is_ack = BinaryValue::tryFrom((int) $params['is_ack']) ?? BinaryValue::True;
+        $sql = 'UPDATE notifications SET is_ack = :is_ack WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindValue(':is_ack', $is_ack->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->readOne();
     }

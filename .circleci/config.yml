@@ -14,7 +14,7 @@ executors:
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
       - image: cimg/base:current
-    resource_class: large.gen2
+    resource_class: large
     environment:
       DOCKER_BUILDKIT: 1
       BUILDKIT_PROGRESS: plain
@@ -220,13 +220,12 @@ jobs:
       - run:
           name: Create folders
           command: mkdir -p cypress/{screenshots,videos}
-      # commented out because it stays stuck on Import tab on profile page
-      #- run:
-      #    name: Run Cypress e2e tests on Firefox
-      #    command: |
-      #      if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-      #        docker exec elab-cypress cypress run --browser firefox
-      #      fi
+      - run:
+          name: Run Cypress e2e tests on Firefox
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
+              docker exec elab-cypress cypress run --browser firefox
+            fi
       - run:
           name: Run Cypress e2e tests on Chrome
           command: |

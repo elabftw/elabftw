@@ -38,18 +38,37 @@ export default class Todolist extends SidePanel {
 
   getUnfinishedStep(type: EntityType): Promise<void> {
     return ApiC.getJson(`unfinished_steps?scope=${this.unfinishedStepsScope}`).then(json => {
-      let html = '';
+      // lightweight temporary container to create the side panel's <a> element
+      const fragment = document.createDocumentFragment();
       for (const entity of json[type] as Array<UnfinishedEntities>) {
-        html += `<div class='side-panel-item'><p><a href='${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}'>${escapeHTML(entity.title)}</a></p>`;
+        const item = document.createElement('div');
+        item.classList.add('side-panel-item');
+        const p = document.createElement('p');
+        const link = document.createElement('a');
+        link.href = `${type === EntityType.Item ? 'database' : 'experiments'}.php?mode=view&id=${entity.id}`;
+        link.textContent = entity.title;
+        p.append(link);
+        item.append(p);
+
         for (const stepsData of Object.entries(entity.steps)) {
           const stepId = stepsData[1][0];
           const stepBody = stepsData[1][1];
-          html += `<div><input type='checkbox' class='stepbox mr-2' id='todo_step_${stepId}' data-id='${entity.id}' data-type='${type}' data-stepid='${stepId}' />${escapeHTML(stepBody)}</div>`;
+          // create checkbox input
+          const div = document.createElement('div');
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.classList.add('stepbox', 'mr-2');
+          input.id = `todo_step_${stepId}`;
+          input.dataset.id = String(entity.id);
+          input.dataset.type = type;
+          input.dataset.stepid = String(stepId);
+          div.append(input, stepBody);
+          item.append(div);
         }
-        html += '</div>';
+        fragment.append(item);
       }
       const typeIdName = 'todoSteps' + type.charAt(0).toUpperCase() + type.slice(1);
-      document.getElementById(typeIdName).innerHTML = html;
+      document.getElementById(typeIdName).replaceChildren(fragment);
     });
   }
 

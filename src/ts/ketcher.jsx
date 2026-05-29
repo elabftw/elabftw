@@ -23,8 +23,9 @@ const KetcherEditor = () => {
   return (
     <div className="ketcher-editor-container">
       <Editor
-        staticResourcesUrl={JSON.stringify('/')}
+        staticResourcesUrl=""
         structServiceProvider={structServiceProvider}
+        errorHandler={(message) => { console.error('Ketcher error:', message); }}
         onInit={(ketcher) => {window.ketcher = ketcher;}}
       />
     </div>

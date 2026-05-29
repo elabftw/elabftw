@@ -53,8 +53,8 @@
     "jsoneditor": "^10.4.2",
     "jspreadsheet-ce": "^5.0.4",
     "jsuites": "^5.13.5",
-    "ketcher-core": "^3.0.1",
-    "ketcher-react": "^3.0.1",
+    "ketcher-core": "3.12.0",
+    "ketcher-react": "3.12.0",
     "lodash-es": "^4.18.1",
     "luxon": "^3.7.2",
     "marked": "^17.0.5",
@@ -86,7 +86,8 @@
     "cross-spawn": "^7.0.5",
     "lodash": "^4.18.1",
     "lodash-es": "^4.18.1",
-    "diff": "^5.2.2"
+    "diff": "^5.2.2",
+    "ketcher-core": "3.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

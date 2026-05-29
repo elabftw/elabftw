@@ -7,7 +7,6 @@
  */
 import { Model, EntityType, UnfinishedEntities } from './interfaces';
 import SidePanel from './SidePanel.class';
-import { escapeHTML } from './misc';
 import FavTag from './FavTag.class';
 import { ApiC } from './api';
 import { mount } from 'svelte';

@@ -74,24 +74,10 @@ export default class TableSorting {
     table.querySelectorAll(headSelector).forEach((th: HTMLTableCellElement) => {
       // add sort button
       // need span because .fas has pointer-events:none
-      const originalLabel = th.textContent?.trim() ?? '';
-      const original = document.createElement('span');
-      original.replaceChildren(...Array.from(th.childNodes));
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.classList.add('btn', 'btn-link', 'p-0', 'ml-2');
-      button.title = `${i18next.t('sort-by-column')} ${originalLabel}`;
-      button.setAttribute('aria-label', button.title);
-      const icon = document.createElement('i');
-      icon.classList.add('fas', 'fa-sort');
-      button.append(icon);
-      const wrapper = document.createElement('span');
-      wrapper.classList.add('d-flex', 'justify-content-between', 'align-items-center');
-      wrapper.append(original, button);
-      th.replaceChildren(wrapper);
+      th.innerHTML = `<span class='d-flex justify-content-between align-items-center'><span>${th.innerHTML}</span><button class='btn btn-link p-0 ml-2' type='button' title='${i18next.t('sort-by-column')} ${th.innerHTML}' aria-label='${i18next.t('sort-by-column')} ${th.innerHTML}'><i class='fas fa-sort'></i></button></span>`;
 
-      button.addEventListener('click', (event => {
-        const icon = (event.currentTarget as HTMLElement).firstChild as HTMLElement;
+      th.firstChild.firstChild.nextSibling.addEventListener('click', (event => {
+        const icon = (event.target as HTMLElement).firstChild as HTMLElement;
 
         // reset previous icon
         if (prevSortIcon && prevSortIcon != icon) {
@@ -119,7 +105,7 @@ export default class TableSorting {
         const rows = Array.from(table.querySelectorAll(rowSelector)) as HTMLTableRowElement[];
         // Schwartzian transform (decorate)
         const decoratedRows: decoratedRow[] = rows.map(tr => {
-          return {row: tr, value: this.getCellValue(tr, columnId)};
+          return {row:tr, value:this.getCellValue(tr, columnId)};
         });
         decoratedRows.sort(this.getComparer(th.dataset.order === 'asc').bind(this))
           // rebuild table, undecorate

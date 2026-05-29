@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Usergroup;
@@ -221,6 +222,14 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users = $this->getUserInTeam(1);
         $this->expectException(IllegalActionException::class);
         $Users->patch(Action::Update, array('validated' => 1));
+    }
+
+    public function testUpdateValidUntilAsNonAdmin(): void
+    {
+        $Users = $this->getUserInTeam(1);
+        $date = new DateTimeImmutable('tomorrow');
+        $this->expectException(IllegalActionException::class);
+        $Users->patch(Action::Update, array('valid_until' => $date->format('Y-m-d')));
     }
 
     public function testResetPassword(): void

@@ -677,7 +677,7 @@ class Users extends AbstractRest
             $this->requester->isSysadminOrExplode();
         }
         // columns that can only be modified by admin requester
-        if (in_array($params->getTarget(), array('validated'), true)) {
+        if (in_array($params->getTarget(), array('validated', 'valid_until'), true)) {
             $this->requester->isAdminOrExplode();
         }
         // early bail out if existing and new values are the same

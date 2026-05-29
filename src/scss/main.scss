@@ -193,6 +193,7 @@ a:hover,
   vertical-align: text-top;
 }
 
+/* stylelint-disable-next-line selector-no-qualifying-type */
 select:not([multiple]) {
   appearance: none;
   background: var(--white) url('images/ico-arrow.png') no-repeat 97% 56%;
@@ -209,6 +210,7 @@ select:not([multiple]) {
     color: var(--mediumstrong);
   }
 
+  /* stylelint-disable-next-line selector-no-qualifying-type */
   :where(input, textarea).form-control:read-only,
   .form-control:disabled {
     background-color: var(--secondary-muted);
@@ -572,10 +574,12 @@ button:disabled {
 }
 
 /* zebra only when the actual table does not have inline background-color */
+/* stylelint-disable-next-line selector-no-qualifying-type */
 table:not([style*='background-color']) > tbody > tr:nth-child(even) {
   background-color: var(--white);
 }
 
+/* stylelint-disable-next-line selector-no-qualifying-type */
 table:not([style*='background-color']) > tbody > tr:nth-child(odd) {
   background-color: var(--mainbackground);
 }
@@ -802,6 +806,7 @@ tr:first-child td {
   }
 
   .left-icon {
+    /* stylelint-disable-next-line selector-no-qualifying-type */
     i:not(.fa-lock) {
       color: var(--white);
     }

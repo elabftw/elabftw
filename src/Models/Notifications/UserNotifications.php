@@ -44,6 +44,7 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $this->users->isSelfOrExplode();
         $sql = 'SELECT id, category, body, is_ack, created_at, userid
             FROM notifications
             WHERE userid = :userid
@@ -74,6 +75,7 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        $this->users->isSelfOrExplode();
         $sql = 'SELECT * FROM notifications WHERE userid = :userid AND id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);

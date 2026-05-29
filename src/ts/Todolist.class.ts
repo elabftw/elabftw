@@ -67,7 +67,8 @@ export default class Todolist extends SidePanel {
         fragment.append(item);
       }
       const typeIdName = 'todoSteps' + type.charAt(0).toUpperCase() + type.slice(1);
-      document.getElementById(typeIdName).replaceChildren(fragment);
+      const target = document.getElementById(typeIdName);
+      target?.replaceChildren(fragment);
     });
   }
 

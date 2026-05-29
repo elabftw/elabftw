@@ -190,6 +190,16 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($user2->team, $entityData['team']);
     }
 
+    public function testUpdateOwnershipWithoutUsingDedicatedAction(): void
+    {
+        $User = $this->getRandomUserInTeam(1);
+        $exp = $this->getFreshExperimentWithGivenUser($User);
+        $params = array('userid' => $User->getUserid(), 'team' => $User->getTeam());
+        // needs to use Action::UpdateOwner if we're using userid/team params)
+        $this->expectException(ImproperActionException::class);
+        $exp->patch(Action::Update, $params);
+    }
+
     public function testUpdateOwnershipWrongTeamCombination(): void
     {
         $user1 = new Users(1, 1);

@@ -546,6 +546,9 @@ abstract class AbstractEntity extends AbstractRest
             ),
             Action::Update => (
                 function () use ($params) {
+                    if (array_key_exists('userid', $params) || array_key_exists('team', $params)) {
+                        throw new ImproperActionException("Use the 'action:updateowner' to transfer ownership.");
+                    }
                     foreach ($params as $key => $value) {
                         $this->update(new EntityParams($key, (string) $value));
                     }

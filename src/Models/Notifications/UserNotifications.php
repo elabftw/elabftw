@@ -86,6 +86,7 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        $this->users->isSelfOrExplode();
         $is_ack = BinaryValue::tryFrom((int) $params['is_ack']) ?? BinaryValue::True;
         $sql = 'UPDATE notifications SET is_ack = :is_ack WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);
@@ -108,6 +109,7 @@ final class UserNotifications extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        $this->users->isSelfOrExplode();
         $sql = 'DELETE FROM notifications WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);

@@ -23,7 +23,7 @@ jobs:
     steps:
       # https://github.com/CycodeLabs/cimon-action
       - name: Cimon supply chain attack protection
-        uses: cycodelabs/cimon-action@f99ad5557cb80964bc2b2e76a47bf4b5ba6e323b # v0.10
+        uses: cycodelabs/cimon-action@a0870cc3d9e3bf3cedd28bdb67bf3fd3281e5941 # v1.0.1
         with:
           prevent: true
           allowed-hosts: >
@@ -31,7 +31,9 @@ jobs:
             codeload.github.com
             dl-cdn.alpinelinux.org
             docker.io
+            fulcio.sigstore.dev
             ghcr.io
+            hooks.deltablot.dev
             index.docker.io
             mirror.gcr.io
             nginx.org
@@ -42,7 +44,6 @@ jobs:
             registry.yarnpkg.com
             repo.yarnpkg.com
             registry.npmjs.org
-            hooks.deltablot.dev
 
       - name: Checkout elabimg repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6

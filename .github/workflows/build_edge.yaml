@@ -31,7 +31,7 @@ jobs:
             codeload.github.com
             dl-cdn.alpinelinux.org
             docker.io
-            fulcio.sigstore.dev
+            *.sigstore.dev
             ghcr.io
             hooks.deltablot.dev
             index.docker.io

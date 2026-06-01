@@ -354,10 +354,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     {
         $query = new InputBag(array('category' => 'null,1'));
         $DisplayParams = new DisplayParams($this->Users, EntityType::Experiments, $query);
-
-        $this->assertStringContainsString(
-            'AND (entity.category IS NULL OR entity.category IN (1))',
-            $DisplayParams->getFilterSql(),
-        );
+        $expected = 'AND (entity.category IS NULL OR entity.category IN (1))';
+        $this->assertStringContainsString($expected, $DisplayParams->getFilterSql());
     }
 }

@@ -209,6 +209,7 @@ final class DisplayParams extends BaseQueryParams
     private function getSqlIn(string $column, string|int $input): string
     {
         $input = (string) $input;
+        // Do not use empty() here as "0" is a valid filter value.
         if ($input === '') {
             return '';
         }
@@ -226,11 +227,13 @@ final class DisplayParams extends BaseQueryParams
         }
         if ($numbers) {
             $numbers = array_unique($numbers);
+            // Add the IN condition to the list so it can be grouped with IS NULL below
             $conditions[] = sprintf('%s IN (%s)', $column, implode(', ', $numbers));
         }
         if (!$conditions) {
             return '';
         }
+        // group all conditions to preserve SQL operator precedence when OR is present.
         return sprintf(' AND (%s)', implode(' OR ', $conditions));
     }
 }

@@ -348,4 +348,16 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $this->Experiments->patch(Action::Update, array('custom_id' => 99));
     }
+
+    // focused regression test for nullable filters to ensure mixed `NULL` and `IN (...)` conditions are grouped as a single SQL predicate.
+    public function testNullableCategoryFilterSqlIsGrouped(): void
+    {
+        $query = new InputBag(array('category' => 'null,1'));
+        $DisplayParams = new DisplayParams($this->Users, EntityType::Experiments, $query);
+
+        $this->assertStringContainsString(
+            'AND (entity.category IS NULL OR entity.category IN (1))',
+            $DisplayParams->getFilterSql(),
+        );
+    }
 }

@@ -21,6 +21,7 @@ use Elabftw\Services\LoginHelper;
 use Exception;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use function basename;
@@ -58,7 +59,7 @@ try {
         $Config = Config::getConfig();
     } catch (DatabaseErrorException | PDOException $e) {
         $Logger->critical('', array('Exception' => $e));
-        throw new ImproperActionException('<html><body style="padding:8vmin;background-color: #dbdbdb;color: #343434;font-family: sans-serif"><h1>Error encountered during MySQL initialization</h1><h2>Possible solutions:</h2><ul style="line-height:150%"><li>Make sure the database is initialized with <code style="background-color: black;color:white;padding:5px;border-radius: 5px;font-weight: bold">docker exec elabftw bin/init db:install</code></li><li>Make sure hostname and credentials for MySQL are correctly configured through environment variables</li><li>Make sure the database is operational and reachable (firewalls)</li></ul></body></html>');
+        throw new ImproperActionException('<html><body style="padding:8vmin;background-color: #dbdbdb;color: #343434;font-family: sans-serif"><h1>Error connecting to MySQL server</h1><h2>Possible solutions:</h2><ul style="line-height:150%"><li>Make sure the database is initialized with <code style="background-color: black;color:white;padding:5px;border-radius: 5px;font-weight: bold">docker exec elabftw bin/init db:install</code></li><li>Make sure hostname and credentials for MySQL are correctly configured through environment variables</li><li>Make sure the database is operational and reachable (firewalls)</li></ul></body></html>');
     }
 
     // CSRF
@@ -153,5 +154,8 @@ try {
     exit;
 } catch (Exception $e) {
     // if something went wrong here it should stop whatever is after
-    die($e->getMessage());
+    $Response = new Response();
+    $Response->setStatusCode(500);
+    $Response->setContent($e->getMessage());
+    $Response->send();
 }

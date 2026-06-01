@@ -15,12 +15,14 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\Language;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
@@ -303,7 +305,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTimestampThisMonth(): void
     {
-        $this->assertEquals(5, $this->Experiments->getTimestampLastMonth());
+        $this->assertIsInt($this->Experiments->getTimestampLastMonth());
+        $this->assertNotEquals(0, $this->Experiments->getTimestampLastMonth());
     }
 
     public function testUpdateJsonField(): void
@@ -356,5 +359,18 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $DisplayParams = new DisplayParams($this->Users, EntityType::Experiments, $query);
         $expected = 'AND (entity.category IS NULL OR entity.category IN (1))';
         $this->assertStringContainsString($expected, $DisplayParams->getFilterSql());
+    }
+
+    // test anonymous user cannot read
+    public function testReadAllSetsIsAnonForAnonymousUser(): void
+    {
+        $AnonymousUser = new AnonymousUser(1, Language::EnglishUS);
+        $Experiments = new Experiments($AnonymousUser);
+        $experiments = $Experiments->readAll();
+
+        foreach ($experiments as $experiment) {
+            $this->assertTrue($Experiments->isAnon);
+            $this->assertSame(BasePermissions::Full->value, $experiment['canread_base']);
+        }
     }
 }

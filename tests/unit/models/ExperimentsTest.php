@@ -361,8 +361,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString($expected, $DisplayParams->getFilterSql());
     }
 
-    // test anonymous user cannot read
-    public function testReadAllSetsIsAnonForAnonymousUser(): void
+    // test anonymous user can only read Entries with 'Permission:Full' (Everyone including anonymous users)
+    public function testReadAllForAnonymousUser(): void
     {
         $AnonymousUser = new AnonymousUser(1, Language::EnglishUS);
         $Experiments = new Experiments($AnonymousUser);

@@ -157,5 +157,6 @@ try {
     $Response = new Response();
     $Response->setStatusCode(500);
     $Response->setContent($e->getMessage());
+    $Response->headers->set('Content-Type', 'text/html; charset=UTF-8');
     $Response->send();
 }

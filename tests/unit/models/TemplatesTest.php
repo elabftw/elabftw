@@ -16,11 +16,12 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
-
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\TeamParam;
 use Elabftw\Traits\TestsUtilsTrait;
+
 use function json_decode;
+use function array_column;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
@@ -106,28 +107,6 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    private function createdFrom(EntityType $entityType): void
-    {
-        $template = $entityType->toInstance($this->getUserInTeam(1));
-        $id = $template->create();
-        $template->setId($id);
-        $this->assertNull($template->entityData['created_from_type']);
-        $this->assertNull($template->entityData['created_from_id']);
-
-        // now create template from concrete entity
-        $sourceType = $entityType->asEntityTypeOrNull();
-        $sourceId = $sourceType === null ? null : 12;
-
-        $new = $template->create(
-            createdFromType: $sourceType,
-            createdFromId: $sourceId,
-        );
-        $template->setId($new);
-
-        $this->assertSame($entityType->asEntityTypeOrNull()?->toInt(), $template->entityData['created_from_type']);
-        $this->assertSame($sourceId, $template->entityData['created_from_id']);
-    }
-
     public function testCreateFromEntity(): void
     {
         $user = $this->getRandomUserInTeam(1);
@@ -163,5 +142,27 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('Template created from postAction', $Template->entityData['title']);
         $this->assertSame(EntityType::Experiments->toInt(), $Template->entityData['created_from_type']);
         $this->assertSame($Exp->id, $Template->entityData['created_from_id']);
+    }
+
+    private function createdFrom(EntityType $entityType): void
+    {
+        $template = $entityType->toInstance($this->getUserInTeam(1));
+        $id = $template->create();
+        $template->setId($id);
+        $this->assertNull($template->entityData['created_from_type']);
+        $this->assertNull($template->entityData['created_from_id']);
+
+        // now create template from concrete entity
+        $sourceType = $entityType->asEntityTypeOrNull();
+        $sourceId = $sourceType === null ? null : 12;
+
+        $new = $template->create(
+            createdFromType: $sourceType,
+            createdFromId: $sourceId,
+        );
+        $template->setId($new);
+
+        $this->assertSame($entityType->asEntityTypeOrNull()?->toInt(), $template->entityData['created_from_type']);
+        $this->assertSame($sourceId, $template->entityData['created_from_id']);
     }
 }

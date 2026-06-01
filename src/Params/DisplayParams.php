@@ -29,8 +29,8 @@ use function explode;
 use function sprintf;
 use function trim;
 use function implode;
-use function rtrim;
 use function strtolower;
+use function array_unique;
 
 /**
  * This class holds the values for limit, offset, order and sort
@@ -209,23 +209,28 @@ final class DisplayParams extends BaseQueryParams
     private function getSqlIn(string $column, string|int $input): string
     {
         $input = (string) $input;
-        if (empty($input)) {
+        if ($input === '') {
             return '';
         }
         $exploded = explode(',', $input);
+        $conditions = array();
         $numbers = array();
-        $sql = ' AND';
         foreach ($exploded as $value) {
-            // we need to treat null specially, it cannot be part of the IN()
+            $value = trim($value);
+
             if (strtolower($value) === 'null') {
-                $sql = sprintf(' AND %s IS NULL OR', $column);
+                $conditions[] = sprintf('%s IS NULL', $column);
                 continue;
             }
             $numbers[] = (int) $value;
         }
         if ($numbers) {
-            return $sql . sprintf(' %s IN (%s)', $column, implode(', ', $numbers));
+            $numbers = array_unique($numbers);
+            $conditions[] = sprintf('%s IN (%s)', $column, implode(', ', $numbers));
         }
-        return rtrim($sql, ' OR');
+        if (!$conditions) {
+            return '';
+        }
+        return sprintf(' AND (%s)', implode(' OR ', $conditions));
     }
 }

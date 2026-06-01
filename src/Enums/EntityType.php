@@ -63,9 +63,17 @@ enum EntityType: string
     {
         return match ($this) {
             self::Experiments => self::Templates,
-            self::Templates  => null,
+            self::Templates, self::ItemsTypes => null,
             self::Items => self::ItemsTypes,
-            self::ItemsTypes => null,
+        };
+    }
+
+    public function asEntityTypeOrNull(): ?EntityType
+    {
+        return match ($this) {
+            self::Experiments, self::Items => null,
+            self::Templates => self::Experiments,
+            self::ItemsTypes => self::Items,
         };
     }
 

@@ -235,6 +235,9 @@ abstract class AbstractEntity extends AbstractRest
     // create a template from an entity
     public function createTemplateFrom(int $entityId, ?string $title = null): int
     {
+        if (!($this instanceof AbstractTemplateEntity)) {
+            throw new ImproperActionException('The entity parameter is only valid for template creation.');
+        }
         $SourceEntity = $this->entityType->toConcreteEntity($this->Users, $entityId);
         $source = $SourceEntity->readOne();
 

@@ -44,7 +44,7 @@
     "css-loader": "^7.1.4",
     "css-minimizer-webpack-plugin": "^7.0.4",
     "diff-match-patch": "^1.0.5",
-    "dompurify": "^3.3.3",
+    "dompurify": "^3.4.4",
     "expose-loader": "^5.0.1",
     "i18next": "^25.10.9",
     "immutable": "^5.1.5",
@@ -68,7 +68,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sass": "^1.98.0",
-    "svelte": "^5.55.2",
+    "svelte": "^5.55.7",
     "terser": "^5.46.1",
     "terser-webpack-plugin": "^5.4.0",
     "tinymce": "^6.8.6",
@@ -80,7 +80,7 @@
     "webpack-cli": "^7.0.2"
   },
   "resolutions": {
-    "fast-xml-parser": "^5.5.7",
+    "fast-xml-parser": "^5.8.0",
     "micromatch": "^4.0.8",
     "path-to-regexp": "^1.9.0",
     "cross-spawn": "^7.0.5",

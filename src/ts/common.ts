@@ -161,7 +161,9 @@ btn.style.opacity = '0';
 // will not be shown for small screens, only large ones
 btn.classList.add('d-none', 'd-xl-inline', 'd-lg-inline');
 // the button is an up arrow
-btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+const icon = document.createElement('i');
+icon.classList.add('fas', 'fa-arrow-up');
+btn.replaceChildren(icon);
 // give it an id so we can remove it easily
 btn.id = 'backToTopButton';
 btn.setAttribute('aria-label', 'Back to top');

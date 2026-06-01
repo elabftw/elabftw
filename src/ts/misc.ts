@@ -667,19 +667,6 @@ export function toggleIcon(el: HTMLElement, isHidden: boolean): void
   }
 }
 
-// escape text similar to htmlspecialchars() of php
-// https://stackoverflow.com/a/4835406
-export function escapeHTML(text: string): string {
-  const escapeMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&#34;',
-    '\'': '&#39;',
-  };
-  return text.replace(/[&<>'"]/g, char => escapeMap[char]);
-}
-
 export function escapeExtendedQuery(searchTerm: string): string {
   // the order of the replacement is important
   // 1) escape extended search query wildcards

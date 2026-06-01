@@ -23,18 +23,23 @@ jobs:
     steps:
       # https://github.com/CycodeLabs/cimon-action
       - name: Cimon supply chain attack protection
-        uses: cycodelabs/cimon-action@f99ad5557cb80964bc2b2e76a47bf4b5ba6e323b # v0.10
+        uses: cycodelabs/cimon-action@a0870cc3d9e3bf3cedd28bdb67bf3fd3281e5941 # v1.0.1
         with:
           prevent: true
           allowed-hosts: >
             auth.docker.io
+            api.github.com
             codeload.github.com
             dl-cdn.alpinelinux.org
             docker.io
+            *.sigstore.dev
+            github.com
             ghcr.io
+            hooks.deltablot.dev
             index.docker.io
             mirror.gcr.io
             nginx.org
+            objects.githubusercontent.com
             packagist.org
             pkg-containers.githubusercontent.com
             production.cloudflare.docker.com
@@ -42,7 +47,6 @@ jobs:
             registry.yarnpkg.com
             repo.yarnpkg.com
             registry.npmjs.org
-            hooks.deltablot.dev
 
       - name: Checkout elabimg repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -65,6 +69,9 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
       # https://github.com/docker/build-push-action#multi-platform-image
       # https://docs.docker.com/build/ci/github-actions/cache/
       - name: Build release for all platforms and push to Docker Hub
@@ -79,11 +86,15 @@ jobs:
           cache-from: type=gha,scope=${{ runner.os }}-${{ runner.arch }}
           cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}
           sbom: true
+          provenance: mode=max
           build-args: |
               ELABFTW_VERSION=${{ github.event.release.tag_name }}
           tags: |
               elabftw/elabimg:edge
               elabftw/elabimg:${{ github.event.release.tag_name }}
+
+      - name: Sign Docker image with cosign
+        run: cosign sign --yes docker.io/elabftw/elabimg@${{ steps.push.outputs.digest }}
 
       # ATTESTATION
       - name: Create build provenance attestation

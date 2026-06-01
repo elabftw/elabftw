@@ -251,8 +251,8 @@ COPY ./.yarnrc.yml /elabftw
 
 # COMPOSER
 ENV COMPOSER_HOME=/composer
-# 2.9.7
-COPY --from=composer@sha256:dc292c5c0f95f526b051d4c341bf08e7e2b18504c74625e3203d7f123050e318 /usr/bin/composer /usr/local/bin/composer
+# 2.10.0 https://github.com/composer/composer/releases/tag/2.10.0
+COPY --from=composer@sha256:1b73755de4f19775ba6087fd5313664493e06fab72b6fc27dc2044e87bb7c4c3 /usr/bin/composer /usr/local/bin/composer
 
 # this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
 # pass it to build command with --build-arg BUILD_ALL=0

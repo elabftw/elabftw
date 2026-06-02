@@ -24,4 +24,37 @@ enum Units: string
     case MilliGram = 'mg';
     case Gram = 'g';
     case KiloGram = 'kg';
+
+    // human readable label for the dropdowns; defaults to the symbol/abbreviation
+    public function label(): string
+    {
+        return match ($this) {
+            self::Bar => 'Bar',
+            self::Metre => 'Metre',
+            default => $this->value,
+        };
+    }
+
+    /**
+     * Built-in units in the order they should appear in the UI dropdowns.
+     * The case declaration order above is intentionally NOT the display order, so this is the
+     * single source of truth for ordering. Keep it in sync with the cases (covered by a test).
+     *
+     * @return list<self>
+     */
+    public static function inDisplayOrder(): array
+    {
+        return array(
+            self::Unit,
+            self::MicroLiter,
+            self::MilliLiter,
+            self::Liter,
+            self::MicroGram,
+            self::MilliGram,
+            self::Gram,
+            self::KiloGram,
+            self::Bar,
+            self::Metre,
+        );
+    }
 }

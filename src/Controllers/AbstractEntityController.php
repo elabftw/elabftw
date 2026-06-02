@@ -232,6 +232,18 @@ abstract class AbstractEntityController implements ControllerInterface
     }
 
     /**
+     * The built-in units (value + display label) in dropdown display order. Single source for the
+     * add-container modal, the inline editor and the admin show/hide checkboxes.
+     */
+    protected function getBuiltinUnitsArr(): array
+    {
+        return array_map(
+            static fn(Units $unit): array => array('value' => $unit->value, 'label' => $unit->label()),
+            Units::inDisplayOrder(),
+        );
+    }
+
+    /**
      * View mode (one item displayed)
      */
     protected function view(): Response
@@ -239,6 +251,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
         // the mode parameter is for the uploads tpl
         $renderArr = array(
+            'builtinUnitsArr' => $this->getBuiltinUnitsArr(),
             'categoryArr' => $this->categoryArr,
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
@@ -299,6 +312,7 @@ abstract class AbstractEntityController implements ControllerInterface
         $DisplayParamsTemplates = new DisplayParams($this->App->Users, EntityType::Templates);
         $DisplayParamsItemsTypes = new DisplayParams($this->App->Users, EntityType::ItemsTypes);
         $renderArr = array(
+            'builtinUnitsArr' => $this->getBuiltinUnitsArr(),
             'categoryArr' => $this->categoryArr,
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,

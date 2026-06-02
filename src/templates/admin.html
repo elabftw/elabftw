@@ -83,9 +83,9 @@
     {% set hiddenUnits = (App.Teams.teamArr.hidden_units ?? '')|split(',') %}
     <label class='col-form-label d-block'>{{ 'Built-in units to offer'|trans }}</label>
     <div class='d-flex flex-wrap'>
-      {% for value, label in {'•': '•', 'μL': 'μL', 'mL': 'mL', 'L': 'L', 'μg': 'μg', 'mg': 'mg', 'g': 'g', 'kg': 'kg', 'bar': 'Bar', 'm': 'Metre'} %}
+      {% for unit in builtinUnitsArr %}
         <label class='form-check-label mr-3 text-nowrap'>
-          <input type='checkbox' class='hidden-unit-toggle' data-trigger='change' data-model='{{ model }}' data-target='hidden_units' data-transform='collectHiddenUnits' value='{{ value }}'{{ value not in hiddenUnits ? ' checked' }} /> {{ label }}
+          <input type='checkbox' class='hidden-unit-toggle' data-trigger='change' data-model='{{ model }}' data-target='hidden_units' data-transform='collectHiddenUnits' value='{{ unit.value }}'{{ unit.value not in hiddenUnits ? ' checked' }} /> {{ unit.label }}
         </label>
       {% endfor %}
     </div>

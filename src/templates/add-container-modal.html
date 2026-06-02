@@ -17,17 +17,10 @@
             <input type='number' value='1' min='0' step='any' id='containerQtyStoredInput' autocomplete='off' class='form-control' />
             <div class='input-group-append'>
               <select class='custom-select brl-none brr-none' id='containerQtyUnitSelect' aria-label='{{ 'Quantity unit'|trans }}'>
-                {# built-in units: never modified or reordered (see enum Units), only hidden per team #}
-                {% if '•' not in hiddenUnitsArr %}<option value='•'>•</option>{% endif %}
-                {% if 'μL' not in hiddenUnitsArr %}<option value='μL'>μL</option>{% endif %}
-                {% if 'mL' not in hiddenUnitsArr %}<option value='mL'>mL</option>{% endif %}
-                {% if 'L' not in hiddenUnitsArr %}<option value='L'>L</option>{% endif %}
-                {% if 'μg' not in hiddenUnitsArr %}<option value='μg'>μg</option>{% endif %}
-                {% if 'mg' not in hiddenUnitsArr %}<option value='mg'>mg</option>{% endif %}
-                {% if 'g' not in hiddenUnitsArr %}<option value='g'>g</option>{% endif %}
-                {% if 'kg' not in hiddenUnitsArr %}<option value='kg'>kg</option>{% endif %}
-                {% if 'bar' not in hiddenUnitsArr %}<option value='bar'>Bar</option>{% endif %}
-                {% if 'm' not in hiddenUnitsArr %}<option value='m'>Metre</option>{% endif %}
+                {# built-in units (enum Units, in display order), minus the ones the team hid #}
+                {% for unit in builtinUnitsArr if unit.value not in hiddenUnitsArr %}
+                <option value='{{ unit.value }}'>{{ unit.label }}</option>
+                {% endfor %}
                 {# team-specific custom units, appended after the built-ins #}
                 {% for unit in customUnitsArr %}
                 <option value='{{ unit }}'>{{ unit }}</option>

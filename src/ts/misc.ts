@@ -360,7 +360,8 @@ export function makeMalleableColumnsGreatAgain() {
   // a container so that editing never silently changes a value not in the configured lists
   const containersDiv = document.getElementById('containersDiv');
   const splitUnits = (raw?: string): string[] => (raw ?? '').split(',').map(unit => unit.trim()).filter(Boolean);
-  const builtinUnits = ['•', 'μL', 'mL', 'L', 'μg', 'mg', 'g', 'kg', 'bar', 'm'];
+  // built-in units (enum Units, in display order) are rendered server-side on #containersDiv
+  const builtinUnits = splitUnits(containersDiv?.dataset.builtinUnits);
   const customUnits = splitUnits(containersDiv?.dataset.customUnits);
   const hiddenUnits = new Set(splitUnits(containersDiv?.dataset.hiddenUnits));
   const inUseUnits = Array.from(document.querySelectorAll('.malleableQtyUnit'))

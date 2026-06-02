@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\AccessType;
+use Elabftw\Enums\Units;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Factories\LinksFactory;
@@ -34,6 +35,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function array_filter;
 use function _;
+use function array_map;
 
 /**
  * Administration panel of a team
@@ -111,6 +113,10 @@ try {
     $template = 'admin.html';
     $renderArr = array(
         'allTeamUsersArr' => $allTeamUsersArr,
+        'builtinUnitsArr' => array_map(
+            static fn(Units $unit): array => array('value' => $unit->value, 'label' => $unit->label()),
+            Units::inDisplayOrder(),
+        ),
         'tagsArr' => $TeamTags->readAll(),
         'metadataGroups' => $metadataGroups,
         'allTeamgroupsArr' => $TeamGroups->readAllEverything(),

@@ -61,6 +61,25 @@ describe('Container units', () => {
     });
   });
 
+  it('does not duplicate a built-in unit that is also stored as a custom unit', () => {
+    // 'mL' is a built-in; storing it as a custom unit must not make it render twice in the dropdown
+    cy.request('PATCH', '/api/v2/teams/current', { custom_units: 'mL, Mcells', hidden_units: '' });
+
+    cy.createResource().then(response => {
+      cy.extractIdFromLocation(response).then(itemId => {
+        cy.visit(`/database.php?mode=edit&id=${itemId}`);
+        cy.get('[data-action="toggle-modal"][data-target="storageModal"]').click();
+        cy.get('#storageModal').should('be.visible');
+
+        cy.get('#containerQtyUnitSelect option').then($opts => {
+          const values = [...$opts].map(o => (o as HTMLOptionElement).value);
+          expect(values.filter(v => v === 'mL')).to.have.length(1); // built-in, not duplicated
+          expect(values).to.include('Mcells');                       // genuine custom still appended
+        });
+      });
+    });
+  });
+
   it('keeps a hidden unit selectable on a container already using it (no silent change)', () => {
     cy.request('PATCH', '/api/v2/teams/current', { hidden_units: 'bar' });
 

@@ -30,6 +30,23 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testUnitsLabel(): void
+    {
+        $this->assertSame('Bar', Units::Bar->label());
+        $this->assertSame('Metre', Units::Metre->label());
+        // units without a custom label fall back to their value
+        $this->assertSame('mL', Units::MilliLiter->label());
+    }
+
+    public function testUnitsInDisplayOrder(): void
+    {
+        $order = Units::inDisplayOrder();
+        // the count unit is first so it stays the default in the dropdowns
+        $this->assertSame(Units::Unit, $order[0]);
+        // display order must cover every case exactly once (guards against drift)
+        $this->assertEqualsCanonicalizing(Units::cases(), $order);
+    }
+
     public function testLanguage(): void
     {
         $this->assertIsArray(Language::getAllHuman());

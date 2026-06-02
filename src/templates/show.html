@@ -121,7 +121,7 @@
             <option value='' disabled>{{ 'Name of field'|trans }}</option>
             <option value='**' {{- '**' == App.Request.query.get('metakey') ? ' selected' }}>{{ 'All fields'|trans }}</option>
             {% for metakey in metakeyArrForSelect %}
-              <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
+              <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey }}</option>
             {% endfor %}
           </select>
           {% if App.devMode -%}

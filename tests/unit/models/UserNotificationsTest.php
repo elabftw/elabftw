@@ -12,21 +12,32 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserNotifications;
+use Elabftw\Traits\TestsUtilsTrait;
 use Elabftw\Models\Users\Users;
 
 class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private UserNotifications $UserNotifications;
+
+    private UserNotifications $OtherUserNotifications;
 
     private Users $Users;
 
+    private Users $OtherUsers;
+
     protected function setUp(): void
     {
-        $this->Users = new Users(1, 1);
+        $this->Users = $this->getRandomUserInTeam(1, 1);
         $this->UserNotifications = new UserNotifications($this->Users, 1);
+
+        $this->OtherUsers = $this->getRandomUserInTeam(2);
+        $this->OtherUserNotifications = new UserNotifications($this->OtherUsers, 1);
     }
 
     public function testGetApiPath(): void
@@ -44,6 +55,16 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->UserNotifications->readAll());
     }
 
+    public function testReadAllNotifsOfAnotherUser(): void
+    {
+        // create one so we have something to read
+        $Notif = new StepDeadline($this->OtherUsers, 1, 1, 'experiments', '2026-05-27 03:29:21');
+        $Notif->create();
+        $this->OtherUsers->requester = $this->Users->requester;
+        $this->expectException(IllegalActionException::class);
+        $this->OtherUserNotifications->readAll();
+    }
+
     public function testReadOne(): void
     {
         $Notif = new SelfIsValidated($this->Users);
@@ -52,16 +73,51 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->UserNotifications->readOne());
     }
 
+    public function testReadOneNotifOfAnotherUser(): void
+    {
+        $Notif = new SelfIsValidated($this->Users);
+        $id = $Notif->create();
+
+        $this->OtherUsers->requester = $this->Users->requester;
+        $this->OtherUserNotifications->setId($id);
+        $this->expectException(IllegalActionException::class);
+        $this->OtherUserNotifications->readOne();
+    }
+
     public function testPatch(): void
     {
         $Notif = new SelfIsValidated($this->Users);
         $id = $Notif->create();
         $this->UserNotifications->setId($id);
-        $this->assertIsArray($this->UserNotifications->patch(Action::Update, array()));
+        $this->UserNotifications->patch(Action::Update, array('is_ack' => 1));
+        $this->assertEquals(1, $this->UserNotifications->readOne()['is_ack']);
+        $this->UserNotifications->patch(Action::Update, array('is_ack' => 0));
+        $this->assertEquals(0, $this->UserNotifications->readOne()['is_ack']);
+    }
+
+    public function testPatchNotifOfAnotherUser(): void
+    {
+        $Notif = new SelfIsValidated($this->Users);
+        $id = $Notif->create();
+
+        $this->OtherUsers->requester = $this->Users->requester;
+        $this->OtherUserNotifications->setId($id);
+        $this->expectException(IllegalActionException::class);
+        $this->OtherUserNotifications->patch(Action::Update, array());
     }
 
     public function testDestroy(): void
     {
         $this->assertTrue($this->UserNotifications->destroy());
+    }
+
+    public function testDestroyNotifOfAnotherUser(): void
+    {
+        $Notif = new SelfIsValidated($this->Users);
+        $Notif->create();
+
+        $this->OtherUsers->requester = $this->Users->requester;
+        $this->expectException(IllegalActionException::class);
+        $this->OtherUserNotifications->destroy();
     }
 }

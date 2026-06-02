@@ -139,6 +139,7 @@ These users reported vulnerabilities responsibly:
 - Alexander Haller
 - Anders Märak Leffler (@anargam)
 - Matthias Grönewald
+- HuajiHD
 - @krastanoel
 - Rafal Lykowski (@mgrRaf)
 - Piyush Patil (@xoffense).

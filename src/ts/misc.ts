@@ -173,7 +173,7 @@ export function rebuildTomSelectOptions(
   const ts = selectEl.tomselect;
   if (!ts) return;
 
-  let nextOptions: TomSelectOption[] = [];
+  let nextOptions: TomSelectOption[];
 
   if ('options' in source) {
     nextOptions = source.options;
@@ -584,6 +584,7 @@ export async function updateCatStat(target: string, entity: Entity, value: strin
   const newEntity = await ApiC.patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
   // return a string separated with | with the id first so we can use it in data-id of new element
   let response = value + '|';
+  /* eslint-disable-next-line */
   return response += (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 
@@ -661,19 +662,6 @@ export function toggleIcon(el: HTMLElement, isHidden: boolean): void
     iconEl.classList.remove(el.dataset.closedIcon);
     iconEl.classList.add(el.dataset.openedIcon);
   }
-}
-
-// escape text similar to htmlspecialchars() of php
-// https://stackoverflow.com/a/4835406
-export function escapeHTML(text: string): string {
-  const escapeMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&#34;',
-    '\'': '&#39;',
-  };
-  return text.replace(/[&<>'"]/g, char => escapeMap[char]);
 }
 
 export function escapeExtendedQuery(searchTerm: string): string {

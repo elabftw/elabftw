@@ -309,7 +309,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $before = $this->Experiments->getTimestampLastMonth();
         $uploadId = $this->Experiments->Uploads->createFromString(FileFromString::Json, 'timestamp.json', '{}');
         $this->Experiments->Uploads->setId($uploadId);
-        $this->Experiments->Uploads->patch(Action::Update, array('comment' => 'Timestamp archive test'));
+        $this->Experiments->timestamp();
         $this->assertSame($before + 1, $this->Experiments->getTimestampLastMonth());
     }
 

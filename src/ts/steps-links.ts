@@ -74,13 +74,12 @@ if (document.getElementById('stepsDiv')) {
 
   on('step-update-deadline', (el: HTMLElement) => {
     const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
-    StepC.update(parseInt(el.dataset.stepid, 10), value, Target.Deadline).then(() => {
-      reloadElements(['stepsDiv']);
+    const stepid = parseInt(el.dataset.stepid, 10);
+    StepC.update(stepid, value, Target.Deadline).then(() => {
+      StepC.notif(stepid).then(() => reloadElements(['stepsDiv'])).then(() => {
+        reloadElements(['stepsDiv']);
+      });
     });
-  });
-
-  on('step-toggle-deadline-notif', (el: HTMLElement) => {
-    StepC.notif(parseInt(el.dataset.stepid, 10)).then(() => reloadElements(['stepsDiv']));
   });
 
   on('step-destroy-deadline', (el: HTMLElement) => {

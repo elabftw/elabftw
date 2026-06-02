@@ -572,10 +572,6 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        // Anonymous API reads must use the same restricted list mode as UI
-        if ($this->Users->requester instanceof AnonymousUser) {
-            $this->isAnon = true;
-        }
         $queryParams ??= $this->getQueryParams();
         if ($queryParams->getFastq()) {
             return $this->readAllSimple($queryParams);

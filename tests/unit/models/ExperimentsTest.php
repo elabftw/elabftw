@@ -307,8 +307,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testGetTimestampLastMonth(): void
     {
         $before = $this->Experiments->getTimestampLastMonth();
-        $uploadId = $this->Experiments->Uploads->createFromString(FileFromString::Json, 'timestamp.json', '{}');
-        $this->Experiments->Uploads->setId($uploadId);
         $this->Experiments->timestamp();
         $this->assertSame($before + 1, $this->Experiments->getTimestampLastMonth());
     }

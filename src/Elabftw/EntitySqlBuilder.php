@@ -20,6 +20,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\Users\AnonymousUser;
 use Override;
 
 use function array_column;
@@ -81,7 +82,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     public function getCanFilter(string $can): string
     {
         $sql = '';
-        if ($this->entity->isAnon) {
+        if ($this->entity->Users->requester instanceof AnonymousUser) {
             $sql .= ' AND ' . $this->canAnon();
         }
         $sql .= sprintf(

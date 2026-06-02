@@ -818,25 +818,119 @@ on('add-storage-children', (el: HTMLElement) => {
     });
   });
 });
-on('create-container', (el: HTMLElement) => {
+// CONTAINER DISTRIBUTION across multiple storage locations
+// Each storage location in the "Add container" modal has a -/number/+ stepper.
+// The user distributes a target number of containers (#containerMultiplierInput) across
+// the locations; the steppers can never sum above the target, and the "Store containers"
+// button is only enabled once they sum exactly to it.
+const containerStepperInputs = (): HTMLInputElement[] =>
+  Array.from(document.querySelectorAll('input[data-action="container-qty-input"]'));
+
+const containerTarget = (): number => {
+  const target = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement)?.value, 10);
+  return (isNaN(target) || target < 0) ? 0 : target;
+};
+
+const containerAssigned = (): number =>
+  containerStepperInputs().reduce((sum, input) => sum + (parseInt(input.value, 10) || 0), 0);
+
+function refreshContainerDistribution(): void {
+  const target = containerTarget();
+  const assigned = containerAssigned();
+  const assignedEl = document.getElementById('containerAssignedCount');
+  const targetEl = document.getElementById('containerTargetCount');
+  if (assignedEl) assignedEl.textContent = String(assigned);
+  if (targetEl) targetEl.textContent = String(target);
+  const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
+  if (submitBtn) submitBtn.disabled = target === 0 || assigned !== target;
+}
+
+// sum of every stepper except the one passed in (identity match, robust whether or not
+// the input's own value has already been updated by the browser)
+const otherSteppersTotal = (except: HTMLInputElement): number =>
+  containerStepperInputs()
+    .filter(input => input !== except)
+    .reduce((sum, input) => sum + (parseInt(input.value, 10) || 0), 0);
+
+// set a stepper to a value, clamped so the total assigned can never exceed the target
+function setStepperValue(input: HTMLInputElement, value: number): void {
+  const max = Math.max(0, containerTarget() - otherSteppersTotal(input));
+  input.value = String(Math.min(Math.max(0, value), max));
+  refreshContainerDistribution();
+}
+
+// clamp every stepper down when the target total is reduced below what is already assigned
+function reclampAllSteppers(): void {
+  const target = containerTarget();
+  let running = 0;
+  containerStepperInputs().forEach(input => {
+    let value = parseInt(input.value, 10) || 0;
+    if (running + value > target) {
+      value = Math.max(0, target - running);
+    }
+    input.value = String(value);
+    running += value;
+  });
+  refreshContainerDistribution();
+}
+
+const stepperFor = (el: HTMLElement): HTMLInputElement | null =>
+  document.querySelector(`input[data-action="container-qty-input"][data-storage-id="${el.dataset.storageId}"]`);
+
+on('container-qty-plus', (el: HTMLElement) => {
+  const input = stepperFor(el);
+  if (input) setStepperValue(input, (parseInt(input.value, 10) || 0) + 1);
+});
+on('container-qty-minus', (el: HTMLElement) => {
+  const input = stepperFor(el);
+  if (input) setStepperValue(input, (parseInt(input.value, 10) || 0) - 1);
+});
+
+on('store-containers-distributed', () => {
   const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
   const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
-  let multiplier = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement).value, 10);
-  if (isNaN(multiplier) || multiplier <= 0) {
-    multiplier = 1;
+  const postCalls = containerStepperInputs().flatMap(input => {
+    const count = parseInt(input.value, 10) || 0;
+    return Array.from({ length: count }, () =>
+      ApiC.post(`${entity.type}/${entity.id}/containers/${input.dataset.storageId}`, {
+        qty_stored: qty_stored,
+        qty_unit: qty_unit,
+      }),
+    );
+  });
+  if (postCalls.length === 0) {
+    return;
   }
-
-  const postCalls = Array.from({ length: multiplier }, () =>
-    ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {
-      qty_stored: qty_stored,
-      qty_unit: qty_unit,
-    }),
-  );
   // Execute all POST calls and reload elements after all are resolved
   Promise.all(postCalls)
-    .then(() => reloadElements(['storageDivContent']))
+    .then(() => {
+      reloadElements(['storageDivContent']);
+      $('#storageModal').modal('hide');
+    })
     .catch((error) => notify.error(error));
 });
+
+// the steppers' number inputs and the target total fire 'input', not 'click', so they are
+// handled with a delegated listener rather than via on()
+const storageModalEl = document.getElementById('storageModal');
+if (storageModalEl) {
+  document.getElementById('container')?.addEventListener('input', (event: Event) => {
+    const target = event.target as HTMLElement | null;
+    const stepper = target?.closest('input[data-action="container-qty-input"]') as HTMLInputElement | null;
+    if (stepper) {
+      setStepperValue(stepper, parseInt(stepper.value, 10) || 0);
+      return;
+    }
+    if (target?.id === 'containerMultiplierInput') {
+      reclampAllSteppers();
+    }
+  });
+  // reset all steppers each time the modal opens so a reopened modal starts clean
+  $('#storageModal').on('show.bs.modal', () => {
+    containerStepperInputs().forEach(input => { input.value = '0'; });
+    refreshContainerDistribution();
+  });
+}
 
 on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv'])));
 

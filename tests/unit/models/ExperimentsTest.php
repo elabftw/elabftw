@@ -362,15 +362,26 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     }
 
     // test anonymous user can only read Entries with 'Permission:Full' (Everyone including anonymous users)
-    public function testReadAllForAnonymousUser(): void
+    public function testReadAllForAnonymousUserOnlyReturnsFullPermission(): void
     {
+        $ids = array();
+        // create experiments for each base permission
+        foreach (BasePermissions::cases() as $permission) {
+            $Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
+            $Experiments->patch(Action::Update, array('canread_base' => $permission->value));
+            $ids[$permission->value] = $Experiments->id;
+        }
         $AnonymousUser = new AnonymousUser(1, Language::EnglishUS);
         $Experiments = new Experiments($AnonymousUser);
         $experiments = $Experiments->readAll();
 
-        foreach ($experiments as $experiment) {
-            $this->assertTrue($Experiments->isAnon);
-            $this->assertSame(BasePermissions::Full->value, $experiment['canread_base']);
-        }
+        $this->assertTrue($Experiments->isAnon);
+        $returnedIds = array_column($experiments, 'id');
+
+        $this->assertContains($ids[BasePermissions::Full->value], $returnedIds);
+        $this->assertNotContains($ids[BasePermissions::Organization->value], $returnedIds);
+        $this->assertNotContains($ids[BasePermissions::Team->value], $returnedIds);
+        $this->assertNotContains($ids[BasePermissions::User->value], $returnedIds);
+        $this->assertNotContains($ids[BasePermissions::UserOnly->value], $returnedIds);
     }
 }

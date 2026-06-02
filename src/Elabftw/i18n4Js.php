@@ -73,6 +73,7 @@ final class i18n4Js
             'create-one-items_types' => _('Create a resource template'),
             'current-edit' => _('Currently editing'),
             'custom-fields' => _('Custom fields'),
+            'custom-units-dropped' => _('Some custom units were not saved (each must be at most 10 characters, and the whole list is limited to 255 characters): {{units}}'),
             'delete' => _('Delete'),
             'delete-confirmation' => _('Delete {{num, number}} line(s)?'),
             'delete-selected' => _('Delete selected rows'),

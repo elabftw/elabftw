@@ -74,6 +74,24 @@
     <p class='smallgray'>{{ "The following text will be displayed to all users on all pages while it's active."|trans }}</p>
     <hr>
 
+    <div class='d-flex justify-content-between'>
+      <label for='custom_units' class='col-form-label'>{{ 'Custom container units'|trans }}</label>
+      <input class='form-control col-md-4' data-trigger='blur' data-model='{{ model }}' data-target='custom_units' data-reflect='list' type='text' id='custom_units' name='custom_units' value='{{ App.Teams.teamArr.custom_units }}' />
+    </div>
+    <p class='smallgray'>{{ 'Comma-separated extra units offered when storing containers, in addition to the built-in ones (e.g. Mcells, OD600). Maximum 10 characters each.'|trans }}</p>
+
+    {% set hiddenUnits = (App.Teams.teamArr.hidden_units ?? '')|split(',') %}
+    <label class='col-form-label d-block'>{{ 'Built-in units to offer'|trans }}</label>
+    <div class='d-flex flex-wrap'>
+      {% for value, label in {'•': '•', 'μL': 'μL', 'mL': 'mL', 'L': 'L', 'μg': 'μg', 'mg': 'mg', 'g': 'g', 'kg': 'kg', 'bar': 'Bar', 'm': 'Metre'} %}
+        <label class='form-check-label mr-3 text-nowrap'>
+          <input type='checkbox' class='hidden-unit-toggle' data-trigger='change' data-model='{{ model }}' data-target='hidden_units' data-transform='collectHiddenUnits' value='{{ value }}'{{ value not in hiddenUnits ? ' checked' }} /> {{ label }}
+        </label>
+      {% endfor %}
+    </div>
+    <p class='smallgray'>{{ 'Uncheck a built-in unit to stop offering it when storing containers. Containers already using it keep their value and stay editable.'|trans }}</p>
+    <hr>
+
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'force_exp_tpl',
       'label': 'Force experiment template use'|trans,

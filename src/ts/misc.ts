@@ -95,6 +95,13 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
   if (el.dataset.transform === 'permissionsToJson') {
     value = permissionsToJson([]);
   }
+  // collect the built-in units the admin chose to hide (the unchecked toggles) into one value
+  if (el.dataset.transform === 'collectHiddenUnits') {
+    value = Array.from(document.querySelectorAll<HTMLInputElement>('.hidden-unit-toggle'))
+      .filter(toggle => !toggle.checked)
+      .map(toggle => toggle.value)
+      .join(',');
+  }
   if (el.dataset.value) {
     value = el.dataset.value;
   }
@@ -116,7 +123,25 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
     const params: Record<string, unknown> = {};
     params[el.dataset.target as string] = value;
 
-    await ApiC.patch(`${el.dataset.model}`, params);
+    const response = await ApiC.patch(`${el.dataset.model}`, params);
+
+    // reflect the server-normalized value back into the field (opt-in via data-reflect) so the
+    // admin sees exactly what was stored, e.g. after custom units are trimmed, deduped or dropped
+    if (el.dataset.reflect && !isCheckbox) {
+      const json = await response.json();
+      const stored = (json[el.dataset.target as string] ?? '') as string;
+      // for comma-separated lists, tell the admin which entries did not make it through
+      // (e.g. too long or pushed past the column size) so the silent change isn't confusing
+      if (el.dataset.reflect === 'list') {
+        const submitted = String(value).split(/[,\r\n]+/).map(item => item.trim()).filter(Boolean);
+        const storedSet = new Set(stored.split(',').map(item => item.trim()).filter(Boolean));
+        const dropped = [...new Set(submitted.filter(item => !storedSet.has(item)))];
+        if (dropped.length > 0) {
+          notify.warning('custom-units-dropped', {units: dropped.join(', ')});
+        }
+      }
+      el.value = stored;
+    }
 
     // success side-effect for the generic path
     if (el.dataset.reload) {
@@ -325,21 +350,28 @@ export function makeMalleableColumnsGreatAgain() {
   }).listen();
 
   // MALLEABLE QTY_UNIT - we need a specific code to add the select options
+  // the offered units are: the built-in units minus the ones the team hid, plus the team's
+  // custom units (both declared on #containersDiv server-side), plus any unit already in use on
+  // a container so that editing never silently changes a value not in the configured lists
+  const containersDiv = document.getElementById('containersDiv');
+  const splitUnits = (raw?: string): string[] => (raw ?? '').split(',').map(unit => unit.trim()).filter(Boolean);
+  const builtinUnits = ['•', 'μL', 'mL', 'L', 'μg', 'mg', 'g', 'kg', 'bar', 'm'];
+  const customUnits = splitUnits(containersDiv?.dataset.customUnits);
+  const hiddenUnits = new Set(splitUnits(containersDiv?.dataset.hiddenUnits));
+  const inUseUnits = Array.from(document.querySelectorAll('.malleableQtyUnit'))
+    .map(el => (el.textContent ?? '').trim())
+    .filter(Boolean);
+  const qtyUnitValues = [...new Set([
+    ...builtinUnits.filter(unit => !hiddenUnits.has(unit)),
+    ...customUnits,
+    ...inUseUnits,
+  ])];
   new Malle({
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     inputType: InputType.Select,
-    selectOptions: [
-      {selected: false, text: '•', value: '•'},
-      {selected: false, text: 'μL', value: 'μL'},
-      {selected: false, text: 'mL', value: 'mL'},
-      {selected: false, text: 'L', value: 'L'},
-      {selected: false, text: 'μg', value: 'μg'},
-      {selected: false, text: 'mg', value: 'mg'},
-      {selected: false, text: 'g', value: 'g'},
-      {selected: false, text: 'kg', value: 'kg'},
-    ],
+    selectOptions: qtyUnitValues.map(value => ({selected: false, text: value, value})),
     fun: (value, original) => {
       return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
         .then(res => res.json())

@@ -6,7 +6,7 @@
 <div class='row mt-2' id='storageDivContent' data-save-hidden='storageDivContent' data-count-for='containersCount'>
   <div class='ml-3 mt-3 col-md-12'>
       {% if Entity.entityData.containers %}
-        <ul class='list-group' id='containersDiv'>
+        <ul class='list-group' id='containersDiv' data-custom-units='{{ customUnitsArr|join(',') }}' data-hidden-units='{{ hiddenUnitsArr|join(',') }}'>
           {% for container in Entity.entityData.containers %}
             <li class='list-group-item countable'>
               <div class='d-flex flex align-items-center'>

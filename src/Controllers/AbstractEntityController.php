@@ -23,6 +23,7 @@ use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
+use Elabftw\Enums\Units;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -35,6 +36,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Teams;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Templates;
 use Elabftw\Models\UserRequestActions;
@@ -46,7 +48,15 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
+use function array_filter;
+use function array_map;
+use function array_unique;
+use function array_values;
+use function explode;
+use function in_array;
+use function is_string;
 use function sprintf;
+use function trim;
 
 /**
  * For displaying an entity in show, view or edit mode
@@ -74,6 +84,9 @@ abstract class AbstractEntityController implements ControllerInterface
     protected array $currencyArr = array();
 
     protected array $scopedTeamgroupsArr = array();
+
+    // memoized row of the entity's owning team, used to resolve container units
+    private ?array $entityTeamArr = null;
 
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
@@ -184,6 +197,41 @@ abstract class AbstractEntityController implements ControllerInterface
     }
 
     /**
+     * The team-specific custom container units, appended after the built-in Units in the
+     * quantity dropdowns. Deduped against the built-ins, which are never altered.
+     */
+    protected function getCustomUnitsArr(): array
+    {
+        $customUnits = $this->entityTeamArr()['custom_units'] ?? '';
+        if (!is_string($customUnits) || $customUnits === '') {
+            return array();
+        }
+        $builtin = array_map(static fn(Units $unit): string => $unit->value, Units::cases());
+        $custom = array_map(trim(...), explode(',', $customUnits));
+        return array_values(array_unique(array_filter(
+            $custom,
+            static fn(string $unit): bool => $unit !== '' && !in_array($unit, $builtin, true),
+        )));
+    }
+
+    /**
+     * Built-in units the team has chosen to hide from the container dropdowns. Only valid
+     * built-in unit values are returned; the built-ins themselves are never modified.
+     */
+    protected function getHiddenUnitsArr(): array
+    {
+        $hiddenUnits = $this->entityTeamArr()['hidden_units'] ?? '';
+        if (!is_string($hiddenUnits) || $hiddenUnits === '') {
+            return array();
+        }
+        $hidden = array_map(trim(...), explode(',', $hiddenUnits));
+        return array_values(array_filter(
+            $hidden,
+            static fn(string $unit): bool => $unit !== '' && Units::tryFrom($unit) !== null,
+        ));
+    }
+
+    /**
      * View mode (one item displayed)
      */
     protected function view(): Response
@@ -194,9 +242,11 @@ abstract class AbstractEntityController implements ControllerInterface
             'categoryArr' => $this->categoryArr,
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
+            'customUnitsArr' => $this->getCustomUnitsArr(),
             'Entity' => $this->Entity,
             'entityProcurementRequestsArr' => $this->getEntityProcurementRequestsArr(),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
+            'hiddenUnitsArr' => $this->getHiddenUnitsArr(),
             'pageTitle' => $this->getPageTitle(),
             'mode' => 'view',
             'hideTitle' => true,
@@ -252,9 +302,11 @@ abstract class AbstractEntityController implements ControllerInterface
             'categoryArr' => $this->categoryArr,
             'classificationArr' => $this->classificationArr,
             'currencyArr' => $this->currencyArr,
+            'customUnitsArr' => $this->getCustomUnitsArr(),
             'Entity' => $this->Entity,
             'entityProcurementRequestsArr' => $this->getEntityProcurementRequestsArr(),
             'entityRequestActionsArr' => $RequestActions->readAllFull(),
+            'hiddenUnitsArr' => $this->getHiddenUnitsArr(),
             'hideTitle' => true,
             'metadataGroups' => $Metadata->getGroups(),
             'mode' => 'edit',
@@ -292,5 +344,18 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('changelog.html', $renderArr));
         return $Response;
+    }
+
+    // the row of the entity's owning team (anchored to the entity, not the viewer's active
+    // team), memoized so the custom/hidden unit lists share a single query
+    private function entityTeamArr(): array
+    {
+        if ($this->entityTeamArr === null) {
+            $teamId = (int) ($this->Entity->entityData['team'] ?? 0);
+            $this->entityTeamArr = $teamId > 0
+                ? (new Teams($this->App->Users, $teamId))->teamArr
+                : array();
+        }
+        return $this->entityTeamArr;
     }
 }

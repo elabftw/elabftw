@@ -43,41 +43,42 @@ describe('Containers', () => {
             for (let i = 0; i < 3; i++) {
               cy.get(`${stepper(storageA)} [data-action="container-qty-plus"]`).click();
             }
-            cy.get(`input[data-action="container-qty-input"]${stepper(storageA)}`).should('have.value', '3');
+            cy.get(`${stepper(storageA)} input[data-action="container-qty-input"]`).should('have.value', '3');
 
             // clamp check: the sum cannot exceed the target of 5
             for (let i = 0; i < 5; i++) {
               cy.get(`${stepper(storageA)} [data-action="container-qty-plus"]`).click();
             }
-            cy.get(`input[data-action="container-qty-input"]${stepper(storageA)}`).should('have.value', '5');
+            cy.get(`${stepper(storageA)} input[data-action="container-qty-input"]`).should('have.value', '5');
 
             // back down to 3 in Freezer A
             for (let i = 0; i < 2; i++) {
               cy.get(`${stepper(storageA)} [data-action="container-qty-minus"]`).click();
             }
-            cy.get(`input[data-action="container-qty-input"]${stepper(storageA)}`).should('have.value', '3');
+            cy.get(`${stepper(storageA)} input[data-action="container-qty-input"]`).should('have.value', '3');
 
             // type 2 directly into Freezer B
-            cy.get(`input[data-action="container-qty-input"]${stepper(storageB)}`).invoke('val', '2').trigger('input');
+            cy.get(`${stepper(storageB)} input[data-action="container-qty-input"]`).invoke('val', '2').trigger('input');
 
             // now fully distributed: counter reads 5 / 5 and submit is enabled
             cy.get('#containerAssignedCount').should('have.text', '5');
             cy.get('#storeContainersBtn').should('be.enabled');
 
-            // re-clamp check: lowering the target below the assigned sum clamps the steppers and disables submit
+            // re-clamp check: lowering the target re-distributes the steppers down to exactly the new target
             cy.get('#containerMultiplierInput').invoke('val', '4').trigger('input');
-            cy.get('#storeContainersBtn').should('be.disabled');
-            // total assigned must now be <= 4
+            cy.get('#containerAssignedCount').should('have.text', '4');
+            cy.get('#storeContainersBtn').should('be.enabled');
+            // total assigned must now be exactly 4
             cy.get('input[data-action="container-qty-input"]').then($inputs => {
               const total = Cypress.$.makeArray($inputs)
                 .reduce((sum, el) => sum + (parseInt((el as HTMLInputElement).value, 10) || 0), 0);
-              expect(total).to.be.at.most(4);
+              expect(total).to.eq(4);
             });
 
             // restore a valid 3 + 2 = 5 distribution and submit
             cy.get('#containerMultiplierInput').invoke('val', '5').trigger('input');
-            cy.get(`input[data-action="container-qty-input"]${stepper(storageA)}`).invoke('val', '3').trigger('input');
-            cy.get(`input[data-action="container-qty-input"]${stepper(storageB)}`).invoke('val', '2').trigger('input');
+            cy.get(`${stepper(storageA)} input[data-action="container-qty-input"]`).invoke('val', '3').trigger('input');
+            cy.get(`${stepper(storageB)} input[data-action="container-qty-input"]`).invoke('val', '2').trigger('input');
             cy.get('#storeContainersBtn').should('be.enabled').click();
 
             // modal closes after submit

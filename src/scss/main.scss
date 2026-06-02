@@ -858,9 +858,9 @@ tr:first-child td {
 }
 
 .side-panel {
-  background: var(--chrome-bg);
+  background: var(--mediumstrong);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-  color: var(--chrome-fg);
+  color: var(--white);
   height: 100%;
   left: 0;
   overflow: hidden;
@@ -873,16 +873,28 @@ tr:first-child td {
   .fas,
   .far,
   h3 {
-    color: var(--chrome-fg);
+    color: var(--white);
+  }
+
+  .btn-primary {
+    .fas,
+    .far {
+      color: inherit;
+    }
+  }
+
+  .list-group-item {
+    background-color: var(--white);
+    border: 1px solid var(--chrome-muted);
+    color: var(--mediumstrong);
+
+    .fas {
+      color: var(--mediumstrong);
+    }
   }
 
   .side-panel-item {
     padding: 5px 0 5px 10px;
-
-    &.list-group-item {
-      background-color: var(--chrome-bg);
-      border: 1px solid var(--chrome-muted);
-    }
 
     /* Favtags will show up as selected */
     &.selected {

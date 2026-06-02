@@ -32,7 +32,6 @@ class InfoTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         $info = $this->Info->readOne();
-        $this->assertIsArray($info);
         $this->assertArrayHasKey('elabftw_version', $info);
         $timestamp = new Experiments(new Users(1, 1))->getTimestampLastMonth();
         $this->assertEquals($timestamp, $info['experiments_timestamped_count']);

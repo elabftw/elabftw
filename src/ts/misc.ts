@@ -137,7 +137,12 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
         const storedSet = new Set(stored.split(',').map(item => item.trim()).filter(Boolean));
         const dropped = [...new Set(submitted.filter(item => !storedSet.has(item)))];
         if (dropped.length > 0) {
-          notify.warning('custom-units-dropped', {units: dropped.join(', ')});
+          // defaultValue renders the message before the i18next catalogs are regenerated from
+          // i18n4Js.php (bin/console dev:i18n4js); a catalog translation overrides it once present
+          notify.warning('custom-units-dropped', {
+            units: dropped.join(', '),
+            defaultValue: 'Some custom units were not saved (each must be at most 10 characters, and the whole list is limited to 255 characters): {{units}}',
+          });
         }
       }
       el.value = stored;

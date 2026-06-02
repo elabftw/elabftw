@@ -35,6 +35,7 @@ use function count;
 use function is_array;
 use function json_decode;
 use function sprintf;
+use function array_column;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {

@@ -18,8 +18,8 @@
             <div class='input-group-append'>
               <select class='custom-select brl-none brr-none' id='containerQtyUnitSelect' aria-label='{{ 'Quantity unit'|trans }}'>
                 {# built-in units (enum Units, in display order), minus the ones the team hid #}
-                {% for unit in builtinUnitsArr if unit.value not in hiddenUnitsArr %}
-                <option value='{{ unit.value }}'>{{ unit.label }}</option>
+                {% for unit in builtinUnitsArr %}
+                {% if unit.value not in hiddenUnitsArr %}<option value='{{ unit.value }}'>{{ unit.label }}</option>{% endif %}
                 {% endfor %}
                 {# team-specific custom units, appended after the built-ins #}
                 {% for unit in customUnitsArr %}

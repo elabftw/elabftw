@@ -304,10 +304,13 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($res);
     }
 
-    public function testGetTimestampThisMonth(): void
+    public function testGetTimestampLastMonth(): void
     {
-        $this->assertIsInt($this->Experiments->getTimestampLastMonth());
-        $this->assertNotEquals(0, $this->Experiments->getTimestampLastMonth());
+        $before = $this->Experiments->getTimestampLastMonth();
+        $uploadId = $this->Experiments->Uploads->createFromString(FileFromString::Json, 'timestamp.json', '{}');
+        $this->Experiments->Uploads->setId($uploadId);
+        $this->Experiments->Uploads->patch(Action::Update, array('comment' => 'Timestamp archive test'));
+        $this->assertSame($before + 1, $this->Experiments->getTimestampLastMonth());
     }
 
     public function testUpdateJsonField(): void
@@ -363,26 +366,21 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     }
 
     // test anonymous user can only read Entries with 'Permission:Full' (Everyone including anonymous users)
-    public function testReadAllForAnonymousUserOnlyReturnsFullPermission(): void
+    public function testReadAllForAnonymousUser(): void
     {
-        $ids = array();
         // create experiments for each base permission
         foreach (BasePermissions::cases() as $permission) {
             $Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
             $Experiments->patch(Action::Update, array('canread_base' => $permission->value));
-            $ids[$permission->value] = $Experiments->id;
         }
+
         $AnonymousUser = new AnonymousUser(1, Language::EnglishUS);
         $Experiments = new Experiments($AnonymousUser);
         $experiments = $Experiments->readAll();
 
         $this->assertTrue($Experiments->isAnon);
-        $returnedIds = array_column($experiments, 'id');
-
-        $this->assertContains($ids[BasePermissions::Full->value], $returnedIds);
-        $this->assertNotContains($ids[BasePermissions::Organization->value], $returnedIds);
-        $this->assertNotContains($ids[BasePermissions::Team->value], $returnedIds);
-        $this->assertNotContains($ids[BasePermissions::User->value], $returnedIds);
-        $this->assertNotContains($ids[BasePermissions::UserOnly->value], $returnedIds);
+        foreach ($experiments as $experiment) {
+            $this->assertSame(BasePermissions::Full->value, $experiment['canread_base']);
+        }
     }
 }

@@ -35,7 +35,6 @@ use function count;
 use function is_array;
 use function json_decode;
 use function sprintf;
-use function array_column;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -376,7 +375,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $Experiments = new Experiments($AnonymousUser);
         $experiments = $Experiments->readAll();
 
-        $this->assertTrue($Experiments->isAnon);
         foreach ($experiments as $experiment) {
             $this->assertSame(BasePermissions::Full->value, $experiment['canread_base']);
         }

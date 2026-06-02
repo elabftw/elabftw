@@ -59,7 +59,6 @@ use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
 use Elabftw\Models\Links\AbstractExperimentsLinks;
 use Elabftw\Models\Links\AbstractItemsLinks;
-use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;

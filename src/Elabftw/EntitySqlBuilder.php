@@ -82,7 +82,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     public function getCanFilter(string $can): string
     {
         $sql = '';
-        if ($this->entity->Users->requester instanceof AnonymousUser) {
+        if ($this->entity->Users instanceof AnonymousUser) {
             $sql .= ' AND ' . $this->canAnon();
         }
         $sql .= sprintf(

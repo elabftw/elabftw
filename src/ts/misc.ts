@@ -135,9 +135,9 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
       if (el.dataset.reflect === 'list') {
         const submitted = String(value).split(/[,\r\n]+/).map(item => item.trim()).filter(Boolean);
         const storedSet = new Set(stored.split(',').map(item => item.trim()).filter(Boolean));
-        const dropped = [...new Set(submitted.filter(item => !storedSet.has(item)))];
-        // TEMPORARY DEBUG (remove): surfaces in cypress output as `cons:warn` to diagnose why the warning isn't shown
-        console.warn(`DBG-units value=${JSON.stringify(String(value))} stored=${JSON.stringify(stored)} submitted=${JSON.stringify(submitted)} dropped=${JSON.stringify(dropped)}`);
+        // NB: use Array.from, not [...new Set()] — ts-loader (transpileOnly, no downlevelIteration,
+        // default target) mis-compiles spread of a Set to an empty array. See also qty unit list below.
+        const dropped = Array.from(new Set(submitted.filter(item => !storedSet.has(item))));
         if (dropped.length > 0) {
           // defaultValue renders the message before the i18next catalogs are regenerated from
           // i18n4Js.php (bin/console dev:i18n4js); a catalog translation overrides it once present
@@ -369,11 +369,11 @@ export function makeMalleableColumnsGreatAgain() {
   const inUseUnits = Array.from(document.querySelectorAll('.malleableQtyUnit'))
     .map(el => (el.textContent ?? '').trim())
     .filter(Boolean);
-  const qtyUnitValues = [...new Set([
+  const qtyUnitValues = Array.from(new Set([
     ...builtinUnits.filter(unit => !hiddenUnits.has(unit)),
     ...customUnits,
     ...inUseUnits,
-  ])];
+  ]));
   new Malle({
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],

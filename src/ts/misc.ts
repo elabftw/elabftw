@@ -136,6 +136,8 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
         const submitted = String(value).split(/[,\r\n]+/).map(item => item.trim()).filter(Boolean);
         const storedSet = new Set(stored.split(',').map(item => item.trim()).filter(Boolean));
         const dropped = [...new Set(submitted.filter(item => !storedSet.has(item)))];
+        // TEMPORARY DEBUG (remove): surfaces in cypress output as `cons:warn` to diagnose why the warning isn't shown
+        console.warn(`DBG-units value=${JSON.stringify(String(value))} stored=${JSON.stringify(stored)} submitted=${JSON.stringify(submitted)} dropped=${JSON.stringify(dropped)}`);
         if (dropped.length > 0) {
           // defaultValue renders the message before the i18next catalogs are regenerated from
           // i18n4Js.php (bin/console dev:i18n4js); a catalog translation overrides it once present

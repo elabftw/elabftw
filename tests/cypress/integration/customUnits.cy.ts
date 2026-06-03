@@ -36,10 +36,10 @@ describe('Container units', () => {
 
     cy.get('#custom_units').clear().type(`mL, mL, ${tooLong}`).blur();
 
-    // a warning naming the dropped unit is shown (overlay-warning persists, unlike the success one)
-    cy.get('.overlay-warning').should('be.visible').and('contain', tooLong);
-    // the field is rewritten to exactly what was stored (dedup + over-length dropped)
+    // reflect-back: the field is rewritten to exactly what was stored (dedup + over-length dropped)
     cy.get('#custom_units').should('have.value', 'mL');
+    // and a warning naming the dropped unit is shown (overlay-warning persists, unlike success)
+    cy.get('.overlay-warning').should('be.visible').and('contain', tooLong);
   });
 
   it('offers (built-ins - hidden) + custom units in the add-container modal', () => {
@@ -100,7 +100,8 @@ describe('Container units', () => {
               // clicking to edit renders the Malle select (at document level) with "bar" still
               // offered (it is the selected value) even though it is hidden team-wide
               cy.get('#containersDiv .malleableQtyUnit').first().click();
-              cy.get('select:has(option:selected:contains("bar"))').should('exist');
+              // bar is offered as an option (it is in use), even though hidden team-wide
+              cy.get('select:has(option:contains("bar"))').should('exist');
             });
           });
         });

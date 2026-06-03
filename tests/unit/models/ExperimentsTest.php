@@ -15,7 +15,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
-use Elabftw\Enums\Language;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
@@ -371,7 +370,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
             $Experiments->patch(Action::Update, array('canread_base' => $permission->value));
         }
 
-        $AnonymousUser = new AnonymousUser(1, Language::EnglishUS);
+        $AnonymousUser = new AnonymousUser(1);
         $Experiments = new Experiments($AnonymousUser);
         $experiments = $Experiments->readAll();
 

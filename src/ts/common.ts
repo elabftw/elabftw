@@ -433,10 +433,15 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
   // for both category & status malleables
   const selectCurrentCatStatOption = (original: HTMLElement, _: Event, input: HTMLInputElement | HTMLSelectElement): boolean => {
     const select = input as HTMLSelectElement;
-    const currentText = original.textContent.trim();
+    const currentId = original.dataset.id?.trim();
+    if (currentId && Array.from(select.options).some(option => option.value === currentId)) {
+      select.value = currentId;
+      return true;
+    }
+    const currentText = original.textContent?.trim() ?? '';
     for (let i = 0; i < select.options.length; i++) {
       const option = select.options.item(i);
-      if (option?.textContent === currentText) {
+      if ((option?.textContent?.trim() ?? '') === currentText) {
         option.selected = true;
         select.value = option.value;
         break;

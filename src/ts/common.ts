@@ -479,6 +479,19 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       elem.style.setProperty('--bg', `#${splitValue[1]}`);
       return true;
     },
+    // use the onEdit hook to set the correct selected option
+    onEdit: async (original: HTMLElement, _: Event, input: HTMLInputElement | HTMLSelectElement): Promise<boolean> => {
+      const select = input as HTMLSelectElement;
+      const currentText = original.textContent.trim();
+      for (let i = 0; i < select.options.length; i++) {
+        const option = select.options.item(i);
+        if (option && option.textContent === currentText) {
+          option.selected = true;
+          break;
+        }
+      }
+      return true;
+    },
     inputClasses: ['form-control'],
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),

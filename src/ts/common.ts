@@ -325,9 +325,33 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     return optionsCache[endpoint];
   };
 
+  // Ensure the select opens with the currently displayed category/status selected
+  // for both category & status malleables
+  const selectCurrentCatStatOption = (original: HTMLElement, _: Event, input: HTMLInputElement | HTMLSelectElement): boolean => {
+    const select = input as HTMLSelectElement;
+    const currentId = original.dataset.id?.trim();
+    if (currentId && Array.from(select.options).some(option => option.value === currentId)) {
+      select.value = currentId;
+      return true;
+    }
+    const currentText = original.textContent?.trim() ?? '';
+    for (let i = 0; i < select.options.length; i++) {
+      const option = select.options.item(i);
+      if ((option?.textContent?.trim() ?? '') === currentText) {
+        option.selected = true;
+        select.value = option.value;
+        break;
+      }
+    }
+    return true;
+  };
+
+  const getCurrentTeamCatStatOptions = async (endpoint: string): Promise<Status[]> =>
+    ((await getCatStatArr(endpoint)) as Status[])
+      .filter((catStat: Status) => catStat.is_current_team === 1);
+
   // MALLEABLE STATUS
   new Malle({
-    // use the after hook to add the colored circle before text
     after: (elem: HTMLElement, _: Event, value: string) => {
       const icon = document.createElement('i');
       icon.classList.add('fas', 'fa-circle', 'mr-1');
@@ -336,18 +360,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       elem.insertBefore(icon, elem.firstChild);
       return true;
     },
-    // use the onEdit hook to set the correct selected option (because of the circle icon interference)
-    onEdit: async (original: HTMLElement, _: Event, input: HTMLInputElement|HTMLSelectElement) => {
-      // the options can be a promise, so we need to use await or its length will be 0 here
-      const opts = (input as HTMLSelectElement).options;
-      for (let i = 0; i < opts.length; i++) {
-        if (opts.item(i).textContent === original.textContent.trim()) {
-          opts.item(i).selected = true;
-          break;
-        }
-      }
-      return true;
-    },
+    onEdit: selectCurrentCatStatOption,
     inputClasses: ['form-control', 'ml-2'],
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value).then(color => {
@@ -357,9 +370,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: async () =>
-      ((await getCatStatArr(statusEndpoint)) as Status[])
-        .filter((status: Status) => status.is_current_team === 1),
+    selectOptions: () => getCurrentTeamCatStatOptions(statusEndpoint),
     listenOn: '.malleableStatus',
     returnedValueIsTrustedHtml: false,
     tooltip: i18next.t('click-to-edit'),
@@ -367,23 +378,20 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
 
   // MALLEABLE CATEGORY
   new Malle({
-    // use the after hook to change the background color of the new element
     after: (elem: HTMLElement, _: Event, value: string) => {
-      // we get back a string with the id separated from color with a |
       const splitValue = value.split('|');
       elem.dataset.id = splitValue[0];
       elem.style.setProperty('--bg', `#${splitValue[1]}`);
       return true;
     },
+    onEdit: selectCurrentCatStatOption,
     inputClasses: ['form-control'],
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: async () =>
-      ((await getCatStatArr(categoryEndpoint)) as Status[])
-        .filter((cat: Status) => cat.is_current_team === 1),
+    selectOptions: () => getCurrentTeamCatStatOptions(categoryEndpoint),
     listenOn: '.malleableCategory',
     returnedValueIsTrustedHtml: false,
     tooltip: i18next.t('click-to-edit'),

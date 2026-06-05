@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import { Action, CheckableItem, EntityType, Entity, Model, Target, FileType } from './interfaces';
+import {Action, CheckableItem, EntityType, Entity, Model, Target, FileType, Unit} from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
@@ -293,6 +293,11 @@ export function getEntity(useParent: boolean = false): Entity {
   };
 }
 
+const unitLabels: Partial<Record<Unit, string>> = {
+  [Unit.Bar]: 'Bar',
+  [Unit.Metre]: 'Metre',
+};
+
 // Listen for malleable columns
 export function makeMalleableColumnsGreatAgain() {
   new Malle({
@@ -330,16 +335,8 @@ export function makeMalleableColumnsGreatAgain() {
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     inputType: InputType.Select,
-    selectOptions: [
-      {selected: false, text: '•', value: '•'},
-      {selected: false, text: 'μL', value: 'μL'},
-      {selected: false, text: 'mL', value: 'mL'},
-      {selected: false, text: 'L', value: 'L'},
-      {selected: false, text: 'μg', value: 'μg'},
-      {selected: false, text: 'mg', value: 'mg'},
-      {selected: false, text: 'g', value: 'g'},
-      {selected: false, text: 'kg', value: 'kg'},
-    ],
+    selectOptions: Object.values(Unit).map(unit =>
+      ({selected: false, text: unitLabels[unit] ?? unit, value: unit})),
     fun: (value, original) => {
       return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
         .then(res => res.json())

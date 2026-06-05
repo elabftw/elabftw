@@ -24,4 +24,13 @@ enum Units: string
     case MilliGram = 'mg';
     case Gram = 'g';
     case KiloGram = 'kg';
+
+    public function toHuman(): string
+    {
+        return match ($this) {
+            self::Bar => 'Bar',
+            self::Metre => 'Metre',
+            default => $this->value,
+        };
+    }
 }

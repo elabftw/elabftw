@@ -22,7 +22,7 @@ use Override;
  */
 final class AnonymousUser extends Users
 {
-    public function __construct(public ?int $team, private Language $lang)
+    public function __construct(public ?int $team, private Language $lang = Language::EnglishGB)
     {
         parent::__construct(null, $team);
         $this->fillUserData();

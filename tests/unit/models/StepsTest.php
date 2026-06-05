@@ -44,9 +44,17 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $step['finished']);
     }
 
-    public function testRead(): void
+    public function testReadAll(): void
     {
         $this->assertIsArray($this->Steps->readAll());
+    }
+
+    public function testReadOne(): void
+    {
+        $id = $this->Steps->postAction(Action::Create, array('body' => 'do this'));
+        $this->assertIsInt($id);
+        $this->Steps->setId($id);
+        $this->assertIsArray($this->Steps->readOne());
     }
 
     public function testUpdate(): void

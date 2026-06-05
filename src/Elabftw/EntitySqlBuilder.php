@@ -124,6 +124,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 entity.state,
                 entity.canread,
                 entity.canwrite,
+                entity.canread_base,
+                entity.canwrite_base,
                 entity.canread_is_immutable,
                 entity.canwrite_is_immutable,
                 entity.created_at,

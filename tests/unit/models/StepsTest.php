@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function array_filter;
@@ -44,9 +45,29 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $step['finished']);
     }
 
-    public function testRead(): void
+    public function testReadAll(): void
     {
         $this->assertIsArray($this->Steps->readAll());
+    }
+
+    public function testReadOne(): void
+    {
+        $body = 'do this';
+        $id = $this->Steps->postAction(Action::Create, array('body' => $body));
+        $this->assertIsInt($id);
+        $this->Steps->setId($id);
+        $result = $this->Steps->readOne();
+        $this->assertEquals($result['body'], $body);
+    }
+
+    public function testCannotReadOneFromAnotherExperiment(): void
+    {
+        $id = $this->Steps->postAction(Action::Create, array('body' => 'do this'));
+        $OtherExperiments = $this->getFreshExperiment();
+        $OtherSteps = new Steps($OtherExperiments);
+        $OtherSteps->setId($id);
+        $this->expectException(ResourceNotFoundException::class);
+        $OtherSteps->readOne();
     }
 
     public function testUpdate(): void

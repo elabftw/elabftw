@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function array_filter;
@@ -24,15 +25,21 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     private Experiments $Experiments;
 
+    private Experiments $OtherExperiments;
+
     private Templates $Templates;
 
     private Steps $Steps;
+
+    private Steps $OtherSteps;
 
     protected function setUp(): void
     {
         $this->Experiments = $this->getFreshExperiment();
         $this->Templates = $this->getFreshTemplate();
         $this->Steps = $this->Experiments->Steps;
+        $this->OtherExperiments = $this->getFreshExperiment();
+        $this->OtherSteps = $this->OtherExperiments->Steps;
     }
 
     public function testCreateAndFinish(): void
@@ -51,10 +58,22 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadOne(): void
     {
-        $id = $this->Steps->postAction(Action::Create, array('body' => 'do this'));
+        $body = 'do this';
+        $id = $this->Steps->postAction(Action::Create, array('body' => $body));
         $this->assertIsInt($id);
         $this->Steps->setId($id);
-        $this->assertIsArray($this->Steps->readOne());
+        $result = $this->Steps->readOne();
+        $this->assertEquals($result['body'], $body);
+    }
+
+    public function testReadStepNotFound(): void
+    {
+        $body = 'do this';
+        $id = $this->OtherSteps->postAction(Action::Create, array('body' => $body));
+        $this->assertIsInt($id);
+        $this->Steps->setId($id);
+        $this->expectException(ResourceNotFoundException::class);
+        $this->Steps->readOne();
     }
 
     public function testUpdate(): void

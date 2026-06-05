@@ -76,8 +76,8 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->baseReqBody['experiments_categories'] = array($user->userid);
         $this->baseReqBody['experiments_status'] = array($user->userid);
         $this->baseReqBody['items_status'] = array($user->userid);
-        $this->baseReqBody['userid'] = array($user2->getUserid());
-        $this->baseReqBody['team'] = array($user2->getTeam());
+        $this->baseReqBody['userid'] = $user2->getUserid();
+        $this->baseReqBody['team'] = $user2->getTeam();
         $this->assertBatchProcessed(Action::UpdateOwner, $this->baseReqBody);
     }
 

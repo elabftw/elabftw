@@ -76,9 +76,7 @@ if (document.getElementById('stepsDiv')) {
     const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
     const stepid = parseInt(el.dataset.stepid, 10);
     StepC.update(stepid, value, Target.Deadline).then(() => {
-      StepC.notif(stepid).then(() => reloadElements(['stepsDiv'])).then(() => {
-        reloadElements(['stepsDiv']);
-      });
+      StepC.notif(stepid).then(() => reloadElements(['stepsDiv']));
     });
   });
 

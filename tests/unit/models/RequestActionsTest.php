@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -92,8 +93,35 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadOne(): void
     {
-        $this->RequestActions->setId(1);
+        $targetUser = $this->getUserInTeam(2);
+        $reqBody = array(
+            'target_userid' => $targetUser->userid,
+            'target_action' => RequestableAction::Archive->value,
+        );
+        $id = $this->RequestActions->postAction(
+            Action::Create, // this action is irrelevant
+            $reqBody,
+        );
+        $this->RequestActions->setId($id);
         $this->assertIsArray($this->RequestActions->readOne());
+    }
+
+    public function testCannotReadOneFromAnotherExperiment(): void
+    {
+        $targetUser = $this->getUserInTeam(2);
+        $reqBody = array(
+            'target_userid' => $targetUser->userid,
+            'target_action' => RequestableAction::Archive->value,
+        );
+        $id = $this->RequestActions->postAction(
+            Action::Create, // this action is irrelevant
+            $reqBody,
+        );
+        $OtherExperiments = $this->getFreshExperiment();
+        $OtherRequestActions = new RequestActions($targetUser, $OtherExperiments);
+        $OtherRequestActions->setId($id);
+        $this->expectException(ResourceNotFoundException::class);
+        $OtherRequestActions->readOne();
     }
 
     public function testGetApiPath(): void

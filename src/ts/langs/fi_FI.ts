@@ -46,6 +46,7 @@ const t = {
     "encryption": "Encryption",
     "entity-default-title": "Nimetön",
     "entity-delete-warning": "Valitut kohteet ja kaikki niihin liittyvät tiedot poistetaan pysyvästi. Tätä ei voi peruuttaa. Oletko varma?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Virhe",
     "error-no-filename": "File name is missing.",

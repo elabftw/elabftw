@@ -754,7 +754,7 @@ function collectPermissionsFromModal(identifier: string): string {
 
 // change both read & write permissions in one go
 on('save-permissions-both', (el: HTMLElement) => {
-  if (!confirm('This will apply these permissions to both read and write permissions. Continue?')) {
+  if (!confirm(i18next.t('entity-apply-both-permissions-warning'))) {
     return;
   }
   const permissions = collectPermissionsFromModal(el.dataset.identifier);

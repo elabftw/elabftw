@@ -46,6 +46,7 @@ const t = {
     "encryption": "Encryption",
     "entity-default-title": "Χωρίς τίτλο",
     "entity-delete-warning": "Τα επιλεγμένα στοιχεία και όλα τα σχετικά δεδομένα θα διαγραφούν οριστικά. Αυτό δεν μπορεί να αναιρεθεί. Είσαι σίγουρος/η;",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Σφάλμα",
     "error-no-filename": "File name is missing.",

@@ -88,6 +88,7 @@ final class i18n4Js
             'encryption' => _('Encryption'),
             'entity-default-title' => _('Untitled'),
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),
+            'entity-apply-both-permissions-warning' => _('This will apply these permissions to both read and write permissions. Continue?'),
             'entries-processed' => _('{{num, number}} entries processed'),
             'error' => _('Error'),
             'error-no-filename' => _('File name is missing.'),

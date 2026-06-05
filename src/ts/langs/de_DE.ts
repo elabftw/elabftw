@@ -46,6 +46,7 @@ const t = {
     "encryption": "Verschlüsselung",
     "entity-default-title": "Unbenannt",
     "entity-delete-warning": "Die ausgewählte(n) Ressource(n) und alle zugehörigen Daten werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden. Sind Sie sicher?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}} Einträge verarbeitet",
     "error": "Fehler",
     "error-no-filename": "Dateiname fehlt.",

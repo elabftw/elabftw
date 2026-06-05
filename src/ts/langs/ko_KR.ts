@@ -46,6 +46,7 @@ const t = {
     "encryption": "Encryption",
     "entity-default-title": "제목없음",
     "entity-delete-warning": "선택한 항목과 관련된 모든 데이터가 영구적으로 삭제되며 취소할 수 없습니다. 확실합니까?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}} entries processed",
     "error": "오류",
     "error-no-filename": "File name is missing.",

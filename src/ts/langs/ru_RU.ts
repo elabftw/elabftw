@@ -46,6 +46,7 @@ const t = {
     "encryption": "Encryption",
     "entity-default-title": "Без имени",
     "entity-delete-warning": "Выбранные элементы и все связанные данные будут удалены без возможности восстановления. Это не может быть отменено. Ты уверен?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Ошибка",
     "error-no-filename": "File name is missing.",

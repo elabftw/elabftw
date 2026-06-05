@@ -46,6 +46,7 @@ const t = {
     "encryption": "Criptazione",
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, numero}} voci elaborate",
     "error": "Errore",
     "error-no-filename": "Manca il nome del file.",

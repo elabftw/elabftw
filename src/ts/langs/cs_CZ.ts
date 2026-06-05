@@ -46,6 +46,7 @@ const t = {
     "encryption": "Encryption",
     "entity-default-title": "Bez názvu",
     "entity-delete-warning": "Vybrané položky a všechna související data budou trvale odstraněny. Tento krok nelze vrátit zpět. Jste si jisti?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Chyba",
     "error-no-filename": "File name is missing.",

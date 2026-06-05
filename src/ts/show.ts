@@ -739,7 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (selected.length === 0) {
       url.searchParams.delete(param);
-      addHiddenInputToMainSearchForm(param, '');
+      removeHiddenInputsFromMainSearchForm(param);
     } else {
       const joined = selected.join(',');
       url.searchParams.set(param, joined); // param=1,2,5

@@ -130,9 +130,10 @@ final class Steps extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id';
+        $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);

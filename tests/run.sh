@@ -38,6 +38,10 @@ fi
 
 # run yarn and composer install in elabtmp
 docker exec -it elabtmp yarn install
+# build the front-end assets so the served bundle matches the source.
+# CI does this via `yarn buildall:ci` in install_js_php_dependencies; run.sh historically
+# assumed assets were pre-built, which silently served a stale bundle to cypress.
+docker exec -it elabtmp yarn buildjs
 docker exec -it elabtmp composer install
 
 if [ "${SKIP_TWIGCS:-0}" -ne 1 ]; then

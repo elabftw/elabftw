@@ -32,6 +32,7 @@ enum Units: string
     case KiloGram = 'kg';
     case Bar = 'bar';
     case Metre = 'm';
+    case MillionsOfCells = 'e6 cells';
 
     public function toHuman(): string
     {

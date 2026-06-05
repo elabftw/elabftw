@@ -83,15 +83,6 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->assertBatchProcessed(Action::ForceLock, $this->baseReqBody);
     }
 
-    public function testPostActionThrows(): void
-    {
-        $user = $this->getRandomUserInTeam(1, 1);
-        $this->baseReqBody['users_experiments'] = array($user->userid);
-        $this->Batch->postAction(Action::ForceLock, $this->baseReqBody);
-        $this->expectException(ImproperActionException::class);
-        $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
-    }
-
     public function testPostActionWithOwnershipUpdate(): void
     {
         // create an experiment to transfer

@@ -761,7 +761,7 @@ on('save-permissions-both', (el: HTMLElement) => {
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   const params = {canread: permissions, canread_base: baseSelect.value, canwrite: permissions, canwrite_base: baseSelect.value};
   ApiC.patch(`${entity.type}/${entity.id}`, params)
-  .then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
+    .then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
 });
 
 on('select-lang', () => {

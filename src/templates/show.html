@@ -384,7 +384,7 @@
           </option>
 
           {% for user in usersArr %}
-            <option data-is-archived='{{ user.is_archived_in_current_team }}' value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
+            <option data-is-archived='{{ user.is_archived_in_current_team }}' value='{{ user.userid }}' {{- user.userid in App.Request.query.get('owner')|split(',') ? ' selected' }}>{{ user.fullname }}</option>
           {% endfor %}
         </select>
       </div>

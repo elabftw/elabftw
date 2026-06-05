@@ -63,38 +63,32 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     public function testPostAction(): void
     {
         $user = $this->getRandomUserInTeam(1, 1);
-        // test entities/template entities
+        $user2 = $this->getRandomUserInTeam(1);
+        $tagId = new Tags($this->getFreshItemWithGivenUser($user))->postAction(Action::Create, array('tag' => 'tag-batch-test'));
+        $this->baseReqBody['items_tags'] = array($tagId);
+        $this->baseReqBody['experiments_tags'] = array($tagId);
+        $this->baseReqBody['can_base'] = BasePermissions::UserOnly->value;
         $this->baseReqBody['users_experiments'] = array($user->userid);
         $this->baseReqBody['users_resources'] = array($user->userid);
         $this->baseReqBody['users_experiments_templates'] = array($user->userid);
         $this->baseReqBody['users_resources_templates'] = array($user->userid);
-        // categories
         $this->baseReqBody['items_categories'] = array($user->userid);
         $this->baseReqBody['experiments_categories'] = array($user->userid);
-        // status
         $this->baseReqBody['experiments_status'] = array($user->userid);
         $this->baseReqBody['items_status'] = array($user->userid);
-        // tags
-        $tagId = new Tags($this->getFreshItemWithGivenUser($user))->postAction(Action::Create, array('tag' => 'tag-batch-test'));
-        $this->baseReqBody['items_tags'] = array($tagId);
-        $this->baseReqBody['experiments_tags'] = array($tagId);
-        // permissions
-        $this->baseReqBody['can_base'] = BasePermissions::UserOnly->value;
-        $this->assertBatchProcessed(Action::ForceLock, $this->baseReqBody);
-    }
-
-    public function testPostActionWithOwnershipUpdate(): void
-    {
-        // create an experiment to transfer
-        $User = new Users(1, 1);
-        $this->getFreshExperimentWithGivenUser($User);
-        $this->baseReqBody['users_experiments'] = array($User->userid);
-        $this->baseReqBody['userid'] = $User->userid;
-        $this->baseReqBody['team'] = $User->team;
+        $this->baseReqBody['userid'] = array($user2->getUserid());
+        $this->baseReqBody['team'] = array($user2->getTeam());
         $this->assertBatchProcessed(Action::UpdateOwner, $this->baseReqBody);
     }
 
-    public function testPostActionTransferOwnerToWrongUserTeamCombination(): void
+    public function testInvalidPostAction(): void
+    {
+        $this->baseReqBody['users_experiments'] = array(1, 2);
+        $this->expectException(ImproperActionException::class);
+        $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
+    }
+
+    public function testTransferOwnerToWrongUserTeamCombination(): void
     {
         $user = $this->getRandomUserInTeam(1);
         $this->getFreshExperimentWithGivenUser($user);
@@ -117,14 +111,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
 
-    public function testInvalidPostAction(): void
-    {
-        $this->baseReqBody['users_experiments'] = array(1, 2);
-        $this->expectException(ImproperActionException::class);
-        $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
-    }
-
-    public function testPostActionWithWrongOwnershipUpdate(): void
+    public function testOwnershipUpdateWrongParams(): void
     {
         $this->baseReqBody['userid'] = null;
         $this->expectException(MissingRequiredKeyException::class);

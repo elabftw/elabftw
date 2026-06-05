@@ -45,7 +45,9 @@ class BatchTest extends \PHPUnit\Framework\TestCase
             'experiments_status' => array(),
             'experiments_tags' => array(),
             'users_experiments' => array(),
+            'users_experiments_templates' => array(),
             'users_resources' => array(),
+            'users_resources_templates' => array(),
             'can' => '{}',
             'can_base' => BasePermissions::Organization,
             'team' => null,
@@ -63,6 +65,7 @@ class BatchTest extends \PHPUnit\Framework\TestCase
         $user = $this->getRandomUserInTeam(1);
         $this->getFreshExperimentWithGivenUser($user);
         $this->baseReqBody['users_experiments'] = array($user->userid);
+        $this->baseReqBody['users_experiments_templates'] = array($user->userid);
         $this->baseReqBody['can_base'] = BasePermissions::UserOnly->value;
         $this->assertBatchProcessed(Action::ForceLock, $this->baseReqBody);
     }

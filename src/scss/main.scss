@@ -1517,19 +1517,10 @@ input[type='color'] {
   position: fixed;
   right: 0.8%;
   top: calc(100vh - 15rem);
-
-  /* make the up arrow white or we can't see it */
-  svg {
-    color: var(--white);
-  }
 }
 
 #backToTopButton {
   transition: all 0.5s ease;
-
-  i {
-    color: var(--white);
-  }
 }
 
 #scrollTopBtnAnchor {

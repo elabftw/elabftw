@@ -56,4 +56,5 @@ enum Action: string
     case UpdatePassword = 'updatepassword';
     case UpdateTag = 'updatetag';
     case Validate = 'validate';
+    case VoiceLog = 'voicelog';
 }

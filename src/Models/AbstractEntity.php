@@ -554,6 +554,7 @@ abstract class AbstractEntity extends AbstractRest
                     }
                 }
             )(),
+            Action::VoiceLog => $this->handleVoiceLog($params),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
         if ($this->readAfterPatch) {
@@ -1147,6 +1148,26 @@ abstract class AbstractEntity extends AbstractRest
         $key = $type->value;
         $this->update(new EntityParams($key, (string) $params['can']));
         $this->update(new EntityParams($key . '_base', (int) $params['can_base']));
+    }
+
+    // Append a transcribed voice utterance as a Step on the entity.
+    // Optional params: started_at (RFC3339 string), audio_upload_id (int referencing an Upload on this entity).
+    private function handleVoiceLog(array $params): void
+    {
+        $transcript = trim((string) ($params['transcript'] ?? ''));
+        if ($transcript === '') {
+            throw new ImproperActionException('A non-empty transcript parameter is required for voicelog.');
+        }
+        $startedAt = isset($params['started_at']) && is_string($params['started_at']) && $params['started_at'] !== ''
+            ? $params['started_at']
+            : gmdate('Y-m-d\TH:i:s\Z');
+        $audioUploadId = isset($params['audio_upload_id']) ? (int) $params['audio_upload_id'] : 0;
+
+        $body = sprintf('[%s] [voice] %s', $startedAt, $transcript);
+        if ($audioUploadId > 0) {
+            $body .= sprintf(' (audio: upload#%d)', $audioUploadId);
+        }
+        $this->Steps->postAction(Action::Create, array('body' => $body));
     }
 
     // Archive a normal entity, Unarchive an archived entity.

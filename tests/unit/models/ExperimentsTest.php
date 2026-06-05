@@ -378,4 +378,78 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
             $this->assertSame(BasePermissions::Full->value, $experiment['canread_base']);
         }
     }
+
+    public function testVoiceLogAppendsStep(): void
+    {
+        $this->assertCount(0, $this->Experiments->Steps->readAll());
+        $entityData = $this->Experiments->patch(Action::VoiceLog, array(
+            'transcript' => 'added 5 microliters EDTA to tube 4',
+            'started_at' => '2026-06-05T14:32:10Z',
+        ));
+        $this->assertIsArray($entityData);
+        $steps = $this->Experiments->Steps->readAll();
+        $this->assertCount(1, $steps);
+        $this->assertSame(
+            '[2026-06-05T14:32:10Z] [voice] added 5 microliters EDTA to tube 4',
+            $steps[0]['body'],
+        );
+    }
+
+    public function testVoiceLogWithAudioUploadId(): void
+    {
+        $this->Experiments->patch(Action::VoiceLog, array(
+            'transcript' => 'pipetted sample',
+            'started_at' => '2026-06-05T14:32:10Z',
+            'audio_upload_id' => 42,
+        ));
+        $steps = $this->Experiments->Steps->readAll();
+        $this->assertSame(
+            '[2026-06-05T14:32:10Z] [voice] pipetted sample (audio: upload#42)',
+            $steps[0]['body'],
+        );
+    }
+
+    public function testVoiceLogDefaultsTimestampToUtcNow(): void
+    {
+        $this->Experiments->patch(Action::VoiceLog, array(
+            'transcript' => 'observation logged without timestamp',
+        ));
+        $steps = $this->Experiments->Steps->readAll();
+        $this->assertMatchesRegularExpression(
+            '/^\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\] \[voice\] observation logged without timestamp$/',
+            $steps[0]['body'],
+        );
+    }
+
+    public function testVoiceLogTrimsWhitespace(): void
+    {
+        $this->Experiments->patch(Action::VoiceLog, array(
+            'transcript' => "   hello world   ",
+            'started_at' => '2026-06-05T14:32:10Z',
+        ));
+        $steps = $this->Experiments->Steps->readAll();
+        $this->assertSame(
+            '[2026-06-05T14:32:10Z] [voice] hello world',
+            $steps[0]['body'],
+        );
+    }
+
+    public function testVoiceLogRejectsEmptyTranscript(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->Experiments->patch(Action::VoiceLog, array('transcript' => '   '));
+    }
+
+    public function testVoiceLogRejectsMissingTranscript(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->Experiments->patch(Action::VoiceLog, array());
+    }
+
+    public function testVoiceLogRejectedOnDeletedEntity(): void
+    {
+        $this->Experiments->patch(Action::Update, array('state' => State::Deleted->value));
+        $this->expectException(UnprocessableContentException::class);
+        $this->Experiments->patch(Action::VoiceLog, array('transcript' => 'should fail'));
+    }
 }

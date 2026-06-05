@@ -25,21 +25,15 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     private Experiments $Experiments;
 
-    private Experiments $OtherExperiments;
-
     private Templates $Templates;
 
     private Steps $Steps;
-
-    private Steps $OtherSteps;
 
     protected function setUp(): void
     {
         $this->Experiments = $this->getFreshExperiment();
         $this->Templates = $this->getFreshTemplate();
         $this->Steps = $this->Experiments->Steps;
-        $this->OtherExperiments = $this->getFreshExperiment();
-        $this->OtherSteps = $this->OtherExperiments->Steps;
     }
 
     public function testCreateAndFinish(): void
@@ -66,14 +60,14 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result['body'], $body);
     }
 
-    public function testReadStepNotFound(): void
+    public function testCannotReadOneFromAnotherExperiment(): void
     {
-        $body = 'do this';
-        $id = $this->OtherSteps->postAction(Action::Create, array('body' => $body));
-        $this->assertIsInt($id);
-        $this->Steps->setId($id);
+        $id = $this->Steps->postAction(Action::Create, array('body' => 'do this'));
+        $OtherExperiments = $this->getFreshExperiment();
+        $OtherSteps = new Steps($OtherExperiments);
+        $OtherSteps->setId($id);
         $this->expectException(ResourceNotFoundException::class);
-        $this->Steps->readOne();
+        $OtherSteps->readOne();
     }
 
     public function testUpdate(): void

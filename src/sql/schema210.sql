@@ -1,7 +1,4 @@
 -- schema 210
-CREATE INDEX idx_favtags2users_user_tag
-    ON favtags2users (users_id, tags_id);
-
 DELETE t
 FROM tags2entity AS t
 JOIN (

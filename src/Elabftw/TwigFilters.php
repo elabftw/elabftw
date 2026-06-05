@@ -84,7 +84,7 @@ final class TwigFilters
             $Metadata = new Metadata($json);
             $extraFields = $Metadata->getExtraFields();
         } catch (Exception $e) {
-            return self::displayMessage($e->getMessage(), 'ko', false);
+            return self::displayMessage(Tools::eLabHtmlspecialchars($e->getMessage()), 'ko', false);
         }
         if (empty($extraFields)) {
             return $Metadata->getRaw();

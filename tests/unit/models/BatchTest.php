@@ -62,12 +62,34 @@ class BatchTest extends \PHPUnit\Framework\TestCase
 
     public function testPostAction(): void
     {
-        $user = $this->getRandomUserInTeam(1);
-        $this->getFreshExperimentWithGivenUser($user);
+        $user = $this->getRandomUserInTeam(1, 1);
+        // test entities/template entities
         $this->baseReqBody['users_experiments'] = array($user->userid);
+        $this->baseReqBody['users_resources'] = array($user->userid);
         $this->baseReqBody['users_experiments_templates'] = array($user->userid);
+        $this->baseReqBody['users_resources_templates'] = array($user->userid);
+        // categories
+        $this->baseReqBody['items_categories'] = array($user->userid);
+        $this->baseReqBody['experiments_categories'] = array($user->userid);
+        // status
+        $this->baseReqBody['experiments_status'] = array($user->userid);
+        $this->baseReqBody['items_status'] = array($user->userid);
+        // tags
+        $tagId = new Tags($this->getFreshItemWithGivenUser($user))->postAction(Action::Create, array('tag' => 'tag-batch-test'));
+        $this->baseReqBody['items_tags'] = array($tagId);
+        $this->baseReqBody['experiments_tags'] = array($tagId);
+        // permissions
         $this->baseReqBody['can_base'] = BasePermissions::UserOnly->value;
         $this->assertBatchProcessed(Action::ForceLock, $this->baseReqBody);
+    }
+
+    public function testPostActionThrows(): void
+    {
+        $user = $this->getRandomUserInTeam(1, 1);
+        $this->baseReqBody['users_experiments'] = array($user->userid);
+        $this->Batch->postAction(Action::ForceLock, $this->baseReqBody);
+        $this->expectException(ImproperActionException::class);
+        $this->Batch->postAction(Action::UpdateOwner, $this->baseReqBody);
     }
 
     public function testPostActionWithOwnershipUpdate(): void

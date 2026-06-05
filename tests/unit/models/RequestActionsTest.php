@@ -94,7 +94,16 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadOne(): void
     {
-        $this->RequestActions->setId(1);
+        $targetUser = $this->getUserInTeam(2);
+        $reqBody = array(
+            'target_userid' => $targetUser->userid,
+            'target_action' => RequestableAction::Archive->value,
+        );
+        $id = $this->RequestActions->postAction(
+            Action::Create, // this action is irrelevant
+            $reqBody,
+        );
+        $this->RequestActions->setId($id);
         $this->assertIsArray($this->RequestActions->readOne());
     }
 

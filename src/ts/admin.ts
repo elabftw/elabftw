@@ -80,8 +80,8 @@ on('run-action-selected', (el: HTMLElement) => {
   }
   const oldHTML = mkSpin(btn);
   selected['action'] = btn.dataset.what;
-  selected['notifOnSaved'] = 1;
-  // we use a custom notif message, so disable the native one
+  // we use a custom notif message, so disable the native notif
+  selected['notifOnSaved'] = 0;
   ApiC.post('batch', selected).then(res => {
     const processed = res.headers.get('location').split('/').pop();
     notify.success('entries-processed', { num: processed });

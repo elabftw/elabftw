@@ -190,11 +190,6 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
     return {
       filter: 'agTextColumnFilter',
       floatingFilter: true,
-      onCellValueChanged: (event) => {
-        const params = {};
-        params[event.column.colId] = event.newValue;
-        ApiC.patch(`users/${event.data.id}`, params);
-      }
     };
   }, []);
 

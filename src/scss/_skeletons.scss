@@ -65,7 +65,7 @@
     height: 42px;
     vertical-align: middle;
 
-    .skeleton-box:not(.skeleton-checkbox, .skeleton-tag) {
+    .skeleton-box:not([data-skeleton='checkbox'], [data-skeleton='tag']) {
       height: 16px;
     }
 

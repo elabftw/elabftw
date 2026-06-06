@@ -51,6 +51,7 @@ const t = {
     "encryption": "Chiffrement",
     "entity-default-title": "Sans titre",
     "entity-delete-warning": "Le ou les objet(s) sélectionné(s) ainsi que toutes les données associées seront supprimés définitivement. Cela est irréversible. Êtes-vous sûr(e) ?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}} entrées traitées",
     "error": "Erreur",
     "error-no-filename": "Le nom du fichier est manquant.",

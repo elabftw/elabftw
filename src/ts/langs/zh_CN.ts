@@ -51,6 +51,7 @@ const t = {
     "encryption": "加密",
     "entity-default-title": "未命名",
     "entity-delete-warning": "所选项目和所有相关数据将被永久删除。这不能被撤销。您确定吗？",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "已处理 {{num, number}} 条记录",
     "error": "错误",
     "error-no-filename": "文件名缺失。",

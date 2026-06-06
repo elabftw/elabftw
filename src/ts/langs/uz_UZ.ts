@@ -51,6 +51,7 @@ const t = {
     "encryption": "Encryption",
     "entity-default-title": "Sarlavhasiz",
     "entity-delete-warning": "Tanlangan element(lar) va barcha bog‘langan ma’lumotlar butunlay o‘chirib tashlanadi. Buni ortga qaytarib bo‘lmaydi. Ishonchingiz komilmi?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Xato",
     "error-no-filename": "File name is missing.",

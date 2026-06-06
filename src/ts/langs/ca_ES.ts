@@ -51,6 +51,7 @@ const t = {
     "encryption": "Encriptació",
     "entity-default-title": "Sense títol",
     "entity-delete-warning": "L’element o els elements seleccionats i totes les dades associades s’eliminaran definitivament. Això no es pot desfer. Estàs segur?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num,number}} entrades processades",
     "error": "Error",
     "error-no-filename": "Falta el nom d'arxiu.",

@@ -51,6 +51,7 @@ const t = {
     "encryption": "Encriptación",
     "entity-default-title": "Sin título",
     "entity-delete-warning": "Los ítem(s) seleccionados y todo los datos asociados serán permanentemente elilminados. Esto no puede deshacerse. Está seguro?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num,number}} de entradas procesadas",
     "error": "Error",
     "error-no-filename": "Falta el nombre del archivo.",

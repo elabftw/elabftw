@@ -51,6 +51,7 @@ const t = {
     "encryption": "Encryption",
     "entity-default-title": "Brez naslova",
     "entity-delete-warning": "Izbrani predmet(i) in vsi pridruženi podatki bodo trajno izbrisani. Tega ni mogoče razveljaviti. Ali si prepričan?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Napaka",
     "error-no-filename": "File name is missing.",

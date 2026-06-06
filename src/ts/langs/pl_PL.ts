@@ -51,6 +51,7 @@ const t = {
     "encryption": "Kodowanie",
     "entity-default-title": "Bez tytułu",
     "entity-delete-warning": "Wybrany element(y) i wszystkie powiązane z nim dane zostaną nieodwracalnie usunięte. Ta operacja nie może być cofnięta. Jesteś pewny?",
+    "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
     "entries-processed": "{{num, number}}wpisy przewoworzoni",
     "error": "Błąd",
     "error-no-filename": "Brak nazwy pliku",

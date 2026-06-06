@@ -723,12 +723,7 @@ on('clear-form', (el: HTMLElement) => {
 
 on('save-permissions', (el: HTMLElement) => {
   const params = {};
-
-  params[el.dataset.rw] = permissionsToJson(
-    ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
-      .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
-      .concat($('#' + el.dataset.identifier + '_select_users').val() as string[]),
-  );
+  params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   params[baseSelect.name] = baseSelect.value;
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
@@ -745,6 +740,27 @@ on('save-permissions', (el: HTMLElement) => {
   } else {
     ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
   }
+});
+
+function collectPermissionsFromModal(identifier: string): string {
+  const teams = ($('#' + identifier + '_select_teams').val() as string[] | null) ?? [];
+  const teamgroups = ($('#' + identifier + '_select_teamgroups').val() as string[] | null) ?? [];
+  const users = ($('#' + identifier + '_select_users').val() as string[] | null) ?? [];
+  return permissionsToJson(
+    teams.concat(teamgroups).concat(users),
+  );
+}
+
+// change both read & write permissions in one go
+on('save-permissions-both', (el: HTMLElement) => {
+  if (!confirm(i18next.t('entity-apply-both-permissions-warning'))) {
+    return;
+  }
+  const permissions = collectPermissionsFromModal(el.dataset.identifier);
+  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
+  const params = {canread: permissions, canread_base: baseSelect.value, canwrite: permissions, canwrite_base: baseSelect.value};
+  ApiC.patch(`${entity.type}/${entity.id}`, params)
+    .then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
 });
 
 on('select-lang', () => {

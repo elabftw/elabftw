@@ -204,19 +204,6 @@ interface Entity {
   id: number;
 }
 
-enum Unit {
-  Bar = 'bar',
-  Unit = '•',
-  Metre = 'm',
-  MicroLiter = 'μL',
-  MilliLiter = 'mL',
-  Liter = 'L',
-  MicroGram = 'μg',
-  MilliGram = 'mg',
-  Gram = 'g',
-  KiloGram = 'kg',
-}
-
 export {
   Action,
   BinaryValue,
@@ -234,6 +221,5 @@ export {
   Target,
   Todoitem,
   UnfinishedEntities,
-  Unit,
   Upload,
 };

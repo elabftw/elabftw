@@ -6,14 +6,14 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import {Action, CheckableItem, EntityType, Entity, Model, Target, FileType, Unit} from './interfaces';
+import {Action, CheckableItem, EntityType, Entity, Model, Target, FileType} from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
-import { Malle, InputType } from '@deltablot/malle';
+import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
@@ -293,11 +293,6 @@ export function getEntity(useParent: boolean = false): Entity {
   };
 }
 
-const unitLabels: Partial<Record<Unit, string>> = {
-  [Unit.Bar]: 'Bar',
-  [Unit.Metre]: 'Metre',
-};
-
 // Listen for malleable columns
 export function makeMalleableColumnsGreatAgain() {
   new Malle({
@@ -329,14 +324,21 @@ export function makeMalleableColumnsGreatAgain() {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
-  // MALLEABLE QTY_UNIT - we need a specific code to add the select options
+  // MALLEABLE QTY_UNIT - we need a specific code to add the select options.
+  // The unit list has a single source of truth: the PHP Units enum, which is
+  // rendered into the #containerQtyUnitSelect dropdown of the add-container
+  // modal. We read the options straight from there so the list is never
+  // duplicated in the frontend.
+  const qtyUnitSelect = document.getElementById('containerQtyUnitSelect') as HTMLSelectElement | null;
+  const qtyUnitOptions: SelectOptions[] = qtyUnitSelect
+    ? Array.from(qtyUnitSelect.options).map(option => ({selected: false, text: option.text, value: option.value}))
+    : [];
   new Malle({
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     inputType: InputType.Select,
-    selectOptions: Object.values(Unit).map(unit =>
-      ({selected: false, text: unitLabels[unit] ?? unit, value: unit})),
+    selectOptions: qtyUnitOptions,
     fun: (value, original) => {
       return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
         .then(res => res.json())

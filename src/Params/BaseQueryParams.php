@@ -142,6 +142,9 @@ class BaseQueryParams implements QueryParamsInterface
 
     public static function statesToSql(string $tableName, array $states): string
     {
+        if (empty($states)) {
+            return '';
+        }
         return sprintf(' AND %s.state IN (%s)', $tableName, implode(', ', array_map(fn($state) => $state->value, $states)));
     }
 }

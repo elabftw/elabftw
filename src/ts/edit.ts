@@ -25,9 +25,8 @@ const mode = new URLSearchParams(window.location.search).get('mode');
 if (mode === 'edit') {
   // remove exclusive edit mode when leaving the page
   window.onbeforeunload = function() {
-    ApiC.notifOnSaved = false;
     ApiC.keepalive = true;
-    ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.RemoveExclusiveEditMode});
+    ApiC.patch(`${entity.type}/${entity.id}`, { notifOnSaved: 0, action: Action.RemoveExclusiveEditMode });
   };
   // Which editor are we using? md or tiny
   const editor = getEditor();

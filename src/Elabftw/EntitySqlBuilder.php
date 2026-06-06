@@ -39,13 +39,11 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     /**
      * Get the SQL string for read before the WHERE
      *
-     * @param bool $getTags do we get the tags too?
      * @param bool $fullSelect select all the columns of entity
      * @param null|EntityType $relatedOrigin Are we looking for related entries, what is the origin, experiments or items?
      */
     #[Override]
     public function getReadSqlBeforeWhere(
-        bool $getTags = true,
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
     ): string {
@@ -54,9 +52,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         $this->status();
         $this->category();
         $this->comments();
-        if ($getTags) {
-            $this->tags();
-        }
         if ($fullSelect) {
             $this->teamEvents();
         }
@@ -129,6 +124,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 entity.state,
                 entity.canread,
                 entity.canwrite,
+                entity.canread_base,
+                entity.canwrite_base,
                 entity.canread_is_immutable,
                 entity.canwrite_is_immutable,
                 entity.created_at,
@@ -342,20 +339,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canUsers(string $can): string
     {
         return ":userid MEMBER OF (entity.$can->>'$.users')";
-    }
-
-    private function tags(): void
-    {
-        $this->selectSql[] = "GROUP_CONCAT(
-                DISTINCT tags.tag
-                ORDER BY tags.id SEPARATOR '|'
-            ) as tags,
-            GROUP_CONCAT(DISTINCT tags.id) as tags_id";
-        $this->joinsSql[] = 'LEFT JOIN tags2entity
-                ON (tags2entity.item_id = entity.id
-                    AND tags2entity.item_type = \'%1$s\')
-            LEFT JOIN tags
-                ON (tags.id = tags2entity.tag_id)';
     }
 
     private function teamEvents(): void

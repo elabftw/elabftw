@@ -695,8 +695,7 @@ on('transfer-ownership', async (_, e:Event) => {
   }
   const userid = Number.parseInt(String(params['targetUserId']).split(' ')[0], 10);
   const team = Number.parseInt(String(params['targetTeamId']), 10);
-  ApiC.notifOnSaved = false;
-  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid, team });
+  await ApiC.patch(`${entity.type}/${entity.id}`, { notifOnSaved: 0, action: Action.UpdateOwner, userid, team });
   sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
   const path = window.location.pathname.toLowerCase();
   if (path.includes('experiment')) {
@@ -842,25 +841,145 @@ on('add-storage-children', (el: HTMLElement) => {
     });
   });
 });
-on('create-container', (el: HTMLElement) => {
+// CONTAINER DISTRIBUTION across multiple storage locations
+// Each storage location in the "Add container" modal has a -/number/+ stepper.
+// The user distributes a target number of containers (#containerMultiplierInput) across
+// the locations; the steppers can never sum above the target, and the "Store containers"
+// button is only enabled once they sum exactly to it.
+
+/**
+ * Read a non-negative integer from a number input. Blank, negative or non-integer
+ * values (e.g. a manually typed 1.9) collapse to 0 so a fractional entry can never
+ * feed the distribution math or submit a different count than what is shown.
+ */
+const intFromInput = (el: HTMLInputElement | null): number => {
+  const value = el?.valueAsNumber ?? NaN;
+  return Number.isInteger(value) && value >= 0 ? value : 0;
+};
+
+/** All the per-location quantity inputs currently rendered in the modal. */
+const containerStepperInputs = (): HTMLInputElement[] =>
+  Array.from(document.querySelectorAll('input[data-action="container-qty-input"]'));
+
+/** The target total number of containers to distribute. */
+const containerTarget = (): number =>
+  intFromInput(document.getElementById('containerMultiplierInput') as HTMLInputElement | null);
+
+/** The number of containers currently assigned across all locations. */
+const containerAssigned = (): number =>
+  containerStepperInputs().reduce((sum, input) => sum + intFromInput(input), 0);
+
+/** Update the assigned/target counter and enable submit only at an exact match. */
+function refreshContainerDistribution(): void {
+  const target = containerTarget();
+  const assigned = containerAssigned();
+  const assignedEl = document.getElementById('containerAssignedCount');
+  const targetEl = document.getElementById('containerTargetCount');
+  if (assignedEl) assignedEl.textContent = String(assigned);
+  if (targetEl) targetEl.textContent = String(target);
+  const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
+  if (submitBtn) submitBtn.disabled = target === 0 || assigned !== target;
+}
+
+/**
+ * Sum of every stepper except the one passed in (identity match, robust whether or
+ * not the input's own value has already been updated by the browser).
+ */
+const otherSteppersTotal = (except: HTMLInputElement): number =>
+  containerStepperInputs()
+    .filter(input => input !== except)
+    .reduce((sum, input) => sum + intFromInput(input), 0);
+
+/** Set a stepper to a value, clamped so the total assigned can never exceed the target. */
+function setStepperValue(input: HTMLInputElement, value: number): void {
+  const max = Math.max(0, containerTarget() - otherSteppersTotal(input));
+  input.value = String(Math.min(Math.max(0, value), max));
+  refreshContainerDistribution();
+}
+
+/** Clamp every stepper down when the target total is reduced below what is already assigned. */
+function reclampAllSteppers(): void {
+  const target = containerTarget();
+  let running = 0;
+  containerStepperInputs().forEach(input => {
+    let value = intFromInput(input);
+    if (running + value > target) {
+      value = Math.max(0, target - running);
+    }
+    input.value = String(value);
+    running += value;
+  });
+  refreshContainerDistribution();
+}
+
+/** Resolve the quantity input that belongs to a clicked +/- button. */
+const stepperFor = (el: HTMLElement): HTMLInputElement | null =>
+  document.querySelector(`input[data-action="container-qty-input"][data-storage-id="${el.dataset.storageId}"]`);
+
+on('container-qty-plus', (el: HTMLElement) => {
+  const input = stepperFor(el);
+  if (input) setStepperValue(input, intFromInput(input) + 1);
+});
+on('container-qty-minus', (el: HTMLElement) => {
+  const input = stepperFor(el);
+  if (input) setStepperValue(input, intFromInput(input) - 1);
+});
+
+on('store-containers-distributed', () => {
+  const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
+  // guard against double submit: a disabled button means a batch is already in flight
+  if (submitBtn?.disabled) {
+    return;
+  }
   const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
   const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
-  let multiplier = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement).value, 10);
-  if (isNaN(multiplier) || multiplier <= 0) {
-    multiplier = 1;
+  const postCalls = containerStepperInputs().flatMap(input => {
+    const count = intFromInput(input);
+    return Array.from({ length: count }, () =>
+      ApiC.post(`${entity.type}/${entity.id}/containers/${input.dataset.storageId}`, {
+        qty_stored: qty_stored,
+        qty_unit: qty_unit,
+      }),
+    );
+  });
+  if (postCalls.length === 0) {
+    return;
   }
-
-  const postCalls = Array.from({ length: multiplier }, () =>
-    ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {
-      qty_stored: qty_stored,
-      qty_unit: qty_unit,
-    }),
-  );
+  // lock the button while the batch runs so a second click cannot create a duplicate distribution
+  if (submitBtn) submitBtn.disabled = true;
   // Execute all POST calls and reload elements after all are resolved
   Promise.all(postCalls)
-    .then(() => reloadElements(['storageDivContent']))
-    .catch((error) => notify.error(error));
+    .then(() => {
+      reloadElements(['storageDivContent']);
+      $('#storageModal').modal('hide');
+    })
+    .catch((error) => notify.error(error))
+    .finally(() => {
+      if (submitBtn) submitBtn.disabled = false;
+    });
 });
+
+// the steppers' number inputs and the target total fire 'input', not 'click', so they are
+// handled with a delegated listener rather than via on()
+const storageModalEl = document.getElementById('storageModal');
+if (storageModalEl) {
+  document.getElementById('container')?.addEventListener('input', (event: Event) => {
+    const target = event.target as HTMLElement | null;
+    const stepper = target?.closest('input[data-action="container-qty-input"]') as HTMLInputElement | null;
+    if (stepper) {
+      setStepperValue(stepper, intFromInput(stepper));
+      return;
+    }
+    if (target?.id === 'containerMultiplierInput') {
+      reclampAllSteppers();
+    }
+  });
+  // reset all steppers each time the modal opens so a reopened modal starts clean
+  $('#storageModal').on('show.bs.modal', () => {
+    containerStepperInputs().forEach(input => { input.value = '0'; });
+    refreshContainerDistribution();
+  });
+}
 
 on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv'])));
 
@@ -967,8 +1086,7 @@ on('search-pubchem', (el: HTMLElement) => {
   const elOldHTML = mkSpin(el);
   const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
   // we will handle errors differently here
-  ApiC.notifOnError = false;
-  ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
+  ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`, { notifOnError: 0 }).then(json => {
     const compounds = Array.isArray(json) ? json : [json];
     const table = document.createElement('table');
     table.classList.add('table');
@@ -1028,7 +1146,6 @@ on('search-pubchem', (el: HTMLElement) => {
     console.error(err);
     resultTableDiv.innerText = err;
   }).finally(() => {
-    ApiC.notifOnError = true;
     mkSpinStop(el, elOldHTML);
   });
 });

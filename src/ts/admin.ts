@@ -80,8 +80,8 @@ on('run-action-selected', (el: HTMLElement) => {
   }
   const oldHTML = mkSpin(btn);
   selected['action'] = btn.dataset.what;
-  // we use a custom notif message, so disable the native one
-  ApiC.notifOnSaved = false;
+  // we use a custom notif message, so disable the native notif
+  selected['notifOnSaved'] = 0;
   ApiC.post('batch', selected).then(res => {
     const processed = res.headers.get('location').split('/').pop();
     notify.success('entries-processed', { num: processed });
@@ -184,10 +184,10 @@ if (window.location.pathname === '/admin.php') {
   });
 
   on('send-onboarding-emails', () => {
-    ApiC.notifOnSaved = false;
     ApiC.patch(`${Model.Team}/current`, {
-      'action': Action.SendOnboardingEmails,
-      'userids': Array.from((document.getElementById('sendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
+      action: Action.SendOnboardingEmails,
+      notifOnSaved: 0,
+      userids: Array.from((document.getElementById('sendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
         .map(option => parseInt(option.value, 10)),
     }).then(response => {
       if (response.ok) {

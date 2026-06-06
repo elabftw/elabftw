@@ -14,6 +14,7 @@ namespace Elabftw\Models\Users;
 
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Scope;
+use Override;
 
 /**
  * An anonymous user is "logged in" in a team and has default settings
@@ -25,6 +26,12 @@ final class AnonymousUser extends Users
     {
         parent::__construct(null, $team);
         $this->fillUserData();
+    }
+
+    #[Override]
+    public function readOne(): array
+    {
+        return $this->userData;
     }
 
     private function fillUserData(): void

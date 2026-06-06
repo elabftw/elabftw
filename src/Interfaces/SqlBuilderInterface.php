@@ -17,7 +17,6 @@ use Elabftw\Enums\EntityType;
 interface SqlBuilderInterface
 {
     public function getReadSqlBeforeWhere(
-        bool $getTags = true,
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
     ): string;

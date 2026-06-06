@@ -12,14 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
-/**
- * Canonical list of quantity units available for inventory containers.
- *
- * This is the single source of truth. The cases are rendered (in this order)
- * into the #containerQtyUnitSelect dropdown of the add-container modal, and the
- * inline editor in src/ts/misc.ts reads its options straight from that
- * dropdown, so the unit list is never duplicated on the frontend.
- */
 enum Units: string
 {
     case Unit = '•';

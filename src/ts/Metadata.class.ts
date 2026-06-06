@@ -90,15 +90,20 @@ export class Metadata {
       // collect all the selected options, and the value will be an array
       value = [...el.selectedOptions].map(option => option.value);
     }
-    // special case for Experiment/Resource/User link
+    // special case for Experiment/Resource/User/Compound link
     if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
-      value = parseInt(value.split(' ')[0], 10);
-      if (isNaN(value)) {
-        return false;
-      }
-      // also create a link automatically for experiments, resources and compounds.
-      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
-        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+      const rawValue = value.trim();
+      if (rawValue === '') {
+        value = '';
+      } else {
+        value = parseInt(rawValue.split(' ')[0], 10);
+        if (isNaN(value)) {
+          return false;
+        }
+        // also create a link automatically for experiments, resources and compounds.
+        if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
+          ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+        }
       }
     }
     const params = {};

@@ -2397,6 +2397,12 @@ ALTER TABLE `procurement_requests`
   ADD CONSTRAINT `fk_teams_id_proc_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_id_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- schema 210
+CREATE UNIQUE INDEX uniq_tags2entity_type_item_tag
+    ON tags2entity (item_type, item_id, tag_id);
+-- end schema 210
+
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

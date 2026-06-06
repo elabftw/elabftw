@@ -17,6 +17,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\ContentParams;
 use Elabftw\Params\TagParam;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
@@ -157,12 +158,13 @@ final class Tags extends AbstractRest
         }
         $tagId = $TeamTags->create($params);
         // now link the tag with the entity
-        $sql = 'INSERT INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
+        $sql = 'INSERT IGNORE INTO tags2entity (item_id, item_type, tag_id) VALUES (:item_id, :item_type, :tag_id)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':item_type', $this->Entity->entityType->value);
         $req->bindParam(':tag_id', $tagId, PDO::PARAM_INT);
         $this->Db->execute($req);
+        $this->createChangelog(sprintf('Added tag "%s" with id: %d', $params->getContent(), $tagId));
 
         return $tagId;
     }
@@ -173,13 +175,26 @@ final class Tags extends AbstractRest
     private function unreference(): array
     {
         $this->Entity->canOrExplode(AccessType::Write);
+        if ($this->id === null) {
+            throw new ImproperActionException('Tag id is required to unreference a tag.');
+        }
+        $currentTag = $this->readOne();
 
         $sql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':tag_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':tag_id', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+        if ($req->rowCount() > 0) {
+            $this->createChangelog(sprintf('Removed tag "%s" with id: %d', $currentTag['tag'], $this->id));
+        }
 
         return $this->Entity->readOne();
+    }
+
+    private function createChangelog(string $message): void
+    {
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams('tags', $message));
     }
 }

@@ -50,6 +50,7 @@ type CancelNotificationPayload = {
   range_direction?: string;
   range_value?: number;
   range_unit?: string;
+  notifOnSaved?: number;
 };
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
@@ -545,11 +546,11 @@ if (window.location.pathname === '/scheduler.php') {
         payload.range_value = parseInt((document.getElementById('cancelEventRangeValue') as HTMLInputElement).value, 10);
         payload.range_unit = (document.getElementById('cancelEventRangeUnit') as HTMLSelectElement).value;
       }
+      payload.notifOnSaved = 0;
       // The notification must be sent before deletion, otherwise the event ID is lost (Nothing to show with this id)
-      ApiC.notifOnSaved = false;
       ApiC.post(`event/${el.dataset.id}/notifications`, payload)
         .then(() => ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch())
-        .then(() => notify.success()).finally(() => ApiC.notifOnSaved = true);
+        .then(() => notify.success());
     });
 
     on('edit-event', async (_, e: Event) => {

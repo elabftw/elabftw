@@ -122,6 +122,7 @@ module.exports = (env) => {
     ],
     resolve: {
       extensions: ['.ts', '.js', '.jsx', '.svelte'],
+      conditionNames: ['svelte', 'browser', '...'],
       mainFields: ['svelte', 'browser', 'module', 'main'],
       fallback: {
         // required by react 18

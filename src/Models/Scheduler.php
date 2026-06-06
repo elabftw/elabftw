@@ -28,6 +28,7 @@ use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
 use Override;
 use PDO;
+use Throwable;
 
 use function preg_replace;
 use function ksort;
@@ -113,28 +114,39 @@ final class Scheduler extends AbstractRest
         }
         $start = $this->normalizeDate($reqBody['start']);
         $end = $this->normalizeDate($reqBody['end'], true);
-        $this->checkConstraints($start, $end);
-        $this->checkMaxSlots();
 
         // users won't be able to create an entry in the past
         $this->isFutureOrExplode(DateTime::createFromFormat(self::DATETIME_FORMAT, $start));
 
         // fix booking at midnight on monday not working. See #2765
         // we add a second so it works
-        $start = preg_replace('/00:00:00/', '00:00:01', $start);
+        $start = str_replace('00:00:00', '00:00:01', $start);
+        // handle constraints during transaction
+        $this->Db->beginTransaction();
+        try {
+            // Serialize concurrent booking attempts for the same resource.
+            $this->lockItemForBooking();
+            $this->checkConstraints($start, $end);
+            $this->checkMaxSlots();
 
-        $sql = 'INSERT INTO team_events(team, item, start, end, userid, title)
+            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title)
             VALUES(:team, :item, :start, :end, :userid, :title)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
-        $req->bindParam(':start', $start);
-        $req->bindParam(':end', $end);
-        $req->bindValue(':title', $this->filterTitle($reqBody['title'] ?? ''));
-        $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
+            $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
+            $req->bindParam(':start', $start);
+            $req->bindParam(':end', $end);
+            $req->bindValue(':title', $this->filterTitle($reqBody['title'] ?? ''));
+            $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
+            $this->Db->execute($req);
 
-        return $this->Db->lastInsertId();
+            $eventId = $this->Db->lastInsertId();
+            $this->Db->commit();
+            return $eventId;
+        } catch (Throwable $e) {
+            $this->Db->rollback();
+            throw $e;
+        }
     }
 
     /**
@@ -295,6 +307,18 @@ final class Scheduler extends AbstractRest
             $Notif->create();
         }
         return $this->Db->execute($req);
+    }
+
+    /** Lock the resource row to serialize concurrent booking creation for the same item. */
+    private function lockItemForBooking(): void
+    {
+        $sql = 'SELECT id FROM items WHERE id = :item FOR UPDATE';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        if ($req->fetchColumn() === false) {
+            throw new ImproperActionException('Could not lock item for booking.');
+        }
     }
 
     private function update(array $params): void

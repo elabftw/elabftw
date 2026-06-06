@@ -399,11 +399,8 @@ export function getCheckedBoxes(): Array<CheckableItem> {
 }
 
 // reload the entities in show mode
-export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
-  // get the html
-  const html = await fetchCurrentPage(tag);
-  // reload items
-  document.getElementById('showModeContent').innerHTML = html.getElementById('showModeContent').innerHTML;
+export async function reloadEntitiesShow(): Promise<void | Response> {
+  window.dispatchEvent(new CustomEvent('entity-filters-changed'));
   // ask mathjax to reparse the page
   MathJax.typeset();
   // rebind autocomplete for links input
@@ -687,15 +684,13 @@ export function escapeExtendedQuery(searchTerm: string): string {
 
 export function replaceWithTitle(): void {
   document.querySelectorAll('[data-replace-with-title="true"]').forEach((el: HTMLElement) => {
-    // mask error notifications
-    ApiC.notifOnError = false;
     // view mode is innerText
     let changedAttribute = 'innerText';
     // edit mode is value because it's an input
     if (el instanceof HTMLInputElement) {
       changedAttribute = 'value';
     }
-    ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
+    ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`, { notifOnError: 0 }).then(json => {
       // VIEW MODE (non-input): default = 'entity title'
       let value;
       const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';

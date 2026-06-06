@@ -23,9 +23,17 @@
               </select>
             </div>
           </div>
-          <h5><label for='containerMultiplierInput'>{{ 'Adjust number of containers stored'|trans }}</label></h5>
-          <input type='number' value='1' min='1' id='containerMultiplierInput' autocomplete='off' class='form-control' />
-          <h5 class='mt-2'>{{ 'Select a storage location below'|trans }}</h5>
+          <h5><label for='containerMultiplierInput'>{{ 'Total number of containers to distribute'|trans }}</label></h5>
+          <input type='number' value='1' min='1' step='1' id='containerMultiplierInput' autocomplete='off' class='form-control' />
+          <div class='sticky-top bg-white py-2 border-bottom mb-2 mt-2' style='top:0; z-index:1'>
+            <div class='d-flex align-items-center'>
+              <span class='mr-auto'>
+                <span id='containerAssignedCount'>0</span> / <span id='containerTargetCount'>1</span> {{ 'assigned'|trans }}
+              </span>
+              <button type='button' class='btn btn-primary' id='storeContainersBtn' data-action='store-containers-distributed' disabled>{{ 'Store containers'|trans }}</button>
+            </div>
+          </div>
+          <h5 class='mt-2'>{{ 'Distribute containers across the storage locations below'|trans }}</h5>
           {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': true} %}
         </div>
       </div>

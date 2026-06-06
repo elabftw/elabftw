@@ -111,11 +111,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
         $ExtraFieldsKeys = new ExtraFieldsKeys($this->App->Users, '', -1);
 
-        // only show public to anon
-        if ($this->App->Session->get('is_anon')) {
-            $this->Entity->isAnon = true;
-        }
-
         // must be before the call to readShow
         if (($this->App->Users->userData['always_show_owned'] ?? null) === 1) {
             $this->Entity->alwaysShowOwned = true;
@@ -133,13 +128,6 @@ abstract class AbstractEntityController implements ControllerInterface
             limit: $this->App->Users->userData['limit_nb'],
             skipOrderPinned: $skipOrderPinned,
         );
-        $itemsArr = $this->Entity->readShow($DisplayParams);
-
-        // get tags separately
-        $tagsArr = array();
-        if (!empty($itemsArr)) {
-            $tagsArr = $this->Entity->getTags($itemsArr);
-        }
 
         // store the query parameters in the Session
         $this->App->Session->set('lastquery', $this->App->Request->getQueryString());
@@ -157,12 +145,10 @@ abstract class AbstractEntityController implements ControllerInterface
             'categoryArr' => $this->categoryArr,
             'statusArr' => $this->statusArr,
             'favTagsArr' => $favTagsArr,
-            'itemsArr' => $itemsArr,
             'pageTitle' => $this->getPageTitle(),
             'metakeyArrForSelect' => array_column($ExtraFieldsKeys->readAll(), 'extra_fields_key'),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
-            'tagsArr' => $tagsArr,
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),
             'usersArr' => $this->App->Users->readAllFromTeam(),

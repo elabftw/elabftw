@@ -240,14 +240,6 @@
   {# DOWNLOAD / EXPORT MENU #}
   {% include 'export-menu.html' %}
 
-  <div class='vertical-separator'></div>
-  {# for entities(experiments & items): create template from entity #}
-  {% if Entity.entityType.value == 'experiments' or Entity.entityType.value == 'items' %}
-    <a data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments' ? 'experiments_templates' : 'items_types' }}' data-entityid='{{ Entity.id }}' href='#' class='btn btn-ghost ml-2' title='{{ 'Create template from entry'|trans }}' aria-label='{{ 'Create template from entry'|trans }}'>
-      <i class='fas fa-file-circle-plus fa-fw'></i>
-    </a>
-  {% endif %}
-
   <div class='ml-auto d-flex flex-wrap align-items-center'>
     {% if not App.Session.has('is_anon') %}
     {% if mode == 'edit' %}
@@ -305,6 +297,14 @@
           {% if canTransfer %}data-action='toggle-modal' data-target='ownerModal'{% endif %}>
           <i class='fas fa-people-arrows fa-fw {{ (not canTransfer or Entity.isReadOnly) ? 'color-weak' }}' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}
         </button>
+        {# CONVERT TO TEMPLATE #}
+        {# for entities(experiments & items): create template from entity #}
+        {% if Entity.entityType.value == 'experiments' or Entity.entityType.value == 'items' %}
+        <button type='button' class='dropdown-item {{ Entity.isReadOnly ? 'disabled' }}' data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments' ? 'experiments_templates' : 'items_types' }}' data-entityid='{{ Entity.id }}' title='{{ 'Create template from entry'|trans }}'>
+          <i class='fas fa-file-circle-plus fa-fw'></i> {{ 'Create template from entry'|trans }}
+        </button>
+        {% endif %}
+
         {# REVISIONS #}
         <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
         {# CHANGELOG #}

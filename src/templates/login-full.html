@@ -30,10 +30,10 @@
         {% endfor %}
       </select>
       <label for='teaminit_firstname_input'>{{ 'Firstname'|trans }}</label>
-      <input required class='form-control' name='teaminit_firstname' value='{{ App.Session.get('teaminit_firstname') }}' />
+      <input required class='form-control' id='teaminit_firstname_input' name='teaminit_firstname' value='{{ App.Session.get('teaminit_firstname') }}' />
 
       <label for='teaminit_lastname_input'>{{ 'Lastname'|trans }}</label>
-      <input required class='form-control' name='teaminit_lastname' value='{{ App.Session.get('teaminit_lastname') }}' />
+      <input required class='form-control' id='teaminit_lastname_input' name='teaminit_lastname' value='{{ App.Session.get('teaminit_lastname') }}' />
       <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>
     </div>
   </form>
@@ -112,7 +112,7 @@
           </div>
         </div>
 
-        <div class='d-flex align-itemc-center mt-2'>
+        <div class='d-flex align-items-center mt-2'>
           {# Remember me checkbox #}
           {% if App.Config.configArr.remember_me_allowed %}
             <div class='form-check'>

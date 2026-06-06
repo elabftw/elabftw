@@ -451,8 +451,10 @@
   </div>
   <hr>
   {% endmacro %}
-  {{ _self.batchTransferOwnership('Experiments owner', 'users-experiments', allTeamUsersArr) }}
-  {{ _self.batchTransferOwnership('Resources owner', 'users-resources', allTeamUsersArr) }}
+  {{ _self.batchTransferOwnership('Experiments owner', 'users_experiments', allTeamUsersArr) }}
+  {{ _self.batchTransferOwnership('Resources owner', 'users_resources', allTeamUsersArr) }}
+  {{ _self.batchTransferOwnership('Experiments Templates owner', 'users_experiments_templates', allTeamUsersArr) }}
+  {{ _self.batchTransferOwnership('Resources Templates owner', 'users_resources_templates', allTeamUsersArr) }}
   </section>
 
   <div class='row mx-0 mt-3'><p>{{ 'With selected:'|trans }}</p></div>

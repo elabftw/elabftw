@@ -541,6 +541,7 @@ CREATE TABLE `idps` (
   `fname_attr` varchar(255) NULL DEFAULT NULL,
   `lname_attr` varchar(255) NULL DEFAULT NULL,
   `orgid_attr` varchar(255) NULL DEFAULT NULL,
+  `orcid_attr` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

@@ -15,7 +15,6 @@ namespace Elabftw\Services;
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
 

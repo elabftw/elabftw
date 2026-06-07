@@ -43,7 +43,7 @@
         {% if entityData.status_title %}
           <strong>{{ 'Status'|trans }}:</strong> {{ entityData.status_title }}<br>
         {% endif %}
-        <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}<br>
+        <strong>{{ 'Created by'|trans }}:</strong> {{ entityData.fullname }}{% if entityData.orcid %}<br>ORCID: <a href='https://orcid.org/{{ entityData.orcid }}' target='_blank' rel='noopener'>{{ entityData.orcid }}</a>{% endif %}<br>
         <strong>{{ 'Team'|trans }}:</strong> {{ entityData.team_name }}<br>
       </p>
     </div>

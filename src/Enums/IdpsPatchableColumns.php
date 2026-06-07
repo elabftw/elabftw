@@ -23,4 +23,5 @@ enum IdpsPatchableColumns: string
     case FnameAttr = 'fname_attr';
     case LnameAttr = 'lname_attr';
     case OrgidAttr = 'orgid_attr';
+    case OrcidAttr = 'orcid_attr';
 }

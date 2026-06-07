@@ -102,6 +102,7 @@ class Users extends AbstractRest
         bool $alertAdmin = true,
         ?string $validUntil = null,
         ?string $orgid = null,
+        ?string $orcid = null,
         bool $allowTeamCreation = false,
         bool $skipDomainValidation = false,
         BinaryValue $canManageCompounds = BinaryValue::False,
@@ -142,6 +143,7 @@ class Users extends AbstractRest
             `lang`,
             `valid_until`,
             `orgid`,
+            `orcid`,
             `is_sysadmin`,
             `default_read`,
             `default_write`,
@@ -157,6 +159,7 @@ class Users extends AbstractRest
             :lang,
             :valid_until,
             :orgid,
+            :orcid,
             :is_sysadmin,
             :default_read,
             :default_write,
@@ -173,6 +176,7 @@ class Users extends AbstractRest
         $req->bindValue(':lang', $Config->configArr['lang']);
         $req->bindValue(':valid_until', $validUntil);
         $req->bindValue(':orgid', $orgid);
+        $req->bindValue(':orcid', $orcid);
         $req->bindValue(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
         $req->bindValue(':default_read', $defaultCan);
         $req->bindValue(':default_write', $defaultCan);

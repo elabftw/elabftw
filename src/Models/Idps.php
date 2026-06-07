@@ -45,6 +45,8 @@ final class Idps extends AbstractRest implements IdpsInterface
 
     private const string ORGID_ATTR = 'urn:oid:0.9.2342.19200300.100.1.1';
 
+    private const string ORCID_ATTR = 'urn:oid:1.3.6.1.4.1.5923.1.1.1.16';
+
     public function __construct(private Users $requester, ?int $id = null)
     {
         parent::__construct();
@@ -69,6 +71,7 @@ final class Idps extends AbstractRest implements IdpsInterface
             fname_attr: $reqBody['fname_attr'],
             lname_attr: $reqBody['lname_attr'],
             orgid_attr: $reqBody['orgid_attr'] ?? null,
+            orcid_attr: $reqBody['orcid_attr'] ?? null,
         );
     }
 
@@ -174,7 +177,7 @@ final class Idps extends AbstractRest implements IdpsInterface
             }
             $this->setId($id);
             // when coming from XML, we do not overwrite these attributes
-            $immutableFields = array('name', 'email_attr', 'fname_attr', 'lname_attr', 'team_attr', 'orgid_attr');
+            $immutableFields = array('name', 'email_attr', 'fname_attr', 'lname_attr', 'team_attr', 'orgid_attr', 'orcid_attr');
             foreach ($immutableFields as $key) {
                 unset($idp[$key]);
             }
@@ -228,12 +231,13 @@ final class Idps extends AbstractRest implements IdpsInterface
         string $fname_attr = self::FNAME_ATTR,
         string $lname_attr = self::LNAME_ATTR,
         ?string $orgid_attr = self::ORGID_ATTR,
+        ?string $orcid_attr = self::ORCID_ATTR,
         int $enabled = 1,
         ?int $source = null,
         ?array $certs = array(),
         ?array $endpoints = array(),
     ): int {
-        $idpId = $this->createIdp($name, $entityid, $email_attr, $team_attr, $fname_attr, $lname_attr, $orgid_attr, $enabled, $source);
+        $idpId = $this->createIdp($name, $entityid, $email_attr, $team_attr, $fname_attr, $lname_attr, $orgid_attr, $orcid_attr, $enabled, $source);
         if (!empty($certs)) {
             $IdpsCerts = new IdpsCerts($this->requester, $idpId);
             foreach ($certs as $cert) {
@@ -328,11 +332,12 @@ final class Idps extends AbstractRest implements IdpsInterface
         string $fname_attr = self::FNAME_ATTR,
         string $lname_attr = self::LNAME_ATTR,
         ?string $orgid_attr = self::ORGID_ATTR,
+        ?string $orcid_attr = self::ORCID_ATTR,
         int $enabled = 1,
         ?int $source = null,
     ): int {
-        $sql = 'INSERT INTO idps(name, entityid, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, enabled, source)
-            VALUES(:name, :entityid, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :enabled, :source)';
+        $sql = 'INSERT INTO idps(name, entityid, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, orcid_attr, enabled, source)
+            VALUES(:name, :entityid, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :orcid_attr, :enabled, :source)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
@@ -341,6 +346,7 @@ final class Idps extends AbstractRest implements IdpsInterface
         $req->bindParam(':fname_attr', $fname_attr);
         $req->bindParam(':lname_attr', $lname_attr);
         $req->bindParam(':orgid_attr', $orgid_attr);
+        $req->bindParam(':orcid_attr', $orcid_attr);
         $req->bindParam(':enabled', $enabled, PDO::PARAM_INT);
         $req->bindParam(':source', $source);
         $this->Db->execute($req);

@@ -1669,6 +1669,8 @@ components:
           type: string
         orgid_attr:
           type: string
+        orcid_attr:
+          type: string
         source:
           type: int
           nullable: true
@@ -6835,6 +6837,9 @@ paths:
                 orgid_attr:
                   type: string
                   description: What attribute to look for the internal id.
+                orcid_attr:
+                  type: string
+                  description: What attribute to look for the ORCID.
       responses:
         '201':
           description: The idp has been created.

@@ -23,6 +23,7 @@ use Override;
 use PDO;
 
 use function is_int;
+use function array_column;
 
 /**
  * An entity like Templates or ItemsTypes. Template as opposed to Concrete: Experiments and Items
@@ -103,5 +104,49 @@ abstract class AbstractTemplateEntity extends AbstractEntity
         }
 
         return $newId;
+    }
+
+    public function createTemplateFrom(int $entityId, ?string $title = null): int
+    {
+        $SourceEntity = $this->entityType->toConcreteEntity($this->Users, $entityId);
+        $source = $SourceEntity->readOne();
+
+        $id = $this->create(
+            title: $title ?? $source['title'],
+            body: $source['body'],
+            canreadBase: BasePermissions::from($source['canread_base']),
+            canwriteBase: BasePermissions::from($source['canwrite_base']),
+            canread: $source['canread'],
+            canwrite: $source['canwrite'],
+            canreadIsImmutable: (bool) $source['canread_is_immutable'],
+            canwriteIsImmutable: (bool) $source['canwrite_is_immutable'],
+            category: $source['category'],
+            status: $source['status'],
+            metadata: $source['metadata'],
+            hideMainText: BinaryValue::from($source['hide_main_text']),
+            rating: $source['rating'],
+            contentType: BodyContentType::from($source['content_type']),
+            createdFromType: $SourceEntity->entityType,
+            createdFromId: $entityId,
+        );
+
+        // copy links, compounds & tags
+        $freshSelf = new $this($this->Users, $id);
+        $ItemsLinks = LinksFactory::getItemsLinks($SourceEntity);
+        $ItemsLinks->duplicate($entityId, $id, toTemplate: true);
+
+        $ExperimentsLinks = LinksFactory::getExperimentsLinks($SourceEntity);
+        $ExperimentsLinks->duplicate($entityId, $id, toTemplate: true);
+
+        $CompoundsLinks = LinksFactory::getCompoundsLinks($SourceEntity);
+        $CompoundsLinks->duplicate($entityId, $id, toTemplate: true);
+
+        $SourceEntity->Uploads->duplicate($freshSelf);
+
+        $tags = array_column($SourceEntity->Tags->readAll(), 'tag');
+        foreach ($tags as $tag) {
+            $freshSelf->Tags->postAction(Action::Create, array('tag' => $tag));
+        }
+        return $id;
     }
 }

@@ -954,9 +954,6 @@ abstract class AbstractEntity extends AbstractRest
 
         $freshSelf = new $this($this->Users, $id);
 
-        //        LinksFactory::getItemsLinks($sourceEntity)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        //        LinksFactory::getExperimentsLinks($sourceEntity)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        //        LinksFactory::getCompoundsLinks($sourceEntity)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getItemsLinks($this)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getExperimentsLinks($this)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getCompoundsLinks($this)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);

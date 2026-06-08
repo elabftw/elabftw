@@ -8,7 +8,8 @@
    */
   import { onMount, tick } from 'svelte';
   import { ApiC } from '../api';
-    import { relativeMoment } from '../misc';
+  import { relativeMoment } from '../misc';
+  import i18next from '../i18n';
 
   type RorAssociation = {
     teams_id: number;
@@ -24,6 +25,7 @@
 
   const rorPattern = /^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$/;
   const rorPatternHtml = '(?:https://ror\\.org/)?0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}';
+  const t = i18next.t.bind(i18next);
 
   function normalizeRor(value: string): string {
     return value.trim().toLowerCase().replace(/^https:\/\/ror\.org\//, '');
@@ -74,6 +76,7 @@
     rors.length;
 
     void tick().then(() => {
+      // remove the text so it is reloaded
       document.querySelectorAll('.relative-moment').forEach(el => {
         el.textContent = '';
       });
@@ -101,8 +104,10 @@
   }
 
   async function deleteRor(ror: string): Promise<void> {
-    await ApiC.delete(`teams/current/rors/${encodeURIComponent(ror)}`);
-    await loadRors();
+    if (confirm(t('generic-delete-warning'))) {
+      await ApiC.delete(`teams/current/rors/${encodeURIComponent(ror)}`);
+      await loadRors();
+    }
   }
 
   onMount(async () => {
@@ -115,18 +120,18 @@
 </script>
 
 <div class='pl-3 mt-2'>
-  <h3>Existing ROR associations</h3>
 
   {#if isInitialLoading}
-    <p>Loading…</p>
-  {:else}
+    <p>{t('loading')}…</p>
+  {:else if rors.length > 0}
+    <h3>{t('existing-ror-associations')}</h3>
     <table class='table' aria-describedby='existingRors' data-table-sort='true'>
       <thead>
         <tr>
           <th scope='col'>ROR</th>
-          <th scope='col'>Organization name</th>
-          <th scope='col'>Association date</th>
-          <th scope='col'><span class='sr-only'>Action</span></th>
+          <th scope='col'>{t('organisation-name')}</th>
+          <th scope='col'>{t('association-date')}</th>
+          <th scope='col'><span class='sr-only'>{t('action')}</span></th>
         </tr>
       </thead>
 
@@ -146,21 +151,21 @@
               </span>
             </td>
 
-            <td data-label='Organization name'>
+            <td data-label={t('organisation-name')}>
               {organizationNames[rorAssociation.ror] ?? rorAssociation.ror}
             </td>
 
-            <td data-label='Association date'>
+            <td data-label={t('association-date')}>
               <span class='relative-moment' title={rorAssociation.created_at}></span>
             </td>
 
             <td>
-              <span class='sr-only'>Action</span>
+              <span class='sr-only'>{t('action')}</span>
               <button
                 type='button'
                 class='btn btn-danger-ghost'
-                title='Delete'
-                aria-label='Delete'
+                title={t('delete')}
+                aria-label={t('delete')}
                 on:click={() => deleteRor(rorAssociation.ror)}
               >
                 <i class='fas fa-trash-alt fa-fw'></i>
@@ -170,10 +175,12 @@
         {/each}
       </tbody>
     </table>
+  {:else}
+    {t('no-rors')}
   {/if}
 
   <form on:submit|preventDefault={addRor}>
-    <label for='ror_input'>Add Research Organization Registry (ROR) identifier</label>
+    <label for='ror_input'>{t('ror-input-label')}</label>
 
     <div class='input-group'>
       <div class='input-group-prepend'>
@@ -185,7 +192,7 @@
         name='ror'
         id='ror_input'
         class='form-control col-md-4'
-        title='Enter a valid 9-character ROR ID, for example 04t0gwh46 or https://ror.org/04t0gwh46'
+        title={t('ror-input-title')}
         required
         pattern={rorPatternHtml}
         placeholder='04t0gwh46'
@@ -197,10 +204,10 @@
         <button
           class='btn btn-primary'
           type='submit'
-          title='Add'
+          title={t('add')}
           disabled={isSubmitting}
         >
-          Add
+          {t('add')}
         </button>
       </div>
     </div>

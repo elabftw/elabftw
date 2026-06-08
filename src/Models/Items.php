@@ -155,10 +155,8 @@ final class Items extends AbstractConcreteEntity
             body: $this->entityData['body'],
             canreadBase: BasePermissions::from($this->entityData['canread_base']),
             canwriteBase: BasePermissions::from($this->entityData['canwrite_base']),
-            canbookBase: BasePermissions::from($this->entityData['canbook_base']),
             canread: $this->entityData['canread'],
             canwrite: $this->entityData['canwrite'],
-            canbook: $this->entityData['canbook'],
             category: $this->entityData['category'],
             status: $this->entityData['status'],
             metadata: $metadata,
@@ -166,6 +164,8 @@ final class Items extends AbstractConcreteEntity
             contentType: BodyContentType::from($this->entityData['content_type']),
             createdFromType: $this->entityType,
             createdFromId: $this->id,
+            canbook: $this->entityData['canbook'],
+            canbookBase: BasePermissions::from($this->entityData['canbook_base']),
         );
 
         // add missing canbook
@@ -174,7 +174,7 @@ final class Items extends AbstractConcreteEntity
         /** @psalm-suppress PossiblyNullArgument */
         $this->ExperimentsLinks->duplicate($this->id, $newId);
         $this->ItemsLinks->duplicate($this->id, $newId);
-        $this->Steps->duplicate($this->id, $newId);
+        $this->Steps->duplicate($fresh, $this->id, $newId);
         $this->Tags->copyTags($newId);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $CompoundsLinks->duplicate($this->id, $newId);

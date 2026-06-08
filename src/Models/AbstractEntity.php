@@ -199,38 +199,7 @@ abstract class AbstractEntity extends AbstractRest
     // create an entity from a template
     public function createFromTemplate(int $templateId, ?string $title = null): int
     {
-        $TemplateType = $this->entityType->toTemplateEntity($this->Users, $templateId);
-        $template = $TemplateType->readOne();
-        $id = $this->create(
-            title: $title ?? $template['title'],
-            body: $template['body'],
-            canreadBase: BasePermissions::from($template['canread_target_base']),
-            canwriteBase: BasePermissions::from($template['canwrite_target_base']),
-            canread: $template['canread_target'],
-            canwrite: $template['canwrite_target'],
-            canreadIsImmutable: (bool) $template['canread_is_immutable'],
-            canwriteIsImmutable: (bool) $template['canwrite_is_immutable'],
-            category: $template['category'],
-            status: $template['status'],
-            metadata: $template['metadata'],
-            hideMainText: BinaryValue::from($template['hide_main_text']),
-            rating: $template['rating'],
-            contentType: BodyContentType::from($template['content_type']),
-            createdFromType: $TemplateType->entityType,
-            createdFromId: $templateId,
-        );
-        $tags = array_column($TemplateType->Tags->readAll(), 'tag');
-        $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
-        $this->ExperimentsLinks->duplicate($templateId, $id, fromTemplate: true);
-        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, fromTemplate: true);
-        $this->Steps->duplicate($templateId, $id, fromTemplate: true);
-        $freshSelf = new $this($this->Users, $id);
-        $TemplateType->Uploads->duplicate($freshSelf);
-        foreach ($tags as $tag) {
-            $freshSelf->Tags->postAction(Action::Create, array('tag' => $tag));
-        }
-        return $id;
+        return $this->createFromEntity($this->entityType->toTemplateEntity($this->Users, $templateId), $templateId, $title);
     }
 
     #[Override]
@@ -954,6 +923,51 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions->dbInsert($this->entityData['body']);
 
         return $this->readOne();
+    }
+
+    protected function createFromEntity(
+        self $sourceEntity,
+        int $sourceId,
+        ?string $title = null,
+    ): int {
+        $fromTemplate = $sourceEntity instanceof AbstractTemplateEntity;
+        $toTemplate = $this instanceof AbstractTemplateEntity;
+        $source = $sourceEntity->readOne();
+        $id = $this->create(
+            title: $title ?? $source['title'],
+            body: $source['body'],
+            canreadBase: BasePermissions::from($source[$fromTemplate ? 'canread_target_base' : 'canread_base']),
+            canwriteBase: BasePermissions::from($source[$fromTemplate ? 'canwrite_target_base' : 'canwrite_base']),
+            canread: $source[$fromTemplate ? 'canread_target' : 'canread'],
+            canwrite: $source[$fromTemplate ? 'canwrite_target' : 'canwrite'],
+            canreadIsImmutable: (bool) $source['canread_is_immutable'],
+            canwriteIsImmutable: (bool) $source['canwrite_is_immutable'],
+            category: $source['category'],
+            status: $source['status'],
+            metadata: $source['metadata'],
+            hideMainText: BinaryValue::from($source['hide_main_text']),
+            rating: $source['rating'],
+            contentType: BodyContentType::from($source['content_type']),
+            createdFromType: $sourceEntity->entityType,
+            createdFromId: $sourceId,
+        );
+
+        $freshSelf = new $this($this->Users, $id);
+
+        //        LinksFactory::getItemsLinks($sourceEntity)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        //        LinksFactory::getExperimentsLinks($sourceEntity)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        //        LinksFactory::getCompoundsLinks($sourceEntity)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getItemsLinks($this)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getExperimentsLinks($this)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getCompoundsLinks($this)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        $sourceEntity->Uploads->duplicate($freshSelf);
+        $sourceEntity->Steps->duplicate($freshSelf, $sourceId, $id);
+
+        foreach (array_column($sourceEntity->Tags->readAll(), 'tag') as $tag) {
+            $freshSelf->Tags->postAction(Action::Create, array('tag' => $tag));
+        }
+
+        return $id;
     }
 
     protected function getTagsHydrationData(array $entityIds): array

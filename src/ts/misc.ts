@@ -116,7 +116,11 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
     const params: Record<string, unknown> = {};
     params[el.dataset.target as string] = value;
 
-    await ApiC.patch(`${el.dataset.model}`, params);
+    if (el.dataset.method === 'delete') {
+      await ApiC.delete(`${el.dataset.model}`);
+    } else {
+      await ApiC.patch(`${el.dataset.model}`, params);
+    }
 
     // success side-effect for the generic path
     if (el.dataset.reload) {
@@ -231,8 +235,6 @@ export function collectForm(form: HTMLElement): object {
       el.classList.add('border-danger');
       el.focus();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // TODO maybe have "Input validation failed" or something more user friendly. That Invalid syntax error is weird.
-      notify.error('invalid-info');
       throw new Error(i18next.t('invalid-info'));
     }
     let value = el.value;
@@ -1012,4 +1014,29 @@ export function ensureTogglableSectionIsOpen(iconId: string, divId: string): voi
   div.removeAttribute('hidden');
   // and scroll page into editor view
   div.scrollIntoView({ behavior: 'smooth' });
+}
+
+export async function translateRors(): Promise<void> {
+   const promises = Array.from(document.querySelectorAll('.is-ror')).map(async el => {
+    const span = el as HTMLElement;
+    span.innerText = await translateRor(span.innerText);
+  });
+
+  await Promise.all(promises);
+}
+
+async function translateRor(ror: string): Promise<string> {
+  const url = `https://api.ror.org/v2/organizations/${encodeURIComponent(ror)}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`ROR API returned HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data['names'][0]['value'];
 }

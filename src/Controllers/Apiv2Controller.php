@@ -63,6 +63,7 @@ use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
@@ -103,6 +104,8 @@ final class Apiv2Controller extends AbstractApiController
     private RestInterface $Model;
 
     private ?int $subId = null;
+
+    private ?string $subIdString = null;
 
     private bool $hasSubmodel = false;
 
@@ -162,7 +165,9 @@ final class Apiv2Controller extends AbstractApiController
         $this->Model = $this->getModel();
         // load submodel
         if (!empty($req[5])) {
-            $subId = (int) ($req[6] ?? '');
+            $subIdString = $req[6];
+            $subId = (int) $subIdString ?? 0;
+            $this->subIdString = !empty($subIdString) ? $subIdString : null;
             $this->subId = $subId > 0 ? $subId : null;
             $this->Model = $this->getSubModel(ApiSubModels::tryFrom((string) $req[5]));
             $this->hasSubmodel = true;
@@ -387,6 +392,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::ResourcesCategories => new ResourcesCategories($this->Model, $this->subId),
                 ApiSubModels::ItemsStatus => new ItemsStatus($this->Model, $this->subId),
                 ApiSubModels::ProcurementRequests => new ProcurementRequests($this->Model, $this->subId),
+                ApiSubModels::Rors => new Teams2Rors($this->Model, $this->subIdString),
                 ApiSubModels::Tags => new TeamTags($this->requester, $this->subId),
                 ApiSubModels::Teamgroups => new TeamGroups($this->requester, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Teams),

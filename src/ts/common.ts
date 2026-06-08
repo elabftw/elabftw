@@ -32,6 +32,7 @@ import {
   toggleGrayClasses,
   toggleIcon,
   TomSelect,
+  translateRors,
   updateEntityBody,
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
@@ -193,6 +194,7 @@ listenTrigger();
 adjustHiddenState();
 relativeMoment();
 replaceWithTitle();
+translateRors();
 
 // set a random color to all the "create new" catstat modals
 document.querySelectorAll('.randomColor').forEach((input: HTMLInputElement) => {

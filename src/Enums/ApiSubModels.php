@@ -35,6 +35,7 @@ enum ApiSubModels: string
     case ProcurementRequests = 'procurement_requests';
     case RequestActions = 'request_actions';
     case Revisions = 'revisions';
+    case Rors = 'rors';
     case SigKeys = 'sig_keys';
     case Status = 'status';
     case Steps = 'steps';
@@ -86,6 +87,7 @@ enum ApiSubModels: string
                 self::ResourcesCategories,
                 self::ItemsStatus,
                 self::ProcurementRequests,
+                self::Rors,
                 self::Status,
                 self::Tags,
                 self::Teamgroups,

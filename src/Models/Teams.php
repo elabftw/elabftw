@@ -21,6 +21,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\TeamParam;
+use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;

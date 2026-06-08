@@ -206,6 +206,7 @@ final class Config extends AbstractRest
             ('blox_enabled', '1'),
             ('enforce_mfa', '0'),
             ('emit_audit_logs', '0'),
+            ('admin_only_unarchive', '0'),
             ('admins_create_users_remote_dir', '0'),
             ('min_password_length', '12'),
             ('password_complexity_requirement', '0'),

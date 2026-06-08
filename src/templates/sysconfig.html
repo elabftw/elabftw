@@ -171,6 +171,7 @@
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to add existing users to their team'|trans, 'slug': 'admins_import_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to archive users'|trans, 'slug': 'admins_archive_users'} %}
+    {% include 'binary-setting.html' with {'label': 'Only administrators can restore archived entries'|trans, 'slug': 'admin_only_unarchive', 'help': 'When enabled, only team administrators and sysadmins can unarchive entries. Users with write access will not be able to restore archived experiments or resources.'|trans} %}
 
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>

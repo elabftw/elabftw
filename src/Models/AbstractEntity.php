@@ -531,7 +531,16 @@ abstract class AbstractEntity extends AbstractRest
             Action::SetNextCustomId => $this->update(new EntityParams('custom_id', $this->getNextIdempotentCustomId())),
             Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
-            Action::Unarchive => $this->handleArchivedState(from: State::Archived, to: State::Normal, toggleLock: fn() => $this->unlock()),
+            Action::Unarchive => (
+                function () {
+                    // Guard: if admin_only_unarchive is enabled, only admins can unarchive
+                    $Config = \Elabftw\Models\Config::getConfig();
+                    if ($Config->configArr['admin_only_unarchive'] === '1' && !$this->Users->isAdmin && !$this->Users->isSysadmin) {
+                        throw new IllegalActionException(_('Only an administrator can restore an archived entry.'));
+                    }
+                    $this->handleArchivedState(from: State::Archived, to: State::Normal, toggleLock: fn() => $this->unlock());
+                }
+            )(),
             Action::UpdateMetadataField => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {

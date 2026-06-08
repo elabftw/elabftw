@@ -373,6 +373,7 @@ if (window.location.pathname === '/sysconfig.php') {
       (document.getElementById('idpModal_lname_attr') as HTMLInputElement).value = idp.lname_attr;
       (document.getElementById('idpModal_team_attr') as HTMLInputElement).value = idp.team_attr;
       (document.getElementById('idpModal_orgid_attr') as HTMLInputElement).value = idp.orgid_attr;
+      (document.getElementById('idpModal_orcid_attr') as HTMLInputElement).value = idp.orcid_attr;
       document.getElementById('idpModalSaveButton').dataset.id = idp.id;
       $('#idpModal').modal('show');
     });

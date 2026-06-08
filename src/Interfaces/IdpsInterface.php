@@ -43,6 +43,7 @@ interface IdpsInterface
         string $fname_attr,
         string $lname_attr,
         ?string $orgid_attr,
+        ?string $orcid_attr,
         int $enabled = 1,
         ?int $source = null,
         ?array $certs = array(),

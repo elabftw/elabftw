@@ -1661,14 +1661,19 @@ components:
           type: integer
         email_attr:
           type: string
-        team_attr:
-          type: string
         fname_attr:
           type: string
         lname_attr:
           type: string
+        team_attr:
+          type: string
+          nullable: true
         orgid_attr:
           type: string
+          nullable: true
+        orcid_attr:
+          type: string
+          nullable: true
         source:
           type: int
           nullable: true
@@ -6823,18 +6828,24 @@ paths:
                 email_attr:
                   type: string
                   description: What attribute to look for the email.
-                team_attr:
-                  type: string
-                  description: What attribute to look for the team.
                 fname_attr:
                   type: string
                   description: What attribute to look for the firstname.
                 lname_attr:
                   type: string
                   description: What attribute to look for the lastname.
+                team_attr:
+                  type: string
+                  description: What attribute to look for the team.
+                  nullable: true
                 orgid_attr:
                   type: string
                   description: What attribute to look for the internal id.
+                  nullable: true
+                orcid_attr:
+                  type: string
+                  description: What attribute to look for the ORCID.
+                  nullable: true
       responses:
         '201':
           description: The idp has been created.

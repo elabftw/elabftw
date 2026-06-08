@@ -51,6 +51,7 @@ $text-muted: var(--medium);
 @import 'tom-select';
 @import 'tinymce';
 @import 'prism';
+@import 'skeletons';
 
 /* Font is Lato */
 @font-face {
@@ -857,9 +858,9 @@ tr:first-child td {
 }
 
 .side-panel {
-  background: var(--chrome-bg);
+  background: var(--mediumstrong);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-  color: var(--chrome-fg);
+  color: var(--white);
   height: 100%;
   left: 0;
   overflow: hidden;
@@ -872,16 +873,28 @@ tr:first-child td {
   .fas,
   .far,
   h3 {
-    color: var(--chrome-fg);
+    color: var(--white);
+  }
+
+  .btn-primary {
+    .fas,
+    .far {
+      color: inherit;
+    }
+  }
+
+  .list-group-item {
+    background-color: var(--white);
+    border: 1px solid var(--chrome-muted);
+    color: var(--mediumstrong);
+
+    .fas {
+      color: var(--mediumstrong);
+    }
   }
 
   .side-panel-item {
     padding: 5px 0 5px 10px;
-
-    &.list-group-item {
-      background-color: var(--chrome-bg);
-      border: 1px solid var(--chrome-muted);
-    }
 
     /* Favtags will show up as selected */
     &.selected {
@@ -1140,6 +1153,8 @@ the form-control fails to do that so we do the border ourselves */
 /* TAGS */
 .tag {
   background-color: var(--firstlevel);
+  /* selected tag will get orange border */
+  border: 1px solid transparent;
   border-radius: 5px;
   color: var(--mediumstrong);
   font: bold 80% Verdana, Arial, Helvetica, sans-serif;
@@ -1517,19 +1532,10 @@ input[type='color'] {
   position: fixed;
   right: 0.8%;
   top: calc(100vh - 15rem);
-
-  /* make the up arrow white or we can't see it */
-  svg {
-    color: var(--white);
-  }
 }
 
 #backToTopButton {
   transition: all 0.5s ease;
-
-  i {
-    color: var(--white);
-  }
 }
 
 #scrollTopBtnAnchor {
@@ -1846,6 +1852,31 @@ input:user-invalid {
 .logo-preview svg {
   height: 100px;
   width: 300px;
+}
+
+.filter-menu {
+  min-width: 18rem;
+}
+
+.filter-menu .ts-wrapper {
+  width: 100%;
+}
+
+.filter-menu .ts-control {
+  min-height: 2.25rem;
+}
+
+.owner {
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 1px;
+}
+
+.active-filter-badge {
+  background-color: var(--firstlevel);
+  border: 1px solid var(--secondlevel);
+  border-radius: 5px;
+  padding: 0.25rem;
 }
 
 .malleable {

@@ -101,6 +101,9 @@ use function json_decode;
 use function str_ends_with;
 use function str_replace;
 use function ucfirst;
+use function array_fill;
+use function array_map;
+use function count;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -140,8 +143,6 @@ abstract class AbstractEntity extends AbstractRest
     public string $idFilter = '';
 
     public bool $isReadOnly = false;
-
-    public bool $isAnon = false;
 
     // inserted in sql
     public array $extendedValues = array();
@@ -454,7 +455,6 @@ abstract class AbstractEntity extends AbstractRest
         $EntitySqlBuilder = $this->getSqlBuilder();
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
-            $extended,
             $displayParams->getRelatedOrigin(),
         );
 
@@ -490,7 +490,9 @@ abstract class AbstractEntity extends AbstractRest
         $this->bindExtendedValues($req);
         $this->Db->execute($req);
 
-        return $req->fetchAll();
+        $entities = $req->fetchAll();
+
+        return $this->hydrateTags($entities);
     }
 
     /**
@@ -623,11 +625,7 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $queryParams ??= $this->getQueryParams();
-        if ($queryParams->getFastq()) {
-            return $this->readAllSimple($queryParams);
-        }
-        return $this->readShow($queryParams, true);
+        return $this->readShow($this->getQueryParams($queryParams?->getQuery()));
     }
 
     #[Override]
@@ -637,7 +635,7 @@ abstract class AbstractEntity extends AbstractRest
             throw new IllegalActionException('No id was set!');
         }
         $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
-        $sql = $this->getSqlBuilder()->getReadSqlBeforeWhere(true, true);
+        $sql = $this->getSqlBuilder()->getReadSqlBeforeWhere(true);
 
         $sql .= sprintf(' WHERE entity.id = %d', $this->id);
 
@@ -693,6 +691,8 @@ abstract class AbstractEntity extends AbstractRest
             $this->entityData['canbook_base_human'] = BasePermissions::from($this->entityData['canbook_base'])->toHuman();
         }
         $this->entityData['surrounding_bookers'] = $this->getSurroundingBookers();
+
+        $this->entityData = $this->hydrateTag($this->entityData);
 
         ksort($this->entityData);
         return $this->entityData;
@@ -999,6 +999,109 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions->dbInsert($this->entityData['body']);
 
         return $this->readOne();
+    }
+
+    protected function getTagsHydrationData(array $entityIds): array
+    {
+        if ($entityIds === array()) {
+            return array();
+        }
+
+        $placeholders = implode(',', array_fill(0, count($entityIds), '?'));
+
+        $sql = sprintf(
+            'SELECT
+                t2e.item_id,
+                t.id,
+                t.tag,
+                (ft.tags_id IS NOT NULL) AS is_favorite
+            FROM tags2entity AS t2e
+            JOIN tags AS t
+                ON t.id = t2e.tag_id
+            LEFT JOIN favtags2users AS ft
+                ON ft.users_id = ?
+               AND ft.tags_id = t.id
+            WHERE t2e.item_type = ?
+              AND t2e.item_id IN (%s)
+            ORDER BY t2e.item_id, t.tag',
+            $placeholders,
+        );
+
+        $stmt = $this->Db->prepare($sql);
+        $stmt->execute(array(
+            (int) $this->Users->userData['userid'],
+            $this->entityType->value,
+            ...$entityIds,
+        ));
+
+        $tagsByItemId = array();
+
+        foreach ($stmt->fetchAll() as $row) {
+            $itemId = (int) $row['item_id'];
+
+            if (!isset($tagsByItemId[$itemId])) {
+                $tagsByItemId[$itemId] = array(
+                    'tags' => array(),
+                    'tags_id' => array(),
+                    'tags_decoded' => array(),
+                );
+            }
+
+            $tagsByItemId[$itemId]['tags'][] = $row['tag'];
+            $tagsByItemId[$itemId]['tags_id'][] = (string) $row['id'];
+            $tagsByItemId[$itemId]['tags_decoded'][] = array(
+                'id' => (int) $row['id'],
+                'tag' => $row['tag'],
+                'is_favorite' => (bool) $row['is_favorite'],
+            );
+        }
+
+        return $tagsByItemId;
+    }
+
+    protected function hydrateTags(array $entities): array
+    {
+        $entityIds = array_map(static fn(array $entity): int => (int) $entity['id'], $entities);
+        $tagsByItemId = $this->getTagsHydrationData($entityIds);
+
+        foreach ($entities as &$entity) {
+            $itemId = (int) $entity['id'];
+            $tagData = $tagsByItemId[$itemId] ?? null;
+
+            if ($tagData === null) {
+                $entity['tags'] = null;
+                $entity['tags_id'] = null;
+                $entity['tags_decoded'] = array();
+                continue;
+            }
+
+            $entity['tags'] = implode('|', $tagData['tags']);
+            $entity['tags_id'] = implode(',', $tagData['tags_id']);
+            $entity['tags_decoded'] = $tagData['tags_decoded'];
+        }
+        unset($entity);
+
+        return $entities;
+    }
+
+    protected function hydrateTag(array $entity): array
+    {
+        $itemId = (int) $entity['id'];
+        $tagsByItemId = $this->getTagsHydrationData(array($itemId));
+        $tagData = $tagsByItemId[$itemId] ?? null;
+
+        if ($tagData === null) {
+            $entity['tags'] = null;
+            $entity['tags_id'] = null;
+            $entity['tags_decoded'] = array();
+            return $entity;
+        }
+
+        $entity['tags'] = implode('|', $tagData['tags']);
+        $entity['tags_id'] = implode(',', $tagData['tags_id']);
+        $entity['tags_decoded'] = $tagData['tags_decoded'];
+
+        return $entity;
     }
 
     protected function getSurroundingBookers(): array

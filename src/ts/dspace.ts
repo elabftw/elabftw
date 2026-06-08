@@ -10,7 +10,7 @@
  */
 import { ApiC } from './api';
 import i18next from './i18n';
-import { Action, FileType, Method } from './interfaces';
+import { Action, FileType } from './interfaces';
 import { rememberLastSelected, selectLastSelected } from './localStorage';
 import { notify } from './notify';
 import { entity } from './getEntity';
@@ -75,12 +75,8 @@ on('export-to-dspace', async (el, event: Event) => {
     { key: 'dc.description.abstract', value: params['abstract'] },
   ];
   const oldHTML = mkSpin(btn);
-  const prevNotifOnSaved = ApiC.notifOnSaved;
-  const prevNotifOnError = ApiC.notifOnError;
   try {
-    ApiC.notifOnSaved = false;
-    ApiC.notifOnError = false;
-    const res = await ApiC.send(Method.PATCH, 'dspace', { collection: params['collection'], metadata, entity, format});
+    const res = await ApiC.patch('dspace', { notifOnSaved: 0, notifOnError: 0, collection: params['collection'], metadata, entity, format});
     const data = await res.json();
     const itemPublicUrl = data.publicUrl;
     await saveDspaceIdAsExtraField(itemPublicUrl);
@@ -89,8 +85,6 @@ on('export-to-dspace', async (el, event: Event) => {
   } catch (e) {
     notify.error(e);
   } finally {
-    ApiC.notifOnSaved = prevNotifOnSaved;
-    ApiC.notifOnError = prevNotifOnError;
     mkSpinStop(btn, oldHTML);
   }
 });

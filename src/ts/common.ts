@@ -32,10 +32,10 @@ import {
   toggleGrayClasses,
   toggleIcon,
   TomSelect,
-  translateRors,
   updateEntityBody,
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
+  mountRors,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -126,6 +126,7 @@ TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
 makeSortableGreatAgain();
+mountRors();
 
 const userPrefs = document.getElementById('user-prefs').dataset;
 if (userPrefs.scDisabled === '0') {
@@ -194,7 +195,6 @@ listenTrigger();
 adjustHiddenState();
 relativeMoment();
 replaceWithTitle();
-translateRors();
 
 // set a random color to all the "create new" catstat modals
 document.querySelectorAll('.randomColor').forEach((input: HTMLInputElement) => {

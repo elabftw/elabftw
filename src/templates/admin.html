@@ -122,63 +122,7 @@
 
   <h2 class='p-2 pl-3 section-title' id='existingRors'>{{ 'Research Organization Registry (ROR)'|trans }}</h2>
 
-  <div class='pl-3 mt-2'>
-    <h3>{{ 'Existing ROR associations'|trans }}</h3>
-    <table class='table' aria-describedby='existingRors' data-table-sort='true'>
-      <thead>
-        <tr>
-          <th scope='col'>ROR</th>
-          <th scope='col'>{{ 'Organization name'|trans }}</th>
-          <th scope='col'>{{ 'Association date'|trans }}</th>
-          <th scope='col'><span class='sr-only'>{{ 'Action'|trans }}</span></th>
-        </tr>
-      </thead>
-      <tbody id='rorsTable'>
-        {% for ror in rors %}
-          <tr>
-            <td data-label='ROR'>
-              <span class='user-badge'>
-                <a href='https://ror.org/{{ ror.ror }}' rel='noopener' target='_blank' class='external-link'>{{ ror.ror }}</a>
-              </span>
-            </td>
-            <td data-label='{{ 'Organization name'|trans }}'><span class='is-ror'>{{ ror.ror }}</span></td>
-            <td data-label='{{ 'Association date'|trans }}'><span class='relative-moment' title='{{ ror.created_at }}'></span></td>
-            <td><span class='sr-only'>{{ 'Action'|trans }}</span><button type='button' class='btn btn-danger-ghost' data-trigger='click' data-model='teams/current/rors/{{ ror.ror }}' data-method='delete' data-reload='rorsTable' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <form id='rorForm'>
-      <label for='ror_input'>{{ 'Add Research Organization Registry (ROR) identifier'|trans }}</label>
-      <div class='input-group'>
-        <div class='input-group-prepend'>
-          <span class='input-group-text'>ROR</span>
-        </div>
-        <input
-          name='ror'
-          id='ror_input'
-          class='form-control col-md-4'
-          title='{{ 'Enter a valid 9-character ROR ID, for example 04t0gwh46'|trans }}'
-          required minlength='9' maxlength='9'
-          pattern='0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}'
-          placeholder='04t0gwh46'
-        />
-        <div class='input-group-append'>
-          <button
-            class='btn btn-primary'
-            type='submit'
-            data-action='create-ror'
-            title='{{ 'Add'|trans }}'
-          >
-          {{ 'Add'|trans }}
-          </button>
-        </div>
-      </div>
-    </form>
-    <hr>
-
-  </div>
+  <div class='mb-2' data-svelte-component='rors'></div>
 
   {# ONBOARDING EMAIL #}
   {% include 'onboarding-email.html' %}

@@ -165,8 +165,8 @@ final class Apiv2Controller extends AbstractApiController
         $this->Model = $this->getModel();
         // load submodel
         if (!empty($req[5])) {
-            $subIdString = $req[6];
-            $subId = (int) $subIdString ?? 0;
+            $subIdString = $req[6] ?? '';
+            $subId = (int) $subIdString;
             $this->subIdString = !empty($subIdString) ? $subIdString : null;
             $this->subId = $subId > 0 ? $subId : null;
             $this->Model = $this->getSubModel(ApiSubModels::tryFrom((string) $req[5]));

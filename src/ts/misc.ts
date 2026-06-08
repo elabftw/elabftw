@@ -26,6 +26,8 @@ import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/p
 import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
 import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
 import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
+import { mount } from 'svelte';
+import RorsSv from './components/Rors.svelte';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -1016,27 +1018,9 @@ export function ensureTogglableSectionIsOpen(iconId: string, divId: string): voi
   div.scrollIntoView({ behavior: 'smooth' });
 }
 
-export async function translateRors(): Promise<void> {
-   const promises = Array.from(document.querySelectorAll('.is-ror')).map(async el => {
-    const span = el as HTMLElement;
-    span.innerText = await translateRor(span.innerText);
+export function mountRors(): void {
+  document.querySelectorAll('[data-svelte-component="rors"]').forEach(el => {
+    const target = el as HTMLElement;
+    mount(RorsSv, {target});
   });
-
-  await Promise.all(promises);
-}
-
-async function translateRor(ror: string): Promise<string> {
-  const url = `https://api.ror.org/v2/organizations/${encodeURIComponent(ror)}`;
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`ROR API returned HTTP ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data['names'][0]['value'];
 }

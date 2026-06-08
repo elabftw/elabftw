@@ -20,6 +20,8 @@ use Elabftw\Services\Check;
 use Override;
 use PDO;
 
+use function sprintf;
+
 /**
  * Handle the teams to ror relationship. Submodel for teams.
  */
@@ -36,7 +38,7 @@ final class Teams2Rors extends AbstractRest
     #[Override]
     public function getApiPath(): string
     {
-        return sprintf('api/v2/teams/%d/rors/', $this->Teams->id);
+        return sprintf('api/v2/teams/%d/rors/', $this->Teams->id ?? 0);
     }
 
     #[Override]

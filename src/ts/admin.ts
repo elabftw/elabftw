@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import {
-  clearForm,
   collectForm,
   getSafeElementById,
   mkSpin,
@@ -87,16 +86,6 @@ on('run-action-selected', (el: HTMLElement) => {
     notify.success('entries-processed', { num: processed });
   }).finally(() => {
     mkSpinStop(btn, oldHTML);
-  });
-});
-
-on('create-ror', (_, event: Event) => {
-  event.preventDefault();
-  const form = document.getElementById('rorForm');
-  const params = collectForm(form);
-  ApiC.post(`teams/current/rors/${params['ror']}`).then(() => {
-    clearForm(form);
-    reloadElements(['rorsTable']);
   });
 });
 

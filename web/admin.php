@@ -22,7 +22,6 @@ use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\TeamTags;
 use Elabftw\Services\DummyRemoteDirectory;
 use Elabftw\Services\EairefRemoteDirectory;
@@ -58,8 +57,6 @@ try {
     $teamStats = $App->Teams->getStats($App->Users->userData['team']);
     $FavTags = new FavTags($App->Users);
     $favTagsArr = $FavTags->readAll();
-    $Teams2Rors = new Teams2Rors($App->Teams);
-
 
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
@@ -125,7 +122,6 @@ try {
         'teamGroupsArr' => $teamGroupsArr,
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
-        'rors' => $Teams2Rors->readAll(),
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'teamStats' => $teamStats,
         'teamsArr' => $App->Teams->selectAll(),

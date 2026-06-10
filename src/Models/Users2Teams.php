@@ -67,6 +67,17 @@ final class Users2Teams
         return $wasInserted;
     }
 
+    // archive user in all teams
+    public function archive(int $targetUserid): int
+    {
+        $UsersHelper = new UsersHelper($targetUserid);
+        $teams = $UsersHelper->getTeamsFromUserid();
+        foreach ($teams as $team) {
+            $this->patchIsArchived($targetUserid, $team['id'], BinaryValue::True);
+        }
+        return count($teams);
+    }
+
     public function patchUser2Team(array $params, int $targetUserid): int
     {
         return $this->patchIsSomething(

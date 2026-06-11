@@ -171,9 +171,16 @@
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to add existing users to their team'|trans, 'slug': 'admins_import_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to archive users'|trans, 'slug': 'admins_archive_users'} %}
-    {% include 'binary-setting.html' with {'label': 'Only administrators can restore archived entries'|trans, 'slug': 'admin_only_unarchive', 'help': 'When enabled, only team administrators and sysadmins can unarchive entries. Users with write access will not be able to restore archived experiments or resources.'|trans} %}
-
-    {% include 'binary-setting.html' with {'label': 'Allow original owner to restore archived entries'|trans, 'slug': 'admin_only_unarchive_allow_owner', 'help': 'When enabled, the original author of an entry can also unarchive it, in addition to administrators. Only has effect when \"Only administrators can restore archived entries\" is enabled.'|trans} %}
+    <div class='d-flex justify-content-between'>
+      <label for='admin_only_unarchive' class='col-form-label'>{{ 'Restore archived entries'|trans }}</label>
+      <select class='form-control col-md-3' data-trigger='change' data-model='config' data-target='admin_only_unarchive' id='admin_only_unarchive'>
+        <option value='0' {{- App.Config.configArr.admin_only_unarchive == '0' ? ' selected' }}>{{ 'Any user with write access'|trans }}</option>
+        <option value='1' {{- App.Config.configArr.admin_only_unarchive == '1' ? ' selected' }}>{{ 'Only administrators'|trans }}</option>
+        <option value='2' {{- App.Config.configArr.admin_only_unarchive == '2' ? ' selected' }}>{{ 'Administrators and entry author'|trans }}</option>
+      </select>
+    </div>
+    <p class='smallgray'>{{ 'Control who can restore archived experiments and resources.'|trans }}</p>
+    <hr>
 
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>

@@ -533,17 +533,17 @@ abstract class AbstractEntity extends AbstractRest
             Action::Timestamp => $this->timestamp(),
             Action::Unarchive => (
                 function () {
-                    // Guard: if admin_only_unarchive is enabled, only admins can unarchive
+                    // Guard: if admin_only_unarchive is enabled, restrict who can unarchive
                     $Config = \Elabftw\Models\Config::getConfig();
                     if ($Config->configArr['admin_only_unarchive'] === '1' && !$this->Users->isAdmin && !$this->Users->isSysadmin) {
-                        // Check if owner is allowed to unarchive
-                        if ($Config->configArr['admin_only_unarchive_allow_owner'] === '1') {
-                            $entityData = $this->readOne();
-                            if ((int) $entityData['userid'] === $this->Users->userid) {
-                                return; // owner is allowed, skip the exception
-                            }
-                        }
                         throw new IllegalActionException(_('Only an administrator can restore an archived entry.'));
+                    }
+                    if ($Config->configArr['admin_only_unarchive'] === '2' && !$this->Users->isAdmin && !$this->Users->isSysadmin) {
+                        // Allow owner to unarchive as well
+                        $entityData = $this->readOne();
+                        if ((int) $entityData['userid'] !== $this->Users->userid) {
+                            throw new IllegalActionException(_('Only an administrator or the entry author can restore an archived entry.'));
+                        }
                     }
                     $this->handleArchivedState(from: State::Archived, to: State::Normal, toggleLock: fn() => $this->unlock());
                 }

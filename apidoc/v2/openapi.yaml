@@ -627,6 +627,14 @@ components:
             type: string
             example: '0'
             default: '0'
+          admin_only_unarchive:
+            type: string
+            example: '0'
+            default: '0'
+          admin_only_unarchive_allow_owner:
+            type: string
+            example: '0'
+            default: '0'
           admin_panel_custom_msg:
             type: string
             example: 'Welcome to the Admin Panel. Please follow internal procedures.'

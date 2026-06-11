@@ -667,6 +667,16 @@
   <div class='pl-3 mt-2 mb-5'>
     {% include 'binary-setting.html' with {'label': 'Use S3 for exports'|trans, 'slug': 's3_exports_toggle', 'help': 'Save user created export files to S3'|trans} %}
     {% include 'binary-setting.html' with {'label': 'Add watermark to PDF exports'|trans, 'slug': 'pdf_watermark', 'help': 'When enabled, exported PDFs will display a semi-transparent watermark with the user name and export timestamp on every page. Not compatible with PDF/A mode.'|trans} %}
+    <div class='d-flex justify-content-between'>
+      <label for='pdf_watermark_text' class='col-form-label'>{{ 'PDF watermark text template'|trans }}</label>
+      <input class='form-control col-md-3' type='text' id='pdf_watermark_text' placeholder='CONFIDENTIAL — {user} — {datetime}' data-trigger='blur' data-model='config' data-target='pdf_watermark_text' value='{{ App.Config.configArr.pdf_watermark_text }}' />
+    </div>
+    <hr>
+    <div class='d-flex justify-content-between'>
+      <label for='pdf_watermark_opacity' class='col-form-label'>{{ 'PDF watermark opacity (0-1)'|trans }}</label>
+      <input class='form-control col-md-3' type='number' id='pdf_watermark_opacity' placeholder='0.15' min='0' max='1' step='0.05' data-trigger='blur' data-model='config' data-target='pdf_watermark_opacity' value='{{ App.Config.configArr.pdf_watermark_opacity }}' />
+    </div>
+    <hr>
     {% include 'binary-setting.html' with {'label': 'Use a dedicated bucket'|trans, 'slug': 's3_exports_use_dedicated_bucket', 'help': 'Active this option and configure another bucket below if your main uploads bucket has object locking enabled or retention policy that makes it unsuitable for short-lived objects such as user exports.'} %}
     <div class='d-flex justify-content-between'>
       <label for='s3_exports_bucket_name' class='col-form-label'>S3 bucket name</label>

@@ -2334,6 +2334,44 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fullcalendar/resource-daygrid@npm:~6.1.20":
+  version: 6.1.20
+  resolution: "@fullcalendar/resource-daygrid@npm:6.1.20"
+  dependencies:
+    "@fullcalendar/daygrid": "npm:~6.1.20"
+    "@fullcalendar/premium-common": "npm:~6.1.20"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.20
+    "@fullcalendar/resource": ~6.1.20
+  checksum: 10c0/95a44d0a79847c5241da7e341c28f7d11f22ec9ff69f02b902f9993d9dc4112ce69cb5556013ac775d51ad501e26bdf41818446a19bb553893f5c596c42d1dea
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/resource-timegrid@npm:^6.1.20":
+  version: 6.1.20
+  resolution: "@fullcalendar/resource-timegrid@npm:6.1.20"
+  dependencies:
+    "@fullcalendar/premium-common": "npm:~6.1.20"
+    "@fullcalendar/resource-daygrid": "npm:~6.1.20"
+    "@fullcalendar/timegrid": "npm:~6.1.20"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.20
+    "@fullcalendar/resource": ~6.1.20
+  checksum: 10c0/aee93130ac27ae7ba0534c403667389dfde97008c31f3850b0d4a9c513020594485c0acdf10ac860f052c7129bc070adba6ac26c01cbb336b591951ffd96b266
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/resource@npm:^6.1.20":
+  version: 6.1.20
+  resolution: "@fullcalendar/resource@npm:6.1.20"
+  dependencies:
+    "@fullcalendar/premium-common": "npm:~6.1.20"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.20
+  checksum: 10c0/9ae2adf57f09af91572681759e6fe87876160f69a12d392301f67f87cde9c7fcadf730a0b1bcc42b8ff40200fca34c9fdf6483067293ed8a65e0d5957e238e35
+  languageName: node
+  linkType: hard
+
 "@fullcalendar/scrollgrid@npm:~6.1.20":
   version: 6.1.20
   resolution: "@fullcalendar/scrollgrid@npm:6.1.20"
@@ -2345,7 +2383,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fullcalendar/timegrid@npm:^6.1.20":
+"@fullcalendar/timegrid@npm:^6.1.20, @fullcalendar/timegrid@npm:~6.1.20":
   version: 6.1.20
   resolution: "@fullcalendar/timegrid@npm:6.1.20"
   dependencies:
@@ -6642,6 +6680,8 @@ __metadata:
     "@fullcalendar/daygrid": "npm:^6.1.20"
     "@fullcalendar/interaction": "npm:^6.1.20"
     "@fullcalendar/list": "npm:^6.1.20"
+    "@fullcalendar/resource": "npm:^6.1.20"
+    "@fullcalendar/resource-timegrid": "npm:^6.1.20"
     "@fullcalendar/timegrid": "npm:^6.1.20"
     "@fullcalendar/timeline": "npm:^6.1.20"
     "@jspreadsheet-ce/react": "npm:^5.0.2"

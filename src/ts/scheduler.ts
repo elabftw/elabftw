@@ -30,6 +30,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
+import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
 import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
@@ -63,6 +64,11 @@ const TIMELINE_VIEWS: Record<Range, string> = {
   day: 'timelineDay',
   week: 'timelineWeek',
   month: 'timelineMonth',
+};
+const RESOURCE_VIEWS: Record<Range, string> = {
+  day: 'resourceTimeGridDay',
+  week: 'resourceTimeGridWeek',
+  month: 'resourceTimeGridWeek',
 };
 const LIST_WEEK_VIEW = 'listWeek';
 
@@ -143,15 +149,23 @@ if (window.location.pathname === '/scheduler.php') {
   const currentUserId = Number(calendarEl?.dataset.userId);
   const isAdmin = calendarEl?.dataset.isAdmin === 'true';
   if (calendarEl) {
-    const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
-    const layout = (layoutCheckbox && layoutCheckbox.checked)
-      ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
-      : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth'; // classic grid calendar
+    const schedulerLayout = Number(calendarEl.dataset.layout || 0);
+    const layout =
+      schedulerLayout === 1
+        ? 'timelineDay,timelineWeek,listWeek,timelineMonth'
+        : schedulerLayout === 2
+          ? 'resourceTimeGridDay,resourceTimeGridWeek,listWeek,dayGridMonth'
+          : 'timeGridDay,timeGridWeek,listWeek,dayGridMonth';
 
     // persist selected view type (day, week, month, and the layout)
     const saved = localStorage.getItem('persistent_schedulerRange') as SavedView | null;
     const range: Range = saved && saved !== LIST_WEEK_VIEW ? saved : 'week';
-    const viewMap = layoutCheckbox.checked ? TIMELINE_VIEWS : GRID_VIEWS;
+    const viewMap =
+      schedulerLayout === 1
+        ? TIMELINE_VIEWS
+        : schedulerLayout === 2
+          ? RESOURCE_VIEWS
+          : GRID_VIEWS;
     const initialView =
       saved === LIST_WEEK_VIEW
         ? LIST_WEEK_VIEW
@@ -258,7 +272,7 @@ if (window.location.pathname === '/scheduler.php') {
       // Determines how far forward the scroll pane is initially scrolled.
       scrollTime: '08:00:00',
       weekends: calendarEl.dataset.weekends === '1',
-      plugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin, timelinePlugin ],
+      plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, bootstrapPlugin, timelinePlugin, resourceTimeGridPlugin],
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
@@ -270,6 +284,19 @@ if (window.location.pathname === '/scheduler.php') {
             { weekday: 'short', day: 'numeric' }, // e.g., "Tue 8" in month view
           ],
         },
+        resourceTimeGridDay: {
+          type: 'resourceTimeGrid',
+          duration: { days: 1 },
+          buttonText: 'resources day',
+        },
+        resourceTimeGridWeek: {
+          type: 'resourceTimeGrid',
+          duration: { weeks: 1 },
+          buttonText: 'resources week',
+        },
+      },
+      resources: {
+        url: 'api/v2/items?bookable=1',
       },
       initialView: initialView,
       datesSet: (info) => {
@@ -297,6 +324,13 @@ if (window.location.pathname === '/scheduler.php') {
       initialDate: selectedDate,
       // display a line for the time of now
       nowIndicator: true,
+      // for resources view, fullcalendar needs resourceId to render instead of items_id
+      eventDataTransform: (eventData) => {
+        if (eventData.items_id) {
+          eventData.resourceId = String(eventData.items_id);
+        }
+        return eventData;
+      },
       // load the events as JSON
       eventSources: [
         {

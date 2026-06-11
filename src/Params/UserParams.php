@@ -18,6 +18,7 @@ use Elabftw\Enums\Language;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\PdfFormat;
+use Elabftw\Enums\SchedulerLayout;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\ThemeVariant;
@@ -87,12 +88,12 @@ final class UserParams extends ContentParams
             'notif_user_need_validation_email',
             'notif_user_need_validation',
             'pdf_sig',
-            'scheduler_layout',
             'show_weekends',
             'uploads_layout',
             'use_isodate',
             'use_markdown',
             'validated' => (string) Filter::toBinary($this->content),
+            'scheduler_layout' => (SchedulerLayout::tryFrom($this->asInt()) ?? SchedulerLayout::Auto)->value,
             'theme_variant' => (ThemeVariant::tryFrom($this->asInt()) ?? ThemeVariant::Auto)->value,
             'mfa_secret' => $this->getNullableString(),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,

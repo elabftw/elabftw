@@ -11,7 +11,14 @@
         {# schedulerSettings #}
         <div class='mb-2'>
           {% include 'binary-setting.html' with {'label': 'Show weekends'|trans, 'model': 'users/me', 'slug': 'show_weekends', 'src': src} %}
-          {% include 'binary-setting.html' with {'label': 'Layout: timeline'|trans, 'model': 'users/me', 'slug': 'scheduler_layout', 'src': src} %}
+          <div class='d-flex justify-content-between'>
+            <label for='scheduler_layout' class='col-form-label'>{{ 'Scheduler layout'|trans }}</label>
+            <select id='scheduler_layout' class='form-control w-auto' autocomplete='off' data-trigger='change' data-model='users/me' data-target='scheduler_layout'>
+              <option value='0' {{ App.Users.userData.scheduler_layout == 0 ? 'selected' }}>{{ 'Classic'|trans }}</option>
+              <option value='1' {{ App.Users.userData.scheduler_layout == 1 ? 'selected' }}>{{ 'Timeline'|trans }}</option>
+              <option value='2' {{ App.Users.userData.scheduler_layout == 2 ? 'selected' }}>{{ 'Resource'|trans }}</option>
+            </select>
+          </div>
         </div>
       </div>
 

@@ -884,6 +884,18 @@ components:
             type: string
             example: '1'
             default: '1'
+          screen_watermark:
+            type: string
+            example: '0'
+            default: '0'
+          screen_watermark_opacity:
+            type: string
+            example: '0.15'
+            default: '0.15'
+          screen_watermark_text:
+            type: string
+            example: 'CONFIDENTIAL — {user} — {datetime}'
+            default: 'CONFIDENTIAL — {user} — {datetime}'
           saml_allowrepeatattributename:
             type: string
             example: '0'

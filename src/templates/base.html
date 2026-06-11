@@ -70,6 +70,20 @@
 {% if App.devMode and mode == 'edit' -%}
   <!-- [html-validate-disable input-missing-label, heading-level, no-dup-id, prefer-native-element, wcag/h37, no-redundant-role: suppress errors from 3rd party tools] -->
 {%- endif %}
+{# SCREEN WATERMARK #}
+{% if App.Config.configArr.screen_watermark == '1' and App.Session.get('is_auth') and not App.Session.get('is_anon') %}
+{% set opacity_val = App.Config.configArr.screen_watermark_opacity|default('0.15') %}
+{% set wmtext = App.Config.configArr.screen_watermark_text|default('CONFIDENTIAL — {user} — {datetime}') %}
+{% set wmtext = wmtext|replace({'{user}': App.Users.userData.fullname, '{datetime}': "now"|date("Y-m-d H:i:s")}) %}
+<style>
+#screen-watermark { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
+#screen-watermark > span { position: absolute; color: rgba(128,128,128,{{ opacity_val * 0.53 }}); font-family: monospace; font-size: 18px; white-space: nowrap; transform: rotate(-30deg); }
+{% for row in 0..5 %}{% set top = 5 + row * 15 %}{% for col in 0..5 %}{% set left = 5 + col * 15 %}#screen-watermark > span:nth-child({{ row * 6 + col + 1 }}) { top: {{ top }}%; left: {{ left }}%; }
+{% endfor %}{% endfor %}
+@media print { #screen-watermark > span { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }
+</style>
+<div id="screen-watermark">{% for i in 0..35 %}<span>{{ wmtext }}</span>{% endfor %}</div>
+{% endif %}
 </body>
 </html>
 <!-- Made in France | Liberté, Égalité, Fraternité -->

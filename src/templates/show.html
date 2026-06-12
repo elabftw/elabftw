@@ -20,7 +20,6 @@
   <div class='d-flex'>
     {% set pageName = scriptName|replace({'.php': ''}) %}
     {% set searchTarget = pageName %}
-    {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
     {% if pageName == 'database' %}
       {% set searchTarget = 'resources'|trans %}
     {% endif %}
@@ -35,8 +34,8 @@
         id='searchBar'
         data-name='q'
         data-value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
-        data-placeholder='{{ searchPlaceholder|e('html_attr') }}'
-        data-aria-label='{{ searchPlaceholder|e('html_attr') }}'
+        data-placeholder='{{ 'Search'|trans }}'
+        data-aria-label='{{ 'Search'|trans }}'
         data-button-label='{{ 'Search'|trans|e('html_attr') }}'
       >
         <div class='input-group w-100 search-bar-input-group search-bar-fallback'>
@@ -45,8 +44,8 @@
             name='q'
             type='text'
             class='form-control'
-            placeholder='{{ searchPlaceholder|e('html_attr') }}'
-            aria-label='{{ searchPlaceholder|e('html_attr') }}'
+            placeholder='{{ 'Search'|trans }}'
+            aria-label='{{ 'Search'|trans }}'
             spellcheck='false'
             value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
           />

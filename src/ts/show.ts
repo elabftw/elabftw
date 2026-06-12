@@ -67,6 +67,7 @@ searchQuery.subscribe(value => {
     }
 
     window.history.replaceState({}, '', url.toString());
+    window.dispatchEvent(new CustomEvent('entity-filters-changed'));
   }, 250);
 });
 
@@ -362,7 +363,181 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function getFilterValueFromElement(elem: HTMLElement): string {
+    if (elem instanceof HTMLSelectElement) {
+      return elem.options[elem.selectedIndex]?.value ?? '';
+    }
+
+    if (elem instanceof HTMLInputElement) {
+      if (elem.type === 'checkbox') {
+        return elem.checked ? elem.value : '';
+      }
+
+      return elem.value.trim();
+    }
+
+    if (elem instanceof HTMLTextAreaElement) {
+      return elem.value.trim();
+    }
+
+    return '';
+  }
+
+  function getQuotes(value: string): string {
+    return /[\s:'"()&|!]/.test(value) ? '"' : '';
+  }
+
+  function escapeSearchToken(value: string): string {
+    return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
+  function buildFilterHelperRegex(filterName: string): RegExp {
+    const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
+    const operatorRegex = '(?:[<>]=?|!?=)?';
+    let valueRegex = baseRegex;
+
+    if (filterName === 'date') {
+      valueRegex = operatorRegex + baseRegex;
+    }
+
+    if (filterName === 'extrafield') {
+      valueRegex = `${baseRegex}:${baseRegex}`;
+    }
+
+    return new RegExp(`${filterName}:${valueRegex}\\s?`);
+  }
+
+  function getFilterHelperName(elem: HTMLElement): string {
+    return elem.dataset.filter || (elem as HTMLInputElement).name;
+  }
+
+  function buildFilterHelperToken(elem: HTMLElement): string {
+    let filterName = getFilterHelperName(elem);
+    let filterValue = getFilterValueFromElement(elem);
+
+    if (filterValue === '') {
+      return '';
+    }
+
+    if (filterName === '(?:author|group)') {
+      filterName = filterValue.split(':')[0];
+      filterValue = filterValue.substring(filterName.length + 1);
+    }
+
+    if (filterName === 'date') {
+      return `${filterName}:${filterValue}`;
+    }
+
+    if (filterName === 'extrafield') {
+      return `${filterName}:${filterValue}`;
+    }
+
+    const escapedValue = escapeSearchToken(filterValue);
+    const quotes = getQuotes(escapedValue);
+
+    return `${filterName}:${quotes}${escapedValue}${quotes}`;
+  }
+
+  function syncFilterHelperToSearchQuery(elem: HTMLElement): void {
+    const curVal = get(searchQuery);
+    const hasInput = curVal.length !== 0;
+    const hasSpace = curVal.endsWith(' ');
+    const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
+    const filterName = getFilterHelperName(elem);
+    const regex = buildFilterHelperRegex(filterName);
+    const filter = buildFilterHelperToken(elem);
+
+    if (curVal.match(regex)) {
+      searchQuery.set(curVal.replace(regex, filter === '' ? '' : `${filter} `).trimStart());
+      return;
+    }
+
+    if (filter !== '') {
+      searchQuery.set(`${curVal}${addSpace}${filter}`);
+    }
+  }
+
+  function getSearchTokenRegexPart(): string {
+    return '(?:(?:"(?:\\\\"|[^"])+")|(?:\'(?:\\\\\'|[^\'])*\')|[^\\s:\'"()&|!]+)';
+  }
+
+  function quoteSearchToken(value: string): string {
+    const escaped = value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
+    if (/[\s:'"()&|!]/.test(escaped)) {
+      return `"${escaped}"`;
+    }
+
+    return escaped;
+  }
+
+  function buildExtrafieldFilter(): string {
+    const metakey = document.getElementById('metakey') as HTMLSelectElement | null;
+    const metavalue = document.getElementById('metavalue') as HTMLInputElement | null;
+
+    const key = metakey?.value.trim() ?? '';
+    const value = metavalue?.value.trim() ?? '';
+
+    if (key === '' && value === '') {
+      return '';
+    }
+
+    if (key === '' || value === '') {
+      return `extrafield:${quoteSearchToken(key || value)}`;
+    }
+
+    return `extrafield:${quoteSearchToken(key)}:${quoteSearchToken(value)}`;
+  }
+
+  function buildExtrafieldRegex(): RegExp {
+    const token = getSearchTokenRegexPart();
+
+    // Matches:
+    // extrafield:Manufacturer
+    // extrafield:Manufacturer:abc
+    // extrafield:Manufacturer:"abc"
+    // extrafield:"Some Field":"abc"
+    return new RegExp(`(^|\\s)extrafield:${token}(?::${token})?\\s?`);
+  }
+
+  function syncExtrafieldFilterToSearchQuery(): void {
+    const curVal = get(searchQuery);
+    const filter = buildExtrafieldFilter();
+    const regex = buildExtrafieldRegex();
+
+    if (regex.test(curVal)) {
+      const next = curVal.replace(regex, (_match, prefix: string) => {
+        return filter === '' ? prefix : `${prefix}${filter} `;
+      });
+
+      searchQuery.set(next.trim());
+      return;
+    }
+
+    if (filter === '') {
+      return;
+    }
+
+    searchQuery.set(`${curVal}${curVal.trim().length > 0 ? ' ' : ''}${filter}`);
+  }
+
   // FILTERS HANDLER FOR THE SHOW PAGE
+  document.querySelectorAll<HTMLElement>('.filterHelper').forEach(el => {
+    const eventName = el instanceof HTMLInputElement && el.type === 'text'
+      ? 'input'
+      : 'change';
+
+    el.addEventListener(eventName, event => {
+      const elem = event.currentTarget as HTMLElement;
+
+      if (elem.dataset.filter === 'extrafield') {
+        syncExtrafieldFilterToSearchQuery();
+        return;
+      }
+
+      syncFilterHelperToSearchQuery(elem);
+    });
+  });
   document.querySelectorAll('.filterAuto').forEach(el => {
     el.addEventListener('change', event => {
       // prevent this listener to be active when toggling archived users

@@ -18,7 +18,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { get } from 'svelte/store';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
-import { notify } from './notify';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
 
@@ -26,6 +25,7 @@ import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
 const lastLoginText = v => v === null ? i18next.t('never') : v;
 let entitiesTableRoot = null;
+const isExtendedSearch = value => /(?:^|\s)\w+:[^\s]+/.test(value);
 
 const rowSelection = {
   mode: 'multiRow',
@@ -42,7 +42,12 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
     gridApiRef.current = params.api;
 
     if (searchQuery) {
-      params.api.setGridOption('quickFilterText', get(searchQuery));
+      const value = get(searchQuery);
+
+      params.api.setGridOption(
+        'quickFilterText',
+        isExtendedSearch(value) ? '' : value,
+      );
     }
 
     fetchData();
@@ -132,10 +137,9 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
 
     try {
       const endpoint = getEntityTypeFromPage(window.location);
-      const entities = await ApiC.getJson(`${endpoint}?${queryString ? `&${queryString}` : ''}`);
+      const entities = await ApiC.getJson(`${endpoint}?${queryString ? `&${queryString}` : ''}`, {notifOnError: 0});
       setRowData(entities);
     } catch (error) {
-      notify.error(error);
       console.error(`Could not load entities: ${error}`);
     }
   }, []);
@@ -161,7 +165,10 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
     }
 
     const unsubscribe = searchQuery.subscribe(value => {
-      gridApiRef.current?.setGridOption('quickFilterText', value);
+      gridApiRef.current?.setGridOption(
+        'quickFilterText',
+        isExtendedSearch(value) ? '' : value,
+      );
     });
 
     return unsubscribe;

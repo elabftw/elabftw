@@ -299,6 +299,8 @@
         params['state'] = currentState;
       }
 
+      params['notifOnError'] = 0;
+
       // fetch entries
       const payload = await ApiC.getJson(currentType, params) as EntityListItem[] | { items?: EntityListItem[] };
 

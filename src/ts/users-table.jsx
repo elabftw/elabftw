@@ -17,7 +17,7 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
-import { populateUserModal } from './misc';
+import { DEFAULT_PAGINATION_PAGE_SIZE, DEFAULT_PAGINATION_PAGE_SIZE_SELECTOR, populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
@@ -197,8 +197,8 @@ if (document.getElementById('users-table')) {
             onCellDoubleClicked={cellDoubleClicked}
             onSelectionChanged={selectionChanged}
             pagination={true}
-            paginationPageSize={100}
-            paginationPageSizeSelector={[100, 250, 500]}
+            paginationPageSize={DEFAULT_PAGINATION_PAGE_SIZE}
+            paginationPageSizeSelector={DEFAULT_PAGINATION_PAGE_SIZE_SELECTOR}
           />
         </div>
         <div className='d-flex justify-content-start my-2'>

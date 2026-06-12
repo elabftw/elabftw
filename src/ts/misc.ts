@@ -1013,3 +1013,7 @@ export function ensureTogglableSectionIsOpen(iconId: string, divId: string): voi
   // and scroll page into editor view
   div.scrollIntoView({ behavior: 'smooth' });
 }
+
+// default pagination size for ag grid components
+export const DEFAULT_PAGINATION_PAGE_SIZE = 100;
+export const DEFAULT_PAGINATION_PAGE_SIZE_SELECTOR = [100, 250, 500];

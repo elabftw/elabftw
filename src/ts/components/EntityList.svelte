@@ -102,6 +102,8 @@
     currentOwner: string;
     currentTags: string[];
     currentState: string;
+    currentScope: string;
+    currentBookable: string;
   };
 
   function handleFilterClick(
@@ -178,6 +180,8 @@
       currentOwner: getCurrentUrlParam('owner'),
       currentTags: getCurrentUrlTags(),
       currentState: getCurrentUrlParam('state'),
+      currentScope: getCurrentUrlParam('scope'),
+      currentBookable: getCurrentUrlParam('bookable'),
     };
   }
 
@@ -194,6 +198,8 @@
       context.currentOwner,
       context.currentTags,
       context.currentState,
+      context.currentScope,
+      context.currentBookable,
       currentReloadVersion,
     ]);
   }
@@ -261,6 +267,8 @@
     currentOwner,
     currentTags,
     currentState,
+    currentScope,
+    currentBookable,
   } = context;
     const seq = ++requestSeq;
     error = '';
@@ -299,6 +307,15 @@
         params['state'] = currentState;
       }
 
+      if (currentScope.length > 0) {
+        params['scope'] = currentScope;
+      }
+
+      if (currentBookable.length > 0) {
+        params['bookable'] = currentBookable;
+      }
+
+      // don't display errors
       params['notifOnError'] = 0;
 
       // fetch entries

@@ -48,26 +48,92 @@ type EntityFilterRequestedDetail = {
 const activeFilters = document.getElementById('activeFiltersDiv');
 let debounceTimer: number | undefined;
 let entityListSvComponent: Record<string, unknown> | null = null;
-const initialQ = new URL(window.location.href).searchParams.get('q') ?? '';
+const initialUrlParams = new URLSearchParams(window.location.search);
+const initialQ = initialUrlParams.get('q') ?? '';
+initialUrlParams.delete('q');
+
 const filterControls: ActiveFilterControl[] = [];
 const searchQuery = writable(initialQ);
+const entityFilters = writable(initialUrlParams);
 const selectedEntities = writable<string[]>([]);
+let searchQueryInitialized = false;
 
-searchQuery.subscribe(value => {
+function updateUrlFromStores(filters = get(entityFilters)): void {
+  const url = new URL(window.location.href);
+  const q = get(searchQuery).trim();
+
+  url.search = filters.toString();
+
+  if (q.length > 0) {
+    url.searchParams.set('q', q);
+  } else {
+    url.searchParams.delete('q');
+  }
+
+  window.history.replaceState({}, '', url.toString());
+  window.dispatchEvent(new CustomEvent('entity-filters-changed', {
+    detail: new URLSearchParams(url.search),
+  }));
+}
+
+function setEntityFilterParam(param: string, value: string): void {
+  entityFilters.update(currentParams => {
+    const nextParams = new URLSearchParams(currentParams);
+
+    nextParams.delete('offset');
+
+    if (value === '') {
+      nextParams.delete(param);
+    } else {
+      nextParams.set(param, value);
+    }
+
+    updateUrlFromStores(nextParams);
+
+    return nextParams;
+  });
+}
+
+function setEntityFilterParamValues(param: string, values: string[]): void {
+  entityFilters.update(currentParams => {
+    const nextParams = new URLSearchParams(currentParams);
+
+    nextParams.delete('offset');
+    nextParams.delete(param);
+
+    values.filter(Boolean).forEach(value => nextParams.append(param, value));
+    updateUrlFromStores(nextParams);
+
+    return nextParams;
+  });
+}
+
+function getEntityFilterParamValues(param: string): string[] {
+  const params = get(entityFilters);
+
+  if (param === 'tags[]') {
+    return params.getAll(param);
+  }
+
+  const value = params.get(param);
+
+  if (!value) {
+    return [];
+  }
+
+  return value.split(',').filter(Boolean);
+}
+
+searchQuery.subscribe(() => {
+  if (!searchQueryInitialized) {
+    searchQueryInitialized = true;
+    return;
+  }
+
   window.clearTimeout(debounceTimer);
 
   debounceTimer = window.setTimeout(() => {
-    const trimmedValue = value.trim();
-    const url = new URL(window.location.href);
-
-    if (trimmedValue.length > 0) {
-      url.searchParams.set('q', trimmedValue);
-    } else {
-      url.searchParams.delete('q');
-    }
-
-    window.history.replaceState({}, '', url.toString());
-    window.dispatchEvent(new CustomEvent('entity-filters-changed'));
+    updateUrlFromStores();
   }, 250);
 });
 
@@ -93,6 +159,7 @@ const mountEntityListSv = (target: HTMLElement): void => {
       entityType: entity.type,
       limit: 15,
       searchQuery,
+      entityFilters,
       selectedEntities,
       currentUserId: core.currentUserid,
       currentTeam: core.currentTeam,
@@ -239,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
 
   preventReactiveSearchFormSubmit();
+  hydrateFilterAutoControlsFromUrl();
 
   // TomSelect for extra fields & owner search select
   if (document.getElementById('metakey')) {
@@ -299,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
       param: 'owner',
       title: 'Owner',
     });
+    hydrateTomSelectFromUrl(control, 'owner');
     renderActiveFilters();
 
     bindExternalFilterRequest(control, 'owner');
@@ -356,6 +425,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     return '';
+  }
+
+  function hydrateFilterAutoControlsFromUrl(): void {
+    document.querySelectorAll<HTMLElement>('.filterAuto').forEach(elem => {
+      const param = elem.dataset.param || (elem as HTMLInputElement).name;
+      const values = getEntityFilterParamValues(param);
+
+      if (values.length === 0) {
+        return;
+      }
+
+      if (elem instanceof HTMLSelectElement || elem instanceof HTMLTextAreaElement) {
+        elem.value = values[0];
+        return;
+      }
+
+      if (elem instanceof HTMLInputElement) {
+        if (elem.type === 'checkbox') {
+          elem.checked = values.includes(elem.value);
+          return;
+        }
+
+        elem.value = values[0];
+      }
+    });
+  }
+
+  function hydrateTomSelectFromUrl(
+    control: TomSelectWithAllOptions,
+    param: string,
+  ): void {
+    getEntityFilterParamValues(param).forEach(value => {
+      ensureTomSelectOption(control, value, value);
+
+      if (!control.items.map(String).includes(value)) {
+        control.addItem(value, true);
+      }
+    });
   }
 
   function getQuotes(value: string): string {
@@ -517,18 +624,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function syncFilterAutoToUrl(elem: HTMLElement): void {
     const param = elem.dataset.param || (elem as HTMLInputElement).name;
     const value = getFilterValueFromElement(elem);
-    const url = new URL(window.location.href);
 
-    url.searchParams.delete('offset');
-
-    if (value === '') {
-      url.searchParams.delete(param);
-    } else {
-      url.searchParams.set(param, value);
-    }
-
-    window.history.replaceState({}, '', url.toString());
-    reloadEntitiesShow();
+    setEntityFilterParam(param, value);
   }
 
   document.querySelectorAll<HTMLElement>('.filterAuto').forEach(el => {
@@ -602,7 +699,6 @@ document.addEventListener('DOMContentLoaded', () => {
   /////////////////////////
   document.getElementById('container').addEventListener('click', async event => {
     const el = (event.target as HTMLElement);
-    const params = new URLSearchParams(document.location.search);
     // SAVE MULTI CHANGES
     if (el.matches('[data-action="save-multi-changes"]')) {
 
@@ -677,15 +773,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // a tag has been clicked/selected, add it in url and load the page
     } else if (el.matches('[data-action="add-tag-filter"]')) {
-      params.set('tags[]', el.dataset.tag);
-      // clear out any offset from a previous query
-      params.delete('offset');
-      history.replaceState(null, '', `?${params.toString()}`);
+      setEntityFilterParamValues('tags[]', [el.dataset.tag ?? '']);
       document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
         el.classList.remove('selected');
       });
       el.classList.add('selected');
-      reloadEntitiesShow();
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {
@@ -897,20 +989,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function syncMultiSelectParam(param: string, value: string | string[] | null | undefined) {
-    const url = new URL(window.location.href);
-
     // Tom Select gives an array for multi-select; normalize just in case
     const selected = Array.isArray(value) ? value : value ? [value] : [];
 
-    if (selected.length === 0) {
-      url.searchParams.delete(param);
-    } else {
-      const joined = selected.join(',');
-      url.searchParams.set(param, joined); // param=1,2,5
-    }
-
-    window.history.replaceState({}, '', url.toString());
-    window.dispatchEvent(new CustomEvent('entity-filters-changed'));
+    setEntityFilterParam(param, selected.join(','));
   }
 
   function bindExternalFilterRequest(
@@ -1035,15 +1117,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function bindShowAllToggle(control: TeamScopedTomSelect) {
-    bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', (checked) => {
-      const url = new URL(window.location.href);
-      if (checked) url.searchParams.set('scope', '3');
-      else url.searchParams.delete('scope');
-      window.history.replaceState({}, '', url.toString());
+    bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', checked => {
+      setEntityFilterParam('scope', checked ? '3' : '');
 
       applyTeamFilter(control);
       control.open(); // keep it open after filtering
-      reloadEntitiesShow();
     });
   }
 
@@ -1073,7 +1151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       onInitialize(this: TeamScopedTomSelect) {
         this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
-        this._showAll = false;
+        this._showAll = get(entityFilters).get('scope') === '3';
 
         applyTeamFilter(this);
       },
@@ -1090,6 +1168,7 @@ document.addEventListener('DOMContentLoaded', () => {
       param: cfg.param,
       title: cfg.title,
     });
+    hydrateTomSelectFromUrl(control, cfg.param);
     renderActiveFilters();
 
     if (cfg.param === 'category' || cfg.param === 'status') {
@@ -1146,16 +1225,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       onChange: (value: unknown) => {
         const selectedTags = Array.isArray(value) ? value as string[] : [];
-        const url = new URL(window.location.href);
 
-        url.searchParams.delete('tags[]');
-
-        selectedTags.forEach(tag => {
-          url.searchParams.append('tags[]', tag);
-        });
-
-        window.history.replaceState({}, '', url.toString());
-        window.dispatchEvent(new CustomEvent('entity-filters-changed'));
+        setEntityFilterParamValues('tags[]', selectedTags);
       },
 
       onItemAdd() {
@@ -1168,7 +1239,9 @@ document.addEventListener('DOMContentLoaded', () => {
         no_active_items: {},
         remove_button: {},
       },
-    });
+    }) as TomSelectWithAllOptions;
+
+    hydrateTomSelectFromUrl(tsTagFilter, 'tags[]');
 
     if (dropdownRoot) {
       $(dropdownRoot).on('shown.bs.dropdown', function() {

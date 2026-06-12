@@ -6003,7 +6003,7 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/users'
                 - type: object
-                  description: Archive or validate a user (will toggle the attribute)
+                  description: Archive or validate a user (will toggle the attribute). Archive will archive user in all teams and requires Sysadmin rights.
                   properties:
                     action:
                       type: string

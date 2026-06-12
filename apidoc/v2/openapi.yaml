@@ -848,6 +848,18 @@ components:
             type: string
             example: 'test email subject'
             default: 'test email subject'
+          pdf_watermark:
+            type: string
+            example: '0'
+            default: '0'
+          pdf_watermark_opacity:
+            type: string
+            example: '0.15'
+            default: '0.15'
+          pdf_watermark_text:
+            type: string
+            example: 'CONFIDENTIAL — {user} — {datetime}'
+            default: 'CONFIDENTIAL — {user} — {datetime}'
           privacy_policy:
             type: string
             example: ''

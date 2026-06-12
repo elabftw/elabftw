@@ -100,6 +100,20 @@ class MakePdf extends AbstractMakePdf
         if ($this->pdfa || $this->requester->userData['inc_files_pdf']) {
             $this->includeAttachments = true;
         }
+
+        // PDF watermark: when enabled, render user+timestamp on every page
+        $Config = \Elabftw\Models\Config::getConfig();
+        if ($Config->configArr['pdf_watermark'] === '1' && !$this->pdfa) {
+            $text = str_replace(
+                ['{user}', '{datetime}'],
+                [$this->requester->userData['fullname'], date('Y-m-d H:i:s')],
+                $Config->configArr['pdf_watermark_text'] ?? 'CONFIDENTIAL — {user} — {datetime}',
+            );
+            $this->mpdf->SetWatermarkText($text);
+            $this->mpdf->showWatermarkText = true;
+            $this->mpdf->watermark_font = 'DejaVuSans';
+            $this->mpdf->watermarkTextAlpha = (float) ($Config->configArr['pdf_watermark_opacity'] ?? 0.15);
+        }
     }
 
     public function __destruct()

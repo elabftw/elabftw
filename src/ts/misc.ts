@@ -1015,5 +1015,8 @@ export function ensureTogglableSectionIsOpen(iconId: string, divId: string): voi
 }
 
 // default pagination size for ag grid components
-export const DEFAULT_PAGINATION_PAGE_SIZE = 100;
-export const DEFAULT_PAGINATION_PAGE_SIZE_SELECTOR = [100, 250, 500];
+export const DEFAULT_AG_GRID_PAGINATION = {
+  pagination: true,
+  paginationPageSize: 100,
+  paginationPageSizeSelector: [100, 250, 500],
+};

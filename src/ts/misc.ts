@@ -1024,3 +1024,10 @@ export function mountRors(): void {
     mount(RorsSv, {target});
   });
 }
+
+// default pagination size for ag grid components
+export const DEFAULT_AG_GRID_PAGINATION = {
+  pagination: true,
+  paginationPageSize: 100,
+  paginationPageSizeSelector: [100, 250, 500],
+};

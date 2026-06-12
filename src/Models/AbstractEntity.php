@@ -398,6 +398,7 @@ abstract class AbstractEntity extends AbstractRest
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
         if ($displayParams->hasUserQuery()) {
             $this->processExtendedQuery($displayParams->getUserQuery());
+            $extended = true;
         }
 
         $EntitySqlBuilder = $this->getSqlBuilder();

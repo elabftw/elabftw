@@ -489,6 +489,7 @@ class Users extends AbstractRest
                     new Users2Teams($this->requester)->create($this->userData['userid'], $team, isValidated: $this->userData['validated'] === 1);
                 }
             )(),
+            Action::Archive => (new Users2Teams($this->requester))->archive($this->getUserid()),
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params, $this->getUserid()),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),

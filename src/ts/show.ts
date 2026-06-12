@@ -538,19 +538,36 @@ document.addEventListener('DOMContentLoaded', () => {
       syncFilterHelperToSearchQuery(elem);
     });
   });
-  document.querySelectorAll('.filterAuto').forEach(el => {
-    el.addEventListener('change', event => {
-      // prevent this listener to be active when toggling archived users
-      if ((event.target as HTMLElement).classList.contains('ts-toggle-archived')) return;
-      const url = new URL(window.location.href);
-      const elem = event.target as HTMLSelectElement;
-      const elemValue = elem.options[elem.selectedIndex].value;
-      url.searchParams.set(elem.name, elemValue);
-      // also add it to the main input form
-      addHiddenInputToMainSearchForm(elem.name, elemValue);
 
-      window.history.replaceState({}, '', url.toString());
-      reloadEntitiesShow();
+  function syncFilterAutoToUrl(elem: HTMLElement): void {
+    const param = elem.dataset.param || (elem as HTMLInputElement).name;
+    const value = getFilterValueFromElement(elem);
+    const url = new URL(window.location.href);
+
+    url.searchParams.delete('offset');
+
+    if (value === '') {
+      url.searchParams.delete(param);
+      removeHiddenInputsFromMainSearchForm(param);
+    } else {
+      url.searchParams.set(param, value);
+      addHiddenInputToMainSearchForm(param, value);
+    }
+
+    window.history.replaceState({}, '', url.toString());
+    reloadEntitiesShow();
+  }
+
+  document.querySelectorAll<HTMLElement>('.filterAuto').forEach(el => {
+    el.addEventListener('change', event => {
+      const elem = event.target as HTMLElement;
+
+      // prevent this listener to be active when toggling archived users
+      if (elem.classList.contains('ts-toggle-archived')) {
+        return;
+      }
+
+      syncFilterAutoToUrl(elem);
     });
   });
   // END SEARCH RELATED CODE

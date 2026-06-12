@@ -10,7 +10,7 @@
   (State.Deleted.value): 'Deleted'|trans,
 } %}
 {# here we have filterHelper and filterAuto that are only meaningful on show mode #}
-<select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterHelper filterAuto' autocomplete='off'>
+<select name='state' aria-label='{{ 'State'|trans }}' class='form-control filterAuto' autocomplete='off'>
   {% for value, label in stateOptions %}
   <option data-action='{% if value == '' %}clear{% else %}insert-param-and-reload{% endif %}' data-target='state' value='{{ value }}' {% if dataReload %}data-reload='{{ dataReload }}'{% endif %} {{ reqState == value ? 'selected' }}>{{ label }}</option>
   {% endfor %}

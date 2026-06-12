@@ -71,9 +71,9 @@ async function blob2table(blob: Blob, container: HTMLDivElement, sheetName: stri
 on('rename-upload', (el: HTMLElement) => {
   // find the corresponding filename element
   // we replace the parent span to also remove the link for download
-  const filenameLink = document.getElementById('upload-filename_' + el.dataset.id);
+  const filenameLink = document.getElementById('upload-filename_' + el.dataset.uploadid);
   const filenameInput = document.createElement('input');
-  filenameInput.dataset.id = el.dataset.id;
+  filenameInput.dataset.id = el.dataset.uploadid;
   filenameInput.classList.add('form-control');
   filenameInput.value = filenameLink.textContent;
   const parentSpan = filenameLink.parentElement;
@@ -95,8 +95,7 @@ on('duplicate-upload', (el: HTMLElement) => {
 });
 
 on('toggle-uploads-layout', (el: HTMLElement) => {
-  ApiC.notifOnSaved = false;
-  ApiC.patch(`${Model.User}/me`, {'uploads_layout': el.dataset.targetLayout})
+  ApiC.patch(`${Model.User}/me`, { notifOnSaved: 0, uploads_layout: el.dataset.targetLayout })
     // toggler needs to be reloaded too so the target value will be updated
     .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
 });

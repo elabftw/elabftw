@@ -37,7 +37,7 @@ try {
     try {
         $settingsArr = $IdpsHelper->getSettings();
     } catch (ResourceNotFoundException) {
-        throw new ImproperActionException('No Service Provider configured. Aborting.');
+        throw new ImproperActionException('No active IdP could be found. Configure at least one IdP.');
     }
 
     // Now we only validate SP settings

@@ -53,7 +53,7 @@ try {
         $App->Request->query->getString('name'),
         $App->Request->query->has('forceDownload'),
     );
-    $Response = $DownloadController->getResponse();
+    $Response = $DownloadController->getResponse($App->Request);
     $Response->prepare($App->Request);
     $Response->send();
 } catch (Exception $e) {

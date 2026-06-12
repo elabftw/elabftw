@@ -541,6 +541,7 @@ CREATE TABLE `idps` (
   `fname_attr` varchar(255) NULL DEFAULT NULL,
   `lname_attr` varchar(255) NULL DEFAULT NULL,
   `orgid_attr` varchar(255) NULL DEFAULT NULL,
+  `orcid_attr` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -2188,6 +2189,18 @@ CREATE TABLE IF NOT EXISTS storage_units (
     PRIMARY KEY(`id`)
 );
 
+-- STORAGE UNITS HISTORY
+CREATE TABLE IF NOT EXISTS storage_units_history (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_unit_id INT UNSIGNED NOT NULL,
+    old_parent_id INT UNSIGNED NULL,
+    new_parent_id INT UNSIGNED NULL,
+    users_id INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY (storage_unit_id, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- CONTAINERS TO EXPERIMENTS
 CREATE TABLE containers2experiments (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2384,6 +2397,12 @@ ALTER TABLE `procurement_requests`
 ALTER TABLE `procurement_requests`
   ADD CONSTRAINT `fk_teams_id_proc_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_id_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- schema 210
+CREATE UNIQUE INDEX uniq_tags2entity_type_item_tag
+    ON tags2entity (item_type, item_id, tag_id);
+-- end schema 210
+
 
 COMMIT;
 

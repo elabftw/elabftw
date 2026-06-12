@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use DateTime;
-use Elabftw\Enums\Orderby;
-use Elabftw\Enums\Sort;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
@@ -116,15 +114,5 @@ final class TwigFunctions
         $PermissionsHelper = new PermissionsHelper();
         $Users = new Users();
         return $PermissionsHelper->translate(new Teams($Users), new TeamGroups($Users), $json);
-    }
-
-    public static function getSortIcon(string $orderBy): string
-    {
-        $Request = Request::createFromGlobals();
-        $sort = null;
-        if (Orderby::tryFrom($orderBy) === Orderby::tryFrom($Request->query->getAlpha('order'))) {
-            $sort = Sort::tryFrom($Request->query->getAlpha('sort'));
-        }
-        return $sort === null ? 'fa-sort' : $sort->toFa();
     }
 }

@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\CertPurpose;
 use Elabftw\Enums\IdpsPatchableColumns;
 use Elabftw\Enums\SamlBinding;
+use Elabftw\Interfaces\IdpsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\SetIdTrait;
@@ -30,7 +31,7 @@ use function sprintf;
 /**
  * An IDP is an Identity Provider. Used in SAML2 authentication context.
  */
-final class Idps extends AbstractRest
+final class Idps extends AbstractRest implements IdpsInterface
 {
     use SetIdTrait;
 
@@ -43,6 +44,8 @@ final class Idps extends AbstractRest
     private const string LNAME_ATTR = 'urn:oid:2.5.4.4';
 
     private const string ORGID_ATTR = 'urn:oid:0.9.2342.19200300.100.1.1';
+
+    private const string ORCID_ATTR = 'urn:oid:1.3.6.1.4.1.5923.1.1.1.16';
 
     public function __construct(private Users $requester, ?int $id = null)
     {
@@ -68,6 +71,7 @@ final class Idps extends AbstractRest
             fname_attr: $reqBody['fname_attr'],
             lname_attr: $reqBody['lname_attr'],
             orgid_attr: $reqBody['orgid_attr'] ?? null,
+            orcid_attr: $reqBody['orcid_attr'] ?? null,
         );
     }
 
@@ -78,6 +82,7 @@ final class Idps extends AbstractRest
         return $this->selectOne();
     }
 
+    #[Override]
     public function selectOne(): array
     {
         $sql = sprintf($this->getReadSql(), 'WHERE idps.id = :id');
@@ -102,6 +107,7 @@ final class Idps extends AbstractRest
     /**
      * Used to get a list of enabled IDP for the login page, without having to load too much data
      */
+    #[Override]
     public function readAllSimpleEnabled(): array
     {
         $sql = 'SELECT idps.id, idps.name FROM idps WHERE idps.enabled = 1 ORDER BY name ASC';
@@ -114,6 +120,7 @@ final class Idps extends AbstractRest
     /**
      * Used to get a list of IDP for the sysconfig page, without having to load too much data
      */
+    #[Override]
     public function readAllLight(): array
     {
         $sql = 'SELECT idps.id, idps.name, idps.entityid, idps.enabled, idps_sources.url AS source_url
@@ -137,6 +144,7 @@ final class Idps extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function fullUpdate(array $idp): array
     {
         $IdpsCerts = new IdpsCerts($this->requester, $this->id);
@@ -151,6 +159,7 @@ final class Idps extends AbstractRest
         return $this->readOne();
     }
 
+    #[Override]
     public function upsert(int $sourceId, array $idps): int
     {
         foreach ($idps as $idp) {
@@ -168,7 +177,7 @@ final class Idps extends AbstractRest
             }
             $this->setId($id);
             // when coming from XML, we do not overwrite these attributes
-            $immutableFields = array('name', 'email_attr', 'fname_attr', 'lname_attr', 'team_attr', 'orgid_attr');
+            $immutableFields = array('name', 'email_attr', 'fname_attr', 'lname_attr', 'team_attr', 'orgid_attr', 'orcid_attr');
             foreach ($immutableFields as $key) {
                 unset($idp[$key]);
             }
@@ -177,6 +186,7 @@ final class Idps extends AbstractRest
         return count($idps);
     }
 
+    #[Override]
     public function getEnabled(?int $id = null): int
     {
         $sql = 'SELECT id FROM idps WHERE enabled = 1';
@@ -191,6 +201,7 @@ final class Idps extends AbstractRest
         return (int) $req->fetchColumn();
     }
 
+    #[Override]
     public function getEnabledByEntityId(string $entId): int
     {
         $sql = 'SELECT id FROM idps WHERE enabled = 1 AND entityid = :entId';
@@ -211,6 +222,7 @@ final class Idps extends AbstractRest
         return $this->Db->execute($req);
     }
 
+    #[Override]
     public function create(
         string $name,
         string $entityid,
@@ -219,12 +231,13 @@ final class Idps extends AbstractRest
         string $fname_attr = self::FNAME_ATTR,
         string $lname_attr = self::LNAME_ATTR,
         ?string $orgid_attr = self::ORGID_ATTR,
+        ?string $orcid_attr = self::ORCID_ATTR,
         int $enabled = 1,
         ?int $source = null,
         ?array $certs = array(),
         ?array $endpoints = array(),
     ): int {
-        $idpId = $this->createIdp($name, $entityid, $email_attr, $team_attr, $fname_attr, $lname_attr, $orgid_attr, $enabled, $source);
+        $idpId = $this->createIdp($name, $entityid, $email_attr, $team_attr, $fname_attr, $lname_attr, $orgid_attr, $orcid_attr, $enabled, $source);
         if (!empty($certs)) {
             $IdpsCerts = new IdpsCerts($this->requester, $idpId);
             foreach ($certs as $cert) {
@@ -241,6 +254,7 @@ final class Idps extends AbstractRest
         return $idpId;
     }
 
+    #[Override]
     public function findByEntityId(string $entityId): int
     {
         $sql = 'SELECT id FROM idps WHERE entityid = :entityId';
@@ -318,11 +332,12 @@ final class Idps extends AbstractRest
         string $fname_attr = self::FNAME_ATTR,
         string $lname_attr = self::LNAME_ATTR,
         ?string $orgid_attr = self::ORGID_ATTR,
+        ?string $orcid_attr = self::ORCID_ATTR,
         int $enabled = 1,
         ?int $source = null,
     ): int {
-        $sql = 'INSERT INTO idps(name, entityid, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, enabled, source)
-            VALUES(:name, :entityid, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :enabled, :source)';
+        $sql = 'INSERT INTO idps(name, entityid, email_attr, team_attr, fname_attr, lname_attr, orgid_attr, orcid_attr, enabled, source)
+            VALUES(:name, :entityid, :email_attr, :team_attr, :fname_attr, :lname_attr, :orgid_attr, :orcid_attr, :enabled, :source)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':entityid', $entityid);
@@ -331,6 +346,7 @@ final class Idps extends AbstractRest
         $req->bindParam(':fname_attr', $fname_attr);
         $req->bindParam(':lname_attr', $lname_attr);
         $req->bindParam(':orgid_attr', $orgid_attr);
+        $req->bindParam(':orcid_attr', $orcid_attr);
         $req->bindParam(':enabled', $enabled, PDO::PARAM_INT);
         $req->bindParam(':source', $source);
         $this->Db->execute($req);

@@ -16,37 +16,72 @@
 
   <hr>
 
+  {# SEARCH BAR #}
   <div class='d-flex'>
-    {# SEARCH BAR #}
     {% set pageName = scriptName|replace({'.php': ''}) %}
     {% set searchTarget = pageName %}
     {% set searchPlaceholder = 'Search in %s'|trans|format(pageTitle|lower) %}
     {% if pageName == 'database' %}
       {% set searchTarget = 'resources'|trans %}
     {% endif %}
-    <form id='mainSearchForm' aria-label='{{ 'Search %s'|trans|format(searchTarget) }}' class='mb-2 flex-fill' method='get'>
-      {# next div is wrapper to position pre below textarea #}
-      <div class='input-group' style='position:relative;'>
-        <input
-          id='extendedArea'
-          name='q'
-          type='text'
-          class='form-control'
-          placeholder="{{ searchPlaceholder }}"
-          spellcheck='false'
-          aria-label="{{ searchPlaceholder }}"
-          value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') }}' />
-        <pre id='search-highlighting' class='form-control d-none' aria-hidden='true'><code></code></pre>
-        <div class='input-group-append'>
-          <button class='btn btn-secondary' type='submit' aria-label='{{ 'Search'|trans }}' title='{{ 'Search'|trans }}'><i class='fas fa-magnifying-glass'></i></button>
+
+    <form
+      id='mainSearchForm'
+      aria-label='{{ 'Search %s'|trans|format(searchTarget) }}'
+      class='flex-fill'
+      method='get'
+    >
+      <div
+        id='searchBar'
+        data-name='q'
+        data-value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
+        data-placeholder='{{ searchPlaceholder|e('html_attr') }}'
+        data-aria-label='{{ searchPlaceholder|e('html_attr') }}'
+        data-button-label='{{ 'Search'|trans|e('html_attr') }}'
+      >
+        <div class='input-group w-100 search-bar-input-group search-bar-fallback'>
+          <input
+            id='extendedArea'
+            name='q'
+            type='text'
+            class='form-control'
+            placeholder='{{ searchPlaceholder|e('html_attr') }}'
+            aria-label='{{ searchPlaceholder|e('html_attr') }}'
+            spellcheck='false'
+            value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
+          />
+          <div class='input-group-append'>
+            <button
+              class='btn btn-secondary'
+              type='submit'
+              aria-label='{{ 'Search'|trans }}'
+              title='{{ 'Search'|trans }}'
+            >
+              <i class='fas fa-magnifying-glass'></i>
+            </button>
+          </div>
         </div>
       </div>
     </form>
-    {# wrap button into a div or it appears too tall #}
+
     <div>
-      <button type='button' class='btn btn-neutral ml-2' aria-label='{{ 'Show full syntax'|trans }}' title='{{ 'Show full syntax'|trans }}' data-action='toggle-modal' data-target='advancedSearchModal'><i class='fa-regular fa-circle-question'></i></button>
+      <button
+        type='button'
+        class='btn btn-neutral ml-2'
+        aria-label='{{ 'Show full syntax'|trans }}'
+        title='{{ 'Show full syntax'|trans }}'
+        data-action='toggle-modal'
+        data-target='advancedSearchModal'
+      >
+        <i class='color-medium fa-regular fa-circle-question'></i>
+      </button>
+      {# TOGGLE MORE FILTERS BUTTON #}
+      <button class='btn btn-secondary btn ml-1' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-filter' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv' title='{{ 'Show more filters'|trans }}'>
+        <i class='fas fa-filter'></i>
+      </button>
     </div>
   </div>
+
   {# END SEARCH BAR #}
 
   {# QUERY FILTERS #}
@@ -60,101 +95,10 @@
           <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
           <input type='hidden' name='related_origin' value='{{ App.Request.query.getAlpha('related_origin') }}' />
         {% endif %}
-
-        <div id='visibleFiltersDiv' class='mt-1 flex-fill'>
-          {# CATEGORY #}
-          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
-          <input placeholder='{{ 'Filter category'|trans }}' id='categoryFilterPlaceholder' class='form-control' aria-label='placeholder for category input' />
-          {% if App.devMode -%}
-            <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
-          {%- endif %}
-          <select hidden
-            id='categoryFilter'
-            name='category'
-            class='form-control'
-            multiple
-            aria-label='{{ 'Filter category'|trans }}'
-            placeholder='{{ 'Filter category'|trans }}'
-          >
-            <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>{{ 'Filter category'|trans }}</option>
-            <option data-current-team='1' value='null'
-              {{- 'null' in App.Request.query.get('category')|split(',') ? ' selected' -}}
-            >
-            {{ 'No category set'|trans }}</option>
-            {% for category in categoryArr %}
-            <option data-current-team='{{ category.is_current_team }}' value='{{ category.id }}'
-                {{- category.id in App.Request.query.get('category')|split(',') ? ' selected' -}}
-              >
-              {% if category.is_current_team == 0 %}{{ category.team_name }} - {% endif %}{{ category.title }}</option>
-            {% endfor %}
-          </select>
-
-          {# STATUS #}
-          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
-          <input placeholder='{{ 'Filter status'|trans }}' id='statusFilterPlaceholder' class='form-control' aria-label='placeholder for status input' />
-          {% if App.devMode -%}
-            <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
-          {%- endif %}
-          <select hidden
-            id='statusFilter'
-            name='status'
-            class='form-control'
-            multiple
-            aria-label='{{ 'Filter status'|trans }}'
-            placeholder='{{ 'Filter status'|trans }}'
-          >
-            <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>{{ 'Filter status'|trans }}</option>
-            <option data-current-team='1' value='null'
-              {{- 'null' in App.Request.query.get('status')|split(',') ? ' selected' -}}
-            >
-            {{ 'No status set'|trans }}</option>
-            {% for status in statusArr %}
-              <option data-current-team='{{ status.is_current_team }}' value='{{ status.id }}'
-                {{- status.id in App.Request.query.get('status')|split(',') ? ' selected' -}}
-              >
-              {% if status.is_current_team == 0 %}{{ status.team_name }} - {% endif %}{{ status.title }}</option>
-            {% endfor %}
-          </select>
-
-          {# OWNER filter #}
-          {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->{%- endif %}
-          <select id='filterOwner' name='owner' class='form-control filterAuto' aria-label='{{ 'Filter owner'|trans }}'>
-            <option value='' class='dropdown-header' data-action='clear'>{{ 'Filter owner'|trans }}</option>
-            {% for user in usersArr %}
-            <option data-is-archived='{{ user.is_archived_in_current_team }}' value='{{ user.userid }}' {{- App.Request.query.get('owner') == user.userid ? ' selected' }}>{{ user.fullname }}</option>
-            {% endfor %}
-          </select>
-
-          {# SEARCH WITH TAG #}
-          {# select is hidden to avoid showing the raw list and a layout change, it shows up with TomSelect #}
-          <input placeholder='{{ 'Tags'|trans }}' id='tagFilterPlaceholder' class='form-control' aria-label='placeholder for tags input' />
-          {% if App.devMode -%}
-            <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
-          {%- endif %}
-          <select hidden
-            id='tagFilter'
-            multiple
-            name='tags[]'
-            class='form-control'
-            aria-label='{{ 'Tags'|trans }}'
-            placeholder='{{ 'Tags'|trans }}'
-          >
-            {% for tag in tagsArrForSelect %}
-              <option value='{{ tag.tag|e('html_attr') }}' {{- tag.tag in App.Request.query.all('tags') ? ' selected' }}>{{ tag.tag }}</option>
-            {% endfor %}
-          </select>
-          {# END SEARCH WITH TAG #}
-        </div>
         {# WCAG/h32 - form needs a submit button #}
         <button type='submit' hidden></button>
       </form>
 
-      {# TOGGLE MORE FILTERS BUTTON #}
-      <div class='ml-auto'>
-        <button class='btn btn-secondary btn' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-sliders' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv' title='{{ 'Show more filters'|trans }}'>
-          <i class='fas fa-sliders'></i>
-        </button>
-      </div>
     {# END ALWAYS VISIBLE FILTERS #}
     </div>
 
@@ -176,7 +120,7 @@
             <option value='' disabled>{{ 'Name of field'|trans }}</option>
             <option value='**' {{- '**' == App.Request.query.get('metakey') ? ' selected' }}>{{ 'All fields'|trans }}</option>
             {% for metakey in metakeyArrForSelect %}
-              <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey|raw }}</option>
+              <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey }}</option>
             {% endfor %}
           </select>
           {% if App.devMode -%}
@@ -280,7 +224,7 @@
 
   <hr>
   {# BUTTONS TOOLBAR #}
-  <div class='d-flex'>
+  <div class='d-flex flex-wrap'>
     {# LEFT #}
     <div class='d-flex'>
       <a title='{{ 'Select all'|trans }}' aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn btn-transparent'>
@@ -296,7 +240,198 @@
     </div>
 
     {# RIGHT #}
-    <div class='ml-auto'>
+
+    {# CATEGORY #}
+    <div class='dropdown ml-auto' id='categoryFilterDropdown'>
+      <button
+        type='button'
+        class='btn btn-ghost dropdown-toggle'
+        id='categoryFilterPlaceholder'
+        data-toggle='dropdown'
+        aria-haspopup='true'
+        aria-expanded='false'
+      >
+        {{ 'Category'|trans }}
+      </button>
+
+      <div
+        class='dropdown-menu dropdown-menu-right p-2 filter-menu'
+        id='categoryFilterMenu'
+      >
+        {% if App.devMode -%}
+          <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
+        {%- endif %}
+
+        <select
+          id='categoryFilter'
+          name='category'
+          class='form-control'
+          multiple
+          aria-label='{{ 'Filter category'|trans }}'
+          placeholder='{{ 'Filter category'|trans }}'
+        >
+          <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>
+            {{ 'Filter category'|trans }}
+          </option>
+
+          <option
+            data-current-team='1'
+            value='null'
+            {{- 'null' in App.Request.query.get('category')|split(',') ? ' selected' -}}
+          >
+            {{ 'No category set'|trans }}
+          </option>
+
+          {% for category in categoryArr %}
+            <option
+              data-current-team='{{ category.is_current_team }}'
+              value='{{ category.id }}'
+              {{- category.id in App.Request.query.get('category')|split(',') ? ' selected' -}}
+            >
+              {% if category.is_current_team == 0 %}{{ category.team_name }} - {% endif %}{{ category.title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    {# STATUS #}
+    <div class='dropdown ml-2' id='statusFilterDropdown'>
+      <button
+        type='button'
+        class='btn btn-ghost dropdown-toggle'
+        id='statusFilterPlaceholder'
+        data-toggle='dropdown'
+        aria-haspopup='true'
+        aria-expanded='false'
+      >
+        {{ 'Status'|trans }}
+      </button>
+
+      <div
+        class='dropdown-menu dropdown-menu-right p-2 filter-menu'
+        id='statusFilterMenu'
+      >
+        {% if App.devMode -%}
+          <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
+        {%- endif %}
+
+        <select
+          id='statusFilter'
+          name='status'
+          class='form-control'
+          multiple
+          aria-label='{{ 'Filter status'|trans }}'
+          placeholder='{{ 'Filter status'|trans }}'
+        >
+          <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>
+            {{ 'Filter status'|trans }}
+          </option>
+
+          <option
+            data-current-team='1'
+            value='null'
+            {{- 'null' in App.Request.query.get('status')|split(',') ? ' selected' -}}
+          >
+            {{ 'No status set'|trans }}
+          </option>
+
+          {% for status in statusArr %}
+            <option
+              data-current-team='{{ status.is_current_team }}'
+              value='{{ status.id }}'
+              {{- status.id in App.Request.query.get('status')|split(',') ? ' selected' -}}
+            >
+              {% if status.is_current_team == 0 %}{{ status.team_name }} - {% endif %}{{ status.title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    {# OWNER #}
+    <div class='dropdown ml-2' id='filterOwnerDropdown'>
+      <button
+        type='button'
+        class='btn btn-ghost dropdown-toggle'
+        id='ownerFilterPlaceholder'
+        data-toggle='dropdown'
+        aria-haspopup='true'
+        aria-expanded='false'
+      >
+        {{ 'Owner'|trans }}
+      </button>
+
+      <div
+        class='dropdown-menu dropdown-menu-right p-2 filter-menu'
+        id='filterOwnerMenu'
+      >
+        {% if App.devMode -%}
+          <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
+        {%- endif %}
+
+        <select
+          id='filterOwner'
+          name='owner'
+          class='form-control'
+          multiple
+          aria-label='{{ 'Filter owner'|trans }}'
+          placeholder='{{ 'Filter owner'|trans }}'
+        >
+          <option data-current-team='1' value='' class='dropdown-header' data-action='clear'>
+            {{ 'Filter owner'|trans }}
+          </option>
+
+          {% for user in usersArr %}
+            <option data-is-archived='{{ user.is_archived_in_current_team }}' value='{{ user.userid }}' {{- user.userid in App.Request.query.get('owner')|split(',') ? ' selected' }}>{{ user.fullname }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    {# SEARCH WITH TAG #}
+    <div class='dropdown ml-2' id='tagFilterDropdown'>
+      <button
+        type='button'
+        class='btn btn-ghost dropdown-toggle'
+        id='tagFilterPlaceholder'
+        data-toggle='dropdown'
+        aria-haspopup='true'
+        aria-expanded='false'
+      >
+        {{ 'Tags'|trans }}
+      </button>
+
+      <div
+        class='dropdown-menu dropdown-menu-right p-2'
+        id='tagFilterMenu'
+      >
+        {% if App.devMode -%}
+          <!-- [html-validate-disable-block prefer-native-element: suppress error from tom-select] -->
+        {%- endif %}
+
+        <select
+          id='tagFilter'
+          multiple
+          name='tags[]'
+          class='form-control'
+          aria-label='{{ 'Tags'|trans }}'
+          placeholder='{{ 'Tags'|trans }}'
+        >
+          {% for tag in tagsArrForSelect %}
+            <option
+              value='{{ tag.tag|e('html_attr') }}'
+              {{- tag.tag in App.Request.query.all('tags') ? ' selected' }}
+            >
+              {{ tag.tag }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    {# END SEARCH WITH TAG #}
+
+    <div class='ml-2'>
       {# SCOPE FILTER #}
       {% include 'scope-button.html' with {'reload': 'reloadEntitiesShow,scopeBtn', 'target': 'scope_' ~ Entity.entityType.value, 'setQueryParam': 1} %}
     </div>
@@ -350,9 +485,11 @@
     </div>
   </div>
   </div>
-  <hr>
 
-  {% set count = itemsArr|length %}
+  {# active filters line #}
+  <div class='d-flex' id='activeFiltersDiv' ></div>
+
+  <hr>
 
   {% if categoryArr|length == 0 %}
     <div class='d-flex'>
@@ -362,23 +499,6 @@
   {% endif %}
 
   <div id='showModeContent'>
-    {# Show message if we're looking for something (query parameters are present), but the number of results is 0 #}
-    {% if count == 0 and App.Request.query.all|length > 0 %}
-    <div class='row display-flex' id='itemList'>
-      {% set otherPage = Entity.entityType.value == 'experiments' ? 'database' : 'experiments' %}
-      {{ "Sorry. I couldn't find anything :("|trans|msg('ko', false) }}
-    </div>
-    <div class='row d-flex'>
-      <a href='{{ otherPage }}.php?q={{ App.Request.query.get('q')|trim|e('url') }}'>
-        <button class='btn btn-primary' type='button'>{{ Entity.entityType.value == 'items' ? 'Search in experiments'|trans : 'Search in resources'|trans }}</button>
-      </a>
-    </div>
-  {% elseif count == 0 and (App.Request.query.all|length == 0) and not App.Session.get('is_anon') and not App.Request.query.get('offset') %}
-    <div class='row display-flex' id='itemList'>
-      <h3>{{ 'Nothing here yet. Start by clicking Create (top-right) to add your first %s.'|trans|format(Entity.entityType.toGenre()) }}</h3>
-    </div>
-  {% else %}
-
       <div id='withSelected' class='d-none'>
         <div class='row mx-0'><p>{{ 'With selected:'|trans }}</p></div>
         {# First line #}
@@ -478,81 +598,90 @@
         </form>
       </div>
 
-      {% if App.Users.userData.display_mode == 'it' %}
-        <div class='d-flex flex-column' id='itemList'>
-        {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-          {% include 'show-item.html' %}
-        {% endfor %}
-        </div>
-      {% elseif App.Users.userData.display_mode == 'tb' -%}
-        <div class='table-container'>
-          <table id='itemList' class='table item-table mt-2' aria-describedby='pageTitle'>
-            <thead class='with-top'>
-              <tr>
-                <th>
-                  <div class='d-flex justify-content-between'>
-                    <span>{{ 'Date'|trans }}</span>
-                    <a href='#' data-action='reorder-entities' data-orderby='date'><i class='fas {{ sortIcon("date") }}'></i></a>
-                  </div>
-                </th>
-                <th class='title-item-table col-8'>
-                  <div class='d-flex justify-content-between'>
-                    {{ 'Title'|trans }} <a href='#' data-action='reorder-entities' data-orderby='title'><i class='fas {{ sortIcon("title") }}'></i></a>
-                  </div>
-                </th>
-                <th class='step-item-table col-2'>
-                  {{ 'Next step'|trans }}
-                </th>
-                <th class='category-item-table w-20'>
-                  <div class='d-flex justify-content-between'>
-                    <span>{{ 'Category'|trans }}</span>
-                    <a href='#' data-action='reorder-entities' data-orderby='cat'><i class='fas {{ sortIcon("cat") }}'></i></a>
-                  </div>
-                </th>
-                <th class='category-item-table w-20'>
-                  <div class='d-flex justify-content-between'>
-                    <span>{{ 'Status'|trans }}</span>
-                    <a href='#' data-action='reorder-entities' data-orderby='status'><i class='fas {{ sortIcon("status") }}'></i></a>
-                  </div>
-                </th>
-                <th class='tags-item-table w-20'>
-                  {{ 'Tags'|trans }}
-                </th>
-                <th class='actions-item-rating w-10'>
-                  <div class='d-flex justify-content-between'>
-                    {# add mr-1 here because column is small #}
-                    <span class='mr-1'>{{ 'Rating'|trans }}</span>
-                    <a href='#' data-action='reorder-entities' data-orderby='rating'><i class='fas {{ sortIcon("rating") }}'></i></a>
-                  </div>
-                </th>
-                <th class='actions-item-owner col-2'>
-                  <div class='d-flex justify-content-between'>
-                    <span>{{ 'Owner'|trans }}</span>
-                    <a href='#' data-action='reorder-entities' data-orderby='user'><i class='fas {{ sortIcon("user") }}'></i></a>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in itemsArr|slice(0, DisplayParams.limit) %}
-                {% include 'show-item-table.html' %}
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      {% endif %}
+      {# SKELETONS #}
+      <div id='itemListSkeleton' class='d-flex flex-column' aria-hidden='true'>
+        {% if App.Users.userData.display_mode == 'it' %}
+          {% for i in 1..DisplayParams.limit %}
+            <section data-twiglinterstfu='{{ i }}' class='entity entity-skeleton pl-3 py-3 d-flex'>
+              <div class='mt-1 mr-3'>
+                <span class='skeleton-box' data-skeleton='checkbox'></span>
+              </div>
 
-      {# LOAD MORE button #}
-      <div class='text-center page-buttons mt-2'>
-        <button class='btn btn-primary ' type='button' id='loadMoreBtn' data-action='load-more'>{{ 'Load more'|trans }}</button>
+              <div class='align-self-center flex-grow-1'>
+                <div class='mb-2'>
+                  <span class='skeleton-box mr-1' data-skeleton='pill'></span>
+                  <span class='skeleton-box mr-1' data-skeleton='pill'></span>
+                  <span class='skeleton-box' data-skeleton='pill-sm'></span>
+                </div>
+
+                <div class='d-flex title flex-nowrap my-2 align-items-center'>
+                  <span class='skeleton-box mr-1' data-skeleton='custom-id'></span>
+                  <span class='skeleton-box' data-skeleton='title'></span>
+                </div>
+
+                <div class='mb-2'>
+                  <span class='skeleton-box' data-skeleton='owner'></span>
+                </div>
+
+                <p class='my-2'>
+                  <span class='d-inline-flex flex-wrap'>
+                    <span class='skeleton-box mr-1' data-skeleton='tag'></span>
+                    <span class='skeleton-box mr-1' data-skeleton='tag'></span>
+                    <span class='skeleton-box' data-skeleton='tag'></span>
+                  </span>
+                </p>
+
+                <div class='d-flex flex-row align-items-start'>
+                  <span class='skeleton-box mr-1' data-skeleton='icon'></span>
+                  <span class='skeleton-box mr-2' data-skeleton='icon'></span>
+
+                  <div class='d-flex flex-column'>
+                    <span class='skeleton-box mb-1' data-skeleton='date'></span>
+                    <span class='skeleton-box' data-skeleton='date-sm'></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class='d-flex justify-content-end ml-auto text-nowrap'>
+                <span class='skeleton-box' data-skeleton='icon'></span>
+              </div>
+            </section>
+          {% endfor %}
+
+        {% else %}
+          <div class='table-responsive'>
+            <table class='table table-sm entity-table-skeleton mb-0'>
+              <tbody>
+                {% for i in 1..DisplayParams.limit %}
+                  <tr data-twiglinterstfu='{{ i }}'>
+                    <td><span class='skeleton-box skeleton-checkbox'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td>
+                      <span class='d-inline-flex flex-wrap'>
+                        <span class='skeleton-box skeleton-tag mr-1'></span>
+                        <span class='skeleton-box skeleton-tag mr-1'></span>
+                        <span class='skeleton-box skeleton-tag'></span>
+                      </span>
+                    </td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                    <td><span class='skeleton-box'></span></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
       </div>
-
-  {% endif %}
+      {# this is where components will be mounted #}
+      <div id='entityList'></div>
 
   <div id='info'
       data-page='show'
-      data-type='{{ Entity.entityType.value }}'
-      data-locale='{{ App.Users.userData.lang }}'
       data-limit='{{ DisplayParams.limit }}'
   >
   </div>

@@ -1661,14 +1661,19 @@ components:
           type: integer
         email_attr:
           type: string
-        team_attr:
-          type: string
         fname_attr:
           type: string
         lname_attr:
           type: string
+        team_attr:
+          type: string
+          nullable: true
         orgid_attr:
           type: string
+          nullable: true
+        orcid_attr:
+          type: string
+          nullable: true
         source:
           type: int
           nullable: true
@@ -2381,7 +2386,10 @@ paths:
     patch:
       tags: ['Containers']
       summary: Modify a container.
-      description: Update the quantity stored or the unit of a container.
+      description: |
+        Update the quantity stored, the unit, or the storage location of a
+        container. Setting `storage_id` moves the container to a different
+        storage unit while preserving its `id` and `created_at`.
       operationId: patch-container
       requestBody:
         description: Parameters for modifying a container.
@@ -2398,6 +2406,14 @@ paths:
                   type: string
                   description: New unit of the quantity.
                   example: "g"
+                storage_id:
+                  type: integer
+                  description: |
+                    New storage unit id. Moves the container to that storage
+                    unit. Requires write access on the parent entity and (when
+                    `inventory_require_edit_rights=1`) the
+                    `can_manage_inventory_locations` permission.
+                  example: 12
       responses:
         '200':
           description: The updated container.
@@ -2740,7 +2756,11 @@ paths:
     patch:
       tags: ['Storage units']
       summary: Modify a storage unit.
-      description: Update the name of a storage unit. Requires permission to manage inventory locations.
+      description: |
+        Update the name and/or the parent of a storage unit. Setting
+        `parent_id` reparents the unit (and everything under it) in place.
+        Pass `parent_id: null` to move the unit to the root. Requires
+        permission to manage inventory locations.
       operationId: patch-storage-unit
       requestBody:
         description: Parameters for modifying a storage unit.
@@ -2748,12 +2768,19 @@ paths:
           application/json:
             schema:
               type: object
-              required: ['name']
+              minProperties: 1
               properties:
                 name:
                   type: string
                   description: New name for the storage unit.
                   example: "Freezer B"
+                parent_id:
+                  type: integer
+                  nullable: true
+                  description: |
+                    New parent storage unit id, or `null` to move to the root.
+                    Cannot be the unit itself or any of its descendants.
+                  example: 5
       responses:
         '200':
           description: The updated storage unit.
@@ -6216,9 +6243,19 @@ paths:
           $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Notifications']
-      summary: |
-        Actions on a notification. Only changing `is_ack` column is possible.
+      summary: Update the acknowledgment status of a notification.
       operationId: patch-notification
+      requestBody:
+        description: Defines whether the notification is acknowledged.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_ack:
+                  type: integer
+                  description: Acknowledge the notification. `0` for unacknowledging, `1` for acknowledge.
+                  enum: [ 0, 1 ]
       responses:
         '200':
           description: The updated notification.
@@ -6791,18 +6828,24 @@ paths:
                 email_attr:
                   type: string
                   description: What attribute to look for the email.
-                team_attr:
-                  type: string
-                  description: What attribute to look for the team.
                 fname_attr:
                   type: string
                   description: What attribute to look for the firstname.
                 lname_attr:
                   type: string
                   description: What attribute to look for the lastname.
+                team_attr:
+                  type: string
+                  description: What attribute to look for the team.
+                  nullable: true
                 orgid_attr:
                   type: string
                   description: What attribute to look for the internal id.
+                  nullable: true
+                orcid_attr:
+                  type: string
+                  description: What attribute to look for the ORCID.
+                  nullable: true
       responses:
         '201':
           description: The idp has been created.

@@ -5,10 +5,11 @@
   </h3>
   <span class='beta'>beta</span>
   {% include 'infotip.html' with {text} %}
+  <div class='d-flex justify-content-between align-items-center'>
+    <span hidden id='spreadsheetEditorUnsavedChanges'>{{ 'You have unsaved changes'|trans|msg('warning', false) }}</span>
+    <a class='btn btn-ghost ml-auto mr-2 external-link' href='https://doc.elabftw.net/docs/usage/user-guide/experiments#spreadsheet-editor' target='_blank' rel='noopener'>{{ 'Documentation'|trans }}</a>
+  </div>
   <div id='spreadsheetEditorDiv' class='m-2' hidden data-save-hidden='spreadsheetEditorDiv'>
-    <div class='d-flex'>
-      <a class='btn btn-ghost ml-auto mr-2 external-link' href='https://doc.elabftw.net/docs/usage/user-guide/experiments#spreadsheet-editor' target='_blank' rel='noopener'>{{ 'Documentation'|trans }}</a>
-    </div>
     {% if App.devMode -%}
       <!-- [html-validate-disable-block unique-landmark, no-deprecated-attr, prefer-native-element: suppress errors from spreadsheet editor] -->
     {%- endif %}

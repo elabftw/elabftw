@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\UsersHelper;
 use PDO;
@@ -20,6 +21,9 @@ use Override;
 
 use function date;
 use function implode;
+use function array_column;
+use function array_filter;
+use function count;
 
 /**
  * Create a report of usage for users provided in construct
@@ -64,7 +68,8 @@ class MakeReport extends AbstractMakeCsv
         foreach ($users as $key => $user) {
             $UsersHelper = new UsersHelper($user['userid']);
             // get the teams of user
-            $teams = implode(',', $UsersHelper->getTeamsNameFromUserid());
+            $teams = $UsersHelper->getTeamsFromUserid();
+            $teamNamesString = implode(', ', array_column($teams, 'name'));
             // get disk usage for all uploaded files
             $diskUsage = $this->getDiskUsage($user['userid']);
 
@@ -77,16 +82,19 @@ class MakeReport extends AbstractMakeCsv
                 'token',
                 'auth_lock_time',
                 'sig_pubkey',
+                'teams',
             );
             foreach ($unusedColumns as $column) {
                 unset($users[$key][$column]);
             }
 
-            $users[$key]['team(s)'] = $teams;
+            $users[$key]['team(s)'] = $teamNamesString;
             $users[$key]['diskusage_in_bytes'] = $diskUsage;
             $users[$key]['diskusage_formatted'] = Tools::formatBytes($diskUsage);
-            $users[$key]['exp_total'] = $UsersHelper->countExperiments();
+            $users[$key]['exp_total'] = $UsersHelper->countEntity(EntityType::Experiments);
             $users[$key]['exp_timestamped_total'] = $UsersHelper->countTimestampedExperiments();
+            $users[$key]['resources_total'] = $UsersHelper->countEntity(EntityType::Items);
+            $users[$key]['is_archived_in_all_teams'] = count(array_filter($teams, fn($team) => $team['is_archived'] === 1)) === count($teams) ? 1 : 0;
         }
         return $users;
     }

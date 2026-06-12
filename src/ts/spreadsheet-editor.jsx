@@ -37,8 +37,35 @@ function SpreadsheetEditor() {
   // refs that always have the latest values (for toolbar onclick)
   const replaceIdRef = useRef(null);
   const replaceNameRef = useRef(null);
+  const isDirtyRef = useRef(false);
+
   useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
   useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
+  // on changes in the spreadsheet, notify that there's unsaved changes
+  const setUnsavedWarning = (visible) => {
+    isDirtyRef.current = visible;
+    const unsavedChangesWarning = window.parent.document.getElementById('spreadsheetEditorUnsavedChanges');
+    if (unsavedChangesWarning) {
+      unsavedChangesWarning.hidden = !visible;
+    }
+  };
+
+  const markUnsaved = () => setUnsavedWarning(true);
+
+  // if Dirty state, ask user if he wants to save before leaving the page
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (!isDirtyRef.current) {
+        return;
+      }
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.parent.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.parent.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
   const entity = getEntity(true);
@@ -66,6 +93,7 @@ function SpreadsheetEditor() {
         res = await saveAsAttachment(aoa, entity.type, entity.id);
       }
       keepResult(res);
+      setUnsavedWarning(false);
     } finally {
       window.parent.postMessage('uploadsDiv', window.location.origin);
       setIsSaving(false);
@@ -167,15 +195,14 @@ function SpreadsheetEditor() {
     <>
       <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
       {/* move Spreadsheet into a child component to safely re-init on file uploads */}
-      <SpreadsheetInner key={spreadsheetKey} data={data} buildToolbar={buildToolbar} />
+      <SpreadsheetInner key={spreadsheetKey} data={data} buildToolbar={buildToolbar} onSpreadsheetChange={markUnsaved}/>
     </>
   );
 }
-
-function SpreadsheetInner({ data, buildToolbar }) {
+function SpreadsheetInner({ data, buildToolbar, onSpreadsheetChange }) {
   const spreadsheetRef = useRef(null);
   return (
-    <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar}>
+    <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar} onchange={onSpreadsheetChange}>
       <Worksheet data={data} minDimensions={[
           Math.max(12, data[0]?.length || 0),
           Math.max(12, data.length)

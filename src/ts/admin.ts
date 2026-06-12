@@ -39,16 +39,13 @@ function collectInt(name: string): number {
   return parseInt((getSafeElementById(name) as HTMLInputElement).value, 10);
 }
 
+// Collect selected teams, user groups and users from TomSelect-backed selects.
 function collectCan(): string {
   // Warning: copy pasta from common.ts save-permissions action
-  // collect existing users listed in ul->li, and store them in a string[] with user:<userid>
-  const existingUsers = Array.from(document.getElementById('masscan_list_users').children)
-    .map(u => `user:${(u as HTMLElement).dataset.id}`);
-
   return permissionsToJson(
-    Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v=>v.value)
-      .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v=>v.value))
-      .concat(existingUsers),
+    Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v => v.value)
+      .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v => v.value))
+      .concat(Array.from((document.getElementById('masscan_select_users') as HTMLSelectElement).selectedOptions).map(v => v.value)),
   );
 }
 
@@ -61,8 +58,10 @@ function getSelected(): Selected {
     experiments_categories: collectSelectable('experiments_categories'),
     experiments_tags: collectSelectable('experiments_tags'),
     tags: collectSelectable('tags'),
-    users_experiments: collectSelectable('users-experiments'),
-    users_resources: collectSelectable('users-resources'),
+    users_experiments: collectSelectable('users_experiments'),
+    users_resources: collectSelectable('users_resources'),
+    users_experiments_templates: collectSelectable('users_experiments_templates'),
+    users_resources_templates: collectSelectable('users_resources_templates'),
     userid: collectInt('targetUserId'),
     team: collectInt('targetTeamId'),
     can: collectCan(),
@@ -80,8 +79,8 @@ on('run-action-selected', (el: HTMLElement) => {
   }
   const oldHTML = mkSpin(btn);
   selected['action'] = btn.dataset.what;
-  // we use a custom notif message, so disable the native one
-  ApiC.notifOnSaved = false;
+  // we use a custom notif message, so disable the native notif
+  selected['notifOnSaved'] = 0;
   ApiC.post('batch', selected).then(res => {
     const processed = res.headers.get('location').split('/').pop();
     notify.success('entries-processed', { num: processed });
@@ -184,10 +183,10 @@ if (window.location.pathname === '/admin.php') {
   });
 
   on('send-onboarding-emails', () => {
-    ApiC.notifOnSaved = false;
     ApiC.patch(`${Model.Team}/current`, {
-      'action': Action.SendOnboardingEmails,
-      'userids': Array.from((document.getElementById('sendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
+      action: Action.SendOnboardingEmails,
+      notifOnSaved: 0,
+      userids: Array.from((document.getElementById('sendOnboardingEmailToUsers') as HTMLSelectElement).selectedOptions)
         .map(option => parseInt(option.value, 10)),
     }).then(response => {
       if (response.ok) {

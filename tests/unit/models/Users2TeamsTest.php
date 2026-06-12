@@ -84,6 +84,23 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         $Users2Teams->patchUser2Team($params, 2);
     }
 
+    public function testCreateIdempotent(): void
+    {
+        // create a fresh user in team 2
+        $newUserId = (new Users(1, 1))->postAction(Action::Create, array(
+            'team' => 2,
+            'firstname' => 'idempotent',
+            'lastname' => 'test',
+            'email' => 'idempotent@test-create.com',
+        ));
+        // first call inserts a new row → must return true
+        $this->assertTrue($this->Users2Teams->create($newUserId, 1));
+        // second call hits INSERT IGNORE and skips → must return false
+        $this->assertFalse($this->Users2Teams->create($newUserId, 1));
+        // clean up
+        (new Users($newUserId, 1))->destroy();
+    }
+
     public function testWasAdminAlready(): void
     {
         // create new user

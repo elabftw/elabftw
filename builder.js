@@ -71,8 +71,10 @@ module.exports = (env) => {
         'prismjs/components/prism-latex.js',
         'prismjs/components/prism-lua.js',
         'prismjs/components/prism-makefile.js',
+        'prismjs/components/prism-markup-templating.js', // necessary for php
         'prismjs/components/prism-matlab.js',
         'prismjs/components/prism-perl.js',
+        'prismjs/components/prism-php.js',
         'prismjs/components/prism-python.js',
         'prismjs/components/prism-r.js',
         'prismjs/components/prism-ruby.js',
@@ -120,6 +122,7 @@ module.exports = (env) => {
     ],
     resolve: {
       extensions: ['.ts', '.js', '.jsx', '.svelte'],
+      conditionNames: ['svelte', 'browser', '...'],
       mainFields: ['svelte', 'browser', 'module', 'main'],
       fallback: {
         // required by react 18

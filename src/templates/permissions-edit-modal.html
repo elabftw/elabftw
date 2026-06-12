@@ -142,6 +142,9 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+        {% if not ucpPage and (rw == 'canread' or rw == 'canwrite') %}
+          <button type='button' class='btn btn-outline-primary' data-dismiss='modal' data-identifier='{{ identifier }}' data-action='save-permissions-both'>{{ 'Apply permissions to both Read and Write'|trans }}</button>
+        {% endif %}
         <button type='button' class='btn btn-primary' data-dismiss='modal' data-identifier='{{ identifier }}' data-rw='{{ rw }}' {{ ucpPage ? 'data-is-user-default="1"' }} data-action='save-permissions'>{{ 'Save'|trans }}</button>
       </div>
     </div>

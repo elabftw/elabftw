@@ -124,8 +124,6 @@ async function displayEntities(mode: string) {
   mountEntityListSv(rootEl);
 }
 
-const params = new URLSearchParams(document.location.search.slice(1));
-
 const searchBar = document.getElementById('searchBar');
 if (searchBar) {
   // remove placeholder input
@@ -143,39 +141,22 @@ if (searchBar) {
   });
 }
 
-function removeHiddenInputsFromMainSearchForm(name: string): void
-{
-  const form = document.getElementById('mainSearchForm');
+function preventReactiveSearchFormSubmit(): void {
+  const form = document.getElementById('mainSearchForm') as HTMLFormElement | null;
+
   if (!form) {
     return;
   }
 
-  form.querySelectorAll<HTMLInputElement>('input[hidden]').forEach(input => {
-    if (input.name === name) {
-      input.remove();
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const input = form.elements.namedItem('q') as HTMLInputElement | null;
+
+    if (input) {
+      searchQuery.set(input.value);
     }
   });
-}
-
-function appendHiddenInputToMainSearchForm(name: string, value: string): void
-{
-  const form = document.getElementById('mainSearchForm');
-  if (!form) {
-    return;
-  }
-
-  const input = document.createElement('input');
-  input.hidden = true;
-  input.name = name;
-  input.setAttribute('aria-label', name);
-  input.value = value;
-  form.appendChild(input);
-}
-
-function addHiddenInputToMainSearchForm(name: string, value: string): void
-{
-  removeHiddenInputsFromMainSearchForm(name);
-  appendHiddenInputToMainSearchForm(name, value);
 }
 
 function syncSelectedEntitiesFromDom(): void {
@@ -257,13 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayEntities(displayMode);
   })();
 
-
-  // Preserve filters from navbar dropdown (e.g., category, scope, bookable) when performing a search. #6284
-  ['category', 'scope', 'bookable'].forEach(param => {
-    if (params.has(param)) {
-      addHiddenInputToMainSearchForm(param, params.get(param));
-    }
-  });
+  preventReactiveSearchFormSubmit();
 
   // TomSelect for extra fields & owner search select
   if (document.getElementById('metakey')) {
@@ -548,10 +523,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (value === '') {
       url.searchParams.delete(param);
-      removeHiddenInputsFromMainSearchForm(param);
     } else {
       url.searchParams.set(param, value);
-      addHiddenInputToMainSearchForm(param, value);
     }
 
     window.history.replaceState({}, '', url.toString());
@@ -931,11 +904,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (selected.length === 0) {
       url.searchParams.delete(param);
-      removeHiddenInputsFromMainSearchForm(param);
     } else {
       const joined = selected.join(',');
       url.searchParams.set(param, joined); // param=1,2,5
-      addHiddenInputToMainSearchForm(param, joined);
     }
 
     window.history.replaceState({}, '', url.toString());
@@ -1178,11 +1149,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = new URL(window.location.href);
 
         url.searchParams.delete('tags[]');
-        removeHiddenInputsFromMainSearchForm('tags[]');
 
         selectedTags.forEach(tag => {
           url.searchParams.append('tags[]', tag);
-          appendHiddenInputToMainSearchForm('tags[]', tag);
         });
 
         window.history.replaceState({}, '', url.toString());

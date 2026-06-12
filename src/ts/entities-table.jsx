@@ -20,7 +20,7 @@ import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import { notify } from './notify';
 import i18next from './i18n';
-import { getEntityTypeFromPage } from './misc';
+import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
 
 // allow filtering by displayed values for cells that render their raw value differently
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
@@ -219,9 +219,7 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
           rowSelection={rowSelection}
           onCellClicked={cellClicked}
           onSelectionChanged={selectionChanged}
-          pagination={true}
-          paginationPageSize={15}
-          paginationPageSizeSelector={[15, 50, 100, 500]}
+          {...DEFAULT_AG_GRID_PAGINATION}
         />
       </div>
     </>

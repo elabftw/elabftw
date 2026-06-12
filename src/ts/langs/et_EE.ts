@@ -114,6 +114,8 @@ const t = {
     "request-filename": "Sisesta faili nimi",
     "resource-not-found": "Selle ID-ga pole midagi näidata",
     "revisions-error": "Valige võrdlemiseks kaks redaktsiooni.",
+    "ror-description": "These RORs apply to the whole instance and are applied to all teams.",
+    "ror-description-team": "These RORs apply only to the current team.",
     "ror-input-label": "Add Research Organization Registry (ROR) identifier",
     "ror-input-title": "Enter a valid 9-character ROR ID, for example 04t0gwh46 or https://ror.org/04t0gwh46",
     "save": "Salvesta",

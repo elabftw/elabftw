@@ -1021,7 +1021,15 @@ export function ensureTogglableSectionIsOpen(iconId: string, divId: string): voi
 export function mountRors(): void {
   document.querySelectorAll('[data-svelte-component="rors"]').forEach(el => {
     const target = el as HTMLElement;
-    mount(RorsSv, {target});
+
+    const isInstance = target.dataset.isInstance === '1';
+
+    mount(RorsSv, {
+      target,
+      props: {
+        is_instance: isInstance,
+      },
+    });
   });
 }
 

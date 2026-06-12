@@ -114,6 +114,8 @@ const t = {
     "request-filename": "Ingrese el nombre del archivo",
     "resource-not-found": "Nada que mostrar con este identificador",
     "revisions-error": "Selecciona dos revisiones para compararlas.",
+    "ror-description": "These RORs apply to the whole instance and are applied to all teams.",
+    "ror-description-team": "These RORs apply only to the current team.",
     "ror-input-label": "Add Research Organization Registry (ROR) identifier",
     "ror-input-title": "Enter a valid 9-character ROR ID, for example 04t0gwh46 or https://ror.org/04t0gwh46",
     "save": "Guardar",

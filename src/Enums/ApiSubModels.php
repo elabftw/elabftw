@@ -54,6 +54,7 @@ enum ApiSubModels: string
             ApiEndpoint::Users => self::getUsersCases(),
             ApiEndpoint::Event => self::getSchedulerCases(),
             ApiEndpoint::Idps => self::getIdpsCases(),
+            ApiEndpoint::Instance => self::getInstanceCases(),
             default => throw new ImproperActionException('Incorrect endpoint.'),
         };
     }
@@ -125,6 +126,16 @@ enum ApiSubModels: string
             array(
                 self::IdpsCerts,
                 self::IdpsEndpoints,
+            ),
+        );
+    }
+
+    private static function getInstanceCases(): array
+    {
+        return array_map(
+            fn(self $case): string => $case->value,
+            array(
+                self::Rors,
             ),
         );
     }

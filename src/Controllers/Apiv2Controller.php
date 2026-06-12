@@ -48,6 +48,7 @@ use Elabftw\Models\IdpsEndpoints;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Instance;
+use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\Notifications\EventDeleted;
@@ -164,12 +165,18 @@ final class Apiv2Controller extends AbstractApiController
         // load Model
         $this->Model = $this->getModel();
         // load submodel
-        if (!empty($req[5])) {
-            $subIdString = $req[6] ?? '';
+        $submodel = (string) $req[5];
+        $subIdString = $req[6] ?? '';
+        // no id for /instance
+        if ($this->Model instanceof Instance) {
+            $submodel = (string) $req[4];
+            $subIdString = $req[5] ?? '';
+        }
+        if (!empty($submodel)) {
             $subId = (int) $subIdString;
             $this->subIdString = !empty($subIdString) ? $subIdString : null;
             $this->subId = $subId > 0 ? $subId : null;
-            $this->Model = $this->getSubModel(ApiSubModels::tryFrom((string) $req[5]));
+            $this->Model = $this->getSubModel(ApiSubModels::tryFrom($submodel));
             $this->hasSubmodel = true;
         }
 
@@ -360,8 +367,8 @@ final class Apiv2Controller extends AbstractApiController
 
     private function getSubModel(?ApiSubModels $submodel): RestInterface
     {
-        $this->Model->readOne();
         if ($this->Model instanceof AbstractEntity) {
+            $this->Model->readOne();
             $Config = Config::getConfig();
             return match ($submodel) {
                 ApiSubModels::Comments => new Comments($this->Model, $this->subId),
@@ -419,6 +426,12 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::IdpsCerts => new IdpsCerts($this->requester, $this->id, $this->subId),
                 ApiSubModels::IdpsEndpoints => new IdpsEndpoints($this->requester, $this->id, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Idps),
+            };
+        }
+        if ($this->Model instanceof Instance) {
+            return match ($submodel) {
+                ApiSubModels::Rors => new Instance2Rors($this->requester, $this->subIdString),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Instance),
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');

@@ -114,6 +114,8 @@ const t = {
     "request-filename": "Εισαγάγετε το όνομα του αρχείου",
     "resource-not-found": "Δεν υπάρχει τίποτα για εμφάνιση με αυτό το αναγνωριστικό",
     "revisions-error": "Select two revisions to compare them.",
+    "ror-description": "These RORs apply to the whole instance and are applied to all teams.",
+    "ror-description-team": "These RORs apply only to the current team.",
     "ror-input-label": "Add Research Organization Registry (ROR) identifier",
     "ror-input-title": "Enter a valid 9-character ROR ID, for example 04t0gwh46 or https://ror.org/04t0gwh46",
     "save": "Αποθήκευση",

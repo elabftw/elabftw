@@ -12,10 +12,14 @@
   import i18next from '../i18n';
 
   type RorAssociation = {
-    teams_id: number;
+    teams_id?: number;
     ror: string;
     created_at: string;
   };
+
+  let { is_instance = false } = $props<{ is_instance?: boolean }>();
+
+  let rorsEndpoint = $derived(is_instance ? 'instance/rors' : 'teams/current/rors');
 
   let rors = $state<RorAssociation[]>([]);
   let rorInput = $state('');
@@ -32,7 +36,7 @@
   }
 
   async function loadRors(): Promise<void> {
-    rors = await ApiC.getJson('teams/current/rors');
+    rors = await ApiC.getJson(rorsEndpoint);
     await loadOrganizationNames();
   }
 
@@ -95,7 +99,7 @@
     isSubmitting = true;
 
     try {
-      await ApiC.post(`teams/current/rors/${encodeURIComponent(ror)}`);
+      await ApiC.post(`${rorsEndpoint}/${encodeURIComponent(ror)}`);
       rorInput = '';
       await loadRors();
     } finally {
@@ -105,7 +109,7 @@
 
   async function deleteRor(ror: string): Promise<void> {
     if (confirm(t('generic-delete-warning'))) {
-      await ApiC.delete(`teams/current/rors/${encodeURIComponent(ror)}`);
+      await ApiC.delete(`${rorsEndpoint}/${encodeURIComponent(ror)}`);
       await loadRors();
     }
   }
@@ -125,6 +129,13 @@
     <p>{t('loading')}…</p>
   {:else if rors.length > 0}
     <h3>{t('existing-ror-associations')}</h3>
+    <p class='text-muted'>
+      {#if is_instance}
+        {t('ror-description')}
+      {:else}
+        {t('ror-description-team')}
+      {/if}
+    </p>
     <table class='table' aria-describedby='existingRors' data-table-sort='true'>
       <thead>
         <tr>

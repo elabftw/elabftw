@@ -114,6 +114,8 @@ const t = {
     "request-filename": "输入文件名",
     "resource-not-found": "该 ID 没有任何记录",
     "revisions-error": "选择两个修订版进行比较。",
+    "ror-description": "These RORs apply to the whole instance and are applied to all teams.",
+    "ror-description-team": "These RORs apply only to the current team.",
     "ror-input-label": "Add Research Organization Registry (ROR) identifier",
     "ror-input-title": "Enter a valid 9-character ROR ID, for example 04t0gwh46 or https://ror.org/04t0gwh46",
     "save": "保存",

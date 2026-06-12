@@ -48,6 +48,14 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testArchiveAsAdmin(): void
+    {
+        $admin = $this->getUserInTeam(2, admin: 1);
+        $Users2Teams = new Users2Teams($admin);
+        $this->expectException(IllegalActionException::class);
+        $Users2Teams->archive(2);
+    }
+
     public function testRmUserFromTeamButNotAdminInTeam(): void
     {
         // admin in team 2

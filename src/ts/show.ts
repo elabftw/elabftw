@@ -63,6 +63,7 @@ function updateUrlFromStores(filters = get(entityFilters)): void {
   const q = get(searchQuery).trim();
 
   url.search = filters.toString();
+  url.searchParams.delete('offset');
 
   if (q.length > 0) {
     url.searchParams.set('q', q);
@@ -108,7 +109,7 @@ function setEntityFilterParamValues(param: string, values: string[]): void {
   });
 }
 
-function getEntityFilterParamValues(param: string): string[] {
+function getEntityFilterParamValues(param: string, splitComma = true): string[] {
   const params = get(entityFilters);
 
   if (param === 'tags[]') {
@@ -121,7 +122,7 @@ function getEntityFilterParamValues(param: string): string[] {
     return [];
   }
 
-  return value.split(',').filter(Boolean);
+  return splitComma ? value.split(',').filter(Boolean) : [value];
 }
 
 searchQuery.subscribe(() => {
@@ -430,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function hydrateFilterAutoControlsFromUrl(): void {
     document.querySelectorAll<HTMLElement>('.filterAuto').forEach(elem => {
       const param = elem.dataset.param || (elem as HTMLInputElement).name;
-      const values = getEntityFilterParamValues(param);
+      const values = getEntityFilterParamValues(param, false);
 
       if (values.length === 0) {
         return;
@@ -443,7 +444,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (elem instanceof HTMLInputElement) {
         if (elem.type === 'checkbox') {
-          elem.checked = values.includes(elem.value);
+          const checkboxValues = getEntityFilterParamValues(param, true);
+          elem.checked = checkboxValues.includes(elem.value);
           return;
         }
 

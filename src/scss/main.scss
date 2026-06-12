@@ -521,6 +521,7 @@ button:disabled {
   thead {
     position: sticky;
     top: 0;
+    background-color: var(--white);
 
     /* thead with no filter on top need to have this class to have a top border */
     /* stylelint-disable-next-line selector-no-qualifying-type */

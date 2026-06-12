@@ -182,8 +182,8 @@ if (document.getElementById('compounds-table')) {
           onGridReady={onGridReady}
           onSelectionChanged={selectionChanged}
           pagination={true}
-          paginationPageSize={15}
-          paginationPageSizeSelector={[15, 50, 100, 500]}
+          paginationPageSize={100}
+          paginationPageSizeSelector={[100, 250, 500]}
         />
         <div className='d-flex justify-content-end my-2'>
           <button

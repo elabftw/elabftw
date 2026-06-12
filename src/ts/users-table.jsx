@@ -197,8 +197,8 @@ if (document.getElementById('users-table')) {
             onCellDoubleClicked={cellDoubleClicked}
             onSelectionChanged={selectionChanged}
             pagination={true}
-            paginationPageSize={15}
-            paginationPageSizeSelector={[15, 50, 100, 500]}
+            paginationPageSize={100}
+            paginationPageSizeSelector={[100, 250, 500]}
           />
         </div>
         <div className='d-flex justify-content-start my-2'>

@@ -45,6 +45,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use DateTimeImmutable;
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use ValueError;
 use ZipStream\ZipStream;
 use Override;
@@ -92,10 +95,26 @@ final class MakeController extends AbstractController
                 return new MakeCsv($this->entityArr)->getResponse();
 
             case ExportFormat::Eln:
-                return $this->makeStreamZip(new MakeEln(App::getDefaultLogger(), $this->getZipStreamLib(), $this->requester, $this->entityArr));
+                return $this->makeStreamZip(new MakeEln(
+                    App::getDefaultLogger(),
+                    $this->getZipStreamLib(),
+                    $this->requester,
+                    $this->entityArr,
+                    new Instance2Rors(),
+                    new Teams2Rors($this->requester->getTeam(), false),
+                    new Users2Rors($this->requester, $this->requester),
+                ));
 
             case ExportFormat::ElnHtml:
-                return new MakeElnHtml(App::getDefaultLogger(), $this->getZipStreamLib(), $this->requester, $this->entityArr)->getResponse();
+                return new MakeElnHtml(
+                    App::getDefaultLogger(),
+                    $this->getZipStreamLib(),
+                    $this->requester,
+                    $this->entityArr,
+                    new Instance2Rors(),
+                    new Teams2Rors($this->requester->getTeam(), false),
+                    new Users2Rors($this->requester, $this->requester),
+                )->getResponse();
 
             case ExportFormat::Json:
                 return new MakeJson($this->entityArr)->getResponse();

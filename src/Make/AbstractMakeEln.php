@@ -14,8 +14,11 @@ namespace Elabftw\Make;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\BuildInfo;
+use Elabftw\Models\Instance2Rors;
 use ZipStream\ZipStream;
 use Override;
+
+use function array_map;
 
 /**
  * Abstract class for creating an ELN archive
@@ -24,7 +27,7 @@ abstract class AbstractMakeEln extends AbstractMakeZip
 {
     protected const string HASH_ALGO = 'sha256';
 
-    protected const int INTERNAL_ELN_VERSION = 106;
+    protected const int INTERNAL_ELN_VERSION = 107;
 
     protected string $extension = '.eln';
 
@@ -44,8 +47,10 @@ abstract class AbstractMakeEln extends AbstractMakeZip
     // name of the folder containing everything
     protected string $root;
 
-    public function __construct(protected ZipStream $Zip)
-    {
+    public function __construct(
+        protected ZipStream $Zip,
+        protected Instance2Rors $instance2Rors,
+    ) {
         parent::__construct($Zip);
 
         $this->creationDateTime = new DateTimeImmutable();
@@ -82,6 +87,7 @@ abstract class AbstractMakeEln extends AbstractMakeZip
             'logo' => 'https://www.elabftw.net/img/elabftw-logo-only.svg',
             'slogan' => 'A free and open source electronic lab notebook.',
             'url' => 'https://www.elabftw.net',
+            'memberOf' => $this->getInstanceRors(),
             'parentOrganization' => array('@id' => 'https://www.deltablot.com'),
         );
     }
@@ -90,6 +96,16 @@ abstract class AbstractMakeEln extends AbstractMakeZip
     public function getFileName(): string
     {
         return $this->root . $this->extension;
+    }
+
+    protected function getInstanceRors(): array
+    {
+        return array_map(
+            static fn(array $row): array => array(
+                '@id' => 'https://ror.org/' . $row['ror'],
+            ),
+            $this->instance2Rors->readAll()
+        );
     }
 
     // Create Action: https://www.researchobject.org/ro-crate/1.1/provenance.html#recording-changes-to-ro-crates

@@ -298,7 +298,15 @@ final class Dspace extends AbstractRest
         $tmpFileName = Tools::getUuidv4();
         $storage = Storage::EXPORTS->getStorage();
         $absolutePath = $storage->getAbsoluteUri($tmpFileName);
-        $maker = new MakeEln(App::getDefaultLogger(), new ZipStream(sendHttpHeaders: false), $this->requester, array($entity));
+        $maker = new MakeEln(
+            App::getDefaultLogger(),
+            new ZipStream(sendHttpHeaders: false),
+            $this->requester,
+            array($entity),
+            new Instance2Rors(),
+            new Teams2Rors($this->requester->getTeam(), false),
+            new Users2Rors($this->requester, $this->requester),
+        );
         $maker->writeToFile($absolutePath);
         $headers = $this->getAuthHeaders();
         $url = sprintf('%ssubmission/workspaceitems/%d', $this->host, $workspaceId);

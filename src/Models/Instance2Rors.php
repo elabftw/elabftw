@@ -14,9 +14,9 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Models\Users\Users;
 use Elabftw\Services\Check;
 use Override;
 
@@ -25,7 +25,7 @@ use Override;
  */
 final class Instance2Rors extends AbstractRest
 {
-    public function __construct(private Users $requester, private ?string $ror = null)
+    public function __construct(private readonly bool $canwrite = false, private readonly ?string $ror = null)
     {
         $this->Db = Db::getConnection();
         if ($this->ror !== null) {
@@ -42,7 +42,7 @@ final class Instance2Rors extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->requester->isSysadminOrExplode();
+        $this->canwriteOrExplode();
         return match ($action) {
             Action::Create => $this->create(),
             default => throw new ImproperActionException('Incorrect action for ROR.'),
@@ -71,11 +71,18 @@ final class Instance2Rors extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->requester->isSysadminOrExplode();
+        $this->canwriteOrExplode();
         $sql = 'DELETE FROM instance2rors WHERE ror = :ror';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':ror', $this->ror);
         return $this->Db->execute($req);
+    }
+
+    private function canwriteOrExplode(): void
+    {
+        if (!$this->canwrite) {
+            throw new IllegalActionException();
+        }
     }
 
     private function create(): int

@@ -24,6 +24,9 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\AbstractRest;
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfProvider;
@@ -259,7 +262,15 @@ final class Exports extends AbstractRest
                 }
                 $ZipStream = new ZipStream(sendHttpHeaders: false, outputStream: $fileStream);
                 if ($format === ExportFormat::Eln) {
-                    $Maker = new MakeEln($this->logger, $ZipStream, $this->requester, $entityArr);
+                    $Maker = new MakeEln(
+                        $this->logger,
+                        $ZipStream,
+                        $this->requester,
+                        $entityArr,
+                        new Instance2Rors(),
+                        new Teams2Rors($this->requester->getTeam(), false),
+                        new Users2Rors($this->requester, $this->requester),
+                    );
                 } else {
                     $Maker = new MakeBackupZip($ZipStream, $this->requester, $entityArr, $usePdfa, $includeChangelog, $includeJson);
                 };

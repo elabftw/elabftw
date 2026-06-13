@@ -22,9 +22,13 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Items;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
+use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
@@ -52,6 +56,7 @@ use function json_encode;
 use function random_bytes;
 use function sprintf;
 use function strtr;
+use function array_map;
 
 /**
  * Make an ELN archive
@@ -60,9 +65,16 @@ class MakeEln extends AbstractMakeEln
 {
     use TwigTrait;
 
-    public function __construct(protected LoggerInterface $logger, ZipStream $Zip, protected Users $requester, protected array $entityArr)
-    {
-        parent::__construct($Zip);
+    public function __construct(
+        protected LoggerInterface $logger,
+        ZipStream $Zip,
+        protected Users $requester,
+        protected array $entityArr,
+        protected Instance2Rors $instance2Rors,
+        protected Teams2Rors $teams2Rors,
+        protected Users2Rors $users2Rors,
+    ) {
+        parent::__construct($Zip, $instance2Rors);
     }
 
     /**
@@ -431,6 +443,24 @@ class MakeEln extends AbstractMakeEln
         return $res;
     }
 
+    protected function getUserRors(Users $user): array
+    {
+        $this->users2Rors->target = $user;
+        $teamsRors = array();
+        $UsersHelper = new UsersHelper($user->getUserid());
+        $teams = $UsersHelper->getTeamsIdFromUserid();
+        foreach ($teams as $teamid) {
+            $teamsRors = array_merge($teamsRors, $this->teams2Rors->readAllFromId($teamid));
+        }
+
+        return array_map(
+            static fn(array $row): array => array(
+                '@id' => 'https://ror.org/' . $row['ror'],
+            ),
+            array_merge($this->users2Rors->readAll(), $teamsRors)
+        );
+    }
+
     /**
      * Generate an author node unless it exists already
      */
@@ -448,6 +478,7 @@ class MakeEln extends AbstractMakeEln
             'givenName' => $author->userData['firstname'],
             'familyName' => $author->userData['lastname'],
             'email' => $author->userData['email'],
+            'affiliation' => $this->getUserRors($author),
         );
         // only add an identifier property if there is an orcid
         if (!empty($author->userData['orcid'])) {

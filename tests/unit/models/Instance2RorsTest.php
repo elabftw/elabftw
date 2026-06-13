@@ -15,7 +15,6 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function count;
@@ -24,8 +23,6 @@ class Instance2RorsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
 
-    private Users $Users;
-
     private Instance2Rors $Instance2Rors;
 
     private string $ror;
@@ -33,8 +30,7 @@ class Instance2RorsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->ror = '05kxdq627';
-        $this->Users = new Users(1, 1);
-        $this->Instance2Rors = new Instance2Rors($this->Users, $this->ror);
+        $this->Instance2Rors = new Instance2Rors(true, $this->ror);
     }
 
     public function testGetApiPath(): void
@@ -55,14 +51,14 @@ class Instance2RorsTest extends \PHPUnit\Framework\TestCase
 
     public function testNotSysadmin(): void
     {
-        $Instance2Rors = new Instance2Rors($this->getUserInTeam(2), $this->ror);
+        $Instance2Rors = new Instance2Rors(false, $this->ror);
         $this->expectException(IllegalActionException::class);
         $Instance2Rors->postAction(Action::Create, array());
     }
 
     public function testInvalidCreate(): void
     {
-        $Instance2Rors = new Instance2Rors($this->Users);
+        $Instance2Rors = new Instance2Rors(true);
         $this->expectException(ImproperActionException::class);
         $Instance2Rors->postAction(Action::Create, array());
     }
@@ -70,6 +66,6 @@ class Instance2RorsTest extends \PHPUnit\Framework\TestCase
     public function testInvalidRor(): void
     {
         $this->expectException(ImproperActionException::class);
-        new Instance2Rors($this->Users, 'not a ror');
+        new Instance2Rors(true, 'not a ror');
     }
 }

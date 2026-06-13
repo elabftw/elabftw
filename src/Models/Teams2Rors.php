@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
@@ -27,8 +28,11 @@ use function sprintf;
  */
 final class Teams2Rors extends AbstractRest
 {
-    public function __construct(private Teams $Teams, private ?string $ror = null)
-    {
+    public function __construct(
+        private readonly int $teamid,
+        private readonly bool $canwrite = false,
+        private readonly ?string $ror = null,
+    ) {
         $this->Db = Db::getConnection();
         if ($this->ror !== null) {
             Check::ror($this->ror);
@@ -38,13 +42,13 @@ final class Teams2Rors extends AbstractRest
     #[Override]
     public function getApiPath(): string
     {
-        return sprintf('api/v2/teams/%d/rors/', $this->Teams->id ?? 0);
+        return sprintf('api/v2/teams/%d/rors/', $this->teamid);
     }
 
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->Teams->canWriteOrExplode();
+        $this->canWriteOrExplode();
         return match ($action) {
             Action::Create => $this->create(),
             default => throw new ImproperActionException('Incorrect action for ROR.'),
@@ -54,11 +58,12 @@ final class Teams2Rors extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = 'SELECT * FROM teams2rors WHERE teams_id = :teams_id ORDER BY created_at ASC';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':teams_id', $this->Teams->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->fetchAll();
+        return $this->selectAll($this->teamid);
+    }
+
+    public function readAllFromId(int $teamid): array
+    {
+        return $this->selectAll($teamid);
     }
 
     #[Override]
@@ -66,7 +71,7 @@ final class Teams2Rors extends AbstractRest
     {
         $sql = 'SELECT * FROM teams2rors WHERE teams_id = :teams_id AND ror = :ror';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':teams_id', $this->Teams->id, PDO::PARAM_INT);
+        $req->bindValue(':teams_id', $this->teamid, PDO::PARAM_INT);
         $req->bindValue(':ror', $this->ror);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
@@ -75,11 +80,29 @@ final class Teams2Rors extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        $this->canwriteOrExplode();
         $sql = 'DELETE FROM teams2rors WHERE teams_id = :teams_id AND ror = :ror';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':teams_id', $this->Teams->id, PDO::PARAM_INT);
+        $req->bindValue(':teams_id', $this->teamid, PDO::PARAM_INT);
         $req->bindValue(':ror', $this->ror);
         return $this->Db->execute($req);
+    }
+
+    private function selectAll(int $teamid): array
+    {
+        $sql = 'SELECT * FROM teams2rors WHERE teams_id = :teams_id ORDER BY created_at ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':teams_id', $teamid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+
+    }
+
+    private function canwriteOrExplode(): void
+    {
+        if (!$this->canwrite) {
+            throw new IllegalActionException();
+        }
     }
 
     private function create(): int
@@ -89,7 +112,7 @@ final class Teams2Rors extends AbstractRest
         }
         $sql = 'INSERT IGNORE INTO teams2rors (`teams_id`, `ror`) VALUES (:teams_id, :ror);';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':teams_id', $this->Teams->id, PDO::PARAM_INT);
+        $req->bindValue(':teams_id', $this->teamid, PDO::PARAM_INT);
         $req->bindValue(':ror', $this->ror);
         $this->Db->execute($req);
 

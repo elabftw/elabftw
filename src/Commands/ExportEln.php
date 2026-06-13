@@ -14,6 +14,7 @@ namespace Elabftw\Commands;
 
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Make\MakeTeamEln;
+use Elabftw\Models\Instance2Rors;
 use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -69,7 +70,14 @@ final class ExportEln extends Command
         $ZipStream = new ZipStream(sendHttpHeaders: false, outputStream: $fileStream);
         $users = array_map('intval', $input->getOption('users'));
         $resourcesCategories = array_map('intval', $input->getOption('rcat'));
-        $Maker = new MakeTeamEln(new ConsoleLogger($output), $ZipStream, $teamid, $users, $resourcesCategories);
+        $Maker = new MakeTeamEln(
+            new ConsoleLogger($output),
+            $ZipStream,
+            $teamid,
+            new Instance2Rors(true),
+            $users,
+            $resourcesCategories,
+        );
         $Maker->getStreamZip();
 
         fclose($fileStream);

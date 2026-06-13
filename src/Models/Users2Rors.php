@@ -29,7 +29,7 @@ use function sprintf;
  */
 final class Users2Rors extends AbstractRest
 {
-    public function __construct(private Users $requester, private Users $target, private ?string $ror = null)
+    public function __construct(private Users $requester, public Users $target, private ?string $ror = null)
     {
         $this->Db = Db::getConnection();
         if ($this->ror !== null) {

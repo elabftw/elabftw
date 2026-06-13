@@ -15,16 +15,11 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Traits\TestsUtilsTrait;
 
 use function count;
 
 class Teams2RorsTest extends \PHPUnit\Framework\TestCase
 {
-    use TestsUtilsTrait;
-
-    private Teams $Teams;
-
     private Teams2Rors $Teams2Rors;
 
     private string $ror;
@@ -33,8 +28,7 @@ class Teams2RorsTest extends \PHPUnit\Framework\TestCase
     {
         $this->ror = '04vfs2w97';
         $teamId = 3;
-        $this->Teams = new Teams($this->getUserInTeam($teamId, admin: 1), $teamId);
-        $this->Teams2Rors = new Teams2Rors($this->Teams, $this->ror);
+        $this->Teams2Rors = new Teams2Rors($teamId, true, $this->ror);
     }
 
     public function testGetApiPath(): void
@@ -56,14 +50,14 @@ class Teams2RorsTest extends \PHPUnit\Framework\TestCase
     public function testNotAdmin(): void
     {
         $teamId = 3;
-        $Teams2Rors = new Teams2Rors(new Teams($this->getUserInTeam($teamId), $teamId), $this->ror);
+        $Teams2Rors = new Teams2Rors($teamId, false, $this->ror);
         $this->expectException(IllegalActionException::class);
         $Teams2Rors->postAction(Action::Create, array());
     }
 
     public function testInvalidCreate(): void
     {
-        $Teams2Rors = new Teams2Rors($this->Teams);
+        $Teams2Rors = new Teams2Rors(3, true);
         $this->expectException(ImproperActionException::class);
         $Teams2Rors->postAction(Action::Create, array());
     }
@@ -71,6 +65,6 @@ class Teams2RorsTest extends \PHPUnit\Framework\TestCase
     public function testInvalidRor(): void
     {
         $this->expectException(ImproperActionException::class);
-        new Teams2Rors($this->Teams, 'not a ror');
+        new Teams2Rors(3, true, 'not a ror');
     }
 }

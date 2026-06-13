@@ -166,7 +166,7 @@ final class Apiv2Controller extends AbstractApiController
         // load Model
         $this->Model = $this->getModel();
         // load submodel
-        $submodel = (string) $req[5];
+        $submodel = (string) ($req[5] ?? '');
         $subIdString = $req[6] ?? '';
         // no id for /instance
         if ($this->Model instanceof Instance) {
@@ -400,7 +400,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::ResourcesCategories => new ResourcesCategories($this->Model, $this->subId),
                 ApiSubModels::ItemsStatus => new ItemsStatus($this->Model, $this->subId),
                 ApiSubModels::ProcurementRequests => new ProcurementRequests($this->Model, $this->subId),
-                ApiSubModels::Rors => new Teams2Rors($this->Model, $this->subIdString),
+                ApiSubModels::Rors => new Teams2Rors($this->Model->id ?? 0, $this->Model->canWrite(), $this->subIdString),
                 ApiSubModels::Tags => new TeamTags($this->requester, $this->subId),
                 ApiSubModels::Teamgroups => new TeamGroups($this->requester, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Teams),
@@ -432,7 +432,7 @@ final class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Instance) {
             return match ($submodel) {
-                ApiSubModels::Rors => new Instance2Rors($this->requester, $this->subIdString),
+                ApiSubModels::Rors => new Instance2Rors($this->requester->isSysadmin(), $this->subIdString),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Instance),
             };
         }

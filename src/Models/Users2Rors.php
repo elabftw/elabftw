@@ -43,13 +43,6 @@ final class Users2Rors extends AbstractRest
         return sprintf('api/v2/users/%d/rors/', $this->target->getUserid());
     }
 
-    private function canWriteOrExplode(): void
-    {
-        if (!$this->requester->isAdminOf($this->target->getUserid())) {
-            throw new IllegalActionException();
-        }
-    }
-
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
@@ -90,6 +83,13 @@ final class Users2Rors extends AbstractRest
         $req->bindValue(':users_id', $this->target->getUserid(), PDO::PARAM_INT);
         $req->bindValue(':ror', $this->ror);
         return $this->Db->execute($req);
+    }
+
+    private function canWriteOrExplode(): void
+    {
+        if (!$this->requester->isAdminOf($this->target->getUserid())) {
+            throw new IllegalActionException();
+        }
     }
 
     private function create(): int

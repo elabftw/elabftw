@@ -19,13 +19,16 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Check;
 use Override;
+use PDO;
+
+use function sprintf;
 
 /**
- * Handle the instance to ror relationship. Submodel for instance.
+ * Handle the users to ror relationship. Submodel for users.
  */
-final class Instance2Rors extends AbstractRest
+final class Users2Rors extends AbstractRest
 {
-    public function __construct(private Users $requester, private ?string $ror = null)
+    public function __construct(private Users $user, private ?string $ror = null)
     {
         $this->Db = Db::getConnection();
         if ($this->ror !== null) {
@@ -36,13 +39,12 @@ final class Instance2Rors extends AbstractRest
     #[Override]
     public function getApiPath(): string
     {
-        return 'api/v2/instance/rors/';
+        return sprintf('api/v2/users/%d/rors/', $this->user->getUserid());
     }
 
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->requester->isSysadminOrExplode();
         return match ($action) {
             Action::Create => $this->create(),
             default => throw new ImproperActionException('Incorrect action for ROR.'),
@@ -52,8 +54,9 @@ final class Instance2Rors extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = 'SELECT * FROM instance2rors ORDER BY created_at ASC';
+        $sql = 'SELECT * FROM users2rors WHERE users_id = :users_id ORDER BY created_at ASC';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':users_id', $this->user->getUserid(), PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -61,8 +64,9 @@ final class Instance2Rors extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM instance2rors WHERE ror = :ror';
+        $sql = 'SELECT * FROM users2rors WHERE users_id = :users_id AND ror = :ror';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':users_id', $this->user->getUserid(), PDO::PARAM_INT);
         $req->bindValue(':ror', $this->ror);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
@@ -71,9 +75,9 @@ final class Instance2Rors extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
-        $this->requester->isSysadminOrExplode();
-        $sql = 'DELETE FROM instance2rors WHERE ror = :ror';
+        $sql = 'DELETE FROM users2rors WHERE users_id = :users_id AND ror = :ror';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':users_id', $this->user->getUserid(), PDO::PARAM_INT);
         $req->bindValue(':ror', $this->ror);
         return $this->Db->execute($req);
     }
@@ -83,8 +87,9 @@ final class Instance2Rors extends AbstractRest
         if ($this->ror === null) {
             throw new ImproperActionException('Missing ROR value in URL');
         }
-        $sql = 'INSERT IGNORE INTO instance2rors (`ror`) VALUES (:ror);';
+        $sql = 'INSERT IGNORE INTO users2rors (`users_id`, `ror`) VALUES (:users_id, :ror);';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':users_id', $this->user->getUserid(), PDO::PARAM_INT);
         $req->bindValue(':ror', $this->ror);
         $this->Db->execute($req);
 

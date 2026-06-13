@@ -104,6 +104,7 @@ enum ApiSubModels: string
                 self::Notifications,
                 self::RequestActions,
                 self::SigKeys,
+                self::Rors,
                 self::Uploads,
             ),
         );

@@ -70,6 +70,7 @@ use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
@@ -410,6 +411,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::Notifications => new UserNotifications($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new UserRequestActions($this->Model),
                 ApiSubModels::SigKeys => new SigKeys($this->requester, $this->subId),
+                ApiSubModels::Rors => new Users2Rors($this->requester, $this->subIdString),
                 // the uploads users/X/uploads endpoint forces the use of the requester
                 ApiSubModels::Uploads => new UserUploads($this->requester, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Users),

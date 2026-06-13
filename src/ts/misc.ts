@@ -1022,12 +1022,10 @@ export function mountRors(): void {
   document.querySelectorAll('[data-svelte-component="rors"]').forEach(el => {
     const target = el as HTMLElement;
 
-    const isInstance = target.dataset.isInstance === '1';
-
     mount(RorsSv, {
       target,
       props: {
-        is_instance: isInstance,
+        endpoint: target.dataset.endpoint,
       },
     });
   });

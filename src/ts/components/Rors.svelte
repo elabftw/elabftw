@@ -17,9 +17,7 @@
     created_at: string;
   };
 
-  let { is_instance = false } = $props<{ is_instance?: boolean }>();
-
-  let rorsEndpoint = $derived(is_instance ? 'instance/rors' : 'teams/current/rors');
+  let { endpoint: rorsEndpoint } = $props<{ endpoint: string }>();
 
   let rors = $state<RorAssociation[]>([]);
   let rorInput = $state('');
@@ -130,10 +128,12 @@
   {:else if rors.length > 0}
     <h3>{t('existing-ror-associations')}</h3>
     <p class='text-muted'>
-      {#if is_instance}
+      {#if rorsEndpoint == 'instance/rors'}
         {t('ror-description')}
-      {:else}
+      {:else if rorsEndpoint == 'teams/current/rors'}
         {t('ror-description-team')}
+      {:else}
+        {t('ror-description-user')}
       {/if}
     </p>
     <table class='table' aria-describedby='existingRors' data-table-sort='true'>

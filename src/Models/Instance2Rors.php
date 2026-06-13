@@ -12,43 +12,26 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
-use Elabftw\Services\Check;
 use Override;
 
 /**
  * Handle the instance to ror relationship. Submodel for instance.
  */
-final class Instance2Rors extends AbstractRest
+final class Instance2Rors extends Abstract2Rors
 {
     public function __construct(
-        private readonly bool $canwrite = false,
-        private readonly ?string $ror = null,
+        bool $canwrite = false,
+        ?string $ror = null,
     ) {
-        $this->Db = Db::getConnection();
-        if ($this->ror !== null) {
-            Check::ror($this->ror);
-        }
+        parent::__construct($canwrite, $ror);
     }
 
     #[Override]
     public function getApiPath(): string
     {
         return 'api/v2/instance/rors/';
-    }
-
-    #[Override]
-    public function postAction(Action $action, array $reqBody): int
-    {
-        $this->canwriteOrExplode();
-        return match ($action) {
-            Action::Create => $this->create(),
-            default => throw new ImproperActionException('Incorrect action for ROR.'),
-        };
     }
 
     #[Override]
@@ -80,14 +63,8 @@ final class Instance2Rors extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    private function canwriteOrExplode(): void
-    {
-        if (!$this->canwrite) {
-            throw new IllegalActionException();
-        }
-    }
-
-    private function create(): int
+    #[Override]
+    protected function create(): int
     {
         if ($this->ror === null) {
             throw new ImproperActionException('Missing ROR value in URL');

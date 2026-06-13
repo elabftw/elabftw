@@ -305,7 +305,7 @@ final class Dspace extends AbstractRest
             array($entity),
             new Instance2Rors(),
             new Teams2Rors($this->requester->getTeam(), false),
-            new Users2Rors($this->requester, $this->requester),
+            new Users2Rors($this->requester->getUserid(), false),
         );
         $maker->writeToFile($absolutePath);
         $headers = $this->getAuthHeaders();

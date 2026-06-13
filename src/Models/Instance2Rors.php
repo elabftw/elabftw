@@ -25,8 +25,10 @@ use Override;
  */
 final class Instance2Rors extends AbstractRest
 {
-    public function __construct(private readonly bool $canwrite = false, private readonly ?string $ror = null)
-    {
+    public function __construct(
+        private readonly bool $canwrite = false,
+        private readonly ?string $ror = null,
+    ) {
         $this->Db = Db::getConnection();
         if ($this->ror !== null) {
             Check::ror($this->ror);

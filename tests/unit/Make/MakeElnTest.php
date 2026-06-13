@@ -41,7 +41,7 @@ class MakeElnTest extends \PHPUnit\Framework\TestCase
             $targets,
             new Instance2Rors(),
             new Teams2Rors($Users->getTeam(), false),
-            new Users2Rors($Users, $Users),
+            new Users2Rors($Users->getUserid(), false),
         );
     }
 

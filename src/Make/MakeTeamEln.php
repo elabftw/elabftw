@@ -62,7 +62,7 @@ final class MakeTeamEln extends AbstractMakeEln
             $entityArr,
             new Instance2Rors(),
             new Teams2Rors($requester->getTeam(), false),
-            new Users2Rors($requester, $requester),
+            new Users2Rors($requester->getUserid(), false),
         );
         $Maker->bypassReadPermission = true;
         $Maker->getStreamZip();

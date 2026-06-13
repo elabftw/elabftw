@@ -34,7 +34,7 @@ class Users2RorsTest extends \PHPUnit\Framework\TestCase
     {
         $this->ror = '02feahw73';
         $this->Users = $this->getUserInTeam(1);
-        $this->Users2Rors = new Users2Rors($this->Users, $this->Users, $this->ror);
+        $this->Users2Rors = new Users2Rors($this->Users->getUserid(), true, $this->ror);
     }
 
     public function testGetApiPath(): void
@@ -55,14 +55,14 @@ class Users2RorsTest extends \PHPUnit\Framework\TestCase
 
     public function testNotAdmin(): void
     {
-        $Users2Rors = new Users2Rors($this->getUserInTeam(2), $this->getUserInTeam(3), $this->ror);
+        $Users2Rors = new Users2Rors($this->getUserInTeam(2)->getUserid(), false, $this->ror);
         $this->expectException(IllegalActionException::class);
         $Users2Rors->postAction(Action::Create, array());
     }
 
     public function testInvalidCreate(): void
     {
-        $Users2Rors = new Users2Rors($this->Users, $this->Users);
+        $Users2Rors = new Users2Rors($this->getUserInTeam(2)->getUserid(), true);
         $this->expectException(ImproperActionException::class);
         $Users2Rors->postAction(Action::Create, array());
     }
@@ -70,6 +70,6 @@ class Users2RorsTest extends \PHPUnit\Framework\TestCase
     public function testInvalidRor(): void
     {
         $this->expectException(ImproperActionException::class);
-        new Users2Rors($this->Users, $this->Users, 'not a ror');
+        new Users2Rors($this->Users->getUserid(), true, 'not a ror');
     }
 }

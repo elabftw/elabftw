@@ -269,7 +269,7 @@ final class Exports extends AbstractRest
                         $entityArr,
                         new Instance2Rors(),
                         new Teams2Rors($this->requester->getTeam(), false),
-                        new Users2Rors($this->requester, $this->requester),
+                        new Users2Rors($this->requester->getUserid(), false),
                     );
                 } else {
                     $Maker = new MakeBackupZip($ZipStream, $this->requester, $entityArr, $usePdfa, $includeChangelog, $includeJson);

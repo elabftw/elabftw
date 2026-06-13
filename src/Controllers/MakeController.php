@@ -102,7 +102,7 @@ final class MakeController extends AbstractController
                     $this->entityArr,
                     new Instance2Rors(),
                     new Teams2Rors($this->requester->getTeam(), false),
-                    new Users2Rors($this->requester, $this->requester),
+                    new Users2Rors($this->requester->getUserid(), false),
                 ));
 
             case ExportFormat::ElnHtml:
@@ -113,7 +113,7 @@ final class MakeController extends AbstractController
                     $this->entityArr,
                     new Instance2Rors(),
                     new Teams2Rors($this->requester->getTeam(), false),
-                    new Users2Rors($this->requester, $this->requester),
+                    new Users2Rors($this->requester->getUserid(), false),
                 )->getResponse();
 
             case ExportFormat::Json:

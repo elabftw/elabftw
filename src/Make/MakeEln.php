@@ -445,7 +445,6 @@ class MakeEln extends AbstractMakeEln
 
     protected function getUserRors(Users $user): array
     {
-        $this->users2Rors->target = $user;
         $teamsRors = array();
         $UsersHelper = new UsersHelper($user->getUserid());
         $teams = $UsersHelper->getTeamsIdFromUserid();

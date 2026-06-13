@@ -26,7 +26,7 @@ import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/p
 import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
 import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
 import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
-import { mount } from 'svelte';
+import { mount, unmount } from 'svelte';
 import RorsSv from './components/Rors.svelte';
 
 // get html of current page reloaded via get
@@ -964,6 +964,14 @@ export async function populateUserModal(user: Record<string, string|number>) {
   if (user.validated !== 0) {
     validateUserBtn.setAttribute('disabled', 'disabled');
   }
+  // RORS
+  const rorsDiv = document.getElementById('rorsDiv') as HTMLElement | null;
+  if (!rorsDiv) {
+    throw new Error('Missing #rorsDiv');
+  }
+  rorsDiv.dataset.svelteComponent = 'rors';
+  rorsDiv.dataset.endpoint = `users/${user.userid}/rors`;
+  mountRors({ force: true });
 }
 
 // generate the slider element to toggle isAdmin and isOwner for a given user in a given team
@@ -1018,15 +1026,44 @@ export function ensureTogglableSectionIsOpen(iconId: string, divId: string): voi
   div.scrollIntoView({ behavior: 'smooth' });
 }
 
-export function mountRors(): void {
-  document.querySelectorAll('[data-svelte-component="rors"]').forEach(el => {
-    const target = el as HTMLElement;
+type MountedRors = {
+  component: ReturnType<typeof mount>;
+  endpoint: string;
+};
 
-    mount(RorsSv, {
+const mountedRors = new WeakMap<HTMLElement, MountedRors>();
+
+export function mountRors(options: { force?: boolean } = {}): void {
+  const { force = false } = options;
+
+  document.querySelectorAll<HTMLElement>('[data-svelte-component="rors"]').forEach(target => {
+    const endpoint = target.dataset.endpoint;
+
+    if (!endpoint) {
+      throw new Error('Missing data-endpoint for rors component');
+    }
+
+    const mounted = mountedRors.get(target);
+
+    if (mounted) {
+      if (!force && mounted.endpoint === endpoint) {
+        return;
+      }
+
+      unmount(mounted.component);
+      mountedRors.delete(target);
+    }
+
+    const component = mount(RorsSv, {
       target,
       props: {
-        endpoint: target.dataset.endpoint,
+        endpoint,
       },
+    });
+
+    mountedRors.set(target, {
+      component,
+      endpoint,
     });
   });
 }

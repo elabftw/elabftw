@@ -130,7 +130,7 @@
     <p class='text-muted'>
       {#if rorsEndpoint == 'instance/rors'}
         {t('ror-description')}
-      {:else if rorsEndpoint == 'teams/current/rors'}
+      {:else if rorsEndpoint.startsWith('teams')}
         {t('ror-description-team')}
       {:else}
         {t('ror-description-user')}

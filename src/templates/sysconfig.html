@@ -336,6 +336,9 @@
             <tr>
               <td>{{ team.id }}</td>
               <td><span class='hl-hover p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
+                <details><summary>{{ 'Manage ROR associations'|trans }}</summary>
+                  <div class='mb-2' data-svelte-component='rors' data-endpoint='teams/{{ team.id }}/rors'></div>
+                </details>
                 {#
                 <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} &ndash;
                 {% trans %}

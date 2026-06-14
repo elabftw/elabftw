@@ -282,7 +282,7 @@ class MakePdf extends AbstractMakePdf
             'timestamperName' => $timestamperName,
             'localDate' => $localDate ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],
-            'rors' => $this->getRors($this->Entity->entityData['userid'], $this->Entity->entityData['team']),
+            'rors' => $this->getRors($this->Entity->entityData['team'], $this->Entity->entityData['userid']),
             // TODO fix for templates
             'linkBaseUrl' => $baseUrls,
             'url' => sprintf('%s/%s?mode=view&id=%d', $siteUrl, $this->Entity->entityType->toPage(), $this->Entity->id ?? 0),

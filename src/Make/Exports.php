@@ -252,6 +252,9 @@ final class Exports extends AbstractRest
         }
 
         $absolutePath = $this->storage->getAbsoluteUri($longName);
+        $instance2Rors = new Instance2Rors();
+        $teams2Rors = new Teams2Rors($this->requester->getTeam());
+        $users2Rors = new Users2Rors($this->requester->getUserid());
 
         switch ($format) {
             case ExportFormat::Eln:
@@ -267,9 +270,9 @@ final class Exports extends AbstractRest
                         $ZipStream,
                         $this->requester,
                         $entityArr,
-                        new Instance2Rors(),
-                        new Teams2Rors($this->requester->getTeam(), false),
-                        new Users2Rors($this->requester->getUserid(), false),
+                        $instance2Rors,
+                        $teams2Rors,
+                        $users2Rors,
                     );
                 } else {
                     $Maker = new MakeBackupZip($ZipStream, $this->requester, $entityArr, $usePdfa, $includeChangelog, $includeJson);
@@ -283,10 +286,6 @@ final class Exports extends AbstractRest
                     $this->requester->userData['pdf_format'],
                     $usePdfa,
                 );
-                $instance2Rors = new Instance2Rors();
-                $teams2Rors = new Teams2Rors($this->requester->getTeam());
-                $users2Rors = new Users2Rors($this->requester->getUserid());
-                //$Maker = new MakeMultiPdf($this->logger, $mpdfProvider, $this->requester, $entityArr, $includeChangelog);
                 $Maker = new MakeMultiPdf($this->logger, $mpdfProvider, $this->requester, $entityArr, $instance2Rors, $teams2Rors, $users2Rors, $includeChangelog);
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;

@@ -20,6 +20,9 @@ use Elabftw\Interfaces\MakeTimestampInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Services\MpdfProvider;
@@ -117,11 +120,17 @@ abstract class AbstractMakeTimestamp extends AbstractMake implements MakeTimesta
             true, // PDF/A always for timestamp pdf
         );
         $log = App::getDefaultLogger();
+        $instance2Rors = new Instance2Rors();
+        $teams2Rors = new Teams2Rors($this->entity->Users->getTeam());
+        $users2Rors = new Users2Rors($this->entity->Users->getUserid());
         $MakePdf = new MakeTimestampPdf(
             log: $log,
             mpdfProvider: $MpdfProvider,
             requester: $this->entity->Users,
             entityArr: array($this->entity),
+            instance2Rors: $instance2Rors,
+            teams2Rors: $teams2Rors,
+            users2Rors: $users2Rors,
             includeChangelog: true
         );
         if ($this->configArr['keeex_enabled'] === '1') {

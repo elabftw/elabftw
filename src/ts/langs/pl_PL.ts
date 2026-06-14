@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "Nowy arkusz",
     "no-self-links": "Łączenie elementu ze sobą jest niedozwolone. Wybierz inny cel.",
     "not-found": "Brak pasujących wyników",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Nie ustawiony",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Niczego nie wybrano!",

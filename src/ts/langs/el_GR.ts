@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Δεν επιτρέπεται η σύνδεση ενός στοιχείου με τον εαυτό του. Επιλέξτε διαφορετικό στόχο.",
     "not-found": "No matching result found.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Δεν ρυθμίστηκε",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Τίποτα επιλεγμένο!",

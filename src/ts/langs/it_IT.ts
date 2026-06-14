@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "Nuovo foglio di calcolo",
     "no-self-links": "Non è consentito collegare un elemento a se stesso. Seleziona un target diverso.",
     "not-found": "Non è stato trovato alcun risultato corrispondente.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Non impostato",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nessuna selezione!",

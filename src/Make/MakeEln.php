@@ -456,7 +456,7 @@ class MakeEln extends AbstractMakeEln
             static fn(array $row): array => array(
                 '@id' => 'https://ror.org/' . $row['ror'],
             ),
-            array_merge($this->users2Rors->readAll(), $teamsRors)
+            array_merge($this->users2Rors->readAllFromId($user->getUserid()), $teamsRors)
         );
     }
 

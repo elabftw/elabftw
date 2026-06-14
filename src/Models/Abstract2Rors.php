@@ -37,7 +37,7 @@ abstract class Abstract2Rors extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->canWriteOrExplode();
+        $this->canwriteOrExplode();
         return match ($action) {
             Action::Create => $this->create(),
             default => throw new ImproperActionException('Incorrect action for ROR.'),

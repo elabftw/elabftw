@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Povezovanje predmeta samega s seboj ni dovoljeno. Izberite drug cilj.",
     "not-found": "No matching result found.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Ni nastavljeno",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nič izbranega!",

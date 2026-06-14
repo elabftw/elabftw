@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "Neue Tabelle",
     "no-self-links": "Eine Ressource kann nicht mit sich selbst verknüpft werden. Bitte wählen Sie ein anderes Ziel.",
     "not-found": "Kein passendes Ergebnis gefunden.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Nicht festgelegt",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nichts ausgewählt!",

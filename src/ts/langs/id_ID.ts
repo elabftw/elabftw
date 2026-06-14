@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "Spreadsheet baru",
     "no-self-links": "Tidak diperbolehkan menautkan item ke item itu sendiri. Silakan pilih target yang berbeda.",
     "not-found": "No matching result found.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Tidak diatur",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Tidak ada yang dipilih!",

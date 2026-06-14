@@ -63,7 +63,7 @@ final class Users2Rors extends Abstract2Rors
     #[Override]
     public function destroy(): bool
     {
-        $this->canWriteOrExplode();
+        $this->canwriteOrExplode();
         $sql = 'DELETE FROM users2rors WHERE users_id = :users_id AND ror = :ror';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':users_id', $this->userid, PDO::PARAM_INT);

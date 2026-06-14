@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "Uus arvutustabel",
     "no-self-links": "Üksuse iseendaga linkimine pole lubatud. Palun valige mõni muu sihtmärk.",
     "not-found": "Sobivat tulemust ei leitud.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Pole määratud",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Midagi pole valitud!",

@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "新建电子表格",
     "no-self-links": "不允许链接到资源自身。请选择不同的目标。",
     "not-found": "没有找到匹配的结果。",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "未设置",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "未选中任何选项！",

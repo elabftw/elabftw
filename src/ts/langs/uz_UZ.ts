@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Elementni o'ziga bog'lashga ruxsat berilmaydi. Boshqa maqsadni tanlang.",
     "not-found": "No matching result found.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Belgilanmagan",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Hech narsa tanlanmagan!",

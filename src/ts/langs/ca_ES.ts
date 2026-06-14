@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "Nou full de càlcul",
     "no-self-links": "No es permet enllaçar un element amb ell mateix. Seleccioneu un objectiu diferent.",
     "not-found": "No s'han trobat resultats coincidents.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "No configurat",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Res seleccionat!",

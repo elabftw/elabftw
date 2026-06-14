@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "Nouvelle feuille de calcul",
     "no-self-links": "Il n'est pas permis de lier un élément à lui-même. Veuillez sélectionner une autre cible.",
     "not-found": "Aucun résultat correspondant n'a été trouvé.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Non défini",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Aucune sélection !",

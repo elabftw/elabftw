@@ -21,14 +21,12 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\TeamParam;
-use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
-use RuntimeException;
 
 use function array_diff;
 use function trim;
@@ -321,7 +319,7 @@ final class Teams extends AbstractRest
             return true;
         }
         if ($this->id === null) {
-            throw new RuntimeException('Cannot check permissions in team because the team id is null.');
+            return false;
         }
         $TeamsHelper = new TeamsHelper($this->id);
 

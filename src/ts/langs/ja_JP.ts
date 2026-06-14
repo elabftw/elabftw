@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "新しいスプレッドシート",
     "no-self-links": "アイテムをそれ自体にリンクすることはできません。別のターゲットを選択してください。",
     "not-found": "一致する結果が見つかりませんでした。",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "設定されていない",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "何も選択されていません！",

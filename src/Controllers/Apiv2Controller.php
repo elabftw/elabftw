@@ -170,7 +170,7 @@ final class Apiv2Controller extends AbstractApiController
         $subIdString = $req[6] ?? '';
         // no id for /instance
         if ($this->Model instanceof Instance) {
-            $submodel = (string) $req[4];
+            $submodel = (string) ($req[4] ?? '');
             $subIdString = $req[5] ?? '';
         }
         if (!empty($submodel)) {

@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Kohteen linkittäminen itseensä ei ole sallittua. Valitse toinen kohde.",
     "not-found": "No matching result found.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Ei valittu",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Ei valittu mitään!",

@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Linking an item to itself is not allowed. Please select a different target.",
     "not-found": "No matching result found.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Not set",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nothing selected!",

@@ -94,7 +94,7 @@ const t = {
     "new-spreadsheet": "New spreadsheet",
     "no-self-links": "Prepojenie položky so sebou samým nie je povolené. Vyberte iný cieľ.",
     "not-found": "No matching result found.",
-    "no-rors": "No ROR associated with this team yet.",
+    "no-rors": "No ROR associated yet.",
     "not-set": "Nenastavené",
     "no-tasks-yet": "No tasks yet.",
     "nothing-selected": "Nič nevybrané!",

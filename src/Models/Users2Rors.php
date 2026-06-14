@@ -41,11 +41,12 @@ final class Users2Rors extends Abstract2Rors
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = 'SELECT * FROM users2rors WHERE users_id = :users_id ORDER BY created_at ASC';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':users_id', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->fetchAll();
+        return $this->selectAll($this->userid);
+    }
+
+    public function readAllFromId(int $userid): array
+    {
+        return $this->selectAll($userid);
     }
 
     #[Override]
@@ -83,5 +84,15 @@ final class Users2Rors extends Abstract2Rors
         $this->Db->execute($req);
 
         return 1;
+    }
+
+    private function selectAll(int $userid): array
+    {
+        $sql = 'SELECT * FROM users2rors WHERE users_id = :users_id ORDER BY created_at ASC';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':users_id', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+
     }
 }

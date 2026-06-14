@@ -219,11 +219,14 @@ final class MakeController extends AbstractController
     private function makePdf(): Response
     {
         $log = App::getDefaultLogger();
+        $instance2Rors = new Instance2Rors();
+        $teams2Rors = new Teams2Rors($this->requester->getTeam());
+        $users2Rors = new Users2Rors($this->requester->getUserid());
         $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         if (count($this->entityArr) === 1) {
-            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog(), $classification))->getResponse();
+            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $classification))->getResponse();
         }
-        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog()))->getResponse();
+        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog()))->getResponse();
     }
 
     private function makeSchedulerReport(): Response

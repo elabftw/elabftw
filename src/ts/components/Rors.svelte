@@ -25,6 +25,9 @@
   let isInitialLoading = $state(true);
   let isSubmitting = $state(false);
 
+  const uid = $props.id();
+  const rorInputId = `${uid}-ror`;
+
   const rorPattern = /^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$/;
   const rorPatternHtml = '(?:https://ror\\.org/)?0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}';
   const t = i18next.t.bind(i18next);
@@ -191,7 +194,7 @@
   {/if}
 
   <form on:submit|preventDefault={addRor}>
-    <label for='ror_input'>{t('ror-input-label')}</label>
+    <label for={rorInputId}>{t('ror-input-label')}</label>
 
     <div class='input-group'>
       <div class='input-group-prepend'>
@@ -201,7 +204,7 @@
       <input
         bind:value={rorInput}
         name='ror'
-        id='ror_input'
+        id={rorInputId}
         class='form-control col-md-4'
         title={t('ror-input-title')}
         required

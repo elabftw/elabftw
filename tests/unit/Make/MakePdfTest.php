@@ -15,6 +15,9 @@ use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AccessType;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -67,7 +70,10 @@ class MakePdfTest extends \PHPUnit\Framework\TestCase
 
         $MpdfProvider = new MpdfProvider('Toto');
         $log = (new Logger('elabftw'))->pushHandler(new NullHandler());
-        $this->MakePdf = new MakePdf($log, $MpdfProvider, $requester, array($Entity, $this->getFreshExperiment()));
+        $instance2Rors = new Instance2Rors();
+        $teams2Rors = new Teams2Rors($requester->getTeam());
+        $users2Rors = new Users2Rors($requester->getUserid());
+        $this->MakePdf = new MakePdf($log, $MpdfProvider, $requester, array($Entity, $this->getFreshExperiment()), $instance2Rors, $teams2Rors, $users2Rors);
     }
 
     public function testGetFileContent(): void

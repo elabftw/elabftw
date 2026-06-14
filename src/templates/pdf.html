@@ -237,6 +237,13 @@
         {% if classification != 'None' %}
           <p class='elabid'>Classification: {{ classification }}</p>
         {% endif %}
+        {% if rors %}
+          <p class='elabid'>{{ 'Affiliations:'|trans }}
+          {% for row in rors %}
+              {% if not loop.first %}, {% endif %}
+              <a href="https://ror.org/{{ row.ror|e('html_attr') }}">{{ row.ror }}</a>
+          {% endfor %}</p>
+        {% endif %}
       </td>
     </tr>
   </table>

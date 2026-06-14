@@ -23,9 +23,12 @@ use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Notifications\MathjaxFailed;
 use Elabftw\Models\Notifications\PdfAppendmentFailed;
 use Elabftw\Models\Notifications\PdfGenericError;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\Tex2Svg;
@@ -50,6 +53,7 @@ use function parse_str;
 use function parse_url;
 use function preg_match_all;
 use function sprintf;
+use function array_merge;
 
 /**
  * Create a pdf from an Entity
@@ -78,6 +82,9 @@ class MakePdf extends AbstractMakePdf
         MpdfProviderInterface $mpdfProvider,
         protected Users $requester,
         protected array $entityArr,
+        protected Instance2Rors $instance2Rors,
+        protected Teams2Rors $teams2Rors,
+        protected Users2Rors $users2Rors,
         bool $includeChangelog = false,
         Classification $classification = Classification::None,
     ) {
@@ -207,6 +214,15 @@ class MakePdf extends AbstractMakePdf
         return $content;
     }
 
+    private function getRors(int $teamid, int $userid): array
+    {
+        return array_merge(
+            $this->instance2Rors->readAll(),
+            $this->teams2Rors->readAllFromId($teamid),
+            $this->users2Rors->readAllFromId($userid),
+        );
+    }
+
     /**
      * Build HTML content that will be fed to mpdf->WriteHTML()
      */
@@ -266,6 +282,7 @@ class MakePdf extends AbstractMakePdf
             'timestamperName' => $timestamperName,
             'localDate' => $localDate ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],
+            'rors' => $this->getRors($this->Entity->entityData['userid'], $this->Entity->entityData['team']),
             // TODO fix for templates
             'linkBaseUrl' => $baseUrls,
             'url' => sprintf('%s/%s?mode=view&id=%d', $siteUrl, $this->Entity->entityType->toPage(), $this->Entity->id ?? 0),

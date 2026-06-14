@@ -283,7 +283,11 @@ final class Exports extends AbstractRest
                     $this->requester->userData['pdf_format'],
                     $usePdfa,
                 );
-                $Maker = new MakeMultiPdf($this->logger, $mpdfProvider, $this->requester, $entityArr, $includeChangelog);
+                $instance2Rors = new Instance2Rors();
+                $teams2Rors = new Teams2Rors($this->requester->getTeam());
+                $users2Rors = new Users2Rors($this->requester->getUserid());
+                //$Maker = new MakeMultiPdf($this->logger, $mpdfProvider, $this->requester, $entityArr, $includeChangelog);
+                $Maker = new MakeMultiPdf($this->logger, $mpdfProvider, $this->requester, $entityArr, $instance2Rors, $teams2Rors, $users2Rors, $includeChangelog);
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;
             case ExportFormat::Json:

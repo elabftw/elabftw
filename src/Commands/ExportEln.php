@@ -74,7 +74,7 @@ final class ExportEln extends Command
             new ConsoleLogger($output),
             $ZipStream,
             $teamid,
-            new Instance2Rors(true),
+            new Instance2Rors(),
             $users,
             $resourcesCategories,
         );

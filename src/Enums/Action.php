@@ -22,7 +22,6 @@ enum Action: string
     case ClearLockedOutDevices = 'clearlockedoutdevices';
     case Create = 'create';
     case CreateFromString = 'createfromstring';
-    case CreateRor = 'createror';
     case CreateSigkeys = 'createsigkeys';
     case Destroy = 'destroy';
     case Disable2fa = 'disable2fa';

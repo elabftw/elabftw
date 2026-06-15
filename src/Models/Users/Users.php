@@ -330,8 +330,7 @@ class Users extends AbstractRest
           u.auth_service,
           sk.pubkey
 
-        ORDER BY
-          u.userid ASC;';
+        ORDER BY u.userid ASC;';
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');

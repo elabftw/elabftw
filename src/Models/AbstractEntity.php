@@ -21,6 +21,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
@@ -104,6 +105,7 @@ use function ucfirst;
 use function array_fill;
 use function array_map;
 use function count;
+use function array_replace;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -199,7 +201,10 @@ abstract class AbstractEntity extends AbstractRest
     // create an entity from a template
     public function createFromTemplate(int $templateId, ?string $title = null): int
     {
-        return $this->createFromEntity($this->entityType->toTemplateEntity($this->Users, $templateId), $templateId, $title);
+        return $this->copyEntityFrom(
+            sourceEntity: $this->entityType->toTemplateEntity($this->Users, $templateId),
+            title: $title,
+        );
     }
 
     #[Override]
@@ -926,46 +931,67 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
-    protected function createFromEntity(
+    protected function copyEntityFrom(
         self $sourceEntity,
-        int $sourceId,
         ?string $title = null,
+        bool $copyFiles = true,
+        bool $linkToOriginal = false,
+        array $overrideCreateParams = array(),
     ): int {
+        $sourceId = $sourceEntity->id ?? throw new IllegalActionException('No id was set!');
         $fromTemplate = $sourceEntity instanceof AbstractTemplateEntity;
         $toTemplate = $this instanceof AbstractTemplateEntity;
+
         $source = $sourceEntity->readOne();
-        $id = $this->create(
-            title: $title ?? $source['title'],
-            body: $source['body'],
-            canreadBase: BasePermissions::from($source[$fromTemplate ? 'canread_target_base' : 'canread_base']),
-            canwriteBase: BasePermissions::from($source[$fromTemplate ? 'canwrite_target_base' : 'canwrite_base']),
-            canread: $source[$fromTemplate ? 'canread_target' : 'canread'],
-            canwrite: $source[$fromTemplate ? 'canwrite_target' : 'canwrite'],
-            canreadIsImmutable: (bool) $source['canread_is_immutable'],
-            canwriteIsImmutable: (bool) $source['canwrite_is_immutable'],
-            category: $source['category'],
-            status: $source['status'],
-            metadata: $source['metadata'],
-            hideMainText: BinaryValue::from($source['hide_main_text']),
-            rating: $source['rating'],
-            contentType: BodyContentType::from($source['content_type']),
-            createdFromType: $sourceEntity->entityType,
-            createdFromId: $sourceId,
-        );
 
-        $freshSelf = new $this($this->Users, $id);
-
-        LinksFactory::getItemsLinks($this)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        LinksFactory::getExperimentsLinks($this)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        LinksFactory::getCompoundsLinks($this)->duplicate($sourceId, $id, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        $sourceEntity->Uploads->duplicate($freshSelf);
-        $sourceEntity->Steps->duplicate($freshSelf, $sourceId, $id);
-
-        foreach (array_column($sourceEntity->Tags->readAll(), 'tag') as $tag) {
-            $freshSelf->Tags->postAction(Action::Create, array('tag' => $tag));
+        $metadata = $source['metadata'];
+        if (!$fromTemplate && !$toTemplate) {
+            $metadata = new Metadata($source['metadata'])->blankExtraFieldsValueOnDuplicate();
         }
 
-        return $id;
+        $createParams = array_replace(array(
+            'title' => $title ?? $source['title'],
+            'body' => $source['body'],
+            'canreadBase' => BasePermissions::from($source[$fromTemplate ? 'canread_target_base' : 'canread_base']),
+            'canwriteBase' => BasePermissions::from($source[$fromTemplate ? 'canwrite_target_base' : 'canwrite_base']),
+            'canread' => $source[$fromTemplate ? 'canread_target' : 'canread'],
+            'canwrite' => $source[$fromTemplate ? 'canwrite_target' : 'canwrite'],
+            'canreadIsImmutable' => (bool) $source['canread_is_immutable'],
+            'canwriteIsImmutable' => (bool) $source['canwrite_is_immutable'],
+            'category' => $source['category'],
+            'status' => $source['status'],
+            'metadata' => $metadata,
+            'hideMainText' => BinaryValue::from($source['hide_main_text']),
+            'rating' => $source['rating'],
+            'contentType' => BodyContentType::from($source['content_type']),
+            'createdFromType' => $sourceEntity->entityType,
+            'createdFromId' => $sourceId,
+        ), $overrideCreateParams);
+
+        $newId = $this->create(...$createParams);
+
+        $fresh = new $this($this->Users, $newId);
+
+        if ($fromTemplate && $toTemplate) {
+            $fresh->patch(Action::Update, array(
+                'canread_target' => $source['canread_target'],
+                'canwrite_target' => $source['canwrite_target'],
+            ));
+        }
+
+        LinksFactory::getItemsLinks($this)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getExperimentsLinks($this)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getCompoundsLinks($this)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getContainersLinks($this)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+
+        $sourceEntity->Steps->duplicate($fresh, $sourceId, $newId);
+        $sourceEntity->Tags->copyTags($newId);
+
+        if ($copyFiles) {
+            $sourceEntity->Uploads->duplicate($fresh);
+        }
+
+        return $newId;
     }
 
     protected function getTagsHydrationData(array $entityIds): array

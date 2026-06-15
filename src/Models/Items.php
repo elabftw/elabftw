@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -23,7 +22,6 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\AccessType;
-use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
@@ -147,47 +145,26 @@ final class Items extends AbstractConcreteEntity
     {
         $this->canOrExplode(AccessType::Read);
 
-        $title = $this->entityData['title'] . ' I';
-        // handle the blank_value_on_duplicate attribute on extra fields
-        $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
-        $newId = $this->create(
-            title: $title,
-            body: $this->entityData['body'],
-            canreadBase: BasePermissions::from($this->entityData['canread_base']),
-            canwriteBase: BasePermissions::from($this->entityData['canwrite_base']),
-            canread: $this->entityData['canread'],
-            canwrite: $this->entityData['canwrite'],
-            category: $this->entityData['category'],
-            status: $this->entityData['status'],
-            metadata: $metadata,
-            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
-            contentType: BodyContentType::from($this->entityData['content_type']),
-            createdFromType: $this->entityType,
-            createdFromId: $this->id,
-            canbook: $this->entityData['canbook'],
-            canbookBase: BasePermissions::from($this->entityData['canbook_base']),
+        $newId = $this->copyEntityFrom(
+            sourceEntity: $this,
+            title: $this->entityData['title'] . ' I',
+            copyFiles: $copyFiles,
+            linkToOriginal: $linkToOriginal,
+            overrideCreateParams: array(
+                'canbook' => $this->entityData['canbook'],
+                'canbookBase' => BasePermissions::from($this->entityData['canbook_base']),
+            ),
         );
 
-        // add missing canbook
         $fresh = new self($this->Users, $newId);
+
+        // Keep only if create() still does not persist canbook properly.
         $fresh->update(new ContentParams('canbook', $this->entityData['canbook']));
-        /** @psalm-suppress PossiblyNullArgument */
-        $this->ExperimentsLinks->duplicate($this->id, $newId);
-        $this->ItemsLinks->duplicate($this->id, $newId);
-        $this->Steps->duplicate($fresh, $this->id, $newId);
-        $this->Tags->copyTags($newId);
-        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($this->id, $newId);
-        $ContainersLinks = LinksFactory::getContainersLinks($this);
-        $ContainersLinks->duplicate($this->id, $newId);
-        // also add a link to the original resource
+
         if ($linkToOriginal) {
             $ItemsLinks = new Items2ItemsLinks($fresh);
             $ItemsLinks->setId($this->id);
             $ItemsLinks->postAction(Action::Create, array());
-        }
-        if ($copyFiles) {
-            $this->Uploads->duplicate($fresh);
         }
 
         return $newId;

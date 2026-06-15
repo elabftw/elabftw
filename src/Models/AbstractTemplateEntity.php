@@ -12,13 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Enums\BinaryValue;
-use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
-use Elabftw\Factories\LinksFactory;
 use Override;
 use PDO;
 
@@ -61,52 +57,20 @@ abstract class AbstractTemplateEntity extends AbstractEntity
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
         $this->canOrExplode(AccessType::Read);
-        $title = $this->entityData['title'] . ' I';
-        $newId = $this->create(
-            title: $title,
-            body: $this->entityData['body'],
-            canread: $this->entityData['canread'],
-            canwrite: $this->entityData['canwrite'],
-            category: $this->entityData['category'],
-            status: $this->entityData['status'],
-            metadata: $this->entityData['metadata'],
-            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
-            contentType: BodyContentType::from($this->entityData['content_type']),
-            createdFromType: $this->entityType,
-            createdFromId: $this->id,
+
+        return $this->copyEntityFrom(
+            sourceEntity: $this,
+            title: $this->entityData['title'] . ' I',
+            copyFiles: $copyFiles,
+            linkToOriginal: $linkToOriginal,
         );
-        // add missing can*_target
-        $fresh = clone $this;
-        $fresh->setId($newId);
-        $fresh->patch(Action::Update, array(
-            'canread_target' => $this->entityData['canread_target'],
-            'canwrite_target' => $this->entityData['canwrite_target'],
-        ));
-
-        // copy tags
-        $Tags = new Tags($this);
-        $Tags->copyTags($newId);
-
-        // copy links and steps too
-        $ItemsLinks = LinksFactory::getItemsLinks($this);
-        /** @psalm-suppress PossiblyNullArgument */
-        $ItemsLinks->duplicate($this->id, $newId, fromTemplate: true);
-        $ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
-        $ExperimentsLinks->duplicate($this->id, $newId, fromTemplate: true);
-        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($this->id, $newId, fromTemplate: true);
-        $Steps = new Steps($this);
-        $Steps->duplicate($fresh, $this->id, $newId);
-        if ($copyFiles) {
-            $fresh->Uploads = new Uploads($fresh);
-            $this->Uploads->duplicate($fresh);
-        }
-
-        return $newId;
     }
 
     public function createTemplateFrom(int $entityId, ?string $title = null): int
     {
-        return $this->createFromEntity($this->entityType->toConcreteEntity($this->Users, $entityId), $entityId, $title);
+        return $this->copyEntityFrom(
+            sourceEntity: $this->entityType->toConcreteEntity($this->Users, $entityId),
+            title: $title,
+        );
     }
 }

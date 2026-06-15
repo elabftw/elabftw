@@ -48,6 +48,7 @@ use Elabftw\Models\IdpsEndpoints;
 use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Instance;
+use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\Notifications\EventDeleted;
@@ -63,11 +64,13 @@ use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
@@ -103,6 +106,8 @@ final class Apiv2Controller extends AbstractApiController
     private RestInterface $Model;
 
     private ?int $subId = null;
+
+    private ?string $subIdString = null;
 
     private bool $hasSubmodel = false;
 
@@ -161,10 +166,18 @@ final class Apiv2Controller extends AbstractApiController
         // load Model
         $this->Model = $this->getModel();
         // load submodel
-        if (!empty($req[5])) {
-            $subId = (int) ($req[6] ?? '');
+        $submodel = (string) ($req[5] ?? '');
+        $subIdString = $req[6] ?? '';
+        // no id for /instance
+        if ($this->Model instanceof Instance) {
+            $submodel = (string) ($req[4] ?? '');
+            $subIdString = $req[5] ?? '';
+        }
+        if (!empty($submodel)) {
+            $subId = (int) $subIdString;
+            $this->subIdString = !empty($subIdString) ? $subIdString : null;
             $this->subId = $subId > 0 ? $subId : null;
-            $this->Model = $this->getSubModel(ApiSubModels::tryFrom((string) $req[5]));
+            $this->Model = $this->getSubModel(ApiSubModels::tryFrom($submodel));
             $this->hasSubmodel = true;
         }
 
@@ -355,8 +368,8 @@ final class Apiv2Controller extends AbstractApiController
 
     private function getSubModel(?ApiSubModels $submodel): RestInterface
     {
-        $this->Model->readOne();
         if ($this->Model instanceof AbstractEntity) {
+            $this->Model->readOne();
             $Config = Config::getConfig();
             return match ($submodel) {
                 ApiSubModels::Comments => new Comments($this->Model, $this->subId),
@@ -387,6 +400,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::ResourcesCategories => new ResourcesCategories($this->Model, $this->subId),
                 ApiSubModels::ItemsStatus => new ItemsStatus($this->Model, $this->subId),
                 ApiSubModels::ProcurementRequests => new ProcurementRequests($this->Model, $this->subId),
+                ApiSubModels::Rors => new Teams2Rors($this->Model->id ?? 0, $this->Model->canWrite(), $this->subIdString),
                 ApiSubModels::Tags => new TeamTags($this->requester, $this->subId),
                 ApiSubModels::Teamgroups => new TeamGroups($this->requester, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Teams),
@@ -397,6 +411,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::Notifications => new UserNotifications($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new UserRequestActions($this->Model),
                 ApiSubModels::SigKeys => new SigKeys($this->requester, $this->subId),
+                ApiSubModels::Rors => new Users2Rors($this->Model->getUserid(), $this->requester->isAdminOf($this->Model->getUserid()), $this->subIdString),
                 // the uploads users/X/uploads endpoint forces the use of the requester
                 ApiSubModels::Uploads => new UserUploads($this->requester, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Users),
@@ -413,6 +428,12 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::IdpsCerts => new IdpsCerts($this->requester, $this->id, $this->subId),
                 ApiSubModels::IdpsEndpoints => new IdpsEndpoints($this->requester, $this->id, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Idps),
+            };
+        }
+        if ($this->Model instanceof Instance) {
+            return match ($submodel) {
+                ApiSubModels::Rors => new Instance2Rors($this->requester->isSysadmin(), $this->subIdString),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Instance),
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');

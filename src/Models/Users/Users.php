@@ -252,8 +252,6 @@ class Users extends AbstractRest
             $admins = 'AND u2t_all.is_admin = 1';
         }
 
-        // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
-        // Side effect: User is shown in team with lowest id
         $sql = "SELECT
           u.userid,
           u.firstname,
@@ -277,7 +275,7 @@ class Users extends AbstractRest
           u.orcid,
           u.validated,
           u.auth_service,
-          sk.pubkey                         AS sig_pubkey,
+          sk.pubkey AS sig_pubkey,
           JSON_ARRAYAGG(
              JSON_OBJECT(
                'id',   u2t_all.teams_id,

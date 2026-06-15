@@ -979,19 +979,15 @@ abstract class AbstractEntity extends AbstractRest
             ));
         }
 
-        LinksFactory::getItemsLinks($this)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        LinksFactory::getExperimentsLinks($this)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        LinksFactory::getCompoundsLinks($this)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        LinksFactory::getContainersLinks($this)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getItemsLinks($sourceEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getExperimentsLinks($sourceEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getCompoundsLinks($sourceEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getContainersLinks($sourceEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
 
         $sourceEntity->Steps->duplicate($fresh, $sourceId, $newId);
 
-        if ($sourceEntity->entityType === $this->entityType) {
-            $sourceEntity->Tags->copyTags($newId);
-        } else {
-            foreach (array_column($sourceEntity->Tags->readAll(), 'tag') as $tag) {
-                $fresh->Tags->postAction(Action::Create, array('tag' => $tag));
-            }
+        foreach (array_column($sourceEntity->Tags->readAll(), 'tag') as $tag) {
+            $fresh->Tags->postAction(Action::Create, array('tag' => $tag));
         }
 
         if ($copyFiles) {

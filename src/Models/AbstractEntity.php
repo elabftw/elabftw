@@ -985,7 +985,14 @@ abstract class AbstractEntity extends AbstractRest
         LinksFactory::getContainersLinks($this)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
 
         $sourceEntity->Steps->duplicate($fresh, $sourceId, $newId);
-        $sourceEntity->Tags->copyTags($newId);
+
+        if ($sourceEntity->entityType === $this->entityType) {
+            $sourceEntity->Tags->copyTags($newId);
+        } else {
+            foreach (array_column($sourceEntity->Tags->readAll(), 'tag') as $tag) {
+                $fresh->Tags->postAction(Action::Create, array('tag' => $tag));
+            }
+        }
 
         if ($copyFiles) {
             $sourceEntity->Uploads->duplicate($fresh);

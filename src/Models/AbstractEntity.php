@@ -196,15 +196,13 @@ abstract class AbstractEntity extends AbstractRest
         ?int $createdFromId = null,
     ): int;
 
+    // Duplicate an entity, adding ' I' to the title to make the copy noticeable.
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
     // create an entity from a template
     public function createFromTemplate(int $templateId, ?string $title = null): int
     {
-        return $this->copyEntityFrom(
-            sourceEntity: $this->entityType->toTemplateEntity($this->Users, $templateId),
-            title: $title,
-        );
+        return $this->copyEntityFrom(sourceEntity: $this->entityType->toTemplateEntity($this->Users, $templateId), title: $title);
     }
 
     #[Override]
@@ -946,6 +944,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $metadata = $source['metadata'];
         if (!$fromTemplate && !$toTemplate) {
+            // handle the blank_value_on_duplicate attribute on extra fields
             $metadata = new Metadata($source['metadata'])->blankExtraFieldsValueOnDuplicate();
         }
 
@@ -992,11 +991,9 @@ abstract class AbstractEntity extends AbstractRest
         foreach (array_column($sourceEntity->Tags->readAll(), 'tag') as $tag) {
             $fresh->Tags->postAction(Action::Create, array('tag' => $tag));
         }
-
         if ($copyFiles) {
             $sourceEntity->Uploads->duplicate($fresh);
         }
-
         return $newId;
     }
 

@@ -105,11 +105,6 @@ final class Experiments extends AbstractConcreteEntity
         return $newId;
     }
 
-    /**
-     * Duplicate an experiment
-     *
-     * @return int the ID of the new item
-     */
     #[Override]
     public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int
     {
@@ -124,7 +119,6 @@ final class Experiments extends AbstractConcreteEntity
 
         if ($linkToOriginal) {
             $fresh = new self($this->Users, $newId);
-
             $ExperimentsLinks = new Experiments2ExperimentsLinks($fresh);
             $ExperimentsLinks->setId($this->id);
             $ExperimentsLinks->postAction(Action::Create, array());

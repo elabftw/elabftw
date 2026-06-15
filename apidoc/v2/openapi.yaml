@@ -6054,6 +6054,7 @@ paths:
                       description: The attribute to modify
                     content:
                       type: integer
+                      enum: [0, 1]
                       description: Binary value for the target attributes.
       responses:
         '200':

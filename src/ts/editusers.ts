@@ -136,8 +136,8 @@ if (document.getElementById('users-table')) {
 
     // TOGGLE ADMIN STATUS
     } else if (el.matches('[data-action="toggle-admin-user"]')) {
-      const group = el.dataset.promote === '1' ? 2 : 4;
-      ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: userid}).then(() => document.dispatchEvent(new CustomEvent('dataReload')));
+      const isAdminValue = el.dataset.promote === '1' ? 1 : 0;
+      ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'iz_admin', content: isAdminValue, userid: userid}).then(() => document.dispatchEvent(new CustomEvent('dataReload')));
 
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {

@@ -330,9 +330,7 @@ class Users extends AbstractRest
           u.auth_service,
           sk.pubkey
 
-        ORDER BY
-          MIN(u2t_all.teams_id) ASC,
-          u.created_at DESC;';
+        ORDER BY u.userid ASC;';
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');

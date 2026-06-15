@@ -1197,7 +1197,7 @@ abstract class AbstractEntity extends AbstractRest
         // update the helper columns
         $sql = 'UPDATE ' . $this->entityType->value . ' SET signature_count = signature_count + 1, last_signed_at = NOW(), last_signed_by = :signer WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':signer', $this->Users->getUserid(), PDO::PARAM_INT);
+        $req->bindValue(':signer', $this->Users->getUserid(), PDO::PARAM_INT);
         $req->bindValue(':id', $this->id ?? 0, PDO::PARAM_INT);
         $this->Db->execute($req);
 

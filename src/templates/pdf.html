@@ -51,7 +51,13 @@
 
   {% if timestamped %}
   <div class="timestamped-block">
-    <p>{{ 'This document has been timestamped by %s on %s.'|trans|format(timestamperName, localDate) }}</p>
+    <p>{{ 'This document has been timestamped by %s on %s.'|trans|format(timestamperName, formattedTimestampedAt) }}</p>
+  </div>
+  {% endif %}
+
+  {% if isSigned %}
+  <div class="timestamped-block">
+    <p>{{ 'This document has been last signed by %s on %s.'|trans|format(signerName, formattedSignedAt) }}</p>
   </div>
   {% endif %}
 
@@ -230,7 +236,12 @@
         {% endif %}
         {% if timestamped %}
           <p class='elabid'>
-            {{ 'Timestamped by %s on %s at %s'|trans|format(timestamperName, timestampDate, timestampTime) }}
+            {{ 'Timestamped by %s on %s at %s'|trans|format(timestamperName, timestampedAt.date, timestampedAt.time) }}
+          </p>
+        {% endif %}
+        {% if isSigned %}
+          <p class='elabid'>
+            {{ 'Signed by %s on %s at %s'|trans|format(signerName, signedAt.date, signedAt.time) }}
           </p>
         {% endif %}
         <p class='elabid'>Link: <a href='{{ url }}'>{{ url }}</a></p>

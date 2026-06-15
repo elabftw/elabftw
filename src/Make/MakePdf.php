@@ -237,11 +237,17 @@ class MakePdf extends AbstractMakePdf
         $timestamped = $this->Entity->entityData['timestamped'];
         $timestamperName = $this->Entity->getTimestamperFullname();
         $timestampedAt = Filter::separateDateAndTime($this->Entity->entityData['timestamped_at'] ?? '');
-
-        // Format date for pdf title
         if ($this->Entity->entityData['timestamped'] === 1) {
-            $localDate = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['timestamped_at']));
+            $formattedTimestampedAt = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['timestamped_at']));
         }
+
+        $isSigned = $this->Entity->entityData['signature_count'] > 0;
+        $signerName = $this->Entity->getSignerFullname();
+        $signedAt = Filter::separateDateAndTime($this->Entity->entityData['last_signed_at'] ?? '');
+        if ($isSigned) {
+            $formattedSignedAt = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['last_signed_at']));
+        }
+
 
         // read the content of the thumbnail here to feed the template
         foreach ($this->Entity->entityData['uploads'] as $key => $upload) {
@@ -277,10 +283,13 @@ class MakePdf extends AbstractMakePdf
             'lockTime' => $lockDate['time'],
             'lockerName' => $lockerName,
             'timestamped' => $timestamped,
-            'timestampDate' => $timestampedAt['date'],
-            'timestampTime' => $timestampedAt['time'],
+            'timestampedAt' => $timestampedAt,
             'timestamperName' => $timestamperName,
-            'localDate' => $localDate ?? '',
+            'formattedTimestampedAt' => $formattedTimestampedAt ?? '',
+            'isSigned' => $isSigned,
+            'signerName' => $signerName,
+            'signedAt' => $signedAt,
+            'formattedSignedAt' => $formattedSignedAt ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],
             'rors' => $this->getRors($this->Entity->entityData['team'], $this->Entity->entityData['userid']),
             // TODO fix for templates

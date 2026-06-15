@@ -67,6 +67,18 @@ final class Users2Teams
         return $wasInserted;
     }
 
+    // archive user in all teams
+    public function archive(int $targetUserid): int
+    {
+        $this->requester->isSysadminOrExplode();
+        $UsersHelper = new UsersHelper($targetUserid);
+        $teams = $UsersHelper->getTeamsFromUserid();
+        foreach ($teams as $team) {
+            $this->patchIsArchivedNoPermCheck($targetUserid, $team['id'], BinaryValue::True);
+        }
+        return count($teams);
+    }
+
     public function patchUser2Team(array $params, int $targetUserid): int
     {
         return $this->patchIsSomething(
@@ -171,6 +183,11 @@ final class Users2Teams
     private function patchIsArchived(int $userid, int $teamid, BinaryValue $content): int
     {
         $this->requesterCanModifyInTeamOrExplode($teamid);
+        return $this->patchIsArchivedNoPermCheck($userid, $teamid, $content);
+    }
+
+    private function patchIsArchivedNoPermCheck(int $userid, int $teamid, BinaryValue $content): int
+    {
         return new UserArchiver($this->requester, new Users($userid, $teamid))
             ->setArchived($content)->value;
     }

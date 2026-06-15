@@ -230,6 +230,10 @@
     {{ _self.logo_block('Favicon'|trans, 'favicon_svg', App.Config.configArr.favicon_svg, false) }}
   </div>
 
+  <h2 class='p-2 pl-3 section-title' id='existingRors'>{{ 'Research Organization Registry (ROR)'|trans }}</h2>
+
+  <div class='mb-2' data-svelte-component='rors' data-endpoint='instance/rors'></div>
+
   <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Remote directory configuration'|trans }}</h2>
   <div class='pl-3'>
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts from remote directory'|trans, 'slug': 'admins_create_users_remote_dir'} %}
@@ -332,6 +336,9 @@
             <tr>
               <td>{{ team.id }}</td>
               <td><span class='hl-hover p-1 rounded malleableColumn' data-endpoint='teams' data-id='{{ team.id }}' data-target='name'>{{ team.name }}</span>
+                <details><summary>{{ 'Manage ROR associations'|trans }}</summary>
+                  <div class='mb-2' data-svelte-component='rors' data-endpoint='teams/{{ team.id }}/rors'></div>
+                </details>
                 {#
                 <p class='smallgray p-1'>{{ 'Members'|trans }}: {{ count.totusers }} &ndash;
                 {% trans %}

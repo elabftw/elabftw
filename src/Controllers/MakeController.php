@@ -45,6 +45,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use DateTimeImmutable;
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use ValueError;
 use ZipStream\ZipStream;
 use Override;
@@ -92,10 +95,26 @@ final class MakeController extends AbstractController
                 return new MakeCsv($this->entityArr)->getResponse();
 
             case ExportFormat::Eln:
-                return $this->makeStreamZip(new MakeEln(App::getDefaultLogger(), $this->getZipStreamLib(), $this->requester, $this->entityArr));
+                return $this->makeStreamZip(new MakeEln(
+                    App::getDefaultLogger(),
+                    $this->getZipStreamLib(),
+                    $this->requester,
+                    $this->entityArr,
+                    new Instance2Rors(),
+                    new Teams2Rors($this->requester->getTeam(), false),
+                    new Users2Rors($this->requester->getUserid(), false),
+                ));
 
             case ExportFormat::ElnHtml:
-                return new MakeElnHtml(App::getDefaultLogger(), $this->getZipStreamLib(), $this->requester, $this->entityArr)->getResponse();
+                return new MakeElnHtml(
+                    App::getDefaultLogger(),
+                    $this->getZipStreamLib(),
+                    $this->requester,
+                    $this->entityArr,
+                    new Instance2Rors(),
+                    new Teams2Rors($this->requester->getTeam(), false),
+                    new Users2Rors($this->requester->getUserid(), false),
+                )->getResponse();
 
             case ExportFormat::Json:
                 return new MakeJson($this->entityArr)->getResponse();
@@ -200,11 +219,14 @@ final class MakeController extends AbstractController
     private function makePdf(): Response
     {
         $log = App::getDefaultLogger();
+        $instance2Rors = new Instance2Rors();
+        $teams2Rors = new Teams2Rors($this->requester->getTeam());
+        $users2Rors = new Users2Rors($this->requester->getUserid());
         $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         if (count($this->entityArr) === 1) {
-            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog(), $classification))->getResponse();
+            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $classification))->getResponse();
         }
-        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $this->shouldIncludeChangelog()))->getResponse();
+        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog()))->getResponse();
     }
 
     private function makeSchedulerReport(): Response

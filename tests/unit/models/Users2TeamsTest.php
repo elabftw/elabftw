@@ -15,6 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class Users2TeamsTest extends \PHPUnit\Framework\TestCase
@@ -34,6 +35,25 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Users2Teams->rmUserFromTeams(4, array(3));
         $this->expectException(ImproperActionException::class);
         $this->Users2Teams->rmUserFromTeams(4, array(2));
+    }
+
+    public function testArchive(): void
+    {
+        $targetUserid = new Users(1, 1)->createOne('archiveme@example.com', array(1, 2, 3), automaticValidationEnabled: true);
+        $this->Users2Teams->archive($targetUserid);
+        $UsersHelper = new UsersHelper($targetUserid);
+        $teams = $UsersHelper->getTeamsFromUserid();
+        foreach ($teams as $team) {
+            $this->assertSame(1, $team['is_archived']);
+        }
+    }
+
+    public function testArchiveAsAdmin(): void
+    {
+        $admin = $this->getUserInTeam(2, admin: 1);
+        $Users2Teams = new Users2Teams($admin);
+        $this->expectException(IllegalActionException::class);
+        $Users2Teams->archive(2);
     }
 
     public function testRmUserFromTeamButNotAdminInTeam(): void

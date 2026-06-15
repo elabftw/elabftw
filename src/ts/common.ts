@@ -35,6 +35,7 @@ import {
   updateEntityBody,
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
+  mountRors,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -125,6 +126,7 @@ TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
 makeSortableGreatAgain();
+mountRors();
 
 const userPrefs = document.getElementById('user-prefs').dataset;
 if (userPrefs.scDisabled === '0') {

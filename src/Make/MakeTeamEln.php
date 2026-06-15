@@ -13,6 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Enums\State;
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\UltraAdmin;
 use PDO;
 use ZipStream\ZipStream;
@@ -29,9 +32,15 @@ use function sprintf;
  */
 final class MakeTeamEln extends AbstractMakeEln
 {
-    public function __construct(protected LoggerInterface $logger, protected ZipStream $Zip, protected int $teamId, protected array $users = array(), protected array $resourcesCategories = array())
-    {
-        parent::__construct($Zip);
+    public function __construct(
+        protected LoggerInterface $logger,
+        protected ZipStream $Zip,
+        protected int $teamId,
+        protected Instance2Rors $instance2Rors,
+        protected array $users = array(),
+        protected array $resourcesCategories = array(),
+    ) {
+        parent::__construct($Zip, $instance2Rors);
     }
 
     /**
@@ -46,7 +55,15 @@ final class MakeTeamEln extends AbstractMakeEln
         foreach ($targets as $slug) {
             $entityArr[] = $slug->type->toInstance($requester, $slug->id, bypassReadPermission: true, bypassWritePermission: true);
         }
-        $Maker = new MakeEln($this->logger, $this->Zip, $requester, $entityArr);
+        $Maker = new MakeEln(
+            $this->logger,
+            $this->Zip,
+            $requester,
+            $entityArr,
+            new Instance2Rors(),
+            new Teams2Rors($requester->getTeam(), false),
+            new Users2Rors($requester->getUserid(), false),
+        );
         $Maker->bypassReadPermission = true;
         $Maker->getStreamZip();
     }

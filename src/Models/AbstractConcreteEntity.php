@@ -35,11 +35,6 @@ abstract class AbstractConcreteEntity extends AbstractEntity
         return (int) $req->fetchColumn();
     }
 
-    public function createTemplateFrom(int $entityId, ?string $title = null): int
-    {
-        throw new ImproperActionException('The entity parameter is only valid for template creation.');
-    }
-
     protected function getNextCustomId(?int $category): ?int
     {
         if ($category === null) {

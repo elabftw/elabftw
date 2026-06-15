@@ -979,11 +979,14 @@ abstract class AbstractEntity extends AbstractRest
             ));
         }
 
-        LinksFactory::getItemsLinks($sourceEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        LinksFactory::getExperimentsLinks($sourceEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        LinksFactory::getCompoundsLinks($sourceEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        LinksFactory::getContainersLinks($sourceEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        // Most link duplication works from the target entity type
+        // exception is: entry -> template: links must be read from the concrete source.
+        $linkEntity = $toTemplate && !$fromTemplate ? $sourceEntity : $this;
 
+        LinksFactory::getItemsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getExperimentsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getCompoundsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getContainersLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         $sourceEntity->Steps->duplicate($fresh, $sourceId, $newId);
 
         foreach (array_column($sourceEntity->Tags->readAll(), 'tag') as $tag) {

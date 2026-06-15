@@ -189,6 +189,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamsArr' => $this->App->Teams->readAllVisible(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             'timestamperFullname' => $this->Entity->getTimestamperFullname(),
+            'signerFullname' => $this->Entity->getSignerFullname(),
             'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,

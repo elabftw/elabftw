@@ -1,0 +1,17 @@
+-- schema 213
+ALTER TABLE `experiments`
+    ADD COLUMN `signature_count` INT UNSIGNED NOT NULL DEFAULT 0,
+    ADD COLUMN `last_signed_at` TIMESTAMP NULL DEFAULT NULL,
+    ADD COLUMN `last_signed_by` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `experiments_templates`
+    ADD COLUMN `signature_count` INT UNSIGNED NOT NULL DEFAULT 0,
+    ADD COLUMN `last_signed_at` TIMESTAMP NULL DEFAULT NULL,
+    ADD COLUMN `last_signed_by` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `items`
+    ADD COLUMN `signature_count` INT UNSIGNED NOT NULL DEFAULT 0,
+    ADD COLUMN `last_signed_at` TIMESTAMP NULL DEFAULT NULL,
+    ADD COLUMN `last_signed_by` INT UNSIGNED NULL DEFAULT NULL;
+ALTER TABLE `items_types`
+    ADD COLUMN `signature_count` INT UNSIGNED NOT NULL DEFAULT 0,
+    ADD COLUMN `last_signed_at` TIMESTAMP NULL DEFAULT NULL,
+    ADD COLUMN `last_signed_by` INT UNSIGNED NULL DEFAULT NULL;

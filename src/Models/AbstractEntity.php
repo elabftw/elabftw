@@ -739,6 +739,14 @@ abstract class AbstractEntity extends AbstractRest
         return $this->getFullnameFromUserid($this->entityData['timestampedby']);
     }
 
+    public function getSignerFullname(): string
+    {
+        if ($this->entityData['signature_count'] === 0) {
+            return 'Unknown';
+        }
+        return $this->getFullnameFromUserid($this->entityData['last_signed_by']);
+    }
+
     // generate a title useful for zip folder name for instance: shortened, with category and short elabid
     public function toFsTitle(): string
     {
@@ -1186,6 +1194,17 @@ abstract class AbstractEntity extends AbstractRest
         $ZipArchive->close();
         $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $this->Uploads->create(new CreateUploadFromLocalFile('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
+        // update the helper columns
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET signature_count = signature_count + 1, last_signed_at = NOW(), last_signed_by = :signer WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':signer', $this->Users->getUserid(), PDO::PARAM_INT);
+        $req->bindValue(':id', $this->id ?? 0, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        // now add something in the changelog
+        $Changelog = new Changelog($this);
+        $Changelog->create(new ContentParams('signature', 'Entity was signed'));
+
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));

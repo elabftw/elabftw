@@ -134,6 +134,7 @@ const t = {
     "status": "Status",
     "step-delete-warning": "Hapus langkah ini?",
     "step-unfinish-warning": "Anda yakin ingin mengurungkan langkah ini?",
+    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
     "tag-delete-warning": "Hapus label ini?",
     "tags": "Label",
     "team": "Tim",

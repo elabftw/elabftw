@@ -134,6 +134,7 @@ const t = {
     "status": "Tila",
     "step-delete-warning": "Poistetaanko tämä vaihe?",
     "step-unfinish-warning": "Haluatko varmasti kumota tämän vaiheen?",
+    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
     "tag-delete-warning": "Poistetaanko tämä tunniste?",
     "tags": "Tunnisteet",
     "team": "Tiimi",

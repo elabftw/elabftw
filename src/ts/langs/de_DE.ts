@@ -134,6 +134,7 @@ const t = {
     "status": "Status",
     "step-delete-warning": "Diesen Schritt löschen?",
     "step-unfinish-warning": "Sind Sie sicher, dass Sie diesen Schritt rückgängig machen wollen?",
+    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
     "tag-delete-warning": "Diesen Tag löschen?",
     "tags": "Tags",
     "team": "Team",

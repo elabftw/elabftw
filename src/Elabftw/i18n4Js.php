@@ -178,6 +178,7 @@ final class i18n4Js
             'status' => _('Status'),
             'step-delete-warning' => _('Delete this step?'),
             'step-unfinish-warning' => _('Are you sure you want to undo this step?'),
+            'scheduler-resources-view-mode' => _('You are in resource-view mode. Please select a resource to display its bookings.'),
             'tag-delete-warning' => _('Delete this tag?'),
             'tags' => _('Tags'),
             'team' => _('Team'),

@@ -134,6 +134,7 @@ const t = {
     "status": "Statusy",
     "step-delete-warning": "Usunąć ten krok?",
     "step-unfinish-warning": "Czy na pewno chcesz cofnąć ten krok?",
+    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
     "tag-delete-warning": "Usunąć ten tag?",
     "tags": "Tagi",
     "team": "Zespołów",

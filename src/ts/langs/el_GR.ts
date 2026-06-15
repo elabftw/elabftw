@@ -134,6 +134,7 @@ const t = {
     "status": "Κατάσταση",
     "step-delete-warning": "Διαγραφή αυτού του βήματος;",
     "step-unfinish-warning": "Είστε βέβαιοι ότι θέλετε να αναιρέσετε αυτό το βήμα;",
+    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
     "tag-delete-warning": "Διαγραφή αυτής της ετικέτας;",
     "tags": "Ετικέτες",
     "team": "Ομάδα",

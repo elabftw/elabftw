@@ -134,6 +134,7 @@ const t = {
     "status": "Stav",
     "step-delete-warning": "Vymazat tento krok?",
     "step-unfinish-warning": "Jste si jisti, že chcete tento krok vrátit?",
+    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
     "tag-delete-warning": "Smazat tento štítek?",
     "tags": "Štítky",
     "team": "Tým",

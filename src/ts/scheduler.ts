@@ -118,6 +118,26 @@ function lockScopeButton(selectedItems: string[]): void {
   lockedBtn?.toggleAttribute('hidden', !showLocked);
 }
 
+function getSelectedItemIds(): string[] {
+  const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
+  const selectedFromTomSelect = itemSelect?.tomselect?.items || [];
+  if (selectedFromTomSelect.length > 0) {
+    return selectedFromTomSelect.map(String);
+  }
+  return new URLSearchParams(window.location.search).getAll('items[]');
+}
+
+/* In Vertical Resources View mode, display an empty resource when none is selected (or it looks broken) */
+type SchedulerResourceItem = {
+  id: number;
+  title: string;
+};
+
+const EMPTY_RESOURCE: SchedulerResourceItem = {
+  id: 0,
+  title: i18next.t('scheduler-resources-view-mode'),
+};
+
 if (window.location.pathname === '/scheduler.php') {
   document.getElementById('loading-spinner')?.remove();
 
@@ -204,7 +224,9 @@ if (window.location.pathname === '/scheduler.php') {
       const newQuery = buildEventSourcesUrl();
       calendar.removeAllEventSources();
       calendar.addEventSource({ url: newQuery });
-      calendar.refetchEvents();
+      if (schedulerLayout === 2) {
+        calendar.refetchResources();
+      }
       window.history.replaceState({}, '', `${location.pathname}?${params.toString()}`);
     }
 
@@ -295,8 +317,17 @@ if (window.location.pathname === '/scheduler.php') {
           buttonText: 'resources week',
         },
       },
-      resources: {
-        url: 'api/v2/items?bookable=1',
+      resources: (_fetchInfo, successCallback, failureCallback) => {
+        const selectedItems = getSelectedItemIds();
+        ApiC.getJson('items?bookable=1')
+          .then(items => {
+            const resources = items
+              .filter((item: SchedulerResourceItem) => selectedItems.includes(String(item.id)))
+              .map((item: SchedulerResourceItem) => ({id: item.id, title: item.title}));
+
+            successCallback(resources.length > 0 ? resources : [EMPTY_RESOURCE]);
+          })
+          .catch(failureCallback);
       },
       initialView: initialView,
       datesSet: (info) => {

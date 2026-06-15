@@ -134,6 +134,7 @@ const t = {
     "status": "Staatus",
     "step-delete-warning": "Kas kustutada see samm?",
     "step-unfinish-warning": "Kas oled kindel, et soovid selle sammu tagasi võtta?",
+    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
     "tag-delete-warning": "Kas kustutada see silt?",
     "tags": "Sildid",
     "team": "Meeskond",

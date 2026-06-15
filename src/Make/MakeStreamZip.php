@@ -20,6 +20,9 @@ use League\Flysystem\UnableToReadFile;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Interfaces\PdfMakerInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use ZipStream\ZipStream;
 use Override;
@@ -74,11 +77,17 @@ class MakeStreamZip extends AbstractMakeZip
             $this->usePdfa,
         );
         $log = App::getDefaultLogger();
+        $instance2Rors = new Instance2Rors();
+        $teams2Rors = new Teams2Rors($this->requester->getTeam());
+        $users2Rors = new Users2Rors($this->requester->getUserid());
         return new MakePdf(
             log: $log,
             mpdfProvider: $MpdfProvider,
             requester: $this->requester,
             entityArr: array($entity),
+            instance2Rors: $instance2Rors,
+            teams2Rors: $teams2Rors,
+            users2Rors: $users2Rors,
             includeChangelog: $this->includeChangelog,
             classification: $this->classification,
         );

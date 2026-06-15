@@ -17,7 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
-use RuntimeException;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
@@ -60,7 +59,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     public function testCanWriteOrExplode(): void
     {
         $Teams = new Teams($this->getUserInTeam(1));
-        $this->expectException(RuntimeException::class);
+        $this->expectException(IllegalActionException::class);
         $Teams->canWriteOrExplode();
     }
 

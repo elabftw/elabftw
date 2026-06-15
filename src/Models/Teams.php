@@ -27,7 +27,6 @@ use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
-use RuntimeException;
 
 use function array_diff;
 use function trim;
@@ -314,20 +313,27 @@ final class Teams extends AbstractRest
         return $res;
     }
 
-    public function canWriteOrExplode(): void
+    public function canWrite(): bool
     {
         if ($this->bypassWritePermission || $this->Users->isSysadmin()) {
-            return;
+            return true;
         }
         if ($this->id === null) {
-            throw new RuntimeException('Cannot check permissions in team because the team id is null.');
+            return false;
         }
         $TeamsHelper = new TeamsHelper($this->id);
 
         if ($TeamsHelper->isAdminInTeam($this->Users->getUserid())) {
-            return;
+            return true;
         }
-        throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
+        return false;
+    }
+
+    public function canWriteOrExplode(): void
+    {
+        if (!$this->canWrite()) {
+            throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
+        }
     }
 
     public function create(string $name): int

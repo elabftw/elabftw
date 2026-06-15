@@ -32,10 +32,14 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     private Users $Users;
 
+    private Config $Config;
+
     protected function setUp(): void
     {
         $requester = new Users(1, 1);
         $this->Users = new Users(1, 1, $requester);
+        $this->Config = Config::getConfig();
+        $this->Config->patch(Action::Update, array('admins_archive_users' => 1));
     }
 
     public function testPopulate(): void
@@ -287,10 +291,9 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testCreateUser(): void
     {
         // force admin validation so we can run all code paths
-        $Config = Config::getConfig();
-        $Config->patch(Action::Update, array('admin_validate' => 1));
+        $this->Config->patch(Action::Update, array('admin_validate' => 1));
         $this->assertIsInt($this->Users->createOne('blahblah@yop.fr', array('Bravo'), 'blah', 'yop', 'somePassword!', Usergroup::Admin, false, false));
-        $Config->patch(Action::Update, array('admin_validate' => 0));
+        $this->Config->patch(Action::Update, array('admin_validate' => 0));
         $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), 'blah2', 'yop', 'somePassword!', Usergroup::Admin, true, false));
     }
 
@@ -299,12 +302,9 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Admin = $this->getUserInTeam(team: 2, admin: 1);
         $user2 = $this->getUserInTeam(team: 2);
         $Users = new Users($user2->userid, 2, $Admin);
-        $Config = Config::getConfig();
-        $Config->patch(Action::Update, array('admins_archive_users' => 0));
-        $this->expectException(ImproperActionException::class);
+        $this->Config->patch(Action::Update, array('admins_archive_users' => 0));
+        $this->expectException(IllegalActionException::class);
         $Users->patch(Action::Archive, array());
-
-        $Config->patch(Action::Update, array('admins_archive_users' => 1));
     }
 
     public function testReadAllActiveFromTeam(): void

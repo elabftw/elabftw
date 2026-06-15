@@ -58,7 +58,6 @@ try {
     $FavTags = new FavTags($App->Users);
     $favTagsArr = $FavTags->readAll();
 
-
     if ($App->Request->query->has('templateid')) {
         $ItemsTypes->setId($App->Request->query->getInt('templateid'));
         $ItemsTypes->canOrExplode(AccessType::Write);

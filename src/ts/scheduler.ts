@@ -65,10 +65,9 @@ const TIMELINE_VIEWS: Record<Range, string> = {
   week: 'timelineWeek',
   month: 'timelineMonth',
 };
-const RESOURCE_VIEWS: Record<Range, string> = {
+const RESOURCE_VIEWS: Partial<Record<Range, string>> = {
   day: 'resourceTimeGridDay',
   week: 'resourceTimeGridWeek',
-  month: 'resourceTimeGridWeek',
 };
 const LIST_WEEK_VIEW = 'listWeek';
 
@@ -306,16 +305,8 @@ if (window.location.pathname === '/scheduler.php') {
             { weekday: 'short', day: 'numeric' }, // e.g., "Tue 8" in month view
           ],
         },
-        resourceTimeGridDay: {
-          type: 'resourceTimeGrid',
-          duration: { days: 1 },
-          buttonText: 'resources day',
-        },
-        resourceTimeGridWeek: {
-          type: 'resourceTimeGrid',
-          duration: { weeks: 1 },
-          buttonText: 'resources week',
-        },
+        resourceTimeGridDay: { type: 'resourceTimeGrid', duration: { days: 1 } },
+        resourceTimeGridWeek: { type: 'resourceTimeGrid', duration: { weeks: 1 } },
       },
       resources: (_fetchInfo, successCallback, failureCallback) => {
         const selectedItems = getSelectedItemIds();

@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Params;
 
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Entrypoint;
+use Elabftw\Enums\SchedulerLayout;
 use Elabftw\Exceptions\ImproperActionException;
 
 class UserParamsTest extends \PHPUnit\Framework\TestCase
@@ -64,5 +66,29 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
         $entrypoint = 'test';
         $params = new UserParams('entrypoint', $entrypoint);
         $this->assertEquals(Entrypoint::Dashboard->value, $params->getContent());
+    }
+
+    public function testSchedulerLayout(): void
+    {
+        $params = new UserParams('scheduler_layout', '1');
+        $this->assertIsInt($params->getContent());
+    }
+
+    public function testInvalidSchedulerLayoutDefaultsToAuto(): void
+    {
+        $params = new UserParams('scheduler_layout', '999');
+        $this->assertEquals(SchedulerLayout::Auto->value, $params->getContent());
+    }
+
+    public function testDefaultReadBase(): void
+    {
+        $params = new UserParams('default_read_base', '10');
+        $this->assertEquals(BasePermissions::UserOnly->value, $params->getContent());
+    }
+
+    public function testDefaultWriteBase(): void
+    {
+        $params = new UserParams('default_write_base', '10');
+        $this->assertEquals(BasePermissions::UserOnly->value, $params->getContent());
     }
 }

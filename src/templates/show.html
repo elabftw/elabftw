@@ -86,6 +86,7 @@
             <label class='font-weight-bold mb-1'>{{ 'Metadata'|trans }}</label>
 
             <div class='input-group d-flex flex-nowrap'>
+              {% if App.devMode -%}<!-- [html-validate-disable prefer-native-element: suppress errors from tom-select] -->{%- endif %}
               <select aria-label='{{ 'Name of field'|trans }}' class='form-control filterHelper' data-filter='extrafield' id='metakey' name='metakey'>
                 <option value='' disabled>{{ 'Name of field'|trans }}</option>
                 <option value='**' {{- '**' == App.Request.query.get('metakey') ? ' selected' }}>{{ 'All fields'|trans }}</option>
@@ -94,6 +95,7 @@
                 {% endfor %}
               </select>
 
+              {% if App.devMode -%}<!-- [html-validate-disable prefer-native-element: suppress errors from tom-select] -->{%- endif %}
               <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
 
               <input

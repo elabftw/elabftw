@@ -26,6 +26,8 @@ import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/p
 import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
 import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
 import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
+import { mount, unmount } from 'svelte';
+import RorsSv from './components/Rors.svelte';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -116,7 +118,11 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
     const params: Record<string, unknown> = {};
     params[el.dataset.target as string] = value;
 
-    await ApiC.patch(`${el.dataset.model}`, params);
+    if (el.dataset.method === 'delete') {
+      await ApiC.delete(`${el.dataset.model}`);
+    } else {
+      await ApiC.patch(`${el.dataset.model}`, params);
+    }
 
     // success side-effect for the generic path
     if (el.dataset.reload) {
@@ -231,8 +237,6 @@ export function collectForm(form: HTMLElement): object {
       el.classList.add('border-danger');
       el.focus();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // TODO maybe have "Input validation failed" or something more user friendly. That Invalid syntax error is weird.
-      notify.error('invalid-info');
       throw new Error(i18next.t('invalid-info'));
     }
     let value = el.value;
@@ -960,6 +964,14 @@ export async function populateUserModal(user: Record<string, string|number>) {
   if (user.validated !== 0) {
     validateUserBtn.setAttribute('disabled', 'disabled');
   }
+  // RORS
+  const rorsDiv = document.getElementById('rorsDiv') as HTMLElement | null;
+  if (!rorsDiv) {
+    throw new Error('Missing #rorsDiv');
+  }
+  rorsDiv.dataset.svelteComponent = 'rors';
+  rorsDiv.dataset.endpoint = `users/${user.userid}/rors`;
+  mountRors({ force: true });
 }
 
 // generate the slider element to toggle isAdmin and isOwner for a given user in a given team
@@ -1013,3 +1025,52 @@ export function ensureTogglableSectionIsOpen(iconId: string, divId: string): voi
   // and scroll page into editor view
   div.scrollIntoView({ behavior: 'smooth' });
 }
+
+type MountedRors = {
+  component: ReturnType<typeof mount>;
+  endpoint: string;
+};
+
+const mountedRors = new WeakMap<HTMLElement, MountedRors>();
+
+export function mountRors(options: { force?: boolean } = {}): void {
+  const { force = false } = options;
+
+  document.querySelectorAll<HTMLElement>('[data-svelte-component="rors"]').forEach(target => {
+    const endpoint = target.dataset.endpoint;
+
+    if (!endpoint) {
+      throw new Error('Missing data-endpoint for rors component');
+    }
+
+    const mounted = mountedRors.get(target);
+
+    if (mounted) {
+      if (!force && mounted.endpoint === endpoint) {
+        return;
+      }
+
+      unmount(mounted.component);
+      mountedRors.delete(target);
+    }
+
+    const component = mount(RorsSv, {
+      target,
+      props: {
+        endpoint,
+      },
+    });
+
+    mountedRors.set(target, {
+      component,
+      endpoint,
+    });
+  });
+}
+
+// default pagination size for ag grid components
+export const DEFAULT_AG_GRID_PAGINATION = {
+  pagination: true,
+  paginationPageSize: 100,
+  paginationPageSizeSelector: [100, 250, 500],
+};

@@ -252,8 +252,6 @@ class Users extends AbstractRest
             $admins = 'AND u2t_all.is_admin = 1';
         }
 
-        // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
-        // Side effect: User is shown in team with lowest id
         $sql = "SELECT
           u.userid,
           u.firstname,
@@ -277,7 +275,7 @@ class Users extends AbstractRest
           u.orcid,
           u.validated,
           u.auth_service,
-          sk.pubkey                         AS sig_pubkey,
+          sk.pubkey AS sig_pubkey,
           JSON_ARRAYAGG(
              JSON_OBJECT(
                'id',   u2t_all.teams_id,
@@ -330,9 +328,7 @@ class Users extends AbstractRest
           u.auth_service,
           sk.pubkey
 
-        ORDER BY
-          MIN(u2t_all.teams_id) ASC,
-          u.created_at DESC;';
+        ORDER BY u.userid ASC;';
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
@@ -489,6 +485,7 @@ class Users extends AbstractRest
                     new Users2Teams($this->requester)->create($this->userData['userid'], $team, isValidated: $this->userData['validated'] === 1);
                 }
             )(),
+            Action::Archive => (new Users2Teams($this->requester))->archive($this->getUserid()),
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params, $this->getUserid()),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),

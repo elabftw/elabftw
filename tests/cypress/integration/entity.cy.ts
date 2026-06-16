@@ -131,7 +131,7 @@ describe('Experiments', () => {
   const entityRestore = (publicUrl: string) => {
     cy.visit(`/${publicUrl}`);
     cy.htmlvalidate();
-    cy.get('button[title="Show more filters"]').click();
+    cy.get('[aria-label="Show more filters"]').click()
     // filter deleted items
     cy.get('select[name="state"]').select('3');
     // restore

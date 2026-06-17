@@ -294,12 +294,6 @@ class MakeEln extends AbstractMakeEln
         );
         $datasetNode['elabftw:state'] = State::from((int) ($e['state'] ?? State::Normal->value))->name;
         $datasetNode['elabftw:isLocked'] = !empty($e['locked']) ? 'true' : 'false';
-        if (!empty($e['locked_at'])) {
-            $datasetNode['elabftw:lockedAt'] = new DateTimeImmutable($e['locked_at'])->format(DateTimeImmutable::ATOM);
-        }
-        if (!empty($e['lockedby'])) {
-            $datasetNode['elabftw:lockedBy'] = (int) $e['lockedby'];
-        }
         if (!empty($e['category_title'])) {
             $categoryAtId = '#category-' . $e['category_title'];
             // only add it once

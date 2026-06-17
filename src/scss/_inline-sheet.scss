@@ -1,0 +1,25 @@
+/* Inline spreadsheet snapshot block embedded in an entity body.
+ * Borders are guaranteed in every context (editor, view, PDF) by the border="1" attribute
+ * on the <table>; the rules below are cosmetic polish only. Kept self-contained (literal
+ * fallbacks) so it can be reused across stylesheets. */
+.elabftw-inline-sheet {
+  display: block;
+  margin: 1rem 0;
+  overflow-x: auto;
+
+  .elabftw-inline-sheet-title {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  // every cell is styled the same; the first row is not treated as a header
+  th,
+  td {
+    padding: 4px 8px;
+    border: 1px solid var(--secondary-muted, #ccc);
+  }
+}

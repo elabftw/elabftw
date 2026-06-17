@@ -45,7 +45,8 @@ function parseFileToAOA(buffer: ArrayBuffer): Cell[][] {
   return utils.sheet_to_json(ws, { header: 1, defval: '', raw: true, blankrows: true }) as Cell[][];
 }
 
-export async function loadInSpreadsheetEditor(storage: string, path: string, name: string, uploadId: number): Promise<void> {
+// embedInline asks the editor to post back a computed snapshot once loaded (used by the inline spreadsheet "use existing" path)
+export async function loadInSpreadsheetEditor(storage: string, path: string, name: string, uploadId: number, embedInline = false): Promise<void> {
   try {
     const res = await fetch(`app/download.php?f=${encodeURIComponent(path)}&storage=${storage}`, {
       headers: new Headers({ 'cache-control': 'no-cache' }),
@@ -54,16 +55,21 @@ export async function loadInSpreadsheetEditor(storage: string, path: string, nam
     const buffer = await res.arrayBuffer();
     const aoa = parseFileToAOA(buffer);
     const iframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
-    iframe.contentWindow.postMessage({ type: 'jss-load-aoa', detail: { aoa, name, uploadId } }, window.location.origin);
+    iframe.contentWindow.postMessage({ type: 'jss-load-aoa', detail: { aoa, name, uploadId, embedInline } }, window.location.origin);
   } catch (e) {
     notify.error(e.message || 'Unexpected error while loading spreadsheet.');
   }
 }
 
 // helpers
-async function postAndReturnId(file: File, url: string): Promise<number> {
+async function postAndReturnId(file: File, url: string, replace = false): Promise<number> {
   const fd = new FormData();
   fd.append('file', file);
+  // a multipart POST to /uploads/<id> defaults to Create (leaving a duplicate) unless action=replace is set;
+  // replace archives the old upload and returns a NEW upload id
+  if (replace) {
+    fd.append('action', 'replace');
+  }
   const res = await fetch(url, { method: 'POST', body: fd });
   if (!res.ok) {
     const msg = `Upload failed (${res.status})`;
@@ -106,6 +112,6 @@ async function uploadAOA(aoa: Cell[][], name: string, entityType: string, entity
   const wb = wbFromAOA(aoa);
   const file = fileFromWB(wb, name);
   const url = uploadUrl(entityType, entityId, uploadId);
-  const id = await postAndReturnId(file, url);
+  const id = await postAndReturnId(file, url, Boolean(uploadId));
   return { id, name };
 }

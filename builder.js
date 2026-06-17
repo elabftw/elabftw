@@ -88,6 +88,9 @@ module.exports = (env) => {
         './src/ts/spreadsheet-editor.jsx',
         './src/ts/spreadsheet-utils.ts',
       ],
+      inlineSpreadsheet: [
+        './src/ts/inline-spreadsheet.ts',
+      ],
     },
     // uncomment this to find where the error is coming from
     // makes the build slower

@@ -8,3 +8,26 @@ figure {
   display: block;
   text-align: center;
 }
+
+/* inline spreadsheet snapshot block inside the editor (borders also come from the border="1" attribute) */
+.elabftw-inline-sheet {
+  display: block;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.elabftw-inline-sheet-title {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.elabftw-inline-sheet table {
+  border-collapse: collapse;
+}
+
+/* every cell is styled the same; the first row is not treated as a header */
+.elabftw-inline-sheet th,
+.elabftw-inline-sheet td {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+}

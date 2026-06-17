@@ -1,0 +1,43 @@
+{# Modal for embedding an inline spreadsheet snapshot in the entity body #}
+<div class='modal fade' id='inlineSpreadsheetModal' tabindex='-1' role='dialog' aria-labelledby='inlineSpreadsheetModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='inlineSpreadsheetModalLabel'><i class='fas fa-fw fa-table-cells'></i> {{ 'Insert spreadsheet'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <p>{{ 'Embed a spreadsheet in the text. The data is stored as a spreadsheet attachment and edited in the spreadsheet editor; a read-only snapshot is shown here.'|trans }}</p>
+
+        {# CREATE NEW #}
+        <label for='inlineSheetNewName'>{{ 'Create a new spreadsheet'|trans }}</label>
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <span class='input-group-text' id='inlineSheetNewName-descriptor'>{{ 'Filename'|trans }}</span>
+          </div>
+          <input class='form-control' placeholder='data.xlsx' id='inlineSheetNewName' aria-describedby='inlineSheetNewName-descriptor'>
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-primary' id='inlineSheetCreateBtn'>{{ 'Create'|trans }}</button>
+          </div>
+        </div>
+
+        {# USE EXISTING #}
+        <label class='mt-3' for='inlineSheetExistingSelect'>{{ 'Use an existing spreadsheet attachment'|trans }}</label>
+        <div class='input-group'>
+          <select class='form-control' id='inlineSheetExistingSelect' aria-label='{{ 'Use an existing spreadsheet attachment'|trans }}'></select>
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-primary' id='inlineSheetUseExistingBtn'>{{ 'Embed'|trans }}</button>
+          </div>
+        </div>
+        <small id='inlineSheetNoSheets' class='text-muted' hidden>{{ 'No spreadsheet attachments found on this entry.'|trans }}</small>
+      </div>
+
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script defer src='/assets/inlineSpreadsheet.bundle.js?v={{ v }}'></script>

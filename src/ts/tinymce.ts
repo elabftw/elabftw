@@ -66,6 +66,7 @@ import '../js/tinymce-langs/zh_TW.js';
 import '../js/tinymce-plugins/mention/plugin.js';
 import { EntityType, Model } from './interfaces';
 import { reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
+import { registerInlineSpreadsheet } from './inline-spreadsheet-tinymce';
 import { ApiC } from './api';
 import { isSortable } from './TableSorting.class';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
@@ -208,6 +209,8 @@ export function getTinymceBaseConfig(page: string): object {
     toolbar1 = toolbar1.replace('link |', 'link image |');
     // let Image in menu
     removedMenuItems = 'newdocument, anchor';
+    // add the inline spreadsheet insert button
+    toolbar1 += ' | inline-sheet';
   }
 
   const isDark = document.documentElement.classList.contains('dark-mode');
@@ -258,6 +261,8 @@ export function getTinymceBaseConfig(page: string): object {
       });
     },
     contextmenu: false,
+    // snapshot blocks embedded by the inline spreadsheet feature are not directly editable
+    noneditable_class: 'elabftw-inline-sheet',
     paste_data_images: Boolean(page === 'edit'),
     // use the preprocessing function on paste event to fix the bgcolor attribute from libreoffice into proper background-color style
     paste_preprocess: function(plugin, args) {
@@ -501,6 +506,12 @@ export function getTinymceBaseConfig(page: string): object {
           };
         },
       });
+
+      // INLINE SPREADSHEET: insert/edit a non-editable spreadsheet snapshot backed by an xlsx attachment.
+      // All wiring (buttons, context toolbar, render/rename listeners) lives in inline-spreadsheet-tinymce.ts.
+      if (page === 'edit') {
+        registerInlineSpreadsheet(editor);
+      }
     },
     style_formats_merge: true,
     style_formats: [

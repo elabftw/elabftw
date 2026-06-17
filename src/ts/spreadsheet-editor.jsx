@@ -22,6 +22,8 @@ import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-uti
 import { getEntity } from './misc';
 import { assignKey } from './keymaster';
 import { notify } from './notify';
+// inline spreadsheet helpers: read computed/source values off the live worksheet and post them to the parent page
+import { getComputedFromDom, getSourceFromDom, worksheetHasLoaded, postInlineRefresh } from './inline-spreadsheet-editor';
 
 function SpreadsheetEditor() {
   const spreadsheetRef = useRef(null);
@@ -29,6 +31,8 @@ function SpreadsheetEditor() {
   assignKey.filter = () => false;
 
   const [data, setData] = useState([[]]);
+  // bumped on every load so the worksheet remounts even when two files share the same shape
+  const [loadSeq, setLoadSeq] = useState(0);
   const [currentUploadId, setCurrentUploadId] = useState(0);
   const [replaceName, setReplaceName] = useState(null);
   // loading state to prevent spamming save btn
@@ -38,6 +42,8 @@ function SpreadsheetEditor() {
   const replaceIdRef = useRef(null);
   const replaceNameRef = useRef(null);
   const isDirtyRef = useRef(false);
+  // holds { aoa, name, uploadId } while we wait for an "embed inline" load to settle, else null
+  const embedPendingRef = useRef(null);
 
   useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
   useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
@@ -94,6 +100,10 @@ function SpreadsheetEditor() {
       }
       keepResult(res);
       setUnsavedWarning(false);
+      // refresh any inline snapshot embedded in the entity body with the freshly computed values
+      if (res?.id && res?.name) {
+        postInlineRefresh(res.name, res.id, getComputedFromDom(), false);
+      }
     } finally {
       window.parent.postMessage('uploadsDiv', window.location.origin);
       setIsSaving(false);
@@ -106,15 +116,42 @@ function SpreadsheetEditor() {
     if (instance) instance.setData(data);
   }, [data]);
 
+  // after an "embed inline" load (use-existing path), wait until the worksheet holds the loaded data,
+  // then post its computed values so the parent can build/insert the snapshot
+  useEffect(() => {
+    const pending = embedPendingRef.current;
+    if (!pending) return undefined;
+    let raf = 0;
+    let tries = 0;
+    const tick = () => {
+      const live = getSourceFromDom();
+      if (live && worksheetHasLoaded(live, pending.aoa)) {
+        embedPendingRef.current = null;
+        postInlineRefresh(pending.name, pending.uploadId, getComputedFromDom(), true);
+        return;
+      }
+      if (tries++ < 180) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        embedPendingRef.current = null;
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [data]);
+
   // load an attachment into the editor, capture filename & id
   useEffect(() => {
     const onMessage = (event) => {
       if (event.origin !== window.location.origin) return;
       if (event.data?.type === 'jss-load-aoa') {
-        const { aoa, name, uploadId } = event.data.detail || {};
+        const { aoa, name, uploadId, embedInline } = event.data.detail || {};
         setData(aoa);
+        setLoadSeq(seq => seq + 1);
         setReplaceName(name ?? null);
         setCurrentUploadId(typeof uploadId === 'number' ? uploadId : null);
+        // when embedInline is set, the [data] effect below will post a computed snapshot once the worksheet settles
+        embedPendingRef.current = embedInline ? { aoa, name, uploadId } : null;
       }
     }
     window.addEventListener('message', onMessage);
@@ -128,6 +165,7 @@ function SpreadsheetEditor() {
     if (!file) return;
     const aoa = await fileToAOA(file);
     setData(aoa);
+    setLoadSeq(seq => seq + 1);
     // clear any current spreadsheet id tracking
     setCurrentUploadId(null);
     setReplaceName(null);
@@ -141,6 +179,7 @@ function SpreadsheetEditor() {
     const empty = [[]];
     inst?.setData?.(empty);
     setData(empty);
+    setLoadSeq(seq => seq + 1);
     setCurrentUploadId(null);
     setReplaceName(null);
   };
@@ -188,8 +227,9 @@ function SpreadsheetEditor() {
     tb.items.push(fullscreenBtn, importBtn, exportBtn, clearBtn );
     return tb;
   };
-  // pass a dynamic key to force SpreadsheetInner to remount when data shape changes
-  const spreadsheetKey = `${data.length}-${data[0]?.length || 0}`;
+  // pass a dynamic key to force SpreadsheetInner to remount on every load (loadSeq), even when two
+  // files share the same shape; the shape is kept too so unrelated re-renders stay cheap
+  const spreadsheetKey = `${loadSeq}-${data.length}-${data[0]?.length || 0}`;
 
   return (
     <>

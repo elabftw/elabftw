@@ -64,6 +64,29 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         Filter::body(str_repeat('a', 4120001));
     }
 
+    public function testBodyInlineSpreadsheet(): void
+    {
+        // the inline spreadsheet snapshot block survives sanitization with its class, data attributes and title
+        $block = '<div class="elabftw-inline-sheet" data-upload-id="42" data-sheet-name="data.xlsx"><div class="elabftw-inline-sheet-title">data.xlsx</div><table border="1"><tr><td>A</td></tr><tr><td>1</td></tr></table></div>';
+        $result = Filter::body($block);
+        $this->assertStringContainsString('elabftw-inline-sheet', $result);
+        $this->assertStringContainsString('elabftw-inline-sheet-title', $result);
+        $this->assertStringContainsString('data-upload-id="42"', $result);
+        $this->assertStringContainsString('data-sheet-name="data.xlsx"', $result);
+        $this->assertStringContainsString('border="1"', $result);
+        $this->assertStringContainsString('<td>A</td>', $result);
+        $this->assertStringContainsString('<td>1</td>', $result);
+
+        // a stray button / onclick / contenteditable inside the block is stripped, the table is kept
+        $dirty = '<div class="elabftw-inline-sheet" data-upload-id="1" data-sheet-name="x.xlsx" contenteditable="false"><button onclick="alert(1)">edit</button><table border="1"><tr><td>ok</td></tr></table></div>';
+        $clean = Filter::body($dirty);
+        $this->assertStringNotContainsString('<button', $clean);
+        $this->assertStringNotContainsString('onclick', $clean);
+        $this->assertStringNotContainsString('contenteditable', $clean);
+        $this->assertStringContainsString('elabftw-inline-sheet', $clean);
+        $this->assertStringContainsString('<td>ok</td>', $clean);
+    }
+
     public function testForFilesystem(): void
     {
         $this->assertEquals('blah', Filter::forFilesystem('=blah/'));

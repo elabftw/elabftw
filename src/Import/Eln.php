@@ -211,6 +211,29 @@ class Eln extends AbstractZip
 
     }
 
+    private function restoreEntityLifecycle(array $dataset): void
+    {
+        // convert exported state name back to a State enum. default to normal
+        $state = array_find(
+            State::cases(),
+            static fn(State $state): bool => $state->name === ($dataset['elabftw:state'] ?? State::Normal->name),
+        ) ?? State::Normal;
+
+        if ($state === State::Archived) {
+            $this->Entity->patch(Action::Archive, array());
+            return;
+        }
+        if ($state === State::Deleted) {
+            $this->Entity->update(new EntityParams('state', (string) State::Deleted->value));
+            return;
+        }
+        $isLocked = ($dataset['elabftw:isLocked'] ?? 'false') === 'true';
+        if ($isLocked) {
+            $this->Entity->patch(Action::Lock, array());
+        }
+        $this->Entity->update(new EntityParams('state', (string) $state->value));
+    }
+
     private function grabIdFromUrl(string $url): ?int
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
@@ -486,6 +509,9 @@ class Eln extends AbstractZip
         foreach ($dataset['hasPart'] ?? array() as $part) {
             $this->importPart($this->getNodeFromId($part['@id']));
         }
+
+        // Restore lifecycle last, after all updates/uploads/comments/tags are done.
+        $this->restoreEntityLifecycle($dataset);
     }
 
     private function attrToHtml(array $attr, string $title): string

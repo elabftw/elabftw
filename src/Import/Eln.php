@@ -23,6 +23,7 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Hash\FileHash;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
@@ -512,6 +513,11 @@ class Eln extends AbstractZip
 
         // Restore lifecycle last, after all updates/uploads/comments/tags are done.
         $this->restoreEntityLifecycle($dataset);
+
+        // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
+        if (!empty($dataset['elabftw:changelog'])) {
+            new Changelog($this->Entity)->replaceAll($dataset['elabftw:changelog']);
+        }
     }
 
     private function attrToHtml(array $attr, string $title): string

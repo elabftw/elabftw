@@ -286,6 +286,7 @@ class MakeEln extends AbstractMakeEln
             array('alternateName' => $e['custom_id'] ?? ''),
             array('comment' => $comments),
             array('creativeWorkStatus' => $e['status_title'] ?? ''),
+            array('elabftw:changelog' => $e['changelog'] ?? array()),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),
             array('keywords' => $keywords),

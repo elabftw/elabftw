@@ -155,6 +155,12 @@ final class IdpsHelper
                             'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
                             'friendlyName' => 'uid',
                         ),
+                        array(
+                            'name' => empty($idp['orcid_attr']) ? 'urn:oid:1.3.6.1.4.1.5923.1.1.1.16' : $idp['orcid_attr'],
+                            'isRequired' => false,
+                            'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                            'friendlyName' => 'eduPersonOrcid',
+                        ),
                     ),
                 ),
                 // Specifies info about where and how the <Logout Response> message MUST be
@@ -203,6 +209,7 @@ final class IdpsHelper
                 'fnameAttr' => $idp['fname_attr'],
                 'lnameAttr' => $idp['lname_attr'],
                 'orgidAttr' => $idp['orgid_attr'],
+                'orcidAttr' => $idp['orcid_attr'],
             ),
             // Security settings
             'security' => array(

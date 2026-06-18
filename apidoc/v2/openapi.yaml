@@ -1661,14 +1661,19 @@ components:
           type: integer
         email_attr:
           type: string
-        team_attr:
-          type: string
         fname_attr:
           type: string
         lname_attr:
           type: string
+        team_attr:
+          type: string
+          nullable: true
         orgid_attr:
           type: string
+          nullable: true
+        orcid_attr:
+          type: string
+          nullable: true
         source:
           type: int
           nullable: true
@@ -5998,7 +6003,7 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/users'
                 - type: object
-                  description: Archive or validate a user (will toggle the attribute)
+                  description: Archive or validate a user (will toggle the attribute). Archive will archive user in all teams and requires Sysadmin rights.
                   properties:
                     action:
                       type: string
@@ -6238,9 +6243,19 @@ paths:
           $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Notifications']
-      summary: |
-        Actions on a notification. Only changing `is_ack` column is possible.
+      summary: Update the acknowledgment status of a notification.
       operationId: patch-notification
+      requestBody:
+        description: Defines whether the notification is acknowledged.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_ack:
+                  type: integer
+                  description: Acknowledge the notification. `0` for unacknowledging, `1` for acknowledge.
+                  enum: [ 0, 1 ]
       responses:
         '200':
           description: The updated notification.
@@ -6813,18 +6828,24 @@ paths:
                 email_attr:
                   type: string
                   description: What attribute to look for the email.
-                team_attr:
-                  type: string
-                  description: What attribute to look for the team.
                 fname_attr:
                   type: string
                   description: What attribute to look for the firstname.
                 lname_attr:
                   type: string
                   description: What attribute to look for the lastname.
+                team_attr:
+                  type: string
+                  description: What attribute to look for the team.
+                  nullable: true
                 orgid_attr:
                   type: string
                   description: What attribute to look for the internal id.
+                  nullable: true
+                orcid_attr:
+                  type: string
+                  description: What attribute to look for the ORCID.
+                  nullable: true
       responses:
         '201':
           description: The idp has been created.

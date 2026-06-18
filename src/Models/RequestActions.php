@@ -86,11 +86,12 @@ final class RequestActions extends AbstractRest
         $sql = sprintf(
             'SELECT id, created_at, requester_userid, target_userid, entity_id, action, state
                 FROM %s_request_actions
-                WHERE id = :id',
+                WHERE id = :id AND entity_id = :entity_id',
             $this->entity->entityType->value
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);

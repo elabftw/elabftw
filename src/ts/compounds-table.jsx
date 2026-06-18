@@ -17,7 +17,7 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
-import { toggleEditCompound } from './misc';
+import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
 import i18next from './i18n';
 import { notify } from './notify';
 
@@ -181,9 +181,7 @@ if (document.getElementById('compounds-table')) {
           onCellDoubleClicked={cellDoubleClicked}
           onGridReady={onGridReady}
           onSelectionChanged={selectionChanged}
-          pagination={true}
-          paginationPageSize={15}
-          paginationPageSizeSelector={[15, 50, 100, 500]}
+          {...DEFAULT_AG_GRID_PAGINATION}
         />
         <div className='d-flex justify-content-end my-2'>
           <button

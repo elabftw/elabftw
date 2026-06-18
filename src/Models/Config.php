@@ -94,7 +94,7 @@ final class Config extends AbstractRest
             ('smtp_port', '587'),
             ('smtp_username', ''),
             ('smtp_verify_cert', '1'),
-            ('ts_authority', 'dfn'),
+            ('ts_authority', 'digicert'),
             ('ts_balance', '0'),
             ('ts_login', NULL),
             ('ts_password', NULL),

@@ -22,6 +22,7 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
@@ -239,6 +240,16 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($user2->team, $entityData['team']);
     }
 
+    public function testUpdateOwnershipWithoutUsingDedicatedAction(): void
+    {
+        $User = $this->getRandomUserInTeam(1);
+        $exp = $this->getFreshExperimentWithGivenUser($User);
+        $params = array('userid' => $User->getUserid(), 'team' => $User->getTeam());
+        // needs to use Action::UpdateOwner if we're using userid/team params)
+        $this->expectException(ImproperActionException::class);
+        $exp->patch(Action::Update, $params);
+    }
+
     public function testUpdateOwnershipWrongTeamCombination(): void
     {
         $user1 = new Users(1, 1);
@@ -340,9 +351,11 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($res);
     }
 
-    public function testGetTimestampThisMonth(): void
+    public function testGetTimestampLastMonth(): void
     {
-        $this->assertEquals(5, $this->Experiments->getTimestampLastMonth());
+        $before = $this->Experiments->getTimestampLastMonth();
+        $this->Experiments->timestamp();
+        $this->assertSame($before + 1, $this->Experiments->getTimestampLastMonth());
     }
 
     public function testUpdateJsonField(): void
@@ -386,5 +399,32 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->setId($copy);
         $this->expectException(ImproperActionException::class);
         $this->Experiments->patch(Action::Update, array('custom_id' => 99));
+    }
+
+    // focused regression test for nullable filters to ensure mixed `NULL` and `IN (...)` conditions are grouped as a single SQL predicate.
+    public function testNullableCategoryFilterSqlIsGrouped(): void
+    {
+        $query = new InputBag(array('category' => 'null,1'));
+        $DisplayParams = new DisplayParams($this->Users, EntityType::Experiments, $query);
+        $expected = 'AND (entity.category IS NULL OR entity.category IN (1))';
+        $this->assertStringContainsString($expected, $DisplayParams->getFilterSql());
+    }
+
+    // test anonymous user can only read Entries with 'Permission:Full' (Everyone including anonymous users)
+    public function testReadAllForAnonymousUser(): void
+    {
+        // create experiments for each base permission
+        foreach (BasePermissions::cases() as $permission) {
+            $Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
+            $Experiments->patch(Action::Update, array('canread_base' => $permission->value));
+        }
+
+        $AnonymousUser = new AnonymousUser(1);
+        $Experiments = new Experiments($AnonymousUser);
+        $experiments = $Experiments->readAll();
+
+        foreach ($experiments as $experiment) {
+            $this->assertSame(BasePermissions::Full->value, $experiment['canread_base']);
+        }
     }
 }

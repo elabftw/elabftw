@@ -8,7 +8,6 @@
 import {
   clearForm,
   collectForm,
-  getCheckedBoxes,
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
@@ -17,112 +16,223 @@ import 'bootstrap/js/src/modal.js';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { notify } from './notify';
-import { SearchSyntaxHighlighting } from './SearchSyntaxHighlighting.class';
 import { entity } from './getEntity';
+import { mountEntitiesTable, unmountEntitiesTable } from './entities-table';
+import { get } from 'svelte/store';
+import { mount, unmount } from 'svelte';
+import { writable } from 'svelte/store';
+import SearchBarSv from './components/SearchBar.svelte';
+import EntityListSv from './components/EntityList.svelte';
+import $ from 'jquery';
+import { core } from './core';
 
-const params = new URLSearchParams(document.location.search.slice(1));
+type TeamScopedTomSelect = TomSelectWithAllOptions & {
+  _showAll?: boolean;
+};
 
-// a filter helper can be a select or an input (for date and extrafield), so we need a function to get its value
-function getFilterValueFromElement(element: HTMLElement): string {
-  const escapeDoubleQuotes = (string: string): string => {
-    // escape double quotes if not already escaped
-    return string.replace(/(?<!\\)"/g, '\\"');
-  };
-  const handleDate = (): string => {
-    const date = (document.getElementById('date') as HTMLInputElement).value;
-    const dateTo = (document.getElementById('dateTo') as HTMLInputElement).value;
-    const dateOperatorEl = document.getElementById('dateOperator') as HTMLSelectElement;
-    const dateOperator = dateOperatorEl.options[dateOperatorEl.selectedIndex].value;
-    if (date === '') {
-      return '';
-    }
-    if (dateTo === '') {
-      return dateOperator + date;
-    }
-    return date + '..' + dateTo;
-  };
-  const handleMetadata = (): string => {
-    const metakeyEl = document.getElementById('metakey') as HTMLSelectElement;
-    const metakey = metakeyEl.options[metakeyEl.selectedIndex].value;
-    const metavalue = (document.getElementById('metavalue') as HTMLInputElement).value;
-    if (metakey === '' || metavalue === '') {
-      return '';
-    }
-    const keyQuotes = getQuotes(metakey);
-    const valueQuotes = getQuotes(metavalue);
-    return keyQuotes + escapeDoubleQuotes(metakey) + keyQuotes + ':' + valueQuotes + escapeDoubleQuotes(metavalue) + valueQuotes;
-  };
-  if (element instanceof HTMLSelectElement) {
-    // clear action
-    if (element.options[element.selectedIndex].dataset.action === 'clear') {
-      return '';
-    }
-    if (element.id === 'dateOperator') {
-      return handleDate();
-    }
-    if (element.id === 'metakey') {
-      return handleMetadata();
-    }
-    return escapeDoubleQuotes(element.options[element.selectedIndex].value);
+type ActiveFilterControl = {
+  control: TeamScopedTomSelect;
+  param: string;
+  title: string;
+};
+
+
+type EntityFilterParam = 'owner' | 'category' | 'status';
+
+type EntityFilterRequestedDetail = {
+  param: EntityFilterParam;
+  value: string;
+  label?: string | null;
+};
+
+const activeFilters = document.getElementById('activeFiltersDiv');
+let debounceTimer: number | undefined;
+let entityListSvComponent: Record<string, unknown> | null = null;
+const initialUrlParams = new URLSearchParams(window.location.search);
+const initialQ = initialUrlParams.get('q') ?? '';
+initialUrlParams.delete('q');
+
+const filterControls: ActiveFilterControl[] = [];
+const searchQuery = writable(initialQ);
+const entityFilters = writable(initialUrlParams);
+const selectedEntities = writable<string[]>([]);
+let searchQueryInitialized = false;
+
+function updateUrlFromStores(filters = get(entityFilters)): void {
+  const url = new URL(window.location.href);
+  const q = get(searchQuery).trim();
+
+  url.search = filters.toString();
+  url.searchParams.delete('offset');
+
+  if (q.length > 0) {
+    url.searchParams.set('q', q);
+  } else {
+    url.searchParams.delete('q');
   }
-  if (element instanceof HTMLInputElement) {
-    if (element.id === 'date') {
-      return handleDate();
-    }
-    if (element.id === 'dateTo') {
-      return handleDate();
-    }
-    if (element.id === 'metavalue') {
-      return handleMetadata();
-    }
-  }
-  return '';
+
+  window.history.replaceState({}, '', url.toString());
+  window.dispatchEvent(new CustomEvent('entity-filters-changed', {
+    detail: new URLSearchParams(url.search),
+  }));
 }
 
-// don't add quotes unless we need them (space or some special chars exist)
-function getQuotes(filterValue: string): string {
-  let quotes = '';
-  if ([' ', '&', '|', '!', ':', '(', ')', '\'', '"'].some(value => filterValue.includes(value))) {
-    quotes = '"';
-  }
-  return quotes;
-}
+function setEntityFilterParam(param: string, value: string): void {
+  entityFilters.update(currentParams => {
+    const nextParams = new URLSearchParams(currentParams);
 
-function addHiddenInputToMainSearchForm(name: string, value: string): void
-{
-  const form = document.getElementById('mainSearchForm');
-  const hiddenInputId = `${name}_hiddenInput`;
-  document.getElementById(hiddenInputId)?.remove();
-  const input = document.createElement('input');
-  input.hidden = true;
-  input.name = name;
-  input.setAttribute('aria-label', name);
-  input.value = value;
-  input.id = hiddenInputId;
-  form.appendChild(input);
-}
+    nextParams.delete('offset');
 
-function setExpandedAndSelectedEntities(): void {
-  type ExpandedAndSelectedEntitiesState = { expanded: boolean; selectedEntities: string[]; expendedEntities: string[] };
-  const state = JSON.parse(document.getElementById('showModeContent').dataset.expandedAndSelectedEntities) as ExpandedAndSelectedEntitiesState;
-  if (state.expanded) {
-    const linkEl = document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement;
-    linkEl.dataset.status = 'opened';
-    document.querySelectorAll('[data-action="toggle-body"]').forEach((toggleButton: HTMLButtonElement) => {
-      toggleButton.click();
-    });
-  }
-  if (state.selectedEntities.length > 0) {
-    document.getElementById('withSelected').classList.remove('d-none');
-  }
-  document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
-    if (state.selectedEntities.includes(item.dataset.id)) {
-      item.click();
+    if (value === '') {
+      nextParams.delete(param);
+    } else {
+      nextParams.set(param, value);
     }
-    if (!state.expanded && state.expendedEntities.includes(item.dataset.id)) {
-      (document.querySelector(`[data-action="toggle-body"][data-id="${item.dataset.id}"]`) as HTMLButtonElement).click();
+
+    updateUrlFromStores(nextParams);
+
+    return nextParams;
+  });
+}
+
+function setEntityFilterParamValues(param: string, values: string[]): void {
+  entityFilters.update(currentParams => {
+    const nextParams = new URLSearchParams(currentParams);
+
+    nextParams.delete('offset');
+    nextParams.delete(param);
+
+    values.filter(Boolean).forEach(value => nextParams.append(param, value));
+    updateUrlFromStores(nextParams);
+
+    return nextParams;
+  });
+}
+
+function getEntityFilterParamValues(param: string, splitComma = true): string[] {
+  const params = get(entityFilters);
+
+  if (param === 'tags[]') {
+    return params.getAll(param);
+  }
+
+  const value = params.get(param);
+
+  if (!value) {
+    return [];
+  }
+
+  return splitComma ? value.split(',').filter(Boolean) : [value];
+}
+
+searchQuery.subscribe(() => {
+  if (!searchQueryInitialized) {
+    searchQueryInitialized = true;
+    return;
+  }
+
+  window.clearTimeout(debounceTimer);
+
+  debounceTimer = window.setTimeout(() => {
+    updateUrlFromStores();
+  }, 250);
+});
+
+function handleInitialLoadDone(): void {
+  // remove skeleton
+  document.getElementById('itemListSkeleton')?.remove();
+}
+
+async function getDisplayMode() {
+  return ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
+    return json['display_mode'];
+  }).catch(() => 'it');
+}
+
+const mountEntityListSv = (target: HTMLElement): void => {
+  if (entityListSvComponent) {
+    return;
+  }
+
+  entityListSvComponent = mount(EntityListSv, {
+    target,
+    props: {
+      entityType: entity.type,
+      limit: 15,
+      searchQuery,
+      entityFilters,
+      selectedEntities,
+      currentUserId: core.currentUserid,
+      currentTeam: core.currentTeam,
+      isAdmin: core.isAdmin,
+      isAnon: core.isAnon,
+      onInitialLoadDone: handleInitialLoadDone,
+    },
+  });
+};
+
+const unmountEntityListSv = async (): Promise<void> => {
+  if (!entityListSvComponent) {
+    return;
+  }
+
+  await unmount(entityListSvComponent, { outro: true });
+  entityListSvComponent = null;
+};
+
+async function displayEntities(mode: string) {
+  const rootEl = document.getElementById('entityList');
+  if (mode === 'tb') {
+    unmountEntityListSv();
+    mountEntitiesTable(rootEl, searchQuery, selectedEntities);
+    handleInitialLoadDone();
+    return;
+  }
+  unmountEntitiesTable();
+  mountEntityListSv(rootEl);
+}
+
+const searchBar = document.getElementById('searchBar');
+if (searchBar) {
+  // remove placeholder input
+  searchBar.innerHTML = '';
+  mount(SearchBarSv, {
+    target: searchBar,
+    props: {
+      name: searchBar.dataset.name ?? 'q',
+      value: searchQuery,
+      searchQuery,
+      placeholder: searchBar.dataset.placeholder ?? 'Search',
+      ariaLabel: searchBar.dataset.ariaLabel ?? 'Search',
+      buttonLabel: searchBar.dataset.buttonLabel ?? 'Search',
+    },
+  });
+}
+
+function preventReactiveSearchFormSubmit(): void {
+  const form = document.getElementById('mainSearchForm') as HTMLFormElement | null;
+
+  if (!form) {
+    return;
+  }
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const input = form.elements.namedItem('q') as HTMLInputElement | null;
+
+    if (input) {
+      searchQuery.set(input.value);
     }
   });
+}
+
+function syncSelectedEntitiesFromDom(): void {
+  const selectedIds = Array.from(
+    document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked'),
+  ).map(item => item.dataset.id).filter(Boolean);
+
+  selectedEntities.set(selectedIds);
 }
 
 // dynamically handle the available actions depending the state of selected entities
@@ -163,33 +273,6 @@ function toggleActionButtonsDependingOnSelected(): void {
   });
 }
 
-// get query param value as number
-function getParamNum(param: string): number {
-  const params = new URLSearchParams(document.location.search);
-  let val = params.get(param);
-  if (!val) {
-    val = '0';
-  }
-  return parseInt(val, 10);
-}
-
-// the "load more" button triggers a reloading of div#showModeContent
-// so we keep track of the expanded and selected entities
-function getExpandedAndSelectedEntities(): void {
-  const expanded = (document.querySelector('[data-action="expand-all-entities"]') as HTMLLinkElement).dataset.status === 'opened';
-  const expendedEntities: string[] = [];
-  const selectedEntities: string[] = [];
-  document.querySelectorAll('[data-action="checkbox-entity"]').forEach((item: HTMLInputElement) => {
-    if (item.checked) {
-      selectedEntities.push(item.dataset.id);
-    }
-    if (!document.getElementById(item.dataset.randomid).hidden) {
-      expendedEntities.push(item.dataset.id);
-    }
-  });
-  document.getElementById('showModeContent').dataset.expandedAndSelectedEntities = JSON.stringify({expanded, selectedEntities, expendedEntities});
-}
-
 type TomSelectOptionLike = Record<string, unknown> & {
   $option?: Element | null;
 };
@@ -217,17 +300,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (about.page !== 'show') {
     return;
   }
+  // can't have await at top level, so wrap it
+  void (async (): Promise<void> => {
+    const displayMode = await getDisplayMode();
+    displayEntities(displayMode);
+  })();
 
-  // Preserve filters from navbar dropdown (e.g., category, scope, bookable) when performing a search. #6284
-  ['category', 'scope', 'bookable'].forEach(param => {
-    if (params.has(param)) {
-      addHiddenInputToMainSearchForm(param, params.get(param));
-    }
-  });
-
-  // SEARCH RELATED CODE
-  const searchInput = document.getElementById('extendedArea') as HTMLInputElement;
-  SearchSyntaxHighlighting.init(searchInput);
+  preventReactiveSearchFormSubmit();
+  hydrateFilterAutoControlsFromUrl();
 
   // TomSelect for extra fields & owner search select
   if (document.getElementById('metakey')) {
@@ -239,119 +319,327 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
     });
   }
+
   if (document.getElementById('filterOwner')) {
-    const tsFilterOwner = new TomSelect('#filterOwner', {
+    const dropdownRoot = document.getElementById('filterOwnerDropdown');
+    const menu = document.getElementById('filterOwnerMenu');
+
+    const control = new TomSelect('#filterOwner', {
+      dropdownParent: '#filterOwnerMenu',
       maxOptions: 512,
       plugins: {
         dropdown_header: {
           title: 'Users',
           html: buildDropdownToggleHeaderHtml(i18next.t('users'), 'ts-toggle-archived', i18next.t('show-archived')),
         },
-        dropdown_input: {},
         remove_button: {},
       },
+
       onInitialize(this: AnyTS) {
         this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
         this._showArchived = false;
         applyToggleFilter(this, '_showArchived', isArchivedOption);
       },
+
+      onChange(value: string | string[] | null | undefined) {
+        syncMultiSelectParam('owner', value);
+        renderActiveFilters();
+      },
+
       render: {
         option(data: AnyTS, escape: (s: string) => string) {
           const optEl = data.$option as HTMLOptionElement | undefined;
           const isArchived = optEl?.getAttribute('data-is-archived') === '1';
-          const icon = isArchived ? '<i class=\'fas fa-box-archive mr-1\'></i>' : '';
+          const icon = isArchived ? '<i class="fas fa-box-archive mr-1"></i>' : '';
           return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
         },
 
-        // item is the selected option
         item(data: AnyTS, escape: (s: string) => string) {
           const optEl = data.$option as HTMLOptionElement | undefined;
           const isArchived = optEl?.getAttribute('data-is-archived') === '1';
-          const icon = isArchived ? '<i class=\'fas fa-box-archive mr-1\'></i>' : '';
+          const icon = isArchived ? '<i class="fas fa-box-archive mr-1"></i>' : '';
           return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
         },
       },
     }) as AnyTS;
 
-    tsFilterOwner.on('dropdown_open', () => {
-      bindDropdownToggle(tsFilterOwner, '.ts-toggle-archived', '_showArchived', () => {
-        applyToggleFilter(tsFilterOwner, '_showArchived', isArchivedOption);
-        tsFilterOwner.open();
+    filterControls.push({
+      control,
+      param: 'owner',
+      title: 'Owner',
+    });
+    hydrateTomSelectFromUrl(control, 'owner');
+    renderActiveFilters();
+
+    bindExternalFilterRequest(control, 'owner');
+
+    control.on('dropdown_open', () => {
+      bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
+        applyToggleFilter(control, '_showArchived', isArchivedOption);
+        control.open();
       });
+    });
+
+    if (dropdownRoot) {
+      $(dropdownRoot).on('shown.bs.dropdown', function() {
+        control.open();
+
+        window.requestAnimationFrame(() => {
+          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
+          input?.focus();
+        });
+
+        bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
+          applyToggleFilter(control, '_showArchived', isArchivedOption);
+          control.open();
+        });
+      });
+
+      $(dropdownRoot).on('hide.bs.dropdown', function() {
+        control.close();
+        control.blur();
+      });
+    }
+
+    if (menu) {
+      $(menu).on('click', function(event) {
+        event.stopPropagation();
+      });
+    }
+  }
+
+  function getFilterValueFromElement(elem: HTMLElement): string {
+    if (elem instanceof HTMLSelectElement) {
+      return elem.options[elem.selectedIndex]?.value ?? '';
+    }
+
+    if (elem instanceof HTMLInputElement) {
+      if (elem.type === 'checkbox') {
+        return elem.checked ? elem.value : '';
+      }
+
+      return elem.value.trim();
+    }
+
+    if (elem instanceof HTMLTextAreaElement) {
+      return elem.value.trim();
+    }
+
+    return '';
+  }
+
+  function hydrateFilterAutoControlsFromUrl(): void {
+    document.querySelectorAll<HTMLElement>('.filterAuto').forEach(elem => {
+      const param = elem.dataset.param || (elem as HTMLInputElement).name;
+      const values = getEntityFilterParamValues(param, false);
+
+      if (values.length === 0) {
+        return;
+      }
+
+      if (elem instanceof HTMLSelectElement || elem instanceof HTMLTextAreaElement) {
+        elem.value = values[0];
+        return;
+      }
+
+      if (elem instanceof HTMLInputElement) {
+        if (elem.type === 'checkbox') {
+          const checkboxValues = getEntityFilterParamValues(param, true);
+          elem.checked = checkboxValues.includes(elem.value);
+          return;
+        }
+
+        elem.value = values[0];
+      }
     });
   }
 
+  function hydrateTomSelectFromUrl(
+    control: TomSelectWithAllOptions,
+    param: string,
+  ): void {
+    getEntityFilterParamValues(param).forEach(value => {
+      ensureTomSelectOption(control, value, value);
 
-  // add a change event listener to all elements that helps constructing the query string
-  document.querySelectorAll('.filterHelper').forEach(el => {
-    el.addEventListener('change', event => {
+      if (!control.items.map(String).includes(value)) {
+        control.addItem(value, true);
+      }
+    });
+  }
+
+  function getQuotes(value: string): string {
+    return /[\s:'"()&|!]/.test(value) ? '"' : '';
+  }
+
+  function escapeSearchToken(value: string): string {
+    return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
+  function buildFilterHelperRegex(filterName: string): RegExp {
+    const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
+    const operatorRegex = '(?:[<>]=?|!?=)?';
+    let valueRegex = baseRegex;
+
+    if (filterName === 'date') {
+      valueRegex = operatorRegex + baseRegex;
+    }
+
+    if (filterName === 'extrafield') {
+      valueRegex = `${baseRegex}:${baseRegex}`;
+    }
+
+    return new RegExp(`${filterName}:${valueRegex}\\s?`);
+  }
+
+  function getFilterHelperName(elem: HTMLElement): string {
+    return elem.dataset.filter || (elem as HTMLInputElement).name;
+  }
+
+  function buildFilterHelperToken(elem: HTMLElement): string {
+    let filterName = getFilterHelperName(elem);
+    let filterValue = getFilterValueFromElement(elem);
+
+    if (filterValue === '') {
+      return '';
+    }
+
+    if (filterName === '(?:author|group)') {
+      filterName = filterValue.split(':')[0];
+      filterValue = filterValue.substring(filterName.length + 1);
+    }
+
+    if (filterName === 'date') {
+      return `${filterName}:${filterValue}`;
+    }
+
+    if (filterName === 'extrafield') {
+      return `${filterName}:${filterValue}`;
+    }
+
+    const escapedValue = escapeSearchToken(filterValue);
+    const quotes = getQuotes(escapedValue);
+
+    return `${filterName}:${quotes}${escapedValue}${quotes}`;
+  }
+
+  function syncFilterHelperToSearchQuery(elem: HTMLElement): void {
+    const curVal = get(searchQuery);
+    const hasInput = curVal.length !== 0;
+    const hasSpace = curVal.endsWith(' ');
+    const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
+    const filterName = getFilterHelperName(elem);
+    const regex = buildFilterHelperRegex(filterName);
+    const filter = buildFilterHelperToken(elem);
+
+    if (curVal.match(regex)) {
+      searchQuery.set(curVal.replace(regex, filter === '' ? '' : `${filter} `).trimStart());
+      return;
+    }
+
+    if (filter !== '') {
+      searchQuery.set(`${curVal}${addSpace}${filter}`);
+    }
+  }
+
+  function getSearchTokenRegexPart(): string {
+    return '(?:(?:"(?:\\\\"|[^"])+")|(?:\'(?:\\\\\'|[^\'])*\')|[^\\s:\'"()&|!]+)';
+  }
+
+  function quoteSearchToken(value: string): string {
+    const escaped = value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
+    if (/[\s:'"()&|!]/.test(escaped)) {
+      return `"${escaped}"`;
+    }
+
+    return escaped;
+  }
+
+  function buildExtrafieldFilter(): string {
+    const metakey = document.getElementById('metakey') as HTMLSelectElement | null;
+    const metavalue = document.getElementById('metavalue') as HTMLInputElement | null;
+
+    const key = metakey?.value.trim() ?? '';
+    const value = metavalue?.value.trim() ?? '';
+
+    if (key === '' && value === '') {
+      return '';
+    }
+
+    if (key === '' || value === '') {
+      return `extrafield:${quoteSearchToken(key || value)}`;
+    }
+
+    return `extrafield:${quoteSearchToken(key)}:${quoteSearchToken(value)}`;
+  }
+
+  function buildExtrafieldRegex(): RegExp {
+    const token = getSearchTokenRegexPart();
+
+    // Matches:
+    // extrafield:Manufacturer
+    // extrafield:Manufacturer:abc
+    // extrafield:Manufacturer:"abc"
+    // extrafield:"Some Field":"abc"
+    return new RegExp(`(^|\\s)extrafield:${token}(?::${token})?\\s?`);
+  }
+
+  function syncExtrafieldFilterToSearchQuery(): void {
+    const curVal = get(searchQuery);
+    const filter = buildExtrafieldFilter();
+    const regex = buildExtrafieldRegex();
+
+    if (regex.test(curVal)) {
+      const next = curVal.replace(regex, (_match, prefix: string) => {
+        return filter === '' ? prefix : `${prefix}${filter} `;
+      });
+
+      searchQuery.set(next.trim());
+      return;
+    }
+
+    if (filter === '') {
+      return;
+    }
+
+    searchQuery.set(`${curVal}${curVal.trim().length > 0 ? ' ' : ''}${filter}`);
+  }
+
+  // FILTERS HANDLER FOR THE SHOW PAGE
+  document.querySelectorAll<HTMLElement>('.filterHelper').forEach(el => {
+    const eventName = el instanceof HTMLInputElement && el.type === 'text'
+      ? 'input'
+      : 'change';
+
+    el.addEventListener(eventName, event => {
       const elem = event.currentTarget as HTMLElement;
-      const curVal = (document.getElementById('extendedArea') as HTMLInputElement).value;
-      const hasInput = curVal.length != 0;
-      const hasSpace = curVal.endsWith(' ');
-      const addSpace = hasInput ? (hasSpace ? '' : ' ') : '';
-      let filterName = elem.dataset.filter ? elem.dataset.filter : (elem as HTMLInputElement).name;
 
-      // look if the filter key already exists in the search input
-      // paste the regex on regex101.com to understand it
-      const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
-      const operatorRegex = '(?:[<>]=?|!?=)?';
-      let valueRegex = baseRegex;
-
-      if (filterName === 'date') {
-        // date can use operator
-        valueRegex = operatorRegex + baseRegex;
-      }
-      if (filterName === 'extrafield') {
-        // extrafield has key and value so we need the regex above twice
-        valueRegex = baseRegex + ':' + baseRegex;
-      }
-      const regex = new RegExp(filterName + ':' + valueRegex + '\\s?');
-      const found = curVal.match(regex);
-      // default value is clearing everything
-      let filter = '';
-      let filterValue = getFilterValueFromElement(elem as HTMLElement);
-      let quotes = getQuotes(filterValue);
-      // but if we have a correct value, we add the filter
-      if (filterValue !== '') {
-        if (filterName === 'date') {
-          quotes = '';
-        }
-
-        if (filterName === '(?:author|group)') {
-          filterName = filterValue.split(':')[0];
-          filterValue = filterValue.substring(filterName.length + 1);
-        }
-
-        filter = filterName + ':' + quotes + filterValue + quotes;
-
-        if (filterName === 'extrafield') {
-          filter = `${filterName}:${filterValue}`;
-        }
+      if (elem.dataset.filter === 'extrafield') {
+        syncExtrafieldFilterToSearchQuery();
+        return;
       }
 
-      if (found) {
-        searchInput.value = curVal.replace(regex, filter + (filter === '' ? '' : ' '));
-      } else {
-        searchInput.value = searchInput.value + addSpace + filter;
-      }
-      SearchSyntaxHighlighting.update(searchInput.value);
+      syncFilterHelperToSearchQuery(elem);
     });
   });
-  // FILTERS HANDLER FOR THE SHOW PAGE
-  document.querySelectorAll('.filterAuto').forEach(el => {
-    el.addEventListener('change', event => {
-      // prevent this listener to be active when toggling archived users
-      if ((event.target as HTMLElement).classList.contains('ts-toggle-archived')) return;
-      const url = new URL(window.location.href);
-      const elem = event.target as HTMLSelectElement;
-      const elemValue = elem.options[elem.selectedIndex].value;
-      url.searchParams.set(elem.name, elemValue);
-      // also add it to the main input form
-      addHiddenInputToMainSearchForm(elem.name, elemValue);
 
-      window.history.replaceState({}, '', url.toString());
-      reloadEntitiesShow();
+  function syncFilterAutoToUrl(elem: HTMLElement): void {
+    const param = elem.dataset.param || (elem as HTMLInputElement).name;
+    const value = getFilterValueFromElement(elem);
+
+    setEntityFilterParam(param, value);
+  }
+
+  document.querySelectorAll<HTMLElement>('.filterAuto').forEach(el => {
+    el.addEventListener('change', event => {
+      const elem = event.target as HTMLElement;
+
+      // prevent this listener to be active when toggling archived users
+      if (elem.classList.contains('ts-toggle-archived')) {
+        return;
+      }
+
+      syncFilterAutoToUrl(elem);
     });
   });
   // END SEARCH RELATED CODE
@@ -386,64 +674,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = (event.target as HTMLSelectElement);
     // EXPORT SELECTED
     if (el.matches('[data-action="export-selected-entities"]')) {
-      const checked = getCheckedBoxes();
+      const checked = get(selectedEntities);
       if (checked.length === 0) {
         notify.error('nothing-selected');
         return;
       }
       const format = el.value;
+      const allowedFormats = new Set(['eln', 'zip', 'csv', 'pdf', 'qrpdf', 'json']);
+      if (!allowedFormats.has(format)) {
+        notify.error('invalid-info');
+        return;
+      }
       // reset selection so button can be used again with same format
       el.selectedIndex = 0;
-      window.location.href = `make.php?format=${format}&type=${entity.type}&id=${checked.map(value => value.id).join('+')}`;
+      const params = new URLSearchParams({
+        format,
+        type: entity.type,
+        id: checked.join('+'),
+      });
+      window.location.href = `make.php?${params.toString()}`;
     }
   });
 
   /////////////////////////
   // MAIN CLICK LISTENER //
   /////////////////////////
-  document.getElementById('container').addEventListener('click', event => {
+  document.getElementById('container').addEventListener('click', async event => {
     const el = (event.target as HTMLElement);
-    const params = new URLSearchParams(document.location.search);
-    // LOAD MORE
-    if (el.matches('[data-action="load-more"]')) {
-      // we keep track of the expanded and selected entities
-      getExpandedAndSelectedEntities();
-      // NOTE: in an ideal world, we can request the delta elements in json via api and inject them in page
-      // this would avoid having to re-query all items every time, especially after a few clicks where limit is a few hundreds, might bring strain on mysql servers
-      // so here the strategy is simply to increase the "limit" to show more stuff
-
-      // we want to know if the newly applied limit actually brought new items
-      // because if not, we disable the button
-      // so simply count them
-      const previousNumber = document.querySelectorAll('.entity').length;
-      // this will be 0 if the button has not been clicked yet
-      const queryLimit = getParamNum('limit');
-      const usualLimit = parseInt(about.limit, 10);
-      let newLimit = queryLimit + usualLimit;
-      // handle edge case for first click
-      if (queryLimit < usualLimit) {
-        newLimit = usualLimit * 2;
-      }
-      params.set('limit', String(newLimit));
-      history.replaceState(null, '', `?${params.toString()}`);
-      reloadEntitiesShow().then(() => {
-        // expand and select what was expanded and selected
-        setExpandedAndSelectedEntities();
-        // remove Load more button if no new entries appeared
-        const newNumber = document.querySelectorAll('.entity').length;
-        if (previousNumber === newNumber) {
-          document.getElementById('loadMoreBtn').remove();
-        }
-      });
-
     // SAVE MULTI CHANGES
-    } else if (el.matches('[data-action="save-multi-changes"]')) {
+    if (el.matches('[data-action="save-multi-changes"]')) {
 
       // prevent form submission
       event.preventDefault();
 
       // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
+      const checked = get(selectedEntities);
       if (checked.length === 0) {
         notify.error('nothing-selected');
         return;
@@ -453,7 +718,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       (el as HTMLButtonElement).disabled = true;
-      ApiC.notifOnSaved = false;
       const ajaxs: Promise<unknown>[] = [];
       const form = document.getElementById('multiChangesForm');
       const params = collectForm(form);
@@ -463,53 +727,59 @@ document.addEventListener('DOMContentLoaded', () => {
         // they do not have all the same endpoint: handle tags and links the generic patch method
         for (const key in paramsCopy) {
           if (key === 'tags') {
-            ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${Model.Tag}`, {tag: paramsCopy[key]}));
+            ajaxs.push(ApiC.post(`${entity.type}/${chk}/${Model.Tag}`, {notifOnSaved: 0, tag: paramsCopy[key]}));
             delete paramsCopy[key];
           } else if (Object.values(LinkSubModel).includes(key as LinkSubModel)) {
-            ajaxs.push(ApiC.post(`${entity.type}/${chk.id}/${key}/${parseInt(paramsCopy[key], 10)}`));
+            ajaxs.push(ApiC.post(`${entity.type}/${chk}/${key}/${parseInt(paramsCopy[key], 10)}`));
             delete paramsCopy[key];
           }
         }
         // patch whatever is left
         if (Object.entries(paramsCopy).length > 0) {
-          ajaxs.push(ApiC.patch(`${entity.type}/${chk.id}`, paramsCopy));
+          ajaxs.push(ApiC.patch(`${entity.type}/${chk}`, paramsCopy));
         }
       });
       // reload the page once it's done
       Promise.all(ajaxs).then(() => {
         notify.success();
-        ApiC.notifOnSaved = true;
         reloadEntitiesShow();
-      }).catch(() => (el as HTMLButtonElement).disabled = false);
+      }).finally(() => (el as HTMLButtonElement).disabled = false);
 
     } else if (el.matches('[data-action="clear-form"]')) {
       clearForm(document.getElementById(el.dataset.target));
 
+      if (el.dataset.target === 'multiChangesForm') {
+        selectedEntities.set([]);
+
+        document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked').forEach(checkbox => {
+          checkbox.checked = false;
+          (checkbox.closest('.entity') as HTMLElement).style.backgroundColor = '';
+        });
+
+        document.getElementById('withSelected')?.classList.add('d-none');
+        document.querySelector('a[data-action="invert-entities-selection"]')?.setAttribute('hidden', 'hidden');
+        toggleActionButtonsDependingOnSelected();
+      }
+
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-items-layout"]')) {
-      ApiC.notifOnSaved = false;
-      ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
-        let target = 'it';
-        if (json['display_mode'] === 'it') {
-          target = 'tb';
-        }
-        ApiC.patch(`${Model.User}/me`, { display_mode: target }).then(() => {
-          document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
-          reloadEntitiesShow();
-        });
+      let target = 'it';
+      const currentMode = await getDisplayMode();
+      if (currentMode === 'it') {
+        target = 'tb';
+      }
+      ApiC.patch(`${Model.User}/me`, { notifOnSaved: 0, display_mode: target}).then(() => {
+        document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
+        displayEntities(target);
       });
 
     // a tag has been clicked/selected, add it in url and load the page
     } else if (el.matches('[data-action="add-tag-filter"]')) {
-      params.set('tags[]', el.dataset.tag);
-      // clear out any offset from a previous query
-      params.delete('offset');
-      history.replaceState(null, '', `?${params.toString()}`);
+      setEntityFilterParamValues('tags[]', [el.dataset.tag ?? '']);
       document.querySelectorAll('[data-action="add-tag-filter"]').forEach(el => {
         el.classList.remove('selected');
       });
       el.classList.add('selected');
-      reloadEntitiesShow(el.dataset.tag);
 
     // SORT COLUMN IN TABULAR MODE
     } else if (el.matches('[data-action="reorder-entities"]')) {
@@ -535,13 +805,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       toggleActionButtonsDependingOnSelected();
+      syncSelectedEntitiesFromDom();
       if ((el as HTMLInputElement).checked) {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       } else {
         (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
       }
       // show invert select if any checkbox is selected
-      const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
+      const anyChecked = get(selectedEntities).length > 0;
       const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]') as HTMLAnchorElement;
       if (anyChecked) {
         invertSelections?.removeAttribute('hidden');
@@ -600,6 +871,8 @@ document.addEventListener('DOMContentLoaded', () => {
       icon.classList.toggle('fa-square');
       icon.classList.toggle('fa-square-check');
       el.nextElementSibling.removeAttribute('hidden');
+      syncSelectedEntitiesFromDom();
+      toggleActionButtonsDependingOnSelected();
 
     // INVERT SELECTION
     } else if (el.matches('[data-action="invert-entities-selection"]')) {
@@ -612,8 +885,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
       });
+      syncSelectedEntitiesFromDom();
+      toggleActionButtonsDependingOnSelected();
+
+      const anyChecked = get(selectedEntities).length > 0;
       // Remove withSelected actions if there are no more checked checkboxes
-      const anyChecked = document.querySelectorAll('[data-action="checkbox-entity"]:checked').length > 0;
       const withSelected = document.getElementById('withSelected') as HTMLDivElement;
       if (anyChecked) {
         withSelected.classList.remove('d-none');
@@ -624,7 +900,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // PATCH ACTIONS FOR CHECKED BOXES : lock, unlock, timestamp, archive
     } else if (el.matches('[data-action="patch-selected-entities"]')) {
       // get the item id of all checked boxes
-      const checked = getCheckedBoxes();
+      const checked = get(selectedEntities);
       if (checked.length === 0) {
         notify.error('nothing-selected');
         return;
@@ -636,30 +912,26 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         // perform deletes
-        checked.forEach(chk => {
-          ApiC.delete(`${entity.type}/${chk.id}`).then(() => {
-            // use curly braces to avoid implicit return
-            document.getElementById(`parent_${chk.randomid}`)?.remove();
-          });
+        const deletes = checked.map(chk =>
+          ApiC.delete(`${entity.type}/${chk}`, { notifOnSaved:0 }),
+        );
+        Promise.all(deletes).then(() => {
+          notify.success();
+          reloadEntitiesShow();
         });
         return;
       }
       // handle all other PATCH with selected action
       const results = checked.map(chk =>
-        ApiC.patch(`${entity.type}/${chk.id}`, {action}),
+        ApiC.patch(`${entity.type}/${chk}`, { notifOnSaved: 0, action }),
       );
-      ApiC.notifOnSaved = false;
       Promise.all(results).then(() => {
         notify.success();
         reloadEntitiesShow();
-        ApiC.notifOnSaved = true;
       });
     }
   });
 
-  type TeamScopedTomSelect = TomSelectWithAllOptions & {
-    _showAll?: boolean;
-  };
 
   function buildDropdownToggleHeaderHtml(
     title: string,
@@ -711,7 +983,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-
     control.refreshOptions(false);
   }
 
@@ -720,21 +991,108 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function syncMultiSelectParam(param: string, value: string | string[] | null | undefined) {
-    const url = new URL(window.location.href);
-
     // Tom Select gives an array for multi-select; normalize just in case
     const selected = Array.isArray(value) ? value : value ? [value] : [];
 
-    if (selected.length === 0) {
-      url.searchParams.delete(param);
-      addHiddenInputToMainSearchForm(param, '');
-    } else {
-      const joined = selected.join(',');
-      url.searchParams.set(param, joined); // param=1,2,5
-      addHiddenInputToMainSearchForm(param, joined);
+    setEntityFilterParam(param, selected.join(','));
+  }
+
+  function bindExternalFilterRequest(
+    control: TomSelectWithAllOptions,
+    param: EntityFilterParam,
+  ): void {
+    window.addEventListener('entity-filter-requested', event => {
+      const customEvent = event as CustomEvent<EntityFilterRequestedDetail>;
+      const detail = customEvent.detail;
+
+      if (detail?.param !== param || !detail.value) {
+        return;
+      }
+
+      toggleTomSelectItem(
+        control,
+        detail.value,
+        detail.label ?? detail.value,
+      );
+    });
+  }
+
+  function ensureTomSelectOption(
+    control: TomSelectWithAllOptions,
+    value: string,
+    label: string,
+  ): void {
+    if (control.options[value]) {
+      return;
     }
 
-    window.history.replaceState({}, '', url.toString());
+    const valueField = control.settings.valueField || 'value';
+    const labelField = control.settings.labelField || 'text';
+
+    const knownOption = (control._allOptions ?? []).find(option => (
+      String(option[valueField]) === value
+    ));
+
+    if (knownOption) {
+      control.addOption(knownOption);
+    } else {
+      control.addOption({
+        [valueField]: value,
+        [labelField]: label,
+      });
+    }
+
+    control.refreshOptions(false);
+  }
+
+  function toggleTomSelectItem(
+    control: TomSelectWithAllOptions,
+    value: string,
+    label: string,
+  ): void {
+    ensureTomSelectOption(control, value, label);
+
+    if (control.items.map(String).includes(value)) {
+      control.removeItem(value);
+      return;
+    }
+
+    control.addItem(value);
+  }
+
+  function renderActiveFilters() {
+    activeFilters.replaceChildren();
+
+    for (const { control, title } of filterControls) {
+      for (const value of control.items) {
+        const option = control.options[value];
+        const labelField = control.settings.labelField || 'text';
+        const label = String(option?.[labelField] ?? value);
+
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'btn btn-sm btn-outline-secondary me-2 mb-2 mr-2';
+        chip.setAttribute('aria-label', `Remove ${title}: ${label}`);
+
+        const chipText = document.createElement('span');
+        chipText.textContent = `${title}: ${label}`;
+
+        const removeIcon = document.createElement('span');
+        removeIcon.className = 'ms-1';
+        removeIcon.setAttribute('aria-hidden', 'true');
+        removeIcon.textContent = '×';
+
+        chip.append(chipText, removeIcon);
+
+        chip.addEventListener('click', () => {
+          control.removeItem(value);
+        });
+
+        activeFilters.appendChild(chip);
+      }
+    }
+
+    activeFilters.hidden = activeFilters.children.length === 0;
   }
 
   function bindDropdownToggle(
@@ -761,54 +1119,82 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function bindShowAllToggle(control: TeamScopedTomSelect) {
-    bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', (checked) => {
-      const url = new URL(window.location.href);
-      if (checked) url.searchParams.set('scope', '3');
-      else url.searchParams.delete('scope');
-      window.history.replaceState({}, '', url.toString());
+    bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', checked => {
+      setEntityFilterParam('scope', checked ? '3' : '');
 
       applyTeamFilter(control);
       control.open(); // keep it open after filtering
-      reloadEntitiesShow();
     });
   }
 
   function initTeamScopedFilter(cfg: {
-    selectId: string;         // e.g. "categoryFilter"
-    placeholderId: string;    // e.g. "categoryFilterPlaceholder"
-    title: string;            // e.g. "Categories"
-    param: string;            // e.g. "category"
+    selectId: string;
+    dropdownId: string;
+    menuId: string;
+    title: string;
+    param: string;
   }) {
-    const el = document.getElementById(cfg.selectId);
+    const el = document.getElementById(cfg.selectId) as HTMLSelectElement | null;
     if (!el) return;
 
-    const control = new TomSelect(`#${cfg.selectId}`, {
+    const dropdownRoot = document.getElementById(cfg.dropdownId);
+    const menu = document.getElementById(cfg.menuId);
+
+    const control = new TomSelect(el, {
+      dropdownParent: `#${cfg.menuId}`,
       maxOptions: 512,
       plugins: {
         dropdown_header: {
           title: cfg.title,
           html: buildDropdownToggleHeaderHtml(cfg.title, 'ts-toggle-show-all', i18next.t('show-all')),
         },
-        dropdown_input: {},
         remove_button: {},
       },
 
       onInitialize(this: TeamScopedTomSelect) {
-        document.getElementById(cfg.placeholderId)?.remove();
-
         this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
-        this._showAll = false;
+        this._showAll = get(entityFilters).get('scope') === '3';
 
         applyTeamFilter(this);
       },
 
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam(cfg.param, value);
-        reloadEntitiesShow();
+        renderActiveFilters();
       },
     }) as TeamScopedTomSelect;
 
     control.on('dropdown_open', () => bindShowAllToggle(control));
+    filterControls.push({
+      control,
+      param: cfg.param,
+      title: cfg.title,
+    });
+    hydrateTomSelectFromUrl(control, cfg.param);
+    renderActiveFilters();
+
+    if (cfg.param === 'category' || cfg.param === 'status') {
+      bindExternalFilterRequest(control, cfg.param);
+    }
+
+    if (dropdownRoot) {
+      $(dropdownRoot).on('shown.bs.dropdown', function() {
+        control.open();
+
+        window.requestAnimationFrame(() => {
+          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
+          input?.focus();
+        });
+
+        bindShowAllToggle(control);
+      });
+    }
+
+    if (menu) {
+      $(menu).on('click', function(event) {
+        event.stopPropagation();
+      });
+    }
 
     return control;
   }
@@ -816,49 +1202,69 @@ document.addEventListener('DOMContentLoaded', () => {
   // category tomSelect
   initTeamScopedFilter({
     selectId: 'categoryFilter',
-    placeholderId: 'categoryFilterPlaceholder',
+    dropdownId: 'categoryFilterDropdown',
+    menuId: 'categoryFilterMenu',
     title: i18next.t('categories'),
     param: 'category',
   });
-
   // status tomSelect
   initTeamScopedFilter({
     selectId: 'statusFilter',
-    placeholderId: 'statusFilterPlaceholder',
+    dropdownId: 'statusFilterDropdown',
+    menuId: 'statusFilterMenu',
     title: i18next.t('status'),
     param: 'status',
   });
 
-  new TomSelect('#tagFilter', {
-    onInitialize: () => {
-      // remove the placeholder input once the select is ready
-      document.getElementById('tagFilterPlaceholder').remove();
-    },
-    onChange: (value: unknown) => {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('tags[]');
-      (value as string[]).forEach(tag => {
-        params.append('tags[]', tag);
-        url.searchParams.append('tags[]', tag);
-      });
-      if ((value as string[]).length === 0) {
-        url.searchParams.delete('tags[]');
-      }
-      addHiddenInputToMainSearchForm('tags[]', (value as string[]).toString());
 
-      window.history.replaceState({}, '', url.toString());
-      reloadEntitiesShow();
-    },
-    onItemAdd() {
-      this.setTextboxValue('');
-      // refresh the dropdown so it shows suggestions for new input
-      this.refreshOptions();
-    },
-    plugins: {
-      clear_button: {},
-      dropdown_input: {},
-      no_active_items: {},
-      remove_button: {},
-    },
-  });
+  // tags tomselect
+  if (document.getElementById('tagFilter')) {
+    const dropdownRoot = document.getElementById('tagFilterDropdown');
+    const menu = document.getElementById('tagFilterMenu');
+
+    const tsTagFilter = new TomSelect('#tagFilter', {
+      dropdownParent: '#tagFilterMenu',
+
+      onChange: (value: unknown) => {
+        const selectedTags = Array.isArray(value) ? value as string[] : [];
+
+        setEntityFilterParamValues('tags[]', selectedTags);
+      },
+
+      onItemAdd() {
+        this.setTextboxValue('');
+        this.refreshOptions();
+      },
+
+      plugins: {
+        clear_button: {},
+        no_active_items: {},
+        remove_button: {},
+      },
+    }) as TomSelectWithAllOptions;
+
+    hydrateTomSelectFromUrl(tsTagFilter, 'tags[]');
+
+    if (dropdownRoot) {
+      $(dropdownRoot).on('shown.bs.dropdown', function() {
+        tsTagFilter.open();
+
+        window.requestAnimationFrame(() => {
+          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
+          input?.focus();
+        });
+      });
+
+      $(dropdownRoot).on('hide.bs.dropdown', function() {
+        tsTagFilter.close();
+        tsTagFilter.blur();
+      });
+    }
+
+    if (menu) {
+      $(menu).on('click', function(event) {
+        event.stopPropagation();
+      });
+    }
+  }
 });

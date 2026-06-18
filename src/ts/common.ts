@@ -35,6 +35,7 @@ import {
   updateEntityBody,
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
+  mountRors,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -125,6 +126,7 @@ TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
 makeSortableGreatAgain();
+mountRors();
 
 const userPrefs = document.getElementById('user-prefs').dataset;
 if (userPrefs.scDisabled === '0') {
@@ -161,7 +163,9 @@ btn.style.opacity = '0';
 // will not be shown for small screens, only large ones
 btn.classList.add('d-none', 'd-xl-inline', 'd-lg-inline');
 // the button is an up arrow
-btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+const icon = document.createElement('i');
+icon.classList.add('fas', 'fa-arrow-up');
+btn.replaceChildren(icon);
 // give it an id so we can remove it easily
 btn.id = 'backToTopButton';
 btn.setAttribute('aria-label', 'Back to top');
@@ -326,7 +330,7 @@ on('team-scope-change', async (el: HTMLElement) => {
     const text = document.createTextNode(scope === 1 ? i18next.t('my-teams') : i18next.t('all-teams'));
     btn.append(text, icon);
   }
-  let teams = [];
+  let teams;
 
   if (scope === 1) {
     const user = await ApiC.getJson(`${Model.User}/me`);
@@ -427,9 +431,33 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     return optionsCache[endpoint];
   };
 
+  // Ensure the select opens with the currently displayed category/status selected
+  // for both category & status malleables
+  const selectCurrentCatStatOption = (original: HTMLElement, _: Event, input: HTMLInputElement | HTMLSelectElement): boolean => {
+    const select = input as HTMLSelectElement;
+    const currentId = original.dataset.id?.trim();
+    if (currentId && Array.from(select.options).some(option => option.value === currentId)) {
+      select.value = currentId;
+      return true;
+    }
+    const currentText = original.textContent?.trim() ?? '';
+    for (let i = 0; i < select.options.length; i++) {
+      const option = select.options.item(i);
+      if ((option?.textContent?.trim() ?? '') === currentText) {
+        option.selected = true;
+        select.value = option.value;
+        break;
+      }
+    }
+    return true;
+  };
+
+  const getCurrentTeamCatStatOptions = async (endpoint: string): Promise<Status[]> =>
+    ((await getCatStatArr(endpoint)) as Status[])
+      .filter((catStat: Status) => catStat.is_current_team === 1);
+
   // MALLEABLE STATUS
   new Malle({
-    // use the after hook to add the colored circle before text
     after: (elem: HTMLElement, _: Event, value: string) => {
       const icon = document.createElement('i');
       icon.classList.add('fas', 'fa-circle', 'mr-1');
@@ -438,18 +466,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       elem.insertBefore(icon, elem.firstChild);
       return true;
     },
-    // use the onEdit hook to set the correct selected option (because of the circle icon interference)
-    onEdit: async (original: HTMLElement, _: Event, input: HTMLInputElement|HTMLSelectElement) => {
-      // the options can be a promise, so we need to use await or its length will be 0 here
-      const opts = (input as HTMLSelectElement).options;
-      for (let i = 0; i < opts.length; i++) {
-        if (opts.item(i).textContent === original.textContent.trim()) {
-          opts.item(i).selected = true;
-          break;
-        }
-      }
-      return true;
-    },
+    onEdit: selectCurrentCatStatOption,
     inputClasses: ['form-control', 'ml-2'],
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value).then(color => {
@@ -459,9 +476,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: async () =>
-      ((await getCatStatArr(statusEndpoint)) as Status[])
-        .filter((status: Status) => status.is_current_team === 1),
+    selectOptions: () => getCurrentTeamCatStatOptions(statusEndpoint),
     listenOn: '.malleableStatus',
     returnedValueIsTrustedHtml: false,
     tooltip: i18next.t('click-to-edit'),
@@ -469,23 +484,20 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
 
   // MALLEABLE CATEGORY
   new Malle({
-    // use the after hook to change the background color of the new element
     after: (elem: HTMLElement, _: Event, value: string) => {
-      // we get back a string with the id separated from color with a |
       const splitValue = value.split('|');
       elem.dataset.id = splitValue[0];
       elem.style.setProperty('--bg', `#${splitValue[1]}`);
       return true;
     },
+    onEdit: selectCurrentCatStatOption,
     inputClasses: ['form-control'],
     formClasses: ['form-inline'],
     fun: (value: string, original: HTMLElement) => updateCatStat(original.dataset.target, entity, value),
     inputType: InputType.Select,
     selectOptionsValueKey: 'id',
     selectOptionsTextKey: 'title',
-    selectOptions: async () =>
-      ((await getCatStatArr(categoryEndpoint)) as Status[])
-        .filter((cat: Status) => cat.is_current_team === 1),
+    selectOptions: () => getCurrentTeamCatStatOptions(categoryEndpoint),
     listenOn: '.malleableCategory',
     returnedValueIsTrustedHtml: false,
     tooltip: i18next.t('click-to-edit'),
@@ -685,8 +697,7 @@ on('transfer-ownership', async (_, e:Event) => {
   }
   const userid = Number.parseInt(String(params['targetUserId']).split(' ')[0], 10);
   const team = Number.parseInt(String(params['targetTeamId']), 10);
-  ApiC.notifOnSaved = false;
-  await ApiC.patch(`${entity.type}/${entity.id}`, { action: Action.UpdateOwner, userid, team });
+  await ApiC.patch(`${entity.type}/${entity.id}`, { notifOnSaved: 0, action: Action.UpdateOwner, userid, team });
   sessionStorage.setItem('flash_ownershipTransfer', i18next.t('ownership-transfer'));
   const path = window.location.pathname.toLowerCase();
   if (path.includes('experiment')) {
@@ -714,12 +725,7 @@ on('clear-form', (el: HTMLElement) => {
 
 on('save-permissions', (el: HTMLElement) => {
   const params = {};
-
-  params[el.dataset.rw] = permissionsToJson(
-    ($('#' + el.dataset.identifier + '_select_teams').val() as string[])
-      .concat($('#' + el.dataset.identifier + '_select_teamgroups').val() as string[])
-      .concat($('#' + el.dataset.identifier + '_select_users').val() as string[]),
-  );
+  params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   params[baseSelect.name] = baseSelect.value;
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
@@ -736,6 +742,27 @@ on('save-permissions', (el: HTMLElement) => {
   } else {
     ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
   }
+});
+
+function collectPermissionsFromModal(identifier: string): string {
+  const teams = ($('#' + identifier + '_select_teams').val() as string[] | null) ?? [];
+  const teamgroups = ($('#' + identifier + '_select_teamgroups').val() as string[] | null) ?? [];
+  const users = ($('#' + identifier + '_select_users').val() as string[] | null) ?? [];
+  return permissionsToJson(
+    teams.concat(teamgroups).concat(users),
+  );
+}
+
+// change both read & write permissions in one go
+on('save-permissions-both', (el: HTMLElement) => {
+  if (!confirm(i18next.t('entity-apply-both-permissions-warning'))) {
+    return;
+  }
+  const permissions = collectPermissionsFromModal(el.dataset.identifier);
+  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
+  const params = {canread: permissions, canread_base: baseSelect.value, canwrite: permissions, canwrite_base: baseSelect.value};
+  ApiC.patch(`${entity.type}/${entity.id}`, params)
+    .then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
 });
 
 on('select-lang', () => {
@@ -816,25 +843,145 @@ on('add-storage-children', (el: HTMLElement) => {
     });
   });
 });
-on('create-container', (el: HTMLElement) => {
+// CONTAINER DISTRIBUTION across multiple storage locations
+// Each storage location in the "Add container" modal has a -/number/+ stepper.
+// The user distributes a target number of containers (#containerMultiplierInput) across
+// the locations; the steppers can never sum above the target, and the "Store containers"
+// button is only enabled once they sum exactly to it.
+
+/**
+ * Read a non-negative integer from a number input. Blank, negative or non-integer
+ * values (e.g. a manually typed 1.9) collapse to 0 so a fractional entry can never
+ * feed the distribution math or submit a different count than what is shown.
+ */
+const intFromInput = (el: HTMLInputElement | null): number => {
+  const value = el?.valueAsNumber ?? NaN;
+  return Number.isInteger(value) && value >= 0 ? value : 0;
+};
+
+/** All the per-location quantity inputs currently rendered in the modal. */
+const containerStepperInputs = (): HTMLInputElement[] =>
+  Array.from(document.querySelectorAll('input[data-action="container-qty-input"]'));
+
+/** The target total number of containers to distribute. */
+const containerTarget = (): number =>
+  intFromInput(document.getElementById('containerMultiplierInput') as HTMLInputElement | null);
+
+/** The number of containers currently assigned across all locations. */
+const containerAssigned = (): number =>
+  containerStepperInputs().reduce((sum, input) => sum + intFromInput(input), 0);
+
+/** Update the assigned/target counter and enable submit only at an exact match. */
+function refreshContainerDistribution(): void {
+  const target = containerTarget();
+  const assigned = containerAssigned();
+  const assignedEl = document.getElementById('containerAssignedCount');
+  const targetEl = document.getElementById('containerTargetCount');
+  if (assignedEl) assignedEl.textContent = String(assigned);
+  if (targetEl) targetEl.textContent = String(target);
+  const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
+  if (submitBtn) submitBtn.disabled = target === 0 || assigned !== target;
+}
+
+/**
+ * Sum of every stepper except the one passed in (identity match, robust whether or
+ * not the input's own value has already been updated by the browser).
+ */
+const otherSteppersTotal = (except: HTMLInputElement): number =>
+  containerStepperInputs()
+    .filter(input => input !== except)
+    .reduce((sum, input) => sum + intFromInput(input), 0);
+
+/** Set a stepper to a value, clamped so the total assigned can never exceed the target. */
+function setStepperValue(input: HTMLInputElement, value: number): void {
+  const max = Math.max(0, containerTarget() - otherSteppersTotal(input));
+  input.value = String(Math.min(Math.max(0, value), max));
+  refreshContainerDistribution();
+}
+
+/** Clamp every stepper down when the target total is reduced below what is already assigned. */
+function reclampAllSteppers(): void {
+  const target = containerTarget();
+  let running = 0;
+  containerStepperInputs().forEach(input => {
+    let value = intFromInput(input);
+    if (running + value > target) {
+      value = Math.max(0, target - running);
+    }
+    input.value = String(value);
+    running += value;
+  });
+  refreshContainerDistribution();
+}
+
+/** Resolve the quantity input that belongs to a clicked +/- button. */
+const stepperFor = (el: HTMLElement): HTMLInputElement | null =>
+  document.querySelector(`input[data-action="container-qty-input"][data-storage-id="${el.dataset.storageId}"]`);
+
+on('container-qty-plus', (el: HTMLElement) => {
+  const input = stepperFor(el);
+  if (input) setStepperValue(input, intFromInput(input) + 1);
+});
+on('container-qty-minus', (el: HTMLElement) => {
+  const input = stepperFor(el);
+  if (input) setStepperValue(input, intFromInput(input) - 1);
+});
+
+on('store-containers-distributed', () => {
+  const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
+  // guard against double submit: a disabled button means a batch is already in flight
+  if (submitBtn?.disabled) {
+    return;
+  }
   const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
   const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
-  let multiplier = parseInt((document.getElementById('containerMultiplierInput') as HTMLInputElement).value, 10);
-  if (isNaN(multiplier) || multiplier <= 0) {
-    multiplier = 1;
+  const postCalls = containerStepperInputs().flatMap(input => {
+    const count = intFromInput(input);
+    return Array.from({ length: count }, () =>
+      ApiC.post(`${entity.type}/${entity.id}/containers/${input.dataset.storageId}`, {
+        qty_stored: qty_stored,
+        qty_unit: qty_unit,
+      }),
+    );
+  });
+  if (postCalls.length === 0) {
+    return;
   }
-
-  const postCalls = Array.from({ length: multiplier }, () =>
-    ApiC.post(`${entity.type}/${entity.id}/containers/${el.dataset.id}`, {
-      qty_stored: qty_stored,
-      qty_unit: qty_unit,
-    }),
-  );
+  // lock the button while the batch runs so a second click cannot create a duplicate distribution
+  if (submitBtn) submitBtn.disabled = true;
   // Execute all POST calls and reload elements after all are resolved
   Promise.all(postCalls)
-    .then(() => reloadElements(['storageDivContent']))
-    .catch((error) => notify.error(error));
+    .then(() => {
+      reloadElements(['storageDivContent']);
+      $('#storageModal').modal('hide');
+    })
+    .catch((error) => notify.error(error))
+    .finally(() => {
+      if (submitBtn) submitBtn.disabled = false;
+    });
 });
+
+// the steppers' number inputs and the target total fire 'input', not 'click', so they are
+// handled with a delegated listener rather than via on()
+const storageModalEl = document.getElementById('storageModal');
+if (storageModalEl) {
+  document.getElementById('container')?.addEventListener('input', (event: Event) => {
+    const target = event.target as HTMLElement | null;
+    const stepper = target?.closest('input[data-action="container-qty-input"]') as HTMLInputElement | null;
+    if (stepper) {
+      setStepperValue(stepper, intFromInput(stepper));
+      return;
+    }
+    if (target?.id === 'containerMultiplierInput') {
+      reclampAllSteppers();
+    }
+  });
+  // reset all steppers each time the modal opens so a reopened modal starts clean
+  $('#storageModal').on('show.bs.modal', () => {
+    containerStepperInputs().forEach(input => { input.value = '0'; });
+    refreshContainerDistribution();
+  });
+}
 
 on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv'])));
 
@@ -941,8 +1088,7 @@ on('search-pubchem', (el: HTMLElement) => {
   const elOldHTML = mkSpin(el);
   const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
   // we will handle errors differently here
-  ApiC.notifOnError = false;
-  ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`).then(json => {
+  ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`, { notifOnError: 0 }).then(json => {
     const compounds = Array.isArray(json) ? json : [json];
     const table = document.createElement('table');
     table.classList.add('table');
@@ -1002,7 +1148,6 @@ on('search-pubchem', (el: HTMLElement) => {
     console.error(err);
     resultTableDiv.innerText = err;
   }).finally(() => {
-    ApiC.notifOnError = true;
     mkSpinStop(el, elOldHTML);
   });
 });

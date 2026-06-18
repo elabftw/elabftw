@@ -102,6 +102,7 @@ class Users extends AbstractRest
         bool $alertAdmin = true,
         ?string $validUntil = null,
         ?string $orgid = null,
+        ?string $orcid = null,
         bool $allowTeamCreation = false,
         bool $skipDomainValidation = false,
         BinaryValue $canManageCompounds = BinaryValue::False,
@@ -142,6 +143,7 @@ class Users extends AbstractRest
             `lang`,
             `valid_until`,
             `orgid`,
+            `orcid`,
             `is_sysadmin`,
             `default_read`,
             `default_write`,
@@ -157,6 +159,7 @@ class Users extends AbstractRest
             :lang,
             :valid_until,
             :orgid,
+            :orcid,
             :is_sysadmin,
             :default_read,
             :default_write,
@@ -173,6 +176,7 @@ class Users extends AbstractRest
         $req->bindValue(':lang', $Config->configArr['lang']);
         $req->bindValue(':valid_until', $validUntil);
         $req->bindValue(':orgid', $orgid);
+        $req->bindValue(':orcid', $orcid);
         $req->bindValue(':is_sysadmin', $isSysadmin, PDO::PARAM_INT);
         $req->bindValue(':default_read', $defaultCan);
         $req->bindValue(':default_write', $defaultCan);
@@ -248,8 +252,6 @@ class Users extends AbstractRest
             $admins = 'AND u2t_all.is_admin = 1';
         }
 
-        // NOTE: $tmpTable avoids the use of DISTINCT, so we are able to use ORDER BY with teams_id.
-        // Side effect: User is shown in team with lowest id
         $sql = "SELECT
           u.userid,
           u.firstname,
@@ -273,7 +275,7 @@ class Users extends AbstractRest
           u.orcid,
           u.validated,
           u.auth_service,
-          sk.pubkey                         AS sig_pubkey,
+          sk.pubkey AS sig_pubkey,
           JSON_ARRAYAGG(
              JSON_OBJECT(
                'id',   u2t_all.teams_id,
@@ -326,9 +328,7 @@ class Users extends AbstractRest
           u.auth_service,
           sk.pubkey
 
-        ORDER BY
-          MIN(u2t_all.teams_id) ASC,
-          u.created_at DESC;';
+        ORDER BY u.userid ASC;';
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':query', '%' . $query . '%');
@@ -485,6 +485,7 @@ class Users extends AbstractRest
                     new Users2Teams($this->requester)->create($this->userData['userid'], $team, isValidated: $this->userData['validated'] === 1);
                 }
             )(),
+            Action::Archive => (new Users2Teams($this->requester))->archive($this->getUserid()),
             Action::Disable2fa => $this->disable2fa(),
             Action::PatchUser2Team => (new Users2Teams($this->requester))->patchUser2Team($params, $this->getUserid()),
             Action::Unreference => (new Users2Teams($this->requester))->destroy($this->userData['userid'], (int) $params['team']),
@@ -697,7 +698,10 @@ class Users extends AbstractRest
         if (in_array($params->getTarget(), array('can_manage_compounds', 'can_manage_inventory_locations', 'can_manage_users2teams', 'is_sysadmin'), true)) {
             $this->requester->isSysadminOrExplode();
         }
-
+        // columns that can only be modified by admin requester
+        if (in_array($params->getTarget(), array('validated', 'valid_until'), true)) {
+            $this->requester->isAdminOrExplode();
+        }
         // early bail out if existing and new values are the same
         if ($params->getContent() === $this->userData[$params->getColumn()]) {
             return true;
@@ -777,6 +781,18 @@ class Users extends AbstractRest
     public function isSysadminOrExplode(): void
     {
         if ($this->isSysadmin() === false) {
+            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+        }
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->isAdmin === true;
+    }
+
+    public function isAdminOrExplode(): void
+    {
+        if ($this->isAdmin() === false) {
             throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
         }
     }
@@ -895,6 +911,7 @@ class Users extends AbstractRest
      */
     private function validate(): array
     {
+        $this->requester->isAdminOrExplode();
         $this->rawUpdate(UsersColumn::Validated, 1);
         $Notifications = new SelfIsValidated($this);
         $Notifications->create();

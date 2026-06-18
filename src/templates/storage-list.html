@@ -13,6 +13,18 @@
   <!-- [html-validate-disable-block prefer-native-element: suppress errors] -->
 {%- endif %}
 <div id='storageDiv'>
+  {# stepper used in the entity-create flow to pick how many containers go in this location #}
+  {% macro render_stepper(storage_id, storage_name) %}
+    <div class='input-group input-group-sm mt-1' style='max-width:160px' data-storage-id='{{ storage_id }}'>
+      <div class='input-group-prepend'>
+        <button type='button' class='btn btn-secondary' data-action='container-qty-minus' data-storage-id='{{ storage_id }}' aria-label='{{ 'Decrease containers for %s'|trans|format(storage_name) }}'><i class='fas fa-minus'></i></button>
+      </div>
+      <input type='number' class='form-control text-center' min='0' step='1' value='0' inputmode='numeric' autocomplete='off' data-action='container-qty-input' data-storage-id='{{ storage_id }}' aria-label='{{ 'Number of containers for %s'|trans|format(storage_name) }}' />
+      <div class='input-group-append'>
+        <button type='button' class='btn btn-secondary' data-action='container-qty-plus' data-storage-id='{{ storage_id }}' aria-label='{{ 'Increase containers for %s'|trans|format(storage_name) }}'><i class='fas fa-plus'></i></button>
+      </div>
+    </div>
+  {% endmacro %}
   {% macro render_items(items, groupedItems, storage_editable, is_entity=true, is_move=false, is_move_storage=false) %}
     <ul class='list-group'>
       {% for item in items %}
@@ -26,7 +38,7 @@
               {% elseif is_entity and is_move %}
                 <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(item.name) }}</button>
               {% elseif is_entity %}
-                <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='create-container'><i class='fas fa-location-dot mr-1'></i>{{ 'Store in %s'|trans|format(item.name) }}</button>
+                {{ _self.render_stepper(item.id, item.name) }}
               {% else %}
                 <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1'></i>{{ 'Display content'|trans }}</a>
               {% endif %}
@@ -70,6 +82,10 @@
         {% elseif is_entity and is_move %}
           <div class='ml-auto'>
             <button type='button' class='btn btn-primary btn-sm' data-id='{{ root.id }}' data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(root.name) }}</button>
+          </div>
+        {% elseif is_entity %}
+          <div class='ml-auto'>
+            {{ _self.render_stepper(root.id, root.name) }}
           </div>
         {% endif %}
       </div>

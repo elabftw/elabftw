@@ -12,15 +12,20 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Experiments;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\DisplayParams;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function dirname;
+use function sprintf;
 
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_OK;
@@ -356,5 +361,60 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
         $Import->import();
         $this->assertEquals(2, $Import->getInserted());
+    }
+
+    // test import keeps the state for archived/locked/deleted entries
+    public function testImportRestoresLifecycle(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/locked-archived-deleted-experiments.eln',
+            'locked-archived-deleted-experiments.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Eln(
+            new Users(1, 1),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            EntityType::Experiments,
+        );
+
+        $Import->import();
+
+        $this->assertGreaterThanOrEqual(3, $Import->getInserted());
+
+        $Locked = $this->getExperimentFromTitle('Locked');
+        $this->assertSame(State::Normal->value, (int) $Locked->entityData['state']);
+        $this->assertSame(1, (int) $Locked->entityData['locked']);
+
+        $Archived = $this->getExperimentFromTitle('Archived');
+        $this->assertSame(State::Archived->value, (int) $Archived->entityData['state']);
+        $this->assertSame(1, (int) $Archived->entityData['locked']);
+
+        $Deleted = $this->getExperimentFromTitle('Deleted');
+        $this->assertSame(State::Deleted->value, (int) $Deleted->entityData['state']);
+    }
+
+    private function getExperimentFromTitle(string $title): Experiments
+    {
+        $Experiments = new Experiments(new Users(1, 1));
+        // search by title & include Archived entries
+        $query = new InputBag(array(
+            'q' => sprintf('title:"%s"', $title),
+            'state' => '1,2,3',
+        ));
+        $DisplayParams = new DisplayParams(new Users(1, 1), EntityType::Experiments, $query);
+        $all = $Experiments->readAll($DisplayParams);
+
+        foreach ($all as $entry) {
+            if ($entry['title'] === $title) {
+                $Experiments->setId((int) $entry['id']);
+                return $Experiments;
+            }
+        }
+        $this->fail(sprintf('Could not find imported experiment with title "%s".', $title));
     }
 }

@@ -212,27 +212,25 @@ class Eln extends AbstractZip
 
     }
 
+    /**
+     * Restore the exported lifecycle state after import.
+     * This must run after all content, uploads and links are imported because
+     * archived, deleted or locked entities can no longer be freely modified.
+     */
     private function restoreEntityLifecycle(array $dataset): void
     {
-        // convert exported state name back to a State enum. default to normal
-        $state = array_find(
-            State::cases(),
-            static fn(State $state): bool => $state->name === ($dataset['elabftw:state'] ?? State::Normal->name),
-        ) ?? State::Normal;
-
-        if ($state === State::Archived) {
-            $this->Entity->patch(Action::Archive, array());
+        $state = State::fromName($dataset['elabftw:state'] ?? State::Normal->name);
+        match ($state) {
+            State::Archived => $this->Entity->patch(Action::Archive, array()),
+            State::Deleted => $this->Entity->patch(Action::Destroy, array()),
+            default => null,
+        };
+        if ($state !== State::Normal) {
             return;
         }
-        if ($state === State::Deleted) {
-            $this->Entity->update(new EntityParams('state', (string) State::Deleted->value));
-            return;
-        }
-        $isLocked = ($dataset['elabftw:isLocked'] ?? 'false') === 'true';
-        if ($isLocked) {
+        if (($dataset['elabftw:isLocked'] ?? 'false') === 'true') {
             $this->Entity->patch(Action::Lock, array());
         }
-        $this->Entity->update(new EntityParams('state', (string) $state->value));
     }
 
     private function grabIdFromUrl(string $url): ?int
@@ -511,7 +509,6 @@ class Eln extends AbstractZip
             $this->importPart($this->getNodeFromId($part['@id']));
         }
 
-        // Restore lifecycle last, after all updates/uploads/comments/tags are done.
         $this->restoreEntityLifecycle($dataset);
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog

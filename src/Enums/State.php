@@ -24,4 +24,14 @@ enum State: int
     case Pending = 4;
     case Processing = 5;
     case Error = 6;
+
+    public static function fromName(string $name): self
+    {
+        foreach (self::cases() as $state) {
+            if ($state->name === $name) {
+                return $state;
+            }
+        }
+        return self::Normal;
+    }
 }

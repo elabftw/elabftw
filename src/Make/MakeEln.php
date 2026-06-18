@@ -250,24 +250,11 @@ class MakeEln extends AbstractMakeEln
         // LINKS (mentions)
         // this array will be added to the "mentions" attribute of the main dataset
         $mentions = array();
-        $linkTypes = array('experiments', 'items');
-        foreach ($linkTypes as $type) {
-            foreach ($e[$type . '_links'] as $link) {
-                try {
-                    if ($type === 'items') {
-                        $link = new Items($this->requester, $link['entityid'], $this->bypassReadPermission);
-                    } else {
-                        $link = new Experiments($this->requester, $link['entityid'], $this->bypassReadPermission);
-                    }
-                    // WARNING: recursion!
-                    $linkAtId = $this->processEntity($link);
-                    if ($linkAtId !== false) {
-                        $mentions[] = array('@id' => './' . $linkAtId);
-                    }
-                } catch (IllegalActionException) {
-                    continue;
-                }
-            }
+        foreach (array('experiments', 'items') as $type) {
+            $mentions = array_merge(
+                $mentions,
+                $this->processEntityLinks($e[$type . '_links'] ?? array(), $type, true),
+            );
         }
         // RELATED LINKS
         // These are entities linking to the current one. Process them so their own mentions restore the original direction.
@@ -276,19 +263,7 @@ class MakeEln extends AbstractMakeEln
             'related_items_links' => 'items',
         );
         foreach ($relatedLinkTypes as $key => $type) {
-            foreach ($e[$key] ?? array() as $link) {
-                try {
-                    if ($type === 'items') {
-                        $link = new Items($this->requester, $link['entityid'], $this->bypassReadPermission);
-                    } else {
-                        $link = new Experiments($this->requester, $link['entityid'], $this->bypassReadPermission);
-                    }
-                    // WARNING: recursion!
-                    $this->processEntity($link);
-                } catch (IllegalActionException) {
-                    continue;
-                }
-            }
+            $this->processEntityLinks($e[$key] ?? array(), $type, false);
         }
 
         $datasetNode = array(
@@ -513,5 +488,35 @@ class MakeEln extends AbstractMakeEln
             $this->authors[] = $node;
         }
         return $id;
+    }
+
+    /**
+     * Process entity links and optionally return them as RO-Crate mentions.
+     */
+    private function processEntityLinks(array $links, string $type, bool $asMentions): array
+    {
+        $mentions = array();
+        foreach ($links as $link) {
+            try {
+                if ($type === 'items') {
+                    $linkedEntity = new Items($this->requester, $link['entityid'], $this->bypassReadPermission);
+                } else {
+                    $linkedEntity = new Experiments($this->requester, $link['entityid'], $this->bypassReadPermission);
+                }
+                // WARNING: recursion!
+                $linkAtId = $this->processEntity($linkedEntity);
+                if ($asMentions && $linkAtId !== false) {
+                    $mentions[] = array('@id' => './' . $linkAtId);
+                }
+            } catch (IllegalActionException $ex) {
+                $this->logger->warning(sprintf(
+                    'Skipping linked entity %s:%d during ELN export: %s',
+                    $type,
+                    $link['entityid'],
+                    $ex->getMessage(),
+                ));
+            }
+        }
+        return $mentions;
     }
 }

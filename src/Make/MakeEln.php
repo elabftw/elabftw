@@ -177,14 +177,15 @@ class MakeEln extends AbstractMakeEln
     {
         // experiments:123 or items:123
         $slug = self::toSlug($entity);
-        // only process an entity once
+        // only process an entity once, but still return its folder so links to already processed entities are preserved
         if (in_array($slug, $this->processedEntities, true)) {
-            return false;
+            return $this->processedEntityFolders[$slug] ?? false;
         }
         $e = $entity->entityData;
         $hasPart = array();
         $currentDatasetFolder = self::getDatasetFolderName();
         $this->processedEntities[] = $slug;
+        $this->processedEntityFolders[$slug] = $currentDatasetFolder;
         $this->folder = $this->root . '/' . $currentDatasetFolder;
         $this->rootParts[] = array('@id' => './' . $currentDatasetFolder);
         // COMMENTS
@@ -263,6 +264,27 @@ class MakeEln extends AbstractMakeEln
                     if ($linkAtId !== false) {
                         $mentions[] = array('@id' => './' . $linkAtId);
                     }
+                } catch (IllegalActionException) {
+                    continue;
+                }
+            }
+        }
+        // RELATED LINKS
+        // These are entities linking to the current one. Process them so their own mentions restore the original direction.
+        $relatedLinkTypes = array(
+            'related_experiments_links' => 'experiments',
+            'related_items_links' => 'items',
+        );
+        foreach ($relatedLinkTypes as $key => $type) {
+            foreach ($e[$key] ?? array() as $link) {
+                try {
+                    if ($type === 'items') {
+                        $link = new Items($this->requester, $link['entityid'], $this->bypassReadPermission);
+                    } else {
+                        $link = new Experiments($this->requester, $link['entityid'], $this->bypassReadPermission);
+                    }
+                    // WARNING: recursion!
+                    $this->processEntity($link);
                 } catch (IllegalActionException) {
                     continue;
                 }

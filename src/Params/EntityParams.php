@@ -22,11 +22,6 @@ use Override;
 
 final class EntityParams extends ContentParams implements ContentParamsInterface
 {
-    public function __construct(string $target, mixed $content, private readonly ?BodyContentType $bodyContentType = null)
-    {
-        parent::__construct($target, $content);
-    }
-
     #[Override]
     public function getContent(): mixed
     {
@@ -56,10 +51,5 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
             return 'body';
         }
         return parent::getColumn();
-    }
-
-    public function getBodyContentType(): ?BodyContentType
-    {
-        return $this->bodyContentType;
     }
 }

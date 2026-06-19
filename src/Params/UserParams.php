@@ -42,7 +42,7 @@ final class UserParams extends ContentParams
         return match ($this->target) {
             // checked in update
             'email' => Filter::sanitizeEmail($this->asString()),
-            'firstname' => Filter::toPureString($this->content), 'lastname' => Filter::toPureString($this->content), 'orgid' => $this->content,
+            'firstname', 'lastname' => Filter::toPureString($this->content), 'orgid' => $this->content,
             'valid_until' => (
                 function () {
                     // clicking the little cross on the input will send an empty string, so set a date far in the future instead

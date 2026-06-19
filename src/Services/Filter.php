@@ -273,9 +273,6 @@ final class Filter
         return $purifier->purify($input);
     }
 
-    /**
-     * Validate a Markdown body without treating the Markdown source as HTML.
-     */
     public static function bodyMarkdown(?string $input = null): string
     {
         if ($input === null) {

@@ -18,8 +18,6 @@ const DISPLAY_MATH_REGEXES = [
   /(^|\r\n|\r|\n)([ \t]*\$\$[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\$\$[ \t]*(?=\r\n|\r|\n|$))/g,
   /(^|\r\n|\r|\n)([ \t]*\\\[[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\\\][ \t]*(?=\r\n|\r|\n|$))/g,
 ];
-const MATH_BLOCK_PLACEHOLDER = 'ELABFTW_MATH_BLOCK_';
-
 interface EditorInterface {
   type: string;
   typeAsInt: number;
@@ -40,44 +38,25 @@ class Editor {
   }
 }
 
-interface ProtectedMath {
-  markdown: string;
-  mathBlocks: Record<string, string>;
-}
-
-function protectDisplayMathBlocks(markdown: string): ProtectedMath {
+function protectDisplayMathBlocks(markdown: string): [string, Record<string, string>] {
   const mathBlocks: Record<string, string> = {};
   let index = 0;
   let protectedMarkdown = markdown;
   DISPLAY_MATH_REGEXES.forEach(displayMathRegex => {
     protectedMarkdown = protectedMarkdown.replace(displayMathRegex, (_match, lineBreak, math) => {
-      const placeholder = `${MATH_BLOCK_PLACEHOLDER}${index}__`;
-      mathBlocks[placeholder] = escapeMathForHtml(math);
+      const placeholder = `ELABFTW_MATH_BLOCK_${index}__`;
+      mathBlocks[placeholder] = math
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
       index++;
       return lineBreak + placeholder;
     });
   });
 
-  return {
-    markdown: protectedMarkdown,
-    mathBlocks,
-  };
-}
-
-function restoreDisplayMathBlocks(html: string, mathBlocks: Record<string, string>): string {
-  Object.entries(mathBlocks).forEach(([placeholder, math]) => {
-    html = html.split(placeholder).join(math);
-  });
-  return html;
-}
-
-function escapeMathForHtml(math: string): string {
-  return math
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+  return [protectedMarkdown, mathBlocks];
 }
 
 class TinyEditor extends Editor implements EditorInterface {
@@ -117,8 +96,12 @@ export class MdEditor extends Editor implements EditorInterface {
           MathJax.typeset();
         }, 1);
         // parse with marked and return the html
-        const protectedMath = protectDisplayMathBlocks(ed.$textarea.val() as string);
-        return restoreDisplayMathBlocks(marked(protectedMath.markdown) as string, protectedMath.mathBlocks);
+        const [markdown, mathBlocks] = protectDisplayMathBlocks(ed.$textarea.val() as string);
+        let html = marked(markdown) as string;
+        Object.entries(mathBlocks).forEach(([placeholder, math]) => {
+          html = html.split(placeholder).join(math);
+        });
+        return html;
       },
     });
   }

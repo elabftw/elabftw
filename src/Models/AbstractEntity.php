@@ -860,7 +860,14 @@ abstract class AbstractEntity extends AbstractRest
     // Update an entity. The revision is saved before so it can easily compare old and new body.
     public function update(ContentParamsInterface $params): bool
     {
-        $content = $this->getContentForUpdate($params);
+        if (
+            ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend')
+            && $this->entityData['content_type'] === BodyContentType::Markdown->value
+        ) {
+            $content = Filter::bodyMarkdown($params->getUnfilteredContent());
+        } else {
+            $content = $params->getContent();
+        }
         if ($params->getTarget() === 'bodyappend') {
             $content = $this->readOne()['body'] . $content;
         }
@@ -1249,17 +1256,6 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     protected function enforceTemplate(array $teamConfigArr): void {}
-
-    private function getContentForUpdate(ContentParamsInterface $params): mixed
-    {
-        if (
-            ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend')
-            && $this->entityData['content_type'] === BodyContentType::Markdown->value
-        ) {
-            return Filter::bodyMarkdown($params->getUnfilteredContent());
-        }
-        return $params->getContent();
-    }
 
     private function handleCanUpdate(array $params, AccessType $type): void
     {

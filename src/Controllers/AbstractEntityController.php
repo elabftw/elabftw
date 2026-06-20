@@ -28,7 +28,6 @@ use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsStatus;
-use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
@@ -45,7 +44,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
-use function array_column;
 use function sprintf;
 
 /**
@@ -109,7 +107,6 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
-        $ExtraFieldsKeys = new ExtraFieldsKeys($this->App->Users, '', -1);
 
         // must be before the call to readShow
         if (($this->App->Users->userData['always_show_owned'] ?? null) === 1) {
@@ -146,7 +143,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'statusArr' => $this->statusArr,
             'favTagsArr' => $favTagsArr,
             'pageTitle' => $this->getPageTitle(),
-            'metakeyArrForSelect' => array_column($ExtraFieldsKeys->readAll(), 'extra_fields_key'),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
             // get all the tags for the top search bar

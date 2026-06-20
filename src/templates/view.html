@@ -44,7 +44,7 @@
 </div>
 
 <div id='isSignedByInfoDiv'>
-  {% if Entity.entityData.signature_count > 0%}
+  {% if Entity.entityData.signature_count > 0 %}
   {{ 'Entry was signed by %s on %s at %s'|trans|format(signerFullname, Entity.entityData.last_signed_at|date('Y-m-d'), Entity.entityData.last_signed_at|date('H:i:s'))|msg('ok', false) }}
 {% endif %}
 </div>

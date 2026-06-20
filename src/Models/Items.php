@@ -150,7 +150,6 @@ final class Items extends AbstractConcreteEntity
             sourceEntity: $this,
             title: $this->entityData['title'] . ' I',
             copyFiles: $copyFiles,
-            linkToOriginal: $linkToOriginal,
             overrideCreateParams: array(
                 'canbook' => $this->entityData['canbook'],
                 'canbookBase' => BasePermissions::from($this->entityData['canbook_base']),
@@ -158,9 +157,8 @@ final class Items extends AbstractConcreteEntity
             ),
         );
 
-        $fresh = new self($this->Users, $newId);
-
         if ($linkToOriginal) {
+            $fresh = new self($this->Users, $newId);
             $ItemsLinks = new Items2ItemsLinks($fresh);
             $ItemsLinks->setId($this->id);
             $ItemsLinks->postAction(Action::Create, array());

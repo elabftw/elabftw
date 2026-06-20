@@ -933,7 +933,6 @@ abstract class AbstractEntity extends AbstractRest
         self $sourceEntity,
         ?string $title = null,
         bool $copyFiles = true,
-        bool $linkToOriginal = false,
         array $overrideCreateParams = array(),
     ): int {
         $sourceId = $sourceEntity->id ?? throw new IllegalActionException('No id was set!');

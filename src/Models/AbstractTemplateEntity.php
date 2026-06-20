@@ -62,7 +62,6 @@ abstract class AbstractTemplateEntity extends AbstractEntity
             sourceEntity: $this,
             title: $this->entityData['title'] . ' I',
             copyFiles: $copyFiles,
-            linkToOriginal: $linkToOriginal,
         );
     }
 

@@ -114,7 +114,6 @@ final class Experiments extends AbstractConcreteEntity
             sourceEntity: $this,
             title: $this->entityData['title'] . ' I',
             copyFiles: $copyFiles,
-            linkToOriginal: $linkToOriginal,
         );
 
         if ($linkToOriginal) {

@@ -38,7 +38,7 @@ SELECT
     @created_by_userid AS userid,
     @team_id AS team,
     1 AS state,
-    CONCAT('Fake Compound ', LPAD(n, 4, '0')) AS name,
+    CONCAT('Fake Compound ', LPAD(n, 6, '0')) AS name,
     CONCAT('C', 5 + MOD(n, 30), 'H', 8 + MOD(n, 50), 'N', MOD(n, 4), 'O', MOD(n, 8)) AS molecular_formula,
     12 as molecular_weight,
     CONCAT('FAKE-', LPAD(n, 6, '0')) AS cas_number,
@@ -52,6 +52,6 @@ SELECT
     END AS smiles,
     CONCAT('InChI=1S/FAKE-', LPAD(n, 6, '0')) AS inchi,
     CONCAT('FAKEINCHIKEY', LPAD(n, 13, '0')) AS inchi_key,
-    CONCAT('fake compound ', LPAD(n, 4, '0')) AS iupac_name,
+    CONCAT('fake compound ', LPAD(n, 6, '0')) AS iupac_name,
     900000000 + n AS pubchem_cid
 FROM seq;

@@ -310,13 +310,53 @@ document.addEventListener('DOMContentLoaded', () => {
   hydrateFilterAutoControlsFromUrl();
 
   // TomSelect for extra fields & owner search select
-  if (document.getElementById('metakey')) {
+  const metakeySelect = document.getElementById('metakey');
+
+  if (metakeySelect) {
+    let metakeyOptionsLoaded = false;
+    let metakeyOptionsLoading = false;
+
     new TomSelect('#metakey', {
       maxOptions: 512,
       plugins: [
         'dropdown_input',
         'remove_button',
       ],
+      valueField: 'value',
+      labelField: 'text',
+      searchField: [
+        'text',
+      ],
+      preload: 'focus',
+      shouldLoad() {
+        return !metakeyOptionsLoaded && !metakeyOptionsLoading;
+      },
+      load(query, callback) {
+        if (metakeyOptionsLoading || metakeyOptionsLoaded) {
+          callback();
+          return;
+        }
+        metakeyOptionsLoading = true;
+        ApiC.getJson('extra_fields_keys')
+          .then((extraFieldsKeys) => {
+            const options = extraFieldsKeys
+              .map((extraFieldKey) => ({
+                value: extraFieldKey.extra_fields_key,
+                text: extraFieldKey.extra_fields_key,
+                frequency: extraFieldKey.frequency,
+              }))
+              .filter((option) => option.value);
+
+            metakeyOptionsLoaded = true;
+            callback(options);
+          })
+          .catch(() => {
+            callback();
+          })
+          .finally(() => {
+            metakeyOptionsLoading = false;
+          });
+      },
     });
   }
 

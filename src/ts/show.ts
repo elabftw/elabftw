@@ -314,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (metakeySelect) {
     let metakeyOptionsLoaded = false;
+    let metakeyOptionsLoading = false;
 
     new TomSelect('#metakey', {
       maxOptions: 512,
@@ -328,9 +329,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ],
       preload: 'focus',
       shouldLoad() {
-        return !metakeyOptionsLoaded;
+        return !metakeyOptionsLoaded && !metakeyOptionsLoading;
       },
       load(query, callback) {
+        if (metakeyOptionsLoading || metakeyOptionsLoaded) {
+          callback();
+          return;
+        }
+        metakeyOptionsLoading = true;
         ApiC.getJson('extra_fields_keys')
           .then((extraFieldsKeys) => {
             const options = extraFieldsKeys
@@ -346,6 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
           })
           .catch(() => {
             callback();
+          })
+          .finally(() => {
+            metakeyOptionsLoading = false;
           });
       },
     });

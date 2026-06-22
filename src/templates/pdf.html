@@ -49,7 +49,7 @@
     </div>
   </div>
 
-  {% if timestamped %}
+  {% if isTimestamped %}
   <div class="timestamped-block">
     <p>{{ 'This document has been timestamped by %s on %s.'|trans|format(timestamperName, formattedTimestampedAt) }}</p>
   </div>
@@ -229,12 +229,12 @@
         {% if entityData.elabid %}
           <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ entityData.elabid }}</p>
         {% endif %}
-        {% if locked %}
+        {% if isLocked %}
           <p class='elabid'>
-            {{ 'Locked by %s on %s at %s'|trans|format(entityData.lockedby|userid2fullname, lockDate, lockTime) }}
+            {{ 'Locked by %s on %s at %s'|trans|format(entityData.lockedby|userid2fullname, lockedAt.date, lockedAt.time) }}
           </p>
         {% endif %}
-        {% if timestamped %}
+        {% if isTimestamped %}
           <p class='elabid'>
             {{ 'Timestamped by %s on %s at %s'|trans|format(entityData.timestampedby|userid2fullname, timestampedAt.date, timestampedAt.time) }}
           </p>

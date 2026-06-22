@@ -230,12 +230,15 @@ class MakePdf extends AbstractMakePdf
     {
         $date = new DateTimeImmutable($this->Entity->entityData['date'] ?? date('Ymd'));
 
-        $locked = $this->Entity->entityData['locked'];
-        $lockDate = Filter::separateDateAndTime($this->Entity->entityData['locked_at'] ?? '');
+        $isLocked = $this->Entity->entityData['locked'] === 1;
+        $lockedAt = Filter::separateDateAndTime($this->Entity->entityData['locked_at'] ?? '');
+        if ($isLocked) {
+            $formattedLockedAt = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['locked_at']));
+        }
 
-        $timestamped = $this->Entity->entityData['timestamped'];
+        $isTimestamped = $this->Entity->entityData['timestamped'] === 1;
         $timestampedAt = Filter::separateDateAndTime($this->Entity->entityData['timestamped_at'] ?? '');
-        if ($this->Entity->entityData['timestamped'] === 1) {
+        if ($isTimestamped) {
             $formattedTimestampedAt = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['timestamped_at']));
         }
 
@@ -274,10 +277,10 @@ class MakePdf extends AbstractMakePdf
             'includeChangelog' => $this->includeChangelog,
             'ghsImagesPath' => self::GHS_FOLDER,
             'includeFiles' => $this->includeAttachments,
-            'locked' => $locked,
-            'lockDate' => $lockDate['date'],
-            'lockTime' => $lockDate['time'],
-            'timestamped' => $timestamped,
+            'isLocked' => $isLocked,
+            'lockedAt' => $lockedAt,
+            'lockDateAt' => $formattedLockedAt ?? '',
+            'isTimestamped' => $isTimestamped,
             'timestampedAt' => $timestampedAt,
             'formattedTimestampedAt' => $formattedTimestampedAt ?? '',
             'isSigned' => $isSigned,

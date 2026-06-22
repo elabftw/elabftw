@@ -119,12 +119,13 @@ abstract class AbstractContainersLinks extends AbstractLinks
 
     // Copy Containers from one entity to another
     #[Override]
-    public function duplicate(int $id, int $newId, bool $fromTemplate = false): int
+    public function duplicate(int $id, int $newId, bool $fromTemplate = false, bool $toTemplate = false): int
     {
-        $table = $fromTemplate ? $this->getTemplateTable() : $this->getTable();
-        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, storage_id, qty_stored, qty_unit)
+        $sourceTable = $fromTemplate ? $this->getTemplateTable() : $this->getTable();
+        $targetTable = $toTemplate ? $this->getTemplateTable() : $this->getTable();
+        $sql = 'INSERT IGNORE INTO ' . $targetTable . ' (item_id, storage_id, qty_stored, qty_unit)
             SELECT :new_id, storage_id, qty_stored, qty_unit
-            FROM ' . $table . '
+            FROM ' . $sourceTable . '
             WHERE item_id = :old_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':new_id', $newId, PDO::PARAM_INT);

@@ -149,8 +149,8 @@ final class Experiments extends AbstractConcreteEntity
          * this->id cannot be null here, checked during canOrExplode */
         $this->ExperimentsLinks->duplicate($this->id, $newId);
         $this->ItemsLinks->duplicate($this->id, $newId);
-        $this->Steps->duplicate($this->id, $newId);
-        $this->Tags->copyTags($newId);
+        new Steps($this)->duplicate($this->id, $newId);
+        new Tags($this)->copyTags($newId);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $CompoundsLinks->duplicate($this->id, $newId);
         // also add a link to the original experiment if requested

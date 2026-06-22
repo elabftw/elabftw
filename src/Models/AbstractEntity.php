@@ -123,13 +123,7 @@ abstract class AbstractEntity extends AbstractRest
 
     public AbstractItemsLinks $ItemsLinks;
 
-    public Steps $Steps;
-
-    public Tags $Tags;
-
     public Uploads $Uploads;
-
-    public Pins $Pins;
 
     public ExclusiveEditMode $ExclusiveEditMode;
 
@@ -142,8 +136,6 @@ abstract class AbstractEntity extends AbstractRest
     // inserted in sql
     public array $extendedValues = array();
 
-    public TeamGroups $TeamGroups;
-
     // inserted in sql
     private string $extendedFilter = '';
 
@@ -155,11 +147,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $this->ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
         $this->ItemsLinks = LinksFactory::getItemsLinks($this);
-        $this->Steps = new Steps($this);
-        $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
-        $this->TeamGroups = new TeamGroups($this->Users);
-        $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
         // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
         $this->isReadOnly = $this->ExclusiveEditMode->isActive();
@@ -212,16 +200,18 @@ abstract class AbstractEntity extends AbstractRest
             createdFromType: $TemplateType->entityType,
             createdFromId: $templateId,
         );
-        $tags = array_column($TemplateType->Tags->readAll(), 'tag');
+        $sourceTags = new Tags($TemplateType);
+        $tags = array_column($sourceTags->readAll(), 'tag');
         $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
         $this->ExperimentsLinks->duplicate($templateId, $id, fromTemplate: true);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $CompoundsLinks->duplicate($templateId, $id, fromTemplate: true);
-        $this->Steps->duplicate($templateId, $id, fromTemplate: true);
+        new Steps($this)->duplicate($templateId, $id, fromTemplate: true);
         $freshSelf = new $this($this->Users, $id);
         $TemplateType->Uploads->duplicate($freshSelf);
+        $targetTags = new Tags($freshSelf);
         foreach ($tags as $tag) {
-            $freshSelf->Tags->postAction(Action::Create, array('tag' => $tag));
+            $targetTags->postAction(Action::Create, array('tag' => $tag));
         }
         return $id;
     }
@@ -520,7 +510,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::Lock => $this->toggleLock(),
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
-            Action::Pin => $this->Pins->togglePin(),
+            Action::Pin => new Pins($this)->togglePin(),
             Action::Restore => $this->restore(),
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanRead  => $this->handleCanUpdate($params, AccessType::Read),
@@ -595,7 +585,7 @@ abstract class AbstractEntity extends AbstractRest
             throw new ResourceNotFoundException();
         }
         $this->canOrExplode(AccessType::Read);
-        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['steps'] = new Steps($this)->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
@@ -815,7 +805,7 @@ abstract class AbstractEntity extends AbstractRest
         // remove the custom_id upon deletion
         $this->update(new EntityParams('custom_id', ''));
         // delete from pinned too
-        $this->Pins->cleanup();
+        new Pins($this)->cleanup();
         $this->Uploads->destroyAll();
         return $this->update(new EntityParams('state', State::Deleted->value));
     }
@@ -1337,9 +1327,10 @@ abstract class AbstractEntity extends AbstractRest
 
     private function processExtendedQuery(string $extendedQuery): void
     {
+        $TeamGroups = new TeamGroups($this->Users);
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->entityType->value,
-            $this->TeamGroups->readGroupsWithUsersFromUser(),
+            $TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();
         if ($whereClause) {

@@ -72,7 +72,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $Items = new Items($user, $new);
         $this->assertSame($title, $Items->entityData['title']);
         $this->assertSame($body, $Items->entityData['body']);
-        $this->assertEqualsCanonicalizing($tags, array_column($Items->Tags->readAll(), 'tag'));
+        $this->assertEqualsCanonicalizing($tags, array_column(new Tags($Items)->readAll(), 'tag'));
         $this->assertSame($categoryId, $Items->entityData['category']);
         $this->assertSame($statusId, $Items->entityData['status']);
         $this->assertCount(1, $Items->entityData['uploads']);

@@ -74,6 +74,17 @@ final class TwigFilters
         return Scope::toIcon(Scope::from($scope));
     }
 
+    public static function userid2fullname(?int $userid): string
+    {
+        // maybe user was deleted!
+        try {
+            $user = new Users((int) $userid);
+        } catch (ResourceNotFoundException) {
+            return 'Unknown';
+        }
+        return $user->userData['fullname'];
+    }
+
     /**
      * Process the metadata json string into html, for extra fields view mode
      * @psalm-suppress PossiblyUnusedMethod this method is used in twig templates

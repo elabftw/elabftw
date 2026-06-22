@@ -729,15 +729,6 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    // Get timestamper full name for display in view mode
-    public function getTimestamperFullname(): string
-    {
-        if ($this->entityData['timestamped'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
-    }
-
     // generate a title useful for zip folder name for instance: shortened, with category and short elabid
     public function toFsTitle(): string
     {
@@ -775,15 +766,6 @@ abstract class AbstractEntity extends AbstractRest
         $this->Db->execute($req);
 
         return array_column($req->fetchAll(), 'id');
-    }
-
-    // Get locker full name for display in view mode
-    public function getLockerFullname(): string
-    {
-        if ($this->entityData['locked'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['lockedby']);
     }
 
     public function getIdFromCategory(int $category): array
@@ -1185,6 +1167,17 @@ abstract class AbstractEntity extends AbstractRest
         $ZipArchive->close();
         $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $this->Uploads->create(new CreateUploadFromLocalFile('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
+        // update the helper columns
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET signature_count = signature_count + 1, last_signed_at = NOW(), last_signed_by = :signer WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':signer', $this->Users->getUserid(), PDO::PARAM_INT);
+        $req->bindValue(':id', $this->id ?? 0, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        // record the action in the changelog
+        $Changelog = new Changelog($this);
+        $Changelog->create(new ContentParams('signature', 'Entity was signed'));
+
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
@@ -1192,17 +1185,6 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions = new Revisions($this, 9000, 0, 0);
         $Revisions->dbInsert($this->entityData['body']);
         return $this->readOne();
-    }
-
-    protected function getFullnameFromUserid(int $userid): string
-    {
-        // maybe user was deleted!
-        try {
-            $user = new Users($userid);
-        } catch (ResourceNotFoundException) {
-            return 'User not found!';
-        }
-        return $user->userData['fullname'];
     }
 
     protected function getCurrentHighestCustomId(int $category): int

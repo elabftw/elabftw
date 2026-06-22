@@ -41,6 +41,7 @@
     team?: number | null;
     team_name?: string | null;
     timestamped?: boolean;
+    signature_count?: number;
     next_step?: string | null;
     locked?: boolean;
     modified_at?: string | null;
@@ -454,6 +455,13 @@
               <i
                 style={`color:#${getLeftColor(entity)}`}
                 class='far fa-calendar-check fa-fw'
+              ></i>
+            {/if}
+
+            {#if entity.signature_count > 0}
+              <i
+                style={`color:#${getLeftColor(entity)}`}
+                class='fas fa-signature fa-fw'
               ></i>
             {/if}
 

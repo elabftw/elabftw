@@ -184,8 +184,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'hideTitle' => true,
             'teamsArr' => $this->App->Teams->readAllVisible(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
-            'timestamperFullname' => $this->Entity->getTimestamperFullname(),
-            'lockerFullname' => $this->Entity->getLockerFullname(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
             'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),

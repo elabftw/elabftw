@@ -196,12 +196,6 @@ abstract class AbstractEntity extends AbstractRest
     // Duplicate an entity, adding ' I' to the title to make the copy noticeable.
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
-    // create a template from current entity
-    public function createTemplateFrom(int $entityId, ?string $title = null): int
-    {
-        return $this->copyEntityFrom(sourceEntity: $this->entityType->toConcreteEntity($this->Users, $entityId), title: $title);
-    }
-
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
@@ -214,6 +208,7 @@ abstract class AbstractEntity extends AbstractRest
                     // create an entity from a template
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
                         $entity = $this->entityType->toTemplateEntity($this->Users, (int) $reqBody['template']);
+
                         $title = $reqBody['title'] ?? null;
                         return $this->copyEntityFrom(sourceEntity: $entity, title: $title);
                     }
@@ -222,7 +217,9 @@ abstract class AbstractEntity extends AbstractRest
                         if (!($this instanceof AbstractTemplateEntity)) {
                             throw new ImproperActionException('The entity parameter is only valid for template creation.');
                         }
-                        return $this->createTemplateFrom((int) $reqBody['entity'], $reqBody['title'] ?? null);
+                        $entity = $this->entityType->toConcreteEntity($this->Users, (int) $reqBody['entity']);
+                        $title = $reqBody['title'] ?? null;
+                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title);
                     }
                     // check if use of template is enforced at team level for this entity
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->selectOne();

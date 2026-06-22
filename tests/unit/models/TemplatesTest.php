@@ -121,7 +121,10 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         }
 
         $Templates = new Templates($user);
-        $new = $Templates->createTemplateFrom($exp->id, 'Template created from entity');
+        $new = $Templates->postAction(
+            Action::Create,
+            array('entity' => $exp->id,'title' => 'Template created from entity')
+        );
         $Template = new Templates($user, $new);
 
         $this->assertSame('Template created from entity', $Template->entityData['title']);

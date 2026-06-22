@@ -210,7 +210,7 @@ abstract class AbstractEntity extends AbstractRest
                         $entity = $this->entityType->toTemplateEntity($this->Users, (int) $reqBody['template']);
 
                         $title = $reqBody['title'] ?? null;
-                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title);
+                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title, blankExtrafields: false);
                     }
                     // create a template from current entity
                     if (isset($reqBody['entity']) && ((int) $reqBody['entity']) !== -1) {
@@ -934,6 +934,7 @@ abstract class AbstractEntity extends AbstractRest
         ?string $title = null,
         bool $copyFiles = true,
         array $overrideCreateParams = array(),
+        bool $blankExtrafields = true,
     ): int {
         $sourceId = $sourceEntity->id ?? throw new IllegalActionException('No id was set!');
         $fromTemplate = $sourceEntity instanceof AbstractTemplateEntity;
@@ -942,7 +943,7 @@ abstract class AbstractEntity extends AbstractRest
         $source = $sourceEntity->readOne();
 
         $metadata = $source['metadata'];
-        if (!$fromTemplate && !$toTemplate) {
+        if ($blankExtrafields) {
             // handle the blank_value_on_duplicate attribute on extra fields
             $metadata = new Metadata($source['metadata'])->blankExtraFieldsValueOnDuplicate();
         }

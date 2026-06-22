@@ -56,6 +56,8 @@
   let {
     entityType = 'experiments',
     limit = 15,
+    order = 'date',
+    sort = 'desc',
     searchQuery,
     selectedEntities = [],
     currentUserId = null,
@@ -66,6 +68,8 @@
   } = $props<{
     entityType?: EntityType;
     limit?: number;
+    order?: string;
+    sort?: string;
     searchQuery: Writable<string>;
     selectedEntities: Writable<string[]>;
     currentUserId?: number | null;
@@ -105,6 +109,10 @@
     currentState: string;
     currentScope: string;
     currentBookable: string;
+    currentOrder: string;
+    currentSort: string;
+    currentRelated: number | null;
+    currentRelatedOrigin: string;
   };
 
   function handleFilterClick(
@@ -131,6 +139,24 @@
 
   function getCurrentUrlParam(param: string): string {
     return new URL(window.location.href).searchParams.get(param)?.trim() ?? '';
+  }
+
+  function getCurrentUrlParamOrFallback(param: string, fallback: string): string {
+    const value = getCurrentUrlParam(param);
+
+    return value.length > 0 ? value : fallback;
+  }
+
+  function getCurrentUrlNumberParam(param: string): number | null {
+    const value = getCurrentUrlParam(param);
+
+    if (value.length === 0) {
+      return null;
+    }
+
+    const numberValue = Number(value);
+
+    return Number.isFinite(numberValue) ? numberValue : null;
   }
 
   function getCurrentUrlTags(): string[] {
@@ -183,6 +209,10 @@
       currentState: getCurrentUrlParam('state'),
       currentScope: getCurrentUrlParam('scope'),
       currentBookable: getCurrentUrlParam('bookable'),
+      currentOrder: getCurrentUrlParamOrFallback('order', order),
+      currentSort: getCurrentUrlParamOrFallback('sort', sort),
+      currentRelated: getCurrentUrlNumberParam('related'),
+      currentRelatedOrigin: getCurrentUrlParam('related_origin'),
     };
   }
 
@@ -201,6 +231,10 @@
       context.currentState,
       context.currentScope,
       context.currentBookable,
+      context.currentOrder,
+      context.currentSort,
+      context.currentRelated,
+      context.currentRelatedOrigin,
       currentReloadVersion,
     ]);
   }
@@ -260,17 +294,21 @@
   ): Promise<void> {
 
     const {
-    currentType,
-    currentLimit,
-    currentQ,
-    currentCategory,
-    currentStatus,
-    currentOwner,
-    currentTags,
-    currentState,
-    currentScope,
-    currentBookable,
-  } = context;
+      currentType,
+      currentLimit,
+      currentQ,
+      currentCategory,
+      currentStatus,
+      currentOwner,
+      currentTags,
+      currentState,
+      currentScope,
+      currentBookable,
+      currentOrder,
+      currentSort,
+      currentRelated,
+      currentRelatedOrigin,
+    } = context;
     const seq = ++requestSeq;
     error = '';
 
@@ -314,6 +352,22 @@
 
       if (currentBookable.length > 0) {
         params['bookable'] = currentBookable;
+      }
+
+      if (currentOrder.length > 0) {
+        params['order'] = currentOrder;
+      }
+
+      if (currentSort.length > 0) {
+        params['sort'] = currentSort;
+      }
+
+      if (currentRelated !== null) {
+        params['related'] = currentRelated;
+      }
+
+      if (currentRelatedOrigin.length > 0) {
+        params['related_origin'] = currentRelatedOrigin;
       }
 
       // don't display errors

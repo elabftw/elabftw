@@ -730,23 +730,6 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    // Get timestamper full name for display in view mode
-    public function getTimestamperFullname(): string
-    {
-        if ($this->entityData['timestamped'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
-    }
-
-    public function getSignerFullname(): string
-    {
-        if ($this->entityData['signature_count'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['last_signed_by']);
-    }
-
     // generate a title useful for zip folder name for instance: shortened, with category and short elabid
     public function toFsTitle(): string
     {
@@ -784,15 +767,6 @@ abstract class AbstractEntity extends AbstractRest
         $this->Db->execute($req);
 
         return array_column($req->fetchAll(), 'id');
-    }
-
-    // Get locker full name for display in view mode
-    public function getLockerFullname(): string
-    {
-        if ($this->entityData['locked'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['lockedby']);
     }
 
     public function getIdFromCategory(int $category): array
@@ -1201,7 +1175,7 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindValue(':id', $this->id ?? 0, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        // now add something in the changelog
+        // record the action in the changelog
         $Changelog = new Changelog($this);
         $Changelog->create(new ContentParams('signature', 'Entity was signed'));
 
@@ -1212,17 +1186,6 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions = new Revisions($this, 9000, 0, 0);
         $Revisions->dbInsert($this->entityData['body']);
         return $this->readOne();
-    }
-
-    protected function getFullnameFromUserid(int $userid): string
-    {
-        // maybe user was deleted!
-        try {
-            $user = new Users($userid);
-        } catch (ResourceNotFoundException) {
-            return 'User not found!';
-        }
-        return $user->userData['fullname'];
     }
 
     protected function getCurrentHighestCustomId(int $category): int

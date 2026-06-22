@@ -231,17 +231,17 @@
         {% endif %}
         {% if locked %}
           <p class='elabid'>
-            {{ 'Locked by %s on %s at %s'|trans|format(lockerName, lockDate, lockTime) }}
+            {{ 'Locked by %s on %s at %s'|trans|format(entityData.lockedby|userid2fullname, lockDate, lockTime) }}
           </p>
         {% endif %}
         {% if timestamped %}
           <p class='elabid'>
-            {{ 'Timestamped by %s on %s at %s'|trans|format(timestamperName, timestampedAt.date, timestampedAt.time) }}
+            {{ 'Timestamped by %s on %s at %s'|trans|format(entityData.timestampedby|userid2fullname, timestampedAt.date, timestampedAt.time) }}
           </p>
         {% endif %}
         {% if isSigned %}
           <p class='elabid'>
-            {{ 'Signed by %s on %s at %s'|trans|format(signerName, signedAt.date, signedAt.time) }}
+            {{ 'Signed by %s on %s at %s'|trans|format(entityData.last_signed_by|userid2fullname, signedAt.date, signedAt.time) }}
           </p>
         {% endif %}
         <p class='elabid'>Link: <a href='{{ url }}'>{{ url }}</a></p>

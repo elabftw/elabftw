@@ -231,23 +231,19 @@ class MakePdf extends AbstractMakePdf
         $date = new DateTimeImmutable($this->Entity->entityData['date'] ?? date('Ymd'));
 
         $locked = $this->Entity->entityData['locked'];
-        $lockerName = $this->Entity->getLockerFullname();
         $lockDate = Filter::separateDateAndTime($this->Entity->entityData['locked_at'] ?? '');
 
         $timestamped = $this->Entity->entityData['timestamped'];
-        $timestamperName = $this->Entity->getTimestamperFullname();
         $timestampedAt = Filter::separateDateAndTime($this->Entity->entityData['timestamped_at'] ?? '');
         if ($this->Entity->entityData['timestamped'] === 1) {
             $formattedTimestampedAt = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['timestamped_at']));
         }
 
         $isSigned = $this->Entity->entityData['signature_count'] > 0;
-        $signerName = $this->Entity->getSignerFullname();
         $signedAt = Filter::separateDateAndTime($this->Entity->entityData['last_signed_at'] ?? '');
         if ($isSigned) {
             $formattedSignedAt = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['last_signed_at']));
         }
-
 
         // read the content of the thumbnail here to feed the template
         foreach ($this->Entity->entityData['uploads'] as $key => $upload) {
@@ -281,13 +277,10 @@ class MakePdf extends AbstractMakePdf
             'locked' => $locked,
             'lockDate' => $lockDate['date'],
             'lockTime' => $lockDate['time'],
-            'lockerName' => $lockerName,
             'timestamped' => $timestamped,
             'timestampedAt' => $timestampedAt,
-            'timestamperName' => $timestamperName,
             'formattedTimestampedAt' => $formattedTimestampedAt ?? '',
             'isSigned' => $isSigned,
-            'signerName' => $signerName,
             'signedAt' => $signedAt,
             'formattedSignedAt' => $formattedSignedAt ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],

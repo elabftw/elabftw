@@ -136,6 +136,9 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 entity.canwrite_is_immutable,
                 entity.created_at,
                 entity.modified_at,
+                entity.signature_count,
+                entity.last_signed_at,
+                entity.last_signed_by,
                 entity.timestamped';
             // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it
             if (!empty(array_column($this->entity->extendedValues, 'additional_columns'))) {

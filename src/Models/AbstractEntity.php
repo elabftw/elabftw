@@ -21,6 +21,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
@@ -104,6 +105,7 @@ use function ucfirst;
 use function array_fill;
 use function array_map;
 use function count;
+use function array_replace;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -176,45 +178,8 @@ abstract class AbstractEntity extends AbstractRest
         ?int $createdFromId = null,
     ): int;
 
+    // Duplicate an entity, adding ' I' to the title to make the copy noticeable.
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
-
-    public function createFromTemplate(int $templateId, ?string $title = null): int
-    {
-        $TemplateType = $this->entityType->toTemplateEntity($this->Users, $templateId);
-        $template = $TemplateType->readOne();
-        $id = $this->create(
-            title: $title ?? $template['title'],
-            body: $template['body'],
-            canreadBase: BasePermissions::from($template['canread_target_base']),
-            canwriteBase: BasePermissions::from($template['canwrite_target_base']),
-            canread: $template['canread_target'],
-            canwrite: $template['canwrite_target'],
-            canreadIsImmutable: (bool) $template['canread_is_immutable'],
-            canwriteIsImmutable: (bool) $template['canwrite_is_immutable'],
-            category: $template['category'],
-            status: $template['status'],
-            metadata: $template['metadata'],
-            hideMainText: BinaryValue::from($template['hide_main_text']),
-            rating: $template['rating'],
-            contentType: BodyContentType::from($template['content_type']),
-            createdFromType: $TemplateType->entityType,
-            createdFromId: $templateId,
-        );
-        $sourceTags = new Tags($TemplateType);
-        $tags = array_column($sourceTags->readAll(), 'tag');
-        $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
-        $this->ExperimentsLinks->duplicate($templateId, $id, fromTemplate: true);
-        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, fromTemplate: true);
-        new Steps($this)->duplicate($templateId, $id, fromTemplate: true);
-        $freshSelf = new $this($this->Users, $id);
-        $TemplateType->Uploads->duplicate($freshSelf);
-        $targetTags = new Tags($freshSelf);
-        foreach ($tags as $tag) {
-            $targetTags->postAction(Action::Create, array('tag' => $tag));
-        }
-        return $id;
-    }
 
     #[Override]
     public function postAction(Action $action, array $reqBody): int
@@ -225,8 +190,21 @@ abstract class AbstractEntity extends AbstractRest
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
+                    // create an entity from a template
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
-                        return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
+                        $entity = $this->entityType->toTemplateEntity($this->Users, (int) $reqBody['template']);
+
+                        $title = $reqBody['title'] ?? null;
+                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title, blankExtrafields: false);
+                    }
+                    // create a template from current entity
+                    if (isset($reqBody['entity']) && ((int) $reqBody['entity']) !== -1) {
+                        if (!($this instanceof AbstractTemplateEntity)) {
+                            throw new ImproperActionException('The entity parameter is only valid for template creation.');
+                        }
+                        $entity = $this->entityType->toConcreteEntity($this->Users, (int) $reqBody['entity']);
+                        $title = $reqBody['title'] ?? null;
+                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title);
                     }
                     // check if use of template is enforced at team level for this entity
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->selectOne();
@@ -716,15 +694,6 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    // Get timestamper full name for display in view mode
-    public function getTimestamperFullname(): string
-    {
-        if ($this->entityData['timestamped'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
-    }
-
     // generate a title useful for zip folder name for instance: shortened, with category and short elabid
     public function toFsTitle(): string
     {
@@ -762,15 +731,6 @@ abstract class AbstractEntity extends AbstractRest
         $this->Db->execute($req);
 
         return array_column($req->fetchAll(), 'id');
-    }
-
-    // Get locker full name for display in view mode
-    public function getLockerFullname(): string
-    {
-        if ($this->entityData['locked'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['lockedby']);
     }
 
     public function getIdFromCategory(int $category): array
@@ -934,6 +894,75 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions->dbInsert($this->entityData['body']);
 
         return $this->readOne();
+    }
+
+    protected function copyEntityFrom(
+        self $sourceEntity,
+        ?string $title = null,
+        bool $copyFiles = true,
+        array $overrideCreateParams = array(),
+        bool $blankExtrafields = true,
+    ): int {
+        $sourceId = $sourceEntity->id ?? throw new IllegalActionException('No id was set!');
+        $fromTemplate = $sourceEntity instanceof AbstractTemplateEntity;
+        $toTemplate = $this instanceof AbstractTemplateEntity;
+
+        $source = $sourceEntity->readOne();
+
+        $metadata = $source['metadata'];
+        if ($blankExtrafields) {
+            // handle the blank_value_on_duplicate attribute on extra fields
+            $metadata = new Metadata($source['metadata'])->blankExtraFieldsValueOnDuplicate();
+        }
+
+        $createParams = array_replace(array(
+            'title' => $title ?? $source['title'],
+            'body' => $source['body'],
+            'canreadBase' => BasePermissions::from($source[$fromTemplate ? 'canread_target_base' : 'canread_base']),
+            'canwriteBase' => BasePermissions::from($source[$fromTemplate ? 'canwrite_target_base' : 'canwrite_base']),
+            'canread' => $source[$fromTemplate ? 'canread_target' : 'canread'],
+            'canwrite' => $source[$fromTemplate ? 'canwrite_target' : 'canwrite'],
+            'canreadIsImmutable' => (bool) $source['canread_is_immutable'],
+            'canwriteIsImmutable' => (bool) $source['canwrite_is_immutable'],
+            'category' => $source['category'],
+            'status' => $source['status'],
+            'metadata' => $metadata,
+            'hideMainText' => BinaryValue::from($source['hide_main_text']),
+            'rating' => $source['rating'],
+            'contentType' => BodyContentType::from($source['content_type']),
+            'createdFromType' => $sourceEntity->entityType,
+            'createdFromId' => $sourceId,
+        ), $overrideCreateParams);
+
+        $newId = $this->create(...$createParams);
+
+        $fresh = new $this($this->Users, $newId);
+
+        if ($fromTemplate && $toTemplate) {
+            $fresh->patch(Action::Update, array(
+                'canread_target' => $source['canread_target'],
+                'canwrite_target' => $source['canwrite_target'],
+            ));
+        }
+
+        // Most link duplication works from the target entity type
+        // exception is: entry -> template: links must be read from the concrete source.
+        $linkEntity = $toTemplate && !$fromTemplate ? $sourceEntity : $this;
+
+        LinksFactory::getItemsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getExperimentsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getCompoundsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getContainersLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
+
+        $freshTags = new Tags($fresh);
+        foreach (array_column(new Tags($sourceEntity)->readAll(), 'tag') as $tag) {
+            $freshTags->postAction(Action::Create, array('tag' => $tag));
+        }
+        if ($copyFiles) {
+            $sourceEntity->Uploads->duplicate($fresh);
+        }
+        return $newId;
     }
 
     protected function getTagsHydrationData(array $entityIds): array
@@ -1172,6 +1201,17 @@ abstract class AbstractEntity extends AbstractRest
         $ZipArchive->close();
         $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $this->Uploads->create(new CreateUploadFromLocalFile('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
+        // update the helper columns
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET signature_count = signature_count + 1, last_signed_at = NOW(), last_signed_by = :signer WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':signer', $this->Users->getUserid(), PDO::PARAM_INT);
+        $req->bindValue(':id', $this->id ?? 0, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        // record the action in the changelog
+        $Changelog = new Changelog($this);
+        $Changelog->create(new ContentParams('signature', 'Entity was signed'));
+
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
@@ -1179,17 +1219,6 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions = new Revisions($this, 9000, 0, 0);
         $Revisions->dbInsert($this->entityData['body']);
         return $this->readOne();
-    }
-
-    protected function getFullnameFromUserid(int $userid): string
-    {
-        // maybe user was deleted!
-        try {
-            $user = new Users($userid);
-        } catch (ResourceNotFoundException) {
-            return 'User not found!';
-        }
-        return $user->userData['fullname'];
     }
 
     protected function getCurrentHighestCustomId(int $category): int

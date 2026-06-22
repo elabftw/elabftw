@@ -112,7 +112,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $templateStep = new Steps($this->Templates, $immutableStepId);
         $templateStep->patch(Action::Update, array('is_immutable' => '1'));
         // duplicate steps from template -> experiment
-        new Steps($this->Experiments)->duplicate($this->Templates->id, $this->Experiments->id, true);
+        new Steps($this->Templates)->duplicate($this->Experiments, $this->Templates->id, $this->Experiments->id);
         // find the copied step in the experiment
         $copied = array_values(array_filter(new Steps($this->Experiments)->readAll(), function ($step) {
             return $step['body'] === 'locked from template';

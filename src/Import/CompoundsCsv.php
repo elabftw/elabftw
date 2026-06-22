@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Links\Compounds2ItemsLinks;
@@ -113,7 +114,13 @@ final class CompoundsCsv extends AbstractCsv
                     if ($title === null && $compound) {
                         $title = $compound->name ?? $compound->iupacName;
                     }
-                    $resource = $this->Items->createFromTemplate($this->resourceTemplate, title: $title ?? 'Unnamed compound');
+                    $resource = $this->Items->postAction(
+                        Action::Create,
+                        array(
+                            'template' => $this->resourceTemplate,
+                            'title' => $title ?? 'Unnamed compound',
+                        )
+                    );
                     $this->Items->setId($resource);
                     if (isset($row['comment'])) {
                         $this->Items->update(new EntityParams('body', $row['comment']));

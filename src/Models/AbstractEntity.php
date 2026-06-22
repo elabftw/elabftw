@@ -139,9 +139,6 @@ abstract class AbstractEntity extends AbstractRest
 
     public bool $alwaysShowOwned = false;
 
-    // sql of ids to include
-    public string $idFilter = '';
-
     public bool $isReadOnly = false;
 
     // inserted in sql
@@ -428,7 +425,6 @@ abstract class AbstractEntity extends AbstractRest
         }
         $sqlArr = array(
             $this->extendedFilter,
-            $this->idFilter,
             $stateSql,
             'GROUP BY id',
             $displayParams->getSql(),

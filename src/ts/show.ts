@@ -213,12 +213,12 @@ async function displayEntities(
   order: string,
   sort: string,
   related: number | null = getCurrentUrlNumberParam('related'),
-  relatedType: string = getCurrentUrlParam('related_type'),
+  relatedOrigin: string = getCurrentUrlParam('related_origin'),
 ) {
   const rootEl = document.getElementById('entityList');
   if (mode === 'tb') {
     unmountEntityListSv();
-    mountEntitiesTable(rootEl, searchQuery, selectedEntities, order, sort, related, relatedType);
+    mountEntitiesTable(rootEl, searchQuery, selectedEntities, order, sort, related, relatedOrigin);
     handleInitialLoadDone();
     return;
   }

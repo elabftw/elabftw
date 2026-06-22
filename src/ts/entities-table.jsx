@@ -115,7 +115,7 @@ const EntitiesTable = ({
   order = 'date',
   sort = 'desc',
   related = null,
-  related_type = '',
+  relatedOrigin = '',
 }) => {
   const [rowData, setRowData] = useState([]);
   const gridApiRef = useRef(null);
@@ -197,10 +197,10 @@ const EntitiesTable = ({
     applyStringParamFallback(params, 'order', order);
     applyStringParamFallback(params, 'sort', sort);
     applyNumberParamFallback(params, 'related', related);
-    applyStringParamFallback(params, 'related_type', related_type);
+    applyStringParamFallback(params, 'related_origin', relatedOrigin);
 
     return params;
-  }, [order, sort, related, related_type]);
+  }, [order, sort, related, relatedOrigin]);
 
   // all the entries are loaded in the table, which does client side pagination
   const fetchData = useCallback(async event => {
@@ -306,14 +306,14 @@ const EntitiesTable = ({
   );
 };
 
-const App = ({ searchQuery, selectedEntities, order, sort, related, related_type }) => (
+const App = ({ searchQuery, selectedEntities, order, sort, related, relatedOrigin }) => (
   <EntitiesTable
     searchQuery={searchQuery}
     selectedEntities={selectedEntities}
     order={order}
     sort={sort}
     related={related}
-    related_type={related_type}
+    relatedOrigin={relatedOrigin}
   />
 );
 
@@ -324,7 +324,7 @@ export const mountEntitiesTable = (
   order = 'date',
   sort = 'desc',
   related = null,
-  relatedType = '',
+  relatedOrigin = '',
 ) => {
   if (!rootElement) {
     return null;
@@ -343,7 +343,7 @@ export const mountEntitiesTable = (
       order={order}
       sort={sort}
       related={related}
-      related_type={relatedType}
+      relatedOrigin={relatedOrigin}
     />
   );
 

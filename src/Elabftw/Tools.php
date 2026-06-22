@@ -184,7 +184,7 @@ final class Tools
                 $placeholder = 'ELABFTW_MATH_BLOCK_' . count($mathBlocks) . '__';
                 $mathBlocks[$placeholder] = self::eLabHtmlspecialchars($matches[2]);
                 return $matches[1] . $placeholder;
-            }, $protectedMarkdown) ?? $protectedMarkdown;
+            }, $protectedMarkdown);
         }
 
         return array($protectedMarkdown, $mathBlocks);

@@ -13,11 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
 use PDO;
 
-use function array_column;
 use function sprintf;
 
 /**
@@ -56,7 +54,7 @@ final class Pins
     }
 
     /**
-     * Only read id and title to show in the create-new menu
+     * Only read id. Note: this is not actually exposed in the API.
      */
     public function readAll(): array
     {
@@ -68,11 +66,7 @@ final class Pins
         $req->bindParam(':users_id', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
 
         $this->Db->execute($req);
-
-        $entity = clone $this->Entity;
-        $entity->alwaysShowOwned = false;
-        $entity->idFilter = Tools::getIdFilterSql(array_column($req->fetchAll(), 'id'));
-        return $entity->readAll();
+        return $req->fetchAll();
     }
 
     /**

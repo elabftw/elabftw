@@ -141,9 +141,6 @@ abstract class AbstractEntity extends AbstractRest
 
     public bool $alwaysShowOwned = false;
 
-    // sql of ids to include
-    public string $idFilter = '';
-
     public bool $isReadOnly = false;
 
     // inserted in sql
@@ -379,11 +376,14 @@ abstract class AbstractEntity extends AbstractRest
             $this->processExtendedQuery($displayParams->getUserQuery());
             $extended = true;
         }
+        $displayFilterSql = $displayParams->getFilterSql();
+        $withCompounds = $this->needsCompoundsJoin($displayFilterSql);
 
         $EntitySqlBuilder = $this->getSqlBuilder();
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $displayParams->getRelatedOrigin(),
+            $withCompounds,
         );
 
         $sql .= ' WHERE 1=1 ';
@@ -392,7 +392,7 @@ abstract class AbstractEntity extends AbstractRest
         $sql .= $this->filterSql;
 
         // add filters like related, owner or category
-        $sql .= $displayParams->getFilterSql();
+        $sql .= $displayFilterSql;
 
         // add the json permissions
         $sql .= $EntitySqlBuilder->getCanFilter($can);
@@ -404,7 +404,6 @@ abstract class AbstractEntity extends AbstractRest
         }
         $sqlArr = array(
             $this->extendedFilter,
-            $this->idFilter,
             $stateSql,
             'GROUP BY id',
             $displayParams->getSql(),
@@ -1290,6 +1289,19 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     protected function enforceTemplate(array $teamConfigArr): void {}
+
+    private function needsCompoundsJoin(string $displayFilterSql): bool
+    {
+        return $this->sqlReferencesCompounds($this->extendedFilter)
+            || $this->sqlReferencesCompounds($this->filterSql)
+            || $this->sqlReferencesCompounds($displayFilterSql);
+    }
+
+    private function sqlReferencesCompounds(string $sql): bool
+    {
+        return str_contains($sql, 'compounds.')
+            || str_contains($sql, 'compoundslinks.');
+    }
 
     private function handleCanUpdate(array $params, AccessType $type): void
     {

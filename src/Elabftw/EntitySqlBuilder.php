@@ -46,10 +46,13 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     public function getReadSqlBeforeWhere(
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
+        bool $withCompounds = false,
     ): string {
         $this->entitySelect($fullSelect);
         $this->userTeamMembership();
-        $this->compounds();
+        if ($withCompounds) {
+            $this->compounds();
+        }
         $this->status();
         $this->category();
         $this->comments();

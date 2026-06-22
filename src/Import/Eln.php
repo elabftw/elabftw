@@ -23,6 +23,7 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Hash\FileHash;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Comments;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
@@ -367,7 +368,7 @@ class Eln extends AbstractZip
                             $comment['dateCreated'],
                             $this->transformIfNecessary($comment['text'] ?? '', true),
                         );
-                        $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
+                        new Comments($this->Entity)->postAction(Action::Create, array('comment' => $content));
                     }
                     break;
 

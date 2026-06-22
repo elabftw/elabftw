@@ -119,8 +119,6 @@ abstract class AbstractEntity extends AbstractRest
 
     protected const string FORCE_TEMPLATE_KEY = '';
 
-    public Comments $Comments;
-
     public AbstractExperimentsLinks $ExperimentsLinks;
 
     public AbstractItemsLinks $ItemsLinks;
@@ -160,7 +158,6 @@ abstract class AbstractEntity extends AbstractRest
         $this->Steps = new Steps($this);
         $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
-        $this->Comments = new Comments($this);
         $this->TeamGroups = new TeamGroups($this->Users);
         $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
@@ -605,7 +602,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['changelog'] = new Changelog($this)->readAll();
-        $this->entityData['comments'] = $this->Comments->readAll();
+        $this->entityData['comments'] = new Comments($this)->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $this->entityData['compounds_links'] = $CompoundsLinks->readAll();

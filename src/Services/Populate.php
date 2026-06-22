@@ -23,6 +23,7 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Comments;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
@@ -256,7 +257,7 @@ final class Populate
                 }
                 if (isset($experiment['comments'])) {
                     foreach ($experiment['comments'] as $comment) {
-                        $Experiments->Comments->postAction(Action::Create, array('comment' => $comment));
+                        new Comments($Experiments)->postAction(Action::Create, array('comment' => $comment));
                     }
                 }
                 if (isset($experiment['experiments_links'])) {

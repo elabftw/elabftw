@@ -77,7 +77,7 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
     public function testInvalidSchedulerLayoutDefaultsToAuto(): void
     {
         $params = new UserParams('scheduler_layout', '999');
-        $this->assertEquals(SchedulerLayout::Auto->value, $params->getContent());
+        $this->assertEquals(SchedulerLayout::Classic->value, $params->getContent());
     }
 
     public function testDefaultReadBase(): void

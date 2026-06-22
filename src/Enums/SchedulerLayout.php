@@ -15,7 +15,7 @@ namespace Elabftw\Enums;
 
 enum SchedulerLayout: int
 {
-    case Auto = 0;
+    case Classic = 0;
     case Timeline = 1;
-    case Resource = 2;
+    case SideBySide = 2;
 }

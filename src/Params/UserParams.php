@@ -93,7 +93,7 @@ final class UserParams extends ContentParams
             'use_isodate',
             'use_markdown',
             'validated' => (string) Filter::toBinary($this->content),
-            'scheduler_layout' => (SchedulerLayout::tryFrom($this->asInt()) ?? SchedulerLayout::Auto)->value,
+            'scheduler_layout' => (SchedulerLayout::tryFrom($this->asInt()) ?? SchedulerLayout::Classic)->value,
             'theme_variant' => (ThemeVariant::tryFrom($this->asInt()) ?? ThemeVariant::Auto)->value,
             'mfa_secret' => $this->getNullableString(),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,

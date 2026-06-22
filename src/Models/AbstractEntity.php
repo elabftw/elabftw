@@ -552,11 +552,6 @@ abstract class AbstractEntity extends AbstractRest
                     if (array_key_exists('userid', $params) || array_key_exists('team', $params)) {
                         throw new ImproperActionException("Use the 'action:updateowner' to transfer ownership.");
                     }
-                    if (array_key_exists('content_type', $params)) {
-                        $this->update(new EntityParams('content_type', (string) $params['content_type']));
-                        $this->entityData['content_type'] = (int) $params['content_type'];
-                        unset($params['content_type']);
-                    }
                     foreach ($params as $key => $value) {
                         $this->update(new EntityParams($key, (string) $value));
                     }

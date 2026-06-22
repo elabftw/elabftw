@@ -160,28 +160,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringNotContainsString('<br', $entityData['body_html']);
     }
 
-    public function testMarkdownBodyPreservesLatexAlignmentAmpersandsWhenSwitchingContentType(): void
-    {
-        $body = <<<'MD'
-            $$
-            \begin{bmatrix}
-            H & \mathbf{1} \\
-            \mathbf{1}^{T} & 0
-            \end{bmatrix}
-            $$
-            MD;
-        $new = $this->Experiments->create();
-        $this->Experiments->setId($new);
-        $entityData = $this->Experiments->patch(Action::Update, array(
-            'body' => $body,
-            'content_type' => BodyContentType::Markdown->value,
-        ));
-        $this->assertSame($body, $entityData['body']);
-        $this->assertStringNotContainsString('&amp;', $entityData['body']);
-        $this->assertStringContainsString('H &amp; \mathbf{1} \\\\', $entityData['body_html']);
-        $this->assertStringNotContainsString('<br', $entityData['body_html']);
-    }
-
     public function testUpdateIncorrectState(): void
     {
         $new = $this->Experiments->create();

@@ -46,9 +46,13 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     public function getReadSqlBeforeWhere(
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
+        bool $withCompounds = false,
     ): string {
         $this->entitySelect($fullSelect);
-        $this->compounds();
+        $this->userTeamMembership();
+        if ($withCompounds) {
+            $this->compounds();
+        }
         $this->status();
         $this->category();
         $this->comments();
@@ -60,6 +64,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         if ($relatedOrigin !== null) {
             $this->links($relatedOrigin);
         }
+
         $this->usersTeams();
 
         $sql = array(
@@ -341,6 +346,16 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         return ":userid MEMBER OF (entity.$can->>'$.users')";
     }
 
+    private function userTeamMembership(): void
+    {
+        $this->joinsSql[] = sprintf(
+            'LEFT JOIN users2teams
+                ON (users2teams.users_id = entity.userid
+                    AND users2teams.teams_id = %d)',
+            $this->entity->Users->getTeam(),
+        );
+    }
+
     private function teamEvents(): void
     {
         if ($this->entity instanceof Experiments) {
@@ -380,11 +395,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
         $this->joinsSql[] = 'LEFT JOIN users
             ON (users.userid = entity.userid)';
-        $this->joinsSql[] = sprintf(
-            'LEFT JOIN users2teams
-                ON (users2teams.users_id = entity.userid and users2teams.teams_id = %d)
-            LEFT JOIN teams ON (entity.team = teams.id)',
-            $this->entity->Users->getTeam(),
-        );
+
+        $this->joinsSql[] = 'LEFT JOIN teams
+            ON (entity.team = teams.id)';
     }
 }

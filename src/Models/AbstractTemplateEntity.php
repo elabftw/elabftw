@@ -64,9 +64,4 @@ abstract class AbstractTemplateEntity extends AbstractEntity
             copyFiles: $copyFiles,
         );
     }
-
-    public function createTemplateFrom(int $entityId, ?string $title = null): int
-    {
-        return $this->copyEntityFrom(sourceEntity: $this->entityType->toConcreteEntity($this->Users, $entityId), title: $title);
-    }
 }

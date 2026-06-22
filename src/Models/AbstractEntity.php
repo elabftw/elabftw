@@ -202,6 +202,12 @@ abstract class AbstractEntity extends AbstractRest
         return $this->copyEntityFrom(sourceEntity: $this->entityType->toTemplateEntity($this->Users, $templateId), title: $title);
     }
 
+    // create a template from current entity
+    public function createTemplateFrom(int $entityId, ?string $title = null): int
+    {
+        return $this->copyEntityFrom(sourceEntity: $this->entityType->toConcreteEntity($this->Users, $entityId), title: $title);
+    }
+
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
@@ -214,6 +220,7 @@ abstract class AbstractEntity extends AbstractRest
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
                         return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
                     }
+                    // create a template from current entity
                     if (isset($reqBody['entity']) && ((int) $reqBody['entity']) !== -1) {
                         if (!($this instanceof AbstractTemplateEntity)) {
                             throw new ImproperActionException('The entity parameter is only valid for template creation.');

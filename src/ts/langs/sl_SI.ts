@@ -134,7 +134,7 @@ const t = {
     "status": "Stanje",
     "step-delete-warning": "Ali želite izbrisati ta korak?",
     "step-unfinish-warning": "Ali ste prepričani, da želite razveljaviti ta korak?",
-    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
+    "scheduler-resources-view-mode": "You can view resources side by side. Please select at least one resource to display its bookings.",
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "tags": "Oznake",
     "team": "Ekipa",

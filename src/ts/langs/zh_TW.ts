@@ -134,7 +134,7 @@ const t = {
     "status": "狀態",
     "step-delete-warning": "是否刪除此步驟？",
     "step-unfinish-warning": "您確定要復原此步驟嗎？",
-    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
+    "scheduler-resources-view-mode": "You can view resources side by side. Please select at least one resource to display its bookings.",
     "tag-delete-warning": "是否刪除此標籤？",
     "tags": "標籤",
     "team": "團隊",

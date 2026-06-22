@@ -11,13 +11,31 @@
         {# schedulerSettings #}
         <div class='mb-2'>
           {% include 'binary-setting.html' with {'label': 'Show weekends'|trans, 'model': 'users/me', 'slug': 'show_weekends', 'src': src} %}
-          <div class='d-flex justify-content-between'>
-            <label for='scheduler_layout' class='col-form-label'>{{ 'Scheduler layout'|trans }}</label>
-            <select id='scheduler_layout' class='form-control w-auto' autocomplete='off' data-trigger='change' data-model='users/me' data-target='scheduler_layout'>
-              <option value='0' {{ App.Users.userData.scheduler_layout == 0 ? 'selected' }}>{{ 'Classic'|trans }}</option>
-              <option value='1' {{ App.Users.userData.scheduler_layout == 1 ? 'selected' }}>{{ 'Timeline'|trans }}</option>
-              <option value='2' {{ App.Users.userData.scheduler_layout == 2 ? 'selected' }}>{{ 'Resource'|trans }}</option>
-            </select>
+          <div>
+            <label class='col-form-label'>{{ 'Scheduler layout'|trans }}</label>
+            <div>
+              <label>
+                <input type='radio' name='scheduler_layout' value='0' autocomplete='off' data-trigger='change' data-model='users/me' data-target='scheduler_layout' {{ App.Users.userData.scheduler_layout == 0 ? 'checked' }}>
+                {{ 'Classic'|trans }}
+                <small class='text-muted'> - {{ 'Standard calendar view.'|trans }}</small>
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <input type='radio' name='scheduler_layout' value='1' autocomplete='off' data-trigger='change' data-model='users/me' data-target='scheduler_layout' {{ App.Users.userData.scheduler_layout == 1 ? 'checked' }}>
+                {{ 'Timeline'|trans }}
+                <small class='text-muted'> - {{ 'Chronological timeline view.'|trans }}</small>
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <input type='radio' name='scheduler_layout' value='2' autocomplete='off' data-trigger='change' data-model='users/me' data-target='scheduler_layout' {{ App.Users.userData.scheduler_layout == 2 ? 'checked' }}>
+                {{ 'Resource'|trans }}
+                <small class='text-muted'> - {{ 'Grouped by resource, side by side.'|trans }}</small>
+              </label>
+            </div>
           </div>
         </div>
       </div>

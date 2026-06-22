@@ -134,7 +134,7 @@ const t = {
     "status": "상태",
     "step-delete-warning": "단계를 삭제할까요?",
     "step-unfinish-warning": "정말 이 단계를 되돌리기하시겠습니까?",
-    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
+    "scheduler-resources-view-mode": "You can view resources side by side. Please select at least one resource to display its bookings.",
     "tag-delete-warning": "이 태그를 삭제할까요?",
     "tags": "태그",
     "team": "팀",

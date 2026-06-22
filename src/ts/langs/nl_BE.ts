@@ -134,7 +134,7 @@ const t = {
     "status": "Status",
     "step-delete-warning": "Deze stap verwijderen?",
     "step-unfinish-warning": "Ben je zeker dat je deze stap ongedaan wil maken?",
-    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
+    "scheduler-resources-view-mode": "You can view resources side by side. Please select at least one resource to display its bookings.",
     "tag-delete-warning": "Dit label verwijderen?",
     "tags": "Labels",
     "team": "Team",

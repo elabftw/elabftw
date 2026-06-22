@@ -134,7 +134,7 @@ const t = {
     "status": "状态",
     "step-delete-warning": "删除此步骤？",
     "step-unfinish-warning": "确实要撤消此步骤吗？",
-    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
+    "scheduler-resources-view-mode": "You can view resources side by side. Please select at least one resource to display its bookings.",
     "tag-delete-warning": "删除这个标签？",
     "tags": "标签",
     "team": "团队",

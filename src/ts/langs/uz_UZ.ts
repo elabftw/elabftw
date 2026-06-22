@@ -134,7 +134,7 @@ const t = {
     "status": "Holat",
     "step-delete-warning": "Bu qadam oʻchirilsinmi?",
     "step-unfinish-warning": "Haqiqatan ham bu qadamni bekor qilmoqchimisiz?",
-    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
+    "scheduler-resources-view-mode": "You can view resources side by side. Please select at least one resource to display its bookings.",
     "tag-delete-warning": "Bu teg oʻchirilsinmi?",
     "tags": "Teglar",
     "team": "Jamoa",

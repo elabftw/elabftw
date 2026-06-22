@@ -134,7 +134,7 @@ const t = {
     "status": "ステータス",
     "step-delete-warning": "このステップを削除しますか？",
     "step-unfinish-warning": "本当にこのステップを取り消しますか？",
-    "scheduler-resources-view-mode": "You are in resource-view mode. Please select a resource to display its bookings.",
+    "scheduler-resources-view-mode": "You can view resources side by side. Please select at least one resource to display its bookings.",
     "tag-delete-warning": "このタグを削除しますか？",
     "tags": "タグ",
     "team": "チーム",

@@ -196,12 +196,6 @@ abstract class AbstractEntity extends AbstractRest
     // Duplicate an entity, adding ' I' to the title to make the copy noticeable.
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
 
-    // create an entity from a template
-    public function createFromTemplate(int $templateId, ?string $title = null): int
-    {
-        return $this->copyEntityFrom(sourceEntity: $this->entityType->toTemplateEntity($this->Users, $templateId), title: $title);
-    }
-
     // create a template from current entity
     public function createTemplateFrom(int $entityId, ?string $title = null): int
     {
@@ -217,8 +211,11 @@ abstract class AbstractEntity extends AbstractRest
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
+                    // create an entity from a template
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
-                        return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
+                        $entity = $this->entityType->toTemplateEntity($this->Users, (int) $reqBody['template']);
+                        $title = $reqBody['title'] ?? null;
+                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title);
                     }
                     // create a template from current entity
                     if (isset($reqBody['entity']) && ((int) $reqBody['entity']) !== -1) {

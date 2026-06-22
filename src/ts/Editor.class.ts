@@ -14,9 +14,25 @@ import { Entity, Target } from './interfaces';
 import { ApiC } from './api';
 declare const MathJax: MathJaxObject;
 
+const LINE_BREAK_REGEX = String.raw`\r\n|\r|\n`;
+const DISPLAY_MATH_REGEX_FLAGS = 'g';
+
+function buildDisplayMathRegex(openDelimiter: string, closeDelimiter: string): RegExp {
+  return new RegExp(
+    [
+      `(^|${LINE_BREAK_REGEX})`,
+      `([ \\t]*${openDelimiter}[ \\t]*(?:${LINE_BREAK_REGEX})`,
+      String.raw`[\s\S]*?`,
+      `(?:${LINE_BREAK_REGEX})[ \\t]*${closeDelimiter}[ \\t]*`,
+      `(?=${LINE_BREAK_REGEX}|$))`,
+    ].join(''),
+    DISPLAY_MATH_REGEX_FLAGS,
+  );
+}
+
 const DISPLAY_MATH_REGEXES = [
-  /(^|\r\n|\r|\n)([ \t]*\$\$[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\$\$[ \t]*(?=\r\n|\r|\n|$))/g,
-  /(^|\r\n|\r|\n)([ \t]*\\\[[ \t]*(?:\r\n|\r|\n)[\s\S]*?(?:\r\n|\r|\n)[ \t]*\\\][ \t]*(?=\r\n|\r|\n|$))/g,
+  buildDisplayMathRegex(String.raw`\$\$`, String.raw`\$\$`),
+  buildDisplayMathRegex(String.raw`\\\[`, String.raw`\\\]`),
 ];
 interface EditorInterface {
   type: string;

@@ -219,7 +219,7 @@ class Eln extends AbstractZip
      */
     private function restoreEntityLifecycle(array $dataset): void
     {
-        $state = State::fromName($dataset['elabftw:state'] ?? State::Normal->name);
+        $state = State::fromName($dataset['lifecycleStatus'] ?? State::Normal->name);
         match ($state) {
             State::Archived => $this->Entity->patch(Action::Archive, array()),
             State::Deleted => $this->Entity->patch(Action::Destroy, array()),
@@ -512,8 +512,8 @@ class Eln extends AbstractZip
         $this->restoreEntityLifecycle($dataset);
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
-        if (!empty($dataset['elabftw:changelog'])) {
-            new Changelog($this->Entity)->replaceAll($dataset['elabftw:changelog']);
+        if (!empty($dataset['auditTrail'])) {
+            new Changelog($this->Entity)->replaceAll($dataset['auditTrail']);
         }
     }
 

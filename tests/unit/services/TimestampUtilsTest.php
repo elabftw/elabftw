@@ -1,4 +1,5 @@
 <?php
+
 // unit fails: see https://github.com/elabftw/elabftw/issues/6613
 declare(strict_types=1);
 /**

@@ -292,12 +292,28 @@ class MakeEln extends AbstractMakeEln
             'inDefinedTermSet' => 'eLabFTW entity state',
         );
 
+        // CHANGELOG
+        foreach ($e['changelog'] ?? array() as $change) {
+            $hash = hash(self::HASH_ALGO, random_bytes(6));
+            $id = sprintf('changelog://%s?hash_algo=%s', $hash, self::HASH_ALGO);
+
+            $hasPart[] = array('@id' => $id);
+
+            $this->dataEntities[] = array(
+                '@id' => $id,
+                '@type' => 'CreativeWork',
+                'dateCreated' => new DateTimeImmutable($change['created_at'])->format(DateTimeImmutable::ATOM),
+                'name' => $change['target'] ?? 'changelog',
+                'text' => $change['content'] ?? '',
+                'author' => array('@id' => $this->getAuthorId(new Users((int) ($change['userid'] ?? $e['userid'])))),
+            );
+        }
+
         $datasetNode = self::addIfNotEmpty(
             $datasetNode,
             array('alternateName' => $e['custom_id'] ?? ''),
             array('comment' => $comments),
             array('creativeWorkStatus' => $creativeWorkStatus),
-            array('elabftw:changelog' => $e['changelog'] ?? array()),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),
             array('keywords' => $keywords),

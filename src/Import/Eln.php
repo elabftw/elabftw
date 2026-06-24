@@ -509,16 +509,20 @@ class Eln extends AbstractZip
 
         $this->inserted++;
         // now loop over the parts of this node to find the rest of the files
-        // the getNodeFromId might return nothing but that's okay, we just continue to try and find stuff
+        // changelog entries are also in hasPart, but they are restored separately
+        $changelog = array();
         foreach ($dataset['hasPart'] ?? array() as $part) {
-            $this->importPart($this->getNodeFromId($part['@id']));
+            $change = $this->importPart($this->getNodeFromId($part['@id']));
+            if ($change !== null) {
+                $changelog[] = $change;
+            }
         }
 
         $this->restoreEntityLifecycle($dataset);
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
-        if (!empty($dataset['elabftw:changelog'])) {
-            new Changelog($this->Entity)->replaceAll($dataset['elabftw:changelog']);
+        if (!empty($changelog)) {
+            new Changelog($this->Entity)->replaceAll($changelog);
         }
     }
 
@@ -547,10 +551,10 @@ class Eln extends AbstractZip
         return $html . '</ul>';
     }
 
-    private function importPart(array $part): void
+    private function importPart(array $part): ?array
     {
         if (!array_key_exists('@type', $part) || empty($part['@type'])) {
-            return;
+            return null;
         }
 
         switch ($part['@type']) {
@@ -565,13 +569,24 @@ class Eln extends AbstractZip
             case 'File':
                 if (str_starts_with($part['@id'], 'http')) {
                     // we don't import remote files
-                    return;
+                    return null;
                 }
                 $this->importFile($part);
                 break;
+            case 'CreativeWork':
+                if (str_starts_with($part['@id'], 'changelog://')) {
+                    return array(
+                        'created_at' => new DateTimeImmutable($part['dateCreated'])->format('Y-m-d H:i:s'),
+                        'target' => $part['name'] ?? 'import',
+                        'content' => $part['text'] ?? '',
+                        'userid' => $this->requester->getUserid(),
+                    );
+                }
+                break;
             default:
-                return;
+                return null;
         }
+        return null;
     }
 
     private function importFile(array $file): void

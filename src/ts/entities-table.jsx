@@ -150,7 +150,7 @@ const EntitiesTable = ({
 
   const RatingsRenderer = ({ value }) => {
     return Number(value) > 0
-      ? <span className='rating-show rounded p-1 font-weight-bold'><i className='fas fa-star mr-1' title='☻'></i>{value}</span>
+      ? <span className='rating-show rounded p-1 font-weight-bold'><i className='fas fa-star mr-1' aria-hidden='true'></i>{value}</span>
       : null;
   };
 

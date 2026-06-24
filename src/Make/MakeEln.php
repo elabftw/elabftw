@@ -278,11 +278,25 @@ class MakeEln extends AbstractMakeEln
             'url' => Env::asUrl('SITE_URL') . '/' . $entity->entityType->toPage() . ($entity->entityType == EntityType::ItemsTypes ? '&' : '?') . 'mode=view&id=' . $e['id'],
             'genre' => $entity->entityType->toGenre(),
         );
+        $creativeWorkStatus = array();
+        if (!empty($e['status_title'])) {
+            $creativeWorkStatus[] = array(
+                '@type' => 'DefinedTerm',
+                'name' => $e['status_title'],
+                'inDefinedTermSet' => 'eLabFTW status',
+            );
+        }
+        $creativeWorkStatus[] = array(
+            '@type' => 'DefinedTerm',
+            'name' => State::from((int) ($e['state'] ?? State::Normal->value))->name,
+            'inDefinedTermSet' => 'eLabFTW entity state',
+        );
+
         $datasetNode = self::addIfNotEmpty(
             $datasetNode,
             array('alternateName' => $e['custom_id'] ?? ''),
             array('comment' => $comments),
-            array('creativeWorkStatus' => $e['status_title'] ?? ''),
+            array('creativeWorkStatus' => $creativeWorkStatus),
             array('elabftw:changelog' => $e['changelog'] ?? array()),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),
@@ -290,8 +304,9 @@ class MakeEln extends AbstractMakeEln
             array('mentions' => $mentions),
             array('text' => $e['body']),
         );
-        $datasetNode['elabftw:state'] = State::from((int) ($e['state'] ?? State::Normal->value))->name;
-        $datasetNode['elabftw:isLocked'] = !empty($e['locked']) ? 'true' : 'false';
+        if (!empty($e['locked'])) {
+            $datasetNode['conditionsOfAccess'] = 'Locked';
+        }
         if (!empty($e['category_title'])) {
             $categoryAtId = '#category-' . $e['category_title'];
             // only add it once

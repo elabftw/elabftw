@@ -219,7 +219,7 @@ class Eln extends AbstractZip
      */
     private function restoreEntityLifecycle(array $dataset): void
     {
-        $state = State::fromName($dataset['elabftw:state'] ?? State::Normal->name);
+        $state = State::fromName($this->getCreativeWorkStatusTerm($dataset, 'eLabFTW entity state') ?: State::Normal->name);
         match ($state) {
             State::Archived => $this->Entity->patch(Action::Archive, array()),
             State::Deleted => $this->Entity->patch(Action::Destroy, array()),
@@ -228,7 +228,7 @@ class Eln extends AbstractZip
         if ($state !== State::Normal) {
             return;
         }
-        if (($dataset['elabftw:isLocked'] ?? 'false') === 'true') {
+        if (($dataset['conditionsOfAccess'] ?? '') === 'Locked') {
             $this->Entity->patch(Action::Lock, array());
         }
     }
@@ -446,7 +446,12 @@ class Eln extends AbstractZip
                     break;
                     // STATUS
                 case 'creativeWorkStatus':
-                    $this->Entity->update(new EntityParams('status', (string) $this->getStatusId($entityType, $value)));
+                    // status includes the elabftw status & states
+                    $statusTitle = is_string($value) ? $value : $this->getCreativeWorkStatusTerm($dataset, 'eLabFTW status');
+
+                    if (!empty($statusTitle)) {
+                        $this->Entity->update(new EntityParams('status', (string) $this->getStatusId($entityType, $statusTitle)));
+                    }
                     break;
                     // STEPS
                 case 'step':
@@ -515,6 +520,17 @@ class Eln extends AbstractZip
         if (!empty($dataset['elabftw:changelog'])) {
             new Changelog($this->Entity)->replaceAll($dataset['elabftw:changelog']);
         }
+    }
+
+    /* elabftw specific terms added in DefinedTerm */
+    private function getCreativeWorkStatusTerm(array $dataset, string $termSet): string
+    {
+        foreach ($dataset['creativeWorkStatus'] ?? array() as $term) {
+            if (($term['inDefinedTermSet'] ?? '') === $termSet) {
+                return (string) $term['name'];
+            }
+        }
+        return '';
     }
 
     private function attrToHtml(array $attr, string $title): string

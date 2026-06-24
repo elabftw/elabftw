@@ -526,14 +526,21 @@ class Eln extends AbstractZip
         }
     }
 
-    /* elabftw specific terms added in DefinedTerm */
+    // elabftw specific terms added in DefinedTerm
     private function getCreativeWorkStatusTerm(array $dataset, string $termSet): string
     {
-        foreach ($dataset['creativeWorkStatus'] ?? array() as $term) {
+        $creativeWorkStatus = $dataset['creativeWorkStatus'] ?? array();
+
+        if (is_string($creativeWorkStatus)) {
+            return $termSet === 'eLabFTW status' ? $creativeWorkStatus : '';
+        }
+
+        foreach ($creativeWorkStatus as $term) {
             if (($term['inDefinedTermSet'] ?? '') === $termSet) {
                 return (string) $term['name'];
             }
         }
+
         return '';
     }
 

@@ -219,7 +219,7 @@ class Eln extends AbstractZip
      */
     private function restoreEntityLifecycle(array $dataset): void
     {
-        $state = State::fromName($this->getCreativeWorkStatusTerm($dataset, 'eLabFTW entity state') ?: State::Normal->name);
+        $state = State::fromName($dataset['elabftw:state'] ?? State::Normal->name);
         match ($state) {
             State::Archived => $this->Entity->patch(Action::Archive, array()),
             State::Deleted => $this->Entity->patch(Action::Destroy, array()),
@@ -446,12 +446,7 @@ class Eln extends AbstractZip
                     break;
                     // STATUS
                 case 'creativeWorkStatus':
-                    // status includes the elabftw status & states
-                    $statusTitle = is_string($value) ? $value : $this->getCreativeWorkStatusTerm($dataset, 'eLabFTW status');
-
-                    if (!empty($statusTitle)) {
-                        $this->Entity->update(new EntityParams('status', (string) $this->getStatusId($entityType, $statusTitle)));
-                    }
+                    $this->Entity->update(new EntityParams('status', (string) $this->getStatusId($entityType, $value)));
                     break;
                     // STEPS
                 case 'step':
@@ -509,39 +504,17 @@ class Eln extends AbstractZip
 
         $this->inserted++;
         // now loop over the parts of this node to find the rest of the files
-        // changelog entries are also in hasPart, but they are restored separately
-        $changelog = array();
+        // the getNodeFromId might return nothing but that's okay, we just continue to try and find stuff
         foreach ($dataset['hasPart'] ?? array() as $part) {
-            $change = $this->importPart($this->getNodeFromId($part['@id']));
-            if ($change !== null) {
-                $changelog[] = $change;
-            }
+            $this->importPart($this->getNodeFromId($part['@id']));
         }
 
         $this->restoreEntityLifecycle($dataset);
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
-        if (!empty($changelog)) {
-            new Changelog($this->Entity)->replaceAll($changelog);
+        if (!empty($dataset['elabftw:changelog'])) {
+            new Changelog($this->Entity)->replaceAll($dataset['elabftw:changelog']);
         }
-    }
-
-    // elabftw specific terms added in DefinedTerm
-    private function getCreativeWorkStatusTerm(array $dataset, string $termSet): string
-    {
-        $creativeWorkStatus = $dataset['creativeWorkStatus'] ?? array();
-
-        if (is_string($creativeWorkStatus)) {
-            return $termSet === 'eLabFTW status' ? $creativeWorkStatus : '';
-        }
-
-        foreach ($creativeWorkStatus as $term) {
-            if (($term['inDefinedTermSet'] ?? '') === $termSet) {
-                return (string) $term['name'];
-            }
-        }
-
-        return '';
     }
 
     private function attrToHtml(array $attr, string $title): string
@@ -558,10 +531,10 @@ class Eln extends AbstractZip
         return $html . '</ul>';
     }
 
-    private function importPart(array $part): ?array
+    private function importPart(array $part): void
     {
         if (!array_key_exists('@type', $part) || empty($part['@type'])) {
-            return null;
+            return;
         }
 
         switch ($part['@type']) {
@@ -576,24 +549,12 @@ class Eln extends AbstractZip
             case 'File':
                 if (str_starts_with($part['@id'], 'http')) {
                     // we don't import remote files
-                    return null;
+                    return;
                 }
                 $this->importFile($part);
                 break;
-            case 'CreativeWork':
-                if (str_starts_with($part['@id'], 'changelog://')) {
-                    return array(
-                        'created_at' => new DateTimeImmutable($part['dateCreated'])->format('Y-m-d H:i:s'),
-                        'target' => $part['name'] ?? 'import',
-                        'content' => $part['text'] ?? '',
-                        'userid' => $this->requester->getUserid(),
-                    );
-                }
-                break;
             default:
-                return null;
         }
-        return null;
     }
 
     private function importFile(array $file): void

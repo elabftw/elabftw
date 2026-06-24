@@ -278,51 +278,21 @@ class MakeEln extends AbstractMakeEln
             'url' => Env::asUrl('SITE_URL') . '/' . $entity->entityType->toPage() . ($entity->entityType == EntityType::ItemsTypes ? '&' : '?') . 'mode=view&id=' . $e['id'],
             'genre' => $entity->entityType->toGenre(),
         );
-        $creativeWorkStatus = array();
-        if (!empty($e['status_title'])) {
-            $creativeWorkStatus[] = array(
-                '@type' => 'DefinedTerm',
-                'name' => $e['status_title'],
-                'inDefinedTermSet' => 'eLabFTW status',
-            );
-        }
-        $creativeWorkStatus[] = array(
-            '@type' => 'DefinedTerm',
-            'name' => State::from((int) ($e['state'] ?? State::Normal->value))->name,
-            'inDefinedTermSet' => 'eLabFTW entity state',
-        );
-
-        // CHANGELOG
-        foreach ($e['changelog'] ?? array() as $change) {
-            $hash = hash(self::HASH_ALGO, random_bytes(6));
-            $id = sprintf('changelog://%s?hash_algo=%s', $hash, self::HASH_ALGO);
-
-            $hasPart[] = array('@id' => $id);
-
-            $this->dataEntities[] = array(
-                '@id' => $id,
-                '@type' => 'CreativeWork',
-                'dateCreated' => new DateTimeImmutable($change['created_at'])->format(DateTimeImmutable::ATOM),
-                'name' => $change['target'] ?? 'changelog',
-                'text' => $change['content'] ?? '',
-                'author' => array('@id' => $this->getAuthorId(new Users((int) ($change['userid'] ?? $e['userid'])))),
-            );
-        }
 
         $datasetNode = self::addIfNotEmpty(
             $datasetNode,
             array('alternateName' => $e['custom_id'] ?? ''),
             array('comment' => $comments),
-            array('creativeWorkStatus' => $creativeWorkStatus),
+            array('conditionsOfAccess' => !empty($e['locked']) ? 'Locked' : ''),
+            array('creativeWorkStatus' => $e['status_title'] ?? ''),
+            array('elabftw:changelog' => $e['changelog'] ?? array()),
+            array('elabftw:state' => State::from((int) ($e['state'] ?? State::Normal->value))->name),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),
             array('keywords' => $keywords),
             array('mentions' => $mentions),
             array('text' => $e['body']),
         );
-        if (!empty($e['locked'])) {
-            $datasetNode['conditionsOfAccess'] = 'Locked';
-        }
         if (!empty($e['category_title'])) {
             $categoryAtId = '#category-' . $e['category_title'];
             // only add it once

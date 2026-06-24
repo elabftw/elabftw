@@ -286,7 +286,7 @@ class MakeEln extends AbstractMakeEln
             array('conditionsOfAccess' => !empty($e['locked']) ? 'Locked' : ''),
             array('creativeWorkStatus' => $e['status_title'] ?? ''),
             array('auditTrail' => $e['changelog'] ?? array()),
-            array('lifecycleStatus' => State::from((int) ($e['state'] ?? State::Normal->value))->name),
+            array('status' => State::from((int) ($e['state'] ?? State::Normal->value))->name),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),
             array('keywords' => $keywords),

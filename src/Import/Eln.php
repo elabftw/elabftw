@@ -219,7 +219,7 @@ class Eln extends AbstractZip
      */
     private function restoreEntityLifecycle(array $dataset): void
     {
-        $state = State::fromName($dataset['lifecycleStatus'] ?? State::Normal->name);
+        $state = State::fromName($dataset['status'] ?? State::Normal->name);
         match ($state) {
             State::Archived => $this->Entity->patch(Action::Archive, array()),
             State::Deleted => $this->Entity->patch(Action::Destroy, array()),

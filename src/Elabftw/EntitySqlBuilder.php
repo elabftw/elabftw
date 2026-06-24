@@ -20,6 +20,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\AnonymousUser;
 use Override;
 
@@ -328,7 +329,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      */
     protected function canTeamGroups(string $can): string
     {
-        $teamgroupsOfUser = array_column($this->entity->TeamGroups->readGroupsFromUser(), 'id');
+        $TeamGroups = new TeamGroups($this->entity->Users);
+        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)

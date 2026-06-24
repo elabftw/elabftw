@@ -49,13 +49,31 @@ enum EntityType: string
         };
     }
 
+    public function toConcreteEntity(Users $users, ?int $entityId = null, ?bool $bypassReadPermission = null, ?bool $bypassWritePermission = null): AbstractEntity
+    {
+        return match ($this) {
+            self::Experiments,
+            self::Templates => new Experiments($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+            self::Items,
+            self::ItemsTypes => new Items($users, $entityId, $bypassReadPermission, $bypassWritePermission),
+        };
+    }
+
     public function asTemplateTypeOrNull(): ?EntityType
     {
         return match ($this) {
             self::Experiments => self::Templates,
-            self::Templates  => null,
+            self::Templates, self::ItemsTypes => null,
             self::Items => self::ItemsTypes,
-            self::ItemsTypes => null,
+        };
+    }
+
+    public function asEntityTypeOrNull(): ?EntityType
+    {
+        return match ($this) {
+            self::Experiments, self::Items => null,
+            self::Templates => self::Experiments,
+            self::ItemsTypes => self::Items,
         };
     }
 

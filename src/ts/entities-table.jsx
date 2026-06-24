@@ -27,13 +27,96 @@ const lastLoginText = v => v === null ? i18next.t('never') : v;
 let entitiesTableRoot = null;
 const isExtendedSearch = value => /(?:^|\s)\w+:[^\s]+/.test(value);
 
+const normalizeStringParam = value => {
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  return String(value).trim();
+};
+
+const normalizeNumberParam = value => {
+  const stringValue = normalizeStringParam(value);
+
+  if (stringValue.length === 0) {
+    return null;
+  }
+
+  const numberValue = Number(stringValue);
+
+  return Number.isFinite(numberValue) ? numberValue : null;
+};
+
+const applyStringParamFallback = (params, param, fallback) => {
+  if ((params.get(param) ?? '').length > 0) {
+    return;
+  }
+
+  const value = normalizeStringParam(fallback);
+
+  if (value.length > 0) {
+    params.set(param, value);
+  }
+};
+
+const applyNumberParamFallback = (params, param, fallback) => {
+  const urlValue = params.get(param);
+
+  if (urlValue !== null && urlValue.length > 0) {
+    const numberValue = normalizeNumberParam(urlValue);
+
+    if (numberValue === null) {
+      params.delete(param);
+      return;
+    }
+
+    params.set(param, String(numberValue));
+    return;
+  }
+
+  const value = normalizeNumberParam(fallback);
+
+  if (value !== null) {
+    params.set(param, String(value));
+  }
+};
+
+const getEntityFilterParams = event => {
+  const detail = event?.detail;
+
+  if (detail instanceof URLSearchParams) {
+    return new URLSearchParams(detail);
+  }
+
+  if (typeof detail === 'string') {
+    return new URLSearchParams(detail);
+  }
+
+  if (detail?.params) {
+    return new URLSearchParams(detail.params);
+  }
+
+  if (detail?.search) {
+    return new URLSearchParams(detail.search);
+  }
+
+  return new URLSearchParams(document.location.search);
+};
+
 const rowSelection = {
   mode: 'multiRow',
   headerCheckbox: true,
   selectAll: 'currentPage',
 };
 
-const EntitiesTable = ({ searchQuery, selectedEntities }) => {
+const EntitiesTable = ({
+  searchQuery,
+  selectedEntities,
+  order = 'date',
+  sort = 'desc',
+  related = null,
+  relatedOrigin = '',
+}) => {
   const [rowData, setRowData] = useState([]);
   const gridApiRef = useRef(null);
   const isDark = document.documentElement.classList.contains('dark-mode');
@@ -108,41 +191,31 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
     { field: 'locked', headerName: i18next.t('Is locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },
   ]);
 
-   const getEntityFilterParams = event => {
-    const detail = event?.detail;
+  const getResolvedEntityFilterParams = useCallback(event => {
+    const params = getEntityFilterParams(event);
 
-    if (detail instanceof URLSearchParams) {
-      return detail;
-    }
+    applyStringParamFallback(params, 'order', order);
+    applyStringParamFallback(params, 'sort', sort);
+    applyNumberParamFallback(params, 'related', related);
+    applyStringParamFallback(params, 'related_origin', relatedOrigin);
 
-    if (typeof detail === 'string') {
-      return new URLSearchParams(detail);
-    }
-
-    if (detail?.params) {
-      return new URLSearchParams(detail.params);
-    }
-
-    if (detail?.search) {
-      return new URLSearchParams(detail.search);
-    }
-
-    return new URLSearchParams(document.location.search);
-  };
+    return params;
+  }, [order, sort, related, relatedOrigin]);
 
   // all the entries are loaded in the table, which does client side pagination
   const fetchData = useCallback(async event => {
-    const params = getEntityFilterParams(event);
+    const params = getResolvedEntityFilterParams(event);
     const queryString = params.toString();
 
     try {
       const endpoint = getEntityTypeFromPage(window.location);
-      const entities = await ApiC.getJson(`${endpoint}?${queryString ? `&${queryString}` : ''}`, {notifOnError: 0});
+      const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+      const entities = await ApiC.getJson(url, {notifOnError: 0});
       setRowData(entities);
     } catch (error) {
       console.error(`Could not load entities: ${error}`);
     }
-  }, []);
+  }, [getResolvedEntityFilterParams]);
 
   const getRowId = useCallback(params => String(params.data.id), []);
 
@@ -233,14 +306,26 @@ const EntitiesTable = ({ searchQuery, selectedEntities }) => {
   );
 };
 
-const App = ({ searchQuery, selectedEntities }) => (
+const App = ({ searchQuery, selectedEntities, order, sort, related, relatedOrigin }) => (
   <EntitiesTable
     searchQuery={searchQuery}
     selectedEntities={selectedEntities}
+    order={order}
+    sort={sort}
+    related={related}
+    relatedOrigin={relatedOrigin}
   />
 );
 
-export const mountEntitiesTable = (rootElement, searchQuery, selectedEntities) => {
+export const mountEntitiesTable = (
+  rootElement,
+  searchQuery,
+  selectedEntities,
+  order = 'date',
+  sort = 'desc',
+  related = null,
+  relatedOrigin = '',
+) => {
   if (!rootElement) {
     return null;
   }
@@ -252,11 +337,15 @@ export const mountEntitiesTable = (rootElement, searchQuery, selectedEntities) =
   }
 
   entitiesTableRoot.render(
-  <App
-    searchQuery={searchQuery}
-    selectedEntities={selectedEntities}
-  />
-);
+    <App
+      searchQuery={searchQuery}
+      selectedEntities={selectedEntities}
+      order={order}
+      sort={sort}
+      related={related}
+      relatedOrigin={relatedOrigin}
+    />
+  );
 
   return entitiesTableRoot;
 };

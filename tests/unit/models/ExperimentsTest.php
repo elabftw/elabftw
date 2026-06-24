@@ -85,7 +85,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
         $tpl = $Templates->create(title: 'my template');
-        $new = $this->Experiments->createFromTemplate($tpl);
+        $new = $this->Experiments->postAction(Action::Create, array('template' => $tpl));
         $this->assertTrue((bool) Check::id($new));
         $newExp = new Experiments($this->Users, $new);
         $this->assertTrue($newExp->destroy());

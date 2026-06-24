@@ -143,6 +143,8 @@ abstract class AbstractLinks extends AbstractRest
         if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
             return 0;
         }
+        // this will throw exception if we don't have read access to target entity
+        $this->getTargetType()->toInstance($this->Entity->Users, $this->id);
 
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';

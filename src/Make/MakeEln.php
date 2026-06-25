@@ -278,7 +278,6 @@ class MakeEln extends AbstractMakeEln
             'url' => Env::asUrl('SITE_URL') . '/' . $entity->entityType->toPage() . ($entity->entityType == EntityType::ItemsTypes ? '&' : '?') . 'mode=view&id=' . $e['id'],
             'genre' => $entity->entityType->toGenre(),
         );
-
         $datasetNode = self::addIfNotEmpty(
             $datasetNode,
             array('alternateName' => $e['custom_id'] ?? ''),
@@ -491,9 +490,7 @@ class MakeEln extends AbstractMakeEln
         return $id;
     }
 
-    /**
-     * Process entity links and optionally return them as RO-Crate mentions.
-     */
+    // Process entity links and optionally return them as RO-Crate mentions.
     private function processEntityLinks(array $links, string $type, bool $asMentions): array
     {
         $mentions = array();

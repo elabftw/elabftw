@@ -217,9 +217,10 @@ class Eln extends AbstractZip
      * This must run after all content, uploads and links are imported because
      * archived, deleted or locked entities can no longer be freely modified.
      */
-    private function restoreEntityLifecycle(array $dataset): void
+    private function restoreEntityLifecycle(string $stateName, string $conditionsOfAccess): void
     {
-        $state = State::fromName($dataset['status'] ?? State::Normal->name);
+        // normal - archived - deleted state
+        $state = State::fromName($stateName);
         match ($state) {
             State::Archived => $this->Entity->patch(Action::Archive, array()),
             State::Deleted => $this->Entity->patch(Action::Destroy, array()),
@@ -228,7 +229,8 @@ class Eln extends AbstractZip
         if ($state !== State::Normal) {
             return;
         }
-        if (($dataset['conditionsOfAccess'] ?? '') === 'Locked') {
+        // locked - unlocked state
+        if ($conditionsOfAccess === 'Locked') {
             $this->Entity->patch(Action::Lock, array());
         }
     }
@@ -509,7 +511,10 @@ class Eln extends AbstractZip
             $this->importPart($this->getNodeFromId($part['@id']));
         }
 
-        $this->restoreEntityLifecycle($dataset);
+        $this->restoreEntityLifecycle(
+            $dataset['status'] ?? State::Normal->name,
+            $dataset['conditionsOfAccess'] ?? '',
+        );
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
         if (!empty($dataset['auditTrail'])) {

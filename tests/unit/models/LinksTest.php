@@ -14,6 +14,8 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Models\Links\Experiments2ExperimentsLinks;
 use Elabftw\Models\Links\Experiments2ItemsLinks;
 use Elabftw\Models\Links\ItemsTypes2ItemsLinks;
 use Elabftw\Models\Users\AuthenticatedUser;
@@ -227,7 +229,8 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $Experiments->ExperimentsLinks->postAction(Action::Create, array());
 
         // User 5 from team bravo creates experiment C and adds a link to experiment A
-        $Experiments = new Experiments(new Users(5, 2));
+        // Need AuthenticatedUser so organization-wide permissions are evaluated like in the app
+        $Experiments = new Experiments(new AuthenticatedUser(5, 2));
         $ExperimentCId = $Experiments->create(
             title: 'Experiment C',
             canreadBase: BasePermissions::Organization,
@@ -301,5 +304,20 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $templateLinks = $ItemsTypes->ItemsLinks->readRelated();
         $this->assertNotEquals($itemsLinks, $templateLinks);
         $this->assertEmpty($ItemsTypes->ItemsLinks->readAll());
+    }
+
+    public function testLinkingToEntryWithoutReadAccessToTarget(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Experiments = new Experiments($user);
+        // default permissions will make it unreadable from a user from another team: no need to restrict permissions further
+        $targetId = $Experiments->postAction(Action::Create, array());
+
+        $attacker = $this->getRandomUserInTeam(2);
+        $Experiments = new Experiments($attacker);
+        $id = $Experiments->postAction(Action::Create, array());
+        $Experiments->setId($id);
+        $this->expectException(ForbiddenException::class);
+        new Experiments2ExperimentsLinks($Experiments, $targetId)->postAction(Action::Create, array());
     }
 }

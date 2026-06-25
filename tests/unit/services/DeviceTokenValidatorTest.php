@@ -25,19 +25,26 @@ class DeviceTokenValidatorTest extends \PHPUnit\Framework\TestCase
     public function testValidateValidToken(): void
     {
         $validToken = DeviceToken::getToken(1);
-        $DeviceTokenValidator = new DeviceTokenValidator($this->config, $validToken);
+        $DeviceTokenValidator = new DeviceTokenValidator($this->config, $validToken, 1);
         $DeviceTokenValidator->validate();
+    }
+
+    public function testValidateValidTokenWrongUser(): void
+    {
+        $validToken = DeviceToken::getToken(1);
+        $TokenAttacker = new DeviceTokenValidator($this->config, $validToken, 80);
+        $TokenAttacker->validate();
     }
 
     public function testUndecodableToken(): void
     {
-        $DeviceTokenValidator = new DeviceTokenValidator($this->config, '..');
+        $DeviceTokenValidator = new DeviceTokenValidator($this->config, '..', 1);
         $this->assertFalse($DeviceTokenValidator->validate());
     }
 
     public function testNotParsableToken(): void
     {
-        $DeviceTokenValidator = new DeviceTokenValidator($this->config, 'this cannot be parsed!');
+        $DeviceTokenValidator = new DeviceTokenValidator($this->config, 'this cannot be parsed!', 1);
         $this->assertFalse($DeviceTokenValidator->validate());
     }
 }

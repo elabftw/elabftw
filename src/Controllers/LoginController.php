@@ -233,24 +233,21 @@ final class LoginController implements ControllerInterface
         if ($this->Session->has('auth_userid')) {
             return;
         }
+        // need the targeted user before validating the device token
+        try {
+            $Users = ExistingUser::fromEmail($this->Request->request->getString('email'));
+        } catch (ResourceNotFoundException) {
+            throw new InvalidCredentialsException();
+        }
         // a devicetoken cookie might or might not exist, so this can be null
         $token = $this->Request->cookies->getString('devicetoken');
         // if a token is sent, we need to validate it
-        $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token);
+        $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token, $Users->userData['userid']);
         $isTokenValid = $DeviceTokenValidator->validate();
         // if the token is not valid, verify we can login from untrusted devices for that user
-        if ($isTokenValid === false) {
-            // email might be for non existing user, which will throw exception
-            try {
-                $Users = ExistingUser::fromEmail($this->Request->request->getString('email'));
-            } catch (ResourceNotFoundException) {
-                throw new InvalidCredentialsException();
-            }
-            // check if authentication is locked for untrusted clients for that user
-            if ($Users->allowUntrustedLogin() === false) {
-                // reject any attempt whatsoever if this account is locked for untrusted devices
-                throw new InvalidDeviceTokenException();
-            }
+        if ($isTokenValid === false && $Users->allowUntrustedLogin() === false) {
+            // reject any attempt whatsoever if this account is locked for untrusted devices
+            throw new InvalidDeviceTokenException();
         }
     }
 

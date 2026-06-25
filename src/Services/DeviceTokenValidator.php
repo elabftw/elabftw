@@ -17,13 +17,14 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
+use Lcobucci\JWT\UnencryptedToken;
 
 /**
  * Validate a device token
  */
 final class DeviceTokenValidator
 {
-    public function __construct(private Configuration $config, private string $deviceToken) {}
+    public function __construct(private Configuration $config, private string $deviceToken, private int $expectedUserid) {}
 
     public function validate(): bool
     {
@@ -33,7 +34,20 @@ final class DeviceTokenValidator
         $Db = Db::getConnection();
         try {
             $parsedToken = $this->config->parser()->parse($this->deviceToken);
+            // make sure this is an unencrypted token before accessing claims.
+            // https://lcobucci-jwt.readthedocs.io/en/latest/parsing-tokens
+            if (!$parsedToken instanceof UnencryptedToken) {
+                return false;
+            }
             $this->config->validator()->assert($parsedToken, ...$this->config->validationConstraints());
+            $tokenUserid = $parsedToken->claims()->get('userid', null);
+            if ($tokenUserid === null) {
+                return false;
+            }
+            if ($tokenUserid !== $this->expectedUserid) {
+                return false;
+            }
+
             // also check if the device token is not in the locklist
             $sql = 'SELECT COUNT(id) FROM lockout_devices WHERE device_token = :device_token AND locked_at > (NOW() - INTERVAL 1 HOUR)';
             $req = $Db->prepare($sql);

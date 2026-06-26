@@ -39,6 +39,8 @@ abstract class AbstractMakeEln extends AbstractMakeZip
 
     protected array $processedEntities = array();
 
+    protected array $processedEntityFolders = array();
+
     protected DateTimeImmutable $creationDateTime;
 
     // the array that will be converted to json-ld

@@ -499,9 +499,27 @@ class Eln extends AbstractZip
         };
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
-        if (!empty($dataset['auditTrail'])) {
-            new Changelog($this->Entity)->replaceAll($dataset['auditTrail']);
+        if (!empty($dataset['subjectOf'])) {
+            new Changelog($this->Entity)->replaceAll($this->updateActionsToChangelog($dataset['subjectOf']));
         }
+    }
+
+    // convert export UpdateAction to changelog dataset
+    private function updateActionsToChangelog(array $actions): array
+    {
+        $changelog = array();
+        foreach ($actions as $action) {
+            if (($action['@type'] ?? '') !== 'UpdateAction') {
+                continue;
+            }
+            $changelog[] = array(
+                'created_at' => new DateTimeImmutable($action['startTime'])->format('Y-m-d H:i:s'),
+                'target' => $action['object'] ?? 'import',
+                'content' => $action['result'] ?? '',
+                'userid' => $this->requester->getUserid(),
+            );
+        }
+        return $changelog;
     }
 
     private function attrToHtml(array $attr, string $title): string

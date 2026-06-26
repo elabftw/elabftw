@@ -284,7 +284,8 @@ class MakeEln extends AbstractMakeEln
             array('comment' => $comments),
             array('conditionsOfAccess' => !empty($e['locked']) ? 'Locked' : ''),
             array('creativeWorkStatus' => $e['status_title'] ?? ''),
-            array('auditTrail' => $e['changelog'] ?? array()),
+//            array('auditTrail' => $e['changelog'] ?? array()),
+            array('subjectOf' => $this->changelogToUpdateActions($e['changelog'] ?? array(), (int) $e['userid'])),
             array('status' => State::from((int) ($e['state'] ?? State::Normal->value))->name),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),
@@ -330,6 +331,24 @@ class MakeEln extends AbstractMakeEln
 
         $this->dataEntities[] = $datasetNode;
         return $currentDatasetFolder;
+    }
+
+    /* convert changelog actions to schema.org valid fields UpdateAction */
+    private function changelogToUpdateActions(array $changelog, int $defaultUserid): array
+    {
+        $actions = array();
+
+        foreach ($changelog as $log) {
+            $actions[] = array(
+                '@id' => 'updateaction://' . Tools::getUuidv4(),
+                '@type' => 'UpdateAction',
+                'agent' => array('@id' => $this->getAuthorId(new Users((int) ($log['userid'] ?? $defaultUserid)))),
+                'object' => $log['target'] ?? '',
+                'result' => $log['content'] ?? '',
+                'startTime' => new DateTimeImmutable($log['created_at'])->format(DateTimeImmutable::ATOM),
+            );
+        }
+        return $actions;
     }
 
     #[Override]

@@ -29,7 +29,7 @@ final class MakeDfnTimestamp extends AbstractMakeTrustedTimestamp
     protected function getChain(): string
     {
         // cert change on this date: https://www.dfn.de/zertifikatswechsel-beim-zeitstempeldienst/
-        if (date('Y-m-d') < '2026-06-23') {
+        if (date('Y-m-d') <= '2026-06-23') {
             return dirname(__DIR__) . '/certs/dfn-chain.pem';
         }
         return dirname(__DIR__) . '/certs/dfn-chain-26.pem';

@@ -63,7 +63,7 @@
       </div>
     </form>
 
-    <div>
+    <div class='d-flex'>
       <button
         type='button'
         class='btn btn-neutral ml-2'
@@ -74,10 +74,135 @@
       >
         <i class='color-medium fa-regular fa-circle-question'></i>
       </button>
-      {# TOGGLE MORE FILTERS BUTTON #}
-      <button class='btn btn-secondary btn ml-1' type='button' data-action='toggle-next' data-toggle-target='filtersDiv' data-closed-icon='fa-filter' data-opened-icon='fa-xmark' aria-label='{{ 'Toggle filters'|trans }}' aria-expanded='false' aria-controls='filtersDiv' title='{{ 'Show more filters'|trans }}'>
-        <i class='fas fa-filter'></i>
-      </button>
+      {# MORE FILTERS POPUP #}
+      <details closed class='suggested-tags ml-1'>
+        <summary class='btn btn-secondary' aria-label='{{ 'Show more filters'|trans }}' title='{{ 'Show more filters'|trans }}'>
+          <i class='fas fa-filter'></i>
+        </summary>
+
+        <div class='show-more-filters-menu'>
+          {# METADATA SEARCH #}
+          <div class='filter-section filter-section-wide'>
+            <label class='font-weight-bold mb-1'>{{ 'Metadata'|trans }}</label>
+
+            <div class='input-group d-flex flex-nowrap'>
+              {% if App.devMode -%}<!-- [html-validate-disable prefer-native-element: suppress errors from tom-select] -->{%- endif %}
+              <select aria-label='{{ 'Name of field'|trans }}' class='form-control filterHelper' data-filter='extrafield' id='metakey' name='metakey'>
+                <option value='' disabled>{{ 'Name of field'|trans }}</option>
+                <option value='**' {{- '**' == App.Request.query.get('metakey') ? ' selected' }}>{{ 'All fields'|trans }}</option>
+                {% for metakey in metakeyArrForSelect %}
+                  <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey }}</option>
+                {% endfor %}
+              </select>
+
+              {% if App.devMode -%}<!-- [html-validate-enable prefer-native-element: suppress errors from tom-select] -->{%- endif %}
+              <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
+
+              <input
+                aria-label='{{ 'Value'|trans }}'
+                class='form-control filterHelper'
+                data-filter='extrafield'
+                id='metavalue'
+                name='metavalue'
+                placeholder='{{ 'Value'|trans }}'
+                type='text'
+                value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}'
+              />
+            </div>
+
+            <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
+          </div>
+
+          {# VISIBILITY FILTER #}
+          <div>
+            <label class='font-weight-bold mb-1'>{{ 'Visibility'|trans }}</label>
+            <select name='visibility' class='form-control filterHelper' aria-label='{{ 'Filter visibility'|trans }}'>
+              <option value=''>{{ 'Filter visibility'|trans }}</option>
+              {% for vis in visibilityArr %}
+                <option value='{{ vis|e('html_attr') }}' {{ App.Request.query.get('q') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
+                  {{ vis }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <input type='hidden' name='mode' value='show' />
+
+          {# STATE #}
+          <div>
+            <label class='font-weight-bold mb-1'>{{ 'State'|trans }}</label>
+            {% include 'select-state.html' %}
+          </div>
+
+          {# LOCK #}
+          <div>
+            <label class='font-weight-bold mb-1'>{{ 'Lock'|trans }}</label>
+            <select name='locked' aria-label='{{ 'Select lock status'|trans }}' class='form-control filterHelper'>
+              <option value='' data-action='clear'>{{ 'Select lock status'|trans }}</option>
+              <option value='1' {{- Request.query.get('locked') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
+              <option value='0' {{- Request.query.get('locked') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
+            </select>
+          </div>
+
+          {# TIMESTAMPED #}
+          <div>
+            <label class='font-weight-bold mb-1'>{{ 'Timestamped'|trans }}</label>
+            <select aria-label='{{ 'Timestamped'|trans }}' name='timestamped' class='form-control filterHelper' data-filter='timestamped'>
+              <option value='' data-action='clear'>{{ 'Select timestamp status'|trans }}</option>
+              <option value='1' {{- Request.query.get('timestamped') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
+              <option value='0' {{- Request.query.get('timestamped') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
+            </select>
+          </div>
+
+          {# RATING #}
+          <div>
+            <label class='font-weight-bold mb-1'>{{ 'Rating'|trans }}</label>
+            <select aria-label='{{ 'Rating'|trans }}' id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
+              <option value='' data-action='clear'>{{ 'Select number of stars'|trans }}</option>
+              <option value='unrated' {{- Request.query.get('rating') == 'unrated' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
+              {% for i in range(1, 5) %}
+                <option value='{{ i }}' {{- Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          {# GROUPS filter #}
+          <div>
+            <label class='font-weight-bold mb-1'>{{ 'Filter group'|trans }}</label>
+            <select aria-label='{{ 'Filter group'|trans }}' name='group' class='form-control filterHelper' data-filter='group'>
+              <option value='' data-action='clear'>{{ 'Select group'|trans }}</option>
+              {% for group in scopedTeamgroupsArr %}
+                <option value="{{ group.name|e('html_attr') }}" {{ ('group:' ~ group.name) in (App.Request.query.get('q')|default('')) ? 'selected' : '' }}>{{ group.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          {# DATE FROM #}
+          <div>
+            <label class='font-weight-bold mb-1' for='date'>{{ 'Date from'|trans }}</label>
+            <div class='input-group'>
+              <div class='input-group-prepend'>
+                <select id='dateOperator' aria-label='{{ 'Date operator'|trans }}' name='dateOperator' class='brr-none form-control filterHelper' data-filter='date'>
+                  <option value='<' title='{{ 'less than'|trans }}' {{- Request.query.get('dateOperator') == '<' ? ' selected' }}>&lt;</option>
+                  <option value='<=' title='{{ 'less than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '<=' ? ' selected' }}>&le;</option>
+                  <option value='=' title='{{ 'equal to'|trans }}' {{- Request.query.get('dateOperator') == '=' or Request.query.get('dateOperator') is null ? ' selected' }}>=</option>
+                  <option value='>=' title='{{ 'greater than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '>=' ? ' selected' }}>&ge;</option>
+                  <option value='>' title='{{ 'greater than'|trans }}' {{- Request.query.get('dateOperator') == '>' ? ' selected' }}>&gt;</option>
+                  <option value='!=' title='{{ 'not equal to'|trans }}' {{- Request.query.get('dateOperator') == '!=' ? ' selected' }}>&ne;</option>
+                </select>
+              </div>
+
+              <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
+            </div>
+          </div>
+
+          {# DATE TO #}
+          <div>
+            <label class='font-weight-bold mb-1' for='dateTo'>{{ 'Date to'|trans }}</label>
+            <input id='dateTo' name='dateTo' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('dateTo') != '' ? Request.query.get('dateTo') }}'/>
+          </div>
+        </div>
+      </details>
     </div>
   </div>
 
@@ -100,123 +225,6 @@
 
     {# END ALWAYS VISIBLE FILTERS #}
     </div>
-
-    {# START HIDDEN FILTERS #}
-    <div id='filtersDiv' hidden data-save-hidden='filtersDiv' class='form-group form-inline'>
-      {# METADATA SEARCH #}
-      <div class='d-flex'>
-        <div class='input-group d-flex flex-nowrap'>
-          {% if App.devMode -%}
-            <!-- [html-validate-disable prefer-native-element: suppress errors from tom-select] -->
-          {%- endif %}
-          <select
-            aria-label='{{ 'Name of field'|trans }}'
-            class='form-control filterHelper'
-            data-filter='extrafield'
-            id='metakey'
-            name='metakey'
-          >
-            <option value='' disabled>{{ 'Name of field'|trans }}</option>
-            <option value='**' {{- '**' == App.Request.query.get('metakey') ? ' selected' }}>{{ 'All fields'|trans }}</option>
-            {% for metakey in metakeyArrForSelect %}
-              <option value='{{ metakey }}' {{- metakey == App.Request.query.get('metakey') ? ' selected' }}>{{ metakey }}</option>
-            {% endfor %}
-          </select>
-          {% if App.devMode -%}
-            <!-- [html-validate-enable prefer-native-element: suppress errors from tom-select] -->
-          {%- endif %}
-          <div class='input-group-text px-1 brl-none brr-none' style='margin-left:-1px;margin-right:-1px;'>:</div>
-          <input
-            aria-label='{{ 'Value'|trans }}'
-            class='form-control filterHelper'
-            data-filter='extrafield'
-            id='metavalue'
-            name='metavalue'
-            placeholder='{{ 'Value'|trans }}'
-            type='text'
-            value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}'
-          />
-        </div>
-        <div id='autocompleteAnchorDiv_extra_fields_keys'></div>
-      </div>
-          <!-- TODO add to help modal >
-          <p class='mt-1 text-muted'>{{ "Tip: you can use '%' as wildcard in value"|trans }}</p-->
-          {# METADATA SEARCH END #}
-
-      {# GROUPS filter: disabled because not working FIXME #}
-      {#
-      <!--select name='group' class='mx-1 form-control filterHelper filterAuto' aria-label='{{ 'Filter group'|trans }}'>
-        <option value='' data-action='clear'>{{ 'Select group'|trans }}</option>
-        {% for group in scopedTeamgroupsArr %}
-          <option value='{{ group.name|e('html_attr') }}' {{- Request.query.get('searchonly') == 'group:' ~ group ? ' selected' }}>{{ group.name }}</option>
-        {% endfor %}
-      </select-->
-      #}
-
-      {# VISIBILITY filter #}
-      <select name='visibility' class='mx-1 form-control filterHelper' aria-label='{{ 'Filter visibility'|trans }}'>
-        <option value=''>{{ 'Filter visibility'|trans }}</option>
-        {% for vis in visibilityArr %}
-        <option value='{{ vis|e('html_attr') }}' {{ App.Request.query.get('q') == 'visibility:"' ~ vis|raw ~ '"' ? ' selected' }}>
-          {{ vis }}</option>
-        {% endfor %}
-      </select>
-
-      <input type='hidden' name='mode' value='show' />
-
-      <div>
-        {# STATE filter #}
-        {% include 'select-state.html' %}
-
-        {# LOCK #}
-        <select name='locked' aria-label='{{ 'Select lock status'|trans }}' class='form-control filterHelper'>
-          <option value='' data-action='clear'>{{ 'Select lock status'|trans }}</option>
-          <option value='1' {{- Request.query.get('locked') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
-          <option value='0' {{- Request.query.get('locked') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
-        </select>
-        {# END LOCK #}
-
-        {# TIMESTAMPED #}
-        <select aria-label='{{ 'Timestamped'|trans }}' name='timestamped' class='form-control filterHelper' data-filter='timestamped'>
-          <option value='' data-action='clear'>{{ 'Select timestamp status'|trans }}</option>
-          <option value='1' {{- Request.query.get('timestamped') == 'yes' ? ' selected' }}>{{ 'Yes'|trans|lower }}</option>
-          <option value='0' {{- Request.query.get('timestamped') == 'no' ? ' selected' }}>{{ 'No'|trans|lower }}</option>
-        </select>
-        {# END TIMESTAMPED #}
-
-        {# RATING #}
-        <select id='rating' name='rating' data-filter='rating' class='form-control filterHelper'>
-          <option value='' data-action='clear'>{{ 'Select number of stars'|trans }}</option>
-          <option value='unrated' {{- Request.query.get('rating') == 'unrated' ? ' selected' }}>{{ 'Unrated'|trans }}</option>
-          {% for i in range(1, 5) %}
-            <option value='{{ i }}' {{- Request.query.get('rating') == i ? ' selected' }}>{{ i }}</option>
-
-          {% endfor %}
-        </select>
-        {# END RATING #}
-      </div>
-
-      <div class='d-flex mt-2'>
-        {# SEARCH DATE #}
-          <label class='mr-1 align-self-center' for='date'>{{ 'Date from'|trans }}</label>
-          <div class='input-group'>
-            <div class='input-group-prepend'>
-              <select id='dateOperator' aria-label='{{ 'Date operator'|trans }}' name='dateOperator' style='min-width: 50px' class='brr-none form-control filterHelper' data-filter='date'>
-                <option value='<' title='{{ 'less than'|trans }}' {{- Request.query.get('dateOperator') == '<' ? ' selected' }}>&lt;</option>
-                <option value='<=' title='{{ 'less than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '<=' ? ' selected' }}>&le;</option>
-                <option value='=' title='{{ 'equal to'|trans }}' {{- Request.query.get('dateOperator') == '=' or Request.query.get('dateOperator') is null ? ' selected' }}>=</option>
-                <option value='>=' title='{{ 'greater than or equal to'|trans }}' {{- Request.query.get('dateOperator') == '>=' ? ' selected' }}>&ge;</option>
-                <option value='>' title='{{ 'greater than'|trans }}' {{- Request.query.get('dateOperator') == '>' ? ' selected' }}>&gt;</option>
-                <option value='!=' title='{{ 'not equal to'|trans }}' {{- Request.query.get('dateOperator') == '!=' ? ' selected' }}>&ne;</option>
-              </select>
-            </div>
-            <input id='date' name='date' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('date') != '' ? Request.query.get('date') }}'/>
-          </div>
-          <label class='ml-2 mr-1' for='dateTo'>{{ 'Date to (optional)'|trans }}</label>
-          <input id='dateTo' name='dateTo' type='date' class='form-control filterHelper' data-filter='date' value='{{ Request.query.get('dateTo') != '' ? Request.query.get('dateTo') }}'/>
-        </div>
-        {# END SEARCH DATE #}
-      </div>
 
     </form>
   </div>

@@ -155,6 +155,13 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->testCannotCreateSomethingWithoutTeamPermission(new Templates($admin), new Templates($user));
         $this->testCannotCreateSomethingWithoutTeamPermission(new ItemsTypes($admin), new ItemsTypes($user));
         $this->testCannotCreateSomethingWithoutTeamPermission(new Items($admin), new Items($user));
+        // reset permissions to default
+        $Team->patch(Action::Update, array(
+            'users_canwrite_experiments' => 1,
+            'users_canwrite_experiments_templates' => 1,
+            'users_canwrite_resources' => 1,
+            'users_canwrite_resources_templates' => 1,
+        ));
     }
 
     private function testCannotCreateSomethingWithoutTeamPermission(AbstractEntity $entityWithAdmin, AbstractEntity $entityWithUser): void

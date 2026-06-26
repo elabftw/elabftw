@@ -56,10 +56,16 @@ export function worksheetHasLoaded(live: Cell[][] | null, loaded: Cell[][]): boo
   return true;
 }
 
-// notify the parent page so any inline snapshot for this filename regenerates with computed values
-export function postInlineRefresh(name: string, uploadId: number, computed: Cell[][] | null, embed: boolean): void {
+// notify the parent page so any inline snapshot for this upload regenerates with computed values
+export function postInlineRefresh(
+  name: string,
+  uploadId: number,
+  computed: Cell[][] | null,
+  embed: boolean,
+  previousUploadId: number | null = null,
+): void {
   if (!name || !uploadId || !computed) {
     return;
   }
-  window.parent.postMessage({ type: 'inline-sheet-refresh', name, uploadId, computed, embed }, window.location.origin);
+  window.parent.postMessage({ type: 'inline-sheet-refresh', name, uploadId, previousUploadId, computed, embed }, window.location.origin);
 }

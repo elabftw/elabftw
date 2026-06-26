@@ -57,17 +57,19 @@ export function registerInlineSpreadsheet(editor: Editor): void {
   });
 
   // apply a rendered snapshot to the body. On an explicit embed (insertIfMissing) always insert a
-  // NEW block so the same file can be embedded in several places; on a save-driven refresh, update
-  // every existing copy of that file so they stay in sync.
+  // NEW block so the same upload can be embedded in several places; on a save-driven refresh, update
+  // every existing copy of that upload so they stay in sync.
   const onInlineRender = (event: Event): void => {
     const detail = (event as CustomEvent).detail || {};
     const html = detail.html as string;
     const sheetName = detail.sheetName as string;
-    if (!html || !sheetName) {
+    const uploadId = detail.uploadId ? String(detail.uploadId) : '';
+    const previousUploadId = detail.previousUploadId ? String(detail.previousUploadId) : uploadId;
+    if (!html || !sheetName || !uploadId) {
       return;
     }
     const matching = (Array.from(editor.getBody().querySelectorAll('.elabftw-inline-sheet')) as HTMLElement[])
-      .filter(block => block.dataset.sheetName === sheetName);
+      .filter(block => block.dataset.uploadId === previousUploadId);
     if (detail.insertIfMissing) {
       // never nest a snapshot inside another snapshot: if the caret sits inside an existing
       // block, move it just after that block so the new one is inserted as a top-level sibling

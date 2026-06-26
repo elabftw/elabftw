@@ -26,7 +26,6 @@ import { notify } from './notify';
 import { getComputedFromDom, getSourceFromDom, worksheetHasLoaded, postInlineRefresh } from './inline-spreadsheet-editor';
 
 function SpreadsheetEditor() {
-  const spreadsheetRef = useRef(null);
   // disable keyboard shortcuts completely
   assignKey.filter = () => false;
 
@@ -73,7 +72,7 @@ function SpreadsheetEditor() {
     };
   }, []);
 
-  const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
+  const getAOA = () => getSourceFromDom() ?? data;
   const entity = getEntity(true);
 
   // keep tracking the latest upload info
@@ -102,19 +101,13 @@ function SpreadsheetEditor() {
       setUnsavedWarning(false);
       // refresh any inline snapshot embedded in the entity body with the freshly computed values
       if (res?.id && res?.name) {
-        postInlineRefresh(res.name, res.id, getComputedFromDom(), false);
+        postInlineRefresh(res.name, res.id, getComputedFromDom(), false, replaceId || null);
       }
     } finally {
       window.parent.postMessage('uploadsDiv', window.location.origin);
       setIsSaving(false);
     }
   };
-
-  // reload spreadsheet data after state changes
-  useEffect(() => {
-    const instance = spreadsheetRef.current?.[0];
-    if (instance) instance.setData(data);
-  }, [data]);
 
   // after an "embed inline" load (use-existing path), wait until the worksheet holds the loaded data,
   // then post its computed values so the parent can build/insert the snapshot
@@ -175,9 +168,7 @@ function SpreadsheetEditor() {
 
   const clearSpreadsheet = () => {
     if (!window.confirm(i18next.t('confirm-clear-spreadsheet'))) return;
-    const inst = spreadsheetRef.current?.[0];
     const empty = [[]];
-    inst?.setData?.(empty);
     setData(empty);
     setLoadSeq(seq => seq + 1);
     setCurrentUploadId(null);

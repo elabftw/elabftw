@@ -53,9 +53,17 @@ async function fetchUpload(uploadId: number): Promise<UploadLite | null> {
   }
 }
 
-// ask TinyMCE to insert a new block (insertIfMissing) or update the existing one keyed by filename
-function dispatchRender(html: string, sheetName: string, insertIfMissing: boolean): void {
-  document.dispatchEvent(new CustomEvent('inline-sheet-render', { detail: { html, sheetName, insertIfMissing } }));
+// ask TinyMCE to insert a new block (insertIfMissing) or update existing blocks keyed by upload id
+function dispatchRender(
+  html: string,
+  sheetName: string,
+  uploadId: number,
+  insertIfMissing: boolean,
+  previousUploadId: number | null = null,
+): void {
+  document.dispatchEvent(new CustomEvent('inline-sheet-render', {
+    detail: { html, sheetName, uploadId, previousUploadId, insertIfMissing },
+  }));
 }
 
 function hideModal(): void {
@@ -80,8 +88,8 @@ async function onCreateNew(): Promise<void> {
   if (input) {
     input.value = '';
   }
-  // embed an empty, clickable snapshot block immediately, keyed by filename
-  dispatchRender(sheetDataToTableHtml(empty, { sheetName: res.name, uploadId: res.id }), res.name, true);
+  // embed an empty, clickable snapshot block immediately, keyed by upload id
+  dispatchRender(sheetDataToTableHtml(empty, { sheetName: res.name, uploadId: res.id }), res.name, res.id, true);
   // open the freshly created attachment in the standalone editor
   const upload = await fetchUpload(res.id);
   if (upload) {
@@ -165,11 +173,17 @@ function onRefreshMessage(event: MessageEvent): void {
   if (!data || data.type !== 'inline-sheet-refresh') {
     return;
   }
-  const { name, uploadId, computed, embed } = data;
+  const { name, uploadId, previousUploadId, computed, embed } = data;
   if (!name || !uploadId || !Array.isArray(computed)) {
     return;
   }
-  dispatchRender(sheetDataToTableHtml(computed, { sheetName: name, uploadId }), name, Boolean(embed));
+  dispatchRender(
+    sheetDataToTableHtml(computed, { sheetName: name, uploadId }),
+    name,
+    uploadId,
+    Boolean(embed),
+    previousUploadId || null,
+  );
 }
 
 function init(): void {

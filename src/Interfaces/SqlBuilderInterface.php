@@ -19,6 +19,7 @@ interface SqlBuilderInterface
     public function getReadSqlBeforeWhere(
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
+        bool $withCompounds = false,
     ): string;
 
     public function getCanFilter(string $can): string;

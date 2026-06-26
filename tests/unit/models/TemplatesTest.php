@@ -16,11 +16,17 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Params\EntityParams;
+use Elabftw\Params\TeamParam;
+use Elabftw\Traits\TestsUtilsTrait;
 
 use function json_decode;
+use function array_column;
 
 class TemplatesTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Templates $Templates;
 
     protected function setUp(): void
@@ -90,5 +96,76 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $this->Templates->setId($id);
         $this->assertEquals($this->Templates->entityData['title'], $title);
         $this->assertTrue($this->Templates->getIdempotentIdFromTitle('Géo Trouvetou') > $id);
+    }
+
+    public function testCreatedFrom(): void
+    {
+        foreach (EntityType::cases() as $entityType) {
+            if ($entityType->asEntityTypeOrNull() !== null) {
+                $this->createdFrom($entityType);
+            }
+        }
+    }
+
+    public function testCreateFromEntity(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+
+        $exp = $this->getFreshExperimentWithGivenUser($user);
+        $title = 'An experiment';
+        $tags = array('tag1', 'tag2');
+        $exp->update(new EntityParams('title', $title));
+
+        foreach ($tags as $tag) {
+            $exp->Tags->postAction(Action::Create, array('tag' => $tag));
+        }
+
+        $Templates = new Templates($user);
+        $new = $Templates->postAction(
+            Action::Create,
+            array('entity' => $exp->id,'title' => 'Template created from entity')
+        );
+        $Template = new Templates($user, $new);
+
+        $this->assertSame('Template created from entity', $Template->entityData['title']);
+        $this->assertEqualsCanonicalizing($tags, array_column($Template->Tags->readAll(), 'tag'));
+        $this->assertSame(EntityType::Experiments->toInt(), $Template->entityData['created_from_type']);
+        $this->assertSame($exp->id, $Template->entityData['created_from_id']);
+    }
+
+    public function testPostActionCreateTemplateFromEntity(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Teams = new Teams($user, 1);
+        $Teams->update(new TeamParam('users_canwrite_experiments_templates', 1));
+        $Exp = $this->getFreshExperimentWithGivenUser($user);
+        $Templates = new Templates($user);
+        $new = $Templates->postAction(Action::Create, array('entity' => $Exp->id, 'title' => 'Template created from postAction'));
+        $Template = new Templates($user, $new);
+        $this->assertSame('Template created from postAction', $Template->entityData['title']);
+        $this->assertSame(EntityType::Experiments->toInt(), $Template->entityData['created_from_type']);
+        $this->assertSame($Exp->id, $Template->entityData['created_from_id']);
+    }
+
+    private function createdFrom(EntityType $entityType): void
+    {
+        $template = $entityType->toInstance($this->getUserInTeam(1));
+        $id = $template->create();
+        $template->setId($id);
+        $this->assertNull($template->entityData['created_from_type']);
+        $this->assertNull($template->entityData['created_from_id']);
+
+        // now create template from concrete entity
+        $sourceType = $entityType->asEntityTypeOrNull();
+        $sourceId = $sourceType === null ? null : 12;
+
+        $new = $template->create(
+            createdFromType: $sourceType,
+            createdFromId: $sourceId,
+        );
+        $template->setId($new);
+
+        $this->assertSame($entityType->asEntityTypeOrNull()?->toInt(), $template->entityData['created_from_type']);
+        $this->assertSame($sourceId, $template->entityData['created_from_id']);
     }
 }

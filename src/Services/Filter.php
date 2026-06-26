@@ -273,6 +273,18 @@ final class Filter
         return $purifier->purify($input);
     }
 
+    public static function bodyMarkdown(?string $input = null): string
+    {
+        if ($input === null) {
+            return '';
+        }
+        // use strlen() instead of mb_strlen() because we want the size in bytes
+        if (strlen($input) > self::MAX_BODY_SIZE) {
+            throw new ImproperActionException('Content is too big! Cannot save!');
+        }
+        return $input;
+    }
+
     public static function pem(string $pem): string
     {
         // Trim outer whitespace

@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
+use Lcobucci\JWT\Validation\Constraint\HasClaimWithValue;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use Lcobucci\JWT\UnencryptedToken;
 
@@ -39,15 +40,7 @@ final class DeviceTokenValidator
             if (!$parsedToken instanceof UnencryptedToken) {
                 return false;
             }
-            $this->config->validator()->assert($parsedToken, ...$this->config->validationConstraints());
-            $tokenUserid = $parsedToken->claims()->get('userid', null);
-            if ($tokenUserid === null) {
-                return false;
-            }
-            if ($tokenUserid !== $this->expectedUserid) {
-                return false;
-            }
-
+            $this->config->validator()->assert($parsedToken, new HasClaimWithValue('userid', $this->expectedUserid), ...$this->config->validationConstraints());
             // also check if the device token is not in the locklist
             $sql = 'SELECT COUNT(id) FROM lockout_devices WHERE device_token = :device_token AND locked_at > (NOW() - INTERVAL 1 HOUR)';
             $req = $Db->prepare($sql);

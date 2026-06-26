@@ -212,29 +212,6 @@ class Eln extends AbstractZip
 
     }
 
-    /**
-     * Restore the exported lifecycle state after import.
-     * This must run after all content, uploads and links are imported because
-     * archived, deleted or locked entities can no longer be freely modified.
-     */
-    private function restoreEntityLifecycle(string $stateName, string $conditionsOfAccess): void
-    {
-        // normal - archived - deleted state
-        $state = State::fromName($stateName);
-        match ($state) {
-            State::Archived => $this->Entity->patch(Action::Archive, array()),
-            State::Deleted => $this->Entity->patch(Action::Destroy, array()),
-            default => null,
-        };
-        if ($state !== State::Normal) {
-            return;
-        }
-        // locked - unlocked state
-        if ($conditionsOfAccess === 'Locked') {
-            $this->Entity->patch(Action::Lock, array());
-        }
-    }
-
     private function grabIdFromUrl(string $url): ?int
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
@@ -511,10 +488,15 @@ class Eln extends AbstractZip
             $this->importPart($this->getNodeFromId($part['@id']));
         }
 
-        $this->restoreEntityLifecycle(
-            $dataset['status'] ?? State::Normal->name,
-            $dataset['conditionsOfAccess'] ?? '',
-        );
+        // Restore entity state (normal, archived, deleted).
+        $state = State::fromName($dataset['status'] ?? State::Normal->name);
+        match (true) {
+            $state === State::Archived => $this->Entity->patch(Action::Archive, array()),
+            $state === State::Deleted => $this->Entity->patch(Action::Update, array('state' => $state->value)),
+            // Restore locked/unlocked condition.
+            ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->Entity->patch(Action::Lock, array()),
+            default => null,
+        };
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
         if (!empty($dataset['auditTrail'])) {

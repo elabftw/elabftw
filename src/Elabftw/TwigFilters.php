@@ -234,6 +234,8 @@ final class TwigFilters
             $depth ??= 0;
             if (is_array($value)) {
                 $value = self::array2String($value, $depth + 1);
+            } else {
+                $value = Tools::eLabHtmlspecialchars($value);
             }
             $str .= '<details style="--depth: ' . $depth . '"><summary>' . $key . '</summary>' . $value . '</details>';
         }
@@ -243,7 +245,7 @@ final class TwigFilters
     public static function any2string(string|array|null $input): string
     {
         if (is_string($input)) {
-            return $input;
+            return Tools::eLabHtmlspecialchars($input);
         }
         if (is_array($input)) {
             return self::array2String($input);

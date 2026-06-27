@@ -23,7 +23,7 @@
 
 # Description
 
-**eLabFTW** is an electronic lab notebook manager for research teams.
+**eLabFTW®** is an electronic lab notebook manager for research teams.
 
 It lets you store and organize your research experiments easily. It also features a database where any kind of objects (such as antibodies, plasmids, cell lines, boxes, _etc_.) can be stored.
 It is accessed _via_ the browser. Several research teams can be hosted on the same installation. This means **eLabFTW** can be installed at the institute level and host all team members at the same place. This is what is done at in many research institutions around the globe. It is also a great solution for companies looking into improving the traceability and reproducibility of their processes.
@@ -67,6 +67,12 @@ The documentation explains everything:
 # Security
 
 See [SECURITY.md](./SECURITY.md).
+
+# Trademark
+
+eLabFTW® is a registered trademark of Deltablot SASU in several jurisdictions.
+
+The eLabFTW source code is licensed under the GNU AGPL. Use of the eLabFTW name, logo, and related branding is governed by [TRADEMARK.md](./TRADEMARK.md).
 
 # Support
 

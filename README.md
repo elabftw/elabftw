@@ -145,6 +145,7 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [pyelabdata](https://github.com/FAU-PHYSIK-EP/pyelabdata): provides functions for simple one-line access to data stored in eLabFTW via Python
 * [elabftw-teamupload](https://github.com/HeFDI-DE/elabftw-teamupload/): Synchronize teamgroups and teams with users from Excel
 * [Reporting Dashboard](https://git.rwth-aachen.de/eln-rwth/reporting-scripts-public): Collection of scripts to create a reporting dashabord for eLabFTW SysAdmins
+* [elab2arc](https://github.com/nfdi4plants/elab2arc/): Convert eLabFTW experiments to into structured ARCs
 
 ### Deprecated projects using retired api v1
 * [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects

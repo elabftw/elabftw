@@ -3362,7 +3362,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
- # INSTANCE
+  # INSTANCE
   /instance:
     summary: Instance level actions
     post:
@@ -3460,28 +3460,6 @@ paths:
                       type: string
                       description: Email body.
                       example: Please read the latest team announcement.
-          multipart/form-data:
-            schema:
-              type: object
-              required: ['action', 'id', 'file']
-              properties:
-                action:
-                  type: string
-                  enum: ['update']
-                  description: Update a branding asset.
-                id:
-                  type: integer
-                  description: Branding id.
-                  example: 1
-                file:
-                  type: string
-                  format: binary
-                  description: Branding file. Accepted types are SVG, PNG, JPEG, WebP and ICO. Maximum size is 1 MiB.
-                  minLength: 1
-                  maxLength: 1048576
-            encoding:
-              file:
-                contentType: image/svg+xml, image/png, image/jpeg, image/webp, image/x-icon, image/vnd.microsoft.icon
       responses:
         '201':
           description: The action was successful.
@@ -3496,6 +3474,108 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+
+
+  # INSTANCE BRANDING
+  /instance/branding/{id}:
+    summary: Instance branding
+    parameters:
+      - name: id
+        in: path
+        description: Branding id.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Branding']
+      summary: Read a branding asset as a binary file.
+      operationId: get-instance-branding
+      parameters:
+        - name: format
+          in: query
+          description: Use binary format to retrieve the branding asset.
+          required: true
+          schema:
+            type: string
+            enum: ['binary']
+      responses:
+        '200':
+          description: The branding asset binary file.
+          headers:
+            Content-Length:
+              description: Size of the branding asset in bytes.
+              schema:
+                type: integer
+            Cache-Control:
+              description: Cache policy for the branding asset.
+              schema:
+                type: string
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+            image/x-icon:
+              schema:
+                type: string
+                format: binary
+            image/vnd.microsoft.icon:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+      tags: ['Branding']
+      summary: Update a branding asset.
+      operationId: post-instance-branding
+      requestBody:
+        required: true
+        description: Parameters for updating a branding asset.
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: ['file']
+              properties:
+                action:
+                  type: string
+                  enum: ['update']
+                  description: Update a branding asset. Requires Sysadmin permissions.
+                  default: update
+                file:
+                  type: string
+                  format: binary
+                  description: Branding file. Accepted types are SVG, PNG, JPEG, WebP and ICO. Maximum size is 1 MiB.
+            encoding:
+              file:
+                contentType: image/svg+xml, image/png, image/jpeg, image/webp, image/x-icon, image/vnd.microsoft.icon
+      responses:
+        '201':
+          description: The branding asset has been updated.
+          headers:
+            location:
+              description: An URL to the branding asset that was updated
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
 
   # ITEMS
   /items:

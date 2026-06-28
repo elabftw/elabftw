@@ -23,6 +23,7 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Branding;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
@@ -549,5 +550,6 @@ final class Populate
         // load structure
         $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Sql->execFile('structure.sql');
+        new Branding(true)->populate();
     }
 }

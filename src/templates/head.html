@@ -18,7 +18,7 @@
   <meta name='csrf-token' content='{{ App.Session.get('csrf') }}'/>
   <link rel='manifest' href='/manifest.webmanifest' crossorigin='use-credentials'>
   <link rel='icon' href='/assets/images/favicon.ico' sizes='any'>{# 32×32 #}
-  <link rel='icon' href='{{ branding[constant('Elabftw\\Enums\\Branding::Favicon').value] }}'>
+  <link rel='icon' href='/api/v2/instance/branding/{{ constant('Elabftw\\Enums\\Branding::Favicon').value }}?format=binary'>
   <link rel='apple-touch-icon' href='/assets/images/apple-touch-icon.png'>{# 180×180 #}
 
   <title>{{ Entity.entityData.title|default(pageTitle) }} - eLabFTW</title>
@@ -52,7 +52,7 @@
     {% endif %}
     {# logo #}
     <a href='dashboard.php' class='logo-header' title='{{ 'Go to dashboard'|trans }}' aria-label='{{ 'Go to dashboard'|trans }}'>
-       <img src='{{ branding[constant('Elabftw\\Enums\\Branding::Header').value] }}' alt='eLabFTW'>
+       <img src='/api/v2/instance/branding/{{ constant('Elabftw\\Enums\\Branding::Header').value }}?format=binary' alt='eLabFTW'>
     </a>
     {% if App.Session.has('is_auth') %}
     {# everything in there will be part of the burger #}

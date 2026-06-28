@@ -195,11 +195,10 @@ function checkForUpdate() {
 
 const uploadBranding = async (brandingId: string, file: Blob, filename: string): Promise<void> => {
   const formData = new FormData();
-  formData.append('id', brandingId);
   formData.append('action', 'update');
   formData.append('file', file, filename);
 
-  await ApiC.post('instance', formData);
+  await ApiC.post(`instance/branding/${brandingId}`, formData);
   reloadElements(['brandingLogos']);
 };
 
@@ -246,6 +245,9 @@ if (window.location.pathname === '/sysconfig.php') {
     }
 
     const res = await fetch(url, { cache: 'no-cache' });
+    if (!res.ok) {
+      throw new Error(`Could not load default branding asset: ${url}`);
+    }
     const blob = await res.blob();
     const filename = url.split('/').pop() ?? 'branding.svg';
 

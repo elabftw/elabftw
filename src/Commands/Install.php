@@ -18,6 +18,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Branding;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
@@ -27,15 +28,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
-use PDO;
-use RuntimeException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\Question;
 
 use function dirname;
 use function sprintf;
-use function file_get_contents;
-use function strlen;
 
 /**
  * Import database structure
@@ -101,7 +98,7 @@ final class Install extends Command
         $Teams = new Teams(new Users(), bypassWritePermission: true);
         $Teams->create($input->getOption('team') ?? 'Default team');
         $output->writeln('<info>✓ Team created successfully. Now populating branding table...</info>');
-        $this->populateBrandingTable();
+        new Branding(true)->populate();
 
         if ($input->getOption('email')) {
             $output->writeln('<info>→ Creating Sysadmin user...</info>');
@@ -143,41 +140,5 @@ final class Install extends Command
     private function hashPassword(string $password): string
     {
         return new UserParams('password', $password)->getStringContent();
-    }
-
-    private function populateBrandingTable(): void
-    {
-        $branding = array(
-            1 => 'logo-header.svg',
-            2 => 'logo-light.svg',
-            3 => 'logo-dark.svg',
-            4 => 'favicon.svg',
-        );
-
-        $sql = 'INSERT INTO branding (id, content_type, data, filesize)
-            VALUES (:id, :content_type, :data, :filesize)
-            ON DUPLICATE KEY UPDATE
-                content_type = VALUES(content_type),
-                data = VALUES(data),
-                filesize = VALUES(filesize),
-                modified_at = CURRENT_TIMESTAMP';
-
-        $Db = Db::getConnection();
-        $req = $Db->prepare($sql);
-
-        foreach ($branding as $id => $filename) {
-            $path = dirname(__DIR__, 2) . '/web/assets/images/' . $filename;
-            $data = file_get_contents($path);
-
-            if ($data === false) {
-                throw new RuntimeException(sprintf('Could not read branding file: %s', $path));
-            }
-
-            $req->bindValue(':id', $id, PDO::PARAM_INT);
-            $req->bindValue(':content_type', 'image/svg+xml');
-            $req->bindValue(':data', $data, PDO::PARAM_LOB);
-            $req->bindValue(':filesize', strlen($data), PDO::PARAM_INT);
-            $req->execute();
-        }
     }
 }

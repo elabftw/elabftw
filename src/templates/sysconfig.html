@@ -198,9 +198,9 @@
           for='{{ inputId }}'
           title='{{ 'Upload new file'|trans }}'
           class='btn btn-secondary mb-0'
-          aria-label='{{ 'Upload new file'|trans }}'
         >
-          <i class='fas fa-upload'></i>
+          <i class='fas fa-upload' aria-hidden='true'></i>
+          <span class='sr-only'>{{ 'Upload new file'|trans }}</span>
         </label>
 
         <input
@@ -209,7 +209,7 @@
           data-target='{{ brandingId }}'
           type='file'
           accept='image/svg+xml,image/png,image/jpeg,image/webp,image/x-icon'
-          class='d-none'
+          class='sr-only'
         >
 
         <button

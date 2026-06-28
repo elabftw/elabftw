@@ -34,6 +34,7 @@ use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Batch;
+use Elabftw\Models\Branding;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
@@ -237,7 +238,7 @@ final class Apiv2Controller extends AbstractApiController
         }
 
         if (
-            $this->Model instanceof Instance &&
+            $this->Model instanceof Branding &&
             str_starts_with($this->Request->headers->get('content-type') ?? '', 'multipart/form-data')
         ) {
             $file = $this->Request->files->get('file');
@@ -246,7 +247,6 @@ final class Apiv2Controller extends AbstractApiController
                 throw new ImproperActionException('Error reading file!');
             }
 
-            $this->reqBody['id'] = $this->Request->request->getInt('id');
             $this->reqBody['file'] = $file;
             $this->action = Action::tryFrom($this->Request->request->getString('action')) ?? Action::Update;
         }
@@ -268,7 +268,7 @@ final class Apiv2Controller extends AbstractApiController
         return match ($this->format) {
             ExportFormat::Binary => (
                 function () {
-                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports) {
+                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports || $this->Model instanceof Branding) {
                         return $this->Model->readBinary();
                     }
                     throw new ImproperActionException('Incorrect format (binary): only available for uploads endpoint.');
@@ -450,6 +450,7 @@ final class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Instance) {
             return match ($submodel) {
+                ApiSubModels::Branding => new Branding($this->requester->isSysadmin(), $this->subId),
                 ApiSubModels::Rors => new Instance2Rors($this->requester->isSysadmin(), $this->subIdString),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Instance),
             };
@@ -467,14 +468,14 @@ final class Apiv2Controller extends AbstractApiController
 
         // allow multipart/form-data for:
         // - POST uploads/import
-        // - POST instance, for branding upload
+        // - POST branding
         // use str_starts_with because the actual header will also contain the boundary
         if (str_starts_with($contentType, 'multipart/form-data') &&
             $this->Request->getMethod() === Request::METHOD_POST &&
             (
                 $this->Model instanceof Uploads ||
                 $this->Model instanceof ImportHandler ||
-                $this->Model instanceof Instance
+                $this->Model instanceof Branding
             )) {
             return;
         }

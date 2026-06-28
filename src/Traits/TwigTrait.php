@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\BuildInfo;
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\FsTools;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
@@ -23,6 +24,8 @@ use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 use function dirname;
+use function base64_encode;
+use function sprintf;
 
 /**
  * To get Twig
@@ -120,6 +123,28 @@ trait TwigTrait
         // this helps with busting the cache in browsers
         $TwigEnvironment->addGlobal('v', BuildInfo::ID);
 
+        $TwigEnvironment->addGlobal('branding', $this->getBranding());
+
         return $TwigEnvironment;
+    }
+
+    private function getBranding(): array
+    {
+        $sql = 'SELECT id, content_type, data FROM branding';
+        $Db = Db::getConnection();
+        $req = $Db->prepare($sql);
+        $req->execute();
+
+        $branding = array();
+
+        while ($row = $req->fetch()) {
+            $branding[$row['id']] = sprintf(
+                'data:%s;base64,%s',
+                $row['content_type'],
+                base64_encode($row['data']),
+            );
+        }
+
+        return $branding;
     }
 }

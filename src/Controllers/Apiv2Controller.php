@@ -196,7 +196,9 @@ final class Apiv2Controller extends AbstractApiController
                 $this->Request->query->set('id', $this->id);
             }
         }
-        if ($this->Request->getContent()) {
+
+        $contentType = $this->Request->headers->get('content-type') ?? '';
+        if ($this->Request->getContent() && !str_starts_with($contentType, 'multipart/form-data')) {
             try {
                 // SET REQBODY
                 $this->reqBody = json_decode($this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -232,6 +234,21 @@ final class Apiv2Controller extends AbstractApiController
             $this->reqBody['canread_base'] = (BasePermissions::tryFrom($this->Request->request->getInt('canread_base')) ?? BasePermissions::Team)->value;
             $this->reqBody['canwrite_base'] = (BasePermissions::tryFrom($this->Request->request->getInt('canwrite_base')) ?? BasePermissions::User)->value;
             $this->action = Action::tryFrom($this->Request->request->getString('action')) ?? Action::Create;
+        }
+
+        if (
+            $this->Model instanceof Instance &&
+            str_starts_with($this->Request->headers->get('content-type') ?? '', 'multipart/form-data')
+        ) {
+            $file = $this->Request->files->get('file');
+
+            if ($file === null) {
+                throw new ImproperActionException('Error reading file!');
+            }
+
+            $this->reqBody['id'] = $this->Request->request->getInt('id');
+            $this->reqBody['file'] = $file;
+            $this->action = Action::tryFrom($this->Request->request->getString('action')) ?? Action::Update;
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Env::asUrl('SITE_URL'), $this->Model->getApiPath(), $id)));
@@ -277,6 +294,7 @@ final class Apiv2Controller extends AbstractApiController
             // set default action for patch
             $this->action = Action::Update;
         }
+
         return $this->Model->patch($this->action, $this->reqBody);
     }
 
@@ -445,16 +463,24 @@ final class Apiv2Controller extends AbstractApiController
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 
-        // allow multipart/form-data for the POST/uploads and POST/import endpoints only,
+        $contentType = $this->Request->headers->get('content-type') ?? '';
+
+        // allow multipart/form-data for:
+        // - POST uploads/import
+        // - POST instance, for branding upload
         // use str_starts_with because the actual header will also contain the boundary
-        if (str_starts_with($this->Request->headers->get('content-type') ?? '', 'multipart/form-data') &&
-            ($this->Model instanceof Uploads || $this->Model instanceof ImportHandler) &&
-            $this->Request->getMethod() === Request::METHOD_POST) {
+        if (str_starts_with($contentType, 'multipart/form-data') &&
+            $this->Request->getMethod() === Request::METHOD_POST &&
+            (
+                $this->Model instanceof Uploads ||
+                $this->Model instanceof ImportHandler ||
+                $this->Model instanceof Instance
+            )) {
             return;
         }
 
         // only accept json content-type unless it's GET or DELETE (also prevents csrf!)
-        if (!in_array($this->Request->getMethod(), array(Request::METHOD_GET, Request::METHOD_DELETE), true) && $this->Request->headers->get('content-type') !== 'application/json') {
+        if (!in_array($this->Request->getMethod(), array(Request::METHOD_GET, Request::METHOD_DELETE), true) && $contentType !== 'application/json') {
             throw new ImproperActionException('Incorrect content-type header.');
         }
     }

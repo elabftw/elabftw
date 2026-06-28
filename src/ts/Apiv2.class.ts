@@ -5,9 +5,11 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Method } from './interfaces';
+import { Method, Selected } from './interfaces';
 import { getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';
+
+type ApiParams = Record<string, unknown> | FormData | object | Selected;
 
 export class Api {
   // allow forcing the browser to make the request even if page is closed − useful for clearing exclusive edit on window unload
@@ -51,11 +53,11 @@ export class Api {
     });
   }
 
-  patch(query: string, params = {}): Promise<Response> {
+  patch(query: string, params: ApiParams = {}): Promise<Response> {
     return this.send(Method.PATCH, query, params);
   }
 
-  post(query: string, params = {}): Promise<Response> {
+  post(query: string, params: ApiParams = {}): Promise<Response> {
     return this.send(Method.POST, query, params);
   }
 
@@ -69,35 +71,49 @@ export class Api {
   }
 
   // private method: use patch/post/delete instead
-  private async send(method: Method, query: string, params = {}): Promise<Response> {
+  private async send(method: Method, query: string, params: ApiParams = {}): Promise<Response> {
+    const isFormData = params instanceof FormData;
+
+
     // allow toggle notifs off by sending notifOn(Saved|Error)=0 as param
     let notifOnSaved = true;
-    if (params['notifOnSaved'] === 0) {
-      notifOnSaved = false;
-    }
-    delete params['notifOnSaved'];
     let notifOnError = true;
-    if (params['notifOnError'] === 0) {
-      notifOnError = false;
+    if (!isFormData) {
+      if (params['notifOnSaved'] === 0) {
+        notifOnSaved = false;
+      }
+      delete params['notifOnSaved'];
+
+      if (params['notifOnError'] === 0) {
+        notifOnError = false;
+      }
+      delete params['notifOnError'];
     }
-    delete params['notifOnError'];
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    const options = {
+
+    const headers: HeadersInit = {
+      'X-CSRF-Token': csrfToken,
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    const options: RequestInit = {
       method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken,
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+      headers: headers,
       keepalive: this.keepalive,
     };
+
     if ([Method.POST, Method.PATCH].includes(method)) {
-      options['body'] = JSON.stringify(params);
+      options.body = isFormData ? params : JSON.stringify(params);
     }
+
     let urlParams = '';
-    if (method === Method.GET && Object.keys(params).length > 0) {
-      urlParams = `?${new URLSearchParams(params).toString()}`;
+    if (method === Method.GET && !isFormData && Object.keys(params).length > 0) {
+      urlParams = `?${new URLSearchParams(params as Record<string, string>).toString()}`;
     }
 
     return fetch(`api/v2/${query}${urlParams}`, options).then(async response => {

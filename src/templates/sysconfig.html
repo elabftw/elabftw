@@ -189,23 +189,32 @@
 
   <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Organization branding'|trans }}</h2>
 
-  {% macro logo_block(title, key, svg, darkPreview) %}
+  {% macro logo_block(title, brandingId, dataUri, darkPreview) %}
+    {% set inputId = 'branding-file-' ~ brandingId %}
+
     <h3>
       <span class='text-nowrap'>
-        <button
-          data-action='edit-logo'
-          data-target='{{ key }}'
-          type='button'
-          title='{{ 'Edit'|trans }}'
-          class='btn btn-secondary'
-          aria-label='{{ 'Edit'|trans }}'
+        <label
+          for='{{ inputId }}'
+          title='{{ 'Upload new file'|trans }}'
+          class='btn btn-secondary mb-0'
+          aria-label='{{ 'Upload new file'|trans }}'
         >
-          <i class='fas fa-pencil-alt'></i>
-        </button>
+          <i class='fas fa-upload'></i>
+        </label>
+
+        <input
+          id='{{ inputId }}'
+          data-action='upload-branding'
+          data-target='{{ brandingId }}'
+          type='file'
+          accept='image/svg+xml,image/png,image/jpeg,image/webp,image/x-icon'
+          class='d-none'
+        >
 
         <button
-          data-action='reset-logo'
-          data-target='{{ key }}'
+          data-action='reset-branding'
+          data-target='{{ brandingId }}'
           type='button'
           title='{{ 'Restore default'|trans }}'
           class='btn btn-danger-ghost'
@@ -217,17 +226,52 @@
     </h3>
 
     <div class='{{ darkPreview ? 'bg-dark' : '' }} col-md-6 p-3 logo-preview'>
-      {{ svg|raw }}
+      {% if dataUri %}
+        <img
+          data-branding-preview='{{ brandingId }}'
+          src='{{ dataUri }}'
+          alt='{{ title }}'
+          class='img-fluid'
+        >
+      {% endif %}
     </div>
 
     <hr>
   {% endmacro %}
 
+  {% set brandingHeader = constant('Elabftw\\Enums\\Branding::Header').value %}
+  {% set brandingLight = constant('Elabftw\\Enums\\Branding::Light').value %}
+  {% set brandingDark = constant('Elabftw\\Enums\\Branding::Dark').value %}
+  {% set brandingFavicon = constant('Elabftw\\Enums\\Branding::Favicon').value %}
+
   <div class='pl-3' id='brandingLogos'>
-    {{ _self.logo_block('Header logo (110x40px)'|trans, 'logo_header_svg', App.Config.configArr.logo_header_svg, true) }}
-    {{ _self.logo_block('Login page logo (light theme)'|trans, 'logo_light_svg', App.Config.configArr.logo_light_svg, false) }}
-    {{ _self.logo_block('Login page logo (dark theme)'|trans, 'logo_dark_svg', App.Config.configArr.logo_dark_svg, true) }}
-    {{ _self.logo_block('Favicon'|trans, 'favicon_svg', App.Config.configArr.favicon_svg, false) }}
+    {{ _self.logo_block(
+      'Header logo (110x40px)'|trans,
+      brandingHeader,
+      branding[brandingHeader] ?? null,
+      true
+    ) }}
+
+    {{ _self.logo_block(
+      'Login page logo (light theme)'|trans,
+      brandingLight,
+      branding[brandingLight] ?? null,
+      false
+    ) }}
+
+    {{ _self.logo_block(
+      'Login page logo (dark theme)'|trans,
+      brandingDark,
+      branding[brandingDark] ?? null,
+      true
+    ) }}
+
+    {{ _self.logo_block(
+      'Favicon'|trans,
+      brandingFavicon,
+      branding[brandingFavicon] ?? null,
+      false
+    ) }}
   </div>
 
   <h2 class='p-2 pl-3 section-title' id='existingRors'>{{ 'Research Organization Registry (ROR)'|trans }}</h2>

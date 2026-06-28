@@ -189,7 +189,7 @@
 
   <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Organization branding'|trans }}</h2>
 
-  {% macro logo_block(title, brandingId, dataUri, darkPreview) %}
+  {% macro logo_block(title, brandingId, darkPreview) %}
     {% set inputId = 'branding-file-' ~ brandingId %}
 
     <h3>
@@ -226,14 +226,12 @@
     </h3>
 
     <div class='{{ darkPreview ? 'bg-dark' : '' }} col-md-6 p-3 logo-preview'>
-      {% if dataUri %}
-        <img
-          data-branding-preview='{{ brandingId }}'
-          src='{{ dataUri }}'
-          alt='{{ title }}'
-          class='img-fluid'
-        >
-      {% endif %}
+      <img
+        data-branding-preview='{{ brandingId }}'
+        src='/api/v2/instance/branding/{{ brandingId }}?format=binary'
+        alt='{{ title }}'
+          class='{{ brandingId == constant('Elabftw\\Enums\\Branding::Favicon').value ? 'display-favicon' : 'img-fluid' }}'
+      >
     </div>
 
     <hr>
@@ -248,28 +246,24 @@
     {{ _self.logo_block(
       'Header logo (110x40px)'|trans,
       brandingHeader,
-      branding[brandingHeader] ?? null,
       true
     ) }}
 
     {{ _self.logo_block(
       'Login page logo (light theme)'|trans,
       brandingLight,
-      branding[brandingLight] ?? null,
       false
     ) }}
 
     {{ _self.logo_block(
       'Login page logo (dark theme)'|trans,
       brandingDark,
-      branding[brandingDark] ?? null,
       true
     ) }}
 
     {{ _self.logo_block(
       'Favicon'|trans,
       brandingFavicon,
-      branding[brandingFavicon] ?? null,
       false
     ) }}
   </div>

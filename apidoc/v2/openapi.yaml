@@ -3486,6 +3486,7 @@ paths:
         required: true
         schema:
           type: integer
+          enum: [1, 2, 3, 4]
     get:
       tags: ['Branding']
       summary: Read a branding asset as a binary file.

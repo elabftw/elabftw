@@ -193,13 +193,32 @@ function checkForUpdate() {
   }).catch(error => latestVersionDiv.append(error));
 }
 
+const updateBrandingPreview = (brandingId: string, file: Blob): void => {
+  const img = document.querySelector<HTMLImageElement>(`img[data-branding-preview="${brandingId}"]`);
+
+  if (!img) {
+    reloadElements(['brandingLogos']);
+    return;
+  }
+
+  const previousObjectUrl = img.dataset.objectUrl;
+  if (previousObjectUrl) {
+    URL.revokeObjectURL(previousObjectUrl);
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  img.dataset.objectUrl = objectUrl;
+  img.src = objectUrl;
+};
+
 const uploadBranding = async (brandingId: string, file: Blob, filename: string): Promise<void> => {
   const formData = new FormData();
   formData.append('action', 'update');
   formData.append('file', file, filename);
 
   await ApiC.post(`instance/branding/${brandingId}`, formData);
-  reloadElements(['brandingLogos']);
+
+  updateBrandingPreview(brandingId, file);
 };
 
 const defaultBrandingAssets: Record<string, string> = {

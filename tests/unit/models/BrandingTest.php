@@ -65,7 +65,7 @@ class BrandingTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
         $this->assertSame('image/svg+xml', $response->headers->get('Content-Type'));
-        $this->assertSame('max-age=3600, public', $response->headers->get('Cache-Control'));
+        $this->assertSame('must-revalidate, no-cache, public', $response->headers->get('Cache-Control'));
         $this->assertIsString($content);
         $this->assertSame((string) strlen($content), $response->headers->get('Content-Length'));
     }
@@ -85,7 +85,7 @@ class BrandingTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
         $this->assertSame('image/png', $response->headers->get('Content-Type'));
         $this->assertSame((string) strlen($data), $response->headers->get('Content-Length'));
-        $this->assertSame('max-age=3600, public', $response->headers->get('Cache-Control'));
+        $this->assertSame('must-revalidate, no-cache, public', $response->headers->get('Cache-Control'));
         $this->assertSame($data, $response->getContent());
     }
 
@@ -108,15 +108,16 @@ class BrandingTest extends \PHPUnit\Framework\TestCase
         $Branding = new Branding(true, 42);
 
         $this->expectException(ImproperActionException::class);
-        $Branding->readOne();
+        $Branding->readBinary();
     }
 
     public function testInvalidBrandingIdUpdate(): void
     {
         $Branding = new Branding(true, 42);
+        $file = $this->getUploadedFile('not an image', 'branding.txt');
 
         $this->expectException(ImproperActionException::class);
-        $Branding->postAction(Action::Update, array());
+        $Branding->postAction(Action::Update, array('file' => $file));
     }
 
     public function testMissingFile(): void

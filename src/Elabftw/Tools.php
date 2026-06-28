@@ -174,7 +174,7 @@ final class Tools
 
         return preg_match(
             '#(?:^|[=&?/])api/v2/instance/branding/[1-9][0-9]*(?:$|[&?])#',
-            $request->server->get('QUERY_STRING') ?? '',
+            $request->getRequestUri(),
         ) === 1;
     }
 }

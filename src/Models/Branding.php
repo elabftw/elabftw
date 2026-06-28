@@ -28,6 +28,7 @@ use function strlen;
 use function strtolower;
 use function dirname;
 use function sprintf;
+use function hash;
 
 /**
  * Operations on branding table
@@ -65,10 +66,20 @@ final class Branding extends AbstractRest
     public function readBinary(): Response
     {
         $branding = $this->selectOne();
+
         return new Response($branding['data'], Response::HTTP_OK, array(
             'Content-Type' => $branding['content_type'],
             'Content-Length' => (string) $branding['filesize'],
-            'Cache-Control' => 'public, max-age=3600',
+            'Cache-Control' => 'public, no-cache, must-revalidate',
+            'ETag' => sprintf(
+                '"%s"',
+                hash('xxh3', sprintf(
+                    '%d:%s:%d',
+                    $branding['id'],
+                    $branding['modified_at'],
+                    $branding['filesize'],
+                )),
+            ),
         ));
     }
 
@@ -120,7 +131,7 @@ final class Branding extends AbstractRest
     {
         $branding = BrandingEnum::tryFrom($this->id ?? 0) ?? throw new ImproperActionException('Invalid branding id.');
 
-        $sql = 'SELECT id, content_type, data, filesize FROM branding WHERE id = :id';
+        $sql = 'SELECT id, content_type, data, filesize, modified_at FROM branding WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $branding->value, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -154,7 +165,10 @@ final class Branding extends AbstractRest
         $filesize = $file->getSize();
 
         if ($filesize < 1 || $filesize > self::BRANDING_MAX_FILESIZE) {
-            throw new ImproperActionException('Invalid branding file size.');
+            throw new ImproperActionException(sprintf(
+                'Invalid branding file size. Maximum allowed size is %.1f MiB.',
+                self::BRANDING_MAX_FILESIZE / 1024 / 1024,
+            ));
         }
 
         $data = file_get_contents($file->getPathname());

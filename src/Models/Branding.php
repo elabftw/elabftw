@@ -46,7 +46,7 @@ final class Branding extends AbstractRest
         'image/vnd.microsoft.icon',
     );
 
-    public function __construct(private readonly bool $canwrite, private readonly ?int $id = null)
+    public function __construct(private readonly bool $canwrite = false, private readonly ?int $id = null)
     {
         parent::__construct();
     }

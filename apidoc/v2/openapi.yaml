@@ -3511,6 +3511,10 @@ paths:
               description: Cache policy for the branding asset.
               schema:
                 type: string
+            ETag:
+              description: Entity tag used for cache revalidation.
+              schema:
+                type: string
           content:
             image/svg+xml:
               schema:
@@ -3536,6 +3540,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        '304':
+          description: The branding asset has not changed.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:

@@ -273,7 +273,7 @@ final class Apiv2Controller extends AbstractApiController
                         $response->isNotModified($this->Request);
                         return $response;
                     }
-                    throw new ImproperActionException('Incorrect format (binary): only available for uploads endpoint.');
+                    throw new ImproperActionException('Incorrect format (binary): only available for uploads/exports/branding endpoints.');
                 }
             )(),
             ExportFormat::Csv,

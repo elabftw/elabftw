@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @author Nicolas CARPi / Deltablot
  * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -60,7 +60,7 @@ final class Branding extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        throw new ImproperActionException("Use format=binary on this endpoint. No\u{a0}JSON response available.");
+        throw new ImproperActionException('Use ?format=binary on this endpoint. No JSON response available.');
     }
 
     public function readBinary(): Response
@@ -94,13 +94,6 @@ final class Branding extends AbstractRest
 
     public function populate(): void
     {
-        $branding = array(
-            1 => 'logo-header.svg',
-            2 => 'logo-light.svg',
-            3 => 'logo-dark.svg',
-            4 => 'favicon.svg',
-        );
-
         $sql = 'INSERT INTO branding (id, content_type, data, filesize)
             VALUES (:id, :content_type, :data, :filesize)
             ON DUPLICATE KEY UPDATE
@@ -111,15 +104,15 @@ final class Branding extends AbstractRest
 
         $req = $this->Db->prepare($sql);
 
-        foreach ($branding as $id => $filename) {
-            $path = dirname(__DIR__, 2) . '/web/assets/images/' . $filename;
+        foreach (BrandingEnum::cases() as $branding) {
+            $path = dirname(__DIR__, 2) . '/web/assets/images/' . BrandingEnum::toFile($branding);
             $data = file_get_contents($path);
 
             if ($data === false) {
                 throw new RuntimeException(sprintf('Could not read branding file: %s', $path));
             }
 
-            $req->bindValue(':id', $id, PDO::PARAM_INT);
+            $req->bindValue(':id', $branding->value, PDO::PARAM_INT);
             $req->bindValue(':content_type', 'image/svg+xml');
             $req->bindValue(':data', $data, PDO::PARAM_LOB);
             $req->bindValue(':filesize', strlen($data), PDO::PARAM_INT);

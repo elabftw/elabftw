@@ -18,4 +18,14 @@ enum Branding: int
     case Light = 2;
     case Dark = 3;
     case Favicon = 4;
+
+    public static function toFile(self $case): string
+    {
+        return match ($case) {
+            self::Header => 'logo-header.svg',
+            self::Light => 'logo-light.svg',
+            self::Dark => 'logo-dark.svg',
+            self::Favicon => 'favicon.svg',
+        };
+    }
 }

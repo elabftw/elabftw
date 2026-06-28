@@ -246,8 +246,11 @@ if (window.location.pathname === '/sysconfig.php') {
       return;
     }
 
-    await uploadBranding(brandingId, file, file.name);
-    input.value = '';
+    try {
+      await uploadBranding(brandingId, file, file.name);
+    } finally {
+      input.value = '';
+    }
   });
 
   on('reset-branding', async (el: HTMLElement) => {

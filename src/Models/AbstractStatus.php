@@ -57,6 +57,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->canWriteOrExplode();
         return $this->create(
             $reqBody['name'] ?? _('Untitled'),
             $reqBody['color'] ?? $this->getRandomDarkColor(),
@@ -156,7 +157,6 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function create(string $title = '', ?string $color = null, int $isDefault = 0): int
     {
-        $this->canWriteOrExplode();
         $title = Filter::title($title);
         $color ??= $this->getRandomDarkColor();
         $color = Check::color($color);

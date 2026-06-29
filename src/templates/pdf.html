@@ -49,9 +49,15 @@
     </div>
   </div>
 
-  {% if timestamped %}
+  {% if isTimestamped %}
   <div class="timestamped-block">
-    <p>{{ 'This document has been timestamped by %s on %s.'|trans|format(timestamperName, localDate) }}</p>
+    <p>{{ 'This document has been timestamped by %s on %s.'|trans|format(timestamperName, formattedTimestampedAt) }}</p>
+  </div>
+  {% endif %}
+
+  {% if isSigned %}
+  <div class="timestamped-block">
+    <p>{{ 'This document has been last signed by %s on %s.'|trans|format(signerName, formattedSignedAt) }}</p>
   </div>
   {% endif %}
 
@@ -223,14 +229,19 @@
         {% if entityData.elabid %}
           <p class='elabid'>{{ 'Unique eLabID:'|trans }} {{ entityData.elabid }}</p>
         {% endif %}
-        {% if locked %}
+        {% if isLocked %}
           <p class='elabid'>
-            {{ 'Locked by %s on %s at %s'|trans|format(lockerName, lockDate, lockTime) }}
+            {{ 'Locked by %s on %s at %s'|trans|format(entityData.lockedby|userid2fullname, lockedAt.date, lockedAt.time) }}
           </p>
         {% endif %}
-        {% if timestamped %}
+        {% if isTimestamped %}
           <p class='elabid'>
-            {{ 'Timestamped by %s on %s at %s'|trans|format(timestamperName, timestampDate, timestampTime) }}
+            {{ 'Timestamped by %s on %s at %s'|trans|format(entityData.timestampedby|userid2fullname, timestampedAt.date, timestampedAt.time) }}
+          </p>
+        {% endif %}
+        {% if isSigned %}
+          <p class='elabid'>
+            {{ 'Signed by %s on %s at %s'|trans|format(entityData.last_signed_by|userid2fullname, signedAt.date, signedAt.time) }}
           </p>
         {% endif %}
         <p class='elabid'>Link: <a href='{{ url }}'>{{ url }}</a></p>

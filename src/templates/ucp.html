@@ -84,6 +84,7 @@
           <option value='date' {{ App.Users.userData.orderby == 'date' ? ' selected' }}>{{ 'Date'|trans }}</option>
           <option value='title' {{ App.Users.userData.orderby == 'title' ? ' selected' }}>{{ 'Title'|trans }}</option>
           <option value='comment' {{ App.Users.userData.orderby == 'comment' ? ' selected' }}>{% trans %}Comment{% plural 1 %}Comments{% endtrans %}</option>
+          <option value='customid' {{ App.Users.userData.orderby == 'customid' ? ' selected' }}>{{ 'Custom ID'|trans }}</option>
       </select>
     </div>
     <hr>

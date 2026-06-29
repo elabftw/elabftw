@@ -143,13 +143,39 @@ function handleInitialLoadDone(): void {
   document.getElementById('itemListSkeleton')?.remove();
 }
 
-async function getDisplayMode() {
-  return ApiC.getJson(`${Model.User}/me`).then((json: { display_mode?: string }) => {
-    return json['display_mode'];
-  }).catch(() => 'it');
+async function getMe() {
+  return ApiC.getJson(`${Model.User}/me`);
 }
 
-const mountEntityListSv = (target: HTMLElement): void => {
+function getCurrentUrlParam(param: string): string {
+  return new URLSearchParams(window.location.search).get(param) ?? '';
+}
+
+function getCurrentUrlNumberParam(param: string): number | null {
+  const value = getCurrentUrlParam(param);
+
+  if (value.length === 0) {
+    return null;
+  }
+
+  const numberValue = Number(value);
+
+  return Number.isFinite(numberValue) ? numberValue : null;
+}
+
+function getPreferredOrder(user: Record<string, unknown>): string {
+  const order = user['orderby'] ?? user['order'];
+
+  return typeof order === 'string' && order.length > 0 ? order : 'date';
+}
+
+function getPreferredSort(user: Record<string, unknown>): string {
+  const sort = user['sort'];
+
+  return typeof sort === 'string' && sort.length > 0 ? sort : 'desc';
+}
+
+const mountEntityListSv = (target: HTMLElement, order: string, sort: string): void => {
   if (entityListSvComponent) {
     return;
   }
@@ -159,6 +185,8 @@ const mountEntityListSv = (target: HTMLElement): void => {
     props: {
       entityType: entity.type,
       limit: 15,
+      order: order,
+      sort: sort,
       searchQuery,
       entityFilters,
       selectedEntities,
@@ -180,16 +208,22 @@ const unmountEntityListSv = async (): Promise<void> => {
   entityListSvComponent = null;
 };
 
-async function displayEntities(mode: string) {
+async function displayEntities(
+  mode: string,
+  order: string,
+  sort: string,
+  related: number | null = getCurrentUrlNumberParam('related'),
+  relatedOrigin: string = getCurrentUrlParam('related_origin'),
+) {
   const rootEl = document.getElementById('entityList');
   if (mode === 'tb') {
     unmountEntityListSv();
-    mountEntitiesTable(rootEl, searchQuery, selectedEntities);
+    mountEntitiesTable(rootEl, searchQuery, selectedEntities, order, sort, related, relatedOrigin);
     handleInitialLoadDone();
     return;
   }
   unmountEntitiesTable();
-  mountEntityListSv(rootEl);
+  mountEntityListSv(rootEl, order, sort);
 }
 
 const searchBar = document.getElementById('searchBar');
@@ -302,21 +336,61 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // can't have await at top level, so wrap it
   void (async (): Promise<void> => {
-    const displayMode = await getDisplayMode();
-    displayEntities(displayMode);
+    const me = await getMe();
+    displayEntities(String(me['display_mode'] ?? 'it'), getPreferredOrder(me), getPreferredSort(me));
   })();
 
   preventReactiveSearchFormSubmit();
   hydrateFilterAutoControlsFromUrl();
 
   // TomSelect for extra fields & owner search select
-  if (document.getElementById('metakey')) {
+  const metakeySelect = document.getElementById('metakey');
+
+  if (metakeySelect) {
+    let metakeyOptionsLoaded = false;
+    let metakeyOptionsLoading = false;
+
     new TomSelect('#metakey', {
       maxOptions: 512,
       plugins: [
         'dropdown_input',
         'remove_button',
       ],
+      valueField: 'value',
+      labelField: 'text',
+      searchField: [
+        'text',
+      ],
+      preload: 'focus',
+      shouldLoad() {
+        return !metakeyOptionsLoaded && !metakeyOptionsLoading;
+      },
+      load(query, callback) {
+        if (metakeyOptionsLoading || metakeyOptionsLoaded) {
+          callback();
+          return;
+        }
+        metakeyOptionsLoading = true;
+        ApiC.getJson('extra_fields_keys')
+          .then((extraFieldsKeys) => {
+            const options = extraFieldsKeys
+              .map((extraFieldKey) => ({
+                value: extraFieldKey.extra_fields_key,
+                text: extraFieldKey.extra_fields_key,
+                frequency: extraFieldKey.frequency,
+              }))
+              .filter((option) => option.value);
+
+            metakeyOptionsLoaded = true;
+            callback(options);
+          })
+          .catch(() => {
+            callback();
+          })
+          .finally(() => {
+            metakeyOptionsLoading = false;
+          });
+      },
     });
   }
 
@@ -764,13 +838,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // TOGGLE DISPLAY
     } else if (el.matches('[data-action="toggle-items-layout"]')) {
       let target = 'it';
-      const currentMode = await getDisplayMode();
-      if (currentMode === 'it') {
+      const me = await getMe();
+      if (me['display_mode'] === 'it') {
         target = 'tb';
       }
-      ApiC.patch(`${Model.User}/me`, { notifOnSaved: 0, display_mode: target}).then(() => {
+      ApiC.patch(`${Model.User}/me`, { notifOnSaved: 0, display_mode: target}).then(resp => resp.json()).then(json => {
         document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
-        displayEntities(target);
+        displayEntities(target, getPreferredOrder(json), getPreferredSort(json));
       });
 
     // a tag has been clicked/selected, add it in url and load the page

@@ -21,6 +21,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\AccessType;
@@ -104,6 +105,7 @@ use function ucfirst;
 use function array_fill;
 use function array_map;
 use function count;
+use function array_replace;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -119,19 +121,11 @@ abstract class AbstractEntity extends AbstractRest
 
     protected const string FORCE_TEMPLATE_KEY = '';
 
-    public Comments $Comments;
-
     public AbstractExperimentsLinks $ExperimentsLinks;
 
     public AbstractItemsLinks $ItemsLinks;
 
-    public Steps $Steps;
-
-    public Tags $Tags;
-
     public Uploads $Uploads;
-
-    public Pins $Pins;
 
     public ExclusiveEditMode $ExclusiveEditMode;
 
@@ -139,15 +133,10 @@ abstract class AbstractEntity extends AbstractRest
 
     public bool $alwaysShowOwned = false;
 
-    // sql of ids to include
-    public string $idFilter = '';
-
     public bool $isReadOnly = false;
 
     // inserted in sql
     public array $extendedValues = array();
-
-    public TeamGroups $TeamGroups;
 
     // inserted in sql
     private string $extendedFilter = '';
@@ -160,12 +149,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $this->ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
         $this->ItemsLinks = LinksFactory::getItemsLinks($this);
-        $this->Steps = new Steps($this);
-        $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
-        $this->Comments = new Comments($this);
-        $this->TeamGroups = new TeamGroups($this->Users);
-        $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
         // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
         $this->isReadOnly = $this->ExclusiveEditMode->isActive();
@@ -194,43 +178,8 @@ abstract class AbstractEntity extends AbstractRest
         ?int $createdFromId = null,
     ): int;
 
+    // Duplicate an entity, adding ' I' to the title to make the copy noticeable.
     abstract public function duplicate(bool $copyFiles = false, bool $linkToOriginal = false): int;
-
-    public function createFromTemplate(int $templateId, ?string $title = null): int
-    {
-        $TemplateType = $this->entityType->toTemplateEntity($this->Users, $templateId);
-        $template = $TemplateType->readOne();
-        $id = $this->create(
-            title: $title ?? $template['title'],
-            body: $template['body'],
-            canreadBase: BasePermissions::from($template['canread_target_base']),
-            canwriteBase: BasePermissions::from($template['canwrite_target_base']),
-            canread: $template['canread_target'],
-            canwrite: $template['canwrite_target'],
-            canreadIsImmutable: (bool) $template['canread_is_immutable'],
-            canwriteIsImmutable: (bool) $template['canwrite_is_immutable'],
-            category: $template['category'],
-            status: $template['status'],
-            metadata: $template['metadata'],
-            hideMainText: BinaryValue::from($template['hide_main_text']),
-            rating: $template['rating'],
-            contentType: BodyContentType::from($template['content_type']),
-            createdFromType: $TemplateType->entityType,
-            createdFromId: $templateId,
-        );
-        $tags = array_column($TemplateType->Tags->readAll(), 'tag');
-        $this->ItemsLinks->duplicate($templateId, $id, fromTemplate: true);
-        $this->ExperimentsLinks->duplicate($templateId, $id, fromTemplate: true);
-        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($templateId, $id, fromTemplate: true);
-        $this->Steps->duplicate($templateId, $id, fromTemplate: true);
-        $freshSelf = new $this($this->Users, $id);
-        $TemplateType->Uploads->duplicate($freshSelf);
-        foreach ($tags as $tag) {
-            $freshSelf->Tags->postAction(Action::Create, array('tag' => $tag));
-        }
-        return $id;
-    }
 
     #[Override]
     public function postAction(Action $action, array $reqBody): int
@@ -241,8 +190,21 @@ abstract class AbstractEntity extends AbstractRest
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
+                    // create an entity from a template
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
-                        return $this->createFromTemplate((int) $reqBody['template'], $reqBody['title'] ?? null);
+                        $entity = $this->entityType->toTemplateEntity($this->Users, (int) $reqBody['template']);
+
+                        $title = $reqBody['title'] ?? null;
+                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title, blankExtrafields: false);
+                    }
+                    // create a template from current entity
+                    if (isset($reqBody['entity']) && ((int) $reqBody['entity']) !== -1) {
+                        if (!($this instanceof AbstractTemplateEntity)) {
+                            throw new ImproperActionException('The entity parameter is only valid for template creation.');
+                        }
+                        $entity = $this->entityType->toConcreteEntity($this->Users, (int) $reqBody['entity']);
+                        $title = $reqBody['title'] ?? null;
+                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title);
                     }
                     // check if use of template is enforced at team level for this entity
                     $teamConfigArr = new Teams($this->Users, $this->Users->team)->selectOne();
@@ -400,11 +362,14 @@ abstract class AbstractEntity extends AbstractRest
             $this->processExtendedQuery($displayParams->getUserQuery());
             $extended = true;
         }
+        $displayFilterSql = $displayParams->getFilterSql();
+        $withCompounds = $this->needsCompoundsJoin($displayFilterSql);
 
         $EntitySqlBuilder = $this->getSqlBuilder();
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $displayParams->getRelatedOrigin(),
+            $withCompounds,
         );
 
         $sql .= ' WHERE 1=1 ';
@@ -413,7 +378,7 @@ abstract class AbstractEntity extends AbstractRest
         $sql .= $this->filterSql;
 
         // add filters like related, owner or category
-        $sql .= $displayParams->getFilterSql();
+        $sql .= $displayFilterSql;
 
         // add the json permissions
         $sql .= $EntitySqlBuilder->getCanFilter($can);
@@ -425,7 +390,6 @@ abstract class AbstractEntity extends AbstractRest
         }
         $sqlArr = array(
             $this->extendedFilter,
-            $this->idFilter,
             $stateSql,
             'GROUP BY id',
             $displayParams->getSql(),
@@ -524,7 +488,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::Lock => $this->toggleLock(),
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
-            Action::Pin => $this->Pins->togglePin(),
+            Action::Pin => new Pins($this)->togglePin(),
             Action::Restore => $this->restore(),
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanRead  => $this->handleCanUpdate($params, AccessType::Read),
@@ -599,14 +563,14 @@ abstract class AbstractEntity extends AbstractRest
             throw new ResourceNotFoundException();
         }
         $this->canOrExplode(AccessType::Read);
-        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['steps'] = new Steps($this)->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['changelog'] = new Changelog($this)->readAll();
-        $this->entityData['comments'] = $this->Comments->readAll();
+        $this->entityData['comments'] = new Comments($this)->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $this->entityData['compounds_links'] = $CompoundsLinks->readAll();
@@ -730,15 +694,6 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    // Get timestamper full name for display in view mode
-    public function getTimestamperFullname(): string
-    {
-        if ($this->entityData['timestamped'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['timestampedby']);
-    }
-
     // generate a title useful for zip folder name for instance: shortened, with category and short elabid
     public function toFsTitle(): string
     {
@@ -778,15 +733,6 @@ abstract class AbstractEntity extends AbstractRest
         return array_column($req->fetchAll(), 'id');
     }
 
-    // Get locker full name for display in view mode
-    public function getLockerFullname(): string
-    {
-        if ($this->entityData['locked'] === 0) {
-            return 'Unknown';
-        }
-        return $this->getFullnameFromUserid($this->entityData['lockedby']);
-    }
-
     public function getIdFromCategory(int $category): array
     {
         $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE team = :team AND category = :category AND (state = :statenormal OR state = :statearchived)';
@@ -819,7 +765,7 @@ abstract class AbstractEntity extends AbstractRest
         // remove the custom_id upon deletion
         $this->update(new EntityParams('custom_id', ''));
         // delete from pinned too
-        $this->Pins->cleanup();
+        new Pins($this)->cleanup();
         $this->Uploads->destroyAll();
         return $this->update(new EntityParams('state', State::Deleted->value));
     }
@@ -955,6 +901,75 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions->dbInsert($this->entityData['body']);
 
         return $this->readOne();
+    }
+
+    protected function copyEntityFrom(
+        self $sourceEntity,
+        ?string $title = null,
+        bool $copyFiles = true,
+        array $overrideCreateParams = array(),
+        bool $blankExtrafields = true,
+    ): int {
+        $sourceId = $sourceEntity->id ?? throw new IllegalActionException('No id was set!');
+        $fromTemplate = $sourceEntity instanceof AbstractTemplateEntity;
+        $toTemplate = $this instanceof AbstractTemplateEntity;
+
+        $source = $sourceEntity->readOne();
+
+        $metadata = $source['metadata'];
+        if ($blankExtrafields) {
+            // handle the blank_value_on_duplicate attribute on extra fields
+            $metadata = new Metadata($source['metadata'])->blankExtraFieldsValueOnDuplicate();
+        }
+
+        $createParams = array_replace(array(
+            'title' => $title ?? $source['title'],
+            'body' => $source['body'],
+            'canreadBase' => BasePermissions::from($source[$fromTemplate ? 'canread_target_base' : 'canread_base']),
+            'canwriteBase' => BasePermissions::from($source[$fromTemplate ? 'canwrite_target_base' : 'canwrite_base']),
+            'canread' => $source[$fromTemplate ? 'canread_target' : 'canread'],
+            'canwrite' => $source[$fromTemplate ? 'canwrite_target' : 'canwrite'],
+            'canreadIsImmutable' => (bool) $source['canread_is_immutable'],
+            'canwriteIsImmutable' => (bool) $source['canwrite_is_immutable'],
+            'category' => $source['category'],
+            'status' => $source['status'],
+            'metadata' => $metadata,
+            'hideMainText' => BinaryValue::from($source['hide_main_text']),
+            'rating' => $source['rating'],
+            'contentType' => BodyContentType::from($source['content_type']),
+            'createdFromType' => $sourceEntity->entityType,
+            'createdFromId' => $sourceId,
+        ), $overrideCreateParams);
+
+        $newId = $this->create(...$createParams);
+
+        $fresh = new $this($this->Users, $newId);
+
+        if ($fromTemplate && $toTemplate) {
+            $fresh->patch(Action::Update, array(
+                'canread_target' => $source['canread_target'],
+                'canwrite_target' => $source['canwrite_target'],
+            ));
+        }
+
+        // Most link duplication works from the target entity type
+        // exception is: entry -> template: links must be read from the concrete source.
+        $linkEntity = $toTemplate && !$fromTemplate ? $sourceEntity : $this;
+
+        LinksFactory::getItemsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getExperimentsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getCompoundsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        LinksFactory::getContainersLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
+        new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
+
+        $freshTags = new Tags($fresh);
+        foreach (array_column(new Tags($sourceEntity)->readAll(), 'tag') as $tag) {
+            $freshTags->postAction(Action::Create, array('tag' => $tag));
+        }
+        if ($copyFiles) {
+            $sourceEntity->Uploads->duplicate($fresh);
+        }
+        return $newId;
     }
 
     protected function getTagsHydrationData(array $entityIds): array
@@ -1193,6 +1208,17 @@ abstract class AbstractEntity extends AbstractRest
         $ZipArchive->close();
         $comment = sprintf(_('Signature archive by %s (%s)'), $this->Users->userData['fullname'], $meaning->name);
         $this->Uploads->create(new CreateUploadFromLocalFile('signature archive.zip', $zipPath, $comment, immutable: 1, state: State::Archived));
+        // update the helper columns
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET signature_count = signature_count + 1, last_signed_at = NOW(), last_signed_by = :signer WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':signer', $this->Users->getUserid(), PDO::PARAM_INT);
+        $req->bindValue(':id', $this->id ?? 0, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        // record the action in the changelog
+        $Changelog = new Changelog($this);
+        $Changelog->create(new ContentParams('signature', 'Entity was signed'));
+
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
@@ -1200,17 +1226,6 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions = new Revisions($this, 9000, 0, 0);
         $Revisions->dbInsert($this->entityData['body']);
         return $this->readOne();
-    }
-
-    protected function getFullnameFromUserid(int $userid): string
-    {
-        // maybe user was deleted!
-        try {
-            $user = new Users($userid);
-        } catch (ResourceNotFoundException) {
-            return 'User not found!';
-        }
-        return $user->userData['fullname'];
     }
 
     protected function getCurrentHighestCustomId(int $category): int
@@ -1251,6 +1266,19 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     protected function enforceTemplate(array $teamConfigArr): void {}
+
+    private function needsCompoundsJoin(string $displayFilterSql): bool
+    {
+        return $this->sqlReferencesCompounds($this->extendedFilter)
+            || $this->sqlReferencesCompounds($this->filterSql)
+            || $this->sqlReferencesCompounds($displayFilterSql);
+    }
+
+    private function sqlReferencesCompounds(string $sql): bool
+    {
+        return str_contains($sql, 'compounds.')
+            || str_contains($sql, 'compoundslinks.');
+    }
 
     private function handleCanUpdate(array $params, AccessType $type): void
     {
@@ -1335,9 +1363,10 @@ abstract class AbstractEntity extends AbstractRest
 
     private function processExtendedQuery(string $extendedQuery): void
     {
+        $TeamGroups = new TeamGroups($this->Users);
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->entityType->value,
-            $this->TeamGroups->readGroupsWithUsersFromUser(),
+            $TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();
         if ($whereClause) {

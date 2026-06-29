@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
-use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -23,9 +22,7 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\AccessType;
-use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\Links\Items2ItemsLinks;
-use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
@@ -70,6 +67,7 @@ final class Items extends AbstractConcreteEntity
         // specific to Items
         string $canbook = self::EMPTY_CAN_JSON,
         BasePermissions $canbookBase = BasePermissions::Team,
+        BinaryValue $isBookable = BinaryValue::False,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
         $date ??= new DateTimeImmutable();
@@ -82,8 +80,8 @@ final class Items extends AbstractConcreteEntity
         // figure out the custom id
         $customId ??= $this->getNextCustomId($category);
 
-        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread_base, canwrite_base, canbook_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text, created_from_type, created_from_id)
-            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread_base, :canwrite_base, :canbook_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text, :created_from_type, :created_from_id)';
+        $sql = 'INSERT INTO items(team, title, date, status, body, userid, category, elabid, canread_base, canwrite_base, canbook_base, canread, canwrite, canread_is_immutable, canwrite_is_immutable, canbook, metadata, custom_id, content_type, rating, hide_main_text, created_from_type, created_from_id, is_bookable)
+            VALUES(:team, :title, :date, :status, :body, :userid, :category, :elabid, :canread_base, :canwrite_base, :canbook_base, :canread, :canwrite, :canread_is_immutable, :canwrite_is_immutable, :canbook, :metadata, :custom_id, :content_type, :rating, :hide_main_text, :created_from_type, :created_from_id, :is_bookable)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->team, PDO::PARAM_INT);
         $req->bindParam(':title', $title);
@@ -106,6 +104,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);
+        $req->bindValue(':is_bookable', $isBookable->value, PDO::PARAM_INT);
         $this->Db->bindNullableInt($req, ':created_from_type', $createdFromType?->toInt());
         $this->Db->bindNullableInt($req, ':created_from_id', $createdFromId);
         $this->Db->execute($req);
@@ -149,47 +148,22 @@ final class Items extends AbstractConcreteEntity
     {
         $this->canOrExplode(AccessType::Read);
 
-        $title = $this->entityData['title'] . ' I';
-        // handle the blank_value_on_duplicate attribute on extra fields
-        $metadata = (new Metadata($this->entityData['metadata']))->blankExtraFieldsValueOnDuplicate();
-        $newId = $this->create(
-            title: $title,
-            body: $this->entityData['body'],
-            canreadBase: BasePermissions::from($this->entityData['canread_base']),
-            canwriteBase: BasePermissions::from($this->entityData['canwrite_base']),
-            canbookBase: BasePermissions::from($this->entityData['canbook_base']),
-            canread: $this->entityData['canread'],
-            canwrite: $this->entityData['canwrite'],
-            canbook: $this->entityData['canbook'],
-            category: $this->entityData['category'],
-            status: $this->entityData['status'],
-            metadata: $metadata,
-            hideMainText: BinaryValue::from($this->entityData['hide_main_text']),
-            contentType: BodyContentType::from($this->entityData['content_type']),
-            createdFromType: $this->entityType,
-            createdFromId: $this->id,
+        $newId = $this->copyEntityFrom(
+            sourceEntity: $this,
+            title: $this->entityData['title'] . ' I',
+            copyFiles: $copyFiles,
+            overrideCreateParams: array(
+                'canbook' => $this->entityData['canbook'],
+                'canbookBase' => BasePermissions::from($this->entityData['canbook_base']),
+                'isBookable' => BinaryValue::from($this->entityData['is_bookable']),
+            ),
         );
 
-        // add missing canbook
-        $fresh = new self($this->Users, $newId);
-        $fresh->update(new ContentParams('canbook', $this->entityData['canbook']));
-        /** @psalm-suppress PossiblyNullArgument */
-        $this->ExperimentsLinks->duplicate($this->id, $newId);
-        $this->ItemsLinks->duplicate($this->id, $newId);
-        $this->Steps->duplicate($this->id, $newId);
-        $this->Tags->copyTags($newId);
-        $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
-        $CompoundsLinks->duplicate($this->id, $newId);
-        $ContainersLinks = LinksFactory::getContainersLinks($this);
-        $ContainersLinks->duplicate($this->id, $newId);
-        // also add a link to the original resource
         if ($linkToOriginal) {
+            $fresh = new self($this->Users, $newId);
             $ItemsLinks = new Items2ItemsLinks($fresh);
             $ItemsLinks->setId($this->id);
             $ItemsLinks->postAction(Action::Create, array());
-        }
-        if ($copyFiles) {
-            $this->Uploads->duplicate($fresh);
         }
 
         return $newId;

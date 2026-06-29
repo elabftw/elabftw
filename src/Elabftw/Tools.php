@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
+use Symfony\Component\HttpFoundation\Request;
 
 use function bin2hex;
 use function date;
@@ -33,6 +34,7 @@ use function ord;
 use function sprintf;
 use function strlen;
 use function vsprintf;
+use function preg_match;
 
 /**
  * Toolbelt full of useful functions
@@ -158,5 +160,21 @@ final class Tools
     public static function eLabHtmlspecialchars(mixed $string): string
     {
         return htmlspecialchars((string) $string, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false);
+    }
+
+    public static function isPublicBrandingBinaryRequest(Request $request): bool
+    {
+        if ($request->getMethod() !== Request::METHOD_GET) {
+            return false;
+        }
+
+        if ($request->query->getAlpha('format') !== 'binary') {
+            return false;
+        }
+
+        return preg_match(
+            '#/api/v2/instance/branding/[1-4]\?format=binary#',
+            $request->getRequestUri(),
+        ) === 1;
     }
 }

@@ -2311,6 +2311,17 @@ CREATE TABLE `users2rors` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 -- end schema 212
 
+-- schema 214
+CREATE TABLE branding (
+    id TINYINT UNSIGNED NOT NULL,
+    content_type VARCHAR(127) NOT NULL,
+    data MEDIUMBLOB NOT NULL,
+    filesize INT UNSIGNED NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
 --
 -- Indexes and Constraints for table `experiments_templates_edit_mode`
 --

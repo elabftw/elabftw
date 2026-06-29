@@ -3,9 +3,9 @@
   <label for='createTagInput' class='col-form-label mr-3 edit-mode-label d-sm-block d-none'>{{ 'Tags'|trans }}</label>
   <div class='tags form-inline align-items-center mr-2'>
     <div id='tags_div_currenttags_{{ Entity.id }}' class='d-flex flex-wrap'>
-      {% set attachedTags = Entity.Tags.readAll() %}
+      {% set attachedTags = Entity.entityData.tags_decoded %}
       {% for tag in attachedTags %}
-        <button class='btn tag margin-1px hover-danger lh-normal border-0 {{- loop.last ? ' mr-2' }} {{- tag.is_favorite ? ' favorite' }}' type='button' data-action='unreference-tag' data-tagid='{{ tag.tag_id }}'>{{ tag.tag }}</button>
+        <button class='btn tag margin-1px hover-danger lh-normal border-0 {{- loop.last ? ' mr-2' }} {{- tag.is_favorite ? ' favorite' }}' type='button' data-action='unreference-tag' data-tagid='{{ tag.id }}'>{{ tag.tag }}</button>
       {%- endfor -%}
     </div>
     <input type='text' id='createTagInput' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />

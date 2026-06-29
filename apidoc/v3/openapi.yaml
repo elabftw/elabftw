@@ -1,0 +1,13 @@
+openapi: 3.2.0
+info:
+  title: eLabFTW REST API v3 Documentation
+  description: |
+    This document describes all available endpoints and methods for eLabFTW's API version 3.
+  version: 3.0.0
+servers:
+  - url: https://elab.local:3148/api/v3
+    description: Local dev server
+  - url: https://demo.elabftw.net/api/v3
+    description: Official demo server
+  - url: https://eln.example.org/api/v3
+    description: Example base URL

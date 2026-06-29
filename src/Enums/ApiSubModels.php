@@ -19,6 +19,7 @@ use function array_map;
 
 enum ApiSubModels: string
 {
+    case Branding = 'branding';
     case Comments = 'comments';
     case CompoundsLinks = 'compounds_links';
     case Containers = 'containers';
@@ -136,6 +137,7 @@ enum ApiSubModels: string
         return array_map(
             fn(self $case): string => $case->value,
             array(
+                self::Branding,
                 self::Rors,
             ),
         );

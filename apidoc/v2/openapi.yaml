@@ -1892,8 +1892,6 @@ components:
           type: string
         color:
           type: string
-        is_default:
-          type: integer
     step:
       type: object
       properties:
@@ -3361,6 +3359,228 @@ paths:
                               example: 10
         '401':
           $ref: '#/components/responses/Unauthorized'
+
+  # INSTANCE
+  /instance:
+    summary: Instance level actions
+    post:
+      tags: ['Instance']
+      summary: Run an instance level action.
+      operationId: post-instance
+      requestBody:
+        description: Parameters for the instance action.
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required: ['action']
+                  properties:
+                    action:
+                      type: string
+                      enum: ['allowuntrusted']
+                      description: Allow all untrusted devices to access locked down user accounts. Requires Sysadmin permissions.
+                - type: object
+                  required: ['action']
+                  properties:
+                    action:
+                      type: string
+                      enum: ['clearlockedoutdevices']
+                      description: Clear all locked out devices. Requires Sysadmin permissions.
+                - type: object
+                  required: ['action', 'email']
+                  properties:
+                    action:
+                      type: string
+                      enum: ['test']
+                      description: Send a test email. Requires Sysadmin permissions.
+                    email:
+                      type: string
+                      format: email
+                      description: Email address that will receive the test email.
+                      example: sysadmin@example.org
+                - type: object
+                  required: ['action', 'target', 'subject', 'body']
+                  properties:
+                    action:
+                      type: string
+                      enum: ['email']
+                      description: Send a mass email to instance users. Requires Sysadmin permissions.
+                    target:
+                      type: string
+                      enum: ['active_users', 'admins', 'sysadmins']
+                      description: Target recipients.
+                    subject:
+                      type: string
+                      description: Email subject.
+                      example: Planned maintenance
+                    body:
+                      type: string
+                      description: Email body.
+                      example: The instance will be unavailable tonight.
+                - type: object
+                  required: ['action', 'entity_id', 'subject', 'body']
+                  properties:
+                    action:
+                      type: string
+                      enum: ['emailbookers']
+                      description: Email users who booked the item.
+                    entity_id:
+                      type: integer
+                      description: ID of the bookable item.
+                      example: 12
+                    subject:
+                      type: string
+                      description: Email subject.
+                      example: Booking update
+                    body:
+                      type: string
+                      description: Email body.
+                      example: The booked item will be unavailable tomorrow.
+                - type: object
+                  required: ['action', 'target', 'subject', 'body']
+                  properties:
+                    action:
+                      type: string
+                      enum: ['emailteam']
+                      description: Email the current team or one of its teamgroups.
+                    target:
+                      type: string
+                      description: Target recipients. Use "team" for the current team or "teamgroup_{id}" for a teamgroup.
+                      example: teamgroup_4
+                      pattern: '^(team|teamgroup_[0-9]+)$'
+                    subject:
+                      type: string
+                      description: Email subject.
+                      example: Team update
+                    body:
+                      type: string
+                      description: Email body.
+                      example: Please read the latest team announcement.
+      responses:
+        '201':
+          description: The action was successful.
+          headers:
+            location:
+              description: An URL ending with the integer returned by the action.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+
+  # INSTANCE BRANDING
+  /instance/branding/{id}:
+    summary: Instance branding
+    parameters:
+      - name: id
+        in: path
+        description: Branding id.
+        required: true
+        schema:
+          type: integer
+          enum: [1, 2, 3, 4]
+    get:
+      tags: ['Branding']
+      summary: Read a branding asset as a binary file.
+      operationId: get-instance-branding
+      parameters:
+        - name: format
+          in: query
+          description: Use binary format to retrieve the branding asset.
+          required: true
+          schema:
+            type: string
+            enum: ['binary']
+      responses:
+        '200':
+          description: The branding asset binary file.
+          headers:
+            Content-Length:
+              description: Size of the branding asset in bytes.
+              schema:
+                type: integer
+            Cache-Control:
+              description: Cache policy for the branding asset.
+              schema:
+                type: string
+            ETag:
+              description: Entity tag used for cache revalidation.
+              schema:
+                type: string
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+            image/x-icon:
+              schema:
+                type: string
+                format: binary
+            image/vnd.microsoft.icon:
+              schema:
+                type: string
+                format: binary
+        '304':
+          description: The branding asset has not changed.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+      tags: ['Branding']
+      summary: Update a branding asset.
+      operationId: post-instance-branding
+      requestBody:
+        required: true
+        description: Parameters for updating a branding asset.
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: ['file']
+              properties:
+                action:
+                  type: string
+                  enum: ['update']
+                  description: Update a branding asset. Requires Sysadmin permissions.
+                  default: update
+                file:
+                  type: string
+                  format: binary
+                  description: Branding file. Accepted types are SVG, PNG, JPEG, WebP and ICO. Maximum size is 1 MiB.
+            encoding:
+              file:
+                contentType: image/svg+xml, image/png, image/jpeg, image/webp, image/x-icon, image/vnd.microsoft.icon
+      responses:
+        '201':
+          description: The branding asset has been updated.
+          headers:
+            location:
+              description: An URL to the branding asset that was updated
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+           $ref: '#/components/responses/Forbidden'
 
   # ITEMS
   /items:
@@ -5097,9 +5317,6 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
-                default:
-                  type: integer
-                  description: Is it the default category for the team?
       responses:
         '201':
           description: Create a category.
@@ -5222,9 +5439,6 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
-                default:
-                  type: integer
-                  description: Is it the default category for the team?
       responses:
         '201':
           description: Create a resource category.
@@ -5347,9 +5561,6 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
-                default:
-                  type: integer
-                  description: Is it the default status for the team?
       responses:
         '201':
           description: New experiments status created.
@@ -5470,9 +5681,6 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
-                default:
-                  type: integer
-                  description: Is it the default status for the team?
       responses:
         '201':
           description: New resources status created.

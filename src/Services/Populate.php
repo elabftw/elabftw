@@ -23,6 +23,7 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Branding;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
@@ -97,7 +98,7 @@ final class Populate
 
         $this->output->writeln('┌ Creating teams, users, experiments, and resources...');
         $Users = new UltraAdmin(1, 1);
-        $Teams = new Teams($Users, bypassWritePermission: true);
+        $Teams = new Teams($Users);
 
         // main loop is on "teams" key
         foreach ($this->yaml['teams'] as $team) {
@@ -357,7 +358,7 @@ final class Populate
             return;
         }
         $iterations ??= $this->iterations;
-        $Teams = new Teams($Entity->Users, $Entity->Users->team, bypassWritePermission: true);
+        $Teams = new Teams($Entity->Users, $Entity->Users->team);
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
@@ -549,5 +550,6 @@ final class Populate
         // load structure
         $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Sql->execFile('structure.sql');
+        new Branding(true)->populate();
     }
 }

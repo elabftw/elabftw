@@ -235,7 +235,7 @@ final class TwigFilters
             if (is_array($value)) {
                 $value = self::array2String($value, $depth + 1);
             } else {
-                $value = Tools::eLabHtmlspecialchars($value);
+                $value = Tools::eLabHtmlspecialchars((string) $value);
             }
             $str .= '<details style="--depth: ' . $depth . '"><summary>' . $key . '</summary>' . $value . '</details>';
         }

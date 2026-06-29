@@ -25,7 +25,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $new = $this->Status->postAction(Action::Create, array('title' => 'New status', 'color' => '#29AEB9', 'is_default' => 1));
+        $new = $this->Status->postAction(Action::Create, array('title' => 'New status', 'color' => '#29AEB9'));
         $this->assertIsInt($new);
     }
 
@@ -46,9 +46,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212'));
         $this->assertEquals('Updated', $status['title']);
         $this->assertEquals('121212', $status['color']);
-        $this->assertEquals(0, $status['is_default']);
-        $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212', 'is_default' => 1));
-        $this->assertEquals(1, $status['is_default']);
     }
 
     public function testDestroy(): void

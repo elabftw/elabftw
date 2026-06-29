@@ -60,8 +60,7 @@ abstract class AbstractStatus extends AbstractCategory
         $this->canWriteOrExplode();
         return $this->create(
             $reqBody['name'] ?? _('Untitled'),
-            $reqBody['color'] ?? $this->getRandomDarkColor(),
-            $reqBody['default'] ?? 0,
+            $reqBody['color'] ?? null,
         );
     }
 
@@ -70,7 +69,7 @@ abstract class AbstractStatus extends AbstractCategory
      */
     public function createDefault(): bool
     {
-        return $this->create(_('Running'), '#' . self::DEFAULT_BLUE, 1)
+        return $this->create(_('Running'), '#' . self::DEFAULT_BLUE)
         && $this->create(_('Success'), '#' . self::DEFAULT_GREEN)
         && $this->create(_('Need to be redone'), '#' . self::DEFAULT_GRAY)
         && $this->create(_('Fail'), '#' . self::DEFAULT_RED);
@@ -79,7 +78,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function readOne(): array
     {
-        $sql = sprintf('SELECT id, title, color, is_default, ordering, state, team, is_private
+        $sql = sprintf('SELECT id, title, color, ordering, state, team, is_private
             FROM %s WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -101,7 +100,6 @@ abstract class AbstractStatus extends AbstractCategory
                 entity.id,
                 entity.title,
                 entity.color,
-                entity.is_default,
                 entity.ordering,
                 entity.state,
                 entity.team,
@@ -155,20 +153,18 @@ abstract class AbstractStatus extends AbstractCategory
     }
 
     #[Override]
-    public function create(string $title = '', ?string $color = null, int $isDefault = 0): int
+    public function create(string $title = '', ?string $color = null): int
     {
         $title = Filter::title($title);
         $color ??= $this->getRandomDarkColor();
         $color = Check::color($color);
-        $isDefault = Filter::toBinary($isDefault);
 
-        $sql = sprintf('INSERT INTO %s (title, color, team, is_default)
-            VALUES(:title, :color, :team, :is_default)', $this->table);
+        $sql = sprintf('INSERT INTO %s (title, color, team)
+            VALUES(:title, :color, :team)', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title);
         $req->bindParam(':color', $color);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
-        $req->bindParam(':is_default', $isDefault, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
@@ -176,28 +172,10 @@ abstract class AbstractStatus extends AbstractCategory
 
     private function update(StatusParams $params): bool
     {
-        // make sure there is only one default status
-        if ($params->getTarget() === 'is_default' && $params->getContent() === 1) {
-            $this->setDefaultFalse();
-        }
-
         $sql = sprintf('UPDATE %s SET ' . $params->getColumn() . ' = :content WHERE id = :id', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    /**
-     * Remove all the default status for a team.
-     * If we set true to is_default somewhere, it's best to remove all other default
-     * in the team so we won't have two default status
-     */
-    private function setDefaultFalse(): void
-    {
-        $sql = sprintf('UPDATE %s SET is_default = 0 WHERE team = :team', $this->table);
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 }

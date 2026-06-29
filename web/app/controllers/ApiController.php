@@ -13,6 +13,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\Apiv1Controller;
 use Elabftw\Controllers\Apiv2Controller;
+use Elabftw\Controllers\Apiv3Controller;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\ActiveUser;
@@ -60,6 +61,8 @@ try {
 
     if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
         $Controller = new Apiv2Controller($App->Users, $App->Request);
+    } elseif (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v3')) {
+        $Controller = new Apiv3Controller($App->Users, $App->Request);
     } else {
         $Controller = new Apiv1Controller($App->Users, $App->Request);
     }

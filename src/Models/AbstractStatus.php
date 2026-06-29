@@ -79,7 +79,7 @@ abstract class AbstractStatus extends AbstractCategory
     public function readOne(): array
     {
         $sql = sprintf('SELECT id, title, color, ordering, state, team, is_private
-            FROM %s WHERE id = :id', $this->table);
+            FROM %s WHERE id = :id AND team = :team', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);

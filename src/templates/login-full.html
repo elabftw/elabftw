@@ -3,13 +3,11 @@
 </div>
 
 <div class='text-center'>
-  <div class='col-md-3 mx-auto'>
-    <div class='logo logo-light'>
-      {{ App.Config.configArr.logo_light_svg|raw }}
-    </div>
-    <div class='logo logo-dark'>
-      {{ App.Config.configArr.logo_dark_svg|raw }}
-    </div>
+  <div class='logo logo-light'>
+     <img src='/api/v2/instance/branding/{{ constant('Elabftw\\Enums\\Branding::Light').value }}?format=binary' alt='eLabFTW'>
+  </div>
+  <div class='logo logo-dark'>
+     <img src='/api/v2/instance/branding/{{ constant('Elabftw\\Enums\\Branding::Dark').value }}?format=binary' alt='eLabFTW'>
   </div>
 </div>
 <div class='separator col-md-4 mx-auto'></div>

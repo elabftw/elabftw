@@ -22,6 +22,7 @@ use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Branding;
 use Elabftw\Models\Compounds;
@@ -263,13 +264,21 @@ final class Populate
                 if (isset($experiment['experiments_links'])) {
                     foreach ($experiment['experiments_links'] as $target) {
                         $Experiments->ExperimentsLinks->setId($target);
-                        $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+                        // let it fail, we don't care
+                        try {
+                            $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+                        } catch (ResourceNotFoundException) {
+                        }
                     }
                 }
                 if (isset($experiment['items_links'])) {
                     foreach ($experiment['items_links'] as $target) {
                         $Experiments->ItemsLinks->setId($target);
-                        $Experiments->ItemsLinks->postAction(Action::Create, array());
+                        // let it fail, we don't care
+                        try {
+                            $Experiments->ItemsLinks->postAction(Action::Create, array());
+                        } catch (ResourceNotFoundException) {
+                        }
                     }
                 }
                 $this->output->writeln(sprintf('├ + experiment: %s (id: %d in team: %d)', $experiment['title'], $id, $teamid));

@@ -1892,8 +1892,6 @@ components:
           type: string
         color:
           type: string
-        is_default:
-          type: integer
     step:
       type: object
       properties:
@@ -5319,9 +5317,6 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
-                default:
-                  type: integer
-                  description: Is it the default category for the team?
       responses:
         '201':
           description: Create a category.
@@ -5444,9 +5439,6 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
-                default:
-                  type: integer
-                  description: Is it the default category for the team?
       responses:
         '201':
           description: Create a resource category.
@@ -5569,9 +5561,6 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
-                default:
-                  type: integer
-                  description: Is it the default status for the team?
       responses:
         '201':
           description: New experiments status created.
@@ -5692,9 +5681,6 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
-                default:
-                  type: integer
-                  description: Is it the default status for the team?
       responses:
         '201':
           description: New resources status created.

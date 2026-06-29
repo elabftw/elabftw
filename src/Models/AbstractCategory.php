@@ -55,19 +55,6 @@ abstract class AbstractCategory extends AbstractRest
 
     abstract public function create(string $title, ?string $color = null): int;
 
-    public function getDefault(): ?int
-    {
-        // there should be only one because upon making a status default,
-        // all the others are made not default
-        $sql = 'SELECT id FROM ' . $this->table . ' WHERE is_default = true AND team = :team LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-
-        // if there is no default status, null is fine
-        return (int) $req->fetchColumn() ?: null;
-    }
-
     protected function getUsersCanwriteName(): string
     {
         return $this->table;

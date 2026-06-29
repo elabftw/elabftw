@@ -12,10 +12,15 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private ExperimentsStatus $Status;
 
     protected function setUp(): void
@@ -57,5 +62,29 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $this->assertTrue($Status->destroy());
         $this->assertTrue($this->Status->destroy());
+    }
+
+    public function testCannotReadStatusFromAnotherTeamThroughCurrentTeam(): void
+    {
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2)), $id);
+        $this->expectException(ResourceNotFoundException::class);
+        $otherStatus->readOne();
+    }
+
+    public function testCannotReadOtherTeam(): void
+    {
+        $this->expectException(ImproperActionException::class);
+
+        $Team = new Teams($this->getRandomUserInTeam(2), 1);
+        $Team->readOne();
+    }
+
+    public function testUpdateNonAccessibleStatusThroughCurrentTeam(): void
+    {
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2)), $id);
+        $this->expectException(ResourceNotFoundException::class);
+        $otherStatus->patch(Action::Create, array('title' => 'Coucou'));
     }
 }

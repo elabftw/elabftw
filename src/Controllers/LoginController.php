@@ -123,7 +123,11 @@ final class LoginController implements ControllerInterface
         $loggingInUser = $AuthResponse->getUser();
 
         // if we're receiving mfa_secret, it's because we just enabled MFA, so save it for that user
-        if ($this->Session->has('mfa_secret') && $loggingInUser->userData['mfa_secret'] === null) {
+        if (
+            $AuthResponse->hasVerifiedMfa()
+            && $this->Session->has('mfa_secret')
+            && $loggingInUser->userData['mfa_secret'] === null
+        ) {
             $loggingInUser->update(new UserParams('mfa_secret', $this->Session->get('mfa_secret')));
             $this->Session->remove('mfa_secret');
         }

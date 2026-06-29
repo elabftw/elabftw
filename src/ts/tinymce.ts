@@ -31,7 +31,6 @@ import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/media';
-import 'tinymce/plugins/noneditable';
 import 'tinymce/plugins/pagebreak';
 import 'tinymce/plugins/preview';
 import 'tinymce/plugins/save';
@@ -199,7 +198,7 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
 
 // options for tinymce to pass to tinymce.init()
 export function getTinymceBaseConfig(page: string): object {
-  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media noneditable link pagebreak codesample template mention visualblocks visualchars emoticons preview';
+  let plugins = 'accordion advlist anchor autolink autoresize table searchreplace code fullscreen insertdatetime charmap lists save image media link pagebreak codesample template mention visualblocks visualchars emoticons preview';
   let toolbar1 = 'custom-save preview | undo redo | styles fontsize bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap emoticons adddate | codesample | link | sort-table';
   let removedMenuItems = 'newdocument, image, anchor';
   let fileMenuItems = 'preview | print';
@@ -334,7 +333,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
     },
     mobile: {
-      plugins: [ 'autolink', 'image', 'link', 'lists', 'save', 'table', 'mention', 'noneditable' ],
+      plugins: [ 'autolink', 'image', 'link', 'lists', 'save', 'table', 'mention' ],
     },
     // use a custom function for the save button in toolbar
     save_onsavecallback: (): Promise<void> => updateEntityBody(),

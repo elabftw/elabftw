@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Token;
 
 class DeviceTokenValidatorTest extends \PHPUnit\Framework\TestCase
 {
@@ -45,6 +47,18 @@ class DeviceTokenValidatorTest extends \PHPUnit\Framework\TestCase
     public function testNotParsableToken(): void
     {
         $DeviceTokenValidator = new DeviceTokenValidator($this->config, 'this cannot be parsed!', 1);
+        $this->assertFalse($DeviceTokenValidator->validate());
+    }
+
+    public function testValidateReturnFalseWhenParsedTokenIsNotUnencrypted(): void
+    {
+        $parsedToken = $this->createStub(Token::class);
+        $parser = $this->createStub(Parser::class);
+        $parser->method('parse')->willReturn($parsedToken);
+
+        $config = $this->config->withParser($parser);
+
+        $DeviceTokenValidator = new DeviceTokenValidator($config, 'not-an-unencrypted-token', 1);
         $this->assertFalse($DeviceTokenValidator->validate());
     }
 }

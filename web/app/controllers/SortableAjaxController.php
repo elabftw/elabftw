@@ -24,6 +24,7 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ResourcesCategories;
+use Elabftw\Models\Steps;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
@@ -83,11 +84,11 @@ try {
             break;
         case Orderable::ExperimentsSteps:
             $model = new Experiments($App->Users);
-            $Entity = $model->Steps;
+            $Entity = new Steps($model);
             break;
         case Orderable::ItemsSteps:
             $model = new Items($App->Users);
-            $Entity = $model->Steps;
+            $Entity = new Steps($model);
             break;
         case Orderable::Todolist:
             $Entity = new Todolist($App->Users->userData['userid']);
@@ -97,11 +98,11 @@ try {
             break;
         case Orderable::ExperimentsTemplatesSteps:
             $model = new Templates($App->Users);
-            $Entity = $model->Steps;
+            $Entity = new Steps($model);
             break;
         case Orderable::ItemsTypesSteps:
             $model = new ItemsTypes($App->Users);
-            $Entity = $model->Steps;
+            $Entity = new Steps($model);
             break;
         default:
             throw new IllegalActionException('Bad table for updateOrdering.');

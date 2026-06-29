@@ -127,4 +127,12 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             $data['message']
         );
     }
+
+    public function testCannotAccessOtherTeamSubresource(): void
+    {
+        $user = $this->getRandomUserInTeam(2);
+        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/teams/1/experiments_categories/1', 'GET'));
+        $res = $Controller->getResponse();
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+    }
 }

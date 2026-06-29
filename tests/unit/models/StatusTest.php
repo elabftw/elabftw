@@ -77,8 +77,8 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
 
-        $Team = new Teams($this->getRandomUserInTeam(2), 1);
-        $Team->readOne();
+        $otherTeam = new Teams($this->getRandomUserInTeam(2), 1);
+        $otherTeam->readOne();
     }
 
     public function testUpdateNonAccessibleStatusThroughCurrentTeam(): void

@@ -1922,6 +1922,13 @@ input:user-invalid {
   }
 }
 
+#devPerfDiv {
+  background-color: $white;
+  bottom: 0;
+  left: 0;
+  position: fixed;
+}
+
 .logo-header {
   height: 40px;
   width: 110px;

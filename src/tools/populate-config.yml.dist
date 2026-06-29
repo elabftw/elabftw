@@ -75,11 +75,13 @@ teams:
         create_experiments: true
         create_templates: true
         create_mfa_secret: false
+        api_key: titi
 
       - email: tutu@yopmail.com
         firstname: Tutu
         create_experiments: true
         create_mfa_secret: true
+        api_key: tutu
 
       - email: demo@elabftw.net
         password: testPassword
@@ -141,7 +143,7 @@ teams:
         create_experiments: true
         create_items: true
         create_templates: true
-        api_key: apiKey4Test_tata
+        api_key: tata
 
       - email: somesamluser@example.com
         create_experiments: false

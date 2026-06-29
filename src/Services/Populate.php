@@ -98,7 +98,7 @@ final class Populate
 
         $this->output->writeln('┌ Creating teams, users, experiments, and resources...');
         $Users = new UltraAdmin(1, 1);
-        $Teams = new Teams($Users, bypassWritePermission: true);
+        $Teams = new Teams($Users);
 
         // main loop is on "teams" key
         foreach ($this->yaml['teams'] as $team) {
@@ -358,7 +358,7 @@ final class Populate
             return;
         }
         $iterations ??= $this->iterations;
-        $Teams = new Teams($Entity->Users, $Entity->Users->team, bypassWritePermission: true);
+        $Teams = new Teams($Entity->Users, $Entity->Users->team);
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);

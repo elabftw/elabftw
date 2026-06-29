@@ -95,7 +95,7 @@ final class Install extends Command
         (new Sql($sqlFs))->execFile('structure.sql');
         $output->writeln('<info>✓ Installation successful! Now creating the first team...</info>');
         // now create the default team
-        $Teams = new Teams(new Users(), bypassWritePermission: true);
+        $Teams = new Teams(new Users());
         $Teams->create($input->getOption('team') ?? 'Default team');
         $output->writeln('<info>✓ Team created successfully. Now populating branding table...</info>');
         new Branding(true)->populate();

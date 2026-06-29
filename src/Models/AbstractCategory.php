@@ -75,7 +75,7 @@ abstract class AbstractCategory extends AbstractRest
 
     protected function canWriteOrExplode(): void
     {
-        if ($this->Teams->bypassWritePermission) {
+        if ($this->Teams->canWrite()) {
             return;
         }
         $property = sprintf('users_canwrite_%s', $this->getUsersCanwriteName());

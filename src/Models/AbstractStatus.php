@@ -173,11 +173,12 @@ abstract class AbstractStatus extends AbstractCategory
 
     private function update(StatusParams $params): bool
     {
+        $requester = $this->Teams->Users->getTeam();
         $sql = sprintf('UPDATE %s SET ' . $params->getColumn() . ' = :content WHERE id = :id AND team = :team', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Teams->Users->getTeam(), PDO::PARAM_INT);
+        $req->bindParam(':team', $requester, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 }

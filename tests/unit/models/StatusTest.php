@@ -68,7 +68,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     public function testCannotReadStatusFromAnotherTeamThroughCurrentTeam(): void
     {
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
-        $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2)), $id);
+        $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2), 2), $id);
         $this->expectException(ResourceNotFoundException::class);
         $otherStatus->readOne();
     }
@@ -84,8 +84,8 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     public function testUpdateNonAccessibleStatusThroughCurrentTeam(): void
     {
         $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
-        $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2)), $id);
+        $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2), 2), $id);
         $this->expectException(ResourceNotFoundException::class);
-        $otherStatus->patch(Action::Create, array('title' => 'Coucou'));
+        $otherStatus->patch(Action::Update, array('title' => 'Coucou'));
     }
 }

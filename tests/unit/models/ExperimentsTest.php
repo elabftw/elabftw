@@ -271,7 +271,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         // also add some custom settings like hiding main text
         $this->Experiments->patch(Action::Update, array('canread_base' => $canread->value, 'canwrite_base' => $canwrite->value, 'hide_main_text' => 1));
         // add some steps and links in there, too
-        $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
+        new Steps($this->Experiments)->postAction(Action::Create, array('body' => 'some step'));
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
         // add some uploads

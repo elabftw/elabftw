@@ -121,19 +121,11 @@ abstract class AbstractEntity extends AbstractRest
 
     protected const string FORCE_TEMPLATE_KEY = '';
 
-    public Comments $Comments;
-
     public AbstractExperimentsLinks $ExperimentsLinks;
 
     public AbstractItemsLinks $ItemsLinks;
 
-    public Steps $Steps;
-
-    public Tags $Tags;
-
     public Uploads $Uploads;
-
-    public Pins $Pins;
 
     public ExclusiveEditMode $ExclusiveEditMode;
 
@@ -146,8 +138,6 @@ abstract class AbstractEntity extends AbstractRest
     // inserted in sql
     public array $extendedValues = array();
 
-    public TeamGroups $TeamGroups;
-
     // inserted in sql
     private string $extendedFilter = '';
 
@@ -159,12 +149,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $this->ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
         $this->ItemsLinks = LinksFactory::getItemsLinks($this);
-        $this->Steps = new Steps($this);
-        $this->Tags = new Tags($this);
         $this->Uploads = new Uploads($this);
-        $this->Comments = new Comments($this);
-        $this->TeamGroups = new TeamGroups($this->Users);
-        $this->Pins = new Pins($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
         // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
         $this->isReadOnly = $this->ExclusiveEditMode->isActive();
@@ -503,7 +488,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::Lock => $this->toggleLock(),
             Action::ForceLock => $this->lock(),
             Action::ForceUnlock => $this->unlock(),
-            Action::Pin => $this->Pins->togglePin(),
+            Action::Pin => new Pins($this)->togglePin(),
             Action::Restore => $this->restore(),
             Action::RemoveExclusiveEditMode => $this->ExclusiveEditMode->destroy(),
             Action::SetCanRead  => $this->handleCanUpdate($params, AccessType::Read),
@@ -578,14 +563,14 @@ abstract class AbstractEntity extends AbstractRest
             throw new ResourceNotFoundException();
         }
         $this->canOrExplode(AccessType::Read);
-        $this->entityData['steps'] = $this->Steps->readAll();
+        $this->entityData['steps'] = new Steps($this)->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['changelog'] = new Changelog($this)->readAll();
-        $this->entityData['comments'] = $this->Comments->readAll();
+        $this->entityData['comments'] = new Comments($this)->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
         $this->entityData['compounds_links'] = $CompoundsLinks->readAll();
@@ -780,7 +765,7 @@ abstract class AbstractEntity extends AbstractRest
         // remove the custom_id upon deletion
         $this->update(new EntityParams('custom_id', ''));
         // delete from pinned too
-        $this->Pins->cleanup();
+        new Pins($this)->cleanup();
         $this->Uploads->destroyAll();
         return $this->update(new EntityParams('state', State::Deleted->value));
     }
@@ -968,10 +953,11 @@ abstract class AbstractEntity extends AbstractRest
         LinksFactory::getExperimentsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getCompoundsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getContainersLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        $sourceEntity->Steps->duplicate($fresh, $sourceId, $newId);
+        new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
 
-        foreach (array_column($sourceEntity->Tags->readAll(), 'tag') as $tag) {
-            $fresh->Tags->postAction(Action::Create, array('tag' => $tag));
+        $freshTags = new Tags($fresh);
+        foreach (array_column(new Tags($sourceEntity)->readAll(), 'tag') as $tag) {
+            $freshTags->postAction(Action::Create, array('tag' => $tag));
         }
         if ($copyFiles) {
             $sourceEntity->Uploads->duplicate($fresh);
@@ -1370,9 +1356,10 @@ abstract class AbstractEntity extends AbstractRest
 
     private function processExtendedQuery(string $extendedQuery): void
     {
+        $TeamGroups = new TeamGroups($this->Users);
         $advancedQuery = new AdvancedSearchQuery($extendedQuery, new VisitorParameters(
             $this->entityType->value,
-            $this->TeamGroups->readGroupsWithUsersFromUser(),
+            $TeamGroups->readGroupsWithUsersFromUser(),
         ));
         $whereClause = $advancedQuery->getWhereClause();
         if ($whereClause) {

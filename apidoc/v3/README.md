@@ -28,6 +28,6 @@ Access it on http://localhost:8085. Reload the page to see recent changes to the
 
 ## Using the UI to test things
 
-In order to test the API through the documentation's web UI, you will need to allow CORS requests to the local dev server (assuming elab.local:3148). Edit your local configuration file to allow CORS (see https://github.com/elabftw/elabapi-javascript-example#readme), click the Authorize button on the top right of the documentation and enter a valid API key (`apiKey4Test` will work for userid:1 if you generated the users with the populate script).
+In order to test the API through the documentation's web UI, you will need to allow CORS requests to the local dev server (assuming elab.local:3148). Edit your local configuration file to allow CORS (see https://github.com/elabftw/elabapi-javascript-example#readme), click the Authorize button on the top right of the documentation and enter a valid API key (`apiKey4Test` will work for userid:1 if you generated the users with the populate script: `docker exec -it elabftw bin/init db:populate src/tools/populate-config.yml.dist`).
 
 That's it, now you can use the web UI to perform requests!

@@ -413,9 +413,6 @@ final class Apiv2Controller extends AbstractApiController
             };
         }
         if ($this->Model instanceof Teams) {
-            // Verify access to the target team before resolving subresources.
-            // The team id from the URL must not allow editing categories/statuses belonging to another team.
-            $this->Model->readOne();
             return match ($submodel) {
                 // backward compatibility: Status == ExperimentsStatus
                 ApiSubModels::Status, ApiSubModels::ExperimentsStatus => new ExperimentsStatus($this->Model, $this->subId),

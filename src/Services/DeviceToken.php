@@ -62,7 +62,6 @@ final class DeviceToken
             new Sha256(),
             InMemory::plainText($secretKey->getRawBytes()), // @phpstan-ignore-line
         );
-        // TODO validate the userid claim and other stuff
         $config->setValidationConstraints(
             new PermittedFor('brute-force-protection'),
             new SignedWith($config->signer(), $config->signingKey()),

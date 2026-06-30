@@ -207,6 +207,7 @@ final class CompoundsCsv extends AbstractCsv
             'title',
             'comment',
             'custom_id',
+            'tags',
             'chebi_id',
             'chembl_id',
             'dea_number',

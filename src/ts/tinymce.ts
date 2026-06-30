@@ -227,8 +227,8 @@ export function getTinymceBaseConfig(page: string): object {
     skin_url: isDark ? '/assets/tinymce_skins_dark' : '/assets/tinymce_skins',
     skin: isDark ? 'oxide-dark' : 'oxide',
     content_css: isDark ? ['/assets/tinymce_content_dark.min.css', '/assets/tinymce_content.min.css'] : ['/assets/tinymce_content.min.css'],
-    content_style: `/* Prevent inserted images from overflowing the editor. See #5050. */
-    img { max-width: 100%; height: auto; }`,
+    // Prevent inserted images from overflowing the editor. See #5050.
+    content_style: 'img { max-width: 100%; height: auto; }',
     emoticons_database_url: 'assets/tinymce_emojis.js',
     // remove the "Upgrade" button
     promotion: false,

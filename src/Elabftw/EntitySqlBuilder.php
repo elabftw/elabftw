@@ -20,6 +20,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\AnonymousUser;
 use Override;
 
@@ -46,9 +47,13 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     public function getReadSqlBeforeWhere(
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
+        bool $withCompounds = false,
     ): string {
         $this->entitySelect($fullSelect);
-        $this->compounds();
+        $this->userTeamMembership();
+        if ($withCompounds) {
+            $this->compounds();
+        }
         $this->status();
         $this->category();
         $this->comments();
@@ -60,6 +65,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         if ($relatedOrigin !== null) {
             $this->links($relatedOrigin);
         }
+
         $this->usersTeams();
 
         $sql = array(
@@ -130,6 +136,9 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 entity.canwrite_is_immutable,
                 entity.created_at,
                 entity.modified_at,
+                entity.signature_count,
+                entity.last_signed_at,
+                entity.last_signed_by,
                 entity.timestamped';
             // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it
             if (!empty(array_column($this->entity->extendedValues, 'additional_columns'))) {
@@ -320,7 +329,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      */
     protected function canTeamGroups(string $can): string
     {
-        $teamgroupsOfUser = array_column($this->entity->TeamGroups->readGroupsFromUser(), 'id');
+        $TeamGroups = new TeamGroups($this->entity->Users);
+        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
@@ -339,6 +349,16 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canUsers(string $can): string
     {
         return ":userid MEMBER OF (entity.$can->>'$.users')";
+    }
+
+    private function userTeamMembership(): void
+    {
+        $this->joinsSql[] = sprintf(
+            'LEFT JOIN users2teams
+                ON (users2teams.users_id = entity.userid
+                    AND users2teams.teams_id = %d)',
+            $this->entity->Users->getTeam(),
+        );
     }
 
     private function teamEvents(): void
@@ -380,11 +400,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
         $this->joinsSql[] = 'LEFT JOIN users
             ON (users.userid = entity.userid)';
-        $this->joinsSql[] = sprintf(
-            'LEFT JOIN users2teams
-                ON (users2teams.users_id = entity.userid and users2teams.teams_id = %d)
-            LEFT JOIN teams ON (entity.team = teams.id)',
-            $this->entity->Users->getTeam(),
-        );
+
+        $this->joinsSql[] = 'LEFT JOIN teams
+            ON (entity.team = teams.id)';
     }
 }

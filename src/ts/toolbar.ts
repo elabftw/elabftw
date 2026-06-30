@@ -65,7 +65,7 @@ if (document.getElementById('topToolbar')) {
     const params = collectForm(form);
     params['action'] = Action.Sign;
     ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
-      reloadElements(['commentsDiv', 'requestActionsDiv']);
+      reloadElements(['commentsDiv', 'requestActionsDiv', 'isSignedByInfoDiv']);
       form.reset();
       $('#addSignatureModal').modal('hide');
     });

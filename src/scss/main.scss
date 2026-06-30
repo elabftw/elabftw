@@ -1178,7 +1178,8 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 /* replace flex container with a responsive grid */
-.suggested-tags-menu {
+.suggested-tags-menu,
+.show-more-filters-menu {
   background: var(--white);
   border-radius: 5px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -1192,6 +1193,21 @@ the form-control fails to do that so we do the border ourselves */
   right: 0;
   top: 100%;
   z-index: 100;
+}
+
+.show-more-filters-menu {
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  min-width: min(42rem, 90vw);
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* filters containing multiple controls (like metadata) need the full row */
+.filter-section-wide {
+  grid-column: 1 / -1;
 }
 
 .box {
@@ -1904,4 +1920,21 @@ input:user-invalid {
   &:hover::after {
     opacity: 1;
   }
+}
+
+#devPerfDiv {
+  background-color: $white;
+  bottom: 0;
+  left: 0;
+  position: fixed;
+}
+
+.logo-header {
+  height: 40px;
+  width: 110px;
+}
+
+.display-favicon {
+  height: 128px;
+  width: 128px;
 }

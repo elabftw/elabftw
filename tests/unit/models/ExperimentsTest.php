@@ -85,7 +85,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->Experiments->destroy();
         $Templates = new Templates($this->Users);
         $tpl = $Templates->create(title: 'my template');
-        $new = $this->Experiments->createFromTemplate($tpl);
+        $new = $this->Experiments->postAction(Action::Create, array('template' => $tpl));
         $this->assertTrue((bool) Check::id($new));
         $newExp = new Experiments($this->Users, $new);
         $this->assertTrue($newExp->destroy());
@@ -271,7 +271,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         // also add some custom settings like hiding main text
         $this->Experiments->patch(Action::Update, array('canread_base' => $canread->value, 'canwrite_base' => $canwrite->value, 'hide_main_text' => 1));
         // add some steps and links in there, too
-        $this->Experiments->Steps->postAction(Action::Create, array('body' => 'some step'));
+        new Steps($this->Experiments)->postAction(Action::Create, array('body' => 'some step'));
         $this->Experiments->ItemsLinks->postAction(Action::Create, array());
         $this->Experiments->ExperimentsLinks->postAction(Action::Create, array());
         // add some uploads

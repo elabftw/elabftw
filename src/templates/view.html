@@ -38,13 +38,19 @@
 {% include('view-edit-toolbar.html') %}
 
 <div id='isTimestampedByInfoDiv'>
-{% if Entity.entityData.timestamped %}
-  {{ 'Entry was timestamped by %s on %s at %s'|trans|format(timestamperFullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|msg('ok', false) }}
+  {% if Entity.entityData.timestamped %}
+    {{ 'Entry was timestamped by %s on %s at %s'|trans|format(Entity.entityData.timestampedby|userid2fullname, Entity.entityData.timestamped_at|date('Y-m-d'), Entity.entityData.timestamped_at|date('H:i:s'))|msg('ok', false) }}
+  {% endif %}
+</div>
+
+<div id='isSignedByInfoDiv'>
+  {% if Entity.entityData.signature_count > 0 %}
+  {{ 'Entry was signed by %s on %s at %s'|trans|format(Entity.entityData.last_signed_by|userid2fullname, Entity.entityData.last_signed_at|date('Y-m-d'), Entity.entityData.last_signed_at|date('H:i:s'))|msg('ok', false) }}
 {% endif %}
 </div>
 
 {% if Entity.entityData.locked %}
-  {{ 'Locked by %s on %s at %s'|trans|format(lockerFullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|msg('ok', false) }}
+  {{ 'Locked by %s on %s at %s'|trans|format(Entity.entityData.lockedby|userid2fullname, Entity.entityData.locked_at|date('Y-m-d'), Entity.entityData.locked_at|date('H:i:s'))|msg('ok', false) }}
 {% endif %}
 
 <section>
@@ -79,7 +85,7 @@
         <i class='fas fa-tags mr-1'></i>{{ 'Tags'|trans }}
       </div>
       <span class='tags mathjax-ignore d-flex-inline flex-wrap'>
-        {% for tag in Entity.Tags.readAll() %}
+        {% for tag in Entity.entityData.tags_decoded %}
         <a class='tag btn {{- tag.is_favorite ? ' favorite' }}' href='?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}' aria-label='{{ tag.tag }}'>{{ tag.tag }}</a>
         {% endfor %}
       </span>

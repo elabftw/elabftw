@@ -68,11 +68,11 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         // add a file too
         $uploadTitle = 'osef.json';
         $ItemsTypes->Uploads->createFromString(FileFromString::Json, $uploadTitle, '[1, 2]');
-        $new = $this->Items->createFromTemplate($templateId);
+        $new = $this->Items->postAction(Action::Create, array('template' => $templateId));
         $Items = new Items($user, $new);
         $this->assertSame($title, $Items->entityData['title']);
         $this->assertSame($body, $Items->entityData['body']);
-        $this->assertEqualsCanonicalizing($tags, array_column($Items->Tags->readAll(), 'tag'));
+        $this->assertEqualsCanonicalizing($tags, array_column(new Tags($Items)->readAll(), 'tag'));
         $this->assertSame($categoryId, $Items->entityData['category']);
         $this->assertSame($statusId, $Items->entityData['status']);
         $this->assertCount(1, $Items->entityData['uploads']);
@@ -194,7 +194,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
             'canwrite_target_base' => $canwriteTarget->value,
         ));
         // now create an item from that template
-        $newId = $this->Items->createFromTemplate($itemTemplate);
+        $newId = $this->Items->postAction(Action::Create, array('template' => $itemTemplate));
         $this->assertIsInt($newId);
         $this->Items->setId($newId);
         $this->assertEquals($canreadTarget->value, $this->Items->entityData['canread_base']);
@@ -221,7 +221,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $ItemsTypes->setId($templateId);
         $ItemsTypes->patch(Action::Update, array('canread_is_immutable' => 1));
         $Items = new Items($user);
-        $newId = $Items->createFromTemplate($templateId);
+        $newId = $Items->postAction(Action::Create, array('template' => $templateId));
         $Items->setId($newId);
         return $Items;
     }

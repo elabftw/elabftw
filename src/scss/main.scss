@@ -1938,3 +1938,12 @@ input:user-invalid {
   height: 128px;
   width: 128px;
 }
+
+#topToolbar {
+  background: var(--mainbackground);
+  padding: 0.3rem 0;
+  position: sticky;
+  top: 5px;
+  width: 100%;
+  z-index: 100;
+}

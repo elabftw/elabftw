@@ -240,6 +240,14 @@
   {# DOWNLOAD / EXPORT MENU #}
   {% include 'export-menu.html' %}
 
+  {% if mode == 'edit' %}
+    <div class='vertical-separator'></div>
+    <div class='mt-1 text-center'>
+      <button type='button' data-action='update-entity-body' class='btn btn-primary mr-2'>{{ 'Save'|trans }}</button>
+      <button type='button' data-action='update-entity-body' data-redirect='view' class='btn btn-secondary mr-2'>{{ 'Save and go back'|trans }}</button>
+    </div>
+  {% endif %}
+
   <div class='ml-auto d-flex flex-wrap align-items-center'>
     {% if not App.Session.has('is_anon') %}
     {% if mode == 'edit' %}

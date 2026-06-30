@@ -248,9 +248,8 @@ final class LoginController implements ControllerInterface
         $token = $this->Request->cookies->getString('devicetoken');
         // if a token is sent, we need to validate it
         $DeviceTokenValidator = new DeviceTokenValidator(DeviceToken::getConfig(), $token, $Users->userData['userid']);
-        $isTokenValid = $DeviceTokenValidator->validate();
         // if the token is not valid, verify we can login from untrusted devices for that user
-        if ($isTokenValid === false && $Users->allowUntrustedLogin() === false) {
+        if (!$DeviceTokenValidator->validate() && $Users->allowUntrustedLogin() === false) {
             // reject any attempt whatsoever if this account is locked for untrusted devices
             throw new InvalidDeviceTokenException();
         }

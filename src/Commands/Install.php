@@ -18,6 +18,7 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Branding;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
@@ -61,7 +62,7 @@ final class Install extends Command
         $req = $Db->q('SELECT COUNT(*) AS cnt FROM information_schema.tables WHERE table_schema = "' . Env::asString('DB_NAME') . '"');
         $res = $req->fetch();
         if ((int) $res['cnt'] > 1 && !$input->getOption('reset')) {
-            $output->writeln('<info>→ Database structure already present. Skipping initialization.</info>');
+            $output->writeln('<info>→ Database structure already present. Skipping initialization. Use "-r" to override.</info>');
             return Command::SUCCESS;
         }
 
@@ -94,8 +95,11 @@ final class Install extends Command
         (new Sql($sqlFs))->execFile('structure.sql');
         $output->writeln('<info>✓ Installation successful! Now creating the first team...</info>');
         // now create the default team
-        $Teams = new Teams(new Users(), bypassWritePermission: true);
+        $Teams = new Teams(new Users());
         $Teams->create($input->getOption('team') ?? 'Default team');
+        $output->writeln('<info>✓ Team created successfully. Now populating branding table...</info>');
+        new Branding(true)->populate();
+
         if ($input->getOption('email')) {
             $output->writeln('<info>→ Creating Sysadmin user...</info>');
             $Users = new Users();

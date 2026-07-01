@@ -1938,3 +1938,11 @@ input:user-invalid {
   height: 128px;
   width: 128px;
 }
+
+.sticky-toolbar {
+  background: var(--mainbackground);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}

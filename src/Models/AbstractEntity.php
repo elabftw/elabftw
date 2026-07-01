@@ -48,6 +48,7 @@ use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
+use Elabftw\Make\MakeDeltablotTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Make\MakeDgnTimestamp;
 use Elabftw\Make\MakeDigicertTimestamp;
@@ -1173,6 +1174,7 @@ abstract class AbstractEntity extends AbstractRest
             'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
             'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
             'evidency' => Env::asBool('DEV_MODE') ? new MakeEvidencyTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeEvidencyTimestamp($this->Users, $this, $config, $dataFormat),
+            'deltablot' => new MakeDeltablotTimestamp($this->Users, $this, $config, $dataFormat),
             'custom' => new MakeCustomTimestamp($this->Users, $this, $config, $dataFormat),
             default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
         };

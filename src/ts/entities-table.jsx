@@ -9,11 +9,18 @@
 /**
  * Code related to the entities table present on the index page
  */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import {
+  ClientSideRowModelModule,
+  ModuleRegistry,
+  PaginationModule,
+  QuickFilterModule,
+  RowSelectionModule,
+  TextFilterModule,
+  provideGlobalGridOptions,
+} from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { get } from 'svelte/store';
 import { createRoot } from 'react-dom/client';
@@ -337,7 +344,14 @@ export const mountEntitiesTable = (
     return null;
   }
 
-  ModuleRegistry.registerModules([ClientSideRowModelModule]);
+  provideGlobalGridOptions({ theme: 'legacy' });
+  ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    RowSelectionModule,
+    PaginationModule,
+    TextFilterModule,
+    QuickFilterModule,
+  ]);
 
   if (!entitiesTableRoot) {
     entitiesTableRoot = createRoot(rootElement);

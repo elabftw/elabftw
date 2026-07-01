@@ -21,6 +21,7 @@ use function is_string;
 use function rtrim;
 use function sprintf;
 use function strtr;
+use function date;
 
 /**
  * All about changelog tables
@@ -89,5 +90,27 @@ final class Changelog
             }
         }
         return $changes;
+    }
+
+    // Replace import-generated changelog entries with the original exported changelog.
+    public function replaceAll(array $changelog): void
+    {
+        $sql = 'DELETE FROM ' . $this->entity->entityType->value . '_changelog WHERE entity_id = :entity_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':entity_id', $this->entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        foreach ($changelog as $change) {
+            $sql = 'INSERT INTO ' . $this->entity->entityType->value . '_changelog
+            (entity_id, users_id, target, content, created_at)
+            VALUES (:entity_id, :users_id, :target, :content, :created_at)';
+            $req = $this->Db->prepare($sql);
+            $req->bindValue(':entity_id', $this->entity->id, PDO::PARAM_INT);
+            $req->bindValue(':users_id', (int) ($change['userid'] ?? $this->entity->Users->userData['userid']), PDO::PARAM_INT);
+            $req->bindValue(':target', (string) ($change['target'] ?? 'import'));
+            $req->bindValue(':content', (string) ($change['content'] ?? ''));
+            $req->bindValue(':created_at', (string) ($change['created_at'] ?? date('Y-m-d H:i:s')));
+            $this->Db->execute($req);
+        }
     }
 }

@@ -26,6 +26,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
@@ -490,6 +491,39 @@ class Eln extends AbstractZip
         foreach ($dataset['hasPart'] ?? array() as $part) {
             $this->importPart($this->getNodeFromId($part['@id']));
         }
+
+        // Restore entity state (normal, archived, deleted).
+        $state = State::fromName($dataset['status'] ?? State::Normal->name);
+        match (true) {
+            $state === State::Archived => $this->Entity->patch(Action::Archive, array()),
+            $state === State::Deleted => $this->Entity->patch(Action::Update, array('state' => $state->value)),
+            // Restore locked/unlocked condition.
+            ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->Entity->patch(Action::Lock, array()),
+            default => null,
+        };
+
+        // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
+        if (!empty($dataset['subjectOf'])) {
+            new Changelog($this->Entity)->replaceAll($this->updateActionsToChangelog($dataset['subjectOf']));
+        }
+    }
+
+    // convert export UpdateAction to changelog dataset
+    private function updateActionsToChangelog(array $actions): array
+    {
+        $changelog = array();
+        foreach ($actions as $action) {
+            if (($action['@type'] ?? '') !== 'UpdateAction') {
+                continue;
+            }
+            $changelog[] = array(
+                'created_at' => new DateTimeImmutable($action['startTime'])->format('Y-m-d H:i:s'),
+                'target' => $action['object'] ?? 'import',
+                'content' => $action['result'] ?? '',
+                'userid' => $this->requester->getUserid(),
+            );
+        }
+        return $changelog;
     }
 
     private function attrToHtml(array $attr, string $title): string
@@ -529,7 +563,6 @@ class Eln extends AbstractZip
                 $this->importFile($part);
                 break;
             default:
-                return;
         }
     }
 

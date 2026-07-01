@@ -1939,11 +1939,10 @@ input:user-invalid {
   width: 128px;
 }
 
-#topToolbar {
+.sticky-toolbar {
   background: var(--mainbackground);
-  padding: 0.3rem 0;
   position: sticky;
-  top: 5px;
+  top: 0;
   width: 100%;
   z-index: 100;
 }

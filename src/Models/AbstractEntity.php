@@ -590,7 +590,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['body_html'] = $this->entityData['body'];
         // convert from markdown only if necessary
         if ($this->entityData['content_type'] === BodyContentType::Markdown->value) {
-            $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
+            $this->entityData['body_html'] = Filter::body(Tools::md2html($this->entityData['body'] ?? ''));
         }
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
@@ -801,7 +801,14 @@ abstract class AbstractEntity extends AbstractRest
     // Update an entity. The revision is saved before so it can easily compare old and new body.
     public function update(ContentParamsInterface $params): bool
     {
-        $content = $params->getContent();
+        if (
+            ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend')
+            && $this->entityData['content_type'] === BodyContentType::Markdown->value
+        ) {
+            $content = Filter::bodyMarkdown($params->getUnfilteredContent());
+        } else {
+            $content = $params->getContent();
+        }
         if ($params->getTarget() === 'bodyappend') {
             $content = $this->readOne()['body'] . $content;
         }

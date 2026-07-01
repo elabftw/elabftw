@@ -14,6 +14,26 @@ import { Entity, Target } from './interfaces';
 import { ApiC } from './api';
 declare const MathJax: MathJaxObject;
 
+const LINE_BREAK_REGEX = String.raw`\r\n|\r|\n`;
+const DISPLAY_MATH_REGEX_FLAGS = 'g';
+
+function buildDisplayMathRegex(openDelimiter: string, closeDelimiter: string): RegExp {
+  return new RegExp(
+    [
+      `(^|${LINE_BREAK_REGEX})`,
+      `([ \\t]*${openDelimiter}[ \\t]*(?:${LINE_BREAK_REGEX})`,
+      String.raw`[\s\S]*?`,
+      `(?:${LINE_BREAK_REGEX})[ \\t]*${closeDelimiter}[ \\t]*`,
+      `(?=${LINE_BREAK_REGEX}|$))`,
+    ].join(''),
+    DISPLAY_MATH_REGEX_FLAGS,
+  );
+}
+
+const DISPLAY_MATH_REGEXES = [
+  buildDisplayMathRegex(String.raw`\$\$`, String.raw`\$\$`),
+  buildDisplayMathRegex(String.raw`\\\[`, String.raw`\\\]`),
+];
 interface EditorInterface {
   type: string;
   typeAsInt: number;
@@ -32,6 +52,27 @@ class Editor {
     params[Target.ContentType] = this.type === 'tiny' ? 2 : 1;
     return ApiC.patch(`${entity.type}/${entity.id}`, params);
   }
+}
+
+function protectDisplayMathBlocks(markdown: string): [string, Record<string, string>] {
+  const mathBlocks: Record<string, string> = {};
+  let index = 0;
+  let protectedMarkdown = markdown;
+  DISPLAY_MATH_REGEXES.forEach(displayMathRegex => {
+    protectedMarkdown = protectedMarkdown.replace(displayMathRegex, (_match, lineBreak, math) => {
+      const placeholder = `ELABFTW_MATH_BLOCK_${index}__`;
+      mathBlocks[placeholder] = math
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+      index++;
+      return lineBreak + placeholder;
+    });
+  });
+
+  return [protectedMarkdown, mathBlocks];
 }
 
 class TinyEditor extends Editor implements EditorInterface {
@@ -71,7 +112,12 @@ export class MdEditor extends Editor implements EditorInterface {
           MathJax.typeset();
         }, 1);
         // parse with marked and return the html
-        return marked(ed.$textarea.val());
+        const [markdown, mathBlocks] = protectDisplayMathBlocks(ed.$textarea.val() as string);
+        let html = marked(markdown) as string;
+        Object.entries(mathBlocks).forEach(([placeholder, math]) => {
+          html = html.split(placeholder).join(math);
+        });
+        return html;
       },
     });
   }

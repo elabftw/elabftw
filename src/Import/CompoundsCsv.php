@@ -36,6 +36,9 @@ use function trim;
 use function count;
 use function explode;
 use function is_array;
+use function json_decode;
+use function json_encode;
+use function str_replace;
 
 /**
  * Import a CSV into compounds
@@ -130,7 +133,8 @@ final class CompoundsCsv extends AbstractCsv
                         $Tags = new Tags($this->Items);
                         $Tags->postAction(Action::Create, array('tag' => trim($row['tags'])));
                     }
-                    $this->Items->update(new EntityParams('metadata', $this->collectMetadata($row)));
+                    //                    $this->Items->update(new EntityParams('metadata', $this->collectMetadata($row)));
+                    $this->Items->update(new EntityParams('metadata', $this->mergeMetadataValues($this->collectMetadata($row))));
                     foreach ($ids as $id) {
                         $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
                         $Compounds2ItemsLinks->create();
@@ -245,6 +249,50 @@ final class CompoundsCsv extends AbstractCsv
             'is_nano',
             'is_controlled',
         );
+    }
+
+    protected function mergeMetadataValues(string $incomingMetadata): string
+    {
+        $currentMetadata = $this->decodeMetadata($this->Items->readOne()['metadata'] ?? '');
+        $incomingMetadata = $this->decodeMetadata($incomingMetadata);
+
+        $currentMetadata['extra_fields'] ??= array();
+        $incomingMetadata['extra_fields'] ??= array();
+
+        foreach ($incomingMetadata['extra_fields'] as $name => $incomingField) {
+            $value = $incomingField['value'] ?? '';
+
+            if (isset($currentMetadata['extra_fields'][$name])) {
+                $currentMetadata['extra_fields'][$name]['value'] = $this->normalizeMetadataValue(
+                    $currentMetadata['extra_fields'][$name],
+                    $value,
+                );
+                continue;
+            }
+
+            $currentMetadata['extra_fields'][$name] = $incomingField;
+        }
+
+        return json_encode($currentMetadata, JSON_THROW_ON_ERROR);
+    }
+
+    protected function decodeMetadata(string $metadata): array
+    {
+        if ($metadata === '' || $metadata === '{}') {
+            return array('extra_fields' => array());
+        }
+        $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+        return is_array($decoded) ? $decoded : array('extra_fields' => array());
+    }
+
+    protected function normalizeMetadataValue(array $field, mixed $value): string
+    {
+        $value = trim((string) $value);
+        return match ($field['type'] ?? 'text') {
+            'checkbox' => strcasecmp($value, 'X') === 0 ? 'on' : '',
+            'number' => str_replace(',', '.', $value),
+            default => $value,
+        };
     }
 
     private function createCompound(?string $casKey, array $row): int

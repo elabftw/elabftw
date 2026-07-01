@@ -35,6 +35,49 @@ describe('Experiments', () => {
     cy.contains('some step').should('not.exist');
   };
 
+  const entityRequestArchiveUnarchiveAction = (action) => {
+    cy.get('[data-cy="requestActionModalOpen"]').click();
+    cy.get('[data-cy="requestActionModal"]').should('be.visible');
+    cy.get('[data-cy="requestedActionSelect"]')
+      .select(action)
+      .invoke('text')
+      .should('contain', action);
+    // add collaborator
+    // wait a moment while both populating and selecting the user
+    cy.get('[data-cy="requestActionUserSelect"]')
+      .wait(500)
+      .type('Titi')
+      .wait(500)
+      .type('{downArrow}{enter}');
+    cy.get('[data-cy="requestActionModalSave"]').click();
+    cy.wait(500);
+    cy.get('[data-cy="hasRequestedAction"]').should('be.visible');
+    cy.get('[data-cy="requestActionModal"]').should('not.be.visible');
+    // not proceeding here with collaborator actioning, just trigger the Archived state
+    cy.get('[data-cy="cancelRequestableAction"]').click();
+    cy.get('button[title="More options"]').click();
+    cy.get('[data-cy="doRequestableActionArchive"]')
+      .click()
+      .wait(500);
+    // check also that Request action dropdown has only Unarchive
+    cy.get('[data-cy="requestActionModalOpen"]').click();
+    cy.get('[data-cy="requestActionModal"]').should('be.visible');
+    cy.get('[data-cy="requestedActionSelect"]').should('have.length', 1)
+      .select('Unarchive')
+      .invoke('text')
+      .should('contain', 'Unarchive');
+    cy.get('[data-cy="requestActionModalClose"]')
+      .wait(500)
+      .click();
+    cy.get('[data-cy="requestActionModal"]').should('not.be.visible');
+    // not proceeding here with collaborator actioning, just trigger the Unarchived state
+    // to be able to delete the entity
+    cy.get('button[title="More options"]').click();
+    cy.get('[data-cy="doRequestableActionUnarchive"]')
+      .click()
+      .wait(500);
+  };
+
   const entityComment = () => {
     // go in view mode
     cy.get('[title="View mode"]').click();
@@ -126,6 +169,34 @@ describe('Experiments', () => {
       .wait(500)
       .click();
     cy.get('input[data-cy=expcatName][value="Justice"]').should('not.exist');
+  });
+
+  it('Trigger an Archive>Unarchive request action', () => {
+    cy.createEntity('experiment', 'Cypress created experiment: request action')
+      .then(() => {
+        entityRequestArchiveUnarchiveAction('Archive');
+        entityDestroy();
+      });
+  });
+
+  it('Stateful archive/unarchive toggle state', () => {
+    cy.createEntity('experiment', 'Cypress created experiment: request action')
+      .then(() => {
+        // Archived state
+        cy.get('button[title="More options"]').click();
+        cy.get('[data-cy="doRequestableActionUnarchive"]').should('not.exist');
+        cy.get('[data-cy="doRequestableActionArchive"]').should('be.visible')
+          .click()
+          .wait(500);
+        cy.get('[data-cy="isArchivedDiv"]').should('be.visible');
+        // Unarchived state
+        cy.get('button[title="More options"]').click();
+        cy.get('[data-cy="doRequestableActionArchive"]').should('not.exist');
+        cy.get('[data-cy="doRequestableActionUnarchive"]').should('be.visible')
+          .click()
+          .wait(500);
+        entityDestroy();
+      });
   });
 
   const entityRestore = (publicUrl: string) => {

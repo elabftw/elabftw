@@ -81,6 +81,7 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
+use JsonException;
 
 use function array_column;
 use function array_merge;
@@ -808,7 +809,7 @@ abstract class AbstractEntity extends AbstractRest
             $content = $this->readOne()['body'] . $content;
         }
         if ($params->getTarget() === 'metadatamerge') {
-            $content = $this->mergeMetadataValues($this->readOne()['metadata'] ?? '', $content);
+            $content = $this->mergeMetadataValues($this->getCurrentMetadataColumn(), $content);
         }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
@@ -1265,6 +1266,15 @@ abstract class AbstractEntity extends AbstractRest
 
     protected function enforceTemplate(array $teamConfigArr): void {}
 
+    private function getCurrentMetadataColumn(): string
+    {
+        $sql = 'SELECT metadata FROM ' . $this->entityType->value . ' WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (string) $req->fetchColumn();
+    }
+
     private function needsCompoundsJoin(string $displayFilterSql): bool
     {
         return $this->sqlReferencesCompounds($this->extendedFilter)
@@ -1410,7 +1420,8 @@ abstract class AbstractEntity extends AbstractRest
                 );
                 continue;
             }
-            // Add unknown incoming fields as-is (create)
+            // new fields: keep incoming schema, but normalize its value if it has a known type.
+            $incomingField['value'] = $this->normalizeMetadataValue($incomingField, $value);
             $base['extra_fields'][$name] = $incomingField;
         }
 
@@ -1423,7 +1434,11 @@ abstract class AbstractEntity extends AbstractRest
         if ($metadata === '' || $metadata === '{}') {
             return array('extra_fields' => array());
         }
-        $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+        try {
+            $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            throw new ImproperActionException(_('Invalid metadata JSON provided.'));
+        }
         return is_array($decoded) ? $decoded : array('extra_fields' => array());
     }
 

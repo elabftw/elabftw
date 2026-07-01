@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ProcurementState;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -32,7 +33,8 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $entityId = 3;
+        $Entity = $this->getFreshItem();
+        $entityId = $Entity->id;
         $id = $this->pr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body' => '', 'quote' => 12));
         $this->assertIsInt($id);
         $this->pr->setId($id);
@@ -40,6 +42,14 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->pr->readActiveForEntity($entityId));
         $this->assertNotEmpty($this->pr->readActiveForEntity($entityId));
         $this->assertIsArray($this->pr->patch(Action::Update, array('qty_received' => 2)));
+    }
+
+    public function testPostNoAuthorizeUser(): void
+    {
+        $Entity = $this->getFreshItem();
+        $entityId = $Entity->id;
+        $this->expectException(ImproperActionException::class);
+        $id = $this->otherTeamPr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body' => '', 'quote' => 12));
     }
 
     public function testRead(): void

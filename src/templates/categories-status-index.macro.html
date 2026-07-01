@@ -62,26 +62,28 @@
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
-      <div class='modal-body'>
-          <div class='d-flex justify-content-between mb-2'>
-            <label for='createCatStatName' class='col-form-label'>{{ 'Name'|trans }}</label>
-            <input class='form-control col-md-6' type='text' name='name' placeholder='{{ newNamePlaceholder }}' required id='createCatStatName' />
-          </div>
-          <hr>
-
-          <div class='d-flex justify-content-between'>
-            <label for='createCatStatColor' class='col-form-label'>{{ 'Color'|trans }}</label>
-            <div class='d-flex flex-row'>
-              <button aria-label='{{ 'Change color'|trans }}' title='{{ 'Change color'|trans }}' type='button' class='btn btn-ghost mr-1' data-action='reload-color'><i class='fas fa-rotate'></i></button>
-              <input class='form-control randomColor col-md-6 color-input' type='color' name='color' id='createCatStatColor' />
+      <form id='createCatStatForm' aria-label='{{ 'Edit event'|trans }}'>
+        <div class='modal-body'>
+            <div class='d-flex justify-content-between mb-2'>
+              <label for='createCatStatName' class='col-form-label'>{{ 'Name'|trans }}</label>
+              <input class='form-control col-md-6' type='text' name='name' placeholder='{{ newNamePlaceholder }}' required id='createCatStatName' />
             </div>
-          </div>
-      </div>
+            <hr>
 
-      <div class='modal-footer'>
-        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' data-endpoint='{{ type }}' data-action='create-catstat' class='btn btn-primary'>{{ 'Create'|trans }}</button>
-      </div>
+            <div class='d-flex justify-content-between'>
+              <label for='createCatStatColor' class='col-form-label'>{{ 'Color'|trans }}</label>
+              <div class='d-flex flex-row'>
+                <button aria-label='{{ 'Change color'|trans }}' title='{{ 'Change color'|trans }}' type='button' class='btn btn-ghost mr-1' data-action='reload-color'><i class='fas fa-rotate'></i></button>
+                <input class='form-control randomColor col-md-6 color-input' type='color' name='color' id='createCatStatColor' />
+              </div>
+            </div>
+        </div>
+
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' data-endpoint='{{ type }}' data-action='create-catstat' class='btn btn-primary'>{{ 'Create'|trans }}</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

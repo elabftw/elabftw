@@ -15,6 +15,7 @@ import {
 import i18next from './i18n';
 import { EntityType, Model } from './interfaces';
 import { on } from './handlers';
+import { showModalAndFocusFirstInput } from './common';
 
 //////////////////////////////////////
 // CREATE NEW CODE                  //
@@ -139,11 +140,7 @@ on('toggle-create-modal', async (el: HTMLElement) => {
     $('#editCompoundModal').modal('hide');
   }
 
-  $('#createModal')
-    .one('shown.bs.modal', () => {
-      document.getElementById('createNewFormTitle')?.focus();
-    })
-    .modal('show');
+  showModalAndFocusFirstInput('#createModal');
 });
 
 on('toggle-templates', (el: HTMLElement) => {

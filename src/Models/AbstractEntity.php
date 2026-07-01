@@ -808,10 +808,7 @@ abstract class AbstractEntity extends AbstractRest
             $content = $this->readOne()['body'] . $content;
         }
         if ($params->getTarget() === 'metadatamerge') {
-            $content = $this->mergeMetadataValues(
-                $this->readOne()['metadata'] ?? '',
-                (string) $content,
-            );
+            $content = $this->mergeMetadataValues($this->readOne()['metadata'] ?? '', $content);
         }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
@@ -1394,9 +1391,11 @@ abstract class AbstractEntity extends AbstractRest
 
     private function mergeMetadataValues(string $baseMetadata, string $incomingMetadata): string
     {
+        // base metadata comes from the template and contains the field schema
         $base = $this->decodeMetadata($baseMetadata);
+        // incoming metadata usually comes from CSV/API and contains the values to inject.
         $incoming = $this->decodeMetadata($incomingMetadata);
-
+        // ensure both metadata arrays have an extra_fields array.
         $base['extra_fields'] ??= array();
         $incoming['extra_fields'] ??= array();
 
@@ -1404,13 +1403,14 @@ abstract class AbstractEntity extends AbstractRest
             $value = $incomingField['value'] ?? '';
 
             if (isset($base['extra_fields'][$name])) {
+                // Preserve the existing field schema and only update its value
                 $base['extra_fields'][$name]['value'] = $this->normalizeMetadataValue(
                     $base['extra_fields'][$name],
                     $value,
                 );
                 continue;
             }
-
+            // Add unknown incoming fields as-is (create)
             $base['extra_fields'][$name] = $incomingField;
         }
 
@@ -1419,12 +1419,11 @@ abstract class AbstractEntity extends AbstractRest
 
     private function decodeMetadata(string $metadata): array
     {
+        // Treat empty metadata as valid metadata with no fields.
         if ($metadata === '' || $metadata === '{}') {
             return array('extra_fields' => array());
         }
-
         $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
-
         return is_array($decoded) ? $decoded : array('extra_fields' => array());
     }
 
@@ -1433,9 +1432,23 @@ abstract class AbstractEntity extends AbstractRest
         $value = trim((string) $value);
 
         return match ($field['type'] ?? 'text') {
-            'checkbox' => strcasecmp($value, 'X') === 0 ? 'on' : '',
+            // checkboxes use "on" when checked.
+            'checkbox' => $this->normalizeCheckboxValue($value),
+            // normalize decimal commas for number fields.
             'number' => str_replace(',', '.', $value),
+            // select/users/text/url/etc. keep the incoming string value.
             default => $value,
         };
+    }
+
+    private function normalizeCheckboxValue(string $value): string
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return '';
+        }
+        // Common truthy values accepted from CSV/API imports.
+        $truthyValues = array('1', 'true', 'yes', 'y', 'x', 'on', 'checked', 'oui');
+        return in_array(strtolower($value), $truthyValues, true) ? 'on' : '';
     }
 }

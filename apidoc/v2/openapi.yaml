@@ -1249,6 +1249,9 @@ components:
           description: The main text content (HTML or Markdown)
           default: null
           example: "<h1>Section title</h1><p>Main text of resource</p>"
+        bodyappend:
+          type: string
+          description: Append content to the existing entity body instead of replacing it.
         canread_base:
           type: number
           nullable: true
@@ -1310,6 +1313,19 @@ components:
           nullable: true
         metadata:
           $ref: '#/components/schemas/metadata'
+        metadatamerge:
+          description: >
+            Merge incoming metadata into the existing entity metadata.
+            Existing extra fields keep their schema such as type, options, units and description;
+            only their value is updated. Incoming extra fields that do not already exist are added.
+          allOf:
+            - $ref: '#/components/schemas/metadata'
+          example:
+            extra_fields:
+              weight:
+                value: "12"
+              certified:
+                value: "X"
         rating:
           type: integer
           nullable: true

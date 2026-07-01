@@ -806,10 +806,10 @@ abstract class AbstractEntity extends AbstractRest
     {
         $content = $params->getContent();
         if ($params->getTarget() === 'bodyappend') {
-            $content = $this->readOne()['body'] . $content;
+            $content = $this->readColumn('body') . $content;
         }
         if ($params->getTarget() === 'metadatamerge') {
-            $content = $this->mergeMetadataValues($this->getCurrentMetadataColumn(), $content);
+            $content = $this->mergeMetadataValues($this->readColumn('metadata'), $content);
         }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
@@ -1266,9 +1266,10 @@ abstract class AbstractEntity extends AbstractRest
 
     protected function enforceTemplate(array $teamConfigArr): void {}
 
-    private function getCurrentMetadataColumn(): string
+    // read only one column from an entity without calling the full entity
+    private function readColumn(string $column): string
     {
-        $sql = 'SELECT metadata FROM ' . $this->entityType->value . ' WHERE id = :id';
+        $sql = 'SELECT ' . $column . ' FROM ' . $this->entityType->value . ' WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);

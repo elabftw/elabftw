@@ -106,8 +106,8 @@ use function array_fill;
 use function array_map;
 use function count;
 use function array_replace;
-use function strcasecmp;
 use function trim;
+use function strtolower;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;

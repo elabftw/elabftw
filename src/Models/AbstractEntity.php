@@ -106,6 +106,8 @@ use function array_fill;
 use function array_map;
 use function count;
 use function array_replace;
+use function strcasecmp;
+use function trim;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -805,6 +807,12 @@ abstract class AbstractEntity extends AbstractRest
         if ($params->getTarget() === 'bodyappend') {
             $content = $this->readOne()['body'] . $content;
         }
+        if ($params->getTarget() === 'metadatamerge') {
+            $content = $this->mergeMetadataValues(
+                $this->readOne()['metadata'] ?? '',
+                (string) $content,
+            );
+        }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
         if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite' || $params->getTarget() === 'canread_base' || $params->getTarget() === 'canwrite_base') {
@@ -1382,5 +1390,52 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->getCreatePermissionFromTeam($teamConfigArr) === false) {
             throw new ForbiddenException();
         }
+    }
+
+    private function mergeMetadataValues(string $baseMetadata, string $incomingMetadata): string
+    {
+        $base = $this->decodeMetadata($baseMetadata);
+        $incoming = $this->decodeMetadata($incomingMetadata);
+
+        $base['extra_fields'] ??= array();
+        $incoming['extra_fields'] ??= array();
+
+        foreach ($incoming['extra_fields'] as $name => $incomingField) {
+            $value = $incomingField['value'] ?? '';
+
+            if (isset($base['extra_fields'][$name])) {
+                $base['extra_fields'][$name]['value'] = $this->normalizeMetadataValue(
+                    $base['extra_fields'][$name],
+                    $value,
+                );
+                continue;
+            }
+
+            $base['extra_fields'][$name] = $incomingField;
+        }
+
+        return json_encode($base, JSON_THROW_ON_ERROR);
+    }
+
+    private function decodeMetadata(string $metadata): array
+    {
+        if ($metadata === '' || $metadata === '{}') {
+            return array('extra_fields' => array());
+        }
+
+        $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+
+        return is_array($decoded) ? $decoded : array('extra_fields' => array());
+    }
+
+    private function normalizeMetadataValue(array $field, mixed $value): string
+    {
+        $value = trim((string) $value);
+
+        return match ($field['type'] ?? 'text') {
+            'checkbox' => strcasecmp($value, 'X') === 0 ? 'on' : '',
+            'number' => str_replace(',', '.', $value),
+            default => $value,
+        };
     }
 }

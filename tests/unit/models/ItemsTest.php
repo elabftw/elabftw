@@ -26,6 +26,8 @@ use Elabftw\Traits\TestsUtilsTrait;
 
 use function date;
 use function array_column;
+use function json_decode;
+use function json_encode;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
 {
@@ -212,6 +214,86 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         // unlock
         $item = $this->Items->toggleLock();
         $this->assertFalse((bool) $item['locked']);
+    }
+
+    // test metadata merge preserves existing fields on import
+    public function testMetadataMergePreservesExistingFieldSchema(): void
+    {
+        $new = $this->Items->create();
+        $this->Items->setId($new);
+
+        $baseMetadata = json_encode(array(
+            'extra_fields' => array(
+                'weight' => array(
+                    'type' => 'number',
+                    'value' => '0',
+                    'units' => array('g'),
+                    'unit' => 'g',
+                ),
+                'certified' => array(
+                    'type' => 'checkbox',
+                    'value' => '',
+                ),
+                'location' => array(
+                    'type' => 'select',
+                    'value' => '',
+                    'options' => array('Room A', 'Room B'),
+                ),
+            ),
+        ), JSON_THROW_ON_ERROR);
+
+        $incomingMetadata = json_encode(array(
+            'extra_fields' => array(
+                'weight' => array(
+                    'type' => 'text',
+                    'value' => '12,5',
+                ),
+                'certified' => array(
+                    'type' => 'text',
+                    'value' => 'X',
+                ),
+                'location' => array(
+                    'type' => 'text',
+                    'value' => 'Room B',
+                ),
+                'new checkbox' => array(
+                    'type' => 'checkbox',
+                    'value' => 'oui',
+                ),
+                'new text' => array(
+                    'type' => 'text',
+                    'value' => 'hello',
+                ),
+            ),
+        ), JSON_THROW_ON_ERROR);
+
+        // have the base Metadata on the item
+        $this->Items->patch(Action::Update, array('metadata' => $baseMetadata));
+        // now merge with some incoming data
+        $this->Items->patch(Action::Update, array('metadatamerge' => $incomingMetadata));
+
+        $metadata = json_decode($this->Items->readOne()['metadata'], true, 512, JSON_THROW_ON_ERROR);
+        $fields = $metadata['extra_fields'];
+
+        // weight keeps it's original "number" type, "g" unit, and the incoming "12.5" value
+        $this->assertSame('number', $fields['weight']['type']);
+        $this->assertSame('12.5', $fields['weight']['value']);
+        $this->assertSame(array('g'), $fields['weight']['units']);
+        $this->assertSame('g', $fields['weight']['unit']);
+
+        // checkbox receives truthy value "X" (or "oui") and becomes "on"
+        $this->assertSame('checkbox', $fields['certified']['type']);
+        $this->assertSame('on', $fields['certified']['value']);
+
+        $this->assertSame('select', $fields['location']['type']);
+        $this->assertSame('Room B', $fields['location']['value']);
+        $this->assertSame(array('Room A', 'Room B'), $fields['location']['options']);
+        // oui
+        $this->assertSame('checkbox', $fields['new checkbox']['type']);
+        $this->assertSame('on', $fields['new checkbox']['value']);
+
+        $this->assertSame('text', $fields['new text']['type']);
+        $this->assertSame('hello', $fields['new text']['value']);
     }
 
     private function makeItemFromImmutableTemplateFor(AuthenticatedUser $user): Items

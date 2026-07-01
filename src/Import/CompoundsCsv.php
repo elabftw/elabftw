@@ -19,6 +19,7 @@ use Elabftw\Models\Links\Compounds2ItemsLinks;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Items;
 use Elabftw\Models\StorageUnits;
+use Elabftw\Models\Tags;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
@@ -125,6 +126,10 @@ final class CompoundsCsv extends AbstractCsv
                     if (isset($row['comment'])) {
                         $this->Items->update(new EntityParams('body', $row['comment']));
                     }
+                    if (isset($row['tags']) && trim($row['tags']) !== '') {
+                        $Tags = new Tags($this->Items);
+                        $Tags->postAction(Action::Create, array('tag' => trim($row['tags'])));
+                    }
                     $this->Items->update(new EntityParams('metadata', $this->collectMetadata($row)));
                     foreach ($ids as $id) {
                         $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
@@ -202,6 +207,7 @@ final class CompoundsCsv extends AbstractCsv
             'title',
             'comment',
             'custom_id',
+            'tags',
             'chebi_id',
             'chembl_id',
             'dea_number',

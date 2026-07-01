@@ -234,10 +234,19 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
                     'type' => 'checkbox',
                     'value' => '',
                 ),
-                'location' => array(
+                'choice' => array(
                     'type' => 'select',
+                    'value' => 'A',
+                    'options' => array('A', 'B'),
+                ),
+                'person in charge' => array(
+                    'type' => 'users',
                     'value' => '',
-                    'options' => array('Room A', 'Room B'),
+                    'description' => 'Select the person responsible.',
+                ),
+                'website' => array(
+                    'type' => 'url',
+                    'value' => '',
                 ),
             ),
         ), JSON_THROW_ON_ERROR);
@@ -252,9 +261,17 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
                     'type' => 'text',
                     'value' => 'X',
                 ),
-                'location' => array(
+                'choice' => array(
                     'type' => 'text',
-                    'value' => 'Room B',
+                    'value' => 'C',
+                ),
+                'person in charge' => array(
+                    'type' => 'text',
+                    'value' => '42',
+                ),
+                'website' => array(
+                    'type' => 'text',
+                    'value' => 'https://example.org',
                 ),
                 'new checkbox' => array(
                     'type' => 'checkbox',
@@ -275,23 +292,33 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $metadata = json_decode($this->Items->readOne()['metadata'], true, 512, JSON_THROW_ON_ERROR);
         $fields = $metadata['extra_fields'];
 
-        // weight keeps it's original "number" type, "g" unit, and the incoming "12.5" value
+        // existing "weight" number keeps type/unit and receives normalized value.
         $this->assertSame('number', $fields['weight']['type']);
         $this->assertSame('12.5', $fields['weight']['value']);
         $this->assertSame(array('g'), $fields['weight']['units']);
         $this->assertSame('g', $fields['weight']['unit']);
 
-        // checkbox receives truthy value "X" (or "oui") and becomes "on"
+        // existing checkbox keeps type and receives normalized truthy value.
         $this->assertSame('checkbox', $fields['certified']['type']);
         $this->assertSame('on', $fields['certified']['value']);
 
-        $this->assertSame('select', $fields['location']['type']);
-        $this->assertSame('Room B', $fields['location']['value']);
-        $this->assertSame(array('Room A', 'Room B'), $fields['location']['options']);
-        // oui
+        // existing select keeps options even if incoming value is new.
+        $this->assertSame('select', $fields['choice']['type']);
+        $this->assertSame('C', $fields['choice']['value']);
+        $this->assertSame(array('A', 'B'), $fields['choice']['options']);
+
+        // existing user field keeps description/schema.
+        $this->assertSame('users', $fields['person in charge']['type']);
+        $this->assertSame('42', $fields['person in charge']['value']);
+        $this->assertSame('Select the person responsible.', $fields['person in charge']['description']);
+
+        // url keeps type.
+        $this->assertSame('url', $fields['website']['type']);
+        $this->assertSame('https://example.org', $fields['website']['value']);
+
+        // New fields are added and normalized according to their incoming type.
         $this->assertSame('checkbox', $fields['new checkbox']['type']);
         $this->assertSame('on', $fields['new checkbox']['value']);
-
         $this->assertSame('text', $fields['new text']['type']);
         $this->assertSame('hello', $fields['new text']['value']);
     }

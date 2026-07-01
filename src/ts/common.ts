@@ -1073,11 +1073,13 @@ on('toggle-modal', (el: HTMLElement) => {
 
 // autofocus the first input of a modal
 function focusFirstTextInputOnShown(modalSelector: string) {
-  $(modalSelector).one('shown.bs.modal', () => {
-    document.querySelector<HTMLElement>(
-      `${modalSelector} input:is([type="text"], [type="search"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="number"]):not([disabled]):not([readonly]),
-       ${modalSelector} input:not([type]):not([disabled]):not([readonly]),
-       ${modalSelector} textarea:not([disabled]):not([readonly])`,
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+  $(modal).one('shown.bs.modal', () => {
+    modal.querySelector<HTMLElement>(
+      'input:is([type="text"], [type="search"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="number"]):not([disabled]):not([readonly]),' +
+      'input:not([type]):not([disabled]):not([readonly]),' +
+      'textarea:not([disabled]):not([readonly])',
     )?.focus();
   });
 }

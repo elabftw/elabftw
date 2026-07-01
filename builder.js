@@ -103,6 +103,7 @@ module.exports = (env) => {
       },
       minimize: true,
       minimizer: [
+        '...',
         new MinimizerPlugin({
           test: /\.css(\?.*)?$/i,
           minify: MinimizerPlugin.cssnanoMinify,

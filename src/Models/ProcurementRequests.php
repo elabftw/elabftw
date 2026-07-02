@@ -95,7 +95,7 @@ final class ProcurementRequests extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->validateEntityBelongsToCurrentTeam($reqBody);
+        $this->canReadOrExplode($reqBody['entity_id']);
 
         $sql = 'INSERT INTO procurement_requests (team, requester_userid, entity_id, qty_ordered, body, quote, state)
             VALUES (:team, :requester_userid, :entity_id, :qty_ordered, :body, :quote, :state)';
@@ -158,16 +158,11 @@ final class ProcurementRequests extends AbstractRest
         }
     }
 
-    private function validateEntityBelongsToCurrentTeam(array $reqBody): void
+    private function canReadOrExplode(int $entityId): void
     {
-        $sql = 'SELECT id FROM items WHERE id = :entity_id AND team = :team';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':entity_id', $reqBody['entity_id'], PDO::PARAM_INT);
-        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $itemId = $req->fetchColumn();
-        if (!$itemId) {
-            throw new ImproperActionException('Resource not found or not accessible by your current team');
-        }
+        // A user can only create a procurement request for a resource they can read.
+        // setId() calls readOne(), which checks read permissions with canOrExplode().
+        $Item = new Items($this->Teams->Users);
+        $Item->setId($entityId);
     }
 }

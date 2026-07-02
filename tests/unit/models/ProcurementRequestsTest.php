@@ -13,7 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ProcurementState;
-use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -44,11 +44,11 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->pr->patch(Action::Update, array('qty_received' => 2)));
     }
 
-    public function testPostNoAuthorizeUser(): void
+    public function testPostNoAuthorizedUser(): void
     {
         $Entity = $this->getFreshItem();
         $entityId = $Entity->id;
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(ForbiddenException::class);
         $id = $this->otherTeamPr->postAction(Action::Create, array('entity_id' => $entityId, 'qty_ordered' => 1, 'body' => '', 'quote' => 12));
     }
 

@@ -114,7 +114,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
             ),
             'NewVersionInstalled' => array(
                 array('category' => Notifications::NewVersionInstalled->value, 'created_at' => 'DATE'),
-                '<a class="color-white" href="'
+                '<a class="text-white" href="'
                 . App::getWhatsnewLink(BuildInfo::VERSION_INT)
                 . '" target="_blank">'
                 . sprintf('A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message.', '<br>')

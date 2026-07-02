@@ -9,7 +9,11 @@ figure {
   text-align: center;
 }
 
-/* inline spreadsheet snapshot block inside the editor (borders also come from the border="1" attribute) */
+/* Inline spreadsheet snapshot block embedded in an entity body.
+ * This file is loaded both in the main stylesheet (via main.scss) and inside the TinyMCE
+ * iframe (appended raw to tinymce_content.min.css by yarn-plugin-tinymce), so it must stay
+ * plain CSS. Borders are guaranteed in every context (editor, view, PDF) by the border="1"
+ * attribute on the <table>; the rules below are cosmetic polish only. */
 .elabftw-inline-sheet {
   display: block;
   margin: 1rem 0;
@@ -29,5 +33,6 @@ figure {
 .elabftw-inline-sheet th,
 .elabftw-inline-sheet td {
   padding: 4px 8px;
-  border: 1px solid #ccc;
+  /* the custom property is not defined inside the TinyMCE iframe, where the fallback applies */
+  border: 1px solid var(--secondary-muted, #ccc);
 }

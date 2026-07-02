@@ -16,6 +16,7 @@
  *
  * All spreadsheet computation happens in the standalone editor; this module never instantiates jspreadsheet.
  */
+import $ from 'jquery';
 import { entity } from './getEntity';
 import { Model } from './interfaces';
 import { ApiC } from './api';
@@ -67,8 +68,7 @@ function dispatchRender(
 }
 
 function hideModal(): void {
-  // cross-bundle: Bootstrap's .modal() is registered on the global jQuery by common.ts, not the imported $
-  window.jQuery('#inlineSpreadsheetModal').modal('hide');
+  $('#inlineSpreadsheetModal').modal('hide');
 }
 
 // CREATE NEW: make an empty xlsx attachment, embed an (empty) snapshot, then open it in the editor to enter data
@@ -161,7 +161,7 @@ async function populateExisting(): Promise<void> {
 
 async function openModal(): Promise<void> {
   await populateExisting();
-  window.jQuery('#inlineSpreadsheetModal').modal('show');
+  $('#inlineSpreadsheetModal').modal('show');
 }
 
 // the standalone editor posted computed values after a save or an embedInline load: (re)build the snapshot

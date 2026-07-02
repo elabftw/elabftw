@@ -36,12 +36,6 @@
     <a href='https://www.elabftw.net' target='_blank' rel='noopener' class='link-like'>eLabFTW</a> {% if App.Session.has('is_auth') %}<a href="{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\BuildInfo::VERSION_INT')) }}" target='_blank' rel='noopener' class='link-like'>{{ constant('Elabftw\\Elabftw\\BuildInfo::VERSION') }}</a>{% endif %}{% if App.demoMode %} | Demo mode{% endif %}
     <br>
     Made with ♥ by <a href='https://www.deltablot.com' target='_blank' rel='noopener' class='link-like'>Deltablot</a>
-    {% if App.devMode -%}
-      <br>{{ 'Page generated in' }} {{ generationTime() }} {{ 'seconds'|trans }}
-      ({{ numberOfQueries() }} SQL)
-      <br>{{ 'Memory usage:'|trans }}
-      {{ memoryUsage()|formatBytes }} ({{ memoryUsage() }} {{ 'bytes'|trans }})
-    {% endif %}
   </p>
 </footer>
 
@@ -73,6 +67,15 @@
   </div>
 </div>
 
+{% if App.devMode -%}
+  <div id='devPerfDiv'>
+    {{ 'Page generated in' }} {{ generationTime() }} {{ 'seconds'|trans }}
+    ({{ numberOfQueries() }} SQL)
+    <br>{{ 'Memory usage:'|trans }}
+    {{ memoryUsage()|formatBytes }} ({{ memoryUsage() }} {{ 'bytes'|trans }})
+  </div>
+{% endif %}
+
 <div id='user-prefs'
   data-lang='{{ App.getLang }}'
   data-jslang='{{ App.getJsLang }}'
@@ -90,6 +93,8 @@
   {
     "isAnon": {{ App.Session.has('is_anon') ? 'true' : 'false' }},
     "isAuth": {{ App.Session.has('is_auth') ? 'true' : 'false' }},
-    "currentTeam": {{ App.Users.userData.team|default(-1) }}
+    "isAdmin": {{ App.Users.isAdmin ? 'true' : 'false' }},
+    "currentTeam": {{ App.Users.userData.team|default(-1) }},
+    "currentUserid": {{ App.Users.userid|default(-1) }}
   }
 </script>

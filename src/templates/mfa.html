@@ -35,7 +35,6 @@
               <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='mfa_secret'><i class='fas fa-clone'></i></button>
             </div>
             <input class='form-control text-center' value='{{ mfaNewSecret|formatMfaSecret }}' id='mfa_secret' disabled readonly />
-            <input type='hidden' name='mfa_secret' value='{{ mfaNewSecret }}'>
           </div>
         </div>
       </div>

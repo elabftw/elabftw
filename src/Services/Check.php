@@ -169,6 +169,14 @@ final class Check
         throw new ImproperActionException('Incorrect value for access key!');
     }
 
+    public static function ror(string $ror): string
+    {
+        if (preg_match('/^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$/i', $ror) === 1) {
+            return $ror;
+        }
+        throw new ImproperActionException('Incorrect value for ROR!');
+    }
+
     /**
      * Check digit according to ISO/IEC 7064:2003, MOD 11-2
      */

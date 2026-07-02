@@ -15,15 +15,15 @@ import { ApiC } from './api';
 import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
 import { on } from './handlers';
-import DOMPurify from 'dompurify';
 
 function updateTsFieldsVisibility(select: HTMLSelectElement) {
   const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
+  const accountTsa = ['universign', 'dgn', 'evidency', 'deltablot'];
   if (noAccountTsa.includes(select.value)) {
     // mask all
     document.getElementById('ts_loginpass').toggleAttribute('hidden', true);
     document.getElementById('ts_urldiv').toggleAttribute('hidden', true);
-  } else if (select.value === 'universign' || select.value === 'dgn') {
+  } else if (accountTsa.includes(select.value)) {
     // only make loginpass visible
     document.getElementById('ts_loginpass').removeAttribute('hidden');
     document.getElementById('ts_urldiv').toggleAttribute('hidden', true);
@@ -139,33 +139,6 @@ function renderEndpoints(endpoints: Endpoint[]): void {
   });
 }
 
-function pickSvgText(): Promise<string | null> {
-  return new Promise((resolve, reject) => {
-    const i = document.createElement('input');
-    i.type = 'file';
-    i.accept = '.svg,image/svg+xml';
-
-    i.onchange = async () => {
-      const f = i.files?.[0];
-      if (!f) return resolve(null);
-      const isSvgExt = f.name.toLowerCase().endsWith('.svg');
-      const isSvgMime = f.type === 'image/svg+xml';
-      if (!isSvgExt && !isSvgMime) {
-        return reject(new Error('Please choose an SVG file.'));
-      }
-      const text = await f.text();
-      const sanitizedText = DOMPurify.sanitize(text, { USE_PROFILES: { svg: true, svgFilters: true } });
-      const xml = new DOMParser().parseFromString(sanitizedText, 'image/svg+xml');
-      if (xml.querySelector('parsererror') || xml.documentElement?.nodeName !== 'svg') {
-        return reject(new Error('Not valid SVG.'));
-      }
-      resolve(sanitizedText);
-    };
-
-    i.click();
-  });
-}
-
 // GET the latest version information
 function checkForUpdate() {
   const updateUrl = 'https://get.elabftw.net/updates.json';
@@ -221,28 +194,87 @@ function checkForUpdate() {
   }).catch(error => latestVersionDiv.append(error));
 }
 
+const updateBrandingPreview = (brandingId: string, file: Blob): void => {
+  const img = document.querySelector<HTMLImageElement>(`img[data-branding-preview="${brandingId}"]`);
+
+  if (!img) {
+    reloadElements(['brandingLogos']);
+    return;
+  }
+
+  const previousObjectUrl = img.dataset.objectUrl;
+  if (previousObjectUrl) {
+    URL.revokeObjectURL(previousObjectUrl);
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  img.dataset.objectUrl = objectUrl;
+  img.src = objectUrl;
+};
+
+const uploadBranding = async (brandingId: string, file: Blob, filename: string): Promise<void> => {
+  const formData = new FormData();
+  formData.append('action', 'update');
+  formData.append('file', file, filename);
+
+  await ApiC.post(`instance/branding/${brandingId}`, formData);
+
+  updateBrandingPreview(brandingId, file);
+};
+
+const defaultBrandingAssets: Record<string, string> = {
+  '1': '/assets/images/logo-header.svg',
+  '2': '/assets/images/logo-light.svg',
+  '3': '/assets/images/logo-dark.svg',
+  '4': '/assets/images/favicon.svg',
+};
+
 if (window.location.pathname === '/sysconfig.php') {
 
   checkForUpdate();
 
-  on('edit-logo', async (el: HTMLElement) => {
-    const picked = await pickSvgText();
-    if (!picked) return; // cancelled
-    ApiC.patch('config', {[el.dataset.target!]: picked}).then(() => reloadElements(['brandingLogos']));
+  document.addEventListener('change', async event => {
+    const input = event.target;
+
+    if (!(input instanceof HTMLInputElement) || input.dataset.action !== 'upload-branding') {
+      return;
+    }
+
+    const brandingId = input.dataset.target;
+    const file = input.files?.[0];
+
+    if (!brandingId || !file) {
+      return;
+    }
+
+    try {
+      await uploadBranding(brandingId, file, file.name);
+    } finally {
+      input.value = '';
+    }
   });
 
-  on('reset-logo', async (el: HTMLElement) => {
-    // map config key -> default asset path
-    const defaults: Record<string, string> = {
-      logo_header_svg: '/assets/images/logo-header.svg',
-      logo_light_svg: '/assets/images/logo-light.svg',
-      logo_dark_svg: '/assets/images/logo-dark.svg',
-      favicon_svg: '/assets/images/favicon.svg',
-    };
-    const url = defaults[el.dataset.target];
+  on('reset-branding', async (el: HTMLElement) => {
+    const brandingId = el.dataset.target;
+
+    if (!brandingId) {
+      return;
+    }
+
+    const url = defaultBrandingAssets[brandingId];
+
+    if (!url) {
+      return;
+    }
+
     const res = await fetch(url, { cache: 'no-cache' });
-    const defaultSvg = await res.text();
-    ApiC.patch('config', {[el.dataset.target!]: defaultSvg}).then(() => reloadElements(['brandingLogos']));
+    if (!res.ok) {
+      throw new Error(`Could not load default branding asset: ${url}`);
+    }
+    const blob = await res.blob();
+    const filename = url.split('/').pop() ?? 'branding.svg';
+
+    await uploadBranding(brandingId, blob, filename);
   });
 
   // TEST EMAIL
@@ -373,6 +405,7 @@ if (window.location.pathname === '/sysconfig.php') {
       (document.getElementById('idpModal_lname_attr') as HTMLInputElement).value = idp.lname_attr;
       (document.getElementById('idpModal_team_attr') as HTMLInputElement).value = idp.team_attr;
       (document.getElementById('idpModal_orgid_attr') as HTMLInputElement).value = idp.orgid_attr;
+      (document.getElementById('idpModal_orcid_attr') as HTMLInputElement).value = idp.orcid_attr;
       document.getElementById('idpModalSaveButton').dataset.id = idp.id;
       $('#idpModal').modal('show');
     });

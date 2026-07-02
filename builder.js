@@ -13,8 +13,7 @@
  */
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const MinimizerPlugin = require('minimizer-webpack-plugin');
 const webpack = require('webpack');
 const sveltePreprocess = require('svelte-preprocess');
 
@@ -71,8 +70,10 @@ module.exports = (env) => {
         'prismjs/components/prism-latex.js',
         'prismjs/components/prism-lua.js',
         'prismjs/components/prism-makefile.js',
+        'prismjs/components/prism-markup-templating.js', // necessary for php
         'prismjs/components/prism-matlab.js',
         'prismjs/components/prism-perl.js',
+        'prismjs/components/prism-php.js',
         'prismjs/components/prism-python.js',
         'prismjs/components/prism-r.js',
         'prismjs/components/prism-ruby.js',
@@ -102,8 +103,15 @@ module.exports = (env) => {
       },
       minimize: true,
       minimizer: [
-        new CssMinimizerPlugin(),
-        new TerserPlugin(),
+        '...',
+        new MinimizerPlugin({
+          test: /\.css(\?.*)?$/i,
+          minify: MinimizerPlugin.cssnanoMinify,
+          // Options - https://cssnano.github.io/cssnano/docs/config-file/
+          minimizerOptions: {
+            preset: 'default',
+          },
+        }),
       ],
     },
     plugins: [
@@ -120,6 +128,7 @@ module.exports = (env) => {
     ],
     resolve: {
       extensions: ['.ts', '.js', '.jsx', '.svelte'],
+      conditionNames: ['svelte', 'browser', '...'],
       mainFields: ['svelte', 'browser', 'module', 'main'],
       fallback: {
         // required by react 18

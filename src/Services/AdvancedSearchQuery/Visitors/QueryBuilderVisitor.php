@@ -438,7 +438,7 @@ final class QueryBuilderVisitor implements Visitor
         $bindValues = array();
         foreach (array_unique($users) as $user) {
             $param = $this->getUniqueID();
-            $queryParts[] = 'users.userid = ' . $param;
+            $queryParts[] = 'entity.userid = ' . $param;
             $bindValues[] = array(
                 'param' => $param,
                 'value' => $user,
@@ -518,7 +518,7 @@ final class QueryBuilderVisitor implements Visitor
         $bindValues = array();
         foreach ($filteredSearchArr as $value) {
             $param = $this->getUniqueID();
-            $queryParts[] = "JSON_EXTRACT(entity.canread, '$.base') = " . $param;
+            $queryParts[] = 'entity.canread_base = ' . $param;
             $bindValues[] = array(
                 'param' => $param,
                 'value' => $value,

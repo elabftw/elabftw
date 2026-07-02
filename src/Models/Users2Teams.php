@@ -52,14 +52,31 @@ final class Users2Teams
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
         $req->bindValue(':is_admin', $isAdmin->value, PDO::PARAM_INT);
-        $res = $this->Db->execute($req);
+        $this->Db->execute($req);
+        // INSERT IGNORE silently skips duplicate rows; rowCount() = 0 means the user was already in the team
+        $wasInserted = $req->rowCount() > 0;
 
-        AuditLogs::create(new TeamAddition($teamid, $isAdmin->value, $this->requester->userid ?? 0, $userid));
-        if ($isValidated) {
-            new Teams($this->requester, $teamid)->sendOnboardingEmailToUser($userid, $isAdmin);
+        // only audit and notify when an actual new assignment was created
+        if ($wasInserted) {
+            AuditLogs::create(new TeamAddition($teamid, $isAdmin->value, $this->requester->userid ?? 0, $userid));
+            if ($isValidated) {
+                new Teams($this->requester, $teamid)->sendOnboardingEmailToUser($userid, $isAdmin);
+            }
         }
 
-        return $res;
+        return $wasInserted;
+    }
+
+    // archive user in all teams
+    public function archive(int $targetUserid): int
+    {
+        $this->requester->isSysadminOrExplode();
+        $UsersHelper = new UsersHelper($targetUserid);
+        $teams = $UsersHelper->getTeamsFromUserid();
+        foreach ($teams as $team) {
+            $this->patchIsArchivedNoPermCheck($targetUserid, $team['id'], BinaryValue::True);
+        }
+        return count($teams);
     }
 
     public function patchUser2Team(array $params, int $targetUserid): int
@@ -166,6 +183,11 @@ final class Users2Teams
     private function patchIsArchived(int $userid, int $teamid, BinaryValue $content): int
     {
         $this->requesterCanModifyInTeamOrExplode($teamid);
+        return $this->patchIsArchivedNoPermCheck($userid, $teamid, $content);
+    }
+
+    private function patchIsArchivedNoPermCheck(int $userid, int $teamid, BinaryValue $content): int
+    {
         return new UserArchiver($this->requester, new Users($userid, $teamid))
             ->setArchived($content)->value;
     }

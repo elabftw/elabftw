@@ -34,7 +34,7 @@
       <div class='form-inline'>
         <label for='date_input' class='col-form-label mr-3 edit-mode-label justify-content-start d-sm-block d-none'>{{ 'Started on'|trans }}</label>
         {# the input expects date in YYYY-MM-DD format, and it will be displayed according to the browser's locale #}
-        <input id='date_input' data-trigger='blur' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
+        <input id='date_input' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='date' type='date' value='{{ Entity.entityData.date|date('Y-m-d') }}' class='form-control' />
       </div>
     {# CUSTOM ID #}
     <div class='d-flex ml-2 d-inline-flex flex-nowrap align-items-center'>

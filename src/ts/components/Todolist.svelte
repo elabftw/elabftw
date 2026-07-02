@@ -1,4 +1,11 @@
-<script lang="ts">
+<script lang='ts'>
+  /**
+   * @author Nicolas CARPi / Deltablot
+   * @copyright 2026 Nicolas CARPi
+   * @see https://www.elabftw.net Official website
+   * @license AGPL-3.0
+   * @package elabftw
+   */
   import { onMount, tick } from 'svelte';
   import { ApiC } from '../api';
   import i18next from '../i18n';
@@ -7,6 +14,7 @@
   import { makeSortableGreatAgain, toRelative } from '../misc';
 
   const t = i18next.t.bind(i18next);
+
   let locale = 'en-gb';
 
   let malleable: Malle | null = null;
@@ -47,9 +55,7 @@
     const content = draft.trim();
     if (!content) return;
 
-    ApiC.notifOnSaved = false;
-    await ApiC.post(Model.Todolist, { content });
-    ApiC.notifOnSaved = true;
+    await ApiC.post(`${Model.Todolist}`, { notifOnSaved: 0, content });
     draft = '';
     await load();
   }

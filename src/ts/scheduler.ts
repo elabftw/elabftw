@@ -50,6 +50,7 @@ type CancelNotificationPayload = {
   range_direction?: string;
   range_value?: number;
   range_unit?: string;
+  notifOnSaved?: number;
 };
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
@@ -197,10 +198,10 @@ if (window.location.pathname === '/scheduler.php') {
       // start by clearing the divs
       clearBoundDiv('experiment');
       clearBoundDiv('item');
-      if (extendedProps.experiment) {
+      if (extendedProps.experiment && extendedProps.experiment_title) {
         createBoundDiv('experiment', extendedProps.experiment_title, `experiments.php?mode=view&id=${extendedProps.experiment}`);
       }
-      if (extendedProps.item_link) {
+      if (extendedProps.item_link && extendedProps.item_link_title) {
         createBoundDiv('item', extendedProps.item_link_title, `database.php?mode=view&id=${extendedProps.item_link}`);
       }
     }
@@ -446,7 +447,7 @@ if (window.location.pathname === '/scheduler.php') {
         $('#eventModal').modal('show');
         // set the event id on the various elements
         document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
-        document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn:HTMLButtonElement) => btn.dataset.eventid = info.event.id);
+        document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn: HTMLButtonElement) => btn.dataset.eventid = info.event.id);
         document.querySelectorAll('[data-action="cancel-event"], [data-action="cancel-event-with-message"]')
           .forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
 
@@ -492,8 +493,17 @@ if (window.location.pathname === '/scheduler.php') {
         );
         // Set modal content
         document.getElementById('viewTitle')!.textContent = info.event.extendedProps.title_only;
-        document.getElementById('viewDatetime')!.innerHTML = `${dateLine}<br class='mb-2'>` +
-          `<strong>${timeLine}</strong> (${durationMinutes} ${i18next.t('minutes')})`;
+        const viewDatetime = document.getElementById('viewDatetime')!;
+        const br = document.createElement('br');
+        br.classList.add('mb-2');
+        const strong = document.createElement('strong');
+        strong.textContent = timeLine;
+        viewDatetime.replaceChildren(
+          dateLine,
+          br,
+          strong,
+          ` (${durationMinutes} ${i18next.t('minutes')})`,
+        );
       },
       // on mouse enter add shadow and show title
       eventMouseEnter: function(info): void {
@@ -536,11 +546,11 @@ if (window.location.pathname === '/scheduler.php') {
         payload.range_value = parseInt((document.getElementById('cancelEventRangeValue') as HTMLInputElement).value, 10);
         payload.range_unit = (document.getElementById('cancelEventRangeUnit') as HTMLSelectElement).value;
       }
+      payload.notifOnSaved = 0;
       // The notification must be sent before deletion, otherwise the event ID is lost (Nothing to show with this id)
-      ApiC.notifOnSaved = false;
       ApiC.post(`event/${el.dataset.id}/notifications`, payload)
         .then(() => ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch())
-        .then(() => notify.success()).finally(() => ApiC.notifOnSaved = true);
+        .then(() => notify.success());
     });
 
     on('edit-event', async (_, e: Event) => {

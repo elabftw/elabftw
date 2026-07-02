@@ -19,6 +19,7 @@ use function array_map;
 
 enum ApiSubModels: string
 {
+    case Branding = 'branding';
     case Comments = 'comments';
     case CompoundsLinks = 'compounds_links';
     case Containers = 'containers';
@@ -35,6 +36,7 @@ enum ApiSubModels: string
     case ProcurementRequests = 'procurement_requests';
     case RequestActions = 'request_actions';
     case Revisions = 'revisions';
+    case Rors = 'rors';
     case SigKeys = 'sig_keys';
     case Status = 'status';
     case Steps = 'steps';
@@ -53,6 +55,7 @@ enum ApiSubModels: string
             ApiEndpoint::Users => self::getUsersCases(),
             ApiEndpoint::Event => self::getSchedulerCases(),
             ApiEndpoint::Idps => self::getIdpsCases(),
+            ApiEndpoint::Instance => self::getInstanceCases(),
             default => throw new ImproperActionException('Incorrect endpoint.'),
         };
     }
@@ -86,6 +89,7 @@ enum ApiSubModels: string
                 self::ResourcesCategories,
                 self::ItemsStatus,
                 self::ProcurementRequests,
+                self::Rors,
                 self::Status,
                 self::Tags,
                 self::Teamgroups,
@@ -101,6 +105,7 @@ enum ApiSubModels: string
                 self::Notifications,
                 self::RequestActions,
                 self::SigKeys,
+                self::Rors,
                 self::Uploads,
             ),
         );
@@ -123,6 +128,17 @@ enum ApiSubModels: string
             array(
                 self::IdpsCerts,
                 self::IdpsEndpoints,
+            ),
+        );
+    }
+
+    private static function getInstanceCases(): array
+    {
+        return array_map(
+            fn(self $case): string => $case->value,
+            array(
+                self::Branding,
+                self::Rors,
             ),
         );
     }

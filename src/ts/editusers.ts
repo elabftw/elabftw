@@ -134,11 +134,6 @@ if (document.getElementById('users-table')) {
         $('#editUserModal').modal('toggle');
       });
 
-    // TOGGLE ADMIN STATUS
-    } else if (el.matches('[data-action="toggle-admin-user"]')) {
-      const group = el.dataset.promote === '1' ? 2 : 4;
-      ApiC.patch(`${Model.User}/${userid}`, {action: Action.PatchUser2Team, team: el.dataset.team, target: 'group', content: group, userid: userid}).then(() => document.dispatchEvent(new CustomEvent('dataReload')));
-
     // VALIDATE USER
     } else if (el.matches('[data-action="validate-user"]')) {
       ApiC.patch(`users/${userid}`, {action: Action.Validate})

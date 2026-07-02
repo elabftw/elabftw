@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
 use Symfony\Component\HttpFoundation\InputBag;
-
-use function is_array;
 
 class InfoTest extends \PHPUnit\Framework\TestCase
 {
@@ -33,8 +32,9 @@ class InfoTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         $info = $this->Info->readOne();
-        $this->assertTrue(is_array($info));
-        $this->assertEquals(5, $info['experiments_timestamped_count']);
+        $this->assertArrayHasKey('elabftw_version', $info);
+        $timestamp = new Experiments(new Users(1, 1))->getTimestampLastMonth();
+        $this->assertEquals($timestamp, $info['experiments_timestamped_count']);
     }
 
     public function testHist(): void

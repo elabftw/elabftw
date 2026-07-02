@@ -167,10 +167,13 @@ final class Saml implements AuthInterface
         $email = $this->extractAttribute($this->settings['idp']['emailAttr']);
 
         // GET ORGID
-        $orgid = $this->getOrgid();
+        $orgid = $this->getAttribute('orgidAttr');
+
+        // GET ORCID
+        $orcid = $this->getAttribute('orcidAttr');
 
         // GET POPULATED USERS OBJECT
-        $Users = $this->getUsers($email, $orgid);
+        $Users = $this->getUsers($email, $orgid, $orcid);
         if (!$Users instanceof Users) {
             $this->AuthResponse->setAuthenticatedUserid(0);
             $this->AuthResponse->setInitTeamRequired(true);
@@ -179,6 +182,7 @@ final class Saml implements AuthInterface
                 'firstname' => $this->getName(),
                 'lastname' => $this->getName(true),
                 'orgid' => $orgid,
+                'orcid' => $orcid,
             ));
             return $this->AuthResponse;
         }
@@ -203,6 +207,9 @@ final class Saml implements AuthInterface
         }
         if ($orgid !== null) {
             $Users->update(new UserParams('orgid', $orgid));
+        }
+        if ($orcid !== null) {
+            $Users->update(new UserParams('orcid', $orcid));
         }
 
         // load the teams from db
@@ -235,13 +242,13 @@ final class Saml implements AuthInterface
         return $attr;
     }
 
-    private function getOrgid(): ?string
+    private function getAttribute(string $key): ?string
     {
-        $orgid = $this->samlUserdata[$this->settings['idp']['orgidAttr'] ?? self::UNKNOWN_VALUE] ?? null;
-        if (is_array($orgid)) {
-            return $orgid[0];
+        $attr = $this->samlUserdata[$this->settings['idp'][$key] ?? self::UNKNOWN_VALUE] ?? null;
+        if (is_array($attr)) {
+            return $attr[0];
         }
-        return $orgid;
+        return $attr;
     }
 
     /**
@@ -322,7 +329,7 @@ final class Saml implements AuthInterface
         }
     }
 
-    private function getUsers(string $email, ?string $orgid = null): Users | int
+    private function getUsers(string $email, ?string $orgid = null, ?string $orcid = null): Users | int
     {
         $Users = $this->getExistingUser($email, $orgid);
         if ($Users === false) {
@@ -346,7 +353,7 @@ final class Saml implements AuthInterface
             // CREATE USER (and force validation of user, with user permissions)
             $allowTeamCreation = ($this->configArr['saml_team_create'] ?? '1') === '1';
             /** @psalm-suppress PossiblyInvalidArgument */
-            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), orgid: $orgid, allowTeamCreation: $allowTeamCreation);
+            $Users = ValidatedUser::fromExternal($email, $teams, $this->getName(), $this->getName(true), orgid: $orgid, orcid: $orcid, allowTeamCreation: $allowTeamCreation);
         }
         return $Users;
     }

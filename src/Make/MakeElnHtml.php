@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use ZipStream\ZipStream;
 use Override;
@@ -25,9 +28,16 @@ use function json_encode;
  */
 final class MakeElnHtml extends MakeEln
 {
-    public function __construct(protected LoggerInterface $logger, protected ZipStream $Zip, protected Users $requester, protected array $entityArr)
-    {
-        parent::__construct($logger, $Zip, $requester, $entityArr);
+    public function __construct(
+        protected LoggerInterface $logger,
+        protected ZipStream $Zip,
+        protected Users $requester,
+        protected array $entityArr,
+        protected Instance2Rors $instance2Rors,
+        protected Teams2Rors $teams2Rors,
+        protected Users2Rors $users2Rors,
+    ) {
+        parent::__construct($logger, $Zip, $requester, $entityArr, $instance2Rors, $teams2Rors, $users2Rors);
     }
 
     #[Override]

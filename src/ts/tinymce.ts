@@ -226,7 +226,7 @@ export function getTinymceBaseConfig(page: string): object {
     // location of the skin directory
     skin_url: isDark ? '/assets/tinymce_skins_dark' : '/assets/tinymce_skins',
     skin: isDark ? 'oxide-dark' : 'oxide',
-    content_css: isDark ? ['/assets/tinymce_skins/content/dark/content.min.css', '/assets/tinymce_content.min.css'] : ['/assets/tinymce_content.min.css'],
+    content_css: isDark ? ['/assets/tinymce_content_dark.min.css', '/assets/tinymce_content.min.css'] : ['/assets/tinymce_content.min.css'],
     emoticons_database_url: 'assets/tinymce_emojis.js',
     // remove the "Upgrade" button
     promotion: false,
@@ -282,6 +282,7 @@ export function getTinymceBaseConfig(page: string): object {
       {text: 'Makefile', value: 'makefile'},
       {text: 'Matlab', value: 'matlab'},
       {text: 'Perl', value: 'perl'},
+      {text: 'PHP', value: 'php'},
       {text: 'Python', value: 'python'},
       {text: 'R', value: 'r'},
       {text: 'Ruby', value: 'ruby'},

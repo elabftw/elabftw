@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "cypress-html-validate": "^7.2.0",
+    "cypress-html-validate": "^9.0.0",
     "cypress-terminal-report": "^7.3.3",
     "html-validate": "^8.29.0",
     "luxon": "^3.7.2",

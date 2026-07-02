@@ -57,6 +57,7 @@ trait TwigTrait
         $toIconFilter = new TwigFilter('toIcon', '\Elabftw\Elabftw\TwigFilters::toIcon', $filterOptions);
         $jsonDecodFilter = new TwigFilter('jsonDecode', '\Elabftw\Elabftw\TwigFilters::jsonDecode', $filterOptions);
         $any2StringFilter = new TwigFilter('any2string', '\Elabftw\Elabftw\TwigFilters::any2String', $filterOptions);
+        $userid2fullname = new TwigFilter('userid2fullname', '\Elabftw\Elabftw\TwigFilters::userid2fullname', $filterOptions);
         // |trans filter
         $transFilter = new TwigFilter(
             'trans',
@@ -76,7 +77,6 @@ trait TwigTrait
         $envAsBool = new TwigFunction('envAsBool', '\Elabftw\Elabftw\TwigFunctions::envAsBool');
         $numberOfQueries = new TwigFunction('numberOfQueries', '\Elabftw\Elabftw\TwigFunctions::getNumberOfQueries');
         $ext2icon = new TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
-        $sortIcon = new TwigFunction('sortIcon', '\Elabftw\Elabftw\TwigFunctions::getSortIcon');
         $getExtendedSearchExample = new TwigFunction('getExtendedSearchExample', '\Elabftw\Elabftw\TwigFunctions::getExtendedSearchExample');
 
         // load the i18n extension for using the translation tag for twig
@@ -99,6 +99,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($toIconFilter);
         $TwigEnvironment->addFilter($jsonDecodFilter);
         $TwigEnvironment->addFilter($any2StringFilter);
+        $TwigEnvironment->addFilter($userid2fullname);
         $TwigEnvironment->addFilter($transFilter);
         $TwigEnvironment->addFilter($toDatetimeFilter);
         $TwigEnvironment->addFilter($isInJsonArray);
@@ -112,7 +113,6 @@ trait TwigTrait
         $TwigEnvironment->addFunction($envAsBool);
         $TwigEnvironment->addFunction($numberOfQueries);
         $TwigEnvironment->addFunction($ext2icon);
-        $TwigEnvironment->addFunction($sortIcon);
         $TwigEnvironment->addFunction($getExtendedSearchExample);
 
         // use the image BUILD_ID to use as parameter for loading assets

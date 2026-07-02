@@ -17,7 +17,6 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
-use RuntimeException;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
@@ -60,7 +59,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     public function testCanWriteOrExplode(): void
     {
         $Teams = new Teams($this->getUserInTeam(1));
-        $this->expectException(RuntimeException::class);
+        $this->expectException(IllegalActionException::class);
         $Teams->canWriteOrExplode();
     }
 
@@ -103,7 +102,6 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $id = $this->Teams->postAction(Action::Create, array('name' => 'Destroy me'));
         $this->Teams->setId($id);
-        $this->Teams->bypassWritePermission = true;
         $this->assertTrue($this->Teams->destroy());
         // try to destroy a team with data
         $this->Teams->setId(1);
@@ -156,6 +154,13 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->testCannotCreateSomethingWithoutTeamPermission(new Templates($admin), new Templates($user));
         $this->testCannotCreateSomethingWithoutTeamPermission(new ItemsTypes($admin), new ItemsTypes($user));
         $this->testCannotCreateSomethingWithoutTeamPermission(new Items($admin), new Items($user));
+        // reset permissions to default
+        $Team->patch(Action::Update, array(
+            'users_canwrite_experiments' => 1,
+            'users_canwrite_experiments_templates' => 1,
+            'users_canwrite_resources' => 1,
+            'users_canwrite_resources_templates' => 1,
+        ));
     }
 
     private function testCannotCreateSomethingWithoutTeamPermission(AbstractEntity $entityWithAdmin, AbstractEntity $entityWithUser): void

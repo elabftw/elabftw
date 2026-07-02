@@ -5,14 +5,13 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Method } from './interfaces';
+import { Method, Selected } from './interfaces';
 import { getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';
 
+type ApiParams = Record<string, unknown> | FormData | object | Selected;
+
 export class Api {
-  // set this to false to prevent the "Saved" notification from showing up
-  notifOnSaved = true;
-  notifOnError = true;
   // allow forcing the browser to make the request even if page is closed − useful for clearing exclusive edit on window unload
   // it is false by default for two reasons:
   // 1. It is not needed
@@ -54,62 +53,95 @@ export class Api {
     });
   }
 
-  patch(query: string, params = {}): Promise<Response> {
+  patch(query: string, params: ApiParams = {}): Promise<Response> {
     return this.send(Method.PATCH, query, params);
   }
 
-  post(query: string, params = {}): Promise<Response> {
+  post(query: string, params: ApiParams = {}): Promise<Response> {
     return this.send(Method.POST, query, params);
   }
 
-  post2location(query: string, params = {}): Promise<number> {
+  async post2location(query: string, params = {}): Promise<number> {
     return this.send(Method.POST, query, params).then(res => getNewIdFromPostRequest(res));
   }
 
 
-  delete(query: string): Promise<Response> {
-    return this.send(Method.DELETE, query);
+  delete(query: string, params = {}): Promise<Response> {
+    return this.send(Method.DELETE, query, params);
   }
 
   // private method: use patch/post/delete instead
-  send(method: Method, query: string, params = {}): Promise<Response> {
+  private async send(method: Method, query: string, params: ApiParams = {}): Promise<Response> {
+    const isFormData = params instanceof FormData;
+
+
+    // allow toggle notifs off by sending notifOn(Saved|Error)=0 as param
+    let notifOnSaved = true;
+    let notifOnError = true;
+    if (!isFormData) {
+      if (params['notifOnSaved'] === 0) {
+        notifOnSaved = false;
+      }
+      delete params['notifOnSaved'];
+
+      if (params['notifOnError'] === 0) {
+        notifOnError = false;
+      }
+      delete params['notifOnError'];
+    }
+
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    const options = {
+
+    const headers: HeadersInit = {
+      'X-CSRF-Token': csrfToken,
+      'X-Requested-With': 'XMLHttpRequest',
+    };
+
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    const options: RequestInit = {
       method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken,
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+      headers: headers,
       keepalive: this.keepalive,
     };
+
     if ([Method.POST, Method.PATCH].includes(method)) {
-      options['body'] = JSON.stringify(params);
+      options.body = isFormData ? params : JSON.stringify(params);
     }
+
     let urlParams = '';
-    if (method === Method.GET && Object.keys(params).length > 0) {
-      urlParams = `?${new URLSearchParams(params).toString()}`;
+    if (method === Method.GET && !isFormData && Object.keys(params).length > 0) {
+      urlParams = `?${new URLSearchParams(params as Record<string, string>).toString()}`;
     }
+
     return fetch(`api/v2/${query}${urlParams}`, options).then(async response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
-        // if there is an error we will get the message in the reply body
-        return response.json().then(json => { throw new Error(json.message || json.description); });
+        return response.json().then(json => {
+          const error = new Error(json.message || json.description) as Error & { status?: number };
+          error.status = response.status;
+          throw error;
+        });
       }
       return response;
     }).then(response => {
-      if (method !== Method.GET && this.notifOnSaved) {
+      if (method !== Method.GET && notifOnSaved) {
         notify.success();
       }
       return response;
     }).catch(error => {
-      if (this.notifOnError) {
+      if (notifOnError) {
         notify.error(error.message);
       }
-      return Promise.reject(new Error(error.message));
+
+      const wrappedError = new Error(error.message) as Error & { status?: number };
+      wrappedError.status = error.status;
+      return Promise.reject(wrappedError);
     });
   }
 
-  getOkStatusFromMethod(method: Method): number {
+  private getOkStatusFromMethod(method: Method): number {
     switch (method) {
     case Method.GET:
     case Method.PATCH:

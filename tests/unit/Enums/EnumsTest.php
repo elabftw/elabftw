@@ -76,6 +76,12 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray(Currency::getAssociativeArray());
     }
 
+    public function testUnit(): void
+    {
+        $this->assertSame('Bar', Units::Bar->toHuman());
+        $this->assertSame('Metre', Units::Metre->toHuman());
+    }
+
     public function testApiSubModels(): void
     {
         array_map(

@@ -24,6 +24,9 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\AbstractRest;
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use Elabftw\Services\MpdfProvider;
@@ -249,6 +252,9 @@ final class Exports extends AbstractRest
         }
 
         $absolutePath = $this->storage->getAbsoluteUri($longName);
+        $instance2Rors = new Instance2Rors();
+        $teams2Rors = new Teams2Rors($this->requester->getTeam());
+        $users2Rors = new Users2Rors($this->requester->getUserid());
 
         switch ($format) {
             case ExportFormat::Eln:
@@ -259,7 +265,15 @@ final class Exports extends AbstractRest
                 }
                 $ZipStream = new ZipStream(sendHttpHeaders: false, outputStream: $fileStream);
                 if ($format === ExportFormat::Eln) {
-                    $Maker = new MakeEln($this->logger, $ZipStream, $this->requester, $entityArr);
+                    $Maker = new MakeEln(
+                        $this->logger,
+                        $ZipStream,
+                        $this->requester,
+                        $entityArr,
+                        $instance2Rors,
+                        $teams2Rors,
+                        $users2Rors,
+                    );
                 } else {
                     $Maker = new MakeBackupZip($ZipStream, $this->requester, $entityArr, $usePdfa, $includeChangelog, $includeJson);
                 };
@@ -272,7 +286,7 @@ final class Exports extends AbstractRest
                     $this->requester->userData['pdf_format'],
                     $usePdfa,
                 );
-                $Maker = new MakeMultiPdf($this->logger, $mpdfProvider, $this->requester, $entityArr, $includeChangelog);
+                $Maker = new MakeMultiPdf($this->logger, $mpdfProvider, $this->requester, $entityArr, $instance2Rors, $teams2Rors, $users2Rors, $includeChangelog);
                 $this->fs->write($longName, $Maker->getFileContent());
                 break;
             case ExportFormat::Json:

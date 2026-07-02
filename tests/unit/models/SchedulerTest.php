@@ -92,6 +92,33 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         return $id;
     }
 
+    public function testRepeatedOverlappingBookingsCreateOnlyOneEvent(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Items->patch(Action::Update, array('book_can_overlap' => 0));
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('+1 hour');
+        $end = $start->add(new DateInterval('PT2H'));
+
+        $created = 0;
+        $rejected = 0;
+        for ($i = 0; $i < 5; $i++) {
+            try {
+                $Scheduler->postAction(Action::Create, array(
+                    'start' => $start->format('c'),
+                    'end' => $end->format('c'),
+                    'title' => sprintf('Booking %d', $i),
+                ));
+                $created++;
+            } catch (ImproperActionException) {
+                $rejected++;
+            }
+        }
+
+        $this->assertSame(1, $created);
+        $this->assertSame(4, $rejected);
+    }
+
     public function testPostActionWithNegativeTimeSlots(): void
     {
         $end = new DateTimeImmutable('-1 hour')->format('c');
@@ -380,6 +407,49 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->Scheduler->setId($this->testPostAction());
         $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'experiment', 'id' => null)));
         $this->assertIsArray($this->Scheduler->patch(Action::Update, array('target' => 'item_link', 'id' => null)));
+    }
+
+    public function testReadOneDoesNotLeakPrivateBoundEntityTitles(): void
+    {
+        $Owner = $this->getUserInTeam(1);
+        $User2 = $this->getUserInTeam(2);
+
+        $BookableItem = $this->getFreshItemWithGivenUser($Owner);
+        $BookableItem->patch(Action::Update, array(
+            'is_bookable' => 1,
+            'canread_base' => BasePermissions::User->value,
+            'canread' => json_encode(array(
+                'users' => array($User2->userid),
+                'teams' => array(),
+                'teamgroups' => array(),
+            )),
+        ));
+
+        $PrivateExperiment = $this->getFreshExperimentWithGivenUser($Owner);
+        $PrivateExperiment->patch(Action::Update, array(
+            'canread_base' => BasePermissions::UserOnly->value,
+            'canwrite_base' => BasePermissions::UserOnly->value,
+        ));
+
+        $OwnerScheduler = new Scheduler($BookableItem);
+        $eventId = $OwnerScheduler->postAction(Action::Create, array(
+            'start' => $this->start,
+            'end' => $this->end,
+        ));
+
+        $OwnerScheduler->setId($eventId);
+        $OwnerScheduler->patch(Action::Update, array(
+            'target' => 'experiment',
+            'id' => $PrivateExperiment->id,
+        ));
+
+        $User2Scheduler = new Scheduler(new Items($User2, $BookableItem->id));
+        $User2Scheduler->setId($eventId);
+
+        $event = $User2Scheduler->readOne();
+        // the experiment's ID is also not shown
+        $this->assertEquals(0, (int) $event['experiment']);
+        $this->assertNull($event['experiment_title']);
     }
 
     public function testCanWriteAndWeAreAdmin(): void

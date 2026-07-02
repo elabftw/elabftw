@@ -215,4 +215,3 @@ Cypress.Commands.add('extractIdFromLocation', response => {
   }
   return cy.wrap(id);
 });
-

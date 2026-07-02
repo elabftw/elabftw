@@ -9,15 +9,22 @@
 /**
  * Code related to the users table present on the Users tab of Admin and Sysconfig panels
  */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import {
+  ClientSideRowModelModule,
+  ModuleRegistry,
+  PaginationModule,
+  QuickFilterModule,
+  RowSelectionModule,
+  TextFilterModule,
+  provideGlobalGridOptions,
+} from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
-import { populateUserModal } from './misc';
+import { DEFAULT_AG_GRID_PAGINATION, populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
@@ -46,7 +53,14 @@ async function toggleUserModal(user) {
 }
 
 if (document.getElementById('users-table')) {
-  ModuleRegistry.registerModules([ClientSideRowModelModule]);
+  provideGlobalGridOptions({ theme: 'legacy' });
+  ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    RowSelectionModule,
+    PaginationModule,
+    TextFilterModule,
+    QuickFilterModule,
+  ]);
 
   const rowSelection = {
     mode: 'multiRow',
@@ -196,9 +210,7 @@ if (document.getElementById('users-table')) {
             rowSelection={rowSelection}
             onCellDoubleClicked={cellDoubleClicked}
             onSelectionChanged={selectionChanged}
-            pagination={true}
-            paginationPageSize={15}
-            paginationPageSizeSelector={[15, 50, 100, 500]}
+            {...DEFAULT_AG_GRID_PAGINATION}
           />
         </div>
         <div className='d-flex justify-content-start my-2'>

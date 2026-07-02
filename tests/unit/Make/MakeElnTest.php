@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use Psr\Log\LoggerInterface;
@@ -31,7 +34,15 @@ class MakeElnTest extends \PHPUnit\Framework\TestCase
         );
         $Users = new Users(1, 1);
         $Zip = $this->createMock(ZipStream::class);
-        $this->Make = new MakeEln($this->createMock(LoggerInterface::class), $Zip, $Users, $targets);
+        $this->Make = new MakeEln(
+            $this->createMock(LoggerInterface::class),
+            $Zip,
+            $Users,
+            $targets,
+            new Instance2Rors(),
+            new Teams2Rors($Users->getTeam(), false),
+            new Users2Rors($Users->getUserid(), false),
+        );
     }
 
     public function testGetFileName(): void

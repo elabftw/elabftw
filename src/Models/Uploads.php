@@ -30,6 +30,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Params\ContentParams;
 use Elabftw\Params\Guard;
 use Elabftw\Params\UploadParams;
 use Elabftw\Services\Check;
@@ -198,8 +199,13 @@ final class Uploads extends AbstractRest
         $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
         $req->bindValue(':immutable', $params->getImmutable(), PDO::PARAM_INT);
         $this->Db->execute($req);
+        $uploadId = $this->Db->lastInsertId();
 
-        return $this->Db->lastInsertId();
+        $Changelog = new Changelog($this->Entity);
+        $params = new ContentParams('uploads', sprintf('Added upload "%s" with id: %d', $realName, $uploadId));
+        $Changelog->create($params);
+
+        return $uploadId;
     }
 
     // entity is target entity
@@ -487,6 +493,18 @@ final class Uploads extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $Changelog = new Changelog($this->Entity);
+        $contentParams = new ContentParams(
+            'uploads',
+            sprintf(
+                'Changed upload "%s" with id %d: updated %s to %s',
+                $this->uploadData['real_name'],
+                $this->id,
+                $params->getColumn(),
+                $params->getContent(),
+            ),
+        );
+        $Changelog->create($contentParams);
         return $this->Db->execute($req);
     }
 

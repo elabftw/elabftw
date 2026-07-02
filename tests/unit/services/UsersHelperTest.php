@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Enums\EntityType;
+
 class UsersHelperTest extends \PHPUnit\Framework\TestCase
 {
     private UsersHelper $UsersHelper;
@@ -27,7 +29,7 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
 
     public function testCountExperiments(): void
     {
-        $this->assertIsInt($this->UsersHelper->countExperiments());
+        $this->assertIsInt($this->UsersHelper->countEntity(EntityType::Experiments));
     }
 
     public function testCountTimestampedExperiments(): void
@@ -45,11 +47,5 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
     {
         $UsersHelper = new UsersHelper(1337);
         $this->assertEmpty($UsersHelper->getTeamsFromUserid());
-    }
-
-    public function testgetTeamsNameFromUserid(): void
-    {
-        $expected = array('Alpha');
-        $this->assertEquals($expected, $this->UsersHelper->getTeamsNameFromUserid());
     }
 }

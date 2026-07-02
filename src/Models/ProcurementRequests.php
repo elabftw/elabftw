@@ -70,9 +70,10 @@ final class ProcurementRequests extends AbstractRest
     public function readOne(): array
     {
         $sql = 'SELECT id, created_at, team, requester_userid, entity_id, qty_ordered, qty_received, body, quote, email_sent, state
-            FROM procurement_requests WHERE id = :id';
+            FROM procurement_requests WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
@@ -135,12 +136,15 @@ final class ProcurementRequests extends AbstractRest
         return $this->update(new ProcurementRequestParams('state', (string) ProcurementState::Cancelled->value));
     }
 
+    // Safe to concatenate: getColumn() can only return a validated column name associated with the target matched by getContent().
+    // See /src/Params/ContentParams.php
     private function update(ProcurementRequestParams $params): bool
     {
-        $sql = 'UPDATE procurement_requests SET ' . $params->getColumn() . ' = :value WHERE id = :id';
+        $sql = 'UPDATE procurement_requests SET ' . $params->getColumn() . ' = :value WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':value', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 

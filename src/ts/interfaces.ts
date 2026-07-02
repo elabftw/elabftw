@@ -53,6 +53,8 @@ interface Selected {
   experiments_tags: number[];
   users_experiments: number[];
   users_resources: number[];
+  users_experiments_templates: number[];
+  users_resources_templates: number[];
   tags: number[];
   userid: number;
   team: number;

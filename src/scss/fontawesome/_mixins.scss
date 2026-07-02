@@ -3,9 +3,9 @@
 
 // base rendering for an icon
 @mixin fa-icon {
+  display: inline-block;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  display: inline-block;
   font-style: normal;
   font-variant: normal;
   font-weight: normal;
@@ -23,15 +23,15 @@
 // see: https://www.a11yproject.com/posts/2013-01-11-how-to-hide-content/
 // see: https://hugogiraudel.com/2016/10/13/css-hide-and-seek/
 @mixin fa-sr-only() {
-  position: absolute;
-  width: 1px;
+  border-width: 0;
+  clip: rect(0, 0, 0, 0);
   height: 1px;
-  padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  padding: 0;
+  position: absolute;
   white-space: nowrap;
-  border-width: 0;
+  width: 1px;
 }
 
 // use in conjunction with .sr-only to only display content when it's focused
@@ -51,7 +51,7 @@
   @extend .fa-solid;
 
   &::before {
-    content: unquote("\"#{ $fa-var }\"");
+    content: unquote('\"#{ $fa-var }\"');
   }
 }
 
@@ -60,7 +60,7 @@
   @extend .fa-regular;
 
   &::before {
-    content: unquote("\"#{ $fa-var }\"");
+    content: unquote('\"#{ $fa-var }\"');
   }
 }
 
@@ -69,6 +69,6 @@
   @extend .fa-brands;
 
   &::before {
-    content: unquote("\"#{ $fa-var }\"");
+    content: unquote('\"#{ $fa-var }\"');
   }
 }

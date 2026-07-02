@@ -14,6 +14,8 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Models\Users\Users;
 
+use function mb_substr;
+
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
     private ExperimentsStatus $Status;
@@ -25,13 +27,15 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $new = $this->Status->postAction(Action::Create, array('title' => 'New status', 'color' => '#29AEB9', 'is_default' => 1));
+        $title = 'New status';
+        $color = '#29AEB9';
+        $new = $this->Status->postAction(Action::Create, array('name' => $title, 'color' => $color));
         $this->assertIsInt($new);
-    }
-
-    public function testRead(): void
-    {
-        $this->assertIsArray($this->Status->readOne());
+        $this->Status->setId($new);
+        $status = $this->Status->readOne();
+        $this->assertIsArray($status);
+        $this->assertSame($title, $status['title']);
+        $this->assertSame(mb_substr($color, 1), $status['color']);
     }
 
     public function testGetApiPath(): void
@@ -46,9 +50,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212'));
         $this->assertEquals('Updated', $status['title']);
         $this->assertEquals('121212', $status['color']);
-        $this->assertEquals(0, $status['is_default']);
-        $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212', 'is_default' => 1));
-        $this->assertEquals(1, $status['is_default']);
     }
 
     public function testDestroy(): void

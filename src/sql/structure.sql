@@ -111,6 +111,9 @@ CREATE TABLE `experiments` (
   `locked` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `lockedby` int(10) UNSIGNED DEFAULT NULL,
   `locked_at` timestamp NULL DEFAULT NULL,
+  `signature_count` INT UNSIGNED NOT NULL DEFAULT 0,
+  `last_signed_at` TIMESTAMP NULL DEFAULT NULL,
+  `last_signed_by` INT UNSIGNED NULL DEFAULT NULL,
   `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `timestampedby` int(11) NULL DEFAULT NULL,
   `timestamped_at` timestamp NULL DEFAULT NULL,
@@ -353,6 +356,9 @@ CREATE TABLE `experiments_templates` (
   `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
+  `signature_count` INT UNSIGNED NOT NULL DEFAULT 0,
+  `last_signed_at` TIMESTAMP NULL DEFAULT NULL,
+  `last_signed_by` INT UNSIGNED NULL DEFAULT NULL,
   `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `timestampedby` int(11) NULL DEFAULT NULL,
   `timestamped_at` timestamp NULL DEFAULT NULL,
@@ -541,6 +547,7 @@ CREATE TABLE `idps` (
   `fname_attr` varchar(255) NULL DEFAULT NULL,
   `lname_attr` varchar(255) NULL DEFAULT NULL,
   `orgid_attr` varchar(255) NULL DEFAULT NULL,
+  `orcid_attr` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
@@ -647,6 +654,9 @@ CREATE TABLE `items` (
   `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
+  `signature_count` INT UNSIGNED NOT NULL DEFAULT 0,
+  `last_signed_at` TIMESTAMP NULL DEFAULT NULL,
+  `last_signed_by` INT UNSIGNED NULL DEFAULT NULL,
   `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `timestampedby` int NULL DEFAULT NULL,
   `timestamped_at` timestamp NULL DEFAULT NULL,
@@ -688,7 +698,6 @@ CREATE TABLE `items_categories` (
   `team` int UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
   `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -852,6 +861,9 @@ CREATE TABLE `items_types` (
   `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
+  `signature_count` INT UNSIGNED NOT NULL DEFAULT 0,
+  `last_signed_at` TIMESTAMP NULL DEFAULT NULL,
+  `last_signed_by` INT UNSIGNED NULL DEFAULT NULL,
   `timestamped` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `timestampedby` int(11) NULL DEFAULT NULL,
   `timestamped_at` timestamp NULL DEFAULT NULL,
@@ -1070,7 +1082,6 @@ CREATE TABLE `experiments_status` (
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
   `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -1090,7 +1101,6 @@ CREATE TABLE `experiments_categories` (
   `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
   `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -1107,7 +1117,6 @@ CREATE TABLE `items_status` (
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
   `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -2188,6 +2197,18 @@ CREATE TABLE IF NOT EXISTS storage_units (
     PRIMARY KEY(`id`)
 );
 
+-- STORAGE UNITS HISTORY
+CREATE TABLE IF NOT EXISTS storage_units_history (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    storage_unit_id INT UNSIGNED NOT NULL,
+    old_parent_id INT UNSIGNED NULL,
+    new_parent_id INT UNSIGNED NULL,
+    users_id INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY (storage_unit_id, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 -- CONTAINERS TO EXPERIMENTS
 CREATE TABLE containers2experiments (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -2241,6 +2262,61 @@ CREATE TABLE containers2items_types (
     PRIMARY KEY(`id`)
 );
 -- end schema 167
+
+-- schema 212
+CREATE TABLE `instance2rors` (
+  `ror` char(9) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`ror`),
+
+  CONSTRAINT `chk_instance2rors_ror`
+    CHECK (`ror` REGEXP '^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$')
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE `teams2rors` (
+  `teams_id` int(10) UNSIGNED NOT NULL,
+  `ror` char(9) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`teams_id`, `ror`),
+  KEY `idx_teams2rors_ror` (`ror`),
+
+  CONSTRAINT `fk_teams2rors_team`
+    FOREIGN KEY (`teams_id`) REFERENCES `teams` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+  CONSTRAINT `chk_teams2rors_ror`
+    CHECK (`ror` REGEXP '^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$')
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE `users2rors` (
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `ror` char(9) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`users_id`, `ror`),
+  KEY `idx_users2rors_ror` (`ror`),
+
+  CONSTRAINT `fk_users2rors_user`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+  CONSTRAINT `chk_users2rors_ror`
+    CHECK (`ror` REGEXP '^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$')
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+-- end schema 212
+
+-- schema 214
+CREATE TABLE branding (
+    id TINYINT UNSIGNED NOT NULL,
+    content_type VARCHAR(127) NOT NULL,
+    data MEDIUMBLOB NOT NULL,
+    filesize INT UNSIGNED NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
 -- Indexes and Constraints for table `experiments_templates_edit_mode`
@@ -2384,6 +2460,12 @@ ALTER TABLE `procurement_requests`
 ALTER TABLE `procurement_requests`
   ADD CONSTRAINT `fk_teams_id_proc_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_id_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- schema 210
+CREATE UNIQUE INDEX uniq_tags2entity_type_item_tag
+    ON tags2entity (item_type, item_id, tag_id);
+-- end schema 210
+
 
 COMMIT;
 

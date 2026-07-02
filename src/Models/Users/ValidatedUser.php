@@ -34,9 +34,9 @@ final class ValidatedUser extends ExistingUser
         return self::search(UsersColumn::Orgid, $orgid, true);
     }
 
-    public static function fromExternal(string $email, array $teams, string $firstname, string $lastname, ?string $orgid = null, bool $allowTeamCreation = false): Users
+    public static function fromExternal(string $email, array $teams, string $firstname, string $lastname, ?string $orgid = null, ?string $orcid = null, bool $allowTeamCreation = false): Users
     {
-        return parent::fromScratch($email, $teams, $firstname, $lastname, automaticValidationEnabled: true, orgid: $orgid, allowTeamCreation: $allowTeamCreation);
+        return parent::fromScratch($email, $teams, $firstname, $lastname, automaticValidationEnabled: true, orgid: $orgid, orcid: $orcid, allowTeamCreation: $allowTeamCreation);
     }
 
     public static function fromAdmin(string $email, array $teams, string $firstname, string $lastname, Usergroup $usergroup, bool $skipDomainValidation = false): Users

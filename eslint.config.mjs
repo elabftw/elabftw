@@ -1,53 +1,75 @@
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import globals from "globals";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
+import tseslint from 'typescript-eslint';
+import globals from 'globals';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
+export default defineConfig(
+  {
+    ignores: [
+      '.yarn/**',
+      'node_modules/**',
+      'vendor/**',
+      'dist/**',
+      'build/**',
+      'coverage/**',
+      'tests/_output/**',
+    ],
+  },
 
-export default [
-    ...compat.extends("eslint:recommended", "plugin:@typescript-eslint/recommended"),
-    {
-        plugins: {
-            "@typescript-eslint": typescriptEslint,
-        },
+  js.configs.recommended,
+  tseslint.configs.recommended,
 
-        languageOptions: {
-            globals: {
-                ...globals.browser,
-            },
+  {
+    files: ['**/*.{js,mjs,cjs,ts,tsx,mts,cts}'],
 
-            parser: tsParser,
-            ecmaVersion: "latest",
-            sourceType: "module",
-        },
-
-        rules: {
-            indent: ["error", 2],
-            "linebreak-style": ["error", "unix"],
-            quotes: ["error", "single"],
-            semi: ["error", "always"],
-            "comma-dangle": ["error", "always-multiline"],
-
-            "keyword-spacing": ["error", {
-                before: true,
-                after: true,
-            }],
-
-            "space-before-function-paren": ["error", {
-                anonymous: "never",
-                named: "never",
-                asyncArrow: "always",
-            }],
-        },
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+      },
     },
-];
+
+    rules: {
+      indent: ['error', 2],
+      'linebreak-style': ['error', 'unix'],
+      quotes: ['error', 'single'],
+      semi: ['error', 'always'],
+      'comma-dangle': ['error', 'always-multiline'],
+
+      'keyword-spacing': ['error', {
+        before: true,
+        after: true,
+      }],
+
+      'space-before-function-paren': ['error', {
+        anonymous: 'never',
+        named: 'never',
+        asyncArrow: 'always',
+      }],
+    },
+  },
+
+  {
+    files: ['**/*.{cjs,cts}'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
+  {
+    files: [
+      'eslint.config.mjs',
+      'cypress.config.ts',
+      '*.config.{js,mjs,cjs,ts,mts,cts}',
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+);

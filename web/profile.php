@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Make\Exports;
@@ -37,7 +38,7 @@ try {
     $Response->prepare($App->Request);
     $UsersHelper = new UsersHelper($App->Users->userData['userid']);
     // get total number of experiments
-    $count = $UsersHelper->countExperiments();
+    $count = $UsersHelper->countEntity(EntityType::Experiments);
 
     // generate stats for the pie chart with experiments status
     $UserStats = new UserStats($App->Users, $count);

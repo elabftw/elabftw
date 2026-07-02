@@ -27,7 +27,6 @@ use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
-use RuntimeException;
 
 use function array_diff;
 use function trim;
@@ -46,7 +45,7 @@ final class Teams extends AbstractRest
 
     public array $teamArr = array();
 
-    public function __construct(public Users $Users, ?int $id = null, public bool $bypassWritePermission = false)
+    public function __construct(public Users $Users, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -72,7 +71,6 @@ final class Teams extends AbstractRest
             $team = $req->fetch();
             // team was not found, we need to create it, but only if we're allowed to
             if ($team === false && $allowTeamCreation === true) {
-                $this->bypassWritePermission = true;
                 $freshTeam = new self($this->Users, $this->create($query));
                 $team = $freshTeam->selectOne();
             }
@@ -231,6 +229,8 @@ final class Teams extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        $this->canWriteOrExplode();
+
         // check for stats, should be 0
         $count = $this->getStats($this->id ?? 0);
 
@@ -314,20 +314,27 @@ final class Teams extends AbstractRest
         return $res;
     }
 
-    public function canWriteOrExplode(): void
+    public function canWrite(): bool
     {
-        if ($this->bypassWritePermission || $this->Users->isSysadmin()) {
-            return;
+        if ($this->Users->isSysadmin()) {
+            return true;
         }
         if ($this->id === null) {
-            throw new RuntimeException('Cannot check permissions in team because the team id is null.');
+            return false;
         }
         $TeamsHelper = new TeamsHelper($this->id);
 
         if ($TeamsHelper->isAdminInTeam($this->Users->getUserid())) {
-            return;
+            return true;
         }
-        throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
+        return false;
+    }
+
+    public function canWriteOrExplode(): void
+    {
+        if (!$this->canWrite()) {
+            throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
+        }
     }
 
     public function create(string $name): int

@@ -81,6 +81,7 @@
       {# DOWNLOAD as CSV #}
       <div class='mb-4 d-flex flex-row-reverse'>
         <a href='/api/v2/teams/current/procurement_requests?format=csv'><button type='button' class='btn btn-secondary'>{{ 'Download'|trans }} (.csv)</button></a>
+        <a class='btn btn-ghost ml-auto mr-2 external-link' href='https://doc.elabftw.net/docs/user-guide/resources#making-a-resource-procurable' target='_blank' rel='noopener'>{{ 'Documentation'|trans }}</a>
       </div>
       {% include 'filter-input-snippet.html' with {'target': 'procurementRequestsTable'} %}
 
@@ -134,7 +135,6 @@
         </table>
       </div>
       {% else %} {# no requests #}
-      {# TODO add documentation link #}
         <p>{{ 'No procurement requests have been made yet.'|trans }}</p>
       {% endif %}
   </div>

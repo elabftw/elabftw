@@ -6,14 +6,14 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import { Action, CheckableItem, EntityType, Entity, Model, Target, FileType } from './interfaces';
+import {Action, CheckableItem, EntityType, Entity, Model, Target, FileType} from './interfaces';
 import { DateTime } from 'luxon';
 import { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
-import { Malle, InputType } from '@deltablot/malle';
+import { Malle, InputType, SelectOptions } from '@deltablot/malle';
 import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
@@ -26,6 +26,8 @@ import TomSelectDropdownInput from 'tom-select/dist/esm/plugins/dropdown_input/p
 import TomSelectNoActiveItems from 'tom-select/dist/esm/plugins/no_active_items/plugin.js';
 import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plugin.js';
 import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
+import { mount, unmount } from 'svelte';
+import RorsSv from './components/Rors.svelte';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -116,7 +118,11 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
     const params: Record<string, unknown> = {};
     params[el.dataset.target as string] = value;
 
-    await ApiC.patch(`${el.dataset.model}`, params);
+    if (el.dataset.method === 'delete') {
+      await ApiC.delete(`${el.dataset.model}`);
+    } else {
+      await ApiC.patch(`${el.dataset.model}`, params);
+    }
 
     // success side-effect for the generic path
     if (el.dataset.reload) {
@@ -173,7 +179,7 @@ export function rebuildTomSelectOptions(
   const ts = selectEl.tomselect;
   if (!ts) return;
 
-  let nextOptions: TomSelectOption[] = [];
+  let nextOptions: TomSelectOption[];
 
   if ('options' in source) {
     nextOptions = source.options;
@@ -231,8 +237,6 @@ export function collectForm(form: HTMLElement): object {
       el.classList.add('border-danger');
       el.focus();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // TODO maybe have "Input validation failed" or something more user friendly. That Invalid syntax error is weird.
-      notify.error('invalid-info');
       throw new Error(i18next.t('invalid-info'));
     }
     let value = el.value;
@@ -324,22 +328,21 @@ export function makeMalleableColumnsGreatAgain() {
     tooltip: i18next.t('click-to-edit'),
   }).listen();
 
-  // MALLEABLE QTY_UNIT - we need a specific code to add the select options
+  // MALLEABLE QTY_UNIT - we need a specific code to add the select options.
+  // The unit list has a single source of truth: the PHP Units enum, which is
+  // rendered into the #containerQtyUnitSelect dropdown of the add-container
+  // modal. We read the options straight from there so the list is never
+  // duplicated in the frontend.
+  const qtyUnitSelect = document.getElementById('containerQtyUnitSelect') as HTMLSelectElement | null;
+  const qtyUnitOptions: SelectOptions[] = qtyUnitSelect
+    ? Array.from(qtyUnitSelect.options).map(option => ({selected: false, text: option.text, value: option.value}))
+    : [];
   new Malle({
     cancel : i18next.t('cancel'),
     cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
     inputClasses: ['form-control'],
     inputType: InputType.Select,
-    selectOptions: [
-      {selected: false, text: '•', value: '•'},
-      {selected: false, text: 'μL', value: 'μL'},
-      {selected: false, text: 'mL', value: 'mL'},
-      {selected: false, text: 'L', value: 'L'},
-      {selected: false, text: 'μg', value: 'μg'},
-      {selected: false, text: 'mg', value: 'mg'},
-      {selected: false, text: 'g', value: 'g'},
-      {selected: false, text: 'kg', value: 'kg'},
-    ],
+    selectOptions: qtyUnitOptions,
     fun: (value, original) => {
       return ApiC.patch(`${original.dataset.endpoint}/${original.dataset.id}`, {qty_unit: value})
         .then(res => res.json())
@@ -402,11 +405,8 @@ export function getCheckedBoxes(): Array<CheckableItem> {
 }
 
 // reload the entities in show mode
-export async function reloadEntitiesShow(tag = ''): Promise<void | Response> {
-  // get the html
-  const html = await fetchCurrentPage(tag);
-  // reload items
-  document.getElementById('showModeContent').innerHTML = html.getElementById('showModeContent').innerHTML;
+export async function reloadEntitiesShow(): Promise<void | Response> {
+  window.dispatchEvent(new CustomEvent('entity-filters-changed'));
   // ask mathjax to reparse the page
   MathJax.typeset();
   // rebind autocomplete for links input
@@ -587,6 +587,7 @@ export async function updateCatStat(target: string, entity: Entity, value: strin
   const newEntity = await ApiC.patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
   // return a string separated with | with the id first so we can use it in data-id of new element
   let response = value + '|';
+  /* eslint-disable-next-line */
   return response += (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
 }
 
@@ -666,19 +667,6 @@ export function toggleIcon(el: HTMLElement, isHidden: boolean): void
   }
 }
 
-// escape text similar to htmlspecialchars() of php
-// https://stackoverflow.com/a/4835406
-export function escapeHTML(text: string): string {
-  const escapeMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&#34;',
-    '\'': '&#39;',
-  };
-  return text.replace(/[&<>'"]/g, char => escapeMap[char]);
-}
-
 export function escapeExtendedQuery(searchTerm: string): string {
   // the order of the replacement is important
   // 1) escape extended search query wildcards
@@ -702,15 +690,13 @@ export function escapeExtendedQuery(searchTerm: string): string {
 
 export function replaceWithTitle(): void {
   document.querySelectorAll('[data-replace-with-title="true"]').forEach((el: HTMLElement) => {
-    // mask error notifications
-    ApiC.notifOnError = false;
     // view mode is innerText
     let changedAttribute = 'innerText';
     // edit mode is value because it's an input
     if (el instanceof HTMLInputElement) {
       changedAttribute = 'value';
     }
-    ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`).then(json => {
+    ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`, { notifOnError: 0 }).then(json => {
       // VIEW MODE (non-input): default = 'entity title'
       let value;
       const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';
@@ -978,6 +964,14 @@ export async function populateUserModal(user: Record<string, string|number>) {
   if (user.validated !== 0) {
     validateUserBtn.setAttribute('disabled', 'disabled');
   }
+  // RORS
+  const rorsDiv = document.getElementById('rorsDiv') as HTMLElement | null;
+  if (!rorsDiv) {
+    throw new Error('Missing #rorsDiv');
+  }
+  rorsDiv.dataset.svelteComponent = 'rors';
+  rorsDiv.dataset.endpoint = `users/${user.userid}/rors`;
+  mountRors({ force: true });
 }
 
 // generate the slider element to toggle isAdmin and isOwner for a given user in a given team
@@ -1031,3 +1025,52 @@ export function ensureTogglableSectionIsOpen(iconId: string, divId: string): voi
   // and scroll page into editor view
   div.scrollIntoView({ behavior: 'smooth' });
 }
+
+type MountedRors = {
+  component: ReturnType<typeof mount>;
+  endpoint: string;
+};
+
+const mountedRors = new WeakMap<HTMLElement, MountedRors>();
+
+export function mountRors(options: { force?: boolean } = {}): void {
+  const { force = false } = options;
+
+  document.querySelectorAll<HTMLElement>('[data-svelte-component="rors"]').forEach(target => {
+    const endpoint = target.dataset.endpoint;
+
+    if (!endpoint) {
+      throw new Error('Missing data-endpoint for rors component');
+    }
+
+    const mounted = mountedRors.get(target);
+
+    if (mounted) {
+      if (!force && mounted.endpoint === endpoint) {
+        return;
+      }
+
+      unmount(mounted.component);
+      mountedRors.delete(target);
+    }
+
+    const component = mount(RorsSv, {
+      target,
+      props: {
+        endpoint,
+      },
+    });
+
+    mountedRors.set(target, {
+      component,
+      endpoint,
+    });
+  });
+}
+
+// default pagination size for ag grid components
+export const DEFAULT_AG_GRID_PAGINATION = {
+  pagination: true,
+  paginationPageSize: 100,
+  paginationPageSizeSelector: [100, 250, 500],
+};

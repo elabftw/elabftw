@@ -15,15 +15,21 @@ use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Models\Users\ValidatedUser;
+use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ExpirationNotifierTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     public function testSendEmails(): void
     {
         // first make a user close to expiration
         $user = ValidatedUser::fromAdmin('expire@soon.example', array(1), 'expire', 'soon', Usergroup::User);
         $date = new DateTimeImmutable('tomorrow');
+        // valid_until can only be modified by admin requester
+        $admin = $this->getRandomUserInTeam(1, 1);
+        $user->requester = $admin;
         $user->patch(Action::Update, array('valid_until' => $date->format('Y-m-d')));
         // now alert user and admin
         $stub = $this->createStub(Email::class);

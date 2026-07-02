@@ -9,20 +9,34 @@
 /**
  * Code related to the compounds table present on the Compounds page from ag-grid
  */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import {
+  ClientSideRowModelModule,
+  ModuleRegistry,
+  PaginationModule,
+  QuickFilterModule,
+  RowSelectionModule,
+  TextFilterModule,
+  provideGlobalGridOptions,
+} from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
-import { toggleEditCompound } from './misc';
+import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
 import i18next from './i18n';
 import { notify } from './notify';
 
 if (document.getElementById('compounds-table')) {
-  ModuleRegistry.registerModules([ClientSideRowModelModule]);
+  provideGlobalGridOptions({ theme: 'legacy' });
+  ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    RowSelectionModule,
+    PaginationModule,
+    TextFilterModule,
+    QuickFilterModule,
+  ]);
 
   const isDark = document.documentElement.classList.contains('dark-mode');
   const rowSelection = {
@@ -181,9 +195,7 @@ if (document.getElementById('compounds-table')) {
           onCellDoubleClicked={cellDoubleClicked}
           onGridReady={onGridReady}
           onSelectionChanged={selectionChanged}
-          pagination={true}
-          paginationPageSize={15}
-          paginationPageSizeSelector={[15, 50, 100, 500]}
+          {...DEFAULT_AG_GRID_PAGINATION}
         />
         <div className='d-flex justify-content-end my-2'>
           <button

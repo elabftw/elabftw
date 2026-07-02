@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Links\Compounds2ItemsLinks;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Items;
 use Elabftw\Models\StorageUnits;
+use Elabftw\Models\Tags;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
@@ -113,12 +115,22 @@ final class CompoundsCsv extends AbstractCsv
                     if ($title === null && $compound) {
                         $title = $compound->name ?? $compound->iupacName;
                     }
-                    $resource = $this->Items->createFromTemplate($this->resourceTemplate, title: $title ?? 'Unnamed compound');
+                    $resource = $this->Items->postAction(
+                        Action::Create,
+                        array(
+                            'template' => $this->resourceTemplate,
+                            'title' => $title ?? 'Unnamed compound',
+                        )
+                    );
                     $this->Items->setId($resource);
                     if (isset($row['comment'])) {
                         $this->Items->update(new EntityParams('body', $row['comment']));
                     }
-                    $this->Items->update(new EntityParams('metadata', $this->collectMetadata($row)));
+                    if (isset($row['tags']) && trim($row['tags']) !== '') {
+                        $Tags = new Tags($this->Items);
+                        $Tags->postAction(Action::Create, array('tag' => trim($row['tags'])));
+                    }
+                    $this->Items->update(new EntityParams('metadatamerge', $this->collectMetadata($row)));
                     foreach ($ids as $id) {
                         $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
                         $Compounds2ItemsLinks->create();
@@ -195,6 +207,7 @@ final class CompoundsCsv extends AbstractCsv
             'title',
             'comment',
             'custom_id',
+            'tags',
             'chebi_id',
             'chembl_id',
             'dea_number',

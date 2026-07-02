@@ -15,8 +15,9 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\CertPurpose;
 use Elabftw\Enums\SamlBinding;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\IdpsInterface;
 use Elabftw\Models\Config;
-use Elabftw\Models\Idps;
 
 use function rtrim;
 
@@ -25,7 +26,7 @@ use function rtrim;
  */
 final class IdpsHelper
 {
-    public function __construct(public Config $Config, private Idps $Idps) {}
+    public function __construct(public Config $Config, private IdpsInterface $Idps) {}
 
     /**
      * Get the settings array
@@ -39,6 +40,10 @@ final class IdpsHelper
     {
         $idpId = $this->Idps->getEnabled($id);
 
+        // no active IdP
+        if ($idpId === 0) {
+            throw new ResourceNotFoundException();
+        }
         return $this->getSettingsByIdp($idpId);
     }
 
@@ -150,6 +155,12 @@ final class IdpsHelper
                             'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
                             'friendlyName' => 'uid',
                         ),
+                        array(
+                            'name' => empty($idp['orcid_attr']) ? 'urn:oid:1.3.6.1.4.1.5923.1.1.1.16' : $idp['orcid_attr'],
+                            'isRequired' => false,
+                            'nameFormat' => 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri',
+                            'friendlyName' => 'eduPersonOrcid',
+                        ),
                     ),
                 ),
                 // Specifies info about where and how the <Logout Response> message MUST be
@@ -198,6 +209,7 @@ final class IdpsHelper
                 'fnameAttr' => $idp['fname_attr'],
                 'lnameAttr' => $idp['lname_attr'],
                 'orgidAttr' => $idp['orgid_attr'],
+                'orcidAttr' => $idp['orcid_attr'],
             ),
             // Security settings
             'security' => array(

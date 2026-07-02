@@ -862,7 +862,7 @@ msgstr "Utilisateur"
 
 #: src/Enums/Users2TeamsTargets.php:26
 msgid "Owner"
-msgstr "Propriétaire seulement"
+msgstr "Propriétaire"
 
 #: src/Exceptions/DemoModeException.php:25
 msgid "Sorry, this action is disabled in demo mode."

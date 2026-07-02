@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\BaseQueryParams;
 use PDO;
 
 use function array_column;
@@ -39,28 +41,11 @@ class UsersHelper
         return $this->hasExperiments() || $this->hasItems() || $Users->isSysadmin() || $this->hasComments() || $this->hasTemplates() || $this->hasUploads();
     }
 
-    /**
-     * Count all the experiments owned by a user
-     */
-    public function countExperiments(): int
+    public function countEntity(EntityType $entityType, array $states = array(State::Normal, State::Archived)): int
     {
-        $sql = 'SELECT COUNT(id) FROM experiments WHERE userid = :userid AND state = :state';
+        $sql = sprintf('SELECT COUNT(id) FROM %s WHERE userid = :userid %s', $entityType->value, BaseQueryParams::statesToSql($entityType->value, $states));
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (int) $req->fetchColumn();
-    }
-
-    /**
-     * Count all the items owned by a user
-     */
-    public function countItems(): int
-    {
-        $sql = 'SELECT COUNT(id) FROM items WHERE userid = :userid AND state = :state';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }
@@ -101,14 +86,6 @@ class UsersHelper
         return array_column($this->getTeamsFromUserid(), 'id');
     }
 
-    /**
-     * Get teams name from a userid
-     */
-    public function getTeamsNameFromUserid(): array
-    {
-        return array_column($this->getTeamsFromUserid(), 'name');
-    }
-
     private function countComments(): int
     {
         $sql = 'SELECT SUM(comment_count) AS total_comment_count
@@ -138,12 +115,12 @@ class UsersHelper
 
     private function hasExperiments(): bool
     {
-        return $this->countExperiments() > 0;
+        return $this->countEntity(EntityType::Experiments) > 0;
     }
 
     private function hasItems(): bool
     {
-        return $this->countItems() > 0;
+        return $this->countEntity(EntityType::Items) > 0;
     }
 
     private function hasComments(): bool

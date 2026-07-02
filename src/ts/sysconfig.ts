@@ -171,17 +171,17 @@ function checkForUpdate() {
       warningDiv.appendChild(chevron);
       const text = document.createElement('span');
       text.classList.add('ml-1');
-      text.innerText = `${data.date} - ${i18next.t('new-version')}!`;
+      text.innerText = `${data.date} - ${i18next.t('new-version')}`;
       warningDiv.appendChild(text);
       const updateButton = document.createElement('button');
       updateButton.type = 'button';
-      updateButton.classList.add('btn', 'btn-primary', 'ml-2');
-      updateButton.innerText = i18next.t('update');
+      updateButton.classList.add('btn', 'btn-primary', 'ml-2', 'external-link');
+      updateButton.innerText = i18next.t('view-upgrade-guide');
       updateButton.addEventListener('click', () => window.open('https://doc.elabftw.net/docs/install/update', '_blank'));
       const changelogButton = document.createElement('button');
       changelogButton.type = 'button';
-      changelogButton.classList.add('btn', 'btn-primary', 'ml-2');
-      changelogButton.innerText = i18next.t('see-changelog');
+      changelogButton.classList.add('btn', 'btn-primary', 'ml-2', 'external-link');
+      changelogButton.innerText = i18next.t('read-release-notes');
       changelogButton.addEventListener('click', () => window.open('https://github.com/elabftw/elabftw/releases', '_blank'));
 
       warningDiv.appendChild(updateButton);

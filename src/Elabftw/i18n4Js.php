@@ -151,6 +151,7 @@ final class i18n4Js
             'ownership-transfer' => _('Your entry has been successfully transferred to the selected user.'),
             'organisation-name' => _('Organisation name'),
             'please-wait' => _('Please wait…'),
+            'read-release-notes' => _('Read release notes'),
             'readonly' => _('Read-only'),
             'remove' => _('Remove'),
             'rename-column' => _('New title for the column'),
@@ -169,7 +170,6 @@ final class i18n4Js
             'save-attachment' => _('Save as attachment'),
             'saved' => _('Saved'),
             'search' => _('Search'),
-            'see-changelog' => _('See changelog'),
             'select-resource' => _('Select a resource'),
             'show-all' => _('Show all'),
             'show-archived' => _('Show archived'),
@@ -193,13 +193,13 @@ final class i18n4Js
             'undefined-group' => _('Undefined group'),
             'unarchive-user' => _('Unarchive user'),
             'unarchive-user-description' => _('Unarchiving a user means their account will be restored. This action is reversible.'),
-            'update' => _('Update'),
             'upload-file-comment' => _('File comment'),
             'userid' => _('Userid'),
             'users' => _('Users'),
             'valid-until' => _('Valid until'),
             'validated' => _('Validated'),
             'view-template' => _('View template'),
+            'view-upgrade-guide' => _('View upgrade guide'),
         );
     }
 

@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "Nom",
     "new-spreadsheet": "Nou full de càlcul",
+    "new-version": "A new version is available!",
     "no-self-links": "No es permet enllaçar un element amb ell mateix. Seleccioneu un objectiu diferent.",
     "not-found": "No s'han trobat resultats coincidents.",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "La teva entrada s'ha transferit al usuari seleccionat amb èxit.",
     "organisation-name": "Organisation name",
     "please-wait": "Espereu...",
+    "read-release-notes": "Read release notes",
     "readonly": "Llegeix només",
     "remove": "Eliminar",
     "rename-column": "Nou títol per la columna",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "Vàlid fins",
     "validated": "Validat",
     "view-template": "Mira plantilla",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

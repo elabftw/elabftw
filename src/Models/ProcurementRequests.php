@@ -95,7 +95,7 @@ final class ProcurementRequests extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
-        $this->canReadOrExplode($reqBody['entity_id']);
+        $this->canReadOrExplode((int) $reqBody['entity_id']);
 
         $sql = 'INSERT INTO procurement_requests (team, requester_userid, entity_id, qty_ordered, body, quote, state)
             VALUES (:team, :requester_userid, :entity_id, :qty_ordered, :body, :quote, :state)';
@@ -162,7 +162,6 @@ final class ProcurementRequests extends AbstractRest
     {
         // A user can only create a procurement request for a resource they can read.
         // setId() calls readOne(), which checks read permissions with canOrExplode().
-        $Item = new Items($this->Teams->Users);
-        $Item->setId($entityId);
+        new Items($this->Teams->Users, $entityId);
     }
 }

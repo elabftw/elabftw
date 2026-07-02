@@ -9,11 +9,18 @@
 /**
  * Code related to the users table present on the Users tab of Admin and Sysconfig panels
  */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import {
+  ClientSideRowModelModule,
+  ModuleRegistry,
+  PaginationModule,
+  QuickFilterModule,
+  RowSelectionModule,
+  TextFilterModule,
+  provideGlobalGridOptions,
+} from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
@@ -46,7 +53,14 @@ async function toggleUserModal(user) {
 }
 
 if (document.getElementById('users-table')) {
-  ModuleRegistry.registerModules([ClientSideRowModelModule]);
+  provideGlobalGridOptions({ theme: 'legacy' });
+  ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    RowSelectionModule,
+    PaginationModule,
+    TextFilterModule,
+    QuickFilterModule,
+  ]);
 
   const rowSelection = {
     mode: 'multiRow',

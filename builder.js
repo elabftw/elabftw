@@ -13,8 +13,7 @@
  */
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const MinimizerPlugin = require('minimizer-webpack-plugin');
 const webpack = require('webpack');
 const sveltePreprocess = require('svelte-preprocess');
 
@@ -104,8 +103,15 @@ module.exports = (env) => {
       },
       minimize: true,
       minimizer: [
-        new CssMinimizerPlugin(),
-        new TerserPlugin(),
+        '...',
+        new MinimizerPlugin({
+          test: /\.css(\?.*)?$/i,
+          minify: MinimizerPlugin.cssnanoMinify,
+          // Options - https://cssnano.github.io/cssnano/docs/config-file/
+          minimizerOptions: {
+            preset: 'default',
+          },
+        }),
       ],
     },
     plugins: [

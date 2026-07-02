@@ -173,16 +173,19 @@ function checkForUpdate() {
       text.classList.add('ml-1');
       text.innerText = `${data.date} - A new version is available!`;
       warningDiv.appendChild(text);
-      const updateLink = document.createElement('a');
-      updateLink.href = 'https://doc.elabftw.net/docs/install/update';
-      updateLink.classList.add('button', 'btn', 'btn-primary', 'text-white', 'ml-2');
-      updateLink.innerText = 'Update elabftw';
-      const changelogLink = document.createElement('a');
-      changelogLink.href = 'https://github.com/elabftw/elabftw/releases';
-      changelogLink.classList.add('button', 'btn', 'btn-primary', 'text-white', 'ml-2');
-      changelogLink.innerText = 'Read changelog';
-      warningDiv.appendChild(updateLink);
-      warningDiv.appendChild(changelogLink);
+      const updateButton = document.createElement('button');
+      updateButton.type = 'button';
+      updateButton.classList.add('btn', 'btn-primary', 'ml-2');
+      updateButton.innerText = 'Update eLabFTW';
+      updateButton.addEventListener('click', () => window.open('https://doc.elabftw.net/docs/install/update', '_blank'));
+      const changelogButton = document.createElement('button');
+      changelogButton.type = 'button';
+      changelogButton.classList.add('btn', 'btn-primary', 'ml-2');
+      changelogButton.innerText = 'Read changelog';
+      changelogButton.addEventListener('click', () => window.open('https://github.com/elabftw/elabftw/releases', '_blank'));
+
+      warningDiv.appendChild(updateButton);
+      warningDiv.appendChild(changelogButton);
       document.getElementById('versionNotifZone').appendChild(warningDiv);
     } else {
       // show a little green check if we have latest version

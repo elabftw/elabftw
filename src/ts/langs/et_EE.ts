@@ -142,6 +142,7 @@ const t = {
     "team": "Meeskond",
     "teams": "Meeskonnad",
     "template-title": "Malli pealkiri",
+    "timestamped-by": "Timestamped by",
     "title": "Pealkiri",
     "today": "Täna",
     "toggle-pin": "Kinnita/lahti",

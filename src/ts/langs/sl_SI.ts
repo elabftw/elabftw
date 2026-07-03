@@ -142,6 +142,7 @@ const t = {
     "team": "Ekipa",
     "teams": "Ekipe",
     "template-title": "Naslov predloge",
+    "timestamped-by": "Timestamped by",
     "title": "Naslov",
     "today": "Danes",
     "toggle-pin": "Preklopni žebljiček",

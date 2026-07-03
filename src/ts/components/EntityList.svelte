@@ -43,6 +43,7 @@
     timestamped?: boolean;
     signature_count?: number;
     last_signed_by?: number;
+    timestampedby?: number;
     next_step?: string | null;
     locked?: boolean;
     modified_at?: string | null;
@@ -124,10 +125,12 @@
 
     loadingFullnames.add(userId);
 
-    const user = await ApiC.getJson(`users/${userId}`);
-    fullnames[userId] = user.fullname;
-
-    loadingFullnames.delete(userId);
+    try {
+      const user = await ApiC.getJson(`users/${userId}`);
+      fullnames[userId] = user.fullname;
+    } finally {
+      loadingFullnames.delete(userId);
+    }
   }
 
 
@@ -522,10 +525,28 @@
         <div class='align-self-center'>
           <div>
             {#if entity.timestamped}
-              <i
-                style={`color:#${getLeftColor(entity)}`}
-                class='far fa-calendar-check fa-fw'
-              ></i>
+              <div
+                class='infotip'
+                role='img'
+                aria-label={`${t('timestamped-by')} ${fullnames[entity.timestampedby] || ''}`}
+                onmouseenter={() => getFullname(entity.timestampedby)}
+              >
+                <span class='infotip-icon'>
+                  <i
+                    style={`color:#${getLeftColor(entity)}`}
+                    class='fas fa-calendar-check fa-fw'
+                    aria-hidden='true'
+                  ></i>
+                </span>
+
+                <p class='infotip-text'>
+                  {#if fullnames[entity.last_signed_by]}
+                    {t('timestamped-by')} {fullnames[entity.timestampedby]}
+                  {:else}
+                    {t('loading')}
+                  {/if}
+                </p>
+              </div>
             {/if}
 
             {#if entity.signature_count > 0}
@@ -544,7 +565,11 @@
                 </span>
 
                 <p class='infotip-text'>
-                  {`${t('signed-by')} ${fullnames[entity.last_signed_by] || t('loading')}`}
+                  {#if fullnames[entity.last_signed_by]}
+                    {t('signed-by')} {fullnames[entity.last_signed_by]}
+                  {:else}
+                    {t('loading')}
+                  {/if}
                 </p>
               </div>
             {/if}

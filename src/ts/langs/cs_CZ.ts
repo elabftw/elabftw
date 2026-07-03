@@ -142,6 +142,7 @@ const t = {
     "team": "Tým",
     "teams": "Týmy",
     "template-title": "Název šablony",
+    "timestamped-by": "Timestamped by",
     "title": "Nadpis",
     "today": "Dnes",
     "toggle-pin": "Přepínací pin",

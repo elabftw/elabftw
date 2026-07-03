@@ -142,6 +142,7 @@ const t = {
     "team": "团队",
     "teams": "团队",
     "template-title": "模板标题",
+    "timestamped-by": "Timestamped by",
     "title": "标题",
     "today": "今天",
     "toggle-pin": "切换固定状态",

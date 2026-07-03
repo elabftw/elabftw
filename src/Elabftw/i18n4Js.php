@@ -186,6 +186,7 @@ final class i18n4Js
             'team' => _('Team'),
             'teams' => _('Teams'),
             'template-title' => _('Template title'),
+            'timestamped-by' => _('Timestamped by'),
             'title' => _('Title'),
             'today' => _('Today'),
             'toggle-pin' => _('Toggle pin'),

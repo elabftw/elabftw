@@ -142,6 +142,7 @@ const t = {
     "team": "Команда",
     "teams": "Команды",
     "template-title": "Название шаблона",
+    "timestamped-by": "Timestamped by",
     "title": "Заголовок",
     "today": "Сегодня",
     "toggle-pin": "Переключить контакт",

@@ -142,6 +142,7 @@ const t = {
     "team": "チーム",
     "teams": "チーム",
     "template-title": "テンプレートタイトル",
+    "timestamped-by": "Timestamped by",
     "title": "タイトル",
     "today": "今日",
     "toggle-pin": "ピンを切り替え",

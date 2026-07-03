@@ -142,6 +142,7 @@ const t = {
     "team": "Team",
     "teams": "Teams",
     "template-title": "Sjabloon titel",
+    "timestamped-by": "Timestamped by",
     "title": "Titel",
     "today": "Vandaag",
     "toggle-pin": "Wijzig pin",

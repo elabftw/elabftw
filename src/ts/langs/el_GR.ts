@@ -142,6 +142,7 @@ const t = {
     "team": "Ομάδα",
     "teams": "Ομάδες",
     "template-title": "Τίτλος προτύπου",
+    "timestamped-by": "Timestamped by",
     "title": "Τίτλος",
     "today": "Σήμερα",
     "toggle-pin": "Εναλλαγή καρφίτσας",

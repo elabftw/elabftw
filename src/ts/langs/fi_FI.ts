@@ -142,6 +142,7 @@ const t = {
     "team": "Tiimi",
     "teams": "Tiimit",
     "template-title": "Malliotsikko",
+    "timestamped-by": "Timestamped by",
     "title": "Otsikko",
     "today": "Tänään",
     "toggle-pin": "Vaihda kiinnitys",

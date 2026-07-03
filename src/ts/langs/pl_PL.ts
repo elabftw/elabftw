@@ -142,6 +142,7 @@ const t = {
     "team": "Zespołów",
     "teams": "Zespoły",
     "template-title": "Tytuł szablonu",
+    "timestamped-by": "Timestamped by",
     "title": "Tytuły",
     "today": "Dzisiaj",
     "toggle-pin": "Przełącz pinezkę",

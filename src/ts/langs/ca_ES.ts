@@ -142,6 +142,7 @@ const t = {
     "team": "Equip",
     "teams": "Equips",
     "template-title": "Títol de la plantilla",
+    "timestamped-by": "Timestamped by",
     "title": "Títol",
     "today": "Avui",
     "toggle-pin": "Activa/desactiva el pin",

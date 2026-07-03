@@ -142,6 +142,7 @@ const t = {
     "team": "팀",
     "teams": "팀",
     "template-title": "템플릿 제목",
+    "timestamped-by": "Timestamped by",
     "title": "제목",
     "today": "오늘",
     "toggle-pin": "핀 전환",

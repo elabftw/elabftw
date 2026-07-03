@@ -142,6 +142,7 @@ const t = {
     "team": "Jamoa",
     "teams": "Jamoalar",
     "template-title": "Shablon sarlavhasi",
+    "timestamped-by": "Timestamped by",
     "title": "Sarlavha",
     "today": "Bugun",
     "toggle-pin": "PIN-kodni almashtirish",

@@ -142,6 +142,7 @@ const t = {
     "team": "Tim",
     "teams": "Tim",
     "template-title": "Judul templat",
+    "timestamped-by": "Timestamped by",
     "title": "Judul",
     "today": "Hari ini",
     "toggle-pin": "Alihkan pin",

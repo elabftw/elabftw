@@ -142,6 +142,7 @@ const t = {
     "team": "團隊",
     "teams": "團隊",
     "template-title": "模板標題",
+    "timestamped-by": "Timestamped by",
     "title": "標題",
     "today": "今天",
     "toggle-pin": "更改釘選狀態",

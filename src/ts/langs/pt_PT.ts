@@ -142,6 +142,7 @@ const t = {
     "team": "Equipa",
     "teams": "Equipas",
     "template-title": "Título do modelo",
+    "timestamped-by": "Timestamped by",
     "title": "Título",
     "today": "Hoje",
     "toggle-pin": "Alternar afixação",

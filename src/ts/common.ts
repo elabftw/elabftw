@@ -252,10 +252,10 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 makeMalleableColumnsGreatAgain();
 
 // selector for all {permission}_select (canread, canwrite, canbook)
-const PERMISSION_SELECT_SELECTOR = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
+const PERMISSION_SELECT_IDS = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
 
 function initPermissionsTomSelects() {
-  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_SELECTOR);
+  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
   if (permissionSelects.length === 0) return;
   permissionSelects.forEach((select) => {
     const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
@@ -349,7 +349,7 @@ on('team-scope-change', async (el: HTMLElement) => {
 });
 
 document.addEventListener('scope-changed', () => {
-  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_SELECTOR);
+  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
   permissionSelects.forEach(select => rebuildTomSelectOptions(select));
 });
 
@@ -681,7 +681,7 @@ on('toggle-dependent', (el: HTMLInputElement) => {
 });
 
 function destroyPermissionsTomSelect(): void {
-  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_SELECTOR);
+  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
   permissionSelects.forEach((select) => {
     const tsSelect = select as HTMLSelectElement & {tomselect? : TomSelect };
     tsSelect.tomselect?.destroy();

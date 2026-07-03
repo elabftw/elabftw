@@ -48,6 +48,7 @@ use Elabftw\Interfaces\MakeTrustedTimestampInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeBloxberg;
 use Elabftw\Make\MakeCustomTimestamp;
+use Elabftw\Make\MakeDeltablotTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Make\MakeDgnTimestamp;
 use Elabftw\Make\MakeDigicertTimestamp;
@@ -81,6 +82,7 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
+use JsonException;
 
 use function array_column;
 use function array_merge;
@@ -106,6 +108,8 @@ use function array_fill;
 use function array_map;
 use function count;
 use function array_replace;
+use function trim;
+use function strtolower;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -803,7 +807,10 @@ abstract class AbstractEntity extends AbstractRest
     {
         $content = $params->getContent();
         if ($params->getTarget() === 'bodyappend') {
-            $content = $this->readOne()['body'] . $content;
+            $content = $this->readColumn('body') . $content;
+        }
+        if ($params->getTarget() === 'metadatamerge') {
+            $content = $this->mergeMetadataValues($this->readColumn('metadata'), $content);
         }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
@@ -1173,6 +1180,7 @@ abstract class AbstractEntity extends AbstractRest
             'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
             'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
             'evidency' => Env::asBool('DEV_MODE') ? new MakeEvidencyTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeEvidencyTimestamp($this->Users, $this, $config, $dataFormat),
+            'deltablot' => new MakeDeltablotTimestamp($this->Users, $this, $config, $dataFormat),
             'custom' => new MakeCustomTimestamp($this->Users, $this, $config, $dataFormat),
             default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
         };
@@ -1259,6 +1267,16 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     protected function enforceTemplate(array $teamConfigArr): void {}
+
+    // read only one column from an entity without calling the full entity
+    private function readColumn(string $column): string
+    {
+        $sql = 'SELECT ' . $column . ' FROM ' . $this->entityType->value . ' WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (string) $req->fetchColumn();
+    }
 
     private function needsCompoundsJoin(string $displayFilterSql): bool
     {
@@ -1382,5 +1400,73 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->getCreatePermissionFromTeam($teamConfigArr) === false) {
             throw new ForbiddenException();
         }
+    }
+
+    private function mergeMetadataValues(string $baseMetadata, string $incomingMetadata): string
+    {
+        // base metadata comes from the template and contains the field schema
+        $base = $this->decodeMetadata($baseMetadata);
+        // incoming metadata usually comes from CSV/API and contains the values to inject.
+        $incoming = $this->decodeMetadata($incomingMetadata);
+        // ensure both metadata arrays have an extra_fields array.
+        $base['extra_fields'] ??= array();
+        $incoming['extra_fields'] ??= array();
+
+        foreach ($incoming['extra_fields'] as $name => $incomingField) {
+            $value = $incomingField['value'] ?? '';
+
+            if (isset($base['extra_fields'][$name])) {
+                // Preserve the existing field schema and only update its value
+                $base['extra_fields'][$name]['value'] = $this->normalizeMetadataValue(
+                    $base['extra_fields'][$name],
+                    $value,
+                );
+                continue;
+            }
+            // new fields: keep incoming schema, but normalize its value if it has a known type.
+            $incomingField['value'] = $this->normalizeMetadataValue($incomingField, $value);
+            $base['extra_fields'][$name] = $incomingField;
+        }
+
+        return json_encode($base, JSON_THROW_ON_ERROR);
+    }
+
+    private function decodeMetadata(string $metadata): array
+    {
+        // Treat empty metadata as valid metadata with no fields.
+        if ($metadata === '' || $metadata === '{}') {
+            return array('extra_fields' => array());
+        }
+        try {
+            $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            throw new ImproperActionException(_('Invalid metadata JSON provided.'));
+        }
+        return is_array($decoded) ? $decoded : array('extra_fields' => array());
+    }
+
+    private function normalizeMetadataValue(array $field, mixed $value): string
+    {
+        $value = trim((string) $value);
+
+        return match ($field['type'] ?? 'text') {
+            // checkboxes use "on" when checked.
+            'checkbox' => $this->normalizeCheckboxValue($value),
+            // normalize decimal commas for number fields.
+            'number' => str_replace(',', '.', $value),
+            // select/users/text/url/etc. keep the incoming string value.
+            default => $value,
+        };
+    }
+
+    private function normalizeCheckboxValue(string $value): string
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return '';
+        }
+        // Common truthy values accepted from CSV/API imports.
+        $truthyValues = array('1', 'true', 'yes', 'y', 'x', 'on', 'checked', 'oui');
+        return in_array(strtolower($value), $truthyValues, true) ? 'on' : '';
     }
 }

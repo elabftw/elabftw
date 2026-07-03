@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "Nome",
     "new-spreadsheet": "Nuovo foglio di calcolo",
+    "new-version": "A new version is available!",
     "no-self-links": "Non è consentito collegare un elemento a se stesso. Seleziona un target diverso.",
     "not-found": "Non è stato trovato alcun risultato corrispondente.",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "La tua voce è stata trasferita con successo all’utente selezionato.",
     "organisation-name": "Organisation name",
     "please-wait": "Attendere, prego…",
+    "read-release-notes": "Read release notes",
     "readonly": "Sola lettura",
     "remove": "Rimuovere",
     "rename-column": "Nuovo titolo per la colonna",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "Valido fino a",
     "validated": "Convalidato",
     "view-template": "Visualizza il modello",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

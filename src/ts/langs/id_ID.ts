@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "Nama",
     "new-spreadsheet": "Spreadsheet baru",
+    "new-version": "A new version is available!",
     "no-self-links": "Tidak diperbolehkan menautkan item ke item itu sendiri. Silakan pilih target yang berbeda.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "organisation-name": "Organisation name",
     "please-wait": "Mohon tunggu…",
+    "read-release-notes": "Read release notes",
     "readonly": "Hanya baca",
     "remove": "Menghapus",
     "rename-column": "Judul baru untuk kolom",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "Berlaku hingga",
     "validated": "Tervalidasi",
     "view-template": "Lihat templat",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

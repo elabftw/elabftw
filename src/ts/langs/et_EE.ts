@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "Nimi",
     "new-spreadsheet": "Uus arvutustabel",
+    "new-version": "A new version is available!",
     "no-self-links": "Üksuse iseendaga linkimine pole lubatud. Palun valige mõni muu sihtmärk.",
     "not-found": "Sobivat tulemust ei leitud.",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "organisation-name": "Organisation name",
     "please-wait": "Palun oodake…",
+    "read-release-notes": "Read release notes",
     "readonly": "Kirjutuskaitstud",
     "remove": "Eemalda",
     "rename-column": "Uus veeru pealkiri",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "Kehtiv kuni",
     "validated": "Valideeritud",
     "view-template": "Kuva mall",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

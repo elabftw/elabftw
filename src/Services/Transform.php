@@ -110,7 +110,7 @@ final class Transform
                 ),
             Notifications::NewVersionInstalled =>
                 sprintf(
-                    '<a class="color-white" href="%s" target="_blank">%s</a>' . $relativeMoment,
+                    '<a class="text-white" href="%s" target="_blank">%s</a>' . $relativeMoment,
                     App::getWhatsnewLink(BuildInfo::VERSION_INT),
                     sprintf(_('A new eLabFTW version has been installed since your last visit.%sRead the release notes by clicking this message.'), '<br>'),
                     $notif['created_at'],

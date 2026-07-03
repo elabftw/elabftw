@@ -15,7 +15,8 @@
       {% endif %}
     </div>
     {% if App.devMode -%}
-    <!-- [html-validate-disable-block prefer-native-element, element-permitted-content, {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'no-missing-references' }}: ag-grid] -->
+    {# no-redundant-role: 'Redundant role "spinbutton" on <input>' on '#ag-13-input' #}
+    <!-- [html-validate-disable-block prefer-native-element, no-redundant-role, element-permitted-content, {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'no-missing-references' }}: ag-grid] -->
     {%- endif %}
     <div id='users-table'></div>
   </div>

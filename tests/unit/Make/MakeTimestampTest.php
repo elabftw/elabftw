@@ -252,4 +252,27 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $zipName = $Maker->getFileName();
         $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUploadFromLocalFile($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
     }
+
+    public function testDeltablotTimestamp(): void
+    {
+        $config = array(
+            'ts_login' => 'gentilrequin',
+            'ts_password' => 'abc123',
+        );
+        $Maker = new MakeDeltablotTimestamp(
+            new Users(1, 1),
+            $this->getFreshExperiment(),
+            $config,
+            $this->dataFormat,
+        );
+        $this->assertInstanceOf(TimestampUtils::class, $Maker->getTimestampUtils());
+        $Maker->generateData();
+        $this->assertIsArray($Maker->getTimestampParameters());
+
+        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
+        $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 13:37:42.666 2021 GMT');
+        $zipName = $Maker->getFileName();
+        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUploadFromLocalFile($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
+    }
 }

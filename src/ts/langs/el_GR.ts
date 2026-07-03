@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "Όνομα",
     "new-spreadsheet": "New spreadsheet",
+    "new-version": "A new version is available!",
     "no-self-links": "Δεν επιτρέπεται η σύνδεση ενός στοιχείου με τον εαυτό του. Επιλέξτε διαφορετικό στόχο.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "organisation-name": "Organisation name",
     "please-wait": "Παρακαλώ περιμένετε",
+    "read-release-notes": "Read release notes",
     "readonly": "Μόνο για ανάγνωση",
     "remove": "Αφαίρεση",
     "rename-column": "New title for the column",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "Ισχύει έως",
     "validated": "Επικυρώθηκε",
     "view-template": "View template",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

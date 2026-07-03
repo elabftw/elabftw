@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "名前",
     "new-spreadsheet": "新しいスプレッドシート",
+    "new-version": "A new version is available!",
     "no-self-links": "アイテムをそれ自体にリンクすることはできません。別のターゲットを選択してください。",
     "not-found": "一致する結果が見つかりませんでした。",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "organisation-name": "Organisation name",
     "please-wait": "お待ちください…",
+    "read-release-notes": "Read release notes",
     "readonly": "Read-only",
     "remove": "取り除く",
     "rename-column": "コラムの新しいタイトル",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "有効期限",
     "validated": "検証済み",
     "view-template": "テンプレートを確認する",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

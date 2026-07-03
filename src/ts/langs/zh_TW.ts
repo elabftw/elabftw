@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "姓名",
     "new-spreadsheet": "新電子表格",
+    "new-version": "A new version is available!",
     "no-self-links": "不允許將項目連結到自身。請選擇其他目標。",
     "not-found": "未找到匹配結果。",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "您的物件已成功轉交給指定使用者。",
     "organisation-name": "Organisation name",
     "please-wait": "請稍等…",
+    "read-release-notes": "Read release notes",
     "readonly": "唯讀",
     "remove": "清除",
     "rename-column": "專欄新標題",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "有效期限至",
     "validated": "已驗證",
     "view-template": "查看模板",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

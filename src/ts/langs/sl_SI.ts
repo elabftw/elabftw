@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "Ime",
     "new-spreadsheet": "New spreadsheet",
+    "new-version": "A new version is available!",
     "no-self-links": "Povezovanje predmeta samega s seboj ni dovoljeno. Izberite drug cilj.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "organisation-name": "Organisation name",
     "please-wait": "Prosim počakaj…",
+    "read-release-notes": "Read release notes",
     "readonly": "Le za branje",
     "remove": "Odstrani",
     "rename-column": "New title for the column",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "Veljavno do",
     "validated": "Potrjeno",
     "view-template": "View template",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

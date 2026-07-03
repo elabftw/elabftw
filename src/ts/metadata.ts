@@ -517,10 +517,10 @@ if (document.getElementById('metadataDiv') && entity.id) {
             const updateButton = createButton('update-fields-group', 'btn-primary');
             const deleteButton = createButton('remove-fields-group', 'btn-secondary');
             const saveIcon = document.createElement('i');
-            saveIcon.classList.add('fas', 'fa-save', 'text-white');
+            saveIcon.classList.add('fas', 'fa-save');
             updateButton.appendChild(saveIcon);
             const deleteIcon = document.createElement('i');
-            deleteIcon.classList.add('fas', 'fa-trash-alt', 'text-white');
+            deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteButton.appendChild(deleteIcon);
             // Append buttons to the appendDiv
             appendDiv.appendChild(updateButton);

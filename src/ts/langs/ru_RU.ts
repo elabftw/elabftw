@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "Имя",
     "new-spreadsheet": "New spreadsheet",
+    "new-version": "A new version is available!",
     "no-self-links": "Связывание элемента с самим собой не допускается. Пожалуйста, выберите другую цель.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "organisation-name": "Organisation name",
     "please-wait": "Пожалуйста, подождите…",
+    "read-release-notes": "Read release notes",
     "readonly": "Только чтение",
     "remove": "Удалять",
     "rename-column": "New title for the column",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "Годен до",
     "validated": "проверено",
     "view-template": "View template",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

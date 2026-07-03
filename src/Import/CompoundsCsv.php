@@ -130,7 +130,7 @@ final class CompoundsCsv extends AbstractCsv
                         $Tags = new Tags($this->Items);
                         $Tags->postAction(Action::Create, array('tag' => trim($row['tags'])));
                     }
-                    $this->Items->update(new EntityParams('metadata', $this->collectMetadata($row)));
+                    $this->Items->update(new EntityParams('metadatamerge', $this->collectMetadata($row)));
                     foreach ($ids as $id) {
                         $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
                         $Compounds2ItemsLinks->create();

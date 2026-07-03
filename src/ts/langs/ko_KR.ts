@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "이름",
     "new-spreadsheet": "New spreadsheet",
+    "new-version": "A new version is available!",
     "no-self-links": "항목 자체를 링크하는 것은 허용되지 않습니다. 다른 타겟을 선택하세요.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "organisation-name": "Organisation name",
     "please-wait": "잠시만 기다려주세요…",
+    "read-release-notes": "Read release notes",
     "readonly": "읽기 전용",
     "remove": "제거하다",
     "rename-column": "New title for the column",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "까지 유효",
     "validated": "검증됨",
     "view-template": "View template",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

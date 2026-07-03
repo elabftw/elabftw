@@ -92,6 +92,7 @@ const t = {
     "my-teams": "My teams",
     "name": "Jméno",
     "new-spreadsheet": "New spreadsheet",
+    "new-version": "A new version is available!",
     "no-self-links": "Propojení položky se sebou samou není povoleno. Vyberte prosím jiný cíl.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",
@@ -106,6 +107,7 @@ const t = {
     "ownership-transfer": "Your entry has been successfully transferred to the selected user.",
     "organisation-name": "Organisation name",
     "please-wait": "Počkejte prosím…",
+    "read-release-notes": "Read release notes",
     "readonly": "Pouze pro čtení",
     "remove": "Odstranit",
     "rename-column": "New title for the column",
@@ -153,6 +155,7 @@ const t = {
     "valid-until": "Platné do",
     "validated": "Tasdiqlangan",
     "view-template": "View template",
+    "view-upgrade-guide": "View upgrade guide",
   },
 };
 export default t;

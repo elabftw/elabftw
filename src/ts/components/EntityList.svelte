@@ -469,7 +469,7 @@
   }
 
   function getLeftColor(entity: EntityListItem): string {
-    return entity.category_color || 'bdbdbd';
+    return entity.category_color || '6f6f6f';
   }
 
   function canEditEntity(entity: EntityListItem): boolean {

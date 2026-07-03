@@ -349,6 +349,7 @@ on('team-scope-change', async (el: HTMLElement) => {
 });
 
 document.addEventListener('scope-changed', () => {
+  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_SELECTOR);
   permissionSelects.forEach(select => rebuildTomSelectOptions(select));
 });
 
@@ -679,7 +680,16 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     });
 });
 
+function destroyPermissionsTomSelect(): void {
+  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_SELECTOR);
+  permissionSelects.forEach((select) => {
+    const tsSelect = select as HTMLSelectElement & {tomselect? : TomSelect };
+    tsSelect.tomselect?.destroy();
+  });
+}
+
 async function reloadElementsAndInitPermissions(elementIds: string[]): Promise<void> {
+  destroyPermissionsTomSelect();
   await reloadElements(elementIds);
   initPermissionsTomSelects();
 }

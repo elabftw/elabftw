@@ -130,6 +130,7 @@ const t = {
     "show-all": "Tunjukkan semua",
     "show-archived": "Tunjukkan yang telah diarsipkan",
     "show-deleted": "Tampilkan terhapus",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Urutkan berdasarkan kolom",
     "started-on": "Dimulai pada",

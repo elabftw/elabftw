@@ -130,6 +130,7 @@ const t = {
     "show-all": "Näytä kaikki",
     "show-archived": "Näytä arkistoitu",
     "show-deleted": "Show deleted",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Lajittele sarakkeen mukaan",
     "started-on": "Alkoi",

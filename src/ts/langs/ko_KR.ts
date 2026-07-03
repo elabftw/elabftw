@@ -130,6 +130,7 @@ const t = {
     "show-all": "전체 보기",
     "show-archived": "보관된 항목 표시",
     "show-deleted": "Show deleted",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "특정 컬럼으로 정렬",
     "started-on": "최초 작성",

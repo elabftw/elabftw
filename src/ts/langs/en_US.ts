@@ -130,6 +130,7 @@ const t = {
     "show-all": "Show all",
     "show-archived": "Show archived",
     "show-deleted": "Show deleted",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Sort by column",
     "started-on": "Started on",

@@ -130,6 +130,7 @@ const t = {
     "show-all": "Pokaži vse",
     "show-archived": "Prikaži arhivirano",
     "show-deleted": "Show deleted",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Razvrsti po stolpcu",
     "started-on": "Začelo dne",

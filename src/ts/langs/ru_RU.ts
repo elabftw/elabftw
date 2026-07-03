@@ -130,6 +130,7 @@ const t = {
     "show-all": "Показать все",
     "show-archived": "Показать в архиве",
     "show-deleted": "Show deleted",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Сортировать по столбцу",
     "started-on": "Началось",

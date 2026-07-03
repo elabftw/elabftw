@@ -130,6 +130,7 @@ const t = {
     "show-all": "Προβολή όλων",
     "show-archived": "Εμφάνιση αρχειοθετημένη",
     "show-deleted": "Show deleted",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Ταξινόμηση ανά στήλη",
     "started-on": "Ξεκίνησε στις",

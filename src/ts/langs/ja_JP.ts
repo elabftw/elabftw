@@ -130,6 +130,7 @@ const t = {
     "show-all": "全て表示",
     "show-archived": "アーカイブを表示",
     "show-deleted": "削除された表示",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "列で並べ替え",
     "started-on": "スタート",

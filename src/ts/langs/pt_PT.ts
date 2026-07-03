@@ -130,6 +130,7 @@ const t = {
     "show-all": "Mostrar tudo",
     "show-archived": "Mostrar arquivados",
     "show-deleted": "Show deleted",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Ordenar por coluna",
     "started-on": "Iniciada a",

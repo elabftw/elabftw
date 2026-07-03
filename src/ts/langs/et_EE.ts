@@ -130,6 +130,7 @@ const t = {
     "show-all": "Näita kõiki",
     "show-archived": "Näita arhiveeritud",
     "show-deleted": "Kuva kustutatud",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Sorteeri veeru järgi",
     "started-on": "Alustatud kuupäeval",

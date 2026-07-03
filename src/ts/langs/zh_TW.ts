@@ -130,6 +130,7 @@ const t = {
     "show-all": "顯示全部",
     "show-archived": "顯示已封存內容",
     "show-deleted": "顯示已刪除",
+    "signed-by": "Signed by",
     "signing": "簽名",
     "sort-by-column": "按欄位排序",
     "started-on": "開始於",

@@ -42,6 +42,7 @@
     team_name?: string | null;
     timestamped?: boolean;
     signature_count?: number;
+    last_signed_by?: number;
     next_step?: string | null;
     locked?: boolean;
     modified_at?: string | null;
@@ -114,6 +115,21 @@
     currentRelated: number | null;
     currentRelatedOrigin: string;
   };
+
+  let fullnames = $state<Record<number, string>>({});
+  const loadingFullnames = new Set<number>();
+
+  async function getFullname(userId: number): Promise<void> {
+    if (!userId || fullnames[userId] || loadingFullnames.has(userId)) return;
+
+    loadingFullnames.add(userId);
+
+    const user = await ApiC.getJson(`users/${userId}`);
+    fullnames[userId] = user.fullname;
+
+    loadingFullnames.delete(userId);
+  }
+
 
   function handleFilterClick(
     event: MouseEvent,
@@ -513,10 +529,24 @@
             {/if}
 
             {#if entity.signature_count > 0}
-              <i
-                style={`color:#${getLeftColor(entity)}`}
-                class='fas fa-signature fa-fw'
-              ></i>
+              <div
+                class='infotip'
+                role='img'
+                aria-label={`${t('signed-by')} ${fullnames[entity.last_signed_by] || ''}`}
+                onmouseenter={() => getFullname(entity.last_signed_by)}
+              >
+                <span class='infotip-icon'>
+                  <i
+                    style={`color:#${getLeftColor(entity)}`}
+                    class='fas fa-signature fa-fw'
+                    aria-hidden='true'
+                  ></i>
+                </span>
+
+                <p class='infotip-text'>
+                  {`${t('signed-by')} ${fullnames[entity.last_signed_by] || t('loading')}`}
+                </p>
+              </div>
             {/if}
 
             {#if entity.state === EntityState.Archived}

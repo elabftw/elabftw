@@ -130,6 +130,7 @@ const t = {
     "show-all": "Zobrazit vše",
     "show-archived": "Zobrazit archivované",
     "show-deleted": "Show deleted",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Setřídit dle sloupce",
     "started-on": "Spuštěno",

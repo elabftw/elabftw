@@ -130,6 +130,7 @@ const t = {
     "show-all": "Hammasini ko'rsatish",
     "show-archived": "Arxivlangan ko'rsatish",
     "show-deleted": "Show deleted",
+    "signed-by": "Signed by",
     "signing": "Signing",
     "sort-by-column": "Ustun bo'yicha saralash",
     "started-on": "Boshlangan",

@@ -174,6 +174,7 @@ final class i18n4Js
             'show-all' => _('Show all'),
             'show-archived' => _('Show archived'),
             'show-deleted' => _('Show deleted'),
+            'signed-by' => _('Signed by'),
             'signing' => _('Signing'),
             'sort-by-column' => _('Sort by column'),
             'started-on' => _('Started on'),

@@ -130,6 +130,7 @@ const t = {
     "show-all": "显示全部",
     "show-archived": "显示已归档",
     "show-deleted": "显示已删除",
+    "signed-by": "Signed by",
     "signing": "签名",
     "sort-by-column": "按列排序",
     "started-on": "开始于",

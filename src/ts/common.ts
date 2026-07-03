@@ -252,11 +252,10 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 makeMalleableColumnsGreatAgain();
 
 // selector for all {permission}_select (canread, canwrite, canbook)
-const permissionSelects = document.querySelectorAll<HTMLSelectElement>(
-  '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]',
-);
+const PERMISSION_SELECT_SELECTOR = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
 
 function initPermissionsTomSelects() {
+  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_SELECTOR);
   if (permissionSelects.length === 0) return;
   permissionSelects.forEach((select) => {
     const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
@@ -680,12 +679,17 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     });
 });
 
+async function reloadElementsAndInitPermissions(elementIds: string[]): Promise<void> {
+  await reloadElements(elementIds);
+  initPermissionsTomSelects();
+}
+
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
   const params = collectForm(form);
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
-  reloadElements(['topToolbar', 'permissionsDiv']);
+  await reloadElementsAndInitPermissions(['topToolbar', 'permissionsDiv']);
   $('#bookingParamsModal').modal('hide');
 });
 
@@ -723,11 +727,13 @@ on('clear-form', (el: HTMLElement) => {
   inputs.forEach(input => input.value = '');
 });
 
-on('save-permissions', (el: HTMLElement) => {
+on('save-permissions', async (el: HTMLElement) => {
   const params = {};
   params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   params[baseSelect.name] = baseSelect.value;
+
+  const divId = el.dataset.identifier + 'Div';
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
   if (el.dataset.isUserDefault) {
     // we need to replace canread/canwrite with default_read/default_write for user attribute
@@ -738,9 +744,11 @@ on('save-permissions', (el: HTMLElement) => {
     // create a new key and delete the old one
     params[paramKey] = params[el.dataset.rw];
     delete params[el.dataset.rw];
-    ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
+    await ApiC.patch(`${Model.User}/me`, params);
+    await reloadElementsAndInitPermissions([divId]);
   } else {
-    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
+    await ApiC.patch(`${entity.type}/${entity.id}`, params);
+    await reloadElementsAndInitPermissions([divId]);
   }
 });
 
@@ -754,15 +762,15 @@ function collectPermissionsFromModal(identifier: string): string {
 }
 
 // change both read & write permissions in one go
-on('save-permissions-both', (el: HTMLElement) => {
+on('save-permissions-both', async (el: HTMLElement) => {
   if (!confirm(i18next.t('entity-apply-both-permissions-warning'))) {
     return;
   }
   const permissions = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   const params = {canread: permissions, canread_base: baseSelect.value, canwrite: permissions, canwrite_base: baseSelect.value};
-  ApiC.patch(`${entity.type}/${entity.id}`, params)
-    .then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
+  await ApiC.patch(`${entity.type}/${entity.id}`, params);
+  await reloadElementsAndInitPermissions(['canreadDiv', 'canwriteDiv']);
 });
 
 on('select-lang', () => {

@@ -12,10 +12,17 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
+
+use function mb_substr;
 
 class StatusTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private ExperimentsStatus $Status;
 
     protected function setUp(): void
@@ -25,13 +32,15 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
-        $new = $this->Status->postAction(Action::Create, array('title' => 'New status', 'color' => '#29AEB9', 'is_default' => 1));
+        $title = 'New status';
+        $color = '#29AEB9';
+        $new = $this->Status->postAction(Action::Create, array('name' => $title, 'color' => $color));
         $this->assertIsInt($new);
-    }
-
-    public function testRead(): void
-    {
-        $this->assertIsArray($this->Status->readOne());
+        $this->Status->setId($new);
+        $status = $this->Status->readOne();
+        $this->assertIsArray($status);
+        $this->assertSame($title, $status['title']);
+        $this->assertSame(mb_substr($color, 1), $status['color']);
     }
 
     public function testGetApiPath(): void
@@ -46,9 +55,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212'));
         $this->assertEquals('Updated', $status['title']);
         $this->assertEquals('121212', $status['color']);
-        $this->assertEquals(0, $status['is_default']);
-        $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212', 'is_default' => 1));
-        $this->assertEquals(1, $status['is_default']);
     }
 
     public function testDestroy(): void
@@ -57,5 +63,29 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $this->assertTrue($Status->destroy());
         $this->assertTrue($this->Status->destroy());
+    }
+
+    public function testCannotReadStatusFromAnotherTeamThroughCurrentTeam(): void
+    {
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2), 2), $id);
+        $this->expectException(ResourceNotFoundException::class);
+        $otherStatus->readOne();
+    }
+
+    public function testCannotReadOtherTeam(): void
+    {
+        $this->expectException(ImproperActionException::class);
+
+        $otherTeam = new Teams($this->getRandomUserInTeam(2), 1);
+        $otherTeam->readOne();
+    }
+
+    public function testUpdateNonAccessibleStatusThroughCurrentTeam(): void
+    {
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2), 2), $id);
+        $this->expectException(ResourceNotFoundException::class);
+        $otherStatus->patch(Action::Update, array('title' => 'Coucou'));
     }
 }

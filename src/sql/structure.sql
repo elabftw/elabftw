@@ -698,7 +698,6 @@ CREATE TABLE `items_categories` (
   `team` int UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
   `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -1083,7 +1082,6 @@ CREATE TABLE `experiments_status` (
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
   `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -1103,7 +1101,6 @@ CREATE TABLE `experiments_categories` (
   `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
   `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -1120,7 +1117,6 @@ CREATE TABLE `items_status` (
   `team` int(10) UNSIGNED NOT NULL,
   `title` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint UNSIGNED DEFAULT NULL,
   `is_private` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `state` INT UNSIGNED NOT NULL DEFAULT 1,
@@ -2310,6 +2306,17 @@ CREATE TABLE `users2rors` (
     CHECK (`ror` REGEXP '^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 -- end schema 212
+
+-- schema 214
+CREATE TABLE branding (
+    id TINYINT UNSIGNED NOT NULL,
+    content_type VARCHAR(127) NOT NULL,
+    data MEDIUMBLOB NOT NULL,
+    filesize INT UNSIGNED NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
 -- Indexes and Constraints for table `experiments_templates_edit_mode`

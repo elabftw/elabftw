@@ -1921,3 +1921,24 @@ input:user-invalid {
     opacity: 1;
   }
 }
+
+#devPerfDiv {
+  background-color: $white;
+  bottom: 0;
+  left: 0;
+  position: fixed;
+}
+
+/* we set font-size to 0 and color transparent to prevent visible alt-text flash before image paints */
+.logo-header {
+  color: transparent;
+  font-size: 0;
+  height: 40px;
+  object-fit: contain;
+  width: 110px;
+}
+
+.display-favicon {
+  height: 128px;
+  width: 128px;
+}

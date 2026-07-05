@@ -42,6 +42,8 @@
     team_name?: string | null;
     timestamped?: boolean;
     signature_count?: number;
+    last_signed_by?: number;
+    timestampedby?: number;
     next_step?: string | null;
     locked?: boolean;
     modified_at?: string | null;
@@ -114,6 +116,23 @@
     currentRelated: number | null;
     currentRelatedOrigin: string;
   };
+
+  let fullnames = $state<Record<number, string>>({});
+  const loadingFullnames = new Set<number>();
+
+  async function getFullname(userId: number): Promise<void> {
+    if (!userId || fullnames[userId] || loadingFullnames.has(userId)) return;
+
+    loadingFullnames.add(userId);
+
+    try {
+      const user = await ApiC.getJson(`users/${userId}`);
+      fullnames[userId] = user.fullname;
+    } finally {
+      loadingFullnames.delete(userId);
+    }
+  }
+
 
   function handleFilterClick(
     event: MouseEvent,
@@ -453,7 +472,7 @@
   }
 
   function getLeftColor(entity: EntityListItem): string {
-    return entity.category_color || 'bdbdbd';
+    return entity.category_color || '6f6f6f';
   }
 
   function canEditEntity(entity: EntityListItem): boolean {
@@ -506,17 +525,53 @@
         <div class='align-self-center'>
           <div>
             {#if entity.timestamped}
-              <i
-                style={`color:#${getLeftColor(entity)}`}
-                class='far fa-calendar-check fa-fw'
-              ></i>
+              <div
+                class='infotip'
+                role='img'
+                aria-label={`${t('timestamped-by')} ${fullnames[entity.timestampedby] || ''}`}
+                onmouseenter={() => getFullname(entity.timestampedby)}
+              >
+                <span class='infotip-icon'>
+                  <i
+                    style={`color:#${getLeftColor(entity)}`}
+                    class='fas fa-calendar-check fa-fw'
+                    aria-hidden='true'
+                  ></i>
+                </span>
+
+                <p class='infotip-text'>
+                  {#if fullnames[entity.last_signed_by]}
+                    {t('timestamped-by')} {fullnames[entity.timestampedby]}
+                  {:else}
+                    {t('loading')}
+                  {/if}
+                </p>
+              </div>
             {/if}
 
             {#if entity.signature_count > 0}
-              <i
-                style={`color:#${getLeftColor(entity)}`}
-                class='fas fa-signature fa-fw'
-              ></i>
+              <div
+                class='infotip'
+                role='img'
+                aria-label={`${t('signed-by')} ${fullnames[entity.last_signed_by] || ''}`}
+                onmouseenter={() => getFullname(entity.last_signed_by)}
+              >
+                <span class='infotip-icon'>
+                  <i
+                    style={`color:#${getLeftColor(entity)}`}
+                    class='fas fa-signature fa-fw'
+                    aria-hidden='true'
+                  ></i>
+                </span>
+
+                <p class='infotip-text'>
+                  {#if fullnames[entity.last_signed_by]}
+                    {t('signed-by')} {fullnames[entity.last_signed_by]}
+                  {:else}
+                    {t('loading')}
+                  {/if}
+                </p>
+              </div>
             {/if}
 
             {#if entity.state === EntityState.Archived}

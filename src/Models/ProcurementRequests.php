@@ -95,6 +95,8 @@ final class ProcurementRequests extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        $this->canReadOrExplode((int) $reqBody['entity_id']);
+
         $sql = 'INSERT INTO procurement_requests (team, requester_userid, entity_id, qty_ordered, body, quote, state)
             VALUES (:team, :requester_userid, :entity_id, :qty_ordered, :body, :quote, :state)';
         $req = $this->Db->prepare($sql);
@@ -154,5 +156,12 @@ final class ProcurementRequests extends AbstractRest
         if ($TeamsHelper->isUserInTeam($this->Teams->Users->userData['userid']) === false) {
             throw new ImproperActionException('Cannot delete from a team you do not belong in.');
         }
+    }
+
+    private function canReadOrExplode(int $entityId): void
+    {
+        // A user can only create a procurement request for a resource they can read.
+        // setId() calls readOne(), which checks read permissions with canOrExplode().
+        new Items($this->Teams->Users, $entityId);
     }
 }

@@ -13,9 +13,10 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\Apiv1Controller;
 use Elabftw\Controllers\Apiv2Controller;
+use Elabftw\Controllers\Apiv3Controller;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Models\Users\ActiveUser;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Users\Users;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,22 +38,31 @@ try {
     if ($App->Request->getMethod() === Request::METHOD_OPTIONS) {
         return new JsonResponse();
     }
-    // check if the authorization header starts with Basic it means it's a basic auth header and we ignore it.
-    if ($App->Request->server->has('HTTP_AUTHORIZATION') && !str_starts_with($App->Request->server->get('HTTP_AUTHORIZATION'), 'Basic')) {
+
+    // allow requests to branding assets without auth
+    $isPublicBrandingBinaryRequest = Tools::isPublicBrandingBinaryRequest($App->Request);
+
+    if (!$isPublicBrandingBinaryRequest && $App->Request->server->has('HTTP_AUTHORIZATION') && !str_starts_with($App->Request->server->get('HTTP_AUTHORIZATION'), 'Basic')) {
         // verify the key and load user info
         $ApiKeys = new ApiKeys(new Users());
         $key = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
         // replace the Users in App
-        $App->Users = new ActiveUser($key['userid'], $key['team']);
+        $App->Users = new AuthenticatedUser($key['userid'], $key['team']);
         $canWrite = (bool) $key['can_write'];
     } else {
-        if ($App->Session->get('is_auth') !== 1) {
+        if (!$isPublicBrandingBinaryRequest && $App->Session->get('is_auth') !== 1) {
             throw new UnauthorizedException();
+        }
+
+        if ($isPublicBrandingBinaryRequest) {
+            $canWrite = false;
         }
     }
 
     if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
         $Controller = new Apiv2Controller($App->Users, $App->Request);
+    } elseif (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v3')) {
+        $Controller = new Apiv3Controller($App->Users, $App->Request);
     } else {
         $Controller = new Apiv1Controller($App->Users, $App->Request);
     }

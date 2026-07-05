@@ -102,7 +102,6 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $id = $this->Teams->postAction(Action::Create, array('name' => 'Destroy me'));
         $this->Teams->setId($id);
-        $this->Teams->bypassWritePermission = true;
         $this->assertTrue($this->Teams->destroy());
         // try to destroy a team with data
         $this->Teams->setId(1);

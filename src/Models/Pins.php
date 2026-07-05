@@ -46,6 +46,7 @@ final class Pins
 
     /**
      * Add/remove current entity as pinned for current user
+     * @phpstan-impure
      */
     public function togglePin(): array
     {

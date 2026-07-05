@@ -117,7 +117,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $exp->update(new EntityParams('title', $title));
 
         foreach ($tags as $tag) {
-            $exp->Tags->postAction(Action::Create, array('tag' => $tag));
+            new Tags($exp)->postAction(Action::Create, array('tag' => $tag));
         }
 
         $Templates = new Templates($user);
@@ -128,7 +128,7 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
         $Template = new Templates($user, $new);
 
         $this->assertSame('Template created from entity', $Template->entityData['title']);
-        $this->assertEqualsCanonicalizing($tags, array_column($Template->Tags->readAll(), 'tag'));
+        $this->assertEqualsCanonicalizing($tags, array_column(new Tags($Template)->readAll(), 'tag'));
         $this->assertSame(EntityType::Experiments->toInt(), $Template->entityData['created_from_type']);
         $this->assertSame($exp->id, $Template->entityData['created_from_id']);
     }

@@ -136,6 +136,7 @@ final class i18n4Js
             'my-teams' => _('My teams'),
             'name' => _('Name'),
             'new-spreadsheet' => _('New spreadsheet'),
+            'new-version' => _('A new version is available!'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-found' => _('No matching result found.'),
             'no-rors' => _('No ROR associated yet.'),
@@ -150,6 +151,7 @@ final class i18n4Js
             'ownership-transfer' => _('Your entry has been successfully transferred to the selected user.'),
             'organisation-name' => _('Organisation name'),
             'please-wait' => _('Please wait…'),
+            'read-release-notes' => _('Read release notes'),
             'readonly' => _('Read-only'),
             'remove' => _('Remove'),
             'rename-column' => _('New title for the column'),
@@ -172,6 +174,7 @@ final class i18n4Js
             'show-all' => _('Show all'),
             'show-archived' => _('Show archived'),
             'show-deleted' => _('Show deleted'),
+            'signed-by' => _('Signed by'),
             'signing' => _('Signing'),
             'sort-by-column' => _('Sort by column'),
             'started-on' => _('Started on'),
@@ -183,6 +186,7 @@ final class i18n4Js
             'team' => _('Team'),
             'teams' => _('Teams'),
             'template-title' => _('Template title'),
+            'timestamped-by' => _('Timestamped by'),
             'title' => _('Title'),
             'today' => _('Today'),
             'toggle-pin' => _('Toggle pin'),
@@ -197,6 +201,7 @@ final class i18n4Js
             'valid-until' => _('Valid until'),
             'validated' => _('Validated'),
             'view-template' => _('View template'),
+            'view-upgrade-guide' => _('View upgrade guide'),
         );
     }
 

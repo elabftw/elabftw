@@ -45,7 +45,7 @@ final class Teams extends AbstractRest
 
     public array $teamArr = array();
 
-    public function __construct(public Users $Users, ?int $id = null, public bool $bypassWritePermission = false)
+    public function __construct(public Users $Users, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -71,7 +71,6 @@ final class Teams extends AbstractRest
             $team = $req->fetch();
             // team was not found, we need to create it, but only if we're allowed to
             if ($team === false && $allowTeamCreation === true) {
-                $this->bypassWritePermission = true;
                 $freshTeam = new self($this->Users, $this->create($query));
                 $team = $freshTeam->selectOne();
             }
@@ -230,6 +229,8 @@ final class Teams extends AbstractRest
     #[Override]
     public function destroy(): bool
     {
+        $this->canWriteOrExplode();
+
         // check for stats, should be 0
         $count = $this->getStats($this->id ?? 0);
 
@@ -315,7 +316,7 @@ final class Teams extends AbstractRest
 
     public function canWrite(): bool
     {
-        if ($this->bypassWritePermission || $this->Users->isSysadmin()) {
+        if ($this->Users->isSysadmin()) {
             return true;
         }
         if ($this->id === null) {

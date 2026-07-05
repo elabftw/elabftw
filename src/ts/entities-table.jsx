@@ -9,11 +9,18 @@
 /**
  * Code related to the entities table present on the index page
  */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import {
+  ClientSideRowModelModule,
+  ModuleRegistry,
+  PaginationModule,
+  QuickFilterModule,
+  RowSelectionModule,
+  TextFilterModule,
+  provideGlobalGridOptions,
+} from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { get } from 'svelte/store';
 import { createRoot } from 'react-dom/client';
@@ -148,6 +155,12 @@ const EntitiesTable = ({
       : <span title={value}><i className='fas fa-circle-xmark mr-2'></i>{value}</span>;
   };
 
+  const RatingsRenderer = ({ value }) => {
+    return Number(value) > 0
+      ? <span className='rating-show rounded p-1 font-weight-bold'><i className='fas fa-star mr-1' aria-hidden='true'></i>{value}</span>
+      : null;
+  };
+
   const TagsRenderer = ({ value }) => {
     const tags = Array.isArray(value) ? value : [];
 
@@ -189,6 +202,7 @@ const EntitiesTable = ({
     { field: 'fullname', headerName: i18next.t('owner') },
     { field: 'timestamped', headerName: i18next.t('Is timestamped'), valueGetter: p => yesNo(p.data.timestamped), filterValueGetter: p => yesNo(p.data.timestamped), cellRenderer: BinaryRenderer },
     { field: 'locked', headerName: i18next.t('Is locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },
+    { field: 'rating', headerName: i18next.t('Rating'), cellRenderer: RatingsRenderer }
   ]);
 
   const getResolvedEntityFilterParams = useCallback(event => {
@@ -330,7 +344,14 @@ export const mountEntitiesTable = (
     return null;
   }
 
-  ModuleRegistry.registerModules([ClientSideRowModelModule]);
+  provideGlobalGridOptions({ theme: 'legacy' });
+  ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    RowSelectionModule,
+    PaginationModule,
+    TextFilterModule,
+    QuickFilterModule,
+  ]);
 
   if (!entitiesTableRoot) {
     entitiesTableRoot = createRoot(rootElement);

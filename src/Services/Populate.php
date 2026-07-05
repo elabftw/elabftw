@@ -24,6 +24,8 @@ use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\Comments;
+use Elabftw\Models\Branding;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
@@ -37,6 +39,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ResourcesCategories;
+use Elabftw\Models\Steps;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
@@ -98,7 +101,7 @@ final class Populate
 
         $this->output->writeln('┌ Creating teams, users, experiments, and resources...');
         $Users = new UltraAdmin(1, 1);
-        $Teams = new Teams($Users, bypassWritePermission: true);
+        $Teams = new Teams($Users);
 
         // main loop is on "teams" key
         foreach ($this->yaml['teams'] as $team) {
@@ -189,8 +192,9 @@ final class Populate
                     $Templates->toggleLock();
                 }
                 if (isset($template['tags'])) {
+                    $Tags = new Tags($Templates);
                     foreach ($template['tags'] as $tag) {
-                        $Templates->Tags->postAction(Action::Create, array('tag' => $tag));
+                        $Tags->postAction(Action::Create, array('tag' => $tag));
                     }
                 }
                 if (isset($template['items_links'])) {
@@ -251,13 +255,14 @@ final class Populate
                     $Experiments->toggleLock();
                 }
                 if (isset($experiment['tags'])) {
+                    $Tags = new Tags($Experiments);
                     foreach ($experiment['tags'] as $tag) {
-                        $Experiments->Tags->postAction(Action::Create, array('tag' => $tag));
+                        $Tags->postAction(Action::Create, array('tag' => $tag));
                     }
                 }
                 if (isset($experiment['comments'])) {
                     foreach ($experiment['comments'] as $comment) {
-                        $Experiments->Comments->postAction(Action::Create, array('comment' => $comment));
+                        new Comments($Experiments)->postAction(Action::Create, array('comment' => $comment));
                     }
                 }
                 if (isset($experiment['experiments_links'])) {
@@ -366,7 +371,7 @@ final class Populate
             return;
         }
         $iterations ??= $this->iterations;
-        $Teams = new Teams($Entity->Users, $Entity->Users->team, bypassWritePermission: true);
+        $Teams = new Teams($Entity->Users, $Entity->Users->team);
         if ($Entity instanceof Experiments) {
             $Category = new ExperimentsCategories($Teams);
             $Status = new ExperimentsStatus($Teams);
@@ -468,9 +473,10 @@ final class Populate
 
             // maybe add a few steps
             if ($this->faker->randomDigit() > 8) {
+                $Steps = new Steps($Entity);
                 // put two words so it's long enough
-                $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
-                $Entity->Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
+                $Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
+                $Steps->postAction(Action::Create, array('body' => $this->faker->word() . $this->faker->word()));
             }
 
             // maybe make it bookable
@@ -558,5 +564,6 @@ final class Populate
         // load structure
         $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
         $Sql->execFile('structure.sql');
+        new Branding(true)->populate();
     }
 }

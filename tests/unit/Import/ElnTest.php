@@ -387,15 +387,15 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->assertGreaterThanOrEqual(3, $Import->getInserted());
 
         $Locked = $this->getExperimentFromTitle('Locked');
-        $this->assertSame(State::Normal->value, (int) $Locked->entityData['state']);
-        $this->assertSame(1, (int) $Locked->entityData['locked']);
+        $this->assertSame(State::Normal->value, $Locked->entityData['state']);
+        $this->assertSame(1, $Locked->entityData['locked']);
 
         $Archived = $this->getExperimentFromTitle('Archived');
-        $this->assertSame(State::Archived->value, (int) $Archived->entityData['state']);
-        $this->assertSame(1, (int) $Archived->entityData['locked']);
+        $this->assertSame(State::Archived->value, $Archived->entityData['state']);
+        $this->assertSame(1, $Archived->entityData['locked']);
 
         $Deleted = $this->getExperimentFromTitle('Deleted');
-        $this->assertSame(State::Deleted->value, (int) $Deleted->entityData['state']);
+        $this->assertSame(State::Deleted->value, $Deleted->entityData['state']);
     }
 
     private function getExperimentFromTitle(string $title): Experiments
@@ -411,7 +411,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         foreach ($all as $entry) {
             if ($entry['title'] === $title) {
-                $Experiments->setId((int) $entry['id']);
+                $Experiments->setId($entry['id']);
                 return $Experiments;
             }
         }

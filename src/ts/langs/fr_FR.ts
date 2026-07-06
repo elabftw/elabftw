@@ -89,7 +89,7 @@ const t = {
     "location-name": "Nom du lieu",
     "modified-at": "Modifié le",
     "multi-changes-confirm": "Appliquer à {{num, nombre}} entrées ?",
-    "my-teams": "Mon équipe",
+    "my-teams": "Mes équipes",
     "name": "Nom",
     "new-spreadsheet": "Nouvelle feuille de calcul",
     "new-version": "Une nouvelle version est disponible !",

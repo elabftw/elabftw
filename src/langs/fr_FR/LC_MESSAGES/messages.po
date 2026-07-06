@@ -522,7 +522,7 @@ msgstr "Appliquer à {{num, nombre}} entrées ?"
 
 #: src/Elabftw/i18n4Js.php:136
 msgid "My teams"
-msgstr "Mon équipe"
+msgstr "Mes équipes"
 
 #: src/Elabftw/i18n4Js.php:137
 msgid "Name"

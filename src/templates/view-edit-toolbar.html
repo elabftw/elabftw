@@ -175,9 +175,9 @@
         <button type='button' title='{{ 'Save'|trans }}' data-action='update-entity-body' aria-label='{{ 'Save'|trans }}' class='btn btn-primary mr-2'>
           <i class='fas fa-save'></i>
         </button>
-      <a title='{{ 'Save and go back'|trans }}' aria-label='{{ 'Save and go back'|trans }}' href='?mode=view&amp;id={{ Entity.id }}' data-redirect='view' class='btn btn-transparent mr-2'>
+      <button type='button' title='{{ 'Save and go back'|trans }}' aria-label='{{ 'Save and go back'|trans }}' data-action='update-entity-body' data-redirect='view' class='btn btn-transparent mr-2'>
         <i class='fas fa-eye fa-fw'></i>
-      </a>
+      </button>
     {% else %}
       {# EDIT button #}
       <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn btn-primary mr-2 {{ Entity.isReadOnly ? 'disabled' }}'>

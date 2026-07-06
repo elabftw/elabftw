@@ -37,7 +37,7 @@ describe('Experiments', () => {
 
   const entityComment = () => {
     // go in view mode
-    cy.get('[title="View mode"]').click();
+    cy.get('[title="Save and go back"]').click();
     cy.url().should('include', 'mode=view');
 
     cy.get('#commentsCreateArea').type('This is a very nice experiment');

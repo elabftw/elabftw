@@ -494,6 +494,7 @@ class Eln extends AbstractZip
 
         // Restore entity state (normal, archived, deleted).
         $state = State::fromName($dataset['status'] ?? State::Normal->name);
+        // we use match(true) to be able to match a State and the Locked pseudo-state in the same match
         match (true) {
             $state === State::Archived => $this->Entity->patch(Action::Archive, array()),
             $state === State::Deleted => $this->Entity->patch(Action::Update, array('state' => $state->value)),

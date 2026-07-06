@@ -1929,8 +1929,12 @@ input:user-invalid {
   position: fixed;
 }
 
+/* we set font-size to 0 and color transparent to prevent visible alt-text flash before image paints */
 .logo-header {
+  color: transparent;
+  font-size: 0;
   height: 40px;
+  object-fit: contain;
   width: 110px;
 }
 

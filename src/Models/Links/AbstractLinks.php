@@ -19,7 +19,9 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
@@ -193,12 +195,16 @@ abstract class AbstractLinks extends AbstractRest
     private function createChangelog(Action $action = Action::Add): void
     {
         $verb = $action === Action::Destroy ? _('Removed') : _('Added');
-        // build the changelog message with title + clickable URL
-        $anchor = sprintf(
-            '<a href="%1$s">%2$s</a>',
-            Tools::eLabHtmlspecialchars(sprintf('/%s?mode=view&id=%d', $this->getTargetType()->toPage(), $this->id ?? 0)),
-            Tools::eLabHtmlspecialchars($this->getTargetTitle())
-        );
+        try {
+            $this->getTargetType()->toInstance($this->Entity->Users, $this->id);
+            $anchor = sprintf(
+                '<a href="%1$s">%2$s</a>',
+                Tools::eLabHtmlspecialchars(sprintf('/%s?mode=view&id=%d', $this->getTargetType()->toPage(), $this->id ?? 0)),
+                Tools::eLabHtmlspecialchars($this->getTargetTitle())
+            );
+        } catch (ForbiddenException | ResourceNotFoundException) {
+            $anchor = '';
+        }
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(
             'links',

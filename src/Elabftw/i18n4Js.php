@@ -23,6 +23,7 @@ use function dirname;
 use function putenv;
 use function setlocale;
 use function textdomain;
+use function sprintf;
 
 /**
  * This class is used to generate the translations files for i18next (javascript)
@@ -164,7 +165,7 @@ final class i18n4Js
             'ror-description-team' => _('These RORs apply only to the current team.'),
             'ror-description-user' => _('These RORs apply only to your account.'),
             'ror-input-label' => _('Add Research Organization Registry (ROR) identifier'),
-            'ror-input-title' => _('Enter a valid 9-character ROR ID, for example 04t0gwh46 or https://ror.org/04t0gwh46'),
+            'ror-input-title' => sprintf(_('Enter a valid 9-character ROR ID, for example 04t0gwh46 or %s'), 'https://ror.org/04t0gwh46'),
             'save' => _('Save'),
             'save-and-go-back' => _('Save and go back'),
             'save-attachment' => _('Save as attachment'),

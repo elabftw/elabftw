@@ -15,6 +15,7 @@ import { ApiC } from './api';
 import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
 import { on } from './handlers';
+import { showModalAndFocusFirstInput } from './common';
 
 function updateTsFieldsVisibility(select: HTMLSelectElement) {
   const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
@@ -410,7 +411,7 @@ if (window.location.pathname === '/sysconfig.php') {
       (document.getElementById('idpModal_orgid_attr') as HTMLInputElement).value = idp.orgid_attr;
       (document.getElementById('idpModal_orcid_attr') as HTMLInputElement).value = idp.orcid_attr;
       document.getElementById('idpModalSaveButton').dataset.id = idp.id;
-      $('#idpModal').modal('show');
+      showModalAndFocusFirstInput('#idpModal');
     });
   });
 

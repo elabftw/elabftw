@@ -139,7 +139,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 entity.signature_count,
                 entity.last_signed_at,
                 entity.last_signed_by,
-                entity.timestamped';
+                entity.timestamped,
+                entity.timestampedby';
             // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it
             if (!empty(array_column($this->entity->extendedValues, 'additional_columns'))) {
                 $this->selectSql[] = implode(', ', array_unique(array_column($this->entity->extendedValues, 'additional_columns')));

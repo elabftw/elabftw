@@ -1083,10 +1083,29 @@ on('replace-with-next', (el: HTMLElement) => {
   // hide clicked element
   el.toggleAttribute('hidden');
 });
+// TODO this requires jquery for now. Not in BS5.
 on('toggle-modal', (el: HTMLElement) => {
-  // TODO this requires jquery for now. Not in BS5.
-  $('#' + el.dataset.target).modal('show');
+  const modalSelector = `#${el.dataset.target}`;
+  showModalAndFocusFirstInput(modalSelector);
 });
+
+// autofocus the first input of a modal
+function focusFirstTextInputOnShown(modalSelector: string) {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+  $(modal).one('shown.bs.modal', () => {
+    modal.querySelector<HTMLElement>(
+      'input:is([type="text"], [type="search"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="number"]):not([disabled]):not([readonly]),' +
+      'input:not([type]):not([disabled]):not([readonly]),' +
+      'textarea:not([disabled]):not([readonly])',
+    )?.focus();
+  });
+}
+
+export function showModalAndFocusFirstInput(modalSelector: string) {
+  focusFirstTextInputOnShown(modalSelector);
+  $(modalSelector).modal('show');
+}
 
 on('update-entity-body', (el: HTMLElement) => {
   updateEntityBody().then(() => {
@@ -1359,7 +1378,8 @@ on('reload-color', (el: HTMLElement) => {
 });
 
 // CREATE CATEGORY OR STATUS
-on('create-catstat', (el: HTMLElement) => {
+on('create-catstat', (el: HTMLElement, e: Event) => {
+  e.preventDefault();
   const modalId = 'createCatStatModal';
   const form = document.getElementById(modalId);
   try {

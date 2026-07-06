@@ -41,6 +41,7 @@ import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
 import { rebuildTomSelectOptions } from './misc';
+import { showModalAndFocusFirstInput} from './common';
 
 type CancelNotificationPayload = {
   action: Action;
@@ -388,7 +389,7 @@ if (window.location.pathname === '/scheduler.php') {
             container.appendChild(div);
           });
 
-          $('#itemPickerReviewModal').modal('show');
+          showModalAndFocusFirstInput('#itemPickerReviewModal');
 
           handleConfirm('confirmItemReview', () => {
             const checked = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked');
@@ -430,7 +431,7 @@ if (window.location.pathname === '/scheduler.php') {
             manualSelect = itemSelectModalEl.tomselect;
           }
 
-          $('#itemPickerSelectModal').modal('show');
+          showModalAndFocusFirstInput('#itemPickerSelectModal');
 
           // confirm handler uses selected TomSelect items
           handleConfirm('confirmItemSelect', () => manualSelect?.items || []);
@@ -444,7 +445,7 @@ if (window.location.pathname === '/scheduler.php') {
           return;
         }
         setSchedulerMode('view');
-        $('#eventModal').modal('show');
+        showModalAndFocusFirstInput('#eventModal');
         // set the event id on the various elements
         document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
         document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn: HTMLButtonElement) => btn.dataset.eventid = info.event.id);

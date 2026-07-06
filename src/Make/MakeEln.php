@@ -282,10 +282,10 @@ class MakeEln extends AbstractMakeEln
             $datasetNode,
             array('alternateName' => $e['custom_id'] ?? ''),
             array('comment' => $comments),
-            array('conditionsOfAccess' => !empty($e['locked']) ? 'Locked' : ''),
+            array('conditionsOfAccess' => $e['locked'] === 1 ? 'Locked' : 'Unlocked'),
             array('creativeWorkStatus' => $e['status_title'] ?? ''),
-            array('subjectOf' => $this->changelogToUpdateActions($e['changelog'] ?? array(), (int) $e['userid'])),
-            array('status' => State::from((int) ($e['state'] ?? State::Normal->value))->name),
+            array('subjectOf' => $this->changelogToUpdateActions($e['changelog'] ?? array())),
+            array('status' => State::from($e['state'])->name),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),
             array('keywords' => $keywords),
@@ -491,7 +491,7 @@ class MakeEln extends AbstractMakeEln
     }
 
     // convert changelog actions to schema.org valid fields UpdateAction
-    private function changelogToUpdateActions(array $changelog, int $defaultUserid): array
+    private function changelogToUpdateActions(array $changelog): array
     {
         $actions = array();
 
@@ -499,7 +499,7 @@ class MakeEln extends AbstractMakeEln
             $actions[] = array(
                 '@id' => 'updateaction://' . Tools::getUuidv4(),
                 '@type' => 'UpdateAction',
-                'agent' => array('@id' => $this->getAuthorId(new Users((int) ($log['userid'] ?? $defaultUserid)))),
+                'agent' => array('@id' => $this->getAuthorId(new Users($log['userid']))),
                 'object' => $log['target'] ?? '',
                 'result' => $log['content'] ?? '',
                 'startTime' => new DateTimeImmutable($log['created_at'])->format(DateTimeImmutable::ATOM),

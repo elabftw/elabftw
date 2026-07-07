@@ -429,15 +429,6 @@ function setSelectedItemsDivVisibility(instance) {
   instance.control.style.display = instance.items.length ? 'flex' : 'none';
 }
 
-// fetch users and return in an id - username (email) format
-async function fetchUsers(query: string) {
-  const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
-  return users.map((u) => ({
-    value: `user:${u.userid}`,
-    text: `${u.fullname} (${u.email})`,
-  }));
-}
-
 function configTomSelect(select: HTMLSelectElement) {
   const config = {
     plugins: {
@@ -460,6 +451,15 @@ function configTomSelect(select: HTMLSelectElement) {
   return config;
 }
 
+// fetch users and return in an id - username (email) format
+async function fetchUsers(query: string) {
+  const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
+  return users.map((u) => ({
+    value: `user:${u.userid}`,
+    text: `${u.fullname} (${u.email})`,
+  }));
+}
+
 function addUsersConfig(select: HTMLSelectElement, config): void {
   // for users, we return a formatted response with id - user (email)
   if (select.id.endsWith('_select_users')) {
@@ -473,30 +473,24 @@ function addUsersConfig(select: HTMLSelectElement, config): void {
 // selector for all {permission}_select (canread, canwrite, canbook)
 export const PERMISSION_SELECT_IDS = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
 
-export function initPermissionsTomSelects(): void {
-  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
-  if (permissionSelects.length === 0) return;
-  permissionSelects.forEach((select) => {
-    const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
-    // avoid re-init of tomselect if already exists
-    if (tsSelect.tomselect) return;
-    const config = configTomSelect(select);
-    addUsersConfig(select, config);
-    new TomSelect(select, config);
-  });
-}
+function initTomSelect(select: HTMLSelectElement): void {
+  const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
+  if (tsSelect.tomselect) return;
 
-function reloadTomSelects(ts: Element): void {
-  if (!(ts instanceof HTMLSelectElement)) {
-    return;
-  }
-  const select = ts as HTMLSelectElement & { tomselect?: TomSelect };
-  if (select.tomselect) {
-    return;
-  }
   const config = configTomSelect(select);
   addUsersConfig(select, config);
   new TomSelect(select, config);
+}
+
+export function initPermissionsTomSelects(container: ParentNode = document): void {
+  container.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS)
+    .forEach((select) => initTomSelect(select));
+}
+
+function reloadTomSelects(ts: Element): void {
+  if (ts instanceof HTMLSelectElement) {
+    initTomSelect(ts);
+  }
 }
 
 export async function reloadElements(elementIds: string[]): Promise<void> {

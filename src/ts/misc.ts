@@ -437,7 +437,17 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
     return;
   }
 
-  const html = await fetchCurrentPage();
+  let html: Document;
+  try {
+    html = await fetchCurrentPage();
+  } catch (error) {
+    // Ignore fetch failures caused by navigating away while reloading page fragments.
+    if (error instanceof TypeError && error.message.includes('NetworkError')) {
+      return;
+    }
+    throw error;
+  }
+
   elementIds.forEach(elementId => {
     if (!html.getElementById(elementId)) {
       console.warn(`Could not find element with id ${elementId} anymore, removing it`);

@@ -47,7 +47,7 @@
 
       {# INSERT IN TEXT in edit mode #}
       {% set isInsertable = ext matches '/(jpg|jpeg|png|gif|svg|bmp|mkv|mp4|ogv|webm|aac|flac|mp3|ogg|opus|wav|txt)$/i' %}
-      <button type='button' class='dropdown-item' {% if not isInsertable %}disabled{% endif %} data-action='insert-in-body' data-ext='{{ ext|e('html_attr') }}'data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-arrow-right-to-bracket mr-1'></i>{{ 'Insert in main text'|trans }}</button>
+      <button type='button' class='dropdown-item' {% if not isInsertable %}disabled{% endif %} data-action='insert-in-body' data-ext='{{ ext|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-arrow-right-to-bracket mr-1'></i>{{ 'Insert in main text'|trans }}</button>
 
       <div class='dropdown-divider'></div>
       {# Annotate image #}
@@ -71,10 +71,12 @@
     {% set isPreview = ext matches '/(txt|md|json)$/i' %}
     <button type='button' class='dropdown-item' {% if not isPreview %}disabled{% endif %} data-action='toggle-modal' data-target='plainTextModal' data-uploadid='{{ upload.id }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}' data-ext='{{ ext }}'><i class='fas fa-fw fa-eye mr-1'></i>{{ 'Preview'|trans }}</button>
 
-    {% if App.Users.userData.uploads_layout != 0 %}
+    {% if not isGrid %}
       <button type='button' class='dropdown-item' data-action='more-info-upload' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</button>
-      <div class='dropdown-divider'></div>
-      {{ ui.dropdown_item('destroy-upload', 'trash-alt', 'Delete'|trans, upload.id, 'text-danger') }}
+      {% if not upload.immutable and not Entity.isReadOnly %}
+        <div class='dropdown-divider'></div>
+        {{ ui.dropdown_item('destroy-upload', 'trash-alt', 'Delete'|trans, upload.id, 'text-danger') }}
+      {% endif %}
     {% endif %}
 
   </div>

@@ -441,8 +441,8 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
   try {
     html = await fetchCurrentPage();
   } catch (error) {
-    // Ignore fetch failures caudes by navigating away while reloading page fragments.
-    if (error instanceof TypeError && error.message.includes('NetworkEorror')) {
+    // Ignore fetch failures caused by navigating away while reloading page fragments.
+    if (error instanceof TypeError && error.message.includes('NetworkError')) {
       return;
     }
     throw error;

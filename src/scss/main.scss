@@ -1943,10 +1943,21 @@ input:user-invalid {
   width: 128px;
 }
 
+:root {
+  --navbar-height: 0;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
 .sticky-toolbar {
   background: var(--mainbackground);
   position: sticky;
-  top: 0;
+  top: var(--navbar-height);
   width: 100%;
   z-index: 100;
 }

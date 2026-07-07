@@ -36,7 +36,8 @@ import {
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
   mountRors,
-  setSelectedItemsDivVisibility,
+  initPermissionsTomSelects,
+  PERMISSION_SELECT_IDS,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -252,61 +253,7 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 
 makeMalleableColumnsGreatAgain();
 
-// selector for all {permission}_select (canread, canwrite, canbook)
-const PERMISSION_SELECT_IDS = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
-
-function initPermissionsTomSelects() {
-  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
-  if (permissionSelects.length === 0) return;
-  permissionSelects.forEach((select) => {
-    const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
-    // avoid re-init of tomselect if already exists
-    if (tsSelect.tomselect) return;
-    const config = {
-      plugins: {
-        no_backspace_delete: {},
-        remove_button: {},
-      },
-      // display many things or users will be confused what they search is not displayed right away
-      maxOptions: 2222,
-      onInitialize() { setSelectedItemsDivVisibility(this); },
-      onItemAdd() {
-        this.setTextboxValue('');
-        setSelectedItemsDivVisibility(this);
-      },
-      onItemRemove() { setSelectedItemsDivVisibility(this); },
-    };
-    const wrapper = select.closest('.ts-wrapper');
-    config['dropdownParent'] = wrapper;
-    config['controlInput'] = wrapper?.querySelector('input');
-    // for users, we return a formatted response with id - user (email)
-    if (select.id.endsWith('_select_users')) {
-      config['load'] = (query: string, callback) => {
-        if (!query.length) return callback();
-        fetchUsers(query).then(callback).catch(() => callback());
-      };
-    }
-    new TomSelect(select, config);
-  });
-}
-
 initPermissionsTomSelects();
-
-/*
-// make the div holding selected items disappear when empty and vice versa.
-function setSelectedItemsDivVisibility(instance) {
-  instance.control.style.display = instance.items.length ? 'flex' : 'none';
-}
-*/
-
-// fetch users and return in an id - username (email) format
-async function fetchUsers(query: string) {
-  const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
-  return users.map((u) => ({
-    value: `user:${u.userid}`,
-    text: `${u.fullname} (${u.email})`,
-  }));
-}
 
 on('team-scope-change', async (el: HTMLElement) => {
   const scope = Number(el.dataset.value);

@@ -1089,13 +1089,13 @@ export function showModalAndFocusFirstInput(modalSelector: string) {
   $(modalSelector).modal('show');
 }
 
-on('update-entity-body', async (el: HTMLElement) => {
-  await updateEntityBody();
-  // SAVE AND GO BACK BUTTON
-  if (el.matches('[data-redirect="view"]')) {
-    sessionStorage.setItem('flash_saved', i18next.t('saved'));
-    window.location.replace('?mode=view&id=' + entity.id);
-  }
+on('update-entity-body', (el: HTMLElement) => {
+  updateEntityBody().then(() => {
+    // SAVE AND GO BACK BUTTON
+    if (el.matches('[data-redirect="view"]')) {
+      window.location.replace('?mode=view&id=' + entity.id);
+    }
+  });
 });
 
 on('search-pubchem', (el: HTMLElement) => {

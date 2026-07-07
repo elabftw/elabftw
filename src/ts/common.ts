@@ -1028,8 +1028,8 @@ function focusFirstTextInputOnShown(modalSelector: string) {
   if (!modal) return;
   $(modal).one('shown.bs.modal', () => {
     modal.querySelector<HTMLElement>(
-      'input:is([type="text"], [type="search"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="number"]):not([disabled]):not([readonly]),' +
-      'input:not([type]):not([disabled]):not([readonly]),' +
+      'input:is([type="text"], [type="search"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="number"]):not([disabled]):not([readonly]):not(.ts-wrapper input), ' +
+      'input:not([type]):not([disabled]):not([readonly]):not(.ts-wrapper input), ' +
       'textarea:not([disabled]):not([readonly])',
     )?.focus();
   });

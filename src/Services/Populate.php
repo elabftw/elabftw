@@ -22,6 +22,8 @@ use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
+use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Branding;
@@ -106,7 +108,8 @@ final class Populate
         foreach ($this->yaml['teams'] as $team) {
             $teamid = $Teams->create($team['name']);
             $this->output->writeln(sprintf('├ + team: %s (ID: %d)', $team['name'], $teamid));
-            $Teams->setId($teamid);
+            // init a new object so we populate teamArr
+            $Teams = new Teams($Users, $teamid);
 
             $columns = array(
                 'visible',
@@ -267,13 +270,21 @@ final class Populate
                 if (isset($experiment['experiments_links'])) {
                     foreach ($experiment['experiments_links'] as $target) {
                         $Experiments->ExperimentsLinks->setId($target);
-                        $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+                        // let it fail, we don't care
+                        try {
+                            $Experiments->ExperimentsLinks->postAction(Action::Create, array());
+                        } catch (ResourceNotFoundException | ForbiddenException) {
+                        }
                     }
                 }
                 if (isset($experiment['items_links'])) {
                     foreach ($experiment['items_links'] as $target) {
                         $Experiments->ItemsLinks->setId($target);
-                        $Experiments->ItemsLinks->postAction(Action::Create, array());
+                        // let it fail, we don't care
+                        try {
+                            $Experiments->ItemsLinks->postAction(Action::Create, array());
+                        } catch (ResourceNotFoundException | ForbiddenException) {
+                        }
                     }
                 }
                 $this->output->writeln(sprintf('├ + experiment: %s (id: %d in team: %d)', $experiment['title'], $id, $teamid));

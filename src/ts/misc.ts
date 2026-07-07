@@ -424,6 +424,38 @@ export function getSafeElementById(id: string): HTMLElement {
     ?? (() => { throw new Error(`Element could not be found: '${id}'`); })();
 }
 
+// make the div holding selected items disappear when empty and vice versa.
+export function setSelectedItemsDivVisibility(instance) {
+  instance.control.style.display = instance.items.length ? 'flex' : 'none';
+}
+
+function reloadTomSelects(ts: Element): void {
+  if (!(ts instanceof HTMLSelectElement)) {
+    return;
+  }
+  const select = ts as HTMLSelectElement & { tomselect?: TomSelect };
+  if (select.tomselect) {
+    return;
+  }
+  const config = {
+    plugins: {
+      no_backspace_delete: {},
+      remove_button: {},
+    },
+    maxOptions: 2222,
+    onInitialize() { setSelectedItemsDivVisibility(this); },
+    onItemAdd() {
+      this.setTextboxValue('');
+      setSelectedItemsDivVisibility(this);
+    },
+    onItemRemove() { setSelectedItemsDivVisibility(this); },
+  };
+  const wrapper = select.closest('.ts-wrapper');
+  config['dropdownParent'] = wrapper;
+  config['controlInput'] = wrapper?.querySelector('input');
+  new TomSelect(select, config);
+}
+
 export async function reloadElements(elementIds: string[]): Promise<void> {
   elementIds = elementIds.filter((elementId: string): boolean => {
     if (!document.getElementById(elementId)) {
@@ -439,12 +471,15 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
 
   const html = await fetchCurrentPage();
   elementIds.forEach(elementId => {
-    if (!html.getElementById(elementId)) {
+    const currentElement = document.getElementById(elementId);
+    const newElement = html.getElementById(elementId);
+    if (!newElement) {
       console.warn(`Could not find element with id ${elementId} anymore, removing it`);
-      document.getElementById(elementId).remove();
+      currentElement.remove();
       return;
     }
-    document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+    currentElement.innerHTML = newElement.innerHTML;
+    currentElement.querySelectorAll('[data-tom-select="1"]').forEach(ts => reloadTomSelects(ts));
     listenTrigger(elementId);
   });
   (new TableSorting()).init();

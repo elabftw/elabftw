@@ -36,6 +36,7 @@ import {
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
   mountRors,
+  setSelectedItemsDivVisibility,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -291,10 +292,12 @@ function initPermissionsTomSelects() {
 
 initPermissionsTomSelects();
 
+/*
 // make the div holding selected items disappear when empty and vice versa.
 function setSelectedItemsDivVisibility(instance) {
   instance.control.style.display = instance.items.length ? 'flex' : 'none';
 }
+*/
 
 // fetch users and return in an id - username (email) format
 async function fetchUsers(query: string) {
@@ -680,26 +683,12 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     });
 });
 
-function destroyPermissionsTomSelect(): void {
-  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
-  permissionSelects.forEach((select) => {
-    const tsSelect = select as HTMLSelectElement & {tomselect? : TomSelect };
-    tsSelect.tomselect?.destroy();
-  });
-}
-
-async function reloadElementsAndInitPermissions(elementIds: string[]): Promise<void> {
-  destroyPermissionsTomSelect();
-  await reloadElements(elementIds);
-  initPermissionsTomSelects();
-}
-
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
   const params = collectForm(form);
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
-  await reloadElementsAndInitPermissions(['topToolbar', 'permissionsDiv']);
+  reloadElements(['topToolbar', 'permissionsDiv']);
   $('#bookingParamsModal').modal('hide');
 });
 
@@ -737,7 +726,7 @@ on('clear-form', (el: HTMLElement) => {
   inputs.forEach(input => input.value = '');
 });
 
-on('save-permissions', async (el: HTMLElement) => {
+on('save-permissions', (el: HTMLElement) => {
   const params = {};
   params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
@@ -754,11 +743,9 @@ on('save-permissions', async (el: HTMLElement) => {
     // create a new key and delete the old one
     params[paramKey] = params[el.dataset.rw];
     delete params[el.dataset.rw];
-    await ApiC.patch(`${Model.User}/me`, params);
-    await reloadElementsAndInitPermissions([divId]);
+    ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([divId]));
   } else {
-    await ApiC.patch(`${entity.type}/${entity.id}`, params);
-    await reloadElementsAndInitPermissions([divId]);
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([divId]));
   }
 });
 
@@ -772,15 +759,14 @@ function collectPermissionsFromModal(identifier: string): string {
 }
 
 // change both read & write permissions in one go
-on('save-permissions-both', async (el: HTMLElement) => {
+on('save-permissions-both', (el: HTMLElement) => {
   if (!confirm(i18next.t('entity-apply-both-permissions-warning'))) {
     return;
   }
   const permissions = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   const params = {canread: permissions, canread_base: baseSelect.value, canwrite: permissions, canwrite_base: baseSelect.value};
-  await ApiC.patch(`${entity.type}/${entity.id}`, params);
-  await reloadElementsAndInitPermissions(['canreadDiv', 'canwriteDiv']);
+  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
 });
 
 on('select-lang', () => {

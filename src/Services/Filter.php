@@ -252,6 +252,7 @@ final class Filter
             'font-variant',
             'height',
             'line-height',
+            'list-style-type',
             'margin-left',
             'margin-right',
             'min-width',

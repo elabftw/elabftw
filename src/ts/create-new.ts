@@ -112,7 +112,7 @@ function onScopeChange(ev: Event) {
 function onCategoryChange(ev: Event) {
   const el = ev.currentTarget;
   if (!(el instanceof HTMLSelectElement)) return;
-  ApiC.getJson(`${el.dataset.endpoint}/?fastq&scope=${getScopeValue()}&cat=${el.selectedOptions[0].value}`).then(templates => {
+  ApiC.getJson(`${el.dataset.endpoint}/?fastq&scope=${getScopeValue()}&category=${el.selectedOptions[0].value}`).then(templates => {
     renderTemplates(templates);
   });
 }

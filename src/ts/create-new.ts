@@ -129,7 +129,8 @@ on('filter-category', (el: HTMLElement) => {
 });
 
 on('toggle-create-modal', async (el: HTMLElement) => {
-  const navbar = document.querySelector<HTMLElement>('.sticky-navbar')?.style.setProperty('position', 'static');
+  const navbar = document.querySelector<HTMLElement>('.sticky-navbar');
+  navbar?.style.setProperty('position', 'static');
   // allow data-type to override selected type (for instance on dashboard)
   const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage(window.location);
   setTypeRadio(entityType);

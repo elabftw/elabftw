@@ -29,7 +29,7 @@
       <h4>{{ 'Browse by category'|trans }}</h4>
       <div class='d-flex my-2 flex-wrap lh-150'>
         {% for category in App.experimentsCategoryArr|filter(c => c.is_current_team == 1) -%}
-          <a href='experiments.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
+          <a href='experiments.php?mode=show&amp;category={{ category.id }}' class='btn mr-2 catstat-btn category-btn mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
         {%- endfor %}
       </div>
       <hr>
@@ -78,7 +78,7 @@
     <h4>{{ 'Browse by category'|trans }}</h4>
     <div class='d-flex my-2 flex-wrap lh-150'>
       {% for category in App.itemsCategoryArr|filter(c => c.is_current_team == 1) -%}
-        <a href='database.php?mode=show&amp;cat={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
+        <a href='database.php?mode=show&amp;category={{ category.id }}' class='btn mr-2 catstat-btn category-btn lh-normal mb-1' style='--bg: #{{ category.color }}'>{{ category.title }}</a>
       {%- endfor %}
     </div>
     <hr>

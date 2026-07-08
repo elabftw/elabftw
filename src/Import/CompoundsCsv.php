@@ -130,6 +130,13 @@ final class CompoundsCsv extends AbstractCsv
                         $Tags = new Tags($this->Items);
                         $Tags->postAction(Action::Create, array('tag' => trim($row['tags'])));
                     }
+                    if (isset($row['status']) && trim($row['status']) !== '') {
+                        try {
+                            $this->Items->update(new EntityParams('status', (int) $row['status']));
+                        } catch (ImproperActionException $e) {
+                            $this->emitLog(sprintf('Status %s: %s', $row['status'], $e->getMessage()), LogLevel::ERROR);
+                        }
+                    }
                     $this->Items->update(new EntityParams('metadatamerge', $this->collectMetadata($row)));
                     foreach ($ids as $id) {
                         $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
@@ -208,6 +215,7 @@ final class CompoundsCsv extends AbstractCsv
             'comment',
             'custom_id',
             'tags',
+            'status',
             'chebi_id',
             'chembl_id',
             'dea_number',

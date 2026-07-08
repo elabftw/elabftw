@@ -161,6 +161,13 @@ const EntitiesTable = ({
       : null;
   };
 
+  const NextStepRenderer = ({ value }) =>
+    value && (
+      <p className='item-next my-2'>
+        <span className='text-uppercase'>{i18next.t('Next step')}:</span> {value.split('|')[0]}
+      </p>
+    );
+
   const TagsRenderer = ({ value }) => {
     const tags = Array.isArray(value) ? value : [];
 
@@ -202,7 +209,8 @@ const EntitiesTable = ({
     { field: 'fullname', headerName: i18next.t('owner') },
     { field: 'timestamped', headerName: i18next.t('Is timestamped'), valueGetter: p => yesNo(p.data.timestamped), filterValueGetter: p => yesNo(p.data.timestamped), cellRenderer: BinaryRenderer },
     { field: 'locked', headerName: i18next.t('Is locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },
-    { field: 'rating', headerName: i18next.t('Rating'), cellRenderer: RatingsRenderer }
+    { field: 'rating', headerName: i18next.t('Rating'), cellRenderer: RatingsRenderer },
+    { field: 'next_step', headerName: i18next.t('Next step'), cellRenderer: NextStepRenderer }
   ]);
 
   const getResolvedEntityFilterParams = useCallback(event => {

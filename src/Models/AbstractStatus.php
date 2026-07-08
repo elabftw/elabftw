@@ -17,11 +17,13 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
 use Elabftw\Params\StatusParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\RandomColorTrait;
 use Elabftw\Traits\SetIdTrait;
 use PDO;
@@ -140,6 +142,13 @@ abstract class AbstractStatus extends AbstractCategory
     {
         $this->canWriteOrExplode();
         foreach ($params as $key => $value) {
+            // special case for is_private: must be team Admin (see #6519)
+            if ($key === 'is_private') {
+                $helper = new TeamsHelper($this->Teams->id);
+                if ($helper->isAdminInTeam($this->Teams->Users->getUserid()) === false) {
+                    throw new IllegalActionException();
+                }
+            }
             $this->update(new StatusParams($key, (string) $value));
         }
         return $this->readOne();

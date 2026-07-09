@@ -52,7 +52,7 @@ function fetchCurrentPage(tag = ''): Promise<Document>{
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
-  const locale = document.getElementById('user-prefs').dataset.jslang;
+  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
   document.querySelectorAll('.relative-moment').forEach(el => {
     const span = el as HTMLElement;
     // do nothing if it's already loaded, prevent infinite loop with mutation observer

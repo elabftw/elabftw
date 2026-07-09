@@ -169,10 +169,10 @@ jobs:
               run: |
                 set -euo pipefail
 
-                base_delay=3
+                retry_delays=(3 12 27 48)
                 refs=()
                 while IFS= read -r digest; do
-                  if [[ "$digest" =~ ^[a-f0-9]{64}$ ]]; then
+                  if [[ "$digest" =~ ^[a-fA-F0-9]{64}$ ]]; then
                     refs+=("elabftw/elabimg@sha256:${digest}")
                   fi
                 done < <(find . -type f -exec basename {} \; | sort)
@@ -196,8 +196,7 @@ jobs:
                     exit 1
                   fi
 
-                  # Square backoff: 3s, 12s, 27s, 48s between retries.
-                  delay=$((attempt * attempt * base_delay))
+                  delay="${retry_delays[$((attempt - 1))]}"
                   echo "Retrying manifest creation in ${delay}s..."
                   sleep "$delay"
                 done

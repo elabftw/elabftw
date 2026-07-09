@@ -259,16 +259,15 @@ export class Metadata {
    * Generate a non editable view of the extra fields
    */
   generateViewableElement(name: string, properties: ExtraFieldProperties): Element {
-    const wrapperDiv = document.createElement('div');
-    wrapperDiv.classList.add('d-flex');
-    // name + description
-    const nameWrapper = document.createElement('div');
-    nameWrapper.classList.add('flex-column');
+    const row = document.createElement('tr');
+    const nameCell = document.createElement('td');
+    nameCell.classList.add('align-top');
 
-    const nameEl = document.createElement('p');
+    // name + description
+    const nameEl = document.createElement('strong');
     nameEl.innerText = name;
-    nameWrapper.append(nameEl);
-    nameWrapper.append(this.getDescription(properties));
+    nameCell.append(nameEl);
+    nameCell.append(this.getDescription(properties));
 
     let valueEl: HTMLElement;
     // checkbox is special case
@@ -286,7 +285,7 @@ export class Metadata {
       if (properties.unit) {
         value += ' ' + properties.unit;
       }
-      valueEl.innerText = value;
+      valueEl.innerText = value || '—';
       // the link is generated with javascript so we can still use innerText and
       // not innerHTML with manual "<a href...>" which implicates security considerations
       if (properties.type === ExtraFieldInputType.Url) {
@@ -298,13 +297,12 @@ export class Metadata {
         valueEl.dataset.id = properties.value as string;
       }
     }
-    const valueWrapper = document.createElement('div');
-    // set the value on the right
-    valueWrapper.classList.add('ml-auto', 'pl-5');
-    valueWrapper.append(valueEl);
-    wrapperDiv.append(nameWrapper);
-    wrapperDiv.append(valueWrapper);
-    return wrapperDiv;
+    const valueCell = document.createElement('td');
+    valueCell.classList.add('align-top');
+    valueCell.append(valueEl);
+
+    row.append(nameCell, valueCell);
+    return row;
   }
 
   /**
@@ -531,10 +529,25 @@ export class Metadata {
         }
 
         groupWrapperDiv.append(groupHeader);
+
+        const tableContainer = document.createElement('div');
+        tableContainer.classList.add('pl-3', 'table-container');
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-sm', 'table-borderless', 'mb-0');
+        const tbody = document.createElement('tbody');
+
         // now display the names/values from extra_fields
         for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
-          groupWrapperDiv.append(element.element);
+          tbody.append(element.element);
         }
+        table.append(tbody);
+        tableContainer.append(table);
+        const fieldsHeader = document.createElement('h5');
+        fieldsHeader.classList.add('mt-3', 'mb-2');
+        fieldsHeader.innerText = i18next.t('custom-fields');
+
+        groupWrapperDiv.append(fieldsHeader);
+        groupWrapperDiv.append(tableContainer);
         groupWrapperDiv.append(document.createElement('hr'));
         this.metadataDiv.append(groupWrapperDiv);
       });

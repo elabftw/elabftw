@@ -14,11 +14,20 @@ permissions:
 
 jobs:
     buildandpush:
-        #runs-on: ubuntu-latest
-        # temporary revert for arm build
-        runs-on: ubuntu-22.04
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - platform: linux/amd64
+                      arch: amd64
+                      runner: ubuntu-22.04
+                    - platform: linux/arm64
+                      arch: arm64
+                      runner: ubuntu-24.04-arm
+        runs-on: ${{ matrix.runner }}
         # only run on stable releases
         if: github.event.release.prerelease == false
+        name: Build and push ${{ matrix.platform }}
         steps:
             # https://github.com/CycodeLabs/cimon-action
             - name: Cimon supply chain attack protection
@@ -59,10 +68,6 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
 
-            # https://github.com/docker/setup-qemu-action#usage
-            - name: Set up QEMU
-              uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4
-
             # https://github.com/docker/login-action#docker-hub
             - name: Login to Docker Hub
               uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
@@ -78,22 +83,109 @@ jobs:
               with:
                 context: .
                 file: containers/elabimg/Dockerfile
-                platforms: linux/arm64,linux/amd64
-                push: true
+                platforms: ${{ matrix.platform }}
                 # the scope parameter is necessary when doing multi arch builds or we'll always miss cache
-                cache-from: type=gha,scope=${{ runner.os }}-${{ runner.arch }}
-                cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}
+                cache-from: type=gha,scope=${{ runner.os }}-${{ matrix.arch }}
+                cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ matrix.arch }}
+                outputs: type=image,name=docker.io/elabftw/elabimg,push-by-digest=true,name-canonical=true,push=true
                 sbom: true
                 build-args: |
                     ELABFTW_VERSION=${{ github.ref_name }}
-                tags: |
-                    elabftw/elabimg:stable
-                    elabftw/elabimg:latest
-                    elabftw/elabimg:${{ github.ref_name }}
+            - name: Export image digest
+              run: |
+                mkdir -p /tmp/digests
+                digest="${{ steps.push.outputs.digest }}"
+                touch "/tmp/digests/${digest#sha256:}"
+
+            - name: Upload image digest
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              with:
+                name: digests-${{ matrix.arch }}
+                path: /tmp/digests/*
+                if-no-files-found: error
+                retention-days: 1
+
+    finalize:
+        runs-on: ubuntu-22.04
+        needs: buildandpush
+        # only run on stable releases
+        if: github.event.release.prerelease == false
+        steps:
+            # https://github.com/CycodeLabs/cimon-action
+            - name: Cimon supply chain attack protection
+              uses: cycodelabs/cimon-action@f99ad5557cb80964bc2b2e76a47bf4b5ba6e323b # v0.10
+              with:
+                prevent: true
+                allowed-hosts: >
+                  archive.ubuntu.com
+                  auth.docker.io
+                  codeload.github.com
+                  dhi.io
+                  dl-cdn.alpinelinux.org
+                  docker.io
+                  files.pythonhosted.org
+                  ghcr.io
+                  hooks.deltablot.dev
+                  index.docker.io
+                  mirror.gcr.io
+                  nginx.org
+                  packagist.org
+                  pkg-containers.githubusercontent.com
+                  ports.ubuntu.com
+                  production.cloudflare.docker.com
+                  pypi.org
+                  raw.githubusercontent.com
+                  registry.yarnpkg.com
+                  repo.yarnpkg.com
+                  registry.npmjs.org
+                  security.ubuntu.com
+
+            - name: Checkout elabimg repo
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+              with:
+                ref: ${{ github.ref_name }}
+                persist-credentials: false
+
+            - name: Download image digests
+              uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+              with:
+                path: /tmp/digests
+                pattern: digests-*
+                merge-multiple: true
+
+            # https://github.com/marketplace/actions/docker-setup-buildx
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
+
+            # https://github.com/docker/login-action#docker-hub
+            - name: Login to Docker Hub
+              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
+              with:
+                username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+            - name: Create and push manifest list
+              working-directory: /tmp/digests
+              run: |
+                docker buildx imagetools create \
+                  -t elabftw/elabimg:stable \
+                  -t elabftw/elabimg:latest \
+                  -t elabftw/elabimg:${{ github.ref_name }} \
+                  $(printf 'elabftw/elabimg@sha256:%s ' *)
+
+            - name: Resolve manifest digest
+              id: manifest
+              run: |
+                digest=$(docker buildx imagetools inspect docker.io/elabftw/elabimg:${{ github.ref_name }} | awk '/^Digest:/ { print $2; exit }')
+                echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
             - name: Send request to webhook to trigger update of demo
               run: |
                 curl -H 'X-Hook-Secret: ${{ secrets.HOOK_SECRET }}' ${{ secrets.HOOK_URL }}
+
+            # https://github.com/docker/setup-qemu-action#usage
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4
 
             # build chem-plugin with correct tag
             - name: Build chem plugin with version tag
@@ -117,5 +209,5 @@ jobs:
               uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
               with:
                 subject-name: docker.io/elabftw/elabimg
-                subject-digest: ${{ steps.push.outputs.digest }}
+                subject-digest: ${{ steps.manifest.outputs.digest }}
                 push-to-registry: true

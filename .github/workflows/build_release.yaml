@@ -167,11 +167,39 @@ jobs:
             - name: Create and push manifest list
               working-directory: /tmp/digests
               run: |
-                docker buildx imagetools create \
-                  -t elabftw/elabimg:stable \
-                  -t elabftw/elabimg:latest \
-                  -t elabftw/elabimg:${{ github.ref_name }} \
-                  $(printf 'elabftw/elabimg@sha256:%s ' *)
+                set -euo pipefail
+
+                retry_delays=(3 12 27 48 75)
+                refs=()
+                while IFS= read -r digest; do
+                  if [[ "$digest" =~ ^[a-fA-F0-9]{64}$ ]]; then
+                    refs+=("elabftw/elabimg@sha256:${digest}")
+                  fi
+                done < <(find . -type f -exec basename {} \; | sort)
+
+                if [ "${#refs[@]}" -eq 0 ]; then
+                  echo 'No image digests found.'
+                  exit 1
+                fi
+
+                for attempt in 1 2 3 4 5; do
+                  if docker buildx imagetools create \
+                    -t elabftw/elabimg:stable \
+                    -t elabftw/elabimg:latest \
+                    -t elabftw/elabimg:${{ github.ref_name }} \
+                    "${refs[@]}"; then
+                    break
+                  fi
+
+                  if [ "$attempt" -eq 5 ]; then
+                    echo "Failed to create manifest list after $attempt attempts."
+                    exit 1
+                  fi
+
+                  delay="${retry_delays[$((attempt - 1))]}"
+                  echo "Retrying manifest creation in ${delay}s..."
+                  sleep "$delay"
+                done
 
             - name: Resolve manifest digest
               id: manifest

@@ -1942,3 +1942,26 @@ input:user-invalid {
   height: 128px;
   width: 128px;
 }
+
+:root {
+  --navbar-height: 0;
+}
+
+div > .sticky-navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.sticky-toolbar {
+  background: var(--mainbackground);
+  position: sticky;
+  top: var(--navbar-height);
+  width: 100%;
+  z-index: 50;
+}
+
+.sticky-dropdown > #navbar-create-dropdown {
+  z-index: 1001;
+}

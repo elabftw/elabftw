@@ -129,6 +129,8 @@ on('filter-category', (el: HTMLElement) => {
 });
 
 on('toggle-create-modal', async (el: HTMLElement) => {
+  const navbar = document.querySelector<HTMLElement>('.sticky-navbar');
+  navbar?.style.setProperty('position', 'static');
   // allow data-type to override selected type (for instance on dashboard)
   const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage(window.location);
   setTypeRadio(entityType);
@@ -140,6 +142,9 @@ on('toggle-create-modal', async (el: HTMLElement) => {
     $('#editCompoundModal').modal('hide');
   }
 
+  $('#createModal').one('hidden.bs.modal', () => {
+    navbar?.style.removeProperty('position');
+  });
   showModalAndFocusFirstInput('#createModal');
 });
 

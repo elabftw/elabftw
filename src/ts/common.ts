@@ -79,6 +79,9 @@ interface Status extends SelectOptions {
   is_current_team: number;
 }
 
+// Use the sticky navbar height to offset the toolbar below it.
+document.documentElement.style.setProperty('--navbar-height', `${document.querySelector<HTMLElement>('div > .navbar')?.offsetHeight ?? 0}px`);
+
 on('toggle-dark-mode', (el: HTMLElement) => {
   const currentTheme = parseInt(el.dataset.currentTheme, 10);
   // Auto (0) and Light (1) should both toggle to Dark (2)
@@ -1040,13 +1043,14 @@ export function showModalAndFocusFirstInput(modalSelector: string) {
   $(modalSelector).modal('show');
 }
 
-on('update-entity-body', (el: HTMLElement) => {
-  updateEntityBody().then(() => {
-    // SAVE AND GO BACK BUTTON
-    if (el.matches('[data-redirect="view"]')) {
-      window.location.replace('?mode=view&id=' + entity.id);
-    }
-  });
+on('update-entity-body', async (el: HTMLElement) => {
+  const redirect = el.dataset.redirect === 'view';
+  await updateEntityBody(redirect);
+  // SAVE AND GO BACK BUTTON
+  if (redirect) {
+    sessionStorage.setItem('flash_saved', i18next.t('saved'));
+    window.location.replace('?mode=view&id=' + entity.id);
+  }
 });
 
 on('search-pubchem', (el: HTMLElement) => {

@@ -523,6 +523,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
     ],
     toolbar_sticky: true,
+    toolbar_sticky_offset: document.querySelector<HTMLElement>('.sticky-toolbar')?.offsetHeight ?? 0,
     // render MathJax for TinyMCE preview
     init_instance_callback: (editor) => {
       editor.on('ExecCommand', (e) => {

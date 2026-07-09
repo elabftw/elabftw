@@ -169,7 +169,7 @@ jobs:
               run: |
                 set -euo pipefail
 
-                mapfile -t refs < <(find . -type f -printf '%f\n' | grep -E '^[a-f0-9]{64}$' | sed 's|^|elabftw/elabimg@sha256:|' | sort)
+                mapfile -t refs < <(find . -type f -exec basename {} \; | grep -E '^[a-f0-9]{64}$' | sed 's|^|elabftw/elabimg@sha256:|' | sort)
                 if [ "${#refs[@]}" -eq 0 ]; then
                   echo 'No image digests found.'
                   exit 1
@@ -189,7 +189,9 @@ jobs:
                     exit 1
                   fi
 
-                  sleep $((attempt * attempt * 3))
+                  delay=$((attempt * attempt * 3))
+                  echo "Retrying manifest creation in ${delay}s..."
+                  sleep "$delay"
                 done
 
             - name: Resolve manifest digest

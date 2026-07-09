@@ -128,6 +128,7 @@ if (document.getElementById('stepsDiv')) {
     cancel : i18next.t('cancel'),
     cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
     inputClasses: ['form-control'],
+    formClasses: ['w-100'],
     fun: async (value, original) => {
       return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
         .then(resp => resp.json())

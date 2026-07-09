@@ -1093,8 +1093,8 @@ export function showModalAndFocusFirstInput(modalSelector: string) {
 }
 
 on('update-entity-body', async (el: HTMLElement) => {
-  const redirect = el.matches('[data-redirect="view"]');
-  await updateEntityBody(!redirect);
+  const redirect = el.dataset.redirect === 'view';
+  await updateEntityBody(redirect);
   // SAVE AND GO BACK BUTTON
   if (redirect) {
     sessionStorage.setItem('flash_saved', i18next.t('saved'));

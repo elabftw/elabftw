@@ -760,19 +760,21 @@ export async function saveStringAsFile(filename: string, content: string|Promise
 }
 
 // Shared function to UPDATE ENTITY BODY via save shortcut and/or save button, or autosave
-export async function updateEntityBody(showSavedNotif = true): Promise<void> {
+export async function updateEntityBody(redirect = true): Promise<void> {
   const editor = getEditor();
   const entity = getEntity();
 
-  return ApiC.patch(`${entity.type}/${entity.id}`, {body: editor.getContent(), notifOnSaved: showSavedNotif ? 1 : 0}).then(response => response.json()).then(json => {
+  return ApiC.patch(`${entity.type}/${entity.id}`, {body: editor.getContent(), notifOnSaved: redirect ? 0 : 1}).then(response => response.json()).then(json => {
     if (editor.type === 'tiny') {
       // set the editor as non dirty so we can navigate out without a warning to clear
       tinymce.activeEditor.setDirty(false);
     }
-    const lastSavedAt = document.getElementById('lastSavedAt');
-    if (lastSavedAt) {
-      lastSavedAt.title = json.modified_at;
-      reloadElements(['lastSavedAt']);
+    if (!redirect) {
+      const lastSavedAt = document.getElementById('lastSavedAt');
+      if (lastSavedAt) {
+        lastSavedAt.title = json.modified_at;
+        reloadElements(['lastSavedAt']);
+      }
     }
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)

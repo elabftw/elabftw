@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Links\Compounds2ItemsLinks;
@@ -130,6 +131,14 @@ final class CompoundsCsv extends AbstractCsv
                         $Tags = new Tags($this->Items);
                         $Tags->postAction(Action::Create, array('tag' => trim($row['tags'])));
                     }
+                    if (isset($row['status']) && trim($row['status']) !== '') {
+                        try {
+                            $statusId = $this->getStatusId($this->Items->entityType, trim($row['status']));
+                            $this->Items->update(new EntityParams('status', $statusId));
+                        } catch (DatabaseErrorException | ImproperActionException $e) {
+                            $this->emitLog(sprintf('Status %s: %s', $row['status'], $e->getMessage()), LogLevel::ERROR);
+                        }
+                    }
                     $this->Items->update(new EntityParams('metadatamerge', $this->collectMetadata($row)));
                     foreach ($ids as $id) {
                         $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
@@ -208,6 +217,7 @@ final class CompoundsCsv extends AbstractCsv
             'comment',
             'custom_id',
             'tags',
+            'status',
             'chebi_id',
             'chembl_id',
             'dea_number',

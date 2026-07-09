@@ -36,6 +36,8 @@ import {
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
   mountRors,
+  initPermissionsTomSelects,
+  PERMISSION_SELECT_IDS,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -251,60 +253,7 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 
 makeMalleableColumnsGreatAgain();
 
-// selector for all {permission}_select (canread, canwrite, canbook)
-const permissionSelects = document.querySelectorAll<HTMLSelectElement>(
-  '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]',
-);
-
-function initPermissionsTomSelects() {
-  if (permissionSelects.length === 0) return;
-  permissionSelects.forEach((select) => {
-    const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
-    // avoid re-init of tomselect if already exists
-    if (tsSelect.tomselect) return;
-    const config = {
-      plugins: {
-        no_backspace_delete: {},
-        remove_button: {},
-      },
-      // display many things or users will be confused what they search is not displayed right away
-      maxOptions: 2222,
-      onInitialize() { setSelectedItemsDivVisibility(this); },
-      onItemAdd() {
-        this.setTextboxValue('');
-        setSelectedItemsDivVisibility(this);
-      },
-      onItemRemove() { setSelectedItemsDivVisibility(this); },
-    };
-    const wrapper = select.closest('.ts-wrapper');
-    config['dropdownParent'] = wrapper;
-    config['controlInput'] = wrapper?.querySelector('input');
-    // for users, we return a formatted response with id - user (email)
-    if (select.id.endsWith('_select_users')) {
-      config['load'] = (query: string, callback) => {
-        if (!query.length) return callback();
-        fetchUsers(query).then(callback).catch(() => callback());
-      };
-    }
-    new TomSelect(select, config);
-  });
-}
-
 initPermissionsTomSelects();
-
-// make the div holding selected items disappear when empty and vice versa.
-function setSelectedItemsDivVisibility(instance) {
-  instance.control.style.display = instance.items.length ? 'flex' : 'none';
-}
-
-// fetch users and return in an id - username (email) format
-async function fetchUsers(query: string) {
-  const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
-  return users.map((u) => ({
-    value: `user:${u.userid}`,
-    text: `${u.fullname} (${u.email})`,
-  }));
-}
 
 on('team-scope-change', async (el: HTMLElement) => {
   const scope = Number(el.dataset.value);
@@ -350,6 +299,7 @@ on('team-scope-change', async (el: HTMLElement) => {
 });
 
 document.addEventListener('scope-changed', () => {
+  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
   permissionSelects.forEach(select => rebuildTomSelectOptions(select));
 });
 
@@ -728,6 +678,8 @@ on('save-permissions', (el: HTMLElement) => {
   params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   params[baseSelect.name] = baseSelect.value;
+
+  const divId = el.dataset.identifier + 'Div';
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
   if (el.dataset.isUserDefault) {
     // we need to replace canread/canwrite with default_read/default_write for user attribute
@@ -738,9 +690,9 @@ on('save-permissions', (el: HTMLElement) => {
     // create a new key and delete the old one
     params[paramKey] = params[el.dataset.rw];
     delete params[el.dataset.rw];
-    ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
+    ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([divId]));
   } else {
-    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([divId]));
   }
 });
 
@@ -761,8 +713,7 @@ on('save-permissions-both', (el: HTMLElement) => {
   const permissions = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   const params = {canread: permissions, canread_base: baseSelect.value, canwrite: permissions, canwrite_base: baseSelect.value};
-  ApiC.patch(`${entity.type}/${entity.id}`, params)
-    .then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
+  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
 });
 
 on('select-lang', () => {

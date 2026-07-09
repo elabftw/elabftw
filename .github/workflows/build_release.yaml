@@ -124,6 +124,7 @@ jobs:
                   dl-cdn.alpinelinux.org
                   docker.io
                   files.pythonhosted.org
+                  *.sigstore.dev
                   ghcr.io
                   hooks.deltablot.dev
                   index.docker.io

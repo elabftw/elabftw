@@ -1,4 +1,4 @@
-{% macro catstatidx(type, table, subtitle, infotip, sourceArr, emptyWarning, modalTitle, newNamePlaceholder, teamName) %}
+{% macro catstatidx(type, table, subtitle, infotip, sourceArr, emptyWarning, modalTitle, newNamePlaceholder, teamName, isAdmin) %}
 <h2>{{ teamName }}</h2>
 <div class='mb-5 d-flex justify-content-between'>
   <div class='d-flex'>
@@ -37,8 +37,8 @@
 
           <li class='list-inline-item'>
             <label for='expcatIsPrivate_{{ cat.id }}'>{{ 'Mark as private'|trans }}</label>
-            <label class='switch ucp-align'><span class='sr-only'>{{ 'Mark as private'|trans }}</span>
-              <input type='checkbox' autocomplete='off' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='is_private' {{ cat.is_private ? 'checked="checked"' }} id='expcatIsPrivate_{{ cat.id }}'>
+            <label class='switch ucp-align {{ not isAdmin ? 'disabled' }}'><span class='sr-only'>{{ 'Mark as private'|trans }}</span>
+              <input type='checkbox' autocomplete='off' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='is_private' {{ cat.is_private ? 'checked="checked"' }} {{ not isAdmin ? 'disabled="disabled"' }} id='expcatIsPrivate_{{ cat.id }}'>
               <span class='slider'></span>
             </label>
           </li>

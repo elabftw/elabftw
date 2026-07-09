@@ -196,7 +196,7 @@ jobs:
                     exit 1
                   fi
 
-                  # Quadratic backoff: 3s, 12s, 27s, 48s between retries.
+                  # Square backoff: 3s, 12s, 27s, 48s between retries.
                   delay=$((attempt * attempt * base_delay))
                   echo "Retrying manifest creation in ${delay}s..."
                   sleep "$delay"

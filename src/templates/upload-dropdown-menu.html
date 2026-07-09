@@ -32,7 +32,6 @@
       {{ ui.dropdown_item('rename-upload', 'pencil-alt', 'Edit filename'|trans, upload.id) }}
       {% if not upload.immutable and not Entity.isReadOnly %}
         {{ ui.dropdown_item('archive-upload', 'box-archive', 'Archive/Unarchive'|trans, upload.id) }}
-        {{ ui.dropdown_item('destroy-upload', 'trash-alt', 'Delete'|trans, upload.id, 'text-danger') }}
       {% endif %}
 
       <div class='dropdown-divider'></div>
@@ -46,21 +45,9 @@
         <button type='button' class='dropdown-item' data-action='replace-upload' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-sync-alt mr-1'></i>{{ 'Upload new version'|trans }}</button>
       {% endif %}
 
-      {# INSERT IN TEXT in edit mode for images #}
-      {% set isImage = ext matches '/(jpg|jpeg|png|gif|svg|bmp)$/i' %}
-      <button type='button' class='dropdown-item' {% if not isImage %}disabled{% endif %} data-action='insert-image-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-image mr-1'></i>{{ 'Insert image'|trans }}</button>
-
-      {# INSERT VIDEO #}
-      {% set isVideo = ext matches '/(mkv|mp4|ogv|webm)$/i' %}
-      <button type='button' class='dropdown-item' {% if not isVideo %}disabled{% endif %} data-action='insert-video-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-video mr-1'></i>{{ 'Insert video'|trans }}</button>
-
-      {# INSERT AUDIO #}
-      {% set isAudio = ext matches '/(aac|flac|mp3|ogg|opus|wav)$/i' %}
-      <button type='button' class='dropdown-item' {% if not isAudio %}disabled{% endif %} data-action='insert-audio-in-body' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-volume-low mr-1'></i>{{ 'Insert audio'|trans }}</button>
-
-      {# INSERT TEXT #}
-      {% set isTxt = ext matches '/txt$/i' %}
-      <button type='button' class='dropdown-item' {% if not isTxt %}disabled{% endif %} data-action='insert-plain-text' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}'><i class='fas fa-fw fa-file-import mr-1'></i>{{ 'Insert text'|trans }}</button>
+      {# INSERT IN TEXT in edit mode #}
+      {% set isInsertable = ext matches '/(jpg|jpeg|png|gif|svg|bmp|mkv|mp4|ogv|webm|aac|flac|mp3|ogg|opus|wav|txt)$/i' %}
+      <button type='button' class='dropdown-item' {% if not isInsertable %}disabled{% endif %} data-action='insert-in-body' data-ext='{{ ext|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}' data-storage='{{ upload.storage }}' data-link='{{ upload.long_name|e('html_attr') }}' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-arrow-right-to-bracket mr-1'></i>{{ 'Insert in main text'|trans }}</button>
 
       <div class='dropdown-divider'></div>
       {# Annotate image #}
@@ -69,7 +56,7 @@
 
       {# JSON EDITOR #}
       {% set isJson = ext matches '/(json)$/i' %}
-      <button type='button' class='dropdown-item' {% if not isJson %}disabled{% endif %} data-action='json-load-file' data-uploadid='{{ upload.id }}' data-link='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}'><i class='fas fa-fw fa-file-code mr-1'></i>{{ 'JSON editor'|trans }}</button>
+      <button type='button' class='dropdown-item' {% if not isJson %}disabled{% endif %} data-action='json-load-file' data-uploadid='{{ upload.id }}' data-link='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}'><i class='fas fa-fw fa-file-code mr-1'></i>{{ 'Load in JSON editor'|trans }}</button>
       {# SHEET EDITOR #}
       {% set isSheet = ext in constant('Elabftw\\Elabftw\\Extensions::SPREADSHEET') %}
       <button type='button' class='dropdown-item' {% if not isSheet %}disabled{% endif %} data-action='xls-load-file' data-uploadid='{{ upload.id }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}'><i class='fas fa-fw fa-file-excel mr-1'></i>{{ 'Spreadsheet editor'|trans }}</button>
@@ -84,8 +71,12 @@
     {% set isPreview = ext matches '/(txt|md|json)$/i' %}
     <button type='button' class='dropdown-item' {% if not isPreview %}disabled{% endif %} data-action='toggle-modal' data-target='plainTextModal' data-uploadid='{{ upload.id }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}' data-ext='{{ ext }}'><i class='fas fa-fw fa-eye mr-1'></i>{{ 'Preview'|trans }}</button>
 
-    {% if App.Users.userData.uploads_layout != 0 %}
+    {% if not isGrid %}
       <button type='button' class='dropdown-item' data-action='more-info-upload' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-info-circle mr-1'></i>{{ 'More information'|trans }}</button>
+      {% if not upload.immutable and not Entity.isReadOnly %}
+        <div class='dropdown-divider'></div>
+        {{ ui.dropdown_item('destroy-upload', 'trash-alt', 'Delete'|trans, upload.id, 'text-danger') }}
+      {% endif %}
     {% endif %}
 
   </div>

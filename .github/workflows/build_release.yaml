@@ -169,7 +169,7 @@ jobs:
               run: |
                 set -euo pipefail
 
-                retry_delays=(3 12 27 48)
+                retry_delays=(3 12 27 48 75)
                 refs=()
                 while IFS= read -r digest; do
                   if [[ "$digest" =~ ^[a-fA-F0-9]{64}$ ]]; then

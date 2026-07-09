@@ -95,6 +95,7 @@ const t = {
     "name": "Meno",
     "new-spreadsheet": "New spreadsheet",
     "new-version": "A new version is available!",
+    "next-step": "Ďalší krok",
     "no-self-links": "Prepojenie položky so sebou samým nie je povolené. Vyberte iný cieľ.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",

@@ -95,6 +95,7 @@ const t = {
     "name": "Όνομα",
     "new-spreadsheet": "New spreadsheet",
     "new-version": "A new version is available!",
+    "next-step": "Επόμενο βήμα",
     "no-self-links": "Δεν επιτρέπεται η σύνδεση ενός στοιχείου με τον εαυτό του. Επιλέξτε διαφορετικό στόχο.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",

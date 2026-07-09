@@ -95,6 +95,7 @@ const t = {
     "name": "Ime",
     "new-spreadsheet": "New spreadsheet",
     "new-version": "A new version is available!",
+    "next-step": "Naslednji korak",
     "no-self-links": "Povezovanje predmeta samega s seboj ni dovoljeno. Izberite drug cilj.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",

@@ -95,6 +95,7 @@ const t = {
     "name": "名前",
     "new-spreadsheet": "新しいスプレッドシート",
     "new-version": "A new version is available!",
+    "next-step": "次のステップ",
     "no-self-links": "アイテムをそれ自体にリンクすることはできません。別のターゲットを選択してください。",
     "not-found": "一致する結果が見つかりませんでした。",
     "no-rors": "No ROR associated yet.",

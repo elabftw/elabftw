@@ -95,6 +95,7 @@ const t = {
     "name": "Имя",
     "new-spreadsheet": "New spreadsheet",
     "new-version": "A new version is available!",
+    "next-step": "Следующий шаг",
     "no-self-links": "Связывание элемента с самим собой не допускается. Пожалуйста, выберите другую цель.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",

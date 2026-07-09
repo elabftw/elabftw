@@ -95,6 +95,7 @@ const t = {
     "name": "Nimi",
     "new-spreadsheet": "New spreadsheet",
     "new-version": "A new version is available!",
+    "next-step": "Seuraava askel",
     "no-self-links": "Kohteen linkittäminen itseensä ei ole sallittua. Valitse toinen kohde.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",

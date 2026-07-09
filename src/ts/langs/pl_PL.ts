@@ -95,6 +95,7 @@ const t = {
     "name": "Nazwa",
     "new-spreadsheet": "Nowy arkusz",
     "new-version": "A new version is available!",
+    "next-step": "Następny krok",
     "no-self-links": "Łączenie elementu ze sobą jest niedozwolone. Wybierz inny cel.",
     "not-found": "Brak pasujących wyników",
     "no-rors": "No ROR associated yet.",

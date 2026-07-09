@@ -140,6 +140,7 @@ final class i18n4Js
             'name' => _('Name'),
             'new-spreadsheet' => _('New spreadsheet'),
             'new-version' => _('A new version is available!'),
+            'next-step' => _('Next step'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-found' => _('No matching result found.'),
             'no-rors' => _('No ROR associated yet.'),

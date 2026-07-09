@@ -95,6 +95,7 @@ const t = {
     "name": "Nombre",
     "new-spreadsheet": "Nueva hoja de cálculo",
     "new-version": "A new version is available!",
+    "next-step": "Próxima etapa",
     "no-self-links": "No se permite vincular un elemento consigo mismo. Seleccione otro elemento.",
     "not-found": "No se han encontrado resultados coincidentes.",
     "no-rors": "No ROR associated yet.",

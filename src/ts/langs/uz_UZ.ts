@@ -95,6 +95,7 @@ const t = {
     "name": "Ism",
     "new-spreadsheet": "New spreadsheet",
     "new-version": "A new version is available!",
+    "next-step": "Keyingi qadam",
     "no-self-links": "Elementni o'ziga bog'lashga ruxsat berilmaydi. Boshqa maqsadni tanlang.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",

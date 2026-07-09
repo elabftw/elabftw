@@ -95,6 +95,7 @@ const t = {
     "name": "Nama",
     "new-spreadsheet": "Spreadsheet baru",
     "new-version": "A new version is available!",
+    "next-step": "Langkah berikutnya",
     "no-self-links": "Tidak diperbolehkan menautkan item ke item itu sendiri. Silakan pilih target yang berbeda.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",

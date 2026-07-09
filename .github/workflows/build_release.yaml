@@ -136,6 +136,7 @@ jobs:
                   pypi.org
                   raw.githubusercontent.com
                   registry.yarnpkg.com
+                  registry-1.docker.io
                   repo.yarnpkg.com
                   registry.npmjs.org
                   security.ubuntu.com

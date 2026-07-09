@@ -200,10 +200,10 @@ const EntitiesTable = ({
     { field: 'id', headerName: i18next.t('id') },
     { field: 'custom_id', headerName: i18next.t('custom-id') },
     { field: 'fullname', headerName: i18next.t('owner') },
-    { field: 'timestamped', headerName: i18next.t('Is timestamped'), valueGetter: p => yesNo(p.data.timestamped), filterValueGetter: p => yesNo(p.data.timestamped), cellRenderer: BinaryRenderer },
-    { field: 'modified_at', headerName: i18next.t('Last modified at'), valueGetter: p => p.data.modified_at },
-    { field: 'locked', headerName: i18next.t('Is locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },
-    { field: 'rating', headerName: i18next.t('Rating'), cellRenderer: RatingsRenderer }
+    { field: 'timestamped', headerName: i18next.t('is-timestamped'), valueGetter: p => yesNo(p.data.timestamped), filterValueGetter: p => yesNo(p.data.timestamped), cellRenderer: BinaryRenderer },
+    { field: 'modified_at', headerName: i18next.t('last-modified-at'), valueGetter: p => p.data.modified_at },
+    { field: 'locked', headerName: i18next.t('is-locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },
+    { field: 'rating', headerName: i18next.t('rating'), cellRenderer: RatingsRenderer }
   ]);
 
   const getResolvedEntityFilterParams = useCallback(event => {

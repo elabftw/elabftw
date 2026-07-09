@@ -77,4 +77,18 @@ class AbstractCategoryTest extends \PHPUnit\Framework\TestCase
             'color' => '#29AEB9',
         ));
     }
+
+    public function testNormalUserCannotModifyIsPrivate(): void
+    {
+        $user = $this->getUserInTeam(1);
+        $Teams = new Teams($user, 1);
+        $Category = new ExperimentsCategories($Teams);
+
+        $this->expectException(IllegalActionException::class);
+
+        $Category->patch(Action::Update, array(
+            'title' => 'Secret category',
+            'is_private' => 0,
+        ));
+    }
 }

@@ -169,6 +169,7 @@ jobs:
               run: |
                 set -euo pipefail
 
+                base_delay=3
                 mapfile -t refs < <(find . -type f -exec basename {} \; | grep -E '^[a-f0-9]{64}$' | sed 's|^|elabftw/elabimg@sha256:|' | sort)
                 if [ "${#refs[@]}" -eq 0 ]; then
                   echo 'No image digests found.'
@@ -189,7 +190,7 @@ jobs:
                     exit 1
                   fi
 
-                  delay=$((attempt * attempt * 3))
+                  delay=$((attempt * attempt * base_delay))
                   echo "Retrying manifest creation in ${delay}s..."
                   sleep "$delay"
                 done

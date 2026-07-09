@@ -219,6 +219,16 @@ select:not([multiple]) {
     background-color: var(--darkred);
     border-color: var(--lightred);
   }
+
+  /* autocomplete */
+  .ui-autocomplete {
+    background: var(--mainbackground);
+  }
+
+  .ui-menu-item-wrapper {
+    color: var(--strongest);
+  }
+
 }
 
 .logo-dark { display: none; }

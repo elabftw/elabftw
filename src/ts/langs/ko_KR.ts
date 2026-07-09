@@ -95,6 +95,7 @@ const t = {
     "name": "이름",
     "new-spreadsheet": "New spreadsheet",
     "new-version": "A new version is available!",
+    "next-step": "다음 단계",
     "no-self-links": "항목 자체를 링크하는 것은 허용되지 않습니다. 다른 타겟을 선택하세요.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",

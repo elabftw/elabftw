@@ -95,6 +95,7 @@ const t = {
     "name": "Nimi",
     "new-spreadsheet": "Uus arvutustabel",
     "new-version": "A new version is available!",
+    "next-step": "Järgmine samm",
     "no-self-links": "Üksuse iseendaga linkimine pole lubatud. Palun valige mõni muu sihtmärk.",
     "not-found": "Sobivat tulemust ei leitud.",
     "no-rors": "No ROR associated yet.",

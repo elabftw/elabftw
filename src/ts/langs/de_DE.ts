@@ -95,6 +95,7 @@ const t = {
     "name": "Name",
     "new-spreadsheet": "Neue Tabelle",
     "new-version": "A new version is available!",
+    "next-step": "Nächster Schritt",
     "no-self-links": "Eine Ressource kann nicht mit sich selbst verknüpft werden. Bitte wählen Sie ein anderes Ziel.",
     "not-found": "Kein passendes Ergebnis gefunden.",
     "no-rors": "No ROR associated yet.",

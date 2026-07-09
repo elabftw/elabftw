@@ -95,6 +95,7 @@ const t = {
     "name": "姓名",
     "new-spreadsheet": "新電子表格",
     "new-version": "A new version is available!",
+    "next-step": "下一步",
     "no-self-links": "不允許將項目連結到自身。請選擇其他目標。",
     "not-found": "未找到匹配結果。",
     "no-rors": "No ROR associated yet.",

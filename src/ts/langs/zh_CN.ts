@@ -95,6 +95,7 @@ const t = {
     "name": "名称",
     "new-spreadsheet": "新建电子表格",
     "new-version": "A new version is available!",
+    "next-step": "下一步骤",
     "no-self-links": "不允许链接到资源自身。请选择不同的目标。",
     "not-found": "没有找到匹配的结果。",
     "no-rors": "No ROR associated yet.",

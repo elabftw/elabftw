@@ -204,7 +204,7 @@ const EntitiesTable = ({
     { field: 'modified_at', headerName: i18next.t('last-modified-at'), valueGetter: p => p.data.modified_at },
     { field: 'locked', headerName: i18next.t('is-locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },
     { field: 'rating', headerName: i18next.t('rating'), cellRenderer: RatingsRenderer },
-    { field: 'next_step', headerName: i18next.t('Next step'),  cellRenderer: ({ value }) => value ? value.split('|')[0] : null }
+    { field: 'next_step', headerName: i18next.t('next-step'),  cellRenderer: ({ value }) => value ? value.split('|')[0] : null }
   ]);
 
   const getResolvedEntityFilterParams = useCallback(event => {

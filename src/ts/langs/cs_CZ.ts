@@ -95,6 +95,7 @@ const t = {
     "name": "Jméno",
     "new-spreadsheet": "New spreadsheet",
     "new-version": "A new version is available!",
+    "next-step": "Další krok",
     "no-self-links": "Propojení položky se sebou samou není povoleno. Vyberte prosím jiný cíl.",
     "not-found": "No matching result found.",
     "no-rors": "No ROR associated yet.",

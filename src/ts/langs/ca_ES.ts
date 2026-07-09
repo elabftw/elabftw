@@ -95,6 +95,7 @@ const t = {
     "name": "Nom",
     "new-spreadsheet": "Nou full de càlcul",
     "new-version": "A new version is available!",
+    "next-step": "Pròxima etapa",
     "no-self-links": "No es permet enllaçar un element amb ell mateix. Seleccioneu un objectiu diferent.",
     "not-found": "No s'han trobat resultats coincidents.",
     "no-rors": "No ROR associated yet.",

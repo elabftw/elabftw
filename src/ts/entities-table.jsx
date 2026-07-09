@@ -162,11 +162,7 @@ const EntitiesTable = ({
   };
 
   const NextStepRenderer = ({ value }) =>
-    value && (
-      <p className='item-next my-2'>
-        <span className='text-uppercase'>{i18next.t('Next step')}:</span> {value.split('|')[0]}
-      </p>
-    );
+    value ? <>{value.split('|')[0]}</> : null;
 
   const TagsRenderer = ({ value }) => {
     const tags = Array.isArray(value) ? value : [];

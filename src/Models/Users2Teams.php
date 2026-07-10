@@ -143,21 +143,24 @@ final class Users2Teams
         return $Users->readOne();
     }
 
-    private function requesterCanModifyInTeamOrExplode(int $teamid): void
+    // Pass false for sensitive changes, such as is_admin, to exclude delegated user/team managers.
+    private function requesterCanModifyInTeamOrExplode(int $teamid, bool $allowUserTeamManager = true): void
     {
         $TeamsHelper = new TeamsHelper($teamid);
-        if (!(
-            $this->requester->isSysadmin()
-            || $this->requester->userData['can_manage_users2teams']
+        $isAllowed = $this->requester->isSysadmin()
             || $TeamsHelper->isAdminInTeam($this->requester->userData['userid'])
-        )) {
-            throw new IllegalActionException('User tried to modify a team where they are not admin');
+            || (
+                $allowUserTeamManager
+                && $this->requester->userData['can_manage_users2teams']
+            );
+        if (!$isAllowed) {
+            throw new IllegalActionException('User is not allowed to modify this team membership.');
         }
     }
 
     private function patchIsAdmin(int $userid, int $teamid, BinaryValue $isAdmin): int
     {
-        $this->requesterCanModifyInTeamOrExplode($teamid);
+        $this->requesterCanModifyInTeamOrExplode($teamid, allowUserTeamManager: false);
         $promoteToAdmin = $isAdmin->toBoolean() && !$this->wasAdminAlready($userid);
 
         $sql = 'UPDATE users2teams SET is_admin = :is_admin WHERE `users_id` = :userid AND `teams_id` = :team';

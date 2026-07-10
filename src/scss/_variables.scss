@@ -38,6 +38,8 @@
   --gold: #d4ae75;
   --darkgold: #594303;
 
+  --nav-active-color: #f2f2f2;
+
   /* Colors that stay the same in both modes (like navbar) */
   --chrome-bg: #2b2b2b;
   --chrome-fg: #fff;
@@ -78,6 +80,8 @@
 
   --lightgold: #594303;
   --darkgold: #ecdeab;
+
+  --nav-active-color: #6f7f91;
 }
 
 .dark-blue-mode {
@@ -112,6 +116,8 @@
   --lightgold: #3b2300;
   --gold: #d29922;
   --darkgold: #e3b341;
+
+  --nav-active-color: #73869b;
 }
 
 /* COLORS for specific cases like pdf export (var(--) does not apply) */

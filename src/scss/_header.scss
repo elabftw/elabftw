@@ -48,11 +48,11 @@
 
   /* selected nav entry */
   &.active {
-    background-image: linear-gradient(to top, $mainbackground 0%, $mainbackground 100%);
+    background-image: linear-gradient(to top, var(--nav-active-color) 0%, var(--nav-active-color) 100%);
     background-position: center bottom;
     background-repeat: no-repeat;
     background-size: 100% 6px;
-    border-color: $mainbackground !important;
+    border-color: var(--nav-active-color) !important;
   }
 
   i {

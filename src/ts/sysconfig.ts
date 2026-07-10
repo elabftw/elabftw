@@ -144,6 +144,7 @@ function renderEndpoints(endpoints: Endpoint[]): void {
 function checkForUpdate() {
   const updateUrl = 'https://get.elabftw.net/updates.json';
   const currentVersionDiv = document.getElementById('currentVersion');
+  if (!currentVersionDiv) return;
   const latestVersionDiv = document.getElementById('latestVersion');
   const currentVersion = currentVersionDiv.innerText;
   // Note: this doesn't work on Chrome

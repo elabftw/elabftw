@@ -18,6 +18,9 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function array_filter;
+use function array_values;
+
 class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
@@ -144,5 +147,40 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         ), $newUser));
         // remove user again
         (new Users($newUser, 1))->destroy();
+    }
+
+    public function testUserTeamManagerCannotPromoteSelfToAdmin(): void
+    {
+        // non-admin user from team 2
+        $manager = $this->getUserInTeam(team: 2, admin: 0);
+        $manager->userData['can_manage_users2teams'] = 1;
+
+        // add user to team 1 as a regular member so an is_admin row exists
+        $this->Users2Teams->addUserToTeams($manager->userid, array(1));
+
+        // perform update as the delegated user/team manager
+        $Users2Teams = new Users2Teams($manager);
+        try {
+            // attempt promoting requester to admin in team 1
+            $Users2Teams->patchUser2Team(array(
+                'team' => 1,
+                'target' => 'is_admin',
+                'content' => 1,
+            ), $manager->userid);
+
+            $this->fail('A user/team manager should not be able to promote themselves to team admin.');
+        } catch (IllegalActionException) {
+            // expected: can_manage_users2teams does not allow admin changes
+        }
+
+        // Reload the user's team memberships from db
+        $teams = new UsersHelper($manager->userid)->getTeamsFromUserid();
+        // select membership entry for team 1 (from teams array)
+        $team = array_values(array_filter(
+            $teams,
+            static fn(array $team): bool => $team['id'] === 1,
+        ))[0];
+
+        $this->assertSame(0, $team['is_admin']);
     }
 }

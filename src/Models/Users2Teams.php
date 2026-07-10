@@ -209,7 +209,7 @@ final class Users2Teams
         }
         $sql = 'UPDATE users2teams SET ' . $what->value . ' = :content WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $content, PDO::PARAM_INT);
+        $req->bindValue(':content', $content->value, PDO::PARAM_INT);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':team', $teamid, PDO::PARAM_INT);
 

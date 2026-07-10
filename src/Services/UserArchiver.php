@@ -20,6 +20,7 @@ use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
@@ -66,6 +67,9 @@ final class UserArchiver
             throw new UnprocessableContentException(_('A sysadmin account cannot be archived.'));
         }
         $this->target->invalidateToken();
+        // also remove any api key for that user in that team
+        $ApiKeys = new ApiKeys(new Users($this->target->getUserid(), $this->target->getTeam()));
+        $ApiKeys->destroyInTeam($this->target->getTeam());
         // if we are archiving a user, also lock all experiments (if asked)
         return $lockExp ? $this->lockAndArchiveExperiments() : true;
     }

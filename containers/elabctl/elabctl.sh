@@ -629,7 +629,7 @@ case "$1" in
     ;;
 esac
 
-# default settings that could be overriden by config
+# default settings that could be overridden by config
 
 declare ELAB_WEB_CONTAINER_NAME='elabftw'
 declare ELAB_MYSQL_CONTAINER_NAME='mysql'

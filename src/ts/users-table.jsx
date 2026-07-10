@@ -70,7 +70,13 @@ if (document.getElementById('users-table')) {
   const GridExample = () => {
     const [rowData, setRowData] = useState([]);
     const [gridApi, setGridApi] = useState(null);
-    const isDark = document.documentElement.classList.contains('dark-mode');
+    const rootClasses = document.documentElement.classList;
+    const isDark = rootClasses.contains('dark-mode');
+    const isDarkBlue = rootClasses.contains('dark-blue-mode');
+
+    const agGridTheme = isDarkBlue ? 'ag-theme-quartz-dark'
+      : isDark ? 'ag-theme-alpine-dark'
+        : 'ag-theme-alpine';
 
     const onGridReady = (params) => {
       setGridApi(params.api);
@@ -201,7 +207,7 @@ if (document.getElementById('users-table')) {
           aria-label={i18next.t('search')}
         />
         <div
-          className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
+          className={agGridTheme} style={{ height: 650 }}>
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}

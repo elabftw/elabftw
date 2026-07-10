@@ -210,7 +210,9 @@ export function getTinymceBaseConfig(page: string): object {
     removedMenuItems = 'newdocument, anchor';
   }
 
-  const isDark = document.documentElement.classList.contains('dark-mode');
+  const isDark =
+    document.documentElement.classList.contains('dark-mode') ||
+    document.documentElement.classList.contains('dark-blue-mode');
   const templateEndpoint = (entity.type === EntityType.Experiment || entity.type === EntityType.Template)
     ? EntityType.Template
     : EntityType.ItemType;

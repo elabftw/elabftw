@@ -156,6 +156,8 @@ jobs:
 
       - name: Create and push manifest list
         working-directory: /tmp/digests
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           set -euo pipefail
 
@@ -175,7 +177,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             if docker buildx imagetools create \
               -t elabftw/elabimg:edge \
-              -t elabftw/elabimg:${{ github.event.release.tag_name }} \
+              -t elabftw/elabimg:${RELEASE_TAG} \
               "${refs[@]}"; then
               break
             fi
@@ -192,8 +194,10 @@ jobs:
 
       - name: Resolve manifest digest
         id: manifest
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          digest=$(docker buildx imagetools inspect docker.io/elabftw/elabimg:${{ github.event.release.tag_name }} | awk '/^Digest:/ { print $2; exit }')
+          digest=$(docker buildx imagetools inspect "docker.io/elabftw/elabimg:${RELEASE_TAG}" | awk '/^Digest:/ { print $2; exit }')
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Sign Docker image with cosign

@@ -2334,7 +2334,7 @@ msgid ""
 "Calculate the %shourly%s cost of booked resources based on scheduling data, "
 "and export the results as a CSV file from the Scheduler page."
 msgstr ""
-"Calculez le coût %shourly% des ressources réservées à partir des données de "
+"Calculez le coût %shourly%s des ressources réservées à partir des données de "
 "planification, puis exportez les résultats sous forme de fichier CSV depuis "
 "la page « Planificateur »."
 

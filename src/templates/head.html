@@ -239,8 +239,6 @@
               <a class='dropdown-item' href='/profile.php?tab=3'><i class='fas fa-file-arrow-up fa-fw'></i> {{ 'Import'|trans }}</a>
               <a class='dropdown-item' href='/profile.php?tab=4'><i class='fas fa-file-arrow-down fa-fw'></i> {{ 'Export'|trans }}</a>
               <a class='dropdown-item' href='/ucp.php'><i class='fas fa-cogs fa-fw'></i> {{ 'Settings'|trans }}</a>
-              <button type='button' class='dropdown-item' data-action='toggle-dark-mode' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-circle-half-stroke fa-fw'></i> {{ 'Change theme'|trans }}
-              </button>
               {% if App.Users.isAdmin %}
                 <a class='dropdown-item' href='admin.php'><i class='fas fa-tools fa-fw'></i> {{ 'Admin panel'|trans }}</a>
               {% endif %}
@@ -249,6 +247,14 @@
               {% endif %}
 
             {% endif %}
+            <div class='dropdown-divider'></div>
+            <span class='dropdown-item small'>{{ 'Change theme'|trans }}</span>
+            {# LIGHT #TODO: make a SELECT with all options to allow scalability #}
+            <button type='button' class='dropdown-item' data-action='set-theme' data-theme-variant='1' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-sun fa-fw'></i>{{ 'Light'|trans }}</button>
+            {# DARK #}
+            <button type='button' class='dropdown-item' data-action='set-theme' data-theme-variant='2' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-moon fa-fw'></i>{{ 'Dark'|trans }}</button>
+            {# DARK BLUE #}
+            <button type='button' class='dropdown-item' data-action='set-theme' data-theme-variant='3' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-palette fa-fw'></i>{{ 'Dark blue'|trans }}</button>
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='#' data-action='logout'><i class='fas fa-sign-out-alt fa-fw'></i> {{ 'Logout'|trans }}</a>
           </div>

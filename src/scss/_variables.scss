@@ -43,6 +43,7 @@
   --chrome-fg: #fff;
   --chrome-muted: #9aa0a6;
   --disabled: #888;
+  --chrome-strongest: #0d1117;
 }
 
 .dark-mode {
@@ -77,6 +78,40 @@
 
   --lightgold: #594303;
   --darkgold: #ecdeab;
+}
+
+.dark-blue-mode {
+  --white: #212830;
+  --mainbackground: #151b23;
+  --highlighted: #1f6feb33;
+  --superlight: #21262d;
+  --firstlevel: #30363d;
+  --secondlevel: #8b949e;
+  --thirdlevel: #6e7681;
+  --medium: #c9d1d9;
+  --mediumstrong: #d0d7de;
+  --strongest: #f0f6fc;
+
+  --primary: #2f81f7;
+  --secondary: #8b949e;
+  --secondary-muted: #30363d;
+  --elabblue: #2f81f7;
+  --lightblue: #0d419d;
+  --darkblue: #79c0ff;
+
+  --darkred: #ffa198;
+  --lightred: #490202;
+  --dangerred: #ff7b72;
+
+  --green: #7ee787;
+  --lessbrightorange: #bb8009;
+  --brightorange: #d29922;
+  --orange: #f0883e;
+  --mediumyellow: #d29922;
+
+  --lightgold: #3b2300;
+  --gold: #d29922;
+  --darkgold: #e3b341;
 }
 
 /* COLORS for specific cases like pdf export (var(--) does not apply) */

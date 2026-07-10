@@ -3,10 +3,12 @@
 This page exists to have a single page holding all buttons, links and notifications so it's easier to work on the CSS.
 
 <div class='my-3'>
-<button type='button' class='btn btn-primary' data-action='toggle-dark-mode' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-circle-half-stroke fa-fw'></i> {{ 'Change theme'|trans }}
-</button>
+  <div class='btn-group' role='group' aria-label='{{ 'Theme'|trans }}'>
+    <button type='button' class='btn btn-secondary' data-action='set-theme' data-theme-variant='1' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-sun fa-fw'></i>{{ 'Light'|trans }}</button>
+    <button type='button' class='btn btn-secondary' data-action='set-theme' data-theme-variant='2' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-moon fa-fw'></i>{{ 'Dark'|trans }}</button>
+    <button type='button' class='btn btn-secondary' data-action='set-theme' data-theme-variant='3' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-palette fa-fw'></i>{{ 'Dark blue'|trans }}</button>
+  </div>
 </div>
-
 <p>This is normal text. <a href='#' class='external-link'>And this is an external link</a>.</p>
 
 <div class='my-3'>

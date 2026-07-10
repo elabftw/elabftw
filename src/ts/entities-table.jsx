@@ -21,6 +21,7 @@ import {
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { get } from 'svelte/store';
 import { createRoot } from 'react-dom/client';
@@ -126,7 +127,15 @@ const EntitiesTable = ({
 }) => {
   const [rowData, setRowData] = useState([]);
   const gridApiRef = useRef(null);
-  const isDark = document.documentElement.classList.contains('dark-mode');
+  // const isDark = document.documentElement.classList.contains('dark-mode');
+  const rootClasses = document.documentElement.classList;
+
+  const isDark = rootClasses.contains('dark-mode');
+  const isDarkBlue = rootClasses.contains('dark-blue-mode');
+
+  const agGridTheme = isDarkBlue ? 'ag-theme-quartz-dark'
+    : isDark ? 'ag-theme-alpine-dark'
+      : 'ag-theme-alpine';
 
   const onGridReady = (params) => {
     gridApiRef.current = params.api;
@@ -305,7 +314,7 @@ const EntitiesTable = ({
   return (
     <>
       <div
-        className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
+        className={agGridTheme} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}

@@ -22,7 +22,7 @@ declare UPLOAD_DIR="${DATA_DIR}/web"
 declare ELABCTL_CONF_FILE="using default values (no config file found)"
 
 # use the new compose command
-declare DC="docker compose"
+declare -a DC=(docker compose)
 
 function access-logs
 {
@@ -120,7 +120,7 @@ function get-user-conf
     if [ -f elabctl.conf ]; then
         mv -v elabctl.conf elabctl.conf.old
     fi
-    curl -Ls https://github.com/elabftw/elabctl/raw/master/elabctl.conf -o elabctl.conf
+    curl -Ls https://github.com/elabftw/elabftw/raw/master/containers/elabctl/elabctl.conf -o elabctl.conf
     echo "Downloaded elabctl.conf."
     echo "Edit it and move it in ~/.config or /etc."
     echo "Or leave it there and always use elabctl from this directory."
@@ -457,7 +457,7 @@ function self-update
     TMP_DIR=$(mktemp -d)
     tmp_filepath="${TMP_DIR}/elabctl"
     echo "Downloading new version to $tmp_filepath"
-    curl -sL https://raw.githubusercontent.com/elabftw/elabctl/master/elabctl.sh -o "$tmp_filepath"
+    curl -sL https://raw.githubusercontent.com/elabftw/elabftw/master/containers/elabctl/elabctl.sh -o "$tmp_filepath"
     chmod -v +x "$tmp_filepath"
     mv -v "$tmp_filepath" "$me"
     rmdir -v ${TMP_DIR}
@@ -466,19 +466,19 @@ function self-update
 function start
 {
     is-installed
-    eval "$DC" -f "$CONF_FILE" up -d
+    "${DC[@]}" -f "$CONF_FILE" up -d
 }
 
 function status
 {
     is-installed
-    eval "$DC" -f "$CONF_FILE" ps
+    "${DC[@]}" -f "$CONF_FILE" ps
 }
 
 function stop
 {
     is-installed
-    eval "$DC" -f "$CONF_FILE" down
+    "${DC[@]}" -f "$CONF_FILE" down
 }
 
 function uninstall
@@ -553,7 +553,7 @@ function update
         backup
         echo "Backup done, now updating."
     fi
-    eval "$DC" -f "$CONF_FILE" pull
+    "${DC[@]}" -f "$CONF_FILE" pull
     refresh
 
     echo "Do you want to update the MySQL database schema? (recommended) (y/N)"
@@ -665,6 +665,8 @@ if [ "${UPLOAD_DIR:0:1}" != "/" ]; then
     echo "Edit elabctl.conf and add a full path to the directory."
     exit 1
 fi
+
+UPLOAD_DIR="${UPLOAD_DIR:-${DATA_DIR}/web}"
 
 # available commands
 declare -A commands

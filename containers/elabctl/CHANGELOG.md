@@ -6,7 +6,7 @@
 
 ## Version 5.0.3
 
-* Properly address #37 by only creating a tmp dir during install or sef-update
+* Properly address #37 by only creating a tmp dir during install or self-update
 
 ## Version 5.0.2
 
@@ -18,7 +18,7 @@
 
 ## Version 5.0.0
 
-The major version bump is simply to align with the rest of the elabftw related repositories, it has no other meaning.
+The major version bump is simply to align with the rest of the eLabFTW-related repositories, it has no other meaning.
 
 * Actually check for healthy state of MySQL container rather than wait 15 seconds before running db update. See elabftw/elabftw#4948.
 
@@ -83,7 +83,7 @@ The major version bump is simply to align with the rest of the elabftw related r
 ## Version 2.4.0
 
 * Add convenience function `initialize` to import the database structure
-* Populate SITE_URL in elabftw.yml form user input
+* Populate `SITE_URL` in elabftw.yml from user input
 * Use container names from elabctl.conf in elabftw.yml
 * `uninstall` also removes mysql:8.0
 
@@ -109,7 +109,7 @@ The major version bump is simply to align with the rest of the elabftw related r
 * Add a warning with a choice to continue update if the latest version is a beta version
 
 ## Version 2.2.4
-* Fix ENABLE_LETSENCRYPT being incorrectly set to true for self signed certs (#20)
+* Fix ENABLE_LETSENCRYPT being incorrectly set to true for self-signed certs (#20)
 * Drop "no domain name" support
 
 ## Version 2.2.3

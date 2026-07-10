@@ -165,7 +165,7 @@ a,
   text-decoration: none;
 
   &:hover {
-    color: color-mix(in srgb, var(--primary) 85%, $white);
+    color: var(--link-hover);
     text-decoration: underline;
   }
 }

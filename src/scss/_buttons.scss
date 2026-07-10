@@ -24,6 +24,8 @@
   .far,
   .fa { color: var(--chrome-fg); }
 
+  //background: var(--primary);
+  //border: var(--primary);
   &:hover {
     background-color: var(--mainbackground);
     border-color: var(--primary);

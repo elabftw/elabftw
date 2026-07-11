@@ -319,18 +319,21 @@ final class StorageUnits extends AbstractRest
     {
         $parent = null;
         $id = 0;
+
         foreach ($locations as $location) {
             $unitName = trim($location);
             if (empty($unitName)) {
                 continue;
             }
-            $res = $this->searchStorage($unitName);
+
+            $res = $this->searchStorage($unitName, $parent);
             if ($res) {
                 $id = $parent = $res['id'];
             } else {
                 $id = $parent = $this->create($unitName, $parent);
             }
         }
+
         return $id;
     }
 
@@ -568,12 +571,23 @@ final class StorageUnits extends AbstractRest
         return (bool) $req->fetchColumn();
     }
 
-    private function searchStorage(string $unitName): array|false
+    private function searchStorage(string $unitName, ?int $parentId): array|false
     {
-        $sql = 'SELECT id, parent_id FROM storage_units WHERE name = :name';
+        if ($parentId === null) {
+            $sql = 'SELECT id, parent_id FROM storage_units WHERE name = :name AND parent_id IS NULL';
+        } else {
+            $sql = 'SELECT id, parent_id FROM storage_units WHERE name = :name AND parent_id = :parent_id';
+        }
+
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $unitName);
+
+        if ($parentId !== null) {
+            $req->bindValue(':parent_id', $parentId, PDO::PARAM_INT);
+        }
+
         $this->Db->execute($req);
+
         try {
             return $this->Db->fetch($req);
         } catch (ResourceNotFoundException) {

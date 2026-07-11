@@ -11,6 +11,7 @@
   import { ApiC } from '../api';
   import i18next from '../i18n';
   import { State, type StateValue } from '../state.auto';
+  import { relativeMoment } from "../misc";
 
   // this is only used in the template, so it is stripped by svelte during compilation
   // copy it so it stays available
@@ -257,6 +258,14 @@
       currentReloadVersion,
     ]);
   }
+
+  $effect(() => {
+    entities;
+    void tick().then(() => {
+      document.querySelectorAll('.relative-moment').forEach(el => el.textContent = '');
+      relativeMoment();
+    });
+  });
 
   $effect(() => {
     urlVersion;

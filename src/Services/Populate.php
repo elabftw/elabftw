@@ -108,7 +108,8 @@ final class Populate
         foreach ($this->yaml['teams'] as $team) {
             $teamid = $Teams->create($team['name']);
             $this->output->writeln(sprintf('├ + team: %s (ID: %d)', $team['name'], $teamid));
-            $Teams->setId($teamid);
+            // init a new object so we populate teamArr
+            $Teams = new Teams($Users, $teamid);
 
             $columns = array(
                 'visible',

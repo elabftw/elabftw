@@ -69,7 +69,7 @@ components:
           value: experiments
 
     Category:
-      name: cat
+      name: category
       in: query
       schema:
         type: string

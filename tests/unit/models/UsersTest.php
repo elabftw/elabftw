@@ -280,12 +280,17 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         // tata in bravo
         $Admin = $this->getUserInTeam(team: 2, admin: 1);
         $user2 = $this->getUserInTeam(team: 2);
+        // create an api key
+        $ApiKeys = new ApiKeys($user2);
+        $ApiKeys->create('yep', 1);
         $Users2Teams = new Users2Teams($Admin);
         $this->assertEquals(1, $Users2Teams->patchUser2Team(array(
             'target' => Users2TeamsTargets::IsArchived->value,
             'content' => '1',
             'team' => '2',
         ), $user2->userid));
+        // make sure keys have been deleted after archival
+        $this->assertCount(0, $ApiKeys->readAll());
     }
 
     public function testCreateUser(): void

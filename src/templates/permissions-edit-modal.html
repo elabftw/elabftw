@@ -78,7 +78,7 @@
           <p class='smallgray'>{{ 'Selecting a team here will give access to all members of this team.'|trans }}</p>
           <div class='ts-wrapper'>
             {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
-            <select id='{{ identifierTeams }}' multiple class='form-control' autocomplete='off' aria-label='{{ 'Search for user team'|trans }}'>
+            <select id='{{ identifierTeams }}' multiple class='form-control' autocomplete='off' aria-label='{{ 'Search for user team'|trans }}' data-tom-select='1'>
               {% for team in teamsArr %}
                 <option value='team:{{ team.id }}' {{ permissionsJson|isInJsonArray('teams', team.id) ? ' selected' }}>
                   {{ 'Team'|trans }} - {{ team.name }}
@@ -99,7 +99,7 @@
           <p class='smallgray'>{{ 'Selecting a user group here will give access to all users of this group.'|trans }}</p>
           <div class='ts-wrapper'>
             {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
-            <select id='{{ identifierTeamGroups }}' multiple class='form-control' autocomplete='off' {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} aria-label='{{ 'Search for user group'|trans }}'>
+            <select id='{{ identifierTeamGroups }}' multiple class='form-control' autocomplete='off' {{ scopedTeamgroupsArr|length == 0 ? 'disabled' }} aria-label='{{ 'Search for user group'|trans }}' data-tom-select='1'>
               {% for tg in scopedTeamgroupsArr %}
                 <option value='teamgroup:{{ tg.id }}'
                 {{ permissionsJson|isInJsonArray('teamgroups', tg.id) == ('teamgroup:' ~ tg.id) ? ' selected' }}>{{ tg.team_name }} - {{ tg.name }}</option>
@@ -112,7 +112,7 @@
           <p class='smallgray'>{{ 'You can select specific users to give access to.'|trans }}</p>
           <div class='ts-wrapper'>
             {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
-            <select id='{{ identifier }}_select_users' multiple class='form-control' autocomplete='off' aria-label='{{ 'Search for users'|trans }}'>
+            <select id='{{ identifier }}_select_users' multiple class='form-control' autocomplete='off' aria-label='{{ 'Search for users'|trans }}' data-tom-select='1'>
               {% set humanCan = permissionsJson|canToHuman %}
               {% for user in humanCan.users %}
                 <option value='user:{{ user.userid }}' selected>
@@ -143,7 +143,7 @@
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
         {% if not ucpPage and (rw == 'canread' or rw == 'canwrite') %}
-          <button type='button' class='btn btn-outline-primary' data-dismiss='modal' data-identifier='{{ identifier }}' data-action='save-permissions-both'>{{ 'Apply to Read & Write'|trans }}</button>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal' data-identifier='{{ identifier }}' data-action='save-permissions-both'>{{ 'Apply to Read & Write'|trans }}</button>
         {% endif %}
         <button type='button' class='btn btn-primary' data-dismiss='modal' data-identifier='{{ identifier }}' data-rw='{{ rw }}' {{ ucpPage ? 'data-is-user-default="1"' }} data-action='save-permissions'>{{ 'Save'|trans }}</button>
       </div>

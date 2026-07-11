@@ -266,8 +266,8 @@ ARG BUILD_ALL=1
 ENV CYPRESS_INSTALL_BINARY=0
 # avoid download prompt
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-ENV COREPACK_HOME=/run/elabftw/.cache/node/corepack
-RUN mkdir -p /run/elabftw/.cache/node/corepack
+ENV COREPACK_HOME=/run/elabftw/cache/node/corepack
+RUN mkdir -p /run/elabftw/cache/node/corepack
 
 # this is necessary for yarn install in dev mode, as /tmp is not writable
 ENV TMPDIR=/run/elabftw/tmp

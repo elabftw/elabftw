@@ -31,18 +31,18 @@ commands:
           command: |
             docker exec elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
 
-  fix_permissions:
-    description: Fix the permissions after populating database
-    steps:
-      - run:
-          name: Fix permissions
-          command: |
-            docker exec elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-            docker exec elabtmp chown -R nginx:nginx cache
-            docker exec elabtmp chmod -R 777 cache
-            docker exec elabtmp chmod -R 777 tests/_output
-            docker exec elabtmp chown -R nginx:nginx uploads
-            docker exec elabtmp chmod -R 777 uploads
+#  fix_permissions:
+#    description: Fix the permissions after populating database
+#    steps:
+#      - run:
+#          name: Fix permissions
+#          command: |
+#            docker exec elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
+#            docker exec elabtmp chown -R nginx:nginx cache
+#            docker exec elabtmp chmod -R 777 cache
+#            docker exec elabtmp chmod -R 777 tests/_output
+#            docker exec elabtmp chown -R nginx:nginx uploads
+#            docker exec elabtmp chmod -R 777 uploads
 
   build_elabtmp:
     steps:

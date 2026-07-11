@@ -1056,8 +1056,8 @@ export function showModal(modalSelector: string) {
 }
 
 export function showModalAndFocusFirstInput(modalSelector: string) {
-  showModal(modalSelector);
   focusFirstTextInputOnShown(modalSelector);
+  showModal(modalSelector);
 }
 
 on('update-entity-body', async (el: HTMLElement) => {

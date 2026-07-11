@@ -49,7 +49,7 @@ commands:
       - run:
           name: Build elabtmp image
           command: |
-            docker build -t elabftw/elabimg:ci --build-arg BUILD_ALL=0 -f containers/elabimg/Dockerfile .
+            docker build -t elabftw/elabimg:ci --build-arg CI=1 -f containers/elabimg/Dockerfile .
             docker build -t elabtmp -f containers/elabtmp/Dockerfile .
             docker build -t elabtmp -f containers/circleci/Dockerfile .
 
@@ -79,16 +79,6 @@ commands:
           name: Start cypress container
           command: docker compose -f containers/cypress/docker-compose.yml up -d
 
-  install_js_php_dependencies:
-    steps:
-      - run:
-          name: Build JS
-          command: |
-            docker exec elabtmp yarn install
-            docker exec elabtmp yarn buildall:ci
-      - run:
-          name: Composer install
-          command: docker exec elabtmp composer install
 jobs:
   prepare_workspace:
     executor: elab-executor
@@ -119,7 +109,6 @@ jobs:
           at: .
       - build_elabtmp
       - start_elabtmp
-      - install_js_php_dependencies
       - run:
           name: Run SCSS linter
           command: |
@@ -170,7 +159,6 @@ jobs:
       - build_elabtmp
       - start_elabtmp
       - start_mysql
-      - install_js_php_dependencies
       - populate_db
       #- fix_permissions
       - run:
@@ -213,7 +201,6 @@ jobs:
       - start_elabtmp
       - start_mysql
       - start_cypress
-      - install_js_php_dependencies
       - populate_db
       #- fix_permissions
       - run:

@@ -1042,18 +1042,22 @@ function focusFirstTextInputOnShown(modalSelector: string) {
 
 function ensureModalIsContainerChild(modal: HTMLElement): void {
   // we do that to avoid issues with sticky navbar/z-index
-  if (modal.parentElement !== document.body) {
+  if (modal.parentElement !== container) {
     container.appendChild(modal);
   }
 }
 
-export function showModalAndFocusFirstInput(modalSelector: string) {
+export function showModal(modalSelector: string) {
   const modal = document.querySelector<HTMLElement>(modalSelector);
   if (!modal) return;
 
   ensureModalIsContainerChild(modal);
-  focusFirstTextInputOnShown(modalSelector);
   $(modal).modal('show');
+}
+
+export function showModalAndFocusFirstInput(modalSelector: string) {
+  showModal(modalSelector);
+  focusFirstTextInputOnShown(modalSelector);
 }
 
 on('update-entity-body', async (el: HTMLElement) => {

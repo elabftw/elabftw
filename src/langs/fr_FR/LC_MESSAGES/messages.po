@@ -3109,7 +3109,7 @@ msgstr "Auteur"
 
 #: src/templates/export-menu-dspace-modal.html:26
 msgid "Date of Issue"
-msgstr "Date de’émission"
+msgstr "Date d’émission"
 
 #: src/templates/export-menu-dspace-modal.html:30
 msgid "Type"

@@ -172,7 +172,7 @@ jobs:
       - start_mysql
       - install_js_php_dependencies
       - populate_db
-      - fix_permissions
+      #- fix_permissions
       - run:
           name: Run unit and apiv2 tests
           command: docker exec elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
@@ -215,7 +215,7 @@ jobs:
       - start_cypress
       - install_js_php_dependencies
       - populate_db
-      - fix_permissions
+      #- fix_permissions
       - run:
           name: Create folders
           command: mkdir -p cypress/{screenshots,videos}

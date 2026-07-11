@@ -4,7 +4,8 @@ networks:
 services:
   web:
     image: elabtmp
-    user: 1000:1000
+    # circleci runs as id 1001 and gid 1002
+    user: 1001:1002
     build:
       context: ../..
       dockerfile: ./containers/circleci/Dockerfile
@@ -41,5 +42,5 @@ services:
       timeout: 5s
       retries: 3
     tmpfs:
-      - /elabftw/cache:uid=1000,gid=1000
-      - /var/cache/nginx:mode=755,uid=1000,gid=1000,exec,nosuid,nodev
+      - /elabftw/cache:uid=1001,gid=1002
+      - /var/cache/nginx:mode=755,uid=1001,gid=1002,exec,nosuid,nodev

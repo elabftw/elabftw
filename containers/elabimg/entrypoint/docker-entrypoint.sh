@@ -198,7 +198,7 @@ nginxConf() {
     # DEV MODE
     # we don't want to serve brotli/gzip compressed assets in dev (or we would need to recompress them after every change!)
     if ($dev_mode); then
-        rm -f /etc/nginx/conf.d/brotli.conf /etc/nginx/conf.d/gzip.conf
+        rm -f /run/nginx/conf.d/brotli.conf /run/nginx/conf.d/gzip.conf
         # to allow webpack in watch/dev mode we need to allow unsafe-eval for script-src
         unsafe_eval="'unsafe-eval'"
         # fix git complaining: fatal: detected dubious ownership in repository at '/elabftw'

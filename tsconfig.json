@@ -10,7 +10,9 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "lib": ["es2022", "es2022.intl", "dom"]
+    "lib": ["es2022", "es2022.intl", "dom"],
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true
   },
   "include": [
     "src/**/*.ts",

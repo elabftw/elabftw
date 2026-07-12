@@ -90,13 +90,14 @@ copyConf() {
 
 # fullchain.pem and privkey.pem should be in a volume linked to /ssl
 generateCert() {
-    mkdir -pv /run/elabftw/nginx/certs
-    if [ ! -f /run/elabftw/nginx/certs/server.crt ]; then
+    cert_dir="/run/nginx/certs"
+    mkdir -pv "$cert_dir"
 
-        # here we generate a random CN because of this bug:
-        # https://bugzilla.redhat.com/show_bug.cgi?id=1204670
-        # https://bugzilla.mozilla.org/show_bug.cgi?id=1056341
-        # this way there is no more hangs
+    # here we generate a random CN because of this bug:
+    # https://bugzilla.redhat.com/show_bug.cgi?id=1204670
+    # https://bugzilla.mozilla.org/show_bug.cgi?id=1056341
+    # this way there is no more hangs
+    if [ ! -f "$cert_dir/server.crt" ]; then
         randcn=$(openssl rand -hex 6)
         openssl req \
             -new \
@@ -105,8 +106,8 @@ generateCert() {
             -nodes \
             -x509 \
             -subj "/C=FR/ST=France/L=Paris/O=elabftw/CN=$randcn" \
-            -keyout /run/elabftw/nginx/certs/server.key \
-            -out /run/elabftw/nginx/certs/server.crt
+            -keyout "$cert_dir/server.key" \
+            -out "$cert_dir/server.crt"
     fi
 }
 
@@ -127,20 +128,19 @@ nginxConf() {
 
     # HTTPS
     else
-        mkdir -p /etc/nginx/certs
         # generate a selfsigned certificate if we don't use Let's Encrypt
         if (! $enable_letsencrypt); then
             generateCert
         fi
-        # activate an HTTPS server listening on port 443
+        # activate an HTTPS server listening on port 8080
         cp -v /etc/nginx/https.conf /run/nginx/conf.d/server.conf
         if ($enable_letsencrypt); then
             mkdir -p /ssl
             sed -i -e "s:%CERT_PATH%:/ssl/live/${server_name}/fullchain.pem:" $server_conf
             sed -i -e "s:%KEY_PATH%:/ssl/live/${server_name}/privkey.pem:" $server_conf
         else
-            sed -i -e "s:%CERT_PATH%:/run/elabftw/nginx/certs/server.crt:" $server_conf
-            sed -i -e "s:%KEY_PATH%:/run/elabftw/nginx/certs/server.key:" $server_conf
+            sed -i -e "s:%CERT_PATH%:/run/nginx/certs/server.crt:" $server_conf
+            sed -i -e "s:%KEY_PATH%:/run/nginx/certs/server.key:" $server_conf
         fi
     fi
     # set the server name in nginx config

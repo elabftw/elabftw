@@ -23,6 +23,9 @@ func main() {
 	log.Println("starting invoker...")
 	// this var lets us authenticate that messages come from the php app
 	psk := os.Getenv("INVOKER_PSK")
+	if psk == "" {
+		log.Fatal("INVOKER_PSK is not set")
+	}
 	socketPath := "/run/elabftw/invoker.sock"
 
 	// Remove the socket if it already exists

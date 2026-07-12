@@ -60,8 +60,10 @@ services:
     # we need a mutable folder to hold configuration (which is modified at runtime), and things like pid files
     # here we use uid/gid 1000, replace with the real userid and groupid of your user running the service
     # use the command: "id elabftw-worker" to get that information
+    # example:
+    # - /run:mode=755,uid=1002,gid=1002,exec,nosuid,nodev
     tmpfs:
-      - /run:mode=755,uid=1000,gid=1000,exec,nosuid,nodev
+      - /run:mode=755,uid=<REPLACE WITH ELABFTW-WORKER UID>,gid=<REPLACE WITH ELABFTW-WORKER GID>,exec,nosuid,nodev
 
     # restrict capabilities of the root user to the strict minimum
     # see CIS Docker Benchmark v1.5 5.3
@@ -345,7 +347,7 @@ services:
         # for Windows users it might look like this
         # - D:\Users\Nico\elab-data\web:/elabftw/uploads
         # host:container
-        - /var/elabftw/web:/elabftw/uploads
+        - /var/elabftw/web:/var/lib/elabftw/uploads
         #
         # TLS configuration
         #
@@ -369,7 +371,7 @@ services:
         # of the container. Useful if you have several containers or expect
         # many users to export data and don't want your containers to grow too
         # much or be stateful.
-        #- /path/to/big_partition:/elabftw/exports
+        #- /path/to/big_partition:/var/lib/elabftw/exports
 
     # This part is just an example for having a custom DNS entry in /etc/hosts of the container
     # Use it if DNS resolution cannot work for some reason

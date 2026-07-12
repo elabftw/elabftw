@@ -136,8 +136,6 @@ LABEL net.elabftw.name="elabftw" \
     net.elabftw.vcs-url="https://github.com/elabftw/elabftw" \
     net.elabftw.elabftw-version=$ELABFTW_VERSION
 
-RUN addgroup -S -g 3148 elabftw && adduser -D -S -G elabftw -u 3148 elabftw && addgroup elabftw root
-
 # NGINX
 # copy our nginx from the build image
 COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx

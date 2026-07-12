@@ -247,6 +247,9 @@ phpfpmConf() {
     INVOKER_PSK=$(openssl rand -base64 42)
     # allow php to read it. use | separator as / is in base64
     sed -i -e "s|^env\[INVOKER_PSK\] = .*|env[INVOKER_PSK] = ${INVOKER_PSK}|" $f
+    # expose it to services started through with-contenv
+    printf '%s' "$INVOKER_PSK" > /run/s6/container_environment/INVOKER_PSK
+    chmod 600 /run/s6/container_environment/INVOKER_PSK
     # increase max number of simultaneous requests
     sed -i -e "s/%PHP_MAX_CHILDREN%/${php_max_children}/" $f
     # allow using more memory for php-fpm

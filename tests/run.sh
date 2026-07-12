@@ -35,10 +35,6 @@ if [ "${SKIP_TWIGCS:-0}" -ne 1 ]; then
     echo "▶ Running twigcs. Use SKIP_TWIGCS=1 to disable."
     docker exec -it elabtmp yarn twigcs
 fi
-# fix permissions on cache folders
-#docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-#worker_user=$(docker exec -it elabtmp tail -n1 /etc/shadow |awk -F ":" '{print $1}')
-#docker exec -it elabtmp chown -R "$worker_user":"$worker_user" cache
 
 # populate the database
 if [ "${SKIP_POPULATE:-0}" -ne 1 ]; then

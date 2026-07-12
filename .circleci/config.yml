@@ -205,20 +205,20 @@ jobs:
           command: mkdir -p cypress/{screenshots,videos}
 
       - run:
-        name: Run Cypress on << parameters.browser >>
-        command: |
-          SPECS=$(
-            find tests/cypress/integration -type f \
-              \( -name '*.cy.js' -o -name '*.cy.jsx' -o -name '*.cy.ts' -o -name '*.cy.tsx' \) \
-              | sort \
-              | circleci tests split --split-by=name \
-              | paste -sd, -
-          )
+          name: Run Cypress on << parameters.browser >>
+          command: |
+            SPECS=$(
+              find tests/cypress/integration -type f \
+                \( -name '*.cy.js' -o -name '*.cy.jsx' -o -name '*.cy.ts' -o -name '*.cy.tsx' \) \
+                | sort \
+                | circleci tests split --split-by=name \
+                | paste -sd, -
+            )
 
-          docker exec elab-cypress cypress run \
-            --browser << parameters.browser >> \
-            --spec "$SPECS" \
-            --config baseUrl=https://elabtmp:8080
+            docker exec elab-cypress cypress run \
+              --browser << parameters.browser >> \
+              --spec "$SPECS" \
+              --config baseUrl=https://elabtmp:8080
       - run:
           name: Extract cypress screenshots and videos in case it is enabled again to debug a faulty run
           command: |

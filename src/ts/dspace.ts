@@ -19,7 +19,8 @@ import { on } from './handlers';
 import $ from 'jquery';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Metadata } from './Metadata.class';
-import { ExtraFieldInputType, ValidMetadata } from './metadataInterfaces';
+import { ExtraFieldInputType } from './metadataInterfaces';
+import type { ValidMetadata } from './metadataInterfaces';
 import { showModal } from './common';
 
 async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> {

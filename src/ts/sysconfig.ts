@@ -6,7 +6,8 @@
  * @package elabftw
  */
 import { clearForm, collectForm, reloadElements, toggleIcon } from './misc';
-import { Action, BinaryValue, Model } from './interfaces';
+import { Action, Model } from './interfaces';
+import type { BinaryValue } from './interfaces';
 import i18next from './i18n';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';

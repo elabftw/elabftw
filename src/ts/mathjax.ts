@@ -32,7 +32,7 @@ Loader.preLoad(
   'a11y/assistive-mml',
 );
 
-import { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 
 // Now insert the config

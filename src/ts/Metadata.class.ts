@@ -7,9 +7,11 @@
  */
 import i18next from './i18n';
 import { ApiC } from './api';
-import { Action, Entity, EntityType } from './interfaces';
+import { Action, EntityType } from './interfaces';
+import type { Entity } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { ExtraFieldInputType, ExtraFieldProperties, ExtraFieldsGroup, ValidMetadata } from './metadataInterfaces';
+import { ExtraFieldInputType } from './metadataInterfaces';
+import type { ExtraFieldProperties, ExtraFieldsGroup, ValidMetadata } from './metadataInterfaces';
 import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
 import { notify } from './notify';
 

@@ -10,9 +10,10 @@ import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from './i18n';
 import { askFileName, ensureTogglableSectionIsOpen, reloadElements } from './misc';
-import { Action, Entity, FileType, Model } from './interfaces';
+import { Action, FileType, Model } from './interfaces';
+import type { Entity } from './interfaces';
 import { ApiC } from './api';
-import { ValidMetadata } from './metadataInterfaces';
+import type { ValidMetadata } from './metadataInterfaces';
 import { notify } from './notify';
 
 // This class is named helper because the jsoneditor lib already exports JSONEditor

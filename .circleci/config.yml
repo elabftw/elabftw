@@ -71,7 +71,7 @@ commands:
     steps:
       - run:
           name: Start mysql container
-          command: docker compose -f containers/mysqltmp/docker-compose.yml up -d
+          command: docker compose -f containers/mysqltmp/docker-compose.yml up -d --wait --wait-timeout 120
 
   start_cypress:
     steps:

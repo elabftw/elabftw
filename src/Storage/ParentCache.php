@@ -12,14 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Storage;
 
-use League\Flysystem\FilesystemAdapter;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use Override;
-
 /**
  * The cache folder parent of all caches
  */
-final class ParentCache extends AbstractStorage
+class ParentCache extends AbstractStorage
 {
     protected const string FOLDER = '/run/elabftw/cache';
 
@@ -32,11 +28,5 @@ final class ParentCache extends AbstractStorage
             $fs->deleteDirectory($dir);
         }
         return true;
-    }
-
-    #[Override]
-    protected function getAdapter(): FilesystemAdapter
-    {
-        return new LocalFilesystemAdapter(static::FOLDER);
     }
 }

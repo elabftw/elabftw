@@ -42,5 +42,5 @@ services:
       timeout: 5s
       retries: 3
     tmpfs:
-      - /elabftw/cache:uid=1001,gid=1002
+      - /run/elabftw/cache:mode=1770,uid=1001,gid=1002
       - /var/cache/nginx:mode=755,uid=1001,gid=1002,exec,nosuid,nodev

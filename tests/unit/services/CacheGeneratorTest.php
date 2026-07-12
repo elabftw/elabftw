@@ -11,14 +11,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use function dirname;
-
 class CacheGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     public function testGenerate(): void
     {
         $CacheGenerator = new CacheGenerator();
         $CacheGenerator->generate();
-        $this->assertDirectoryExists(dirname(__DIR__, 3) . '/cache/twig');
+        $this->assertDirectoryExists('/run/elabftw/cache/twig');
     }
 }

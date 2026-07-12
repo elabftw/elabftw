@@ -469,7 +469,7 @@ final class Uploads extends AbstractRest
     private function makeCreateUploadParam(array $upload): CreateUploadParamsInterface
     {
         if ($upload['storage'] === Storage::LOCAL->value) {
-            $prefix = '/elabftw/uploads/';
+            $prefix = Storage::LOCAL->getStorage()->getPath() . '/';
             return new CreateUpload(
                 realName: $upload['real_name'],
                 filePath: $prefix . $upload['long_name'],

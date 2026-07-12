@@ -45,3 +45,5 @@ services:
     tmpfs:
       - /run:mode=755,uid=1000,gid=1000,exec,nosuid,nodev
       - /var/cache/nginx:mode=755,uid=1000,gid=1000,exec,nosuid,nodev
+      - /var/lib/elabftw/exports:mode=755,uid=1000,gid=1000,noexec,nosuid,nodev
+      - /var/lib/elabftw/uploads:mode=755,uid=1000,gid=1000,noexec,nosuid,nodev

@@ -15,8 +15,12 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\StorageAttributes;
+use RuntimeException;
 
 use function dirname;
+use function is_dir;
+use function mkdir;
+use function sprintf;
 
 /**
  * Generate Twig cache
@@ -31,6 +35,17 @@ final class CacheGenerator
      */
     public function generate(): void
     {
+        if (
+            !is_dir(self::TWIG_CACHE_DIR)
+            && !mkdir(self::TWIG_CACHE_DIR, 0o770, true)
+            && !is_dir(self::TWIG_CACHE_DIR)
+        ) {
+            throw new RuntimeException(sprintf(
+                'Unable to create Twig cache directory: %s',
+                self::TWIG_CACHE_DIR,
+            ));
+        }
+
         $TwigEnvironment = $this->getTwig(false);
         $tplFs = FsTools::getFs(dirname(__DIR__, 2) . '/src/templates');
         // iterate over all the templates

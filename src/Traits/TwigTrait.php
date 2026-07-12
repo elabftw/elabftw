@@ -28,6 +28,8 @@ use function dirname;
  */
 trait TwigTrait
 {
+    protected const string TWIG_CACHE_DIR = '/run/elabftw/cache/twig';
+
     /**
      * Prepare the Twig object
      */
@@ -38,7 +40,7 @@ trait TwigTrait
 
         $options = array(
             // use local cache
-            'cache' => '/run/elabftw/cache/twig',
+            'cache' => self::TWIG_CACHE_DIR,
             // debug mode means the cache is not used (useful in dev of course)
             'debug' => $debug,
         );

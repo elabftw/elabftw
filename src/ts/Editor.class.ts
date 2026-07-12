@@ -9,8 +9,9 @@ import $ from 'jquery';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import { marked } from 'marked';
-import { MathJaxObject } from 'mathjax-full/js/components/startup';
-import { Entity, Target } from './interfaces';
+import type { MathJaxObject } from 'mathjax-full/js/components/startup';
+import { Target } from './interfaces';
+import type { Entity } from './interfaces';
 import { ApiC } from './api';
 declare const MathJax: MathJaxObject;
 

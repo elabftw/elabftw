@@ -68,7 +68,7 @@ import { EntityType, Model } from './interfaces';
 import { reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
 import { ApiC } from './api';
 import { isSortable } from './TableSorting.class';
-import { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import { entity } from './getEntity';
 

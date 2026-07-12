@@ -19,7 +19,9 @@ import { on } from './handlers';
 import $ from 'jquery';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Metadata } from './Metadata.class';
-import { ExtraFieldInputType, ValidMetadata } from './metadataInterfaces';
+import { ExtraFieldInputType } from './metadataInterfaces';
+import type { ValidMetadata } from './metadataInterfaces';
+import { showModal } from './common';
 
 async function saveDspaceIdAsExtraField(itemUuid: string): Promise<void> {
   const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
@@ -91,7 +93,8 @@ on('export-to-dspace', async (el, event: Event) => {
 
 // populate lists with tomSelect on modal show
 on('open-dspace-modal', async () => {
-  $('#dspaceExportModal').modal('toggle');
+  // don't focus on first text input because it's too low: real first input is a select
+  showModal('#dspaceExportModal');
   const collectionSelect = document.getElementById('dspaceCollection') as HTMLSelectElement & { tomselect?: TomSelect };
   const typeSelect = document.getElementById('dspaceType') as HTMLSelectElement & { tomselect?: TomSelect };
   collectionSelect.innerHTML = `<option disabled selected>${i18next.t('loading')}...</option>`;

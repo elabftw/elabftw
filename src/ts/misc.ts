@@ -6,14 +6,16 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import {Action, CheckableItem, EntityType, Entity, Model, Target, FileType} from './interfaces';
+import {Action, EntityType, Model, Target, FileType} from './interfaces';
+import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
-import { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
-import { Malle, InputType, SelectOptions } from '@deltablot/malle';
+import { Malle, InputType } from '@deltablot/malle';
+import type { SelectOptions } from '@deltablot/malle';
 import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';

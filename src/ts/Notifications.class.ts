@@ -8,7 +8,7 @@
  */
 
 import i18next from './i18n';
-import { ResponseMsg } from './interfaces';
+import type { ResponseMsg } from './interfaces';
 
 enum NotificationType {
   Error = 'error',

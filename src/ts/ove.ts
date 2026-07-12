@@ -15,7 +15,8 @@ declare global {
 
 import { anyToJson } from '@teselagen/bio-parsers';
 import { reloadElements } from './misc';
-import { Action, Entity, Model } from './interfaces';
+import { Action, Model } from './interfaces';
+import type { Entity } from './interfaces';
 import { ApiC } from './api';
 import { notify } from './notify';
 

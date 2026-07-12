@@ -7,7 +7,8 @@
  */
 import $ from 'jquery';
 import { ApiC } from './api';
-import { Malle, InputType, SelectOptions } from '@deltablot/malle';
+import { Malle, InputType } from '@deltablot/malle';
+import type { SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
@@ -43,7 +44,7 @@ import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, LinkSubModel } from './interfaces';
-import { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';
@@ -81,6 +82,8 @@ interface Status extends SelectOptions {
 
 // Use the sticky navbar height to offset the toolbar below it.
 document.documentElement.style.setProperty('--navbar-height', `${document.querySelector<HTMLElement>('div > .navbar')?.offsetHeight ?? 0}px`);
+
+const container = document.getElementById('container')!;
 
 on('toggle-dark-mode', (el: HTMLElement) => {
   const currentTheme = parseInt(el.dataset.currentTheme, 10);
@@ -1038,9 +1041,24 @@ function focusFirstTextInputOnShown(modalSelector: string) {
   });
 }
 
+function ensureModalIsContainerChild(modal: HTMLElement): void {
+  // we do that to avoid issues with sticky navbar/z-index
+  if (modal.parentElement !== container) {
+    container.appendChild(modal);
+  }
+}
+
+export function showModal(modalSelector: string) {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+
+  ensureModalIsContainerChild(modal);
+  $(modal).modal('show');
+}
+
 export function showModalAndFocusFirstInput(modalSelector: string) {
   focusFirstTextInputOnShown(modalSelector);
-  $(modalSelector).modal('show');
+  showModal(modalSelector);
 }
 
 on('update-entity-body', async (el: HTMLElement) => {
@@ -1540,7 +1558,6 @@ on('scope-change', async (el: HTMLElement) => {
 /**
  * MAIN click listener on container
  */
-const container = document.getElementById('container')!;
 container.addEventListener('click', (event: Event) => {
   const rawTarget = event.target as HTMLElement | null;
   const el = rawTarget?.closest('[data-action]') as HTMLElement | null;

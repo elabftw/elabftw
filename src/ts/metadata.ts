@@ -10,7 +10,8 @@ import {
   normalizeFieldName,
 } from './misc';
 import { autoResize, Metadata } from './Metadata.class';
-import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
+import { ExtraFieldInputType } from './metadataInterfaces';
+import type { ValidMetadata } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
 import { ApiC } from './api';

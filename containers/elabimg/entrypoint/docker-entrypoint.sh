@@ -321,7 +321,7 @@ phpConf() {
     # production open_basedir conf value
     # /etc/ssl/cert.pem is for openssl and timestamp related functions
     # for /run/s6-rc... see elabftw/elabftw#5249
-    open_basedir="/.dockerenv:/elabftw/:/tmp/:/run/elabftw/cache:/usr/bin/unzip:/etc/ssl/cert.pem:/run/s6-rc/servicedirs/s6rc-oneshot-runner"
+    open_basedir="/.dockerenv:/elabftw/:/tmp/:/run/elabftw/tmp:/run/elabftw/cache:/usr/bin/unzip:/etc/ssl/cert.pem:/run/s6-rc/servicedirs/s6rc-oneshot-runner"
     # DEV MODE
     if ($dev_mode); then
         # we don't want to use opcache as we want our changes to be immediately visible
@@ -336,7 +336,7 @@ phpConf() {
 }
 
 elabftwConf() {
-    mkdir -p /var/lib/elabftw/uploads /run/elabftw/cache/elab /run/elabftw/cache/mpdf /run/elabftw/cache/twig /run/elabftw/cache/purifier/CSS /run/elabftw/cache/purifier/HTML /run/elabftw/cache/purifier/URI /var/lib/elabftw/exports
+    mkdir -p /var/lib/elabftw/uploads /run/elabftw/cache/elab /run/elabftw/tmp /run/elabftw/cache/mpdf /run/elabftw/cache/twig /run/elabftw/cache/purifier/CSS /run/elabftw/cache/purifier/HTML /run/elabftw/cache/purifier/URI /var/lib/elabftw/exports
     # necessary so php user can write to it in podman rootless
     chmod -R g+w /run/elabftw/cache
 }

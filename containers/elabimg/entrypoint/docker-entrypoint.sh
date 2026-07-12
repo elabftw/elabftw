@@ -8,7 +8,7 @@
 #
 # This script is called by the oneshot service "init"
 # It will get config from env and adjust configuration files and system accordingly
-set -e
+#set -e
 
 # get env values
 # and unset the sensitive ones so they cannot be accessed by a rogue process

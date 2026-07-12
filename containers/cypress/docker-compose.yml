@@ -1,6 +1,7 @@
 networks:
   default:
     name: elabftw-net
+    external: true
 services:
   cypress:
     image: elab-cypress

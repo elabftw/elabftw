@@ -40,6 +40,12 @@ commands:
             docker build -t elabtmp -f containers/elabtmp/Dockerfile .
             docker build -t elabtmp -f containers/circleci/Dockerfile .
 
+  load_elabtmp:
+    steps:
+      - run:
+          name: Load elabtmp image
+          command: docker image load -i /tmp/elabtmp.tar
+
   build_cypress:
     steps:
       - run:
@@ -52,7 +58,7 @@ commands:
     steps:
       - run:
           name: Start elabtmp container
-          command: docker compose -f containers/circleci/docker-compose.yml up -d
+          command: docker compose -f containers/circleci/docker-compose.yml up -d --no-build
 
   start_mysql:
     steps:
@@ -67,7 +73,7 @@ commands:
           command: docker compose -f containers/cypress/docker-compose.yml up -d
 
 jobs:
-  prepare_workspace:
+  build_elabtmp_image:
     executor: elab-executor
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
@@ -75,13 +81,15 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: docker27
+          docker_layer_caching: true
+      - build_elabtmp
+      - run:
+          name: Export elabtmp image
+          command: docker image save -o /tmp/elabtmp.tar elabtmp
       - persist_to_workspace:
-          root: .
+          root: /tmp
           paths:
-            - tests/
-            - cypress/
-            - cypress.config.ts
-            - src/
+            - elabtmp.tar
 
   code_linters:
     executor: elab-executor
@@ -93,8 +101,8 @@ jobs:
       - setup_remote_docker:
           version: docker27
       - attach_workspace:
-          at: .
-      - build_elabtmp
+          at: /tmp
+      - load_elabtmp
       - start_elabtmp
       - run:
           name: Run SCSS linter
@@ -142,8 +150,8 @@ jobs:
       - setup_remote_docker:
           version: docker27
       - attach_workspace:
-          at: .
-      - build_elabtmp
+          at: /tmp
+      - load_elabtmp
       - start_elabtmp
       - start_mysql
       - populate_db
@@ -174,8 +182,8 @@ jobs:
       - setup_remote_docker:
           version: docker27
       - attach_workspace:
-          at: .
-      - build_elabtmp
+          at: /tmp
+      - load_elabtmp
       - build_cypress
       - start_elabtmp
       - start_mysql
@@ -221,13 +229,13 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - prepare_workspace
+      - build_elabtmp_image
       - code_linters:
           requires:
-            - prepare_workspace
+            - build_elabtmp_image
       - php_unit_tests:
           requires:
-            - prepare_workspace
+            - build_elabtmp_image
       - cypress_e2e_tests:
           requires:
-            - prepare_workspace
+            - build_elabtmp_image

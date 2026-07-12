@@ -289,10 +289,13 @@ RUN if [ "$BUILD_ALL" = "1" ]; then \
             yarn run buildall:prod; \
         fi \
         && yarn workspaces focus -A --production \
-        && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a \
+        && if [ "$CI" = "1" ]; then \
+            /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress -a; \
+        else \
+            /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a; \
+        fi \
         && yarn cache clean; \
     fi
-
 # PHP: add php config after composer step so open_basedir is not an issue
 COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini.tpl
 RUN rm -f /etc/php84/php.ini && ln -s /run/php/php.ini /etc/php84/php.ini

@@ -58,7 +58,7 @@ commands:
       - run:
           name: Build elab-cypress image
           command: |
-            sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
+            sed -i 's/elab.local:3148/elabtmp:8080/g' cypress.config.ts
             docker build -t elab-cypress -f containers/cypress/Dockerfile .
 
   start_elabtmp:

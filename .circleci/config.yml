@@ -185,7 +185,7 @@ jobs:
       browser:
         type: string
     executor: elab-executor
-    parallelism: 2
+    parallelism: 4
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
     steps:

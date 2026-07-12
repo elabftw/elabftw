@@ -323,11 +323,6 @@ ENV PUBCHEM_PUG_VIEW_URL=https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data
 # copy nginx config files
 COPY ./containers/elabimg/nginx/ /etc/nginx/
 
-# gzip and brotli config
-RUN rm -fr /etc/nginx/conf.d
-COPY ./containers/elabimg/nginx/conf.d/brotli.conf /run/nginx/conf.d/brotli.conf
-COPY ./containers/elabimg/nginx/conf.d/gzip.conf /run/nginx/conf.d/gzip.conf
-
 COPY ./containers/elabimg/nginx/nginx.conf /etc/nginx/nginx.conf.tpl
 RUN rm -f /etc/nginx/nginx.conf && ln -s /run/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./containers/elabimg/nginx/common.conf /etc/nginx/common.conf.tpl

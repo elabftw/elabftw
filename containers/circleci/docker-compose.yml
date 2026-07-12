@@ -42,6 +42,8 @@ services:
       timeout: 5s
       retries: 3
     tmpfs:
+      - /run/nginx:mode=1770,uid=1001,gid=1002
+      - /run/php:mode=1770,uid=1001,gid=1002
       - /run/elabftw/cache:mode=1770,uid=1001,gid=1002,exec,nosuid,nodev
       - /elabftw/tests/_output:mode=1770,uid=1001,gid=1002
       - /elabftw/tests/_support/_generated:mode=1770,uid=1001,gid=1002

@@ -8,6 +8,7 @@
 #
 # This script is called by the oneshot service "init"
 # It will get config from env and adjust configuration files and system accordingly
+set -e
 
 # get env values
 # and unset the sensitive ones so they cannot be accessed by a rogue process
@@ -77,12 +78,14 @@ checkSiteUrl() {
 copyConf() {
     mkdir -pv /run/php
     f="/run/php/elabpool.conf"
-    cp -v /etc/php84/php-fpm.d/elabpool.conf.tpl $f
-    chmod -v 600 $f
-    mkdir -pv /run/nginx
+    cp -v /etc/php84/php-fpm.d/elabpool.conf.tpl "$f"
+    chmod -v 600 "$f"
+
+    mkdir -pv /run/nginx/conf.d
     n="/run/nginx/nginx.conf"
-    cp -v /etc/nginx/nginx.conf.tpl $n
-    chmod -v 600 $n
+    cp -v /etc/nginx/nginx.conf.tpl "$n"
+    cp -v /etc/nginx/conf.d/*.conf /run/nginx/conf.d/
+    chmod -v 600 "$n"
 }
 
 # fullchain.pem and privkey.pem should be in a volume linked to /ssl

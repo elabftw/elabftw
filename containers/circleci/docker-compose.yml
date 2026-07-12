@@ -43,4 +43,5 @@ services:
       retries: 3
     tmpfs:
       - /run/elabftw/cache:mode=1770,uid=1001,gid=1002
+      - /elabftw/tests/_output:mode=1770,uid=1001,gid=1002
       - /var/cache/nginx:mode=755,uid=1001,gid=1002,exec,nosuid,nodev

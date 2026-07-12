@@ -22,7 +22,6 @@
         <directory name="../../tests" />
         <directory name="../../web" />
         <ignoreFiles>
-            <directory name="../../uploads" />
             <directory name="../../vendor" />
             <directory name="../../tests" />
             <file name="../../src/Services/AdvancedSearchQuery/Grammar/Parser.php" />

@@ -49,3 +49,4 @@ services:
       - /elabftw/tests/_support/_generated:mode=1770,uid=1001,gid=1002
       - /var/cache/nginx:mode=755,uid=1001,gid=1002,noexec,nosuid,nodev
       - /var/lib/elabftw/exports:mode=755,uid=1001,gid=1002,noexec,nosuid,nodev
+      - /var/lib/elabftw/uploads:mode=755,uid=1001,gid=1002,noexec,nosuid,nodev

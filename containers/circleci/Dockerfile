@@ -9,3 +9,5 @@ COPY ./.php-cs-fixer.dist.php /elabftw
 COPY ./.stylelintrc.json /elabftw
 COPY ./codeception.yml /elabftw
 COPY ./cypress.config.ts /elabftw
+
+RUN mkdir /elabftw/uploads && chmod 1777 /elabftw/uploads

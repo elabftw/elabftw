@@ -6,7 +6,8 @@
  * @package elabftw
  */
 import i18next from './i18n';
-import { Malle, InputType, SelectOptions } from '@deltablot/malle';
+import { Malle, InputType } from '@deltablot/malle';
+import type { SelectOptions } from '@deltablot/malle';
 import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Action, ProcurementState } from './interfaces';

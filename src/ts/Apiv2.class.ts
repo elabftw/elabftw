@@ -5,7 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Method, Selected } from './interfaces';
+import { Method, } from './interfaces';
+import type { Selected } from './interfaces';
 import { getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';
 

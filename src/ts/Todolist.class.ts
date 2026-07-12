@@ -5,7 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Model, EntityType, UnfinishedEntities } from './interfaces';
+import { Model, EntityType } from './interfaces';
+import type { UnfinishedEntities } from './interfaces';
 import SidePanel from './SidePanel.class';
 import FavTag from './FavTag.class';
 import { ApiC } from './api';

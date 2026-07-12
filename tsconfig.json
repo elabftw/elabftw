@@ -2,9 +2,9 @@
   "compilerOptions": {
     "target": "es2022",
     "baseUrl": ".",
-    "module": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
-    "moduleResolution": "NodeNext",
     "jsx": "react-jsx",
     "strict": false,
     "removeComments": true,

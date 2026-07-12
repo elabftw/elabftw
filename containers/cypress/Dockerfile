@@ -6,12 +6,7 @@ FROM cypress/included@sha256:848fb0d361178e695aa3ebd0f9632f2966232907c0fc02fbd64
 
 WORKDIR /home/node
 
-COPY tsconfig.json .
-COPY cypress.config.ts .
-COPY tests/cypress/ ./tests/cypress/
-COPY tests/_data/ ./tests/_data/
-COPY containers/cypress/package.json .
-COPY containers/cypress/package-lock.json .
+COPY containers/cypress/package.json containers/cypress/package-lock.json .
 
 # create cypress output folders
 # use bash so we can expand the command (RUN will use sh)

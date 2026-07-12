@@ -46,14 +46,6 @@ commands:
           name: Load elabtmp image
           command: docker image load -i /tmp/elabtmp.tar
 
-  build_cypress:
-    steps:
-      - run:
-          name: Build elab-cypress image
-          command: |
-            sed -i 's/elab.local:3148/elabtmp:8080/g' cypress.config.ts
-            docker build -t elab-cypress -f containers/cypress/Dockerfile .
-
   start_elabtmp:
     steps:
       - run:
@@ -70,7 +62,18 @@ commands:
     steps:
       - run:
           name: Start cypress container
-          command: docker compose -f containers/cypress/docker-compose.yml up -d
+          command: docker compose -f containers/cypress/docker-compose.yml up -d --no-build
+
+  copy_cypress_tests:
+    steps:
+      - run:
+          name: Copy Cypress tests
+          command: |
+            docker cp cypress.config.ts elab-cypress:/home/node/cypress.config.ts
+            docker cp tsconfig.json elab-cypress:/home/node/tsconfig.json
+            docker cp tests/cypress/. elab-cypress:/home/node/tests/cypress/
+            docker cp tests/_data/. elab-cypress:/home/node/tests/_data/
+            docker exec -u root elab-cypress chown -R node:node /home/node/tests
 
 jobs:
   build_elabtmp_image:
@@ -181,8 +184,11 @@ jobs:
       - codecov/upload
 
   cypress_e2e_tests:
+    parameters:
+      browser:
+        type: string
     executor: elab-executor
-    parallelism: 4
+    parallelism: 2
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
     steps:
@@ -192,38 +198,30 @@ jobs:
       - attach_workspace:
           at: /tmp
       - load_elabtmp
-      - build_cypress
       - start_elabtmp
       - start_mysql
       - start_cypress
+      - copy_cypress_tests
       - populate_db
       - run:
           name: Create folders
           command: mkdir -p cypress/{screenshots,videos}
+
       - run:
-          name: Run Cypress e2e tests on Firefox
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              docker exec elab-cypress cypress run --browser firefox
-            fi
-      - run:
-          name: Run Cypress e2e tests on Chrome
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
-              docker exec elab-cypress cypress run --browser chrome
-            fi
-      - run:
-          name: Run Cypress e2e tests on Electron
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "2" ]; then
-              docker exec elab-cypress cypress run --browser electron
-            fi
-      - run:
-          name: Run Cypress e2e tests on Edge
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "3" ]; then
-              docker exec elab-cypress cypress run --browser edge
-            fi
+        name: Run Cypress on << parameters.browser >>
+        command: |
+          SPECS=$(
+            find tests/cypress/integration -type f \
+              \( -name '*.cy.js' -o -name '*.cy.jsx' -o -name '*.cy.ts' -o -name '*.cy.tsx' \) \
+              | sort \
+              | circleci tests split --split-by=name \
+              | paste -sd, -
+          )
+
+          docker exec elab-cypress cypress run \
+            --browser << parameters.browser >> \
+            --spec "$SPECS" \
+            --config baseUrl=https://elabtmp:8080
       - run:
           name: Extract cypress screenshots and videos in case it is enabled again to debug a faulty run
           command: |
@@ -247,3 +245,10 @@ workflows:
       - cypress_e2e_tests:
           requires:
             - build_elabtmp_image
+          matrix:
+            parameters:
+              browser:
+                - firefox
+                - chrome
+                - electron
+                - edge

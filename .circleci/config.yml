@@ -31,19 +31,6 @@ commands:
           command: |
             docker exec elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
 
-#  fix_permissions:
-#    description: Fix the permissions after populating database
-#    steps:
-#      - run:
-#          name: Fix permissions
-#          command: |
-#            docker exec elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-#            docker exec elabtmp chown -R nginx:nginx cache
-#            docker exec elabtmp chmod -R 777 cache
-#            docker exec elabtmp chmod -R 777 tests/_output
-#            docker exec elabtmp chown -R nginx:nginx uploads
-#            docker exec elabtmp chmod -R 777 uploads
-
   build_elabtmp:
     steps:
       - run:
@@ -160,10 +147,12 @@ jobs:
       - start_elabtmp
       - start_mysql
       - populate_db
-      #- fix_permissions
       - run:
-          name: Run unit and apiv2 tests
-          command: docker exec elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
+          name: Run unit tests with coverage
+          command: docker exec elabtmp php vendor/bin/codecept run unit --coverage --coverage-xml --coverage-html
+      - run:
+          name: Run API v2 tests
+          command: docker exec elabtmp php vendor/bin/codecept run apiv2
       - run:
           name: Extract coverage report
           command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
@@ -192,7 +181,6 @@ jobs:
       - start_mysql
       - start_cypress
       - populate_db
-      #- fix_permissions
       - run:
           name: Create folders
           command: mkdir -p cypress/{screenshots,videos}

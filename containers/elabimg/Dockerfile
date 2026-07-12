@@ -206,6 +206,9 @@ RUN apk upgrade -U -a && apk add --no-cache \
 # add a symlink to php8
 RUN ln -f /usr/bin/php84 /usr/bin/php
 
+# fix git complaining: fatal: detected dubious ownership in repository at '/elabftw'
+RUN git config --system --add safe.directory /elabftw
+
 # S6-OVERLAY
 # install s6-overlay, our init system. Workaround for different versions using TARGETPLATFORM
 # platform see https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope

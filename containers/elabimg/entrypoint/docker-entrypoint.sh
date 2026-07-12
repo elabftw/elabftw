@@ -8,7 +8,7 @@
 #
 # This script is called by the oneshot service "init"
 # It will get config from env and adjust configuration files and system accordingly
-#set -e
+set -e
 
 # get env values
 # and unset the sensitive ones so they cannot be accessed by a rogue process
@@ -204,8 +204,6 @@ nginxConf() {
         rm -f /run/nginx/conf.d/brotli.conf /run/nginx/conf.d/gzip.conf
         # to allow webpack in watch/dev mode we need to allow unsafe-eval for script-src
         unsafe_eval="'unsafe-eval'"
-        # fix git complaining: fatal: detected dubious ownership in repository at '/elabftw'
-        git config --global --add safe.directory /elabftw
     fi
     # set unsafe-eval in CSP
     sed -i -e "s/%UNSAFE-EVAL4DEV%/${unsafe_eval}/" /run/nginx/common.conf

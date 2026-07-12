@@ -168,6 +168,7 @@ module.exports = (env) => {
         },
         {
           test: /\.jsx?$/,
+          include: path.resolve(__dirname, 'src'),
           use: ["babel-loader"]
         },
         { // SASS loader

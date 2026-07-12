@@ -3,7 +3,7 @@ modules:
     enabled:
         - \Helper\Apiv2
         - REST:
-            url: https://elabtmp:8080/api/v2/
+            url: https://localhost:8080/api/v2/
             depends: PhpBrowser
             curl:
               CURLOPT_TIMEOUT: 60

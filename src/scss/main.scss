@@ -215,11 +215,6 @@ select:not([multiple]) {
     color: var(--mediumstrong);
   }
 
-  .hover-danger:hover {
-    background-color: var(--darkred);
-    border-color: var(--lightred);
-  }
-
   .ui-autocomplete {
     background: var(--mainbackground);
   }

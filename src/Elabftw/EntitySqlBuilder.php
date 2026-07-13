@@ -206,29 +206,19 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected function steps(): void
     {
-        // any_value is necessary to silence the nonaggregated column error
-        $this->selectSql[] = 'ANY_VALUE(st.body) AS next_step';
-        $this->joinsSql[] = 'LEFT JOIN %1$s_steps AS st
-            ON st.item_id = entity.id
-            AND st.finished = 0
-            AND st.ordering = (
-                SELECT MIN(ordering)
-                FROM %1$s_steps
-                WHERE item_id = entity.id
-                AND finished = 0
-            )';
+        $this->selectSql[] = '(SELECT st.body
+            FROM %1$s_steps AS st
+            WHERE st.item_id = entity.id
+                AND st.finished = 0
+            ORDER BY st.ordering ASC, st.id ASC
+            LIMIT 1) AS next_step';
     }
 
     protected function comments(): void
     {
-        $this->selectSql[] = 'ANY_VALUE(cmt.created_at) AS recent_comment';
-        $this->joinsSql[] = 'LEFT JOIN %1$s_comments AS cmt
-            ON cmt.item_id = entity.id
-            AND cmt.created_at = (
-                SELECT MAX(created_at)
-                FROM %1$s_comments
-                WHERE item_id = entity.id
-            )';
+        $this->selectSql[] = '(SELECT MAX(cmt.created_at)
+            FROM %1$s_comments AS cmt
+            WHERE cmt.item_id = entity.id) AS recent_comment';
     }
 
     /**

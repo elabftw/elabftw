@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import {Action, EntityType, Model, Target, FileType} from './interfaces';
+import { Action, EntityType, Model, Target, FileType } from './interfaces';
 import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
 import type { MathJaxObject } from 'mathjax-full/js/components/startup';

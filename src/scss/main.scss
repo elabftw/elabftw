@@ -1969,3 +1969,10 @@ div > .sticky-navbar {
   width: 100%;
   z-index: 50;
 }
+
+.ghs-pictogram {
+  background-color: var(--chrome-fg);
+  border-radius: 2px;
+  max-height: 3rem;
+  max-width: 3rem;
+}

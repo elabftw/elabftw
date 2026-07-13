@@ -71,7 +71,7 @@ import { entity } from './getEntity';
 import { on, get } from './handlers';
 import Tab from './Tab.class';
 import { core } from './core';
-import {applyTheme, updateThemeControls} from "./theme";
+import { applyTheme, updateThemeControls } from './theme';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {

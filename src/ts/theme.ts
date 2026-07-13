@@ -20,15 +20,15 @@ export const isThemeVariant = (value: number): value is ThemeVariant => {
 export const applyTheme = (themeVariant: ThemeVariant): void => {
   document.documentElement.classList.remove(...themeClasses);
   switch (themeVariant) {
-    case ThemeVariant.Dark:
-      document.documentElement.classList.add('dark-mode');
-      break;
-    case ThemeVariant.DarkBlue:
-      document.documentElement.classList.add('dark-blue-mode');
-      break;
-    case ThemeVariant.Auto:
-    case ThemeVariant.Light:
-      break;
+  case ThemeVariant.Dark:
+    document.documentElement.classList.add('dark-mode');
+    break;
+  case ThemeVariant.DarkBlue:
+    document.documentElement.classList.add('dark-blue-mode');
+    break;
+  case ThemeVariant.Auto:
+  case ThemeVariant.Light:
+    break;
   }
 };
 
@@ -57,11 +57,11 @@ export const isDarkTheme = (): boolean => {
 
 export const getAgGridTheme = (): string => {
   switch (getAppTheme()) {
-    case AppTheme.DarkBlue:
-      return 'ag-theme-quartz-dark';
-    case AppTheme.Dark:
-      return 'ag-theme-alpine-dark';
-    case AppTheme.Light:
-      return 'ag-theme-alpine';
+  case AppTheme.DarkBlue:
+    return 'ag-theme-quartz-dark';
+  case AppTheme.Dark:
+    return 'ag-theme-alpine-dark';
+  case AppTheme.Light:
+    return 'ag-theme-alpine';
   }
 };

@@ -71,7 +71,7 @@ import { isSortable } from './TableSorting.class';
 import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import { entity } from './getEntity';
-import {isDarkTheme} from "./theme";
+import { isDarkTheme } from './theme';
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save

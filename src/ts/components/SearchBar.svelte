@@ -8,12 +8,13 @@
    */
   import { onMount } from 'svelte';
   import Prism from 'prismjs';
-  import { writable, type Writable } from 'svelte/store';
+  import { writable, type Readable, type Writable } from 'svelte/store';
   import '../prism-elabftwquery';
   import i18next from '../i18n';
 
   type Props = {
     searchQuery?: Writable<string>;
+    isPending?: Readable<boolean>;
     buttonLabel?: string;
   };
 
@@ -21,6 +22,7 @@
 
   const {
     searchQuery = writable(''),
+    isPending = writable(false),
     buttonLabel = t('search'),
   }: Props = $props();
 
@@ -107,8 +109,13 @@
       type='submit'
       aria-label={buttonLabel}
       title={buttonLabel}
+      aria-busy={$isPending}
     >
-      <i class='fas fa-magnifying-glass'></i>
+      {#if $isPending}
+        <i class='fas fa-spinner fa-spin'></i>
+      {:else}
+        <i class='fas fa-magnifying-glass'></i>
+      {/if}
     </button>
   </div>
 </div>

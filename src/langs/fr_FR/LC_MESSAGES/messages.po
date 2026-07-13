@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-06 13:54+0200\n"
+"POT-Creation-Date: 2026-07-10 14:47+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -120,7 +120,7 @@ msgstr "OpenCloning"
 msgid "Default group"
 msgstr "Groupe par défaut"
 
-#: src/Elabftw/Metadata.php:118 src/Elabftw/i18n4Js.php:195
+#: src/Elabftw/Metadata.php:118 src/Elabftw/i18n4Js.php:201
 msgid "Undefined group"
 msgstr "Groupe non défini"
 
@@ -142,51 +142,51 @@ msgstr ""
 msgid "User could not be found."
 msgstr "L'utilisateur n'a pas été trouvé."
 
-#: src/Elabftw/UserStats.php:96 src/Elabftw/i18n4Js.php:143
+#: src/Elabftw/UserStats.php:96 src/Elabftw/i18n4Js.php:147
 msgid "Not set"
 msgstr "Non défini"
 
-#: src/Elabftw/i18n4Js.php:47
+#: src/Elabftw/i18n4Js.php:48
 msgid "2FA"
 msgstr "2FA"
 
-#: src/Elabftw/i18n4Js.php:48
+#: src/Elabftw/i18n4Js.php:49
 msgid "Action"
 msgstr "Action"
 
-#: src/Elabftw/i18n4Js.php:49
+#: src/Elabftw/i18n4Js.php:50
 msgid "Add"
 msgstr "Ajouter"
 
-#: src/Elabftw/i18n4Js.php:50
+#: src/Elabftw/i18n4Js.php:51
 msgid "Add compound"
 msgstr "Ajouter un composé"
 
-#: src/Elabftw/i18n4Js.php:51
+#: src/Elabftw/i18n4Js.php:52
 msgid "Add task"
 msgstr "Ajouter une tâche"
 
-#: src/Elabftw/i18n4Js.php:52
+#: src/Elabftw/i18n4Js.php:53
 msgid "Add team"
 msgstr "Ajouter une équipe"
 
-#: src/Elabftw/i18n4Js.php:53
+#: src/Elabftw/i18n4Js.php:54
 msgid "Add selected users to team"
 msgstr "Ajouter les utilisateurs sélectionnés à l'équipe"
 
-#: src/Elabftw/i18n4Js.php:54
+#: src/Elabftw/i18n4Js.php:55
 msgid "Use the autocompletion menu to add users."
 msgstr "Utilisez le menu d'autocomplétion pour ajouter des utilisateurs."
 
-#: src/Elabftw/i18n4Js.php:55
+#: src/Elabftw/i18n4Js.php:56
 msgid "All teams"
 msgstr "Toutes les équipes"
 
-#: src/Elabftw/i18n4Js.php:56
+#: src/Elabftw/i18n4Js.php:57
 msgid "Archive user"
 msgstr "Archiver utilisateur"
 
-#: src/Elabftw/i18n4Js.php:57
+#: src/Elabftw/i18n4Js.php:58
 msgid ""
 "Archiving a user means their account will be disabled. This action is "
 "reversible."
@@ -194,168 +194,168 @@ msgstr ""
 "L'archivage d'un utilisateur signifie que son compte sera désactivé. Cette "
 "action est réversible."
 
-#: src/Elabftw/i18n4Js.php:58
+#: src/Elabftw/i18n4Js.php:59
 msgid "Association date"
 msgstr "Date de création de l'association"
 
-#: src/Elabftw/i18n4Js.php:59
+#: src/Elabftw/i18n4Js.php:60
 msgid "Can manage compounds"
 msgstr "Peut gérer la base de composés chimiques"
 
-#: src/Elabftw/i18n4Js.php:60
+#: src/Elabftw/i18n4Js.php:61
 msgid "Can manage inventory locations"
 msgstr "Peut gérer les emplacements des stocks"
 
-#: src/Elabftw/i18n4Js.php:61
+#: src/Elabftw/i18n4Js.php:62
 msgid "Can manage users to teams"
 msgstr "Peut gérer les utilisateurs en équipes"
 
-#: src/Elabftw/i18n4Js.php:62
+#: src/Elabftw/i18n4Js.php:63
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/Elabftw/i18n4Js.php:63
+#: src/Elabftw/i18n4Js.php:64
 msgid "Categories"
 msgstr "Catégories"
 
-#: src/Elabftw/i18n4Js.php:64
+#: src/Elabftw/i18n4Js.php:65
 msgid "Category"
 msgstr "Catégorie"
 
-#: src/Elabftw/i18n4Js.php:65
+#: src/Elabftw/i18n4Js.php:66
 msgid "Clear"
 msgstr "Effacer"
 
-#: src/Elabftw/i18n4Js.php:66
+#: src/Elabftw/i18n4Js.php:67
 msgid "Click to edit"
 msgstr "Cliquer pour modifier"
 
-#: src/Elabftw/i18n4Js.php:67
+#: src/Elabftw/i18n4Js.php:68
 msgid "Please check required fields."
 msgstr "Veuillez vérifier les champs obligatoires."
 
-#: src/Elabftw/i18n4Js.php:68
+#: src/Elabftw/i18n4Js.php:69
 msgid "Copied to clipboard."
 msgstr "Copié dans le presse-papiers."
 
-#: src/Elabftw/i18n4Js.php:69
+#: src/Elabftw/i18n4Js.php:70
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
 
-#: src/Elabftw/i18n4Js.php:70
+#: src/Elabftw/i18n4Js.php:71
 msgid "Discard current spreadsheet? All unsaved changes will be lost."
 msgstr ""
 "Abandonner la feuille de calcul actuelle ? Toutes les modifications non "
 "enregistrées seront perdues."
 
-#: src/Elabftw/i18n4Js.php:71
+#: src/Elabftw/i18n4Js.php:72
 msgid "Custom ID"
 msgstr "ID personnalisé"
 
-#: src/Elabftw/i18n4Js.php:72 src/Models/AbstractEntity.php:856
+#: src/Elabftw/i18n4Js.php:73 src/Models/AbstractEntity.php:856
 msgid "Custom ID is already used! Try another one."
 msgstr "L'identifiant personnalisé est déjà utilisé ! Essayez-en un autre."
 
-#: src/Elabftw/i18n4Js.php:73
+#: src/Elabftw/i18n4Js.php:74
 msgid "Created at"
 msgstr "Créé à"
 
-#: src/Elabftw/i18n4Js.php:74
+#: src/Elabftw/i18n4Js.php:75
 msgid "Created on"
 msgstr "Créé le"
 
-#: src/Elabftw/i18n4Js.php:75
+#: src/Elabftw/i18n4Js.php:76
 msgid "Create an experiment without using a template"
 msgstr "Créer une expérience sans utiliser de modèle"
 
-#: src/Elabftw/i18n4Js.php:76
+#: src/Elabftw/i18n4Js.php:77
 msgid "Create a resource without using a template"
 msgstr "Créer une ressource sans utiliser de modèle"
 
-#: src/Elabftw/i18n4Js.php:77
+#: src/Elabftw/i18n4Js.php:78
 msgid "Create an experiment template"
 msgstr "Créer un modèle d'expérience"
 
-#: src/Elabftw/i18n4Js.php:78
+#: src/Elabftw/i18n4Js.php:79
 msgid "Create a resource template"
 msgstr "Créer un modèle de ressource"
 
-#: src/Elabftw/i18n4Js.php:79
+#: src/Elabftw/i18n4Js.php:80
 msgid "Create resource from template"
 msgstr "Créer une ressource à partir d'un modèle"
 
-#: src/Elabftw/i18n4Js.php:80
+#: src/Elabftw/i18n4Js.php:81
 msgid "Create experiment from template"
 msgstr "Créer une expérience depuis ce modèle"
 
-#: src/Elabftw/i18n4Js.php:81
+#: src/Elabftw/i18n4Js.php:82
 msgid "Currently editing"
 msgstr "Actuellement en cours d'édition"
 
-#: src/Elabftw/i18n4Js.php:82
+#: src/Elabftw/i18n4Js.php:83
 msgid "Custom fields"
 msgstr "Champs personnalisés"
 
-#: src/Elabftw/i18n4Js.php:83
+#: src/Elabftw/i18n4Js.php:84
 msgid "Delete"
 msgstr "Supprimer"
 
-#: src/Elabftw/i18n4Js.php:84
+#: src/Elabftw/i18n4Js.php:85
 msgid "Delete {{num, number}} line(s)?"
 msgstr "Supprimer {{num, number}} ligne(s) ?"
 
-#: src/Elabftw/i18n4Js.php:85
+#: src/Elabftw/i18n4Js.php:86
 msgid "Delete selected rows"
 msgstr "Supprimer les lignes sélectionnées"
 
-#: src/Elabftw/i18n4Js.php:86
+#: src/Elabftw/i18n4Js.php:87
 msgid "Done"
 msgstr "Terminé"
 
-#: src/Elabftw/i18n4Js.php:87
+#: src/Elabftw/i18n4Js.php:88
 msgid "Drop files here to upload"
 msgstr "Déposez ici les fichiers à uploader"
 
-#: src/Elabftw/i18n4Js.php:88
+#: src/Elabftw/i18n4Js.php:89
 msgid "File size limit:"
 msgstr "Taille limite de fichier :"
 
-#: src/Elabftw/i18n4Js.php:89
+#: src/Elabftw/i18n4Js.php:90
 msgid "Edit"
 msgstr "Editer"
 
-#: src/Elabftw/i18n4Js.php:90
+#: src/Elabftw/i18n4Js.php:91
 msgid "Edit compound"
 msgstr "Éditer le composé"
 
-#: src/Elabftw/i18n4Js.php:91
+#: src/Elabftw/i18n4Js.php:92
 msgid "You are currently editing the metadata attached to this entry."
 msgstr "Vous êtes en train de modifier les métadonnées jointes à cette entrée."
 
-#: src/Elabftw/i18n4Js.php:92
+#: src/Elabftw/i18n4Js.php:93
 msgid "Email sent to {{num, number}} users."
 msgstr "E-mail envoyé à {{num, number}} utilisateurs."
 
-#: src/Elabftw/i18n4Js.php:93
+#: src/Elabftw/i18n4Js.php:94
 msgid "Email"
 msgstr "Email"
 
-#: src/Elabftw/i18n4Js.php:94
+#: src/Elabftw/i18n4Js.php:95
 msgid "You must allow at least one permission setting."
 msgstr "Vous devez autoriser au moins un paramètre de permission."
 
-#: src/Elabftw/i18n4Js.php:95
+#: src/Elabftw/i18n4Js.php:96
 msgid "Encryption"
 msgstr "Chiffrement"
 
-#: src/Elabftw/i18n4Js.php:96 src/Import/Eln.php:345
-#: src/Models/AbstractStatus.php:62 src/Models/Experiments.php:65
+#: src/Elabftw/i18n4Js.php:97 src/Import/Eln.php:345
+#: src/Models/AbstractStatus.php:65 src/Models/Experiments.php:65
 #: src/Models/Items.php:72 src/Models/TeamGroups.php:54
 #: src/Models/Templates.php:61 src/Services/Filter.php:130
 msgid "Untitled"
 msgstr "Sans titre"
 
-#: src/Elabftw/i18n4Js.php:97
+#: src/Elabftw/i18n4Js.php:98
 msgid ""
 "The selected item(s) and all associated data will be permanently deleted. "
 "This cannot be undone. Are you sure?"
@@ -363,7 +363,7 @@ msgstr ""
 "Le ou les objet(s) sélectionné(s) ainsi que toutes les données associées "
 "seront supprimés définitivement. Cela est irréversible. Êtes-vous sûr(e) ?"
 
-#: src/Elabftw/i18n4Js.php:98
+#: src/Elabftw/i18n4Js.php:99
 msgid ""
 "This will apply these permissions to both read and write permissions. "
 "Continue?"
@@ -371,25 +371,25 @@ msgstr ""
 "Cela appliquera ces autorisations à la fois aux droits de lecture et "
 "d'écriture. Voulez-vous continuer ?"
 
-#: src/Elabftw/i18n4Js.php:99
+#: src/Elabftw/i18n4Js.php:100
 msgid "{{num, number}} entries processed"
 msgstr "{{num, number}} entrées traitées"
 
-#: src/Elabftw/i18n4Js.php:100
+#: src/Elabftw/i18n4Js.php:101
 msgid "Error"
 msgstr "Erreur"
 
-#: src/Elabftw/i18n4Js.php:101
+#: src/Elabftw/i18n4Js.php:102
 msgid "File name is missing."
 msgstr "Le nom du fichier est manquant."
 
-#: src/Elabftw/i18n4Js.php:102
+#: src/Elabftw/i18n4Js.php:103
 msgid "There was an error while fetching the requested data: {{error}}"
 msgstr ""
 "Une erreur s'est produite lors de l'extraction des données demandées : "
 "{{error}}"
 
-#: src/Elabftw/i18n4Js.php:103
+#: src/Elabftw/i18n4Js.php:104
 msgid ""
 "There was an error while parsing metadata (custom fields). Full error has "
 "been logged to the browser console."
@@ -398,172 +398,184 @@ msgstr ""
 "personnalisés). Le message d'erreur complet a été enregistré dans la console "
 "du navigateur."
 
-#: src/Elabftw/i18n4Js.php:104
+#: src/Elabftw/i18n4Js.php:105
 msgid "Existing ROR associations"
 msgstr "Associations ROR existantes"
 
-#: src/Elabftw/i18n4Js.php:105
+#: src/Elabftw/i18n4Js.php:106
 msgid "Export"
 msgstr "Export"
 
-#: src/Elabftw/i18n4Js.php:106
+#: src/Elabftw/i18n4Js.php:107
 msgid "Export successful."
 msgstr "Exportation réussie."
 
-#: src/Elabftw/i18n4Js.php:107
+#: src/Elabftw/i18n4Js.php:108
 msgid "Filename"
 msgstr "Nom du fichier"
 
-#: src/Elabftw/i18n4Js.php:108
+#: src/Elabftw/i18n4Js.php:109
 msgid "Firstname"
 msgstr "Prénom"
 
-#: src/Elabftw/i18n4Js.php:109
+#: src/Elabftw/i18n4Js.php:110
 msgid "Format"
 msgstr "Format"
 
-#: src/Elabftw/i18n4Js.php:110
+#: src/Elabftw/i18n4Js.php:111
 msgid "Id"
 msgstr "Id"
 
-#: src/Elabftw/i18n4Js.php:111
+#: src/Elabftw/i18n4Js.php:112
 msgid "This action cannot apply to current selection"
 msgstr "Cette action ne peut pas s'appliquer à la sélection actuelle"
 
-#: src/Elabftw/i18n4Js.php:112
+#: src/Elabftw/i18n4Js.php:113
 msgid "Is Admin"
 msgstr "Est Admin"
 
-#: src/Elabftw/i18n4Js.php:113
+#: src/Elabftw/i18n4Js.php:114
 msgid "Is Archived"
 msgstr "Est archivé"
 
-#: src/Elabftw/i18n4Js.php:114
+#: src/Elabftw/i18n4Js.php:115
 msgid "Is Owner"
 msgstr "Est propriétaire"
 
-#: src/Elabftw/i18n4Js.php:115
+#: src/Elabftw/i18n4Js.php:116
 msgid "Is Sysadmin"
 msgstr "Est Sysadmin"
 
-#: src/Elabftw/i18n4Js.php:116
+#: src/Elabftw/i18n4Js.php:117
 msgid "Last login"
 msgstr "Dernière connexion"
 
-#: src/Elabftw/i18n4Js.php:117
+#: src/Elabftw/i18n4Js.php:118
 msgid "Lastname"
 msgstr "Nom"
 
-#: src/Elabftw/i18n4Js.php:118
+#: src/Elabftw/i18n4Js.php:119
 msgid "File imported successfully"
 msgstr "Fichier importé avec succès"
 
-#: src/Elabftw/i18n4Js.php:119
+#: src/Elabftw/i18n4Js.php:120
 msgid "Error: file is too large!"
 msgstr "Erreur : le fichier est trop volumineux !"
 
-#: src/Elabftw/i18n4Js.php:120
+#: src/Elabftw/i18n4Js.php:121
 msgid "Filter by category"
 msgstr "Filtrer par catégorie"
 
-#: src/Elabftw/i18n4Js.php:121
+#: src/Elabftw/i18n4Js.php:122
 msgid "Error validating the form."
 msgstr "Erreur de validation du formulaire."
 
-#: src/Elabftw/i18n4Js.php:122
+#: src/Elabftw/i18n4Js.php:123
 msgid "Delete this?"
 msgstr "Supprimer ça ?"
 
-#: src/Elabftw/i18n4Js.php:123
+#: src/Elabftw/i18n4Js.php:124
 msgid "Hide deleted"
 msgstr "Masquer les données supprimées"
 
-#: src/Elabftw/i18n4Js.php:124
+#: src/Elabftw/i18n4Js.php:125
 msgid "Remove this filter?"
 msgstr "Supprimer ce filtre ?"
 
-#: src/Elabftw/i18n4Js.php:125
+#: src/Elabftw/i18n4Js.php:126
 msgid "Import"
 msgstr "Import"
 
-#: src/Elabftw/i18n4Js.php:126
+#: src/Elabftw/i18n4Js.php:127
 msgid "Import a spreadsheet (xls, csv, ods, ...)"
 msgstr "Importer une feuille de calcul (xls, csv, ods, ...)"
 
-#: src/Elabftw/i18n4Js.php:128
+#: src/Elabftw/i18n4Js.php:129
 msgid "Error during import. Please check the console for more information."
 msgstr ""
 "Erreur lors de l'importation. Veuillez consulter la console pour plus "
 "d'informations."
 
-#: src/Elabftw/i18n4Js.php:129
+#: src/Elabftw/i18n4Js.php:130
 msgid "Invalid syntax or information provided."
 msgstr "La syntaxe ou les informations fournies ne sont pas valides."
 
-#: src/Elabftw/i18n4Js.php:130
+#: src/Elabftw/i18n4Js.php:131
+msgid "Is locked"
+msgstr "Est verrouillé"
+
+#: src/Elabftw/i18n4Js.php:132
+msgid "Last modified at"
+msgstr "Modifié le"
+
+#: src/Elabftw/i18n4Js.php:133
 msgid "Loading"
 msgstr "Chargement"
 
-#: src/Elabftw/i18n4Js.php:131
+#: src/Elabftw/i18n4Js.php:134
 msgid "Delete this link?"
 msgstr "Supprimer ce lien ?"
 
-#: src/Elabftw/i18n4Js.php:132
+#: src/Elabftw/i18n4Js.php:135
 msgid "Location name"
 msgstr "Nom du lieu"
 
-#: src/Elabftw/i18n4Js.php:133
+#: src/Elabftw/i18n4Js.php:136
 msgid "Modified at"
 msgstr "Modifié le"
 
-#: src/Elabftw/i18n4Js.php:135
+#: src/Elabftw/i18n4Js.php:138
 msgid "Apply to {{num, number}} entries?"
 msgstr "Appliquer à {{num, nombre}} entrées ?"
 
-#: src/Elabftw/i18n4Js.php:136
+#: src/Elabftw/i18n4Js.php:139
 msgid "My teams"
 msgstr "Mes équipes"
 
-#: src/Elabftw/i18n4Js.php:137
+#: src/Elabftw/i18n4Js.php:140
 msgid "Name"
 msgstr "Nom"
 
-#: src/Elabftw/i18n4Js.php:138
+#: src/Elabftw/i18n4Js.php:141
 msgid "New spreadsheet"
 msgstr "Nouvelle feuille de calcul"
 
-#: src/Elabftw/i18n4Js.php:139
+#: src/Elabftw/i18n4Js.php:142
 msgid "A new version is available!"
 msgstr "Une nouvelle version est disponible !"
 
-#: src/Elabftw/i18n4Js.php:140 src/Models/AbstractEntity.php:1346
+#: src/Elabftw/i18n4Js.php:143
+msgid "Next step"
+msgstr "Étape suivante"
+
+#: src/Elabftw/i18n4Js.php:144 src/Models/AbstractEntity.php:1346
 msgid ""
 "Linking an item to itself is not allowed. Please select a different target."
 msgstr ""
 "Il n'est pas permis de lier un élément à lui-même. Veuillez sélectionner une "
 "autre cible."
 
-#: src/Elabftw/i18n4Js.php:141
+#: src/Elabftw/i18n4Js.php:145
 msgid "No matching result found."
 msgstr "Aucun résultat correspondant n'a été trouvé."
 
-#: src/Elabftw/i18n4Js.php:142
+#: src/Elabftw/i18n4Js.php:146
 msgid "No ROR associated yet."
 msgstr "Aucun ROR n'est encore associé."
 
-#: src/Elabftw/i18n4Js.php:144
+#: src/Elabftw/i18n4Js.php:148
 msgid "No tasks yet."
 msgstr "Aucune tâche pour l'instant."
 
-#: src/Elabftw/i18n4Js.php:145
+#: src/Elabftw/i18n4Js.php:149
 msgid "Nothing selected!"
 msgstr "Aucune sélection !"
 
-#: src/Elabftw/i18n4Js.php:146
+#: src/Elabftw/i18n4Js.php:150
 msgid "Now"
 msgstr "Maintenant"
 
-#: src/Elabftw/i18n4Js.php:147
+#: src/Elabftw/i18n4Js.php:151
 msgid ""
 "Warning: current OpenCloning version is incompatible with this version of "
 "eLabFTW."
@@ -571,206 +583,214 @@ msgstr ""
 "Attention : la version actuelle d'OpenCloning est incompatible avec cette "
 "version d'eLabFTW."
 
-#: src/Elabftw/i18n4Js.php:148
+#: src/Elabftw/i18n4Js.php:152
 msgid "Onboarding email(s) will soon be sent."
 msgstr "Le(s) courriel(s) d'accueil sera(ont) bientôt envoyé(s)."
 
-#: src/Elabftw/i18n4Js.php:149
+#: src/Elabftw/i18n4Js.php:153
 msgid "Only a Sysadmin can modify this."
 msgstr "Seul un administrateur système peut le modifier."
 
-#: src/Elabftw/i18n4Js.php:150 src/Enums/Users2TeamsTargets.php:28
+#: src/Elabftw/i18n4Js.php:154 src/Enums/Users2TeamsTargets.php:28
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: src/Elabftw/i18n4Js.php:151
+#: src/Elabftw/i18n4Js.php:155
 msgid "Your entry has been successfully transferred to the selected user."
 msgstr "Votre entrée a été transférée avec succès à l'utilisateur sélectionné."
 
-#: src/Elabftw/i18n4Js.php:152
+#: src/Elabftw/i18n4Js.php:156
 msgid "Organisation name"
 msgstr "Nom de l'organisation"
 
-#: src/Elabftw/i18n4Js.php:153
+#: src/Elabftw/i18n4Js.php:157
 msgid "Please wait…"
 msgstr "Patientez…"
 
-#: src/Elabftw/i18n4Js.php:154
+#: src/Elabftw/i18n4Js.php:158
+msgid "Rating"
+msgstr "Note"
+
+#: src/Elabftw/i18n4Js.php:159
 msgid "Read release notes"
 msgstr "Lire les notes de mise à jour"
 
-#: src/Elabftw/i18n4Js.php:155
+#: src/Elabftw/i18n4Js.php:160
 msgid "Read-only"
 msgstr "Lecture seule"
 
-#: src/Elabftw/i18n4Js.php:156
+#: src/Elabftw/i18n4Js.php:161
 msgid "Remove"
 msgstr "Supprimer"
 
-#: src/Elabftw/i18n4Js.php:157
+#: src/Elabftw/i18n4Js.php:162
 msgid "New title for the column"
 msgstr "Nouveau titre pour la colonne"
 
-#: src/Elabftw/i18n4Js.php:158
+#: src/Elabftw/i18n4Js.php:163
 msgid "Do you want to replace the file on the server with this edit?"
 msgstr ""
 "Souhaitez-vous remplacer le fichier sur le serveur avec ce changement ?"
 
-#: src/Elabftw/i18n4Js.php:159
+#: src/Elabftw/i18n4Js.php:164
 msgid "Overwrite original file"
 msgstr "Écraser le fichier original"
 
-#: src/Elabftw/i18n4Js.php:160
+#: src/Elabftw/i18n4Js.php:165
 msgid "Enter name of the file"
 msgstr "Nom du fichier"
 
-#: src/Elabftw/i18n4Js.php:161 src/Enums/Messages.php:46
+#: src/Elabftw/i18n4Js.php:166 src/Enums/Messages.php:46
 msgid "Nothing to show with this id"
 msgstr "Rien à afficher avec cet ID"
 
-#: src/Elabftw/i18n4Js.php:162
+#: src/Elabftw/i18n4Js.php:167
 msgid "Select two revisions to compare them."
 msgstr "Sélectionnez deux révisions pour les comparer."
 
-#: src/Elabftw/i18n4Js.php:163
+#: src/Elabftw/i18n4Js.php:168
 msgid "These RORs apply to the whole instance and are inherited by all teams."
 msgstr ""
 "Ces ROR s'appliquent à l'ensemble de l'instance et sont héritées par toutes "
 "les équipes."
 
-#: src/Elabftw/i18n4Js.php:164
+#: src/Elabftw/i18n4Js.php:169
 msgid "These RORs apply only to the current team."
 msgstr "Ces ROR ne s'appliquent qu'à l'équipe actuelle."
 
-#: src/Elabftw/i18n4Js.php:165
+#: src/Elabftw/i18n4Js.php:170
 msgid "These RORs apply only to your account."
 msgstr "Ces ROR s'appliquent uniquement à votre compte."
 
-#: src/Elabftw/i18n4Js.php:166
+#: src/Elabftw/i18n4Js.php:171
 msgid "Add Research Organization Registry (ROR) identifier"
 msgstr "Ajouter l'identifiant du Registre des Organismes de Recherche (ROR)"
 
-#: src/Elabftw/i18n4Js.php:167
+#: src/Elabftw/i18n4Js.php:172
 #, php-format
 msgid "Enter a valid 9-character ROR ID, for example 04t0gwh46 or %s"
 msgstr ""
 "Saisissez un identifiant ROR valide de 9 caractères, par exemple 04t0gwh46 "
 "ou %s"
 
-#: src/Elabftw/i18n4Js.php:168
+#: src/Elabftw/i18n4Js.php:173
 msgid "Save"
 msgstr "Enregistrer"
 
-#: src/Elabftw/i18n4Js.php:169
+#: src/Elabftw/i18n4Js.php:174
 msgid "Save and go back"
 msgstr "Enregistrer et revenir en arrière"
 
-#: src/Elabftw/i18n4Js.php:170
+#: src/Elabftw/i18n4Js.php:175
 msgid "Save as attachment"
 msgstr "Enregistrer en tant que pièce jointe"
 
-#: src/Elabftw/i18n4Js.php:171
+#: src/Elabftw/i18n4Js.php:176
 #: web/app/controllers/SortableAjaxController.php:49
 msgid "Saved"
 msgstr "Enregistré"
 
-#: src/Elabftw/i18n4Js.php:172
+#: src/Elabftw/i18n4Js.php:177
 msgid "Search"
 msgstr "Recherche"
 
-#: src/Elabftw/i18n4Js.php:173
+#: src/Elabftw/i18n4Js.php:178
 msgid "Select a resource"
 msgstr "Sélectionner une ressource"
 
-#: src/Elabftw/i18n4Js.php:174
+#: src/Elabftw/i18n4Js.php:179
 msgid "Show all"
 msgstr "Montrer tout"
 
-#: src/Elabftw/i18n4Js.php:175
+#: src/Elabftw/i18n4Js.php:180
 msgid "Show archived"
 msgstr "Montrer archives"
 
-#: src/Elabftw/i18n4Js.php:176
+#: src/Elabftw/i18n4Js.php:181
 msgid "Show deleted"
 msgstr "Montrer les supprimés"
 
-#: src/Elabftw/i18n4Js.php:177
+#: src/Elabftw/i18n4Js.php:182
 msgid "Signed by"
 msgstr "Signé par"
 
-#: src/Elabftw/i18n4Js.php:178
+#: src/Elabftw/i18n4Js.php:183
 msgid "Signing"
 msgstr "Signature"
 
-#: src/Elabftw/i18n4Js.php:179
+#: src/Elabftw/i18n4Js.php:184
 msgid "Sort by column"
 msgstr "Trier par colonne"
 
-#: src/Elabftw/i18n4Js.php:180
+#: src/Elabftw/i18n4Js.php:185
 msgid "Started on"
 msgstr "Démarrée le"
 
-#: src/Elabftw/i18n4Js.php:181
+#: src/Elabftw/i18n4Js.php:186
 msgid "Status"
 msgstr "Statut"
 
-#: src/Elabftw/i18n4Js.php:182
+#: src/Elabftw/i18n4Js.php:187
 msgid "Delete this step?"
 msgstr "Supprimer cette étape ?"
 
-#: src/Elabftw/i18n4Js.php:183
+#: src/Elabftw/i18n4Js.php:188
 msgid "Are you sure you want to undo this step?"
 msgstr "Êtes-vous certain(e) de vouloir défaire cette étape ?"
 
-#: src/Elabftw/i18n4Js.php:184
+#: src/Elabftw/i18n4Js.php:189
 msgid "Delete this tag?"
 msgstr "Supprimer ce tag ?"
 
-#: src/Elabftw/i18n4Js.php:185
+#: src/Elabftw/i18n4Js.php:190
 msgid "Tags"
 msgstr "Tags"
 
-#: src/Elabftw/i18n4Js.php:186 src/Enums/Scope.php:36 web/team.php:37
+#: src/Elabftw/i18n4Js.php:191 src/Enums/Scope.php:36 web/team.php:37
 msgid "Team"
 msgstr "Équipe"
 
-#: src/Elabftw/i18n4Js.php:187
+#: src/Elabftw/i18n4Js.php:192
 msgid "Teams"
 msgstr "Équipes"
 
-#: src/Elabftw/i18n4Js.php:188
+#: src/Elabftw/i18n4Js.php:193
 msgid "Template title"
 msgstr "Titre du modèle"
 
-#: src/Elabftw/i18n4Js.php:189
+#: src/Elabftw/i18n4Js.php:194
+msgid "Is timestamped"
+msgstr "Est horodaté"
+
+#: src/Elabftw/i18n4Js.php:195
 msgid "Timestamped by"
 msgstr "Horodaté par"
 
-#: src/Elabftw/i18n4Js.php:190
+#: src/Elabftw/i18n4Js.php:196
 msgid "Title"
 msgstr "Titre"
 
-#: src/Elabftw/i18n4Js.php:191
+#: src/Elabftw/i18n4Js.php:197
 msgid "Today"
 msgstr "Aujourd’hui"
 
-#: src/Elabftw/i18n4Js.php:192
+#: src/Elabftw/i18n4Js.php:198
 msgid "Toggle pin"
 msgstr "Épingler/Désépingler"
 
-#: src/Elabftw/i18n4Js.php:193
+#: src/Elabftw/i18n4Js.php:199
 msgid "At least 3 characters are required to search"
 msgstr "Au moins 3 caractères sont nécessaires pour effectuer une recherche"
 
-#: src/Elabftw/i18n4Js.php:194
+#: src/Elabftw/i18n4Js.php:200
 msgid "Unarchive and add to team {{team, string}}"
 msgstr "Désarchiver et ajouter à l'équipe {{team, string}}"
 
-#: src/Elabftw/i18n4Js.php:196
+#: src/Elabftw/i18n4Js.php:202
 msgid "Unarchive user"
 msgstr "Désarchiver utilisateur"
 
-#: src/Elabftw/i18n4Js.php:197
+#: src/Elabftw/i18n4Js.php:203
 msgid ""
 "Unarchiving a user means their account will be restored. This action is "
 "reversible."
@@ -778,31 +798,31 @@ msgstr ""
 "Désarchiver un utilisateur signifie que son compte sera restauré. Cette "
 "action est réversible."
 
-#: src/Elabftw/i18n4Js.php:198
+#: src/Elabftw/i18n4Js.php:204
 msgid "File comment"
 msgstr "Commentaire du fichier"
 
-#: src/Elabftw/i18n4Js.php:199
+#: src/Elabftw/i18n4Js.php:205
 msgid "Userid"
 msgstr "Userid"
 
-#: src/Elabftw/i18n4Js.php:200
+#: src/Elabftw/i18n4Js.php:206
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: src/Elabftw/i18n4Js.php:201
+#: src/Elabftw/i18n4Js.php:207
 msgid "Valid until"
 msgstr "Valide jusqu'à"
 
-#: src/Elabftw/i18n4Js.php:202 src/Enums/ProcurementState.php:30
+#: src/Elabftw/i18n4Js.php:208 src/Enums/ProcurementState.php:30
 msgid "Validated"
 msgstr "Validé"
 
-#: src/Elabftw/i18n4Js.php:203
+#: src/Elabftw/i18n4Js.php:209
 msgid "View template"
 msgstr "Voir le modèle"
 
-#: src/Elabftw/i18n4Js.php:204
+#: src/Elabftw/i18n4Js.php:210
 msgid "View upgrade guide"
 msgstr "Consulter le guide de mise à niveau"
 
@@ -1156,21 +1176,25 @@ msgstr ""
 msgid "Invalid metadata JSON provided."
 msgstr "Le fichier JSON de métadonnées fourni n'est pas valide."
 
-#: src/Models/AbstractStatus.php:72
+#: src/Models/AbstractStatus.php:75
 msgid "Running"
 msgstr "En cours"
 
-#: src/Models/AbstractStatus.php:73
+#: src/Models/AbstractStatus.php:76
 msgid "Success"
 msgstr "Succès"
 
-#: src/Models/AbstractStatus.php:74
+#: src/Models/AbstractStatus.php:77
 msgid "Need to be redone"
 msgstr "Besoin d'être refait"
 
-#: src/Models/AbstractStatus.php:75
+#: src/Models/AbstractStatus.php:78
 msgid "Fail"
 msgstr "Échec"
+
+#: src/Models/AbstractStatus.php:149
+msgid "Only a team Admin can modify the visibility."
+msgstr "Seul un administrateur de l'équipe peut modifier la visibilité."
 
 #: src/Models/ApiKeys.php:121
 msgid "No corresponding API key found!"
@@ -1372,11 +1396,11 @@ msgstr ""
 msgid "This step is immutable: it cannot be modified."
 msgstr "Cette étape est immuable : elle ne peut pas être modifiée."
 
-#: src/Models/StorageUnits.php:373
+#: src/Models/StorageUnits.php:376
 msgid "Cannot delete a storage unit with children!"
 msgstr "Impossible de supprimer une unité de stockage avec des enfants !"
 
-#: src/Models/StorageUnits.php:376
+#: src/Models/StorageUnits.php:379
 msgid "Cannot delete a storage unit with containers!"
 msgstr "Impossible de supprimer une unité de stockage avec des conteneurs !"
 
@@ -2125,12 +2149,12 @@ msgid "With selected:"
 msgstr "Avec sélection :"
 
 #: src/templates/admin.html:469 src/templates/show.html:139
-#: src/templates/show.html:524 src/templates/view-edit-toolbar.html:265
+#: src/templates/show.html:524 src/templates/view-edit-toolbar.html:268
 msgid "Lock"
 msgstr "Verrouiller"
 
 #: src/templates/admin.html:470 src/templates/show.html:525
-#: src/templates/view-edit-toolbar.html:268
+#: src/templates/view-edit-toolbar.html:271
 msgid "Unlock"
 msgstr "Déverrouiller"
 
@@ -2138,17 +2162,17 @@ msgstr "Déverrouiller"
 #: src/templates/ownership-transfer-modal.html:23
 #: src/templates/ownership-transfer-modal.html:59
 #: src/templates/ownership-transfer-modal.html:61
-#: src/templates/view-edit-toolbar.html:298
+#: src/templates/view-edit-toolbar.html:304
 msgid "Transfer ownership"
 msgstr "Transférer la possession"
 
 #: src/templates/admin.html:472 src/templates/show.html:527
-#: src/templates/view-edit-toolbar.html:323
+#: src/templates/view-edit-toolbar.html:332
 msgid "Archive"
 msgstr "Archive"
 
 #: src/templates/admin.html:473 src/templates/show.html:528
-#: src/templates/view-edit-toolbar.html:327
+#: src/templates/view-edit-toolbar.html:336
 msgid "Unarchive"
 msgstr "Désarchiver"
 
@@ -2236,8 +2260,8 @@ msgstr "Retourner à la liste"
 
 #: src/templates/booking-params-modal.html:6
 #: src/templates/booking-params-modal.html:11
-#: src/templates/view-edit-toolbar.html:201
-#: src/templates/view-edit-toolbar.html:290
+#: src/templates/view-edit-toolbar.html:205
+#: src/templates/view-edit-toolbar.html:294
 msgid "Modify booking parameters"
 msgstr "Modifier les paramètres de réservation"
 
@@ -2310,7 +2334,7 @@ msgid ""
 "Calculate the %shourly%s cost of booked resources based on scheduling data, "
 "and export the results as a CSV file from the Scheduler page."
 msgstr ""
-"Calculez le coût %shourly% des ressources réservées à partir des données de "
+"Calculez le coût %shourly%s des ressources réservées à partir des données de "
 "planification, puis exportez les résultats sous forme de fichier CSV depuis "
 "la page « Planificateur »."
 
@@ -2367,7 +2391,7 @@ msgstr "Envoyer"
 
 #: src/templates/categories-status-index.macro.html:34
 #: src/templates/categories-status-index.macro.html:74
-#: src/templates/edit.html:159
+#: src/templates/edit.html:154
 msgid "Color"
 msgstr "Couleur"
 
@@ -2457,7 +2481,7 @@ msgstr "Structure exacte"
 msgid "Compounds substructure search results"
 msgstr "Résultats de la recherche de sous-structures de composés"
 
-#: src/templates/compounds-view-edit.html:2 src/templates/edit.html:138
+#: src/templates/compounds-view-edit.html:2 src/templates/edit.html:133
 #: src/templates/steps-view.html:5 src/templates/storage-view-edit.html:5
 #: src/templates/todolist-panel.html:4 src/templates/todolist-panel.html:28
 #: src/templates/todolist-panel.html:35 src/templates/uploads.html:26
@@ -2719,8 +2743,8 @@ msgid "Duplicate link to original entry"
 msgstr "Lien dupliqué vers l'entrée originale"
 
 #: src/templates/duplicate-modal.html:34
-#: src/templates/upload-dropdown-menu.html:42
-#: src/templates/view-edit-toolbar.html:187
+#: src/templates/upload-dropdown-menu.html:41
+#: src/templates/view-edit-toolbar.html:191
 msgid "Duplicate"
 msgstr "Dupliquer"
 
@@ -2886,11 +2910,11 @@ msgstr ""
 "La fonctionnalité « Texte principal » a été désactivée. Cliquez sur l'icône "
 "en forme d'œil pour la réactiver."
 
-#: src/templates/edit.html:61 src/templates/view-edit-toolbar.html:316
+#: src/templates/edit.html:61 src/templates/view-edit-toolbar.html:325
 msgid "Show main text"
 msgstr "Afficher le texte principal"
 
-#: src/templates/edit.html:61 src/templates/view-edit-toolbar.html:316
+#: src/templates/edit.html:61 src/templates/view-edit-toolbar.html:325
 msgid "Hide main text"
 msgstr "Masquer le texte principal"
 
@@ -2914,37 +2938,37 @@ msgstr "Contenu principal"
 msgid "Last saved:"
 msgstr "Dernière sauvegarde :"
 
-#: src/templates/edit.html:121 src/templates/json-editor.html:10
+#: src/templates/edit.html:116 src/templates/json-editor.html:10
 msgid "Add field"
 msgstr "Ajouter un champ"
 
-#: src/templates/edit.html:122
+#: src/templates/edit.html:117
 msgid "Load fields"
 msgstr "Charger les champs"
 
-#: src/templates/edit.html:138 src/templates/ucp.html:493
+#: src/templates/edit.html:133 src/templates/ucp.html:493
 #: src/templates/ucp.html:513 src/templates/ucp.html:524
 #: src/templates/view.html:163
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/templates/edit.html:141
+#: src/templates/edit.html:136
 msgid "Permissions for the template"
 msgstr "Autorisations pour le modèle"
 
-#: src/templates/edit.html:150
+#: src/templates/edit.html:145
 msgid "Draw something"
 msgstr "Dessiner quelquechose"
 
-#: src/templates/edit.html:166
+#: src/templates/edit.html:161
 msgid "Stroke width"
 msgstr "Épaisseur du trait"
 
-#: src/templates/edit.html:173
+#: src/templates/edit.html:168
 msgid "Eraser"
 msgstr "Effaceur"
 
-#: src/templates/edit.html:178
+#: src/templates/edit.html:173
 msgid "Use %sCtrl%s + click to add text"
 msgstr "Utilisez %sCtrl%s + clic pour ajouter du texte"
 
@@ -3085,7 +3109,7 @@ msgstr "Auteur"
 
 #: src/templates/export-menu-dspace-modal.html:26
 msgid "Date of Issue"
-msgstr "Date de’émission"
+msgstr "Date d’émission"
 
 #: src/templates/export-menu-dspace-modal.html:30
 msgid "Type"
@@ -3863,7 +3887,6 @@ msgid "See documentation about custom fields."
 msgstr "Consultez la documentation sur les champs personnalisés."
 
 #: src/templates/link-view-one.html:22 src/templates/revisions.html:27
-#: src/templates/show-item.html:117
 msgid "Toggle content"
 msgstr "Afficher/Masquer contenu"
 
@@ -4290,8 +4313,8 @@ msgid "Apply to Read & Write"
 msgstr "Appliquer en lecture & écriture"
 
 #: src/templates/procurement-params-modal.html:6
-#: src/templates/view-edit-toolbar.html:230
-#: src/templates/view-edit-toolbar.html:292
+#: src/templates/view-edit-toolbar.html:233
+#: src/templates/view-edit-toolbar.html:297
 msgid "Modify procurement parameters"
 msgstr "Modifier les paramètres d'approvisionnement"
 
@@ -4567,7 +4590,7 @@ msgstr ""
 msgid "Compare revisions"
 msgstr "Comparer les révisions"
 
-#: src/templates/revisions.html:25 src/templates/show-item.html:13
+#: src/templates/revisions.html:25
 msgid "Select"
 msgstr "Sélectionner"
 
@@ -4579,7 +4602,7 @@ msgstr "ID de révision"
 msgid "Toggle content "
 msgstr "Afficher/masquer le contenu "
 
-#: src/templates/revisions.html:30 src/templates/show-item.html:58
+#: src/templates/revisions.html:30
 msgid "by"
 msgstr "par"
 
@@ -4682,7 +4705,6 @@ msgstr "Associez cet événement à des expériences ou à des ressources."
 
 #: src/templates/scheduler-event-view-modal.html:17
 #: src/templates/scheduler-event-view-modal.html:43
-#: src/templates/show-item.html:112
 msgid "View"
 msgstr "Voir"
 
@@ -4727,7 +4749,7 @@ msgstr ""
 "tous les filtres actifs."
 
 #: src/templates/scheduler-pick-items-modal.html:5
-#: src/templates/view-edit-toolbar.html:194
+#: src/templates/view-edit-toolbar.html:198
 msgid "Book item"
 msgstr "Réserver"
 
@@ -4891,23 +4913,6 @@ msgstr "Supprimé"
 msgid "State"
 msgstr "État"
 
-#: src/templates/show-item.html:9
-msgid "Entry"
-msgstr "Entrée"
-
-#: src/templates/show-item.html:72 src/templates/view.html:119
-msgid "Next step"
-msgstr "Étape suivante"
-
-#: src/templates/show-item.html:101 src/templates/view-edit-toolbar.html:337
-#: src/templates/view.html:219
-msgid "Restore entry"
-msgstr "Rétablir l'entrée"
-
-#: src/templates/show-item.html:124 src/templates/ucp.html:82
-msgid "Last modified"
-msgstr "Dernière modification"
-
 #: src/templates/show-view-edit.html:6
 msgid "You are seeing this because your account is less than %d days old."
 msgstr "Vous voyez ceci parce que votre compte date de moins de %d jours."
@@ -4927,10 +4932,6 @@ msgstr "Afficher la syntaxe complète"
 #: src/templates/show.html:79
 msgid "Show more filters"
 msgstr "Plus de filtres"
-
-#: src/templates/show.html:86
-msgid "Metadata"
-msgstr "Métadonnées"
 
 #: src/templates/show.html:90 src/templates/show.html:91
 msgid "Name of field"
@@ -4967,10 +4968,6 @@ msgstr "Horodaté"
 #: src/templates/show.html:151
 msgid "Select timestamp status"
 msgstr "Choisir un statut d'horodatage"
-
-#: src/templates/show.html:159 src/templates/show.html:160
-msgid "Rating"
-msgstr "Note"
 
 #: src/templates/show.html:161
 msgid "Select number of stars"
@@ -5145,7 +5142,7 @@ msgstr "Horodater les entités sélectionnées"
 #: src/templates/show.html:526 src/templates/sysconfig.html:53
 #: src/templates/view-edit-toolbar.html:54
 #: src/templates/view-edit-toolbar.html:78
-#: src/templates/view-edit-toolbar.html:216
+#: src/templates/view-edit-toolbar.html:219
 msgid "Timestamp"
 msgstr "Horodatage"
 
@@ -5254,7 +5251,7 @@ msgstr "complété"
 
 #: src/templates/steps-edit.html:56 src/templates/ucp.html:425
 #: src/templates/upload-dropdown-menu.html:26
-#: src/templates/view-edit-toolbar.html:283
+#: src/templates/view-edit-toolbar.html:287
 msgid "More options"
 msgstr "Plus d'options"
 
@@ -6636,6 +6633,10 @@ msgstr "Liste d'entrées (défaut)"
 msgid "Tabular"
 msgstr "Tabulaire"
 
+#: src/templates/ucp.html:82
+msgid "Last modified"
+msgstr "Dernière modification"
+
 #: src/templates/ucp.html:82 src/templates/ucp.html:106
 msgid "(default)"
 msgstr "(défaut)"
@@ -6923,47 +6924,35 @@ msgstr "Éditer le nom du fichier"
 msgid "Archive/Unarchive"
 msgstr "Archivage/désarchivage"
 
-#: src/templates/upload-dropdown-menu.html:46
+#: src/templates/upload-dropdown-menu.html:45
 msgid "Upload new version"
 msgstr "Télécharger une nouvelle version"
 
-#: src/templates/upload-dropdown-menu.html:51
-msgid "Insert image"
-msgstr "Insérer une image"
+#: src/templates/upload-dropdown-menu.html:50
+msgid "Insert in main text"
+msgstr "Insérer dans le corps du texte"
 
 #: src/templates/upload-dropdown-menu.html:55
-msgid "Insert video"
-msgstr "Insérer une vidéo"
-
-#: src/templates/upload-dropdown-menu.html:59
-msgid "Insert audio"
-msgstr "Insérer de l’audio"
-
-#: src/templates/upload-dropdown-menu.html:63
-msgid "Insert text"
-msgstr "Insérer du texte"
-
-#: src/templates/upload-dropdown-menu.html:68
 msgid "Annotate image"
 msgstr "Annoter l'image"
 
-#: src/templates/upload-dropdown-menu.html:72
-msgid "JSON editor"
-msgstr "Éditeur JSON"
+#: src/templates/upload-dropdown-menu.html:59
+msgid "Load in JSON editor"
+msgstr "Charger dans l'éditeur JSON"
 
-#: src/templates/upload-dropdown-menu.html:75
+#: src/templates/upload-dropdown-menu.html:62
 msgid "Spreadsheet editor"
 msgstr "Éditeur de tableur"
 
-#: src/templates/upload-dropdown-menu.html:79
+#: src/templates/upload-dropdown-menu.html:66
 msgid "Open in NMRium"
 msgstr "Ouvrir dans NMRium"
 
-#: src/templates/upload-dropdown-menu.html:85
+#: src/templates/upload-dropdown-menu.html:72
 msgid "Preview"
 msgstr "Aperçu"
 
-#: src/templates/upload-dropdown-menu.html:88 src/templates/uploads.html:76
+#: src/templates/upload-dropdown-menu.html:75 src/templates/uploads.html:76
 msgid "More information"
 msgstr "Plus d'informations"
 
@@ -7034,8 +7023,8 @@ msgid "Lock down write permissions"
 msgstr "Verrouiller les autorisations d'écriture"
 
 #: src/templates/view-edit-toolbar.html:6
-#: src/templates/view-edit-toolbar.html:276
-#: src/templates/view-edit-toolbar.html:277
+#: src/templates/view-edit-toolbar.html:279
+#: src/templates/view-edit-toolbar.html:280
 msgid "Request action"
 msgstr "Demande d'action"
 
@@ -7086,7 +7075,7 @@ msgstr ""
 "blockchain du Consortium Bloxberg basée sur Ethereum."
 
 #: src/templates/view-edit-toolbar.html:89
-#: src/templates/view-edit-toolbar.html:210
+#: src/templates/view-edit-toolbar.html:213
 msgid "Add signature"
 msgstr "Ajouter une signature"
 
@@ -7138,19 +7127,19 @@ msgid "Enter a quantity to purchase"
 msgstr "Saisir une quantité à acheter"
 
 #: src/templates/view-edit-toolbar.html:151
-#: src/templates/view-edit-toolbar.html:230
+#: src/templates/view-edit-toolbar.html:233
 msgid "Place order"
 msgstr "Passer la commande"
 
-#: src/templates/view-edit-toolbar.html:165
+#: src/templates/view-edit-toolbar.html:166
 msgid "Create entry from template"
 msgstr "Créer une entrée à partir d'un modèle"
 
-#: src/templates/view-edit-toolbar.html:174
-msgid "View mode"
-msgstr "Mode vue"
+#: src/templates/view-edit-toolbar.html:178
+msgid "Save and view"
+msgstr "Enregistrer et afficher"
 
-#: src/templates/view-edit-toolbar.html:197
+#: src/templates/view-edit-toolbar.html:201
 msgid ""
 "Send an email to users who have booked this resource within the 4 last & "
 "upcoming months."
@@ -7158,22 +7147,26 @@ msgstr ""
 "Envoyer un e-mail aux utilisateurs qui ont réservé cette ressource au cours "
 "des 4 derniers mois et des mois à venir."
 
-#: src/templates/view-edit-toolbar.html:223
+#: src/templates/view-edit-toolbar.html:226
 msgid "Add to blockchain"
 msgstr "Ajouter à la blockchain"
 
-#: src/templates/view-edit-toolbar.html:303
-#: src/templates/view-edit-toolbar.html:304
+#: src/templates/view-edit-toolbar.html:310
+#: src/templates/view-edit-toolbar.html:311
 msgid "Create template from entry"
 msgstr "Créer un modèle à partir d'une entrée"
 
-#: src/templates/view-edit-toolbar.html:309
+#: src/templates/view-edit-toolbar.html:316
 msgid "See revisions"
 msgstr "Voir les révisions"
 
-#: src/templates/view-edit-toolbar.html:311
+#: src/templates/view-edit-toolbar.html:319
 msgid "See changelog"
 msgstr "Voir journal des modifications"
+
+#: src/templates/view-edit-toolbar.html:347 src/templates/view.html:219
+msgid "Restore entry"
+msgstr "Rétablir l'entrée"
 
 #: src/templates/view-edit.html:20
 msgid "This entry is archived: it will not appear in the listings by default."
@@ -7215,6 +7208,27 @@ msgstr "Dernière modification le %s"
 #: src/templates/view.html:217
 msgid "This entry has been deleted."
 msgstr "Cette entrée a été supprimée."
+
+#~ msgid "Entry"
+#~ msgstr "Entrée"
+
+#~ msgid "Metadata"
+#~ msgstr "Métadonnées"
+
+#~ msgid "Insert image"
+#~ msgstr "Insérer une image"
+
+#~ msgid "Insert video"
+#~ msgstr "Insérer une vidéo"
+
+#~ msgid "Insert audio"
+#~ msgstr "Insérer de l’audio"
+
+#~ msgid "JSON editor"
+#~ msgstr "Éditeur JSON"
+
+#~ msgid "View mode"
+#~ msgstr "Mode vue"
 
 #~ msgid "Extra fields"
 #~ msgstr "Champs supplémentaires"
@@ -7321,9 +7335,6 @@ msgstr "Cette entrée a été supprimée."
 
 #~ msgid "Insert in text at cursor position"
 #~ msgstr "Insérer dans le texte à la position du curseur"
-
-#~ msgid "Load into JSON Editor"
-#~ msgstr "Charger dans l'éditeur JSON"
 
 #~ msgid "Load into Spreadsheet Editor"
 #~ msgstr "Charger dans l'éditeur de tableur"

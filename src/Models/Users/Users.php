@@ -792,7 +792,7 @@ class Users extends AbstractRest
 
     public function isAdminOrExplode(): void
     {
-        if ($this->isAdmin() === false) {
+        if (!$this->isSysadmin() && !$this->isAdmin()) {
             throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
         }
     }

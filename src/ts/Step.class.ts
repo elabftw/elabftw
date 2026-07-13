@@ -5,7 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { Model, Target, Entity, Action } from './interfaces';
+import { Model, Target, Action } from './interfaces';
+import type { Entity } from './interfaces';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
 

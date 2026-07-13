@@ -6,7 +6,8 @@
  * @package elabftw
  */
 import { clearForm, collectForm, reloadElements, toggleIcon } from './misc';
-import { Action, BinaryValue, Model } from './interfaces';
+import { Action, Model } from './interfaces';
+import type { BinaryValue } from './interfaces';
 import i18next from './i18n';
 import tinymce from 'tinymce/tinymce';
 import { getEditor } from './Editor.class';
@@ -144,6 +145,7 @@ function renderEndpoints(endpoints: Endpoint[]): void {
 function checkForUpdate() {
   const updateUrl = 'https://get.elabftw.net/updates.json';
   const currentVersionDiv = document.getElementById('currentVersion');
+  if (!currentVersionDiv) return;
   const latestVersionDiv = document.getElementById('latestVersion');
   const currentVersion = currentVersionDiv.innerText;
   // Note: this doesn't work on Chrome

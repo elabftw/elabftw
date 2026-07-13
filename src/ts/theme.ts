@@ -1,8 +1,44 @@
+export enum ThemeVariant {
+  Auto = 0,
+  Light = 1,
+  Dark = 2,
+  DarkBlue = 3,
+}
+
 export enum AppTheme {
   Light = 'light',
   Dark = 'dark',
   DarkBlue = 'dark-blue',
 }
+
+const themeClasses = ['dark-mode','dark-blue-mode'] as const;
+
+export const isThemeVariant = (value: number): value is ThemeVariant => {
+  return Object.values(ThemeVariant).includes(value);
+};
+
+export const applyTheme = (themeVariant: ThemeVariant): void => {
+  document.documentElement.classList.remove(...themeClasses);
+  switch (themeVariant) {
+    case ThemeVariant.Dark:
+      document.documentElement.classList.add('dark-mode');
+      break;
+    case ThemeVariant.DarkBlue:
+      document.documentElement.classList.add('dark-blue-mode');
+      break;
+    case ThemeVariant.Auto:
+    case ThemeVariant.Light:
+      break;
+  }
+};
+
+export const updateThemeControls = (themeVariant: ThemeVariant): void => {
+  document
+    .querySelectorAll<HTMLElement>('[data-current-theme]')
+    .forEach(control => {
+      control.dataset.currentTheme = String(themeVariant);
+    });
+};
 
 export const getAppTheme = (): AppTheme => {
   const classes = document.documentElement.classList;
@@ -25,7 +61,7 @@ export const getAgGridTheme = (): string => {
       return 'ag-theme-quartz-dark';
     case AppTheme.Dark:
       return 'ag-theme-alpine-dark';
-    default:
+    case AppTheme.Light:
       return 'ag-theme-alpine';
   }
 };

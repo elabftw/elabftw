@@ -71,6 +71,7 @@ import { entity } from './getEntity';
 import { on, get } from './handlers';
 import Tab from './Tab.class';
 import { core } from './core';
+import {applyTheme, updateThemeControls} from "./theme";
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -84,26 +85,6 @@ interface Status extends SelectOptions {
 document.documentElement.style.setProperty('--navbar-height', `${document.querySelector<HTMLElement>('div > .navbar')?.offsetHeight ?? 0}px`);
 
 const container = document.getElementById('container')!;
-
-const themeClasses = ['dark-mode', 'dark-blue-mode'];
-
-const applyTheme = (themeVariant: number): void => {
-  document.documentElement.classList.remove(...themeClasses);
-  switch (themeVariant) {
-  case 2:
-    document.documentElement.classList.add('dark-mode');
-    break;
-  case 3:
-    document.documentElement.classList.add('dark-blue-mode');
-    break;
-  }
-};
-
-const updateThemeControls = (themeVariant: number): void => {
-  document.querySelectorAll<HTMLElement>('[data-current-theme]').forEach(control => {
-    control.dataset.currentTheme = String(themeVariant);
-  });
-};
 
 on('set-theme', (el: HTMLElement) => {
   const targetTheme = Number.parseInt(el.dataset.themeVariant ?? '', 10);

@@ -113,6 +113,7 @@ use function strtolower;
 use function array_filter;
 use function preg_replace;
 use function preg_match;
+use function strlen;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -1415,14 +1416,7 @@ abstract class AbstractEntity extends AbstractRest
                     FROM compounds2%1$s AS c2e_search
                     INNER JOIN compounds AS cmp_search
                         ON cmp_search.id = c2e_search.compound_id
-                    WHERE MATCH(
-                        cmp_search.cas_number,
-                        cmp_search.ec_number,
-                        cmp_search.name,
-                        cmp_search.iupac_name,
-                        cmp_search.inchi_key,
-                        cmp_search.molecular_formula
-                    ) AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
+                    WHERE ' . $this->getCompoundsSimpleQuerySql($query) . '
                 )',
                 $this->entityType->value,
             ),
@@ -1442,6 +1436,41 @@ abstract class AbstractEntity extends AbstractRest
                 ),
             ),
         );
+    }
+
+    private function getCompoundsSimpleQuerySql(string $query): string
+    {
+        if ($this->hasShortFulltextToken($query)) {
+            return 'cmp_search.cas_number LIKE :simpleQuery
+                OR cmp_search.ec_number LIKE :simpleQuery
+                OR cmp_search.name LIKE :simpleQuery
+                OR cmp_search.iupac_name LIKE :simpleQuery
+                OR cmp_search.inchi_key LIKE :simpleQuery
+                OR cmp_search.molecular_formula LIKE :simpleQuery';
+        }
+
+        return 'MATCH(
+            cmp_search.cas_number,
+            cmp_search.ec_number,
+            cmp_search.name,
+            cmp_search.iupac_name,
+            cmp_search.inchi_key,
+            cmp_search.molecular_formula
+        ) AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)';
+    }
+
+    private function hasShortFulltextToken(string $value): bool
+    {
+        $value = preg_replace('/[+\-><()~*"@]+/', ' ', $value) ?? '';
+        $tokens = array_filter(explode(' ', trim($value)));
+
+        foreach ($tokens as $token) {
+            if (strlen($token) < 3) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function toBooleanFulltextQuery(string $value): string

@@ -1,6 +1,6 @@
 // overrides of prism.js code highlighting library
 
-.dark-mode {
+:is(.dark-mode, .dark-blue-mode) {
   // this can also be seen in the search help modal
   .token {
     background-color: var(--mainbackground);

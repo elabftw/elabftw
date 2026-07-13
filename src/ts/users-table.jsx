@@ -28,6 +28,7 @@ import { DEFAULT_AG_GRID_PAGINATION, populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
+import { getAgGridTheme } from "./theme";
 
 // allow filtering by values for cells that render icons or badges (team, isSysadmin, etc.,)
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
@@ -70,13 +71,6 @@ if (document.getElementById('users-table')) {
   const GridExample = () => {
     const [rowData, setRowData] = useState([]);
     const [gridApi, setGridApi] = useState(null);
-    const rootClasses = document.documentElement.classList;
-    const isDark = rootClasses.contains('dark-mode');
-    const isDarkBlue = rootClasses.contains('dark-blue-mode');
-
-    const agGridTheme = isDarkBlue ? 'ag-theme-quartz-dark'
-      : isDark ? 'ag-theme-alpine-dark'
-        : 'ag-theme-alpine';
 
     const onGridReady = (params) => {
       setGridApi(params.api);
@@ -207,7 +201,7 @@ if (document.getElementById('users-table')) {
           aria-label={i18next.t('search')}
         />
         <div
-          className={agGridTheme} style={{ height: 650 }}>
+          className={getAgGridTheme()} style={{ height: 650 }}>
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}

@@ -5,6 +5,7 @@
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</button></li>
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='3'>{{ 'API keys'|trans }}</button></li>
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='4'>{{ 'Notifications'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='5'>{{ 'Appearence'|trans }}</button></li>
 </ul>
 
 {% include 'loading-spinner.html' %}
@@ -39,7 +40,7 @@
   </div>
 </div>
 
-{# TAB 1 - USER PREFERENCES #}
+{# TAB 1 - USER PREFERENCES - GENERAL #}
 <div data-tabcontent='1' hidden>
   {# LANGUAGE #}
   <h2 class='p-2 pl-3 section-title'>{{ 'Preferences'|trans }}</h2>
@@ -465,7 +466,7 @@
   </div>
 </div>
 
-{# TAB 4 - API KEYS #}
+{# TAB 3 - API KEYS #}
 <div data-tabcontent='3' hidden>
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/usage/api'>{{ 'Link to documentation'|trans }}</a></p>
   <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
@@ -531,7 +532,7 @@
   </table>
 </div>
 
-{# TAB 5 - NOTIFICATIONS SETTINGS #}
+{# TAB 4 - NOTIFICATIONS SETTINGS #}
 <div data-tabcontent='4' hidden>
   <h2 class='p-2 pl-3 section-title mb-3' id='notificationsSettings'>{{ 'Notifications settings'|trans }}</h2>
   <div class='pl-3'>
@@ -557,6 +558,13 @@
     </div>
     <hr>
   {% endfor %}
+  </div>
+</div>
+
+{# TAB 5 - APPEARANCE SETTINGS #}
+<div data-tabcontent='5' hidden>
+  <h2 class='p-2 pl-3 section-title mb-3' id='notificationsSettings'>{{ 'Theme preferences'|trans }}</h2>
+  <div class='pl-3'>
   </div>
 </div>
 {# END PAGE #}

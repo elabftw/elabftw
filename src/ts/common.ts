@@ -85,22 +85,6 @@ document.documentElement.style.setProperty('--navbar-height', `${document.queryS
 
 const container = document.getElementById('container')!;
 
-// on('toggle-dark-mode', (el: HTMLElement) => {
-//   const currentTheme = parseInt(el.dataset.currentTheme, 10);
-//   // Auto (0) and Light (1) should both toggle to Dark (2)
-//   const targetTheme = currentTheme === 2 ? 1 : 2;
-// on('toggle-dark-mode', (el: HTMLElement) => {
-//   const currentTheme = parseInt(el.dataset.currentTheme, 10);
-//   // Auto (0) and Light (1) should both toggle to Dark (2)
-//   const targetTheme = currentTheme === 2 ? 1 : 2;
-//   ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
-//     const isDark = targetTheme === 2;
-//     document.documentElement.classList.toggle('dark-mode', isDark);
-//     document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
-//     el.dataset.currentTheme = String(targetTheme);
-//   });
-// });
-
 const themeClasses = ['dark-mode', 'dark-blue-mode'];
 
 const applyTheme = (themeVariant: number): void => {
@@ -113,10 +97,6 @@ const applyTheme = (themeVariant: number): void => {
     document.documentElement.classList.add('dark-blue-mode');
     break;
   }
-  // reload jsx components
-  window.dispatchEvent(new CustomEvent('theme-changed', {
-    detail: { themeVariant },
-  }));
 };
 
 const updateThemeControls = (themeVariant: number): void => {

@@ -28,6 +28,7 @@ import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
+import { getAgGridTheme } from "./theme";
 
 // allow filtering by displayed values for cells that render their raw value differently
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
@@ -127,15 +128,6 @@ const EntitiesTable = ({
 }) => {
   const [rowData, setRowData] = useState([]);
   const gridApiRef = useRef(null);
-  // const isDark = document.documentElement.classList.contains('dark-mode');
-  const rootClasses = document.documentElement.classList;
-
-  const isDark = rootClasses.contains('dark-mode');
-  const isDarkBlue = rootClasses.contains('dark-blue-mode');
-
-  const agGridTheme = isDarkBlue ? 'ag-theme-quartz-dark'
-    : isDark ? 'ag-theme-alpine-dark'
-      : 'ag-theme-alpine';
 
   const onGridReady = (params) => {
     gridApiRef.current = params.api;
@@ -314,7 +306,7 @@ const EntitiesTable = ({
   return (
     <>
       <div
-        className={agGridTheme} style={{ height: 650 }}>
+        className={getAgGridTheme()} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}

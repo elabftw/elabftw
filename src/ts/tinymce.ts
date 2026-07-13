@@ -71,6 +71,7 @@ import { isSortable } from './TableSorting.class';
 import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import { entity } from './getEntity';
+import {isDarkTheme} from "./theme";
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -210,9 +211,7 @@ export function getTinymceBaseConfig(page: string): object {
     removedMenuItems = 'newdocument, anchor';
   }
 
-  const isDark =
-    document.documentElement.classList.contains('dark-mode') ||
-    document.documentElement.classList.contains('dark-blue-mode');
+  const isDark = isDarkTheme();
   const templateEndpoint = (entity.type === EntityType.Experiment || entity.type === EntityType.Template)
     ? EntityType.Template
     : EntityType.ItemType;

@@ -27,6 +27,7 @@ import { ApiC } from './api';
 import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
 import i18next from './i18n';
 import { notify } from './notify';
+import { getAgGridTheme } from './theme';
 
 if (document.getElementById('compounds-table')) {
   provideGlobalGridOptions({ theme: 'legacy' });
@@ -38,14 +39,6 @@ if (document.getElementById('compounds-table')) {
     QuickFilterModule,
   ]);
 
-  const rootClasses = document.documentElement.classList;
-
-  const isDark = rootClasses.contains('dark-mode');
-  const isDarkBlue = rootClasses.contains('dark-blue-mode');
-
-  const agGridTheme = isDarkBlue ? 'ag-theme-quartz-dark'
-    : isDark ? 'ag-theme-alpine-dark'
-      : 'ag-theme-alpine';
   const rowSelection = {
       mode: 'multiRow',
       headerCheckbox: false,
@@ -193,7 +186,7 @@ if (document.getElementById('compounds-table')) {
           onChange={onQuickFilterChange}
           className={'form-control mb-2'}
         />
-        <div className={agGridTheme} style={{ height: 650 }}>
+        <div className={getAgGridTheme()} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}

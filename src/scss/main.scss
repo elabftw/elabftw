@@ -222,6 +222,10 @@ select:not([multiple]) {
   .ui-menu-item-wrapper {
     color: var(--strongest);
   }
+
+  .dropdown-divider {
+    border-top: 1px solid var(--thirdlevel);
+  }
 }
 
 .logo-dark { display: none; }

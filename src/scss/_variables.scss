@@ -50,7 +50,7 @@
   --chrome-strongest: #0d1117;
 }
 
-:is(.dark-mode, .dark-blue-mode) {
+:is(.dark-mode, .midnight) {
   --firstlevel: #30363d;
   --secondlevel: #bdbdbd;
   --thirdlevel: #666;
@@ -90,7 +90,7 @@
   --superlight: #2d2d2d;
 }
 
-.dark-blue-mode {
+.midnight {
   --white: #212830;
   --mainbackground: #151b23;
   --highlighted: #1f6feb33;

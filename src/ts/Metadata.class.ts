@@ -544,11 +544,7 @@ export class Metadata {
         }
         table.append(tbody);
         tableContainer.append(table);
-        const fieldsHeader = document.createElement('h5');
-        fieldsHeader.classList.add('mt-3', 'mb-2');
-        fieldsHeader.innerText = i18next.t('custom-fields');
 
-        groupWrapperDiv.append(fieldsHeader);
         groupWrapperDiv.append(tableContainer);
         groupWrapperDiv.append(document.createElement('hr'));
         this.metadataDiv.append(groupWrapperDiv);

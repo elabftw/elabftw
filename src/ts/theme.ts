@@ -2,16 +2,16 @@ export enum ThemeVariant {
   Auto = 0,
   Light = 1,
   Dark = 2,
-  DarkBlue = 3,
+  Midnight = 3,
 }
 
 export enum AppTheme {
   Light = 'light',
   Dark = 'dark',
-  DarkBlue = 'dark-blue',
+  Midnight = 'midnight',
 }
 
-const themeClasses = ['dark-mode','dark-blue-mode'] as const;
+const themeClasses = ['dark-mode','midnight'] as const;
 
 export const isThemeVariant = (value: number): value is ThemeVariant => {
   return Object.values(ThemeVariant).includes(value);
@@ -23,8 +23,8 @@ export const applyTheme = (themeVariant: ThemeVariant): void => {
   case ThemeVariant.Dark:
     document.documentElement.classList.add('dark-mode');
     break;
-  case ThemeVariant.DarkBlue:
-    document.documentElement.classList.add('dark-blue-mode');
+  case ThemeVariant.Midnight:
+    document.documentElement.classList.add('midnight');
     break;
   case ThemeVariant.Auto:
   case ThemeVariant.Light:
@@ -42,8 +42,8 @@ export const updateThemeControls = (themeVariant: ThemeVariant): void => {
 
 export const getAppTheme = (): AppTheme => {
   const classes = document.documentElement.classList;
-  if (classes.contains('dark-blue-mode')) {
-    return AppTheme.DarkBlue;
+  if (classes.contains('midnight')) {
+    return AppTheme.Midnight;
   }
   if (classes.contains('dark-mode')) {
     return AppTheme.Dark;
@@ -57,7 +57,7 @@ export const isDarkTheme = (): boolean => {
 
 export const getAgGridTheme = (): string => {
   switch (getAppTheme()) {
-  case AppTheme.DarkBlue:
+  case AppTheme.Midnight:
     return 'ag-theme-quartz-dark';
   case AppTheme.Dark:
     return 'ag-theme-alpine-dark';

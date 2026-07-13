@@ -193,7 +193,7 @@ select:not([multiple]) {
   color: var(--strongest);
 }
 
-:is(.dark-mode, .dark-blue-mode) {
+:is(.dark-mode, .midnight) {
   :where(input, textarea).form-control:read-only,
   .form-control:disabled {
     background-color: var(--firstlevel);
@@ -230,8 +230,8 @@ select:not([multiple]) {
 
 .logo-dark { display: none; }
 
-:is(.dark-mode, .dark-blue-mode) .logo-dark { display: block; }
-:is(.dark-mode, .dark-blue-mode) .logo-light { display: none; }
+:is(.dark-mode, .midnight) .logo-dark { display: block; }
+:is(.dark-mode, .midnight) .logo-light { display: none; }
 
 /* prevent the caret from being too close from text */
 /* stylelint-disable-next-line selector-no-qualifying-type */

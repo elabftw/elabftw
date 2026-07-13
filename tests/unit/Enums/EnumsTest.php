@@ -108,6 +108,6 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('', ThemeVariant::Auto->toCssClass());
         $this->assertSame('', ThemeVariant::Light->toCssClass());
         $this->assertSame('dark-mode', ThemeVariant::Dark->toCssClass());
-        $this->assertSame('dark-blue-mode', ThemeVariant::DarkBlue->toCssClass());
+        $this->assertSame('midnight', ThemeVariant::Midnight->toCssClass());
     }
 }

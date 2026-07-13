@@ -112,6 +112,7 @@ use function trim;
 use function strtolower;
 use function array_filter;
 use function preg_replace;
+use function preg_match;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -366,7 +367,7 @@ abstract class AbstractEntity extends AbstractRest
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
         $plainQuery = trim($displayParams->getQuery()->getString('q'));
         $extendedQuery = trim($displayParams->getQuery()->getString('extended'));
-        if ($plainQuery !== '' && $extendedQuery === '') {
+        if ($plainQuery !== '' && $extendedQuery === '' && !$this->isAdvancedSearchQuery($plainQuery)) {
             $this->processSimpleQuery($plainQuery);
             // Keep the lightweight list select for plain q. The full entity payload is only needed
             // for explicit extended searches.
@@ -1282,6 +1283,15 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     protected function enforceTemplate(array $teamConfigArr): void {}
+
+    private function isAdvancedSearchQuery(string $query): bool
+    {
+        return preg_match(
+            '/(?:^|\s)(?:author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
+            $query,
+        ) === 1
+            || preg_match('/\b(?:AND|OR|NOT)\b|[()!&|"\']/', $query) === 1;
+    }
 
     // read only one column from an entity without calling the full entity
     private function readColumn(string $column): string

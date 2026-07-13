@@ -55,6 +55,7 @@
   }
 
   const t = i18next.t.bind(i18next);
+  const SEARCH_DEBOUNCE_MS = 500;
 
   let {
     entityType = 'experiments',
@@ -94,6 +95,10 @@
   let sentinelEl: HTMLDivElement | null = null;
   let currentQueryKey = '';
   let reloadVersion = $state(0);
+  let debouncedSearchQuery = $state('');
+  let searchDebounceTimer: number | undefined;
+  let hasInitializedDebouncedSearch = false;
+  let nonSearchFilterSignature = '';
 
   function bumpUrlVersion(): void {
     urlVersion += 1;
@@ -213,15 +218,60 @@
     setSingleTagInUrl(tag);
   }
 
-  function bumpReloadVersion(): void {
+  function getCurrentNonSearchFilterSignature(): string {
+    const params = new URL(window.location.href).searchParams;
+    const normalized = new URLSearchParams(params);
+
+    normalized.delete('q');
+    normalized.delete('offset');
+
+    return normalized.toString();
+  }
+
+  function bumpReloadVersionIfFiltersChanged(): void {
+    const nextSignature = getCurrentNonSearchFilterSignature();
+
+    if (nextSignature === nonSearchFilterSignature) {
+      return;
+    }
+
+    nonSearchFilterSignature = nextSignature;
     reloadVersion += 1;
   }
+
+  $effect(() => {
+    const nextQuery = $searchQuery.trim();
+
+    if (!hasInitializedDebouncedSearch) {
+      hasInitializedDebouncedSearch = true;
+      debouncedSearchQuery = nextQuery;
+      return;
+    }
+
+    if (searchDebounceTimer !== undefined) {
+      window.clearTimeout(searchDebounceTimer);
+    }
+
+    searchDebounceTimer = window.setTimeout(() => {
+      if (debouncedSearchQuery !== nextQuery) {
+        debouncedSearchQuery = nextQuery;
+      }
+
+      searchDebounceTimer = undefined;
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => {
+      if (searchDebounceTimer !== undefined) {
+        window.clearTimeout(searchDebounceTimer);
+      }
+    };
+  });
 
   function getEntityQueryContext(): EntityQueryContext {
     return {
       currentType: entityType,
       currentLimit: limit,
-      currentQ: $searchQuery.trim(),
+      currentQ: debouncedSearchQuery,
       currentCategory: getCurrentUrlParam('category'),
       currentStatus: getCurrentUrlParam('status'),
       currentOwner: getCurrentUrlParam('owner'),
@@ -489,12 +539,14 @@
   }
 
   onMount(() => {
+    nonSearchFilterSignature = getCurrentNonSearchFilterSignature();
+
     window.addEventListener('popstate', bumpUrlVersion);
-    window.addEventListener('entity-filters-changed', bumpReloadVersion);
+    window.addEventListener('entity-filters-changed', bumpReloadVersionIfFiltersChanged);
 
     return () => {
       window.removeEventListener('popstate', bumpUrlVersion);
-      window.removeEventListener('entity-filters-changed', bumpReloadVersion);
+      window.removeEventListener('entity-filters-changed', bumpReloadVersionIfFiltersChanged);
     };
   });
 </script>

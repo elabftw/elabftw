@@ -110,6 +110,8 @@ use function count;
 use function array_replace;
 use function trim;
 use function strtolower;
+use function array_filter;
+use function preg_replace;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -362,10 +364,18 @@ abstract class AbstractEntity extends AbstractRest
             return $this->readAllSimple($displayParams);
         }
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if ($displayParams->hasUserQuery()) {
+        $plainQuery = trim($displayParams->getQuery()->getString('q'));
+        $extendedQuery = trim($displayParams->getQuery()->getString('extended'));
+        if ($plainQuery !== '' && $extendedQuery === '') {
+            $this->processSimpleQuery($plainQuery);
+            // Keep the lightweight list select for plain q. The full entity payload is only needed
+            // for explicit extended searches.
+            $extended = false;
+        } elseif ($displayParams->hasUserQuery()) {
             $this->processExtendedQuery($displayParams->getUserQuery());
             $extended = true;
         }
+
         $displayFilterSql = $displayParams->getFilterSql();
         $withCompounds = $this->needsCompoundsJoin($displayFilterSql);
 
@@ -536,13 +546,18 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function getQueryParams(?InputBag $query = null): DisplayParams
     {
-        return new DisplayParams($this->Users, $this->entityType, $query);
+        return new DisplayParams(
+            requester: $this->Users,
+            entityType: $this->entityType,
+            query: $query,
+            limit: ($this->Users->userData['limit_nb'] ?? 15),
+        );
     }
 
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        return $this->readShow($this->getQueryParams($queryParams?->getQuery()));
+        return $this->readShow($queryParams ?? $this->getQueryParams());
     }
 
     #[Override]
@@ -1370,6 +1385,61 @@ abstract class AbstractEntity extends AbstractRest
         foreach ($this->extendedValues as $bindValue) {
             $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type'] ?? PDO::PARAM_STR);
         }
+    }
+
+    private function processSimpleQuery(string $query): void
+    {
+        $this->addToExtendedFilter(
+            sprintf(
+                ' AND entity.id IN (
+                    SELECT search_entity.id
+                    FROM %1$s AS search_entity
+                    WHERE search_entity.title LIKE :simpleQuery
+                        OR search_entity.date LIKE :simpleQuery
+                        OR search_entity.elabid LIKE :simpleQuery
+                        OR search_entity.custom_id = :simpleQueryCustomId
+                        OR MATCH(search_entity.title, search_entity.body, search_entity.elabid)
+                            AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
+                    UNION
+                    SELECT c2e_search.entity_id
+                    FROM compounds2%1$s AS c2e_search
+                    INNER JOIN compounds AS cmp_search
+                        ON cmp_search.id = c2e_search.compound_id
+                    WHERE MATCH(
+                        cmp_search.cas_number,
+                        cmp_search.ec_number,
+                        cmp_search.name,
+                        cmp_search.iupac_name,
+                        cmp_search.inchi_key,
+                        cmp_search.molecular_formula
+                    ) AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
+                )',
+                $this->entityType->value,
+            ),
+            array(
+                array(
+                    'param' => ':simpleQuery',
+                    'value' => '%' . $query . '%',
+                ),
+                array(
+                    'param' => ':simpleQueryCustomId',
+                    'value' => $query,
+                    'type' => PDO::PARAM_INT,
+                ),
+                array(
+                    'param' => ':simpleQueryFulltext',
+                    'value' => $this->toBooleanFulltextQuery($query),
+                ),
+            ),
+        );
+    }
+
+    private function toBooleanFulltextQuery(string $value): string
+    {
+        $value = preg_replace('/[+\-><()~*"@]+/', ' ', $value) ?? '';
+        $tokens = array_filter(explode(' ', trim($value)));
+
+        return implode(' ', array_map(static fn(string $token): string => '+' . $token . '*', $tokens));
     }
 
     private function processExtendedQuery(string $extendedQuery): void

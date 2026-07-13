@@ -1145,7 +1145,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const chip = document.createElement('button');
         chip.type = 'button';
-        chip.className = 'btn btn-sm btn-outline-secondary me-2 mb-2 mr-2';
+        chip.className = 'btn btn-sm btn-ghost me-2 mb-2 mr-2';
         chip.setAttribute('aria-label', `Remove ${title}: ${label}`);
 
         const chipText = document.createElement('span');

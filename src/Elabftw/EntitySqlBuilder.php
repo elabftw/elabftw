@@ -35,7 +35,14 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected array $joinsSql = array();
 
+    private string $searchJoinSql = '';
+
     public function __construct(private AbstractEntity $entity) {}
+
+    public function setSearchJoinSql(string $sql): void
+    {
+        $this->searchJoinSql = $sql;
+    }
 
     /**
      * Get the SQL string for read before the WHERE
@@ -51,17 +58,21 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     ): string {
         $this->entitySelect($fullSelect);
         $this->userTeamMembership();
+
         if ($withCompounds) {
             $this->compounds();
         }
+
         $this->status();
         $this->category();
         $this->comments();
+
         if ($fullSelect) {
             $this->teamEvents();
         }
+
         $this->steps();
-        // The links tables are only joined if we want to show related entities
+
         if ($relatedOrigin !== null) {
             $this->links($relatedOrigin);
         }
@@ -72,10 +83,10 @@ final class EntitySqlBuilder implements SqlBuilderInterface
             'SELECT',
             implode(', ', $this->selectSql),
             'FROM %1$s AS entity',
+            $this->searchJoinSql,
             implode(' ', $this->joinsSql),
         );
 
-        // replace all %1$s by 'experiments' or 'items', there are many more than the one in FROM
         return sprintf(implode(' ', $sql), $this->entity->entityType->value);
     }
 

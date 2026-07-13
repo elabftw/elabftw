@@ -368,10 +368,11 @@ abstract class AbstractEntity extends AbstractRest
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
         $plainQuery = trim($displayParams->getQuery()->getString('q'));
         $extendedQuery = trim($displayParams->getQuery()->getString('extended'));
+        $searchJoinSql = '';
+
         if ($plainQuery !== '' && $extendedQuery === '' && !$this->isAdvancedSearchQuery($plainQuery)) {
-            $this->processSimpleQuery($plainQuery);
-            // Keep the lightweight list select for plain q. The full entity payload is only needed
-            // for explicit extended searches.
+            $searchJoinSql = $this->getSimpleQueryJoin($plainQuery);
+            $this->addSimpleQueryBindValues($plainQuery);
             $extended = false;
         } elseif ($displayParams->hasUserQuery()) {
             $this->processExtendedQuery($displayParams->getUserQuery());
@@ -382,6 +383,9 @@ abstract class AbstractEntity extends AbstractRest
         $withCompounds = $this->needsCompoundsJoin($displayFilterSql);
 
         $EntitySqlBuilder = $this->getSqlBuilder();
+        if ($searchJoinSql !== '' && $EntitySqlBuilder instanceof EntitySqlBuilder) {
+            $EntitySqlBuilder->setSearchJoinSql($searchJoinSql);
+        }
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $displayParams->getRelatedOrigin(),
@@ -1285,6 +1289,23 @@ abstract class AbstractEntity extends AbstractRest
 
     protected function enforceTemplate(array $teamConfigArr): void {}
 
+    private function addSimpleQueryBindValues(string $query): void
+    {
+        $this->extendedValues[] = array(
+            'param' => ':simpleQuery',
+            'value' => '%' . $query . '%',
+        );
+        $this->extendedValues[] = array(
+            'param' => ':simpleQueryCustomId',
+            'value' => $query,
+            'type' => PDO::PARAM_INT,
+        );
+        $this->extendedValues[] = array(
+            'param' => ':simpleQueryFulltext',
+            'value' => $this->toBooleanFulltextQuery($query),
+        );
+    }
+
     private function isAdvancedSearchQuery(string $query): bool
     {
         return preg_match(
@@ -1302,6 +1323,35 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (string) $req->fetchColumn();
+    }
+
+    private function getEntitySimpleQuerySql(string $query, string $table): string
+    {
+        $sql = sprintf(
+            'SELECT search_entity.id
+            FROM %1$s AS search_entity
+            WHERE MATCH(search_entity.title, search_entity.body, search_entity.elabid)
+                AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
+            UNION
+            SELECT search_entity.id
+            FROM %1$s AS search_entity
+            WHERE search_entity.custom_id = :simpleQueryCustomId',
+            $table,
+        );
+
+        if ($this->hasShortFulltextToken($query)) {
+            $sql .= sprintf(
+                ' UNION
+                SELECT search_entity.id
+                FROM %1$s AS search_entity
+                WHERE search_entity.title LIKE :simpleQuery
+                    OR search_entity.date LIKE :simpleQuery
+                    OR search_entity.elabid LIKE :simpleQuery',
+                $table,
+            );
+        }
+
+        return $sql;
     }
 
     private function needsCompoundsJoin(string $displayFilterSql): bool
@@ -1398,43 +1448,22 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    private function processSimpleQuery(string $query): void
+    private function getSimpleQueryJoin(string $query): string
     {
-        $this->addToExtendedFilter(
-            sprintf(
-                ' AND entity.id IN (
-                    SELECT search_entity.id
-                    FROM %1$s AS search_entity
-                    WHERE search_entity.title LIKE :simpleQuery
-                        OR search_entity.date LIKE :simpleQuery
-                        OR search_entity.elabid LIKE :simpleQuery
-                        OR search_entity.custom_id = :simpleQueryCustomId
-                        OR MATCH(search_entity.title, search_entity.body, search_entity.elabid)
-                            AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
-                    UNION
-                    SELECT c2e_search.entity_id
-                    FROM compounds2%1$s AS c2e_search
-                    INNER JOIN compounds AS cmp_search
-                        ON cmp_search.id = c2e_search.compound_id
-                    WHERE ' . $this->getCompoundsSimpleQuerySql($query) . '
-                )',
-                $this->entityType->value,
-            ),
-            array(
-                array(
-                    'param' => ':simpleQuery',
-                    'value' => '%' . $query . '%',
-                ),
-                array(
-                    'param' => ':simpleQueryCustomId',
-                    'value' => $query,
-                    'type' => PDO::PARAM_INT,
-                ),
-                array(
-                    'param' => ':simpleQueryFulltext',
-                    'value' => $this->toBooleanFulltextQuery($query),
-                ),
-            ),
+        return sprintf(
+            'STRAIGHT_JOIN (
+            %1$s
+            UNION
+            SELECT c2e_search.entity_id AS id
+            FROM compounds2%2$s AS c2e_search
+            INNER JOIN compounds AS cmp_search
+                ON cmp_search.id = c2e_search.compound_id
+            WHERE %3$s
+        ) AS search_ids
+            ON search_ids.id = entity.id',
+            $this->getEntitySimpleQuerySql($query, $this->entityType->value),
+            $this->entityType->value,
+            $this->getCompoundsSimpleQuerySql($query),
         );
     }
 

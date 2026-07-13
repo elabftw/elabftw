@@ -2492,19 +2492,27 @@ ALTER TABLE `compounds`
 
 ALTER TABLE `experiments`
   ADD INDEX `idx_experiments_state_date_id` (`state`, `date`, `id`),
-  ADD INDEX `idx_experiments_state_modified_id` (`state`, `modified_at`, `id`);
+  ADD INDEX `idx_experiments_state_modified_id` (`state`, `modified_at`, `id`),
+  ADD INDEX idx_experiments_user_state_modified_id
+  (userid, state, modified_at, id);
 
 ALTER TABLE `items`
   ADD INDEX `idx_items_state_date_id` (`state`, `date`, `id`),
-  ADD INDEX `idx_items_state_modified_id` (`state`, `modified_at`, `id`);
+  ADD INDEX `idx_items_state_modified_id` (`state`, `modified_at`, `id`),
+  ADD INDEX idx_items_user_state_modified_id
+  (userid, state, modified_at, id);
 
 ALTER TABLE `experiments_templates`
   ADD INDEX `idx_experiments_templates_state_created_id` (`state`, `created_at`, `id`),
-  ADD INDEX `idx_experiments_templates_state_modified_id` (`state`, `modified_at`, `id`);
+  ADD INDEX `idx_experiments_templates_state_modified_id` (`state`, `modified_at`, `id`),
+  ADD INDEX idx_experiments_templates_user_state_modified_id
+  (userid, state, modified_at, id);
 
 ALTER TABLE `items_types`
   ADD INDEX `idx_items_types_state_created_id` (`state`, `created_at`, `id`),
-  ADD INDEX `idx_items_types_state_modified_id` (`state`, `modified_at`, `id`);
+  ADD INDEX `idx_items_types_state_modified_id` (`state`, `modified_at`, `id`),
+  ADD INDEX idx_items_types_user_state_modified_id
+  (userid, state, modified_at, id);
 
 ALTER TABLE `experiments_steps`
   ADD INDEX `idx_experiments_steps_next` (`item_id`, `finished`, `ordering`, `id`);
@@ -2529,22 +2537,6 @@ ALTER TABLE `experiments_templates_comments`
 
 ALTER TABLE `items_types_comments`
   ADD INDEX `idx_items_types_comments_item_created` (`item_id`, `created_at`);
-
-ALTER TABLE experiments
-  ADD INDEX idx_experiments_user_state_modified_id
-  (userid, state, modified_at, id);
-
-ALTER TABLE experiments_templates
-  ADD INDEX idx_experiments_templates_user_state_modified_id
-  (userid, state, modified_at, id);
-
-ALTER TABLE items
-  ADD INDEX idx_items_user_state_modified_id
-  (userid, state, modified_at, id);
-
-ALTER TABLE items_types
-  ADD INDEX idx_items_types_user_state_modified_id
-  (userid, state, modified_at, id);
 -- end schema 216
 
 COMMIT;

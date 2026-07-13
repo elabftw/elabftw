@@ -411,6 +411,7 @@ abstract class AbstractEntity extends AbstractRest
         $sqlArr = array(
             $this->extendedFilter,
             $stateSql,
+            'GROUP BY entity.id',
             $displayParams->getSql(),
         );
 

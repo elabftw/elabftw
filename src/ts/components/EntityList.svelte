@@ -63,6 +63,7 @@
     order = 'date',
     sort = 'desc',
     searchQuery,
+    queryPending,
     selectedEntities = [],
     currentUserId = null,
     currentTeam = null,
@@ -75,6 +76,7 @@
     order?: string;
     sort?: string;
     searchQuery: Writable<string>;
+    queryPending?: Writable<boolean>;
     selectedEntities: Writable<string[]>;
     currentUserId?: number | null;
     currentTeam?: number | null;
@@ -97,8 +99,15 @@
   let reloadVersion = $state(0);
   let debouncedSearchQuery = $state('');
   let searchDebounceTimer: number | undefined;
+  let hasPendingQueryResults = $state(false);
+  let queryResultsRequestSeq = 0;
   let hasInitializedDebouncedSearch = false;
   let nonSearchFilterSignature = '';
+
+  function setPendingQueryResults(value: boolean): void {
+    hasPendingQueryResults = value;
+    queryPending?.set(value);
+  }
 
   function bumpUrlVersion(): void {
     urlVersion += 1;
@@ -245,8 +254,16 @@
     if (!hasInitializedDebouncedSearch) {
       hasInitializedDebouncedSearch = true;
       debouncedSearchQuery = nextQuery;
+      setPendingQueryResults(false);
       return;
     }
+
+    if (nextQuery === debouncedSearchQuery) {
+      setPendingQueryResults(queryResultsRequestSeq !== 0);
+      return;
+    }
+
+    setPendingQueryResults(true);
 
     if (searchDebounceTimer !== undefined) {
       window.clearTimeout(searchDebounceTimer);
@@ -343,7 +360,7 @@
           return;
         }
 
-        if (isLoading || isLoadingMore || !hasMore || entities.length === 0) {
+        if (hasPendingQueryResults || isLoading || isLoadingMore || !hasMore || entities.length === 0) {
           return;
         }
 
@@ -394,6 +411,10 @@
       isLoading = true;
     } else {
       isLoadingMore = true;
+    }
+
+    if (replace && hasPendingQueryResults && currentQ === $searchQuery.trim()) {
+      queryResultsRequestSeq = seq;
     }
 
     try {
@@ -492,6 +513,11 @@
           isLoading = false;
         } else {
           isLoadingMore = false;
+        }
+
+        if (queryResultsRequestSeq === seq && currentQ === $searchQuery.trim()) {
+          queryResultsRequestSeq = 0;
+          setPendingQueryResults(false);
         }
 
         if (!hasReportedInitialLoad) {

@@ -20,5 +20,9 @@ CALL DropIdx('experiments_comments', 'idx_experiments_comments_item_created');
 CALL DropIdx('items_comments', 'idx_items_comments_item_created');
 CALL DropIdx('experiments_templates_comments', 'idx_experiments_templates_comments_item_created');
 CALL DropIdx('items_types_comments', 'idx_items_types_comments_item_created');
+CALL DropIdx('experiments', 'idx_experiments_user_state_modified_id');
+CALL DropIdx('experiments_templates', 'idx_experiments_templates_user_state_modified_id');
+CALL DropIdx('items', 'idx_items_user_state_modified_id');
+CALL DropIdx('items_types', 'idx_items_types_user_state_modified_id');
 
 UPDATE config SET conf_value = 215 WHERE conf_name = 'schema';

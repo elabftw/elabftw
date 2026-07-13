@@ -38,7 +38,7 @@
   --gold: #d4ae75;
   --darkgold: #594303;
 
-  --nav-active-color: #f2f2f2;
+  --nav-active: #f2f2f2;
   --link-hover: #084785;
   --link: #0c58ab;
 
@@ -51,6 +51,7 @@
 }
 
 :is(.dark-mode, .dark-blue-mode) {
+  --firstlevel: #30363d;
   --secondlevel: #bdbdbd;
   --thirdlevel: #666;
   --medium: #d8dae0;
@@ -59,8 +60,10 @@
 
   --primary: #0f94fd;
   --secondary: #afafaf;
+  --secondary-muted: rgba(146, 146, 146, 0.34);
   --elabblue: #0f94fd;
   --lightblue: #003769;
+  --darkblue: #79c0ff;
 
   --darkred: #ffc1b7;
   --lightred: #7b1100;
@@ -77,7 +80,7 @@
 
   --link: #7cddff;
   --link-hover: #4298db;
-  --nav-active-color: #73869b;
+  --nav-active: #73869b;
 }
 
 .dark-mode {
@@ -85,9 +88,6 @@
   --mainbackground: #1e1e1e;
   --highlighted: #2a2a2a;
   --superlight: #2d2d2d;
-  --firstlevel: #13181c;
-  --secondary-muted: rgba(146, 146, 146, 0.34);
-  --darkblue: #7cddff;
 }
 
 .dark-blue-mode {
@@ -95,13 +95,10 @@
   --mainbackground: #151b23;
   --highlighted: #1f6feb33;
   --superlight: #142f57;
-  --firstlevel: #30363d;
   --secondlevel: #8b949e;
   --thirdlevel: #6e7681;
   --medium: #c9d1d9;
   --mediumstrong: #d0d7de;
-  --secondary-muted: #30363d;
-  --darkblue: #79c0ff;
 }
 
 /* COLORS for specific cases like pdf export (var(--) does not apply) */

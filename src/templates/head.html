@@ -6,7 +6,14 @@
  * @license AGPL-3.0
  * @package elabftw
 -->
-<html lang='{{ App.getLang()|slice(0, 2) }}' class="{{ App.getThemeVariant().toCssClass() }}">
+<html lang='{{ App.getLang()|slice(0, 2) }}' class='{{ App.getThemeVariant().toCssClass() }}'
+  {% if App.Users.userData.accent_color %}
+    style='
+      --primary: {{ App.Users.userData.accent_color|e("html_attr") }};
+      --primary-fg: {{ App.Users.userData.accent_foreground|default("#ffffff")|e("html_attr") }};
+      '
+  {% endif %}
+>
 
 <head>
   <meta http-equiv='Content-type' content='text/html;charset=UTF-8' />

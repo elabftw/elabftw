@@ -72,6 +72,8 @@ import { on, get } from './handlers';
 import Tab from './Tab.class';
 import { core } from './core';
 import { applyTheme, updateThemeControls } from './theme';
+import { mount } from 'svelte';
+import AccentColorPicker from './components/AccentColorPicker.svelte';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -97,6 +99,20 @@ on('set-theme', (el: HTMLElement) => {
     document.cookie = [`theme_variant=${targetTheme}`, 'Path=/', 'Max-Age=31536000', 'SameSite=Lax', 'Secure'].join('; ');
   });
 });
+
+const target = document.getElementById('accent-color-picker');
+
+if (target) {
+  mount(AccentColorPicker, {
+    target,
+    props: {
+      initialAccentColor:
+        target.dataset.accentColor ?? '#0f94fd',
+      initialAccentForeground:
+        target.dataset.accentForeground ?? '#ffffff',
+    },
+  });
+}
 
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated

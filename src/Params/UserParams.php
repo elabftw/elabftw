@@ -94,6 +94,8 @@ final class UserParams extends ContentParams
             'use_isodate',
             'use_markdown',
             'validated' => (string) Filter::toBinary($this->content),
+            'accent_color',
+            'accent_foreground' => $this->filterNullableHexColor($this->asString()),
             'theme_variant' => (ThemeVariant::tryFrom($this->asInt()) ?? ThemeVariant::Auto)->value,
             'mfa_secret' => $this->getNullableString(),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
@@ -148,5 +150,17 @@ final class UserParams extends ContentParams
             return 10;
         }
         return (int) $checksum;
+    }
+
+    private function filterNullableHexColor(): ?string
+    {
+        if ($this->content === null || $this->content === '') {
+            return null;
+        }
+        $color = $this->asString();
+        if (preg_match('/^#[0-9a-fA-F]{6}$/', $color) !== 1) {
+            throw new ImproperActionException('Invalid color value.');
+        }
+        return strtolower($color);
     }
 }

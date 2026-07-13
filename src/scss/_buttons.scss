@@ -19,19 +19,14 @@
   line-height: normal;
 }
 
-.midnight .btn-primary {
-  background: var(--darkblue);
-  color: var(--chrome-strongest);
-
-  .fas,
-  .far,
-  .fa { color: var(--chrome-strongest); }
-}
-
 .btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-fg);
+
   .fas,
   .far,
-  .fa { color: var(--chrome-fg); }
+  .fa { color: var(--primary-fg); }
 
   &:hover {
     background-color: var(--mainbackground);

@@ -19,13 +19,20 @@
   line-height: normal;
 }
 
+.dark-blue-mode .btn-primary {
+  background: var(--darkblue);
+  color: var(--chrome-strongest);
+
+  .fas,
+  .far,
+  .fa { color: var(--chrome-strongest); }
+}
+
 .btn-primary {
   .fas,
   .far,
   .fa { color: var(--chrome-fg); }
 
-  //background: var(--primary);
-  //border: var(--primary);
   &:hover {
     background-color: var(--mainbackground);
     border-color: var(--primary);

@@ -248,13 +248,8 @@
 
             {% endif %}
             <div class='dropdown-divider'></div>
-            <span class='dropdown-item small'>{{ 'Change theme'|trans }}</span>
-            {# LIGHT #TODO: make a SELECT with all options to allow scalability #}
-            <button type='button' class='dropdown-item' data-action='set-theme' data-theme-variant='1' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-sun fa-fw'></i>{{ 'Light'|trans }}</button>
-            {# DARK #}
-            <button type='button' class='dropdown-item' data-action='set-theme' data-theme-variant='2' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-moon fa-fw'></i>{{ 'Dark'|trans }}</button>
-            {# DARK BLUE #}
-            <button type='button' class='dropdown-item' data-action='set-theme' data-theme-variant='3' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-palette fa-fw'></i>{{ 'Dark blue'|trans }}</button>
+            {# THEMES #}
+            <a class='dropdown-item' href='/ucp.php?tab=5'><i class='fa-solid fa-palette fa-fw'></i>{{ 'Appearance'|trans }}</a>
             <div class='dropdown-divider'></div>
             <a class='dropdown-item' href='#' data-action='logout'><i class='fas fa-sign-out-alt fa-fw'></i> {{ 'Logout'|trans }}</a>
           </div>

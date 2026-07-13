@@ -161,7 +161,7 @@ hr {
 /* LINKS */
 a,
 .link-like {
-  color: var(--primary);
+  color: var(--link);
   text-decoration: none;
 
   &:hover {
@@ -1926,7 +1926,7 @@ input:user-invalid {
 }
 
 #devPerfDiv {
-  background-color: $white;
+  background-color: var(--white);
   bottom: 0;
   left: 0;
   position: fixed;

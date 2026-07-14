@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-  paths:
+    paths:
       - "documentation/**"
 
 jobs:
@@ -12,5 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send request to webhook to trigger update of doc
+        env:
+          HOOK_SECRET: ${{ secrets.HOOK_SECRET }}
+          HOOK_URL: ${{ secrets.HOOK_URL }}
         run: |
-          curl -v -H 'X-Hook-Secret: ${{ secrets.HOOK_SECRET }}' ${{ secrets.HOOK_URL }}
+          curl --fail-with-body --silent --show-error --max-time 30 \
+            -H "X-Hook-Secret: ${HOOK_SECRET}" \
+            "${HOOK_URL}"

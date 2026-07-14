@@ -271,7 +271,7 @@ Not great, not terrible.
 Connect as root in the MySQL container:
 
 ~~~bash
-docker exec -it mysql
+docker exec -it mysql bash
 mysql -uroot -p$MYSQL_ROOT_PASSWORD
 mysql> SET GLOBAL general_log = ON;
 # check where it is saved

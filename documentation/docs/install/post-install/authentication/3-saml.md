@@ -34,8 +34,6 @@ openssl req -newkey rsa:2048 -nodes -keyout private.key -x509 -days 9999 -out ce
 
 Use the content of `private.key` and `cert.crt`.
 
-Alternatively you can use `this site <https://developers.onelogin.com/saml/online-tools/x509-certs/obtain-self-signed-certs>`_ to generate a self-signed certificate.
-
 ## Set up the Identity Provider
 
 ### Option A: using an XML file (recommended)

@@ -25,7 +25,7 @@ This should give you an App ID (GUID).
 
 From the SAML-based Sign-on panel register:
 
-* Identifier (Entity ID): `https://<your-elabftw-fqdn>`
+* Identifier (Entity ID): `spn:<appid-uuid>`
 * Reply URL: `https://<your-elabftw-fqdn>/index.php?acs`
 
 

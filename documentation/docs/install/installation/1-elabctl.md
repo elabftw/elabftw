@@ -9,7 +9,7 @@ sidebar_position: 1
 
 ~~~bash
 # get the program and make it executable
-curl -sL https://get.elabftw.net -o elabctl && chmod +x elabctl
+curl -sL --fail --show-error https://get.elabftw.net -o elabctl && chmod +x elabctl
 # add it to a directory in your $PATH
 sudo mv elabctl /usr/local/bin/
 ~~~

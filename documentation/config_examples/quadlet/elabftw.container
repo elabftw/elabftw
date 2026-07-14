@@ -23,7 +23,7 @@ AddCapability=NET_BIND_SERVICE
 NoNewPrivileges=true
 
 # HEALTHCHECK
-HealthCmd=curl http://localhost:443/healthcheck
+HealthCmd=curl --fail --silent --show-error http://localhost:443/healthcheck
 HealthInterval=5s
 HealthTimeout=5s
 HealthRetries=20
@@ -58,7 +58,7 @@ Environment=ELABFTW_USER=nobody
 Environment=ELABFTW_GROUP=nobody
 Environment=ELABFTW_USERID=65534
 Environment=ELABFTW_GROUPID=65534
-Environment=STATUS_PASSWORD=secr3t
+Secret=status-password,type=env,target=STATUS_PASSWORD
 # if using S3 storage
 Secret=elabftw-s3-ak,type=env,target=ELAB_AWS_ACCESS_KEY
 Secret=elabftw-s3-sk,type=env,target=ELAB_AWS_SECRET_KEY

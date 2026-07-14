@@ -152,7 +152,7 @@ The salt is combined to the passphrase into a Key Derivation Function (KDF): thi
 
 To save this into a human readable format, the private key is serialized into the minisign format::
 
-~~~
+~~~text
     untrusted comment: <arbitrary text>
     base64(<signature_algorithm> || <kdf_algorithm> || <cksum_algorithm> ||
            <kdf_salt> || <kdf_opslimit> || <kdf_memlimit> || <keynum_sk>)
@@ -160,7 +160,7 @@ To save this into a human readable format, the private key is serialized into th
 
 And the public key::
 
-~~~
+~~~text
     untrusted comment: <arbitrary text>
     base64(<signature_algorithm> || <key_id> || <public_key>)
 ~~~
@@ -171,7 +171,7 @@ For signature, we extract the private key thanks to the provided passphrase and 
 
 We add a trusted comment to the signature data. This comment is trusted because we can verify it with its signature. It is a JSON string with metadata about the signature (who, when, why). A signature file can look like this::
 
-~~~
+~~~text
     untrusted comment: <arbitrary text>
     base64(<signature_algorithm> || <key_id> || <signature>)
     trusted_comment: <arbitrary text>
@@ -180,7 +180,7 @@ We add a trusted comment to the signature data. This comment is trusted because 
 
 A real-world example:
 
-~~~
+~~~text
     untrusted comment: elabftw/50100: signature from key f3690b6554b4f817
     RUTzaQtlVLT4F5C81w4VBNIodngF4Kna0RqfOTY3CGIB+6AlzsFeX2BPpm49HyIKVnZHHhUQ8C/osp/uTyhAo0WrCoASqm2d0w0=
     trusted comment: {"firstname":"Toto","lastname":"Le sysadmin","email":"toto@yopmail.com","created_at":"2024-03-18T00:48:39+01:00","site_url":"https:\/\/elab.local:3148","created_by":"eLabFTW 50100","meaning":"Approval"}

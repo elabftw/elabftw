@@ -128,7 +128,7 @@ docker exec elabftw bash -c "apk add openldap openldap-back-mdb openldap-clients
     -H 'ldaps://<LDAP Host>' \
     -b '<LDAP Base DN>' \
     -D '<LDAP Username>' \
-    -w '<LDAP Password>' \
+    -W \
     '<filter>'"
 ~~~
 

@@ -138,8 +138,8 @@ WantedBy=timers.target
 Now activate it:
 
 ~~~bash
-systemctl enable elabftw-backup
-systemctl start elabftw-backup
+systemctl daemon-reload
+systemctl enable --now elabftw-backup.timer
 ~~~
 
 ## How to restore a backup

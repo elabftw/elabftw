@@ -165,6 +165,8 @@ import elabapi_python
 ## Configure the library
 
 ~~~python title="main.py"
+import os
+
 # START CONFIG
 # Basic configuration: Api Key and Host URL: use environment variables
 API_KEY = os.getenv('API_KEY')

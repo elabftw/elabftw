@@ -46,7 +46,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl:
-            'https://github.com/elabftw/documentation/tree/master/',
+            'https://github.com/elabftw/elabftw/edit/master/documentation',
         },
         blog: false,
         theme: {
@@ -136,7 +136,7 @@ const config: Config = {
           items: [
             {
               label: 'Documentation source code',
-              href: 'https://github.com/elabftw/documentation',
+              href: 'https://github.com/elabftw/elabftw/tree/master/documentation',
             },
             {
               label: 'Application source code',

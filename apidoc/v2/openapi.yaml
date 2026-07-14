@@ -1355,6 +1355,7 @@ components:
           type: integer
           description: |
             User ID of the entity owner.
+            If omitted, the requester's ID is used by default.
             When transferring ownership, the `team` field should also be provided (optional).
         team:
           type: integer

@@ -64,6 +64,7 @@ final class Items extends AbstractConcreteEntity
         BodyContentType $contentType = BodyContentType::Html,
         ?EntityType $createdFromType = null,
         ?int $createdFromId = null,
+        ?int $userid = null,
         // specific to Items
         string $canbook = self::EMPTY_CAN_JSON,
         BasePermissions $canbookBase = BasePermissions::Team,
@@ -86,7 +87,7 @@ final class Items extends AbstractConcreteEntity
         $req->bindValue(':date', $date->format('Y-m-d'));
         $req->bindParam(':status', $status);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindParam(':category', $category, PDO::PARAM_INT);
         $req->bindValue(':elabid', Tools::generateElabid());
         $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);

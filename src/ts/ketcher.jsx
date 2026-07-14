@@ -18,12 +18,6 @@ import 'ketcher-react/dist/index.css';
 import { StandaloneStructServiceProvider } from 'ketcher-standalone';
 
 const structServiceProvider = new StandaloneStructServiceProvider();
-/*
-import { RemoteStructServiceProvider } from 'ketcher-core';
-const structServiceProvider = new RemoteStructServiceProvider(
-  '/indigo/v2',
-);
-*/
 
 const KetcherEditor = () => {
   return (

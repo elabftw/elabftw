@@ -39,6 +39,10 @@
   }
 }
 
+.btn-primary:active, .btn-primary:focus {
+  background-color: var(--primary) !important; /* for Active, it doesn't override without !imp */
+}
+
 .btn-secondary {
   .fas,
   .far,

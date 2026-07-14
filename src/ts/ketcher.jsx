@@ -14,10 +14,16 @@ import 'ketcher-react/dist/index.css';
  * or webpack has issue with including a working wasm or something. So for now the best approach is to require a separate Indigo service
  * but eventually, using the wasm standalone could be a good solution.
 */
+
+import { StandaloneStructServiceProvider } from 'ketcher-standalone';
+
+const structServiceProvider = new StandaloneStructServiceProvider();
+/*
 import { RemoteStructServiceProvider } from 'ketcher-core';
 const structServiceProvider = new RemoteStructServiceProvider(
   '/indigo/v2',
 );
+*/
 
 const KetcherEditor = () => {
   return (

@@ -1,0 +1,8 @@
+{
+  "label": "Authentication",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Several authentication methods are available."
+  }
+}

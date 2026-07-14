@@ -1,0 +1,8 @@
+{
+  "label": "Installation",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Start by installing elabctl."
+  }
+}

@@ -352,9 +352,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
             $('#fieldBuilderModal').modal('toggle');
             // focus on the newly added element
             document.querySelector(`#metadataDiv [data-name="${CSS.escape(fieldKey)}"]`)?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-              });
+              behavior: 'smooth',
+              block: 'center',
+            });
           });
         });
       // EDIT EXTRA FIELD
@@ -450,9 +450,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
             $('#fieldBuilderModal').modal('toggle');
             // focus on the newly added element
             document.querySelector(`#metadataDiv [data-name="${CSS.escape(newFieldKey)}"]`)?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-              });
+              behavior: 'smooth',
+              block: 'center',
+            });
           });
         });
       // ADD OPTION FOR SELECT OR RADIO

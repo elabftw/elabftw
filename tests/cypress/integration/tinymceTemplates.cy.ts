@@ -48,8 +48,8 @@ describe('TinyMCE templates', () => {
       getIframeBody('iframe.tox-edit-area__iframe')
         .should('not.contain', templateText);
 
-      cy.get('.tox-dialog__footer').contains('.tox-button', 'Insert').click();
-      cy.get('.tox-collection__item').contains('Template').click();
+      cy.get('.tox-mbtn__select-label').contains('Insert').click({force: true});
+      cy.get('.tox-collection__item-label').contains('Insert template').click({force: true});
       cy.wait('@getTemplates');
 
       cy.get('.tox-dialog').should('be.visible');
@@ -59,7 +59,7 @@ describe('TinyMCE templates', () => {
       getIframeBody('.tox-dialog iframe')
         .should('contain', templateText);
 
-      cy.get('.tox-dialog').contains('button', 'Insert').click();
+      cy.get('.tox-dialog').contains('button', 'Save').click();
       cy.get('.tox-dialog').should('not.exist');
 
       getIframeBody('iframe.tox-edit-area__iframe')

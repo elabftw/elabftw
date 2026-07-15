@@ -4,6 +4,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+const versioningReady = process.env.DOCUSAURUS_VERSIONING_READY === '1';
+
 const config: Config = {
   title: 'eLabFTW Documentation',
   tagline: 'Official documentation',
@@ -54,12 +56,15 @@ const config: Config = {
               path: 'edge',
               banner: 'unreleased',
             },
-            '5.6': {
-              label: '5.6',
-              path: '5.6',
-              banner: 'none',
-            },
+            ...(versioningReady && {
+              '5.6': {
+                label: '5.6',
+                path: '5.6',
+                banner: 'none',
+              },
+            }),
           },
+
 
           // Point "Edit this page" to the correct Git branch.
           editUrl: ({version, docPath}) => {
@@ -117,7 +122,6 @@ const config: Config = {
       {
         type: 'docsVersionDropdown',
         position: 'right',
-        versions: ['current', '5.6'],
       },
       ],
     },

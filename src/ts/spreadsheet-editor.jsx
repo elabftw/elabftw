@@ -38,6 +38,7 @@ function SpreadsheetEditor() {
   const replaceIdRef = useRef(null);
   const replaceNameRef = useRef(null);
   const isDirtyRef = useRef(false);
+  const isSavingRef = useRef(false);
 
   useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
   useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
@@ -78,7 +79,8 @@ function SpreadsheetEditor() {
   };
 
   const onSaveOrReplace = async () => {
-    if (isSaving) return;
+    if (isSavingRef.current) return;
+    isSavingRef.current = true;
     setIsSaving(true);
     try {
       const aoa = getAOA();
@@ -92,10 +94,12 @@ function SpreadsheetEditor() {
         // SAVE MODE
         res = await saveAsAttachment(aoa, entity.type, entity.id);
       }
+      if (!res) return;
       keepResult(res);
       setUnsavedWarning(false);
     } finally {
       window.parent.postMessage('uploadsDiv', window.location.origin);
+      isSavingRef.current = false;
       setIsSaving(false);
     }
   };
@@ -182,7 +186,7 @@ function SpreadsheetEditor() {
       type: 'icon',
       class: 'ml-2 fas fa-floppy-disk',
       tooltip: i18next.t('save-attachment'),
-      onclick: isSaving ? undefined : onSaveOrReplace,
+      onclick: onSaveOrReplace,
     });
 
     tb.items.push(fullscreenBtn, importBtn, exportBtn, clearBtn );

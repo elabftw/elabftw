@@ -47,8 +47,8 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // Make master/Edge the default documentation version.
-          lastVersion: 'current',
+           // Use current while creating the version, then make 5.6 the default.
+          lastVersion: versioningReady ? '5.6' : 'current',
 
           versions: {
             current: {
@@ -64,7 +64,6 @@ const config: Config = {
               },
             }),
           },
-
 
           // Point "Edit this page" to the correct Git branch.
           editUrl: ({version, docPath}) => {

@@ -43,7 +43,7 @@ Register an account using this link: [SMTP2GO](https://get.smtp2go.com/xj1zy4rvl
 
 ## Set up backup
 
-See the dedicated [backup page](/docs/install/backups).
+See the dedicated [backup page](../install/backups).
 
 
 ## Configure teams `(optional)`
@@ -63,8 +63,8 @@ The "Visible" attribute allows you to hide a team from the "Register" page. Use 
 eLabFTW currently supports four authentication mechanisms:
 
 * Local authentication: email + password stored locally (in the eLabFTW database), this is the default
-* SAML authentication: use one or several Identity Provider (IDP) to authenticate users. See dedicated [SAML documentation page](/docs/install/post-install/authentication/saml).
-* LDAP authentication: verify the login with an LDAP service. See dedicated [LDAP documentation page](/docs/install/post-install/authentication/ldap).
+* SAML authentication: use one or several Identity Provider (IDP) to authenticate users. See dedicated [SAML documentation page](../install/post-install/authentication/saml).
+* LDAP authentication: verify the login with an LDAP service. See dedicated [LDAP documentation page](../install/post-install/authentication/ldap).
 * External authentication: use request headers added by your own middleware to authenticate the user (_e.g._ Apache's auth_mellon)
 
 It is possible to have several mechanisms at the same time but recommended to only leave one visible to users. So if you configure LDAP or SAML, disable the Local login so Users are not confused.
@@ -152,7 +152,7 @@ It is important to keep your install up to date with the latest bug fixes and ne
 
 Subscribe to [the newsletter](http://eepurl.com/bTjcMj) to be warned when a new release is out or select "Releases only" from GitHub's Watch button on the [repo page](https://github.com/elabftw/elabftw).
 
-See instructions on updating eLabFTW on [upgrade page](/docs/install/update).
+See instructions on updating eLabFTW on [upgrade page](../install/update).
 
 ## Sysadmin Panel
 
@@ -285,7 +285,7 @@ Of course, adjust these instructions relative to your setup. Try and have the mo
 
 Start your staging instance with: `docker compose up -d`. Make sure to adjust DNS, certificates, load balancers, reverse proxies accordingly.
 
-Use the [Restore backup](/docs/install/backups#how-to-restore-a-backup) instructions to copy your production data into the staging instance. It is recommended to do that regularly, especially before updates, so the staging data is the same as production data and you will not have surprises. It's also a good opportunity to test your backups, if this has not been automated.
+Use the [Restore backup](../install/backups#how-to-restore-a-backup) instructions to copy your production data into the staging instance. It is recommended to do that regularly, especially before updates, so the staging data is the same as production data and you will not have surprises. It's also a good opportunity to test your backups, if this has not been automated.
 
 Before a major release, update the staging instance, optionally asking users if everything looks good on this instance, and once everything is validated, you can upgrade the production instance.
 

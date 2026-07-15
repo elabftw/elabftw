@@ -13,7 +13,7 @@ title: OpenCloning
   <figcaption>OpenCloning menu.</figcaption>
 </figure>
 
-If the menu is grayed out, ask your Sysadmin to enable it. If you're looking for information about how to enable it as a Sysadmin, see [installing OpenCloning](/docs/install/addons) section.
+If the menu is grayed out, ask your Sysadmin to enable it. If you're looking for information about how to enable it as a Sysadmin, see [installing OpenCloning](../install/addons) section.
 
 ## How to use
 

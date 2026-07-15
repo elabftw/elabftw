@@ -39,6 +39,7 @@ class BaseQueryParams implements QueryParamsInterface
         public int $limit = 0,
         public int $offset = 0,
         public array $states = array(State::Normal),
+        public bool $full = false,
     ) {
         if ($query !== null) {
             if ($query->has('limit')) {
@@ -146,5 +147,11 @@ class BaseQueryParams implements QueryParamsInterface
             return '';
         }
         return sprintf(' AND %s.state IN (%s)', $tableName, implode(', ', array_map(fn($state) => $state->value, $states)));
+    }
+
+    #[Override]
+    public function isFull(): bool
+    {
+        return $this->full;
     }
 }

@@ -50,4 +50,4 @@ ROR are exported in `.eln` exports, and also visible in PDF exports.
 
 ### ELN
 
-The `.eln` file format, based on **RO-Crate** allows you to export and import data to and from your eLabFTW instance. See [Import/Export page](/docs/usage/import-export).
+The `.eln` file format, based on **RO-Crate** allows you to export and import data to and from your eLabFTW instance. See [Import/Export page](../usage/import-export).

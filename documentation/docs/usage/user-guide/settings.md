@@ -26,4 +26,4 @@ Once this application is installed, on the eLabFTW page, select YES to "Use two-
 **Note**: it is highly recommended to enable 2FA wherever you can.
 
 ## Api keys tab
-Create an API key for your account from this page. An API key is like a Username+password for your account. It allows you to interact with eLabFTW programmatically, through the REST API. See [API documentation](/docs/usage/api).
+Create an API key for your account from this page. An API key is like a Username+password for your account. It allows you to interact with eLabFTW programmatically, through the REST API. See [API documentation](../api).

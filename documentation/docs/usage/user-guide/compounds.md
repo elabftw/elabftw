@@ -54,7 +54,7 @@ Maybe you've just created an never-seen before chemical compound, which means yo
 
 ## Importing compounds manually
 
-Look at the [Import compounds through CLI](/docs/tutorials/import-compounds) section to learn how to import your compounds from a spreadsheet file or through the API.
+Look at the [Import compounds through CLI](../../tutorials/import-compounds) section to learn how to import your compounds from a spreadsheet file or through the API.
 
 ## Fingerprints
 

@@ -7,7 +7,7 @@ title: Upgrade
 
 
 :::warning
-Be sure to read the [release notes](https://github.com/elabftw/elabftw/releases/latest), they might contain important information. And have a [backup](/docs/install/backups).
+Be sure to read the [release notes](https://github.com/elabftw/elabftw/releases/latest), they might contain important information. And have a [backup](../install/backups).
 :::
 
 :::note
@@ -21,7 +21,7 @@ Make sure to figure out what version you are running and **read the release note
 The current running version can be seen in the bottom right of every page.
 
 :::warning
-Be sure to read the [release notes](https://github.com/elabftw/elabftw/releases/latest), they might contain important information. And have a [backup](/docs/install/backups).
+Be sure to read the [release notes](https://github.com/elabftw/elabftw/releases/latest), they might contain important information. And have a [backup](../install/backups).
 :::
 
 ## STEP 1: Specify which version you want

@@ -13,8 +13,8 @@ jobs:
     steps:
       - name: Send request to webhook to trigger update of doc
         env:
-          HOOK_SECRET: ${{ secrets.HOOK_SECRET }}
-          HOOK_URL: ${{ secrets.HOOK_URL }}
+          HOOK_SECRET: ${{ secrets.DOC_HOOK_SECRET }}
+          HOOK_URL: ${{ secrets.DOC_HOOK_URL }}
         run: |
           curl --fail-with-body --silent --show-error --max-time 30 \
             -H "X-Hook-Secret: ${HOOK_SECRET}" \

@@ -433,8 +433,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
             const el = document.getElementById(id) as HTMLInputElement | null;
             if (el?.checked) field[key] = true;
           }
-          // preserve readonly
+          // preserve properties that aren't editable in this modal
           if (prevField?.readonly === true) field['readonly'] = true;
+          if (typeof prevField?.position === 'number') field['position'] = prevField.position;
           // ensure the old extra field is replaced
           if (!json['extra_fields']) json['extra_fields'] = {};
           if (originalFieldKey && originalFieldKey !== newFieldKey) {

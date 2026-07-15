@@ -45,8 +45,30 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl:
-            'https://github.com/elabftw/elabftw/edit/master/documentation',
+          // Make master/Edge the default documentation version.
+          lastVersion: 'current',
+
+          versions: {
+            current: {
+              label: 'Edge',
+              path: 'edge',
+              banner: 'unreleased',
+            },
+            '5.6': {
+              label: '5.6',
+              path: '5.6',
+              banner: 'none',
+            },
+          },
+
+          // Point "Edit this page" to the correct Git branch.
+          editUrl: ({version, docPath}) => {
+            const branch = version === 'current'
+              ? 'master'
+              : `release/${version}`;
+
+            return `https://github.com/elabftw/elabftw/edit/${branch}/documentation/docs/${docPath}`;
+          },
         },
         blog: false,
         theme: {
@@ -91,6 +113,11 @@ const config: Config = {
         sidebarId: "contributingSidebar",
         label: "Contributing",
         position: "left",
+      },
+      {
+        type: 'docsVersionDropdown',
+        position: 'right',
+        versions: ['current', '5.6'],
       },
       ],
     },

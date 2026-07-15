@@ -49,6 +49,7 @@ module.exports = (env) => {
         './src/ts/show.ts',
         './src/ts/sysconfig.ts',
         './src/ts/opencloning.ts',
+        './src/ts/inline-spreadsheet.ts',
         'bootstrap/js/src/alert.js',
         'bootstrap/js/src/button.js',
         'bootstrap/js/src/collapse.js',

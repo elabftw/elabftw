@@ -27,11 +27,14 @@ type Cell = string | number | boolean | null;
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
     const newFilename = (event.target as HTMLInputElement).value;
-    ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${event.target.dataset.id}`, {real_name: newFilename}).then(() => {
+    const uploadId = (event.target as HTMLInputElement).dataset.id;
+    ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadId}`, {real_name: newFilename}).then(() => {
       event.target.remove();
       // change the link text with the new one
       original.textContent = newFilename;
       parent.prepend(original);
+      // keep any embedded inline-spreadsheet snapshot of this file in sync with the new name
+      document.dispatchEvent(new CustomEvent('inline-sheet-rename', { detail: { uploadId, newName: newFilename } }));
     });
   }
 }

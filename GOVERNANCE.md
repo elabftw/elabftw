@@ -26,3 +26,5 @@ Sometimes, polls or discussions are created to ask for input from users.
 Significant changes to the code are done on a separate branch that gets merged into the development branch after review.
 
 The review process involves several rounds of back-and-forth between the author and the code owner. The code is thoroughly tested before getting merged.
+
+Currently, only @NicolasCARPi can merge changes in the `master` branch and create new software releases.

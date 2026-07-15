@@ -13,10 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Models\Links;
 
 use Elabftw\Enums\EntityType;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Override;
+
+use function sprintf;
 
 /**
  * For links pointing to experiments
@@ -71,7 +74,7 @@ abstract class AbstractExperimentsLinks extends AbstractLinks
             // incoming links from an experiment or resource with the same ID.
             $this->Entity instanceof Experiments => 'experiments2experiments',
             $this->Entity instanceof Items => 'experiments2items',
-            default => throw new LogicException(sprintf(
+            default => throw new ImproperActionException(sprintf(
                 'Entity type %s cannot have incoming experiment links.',
                 $this->Entity::class,
             )),

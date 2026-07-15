@@ -13,10 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Models\Links;
 
 use Elabftw\Enums\EntityType;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Templates;
 use Override;
+
+use function sprintf;
 
 /**
  * For links pointing to items

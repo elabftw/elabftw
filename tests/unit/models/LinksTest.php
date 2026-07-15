@@ -321,6 +321,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         new Experiments2ExperimentsLinks($Experiments, $targetId)->postAction(Action::Create, array());
     }
 
+    // regression test for links prior to issue #6633
     public function testTemplatesDoNotInheritIncomingLinksFromEntitiesWithSameId(): void
     {
         $User = $this->getRandomUserInTeam(1);
@@ -328,8 +329,7 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         /**
          * Experiment template and experiment sharing the same ID. Create incoming links to the experiment from:
          * - another experiment;
-         * - a resource.
-         */
+         * - a resource. */
         $TargetExperiment = $this->getFreshExperimentWithGivenUser($User);
         $SourceExperiment = $this->getFreshExperimentWithGivenUser($User);
         $SourceExperiment->ExperimentsLinks->setId($TargetExperiment->id);
@@ -364,7 +364,6 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $SourceItem->ItemsLinks->setId($TargetItem->id);
         $SourceItem->ItemsLinks->postAction(Action::Create, array());
 
-        // Move a fresh resource template onto the resource's numeric ID.
         $ItemsType = $this->getFreshItemType();
         $req = $this->Db->prepare('UPDATE items_types SET id = :collision_id WHERE id = :template_id');
         $req->bindValue(':collision_id', $TargetItem->id, PDO::PARAM_INT);

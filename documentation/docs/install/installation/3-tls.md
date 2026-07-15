@@ -12,7 +12,7 @@ You can run the container in HTTP mode (internal port 443) only if you have a re
 
 - Set `DISABLE_HTTPS=true`
 
-Reverse proxy configuration examples can be found here: https://github.com/elabftw/documentation/tree/master/config_examples/.
+Reverse proxy configuration examples can be found here: https://github.com/elabftw/elabftw/tree/master/documentation/config_examples/.
 
 ## Option B: HTTPS mode with Let's Encrypt certificates
 

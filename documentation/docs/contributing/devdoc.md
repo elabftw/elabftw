@@ -19,13 +19,12 @@ But fear not, because there is a whole documentation about getting started, and 
 
 ## Note about repositories
 
-The eLabFTW project is split in different repositories. The main one with the actual PHP code is [elabftw/elabftw](https://github.com/elabftw/elabftw>). The present document is generated from markdown files in [elabftw/documentation](https://github.com/elabftw/documentation). So if you need to change the documentation, it will be in there.
+The eLabFTW project is split in different repositories. The main one with the actual PHP code is [elabftw/elabftw](https://github.com/elabftw/elabftw>). The present document is generated from markdown files in [/documentation folder of elabftw](https://github.com/elabftw/elabftw/tree/master/documentation). So if you need to change the documentation, it will be in there.
 
-The Docker image is built from the code at [elabftw/elabimg](https://github.com/elabftw/elabimg).
+The Docker image is built from the code in [/containers/elabimg folder](https://github.com/elabftw/elabftw/tree/master/containers/elabimg).
 
 Other interesting repositories are:
 
-- [elabftw/elabctl](https://github.com/elabftw/elabctl) for the elabctl tool
 - [elabftw/elabapi-python](https://github.com/elabftw/elabapi-python) for the python API library
 
 The rest of this documentation is about elabftw/elabftw.
@@ -46,7 +45,7 @@ Releases get tagged from a `release/X.Y` branch. And patch releases are built fr
 * Check out the scripts in `src/tools` too
 
 ## Working with JavaScript
-All JavaScript code is written in `TypeScript <https://www.typescriptlang.org/>`_ in `src/ts`. During build, it is converted in JS by `tsc`. It is then bundled by [Webpack](https://webpack.js.org/). A full build can be quite time consuming, especially on hardware with limited CPU power.
+All JavaScript code is written in [TypeScript](https://www.typescriptlang.org/) in `src/ts`. During build, it is converted in JS by `tsc`. It is then bundled by [Webpack](https://webpack.js.org/). A full build can be quite time consuming, especially on hardware with limited CPU power.
 
 When working on some JS, what you want is to be able to save the file and immediately see the changes. For that, use `yarn watchjs` to build the JS and watch for changes. Now changes will take a very small time to compile and be visible.
 
@@ -58,13 +57,13 @@ Use vanilla JS and ban the use of jQuery selectors or functions.
 
 * if you make a change to the SQL structure, you need to add a schema file in `src/sql`. See the existing files for an example. Then increment the required version in `src/classes/Update`. Modify `src/sql/structure.sql` so new installs will get the correct structure. See also `dev:genschema` command.
 * comment your code wisely, what is important is the why, not the what
-* your code must follow `the PSR standards <https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md>`_
+* your code must follow [the PSR standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)
 * add a plugin to your editor to show trailing whitespaces in red
 * add a plugin to your editor to show PSR-1 errors
-* see `editorconfig.org <https://editorconfig.org/>`_ and configure your editor to follow the settings from `.editorconfig`
+* see [editorconfig.org](https://editorconfig.org/) and configure your editor to follow the settings from `.editorconfig`
 * remove BOM
-* if you want to work on the documentation, clone the `documentation repo <https://github.com/elabftw/documentation>`_
-* if you want to make backups of your dev install, you'll need to edit `elabctl.conf` to point to the correct folders/config files. See `example <https://github.com/elabftw/elabctl/blob/master/elabctl.conf>`_
+* if you want to work on the documentation, look into `/documentation` folder
+* if you want to make backups of your dev install, you'll need to edit `elabctl.conf` to point to the correct folders/config files. See [example](https://github.com/elabftw/elabftw/blob/master/containers/elabctl/elabctl.conf)
 * in php camelCase; in html, dash separation for CSS stuff, camelCase for JS
 * check the commands in the "scripts" part of the `package.json` file, a lot of nice things in there ;)
 

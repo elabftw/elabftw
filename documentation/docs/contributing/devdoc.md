@@ -19,7 +19,7 @@ But fear not, because there is a whole documentation about getting started, and 
 
 ## Note about repositories
 
-The eLabFTW project is split in different repositories. The main one with the actual PHP code is [elabftw/elabftw](https://github.com/elabftw/elabftw>). The present document is generated from markdown files in [/documentation folder of elabftw](https://github.com/elabftw/elabftw/tree/master/documentation). So if you need to change the documentation, it will be in there.
+The eLabFTW project is split in different repositories. The main one with the actual PHP code is [elabftw/elabftw](https://github.com/elabftw/elabftw). The present document is generated from markdown files in [/documentation folder of elabftw](https://github.com/elabftw/elabftw/tree/master/documentation). So if you need to change the documentation, it will be in there.
 
 The Docker image is built from the code in [/containers/elabimg folder](https://github.com/elabftw/elabftw/tree/master/containers/elabimg).
 

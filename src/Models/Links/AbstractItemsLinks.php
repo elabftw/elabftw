@@ -65,9 +65,14 @@ abstract class AbstractItemsLinks extends AbstractLinks
     #[Override]
     protected function getRelatedTable(): string
     {
-        if ($this->Entity instanceof Items) {
-            return 'items2items';
-        }
-        return 'items2experiments';
+        // be strict here: see comment on AbstractExperimentsLinks
+        return match (true) {
+            $this->Entity instanceof Items => 'items2items',
+            $this->Entity instanceof Experiments => 'items2experiments',
+            default => throw new ImproperActionException(sprintf(
+                'Entity type %s cannot have incoming resource links.',
+                $this->Entity::class,
+            )),
+        };
     }
 }

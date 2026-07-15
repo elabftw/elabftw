@@ -94,6 +94,7 @@ function SpreadsheetEditor() {
         // SAVE MODE
         res = await saveAsAttachment(aoa, entity.type, entity.id);
       }
+      if (!res) return;
       keepResult(res);
       setUnsavedWarning(false);
     } finally {

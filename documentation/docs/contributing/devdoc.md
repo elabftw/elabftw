@@ -40,10 +40,9 @@ Releases get tagged from a `release/X.Y` branch. And patch releases are built fr
 
 * Real accessible pages are in the web/ directory (experiments.php, database.php, login.php, etc…)
 * The rest is in app/ or src/ for PHP classes
-* src/models will contain classes with CRUD (Create, Read, Update, Destroy)
-* src/classes will contain services or utility classes
+* src/Models will contain classes with CRUD (Create, Read, Update, Destroy)
+* src/Services, src/Elabftw will contain services or utility classes
 * A new class will be loaded automagically thanks to the use of PSR-4 with composer (namespace Elabftw\\Elabftw)
-* app/controllers will contain pages that send actions to models (like destroy something), and generally output json for an ajax request, or redirect the user.
 * Check out the scripts in `src/tools` too
 
 ## Working with JavaScript

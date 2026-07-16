@@ -28,6 +28,7 @@ use function date;
 use function array_column;
 use function json_decode;
 use function json_encode;
+use function str_contains;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
 {
@@ -88,6 +89,14 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
                 $this->assertSame('Sample destroyed per HTA schedule', $change['content']);
             }
         }
+        // the reason is also written to the audit log so it survives an item purge
+        $audited = false;
+        foreach (AuditLogs::read() as $log) {
+            if (str_contains((string) $log['body'], 'Sample destroyed per HTA schedule')) {
+                $audited = true;
+            }
+        }
+        $this->assertTrue($audited);
     }
 
     public function testUnwatchedItemDeletesWithoutReason(): void

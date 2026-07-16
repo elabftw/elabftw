@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\AuditEvent\ResourceDeleted;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
@@ -181,7 +182,8 @@ final class Items extends AbstractConcreteEntity
     public function readOne(): array
     {
         parent::readOne();
-        $Teams = new Teams($this->Users, $this->Users->team);
+        // resolve the settings from the team that owns the item, not the requester's current team
+        $Teams = new Teams($this->Users, (int) ($this->entityData['team'] ?? $this->Users->team));
         $this->entityData['deletion_reason_required'] = !empty($Teams->teamArr['deletion_reason_enabled'])
             && $this->deletionReasonMatches($Teams);
         $this->entityData['deletion_reason_options'] = json_decode((string) ($Teams->teamArr['deletion_reason_options'] ?? '[]'), true) ?: array();
@@ -195,7 +197,7 @@ final class Items extends AbstractConcreteEntity
         if (empty($this->entityData)) {
             $this->readOne();
         }
-        if ($this->entityData['deletion_reason_required']) {
+        if (!empty($this->entityData['deletion_reason_required'])) {
             // read the reason from the request body so it stays out of the server access logs
             $request = Request::createFromGlobals();
             $payload = json_decode($request->getContent(), true) ?: array();
@@ -204,6 +206,8 @@ final class Items extends AbstractConcreteEntity
                 throw new ImproperActionException(_('A reason must be provided to delete this resource.'));
             }
             new Changelog($this)->create(new ContentParams('deletion_reason', $deletionReason));
+            // also record it in the audit log, which survives even if the item is later purged
+            AuditLogs::create(new ResourceDeleted($this->Users->userData['userid'], $this->id ?? 0, $this->entityType, $deletionReason));
         }
         return parent::destroy();
     }

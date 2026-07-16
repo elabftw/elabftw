@@ -33,4 +33,5 @@ enum AuditCategory: int
     case SignatureKeysCreated = 100;
     case SignatureCreated = 101;
     case ActionRequested = 102;
+    case ResourceDeleted = 110;
 }

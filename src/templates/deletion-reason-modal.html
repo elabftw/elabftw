@@ -1,0 +1,29 @@
+{# reason for deletion modal (HTA compliance). Set an "options" array and optionally a "confirmAction". #}
+{% set confirmAction = confirmAction|default('destroy-with-reason') %}
+<div class='modal fade' id='deletionReasonModal' tabindex='-1' role='dialog' aria-labelledby='deletionReasonModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='deletionReasonModalLabel'>{{ 'Reason for deletion'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <label class='col-form-label' for='deletionReasonSelect'>{{ 'A reason is required to delete this resource.'|trans }}</label>
+        <select id='deletionReasonSelect' class='form-control' required autocomplete='off'>
+          <option value='' disabled selected>{{ 'Select a reason'|trans }}</option>
+          {% for reason in options %}
+            <option value='{{ reason }}'>{{ reason }}</option>
+          {% endfor %}
+          <option value='_other'>{{ 'Other'|trans }}</option>
+        </select>
+        <input type='text' id='deletionReasonOther' class='form-control mt-2 d-none' placeholder='{{ 'Specify reason'|trans }}' aria-label='{{ 'Specify reason'|trans }}'>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-transparent' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' data-action='{{ confirmAction }}' class='btn btn-danger'>{{ 'Delete'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

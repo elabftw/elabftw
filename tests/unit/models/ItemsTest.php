@@ -41,12 +41,65 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->Items = $this->getFreshItemWithGivenUser($admin);
     }
 
+    protected function tearDown(): void
+    {
+        $Teams = new Teams($this->Items->Users, 1);
+        $Teams->update(new TeamParam('deletion_reason_enabled', '0'));
+        $Teams->update(new TeamParam('deletion_reason_categories', '[]'));
+        $Teams->update(new TeamParam('deletion_reason_tags', '[]'));
+        unset($_GET['deletion_reason']);
+    }
+
     public function testCreateAndDestroy(): void
     {
         $new = $this->Items->create();
         $this->assertTrue((bool) Check::id($new));
         $this->Items->setId($new);
         $this->Items->destroy();
+    }
+
+    public function testCannotDeleteWatchedItemWithoutReason(): void
+    {
+        $Teams = new Teams($this->Items->Users, 1);
+        $categoryId = new ResourcesCategories($Teams)->create('HTA regulated');
+        $new = $this->Items->create(category: $categoryId);
+        $Teams->update(new TeamParam('deletion_reason_enabled', '1'));
+        $Teams->update(new TeamParam('deletion_reason_categories', json_encode(array($categoryId))));
+        unset($_GET['deletion_reason']);
+        $Item = new Items($this->Items->Users, $new);
+        $this->expectException(ImproperActionException::class);
+        $Item->destroy();
+    }
+
+    public function testDeleteWatchedItemWithReasonIsRecorded(): void
+    {
+        $Teams = new Teams($this->Items->Users, 1);
+        $categoryId = new ResourcesCategories($Teams)->create('HTA regulated');
+        $new = $this->Items->create(category: $categoryId);
+        $Teams->update(new TeamParam('deletion_reason_enabled', '1'));
+        $Teams->update(new TeamParam('deletion_reason_categories', json_encode(array($categoryId))));
+        $_GET['deletion_reason'] = 'Sample destroyed per HTA schedule';
+        $Item = new Items($this->Items->Users, $new);
+        $this->assertTrue($Item->destroy());
+        $changelog = new Changelog($Item)->readAll();
+        $this->assertContains('deletion_reason', array_column($changelog, 'target'));
+        foreach ($changelog as $change) {
+            if ($change['target'] === 'deletion_reason') {
+                $this->assertSame('Sample destroyed per HTA schedule', $change['content']);
+            }
+        }
+    }
+
+    public function testUnwatchedItemDeletesWithoutReason(): void
+    {
+        $Teams = new Teams($this->Items->Users, 1);
+        $categoryId = new ResourcesCategories($Teams)->create('Not regulated');
+        $new = $this->Items->create(category: $categoryId);
+        $Teams->update(new TeamParam('deletion_reason_enabled', '1'));
+        $Teams->update(new TeamParam('deletion_reason_categories', '[]'));
+        unset($_GET['deletion_reason']);
+        $Item = new Items($this->Items->Users, $new);
+        $this->assertTrue($Item->destroy());
     }
 
     public function testCreateFromTemplate(): void

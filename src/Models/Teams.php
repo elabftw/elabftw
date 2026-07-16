@@ -35,6 +35,7 @@ use function array_intersect;
 use function array_map;
 use function implode;
 use function is_array;
+use function json_encode;
 
 /**
  * All about the teams
@@ -42,6 +43,15 @@ use function is_array;
 final class Teams extends AbstractRest
 {
     use SetIdTrait;
+
+    // default reasons offered to users when deleting an HTA regulated resource
+    public const array DEFAULT_DELETION_REASONS = array(
+        'Consent withdrawn',
+        'Retention period expired',
+        'Transferred to another establishment',
+        'Used in research',
+        'Disposed per SOP',
+    );
 
     public array $teamArr = array();
 
@@ -341,9 +351,10 @@ final class Teams extends AbstractRest
     {
         $name = Filter::title($name);
 
-        $sql = 'INSERT INTO teams (name) VALUES (:name)';
+        $sql = 'INSERT INTO teams (name, deletion_reason_options) VALUES (:name, :deletion_reason_options)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
+        $req->bindValue(':deletion_reason_options', json_encode(self::DEFAULT_DELETION_REASONS, JSON_THROW_ON_ERROR));
         $this->Db->execute($req);
         // grab the team ID
         $newId = $this->Db->lastInsertId();

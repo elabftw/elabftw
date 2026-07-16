@@ -770,6 +770,8 @@ document.addEventListener('DOMContentLoaded', () => {
         id: checked.join('+'),
       });
       window.location.href = `make.php?${params.toString()}`;
+    } else if (el.matches('#deletionReasonSelect')) {
+      document.getElementById('deletionReasonOther').classList.toggle('d-none', el.value !== '_other');
     }
   });
 
@@ -985,6 +987,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const action = <Action>el.dataset.what;
       // special case: DELETE request for confirmation & deletes div
       if (action === Action.Destroy) {
+        // HTA compliance: when the team requires it, collect one reason for the whole batch first
+        const reasonModal = document.getElementById('deletionReasonModal');
+        if (reasonModal) {
+          $(reasonModal).modal('show');
+          return;
+        }
         if (!confirm(i18next.t('generic-delete-warning'))) {
           return;
         }
@@ -1003,6 +1011,32 @@ document.addEventListener('DOMContentLoaded', () => {
         ApiC.patch(`${entity.type}/${chk}`, { notifOnSaved: 0, action }),
       );
       Promise.all(results).then(() => {
+        notify.success();
+        reloadEntitiesShow();
+      });
+    } else if (el.matches('[data-action="destroy-selected-with-reason"]')) {
+      const checked = get(selectedEntities);
+      if (checked.length === 0) {
+        notify.error('nothing-selected');
+        return;
+      }
+      const reasonSelect = document.getElementById('deletionReasonSelect') as HTMLSelectElement;
+      if (!reasonSelect) {
+        return;
+      }
+      let reason = reasonSelect.value;
+      if (reason === '_other') {
+        reason = (document.getElementById('deletionReasonOther') as HTMLInputElement).value.trim();
+      }
+      if (!reason) {
+        notify.error('invalid-info');
+        return;
+      }
+      $('#deletionReasonModal').modal('hide');
+      const deletes = checked.map(chk =>
+        ApiC.delete(`${entity.type}/${chk}?deletion_reason=${encodeURIComponent(reason)}`, { notifOnSaved: 0 }),
+      );
+      Promise.all(deletes).then(() => {
         notify.success();
         reloadEntitiesShow();
       });

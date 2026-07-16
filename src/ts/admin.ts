@@ -174,6 +174,20 @@ if (window.location.pathname === '/admin.php') {
     });
   });
 
+  on('save-deletion-reason-settings', () => {
+    const options = (document.getElementById('deletionReasonOptions') as HTMLTextAreaElement).value
+      .split('\n').map(line => line.trim()).filter(line => line !== '');
+    const categories = Array.from((document.getElementById('deletionReasonCategories') as HTMLSelectElement).selectedOptions)
+      .map(opt => parseInt(opt.value, 10));
+    const tags = Array.from((document.getElementById('deletionReasonTags') as HTMLSelectElement).selectedOptions)
+      .map(opt => opt.value);
+    ApiC.patch(`${Model.Team}/current`, {
+      deletion_reason_options: JSON.stringify(options),
+      deletion_reason_categories: JSON.stringify(categories),
+      deletion_reason_tags: JSON.stringify(tags),
+    });
+  });
+
   on('open-onboarding-email-modal', () => {
     // reload the modal in case the users of the team have changed
     reloadElements(['sendOnboardingEmailModal'])

@@ -16,6 +16,10 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Override;
 
+use function is_array;
+use function json_decode;
+use function json_encode;
+
 final class TeamParam extends ContentParams
 {
     #[Override]
@@ -39,8 +43,12 @@ final class TeamParam extends ContentParams
             'users_canwrite_resources_templates',
             'visible',
             'newcomer_banner_active',
+            'deletion_reason_enabled',
             'onboarding_email_active' => $this->getBinary(),
             'newcomer_threshold' => $this->asInt(),
+            'deletion_reason_options',
+            'deletion_reason_categories',
+            'deletion_reason_tags' => $this->getJsonArrayContent(),
             default => throw new ImproperActionException('Incorrect parameter for team.' . $this->target),
         };
     }
@@ -51,5 +59,17 @@ final class TeamParam extends ContentParams
             return null;
         }
         return Filter::body(parent::getContent());
+    }
+
+    private function getJsonArrayContent(): ?string
+    {
+        if (empty($this->content)) {
+            return null;
+        }
+        $decoded = json_decode((string) $this->content, true);
+        if (!is_array($decoded)) {
+            throw new ImproperActionException('Incorrect value: a JSON array is expected.');
+        }
+        return json_encode($decoded, JSON_THROW_ON_ERROR);
     }
 }

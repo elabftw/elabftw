@@ -22,7 +22,9 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\AccessType;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Items2ItemsLinks;
+use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
@@ -31,6 +33,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Override;
 
 use function _;
+use function array_filter;
+use function array_intersect;
+use function array_map;
+use function explode;
+use function in_array;
+use function json_decode;
+use function ksort;
+use function trim;
 
 /**
  * All about the database items
@@ -200,8 +210,48 @@ final class Items extends AbstractConcreteEntity
     }
 
     #[Override]
+    public function readOne(): array
+    {
+        parent::readOne();
+        $Teams = new Teams($this->Users, $this->Users->team);
+        $this->entityData['deletion_reason_required'] = !empty($Teams->teamArr['deletion_reason_enabled'])
+            && $this->deletionReasonMatches($Teams);
+        $this->entityData['deletion_reason_options'] = json_decode((string) ($Teams->teamArr['deletion_reason_options'] ?? '[]'), true) ?: array();
+        ksort($this->entityData);
+        return $this->entityData;
+    }
+
+    #[Override]
+    public function destroy(): bool
+    {
+        if (empty($this->entityData)) {
+            $this->readOne();
+        }
+        if ($this->entityData['deletion_reason_required']) {
+            $deletionReason = trim(Request::createFromGlobals()->query->getString('deletion_reason'));
+            if ($deletionReason === '') {
+                throw new ImproperActionException(_('A reason must be provided to delete this resource.'));
+            }
+            new Changelog($this)->create(new ContentParams('deletion_reason', $deletionReason));
+        }
+        return parent::destroy();
+    }
+
+    #[Override]
     protected function getCreatePermissionKey(): string
     {
         return 'users_canwrite_resources';
+    }
+
+    // an item needs a deletion reason if its category or one of its tags is watched by the team
+    private function deletionReasonMatches(Teams $Teams): bool
+    {
+        $categories = json_decode((string) ($Teams->teamArr['deletion_reason_categories'] ?? '[]'), true) ?: array();
+        if (in_array((int) $this->entityData['category'], array_map('intval', $categories), true)) {
+            return true;
+        }
+        $watchedTags = json_decode((string) ($Teams->teamArr['deletion_reason_tags'] ?? '[]'), true) ?: array();
+        $entityTags = array_filter(explode('|', (string) ($this->entityData['tags'] ?? '')));
+        return !empty(array_intersect($watchedTags, $entityTags));
     }
 }

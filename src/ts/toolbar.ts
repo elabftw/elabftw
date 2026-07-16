@@ -155,6 +155,31 @@ if (document.getElementById('topToolbar')) {
     }
   });
 
+  // deletion with a mandatory reason (HTA compliance), reason is sent as a query parameter
+  const reasonSelect = document.getElementById('deletionReasonSelect') as HTMLSelectElement;
+  if (reasonSelect) {
+    reasonSelect.addEventListener('change', () => {
+      document.getElementById('deletionReasonOther').classList.toggle('d-none', reasonSelect.value !== '_other');
+    });
+  }
+
+  on('destroy-with-reason', () => {
+    if (!reasonSelect) {
+      return;
+    }
+    let reason = reasonSelect.value;
+    if (reason === '_other') {
+      reason = (document.getElementById('deletionReasonOther') as HTMLInputElement).value.trim();
+    }
+    if (!reason) {
+      notify.error('invalid-info');
+      return;
+    }
+    const path = window.location.pathname;
+    ApiC.delete(`${entity.type}/${entity.id}?deletion_reason=${encodeURIComponent(reason)}`).then(
+      () => window.location.replace(path.split('/').pop()));
+  });
+
   on(Action.CreateProcurementRequest, () => {
     const input = (document.getElementById('procurementRequestQtyInput') as HTMLInputElement);
     const qty = parseInt(input.value, 10);

@@ -120,6 +120,40 @@
 
   </div>
 
+  <h2 class='p-2 pl-3 section-title'>{{ 'Deletion reason (HTA compliance)'|trans }}</h2>
+  <div class='pl-3 mt-2'>
+    {% set catsSelected = App.Teams.teamArr.deletion_reason_categories|default('[]')|jsonDecode %}
+    {% set tagsSelected = App.Teams.teamArr.deletion_reason_tags|default('[]')|jsonDecode %}
+    {% include 'binary-setting.html' with {'model': model, 'src': src,
+      'slug': 'deletion_reason_enabled',
+      'label': 'Force a reason when deleting a watched resource'|trans,
+      'help': 'Users will have to pick a reason before they can delete a resource whose category or tag is watched below.'|trans} %}
+
+    <label for='deletionReasonOptions' class='col-form-label'>{{ 'Reasons offered to users (one per line)'|trans }}</label>
+    <textarea class='form-control' id='deletionReasonOptions' rows='4'>{% for reason in App.Teams.teamArr.deletion_reason_options|default('[]')|jsonDecode %}{{ reason }}{% if not loop.last %}
+{% endif %}{% endfor %}</textarea>
+    <hr>
+
+    <label for='deletionReasonCategories' class='col-form-label'>{{ 'Watched resource categories'|trans }}</label>
+    <select class='form-control' id='deletionReasonCategories' multiple autocomplete='off'>
+      {% for itemsType in App.itemsCategoryArr %}
+        <option value='{{ itemsType.id }}' {{ itemsType.id in catsSelected ? 'selected' }}>{{ itemsType.title }}</option>
+      {% endfor %}
+    </select>
+    <hr>
+
+    <label for='deletionReasonTags' class='col-form-label'>{{ 'Watched tags'|trans }}</label>
+    <select class='form-control' id='deletionReasonTags' multiple autocomplete='off'>
+      {% for tag in tagsArr %}
+        <option value='{{ tag.tag }}' {{ tag.tag in tagsSelected ? 'selected' }}>{{ tag.tag }}</option>
+      {% endfor %}
+    </select>
+
+    <div class='mt-2 text-center'>
+      <button type='button' data-action='save-deletion-reason-settings' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+    </div>
+  </div>
+
   <h2 class='p-2 pl-3 section-title' id='existingRors'>{{ 'Research Organization Registry (ROR)'|trans }}</h2>
 
   <div class='mb-2' data-svelte-component='rors' data-endpoint='teams/current/rors'></div>

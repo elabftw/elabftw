@@ -13,6 +13,9 @@
   {% include 'search-help-modal.html' %}
   {% include 'show-view-edit.html' %}
   {% include 'request-actions-show.html' %}
+  {% if Entity.entityType.value == 'items' and App.Teams.teamArr.deletion_reason_enabled %}
+    {% include 'deletion-reason-modal.html' with {'options': App.Teams.teamArr.deletion_reason_options|default('[]')|jsonDecode, 'confirmAction': 'destroy-selected-with-reason'} %}
+  {% endif %}
 
   <hr>
 

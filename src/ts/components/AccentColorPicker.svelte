@@ -2,6 +2,7 @@
   import { ApiC } from '../api';
   import { Model } from '../interfaces';
   import { notify } from '../notify';
+  import i18next from "../i18n";
   
   export let initialAccentColor = '#813d9c';
   export let initialAccentForeground = '#ffffff';
@@ -9,6 +10,7 @@
   let accentColor = initialAccentColor;
   let accentForeground = initialAccentForeground;
   let isSaving = false;
+  const t = i18next.t.bind(i18next);
   
   const hexColorPattern = /^#[0-9a-fA-F]{6}$/;
   
@@ -21,7 +23,7 @@
     if (!hexColorPattern.test(accentColor)
       || !hexColorPattern.test(accentForeground)
     ) {
-      notify.error('Invalid color value.');
+      notify.error('invalid-info');
       return;
     }
     isSaving = true;
@@ -29,7 +31,7 @@
       await ApiC.patch(`${Model.User}/me`, {accent_color: accentColor, accent_foreground: accentForeground });
       applyPreview();
     } catch (error) {
-      notify.error('Could not save the colors.');
+      notify.error(error);
     } finally {
       isSaving = false;
     }
@@ -55,7 +57,7 @@
       initialAccentColor = accentColor;
       initialAccentForeground = accentForeground;
     } catch (error) {
-      notify.error('Could not reset the colors.');
+      notify.error('cannot-reset-settings');
     } finally {
       isSaving = false;
     }
@@ -64,8 +66,7 @@
 
 <div class='accent-color-settings'>
   <div class='d-flex justify-content-between align-items-center mb-3'>
-<!--    TODO I18n -->
-    <label for='accentColor' class='col-form-label'>Primary color</label>
+    <label for='accentColor' class='col-form-label'>{t('primary-color')}</label>
     
     <div class='d-flex align-items-center'>
       <input
@@ -73,15 +74,16 @@
         class='color-input mr-2'
         type='color'
         bind:value={accentColor}
-        aria-label='Primary color'
+        aria-label={t('primary-color')}
       >
+      <!-- hexadecimal value -->
       <input
         class='form-control accent-hex-input'
         type='text'
         bind:value={accentColor}
         pattern='#[0-9a-fA-F]{6}'
         maxlength='7'
-        aria-label='Primary color hexadecimal value'
+        aria-label={`Hexadecimal ${t('primary-color')}`}
       >
     </div>
   </div>
@@ -90,8 +92,7 @@
   
   <div class='d-flex justify-content-between align-items-center mb-3'>
     <label for='accentForeground' class='col-form-label'>
-      <!--    TODO I18n -->
-      Text color on primary buttons
+      {t('text-color-primary')}
     </label>
     
     <div class='d-flex align-items-center'>
@@ -100,33 +101,29 @@
         class='color-input mr-2'
         type='color'
         bind:value={accentForeground}
-        aria-label='Primary foreground color'
+        aria-label={t('text-color-primary')}
       >
-      
       <input
         class='form-control accent-hex-input'
         type='text'
         bind:value={accentForeground}
         pattern='#[0-9a-fA-F]{6}'
         maxlength='7'
-        aria-label='Primary foreground hexadecimal value'
+        aria-label={`Hexadecimal ${t('text-color-primary')}`}
       >
     </div>
   </div>
-  
   <hr>
   
   <div
     class='theme-accent-preview box'
     style={`--primary: ${accentColor}; --primary-fg: ${accentForeground};`}
   >
-    <p class='mb-2'>
-      Preview
-    </p>
+    <p class='mb-2'>{t('preview')}</p>
     
     <button type='button' class='btn btn-primary mr-2'>
       <i class='fas fa-pencil mr-1'></i>
-      Primary button
+      <label for='accentColor' class='col-form-label'>{t('primary-color')}</label>
     </button>
   </div>
   
@@ -137,8 +134,7 @@
       disabled={isSaving}
       on:click={saveColors}
     >
-      <!--    TODO I18n -->
-      {isSaving ? 'Saving...' : 'Save'}
+      {isSaving ? t('please-wait') : t('save')}
     </button>
     
     <button
@@ -147,7 +143,7 @@
       disabled={isSaving}
       on:click={resetColors}
     >
-      Reset
+      {t('reset')}
     </button>
   </div>
 </div>

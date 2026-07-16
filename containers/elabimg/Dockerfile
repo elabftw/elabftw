@@ -20,8 +20,7 @@ FROM alpine:3.23 AS nginx-builder
 ENV NGINX_VERSION=1.30.4
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
-# BROKEN HASH: ENV NGX_BROTLI_COMMIT_HASH=63ca02abdcf79c9e788d2eedcc388d2335902e52
-ENV NGX_BROTLI_COMMIT_HASH=6e975bcb015f62e1f303054897783355e2a877dc
+ENV NGX_BROTLI_COMMIT=a71f9312c2deb28875acc7bacfdd5695a111aa53
 # https://github.com/openresty/headers-more-nginx-module/tags
 ENV HEADERS_MORE_VERSION=v0.39
 # releases can be signed by any key on this page https://nginx.org/en/pgp_keys.html
@@ -40,14 +39,23 @@ RUN mkdir /build && chown builder:builder /build
 WORKDIR /build
 USER builder
 
-# clone the nginx modules
-# NEW broken brotli code
-#RUN git clone --recurse-submodules  --depth 25 https://github.com/google/ngx_brotli && cd ngx_brotli && git reset --hard $NGX_BROTLI_COMMIT_HASH && cd deps/brotli && mkdir out && cd out && \
-#    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="-Ofast -march=native -mtune=native -flto -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections" -DCMAKE_CXX_FLAGS="-Ofast -m64 -march=native -mtune=native -flto -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections" -DCMAKE_INSTALL_PREFIX=./installed .. && \
-#    cmake --build . --config Release --target brotlienc
-# OLD working brotli stuff
-# removed the depth param
-RUN git clone https://github.com/google/ngx_brotli && cd ngx_brotli && git reset --hard $NGX_BROTLI_COMMIT_HASH && cd ..
+# build brotli
+RUN git clone https://github.com/google/ngx_brotli \
+    && cd ngx_brotli \
+    && git checkout "$NGX_BROTLI_COMMIT" \
+    && git submodule update --init --recursive \
+    && cd deps/brotli \
+    && mkdir out \
+    && cd out \
+    && cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DCMAKE_C_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections" \
+        -DCMAKE_CXX_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections" \
+        -DCMAKE_EXE_LINKER_FLAGS="-Wl,--gc-sections" \
+        .. \
+    && cmake --build . --config Release --target brotlienc
+
 RUN git clone --depth 1 -b $HEADERS_MORE_VERSION https://github.com/openresty/headers-more-nginx-module
 
 # now start the build
@@ -328,8 +336,6 @@ COPY ./containers/elabimg/nginx/nginx.conf /etc/nginx/nginx.conf.tpl
 RUN rm -f /etc/nginx/nginx.conf && ln -s /run/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./containers/elabimg/nginx/common.conf /etc/nginx/common.conf.tpl
 RUN rm -f /etc/nginx/common.conf && ln -s /run/nginx/common.conf /etc/nginx/common.conf
-COPY ./containers/elabimg/nginx/indigo.conf /etc/nginx/indigo.conf.tpl
-RUN rm -f /etc/nginx/indigo.conf && ln -s /run/nginx/indigo.conf /etc/nginx/indigo.conf
 COPY ./containers/elabimg/nginx/opencloning.conf /etc/nginx/opencloning.conf.tpl
 RUN rm -f /etc/nginx/opencloning.conf && ln -s /run/nginx/opencloning.conf /etc/nginx/opencloning.conf
 # the healthcheck.sh script checks if nginx replies to requests

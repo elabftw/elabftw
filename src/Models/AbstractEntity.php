@@ -378,6 +378,9 @@ abstract class AbstractEntity extends AbstractRest
             $this->processExtendedQuery($displayParams->getUserQuery());
             $extended = true;
         }
+        if ($displayParams->isFull()) {
+            $extended = true;
+        }
 
         $displayFilterSql = $displayParams->getFilterSql();
         $withCompounds = $this->needsCompoundsJoin($displayFilterSql);

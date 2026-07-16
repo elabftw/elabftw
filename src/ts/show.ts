@@ -1038,6 +1038,7 @@ document.addEventListener('DOMContentLoaded', () => {
       );
       Promise.all(deletes).then(() => {
         notify.success();
+      }).finally(() => {
         reloadEntitiesShow();
       });
     }

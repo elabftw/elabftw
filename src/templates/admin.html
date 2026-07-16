@@ -130,8 +130,7 @@
       'help': 'Users will have to pick a reason before they can delete a resource whose category or tag is watched below.'|trans} %}
 
     <label for='deletionReasonOptions' class='col-form-label'>{{ 'Reasons offered to users (one per line)'|trans }}</label>
-    <textarea class='form-control' id='deletionReasonOptions' rows='4'>{% for reason in App.Teams.teamArr.deletion_reason_options|default('[]')|jsonDecode %}{{ reason }}{% if not loop.last %}
-{% endif %}{% endfor %}</textarea>
+    <textarea class='form-control' id='deletionReasonOptions' rows='4'>{{ App.Teams.teamArr.deletion_reason_options|default('[]')|jsonDecode|join("\n") }}</textarea>
     <hr>
 
     <label for='deletionReasonCategories' class='col-form-label'>{{ 'Watched resource categories'|trans }}</label>

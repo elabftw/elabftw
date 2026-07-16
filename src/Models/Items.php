@@ -254,7 +254,7 @@ final class Items extends AbstractConcreteEntity
     private function deletionReasonMatches(Teams $Teams): bool
     {
         $categories = json_decode((string) ($Teams->teamArr['deletion_reason_categories'] ?? '[]'), true) ?: array();
-        if (in_array((int) $this->entityData['category'], array_map('intval', $categories), true)) {
+        if (in_array((int) ($this->entityData['category'] ?? 0), array_map('intval', $categories), true)) {
             return true;
         }
         $watchedTags = json_decode((string) ($Teams->teamArr['deletion_reason_tags'] ?? '[]'), true) ?: array();

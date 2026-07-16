@@ -59,7 +59,6 @@ const config: Config = {
             ...(versioningReady && {
               '5.6': {
                 label: '5.6',
-                path: '5.6',
                 banner: 'none',
               },
             }),

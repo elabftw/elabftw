@@ -28,11 +28,11 @@ For organisations operating in a regulated environment, these controls may be us
 - Moustapha Camara @MoustaphaCamara: Full-stack Developer
 - Elsa Touma @eltouma: Full-stack Developer
 
-## Decision making and accountability
+## Decision-making and accountability
 
 @NicolasCARPi acts as the project's benevolent dictator and has final authority over strategic and technical decisions.
 
-Where appropriate, issues, discussions, or polls are used to collect input from contributors and users. Decisions that result in software changes are documented through the associated issue, pull request, commit history, or release notes.
+Where appropriate, issues, discussions, or polls are used to collect input from contributors and users. Decisions that result in software changes must be documented in the associated issue or pull request, including the decision rationale and expected impact. Commit history and release notes may provide supplemental evidence, but do not replace this decision record.
 
 ## Controlled code change procedure
 
@@ -72,9 +72,9 @@ Unresolved review comments must be addressed before approval. Approval is record
 
 Changes must be tested before they are merged. The extent of testing is proportionate to the nature, complexity, and potential impact of the change.
 
-Applicable automated checks must complete successfully. Additional manual, integration, migration, regression, or security testing is performed when warranted by the change.
+Documented acceptance criteria must be defined for the change. Applicable automated checks must complete successfully, and additional manual, integration, migration, regression, or security testing is performed when warranted by the change. Evidence of the tests performed and their results must be recorded in, or linked from, the pull request or associated change record.
 
-Test failures and identified deviations must be resolved or explicitly assessed and documented before the change is approved.
+Test failures, identified deviations, and deferred testing must be documented with an assessment of their impact, a risk-based rationale for the proposed disposition, and the name of the approver. Before the change is approved, each item must either be closed or be covered by a formal, documented risk acceptance that identifies the residual risk, any compensating controls, a named owner, and a deadline for resolution or completion.
 
 ### Merge control
 
@@ -102,9 +102,12 @@ Urgent corrections and security fixes may follow an expedited process, but they 
 
 - the change is submitted through a pull request;
 - the reason and scope of the change are documented;
-- testing is performed to the extent reasonably possible;
-- approval by a reviewer is required before merging; and
-- the resulting change remains traceable to its commit and release.
+- testing is performed to the extent reasonably possible before merging;
+- any unresolved deviation or deferred testing is documented and formally risk-accepted before merging;
+- approval by a reviewer is required before merging;
+- the resulting change remains traceable to its commit and release;
+- any deferred testing is completed after the merge by a named owner within a documented deadline, with the results recorded in or linked from the pull request or associated change record; and
+- a retrospective review is completed after the merge by a named owner within a documented deadline to confirm the effectiveness of the change, review any remaining risk acceptance, and determine whether further corrective action is required.
 
 Security-related information may be kept confidential until a fix is available, but the change remains subject to review and approval by authorised maintainers.
 
@@ -112,7 +115,11 @@ Security-related information may be kept confidential until a fix is available, 
 
 Software releases are created from reviewed and approved changes.
 
-Each release is assigned a version and is associated with a defined state of the source code. Release tags, commit history, merged pull requests, and release notes allow changes included in a release to be identified and reviewed.
+Each release is assigned a version and linked to a protected release reference consisting of the version tag and the exact source commit from which the release was produced. Modification or deletion of these references is restricted to authorised maintainers and must remain traceable.
+
+Applicable build manifests, artifact identifiers, package or container image digests, checksums, signatures, and provenance references are retained so that the released artifacts can be unambiguously associated with their source code and build.
+
+The authoritative release record is the release entry associated with the protected version tag. It identifies the released version, source commit, release date, responsible releaser or approver, retained manifests or artifact identifiers, and release notes. Commit history, merged pull requests, and external artifact catalogues provide supplemental evidence.
 
 Published fixes and functional changes are delivered through a new version rather than by silently modifying the source code associated with an existing release.
 

@@ -204,7 +204,6 @@ components:
       schema:
         type: integer
         enum: [0, 1]
-        default: 0
       description: |
         Return all columns of each entry when set to 1.
   # end query parameters for entity

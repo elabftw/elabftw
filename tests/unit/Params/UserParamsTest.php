@@ -65,4 +65,29 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
         $params = new UserParams('entrypoint', $entrypoint);
         $this->assertEquals(Entrypoint::Dashboard->value, $params->getContent());
     }
+
+    public function testAccentForeground(): void
+    {
+        $params = new UserParams('accent_foreground', '#A1B2C3');
+        $this->assertSame('#a1b2c3', $params->getContent());
+    }
+
+    public function testAccentForegroundNull(): void
+    {
+        $params = new UserParams('accent_foreground', null);
+        $this->assertNull($params->getContent());
+    }
+
+    public function testAccentForegroundEmpty(): void
+    {
+        $params = new UserParams('accent_foreground', '');
+        $this->assertNull($params->getContent());
+    }
+
+    public function testInvalidAccentForeground(): void
+    {
+        $params = new UserParams('accent_foreground', '#fff');
+        $this->expectException(ImproperActionException::class);
+        $params->getContent();
+    }
 }

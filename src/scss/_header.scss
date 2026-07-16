@@ -9,15 +9,11 @@
 @use './variables';
 
 .navbar {
-  background-color: var(--chrome-bg);
+  background-color: var(--nav-bg);
   border: 0;
   border-radius: 0;
   margin-bottom: 10px;
   padding: 0 5%;
-}
-
-.midnight .navbar {
-  background-color: var(--chrome-strongest);
 }
 
 .navbar-brand {

@@ -39,6 +39,7 @@
   --gold: #d4ae75;
   --darkgold: #594303;
 
+  --nav-bg: var(--chrome-bg);
   --nav-active: #f2f2f2;
   --link-hover: #084785;
   --link: #0c58ab;
@@ -101,6 +102,7 @@
   --thirdlevel: #6e7681;
   --medium: #c9d1d9;
   --mediumstrong: #d0d7de;
+  --nav-bg: var(--chrome-strongest);
 }
 
 /* COLORS for specific cases like pdf export (var(--) does not apply) */

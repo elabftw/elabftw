@@ -5801,13 +5801,22 @@ paths:
       operationId: read-team-teamgroups
       responses:
         '200':
-          description: A list of teamgroups for the team.
+          description: Teamgroups for the team, keyed by teamgroup ID.
           content:
             application/json:
               schema:
-                type: array
-                items:
+                type: object
+                additionalProperties:
                   $ref: '#/components/schemas/teamgroup'
+                example:
+                  "1":
+                    id: 1
+                    name: Super secret project
+                    users: [ ]
+                  "2":
+                    id: 2
+                    name: Advanced microscopy users
+                    users: [ ]
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

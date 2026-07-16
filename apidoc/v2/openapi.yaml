@@ -5800,13 +5800,16 @@ paths:
       operationId: read-team-teamgroups
       responses:
         '200':
-          description: A list of teamgroups for the team.
+          description: Teamgroups for the team, keyed by teamgroup ID.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/teamgroup'
+                type: object
+                properties:
+                  "1":
+                    $ref: '#/components/schemas/teamgroup'
+                  "2":
+                    $ref: '#/components/schemas/teamgroup'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

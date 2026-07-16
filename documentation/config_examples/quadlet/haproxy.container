@@ -1,0 +1,28 @@
+[Unit]
+Description=HAProxy Service
+Wants=network.target
+After=network.target
+
+[Container]
+Image=docker.io/haproxy:3.0
+ContainerName=haproxy
+ReadOnly=true
+NoNewPrivileges=true
+PidsLimit=12
+
+# Port mapping
+PublishPort=80:8080
+ExposeHostPort=80
+PublishPort=443:4443
+ExposeHostPort=443
+
+# Volume mounts
+Volume=/usr/local/etc/haproxy:/usr/local/etc/haproxy:ro,z
+
+Network=elabftw.network
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

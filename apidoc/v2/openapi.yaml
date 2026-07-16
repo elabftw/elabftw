@@ -197,6 +197,15 @@ components:
           value: "2,3"
       description: |
         Filter results based on their state: 1 (Normal), 2 (Archived), 3 (Deleted). Supports comma separated values.
+
+    Full:
+      name: full
+      in: query
+      schema:
+        type: integer
+        enum: [0, 1]
+      description: |
+        Return all columns of each entry when set to 1.
   # end query parameters for entity
 
   requestBodies:
@@ -2281,6 +2290,7 @@ x-parameterGroups:
     - $ref: '#/components/parameters/Order'
     - $ref: '#/components/parameters/Sort'
     - $ref: '#/components/parameters/State'
+    - $ref: '#/components/parameters/Full'
 
 security:
   - token:

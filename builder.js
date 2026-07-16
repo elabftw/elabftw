@@ -16,6 +16,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MinimizerPlugin = require('minimizer-webpack-plugin');
 const webpack = require('webpack');
 const sveltePreprocess = require('svelte-preprocess');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env) => {
   return {
@@ -124,6 +125,18 @@ module.exports = (env) => {
       // required to make process work in the browser
       new webpack.ProvidePlugin({
         process: 'process/browser.js',
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(
+              __dirname,
+              '.yarn/unplugged/indigo-ketcher-npm-*/node_modules/indigo-ketcher/**/*.wasm',
+            ),
+            to: '[name][ext]',
+            noErrorOnMissing: false,
+          },
+        ],
       }),
     ],
     resolve: {

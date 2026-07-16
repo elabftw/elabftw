@@ -5805,11 +5805,17 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
+                additionalProperties:
+                  $ref: '#/components/schemas/teamgroup'
+                example:
                   "1":
-                    $ref: '#/components/schemas/teamgroup'
+                    id: 1
+                    name: Super secret project
+                    users: [ ]
                   "2":
-                    $ref: '#/components/schemas/teamgroup'
+                    id: 2
+                    name: Advanced microscopy users
+                    users: [ ]
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

@@ -3,6 +3,7 @@
   import { Model } from '../interfaces';
   import { notify } from '../notify';
   import i18next from "../i18n";
+  import { getContrastResult } from '../accessibility';
   
   export let initialAccentColor = '#813d9c';
   export let initialAccentForeground = '#ffffff';
@@ -62,6 +63,11 @@
       isSaving = false;
     }
   };
+  
+  $: contrast = getContrastResult(
+    accentForeground,
+    accentColor,
+  );
 </script>
 
 <div class='accent-color-settings'>
@@ -115,16 +121,19 @@
   </div>
   <hr>
   
-  <div
-    class='theme-accent-preview box'
-    style={`--primary: ${accentColor}; --primary-fg: ${accentForeground};`}
-  >
+  <div class='box' style={`--primary: ${accentColor}; --primary-fg: ${accentForeground};`}>
     <p class='mb-2'>{t('preview')}</p>
     
     <button type='button' class='btn btn-primary mr-2'>
       <i class='fas fa-pencil mr-1'></i>
       <label for='accentColor' class='col-form-label'>{t('primary-color')}</label>
     </button>
+    
+    <p class={`small mt-2 ${contrast.className}`}>
+      <strong>{contrast.icon} {contrast.level}</strong>
+      ({contrast.description})
+      • {contrast.ratio.toFixed(1)}:1
+    </p>
   </div>
   
   <div class='mt-3'>

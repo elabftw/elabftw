@@ -54,6 +54,7 @@ initialUrlParams.delete('q');
 
 const filterControls: ActiveFilterControl[] = [];
 const searchQuery = writable(initialQ);
+const isSearchPending = writable(false);
 const entityFilters = writable(initialUrlParams);
 const selectedEntities = writable<string[]>([]);
 let searchQueryInitialized = false;
@@ -188,6 +189,7 @@ const mountEntityListSv = (target: HTMLElement, order: string, sort: string): vo
       order: order,
       sort: sort,
       searchQuery,
+      queryPending: isSearchPending,
       entityFilters,
       selectedEntities,
       currentUserId: core.currentUserid,
@@ -236,6 +238,7 @@ if (searchBar) {
       name: searchBar.dataset.name ?? 'q',
       value: searchQuery,
       searchQuery,
+      isPending: isSearchPending,
       placeholder: searchBar.dataset.placeholder ?? 'Search',
       ariaLabel: searchBar.dataset.ariaLabel ?? 'Search',
       buttonLabel: searchBar.dataset.buttonLabel ?? 'Search',

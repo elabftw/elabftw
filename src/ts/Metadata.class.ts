@@ -493,7 +493,6 @@ export class Metadata {
     }
 
     // clear previous content
-    this.metadataDiv.textContent = '';
     return displayFunction.call(this).catch(e => {
       if (e instanceof ResourceNotFoundException) {
         // no metadata is associated but it's okay, it's not an error
@@ -544,11 +543,7 @@ export class Metadata {
         }
         table.append(tbody);
         tableContainer.append(table);
-        const fieldsHeader = document.createElement('h5');
-        fieldsHeader.classList.add('mt-3', 'mb-2');
-        fieldsHeader.innerText = i18next.t('custom-fields');
 
-        groupWrapperDiv.append(fieldsHeader);
         groupWrapperDiv.append(tableContainer);
         groupWrapperDiv.append(document.createElement('hr'));
         this.metadataDiv.append(groupWrapperDiv);
@@ -624,10 +619,10 @@ export class Metadata {
       this.editor.refresh(json as ValidMetadata);
       // clean groups field if they're removed via json editor
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
+        this.metadataDiv.replaceChildren();
         reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
         return;
       }
-
       const [groups, groupedArr] = this.getGroups('edit', json as ValidMetadata);
       // the full content of extra fields
       const wrapperDiv = document.createElement('div');
@@ -781,7 +776,7 @@ export class Metadata {
         }
       });
 
-      this.metadataDiv.append(wrapperDiv);
+      this.metadataDiv.replaceChildren(wrapperDiv);
       reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
     }).then(() => {
       makeSortableGreatAgain();

@@ -320,4 +320,61 @@ class LinksTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ForbiddenException::class);
         new Experiments2ExperimentsLinks($Experiments, $targetId)->postAction(Action::Create, array());
     }
+
+    // regression test for links prior to issue #6633
+    public function testTemplatesDoNotInheritIncomingLinksFromEntitiesWithSameId(): void
+    {
+        $User = $this->getRandomUserInTeam(1);
+
+        /**
+         * Experiment template and experiment sharing the same ID. Create incoming links to the experiment from:
+         * - another experiment;
+         * - a resource. */
+        $TargetExperiment = $this->getFreshExperimentWithGivenUser($User);
+        $SourceExperiment = $this->getFreshExperimentWithGivenUser($User);
+        $SourceExperiment->ExperimentsLinks->setId($TargetExperiment->id);
+        $SourceExperiment->ExperimentsLinks->postAction(Action::Create, array());
+
+        $SourceItem = $this->getFreshItemWithGivenUser($User);
+        $SourceItem->ExperimentsLinks->setId($TargetExperiment->id);
+        $SourceItem->ExperimentsLinks->postAction(Action::Create, array());
+
+        // Move a fresh experiment template onto the experiment's numeric ID.
+        // IDs may legitimately collide because they belong to different tables.
+        $Template = $this->getFreshTemplate();
+        $req = $this->Db->prepare('UPDATE experiments_templates SET id = :collision_id WHERE id = :template_id');
+        $req->bindValue(':collision_id', $TargetExperiment->id, PDO::PARAM_INT);
+        $req->bindValue(':template_id', $Template->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $Template = new Templates($Template->Users, $TargetExperiment->id);
+        $this->assertNotEmpty($TargetExperiment->ExperimentsLinks->readRelated());
+        $this->assertNotEmpty($TargetExperiment->ItemsLinks->readRelated());
+        $this->assertSame(array(), $Template->ExperimentsLinks->readRelated());
+        $this->assertSame(array(), $Template->ItemsLinks->readRelated());
+
+        // same for resources & resources templates
+        $TargetItem = $this->getFreshItemWithGivenUser($User);
+
+        $SourceExperiment = $this->getFreshExperimentWithGivenUser($User);
+        $SourceExperiment->ItemsLinks->setId($TargetItem->id);
+        $SourceExperiment->ItemsLinks->postAction(Action::Create, array());
+
+        $SourceItem = $this->getFreshItemWithGivenUser($User);
+        $SourceItem->ItemsLinks->setId($TargetItem->id);
+        $SourceItem->ItemsLinks->postAction(Action::Create, array());
+
+        $ItemsType = $this->getFreshItemType();
+        $req = $this->Db->prepare('UPDATE items_types SET id = :collision_id WHERE id = :template_id');
+        $req->bindValue(':collision_id', $TargetItem->id, PDO::PARAM_INT);
+        $req->bindValue(':template_id', $ItemsType->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $ItemsType = new ItemsTypes($ItemsType->Users, $TargetItem->id);
+
+        $this->assertNotEmpty($TargetItem->ExperimentsLinks->readRelated());
+        $this->assertNotEmpty($TargetItem->ItemsLinks->readRelated());
+        $this->assertSame(array(), $ItemsType->ExperimentsLinks->readRelated());
+        $this->assertSame(array(), $ItemsType->ItemsLinks->readRelated());
+    }
 }

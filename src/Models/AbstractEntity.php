@@ -110,6 +110,10 @@ use function count;
 use function array_replace;
 use function trim;
 use function strtolower;
+use function array_filter;
+use function preg_replace;
+use function preg_match;
+use function strlen;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -362,14 +366,26 @@ abstract class AbstractEntity extends AbstractRest
             return $this->readAllSimple($displayParams);
         }
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
-        if ($displayParams->hasUserQuery()) {
+        $plainQuery = trim($displayParams->getQuery()->getString('q'));
+        $extendedQuery = trim($displayParams->getQuery()->getString('extended'));
+        $searchJoinSql = '';
+
+        if ($plainQuery !== '' && $extendedQuery === '' && !$this->isAdvancedSearchQuery($plainQuery)) {
+            $searchJoinSql = $this->getSimpleQueryJoin($plainQuery);
+            $this->addSimpleQueryBindValues($plainQuery);
+            $extended = false;
+        } elseif ($displayParams->hasUserQuery()) {
             $this->processExtendedQuery($displayParams->getUserQuery());
             $extended = true;
         }
+
         $displayFilterSql = $displayParams->getFilterSql();
         $withCompounds = $this->needsCompoundsJoin($displayFilterSql);
 
         $EntitySqlBuilder = $this->getSqlBuilder();
+        if ($searchJoinSql !== '' && $EntitySqlBuilder instanceof EntitySqlBuilder) {
+            $EntitySqlBuilder->setSearchJoinSql($searchJoinSql);
+        }
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
             $displayParams->getRelatedOrigin(),
@@ -395,7 +411,7 @@ abstract class AbstractEntity extends AbstractRest
         $sqlArr = array(
             $this->extendedFilter,
             $stateSql,
-            'GROUP BY id',
+            'GROUP BY entity.id',
             $displayParams->getSql(),
         );
 
@@ -536,13 +552,18 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function getQueryParams(?InputBag $query = null): DisplayParams
     {
-        return new DisplayParams($this->Users, $this->entityType, $query);
+        return new DisplayParams(
+            requester: $this->Users,
+            entityType: $this->entityType,
+            query: $query,
+            limit: ($this->Users->userData['limit_nb'] ?? 15),
+        );
     }
 
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        return $this->readShow($this->getQueryParams($queryParams?->getQuery()));
+        return $this->readShow($queryParams ?? $this->getQueryParams());
     }
 
     #[Override]
@@ -1268,6 +1289,32 @@ abstract class AbstractEntity extends AbstractRest
 
     protected function enforceTemplate(array $teamConfigArr): void {}
 
+    private function addSimpleQueryBindValues(string $query): void
+    {
+        $this->extendedValues[] = array(
+            'param' => ':simpleQuery',
+            'value' => '%' . $query . '%',
+        );
+        $this->extendedValues[] = array(
+            'param' => ':simpleQueryCustomId',
+            'value' => $query,
+            'type' => PDO::PARAM_INT,
+        );
+        $this->extendedValues[] = array(
+            'param' => ':simpleQueryFulltext',
+            'value' => $this->toBooleanFulltextQuery($query),
+        );
+    }
+
+    private function isAdvancedSearchQuery(string $query): bool
+    {
+        return preg_match(
+            '/(?:^|\s)(?:author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
+            $query,
+        ) === 1
+            || preg_match('/\b(?:AND|OR|NOT)\b|[()!&|"\']/', $query) === 1;
+    }
+
     // read only one column from an entity without calling the full entity
     private function readColumn(string $column): string
     {
@@ -1276,6 +1323,35 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (string) $req->fetchColumn();
+    }
+
+    private function getEntitySimpleQuerySql(string $query, string $table): string
+    {
+        $sql = sprintf(
+            'SELECT search_entity.id
+            FROM %1$s AS search_entity
+            WHERE MATCH(search_entity.title, search_entity.body, search_entity.elabid)
+                AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
+            UNION
+            SELECT search_entity.id
+            FROM %1$s AS search_entity
+            WHERE search_entity.custom_id = :simpleQueryCustomId',
+            $table,
+        );
+
+        if ($this->hasShortFulltextToken($query)) {
+            $sql .= sprintf(
+                ' UNION
+                SELECT search_entity.id
+                FROM %1$s AS search_entity
+                WHERE search_entity.title LIKE :simpleQuery
+                    OR search_entity.date LIKE :simpleQuery
+                    OR search_entity.elabid LIKE :simpleQuery',
+                $table,
+            );
+        }
+
+        return $sql;
     }
 
     private function needsCompoundsJoin(string $displayFilterSql): bool
@@ -1370,6 +1446,68 @@ abstract class AbstractEntity extends AbstractRest
         foreach ($this->extendedValues as $bindValue) {
             $req->bindValue($bindValue['param'], $bindValue['value'], $bindValue['type'] ?? PDO::PARAM_STR);
         }
+    }
+
+    private function getSimpleQueryJoin(string $query): string
+    {
+        return sprintf(
+            'STRAIGHT_JOIN (
+            %1$s
+            UNION
+            SELECT c2e_search.entity_id AS id
+            FROM compounds2%2$s AS c2e_search
+            INNER JOIN compounds AS cmp_search
+                ON cmp_search.id = c2e_search.compound_id
+            WHERE %3$s
+        ) AS search_ids
+            ON search_ids.id = entity.id',
+            $this->getEntitySimpleQuerySql($query, $this->entityType->value),
+            $this->entityType->value,
+            $this->getCompoundsSimpleQuerySql($query),
+        );
+    }
+
+    private function getCompoundsSimpleQuerySql(string $query): string
+    {
+        if ($this->hasShortFulltextToken($query)) {
+            return 'cmp_search.cas_number LIKE :simpleQuery
+                OR cmp_search.ec_number LIKE :simpleQuery
+                OR cmp_search.name LIKE :simpleQuery
+                OR cmp_search.iupac_name LIKE :simpleQuery
+                OR cmp_search.inchi_key LIKE :simpleQuery
+                OR cmp_search.molecular_formula LIKE :simpleQuery';
+        }
+
+        return 'MATCH(
+            cmp_search.cas_number,
+            cmp_search.ec_number,
+            cmp_search.name,
+            cmp_search.iupac_name,
+            cmp_search.inchi_key,
+            cmp_search.molecular_formula
+        ) AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)';
+    }
+
+    private function hasShortFulltextToken(string $value): bool
+    {
+        $value = preg_replace('/[+\-><()~*"@]+/', ' ', $value) ?? '';
+        $tokens = array_filter(explode(' ', trim($value)));
+
+        foreach ($tokens as $token) {
+            if (strlen($token) < 3) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function toBooleanFulltextQuery(string $value): string
+    {
+        $value = preg_replace('/[+\-><()~*"@]+/', ' ', $value) ?? '';
+        $tokens = array_filter(explode(' ', trim($value)));
+
+        return implode(' ', array_map(static fn(string $token): string => '+' . $token . '*', $tokens));
     }
 
     private function processExtendedQuery(string $extendedQuery): void

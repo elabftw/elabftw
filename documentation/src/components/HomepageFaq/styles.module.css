@@ -1,0 +1,19 @@
+.faqSection {
+  padding: 4rem 0;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.list {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.item {
+  margin-bottom: 1rem;
+  /* Prevent the fixed navbar from covering the anchored FAQ item */
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem);
+}

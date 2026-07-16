@@ -13,10 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Models\Links;
 
 use Elabftw\Enums\EntityType;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Templates;
 use Override;
+
+use function sprintf;
 
 /**
  * For links pointing to items
@@ -65,9 +68,14 @@ abstract class AbstractItemsLinks extends AbstractLinks
     #[Override]
     protected function getRelatedTable(): string
     {
-        if ($this->Entity instanceof Items) {
-            return 'items2items';
-        }
-        return 'items2experiments';
+        // be strict here: see comment on AbstractExperimentsLinks
+        return match (true) {
+            $this->Entity instanceof Items => 'items2items',
+            $this->Entity instanceof Experiments => 'items2experiments',
+            default => throw new ImproperActionException(sprintf(
+                'Entity type %s cannot have incoming resource links.',
+                $this->Entity::class,
+            )),
+        };
     }
 }

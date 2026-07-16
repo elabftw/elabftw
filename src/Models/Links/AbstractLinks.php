@@ -26,6 +26,8 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Templates;
 use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Override;
@@ -67,6 +69,12 @@ abstract class AbstractLinks extends AbstractRest
     // Get related entities
     public function readRelated(): array
     {
+        // Templates may contain outgoing links, but regular entities cannot link
+        // to templates. Therefore, templates cannot have incoming links.
+        if ($this->Entity instanceof Templates || $this->Entity instanceof ItemsTypes) {
+            return array();
+        }
+
         return $this->prepareBindExecuteFetch($this->getSqlQuery(related: true));
     }
 

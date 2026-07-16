@@ -63,8 +63,6 @@ getEnv() {
     allow_methods=${ALLOW_METHODS:-}
     allow_headers=${ALLOW_HEADERS:-}
     status_password=${STATUS_PASSWORD:-}
-    use_indigo=${USE_INDIGO:-false}
-    indigo_url=${INDIGO_URL:-https://chem-plugin.elabftw.net/}
     use_fingerprinter=${USE_FINGERPRINTER:-false}
     fingerprinter_use_proxy=${FINGERPRINTER_USE_PROXY:-false}
     fingerprinter_url=${FINGERPRINTER_URL:-https://example.com:8000/}
@@ -175,10 +173,6 @@ nginxConf() {
     sed -i -e "s/%CLIENT_MAX_BODY_SIZE%/${max_upload_size}/" /etc/nginx/nginx.conf
 
     # ADJUST PLUGINS
-    if [ "$indigo_url" != "false" ] && [ -n "$indigo_url" ] && [ "$use_indigo" != "false" ] && [ -n "$use_indigo" ]; then
-        sed -i -e "s|^#\s*include /etc/nginx/indigo.conf|include /etc/nginx/indigo.conf|" /etc/nginx/common.conf
-        sed -i -e "s|%INDIGO_URL%|${indigo_url}|" /etc/nginx/indigo.conf
-    fi
     if [ "$opencloning_url" != "false" ] && [ -n "$opencloning_url" ] && [ "$use_opencloning" != "false" ] && [ -n "$use_opencloning" ]; then
         # remove the trailing / if it exists, or it doesn't work
         oc_url=${opencloning_url%/}
@@ -272,7 +266,6 @@ phpfpmConf() {
     # allow using more memory for php-fpm
     sed -i -e "s/%PHP_MAX_MEMORY%/${max_php_memory}/" $f
     # external services, we want to easily know from php app if they are available
-    sed -i -e "s/%USE_INDIGO%/${use_indigo}/" $f
     sed -i -e "s/%USE_FINGERPRINTER%/${use_fingerprinter}/" $f
     sed -i -e "s/%FINGERPRINTER_USE_PROXY%/${fingerprinter_use_proxy}/" $f
     # use # because url has / in it

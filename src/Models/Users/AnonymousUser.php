@@ -40,6 +40,8 @@ final class AnonymousUser extends Users
         $this->userData['limit_nb'] = 15;
         $this->userData['display_mode'] = 'it';
         $this->userData['theme_variant'] = 0;
+        $this->userData['accent_color'] = '#0c58ab'; // primary
+        $this->userData['accent_foreground'] = '#ffffff';
         $this->userData['orderby'] = 'lastchange';
         $this->userData['sort'] = 'desc';
         $this->userData['disable_shortcuts'] = 1;

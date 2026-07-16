@@ -27,7 +27,7 @@
         } %}
         {% for property, data in hazards %}
           {% if attribute(compound, property) %}
-            <img src='assets/images/ghs/GHS{{ data.code }}.svg' alt='{{ data.alt }}' title='{{ data.alt }}' />
+            <img class='ghs-pictogram' src='assets/images/ghs/GHS{{ data.code }}.svg' alt='{{ data.alt|trans }}' title='{{ data.alt|trans }}'/>
           {% endif %}
         {% endfor %}
 

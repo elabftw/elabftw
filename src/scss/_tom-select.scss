@@ -17,7 +17,7 @@
   white-space: nowrap;
 }
 
-.dark-mode {
+:is(.dark-mode, .midnight) {
   .ts-control {
     background-color: var(--mainbackground);
     border: 1px solid var(--secondary-muted);

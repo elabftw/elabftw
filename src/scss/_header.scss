@@ -9,7 +9,7 @@
 @use './variables';
 
 .navbar {
-  background-color: var(--chrome-bg);
+  background-color: var(--nav-bg);
   border: 0;
   border-radius: 0;
   margin-bottom: 10px;
@@ -44,11 +44,11 @@
 
   /* selected nav entry */
   &.active {
-    background-image: linear-gradient(to top, $mainbackground 0%, $mainbackground 100%);
+    background-image: linear-gradient(to top, var(--nav-active) 0%, var(--nav-active) 100%);
     background-position: center bottom;
     background-repeat: no-repeat;
     background-size: 100% 6px;
-    border-color: $mainbackground !important;
+    border-color: var(--nav-active) !important;
   }
 
   i {

@@ -17,6 +17,8 @@ namespace Elabftw\Enums;
  */
 enum UsersColumn: string
 {
+    case AccentColor = 'accent_color';
+    case AccentForeground = 'accent_foreground';
     case AllowUntrusted = 'allow_untrusted';
     case AlwaysShowOwned = 'always_show_owned';
     case AppendPdfs = 'append_pdfs';

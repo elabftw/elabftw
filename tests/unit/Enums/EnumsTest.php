@@ -102,4 +102,12 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(500, Messages::CriticalError->toHttpCode());
         $this->assertSame(403, Messages::InsufficientPermissions->toHttpCode());
     }
+
+    public function testThemeVariant(): void
+    {
+        $this->assertSame('', ThemeVariant::Auto->toCssClass());
+        $this->assertSame('', ThemeVariant::Light->toCssClass());
+        $this->assertSame('dark-mode', ThemeVariant::Dark->toCssClass());
+        $this->assertSame('midnight', ThemeVariant::Midnight->toCssClass());
+    }
 }

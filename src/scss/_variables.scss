@@ -20,6 +20,7 @@
 
   /* COLORS */
   --primary: #0c58ab;
+  --primary-fg: #fff;
   --secondary: #4d4c4c;
   --secondary-muted: #d9d9d9;
   --elabblue: #0c58ab;
@@ -38,32 +39,32 @@
   --gold: #d4ae75;
   --darkgold: #594303;
 
+  --nav-bg: var(--chrome-bg);
+  --nav-active: #f2f2f2;
+  --link-hover: #084785;
+  --link: #0c58ab;
+
   /* Colors that stay the same in both modes (like navbar) */
   --chrome-bg: #2b2b2b;
   --chrome-fg: #fff;
   --chrome-muted: #9aa0a6;
   --disabled: #888;
+  --chrome-strongest: #0d1117;
 }
 
-.dark-mode {
-  --white: #131313;
-  --mainbackground: #1e1e1e;
-  --highlighted: #2a2a2a;
-  --superlight: #2d2d2d;
-  --firstlevel: #13181c;
+:is(.dark-mode, .midnight) {
+  --firstlevel: #30363d;
   --secondlevel: #bdbdbd;
   --thirdlevel: #666;
   --medium: #d8dae0;
   --mediumstrong: #d3d3d3;
   --strongest: #f0f6fc;
 
-  --primary: #0f94fd;
   --secondary: #afafaf;
-  // secondary with opacity for borders of inputs
   --secondary-muted: rgba(146, 146, 146, 0.34);
   --elabblue: #0f94fd;
   --lightblue: #003769;
-  --darkblue: #7cddff;
+  --darkblue: #79c0ff;
 
   --darkred: #ffc1b7;
   --lightred: #7b1100;
@@ -77,6 +78,31 @@
 
   --lightgold: #594303;
   --darkgold: #ecdeab;
+
+  --link: #7cddff;
+  --link-hover: #4298db;
+  --nav-active: #73869b;
+}
+
+.dark-mode {
+  --white: #131313;
+  --mainbackground: #1e1e1e;
+  --highlighted: #2a2a2a;
+  --superlight: #2d2d2d;
+}
+
+.midnight {
+  --primary: #79c0ff;
+  --primary-fg: #131313;
+  --white: #252932;
+  --mainbackground: #151b23;
+  --highlighted: rgba(0, 6, 16, 0.2);
+  --superlight: #112544;
+  --secondlevel: #8b949e;
+  --thirdlevel: #6e7681;
+  --medium: #c9d1d9;
+  --mediumstrong: #d0d7de;
+  --nav-bg: var(--chrome-strongest);
 }
 
 /* COLORS for specific cases like pdf export (var(--) does not apply) */

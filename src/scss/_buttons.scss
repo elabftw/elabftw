@@ -20,9 +20,13 @@
 }
 
 .btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-fg);
+
   .fas,
   .far,
-  .fa { color: var(--chrome-fg); }
+  .fa { color: var(--primary-fg); }
 
   &:hover {
     background-color: var(--mainbackground);
@@ -33,6 +37,11 @@
     .far,
     .fa { color: var(--primary); }
   }
+}
+
+.btn-primary:active,
+.btn-primary:focus {
+  background-color: var(--primary) !important; /* for Active, it doesn't override without !imp */
 }
 
 .btn-secondary {

@@ -5,6 +5,7 @@
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</button></li>
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='3'>{{ 'API keys'|trans }}</button></li>
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='4'>{{ 'Notifications'|trans }}</button></li>
+  <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='5'>{{ 'Appearance'|trans }}</button></li>
 </ul>
 
 {% include 'loading-spinner.html' %}
@@ -39,7 +40,7 @@
   </div>
 </div>
 
-{# TAB 1 - USER PREFERENCES #}
+{# TAB 1 - USER PREFERENCES - GENERAL #}
 <div data-tabcontent='1' hidden>
   {# LANGUAGE #}
   <h2 class='p-2 pl-3 section-title'>{{ 'Preferences'|trans }}</h2>
@@ -465,7 +466,7 @@
   </div>
 </div>
 
-{# TAB 4 - API KEYS #}
+{# TAB 3 - API KEYS #}
 <div data-tabcontent='3' hidden>
   <p><a target='_blank' rel='noopener' class='external-link' href='https://doc.elabftw.net/docs/usage/api'>{{ 'Link to documentation'|trans }}</a></p>
   <h2 class='p-2 pl-3 section-title'>{{ 'Create new key'|trans }}</h2>
@@ -531,7 +532,7 @@
   </table>
 </div>
 
-{# TAB 5 - NOTIFICATIONS SETTINGS #}
+{# TAB 4 - NOTIFICATIONS SETTINGS #}
 <div data-tabcontent='4' hidden>
   <h2 class='p-2 pl-3 section-title mb-3' id='notificationsSettings'>{{ 'Notifications settings'|trans }}</h2>
   <div class='pl-3'>
@@ -559,6 +560,38 @@
   {% endfor %}
   </div>
 </div>
+
+  {# TAB 5 - APPEARANCE SETTINGS #}
+  <div data-tabcontent='5' hidden>
+    <h2 class='p-2 pl-3 section-title mb-3'>{{ 'Theme preferences'|trans }}</h2>
+    <div class='pl-3 pr-3 mt-2 mb-5'>
+      <p class='mb-3'>{{ 'Choose the color theme used throughout the interface.'|trans }}</p>
+      <div class='my-3'>
+        <div class='btn-group' role='group' aria-label='{{ 'Theme'|trans }}'>
+          <button type='button' class='btn btn-light' data-action='set-theme' data-theme-variant='1' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-sun fa-fw'></i>{{ 'Light'|trans }}</button>
+          <button type='button' class='btn btn-secondary' data-action='set-theme' data-theme-variant='2' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-moon fa-fw'></i>{{ 'Dark'|trans }}</button>
+          <button type='button' class='btn btn-neutral' data-action='set-theme' data-theme-variant='3' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-palette fa-fw'></i>{{ 'Midnight'|trans }}</button>
+        </div>
+      </div>
+    </div>
+
+    <h2 class='p-2 pl-3 section-title mb-3'>{{ 'Preview'|trans }}</h2>
+
+    <div class='pl-3 pr-3 mt-2 mb-5'>
+      <div class='box'>
+        <p>{{ 'This is normal text.'|trans }} <br> <a href='#'>{{ 'This is a link'|trans }}</a>.</p>
+        {% include 'interface-buttons.html' %}
+        <div class='form-group mt-3 mb-0'>
+          <label for='themePreviewInput'>{{ 'Example input'|trans }}</label>
+          <input type='text' id='themePreviewInput' class='form-control' placeholder='{{ 'Placeholder text'|trans }}'>
+        </div>
+      </div>
+    </div>
+
+    <h2 class='p-2 pl-3 section-title mb-3 mt-4'>{{ 'Accent colors'|trans }}</h2>
+    {% include 'accent-color-picker.html' %}
+
+  </div>
 {# END PAGE #}
 
 {% endblock body %}

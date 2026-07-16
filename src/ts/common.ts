@@ -71,6 +71,9 @@ import { entity } from './getEntity';
 import { on, get } from './handlers';
 import Tab from './Tab.class';
 import { core } from './core';
+import { applyTheme, updateThemeControls } from './theme';
+import { mount } from 'svelte';
+import AccentColorPicker from './components/AccentColorPicker.svelte';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -85,17 +88,29 @@ document.documentElement.style.setProperty('--navbar-height', `${document.queryS
 
 const container = document.getElementById('container')!;
 
-on('toggle-dark-mode', (el: HTMLElement) => {
-  const currentTheme = parseInt(el.dataset.currentTheme, 10);
-  // Auto (0) and Light (1) should both toggle to Dark (2)
-  const targetTheme = currentTheme === 2 ? 1 : 2;
+on('set-theme', (el: HTMLElement) => {
+  const targetTheme = Number.parseInt(el.dataset.themeVariant ?? '', 10);
+  if (![0, 1, 2, 3].includes(targetTheme)) {
+    return;
+  }
   ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
-    const isDark = targetTheme === 2;
-    document.documentElement.classList.toggle('dark-mode', isDark);
-    document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
-    el.dataset.currentTheme = String(targetTheme);
+    applyTheme(targetTheme);
+    updateThemeControls(targetTheme);
+    document.cookie = [`theme_variant=${targetTheme}`, 'Path=/', 'Max-Age=31536000', 'SameSite=Lax', 'Secure'].join('; ');
   });
 });
+
+const target = document.getElementById('accent-color-picker');
+
+if (target) {
+  mount(AccentColorPicker, {
+    target,
+    props: {
+      initialAccentColor: target.dataset.accentColor ?? '#0f94fd',
+      initialAccentForeground: target.dataset.accentForeground ?? '#ffffff',
+    },
+  });
+}
 
 // HEARTBEAT
 // this function is to check periodically that we are still authenticated

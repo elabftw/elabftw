@@ -20,13 +20,13 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
 import i18next from './i18n';
 import { notify } from './notify';
+import { getAgGridTheme } from './theme';
 
 if (document.getElementById('compounds-table')) {
   provideGlobalGridOptions({ theme: 'legacy' });
@@ -38,7 +38,6 @@ if (document.getElementById('compounds-table')) {
     QuickFilterModule,
   ]);
 
-  const isDark = document.documentElement.classList.contains('dark-mode');
   const rowSelection = {
       mode: 'multiRow',
       headerCheckbox: false,
@@ -186,7 +185,7 @@ if (document.getElementById('compounds-table')) {
           onChange={onQuickFilterChange}
           className={'form-control mb-2'}
         />
-        <div className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
+        <div className={getAgGridTheme()} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}

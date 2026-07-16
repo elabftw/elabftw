@@ -20,7 +20,6 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
@@ -28,6 +27,7 @@ import { DEFAULT_AG_GRID_PAGINATION, populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
+import { getAgGridTheme } from "./theme";
 
 // allow filtering by values for cells that render icons or badges (team, isSysadmin, etc.,)
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
@@ -70,7 +70,6 @@ if (document.getElementById('users-table')) {
   const GridExample = () => {
     const [rowData, setRowData] = useState([]);
     const [gridApi, setGridApi] = useState(null);
-    const isDark = document.documentElement.classList.contains('dark-mode');
 
     const onGridReady = (params) => {
       setGridApi(params.api);
@@ -201,7 +200,7 @@ if (document.getElementById('users-table')) {
           aria-label={i18next.t('search')}
         />
         <div
-          className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
+          className={getAgGridTheme()} style={{ height: 650 }}>
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}

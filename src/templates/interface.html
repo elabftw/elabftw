@@ -3,23 +3,22 @@
 This page exists to have a single page holding all buttons, links and notifications so it's easier to work on the CSS.
 
 <div class='my-3'>
-<button type='button' class='btn btn-primary' data-action='toggle-dark-mode' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-circle-half-stroke fa-fw'></i> {{ 'Change theme'|trans }}
-</button>
+  <div class='btn-group' role='group' aria-label='{{ 'Theme'|trans }}'>
+    <button type='button' class='btn btn-secondary' data-action='set-theme' data-theme-variant='1' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-sun fa-fw'></i>{{ 'Light'|trans }}</button>
+    <button type='button' class='btn btn-secondary' data-action='set-theme' data-theme-variant='2' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-moon fa-fw'></i>{{ 'Dark'|trans }}</button>
+    <button type='button' class='btn btn-secondary' data-action='set-theme' data-theme-variant='3' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-palette fa-fw'></i>{{ 'Midnight'|trans }}</button>
+  </div>
 </div>
-
 <p>This is normal text. <a href='#' class='external-link'>And this is an external link</a>.</p>
 
 <div class='my-3'>
-<button type='button' class='btn btn-primary'><i class='fas fa-pencil mr-1'></i>Primary button</button>
-<button type='button' class='btn btn-secondary'><i class='fas fa-pencil mr-1'></i>Secondary button</button>
+{% include 'interface-buttons.html' %}
 <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-primary p-2 mr-2 rounded lh-normal border-0 disabled'>
   <i class='fas fa-pencil fa-fw mr-1'></i>primary disabled
 </a>
 <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-secondary p-2 mr-2 rounded lh-normal border-0 disabled'>
   <i class='fas fa-pencil fa-fw mr-1'></i>secondary disabled
 </a>
-<button type='button' class='btn btn-ghost'><i class='fas fa-pencil mr-1'></i>Ghost button</button>
-<button type='button' class='btn btn-danger-ghost'><i class='fas fa-pencil mr-1'></i>Danger Ghost button</button>
 <button type='button' class='btn btn-neutral'><i class='fas fa-pencil mr-1'></i>Neutral button</button>
 <button type='button' class='btn btn-transparent'><i class='fas fa-pencil mr-1'></i>btn-transparent</button>
 </div>
@@ -105,4 +104,5 @@ This page exists to have a single page holding all buttons, links and notificati
   </ul>
 </div>
 
+{% include 'accent-color-picker.html' %}
 {% endblock body %}

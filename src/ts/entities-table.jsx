@@ -21,12 +21,14 @@ import {
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { get } from 'svelte/store';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
+import { getAgGridTheme } from "./theme";
 
 // allow filtering by displayed values for cells that render their raw value differently
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
@@ -126,7 +128,6 @@ const EntitiesTable = ({
 }) => {
   const [rowData, setRowData] = useState([]);
   const gridApiRef = useRef(null);
-  const isDark = document.documentElement.classList.contains('dark-mode');
 
   const onGridReady = (params) => {
     gridApiRef.current = params.api;
@@ -305,7 +306,7 @@ const EntitiesTable = ({
   return (
     <>
       <div
-        className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
+        className={getAgGridTheme()} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}

@@ -80,7 +80,6 @@
         class='color-input mr-2'
         type='color'
         bind:value={accentColor}
-        aria-label={t('primary-color')}
       >
       <!-- hexadecimal value -->
       <input
@@ -107,7 +106,6 @@
         class='color-input mr-2'
         type='color'
         bind:value={accentForeground}
-        aria-label={t('text-color-primary')}
       >
       <input
         class='form-control'
@@ -126,7 +124,7 @@
     
     <button type='button' class='btn btn-primary mr-2'>
       <i class='fas fa-pencil mr-1'></i>
-      <label for='accentColor' class='col-form-label'>{t('primary-color')}</label>
+      <span>{t('primary-color')}</span>
     </button>
     
     <p class={`small mt-2 ${contrast.className}`}>

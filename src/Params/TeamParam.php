@@ -16,9 +16,12 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Override;
 
+use function array_is_list;
 use function is_array;
+use function is_scalar;
 use function json_decode;
 use function json_encode;
+use function trim;
 
 final class TeamParam extends ContentParams
 {
@@ -47,8 +50,8 @@ final class TeamParam extends ContentParams
             'onboarding_email_active' => $this->getBinary(),
             'newcomer_threshold' => $this->asInt(),
             'deletion_reason_options',
-            'deletion_reason_categories',
-            'deletion_reason_tags' => $this->getJsonArrayContent(),
+            'deletion_reason_tags' => $this->getStringListContent(),
+            'deletion_reason_categories' => $this->getIntListContent(),
             default => throw new ImproperActionException('Incorrect parameter for team.' . $this->target),
         };
     }
@@ -61,15 +64,47 @@ final class TeamParam extends ContentParams
         return Filter::body(parent::getContent());
     }
 
-    private function getJsonArrayContent(): ?string
+    private function decodeFlatList(): array
+    {
+        $decoded = json_decode((string) $this->content, true);
+        if (!is_array($decoded) || !array_is_list($decoded)) {
+            throw new ImproperActionException('Incorrect value: a flat JSON list is expected.');
+        }
+        return $decoded;
+    }
+
+    // a list of trimmed, non-empty strings (deletion reasons, watched tags)
+    private function getStringListContent(): ?string
     {
         if (empty($this->content)) {
             return null;
         }
-        $decoded = json_decode((string) $this->content, true);
-        if (!is_array($decoded)) {
-            throw new ImproperActionException('Incorrect value: a JSON array is expected.');
+        $list = array();
+        foreach ($this->decodeFlatList() as $element) {
+            if (!is_scalar($element)) {
+                throw new ImproperActionException('Incorrect value: only text entries are allowed.');
+            }
+            $trimmed = trim((string) $element);
+            if ($trimmed !== '') {
+                $list[] = $trimmed;
+            }
         }
-        return json_encode($decoded, JSON_THROW_ON_ERROR);
+        return json_encode($list, JSON_THROW_ON_ERROR);
+    }
+
+    // a list of integer ids (watched categories)
+    private function getIntListContent(): ?string
+    {
+        if (empty($this->content)) {
+            return null;
+        }
+        $list = array();
+        foreach ($this->decodeFlatList() as $element) {
+            if (!is_scalar($element)) {
+                throw new ImproperActionException('Incorrect value: only numeric ids are allowed.');
+            }
+            $list[] = (int) $element;
+        }
+        return json_encode($list, JSON_THROW_ON_ERROR);
     }
 }

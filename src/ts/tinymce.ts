@@ -251,7 +251,7 @@ export function getTinymceBaseConfig(page: string): object {
     // use undocumented callback function to asynchronously get the templates
     // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
     templates: (callback): void => {
-      ApiC.getJson(templateEndpoint).then(json => {
+      ApiC.getJson(`${templateEndpoint}?full=1`).then(json => {
         const res = [];
         json.forEach(tpl => {
           res.push({'title': tpl.title, 'description': '', 'content': tpl.body});

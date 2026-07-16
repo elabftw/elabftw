@@ -299,9 +299,9 @@ const EntitiesTable = ({
     ) {
       return;
     }
-    if (event.event.ctrlKey || event.event.metaKey) {
-        window.open(url, '_blank');
-        return;
+    if (event.event?.ctrlKey || event.event?.metaKey) {
+      window.open(url, '_blank');
+      return;
     }
     window.location = url;
   };

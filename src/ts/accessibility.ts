@@ -1,11 +1,9 @@
 /**
  * WCAG contrast ratio utilities.
  *
- * Contrast ratio is calculated according to the W3C Web Content Accessibility
- * Guidelines (WCAG) relative luminance algorithm:
- * https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
- *
- * Formula here: https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
+ * Contrast ratio is calculated according to the W3C Web Content Accessibility Guidelines (WCAG)
+ * relative luminance algorithm: https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
+ * Formula: https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
  */
 export interface ContrastResult {
   ratio: number;

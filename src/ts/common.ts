@@ -106,10 +106,8 @@ if (target) {
   mount(AccentColorPicker, {
     target,
     props: {
-      initialAccentColor:
-        target.dataset.accentColor ?? '#0f94fd',
-      initialAccentForeground:
-        target.dataset.accentForeground ?? '#ffffff',
+      initialAccentColor: target.dataset.accentColor ?? '#0f94fd',
+      initialAccentForeground: target.dataset.accentForeground ?? '#ffffff',
     },
   });
 }

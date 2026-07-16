@@ -11,7 +11,7 @@ export enum AppTheme {
   Midnight = 'midnight',
 }
 
-const themeClasses = ['dark-mode','midnight'] as const;
+const themeClasses = ['dark-mode', 'midnight'] as const;
 
 export const isThemeVariant = (value: number): value is ThemeVariant => {
   return Object.values(ThemeVariant).includes(value);
@@ -33,8 +33,7 @@ export const applyTheme = (themeVariant: ThemeVariant): void => {
 };
 
 export const updateThemeControls = (themeVariant: ThemeVariant): void => {
-  document
-    .querySelectorAll<HTMLElement>('[data-current-theme]')
+  document.querySelectorAll<HTMLElement>('[data-current-theme]')
     .forEach(control => {
       control.dataset.currentTheme = String(themeVariant);
     });
@@ -51,6 +50,7 @@ export const getAppTheme = (): AppTheme => {
   return AppTheme.Light;
 };
 
+// for components like tinymce that have either light / dark only
 export const isDarkTheme = (): boolean => {
   return getAppTheme() !== AppTheme.Light;
 };

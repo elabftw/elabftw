@@ -70,7 +70,7 @@
   );
 </script>
 
-<div class='accent-color-settings'>
+<div>
   <div class='d-flex justify-content-between align-items-center mb-3'>
     <label for='accentColor' class='col-form-label'>{t('primary-color')}</label>
     
@@ -84,7 +84,7 @@
       >
       <!-- hexadecimal value -->
       <input
-        class='form-control accent-hex-input'
+        class='form-control'
         type='text'
         bind:value={accentColor}
         pattern='#[0-9a-fA-F]{6}'
@@ -110,7 +110,7 @@
         aria-label={t('text-color-primary')}
       >
       <input
-        class='form-control accent-hex-input'
+        class='form-control'
         type='text'
         bind:value={accentForeground}
         pattern='#[0-9a-fA-F]{6}'

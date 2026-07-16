@@ -178,6 +178,34 @@ final class Items extends AbstractConcreteEntity
     }
 
     #[Override]
+    public function readOne(): array
+    {
+        parent::readOne();
+        $Teams = new Teams($this->Users, $this->Users->team);
+        $this->entityData['deletion_reason_required'] = !empty($Teams->teamArr['deletion_reason_enabled'])
+            && $this->deletionReasonMatches($Teams);
+        $this->entityData['deletion_reason_options'] = json_decode((string) ($Teams->teamArr['deletion_reason_options'] ?? '[]'), true) ?: array();
+        ksort($this->entityData);
+        return $this->entityData;
+    }
+
+    #[Override]
+    public function destroy(): bool
+    {
+        if (empty($this->entityData)) {
+            $this->readOne();
+        }
+        if ($this->entityData['deletion_reason_required']) {
+            $deletionReason = trim(Request::createFromGlobals()->query->getString('deletion_reason'));
+            if ($deletionReason === '') {
+                throw new ImproperActionException(_('A reason must be provided to delete this resource.'));
+            }
+            new Changelog($this)->create(new ContentParams('deletion_reason', $deletionReason));
+        }
+        return parent::destroy();
+    }
+
+    #[Override]
     // get users who booked current item in the 4 surrounding months
     protected function getSurroundingBookers(): array
     {
@@ -207,34 +235,6 @@ final class Items extends AbstractConcreteEntity
         $req->bindValue(':itemid', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
-    }
-
-    #[Override]
-    public function readOne(): array
-    {
-        parent::readOne();
-        $Teams = new Teams($this->Users, $this->Users->team);
-        $this->entityData['deletion_reason_required'] = !empty($Teams->teamArr['deletion_reason_enabled'])
-            && $this->deletionReasonMatches($Teams);
-        $this->entityData['deletion_reason_options'] = json_decode((string) ($Teams->teamArr['deletion_reason_options'] ?? '[]'), true) ?: array();
-        ksort($this->entityData);
-        return $this->entityData;
-    }
-
-    #[Override]
-    public function destroy(): bool
-    {
-        if (empty($this->entityData)) {
-            $this->readOne();
-        }
-        if ($this->entityData['deletion_reason_required']) {
-            $deletionReason = trim(Request::createFromGlobals()->query->getString('deletion_reason'));
-            if ($deletionReason === '') {
-                throw new ImproperActionException(_('A reason must be provided to delete this resource.'));
-            }
-            new Changelog($this)->create(new ContentParams('deletion_reason', $deletionReason));
-        }
-        return parent::destroy();
     }
 
     #[Override]

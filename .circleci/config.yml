@@ -36,7 +36,7 @@ commands:
       - run:
           name: Build elabtmp image
           command: |
-            docker build -t elabftw/elabimg:ci --build-arg CI=1 -f containers/elabimg/Dockerfile .
+            docker build --no-cache -t elabftw/elabimg:ci --build-arg CI=1 -f containers/elabimg/Dockerfile .
             docker build -t elabtmp -f containers/elabtmp/Dockerfile .
             docker build -t elabtmp -f containers/circleci/Dockerfile .
 

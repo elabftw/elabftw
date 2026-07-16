@@ -291,6 +291,7 @@ const EntitiesTable = ({
 
   const cellClicked = event => {
     const target = event.event?.target;
+    const url = `?mode=view&id=${encodeURIComponent(event.data.id)}`;
 
     if (
       target instanceof HTMLElement
@@ -298,8 +299,11 @@ const EntitiesTable = ({
     ) {
       return;
     }
-
-    window.location = `?mode=view&id=${encodeURIComponent(event.data.id)}`;
+    if (event.event.ctrlKey || event.event.metaKey) {
+        window.open(url, '_blank');
+        return;
+    }
+    window.location = url;
   };
 
   return (

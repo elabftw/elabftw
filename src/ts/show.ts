@@ -220,7 +220,7 @@ async function displayEntities(
   const rootEl = document.getElementById('entityList');
   if (mode === 'tb') {
     unmountEntityListSv();
-    mountEntitiesTable(rootEl, searchQuery, selectedEntities, order, sort, related, relatedOrigin);
+    mountEntitiesTable(rootEl, selectedEntities, order, sort, related, relatedOrigin);
     handleInitialLoadDone();
     return;
   }

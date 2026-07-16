@@ -1034,7 +1034,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       $('#deletionReasonModal').modal('hide');
       const deletes = checked.map(chk =>
-        ApiC.delete(`${entity.type}/${chk}?deletion_reason=${encodeURIComponent(reason)}`, { notifOnSaved: 0 }),
+        ApiC.delete(`${entity.type}/${chk}`, { deletion_reason: reason, notifOnSaved: 0 }),
       );
       Promise.all(deletes).then(() => {
         notify.success();

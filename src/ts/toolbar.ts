@@ -176,7 +176,7 @@ if (document.getElementById('topToolbar')) {
       return;
     }
     const path = window.location.pathname;
-    ApiC.delete(`${entity.type}/${entity.id}?deletion_reason=${encodeURIComponent(reason)}`).then(
+    ApiC.delete(`${entity.type}/${entity.id}`, { deletion_reason: reason }).then(
       () => window.location.replace(path.split('/').pop()));
   });
 

@@ -108,7 +108,7 @@ export class Api {
       keepalive: this.keepalive,
     };
 
-    if ([Method.POST, Method.PATCH].includes(method)) {
+    if ([Method.POST, Method.PATCH, Method.DELETE].includes(method)) {
       options.body = isFormData ? params : JSON.stringify(params);
     }
 

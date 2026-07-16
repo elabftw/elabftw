@@ -47,7 +47,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $Teams->update(new TeamParam('deletion_reason_enabled', '0'));
         $Teams->update(new TeamParam('deletion_reason_categories', '[]'));
         $Teams->update(new TeamParam('deletion_reason_tags', '[]'));
-        unset($_GET['deletion_reason']);
+        unset($_POST['deletion_reason']);
     }
 
     public function testCreateAndDestroy(): void
@@ -65,7 +65,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $new = $this->Items->create(category: $categoryId);
         $Teams->update(new TeamParam('deletion_reason_enabled', '1'));
         $Teams->update(new TeamParam('deletion_reason_categories', json_encode(array($categoryId))));
-        unset($_GET['deletion_reason']);
+        unset($_POST['deletion_reason']);
         $Item = new Items($this->Items->Users, $new);
         $this->expectException(ImproperActionException::class);
         $Item->destroy();
@@ -78,7 +78,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $new = $this->Items->create(category: $categoryId);
         $Teams->update(new TeamParam('deletion_reason_enabled', '1'));
         $Teams->update(new TeamParam('deletion_reason_categories', json_encode(array($categoryId))));
-        $_GET['deletion_reason'] = 'Sample destroyed per HTA schedule';
+        $_POST['deletion_reason'] = 'Sample destroyed per HTA schedule';
         $Item = new Items($this->Items->Users, $new);
         $this->assertTrue($Item->destroy());
         $changelog = new Changelog($Item)->readAll();
@@ -97,7 +97,7 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $new = $this->Items->create(category: $categoryId);
         $Teams->update(new TeamParam('deletion_reason_enabled', '1'));
         $Teams->update(new TeamParam('deletion_reason_categories', '[]'));
-        unset($_GET['deletion_reason']);
+        unset($_POST['deletion_reason']);
         $Item = new Items($this->Items->Users, $new);
         $this->assertTrue($Item->destroy());
     }

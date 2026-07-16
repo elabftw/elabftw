@@ -196,7 +196,10 @@ final class Items extends AbstractConcreteEntity
             $this->readOne();
         }
         if ($this->entityData['deletion_reason_required']) {
-            $deletionReason = trim(Request::createFromGlobals()->query->getString('deletion_reason'));
+            // read the reason from the request body so it stays out of the server access logs
+            $request = Request::createFromGlobals();
+            $payload = json_decode($request->getContent(), true) ?: array();
+            $deletionReason = trim((string) ($payload['deletion_reason'] ?? $request->request->get('deletion_reason', '')));
             if ($deletionReason === '') {
                 throw new ImproperActionException(_('A reason must be provided to delete this resource.'));
             }

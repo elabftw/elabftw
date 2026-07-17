@@ -37,7 +37,7 @@
               ) }} <span title='{{ action.created_at }}' class='relative-moment text-nowrap smallgray ml-2'></span>
               <div class='mt-2'>
                 {% if action.target_userid == App.Users.userData.userid %}
-                  <button type='button' class='btn btn-primary btn-sm mr-2' data-action='doRequestableAction' data-target='{{ action.target }}'>{{ action.action }}</button>
+                  <button type='button' class='btn btn-primary btn-sm mr-2' data-action='do-requestable-action' data-target='{{ action.target }}'>{{ action.action }}</button>
                 {% endif %}
                 {% if action.requester_userid == App.Users.userData.userid or action.target_userid == App.Users.userData.userid %}
                   <button type='button' class='btn btn-sm btn-ghost' data-action='cancelrequestableaction' data-cy='cancelRequestableAction' data-id='{{ action.id }}'>{{ 'Cancel'|trans }}</button>

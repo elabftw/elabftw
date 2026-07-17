@@ -197,6 +197,7 @@ final class Items extends AbstractConcreteEntity
         if (empty($this->entityData)) {
             $this->readOne();
         }
+        $deletionReason = null;
         if (!empty($this->entityData['deletion_reason_required'])) {
             // read the reason from the request body so it stays out of the server access logs
             $request = Request::createFromGlobals();
@@ -205,11 +206,15 @@ final class Items extends AbstractConcreteEntity
             if ($deletionReason === '') {
                 throw new ImproperActionException(_('A reason must be provided to delete this resource.'));
             }
+        }
+        $destroyed = parent::destroy();
+        // only write the deletion logs once the item was actually destroyed
+        if ($destroyed && $deletionReason !== null) {
             new Changelog($this)->create(new ContentParams('deletion_reason', $deletionReason));
             // also record it in the audit log, which survives even if the item is later purged
             AuditLogs::create(new ResourceDeleted($this->Users->userData['userid'], $this->id ?? 0, $this->entityType, $deletionReason));
         }
-        return parent::destroy();
+        return $destroyed;
     }
 
     #[Override]

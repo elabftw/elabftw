@@ -80,6 +80,22 @@ interface Status extends SelectOptions {
   is_current_team: number;
 }
 
+let lastScroll = window.scrollY;
+const navbar = document.querySelector<HTMLElement>('.sticky-navbar');
+const navbarHeight = navbar?.offsetHeight ?? 0;
+
+document.documentElement.style.setProperty('--navbar-height', `${navbarHeight}px`);
+
+window.addEventListener('scroll', () => {
+  if (!navbar) {
+    return;
+  }
+  const isScrollingDown = window.scrollY > lastScroll;
+  navbar.classList.toggle('hidden', isScrollingDown);
+  document.documentElement.style.setProperty('--navbar-height', isScrollingDown ? '0px' : `${navbarHeight}px`);
+  lastScroll = window.scrollY;
+});
+
 // Use the sticky navbar height to offset the toolbar below it.
 document.documentElement.style.setProperty('--navbar-height', `${document.querySelector<HTMLElement>('div > .navbar')?.offsetHeight ?? 0}px`);
 

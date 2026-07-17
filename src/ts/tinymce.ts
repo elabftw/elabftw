@@ -214,8 +214,8 @@ export function getTinymceBaseConfig(page: string): object {
   const templateEndpoint = (entity.type === EntityType.Experiment || entity.type === EntityType.Template)
     ? EntityType.Template
     : EntityType.ItemType;
-  const navbarHeight = document.querySelector<HTMLElement>('div > .navbar')?.offsetHeight ?? 0;
-  const stickyToolbarHeight = document.querySelector<HTMLElement>('.sticky-toolbar')?.offsetHeight ?? 0;
+  const toolbar = document.querySelector<HTMLElement>('.sticky-toolbar');
+  document.documentElement.style.setProperty('--toolbar-height', `${toolbar?.offsetHeight ?? 0}px`);
 
   return {
     selector: '.mceditable',
@@ -526,7 +526,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
     ],
     toolbar_sticky: true,
-    toolbar_sticky_offset: navbarHeight + stickyToolbarHeight,
+    toolbar_sticky_offset: (document.querySelector<HTMLElement>('.sticky-navbar')?.offsetHeight ?? 0) + (toolbar?.offsetHeight ?? 0),
     // render MathJax for TinyMCE preview
     init_instance_callback: (editor) => {
       editor.on('ExecCommand', (e) => {

@@ -1955,11 +1955,13 @@ input:user-invalid {
 
 :root {
   --navbar-height: 0;
+  --toolbar-height: 0;
 }
 
 div > .sticky-navbar {
   position: sticky;
   top: 0;
+  transition: transform 0.2s ease;
   width: 100%;
   z-index: 100;
 }
@@ -1968,6 +1970,16 @@ div > .sticky-navbar {
   background: var(--mainbackground);
   position: sticky;
   top: var(--navbar-height);
+  transition: top 0.2s ease;
   width: 100%;
   z-index: 50;
+}
+
+.sticky-navbar.hidden {
+  transform: translateY(-100%);
+}
+
+.tox-tinymce--toolbar-sticky-on .tox-editor-header {
+  top: calc(var(--navbar-height) + var(--toolbar-height)) !important;
+  transition: top 0.2s ease;
 }

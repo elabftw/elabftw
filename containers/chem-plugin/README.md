@@ -2,10 +2,9 @@
 
 ## Description
 
-This image contains two services:
+This image contains one service:
 
-1. Ketcher molecule editor service (indigo-service)
-2. Fingerprinting service with OpenBabel
+1. Fingerprinting service with OpenBabel
 
 ## Build
 
@@ -24,7 +23,3 @@ Use `TLS_KEYFILE` and `TLS_CERTFILE` env vars pointing to the key/cert files.
 ## Acknowledgements
 
 The fingerprinting part of this project was initialized by Tanguy Le Carrour from [Easter-Eggs](https://www.easter-eggs.com/). Thank you Tanguy for the MVP and discussions!
-
-## Indigo service
-
-This image builds on code from https://github.com/epam/Indigo, the configuration files in `conf` have been modified to run as user, and a supervisord configuration file has been added. The files in `service` are untouched (we just removed the `tests` folder). We completed the `Dockerfile` from Indigo with additions necessary for eLabFTW chem plugin.

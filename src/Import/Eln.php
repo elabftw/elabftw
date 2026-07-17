@@ -23,6 +23,10 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Hash\FileHash;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Comments;
+use Elabftw\Models\Steps;
+use Elabftw\Models\Tags;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
@@ -367,7 +371,7 @@ class Eln extends AbstractZip
                             $comment['dateCreated'],
                             $this->transformIfNecessary($comment['text'] ?? '', true),
                         );
-                        $this->Entity->Comments->postAction(Action::Create, array('comment' => $content));
+                        new Comments($this->Entity)->postAction(Action::Create, array('comment' => $content));
                     }
                     break;
 
@@ -430,13 +434,13 @@ class Eln extends AbstractZip
                 case 'step':
                     if ($this->internalElnVersion < 104) {
                         foreach ($value as $step) {
-                            $this->Entity->Steps->importFromHowToStepOld($step);
+                            new Steps($this->Entity)->importFromHowToStepOld($step);
                         }
                     } else {
                         foreach ($value as $id) {
                             $step = $this->getNodeFromId($id['@id']);
                             $body = $this->getNodeFromId($step['itemListElement']['@id'])['text'];
-                            $this->Entity->Steps->importFromHowToStep($step, $body);
+                            new Steps($this->Entity)->importFromHowToStep($step, $body);
                         }
                     }
                     break;
@@ -446,9 +450,10 @@ class Eln extends AbstractZip
                     if (is_string($tags)) {
                         $tags = explode(self::TAGS_SEPARATOR, $tags);
                     }
+                    $Tags = new Tags($this->Entity);
                     foreach ($tags as $tag) {
                         if (!empty($tag)) {
-                            $this->Entity->Tags->create(new TagParam($this->transformIfNecessary($tag)), true);
+                            $Tags->create(new TagParam($this->transformIfNecessary($tag)), true);
                         }
                     }
                     break;
@@ -486,6 +491,40 @@ class Eln extends AbstractZip
         foreach ($dataset['hasPart'] ?? array() as $part) {
             $this->importPart($this->getNodeFromId($part['@id']));
         }
+
+        // Restore entity state (normal, archived, deleted).
+        $state = State::fromName($dataset['status'] ?? State::Normal->name);
+        // we use match(true) to be able to match a State and the Locked pseudo-state in the same match
+        match (true) {
+            $state === State::Archived => $this->Entity->patch(Action::Archive, array()),
+            $state === State::Deleted => $this->Entity->patch(Action::Update, array('state' => $state->value)),
+            // Restore locked/unlocked condition.
+            ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->Entity->patch(Action::Lock, array()),
+            default => null,
+        };
+
+        // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
+        if (!empty($dataset['subjectOf'])) {
+            new Changelog($this->Entity)->replaceAll($this->updateActionsToChangelog($dataset['subjectOf']));
+        }
+    }
+
+    // convert export UpdateAction to changelog dataset
+    private function updateActionsToChangelog(array $actions): array
+    {
+        $changelog = array();
+        foreach ($actions as $action) {
+            if (($action['@type'] ?? '') !== 'UpdateAction') {
+                continue;
+            }
+            $changelog[] = array(
+                'created_at' => new DateTimeImmutable($action['startTime'])->format('Y-m-d H:i:s'),
+                'target' => $action['object'] ?? 'import',
+                'content' => $action['result'] ?? '',
+                'userid' => $this->requester->getUserid(),
+            );
+        }
+        return $changelog;
     }
 
     private function attrToHtml(array $attr, string $title): string
@@ -525,7 +564,6 @@ class Eln extends AbstractZip
                 $this->importFile($part);
                 break;
             default:
-                return;
         }
     }
 

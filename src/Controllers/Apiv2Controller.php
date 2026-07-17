@@ -34,6 +34,7 @@ use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Batch;
+use Elabftw\Models\Branding;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
@@ -196,7 +197,9 @@ final class Apiv2Controller extends AbstractApiController
                 $this->Request->query->set('id', $this->id);
             }
         }
-        if ($this->Request->getContent()) {
+
+        $contentType = $this->Request->headers->get('content-type') ?? '';
+        if ($this->Request->getContent() && !str_starts_with($contentType, 'multipart/form-data')) {
             try {
                 // SET REQBODY
                 $this->reqBody = json_decode($this->Request->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -233,6 +236,20 @@ final class Apiv2Controller extends AbstractApiController
             $this->reqBody['canwrite_base'] = (BasePermissions::tryFrom($this->Request->request->getInt('canwrite_base')) ?? BasePermissions::User)->value;
             $this->action = Action::tryFrom($this->Request->request->getString('action')) ?? Action::Create;
         }
+
+        if (
+            $this->Model instanceof Branding &&
+            str_starts_with($this->Request->headers->get('content-type') ?? '', 'multipart/form-data')
+        ) {
+            $file = $this->Request->files->get('file');
+
+            if ($file === null) {
+                throw new ImproperActionException('Error reading file!');
+            }
+
+            $this->reqBody['file'] = $file;
+            $this->action = Action::tryFrom($this->Request->request->getString('action')) ?? Action::Update;
+        }
         $id = $this->Model->postAction($this->action, $this->reqBody);
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Env::asUrl('SITE_URL'), $this->Model->getApiPath(), $id)));
     }
@@ -251,10 +268,12 @@ final class Apiv2Controller extends AbstractApiController
         return match ($this->format) {
             ExportFormat::Binary => (
                 function () {
-                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports) {
-                        return $this->Model->readBinary();
+                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports || $this->Model instanceof Branding) {
+                        $response = $this->Model->readBinary();
+                        $response->isNotModified($this->Request);
+                        return $response;
                     }
-                    throw new ImproperActionException('Incorrect format (binary): only available for uploads endpoint.');
+                    throw new ImproperActionException('Incorrect format (binary): only available for uploads/exports/branding endpoints.');
                 }
             )(),
             ExportFormat::Csv,
@@ -277,6 +296,7 @@ final class Apiv2Controller extends AbstractApiController
             // set default action for patch
             $this->action = Action::Update;
         }
+
         return $this->Model->patch($this->action, $this->reqBody);
     }
 
@@ -432,6 +452,7 @@ final class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Instance) {
             return match ($submodel) {
+                ApiSubModels::Branding => new Branding($this->requester->isSysadmin(), $this->subId),
                 ApiSubModels::Rors => new Instance2Rors($this->requester->isSysadmin(), $this->subIdString),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Instance),
             };
@@ -445,16 +466,24 @@ final class Apiv2Controller extends AbstractApiController
             throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 
-        // allow multipart/form-data for the POST/uploads and POST/import endpoints only,
+        $contentType = $this->Request->headers->get('content-type') ?? '';
+
+        // allow multipart/form-data for:
+        // - POST uploads/import
+        // - POST branding
         // use str_starts_with because the actual header will also contain the boundary
-        if (str_starts_with($this->Request->headers->get('content-type') ?? '', 'multipart/form-data') &&
-            ($this->Model instanceof Uploads || $this->Model instanceof ImportHandler) &&
-            $this->Request->getMethod() === Request::METHOD_POST) {
+        if (str_starts_with($contentType, 'multipart/form-data') &&
+            $this->Request->getMethod() === Request::METHOD_POST &&
+            (
+                $this->Model instanceof Uploads ||
+                $this->Model instanceof ImportHandler ||
+                $this->Model instanceof Branding
+            )) {
             return;
         }
 
         // only accept json content-type unless it's GET or DELETE (also prevents csrf!)
-        if (!in_array($this->Request->getMethod(), array(Request::METHOD_GET, Request::METHOD_DELETE), true) && $this->Request->headers->get('content-type') !== 'application/json') {
+        if (!in_array($this->Request->getMethod(), array(Request::METHOD_GET, Request::METHOD_DELETE), true) && $contentType !== 'application/json') {
             throw new ImproperActionException('Incorrect content-type header.');
         }
     }

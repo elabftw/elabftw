@@ -20,6 +20,7 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\AnonymousUser;
 use Override;
 
@@ -34,7 +35,14 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected array $joinsSql = array();
 
+    private string $searchJoinSql = '';
+
     public function __construct(private AbstractEntity $entity) {}
+
+    public function setSearchJoinSql(string $sql): void
+    {
+        $this->searchJoinSql = $sql;
+    }
 
     /**
      * Get the SQL string for read before the WHERE
@@ -46,30 +54,39 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     public function getReadSqlBeforeWhere(
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
+        bool $withCompounds = false,
     ): string {
         $this->entitySelect($fullSelect);
-        $this->compounds();
+        $this->userTeamMembership();
+
+        if ($withCompounds) {
+            $this->compounds();
+        }
+
         $this->status();
         $this->category();
         $this->comments();
+
         if ($fullSelect) {
             $this->teamEvents();
         }
+
         $this->steps();
-        // The links tables are only joined if we want to show related entities
+
         if ($relatedOrigin !== null) {
             $this->links($relatedOrigin);
         }
+
         $this->usersTeams();
 
         $sql = array(
             'SELECT',
             implode(', ', $this->selectSql),
             'FROM %1$s AS entity',
+            $this->searchJoinSql,
             implode(' ', $this->joinsSql),
         );
 
-        // replace all %1$s by 'experiments' or 'items', there are many more than the one in FROM
         return sprintf(implode(' ', $sql), $this->entity->entityType->value);
     }
 
@@ -130,7 +147,11 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 entity.canwrite_is_immutable,
                 entity.created_at,
                 entity.modified_at,
-                entity.timestamped';
+                entity.signature_count,
+                entity.last_signed_at,
+                entity.last_signed_by,
+                entity.timestamped,
+                entity.timestampedby';
             // only include columns (created_at, locked_at, timestamped_at, entity.metadata) if actually searching for it
             if (!empty(array_column($this->entity->extendedValues, 'additional_columns'))) {
                 $this->selectSql[] = implode(', ', array_unique(array_column($this->entity->extendedValues, 'additional_columns')));
@@ -185,29 +206,19 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected function steps(): void
     {
-        // any_value is necessary to silence the nonaggregated column error
-        $this->selectSql[] = 'ANY_VALUE(st.body) AS next_step';
-        $this->joinsSql[] = 'LEFT JOIN %1$s_steps AS st
-            ON st.item_id = entity.id
-            AND st.finished = 0
-            AND st.ordering = (
-                SELECT MIN(ordering)
-                FROM %1$s_steps
-                WHERE item_id = entity.id
-                AND finished = 0
-            )';
+        $this->selectSql[] = '(SELECT st.body
+            FROM %1$s_steps AS st
+            WHERE st.item_id = entity.id
+                AND st.finished = 0
+            ORDER BY st.ordering ASC, st.id ASC
+            LIMIT 1) AS next_step';
     }
 
     protected function comments(): void
     {
-        $this->selectSql[] = 'ANY_VALUE(cmt.created_at) AS recent_comment';
-        $this->joinsSql[] = 'LEFT JOIN %1$s_comments AS cmt
-            ON cmt.item_id = entity.id
-            AND cmt.created_at = (
-                SELECT MAX(created_at)
-                FROM %1$s_comments
-                WHERE item_id = entity.id
-            )';
+        $this->selectSql[] = '(SELECT MAX(cmt.created_at)
+            FROM %1$s_comments AS cmt
+            WHERE cmt.item_id = entity.id) AS recent_comment';
     }
 
     /**
@@ -320,7 +331,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      */
     protected function canTeamGroups(string $can): string
     {
-        $teamgroupsOfUser = array_column($this->entity->TeamGroups->readGroupsFromUser(), 'id');
+        $TeamGroups = new TeamGroups($this->entity->Users);
+        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
         if (!empty($teamgroupsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
@@ -339,6 +351,16 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canUsers(string $can): string
     {
         return ":userid MEMBER OF (entity.$can->>'$.users')";
+    }
+
+    private function userTeamMembership(): void
+    {
+        $this->joinsSql[] = sprintf(
+            'LEFT JOIN users2teams
+                ON (users2teams.users_id = entity.userid
+                    AND users2teams.teams_id = %d)',
+            $this->entity->Users->getTeam(),
+        );
     }
 
     private function teamEvents(): void
@@ -380,11 +402,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
         $this->joinsSql[] = 'LEFT JOIN users
             ON (users.userid = entity.userid)';
-        $this->joinsSql[] = sprintf(
-            'LEFT JOIN users2teams
-                ON (users2teams.users_id = entity.userid and users2teams.teams_id = %d)
-            LEFT JOIN teams ON (entity.team = teams.id)',
-            $this->entity->Users->getTeam(),
-        );
+
+        $this->joinsSql[] = 'LEFT JOIN teams
+            ON (entity.team = teams.id)';
     }
 }

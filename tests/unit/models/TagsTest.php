@@ -27,24 +27,27 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     private Experiments $Experiments;
 
+    private Tags $Tags;
+
     protected function setUp(): void
     {
         $this->Users = $this->getRandomUserInTeam(1, admin: 1);
         $this->Experiments = $this->getFreshExperimentWithGivenUser($this->Users);
+        $this->Tags = new Tags($this->Experiments);
     }
 
     public function testGetApiPath(): void
     {
-        $this->assertEquals(sprintf('api/v2/experiments/%d/tags/', $this->Experiments->id), $this->Experiments->Tags->getApiPath());
+        $this->assertEquals(sprintf('api/v2/experiments/%d/tags/', $this->Experiments->id), $this->Tags->getApiPath());
     }
 
     public function testCreate(): void
     {
-        $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'my tag'));
-        $id = $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'new tag'));
+        $this->Tags->postAction(Action::Create, array('tag' => 'my tag'));
+        $id = $this->Tags->postAction(Action::Create, array('tag' => 'new tag'));
         $this->assertIsInt($id);
         // multi tags
-        $id = $this->Experiments->Tags->postAction(Action::Create, array('tags' => array('tag A', 'tag B')));
+        $id = $this->Tags->postAction(Action::Create, array('tags' => array('tag A', 'tag B')));
         $this->assertIsInt($id);
 
         // no admin user
@@ -62,10 +65,10 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll(): void
     {
-        $this->assertIsArray($this->Experiments->Tags->readAll());
-        $id = $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'new tag'));
-        $this->Experiments->Tags->setId($id);
-        $this->assertIsArray($this->Experiments->Tags->readOne());
+        $this->assertIsArray($this->Tags->readAll());
+        $id = $this->Tags->postAction(Action::Create, array('tag' => 'new tag'));
+        $this->Tags->setId($id);
+        $this->assertIsArray($this->Tags->readOne());
         $Items = $this->getFreshItemWithGivenUser($this->Users);
         $Tags = new Tags($Items);
         $this->assertIsArray($Tags->readAll());
@@ -74,14 +77,14 @@ class TagsTest extends \PHPUnit\Framework\TestCase
     public function testCopyTags(): void
     {
         $id = $this->Experiments->postAction(Action::Create, array());
-        $this->Experiments->Tags->copyTags($id, true);
+        $this->Tags->copyTags($id, true);
         $newExperiments = new Experiments($this->Users, $id);
         $this->assertEquals($this->Experiments->readOne()['tags'], $newExperiments->entityData['tags']);
     }
 
     public function testUnreference(): void
     {
-        $id = $this->Experiments->Tags->postAction(Action::Create, array('tag' => 'blahblahblah'));
+        $id = $this->Tags->postAction(Action::Create, array('tag' => 'blahblahblah'));
         $Tags = new Tags($this->Experiments, $id);
         $Tags->patch(Action::Unreference, array());
         $this->expectException(ImproperActionException::class);
@@ -90,19 +93,19 @@ class TagsTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $this->assertTrue($this->Experiments->Tags->destroy());
+        $this->assertTrue($this->Tags->destroy());
     }
 
     public function testDestroyWithoutWriteAccess(): void
     {
         $owner = $this->getRandomUserInTeam(1, admin: 1);
         $experiment = $this->getFreshExperimentWithGivenUser($owner);
-        $experiment->Tags->postAction(Action::Create, array('tag' => 'secure-tag'));
+        new Tags($experiment)->postAction(Action::Create, array('tag' => 'secure-tag'));
 
         $otherUser = $this->getRandomUserInTeam(1);
         // instantiate the same experiment with the other user
         $experimentAsOtherUser = new Experiments($otherUser, $experiment->id);
         $this->expectException(ForbiddenException::class);
-        $experimentAsOtherUser->Tags->destroy();
+        new Tags($experimentAsOtherUser)->destroy();
     }
 }

@@ -35,14 +35,3 @@ updates:
       semver-major-days: 32
       semver-minor-days: 24
       semver-patch-days: 3
-- package-ecosystem: uv
-  schedule:
-    interval: monthly
-    day: wednesday
-    time: "06:12"
-  directory: "/containers/chem-plugin/indigo"
-  cooldown:
-      default-days: 12
-      semver-major-days: 32
-      semver-minor-days: 24
-      semver-patch-days: 3

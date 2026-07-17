@@ -133,7 +133,7 @@ body::before {
 /* this is the big white thing that holds everything */
 #container {
   font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
-  font-weight: 500;
+  font-weight: 400;
   padding: 0;
 }
 
@@ -219,6 +219,16 @@ select:not([multiple]) {
     background-color: var(--darkred);
     border-color: var(--lightred);
   }
+
+  /* autocomplete */
+  .ui-autocomplete {
+    background: var(--mainbackground);
+  }
+
+  .ui-menu-item-wrapper {
+    color: var(--strongest);
+  }
+
 }
 
 .logo-dark { display: none; }
@@ -344,7 +354,7 @@ h5 {
 
     button {
       border-bottom: 6px solid var(--mainbackground);
-      font-weight: 500;
+      font-weight: 400;
       text-transform: uppercase;
     }
 
@@ -1178,7 +1188,8 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 /* replace flex container with a responsive grid */
-.suggested-tags-menu {
+.suggested-tags-menu,
+.show-more-filters-menu {
   background: var(--white);
   border-radius: 5px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -1192,6 +1203,21 @@ the form-control fails to do that so we do the border ourselves */
   right: 0;
   top: 100%;
   z-index: 100;
+}
+
+.show-more-filters-menu {
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  min-width: min(42rem, 90vw);
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* filters containing multiple controls (like metadata) need the full row */
+.filter-section-wide {
+  grid-column: 1 / -1;
 }
 
 .box {
@@ -1904,4 +1930,44 @@ input:user-invalid {
   &:hover::after {
     opacity: 1;
   }
+}
+
+#devPerfDiv {
+  background-color: $white;
+  bottom: 0;
+  left: 0;
+  position: fixed;
+}
+
+/* we set font-size to 0 and color transparent to prevent visible alt-text flash before image paints */
+.logo-header {
+  color: transparent;
+  font-size: 0;
+  height: 40px;
+  object-fit: contain;
+  width: 110px;
+}
+
+.display-favicon {
+  height: 128px;
+  width: 128px;
+}
+
+:root {
+  --navbar-height: 0;
+}
+
+div > .sticky-navbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.sticky-toolbar {
+  background: var(--mainbackground);
+  position: sticky;
+  top: var(--navbar-height);
+  width: 100%;
+  z-index: 50;
 }

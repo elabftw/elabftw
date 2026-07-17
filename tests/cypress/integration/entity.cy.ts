@@ -80,7 +80,7 @@ describe('Experiments', () => {
 
   const entityComment = () => {
     // go in view mode
-    cy.get('[title="View mode"]').click();
+    cy.get('[data-action="update-entity-body"][data-redirect="view"]').click();
     cy.url().should('include', 'mode=view');
 
     cy.get('#commentsCreateArea').type('This is a very nice experiment');
@@ -202,7 +202,7 @@ describe('Experiments', () => {
   const entityRestore = (publicUrl: string) => {
     cy.visit(`/${publicUrl}`);
     cy.htmlvalidate();
-    cy.get('button[title="Show more filters"]').click();
+    cy.get('[aria-label="Show more filters"]').click();
     // filter deleted items
     cy.get('select[name="state"]').select('3');
     // restore

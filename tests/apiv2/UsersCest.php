@@ -32,7 +32,7 @@ class UsersCest
     public function illegalDisableMfaTest(Apiv2Tester $I)
     {
         // use Tata (Bravo team Admin) to try and disable 2fa for another user in their team
-        $I->haveHttpHeader('Authorization', 'apiKey4Test_tata');
+        $I->haveHttpHeader('Authorization', 'tata');
         $I->wantTo('Disable mfa for a user but we should not be able to');
         $I->sendPATCH('/users/6', array('action' => Action::Disable2fa->value));
         $I->seeResponseCodeIs(HttpCode::FORBIDDEN); // 403

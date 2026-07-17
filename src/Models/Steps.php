@@ -146,24 +146,22 @@ final class Steps extends AbstractRest
     }
 
     // Copy Steps from one entity to another
-    public function duplicate(int $id, int $newId, bool $fromTemplate = false): void
+    public function duplicate(AbstractEntity $targetEntity, int $id, int $newId): void
     {
-        $table = $this->Entity->entityType->value;
-        if ($fromTemplate) {
-            $table = ($this->Entity instanceof Experiments || $this->Entity instanceof Templates) ? 'experiments_templates' : 'items_types';
-        }
-        $stepsql = 'SELECT body, ordering, is_immutable FROM ' . $table . '_steps WHERE item_id = :id';
+        $sourceTable = $this->Entity->entityType->value;
+        $targetTable = $targetEntity->entityType->value;
+        $stepsql = sprintf('SELECT body, ordering, is_immutable FROM %s_steps WHERE item_id = :id', $sourceTable);
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($stepreq);
 
-        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering, is_immutable) VALUES(:item_id, :body, :ordering, :is_immutable)';
+        $sql = sprintf('INSERT INTO %s_steps (item_id, body, ordering, is_immutable) VALUES (:item_id, :body, :ordering, :is_immutable)', $targetTable);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
-        while ($steps = $stepreq->fetch()) {
-            $req->bindParam(':body', $steps['body']);
-            $req->bindParam(':ordering', $steps['ordering'], PDO::PARAM_INT);
-            $req->bindParam(':is_immutable', $steps['is_immutable'], PDO::PARAM_INT);
+        while ($step = $stepreq->fetch()) {
+            $req->bindParam(':body', $step['body']);
+            $req->bindParam(':ordering', $step['ordering'], PDO::PARAM_INT);
+            $req->bindParam(':is_immutable', $step['is_immutable'], PDO::PARAM_INT);
             $this->Db->execute($req);
         }
     }

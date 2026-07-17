@@ -33,7 +33,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     {
         $this->Experiments = $this->getFreshExperiment();
         $this->Templates = $this->getFreshTemplate();
-        $this->Steps = $this->Experiments->Steps;
+        $this->Steps = new Steps($this->Experiments);
     }
 
     public function testCreateAndFinish(): void
@@ -108,13 +108,13 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     public function testCannotPatchImmutableStepsFromExperiment(): void
     {
         // create a template step and make it immutable
-        $immutableStepId = $this->Templates->Steps->postAction(Action::Create, array('body' => 'locked from template', 'ordering' => 1));
+        $immutableStepId = new Steps($this->Templates)->postAction(Action::Create, array('body' => 'locked from template', 'ordering' => 1));
         $templateStep = new Steps($this->Templates, $immutableStepId);
         $templateStep->patch(Action::Update, array('is_immutable' => '1'));
         // duplicate steps from template -> experiment
-        $this->Experiments->Steps->duplicate($this->Templates->id, $this->Experiments->id, true);
+        new Steps($this->Templates)->duplicate($this->Experiments, $this->Templates->id, $this->Experiments->id);
         // find the copied step in the experiment
-        $copied = array_values(array_filter($this->Experiments->Steps->readAll(), function ($step) {
+        $copied = array_values(array_filter(new Steps($this->Experiments)->readAll(), function ($step) {
             return $step['body'] === 'locked from template';
         }));
         $this->assertNotEmpty($copied, 'Copied step not found in experiment after duplicate()');
@@ -127,7 +127,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     public function testImmutableDoesNotBlockUpdateOnTemplates(): void
     {
-        $id = $this->Templates->Steps->postAction(Action::Create, array('body' => 'some immutable template step'));
+        $id = new Steps($this->Templates)->postAction(Action::Create, array('body' => 'some immutable template step'));
         $Steps = new Steps($this->Templates, $id);
         // template can set immutable
         $Steps->patch(Action::Update, array('is_immutable' => '1'));

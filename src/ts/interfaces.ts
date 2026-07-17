@@ -208,19 +208,22 @@ interface Entity {
 
 export {
   Action,
-  BinaryValue,
-  Categories,
-  CheckableItem,
-  Entity,
   EntityType,
   FileType,
   Method,
   Model,
   ProcurementState,
-  ResponseMsg,
-  Selected,
   LinkSubModel,
   Target,
+};
+
+export type {
+  BinaryValue,
+  Categories,
+  CheckableItem,
+  Entity,
+  ResponseMsg,
+  Selected,
   Todoitem,
   UnfinishedEntities,
   Upload,

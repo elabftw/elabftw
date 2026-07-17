@@ -2,15 +2,17 @@
   "compilerOptions": {
     "target": "es2022",
     "baseUrl": ".",
-    "module": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
-    "moduleResolution": "NodeNext",
     "jsx": "react-jsx",
     "strict": false,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "lib": ["es2022", "es2022.intl", "dom"]
+    "lib": ["es2022", "es2022.intl", "dom"],
+    "verbatimModuleSyntax": false,
+    "isolatedModules": true
   },
   "include": [
     "src/**/*.ts",

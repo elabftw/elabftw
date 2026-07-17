@@ -13,10 +13,10 @@
  */
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const MinimizerPlugin = require('minimizer-webpack-plugin');
 const webpack = require('webpack');
 const sveltePreprocess = require('svelte-preprocess');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env) => {
   return {
@@ -104,8 +104,15 @@ module.exports = (env) => {
       },
       minimize: true,
       minimizer: [
-        new CssMinimizerPlugin(),
-        new TerserPlugin(),
+        '...',
+        new MinimizerPlugin({
+          test: /\.css(\?.*)?$/i,
+          minify: MinimizerPlugin.cssnanoMinify,
+          // Options - https://cssnano.github.io/cssnano/docs/config-file/
+          minimizerOptions: {
+            preset: 'default',
+          },
+        }),
       ],
     },
     plugins: [
@@ -118,6 +125,18 @@ module.exports = (env) => {
       // required to make process work in the browser
       new webpack.ProvidePlugin({
         process: 'process/browser.js',
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(
+              __dirname,
+              '.yarn/unplugged/indigo-ketcher-npm-*/node_modules/indigo-ketcher/**/*.wasm',
+            ),
+            to: '[name][ext]',
+            noErrorOnMissing: false,
+          },
+        ],
       }),
     ],
     resolve: {

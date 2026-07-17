@@ -23,6 +23,7 @@ use function dirname;
 use function putenv;
 use function setlocale;
 use function textdomain;
+use function sprintf;
 
 /**
  * This class is used to generate the translations files for i18next (javascript)
@@ -127,6 +128,8 @@ final class i18n4Js
             // import errors often print html content
             'import-error' => _('Error during import. Please check the console for more information.'),
             'invalid-info' => _('Invalid syntax or information provided.'),
+            'is-locked' => _('Is locked'),
+            'last-modified-at' => _('Last modified at'),
             'loading' => _('Loading'),
             'link-delete-warning' => _('Delete this link?'),
             'location-name' => _('Location name'),
@@ -136,6 +139,8 @@ final class i18n4Js
             'my-teams' => _('My teams'),
             'name' => _('Name'),
             'new-spreadsheet' => _('New spreadsheet'),
+            'new-version' => _('A new version is available!'),
+            'next-step' => _('Next step'),
             'no-self-links' => _('Linking an item to itself is not allowed. Please select a different target.'),
             'not-found' => _('No matching result found.'),
             'no-rors' => _('No ROR associated yet.'),
@@ -150,6 +155,8 @@ final class i18n4Js
             'ownership-transfer' => _('Your entry has been successfully transferred to the selected user.'),
             'organisation-name' => _('Organisation name'),
             'please-wait' => _('Please wait…'),
+            'rating' => _('Rating'),
+            'read-release-notes' => _('Read release notes'),
             'readonly' => _('Read-only'),
             'remove' => _('Remove'),
             'rename-column' => _('New title for the column'),
@@ -162,7 +169,7 @@ final class i18n4Js
             'ror-description-team' => _('These RORs apply only to the current team.'),
             'ror-description-user' => _('These RORs apply only to your account.'),
             'ror-input-label' => _('Add Research Organization Registry (ROR) identifier'),
-            'ror-input-title' => _('Enter a valid 9-character ROR ID, for example 04t0gwh46 or https://ror.org/04t0gwh46'),
+            'ror-input-title' => sprintf(_('Enter a valid 9-character ROR ID, for example 04t0gwh46 or %s'), 'https://ror.org/04t0gwh46'),
             'save' => _('Save'),
             'save-and-go-back' => _('Save and go back'),
             'save-attachment' => _('Save as attachment'),
@@ -172,6 +179,7 @@ final class i18n4Js
             'show-all' => _('Show all'),
             'show-archived' => _('Show archived'),
             'show-deleted' => _('Show deleted'),
+            'signed-by' => _('Signed by'),
             'signing' => _('Signing'),
             'sort-by-column' => _('Sort by column'),
             'started-on' => _('Started on'),
@@ -183,6 +191,8 @@ final class i18n4Js
             'team' => _('Team'),
             'teams' => _('Teams'),
             'template-title' => _('Template title'),
+            'is-timestamped' => _('Is timestamped'),
+            'timestamped-by' => _('Timestamped by'),
             'title' => _('Title'),
             'today' => _('Today'),
             'toggle-pin' => _('Toggle pin'),
@@ -197,6 +207,7 @@ final class i18n4Js
             'valid-until' => _('Valid until'),
             'validated' => _('Validated'),
             'view-template' => _('View template'),
+            'view-upgrade-guide' => _('View upgrade guide'),
         );
     }
 

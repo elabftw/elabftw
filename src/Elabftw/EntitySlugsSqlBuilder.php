@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use DateTimeImmutable;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use PDO;
@@ -65,7 +66,7 @@ final class EntitySlugsSqlBuilder
         $sql = '';
 
         if ($this->withExperiments) {
-            $sql .= 'SELECT CONCAT("experiments:", experiments.id) AS slug FROM experiments WHERE experiments.userid = :userid AND modified_at BETWEEN :start AND :end';
+            $sql .= 'SELECT CONCAT("experiments:", experiments.id) AS slug FROM experiments WHERE experiments.userid = :userid AND modified_at BETWEEN :start AND :end  AND (state = ' . State::Normal->value . ' OR state = ' . State::Archived->value . ')';
             if (is_int($this->experimentsCategoryFilter)) {
                 $sql .= sprintf(' AND experiments.category = %d', $this->experimentsCategoryFilter);
             }
@@ -74,7 +75,7 @@ final class EntitySlugsSqlBuilder
             if (!empty($sql)) {
                 $sql .= ' UNION ALL ';
             }
-            $sql .= 'SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.userid = :userid AND modified_at BETWEEN :start AND :end';
+            $sql .= 'SELECT CONCAT("items:", items.id) AS slug FROM items WHERE items.userid = :userid AND modified_at BETWEEN :start AND :end AND (state = ' . State::Normal->value . ' OR state = ' . State::Archived->value . ')';
             if (is_int($this->itemsCategoryFilter)) {
                 $sql .= sprintf(' AND items.category = %d', $this->itemsCategoryFilter);
             }
@@ -83,7 +84,7 @@ final class EntitySlugsSqlBuilder
             if (!empty($sql)) {
                 $sql .= ' UNION ALL ';
             }
-            $sql .= 'SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug FROM experiments_templates WHERE experiments_templates.userid = :userid AND modified_at BETWEEN :start AND :end';
+            $sql .= 'SELECT CONCAT("experiments_templates:", experiments_templates.id) AS slug FROM experiments_templates WHERE experiments_templates.userid = :userid AND modified_at BETWEEN :start AND :end AND (state = ' . State::Normal->value . ' OR state = ' . State::Archived->value . ')';
             if (is_int($this->templatesCategoryFilter)) {
                 $sql .= sprintf(' AND experiments_templates.category = %d', $this->templatesCategoryFilter);
             }
@@ -92,7 +93,7 @@ final class EntitySlugsSqlBuilder
             if (!empty($sql)) {
                 $sql .= ' UNION ALL ';
             }
-            $sql .= 'SELECT CONCAT("items_types:", items_types.id) AS slug FROM items_types WHERE items_types.team = :team AND modified_at BETWEEN :start AND :end';
+            $sql .= 'SELECT CONCAT("items_types:", items_types.id) AS slug FROM items_types WHERE items_types.team = :team AND modified_at BETWEEN :start AND :end AND (state = ' . State::Normal->value . ' OR state = ' . State::Archived->value . ')';
             if (is_int($this->itemsTypesCategoryFilter)) {
                 $sql .= sprintf(' AND items_types.category = %d', $this->itemsTypesCategoryFilter);
             }

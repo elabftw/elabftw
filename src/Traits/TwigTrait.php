@@ -58,6 +58,7 @@ trait TwigTrait
         $toIconFilter = new TwigFilter('toIcon', '\Elabftw\Elabftw\TwigFilters::toIcon', $filterOptions);
         $jsonDecodFilter = new TwigFilter('jsonDecode', '\Elabftw\Elabftw\TwigFilters::jsonDecode', $filterOptions);
         $any2StringFilter = new TwigFilter('any2string', '\Elabftw\Elabftw\TwigFilters::any2String', $filterOptions);
+        $userid2fullname = new TwigFilter('userid2fullname', '\Elabftw\Elabftw\TwigFilters::userid2fullname', $filterOptions);
         // |trans filter
         $transFilter = new TwigFilter(
             'trans',
@@ -99,6 +100,7 @@ trait TwigTrait
         $TwigEnvironment->addFilter($toIconFilter);
         $TwigEnvironment->addFilter($jsonDecodFilter);
         $TwigEnvironment->addFilter($any2StringFilter);
+        $TwigEnvironment->addFilter($userid2fullname);
         $TwigEnvironment->addFilter($transFilter);
         $TwigEnvironment->addFilter($toDatetimeFilter);
         $TwigEnvironment->addFilter($isInJsonArray);

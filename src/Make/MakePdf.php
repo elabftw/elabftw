@@ -230,17 +230,22 @@ class MakePdf extends AbstractMakePdf
     {
         $date = new DateTimeImmutable($this->Entity->entityData['date'] ?? date('Ymd'));
 
-        $locked = $this->Entity->entityData['locked'];
-        $lockerName = $this->Entity->getLockerFullname();
-        $lockDate = Filter::separateDateAndTime($this->Entity->entityData['locked_at'] ?? '');
+        $isLocked = $this->Entity->entityData['locked'] === 1;
+        $lockedAt = Filter::separateDateAndTime($this->Entity->entityData['locked_at'] ?? '');
+        if ($isLocked) {
+            $formattedLockedAt = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['locked_at']));
+        }
 
-        $timestamped = $this->Entity->entityData['timestamped'];
-        $timestamperName = $this->Entity->getTimestamperFullname();
+        $isTimestamped = $this->Entity->entityData['timestamped'] === 1;
         $timestampedAt = Filter::separateDateAndTime($this->Entity->entityData['timestamped_at'] ?? '');
+        if ($isTimestamped) {
+            $formattedTimestampedAt = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['timestamped_at']));
+        }
 
-        // Format date for pdf title
-        if ($this->Entity->entityData['timestamped'] === 1) {
-            $localDate = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['timestamped_at']));
+        $isSigned = $this->Entity->entityData['signature_count'] > 0;
+        $signedAt = Filter::separateDateAndTime($this->Entity->entityData['last_signed_at'] ?? '');
+        if ($isSigned) {
+            $formattedSignedAt = Filter::formatLocalDate(new DateTimeImmutable($this->Entity->entityData['last_signed_at']));
         }
 
         // read the content of the thumbnail here to feed the template
@@ -272,15 +277,15 @@ class MakePdf extends AbstractMakePdf
             'includeChangelog' => $this->includeChangelog,
             'ghsImagesPath' => self::GHS_FOLDER,
             'includeFiles' => $this->includeAttachments,
-            'locked' => $locked,
-            'lockDate' => $lockDate['date'],
-            'lockTime' => $lockDate['time'],
-            'lockerName' => $lockerName,
-            'timestamped' => $timestamped,
-            'timestampDate' => $timestampedAt['date'],
-            'timestampTime' => $timestampedAt['time'],
-            'timestamperName' => $timestamperName,
-            'localDate' => $localDate ?? '',
+            'isLocked' => $isLocked,
+            'lockedAt' => $lockedAt,
+            'lockDateAt' => $formattedLockedAt ?? '',
+            'isTimestamped' => $isTimestamped,
+            'timestampedAt' => $timestampedAt,
+            'formattedTimestampedAt' => $formattedTimestampedAt ?? '',
+            'isSigned' => $isSigned,
+            'signedAt' => $signedAt,
+            'formattedSignedAt' => $formattedSignedAt ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],
             'rors' => $this->getRors($this->Entity->entityData['team'], $this->Entity->entityData['userid']),
             // TODO fix for templates

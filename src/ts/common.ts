@@ -7,7 +7,8 @@
  */
 import $ from 'jquery';
 import { ApiC } from './api';
-import { Malle, InputType, SelectOptions } from '@deltablot/malle';
+import { Malle, InputType } from '@deltablot/malle';
+import type { SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
@@ -36,12 +37,14 @@ import {
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
   mountRors,
+  initPermissionsTomSelects,
+  PERMISSION_SELECT_IDS,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, LinkSubModel } from './interfaces';
-import { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';
@@ -76,6 +79,11 @@ interface Status extends SelectOptions {
   title: string;
   is_current_team: number;
 }
+
+// Use the sticky navbar height to offset the toolbar below it.
+document.documentElement.style.setProperty('--navbar-height', `${document.querySelector<HTMLElement>('div > .navbar')?.offsetHeight ?? 0}px`);
+
+const container = document.getElementById('container')!;
 
 on('toggle-dark-mode', (el: HTMLElement) => {
   const currentTheme = parseInt(el.dataset.currentTheme, 10);
@@ -251,60 +259,7 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 
 makeMalleableColumnsGreatAgain();
 
-// selector for all {permission}_select (canread, canwrite, canbook)
-const permissionSelects = document.querySelectorAll<HTMLSelectElement>(
-  '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]',
-);
-
-function initPermissionsTomSelects() {
-  if (permissionSelects.length === 0) return;
-  permissionSelects.forEach((select) => {
-    const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
-    // avoid re-init of tomselect if already exists
-    if (tsSelect.tomselect) return;
-    const config = {
-      plugins: {
-        no_backspace_delete: {},
-        remove_button: {},
-      },
-      // display many things or users will be confused what they search is not displayed right away
-      maxOptions: 2222,
-      onInitialize() { setSelectedItemsDivVisibility(this); },
-      onItemAdd() {
-        this.setTextboxValue('');
-        setSelectedItemsDivVisibility(this);
-      },
-      onItemRemove() { setSelectedItemsDivVisibility(this); },
-    };
-    const wrapper = select.closest('.ts-wrapper');
-    config['dropdownParent'] = wrapper;
-    config['controlInput'] = wrapper?.querySelector('input');
-    // for users, we return a formatted response with id - user (email)
-    if (select.id.endsWith('_select_users')) {
-      config['load'] = (query: string, callback) => {
-        if (!query.length) return callback();
-        fetchUsers(query).then(callback).catch(() => callback());
-      };
-    }
-    new TomSelect(select, config);
-  });
-}
-
 initPermissionsTomSelects();
-
-// make the div holding selected items disappear when empty and vice versa.
-function setSelectedItemsDivVisibility(instance) {
-  instance.control.style.display = instance.items.length ? 'flex' : 'none';
-}
-
-// fetch users and return in an id - username (email) format
-async function fetchUsers(query: string) {
-  const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
-  return users.map((u) => ({
-    value: `user:${u.userid}`,
-    text: `${u.fullname} (${u.email})`,
-  }));
-}
 
 on('team-scope-change', async (el: HTMLElement) => {
   const scope = Number(el.dataset.value);
@@ -350,6 +305,7 @@ on('team-scope-change', async (el: HTMLElement) => {
 });
 
 document.addEventListener('scope-changed', () => {
+  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
   permissionSelects.forEach(select => rebuildTomSelectOptions(select));
 });
 
@@ -728,6 +684,8 @@ on('save-permissions', (el: HTMLElement) => {
   params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   params[baseSelect.name] = baseSelect.value;
+
+  const divId = el.dataset.identifier + 'Div';
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
   if (el.dataset.isUserDefault) {
     // we need to replace canread/canwrite with default_read/default_write for user attribute
@@ -738,9 +696,9 @@ on('save-permissions', (el: HTMLElement) => {
     // create a new key and delete the old one
     params[paramKey] = params[el.dataset.rw];
     delete params[el.dataset.rw];
-    ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
+    ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([divId]));
   } else {
-    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([el.dataset.identifier + 'Div']));
+    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([divId]));
   }
 });
 
@@ -761,8 +719,7 @@ on('save-permissions-both', (el: HTMLElement) => {
   const permissions = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   const params = {canread: permissions, canread_base: baseSelect.value, canwrite: permissions, canwrite_base: baseSelect.value};
-  ApiC.patch(`${entity.type}/${entity.id}`, params)
-    .then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
+  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
 });
 
 on('select-lang', () => {
@@ -1065,18 +1022,53 @@ on('replace-with-next', (el: HTMLElement) => {
   // hide clicked element
   el.toggleAttribute('hidden');
 });
+// TODO this requires jquery for now. Not in BS5.
 on('toggle-modal', (el: HTMLElement) => {
-  // TODO this requires jquery for now. Not in BS5.
-  $('#' + el.dataset.target).modal('show');
+  const modalSelector = `#${el.dataset.target}`;
+  showModalAndFocusFirstInput(modalSelector);
 });
 
-on('update-entity-body', (el: HTMLElement) => {
-  updateEntityBody().then(() => {
-    // SAVE AND GO BACK BUTTON
-    if (el.matches('[data-redirect="view"]')) {
-      window.location.replace('?mode=view&id=' + entity.id);
-    }
+// autofocus the first input of a modal
+function focusFirstTextInputOnShown(modalSelector: string) {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+  $(modal).one('shown.bs.modal', () => {
+    modal.querySelector<HTMLElement>(
+      'input:is([type="text"], [type="search"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="number"]):not([disabled]):not([readonly]):not(.ts-wrapper input), ' +
+      'input:not([type]):not([disabled]):not([readonly]):not(.ts-wrapper input), ' +
+      'textarea:not([disabled]):not([readonly])',
+    )?.focus();
   });
+}
+
+function ensureModalIsContainerChild(modal: HTMLElement): void {
+  // we do that to avoid issues with sticky navbar/z-index
+  if (modal.parentElement !== container) {
+    container.appendChild(modal);
+  }
+}
+
+export function showModal(modalSelector: string) {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+
+  ensureModalIsContainerChild(modal);
+  $(modal).modal('show');
+}
+
+export function showModalAndFocusFirstInput(modalSelector: string) {
+  focusFirstTextInputOnShown(modalSelector);
+  showModal(modalSelector);
+}
+
+on('update-entity-body', async (el: HTMLElement) => {
+  const redirect = el.dataset.redirect === 'view';
+  await updateEntityBody(redirect);
+  // SAVE AND GO BACK BUTTON
+  if (redirect) {
+    sessionStorage.setItem('flash_saved', i18next.t('saved'));
+    window.location.replace('?mode=view&id=' + entity.id);
+  }
 });
 
 on('search-pubchem', (el: HTMLElement) => {
@@ -1295,6 +1287,8 @@ on('create-entity', async (el: HTMLElement, event: Event) => {
   const params = collectForm(form);
   if (el.dataset.tplid) {
     params['template'] = parseInt(el.dataset.tplid, 10);
+  } else if (el.dataset.entityid) {
+    params['entity'] = parseInt(el.dataset.entityid, 10);
   }
   // look for any tag present in the url, we will create the entry with these tags
   const urlParams = new URLSearchParams(document.location.search);
@@ -1339,7 +1333,8 @@ on('reload-color', (el: HTMLElement) => {
 });
 
 // CREATE CATEGORY OR STATUS
-on('create-catstat', (el: HTMLElement) => {
+on('create-catstat', (el: HTMLElement, e: Event) => {
+  e.preventDefault();
   const modalId = 'createCatStatModal';
   const form = document.getElementById(modalId);
   try {
@@ -1563,7 +1558,6 @@ on('scope-change', async (el: HTMLElement) => {
 /**
  * MAIN click listener on container
  */
-const container = document.getElementById('container')!;
 container.addEventListener('click', (event: Event) => {
   const rawTarget = event.target as HTMLElement | null;
   const el = rawTarget?.closest('[data-action]') as HTMLElement | null;

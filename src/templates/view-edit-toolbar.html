@@ -155,182 +155,206 @@
 </div>
 {% endif %}
 
-<hr>
+<div class='sticky-toolbar'>
+  <hr>
 
-{# TOP TOOLBAR #}
-<div class='d-flex align-items-center flex-wrap' id='topToolbar'>
-  {% include 'back-to-previous.html' %}
-  {# for templates: create from button #}
-  {% if Entity.entityType.value == 'experiments_templates' or Entity.entityType.value == 'items_types' %}
-  <a data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'items' }}' data-tplid='{{ Entity.id }}' href='#' class='btn btn-primary ml-2' title='{{ 'Create entry from template'|trans }}' aria-label='{{ 'Create entry from template'|trans }}'>
-      <i class='fas fa-file-circle-plus fa-fw'></i>
-    </a>
-  {% endif %}
-
-  <div class='vertical-separator'></div>
-
-  {% if mode == 'edit' %}
-    {# VIEW button #}
-    <a title='{{ 'View mode'|trans }}' aria-label='{{ 'View mode'|trans }}' href='?mode=view&amp;id={{ Entity.id }}' class='btn btn-primary mr-2'>
-      <i class='fas fa-eye fa-fw'></i>
-    </a>
-  {% else %}
-    {# EDIT button #}
-    <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn btn-primary mr-2 {{ Entity.isReadOnly ? 'disabled' }}'>
-      <i class='fas fa-pencil fa-fw'></i>
-    </a>
-  {% endif %}
-
-  {% if not App.Session.has('is_anon') %}
-
-    {# DUPLICATE #}
-    <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='toggle-modal' data-target='duplicateModal' class='btn btn-transparent mr-2'>
-      <i class='fas fa-clone fa-fw'></i>
-    </button>
-
-    {# Calendar booking #}
-    {% if Entity.entityType.value == 'items' and (Entity.entityData.is_bookable or not Entity.isReadOnly) %}
-      {% if Entity.entityData.is_bookable %}
-        <a class='btn mr-2 btn-transparent' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?items[]={{ Entity.id }}'>
-          <i class='fas fa-calendar-plus fa-fw'></i>
-        </a>
-        <button type='button' class='btn btn-transparent mr-2' aria-label='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' title='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' data-action='toggle-modal' data-target='sendBookingsEmailModal'>
-          <i class='fas fa-fw fa-envelope'></i>
-        </button>
-      {% else %}
-        <button type='button' class='btn mr-2 btn-transparent' aria-label='{{ 'Modify booking parameters'|trans }}' title='{{ 'Modify booking parameters'|trans }}' data-action='toggle-modal' data-target='bookingParamsModal'>
-          <i class='fas fa-calendar-plus color-disabled fa-fw'></i>
-        </button>
-      {% endif %}
+  {# TOP TOOLBAR #}
+  <div class='d-flex align-items-center flex-wrap' id='topToolbar'>
+    {% include 'back-to-previous.html' %}
+    {# for templates: create from button #}
+    {% if Entity.entityType.value == 'experiments_templates' or Entity.entityType.value == 'items_types' %}
+      <a data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'items' }}' data-tplid='{{ Entity.id }}' href='#' class='btn btn-primary ml-2' title='{{ 'Create entry from template'|trans }}' aria-label='{{ 'Create entry from template'|trans }}'>
+        <i class='fas fa-file-circle-plus fa-fw'></i>
+      </a>
     {% endif %}
 
-  {% endif %}
-
-  {# SIGN #}
-  <button type='button' id='actionButton-sign' title='{{ 'Add signature'|trans }}' aria-label='{{ 'Add signature'|trans }}' data-action='toggle-modal' data-target='addSignatureModal' class='btn btn-transparent mr-2'>
-    <i class='fas fa-signature fa-fw'></i>
-  </button>
-
-  {# TIMESTAMP #}
-  {% if not App.Session.has('is_anon') %}
-    <button type='button' title='{{ 'Timestamp'|trans }}' aria-label='{{ 'Timestamp'|trans }}' data-action='do-requestable-action' data-target='timestamp' class='btn btn-transparent mr-2'>
-      <i class='fas fa-calendar-check fa-fw'></i>
-    </button>
-  {% endif %}
-
-  {# BLOXBERG TIMESTAMP #}
-  {% if App.Config.configArr.blox_enabled %}
-    <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='toggle-modal' data-target='blocktimestampModal' class='btn btn-transparent mr-2'>
-      <i class='fas fa-cubes fa-fw'></i>
-    </button>
-  {% endif %}
-
-  {# PROCUREMENT REQUEST #}
-  {% if Entity.entityType.value == 'items' and (Entity.entityData.is_procurable or not Entity.isReadOnly) %}
-  {% set proc_label = Entity.entityData.is_procurable ? 'Place order'|trans : 'Modify procurement parameters'|trans %}
-    <button type='button' title='{{ proc_label }}' aria-label='{{ proc_label }}' data-action='toggle-modal' data-target='procurement{{ Entity.entityData.is_procurable ? 'Request' : 'Params' }}Modal' class='btn btn-transparent mr-2 {{ not Entity.entityData.is_procurable ? 'disabled' }}'>
-      <i class='fas fa-cart-shopping fa-fw'></i>
-    </button>
-  {% endif %}
-
-  {% if not App.Session.has('is_anon') %}
     <div class='vertical-separator'></div>
-  {% endif %}
 
-  {# DOWNLOAD / EXPORT MENU #}
-  {% include 'export-menu.html' %}
-
-  <div class='ml-auto d-flex flex-wrap align-items-center'>
-    {% if not App.Session.has('is_anon') %}
     {% if mode == 'edit' %}
-      {# RATING EDIT #}
-      <div class='rating mr-2 align-items-center' id='editRatingDiv'>
-        <span class='cancel-button' data-trigger='click' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
-        {% for i in range(5, 1) %}
-          <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
-        {% endfor %}
-      </div>
-    {% else %}
-      {# RATING VIEW #}
-      {% if Entity.entityData.rating > 0 %}
-        <span class='rating-show rounded p-1 mr-3'><i class='fas fa-star' title='☻'></i>{{ Entity.entityData.rating }}</span>
-      {% endif %}
-    {% endif %}
-
-      {# TOGGLE PIN #}
-      {% include 'toggle-pin.html' %}
-
-      {# LOCK #}
-      {% set lockIcon = 'fa-lock-open' %}
-      {% set alt = 'Lock'|trans %}
-      {% if Entity.entityData.locked %}
-          {% set lockIcon = 'fa-lock' %}
-          {% set alt = 'Unlock'|trans %}
-      {% endif %}
-      <button type='button' title='{{ alt }}' aria-label='{{ alt }}' data-action='do-requestable-action' data-target='lock' class='btn {{ Entity.entityData.locked ? 'btn-secondary' : 'btn-transparent' }} mr-2'>
-        <i class='fas {{ lockIcon }} fa-fw'></i>
+      {# VIEW button #}
+        <button type='button' title='{{ 'Save'|trans }}' data-action='update-entity-body' aria-label='{{ 'Save'|trans }}' class='btn btn-primary mr-2'>
+          <i class='fas fa-save'></i>
+        </button>
+      <button type='button' title='{{ 'Save and view'|trans }}' aria-label='{{ 'Save and view'|trans }}' data-action='update-entity-body' data-redirect='view' class='btn btn-transparent mr-2'>
+        <i class='fas fa-eye fa-fw'></i>
       </button>
+    {% else %}
+      {# EDIT button #}
+      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn btn-primary mr-2 {{ Entity.isReadOnly ? 'disabled' }}'>
+        <i class='fas fa-pencil fa-fw'></i>
+      </a>
     {% endif %}
 
-    {# REQUEST ACTION #}
-    <button type='button' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal' data-cy='requestActionModalOpen'>
-      <i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i>
+    {% if not App.Session.has('is_anon') %}
+
+      {# REQUEST ACTION #}
+      <button type='button' class='btn hl-hover-gray p-2 mr-2 lh-normal border-0' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal' data-cy='requestActionModalOpen'>
+        <i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i>
+      </button>
+
+      {# DUPLICATE #}
+      <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='toggle-modal' data-target='duplicateModal' class='btn btn-transparent mr-2'>
+        <i class='fas fa-clone fa-fw'></i>
+      </button>
+
+      {# Calendar booking #}
+      {% if Entity.entityType.value == 'items' and (Entity.entityData.is_bookable or not Entity.isReadOnly) %}
+        {% if Entity.entityData.is_bookable %}
+          <a class='btn mr-2 btn-transparent' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?items[]={{ Entity.id }}'>
+            <i class='fas fa-calendar-plus fa-fw'></i>
+          </a>
+          <button type='button' class='btn btn-transparent mr-2' aria-label='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' title='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' data-action='toggle-modal' data-target='sendBookingsEmailModal'>
+            <i class='fas fa-fw fa-envelope'></i>
+          </button>
+        {% else %}
+          <button type='button' class='btn mr-2 btn-transparent' aria-label='{{ 'Modify booking parameters'|trans }}' title='{{ 'Modify booking parameters'|trans }}' data-action='toggle-modal' data-target='bookingParamsModal'>
+            <i class='fas fa-calendar-plus color-disabled fa-fw'></i>
+          </button>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+
+    {# SIGN #}
+    <button type='button' id='actionButton-sign' title='{{ 'Add signature'|trans }}' aria-label='{{ 'Add signature'|trans }}' data-action='toggle-modal' data-target='addSignatureModal' class='btn btn-transparent mr-2'>
+      <i class='fas fa-signature fa-fw'></i>
     </button>
 
-    <div class='vertical-separator'></div>
-    {# MORE OPTIONS #}
-    <div class='dropdown'>
-      <button data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button' class='btn btn-transparent'>
-        <i class='fas fa-fw fa-ellipsis-v'></i>
+    {# TIMESTAMP #}
+    {% if not App.Session.has('is_anon') %}
+      <button type='button' title='{{ 'Timestamp'|trans }}' aria-label='{{ 'Timestamp'|trans }}' data-action='do-requestable-action' data-target='timestamp' class='btn btn-transparent mr-2'>
+        <i class='fas fa-calendar-check fa-fw'></i>
       </button>
+    {% endif %}
 
-      <div class='dropdown-menu dropdown-menu-right'>
-        {% if Entity.entityType.value == 'items' %}
-          {# BOOKING PARAMS #}
-          <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='bookingParamsModal'><i class='fas fa-calendar-plus fa-fw' title='{{ 'Modify booking parameters'|trans }}'></i> {{ 'Modify booking parameters'|trans }}</button>
-          {# PROCUREMENT #}
-          <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='procurementParamsModal'><i class='fas fa-cart-shopping fa-fw' title='{{ 'Modify procurement parameters'|trans }}'></i> {{ 'Modify procurement parameters'|trans }}</button>
-        {% endif %}
-        {# TRANSFER OWNERSHIP #}
-        {% set canTransfer = Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
-        <button type='button' class='dropdown-item {{ (not canTransfer or Entity.isReadOnly) ? 'disabled' }}'
-          {% if canTransfer %}data-action='toggle-modal' data-target='ownerModal'{% endif %}>
-          <i class='fas fa-people-arrows fa-fw {{ (not canTransfer or Entity.isReadOnly) ? 'color-weak' }}' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}
-        </button>
-        {# REVISIONS #}
-        <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
-        {# CHANGELOG #}
-        <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw' title='{{ 'See changelog'|trans }}'></i> {{ 'See changelog'|trans }}</a>
-        {# HIDE MAIN TEXT #}
-        {% set icon = Entity.entityData.hide_main_text ? 'fa-eye' : 'fa-eye-slash' %}
-        <button type='button' class='dropdown-item' data-trigger='blur' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='{{ Entity.entityData.hide_main_text ? 0 : 1 }}'>
-          <i class='fas {{ icon }}'></i>
-          {{ Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans }}
-        </button>
+    {# BLOXBERG TIMESTAMP #}
+    {% if App.Config.configArr.blox_enabled %}
+      <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='toggle-modal' data-target='blocktimestampModal' class='btn btn-transparent mr-2'>
+        <i class='fas fa-cubes fa-fw'></i>
+      </button>
+    {% endif %}
 
-        {% if not App.Session.has('is_anon') %}
-          {# ARCHIVE / UNARCHIVE #}
-          {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
-            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive' data-cy='doRequestableActionArchive'>
-              <i class='fas fa-fw fa-box-archive' title='{{ 'Archive'|trans }}'></i> {{ 'Archive'|trans }}
-            </button>
-          {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
-            <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive' data-cy='doRequestableActionUnarchive'>
-              <i class='fas fa-fw fa-box-archive' title='{{ 'Unarchive'|trans }}'></i> {{ 'Unarchive'|trans }}
-            </button>
+    {# PROCUREMENT REQUEST #}
+    {% if Entity.entityType.value == 'items' and (Entity.entityData.is_procurable or not Entity.isReadOnly) %}
+      {% set proc_label = Entity.entityData.is_procurable ? 'Place order'|trans : 'Modify procurement parameters'|trans %}
+      <button type='button' title='{{ proc_label }}' aria-label='{{ proc_label }}' data-action='toggle-modal' data-target='procurement{{ Entity.entityData.is_procurable ? 'Request' : 'Params' }}Modal' class='btn btn-transparent mr-2 {{ not Entity.entityData.is_procurable ? 'disabled' }}'>
+        <i class='fas fa-cart-shopping fa-fw'></i>
+      </button>
+    {% endif %}
+
+    {% if not App.Session.has('is_anon') %}
+      <div class='vertical-separator'></div>
+    {% endif %}
+
+    {# DOWNLOAD / EXPORT MENU #}
+    {% include 'export-menu.html' %}
+
+    <div class='ml-auto d-flex flex-wrap align-items-center'>
+      {% if not App.Session.has('is_anon') %}
+        {% if mode == 'edit' %}
+          {# RATING EDIT #}
+          <div class='rating mr-2 align-items-center' id='editRatingDiv'>
+            <span class='cancel-button' data-trigger='click' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='0' data-reload='editRatingDiv'><i class='fas fa-ban fa-fw'></i></span>
+            {% for i in range(5, 1) %}
+              <input {{ Entity.entityData.rating == i ? 'checked="checked"' }} type='radio' id='star{{ i }}' data-trigger='change' data-model='{{ Entity.entityType.value }}/{{ Entity.entityData.id }}' data-target='rating' data-value='{{ i }}' data-reload='editRatingDiv' value='{{ i }}' /><label for='star{{ i }}' aria-label='{{ i }} star {{- i > 1 ? 's' }}'></label>
+            {% endfor %}
+          </div>
+        {% else %}
+          {# RATING VIEW #}
+          {% if Entity.entityData.rating > 0 %}
+            <span class='rating-show rounded p-1 mr-3'><i class='fas fa-star' title='☻'></i>{{ Entity.entityData.rating }}</span>
           {% endif %}
         {% endif %}
-        {# DELETE / RESTORE #}
-        {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
-          <div class='dropdown-divider'></div>
-          <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
-        {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
-          <div class='dropdown-divider'></div>
-          <button type='button' class='dropdown-item hover-danger' data-action='restore'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
+
+        {# TOGGLE PIN #}
+        {% include 'toggle-pin.html' %}
+
+        {# LOCK #}
+        {% set lockIcon = 'fa-lock-open' %}
+        {% set alt = 'Lock'|trans %}
+        {% if Entity.entityData.locked %}
+          {% set lockIcon = 'fa-lock' %}
+          {% set alt = 'Unlock'|trans %}
         {% endif %}
+        <button type='button' title='{{ alt }}' aria-label='{{ alt }}' data-action='do-requestable-action' data-target='lock' class='btn {{ Entity.entityData.locked ? 'btn-secondary' : 'btn-transparent' }} mr-2'>
+          <i class='fas {{ lockIcon }} fa-fw'></i>
+        </button>
+      {% endif %}
+
+      {# REQUEST ACTION #}
+      <button type='button' class='btn btn-transparent mr-2' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal'>
+        <i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i>
+      </button>
+
+      <div class='vertical-separator'></div>
+
+      {# MORE OPTIONS #}
+      <div class='dropdown'>
+        <button data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button' class='btn btn-transparent'>
+          <i class='fas fa-fw fa-ellipsis-v'></i>
+        </button>
+
+        <div class='dropdown-menu dropdown-menu-right'>
+          {% if Entity.entityType.value == 'items' %}
+            {# BOOKING PARAMS #}
+            <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='bookingParamsModal'><i class='fas fa-calendar-plus fa-fw' title='{{ 'Modify booking parameters'|trans }}'></i> {{ 'Modify booking parameters'|trans }}</button>
+
+            {# PROCUREMENT #}
+            <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='procurementParamsModal'><i class='fas fa-cart-shopping fa-fw' title='{{ 'Modify procurement parameters'|trans }}'></i> {{ 'Modify procurement parameters'|trans }}</button>
+          {% endif %}
+
+          {# TRANSFER OWNERSHIP #}
+          {% set canTransfer = Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
+          <button type='button' class='dropdown-item {{ (not canTransfer or Entity.isReadOnly) ? 'disabled' }}'
+            {% if canTransfer %}data-action='toggle-modal' data-target='ownerModal'{% endif %}>
+            <i class='fas fa-people-arrows fa-fw {{ (not canTransfer or Entity.isReadOnly) ? 'color-weak' }}' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}
+          </button>
+
+          {# CONVERT TO TEMPLATE #}
+          {# for entities(experiments & items): create template from entity #}
+          {% if Entity.entityType.value == 'experiments' or Entity.entityType.value == 'items' %}
+            <button type='button' class='dropdown-item {{ Entity.isReadOnly ? 'disabled' }}' data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments' ? 'experiments_templates' : 'items_types' }}' data-entityid='{{ Entity.id }}' title='{{ 'Create template from entry'|trans }}'>
+              <i class='fas fa-file-circle-plus fa-fw'></i> {{ 'Create template from entry'|trans }}
+            </button>
+          {% endif %}
+
+          {# REVISIONS #}
+          <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
+
+          {# CHANGELOG #}
+          <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw' title='{{ 'See changelog'|trans }}'></i> {{ 'See changelog'|trans }}</a>
+
+          {# HIDE MAIN TEXT #}
+          {% set icon = Entity.entityData.hide_main_text ? 'fa-eye' : 'fa-eye-slash' %}
+          <button type='button' class='dropdown-item' data-trigger='blur' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='{{ Entity.entityData.hide_main_text ? 0 : 1 }}'>
+            <i class='fas {{ icon }}'></i>
+            {{ Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans }}
+          </button>
+
+          {% if not App.Session.has('is_anon') %}
+            {# ARCHIVE / UNARCHIVE #}
+            {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
+              <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive'>
+                <i class='fas fa-fw fa-box-archive' title='{{ 'Archive'|trans }}'></i> {{ 'Archive'|trans }}
+              </button>
+            {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
+              <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive'>
+                <i class='fas fa-fw fa-box-archive' title='{{ 'Unarchive'|trans }}'></i> {{ 'Unarchive'|trans }}
+              </button>
+            {% endif %}
+          {% endif %}
+
+          {# DELETE / RESTORE #}
+          {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
+            <div class='dropdown-divider'></div>
+            <button type='button' class='dropdown-item hover-danger' data-action='destroy'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
+          {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
+            <div class='dropdown-divider'></div>
+            <button type='button' class='dropdown-item hover-danger' data-action='restore'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<hr>
+  <hr>
+</div>

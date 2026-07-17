@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class EntityTest extends \PHPUnit\Framework\TestCase
@@ -23,6 +25,14 @@ class EntityTest extends \PHPUnit\Framework\TestCase
         foreach (EntityType::cases() as $entityType) {
             $this->createdFrom($entityType);
         }
+    }
+
+    public function testEntityParameterOnlyValidForTemplateCreation(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Exp = $this->getFreshExperimentWithGivenUser($user);
+        $this->expectException(ImproperActionException::class);
+        $Exp->postAction(Action::Create, array('entity' => 123,));
     }
 
     private function createdFrom(EntityType $entityType): void

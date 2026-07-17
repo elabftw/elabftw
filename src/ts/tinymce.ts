@@ -68,7 +68,7 @@ import { EntityType, Model } from './interfaces';
 import { reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
 import { ApiC } from './api';
 import { isSortable } from './TableSorting.class';
-import { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import { entity } from './getEntity';
 
@@ -214,6 +214,8 @@ export function getTinymceBaseConfig(page: string): object {
   const templateEndpoint = (entity.type === EntityType.Experiment || entity.type === EntityType.Template)
     ? EntityType.Template
     : EntityType.ItemType;
+  const navbarHeight = document.querySelector<HTMLElement>('div > .navbar')?.offsetHeight ?? 0;
+  const stickyToolbarHeight = document.querySelector<HTMLElement>('.sticky-toolbar')?.offsetHeight ?? 0;
 
   return {
     selector: '.mceditable',
@@ -227,6 +229,8 @@ export function getTinymceBaseConfig(page: string): object {
     skin_url: isDark ? '/assets/tinymce_skins_dark' : '/assets/tinymce_skins',
     skin: isDark ? 'oxide-dark' : 'oxide',
     content_css: isDark ? ['/assets/tinymce_content_dark.min.css', '/assets/tinymce_content.min.css'] : ['/assets/tinymce_content.min.css'],
+    // Prevent inserted images from overflowing the editor. See #5050.
+    content_style: 'img { max-width: 100%; height: auto; }',
     emoticons_database_url: 'assets/tinymce_emojis.js',
     // remove the "Upgrade" button
     promotion: false,
@@ -249,7 +253,8 @@ export function getTinymceBaseConfig(page: string): object {
     // use undocumented callback function to asynchronously get the templates
     // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
     templates: (callback): void => {
-      ApiC.getJson(templateEndpoint).then(json => {
+      // add full param to get the body
+      ApiC.getJson(`${templateEndpoint}?full=1`).then(json => {
         const res = [];
         json.forEach(tpl => {
           res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
@@ -521,6 +526,7 @@ export function getTinymceBaseConfig(page: string): object {
       },
     ],
     toolbar_sticky: true,
+    toolbar_sticky_offset: navbarHeight + stickyToolbarHeight,
     // render MathJax for TinyMCE preview
     init_instance_callback: (editor) => {
       editor.on('ExecCommand', (e) => {

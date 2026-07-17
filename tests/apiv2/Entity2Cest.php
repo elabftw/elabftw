@@ -137,13 +137,6 @@ class Entity2Cest
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
     }
 
-    public function addLinkTest(Apiv2Tester $I)
-    {
-        $I->wantTo('Add a link to an experiment');
-        $I->sendPOST("/experiments/{$this->expid}/items_links/1", array());
-        $I->seeResponseCodeIs(HttpCode::CREATED); // 201
-    }
-
     public function createExpTest(Apiv2Tester $I)
     {
         $I->wantTo('Create an experiment');
@@ -169,6 +162,13 @@ class Entity2Cest
     {
         $I->wantTo('Create an item');
         $I->sendPOST('/items', array('category_id' => 1));
+        $I->seeResponseCodeIs(HttpCode::CREATED); // 201
+    }
+
+    public function addLinkTest(Apiv2Tester $I)
+    {
+        $I->wantTo('Add a link to an experiment');
+        $I->sendPOST("/experiments/{$this->expid}/items_links/{$this->itemid}", array());
         $I->seeResponseCodeIs(HttpCode::CREATED); // 201
     }
 

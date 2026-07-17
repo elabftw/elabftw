@@ -10,7 +10,8 @@ import {
   normalizeFieldName,
 } from './misc';
 import { autoResize, Metadata } from './Metadata.class';
-import { ValidMetadata, ExtraFieldInputType } from './metadataInterfaces';
+import { ExtraFieldInputType } from './metadataInterfaces';
+import type { ValidMetadata } from './metadataInterfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { JsonEditorActions } from './JsonEditorActions.class';
 import { ApiC } from './api';
@@ -350,7 +351,10 @@ if (document.getElementById('metadataDiv') && entity.id) {
             // and finally close the modal
             $('#fieldBuilderModal').modal('toggle');
             // focus on the newly added element
-            document.querySelector(`[data-name="${fieldKey}"`).scrollIntoView({behavior: 'smooth'});
+            document.querySelector(`#metadataDiv [data-name="${CSS.escape(fieldKey)}"]`)?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+            });
           });
         });
       // EDIT EXTRA FIELD
@@ -432,8 +436,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
             const el = document.getElementById(id) as HTMLInputElement | null;
             if (el?.checked) field[key] = true;
           }
-          // preserve readonly
+          // preserve properties that aren't editable in this modal
           if (prevField?.readonly === true) field['readonly'] = true;
+          if (typeof prevField?.position === 'number') field['position'] = prevField.position;
           // ensure the old extra field is replaced
           if (!json['extra_fields']) json['extra_fields'] = {};
           if (originalFieldKey && originalFieldKey !== newFieldKey) {
@@ -444,7 +449,10 @@ if (document.getElementById('metadataDiv') && entity.id) {
           MetadataC.update(json as ValidMetadata).then(() => {
             $('#fieldBuilderModal').modal('toggle');
             // focus on the newly added element
-            document.querySelector(`[data-name="${newFieldKey}"]`).scrollIntoView({behavior: 'smooth'});
+            document.querySelector(`#metadataDiv [data-name="${CSS.escape(newFieldKey)}"]`)?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+            });
           });
         });
       // ADD OPTION FOR SELECT OR RADIO
@@ -517,10 +525,10 @@ if (document.getElementById('metadataDiv') && entity.id) {
             const updateButton = createButton('update-fields-group', 'btn-primary');
             const deleteButton = createButton('remove-fields-group', 'btn-secondary');
             const saveIcon = document.createElement('i');
-            saveIcon.classList.add('fas', 'fa-save', 'text-white');
+            saveIcon.classList.add('fas', 'fa-save');
             updateButton.appendChild(saveIcon);
             const deleteIcon = document.createElement('i');
-            deleteIcon.classList.add('fas', 'fa-trash-alt', 'text-white');
+            deleteIcon.classList.add('fas', 'fa-trash-alt');
             deleteButton.appendChild(deleteIcon);
             // Append buttons to the appendDiv
             appendDiv.appendChild(updateButton);

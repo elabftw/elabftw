@@ -66,10 +66,12 @@ final class ExperimentsTimestamp extends Command
         }
         $Db = Db::getConnection();
         $sql = sprintf('SELECT id FROM experiments
-            WHERE timestamped_at IS NULL
+            WHERE (
+                timestamped_at IS NULL
                OR (
                    modified_at > :m
                    AND ABS(TIMESTAMPDIFF(SECOND, timestamped_at, modified_at)) > %d
+                   )
                  )', self::TOLERANCE);
         $teams = $input->getOption('teams');
         if ($teams) {
@@ -87,7 +89,8 @@ final class ExperimentsTimestamp extends Command
             return 0;
         }
         $userid = (int) $input->getArgument('user');
-        $Experiments = new Experiments(new Users($userid), bypassReadPermission: true, bypassWritePermission: true);
+        // we set the team of Users() to 1 here so getTeam() doesn't explode, but it's not relevant
+        $Experiments = new Experiments(new Users($userid, 1), bypassReadPermission: true, bypassWritePermission: true);
         foreach ($expArr as $exp) {
             if ($output->isVerbose()) {
                 $output->writeln(sprintf('Timestamping experiment %d', $exp['id']));

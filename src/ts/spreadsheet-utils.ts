@@ -7,7 +7,8 @@
  * @package elabftw
  */
 
-import { read, utils, WorkBook, write } from '@e965/xlsx';
+import { read, utils, write } from '@e965/xlsx';
+import type { WorkBook } from '@e965/xlsx';
 import { FileType, Model } from './interfaces';
 import { askFileName, getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';

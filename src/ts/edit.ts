@@ -118,9 +118,9 @@ if (mode === 'edit') {
       return editor.setContent(content);
     });
   });
-  on('insert-image-in-body', (el: HTMLElement) => {
-    // link to the image file
-    const url = `app/download.php?name=${el.dataset.name}&f=${el.dataset.link}&storage=${el.dataset.storage}`;
+
+  // INSERT IN BODY
+  const insertImageInBody = (url: string): void => {
     // switch for markdown or tinymce editor
     let content: string;
     if (editor.type === 'md') {
@@ -131,10 +131,9 @@ if (mode === 'edit') {
     editor.setContent(content);
     // save to prevent destroy/archive actions on the uploads before they're considered part of the body
     updateEntityBody();
-  });
-  on('insert-video-in-body', (el: HTMLElement) => {
-    // link to the video file
-    const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
+  };
+
+  const insertVideoInBody = (url: string): void => {
     // no syntax for video in markdown; use plain html in both cases
     const video = document.createElement('video');
     const source = document.createElement('source');
@@ -143,19 +142,18 @@ if (mode === 'edit') {
     video.controls = true;
     video.appendChild(source);
     editor.setContent(video.outerHTML);
-  });
-  on('insert-audio-in-body', (el: HTMLElement) => {
-    // link to the audio file
-    const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
+  };
+
+  const insertAudioInBody = (url: string): void => {
     // no syntax for audio in markdown; use plain html in both cases
     const audio = document.createElement('audio');
     audio.src = url;
     audio.controls = true;
     editor.setContent(audio.outerHTML);
-  });
+  };
 
-  on('insert-plain-text', (el: HTMLElement) => {
-    fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`).then(response => {
+  const insertTextInBody = (url: string): void => {
+    fetch(url).then(response => {
       return response.text();
     }).then(fileContent => {
       const specialChars = {
@@ -165,7 +163,25 @@ if (mode === 'edit') {
       // wrap in pre element to retain whitespace, html encode '<' and '>'
       editor.setContent('<pre>' + fileContent.replace(/[<>]/g, char => specialChars[char]) + '</pre>');
     });
+  };
+
+  const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp'];
+  const videoExts = ['mkv', 'mp4', 'ogv', 'webm'];
+  const audioExts = ['aac', 'flac', 'mp3', 'ogg', 'opus', 'wav'];
+
+  const insertHandlers = new Map<string, (url: string) => void>([
+    ...imageExts.map(ext => [ext, insertImageInBody] as const),
+    ...videoExts.map(ext => [ext, insertVideoInBody] as const),
+    ...audioExts.map(ext => [ext, insertAudioInBody] as const),
+    ['txt', insertTextInBody],
+  ]);
+
+  on('insert-in-body', (el: HTMLElement) => {
+    const url = `app/download.php?name=${encodeURIComponent(el.dataset.name)}&f=${encodeURIComponent(el.dataset.link)}&storage=${encodeURIComponent(el.dataset.storage)}`;
+    insertHandlers.get(el.dataset.ext.replace(/^\./, '').toLowerCase())?.(url);
   });
+  // END INSERT IN BODY
+
 
   // REPLACE UPLOADED FILE
   // this should be in uploads but there is no good way so far to interact with the two editors there

@@ -15,6 +15,7 @@ import {
 import i18next from './i18n';
 import { EntityType, Model } from './interfaces';
 import { on } from './handlers';
+import { showModalAndFocusFirstInput } from './common';
 
 //////////////////////////////////////
 // CREATE NEW CODE                  //
@@ -111,7 +112,7 @@ function onScopeChange(ev: Event) {
 function onCategoryChange(ev: Event) {
   const el = ev.currentTarget;
   if (!(el instanceof HTMLSelectElement)) return;
-  ApiC.getJson(`${el.dataset.endpoint}/?fastq&scope=${getScopeValue()}&cat=${el.selectedOptions[0].value}`).then(templates => {
+  ApiC.getJson(`${el.dataset.endpoint}/?fastq&scope=${getScopeValue()}&category=${el.selectedOptions[0].value}`).then(templates => {
     renderTemplates(templates);
   });
 }
@@ -139,11 +140,7 @@ on('toggle-create-modal', async (el: HTMLElement) => {
     $('#editCompoundModal').modal('hide');
   }
 
-  $('#createModal')
-    .one('shown.bs.modal', () => {
-      document.getElementById('createNewFormTitle')?.focus();
-    })
-    .modal('show');
+  showModalAndFocusFirstInput('#createModal');
 });
 
 on('toggle-templates', (el: HTMLElement) => {

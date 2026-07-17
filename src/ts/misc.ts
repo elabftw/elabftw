@@ -6,14 +6,16 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import {Action, CheckableItem, EntityType, Entity, Model, Target, FileType} from './interfaces';
+import {Action, EntityType, Model, Target, FileType} from './interfaces';
+import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
-import { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
 import TableSorting from './TableSorting.class';
 declare const MathJax: MathJaxObject;
-import { Malle, InputType, SelectOptions } from '@deltablot/malle';
+import { Malle, InputType } from '@deltablot/malle';
+import type { SelectOptions } from '@deltablot/malle';
 import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
@@ -52,7 +54,7 @@ function fetchCurrentPage(tag = ''): Promise<Document>{
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
-  const locale = document.getElementById('user-prefs').dataset.jslang;
+  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
   document.querySelectorAll('.relative-moment').forEach(el => {
     const span = el as HTMLElement;
     // do nothing if it's already loaded, prevent infinite loop with mutation observer
@@ -424,6 +426,75 @@ export function getSafeElementById(id: string): HTMLElement {
     ?? (() => { throw new Error(`Element could not be found: '${id}'`); })();
 }
 
+// make the div holding selected items disappear when empty and vice versa.
+function setSelectedItemsDivVisibility(instance) {
+  instance.control.style.display = instance.items.length ? 'flex' : 'none';
+}
+
+function configTomSelect(select: HTMLSelectElement) {
+  const config = {
+    plugins: {
+      no_backspace_delete: {},
+      remove_button: {},
+    },
+    // display many things or users will be confused what they search is not displayed right away.
+    maxOptions: 2222,
+    onInitialize() { setSelectedItemsDivVisibility(this); },
+    onItemAdd() {
+      this.setTextboxValue('');
+      setSelectedItemsDivVisibility(this);
+    },
+    onItemRemove() { setSelectedItemsDivVisibility(this); },
+  };
+  const wrapper = select.closest('.ts-wrapper');
+  config['dropdownParent'] = wrapper;
+  config['controlInput'] = wrapper?.querySelector('input');
+
+  return config;
+}
+
+// fetch users and return in an id - username (email) format
+async function fetchUsers(query: string) {
+  const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
+  return users.map((u) => ({
+    value: `user:${u.userid}`,
+    text: `${u.fullname} (${u.email})`,
+  }));
+}
+
+function addUsersConfig(select: HTMLSelectElement, config): void {
+  // for users, we return a formatted response with id - user (email)
+  if (select.id.endsWith('_select_users')) {
+    config['load'] = (query: string, callback) => {
+      if (!query.length) return callback();
+      fetchUsers(query).then(callback).catch(() => callback());
+    };
+  }
+}
+
+// selector for all {permission}_select (canread, canwrite, canbook)
+export const PERMISSION_SELECT_IDS = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
+
+function initTomSelect(select: HTMLSelectElement): void {
+  const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
+  if (tsSelect.tomselect) return;
+
+  const config = configTomSelect(select);
+  addUsersConfig(select, config);
+  new TomSelect(select, config);
+}
+
+export function initPermissionsTomSelects(container: ParentNode = document): void {
+  container.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS)
+    .forEach((select) => initTomSelect(select));
+}
+
+function reloadTomSelects(ts: Element): void {
+  if (ts instanceof HTMLSelectElement) {
+    initTomSelect(ts);
+  }
+}
+
 export async function reloadElements(elementIds: string[]): Promise<void> {
   elementIds = elementIds.filter((elementId: string): boolean => {
     if (!document.getElementById(elementId)) {
@@ -437,14 +508,26 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
     return;
   }
 
-  const html = await fetchCurrentPage();
-  elementIds.forEach(elementId => {
-    if (!html.getElementById(elementId)) {
-      console.warn(`Could not find element with id ${elementId} anymore, removing it`);
-      document.getElementById(elementId).remove();
+  let html: Document;
+  try {
+    html = await fetchCurrentPage();
+  } catch (error) {
+    // Ignore fetch failures caused by navigating away while reloading page fragments.
+    if (error instanceof TypeError && error.message.includes('NetworkError')) {
       return;
     }
-    document.getElementById(elementId).innerHTML = html.getElementById(elementId).innerHTML;
+    throw error;
+  }
+  elementIds.forEach(elementId => {
+    const currentElement = document.getElementById(elementId);
+    const newElement = html.getElementById(elementId);
+    if (!newElement) {
+      console.warn(`Could not find element with id ${elementId} anymore, removing it`);
+      currentElement.remove();
+      return;
+    }
+    currentElement.innerHTML = newElement.innerHTML;
+    currentElement.querySelectorAll('[data-tom-select="1"]').forEach(ts => reloadTomSelects(ts));
     listenTrigger(elementId);
   });
   (new TableSorting()).init();
@@ -485,7 +568,7 @@ export function addAutocompleteToLinkInputs(): void {
   [{
     selectElid: 'addLinkCatFilter',
     itemType: EntityType.Item,
-    filterFamily: 'cat',
+    filterFamily: 'category',
     inputElId: 'addLinkItemsInput',
   }, {
     selectElid: 'addLinkOwnerFilter',
@@ -751,18 +834,21 @@ export async function saveStringAsFile(filename: string, content: string|Promise
 }
 
 // Shared function to UPDATE ENTITY BODY via save shortcut and/or save button, or autosave
-export async function updateEntityBody(): Promise<void> {
+export async function updateEntityBody(redirect = true): Promise<void> {
   const editor = getEditor();
   const entity = getEntity();
-  return ApiC.patch(`${entity.type}/${entity.id}`, {body: editor.getContent()}).then(response => response.json()).then(json => {
+
+  return ApiC.patch(`${entity.type}/${entity.id}`, {body: editor.getContent(), notifOnSaved: redirect ? 0 : 1}).then(response => response.json()).then(json => {
     if (editor.type === 'tiny') {
       // set the editor as non dirty so we can navigate out without a warning to clear
       tinymce.activeEditor.setDirty(false);
     }
-    const lastSavedAt = document.getElementById('lastSavedAt');
-    if (lastSavedAt) {
-      lastSavedAt.title = json.modified_at;
-      reloadElements(['lastSavedAt']);
+    if (!redirect) {
+      const lastSavedAt = document.getElementById('lastSavedAt');
+      if (lastSavedAt) {
+        lastSavedAt.title = json.modified_at;
+        reloadElements(['lastSavedAt']);
+      }
     }
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)

@@ -7,9 +7,11 @@
  */
 import i18next from './i18n';
 import { ApiC } from './api';
-import { Action, Entity, EntityType } from './interfaces';
+import { Action, EntityType } from './interfaces';
+import type { Entity } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { ExtraFieldInputType, ExtraFieldProperties, ExtraFieldsGroup, ValidMetadata } from './metadataInterfaces';
+import { ExtraFieldInputType } from './metadataInterfaces';
+import type { ExtraFieldProperties, ExtraFieldsGroup, ValidMetadata } from './metadataInterfaces';
 import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
 import { notify } from './notify';
 
@@ -259,16 +261,15 @@ export class Metadata {
    * Generate a non editable view of the extra fields
    */
   generateViewableElement(name: string, properties: ExtraFieldProperties): Element {
-    const wrapperDiv = document.createElement('div');
-    wrapperDiv.classList.add('d-flex');
-    // name + description
-    const nameWrapper = document.createElement('div');
-    nameWrapper.classList.add('flex-column');
+    const row = document.createElement('tr');
+    const nameCell = document.createElement('td');
+    nameCell.classList.add('align-top');
 
-    const nameEl = document.createElement('p');
+    // name + description
+    const nameEl = document.createElement('strong');
     nameEl.innerText = name;
-    nameWrapper.append(nameEl);
-    nameWrapper.append(this.getDescription(properties));
+    nameCell.append(nameEl);
+    nameCell.append(this.getDescription(properties));
 
     let valueEl: HTMLElement;
     // checkbox is special case
@@ -286,7 +287,7 @@ export class Metadata {
       if (properties.unit) {
         value += ' ' + properties.unit;
       }
-      valueEl.innerText = value;
+      valueEl.innerText = value || '—';
       // the link is generated with javascript so we can still use innerText and
       // not innerHTML with manual "<a href...>" which implicates security considerations
       if (properties.type === ExtraFieldInputType.Url) {
@@ -298,13 +299,12 @@ export class Metadata {
         valueEl.dataset.id = properties.value as string;
       }
     }
-    const valueWrapper = document.createElement('div');
-    // set the value on the right
-    valueWrapper.classList.add('ml-auto', 'pl-5');
-    valueWrapper.append(valueEl);
-    wrapperDiv.append(nameWrapper);
-    wrapperDiv.append(valueWrapper);
-    return wrapperDiv;
+    const valueCell = document.createElement('td');
+    valueCell.classList.add('align-top');
+    valueCell.append(valueEl);
+
+    row.append(nameCell, valueCell);
+    return row;
   }
 
   /**
@@ -493,7 +493,6 @@ export class Metadata {
     }
 
     // clear previous content
-    this.metadataDiv.textContent = '';
     return displayFunction.call(this).catch(e => {
       if (e instanceof ResourceNotFoundException) {
         // no metadata is associated but it's okay, it's not an error
@@ -531,10 +530,21 @@ export class Metadata {
         }
 
         groupWrapperDiv.append(groupHeader);
+
+        const tableContainer = document.createElement('div');
+        tableContainer.classList.add('pl-3', 'table-container');
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-sm', 'table-borderless', 'mb-0');
+        const tbody = document.createElement('tbody');
+
         // now display the names/values from extra_fields
         for (const element of groupedArr[group.id].sort((a: ExtraFieldProperties, b: ExtraFieldProperties) => a.position - b.position)) {
-          groupWrapperDiv.append(element.element);
+          tbody.append(element.element);
         }
+        table.append(tbody);
+        tableContainer.append(table);
+
+        groupWrapperDiv.append(tableContainer);
         groupWrapperDiv.append(document.createElement('hr'));
         this.metadataDiv.append(groupWrapperDiv);
       });
@@ -609,10 +619,10 @@ export class Metadata {
       this.editor.refresh(json as ValidMetadata);
       // clean groups field if they're removed via json editor
       if (!Object.prototype.hasOwnProperty.call(json, 'extra_fields')) {
+        this.metadataDiv.replaceChildren();
         reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
         return;
       }
-
       const [groups, groupedArr] = this.getGroups('edit', json as ValidMetadata);
       // the full content of extra fields
       const wrapperDiv = document.createElement('div');
@@ -766,7 +776,7 @@ export class Metadata {
         }
       });
 
-      this.metadataDiv.append(wrapperDiv);
+      this.metadataDiv.replaceChildren(wrapperDiv);
       reloadElements(['newFieldGroupSelect', 'fieldsGroup']);
     }).then(() => {
       makeSortableGreatAgain();

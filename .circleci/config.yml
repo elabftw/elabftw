@@ -31,25 +31,25 @@ commands:
           command: |
             docker exec elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
 
-  build_elabtmp:
+  build_image:
     steps:
       - run:
-          name: Build elabtmp image
+          name: Build image
           command: |
             docker build -t elabftw/elabimg:ci --build-arg CI=1 -f containers/elabimg/Dockerfile .
-            docker build -t elabtmp -f containers/elabtmp/Dockerfile .
-            docker build -t elabtmp -f containers/circleci/Dockerfile .
+            docker build -t elabftw/elabtmp -f containers/elabtmp/Dockerfile .
+            docker build -t elabftw/circleci -f containers/circleci/Dockerfile .
 
-  load_elabtmp:
+  load_image:
     steps:
       - run:
-          name: Load elabtmp image
-          command: docker image load -i /tmp/elabtmp.tar
+          name: Load image
+          command: docker image load -i /tmp/elabftw-circleci.tar
 
-  start_elabtmp:
+  start_container:
     steps:
       - run:
-          name: Start elabtmp container
+          name: Start container
           command: docker compose -f containers/circleci/docker-compose.yml up -d --no-build
 
   start_mysql:
@@ -85,14 +85,14 @@ jobs:
       - setup_remote_docker:
           version: docker27
           docker_layer_caching: true
-      - build_elabtmp
+      - build_image
       - run:
-          name: Export elabtmp image
-          command: docker image save -o /tmp/elabtmp.tar elabtmp
+          name: Export image
+          command: docker image save -o /tmp/elabftw-circleci.tar elabftw/circleci
       - persist_to_workspace:
           root: /tmp
           paths:
-            - elabtmp.tar
+            - elabftw-circleci.tar
 
   code_linters:
     executor: elab-executor
@@ -105,8 +105,8 @@ jobs:
           version: docker27
       - attach_workspace:
           at: /tmp
-      - load_elabtmp
-      - start_elabtmp
+      - load_image
+      - start_container
       - run:
           name: Run SCSS linter
           command: |
@@ -154,8 +154,8 @@ jobs:
           version: docker27
       - attach_workspace:
           at: /tmp
-      - load_elabtmp
-      - start_elabtmp
+      - load_image
+      - start_container
       - start_mysql
       - populate_db
       - run:
@@ -194,8 +194,8 @@ jobs:
           version: docker27
       - attach_workspace:
           at: /tmp
-      - load_elabtmp
-      - start_elabtmp
+      - load_image
+      - start_container
       - start_mysql
       - start_cypress
       - copy_cypress_tests

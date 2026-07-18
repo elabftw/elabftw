@@ -3,7 +3,7 @@ networks:
     name: elabftw-net
 services:
   web:
-    image: elabtmp
+    image: elabftw/circleci
     # circleci runs as id 1001 and gid 1002
     user: 1001:1002
     build:

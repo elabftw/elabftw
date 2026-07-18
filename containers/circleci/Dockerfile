@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for CircleCI
-FROM elabtmp
+FROM elabftw/elabtmp
 
 # add tests related folders and files to the image
 COPY ./tests /elabftw/tests

@@ -31,6 +31,11 @@ abstract class AbstractStorage implements StorageInterface
         return new Filesystem($this->getAdapter());
     }
 
+    public static function getFolder(): string
+    {
+        return static::FOLDER;
+    }
+
     #[Override]
     public function getAbsoluteUri(string $path): string
     {

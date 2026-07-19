@@ -368,10 +368,8 @@ services:
         #- /path/to/cert/folder:/mysql-cert
         #
         # Exports: bind mount this folder so exported files are saved outside
-        # of the container. Useful if you have several containers or expect
-        # many users to export data and don't want your containers to grow too
-        # much or be stateful.
-        #- /path/to/big_partition:/var/lib/elabftw/exports
+        # of the container.
+        - /var/elabftw/exports:/var/lib/elabftw/exports
 
     # This part is just an example for having a custom DNS entry in /etc/hosts of the container
     # Use it if DNS resolution cannot work for some reason
@@ -437,7 +435,7 @@ services:
 
   chem-plugin:
     # note: use elabftw version here instead of latest tag
-    # e.g. image: elabftw/chem-plugin:5.6.2
+    # e.g. image: elabftw/chem-plugin:6.0.0
     image: elabftw/chem-plugin:latest
     container_name: chem-plugin
     restart: always

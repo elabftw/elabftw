@@ -16,7 +16,7 @@ use Aws\Credentials\Credentials;
 use Elabftw\Elabftw\Env;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Config;
-use Elabftw\Storage\ElabCache;
+use Elabftw\Storage\Cache\ElabCache;
 use Elabftw\Storage\Exports;
 use Elabftw\Storage\Fixtures;
 use Elabftw\Storage\Local;

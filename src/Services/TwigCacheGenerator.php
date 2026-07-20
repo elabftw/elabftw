@@ -16,11 +16,13 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\StorageAttributes;
 use RuntimeException;
+use Symfony\Component\Console\Output\OutputInterface;
 
 use function dirname;
 use function is_dir;
 use function mkdir;
 use function sprintf;
+use function count;
 
 /**
  * Generate Twig cache
@@ -29,13 +31,13 @@ final class TwigCacheGenerator
 {
     use TwigTrait;
 
-    public function __construct(private readonly string $twigCacheDir) {}
+    public function __construct(private readonly string $twigCacheDir, private readonly OutputInterface $output) {}
 
     /**
      * Generate a twig cache file for all the templates in the template dir
      * @phan-suppress PhanAccessMethodInternal
      */
-    public function generate(): void
+    public function warm(): bool
     {
         if (
             !is_dir($this->twigCacheDir)
@@ -48,16 +50,28 @@ final class TwigCacheGenerator
             ));
         }
 
+        $tplPath = dirname(__DIR__, 2) . '/src/templates';
+        $tplFs = FsTools::getFs($tplPath);
+
+        $this->output->writeln(array(
+            sprintf('Generating Twig cache files in: %s', $this->twigCacheDir),
+            sprintf('Loading Twig templates from: %s', $tplPath),
+        ));
+
         $TwigEnvironment = $this->getTwig(false);
-        $tplFs = FsTools::getFs(dirname(__DIR__, 2) . '/src/templates');
         // iterate over all the templates
         $templates = $tplFs
             ->listContents('.')
-            ->filter(fn(StorageAttributes $attributes): bool => $attributes->isFile());
+            ->filter(fn(StorageAttributes $attributes): bool => $attributes->isFile())
+            ->toArray();
 
+        $this->output->writeln(sprintf('Found %d templates to process.', count($templates)));
         foreach ($templates as $template) {
+            $this->output->writeln(sprintf('Processing: %s', $template->path()));
             // force compilation of the template into cache php file
             $TwigEnvironment->load($template->path());
         }
+        $this->output->writeln('Success. All the templates are now cached by Twig.');
+        return true;
     }
 }

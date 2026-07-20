@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Storage;
+namespace Elabftw\Storage\Cache;
 
 /**
  * For local cache folder, used by many processes that need to write files at some point

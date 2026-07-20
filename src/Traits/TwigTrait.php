@@ -13,9 +13,9 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\BuildInfo;
+use Elabftw\Storage\Cache\TwigCache;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
-use Elabftw\Storage\TwigCache;
 use Twig\Extension\DebugExtension;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\Loader\FilesystemLoader;

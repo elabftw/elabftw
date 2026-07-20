@@ -15,7 +15,7 @@ namespace Elabftw\Make;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\MakeThumbnailInterface;
-use Elabftw\Storage\NginxCache;
+use Elabftw\Storage\Cache\NginxCache;
 use Imagick;
 use League\Flysystem\Filesystem;
 use Override;

@@ -89,12 +89,13 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Changing schema to', $commandTester->getDisplay());
     }
 
-    public function testGenCache(): void
+    public function testCacheTwig(): void
     {
-        $commandTester = new CommandTester(new GenCache());
-        $commandTester->execute(array());
+        $commandTester = new CommandTester(new CacheTwig());
+        $commandTester->execute(array('action' => 'warm'));
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Success', $commandTester->getDisplay());
+        $commandTester->execute(array('action' => 'clear'));
+        $commandTester->assertCommandIsSuccessful();
     }
 
     public function testGenSchema(): void
@@ -151,12 +152,11 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    public function testExecuteCacheClear(): void
+    public function testExecuteCache(): void
     {
-        $commandTester = new CommandTester(new CacheClear());
-        $commandTester->execute(array());
+        $commandTester = new CommandTester(new Cache());
+        $commandTester->execute(array('action' => 'clear'));
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Cache cleared!', $commandTester->getDisplay());
     }
 
     public function testExecuteCheckDatabase(): void

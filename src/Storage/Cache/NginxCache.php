@@ -10,12 +10,12 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Storage;
+namespace Elabftw\Storage\Cache;
 
 /**
  * For nginx temporary files, should be bind-mounted to host, not in tmpfs
  */
-class NginxCache extends AbstractStorage
+class NginxCache extends AbstractCache
 {
     protected const string FOLDER = '/var/cache/nginx';
 }

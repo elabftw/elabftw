@@ -11,8 +11,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Storage\TwigCache;
+use Elabftw\Storage\Cache\TwigCache;
 use RuntimeException;
+use Symfony\Component\Console\Output\NullOutput;
 
 use function sys_get_temp_dir;
 use function touch;
@@ -23,8 +24,8 @@ class TwigCacheGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testGenerate(): void
     {
         $dir = TwigCache::getFolder();
-        $CacheGenerator = new TwigCacheGenerator($dir);
-        $CacheGenerator->generate();
+        $CacheGenerator = new TwigCacheGenerator($dir, new NullOutput());
+        $CacheGenerator->warm();
         $this->assertDirectoryExists($dir);
     }
 
@@ -37,7 +38,7 @@ class TwigCacheGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Unable to create Twig cache directory: $path");
 
         try {
-            (new TwigCacheGenerator($path))->generate();
+            (new TwigCacheGenerator($path, new NullOutput()))->warm();
         } finally {
             unlink($path);
         }

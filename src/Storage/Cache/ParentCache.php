@@ -10,16 +10,19 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Storage;
+namespace Elabftw\Storage\Cache;
+
+use Override;
 
 /**
  * The cache folder parent of all caches
  */
-class ParentCache extends AbstractStorage
+class ParentCache extends AbstractCache
 {
     protected const string FOLDER = '/run/elabftw/cache';
 
-    public function destroy(): bool
+    #[Override]
+    public function clear(): bool
     {
         $fs = $this->getFs();
         // skip deleting advancedSearchQuery because it's problematic with the generated grammar class in there

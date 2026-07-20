@@ -1,13 +1,16 @@
 apidoc
-cache
 CHANGELOG.md
 CITATION.cff
 codemeta.json
 containers/elabimg/docker-compose-EXAMPLE.yml
 containers/chem-plugin/fingerprinter/.venv
 containers/chem-plugin/fingerprinter/__pycache__
+containers/cypress
+containers/elabctl
+containers/elabtmp
+containers/mysqltmp
+containers/README.md
 CONTRIBUTING.md
-exports
 FUNDING.yml
 GOVERNANCE.md
 ideas
@@ -16,8 +19,6 @@ paper.bib
 paper.md
 README.md
 SECURITY.md
-sonar-project.properties
 todo
 TRADEMARK.md
-uploads
 vendor

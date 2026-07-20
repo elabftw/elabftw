@@ -17,7 +17,11 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
+
+use function implode;
+use function sprintf;
 
 /**
  * Handle the nginx cache folder
@@ -30,18 +34,23 @@ final class CacheNginx extends Cache
     {
         $this->setDescription('Manage Nginx cache directory')
             ->setHelp('Nginx cache dir cli tool')
-            ->addArgument('action', InputArgument::REQUIRED, 'Action to perform: clear or warm', null, array('clear', 'warm'));
+            ->addArgument('action', InputArgument::REQUIRED, 'Action to perform: clear or warm', null, $this->actions);
     }
 
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($input->getArgument('action') === 'warm') {
-            new NginxCache()->warm();
+        switch ($input->getArgument('action')) {
+            case 'warm':
+                new NginxCache()->warm();
+                break;
+            case 'clear':
+                new NginxCache()->clear();
+                break;
+            default:
+                $output->writeln(sprintf('<error>Error: Invalid action argument. Available actions: %s</error>', implode(', ', $this->actions)));
+                return Command::INVALID;
         }
-        if ($input->getArgument('action') === 'clear') {
-            new NginxCache()->clear();
-        }
-        return 0;
+        return Command::SUCCESS;
     }
 }

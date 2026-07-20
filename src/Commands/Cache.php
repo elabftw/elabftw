@@ -21,31 +21,39 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 use Symfony\Component\Console\Input\InputArgument;
 
+use function implode;
+use function sprintf;
+
 /**
  * Handle the cached Twig files
  */
-#[AsCommand(name: 'cache')]
+#[AsCommand(name: 'cache:all')]
 class Cache extends Command
 {
+    protected array $actions = array('clear', 'warm');
+
     #[Override]
     protected function configure(): void
     {
-        $this->setDescription('Manage cache folders')
-            ->setHelp('')
-            ->addArgument('action', InputArgument::REQUIRED, 'Action to perform: clear or warm', null, array('clear', 'warm'));
+        $this->setDescription('Manage all cache folders')
+            ->setHelp('This command will act upon all cache folders of the application.')
+            ->addArgument('action', InputArgument::REQUIRED, 'Action to perform: clear or warm', null, $this->actions);
     }
 
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($input->getArgument('action') === 'warm') {
-            $output->writeln('<error>Error: No warm action for this cache folder.</error>');
-            return Command::INVALID;
+        switch ($input->getArgument('action')) {
+            case 'warm':
+                $output->writeln('<error>Error: No warm action available.</error>');
+                return Command::INVALID;
+            case 'clear':
+                new NginxCache()->clear();
+                new ParentCache()->clear();
+                return Command::SUCCESS;
+            default:
+                $output->writeln(sprintf('<error>Error: Invalid action argument. Available actions: %s</error>', implode(', ', $this->actions)));
+                return Command::INVALID;
         }
-        if ($input->getArgument('action') === 'clear') {
-            new NginxCache()->clear();
-            new ParentCache()->clear();
-        }
-        return Command::SUCCESS;
     }
 }

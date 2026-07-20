@@ -15,6 +15,7 @@ namespace Elabftw\Traits;
 use Elabftw\Elabftw\BuildInfo;
 use jblond\TwigTrans\Translation;
 use Twig\Environment;
+use Elabftw\Storage\TwigCache;
 use Twig\Extension\DebugExtension;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\Loader\FilesystemLoader;
@@ -28,7 +29,10 @@ use function dirname;
  */
 trait TwigTrait
 {
-    protected const string TWIG_CACHE_DIR = '/run/elabftw/cache/twig';
+    protected function getCacheDir(): string
+    {
+        return TwigCache::getFolder();
+    }
 
     /**
      * Prepare the Twig object
@@ -40,7 +44,7 @@ trait TwigTrait
 
         $options = array(
             // use local cache
-            'cache' => self::TWIG_CACHE_DIR,
+            'cache' => $this->getCacheDir(),
             // debug mode means the cache is not used (useful in dev of course)
             'debug' => $debug,
         );

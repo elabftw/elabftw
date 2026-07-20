@@ -12,7 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Services\CacheGenerator;
+use Elabftw\Services\TwigCacheGenerator;
+use Elabftw\Storage\TwigCache;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,7 +23,7 @@ use Override;
 /**
  * Generate the cached Twig files
  */
-#[AsCommand(name: 'dev:gencache')]
+#[AsCommand(name: 'cache:twig')]
 final class GenCache extends Command
 {
     #[Override]
@@ -35,11 +36,11 @@ final class GenCache extends Command
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $dir = TwigCache::getFolder();
         $output->writeln(array(
-            'Generating Twig cache files',
-            '===========================',
+            sprintf('Generating Twig cache files in %s', $dir),
         ));
-        $Generator = new CacheGenerator();
+        $Generator = new TwigCacheGenerator($dir);
         $Generator->generate();
         $output->writeln(array(
             'Success. All the templates are now cached by Twig.',

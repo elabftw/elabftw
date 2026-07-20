@@ -25,9 +25,11 @@ use function sprintf;
 /**
  * Generate Twig cache
  */
-final class CacheGenerator
+final class TwigCacheGenerator
 {
     use TwigTrait;
+
+    public function __construct(private readonly string $twigCacheDir) {}
 
     /**
      * Generate a twig cache file for all the templates in the template dir
@@ -36,13 +38,13 @@ final class CacheGenerator
     public function generate(): void
     {
         if (
-            !is_dir(self::TWIG_CACHE_DIR)
-            && !mkdir(self::TWIG_CACHE_DIR, 0o770, true)
-            && !is_dir(self::TWIG_CACHE_DIR)
+            !is_dir($this->twigCacheDir)
+            && !mkdir($this->twigCacheDir, 0o770, true)
+            && !is_dir($this->twigCacheDir)
         ) {
             throw new RuntimeException(sprintf(
                 'Unable to create Twig cache directory: %s',
-                self::TWIG_CACHE_DIR,
+                $this->twigCacheDir,
             ));
         }
 

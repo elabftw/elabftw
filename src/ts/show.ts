@@ -176,7 +176,12 @@ function getPreferredSort(user: Record<string, unknown>): string {
   return typeof sort === 'string' && sort.length > 0 ? sort : 'desc';
 }
 
-const mountEntityListSv = (target: HTMLElement, order: string, sort: string): void => {
+function getPreferredLimit(user: Record<string, unknown>): number {
+  const limit = Number(user['limit_nb']);
+  return Number.isFinite(limit) ? limit : 15;
+}
+
+const mountEntityListSv = (target: HTMLElement, order: string, sort: string, limit: number): void => {
   if (entityListSvComponent) {
     return;
   }
@@ -185,7 +190,7 @@ const mountEntityListSv = (target: HTMLElement, order: string, sort: string): vo
     target,
     props: {
       entityType: entity.type,
-      limit: 15,
+      limit,
       order: order,
       sort: sort,
       searchQuery,
@@ -214,6 +219,7 @@ async function displayEntities(
   mode: string,
   order: string,
   sort: string,
+  limit: number,
   related: number | null = getCurrentUrlNumberParam('related'),
   relatedOrigin: string = getCurrentUrlParam('related_origin'),
 ) {
@@ -225,7 +231,7 @@ async function displayEntities(
     return;
   }
   unmountEntitiesTable();
-  mountEntityListSv(rootEl, order, sort);
+  mountEntityListSv(rootEl, order, sort, limit);
 }
 
 const searchBar = document.getElementById('searchBar');
@@ -340,7 +346,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // can't have await at top level, so wrap it
   void (async (): Promise<void> => {
     const me = await getMe();
-    displayEntities(String(me['display_mode'] ?? 'it'), getPreferredOrder(me), getPreferredSort(me));
+    await displayEntities(
+      String(me['display_mode'] ?? 'it'),
+      getPreferredOrder(me),
+      getPreferredSort(me),
+      getPreferredLimit(me),
+    );
   })();
 
   preventReactiveSearchFormSubmit();
@@ -847,7 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       ApiC.patch(`${Model.User}/me`, { notifOnSaved: 0, display_mode: target}).then(resp => resp.json()).then(json => {
         document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
-        displayEntities(target, getPreferredOrder(json), getPreferredSort(json));
+        displayEntities(target, getPreferredOrder(json), getPreferredSort(json), getPreferredLimit(json));
       });
 
     // a tag has been clicked/selected, add it in url and load the page

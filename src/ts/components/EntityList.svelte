@@ -285,7 +285,7 @@
   });
 
   function getEntityQueryContext(): EntityQueryContext {
-    return {
+    return <EntityQueryContext>{
       currentType: entityType,
       currentLimit: limit,
       currentQ: debouncedSearchQuery,

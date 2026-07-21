@@ -555,12 +555,7 @@ abstract class AbstractEntity extends AbstractRest
     #[Override]
     public function getQueryParams(?InputBag $query = null): DisplayParams
     {
-        return new DisplayParams(
-            requester: $this->Users,
-            entityType: $this->entityType,
-            query: $query,
-            limit: ($this->Users->userData['limit_nb'] ?? 15),
-        );
+        return new DisplayParams($this->Users, $this->entityType, $query);
     }
 
     #[Override]

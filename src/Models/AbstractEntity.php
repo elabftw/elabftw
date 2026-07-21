@@ -559,7 +559,6 @@ abstract class AbstractEntity extends AbstractRest
             requester: $this->Users,
             entityType: $this->entityType,
             query: $query,
-            limit: ($this->Users->userData['limit_nb'] ?? 15),
         );
     }
 

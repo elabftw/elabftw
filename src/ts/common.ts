@@ -87,6 +87,7 @@ const navbar = document.getElementById('main-navbar');
 
 if (navbar) {
   const navbarHeight = `${navbar.offsetHeight}px`;
+  root.style.setProperty('--navbar-height', navbarHeight);
   let lastScroll = Math.max(0, window.scrollY);
   let ticking = false;
   let isNavbarHidden = false;

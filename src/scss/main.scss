@@ -101,6 +101,11 @@ $text-muted: var(--medium);
   src: url('fonts/lato-black-italic.woff2') format('woff2');
 }
 
+:root {
+  --navbar-height: 0;
+  --toolbar-height: 0;
+}
+
 body {
   background: var(--mainbackground);
   color: var(--mediumstrong);
@@ -1953,13 +1958,10 @@ input:user-invalid {
   width: 128px;
 }
 
-:root {
-  --navbar-height: 0;
-}
-
 div > .sticky-navbar {
   position: sticky;
   top: 0;
+  transition: transform 0.2s ease;
   width: 100%;
   z-index: 100;
 }
@@ -1968,6 +1970,11 @@ div > .sticky-navbar {
   background: var(--mainbackground);
   position: sticky;
   top: var(--navbar-height);
+  transition: top 0.2s ease;
   width: 100%;
   z-index: 50;
+}
+
+.sticky-navbar.hidden {
+  transform: translateY(-100%);
 }

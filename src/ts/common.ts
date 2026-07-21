@@ -80,8 +80,40 @@ interface Status extends SelectOptions {
   is_current_team: number;
 }
 
-// Use the sticky navbar height to offset the toolbar below it.
-document.documentElement.style.setProperty('--navbar-height', `${document.querySelector<HTMLElement>('div > .navbar')?.offsetHeight ?? 0}px`);
+
+// code to hide navbar on scroll down, and show it on scroll up.
+const root = document.documentElement;
+const navbar = document.getElementById('main-navbar');
+
+if (navbar) {
+  const navbarHeight = `${navbar.offsetHeight}px`;
+  root.style.setProperty('--navbar-height', navbarHeight);
+  let lastScroll = Math.max(0, window.scrollY);
+  let ticking = false;
+  let isNavbarHidden = false;
+
+  window.addEventListener('scroll', () => {
+    if (ticking) {
+      return;
+    }
+
+    ticking = true;
+
+    window.requestAnimationFrame(() => {
+      const currentScroll = Math.max(0, window.scrollY);
+      const shouldHide = currentScroll > 0 && currentScroll > lastScroll;
+
+      if (shouldHide !== isNavbarHidden) {
+        navbar.classList.toggle('hidden', shouldHide);
+        root.style.setProperty('--navbar-height', shouldHide ? '0px' : navbarHeight);
+        isNavbarHidden = shouldHide;
+      }
+
+      lastScroll = currentScroll;
+      ticking = false;
+    });
+  }, { passive: true });
+}
 
 const container = document.getElementById('container')!;
 

@@ -85,10 +85,9 @@ const navbar = document.querySelector<HTMLElement>('.sticky-navbar');
 
 if (navbar) {
   const navbarHeight = `${navbar.offsetHeight}px`;
-  let lastScroll = window.scrollY;
+  let lastScroll = Math.max(0, window.scrollY);
   let ticking = false;
-
-  root.style.setProperty('--navbar-height', navbarHeight);
+  let isNavbarHidden = false;
 
   window.addEventListener('scroll', () => {
     if (ticking) {
@@ -98,18 +97,20 @@ if (navbar) {
     ticking = true;
 
     window.requestAnimationFrame(() => {
-      const currentScroll = window.scrollY;
-      const isHidden = currentScroll > 0 && currentScroll > lastScroll;
-      navbar.classList.toggle('hidden', isHidden);
-      root.style.setProperty('--navbar-height', isHidden ? '0px' : navbarHeight);
+      const currentScroll = Math.max(0, window.scrollY);
+      const shouldHide = currentScroll > 0 && currentScroll > lastScroll;
+
+      if (shouldHide !== isNavbarHidden) {
+        navbar.classList.toggle('hidden', shouldHide);
+        root.style.setProperty('--navbar-height', shouldHide ? '0px' : navbarHeight);
+        isNavbarHidden = shouldHide;
+      }
+
       lastScroll = currentScroll;
       ticking = false;
     });
   }, { passive: true });
 }
-
-// Use the sticky navbar height to offset the toolbar below it.
-document.documentElement.style.setProperty('--navbar-height', `${document.querySelector<HTMLElement>('div > .navbar')?.offsetHeight ?? 0}px`);
 
 const container = document.getElementById('container')!;
 

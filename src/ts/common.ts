@@ -80,8 +80,10 @@ interface Status extends SelectOptions {
   is_current_team: number;
 }
 
+
+// code to hide navbar on scroll down, and show it on scroll up.
 const root = document.documentElement;
-const navbar = document.querySelector<HTMLElement>('.sticky-navbar');
+const navbar = document.getElementById('main-navbar');
 
 if (navbar) {
   const navbarHeight = `${navbar.offsetHeight}px`;

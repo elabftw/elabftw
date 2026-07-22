@@ -15,7 +15,7 @@ It is a good idea to start by creating an Experiment Template for Synthesis expe
 
 ### Add a category
 
-Go to "Experiments categories" page from the menu:
+Go to "Experiment categories" page from the menu:
 
 <figure>
   <img src="/img/tuto-syn-exp-cat-menu.webp" alt="Experiment categories menu" />

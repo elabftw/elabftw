@@ -152,6 +152,92 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2.0, $this->readContainerQty('containers2items', $rowB));
     }
 
+    public function testCreateLogsToChangelog(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for create changelog test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(5.0, 'mL');
+
+        $entry = $this->latestChangelogEntry($Item, 'container_created');
+        $this->assertNotNull($entry);
+        $this->assertStringContainsString('Added container with 5.00 mL', $entry['content']);
+    }
+
+    public function testQtyChangeLogsToChangelog(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for qty changelog test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(10.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->patch(Action::Update, array('qty_stored' => 3.0));
+
+        $entry = $this->latestChangelogEntry($Item, 'container_qty_changed');
+        $this->assertNotNull($entry);
+        $this->assertStringContainsString('from "10.00" to "3.00"', $entry['content']);
+    }
+
+    public function testUnitChangeLogsToChangelog(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for unit changelog test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(10.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->patch(Action::Update, array('qty_unit' => 'g'));
+
+        $entry = $this->latestChangelogEntry($Item, 'container_unit_changed');
+        $this->assertNotNull($entry);
+        $this->assertStringContainsString('from "mL" to "g"', $entry['content']);
+    }
+
+    public function testDeleteLogsToChangelog(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for delete changelog test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->destroy();
+
+        $entry = $this->latestChangelogEntry($Item, 'container_deleted');
+        $this->assertNotNull($entry);
+        $this->assertStringContainsString('Removed container', $entry['content']);
+    }
+
+    public function testNoOpQtyDoesNotLog(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for no-op qty test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(10.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        // patching to identical values must not create qty/unit changelog entries
+        $Links->patch(Action::Update, array('qty_stored' => 10.0, 'qty_unit' => 'mL'));
+
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_qty_changed'));
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_unit_changed'));
+    }
+
+    private function latestChangelogEntry(Items $entity, string $target): ?array
+    {
+        foreach (new Changelog($entity)->readAll() as $row) {
+            if ($row['target'] === $target) {
+                return $row;
+            }
+        }
+        return null;
+    }
+
     private function latestContainerRowId(string $table, int $itemId): int
     {
         $Db = \Elabftw\Elabftw\Db::getConnection();

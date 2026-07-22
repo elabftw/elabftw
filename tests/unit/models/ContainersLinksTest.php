@@ -212,6 +212,15 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Removed container', $entry['content']);
     }
 
+    public function testDeleteMissingRowIsTolerated(): void
+    {
+        $Item = $this->getFreshItem();
+        // no container row for this id: destroy must not throw and must not log
+        $Links = new Containers2ItemsLinks($Item, PHP_INT_MAX);
+        $this->assertTrue($Links->destroy());
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
+    }
+
     public function testNoOpQtyDoesNotLog(): void
     {
         $Item = $this->getFreshItem();

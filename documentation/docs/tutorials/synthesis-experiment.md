@@ -31,7 +31,7 @@ Click the "Create" button and add a category: "Synthesis".
 
 ### Add a template
 
-Next, go to "Experiments templates" page and create a new Experiment Template.
+Next, go to "Experiment templates" page and create a new Experiment Template.
 
 <figure>
   <img src="/img/tuto-syn-exp-tpl-menu.webp" alt="Experiment template menu" />

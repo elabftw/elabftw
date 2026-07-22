@@ -5299,7 +5299,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # EXPERIMENTS CATEGORIES
+  # EXPERIMENT CATEGORIES
   /teams/{id}/experiments_categories:
     parameters:
       - name: id
@@ -5310,11 +5310,11 @@ paths:
           type: integer
     get:
       tags: ['Experiment categories']
-      summary: Read experiments categories of a team.
+      summary: Read experiment categories of a team.
       operationId: read-team-experiments-categories
       responses:
         '200':
-          description: A list of experiments categories for the team.
+          description: A list of experiment categories for the team.
           content:
             application/json:
               schema:
@@ -5543,7 +5543,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # EXPERIMENTS STATUS
+  # EXPERIMENT STATUS
   /teams/{id}/experiments_status:
     parameters:
       - name: id
@@ -5554,7 +5554,7 @@ paths:
           type: integer
     get:
       tags: ['Experiment status']
-      summary: Read experiments status of a team.
+      summary: Read experiment status of a team.
       operationId: read-team-experiments-status
       responses:
         '200':
@@ -5572,7 +5572,7 @@ paths:
     post:
       tags: ['Experiment status']
       operationId: post-team-one-expstatus
-      summary: Create a new experiments status.
+      summary: Create a new experiment status.
       requestBody:
         description: Parameters for creating a status.
         content:
@@ -5589,10 +5589,10 @@ paths:
                     Hex color without leading \#.
       responses:
         '201':
-          description: New experiments status created.
+          description: New experiment status created.
           headers:
             location:
-              description: An URL to the experiments status that was created.
+              description: An URL to the experiment status that was created.
               schema:
                 type: string
         '400':
@@ -5676,11 +5676,11 @@ paths:
           type: integer
     get:
       tags: ['Resource status']
-      summary: Read resources status of a team.
+      summary: Read resource status of a team.
       operationId: read-team-items-status
       responses:
         '200':
-          description: A list of resources status for the team.
+          description: A list of resource status for the team.
           content:
             application/json:
               schema:
@@ -5694,7 +5694,7 @@ paths:
       operationId: post-team-one-resstat
       summary: Create a new status for resources.
       requestBody:
-        description: Parameters for creating a resources status.
+        description: Parameters for creating a resource status.
         content:
           application/json:
             schema:
@@ -5709,10 +5709,10 @@ paths:
                     Hex color without leading \#.
       responses:
         '201':
-          description: New resources status created.
+          description: New resource status created.
           headers:
             location:
-              description: An URL to the resources status that was created.
+              description: An URL to the resource status that was created.
               schema:
                 type: string
         '400':

@@ -154,23 +154,27 @@ abstract class AbstractContainersLinks extends AbstractLinks
         if (isset($params['storage_id'])) {
             $this->moveToStorage((int) $params['storage_id']);
         }
-        // resolved lazily below (post-move, so it reflects the final location) only when we log
-        $storagePath = null;
-        if (array_key_exists('qty_stored', $params) && $params['qty_stored'] !== null && $params['qty_stored'] !== '') {
+        $qtyGiven = array_key_exists('qty_stored', $params) && $params['qty_stored'] !== null && $params['qty_stored'] !== '';
+        $unitGiven = array_key_exists('qty_unit', $params) && $params['qty_unit'] !== null && $params['qty_unit'] !== '';
+        if ($qtyGiven) {
             $this->update('qty_stored', $params['qty_stored']);
-            // skip logging a same-value patch
-            if ((float) $params['qty_stored'] !== (float) $before['qty_stored']) {
-                $storagePath ??= $this->getStoragePath((int) $this->readOne()['storage_id']);
+        }
+        if ($unitGiven) {
+            $this->update('qty_unit', $params['qty_unit']);
+        }
+
+        // log only real changes; resolve the (post-move) path once, and only when we log
+        $qtyChanged = $qtyGiven && (float) $params['qty_stored'] !== (float) $before['qty_stored'];
+        $unitChanged = $unitGiven && (string) $params['qty_unit'] !== (string) $before['qty_unit'];
+        if ($qtyChanged || $unitChanged) {
+            $storagePath = $this->getStoragePath((int) $this->readOne()['storage_id']);
+            if ($qtyChanged) {
                 new Changelog($this->Entity)->create(new ContentParams(
                     'container_qty_changed',
                     sprintf('Quantity changed from "%s" to "%s" at "%s"', number_format((float) $before['qty_stored'], 2), number_format((float) $params['qty_stored'], 2), $storagePath),
                 ));
             }
-        }
-        if (array_key_exists('qty_unit', $params) && $params['qty_unit'] !== null && $params['qty_unit'] !== '') {
-            $this->update('qty_unit', $params['qty_unit']);
-            if ((string) $params['qty_unit'] !== (string) $before['qty_unit']) {
-                $storagePath ??= $this->getStoragePath((int) $this->readOne()['storage_id']);
+            if ($unitChanged) {
                 new Changelog($this->Entity)->create(new ContentParams(
                     'container_unit_changed',
                     sprintf('Unit changed from "%s" to "%s" at "%s"', $before['qty_unit'], $params['qty_unit'], $storagePath),
@@ -305,7 +309,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
             new Changelog($this->Entity)->create(new ContentParams(
                 'container_created',
                 // at creation $this->id is the storage_id
-                sprintf('Added container with %s %s at "%s"', number_format($qty, 2), $unit, $this->getStoragePath($this->id)),
+                sprintf('Added container with %s %s at "%s"', number_format((float) $qty, 2), $unit, $this->getStoragePath($this->id)),
             ));
         }
 

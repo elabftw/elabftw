@@ -19,6 +19,7 @@ use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Units;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\Config;
@@ -226,8 +227,14 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $this->Entity->touch();
 
         // read details for the changelog before the row is deleted
-        $current = $this->readOne();
-        $storagePath = $this->getStoragePath((int) $current['storage_id']);
+        $current = null;
+        $storagePath = '';
+        try {
+            $current = $this->readOne();
+            $storagePath = $this->getStoragePath((int) $current['storage_id']);
+        } catch (ResourceNotFoundException) {
+            // already gone: still run the DELETE (idempotent), just skip the changelog
+        }
 
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
@@ -235,7 +242,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $result = $this->Db->execute($req);
 
-        if ($req->rowCount() > 0) {
+        if ($current !== null && $req->rowCount() > 0) {
             new Changelog($this->Entity)->create(new ContentParams(
                 'container_deleted',
                 sprintf('Removed container with %s %s from "%s"', $current['qty_stored'], $current['qty_unit'], $storagePath),

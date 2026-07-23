@@ -1504,7 +1504,7 @@ components:
               description: Set to 1 to prevent further changes to the permissions setting for write access
               default: 0
     entity_template:
-      description: For experiments templates and items types (resources templates)
+      description: For experiment templates and resource templates
       allOf:
         - $ref: '#/components/schemas/entity_template_editable'
         - $ref: '#/components/schemas/entity'
@@ -3956,7 +3956,7 @@ paths:
                 items_types:
                   type: string
                   example: "on"
-                  description: Set to "on" to include resource categories in the export
+                  description: Set to "on" to include resource templates in the export
                 changelog:
                   type: string
                   example: "on"
@@ -4273,7 +4273,7 @@ paths:
           type: integer
     get:
       tags: ['Links to experiments']
-      summary: Read all experiments links of that entity.
+      summary: Read all experiment links of that entity.
       operationId: read-entity-experiments-links
       responses:
         '200':
@@ -4289,7 +4289,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/experiments_links/{subid}:
-    summary: Actions on experiments link of an entity
+    summary: Actions on experiment link of an entity
     parameters:
       - name: entity_type
         in: path

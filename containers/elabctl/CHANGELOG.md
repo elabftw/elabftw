@@ -1,5 +1,9 @@
 # Changelog for elabctl
 
+## Version 5.1.1
+
+* Remove raw dump from mysql container with `mysql-backup` command (#7122)
+
 ## Version 5.0.4
 
 * Fix an issue where `elabctl update` could fail if no _healthcheck_ was configured for MySQL container. Fix #38 via #39.

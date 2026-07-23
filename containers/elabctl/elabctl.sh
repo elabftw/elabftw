@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # https://www.elabftw.net
-# https://github.com/elabftw/elabctl/
+# https://github.com/elabftw/elabftw
 # © 2022 Nicolas CARPi @ Deltablot
 # License: GPLv3
-declare -r ELABCTL_VERSION='5.1.0'
+declare -r ELABCTL_VERSION='5.1.1'
 
 # default backup dir
 declare BACKUP_DIR='/var/backups/elabftw'

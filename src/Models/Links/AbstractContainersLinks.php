@@ -19,6 +19,7 @@ use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Units;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\Config;
@@ -33,6 +34,7 @@ use PDO;
 use function array_key_exists;
 use function intval;
 use function json_encode;
+use function number_format;
 use function sprintf;
 
 /**
@@ -148,14 +150,36 @@ abstract class AbstractContainersLinks extends AbstractLinks
     public function patch(Action $action, array $params): array
     {
         $this->Entity->canOrExplode(AccessType::Write);
+        $before = $this->readOne();
         if (isset($params['storage_id'])) {
             $this->moveToStorage((int) $params['storage_id']);
         }
-        if (array_key_exists('qty_stored', $params) && $params['qty_stored'] !== null && $params['qty_stored'] !== '') {
+        $qtyGiven = array_key_exists('qty_stored', $params) && $params['qty_stored'] !== null && $params['qty_stored'] !== '';
+        $unitGiven = array_key_exists('qty_unit', $params) && $params['qty_unit'] !== null && $params['qty_unit'] !== '';
+        if ($qtyGiven) {
             $this->update('qty_stored', $params['qty_stored']);
         }
-        if (array_key_exists('qty_unit', $params) && $params['qty_unit'] !== null && $params['qty_unit'] !== '') {
+        if ($unitGiven) {
             $this->update('qty_unit', $params['qty_unit']);
+        }
+
+        // log only real changes; resolve the (post-move) path once, and only when we log
+        $qtyChanged = $qtyGiven && (float) $params['qty_stored'] !== (float) $before['qty_stored'];
+        $unitChanged = $unitGiven && (string) $params['qty_unit'] !== (string) $before['qty_unit'];
+        if ($qtyChanged || $unitChanged) {
+            $storagePath = $this->getStoragePath((int) $this->readOne()['storage_id']);
+            if ($qtyChanged) {
+                new Changelog($this->Entity)->create(new ContentParams(
+                    'container_qty_changed',
+                    sprintf('Quantity changed from "%s" to "%s" at "%s"', number_format((float) $before['qty_stored'], 2), number_format((float) $params['qty_stored'], 2), $storagePath),
+                ));
+            }
+            if ($unitChanged) {
+                new Changelog($this->Entity)->create(new ContentParams(
+                    'container_unit_changed',
+                    sprintf('Unit changed from "%s" to "%s" at "%s"', $before['qty_unit'], $params['qty_unit'], $storagePath),
+                ));
+            }
         }
         return $this->readOne();
     }
@@ -206,11 +230,30 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
 
+        // read details for the changelog before the row is deleted
+        $current = null;
+        $storagePath = '';
+        try {
+            $current = $this->readOne();
+            $storagePath = $this->getStoragePath((int) $current['storage_id']);
+        } catch (ResourceNotFoundException) {
+            // already gone: still run the DELETE (idempotent), just skip the changelog
+        }
+
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $result = $this->Db->execute($req);
+
+        if ($current !== null && $req->rowCount() > 0) {
+            new Changelog($this->Entity)->create(new ContentParams(
+                'container_deleted',
+                sprintf('Removed container with %s %s from "%s"', $current['qty_stored'], $current['qty_unit'], $storagePath),
+            ));
+        }
+
+        return $result;
     }
 
     public function destroyAll(): bool
@@ -260,6 +303,15 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $req->bindParam(':qty_unit', $unit);
 
         $this->Db->execute($req);
+
+        // INSERT IGNORE inserts nothing on a FK violation; only log a real insert
+        if ($req->rowCount() > 0) {
+            new Changelog($this->Entity)->create(new ContentParams(
+                'container_created',
+                // at creation $this->id is the storage_id
+                sprintf('Added container with %s %s at "%s"', number_format((float) $qty, 2), $unit, $this->getStoragePath($this->id)),
+            ));
+        }
 
         return $this->id;
     }
@@ -327,10 +379,8 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $Destination->canWriteOrExplode();
         $destinationData = $Destination->readOne();
 
-        // resolve old full_path for the changelog (do not require edit rights here)
-        $Old = new StorageUnits($this->Entity->Users, false);
-        $Old->setId($oldStorageId);
-        $oldPath = $Old->readOne()['full_path'] ?? '';
+        // resolve old full_path for the changelog
+        $oldPath = $this->getStoragePath($oldStorageId);
 
         $this->update('storage_id', $newStorageId);
         $this->Entity->touch();
@@ -339,6 +389,14 @@ abstract class AbstractContainersLinks extends AbstractLinks
             'container_moved',
             sprintf('From "%s" to "%s"', $oldPath, $destinationData['full_path'] ?? ''),
         ));
+    }
+
+    // full_path for changelog messages; read-only, so no edit rights required
+    private function getStoragePath(int $storageId): string
+    {
+        $Storage = new StorageUnits($this->Entity->Users, false);
+        $Storage->setId($storageId);
+        return $Storage->readOne()['full_path'] ?? '';
     }
 
     /**

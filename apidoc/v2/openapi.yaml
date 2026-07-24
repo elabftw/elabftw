@@ -1504,7 +1504,7 @@ components:
               description: Set to 1 to prevent further changes to the permissions setting for write access
               default: 0
     entity_template:
-      description: For experiments templates and items types (resources templates)
+      description: For experiment templates and resource templates
       allOf:
         - $ref: '#/components/schemas/entity_template_editable'
         - $ref: '#/components/schemas/entity'
@@ -3952,11 +3952,11 @@ paths:
                 experiments_templates:
                   type: string
                   example: "on"
-                  description: Set to "on" to include experiments templates in the export
+                  description: Set to "on" to include experiment templates in the export
                 items_types:
                   type: string
                   example: "on"
-                  description: Set to "on" to include resources categories in the export
+                  description: Set to "on" to include resource templates in the export
                 changelog:
                   type: string
                   example: "on"
@@ -4273,7 +4273,7 @@ paths:
           type: integer
     get:
       tags: ['Links to experiments']
-      summary: Read all experiments links of that entity.
+      summary: Read all experiment links of that entity.
       operationId: read-entity-experiments-links
       responses:
         '200':
@@ -4289,7 +4289,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
   /{entity_type}/{id}/experiments_links/{subid}:
-    summary: Actions on experiments link of an entity
+    summary: Actions on experiment link of an entity
     parameters:
       - name: entity_type
         in: path
@@ -5299,7 +5299,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # EXPERIMENTS CATEGORIES
+  # EXPERIMENT CATEGORIES
   /teams/{id}/experiments_categories:
     parameters:
       - name: id
@@ -5309,12 +5309,12 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Experiments categories']
-      summary: Read experiments categories of a team.
+      tags: ['Experiment categories']
+      summary: Read experiment categories of a team.
       operationId: read-team-experiments-categories
       responses:
         '200':
-          description: A list of experiments categories for the team.
+          description: A list of experiment categories for the team.
           content:
             application/json:
               schema:
@@ -5326,7 +5326,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     post:
-      tags: ['Experiments categories']
+      tags: ['Experiment categories']
       operationId: post-team-one-expcat
       summary: Create a new category for experiments.
       requestBody:
@@ -5372,7 +5372,7 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Experiments categories']
+      tags: ['Experiment categories']
       operationId: read-team-one-expcat
       summary: Read a category.
       responses:
@@ -5387,7 +5387,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     patch:
-      tags: ['Experiments categories']
+      tags: ['Experiment categories']
       operationId: patch-expcat
       summary: Modify a category.
       requestBody:
@@ -5410,7 +5410,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      tags: ['Experiments categories']
+      tags: ['Experiment categories']
       summary: Delete a category.
       operationId: delete-expcat
       responses:
@@ -5421,7 +5421,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # RESOURCES CATEGORIES
+  # RESOURCE CATEGORIES
   /teams/{id}/resources_categories:
     parameters:
       - name: id
@@ -5431,12 +5431,12 @@ paths:
         schema:
           type: integer
     get:
-      tags: [ 'Resources categories' ]
-      summary: Read resources categories of a team.
+      tags: [ 'Resource categories' ]
+      summary: Read resource categories of a team.
       operationId: read-team-resources-categories
       responses:
         '200':
-          description: A list of resources categories for the team.
+          description: A list of resource categories for the team.
           content:
             application/json:
               schema:
@@ -5448,7 +5448,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     post:
-      tags: [ 'Resources categories' ]
+      tags: [ 'Resource categories' ]
       operationId: post-team-one-rescat
       summary: Create a new category for resources.
       requestBody:
@@ -5494,7 +5494,7 @@ paths:
         schema:
           type: integer
     get:
-      tags: [ 'Resources categories' ]
+      tags: [ 'Resource categories' ]
       operationId: read-team-one-rescat
       summary: Read a category.
       responses:
@@ -5509,7 +5509,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     patch:
-      tags: [ 'Resources categories' ]
+      tags: [ 'Resource categories' ]
       operationId: patch-rescat
       summary: Modify a category.
       requestBody:
@@ -5532,7 +5532,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      tags: [ 'Resources categories' ]
+      tags: [ 'Resource categories' ]
       summary: Delete a category.
       operationId: delete-rescat
       responses:
@@ -5543,7 +5543,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  # EXPERIMENTS STATUS
+  # EXPERIMENT STATUS
   /teams/{id}/experiments_status:
     parameters:
       - name: id
@@ -5553,8 +5553,8 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Experiments status']
-      summary: Read experiments status of a team.
+      tags: ['Experiment status']
+      summary: Read experiment status of a team.
       operationId: read-team-experiments-status
       responses:
         '200':
@@ -5570,9 +5570,9 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     post:
-      tags: ['Experiments status']
+      tags: ['Experiment status']
       operationId: post-team-one-expstatus
-      summary: Create a new experiments status.
+      summary: Create a new experiment status.
       requestBody:
         description: Parameters for creating a status.
         content:
@@ -5589,10 +5589,10 @@ paths:
                     Hex color without leading \#.
       responses:
         '201':
-          description: New experiments status created.
+          description: New experiment status created.
           headers:
             location:
-              description: An URL to the experiments status that was created.
+              description: An URL to the experiment status that was created.
               schema:
                 type: string
         '400':
@@ -5616,7 +5616,7 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Experiments status']
+      tags: ['Experiment status']
       operationId: read-team-one-expstatus
       summary: Read a status.
       responses:
@@ -5631,7 +5631,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     patch:
-      tags: ['Experiments status']
+      tags: ['Experiment status']
       operationId: patch-expstatus
       summary: Modify a status.
       requestBody:
@@ -5654,7 +5654,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      tags: ['Experiments status']
+      tags: ['Experiment status']
       summary: Delete a status.
       operationId: delete-expstatus
       responses:
@@ -5675,12 +5675,12 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Resources status']
-      summary: Read resources status of a team.
+      tags: ['Resource status']
+      summary: Read resource status of a team.
       operationId: read-team-items-status
       responses:
         '200':
-          description: A list of resources status for the team.
+          description: A list of resource status for the team.
           content:
             application/json:
               schema:
@@ -5690,11 +5690,11 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
     post:
-      tags: ['Resources status']
+      tags: ['Resource status']
       operationId: post-team-one-resstat
       summary: Create a new status for resources.
       requestBody:
-        description: Parameters for creating a resources status.
+        description: Parameters for creating a resource status.
         content:
           application/json:
             schema:
@@ -5709,10 +5709,10 @@ paths:
                     Hex color without leading \#.
       responses:
         '201':
-          description: New resources status created.
+          description: New resource status created.
           headers:
             location:
-              description: An URL to the resources status that was created.
+              description: An URL to the resource status that was created.
               schema:
                 type: string
         '400':
@@ -5736,7 +5736,7 @@ paths:
         schema:
           type: integer
     get:
-      tags: ['Resources status']
+      tags: ['Resource status']
       operationId: read-team-one-resstatus
       summary: Read a status.
       responses:
@@ -5751,7 +5751,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     patch:
-      tags: ['Resources status']
+      tags: ['Resource status']
       operationId: patch-resstatus
       summary: Modify a status.
       requestBody:
@@ -5774,7 +5774,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      tags: ['Resources status']
+      tags: ['Resource status']
       summary: Delete a status.
       operationId: delete-resstatus
       responses:

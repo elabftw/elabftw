@@ -31,7 +31,7 @@ final class ExperimentsStatusController extends AbstractStatusController
     #[Override]
     protected function getPageTitle(): string
     {
-        return _('Experiments status');
+        return _('Experiment status');
     }
 
     #[Override]

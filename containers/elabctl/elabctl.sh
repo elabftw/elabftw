@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # https://www.elabftw.net
-# https://github.com/elabftw/elabctl/
+# https://github.com/elabftw/elabftw
 # © 2022 Nicolas CARPi @ Deltablot
 # License: GPLv3
-declare -r ELABCTL_VERSION='5.1.0'
+declare -r ELABCTL_VERSION='5.1.1'
 
 # default backup dir
 declare BACKUP_DIR='/var/backups/elabftw'
@@ -422,7 +422,7 @@ function mysql-backup
     # dump sql
     docker exec "${ELAB_MYSQL_CONTAINER_NAME}" bash -c 'mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD -r dump.sql --no-tablespaces $MYSQL_DATABASE 2>&1 | grep -v "Warning: Using a password"' || echo ">> Containers must be running to do the backup!"
     # copy it from the container to the host
-    docker cp "${ELAB_MYSQL_CONTAINER_NAME}:dump.sql" "$dumpfile"
+    docker cp "${ELAB_MYSQL_CONTAINER_NAME}:dump.sql" "$dumpfile" && docker exec "${ELAB_MYSQL_CONTAINER_NAME} rm dump.sql"
     # compress it to the max
     gzip -f --best "$dumpfile"
     # delete old dumps

@@ -40,7 +40,13 @@ Note the user id and group id of that newly created user shown by the second com
 
 ## Changes to the configuration file
 
-In your configuration file (by default `/etc/elabftw.yml`, add these line below `image:`:
+In your configuration file (by default `/etc/elabftw.yml`, start by setting the version of the image:
+
+~~~yaml
+image: elabftw/elabimg:6.0.0
+~~~
+
+Next, add these lines below `image:`:
 
 ~~~yaml
 # this could look like: user: 995:981
@@ -160,3 +166,5 @@ chem-plugin:
   networks:
     - elabftw-net
 ~~~
+
+Once all is in place, restart the container with: `elabctl refresh`.

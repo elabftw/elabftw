@@ -43,7 +43,8 @@ Note the user id and group id of that newly created user shown by the second com
 In your configuration file (by default `/etc/elabftw.yml`, add these line below `image:`:
 
 ~~~yaml
-user: elabftw-worker:elabftw-worker
+# this could look like: user: 995:981
+user: <REPLACE WITH ELABFTW-WORKER UID>:<REPLACE WITH ELABFTW-WORKER GID>
 read_only: true
 tmpfs:
   - /run:mode=755,uid=<REPLACE WITH ELABFTW-WORKER UID>,gid=<REPLACE WITH ELABFTW-WORKER GID>,exec,nosuid,nodev

@@ -17,9 +17,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
-use League\Flysystem\Filesystem;
+use Elabftw\Storage\Cache\ElabCache;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -39,7 +38,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         // can't use InMemory adapter here because of ziparchive
-        $this->fs = new Filesystem(new LocalFilesystemAdapter(dirname(__DIR__, 3) . '/cache/elab/'));
+        $this->fs = new ElabCache()->getFs();
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 

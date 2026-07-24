@@ -31,67 +31,52 @@ commands:
           command: |
             docker exec elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
 
-  fix_permissions:
-    description: Fix the permissions after populating database
+  build_image:
     steps:
       - run:
-          name: Fix permissions
+          name: Build image
           command: |
-            docker exec elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-            docker exec elabtmp chown -R nginx:nginx cache
-            docker exec elabtmp chmod -R 777 cache
-            docker exec elabtmp chmod -R 777 tests/_output
-            docker exec elabtmp chown -R nginx:nginx uploads
-            docker exec elabtmp chmod -R 777 uploads
+            docker build -t elabftw/elabimg:ci --build-arg CI=1 -f containers/elabimg/Dockerfile .
+            docker build -t elabftw/elabtmp -f containers/elabtmp/Dockerfile .
+            docker build -t elabftw/circleci -f containers/circleci/Dockerfile .
 
-  build_elabtmp:
+  load_image:
     steps:
       - run:
-          name: Build elabtmp image
-          command: |
-            docker build -t elabftw/elabimg:ci --build-arg BUILD_ALL=0 -f containers/elabimg/Dockerfile .
-            docker build -t elabtmp -f containers/elabtmp/Dockerfile .
-            docker build -t elabtmp -f containers/circleci/Dockerfile .
-            printf "ELABFTW_USER=nginx\nELABFTW_GROUP=nginx\nELABFTW_USERID=101\nELABFTW_GROUPID=101\n" > containers/circleci/elabftw-user.env
+          name: Load image
+          command: docker image load -i /tmp/elabftw-circleci.tar
 
-  build_cypress:
+  start_container:
     steps:
       - run:
-          name: Build elab-cypress image
-          command: |
-            sed -i 's/elab.local:3148/elabtmp/g' cypress.config.ts
-            docker build -t elab-cypress -f containers/cypress/Dockerfile .
-
-  start_elabtmp:
-    steps:
-      - run:
-          name: Start elabtmp container
-          command: docker compose -f containers/circleci/docker-compose.yml up -d
+          name: Start container
+          command: docker compose -f containers/circleci/docker-compose.yml up -d --no-build
 
   start_mysql:
     steps:
       - run:
           name: Start mysql container
-          command: docker compose -f containers/mysqltmp/docker-compose.yml up -d
+          command: docker compose -f containers/mysqltmp/docker-compose.yml up -d --wait --wait-timeout 120
 
   start_cypress:
     steps:
       - run:
           name: Start cypress container
-          command: docker compose -f containers/cypress/docker-compose.yml up -d
+          command: docker compose -f containers/cypress/docker-compose.yml up -d --no-build
 
-  install_js_php_dependencies:
+  copy_cypress_tests:
     steps:
       - run:
-          name: Build JS
+          name: Copy Cypress tests
           command: |
-            docker exec elabtmp yarn install
-            docker exec elabtmp yarn buildall:ci
-      - run:
-          name: Composer install
-          command: docker exec elabtmp composer install
+            docker cp cypress.config.ts elab-cypress:/home/node/cypress.config.ts
+            docker cp tsconfig.json elab-cypress:/home/node/tsconfig.json
+            docker cp tests/cypress/. elab-cypress:/home/node/tests/cypress/
+            docker cp tests/_data/. elab-cypress:/home/node/tests/_data/
+            docker exec -u root elab-cypress chown -R node:node /home/node/tests
+
 jobs:
-  prepare_workspace:
+  build_elabtmp_image:
     executor: elab-executor
     working_directory: ~/elabftw/elabftw
     shell: /bin/bash --login
@@ -99,13 +84,15 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: docker27
+          docker_layer_caching: true
+      - build_image
+      - run:
+          name: Export image
+          command: docker image save -o /tmp/elabftw-circleci.tar elabftw/circleci
       - persist_to_workspace:
-          root: .
+          root: /tmp
           paths:
-            - tests/
-            - cypress/
-            - cypress.config.ts
-            - src/
+            - elabftw-circleci.tar
 
   code_linters:
     executor: elab-executor
@@ -117,10 +104,9 @@ jobs:
       - setup_remote_docker:
           version: docker27
       - attach_workspace:
-          at: .
-      - build_elabtmp
-      - start_elabtmp
-      - install_js_php_dependencies
+          at: /tmp
+      - load_image
+      - start_container
       - run:
           name: Run SCSS linter
           command: |
@@ -167,38 +153,37 @@ jobs:
       - setup_remote_docker:
           version: docker27
       - attach_workspace:
-          at: .
-      - build_elabtmp
-      - start_elabtmp
+          at: /tmp
+      - load_image
+      - start_container
       - start_mysql
-      - install_js_php_dependencies
       - populate_db
-      - fix_permissions
       - run:
-          name: Run unit and apiv2 tests
-          command: docker exec elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-xml --coverage-html
+          name: Run API v2 tests
+          command: docker exec elabtmp php vendor/bin/codecept run apiv2
       - run:
-          name: Extract coverage report
-          command: docker cp elabtmp:/elabftw/tests/_output/coverage.xml .
-      - run:
-          name: Extract coverage HTML report
-          command: docker cp elabtmp:/elabftw/tests/_output/coverage coverage-html
-      - run:
-          name: Generate the php documentation
-          # Note:  --setting=graphs.enabled=true has been removed because the graphs are too large
-          command: docker exec elabtmp ./phpdoc -i ./cache -i ./uploads -d ./src/ -t phpdoc-html
-      - run:
-          name: Extract the php documentation
-          command: docker cp elabtmp:/elabftw/phpdoc-html phpdoc-html
-      - store_artifacts:
-          path: phpdoc-html
-          destination: phpdoc-html
+          name: Run unit tests with coverage
+          command: |
+            docker exec elabtmp php vendor/bin/codecept run unit \
+              --coverage \
+              --coverage-xml=coverage.xml \
+              --coverage-html=coverage
+
+            docker exec elabtmp test -f /elabftw/tests/_output/coverage.xml
+            docker exec elabtmp \
+              tar -C /elabftw/tests/_output -cf - coverage.xml coverage \
+              | tar -xf -
+
+            mv coverage coverage-html
       - store_artifacts:
           path: coverage-html
           destination: coverage-html
       - codecov/upload
 
   cypress_e2e_tests:
+    parameters:
+      browser:
+        type: string
     executor: elab-executor
     parallelism: 4
     working_directory: ~/elabftw/elabftw
@@ -208,42 +193,32 @@ jobs:
       - setup_remote_docker:
           version: docker27
       - attach_workspace:
-          at: .
-      - build_elabtmp
-      - build_cypress
-      - start_elabtmp
+          at: /tmp
+      - load_image
+      - start_container
       - start_mysql
       - start_cypress
-      - install_js_php_dependencies
+      - copy_cypress_tests
       - populate_db
-      - fix_permissions
       - run:
           name: Create folders
           command: mkdir -p cypress/{screenshots,videos}
+
       - run:
-          name: Run Cypress e2e tests on Firefox
+          name: Run Cypress on << parameters.browser >>
           command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "0" ]; then
-              docker exec elab-cypress cypress run --browser firefox
-            fi
-      - run:
-          name: Run Cypress e2e tests on Chrome
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
-              docker exec elab-cypress cypress run --browser chrome
-            fi
-      - run:
-          name: Run Cypress e2e tests on Electron
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "2" ]; then
-              docker exec elab-cypress cypress run --browser electron
-            fi
-      - run:
-          name: Run Cypress e2e tests on Edge
-          command: |
-            if [ "$CIRCLE_NODE_INDEX" -eq "3" ]; then
-              docker exec elab-cypress cypress run --browser edge
-            fi
+            SPECS=$(
+              find tests/cypress/integration -type f \
+                \( -name '*.cy.js' -o -name '*.cy.jsx' -o -name '*.cy.ts' -o -name '*.cy.tsx' \) \
+                | sort \
+                | circleci tests split --split-by=name \
+                | paste -sd, -
+            )
+
+            docker exec elab-cypress cypress run \
+              --browser << parameters.browser >> \
+              --spec "$SPECS" \
+              --config baseUrl=https://elabtmp:8080
       - run:
           name: Extract cypress screenshots and videos in case it is enabled again to debug a faulty run
           command: |
@@ -257,13 +232,20 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - prepare_workspace
+      - build_elabtmp_image
       - code_linters:
           requires:
-            - prepare_workspace
+            - build_elabtmp_image
       - php_unit_tests:
           requires:
-            - prepare_workspace
+            - build_elabtmp_image
       - cypress_e2e_tests:
           requires:
-            - prepare_workspace
+            - build_elabtmp_image
+          matrix:
+            parameters:
+              browser:
+                - firefox
+                - chrome
+                - electron
+                - edge

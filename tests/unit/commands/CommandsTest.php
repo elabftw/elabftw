@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\SchemaVersionChecker;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use Elabftw\Services\MfaHelper;
@@ -20,6 +21,7 @@ use Elabftw\Storage\Memory;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Mailer\MailerInterface;
@@ -89,12 +91,52 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Changing schema to', $commandTester->getDisplay());
     }
 
-    public function testGenCache(): void
+    public function testCache(): void
     {
-        $commandTester = new CommandTester(new GenCache());
-        $commandTester->execute(array());
+        $commandTester = new CommandTester(new Cache());
+        $statusCode = $commandTester->execute(array('action' => 'warm'));
+        self::assertSame(Command::INVALID, $statusCode);
+        self::assertStringContainsString(
+            'Error: No warm action available.',
+            $commandTester->getDisplay(),
+        );
+        $commandTester->execute(array('action' => 'clear'));
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Success', $commandTester->getDisplay());
+        $statusCode = $commandTester->execute(array(
+            'action' => 'invalid',
+        ));
+
+        self::assertSame(Command::INVALID, $statusCode);
+        self::assertStringContainsString(
+            'Error: Invalid action argument. Available actions: clear, warm',
+            $commandTester->getDisplay(),
+        );
+    }
+
+    public function testCacheTwig(): void
+    {
+        $commandTester = new CommandTester(new CacheTwig());
+        $commandTester->execute(array('action' => 'warm'));
+        $commandTester->assertCommandIsSuccessful();
+        $commandTester->execute(array('action' => 'clear'));
+        $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testCacheNginx(): void
+    {
+        $commandTester = new CommandTester(new CacheNginx());
+        $commandTester->execute(array('action' => 'clear'));
+        $commandTester->assertCommandIsSuccessful();
+        $statusCode = $commandTester->execute(array(
+            'action' => 'invalid',
+        ));
+        self::assertSame(Command::INVALID, $statusCode);
+        self::assertStringContainsString(
+            'Error: Invalid action argument. Available actions: clear, warm',
+            $commandTester->getDisplay(),
+        );
+        $this->expectException(ImproperActionException::class);
+        $commandTester->execute(array('action' => 'warm'));
     }
 
     public function testGenSchema(): void
@@ -151,12 +193,11 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    public function testExecuteCacheClear(): void
+    public function testExecuteCache(): void
     {
-        $commandTester = new CommandTester(new CacheClear());
-        $commandTester->execute(array());
+        $commandTester = new CommandTester(new Cache());
+        $commandTester->execute(array('action' => 'clear'));
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Cache cleared!', $commandTester->getDisplay());
     }
 
     public function testExecuteCheckDatabase(): void

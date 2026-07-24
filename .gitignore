@@ -7,7 +7,6 @@ apidoc/*/html
 _srcdoc/
 build
 cache
-c3.php
 config.php*
 *.min.css
 *.css.map
@@ -35,8 +34,6 @@ uploads
 src/Elabftw/BuildInfo.php
 src/ts/langs/*.js
 *.gz
-containers/elabimg/elabftw-user.env
-containers/elabtmp/elabftw-user.env
 /todo
 /ideas
 .yarn

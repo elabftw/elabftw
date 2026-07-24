@@ -1,12 +1,10 @@
 networks:
   default:
     name: elabftw-net
+    external: true
 services:
   cypress:
-    image: elab-cypress
+    image: elabftw/elab-cypress:14.5.4
     extra_hosts:
       - "elab.local:host-gateway"
-    build:
-      context: ../..
-      dockerfile: ./containers/cypress/Dockerfile
     container_name: elab-cypress

@@ -131,7 +131,7 @@ module.exports = (env) => {
           {
             from: path.resolve(
               __dirname,
-              '.yarn/unplugged/indigo-ketcher-npm-*/node_modules/indigo-ketcher/**/*.wasm',
+              '/run/elabftw/yarn/unplugged/indigo-ketcher-npm-*/node_modules/indigo-ketcher/**/*.wasm',
             ),
             to: '[name][ext]',
             noErrorOnMissing: false,
@@ -181,6 +181,7 @@ module.exports = (env) => {
         },
         {
           test: /\.jsx?$/,
+          include: path.resolve(__dirname, 'src'),
           use: ["babel-loader"]
         },
         { // SASS loader

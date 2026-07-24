@@ -17,11 +17,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# if there are no custom env_file, touch one, as this will trigger an error
-if [ ! -f containers/elabtmp/elabftw-user.env ]; then
-    touch containers/elabtmp/elabftw-user.env
-fi
-
 # make sure elabftw/elabimg:ci exists locally (elabtmp depends on it)
 if ! docker image inspect elabftw/elabimg:ci >/dev/null 2>&1; then
     docker build -t elabftw/elabimg:ci --build-arg BUILD_ALL=0 -f containers/elabimg/Dockerfile .
@@ -36,18 +31,10 @@ if [ -z "$(docker ps -q -f name=mysqltmp)" ]; then
     while [ "$(docker inspect -f {{.State.Health.Status}} elabtmp)" != "healthy" ]; do echo -n .; sleep 2; done; echo
 fi
 
-# run yarn and composer install in elabtmp
-docker exec -it elabtmp yarn install
-docker exec -it elabtmp composer install
-
 if [ "${SKIP_TWIGCS:-0}" -ne 1 ]; then
     echo "▶ Running twigcs. Use SKIP_TWIGCS=1 to disable."
     docker exec -it elabtmp yarn twigcs
 fi
-# fix permissions on cache folders
-docker exec -it elabtmp mkdir -p cache/purifier/{HTML,CSS,URI} cache/{elab,mpdf,twig}
-worker_user=$(docker exec -it elabtmp tail -n1 /etc/shadow |awk -F ":" '{print $1}')
-docker exec -it elabtmp chown -R "$worker_user":"$worker_user" cache
 
 # populate the database
 if [ "${SKIP_POPULATE:-0}" -ne 1 ]; then
@@ -75,7 +62,8 @@ if [ "${1:-}" = "unit" ]; then
         docker exec -it elabtmp php vendor/bin/codecept run --verbose --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
     fi
 elif [ "${1:-}" = "api" ]; then
-    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress --coverage --coverage-html --coverage-xml
+        echo "Running apiv2 tests."
+    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress
 # acceptance with cypress
 elif [ "${1:-}" = "cy" ]; then
     if [ -z "$(docker images -q elab-cypress 2>/dev/null)" ]; then
@@ -94,13 +82,10 @@ elif [ "${1:-}" = "cy" ]; then
     # copy the artifacts in cypress output folder
     docker cp elab-cypress:/home/node/tests/cypress/videos/. ./tests/cypress/videos
     docker cp elab-cypress:/home/node/tests/cypress/screenshots/. ./tests/cypress/screenshots
-    # copy codecoverage reports
-    docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.tar ./tests/_output/cypress-coverage.tar
-    mkdir -p ./tests/_output/cypress-coverage-html \
-        && tar -xf ./tests/_output/cypress-coverage.tar -C ./tests/_output/cypress-coverage-html
-    docker cp elabtmp:/elabftw/tests/_output/c3tmp/codecoverage.clover.xml ./tests/_output/cypress-coverage.clover.xml
 else
-    docker exec -it elabtmp php vendor/bin/codecept run --skip cypress --coverage --coverage-html
+    # run unit with coverage and api without coverage
+    docker exec -it elabtmp php vendor/bin/codecept run --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
+    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress
 fi
 
 # all tests succeeded, display a koala

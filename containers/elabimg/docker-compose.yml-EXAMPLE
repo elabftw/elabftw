@@ -1,4 +1,13 @@
-# docker-elabftw configuration file
+# docker-elabftw configuration file for eLabFTW Version 5
+# !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING
+# !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING
+#
+# This file is for eLabFTW Version 5.x
+# For version 6.x see docker-compose.yml-EXAMPLE-VERSION-6
+#
+# !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING
+# !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING !!! WARNING
+#
 # use : "docker compose up -d" to start containers
 # this config file contains all the possible configuration options, shown with default values
 # https://hub.docker.com/r/elabftw/elabimg/

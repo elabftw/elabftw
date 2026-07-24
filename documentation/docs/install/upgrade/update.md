@@ -1,6 +1,6 @@
 ---
-sidebar_position: 7
-title: Upgrade
+sidebar_position: 1
+title: Upgrade your instance
 ---
 
 # How to Upgrade

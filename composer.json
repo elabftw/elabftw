@@ -3,7 +3,7 @@
   "description": "Laboratory notebook for research labs",
   "homepage": "https://www.elabftw.net",
   "require": {
-    "php": ">=8.3.0",
+    "php": ">=8.4.0",
     "ext-ctype": "*",
     "ext-curl": "*",
     "ext-exif": "*",
@@ -65,7 +65,6 @@
     "codeception/module-asserts": "^3.0.0",
     "codeception/module-rest": "^3.2.0",
     "codeception/module-phpbrowser": "^3.0",
-    "codeception/c3": "^2.9",
     "friendsoftwig/twigcs": "^6.2",
     "phpstan/phpstan": "^2.1",
     "vimeo/psalm": "^6.5.1"
@@ -91,8 +90,7 @@
   },
   "config": {
     "allow-plugins": {
-      "pyrech/composer-changelogs": true,
-      "codeception/c3": true
+      "pyrech/composer-changelogs": true
     }
   }
 }

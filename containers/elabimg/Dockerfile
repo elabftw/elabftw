@@ -20,8 +20,7 @@ FROM alpine:3.23 AS nginx-builder
 ENV NGINX_VERSION=1.30.4
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
-# BROKEN HASH: ENV NGX_BROTLI_COMMIT_HASH=63ca02abdcf79c9e788d2eedcc388d2335902e52
-ENV NGX_BROTLI_COMMIT_HASH=6e975bcb015f62e1f303054897783355e2a877dc
+ENV NGX_BROTLI_COMMIT=a71f9312c2deb28875acc7bacfdd5695a111aa53
 # https://github.com/openresty/headers-more-nginx-module/tags
 ENV HEADERS_MORE_VERSION=v0.39
 # releases can be signed by any key on this page https://nginx.org/en/pgp_keys.html
@@ -40,14 +39,23 @@ RUN mkdir /build && chown builder:builder /build
 WORKDIR /build
 USER builder
 
-# clone the nginx modules
-# NEW broken brotli code
-#RUN git clone --recurse-submodules  --depth 25 https://github.com/google/ngx_brotli && cd ngx_brotli && git reset --hard $NGX_BROTLI_COMMIT_HASH && cd deps/brotli && mkdir out && cd out && \
-#    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="-Ofast -march=native -mtune=native -flto -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections" -DCMAKE_CXX_FLAGS="-Ofast -m64 -march=native -mtune=native -flto -funroll-loops -ffunction-sections -fdata-sections -Wl,--gc-sections" -DCMAKE_INSTALL_PREFIX=./installed .. && \
-#    cmake --build . --config Release --target brotlienc
-# OLD working brotli stuff
-# removed the depth param
-RUN git clone https://github.com/google/ngx_brotli && cd ngx_brotli && git reset --hard $NGX_BROTLI_COMMIT_HASH && cd ..
+# build brotli
+RUN git clone https://github.com/google/ngx_brotli \
+    && cd ngx_brotli \
+    && git checkout "$NGX_BROTLI_COMMIT" \
+    && git submodule update --init --recursive \
+    && cd deps/brotli \
+    && mkdir out \
+    && cd out \
+    && cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DCMAKE_C_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections" \
+        -DCMAKE_CXX_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections" \
+        -DCMAKE_EXE_LINKER_FLAGS="-Wl,--gc-sections" \
+        .. \
+    && cmake --build . --config Release --target brotlienc
+
 RUN git clone --depth 1 -b $HEADERS_MORE_VERSION https://github.com/openresty/headers-more-nginx-module
 
 # now start the build
@@ -84,14 +92,13 @@ RUN ./configure \
         --with-cc-opt='-g0 -O3 -fstack-protector-strong -flto -pie --param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2 -Wl,-z,relro,-z,now -Wl,-z,noexecstack -fPIC'\
         --modules-path=/usr/lib/nginx/modules \
         --conf-path=/etc/nginx/nginx.conf \
-        --pid-path=/run/nginx.pid \
-        --error-log-path=/var/log/nginx/error.log \
-        --http-log-path=/var/log/nginx/access.log \
-        --lock-path=/run/nginx.lock \
-        --http-client-body-temp-path=/run/nginx-client_body \
-        --http-fastcgi-temp-path=/run/nginx-fastcgi \
-        --user=nginx \
-        --group=nginx \
+        --pid-path=/run/nginx/nginx.pid \
+        --error-log-path=/dev/stderr \
+        --http-log-path=/dev/stdout \
+        --lock-path=/run/nginx/nginx.lock \
+        --http-client-body-temp-path=/var/cache/nginx/client_body \
+        --http-fastcgi-temp-path=/var/cache/nginx/fastcgi \
+        --http-proxy-temp-path=/var/cache/nginx/proxy \
         --with-threads \
         --with-http_ssl_module \
         --with-http_v2_module \
@@ -130,6 +137,7 @@ FROM alpine:3.23
 ARG ELABFTW_VERSION=dev
 ENV ELABFTW_VERSION=$ELABFTW_VERSION
 
+
 LABEL net.elabftw.name="elabftw" \
     net.elabftw.description="eLabFTW web service" \
     net.elabftw.url="https://www.elabftw.net" \
@@ -142,10 +150,8 @@ COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=nginx-builder /etc/nginx/mime.types /etc/nginx/mime.types
 COPY --from=nginx-builder /etc/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
 
-# create the log folder and make the logfiles links to stdout/stderr so docker logs will catch it
-RUN mkdir -p /var/log/nginx \
-    && ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+RUN mkdir /var/cache/nginx
+
 # END NGINX
 
 # install required packages
@@ -206,6 +212,9 @@ RUN apk upgrade -U -a && apk add --no-cache \
 # add a symlink to php8
 RUN ln -f /usr/bin/php84 /usr/bin/php
 
+# fix git complaining: fatal: detected dubious ownership in repository at '/elabftw'
+RUN git config --system --add safe.directory /elabftw
+
 # S6-OVERLAY
 # install s6-overlay, our init system. Workaround for different versions using TARGETPLATFORM
 # platform see https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
@@ -250,34 +259,69 @@ COPY ./yarn.lock /elabftw
 COPY ./.yarnrc.yml /elabftw
 
 # COMPOSER
-ENV COMPOSER_HOME=/composer
+ENV COMPOSER_HOME=/run/composer
 # 2.10.2 https://github.com/composer/composer/releases/tag/2.10.2
 COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
+
+# this is bind-mounted at runtime to a tmpfs
+RUN mkdir -p /run/elabftw \
+    && chmod 1777 /run/elabftw
 
 # this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
 # pass it to build command with --build-arg BUILD_ALL=0
 ARG BUILD_ALL=1
+# enable this in CI to skip brotli/zopfli minification
+ARG CI=0
 # install php and js dependencies and build assets
 # avoid installing cypress
 ENV CYPRESS_INSTALL_BINARY=0
 # avoid download prompt
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+# this is necessary for yarn install in dev mode, as /tmp is not writable
+ENV TMPDIR=/run/elabftw/cache
+RUN mkdir -p "$TMPDIR" && chmod 1777 "$TMPDIR"
+
+ENV COREPACK_HOME=/run/elabftw/cache/node/corepack
+RUN mkdir -p $COREPACK_HOME
+
+
 # enable new yarn
 RUN corepack enable
 # some ini settings are set on the command line to override the restrictive production ones already set
 # IMPORTANT: the yarn/build step must be done before the composer/install step because a source file (advancedQuery) will be generated by yarn
 # so in order for composer to take it into account, it must exist before we call the install command of composer.
-RUN if [ "$BUILD_ALL" = "1" ]; then yarn install \
-    && yarn run buildall:prod \
-    && yarn workspaces focus -A --production \
-    && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a \
-    && yarn cache clean && rm -r /root/.cache /root/.yarn; fi
-
+# in CI we use -o flag for composer because we will add other classes afterwards (tests)
+RUN if [ "$BUILD_ALL" = "1" ]; then \
+        yarn install \
+        && if [ "$CI" = "1" ]; then \
+            yarn run buildall:ci \
+            && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress -o; \
+        else \
+            yarn run buildall:prod \
+            && yarn workspaces focus -A --production \
+            && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a \
+            && yarn cache clean; \
+        fi; \
+    fi
 # PHP: add php config after composer step so open_basedir is not an issue
-COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini
+COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini.tpl
+RUN rm -f /etc/php84/php.ini && ln -s /run/php/php.ini /etc/php84/php.ini
 COPY ./containers/elabimg/php/php-fpm.conf /etc/php84/php-fpm.conf
-COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf
+COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf.tpl
+
+# Make PHP write errors to stderr
+RUN mkdir -p /var/log/php84 && ln -sf /dev/stderr /var/log/php84/error.log
+
 # END PHP
+
+# create invoker service
+RUN mkdir -p /etc/s6-overlay/s6-rc.d/invoker && echo "longrun" > /etc/s6-overlay/s6-rc.d/invoker/type
+COPY ./containers/elabimg/invoker/run /etc/s6-overlay/s6-rc.d/invoker/
+RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/invoker
+# create chronos service
+RUN mkdir -p /etc/s6-overlay/s6-rc.d/chronos && echo "longrun" > /etc/s6-overlay/s6-rc.d/chronos/type
+COPY ./containers/elabimg/chronos/run /etc/s6-overlay/s6-rc.d/chronos/
+RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/chronos
 
 # declare a default value for these ENV values so they are accessible in php-cli
 # they will still be overridden by runtime env, but if they are not declared here, php-cli won't see them ever
@@ -288,11 +332,18 @@ ENV PUBCHEM_PUG_VIEW_URL=https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data
 # NGINX PART 2
 # copy nginx config files
 COPY ./containers/elabimg/nginx/ /etc/nginx/
+
+COPY ./containers/elabimg/nginx/nginx.conf /etc/nginx/nginx.conf.tpl
+RUN rm -f /etc/nginx/nginx.conf && ln -s /run/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./containers/elabimg/nginx/common.conf /etc/nginx/common.conf.tpl
+RUN rm -f /etc/nginx/common.conf && ln -s /run/nginx/common.conf /etc/nginx/common.conf
+COPY ./containers/elabimg/nginx/opencloning.conf /etc/nginx/opencloning.conf.tpl
+RUN rm -f /etc/nginx/opencloning.conf && ln -s /run/nginx/opencloning.conf /etc/nginx/opencloning.conf
 # the healthcheck.sh script checks if nginx replies to requests
 # the HEALTHCHECK instruction allows to show healthy/unhealthy in "docker ps" output next to the container name
 HEALTHCHECK --interval=2m --timeout=5s --retries=3 CMD sh /etc/nginx/healthcheck.sh
-# nginx will run on port 443
-EXPOSE 443
+# nginx will run on port 8080
+EXPOSE 8080
 # END NGINX PART 2
 
 # ENTRYPOINT
@@ -304,27 +355,29 @@ RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/entrypoint
 # docker-entrypoint.sh must run before nginx and php are started
 RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/nginx/dependencies
 RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/php/dependencies
+# invoker needs /run/elabftw folder created by entrypoint
+RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/invoker/dependencies
 
 COPY ./containers/elabimg/entrypoint/docker-entrypoint.sh /usr/sbin/docker-entrypoint.sh
 # END DOCKER-ENTRYPOINT.SH
 
 # INVOKER
 COPY --from=go-builder /app/invoker /usr/local/bin/invoker
-RUN chmod 755 /usr/local/bin/invoker
+RUN chmod 555 /usr/local/bin/invoker
 
 # CHRONOS
 COPY --from=go-builder /app/chronos /usr/local/bin/chronos
-RUN chmod 755 /usr/local/bin/chronos
+RUN chmod 555 /usr/local/bin/chronos
 
 # add a helper script to reload services easily
 COPY ./containers/elabimg/entrypoint/reload.sh /usr/local/bin/reload
-RUN chmod 700 /usr/local/bin/reload
-
-# this file contains secrets
-RUN chmod 400 /etc/php84/php-fpm.d/elabpool.conf
+RUN chmod 555 /usr/local/bin/reload
 
 # add a cache busting query param for spreadsheet iframe assets
 RUN sed -i -e "s/%REPLACED_AT_BUILD_TIME%/$(openssl rand -hex 4)/" /elabftw/web/spreadsheet.html
+
+# necessary for s6 if running with read-only flag
+ENV S6_READ_ONLY_ROOT=1
 
 # start s6
 ENTRYPOINT ["/init"]

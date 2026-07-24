@@ -151,7 +151,6 @@
     "phpstan": "composer run-script phpstan",
     "pre-commit": "yarn phpcs-dry && yarn static && yarn csslint && yarn jslint && yarn twigcs",
     "psalm": "composer run-script psalm",
-    "srcdoc": "phpDocumentor run --cache-folder /tmp -i ./cache -i ./uploads -d src/classes -d src/controllers -d src/exceptions -d src/interfaces -d src/models -d src/services -d src/traits -d web/app/controllers -t _srcdoc --setting=graphs.enabled=true",
     "static": "composer run-script psalm && composer run-script phpstan",
     "test": "tests/run.sh",
     "test:clean": "php vendor/bin/codecept clean",

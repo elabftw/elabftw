@@ -59,7 +59,9 @@ final class Templates extends AbstractTemplateEntity
         ?int $createdFromId = null,
     ): int {
         $title = Filter::title($title ?? _('Untitled'));
-        $body = Filter::body($body);
+        $body = $contentType === BodyContentType::Markdown
+            ? Filter::bodyMarkdown($body)
+            : Filter::body($body);
         if (empty($body)) {
             $body = null;
         }

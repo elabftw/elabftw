@@ -60,6 +60,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals('my body', Filter::body('my body'));
         $this->assertEquals('my body', Filter::body('my body<script></script>'));
+        $this->assertEquals('H & \mathbf{1}', Filter::bodyMarkdown('H & \mathbf{1}'));
         $this->expectException(ImproperActionException::class);
         Filter::body(str_repeat('a', 4120001));
     }

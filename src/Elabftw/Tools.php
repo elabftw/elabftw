@@ -21,10 +21,13 @@ use function date;
 use function htmlspecialchars;
 use function implode;
 use function pathinfo;
+use function count;
+use function preg_replace_callback;
 use function random_bytes;
 use function mb_substr;
 use function sha1;
 use function str_split;
+use function strtr;
 use function trim;
 use function chr;
 use function explode;
@@ -41,6 +44,11 @@ use function preg_match;
  */
 final class Tools
 {
+    private const array DISPLAY_MATH_REGEXES = array(
+        '/(^|\R)([ \t]*\$\$[ \t]*\R[\s\S]*?\R[ \t]*\$\$[ \t]*(?=\R|$))/',
+        '/(^|\R)([ \t]*\\\\\[[ \t]*\R[\s\S]*?\R[ \t]*\\\\\][ \t]*(?=\R|$))/',
+    );
+
     public static function getUuidv4(): string
     {
         // 16 bytes = 128 bits of random data
@@ -62,10 +70,12 @@ final class Tools
             'allow_unsafe_links' => false,
             'max_nesting_level' => 42,
         );
+        [$protectedMd, $displayMathBlocks] = self::protectDisplayMathBlocks($md);
 
         try {
             $converter = new GithubFlavoredMarkdownConverter($config);
-            return trim($converter->convert($md)->getContent(), "\n");
+            $html = trim($converter->convert($protectedMd)->getContent(), "\n");
+            return strtr($html, $displayMathBlocks);
         } catch (UnexpectedEncodingException) {
             // fix for incorrect utf8 encoding, just return md and hope it's html
             // so at least the thing is displayed instead of triggering a fatal error
@@ -162,6 +172,26 @@ final class Tools
         return htmlspecialchars((string) $string, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false);
     }
 
+    /**
+     * Keep Markdown parsers from interpreting TeX control sequences inside display math.
+     *
+     * @return array{0: string, 1: array<string, string>}
+     */
+    private static function protectDisplayMathBlocks(string $markdown): array
+    {
+        $mathBlocks = array();
+        $protectedMarkdown = $markdown;
+        foreach (self::DISPLAY_MATH_REGEXES as $displayMathRegex) {
+            $protectedMarkdown = preg_replace_callback($displayMathRegex, function (array $matches) use (&$mathBlocks): string {
+                $placeholder = 'ELABFTW_MATH_BLOCK_' . count($mathBlocks) . '__';
+                $mathBlocks[$placeholder] = self::eLabHtmlspecialchars($matches[2]);
+                return $matches[1] . $placeholder;
+            }, $protectedMarkdown) ?? $protectedMarkdown;
+        }
+
+        return array($protectedMarkdown, $mathBlocks);
+    }
+  
     public static function isPublicBrandingBinaryRequest(Request $request): bool
     {
         if ($request->getMethod() !== Request::METHOD_GET) {

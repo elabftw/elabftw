@@ -61,7 +61,9 @@ final class ItemsTypes extends AbstractTemplateEntity
         BasePermissions $canbookBase = BasePermissions::Team,
     ): int {
         $title = Filter::title($title ?? _('Default'));
-        $body = Filter::body($body);
+        $body = $contentType === BodyContentType::Markdown
+            ? Filter::bodyMarkdown($body)
+            : Filter::body($body);
         if (empty($body)) {
             $body = null;
         }

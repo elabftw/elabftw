@@ -272,6 +272,7 @@ ARG CI=0
 # avoid installing cypress
 ENV CYPRESS_INSTALL_BINARY=0
 ENV COREPACK_HOME=/var/cache/corepack
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 ENV TMPDIR=/var/cache/build-tmp
 
 RUN corepack enable

@@ -9,3 +9,6 @@ COPY ./.php-cs-fixer.dist.php /elabftw
 COPY ./.stylelintrc.json /elabftw
 COPY ./codeception.yml /elabftw
 COPY ./cypress.config.ts /elabftw
+
+WORKDIR /elabftw
+RUN yarn install

@@ -12,3 +12,5 @@ COPY ./cypress.config.ts /elabftw
 
 WORKDIR /elabftw
 RUN yarn install
+
+RUN chown -R 1001:1002 /var/cache

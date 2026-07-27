@@ -156,27 +156,9 @@ We removed support for IPv6 in container. You can still use IPv6 to expose the s
 
 ### Chem-plugin
 
-The `chem-plugin` addon used to run two services: one for the chemical structure editor, one for the fingerprinting of imported compounds. In version 6, only one service runs (the fingerprinting service). The other service is now running client-side as WASM component in the browser.
+The `chem-plugin` addon can now be completely removed! It is not useful anymore:
 
-As such, where you previously needed to export ports: 8080 and 8000, only port `8000` needs to be exposed now. The default configuration doesn't expose ports outside, so this change doesn't need to be reflected in the new configuration anyway.
+- indigo/ketcher code is now running in the browser through WASM worker
+- openbabel code for compound fingerprinting is now running in the main container
 
-Here is the new recommended configuration for `chem-plugin`:
-
-~~~yaml
-chem-plugin:
-  # versions of this image follows elabftw versioning
-  image: elabftw/chem-plugin:6.0.0
-  container_name: chem-plugin
-  restart: always
-  read_only: true
-  cap_drop:
-      - ALL
-  tmpfs:
-    - /tmp
-  security_opt:
-    - no-new-privileges:true
-  networks:
-    - elabftw-net
-~~~
-
-Once all is in place, restart the container with: `elabctl refresh`.
+It is then safe to remove the whole `chem-plugin` block in your docker compose file.

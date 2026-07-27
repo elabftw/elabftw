@@ -7,40 +7,6 @@ title: Addons
 
 Addons are services that can be deployed to provide extended functionality for eLabFTW. They are not a strict requirement but are definitely recommended.
 
-# Chem Plugin Addon
-
-## Description
-
-The `chem-plugin` addon is necessary for calculating fingerprint of chemical compounds (which subsequently allows for substructure search).
-
-## How to install
-
-Deploy a `chem-plugin` container somewhere. It can be on the same server than eLabFTW or some other place. Adding a service to your `docker-compose.yml` file is the easiest. See the [example docker-compose.yml file](https://github.com/elabftw/elabftw/blob/master/containers/elabimg/docker-compose.yml-EXAMPLE).
-
-The deployment is really straightforward, as there is nothing to configure. You just start the container and that's it.
-
-~~~yaml
-chem-plugin:
-    # Note: it is recommended to either use the same version as eLabFTW like 5.6.8 or a sha256 pin
-    image: elabftw/chem-plugin:latest
-    container_name: chem-plugin
-    restart: always
-    networks:
-      - elabftw-net
-~~~
-
-Next, configure eLabFTW to use that service by adding four environment variables:
-
-~~~yaml
-# The fingerprinter is necessary to create a fingerprint of chemical compounds so we can do sub-structure search
-- USE_FINGERPRINTER=true
-- FINGERPRINTER_URL=http://chem-plugin:8000/
-~~~
-
-In the example above, the container is on the same network as `elabftw` container, so we use its name as hostname.
-
-Restart the `elabftw` container to take these changes into account (`elabctl refresh`).
-
 # OpenCloning Addon
 
 ## Description

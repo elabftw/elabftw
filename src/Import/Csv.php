@@ -18,10 +18,15 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Tags;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\TagParam;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
+use Elabftw\Enums\Action;
+use Elabftw\Models\Items;
+use Elabftw\Params\EntityParams;
 
 use function array_key_exists;
 use function explode;
@@ -41,12 +46,14 @@ final class Csv extends AbstractCsv
         protected BasePermissions $canwriteBase = BasePermissions::User,
         protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
         protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
+        protected ?int $resourceTemplate = null,
     ) {
         parent::__construct(
             $requester,
             $UploadedFile,
             $logger,
         );
+        $this->resourceTemplate = 23;
         // we might have been forced to cast to int a null value, so bring it back to null
         if ($this->category === 0) {
             $this->category = null;
@@ -89,22 +96,42 @@ final class Csv extends AbstractCsv
             $canread = empty($row['canread']) ? $this->canread : $row['canread'];
             $canwrite = empty($row['canwrite']) ? $this->canwrite : $row['canwrite'];
 
-            $entity->create(
-                title: $row['title'],
-                body: $body,
-                canreadBase: $canreadBase,
-                canwriteBase: $canwriteBase,
-                canread: $canread,
-                canwrite: $canwrite,
-                contentType: BodyContentType::from((int) ($row['contentType'] ?? BodyContentType::Html->value)),
-                date: $date,
-                tags: $tags,
-                category: $category,
-                status: $status,
-                customId: $customId,
-                metadata: $metadata,
-                rating: (int) ($row['rating'] ?? 0),
-            );
+            if ($this->entityType === EntityType::Items && $this->resourceTemplate !== null) {
+                $resourceId = $entity->postAction(Action::Create, array(
+                        'template' => $this->resourceTemplate,
+                        'title' => $row['title'],
+                    ),
+                );
+                $entity->setId($resourceId);
+                $Tags = new Tags($entity);
+
+                foreach ($tags as $tag) {
+                    $tag = trim($tag);
+
+                    if ($tag !== '') {
+                        $Tags->create(new TagParam($tag), true);
+                    }
+                }
+                $entity->update(new EntityParams('metadatamerge', $this->collectMetadata($row)),
+                );
+            } else {
+                $entity->create(
+                    title: $row['title'],
+                    body: $body,
+                    date: $date,
+                    canreadBase: $canreadBase,
+                    canwriteBase: $canwriteBase,
+                    canread: $canread,
+                    canwrite: $canwrite,
+                    tags: $tags,
+                    category: $category,
+                    status: $status,
+                    customId: $customId,
+                    metadata: $metadata,
+                    rating: (int) ($row['rating'] ?? 0),
+                    contentType: BodyContentType::from((int) ($row['contentType'] ?? BodyContentType::Html->value)),
+                );
+            }
 
             $this->inserted++;
         }

@@ -1546,9 +1546,10 @@ abstract class AbstractEntity extends AbstractRest
     {
         // base metadata comes from the template and contains the field schema
         $base = $this->decodeMetadata($baseMetadata);
-        // incoming metadata usually comes from CSV/API and contains the values to inject.
+        // incoming metadata usually comes from CSV/API and contains the values to inject
         $incoming = $this->decodeMetadata($incomingMetadata);
-        // ensure both metadata arrays have an extra_fields array.
+
+        // ensure both metadata arrays have an extra_fields array
         $base['extra_fields'] ??= array();
         $incoming['extra_fields'] ??= array();
 
@@ -1556,15 +1557,47 @@ abstract class AbstractEntity extends AbstractRest
             $value = $incomingField['value'] ?? '';
 
             if (isset($base['extra_fields'][$name])) {
+                $baseField = &$base['extra_fields'][$name];
+                $type = $baseField['type'] ?? '';
+
+                // Add missing options for fields using a controlled list of values
+                $values = match ($type) {
+                    'select-multi' => is_array($value)
+                        ? $value
+                        : array_map('trim', explode(',', (string) $value)),
+                    'select', 'select-one', 'radio' => array($value),
+                    default => array(),
+                };
+
+                if (!empty($values)) {
+                    $baseField['options'] ??= array();
+
+                    foreach ($values as $option) {
+                        if (
+                            $option !== ''
+                            && !in_array($option, $baseField['options'], true)
+                        ) {
+                            $baseField['options'][] = $option;
+                        }
+                    }
+                }
+
                 // Preserve the existing field schema and only update its value
-                $base['extra_fields'][$name]['value'] = $this->normalizeMetadataValue(
-                    $base['extra_fields'][$name],
+                $baseField['value'] = $this->normalizeMetadataValue(
+                    $baseField,
                     $value,
                 );
+
+                unset($baseField);
                 continue;
             }
-            // new fields: keep incoming schema, but normalize its value if it has a known type.
-            $incomingField['value'] = $this->normalizeMetadataValue($incomingField, $value);
+
+            // New fields: keep incoming schema, but normalize their value
+            // if they have a known type
+            $incomingField['value'] = $this->normalizeMetadataValue(
+                $incomingField,
+                $value,
+            );
             $base['extra_fields'][$name] = $incomingField;
         }
 

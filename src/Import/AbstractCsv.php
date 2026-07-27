@@ -98,4 +98,6 @@ abstract class AbstractCsv extends AbstractImport
         return json_encode($metadata, JSON_THROW_ON_ERROR, 12);
 
     }
+
+    // collect tags
 }

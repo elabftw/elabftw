@@ -12,12 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Services\HttpGetter;
-use Elabftw\Elabftw\Env;
-use Elabftw\Models\Config;
 use Elabftw\Models\Fingerprints;
-use Elabftw\Services\Fingerprinter;
-use GuzzleHttp\Client;
+use Elabftw\Services\OpenBabelFingerprinter;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -59,9 +55,7 @@ final class FingerprintCompounds extends Command
             $output->writeln('Dry run mode: not processing anything.');
             return Command::SUCCESS;
         }
-        $proxy = Env::asBool('FINGERPRINTER_USE_PROXY') ? Config::getConfig()->configArr['proxy'] : '';
-        $fingerPrinterHttpGetter = new HttpGetter(new Client(), $proxy, !Env::asBool('DEV_MODE'));
-        $Fingerprinter = new Fingerprinter($fingerPrinterHttpGetter, Env::asUrl('FINGERPRINTER_URL'));
+        $Fingerprinter = new OpenBabelFingerprinter();
         foreach ($compounds as $compound) {
             if (empty($compound['smiles'])) {
                 $output->writeln(sprintf('Skipping compound with ID: %d (empty SMILES).', $compound['id']));

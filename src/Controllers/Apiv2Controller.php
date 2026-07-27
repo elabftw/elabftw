@@ -76,9 +76,8 @@ use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
 use Elabftw\Services\Email;
-use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
-use Elabftw\Services\NullFingerprinter;
+use Elabftw\Services\OpenBabelFingerprinter;
 use Exception;
 use GuzzleHttp\Client;
 use JsonException;
@@ -308,12 +307,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Compounds => (
                 function () {
                     $Config = Config::getConfig();
-                    $Fingerprinter = new NullFingerprinter();
-                    if (Env::asBool('USE_FINGERPRINTER')) {
-                        $proxy = Env::asBool('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
-                        $httpGetter = new HttpGetter(new Client(), $proxy, !Env::asBool('DEV_MODE'));
-                        $Fingerprinter = new Fingerprinter($httpGetter, Env::asUrl('FINGERPRINTER_URL'));
-                    }
+                    $Fingerprinter = new OpenBabelFingerprinter();
                     return new Compounds(
                         new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE')),
                         $this->requester,

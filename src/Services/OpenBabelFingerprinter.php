@@ -14,12 +14,22 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\FingerprinterInterface;
+use Override;
 use Symfony\Component\Process\Process;
 
 use function trim;
+use function array_any;
+use function array_map;
+use function array_reverse;
+use function count;
+use function intval;
+use function preg_match;
+use function preg_split;
+use function str_contains;
 
 final class OpenBabelFingerprinter implements FingerprinterInterface
 {
+    #[Override]
     public function calculate(string $fmt, string $data): array
     {
         if ($fmt !== 'smi') {

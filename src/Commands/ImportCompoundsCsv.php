@@ -30,9 +30,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Elabftw\Models\Config;
 use Elabftw\Models\Items;
-use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
-use Elabftw\Services\NullFingerprinter;
+use Elabftw\Services\OpenBabelFingerprinter;
 use Elabftw\Services\PubChemImporter;
 use GuzzleHttp\Client;
 use Override;
@@ -86,14 +85,8 @@ final class ImportCompoundsCsv extends Command
         }
         $locationSplitter = $input->getOption('location-splitter');
         $Config = Config::getConfig();
-        $Fingerprinter = new NullFingerprinter();
         $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE'));
-        if (Env::asBool('USE_FINGERPRINTER')) {
-            // we use a different httpGetter object so we can configure proxy usage
-            $proxy = Env::asBool('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
-            $fingerPrinterHttpGetter = new HttpGetter(new Client(), $proxy, !Env::asBool('DEV_MODE'));
-            $Fingerprinter = new Fingerprinter($fingerPrinterHttpGetter, Env::asUrl('FINGERPRINTER_URL'));
-        }
+        $Fingerprinter = new OpenBabelFingerprinter();
 
         $usePubchem = (bool) $input->getOption('use-pubchem');
         $pubChemImporter = null;

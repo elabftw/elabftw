@@ -152,7 +152,7 @@ It is important to keep your install up to date with the latest bug fixes and ne
 
 Subscribe to [the newsletter](http://eepurl.com/bTjcMj) to be warned when a new release is out or select "Releases only" from GitHub's Watch button on the [repo page](https://github.com/elabftw/elabftw).
 
-See instructions on updating eLabFTW on [upgrade page](../install/update).
+See instructions on updating eLabFTW on [upgrade page](../install/upgrade/update).
 
 ## Sysadmin Panel
 

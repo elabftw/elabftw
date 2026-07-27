@@ -331,7 +331,7 @@ phpConf() {
 }
 
 elabftwConf() {
-    mkdir -p /var/lib/elabftw/uploads /run/elabftw/cache/elab /run/elabftw/tmp /run/elabftw/cache/mpdf /run/elabftw/cache/twig /run/elabftw/cache/purifier/CSS /run/elabftw/cache/purifier/HTML /run/elabftw/cache/purifier/URI /var/lib/elabftw/exports
+    mkdir -p /run/elabftw/cache/elab /run/elabftw/tmp /run/elabftw/cache/mpdf /run/elabftw/cache/twig /run/elabftw/cache/purifier/CSS /run/elabftw/cache/purifier/HTML /run/elabftw/cache/purifier/URI
     # necessary so php user can write to it in podman rootless
     chmod -R g+w /run/elabftw/cache
 }

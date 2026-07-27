@@ -11,6 +11,7 @@ containers/elabtmp
 containers/mysqltmp
 containers/README.md
 CONTRIBUTING.md
+documentation/
 FUNDING.yml
 GOVERNANCE.md
 ideas

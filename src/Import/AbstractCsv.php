@@ -18,7 +18,17 @@ use League\Csv\Info as CsvInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 use Psr\Log\LoggerInterface;
+use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Links\Containers2ItemsLinks;
+use Elabftw\Models\StorageUnits;
+use Elabftw\Models\Tags;
+use Elabftw\Params\TagParam;
 
+use function array_filter;
+use function array_map;
+use function array_values;
+use function explode;
+use function trim;
 use function arsort;
 use function array_diff_key;
 use function array_flip;
@@ -100,4 +110,40 @@ abstract class AbstractCsv extends AbstractImport
     }
 
     // collect tags
+    protected function processTags(AbstractEntity $entity, array $tags): void
+    {
+        $Tags = new Tags($entity);
+        foreach ($tags as $tag) {
+            $tag = trim($tag);
+            if ($tag !== '') {
+                $Tags->create(new TagParam($tag), true);
+            }
+        }
+    }
+
+    // create storage units with 'location' column
+    protected function processLocation(AbstractEntity $entity, array $row, string $locationSplitter = '/'): void
+    {
+        if (empty($row['location']) || $locationSplitter === '') {
+            return;
+        }
+
+        $locationSplit = array_values(array_filter(
+            array_map('trim', explode($locationSplitter, $row['location'])),
+            static fn($location): bool => $location !== '',
+        ));
+
+        if ($locationSplit === array()) {
+            return;
+        }
+
+        $StorageUnits = new StorageUnits($this->requester, requireEditRights: false);
+        $storageUnitId = $StorageUnits->createImmutable($locationSplit);
+        $Containers2ItemsLinks = new Containers2ItemsLinks($entity, $storageUnitId);
+
+        $Containers2ItemsLinks->createWithQuantity(
+            ($row['quantity'] ?? 1.0),
+            $row['unit'] ?? '•',
+        );
+    }
 }

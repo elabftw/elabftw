@@ -18,6 +18,8 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Links\Containers2ItemsLinks;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\TagParam;
@@ -25,11 +27,14 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 use Elabftw\Enums\Action;
-use Elabftw\Models\Items;
 use Elabftw\Params\EntityParams;
 
 use function array_key_exists;
 use function explode;
+use function array_filter;
+use function array_map;
+use function array_values;
+use function trim;
 
 /**
  * Import entries from a csv file.
@@ -97,23 +102,52 @@ final class Csv extends AbstractCsv
             $canwrite = empty($row['canwrite']) ? $this->canwrite : $row['canwrite'];
 
             if ($this->entityType === EntityType::Items && $this->resourceTemplate !== null) {
-                $resourceId = $entity->postAction(Action::Create, array(
+                $resourceId = $entity->postAction(
+                    Action::Create,
+                    array(
                         'template' => $this->resourceTemplate,
                         'title' => $row['title'],
                     ),
                 );
                 $entity->setId($resourceId);
+                // process tags
                 $Tags = new Tags($entity);
-
                 foreach ($tags as $tag) {
                     $tag = trim($tag);
-
                     if ($tag !== '') {
                         $Tags->create(new TagParam($tag), true);
                     }
                 }
-                $entity->update(new EntityParams('metadatamerge', $this->collectMetadata($row)),
-                );
+                // Process inventory location
+                if (isset($row['location']) && trim($row['location']) !== '') {
+                    $locationSplit = array_values(array_filter(
+                        array_map(
+                            'trim',
+                            explode('/', $row['location']),
+                        ),
+                        static fn(string $location): bool => $location !== '',
+                    ));
+
+                    if ($locationSplit !== array()) {
+                        $StorageUnits = new StorageUnits(
+                            $this->requester,
+                            requireEditRights: false,
+                        );
+
+                        $storageUnitId = $StorageUnits->createImmutable($locationSplit);
+
+                        $Containers2ItemsLinks = new Containers2ItemsLinks(
+                            $entity,
+                            $storageUnitId,
+                        );
+
+                        $Containers2ItemsLinks->createWithQuantity(
+                            (float) ($row['quantity'] ?? 1.0),
+                            $row['unit'] ?? '•',
+                        );
+                    }
+                }
+                $entity->update(new EntityParams('metadatamerge', $this->collectMetadata($row)));
             } else {
                 $entity->create(
                     title: $row['title'],

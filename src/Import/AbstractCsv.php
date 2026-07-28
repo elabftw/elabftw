@@ -142,7 +142,7 @@ abstract class AbstractCsv extends AbstractImport
         $Containers2ItemsLinks = new Containers2ItemsLinks($entity, $storageUnitId);
 
         $Containers2ItemsLinks->createWithQuantity(
-            ($row['quantity'] ?? 1.0),
+            (float) ($row['quantity'] ?? 1.0),
             $row['unit'] ?? '•',
         );
     }

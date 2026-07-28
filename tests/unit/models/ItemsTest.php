@@ -302,10 +302,10 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('checkbox', $fields['certified']['type']);
         $this->assertSame('on', $fields['certified']['value']);
 
-        // existing select keeps options even if incoming value is new.
+        // existing select keeps type and adds new options automatically.
         $this->assertSame('select', $fields['choice']['type']);
         $this->assertSame('C', $fields['choice']['value']);
-        $this->assertSame(array('A', 'B'), $fields['choice']['options']);
+        $this->assertSame(array('A', 'B', 'C'), $fields['choice']['options']);
 
         // existing user field keeps description/schema.
         $this->assertSame('users', $fields['person in charge']['type']);

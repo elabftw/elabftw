@@ -1546,10 +1546,10 @@ abstract class AbstractEntity extends AbstractRest
     {
         // base metadata comes from the template and contains the field schema
         $base = $this->decodeMetadata($baseMetadata);
-        // incoming metadata usually comes from CSV/API and contains the values to inject
+        // incoming metadata usually comes from CSV/API and contains the values to inject.
         $incoming = $this->decodeMetadata($incomingMetadata);
 
-        // ensure both metadata arrays have an extra_fields array
+        // ensure both metadata arrays have an extra_fields array.
         $base['extra_fields'] ??= array();
         $incoming['extra_fields'] ??= array();
 
@@ -1571,33 +1571,19 @@ abstract class AbstractEntity extends AbstractRest
 
                 if (!empty($values)) {
                     $baseField['options'] ??= array();
-
                     foreach ($values as $option) {
-                        if (
-                            $option !== ''
-                            && !in_array($option, $baseField['options'], true)
-                        ) {
+                        if ($option !== '' && !in_array($option, $baseField['options'], true)) {
                             $baseField['options'][] = $option;
                         }
                     }
                 }
-
                 // Preserve the existing field schema and only update its value
-                $baseField['value'] = $this->normalizeMetadataValue(
-                    $baseField,
-                    $value,
-                );
-
+                $baseField['value'] = $this->normalizeMetadataValue($baseField, $value);
                 unset($baseField);
                 continue;
             }
-
-            // New fields: keep incoming schema, but normalize their value
-            // if they have a known type
-            $incomingField['value'] = $this->normalizeMetadataValue(
-                $incomingField,
-                $value,
-            );
+            // new fields: keep incoming schema, but normalize its value if it has a known type.
+            $incomingField['value'] = $this->normalizeMetadataValue($incomingField, $value);
             $base['extra_fields'][$name] = $incomingField;
         }
 

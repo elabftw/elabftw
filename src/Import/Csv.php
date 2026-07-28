@@ -50,7 +50,6 @@ final class Csv extends AbstractCsv
             $UploadedFile,
             $logger,
         );
-        $this->resourceTemplate = 23;
         // we might have been forced to cast to int a null value, so bring it back to null
         if ($this->category === 0) {
             $this->category = null;

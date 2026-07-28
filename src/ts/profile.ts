@@ -66,13 +66,25 @@ if (window.location.pathname === '/profile.php') {
       .forEach((el: HTMLElement) => isEln ? el.removeAttribute('hidden') : el.hidden = true);
     // we want to let the .eln file decide which kind of entry it is by default
     const targetElement = 'entityTypeRadio' + (isEln ? 'None' : 'Experiments');
-    (document.getElementById(targetElement) as HTMLInputElement).checked = true;
+    const targetRadio = document.getElementById(targetElement) as HTMLInputElement;
+    targetRadio.checked = true;
+    targetRadio.dispatchEvent(new Event('change', {bubbles: true}));
   });
 
   // when selecting the target type, change the category listing
   document.getElementById('importRadioEntityType').addEventListener('change', async function(event) {
-    const el = (event.target as HTMLInputElement);
+    const el = event.target as HTMLInputElement;
     const selectCategoryDiv = document.getElementById('selectCategoryDiv') as HTMLElement;
+    const selectResourceTemplateDiv = document.getElementById('selectResourceTemplateDiv') as HTMLElement;
+    const resourceTemplateSelect = document.getElementById('importSelectResourceTemplate') as HTMLSelectElement;
+
+    const isResource = el.value === 'items';
+    selectResourceTemplateDiv.hidden = !isResource;
+    resourceTemplateSelect.disabled = !isResource;
+    if (!isResource) {
+      resourceTemplateSelect.value = 'null';
+    }
+
     selectCategoryDiv.removeAttribute('hidden');
     if (['items_types', 'null'].includes(el.value)) {
       selectCategoryDiv.hidden = true;
@@ -121,6 +133,9 @@ if (window.location.pathname === '/profile.php') {
     }
     if (formData.get('category') === 'null') {
       formData.delete('category');
+    }
+    if (formData.get('resource_template') === 'null') {
+      formData.delete('resource_template');
     }
     fetch(form.action, {
       method: 'POST',

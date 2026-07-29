@@ -231,7 +231,7 @@ final class Apiv2Controller extends AbstractApiController
             $this->reqBody['entity_type'] = $this->Request->request->get('entity_type'); // can be null
             $this->reqBody['category'] = $this->Request->request->get('category'); // can be null
             $this->reqBody['owner'] = $this->Request->request->getInt('owner');
-            $this->reqBody['resource_template'] = $this->Request->request->get('resource_template'); // can be null
+            $this->reqBody['template'] = $this->Request->request->getInt('template');
             $this->reqBody['canread_base'] = (BasePermissions::tryFrom($this->Request->request->getInt('canread_base')) ?? BasePermissions::Team)->value;
             $this->reqBody['canwrite_base'] = (BasePermissions::tryFrom($this->Request->request->getInt('canwrite_base')) ?? BasePermissions::User)->value;
             $this->action = Action::tryFrom($this->Request->request->getString('action')) ?? Action::Create;

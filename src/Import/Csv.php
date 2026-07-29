@@ -43,7 +43,7 @@ final class Csv extends AbstractCsv
         protected BasePermissions $canwriteBase = BasePermissions::User,
         protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
         protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
-        protected ?int $resourceTemplate = null,
+        protected ?int $template = null,
     ) {
         parent::__construct(
             $requester,
@@ -93,11 +93,14 @@ final class Csv extends AbstractCsv
             $canread = empty($row['canread']) ? $this->canread : $row['canread'];
             $canwrite = empty($row['canwrite']) ? $this->canwrite : $row['canwrite'];
 
-            if ($this->entityType === EntityType::Items && $this->resourceTemplate !== null) {
-                $resourceId = $entity->postAction(Action::Create, array(
-                    'template' => $this->resourceTemplate, 'title' => $row['title'])
+            if ($this->template !== null && in_array(
+                $this->entityType, array(EntityType::Experiments, EntityType::Items), true)
+            ) {
+                $entityId = $entity->postAction(
+                    Action::Create,
+                    array('template' => $this->template, 'title' => $row['title']),
                 );
-                $entity->setId($resourceId);
+                $entity->setId($entityId);
                 $this->processTags($entity, $tags);
                 $this->processLocation($entity, $row);
                 // preserve the template metadata schema while applying the explicit metadata payload first

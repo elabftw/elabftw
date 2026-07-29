@@ -106,6 +106,7 @@ final class Handler extends AbstractRest
                     category: (int) $reqBody['category'],
                     canreadBase: $canreadBase,
                     canwriteBase: $canwriteBase,
+                    resourceTemplate: empty($reqBody['resource_template']) ? null : (int) $reqBody['resource_template'],
                 );
             default:
                 throw new ImproperActionException(sprintf(

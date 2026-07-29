@@ -39,8 +39,6 @@ const t = {
     "current-edit": "Currently editing",
     "custom-fields": "Custom fields",
     "delete": "Deletar",
-    "delete-confirmation": "Delete {{num, number}} line(s)?",
-    "delete-selected": "Delete selected rows",
     "done": "Done",
     "dropzone-upload-area": "Arraste aqui os arquivos que quiser anexar ao experimento",
     "dropzone-filesize-limit": "Limite de tamanho do arquivo:",

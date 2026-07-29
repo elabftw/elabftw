@@ -39,8 +39,6 @@ const t = {
     "current-edit": "Obecnie edytowany",
     "custom-fields": "Custom fields",
     "delete": "Usuń",
-    "delete-confirmation": "Usunąć {{num, number}} lini?",
-    "delete-selected": "Usuń wybrane kolumny",
     "done": "Done",
     "dropzone-upload-area": "Przeciągnij pliki tutaj aby załadować",
     "dropzone-filesize-limit": "Limit rozmiaru pliku:",

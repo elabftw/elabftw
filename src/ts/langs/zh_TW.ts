@@ -39,8 +39,6 @@ const t = {
     "current-edit": "正在編輯",
     "custom-fields": "Custom fields",
     "delete": "刪除",
-    "delete-confirmation": "刪除 {{num, number}} 行？",
-    "delete-selected": "刪除選取的行",
     "done": "Done",
     "dropzone-upload-area": "文件拖放到這裡即可上傳",
     "dropzone-filesize-limit": "檔案大小限制：",

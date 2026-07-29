@@ -82,8 +82,6 @@ final class i18n4Js
             'current-edit' => _('Currently editing'),
             'custom-fields' => _('Custom fields'),
             'delete' => _('Delete'),
-            'delete-confirmation' => _('Delete {{num, number}} line(s)?'),
-            'delete-selected' => _('Delete selected rows'),
             'done' => _('Done'),
             'dropzone-upload-area' => _('Drop files here to upload'),
             'dropzone-filesize-limit' => _('File size limit:'),

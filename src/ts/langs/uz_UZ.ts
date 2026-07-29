@@ -39,8 +39,6 @@ const t = {
     "current-edit": "Currently editing",
     "custom-fields": "Custom fields",
     "delete": "Oʻchirish",
-    "delete-confirmation": "Delete {{num, number}} line(s)?",
-    "delete-selected": "Delete selected rows",
     "done": "Done",
     "dropzone-upload-area": "Yuklash uchun fayllarni bu yerga tashlang",
     "dropzone-filesize-limit": "Fayl hajmi chegarasi:",

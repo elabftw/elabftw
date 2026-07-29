@@ -39,8 +39,6 @@ const t = {
     "current-edit": "Editant actualment",
     "custom-fields": "Custom fields",
     "delete": "Esborrar",
-    "delete-confirmation": "Eliminar {{num, number}} línia(es)?",
-    "delete-selected": "Elimina les files seleccionades",
     "done": "Done",
     "dropzone-upload-area": "Arrossega els fitxers fins aquí per a adjuntar-los",
     "dropzone-filesize-limit": "Límit de mida del fitxer:",

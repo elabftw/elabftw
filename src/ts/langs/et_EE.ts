@@ -39,8 +39,6 @@ const t = {
     "current-edit": "Praegu toimetab",
     "custom-fields": "Custom fields",
     "delete": "Kustuta",
-    "delete-confirmation": "Kustutada {{num, number}} rida?",
-    "delete-selected": "Kustutada valitud read",
     "done": "Done",
     "dropzone-upload-area": "Lohista failid siia üleslaadimiseks",
     "dropzone-filesize-limit": "Faili suuruse piirang:",

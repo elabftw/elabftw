@@ -39,8 +39,6 @@ const t = {
     "current-edit": "現在編集中",
     "custom-fields": "Custom fields",
     "delete": "削除",
-    "delete-confirmation": "num, number}}行を削除しますか？",
-    "delete-selected": "選択した行を削除する",
     "done": "Done",
     "dropzone-upload-area": "ファイルをドロップしてアップロード",
     "dropzone-filesize-limit": "サイズ上限: ",

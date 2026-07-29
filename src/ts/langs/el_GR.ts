@@ -39,8 +39,6 @@ const t = {
     "current-edit": "Currently editing",
     "custom-fields": "Custom fields",
     "delete": "Διαγραφή",
-    "delete-confirmation": "Delete {{num, number}} line(s)?",
-    "delete-selected": "Delete selected rows",
     "done": "Done",
     "dropzone-upload-area": "Αποθέστε τα αρχεία εδώ για να μεταφορτώσετε",
     "dropzone-filesize-limit": "Όριο μεγέθους αρχείου:",

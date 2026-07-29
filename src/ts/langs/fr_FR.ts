@@ -39,8 +39,6 @@ const t = {
     "current-edit": "Actuellement en cours d'édition",
     "custom-fields": "Champs personnalisés",
     "delete": "Supprimer",
-    "delete-confirmation": "Supprimer {{num, number}} ligne(s) ?",
-    "delete-selected": "Supprimer les lignes sélectionnées",
     "done": "Terminé",
     "dropzone-upload-area": "Déposez ici les fichiers à uploader",
     "dropzone-filesize-limit": "Taille limite de fichier :",

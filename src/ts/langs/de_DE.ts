@@ -39,8 +39,6 @@ const t = {
     "current-edit": "Wird gerade bearbeitet",
     "custom-fields": "Custom fields",
     "delete": "Löschen",
-    "delete-confirmation": "Lösche {{num, number}} Zeile(n)?",
-    "delete-selected": "Lösche ausgewählte Zeilen",
     "done": "Done",
     "dropzone-upload-area": "Dateien zum Hochladen hier fallen lassen",
     "dropzone-filesize-limit": "Maximale Dateigröße:",

@@ -39,8 +39,6 @@ const t = {
     "current-edit": "Sedang mengedit",
     "custom-fields": "Custom fields",
     "delete": "Hapus",
-    "delete-confirmation": "Hapus baris {{num, number}}?",
-    "delete-selected": "Menghapus baris yang dipilih",
     "done": "Done",
     "dropzone-upload-area": "Taruh berkas di sini untuk mengunggah",
     "dropzone-filesize-limit": "Batas ukuran berkas:",

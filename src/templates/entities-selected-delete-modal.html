@@ -1,0 +1,16 @@
+<div class='modal fade' id='deleteSelectedEntitiesModal' tabindex='-1' role='dialog' aria-labelledby='deleteSelectedEntitiesModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='deleteSelectedEntitiesModalLabel'>{{ 'Delete your entries'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <p id='deleteSelectedEntityMessage' class='d-none'>{{ 'Are you sure you want to delete the selected entity?'|trans }}</p>
+        <p id='deleteSelectedEntitiesMessage' class='d-none'>{{ 'Are you sure you want to delete these'|trans }}<strong id='selectedEntitiesCount'></strong>{{ 'entities?'|trans }}</p>
+      </div>
+    </div>
+  </div>
+</div>

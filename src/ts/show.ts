@@ -991,10 +991,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const modalSelector = `#${el.dataset.target}`;
         const deleteMsg = document.getElementById('deleteEntityMessage');
         const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
+        const pageTitle = document.getElementById('pageTitle');
+        const entityName = pageTitle.textContent?.trim().toLowerCase() ?? '';
 
         entitiesPendingDeletion = [...checked];
         if (count) {
-          deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entity.type});
+          deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
         }
 
         deleteButton.disabled = true;

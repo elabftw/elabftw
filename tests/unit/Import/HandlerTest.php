@@ -49,6 +49,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             'category' => 1,
             'entity_type' => 'items',
             'owner' => 2,
+            'resource_template' => null,
         );
 
         $this->assertEquals(13, $this->handler->postAction(Action::Update, $req));

@@ -1,0 +1,23 @@
+<div class='modal fade' id='deleteSelectedEntitiesModal' tabindex='-1' role='dialog' aria-labelledby='deleteSelectedEntitiesModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='deleteSelectedEntitiesModalLabel'>{{ 'Delete your entries'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <p id='deleteSelectedEntityMessage' class='d-none'>{{ 'Are you sure you want to delete the selected entity?'|trans }}</p>
+        <p id='deleteSelectedEntitiesMessage' class='d-none'>{{ 'Are you sure you want to delete these'|trans }} <strong id='selectedEntitiesCount'></strong> {{ 'entities?'|trans }}</p>
+        <p>{{ 'Please note this is action is reversible: you can retrieve your deleted entries by filtering the search results by the \'Deleted\' state.'|trans }}</p>
+      </div>
+      <div class='modal-footer d-flex justify-content-end'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>
+          {{ 'Cancel'|trans }}
+        </button>
+        <button type='button' class='btn btn-danger' data-action='delete-selected-entities' id='deleteSelectedEntitiesButton' data-dismiss='modal' disabled>{{ 'Delete'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

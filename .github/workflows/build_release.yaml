@@ -217,23 +217,6 @@ jobs:
             - name: Set up QEMU
               uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a # v4
 
-            # build chem-plugin with correct tag
-            - name: Build chem plugin with version tag
-              uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7
-              with:
-                context: .
-                file: containers/chem-plugin/Dockerfile
-                platforms: linux/amd64,linux/arm64
-                push: true
-                # the scope parameter is necessary when doing multi arch builds or we'll always miss cache
-                cache-from: type=gha,scope=${{ runner.os }}-${{ runner.arch }}
-                cache-to:   type=gha,mode=max,scope=${{ runner.os }}-${{ runner.arch }}
-                sbom: true
-                tags: |
-                    elabftw/chem-plugin:${{ github.ref_name }}
-                    elabftw/chem-plugin:stable
-                    elabftw/chem-plugin:latest
-
             # ATTESTATION
             - name: Create build provenance attestation
               uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0

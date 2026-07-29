@@ -306,15 +306,6 @@ services:
         # See below the configuration necessary to deploy them.
         # optional: define chemistry/biology plugin services domain name + port
         # IMPORTANT: end url values with trailing slash!
-        #
-        # This service is necessary for the Chemical structure editor (Ketcher)
-        #- USE_INDIGO=false
-        #- INDIGO_URL=http://chem-plugin:8080/
-        # The fingerprinter is necessary to create a fingerprint of chemical compounds so we can do sub-structure search
-        #- USE_FINGERPRINTER=false
-        #- FINGERPRINTER_URL=http://chem-plugin:8000/
-        # If your fingerprinter service needs to use the generic app proxy, set this to true
-        #- FINGERPRINTER_USE_PROXY=false
         # This is for the integration of the DNA Cloning tool
         #- USE_OPENCLONING=false
         #- OPENCLONING_URL=http://opencloning-plugin:8000/
@@ -430,22 +421,6 @@ services:
      # make sure to document your usage here.
     expose:
       - '3306'
-    networks:
-      - elabftw-net
-
-  chem-plugin:
-    # note: use elabftw version here instead of latest tag
-    # e.g. image: elabftw/chem-plugin:6.0.0
-    image: elabftw/chem-plugin:latest
-    container_name: chem-plugin
-    restart: always
-    read_only: true
-    cap_drop:
-        - ALL
-    tmpfs:
-      - /tmp
-    security_opt:
-      - no-new-privileges:true
     networks:
       - elabftw-net
 

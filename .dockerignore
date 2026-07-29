@@ -3,8 +3,6 @@ CHANGELOG.md
 CITATION.cff
 codemeta.json
 containers/elabimg/docker-compose-EXAMPLE.yml
-containers/chem-plugin/fingerprinter/.venv
-containers/chem-plugin/fingerprinter/__pycache__
 containers/cypress
 containers/elabctl
 containers/elabtmp

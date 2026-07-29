@@ -128,6 +128,53 @@ RUN ./configure \
 USER root
 RUN make install
 
+#####################
+# OPENBABEL BUILDER #
+#####################
+FROM alpine:3.23 AS openbabel-builder
+
+# Version 3.2.1
+# https://github.com/openbabel/openbabel/releases/tag/openbabel-3-2-1
+ARG OPENBABEL_REF=0e94434fa75c9f61095023e3c12e0d5f2ac035ff
+
+RUN apk add --no-cache \
+    build-base \
+    cmake \
+    git \
+    perl
+
+WORKDIR /build/openbabel
+
+RUN git init \
+    && git remote add origin https://github.com/openbabel/openbabel.git \
+    && git fetch --depth 1 origin "$OPENBABEL_REF" \
+    && git checkout --detach FETCH_HEAD
+
+
+# Open Babel 3.2.1 incorrectly registers the InChI descriptor in static
+# builds even when InChI support is disabled.
+RUN sed -i \
+        '/theInChIFilter.*GetID/d' \
+        src/plugin.cpp
+
+RUN cmake -S . -B build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_SHARED=OFF \
+        -DBUILD_MIXED=OFF \
+        -DMINIMAL_BUILD=OFF \
+        -DENABLE_TESTS=OFF \
+        -DBUILD_GUI=OFF \
+        -DBUILD_DOCS=OFF \
+        -DWITH_INCHI=OFF \
+        -DWITH_STATIC_INCHI=OFF \
+        -DWITH_STATIC_LIBXML=OFF \
+        -DPYTHON_BINDINGS=OFF \
+        -DRUN_SWIG=OFF \
+    && cmake --build build \
+        --target obabel \
+        --parallel "$(getconf _NPROCESSORS_ONLN)" \
+    && strip -s build/bin/obabel
+
 #############################
 # ELABFTW + NGINX + PHP-FPM #
 #############################
@@ -153,6 +200,9 @@ COPY --from=nginx-builder /etc/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
 RUN mkdir /var/cache/nginx
 
 # END NGINX
+
+# OpenBabel
+COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/obabel
 
 # install required packages
 # php8-bcmath is required to send emails via Exchange (NTLM authenticator)

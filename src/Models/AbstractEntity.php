@@ -1548,7 +1548,6 @@ abstract class AbstractEntity extends AbstractRest
         $base = $this->decodeMetadata($baseMetadata);
         // incoming metadata usually comes from CSV/API and contains the values to inject.
         $incoming = $this->decodeMetadata($incomingMetadata);
-
         // ensure both metadata arrays have an extra_fields array.
         $base['extra_fields'] ??= array();
         $incoming['extra_fields'] ??= array();

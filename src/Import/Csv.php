@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use DateTimeImmutable;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
+use Elabftw\Params\EntityParams;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -22,8 +24,6 @@ use Elabftw\Models\Users\Users;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
-use Elabftw\Enums\Action;
-use Elabftw\Params\EntityParams;
 
 use function array_key_exists;
 use function explode;
@@ -94,12 +94,8 @@ final class Csv extends AbstractCsv
             $canwrite = empty($row['canwrite']) ? $this->canwrite : $row['canwrite'];
 
             if ($this->entityType === EntityType::Items && $this->resourceTemplate !== null) {
-                $resourceId = $entity->postAction(
-                    Action::Create,
-                    array(
-                        'template' => $this->resourceTemplate,
-                        'title' => $row['title'],
-                    ),
+                $resourceId = $entity->postAction(Action::Create, array(
+                    'template' => $this->resourceTemplate, 'title' => $row['title'])
                 );
                 $entity->setId($resourceId);
                 $this->processTags($entity, $tags);

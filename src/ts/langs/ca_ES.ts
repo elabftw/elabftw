@@ -83,6 +83,7 @@ const t = {
     "import": "Importa",
     "import-spreadsheet": "Importa un full de càlcul (xls, csv, ods, ...)",
     "import-error": "Error durant la importació. Siu us plau, comprova la consola per més informació.",
+    "info-deleted-entries": "Are you sure you want to delete {{count, number}} {{entity, string}}?",
     "invalid-info": "Sintaxi o informació proveïda invàlida.",
     "is-locked": "Is locked",
     "last-modified-at": "Last modified at",

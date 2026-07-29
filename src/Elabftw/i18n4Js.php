@@ -127,6 +127,7 @@ final class i18n4Js
             'import-spreadsheet' => _('Import a spreadsheet (xls, csv, ods, ...)'),
             // import errors often print html content
             'import-error' => _('Error during import. Please check the console for more information.'),
+            'info-deleted-entries' => _('Are you sure you want to delete {{count, number}} {{entity, string}}?'),
             'invalid-info' => _('Invalid syntax or information provided.'),
             'is-locked' => _('Is locked'),
             'last-modified-at' => _('Last modified at'),

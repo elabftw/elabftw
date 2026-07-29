@@ -83,6 +83,7 @@ const t = {
     "import": "Importuj",
     "import-spreadsheet": "Importuj arkusz (xls, csv, ods)",
     "import-error": "ystąpił błąd podczas importowania. Więcej informacji znajdziesz w konsoli.",
+    "info-deleted-entries": "Are you sure you want to delete {{count, number}} {{entity, string}}?",
     "invalid-info": "Błędne wyrążenie lub wprowadzone informacje",
     "is-locked": "Is locked",
     "last-modified-at": "Last modified at",

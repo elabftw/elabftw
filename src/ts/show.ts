@@ -989,23 +989,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (action === Action.Destroy) {
         const count = checked.length;
         const modalSelector = `#${el.dataset.target}`;
-        const oneEntity = document.getElementById('deleteSelectedEntityMessage');
-        const pluralEntities = document.getElementById('deleteSelectedEntitiesMessage');
-        const countEntities = document.getElementById('selectedEntitiesCount');
+        const deleteMsg = document.getElementById('deleteEntityMessage');
         const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
 
         entitiesPendingDeletion = [...checked];
-        oneEntity?.classList.toggle('d-none', count !== 1);
-        pluralEntities?.classList.toggle('d-none', count === 1);
-        if (countEntities) {
-          countEntities.textContent = String(count);
+        if (count) {
+          deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entity.type});
         }
 
         deleteButton.disabled = true;
         showModalAndFocusFirstInput(modalSelector);
         setTimeout(() => {
           deleteButton.disabled = false;
-        }, 3000);
+        }, 2000);
 
         return;
       }

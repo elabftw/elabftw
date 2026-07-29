@@ -83,6 +83,7 @@ const t = {
     "import": "Importeer",
     "import-spreadsheet": "Import a spreadsheet (xls, csv, ods, ...)",
     "import-error": "Error during import. Please check the console for more information.",
+    "info-deleted-entries": "Are you sure you want to delete {{count, number}} {{entity, string}}?",
     "invalid-info": "Invalid syntax or information provided.",
     "is-locked": "Is locked",
     "last-modified-at": "Last modified at",

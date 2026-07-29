@@ -80,7 +80,6 @@ interface Status extends SelectOptions {
   is_current_team: number;
 }
 
-
 // code to hide navbar on scroll down, and show it on scroll up.
 const root = document.documentElement;
 const navbar = document.getElementById('main-navbar');

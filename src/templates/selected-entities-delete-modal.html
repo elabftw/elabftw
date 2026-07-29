@@ -8,9 +8,13 @@
         </button>
       </div>
       <div class='modal-body'>
+        <span id='deleteEntityMessage'></span>
+        <!--
         <p id='deleteSelectedEntityMessage' class='d-none'>{{ 'Are you sure you want to delete the selected entity?'|trans }}</p>
         <p id='deleteSelectedEntitiesMessage' class='d-none'>{{ 'Are you sure you want to delete these'|trans }} <strong id='selectedEntitiesCount'></strong> {{ 'entities?'|trans }}</p>
-        <p>{{ 'Please note this is action is reversible: you can retrieve your deleted entries by filtering the search results by the \'Deleted\' state.'|trans }}</p>
+
+        -->
+        <p>{{ 'Please note this action is reversible: to retrieve deleted entries, filter your search results to retrieve entries with the \'Deleted\' state.'|trans }}</p>
       </div>
       <div class='modal-footer d-flex justify-content-end'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>

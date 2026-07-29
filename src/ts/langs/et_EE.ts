@@ -83,6 +83,7 @@ const t = {
     "import": "Impordi",
     "import-spreadsheet": "Impordi arvutustabel (xls, csv, ods, ...)",
     "import-error": "Importimisel tekkis viga. Lisateabe saamiseks kontrollige konsooli.",
+    "info-deleted-entries": "Are you sure you want to delete {{count, number}} {{entity, string}}?",
     "invalid-info": "Esitatud süntaks või teave on sobimatu.",
     "is-locked": "Is locked",
     "last-modified-at": "Last modified at",

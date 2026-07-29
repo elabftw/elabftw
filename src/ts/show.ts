@@ -25,6 +25,7 @@ import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
+import { showModalAndFocusFirstInput} from './common';
 
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
   _showAll?: boolean;
@@ -58,6 +59,7 @@ const isSearchPending = writable(false);
 const entityFilters = writable(initialUrlParams);
 const selectedEntities = writable<string[]>([]);
 let searchQueryInitialized = false;
+let entitiesPendingDeletion: string[] = [];
 
 function updateUrlFromStores(filters = get(entityFilters)): void {
   const url = new URL(window.location.href);
@@ -985,17 +987,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const action = <Action>el.dataset.what;
       // special case: DELETE request for confirmation & deletes div
       if (action === Action.Destroy) {
-        if (!confirm(i18next.t('generic-delete-warning'))) {
-          return;
+        const count = checked.length;
+        const modalSelector = `#${el.dataset.target}`;
+        const oneEntity = document.getElementById('deleteSelectedEntityMessage');
+        const pluralEntities = document.getElementById('deleteSelectedEntitiesMessage');
+        const countEntities = document.getElementById('selectedEntitiesCount');
+        const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
+
+        entitiesPendingDeletion = [...checked];
+        oneEntity?.classList.toggle('d-none', count !== 1);
+        pluralEntities?.classList.toggle('d-none', count === 1);
+        if (countEntities) {
+          countEntities.textContent = String(count);
         }
-        // perform deletes
-        const deletes = checked.map(chk =>
-          ApiC.delete(`${entity.type}/${chk}`, { notifOnSaved:0 }),
-        );
-        Promise.all(deletes).then(() => {
-          notify.success();
-          reloadEntitiesShow();
-        });
+
+        deleteButton.disabled = true;
+        showModalAndFocusFirstInput(modalSelector);
+        setTimeout(() => {
+          deleteButton.disabled = false;
+        }, 3000);
+
         return;
       }
       // handle all other PATCH with selected action
@@ -1006,6 +1017,17 @@ document.addEventListener('DOMContentLoaded', () => {
         notify.success();
         reloadEntitiesShow();
       });
+    } else if (el.matches('[data-action="delete-selected-entities"]')) {
+      // perform deletes
+      const deletes = entitiesPendingDeletion.map(id =>
+        ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
+      );
+      Promise.all(deletes).then(() => {
+        entitiesPendingDeletion = [];
+        notify.success();
+        reloadEntitiesShow();
+      });
+      return;
     }
   });
 

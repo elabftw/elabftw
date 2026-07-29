@@ -65,6 +65,7 @@
     searchQuery,
     queryPending,
     selectedEntities = [],
+    selectedEntitiesDetails = [],
     currentUserId = null,
     currentTeam = null,
     isAdmin = false,
@@ -78,6 +79,7 @@
     searchQuery: Writable<string>;
     queryPending?: Writable<boolean>;
     selectedEntities: Writable<string[]>;
+    selectedEntitiesDetails: Writable<string[]>;
     currentUserId?: number | null;
     currentTeam?: number | null;
     isAdmin?: boolean;

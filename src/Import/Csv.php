@@ -95,7 +95,10 @@ final class Csv extends AbstractCsv
             $canwrite = empty($row['canwrite']) ? $this->canwrite : $row['canwrite'];
 
             if ($this->template !== null && in_array(
-                $this->entityType, array(EntityType::Experiments, EntityType::Items), true)
+                $this->entityType,
+                array(EntityType::Experiments, EntityType::Items),
+                true
+            )
             ) {
                 $entityId = $entity->postAction(
                     Action::Create,

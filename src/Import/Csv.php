@@ -82,10 +82,11 @@ final class Csv extends AbstractCsv
             }
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
-            $metadata = empty($row['metadata']) ? null : (string) $row['metadata'];
-            if ($metadata === null) {
-                $metadata = $this->collectMetadata($row);
-            }
+            // metadata can come from the dedicated metadata column or from extra CSV columns
+            $csvMetadata = empty($row['metadata']) ? null : (string) $row['metadata'];
+            $columnMetadata = $this->collectMetadata($row);
+            $metadata = $csvMetadata ?? $columnMetadata;
+
             $tags = empty($row['tags']) ? array() : explode(self::TAGS_SEPARATOR, $row['tags']);
             $canreadBase = empty($row['canread_base']) ? $this->canreadBase : $row['canread_base'];
             $canwriteBase = empty($row['canwrite_base']) ? $this->canwriteBase : $row['canwrite_base'];
@@ -103,9 +104,14 @@ final class Csv extends AbstractCsv
                 $entity->setId($resourceId);
                 $this->processTags($entity, $tags);
                 $this->processLocation($entity, $row);
-                $entity->update(new EntityParams('metadatamerge', $this->collectMetadata($row)));
+                // preserve the template metadata schema while applying the explicit metadata payload first
+                if ($csvMetadata !== null) {
+                    $entity->update(new EntityParams('metadatamerge', $csvMetadata));
+                }
+                // merge remaining CSV columns as metadata, letting explicit columns override matching fields
+                $entity->update(new EntityParams('metadatamerge', $columnMetadata));
             } else {
-                $entity->create(
+                $entityId = $entity->create(
                     title: $row['title'],
                     body: $body,
                     date: $date,
@@ -121,6 +127,15 @@ final class Csv extends AbstractCsv
                     rating: (int) ($row['rating'] ?? 0),
                     contentType: BodyContentType::from((int) ($row['contentType'] ?? BodyContentType::Html->value)),
                 );
+                $entity->setId($entityId);
+                // process inventory location after create because location links need the new resource id
+                if ($this->entityType === EntityType::Items) {
+                    $this->processLocation($entity, $row);
+                }
+                // when a metadata column exists, create used it first, so merge extra CSV columns afterwards
+                if ($csvMetadata !== null) {
+                    $entity->update(new EntityParams('metadatamerge', $columnMetadata));
+                }
             }
 
             $this->inserted++;

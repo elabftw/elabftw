@@ -27,6 +27,7 @@ use Override;
 
 use function array_key_exists;
 use function explode;
+use function in_array;
 
 /**
  * Import entries from a csv file.

@@ -219,14 +219,11 @@
           </span>
         </div>
 
-        <div id='selectResourceTemplateDiv' hidden>
+        <div id='selectTemplateDiv' hidden>
           <hr>
-          <label for='importSelectResourceTemplate'>{{ 'Select a Resource Template'|trans }}</label>
-          <select class='form-control' id='importSelectResourceTemplate' autocomplete='off' name='resource_template'>
-            <option value='null'>{{ 'Do not use a Resource Template'|trans }}</option>
-            {% for template in itemsTemplatesArr %}
-              <option value='{{ template.id }}'>{{ template.title }}</option>
-            {% endfor %}
+          <label for='importSelectTemplate'>{{ 'Select a template'|trans }}</label>
+          <select class='form-control' id='importSelectTemplate' autocomplete='off' name='template'>
+            <option value='null'>{{ 'Do not use a template'|trans }}</option>
           </select>
         </div>
 

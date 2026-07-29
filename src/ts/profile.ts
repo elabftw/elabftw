@@ -75,14 +75,34 @@ if (window.location.pathname === '/profile.php') {
   document.getElementById('importRadioEntityType').addEventListener('change', async function(event) {
     const el = event.target as HTMLInputElement;
     const selectCategoryDiv = document.getElementById('selectCategoryDiv') as HTMLElement;
-    const selectResourceTemplateDiv = document.getElementById('selectResourceTemplateDiv') as HTMLElement;
-    const resourceTemplateSelect = document.getElementById('importSelectResourceTemplate') as HTMLSelectElement;
+    const selectTemplateDiv = document.getElementById('selectTemplateDiv') as HTMLElement;
+    const templateSelect = document.getElementById('importSelectTemplate') as HTMLSelectElement;
 
-    const isResource = el.value === 'items';
-    selectResourceTemplateDiv.hidden = !isResource;
-    resourceTemplateSelect.disabled = !isResource;
-    if (!isResource) {
-      resourceTemplateSelect.value = 'null';
+    const supportsTemplate = ['experiments', 'items'].includes(el.value);
+    selectTemplateDiv.hidden = !supportsTemplate;
+    templateSelect.disabled = !supportsTemplate;
+    templateSelect.value = 'null';
+
+    for (let i = templateSelect.options.length - 1; i >= 1; i--) {
+      templateSelect.remove(i);
+    }
+
+    if (supportsTemplate) {
+      let templateType = el.value;
+      if (el.value === 'items') {
+        templateType = 'items_types';
+      } else if (el.value === 'experiments') {
+        templateType = 'experiments_templates';
+      }
+
+      ApiC.getJson(`${templateType}`).then(templates => {
+        templates.forEach(template => {
+          const newOption = document.createElement('option');
+          newOption.value = template.id;
+          newOption.text = template.title;
+          templateSelect.add(newOption);
+        });
+      });
     }
 
     selectCategoryDiv.removeAttribute('hidden');
@@ -134,8 +154,8 @@ if (window.location.pathname === '/profile.php') {
     if (formData.get('category') === 'null') {
       formData.delete('category');
     }
-    if (formData.get('resource_template') === 'null') {
-      formData.delete('resource_template');
+    if (formData.get('template') === 'null') {
+      formData.delete('template');
     }
     fetch(form.action, {
       method: 'POST',

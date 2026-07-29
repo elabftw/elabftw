@@ -1559,7 +1559,7 @@ abstract class AbstractEntity extends AbstractRest
                 $baseField = &$base['extra_fields'][$name];
                 $type = $baseField['type'] ?? '';
 
-                // Add missing options for fields using a controlled list of values
+                // Add imported values to the field's options if they don't already exist.
                 $values = match ($type) {
                     'select-multi' => is_array($value)
                         ? $value

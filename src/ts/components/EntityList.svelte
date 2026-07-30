@@ -243,11 +243,9 @@
   
   onMount(() => {
     nonSearchFilterSignature = getCurrentNonSearchFilterSignature();
-    
     window.addEventListener('popstate', bumpUrlVersion);
     window.addEventListener('entity-filters-changed', bumpReloadVersionIfFiltersChanged);
     window.addEventListener('entity-list-reload', reloadEntityList);
-    
     return () => {
       window.removeEventListener('popstate', bumpUrlVersion);
       window.removeEventListener('entity-filters-changed', bumpReloadVersionIfFiltersChanged);

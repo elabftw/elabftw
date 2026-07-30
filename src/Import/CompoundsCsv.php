@@ -17,10 +17,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Links\Compounds2ItemsLinks;
-use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Items;
-use Elabftw\Models\StorageUnits;
-use Elabftw\Models\Tags;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Services\PubChemImporter;
@@ -35,7 +32,6 @@ use function sprintf;
 use function strcasecmp;
 use function trim;
 use function count;
-use function explode;
 use function is_array;
 
 /**
@@ -127,9 +123,8 @@ final class CompoundsCsv extends AbstractCsv
                     if (isset($row['comment'])) {
                         $this->Items->update(new EntityParams('body', $row['comment']));
                     }
-                    if (isset($row['tags']) && trim($row['tags']) !== '') {
-                        $Tags = new Tags($this->Items);
-                        $Tags->postAction(Action::Create, array('tag' => trim($row['tags'])));
+                    if (isset($row['tags'])) {
+                        $this->processTags($this->Items, array($row['tags']));
                     }
                     if (isset($row['status']) && trim($row['status']) !== '') {
                         try {
@@ -144,14 +139,7 @@ final class CompoundsCsv extends AbstractCsv
                         $Compounds2ItemsLinks = new Compounds2ItemsLinks($this->Items, $id);
                         $Compounds2ItemsLinks->create();
                     }
-                    // process localisation
-                    if (isset($row['location']) && !empty($row['location']) && !empty($this->locationSplitter)) {
-                        $locationSplit = explode($this->locationSplitter, $row['location']);
-                        $StorageUnits = new StorageUnits($this->requester, requireEditRights: false);
-                        $id = $StorageUnits->createImmutable($locationSplit);
-                        $Containers2ItemsLinks = new Containers2ItemsLinks($this->Items, $id);
-                        $Containers2ItemsLinks->createWithQuantity((float) ($row['quantity'] ?? 1.0), $row['unit'] ?? '•');
-                    }
+                    $this->processLocation($this->Items, $row, $this->locationSplitter);
                     // process custom_id
                     if (isset($row['custom_id']) && !empty($row['custom_id'])) {
                         try {

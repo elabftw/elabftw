@@ -17,6 +17,9 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Make\Exports;
 use Elabftw\Models\ExperimentsCategories;
+use Elabftw\Enums\Orderby;
+use Elabftw\Models\ItemsTypes;
+use Elabftw\Params\DisplayParams;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\UserUploads;
 use Elabftw\Services\UsersHelper;
@@ -57,6 +60,13 @@ try {
     $UserUploads = new UserUploads($App->Users);
     $PermissionsHelper = new PermissionsHelper();
 
+    $ItemsTypes = new ItemsTypes($App->Users);
+    $DisplayParamsItemsTypes = new DisplayParams(
+        $App->Users,
+        EntityType::ItemsTypes,
+        orderby: Orderby::Lastchange,
+    );
+
     $queryParams = $UserUploads->getQueryParams(new InputBag($App->Request->query->all()));
     $template = 'profile.html';
     $renderArr = array(
@@ -64,6 +74,7 @@ try {
         'count' => $count,
         'exportedFiles' => $Export->readAll(),
         'experimentsCategoryArr' => $ExperimentsCategories->readAll(),
+        'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
         'maxUploadSizeRaw' => ini_get('post_max_size'),
         'pageTitle' => _('Profile'),
         'pieData' => $UserStats->getPieData(),

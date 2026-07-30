@@ -374,7 +374,8 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         metakeyOptionsLoading = true;
-        ApiC.getJson('extra_fields_keys')
+        // TODO: add a selectAll public fn to get all
+        ApiC.getJson('extra_fields_keys', {limit: 999999})
           .then((extraFieldsKeys) => {
             const options = extraFieldsKeys
               .map((extraFieldKey) => ({

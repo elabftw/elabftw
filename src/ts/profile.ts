@@ -11,6 +11,22 @@ import { collectForm, reloadElements } from './misc';
 import i18next from './i18n';
 import { on } from './handlers';
 
+// populate selects for category/templates when importing csv
+const populateSelect = async (select: HTMLSelectElement, endpoint?: string): Promise<void> => {
+  // remove all options except the first one ("Do not use ...")
+  for (let i = select.options.length - 1; i >= 1; i--) {
+    select.remove(i);
+  }
+  if (!endpoint) return;
+  const entries = await ApiC.getJson(endpoint);
+  entries.forEach(entry => {
+    const newOption = document.createElement('option');
+    newOption.value = entry.id;
+    newOption.text = entry.title;
+    select.add(newOption);
+  });
+};
+
 if (window.location.pathname === '/profile.php') {
   // we use a normal button to trigger the actual file input
   on('show-file-input', () => document.getElementById('importFileInput').click());
@@ -66,39 +82,40 @@ if (window.location.pathname === '/profile.php') {
       .forEach((el: HTMLElement) => isEln ? el.removeAttribute('hidden') : el.hidden = true);
     // we want to let the .eln file decide which kind of entry it is by default
     const targetElement = 'entityTypeRadio' + (isEln ? 'None' : 'Experiments');
-    (document.getElementById(targetElement) as HTMLInputElement).checked = true;
+    const targetRadio = document.getElementById(targetElement) as HTMLInputElement;
+    targetRadio.checked = true;
+    targetRadio.dispatchEvent(new Event('change', {bubbles: true}));
   });
 
-  // when selecting the target type, change the category listing
+  // when selecting the target type, change the category and template listings
   document.getElementById('importRadioEntityType').addEventListener('change', async function(event) {
-    const el = (event.target as HTMLInputElement);
+    const el = event.target as HTMLInputElement;
     const selectCategoryDiv = document.getElementById('selectCategoryDiv') as HTMLElement;
-    selectCategoryDiv.removeAttribute('hidden');
-    if (['items_types', 'null'].includes(el.value)) {
-      selectCategoryDiv.hidden = true;
-      return;
-    }
+    const selectTemplateDiv = document.getElementById('selectTemplateDiv') as HTMLElement;
     const categorySelect = document.getElementById('importSelectCategory') as HTMLSelectElement;
-    // Remove all options except the first one
-    for (let i = categorySelect.options.length - 1; i >= 1; i--) {
-      categorySelect.remove(i);
-    }
-    let entityType = el.value;
-    if (el.value === 'experiments_templates') {
-      entityType = 'experiments';
-    }
-    if (el.value === 'items') {
-      entityType = 'resources';
-    }
-    ApiC.getJson(`teams/current/${entityType}_categories`).then(categories => {
-      // Append new options
-      categories.forEach(category => {
-        const newOption = document.createElement('option');
-        newOption.value = category.id;
-        newOption.text = category.title;
-        categorySelect.add(newOption);
-      });
-    });
+    const templateSelect = document.getElementById('importSelectTemplate') as HTMLSelectElement;
+
+    // template select
+    const templateTypes: Record<string, string> = {
+      experiments: 'experiments_templates',
+      items: 'items_types',
+    };
+    const templateType = templateTypes[el.value];
+    const supportsTemplate = templateType !== undefined;
+    selectTemplateDiv.hidden = !supportsTemplate;
+    templateSelect.disabled = !supportsTemplate;
+    templateSelect.value = 'null';
+    await populateSelect(templateSelect, templateType);
+
+    // categories select
+    selectCategoryDiv.hidden = ['items_types', 'null'].includes(el.value);
+    if (selectCategoryDiv.hidden) return;
+    const categoryTypes: Record<string, string> = {
+      experiments_templates: 'experiments',
+      items: 'resources',
+    };
+    const categoryType = categoryTypes[el.value] ?? el.value;
+    await populateSelect(categorySelect, `teams/current/${categoryType}_categories`);
   });
 
   document.getElementById('importFileForm')?.addEventListener('submit', function(event) {
@@ -121,6 +138,9 @@ if (window.location.pathname === '/profile.php') {
     }
     if (formData.get('category') === 'null') {
       formData.delete('category');
+    }
+    if (formData.get('template') === 'null') {
+      formData.delete('template');
     }
     fetch(form.action, {
       method: 'POST',

@@ -986,31 +986,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const action = <Action>el.dataset.what;
-      // special case: DELETE request for confirmation & deletes div
-      /*
-      if (action === Action.Destroy) {
-        const count = checked.length;
-        const modalSelector = `#${el.dataset.target}`;
-        const deleteMsg = document.getElementById('deleteEntityMessage');
-        const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
-        const pageTitle = document.getElementById('pageTitle');
-        const entityName = pageTitle.textContent?.trim().toLowerCase() ?? '';
-
-        entitiesPendingDeletion = [...checked];
-        if (count) {
-          deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
-        }
-
-        deleteButton.disabled = true;
-        showModalAndFocusFirstInput(modalSelector);
-        setTimeout(() => {
-          deleteButton.disabled = false;
-        }, 2000);
-
-        return;
-      }
-   */
-      // handle all other PATCH with selected action
       const results = checked.map(chk =>
         ApiC.patch(`${entity.type}/${chk}`, { notifOnSaved: 0, action }),
       );
@@ -1018,19 +993,6 @@ document.addEventListener('DOMContentLoaded', () => {
         notify.success();
         reloadEntitiesShow();
       });
-      /*
-    } else if (el.matches('[data-action="delete-selected-entities"]')) {
-      // perform deletes
-      const deletes = entitiesPendingDeletion.map(id =>
-        ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
-      );
-      Promise.all(deletes).then(() => {
-        entitiesPendingDeletion = [];
-        notify.success();
-        reloadEntitiesShow();
-      });
-      return;
-      */
     }
   });
 

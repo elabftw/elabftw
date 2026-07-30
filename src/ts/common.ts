@@ -90,25 +90,20 @@ let entitiesPendingDeletion: string[] = [];
 document.getElementById('container').addEventListener('click', async event => {
   const el = (event.target as HTMLElement);
 
-  if (el.matches('[data-action="toggle-modal"]')) {
+  if (el.matches('[data-action="toggle-modal"][data-target="deleteSelectedEntitiesModal"]')) {
     // get the item id of all checked boxes
     const checked = get(selectedEntities);
-    if (checked.length === 0) {
+    const requiresSelection = el.dataset.requiresSelection === 'true';
+    if (requiresSelection && checked.length === 0) {
       notify.error('nothing-selected');
       return;
     }
-    //   const action = <Action>el.dataset.what;
-    //const action = <Action>el.dataset.action;
-    // special case: DELETE request for confirmation & deletes div
-    // if (action === Action.Destroy) {
     const count = checked.length;
     const modalSelector = `#${el.dataset.target}`;
     const deleteMsg = document.getElementById('deleteEntityMessage');
     const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
-    const pageTitle = document.getElementById('pageTitle');
-    const entityName = pageTitle.textContent?.trim().toLowerCase() ?? '';
+    const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
 
-    entitiesPendingDeletion = [...checked];
     if (count) {
       deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
     }
@@ -118,11 +113,14 @@ document.getElementById('container').addEventListener('click', async event => {
     setTimeout(() => {
       deleteButton.disabled = false;
     }, 2000);
-
-    return;
-    //   }
-    // handle all other PATCH with selected action
   } else if (el.matches('[data-action="delete-selected-entities"]')) {
+    const checked = get(selectedEntities);
+    const requiresSelection = el.dataset.requiresSelection === 'true';
+    if (requiresSelection && checked.length === 0) {
+      notify.error('nothing-selected');
+      return;
+    }
+    entitiesPendingDeletion = [...checked];
     // perform deletes
     const deletes = entitiesPendingDeletion.map(id =>
       ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),

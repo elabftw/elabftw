@@ -85,13 +85,22 @@ interface Status extends SelectOptions {
 
 export const selectedEntities = writable<string[]>([]);
 
+// only on entity page
+const pageMode = new URLSearchParams(document.location.search).get('mode');
+
 on('toggle-modal', (el: HTMLElement) => {
   if (el.matches('[data-target="deleteSelectedEntitiesModal"]')) {
     // get the item id of all checked boxes
-    const checked = getFromSvelte(selectedEntities);
-    if (checked.length === 0) {
-      notify.error('nothing-selected');
-      return;
+    let checked;
+    if (pageMode == 'view' || pageMode == 'edit') {
+      checked = entity.id;
+    }
+    else {
+      checked = getFromSvelte(selectedEntities);
+      if (checked.length === 0) {
+        notify.error('nothing-selected');
+        return;
+      }
     }
     const count = checked.length;
     const modalSelector = `#${el.dataset.target}`;
@@ -111,7 +120,13 @@ on('toggle-modal', (el: HTMLElement) => {
   }
 });
 
-on('delete-selected-entities', () => {
+on('delete-selected-entities', async () => {
+  if (pageMode == 'view' || pageMode == 'edit') {
+    await ApiC.delete(`${entity.type}/${entity.id}`, { notifOnSaved:0 });
+    window.location.href = window.location.pathname;
+    notify.success();
+    return;
+  }
   const checked = getFromSvelte(selectedEntities);
   if (checked.length === 0) {
     notify.error('nothing-selected');
@@ -125,7 +140,6 @@ on('delete-selected-entities', () => {
     notify.success();
     reloadEntitiesShow();
   });
-  return;
 });
 
 // code to hide navbar on scroll down, and show it on scroll up.
@@ -407,8 +421,7 @@ document.addEventListener('scope-changed', () => {
   }
 });
 
-// only on entity page
-const pageMode = new URLSearchParams(document.location.search).get('mode');
+
 
 notify.flashSuccess();
 

@@ -238,13 +238,7 @@
   }
 
   function bumpReloadVersionIfFiltersChanged(): void {
-    const nextSignature = getCurrentNonSearchFilterSignature();
-
-    if (nextSignature === nonSearchFilterSignature) {
-      return;
-    }
-
-    nonSearchFilterSignature = nextSignature;
+    nonSearchFilterSignature = getCurrentNonSearchFilterSignature();
     reloadVersion += 1;
   }
 

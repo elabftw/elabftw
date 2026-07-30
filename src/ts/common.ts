@@ -39,6 +39,7 @@ import {
   mountRors,
   initPermissionsTomSelects,
   PERMISSION_SELECT_IDS,
+  reloadEntitiesShow,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -68,9 +69,12 @@ import { Counter } from './Counter.class';
 import { getEditor } from './Editor.class';
 import Todolist from './Todolist.class';
 import { entity } from './getEntity';
-import { on, get } from './handlers';
+import { get as Get }  from './handlers';
+import { on } from './handlers';
 import Tab from './Tab.class';
 import { core } from './core';
+import { get } from 'svelte/store';
+import { writable } from 'svelte/store';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -79,6 +83,58 @@ interface Status extends SelectOptions {
   title: string;
   is_current_team: number;
 }
+
+export const selectedEntities = writable<string[]>([]);
+let entitiesPendingDeletion: string[] = [];
+
+document.getElementById('container').addEventListener('click', async event => {
+  const el = (event.target as HTMLElement);
+
+  if (el.matches('[data-action="toggle-modal"]')) {
+    // get the item id of all checked boxes
+    const checked = get(selectedEntities);
+    if (checked.length === 0) {
+      notify.error('nothing-selected');
+      return;
+    }
+    //   const action = <Action>el.dataset.what;
+    //const action = <Action>el.dataset.action;
+    // special case: DELETE request for confirmation & deletes div
+    // if (action === Action.Destroy) {
+    const count = checked.length;
+    const modalSelector = `#${el.dataset.target}`;
+    const deleteMsg = document.getElementById('deleteEntityMessage');
+    const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
+    const pageTitle = document.getElementById('pageTitle');
+    const entityName = pageTitle.textContent?.trim().toLowerCase() ?? '';
+
+    entitiesPendingDeletion = [...checked];
+    if (count) {
+      deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
+    }
+
+    deleteButton.disabled = true;
+    showModalAndFocusFirstInput(modalSelector);
+    setTimeout(() => {
+      deleteButton.disabled = false;
+    }, 2000);
+
+    return;
+    //   }
+    // handle all other PATCH with selected action
+  } else if (el.matches('[data-action="delete-selected-entities"]')) {
+    // perform deletes
+    const deletes = entitiesPendingDeletion.map(id =>
+      ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
+    );
+    Promise.all(deletes).then(() => {
+      entitiesPendingDeletion = [];
+      notify.success();
+      reloadEntitiesShow();
+    });
+    return;
+  }
+});
 
 // code to hide navbar on scroll down, and show it on scroll up.
 const root = document.documentElement;
@@ -1592,8 +1648,8 @@ on('scope-change', async (el: HTMLElement) => {
 container.addEventListener('click', (event: Event) => {
   const rawTarget = event.target as HTMLElement | null;
   const el = rawTarget?.closest('[data-action]') as HTMLElement | null;
-  if (!el || !container.contains(el)) return;
-  const set = get(el.dataset.action);
+  if (!el || ! container.contains(el)) return;
+  const set =  Get(el.dataset.action);
   if (!set) return;
   // do not use for..of here!
   set.forEach(fn => {

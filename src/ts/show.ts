@@ -25,7 +25,8 @@ import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
-import { showModalAndFocusFirstInput} from './common';
+//import { showModalAndFocusFirstInput} from './common';
+import { selectedEntities } from './common';
 
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
   _showAll?: boolean;
@@ -57,9 +58,9 @@ const filterControls: ActiveFilterControl[] = [];
 const searchQuery = writable(initialQ);
 const isSearchPending = writable(false);
 const entityFilters = writable(initialUrlParams);
-const selectedEntities = writable<string[]>([]);
+// const selectedEntities = writable<string[]>([]);
 let searchQueryInitialized = false;
-let entitiesPendingDeletion: string[] = [];
+//let entitiesPendingDeletion: string[] = [];
 
 function updateUrlFromStores(filters = get(entityFilters)): void {
   const url = new URL(window.location.href);
@@ -986,6 +987,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const action = <Action>el.dataset.what;
       // special case: DELETE request for confirmation & deletes div
+      /*
       if (action === Action.Destroy) {
         const count = checked.length;
         const modalSelector = `#${el.dataset.target}`;
@@ -1007,6 +1009,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return;
       }
+   */
       // handle all other PATCH with selected action
       const results = checked.map(chk =>
         ApiC.patch(`${entity.type}/${chk}`, { notifOnSaved: 0, action }),
@@ -1015,6 +1018,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notify.success();
         reloadEntitiesShow();
       });
+      /*
     } else if (el.matches('[data-action="delete-selected-entities"]')) {
       // perform deletes
       const deletes = entitiesPendingDeletion.map(id =>
@@ -1026,6 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadEntitiesShow();
       });
       return;
+      */
     }
   });
 

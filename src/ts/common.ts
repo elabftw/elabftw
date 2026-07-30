@@ -114,17 +114,15 @@ on('toggle-modal', (el: HTMLElement) => {
 
     deleteButton.disabled = true;
     showModalAndFocusFirstInput(modalSelector);
-    setTimeout(() => {
-      deleteButton.disabled = false;
-    }, 2000);
+    setTimeout(() => deleteButton.disabled = false, 2000);
   }
 });
 
 on('delete-selected-entities', async () => {
   if (pageMode == 'view' || pageMode == 'edit') {
     await ApiC.delete(`${entity.type}/${entity.id}`, { notifOnSaved:0 });
+    sessionStorage.setItem('flash_deleted', i18next.t('saved'));
     window.location.href = window.location.pathname;
-    notify.success();
     return;
   }
   const checked = getFromSvelte(selectedEntities);
@@ -420,8 +418,6 @@ document.addEventListener('scope-changed', () => {
     });
   }
 });
-
-
 
 notify.flashSuccess();
 

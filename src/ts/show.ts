@@ -800,7 +800,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const params = collectForm(form);
       clearForm(form);
       checked.forEach(chk => {
-        const paramsCopy = Object.assign({}, params);
+        const paramsCopy = Object.assign({}, params, { notifOnSaved: 0 });
         // they do not have all the same endpoint: handle tags and links the generic patch method
         for (const key in paramsCopy) {
           if (key === 'tags') {
@@ -990,7 +990,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // perform deletes
         const deletes = checked.map(chk =>
-          ApiC.delete(`${entity.type}/${chk}`, { notifOnSaved:0 }),
+          ApiC.delete(`${entity.type}/${chk}`, { notifOnSaved: 0 }),
         );
         Promise.all(deletes).then(() => {
           notify.success();

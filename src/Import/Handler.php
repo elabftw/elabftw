@@ -98,6 +98,7 @@ final class Handler extends AbstractRest
                     canwriteBase: $canwriteBase,
                 );
             case 'csv':
+                $csvTemplate = empty($reqBody['template']) ? null : (int) $reqBody['template'];
                 return new Csv(
                     $this->requester,
                     $reqBody['file'],
@@ -106,7 +107,7 @@ final class Handler extends AbstractRest
                     category: (int) $reqBody['category'],
                     canreadBase: $canreadBase,
                     canwriteBase: $canwriteBase,
-                    template: empty($reqBody['template']) ? null : (int) $reqBody['template'],
+                    template: $csvTemplate,
                 );
             default:
                 throw new ImproperActionException(sprintf(

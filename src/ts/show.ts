@@ -25,7 +25,6 @@ import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
-//import { showModalAndFocusFirstInput} from './common';
 import { selectedEntities } from './common';
 
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
@@ -58,9 +57,7 @@ const filterControls: ActiveFilterControl[] = [];
 const searchQuery = writable(initialQ);
 const isSearchPending = writable(false);
 const entityFilters = writable(initialUrlParams);
-// const selectedEntities = writable<string[]>([]);
 let searchQueryInitialized = false;
-//let entitiesPendingDeletion: string[] = [];
 
 function updateUrlFromStores(filters = get(entityFilters)): void {
   const url = new URL(window.location.href);
@@ -995,7 +992,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-
 
   function buildDropdownToggleHeaderHtml(
     title: string,

@@ -69,11 +69,10 @@ import { Counter } from './Counter.class';
 import { getEditor } from './Editor.class';
 import Todolist from './Todolist.class';
 import { entity } from './getEntity';
-import { get as Get }  from './handlers';
-import { on } from './handlers';
+import { get, on } from './handlers';
 import Tab from './Tab.class';
 import { core } from './core';
-import { get } from 'svelte/store';
+import { get as getFromSvelte } from 'svelte/store';
 import { writable } from 'svelte/store';
 
 // we need to extend the interface from malle to add more properties
@@ -85,16 +84,14 @@ interface Status extends SelectOptions {
 }
 
 export const selectedEntities = writable<string[]>([]);
-let entitiesPendingDeletion: string[] = [];
 
 document.getElementById('container').addEventListener('click', async event => {
   const el = (event.target as HTMLElement);
 
   if (el.matches('[data-action="toggle-modal"][data-target="deleteSelectedEntitiesModal"]')) {
     // get the item id of all checked boxes
-    const checked = get(selectedEntities);
-    const requiresSelection = el.dataset.requiresSelection === 'true';
-    if (requiresSelection && checked.length === 0) {
+    const checked = getFromSvelte(selectedEntities);
+    if (checked.length === 0) {
       notify.error('nothing-selected');
       return;
     }
@@ -114,19 +111,16 @@ document.getElementById('container').addEventListener('click', async event => {
       deleteButton.disabled = false;
     }, 2000);
   } else if (el.matches('[data-action="delete-selected-entities"]')) {
-    const checked = get(selectedEntities);
-    const requiresSelection = el.dataset.requiresSelection === 'true';
-    if (requiresSelection && checked.length === 0) {
+    const checked = getFromSvelte(selectedEntities);
+    if (checked.length === 0) {
       notify.error('nothing-selected');
       return;
     }
-    entitiesPendingDeletion = [...checked];
     // perform deletes
-    const deletes = entitiesPendingDeletion.map(id =>
+    const deletes = checked.map(id =>
       ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
     );
     Promise.all(deletes).then(() => {
-      entitiesPendingDeletion = [];
       notify.success();
       reloadEntitiesShow();
     });
@@ -1647,7 +1641,7 @@ container.addEventListener('click', (event: Event) => {
   const rawTarget = event.target as HTMLElement | null;
   const el = rawTarget?.closest('[data-action]') as HTMLElement | null;
   if (!el || ! container.contains(el)) return;
-  const set =  Get(el.dataset.action);
+  const set =  get(el.dataset.action);
   if (!set) return;
   // do not use for..of here!
   set.forEach(fn => {

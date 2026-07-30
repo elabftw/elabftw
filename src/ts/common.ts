@@ -85,10 +85,8 @@ interface Status extends SelectOptions {
 
 export const selectedEntities = writable<string[]>([]);
 
-document.getElementById('container').addEventListener('click', async event => {
-  const el = (event.target as HTMLElement);
-
-  if (el.matches('[data-action="toggle-modal"][data-target="deleteSelectedEntitiesModal"]')) {
+on('toggle-modal', (el: HTMLElement) => {
+  if (el.matches('[data-target="deleteSelectedEntitiesModal"]')) {
     // get the item id of all checked boxes
     const checked = getFromSvelte(selectedEntities);
     if (checked.length === 0) {
@@ -110,22 +108,24 @@ document.getElementById('container').addEventListener('click', async event => {
     setTimeout(() => {
       deleteButton.disabled = false;
     }, 2000);
-  } else if (el.matches('[data-action="delete-selected-entities"]')) {
-    const checked = getFromSvelte(selectedEntities);
-    if (checked.length === 0) {
-      notify.error('nothing-selected');
-      return;
-    }
-    // perform deletes
-    const deletes = checked.map(id =>
-      ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
-    );
-    Promise.all(deletes).then(() => {
-      notify.success();
-      reloadEntitiesShow();
-    });
+  }
+});
+
+on('delete-selected-entities', () => {
+  const checked = getFromSvelte(selectedEntities);
+  if (checked.length === 0) {
+    notify.error('nothing-selected');
     return;
   }
+  // perform deletes
+  const deletes = checked.map(id =>
+    ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
+  );
+  Promise.all(deletes).then(() => {
+    notify.success();
+    reloadEntitiesShow();
+  });
+  return;
 });
 
 // code to hide navbar on scroll down, and show it on scroll up.

@@ -85,7 +85,7 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
         $targetFreezerId = $StorageUnits->create($freezer, $lab2Id);
 
         $csv = sprintf(
-            "name,location,quantity,unit\nRegression compound,%s/%s,42,g\n",
+            "name,tags,location,quantity,unit\nRegression compound,regression-tag,%s/%s,42,g\nEmpty location compound,regression-tag,///,1,g\n",
             $lab2,
             $freezer,
         );
@@ -106,7 +106,7 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
             $Compounds = new Compounds($httpGetter, $requester, new NullFingerprinter(), false);
             $Import = new CompoundsCsv(new NullLogger(), $Items, $uploadedFile, $Compounds, 1);
 
-            $this->assertSame(1, $Import->import());
+            $this->assertSame(2, $Import->import());
             $this->assertSame($targetFreezerId, $this->latestImportedStorageId());
         } finally {
             unlink($csvPath);

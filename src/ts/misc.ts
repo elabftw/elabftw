@@ -406,27 +406,18 @@ export function getCheckedBoxes(): Array<CheckableItem> {
   return checkedBoxes;
 }
 
-// // reload the entities in show mode
-// export async function reloadEntitiesShow(): Promise<void | Response> {
-//   window.dispatchEvent(new CustomEvent('entity-filters-changed'));
-//   // ask mathjax to reparse the page
-//   MathJax.typeset();
-//   // rebind autocomplete for links input
-//   addAutocompleteToLinkInputs();
-//   // tags too
-//   addAutocompleteToTagInputs();
-//   // listen to data-trigger elements
-//   listenTrigger();
-//   // and set relative moments
-//   relativeMoment();
-// }
-
-export function reloadEntitiesShow(): void {
-  window.dispatchEvent(new CustomEvent('entity-list-reload'));
+// reload the entities in show mode
+export async function reloadEntitiesShow(): Promise<void | Response> {
+  window.dispatchEvent(new CustomEvent('entity-filters-changed'));
+  // ask mathjax to reparse the page
   MathJax.typeset();
+  // rebind autocomplete for links input
   addAutocompleteToLinkInputs();
+  // tags too
   addAutocompleteToTagInputs();
+  // listen to data-trigger elements
   listenTrigger();
+  // and set relative moments
   relativeMoment();
 }
 

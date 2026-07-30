@@ -50,6 +50,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
             $this->logger,
             EntityType::Items,
             category: 1,
+            template: 1,
         );
         $Import->import();
         $this->assertEquals(3, $Import->getInserted());

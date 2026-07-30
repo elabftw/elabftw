@@ -100,10 +100,7 @@ final class Csv extends AbstractCsv
                 true
             )
             ) {
-                $entityId = $entity->postAction(
-                    Action::Create,
-                    array('template' => $this->template, 'title' => $row['title']),
-                );
+                $entityId = $entity->postAction(Action::Create, array('template' => $this->template, 'title' => $row['title']));
                 $entity->setId($entityId);
                 $this->processTags($entity, $tags);
                 $this->processLocation($entity, $row);

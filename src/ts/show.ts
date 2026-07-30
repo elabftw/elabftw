@@ -374,7 +374,8 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         metakeyOptionsLoading = true;
-        ApiC.getJson('extra_fields_keys')
+        // TODO: add a selectAll public fn to get all
+        ApiC.getJson('extra_fields_keys', {limit: 999999})
           .then((extraFieldsKeys) => {
             const options = extraFieldsKeys
               .map((extraFieldKey) => ({
@@ -800,7 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const params = collectForm(form);
       clearForm(form);
       checked.forEach(chk => {
-        const paramsCopy = Object.assign({}, params);
+        const paramsCopy = Object.assign({}, params, { notifOnSaved: 0 });
         // they do not have all the same endpoint: handle tags and links the generic patch method
         for (const key in paramsCopy) {
           if (key === 'tags') {

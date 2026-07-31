@@ -88,14 +88,15 @@ export const selectedEntities = writable<string[]>([]);
 // only on entity page
 const pageMode = new URLSearchParams(document.location.search).get('mode');
 
+// Listen for this event to populate the modal text dynamically.
+// On view/edit pages, use the current entity id,
+// on the show page, get the item id of all checked boxes.
 on('toggle-modal', (el: HTMLElement) => {
   if (el.matches('[data-target="deleteSelectedEntitiesModal"]')) {
-    // get the item id of all checked boxes
     let checked = [];
     if (pageMode == 'view' || pageMode == 'edit') {
       checked.push(entity.id);
-    }
-    else {
+    } else {
       checked = getFromSvelte(selectedEntities);
       if (checked.length === 0) {
         notify.error('nothing-selected');
@@ -107,8 +108,11 @@ on('toggle-modal', (el: HTMLElement) => {
     const deleteMsg = document.getElementById('deleteEntityMessage');
     const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
     const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
+    const entryName = document.getElementById('documentTitle')?.textContent?.trim() ?? '';
 
-    if (count) {
+    if (count == 1 && (pageMode == 'view' || pageMode == 'edit')) {
+      deleteMsg.textContent = i18next.t('info-deleted-entry', {entry: entryName});
+    } else {
       deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
     }
 

@@ -82,6 +82,7 @@ const t = {
     "import-spreadsheet": "导入电子表格（xls, csv, ods, ...）",
     "import-error": "导入过程中发生错误。请检查控制台以获取更多信息。",
     "info-deleted-entries": "Are you sure you want to delete {{count, number}} {{entity, string}}?",
+    "info-deleted-entry": "Are you sure you want to delete: {{entry, string}}?",
     "invalid-info": "提供的语法或信息无效。",
     "is-locked": "Is locked",
     "last-modified-at": "Last modified at",

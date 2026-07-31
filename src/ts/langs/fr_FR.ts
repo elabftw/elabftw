@@ -82,6 +82,7 @@ const t = {
     "import-spreadsheet": "Importer une feuille de calcul (xls, csv, ods, ...)",
     "import-error": "Erreur lors de l'importation. Veuillez consulter la console pour plus d'informations.",
     "info-deleted-entries": "Are you sure you want to delete {{count, number}} {{entity, string}}?",
+    "info-deleted-entry": "Are you sure you want to delete: {{entry, string}}?",
     "invalid-info": "La syntaxe ou les informations fournies ne sont pas valides.",
     "is-locked": "Est verrouillé",
     "last-modified-at": "Modifié le",

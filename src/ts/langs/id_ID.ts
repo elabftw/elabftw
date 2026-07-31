@@ -82,6 +82,7 @@ const t = {
     "import-spreadsheet": "Mengimpor spreadsheet (xls, csv, ods, ...)",
     "import-error": "Kesalahan selama impor. Silakan periksa konsol untuk informasi lebih lanjut.",
     "info-deleted-entries": "Are you sure you want to delete {{count, number}} {{entity, string}}?",
+    "info-deleted-entry": "Are you sure you want to delete: {{entry, string}}?",
     "invalid-info": "Sintaks atau informasi yang diberikan tidak valid.",
     "is-locked": "Is locked",
     "last-modified-at": "Last modified at",

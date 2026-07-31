@@ -82,6 +82,7 @@ const t = {
     "import-spreadsheet": "スプレッドシート（xls、csv、ods、...）のインポート",
     "import-error": "インポート中にエラーが発生しました。コンソールで詳細を確認してください。",
     "info-deleted-entries": "Are you sure you want to delete {{count, number}} {{entity, string}}?",
+    "info-deleted-entry": "Are you sure you want to delete: {{entry, string}}?",
     "invalid-info": "無効な構文または情報。",
     "is-locked": "Is locked",
     "last-modified-at": "Last modified at",

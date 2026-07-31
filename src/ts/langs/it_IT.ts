@@ -82,6 +82,7 @@ const t = {
     "import-spreadsheet": "Importare un foglio di calcolo (xls, csv, ods, ...)",
     "import-error": "Errore durante l'importazione. Controllare la console per ulteriori informazioni.",
     "info-deleted-entries": "Are you sure you want to delete {{count, number}} {{entity, string}}?",
+    "info-deleted-entry": "Are you sure you want to delete: {{entry, string}}?",
     "invalid-info": "Sintassi o informazioni fornite non valide.",
     "is-locked": "Is locked",
     "last-modified-at": "Last modified at",

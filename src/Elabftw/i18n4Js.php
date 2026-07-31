@@ -82,7 +82,7 @@ final class i18n4Js
             'current-edit' => _('Currently editing'),
             'custom-fields' => _('Custom fields'),
             'delete' => _('Delete'),
-            'delete_success' => _('deleted successfully'),
+            'delete-success' => _('Deleted successfully'),
             'done' => _('Done'),
             'dropzone-upload-area' => _('Drop files here to upload'),
             'dropzone-filesize-limit' => _('File size limit:'),

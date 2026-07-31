@@ -361,7 +361,13 @@ EOF_INSTALL
 
     # get a config file already filled with random passwords/keys
     echo "[3/4] Downloading the Docker Compose configuration file."
-    curl --fail --show-error --silent "https://get.elabftw.net/?config" -o "$TMP_CONF_FILE"
+    curl --fail --show-error --silent --location \
+        --connect-timeout 12 --max-time 42 \
+        "https://get.elabftw.net/?config" -o "$TMP_CONF_FILE"
+    if [ ! -s "$TMP_CONF_FILE" ]; then
+        echo "Error: configuration download was empty." >&2
+        exit 1
+    fi
 
     # elab config
     echo "[4/4] Adjusting the configuration."
@@ -423,6 +429,15 @@ EOF_INSTALL
     if confirm 'Start the containers now? This will run the "start" command.'; then
         start
         if confirm 'Run the database initialization? This will run the "initialize" command.'; then
+            echo -n "Waiting a few seconds for ${ELAB_WEB_CONTAINER_NAME} to start..."
+            sleep 1
+            echo -n "."
+            sleep 1
+            echo -n "."
+            sleep 1
+            echo -n "."
+            sleep 1
+            echo "."
             initialize
         fi
     fi
@@ -527,8 +542,6 @@ function stop
 
 function uninstall
 {
-    stop
-
     echo ""
     echo "WARNING: This will delete everything related to eLabFTW on this computer."
     echo "There is no undo operation."
@@ -536,6 +549,8 @@ function uninstall
         echo "Uninstall cancelled."
         exit 1
     fi
+
+    stop
 
     local rmbackup='n'
     if confirm "Delete the backups too?"; then

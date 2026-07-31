@@ -1,5 +1,6 @@
 # This file is an example .container file for eLabFTW service running as user. Also place the .network file and possible configure HAProxy accordingly.
-# Place it in /etc/containers/systemd so a quadlet is generated and the service can be managed by systemd.
+# Place it in ${XDG_CONFIG_HOME:-$HOME/.config}/containers/systemd/ so a quadlet is generated and the service can be managed by systemd.
+# Use lingering for the user. Start the systemd service as user.
 # This is not an authoritative file, adapt it to your system.
 # Documentation: https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
 
@@ -57,7 +58,7 @@ Secret=elabftw-s3-sk,type=env,target=ELAB_AWS_SECRET_KEY
 Volume=/mnt/data/elabftw_uploads:/var/lib/elabftw/uploads
 # this is necessary if you encrypt mysql connection and thus want the container to have access to the mysql cert
 Volume=/deltablot/mysql:/mysql-cert:z
-Volume=/var/cache/elabftw/nginx-cache:/var/cache/nginx:Z
+Volume=/var/elabftw/.cache/nginx:/var/cache/nginx:Z
 # Note the notmpcopyup option which is important
 Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup
 

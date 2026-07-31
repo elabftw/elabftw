@@ -70,9 +70,11 @@ Only changed/added lines are shown:
 Image=docker.io/elabftw/elabimg:6.0.0
 ReadOnly=true
 UserNS=keep-id
-HealthCmd=curl http://localhost:8080/healthcheck
+HealthCmd=curl --fail --silent --show-error http://localhost:8080/healthcheck
 Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup
 ~~~
+
+Move the file into `${XDG_CONFIG_HOME:-$HOME/.config}/containers/systemd/` for your user.
 
 See also sections below, adjust volumes accordingly.
 
@@ -95,7 +97,7 @@ Then in the configuration file, under `volumes:` section:
 # docker
   - /var/elabftw/.cache/nginx:/var/cache/nginx
 # quadlet
-Volume=/var/lib/elabftw/nginx-cache:/var/cache/nginx:Z
+Volume=/var/elabftw/.cache/nginx:/var/cache/nginx:Z
 ~~~
 
 #### Uploads folder

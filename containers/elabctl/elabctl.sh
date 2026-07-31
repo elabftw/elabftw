@@ -290,6 +290,7 @@ EOF_INSTALL
 
     declare TMP_DIR
     TMP_DIR=$(mktemp -d)
+    trap 'rm -rf "$TMP_DIR"' EXIT
     declare TMP_CONF_FILE="${TMP_DIR}/elabftw.yml"
 
     ########################################################################

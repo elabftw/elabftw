@@ -39,6 +39,7 @@ const t = {
     "current-edit": "Currently editing",
     "custom-fields": "Custom fields",
     "delete": "삭제",
+    "delete_success": "deleted successfully",
     "done": "Done",
     "dropzone-upload-area": "업로드 하려는 파일을 여기에 드롭하세요",
     "dropzone-filesize-limit": "파일 크기 제한:",

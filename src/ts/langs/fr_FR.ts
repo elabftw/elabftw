@@ -39,6 +39,7 @@ const t = {
     "current-edit": "Actuellement en cours d'édition",
     "custom-fields": "Champs personnalisés",
     "delete": "Supprimer",
+    "delete_success": "deleted successfully",
     "done": "Terminé",
     "dropzone-upload-area": "Déposez ici les fichiers à uploader",
     "dropzone-filesize-limit": "Taille limite de fichier :",

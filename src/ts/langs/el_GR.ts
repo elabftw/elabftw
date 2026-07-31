@@ -39,6 +39,7 @@ const t = {
     "current-edit": "Currently editing",
     "custom-fields": "Custom fields",
     "delete": "Διαγραφή",
+    "delete_success": "deleted successfully",
     "done": "Done",
     "dropzone-upload-area": "Αποθέστε τα αρχεία εδώ για να μεταφορτώσετε",
     "dropzone-filesize-limit": "Όριο μεγέθους αρχείου:",

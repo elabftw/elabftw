@@ -39,6 +39,7 @@ const t = {
     "current-edit": "Currently editing",
     "custom-fields": "Custom fields",
     "delete": "Oʻchirish",
+    "delete_success": "deleted successfully",
     "done": "Done",
     "dropzone-upload-area": "Yuklash uchun fayllarni bu yerga tashlang",
     "dropzone-filesize-limit": "Fayl hajmi chegarasi:",

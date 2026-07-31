@@ -39,6 +39,7 @@ const t = {
     "current-edit": "Praegu toimetab",
     "custom-fields": "Custom fields",
     "delete": "Kustuta",
+    "delete_success": "deleted successfully",
     "done": "Done",
     "dropzone-upload-area": "Lohista failid siia üleslaadimiseks",
     "dropzone-filesize-limit": "Faili suuruse piirang:",

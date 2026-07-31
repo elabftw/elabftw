@@ -39,6 +39,7 @@ const t = {
     "current-edit": "現在編集中",
     "custom-fields": "Custom fields",
     "delete": "削除",
+    "delete_success": "deleted successfully",
     "done": "Done",
     "dropzone-upload-area": "ファイルをドロップしてアップロード",
     "dropzone-filesize-limit": "サイズ上限: ",

@@ -39,6 +39,7 @@ const t = {
     "current-edit": "Obecnie edytowany",
     "custom-fields": "Custom fields",
     "delete": "Usuń",
+    "delete_success": "deleted successfully",
     "done": "Done",
     "dropzone-upload-area": "Przeciągnij pliki tutaj aby załadować",
     "dropzone-filesize-limit": "Limit rozmiaru pliku:",

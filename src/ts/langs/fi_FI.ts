@@ -39,6 +39,7 @@ const t = {
     "current-edit": "Currently editing",
     "custom-fields": "Custom fields",
     "delete": "Poista",
+    "delete_success": "deleted successfully",
     "done": "Done",
     "dropzone-upload-area": "Pudota tiedostot tähän ladattavaksi",
     "dropzone-filesize-limit": "Tiedoston kokorajoitus:",

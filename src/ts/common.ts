@@ -125,7 +125,7 @@ on('toggle-modal', (el: HTMLElement) => {
 on('delete-selected-entities', async () => {
   if (pageMode == 'view' || pageMode == 'edit') {
     await ApiC.delete(`${entity.type}/${entity.id}`, { notifOnSaved:0 });
-    sessionStorage.setItem('flash_deleted', i18next.t('saved'));
+    sessionStorage.setItem('flash_deleted', i18next.t('delete_success'));
     window.location.href = window.location.pathname;
     return;
   }
@@ -139,7 +139,7 @@ on('delete-selected-entities', async () => {
     ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
   );
   Promise.all(deletes).then(() => {
-    notify.success();
+    notify.success(i18next.t('delete_success'));
     reloadEntitiesShow();
   });
 });

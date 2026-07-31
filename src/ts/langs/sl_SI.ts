@@ -39,6 +39,7 @@ const t = {
     "current-edit": "Currently editing",
     "custom-fields": "Custom fields",
     "delete": "Izbriši",
+    "delete_success": "deleted successfully",
     "done": "Done",
     "dropzone-upload-area": "Za nalaganje povlecite datoteko sem",
     "dropzone-filesize-limit": "Omejitev velikosti datoteke:",

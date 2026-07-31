@@ -25,6 +25,7 @@ import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
+import { selectedEntities } from './common';
 
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
   _showAll?: boolean;
@@ -56,7 +57,6 @@ const filterControls: ActiveFilterControl[] = [];
 const searchQuery = writable(initialQ);
 const isSearchPending = writable(false);
 const entityFilters = writable(initialUrlParams);
-const selectedEntities = writable<string[]>([]);
 let searchQueryInitialized = false;
 
 function updateUrlFromStores(filters = get(entityFilters)): void {
@@ -984,22 +984,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const action = <Action>el.dataset.what;
-      // special case: DELETE request for confirmation & deletes div
-      if (action === Action.Destroy) {
-        if (!confirm(i18next.t('generic-delete-warning'))) {
-          return;
-        }
-        // perform deletes
-        const deletes = checked.map(chk =>
-          ApiC.delete(`${entity.type}/${chk}`, { notifOnSaved: 0 }),
-        );
-        Promise.all(deletes).then(() => {
-          notify.success();
-          reloadEntitiesShow();
-        });
-        return;
-      }
-      // handle all other PATCH with selected action
       const results = checked.map(chk =>
         ApiC.patch(`${entity.type}/${chk}`, { notifOnSaved: 0, action }),
       );
@@ -1009,7 +993,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-
 
   function buildDropdownToggleHeaderHtml(
     title: string,

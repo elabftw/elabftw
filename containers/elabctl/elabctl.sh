@@ -132,7 +132,7 @@ function checkDeps
 {
     need_to_quit=0
 
-    for bin in docker curl sudo
+    for bin in docker curl
     do
         if ! hash "$bin" 2>/dev/null; then
             echo "Error: $bin not found in the \$PATH. Please install the program '$bin' or fix your \$PATH."
@@ -286,9 +286,7 @@ EOF_INSTALL
     fi
 
     # create the data dir
-    if ! mkdir -pv "$DATA_DIR"; then
-        sudo mkdir -pv "$DATA_DIR"
-    fi
+    mkdir -pv "$DATA_DIR"
 
     declare TMP_DIR
     TMP_DIR=$(mktemp -d)
@@ -342,24 +340,22 @@ EOF_INSTALL
     fi
 
     echo ""
-    echo "[1/4] Creating the folder structure. sudo may ask for your password."
-    sudo mkdir -pv "${DATA_DIR}/mysql" "${UPLOAD_DIR}"
-    sudo chmod -Rv 700 "${DATA_DIR}" "${UPLOAD_DIR}"
-    echo "Executing: sudo chown -v 999:999 ${DATA_DIR}/mysql"
-    sudo chown -v 999:999 "${DATA_DIR}/mysql"
-    echo "Executing: sudo chown -v 101:101 ${UPLOAD_DIR}"
-    sudo chown -v 101:101 "${UPLOAD_DIR}"
+    echo "[1/4] Creating the folder structure."
+    mkdir -pv "${DATA_DIR}/mysql" "${UPLOAD_DIR}"
+    chmod -Rv 700 "${DATA_DIR}" "${UPLOAD_DIR}"
+    chown -v 999:999 "${DATA_DIR}/mysql"
+    chown -v 101:101 "${UPLOAD_DIR}"
 
     echo "[2/4] Preparing the Docker Compose configuration file."
     # make a copy of an existing conf file
     if [ -e "$CONF_FILE" ]; then
         echo "Making a copy of the existing configuration file."
-        \cp "$CONF_FILE" "${CONF_FILE}.old"
+        cp -v "$CONF_FILE" "${CONF_FILE}.old"
     fi
 
     # get a config file already filled with random passwords/keys
     echo "[3/4] Downloading the Docker Compose configuration file."
-    curl --silent "https://get.elabftw.net/?config" -o "$TMP_CONF_FILE"
+    curl --fail --show-error --silent "https://get.elabftw.net/?config" -o "$TMP_CONF_FILE"
 
     # elab config
     echo "[4/4] Adjusting the configuration."
@@ -387,9 +383,8 @@ EOF_INSTALL
     # setup restrictive permissions
     chmod 600 "$TMP_CONF_FILE"
 
-    # now move conf file at proper location
-    # use sudo in case it's in /etc and we are not root
-    sudo mv "$TMP_CONF_FILE" "$CONF_FILE"
+    # now move conf file to the configured location
+    mv "$TMP_CONF_FILE" "$CONF_FILE"
 
     rmdir -v "$TMP_DIR"
 
@@ -455,9 +450,6 @@ function mysql-backup
 {
     if ! ls -A "${BACKUP_DIR}" > /dev/null 2>&1; then
         mkdir -pv "${BACKUP_DIR}"
-        if [ $? -eq 1 ]; then
-            sudo mkdir -pv ${BACKUP_DIR}
-        fi
     fi
 
     set -e
@@ -507,7 +499,7 @@ function self-update
     curl -sL https://raw.githubusercontent.com/elabftw/elabftw/master/containers/elabctl/elabctl.sh -o "$tmp_filepath"
     chmod -v +x "$tmp_filepath"
     mv -v "$tmp_filepath" "$me"
-    rmdir -v "${TMP_DIR}"
+    rmdir -v "$TMP_DIR"
 }
 
 function start
@@ -571,12 +563,12 @@ function uninstall
     fi
     # remove uploads directory
     if [ -d "$UPLOAD_DIR" ]; then
-        sudo rm -rvf "$UPLOAD_DIR"
+        rm -rvf "$UPLOAD_DIR"
         echo "[x] Deleted $UPLOAD_DIR"
     fi
     # remove data directory
     if [ -d "$DATA_DIR" ]; then
-        sudo rm -rvf "$DATA_DIR"
+        rm -rvf "$DATA_DIR"
         echo "[x] Deleted $DATA_DIR"
     fi
     # remove backup dir
@@ -679,6 +671,13 @@ case "$1" in
     exit 0
     ;;
 esac
+
+# all operational commands manage system-wide files and the rootful Docker daemon
+if (( EUID != 0 )); then
+    echo "Error: elabctl must be run as root." >&2
+    echo "Run it as root, for example with sudo or doas." >&2
+    exit 1
+fi
 
 # default settings that could be overridden by config
 

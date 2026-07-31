@@ -91,9 +91,9 @@ const pageMode = new URLSearchParams(document.location.search).get('mode');
 on('toggle-modal', (el: HTMLElement) => {
   if (el.matches('[data-target="deleteSelectedEntitiesModal"]')) {
     // get the item id of all checked boxes
-    let checked;
+    let checked = [];
     if (pageMode == 'view' || pageMode == 'edit') {
-      checked = entity.id;
+      checked.push(entity.id);
     }
     else {
       checked = getFromSvelte(selectedEntities);

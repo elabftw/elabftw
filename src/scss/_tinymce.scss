@@ -13,3 +13,7 @@ figure {
   top: calc(var(--navbar-height) + var(--toolbar-height)) !important;
   transition: top 0.2s ease;
 }
+
+table > caption {
+  caption-side: top;
+}

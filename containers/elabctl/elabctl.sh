@@ -308,6 +308,11 @@ EOF_INSTALL
                 fi
                 if [ -z "$servername" ]; then
                     echo "A domain name is required."
+                    continue
+                fi
+                if ! [[ $servername =~ ^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?$ ]]; then
+                    echo "Enter a hostname only, without a scheme or a path."
+                    servername=''
                 fi
             done
         else

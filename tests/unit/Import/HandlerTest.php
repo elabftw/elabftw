@@ -15,14 +15,19 @@ namespace Elabftw\Import;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 
 use function dirname;
 
 class HandlerTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Handler $handler;
 
     protected function setUp(): void
@@ -38,21 +43,36 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testPostCsv(): void
     {
-        $req = array(
-            'file' => new UploadedFile(
-                dirname(__DIR__, 2) . '/_data/importable-chem.csv',
-                'importable.csv',
-                null,
-                UPLOAD_ERR_OK,
-                true,
-            ),
-            'category' => 1,
-            'entity_type' => 'items',
-            'owner' => 2,
-            'template' => 1,
-        );
+        $this->assertEquals(13, $this->handler->postAction(Action::Update, $this->getCsvRequest(2)));
+    }
 
+    public function testNonAdminCannotSelectAnotherOwner(): void
+    {
+        $handler = new Handler(new Users(2, 1), new ConsoleLogger(new ConsoleOutput()));
+        $this->expectException(IllegalActionException::class);
+        $handler->postAction(Action::Update, $this->getCsvRequest(1));
+    }
+
+    public function testPostCsvWithoutOwner(): void
+    {
+        $req = $this->getCsvRequest(1);
+        unset($req['owner']);
         $this->assertEquals(13, $this->handler->postAction(Action::Update, $req));
+    }
+
+    public function testPostCsvWithOwnerZero(): void
+    {
+        $this->assertEquals(13, $this->handler->postAction(Action::Update, $this->getCsvRequest(0)));
+    }
+
+    public function testCannotSelectOwnerOutsideDestinationTeam(): void
+    {
+        $this->expectException(UnprocessableContentException::class);
+
+        $this->handler->postAction(
+            Action::Update,
+            $this->getCsvRequest($this->getUserInTeam(2)->getUserid()),
+        );
     }
 
     public function testPostEln(): void
@@ -104,5 +124,22 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         $this->handler->destroy();
+    }
+
+    private function getCsvRequest(int $owner): array
+    {
+        return array(
+            'file' => new UploadedFile(
+                dirname(__DIR__, 2) . '/_data/importable-chem.csv',
+                'importable.csv',
+                null,
+                UPLOAD_ERR_OK,
+                true,
+            ),
+            'category' => 1,
+            'entity_type' => 'items',
+            'owner' => $owner,
+            'template' => 1,
+        );
     }
 }

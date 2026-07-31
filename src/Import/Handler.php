@@ -18,6 +18,9 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -75,24 +78,37 @@ final class Handler extends AbstractRest
 
     private function getImporter(array $reqBody): ImportInterface
     {
-        // if we come from api, the controller will
-        // use getInt to get owner, if it's unset it will be 0 and not null
-        // but if we call postAction from php code (like in tests) it can be null
-        $reqBody['owner'] ??= $this->requester->userid;
-        $owner = ($reqBody['owner'] === 0 ? $this->requester->userid : $reqBody['owner']) ?? throw new ImproperActionException('Could not find owner!');
-        if ($owner !== $this->requester->userid && $this->requester->isAdminOf($owner)) {
-            $this->requester = new Users($owner, $this->requester->team);
+        $requesterId = $this->requester->getUserid();
+        $destinationTeam = $this->requester->getTeam();
+        // The API sends owner=0 when omitted, while direct PHP calls may not provide
+        // the key at all. In both cases, default to the authenticated requester
+        $owner = (int) ($reqBody['owner'] ?? 0);
+        if ($owner === 0) {
+            $owner = $requesterId;
+        }
+        // keep the authenticated requester separate from the selected record owner!
+        $ImportUser = $this->requester;
+        if ($owner !== $requesterId) {
+            $TeamsHelper = new TeamsHelper($destinationTeam);
+            // check if admin in that team. Only admin in destination team can select another owner
+            if (!$TeamsHelper->isAdminInTeam($requesterId)) {
+                throw new IllegalActionException('Only an administrator in the destination team may select another owner.');
+            }
+            if (!$TeamsHelper->isUserInTeam($owner)) {
+                throw new UnprocessableContentException('The selected owner must belong to the destination team.');
+            }
+            $ImportUser = new Users($owner, $destinationTeam, $this->requester);
         }
         $canreadBase = BasePermissions::tryFrom((int) ($reqBody['canread_base'] ?? BasePermissions::Team->value)) ?? BasePermissions::Team;
         $canwriteBase = BasePermissions::tryFrom((int) ($reqBody['canwrite_base'] ?? BasePermissions::User->value)) ?? BasePermissions::User;
         switch ($reqBody['file']->getClientOriginalExtension()) {
             case 'eln':
                 return new Eln(
-                    $this->requester,
+                    $ImportUser,
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,
-                    EntityType::tryFrom((string) $reqBody['entity_type']), // can be null
+                    EntityType::tryFrom((string) $reqBody['entity_type']),
                     category: (int) $reqBody['category'],
                     canreadBase: $canreadBase,
                     canwriteBase: $canwriteBase,
@@ -100,7 +116,7 @@ final class Handler extends AbstractRest
             case 'csv':
                 $csvTemplate = empty($reqBody['template']) ? null : (int) $reqBody['template'];
                 return new Csv(
-                    $this->requester,
+                    $ImportUser,
                     $reqBody['file'],
                     logger: $this->logger,
                     entityType: EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,

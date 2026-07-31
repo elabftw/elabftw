@@ -44,7 +44,7 @@ import {
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
-import { Action, EntityType, Model, LinkSubModel } from './interfaces';
+import { Action, EntityType, Model, LinkSubModel, SingularEntityType } from './interfaces';
 import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -88,6 +88,25 @@ export const selectedEntities = writable<string[]>([]);
 // only on entity page
 const pageMode = new URLSearchParams(document.location.search).get('mode');
 
+const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityType => {
+  switch (entity) {
+  case EntityType.Experiment:
+    return SingularEntityType.Experiment;
+    break;
+  case EntityType.Item:
+    return SingularEntityType.Item;
+    break;
+  case EntityType.ItemType:
+    return SingularEntityType.ItemType;
+    break;
+  case EntityType.Template:
+    return SingularEntityType.Template;
+    break;
+  default:
+    return SingularEntityType.Other;
+  }
+};
+
 // Listen for this event to populate the modal text dynamically.
 // On view/edit pages, use the current entity id,
 // on the show page, get the item id of all checked boxes.
@@ -108,10 +127,11 @@ on('toggle-modal', (el: HTMLElement) => {
     const deleteMsg = document.getElementById('deleteEntityMessage');
     const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
     const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
-    const entryName = document.getElementById('documentTitle')?.textContent?.trim() ?? '';
+    const entryName = getSingularEntryTypeFromEntityType(entity.type);
+    const translatedEntryName = i18next.t(entryName.replace('_', '-')).toLowerCase();
 
-    if (count == 1 && (pageMode == 'view' || pageMode == 'edit')) {
-      deleteMsg.textContent = i18next.t('info-deleted-entry', {entry: entryName});
+    if (count == 1) {
+      deleteMsg.textContent = i18next.t('info-deleted-entry', {entry: (translatedEntryName)});
     } else {
       deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
     }

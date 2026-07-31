@@ -16,7 +16,7 @@ Ready?
   * [Docker](https://www.docker.com)
   * [Docker Compose](https://docs.docker.com/compose/)
 
-Make sure your user is in the `docker` group so you can execute docker commands without sudo (see `documentation <https://docs.docker.com/install/linux/linux-postinstall/>`_).
+Make sure your user is in the `docker` group so you can execute docker commands without sudo (see [documentation](https://docs.docker.com/engine/install/linux-postinstall/)).
 
 :::note
 Some issues may occur when using Docker Desktop to manage your containers. It is highly recommended to use the system's native Docker daemon instead.
@@ -77,7 +77,7 @@ curl -so docker-compose.yml "https://get.elabftw.net/?config"
 * Set `DEV_MODE` to `true`
 
 :::note
-The `DEV_MODE` relaxes the content security policy slightly, and turns off the extra safety net of a somewhat restrictive `open_basedir <https://www.php.net/manual/en/ini.core.php#ini.open-basedir>`_ directive (values found in [docker-entrypoint.sh](https://github.com/elabftw/elabimg/blob/master/src/entrypoint/docker-entrypoint.sh)). Avoid having this enabled in production systems.
+The `DEV_MODE` relaxes the content security policy slightly, and turns off the extra safety net of a somewhat restrictive [open_basedir](https://www.php.net/manual/en/ini.core.php#ini.open-basedir) directive (values found in [docker-entrypoint.sh](https://github.com/elabftw/elabimg/blob/master/src/entrypoint/docker-entrypoint.sh)). Avoid having this enabled in production systems.
 :::
 
 * Change the `ports:` line so the container runs on port 3148 (you can choose whatever port you want, or leave it on 443). It should look like this:
@@ -115,7 +115,7 @@ services:
 ## Install dependencies
 
 :::note
-PHP dependencies are managed through `Composer <https://getcomposer.org/>`_. It'll read the `composer.lock` file and install packages (see `composer.json`). Javascript dependencies are managed through `Yarn <https://yarnpkg.com/>`_. It'll read the `yarn.lock` file and install packages (see `package.json`). The `yarn install` command will populate the `node_modules` directory, and the `buildall` command will use `Webpack <https://webpack.js.org/>`_ to create bundles (see `builder.js` file).
+PHP dependencies are managed through [Composer](https://getcomposer.org/). It'll read the `composer.lock` file and install packages (see `composer.json`). Javascript dependencies are managed through [Yarn](https://yarnpkg.com/). It'll read the `yarn.lock` file and install packages (see `package.json`). The `yarn install` command will populate the `node_modules` directory, and the `buildall` command will use [Webpack](https://webpack.js.org/) to create bundles (see `builder.js` file).
 :::
 
 * Now install the JavaScript and PHP dependencies using `yarn` and `composer` shipped with the container:

@@ -2044,6 +2044,10 @@ components:
           type: integer
           default: 0
           description: Binary toggle to force usage of templates.
+        capture_container_deletion_reason:
+          type: integer
+          default: 0
+          description: Binary toggle to require a reason (deletion_reason, and deletion_note for "other") when deleting a container.
         created_at:
           type: string
         orgid:
@@ -2512,11 +2516,33 @@ paths:
     delete:
       tags: ['Containers']
       summary: Delete a container.
-      description: Remove an entity from a storage unit.
+      description: |
+        Remove an entity from a storage unit. When the team has
+        `capture_container_deletion_reason` enabled, a `deletion_reason` must be
+        provided, and a `deletion_note` is mandatory when the reason is `other`.
+        The reason is recorded in the changelog of the parent entity.
       operationId: delete-container
+      requestBody:
+        description: Deletion reason, required when the team enables `capture_container_deletion_reason`.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deletion_reason:
+                  type: string
+                  # see ContainerDeletionReason enum
+                  enum: ['used_in_authorised_work', 'no_longer_required', 'consent_withdrawn', 'approval_period_ended', 'shelf_life_exceeded', 'unsuitable', 'contaminated', 'storage_or_transport_incident', 'registered_in_error', 'other']
+                  example: 'contaminated'
+                deletion_note:
+                  type: string
+                  description: Free text (255 characters max), required with the `other` reason.
+                  example: 'spilled in transit'
       responses:
         '204':
           description: The container was deleted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
            $ref: '#/components/responses/Unauthorized'
         '404':

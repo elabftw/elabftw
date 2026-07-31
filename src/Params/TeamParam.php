@@ -38,6 +38,7 @@ final class TeamParam extends ContentParams
             'users_canwrite_resources_status',
             'users_canwrite_resources_templates',
             'visible',
+            'capture_container_deletion_reason',
             'newcomer_banner_active',
             'onboarding_email_active' => $this->getBinary(),
             'newcomer_threshold' => $this->asInt(),

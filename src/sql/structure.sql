@@ -1212,6 +1212,7 @@ CREATE TABLE `teams` (
   `newcomer_threshold` INT UNSIGNED NOT NULL DEFAULT 15,
   `newcomer_banner` TEXT NULL DEFAULT NULL,
   `newcomer_banner_active` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `capture_container_deletion_reason` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

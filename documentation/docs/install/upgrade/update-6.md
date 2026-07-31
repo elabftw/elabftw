@@ -15,13 +15,14 @@ Here are the main changes:
 - container volumes change
 - container user configuration change
 
-Note: this guide assumes usage of `docker compose`. For other deployments (`podman`/`quadlets`/k8s`, ...), you will need to adapt the changes to your context.
+Note: this guide assumes usage of `docker compose`, with hints related to `podman quadlets`. For other deployments, you will need to adapt the changes to your context.
 
 ## Making backups
 
 Make a backup of your configuration file:
 
 ~~~bash
+# docker
 cp /etc/elabftw.yml /etc/elabftw.yml.v5.bak
 ~~~
 
@@ -42,6 +43,8 @@ Note the user id and group id of that newly created user shown by the second com
 
 In your configuration file (by default `/etc/elabftw.yml`, start by setting the version of the image:
 
+### Docker
+
 ~~~yaml
 image: elabftw/elabimg:6.0.0
 ~~~
@@ -57,6 +60,21 @@ tmpfs:
 ~~~
 
 This will make the container start and run with `elabftw-worker` user, and a read-only filesystem.
+
+### Quadlet
+
+Only changed/added lines are shown:
+
+~~~conf
+[Container]
+Image=docker.io/elabftw/elabimg:6.0.0
+ReadOnly=true
+UserNS=keep-id
+HealthCmd=curl http://localhost:8080/healthcheck
+Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup
+~~~
+
+See also sections below, adjust volumes accordingly.
 
 ### Volumes
 
@@ -74,7 +92,10 @@ chown elabftw-worker:elabftw-worker /var/elabftw/.cache/nginx
 Then in the configuration file, under `volumes:` section:
 
 ~~~yaml
+# docker
   - /var/elabftw/.cache/nginx:/var/cache/nginx
+# quadlet
+Volume=/var/lib/elabftw/nginx-cache:/var/cache/nginx:Z
 ~~~
 
 #### Uploads folder
@@ -134,6 +155,8 @@ ports:
 ~~~
 
 It is the right-hand side that needs to be modified: the listening port in the container.
+
+For quadlets, adjust PublishPort if you're using this, or adjust your reverse proxy to use port 8080.
 
 ### Environment
 

@@ -421,10 +421,9 @@ EOF_INSTALL
 
     if confirm 'Start the containers now? This will run the "start" command.'; then
         start
-    fi
-
-    if confirm 'Run the database initialization? This will run the "initialize" command.'; then
-        initialize
+        if confirm 'Run the database initialization? This will run the "initialize" command.'; then
+            initialize
+        fi
     fi
 }
 

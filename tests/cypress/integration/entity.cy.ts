@@ -65,6 +65,7 @@ describe('Experiments', () => {
   const entityDestroy = () => {
     cy.get('button[title="More options"]').click();
     cy.get('button[data-action="toggle-modal"][data-target="deleteSelectedEntitiesModal"]').click();
+    cy.get('button[data-action="delete-selected-entities"]').wait(2500).click();
   };
 
   const entityCatStat = (category: string, categoryTarget: string, statusTarget: string) => {

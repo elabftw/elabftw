@@ -3,7 +3,7 @@
 # https://github.com/elabftw/elabftw
 # © 2022 Nicolas CARPi @ Deltablot
 # License: GPLv3
-declare -r ELABCTL_VERSION='5.1.1'
+declare -r ELABCTL_VERSION='6.0.0'
 
 # default backup dir
 declare BACKUP_DIR='/var/backups/elabftw'
@@ -40,6 +40,45 @@ function ascii
     echo " \___|_____\__,_|_.__/|_|     |_|    \_/\_/   "
     echo "                                              "
     echo ""
+}
+
+# ask a yes/no question using Bash built-ins
+function confirm
+{
+    local prompt=$1
+    local default=${2:-no}
+    local reply
+    local suffix='[y/N]'
+
+    if [ "$default" = "yes" ]; then
+        suffix='[Y/n]'
+    fi
+
+    while true; do
+        if ! read -r -p "$prompt $suffix " reply; then
+            echo ""
+            return 1
+        fi
+
+        if [ -z "$reply" ]; then
+            if [ "$default" = "yes" ]; then
+                return 0
+            fi
+            return 1
+        fi
+
+        case "$reply" in
+            [Yy]|[Yy][Ee][Ss])
+                return 0
+                ;;
+            [Nn]|[Nn][Oo])
+                return 1
+                ;;
+            *)
+                echo "Please answer yes or no."
+                ;;
+        esac
+    done
 }
 
 # create a mysqldump and a borg snapshot of the uploaded files
@@ -93,7 +132,7 @@ function checkDeps
 {
     need_to_quit=0
 
-    for bin in dialog docker curl sudo
+    for bin in docker curl sudo
     do
         if ! hash "$bin" 2>/dev/null; then
             echo "Error: $bin not found in the \$PATH. Please install the program '$bin' or fix your \$PATH."
@@ -207,13 +246,12 @@ function install
     checkDeps
 
     # do nothing if there are files in there
-    if [ "$(ls -A $DATA_DIR 2>/dev/null)" ]; then
+    if [ "$(ls -A "$DATA_DIR" 2>/dev/null)" ]; then
         echo "It looks like eLabFTW is already installed. Delete the ${DATA_DIR} folder to reinstall."
         exit 1
     fi
 
-    # init vars
-    # if you don't want any dialog
+    # initialize values used by interactive and unattended installations
     declare unattended=${ELAB_UNATTENDED:-0}
     declare servername=${ELAB_SERVERNAME:-localhost}
     declare hasdomain=${ELAB_HASDOMAIN:-0}
@@ -223,138 +261,135 @@ function install
     # exit on error
     set -e
 
-    title="Install eLabFTW"
-    backtitle="eLabFTW installation"
-
-    # show welcome screen and ask if defaults are fine
+    # show the proposed paths and let the user download an example configuration instead
     if [ "$unattended" -eq 0 ]; then
-        # because answering No to dialog equals exit != 0
-        set +e
+        cat <<EOF
 
-        # welcome screen
-        dialog --backtitle "$backtitle" --title "$title" --msgbox "\nWelcome to the install of eLabFTW :)\n
-        This script will automatically install eLabFTW in a Docker container." 0 0
+Welcome to the installation of eLabFTW.
 
-        dialog --colors --backtitle "$backtitle" --title "$title" --yes-label "Looks good to me" --no-label "Download example conf and quit" --yesno "\nHere is what will happen:\n
-        The main configuration file will be created at: \Z4${CONF_FILE}\Zn\n
-        A directory holding elabftw MySQL data will be created at: \Z4${DATA_DIR}/mysql\Zn\n
-        A directory holding elabftw uploaded files will be created at: \Z4${UPLOAD_DIR}\Zn\n
-        The backups will be created at: \Z4${BACKUP_DIR}\Zn\n\n
-        If you wish to change these settings, quit now and edit the file \Z4elabctl.conf\Zn" 0 0
-        if [ $? -eq 1 ]; then
+This script will install eLabFTW in Docker containers.
+
+The main configuration file will be created at:
+  ${CONF_FILE}
+
+The MySQL data directory will be created at:
+  ${DATA_DIR}/mysql
+
+The uploaded files directory will be created at:
+  ${UPLOAD_DIR}
+
+Backups will be created at:
+  ${BACKUP_DIR}
+
+To change these settings, download and edit elabctl.conf before installing.
+EOF
+
+        if ! confirm "Continue with these settings?" yes; then
             get-user-conf
             exit 0
         fi
     fi
 
     # create the data dir
-    mkdir -pv $DATA_DIR
-    if [ $? -eq 1 ]; then
-        sudo mkdir -pv $DATA_DIR
+    if ! mkdir -pv "$DATA_DIR"; then
+        sudo mkdir -pv "$DATA_DIR"
     fi
 
-    declare TMP_DIR=$(mktemp -d)
+    declare TMP_DIR
+    TMP_DIR=$(mktemp -d)
     declare TMP_CONF_FILE="${TMP_DIR}/elabftw.yml"
 
     if [ "$unattended" -eq 0 ]; then
-        set +e
         ########################################################################
-        # start asking questions                                               #
-        # what we want here is the domain name of the server or its IP address #
-        # and also if we want to use Let's Encrypt or not
+        # Ask for the domain name and whether HTTPS should be handled by the   #
+        # eLabFTW container.                                                    #
         ########################################################################
 
-        # ASK SERVER OR LOCAL?
-        dialog --backtitle "$backtitle" --title "$title" --yes-label "Server" --no-label "My computer" --yesno "\nAre you installing it on a Server or a personal computer?" 0 0
-        if [ $? -eq 1 ]; then
-            # local computer
-            servername="localhost"
-        else
-            # server
-
-            ## DOMAIN NAME OR IP BLOCK
-            dialog --backtitle "$backtitle" --title "$title" --yesno "\nIs a domain name pointing to this server?\n\nAnswer yes if this server can be reached using a domain name. Answer no if you can only reach it with an IP address.\n" 0 0
-            if [ $? -eq 0 ]; then
+        if confirm "Are you installing eLabFTW on a server? Answer no for a personal computer." yes; then
+            if confirm "Does a domain name point to this server?" yes; then
                 hasdomain=1
-                # ask for domain name
-                servername=$(dialog --backtitle "$backtitle" --title "$title" --inputbox "\nPlease enter your domain name below:\nExample: elabftw.example.org\n" 0 0 --output-fd 1)
+                servername=''
+                while [ -z "$servername" ]; do
+                    if ! read -r -p "Enter the domain name (for example, elabftw.example.org): " servername; then
+                        echo ""
+                        exit 1
+                    fi
+                    if [ -z "$servername" ]; then
+                        echo "A domain name is required."
+                    fi
+                done
             else
-                # no domain is not supported, exit
-                dialog --backtitle "$backtitle" --title "$title" --msgbox "\nInstallation without a proper domain name is not supported.\n" 0 0
+                echo "Installation on a server without a proper domain name is not supported."
                 exit 1
             fi
-            ## END DOMAIN NAME OR IP BLOCK
 
-            # ASK IF WE WANT HTTPS AT ALL FIRST
-            dialog --backtitle "$backtitle" --title "$title" --yes-label "Use HTTPS" --no-label "Disable HTTPS" --yesno "\nDo you want to run the HTTPS enabled container or a normal HTTP server? Note: disabling HTTPS means you will use another webserver as a proxy for TLS connections.\n\nChoose 'Disable HTTPS' if you already have a webserver capable of terminating TLS requests running (Apache/Nginx/HAProxy).\nChoose 'Use HTTPS' if unsure.\n" 0 0
-            if [ $? -eq 1 ]; then
-                # use HTTP
-                usehttps=0
-            else
-                if [ $hasdomain -eq 1 ]; then
-                    # ASK IF SELF-SIGNED OR PROPER CERT
-                    dialog --backtitle "$backtitle" --title "$title" --yes-label "Use correct certificate" --no-label "Use self-signed" --yesno "\nDo you want to use a proper TLS certificate (coming from Let's Encrypt or provided by you) or use a self-signed certificate? The self-signed certificate will be automatically generated for you, but browsers will display a warning when connecting.\n\nChoose 'Use self-signed' if you do not have a domain name.\n" 0 0
-                    if [ $? -eq 0 ]; then
-                        # want correct cert
-                        dialog --backtitle "$backtitle" --title "$title" --msgbox "\nSee the documentation on how to configure your TLS certificate before starting the containers.\n" 0 0
-                    else
-                        # use self signed
-                        useselfsigned=1
-                        dialog --backtitle "$backtitle" --title "$title" --msgbox "\nA self-signed certificate will be generated upon container start. But really you should try and use a domain name ;)\n" 0 0
-                    fi
+            echo ""
+            echo "Use HTTPS unless another web server or load balancer already terminates TLS"
+            echo "for this installation, such as Apache, Nginx, or HAProxy."
+            if confirm "Should the eLabFTW container handle HTTPS?" yes; then
+                usehttps=1
+
+                echo ""
+                echo "A proper certificate can come from Let's Encrypt or be provided by you."
+                echo "A self-signed certificate is generated automatically, but browsers display a warning."
+                if confirm "Use a proper TLS certificate instead of a self-signed certificate?" yes; then
+                    useselfsigned=0
+                    echo "Configure the TLS certificate before starting the containers."
+                else
+                    useselfsigned=1
+                    echo "A self-signed certificate will be generated when the container starts."
                 fi
+            else
+                usehttps=0
             fi
+        else
+            servername="localhost"
+            hasdomain=0
         fi
     fi
 
-
-
-    set -e
-
-    echo 40 | dialog --backtitle "$backtitle" --title "$title" --gauge "Creating folder structure. You will be asked for your password (bottom left of the screen)." 20 80
-    sudo mkdir -pv ${DATA_DIR}/mysql ${UPLOAD_DIR}
-    sudo chmod -Rv 700 ${DATA_DIR} ${UPLOAD_DIR}
+    echo ""
+    echo "[1/4] Creating the folder structure. sudo may ask for your password."
+    sudo mkdir -pv "${DATA_DIR}/mysql" "${UPLOAD_DIR}"
+    sudo chmod -Rv 700 "${DATA_DIR}" "${UPLOAD_DIR}"
     echo "Executing: sudo chown -v 999:999 ${DATA_DIR}/mysql"
-    sudo chown -v 999:999 ${DATA_DIR}/mysql
+    sudo chown -v 999:999 "${DATA_DIR}/mysql"
     echo "Executing: sudo chown -v 101:101 ${UPLOAD_DIR}"
-    sudo chown -v 101:101 ${UPLOAD_DIR}
-    sleep 2
+    sudo chown -v 101:101 "${UPLOAD_DIR}"
 
-    echo 50 | dialog --backtitle "$backtitle" --title "$title" --gauge "Grabbing the docker compose configuration file" 20 80
+    echo "[2/4] Preparing the Docker Compose configuration file."
     # make a copy of an existing conf file
-    if [ -e $CONF_FILE ]; then
-        echo 55 | dialog --backtitle "$backtitle" --title "$title" --gauge "Making a copy of the existing configuration file." 20 80
-        \cp $CONF_FILE ${CONF_FILE}.old
+    if [ -e "$CONF_FILE" ]; then
+        echo "Making a copy of the existing configuration file."
+        \cp "$CONF_FILE" "${CONF_FILE}.old"
     fi
 
     # get a config file already filled with random passwords/keys
+    echo "[3/4] Downloading the Docker Compose configuration file."
     curl --silent "https://get.elabftw.net/?config" -o "$TMP_CONF_FILE"
-    sleep 1
 
     # elab config
-    echo 50 | dialog --backtitle "$backtitle" --title "$title" --gauge "Adjusting configuration" 20 80
-    sed -i -e "s/SERVER_NAME=localhost/SERVER_NAME=$servername/" $TMP_CONF_FILE
-    sed -i -e "s:/var/elabftw/web:${UPLOAD_DIR}:" $TMP_CONF_FILE
-    sed -i -e "s/container_name: elabftw/container_name: ${ELAB_WEB_CONTAINER_NAME}/" $TMP_CONF_FILE
-    sed -i -e "s/container_name: mysql/container_name: ${ELAB_MYSQL_CONTAINER_NAME}/" $TMP_CONF_FILE
+    echo "[4/4] Adjusting the configuration."
+    sed -i -e "s/SERVER_NAME=localhost/SERVER_NAME=$servername/" "$TMP_CONF_FILE"
+    sed -i -e "s:/var/elabftw/web:${UPLOAD_DIR}:" "$TMP_CONF_FILE"
+    sed -i -e "s/container_name: elabftw/container_name: ${ELAB_WEB_CONTAINER_NAME}/" "$TMP_CONF_FILE"
+    sed -i -e "s/container_name: mysql/container_name: ${ELAB_MYSQL_CONTAINER_NAME}/" "$TMP_CONF_FILE"
 
     # disable https
     scheme="https://"
-    if [ $usehttps -eq 0 ]; then
-        sed -i -e "s/DISABLE_HTTPS=false/DISABLE_HTTPS=true/" $TMP_CONF_FILE
+    if [ "$usehttps" -eq 0 ]; then
+        sed -i -e "s/DISABLE_HTTPS=false/DISABLE_HTTPS=true/" "$TMP_CONF_FILE"
         scheme="http://"
     fi
 
     # enable letsencrypt
-    if [ $hasdomain -eq 1 ] && [ $useselfsigned -eq 0 ]; then
+    if [ "$hasdomain" -eq 1 ] && [ "$useselfsigned" -eq 0 ]; then
         # even if we don't use Let's Encrypt, for using TLS certs we need this to be true, and volume mounted
-        sed -i -e "s:ENABLE_LETSENCRYPT=false:ENABLE_LETSENCRYPT=true:" $TMP_CONF_FILE
-        sed -i -e "s:#- /etc/letsencrypt:- /etc/letsencrypt:" $TMP_CONF_FILE
+        sed -i -e "s:ENABLE_LETSENCRYPT=false:ENABLE_LETSENCRYPT=true:" "$TMP_CONF_FILE"
+        sed -i -e "s:#- /etc/letsencrypt:- /etc/letsencrypt:" "$TMP_CONF_FILE"
     fi
 
-    sed -i -e "s#SITE_URL=#SITE_URL=$scheme$servername#" $TMP_CONF_FILE
-
-    sleep 1
+    sed -i -e "s#SITE_URL=#SITE_URL=$scheme$servername#" "$TMP_CONF_FILE"
 
     # setup restrictive permissions
     chmod 600 "$TMP_CONF_FILE"
@@ -363,22 +398,35 @@ function install
     # use sudo in case it's in /etc and we are not root
     sudo mv "$TMP_CONF_FILE" "$CONF_FILE"
 
-    rmdir -v ${TMP_DIR}
+    rmdir -v "$TMP_DIR"
 
-    # final screen
     if [ "$unattended" -eq 0 ]; then
-        dialog --colors --backtitle "$backtitle" --title "Installation finished" --msgbox "\nCongratulations, eLabFTW was successfully installed! :)\n\n
-        \Z1====>\Zn Finish the installation by configuring TLS certificates.\n\n
-        \Z1====>\Zn Then start the containers with: \Zb\Z4elabctl start\Zn\n\n
-        \Z1====>\Zn Then import the database structure with: \Zb\Z4elabctl initialize\Zn\n\n
-        \Z1====>\Zn Go to https://$servername once started!\n\n
-        In the mean time, check out what to do after an install:\n
-        \Z1====>\Zn https://doc.elabftw.net/sysadmin-guide.html#setting-up-email\n\n
-        The configuration file for docker compose is here: \Z4$CONF_FILE\Zn\n
-        Your data folder is: \Z4${DATA_DIR}\Zn. It contains the MySQL database and uploaded files.\n
-        You can use 'docker logs -f ${ELAB_WEB_CONTAINER_NAME}' to follow the starting up of the container.\n" 20 80
-    fi
+        cat <<EOF
 
+Installation finished successfully.
+
+Next steps:
+  1. Configure TLS certificates when applicable.
+  2. Start the containers:
+       elabctl start
+  3. Import the database structure:
+       elabctl initialize
+  4. Open:
+       ${scheme}${servername}
+
+Post-installation documentation:
+  https://doc.elabftw.net/sysadmin-guide.html#setting-up-email
+
+Docker Compose configuration:
+  ${CONF_FILE}
+
+Data directory:
+  ${DATA_DIR}
+
+Follow the web container logs with:
+  docker logs -f ${ELAB_WEB_CONTAINER_NAME}
+EOF
+    fi
 }
 
 function is-installed
@@ -485,27 +533,31 @@ function uninstall
 {
     stop
 
-    local -r backtitle="eLabFTW uninstall"
-    local title="Uninstall"
-
-    set +e
-
-    dialog --backtitle "$backtitle" --title "$title" --yesno "\nWarning! You are about to delete everything related to eLabFTW on this computer!\n\nThere is no 'go back' button. Are you sure you want to do this?\n" 0 0
-    if [ $? != 0 ]; then
+    echo ""
+    echo "WARNING: This will delete everything related to eLabFTW on this computer."
+    echo "There is no undo operation."
+    if ! confirm "Continue with the uninstall?"; then
+        echo "Uninstall cancelled."
         exit 1
     fi
 
-    dialog --backtitle "$backtitle" --title "$title" --yesno "\nDo you want to delete the backups, too?" 0 0
-    if [ $? -eq 0 ]; then
+    local rmbackup='n'
+    if confirm "Delete the backups too?"; then
         rmbackup='y'
-    else
-        rmbackup='n'
     fi
 
-    dialog --backtitle "$backtitle" --title "$title" --ok-label "Skip timer" --cancel-label "Cancel uninstall" --pause "\nRemoving everything in 10 seconds. Stop now you fool!\n" 20 40 10
-    if [ $? != 0 ]; then
-        exit 1
+    echo ""
+    echo "Removal will begin in 10 seconds."
+    local countdown_response=''
+    if read -r -t 10 -p "Press Enter to continue immediately, or type 'cancel' to abort: " countdown_response; then
+        case "$countdown_response" in
+            [Cc]|[Cc][Aa][Nn][Cc][Ee][Ll])
+                echo "Uninstall cancelled."
+                exit 1
+                ;;
+        esac
     fi
+    echo ""
 
     clear
 
@@ -529,7 +581,7 @@ function uninstall
         echo "[x] Deleted $DATA_DIR"
     fi
     # remove backup dir
-    if [ $rmbackup == 'y' ] && [ -d "$BACKUP_DIR" ]; then
+    if [ "$rmbackup" = 'y' ] && [ -d "$BACKUP_DIR" ]; then
         rm -rvf "$BACKUP_DIR"
         echo "[x] Deleted $BACKUP_DIR"
     fi

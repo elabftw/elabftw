@@ -251,19 +251,15 @@ function install
         exit 1
     fi
 
-    # initialize values used by interactive and unattended installations
-    declare unattended=${ELAB_UNATTENDED:-0}
-    declare servername=${ELAB_SERVERNAME:-localhost}
-    declare hasdomain=${ELAB_HASDOMAIN:-0}
-    declare usehttps=${ELAB_USEHTTPS:-1}
-    declare useselfsigned=${ELAB_USESELFSIGNED:-0}
+    declare servername='localhost'
+    declare hasdomain=0
+    declare usehttps=1
+    declare useselfsigned=0
 
     # exit on error
     set -e
 
-    # show the proposed paths and let the user download an example configuration instead
-    if [ "$unattended" -eq 0 ]; then
-        cat <<EOF
+    cat <<EOF_INSTALL
 
 Welcome to the installation of eLabFTW.
 
@@ -282,12 +278,11 @@ Backups will be created at:
   ${BACKUP_DIR}
 
 To change these settings, download and edit elabctl.conf before installing.
-EOF
+EOF_INSTALL
 
-        if ! confirm "Continue with these settings?" yes; then
-            get-user-conf
-            exit 0
-        fi
+    if ! confirm "Continue with these settings?" yes; then
+        get-user-conf
+        exit 0
     fi
 
     # create the data dir
@@ -299,53 +294,51 @@ EOF
     TMP_DIR=$(mktemp -d)
     declare TMP_CONF_FILE="${TMP_DIR}/elabftw.yml"
 
-    if [ "$unattended" -eq 0 ]; then
-        ########################################################################
-        # Ask for the domain name and whether HTTPS should be handled by the   #
-        # eLabFTW container.                                                    #
-        ########################################################################
+    ########################################################################
+    # Ask for the domain name and whether HTTPS should be handled by the   #
+    # eLabFTW container.                                                   #
+    ########################################################################
 
-        if confirm "Are you installing eLabFTW on a server? Answer no for a personal computer." yes; then
-            if confirm "Does a domain name point to this server?" yes; then
-                hasdomain=1
-                servername=''
-                while [ -z "$servername" ]; do
-                    if ! read -r -p "Enter the domain name (for example, elabftw.example.org): " servername; then
-                        echo ""
-                        exit 1
-                    fi
-                    if [ -z "$servername" ]; then
-                        echo "A domain name is required."
-                    fi
-                done
-            else
-                echo "Installation on a server without a proper domain name is not supported."
-                exit 1
-            fi
+    if confirm "Are you installing eLabFTW on a server? Answer no for a personal computer." yes; then
+        if confirm "Does a domain name point to this server?" yes; then
+            hasdomain=1
+            servername=''
+            while [ -z "$servername" ]; do
+                if ! read -r -p "Enter the domain name (for example, elabftw.example.org): " servername; then
+                    echo ""
+                    exit 1
+                fi
+                if [ -z "$servername" ]; then
+                    echo "A domain name is required."
+                fi
+            done
+        else
+            echo "Installation on a server without a proper domain name is not supported."
+            exit 1
+        fi
+
+        echo ""
+        echo "Use HTTPS unless another web server or load balancer already terminates TLS"
+        echo "for this installation, such as Apache, Nginx, or HAProxy."
+        if confirm "Should the eLabFTW container handle HTTPS?" yes; then
+            usehttps=1
 
             echo ""
-            echo "Use HTTPS unless another web server or load balancer already terminates TLS"
-            echo "for this installation, such as Apache, Nginx, or HAProxy."
-            if confirm "Should the eLabFTW container handle HTTPS?" yes; then
-                usehttps=1
-
-                echo ""
-                echo "A proper certificate can come from Let's Encrypt or be provided by you."
-                echo "A self-signed certificate is generated automatically, but browsers display a warning."
-                if confirm "Use a proper TLS certificate instead of a self-signed certificate?" yes; then
-                    useselfsigned=0
-                    echo "Configure the TLS certificate before starting the containers."
-                else
-                    useselfsigned=1
-                    echo "A self-signed certificate will be generated when the container starts."
-                fi
+            echo "A proper certificate can come from Let's Encrypt or be provided by you."
+            echo "A self-signed certificate is generated automatically, but browsers display a warning."
+            if confirm "Use a proper TLS certificate instead of a self-signed certificate?" yes; then
+                useselfsigned=0
+                echo "Configure the TLS certificate before starting the containers."
             else
-                usehttps=0
+                useselfsigned=1
+                echo "A self-signed certificate will be generated when the container starts."
             fi
         else
-            servername="localhost"
-            hasdomain=0
+            usehttps=0
         fi
+    else
+        servername="localhost"
+        hasdomain=0
     fi
 
     echo ""
@@ -400,8 +393,7 @@ EOF
 
     rmdir -v "$TMP_DIR"
 
-    if [ "$unattended" -eq 0 ]; then
-        cat <<EOF
+    cat <<EOF_INSTALL
 
 Installation finished successfully.
 
@@ -425,15 +417,14 @@ Data directory:
 
 Follow the web container logs with:
   docker logs -f ${ELAB_WEB_CONTAINER_NAME}
-EOF
+EOF_INSTALL
 
-        if confirm 'Start the containers now? This will run the "start" command.'; then
-            start
-        fi
+    if confirm 'Start the containers now? This will run the "start" command.'; then
+        start
+    fi
 
-        if confirm 'Run the database initialization? This will run the "initialize" command.'; then
-            initialize
-        fi
+    if confirm 'Run the database initialization? This will run the "initialize" command.'; then
+        initialize
     fi
 }
 
@@ -516,7 +507,7 @@ function self-update
     curl -sL https://raw.githubusercontent.com/elabftw/elabftw/master/containers/elabctl/elabctl.sh -o "$tmp_filepath"
     chmod -v +x "$tmp_filepath"
     mv -v "$tmp_filepath" "$me"
-    rmdir -v ${TMP_DIR}
+    rmdir -v "${TMP_DIR}"
 }
 
 function start

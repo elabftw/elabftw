@@ -426,6 +426,14 @@ Data directory:
 Follow the web container logs with:
   docker logs -f ${ELAB_WEB_CONTAINER_NAME}
 EOF
+
+        if confirm 'Start the containers now? This will run the "start" command.'; then
+            start
+        fi
+
+        if confirm 'Run the database initialization? This will run the "initialize" command.'; then
+            initialize
+        fi
     fi
 }
 

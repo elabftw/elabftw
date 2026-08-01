@@ -17,6 +17,12 @@ const MinimizerPlugin = require('minimizer-webpack-plugin');
 const webpack = require('webpack');
 const sveltePreprocess = require('svelte-preprocess');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const mathjaxNewcmRoot = path.resolve(
+  path.dirname(
+    require.resolve('@mathjax/mathjax-newcm-font/js/svg.js'),
+  ),
+  '..',
+);
 
 module.exports = (env) => {
   return {
@@ -137,10 +143,7 @@ module.exports = (env) => {
             noErrorOnMissing: false,
           },
           {
-            from: path.resolve(
-              __dirname,
-              '/run/elabftw/yarn/unplugged/@mathjax-mathjax-newcm-font-npm-*/node_modules/@mathjax/mathjax-newcm-font/mjs/svg/dynamic',
-            ),
+            from: path.join(mathjaxNewcmRoot, 'mjs', 'svg', 'dynamic'),
             to: 'mathjax/mathjax-newcm-font/svg/dynamic',
             noErrorOnMissing: false,
           },

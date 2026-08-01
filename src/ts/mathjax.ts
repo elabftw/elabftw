@@ -88,4 +88,8 @@ insert(
   false,
 );
 
+// output/svg/svg.js registered this path before insert() ran.
+MathJax.config.loader.paths['mathjax-newcm'] =
+  '/assets/mathjax/mathjax-newcm-font';
+
 loadFont(startup, true);

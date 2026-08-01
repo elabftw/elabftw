@@ -1008,7 +1008,7 @@ components:
           smtp_address:
             type: string
             example: 'mail.smtp2go.com'
-            default: 'mail.smtp2go.com'
+            default: 'mail.example.com'
           smtp_encryption:
             type: string
             example: 'ssl'

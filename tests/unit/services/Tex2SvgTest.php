@@ -80,4 +80,24 @@ class Tex2SvgTest extends \PHPUnit\Framework\TestCase
         // check λ
         $this->assertStringContainsString('data-c="3BB"', $output);
     }
+
+    public function testAutoloadEquivalentExtensions(): void
+    {
+        $source = <<<'HTML'
+            <html><body>
+            $$
+            \newcommand{\foo}{x}
+            \cancel{\foo}
+            + \braket{\phi|\psi}
+            + \textcolor{red}{y}
+            $$
+            </body></html>
+            HTML;
+
+        $Tex2Svg = new Tex2Svg($this->log, $this->mpdf, $source);
+        $output = $Tex2Svg->getContent();
+
+        $this->assertFalse($Tex2Svg->mathJaxFailed);
+        $this->assertStringContainsString('<mjx-container', $output);
+    }
 }

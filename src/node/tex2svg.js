@@ -29,6 +29,42 @@ require('@mathjax/src/js/util/entities/all.js');
 require('@mathjax/src/js/input/tex/base/BaseConfiguration.js');
 require('@mathjax/src/js/input/tex/ams/AmsConfiguration.js');
 require('@mathjax/src/js/input/tex/mhchem/MhchemConfiguration.js');
+require('@mathjax/src/js/input/tex/action/ActionConfiguration.js');
+require('@mathjax/src/js/input/tex/amscd/AmsCdConfiguration.js');
+require('@mathjax/src/js/input/tex/bbox/BboxConfiguration.js');
+require('@mathjax/src/js/input/tex/boldsymbol/BoldsymbolConfiguration.js');
+require('@mathjax/src/js/input/tex/braket/BraketConfiguration.js');
+require('@mathjax/src/js/input/tex/bussproofs/BussproofsConfiguration.js');
+require('@mathjax/src/js/input/tex/cancel/CancelConfiguration.js');
+require('@mathjax/src/js/input/tex/color/ColorConfiguration.js');
+require('@mathjax/src/js/input/tex/enclose/EncloseConfiguration.js');
+require('@mathjax/src/js/input/tex/extpfeil/ExtpfeilConfiguration.js');
+require('@mathjax/src/js/input/tex/html/HtmlConfiguration.js');
+require('@mathjax/src/js/input/tex/mhchem/MhchemConfiguration.js');
+require('@mathjax/src/js/input/tex/newcommand/NewcommandConfiguration.js');
+require('@mathjax/src/js/input/tex/unicode/UnicodeConfiguration.js');
+require('@mathjax/src/js/input/tex/verb/VerbConfiguration.js');
+
+// Keep aligned with the browser's default autoload targets in mathjax.ts.
+const texPackages = [
+  'base',
+  'ams',
+  'action',
+  'amscd',
+  'bbox',
+  'boldsymbol',
+  'braket',
+  'bussproofs',
+  'cancel',
+  'color',
+  'enclose',
+  'extpfeil',
+  'html',
+  'mhchem',
+  'newcommand',
+  'unicode',
+  'verb',
+];
 
 const newcmDynamic = require.context(
   'mathjax-newcm-svg-dynamic',
@@ -57,7 +93,7 @@ const tex = new TeX({
   inlineMath: [['$', '$'], ['\\(', '\\)']],
   displayMath: [['$$', '$$'], ['\\[', '\\]']],
   processEscapes: true,
-  packages: ['base', 'ams', 'mhchem'],
+  packages: texPackages,
   formatError: (_jax, error) => {
     throw error;
   },

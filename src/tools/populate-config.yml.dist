@@ -81,6 +81,155 @@ teams:
         password: testPassword
         create_experiments: true
 
+    experiments:
+      - title: Complete MathJax test
+        tags:
+          - generated from yml
+          - has-mathjax
+        user: 1
+        body: |
+          Inline/base TeX:
+          $E = mc^2$, \(\frac{1}{2} + \sqrt{x^2 + y^2}\)
+
+          AMS:
+          $$
+          \begin{aligned}
+            f(x) &= \int_{-\infty}^{\infty} e^{-x^2}\,dx \\
+            A &= \begin{pmatrix}
+              1 & 2 \\
+              3 & 4
+            \end{pmatrix},
+            \qquad \mathbb{R} \subset \mathbb{C}
+          \end{aligned}
+          $$
+
+          action — hover over x² and click the alternating expression:
+          $$
+          \mathtip{x^2}{\text{square of }x}
+          \qquad
+          \toggle{a+b}{b+a}\endtoggle
+          $$
+
+          amscd:
+          $$
+          \begin{CD}
+          A @&gt;f&gt;&gt; B \\
+          @VgVV @VVhV \\
+          C @&gt;&gt;k&gt; D
+          \end{CD}
+          $$
+
+          bbox:
+          $$
+          \bbox[5px, border: 2px solid red]{x^2+y^2}
+          $$
+
+          boldsymbol:
+          $$
+          \boldsymbol{\nabla}\cdot\boldsymbol{E}=\frac{\rho}{\varepsilon_0}
+          $$
+
+          braket:
+          $$
+          \bra{\psi}H\ket{\psi}
+          \qquad
+          \braket{\phi|\psi}
+          \qquad
+          \set{x\in\mathbb{R}\mid x&gt;0}
+          $$
+
+          bussproofs:
+          $$
+          \begin{prooftree}
+          \AxiomC{$A$}
+          \AxiomC{$A \rightarrow B$}
+          \BinaryInfC{$B$}
+          \end{prooftree}
+          $$
+
+          cancel:
+          $$
+          \cancel{x}+\bcancel{y}+\xcancel{z}
+          +\cancelto{0}{a-a}
+          $$
+
+          color:
+          $$
+          \textcolor{red}{x}
+          +\colorbox{yellow}{y}
+          +\fcolorbox{blue}{lightgray}{z}
+          $$
+
+          enclose:
+          $$
+          \enclose{circle}{x}
+          +\enclose{box}{y}
+          +\enclose{updiagonalstrike,downdiagonalstrike}{z}
+          $$
+
+          extpfeil:
+          $$
+          A \xmapsto[\text{below}]{\text{above}} B
+          \qquad
+          X \xtwoheadrightarrow{f} Y
+          \qquad
+          p \xlongequal{\mathrm{def}} q
+          $$
+
+          html:
+          $$
+          \class{mathjax-extension-test}{x+y}
+          \qquad
+          \cssId{mathjax-test-id}{z}
+          \qquad
+          \style{color: purple; border: 1px solid purple}{w}
+          $$
+
+          mhchem and its font extension:
+          $$
+          \ce{Cr2O7^2- + 14H+ + 6e- -&gt; 2Cr^3+ + 7H2O}
+          $$
+
+          $$
+          \ce{A -&gt;[\text{λ &gt; 315 nm}] A^\text{*}
+                 -&gt;[\text{λ &gt; 280 nm}] \text{B (Verfärbung)}}
+          $$
+
+          $$
+          \ce{SO4^2- &lt;=&gt; HSO4^-}
+          \qquad
+          \pu{6.022e23 mol-1}
+          $$
+
+          newcommand:
+          $$
+          \newcommand{\vect}[1]{\boldsymbol{#1}}
+          \newcommand{\R}{\mathbb{R}}
+          \vect{v}\in\R^3
+          $$
+
+          unicode:
+          $$
+          \unicode{x22D6}
+          \qquad
+          \unicode{x03BB}
+          \qquad
+          \char"41
+          \qquad
+          \U{03B1}
+          $$
+
+          verb:
+          $$
+          \verb|a_b + c^2|
+          $$
+
+          NewCM dynamic character ranges:
+          $$
+          \text{Verfärbung, naïve, façade, λ, Ω, Ж, Я, ∑, ∞}
+          $$
+
+
     user_groups:
       - name: Super secret project
         users: [1, 2, 3]
@@ -91,6 +240,8 @@ teams:
       - name: Project Crypto Cool
       - name: Demo
       - name: Tests
+      - name: Biology
+      - name: Chemistry
 
     resources_categories:
       - name: 🔬 Microscope

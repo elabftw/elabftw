@@ -17,6 +17,12 @@ import '@mathjax/src/components/js/input/mml/mml.js';
 import {
   loadFont,
 } from '@mathjax/src/components/js/output/svg/svg.js';
+import {
+  MathJaxNewcmFont,
+} from '@mathjax/mathjax-newcm-font/js/svg.js';
+import {
+  MathJaxMhchemFontExtension,
+} from '@mathjax/mathjax-mhchem-font-extension/js/svg.js';
 import '@mathjax/src/components/js/ui/menu/menu.js';
 import '@mathjax/src/components/js/ui/lazy/lazy.js';
 import '@mathjax/src/components/js/a11y/assistive-mml/assistive-mml.js';
@@ -37,6 +43,10 @@ import '@mathjax/src/components/js/input/tex/extensions/mhchem/mhchem.js';
 import '@mathjax/src/components/js/input/tex/extensions/unicode/unicode.js';
 import '@mathjax/src/components/js/input/tex/extensions/verb/verb.js';
 
+// The mhchem TeX component declares a matching SVG font extension.
+// Bundle and register it here so MathJax never tries to fetch it at runtime.
+MathJaxNewcmFont.addExtension(MathJaxMhchemFontExtension);
+
 Loader.preLoaded(
   'core',
   'input/tex',
@@ -45,6 +55,7 @@ Loader.preLoaded(
   'ui/menu',
   'ui/lazy',
   'a11y/assistive-mml',
+  '[mathjax-mhchem-extension]/svg',
   ...[
     'action', 'amscd', 'bbox', 'boldsymbol', 'braket', 'bussproofs',
     'cancel', 'color', 'enclose', 'extpfeil', 'html', 'mhchem', 'unicode',

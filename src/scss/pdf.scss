@@ -41,7 +41,7 @@ h5 {
 }
 
 a {
-  color: variables.$elabblue;
+  color: $elabblue;
   text-decoration: none;
 }
 
@@ -73,8 +73,8 @@ table td {
 }
 
 table th {
-  background-color: variables.$firstlevel;
-  color: variables.$medium;
+  background-color: $firstlevel;
+  color: $medium;
   font-size: 90%;
   padding: 5px;
   text-align: left;
@@ -107,20 +107,20 @@ tr:nth-child(odd) {
 }
 
 .elabid {
-  color: variables.$strongest;
+  color: $strongest;
   font-size: 8pt;
   text-align: right;
 }
 
 .barcode {
-  color: variables.$strongest;
+  color: $strongest;
   margin: 0;
   padding: 1.5mm;
   vertical-align: middle;
 }
 
 .attached-image {
-  border: 1px solid variables.$firstlevel;
+  border: 1px solid $firstlevel;
   margin-top: 0.5em;
   max-height: 10cm;
   max-width: 100%;
@@ -170,10 +170,10 @@ tr:nth-child(odd) {
 }
 
 .timestamped-block {
-  background-color: variables.$firstlevel;
-  border: 1px solid variables.$medium;
+  background-color: $firstlevel;
+  border: 1px solid $medium;
   border-radius: 5px;
-  color: variables.$medium;
+  color: $medium;
   font-size: 80%;
   margin: 7px 0;
   padding-left: 7px;
@@ -188,7 +188,7 @@ tr:nth-child(odd) {
 
 /* caption for tinymce */
 .image figcaption {
-  border: 1px solid variables.$medium;
+  border: 1px solid $medium;
   /* stylelint-disable-next-line shorthand-property-no-redundant-values */
   margin: 2px 0 6px 0;
   text-align: center;
@@ -204,8 +204,8 @@ img, /* <-- can be removed after PR https://github.com/mpdf/mpdf/pull/1405 is ac
 // quote marks in pdf is not implemented by mpdf
 // https://github.com/mpdf/mpdf/blob/d3ef7689800c6356ab7df7604289f97c17f37c76/src/Tag/BlockQuote.php
 blockquote {
-  background: variables.$firstlevel;
-  border-left: 10px solid variables.$medium;
+  background: $firstlevel;
+  border-left: 10px solid $medium;
   margin: 1.5em 10px;
   padding: 0.5em 10px;
 }

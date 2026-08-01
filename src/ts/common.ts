@@ -45,7 +45,7 @@ import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, LinkSubModel, SingularEntityType } from './interfaces';
-import type { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';

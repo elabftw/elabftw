@@ -9,7 +9,7 @@ import 'jquery-ui/ui/widgets/sortable';
 import {Action, EntityType, Model, Target, FileType} from './interfaces';
 import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
-import type { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
 import TableSorting from './TableSorting.class';

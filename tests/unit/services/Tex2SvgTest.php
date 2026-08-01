@@ -75,6 +75,9 @@ class Tex2SvgTest extends \PHPUnit\Framework\TestCase
         $output = $Tex2Svg->getContent();
 
         $this->assertFalse($Tex2Svg->mathJaxFailed);
+        // check ä
         $this->assertStringContainsString('data-c="E4"', $output);
+        // check λ
+        $this->assertStringContainsString('data-c="3BB"', $output);
     }
 }

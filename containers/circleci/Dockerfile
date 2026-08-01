@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for CircleCI
-FROM elabftw/elabtmp
+ARG ELABTMP_TAG=latest
+FROM elabftw/elabtmp:${ELABTMP_TAG}
 
 # add tests related folders and files to the image
 COPY ./tests /elabftw/tests

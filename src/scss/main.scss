@@ -6,18 +6,18 @@
  * @package elabftw
  */
 @use 'sass:meta';
-@use 'variables';
+@use 'variables' as *;
 @use './fontawesome/variables' as fontawesome with (
-  $fa-font-path: variables.$fa-font-path,
+  $fa-font-path: $fa-font-path,
 );
 
 /* import this first to be able to modify bootstrap theme */
 @include meta.load-css('bootstrap/scss/bootstrap', $with: (
   'theme-colors': (
-    'primary': variables.$elabblue,
-    'secondary': variables.$medium,
-    'danger': variables.$dangerred,
-    'neutral': variables.$medium,
+    'primary': $elabblue,
+    'secondary': $medium,
+    'danger': $dangerred,
+    'neutral': $medium,
   ),
   'dropdown-link-active-bg': var(--primary),
   // Make the non-active link in the navbar have slightly more contrast.
@@ -172,7 +172,7 @@ a,
   text-decoration: none;
 
   &:hover {
-    color: color-mix(in srgb, var(--primary) 85%, variables.$white);
+    color: color-mix(in srgb, var(--primary) 85%, $white);
     text-decoration: underline;
   }
 }
@@ -1945,7 +1945,7 @@ input:user-invalid {
 }
 
 #devPerfDiv {
-  background-color: variables.$white;
+  background-color: $white;
   bottom: 0;
   left: 0;
   position: fixed;

@@ -5,6 +5,10 @@
   "directories": {
     "test": "tests"
   },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "private": true,
   "browserslist": [
     "last 2 Chrome versions",
     "last 2 Firefox versions",

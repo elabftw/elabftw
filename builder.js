@@ -143,7 +143,7 @@ module.exports = (env) => {
             noErrorOnMissing: false,
           },
           {
-            from: path.join(mathjaxNewcmRoot, 'mjs', 'svg', 'dynamic'),
+            from: path.join(mathjaxNewcmRoot, 'svg', 'dynamic'),
             to: 'mathjax/mathjax-newcm-font/svg/dynamic',
             noErrorOnMissing: false,
           },

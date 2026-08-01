@@ -541,12 +541,12 @@ export function getTinymceBaseConfig(page: string): object {
             iframe.onload = async () => {
               const tinyDiv = document.createElement('div');
               tinyDiv.setAttribute('class', 'mce-content-body mce-preview-body');
-              iframe.contentDocument.body.childNodes.forEach((node) => {
+              Array.from(iframe.contentDocument.body.childNodes).forEach((node) => {
                 tinyDiv.append(node);
               });
               // iframe replaced with div element because MathJax otherwise doesn't render menus properly; see #5295
               iframe.replaceWith(tinyDiv);
-              await MathJax.typesetPromise();
+              await MathJax.typesetPromise().catch(error => console.error(error));
             };
           }
         }

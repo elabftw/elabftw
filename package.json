@@ -35,7 +35,6 @@
     "@jspreadsheet-ce/react": "^5.0.2",
     "@mathjax/mathjax-mhchem-font-extension": "^4.1.3",
     "@mathjax/mathjax-newcm-font": "^4.1.3",
-    "@mathjax/mathjax-tex-font": "^4.1.3",
     "@mathjax/src": "^4.1.3",
     "@teselagen/bio-parsers": "^0.4.38",
     "@teselagen/ove": "^0.8.42",

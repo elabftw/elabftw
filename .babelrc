@@ -1,7 +1,6 @@
 {
   "presets": [
     ["@babel/preset-env", {
-      "bugfixes": true,
       "useBuiltIns": false,
       "modules": false
     }],

@@ -65,7 +65,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sass": "^1.101.0",
-    "svelte": "^5.56.3",
+    "svelte": "^5.56.6",
     "terser": "^5.48.0",
     "tinymce": "^6.8.6",
     "tom-select": "^2.6.1",
@@ -86,10 +86,10 @@
     "diff": "^5.2.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/preset-env": "^7.29.7",
-    "@babel/preset-react": "^7.29.7",
-    "@eslint/eslintrc": "^3.3.5",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "^10.0.1",
     "@types/bootstrap": "^5.2.11",
     "@types/dropzone": "^5.7.9",

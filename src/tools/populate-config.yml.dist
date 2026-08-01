@@ -90,6 +90,8 @@ teams:
         body: |
           Inline/base TeX:
           $E = mc^2$, \(\frac{1}{2} + \sqrt{x^2 + y^2}\)
+          <br><br>
+
 
           AMS:
           $$
@@ -102,6 +104,8 @@ teams:
             \qquad \mathbb{R} \subset \mathbb{C}
           \end{aligned}
           $$
+          <br><br>
+
 
           action — hover over x² and click the alternating expression:
           $$
@@ -109,6 +113,8 @@ teams:
           \qquad
           \toggle{a+b}{b+a}\endtoggle
           $$
+          <br><br>
+
 
           amscd:
           $$
@@ -118,16 +124,19 @@ teams:
           C @&gt;&gt;k&gt; D
           \end{CD}
           $$
+          <br><br>
 
           bbox:
           $$
           \bbox[5px, border: 2px solid red]{x^2+y^2}
           $$
+          <br><br>
 
           boldsymbol:
           $$
           \boldsymbol{\nabla}\cdot\boldsymbol{E}=\frac{\rho}{\varepsilon_0}
           $$
+          <br><br>
 
           braket:
           $$
@@ -137,6 +146,7 @@ teams:
           \qquad
           \set{x\in\mathbb{R}\mid x&gt;0}
           $$
+          <br><br>
 
           bussproofs:
           $$
@@ -146,12 +156,14 @@ teams:
           \BinaryInfC{$B$}
           \end{prooftree}
           $$
+          <br><br>
 
           cancel:
           $$
           \cancel{x}+\bcancel{y}+\xcancel{z}
           +\cancelto{0}{a-a}
           $$
+          <br><br>
 
           color:
           $$
@@ -159,6 +171,7 @@ teams:
           +\colorbox{yellow}{y}
           +\fcolorbox{blue}{lightgray}{z}
           $$
+          <br><br>
 
           enclose:
           $$
@@ -166,6 +179,7 @@ teams:
           +\enclose{box}{y}
           +\enclose{updiagonalstrike,downdiagonalstrike}{z}
           $$
+          <br><br>
 
           extpfeil:
           $$
@@ -175,6 +189,7 @@ teams:
           \qquad
           p \xlongequal{\mathrm{def}} q
           $$
+          <br><br>
 
           html:
           $$
@@ -184,22 +199,26 @@ teams:
           \qquad
           \style{color: purple; border: 1px solid purple}{w}
           $$
+          <br><br>
 
           mhchem and its font extension:
           $$
           \ce{Cr2O7^2- + 14H+ + 6e- -&gt; 2Cr^3+ + 7H2O}
           $$
+          <br><br>
 
           $$
           \ce{A -&gt;[\text{λ &gt; 315 nm}] A^\text{*}
                  -&gt;[\text{λ &gt; 280 nm}] \text{B (Verfärbung)}}
           $$
+          <br><br>
 
           $$
           \ce{SO4^2- &lt;=&gt; HSO4^-}
           \qquad
           \pu{6.022e23 mol-1}
           $$
+          <br><br>
 
           newcommand:
           $$
@@ -207,6 +226,7 @@ teams:
           \newcommand{\R}{\mathbb{R}}
           \vect{v}\in\R^3
           $$
+          <br><br>
 
           unicode:
           $$
@@ -218,16 +238,19 @@ teams:
           \qquad
           \U{03B1}
           $$
+          <br><br>
 
           verb:
           $$
           \verb|a_b + c^2|
           $$
+          <br><br>
 
           NewCM dynamic character ranges:
           $$
           \text{Verfärbung, naïve, façade, λ, Ω, Ж, Я, ∑, ∞}
           $$
+          <br><br>
 
 
     user_groups:

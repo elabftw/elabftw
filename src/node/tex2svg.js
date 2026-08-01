@@ -16,6 +16,9 @@ const path = require('path');
 const {mathjax} = require('@mathjax/src/js/mathjax.js');
 const {TeX} = require('@mathjax/src/js/input/tex.js');
 const {SVG} = require('@mathjax/src/js/output/svg.js');
+const {
+  SvgMaction,
+} = require('@mathjax/src/js/output/svg/Wrappers/maction.js');
 const {liteAdaptor} = require('@mathjax/src/js/adaptors/liteAdaptor.js');
 const {RegisterHTMLHandler} = require('@mathjax/src/js/handlers/html.js');
 const {MathJaxNewcmFont} = require(
@@ -28,7 +31,6 @@ const {MathJaxMhchemFontExtension} = require(
 require('@mathjax/src/js/util/entities/all.js');
 require('@mathjax/src/js/input/tex/base/BaseConfiguration.js');
 require('@mathjax/src/js/input/tex/ams/AmsConfiguration.js');
-require('@mathjax/src/js/input/tex/mhchem/MhchemConfiguration.js');
 require('@mathjax/src/js/input/tex/action/ActionConfiguration.js');
 require('@mathjax/src/js/input/tex/amscd/AmsCdConfiguration.js');
 require('@mathjax/src/js/input/tex/bbox/BboxConfiguration.js');
@@ -101,10 +103,19 @@ const tex = new TeX({
 
 MathJaxNewcmFont.addExtension(MathJaxMhchemFontExtension);
 
+// PDF output is static. Disable maction handlers so only the selected branch
+// is rendered, without browser events, tooltips, or foreignObject elements.
+SvgMaction.actions.clear();
+
 const svg = new SVG({
   fontCache: 'local',
   fontData: MathJaxNewcmFont,
   exFactor: 0.5,
+  // LiteDOM has no reliable browser container width. Multiple sibling SVGs
+  // cannot be consumed by the PDF rasterization pipeline.
+  linebreaks: {
+    inline: false,
+  },
 });
 
 const html = mathjax.document(htmlfile, {

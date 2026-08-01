@@ -20,6 +20,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\Process\Exception\ProcessFailedException as SymfonyProcessFailedException;
 use Symfony\Component\Process\Process;
+use ImagickException;
 
 use function dirname;
 use function file_put_contents;
@@ -61,7 +62,19 @@ final class Tex2Svg
             return $this->source;
         }
 
-        $this->scaleSVGs();
+        try {
+            $this->scaleSVGs();
+        } catch (ImagickException $e) {
+            $this->log->warning(
+                'PDF generation failed during MathJax SVG rasterization.',
+                array('exception' => $e)
+            );
+            $this->mathJaxFailed = true;
+
+            // Preserve the existing fallback contract: retain the raw TeX
+            // rather than aborting the entire PDF request.
+            return $this->source;
+        }
 
         // add 'mathjax-svg' class to all mathjax SVGs
         $this->contentWithMathJaxSVG = (string) preg_replace('/(<mjx-container[^>]*><svg)/', '\1 class="mathjax-svg"', $this->contentWithMathJaxSVG);
@@ -160,13 +173,16 @@ final class Tex2Svg
 
     private function nestedSvgToPng(string $mjxContainer, string $svg, float $width, float $height): void
     {
+        $svg = str_replace('currentColor', '#000', $svg);
+        $svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>' . $svg;
+
         $image = new Imagick();
         $image->setRegistry('temporary-path', FsTools::getCacheFolder('elab'));
         // resolution could be lower to reduce file size
         $image->setResolution(300, 300);
         // do not use alpha channel if PDFA
         $image->setBackgroundColor('#FFF' . ($this->mpdf->PDFA === true ? '' : '0')); // #rgba, a=0: fully transparent
-        $image->readImageBlob('<?xml version="1.0" encoding="UTF-8" standalone="no"?>' . $svg);
+        $image->readImageBlob($svg);
         $image->setImageFormat('png');
         // remove all profiles and comments including date:create, date:modify which conflicts with unit testing
         $image->stripImage();

@@ -1549,8 +1549,8 @@ on('toggle-body', (el: HTMLElement) => {
     const width = document.getElementById('parent_' + randId).clientWidth - 30;
     bodyDiv.style.width = String(width);
 
-    // ask mathjax to reparse the page
-    await MathJax.typesetPromise();
+    // ask mathjax to parse the freshly loaded body
+    await MathJax.typesetPromise([bodyDiv]);
 
     TableSortingC.init();
 

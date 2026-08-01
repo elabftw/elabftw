@@ -1,16 +1,10 @@
 /**
- * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @author Nicolas CARPi / Deltablot
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
-
-/*
- * Based on MathJax's custom component example, with lazy typesetting and
- * eLabFTW's configuration. Autoload targets are bundled explicitly so the
- * application never needs to fetch MathJax modules at runtime.
-*/
 
 import { MathJax } from '@mathjax/src/js/components/global.js';
 import { Loader } from '@mathjax/src/js/components/loader.js';
@@ -63,7 +57,6 @@ insert(
   {
     output: {
       font: 'mathjax-newcm',
-      fontPath: '/assets/mathjax/%%FONT%%-font',
     },
     tex: {
       inlineMath: [ ['$','$'], ['\\(','\\)'] ],

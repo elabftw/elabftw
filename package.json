@@ -129,7 +129,7 @@
     "brotli": "brotli -vf web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/images/*.svg",
     "zopfli": "zopfli -i1000 web/assets/*.css web/assets/*.js web/assets/*.svg web/assets/images/*.svg",
     "build": "webpack-cli --progress --config builder.js",
-    "build:dev": "webpack-cli --config-node-env development --config builder.js",
+    "build:dev": "webpack-cli --mode development --config-node-env development --env development --config builder.js",
     "build:prod": "webpack-cli --mode production --config-node-env production --env production --config builder.js --no-devtool",
     "buildnode": "webpack-cli --progress --config node-builder.js",
     "buildall": "CYPRESS_INSTALL_BINARY=0 yarn install --immutable && yarn buildjs && yarn buildcss && yarn buildparser && yarn brotli && yarn zopfli",

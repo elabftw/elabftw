@@ -64,11 +64,16 @@ export class MdEditor extends Editor implements EditorInterface {
   init(): void {
     /* eslint-disable-next-line */
     ($('.markdown-textarea') as any).markdown({
-      onPreview: async ed => {
-        // ask mathjax to reparse the page
-        await MathJax.typesetPromise();
-        // parse with marked and return the html
-        return marked(ed.$textarea.val());
+      onPreview: ed => {
+        const html = marked(ed.$textarea.val()) as string;
+
+        window.setTimeout(() => {
+          void MathJax.typesetPromise().catch(error => {
+            console.error('Markdown preview MathJax error:', error);
+          });
+        }, 0);
+
+        return html;
       },
     });
   }

@@ -35,10 +35,20 @@ commands:
     steps:
       - run:
           name: Build image
+          # we use the SHA1 as build tag to make sure we don't use stale images in the build cascade
           command: |
-            docker build -t elabftw/elabimg:ci --build-arg CI=1 -f containers/elabimg/Dockerfile .
-            docker build -t elabftw/elabtmp -f containers/elabtmp/Dockerfile .
-            docker build -t elabftw/circleci -f containers/circleci/Dockerfile .
+            docker build \
+              -t "elabftw/elabimg:ci-${CIRCLE_SHA1}" \
+              --build-arg CI=1 \
+              -f containers/elabimg/Dockerfile .
+            docker build \
+              -t "elabftw/elabtmp:${CIRCLE_SHA1}" \
+              --build-arg "ELABIMG_TAG=ci-${CIRCLE_SHA1}" \
+              -f containers/elabtmp/Dockerfile .
+            docker build \
+              -t elabftw/circleci \
+              --build-arg "ELABTMP_TAG=${CIRCLE_SHA1}" \
+              -f containers/circleci/Dockerfile .
 
   load_image:
     steps:

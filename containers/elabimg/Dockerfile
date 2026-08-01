@@ -222,7 +222,7 @@ RUN apk upgrade -U -a && apk add --no-cache \
     git \
     imagemagick-heic \
     imagemagick-svg \
-    nodejs \
+    nodejs-current \
     openssl \
     php84 \
     php84-pecl-apcu \

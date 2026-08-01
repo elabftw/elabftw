@@ -538,7 +538,7 @@ export function getTinymceBaseConfig(page: string): object {
           // declaration as iFrame element required to avoid errors with getting srcdoc property
           const iframe = (document.querySelector('iframe.tox-dialog__iframe') as HTMLIFrameElement);
           if (iframe) {
-            iframe.onload = () => {
+            iframe.onload = async () => {
               const tinyDiv = document.createElement('div');
               tinyDiv.setAttribute('class', 'mce-content-body mce-preview-body');
               iframe.contentDocument.body.childNodes.forEach((node) => {
@@ -546,7 +546,7 @@ export function getTinymceBaseConfig(page: string): object {
               });
               // iframe replaced with div element because MathJax otherwise doesn't render menus properly; see #5295
               iframe.replaceWith(tinyDiv);
-              MathJax.typesetPromise();
+              await MathJax.typesetPromise();
             };
           }
         }

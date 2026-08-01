@@ -33,6 +33,7 @@
     "@fullcalendar/timegrid": "^6.1.21",
     "@fullcalendar/timeline": "^6.1.21",
     "@jspreadsheet-ce/react": "^5.0.2",
+    "@mathjax/mathjax-newcm-font": "^4.1.3",
     "@mathjax/mathjax-tex-font": "^4.1.3",
     "@mathjax/src": "^4.1.3",
     "@teselagen/bio-parsers": "^0.4.38",
@@ -174,6 +175,9 @@
   "homepage": "https://www.elabftw.net",
   "packageManager": "yarn@4.15.0",
   "dependenciesMeta": {
+    "@mathjax/mathjax-newcm-font": {
+      "unplugged": true
+    },
     "indigo-ketcher": {
       "unplugged": true
     }

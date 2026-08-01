@@ -136,6 +136,14 @@ module.exports = (env) => {
             to: '[name][ext]',
             noErrorOnMissing: false,
           },
+          {
+            from: path.resolve(
+              __dirname,
+              '/run/elabftw/yarn/unplugged/@mathjax-mathjax-newcm-font-npm-*/node_modules/@mathjax/mathjax-newcm-font/mjs/svg/dynamic',
+            ),
+            to: 'mathjax/mathjax-newcm-font/svg/dynamic',
+            noErrorOnMissing: false,
+          },
         ],
       }),
     ],

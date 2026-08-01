@@ -16,12 +16,13 @@ import { MathJax } from '@mathjax/src/js/components/global.js';
 import { Loader } from '@mathjax/src/js/components/loader.js';
 import { insert } from '@mathjax/src/js/util/Options.js';
 import { startup } from '@mathjax/src/components/js/startup/init.js';
-import { MathJaxTexFont } from '@mathjax/mathjax-tex-font/js/svg.js';
 
 import '@mathjax/src/components/js/core/core.js';
 import '@mathjax/src/components/js/input/tex/tex.js';
 import '@mathjax/src/components/js/input/mml/mml.js';
-import '@mathjax/src/components/js/output/svg/svg.js';
+import {
+  loadFont,
+} from '@mathjax/src/components/js/output/svg/svg.js';
 import '@mathjax/src/components/js/ui/menu/menu.js';
 import '@mathjax/src/components/js/ui/lazy/lazy.js';
 import '@mathjax/src/components/js/a11y/assistive-mml/assistive-mml.js';
@@ -60,6 +61,10 @@ Loader.preLoaded(
 insert(
   MathJax.config,
   {
+    output: {
+      font: 'mathjax-newcm',
+      fontPath: '/assets/mathjax/%%FONT%%-font',
+    },
     tex: {
       inlineMath: [ ['$','$'], ['\\(','\\)'] ],
       displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
@@ -79,12 +84,8 @@ insert(
       },
 
     },
-    svg: {
-      // Keep the v3 font so the upgrade doesn't also change equation layout.
-      fontData: MathJaxTexFont,
-    },
   },
   false,
 );
 
-startup();
+loadFont(startup, true);

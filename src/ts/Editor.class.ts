@@ -64,13 +64,9 @@ export class MdEditor extends Editor implements EditorInterface {
   init(): void {
     /* eslint-disable-next-line */
     ($('.markdown-textarea') as any).markdown({
-      onPreview: ed => {
+      onPreview: async ed => {
         // ask mathjax to reparse the page
-        // if we call typeset directly it doesn't work
-        // so add a timeout
-        setTimeout(() => {
-          MathJax.typeset();
-        }, 1);
+        await MathJax.typesetPromise();
         // parse with marked and return the html
         return marked(ed.$textarea.val());
       },

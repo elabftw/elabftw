@@ -1529,7 +1529,7 @@ on('toggle-body', (el: HTMLElement) => {
   if (el.dataset.revid) {
     queryUrl += `/revisions/${el.dataset.revid}`;
   }
-  ApiC.getJson(queryUrl).then(json => {
+  ApiC.getJson(queryUrl).then(async json => {
     // skip extra fields on the revisions page (focus remains on body). See #6053
     if (window.location.pathname !== '/revisions.php') {
       // add extra fields elements from metadata json
@@ -1550,7 +1550,7 @@ on('toggle-body', (el: HTMLElement) => {
     bodyDiv.style.width = String(width);
 
     // ask mathjax to reparse the page
-    MathJax.typeset();
+    await MathJax.typesetPromise();
 
     TableSortingC.init();
 

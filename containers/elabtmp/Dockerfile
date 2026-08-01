@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1.3
 # Dockerfile for CI image
-FROM elabftw/elabimg:ci
+ARG ELABIMG_TAG=ci
+FROM elabftw/elabimg:${ELABIMG_TAG}
 
 # Install xdebug for coverage
 RUN apk add --update php84-pecl-xdebug

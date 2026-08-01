@@ -11,6 +11,7 @@
  */
 
 const fs = require('fs');
+const path = require('path');
 
 const {mathjax} = require('@mathjax/src/js/mathjax.js');
 const {TeX} = require('@mathjax/src/js/input/tex.js');
@@ -20,11 +21,32 @@ const {RegisterHTMLHandler} = require('@mathjax/src/js/handlers/html.js');
 const {MathJaxNewcmFont} = require(
   '@mathjax/mathjax-newcm-font/js/svg.js',
 );
+const {MathJaxMhchemFontExtension} = require(
+  '@mathjax/mathjax-mhchem-font-extension/js/svg.js',
+);
 
-require('@mathjax/src/js/util/asyncLoad/node.js');
 require('@mathjax/src/js/util/entities/all.js');
+require('@mathjax/src/js/input/tex/base/BaseConfiguration.js');
+require('@mathjax/src/js/input/tex/ams/AmsConfiguration.js');
+require('@mathjax/src/js/input/tex/mhchem/MhchemConfiguration.js');
 
-// Import the TeX Configuration.js modules needed by eLabFTW here.
+const newcmDynamic = require.context(
+  'mathjax-newcm-svg-dynamic',
+  false,
+  /\.js$/,
+);
+
+const newcmDynamicFiles = new Set(newcmDynamic.keys());
+
+mathjax.asyncLoad = name => {
+  const request = `./${path.basename(name)}`;
+
+  if (!newcmDynamicFiles.has(request)) {
+    throw new Error(`Unsupported MathJax dynamic module: ${name}`);
+  }
+
+  return newcmDynamic(request);
+};
 
 const htmlfile = fs.readFileSync(process.argv[2], 'utf8');
 const adaptor = liteAdaptor({fontSize: 16});
@@ -35,15 +57,13 @@ const tex = new TeX({
   inlineMath: [['$', '$'], ['\\(', '\\)']],
   displayMath: [['$$', '$$'], ['\\[', '\\]']],
   processEscapes: true,
-  packages: [
-    'base',
-    'ams',
-    // Explicitly imported extension names
-  ],
+  packages: ['base', 'ams', 'mhchem'],
   formatError: (_jax, error) => {
     throw error;
   },
 });
+
+MathJaxNewcmFont.addExtension(MathJaxMhchemFontExtension);
 
 const svg = new SVG({
   fontCache: 'local',

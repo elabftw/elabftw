@@ -33,6 +33,7 @@
     "@fullcalendar/timegrid": "^6.1.21",
     "@fullcalendar/timeline": "^6.1.21",
     "@jspreadsheet-ce/react": "^5.0.2",
+    "@mathjax/mathjax-mhchem-font-extension": "^4.1.3",
     "@mathjax/mathjax-newcm-font": "^4.1.3",
     "@mathjax/mathjax-tex-font": "^4.1.3",
     "@mathjax/src": "^4.1.3",

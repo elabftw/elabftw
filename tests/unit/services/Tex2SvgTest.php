@@ -66,4 +66,15 @@ class Tex2SvgTest extends \PHPUnit\Framework\TestCase
         $mathJaxOut = $Tex2Svg->getContent();
         $this->assertEquals($mathJaxHtml, $mathJaxOut);
     }
+
+    public function testMhchemWithUmlaut(): void
+    {
+        $source = '<html><body>$$ \ce{A ->[\text{λ > 315 nm}] A^\text{*} ->[\text{λ > 280 nm}] \text{B (Verfärbung)}} $$</body></html>';
+        $Tex2Svg = new Tex2Svg($this->log, $this->mpdf, $source);
+
+        $output = $Tex2Svg->getContent();
+
+        $this->assertFalse($Tex2Svg->mathJaxFailed);
+        $this->assertStringContainsString('data-c="E4"', $output);
+    }
 }

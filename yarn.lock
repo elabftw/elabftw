@@ -8792,9 +8792,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ketcher-core@npm:3.17.0":
-  version: 3.17.0
-  resolution: "ketcher-core@npm:3.17.0"
+"ketcher-core@npm:*, ketcher-core@npm:3.17.1":
+  version: 3.17.1
+  resolution: "ketcher-core@npm:3.17.1"
   dependencies:
     "@babel/runtime": "npm:^7.26.10"
     assert: "npm:^2.0.0"
@@ -8806,7 +8806,7 @@ __metadata:
     raphael: "npm:^2.3.0"
     react-device-detect: "npm:^2.2.2"
     svgpath: "npm:^2.3.1"
-  checksum: 10c0/e138632de0ec0c36c1dff26d64b751eaeee288c0b75cb591e0ee1a73ecc2e889b3efa65b3735ad359e87f89fc0ff903ad19acb3aca6f8519b43dd0518646103f
+  checksum: 10c0/5afbc6c8f8d476f9f45ac412c475e8fc69610d21168307c0ae2ed4f916a97f07e5fc1cda4944920056c624760dc7f805e74f068f5d572319c0395edf6c9cfddf
   languageName: node
   linkType: hard
 

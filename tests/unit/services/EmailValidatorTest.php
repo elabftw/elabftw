@@ -68,6 +68,20 @@ class EmailValidatorTest extends \PHPUnit\Framework\TestCase
         $EmailValidator->validate();
     }
 
+    public function testAllowedWildcardDomain(): void
+    {
+        $email = 'yolololol@institute.department.Example.Org';
+        $EmailValidator = new EmailValidator($email, false, '*.example.org');
+        $this->assertSame($email, $EmailValidator->validate());
+    }
+
+    public function testWildcardDomainDoesNotMatchApex(): void
+    {
+        $EmailValidator = new EmailValidator('yolololol@example.org', false, '*.example.org');
+        $this->expectException(ImproperActionException::class);
+        $EmailValidator->validate();
+    }
+
     public function testSkipValidation(): void
     {
         $email = 'a@newdomain.com';

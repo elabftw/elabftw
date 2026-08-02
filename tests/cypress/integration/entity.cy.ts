@@ -135,6 +135,9 @@ describe('Experiments', () => {
     cy.get('[aria-label="Show more filters"]').click();
     // filter deleted items
     cy.get('select[name="state"]').select('3');
+    cy.get('.show-more-filters-menu').should('be.visible');
+    cy.get('body').click(0, 0);
+    cy.get('.show-more-filters-menu').should('not.be.visible');
     // restore
     cy.get('[data-action="restore-entity-showmode"]').first().click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');

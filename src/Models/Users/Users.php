@@ -775,7 +775,7 @@ class Users extends AbstractRest
 
     public function isSysadmin(): bool
     {
-        return $this->userData['is_sysadmin'] === 1;
+        return ($this->userData['is_sysadmin'] ?? 0) === 1;
     }
 
     public function isSysadminOrExplode(): void

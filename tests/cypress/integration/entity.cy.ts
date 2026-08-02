@@ -135,9 +135,9 @@ describe('Experiments', () => {
     cy.get('[aria-label="Show more filters"]').click();
     // filter deleted items
     cy.get('select[name="state"]').select('3');
-    cy.get('.show-more-filters-menu').should('be.visible');
-    cy.get('body').click(0, 0);
-    cy.get('.show-more-filters-menu').should('not.be.visible');
+    cy.get('[data-cy="moreFiltersMenu"]').should('have.attr', 'open');
+    cy.get('#pageTitle').click(0, 0);
+    cy.get('[data-cy="moreFiltersMenu"]').should('not.have.attr', 'open');
     // restore
     cy.get('[data-action="restore-entity-showmode"]').first().click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');

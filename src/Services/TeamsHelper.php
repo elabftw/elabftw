@@ -129,7 +129,7 @@ final class TeamsHelper
     {
         $sql = 'SELECT COUNT(users_id) AS usernb
                 FROM users2teams
-                WHERE users2teams.teams_id = :team';
+                WHERE users2teams.teams_id = :team AND users2teams.is_archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);

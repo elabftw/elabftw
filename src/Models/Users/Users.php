@@ -812,14 +812,16 @@ class Users extends AbstractRest
     protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self
     {
         $Db = Db::getConnection();
-        // make sure we select only a user with at least one active team
+        // Prefer an active account, but return an archived account if it is the only match.
         $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term %s AND EXISTS (
+            'SELECT userid FROM users WHERE %s = :term %s
+            ORDER BY EXISTS (
               SELECT 1
               FROM users2teams AS ut
               WHERE ut.users_id = users.userid
                 AND ut.is_archived = 0
-            ) LIMIT 1',
+            ) DESC
+            LIMIT 1',
             $column->value,
             $filterValidated ? 'AND validated = 1' : 'AND 1=1',
         );

@@ -25,6 +25,7 @@ use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsCerts;
 use Elabftw\Models\IdpsEndpoints;
 use Elabftw\Models\Users\Users;
+use Elabftw\Models\Users2Teams;
 use Elabftw\Traits\TestsUtilsTrait;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 
@@ -115,6 +116,36 @@ class SamlTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $authResponse->getAuthUserid());
         $this->assertFalse($authResponse->isAnonymous());
         $this->assertEquals(1, $authResponse->getSelectedTeam());
+    }
+
+    public function testArchivedUserIsNotRecreatedAndActiveDuplicateIsPreferred(): void
+    {
+        $email = 'archived-saml-user@example.com';
+        $requester = new Users(1, 1);
+        $archivedUserid = $requester->createOne(
+            $email,
+            array(1),
+            automaticValidationEnabled: true,
+        );
+        new Users2Teams($requester)->archive($archivedUserid);
+
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = $email;
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+
+        $authResponse = $this->getAuthResponse($samlUserdata, $config);
+        $this->assertSame($archivedUserid, $authResponse->getAuthUserid());
+
+        // Preserve the active-account preference introduced for duplicate accounts.
+        $activeUserid = $requester->createOne(
+            $email,
+            array(2),
+            automaticValidationEnabled: true,
+        );
+
+        $authResponse = $this->getAuthResponse($samlUserdata, $config);
+        $this->assertSame($activeUserid, $authResponse->getAuthUserid());
     }
 
     public function testgetSettings(): void

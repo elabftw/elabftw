@@ -58,7 +58,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuthFail(): void
     {
-        $token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        $token = 'deadbeefcafebabe0badf00ddecafbad';
         $CookieAuth = new Cookie(220330, new CookieToken($token), 1);
         $this->expectException(UnauthorizedException::class);
         $CookieAuth->tryAuth();

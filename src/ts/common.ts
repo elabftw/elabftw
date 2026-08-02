@@ -11,6 +11,7 @@ import { Malle, InputType } from '@deltablot/malle';
 import type { SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
+import Heartbeat from './Heartbeat.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
 import {
   adjustHiddenState,
@@ -213,22 +214,11 @@ on('toggle-dark-mode', (el: HTMLElement) => {
 });
 
 // HEARTBEAT
-// this function is to check periodically that we are still authenticated
-// and show a message if we the session is not valid anymore but we are still on a page requiring auth
-// only run if we are an authenticated user
 if (core.isAuth) {
-  // check every 5 minutes
-  const heartRate = 300000;
-  setInterval(() => {
-    fetch('app/controllers/HeartBeat.php').then(response => {
-      if (!response.ok) {
-        clearLocalStorage();
-        alert('Your session expired!');
-        window.location.replace('login.php');
-      }
-    }).catch(error => alert(error));
-  }, heartRate);
+  new Heartbeat();
 }
+// END HEARTBEAT
+
 
 const FavTagC = new FavTag();
 const TodolistC = new Todolist();

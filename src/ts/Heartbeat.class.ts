@@ -159,6 +159,11 @@ export default class Heartbeat {
 
       // Retrieve the new authoritative expiration timestamp.
       await this.checkSession();
+    } catch (error) {
+      console.error('Failed to extend session:', error);
+      // Fall back to re-checking session state so an already-expired
+      // session is caught and the user is redirected.
+      void this.checkSession();
     } finally {
       button.disabled = false;
     }

@@ -137,6 +137,8 @@ const t = {
     "saved": "Tersimpan",
     "search": "Cari",
     "select-resource": "Memilih sumber daya",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "Tunjukkan semua",
     "show-archived": "Tunjukkan yang telah diarsipkan",
     "show-deleted": "Tampilkan terhapus",

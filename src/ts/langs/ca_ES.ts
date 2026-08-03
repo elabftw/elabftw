@@ -137,6 +137,8 @@ const t = {
     "saved": "Guardat",
     "search": "Buscar",
     "select-resource": "Seleccioneu un recurs",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "Mostra-ho tot",
     "show-archived": "Mostra arxivat",
     "show-deleted": "Mostra eliminats",

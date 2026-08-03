@@ -137,6 +137,8 @@ const t = {
     "saved": "已儲存",
     "search": "搜尋",
     "select-resource": "選擇資源",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "顯示全部",
     "show-archived": "顯示已封存內容",
     "show-deleted": "顯示已刪除",

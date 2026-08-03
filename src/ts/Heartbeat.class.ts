@@ -11,6 +11,7 @@ import { ApiC } from './api';
 import { on } from './handlers';
 import { Model } from './interfaces';
 import { clearLocalStorage } from './localStorage';
+import i18next from './i18n';
 
 interface SessionStatus {
   expires_at: number | null;
@@ -104,7 +105,7 @@ export default class Heartbeat {
     }, delay);
   }
 
-  private showSessionExpirationModal(expiresAt: number): void {
+  private async showSessionExpirationModal(expiresAt: number): Promise<void> {
     if (this.warningTimer !== undefined) {
       window.clearTimeout(this.warningTimer);
       this.warningTimer = undefined;
@@ -147,6 +148,26 @@ export default class Heartbeat {
     );
 
     $('#sessionExpirationModal').modal('show');
+
+    let permission = Notification.permission;
+    if (Notification.permission === 'default') {
+      permission = await Notification.requestPermission();
+    }
+    if (
+      document.hidden
+      && 'Notification' in window
+      && permission === 'granted'
+    ) {
+      const notification = new Notification(i18next.t('session-expiring-title'), {
+        body: i18next.t('session-expiring'),
+        tag: 'elabftw-session-expiration',
+      });
+
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+    }
   }
 
   private async extendSession(button: HTMLButtonElement): Promise<void> {

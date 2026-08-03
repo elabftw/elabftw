@@ -25,6 +25,7 @@ use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Exception\UnexpectedResponseException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email as Memail;
 
 use function count;
 
@@ -150,6 +151,28 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->Email->sendEmail(new Address('a@a.fr', 'blah'), 's', 'b'));
         // with cc
         $this->assertTrue($this->Email->sendEmail(new Address('a@a.fr', 'blah'), 's', 'b', array(new Address('cc@example.com', 'cc'))));
+    }
+
+    public function testHtmlToTextPreservesUrlQueryParameters(): void
+    {
+        $firstUrl = 'https://elabftw.example.com/database.php?mode=view&id=123456';
+        $secondUrl = 'https://elabftw.example.com/database.php?mode=view&id=654321';
+        $htmlBody = '<p>Read this entry:</p>
+            <p>https://elabftw.example.com/database.php?mode=view&amp;id=123456</p>
+            <p>Another entry:</p>
+            <p>https://elabftw.example.com/database.php?mode=view&amp;id=654321</p>';
+        $MockMailer = $this->createMock(MailerInterface::class);
+        $MockMailer->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function (Memail $message) use ($firstUrl, $secondUrl): bool {
+                $plainText = $message->getTextBody() ?? '';
+                $this->assertStringContainsString($firstUrl, (string) $plainText);
+                $this->assertStringContainsString($secondUrl, (string) $plainText);
+                return true;
+            }));
+        $Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com');
+
+        $this->assertTrue($Email->sendEmail(new Address('a@a.fr', 'blah'), 's', '', htmlBody: $htmlBody));
     }
 
     public function testNotifySysadminsTsBalance(): void

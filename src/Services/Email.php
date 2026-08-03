@@ -34,6 +34,7 @@ use function _;
 use function array_column;
 use function array_map;
 use function preg_replace;
+use function quoted_printable_encode;
 use function sprintf;
 
 /**
@@ -196,7 +197,9 @@ class Email
                 $textWithLinks = (new Transformer())
                     ->keepLinks()
                     ->keepNewLines()
-                    ->toText($htmlBody);
+                    // Transformer decodes quoted-printable input unconditionally, so encode
+                    // raw HTML first to preserve URL query values such as "=12".
+                    ->toText(quoted_printable_encode($htmlBody));
                 // convert links to plain text and keep the url
                 // <a href="url">link text</a> => link text (url)
                 $plainText = preg_replace('/<a href="([^"]*)">([^<]*)<\/a>/iu', '$2 ($1)', $textWithLinks);

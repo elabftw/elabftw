@@ -17,6 +17,12 @@ const MinimizerPlugin = require('minimizer-webpack-plugin');
 const webpack = require('webpack');
 const sveltePreprocess = require('svelte-preprocess');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const mathjaxNewcmRoot = path.resolve(
+  path.dirname(
+    require.resolve('@mathjax/mathjax-newcm-font/js/svg.js'),
+  ),
+  '..',
+);
 
 module.exports = (env) => {
   return {
@@ -134,6 +140,11 @@ module.exports = (env) => {
               '/run/elabftw/yarn/unplugged/indigo-ketcher-npm-*/node_modules/indigo-ketcher/**/*.wasm',
             ),
             to: '[name][ext]',
+            noErrorOnMissing: false,
+          },
+          {
+            from: path.join(mathjaxNewcmRoot, 'svg', 'dynamic'),
+            to: 'mathjax/mathjax-newcm-font/svg/dynamic',
             noErrorOnMissing: false,
           },
         ],

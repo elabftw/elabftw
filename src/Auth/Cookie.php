@@ -35,7 +35,7 @@ final class Cookie implements AuthInterface
         // compare the provided token with the token saved in SQL database
         $sql = sprintf(
             'SELECT userid
-            FROM users WHERE token = :token AND token_created_at + INTERVAL %d MINUTE > NOW() LIMIT 1',
+            FROM users WHERE token = :token AND token_created_at > NOW() - INTERVAL %d MINUTE LIMIT 1',
             $this->validityMinutes
         );
         $req = $Db->prepare($sql);

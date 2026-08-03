@@ -137,6 +137,8 @@ const t = {
     "saved": "已保存",
     "search": "搜索",
     "select-resource": "选择一个资源",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "显示全部",
     "show-archived": "显示已归档",
     "show-deleted": "显示已删除",

@@ -137,6 +137,8 @@ const t = {
     "saved": "Shranjeno",
     "search": "Išči",
     "select-resource": "Izberite vir",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "Pokaži vse",
     "show-archived": "Prikaži arhivirano",
     "show-deleted": "Show deleted",

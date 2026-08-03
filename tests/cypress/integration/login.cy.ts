@@ -27,7 +27,7 @@ describe('Login page', () => {
     cy.get('input[name=password]').type(`${password}{enter}`);
     // auth cookies should be present
     cy.getCookie('token').should('exist').then(cookie => {
-      expect(cookie.value).to.match(/^[0-9a-fA-F]{64}$/);
+      expect(cookie.value).to.match(/^[0-9a-fA-F]{32}$/);
     });
     cy.getCookie('token_team').should('exist').then(cookie => {
       expect(cookie.value).to.eq('1');

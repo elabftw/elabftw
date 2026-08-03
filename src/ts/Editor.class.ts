@@ -9,7 +9,7 @@ import $ from 'jquery';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
 import { marked } from 'marked';
-import type { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 import { Target } from './interfaces';
 import type { Entity } from './interfaces';
 import { ApiC } from './api';
@@ -65,14 +65,15 @@ export class MdEditor extends Editor implements EditorInterface {
     /* eslint-disable-next-line */
     ($('.markdown-textarea') as any).markdown({
       onPreview: ed => {
-        // ask mathjax to reparse the page
-        // if we call typeset directly it doesn't work
-        // so add a timeout
-        setTimeout(() => {
-          MathJax.typeset();
-        }, 1);
-        // parse with marked and return the html
-        return marked(ed.$textarea.val());
+        const html = marked(ed.$textarea.val()) as string;
+
+        window.setTimeout(() => {
+          void MathJax.typesetPromise().catch(error => {
+            console.error('Markdown preview MathJax error:', error);
+          });
+        }, 0);
+
+        return html;
       },
     });
   }

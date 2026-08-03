@@ -137,6 +137,8 @@ const t = {
     "saved": "저장됨",
     "search": "검색",
     "select-resource": "리소스 선택",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "전체 보기",
     "show-archived": "보관된 항목 표시",
     "show-deleted": "Show deleted",

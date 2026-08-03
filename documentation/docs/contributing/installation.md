@@ -55,7 +55,7 @@ git clone git@github.com:<YOUR USERNAME>/elabftw.git
 # get elabctl
 curl -sLo elabctl https://get.elabftw.net && chmod +x elabctl
 # get elabctl configuration file
-curl -so elabctl.conf https://raw.githubusercontent.com/elabftw/elabctl/master/elabctl.conf
+curl -so elabctl.conf https://raw.githubusercontent.com/elabftw/elabftw/refs/heads/master/containers/elabctl/elabctl.conf
 ~~~
 
 * Edit `elabctl.conf`, change `BACKUP_DIR` to `$dev/backup` or any other directory (write full paths of course, not aliases)

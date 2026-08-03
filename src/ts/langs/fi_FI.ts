@@ -137,6 +137,8 @@ const t = {
     "saved": "Tallennettu",
     "search": "Hae",
     "select-resource": "Valitse resurssi",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "Näytä kaikki",
     "show-archived": "Näytä arkistoitu",
     "show-deleted": "Show deleted",

@@ -12,8 +12,8 @@
   <meta http-equiv='Content-type' content='text/html;charset=UTF-8' />
   <meta name='viewport' content='width=device-width, initial-scale=1'>
   <meta name='description' content='Electronic lab notebook - eLabFTW'>
-  {% if App.Config.configArr.autologout_time != '0' %}
-    <meta http-equiv='refresh' content='{{ App.Config.configArr.autologout_time }};url=app/logout.php' />
+  {% if sessionExpiresAt %}
+    <meta name='session-expires-at' content='{{ sessionExpiresAt }}'>
   {% endif %}
   <meta name='csrf-token' content='{{ App.Session.get('csrf') }}'/>
   <link rel='manifest' href='/manifest.webmanifest' crossorigin='use-credentials'>

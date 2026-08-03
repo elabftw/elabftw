@@ -137,6 +137,8 @@ const t = {
     "saved": "Gespeichert",
     "search": "Suche",
     "select-resource": "Ressource auswählen",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "Zeige alle",
     "show-archived": "Zeige archivierte",
     "show-deleted": "Gelöschte einblenden",

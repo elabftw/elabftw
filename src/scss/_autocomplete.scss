@@ -6,7 +6,7 @@
  * @package elabftw
  */
 
-@use './variables';
+@use './variables' as *;
 
 .rte-autocomplete {
   border: 1px solid rgba(0, 0, 0, 0.2);

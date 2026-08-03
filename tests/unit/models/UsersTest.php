@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\Users2TeamsTargets;
+use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -25,6 +26,7 @@ use Elabftw\Traits\TestsUtilsTrait;
 
 use function count;
 use function is_array;
+use function strtoupper;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
 {
@@ -106,6 +108,23 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $result = (new Users(4, 2, $sysadminUser))->patch(Action::Update, $params);
         $this->assertEquals('tatabis@yopmail.com', $result['email']);
         $this->assertEquals('Yep', $result['lastname']);
+    }
+
+    public function testUpdateAccountWithLegacyUppercaseEmail(): void
+    {
+        $sysadminUser = new Users(1, 1);
+        $target = new Users(4, 2, $sysadminUser);
+        $expectedEmail = $target->userData['email'];
+        $uppercaseEmail = strtoupper($expectedEmail);
+
+        // Reproduce an email stored before addresses were normalized to lowercase.
+        $target->rawUpdate(UsersColumn::Email, $uppercaseEmail);
+
+        // The edit modal submits every field, including the unchanged email.
+        $result = (new Users(4, 2, $sysadminUser))->patch(Action::Update, array(
+            'email' => $uppercaseEmail,
+        ));
+        $this->assertSame($expectedEmail, $result['email']);
     }
 
     public function testUpdateWrongOrcid(): void

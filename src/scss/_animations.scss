@@ -6,6 +6,8 @@
  * @package elabftw
  */
 
+@use './variables' as *;
+
 /* loading spinner */
 .lds-dual-ring::after {
   animation: lds-dual-ring 1.3s linear infinite;

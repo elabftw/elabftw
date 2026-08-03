@@ -6,6 +6,8 @@
  * @package elabftw
  */
 
+@use './variables' as *;
+
 .chart {
   --h: 220px;
   --gap: 4px;

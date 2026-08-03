@@ -28,7 +28,6 @@ On Ubuntu, **Docker installed via snap is known to cause issues**; prefer a non-
 
 - `curl` (fetch files from the command line; probably already installed)
 - **[Docker Compose plugin](https://docs.docker.com/compose/)** (required by `elabctl`; do not use the legacy `docker-compose` tool/package)
-- `dialog` (used by `elabctl install`)
 - `borgbackup` (required if you plan to use `elabctl backup`; not needed just to install)
 
 ## Database note (important)

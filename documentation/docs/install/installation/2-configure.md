@@ -7,7 +7,7 @@ sidebar_position: 2
 Start the configuration wizard with:
 
 ~~~bash
-elabctl install
+sudo elabctl install
 ~~~
 
 This will help you configure the services and create a configuration file (`/etc/elabftw.yml` by default).

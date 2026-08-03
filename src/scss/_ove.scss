@@ -6,7 +6,7 @@
  * @package elabftw
  */
 
-@use './variables';
+@use './variables' as *;
 
 // overwrite ove umd bundle setting
 code {

@@ -7,74 +7,143 @@
  * @package elabftw
  * @see https://github.com/mathjax/MathJax-demos-node/blob/060220686e5e368d9b654169eb4199b1f3de5a96/preload/tex2svg-page
  *
- * Use MathJax v3 to convert all TeX in an HTML document.
+ * Use MathJax v4 to convert all TeX in an HTML document.
  */
 
+const fs = require('fs');
+const path = require('path');
 
-// Read the HTML file passed as the first argument
-const htmlfile = require('fs').readFileSync(process.argv[2], 'utf8');
-
-// Configure MathJax
-// don't put const here or everything explodes and AI takes over the world
-MathJax = {
-    tex: {
-        inlineMath: [['$','$'], ['\\(','\\)']],
-        displayMath: [['$$','$$'], ['\\[','\\]']],
-        processEscapes: true,
-        packages: ['base', 'ams', 'autoload'],
-        // fail hard
-        formatError: (jax, err) => {throw err},
-    },
-    svg: {
-        fontCache: 'local',
-    },
-    startup: {
-        document: htmlfile,
-    },
-    options: {
-        // fail hard
-        compileError: (doc, math, err) => {throw err},
-        typesetError: (doc, math, err) => {throw err},
-    }
-};
-
-// Load all the needed components
-require('mathjax-full/components/src/startup/lib/startup.js');
-require('mathjax-full/components/src/core/core.js');
-require('mathjax-full/components/src/adaptors/liteDOM/liteDOM.js');
-require('mathjax-full/components/src/input/tex-full/tex-full.js');
-require('mathjax-full/components/src/input/tex/extensions/all-packages/all-packages.js');
-// load all html entities, compare to https://github.com/mathjax/MathJax-demos-node/issues/16
-require('mathjax-full/js/util/entities/all.js');
-require('mathjax-full/components/src/output/svg/svg.js');
-require('mathjax-full/components/src/output/svg/fonts/tex/tex.js');
-require('mathjax-full/components/src/startup/startup.js');
-
-// Let MathJax know these are loaded
-MathJax.loader.preLoad(
-    'core',
-    'adaptors/liteDOM',
-    'input/tex-full',
-    '[tex]/all-packages',
-    'output/svg',
-    'output/svg/fonts/tex',
+const {mathjax} = require('@mathjax/src/js/mathjax.js');
+const {TeX} = require('@mathjax/src/js/input/tex.js');
+const {SVG} = require('@mathjax/src/js/output/svg.js');
+const {
+  SvgMaction,
+} = require('@mathjax/src/js/output/svg/Wrappers/maction.js');
+const {liteAdaptor} = require('@mathjax/src/js/adaptors/liteAdaptor.js');
+const {RegisterHTMLHandler} = require('@mathjax/src/js/handlers/html.js');
+const {MathJaxNewcmFont} = require(
+  '@mathjax/mathjax-newcm-font/js/svg.js',
+);
+const {MathJaxMhchemFontExtension} = require(
+  '@mathjax/mathjax-mhchem-font-extension/js/svg.js',
 );
 
-// Create the MathJax methods for the input and output that is loaded
-MathJax.config.startup.ready();
+require('@mathjax/src/js/util/entities/all.js');
+require('@mathjax/src/js/input/tex/base/BaseConfiguration.js');
+require('@mathjax/src/js/input/tex/ams/AmsConfiguration.js');
+require('@mathjax/src/js/input/tex/action/ActionConfiguration.js');
+require('@mathjax/src/js/input/tex/amscd/AmsCdConfiguration.js');
+require('@mathjax/src/js/input/tex/bbox/BboxConfiguration.js');
+require('@mathjax/src/js/input/tex/boldsymbol/BoldsymbolConfiguration.js');
+require('@mathjax/src/js/input/tex/braket/BraketConfiguration.js');
+require('@mathjax/src/js/input/tex/bussproofs/BussproofsConfiguration.js');
+require('@mathjax/src/js/input/tex/cancel/CancelConfiguration.js');
+require('@mathjax/src/js/input/tex/color/ColorConfiguration.js');
+require('@mathjax/src/js/input/tex/enclose/EncloseConfiguration.js');
+require('@mathjax/src/js/input/tex/extpfeil/ExtpfeilConfiguration.js');
+require('@mathjax/src/js/input/tex/html/HtmlConfiguration.js');
+require('@mathjax/src/js/input/tex/mhchem/MhchemConfiguration.js');
+require('@mathjax/src/js/input/tex/newcommand/NewcommandConfiguration.js');
+require('@mathjax/src/js/input/tex/unicode/UnicodeConfiguration.js');
+require('@mathjax/src/js/input/tex/verb/VerbConfiguration.js');
 
-// Wait for MathJax to start up, and then typeset the math
-MathJax.startup.promise.then(() => {
-    const adaptor = MathJax.startup.adaptor;
-    const html = MathJax.startup.document;
+// Keep aligned with the browser's default autoload targets in mathjax.ts.
+const texPackages = [
+  'base',
+  'ams',
+  'action',
+  'amscd',
+  'bbox',
+  'boldsymbol',
+  'braket',
+  'bussproofs',
+  'cancel',
+  'color',
+  'enclose',
+  'extpfeil',
+  'html',
+  'mhchem',
+  'newcommand',
+  'unicode',
+  'verb',
+];
 
-    // If math was found output the resulting HTML
-    if (Array.from(html.math).length > 0) {
-        console.log(adaptor.doctype(html.document));
-        console.log(adaptor.outerHTML(adaptor.root(html.document)));
-    }
-}).catch(err => {
-    // Print error and fail hard
-    console.error('MathJax Error:', err.message);
-    process.exitCode = 1;
+const newcmDynamic = require.context(
+  'mathjax-newcm-svg-dynamic',
+  false,
+  /\.js$/,
+);
+
+const newcmDynamicFiles = new Set(newcmDynamic.keys());
+
+mathjax.asyncLoad = name => {
+  const request = `./${path.basename(name)}`;
+
+  if (!newcmDynamicFiles.has(request)) {
+    throw new Error(`Unsupported MathJax dynamic module: ${name}`);
+  }
+
+  return newcmDynamic(request);
+};
+
+const htmlfile = fs.readFileSync(process.argv[2], 'utf8');
+const adaptor = liteAdaptor({fontSize: 16});
+
+RegisterHTMLHandler(adaptor);
+
+const tex = new TeX({
+  inlineMath: [['$', '$'], ['\\(', '\\)']],
+  displayMath: [['$$', '$$'], ['\\[', '\\]']],
+  processEscapes: true,
+  packages: texPackages,
+  formatError: (_jax, error) => {
+    throw error;
+  },
+});
+
+MathJaxNewcmFont.addExtension(MathJaxMhchemFontExtension);
+
+// PDF output is static. Disable maction handlers so only the selected branch
+// is rendered, without browser events, tooltips, or foreignObject elements.
+SvgMaction.actions.clear();
+
+const svg = new SVG({
+  fontCache: 'local',
+  fontData: MathJaxNewcmFont,
+  exFactor: 0.5,
+  // LiteDOM has no reliable browser container width. Multiple sibling SVGs
+  // cannot be consumed by the PDF rasterization pipeline.
+  linebreaks: {
+    inline: false,
+  },
+});
+
+const html = mathjax.document(htmlfile, {
+  InputJax: tex,
+  OutputJax: svg,
+  compileError: (_document, _math, error) => {
+    throw error;
+  },
+  typesetError: (_document, _math, error) => {
+    throw error;
+  },
+});
+
+async function main() {
+  await html.renderPromise();
+
+  // Preserve the existing contract: no stdout means no math was found.
+  if (Array.from(html.math).length === 0) {
+    return;
+  }
+
+  process.stdout.write(adaptor.doctype(html.document));
+  process.stdout.write('\n');
+  process.stdout.write(adaptor.outerHTML(adaptor.root(html.document)));
+  process.stdout.write('\n');
+}
+
+main().catch(error => {
+  console.error('MathJax Error:', error.message);
+  process.exitCode = 1;
 });

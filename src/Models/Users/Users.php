@@ -530,7 +530,7 @@ class Users extends AbstractRest
      */
     public function invalidateToken(): bool
     {
-        $sql = 'UPDATE users SET token = null WHERE userid = :userid';
+        $sql = 'UPDATE users SET token = NULL, token_created_at = NULL WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);

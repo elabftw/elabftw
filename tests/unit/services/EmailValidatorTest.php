@@ -79,6 +79,7 @@ class EmailValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $EmailValidator = new EmailValidator('yolololol@example.org', false, '*.example.org');
         $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessageMatches('/This email domain is not allowed/');
         $EmailValidator->validate();
     }
 

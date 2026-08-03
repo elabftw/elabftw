@@ -20,7 +20,9 @@ use Elabftw\Models\Users\UltraAdmin;
 use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportException;
+use Symfony\Component\Mailer\Exception\UnexpectedResponseException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 
@@ -78,6 +80,23 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $Email->testemailSend('toto@example.com');
 
+    }
+
+    public function testPermanentTransportExceptionIsMarkedAsSent(): void
+    {
+        $MockMailer = $this->createMock(MailerInterface::class);
+        $exception = new UnexpectedResponseException('Recipient address rejected', 550);
+        $MockMailer->method('send')->willThrowException($exception);
+        $Logger = $this->createMock(LoggerInterface::class);
+        $Logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'SMTP permanently rejected email; marking it as sent to prevent retries.',
+                array('exception' => $exception),
+            );
+        $Email = new Email($this->schemaVersionChecker, $MockMailer, $Logger, 'yep@nope.blah');
+
+        $this->assertSame(1, $Email->testemailSend('toto@example.com'));
     }
 
     public function testMassEmail(): void

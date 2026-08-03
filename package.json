@@ -33,6 +33,9 @@
     "@fullcalendar/timegrid": "^6.1.21",
     "@fullcalendar/timeline": "^6.1.21",
     "@jspreadsheet-ce/react": "^5.0.2",
+    "@mathjax/mathjax-mhchem-font-extension": "^4.1.3",
+    "@mathjax/mathjax-newcm-font": "^4.1.3",
+    "@mathjax/src": "^4.1.3",
     "@teselagen/bio-parsers": "^0.4.38",
     "@teselagen/ove": "^0.8.42",
     "@yarnpkg/core": "^4.9.0",
@@ -59,7 +62,6 @@
     "lodash-es": "^4.18.1",
     "luxon": "^3.7.2",
     "marked": "^18.0.6",
-    "mathjax-full": "^3.2.2",
     "mini-css-extract-plugin": "^2.10.2",
     "peggy": "^5.1.0",
     "phpeggy": "^3.0.0",
@@ -142,7 +144,7 @@
     "buildparser": "yarn peggy --extra-options-file ./src/node/grammar/peggy-config.js",
     "buildprofile": "webpack-cli --config builder.js --profile --json > stats.json",
     "buildnodeprofile": "webpack-cli --config node-builder.js --profile --json > node-stats.json",
-    "clean": "rm -rvf web/assets/*.min.css* web/assets/*.bundle.js* web/assets/tinymce_emojis.js web/assets/*.svg web/assets/tinymce_skins",
+    "clean": "rm -rvf web/assets/*.min.css* web/assets/*.bundle.js* web/assets/tinymce_emojis.js web/assets/*.svg web/assets/tinymce_skins web/assets/mathjax",
     "codespell": "codespell --config src/tools/codespellrc",
     "csslint": "yarn run stylelint src/scss/*.scss",
     "cy": "tests/run.sh cy",
@@ -173,6 +175,9 @@
   "homepage": "https://www.elabftw.net",
   "packageManager": "yarn@4.15.0",
   "dependenciesMeta": {
+    "@mathjax/mathjax-newcm-font": {
+      "unplugged": true
+    },
     "indigo-ketcher": {
       "unplugged": true
     }

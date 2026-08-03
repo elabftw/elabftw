@@ -104,6 +104,10 @@ class Email
         try {
             $this->Mailer->send($email);
         } catch (TransportExceptionInterface $e) {
+            if ($e->getCode() === 550) {
+                $this->Log->warning('SMTP permanently rejected email; marking it as sent to prevent retries.', array('exception' => $e));
+                return true;
+            }
             // for email error, don't display error to user as it might contain sensitive information
             // but log it and display general error. See #841
             $this->Log->error('', array('exception' => $e));

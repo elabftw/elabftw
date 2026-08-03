@@ -101,7 +101,7 @@ update config set conf_value = '1' where conf_name = 'local_auth_enabled';
 
 ### Set up timestamping `(optional)`
 
-eLabFTW provides an easy way to do `Trusted Timestamping <https://en.wikipedia.org/wiki/Trusted_timestamping>`_ for your experiments, so you can have strong legal value for your lab notebook.
+eLabFTW provides an easy way to do [Trusted Timestamping](https://en.wikipedia.org/wiki/Trusted_timestamping) for your experiments, so you can have strong legal value for your lab notebook.
 
 By default, it is setup to use [pki.dfn.de](https://www.pki.dfn.de/zeitstempeldienst/) as <abbr title='Time Stamping Authority'>TSA</abbr>. It is free for researchers. The only problem, is that they don't have ETSI certification for this service (although their PKI infrastructure is certified ETSI TS 102 042).
 

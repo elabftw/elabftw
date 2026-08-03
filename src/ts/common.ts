@@ -39,11 +39,12 @@ import {
   mountRors,
   initPermissionsTomSelects,
   PERMISSION_SELECT_IDS,
+  reloadEntitiesShow,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
-import { Action, EntityType, Model, LinkSubModel } from './interfaces';
+import { Action, EntityType, Model, LinkSubModel, SingularEntityType } from './interfaces';
 import type { MathJaxObject } from 'mathjax-full/js/components/startup';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
@@ -68,9 +69,11 @@ import { Counter } from './Counter.class';
 import { getEditor } from './Editor.class';
 import Todolist from './Todolist.class';
 import { entity } from './getEntity';
-import { on, get } from './handlers';
+import { get, on } from './handlers';
 import Tab from './Tab.class';
 import { core } from './core';
+import { get as getFromSvelte } from 'svelte/store';
+import { writable } from 'svelte/store';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -80,6 +83,86 @@ interface Status extends SelectOptions {
   is_current_team: number;
 }
 
+export const selectedEntities = writable<string[]>([]);
+
+// only on entity page
+const pageMode = new URLSearchParams(document.location.search).get('mode');
+
+const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityType => {
+  switch (entity) {
+  case EntityType.Experiment:
+    return SingularEntityType.Experiment;
+    break;
+  case EntityType.Item:
+    return SingularEntityType.Item;
+    break;
+  case EntityType.ItemType:
+    return SingularEntityType.ItemType;
+    break;
+  case EntityType.Template:
+    return SingularEntityType.Template;
+    break;
+  default:
+    return SingularEntityType.Other;
+  }
+};
+
+// Listen for this event to populate the modal text dynamically.
+// On view/edit pages, use the current entity id,
+// on the show page, get the item id of all checked boxes.
+on('toggle-modal', (el: HTMLElement) => {
+  if (el.matches('[data-target="deleteSelectedEntitiesModal"]')) {
+    let checked = [];
+    if (pageMode == 'view' || pageMode == 'edit') {
+      checked.push(entity.id);
+    } else {
+      checked = getFromSvelte(selectedEntities);
+      if (checked.length === 0) {
+        notify.error('nothing-selected');
+        return;
+      }
+    }
+    const count = checked.length;
+    const modalSelector = `#${el.dataset.target}`;
+    const deleteMsg = document.getElementById('deleteEntityMessage');
+    const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
+    const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
+    const entryName = getSingularEntryTypeFromEntityType(entity.type);
+    const translatedEntryName = i18next.t(entryName.replace('_', '-')).toLowerCase();
+
+    if (count == 1) {
+      deleteMsg.textContent = i18next.t('info-deleted-entry', {entry: (translatedEntryName)});
+    } else {
+      deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
+    }
+
+    deleteButton.disabled = true;
+    showModalAndFocusFirstInput(modalSelector);
+    setTimeout(() => deleteButton.disabled = false, 2000);
+  }
+});
+
+on('delete-selected-entities', async () => {
+  if (pageMode == 'view' || pageMode == 'edit') {
+    await ApiC.delete(`${entity.type}/${entity.id}`, { notifOnSaved:0 });
+    sessionStorage.setItem('flash_deleted', i18next.t('delete_success'));
+    window.location.href = window.location.pathname;
+    return;
+  }
+  const checked = getFromSvelte(selectedEntities);
+  if (checked.length === 0) {
+    notify.error('nothing-selected');
+    return;
+  }
+  // perform deletes
+  const deletes = checked.map(id =>
+    ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
+  );
+  Promise.all(deletes).then(() => {
+    notify.success(i18next.t('delete_success'));
+    reloadEntitiesShow();
+  });
+});
 
 // code to hide navbar on scroll down, and show it on scroll up.
 const root = document.documentElement;
@@ -359,9 +442,6 @@ document.addEventListener('scope-changed', () => {
     });
   }
 });
-
-// only on entity page
-const pageMode = new URLSearchParams(document.location.search).get('mode');
 
 notify.flashSuccess();
 
@@ -1593,8 +1673,8 @@ on('scope-change', async (el: HTMLElement) => {
 container.addEventListener('click', (event: Event) => {
   const rawTarget = event.target as HTMLElement | null;
   const el = rawTarget?.closest('[data-action]') as HTMLElement | null;
-  if (!el || !container.contains(el)) return;
-  const set = get(el.dataset.action);
+  if (!el || ! container.contains(el)) return;
+  const set =  get(el.dataset.action);
   if (!set) return;
   // do not use for..of here!
   set.forEach(fn => {

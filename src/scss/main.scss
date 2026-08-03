@@ -1414,7 +1414,6 @@ the form-control fails to do that so we do the border ourselves */
   color: var(--primary);
 }
 
-/* caption for tinymce */
 .image {
   background: var(--superlight);
   border: 1px solid var(--medium);
@@ -1424,6 +1423,12 @@ the form-control fails to do that so we do the border ourselves */
 
 .image img {
   margin: 8px 8px 0;
+}
+
+/* captions for tables and images */
+table > caption {
+  caption-side: top;
+  text-align: center;
 }
 
 .image figcaption,

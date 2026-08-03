@@ -137,6 +137,8 @@ const t = {
     "saved": "Uložené",
     "search": "Vyhľadávanie",
     "select-resource": "Vyberte zdroj",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "Ukáž všetko",
     "show-archived": "Zobraziť archivované",
     "show-deleted": "Show deleted",

@@ -47,6 +47,7 @@ use function textdomain;
 use function array_merge;
 use function bind_textdomain_codeset;
 use function sprintf;
+use function time;
 
 /**
  * This is a super class holding various global objects
@@ -63,6 +64,8 @@ final class App
     public array $itemsCategoryArr = array();
 
     public Teams $Teams;
+
+    private ?int $sessionExpiresAt = null;
 
     public function __construct(
         public Request $Request,
@@ -89,6 +92,8 @@ final class App
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
     public function boot(): void
     {
+        $this->handleSessionExpiration();
+
         // load the Users with a userid if we are auth and not anon
         try {
             if ($this->Session->has('is_auth') && $this->Session->get('userid') !== 0) {
@@ -149,6 +154,7 @@ final class App
                     array(
                         'App' => $this,
                         'langsArr' => Language::getAllHuman(),
+                        'sessionExpiresAt' => $this->sessionExpiresAt,
                     ),
                     $variables,
                 )
@@ -215,6 +221,31 @@ final class App
         // 2. anon & guest preference (cookie)
         $cookie = $this->Request->cookies->getInt('theme_variant');
         return ThemeVariant::tryFrom($cookie) ?? ThemeVariant::Auto;
+    }
+
+    private function handleSessionExpiration(): void
+    {
+        if (!$this->Session->has('is_auth')) {
+            return;
+        }
+
+        $autologoutTime = (int) $this->Config->configArr['autologout_time'];
+
+        if ($autologoutTime <= 0) {
+            $this->Session->remove('session_expires_at');
+            return;
+        }
+
+        $now = time();
+        $expiresAt = (int) ($this->Session->get('session_expires_at') ?? 0);
+
+        if ($expiresAt !== 0 && $expiresAt <= $now) {
+            $this->Session->invalidate();
+            throw new UnauthorizedException();
+        }
+
+        $this->sessionExpiresAt = $now + $autologoutTime;
+        $this->Session->set('session_expires_at', $this->sessionExpiresAt);
     }
 
     /**

@@ -64,6 +64,17 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         Filter::body(str_repeat('a', 4120001));
     }
 
+    public function testBodyAllowsInternalLinksToOpenInNewWindow(): void
+    {
+        $link = '<a href="/experiments/1" target="_blank" rel="noreferrer noopener">Experiment</a>';
+        $this->assertSame($link, Filter::body($link));
+
+        $this->assertSame(
+            '<a href="/experiments/1">Experiment</a>',
+            Filter::body('<a href="/experiments/1" target="_top">Experiment</a>'),
+        );
+    }
+
     public function testForFilesystem(): void
     {
         $this->assertEquals('blah', Filter::forFilesystem('=blah/'));

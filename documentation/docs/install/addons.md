@@ -15,7 +15,7 @@ Addons are services that can be deployed to provide extended functionality for e
 
 ## How to install
 
-To enable OpenCloning in eLabFTW, deploy an OpenCloning container. See this [example docker-compose.yml](https://github.com/elabftw/elabimg/blob/7a6940475e9866492166e4c2450fc63f38587566/src/docker-compose.yml-EXAMPLE#L429-L440).
+To enable OpenCloning in eLabFTW, deploy an OpenCloning container. See this [example docker-compose.yml](https://github.com/elabftw/elabftw/blob/master/containers/elabimg/docker-compose.yml-EXAMPLE).
 
 Then enable it in the `elabftw` container configuration:
 

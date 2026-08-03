@@ -1,6 +1,6 @@
-# Configuration example files for eLabFTW
+# Configuration and deployment examples for eLabFTW
 
-This folder holds example configuration files for popular web servers, when used as a reverse proxy in front of the eLabFTW container.
+This folder contains example configuration files and deployment guides for running eLabFTW in different environments. It includes examples for reverse proxies, load balancers, and container orchestration platforms.
 
 ## Apache
 
@@ -17,3 +17,6 @@ The [HAProxy folder](./haproxy) contains configuration for running HAProxy in fr
 ## Traefik
 
 The [Traefik folder](./traefik) contains documentation related to traefik.
+
+## Helm Chart
+The [Helm folder](./helm) contains documentation and example files for deploying eLabFTW on Kubernetes using Helm charts.

@@ -1,3 +1,5 @@
+@use './variables' as *;
+
 /* spreadsheet editor iframe*/
 #spreadsheetEditorRoot {
   background: $mainbackground;

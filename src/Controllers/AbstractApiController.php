@@ -45,7 +45,7 @@ abstract class AbstractApiController extends AbstractController
             throw new ImproperActionException('You are using a read-only key to execute a write action.');
         }
         /**
-         * Nginx rewrite config (https://github.com/elabftw/elabimg/blob/4c9b4c2565323f1aa065d8ce5c87eb3e821895b4/src/nginx/common.conf#L74)
+         * Nginx rewrite config (see apiv2 location in nginx/common.conf)
          * will put the request in 'req' query
          * example for /api/v2/experiments/42/uploads/4:
          *   array(7) {

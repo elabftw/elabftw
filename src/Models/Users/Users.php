@@ -683,7 +683,7 @@ class Users extends AbstractRest
             throw new ImproperActionException('Use action:updatepassword to update the password');
         }
         // email is filtered here because otherwise the check for existing email will throw exception
-        if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
+        if ($params->getTarget() === 'email' && $params->getContent() !== strtolower($this->userData['email'])) {
             // we can only edit our own email, or be sysadmin
             if (!$this->isSelf() && !$this->requester->isSysadmin()) {
                 throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');

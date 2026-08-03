@@ -290,7 +290,7 @@ EOF_INSTALL
 
     declare TMP_DIR
     TMP_DIR=$(mktemp -d)
-    trap 'rm -rf "$TMP_DIR"' EXIT
+    trap "rm -rf -- $(printf '%q' "$TMP_DIR")" EXIT
     declare TMP_CONF_FILE="${TMP_DIR}/elabftw.yml"
 
     ########################################################################
@@ -330,7 +330,7 @@ EOF_INSTALL
             echo ""
             echo "A proper certificate can come from Let's Encrypt or be provided by you."
             echo "A self-signed certificate is generated automatically, but browsers display a warning."
-            if confirm "Use a proper TLS certificate instead of a self-signed certificate?" yes; then
+            if confirm "Use a proper TLS certificate? Answer no to let the container generate a self-signed certificate." yes; then
                 useselfsigned=0
                 echo "Configure the TLS certificate before starting the containers."
             else

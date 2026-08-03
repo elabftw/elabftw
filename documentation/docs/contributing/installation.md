@@ -77,7 +77,7 @@ curl -so docker-compose.yml "https://get.elabftw.net/?config"
 * Set `DEV_MODE` to `true`
 
 :::note
-The `DEV_MODE` relaxes the content security policy slightly, and turns off the extra safety net of a somewhat restrictive [open_basedir](https://www.php.net/manual/en/ini.core.php#ini.open-basedir) directive (values found in [docker-entrypoint.sh](https://github.com/elabftw/elabimg/blob/master/src/entrypoint/docker-entrypoint.sh)). Avoid having this enabled in production systems.
+The `DEV_MODE` removes cache for twig templates, adds source-mapped js assets and turns off the extra safety net of a somewhat restrictive [open_basedir](https://www.php.net/manual/en/ini.core.php#ini.open-basedir) directive (values found in [docker-entrypoint.sh](https://github.com/elabftw/elabimg/blob/master/src/entrypoint/docker-entrypoint.sh)). Avoid having this enabled in production systems.
 :::
 
 * Change the `ports:` line so the container runs on port 3148 (you can choose whatever port you want, or leave it on 443). It should look like this:

@@ -45,7 +45,7 @@ import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, LinkSubModel, SingularEntityType } from './interfaces';
-import type { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';
@@ -1529,7 +1529,7 @@ on('toggle-body', (el: HTMLElement) => {
   if (el.dataset.revid) {
     queryUrl += `/revisions/${el.dataset.revid}`;
   }
-  ApiC.getJson(queryUrl).then(json => {
+  ApiC.getJson(queryUrl).then(async json => {
     // skip extra fields on the revisions page (focus remains on body). See #6053
     if (window.location.pathname !== '/revisions.php') {
       // add extra fields elements from metadata json
@@ -1549,8 +1549,8 @@ on('toggle-body', (el: HTMLElement) => {
     const width = document.getElementById('parent_' + randId).clientWidth - 30;
     bodyDiv.style.width = String(width);
 
-    // ask mathjax to reparse the page
-    MathJax.typeset();
+    // ask mathjax to parse the freshly loaded body
+    await MathJax.typesetPromise([bodyDiv]);
 
     TableSortingC.init();
 

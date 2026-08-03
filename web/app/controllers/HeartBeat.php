@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -25,14 +26,26 @@ require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
 $Session = new Session();
 $Session->start();
 
-$Response = new Response();
-// default is 401
-$statusCode = Response::HTTP_UNAUTHORIZED;
-
-if ($Session->get('is_auth')) {
-    // update the session with something so it stays alive
-    $Session->set('last_seen', time());
-    $statusCode = Response::HTTP_OK;
+if (!$Session->get('is_auth')) {
+    new JsonResponse(
+        null,
+        Response::HTTP_UNAUTHORIZED,
+    )->send();
+    exit;
 }
-$Response->setStatusCode($statusCode);
-$Response->send();
+
+$expiresAt = (int) ($Session->get('session_expires_at') ?? 0);
+
+if ($expiresAt !== 0 && $expiresAt <= time()) {
+    $Session->invalidate();
+
+    new JsonResponse(
+        null,
+        Response::HTTP_UNAUTHORIZED,
+    )->send();
+    exit;
+}
+
+new JsonResponse(array(
+    'expires_at' => $expiresAt ?: null,
+))->send();

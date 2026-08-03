@@ -13,13 +13,13 @@ If the server is not responding at all, check the web container logs. If the app
 
 ```bash
 # to check if the containers are running
-elabctl status
+sudo elabctl status
 # or
-docker ps
+sudo docker ps
 # for the web container
-docker logs elabftw
+sudo docker logs elabftw
 # for the mysql container
-docker logs mysql
+sudo docker logs mysql
 ```
 
 ## PHP logs
@@ -40,13 +40,13 @@ If you're not sure what to do to fix issues, or you have an error that seems unr
 
 ```bash
 # stop everything
-elabctl stop
+sudo elabctl stop
 # check nothing is running
-docker ps -a
+sudo docker ps -a
 # cleanup everything
-docker system prune -a
+sudo docker system prune -a
 # start again
-elabctl start
+sudo elabctl start
 ```
 
 Note that this procedure is safe and won't impact your data. Upon starting, it will redownload the docker images and start fresh containers.
@@ -59,7 +59,7 @@ First connect to a MySQL prompt:
 
 ```bash
 # docker users
-elabctl mysql
+sudo elabctl mysql
 ```
 
 Find out the userid of the user you want to reset the password:

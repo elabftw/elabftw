@@ -182,6 +182,8 @@ final class i18n4Js
             'saved' => _('Saved'),
             'search' => _('Search'),
             'select-resource' => _('Select a resource'),
+            'session-expiring' => _('Your session will expire soon due to inactivity.'),
+            'session-expiring-title' => _('eLabFTW session expiring'),
             'show-all' => _('Show all'),
             'show-archived' => _('Show archived'),
             'show-deleted' => _('Show deleted'),

@@ -46,7 +46,7 @@ borg init -e repokey-blake2 /path/to/elabftw-borg-repo
 borg init -e repokey-blake2 someserver:/path/to/elabftw-borg-repo
 ~~~
 
-It is necessary to use the `elabctl.conf` configuration file (available [here](https://raw.githubusercontent.com/elabftw/elabctl/master/elabctl.conf)). Place this file in `/root/.config/elabctl.conf` and make sure to specify the settings correctly.
+It is necessary to use [the elabctl.conf configuration file](https://raw.githubusercontent.com/elabftw/elabftw/refs/heads/master/containers/elabctl/elabctl.conf). Place this file in `/root/.config/elabctl.conf` and make sure to specify the settings correctly.
 
 
 #### Test

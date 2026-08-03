@@ -32,6 +32,53 @@
 <span id='content-start'></span>
 {% block body %}{% endblock %}
 
+{# session expiration modal #}
+{% if sessionExpiresAt %}
+  <div
+    class='modal fade'
+    id='sessionExpirationModal'
+    tabindex='-1'
+    role='dialog'
+    aria-labelledby='sessionExpirationModalLabel'
+    data-backdrop='static'
+    data-keyboard='false'
+  >
+    <div class='modal-dialog modal-dialog-centered' role='document'>
+      <div class='modal-content'>
+        <div class='modal-header'>
+          <h5 class='modal-title' id='sessionExpirationModalLabel'>
+            {{ 'Session expiring'|trans }}
+          </h5>
+        </div>
+
+        <div class='modal-body'>
+          <p>
+            {{ 'Your session is about to expire due to inactivity.'|trans }}
+          </p>
+          <p class='mb-0'>
+            {{ 'Time remaining:'|trans }}
+            <strong id='sessionExpirationCountdown' aria-live='polite'></strong>
+            {{ 'seconds'|trans }}
+          </p>
+        </div>
+
+        <div class='modal-footer'>
+          <a class='btn btn-secondary' href='app/logout.php'>
+            {{ 'Logout'|trans }}
+          </a>
+          <button
+            type='button'
+            class='btn btn-primary'
+            data-action='extend-session'
+          >
+            {{ 'Stay signed in'|trans }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
 {# TODOLIST / FAVTAGS side panels (only for logged in users) #}
 {% if App.Session.get('is_auth') and not App.Session.get('is_anon') %}
   {% include 'todolist-panel.html' %}
@@ -66,6 +113,7 @@
   </div>
 </div>
 {# end policies policy modal #}
+
 {# some 3rd party tools append content to the end but we don't want to see those errors #}
 {% if App.devMode and mode == 'edit' -%}
   <!-- [html-validate-disable input-missing-label, heading-level, no-dup-id, prefer-native-element, wcag/h37, no-redundant-role: suppress errors from 3rd party tools] -->

@@ -137,6 +137,8 @@ const t = {
     "saved": "Αποθηκεύτηκε",
     "search": "Αναζήτηση",
     "select-resource": "Επιλέξτε έναν πόρο",
+    "session-expiring": "Your session will expire soon due to inactivity.",
+    "session-expiring-title": "eLabFTW session expiring",
     "show-all": "Προβολή όλων",
     "show-archived": "Εμφάνιση αρχειοθετημένη",
     "show-deleted": "Show deleted",

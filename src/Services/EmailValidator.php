@@ -16,8 +16,9 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function array_map;
+use function array_any;
 use function filter_var;
-use function in_array;
+use function fnmatch;
 use function _;
 use function explode;
 use function implode;
@@ -73,7 +74,11 @@ final class EmailValidator
         if ($this->emailDomain !== null && !$this->skipDomainValidation) {
             $splitEmail = explode('@', $this->email);
             $splitDomains = array_map('trim', explode(',', $this->emailDomain));
-            if (!in_array($splitEmail[1], $splitDomains, true)) {
+            $isAllowedDomain = array_any(
+                $splitDomains,
+                static fn(string $domain): bool => fnmatch($domain, $splitEmail[1], FNM_CASEFOLD),
+            );
+            if (!$isAllowedDomain) {
                 throw new ImproperActionException(sprintf(_('This email domain is not allowed. Allowed domains: %s'), implode(', ', $splitDomains)));
             }
         }

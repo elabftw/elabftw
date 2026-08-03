@@ -7,8 +7,9 @@
  * @package elabftw
  */
 
-@use './variables';
-@import 'tom-select/dist/scss/tom-select.bootstrap4';
+@use 'sass:meta';
+@use './variables' as *;
+@include meta.load-css('tom-select/dist/css/tom-select.bootstrap4');
 
 .ts-control .item {
   background-color: var(--superlight);

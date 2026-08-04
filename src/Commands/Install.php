@@ -15,13 +15,16 @@ namespace Elabftw\Commands;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\LocalPassword;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Tools;
+use Elabftw\Enums\PasswordComplexity;
+use Elabftw\Hash\LocalPasswordHash;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Branding;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
-use Elabftw\Params\UserParams;
+use Elabftw\Services\PasswordValidator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -100,15 +103,22 @@ final class Install extends Command
         $output->writeln('<info>✓ Team created successfully. Now populating branding table...</info>');
         new Branding(true)->populate();
 
+        $cleartextPassword = $this->getPassword($input, $output);
+        $LocalPassword = new LocalPassword(
+            // this a Sysadmin password, force strong and long
+            new PasswordValidator(24, PasswordComplexity::Strong, $cleartextPassword),
+            new LocalPasswordHash($cleartextPassword),
+        );
+
         if ($input->getOption('email')) {
             $output->writeln('<info>→ Creating Sysadmin user...</info>');
             $Users = new Users();
             $Users->createOne(
                 (string) $input->getOption('email'),
                 array(1),
+                $LocalPassword,
                 (string) $input->getOption('firstname'),
                 (string) $input->getOption('lastname'),
-                $this->getPassword($input, $output),
             );
             $Sysadmin = new Users(1, 1);
             $ApiKeys = new ApiKeys($Sysadmin);
@@ -125,20 +135,14 @@ final class Install extends Command
     private function getPassword(InputInterface $input, OutputInterface $output): string
     {
         if ($input->getOption('password')) {
-            return $this->hashPassword($input->getOption('password'));
+            return $input->getOption('password');
         }
         if ($input->getOption('ask-password')) {
             /** @var QuestionHelper */
             $helper = $this->getHelper('question');
             $question = new Question('[?] Enter password: ', false);
-            $password = $helper->ask($input, $output, $question);
-            return $this->hashPassword($password);
+            return $helper->ask($input, $output, $question);
         }
-        return $this->hashPassword(Tools::getUuidv4());
-    }
-
-    private function hashPassword(string $password): string
-    {
-        return new UserParams('password', $password)->getStringContent();
+        return Tools::getUuidv4();
     }
 }

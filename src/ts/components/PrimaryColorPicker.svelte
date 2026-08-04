@@ -54,7 +54,7 @@
   <div class='d-flex justify-content-between align-items-center mb-3'>
     <label for='primaryBgInput' class='col-form-label'>{t('background-color')}</label>
     <input
-      id='primaryColorInput'
+      id='primaryBgInput'
       class='color-input mr-2'
       type='color'
       bind:value={primaryBg}
@@ -67,7 +67,7 @@
       {t('text-color')}
     </label>
     <input
-      id='primaryForegroundInput'
+      id='primaryFgInput'
       class='color-input mr-2'
       type='color'
       bind:value={primaryFg}

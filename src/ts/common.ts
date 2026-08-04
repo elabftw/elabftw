@@ -228,7 +228,7 @@ const primaryColorPickerTarget = document.getElementById('primary-color-picker')
 
 if (primaryColorPickerTarget) {
   mount(PrimaryColorPicker, {
-    primaryColorPickerTarget,
+    target: primaryColorPickerTarget,
   });
 }
 

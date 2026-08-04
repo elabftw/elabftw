@@ -15,11 +15,13 @@ namespace Elabftw\Services;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\LocalPassword;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ForbiddenException;
@@ -506,7 +508,10 @@ final class Populate
         if ($password === 'random') {
             $password = bin2hex(random_bytes(24));
         }
-        $passwordHash = new LocalPasswordHash($password)->getHash() ?? self::DEFAULT_PASSWORD;
+        $LocalPassword = new LocalPassword(
+            new PasswordValidator(12, PasswordComplexity::None, $password),
+            new LocalPasswordHash($password),
+        );
         // use yopmail.com instead of safeEmail() so we don't hard bounce on example.tld domains when testing mass emails
         $email = $user['email'] ?? sprintf('%s-%d@yopmail.com', $this->faker->word, $this->faker->randomNumber(8));
 
@@ -514,9 +519,9 @@ final class Populate
         $userid = $Users->createOne(
             email: $email,
             teams: array($team),
+            localPassword: $LocalPassword,
             firstname: $firstname,
             lastname: $lastname,
-            passwordHash: $passwordHash,
             usergroup: $usergroup,
             automaticValidationEnabled: true,
             alertAdmin: false,

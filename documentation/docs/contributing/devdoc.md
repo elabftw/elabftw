@@ -255,10 +255,10 @@ Locally: current workaround:
 cd /tmp
 git clone https://github.com/elabftw/elabftw
 cd elabftw
-npm i --no-save --no-lockfile cypress cypress-terminal-report
+npm i --no-save --no-package-lock cypress cypress-terminal-report
+./node_modules/.bin/cypress install
 ./node_modules/.bin/cypress open
 # then once it's fixed
-git checkout -- yarn.lock
 rm -rf node_modules
 ~~~
 

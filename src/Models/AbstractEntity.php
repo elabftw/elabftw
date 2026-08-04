@@ -378,6 +378,9 @@ abstract class AbstractEntity extends AbstractRest
             $this->processExtendedQuery($displayParams->getUserQuery());
             $extended = true;
         }
+        if ($displayParams->isFull()) {
+            $extended = true;
+        }
 
         $displayFilterSql = $displayParams->getFilterSql();
         $withCompounds = $this->needsCompoundsJoin($displayFilterSql);
@@ -556,7 +559,6 @@ abstract class AbstractEntity extends AbstractRest
             requester: $this->Users,
             entityType: $this->entityType,
             query: $query,
-            limit: ($this->Users->userData['limit_nb'] ?? 15),
         );
     }
 
@@ -1554,11 +1556,29 @@ abstract class AbstractEntity extends AbstractRest
             $value = $incomingField['value'] ?? '';
 
             if (isset($base['extra_fields'][$name])) {
+                $baseField = &$base['extra_fields'][$name];
+                $type = $baseField['type'] ?? '';
+
+                // Add imported values to the field's options if they don't already exist.
+                $values = match ($type) {
+                    'select-multi' => is_array($value)
+                        ? $value
+                        : array_map('trim', explode(',', (string) $value)),
+                    'select', 'select-one', 'radio' => array($value),
+                    default => array(),
+                };
+
+                if (!empty($values)) {
+                    $baseField['options'] ??= array();
+                    foreach ($values as $option) {
+                        if ($option !== '' && !in_array($option, $baseField['options'], true)) {
+                            $baseField['options'][] = $option;
+                        }
+                    }
+                }
                 // Preserve the existing field schema and only update its value
-                $base['extra_fields'][$name]['value'] = $this->normalizeMetadataValue(
-                    $base['extra_fields'][$name],
-                    $value,
-                );
+                $baseField['value'] = $this->normalizeMetadataValue($baseField, $value);
+                unset($baseField);
                 continue;
             }
             // new fields: keep incoming schema, but normalize its value if it has a known type.

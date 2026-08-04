@@ -13,7 +13,6 @@ import {
   ClientSideRowModelModule,
   ModuleRegistry,
   PaginationModule,
-  QuickFilterModule,
   RowSelectionModule,
   TextFilterModule,
   provideGlobalGridOptions,
@@ -34,7 +33,6 @@ import { getAgGridTheme } from "./theme";
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
 const lastLoginText = v => v === null ? i18next.t('never') : v;
 let entitiesTableRoot = null;
-const isExtendedSearch = value => /(?:^|\s)\w+:[^\s]+/.test(value);
 
 const normalizeStringParam = value => {
   if (value === null || value === undefined) {
@@ -119,7 +117,6 @@ const rowSelection = {
 };
 
 const EntitiesTable = ({
-  searchQuery,
   selectedEntities,
   order = 'date',
   sort = 'desc',
@@ -129,18 +126,7 @@ const EntitiesTable = ({
   const [rowData, setRowData] = useState([]);
   const gridApiRef = useRef(null);
 
-  const onGridReady = (params) => {
-    gridApiRef.current = params.api;
-
-    if (searchQuery) {
-      const value = get(searchQuery);
-
-      params.api.setGridOption(
-        'quickFilterText',
-        isExtendedSearch(value) ? '' : value,
-      );
-    }
-
+  const onGridReady = () => {
     fetchData();
   };
 
@@ -249,21 +235,6 @@ const EntitiesTable = ({
     };
   }, [fetchData]);
 
-  useEffect(() => {
-    if (!searchQuery) {
-      return undefined;
-    }
-
-    const unsubscribe = searchQuery.subscribe(value => {
-      gridApiRef.current?.setGridOption(
-        'quickFilterText',
-        isExtendedSearch(value) ? '' : value,
-      );
-    });
-
-    return unsubscribe;
-  }, [searchQuery]);
-
   // when a row is selected with the checkbox
   const selectionChanged = (event) => {
     const selectedRows = event.api.getSelectedRows();
@@ -292,6 +263,7 @@ const EntitiesTable = ({
 
   const cellClicked = event => {
     const target = event.event?.target;
+    const url = `?mode=view&id=${encodeURIComponent(event.data.id)}`;
 
     if (
       target instanceof HTMLElement
@@ -299,8 +271,11 @@ const EntitiesTable = ({
     ) {
       return;
     }
-
-    window.location = `?mode=view&id=${encodeURIComponent(event.data.id)}`;
+    if (event.event?.ctrlKey || event.event?.metaKey) {
+      window.open(url, '_blank');
+      return;
+    }
+    window.location = url;
   };
 
   return (
@@ -323,9 +298,8 @@ const EntitiesTable = ({
   );
 };
 
-const App = ({ searchQuery, selectedEntities, order, sort, related, relatedOrigin }) => (
+const App = ({ selectedEntities, order, sort, related, relatedOrigin }) => (
   <EntitiesTable
-    searchQuery={searchQuery}
     selectedEntities={selectedEntities}
     order={order}
     sort={sort}
@@ -336,7 +310,6 @@ const App = ({ searchQuery, selectedEntities, order, sort, related, relatedOrigi
 
 export const mountEntitiesTable = (
   rootElement,
-  searchQuery,
   selectedEntities,
   order = 'date',
   sort = 'desc',
@@ -353,7 +326,6 @@ export const mountEntitiesTable = (
     RowSelectionModule,
     PaginationModule,
     TextFilterModule,
-    QuickFilterModule,
   ]);
 
   if (!entitiesTableRoot) {
@@ -362,7 +334,6 @@ export const mountEntitiesTable = (
 
   entitiesTableRoot.render(
     <App
-      searchQuery={searchQuery}
       selectedEntities={selectedEntities}
       order={order}
       sort={sort}

@@ -1342,7 +1342,7 @@ CREATE TABLE `users` (
   `orcid` varchar(19) NULL DEFAULT NULL,
   `orgid` varchar(255) NULL DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `token` varchar(255) DEFAULT NULL,
+  `token` char(32) CHARACTER SET ascii COLLATE ascii_bin NULL DEFAULT NULL,
   `token_created_at` TIMESTAMP NULL DEFAULT NULL,
   `limit_nb` tinyint UNSIGNED NOT NULL DEFAULT 15,
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',
@@ -2336,6 +2336,7 @@ ALTER TABLE `experiments_templates_edit_mode`
 --
 ALTER TABLE `users` ADD INDEX `idx_users_email_userid` (email, userid);
 ALTER TABLE `users` ADD INDEX `idx_users_orgid_userid` (orgid, userid);
+ALTER TABLE `users` ADD UNIQUE INDEX `idx_users_token` (`token`);
 
 --
 -- Indexes and Constraints for table `users2teams`

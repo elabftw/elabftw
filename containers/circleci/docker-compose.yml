@@ -3,7 +3,9 @@ networks:
     name: elabftw-net
 services:
   web:
-    image: elabtmp
+    image: elabftw/circleci
+    # circleci runs as id 1001 and gid 1002
+    user: 1001:1002
     build:
       context: ../..
       dockerfile: ./containers/circleci/Dockerfile
@@ -16,8 +18,6 @@ services:
       - SETUID
       - FOWNER
       - DAC_OVERRIDE
-    env_file:
-      - elabftw-user.env
     environment:
       - DB_HOST=mysqltmp
       - DB_NAME=phpunit
@@ -25,14 +25,14 @@ services:
       # oMg tHe sOuRcE CoDe cOnTaInS PaSsWoRdS In pLaIn tExT!!!
       - DB_PASSWORD=phpunit
       - SECRET_KEY=def00000195a92432f2ebb86bf6e9b9646b45ea955cab7b8f2d96ba2259a85c9e09b04647078c425c5392cb631fa3d9816974bbe8e458d61e16f897ef36c0def362458fd
-      - SERVER_NAME=elab.local
+      - SERVER_NAME=elabtmp
       - DISABLE_HTTPS=false
       - ENABLE_LETSENCRYPT=false
       - MAX_UPLOAD_SIZE=200M
       - PHP_TIMEZONE=Europe/Paris
       - TZ=Europe/Paris
       - DEV_MODE=true
-      - SITE_URL=https://elab.local:3148
+      - SITE_URL=https://elabtmp:8080
       - ELAB_AWS_ACCESS_KEY=yep
       - ELAB_AWS_SECRET_KEY=yop
       - MAX_PHP_MEMORY=512M
@@ -42,4 +42,11 @@ services:
       timeout: 5s
       retries: 3
     tmpfs:
-      - /elabftw/cache:uid=1000,gid=1000
+      - /run/nginx:mode=1770,uid=1001,gid=1002
+      - /run/php:mode=1770,uid=1001,gid=1002
+      - /run/elabftw/cache:mode=1770,uid=1001,gid=1002,exec,nosuid,nodev
+      - /elabftw/tests/_output:mode=1770,uid=1001,gid=1002
+      - /elabftw/tests/_support/_generated:mode=1770,uid=1001,gid=1002
+      - /var/cache/nginx:mode=755,uid=1001,gid=1002,noexec,nosuid,nodev
+      - /var/lib/elabftw/exports:mode=755,uid=1001,gid=1002,noexec,nosuid,nodev
+      - /var/lib/elabftw/uploads:mode=755,uid=1001,gid=1002,noexec,nosuid,nodev

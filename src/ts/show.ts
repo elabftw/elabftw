@@ -25,6 +25,7 @@ import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
+import { selectedEntities } from './common';
 
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
   _showAll?: boolean;
@@ -56,7 +57,6 @@ const filterControls: ActiveFilterControl[] = [];
 const searchQuery = writable(initialQ);
 const isSearchPending = writable(false);
 const entityFilters = writable(initialUrlParams);
-const selectedEntities = writable<string[]>([]);
 let searchQueryInitialized = false;
 
 function updateUrlFromStores(filters = get(entityFilters)): void {
@@ -220,7 +220,7 @@ async function displayEntities(
   const rootEl = document.getElementById('entityList');
   if (mode === 'tb') {
     unmountEntityListSv();
-    mountEntitiesTable(rootEl, searchQuery, selectedEntities, order, sort, related, relatedOrigin);
+    mountEntitiesTable(rootEl, selectedEntities, order, sort, related, relatedOrigin);
     handleInitialLoadDone();
     return;
   }
@@ -260,6 +260,23 @@ function preventReactiveSearchFormSubmit(): void {
 
     if (input) {
       searchQuery.set(input.value);
+    }
+  });
+}
+
+function bindMoreFiltersOutsideClick(): void {
+  const menu = document.querySelector('.show-more-filters-menu');
+  const details = menu?.closest('details');
+
+  if (!details) {
+    return;
+  }
+
+  document.addEventListener('click', event => {
+    const target = event.target;
+
+    if (details.open && target instanceof Node && !details.contains(target)) {
+      details.open = false;
     }
   });
 }
@@ -344,6 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
 
   preventReactiveSearchFormSubmit();
+  bindMoreFiltersOutsideClick();
   hydrateFilterAutoControlsFromUrl();
 
   // TomSelect for extra fields & owner search select
@@ -374,7 +392,8 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         metakeyOptionsLoading = true;
-        ApiC.getJson('extra_fields_keys')
+        // TODO: add a selectAll public fn to get all
+        ApiC.getJson('extra_fields_keys', {limit: 999999})
           .then((extraFieldsKeys) => {
             const options = extraFieldsKeys
               .map((extraFieldKey) => ({
@@ -800,7 +819,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const params = collectForm(form);
       clearForm(form);
       checked.forEach(chk => {
-        const paramsCopy = Object.assign({}, params);
+        const paramsCopy = Object.assign({}, params, { notifOnSaved: 0 });
         // they do not have all the same endpoint: handle tags and links the generic patch method
         for (const key in paramsCopy) {
           if (key === 'tags') {
@@ -983,22 +1002,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const action = <Action>el.dataset.what;
-      // special case: DELETE request for confirmation & deletes div
-      if (action === Action.Destroy) {
-        if (!confirm(i18next.t('generic-delete-warning'))) {
-          return;
-        }
-        // perform deletes
-        const deletes = checked.map(chk =>
-          ApiC.delete(`${entity.type}/${chk}`, { notifOnSaved:0 }),
-        );
-        Promise.all(deletes).then(() => {
-          notify.success();
-          reloadEntitiesShow();
-        });
-        return;
-      }
-      // handle all other PATCH with selected action
       const results = checked.map(chk =>
         ApiC.patch(`${entity.type}/${chk}`, { notifOnSaved: 0, action }),
       );
@@ -1008,7 +1011,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-
 
   function buildDropdownToggleHeaderHtml(
     title: string,

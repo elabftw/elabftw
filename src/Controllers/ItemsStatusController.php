@@ -31,7 +31,7 @@ final class ItemsStatusController extends AbstractStatusController
     #[Override]
     protected function getPageTitle(): string
     {
-        return _('Resources status');
+        return _('Resource status');
     }
 
     #[Override]

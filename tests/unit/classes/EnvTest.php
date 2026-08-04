@@ -37,7 +37,7 @@ class EnvTest extends \PHPUnit\Framework\TestCase
     public function testAsUrl(): void
     {
         // an URL with an _ in it isn't "per spec" but we want to allow it
-        $url = 'http://chem-plugin_demo.elabftw.net/';
+        $url = 'http://asterix_demo.elabftw.net/';
         putenv(sprintf('TEST_URL=%s', $url));
         $this->assertSame($url, Env::asUrl('TEST_URL'));
         $this->expectException(ImproperActionException::class);

@@ -8,3 +8,8 @@ figure {
   display: block;
   text-align: center;
 }
+
+.tox-tinymce--toolbar-sticky-on .tox-editor-header {
+  top: calc(var(--navbar-height) + var(--toolbar-height)) !important;
+  transition: top 0.2s ease;
+}

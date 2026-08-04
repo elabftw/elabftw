@@ -68,7 +68,7 @@ import { EntityType, Model } from './interfaces';
 import { reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
 import { ApiC } from './api';
 import { isSortable } from './TableSorting.class';
-import type { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 declare const MathJax: MathJaxObject;
 import { entity } from './getEntity';
 import { isDarkTheme } from './theme';
@@ -215,6 +215,12 @@ export function getTinymceBaseConfig(page: string): object {
   const templateEndpoint = (entity.type === EntityType.Experiment || entity.type === EntityType.Template)
     ? EntityType.Template
     : EntityType.ItemType;
+  const entityToolbar = document.getElementById('entityToolbar') as HTMLElement;
+  let isToolbarSticky = false;
+  if (entityToolbar) {
+    document.documentElement.style.setProperty('--toolbar-height', `${entityToolbar.offsetHeight ?? 0}px`);
+    isToolbarSticky = true;
+  }
 
   return {
     selector: '.mceditable',
@@ -252,7 +258,8 @@ export function getTinymceBaseConfig(page: string): object {
     // use undocumented callback function to asynchronously get the templates
     // see https://github.com/tinymce/tinymce/issues/5637#issuecomment-624982699
     templates: (callback): void => {
-      ApiC.getJson(templateEndpoint).then(json => {
+      // add full param to get the body
+      ApiC.getJson(`${templateEndpoint}?full=1`).then(json => {
         const res = [];
         json.forEach(tpl => {
           res.push({'title': tpl.title, 'description': '', 'content': tpl.body});
@@ -523,8 +530,8 @@ export function getTinymceBaseConfig(page: string): object {
         },
       },
     ],
-    toolbar_sticky: true,
-    toolbar_sticky_offset: document.querySelector<HTMLElement>('.sticky-toolbar')?.offsetHeight ?? 0,
+    toolbar_sticky: isToolbarSticky,
+    toolbar_sticky_offset: isToolbarSticky ? ((document.querySelector<HTMLElement>('.sticky-navbar')?.offsetHeight ?? 0) + (entityToolbar?.offsetHeight ?? 0)) : 0,
     // render MathJax for TinyMCE preview
     init_instance_callback: (editor) => {
       editor.on('ExecCommand', (e) => {
@@ -532,15 +539,15 @@ export function getTinymceBaseConfig(page: string): object {
           // declaration as iFrame element required to avoid errors with getting srcdoc property
           const iframe = (document.querySelector('iframe.tox-dialog__iframe') as HTMLIFrameElement);
           if (iframe) {
-            iframe.onload = () => {
+            iframe.onload = async () => {
               const tinyDiv = document.createElement('div');
               tinyDiv.setAttribute('class', 'mce-content-body mce-preview-body');
-              iframe.contentDocument.body.childNodes.forEach((node) => {
+              Array.from(iframe.contentDocument.body.childNodes).forEach((node) => {
                 tinyDiv.append(node);
               });
               // iframe replaced with div element because MathJax otherwise doesn't render menus properly; see #5295
               iframe.replaceWith(tinyDiv);
-              MathJax.typesetPromise();
+              await MathJax.typesetPromise().catch(error => console.error(error));
             };
           }
         }

@@ -19,7 +19,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Experiments categories
+ * Experiment categories
  */
 require_once 'app/init.inc.php';
 

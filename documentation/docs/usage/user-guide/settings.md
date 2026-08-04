@@ -11,13 +11,13 @@ The Settings page is where you can adjust preferences for your account. You can 
 From here you can select a language, adjust the display settings, change the keyboard shortcuts, modify the PDF settings, select a different text editor and set the default permission settings.
 
 ## Account tab
-This page allows you to modify your email/password, enable multi-factor authentication and change your name or add your `ORCID <https://orcid.org/>`_ if you have one.
+This page allows you to modify your email/password, enable multi-factor authentication and change your name or add your [ORCID](https://orcid.org/) if you have one.
 
-## What is two factor authentication?
-Multi-factor authentication, MFA (or Two-factor authentication, 2FA) is a mechanism to further protect your account. After logging in with your password, you will need to enter a 6 digits code that changes every 30 seconds. This code will be displayed by a special application on your cellphone. If you have never used such a mechanism, you need to first install a 2FA application on your phone.
+## What is two-factor authentication?
+Multi-factor authentication, MFA (or Two-factor authentication, 2FA) is a mechanism to further protect your account. After logging in with your password, you will need to enter a 6-digit code that changes every 30 seconds. This code will be displayed by a special application on your cellphone. If you have never used such a mechanism, you need to first install a 2FA application on your phone.
 
-* For Android phones, the recommended application is `Aegis <https://getaegis.app/>`_ (Open Source).
-* For iPhone, you can use `Authy <https://authy.com/download/>`_ (Proprietary but with good features).
+* For Android phones, the recommended application is [Aegis](https://getaegis.app/) (Open Source).
+* For iPhone, you can use [Authy](https://authy.com/download/) (Proprietary but with good features).
 
 If you already have a 2FA application, eLabFTW can work with it: you don't need to install another application.
 

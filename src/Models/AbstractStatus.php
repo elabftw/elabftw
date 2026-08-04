@@ -112,11 +112,12 @@ abstract class AbstractStatus extends AbstractCategory
                 CASE WHEN entity.team = :team THEN 1 ELSE 0 END AS is_current_team
              FROM %s AS entity
              INNER JOIN teams ON teams.id = entity.team
-             WHERE entity.is_private = 0 OR entity.team = :team',
+             WHERE (entity.is_private = 0 OR entity.team = :team)',
             $this->table
         );
 
         $queryParams ??= $this->getQueryParams();
+        $sql .= $queryParams->getStatesSql('entity');
         $sql .= $queryParams->getSql();
 
         $req = $this->Db->prepare($sql);

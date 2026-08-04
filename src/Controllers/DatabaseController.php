@@ -40,7 +40,7 @@ final class DatabaseController extends AbstractEntityController
         if ($this->Entity instanceof Items) {
             return ngettext('Resource', 'Resources', 2);
         }
-        return _('Resources templates');
+        return _('Resource templates');
     }
 
     #[Override]

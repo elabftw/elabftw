@@ -1,4 +1,6 @@
 -- revert schema 217
-CALL DropColumn('users', 'accent_color');
-CALL DropColumn('users', 'accent_foreground');
+CALL DropIdx('users', 'idx_users_token');
+ALTER TABLE users
+    MODIFY token VARCHAR(255) NULL DEFAULT NULL;
+
 UPDATE config SET conf_value = 216 WHERE conf_name = 'schema';

@@ -9,7 +9,7 @@ import 'jquery-ui/ui/widgets/sortable';
 import { Action, EntityType, Model, Target, FileType } from './interfaces';
 import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
-import type { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 import tinymce from 'tinymce/tinymce';
 import { notify } from './notify';
 import TableSorting from './TableSorting.class';
@@ -409,8 +409,6 @@ export function getCheckedBoxes(): Array<CheckableItem> {
 // reload the entities in show mode
 export async function reloadEntitiesShow(): Promise<void | Response> {
   window.dispatchEvent(new CustomEvent('entity-filters-changed'));
-  // ask mathjax to reparse the page
-  MathJax.typeset();
   // rebind autocomplete for links input
   addAutocompleteToLinkInputs();
   // tags too
@@ -419,6 +417,8 @@ export async function reloadEntitiesShow(): Promise<void | Response> {
   listenTrigger();
   // and set relative moments
   relativeMoment();
+  // ask mathjax to reparse the page
+  await MathJax.typesetPromise();
 }
 
 export function getSafeElementById(id: string): HTMLElement {

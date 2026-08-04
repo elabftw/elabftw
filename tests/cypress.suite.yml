@@ -1,8 +1,6 @@
 actor: CypressTester
 coverage:
     enabled: true
-    remote: true
-    c3_url: 'https://elabtmp'
     remote_context_options:
         ssl:
             verify_peer: false

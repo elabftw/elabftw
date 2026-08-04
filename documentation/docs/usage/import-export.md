@@ -30,9 +30,9 @@ Importing a `.eln` file created by an eLabFTW instance will produce the best res
 A `.eln` can contain any type of data:
 
 * Experiments
-* Experiments templates
+* Experiment templates
 * Resources
-* Resources categories
+* Resource categories
 
 eLabFTW will pick up the type of each entry through its [genre](https://schema.org/genre) attribute. Alternatively, you can force the type of entry by selecting one from the dropdown menu (web UI) or using the `--type` option (CLI). The same logic applies to selecting the appropriate category.
 

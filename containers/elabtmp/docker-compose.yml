@@ -4,6 +4,7 @@ networks:
 services:
   web:
     image: elabtmp
+    user: 1000:1000
     build:
       context: ../..
       dockerfile: ./containers/elabtmp/Dockerfile
@@ -16,8 +17,6 @@ services:
       - SETUID
       - FOWNER
       - DAC_OVERRIDE
-    env_file:
-      - elabftw-user.env
     environment:
       - DB_HOST=mysqltmp
       - DB_NAME=phpunit
@@ -44,4 +43,7 @@ services:
       timeout: 5s
       retries: 3
     tmpfs:
-      - /elabftw/cache:uid=1000,gid=1000
+      - /run:mode=755,uid=1000,gid=1000,exec,nosuid,nodev
+      - /var/cache/nginx:mode=755,uid=1000,gid=1000,exec,nosuid,nodev
+      - /var/lib/elabftw/exports:mode=755,uid=1000,gid=1000,noexec,nosuid,nodev
+      - /var/lib/elabftw/uploads:mode=755,uid=1000,gid=1000,noexec,nosuid,nodev

@@ -78,7 +78,7 @@ final class Config extends AbstractRest
             ('mail_from', 'notconfigured@example.com'),
             ('proxy', ''),
             ('user_msg_need_local_account_created', ''),
-            ('smtp_address', 'mail.smtp2go.com'),
+            ('smtp_address', 'mail.example.com'),
             ('smtp_encryption', 'ssl'),
             ('smtp_password', ''),
             ('smtp_port', '587'),

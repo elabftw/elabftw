@@ -1,0 +1,8 @@
+{
+  "label": "Upgrade",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "How to upgrade your instance"
+  }
+}

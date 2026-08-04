@@ -5,6 +5,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+
+@use './variables' as *;
+
 .btn {
   /* make the text of buttons in bold to increase readability */
   font-weight: bold;

@@ -15,6 +15,7 @@ namespace Elabftw\Storage;
 use Elabftw\Interfaces\StorageInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemAdapter;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Override;
 
 /**
@@ -28,6 +29,11 @@ abstract class AbstractStorage implements StorageInterface
     public function getFs(): Filesystem
     {
         return new Filesystem($this->getAdapter());
+    }
+
+    public static function getFolder(): string
+    {
+        return static::FOLDER;
     }
 
     #[Override]
@@ -44,8 +50,11 @@ abstract class AbstractStorage implements StorageInterface
     #[Override]
     public function getPath(string $relativePath = ''): string
     {
-        return '/elabftw/' . static::FOLDER . ($relativePath !== '' ? '/' . $relativePath : '');
+        return static::FOLDER . ($relativePath !== '' ? '/' . $relativePath : '');
     }
 
-    abstract protected function getAdapter(): FilesystemAdapter;
+    protected function getAdapter(): FilesystemAdapter
+    {
+        return new LocalFilesystemAdapter(static::FOLDER);
+    }
 }

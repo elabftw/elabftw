@@ -40,4 +40,6 @@ interface QueryParamsInterface
     public function getFilterSql(): string;
 
     public function setSkipOrderPinned(bool $value): void;
+
+    public function isFull(): bool;
 }

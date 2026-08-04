@@ -150,6 +150,9 @@ final class DisplayParams extends BaseQueryParams
         if (!empty($query->get('extended'))) {
             $this->extendedQuery = trim($query->getString('extended'));
         }
+        if ($query->getInt('full') === 1) {
+            $this->full = true;
+        }
 
         // SCOPE FILTER
         // default scope is the user setting, but can be overridden by query param

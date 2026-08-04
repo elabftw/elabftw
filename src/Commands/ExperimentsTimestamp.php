@@ -66,10 +66,12 @@ final class ExperimentsTimestamp extends Command
         }
         $Db = Db::getConnection();
         $sql = sprintf('SELECT id FROM experiments
-            WHERE timestamped_at IS NULL
+            WHERE (
+                timestamped_at IS NULL
                OR (
                    modified_at > :m
                    AND ABS(TIMESTAMPDIFF(SECOND, timestamped_at, modified_at)) > %d
+                   )
                  )', self::TOLERANCE);
         $teams = $input->getOption('teams');
         if ($teams) {

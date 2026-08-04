@@ -8,9 +8,5 @@ declare namespace Cypress {
      * @return csrf-token
      */
     login(email?: string, password?: string): Cypress.Chainable;
-    /**
-     * Sends necessary headers to get codecoverage via codeceptions c3.php.
-     */
-    enableCodeCoverage(testFile: string): void;
   }
 }

@@ -95,7 +95,7 @@
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_experiments_status',
-      'label': 'Allow users to create and edit experiments status'|trans} %}
+      'label': 'Allow users to create and edit experiment status'|trans} %}
 
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'users_canwrite_experiments_templates',
@@ -369,7 +369,7 @@
   </div>
   <hr>
 
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resource status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchStatusDiv'>
   {% for status in itemsStatusArr %}
     <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -399,7 +399,7 @@
   </div>
   <hr>
 
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpCatDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpCatDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiment categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchExpCatDiv'>
     {% for experimentsCategory in App.experimentsCategoryArr %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -413,7 +413,7 @@
   </div>
   <hr>
 
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiment status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
   <div hidden class='mt-2' id='batchExpStatusDiv'>
     {% for status in statusArr %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>

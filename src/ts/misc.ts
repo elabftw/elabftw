@@ -52,7 +52,7 @@ function fetchCurrentPage(tag = ''): Promise<Document>{
 }
 
 export const getInput = (id: string): HTMLInputElement => {
-  const element = document.getElementById(id);
+  const element = getSafeElementById(id);
 
   if (!(element instanceof HTMLInputElement)) {
     throw new Error(`Input element not found: ${id}`);

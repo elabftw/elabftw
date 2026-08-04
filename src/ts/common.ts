@@ -20,6 +20,7 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
+  getInput,
   getSafeElementById,
   getRandomColor,
   listenTrigger,
@@ -41,7 +42,6 @@ import {
   initPermissionsTomSelects,
   PERMISSION_SELECT_IDS,
   reloadEntitiesShow,
-  getInput,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';

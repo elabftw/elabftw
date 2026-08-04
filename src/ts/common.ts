@@ -219,8 +219,8 @@ on('set-theme', (el: HTMLElement) => {
     const primaryFg = styles.getPropertyValue('--primary-fg');
 
     // also set the value of inputs in appearance when theme changes page
-    getInput('primaryColorInput').value = primaryBg;
-    getInput('primaryForegroundInput').value = primaryFg;
+    getInput('primaryBgInput').value = primaryBg;
+    getInput('primaryFgInput').value = primaryFg;
   });
 });
 

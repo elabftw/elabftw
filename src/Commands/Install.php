@@ -17,7 +17,6 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\LocalPassword;
 use Elabftw\Elabftw\Sql;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Hash\LocalPasswordHash;
 use Elabftw\Models\ApiKeys;
@@ -33,9 +32,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\String\ByteString;
 
 use function dirname;
 use function sprintf;
+use function implode;
 
 /**
  * Import database structure
@@ -103,15 +104,15 @@ final class Install extends Command
         $output->writeln('<info>✓ Team created successfully. Now populating branding table...</info>');
         new Branding(true)->populate();
 
-        $cleartextPassword = $this->getPassword($input, $output);
-        $LocalPassword = new LocalPassword(
-            // this a Sysadmin password, force strong and long
-            new PasswordValidator(24, PasswordComplexity::Strong, $cleartextPassword),
-            new LocalPasswordHash($cleartextPassword),
-        );
-
         if ($input->getOption('email')) {
             $output->writeln('<info>→ Creating Sysadmin user...</info>');
+            $cleartextPassword = $this->getPassword($input, $output);
+            $LocalPassword = new LocalPassword(
+                // this a Sysadmin password, force strong and long
+                new PasswordValidator(24, PasswordComplexity::Strong, $cleartextPassword),
+                new LocalPasswordHash($cleartextPassword),
+            );
+
             $Users = new Users();
             $Users->createOne(
                 (string) $input->getOption('email'),
@@ -143,6 +144,16 @@ final class Install extends Command
             $question = new Question('[?] Enter password: ', false);
             return $helper->ask($input, $output, $question);
         }
-        return Tools::getUuidv4();
+        return $this->generateStrongPassword();
+    }
+
+    private function generateStrongPassword(): string
+    {
+        return implode('', array(
+            ByteString::fromRandom(6, 'abcdefghijklmnopqrstuvwxyz'),
+            ByteString::fromRandom(6, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'),
+            ByteString::fromRandom(6, '0123456789'),
+            ByteString::fromRandom(6, '!#$%&()*+,-./:;<=>?@[]^_{|}~'),
+        ));
     }
 }

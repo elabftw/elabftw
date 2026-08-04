@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\Db;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\AuthResponseInterface;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\UsersHelper;
 use Override;
+use PDO;
 
 use function count;
 
@@ -125,6 +128,16 @@ class AuthResponse implements AuthResponseInterface
     #[Override]
     public function setSelectedTeam(int $team): self
     {
+        $Db = Db::getConnection();
+        // check if user belongs to the team and is not archived
+        $sql = 'SELECT is_admin, is_archived FROM users2teams WHERE users_id = :userid AND teams_id = :team';
+        $req = $Db->prepare($sql);
+        $req->bindValue(':userid', $this->getAuthUserid(), PDO::PARAM_INT);
+        $req->bindValue(':team', $this->getSelectedTeam(), PDO::PARAM_INT);
+        $res = $Db->fetch($req);
+        if (($req->rowCount() !== 1 || $res['is_archived'] === 1) && !$this->isAnonymous()) {
+            throw new ImproperActionException(_('This account is archived in this team and cannot login.'));
+        }
         $this->selectedTeam = $team;
         return $this;
     }

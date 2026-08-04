@@ -26,7 +26,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use function time;
 use function _;
-use function array_column;
 use function setcookie;
 
 /**
@@ -144,19 +143,6 @@ final class LoginHelper
         $res = (bool) $req->fetchColumn();
         if ($res === false) {
             throw new ImproperActionException(_('Your account has expired. Contact your team Admin to extend its validity.'));
-        }
-    }
-
-    // maybe this should be part of AuthResponse?
-    private function checkArchivedStatus(): void
-    {
-        if ($this->AuthResponse->isAnonymous()) {
-            return;
-        }
-        $user = new Users($this->AuthResponse->getAuthUserid(), $this->AuthResponse->getSelectedTeam());
-        $lookup = array_column($user->userData['teams'], 'is_archived', 'id');
-        if ($lookup[$this->AuthResponse->getSelectedTeam()] === 1) {
-            throw new ImproperActionException(_('This account is archived in this team and cannot login.'));
         }
     }
 

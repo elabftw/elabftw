@@ -17,7 +17,6 @@ const t = {
     "can-manage-compounds": "化合物の管理が可能",
     "can-manage-inventory-locations": "在庫ロケーションの管理が可能",
     "can-manage-users2teams": "ユーザーをチーム単位で管理可能",
-    "cannot-reset-settings": "Could not reset the settings.",
     "cancel": "キャンセル",
     "categories": "Categories",
     "category": "カテゴリー",

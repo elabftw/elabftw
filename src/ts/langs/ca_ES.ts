@@ -17,7 +17,6 @@ const t = {
     "can-manage-compounds": "Pot regitionar components",
     "can-manage-inventory-locations": "Pot gestionar ubicació d'inventari",
     "can-manage-users2teams": "Pot gestionar usuaris a equips",
-    "cannot-reset-settings": "Could not reset the settings.",
     "cancel": "Cancel·lar",
     "categories": "Categories",
     "category": "Categoria",

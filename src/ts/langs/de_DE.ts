@@ -17,7 +17,6 @@ const t = {
     "can-manage-compounds": "Darf Substanzen verwalten",
     "can-manage-inventory-locations": "Darf Inventar-Standorte verwalten",
     "can-manage-users2teams": "Kann Nutzende Teams zuweisen",
-    "cannot-reset-settings": "Could not reset the settings.",
     "cancel": "Abbrechen",
     "categories": "Kategorien",
     "category": "Kategorie",

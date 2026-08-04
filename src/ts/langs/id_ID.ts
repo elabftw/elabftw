@@ -17,7 +17,6 @@ const t = {
     "can-manage-compounds": "Dapat mengelola senyawa",
     "can-manage-inventory-locations": "Dapat mengelola lokasi inventaris",
     "can-manage-users2teams": "Dapat mengelola pengguna hingga tim",
-    "cannot-reset-settings": "Could not reset the settings.",
     "cancel": "Batal",
     "categories": "Categories",
     "category": "Kategori",

@@ -17,7 +17,6 @@ const t = {
     "can-manage-compounds": "可管理化合物",
     "can-manage-inventory-locations": "可以管理庫存位置",
     "can-manage-users2teams": "可以管理團隊用戶",
-    "cannot-reset-settings": "Could not reset the settings.",
     "cancel": "取消",
     "categories": "類別",
     "category": "類別",

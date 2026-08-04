@@ -17,7 +17,6 @@ const t = {
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
-    "cannot-reset-settings": "Could not reset the settings.",
     "cancel": "Cancelar",
     "categories": "Categorias",
     "category": "Categoria",

@@ -58,7 +58,7 @@
       initialPrimaryColor = primaryColor;
       initialPrimaryForeground = primaryForeground;
     } catch (error) {
-      notify.error('cannot-reset-settings');
+      notify.error('invalid-info');
     } finally {
       isSaving = false;
     }

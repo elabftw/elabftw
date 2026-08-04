@@ -60,7 +60,6 @@ final class i18n4Js
             'can-manage-compounds' => _('Can manage compounds'),
             'can-manage-inventory-locations' => _('Can manage inventory locations'),
             'can-manage-users2teams' => _('Can manage users to teams'),
-            'cannot-reset-settings' => _('Could not reset the settings.'),
             'cancel' => _('Cancel'),
             'categories' => _('Categories'),
             'category' => _('Category'),

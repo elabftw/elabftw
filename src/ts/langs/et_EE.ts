@@ -17,7 +17,6 @@ const t = {
     "can-manage-compounds": "Saab ühendeid hallata",
     "can-manage-inventory-locations": "Saab laoseisu asukohti hallata",
     "can-manage-users2teams": "Saab kasutajaid meeskondadesse jagada",
-    "cannot-reset-settings": "Could not reset the settings.",
     "cancel": "Tühista",
     "categories": "Categories",
     "category": "Kategooria",

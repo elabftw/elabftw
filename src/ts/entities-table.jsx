@@ -22,7 +22,6 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { get } from 'svelte/store';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
@@ -124,7 +123,6 @@ const EntitiesTable = ({
   relatedOrigin = '',
 }) => {
   const [rowData, setRowData] = useState([]);
-  const gridApiRef = useRef(null);
 
   const onGridReady = () => {
     fetchData();

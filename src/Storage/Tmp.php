@@ -12,20 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Storage;
 
-use League\Flysystem\FilesystemAdapter;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use Override;
-
 /**
  * /tmp/
  */
-final class Tmp extends Local
+final class Tmp extends AbstractStorage
 {
-    protected const string FOLDER = '/tmp';
-
-    #[Override]
-    protected function getAdapter(): FilesystemAdapter
-    {
-        return new LocalFilesystemAdapter(static::FOLDER);
-    }
+    protected const string FOLDER = '/run/elabftw/tmp';
 }

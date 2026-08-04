@@ -5,53 +5,55 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-@import 'variables';
-/* import this first to be able to modify bootstrap theme */
-@import 'bootstrap/scss/functions';
-@import 'bootstrap/scss/variables';
-/* override bootstrap theme */
-$theme-colors: (
-  'primary': $elabblue,
-  'secondary': $medium,
-  'danger': $dangerred,
-  'neutral': $medium,
+@use 'sass:meta';
+@use 'variables' as *;
+@use './fontawesome/variables' as fontawesome with (
+  $fa-font-path: $fa-font-path,
 );
 
-$dropdown-link-active-bg: var(--primary);
-/* make the non active link in navbar have slightly more contrast */
-$navbar-dark-color: var(--chrome-fg);
-$text-muted: var(--medium);
-@import 'bootstrap/scss/bootstrap';
-@import 'prismjs/themes/prism';
-@import '@deltablot/dropzone/src/dropzone';
-@import '@fancyapps/fancybox/dist/jquery.fancybox';
-@import 'jquery-ui/themes/base/core';
-@import 'jquery-ui/themes/base/autocomplete';
-@import 'jquery-ui/themes/base/menu';
-@import 'jquery-ui/themes/base/sortable';
-@import 'jquery-ui/themes/base/theme';
+/* import this first to be able to modify bootstrap theme */
+@include meta.load-css('bootstrap/scss/bootstrap', $with: (
+  'theme-colors': (
+    'primary': $elabblue,
+    'secondary': $medium,
+    'danger': $dangerred,
+    'neutral': $medium,
+  ),
+  'dropdown-link-active-bg': var(--primary),
+  // Make the non-active link in the navbar have slightly more contrast.
+  'navbar-dark-color': var(--chrome-fg),
+  'text-muted': var(--medium),
+));
+@include meta.load-css('prismjs/themes/prism');
+@include meta.load-css('@deltablot/dropzone/src/dropzone');
+@include meta.load-css('@fancyapps/fancybox/dist/jquery.fancybox');
+@include meta.load-css('jquery-ui/themes/base/core');
+@include meta.load-css('jquery-ui/themes/base/autocomplete');
+@include meta.load-css('jquery-ui/themes/base/menu');
+@include meta.load-css('jquery-ui/themes/base/sortable');
+@include meta.load-css('jquery-ui/themes/base/theme');
 
-@import './fontawesome/fontawesome';
-@import './fontawesome/solid';
-@import './fontawesome/brands';
-@import './fontawesome/regular';
-@import 'material-icons';
+@include meta.load-css('./fontawesome/fontawesome');
+@include meta.load-css('./fontawesome/solid');
+@include meta.load-css('./fontawesome/brands');
+@include meta.load-css('./fontawesome/regular');
+@include meta.load-css('material-icons');
 
-@import 'animations';
-@import 'autocomplete';
-@import 'buttons';
-@import 'charts';
-@import 'footer';
-@import 'header';
-@import 'star-rating';
-@import 'jsoneditor';
-@import 'ove';
-@import 'spreadsheet-editor';
-@import 'search-syntax-highlighting';
-@import 'tom-select';
-@import 'tinymce';
-@import 'prism';
-@import 'skeletons';
+@include meta.load-css('animations');
+@include meta.load-css('autocomplete');
+@include meta.load-css('buttons');
+@include meta.load-css('charts');
+@include meta.load-css('footer');
+@include meta.load-css('header');
+@include meta.load-css('star-rating');
+@include meta.load-css('jsoneditor');
+@include meta.load-css('ove');
+@include meta.load-css('spreadsheet-editor');
+@include meta.load-css('search-syntax-highlighting');
+@include meta.load-css('tom-select');
+@include meta.load-css('tinymce');
+@include meta.load-css('prism');
+@include meta.load-css('skeletons');
 
 /* Font is Lato */
 @font-face {
@@ -99,6 +101,11 @@ $text-muted: var(--medium);
   font-style: italic;
   font-weight: 900;
   src: url('fonts/lato-black-italic.woff2') format('woff2');
+}
+
+:root {
+  --navbar-height: 0;
+  --toolbar-height: 0;
 }
 
 body {
@@ -1409,7 +1416,6 @@ the form-control fails to do that so we do the border ourselves */
   color: var(--primary);
 }
 
-/* caption for tinymce */
 .image {
   background: var(--superlight);
   border: 1px solid var(--medium);
@@ -1419,6 +1425,12 @@ the form-control fails to do that so we do the border ourselves */
 
 .image img {
   margin: 8px 8px 0;
+}
+
+/* captions for tables and images */
+table > caption {
+  caption-side: top;
+  text-align: center;
 }
 
 .image figcaption,
@@ -1953,13 +1965,10 @@ input:user-invalid {
   width: 128px;
 }
 
-:root {
-  --navbar-height: 0;
-}
-
 div > .sticky-navbar {
   position: sticky;
   top: 0;
+  transition: transform 0.2s ease;
   width: 100%;
   z-index: 100;
 }
@@ -1968,6 +1977,11 @@ div > .sticky-navbar {
   background: var(--mainbackground);
   position: sticky;
   top: var(--navbar-height);
+  transition: top 0.2s ease;
   width: 100%;
   z-index: 50;
+}
+
+.sticky-navbar.hidden {
+  transform: translateY(-100%);
 }

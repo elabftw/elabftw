@@ -106,8 +106,9 @@ describe('Experiments', () => {
   };
 
   const entityDestroy = () => {
-    cy.get('button[title="More options"]').click()
-      .get('button[data-action="destroy"]').click();
+    cy.get('button[title="More options"]').click();
+    cy.get('button[data-action="toggle-modal"][data-target="deleteSelectedEntitiesModal"]').click();
+    cy.get('button[data-action="delete-selected-entities"]').wait(2500).click();
   };
 
   const entityCatStat = (category: string, categoryTarget: string, statusTarget: string) => {
@@ -205,6 +206,9 @@ describe('Experiments', () => {
     cy.get('[aria-label="Show more filters"]').click();
     // filter deleted items
     cy.get('select[name="state"]').select('3');
+    cy.get('[data-cy="moreFiltersMenu"]').should('have.attr', 'open');
+    cy.get('#pageTitle').click(0, 0);
+    cy.get('[data-cy="moreFiltersMenu"]').should('not.have.attr', 'open');
     // restore
     cy.get('[data-action="restore-entity-showmode"]').first().click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');

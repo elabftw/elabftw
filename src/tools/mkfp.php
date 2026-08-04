@@ -14,8 +14,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\OpenBabelFingerprinter;
 use GuzzleHttp\Client;
 
 use function dirname;
@@ -109,7 +109,7 @@ $smiles = array(
 $startTime = microtime(true);
 $requester = new Users(1, 1);
 $httpGetter = new HttpGetter(new Client(), verifyTls: false);
-$Fingerprinter = new Fingerprinter($httpGetter, Env::asUrl('FINGERPRINTER_URL'));
+$Fingerprinter = new OpenBabelFingerprinter();
 $Compounds = new Compounds($httpGetter, $requester, fingerprinter: $Fingerprinter, requireEditRights: false);
 foreach ($smiles as $mol) {
     $Compounds->create(smiles: $mol['smiles'], name: $mol['name']);

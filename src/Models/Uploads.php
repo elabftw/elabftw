@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Controllers\DownloadController;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\CreateUploadFromUploadedFile;
@@ -139,9 +140,10 @@ final class Uploads extends AbstractRest
                     $longName,
                     $storageFs,
                 )->saveThumb();
-            } catch (UnableToRetrieveMetadata | ImagickException) {
+            } catch (UnableToRetrieveMetadata | ImagickException $e) {
                 // if mime type could not be read just ignore it and continue
                 // if imagick/imagemagick causes problems ignore it and upload file without thumbnail
+                App::getDefaultLogger()->warning(sprintf('Error during thumbnail generation: %s', $e->getMessage()));
             }
         }
 
@@ -469,7 +471,7 @@ final class Uploads extends AbstractRest
     private function makeCreateUploadParam(array $upload): CreateUploadParamsInterface
     {
         if ($upload['storage'] === Storage::LOCAL->value) {
-            $prefix = '/elabftw/uploads/';
+            $prefix = Storage::LOCAL->getStorage()->getPath() . '/';
             return new CreateUpload(
                 realName: $upload['real_name'],
                 filePath: $prefix . $upload['long_name'],

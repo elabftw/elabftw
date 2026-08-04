@@ -147,6 +147,7 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [Reporting Dashboard](https://git.rwth-aachen.de/eln-rwth/reporting-scripts-public): Collection of scripts to create a reporting dashabord for eLabFTW SysAdmins
 * [elab2arc](https://github.com/nfdi4plants/elab2arc/): Convert eLabFTW experiments to into structured ARCs
 * [elab-sample-tracking](https://github.com/wanghao-github/elab-sample-tracking): A lightweight Flask-based web application for tracking sample provenance and collaboration history in eLabFTW.
+* [Rotor Management System](https://github.com/yufewu/rotor_management_elabftw/): A simple and intuitive web-based application for managing laboratory inventories (solid-state NMR rotors) integrated with eLabFTW as backend database.
 
 ### Deprecated projects using retired api v1
 * [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects

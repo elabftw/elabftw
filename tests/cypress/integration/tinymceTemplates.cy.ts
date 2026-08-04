@@ -65,8 +65,8 @@ describe('TinyMCE templates', () => {
       getIframeBody('iframe.tox-edit-area__iframe')
         .should('contain', templateText);
 
-      cy.get('button[title="More options"]').click()
-        .get('button[data-action="destroy"]').click();
+      cy.get('button[title="More options"]').click();
+      cy.get('button[data-action="toggle-modal"][data-target="deleteSelectedEntitiesModal"]').click();
     });
   });
 });

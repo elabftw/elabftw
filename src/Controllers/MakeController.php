@@ -193,7 +193,7 @@ final class MakeController extends AbstractController
         } elseif ($this->Request->query->has('id')) {
             $idArr = array_map(
                 fn(string $id): int => (int) $id,
-                explode(' ', $this->Request->query->getString('id')),
+                explode('+', $this->Request->query->getString('id')),
             );
         }
         foreach ($idArr as $id) {

@@ -16,7 +16,7 @@ use Aws\Credentials\Credentials;
 use Elabftw\Elabftw\Env;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Config;
-use Elabftw\Storage\Cache;
+use Elabftw\Storage\Cache\ElabCache;
 use Elabftw\Storage\Exports;
 use Elabftw\Storage\Fixtures;
 use Elabftw\Storage\Local;
@@ -45,7 +45,7 @@ enum Storage: int
                 $config->getS3Config(),
             ),
             $this::MEMORY => new Memory(),
-            $this::CACHE => new Cache(),
+            $this::CACHE => new ElabCache(),
             $this::FIXTURES => new Fixtures(),
             $this::EXPORTS => self::getExports($config),
         };

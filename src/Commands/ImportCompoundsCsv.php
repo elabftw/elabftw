@@ -30,9 +30,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Elabftw\Models\Config;
 use Elabftw\Models\Items;
-use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
-use Elabftw\Services\NullFingerprinter;
+use Elabftw\Services\OpenBabelFingerprinter;
 use Elabftw\Services\PubChemImporter;
 use GuzzleHttp\Client;
 use Override;
@@ -56,7 +55,7 @@ final class ImportCompoundsCsv extends Command
     {
         $this->setDescription('Import compounds from a CSV file')
             ->setHelp("Column names that will match: cas, chebi_id, chembl_id, dea_number, drugbank_id, dsstox_id, ec_number, hmdb_id, inchi, inchikey, iupacname, is_antibiotic, is_antibiotic_precursor, is_cmr, is_controlled, is_corrosive, is_drug, is_drug_precursor, is_explosive, is_explosive_precursor, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_nano, is_oxidising, is_radioactive, is_serious_health_hazard, is_toxic, is_ed2health, is_ed2env, is_pbt, is_pmt, is_vpvb, is_vpvm, kegg_id, metabolomics_wb_id, molecularformula, molecularweight, name, nci_code, nikkaji_number, pharmgkb_id, pharos_ligand_id, pubchemcid, rxcui, smiles, unii, wikidata, wikipedia.\nA column named «comment» will be added to the main text of the associated resource if a resource is associated with it.\nA column named «location» will be interpreted as location, use the -l option to set the character separating the hierarchical location. The columns «quantity» and «unit» will be used when creating a container.")
-            ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import. Must be present in /elabftw/exports folder in the container')
+            ->addArgument('file', InputArgument::REQUIRED, 'Name of the file to import. Must be present in /var/lib/elabftw/exports folder in the container')
             ->addArgument('teamid', InputArgument::REQUIRED, 'Target team ID')
             ->addOption('userid', 'u', InputOption::VALUE_REQUIRED, 'Target user ID')
             ->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Process the file, but do not actually import things, display what would be done')
@@ -86,14 +85,8 @@ final class ImportCompoundsCsv extends Command
         }
         $locationSplitter = $input->getOption('location-splitter');
         $Config = Config::getConfig();
-        $Fingerprinter = new NullFingerprinter();
         $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE'));
-        if (Env::asBool('USE_FINGERPRINTER')) {
-            // we use a different httpGetter object so we can configure proxy usage
-            $proxy = Env::asBool('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
-            $fingerPrinterHttpGetter = new HttpGetter(new Client(), $proxy, !Env::asBool('DEV_MODE'));
-            $Fingerprinter = new Fingerprinter($fingerPrinterHttpGetter, Env::asUrl('FINGERPRINTER_URL'));
-        }
+        $Fingerprinter = new OpenBabelFingerprinter();
 
         $usePubchem = (bool) $input->getOption('use-pubchem');
         $pubChemImporter = null;

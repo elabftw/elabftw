@@ -164,6 +164,14 @@ enum EntityType {
   Other = 'other',
 }
 
+enum SingularEntityType {
+  Experiment = 'experiment',
+  Item = 'item',
+  ItemType = 'item_type',
+  Template = 'experiment_template',
+  Other = 'other',
+}
+
 enum Target {
   All = 'all',
   Body = 'body',
@@ -209,6 +217,7 @@ interface Entity {
 export {
   Action,
   EntityType,
+  SingularEntityType,
   FileType,
   Method,
   Model,

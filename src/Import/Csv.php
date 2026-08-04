@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use DateTimeImmutable;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
+use Elabftw\Params\EntityParams;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -25,6 +27,7 @@ use Override;
 
 use function array_key_exists;
 use function explode;
+use function in_array;
 
 /**
  * Import entries from a csv file.
@@ -41,6 +44,7 @@ final class Csv extends AbstractCsv
         protected BasePermissions $canwriteBase = BasePermissions::User,
         protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
         protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
+        protected ?int $template = null,
     ) {
         parent::__construct(
             $requester,
@@ -79,32 +83,60 @@ final class Csv extends AbstractCsv
             }
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
-            $metadata = empty($row['metadata']) ? null : (string) $row['metadata'];
-            if ($metadata === null) {
-                $metadata = $this->collectMetadata($row);
-            }
+            // metadata can come from the dedicated metadata column or from extra CSV columns
+            $csvMetadata = empty($row['metadata']) ? null : (string) $row['metadata'];
+            $columnMetadata = $this->collectMetadata($row);
+            $metadata = $csvMetadata ?? $columnMetadata;
+
             $tags = empty($row['tags']) ? array() : explode(self::TAGS_SEPARATOR, $row['tags']);
             $canreadBase = empty($row['canread_base']) ? $this->canreadBase : $row['canread_base'];
             $canwriteBase = empty($row['canwrite_base']) ? $this->canwriteBase : $row['canwrite_base'];
             $canread = empty($row['canread']) ? $this->canread : $row['canread'];
             $canwrite = empty($row['canwrite']) ? $this->canwrite : $row['canwrite'];
 
-            $entity->create(
-                title: $row['title'],
-                body: $body,
-                canreadBase: $canreadBase,
-                canwriteBase: $canwriteBase,
-                canread: $canread,
-                canwrite: $canwrite,
-                contentType: BodyContentType::from((int) ($row['contentType'] ?? BodyContentType::Html->value)),
-                date: $date,
-                tags: $tags,
-                category: $category,
-                status: $status,
-                customId: $customId,
-                metadata: $metadata,
-                rating: (int) ($row['rating'] ?? 0),
-            );
+            if ($this->template !== null && in_array(
+                $this->entityType,
+                array(EntityType::Experiments, EntityType::Items),
+                true
+            )
+            ) {
+                $entityId = $entity->postAction(Action::Create, array('template' => $this->template, 'title' => $row['title']));
+                $entity->setId($entityId);
+                $this->processTags($entity, $tags);
+                $this->processLocation($entity, $row);
+                // preserve the template metadata schema while applying the explicit metadata payload first
+                if ($csvMetadata !== null) {
+                    $entity->update(new EntityParams('metadatamerge', $csvMetadata));
+                }
+                // merge remaining CSV columns as metadata, letting explicit columns override matching fields
+                $entity->update(new EntityParams('metadatamerge', $columnMetadata));
+            } else {
+                $entityId = $entity->create(
+                    title: $row['title'],
+                    body: $body,
+                    date: $date,
+                    canreadBase: $canreadBase,
+                    canwriteBase: $canwriteBase,
+                    canread: $canread,
+                    canwrite: $canwrite,
+                    tags: $tags,
+                    category: $category,
+                    status: $status,
+                    customId: $customId,
+                    metadata: $metadata,
+                    rating: (int) ($row['rating'] ?? 0),
+                    contentType: BodyContentType::from((int) ($row['contentType'] ?? BodyContentType::Html->value)),
+                );
+                $entity->setId($entityId);
+                // process inventory location after create because location links need the new resource id
+                if ($this->entityType === EntityType::Items) {
+                    $this->processLocation($entity, $row);
+                }
+                // when a metadata column exists, create used it first, so merge extra CSV columns afterwards
+                if ($csvMetadata !== null) {
+                    $entity->update(new EntityParams('metadatamerge', $columnMetadata));
+                }
+            }
 
             $this->inserted++;
         }
@@ -129,6 +161,9 @@ final class Csv extends AbstractCsv
             'status_title',
             'tags',
             'title',
+            'location',
+            'quantity',
+            'unit',
         );
     }
 }

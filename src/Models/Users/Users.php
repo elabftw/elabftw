@@ -530,7 +530,7 @@ class Users extends AbstractRest
      */
     public function invalidateToken(): bool
     {
-        $sql = 'UPDATE users SET token = null WHERE userid = :userid';
+        $sql = 'UPDATE users SET token = NULL, token_created_at = NULL WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);
@@ -683,7 +683,7 @@ class Users extends AbstractRest
             throw new ImproperActionException('Use action:updatepassword to update the password');
         }
         // email is filtered here because otherwise the check for existing email will throw exception
-        if ($params->getTarget() === 'email' && $params->getContent() !== $this->userData['email']) {
+        if ($params->getTarget() === 'email' && $params->getContent() !== strtolower($this->userData['email'])) {
             // we can only edit our own email, or be sysadmin
             if (!$this->isSelf() && !$this->requester->isSysadmin()) {
                 throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
@@ -775,7 +775,7 @@ class Users extends AbstractRest
 
     public function isSysadmin(): bool
     {
-        return $this->userData['is_sysadmin'] === 1;
+        return ($this->userData['is_sysadmin'] ?? 0) === 1;
     }
 
     public function isSysadminOrExplode(): void

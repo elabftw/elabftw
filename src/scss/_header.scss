@@ -6,7 +6,7 @@
  * @package elabftw
  */
 
-@use './variables';
+@use './variables' as *;
 
 .navbar {
   background-color: var(--chrome-bg);

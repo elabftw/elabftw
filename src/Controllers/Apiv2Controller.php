@@ -76,9 +76,8 @@ use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
 use Elabftw\Services\Email;
-use Elabftw\Services\Fingerprinter;
 use Elabftw\Services\HttpGetter;
-use Elabftw\Services\NullFingerprinter;
+use Elabftw\Services\OpenBabelFingerprinter;
 use Exception;
 use GuzzleHttp\Client;
 use JsonException;
@@ -232,6 +231,7 @@ final class Apiv2Controller extends AbstractApiController
             $this->reqBody['entity_type'] = $this->Request->request->get('entity_type'); // can be null
             $this->reqBody['category'] = $this->Request->request->get('category'); // can be null
             $this->reqBody['owner'] = $this->Request->request->getInt('owner');
+            $this->reqBody['template'] = $this->Request->request->get('template'); // can be null
             $this->reqBody['canread_base'] = (BasePermissions::tryFrom($this->Request->request->getInt('canread_base')) ?? BasePermissions::Team)->value;
             $this->reqBody['canwrite_base'] = (BasePermissions::tryFrom($this->Request->request->getInt('canwrite_base')) ?? BasePermissions::User)->value;
             $this->action = Action::tryFrom($this->Request->request->getString('action')) ?? Action::Create;
@@ -308,12 +308,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Compounds => (
                 function () {
                     $Config = Config::getConfig();
-                    $Fingerprinter = new NullFingerprinter();
-                    if (Env::asBool('USE_FINGERPRINTER')) {
-                        $proxy = Env::asBool('FINGERPRINTER_USE_PROXY') ? $Config->configArr['proxy'] : '';
-                        $httpGetter = new HttpGetter(new Client(), $proxy, !Env::asBool('DEV_MODE'));
-                        $Fingerprinter = new Fingerprinter($httpGetter, Env::asUrl('FINGERPRINTER_URL'));
-                    }
+                    $Fingerprinter = new OpenBabelFingerprinter();
                     return new Compounds(
                         new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE')),
                         $this->requester,

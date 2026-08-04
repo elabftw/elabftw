@@ -30,6 +30,6 @@ final class ResourcesCategoriesController extends AbstractHtmlController
     #[Override]
     protected function getPageTitle(): string
     {
-        return _('Resources categories');
+        return _('Resource categories');
     }
 }

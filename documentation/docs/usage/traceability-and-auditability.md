@@ -244,3 +244,11 @@ An Audit Log recording sensitive actions in an immutable manner is available on 
 - SignatureKeysCreated
 - SignatureCreated
 - ActionRequested
+
+## Software Bill of Materials (SBOM)
+
+A SBOM in SPDX format is produced for each release. It can be fetched like this:
+
+~~~bash
+ docker buildx imagetools inspect docker.io/elabftw/elabimg:5.6.10 --format '{{ json (index .SBOM "linux/amd64").SPDX }}' > elabftw-5.6.10-amd64.spdx.json
+~~~

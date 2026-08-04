@@ -15,6 +15,7 @@ namespace Elabftw\Make;
 use Elabftw\Elabftw\Extensions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\MakeThumbnailInterface;
+use Elabftw\Storage\Cache\NginxCache;
 use Imagick;
 use League\Flysystem\Filesystem;
 use Override;
@@ -53,6 +54,8 @@ class MakeThumbnail implements MakeThumbnailInterface
     private function getThumb(): string
     {
         $image = new Imagick();
+        // set temporary files path to this folder which should be bind-mounted on the host
+        $image->setRegistry('temporary-path', NginxCache::getFolder());
         $image->readImageFile($this->sourceFile);
         $image->setIteratorIndex(0);
         $image->setBackgroundColor('white');

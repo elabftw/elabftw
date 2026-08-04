@@ -1,10 +1,19 @@
 /**
+ * @author Nicolas CARPi / Deltablot
+ * @author Moustapha Camara / Deltablot
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ *
  * WCAG contrast ratio utilities.
  *
  * Contrast ratio is calculated according to the W3C Web Content Accessibility Guidelines (WCAG)
  * relative luminance algorithm: https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
  * Formula: https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
  */
+import i18next from './i18n';
+
 export interface ContrastResult {
   ratio: number;
   level: 'AAA' | 'AA' | 'AA Large' | 'Fail';
@@ -43,7 +52,7 @@ export const getContrastResult = (
     return {
       ratio,
       level: 'AAA',
-      description: 'Excellent accessibility',
+      description: i18next.t('excellent-accessibility'),
       className: 'text-success',
       icon: '✔',
     };
@@ -53,7 +62,7 @@ export const getContrastResult = (
     return {
       ratio,
       level: 'AA',
-      description: 'Good accessibility',
+      description: i18next.t('good-accessibility'),
       className: 'text-success',
       icon: '✔',
     };
@@ -63,7 +72,7 @@ export const getContrastResult = (
     return {
       ratio,
       level: 'AA Large',
-      description: 'Large text only',
+      description: i18next.t('large-text-only'),
       className: 'text-warning',
       icon: '⚠',
     };
@@ -72,7 +81,7 @@ export const getContrastResult = (
   return {
     ratio,
     level: 'Fail',
-    description: 'Insufficient contrast',
+    description: i18next.t('insufficent-contrast'),
     className: 'text-danger',
     icon: '✖',
   };

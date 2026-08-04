@@ -9,8 +9,8 @@
 <html lang='{{ App.getLang()|slice(0, 2) }}' class='{{ App.getThemeVariant().toCssClass() }}'
   {% if App.Users.userData.primary_bg %}
     style='
-      --primary: #{{ App.Users.userData.primary_bg|e("html_attr") }};
-      --primary-fg: #{{ App.Users.userData.primary_fg|default("ffffff")|e("html_attr") }};
+      --primary: #{{ App.Users.userData.primary_bg }};
+      --primary-fg: #{{ App.Users.userData.primary_fg|default("ffffff") }};
       '
   {% endif %}
 >

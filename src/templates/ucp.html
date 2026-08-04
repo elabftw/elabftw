@@ -564,8 +564,9 @@
   {# TAB 5 - APPEARANCE SETTINGS #}
   <div data-tabcontent='5' hidden>
     <h2 class='p-2 pl-3 section-title mb-3'>{{ 'Theme preferences'|trans }}</h2>
+    <h3 class='pl-3'>{{ 'Theme'|trans }}</h3>
     <div class='pl-3 mt-2 mb-5'>
-      <p class='mb-3'>{{ 'Choose the color theme used throughout the interface.'|trans }}</p>
+      <p class='mb-3'>{{ 'Configure how eLabFTW looks to you. Pick a color theme below.'|trans }}</p>
       <div role='group' aria-label='{{ 'Theme'|trans }}'>
         <button type='button' class='btn btn-light mx-3' data-action='set-theme' data-theme-variant='1' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-sun fa-fw'></i>{{ 'Light'|trans }}</button>
         <button type='button' class='btn btn-secondary mx-3' data-action='set-theme' data-theme-variant='2' data-current-theme='{{ App.Users.userData.theme_variant }}'><i class='fa-solid fa-moon fa-fw'></i>{{ 'Dark'|trans }}</button>

@@ -1,3 +1,12 @@
+/**
+ * @author Nicolas CARPi / Deltablot
+ * @author Moustapha Camara / Deltablot
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+*/
+
 export enum ThemeVariant {
   Auto = 0,
   Light = 1,

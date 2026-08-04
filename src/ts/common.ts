@@ -224,11 +224,11 @@ on('set-theme', (el: HTMLElement) => {
   });
 });
 
-const target = document.getElementById('primary-color-picker');
+const primaryColorPickerTarget = document.getElementById('primary-color-picker');
 
-if (target) {
+if (primaryColorPickerTarget) {
   mount(PrimaryColorPicker, {
-    target,
+    primaryColorPickerTarget,
   });
 }
 

@@ -27,7 +27,7 @@ import { DEFAULT_AG_GRID_PAGINATION, populateUserModal } from './misc';
 import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
-import { getAgGridTheme } from "./theme";
+import { getAgGridTheme } from './theme';
 
 // allow filtering by values for cells that render icons or badges (team, isSysadmin, etc.,)
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');

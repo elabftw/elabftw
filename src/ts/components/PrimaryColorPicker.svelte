@@ -10,7 +10,7 @@
   import { ApiC } from '../api';
   import { Model } from '../interfaces';
   import i18next from "../i18n";
-  import { getContrastResult } from '../accessibility';
+  import { getContrastResult } from '../a11y_utils';
 
   const styles = getComputedStyle(document.documentElement);
   let primaryBg = styles.getPropertyValue('--primary');
@@ -18,7 +18,7 @@
   let isSaving = false;
   const t = i18next.t.bind(i18next);
 
-  const applyPreview = (): void => {
+  const apply = (): void => {
     document.documentElement.style.setProperty('--primary', primaryBg);
     document.documentElement.style.setProperty('--primary-fg', primaryFg);
   };
@@ -27,7 +27,7 @@
     isSaving = true;
     try {
       await ApiC.patch(`${Model.User}/me`, {primary_bg: primaryBg, primary_fg: primaryFg});
-      applyPreview();
+      apply();
     } finally {
       isSaving = false;
     }
@@ -58,7 +58,7 @@
       class='color-input mr-2'
       type='color'
       bind:value={primaryBg}
-      on:change={applyPreview}
+      on:change={apply}
     >
   </div>
   <hr>
@@ -71,7 +71,7 @@
       class='color-input mr-2'
       type='color'
       bind:value={primaryFg}
-      on:change={applyPreview}
+      on:change={apply}
     >
   </div>
   <hr>

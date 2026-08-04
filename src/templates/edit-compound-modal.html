@@ -3,7 +3,7 @@
     <div>
       <label for='addCompound{{ target }}' class='col-form-label'>
       {% if code %}
-        <img width='32' height='32' class='ghs-pictogram' src='assets/images/ghs/GHS{{ code }}.svg' alt='{{ label|trans }}' title='{{ label|trans }}' />
+        <img class='ghs-pictogram' src='assets/images/ghs/GHS{{ code }}.svg' alt='{{ label|e('html_attr') }}' title='{{ label|e('html_attr') }}'/>
       {% endif %}
       {% if icon %}
         <span title='{{ label|trans }}'>

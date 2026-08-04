@@ -1,3 +1,3 @@
 -- revert schema 218
-CALL DropColumn('users', 'accent_color');
-CALL DropColumn('users', 'accent_foreground');
+CALL DropColumn('users', 'primary_color');
+CALL DropColumn('users', 'primary_foreground');

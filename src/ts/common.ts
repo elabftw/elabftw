@@ -77,7 +77,7 @@ import { get as getFromSvelte } from 'svelte/store';
 import { writable } from 'svelte/store';
 import { applyTheme, updateThemeControls } from './theme';
 import { mount } from 'svelte';
-import AccentColorPicker from './components/AccentColorPicker.svelte';
+import PrimaryColorPicker from './components/PrimaryColorPicker.svelte';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -216,14 +216,14 @@ on('set-theme', (el: HTMLElement) => {
   });
 });
 
-const target = document.getElementById('accent-color-picker');
+const target = document.getElementById('primary-color-picker');
 
 if (target) {
-  mount(AccentColorPicker, {
+  mount(PrimaryColorPicker, {
     target,
     props: {
-      initialAccentColor: target.dataset.accentColor ?? '#0f94fd',
-      initialAccentForeground: target.dataset.accentForeground ?? '#ffffff',
+      initialPrimaryColor: target.dataset.primaryColor ?? '#0f94fd',
+      initialPrimaryForeground: target.dataset.primaryForeground ?? '#ffffff',
     },
   });
 }

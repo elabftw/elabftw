@@ -5,31 +5,31 @@
   import i18next from "../i18n";
   import { getContrastResult } from '../accessibility';
   
-  export let initialAccentColor = '#813d9c';
-  export let initialAccentForeground = '#ffffff';
+  export let initialPrimaryColor = '#813d9c';
+  export let initialPrimaryForeground = '#ffffff';
   
-  let accentColor = initialAccentColor;
-  let accentForeground = initialAccentForeground;
+  let primaryColor = initialPrimaryColor;
+  let primaryForeground = initialPrimaryForeground;
   let isSaving = false;
   const t = i18next.t.bind(i18next);
   
   const hexColorPattern = /^#[0-9a-fA-F]{6}$/;
   
   const applyPreview = (): void => {
-    document.documentElement.style.setProperty('--primary', accentColor);
-    document.documentElement.style.setProperty('--primary-fg', accentForeground);
+    document.documentElement.style.setProperty('--primary', primaryColor);
+    document.documentElement.style.setProperty('--primary-fg', primaryForeground);
   };
   
   const saveColors = async (): Promise<void> => {
-    if (!hexColorPattern.test(accentColor)
-      || !hexColorPattern.test(accentForeground)
+    if (!hexColorPattern.test(primaryColor)
+      || !hexColorPattern.test(primaryForeground)
     ) {
       notify.error('invalid-info');
       return;
     }
     isSaving = true;
     try {
-      await ApiC.patch(`${Model.User}/me`, {accent_color: accentColor, accent_foreground: accentForeground });
+      await ApiC.patch(`${Model.User}/me`, {primary_color: primaryColor, primary_foreground: primaryForeground });
       applyPreview();
     } catch (error) {
       notify.error(error);
@@ -41,22 +41,22 @@
   const resetColors = async (): Promise<void> => {
     isSaving = true;
     try {
-      await ApiC.patch(`${Model.User}/me`, {accent_color: null, accent_foreground: null});
+      await ApiC.patch(`${Model.User}/me`, {primary_color: null, primary_foreground: null});
       // remove the user overrides from <html>
       document.documentElement.style.removeProperty('--primary');
       document.documentElement.style.removeProperty('--primary-fg');
       
       // read the defaults now provided by the active theme
       const styles = getComputedStyle(document.documentElement);
-      accentColor = styles.getPropertyValue('--primary').trim();
-      accentForeground = styles
+      primaryColor = styles.getPropertyValue('--primary').trim();
+      primaryForeground = styles
         .getPropertyValue('--primary-fg')
         .trim()
         .replace(/^#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])$/, '#$1$1$2$2$3$3');
       
       // these values become the new unsaved/reset baseline
-      initialAccentColor = accentColor;
-      initialAccentForeground = accentForeground;
+      initialPrimaryColor = primaryColor;
+      initialPrimaryForeground = primaryForeground;
     } catch (error) {
       notify.error('cannot-reset-settings');
     } finally {
@@ -65,27 +65,27 @@
   };
   
   $: contrast = getContrastResult(
-    accentForeground,
-    accentColor,
+    primaryForeground,
+    primaryColor,
   );
 </script>
 
 <div>
   <div class='d-flex justify-content-between align-items-center mb-3'>
-    <label for='accentColor' class='col-form-label'>{t('primary-color')}</label>
+    <label for='primaryColor' class='col-form-label'>{t('primary-color')}</label>
     
     <div class='d-flex align-items-center'>
       <input
-        id='accentColor'
+        id='primaryColor'
         class='color-input mr-2'
         type='color'
-        bind:value={accentColor}
+        bind:value={primaryColor}
       >
       <!-- hexadecimal value -->
       <input
         class='form-control'
         type='text'
-        bind:value={accentColor}
+        bind:value={primaryColor}
         pattern='#[0-9a-fA-F]{6}'
         maxlength='7'
         aria-label={`Hexadecimal ${t('primary-color')}`}
@@ -96,21 +96,21 @@
   <hr>
   
   <div class='d-flex justify-content-between align-items-center mb-3'>
-    <label for='accentForeground' class='col-form-label'>
+    <label for='primaryForeground' class='col-form-label'>
       {t('text-color-primary')}
     </label>
     
     <div class='d-flex align-items-center'>
       <input
-        id='accentForeground'
+        id='primaryForeground'
         class='color-input mr-2'
         type='color'
-        bind:value={accentForeground}
+        bind:value={primaryForeground}
       >
       <input
         class='form-control'
         type='text'
-        bind:value={accentForeground}
+        bind:value={primaryForeground}
         pattern='#[0-9a-fA-F]{6}'
         maxlength='7'
         aria-label={`Hexadecimal ${t('text-color-primary')}`}
@@ -119,7 +119,7 @@
   </div>
   <hr>
   
-  <div class='box' style={`--primary: ${accentColor}; --primary-fg: ${accentForeground};`}>
+  <div class='box' style={`--primary: ${primaryColor}; --primary-fg: ${primaryForeground};`}>
     <p class='mb-2'>{t('preview')}</p>
     
     <button type='button' class='btn btn-primary mr-2'>

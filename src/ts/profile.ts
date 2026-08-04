@@ -7,11 +7,9 @@
  */
 import { ApiC } from './api';
 import { notify } from './notify';
-import { collectForm, rebuildTomSelectOptions, reloadElements, TomSelect } from './misc';
+import { collectForm, rebuildTomSelectOptions, reloadElements, resetToDefault, TomSelect, TomSelectElement } from './misc';
 import i18next from './i18n';
 import { on } from './handlers';
-
-type TomSelectElement = HTMLSelectElement & { tomselect?: TomSelect };
 
 // populate selects for category/templates when importing csv
 const populateSelect = async (select: TomSelectElement, endpoint?: string): Promise<void> => {
@@ -21,6 +19,7 @@ const populateSelect = async (select: TomSelectElement, endpoint?: string): Prom
   }
   if (!endpoint) {
     rebuildTomSelectOptions(select);
+    resetToDefault(select);
     return;
   }
   const entries = await ApiC.getJson(endpoint);
@@ -31,6 +30,7 @@ const populateSelect = async (select: TomSelectElement, endpoint?: string): Prom
     select.add(newOption);
   });
   rebuildTomSelectOptions(select);
+  resetToDefault(select);
 };
 
 if (window.location.pathname === '/profile.php') {

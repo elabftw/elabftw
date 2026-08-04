@@ -170,6 +170,8 @@ type TomSelectOption = {
   text: string;
 };
 
+export type TomSelectElement = HTMLSelectElement & { tomselect?: TomSelect };
+
 type RebuildSource =
   | { filter?: (option: HTMLOptionElement) => boolean }
   | { options: TomSelectOption[] };
@@ -199,6 +201,16 @@ export function rebuildTomSelectOptions(
   ts.addOptions(nextOptions);
   ts.refreshOptions(false);
 }
+
+export const resetToDefault = (select: TomSelectElement): void => {
+  if (select.tomselect) {
+    // Force sync with the hidden native selects (e.g., when default is "Do not apply any value")
+    select.tomselect.clear(true);
+    select.tomselect.setValue('null', true);
+    return;
+  }
+  select.value = 'null';
+};
 
 export function listenTrigger(elementId: string = ''): void {
   let elems: NodeList;

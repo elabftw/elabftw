@@ -33,7 +33,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     public function testCreate(): void
     {
         $title = 'New status';
-        $color = '#29AEB9';
+        $color = '#29aeb9';
         $new = $this->Status->postAction(Action::Create, array('name' => $title, 'color' => $color));
         $this->assertIsInt($new);
         $this->Status->setId($new);

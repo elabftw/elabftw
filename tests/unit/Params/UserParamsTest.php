@@ -68,8 +68,8 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
 
     public function testPrimaryForeground(): void
     {
-        $params = new UserParams('primary_foreground', '#A1B2C3');
-        $this->assertSame('#a1b2c3', $params->getContent());
+        $params = new UserParams('primary_foreground', 'A1B2C3');
+        $this->assertSame('a1b2c3', $params->getContent());
     }
 
     public function testPrimaryForegroundNull(): void

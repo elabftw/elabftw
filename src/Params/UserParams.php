@@ -95,7 +95,7 @@ final class UserParams extends ContentParams
             'use_markdown',
             'validated' => (string) Filter::toBinary($this->content),
             'primary_color',
-            'primary_foreground' => Filter::nullableHexColor($this->content === null ? null : $this->asString()),
+            'primary_foreground' => Filter::nullableHexColor($this->getNullableString()),
             'theme_variant' => (ThemeVariant::tryFrom($this->asInt()) ?? ThemeVariant::Auto)->value,
             'mfa_secret' => $this->getNullableString(),
             'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,

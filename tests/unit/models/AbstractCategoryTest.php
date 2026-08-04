@@ -43,7 +43,7 @@ class AbstractCategoryTest extends \PHPUnit\Framework\TestCase
         $category = $Category->readOne();
 
         $this->assertEquals($title, $category['title']);
-        $this->assertEquals('29AEB9', $category['color']);
+        $this->assertEquals('29aeb9', $category['color']);
     }
 
     public function testGetIdempotentIdFromTitleReturnsExistingCategory(): void
@@ -59,7 +59,7 @@ class AbstractCategoryTest extends \PHPUnit\Framework\TestCase
         $category = $Category->readOne();
 
         $this->assertEquals($title, $category['title']);
-        $this->assertEquals('29AEB9', $category['color']);
+        $this->assertEquals('29aeb9', $category['color']);
     }
 
     public function testNormalUserCannotCreateCategoryIfTeamSettingDisallowsIt(): void

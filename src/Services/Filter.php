@@ -30,7 +30,6 @@ use function explode;
 use function pathinfo;
 use function preg_replace;
 use function str_replace;
-use function preg_match;
 
 /**
  * When values need to be filtered
@@ -294,9 +293,6 @@ final class Filter
         if ($input === null || $input === '') {
             return null;
         }
-        if (preg_match('/^#[0-9a-fA-F]{6}$/', $input) !== 1) {
-            throw new ImproperActionException('Invalid color value.');
-        }
-        return strtolower($input);
+        return Check::color($input);
     }
 }

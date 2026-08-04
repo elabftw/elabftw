@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Toiminto",
     "add": "Lisää",
     "add-compound": "Lisää yhdiste",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Arkistoi käyttäjä",
     "archive-user-description": "Käyttäjän arkistointi tarkoittaa, että hänen tilinsä poistetaan käytöstä. Tämä toiminto on peruutettava.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Odota…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Luokitus",
     "read-release-notes": "Read release notes",
     "readonly": "Lukuoikeus",
@@ -157,7 +158,7 @@ const t = {
     "team": "Tiimi",
     "teams": "Tiimit",
     "template-title": "Malliotsikko",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Otsikko",

@@ -51,6 +51,16 @@ function fetchCurrentPage(tag = ''): Promise<Document>{
   });
 }
 
+export const getInput = (id: string): HTMLInputElement => {
+  const element = document.getElementById(id);
+
+  if (!(element instanceof HTMLInputElement)) {
+    throw new Error(`Input element not found: ${id}`);
+  }
+
+  return element;
+};
+
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {

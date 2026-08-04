@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Tegevus",
     "add": "Lisa",
     "add-compound": "Lisa ühend",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Arhiivi kasutaja",
     "archive-user-description": "Kasutaja arhiveerimine tähendab tema konto sulgemist. See toiming on tagasipööratav.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Saab ühendeid hallata",
     "can-manage-inventory-locations": "Saab laoseisu asukohti hallata",
     "can-manage-users2teams": "Saab kasutajaid meeskondadesse jagada",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Palun oodake…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Hinnang",
     "read-release-notes": "Read release notes",
     "readonly": "Kirjutuskaitstud",
@@ -157,7 +158,7 @@ const t = {
     "team": "Meeskond",
     "teams": "Meeskonnad",
     "template-title": "Malli pealkiri",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Pealkiri",

@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "수행할 작업",
     "add": "추가",
     "add-compound": "화합물 추가",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "사용자 차단",
     "archive-user-description": "사용자를 보관처리하면 해당 사용자의 계정이 비활성화됩니다. 이 작업은 되돌릴 수 있습니다.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "잠시만 기다려주세요…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "별점",
     "read-release-notes": "Read release notes",
     "readonly": "읽기 전용",
@@ -157,7 +158,7 @@ const t = {
     "team": "팀",
     "teams": "팀",
     "template-title": "템플릿 제목",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "제목",

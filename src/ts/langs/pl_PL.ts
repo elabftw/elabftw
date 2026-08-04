@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "dwu stopniowa",
+    "accessibility": "Accessibility",
     "action": "Polecenie",
     "add": "Dodaj",
     "add-compound": "Dodaj związek",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Archiwizuj użytkownika",
     "archive-user-description": "Archiwizacja użytkownika oznacza dezaktywację jego konta. To działanie jest odwracalne.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Może zarządzaś związkami",
     "can-manage-inventory-locations": "Może zarządzać lokalizacją wyposażenia",
     "can-manage-users2teams": "Możliwość zarządzania użytkownikami w zespołach",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Proszę czekać…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Ocena",
     "read-release-notes": "Read release notes",
     "readonly": "Tylko do odczytu",
@@ -157,7 +158,7 @@ const t = {
     "team": "Zespołów",
     "teams": "Zespoły",
     "template-title": "Tytuł szablonu",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Tytuły",

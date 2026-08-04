@@ -17,8 +17,6 @@ namespace Elabftw\Enums;
  */
 enum UsersColumn: string
 {
-    case PrimaryColor = 'primary_color';
-    case PrimaryForeground = 'primary_foreground';
     case AllowUntrusted = 'allow_untrusted';
     case AlwaysShowOwned = 'always_show_owned';
     case AppendPdfs = 'append_pdfs';
@@ -57,6 +55,8 @@ enum UsersColumn: string
     case Orgid = 'orgid';
     case PdfFormat = 'pdf_format';
     case PdfSignature = 'pdf_sig';
+    case PrimaryBg = 'primary_bg';
+    case PrimaryFg = 'primary_fg';
     case ScCreate = 'sc_create';
     case ScEdit = 'sc_edit';
     case ScopeExperiments = 'scope_experiments';

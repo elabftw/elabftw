@@ -46,6 +46,7 @@ final class i18n4Js
     {
         return array(
             '2FA' => _('2FA'),
+            'accessibility' => _('Accessibility'),
             'action' => _('Action'),
             'add' => _('Add'),
             'add-compound' => _('Add compound'),
@@ -57,6 +58,7 @@ final class i18n4Js
             'archive-user' => _('Archive user'),
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),
             'association-date' => _('Association date'),
+            'background-color' => _('Background color'),
             'can-manage-compounds' => _('Can manage compounds'),
             'can-manage-inventory-locations' => _('Can manage inventory locations'),
             'can-manage-users2teams' => _('Can manage users to teams'),
@@ -162,7 +164,6 @@ final class i18n4Js
             'organisation-name' => _('Organisation name'),
             'please-wait' => _('Please wait…'),
             'preview' => _('Preview'),
-            'primary-color' => _('Primary color'),
             'rating' => _('Rating'),
             'read-release-notes' => _('Read release notes'),
             'readonly' => _('Read-only'),
@@ -202,7 +203,7 @@ final class i18n4Js
             'team' => _('Team'),
             'teams' => _('Teams'),
             'template-title' => _('Template title'),
-            'text-color-primary' => _('Text color on primary elements'),
+            'text-color' => _('Text color'),
             'is-timestamped' => _('Is timestamped'),
             'timestamped-by' => _('Timestamped by'),
             'title' => _('Title'),

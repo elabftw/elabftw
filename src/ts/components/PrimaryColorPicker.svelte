@@ -1,139 +1,86 @@
 <script lang="ts">
+  /**
+   * @author Nicolas CARPi / Deltablot
+   * @author Moustapha Camara / Deltablot
+   * @copyright 2026 Nicolas CARPi
+   * @see https://www.elabftw.net Official website
+   * @license AGPL-3.0
+   * @package elabftw
+   */
   import { ApiC } from '../api';
   import { Model } from '../interfaces';
-  import { notify } from '../notify';
   import i18next from "../i18n";
   import { getContrastResult } from '../accessibility';
-  
-  export let initialPrimaryColor = '#813d9c';
-  export let initialPrimaryForeground = '#ffffff';
-  
-  let primaryColor = initialPrimaryColor;
-  let primaryForeground = initialPrimaryForeground;
+
+  const styles = getComputedStyle(document.documentElement);
+  let primaryBg = styles.getPropertyValue('--primary');
+  let primaryFg = styles.getPropertyValue('--primary-fg')
   let isSaving = false;
   const t = i18next.t.bind(i18next);
-  
-  const hexColorPattern = /^#[0-9a-fA-F]{6}$/;
-  
+
   const applyPreview = (): void => {
-    document.documentElement.style.setProperty('--primary', primaryColor);
-    document.documentElement.style.setProperty('--primary-fg', primaryForeground);
+    document.documentElement.style.setProperty('--primary', primaryBg);
+    document.documentElement.style.setProperty('--primary-fg', primaryFg);
   };
-  
+
   const saveColors = async (): Promise<void> => {
-    if (!hexColorPattern.test(primaryColor)
-      || !hexColorPattern.test(primaryForeground)
-    ) {
-      notify.error('invalid-info');
-      return;
-    }
     isSaving = true;
     try {
-      await ApiC.patch(`${Model.User}/me`, {primary_color: primaryColor, primary_foreground: primaryForeground });
+      await ApiC.patch(`${Model.User}/me`, {primary_bg: primaryBg, primary_fg: primaryFg});
       applyPreview();
-    } catch (error) {
-      notify.error(error);
     } finally {
       isSaving = false;
     }
   };
-  
+
   const resetColors = async (): Promise<void> => {
-    isSaving = true;
-    try {
-      await ApiC.patch(`${Model.User}/me`, {primary_color: null, primary_foreground: null});
-      // remove the user overrides from <html>
-      document.documentElement.style.removeProperty('--primary');
-      document.documentElement.style.removeProperty('--primary-fg');
-      
-      // read the defaults now provided by the active theme
-      const styles = getComputedStyle(document.documentElement);
-      primaryColor = styles.getPropertyValue('--primary').trim();
-      primaryForeground = styles
-        .getPropertyValue('--primary-fg')
-        .trim()
-        .replace(/^#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])$/, '#$1$1$2$2$3$3');
-      
-      // these values become the new unsaved/reset baseline
-      initialPrimaryColor = primaryColor;
-      initialPrimaryForeground = primaryForeground;
-    } catch (error) {
-      notify.error('invalid-info');
-    } finally {
-      isSaving = false;
-    }
+    await ApiC.patch(`${Model.User}/me`, {primary_bg: null, primary_fg: null});
+    // remove the user overrides from <html>
+    document.documentElement.style.removeProperty('--primary');
+    document.documentElement.style.removeProperty('--primary-fg');
+    // fetch the colors from current theme
+    const styles = getComputedStyle(document.documentElement);
+    primaryBg = styles.getPropertyValue('--primary');
+    primaryFg = styles.getPropertyValue('--primary-fg');
   };
-  
+
   $: contrast = getContrastResult(
-    primaryForeground,
-    primaryColor,
+    primaryBg,
+    primaryFg,
   );
 </script>
 
 <div>
   <div class='d-flex justify-content-between align-items-center mb-3'>
-    <label for='primaryColor' class='col-form-label'>{t('primary-color')}</label>
-    
-    <div class='d-flex align-items-center'>
-      <input
-        id='primaryColor'
-        class='color-input mr-2'
-        type='color'
-        bind:value={primaryColor}
-      >
-      <!-- hexadecimal value -->
-      <input
-        class='form-control'
-        type='text'
-        bind:value={primaryColor}
-        pattern='#[0-9a-fA-F]{6}'
-        maxlength='7'
-        aria-label={`Hexadecimal ${t('primary-color')}`}
-      >
-    </div>
+    <label for='primaryBgInput' class='col-form-label'>{t('background-color')}</label>
+    <input
+      id='primaryColorInput'
+      class='color-input mr-2'
+      type='color'
+      bind:value={primaryBg}
+      on:change={applyPreview}
+    >
   </div>
-  
   <hr>
-  
   <div class='d-flex justify-content-between align-items-center mb-3'>
-    <label for='primaryForeground' class='col-form-label'>
-      {t('text-color-primary')}
+    <label for='primaryFgInput' class='col-form-label'>
+      {t('text-color')}
     </label>
-    
-    <div class='d-flex align-items-center'>
-      <input
-        id='primaryForeground'
-        class='color-input mr-2'
-        type='color'
-        bind:value={primaryForeground}
-      >
-      <input
-        class='form-control'
-        type='text'
-        bind:value={primaryForeground}
-        pattern='#[0-9a-fA-F]{6}'
-        maxlength='7'
-        aria-label={`Hexadecimal ${t('text-color-primary')}`}
-      >
-    </div>
+    <input
+      id='primaryForegroundInput'
+      class='color-input mr-2'
+      type='color'
+      bind:value={primaryFg}
+      on:change={applyPreview}
+    >
   </div>
   <hr>
-  
-  <div class='box' style={`--primary: ${primaryColor}; --primary-fg: ${primaryForeground};`}>
-    <p class='mb-2'>{t('preview')}</p>
-    
-    <button type='button' class='btn btn-primary mr-2'>
-      <i class='fas fa-pencil mr-1'></i>
-      <span>{t('primary-color')}</span>
-    </button>
-    
-    <p class={`small mt-2 ${contrast.className}`}>
-      <strong>{contrast.icon} {contrast.level}</strong>
-      ({contrast.description})
-      • {contrast.ratio.toFixed(1)}:1
-    </p>
-  </div>
-  
+  <p class='mb-2'>{t('accessibility')}</p>
+  <p class={`small mt-2 ${contrast.className}`}>
+    {contrast.icon} {contrast.level} ({contrast.description}) • {contrast.ratio.toFixed(1)}:1
+  </p>
+
+  <hr>
   <div class='mt-3'>
     <button
       type='button'
@@ -143,7 +90,6 @@
     >
       {isSaving ? t('please-wait') : t('save')}
     </button>
-    
     <button
       type='button'
       class='btn btn-ghost'

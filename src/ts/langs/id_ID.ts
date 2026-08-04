@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Tindakan",
     "add": "Tambah",
     "add-compound": "Tambahkan senyawa",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Arsipkan pengguna",
     "archive-user-description": "Mengarsipkan pengguna berarti akun mereka akan dinonaktifkan. Tindakan ini dapat dibatalkan.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Dapat mengelola senyawa",
     "can-manage-inventory-locations": "Dapat mengelola lokasi inventaris",
     "can-manage-users2teams": "Dapat mengelola pengguna hingga tim",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Mohon tunggu…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Peringkat",
     "read-release-notes": "Read release notes",
     "readonly": "Hanya baca",
@@ -157,7 +158,7 @@ const t = {
     "team": "Tim",
     "teams": "Tim",
     "template-title": "Judul templat",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Judul",

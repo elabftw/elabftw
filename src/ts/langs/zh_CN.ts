@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "双因素验证",
+    "accessibility": "Accessibility",
     "action": "动作",
     "add": "添加",
     "add-compound": "添加化合物",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "归档用户",
     "archive-user-description": "归档用户意味着他们的账户将被禁用。此操作是可逆的。",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "可以管理化合物",
     "can-manage-inventory-locations": "可以管理库存位置",
     "can-manage-users2teams": "可以管理团队中用户",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "请稍候…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "等级",
     "read-release-notes": "Read release notes",
     "readonly": "只读",
@@ -157,7 +158,7 @@ const t = {
     "team": "团队",
     "teams": "团队",
     "template-title": "模板标题",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "标题",

@@ -16,20 +16,17 @@ use Elabftw\Enums\DisplayMode;
 use Elabftw\Enums\Entrypoint;
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Orderby;
-use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\PdfFormat;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\ThemeVariant;
+use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Config;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
-use Elabftw\Services\PasswordValidator;
 use Override;
 
 use function mb_substr;
-use function password_hash;
 use function preg_match;
 use function str_replace;
 use function strlen;
@@ -41,10 +38,11 @@ final class UserParams extends ContentParams
     {
         return match ($this->target) {
             // checked in update
-            'email' => Filter::sanitizeEmail($this->asString()),
-            'firstname', 'lastname' => Filter::toPureString($this->asString()),
-            'orgid' => $this->content,
-            'valid_until' => (
+            UsersColumn::Email->value => Filter::sanitizeEmail($this->asString()),
+            UsersColumn::Firstname->value,
+            UsersColumn::Lastname->value => Filter::toPureString($this->asString()),
+            UsersColumn::Orgid->value => $this->content,
+            UsersColumn::ValidUntil->value => (
                 function () {
                     // clicking the little cross on the input will send an empty string, so set a date far in the future instead
                     if (empty($this->content)) {
@@ -53,56 +51,59 @@ final class UserParams extends ContentParams
                     return $this->content;
                 }
             )(),
-            // return the hash of the password
-            'password' => $this->validateAndHashPassword($this->asString()),
-            'orcid' => $this->filterOrcid($this->asString()),
-            'limit_nb' => (string) Check::limit($this->asInt()),
-            'display_mode' => (DisplayMode::tryFrom($this->content) ?? DisplayMode::Normal)->value,
-            'sort' => (Sort::tryFrom($this->content) ?? Sort::Desc)->value,
-            'orderby' => (Orderby::tryFrom($this->content) ?? Orderby::Date)->value,
-            'scope_experiments_templates',
-            'scope_experiments',
-            'scope_events',
-            'scope_items',
-            'scope_items_types',
-            'scope_teamgroups' => (string) (Scope::tryFrom($this->asInt()) ?? Scope::Team)->value,
-            'sc_create', 'sc_favorite', 'sc_todo', 'sc_edit', 'sc_search' => Filter::firstLetter($this->asString()),
-            'always_show_owned',
-            'append_pdfs',
-            'cjk_fonts',
-            'disable_shortcuts',
-            'enforce_exclusive_edit_mode',
-            'inc_files_pdf',
-            'is_sysadmin',
-            'can_manage_users2teams',
-            'can_manage_compounds',
-            'can_manage_inventory_locations',
-            'notif_comment_created_email',
-            'notif_comment_created',
-            'notif_event_deleted_email',
-            'notif_event_deleted',
-            'notif_step_deadline_email',
-            'notif_step_deadline',
-            'notif_user_created_email',
-            'notif_user_created',
-            'notif_user_need_validation_email',
-            'notif_user_need_validation',
-            'pdf_sig',
-            'scheduler_layout',
-            'show_weekends',
-            'uploads_layout',
-            'use_isodate',
-            'use_markdown',
-            'validated' => (string) Filter::toBinary($this->content),
-            'primary_color',
-            'primary_foreground' => Filter::nullableHexColor($this->getNullableString()),
-            'theme_variant' => (ThemeVariant::tryFrom($this->asInt()) ?? ThemeVariant::Auto)->value,
-            'mfa_secret' => $this->getNullableString(),
-            'lang' => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
-            'entrypoint' => (Entrypoint::tryFrom($this->asInt()) ?? Entrypoint::Dashboard)->value,
-            'default_read', 'default_write' => $this->getCanJson(),
-            'default_read_base', 'default_write_base' => $this->getCanBase(),
-            'pdf_format' => (PdfFormat::tryFrom($this->content) ?? PdfFormat::A4)->value,
+            UsersColumn::Orcid->value => $this->filterOrcid($this->asString()),
+            UsersColumn::Limit->value => (string) Check::limit($this->asInt()),
+            UsersColumn::DisplayMode->value => (DisplayMode::tryFrom($this->content) ?? DisplayMode::Normal)->value,
+            UsersColumn::Sort->value => (Sort::tryFrom($this->content) ?? Sort::Desc)->value,
+            UsersColumn::Orderby->value => (Orderby::tryFrom($this->content) ?? Orderby::Date)->value,
+            UsersColumn::ScopeExperimentsTemplates->value,
+            UsersColumn::ScopeExperiments->value,
+            UsersColumn::ScopeEvents->value,
+            UsersColumn::ScopeItems->value,
+            UsersColumn::ScopeItemsTypes->value,
+            UsersColumn::ScopeTeamgroups->value => (string) (Scope::tryFrom($this->asInt()) ?? Scope::Team)->value,
+            UsersColumn::ScCreate->value,
+            UsersColumn::ScFavorite->value,
+            UsersColumn::ScTodo->value,
+            UsersColumn::ScEdit->value,
+            UsersColumn::ScSearch->value => Filter::firstLetter($this->asString()),
+            UsersColumn::AlwaysShowOwned->value,
+            UsersColumn::AppendPdfs->value,
+            UsersColumn::CjkFonts->value,
+            UsersColumn::DisableShortcuts->value,
+            UsersColumn::IncFilesPdf->value,
+            UsersColumn::IsSysadmin->value,
+            UsersColumn::CanManageUsers2teams->value,
+            UsersColumn::CanManageCompounds->value,
+            UsersColumn::CanManageInventoryLocations->value,
+            UsersColumn::NotifCommentCreatedEmail->value,
+            UsersColumn::NotifCommentCreated->value,
+            UsersColumn::NotifEventDeletedEmail->value,
+            UsersColumn::NotifEventDeleted->value,
+            UsersColumn::NotifStepDeadlineEmail->value,
+            UsersColumn::NotifStepDeadline->value,
+            UsersColumn::NotifUserCreatedEmail->value,
+            UsersColumn::NotifUserCreated->value,
+            UsersColumn::NotifUserNeedValidationEmail->value,
+            UsersColumn::NotifUserNeedValidation->value,
+            UsersColumn::PdfSignature->value,
+            UsersColumn::SchedulerLayout->value,
+            UsersColumn::ShowWeekends->value,
+            UsersColumn::UploadsLayout->value,
+            UsersColumn::UseIsodate->value,
+            UsersColumn::UseMarkdown->value,
+            UsersColumn::Validated->value => (string) Filter::toBinary($this->content),
+            UsersColumn::PrimaryBg->value,
+            UsersColumn::PrimaryFg->value => Filter::nullableHexColor($this->getNullableString()),
+            UsersColumn::ThemeVariant->value => (ThemeVariant::tryFrom($this->asInt()) ?? ThemeVariant::Auto)->value,
+            UsersColumn::MfaSecret->value => $this->getNullableString(),
+            UsersColumn::Lang->value => (Language::tryFrom($this->content) ?? Language::EnglishGB)->value,
+            UsersColumn::Entrypoint->value => (Entrypoint::tryFrom($this->asInt()) ?? Entrypoint::Dashboard)->value,
+            UsersColumn::DefaultRead->value,
+            UsersColumn::DefaultWrite->value => $this->getCanJson(),
+            UsersColumn::DefaultReadBase->value,
+            UsersColumn::DefaultWriteBase->value => $this->getCanBase(),
+            UsersColumn::PdfFormat->value => (PdfFormat::tryFrom($this->content) ?? PdfFormat::A4)->value,
             default => throw new ImproperActionException('Invalid target for user update.'),
         };
     }
@@ -110,17 +111,6 @@ final class UserParams extends ContentParams
     public function getStringContent(): string
     {
         return (string) $this->getContent();
-    }
-
-    private function validateAndHashPassword(string $password): string
-    {
-        $Config = Config::getConfig();
-        $min = (int) $Config->configArr['min_password_length'];
-        $passwordComplexity = PasswordComplexity::from((int) $Config->configArr['password_complexity_requirement']);
-        $PasswordValidator = new PasswordValidator($min, $passwordComplexity);
-        $PasswordValidator->validate($password);
-
-        return password_hash($password, PASSWORD_DEFAULT);
     }
 
     private function filterOrcid(string $input): string

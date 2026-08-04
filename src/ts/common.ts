@@ -41,6 +41,7 @@ import {
   initPermissionsTomSelects,
   PERMISSION_SELECT_IDS,
   reloadEntitiesShow,
+  getInput,
 } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
@@ -213,6 +214,13 @@ on('set-theme', (el: HTMLElement) => {
     applyTheme(targetTheme);
     updateThemeControls(targetTheme);
     document.cookie = [`theme_variant=${targetTheme}`, 'Path=/', 'Max-Age=31536000', 'SameSite=Lax', 'Secure'].join('; ');
+    const styles = getComputedStyle(document.documentElement);
+    const primaryBg = styles.getPropertyValue('--primary');
+    const primaryFg = styles.getPropertyValue('--primary-fg');
+
+    // also set the value of inputs in appearance when theme changes page
+    getInput('primaryColorInput').value = primaryBg;
+    getInput('primaryForegroundInput').value = primaryFg;
   });
 });
 
@@ -221,10 +229,6 @@ const target = document.getElementById('primary-color-picker');
 if (target) {
   mount(PrimaryColorPicker, {
     target,
-    props: {
-      initialPrimaryColor: target.dataset.primaryColor ?? '#0f94fd',
-      initialPrimaryForeground: target.dataset.primaryForeground ?? '#ffffff',
-    },
   });
 }
 

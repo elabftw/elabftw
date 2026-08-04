@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA (二要素認証)",
+    "accessibility": "Accessibility",
     "action": "アクション",
     "add": "追加",
     "add-compound": "化合物を追加する",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "アーカイブユーザー",
     "archive-user-description": "ユーザーをアーカイブすると、そのユーザーのアカウントは無効になります。この操作は元に戻すことができます。",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "化合物の管理が可能",
     "can-manage-inventory-locations": "在庫ロケーションの管理が可能",
     "can-manage-users2teams": "ユーザーをチーム単位で管理可能",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "お待ちください…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "評価",
     "read-release-notes": "Read release notes",
     "readonly": "Read-only",
@@ -157,7 +158,7 @@ const t = {
     "team": "チーム",
     "teams": "チーム",
     "template-title": "テンプレートタイトル",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "タイトル",

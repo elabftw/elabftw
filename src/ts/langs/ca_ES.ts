@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Acció",
     "add": "Afegeix",
     "add-compound": "Afegir compost",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Usuari actiu",
     "archive-user-description": "Arxivar un usuari significa que el seu compte es desactivarà. Aquesta acció és reversible.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Pot regitionar components",
     "can-manage-inventory-locations": "Pot gestionar ubicació d'inventari",
     "can-manage-users2teams": "Pot gestionar usuaris a equips",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Espereu...",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Puntuació",
     "read-release-notes": "Read release notes",
     "readonly": "Llegeix només",
@@ -157,7 +158,7 @@ const t = {
     "team": "Equip",
     "teams": "Equips",
     "template-title": "Títol de la plantilla",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Títol",

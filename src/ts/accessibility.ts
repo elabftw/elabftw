@@ -29,8 +29,8 @@ const luminance = (hex: string): number => {
 };
 
 export const getContrastResult = (
-  foreground: string,
   background: string,
+  foreground: string,
 ): ContrastResult => {
   const l1 = luminance(foreground);
   const l2 = luminance(background);

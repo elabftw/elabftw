@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Azione",
     "add": "Aggiungi",
     "add-compound": "Aggiungi composto",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Archivia utente",
     "archive-user-description": "Archiviare un utente significa che il suo account verrà disabilitato. Questa azione è reversibile.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Può gestire i composti",
     "can-manage-inventory-locations": "Può gestire le posizioni dell'inventario",
     "can-manage-users2teams": "Può gestire gli utenti in team",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Attendere, prego…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Valutazione",
     "read-release-notes": "Read release notes",
     "readonly": "Sola lettura",
@@ -157,7 +158,7 @@ const t = {
     "team": "Team",
     "teams": "Team",
     "template-title": "Titolo del Modello",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Titolo",

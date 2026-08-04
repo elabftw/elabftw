@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Действие",
     "add": "Добавить",
     "add-compound": "Добавить соединение",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Пользователь в архиве",
     "archive-user-description": "Архивирование пользователя означает, что его учетная запись будет отключена. Это действие обратимо.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Пожалуйста, подождите…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Рейтинг",
     "read-release-notes": "Read release notes",
     "readonly": "Только чтение",
@@ -157,7 +158,7 @@ const t = {
     "team": "Команда",
     "teams": "Команды",
     "template-title": "Название шаблона",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Заголовок",

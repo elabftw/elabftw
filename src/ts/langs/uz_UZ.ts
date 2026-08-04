@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Harakat",
     "add": "Qo'shish",
     "add-compound": "Murakkab qo'shing",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Arxiv foydalanuvchisi",
     "archive-user-description": "Foydalanuvchini arxivlash uning hisobi o'chirilishini anglatadi. Bu harakat qaytarilishi mumkin.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Iltimos kuting…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Reyting",
     "read-release-notes": "Read release notes",
     "readonly": "Faqat o'qish",
@@ -157,7 +158,7 @@ const t = {
     "team": "Jamoa",
     "teams": "Jamoalar",
     "template-title": "Shablon sarlavhasi",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Sarlavha",

@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Action",
     "add": "Ajouter",
     "add-compound": "Ajouter un composé",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Archiver utilisateur",
     "archive-user-description": "L'archivage d'un utilisateur signifie que son compte sera désactivé. Cette action est réversible.",
     "association-date": "Date de création de l'association",
+    "background-color": "Background color",
     "can-manage-compounds": "Peut gérer la base de composés chimiques",
     "can-manage-inventory-locations": "Peut gérer les emplacements des stocks",
     "can-manage-users2teams": "Peut gérer les utilisateurs en équipes",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Nom de l'organisation",
     "please-wait": "Patientez…",
     "preview": "Aperçu",
-    "primary-color": "Primary color",
     "rating": "Note",
     "read-release-notes": "Lire les notes de mise à jour",
     "readonly": "Lecture seule",
@@ -157,7 +158,7 @@ const t = {
     "team": "Équipe",
     "teams": "Équipes",
     "template-title": "Titre du modèle",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Est horodaté",
     "timestamped-by": "Horodaté par",
     "title": "Titre",

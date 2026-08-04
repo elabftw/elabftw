@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Ενέργεια",
     "add": "Προσθήκη",
     "add-compound": "Προσθήκη ένωσης",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Αρχειοθέτηση χρήστη",
     "archive-user-description": "Η αρχειοθέτηση ενός χρήστη σημαίνει ότι ο λογαριασμός του θα απενεργοποιηθεί. Αυτή η ενέργεια είναι αναστρέψιμη.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Παρακαλώ περιμένετε",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Αξιολόγηση",
     "read-release-notes": "Read release notes",
     "readonly": "Μόνο για ανάγνωση",
@@ -157,7 +158,7 @@ const t = {
     "team": "Ομάδα",
     "teams": "Ομάδες",
     "template-title": "Τίτλος προτύπου",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Τίτλος",

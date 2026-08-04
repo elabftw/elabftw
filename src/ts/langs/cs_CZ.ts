@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Akce",
     "add": "Přidat",
     "add-compound": "Přidat sloučeninu",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Archivovat uživatele",
     "archive-user-description": "Archivace uživatele znamená, že jeho účet bude deaktivován. Tato akce je vratná.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Počkejte prosím…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Hodnocení",
     "read-release-notes": "Read release notes",
     "readonly": "Pouze pro čtení",
@@ -157,7 +158,7 @@ const t = {
     "team": "Tým",
     "teams": "Týmy",
     "template-title": "Název šablony",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Nadpis",

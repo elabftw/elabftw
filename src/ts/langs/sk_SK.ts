@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Akcia",
     "add": "Pridať",
     "add-compound": "Pridajte zlúčeninu",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Zálohuj užívateľa",
     "archive-user-description": "Archivácia používateľa znamená, že jeho účet bude deaktivovaný. Táto akcia je reverzibilná.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Prosím počkajte…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Hodnotenie",
     "read-release-notes": "Read release notes",
     "readonly": "Iba na čítanie",
@@ -157,7 +158,7 @@ const t = {
     "team": "Tím",
     "teams": "Timy",
     "template-title": "Názov šablóny",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Nadpis",

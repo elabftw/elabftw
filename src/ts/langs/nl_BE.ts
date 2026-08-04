@@ -3,6 +3,7 @@
 const t = {
   translation: {
     "2FA": "2FA",
+    "accessibility": "Accessibility",
     "action": "Actie",
     "add": "Voeg toe",
     "add-compound": "Voeg samenstelling toe",
@@ -14,6 +15,7 @@ const t = {
     "archive-user": "Archiveer gebruiker",
     "archive-user-description": "Het archiveren van een gebruiker betekent dat zijn/haar account wordt uitgeschakeld. Deze actie is omkeerbaar.",
     "association-date": "Association date",
+    "background-color": "Background color",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",
@@ -117,7 +119,6 @@ const t = {
     "organisation-name": "Organisation name",
     "please-wait": "Gelieve te wachten…",
     "preview": "Preview",
-    "primary-color": "Primary color",
     "rating": "Beoordeling",
     "read-release-notes": "Read release notes",
     "readonly": "Alleen lezen",
@@ -157,7 +158,7 @@ const t = {
     "team": "Team",
     "teams": "Teams",
     "template-title": "Sjabloon titel",
-    "text-color-primary": "Text color on primary elements",
+    "text-color": "Text color",
     "is-timestamped": "Is timestamped",
     "timestamped-by": "Timestamped by",
     "title": "Titel",

@@ -124,13 +124,13 @@ if (window.location.pathname === '/profile.php') {
     } else {
       templateSelect.tomselect?.disable();
     }
+    categorySelect.tomselect?.setValue('null', true);
     templateSelect.tomselect?.setValue('null', true);
     await populateSelect(templateSelect, templateType);
 
     // categories select
     selectCategoryDiv.hidden = ['items_types', 'null'].includes(el.value);
     if (selectCategoryDiv.hidden) return;
-    categorySelect.tomselect?.setValue('null', true);
     const categoryTypes: Record<string, string> = {
       experiments_templates: 'experiments',
       items: 'resources',

@@ -135,7 +135,7 @@ If you wish to include tags during the import, add a `tags` column and separate 
 - `tags` are added as tags and must be separated by `|`.
 - `location` creates or reuses a Resource storage path. Separate its levels with `/`, for example `Building C / Floor 2 / Freezer 4`.
 - `quantity` and `unit` set the amount stored at the location, for example `25` and `mL`.
-- `canread`, `canwrite`, and `canbook` contain permissions in eLabFTW JSON format.
+- `canread` and `canwrite` contain permissions in eLabFTW JSON format.
 - `rating`, when present, must be a value from 0 to 5.
 
 All other columns are imported as Extra Fields. Values that are valid URLs are created as URL fields; other values are created as Text fields.

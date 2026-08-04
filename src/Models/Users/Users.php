@@ -30,6 +30,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Hash\LocalPasswordHash;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
@@ -870,12 +871,11 @@ class Users extends AbstractRest
         // when updating the password, we need to check for the presence and validity of the current_password
         // special case for password: we invalidate the stored token
         $this->invalidateToken();
-        // this will properly hash the password
-        $params = new UserParams('password', $params['password']);
+        $passwordHash = new LocalPasswordHash($params['password'])->getHash();
         // don't use the update() function so it cannot be bypassed by setting Action::Update instead of Action::UpdatePassword
         $sql = 'UPDATE users SET password_hash = :content, password_modified_at = NOW() WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
+        $req->bindValue(':content', $passwordHash);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $res = $this->Db->execute($req);
         AuditLogs::create(new PasswordChanged(

@@ -24,6 +24,7 @@ use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Hash\LocalPasswordHash;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Branding;
@@ -505,7 +506,7 @@ final class Populate
         if ($password === 'random') {
             $password = bin2hex(random_bytes(24));
         }
-        $passwordHash = new UserParams('password', $password)->getStringContent();
+        $passwordHash = new LocalPasswordHash($password)->getHash() ?? self::DEFAULT_PASSWORD;
         // use yopmail.com instead of safeEmail() so we don't hard bounce on example.tld domains when testing mass emails
         $email = $user['email'] ?? sprintf('%s-%d@yopmail.com', $this->faker->word, $this->faker->randomNumber(8));
 

@@ -7,17 +7,22 @@
  */
 import { ApiC } from './api';
 import { notify } from './notify';
-import { collectForm, reloadElements } from './misc';
+import { collectForm, rebuildTomSelectOptions, reloadElements, TomSelect } from './misc';
 import i18next from './i18n';
 import { on } from './handlers';
 
+type TomSelectElement = HTMLSelectElement & { tomselect?: TomSelect };
+
 // populate selects for category/templates when importing csv
-const populateSelect = async (select: HTMLSelectElement, endpoint?: string): Promise<void> => {
+const populateSelect = async (select: TomSelectElement, endpoint?: string): Promise<void> => {
   // remove all options except the first one ("Do not use ...")
   for (let i = select.options.length - 1; i >= 1; i--) {
     select.remove(i);
   }
-  if (!endpoint) return;
+  if (!endpoint) {
+    rebuildTomSelectOptions(select);
+    return;
+  }
   const entries = await ApiC.getJson(endpoint);
   entries.forEach(entry => {
     const newOption = document.createElement('option');
@@ -25,9 +30,19 @@ const populateSelect = async (select: HTMLSelectElement, endpoint?: string): Pro
     newOption.text = entry.title;
     select.add(newOption);
   });
+  rebuildTomSelectOptions(select);
 };
 
 if (window.location.pathname === '/profile.php') {
+  ['importSelectTemplate', 'importSelectCategory', 'importSelectOwner'].forEach(id => {
+    const select = document.getElementById(id) as HTMLSelectElement | null;
+    if (select) {
+      new TomSelect(select, {
+        plugins: ['dropdown_input', 'no_active_items'],
+      });
+    }
+  });
+
   // we use a normal button to trigger the actual file input
   on('show-file-input', () => document.getElementById('importFileInput').click());
 
@@ -92,8 +107,8 @@ if (window.location.pathname === '/profile.php') {
     const el = event.target as HTMLInputElement;
     const selectCategoryDiv = document.getElementById('selectCategoryDiv') as HTMLElement;
     const selectTemplateDiv = document.getElementById('selectTemplateDiv') as HTMLElement;
-    const categorySelect = document.getElementById('importSelectCategory') as HTMLSelectElement;
-    const templateSelect = document.getElementById('importSelectTemplate') as HTMLSelectElement;
+    const categorySelect = document.getElementById('importSelectCategory') as TomSelectElement;
+    const templateSelect = document.getElementById('importSelectTemplate') as TomSelectElement;
 
     // template select
     const templateTypes: Record<string, string> = {
@@ -104,12 +119,18 @@ if (window.location.pathname === '/profile.php') {
     const supportsTemplate = templateType !== undefined;
     selectTemplateDiv.hidden = !supportsTemplate;
     templateSelect.disabled = !supportsTemplate;
-    templateSelect.value = 'null';
+    if (supportsTemplate) {
+      templateSelect.tomselect?.enable();
+    } else {
+      templateSelect.tomselect?.disable();
+    }
+    templateSelect.tomselect?.setValue('null', true);
     await populateSelect(templateSelect, templateType);
 
     // categories select
     selectCategoryDiv.hidden = ['items_types', 'null'].includes(el.value);
     if (selectCategoryDiv.hidden) return;
+    categorySelect.tomselect?.setValue('null', true);
     const categoryTypes: Record<string, string> = {
       experiments_templates: 'experiments',
       items: 'resources',

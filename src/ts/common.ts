@@ -76,7 +76,7 @@ import Tab from './Tab.class';
 import { core } from './core';
 import { get as getFromSvelte } from 'svelte/store';
 import { writable } from 'svelte/store';
-import { applyTheme, updateThemeControls } from './theme';
+import { applyTheme, isThemeVariant, updateThemeControls } from './theme';
 import { mount } from 'svelte';
 import PrimaryColorPicker from './components/PrimaryColorPicker.svelte';
 
@@ -207,7 +207,7 @@ const container = document.getElementById('container')!;
 
 on('set-theme', (el: HTMLElement) => {
   const targetTheme = Number.parseInt(el.dataset.themeVariant ?? '', 10);
-  if (![0, 1, 2, 3].includes(targetTheme)) {
+  if (!isThemeVariant(targetTheme)) {
     return;
   }
   ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {

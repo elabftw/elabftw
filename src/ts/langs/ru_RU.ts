@@ -130,7 +130,7 @@ const t = {
     "replace-edited-file": "Вы хотите заменить файл на сервере этим редактированием?",
     "replace-existing": "Overwrite original file",
     "request-filename": "Введите имя файла",
-    "reset": "Перезагрузить",
+    "reset": "Сбросить",
     "resource-not-found": "С этим id ничего нет",
     "revisions-error": "Select two revisions to compare them.",
     "ror-description": "These RORs apply to the whole instance and are inherited by all teams.",

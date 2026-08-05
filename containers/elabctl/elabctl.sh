@@ -466,28 +466,45 @@ function mysql
 }
 
 # create a mysqldump and remove old backups
-function mysql-backup
-{
-    if ! ls -A "${BACKUP_DIR}" > /dev/null 2>&1; then
-        mkdir -pv "${BACKUP_DIR}"
+function mysql-backup {
+  if ! ls -A "${BACKUP_DIR}" >/dev/null 2>&1; then
+    mkdir -pv "${BACKUP_DIR}"
+    if [ $? -eq 1 ]; then
+      sudo mkdir -pv ${BACKUP_DIR}
     fi
+  fi
 
-    set -e
+  set -e
 
-    # get clean date
-    local -r date=$(date +%Y-%m-%d_%H-%M-%S) # 2016-02-10_20-12-45
-    local -r dumpfile="${BACKUP_DIR}/mysql_dump-${date}.sql"
+  # get clean date
+  local -r date=$(date +%Y-%m-%d_%H-%M-%S) # 2016-02-10_20-12-45
+  local -r dumpfile="${BACKUP_DIR}/mysql_dump-${date}.sql"
 
-    # dump sql
-    docker exec "${ELAB_MYSQL_CONTAINER_NAME}" bash -c 'mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD -r dump.sql --no-tablespaces $MYSQL_DATABASE 2>&1 | grep -vF "[Warning] Using a password"' || echo ">> Containers must be running to do the backup!"
+  # dump sql
+  # only consider the exit code of mysqldump for the next step (docker cp) and not the grep
+  if docker exec "${ELAB_MYSQL_CONTAINER_NAME}" bash -c '
+      mysqldump \
+        -u"$MYSQL_USER" \
+        -p"$MYSQL_PASSWORD" \
+        -r dump.sql \
+        --no-tablespaces \
+        "$MYSQL_DATABASE" 2>&1 |
+        grep -vF "[Warning] Using a password"
+   
+    statuses=("${PIPESTATUS[@]}")
+    (( statuses[0] == 0 && statuses[1] <= 1 ))
+    '; then
     # copy it from the container to the host
-    docker cp "${ELAB_MYSQL_CONTAINER_NAME}:dump.sql" "$dumpfile" && docker exec "${ELAB_MYSQL_CONTAINER_NAME} rm dump.sql"
-    # compress it to the max
-    gzip -f --best "$dumpfile"
-    # delete old dumps
-    if [[ "${DUMP_DELETE_DAYS}" != "disabled" ]]; then
-        find ${BACKUP_DIR} -mindepth 1 -name '*.sql.gz' -ctime ${DUMP_DELETE_DAYS} -delete
-    fi
+    docker cp "${ELAB_MYSQL_CONTAINER_NAME}:dump.sql" "$dumpfile" && docker exec "${ELAB_MYSQL_CONTAINER_NAME}" rm dump.sql
+  else
+    echo ">> Containers must be running to do the backup!" >&2
+  fi
+  # compress it to the max
+  gzip -f --best "$dumpfile"
+  # delete old dumps
+  if [[ "${DUMP_DELETE_DAYS}" != "disabled" ]]; then
+    find ${BACKUP_DIR} -mindepth 1 -name '*.sql.gz' -ctime ${DUMP_DELETE_DAYS} -delete
+  fi
 }
 
 function refresh

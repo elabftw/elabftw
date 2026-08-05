@@ -40,6 +40,11 @@
     .far,
     .fa { color: var(--strongest); }
   }
+
+  &:disabled,
+  &.disabled {
+    background-color: var(--primary);
+  }
 }
 
 .btn-primary:active,

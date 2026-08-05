@@ -44,6 +44,7 @@
   &:disabled,
   &.disabled {
     background-color: var(--primary);
+    color: var(--primary-fg);
   }
 }
 

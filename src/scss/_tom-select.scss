@@ -12,7 +12,7 @@
 @include meta.load-css('tom-select/dist/css/tom-select.bootstrap4');
 
 .ts-control .item {
-  background-color: var(--superlight);
+  background-color: var(--firstlevel);
   border-radius: 0.18rem;
   color: var(--strongest);
   white-space: nowrap;
@@ -57,6 +57,11 @@
   color: var(--mediumstrong);
 }
 
+// background for ts inputs when active (e.g., selecting tags, team...)
+.ts-wrapper.single.input-active .ts-control {
+  background: var(--white);
+}
+
 .ts-dropdown {
   min-width: 200px;
 
@@ -85,7 +90,7 @@
 
       // when there's multiple items, e.g., tags filter in show page
       .item {
-        background-color: var(--superlight);
+        background-color: var(--firstlevel);
         color: var(--strongest);
       }
 

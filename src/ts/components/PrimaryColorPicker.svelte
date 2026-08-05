@@ -76,7 +76,7 @@
   </div>
   <hr>
   <p class='mb-2'>{t('accessibility')}</p>
-  <p class={`small mt-2 ${contrast.className}`}>
+  <p class={contrast.className}>
     {contrast.icon} {contrast.level} ({contrast.description}) • {contrast.ratio.toFixed(1)}:1
   </p>
 

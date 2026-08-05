@@ -1170,3 +1170,48 @@ export const DEFAULT_AG_GRID_PAGINATION = {
   paginationPageSize: 100,
   paginationPageSizeSelector: [100, 250, 500],
 };
+
+// account creation: password checks indicator
+// Get the password input and requirements checklist
+const password = getInput('password');
+const checklist = getSafeElementById('password-requirements');
+
+if (password && checklist) {
+  // define the validation function for each password requirement
+  const rules: Record<string, (value: string) => boolean> = {
+    // check the configured minimum password length
+    length: value => Array.from(value).length >= Number(password.dataset.minLength),
+    // require upper and lower case letters, or a letter without case
+    letters: value =>
+      (/\p{Ll}/u.test(value) && /\p{Lu}/u.test(value))
+      || /\p{Lo}/u.test(value),
+    // check for at least one digit
+    digit: value => /\d/u.test(value),
+    // check for at least one punctuation or symbol character
+    special: value => /[\p{P}\p{S}]/u.test(value),
+  };
+
+  // Recheck all requirements whenever the password changes
+  password.addEventListener('input', () => {
+    // find every requirement displayed in the checklist
+    checklist
+      .querySelectorAll<HTMLElement>('[data-password-rule]')
+      .forEach(item => {
+        // and run the validation function associated with this requirement
+        const met = rules[item.dataset.passwordRule!](password.value);
+        // display successful requirements in green & unmet requirements in muted
+        // (not danger or it would also display red on page load)
+        item.classList.toggle('text-success', met);
+        item.classList.toggle('text-muted', !met);
+
+        // find the text showing whether the requirement is met
+        const status = item.querySelector<HTMLElement>('[data-status]');
+        if (status) {
+          // update the requirement with its translated status
+          status.textContent = met
+            ? checklist.dataset.met!
+            : checklist.dataset.notMet!;
+        }
+      });
+  });
+}

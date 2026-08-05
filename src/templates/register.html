@@ -66,11 +66,38 @@
         <div class='row mt-2'>
           <label for='password'>{{ 'Password'|trans }}</label>
           <div class='input-group'>
-            <input name='password' type='password' class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }} {{ passwordInputHelp|e('html_attr') }}' pattern='{{ passwordInputPattern|e('html_attr') }}' id='password' autocomplete='new-password' required />
+            <input name='password' type='password' class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' pattern='{{ passwordInputPattern|e('html_attr') }}' data-min-length='{{ App.Config.configArr.min_password_length }}' id='password' autocomplete='new-password' aria-describedby='password-requirements' required />
             <div class='input-group-append'>
               <button type='button' class='btn btn-ghost' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
             </div>
           </div>
+          <ul id='password-requirements' class='small text-left mt-2 pl-3' data-met='{{ 'Met'|trans }}' data-not-met='{{ 'Not met'|trans }}'>
+            <li data-password-rule='length'>
+              {{ 'At least %d characters'|trans|format(App.Config.configArr.min_password_length) }}
+              (<span data-status>{{ 'Not met'|trans }}</span>)
+            </li>
+
+            {% if App.Config.configArr.password_complexity_requirement >= 10 %}
+              <li data-password-rule='letters'>
+                {{ 'At least one uppercase and one lowercase letter'|trans }}
+                (<span data-status>{{ 'Not met'|trans }}</span>)
+              </li>
+            {% endif %}
+
+            {% if App.Config.configArr.password_complexity_requirement >= 20 %}
+              <li data-password-rule='digit'>
+                {{ 'At least one digit'|trans }}
+                (<span data-status>{{ 'Not met'|trans }}</span>)
+              </li>
+            {% endif %}
+
+            {% if App.Config.configArr.password_complexity_requirement >= 30 %}
+              <li data-password-rule='special'>
+                {{ 'At least one special character'|trans }}
+                (<span data-status>{{ 'Not met'|trans }}</span>)
+              </li>
+            {% endif %}
+          </ul>
         </div>
 
         {# FIRSTNAME #}

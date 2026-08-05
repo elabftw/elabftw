@@ -771,11 +771,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
       return;
     }
-    (el as HTMLButtonElement).disabled = true;
     const ajaxs: Promise<unknown>[] = [];
     const form = document.getElementById('multiChangesForm');
-    const params = collectForm(form);
     clearForm(form);
+    let params: object;
+    try {
+      params = collectForm(form);
+    } catch {
+      // collectForm reports the invalid field to the user already
+      return;
+    }
+    (el as HTMLButtonElement).disabled = true;
     checked.forEach(chk => {
       const paramsCopy = Object.assign({}, params, { notifOnSaved: 0 });
       // they do not have all the same endpoint: handle tags and links the generic patch method
@@ -813,6 +819,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       document.getElementById('withSelected')?.setAttribute('hidden', 'hidden');
       document.querySelector('a[data-action="invert-entities-selection"]')?.setAttribute('hidden', 'hidden');
+      const selectAll = document.querySelector<HTMLElement>('[data-action="toggle-select-all-entities"]');
+      if (selectAll && selectAll.dataset.target === 'unselect') {
+        selectAll.dataset.target = 'select';
+        selectAll.querySelector('i')?.classList.replace('fa-square-check', 'fa-square');
+      }
     }
   });
 
@@ -908,8 +919,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const icon = el.querySelector('i');
     icon.classList.toggle('fa-square');
     icon.classList.toggle('fa-square-check');
-    el.nextElementSibling.removeAttribute('hidden');
     syncSelectedEntitiesFromDom();
+    const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]');
+    if (get(selectedEntities).length > 0) {
+      invertSelections?.removeAttribute('hidden');
+    } else {
+      invertSelections?.setAttribute('hidden', 'hidden');
+    }
   });
 
   // INVERT SELECTION

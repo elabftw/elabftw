@@ -35,7 +35,7 @@ class AbstractCategoryTest extends \PHPUnit\Framework\TestCase
     {
         $title = 'Idempotent category ' . bin2hex(random_bytes(8));
 
-        $id = $this->Category->getIdempotentIdFromTitle($title, '#29AEB9');
+        $id = $this->Category->getIdempotentIdFromTitle($title, '#29aeb9');
 
         $this->assertIsInt($id);
 
@@ -50,7 +50,7 @@ class AbstractCategoryTest extends \PHPUnit\Framework\TestCase
     {
         $title = 'Existing idempotent category ' . bin2hex(random_bytes(8));
 
-        $firstId = $this->Category->getIdempotentIdFromTitle($title, '#29AEB9');
+        $firstId = $this->Category->getIdempotentIdFromTitle($title, '#29aeb9');
         $secondId = $this->Category->getIdempotentIdFromTitle($title, '#121212');
 
         $this->assertSame($firstId, $secondId);
@@ -74,7 +74,7 @@ class AbstractCategoryTest extends \PHPUnit\Framework\TestCase
 
         $Category->postAction(Action::Create, array(
             'title' => 'Forbidden category',
-            'color' => '#29AEB9',
+            'color' => '#29aeb9',
         ));
     }
 

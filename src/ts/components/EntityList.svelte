@@ -597,7 +597,6 @@
             data-id={entity.id}
             data-randomid={bodyId}
             data-type={entityType}
-            data-state={entity.state ?? ''}
             aria-label={t('Select')}
             class='mr-3'
           />

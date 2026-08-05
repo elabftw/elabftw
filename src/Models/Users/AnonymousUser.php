@@ -40,6 +40,8 @@ final class AnonymousUser extends Users
         $this->userData['limit_nb'] = 15;
         $this->userData['display_mode'] = 'it';
         $this->userData['theme_variant'] = 0;
+        $this->userData['primary_bg'] = null;
+        $this->userData['primary_fg'] = null;
         $this->userData['orderby'] = 'lastchange';
         $this->userData['sort'] = 'desc';
         $this->userData['disable_shortcuts'] = 1;
@@ -61,7 +63,6 @@ final class AnonymousUser extends Users
         // U+2609 Sun character does the job
         $this->userData['initials'] = '☉';
         $this->userData['show_weekends'] = 0;
-        $this->userData['enforce_exclusive_edit_mode'] = 0;
         $this->userData['scheduler_layout'] = 0;
         $this->userData['validated'] = 1;
         $this->userData['can_manage_users2teams'] = 0;

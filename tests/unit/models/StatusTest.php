@@ -33,7 +33,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
     public function testCreate(): void
     {
         $title = 'New status';
-        $color = '#29AEB9';
+        $color = '#29aeb9';
         $new = $this->Status->postAction(Action::Create, array('name' => $title, 'color' => $color));
         $this->assertIsInt($new);
         $this->Status->setId($new);
@@ -50,7 +50,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdate(): void
     {
-        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9', 'is_private' => 0));
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29aeb9', 'is_private' => 0));
         $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $status = $Status->patch(Action::Update, array('title' => 'Updated', 'color' => '#121212'));
         $this->assertEquals('Updated', $status['title']);
@@ -59,7 +59,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testDestroy(): void
     {
-        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29aeb9'));
         $Status = new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id);
         $this->assertTrue($Status->destroy());
         $this->assertTrue($this->Status->destroy());
@@ -67,7 +67,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testCannotReadStatusFromAnotherTeamThroughCurrentTeam(): void
     {
-        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29aeb9'));
         $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2), 2), $id);
         $this->expectException(ResourceNotFoundException::class);
         $otherStatus->readOne();
@@ -83,7 +83,7 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateNonAccessibleStatusThroughCurrentTeam(): void
     {
-        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29AEB9'));
+        $id = $this->Status->postAction(Action::Create, array('title' => 'Yop', 'color' => '#29aeb9'));
         $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2), 2), $id);
         $this->expectException(ResourceNotFoundException::class);
         $otherStatus->patch(Action::Update, array('title' => 'Coucou'));

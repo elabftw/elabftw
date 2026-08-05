@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Usergroup;
@@ -316,9 +317,9 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         // force admin validation so we can run all code paths
         $this->Config->patch(Action::Update, array('admin_validate' => 1));
-        $this->assertIsInt($this->Users->createOne('blahblah@yop.fr', array('Bravo'), 'blah', 'yop', 'somePassword!', Usergroup::Admin, false, false));
+        $this->assertIsInt($this->Users->createOne('blahblah@yop.fr', array('Bravo'), new NullLocalPassword(), 'yep', 'yop', Usergroup::Admin, false, false));
         $this->Config->patch(Action::Update, array('admin_validate' => 0));
-        $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), 'blah2', 'yop', 'somePassword!', Usergroup::Admin, true, false));
+        $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), new NullLocalPassword(), 'yep', 'yop', Usergroup::Admin, true, false));
     }
 
     public function testArchiveWithoutPermission(): void
@@ -351,7 +352,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testDestroy(): void
     {
         $Admin = $this->getUserInTeam(team: 2, admin: 1);
-        $id = $Admin->createOne('testdestroy@a.fr', array('2'), 'Life', 'isShort', 'yololololol', Usergroup::User, false, false);
+        $id = $Admin->createOne('testdestroy@a.fr', array('2'), new NullLocalPassword(), 'Life', 'isShort', Usergroup::User, false, false);
         $Target = new Users($id, 2, $Admin);
         $this->assertTrue($Target->destroy());
     }

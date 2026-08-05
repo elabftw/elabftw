@@ -10,6 +10,7 @@ import { ApiC } from './api';
 import 'bootstrap/js/src/modal.js';
 import {
   getEntityTypeFromPage,
+  getInput,
   toggleIcon,
 } from './misc';
 import i18next from './i18n';
@@ -134,9 +135,9 @@ on('toggle-create-modal', async (el: HTMLElement) => {
   setTypeRadio(entityType);
   if (el.dataset.getCompoundIdFrom) {
     const compoundId = (document.getElementById(el.dataset.getCompoundIdFrom) as HTMLElement).dataset.compoundId;
-    (document.getElementById('createNewCompoundInput') as HTMLInputElement).value = compoundId;
+    getInput('createNewCompoundInput').value = compoundId;
     const compound = await ApiC.getJson(`${Model.Compounds}/${compoundId}`);
-    (document.getElementById('createNewFormTitle') as HTMLInputElement).value = compound.name;
+    getInput('createNewFormTitle').value = compound.name;
     $('#editCompoundModal').modal('hide');
   }
 

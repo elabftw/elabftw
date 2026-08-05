@@ -287,4 +287,12 @@ final class Filter
         // Remove all whitespace (newlines, spaces, tabs)
         return str_replace(array("\r", "\n", ' ', "\t"), '', $pem ?? '');
     }
+
+    public static function nullableHexColor(?string $input): ?string
+    {
+        if ($input === null || $input === '') {
+            return null;
+        }
+        return Check::color($input);
+    }
 }

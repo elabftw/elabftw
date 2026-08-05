@@ -479,7 +479,7 @@ function mysql-backup
     local -r dumpfile="${BACKUP_DIR}/mysql_dump-${date}.sql"
 
     # dump sql
-    docker exec "${ELAB_MYSQL_CONTAINER_NAME}" bash -c 'mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD -r dump.sql --no-tablespaces $MYSQL_DATABASE 2>&1 | grep -v "Warning: Using a password"' || echo ">> Containers must be running to do the backup!"
+    docker exec "${ELAB_MYSQL_CONTAINER_NAME}" bash -c 'mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD -r dump.sql --no-tablespaces $MYSQL_DATABASE 2>&1 | grep -vF "[Warning] Using a password"' || echo ">> Containers must be running to do the backup!"
     # copy it from the container to the host
     docker cp "${ELAB_MYSQL_CONTAINER_NAME}:dump.sql" "$dumpfile" && docker exec "${ELAB_MYSQL_CONTAINER_NAME} rm dump.sql"
     # compress it to the max

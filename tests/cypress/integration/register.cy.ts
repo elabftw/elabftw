@@ -25,4 +25,15 @@ describe('Register new user', () => {
 
     cy.get('div.alert.alert-danger').should('contain', 'Sorry, you are not allowed to perform that action.');
   });
+
+  it('marks password requirements as met', () => {
+    cy.visit('/register.php');
+    cy.get('#password').type('Cypress1!cypress');
+
+    cy.get('#password-requirements li').each(requirement => {
+      cy.wrap(requirement)
+        .should('contain.text', 'Met')
+        .and('have.class', 'text-success');
+    });
+  });
 });

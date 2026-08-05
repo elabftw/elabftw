@@ -30,7 +30,7 @@ import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plu
 import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
 import { mount, unmount } from 'svelte';
 import RorsSv from './components/Rors.svelte';
-import PasswordInput from './components/PasswordInput.svelte';
+import RegisterForm from './components/RegisterForm.svelte';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -1172,25 +1172,14 @@ export const DEFAULT_AG_GRID_PAGINATION = {
   paginationPageSizeSelector: [100, 250, 500],
 };
 
-// account creation: mount the reactive password input
-const passwordTarget = document.getElementById('password-input-component');
+const registerTarget = document.getElementById('register-form-component');
 
-if (passwordTarget) {
-  // preserve input entered or autofilled before Svelte loads
-  const initialPassword =
-    passwordTarget.querySelector<HTMLInputElement>('#password')?.value ?? '';
+if (registerTarget) {
+  // read the data passed by Twig
+  const options = JSON.parse(registerTarget.dataset.options ?? '{}');
 
-  // Replace the fallback without displaying an empty intermediate state
-  passwordTarget.replaceChildren();
-  mount(PasswordInput, {
-    target: passwordTarget,
-    props: {
-      initialPassword,
-      minLength: Number(passwordTarget.dataset.minLength),
-      complexity: Number(passwordTarget.dataset.complexity),
-      pattern: passwordTarget.dataset.pattern ?? '.*',
-      title: passwordTarget.dataset.title ?? '',
-      labelsJson: passwordTarget.dataset.labels ?? '{}',
-    },
+  // replaec loading spinner withthe form
+  registerTarget.replaceChildren();
+  mount(RegisterForm, { target: registerTarget, props: { options },
   });
 }

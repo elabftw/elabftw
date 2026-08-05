@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "Pealkirjata",
     "entity-delete-warning": "Valitud üksus(ed) ja kõik nendega seotud andmed kustutatakse jäädavalt. Seda ei saa tagasi võtta. Kas olete kindel?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified: {{failedIds, string}}",
     "entries-processed": "{{num, number}} kirjet töödeldud",
     "error": "Viga",
     "error-no-filename": "Failinimi puudub.",

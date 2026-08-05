@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "Bez mena",
     "entity-delete-warning": "Vybraté položky a všetky súvisiace údaje sa natrvalo odstránia. To nie je možné vrátiť späť. Si si istý?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified: {{failedIds, string}}",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Chyba",
     "error-no-filename": "File name is missing.",

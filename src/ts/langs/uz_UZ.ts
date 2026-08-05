@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "Sarlavhasiz",
     "entity-delete-warning": "Tanlangan element(lar) va barcha bog‘langan ma’lumotlar butunlay o‘chirib tashlanadi. Buni ortga qaytarib bo‘lmaydi. Ishonchingiz komilmi?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified: {{failedIds, string}}",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Xato",
     "error-no-filename": "File name is missing.",

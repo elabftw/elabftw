@@ -586,6 +586,7 @@
       <section
         class={`entity ${template ? 'entity-template' : ''} pl-3 py-3 d-flex`}
         id={`parent_${bodyId}`}
+        data-entity-id={entity.id}
         style={`--left-color: #${getLeftColor(entity)};`}
         aria-label={`${t('Entry')}_${bodyId}`}
       >

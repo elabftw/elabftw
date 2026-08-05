@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "Tanpa Judul",
     "entity-delete-warning": "Komponen terpilih dan data terkait akan dihapus permanen. Ini tidak dapat dibatalkan. Anda yakin?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified: {{failedIds, string}}",
     "entries-processed": "Entri {{num, number}} telah diproses",
     "error": "Kesalahan",
     "error-no-filename": "Nama file tidak ada.",

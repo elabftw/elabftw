@@ -8,6 +8,8 @@
 import {
   clearForm,
   collectForm,
+  mkSpin,
+  mkSpinStop,
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
@@ -935,20 +937,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // PATCH ACTIONS FOR CHECKED BOXES : lock, unlock, timestamp, archive
   on('patch-selected-entities', (el: HTMLElement) => {
-    // get the item id of all checked boxes
     const checked = get(selectedEntities);
+
     if (checked.length === 0) {
       notify.error('nothing-selected');
       return;
     }
-    const action = <Action>el.dataset.what;
-    const results = checked.map(chk =>
-      ApiC.patch(`${entity.type}/${chk}`, { notifOnSaved: 0, action }),
+
+    const btn = el as HTMLButtonElement;
+    const oldHTML = mkSpin(btn);
+    const action = el.dataset.what as Action;
+
+    const requests = checked.map(id =>
+      ApiC.patch(`${entity.type}/${id}`, {
+        notifOnSaved: 0,
+        notifOnError: 0,
+        action,
+      }),
     );
-    Promise.all(results).then(() => {
-      notify.success();
-      reloadEntitiesShow();
-    });
+
+    Promise.allSettled(requests)
+      .then(results => {
+        const failedIds = results
+          .map((result, index) => result.status === 'rejected' ? checked[index] : null)
+          .filter((id): id is typeof checked[number] => id !== null);
+
+        if (failedIds.length === 0) {
+          notify.success();
+        } else {
+          // set bg red for failed entries
+          for (const id of failedIds) {
+            (document.querySelector(`[data-entity-id="${id}"`) as HTMLElement).style.backgroundColor = 'var(--lightred)';
+          }
+
+          const modifiedCount = checked.length - failedIds.length;
+
+          notify.warning(
+            'entity-patch-multi-warning', {count: modifiedCount, failed: failedIds.length, failedIds: failedIds.join(', ')},
+          );
+        }
+
+        reloadEntitiesShow();
+      })
+      .finally(() => {
+        mkSpinStop(btn, oldHTML);
+      });
   });
   // END ACTION LISTENERS
 

@@ -1,9 +1,17 @@
 <script lang='ts'>
+  /**
+   * @author Nicolas CARPi / Deltablot
+   * @author Moustapha Camara / Deltablot
+   * @copyright 2026 Nicolas CARPi
+   * @see https://www.elabftw.net Official website
+   * @license AGPL-3.0
+   * @package elabftw
+   */
   import type { PasswordLabels, PasswordOptions } from '../interfaces';
   import PasswordInput from "./PasswordInput.svelte";
-  
+
   type Team = { id: number; name: string; };
-  
+
   type RegisterLabels = PasswordLabels & {
     team: string;
     selectTeam: string;
@@ -16,7 +24,7 @@
     allowedDomains: string;
     privacyPolicy: string;
   };
-  
+
   type RegisterOptions = {
     selectedTeam: string | null;
     teams: Team[];
@@ -26,11 +34,11 @@
     password: PasswordOptions;
     labels: RegisterLabels;
   };
-  
+
   let { options } = $props<{ options: RegisterOptions }>();
-  
+
   let showDomains = $state(false);
-  
+
   const passwordLabels: PasswordLabels = {
     length: options.labels.passwordLength,
     letters: options.labels.passwordLetters,
@@ -44,9 +52,9 @@
 
 <form method='post' autocomplete='off' action='app/controllers/RegisterController.php'>
   <input type='hidden' name='bot' value='' />
-  
+
   {@html options.csrf}
-  
+
   <div class='form-group mx-auto col-md-4'>
     <div class='row'>
       {@html '<!-- [html-validate-disable-block valid-for, prefer-native-element: suppress errors from tom-select] -->'}
@@ -62,7 +70,7 @@
         <option value='' selected={!options.selectedTeam} disabled>
           {options.labels.selectTeam}
         </option>
-        
+
         {#each options.teams as team}
           <option
             value={team.id}
@@ -73,10 +81,10 @@
         {/each}
       </select>
     </div>
-    
+
     <div class='row mt-2'>
       <label for='email'>{options.labels.email}</label>
-      
+
       <input
         name='email'
         class='form-control'
@@ -85,7 +93,6 @@
         autocomplete='email'
         required
       />
-      
       {#if options.emailDomain}
         <button
           type='button'
@@ -94,7 +101,6 @@
         >
           {options.labels.showDomains}
         </button>
-        
         {#if showDomains}
           <p class='smallgray'>
             {options.labels.allowedDomains}
@@ -102,20 +108,18 @@
         {/if}
       {/if}
     </div>
-    
+
     <div class='row mt-2'>
       <label for='password'>{options.labels.password}</label>
-      
       <PasswordInput
         required
         options={options.password}
         labels={passwordLabels}
       />
     </div>
-    
+
     <div class='row mt-2'>
       <label for='firstname'>{options.labels.firstname}</label>
-      
       <input
         name='firstname'
         class='form-control'
@@ -125,10 +129,9 @@
         required
       />
     </div>
-    
+
     <div class='row mt-2'>
       <label for='lastname'>{options.labels.lastname}</label>
-      
       <input
         name='lastname'
         class='form-control'
@@ -138,7 +141,7 @@
         required
       />
     </div>
-    
+
     {#if options.hasPrivacyPolicy}
       <div class='row mt-2'>
         <div class='form-group form-check'>
@@ -149,7 +152,6 @@
             id='privacy-policy'
             required
           />
-          
           <label class='form-check-label' for='privacy-policy'>
             {options.labels.privacyPolicy}
             <button
@@ -164,7 +166,6 @@
         </div>
       </div>
     {/if}
-    
     <div class='mt-4 text-center'>
       <button type='submit' name='Submit' class='btn btn-primary'>
         {options.labels.create}

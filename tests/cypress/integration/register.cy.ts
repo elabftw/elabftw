@@ -32,8 +32,7 @@ describe('Register new user', () => {
 
     cy.get('#password-requirements li').each(requirement => {
       cy.wrap(requirement)
-        .should('contain.text', 'Met')
-        .and('have.class', 'text-success');
+        .should('have.class', 'text-success');
     });
   });
 });

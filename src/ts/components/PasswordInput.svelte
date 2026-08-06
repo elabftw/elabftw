@@ -1,4 +1,12 @@
 <script lang='ts'>
+  /**
+   * @author Nicolas CARPi / Deltablot
+   * @author Moustapha Camara / Deltablot
+   * @copyright 2026 Nicolas CARPi
+   * @see https://www.elabftw.net Official website
+   * @license AGPL-3.0
+   * @package elabftw
+   */
   import type { PasswordLabels, PasswordOptions } from '../interfaces';
   let { name = 'password', id = 'password', required = false, options, labels } = $props<{
     name?: string;
@@ -7,11 +15,11 @@
     options: PasswordOptions;
     labels: PasswordLabels;
   }>();
-  
+
   // current password typed by the user
   let password = $state('');
   let visible = $state(false);
-  
+
   // build the requirements enabled by the configured policy
   const rules = $derived.by(() => {
     const rules = [{
@@ -41,7 +49,6 @@
         met: /[\p{P}\p{S}]/u.test(password),
       });
     }
-    
     return rules;
   });
 </script>
@@ -60,7 +67,6 @@
     aria-describedby={`${id}-requirements`}
     {required}
   />
-  
   <div class='input-group-append'>
     <button type='button' class='btn btn-ghost' title={labels.showPassword} aria-label={labels.showPassword} onclick={() => visible = !visible}>
       <i class:fa-eye={!visible} class:fa-eye-slash={visible} class='fas' aria-hidden='true'></i>
@@ -71,7 +77,7 @@
 <ul id={`${id}-requirements`} class='small text-left mt-2 mb-0 pl-3'>
   {#each rules as rule}
     <li class:text-success={rule.met} class:text-muted={!rule.met}>
-      {rule.label} ({rule.met ? labels.met : labels.notMet})
+      {rule.met ? labels.met : labels.notMet} {rule.label}
     </li>
   {/each}
 </ul>

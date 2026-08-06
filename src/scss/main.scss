@@ -1192,8 +1192,8 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 /* replace flex container with a responsive grid */
-.suggested-tags-menu,
-.show-more-filters-menu {
+.suggested-tags-popover,
+.show-more-filters-popover {
   background: var(--white);
   border-radius: 5px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -1209,7 +1209,7 @@ the form-control fails to do that so we do the border ourselves */
   z-index: 100;
 }
 
-.show-more-filters-menu {
+.show-more-filters-popover {
   gap: 0.75rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   min-width: min(42rem, 90vw);

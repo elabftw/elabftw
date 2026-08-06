@@ -42,8 +42,6 @@ final class Handler extends AbstractRest
 {
     private const array ALLOWED_EXTENSIONS = array('.eln', '.csv');
 
-    private const int AUDIT_THRESHOLD = 12;
-
     public function __construct(private Users $requester, private LoggerInterface $logger) {}
 
     #[Override]
@@ -63,10 +61,7 @@ final class Handler extends AbstractRest
         $Importer = $this->getImporter($reqBody);
         $Importer->import();
         $inserted = $Importer->getInserted();
-        if ($inserted > self::AUDIT_THRESHOLD) {
-            /** @psalm-suppress RedundantCast had an error during eln import where userid was a string for some reason... */
-            AuditLogs::create(new AuditEventImport((int) ($this->requester->userid ?? 0), $inserted));
-        }
+        AuditLogs::create(new AuditEventImport($this->requester->getUserid(), $Importer->getTargetUserid(), $inserted));
         return $inserted;
     }
 
@@ -81,30 +76,31 @@ final class Handler extends AbstractRest
         $requesterId = $this->requester->getUserid();
         $destinationTeam = $this->requester->getTeam();
         // The API sends owner=0 when omitted, while direct PHP calls may not provide
-        // the key at all. In both cases, default to the authenticated requester
-        $owner = (int) ($reqBody['owner'] ?? 0);
-        if ($owner === 0) {
-            $owner = $requesterId;
+        // the key at all.
+        $targetUserid = (int) ($reqBody['owner'] ?? 0);
+        // fallback to requester userid if no specific owner is requested.
+        if ($targetUserid === 0) {
+            $targetUserid = $requesterId;
         }
-        // keep the authenticated requester separate from the selected record owner!
-        $ImportUser = $this->requester;
-        if ($owner !== $requesterId) {
-            $TeamsHelper = new TeamsHelper($destinationTeam);
+        $targetUser = new Users($targetUserid, $destinationTeam);
+
+        $TeamsHelper = new TeamsHelper($destinationTeam);
+        // add additional checks if user imports as another user
+        if ($targetUserid !== $requesterId) {
             // check if admin in that team. Only admin in destination team can select another owner
             if (!$TeamsHelper->isAdminInTeam($requesterId)) {
                 throw new IllegalActionException('Only an administrator in the destination team may select another owner.');
             }
-            if (!$TeamsHelper->isUserInTeam($owner)) {
+            if (!$TeamsHelper->isUserInTeam($targetUserid)) {
                 throw new UnprocessableContentException('The selected owner must belong to the destination team.');
             }
-            $ImportUser = new Users($owner, $destinationTeam, $this->requester);
         }
         $canreadBase = BasePermissions::tryFrom((int) ($reqBody['canread_base'] ?? BasePermissions::Team->value)) ?? BasePermissions::Team;
         $canwriteBase = BasePermissions::tryFrom((int) ($reqBody['canwrite_base'] ?? BasePermissions::User->value)) ?? BasePermissions::User;
         switch ($reqBody['file']->getClientOriginalExtension()) {
             case 'eln':
                 return new Eln(
-                    $ImportUser,
+                    $this->requester,
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,
@@ -112,11 +108,13 @@ final class Handler extends AbstractRest
                     category: (int) $reqBody['category'],
                     canreadBase: $canreadBase,
                     canwriteBase: $canwriteBase,
+                    targetUserId: $targetUserid,
                 );
             case 'csv':
                 $csvTemplate = empty($reqBody['template']) ? null : (int) $reqBody['template'];
                 return new Csv(
-                    $ImportUser,
+                    $this->requester,
+                    $targetUser,
                     $reqBody['file'],
                     logger: $this->logger,
                     entityType: EntityType::tryFrom((string) $reqBody['entity_type']) ?? EntityType::Items,

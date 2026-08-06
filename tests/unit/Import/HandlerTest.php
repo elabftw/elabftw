@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\Usergroup;
@@ -54,7 +55,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         $Items = new Items(new Users(1, 1));
         $itemsBeforeImport = $Items->getIdFromUser(2);
         $this->assertEquals(13, $this->handler->postAction(Action::Update, $this->getCsvRequest(2)));
-        // import should have created exactly 13 new items owned by the selected owne.
+        // import should have created exactly 13 new items owned by the selected owner.
         $importedItems = array_diff($Items->getIdFromUser(2), $itemsBeforeImport);
         $this->assertCount(13, $importedItems);
 
@@ -93,6 +94,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
         $outsideOwner = new Users(1, 1)->createOne(
             email: sprintf('import-outside-team-%s@example.com', uniqid()),
             teams: array(2),
+            localPassword: new NullLocalPassword(),
             usergroup: Usergroup::User,
             automaticValidationEnabled: true,
             alertAdmin: false,

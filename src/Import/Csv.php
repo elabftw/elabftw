@@ -36,6 +36,7 @@ final class Csv extends AbstractCsv
 {
     public function __construct(
         protected Users $requester,
+        protected Users $targetUser,
         protected UploadedFile $UploadedFile,
         protected LoggerInterface $logger,
         protected EntityType $entityType = EntityType::Items,
@@ -57,6 +58,12 @@ final class Csv extends AbstractCsv
         }
     }
 
+    #[Override]
+    public function getTargetUserid(): int
+    {
+        return $this->targetUser->getUserid();
+    }
+
     /**
      * Do the work
      *
@@ -65,7 +72,7 @@ final class Csv extends AbstractCsv
     #[Override]
     public function import(): int
     {
-        $entity = $this->entityType->toInstance($this->requester);
+        $entity = $this->entityType->toInstance($this->targetUser);
         foreach ($this->reader->getRecords() as $row) {
             // fail hard if no title column can be found, or we end up with a bunch of Untitled entries
             if (empty($row['title'])) {

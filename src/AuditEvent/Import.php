@@ -19,15 +19,15 @@ use function sprintf;
 
 final class Import extends AbstractAuditEvent
 {
-    public function __construct(int $requesterUserid, private int $count)
+    public function __construct(private readonly int $requesterUserid, private readonly int $targetUserid, private readonly int $importedCount)
     {
-        parent::__construct($requesterUserid, 0);
+        parent::__construct($requesterUserid, $targetUserid);
     }
 
     #[Override]
     public function getBody(): string
     {
-        return sprintf('User imported %d entries', $this->count);
+        return sprintf('User imported %d entries', $this->importedCount);
     }
 
     #[Override]

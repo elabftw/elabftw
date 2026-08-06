@@ -99,6 +99,7 @@ class Eln extends AbstractZip
         protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
         private bool $verifyChecksum = true,
         private bool $checksumErrorSkip = true,
+        protected int $targetUserId = 0,
     ) {
         parent::__construct(
             $requester,
@@ -117,6 +118,12 @@ class Eln extends AbstractZip
     public function getCount(): int
     {
         return $this->count;
+    }
+
+    #[Override]
+    public function getTargetUserid(): int
+    {
+        return $this->targetUserId;
     }
 
     #[Override]

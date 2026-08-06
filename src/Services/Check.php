@@ -21,7 +21,6 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use JsonException;
 
-use function ctype_xdigit;
 use function filter_var;
 use function intval;
 use function mb_strlen;
@@ -36,6 +35,7 @@ use function is_array;
 use function json_decode;
 use function preg_match;
 use function str_starts_with;
+use function strtolower;
 
 /**
  * When values need to be checked
@@ -88,8 +88,8 @@ final class Check
             $color = mb_substr($color, 1, strlen($color));
         }
 
-        if (ctype_xdigit($color) && strlen($color) === 6) {
-            return $color;
+        if (preg_match('/^[0-9a-fA-F]{6}$/', $color) === 1) {
+            return strtolower($color);
         }
         throw new ImproperActionException('The color attribute is invalid.');
     }

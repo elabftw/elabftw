@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import {Action, EntityType, Model, Target, FileType} from './interfaces';
+import { Action, EntityType, Model, Target, FileType } from './interfaces';
 import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
 import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
@@ -50,6 +50,16 @@ function fetchCurrentPage(tag = ''): Promise<Document>{
     return parser.parseFromString(data, 'text/html');
   });
 }
+
+export const getInput = (id: string): HTMLInputElement => {
+  const element = getSafeElementById(id);
+
+  if (!(element instanceof HTMLInputElement)) {
+    throw new Error(`Input element not found: ${id}`);
+  }
+
+  return element;
+};
 
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime

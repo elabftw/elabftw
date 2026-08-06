@@ -14,6 +14,8 @@ namespace Elabftw\Interfaces;
 
 interface HashInterface
 {
+    public function getSafeHash(): string;
+
     public function getHash(): ?string;
 
     public function getAlgo(): ?string;

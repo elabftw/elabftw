@@ -18,11 +18,13 @@ enum ThemeVariant: int
     case Auto = 0;
     case Light = 1;
     case Dark = 2;
+    case Midnight = 3;
 
     public function toCssClass(): string
     {
         return match ($this) {
             self::Dark => 'dark-mode',
+            self::Midnight => 'midnight',
             default => '',
         };
     }

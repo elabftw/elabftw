@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Hash;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\HashInterface;
 use Override;
 
@@ -32,6 +33,16 @@ abstract class AbstractHash implements HashInterface
         // we store it in memory because it's an expensive operation
         $this->hash = $this->compute();
         return $this->hash;
+    }
+
+    #[Override]
+    public function getSafeHash(): string
+    {
+        $hash = $this->getHash();
+        if ($hash === null) {
+            throw new ImproperActionException('Could not get hash');
+        }
+        return $hash;
     }
 
     #[Override]

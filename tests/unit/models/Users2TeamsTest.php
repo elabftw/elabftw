@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -39,7 +40,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 
     public function testArchive(): void
     {
-        $targetUserid = new Users(1, 1)->createOne('archiveme@example.com', array(1, 2, 3), automaticValidationEnabled: true);
+        $targetUserid = new Users(1, 1)->createOne('archiveme@example.com', array(1, 2, 3), new NullLocalPassword(), automaticValidationEnabled: true);
         $this->Users2Teams->archive($targetUserid);
         $UsersHelper = new UsersHelper($targetUserid);
         $teams = $UsersHelper->getTeamsFromUserid();

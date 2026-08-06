@@ -13,8 +13,8 @@ import 'bootstrap/js/src/modal.js';
 import { Action, ProcurementState } from './interfaces';
 import { ApiC } from './api';
 import { collectForm, reloadElements } from './misc';
-import {on} from './handlers';
-import {notify} from './notify';
+import { on } from './handlers';
+import { notify } from './notify';
 
 if (window.location.pathname === '/team.php') {
 

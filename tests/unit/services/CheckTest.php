@@ -47,9 +47,10 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testColor(): void
     {
-        $this->assertEquals('AABBCC', Check::color('#AABBCC'));
-        $this->assertEquals('AABBCC', Check::color('AABBCC'));
+        $this->assertEquals('aabbcc', Check::color('#AABBCC'));
+        $this->assertEquals('aabbcc', Check::color('AABBCC'));
         $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('The color attribute is invalid.');
         Check::color('pwet');
     }
 

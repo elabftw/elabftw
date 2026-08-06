@@ -12,11 +12,14 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Messages;
+use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Hash\LocalPasswordHash;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\Check;
+use Elabftw\Services\PasswordValidator;
 use Elabftw\Services\TeamsHelper;
 use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -58,13 +61,23 @@ try {
     $teamsHelper = new TeamsHelper($App->Request->request->getInt('team'));
     $teamsHelper->teamIsVisibleOrExplode();
 
+    $cleartextPassword = $App->Request->request->getString('password');
+    $LocalPassword = new LocalPassword(
+        new PasswordValidator(
+            (int) $App->Config->configArr['min_password_length'],
+            PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']),
+            $cleartextPassword,
+        ),
+        new LocalPasswordHash($cleartextPassword),
+    );
+
     // Create user
     $App->Users->createOne(
         (new UserParams('email', $App->Request->request->getString('email')))->getStringContent(),
         array($App->Request->request->getInt('team')),
+        $LocalPassword,
         (new UserParams('firstname', $App->Request->request->getString('firstname')))->getStringContent(),
         (new UserParams('lastname', $App->Request->request->getString('lastname')))->getStringContent(),
-        (new UserParams('password', $App->Request->request->getString('password')))->getStringContent(),
     );
 
     if ($App->Users->needValidation) {

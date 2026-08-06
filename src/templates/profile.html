@@ -222,6 +222,7 @@
         <div id='selectTemplateDiv' hidden>
           <hr>
           <label for='importSelectTemplate'>{{ 'Select a template'|trans }}</label>
+          {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
           <select class='form-control' id='importSelectTemplate' autocomplete='off' name='template'>
             <option value=''>{{ 'Do not use a template'|trans }}</option>
           </select>
@@ -230,6 +231,7 @@
         <div id='selectCategoryDiv'>
           <hr>
           <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
+          {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
           <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
             <option value=''>{{ 'Do not force a category'|trans }}</option>
             {% for cat in experimentsCategoryArr %}
@@ -242,6 +244,7 @@
         {% if App.Users.isAdmin %}
           <hr>
           <label for='importSelectOwner'>{{ 'Select owner of imported elements'|trans }}</label>
+          {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
           <select class='form-control' id='importSelectOwner' autocomplete='off' name='owner'>
             {% for user in usersArr %}
               <option {{ user.userid == App.Users.userid ? 'selected' }} value='{{ user.userid }}'>{{ user.fullname }}</option>

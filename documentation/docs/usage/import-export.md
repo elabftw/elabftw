@@ -138,7 +138,7 @@ If you wish to include tags during the import, add a `tags` column and separate 
 - `canread` and `canwrite` contain permissions in eLabFTW JSON format.
 - `rating`, when present, must be a value from 0 to 5.
 
-All other columns are imported as Extra Fields. Values that are valid URLs are created as URL fields; other values are created as Text fields.
+All other columns are imported as Custom Fields. Values that are valid URLs are created as URL fields; other values are created as Text fields.
 
 Once you are satisfied with the file, export it as a UTF-8 `.csv` file. Make a second file containing only the header and two or three rows, and use that smaller file to test the import first.
 
@@ -166,14 +166,14 @@ When a template is selected:
 
 - each row creates a new entry from that template;
 - the CSV `title`, tags, Resource location, and metadata values are applied to the new entry;
-- an Extra Field whose name matches a template field keeps the template field's type and configuration while receiving the imported value;
-- a CSV column that does not match a template field is added as a new Extra Field;
+- a Custom Field whose name matches a template field keeps the template field's type and configuration while receiving the imported value;
+- a CSV column that does not match a template field is added as a new Custom Field;
 - imported values missing from a Select, Select one, Radio, or Select multiple field's choices are added to the available choices.
 
-If the CSV contains both a `metadata` JSON column and individual columns matching the same Extra Fields, eLabFTW merges both into the template metadata. The individual CSV columns are applied last and therefore take precedence for matching fields.
+If the CSV contains both a `metadata` JSON column and individual columns matching the same Custom Fields, eLabFTW merges both into the template metadata. The individual CSV columns are applied last and therefore take precedence for matching fields.
 
 :::tip
-Test with two or three rows before importing the complete file. Check the resulting Extra Field types, choice lists, tags, and Resource locations. If the result is correct, delete the test entries and import the complete CSV.
+Test with two or three rows before importing the complete file. Check the resulting Custom Field types, choice lists, tags, and Resource locations. If the result is correct, delete the test entries and import the complete CSV.
 :::
 
 Click **Import**. Every CSV row creates one entry. The import reports an error if a row cannot be processed.
@@ -230,9 +230,9 @@ Once you have your CSV file ready, send it to your Sysadmin and let them know if
 
 ### Matching an existing database
 
-Maybe you already have a Resource Category: "Chemical compounds" for instance, with Compounds associated to a "CAS" extra field. And you'd like to import the already existing compounds in the Compounds table in eLab so they exist as proper compounds.
+Maybe you already have a Resource Category: "Chemical compounds" for instance, with Compounds associated to a "CAS" custom field. And you'd like to import the already existing compounds in the Compounds table in eLab so they exist as proper compounds.
 
-To do that, the import should be done with the `--match-with` command option, which will match an existing Resource through its extra field value. For example: `--match-with cas` will import the compound and link it to the Resource where an extra field `cas` has the same value as the row from the column `cas` in the .csv.
+To do that, the import should be done with the `--match-with` command option, which will match an existing Resource through its custom field value. For example: `--match-with cas` will import the compound and link it to the Resource where an custom field `cas` has the same value as the row from the column `cas` in the .csv.
 
 
 ## Exporting data

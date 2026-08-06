@@ -129,14 +129,16 @@ if (window.location.pathname === '/profile.php') {
     await populateSelect(templateSelect, templateType);
 
     // categories select
-    selectCategoryDiv.hidden = ['items_types', 'null'].includes(el.value);
+    selectCategoryDiv.hidden = el.value === 'null';
     if (selectCategoryDiv.hidden) return;
     const categoryTypes: Record<string, string> = {
-      experiments_templates: 'experiments',
-      items: 'resources',
+      experiments: 'experiments_categories',
+      experiments_templates: 'experiments_categories',
+      items: 'resources_categories',
+      items_types: 'resources_categories',
     };
     const categoryType = categoryTypes[el.value] ?? el.value;
-    await populateSelect(categorySelect, `teams/current/${categoryType}_categories`);
+    await populateSelect(categorySelect, `teams/current/${categoryType}`);
   });
 
   document.getElementById('importFileForm')?.addEventListener('submit', function(event) {

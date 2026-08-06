@@ -479,6 +479,7 @@ function mysql-backup
     local -r dumpfile="${BACKUP_DIR}/mysql_dump-${date}.sql"
 
     # dump sql
+    # only consider the exit code of mysqldump for the next step (docker cp) and not the grep
     if docker exec "${ELAB_MYSQL_CONTAINER_NAME}" bash -c '
         mysqldump \
           -u"$MYSQL_USER" \

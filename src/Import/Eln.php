@@ -510,16 +510,15 @@ class Eln extends AbstractZip
             default => null,
         };
 
-        // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
-        if (!empty($dataset['subjectOf'])) {
-            new Changelog($this->Entity)->replaceAll($this->updateActionsToChangelog($dataset['subjectOf']));
-        }
-
         // update category again after import, in case it was set to something from import request
         if ($this->category !== null) {
             $this->Entity->update(new EntityParams('category', $this->category));
         }
 
+        // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
+        if (!empty($dataset['subjectOf'])) {
+            new Changelog($this->Entity)->replaceAll($this->updateActionsToChangelog($dataset['subjectOf']));
+        }
     }
 
     // convert export UpdateAction to changelog dataset

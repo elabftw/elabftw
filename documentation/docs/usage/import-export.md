@@ -167,7 +167,7 @@ When a template is selected:
 - each row creates a new entry from that template;
 - the CSV `title`, tags, Resource location, and metadata values are applied to the new entry;
 - a Custom Field whose name matches a template field keeps the template field's type and configuration while receiving the imported value;
-- a CSV column that does not match a template field is added as a new Custom Field;
+- a non-reserved CSV column that does not match a template field is added as a new Custom Field;
 - imported values missing from a Select, Select one, Radio, or Select multiple field's choices are added to the available choices.
 
 If the CSV contains both a `metadata` JSON column and individual columns matching the same Custom Fields, eLabFTW merges both into the template metadata. The individual CSV columns are applied last and therefore take precedence for matching fields.
@@ -232,7 +232,7 @@ Once you have your CSV file ready, send it to your Sysadmin and let them know if
 
 Maybe you already have a Resource Category: "Chemical compounds" for instance, with Compounds associated to a "CAS" custom field. And you'd like to import the already existing compounds in the Compounds table in eLab so they exist as proper compounds.
 
-To do that, the import should be done with the `--match-with` command option, which will match an existing Resource through its custom field value. For example: `--match-with cas` will import the compound and link it to the Resource where an custom field `cas` has the same value as the row from the column `cas` in the .csv.
+To do that, the import should be done with the `--match-with` command option, which will match an existing Resource through its custom field value. For example: `--match-with cas` will import the compound and link it to the Resource where a custom field `cas` has the same value as the row from the column `cas` in the .csv.
 
 
 ## Exporting data

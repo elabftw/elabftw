@@ -21,6 +21,8 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
 
+use function sprintf;
+
 class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
@@ -45,6 +47,10 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links = new Containers2ItemsLinks($Item, $rowId);
         $result = $Links->patch(Action::Update, array('storage_id' => $boxB));
         $this->assertEquals($boxB, (int) $result['storage_id']);
+
+        $entry = $this->latestChangelogEntry($Item, 'container_moved');
+        $this->assertNotNull($entry);
+        $this->assertStringContainsString(sprintf('(container #%d)', $rowId), $entry['content']);
 
         // moving to the same destination is a no-op (no exception)
         $result = $Links->patch(Action::Update, array('storage_id' => $boxB));
@@ -158,10 +164,12 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $box = $this->StorageUnits->create('Box for create changelog test');
         $Links = new Containers2ItemsLinks($Item, $box);
         $Links->createWithQuantity(5.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
 
         $entry = $this->latestChangelogEntry($Item, 'container_created');
         $this->assertNotNull($entry);
         $this->assertStringContainsString('Added container with 5.00 mL', $entry['content']);
+        $this->assertStringContainsString(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
     public function testQtyChangeLogsToChangelog(): void
@@ -178,6 +186,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $entry = $this->latestChangelogEntry($Item, 'container_qty_changed');
         $this->assertNotNull($entry);
         $this->assertStringContainsString('from "10.00" to "3.00"', $entry['content']);
+        $this->assertStringContainsString(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
     public function testUnitChangeLogsToChangelog(): void
@@ -194,6 +203,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $entry = $this->latestChangelogEntry($Item, 'container_unit_changed');
         $this->assertNotNull($entry);
         $this->assertStringContainsString('from "mL" to "g"', $entry['content']);
+        $this->assertStringContainsString(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
     public function testDeleteLogsToChangelog(): void
@@ -210,6 +220,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $entry = $this->latestChangelogEntry($Item, 'container_deleted');
         $this->assertNotNull($entry);
         $this->assertStringContainsString('Removed container', $entry['content']);
+        $this->assertStringContainsString(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
     public function testDeleteMissingRowIsTolerated(): void
@@ -235,6 +246,21 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $this->assertNull($this->latestChangelogEntry($Item, 'container_qty_changed'));
         $this->assertNull($this->latestChangelogEntry($Item, 'container_unit_changed'));
+    }
+
+    public function testDatabaseRoundedQtyDoesNotLogChange(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for rounded qty test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(1.23, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $result = $Links->patch(Action::Update, array('qty_stored' => 1.231));
+
+        $this->assertEquals(1.23, (float) $result['qty_stored']);
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_qty_changed'));
     }
 
     private function latestChangelogEntry(Items $entity, string $target): ?array

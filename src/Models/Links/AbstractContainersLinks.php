@@ -163,25 +163,43 @@ abstract class AbstractContainersLinks extends AbstractLinks
             $this->update('qty_unit', $params['qty_unit']);
         }
 
-        // log only real changes; resolve the (post-move) path once, and only when we log
-        $qtyChanged = $qtyGiven && (float) $params['qty_stored'] !== (float) $before['qty_stored'];
-        $unitChanged = $unitGiven && (string) $params['qty_unit'] !== (string) $before['qty_unit'];
+        // Compare persisted values after database normalization, such as DECIMAL rounding.
+        $after = $this->readOne();
+        $beforeQty = number_format((float) $before['qty_stored'], 2, '.', '');
+        $afterQty = number_format((float) $after['qty_stored'], 2, '.', '');
+        $qtyChanged = $qtyGiven && $afterQty !== $beforeQty;
+        $unitChanged = $unitGiven
+            && (string) $after['qty_unit'] !== (string) $before['qty_unit'];
+
         if ($qtyChanged || $unitChanged) {
-            $storagePath = $this->getStoragePath((int) $this->readOne()['storage_id']);
+            $containerId = (int) $after['id'];
+            $storagePath = $this->getStoragePath((int) $after['storage_id']);
             if ($qtyChanged) {
                 new Changelog($this->Entity)->create(new ContentParams(
                     'container_qty_changed',
-                    sprintf('Quantity changed from "%s" to "%s" at "%s"', number_format((float) $before['qty_stored'], 2), number_format((float) $params['qty_stored'], 2), $storagePath),
+                    sprintf(
+                        'Quantity changed from "%s" to "%s" at "%s" (container #%d)',
+                        $beforeQty,
+                        $afterQty,
+                        $storagePath,
+                        $containerId,
+                    ),
                 ));
             }
             if ($unitChanged) {
                 new Changelog($this->Entity)->create(new ContentParams(
                     'container_unit_changed',
-                    sprintf('Unit changed from "%s" to "%s" at "%s"', $before['qty_unit'], $params['qty_unit'], $storagePath),
+                    sprintf(
+                        'Unit changed from "%s" to "%s" at "%s" (container #%d)',
+                        $before['qty_unit'],
+                        $after['qty_unit'],
+                        $storagePath,
+                        $containerId,
+                    ),
                 ));
             }
         }
-        return $this->readOne();
+        return $after;
     }
 
     #[Override]
@@ -249,7 +267,13 @@ abstract class AbstractContainersLinks extends AbstractLinks
         if ($current !== null && $req->rowCount() > 0) {
             new Changelog($this->Entity)->create(new ContentParams(
                 'container_deleted',
-                sprintf('Removed container with %s %s from "%s"', $current['qty_stored'], $current['qty_unit'], $storagePath),
+                sprintf(
+                    'Removed container with %s %s from "%s" (container #%d)',
+                    $current['qty_stored'],
+                    $current['qty_unit'],
+                    $storagePath,
+                    (int) $current['id'],
+                ),
             ));
         }
 
@@ -306,10 +330,16 @@ abstract class AbstractContainersLinks extends AbstractLinks
 
         // INSERT IGNORE inserts nothing on a FK violation; only log a real insert
         if ($req->rowCount() > 0) {
+            $containerId = $this->Db->lastInsertId();
             new Changelog($this->Entity)->create(new ContentParams(
                 'container_created',
-                // at creation $this->id is the storage_id
-                sprintf('Added container with %s %s at "%s"', number_format((float) $qty, 2), $unit, $this->getStoragePath($this->id)),
+                sprintf(
+                    'Added container with %s %s at "%s" (container #%d)',
+                    number_format((float) $qty, 2, '.', ''),
+                    $unit,
+                    $this->getStoragePath($this->id),
+                    $containerId,
+                ),
             ));
         }
 
@@ -387,7 +417,12 @@ abstract class AbstractContainersLinks extends AbstractLinks
 
         new Changelog($this->Entity)->create(new ContentParams(
             'container_moved',
-            sprintf('From "%s" to "%s"', $oldPath, $destinationData['full_path'] ?? ''),
+            sprintf(
+                'From "%s" to "%s" (container #%d)',
+                $oldPath,
+                $destinationData['full_path'] ?? '',
+                $this->id ?? -1,
+            ),
         ));
     }
 

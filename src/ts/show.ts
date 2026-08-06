@@ -773,7 +773,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const ajaxs: Promise<unknown>[] = [];
     const form = document.getElementById('multiChangesForm');
-    clearForm(form);
     let params: object;
     try {
       params = collectForm(form);
@@ -781,6 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // collectForm reports the invalid field to the user already
       return;
     }
+    clearForm(form);
     (el as HTMLButtonElement).disabled = true;
     checked.forEach(chk => {
       const paramsCopy = Object.assign({}, params, { notifOnSaved: 0 });

@@ -478,7 +478,7 @@ abstract class AbstractEntity extends AbstractRest
         if ($state === State::Deleted->value && !in_array($action, $allowedActionsOnDeleted, true)) {
             throw new UnprocessableContentException(_('Only the Restore action is allowed on a deleted entity.'));
         }
-        if ($state === State::Archived->value && $action !== Action::Unarchive) {
+        if ($state === State::Archived->value && ($action !== Action::Unarchive && $action !== Action::Archive)) {
             throw new UnprocessableContentException(_('Only the Unarchive action is allowed on an archived entity.'));
         }
 
@@ -500,7 +500,8 @@ abstract class AbstractEntity extends AbstractRest
             Action::AccessKey => (new AccessKeyHelper($this->entityType, $this->id))->toggleAccessKey(),
             Action::Archive => (
                 function () {
-                    $this->handleArchivedState(State::Normal, State::Archived, fn() => $this->lock());
+                    $this->update(new EntityParams('state', State::Archived->value));
+                    $this->lock();
                     // clear any request action
                     $RequestActions = new RequestActions($this->Users, $this);
                     $RequestActions->remove(RequestableAction::Archive);
@@ -519,7 +520,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::SetNextCustomId => $this->update(new EntityParams('custom_id', $this->getNextIdempotentCustomId())),
             Action::Sign => $this->sign($params['passphrase'], Meaning::from((int) $params['meaning'])),
             Action::Timestamp => $this->timestamp(),
-            Action::Unarchive => $this->handleArchivedState(from: State::Archived, to: State::Normal, toggleLock: fn() => $this->unlock()),
+            Action::Unarchive => $this->update(new EntityParams('state', State::Normal->value)),
             Action::UpdateMetadataField => (
                 function () use ($params) {
                     foreach ($params as $key => $value) {
@@ -1375,17 +1376,6 @@ abstract class AbstractEntity extends AbstractRest
         $key = $type->value;
         $this->update(new EntityParams($key, (string) $params['can']));
         $this->update(new EntityParams($key . '_base', (int) $params['can_base']));
-    }
-
-    // Archive a normal entity, Unarchive an archived entity.
-    private function handleArchivedState(State $from, State $to, callable $toggleLock): void
-    {
-        $targetState = $from;
-        if ($this->entityData['state'] === $from->value) {
-            $targetState = $to;
-            $toggleLock();
-        }
-        $this->update(new EntityParams('state', (string) $targetState->value));
     }
 
     private function updateOwnership(int $userid, int $destinationTeam): void

@@ -1377,13 +1377,14 @@ components:
           type: integer
           description: |
             User ID of the entity owner.
-            When transferring ownership, the `team` field should also be provided (optional).
+            For existing entities, ownership can only be transferred through the `PatchAction`
+            schema with `action: "updateowner"`; both `userid` and `team` are required.
         team:
           type: integer
           description: |
-            Optional team context for ownership transfer.
-            If omitted, the requester’s team is used by default.
-            If provided, the API validates that the target user is a member of the specified team.
+            Team ID of the entity.
+            For existing entities, ownership can only be transferred through the `PatchAction`
+            schema with `action: "updateowner"`; both `userid` and `team` are required.
     # ENTITY DUPLICATE
     entity_duplicate:
       type: object

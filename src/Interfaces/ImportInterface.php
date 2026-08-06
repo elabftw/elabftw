@@ -22,4 +22,6 @@ interface ImportInterface
     public function getCount(): int;
 
     public function getInserted(): int;
+
+    public function getTargetUserid(): int;
 }

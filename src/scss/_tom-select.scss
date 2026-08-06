@@ -67,7 +67,6 @@
 }
 
 .ts-wrapper {
-  max-width: clamp(var(--breakpoint-sm), 35vw, 80vw);
   // don't block down button
   .ts-control:not(.rtl) {
     padding-right: 2rem !important;

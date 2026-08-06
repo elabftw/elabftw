@@ -993,7 +993,7 @@ document.addEventListener('DOMContentLoaded', () => {
           );
         }
 
-        reloadEntitiesShow();
+        return reloadEntitiesShow();
       })
       .finally(() => {
         mkSpinStop(btn, oldHTML);

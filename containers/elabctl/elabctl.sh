@@ -470,9 +470,6 @@ function mysql-backup
 {
     if ! ls -A "${BACKUP_DIR}" > /dev/null 2>&1; then
         mkdir -pv "${BACKUP_DIR}"
-        if [ $? -eq 1 ]; then
-            sudo mkdir -pv ${BACKUP_DIR}
-        fi
     fi
 
     set -e
@@ -490,7 +487,7 @@ function mysql-backup
           --no-tablespaces \
           "$MYSQL_DATABASE" 2>&1 |
           grep -vF "[Warning] Using a password"
-  
+
       statuses=("${PIPESTATUS[@]}")
       (( statuses[0] == 0 && statuses[1] <= 1 ))
       '; then

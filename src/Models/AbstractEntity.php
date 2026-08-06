@@ -1557,6 +1557,7 @@ abstract class AbstractEntity extends AbstractRest
 
             if (isset($base['extra_fields'][$name])) {
                 $baseField = &$base['extra_fields'][$name];
+                $this->guardMetadataSchemaCompatibility($name, $baseField, $incomingField);
                 $type = $baseField['type'] ?? '';
 
                 // Add imported values to the field's options if they don't already exist.
@@ -1615,6 +1616,18 @@ abstract class AbstractEntity extends AbstractRest
             // select/users/text/url/etc. keep the incoming string value.
             default => $value,
         };
+    }
+
+    private function guardMetadataSchemaCompatibility(string $name, array $baseField, array $incomingField): void
+    {
+        foreach (array('type', 'unit') as $key) {
+            if (!array_key_exists($key, $incomingField)) {
+                continue;
+            }
+            if (!array_key_exists($key, $baseField) || $incomingField[$key] !== $baseField[$key]) {
+                throw new ImproperActionException(sprintf(_('Metadata field %s has incompatible %s.'), $name, $key));
+            }
+        }
     }
 
     private function normalizeCheckboxValue(string $value): string

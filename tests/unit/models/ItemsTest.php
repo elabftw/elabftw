@@ -254,23 +254,18 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $incomingMetadata = json_encode(array(
             'extra_fields' => array(
                 'weight' => array(
-                    'type' => 'text',
                     'value' => '12,5',
                 ),
                 'certified' => array(
-                    'type' => 'text',
                     'value' => 'X',
                 ),
                 'choice' => array(
-                    'type' => 'text',
                     'value' => 'C',
                 ),
                 'person in charge' => array(
-                    'type' => 'text',
                     'value' => '42',
                 ),
                 'website' => array(
-                    'type' => 'text',
                     'value' => 'https://example.org',
                 ),
                 'new checkbox' => array(
@@ -321,6 +316,66 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('on', $fields['new checkbox']['value']);
         $this->assertSame('text', $fields['new text']['type']);
         $this->assertSame('hello', $fields['new text']['value']);
+    }
+
+    // prevent regression with conflicting metadata schema. #7148
+    public function testMetadataMergeRejectsSchemaMismatch(): void
+    {
+        $this->Items->patch(Action::Update, array(
+            'metadata' => json_encode(array(
+                'extra_fields' => array(
+                    'Coffee' => array(
+                        'type' => 'number',
+                        'unit' => 'liter',
+                        'value' => '1',
+                    ),
+                ),
+            ), JSON_THROW_ON_ERROR),
+        ));
+
+        $this->expectException(ImproperActionException::class);
+        $this->Items->patch(Action::Update, array(
+            'metadatamerge' => json_encode(array(
+                'extra_fields' => array(
+                    'Coffee' => array(
+                        'type' => 'date',
+                        'unit' => 'gram',
+                        'value' => '2',
+                    ),
+                ),
+            ), JSON_THROW_ON_ERROR),
+        ));
+    }
+
+    public function testMetadataMergeAllowsValueOnlyUpdate(): void
+    {
+        $this->Items->patch(Action::Update, array(
+            'metadata' => json_encode(array(
+                'extra_fields' => array(
+                    'Coffee' => array(
+                        'type' => 'number',
+                        'unit' => 'liter',
+                        'value' => '1',
+                    ),
+                ),
+            ), JSON_THROW_ON_ERROR),
+        ));
+
+        $metadata = $this->Items->patch(Action::Update, array(
+            'metadatamerge' => json_encode(array(
+                'extra_fields' => array(
+                    'Coffee' => array(
+                        'value' => '2',
+                    ),
+                ),
+            ), JSON_THROW_ON_ERROR),
+        ));
+
+        $fields = json_decode($metadata['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
+
+        $this->assertSame('number', $fields['Coffee']['type']);
+        $this->assertSame('liter', $fields['Coffee']['unit']);
+        $this->assertSame('2', $fields['Coffee']['value']);
     }
 
     private function makeItemFromImmutableTemplateFor(AuthenticatedUser $user): Items

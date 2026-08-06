@@ -264,6 +264,7 @@ components:
             - timestamp
             - updatemetadatafield
             - update
+            - updateowner
         passphrase:
           type: string
           description: >
@@ -281,6 +282,18 @@ components:
             - 40: Review
             - 50: Safety
           example: 40
+        userid:
+          type: integer
+          description: >
+            ID of the new owner. Required when action is "updateowner".
+            The user must belong to the destination team.
+          example: 21
+        team:
+          type: integer
+          description: >
+            ID of the destination team. Required when action is "updateowner".
+            Non-admin users can only transfer ownership within their current team.
+          example: 5
       required: [action]
 
     EntityAndItemEditable:

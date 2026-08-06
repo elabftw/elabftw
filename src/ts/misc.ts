@@ -1178,7 +1178,7 @@ if (registerTarget) {
   // read the data passed by Twig
   const options = JSON.parse(registerTarget.dataset.options ?? '{}');
 
-  // replaec loading spinner withthe form
+  // replace loading spinner with the form
   registerTarget.replaceChildren();
   mount(RegisterForm, { target: registerTarget, props: { options },
   });

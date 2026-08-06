@@ -180,7 +180,15 @@ module.exports = (env, argv) => {
             loader: 'svelte-loader',
             options: {
               emitCss: true,
-              preprocess: sveltePreprocess(),
+              preprocess: sveltePreprocess({
+                // preserve value imports used only in Svelte markup, such as child components.
+                // without this, TypeScript may remove them as unused before Svelte compiles the template
+                typescript: {
+                  compilerOptions: {
+                    verbatimModuleSyntax: true,
+                  },
+                },
+              }),
             },
           },
         },

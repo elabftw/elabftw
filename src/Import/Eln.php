@@ -87,6 +87,7 @@ class Eln extends AbstractZip
 
     public function __construct(
         protected Users $requester,
+        protected Users $targetUser,
         protected UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
@@ -117,6 +118,12 @@ class Eln extends AbstractZip
     public function getCount(): int
     {
         return $this->count;
+    }
+
+    #[Override]
+    public function getTargetUserid(): int
+    {
+        return $this->targetUser->getUserid();
     }
 
     #[Override]
@@ -190,7 +197,7 @@ class Eln extends AbstractZip
 
     protected function getAuthor(array $dataset): Users
     {
-        return $this->requester;
+        return $this->targetUser;
     }
 
     protected function getEntityType(array $dataset): EntityType
@@ -352,7 +359,7 @@ class Eln extends AbstractZip
             switch ($attributeName) {
                 // CATEGORY
                 case 'about':
-                    $this->Entity->update(new EntityParams('category', (string) $categoryId));
+                    $this->Entity->update(new EntityParams('category', $categoryId));
                     break;
                     // COMMENTS
                 case 'comment':
@@ -502,6 +509,11 @@ class Eln extends AbstractZip
             ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->Entity->patch(Action::Lock, array()),
             default => null,
         };
+
+        // update category again after import, in case it was set to something from import request
+        if ($this->category !== null) {
+            $this->Entity->update(new EntityParams('category', $this->category));
+        }
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
         if (!empty($dataset['subjectOf'])) {

@@ -11,9 +11,9 @@
     <input type='text' id='createTagInput' data-autocomplete='tags' class='createTagInput form-control' placeholder='{{ 'Add a tag'|trans }}' />
   </div>
   <div class='mathjax-ignore ml-auto d-sm-block d-none'>
-    <details closed class='suggested-tags'>
+    <details closed class='suggested-tags' data-cy='tagsMenu'>
       <summary>{{ 'Suggested tags'|trans }}</summary>
-      <div id='tags_div_suggestedtags_{{ Entity.id }}' class='suggested-tags-menu'>
+      <div id='tags_div_suggestedtags_{{ Entity.id }}' class='suggested-tags-popover'>
         {% set filteredTags = [] %}
         {% for tag in teamTagsArr %}
           {% set tagFound = false %}

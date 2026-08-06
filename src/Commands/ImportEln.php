@@ -86,6 +86,7 @@ final class ImportEln extends Command
         }
         $Importer = new TrustedEln(
             $user,
+            $user,
             $UploadedFile,
             $this->Fs->getFs(),
             $logger,

@@ -226,6 +226,23 @@ export {
   Target,
 };
 
+export type PasswordLabels = {
+  length: string;
+  letters: string;
+  digit: string;
+  special: string;
+  met: string;
+  notMet: string;
+  showPassword: string;
+};
+
+export type PasswordOptions = {
+  minLength: number;
+  complexity: number;
+  pattern: string;
+  title: string;
+};
+
 export type {
   BinaryValue,
   Categories,

@@ -123,35 +123,60 @@ Now you need to have a column named **title**. This is the column that will be p
 | Anti FLAG (M2)     | Mouse  | FLAG tag     | F1804     | Sigma-Aldrich | +4°C  |
 
 
-If you wish to include tags during the import, specify a column "tags" that will contain the tags separated by a "|" character. You can also have a "metadata" column containing JSON. The same logic applies to "metadata" column which can contain JSON that will be included in the metadata of the created entry.
+If you wish to include tags during the import, add a `tags` column and separate multiple tags with a `|` character. You can also add a `metadata` column containing valid eLabFTW metadata JSON.
 
 #### How columns are processed
 
-* `title` becomes `title`
-* `body` becomes the main text (HTML). If you wish to import markdown, have a column `content_type` with value `2` (`1` being for HTML content)
-* `date` becomes the user defined date. Prefer YYYY-MM-DD format
-  `category_title` and `status_title` will become the category or status (a new category/status will be created if necessary)
-  `metadata` will be processed as eLabFTW metadata (in JSON)
-  `tags` will get added as tags, they must be separated by `|` character
-  `canread`, `canwrite` and `canbook` are the JSON permissions suitable for eLabFTW
-  `rating`, if present, must be a value between 0 and 5 (stars rating)
+- `title` becomes the entry title and is required.
+- `body` becomes the main text (HTML). To import Markdown, add a `content_type` column with the value `2` (`1` is HTML).
+- `date` becomes the user-defined date. Prefer the `YYYY-MM-DD` format.
+- `category_title` and `status_title` become the category and status. A missing category or status is created when necessary.
+- `metadata` is processed as eLabFTW metadata JSON.
+- `tags` are added as tags and must be separated by `|`.
+- `location` creates or reuses a Resource storage path. Separate its levels with `/`, for example `Building C / Floor 2 / Freezer 4`.
+- `quantity` and `unit` set the amount stored at the location, for example `25` and `mL`.
+- `canread` and `canwrite` contain permissions in eLabFTW JSON format.
+- `rating`, when present, must be a value from 0 to 5.
 
-The rest of the columns will get added as Text Extra field.
+All other columns are imported as Custom Fields. Values that are valid URLs are created as URL fields; other values are created as Text fields.
 
+Once you are satisfied with the file, export it as a UTF-8 `.csv` file. Make a second file containing only the header and two or three rows, and use that smaller file to test the import first.
 
-Once you are satisfied with the file, export it as a **.csv** (in File > Save as...). Make a copy of only the first 3 rows and export that too as csv, this will be our test file.
+### Importing the file through the web interface
 
-2. Importing the file
+Select **Import** from the user menu to open the Import tab of your Profile page, then select your test CSV file.
 
-Select "Import" from the main top right user menu. If you haven't done it already, create first a Resource Category that corresponds to your data type (or ask your Admin to do it). Here we will use an "Antibody" category as that's what we are importing.
+<figure>
+  <img src="/img/import-csv-select-file.webp" width='285px' alt="Selecting a CSV file from the Import tab of the Profile page" />
+  <figcaption>Select the CSV file to display the available import options.</figcaption>
+</figure>
 
-Start by selecting your `.csv` file. Options to select the type (Resource) and category (Antibody in our case) appear. Select the appropriate options and click "Import".
+Choose whether each row will create an Experiment or a Resource. Select the destination category, owner (available to administrators), and read and write permissions as appropriate.
 
-In the import window, select the correct category (Antibody in this example). Then select the visibility. Now select your **test** CSV file (with a few rows only) and click the "Import" button.
+<figure>
+  <img src="/img/import-csv-options.webp" width='450px' alt="CSV import options for entity type, category, owner, and permissions" />
+  <figcaption>Choose the destination type and the options applied to the imported entries.</figcaption>
+</figure>
 
-Every row will correspond to an entry in the correct category of Resources. All the columns (except title, tags, metadata, date, custom_id, and other picked up special columns) will be imported in the body of each entry.
+### Using an Experiment or Resource template
 
-If the import looks good, you can now delete these newly imported items and import your complete file.
+For Experiment and Resource imports, you can select an existing template. Choose **Do not use a template** to create entries directly from the CSV, or select a template to use its structure and defaults for every imported row.
+
+When a template is selected:
+
+- each row creates a new entry from that template;
+- the CSV `title`, tags, Resource location, and metadata values are applied to the new entry;
+- a Custom Field whose name matches a template field keeps the template field's type and configuration while receiving the imported value;
+- a non-reserved CSV column that does not match a template field is added as a new Custom Field;
+- imported values missing from a Select, Select one, Radio, or Select multiple field's choices are added to the available choices.
+
+If the CSV contains both a `metadata` JSON column and individual columns matching the same Custom Fields, eLabFTW merges both into the template metadata. The individual CSV columns are applied last and therefore take precedence for matching fields.
+
+:::tip
+Test with two or three rows before importing the complete file. Check the resulting Custom Field types, choice lists, tags, and Resource locations. If the result is correct, delete the test entries and import the complete CSV.
+:::
+
+Click **Import**. Every CSV row creates one entry. The import reports an error if a row cannot be processed.
 
 ### Using the API to control how things are imported
 
@@ -205,9 +230,9 @@ Once you have your CSV file ready, send it to your Sysadmin and let them know if
 
 ### Matching an existing database
 
-Maybe you already have a Resource Category: "Chemical compounds" for instance, with Compounds associated to a "CAS" extra field. And you'd like to import the already existing compounds in the Compounds table in eLab so they exist as proper compounds.
+Maybe you already have a Resource Category: "Chemical compounds" for instance, with Compounds associated to a "CAS" custom field. And you'd like to import the already existing compounds in the Compounds table in eLab so they exist as proper compounds.
 
-To do that, the import should be done with the `--match-with` command option, which will match an existing Resource through its extra field value. For example: `--match-with cas` will import the compound and link it to the Resource where an extra field `cas` has the same value as the row from the column `cas` in the .csv.
+To do that, the import should be done with the `--match-with` command option, which will match an existing Resource through its custom field value. For example: `--match-with cas` will import the compound and link it to the Resource where a custom field `cas` has the same value as the row from the column `cas` in the .csv.
 
 
 ## Exporting data

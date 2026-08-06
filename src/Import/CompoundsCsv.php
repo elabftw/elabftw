@@ -53,6 +53,12 @@ final class CompoundsCsv extends AbstractCsv
     }
 
     #[Override]
+    public function getTargetUserid(): int
+    {
+        return $this->Items->Users->getUserid();
+    }
+
+    #[Override]
     public function import(): int
     {
         // number of rows is stored in a var so we can decrement it when a compound is not imported

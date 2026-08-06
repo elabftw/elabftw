@@ -7,27 +7,46 @@
  */
 import { ApiC } from './api';
 import { notify } from './notify';
-import { collectForm, reloadElements } from './misc';
+import { collectForm, rebuildTomSelectOptions, reloadElements, resetToDefault, TomSelect, TomSelectElement } from './misc';
 import i18next from './i18n';
 import { on } from './handlers';
 
 // populate selects for category/templates when importing csv
-const populateSelect = async (select: HTMLSelectElement, endpoint?: string): Promise<void> => {
-  // remove all options except the first one ("Do not use ...")
+const populateSelect = async (select: TomSelectElement, endpoint?: string): Promise<void> => {
+  resetToDefault(select);
+
+  // Remove previous dynamic options, but keep the placeholder option.
   for (let i = select.options.length - 1; i >= 1; i--) {
     select.remove(i);
   }
-  if (!endpoint) return;
-  const entries = await ApiC.getJson(endpoint);
-  entries.forEach(entry => {
-    const newOption = document.createElement('option');
-    newOption.value = entry.id;
-    newOption.text = entry.title;
-    select.add(newOption);
+
+  if (endpoint) {
+    const entries = await ApiC.getJson(endpoint);
+
+    entries.forEach(entry => {
+      const newOption = document.createElement('option');
+      newOption.value = entry.id;
+      newOption.text = entry.title;
+      select.add(newOption);
+    });
+  }
+
+  rebuildTomSelectOptions(select, {
+    filter: option => option.value !== '',
   });
 };
 
 if (window.location.pathname === '/profile.php') {
+  ['importSelectTemplate', 'importSelectCategory', 'importSelectOwner'].forEach(id => {
+    const select = document.getElementById(id) as HTMLSelectElement | null;
+    if (select) {
+      new TomSelect(select, {
+        plugins: ['dropdown_input', 'no_active_items', 'clear_button'],
+        placeholder: select.options[0]?.text,
+      });
+    }
+  });
+
   // we use a normal button to trigger the actual file input
   on('show-file-input', () => document.getElementById('importFileInput').click());
 
@@ -92,8 +111,8 @@ if (window.location.pathname === '/profile.php') {
     const el = event.target as HTMLInputElement;
     const selectCategoryDiv = document.getElementById('selectCategoryDiv') as HTMLElement;
     const selectTemplateDiv = document.getElementById('selectTemplateDiv') as HTMLElement;
-    const categorySelect = document.getElementById('importSelectCategory') as HTMLSelectElement;
-    const templateSelect = document.getElementById('importSelectTemplate') as HTMLSelectElement;
+    const categorySelect = document.getElementById('importSelectCategory') as TomSelectElement;
+    const templateSelect = document.getElementById('importSelectTemplate') as TomSelectElement;
 
     // template select
     const templateTypes: Record<string, string> = {
@@ -104,18 +123,26 @@ if (window.location.pathname === '/profile.php') {
     const supportsTemplate = templateType !== undefined;
     selectTemplateDiv.hidden = !supportsTemplate;
     templateSelect.disabled = !supportsTemplate;
-    templateSelect.value = 'null';
+    if (supportsTemplate) {
+      templateSelect.tomselect?.enable();
+    } else {
+      templateSelect.tomselect?.disable();
+    }
+    categorySelect.tomselect?.setValue('', true);
+    templateSelect.tomselect?.setValue('', true);
     await populateSelect(templateSelect, templateType);
 
     // categories select
-    selectCategoryDiv.hidden = ['items_types', 'null'].includes(el.value);
+    selectCategoryDiv.hidden = el.value === '';
     if (selectCategoryDiv.hidden) return;
     const categoryTypes: Record<string, string> = {
-      experiments_templates: 'experiments',
-      items: 'resources',
+      experiments: 'experiments_categories',
+      experiments_templates: 'experiments_categories',
+      items: 'resources_categories',
+      items_types: 'resources_categories',
     };
     const categoryType = categoryTypes[el.value] ?? el.value;
-    await populateSelect(categorySelect, `teams/current/${categoryType}_categories`);
+    await populateSelect(categorySelect, `teams/current/${categoryType}`);
   });
 
   document.getElementById('importFileForm')?.addEventListener('submit', function(event) {
@@ -133,13 +160,13 @@ if (window.location.pathname === '/profile.php') {
     const formData = new FormData(form);
     // prevent the browser from redirecting us
     formData.set('extraParam', 'noRedirect');
-    if (formData.get('entity_type') === 'null') {
+    if (!formData.get('entity_type')) {
       formData.delete('entity_type');
     }
-    if (formData.get('category') === 'null') {
+    if (!formData.get('category')) {
       formData.delete('category');
     }
-    if (formData.get('template') === 'null') {
+    if (!formData.get('template')) {
       formData.delete('template');
     }
     fetch(form.action, {

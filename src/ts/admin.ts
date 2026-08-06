@@ -7,7 +7,7 @@
  */
 import {
   collectForm,
-  getSafeElementById,
+  getInput,
   mkSpin,
   mkSpinStop,
   permissionsToJson,
@@ -37,7 +37,7 @@ function collectSelectable(name: string): number[] {
 }
 
 function collectInt(name: string): number {
-  return parseInt((getSafeElementById(name) as HTMLInputElement).value, 10);
+  return parseInt(getInput(name).value, 10);
 }
 
 // Collect selected teams, user groups and users from TomSelect-backed selects.

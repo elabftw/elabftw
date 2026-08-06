@@ -15,19 +15,19 @@
       {% endmacro %}
       {% macro compoundPicto(compound) %}
          {% set hazards = {
-          'is_corrosive': {'code': '05', 'alt': 'Corrosive'},
-          'is_serious_health_hazard': {'code': '08', 'alt': 'Serious Health Hazard'},
-          'is_explosive': {'code': '01', 'alt': 'Explosive'},
-          'is_flammable': {'code': '02', 'alt': 'Flammable'},
-          'is_gas_under_pressure': {'code': '04', 'alt': 'Gas under pressure'},
-          'is_hazardous2env': {'code': '09', 'alt': 'Hazardous to environment'},
-          'is_hazardous2health': {'code': '07', 'alt': 'Hazardous to health'},
-          'is_oxidising': {'code': '03', 'alt': 'Oxidising'},
-          'is_toxic': {'code': '06', 'alt': 'Toxic'}
+          'is_corrosive': {'code': '05', 'alt': 'Corrosive'|trans},
+          'is_serious_health_hazard': {'code': '08', 'alt': 'Serious Health Hazard'|trans},
+          'is_explosive': {'code': '01', 'alt': 'Explosive'|trans},
+          'is_flammable': {'code': '02', 'alt': 'Flammable'|trans},
+          'is_gas_under_pressure': {'code': '04', 'alt': 'Gas under pressure'|trans},
+          'is_hazardous2env': {'code': '09', 'alt': 'Hazardous to environment'|trans},
+          'is_hazardous2health': {'code': '07', 'alt': 'Hazardous to health'|trans},
+          'is_oxidising': {'code': '03', 'alt': 'Oxidising'|trans},
+          'is_toxic': {'code': '06', 'alt': 'Toxic'|trans}
         } %}
         {% for property, data in hazards %}
           {% if attribute(compound, property) %}
-            <img src='assets/images/ghs/GHS{{ data.code }}.svg' alt='{{ data.alt }}' title='{{ data.alt }}' />
+            <img class='ghs-pictogram' src='assets/images/ghs/GHS{{ data.code }}.svg' alt='{{ data.alt|e('html_attr') }}' title='{{ data.alt|e('html_attr') }}'/>
           {% endif %}
         {% endfor %}
 
@@ -58,7 +58,7 @@
         {% endfor %}
       {% endmacro %}
       {% for fp in Entity.entityData.compounds_links %}
-        <div class='mt-3 p-2 countable hl-hover-superlight rounded d-flex justify-content-between'>
+        <div class='mt-3 p-2 countable hl-hover-superlight rounded d-flex justify-content-between align-items-start'>
         <details>
           <summary>
             <h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }} {{ _self.compoundPicto(fp) }}</h5>

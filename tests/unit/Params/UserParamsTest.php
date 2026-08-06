@@ -65,4 +65,25 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
         $params = new UserParams('entrypoint', $entrypoint);
         $this->assertEquals(Entrypoint::Dashboard->value, $params->getContent());
     }
+
+    public function testPrimaryFg(): void
+    {
+        $params = new UserParams('primary_fg', 'A1B2C3');
+        $this->assertSame('a1b2c3', $params->getContent());
+        $params = new UserParams('primary_fg', null);
+        $this->assertNull($params->getContent());
+        $params = new UserParams('primary_fg', '');
+        $this->assertNull($params->getContent());
+        $params = new UserParams('primary_fg', '#fff');
+        $this->expectException(ImproperActionException::class);
+        $params->getContent();
+    }
+
+    public function testDefaultReadWriteBase(): void
+    {
+        $params = new UserParams('default_read_base', 10);
+        $this->assertSame(10, $params->getContent());
+        $params = new UserParams('default_write_base', 10);
+        $this->assertSame(10, $params->getContent());
+    }
 }

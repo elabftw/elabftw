@@ -17,13 +17,13 @@ use function sprintf;
 
 trait RandomColorTrait
 {
-    protected const string DEFAULT_BLUE = '29AEB9';
+    protected const string DEFAULT_BLUE = '29aeb9';
 
-    protected const string DEFAULT_GREEN = '54AA08';
+    protected const string DEFAULT_GREEN = '54aa08';
 
-    protected const string DEFAULT_GRAY = 'C0C0C0';
+    protected const string DEFAULT_GRAY = 'c0c0c0';
 
-    protected const string DEFAULT_RED = 'C24F3D';
+    protected const string DEFAULT_RED = 'c24f3d';
 
     /**
      * Get a color that is dark but not too dark

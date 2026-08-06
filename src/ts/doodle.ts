@@ -5,7 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { reloadElements } from './misc';
+import { getInput, reloadElements } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import { ApiC } from './api';
@@ -40,21 +40,21 @@ if (doodleCanvas) {
     path.closePath();
 
     context.globalCompositeOperation = 'source-over';
-    context.strokeStyle = (document.getElementById('doodleStrokeStyle') as HTMLInputElement).value;
-    if ((document.getElementById('doodleEraser') as HTMLInputElement).checked) {
+    context.strokeStyle = getInput('doodleStrokeStyle').value;
+    if (getInput('doodleEraser').checked) {
       context.globalCompositeOperation = 'destination-out';
       context.strokeStyle = 'rgba(0,0,0,1)';
     }
 
     context.lineJoin = 'round';
-    context.lineWidth = Number((document.getElementById('doodleStrokeWidth') as HTMLInputElement).value);
+    context.lineWidth = Number(getInput('doodleStrokeWidth').value);
 
     context.stroke(path);
   }
 
   function addText(x: number, y: number, text: string): void {
     context.font = '18px Arial';
-    context.fillStyle = (document.getElementById('doodleStrokeStyle') as HTMLInputElement).value;
+    context.fillStyle = getInput('doodleStrokeStyle').value;
     context.fillText(text, x, y);
   }
 

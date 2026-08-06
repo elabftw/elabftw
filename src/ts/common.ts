@@ -20,6 +20,7 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
+  getInput,
   getSafeElementById,
   getRandomColor,
   listenTrigger,
@@ -75,6 +76,9 @@ import Tab from './Tab.class';
 import { core } from './core';
 import { get as getFromSvelte } from 'svelte/store';
 import { writable } from 'svelte/store';
+import { applyTheme, isThemeVariant, updateThemeControls } from './theme';
+import { mount } from 'svelte';
+import PrimaryColorPicker from './components/PrimaryColorPicker.svelte';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -201,17 +205,32 @@ if (navbar) {
 
 const container = document.getElementById('container')!;
 
-on('toggle-dark-mode', (el: HTMLElement) => {
-  const currentTheme = parseInt(el.dataset.currentTheme, 10);
-  // Auto (0) and Light (1) should both toggle to Dark (2)
-  const targetTheme = currentTheme === 2 ? 1 : 2;
+on('set-theme', (el: HTMLElement) => {
+  const targetTheme = Number.parseInt(el.dataset.themeVariant ?? '', 10);
+  if (!isThemeVariant(targetTheme)) {
+    return;
+  }
   ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
-    const isDark = targetTheme === 2;
-    document.documentElement.classList.toggle('dark-mode', isDark);
-    document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
-    el.dataset.currentTheme = String(targetTheme);
+    applyTheme(targetTheme);
+    updateThemeControls(targetTheme);
+    document.cookie = [`theme_variant=${targetTheme}`, 'Path=/', 'Max-Age=31536000', 'SameSite=Lax', 'Secure'].join('; ');
+    const styles = getComputedStyle(document.documentElement);
+    const primaryBg = styles.getPropertyValue('--primary');
+    const primaryFg = styles.getPropertyValue('--primary-fg');
+
+    // also set the value of inputs in appearance when theme changes page
+    getInput('primaryBgInput').value = primaryBg;
+    getInput('primaryFgInput').value = primaryFg;
   });
 });
+
+const primaryColorPickerTarget = document.getElementById('primary-color-picker');
+
+if (primaryColorPickerTarget) {
+  mount(PrimaryColorPicker, {
+    target: primaryColorPickerTarget,
+  });
+}
 
 // HEARTBEAT
 if (core.isAuth) {

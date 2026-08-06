@@ -168,11 +168,11 @@ hr {
 /* LINKS */
 a,
 .link-like {
-  color: var(--primary);
+  color: var(--link);
   text-decoration: none;
 
   &:hover {
-    color: color-mix(in srgb, var(--primary) 85%, $white);
+    color: var(--link-hover);
     text-decoration: underline;
   }
 }
@@ -196,11 +196,11 @@ select:not([multiple]) {
 
 .form-control {
   background-color: var(--white);
-  border: 1px solid var(--firstlevel);
+  border: 1px solid var(--thirdlevel);
   color: var(--strongest);
 }
 
-.dark-mode {
+:is(.dark-mode, .midnight) {
   :where(input, textarea).form-control:read-only,
   .form-control:disabled {
     background-color: var(--firstlevel);
@@ -222,12 +222,6 @@ select:not([multiple]) {
     color: var(--mediumstrong);
   }
 
-  .hover-danger:hover {
-    background-color: var(--darkred);
-    border-color: var(--lightred);
-  }
-
-  /* autocomplete */
   .ui-autocomplete {
     background: var(--mainbackground);
   }
@@ -236,12 +230,15 @@ select:not([multiple]) {
     color: var(--strongest);
   }
 
+  .dropdown-divider {
+    border-top: 1px solid var(--thirdlevel);
+  }
 }
 
 .logo-dark { display: none; }
 
-.dark-mode .logo-dark { display: block; }
-.dark-mode .logo-light { display: none; }
+:is(.dark-mode, .midnight) .logo-dark { display: block; }
+:is(.dark-mode, .midnight) .logo-light { display: none; }
 
 /* prevent the caret from being too close from text */
 /* stylelint-disable-next-line selector-no-qualifying-type */
@@ -482,7 +479,7 @@ button:disabled {
 .beta {
   background: var(--primary);
   border-radius: 5px;
-  color: var(--white);
+  color: var(--strongest);
   display: inline-block;
   font-family: sans-serif;
   font-size: 10px;
@@ -692,7 +689,7 @@ tr:first-child td {
 }
 
 .overlay p {
-  color: var(--chrome-fg);
+  color: var(--primary-fg);
   font-weight: bold;
   margin-bottom: 0;
 }
@@ -872,7 +869,7 @@ tr:first-child td {
 
 .list-group-item {
   background-color: var(--white);
-  border: 1px solid var(--secondary);
+  border: 1px solid var(--thirdlevel);
 }
 
 .side-panel {
@@ -1945,7 +1942,7 @@ input:user-invalid {
 }
 
 #devPerfDiv {
-  background-color: $white;
+  background-color: var(--white);
   bottom: 0;
   left: 0;
   position: fixed;
@@ -1980,6 +1977,14 @@ div > .sticky-navbar {
   transition: top 0.2s ease;
   width: 100%;
   z-index: 50;
+}
+
+/* chemical compounds danger (hazard pictograms) */
+.ghs-pictogram {
+  background-color: var(--chrome-fg);
+  border-radius: 2px;
+  max-height: 3rem;
+  max-width: 3rem;
 }
 
 .sticky-navbar.hidden {

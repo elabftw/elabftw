@@ -49,7 +49,7 @@
   
   <div class='form-group mx-auto col-md-4'>
     <div class='row'>
-      <!-- [html-validate-disable-block prefer-native-element: suppress errors from tom-select] -->
+      {@html '<!-- [html-validate-disable-block valid-for, prefer-native-element: suppress errors from tom-select] -->'}
       <label for='team'>{options.labels.team}</label>
       <select
         name='team'

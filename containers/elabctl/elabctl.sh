@@ -489,13 +489,18 @@ function mysql-backup
           "$MYSQL_DATABASE" 2>&1 |
           grep -vF "[Warning] Using a password"
 
-      statuses=("${PIPESTATUS[@]}")
-      (( statuses[0] == 0 && statuses[1] <= 1 ))
+        statuses=("${PIPESTATUS[@]}")
+        (( statuses[0] == 0 )) || exit "${statuses[0]}"
+        (( statuses[1] <= 1 )) || exit "${statuses[1]}"
       '; then
       # copy it from the container to the host
-      docker cp "${ELAB_MYSQL_CONTAINER_NAME}:dump.sql" "$dumpfile" && docker exec "${ELAB_MYSQL_CONTAINER_NAME}" rm dump.sql
+      docker cp "${ELAB_MYSQL_CONTAINER_NAME}:dump.sql" "$dumpfile" || return 1
+      # then delete it from container
+      docker exec "${ELAB_MYSQL_CONTAINER_NAME}" rm dump.sql || return 1
     else
-      echo ">> Containers must be running to do the backup!" >&2
+      status=$?
+      echo '>> MySQL backup failed!' >&2
+      return "$status"
     fi
     # compress it to the max
     gzip -f --best "$dumpfile"

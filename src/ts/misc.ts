@@ -30,6 +30,7 @@ import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plu
 import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
 import { mount, unmount } from 'svelte';
 import RorsSv from './components/Rors.svelte';
+import RegisterForm from './components/RegisterForm.svelte';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -1181,3 +1182,15 @@ export const DEFAULT_AG_GRID_PAGINATION = {
   paginationPageSize: 100,
   paginationPageSizeSelector: [100, 250, 500],
 };
+
+const registerTarget = document.getElementById('register-form-component');
+
+if (registerTarget) {
+  // read the data passed by Twig
+  const options = JSON.parse(registerTarget.dataset.options ?? '{}');
+
+  // replace loading spinner with the form
+  registerTarget.replaceChildren();
+  mount(RegisterForm, { target: registerTarget, props: { options },
+  });
+}

@@ -88,7 +88,7 @@ abstract class AbstractCsv extends AbstractImport
 
     abstract protected function getProcessedColumns(): array;
 
-    protected function collectMetadata(array $row): string
+    protected function collectMetadata(array $row, bool $includeType = true): string
     {
         // we remove the columns present in compound to be left with the ones we want in metadata as extra fields
         $processedColumns = $this->getProcessedColumns();
@@ -103,7 +103,10 @@ abstract class AbstractCsv extends AbstractImport
             if (filter_var($value, FILTER_VALIDATE_URL)) {
                 $type = 'url';
             }
-            $metadata['extra_fields'][$key] = array('value' => $value, 'type' => $type);
+            $metadata['extra_fields'][$key] = array('value' => $value);
+            if ($includeType) {
+                $metadata['extra_fields'][$key]['type'] = $type;
+            }
         }
         return json_encode($metadata, JSON_THROW_ON_ERROR, 12);
 

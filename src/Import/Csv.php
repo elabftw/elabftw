@@ -85,7 +85,7 @@ final class Csv extends AbstractCsv
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
             // metadata can come from the dedicated metadata column or from extra CSV columns
             $csvMetadata = empty($row['metadata']) ? null : (string) $row['metadata'];
-            $columnMetadata = $this->collectMetadata($row);
+            $columnMetadata = $this->collectMetadata($row, $this->template === null);
             $metadata = $csvMetadata ?? $columnMetadata;
 
             $tags = empty($row['tags']) ? array() : explode(self::TAGS_SEPARATOR, $row['tags']);

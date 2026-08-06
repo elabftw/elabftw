@@ -359,7 +359,7 @@ class Eln extends AbstractZip
             switch ($attributeName) {
                 // CATEGORY
                 case 'about':
-                    $this->Entity->update(new EntityParams('category', (string) $categoryId));
+                    $this->Entity->update(new EntityParams('category', $categoryId));
                     break;
                     // COMMENTS
                 case 'comment':
@@ -509,6 +509,11 @@ class Eln extends AbstractZip
             ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->Entity->patch(Action::Lock, array()),
             default => null,
         };
+
+        // update category again after import, in case it was set to something from import request
+        if ($this->category !== null) {
+            $this->Entity->update(new EntityParams('category', $this->category));
+        }
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
         if (!empty($dataset['subjectOf'])) {

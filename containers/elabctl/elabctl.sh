@@ -479,9 +479,24 @@ function mysql-backup
     local -r dumpfile="${BACKUP_DIR}/mysql_dump-${date}.sql"
 
     # dump sql
-    docker exec "${ELAB_MYSQL_CONTAINER_NAME}" bash -c 'mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD -r dump.sql --no-tablespaces $MYSQL_DATABASE 2>&1 | grep -v "Warning: Using a password"' || echo ">> Containers must be running to do the backup!"
-    # copy it from the container to the host
-    docker cp "${ELAB_MYSQL_CONTAINER_NAME}:dump.sql" "$dumpfile" && docker exec "${ELAB_MYSQL_CONTAINER_NAME} rm dump.sql"
+    # only consider the exit code of mysqldump for the next step (docker cp) and not the grep
+    if docker exec "${ELAB_MYSQL_CONTAINER_NAME}" bash -c '
+        mysqldump \
+          -u"$MYSQL_USER" \
+          -p"$MYSQL_PASSWORD" \
+          -r dump.sql \
+          --no-tablespaces \
+          "$MYSQL_DATABASE" 2>&1 |
+          grep -vF "[Warning] Using a password"
+
+      statuses=("${PIPESTATUS[@]}")
+      (( statuses[0] == 0 && statuses[1] <= 1 ))
+      '; then
+      # copy it from the container to the host
+      docker cp "${ELAB_MYSQL_CONTAINER_NAME}:dump.sql" "$dumpfile" && docker exec "${ELAB_MYSQL_CONTAINER_NAME}" rm dump.sql
+    else
+      echo ">> Containers must be running to do the backup!" >&2
+    fi
     # compress it to the max
     gzip -f --best "$dumpfile"
     # delete old dumps

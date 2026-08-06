@@ -114,6 +114,7 @@ use function array_filter;
 use function preg_replace;
 use function preg_match;
 use function strlen;
+use function is_numeric;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -1558,6 +1559,7 @@ abstract class AbstractEntity extends AbstractRest
             if (isset($base['extra_fields'][$name])) {
                 $baseField = &$base['extra_fields'][$name];
                 $this->guardMetadataSchemaCompatibility($name, $baseField, $incomingField);
+                $this->guardMetadataValueCompatibility($name, $baseField, $value);
                 $type = $baseField['type'] ?? '';
 
                 // Add imported values to the field's options if they don't already exist.
@@ -1627,6 +1629,13 @@ abstract class AbstractEntity extends AbstractRest
             if (!array_key_exists($key, $baseField) || $incomingField[$key] !== $baseField[$key]) {
                 throw new ImproperActionException(sprintf(_('Metadata field %s has incompatible %s.'), $name, $key));
             }
+        }
+    }
+
+    private function guardMetadataValueCompatibility(string $name, array $field, mixed $value): void
+    {
+        if (($field['type'] ?? '') === 'number' && $value !== '' && !is_numeric(str_replace(',', '.', (string) $value))) {
+            throw new ImproperActionException(sprintf(_('Metadata field %s expects a number.'), $name));
         }
     }
 

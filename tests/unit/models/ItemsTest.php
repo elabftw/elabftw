@@ -347,35 +347,25 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
-    public function testMetadataMergeAllowsValueOnlyUpdate(): void
+    public function testMetadataMergeRejectsInvalidNumber(): void
     {
         $this->Items->patch(Action::Update, array(
             'metadata' => json_encode(array(
                 'extra_fields' => array(
-                    'Coffee' => array(
-                        'type' => 'number',
-                        'unit' => 'liter',
-                        'value' => '1',
-                    ),
+                    'Coffee' => array('type' => 'number', 'value' => '1'),
                 ),
             ), JSON_THROW_ON_ERROR),
         ));
 
-        $metadata = $this->Items->patch(Action::Update, array(
+        $this->expectException(ImproperActionException::class);
+
+        $this->Items->patch(Action::Update, array(
             'metadatamerge' => json_encode(array(
                 'extra_fields' => array(
-                    'Coffee' => array(
-                        'value' => '2',
-                    ),
+                    'Coffee' => array('value' => '100X89'),
                 ),
             ), JSON_THROW_ON_ERROR),
         ));
-
-        $fields = json_decode($metadata['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
-
-        $this->assertSame('number', $fields['Coffee']['type']);
-        $this->assertSame('liter', $fields['Coffee']['unit']);
-        $this->assertSame('2', $fields['Coffee']['value']);
     }
 
     private function makeItemFromImmutableTemplateFor(AuthenticatedUser $user): Items

@@ -322,49 +322,44 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     public function testMetadataMergeRejectsSchemaMismatch(): void
     {
         $this->Items->patch(Action::Update, array(
-            'metadata' => json_encode(array(
-                'extra_fields' => array(
-                    'Coffee' => array(
-                        'type' => 'number',
-                        'unit' => 'liter',
-                        'value' => '1',
-                    ),
-                ),
-            ), JSON_THROW_ON_ERROR),
+            'metadata' => json_encode(
+                array(
+                    'extra_fields' => array(
+                        'Coffee' => array('type' => 'number', 'unit' => 'liter', 'value' => '1'))),
+                JSON_THROW_ON_ERROR
+            ),
         ));
 
         $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessageMatches('/Metadata field Coffee has incompatible type\./');
         $this->Items->patch(Action::Update, array(
-            'metadatamerge' => json_encode(array(
-                'extra_fields' => array(
-                    'Coffee' => array(
-                        'type' => 'date',
-                        'unit' => 'gram',
-                        'value' => '2',
-                    ),
-                ),
-            ), JSON_THROW_ON_ERROR),
+            'metadatamerge' => json_encode(
+                array(
+                    'extra_fields' => array(
+                        'Coffee' => array('type' => 'date', 'unit' => 'gram', 'value' => '2'))),
+                JSON_THROW_ON_ERROR
+            ),
         ));
     }
 
     public function testMetadataMergeRejectsInvalidNumber(): void
     {
         $this->Items->patch(Action::Update, array(
-            'metadata' => json_encode(array(
-                'extra_fields' => array(
-                    'Coffee' => array('type' => 'number', 'value' => '1'),
-                ),
-            ), JSON_THROW_ON_ERROR),
+            'metadata' => json_encode(
+                array(
+                    'extra_fields' => array(
+                        'Coffee' => array('type' => 'number', 'value' => '1'))),
+                JSON_THROW_ON_ERROR
+            ),
         ));
 
         $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessageMatches('/Metadata field Coffee expects a number\./');
 
         $this->Items->patch(Action::Update, array(
             'metadatamerge' => json_encode(array(
                 'extra_fields' => array(
-                    'Coffee' => array('value' => '100X89'),
-                ),
-            ), JSON_THROW_ON_ERROR),
+                    'Coffee' => array('value' => '100X89'))), JSON_THROW_ON_ERROR),
         ));
     }
 

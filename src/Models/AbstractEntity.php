@@ -1622,10 +1622,15 @@ abstract class AbstractEntity extends AbstractRest
 
     private function guardMetadataSchemaCompatibility(string $name, array $baseField, array $incomingField): void
     {
+        // existing fields keep their original schema. If the incoming metadata explicitly specifies
+        // a schema (currently type or unit), it must match the stored one. Value-only updates are still allowed.
         foreach (array('type', 'unit') as $key) {
+            // The incoming metadata does not specify this schema key, so keep the existing definition
             if (!array_key_exists($key, $incomingField)) {
                 continue;
             }
+
+            // reject attempts to merge an incompatible schema into an existing field
             if (!array_key_exists($key, $baseField) || $incomingField[$key] !== $baseField[$key]) {
                 throw new ImproperActionException(sprintf(_('Metadata field %s has incompatible %s.'), $name, $key));
             }
@@ -1634,6 +1639,8 @@ abstract class AbstractEntity extends AbstractRest
 
     private function guardMetadataValueCompatibility(string $name, array $field, mixed $value): void
     {
+        // Existing number fields must receive a valid numeric value
+        // Accept both '.' and ',' as decimal separators
         if (($field['type'] ?? '') === 'number' && $value !== '' && !is_numeric(str_replace(',', '.', (string) $value))) {
             throw new ImproperActionException(sprintf(_('Metadata field %s expects a number.'), $name));
         }

@@ -213,7 +213,7 @@
               <label class='form-check-label' for='entityTypeRadioItemsTypes'>{{ 'Resources templates'|trans }}</label>
             </span>
             <span class='form-check form-check-inline'>
-              <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioNone' value='null'>
+              <input class='form-check-input' type='radio' name='entity_type' id='entityTypeRadioNone' value=''>
               <label class='form-check-label' for='entityTypeRadioNone'>{{ 'Do not force type'|trans }}</label>
             </span>
           </span>
@@ -223,7 +223,7 @@
           <hr>
           <label for='importSelectTemplate'>{{ 'Select a template'|trans }}</label>
           <select class='form-control' id='importSelectTemplate' autocomplete='off' name='template'>
-            <option value='null'>{{ 'Do not use a template'|trans }}</option>
+            <option value=''>{{ 'Do not use a template'|trans }}</option>
           </select>
         </div>
 
@@ -231,7 +231,7 @@
           <hr>
           <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
           <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
-            <option value='null'>{{ 'Do not force a category'|trans }}</option>
+            <option value=''>{{ 'Do not force a category'|trans }}</option>
             {% for cat in experimentsCategoryArr %}
               <option value='{{ cat.id }}'>{{ cat.title }}</option>
             {% endfor %}

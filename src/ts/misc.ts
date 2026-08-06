@@ -216,10 +216,9 @@ export const resetToDefault = (select: TomSelectElement): void => {
   if (select.tomselect) {
     // Force sync with the hidden native selects (e.g., when default is "Do not apply any value")
     select.tomselect.clear(true);
-    select.tomselect.setValue('null', true);
     return;
   }
-  select.value = 'null';
+  select.value = '';
 };
 
 export function listenTrigger(elementId: string = ''): void {

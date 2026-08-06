@@ -13,24 +13,27 @@ import { on } from './handlers';
 
 // populate selects for category/templates when importing csv
 const populateSelect = async (select: TomSelectElement, endpoint?: string): Promise<void> => {
-  // remove all options except the first one ("Do not use ...")
+  resetToDefault(select);
+
+  // Remove previous dynamic options, but keep the placeholder option.
   for (let i = select.options.length - 1; i >= 1; i--) {
     select.remove(i);
   }
-  if (!endpoint) {
-    rebuildTomSelectOptions(select);
-    resetToDefault(select);
-    return;
+
+  if (endpoint) {
+    const entries = await ApiC.getJson(endpoint);
+
+    entries.forEach(entry => {
+      const newOption = document.createElement('option');
+      newOption.value = entry.id;
+      newOption.text = entry.title;
+      select.add(newOption);
+    });
   }
-  const entries = await ApiC.getJson(endpoint);
-  entries.forEach(entry => {
-    const newOption = document.createElement('option');
-    newOption.value = entry.id;
-    newOption.text = entry.title;
-    select.add(newOption);
+
+  rebuildTomSelectOptions(select, {
+    filter: option => option.value !== '',
   });
-  rebuildTomSelectOptions(select);
-  resetToDefault(select);
 };
 
 if (window.location.pathname === '/profile.php') {
@@ -38,7 +41,8 @@ if (window.location.pathname === '/profile.php') {
     const select = document.getElementById(id) as HTMLSelectElement | null;
     if (select) {
       new TomSelect(select, {
-        plugins: ['dropdown_input', 'no_active_items'],
+        plugins: ['dropdown_input', 'no_active_items', 'clear_button'],
+        placeholder: select.options[0]?.text,
       });
     }
   });
@@ -124,12 +128,12 @@ if (window.location.pathname === '/profile.php') {
     } else {
       templateSelect.tomselect?.disable();
     }
-    categorySelect.tomselect?.setValue('null', true);
-    templateSelect.tomselect?.setValue('null', true);
+    categorySelect.tomselect?.setValue('', true);
+    templateSelect.tomselect?.setValue('', true);
     await populateSelect(templateSelect, templateType);
 
     // categories select
-    selectCategoryDiv.hidden = el.value === 'null';
+    selectCategoryDiv.hidden = el.value === '';
     if (selectCategoryDiv.hidden) return;
     const categoryTypes: Record<string, string> = {
       experiments: 'experiments_categories',
@@ -156,13 +160,13 @@ if (window.location.pathname === '/profile.php') {
     const formData = new FormData(form);
     // prevent the browser from redirecting us
     formData.set('extraParam', 'noRedirect');
-    if (formData.get('entity_type') === 'null') {
+    if (!formData.get('entity_type')) {
       formData.delete('entity_type');
     }
-    if (formData.get('category') === 'null') {
+    if (!formData.get('category')) {
       formData.delete('category');
     }
-    if (formData.get('template') === 'null') {
+    if (!formData.get('template')) {
       formData.delete('template');
     }
     fetch(form.action, {

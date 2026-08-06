@@ -247,6 +247,16 @@ abstract class AbstractEntity extends AbstractRest
                     $contentType = isset($reqBody['content_type'])
                         ? BodyContentType::from($reqBody['content_type'])
                         : ($useMarkdown ? BodyContentType::Markdown : BodyContentType::Html);
+
+                    $userid = isset($reqBody['userid'])
+                        ? (int) $reqBody['userid']
+                        : $this->Users->userid;
+                    if ($userid !== $this->Users->userid) {
+                        $teamsHelper = new TeamsHelper($this->Users->team);
+                        if (!$teamsHelper->isUserInTeam($userid)) {
+                            throw new UnprocessableContentException(_('The selected user does not exist or is not a member of your team.'));
+                        }
+                    }
                     return $this->create(
                         title: $reqBody['title'] ?? null,
                         body: $reqBody['body'] ?? null,
@@ -261,6 +271,7 @@ abstract class AbstractEntity extends AbstractRest
                         status: $status,
                         metadata: $metadata,
                         contentType: $contentType,
+                        userid: $userid,
                     );
                 }
             )(),

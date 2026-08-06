@@ -60,6 +60,7 @@ final class Experiments extends AbstractConcreteEntity
         BodyContentType $contentType = BodyContentType::Html,
         ?EntityType $createdFromType = null,
         ?int $createdFromId = null,
+        ?int $userid = null,
     ): int {
         // defaults
         $title = Filter::title($title ?? _('Untitled'));
@@ -90,7 +91,7 @@ final class Experiments extends AbstractConcreteEntity
         $req->bindParam(':canwrite_is_immutable', $canwriteIsImmutable, PDO::PARAM_INT);
         $req->bindParam(':metadata', $metadata);
         $req->bindParam(':custom_id', $customId, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindValue(':content_type', $contentType->value, PDO::PARAM_INT);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
         $req->bindValue(':hide_main_text', $hideMainText->value, PDO::PARAM_INT);

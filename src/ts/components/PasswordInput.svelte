@@ -74,7 +74,7 @@
   </div>
 </div>
 
-<ul id={`${id}-requirements`} class='small text-left mt-2 mb-0 pl-3'>
+<ul id={`${id}-requirements`} class='small text-left mt-2 mb-0 list-unstyled'>
   {#each rules as rule}
     <li class:text-success={rule.met} class:text-muted={!rule.met}>
       {rule.met ? labels.met : labels.notMet} {rule.label}

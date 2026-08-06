@@ -264,6 +264,7 @@ components:
             - timestamp
             - updatemetadatafield
             - update
+            - updateowner
         passphrase:
           type: string
           description: >
@@ -281,6 +282,18 @@ components:
             - 40: Review
             - 50: Safety
           example: 40
+        userid:
+          type: integer
+          description: >
+            ID of the new owner. Required when action is "updateowner".
+            The user must belong to the destination team.
+          example: 21
+        team:
+          type: integer
+          description: >
+            ID of the destination team. Required when action is "updateowner".
+            Non-admin users can only transfer ownership within their current team.
+          example: 5
       required: [action]
 
     EntityAndItemEditable:
@@ -1364,13 +1377,14 @@ components:
           type: integer
           description: |
             User ID of the entity owner.
-            When transferring ownership, the `team` field should also be provided (optional).
+            For existing entities, ownership can only be transferred through the `PatchAction`
+            schema with `action: "updateowner"`; both `userid` and `team` are required.
         team:
           type: integer
           description: |
-            Optional team context for ownership transfer.
-            If omitted, the requester’s team is used by default.
-            If provided, the API validates that the target user is a member of the specified team.
+            Team ID of the entity.
+            For existing entities, ownership can only be transferred through the `PatchAction`
+            schema with `action: "updateowner"`; both `userid` and `team` are required.
     # ENTITY DUPLICATE
     entity_duplicate:
       type: object

@@ -55,6 +55,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         new Eln(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->fs,
             $this->logger,
@@ -75,6 +76,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         new Eln(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->fs,
             $this->logger,
@@ -94,6 +96,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Eln(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->fs,
@@ -117,6 +120,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->fs,
             $this->logger,
@@ -135,6 +139,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Eln(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->fs,
@@ -157,6 +162,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->fs,
             $this->logger,
@@ -177,6 +183,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Eln(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->fs,
@@ -200,6 +207,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new TrustedEln(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->fs,
             $this->logger,
@@ -222,6 +230,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->fs,
             $this->logger,
@@ -243,6 +252,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Eln(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->fs,
@@ -267,6 +277,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         new Eln(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->fs,
             $this->logger,
@@ -286,6 +297,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Eln(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->fs,
@@ -307,6 +319,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Eln(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->fs,
@@ -330,6 +343,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Eln(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->fs,
             $this->logger,
@@ -351,6 +365,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Eln(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->fs,
@@ -374,6 +389,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Eln(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->fs,

@@ -46,6 +46,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->logger,
             EntityType::Items,
@@ -67,6 +68,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Csv(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->logger,
@@ -90,6 +92,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->logger,
             EntityType::Items,
@@ -110,6 +113,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Csv(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->logger,
@@ -135,6 +139,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $requester = new Users(2, 1);
         $category = 1;
         $Import = new Csv(
+            $requester,
             $requester,
             $uploadedFile,
             $this->logger,

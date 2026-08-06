@@ -258,6 +258,7 @@ TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
 makeSortableGreatAgain();
+bindMoreFiltersOutsideClick();
 mountRors();
 
 const userPrefs = document.getElementById('user-prefs').dataset;
@@ -1695,3 +1696,17 @@ container.addEventListener('click', (event: Event) => {
     }
   });
 });
+
+function bindMoreFiltersOutsideClick(): void {
+  document.querySelectorAll<HTMLElement>('[class*="-popover"]').forEach(popover => {
+    const details = popover.closest('details');
+    if (!details) return;
+
+    document.addEventListener('click', event => {
+      const target = event.target;
+      if (details.open && target instanceof Node && !details.contains(target)) {
+        details.open = false;
+      }
+    });
+  });
+}

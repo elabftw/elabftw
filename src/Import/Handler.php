@@ -82,7 +82,7 @@ final class Handler extends AbstractRest
         if ($targetUserid === 0) {
             $targetUserid = $requesterId;
         }
-        $targetUser = new Users($targetUserid, $destinationTeam);
+        $targetUser = new Users($targetUserid, $destinationTeam, $this->requester);
 
         $TeamsHelper = new TeamsHelper($destinationTeam);
         // add additional checks if user imports as another user

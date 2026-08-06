@@ -87,6 +87,7 @@ class Eln extends AbstractZip
 
     public function __construct(
         protected Users $requester,
+        protected Users $targetUser,
         protected UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
@@ -99,7 +100,6 @@ class Eln extends AbstractZip
         protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
         private bool $verifyChecksum = true,
         private bool $checksumErrorSkip = true,
-        protected int $targetUserId = 0,
     ) {
         parent::__construct(
             $requester,
@@ -123,7 +123,7 @@ class Eln extends AbstractZip
     #[Override]
     public function getTargetUserid(): int
     {
-        return $this->targetUserId;
+        return $this->targetUser->getUserid();
     }
 
     #[Override]
@@ -197,7 +197,7 @@ class Eln extends AbstractZip
 
     protected function getAuthor(array $dataset): Users
     {
-        return $this->requester;
+        return $this->targetUser;
     }
 
     protected function getEntityType(array $dataset): EntityType

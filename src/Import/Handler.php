@@ -101,6 +101,7 @@ final class Handler extends AbstractRest
             case 'eln':
                 return new Eln(
                     $this->requester,
+                    $targetUser,
                     $reqBody['file'],
                     Storage::CACHE->getStorage()->getFs(),
                     $this->logger,
@@ -108,7 +109,6 @@ final class Handler extends AbstractRest
                     category: (int) $reqBody['category'],
                     canreadBase: $canreadBase,
                     canwriteBase: $canwriteBase,
-                    targetUserId: $targetUserid,
                 );
             case 'csv':
                 $csvTemplate = empty($reqBody['template']) ? null : (int) $reqBody['template'];

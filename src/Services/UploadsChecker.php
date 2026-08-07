@@ -93,7 +93,7 @@ final class UploadsChecker
         foreach ($uploads as $upload) {
             $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
             $hasher = new NolimitFileHash($storageFs, $upload['long_name']);
-            $hash = $hasher->getHash();
+            $hash = $hasher->getSafeHash();
             if ($upload['hash'] !== $hash) {
                 $this->output->writeln(sprintf('Found hash mismatch for upload id: %d, stored at %s', $upload['id'], $upload['long_name']));
                 $this->output->writeln(sprintf('Expected: %s but calculated: %s', $upload['hash'], $hash ?? 'error'));
@@ -125,7 +125,7 @@ final class UploadsChecker
     {
         $sql = 'UPDATE uploads SET hash = :hash, hash_algorithm = :hash_algorithm WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':hash', $hasher->getHash());
+        $req->bindValue(':hash', $hasher->getSafeHash());
         $req->bindValue(':hash_algorithm', $hasher->getAlgo());
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         return $this->Db->execute($req);

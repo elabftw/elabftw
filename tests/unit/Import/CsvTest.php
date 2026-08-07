@@ -136,6 +136,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->logger,
             EntityType::Items,

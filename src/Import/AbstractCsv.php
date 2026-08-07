@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use JsonException;
 use League\Csv\Reader;
 use League\Csv\Info as CsvInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -33,7 +35,9 @@ use function arsort;
 use function array_diff_key;
 use function array_flip;
 use function json_encode;
+use function json_decode;
 use function filter_var;
+use function is_array;
 use function key;
 
 /**
@@ -120,6 +124,14 @@ abstract class AbstractCsv extends AbstractImport
     {
         // if an explicit "metadata" column exists on the row, we directly use that and don't care about the rest
         if (!empty($row['metadata'])) {
+            try {
+                $metadata = json_decode($row['metadata'], true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException) {
+                throw new ImproperActionException('Invalid metadata JSON provided.');
+            }
+            if (!is_array($metadata)) {
+                throw new ImproperActionException('Invalid metadata JSON provided.');
+            }
             return $row['metadata'];
         }
         return $this->collectMetadata($row);

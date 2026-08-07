@@ -37,19 +37,10 @@ final class MetadataHelpers
         $sourceMetadata = self::decodeMetadata($source);
         $incomingMetadata = self::decodeMetadata($incoming);
 
-        $sourceFields = $sourceMetadata['extra_fields'] ?? array();
-        $incomingFields = $incomingMetadata['extra_fields'] ?? array();
-
-        if (!is_array($sourceFields) || !is_array($incomingFields)) {
-            throw new ImproperActionException(_('Invalid metadata extra_fields provided.'));
-        }
+        $sourceFields = self::getExtraFields($sourceMetadata);
+        $incomingFields = self::getExtraFields($incomingMetadata);
 
         foreach ($incomingFields as $name => $incomingField) {
-            if (!is_array($incomingField)) {
-                throw new ImproperActionException(
-                    sprintf(_('Invalid metadata field %s.'), $name)
-                );
-            }
 
             // New field: there is no source schema, so keep the complete
             // incoming field definition.
@@ -68,12 +59,6 @@ final class MetadataHelpers
 
                 $sourceFields[$name] = $incomingField;
                 continue;
-            }
-
-            if (!is_array($sourceFields[$name])) {
-                throw new ImproperActionException(
-                    sprintf(_('Invalid metadata field %s.'), $name)
-                );
             }
 
             // Existing field: the source/template owns the schema.
@@ -107,9 +92,8 @@ final class MetadataHelpers
         $base = self::decodeMetadata($baseMetadata);
         // incoming metadata usually comes from CSV/API and contains the values to inject.
         $incoming = self::decodeMetadata($incomingMetadata);
-        // ensure both metadata arrays have an extra_fields array.
-        $base['extra_fields'] ??= array();
-        $incoming['extra_fields'] ??= array();
+        $base['extra_fields'] = self::getExtraFields($base);
+        $incoming['extra_fields'] = self::getExtraFields($incoming);
 
         foreach ($incoming['extra_fields'] as $name => $incomingField) {
             $value = $incomingField['value'] ?? '';
@@ -129,6 +113,24 @@ final class MetadataHelpers
         }
 
         return json_encode($base, JSON_THROW_ON_ERROR);
+    }
+
+    private static function getExtraFields(array $metadata): array
+    {
+        $fields = $metadata['extra_fields'] ?? array();
+        if (!is_array($fields)) {
+            throw new ImproperActionException(_('Invalid metadata extra_fields provided.'));
+        }
+
+        foreach ($fields as $name => $field) {
+            if (!is_array($field)) {
+                throw new ImproperActionException(
+                    sprintf(_('Invalid metadata field %s.'), $name)
+                );
+            }
+        }
+
+        return $fields;
     }
 
     private static function decodeMetadata(?string $metadata): array
@@ -230,6 +232,11 @@ final class MetadataHelpers
             );
         }
 
+        $options = array_map(
+            static fn(mixed $option): mixed => is_scalar($option) ? (string) $option : $option,
+            $options,
+        );
+
         $isMulti = $type === 'select-multi'
             || ($type === 'select' && ($field['allow_multi_values'] ?? false) === true);
 
@@ -248,7 +255,7 @@ final class MetadataHelpers
         }
 
         foreach ($values as $option) {
-            if ($option !== '' && !in_array($option, $options, true)) {
+            if ($option !== '' && (!is_scalar($option) || !in_array((string) $option, $options, true))) {
                 throw new ImproperActionException(
                     sprintf(
                         _('Metadata field %s contains an invalid option.'),

@@ -337,4 +337,41 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
 
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadataValues($base, $incoming));
     }
+
+    public function testMergeMetadataValuesRejectsInvalidExtraFields(): void
+    {
+        $base = '{"extra_fields":"nope"}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Invalid metadata extra_fields provided.');
+        MetadataHelpers::mergeMetadataValues($base, '{}');
+    }
+
+    public function testMergeMetadataValuesRejectsInvalidField(): void
+    {
+        $incoming = '{"extra_fields":{"Nope":"not an array"}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Invalid metadata field Nope.');
+        MetadataHelpers::mergeMetadataValues('{}', $incoming);
+    }
+
+    public function testMergeMetadataValuesAcceptsNumericOptions(): void
+    {
+        $base = '{"extra_fields":{"Choice":{"type":"select","options":[1,2],"value":"2"}}}';
+        $incoming = '{"extra_fields":{"Choice":{"value":"1"}}}';
+        $expected = '{"extra_fields":{"Choice":{"type":"select","options":[1,2],"value":"1"}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadataValues($base, $incoming));
+    }
+
+    public function testMergeMetadataValuesRejectsNonScalarOption(): void
+    {
+        $base = '{"extra_fields":{"Choice":{"type":"select-multi","options":["A"],"value":[]}}}';
+        $incoming = '{"extra_fields":{"Choice":{"value":[["A"]]}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field Choice contains an invalid option.');
+        MetadataHelpers::mergeMetadataValues($base, $incoming);
+    }
 }

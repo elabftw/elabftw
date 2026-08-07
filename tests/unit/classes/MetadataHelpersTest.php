@@ -274,4 +274,67 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage('Invalid metadata JSON provided.');
         MetadataHelpers::mergeMetadataValues('{}', '{nope');
     }
+
+    public function testMergeMetadataRejectsInvalidSourceField(): void
+    {
+        $source = '{"extra_fields":{"Nope":"not an array"}}';
+        $incoming = '{"extra_fields":{"Nope":{"value":"test"}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Invalid metadata field Nope.');
+        MetadataHelpers::mergeMetadata($source, $incoming);
+    }
+
+    public function testMergeMetadataRejectsNonArrayJson(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Invalid metadata JSON provided.');
+        MetadataHelpers::mergeMetadata('null', '{}');
+    }
+
+    public function testMergeMetadataNormalizesMultiSelectArray(): void
+    {
+        $source = '{"extra_fields":{"Choice":{"type":"select","allow_multi_values":true,"options":["A","B","C"],"value":[]}}}';
+        $incoming = '{"extra_fields":{"Choice":{"value":["A","C"]}}}';
+        $expected = '{"extra_fields":{"Choice":{"type":"select","allow_multi_values":true,"options":["A","B","C"],"value":["A","C"]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataRejectsInvalidOptions(): void
+    {
+        $source = '{"extra_fields":{"Choice":{"type":"select","options":"nope","value":"A"}}}';
+        $incoming = '{"extra_fields":{"Choice":{"value":"A"}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field Choice has invalid options.');
+        MetadataHelpers::mergeMetadata($source, $incoming);
+    }
+
+    public function testMergeMetadataNormalizesEmptyCheckbox(): void
+    {
+        $source = '{"extra_fields":{"Certified":{"type":"checkbox","value":"on"}}}';
+        $incoming = '{"extra_fields":{"Certified":{"value":""}}}';
+        $expected = '{"extra_fields":{"Certified":{"type":"checkbox","value":""}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataValuesNormalizesSelectMultiArray(): void
+    {
+        $base = '{"extra_fields":{"Choice":{"type":"select-multi","options":["A","B"],"value":[]}}}';
+        $incoming = '{"extra_fields":{"Choice":{"value":["A","B"]}}}';
+        $expected = '{"extra_fields":{"Choice":{"type":"select-multi","options":["A","B"],"value":["A","B"]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadataValues($base, $incoming));
+    }
+
+    public function testMergeMetadataValuesNormalizesSelectMultiString(): void
+    {
+        $base = '{"extra_fields":{"Choice":{"type":"select-multi","options":["A","B","C"],"value":[]}}}';
+        $incoming = '{"extra_fields":{"Choice":{"value":"A, C"}}}';
+        $expected = '{"extra_fields":{"Choice":{"type":"select-multi","options":["A","B","C"],"value":["A","C"]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadataValues($base, $incoming));
+    }
 }

@@ -118,25 +118,6 @@ final class MetadataHelpers
                 $baseField = &$base['extra_fields'][$name];
                 self::guardMetadataSchemaCompatibility($name, $baseField, $incomingField);
                 self::guardMetadataValueCompatibility($name, $baseField, $value);
-                $type = $baseField['type'] ?? '';
-
-                // Add imported values to the field's options if they don't already exist.
-                $values = match ($type) {
-                    'select-multi' => is_array($value)
-                        ? $value
-                        : array_map('trim', explode(',', (string) $value)),
-                    'select', 'select-one', 'radio' => array($value),
-                    default => array(),
-                };
-
-                if (!empty($values)) {
-                    $baseField['options'] ??= array();
-                    foreach ($values as $option) {
-                        if ($option !== '' && !in_array($option, $baseField['options'], true)) {
-                            $baseField['options'][] = $option;
-                        }
-                    }
-                }
                 // Preserve the existing field schema and only update its value
                 $baseField['value'] = self::normalizeMetadataValue($baseField, $value);
                 unset($baseField);

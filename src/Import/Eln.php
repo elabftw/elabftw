@@ -469,7 +469,13 @@ class Eln extends AbstractZip
             }
         }
 
-        // do the CUSTOM ID after everything (especially after the category) so we can catch any error when setting it and we also have a chance to set the category before the custom_id is set
+        // Make sure an explicitly requested import category is applied before
+        // custom_id so uniqueness is checked against the final category.
+        if ($this->category !== null) {
+            $this->Entity->update(new EntityParams('category', $this->category));
+        }
+
+        // do the CUSTOM ID after everything (especially after the category)
         if (array_key_exists('alternateName', $dataset)) {
             try {
                 $this->Entity->patch(Action::Update, array('custom_id' => (string) $dataset['alternateName']));
@@ -509,11 +515,6 @@ class Eln extends AbstractZip
             ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->Entity->patch(Action::Lock, array()),
             default => null,
         };
-
-        // update category again after import, in case it was set to something from import request
-        if ($this->category !== null) {
-            $this->Entity->update(new EntityParams('category', $this->category));
-        }
 
         // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
         if (!empty($dataset['subjectOf'])) {

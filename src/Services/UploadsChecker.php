@@ -96,7 +96,7 @@ final class UploadsChecker
             $hash = $hasher->getSafeHash();
             if ($upload['hash'] !== $hash) {
                 $this->output->writeln(sprintf('Found hash mismatch for upload id: %d, stored at %s', $upload['id'], $upload['long_name']));
-                $this->output->writeln(sprintf('Expected: %s but calculated: %s', $upload['hash'], $hash ?? 'error'));
+                $this->output->writeln(sprintf('Expected: %s but calculated: %s', $upload['hash'], $hash));
                 if (!$dryRun) {
                     $this->output->writeln('Replacing faulty hash in database...');
                     $this->updateHash($upload['id'], $hasher);

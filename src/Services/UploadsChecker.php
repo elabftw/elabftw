@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Elabftw\FsTools;
 use Elabftw\Hash\NolimitFileHash;
 use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\HashInterface;
@@ -22,7 +21,6 @@ use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function count;
-use function dirname;
 use function sprintf;
 
 /**
@@ -58,8 +56,7 @@ final class UploadsChecker
     public function getNullColumn(string $column): array
     {
         // don't use bindParam here for the column, it doesn't work.
-        // TODO do it also for S3 storage
-        $sql = sprintf('SELECT id, storage, long_name FROM uploads WHERE %s IS NULL AND storage = 1', $column);
+        $sql = sprintf('SELECT id, storage, long_name FROM uploads WHERE %s IS NULL', $column);
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();
@@ -94,7 +91,8 @@ final class UploadsChecker
         $this->Db->execute($req);
         $uploads = $req->fetchAll();
         foreach ($uploads as $upload) {
-            $hasher = new NolimitFileHash(FsTools::getFs(dirname(__DIR__, 2) . '/uploads/'), $upload['long_name']);
+            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
+            $hasher = new NolimitFileHash($storageFs, $upload['long_name']);
             $hash = $hasher->getHash();
             if ($upload['hash'] !== $hash) {
                 $this->output->writeln(sprintf('Found hash mismatch for upload id: %d, stored at %s', $upload['id'], $upload['long_name']));
@@ -115,7 +113,8 @@ final class UploadsChecker
         $toFix = $this->getNullColumn('hash');
         $fixedCount = 0;
         foreach ($toFix as $upload) {
-            $hasher = new NolimitFileHash(FsTools::getFs(dirname(__DIR__, 2) . '/uploads/'), $upload['long_name']);
+            $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
+            $hasher = new NolimitFileHash($storageFs, $upload['long_name']);
             $this->updateHash($upload['id'], $hasher);
             $fixedCount += 1;
         }

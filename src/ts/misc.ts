@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import {Action, EntityType, Model, Target, FileType} from './interfaces';
+import { Action, EntityType, Model, Target, FileType } from './interfaces';
 import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
 import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
@@ -30,6 +30,7 @@ import TomSelectRemoveButton from 'tom-select/dist/esm/plugins/remove_button/plu
 import TomSelectNoBackspaceDelete from 'tom-select/dist/esm/plugins/no_backspace_delete/plugin.js';
 import { mount, unmount } from 'svelte';
 import RorsSv from './components/Rors.svelte';
+import RegisterForm from './components/RegisterForm.svelte';
 
 // get html of current page reloaded via get
 function fetchCurrentPage(tag = ''): Promise<Document>{
@@ -50,6 +51,16 @@ function fetchCurrentPage(tag = ''): Promise<Document>{
     return parser.parseFromString(data, 'text/html');
   });
 }
+
+export const getInput = (id: string): HTMLInputElement => {
+  const element = getSafeElementById(id);
+
+  if (!(element instanceof HTMLInputElement)) {
+    throw new Error(`Input element not found: ${id}`);
+  }
+
+  return element;
+};
 
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
@@ -170,6 +181,8 @@ type TomSelectOption = {
   text: string;
 };
 
+export type TomSelectElement = HTMLSelectElement & { tomselect?: TomSelect };
+
 type RebuildSource =
   | { filter?: (option: HTMLOptionElement) => boolean }
   | { options: TomSelectOption[] };
@@ -199,6 +212,15 @@ export function rebuildTomSelectOptions(
   ts.addOptions(nextOptions);
   ts.refreshOptions(false);
 }
+
+export const resetToDefault = (select: TomSelectElement): void => {
+  if (select.tomselect) {
+    // Force sync with the hidden native selects (e.g., when default is "Do not apply any value")
+    select.tomselect.clear(true);
+    return;
+  }
+  select.value = '';
+};
 
 export function listenTrigger(elementId: string = ''): void {
   let elems: NodeList;
@@ -1160,3 +1182,15 @@ export const DEFAULT_AG_GRID_PAGINATION = {
   paginationPageSize: 100,
   paginationPageSizeSelector: [100, 250, 500],
 };
+
+const registerTarget = document.getElementById('register-form-component');
+
+if (registerTarget) {
+  // read the data passed by Twig
+  const options = JSON.parse(registerTarget.dataset.options ?? '{}');
+
+  // replace loading spinner with the form
+  registerTarget.replaceChildren();
+  mount(RegisterForm, { target: registerTarget, props: { options },
+  });
+}

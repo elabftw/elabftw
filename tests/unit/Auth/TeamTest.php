@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Models\Users\UltraAdmin;
 use Elabftw\Models\Users\Users;
@@ -31,7 +32,7 @@ class TeamTest extends \PHPUnit\Framework\TestCase
     {
         $team = 2;
         $Users = new Users();
-        $invalidUserId = $Users->createOne('auth-team-test@example.com', array($team));
+        $invalidUserId = $Users->createOne('auth-team-test@example.com', array($team), new NullLocalPassword());
         $invalidUser = new Users($invalidUserId, $team, new UltraAdmin());
         $invalidUser->patch(Action::Update, array('validated' => '0'));
 

@@ -14,6 +14,13 @@ describe('Experiments', () => {
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     cy.get('div.tags').contains('some tag').should('exist');
 
+    // open suggested tags
+    cy.get('[data-cy="tagsMenu"] > summary').click();
+    cy.get('[data-cy="tagsMenu"]').should('have.attr', 'open');
+    // click outside
+    cy.get('#createTagInput').click();
+    cy.get('[data-cy="tagsMenu"]').should('not.have.attr', 'open');
+
     // delete tag
     cy.on('window:confirm', () => { return true; });
     cy.contains('some tag').click();

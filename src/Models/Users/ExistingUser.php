@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Users;
 
+use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 
@@ -44,7 +45,7 @@ class ExistingUser extends Users
         bool $skipDomainValidation = false,
     ): Users {
         $Users = new self();
-        $userid = $Users->createOne($email, $teams, $firstname, $lastname, '', $usergroup, $automaticValidationEnabled, $alertAdmin, orgid: $orgid, orcid: $orcid, allowTeamCreation: $allowTeamCreation, skipDomainValidation: $skipDomainValidation);
+        $userid = $Users->createOne($email, $teams, new NullLocalPassword(), $firstname, $lastname, $usergroup, $automaticValidationEnabled, $alertAdmin, orgid: $orgid, orcid: $orcid, allowTeamCreation: $allowTeamCreation, skipDomainValidation: $skipDomainValidation);
         $fresh = new self($userid);
         // we need to report the needValidation flag into the new object
         $fresh->needValidation = $Users->needValidation;

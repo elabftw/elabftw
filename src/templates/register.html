@@ -25,86 +25,52 @@
   </div>
 </div>
 
-<section class='text-center'>
-    <img src='/assets/images/logo.png' alt='elabftw' title='elabftw' class='col-md-3' />
+  {# props for the svelte form #}
+  {% set registerOptions = {
+    'selectedTeam': App.Request.query.get('team'),
+    'teams': teamsArr,
+    'csrf': App.Session.get('csrf')|csrf,
+    'emailDomain': App.Config.configArr.email_domain,
+    'hasPrivacyPolicy': App.Config.configArr.privacy_policy,
+    'password': {
+      'minLength': App.Config.configArr.min_password_length,
+      'complexity': App.Config.configArr.password_complexity_requirement,
+      'pattern': passwordInputPattern,
+      'title': ('Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) ~ ' ' ~ passwordInputHelp),
+    },
+    'labels': {
+      'team': 'Team'|trans,
+      'selectTeam': 'Select a team'|trans,
+      'email': 'Email'|trans,
+      'password': 'Password'|trans,
+      'firstname': 'Firstname'|trans,
+      'lastname': 'Lastname'|trans,
+      'create': 'Create'|trans,
+      'showDomains': 'Display allowed email domains'|trans,
+      'allowedDomains': 'Only emails @%s are authorized to register'|trans|format(App.Config.configArr.email_domain),
+      'privacyPolicy': 'I agree with the Privacy Policy'|trans,
+      'passwordLength': 'At least %d characters'|trans|format(App.Config.configArr.min_password_length),
+      'passwordLetters': 'At least one uppercase and one lowercase letter'|trans,
+      'passwordDigit': 'At least one digit'|trans,
+      'passwordSpecial': 'At least one special character'|trans,
+      'met': '✅',
+      'notMet': '❌',
+      'showPassword': 'Show password'|trans,
+    },
+  } %}
+
+  <section class='text-center'>
+    <img src='/assets/images/logo.png' alt='elabftw' title='elabftw' class='col-md-3'/>
     <h2 class='mb-2 mt-2'>{{ 'Create your account'|trans }}</h2>
-    {# Register form #}
 
-    <form method='post' autocomplete='off' action='app/controllers/RegisterController.php'>
-      <input hidden type='text' name='bot' value=''>
-      {{ App.Session.get('csrf')|csrf }}
-
-      <div class='form-group mx-auto col-md-4'>
-        {# TEAM #}
-        <div class='row'>
-          {% if App.devMode -%}
-            <!-- [html-validate-disable-block prefer-native-element: suppress errors from tom-select] -->
-          {%- endif %}
-          <label for='team'>{{ 'Team'|trans }}</label>
-          <select name='team' class='form-control' id='team' required autocomplete='off' placeholder='{{ 'Select a team'|trans }}' aria-label='{{ 'Team'|trans }}'>
-            <option value='' selected disabled>{{ 'Select a team'|trans }}</option>
-            {# on this page, only show the visible teams #}
-            {% for team in teamsArr %}
-              <option value='{{ team.id }}' {{ App.Request.query.get('team') == team.id ? 'selected' }}>{{ team.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        {# EMAIL #}
-        <div class='row mt-2'>
-          <label for='email'>{{ 'Email'|trans }}</label>
-          <input name='email' class='form-control' type='email' id='email' autocomplete='email' required />
-          {% if App.Config.configArr.email_domain %}
-            <button type='button' data-action='toggle-next' class='mt-1 btn btn-secondary btn-sm'>{{ 'Display allowed email domains'|trans }}</button>
-            <p class='smallgray' hidden>
-              {{ 'Only emails @%s are authorized to register'|trans|format(App.Config.configArr.email_domain) }}
-            </p>
-          {% endif %}
-        </div>
-
-        {# PASSWORD #}
-        <div class='row mt-2'>
-          <label for='password'>{{ 'Password'|trans }}</label>
-          <div class='input-group'>
-            <input name='password' type='password' class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }} {{ passwordInputHelp|e('html_attr') }}' pattern='{{ passwordInputPattern|e('html_attr') }}' id='password' autocomplete='new-password' required />
-            <div class='input-group-append'>
-              <button type='button' class='btn btn-ghost' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
-            </div>
-          </div>
-        </div>
-
-        {# FIRSTNAME #}
-        <div class='row mt-2'>
-          <label for='firstname'>{{ 'Firstname'|trans }}</label>
-          <input name='firstname' class='form-control' type='text' id='firstname' autocomplete='given-name' required />
-        </div>
-
-        {# LASTNAME #}
-        <div class='row mt-2'>
-          <label for='lastname'>{{ 'Lastname'|trans }}</label>
-          <input name='lastname' class='form-control' type='text' id='lastname' autocomplete='family-name' required />
-        </div>
-
-        {# PRIVACY POLICY #}
-        {% if App.Config.configArr.privacy_policy %}
-        <div class='row mt-2'>
-          <div class='form-group form-check'>
-            <input name='privacy-policy' class='form-check-input' type='checkbox' id='privacy-policy' required />
-            <label class='form-check-label' for='privacy-policy'>
-                {{ 'I agree with the %sPrivacy Policy%s'|trans|format("<span class='link-like' data-action='toggle-modal' data-target='policyModal'>", "</span>")|raw }}
-            </label>
-          </div>
-        </div>
-        {% endif %}
-
-        {# SUBMIT #}
-        <div class='mt-4 text-center'>
-          <button type='submit' name='Submit' class='btn btn-primary'>{{ 'Create'|trans }}</button>
-        </div>
+    <div id='register-form-component' data-options='{{ registerOptions|json_encode|e('html_attr') }}'>
+      {# Displayed until Svelte is ready #}
+      <div class='py-5' role='status'>
+        <i class='fas fa-spinner fa-spin fa-2x' aria-hidden='true'></i>
+        <span class='sr-only'>{{ 'Loading'|trans }}</span>
       </div>
-    </form>
-
-{# end register form #}
-</section>
-<div id='info' data-page='register'></div>
+    </div>
+    {# end register form #}
+  </section>
+  <div id='info' data-page='register'></div>
 {% endblock body %}

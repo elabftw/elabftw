@@ -19,10 +19,12 @@ use Elabftw\AuditEvent\UserRegister;
 use Elabftw\Auth\Local;
 use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\LocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\Messages;
+use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
@@ -30,6 +32,8 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Hash\LocalPasswordHash;
+use Elabftw\Interfaces\PasswordInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
@@ -45,6 +49,7 @@ use Elabftw\Models\Users2Teams;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\EmailValidator;
 use Elabftw\Services\Filter;
+use Elabftw\Services\PasswordValidator;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\UserCreator;
 use Elabftw\Services\UsersHelper;
@@ -94,9 +99,9 @@ class Users extends AbstractRest
     public function createOne(
         string $email,
         array $teams,
+        PasswordInterface $localPassword,
         string $firstname = '',
         string $lastname = '',
-        string $passwordHash = '',
         ?Usergroup $usergroup = null,
         bool $automaticValidationEnabled = false,
         bool $alertAdmin = true,
@@ -169,7 +174,7 @@ class Users extends AbstractRest
         $req = $this->Db->prepare($sql);
 
         $req->bindParam(':email', $email);
-        $req->bindParam(':password_hash', $passwordHash);
+        $req->bindValue(':password_hash', $localPassword->toHash());
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
         $req->bindValue(':validated', $isValidated, PDO::PARAM_INT);
@@ -870,12 +875,21 @@ class Users extends AbstractRest
         // when updating the password, we need to check for the presence and validity of the current_password
         // special case for password: we invalidate the stored token
         $this->invalidateToken();
-        // this will properly hash the password
-        $params = new UserParams('password', $params['password']);
+
+        $cleartextPassword = $params['password'];
+        $LocalPassword = new LocalPassword(
+            new PasswordValidator(
+                (int) Config::getConfig()->configArr['min_password_length'],
+                PasswordComplexity::from((int) Config::getConfig()->configArr['password_complexity_requirement']),
+                $cleartextPassword,
+            ),
+            new LocalPasswordHash($cleartextPassword),
+        );
+
         // don't use the update() function so it cannot be bypassed by setting Action::Update instead of Action::UpdatePassword
         $sql = 'UPDATE users SET password_hash = :content, password_modified_at = NOW() WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':content', $params->getContent());
+        $req->bindValue(':content', $LocalPassword->toHash());
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $res = $this->Db->execute($req);
         AuditLogs::create(new PasswordChanged(

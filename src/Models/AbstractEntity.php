@@ -20,6 +20,7 @@ use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\MetadataHelpers as Mh;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
@@ -82,7 +83,6 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
-use JsonException;
 
 use function array_column;
 use function array_merge;
@@ -109,7 +109,6 @@ use function array_map;
 use function count;
 use function array_replace;
 use function trim;
-use function strtolower;
 use function array_filter;
 use function preg_replace;
 use function preg_match;
@@ -198,12 +197,28 @@ abstract class AbstractEntity extends AbstractRest
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
+                    $metadata = null;
+                    if (!empty($reqBody['metadata'])) {
+                        $metadata = is_string($reqBody['metadata'])
+                            ? $reqBody['metadata'] ?? '{}'
+                            : json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
+                    }
+
+
                     // create an entity from a template
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
-                        $entity = $this->entityType->toTemplateEntity($this->Users, (int) $reqBody['template']);
+                        $template = $this->entityType->toTemplateEntity($this->Users, (int) $reqBody['template']);
 
                         $title = $reqBody['title'] ?? null;
-                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title, blankExtrafields: false);
+                        $overrideCreateParams = array();
+
+                        if ($metadata) {
+                            $overrideCreateParams['metadata'] = Mh::mergeMetadata(
+                                $template->entityData['metadata'],
+                                $metadata,
+                            );
+                        }
+                        return $this->copyEntityFrom(sourceEntity: $template, title: $title, blankExtrafields: false, overrideCreateParams: $overrideCreateParams);
                     }
                     // create a template from current entity
                     if (isset($reqBody['entity']) && ((int) $reqBody['entity']) !== -1) {
@@ -223,11 +238,7 @@ abstract class AbstractEntity extends AbstractRest
                     // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
                     $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
                     $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
-                    // force metadata to be a string
-                    $metadata = null;
-                    if (!empty($reqBody['metadata'])) {
-                        $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
-                    }
+
                     // force tags to be an array
                     $tags = $reqBody['tags'] ?? null;
                     if (is_string($tags)) {
@@ -833,7 +844,7 @@ abstract class AbstractEntity extends AbstractRest
             $content = $this->readColumn('body') . $content;
         }
         if ($params->getTarget() === 'metadatamerge') {
-            $content = $this->mergeMetadataValues($this->readColumn('metadata'), $content);
+            $content = Mh::mergeMetadataValues($this->readColumn('metadata'), $content);
         }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
@@ -1540,91 +1551,5 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->getCreatePermissionFromTeam($teamConfigArr) === false) {
             throw new ForbiddenException();
         }
-    }
-
-    private function mergeMetadataValues(string $baseMetadata, string $incomingMetadata): string
-    {
-        // base metadata comes from the template and contains the field schema
-        $base = $this->decodeMetadata($baseMetadata);
-        // incoming metadata usually comes from CSV/API and contains the values to inject.
-        $incoming = $this->decodeMetadata($incomingMetadata);
-        // ensure both metadata arrays have an extra_fields array.
-        $base['extra_fields'] ??= array();
-        $incoming['extra_fields'] ??= array();
-
-        foreach ($incoming['extra_fields'] as $name => $incomingField) {
-            $value = $incomingField['value'] ?? '';
-
-            if (isset($base['extra_fields'][$name])) {
-                $baseField = &$base['extra_fields'][$name];
-                $type = $baseField['type'] ?? '';
-
-                // Add imported values to the field's options if they don't already exist.
-                $values = match ($type) {
-                    'select-multi' => is_array($value)
-                        ? $value
-                        : array_map('trim', explode(',', (string) $value)),
-                    'select', 'select-one', 'radio' => array($value),
-                    default => array(),
-                };
-
-                if (!empty($values)) {
-                    $baseField['options'] ??= array();
-                    foreach ($values as $option) {
-                        if ($option !== '' && !in_array($option, $baseField['options'], true)) {
-                            $baseField['options'][] = $option;
-                        }
-                    }
-                }
-                // Preserve the existing field schema and only update its value
-                $baseField['value'] = $this->normalizeMetadataValue($baseField, $value);
-                unset($baseField);
-                continue;
-            }
-            // new fields: keep incoming schema, but normalize its value if it has a known type.
-            $incomingField['value'] = $this->normalizeMetadataValue($incomingField, $value);
-            $base['extra_fields'][$name] = $incomingField;
-        }
-
-        return json_encode($base, JSON_THROW_ON_ERROR);
-    }
-
-    private function decodeMetadata(string $metadata): array
-    {
-        // Treat empty metadata as valid metadata with no fields.
-        if ($metadata === '' || $metadata === '{}') {
-            return array('extra_fields' => array());
-        }
-        try {
-            $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            throw new ImproperActionException(_('Invalid metadata JSON provided.'));
-        }
-        return is_array($decoded) ? $decoded : array('extra_fields' => array());
-    }
-
-    private function normalizeMetadataValue(array $field, mixed $value): string
-    {
-        $value = trim((string) $value);
-
-        return match ($field['type'] ?? 'text') {
-            // checkboxes use "on" when checked.
-            'checkbox' => $this->normalizeCheckboxValue($value),
-            // normalize decimal commas for number fields.
-            'number' => str_replace(',', '.', $value),
-            // select/users/text/url/etc. keep the incoming string value.
-            default => $value,
-        };
-    }
-
-    private function normalizeCheckboxValue(string $value): string
-    {
-        $value = trim($value);
-        if ($value === '') {
-            return '';
-        }
-        // Common truthy values accepted from CSV/API imports.
-        $truthyValues = array('1', 'true', 'yes', 'y', 'x', 'on', 'checked', 'oui');
-        return in_array(strtolower($value), $truthyValues, true) ? 'on' : '';
     }
 }

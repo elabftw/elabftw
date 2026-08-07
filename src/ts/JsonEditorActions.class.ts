@@ -7,7 +7,7 @@
  */
 import { FileType } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
-import { askFileName, saveStringAsFile } from './misc';
+import { askFileName, getInput, saveStringAsFile } from './misc';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import { notify } from './notify';
 
@@ -36,11 +36,7 @@ export class JsonEditorActions {
           document.querySelector('[data-action="json-save"]').classList.remove('border-danger');
           document.getElementById('jsonUnsavedChangesWarningDiv').hidden = true;
         } else if (el.matches('[data-action="json-import-file"]')) {
-          const fileInput = document.getElementById('jsonImportFileInput') as HTMLInputElement;
-          if (!fileInput) {
-            notify.error('resource-not-found');
-            return;
-          }
+          const fileInput = getInput('jsonImportFileInput');
           fileInput.click();
           fileInput.onchange = () => {
             const file = fileInput.files?.[0];

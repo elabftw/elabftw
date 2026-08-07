@@ -88,28 +88,41 @@ abstract class AbstractCsv extends AbstractImport
 
     abstract protected function getProcessedColumns(): array;
 
-    protected function collectMetadata(array $row, bool $includeType = true): string
+    // we remove the columns processed as sql columns to be left with the ones we want in metadata as extra fields
+    protected function getColumnsImportableAsMetadata(array $row): array
     {
-        // we remove the columns present in compound to be left with the ones we want in metadata as extra fields
         $processedColumns = $this->getProcessedColumns();
-        $strippedRow = array_diff_key($row, array_flip($processedColumns));
+        return array_diff_key($row, array_flip($processedColumns));
+    }
+
+    protected function collectMetadata(array $row): string
+    {
+        $strippedRow = $this->getColumnsImportableAsMetadata($row);
         if (empty($strippedRow)) {
             return '{}';
         }
         $metadata = array();
         foreach ($strippedRow as $key => $value) {
             $type = 'text';
-            // translate urls into links
+            // detect a link-looking value to set type to url
             if (filter_var($value, FILTER_VALIDATE_URL)) {
                 $type = 'url';
             }
-            $metadata['extra_fields'][$key] = array('value' => $value);
-            if ($includeType) {
-                $metadata['extra_fields'][$key]['type'] = $type;
-            }
+            $metadata['extra_fields'][$key] = array(
+                'type' => $type,
+                'value' => $value,
+            );
         }
         return json_encode($metadata, JSON_THROW_ON_ERROR, 12);
+    }
 
+    protected function getMetadataFromRow(array $row): string
+    {
+        // if an explicit "metadata" column exists on the row, we directly use that and don't care about the rest
+        if (!empty($row['metadata'])) {
+            return $row['metadata'];
+        }
+        return $this->collectMetadata($row);
     }
 
     // collect tags

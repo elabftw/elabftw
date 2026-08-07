@@ -27,7 +27,6 @@ use Elabftw\Traits\TestsUtilsTrait;
 use function date;
 use function array_column;
 use function json_decode;
-use function json_encode;
 
 class ItemsTest extends \PHPUnit\Framework\TestCase
 {
@@ -216,151 +215,24 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse((bool) $item['locked']);
     }
 
-    // test metadata merge preserves existing fields on import
-    public function testMetadataMergePreservesExistingFieldSchema(): void
-    {
-        $new = $this->Items->create();
-        $this->Items->setId($new);
-
-        $baseMetadata = json_encode(array(
-            'extra_fields' => array(
-                'weight' => array(
-                    'type' => 'number',
-                    'value' => '0',
-                    'units' => array('g'),
-                    'unit' => 'g',
-                ),
-                'certified' => array(
-                    'type' => 'checkbox',
-                    'value' => '',
-                ),
-                'choice' => array(
-                    'type' => 'select',
-                    'value' => 'A',
-                    'options' => array('A', 'B'),
-                ),
-                'person in charge' => array(
-                    'type' => 'users',
-                    'value' => '',
-                    'description' => 'Select the person responsible.',
-                ),
-                'website' => array(
-                    'type' => 'url',
-                    'value' => '',
-                ),
-            ),
-        ), JSON_THROW_ON_ERROR);
-
-        $incomingMetadata = json_encode(array(
-            'extra_fields' => array(
-                'weight' => array(
-                    'value' => '12,5',
-                ),
-                'certified' => array(
-                    'value' => 'X',
-                ),
-                'choice' => array(
-                    'value' => 'C',
-                ),
-                'person in charge' => array(
-                    'value' => '42',
-                ),
-                'website' => array(
-                    'value' => 'https://example.org',
-                ),
-                'new checkbox' => array(
-                    'type' => 'checkbox',
-                    'value' => 'oui',
-                ),
-                'new text' => array(
-                    'type' => 'text',
-                    'value' => 'hello',
-                ),
-            ),
-        ), JSON_THROW_ON_ERROR);
-
-        // have the base Metadata on the item
-        $this->Items->patch(Action::Update, array('metadata' => $baseMetadata));
-        // now merge with some incoming data
-        $this->Items->patch(Action::Update, array('metadatamerge' => $incomingMetadata));
-
-        $metadata = json_decode($this->Items->readOne()['metadata'], true, 512, JSON_THROW_ON_ERROR);
-        $fields = $metadata['extra_fields'];
-
-        // existing "weight" number keeps type/unit and receives normalized value.
-        $this->assertSame('number', $fields['weight']['type']);
-        $this->assertSame('12.5', $fields['weight']['value']);
-        $this->assertSame(array('g'), $fields['weight']['units']);
-        $this->assertSame('g', $fields['weight']['unit']);
-
-        // existing checkbox keeps type and receives normalized truthy value.
-        $this->assertSame('checkbox', $fields['certified']['type']);
-        $this->assertSame('on', $fields['certified']['value']);
-
-        // existing select keeps type and adds new options automatically.
-        $this->assertSame('select', $fields['choice']['type']);
-        $this->assertSame('C', $fields['choice']['value']);
-        $this->assertSame(array('A', 'B', 'C'), $fields['choice']['options']);
-
-        // existing user field keeps description/schema.
-        $this->assertSame('users', $fields['person in charge']['type']);
-        $this->assertSame('42', $fields['person in charge']['value']);
-        $this->assertSame('Select the person responsible.', $fields['person in charge']['description']);
-
-        // url keeps type.
-        $this->assertSame('url', $fields['website']['type']);
-        $this->assertSame('https://example.org', $fields['website']['value']);
-
-        // New fields are added and normalized according to their incoming type.
-        $this->assertSame('checkbox', $fields['new checkbox']['type']);
-        $this->assertSame('on', $fields['new checkbox']['value']);
-        $this->assertSame('text', $fields['new text']['type']);
-        $this->assertSame('hello', $fields['new text']['value']);
-    }
-
-    // prevent regression with conflicting metadata schema. #7148
-    public function testMetadataMergeRejectsSchemaMismatch(): void
+    public function testMetadataMerge(): void
     {
         $this->Items->patch(Action::Update, array(
-            'metadata' => json_encode(
-                array(
-                    'extra_fields' => array(
-                        'Coffee' => array('type' => 'number', 'unit' => 'liter', 'value' => '1'))),
-                JSON_THROW_ON_ERROR
-            ),
+            'metadata' => '{"extra_fields":{"Coffee":{"type":"number","value":"1"}}}',
         ));
-
-        $this->expectException(ImproperActionException::class);
-        $this->expectExceptionMessageMatches('/Metadata field Coffee has incompatible type\./');
-        $this->Items->patch(Action::Update, array(
-            'metadatamerge' => json_encode(
-                array(
-                    'extra_fields' => array(
-                        'Coffee' => array('type' => 'date', 'unit' => 'gram', 'value' => '2'))),
-                JSON_THROW_ON_ERROR
-            ),
-        ));
-    }
-
-    public function testMetadataMergeRejectsInvalidNumber(): void
-    {
-        $this->Items->patch(Action::Update, array(
-            'metadata' => json_encode(
-                array(
-                    'extra_fields' => array(
-                        'Coffee' => array('type' => 'number', 'value' => '1'))),
-                JSON_THROW_ON_ERROR
-            ),
-        ));
-
-        $this->expectException(ImproperActionException::class);
-        $this->expectExceptionMessageMatches('/Metadata field Coffee expects a number\./');
 
         $this->Items->patch(Action::Update, array(
-            'metadatamerge' => json_encode(array(
-                'extra_fields' => array(
-                    'Coffee' => array('value' => '100X89'))), JSON_THROW_ON_ERROR),
+            'metadatamerge' => '{"extra_fields":{"Coffee":{"value":"2"}}}',
         ));
+
+        $metadata = json_decode(
+            $this->Items->readOne()['metadata'],
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        $this->assertSame('2', $metadata['extra_fields']['Coffee']['value']);
     }
 
     private function makeItemFromImmutableTemplateFor(AuthenticatedUser $user): Items

@@ -1064,11 +1064,47 @@ if (storageModalEl) {
 
 on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv'])));
 
+const destroyContainer = (id: string, params = {}) =>
+  ApiC.delete(`${entity.type}/${entity.id}/containers/${id}`, params).then(() => reloadElements(['storageDivContent']));
+
+// the modal is only rendered when the team requires a deletion reason
+const containerDeletionModal = document.getElementById('containerDeletionReasonModal');
+
 on('destroy-container', (el: HTMLElement) => {
-  if (confirm(i18next.t('generic-delete-warning'))) {
-    ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));
+  if (!containerDeletionModal) {
+    if (confirm(i18next.t('generic-delete-warning'))) {
+      destroyContainer(el.dataset.id);
+    }
+    return;
   }
+  containerDeletionModal.dataset.containerId = el.dataset.id;
+  $('#containerDeletionReasonModal').modal('show');
 });
+
+if (containerDeletionModal) {
+  const reasonSelect = document.getElementById('containerDeletionReasonSelect') as HTMLSelectElement;
+  const noteInput = document.getElementById('containerDeletionNoteInput') as HTMLInputElement;
+  const confirmBtn = document.getElementById('containerDeletionConfirmBtn') as HTMLButtonElement;
+  // a note is only mandatory for the catch-all reason
+  const refreshConfirmBtn = () => {
+    confirmBtn.disabled = reasonSelect.value === ''
+      || (reasonSelect.value === 'other' && noteInput.value.trim() === '');
+  };
+  reasonSelect.addEventListener('change', refreshConfirmBtn);
+  noteInput.addEventListener('input', refreshConfirmBtn);
+  $('#containerDeletionReasonModal').on('show.bs.modal', () => {
+    reasonSelect.value = '';
+    noteInput.value = '';
+    refreshConfirmBtn();
+  });
+
+  on('destroy-container-confirm', () => {
+    destroyContainer(containerDeletionModal.dataset.containerId, {
+      deletion_reason: reasonSelect.value,
+      deletion_note: noteInput.value,
+    }).then(() => $('#containerDeletionReasonModal').modal('hide'));
+  });
+}
 
 on('move-container', (el: HTMLElement) => {
   const modal = document.getElementById('moveStorageModal');

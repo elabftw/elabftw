@@ -1,0 +1,33 @@
+{# Delete a container modal — capture why it is being deleted #}
+<div class='modal fade' id='containerDeletionReasonModal' tabindex='-1' role='dialog' aria-labelledby='containerDeletionReasonModalLabel' data-container-id=''>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h4 class='modal-title' id='containerDeletionReasonModalLabel'><i class='fas fa-fw fa-trash-alt'></i> {{ 'Delete container'|trans }}</h4>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <div class='form-group'>
+          <label for='containerDeletionReasonSelect'>{{ 'Reason for deletion'|trans }}</label>
+          <select class='custom-select' id='containerDeletionReasonSelect'>
+            <option value=''>{{ 'Select a reason'|trans }}</option>
+            {% for case in enum('Elabftw\\Enums\\ContainerDeletionReason').cases %}
+              <option value='{{ case.value }}'>{{ case.toHuman() }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class='form-group mb-0'>
+          <label for='containerDeletionNoteInput'>{{ 'Note'|trans }}</label>
+          <input type='text' maxlength='255' autocomplete='off' class='form-control' id='containerDeletionNoteInput' />
+          <span class='smallgray'>{{ 'Required when the reason is Other.'|trans }}</span>
+        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-danger' id='containerDeletionConfirmBtn' data-action='destroy-container-confirm' disabled>{{ 'Delete'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

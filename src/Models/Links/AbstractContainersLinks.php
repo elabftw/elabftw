@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models\Links;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\ContainerDeletionReason;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\AccessType;
@@ -27,13 +28,17 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\StorageUnits;
+use Elabftw\Models\Teams;
 use Elabftw\Params\ContentParams;
+use Elabftw\Services\Filter;
 use Override;
 use PDO;
+use Symfony\Component\HttpFoundation\Request;
 
 use function array_key_exists;
 use function intval;
 use function json_encode;
+use function mb_substr;
 use function number_format;
 use function sprintf;
 
@@ -246,6 +251,8 @@ abstract class AbstractContainersLinks extends AbstractLinks
     public function destroy(): bool
     {
         $this->Entity->canOrExplode(AccessType::Write);
+        // resolve before the DELETE: a missing reason must not destroy anything
+        $reasonSuffix = $this->deletionReasonSuffix();
         $this->Entity->touch();
 
         // read details for the changelog before the row is deleted
@@ -268,16 +275,36 @@ abstract class AbstractContainersLinks extends AbstractLinks
             new Changelog($this->Entity)->create(new ContentParams(
                 'container_deleted',
                 sprintf(
-                    'Removed container with %s %s from "%s" (container #%d)',
+                    'Removed container with %s %s from "%s" (container #%d)%s',
                     $current['qty_stored'],
                     $current['qty_unit'],
                     $storagePath,
                     (int) $current['id'],
+                    $reasonSuffix,
                 ),
             ));
         }
 
         return $result;
+    }
+
+    /**
+     * Reason for deletion, as a suffix to the changelog line. Empty unless the team requires it.
+     */
+    private function deletionReasonSuffix(): string
+    {
+        $teamConfig = new Teams($this->Entity->Users, $this->Entity->Users->team)->teamArr;
+        if (empty($teamConfig['capture_container_deletion_reason'])) {
+            return '';
+        }
+        $payload = Request::createFromGlobals()->getPayload();
+        $reason = ContainerDeletionReason::tryFrom($payload->getString('deletion_reason'))
+            ?? throw new ImproperActionException(_('A reason is required to delete a container.'));
+        $note = mb_substr(Filter::toPureString($payload->getString('deletion_note')), 0, 255);
+        if ($reason === ContainerDeletionReason::Other && $note === '') {
+            throw new ImproperActionException(_('Please describe the reason for deleting this container.'));
+        }
+        return sprintf(' (%s)', $note === '' ? $reason->toHuman() : $reason->toHuman() . ': ' . $note);
     }
 
     public function destroyAll(): bool

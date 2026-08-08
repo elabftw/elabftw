@@ -11,7 +11,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\AnonymousLoginValidator;
+use Elabftw\Auth\LoginFlow;
+use Elabftw\Auth\MfaPolicy;
+use Elabftw\Auth\MfaVerifier;
+use Elabftw\Auth\PasswordRenewalPolicy;
+use Elabftw\Auth\RememberMe;
+use Elabftw\Auth\SelectableTeamsProvider;
+use Elabftw\Auth\UserLoginValidator;
 use Elabftw\Controllers\LoginController;
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -34,7 +43,27 @@ $location = '/login.php';
 $Response = new RedirectResponse($location);
 
 try {
-    $Response = new LoginController($App->Config->configArr, $App->Request, $App->Session, $App->demoMode)->getResponse();
+    $enforceMfa = EnforceMfa::from((int) $App->Config->configArr['enforce_mfa']);
+    $loginFlow = new LoginFlow(
+        new MfaPolicy($enforceMfa),
+        new PasswordRenewalPolicy((int) $App->Config->configArr['max_password_age_days']),
+        new SelectableTeamsProvider(),
+        new UserLoginValidator(),
+    );
+    $Response = new LoginController(
+        $App->Config->configArr,
+        $App->Request,
+        $App->Session,
+        $loginFlow,
+        new MfaVerifier($App->Session),
+        new AnonymousLoginValidator((bool) $App->Config->configArr['anon_users']),
+        new RememberMe(
+            $App->Request,
+            $App->Config->configArr['remember_me_allowed'] === '1',
+        ),
+        $App->demoMode,
+    )->getResponse();
+
 } catch (InvalidCredentialsException | InvalidMfaCodeException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
     $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->getAlnum('devicetoken'));

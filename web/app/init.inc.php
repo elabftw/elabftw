@@ -11,13 +11,23 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Controllers\LoginController;
+use Elabftw\Auth\AccessKeyDownloadValidator;
+use Elabftw\Auth\AccessKeyVisitor;
+use Elabftw\Auth\AnonymousLoginValidator;
+use Elabftw\Auth\Cookie;
+use Elabftw\Auth\CookieLogin;
+use Elabftw\Auth\CookieToken;
+use Elabftw\Auth\UserLoginValidator;
+use Elabftw\Enums\Entrypoint;
+use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\LoginHelper;
+use Elabftw\Services\TeamFinder;
 use Exception;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
@@ -92,7 +102,6 @@ try {
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     // pages where you don't need to be logged in
     // only the script name, not the path because we use basename() on it
-    // Note: this should probably be merged into LoginController, maybe create a VisitorUser
     $nologinArr = array(
         // the api can be access with session or token (or only token for v1) so we skip auth here to do it later with custom logic
         'ApiController.php',
@@ -108,14 +117,75 @@ try {
         'ResetPasswordController.php',
     );
 
-    if (!in_array(basename($Request->getScriptName()), $nologinArr, true) && !$Session->has('is_auth')) {
-        // try to login our cookie or other methods not requiring a login action
-        $LoginController = new LoginController($App->Config->configArr, $Request, $App->Session, Env::asBool('DEMO_MODE'));
-        // this will throw an UnauthorizedException if we don't have a valid auth
-        $AuthResponse = $LoginController->getAuthResponse();
-        new LoginHelper($AuthResponse, $Session, (int) $App->Config->configArr['cookie_validity_time'])->login();
+    $requestUser = null;
+
+    if (
+        !in_array(basename($Request->getScriptName()), $nologinArr, true)
+        && !$Session->has('is_auth')
+    ) {
+        $page = basename($Request->getScriptName());
+        $accessKey = $Request->query->getString('access_key');
+
+        if (
+            $accessKey !== ''
+            && $Request->query->getString('mode') === 'view'
+            && in_array(
+                $page,
+                array(
+                    Entrypoint::Experiments->toPage(),
+                    Entrypoint::Database->toPage(),
+                ),
+                true,
+            )
+        ) {
+            $requestUser = new AccessKeyVisitor(
+                new TeamFinder(
+                    $page,
+                    $accessKey,
+                ),
+                new AnonymousLoginValidator(
+                    (bool) $App->Config->configArr['anon_users'],
+                ),
+            )->getUser();
+        } elseif (
+            $accessKey !== ''
+            && $page === 'download.php'
+        ) {
+            $teamId = new AccessKeyDownloadValidator()->validate(
+                $accessKey,
+                $Request->query->getString('f'),
+            );
+
+            new AnonymousLoginValidator(
+                (bool) $App->Config->configArr['anon_users'],
+            )->validate($teamId);
+
+            $requestUser = new AnonymousUser(
+                $teamId,
+                Language::EnglishGB,
+            );
+        } else {
+            $context = new CookieLogin(
+                new Cookie(
+                    (int) $App->Config->configArr['cookie_validity_time'],
+                    new CookieToken(
+                        $Request->cookies->getString('token'),
+                    ),
+                ),
+                new UserLoginValidator(),
+                $Request->cookies->getInt('token_team'),
+            )->getContext();
+
+            new LoginHelper(
+                $context,
+                $Session,
+                (int) $App->Config->configArr['cookie_validity_time'],
+            )->login();
+        }
     }
-    $App->boot();
+
+    $App->boot($requestUser);
+
 
 } catch (UnauthorizedException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE

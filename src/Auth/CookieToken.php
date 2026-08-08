@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Filter;
 use PDO;
 
@@ -73,7 +72,7 @@ final class CookieToken
         $token = Filter::hexits($token);
         // and check length
         if (strlen($token) !== self::COOKIE_HEX_LENGTH) {
-            throw new IllegalActionException('Cookie token has invalid length!');
+            return '';
         }
         return $token;
     }

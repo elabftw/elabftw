@@ -12,17 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use DateTimeImmutable;
+use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Interfaces\AuthResponseInterface;
+use Elabftw\Interfaces\AuthenticatorInterface;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Services\Filter;
-use Elabftw\Services\UsersHelper;
 use PDO;
 use SensitiveParameter;
 use Override;
@@ -36,7 +35,7 @@ use function sleep;
 /**
  * Local auth service
  */
-final class Local implements AuthInterface
+final class Local implements AuthenticatorInterface
 {
     private Db $Db;
 
@@ -51,7 +50,6 @@ final class Local implements AuthInterface
         private readonly bool $isDisplayed = true,
         private readonly bool $isOnlySysadminWhenHidden = false,
         private readonly bool $isOnlySysadmin = false,
-        private readonly int $maxPasswordAgeDays = 0,
         private readonly int $maxLoginAttempts = 3,
     ) {
         if (empty($password)) {
@@ -64,10 +62,28 @@ final class Local implements AuthInterface
     }
 
     #[Override]
-    public function tryAuth(): AuthResponseInterface
+    public function authenticate(): Authentication
     {
         $this->preventBruteForce();
+        $this->checkLocalAuthPolicy();
+        $this->verifyPassword();
+        $this->rehashPasswordIfNeeded();
 
+        return new Authentication(
+            $this->userid,
+            AuthMethod::Local,
+        );
+    }
+
+    public function verifyPassword(): void
+    {
+        if (password_verify($this->password, $this->result['password_hash']) !== true) {
+            throw new InvalidCredentialsException($this->userid);
+        }
+    }
+
+    private function checkLocalAuthPolicy(): void
+    {
         // if local_login is disabled, only a sysadmin can login if local_login_hidden_only_sysadmin is set
         if (!$this->isDisplayed && $this->result['is_sysadmin'] === 0 && $this->isOnlySysadminWhenHidden) {
             throw new IllegalActionException(_('Only a Sysadmin account can use local authentication when it is hidden.'));
@@ -76,11 +92,10 @@ final class Local implements AuthInterface
         if ($this->isOnlySysadmin && $this->result['is_sysadmin'] === 0) {
             throw new ImproperActionException(_('Only a Sysadmin account can use local authentication.'));
         }
+    }
 
-        // verify password
-        if (password_verify($this->password, $this->result['password_hash']) !== true) {
-            throw new InvalidCredentialsException($this->userid);
-        }
+    private function rehashPasswordIfNeeded(): void
+    {
         // check if it needs rehash (new algo)
         if (password_needs_rehash($this->result['password_hash'], PASSWORD_DEFAULT)) {
             $passwordHash = password_hash($this->password, PASSWORD_DEFAULT);
@@ -90,29 +105,11 @@ final class Local implements AuthInterface
             $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
-
-        // TODO maybe auth class shouldn't have the responsibility of setting the teams, we can do that in the controller
-        return new AuthResponse()
-            ->setAuthenticatedUserid($this->userid)
-            ->setTeams(new UsersHelper($this->userid));
-    }
-
-    public function mustRenewPassword(): bool
-    {
-        // check if last password modification date was too long ago and require changing it if yes
-        if ($this->maxPasswordAgeDays > 0) {
-            $modifiedAt = new DateTimeImmutable($this->result['password_modified_at']);
-            $now = new DateTimeImmutable();
-            $diff = $now->diff($modifiedAt);
-            $daysDifference = (int) $diff->format('%a');
-            return $daysDifference > $this->maxPasswordAgeDays;
-        }
-        return false;
     }
 
     private function fetchFromDb(): array
     {
-        $sql = 'SELECT is_sysadmin, password_hash, validated, password_modified_at FROM users WHERE userid = :userid;';
+        $sql = 'SELECT is_sysadmin, password_hash, password_modified_at FROM users WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);

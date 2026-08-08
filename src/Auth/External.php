@@ -12,13 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\Authentication;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Interfaces\AuthResponseInterface;
+use Elabftw\Interfaces\AuthenticatorInterface;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Users\ValidatedUser;
-use Elabftw\Services\UsersHelper;
 use Override;
 
 use function _;
@@ -26,12 +26,12 @@ use function _;
 /**
  * Authenticate with server provided values
  */
-final class External implements AuthInterface
+final class External implements AuthenticatorInterface
 {
     public function __construct(private array $configArr, private array $serverParams) {}
 
     #[Override]
-    public function tryAuth(): AuthResponseInterface
+    public function authenticate(): Authentication
     {
         $firstname = $this->serverParams[$this->configArr['extauth_firstname']] ?? '?';
         $lastname = $this->serverParams[$this->configArr['extauth_lastname']] ?? '?';
@@ -65,8 +65,9 @@ final class External implements AuthInterface
             // CREATE USER (and force validation of user)
             $Users = ValidatedUser::fromExternal($email, $teams, $firstname, $lastname);
         }
-        return new AuthResponse()
-            ->setAuthenticatedUserid($Users->userData['userid'])
-            ->setTeams(new UsersHelper($Users->userData['userid']));
+        return new Authentication(
+            $Users->getUserid(),
+            AuthMethod::External,
+        );
     }
 }

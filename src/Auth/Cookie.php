@@ -12,11 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Interfaces\AuthResponseInterface;
-use Elabftw\Services\TeamsHelper;
+use Elabftw\Interfaces\AuthenticatorInterface;
 use Override;
 
 use function sprintf;
@@ -24,12 +24,12 @@ use function sprintf;
 /**
  * Authenticate with the cookie
  */
-final class Cookie implements AuthInterface
+final class Cookie implements AuthenticatorInterface
 {
-    public function __construct(private int $validityMinutes, private CookieToken $Token, private int $team) {}
+    public function __construct(private int $validityMinutes, private CookieToken $Token) {}
 
     #[Override]
-    public function tryAuth(): AuthResponseInterface
+    public function authenticate(): Authentication
     {
         $Db = Db::getConnection();
         // compare the provided token with the token saved in SQL database
@@ -45,16 +45,6 @@ final class Cookie implements AuthInterface
         if ($userid === 0) {
             throw new UnauthorizedException();
         }
-
-        // when doing auth with cookie, we take the token_team value
-        // make sure user is in team because we can't trust it
-        $TeamsHelper = new TeamsHelper($this->team);
-        if (!$TeamsHelper->isUserInTeam($userid)) {
-            throw new UnauthorizedException();
-        }
-
-        return new AuthResponse()
-            ->setAuthenticatedUserid($userid)
-            ->setSelectedTeam($this->team);
+        return new Authentication($userid, AuthMethod::Cookie);
     }
 }

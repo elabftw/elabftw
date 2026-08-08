@@ -12,10 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
-use Elabftw\Interfaces\AuthResponseInterface;
 use PDO;
 
 class CookieTest extends \PHPUnit\Framework\TestCase
@@ -36,7 +35,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
     public function testTryAuthExpired(): void
     {
         // cookie is valid only one minute
-        $CookieAuth = new Cookie(1, $this->CookieToken, 1);
+        $CookieAuth = new Cookie(1, $this->CookieToken);
         // create a token but 4 minutes in the past
         $req = $this->Db->prepare('UPDATE users SET token = :token, token_created_at = DATE_SUB(NOW(), INTERVAL 4 MINUTE) WHERE userid = :userid');
         $req->bindValue(':token', $this->CookieToken->getToken());
@@ -44,40 +43,28 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->Db->execute($req);
         // now try login but our cookie isn't valid anymore
         $this->expectException(UnauthorizedException::class);
-        $CookieAuth->tryAuth();
+        $CookieAuth->authenticate();
     }
 
     public function testTryAuthSuccess(): void
     {
-        $CookieAuth = new Cookie(220330, $this->CookieToken, 1);
-        $res = $CookieAuth->tryAuth();
-        $this->assertInstanceOf(AuthResponseInterface::class, $res);
-        $this->assertEquals(1, $res->getAuthUserid());
-        $this->assertEquals(1, $res->getSelectedTeam());
+        $CookieAuth = new Cookie(220330, $this->CookieToken);
+        $res = $CookieAuth->authenticate();
+        $this->assertInstanceOf(Authentication::class, $res);
+        $this->assertSame(1, $res->userid);
     }
 
     public function testTryAuthFail(): void
     {
         $token = 'deadbeefcafebabe0badf00ddecafbad';
-        $CookieAuth = new Cookie(220330, new CookieToken($token), 1);
+        $CookieAuth = new Cookie(220330, new CookieToken($token));
         $this->expectException(UnauthorizedException::class);
-        $CookieAuth->tryAuth();
-    }
-
-    public function testTryAuthBadTeam(): void
-    {
-        $CookieAuth = new Cookie(220330, $this->CookieToken, 2);
-        $req = $this->Db->prepare('UPDATE users SET token = :token WHERE userid = :userid');
-        $req->bindValue(':token', $this->CookieToken->getToken());
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $this->expectException(UnauthorizedException::class);
-        $CookieAuth->tryAuth();
+        $CookieAuth->authenticate();
     }
 
     public function testInvalidToken(): void
     {
-        $this->expectException(IllegalActionException::class);
-        new CookieToken('invalid length');
+        $CookieToken = new CookieToken('invalid length');
+        $this->assertEmpty($CookieToken->getToken());
     }
 }

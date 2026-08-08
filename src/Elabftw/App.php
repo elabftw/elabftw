@@ -90,45 +90,49 @@ final class App
     //    |_.__/ \___/ \___/ \__|   //
     //                              //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
-    public function boot(): void
-    {
+    public function boot(
+        ?AnonymousUser $requestUser = null,
+    ): void {
         $this->handleSessionExpiration();
 
-        // load the Users with a userid if we are auth and not anon
-        try {
-            if ($this->Session->has('is_auth') && $this->Session->get('userid') !== 0) {
-                $this->loadUser(new AuthenticatedUser(
-                    $this->Session->get('userid'),
-                    $this->Session->get('team'),
-                ));
-            }
-            // maybe the team in session is not valid anymore because sysadmin changed team, so logout user
-            // see #4051
-        } catch (IllegalActionException) {
-            $this->Session->invalidate();
-            throw new UnauthorizedException();
-        }
-
-        // ANONYMOUS
-        if ($this->Session->get('is_anon') === 1) {
-            // anon user only has access to a subset of pages
-            $allowedPages = array(
-                'ApiController.php',
-                'database.php',
-                'download.php',
-                'experiments.php',
-                'index.php',
-                'logout.php',
-                'make.php',
-            );
-            if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {
+        if ($requestUser !== null) {
+            $this->loadUser($requestUser);
+        } else {
+            try {
+                if (
+                    $this->Session->has('is_auth')
+                    && $this->Session->get('userid') !== 0
+                ) {
+                    $this->loadUser(new AuthenticatedUser(
+                        $this->Session->get('userid'),
+                        $this->Session->get('team'),
+                    ));
+                }
+            } catch (IllegalActionException) {
+                $this->Session->invalidate();
                 throw new UnauthorizedException();
             }
 
-            $this->loadUser(new AnonymousUser(
-                $this->Session->get('team'),
-                Language::tryFrom($this->getLang()) ?? Language::EnglishGB,
-            ));
+            if ($this->Session->get('is_anon') === 1) {
+                // anon user only has access to a subset of pages
+                $allowedPages = array(
+                    'ApiController.php',
+                    'database.php',
+                    'download.php',
+                    'experiments.php',
+                    'index.php',
+                    'logout.php',
+                    'make.php',
+                );
+                if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {
+                    throw new UnauthorizedException();
+                }
+
+                $this->loadUser(new AnonymousUser(
+                    $this->Session->get('team'),
+                    Language::tryFrom($this->getLang()) ?? Language::EnglishGB,
+                ));
+            }
         }
 
         $this->Teams = new Teams($this->Users, $this->Users->team);

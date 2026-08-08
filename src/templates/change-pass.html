@@ -2,6 +2,10 @@
 
 {% block body %}
 
+{% if App.Request.query.get('renewal') == '1' %}
+  {{ 'Your password expired. Please set a new password below.'|trans|msg('ok') }}
+{% endif %}
+
 <section>
   <form method='post' class='form-group' action='app/controllers/ResetPasswordController.php'>
     {{ App.Session.get('csrf')|csrf }}

@@ -13,11 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\AuditEvent\UserLogin;
+use Elabftw\Auth\AnonymousLoginContext;
 use Elabftw\Auth\CookieToken;
+use Elabftw\Auth\UserLoginContext;
 use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\AuthResponseInterface;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Notifications\NewVersionInstalled;
 use Elabftw\Models\Users\Users;
@@ -25,8 +26,6 @@ use PDO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use function time;
-use function _;
-use function array_column;
 use function setcookie;
 
 /**
@@ -36,7 +35,7 @@ final class LoginHelper
 {
     private Db $Db;
 
-    public function __construct(private AuthResponseInterface $AuthResponse, private SessionInterface $Session, private int $cookieValidityTime)
+    public function __construct(private UserLoginContext|AnonymousLoginContext $context, private SessionInterface $Session, private int $cookieValidityTime)
     {
         $this->Db = Db::getConnection();
     }
@@ -47,32 +46,91 @@ final class LoginHelper
      */
     public function login(bool $setCookie = false): void
     {
-        $this->checkAccountValidity();
-        $this->checkArchivedStatus();
         $this->populateSession();
+
         if ($setCookie) {
             $this->setToken();
         }
+
         // if we run a version newer than the last time the user logged in, create a notification
         // but only if it's a minor version
-        if ((BuildInfo::VERSION_INT - $this->getLastSeenVersion() >= 100) && !$this->AuthResponse->isAnonymous()) {
-            $authUserid = $this->AuthResponse->getAuthUserid();
-            $authUser = new Users($authUserid);
-            $Notifications = new NewVersionInstalled($authUser);
-            $Notifications->create();
+        if (
+            BuildInfo::VERSION_INT - $this->getLastSeenVersion() >= 100
+            && !$this->context instanceof AnonymousLoginContext
+        ) {
+            $authUser = new Users($this->context->getUserid());
+            new NewVersionInstalled($authUser)->create();
         }
-        $this->updateLast();
+
+        if (!$this->context instanceof AnonymousLoginContext) {
+            $this->updateLast();
+
+            if ($this->context->getAuthMethod() !== AuthMethod::Cookie) {
+                $this->updateAuthService();
+            }
+        }
+
         $this->setDeviceToken();
-        // only update this value if it is set, won't be set for cookie login for instance
-        if ($this->Session->has('auth_service')) {
-            $this->updateAuthService();
-        }
-        AuditLogs::create(new UserLogin($this->AuthResponse->getAuthUserid(), $this->AuthResponse->getAuthUserid()));
+
+        AuditLogs::create(
+            new UserLogin(
+                $this->context->getUserid(),
+                $this->context->getUserid(),
+            ),
+        );
     }
 
     public function getCookieExpiryTimestamp(): int
     {
         return time() + 60 * $this->cookieValidityTime;
+    }
+
+    /**
+     * Update last login time and last seen version.
+     */
+    private function updateLast(): void
+    {
+        $sql = 'UPDATE users
+            SET last_login = NOW(), last_seen_version = :version
+            WHERE userid = :userid';
+
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(
+            ':userid',
+            $this->context->getUserid(),
+            PDO::PARAM_INT,
+        );
+        $req->bindValue(
+            ':version',
+            BuildInfo::VERSION_INT,
+            PDO::PARAM_INT,
+        );
+
+        $this->Db->execute($req);
+    }
+
+    /**
+     * Update the authentication service used.
+     */
+    private function updateAuthService(): void
+    {
+        $sql = 'UPDATE users
+            SET auth_service = :auth_service
+            WHERE userid = :userid';
+
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(
+            ':userid',
+            $this->context->getUserid(),
+            PDO::PARAM_INT,
+        );
+        $req->bindValue(
+            ':auth_service',
+            $this->context->getAuthMethod()->value,
+            PDO::PARAM_INT,
+        );
+
+        $this->Db->execute($req);
     }
 
     /**
@@ -82,7 +140,7 @@ final class LoginHelper
     private function setToken(): void
     {
         $CookieToken = CookieToken::fromScratch();
-        $CookieToken->saveToken($this->AuthResponse->getAuthUserid());
+        $CookieToken->saveToken($this->context->getUserid());
 
         $cookieOptions = array(
             'expires' => $this->getCookieExpiryTimestamp(),
@@ -93,71 +151,16 @@ final class LoginHelper
             'samesite' => 'Lax',
         );
         setcookie('token', $CookieToken->getToken(), $cookieOptions);
-        setcookie('token_team', (string) $this->AuthResponse->getSelectedTeam(), $cookieOptions);
+        setcookie('token_team', (string) $this->context->getTeam(), $cookieOptions);
     }
 
     private function getLastSeenVersion(): int
     {
         $sql = 'SELECT last_seen_version FROM users WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':userid', $this->AuthResponse->getAuthUserid(), PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->context->getUserid(), PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
-    }
-
-    /**
-     * Update the authentication service used
-     */
-    private function updateAuthService(): void
-    {
-        $sql = 'UPDATE users SET auth_service = :auth_service WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':userid', $this->AuthResponse->getAuthUserid(), PDO::PARAM_INT);
-        $req->bindValue(':auth_service', $this->Session->get('auth_service'), PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Update last login time of user and last seen version
-     */
-    private function updateLast(): void
-    {
-        $sql = 'UPDATE users SET last_login = NOW(), last_seen_version = :version WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':version', BuildInfo::VERSION_INT, PDO::PARAM_INT);
-        $req->bindValue(':userid', $this->AuthResponse->getAuthUserid(), PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Verify account validity date
-     */
-    private function checkAccountValidity(): void
-    {
-        if ($this->AuthResponse->isAnonymous()) {
-            return;
-        }
-        $sql = "SELECT IFNULL(valid_until, '3000-01-01') > NOW() FROM users WHERE userid = :userid";
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':userid', $this->AuthResponse->getAuthUserid(), PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $res = (bool) $req->fetchColumn();
-        if ($res === false) {
-            throw new ImproperActionException(_('Your account has expired. Contact your team Admin to extend its validity.'));
-        }
-    }
-
-    // maybe this should be part of AuthResponse?
-    private function checkArchivedStatus(): void
-    {
-        if ($this->AuthResponse->isAnonymous()) {
-            return;
-        }
-        $user = new Users($this->AuthResponse->getAuthUserid(), $this->AuthResponse->getSelectedTeam());
-        $lookup = array_column($user->userData['teams'], 'is_archived', 'id');
-        if ($lookup[$this->AuthResponse->getSelectedTeam()] === 1) {
-            throw new ImproperActionException(_('This account is archived in this team and cannot login.'));
-        }
     }
 
     private function setDeviceToken(): void
@@ -172,25 +175,22 @@ final class LoginHelper
             'samesite' => 'Lax',
         );
 
-        setcookie('devicetoken', DeviceToken::getToken($this->AuthResponse->getAuthUserid()), $cookieOptions);
+        setcookie('devicetoken', DeviceToken::getToken($this->context->getUserid()), $cookieOptions);
     }
 
-    /**
-     * Store userid in session
-     */
     private function populateSession(): void
     {
         // Main switch to know if we are logged in
         $this->Session->set('is_auth', 1);
 
         // ANY LOGIN needs to have a team
-        $this->Session->set('team', $this->AuthResponse->getSelectedTeam());
+        $this->Session->set('team', $this->context->getTeam());
 
         // ANON will get userid 0 here
-        $this->Session->set('userid', $this->AuthResponse->getAuthUserid());
+        $this->Session->set('userid', $this->context->getUserid());
 
-        // ANON LOGIN
-        if ($this->AuthResponse->isAnonymous()) {
+        // add this flag to discriminate between normal user and anonymous user
+        if ($this->context->isAnonymous()) {
             $this->Session->set('is_anon', 1);
         }
     }

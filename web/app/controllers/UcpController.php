@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Action;
-use Elabftw\Enums\AuthType;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Params\UserParams;
@@ -37,7 +37,7 @@ try {
     // TAB 2 : ACCOUNT
     // CHANGE PASSWORD (only for local accounts)
     if (!empty($App->Request->request->getString('current_password'))
-        && $App->Users->userData['auth_service'] === AuthType::Local->asService()
+        && $App->Users->userData['auth_service'] === AuthMethod::Local->value
     ) {
         // for locally auth users, verify local password was provided
         $App->Users->checkCurrentPasswordOrExplode($App->Request->request->getString('current_password'));

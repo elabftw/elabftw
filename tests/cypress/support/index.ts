@@ -19,14 +19,3 @@ import './commands';
 // running import here doesn't work as we need to call it, so use require
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require('cypress-terminal-report/src/installLogsCollector')();
-// fix issue with admin page having this issue in ci but not in browser
-Cypress.on('uncaught:exception', err => {
-  const ignoredErrors = [
-    'ResizeObserver loop completed with undelivered notifications.',
-    'ResizeObserver loop limit exceeded',
-  ];
-
-  if (ignoredErrors.includes(err.message)) {
-    return false;
-  }
-});

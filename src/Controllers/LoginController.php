@@ -196,7 +196,7 @@ final class LoginController implements ControllerInterface
             Env::asString('SECRET_KEY'),
         )->generate($user->userData['email']);
 
-        return new RedirectResponse('/change-pass.php?key=' . $key);
+        return new RedirectResponse('/change-pass.php?renewal=1&key=' . $key);
     }
 
     private function requireTeamSelection(

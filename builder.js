@@ -106,8 +106,7 @@ module.exports = (env, argv) => {
     },
     optimization: {
       splitChunks: {
-        chunks: 'all',
-        name: 'vendor',
+        chunks: 'async',
       },
       minimize: !isDevelopment,
       minimizer: [

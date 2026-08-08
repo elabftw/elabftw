@@ -272,8 +272,7 @@ final class LoginController implements ControllerInterface
 
         // clicking Cancel button on mfa page
         if ($this->Request->request->get('Cancel') === 'cancel') {
-            $this->Session->getFlashBag()->add('warning', _('Authentication flow was interrupted.'));
-            $this->Session->remove('mfa_auth_required');
+            $this->Session->clear();
             return new RedirectResponse('/login.php');
         }
 

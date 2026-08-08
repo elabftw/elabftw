@@ -12,9 +12,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Interfaces;
 
+use Elabftw\Auth\InitialTeamSelectionRequired;
 use Elabftw\Elabftw\Authentication;
 
 interface AuthenticatorInterface
 {
-    public function authenticate(): Authentication;
+    public function authenticate(): Authentication|InitialTeamSelectionRequired;
 }

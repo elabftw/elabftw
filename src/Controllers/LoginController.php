@@ -136,10 +136,30 @@ final class LoginController implements ControllerInterface
 
     private function handleAuthentication(): Response
     {
-        $authentication = $this->getAuthenticator()->authenticate();
+        $result = $this->getAuthenticator()->authenticate();
+
+        if ($result instanceof InitialTeamSelectionRequired) {
+            $this->storeInitialTeamSelection($result);
+
+            return new RedirectResponse('/login.php');
+        }
 
         return $this->handleLoginStep(
-            $this->loginFlow->start($authentication),
+            $this->loginFlow->start($result),
+        );
+    }
+
+    private function storeInitialTeamSelection(
+        InitialTeamSelectionRequired $result,
+    ): void {
+        $this->Session->set(
+            'initial_team_selection_required',
+            true,
+        );
+
+        $this->Session->set(
+            'teaminit_user_info',
+            $result->toArray(),
         );
     }
 
@@ -420,15 +440,7 @@ final class LoginController implements ControllerInterface
         $result = $authenticator->assertIdpResponse();
 
         if ($result instanceof InitialTeamSelectionRequired) {
-            $this->Session->set(
-                'initial_team_selection_required',
-                true,
-            );
-            $this->Session->set(
-                'teaminit_user_info',
-                $result->toArray(),
-            );
-
+            $this->storeInitialTeamSelection($result);
             return $this->samlRedirect('/login.php');
         }
 

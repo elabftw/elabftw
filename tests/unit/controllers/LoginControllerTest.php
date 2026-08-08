@@ -144,12 +144,53 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $controller,
             'getAuthenticator',
         );
-        self::assertInstanceOf(AuthenticatorInterface::class, $authenticator);
+        self::assertInstanceOf(
+            AuthenticatorInterface::class,
+            $authenticator,
+        );
 
         $authentication = $authenticator->authenticate();
 
+        if (!$authentication instanceof Authentication) {
+            self::fail(
+                'Local authentication must return an Authentication.',
+            );
+        }
+
         self::assertGreaterThan(0, $authentication->userid);
         self::assertSame(AuthMethod::Local, $authentication->method);
+    }
+
+    public function testDemoAuthenticatorReturnsDemoAuthentication(): void
+    {
+        $request = Request::create('/login.php', 'POST', array(
+            'auth_type' => 'demo',
+            'email' => 'user2@demo.elabftw.net',
+        ));
+        $controller = $this->createController(
+            $request,
+            demoMode: true,
+        );
+
+        $authenticator = $this->invokePrivate(
+            $controller,
+            'getAuthenticator',
+        );
+        self::assertInstanceOf(
+            AuthenticatorInterface::class,
+            $authenticator,
+        );
+
+        $authentication = $authenticator->authenticate();
+
+        if (!$authentication instanceof Authentication) {
+            self::fail(
+                'Demo authentication must return an Authentication.',
+            );
+        }
+
+        self::assertGreaterThan(0, $authentication->userid);
+        self::assertSame(AuthMethod::Demo, $authentication->method);
     }
 
     public function testDemoAuthenticationRequiresDemoMode(): void
@@ -178,29 +219,6 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $request,
             demoMode: true,
         )->getResponse();
-    }
-
-    public function testDemoAuthenticatorReturnsDemoAuthentication(): void
-    {
-        $request = Request::create('/login.php', 'POST', array(
-            'auth_type' => 'demo',
-            'email' => 'user2@demo.elabftw.net',
-        ));
-        $controller = $this->createController(
-            $request,
-            demoMode: true,
-        );
-
-        $authenticator = $this->invokePrivate(
-            $controller,
-            'getAuthenticator',
-        );
-        self::assertInstanceOf(AuthenticatorInterface::class, $authenticator);
-
-        $authentication = $authenticator->authenticate();
-
-        self::assertGreaterThan(0, $authentication->userid);
-        self::assertSame(AuthMethod::Demo, $authentication->method);
     }
 
     public function testAnonymousLoginRejectsWhenAnonymousAccessIsDisabled(): void
@@ -463,7 +481,7 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
         self::assertTrue(
             str_starts_with(
                 (string) $response->headers->get('Location'),
-                '/change-pass.php?key=',
+                '/change-pass.php?renewal=1&key=',
             ),
         );
         self::assertTrue($session->get('renew_password_required'));

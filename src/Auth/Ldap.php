@@ -55,7 +55,7 @@ final class Ldap implements AuthenticatorInterface
     }
 
     #[Override]
-    public function authenticate(): Authentication
+    public function authenticate(): Authentication|InitialTeamSelectionRequired
     {
         $record = $this->getRecord();
         $this->verifyCredentials($record);
@@ -71,6 +71,10 @@ final class Ldap implements AuthenticatorInterface
                 $email,
                 $teamsFromLdap,
             );
+
+            if ($user instanceof InitialTeamSelectionRequired) {
+                return $user;
+            }
         }
 
         $this->synchronizeTeams(
@@ -103,9 +107,11 @@ final class Ldap implements AuthenticatorInterface
         Model $record,
         string $email,
         ?array $teamsFromLdap,
-    ): Users {
+    ): Users|InitialTeamSelectionRequired {
         if ($this->configArr['saml_user_default'] === '0') {
-            $message = _('Could not find an existing user. Ask a Sysadmin to create your account.');
+            $message = _(
+                'Could not find an existing user. Ask a Sysadmin to create your account.',
+            );
 
             if ($this->configArr['user_msg_need_local_account_created']) {
                 $message = $this->configArr['user_msg_need_local_account_created'];
@@ -114,40 +120,38 @@ final class Ldap implements AuthenticatorInterface
             throw new ImproperActionException($message);
         }
 
-        $firstname = $record[$this->configArr['ldap_firstname']][0] ?? 'Unknown';
-        $lastname = $record[$this->configArr['ldap_lastname']][0] ?? 'Unknown';
+        $firstname = $record[$this->configArr['ldap_firstname']][0]
+            ?? 'Unknown';
+        $lastname = $record[$this->configArr['ldap_lastname']][0]
+            ?? 'Unknown';
 
-        $teams = $teamsFromLdap ?? $this->getDefaultTeams();
+        if ($teamsFromLdap === null) {
+            $teamId = (int) $this->configArr['saml_team_default'];
+
+            if ($teamId === 0) {
+                throw new ImproperActionException(
+                    'Could not find team ID to assign user!',
+                );
+            }
+
+            if ($teamId === -1) {
+                return new InitialTeamSelectionRequired(
+                    email: $email,
+                    firstname: $firstname,
+                    lastname: $lastname,
+                );
+            }
+
+            $teamsFromLdap = array($teamId);
+        }
 
         return ValidatedUser::fromExternal(
             $email,
-            $teams,
+            $teamsFromLdap,
             $firstname,
             $lastname,
             allowTeamCreation: $this->configArr['ldap_team_create'] === '1',
         );
-    }
-
-    /**
-     * @return list<int>
-     */
-    private function getDefaultTeams(): array
-    {
-        $teamId = (int) $this->configArr['saml_team_default'];
-
-        if ($teamId === 0) {
-            throw new ImproperActionException('Could not find team ID to assign user!');
-        }
-
-        if ($teamId === -1) {
-            // Authentication succeeded, but no local userid exists yet.
-            // AuthenticatorInterface currently cannot represent this state.
-            throw new ImproperActionException(
-                'A team must be selected before creating this LDAP user.',
-            );
-        }
-
-        return array($teamId);
     }
 
     /**

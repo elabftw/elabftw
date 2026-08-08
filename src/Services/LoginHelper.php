@@ -80,6 +80,11 @@ final class LoginHelper
         );
     }
 
+    public function getCookieExpiryTimestamp(): int
+    {
+        return time() + 60 * $this->cookieValidityTime;
+    }
+
     /**
      * Update last login time and last seen version.
      */
@@ -126,11 +131,6 @@ final class LoginHelper
         );
 
         $this->Db->execute($req);
-    }
-
-    public function getCookieExpiryTimestamp(): int
-    {
-        return time() + 60 * $this->cookieValidityTime;
     }
 
     /**

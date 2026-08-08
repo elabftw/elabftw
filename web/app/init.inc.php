@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\AccessKeyDownloadValidator;
 use Elabftw\Auth\AccessKeyVisitor;
 use Elabftw\Auth\AnonymousLoginValidator;
 use Elabftw\Auth\Cookie;
@@ -18,10 +19,12 @@ use Elabftw\Auth\CookieLogin;
 use Elabftw\Auth\CookieToken;
 use Elabftw\Auth\UserLoginValidator;
 use Elabftw\Enums\Entrypoint;
+use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\LoginHelper;
 use Elabftw\Services\TeamFinder;
@@ -121,9 +124,10 @@ try {
         && !$Session->has('is_auth')
     ) {
         $page = basename($Request->getScriptName());
+        $accessKey = $Request->query->getString('access_key');
 
         if (
-            $Request->query->has('access_key')
+            $accessKey !== ''
             && $Request->query->getString('mode') === 'view'
             && in_array(
                 $page,
@@ -137,12 +141,29 @@ try {
             $requestUser = new AccessKeyVisitor(
                 new TeamFinder(
                     $page,
-                    $Request->query->getString('access_key'),
+                    $accessKey,
                 ),
                 new AnonymousLoginValidator(
                     (bool) $App->Config->configArr['anon_users'],
                 ),
             )->getUser();
+        } elseif (
+            $accessKey !== ''
+            && $page === 'download.php'
+        ) {
+            $teamId = new AccessKeyDownloadValidator()->validate(
+                $accessKey,
+                $Request->query->getString('f'),
+            );
+
+            new AnonymousLoginValidator(
+                (bool) $App->Config->configArr['anon_users'],
+            )->validate($teamId);
+
+            $requestUser = new AnonymousUser(
+                $teamId,
+                Language::EnglishGB,
+            );
         } else {
             $context = new CookieLogin(
                 new Cookie(
@@ -164,6 +185,7 @@ try {
     }
 
     $App->boot($requestUser);
+
 
 } catch (UnauthorizedException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE

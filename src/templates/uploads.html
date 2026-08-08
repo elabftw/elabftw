@@ -1,3 +1,5 @@
+{% set accessKey = App.Request.query.getString('access_key') %}
+
 {# Modal to display plain text content #}
 <div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
@@ -96,7 +98,7 @@
                   {% if loop.first %}
                     <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
                   {% endif %}
-                  <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn btn-ghost'>
+                  <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn btn-ghost'>
                     <i class='fas fa-download fa-fw'></i>
                   </a>
                   {% if not upload.immutable %}
@@ -133,7 +135,7 @@
               {# don't make the thumbnail clickable if it's a tif #}
               {% if ext matches '/(bmp|jpg|jpeg|png|gif|pdf|eps|svg|heic)$/i' %}
                 <div class='text-center'>
-                  <a class='text-break' target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'
+                  <a class='text-break' target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}'
                     {% if upload.real_name matches '/(bmp|jpg|jpeg|png|gif)$/i' %}data-fancybox='group' data-caption='{{ upload.real_name|e('html_attr') }}'{% endif %}
                     {% if upload.comment %}title='{{ upload.comment|e('html_attr') }}' data-caption='{{ upload.comment|e('html_attr') }}'{% endif %}
                   >
@@ -142,7 +144,7 @@
               {# old timestamp pdf don't have a thumbnail, so don't try to display one for them #}
               {% if ext matches '/(bmp|jpg|jpeg|png|gif|tif|tiff|pdf|eps|svg|heic)$/i' %}
                 <div class='text-center'>
-                  <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}' alt='thumbnail' />
+                  <img class='thumb img-thumbnail rounded' class='text-break' src='app/download.php?f={{ thumb_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}' alt='thumbnail' />
                 </div>
               {% else %}
                 <i class='fas {{ ext2icon(ext) }} thumb rounded mx-auto d-block text-center'></i>
@@ -185,7 +187,7 @@
 
               {# IMPORTANT: here the data-href has the storage first and the filename last or 3Dmol will get confused with the format #}
               <div class='viewer_3Dmoljs'
-                data-href='app/download.php?storage={{ upload.storage }}&amp;f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}'
+                data-href='app/download.php?storage={{ upload.storage }}&amp;f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}'
                 data-style="{{ ext == 'pdb' ? 'cartoon:color=spectrum' : 'stick' }}"
                 data-backgroundcolor='0xffffff'
                 id='3Dmol_{{ upload.id }}'>
@@ -194,7 +196,7 @@
             {# DNA #}
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::DNA') %}
               <div class='viewer-ove'
-                data-href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}'
+                data-href='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}'
                 data-real-name='{{ upload.real_name|e('html_attr') }}'
                 id='OVE_{{ upload.id }}'>
               </div>
@@ -206,6 +208,9 @@
                 data-storage='{{ upload.storage }}'
                 data-path='{{ upload.long_name|e('html_attr') }}'
                 data-name='{{ upload.real_name|e('html_attr') }}'>
+                {% if accessKey %}
+                  data-access-key='{{ accessKey|e('html_attr') }}'
+                {% endif %}
                 <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
               </span>
 
@@ -234,7 +239,7 @@
             {% elseif ext matches '/(mp4|webm)$/i' %}
               <div class='text-center'>
                 <video controls width='300' preload='metadata'>
-                  <source src='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}' type='video/{{ ext }}'>
+                  <source src='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}' type='video/{{ ext }}'>
                 </video>
               </div>
 
@@ -242,7 +247,7 @@
             {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::AUDIO') %}
               <div class='text-center'>
                 <audio controls>
-                  <source src='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}' type='audio/{{ ext }}'>
+                  <source src='app/download.php?f={{ upload.long_name|e('url') }}&amp;storage={{ upload.storage }}&amp;name={{ upload.real_name|e('url') }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}' type='audio/{{ ext }}'>
                 </video>
               </div>
 
@@ -254,7 +259,7 @@
             <div class='caption'>
               <i class='fas fa-fw fa-download mr-1'></i>
               <p class='d-inline'>
-                <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}' target='_blank' rel='noopener'>{{ upload.real_name }}</a>
+                <a id='upload-filename_{{ upload.id }}' class='text-break' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}' target='_blank' rel='noopener'>{{ upload.real_name }}</a>
                 <span class='smallgray' style='display:inline'>
                   {% if upload.filesize %}
                     {{ upload.filesize|formatBytes }} -

@@ -106,7 +106,7 @@ final class LoginHelper
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $this->context->getUserid(), PDO::PARAM_INT);
         $req->bindValue(':version', BuildInfo::VERSION_INT, PDO::PARAM_INT);
-        $req->bindValue(':auth_service', (int) $this->Session->get('auth_service'), PDO::PARAM_INT);
+        $req->bindValue(':auth_service', $this->context->getAuthMethod()->value, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 

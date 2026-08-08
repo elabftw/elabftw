@@ -37,4 +37,9 @@ final readonly class UserLoginContext implements LoginStepInterface
     {
         return $this->teamId;
     }
+
+    public function getAuthMethod(): AuthMethod
+    {
+        return $this->authMethod;
+    }
 }

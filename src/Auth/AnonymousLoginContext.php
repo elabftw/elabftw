@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\Language;
 use Elabftw\Interfaces\LoginContextInterface;
 use Override;
@@ -39,5 +40,10 @@ final readonly class AnonymousLoginContext implements LoginContextInterface
     public function getTeam(): int
     {
         return $this->teamId;
+    }
+
+    public function getAuthMethod(): AuthMethod
+    {
+        return AuthMethod::Local;
     }
 }

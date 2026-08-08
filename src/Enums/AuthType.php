@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
-use RuntimeException;
-
 enum AuthType: string
 {
     case Anonymous = 'anon';
@@ -26,18 +24,4 @@ enum AuthType: string
     case Team = 'team';
     case TeamInit = 'teaminit';
     case TeamSelection = 'teamselection';
-
-    public function asService(): int
-    {
-        return match ($this) {
-            self::Anonymous => 50,
-            self::Demo => 5,
-            self::External => 40,
-            self::Ldap => 30,
-            self::Local => 10,
-            self::Saml => 20,
-            default => throw new RuntimeException('Invalid AuthType enum to get service from'),
-        };
-
-    }
 }

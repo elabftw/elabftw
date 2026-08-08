@@ -64,11 +64,6 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('experiments-status.php', EntityType::Experiments->toStatusPage());
     }
 
-    public function testAuthType(): void
-    {
-        $this->assertIsInt(AuthType::Saml->asService());
-    }
-
     public function testCurrency(): void
     {
         $this->assertIsString(Currency::NOK->toHuman());

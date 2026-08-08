@@ -14,7 +14,6 @@ namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use PDO;
 
@@ -65,7 +64,7 @@ class CookieTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidToken(): void
     {
-        $this->expectException(IllegalActionException::class);
-        new CookieToken('invalid length');
+        $CookieToken = new CookieToken('invalid length');
+        $this->assertEmpty($CookieToken->getToken());
     }
 }

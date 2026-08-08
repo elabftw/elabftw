@@ -72,6 +72,7 @@ use function is_array;
 use function session_get_cookie_params;
 use function sprintf;
 use function explode;
+use function _;
 
 /**
  * For all your authentication/login needs
@@ -243,7 +244,7 @@ final class LoginController implements ControllerInterface
         }
 
         // clicking Cancel button on mfa page
-        if ($this->Request->get('Cancel') === 'cancel') {
+        if ($this->Request->request->get('Cancel') === 'cancel') {
             $this->Session->getFlashBag()->add('warning', _('Authentication flow was interrupted.'));
             $this->Session->remove('mfa_auth_required');
             return new RedirectResponse('/login.php');

@@ -68,8 +68,12 @@ try {
 
 } catch (InvalidCredentialsException | InvalidMfaCodeException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
-    $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->getAlnum('devicetoken'));
-    $AuthFail->register();
+    $deviceToken = $App->Request->cookies->getString('devicetoken');
+    new AuthFail(
+        $loginTries,
+        $e->getCode(),
+        $deviceToken !== '' ? $deviceToken : null,
+    )->register();
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('IllegalAction' => $e)));

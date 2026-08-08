@@ -520,6 +520,9 @@ final class LoginController implements ControllerInterface
 
     private function handleSamlResponse(): Response
     {
+        if ($this->config['saml_toggle'] !== '1') {
+            throw new UnauthorizedException();
+        }
         $IdpsHelper = new IdpsHelper(
             Config::getConfig(),
             new Idps(new Users()),
@@ -618,6 +621,9 @@ final class LoginController implements ControllerInterface
 
     private function getLdapAuthenticator(): AuthenticatorInterface
     {
+        if ($this->config['ldap_toggle'] !== '1') {
+            throw new UnauthorizedException();
+        }
         $ldapPassword = empty($this->config['ldap_password'])
             ? null
             : $this->config['ldap_password'];

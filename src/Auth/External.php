@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Authentication;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthenticatorInterface;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Users\ValidatedUser;
@@ -33,9 +34,9 @@ final class External implements AuthenticatorInterface
     #[Override]
     public function authenticate(): Authentication
     {
-        $firstname = $this->serverParams[$this->configArr['extauth_firstname']] ?? '?';
-        $lastname = $this->serverParams[$this->configArr['extauth_lastname']] ?? '?';
-        $email = $this->serverParams[$this->configArr['extauth_email']] ?? '?';
+        $firstname = $this->serverParams[$this->configArr['extauth_firstname']] ?? throw new UnauthorizedException();
+        $lastname = $this->serverParams[$this->configArr['extauth_lastname']] ?? throw new UnauthorizedException();
+        $email = $this->serverParams[$this->configArr['extauth_email']] ?? throw new UnauthorizedException();
         // try and get the team
         $teams = array($this->serverParams[$this->configArr['extauth_teams']]);
 

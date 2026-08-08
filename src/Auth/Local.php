@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
-use DateTimeImmutable;
 use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\AuthMethod;
@@ -51,7 +50,6 @@ final class Local implements AuthenticatorInterface
         private readonly bool $isDisplayed = true,
         private readonly bool $isOnlySysadminWhenHidden = false,
         private readonly bool $isOnlySysadmin = false,
-        private readonly int $maxPasswordAgeDays = 0,
         private readonly int $maxLoginAttempts = 3,
     ) {
         if (empty($password)) {
@@ -75,19 +73,6 @@ final class Local implements AuthenticatorInterface
             $this->userid,
             AuthMethod::Local,
         );
-    }
-
-    public function mustRenewPassword(): bool
-    {
-        // check if last password modification date was too long ago and require changing it if yes
-        if ($this->maxPasswordAgeDays > 0) {
-            $modifiedAt = new DateTimeImmutable($this->result['password_modified_at']);
-            $now = new DateTimeImmutable();
-            $diff = $now->diff($modifiedAt);
-            $daysDifference = (int) $diff->format('%a');
-            return $daysDifference > $this->maxPasswordAgeDays;
-        }
-        return false;
     }
 
     public function verifyPassword(): void
@@ -124,7 +109,7 @@ final class Local implements AuthenticatorInterface
 
     private function fetchFromDb(): array
     {
-        $sql = 'SELECT is_sysadmin, password_hash, validated, password_modified_at FROM users WHERE userid = :userid;';
+        $sql = 'SELECT is_sysadmin, password_hash, password_modified_at FROM users WHERE userid = :userid;';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);

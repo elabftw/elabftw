@@ -208,9 +208,6 @@
                 data-storage='{{ upload.storage }}'
                 data-path='{{ upload.long_name|e('html_attr') }}'
                 data-name='{{ upload.real_name|e('html_attr') }}'>
-                {% if accessKey %}
-                  data-access-key='{{ accessKey|e('html_attr') }}'
-                {% endif %}
                 <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center'></i>
               </span>
 

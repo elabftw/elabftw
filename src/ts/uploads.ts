@@ -187,9 +187,12 @@ on('toggle-modal', async (el: HTMLElement) => {
     storage: el.dataset.storage,
     f: el.dataset.path,
   });
+  const accessKey = new URLSearchParams(
+    window.location.search,
+  ).get('access_key');
 
-  if (el.dataset.accessKey) {
-    params.set('access_key', el.dataset.accessKey);
+  if (accessKey) {
+    params.set('access_key', accessKey);
   }
 
   const response = await fetch(

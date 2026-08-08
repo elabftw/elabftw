@@ -62,6 +62,7 @@ use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
 use Elabftw\Models\Links\AbstractExperimentsLinks;
 use Elabftw\Models\Links\AbstractItemsLinks;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
@@ -585,7 +586,8 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
         }
-        $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
+        $request = Request::createFromGlobals();
+        $queryParams = $this->getQueryParams($request->query);
         $sql = $this->getSqlBuilder()->getReadSqlBeforeWhere(true);
 
         $sql .= sprintf(' WHERE entity.id = %d', $this->id);
@@ -629,6 +631,23 @@ abstract class AbstractEntity extends AbstractRest
         // convert from markdown only if necessary
         if ($this->entityData['content_type'] === BodyContentType::Markdown->value) {
             $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
+        }
+        $accessKey = $request->query->getString('access_key');
+        $entityAccessKey = (string) (
+            $this->entityData['access_key'] ?? ''
+        );
+
+        if (
+            $this->Users instanceof AnonymousUser
+            && $accessKey !== ''
+            && $entityAccessKey !== ''
+            && hash_equals($entityAccessKey, $accessKey)
+        ) {
+            $this->entityData['body_html'] =
+                $this->appendAccessKeyToDownloadUrls(
+                    $this->entityData['body_html'],
+                    $accessKey,
+                );
         }
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
@@ -1551,5 +1570,35 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->getCreatePermissionFromTeam($teamConfigArr) === false) {
             throw new ForbiddenException();
         }
+    }
+
+    private function appendAccessKeyToDownloadUrls(
+        string $html,
+        string $accessKey,
+    ): string {
+        return preg_replace_callback(
+            '~\b(src|href)=(["\'])(/?app/download\.php\?[^"\']*)\2~i',
+            static function (array $matches) use ($accessKey): string {
+                $url = $matches[3];
+
+                if (
+                    preg_match(
+                        '/(?:[?&]|&amp;)access_key=/',
+                        $url,
+                    ) === 1
+                ) {
+                    return $matches[0];
+                }
+
+                return $matches[1]
+                    . '='
+                    . $matches[2]
+                    . $url
+                    . '&amp;access_key='
+                    . rawurlencode($accessKey)
+                    . $matches[2];
+            },
+            $html,
+        ) ?? $html;
     }
 }

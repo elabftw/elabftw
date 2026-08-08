@@ -135,6 +135,8 @@ final class LoginController implements ControllerInterface
             ) {
                 throw new UnauthorizedException();
             }
+
+            return LoginAction::PasswordRenewal;
         }
 
         return LoginAction::tryFrom(

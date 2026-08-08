@@ -33,6 +33,8 @@ use function str_repeat;
 
 final class SamlTest extends TestCase
 {
+    private const string REQUEST_ID = '_saml-test-request-id';
+
     private const string SESSION_INDEX = 'abcdef';
 
     private const string NAME_ID = 'saml-name-id';
@@ -122,9 +124,38 @@ final class SamlTest extends TestCase
     public function testSessionIndexIsStoredAfterResponseIsProcessed(): void
     {
         $saml = $this->createSaml();
-        $saml->assertIdpResponse();
+        $saml->assertIdpResponse(self::REQUEST_ID);
 
         self::assertSame(self::SESSION_INDEX, $saml->getSessionIndex());
+    }
+
+    public function testRequestIdIsPassedToSamlLibrary(): void
+    {
+        $SamlAuthLib = $this->createMock(
+            SamlAuthLib::class,
+        );
+
+        $SamlAuthLib->expects(self::once())
+            ->method('processResponse')
+            ->with(self::REQUEST_ID);
+
+        // Stop processing after processResponse().
+        $SamlAuthLib->method('getErrors')
+            ->willReturn(array('stop'));
+
+        $saml = new Saml(
+            $SamlAuthLib,
+            $this->configArr,
+            $this->settings,
+        );
+
+        $this->expectException(
+            UnauthorizedException::class,
+        );
+
+        $saml->assertIdpResponse(
+            self::REQUEST_ID,
+        );
     }
 
     public function testFailedAuthenticationIsRejected(): void
@@ -132,7 +163,9 @@ final class SamlTest extends TestCase
         $this->expectException(UnauthorizedException::class);
         $this->expectExceptionMessage('Authentication with IDP failed!');
 
-        $this->createSaml(authenticated: false)->assertIdpResponse();
+        $this->createSaml(
+            authenticated: false,
+        )->assertIdpResponse(self::REQUEST_ID);
     }
 
     public function testSamlErrorsAreHiddenWhenDebugIsDisabled(): void
@@ -142,7 +175,7 @@ final class SamlTest extends TestCase
 
         $this->createSaml(
             errors: array('first error', 'second error'),
-        )->assertIdpResponse();
+        )->assertIdpResponse(self::REQUEST_ID);
     }
 
     public function testSamlErrorsAreExposedWhenDebugIsEnabled(): void
@@ -156,7 +189,7 @@ final class SamlTest extends TestCase
         $this->createSaml(
             config: $config,
             errors: array('first error', 'second error'),
-        )->assertIdpResponse();
+        )->assertIdpResponse(self::REQUEST_ID);
     }
 
     public function testMissingDebugSettingUsesGenericError(): void
@@ -170,7 +203,7 @@ final class SamlTest extends TestCase
         $this->createSaml(
             config: $config,
             errors: array('secret debug detail'),
-        )->assertIdpResponse();
+        )->assertIdpResponse(self::REQUEST_ID);
     }
 
     public function testMissingEmailAttributeIsRejected(): void
@@ -964,7 +997,7 @@ final class SamlTest extends TestCase
     public function testEncodeDecodeTokenPreservesSamlLogoutClaims(): void
     {
         $saml = $this->createSaml();
-        $saml->assertIdpResponse();
+        $saml->assertIdpResponse(self::REQUEST_ID);
 
         $token = $saml->encodeToken(42);
         [$sid, $idpId, $nameId, $nameIdFormat] = Saml::decodeToken($token);
@@ -978,7 +1011,7 @@ final class SamlTest extends TestCase
     public function testEncodeDecodeTokenSupportsNullSessionIndex(): void
     {
         $saml = $this->createSaml(sessionIndex: null);
-        $saml->assertIdpResponse();
+        $saml->assertIdpResponse(self::REQUEST_ID);
 
         [$sid] = Saml::decodeToken($saml->encodeToken(42));
 
@@ -1059,7 +1092,7 @@ final class SamlTest extends TestCase
             $samlUserdata,
             $config,
             $settings,
-        )->assertIdpResponse();
+        )->assertIdpResponse(self::REQUEST_ID);
     }
 
     private function createSaml(

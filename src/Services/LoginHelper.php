@@ -18,6 +18,7 @@ use Elabftw\Auth\CookieToken;
 use Elabftw\Auth\UserLoginContext;
 use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Notifications\NewVersionInstalled;
 use Elabftw\Models\Users\Users;
@@ -46,20 +47,85 @@ final class LoginHelper
     public function login(bool $setCookie = false): void
     {
         $this->populateSession();
+
         if ($setCookie) {
             $this->setToken();
         }
+
         // if we run a version newer than the last time the user logged in, create a notification
         // but only if it's a minor version
-        if ((BuildInfo::VERSION_INT - $this->getLastSeenVersion() >= 100) && !$this->context instanceof AnonymousLoginContext) {
-            $authUserid = $this->context->getUserid();
-            $authUser = new Users($authUserid);
-            $Notifications = new NewVersionInstalled($authUser);
-            $Notifications->create();
+        if (
+            BuildInfo::VERSION_INT - $this->getLastSeenVersion() >= 100
+            && !$this->context instanceof AnonymousLoginContext
+        ) {
+            $authUser = new Users($this->context->getUserid());
+            new NewVersionInstalled($authUser)->create();
         }
-        $this->updateUser();
+
+        if (!$this->context instanceof AnonymousLoginContext) {
+            $this->updateLast();
+
+            if ($this->context->getAuthMethod() !== AuthMethod::Cookie) {
+                $this->updateAuthService();
+            }
+        }
+
         $this->setDeviceToken();
-        AuditLogs::create(new UserLogin($this->context->getUserid(), $this->context->getUserid()));
+
+        AuditLogs::create(
+            new UserLogin(
+                $this->context->getUserid(),
+                $this->context->getUserid(),
+            ),
+        );
+    }
+
+    /**
+     * Update last login time and last seen version.
+     */
+    private function updateLast(): void
+    {
+        $sql = 'UPDATE users
+            SET last_login = NOW(), last_seen_version = :version
+            WHERE userid = :userid';
+
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(
+            ':userid',
+            $this->context->getUserid(),
+            PDO::PARAM_INT,
+        );
+        $req->bindValue(
+            ':version',
+            BuildInfo::VERSION_INT,
+            PDO::PARAM_INT,
+        );
+
+        $this->Db->execute($req);
+    }
+
+    /**
+     * Update the authentication service used.
+     */
+    private function updateAuthService(): void
+    {
+        $sql = 'UPDATE users
+            SET auth_service = :auth_service
+            WHERE userid = :userid';
+
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(
+            ':userid',
+            $this->context->getUserid(),
+            PDO::PARAM_INT,
+        );
+        $req->bindValue(
+            ':auth_service',
+            $this->context->getAuthMethod()->value,
+            PDO::PARAM_INT,
+        );
+
+        $this->Db->execute($req);
     }
 
     public function getCookieExpiryTimestamp(): int
@@ -95,19 +161,6 @@ final class LoginHelper
         $req->bindValue(':userid', $this->context->getUserid(), PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
-    }
-
-    /**
-     * Update the authentication service used, last login time of user and last seen version
-     */
-    private function updateUser(): void
-    {
-        $sql = 'UPDATE users SET auth_service = :auth_service, last_login = NOW(), last_seen_version = :version WHERE userid = :userid';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':userid', $this->context->getUserid(), PDO::PARAM_INT);
-        $req->bindValue(':version', BuildInfo::VERSION_INT, PDO::PARAM_INT);
-        $req->bindValue(':auth_service', $this->context->getAuthMethod()->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 
     private function setDeviceToken(): void

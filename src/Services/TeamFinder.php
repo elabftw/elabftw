@@ -43,12 +43,14 @@ final class TeamFinder
 
     private function searchIn(EntityType $entityType): int
     {
-        $sql = 'SELECT users2teams.teams_id FROM ' . $entityType->value . ' AS entity
-            CROSS JOIN users2teams ON (users2teams.users_id = entity.userid)
-            WHERE entity.access_key = :ak';
+        $sql = 'SELECT team FROM '
+            . $entityType->value
+            . ' WHERE access_key = :ak';
+
         $req = $this->Db->prepare($sql);
         $req->bindParam(':ak', $this->ak);
         $this->Db->execute($req);
+
         return (int) $req->fetchColumn();
     }
 }

@@ -124,7 +124,7 @@ final class LoginController implements ControllerInterface
 
         if ($this->Request->query->has('action')) {
             return LoginAction::tryFrom(
-                $this->Request->query->getAlpha('action'),
+                $this->Request->query->getString('action'),
             ) ?? throw new UnauthorizedException();
         }
 

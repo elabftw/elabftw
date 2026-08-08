@@ -164,7 +164,6 @@ try {
     }
 
     $App->boot($requestUser);
-    $App->boot($requestUser);
 
 } catch (UnauthorizedException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE

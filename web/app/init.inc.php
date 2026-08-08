@@ -11,16 +11,20 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\AccessKeyVisitor;
+use Elabftw\Auth\AnonymousLoginValidator;
 use Elabftw\Auth\Cookie;
 use Elabftw\Auth\CookieLogin;
 use Elabftw\Auth\CookieToken;
 use Elabftw\Auth\UserLoginValidator;
+use Elabftw\Enums\Entrypoint;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\LoginHelper;
+use Elabftw\Services\TeamFinder;
 use Exception;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
@@ -110,27 +114,57 @@ try {
         'ResetPasswordController.php',
     );
 
+    $requestUser = null;
+
     if (
         !in_array(basename($Request->getScriptName()), $nologinArr, true)
         && !$Session->has('is_auth')
     ) {
-        $context = new CookieLogin(
-            new Cookie(
-                (int) $App->Config->configArr['cookie_validity_time'],
-                new CookieToken($Request->cookies->getString('token')),
-            ),
-            new UserLoginValidator(),
-            $Request->cookies->getInt('token_team'),
-        )->getContext();
+        $page = basename($Request->getScriptName());
 
-        new LoginHelper(
-            $context,
-            $Session,
-            (int) $App->Config->configArr['cookie_validity_time'],
-        )->login();
+        if (
+            $Request->query->has('access_key')
+            && $Request->query->getString('mode') === 'view'
+            && in_array(
+                $page,
+                array(
+                    Entrypoint::Experiments->toPage(),
+                    Entrypoint::Database->toPage(),
+                ),
+                true,
+            )
+        ) {
+            $requestUser = new AccessKeyVisitor(
+                new TeamFinder(
+                    $page,
+                    $Request->query->getString('access_key'),
+                ),
+                new AnonymousLoginValidator(
+                    (bool) $App->Config->configArr['anon_users'],
+                ),
+            )->getUser();
+        } else {
+            $context = new CookieLogin(
+                new Cookie(
+                    (int) $App->Config->configArr['cookie_validity_time'],
+                    new CookieToken(
+                        $Request->cookies->getString('token'),
+                    ),
+                ),
+                new UserLoginValidator(),
+                $Request->cookies->getInt('token_team'),
+            )->getContext();
+
+            new LoginHelper(
+                $context,
+                $Session,
+                (int) $App->Config->configArr['cookie_validity_time'],
+            )->login();
+        }
     }
 
-    $App->boot();
+    $App->boot($requestUser);
+    $App->boot($requestUser);
 
 } catch (UnauthorizedException $e) {
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE

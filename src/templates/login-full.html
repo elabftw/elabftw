@@ -75,7 +75,7 @@
       {%- endif %}
       <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
       <select name='selected_team' id='team_selection_select' class='form-control'>
-        {% for team in App.Session.get('team_selection')|filter(t => t.is_archived == 0) %}
+        {% for team in App.Session.get('team_selection') %}
           <option value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
       </select>
@@ -156,6 +156,9 @@
     <br>
     <form method='post' class='form-group' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
       <input type='hidden' name='auth_type' value='saml'>
+      {% if App.Config.configArr.remember_me_allowed %}
+        <input type='hidden' name='rememberme' value='on'>
+      {% endif %}
       {{ App.Session.get('csrf')|csrf }}
       <div class='form-group col-md-4 mx-auto'>
         {% if App.devMode -%}

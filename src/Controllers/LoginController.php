@@ -136,6 +136,8 @@ final class LoginController implements ControllerInterface
 
     private function handleAuthentication(LoginAction $action): Response
     {
+        $this->clearPendingLoginState();
+
         $this->rememberMe->capture();
 
         $result = $this->getAuthenticator($action)->authenticate();
@@ -163,6 +165,25 @@ final class LoginController implements ControllerInterface
             'teaminit_user_info',
             $result->toArray(),
         );
+    }
+
+    private function clearPendingLoginState(): void
+    {
+        foreach (array(
+            'auth_userid',
+            'auth_method',
+            'mfa_auth_required',
+            'mfa_secret',
+            'renew_password_required',
+            'password_renewal_completed',
+            'team_selection_required',
+            'team_selection',
+            'team_request_selection_required',
+            'initial_team_selection_required',
+            'teaminit_user_info',
+        ) as $key) {
+            $this->Session->remove($key);
+        }
     }
 
     private function getAuthenticator(LoginAction $action): AuthenticatorInterface
@@ -268,6 +289,8 @@ final class LoginController implements ControllerInterface
 
     private function handleAnonymousLogin(): Response
     {
+        $this->clearPendingLoginState();
+
         $teamId = $this->Request->request->getInt('team_id');
 
         $this->anonymousLoginValidator->validate($teamId);
@@ -337,7 +360,7 @@ final class LoginController implements ControllerInterface
             (int) $this->config['cookie_validity_time'],
         )->login($rememberMe);
 
-        $this->clearPendingAuthentication();
+        $this->clearPendingLoginState();
         $this->rememberMe->clear();
         $this->clearRedirectCookie();
 
@@ -520,6 +543,8 @@ final class LoginController implements ControllerInterface
 
         $result = $authenticator->assertIdpResponse();
 
+        $this->clearPendingLoginState();
+
         if ($result instanceof InitialTeamSelectionRequired) {
             $this->storeInitialTeamSelection($result);
             return $this->samlRedirect('/login.php');
@@ -553,18 +578,26 @@ final class LoginController implements ControllerInterface
 
     private function getPendingAuthentication(): Authentication
     {
+        if (
+            !$this->Session->has('auth_userid')
+            || !$this->Session->has('auth_method')
+        ) {
+            throw new UnauthorizedException();
+        }
+
+        $authMethod = AuthMethod::tryFrom(
+            $this->Session->get('auth_method'),
+        );
+
+        if ($authMethod === null) {
+            throw new UnauthorizedException();
+        }
+
         return new Authentication(
             $this->Session->get('auth_userid'),
-            AuthMethod::from($this->Session->get('auth_method')),
+            $authMethod,
         );
     }
-
-    private function clearPendingAuthentication(): void
-    {
-        $this->Session->remove('auth_userid');
-        $this->Session->remove('auth_method');
-    }
-
     private function getLdapAuthenticator(): AuthenticatorInterface
     {
         $ldapPassword = empty($this->config['ldap_password'])
@@ -659,6 +692,8 @@ final class LoginController implements ControllerInterface
         if ($this->config['saml_toggle'] !== '1') {
             throw new UnauthorizedException();
         }
+
+        $this->clearPendingLoginState();
 
         $this->rememberMe->capture();
 

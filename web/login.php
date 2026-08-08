@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\SelectableTeamsProvider;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\MfaHelper;
@@ -75,6 +78,13 @@ try {
     }
 
     if ($App->Request->query->get('switch_team') === '1') {
+        if (
+            !$App->Session->has('is_auth')
+            || $App->Session->has('is_anon')
+        ) {
+            throw new UnauthorizedException();
+        }
+
         $cookieOptions = array(
             'expires' => time() - 3600,
             'path' => '/',
@@ -84,10 +94,33 @@ try {
             'samesite' => 'Lax',
         );
         setcookie('token_team', '', $cookieOptions);
+
         $loggedInUser = new Users($App->Session->get('userid'));
-        $App->Session->set('team_selection_required', true);
-        $App->Session->set('team_selection', $loggedInUser->userData['teams']);
-        $App->Session->set('auth_userid', $loggedInUser->userData['userid']);
+
+        $authMethod = AuthMethod::tryFrom(
+            $loggedInUser->userData['auth_service'],
+        ) ?? throw new UnauthorizedException();
+
+        $teams = new SelectableTeamsProvider()
+            ->getForUser($loggedInUser->getUserid());
+
+        $App->Session->set(
+            'team_selection_required',
+            true,
+        );
+        $App->Session->set(
+            'team_selection',
+            $teams->all(),
+        );
+        $App->Session->set(
+            'auth_userid',
+            $loggedInUser->getUserid(),
+        );
+        $App->Session->set(
+            'auth_method',
+            $authMethod->value,
+        );
+
         $App->Session->remove('is_auth');
     }
 

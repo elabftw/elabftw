@@ -411,6 +411,8 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $request = Request::create('/login.php', 'POST', array(
             'auth_type' => 'teaminit',
             'team_id' => 1,
+            'teaminit_firstname' => 'Edited',
+            'teaminit_lastname' => 'Name',
         ));
 
         $response = $this->createController(
@@ -426,6 +428,15 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
         self::assertSame(
             $email,
             ExistingUser::fromEmail($email)->userData['email'],
+        );
+        $user = ExistingUser::fromEmail($email);
+        self::assertSame(
+            'Edited',
+            $user->userData['firstname'],
+        );
+        self::assertSame(
+            'Name',
+            $user->userData['lastname'],
         );
     }
 

@@ -491,8 +491,12 @@ final class LoginController implements ControllerInterface
         $user = ExistingUser::fromScratch(
             $info['email'],
             array($teamId),
-            $info['firstname'],
-            $info['lastname'],
+            $this->Request->request->getString(
+                'teaminit_firstname',
+            ),
+            $this->Request->request->getString(
+                'teaminit_lastname',
+            ),
             orgid: $info['orgid'] ?? null,
             orcid: $info['orcid'] ?? null,
         );

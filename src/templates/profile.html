@@ -194,6 +194,7 @@
         <hr>
         <label for='importRadioEntityType'>{{ 'Select where the entries will be created'|trans }}</label>
         <p hidden class='smallgray' data-showif='eln'>{{ "A .eln file can contain different types of entries. You can either force them all to be of a given type, or let eLabFTW decide the types, based on the 'genre' attribute of each entry. By default, Resources will be created if no genre can be found and no type has been imposed."|trans }}</p>
+        {% if App.devMode -%}<!-- [html-validate-disable-block valid-for] -->{%- endif %}
         <div id='importRadioEntityType'>
           <span class='form-check form-check-inline'>
             <input class='form-check-input' checked type='radio' name='entity_type' id='entityTypeRadioExperiments' value='experiments'>
@@ -221,8 +222,8 @@
 
         <div id='selectTemplateDiv' hidden>
           <hr>
+          {% if App.devMode -%}<!-- [html-validate-disable-block valid-for, prefer-native-element: suppress errors from tom-select] -->{%- endif %}
           <label for='importSelectTemplate'>{{ 'Select a template'|trans }}</label>
-          {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
           <select class='form-control' id='importSelectTemplate' autocomplete='off' name='template'>
             <option value=''>{{ 'Do not use a template'|trans }}</option>
           </select>
@@ -230,8 +231,8 @@
 
         <div id='selectCategoryDiv'>
           <hr>
+          {% if App.devMode -%}<!-- [html-validate-disable-block valid-for, prefer-native-element: suppress errors from tom-select] -->{%- endif %}
           <label for='importSelectCategory'>{{ 'Select a category'|trans }}</label>
-          {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
           <select class='form-control' id='importSelectCategory' autocomplete='off' name='category'>
             <option value=''>{{ 'Do not force a category'|trans }}</option>
             {% for cat in experimentsCategoryArr %}
@@ -243,8 +244,8 @@
         {# if we are admin we can select the owner #}
         {% if App.Users.isAdmin %}
           <hr>
+          {% if App.devMode -%}<!-- [html-validate-disable-block valid-for, prefer-native-element: suppress errors from tom-select] -->{%- endif %}
           <label for='importSelectOwner'>{{ 'Select owner of imported elements'|trans }}</label>
-          {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
           <select class='form-control' id='importSelectOwner' autocomplete='off' name='owner'>
             {% for user in usersArr %}
               <option {{ user.userid == App.Users.userid ? 'selected' }} value='{{ user.userid }}'>{{ user.fullname }}</option>

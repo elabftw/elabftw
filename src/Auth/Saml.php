@@ -134,9 +134,9 @@ final class Saml
         }
     }
 
-    public function assertIdpResponse(): Authentication|InitialTeamSelectionRequired
+    public function assertIdpResponse(string $requestId): Authentication|InitialTeamSelectionRequired
     {
-        $this->assertValidResponse();
+        $this->assertValidResponse($requestId);
 
         $this->samlUserdata = $this->SamlAuthLib->getAttributes();
         $this->samlSessionIdx = $this->SamlAuthLib->getSessionIndex();
@@ -204,9 +204,9 @@ final class Saml
         return $this->samlSessionIdx;
     }
 
-    private function assertValidResponse(): void
+    private function assertValidResponse(string $requestId): void
     {
-        $this->SamlAuthLib->processResponse();
+        $this->SamlAuthLib->processResponse($requestId);
         $errors = $this->SamlAuthLib->getErrors();
 
         if (!empty($errors)) {

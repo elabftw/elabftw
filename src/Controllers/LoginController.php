@@ -26,6 +26,7 @@ use Elabftw\Auth\MfaRequired;
 use Elabftw\Auth\PasswordRenewalRequired;
 use Elabftw\Auth\RememberMe;
 use Elabftw\Auth\Saml as SamlAuth;
+use Elabftw\Auth\SamlRequestState;
 use Elabftw\Auth\TeamRequestRequired;
 use Elabftw\Auth\TeamSelectionRequired;
 use Elabftw\Auth\UserLoginContext;
@@ -89,6 +90,7 @@ final class LoginController implements ControllerInterface
         private readonly MfaVerifierInterface $mfaVerifier,
         private readonly AnonymousLoginValidator $anonymousLoginValidator,
         private readonly RememberMe $rememberMe,
+        private readonly SamlRequestState $samlRequestState,
         private readonly bool $demoMode = false,
     ) {}
 
@@ -542,14 +544,22 @@ final class LoginController implements ControllerInterface
         $settings = $IdpsHelper->getSettingsByEntityId($issuers[0]);
         $idpId = (int) $settings['idp_id'];
 
+        // get expected request and idp from cookie
+        $expectedRequestId = $this->samlRequestState->getRequestId();
+        $expectedIdpId = $this->samlRequestState->getIdpId();
+        if ($idpId !== $expectedIdpId) {
+            throw new UnauthorizedException();
+        }
+
         $authenticator = new SamlAuth(
             new SamlAuthLib($settings),
             $this->config,
             $settings,
         );
 
-        $result = $authenticator->assertIdpResponse();
+        $result = $authenticator->assertIdpResponse($expectedRequestId);
 
+        $this->samlRequestState->clear();
         $this->clearPendingLoginState();
 
         if ($result instanceof InitialTeamSelectionRequired) {
@@ -710,15 +720,25 @@ final class LoginController implements ControllerInterface
             new Idps(new Users()),
         );
 
-        $settings = $idpsHelper->getSettings(
-            $this->Request->request->getInt('idpId'),
+        $idpId = $this->Request->request->getInt('idpId');
+
+        $settings = $idpsHelper->getSettings($idpId);
+
+        $returnUrl = $settings['baseurl']
+            . '/index.php?acs';
+
+        $saml = new SamlAuthLib($settings);
+
+        $redirectUrl = $saml->login(
+            $returnUrl,
+            stay: true,
         );
 
-        $returnUrl = $settings['baseurl'] . '/index.php?acs';
-        // adding stay: true to login() will make psalm/phpstan happy but breaks saml auth
-        new SamlAuthLib($settings)->login($returnUrl);
-        // ^-- this will run exit()
-        /** @psalm-suppress UnevaluatedCode */
-        throw new LogicException('SAML login did not redirect.'); // @phpstan-ignore-line
+        $this->samlRequestState->store(
+            $saml->getLastRequestID(),
+            $idpId,
+        );
+
+        return new RedirectResponse($redirectUrl);
     }
 }

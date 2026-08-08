@@ -17,6 +17,7 @@ use Elabftw\Auth\MfaPolicy;
 use Elabftw\Auth\MfaVerifier;
 use Elabftw\Auth\PasswordRenewalPolicy;
 use Elabftw\Auth\RememberMe;
+use Elabftw\Auth\SamlRequestState;
 use Elabftw\Auth\SelectableTeamsProvider;
 use Elabftw\Auth\UserLoginValidator;
 use Elabftw\Controllers\LoginController;
@@ -61,6 +62,7 @@ try {
             $App->Request,
             $App->Config->configArr['remember_me_allowed'] === '1',
         ),
+        new SamlRequestState($App->Request),
         $App->demoMode,
     )->getResponse();
 

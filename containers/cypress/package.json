@@ -10,10 +10,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "cypress-circleci-reporter": "^0.5.0",
     "cypress-html-validate": "^9.0.0",
     "cypress-terminal-report": "^7.3.3",
     "html-validate": "^11.5.6",
     "luxon": "^3.7.2",
+    "mocha": "^11.8.0",
     "typescript": "^5.9.3"
   }
 }

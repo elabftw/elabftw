@@ -114,6 +114,9 @@ use function array_filter;
 use function preg_replace;
 use function preg_match;
 use function strlen;
+use function hash_equals;
+use function preg_replace_callback;
+use function rawurlencode;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;

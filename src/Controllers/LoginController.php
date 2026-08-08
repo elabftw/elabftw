@@ -123,9 +123,12 @@ final class LoginController implements ControllerInterface
         }
 
         if ($this->Request->query->has('action')) {
-            return LoginAction::tryFrom(
-                $this->Request->query->getString('action'),
-            ) ?? throw new UnauthorizedException();
+            if (
+                $this->Request->query->getString('action')
+                    !== LoginAction::PasswordRenewal->value
+            ) {
+                throw new UnauthorizedException();
+            }
         }
 
         return LoginAction::tryFrom(
@@ -602,6 +605,7 @@ final class LoginController implements ControllerInterface
             $authMethod,
         );
     }
+
     private function getLdapAuthenticator(): AuthenticatorInterface
     {
         $ldapPassword = empty($this->config['ldap_password'])

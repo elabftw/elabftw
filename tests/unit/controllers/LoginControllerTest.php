@@ -593,6 +593,45 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $this->handleLoginStep($controller, $step);
     }
 
+    public function testPasswordRenewalIsAllowedAsQueryAction(): void
+    {
+        $request = Request::create(
+            '/app/controllers/LoginController.php?action=password_renewal',
+            'GET',
+        );
+
+        $controller = $this->createController($request);
+
+        $action = $this->invokePrivate(
+            $controller,
+            'getLoginAction',
+        );
+
+        self::assertSame(
+            LoginAction::PasswordRenewal,
+            $action,
+        );
+    }
+
+    public function testOtherLoginActionsAreRejectedFromQuery(): void
+    {
+        $request = Request::create(
+            '/app/controllers/LoginController.php?action=team',
+            'GET',
+        );
+
+        $controller = $this->createController($request);
+
+        $this->expectException(
+            UnauthorizedException::class,
+        );
+
+        $this->invokePrivate(
+            $controller,
+            'getLoginAction',
+        );
+    }
+
     private function createController(
         Request $request,
         ?Session $session = null,

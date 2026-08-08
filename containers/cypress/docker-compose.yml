@@ -4,7 +4,7 @@ networks:
     external: true
 services:
   cypress:
-    image: elabftw/elab-cypress:14.5.4
+    image: elabftw/elab-cypress:15.20.0
     extra_hosts:
       - "elab.local:host-gateway"
     container_name: elab-cypress

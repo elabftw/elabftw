@@ -192,7 +192,7 @@ jobs:
       browser:
         type: string
     executor: elab-executor
-    parallelism: 4
+    parallelism: 8
     working_directory: ~/elabftw/elabftw
     steps:
       - checkout
@@ -208,7 +208,7 @@ jobs:
       - populate_db
       - run:
           name: Create folders
-          command: mkdir -p cypress/{screenshots,videos}
+          command: mkdir -p cypress/{screenshots,videos} test_results
 
       - run:
           name: Run Cypress on << parameters.browser >>
@@ -217,23 +217,36 @@ jobs:
               find tests/cypress/integration -type f \
                 \( -name '*.cy.js' -o -name '*.cy.jsx' -o -name '*.cy.ts' -o -name '*.cy.tsx' \) \
                 | sort \
-                | circleci tests split --split-by=name \
+                | circleci tests split --split-by=timings --timings-type=filename \
                 | paste -sd, -
             )
 
             docker exec elab-cypress cypress run \
               --browser << parameters.browser >> \
               --spec "$SPECS" \
-              --config baseUrl=https://elabtmp:8080
+              --config baseUrl=https://elabtmp:8080 \
+              --reporter cypress-circleci-reporter \
+              --reporter-options 'resultsDir=/home/node/test_results/cypress,resultFileName=cypress-[hash]'
+
+      - run:
+          name: Extract Cypress test results
+          command: docker cp elab-cypress:/home/node/test_results/. test_results
+          when: always
+
+      - store_test_results:
+          path: test_results
+          when: always
+
       - run:
           name: Extract cypress screenshots and videos in case it is enabled again to debug a faulty run
           command: |
             docker cp elab-cypress:/home/node/tests/cypress/screenshots/. cypress/screenshots
             docker cp elab-cypress:/home/node/tests/cypress/videos/. cypress/videos
+          when: always
+
       - store_artifacts:
           path: cypress
           destination: cypress
-
 workflows:
   version: 2
   build_and_test:
@@ -253,5 +266,3 @@ workflows:
               browser:
                 - firefox
                 - chrome
-                - electron
-                - edge

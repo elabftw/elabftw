@@ -74,6 +74,9 @@ use function session_get_cookie_params;
 use function sprintf;
 use function explode;
 use function _;
+use function rawurldecode;
+use function str_contains;
+use function str_starts_with;
 
 /**
  * For all your authentication/login needs
@@ -321,8 +324,63 @@ final class LoginController implements ControllerInterface
 
         $this->clearPendingAuthentication();
         $this->rememberMe->clear();
+        $this->clearRedirectCookie();
 
-        return new RedirectResponse('/index.php');
+        return new RedirectResponse(
+            $this->getPostLoginRedirect($context),
+        );
+    }
+
+    private function getPostLoginRedirect(
+        UserLoginContext|AnonymousLoginContext $context,
+    ): string {
+        $default = '/index.php';
+
+        // Preserve existing SAML behavior: elab_redirect is ignored.
+        if (
+            $context instanceof UserLoginContext
+            && $context->authMethod === AuthMethod::Saml
+        ) {
+            return $default;
+        }
+
+        if (!$this->Request->cookies->has('elab_redirect')) {
+            return $default;
+        }
+
+        $candidate = rawurldecode(
+            $this->Request->cookies->getString(
+                'elab_redirect',
+                $default,
+            ),
+        );
+
+        // Only allow local absolute paths.
+        if (
+            !str_starts_with($candidate, '/')
+            || str_starts_with($candidate, '//')
+            || str_contains($candidate, '\\')
+        ) {
+            return $default;
+        }
+
+        return $candidate;
+    }
+
+    private function clearRedirectCookie(): void
+    {
+        setcookie(
+            'elab_redirect',
+            '',
+            array(
+                'expires' => time() - 3600,
+                'path' => '/',
+                'domain' => '',
+                'secure' => true,
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ),
+        );
     }
 
     private function handleTeamRequestSelection(): Response

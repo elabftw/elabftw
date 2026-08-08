@@ -51,6 +51,6 @@ class LdapTest extends \PHPUnit\Framework\TestCase
     public function testTryAuth(): void
     {
         $this->expectException(InvalidCredentialsException::class);
-        $this->AuthService->tryAuth();
+        $this->AuthService->authenticate();
     }
 }

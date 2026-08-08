@@ -11,7 +11,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Controllers\LoginController;
+use Elabftw\Auth\Cookie;
+use Elabftw\Auth\CookieLogin;
+use Elabftw\Auth\CookieToken;
+use Elabftw\Auth\UserLoginValidator;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -92,7 +95,6 @@ try {
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//
     // pages where you don't need to be logged in
     // only the script name, not the path because we use basename() on it
-    // Note: this should probably be merged into LoginController, maybe create a VisitorUser
     $nologinArr = array(
         // the api can be access with session or token (or only token for v1) so we skip auth here to do it later with custom logic
         'ApiController.php',
@@ -108,13 +110,26 @@ try {
         'ResetPasswordController.php',
     );
 
-    if (!in_array(basename($Request->getScriptName()), $nologinArr, true) && !$Session->has('is_auth')) {
-        // try to login our cookie or other methods not requiring a login action
-        $LoginController = new LoginController($App->Config->configArr, $Request, $App->Session, Env::asBool('DEMO_MODE'));
-        // this will throw an UnauthorizedException if we don't have a valid auth
-        $AuthResponse = $LoginController->getAuthResponse();
-        new LoginHelper($AuthResponse, $Session, (int) $App->Config->configArr['cookie_validity_time'])->login();
+    if (
+        !in_array(basename($Request->getScriptName()), $nologinArr, true)
+        && !$Session->has('is_auth')
+    ) {
+        $context = new CookieLogin(
+            new Cookie(
+                (int) $App->Config->configArr['cookie_validity_time'],
+                new CookieToken($Request->cookies->getString('token')),
+            ),
+            new UserLoginValidator(),
+            $Request->cookies->getInt('token_team'),
+        )->getContext();
+
+        new LoginHelper(
+            $context,
+            $Session,
+            (int) $App->Config->configArr['cookie_validity_time'],
+        )->login();
     }
+
     $App->boot();
 
 } catch (UnauthorizedException $e) {

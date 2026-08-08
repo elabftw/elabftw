@@ -12,12 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\Authentication;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Interfaces\AuthResponseInterface;
+use Elabftw\Interfaces\AuthenticatorInterface;
 use Elabftw\Models\Users\ExistingUser;
-use Elabftw\Services\UsersHelper;
 use Override;
 
 use function in_array;
@@ -25,7 +25,7 @@ use function in_array;
 /**
  * Demo auth service: auto login with just an email
  */
-final class Demo implements AuthInterface
+final class Demo implements AuthenticatorInterface
 {
     // let's just keep a hardcoded list of valid emails for demo login for now
     private const array ALLOWED_EMAILS = array(
@@ -45,13 +45,12 @@ final class Demo implements AuthInterface
     }
 
     #[Override]
-    public function tryAuth(): AuthResponseInterface
+    public function authenticate(): Authentication
     {
-        $userid = $this->getUseridFromEmail();
-        $UsersHelper = new UsersHelper($userid);
-        return new AuthResponse()
-            ->setAuthenticatedUserid($userid)
-            ->setTeams($UsersHelper);
+        return new Authentication(
+            $this->getUseridFromEmail(),
+            AuthMethod::Demo,
+        );
     }
 
     private function validateEmail(string $email): string

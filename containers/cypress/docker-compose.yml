@@ -3,7 +3,7 @@ networks:
     name: elabftw-net
 services:
   cypress:
-    image: elab-cypress
+    image: elabftw/elab-cypress:15.20.0
     extra_hosts:
       - "elab.local:host-gateway"
     build:

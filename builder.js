@@ -98,8 +98,7 @@ module.exports = (env) => {
     },
     optimization: {
       splitChunks: {
-        chunks: 'all',
-        name: 'vendor',
+        chunks: 'async',
       },
       minimize: true,
       minimizer: [

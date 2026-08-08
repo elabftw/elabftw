@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
@@ -74,5 +75,31 @@ class LocalTest extends \PHPUnit\Framework\TestCase
         $Local = new Local($user->userData['email'], 'thisisnotthecorrectpassword', maxLoginAttempts: -1);
         $this->expectException(ImproperActionException::class);
         $Local->authenticate();
+    }
+
+    public function testBruteForceAttemptsAreScopedToUser(): void
+    {
+        $Db = Db::getConnection();
+        $cleanup = $Db->prepare(
+            'DELETE FROM authfail WHERE users_id IN (1, 2)',
+        );
+        $Db->execute($cleanup);
+
+        $insert = $Db->prepare(
+            'INSERT INTO authfail (users_id) VALUES (2)',
+        );
+        $Db->execute($insert);
+
+        try {
+            $authentication = new Local(
+                'toto@yopmail.com',
+                'totototototo',
+                maxLoginAttempts: 0,
+            )->authenticate();
+
+            self::assertSame(1, $authentication->userid);
+        } finally {
+            $Db->execute($cleanup);
+        }
     }
 }

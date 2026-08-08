@@ -30,7 +30,6 @@ use function password_hash;
 use function password_needs_rehash;
 use function password_verify;
 use function _;
-use function sleep;
 
 /**
  * Local auth service
@@ -118,18 +117,16 @@ final class Local implements AuthenticatorInterface
 
     private function preventBruteForce(): void
     {
-        $sql = 'SELECT COUNT(id) AS failed_attempts
+        $sql = 'SELECT COUNT(id)
             FROM authfail
-            WHERE attempt_time >= NOW() - INTERVAL 1 MINUTE';
+            WHERE users_id = :userid
+                AND attempt_time >= NOW() - INTERVAL 1 MINUTE';
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $res = $req->fetch();
-        if ($res['failed_attempts'] > $this->maxLoginAttempts) {
+
+        if ((int) $req->fetchColumn() > $this->maxLoginAttempts) {
             throw new ImproperActionException(_('Too many authentication tries in the last minute. Please try later.'));
-        }
-        // also make subsequent attempts slower
-        if ($res['failed_attempts'] > 0) {
-            sleep($res['failed_attempts']);
         }
     }
 

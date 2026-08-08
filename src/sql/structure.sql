@@ -63,7 +63,9 @@ CREATE TABLE `authfail` (
   `users_id` int(10) UNSIGNED NOT NULL,
   `attempt_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `device_token` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_authfail_users_attempt_time` (`users_id`, `attempt_time`),
+  KEY `idx_authfail_device_attempt_time` (`device_token`, `attempt_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --

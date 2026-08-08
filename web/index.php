@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Auth\AnonymousLoginValidator;
 use Elabftw\Auth\LoginFlow;
 use Elabftw\Auth\MfaPolicy;
+use Elabftw\Auth\MfaRateLimiter;
 use Elabftw\Auth\MfaVerifier;
 use Elabftw\Auth\PasswordRenewalPolicy;
 use Elabftw\Auth\RememberMe;
@@ -51,6 +52,7 @@ try {
             $App->Session,
             $loginFlow,
             new MfaVerifier($App->Session),
+            new MfaRateLimiter(),
             new AnonymousLoginValidator((bool) $App->Config->configArr['anon_users']),
             new RememberMe(
                 $App->Request,

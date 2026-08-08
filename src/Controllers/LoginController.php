@@ -24,6 +24,7 @@ use OneLogin\Saml2\Settings as SamlSettings;
 use Elabftw\Auth\LoginFlow;
 use Elabftw\Auth\MfaRequired;
 use Elabftw\Auth\PasswordRenewalRequired;
+use Elabftw\Auth\RememberMe;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Auth\TeamRequestRequired;
 use Elabftw\Auth\TeamSelectionRequired;
@@ -86,6 +87,7 @@ final class LoginController implements ControllerInterface
         private readonly LoginFlow $loginFlow,
         private readonly MfaVerifierInterface $mfaVerifier,
         private readonly AnonymousLoginValidator $anonymousLoginValidator,
+        private readonly RememberMe $rememberMe,
         private readonly bool $demoMode = false,
     ) {}
 
@@ -136,6 +138,8 @@ final class LoginController implements ControllerInterface
 
     private function handleAuthentication(): Response
     {
+        $this->rememberMe->capture();
+
         $result = $this->getAuthenticator()->authenticate();
 
         if ($result instanceof InitialTeamSelectionRequired) {
@@ -304,15 +308,19 @@ final class LoginController implements ControllerInterface
         return $this->completeLogin($context);
     }
 
-    private function completeLogin(UserLoginContext|AnonymousLoginContext $context): Response
-    {
+    private function completeLogin(
+        UserLoginContext|AnonymousLoginContext $context,
+    ): Response {
+        $rememberMe = $this->rememberMe->isRequested();
+
         new LoginHelper(
             $context,
             $this->Session,
             (int) $this->config['cookie_validity_time'],
-        )->login($this->setRememberMeCookie());
+        )->login($rememberMe);
 
         $this->clearPendingAuthentication();
+        $this->rememberMe->clear();
 
         return new RedirectResponse('/index.php');
     }
@@ -446,6 +454,7 @@ final class LoginController implements ControllerInterface
 
         $this->setSamlToken(
             $authenticator->encodeToken($idpId),
+            $this->rememberMe->isRequested(),
         );
 
         $response = $this->handleLoginStep(
@@ -509,31 +518,6 @@ final class LoginController implements ControllerInterface
     }
 
     /**
-     * Store the rememberme choice in a cookie, not the session as it won't follow up for saml
-     */
-    private function setRememberMeCookie(): bool
-    {
-        if ($this->config['remember_me_allowed'] === '0') {
-            return false;
-        }
-        // avoid setting it if it's present
-        if ($this->Request->cookies->has('icanhazcookies')) {
-            return $this->Request->cookies->getBoolean('icanhazcookies');
-        }
-        $icanhazcookies = $this->Request->request->has('rememberme') ? '1' : '0';
-        $cookieOptions = array(
-            'expires' => time() + 300,
-            'path' => '/',
-            'domain' => '',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Lax',
-        );
-        setcookie('icanhazcookies', $icanhazcookies, $cookieOptions);
-        return $icanhazcookies === '1';
-    }
-
-    /**
      * See https://owasp.org/www-community/Slow_Down_Online_Guessing_Attacks_with_Device_Cookies
      */
     private function validateDeviceToken(): void
@@ -560,8 +544,10 @@ final class LoginController implements ControllerInterface
         }
     }
 
-    private function setSamlToken(string $token): void
-    {
+    private function setSamlToken(
+        string $token,
+        bool $rememberMe,
+    ): void {
         $cookieOptions = array(
             'path' => '/',
             'domain' => '',
@@ -570,14 +556,14 @@ final class LoginController implements ControllerInterface
             'samesite' => 'None',
         );
 
-        $rememberMe = $this->config['remember_me_allowed'] === '1';
         $sessionOptions = session_get_cookie_params();
 
         if ($rememberMe) {
             $cookieOptions['expires'] = time()
                 + 60 * (int) $this->config['cookie_validity_time'];
         } elseif ($sessionOptions['lifetime'] > 0) {
-            $cookieOptions['expires'] = time() + $sessionOptions['lifetime'];
+            $cookieOptions['expires'] = time()
+                + $sessionOptions['lifetime'];
         }
 
         setcookie('saml_token', $token, $cookieOptions);
@@ -600,6 +586,8 @@ final class LoginController implements ControllerInterface
         if ($this->config['saml_toggle'] !== '1') {
             throw new UnauthorizedException();
         }
+
+        $this->rememberMe->capture();
 
         $idpsHelper = new IdpsHelper(
             Config::getConfig(),

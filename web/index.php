@@ -17,6 +17,7 @@ use Elabftw\Auth\LoginFlow;
 use Elabftw\Auth\MfaPolicy;
 use Elabftw\Auth\MfaVerifier;
 use Elabftw\Auth\PasswordRenewalPolicy;
+use Elabftw\Auth\RememberMe;
 use Elabftw\Auth\SelectableTeamsProvider;
 use Elabftw\Auth\UserLoginValidator;
 use Elabftw\Controllers\LoginController;
@@ -50,6 +51,10 @@ try {
             $loginFlow,
             new MfaVerifier($App->Session),
             new AnonymousLoginValidator((bool) $App->Config->configArr['anon_users']),
+            new RememberMe(
+                $App->Request,
+                $App->Config->configArr['remember_me_allowed'] === '1',
+            ),
             $App->demoMode,
         )->getResponse();
     } else {

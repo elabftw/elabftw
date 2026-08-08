@@ -16,6 +16,7 @@ use Elabftw\Auth\AnonymousLoginValidator;
 use Elabftw\Auth\LoginFlow;
 use Elabftw\Auth\MfaRequired;
 use Elabftw\Auth\PasswordRenewalRequired;
+use Elabftw\Auth\RememberMe;
 use Elabftw\Auth\SelectableTeam;
 use Elabftw\Auth\SelectableTeams;
 use Elabftw\Auth\TeamRequestRequired;
@@ -593,6 +594,7 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $this->unusedLoginFlow(),
             $mfaVerifier ?? $this->createStub(MfaVerifierInterface::class),
             $anonymousLoginValidator ?? $this->unusedAnonymousLoginValidator(),
+            new RememberMe($request, true),
             $demoMode,
         );
     }

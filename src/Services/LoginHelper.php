@@ -192,6 +192,7 @@ final class LoginHelper
         $this->Session->set('userid', $this->context->getUserid());
 
         // add this flag to discriminate between normal user and anonymous user
+        $this->Session->remove('is_anon');
         if ($this->context->isAnonymous()) {
             $this->Session->set('is_anon', 1);
         }

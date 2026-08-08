@@ -17,6 +17,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Services\Email;
@@ -111,19 +112,42 @@ try {
 
     // PART 2: update the password
     if ($App->Request->request->has('password')) {
-        // verify the key received is valid
-        // we get the Users object from the email encrypted in the key
-        $Users = $ResetPasswordKey->validate($App->Request->request->getString('key'));
-        // Replace new password in database
-        // make sure the new password is not the same as the old one
-        // but only if we're in a required reset process
+        $Users = $ResetPasswordKey->validate(
+            $App->Request->request->getString('key'),
+        );
+
         if ($App->Session->has('renew_password_required')) {
-            $Users->requireResetPassword($App->Request->request->getString('password'));
+            if (
+                !$App->Session->has('auth_userid')
+                || $Users->getUserid()
+                    !== (int) $App->Session->get('auth_userid')
+            ) {
+                throw new UnauthorizedException();
+            }
+
+            $Users->requireResetPassword(
+                $App->Request->request->getString('password'),
+            );
+
             $App->Session->remove('renew_password_required');
+            $App->Session->set(
+                'password_renewal_completed',
+                true,
+            );
+
+            $Response = new RedirectResponse(
+                '/app/controllers/LoginController.php?action=password_renewal',
+            );
         } else {
-            $Users->resetPassword($App->Request->request->getString('password'));
+            $Users->resetPassword(
+                $App->Request->request->getString('password'),
+            );
+
+            $App->Session->getFlashBag()->add(
+                'ok',
+                _('New password inserted. You can now login.'),
+            );
         }
-        $App->Session->getFlashBag()->add('ok', _('New password inserted. You can now login.'));
     }
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));

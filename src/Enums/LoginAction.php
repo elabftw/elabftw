@@ -14,12 +14,16 @@ namespace Elabftw\Enums;
 
 enum LoginAction: string
 {
-    case Authenticate = 'authenticate';
-    case Anonymous = 'anonymous';
+    case Anonymous = 'anon';
     case Mfa = 'mfa';
-    case SelectTeam = 'select_team';
-    case JoinTeam = 'join_team';
-    case InitTeam = 'init_team';
+    case SelectTeam = 'team';
+    case JoinTeam = 'teamselection';
+    case InitTeam = 'teaminit';
+    case SamlStart = 'saml';
+    case Local = 'local';
+    case Ldap = 'ldap';
+    case External = 'external';
+    case Demo = 'demo';
+    case PasswordRenewal = 'password_renewal';
     case SamlResponse = 'saml_response';
-    case SamlStart = 'saml_start';
 }

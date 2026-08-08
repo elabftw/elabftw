@@ -33,7 +33,6 @@ use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\IdpsHelper;
 use Elabftw\Enums\AuthMethod;
-use Elabftw\Enums\AuthType;
 use Elabftw\Enums\Language;
 use Elabftw\Enums\LoginAction;
 use Elabftw\Exceptions\ImproperActionException;
@@ -96,15 +95,21 @@ final class LoginController implements ControllerInterface
     #[Override]
     public function getResponse(): Response
     {
-        return match ($this->getLoginAction()) {
-            LoginAction::Authenticate => $this->handleAuthentication(),
+        $loginAction = $this->getLoginAction();
+        return match ($loginAction) {
             LoginAction::Anonymous => $this->handleAnonymousLogin(),
             LoginAction::Mfa => $this->handleMfa(),
-            LoginAction::SamlStart => $this->handleSamlStart(),
             LoginAction::SelectTeam => $this->handleTeamSelection(),
             LoginAction::JoinTeam => $this->handleTeamRequestSelection(),
             LoginAction::InitTeam => $this->handleInitialTeamSelection(),
+            LoginAction::SamlStart => $this->handleSamlStart(),
+            LoginAction::PasswordRenewal => $this->handlePasswordRenewal(),
             LoginAction::SamlResponse => $this->handleSamlResponse(),
+
+            LoginAction::Local,
+            LoginAction::Ldap,
+            LoginAction::External,
+            LoginAction::Demo => $this->handleAuthentication($loginAction),
         };
     }
 
@@ -117,32 +122,23 @@ final class LoginController implements ControllerInterface
             return LoginAction::SamlResponse;
         }
 
-        $authType = AuthType::tryFrom(
+        if ($this->Request->query->has('action')) {
+            return LoginAction::tryFrom(
+                $this->Request->query->getAlpha('action'),
+            ) ?? throw new UnauthorizedException();
+        }
+
+        return LoginAction::tryFrom(
             $this->Request->request->getAlpha('auth_type'),
-        );
+        ) ?? throw new UnauthorizedException();
 
-        return match ($authType) {
-            AuthType::Anonymous => LoginAction::Anonymous,
-            AuthType::Mfa => LoginAction::Mfa,
-            AuthType::Team => LoginAction::SelectTeam,
-            AuthType::TeamSelection => LoginAction::JoinTeam,
-            AuthType::TeamInit => LoginAction::InitTeam,
-            AuthType::Saml => LoginAction::SamlStart,
-
-            AuthType::Local,
-            AuthType::Ldap,
-            AuthType::External,
-            AuthType::Demo => LoginAction::Authenticate,
-
-            default => throw new UnauthorizedException(),
-        };
     }
 
-    private function handleAuthentication(): Response
+    private function handleAuthentication(LoginAction $action): Response
     {
         $this->rememberMe->capture();
 
-        $result = $this->getAuthenticator()->authenticate();
+        $result = $this->getAuthenticator($action)->authenticate();
 
         if ($result instanceof InitialTeamSelectionRequired) {
             $this->storeInitialTeamSelection($result);
@@ -169,20 +165,16 @@ final class LoginController implements ControllerInterface
         );
     }
 
-    private function getAuthenticator(): AuthenticatorInterface
+    private function getAuthenticator(LoginAction $action): AuthenticatorInterface
     {
-        $authType = AuthType::tryFrom(
-            $this->Request->request->getAlpha('auth_type'),
-        );
-
-        return match ($authType) {
-            AuthType::Local => $this->getLocalAuthenticator(),
-            AuthType::Ldap => $this->getLdapAuthenticator(),
-            AuthType::External => new External(
+        return match ($action) {
+            LoginAction::Local => $this->getLocalAuthenticator(),
+            LoginAction::Ldap => $this->getLdapAuthenticator(),
+            LoginAction::External => new External(
                 $this->config,
                 $this->Request->server->all(),
             ),
-            AuthType::Demo => $this->getDemoAuthenticator(),
+            LoginAction::Demo => $this->getDemoAuthenticator(),
             default => throw new UnauthorizedException(),
         };
     }
@@ -197,6 +189,31 @@ final class LoginController implements ControllerInterface
             $step instanceof UserLoginContext => $this->completeLogin($step),
             default => throw new LogicException('Unknown login step.'),
         };
+    }
+
+    private function handlePasswordRenewal(): Response
+    {
+        if (!$this->Session->has('password_renewal_completed')) {
+            throw new UnauthorizedException();
+        }
+
+        if (
+            !$this->Session->has('auth_userid')
+            || !$this->Session->has('auth_method')
+        ) {
+            throw new UnauthorizedException();
+        }
+
+        $authentication = $this->getPendingAuthentication();
+
+        // This continuation must only be consumable once.
+        $this->Session->remove('password_renewal_completed');
+
+        return $this->handleLoginStep(
+            $this->loginFlow->afterPasswordRenewal(
+                $authentication,
+            ),
+        );
     }
 
     private function requireMfa(MfaRequired $step): Response

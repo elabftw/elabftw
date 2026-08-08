@@ -24,6 +24,7 @@ use Elabftw\Auth\TeamSelectionRequired;
 use Elabftw\Auth\UserLoginContext;
 use Elabftw\Elabftw\Authentication;
 use Elabftw\Enums\AuthMethod;
+use Elabftw\Enums\LoginAction;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
@@ -144,6 +145,7 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $authenticator = $this->invokePrivate(
             $controller,
             'getAuthenticator',
+            array(LoginAction::Local),
         );
         self::assertInstanceOf(
             AuthenticatorInterface::class,
@@ -176,6 +178,7 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
         $authenticator = $this->invokePrivate(
             $controller,
             'getAuthenticator',
+            array(LoginAction::Demo),
         );
         self::assertInstanceOf(
             AuthenticatorInterface::class,

@@ -14,9 +14,11 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Auth\AnonymousLoginValidator;
 use Elabftw\Auth\LoginFlow;
+use Elabftw\Auth\MfaRateLimiter;
 use Elabftw\Auth\MfaRequired;
 use Elabftw\Auth\PasswordRenewalRequired;
 use Elabftw\Auth\RememberMe;
+use Elabftw\Auth\SamlRequestState;
 use Elabftw\Auth\SelectableTeam;
 use Elabftw\Auth\SelectableTeams;
 use Elabftw\Auth\TeamRequestRequired;
@@ -28,6 +30,8 @@ use Elabftw\Enums\LoginAction;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
+use Elabftw\Exceptions\InvalidMfaCodeException;
+use Elabftw\Exceptions\TooManyMfaAttemptsException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthenticatorInterface;
 use Elabftw\Interfaces\LoginStepInterface;
@@ -320,6 +324,56 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
 
         // Failed verification must keep the pending MFA state intact.
         self::assertTrue($session->has('mfa_auth_required'));
+    }
+
+    public function testMfaRateLimitClearsPendingLoginState(): void
+    {
+        $session = new Session();
+        $session->set('mfa_auth_required', true);
+        $session->set('auth_userid', 1);
+        $session->set(
+            'auth_method',
+            AuthMethod::Local->value,
+        );
+
+        $request = Request::create(
+            '/login.php',
+            'POST',
+            array(
+                'auth_type' => 'mfa',
+                'mfa_code' => '123456',
+            ),
+        );
+
+        // One failure is enough for this controller test.
+        $rateLimiter = new MfaRateLimiter(1);
+        $rateLimiter->clear(1);
+
+        $mfaVerifier = $this->createMock(
+            MfaVerifierInterface::class,
+        );
+        $mfaVerifier->expects(self::once())
+            ->method('verify')
+            ->with(1, '123456')
+            ->willThrowException(
+                new InvalidMfaCodeException(),
+            );
+
+        try {
+            $this->createController(
+                $request,
+                session: $session,
+                mfaVerifier: $mfaVerifier,
+                mfaRateLimiter: $rateLimiter,
+            )->getResponse();
+            self::fail('Expected MFA rate-limit exception.');
+        } catch (TooManyMfaAttemptsException) {
+            self::assertFalse($session->has('mfa_auth_required'));
+            self::assertFalse($session->has('auth_userid'));
+            self::assertFalse($session->has('auth_method'));
+        } finally {
+            $rateLimiter->clear(1);
+        }
     }
 
     public function testTeamSelectionRequiresPendingSelectionState(): void
@@ -636,6 +690,7 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
         Request $request,
         ?Session $session = null,
         ?MfaVerifierInterface $mfaVerifier = null,
+        ?MfaRateLimiter $mfaRateLimiter = null,
         ?AnonymousLoginValidator $anonymousLoginValidator = null,
         ?array $config = null,
         bool $demoMode = false,
@@ -646,8 +701,10 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $session ?? new Session(),
             $this->unusedLoginFlow(),
             $mfaVerifier ?? $this->createStub(MfaVerifierInterface::class),
+            $mfaRateLimiter ?? new MfaRateLimiter(),
             $anonymousLoginValidator ?? $this->unusedAnonymousLoginValidator(),
             new RememberMe($request, true),
+            new SamlRequestState($request),
             $demoMode,
         );
     }

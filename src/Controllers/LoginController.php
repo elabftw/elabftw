@@ -22,6 +22,7 @@ use Elabftw\Auth\Local;
 use OneLogin\Saml2\Response as SamlResponse;
 use OneLogin\Saml2\Settings as SamlSettings;
 use Elabftw\Auth\LoginFlow;
+use Elabftw\Auth\MfaRateLimiter;
 use Elabftw\Auth\MfaRequired;
 use Elabftw\Auth\PasswordRenewalRequired;
 use Elabftw\Auth\RememberMe;
@@ -39,7 +40,9 @@ use Elabftw\Enums\LoginAction;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
+use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Exceptions\TooManyMfaAttemptsException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthenticatorInterface;
 use Elabftw\Interfaces\ControllerInterface;
@@ -88,6 +91,7 @@ final class LoginController implements ControllerInterface
         private readonly FlashBagAwareSessionInterface $Session,
         private readonly LoginFlow $loginFlow,
         private readonly MfaVerifierInterface $mfaVerifier,
+        private readonly MfaRateLimiter $mfaRateLimiter,
         private readonly AnonymousLoginValidator $anonymousLoginValidator,
         private readonly RememberMe $rememberMe,
         private readonly SamlRequestState $samlRequestState,
@@ -323,9 +327,42 @@ final class LoginController implements ControllerInterface
 
         $authentication = $this->getPendingAuthentication();
 
-        $this->mfaVerifier->verify(
+        if (
+            $this->mfaRateLimiter->isBlocked(
+                $authentication->userid,
+            )
+        ) {
+            $this->clearPendingLoginState();
+
+            throw new TooManyMfaAttemptsException();
+        }
+
+        try {
+            $this->mfaVerifier->verify(
+                $authentication->userid,
+                $this->Request->request->getAlnum(
+                    'mfa_code',
+                ),
+            );
+        } catch (InvalidMfaCodeException $e) {
+            if (
+                $this->mfaRateLimiter->registerFailure(
+                    $authentication->userid,
+                )
+            ) {
+                $this->clearPendingLoginState();
+
+                throw new TooManyMfaAttemptsException(
+                    previous: $e,
+                );
+            }
+
+            throw $e;
+        }
+
+        // A successful second factor resets the failure history.
+        $this->mfaRateLimiter->clear(
             $authentication->userid,
-            $this->Request->request->getAlnum('mfa_code'),
         );
 
         $this->Session->remove('mfa_auth_required');

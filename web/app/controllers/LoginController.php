@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Auth\AnonymousLoginValidator;
 use Elabftw\Auth\LoginFlow;
 use Elabftw\Auth\MfaPolicy;
+use Elabftw\Auth\MfaRateLimiter;
 use Elabftw\Auth\MfaVerifier;
 use Elabftw\Auth\PasswordRenewalPolicy;
 use Elabftw\Auth\RememberMe;
@@ -57,6 +58,7 @@ try {
         $App->Session,
         $loginFlow,
         new MfaVerifier($App->Session),
+        new MfaRateLimiter(),
         new AnonymousLoginValidator((bool) $App->Config->configArr['anon_users']),
         new RememberMe(
             $App->Request,
@@ -66,7 +68,7 @@ try {
         $App->demoMode,
     )->getResponse();
 
-} catch (InvalidCredentialsException | InvalidMfaCodeException $e) {
+} catch (InvalidCredentialsException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
     $deviceToken = $App->Request->cookies->getString('devicetoken');
     new AuthFail(
@@ -74,6 +76,8 @@ try {
         $e->getCode(),
         $deviceToken !== '' ? $deviceToken : null,
     )->register();
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+} catch (InvalidMfaCodeException $e) {
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('IllegalAction' => $e)));

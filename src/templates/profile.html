@@ -192,9 +192,9 @@
 
       <div id='importOptionsDiv' hidden>
         <hr>
+        {% if App.devMode -%}<!-- [html-validate-disable-block valid-for] -->{%- endif %}
         <label for='importRadioEntityType'>{{ 'Select where the entries will be created'|trans }}</label>
         <p hidden class='smallgray' data-showif='eln'>{{ "A .eln file can contain different types of entries. You can either force them all to be of a given type, or let eLabFTW decide the types, based on the 'genre' attribute of each entry. By default, Resources will be created if no genre can be found and no type has been imposed."|trans }}</p>
-        {% if App.devMode -%}<!-- [html-validate-disable-block valid-for] -->{%- endif %}
         <div id='importRadioEntityType'>
           <span class='form-check form-check-inline'>
             <input class='form-check-input' checked type='radio' name='entity_type' id='entityTypeRadioExperiments' value='experiments'>

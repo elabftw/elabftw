@@ -186,7 +186,7 @@
       </a>
     {% endif %}
 
-    {% if not App.Session.has('is_anon') %}
+    {% if not App.isAnonymous() %}
 
       {# DUPLICATE #}
       <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='toggle-modal' data-target='duplicateModal' class='btn btn-transparent mr-2'>
@@ -210,23 +210,23 @@
       {% endif %}
     {% endif %}
 
+  {% if not App.isAnonymous() %}
     {# SIGN #}
     <button type='button' id='actionButton-sign' title='{{ 'Add signature'|trans }}' aria-label='{{ 'Add signature'|trans }}' data-action='toggle-modal' data-target='addSignatureModal' class='btn btn-transparent mr-2'>
       <i class='fas fa-signature fa-fw'></i>
     </button>
 
-    {# TIMESTAMP #}
-    {% if not App.Session.has('is_anon') %}
+      {# TIMESTAMP #}
       <button type='button' title='{{ 'Timestamp'|trans }}' aria-label='{{ 'Timestamp'|trans }}' data-action='do-requestable-action' data-target='timestamp' class='btn btn-transparent mr-2'>
         <i class='fas fa-calendar-check fa-fw'></i>
       </button>
-    {% endif %}
 
-    {# BLOXBERG TIMESTAMP #}
-    {% if App.Config.configArr.blox_enabled %}
-      <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='toggle-modal' data-target='blocktimestampModal' class='btn btn-transparent mr-2'>
-        <i class='fas fa-cubes fa-fw'></i>
-      </button>
+      {# BLOXBERG TIMESTAMP #}
+      {% if App.Config.configArr.blox_enabled %}
+        <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='toggle-modal' data-target='blocktimestampModal' class='btn btn-transparent mr-2'>
+          <i class='fas fa-cubes fa-fw'></i>
+        </button>
+      {% endif %}
     {% endif %}
 
     {# PROCUREMENT REQUEST #}
@@ -237,15 +237,17 @@
       </button>
     {% endif %}
 
-    {% if not App.Session.has('is_anon') %}
+    {% if not App.isAnonymous() %}
       <div class='vertical-separator'></div>
     {% endif %}
 
     {# DOWNLOAD / EXPORT MENU #}
-    {% include 'export-menu.html' %}
+    {% if not App.isAnonymous() %}
+      {% include 'export-menu.html' %}
+    {% endif %}
 
     <div class='ml-auto d-flex flex-wrap align-items-center'>
-      {% if not App.Session.has('is_anon') %}
+      {% if not App.isAnonymous() %}
         {% if mode == 'edit' %}
           {# RATING EDIT #}
           <div class='rating mr-2 align-items-center' id='editRatingDiv'>
@@ -277,9 +279,11 @@
       {% endif %}
 
       {# REQUEST ACTION #}
-      <button type='button' class='btn btn-transparent mr-2' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal'>
-        <i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i>
-      </button>
+      {% if not App.isAnonymous() %}
+        <button type='button' class='btn btn-transparent mr-2' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal'>
+          <i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i>
+        </button>
+      {% endif %}
 
       <div class='vertical-separator'></div>
 
@@ -326,7 +330,7 @@
             {{ Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans }}
           </button>
 
-          {% if not App.Session.has('is_anon') %}
+          {% if not App.isAnonymous() %}
             {# ARCHIVE / UNARCHIVE #}
             {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
               <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive'>
@@ -340,7 +344,7 @@
           {% endif %}
 
           {# DELETE / RESTORE #}
-          {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
+          {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value and not App.isAnonymous() %}
             <div class='dropdown-divider'></div>
             <button type='button' class='dropdown-item hover-danger' data-action='toggle-modal' data-target='deleteSelectedEntitiesModal'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
           {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}

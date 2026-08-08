@@ -95,7 +95,7 @@
 {# this is read by JS to get info about the state of current user #}
 <script type='application/json' id='core'>
   {
-    "isAnon": {{ App.Session.has('is_anon') ? 'true' : 'false' }},
+    "isAnon": {{ App.isAnonymous() ? 'true' : 'false' }},
     "isAuth": {{ App.Session.has('is_auth') ? 'true' : 'false' }},
     "isAdmin": {{ App.Users.isAdmin ? 'true' : 'false' }},
     "currentTeam": {{ App.Users.userData.team|default(-1) }},

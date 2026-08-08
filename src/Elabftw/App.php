@@ -145,6 +145,11 @@ final class App
         $this->initi18n();
     }
 
+    public function isAnonymous(): bool
+    {
+        return $this->Users instanceof AnonymousUser;
+    }
+
     /**
      * Generate HTML from a twig template (in src/templates).
      * The App object is injected into every template as well as langsArr

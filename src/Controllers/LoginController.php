@@ -73,7 +73,6 @@ use function is_array;
 use function session_get_cookie_params;
 use function sprintf;
 use function explode;
-use function _;
 use function rawurldecode;
 use function str_contains;
 use function str_starts_with;

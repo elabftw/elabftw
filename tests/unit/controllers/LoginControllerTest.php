@@ -46,6 +46,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 use function bin2hex;
 use function random_bytes;
@@ -261,7 +262,10 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
 
     public function testAnonymousLoginCompletesLogin(): void
     {
-        $session = new Session();
+        $session = new Session(new MockArraySessionStorage());
+        $session->setId('fixedsessionid1234567890');
+        $session->start();
+        $sessionId = $session->getId();
         $session->set('auth_userid', 123);
         $session->set('auth_method', AuthMethod::Local->value);
 
@@ -277,6 +281,7 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
         )->getResponse();
 
         self::assertRedirect($response, '/index.php');
+        self::assertNotSame($sessionId, $session->getId());
         self::assertFalse($session->has('auth_userid'));
         self::assertFalse($session->has('auth_method'));
     }

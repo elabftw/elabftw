@@ -46,6 +46,8 @@ final class LoginHelper
      */
     public function login(bool $setCookie = false): void
     {
+        $this->Session->migrate(true);
+
         $this->populateSession();
 
         if ($setCookie) {

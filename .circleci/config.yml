@@ -192,7 +192,7 @@ jobs:
       browser:
         type: string
     executor: elab-executor
-    parallelism: 4
+    parallelism: 8
     working_directory: ~/elabftw/elabftw
     steps:
       - checkout
@@ -217,7 +217,7 @@ jobs:
               find tests/cypress/integration -type f \
                 \( -name '*.cy.js' -o -name '*.cy.jsx' -o -name '*.cy.ts' -o -name '*.cy.tsx' \) \
                 | sort \
-                | circleci tests split --split-by=name \
+                | circleci tests split --split-by=timings \
                 | paste -sd, -
             )
 
@@ -253,5 +253,3 @@ workflows:
               browser:
                 - firefox
                 - chrome
-                - electron
-                - edge

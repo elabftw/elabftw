@@ -92,22 +92,10 @@ final class LoginHelper
      */
     private function updateLast(): void
     {
-        $sql = 'UPDATE users
-            SET last_login = NOW(), last_seen_version = :version
-            WHERE userid = :userid';
-
+        $sql = 'UPDATE users SET last_login = NOW(), last_seen_version = :version WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(
-            ':userid',
-            $this->context->getUserid(),
-            PDO::PARAM_INT,
-        );
-        $req->bindValue(
-            ':version',
-            BuildInfo::VERSION_INT,
-            PDO::PARAM_INT,
-        );
-
+        $req->bindValue(':userid', $this->context->getUserid(), PDO::PARAM_INT);
+        $req->bindValue(':version', BuildInfo::VERSION_INT, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 
@@ -116,22 +104,10 @@ final class LoginHelper
      */
     private function updateAuthService(): void
     {
-        $sql = 'UPDATE users
-            SET auth_service = :auth_service
-            WHERE userid = :userid';
-
+        $sql = 'UPDATE users SET auth_service = :auth_service WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(
-            ':userid',
-            $this->context->getUserid(),
-            PDO::PARAM_INT,
-        );
-        $req->bindValue(
-            ':auth_service',
-            $this->context->getAuthMethod()->value,
-            PDO::PARAM_INT,
-        );
-
+        $req->bindValue(':userid', $this->context->getUserid(), PDO::PARAM_INT);
+        $req->bindValue(':auth_service', $this->context->getAuthMethod()->value, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 

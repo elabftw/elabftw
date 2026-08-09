@@ -21,8 +21,6 @@ final class TooManyMfaAttemptsException extends UnauthorizedException
     #[Override]
     protected function getErrorMessage(): string
     {
-        return _(
-            'Too many invalid authentication codes. Please try again later.',
-        );
+        return _('Too many invalid authentication codes. Please try again later.');
     }
 }

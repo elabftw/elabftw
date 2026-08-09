@@ -205,11 +205,16 @@ module.exports = (env, argv) => {
         },
         { // SASS loader
           test: /\.scss$/,
-          type: 'asset/resource',
-          generator: {
-            filename: 'elabftw.min.css',
-          },
-          use: ['sass-loader'],
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                url: false,
+              },
+            },
+            'sass-loader',
+          ],
         },
         {
           test: /.(jpg|jpeg|png|svg)$/,

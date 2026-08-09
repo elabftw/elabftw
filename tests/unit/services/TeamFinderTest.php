@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Entrypoint;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users\Users;
@@ -37,5 +38,11 @@ class TeamFinderTest extends \PHPUnit\Framework\TestCase
         $ak = new AccessKeyHelper(EntityType::Items, $id)->toggleAccessKey();
         $finder = new TeamFinder(Entrypoint::Database->toPage(), $ak);
         $this->assertEquals(1, $finder->findTeam());
+    }
+
+    public function testFindInNothing(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        new TeamFinder('savethecheerleadersavetheworld.php', 'a');
     }
 }

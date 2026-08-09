@@ -67,4 +67,18 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $CookieToken = new CookieToken('invalid length');
         $this->assertEmpty($CookieToken->getToken());
     }
+
+    public function testEmptyTokenIsNotSaved(): void
+    {
+        $currentToken = $this->CookieToken->getToken();
+        $CookieToken = new CookieToken('invalid length');
+
+        $this->assertTrue($CookieToken->saveToken($this->userid));
+
+        $req = $this->Db->prepare('SELECT token FROM users WHERE userid = :userid');
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $this->assertSame($currentToken, $req->fetchColumn());
+    }
 }

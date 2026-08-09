@@ -156,21 +156,22 @@
   {% include 'links.html' %}
 {% endif %}
 
-{# same for storage #}
-{% if Entity.entityData.containers %}
-  {% include 'storage-view-edit.html' %}
-{% endif %}
+{% if not App.isAnonymous() %}
 
-{# PERMISSIONS #}
-<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
-<div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
-  {% include('edit-permissions.html') %}
-  {% include 'view-edit-target-permissions.html' %}
-</div>
-<hr>
+  {# same for storage #}
+  {% if Entity.entityData.containers %}
+    {% include 'storage-view-edit.html' %}
+  {% endif %}
+
+  {# PERMISSIONS #}
+  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
+  <div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
+    {% include('edit-permissions.html') %}
+    {% include 'view-edit-target-permissions.html' %}
+  </div>
+  <hr>
 
 
-{% if App.Session.get('is_auth') and not App.isAnonymous() %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='commentsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Comments'|trans }} (<span id='commentsCount'>{{ Entity.entityData.comments|length }}</span>)</h3>
   <div class='mt-2' id='commentsDiv' data-count-for='commentsCount' data-save-hidden='commentsDiv'>
       {% for comment in Entity.entityData.comments %}

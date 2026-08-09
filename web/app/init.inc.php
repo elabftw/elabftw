@@ -18,6 +18,7 @@ use Elabftw\Auth\Cookie;
 use Elabftw\Auth\CookieLogin;
 use Elabftw\Auth\CookieToken;
 use Elabftw\Auth\UserLoginValidator;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Entrypoint;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
@@ -41,6 +42,7 @@ use function in_array;
 use function setcookie;
 use function stripos;
 use function time;
+use function array_map;
 
 /**
  *   _       _ _
@@ -135,9 +137,9 @@ try {
             && $Request->query->getString('mode') === 'view'
             && in_array(
                 $page,
-                array(
-                    Entrypoint::Experiments->toPage(),
-                    Entrypoint::Database->toPage(),
+                array_map(
+                    fn(EntityType $type): string => $type->toPage(),
+                    EntityType::cases(),
                 ),
                 true,
             )

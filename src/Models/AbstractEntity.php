@@ -645,11 +645,7 @@ abstract class AbstractEntity extends AbstractRest
             && $entityAccessKey !== ''
             && hash_equals($entityAccessKey, $accessKey)
         ) {
-            $this->entityData['body_html'] =
-                $this->appendAccessKeyToDownloadUrls(
-                    $this->entityData['body_html'],
-                    $accessKey,
-                );
+            $this->entityData['body_html'] = $this->appendAccessKeyToDownloadUrls($this->entityData['body_html'] ?? '', $accessKey);
         }
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);

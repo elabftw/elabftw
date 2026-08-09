@@ -26,37 +26,36 @@ final readonly class AccessKeyDownloadValidator
 
         $Db = Db::getConnection();
 
-        $sql = "SELECT COALESCE(experiments.team, items.team)
+        $sql = "SELECT COALESCE(experiments.team, items.team, experiments_templates.team, items_types.team)
             FROM uploads
             LEFT JOIN experiments
                 ON uploads.type = 'experiments'
                 AND uploads.item_id = experiments.id
+            LEFT JOIN experiments_templates
+                ON uploads.type = 'experiments_templates'
+                AND uploads.item_id = experiments_templates.id
             LEFT JOIN items
                 ON uploads.type = 'items'
                 AND uploads.item_id = items.id
+            LEFT JOIN items_types
+                ON uploads.type = 'items_types'
+                AND uploads.item_id = items_types.id
             WHERE (
                 uploads.long_name = :long_name
                 OR CONCAT(uploads.long_name, '_th.jpg') = :thumbnail_name
             )
             AND COALESCE(
                 experiments.access_key,
-                items.access_key
+                items.access_key,
+                experiments_templates.access_key,
+                items_types.access_key
             ) = :access_key
             LIMIT 1";
 
         $req = $Db->prepare($sql);
-        $req->bindValue(
-            ':long_name',
-            $longName,
-        );
-        $req->bindValue(
-            ':thumbnail_name',
-            $longName,
-        );
-        $req->bindValue(
-            ':access_key',
-            $accessKey,
-        );
+        $req->bindValue(':long_name', $longName);
+        $req->bindValue(':thumbnail_name', $longName);
+        $req->bindValue(':access_key', $accessKey);
 
         $Db->execute($req);
 

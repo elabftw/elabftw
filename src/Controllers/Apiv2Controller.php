@@ -26,7 +26,6 @@ use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidApiSubModelException;
-use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
@@ -367,7 +366,7 @@ final class Apiv2Controller extends AbstractApiController
                 $this->Request->query->get('scope') === 'team',
             ),
             ApiEndpoint::Users => $this->requester instanceof AnonymousUser
-                ? throw new UnauthorizedException()
+                ? new AnonymousUser($this->requester->getTeam())
                 : new Users($this->id, $this->requester->getTeam(), $this->requester),
         };
     }

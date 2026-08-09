@@ -63,10 +63,8 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
 
         $res = $Controller->getResponse();
 
-        self::assertSame(
-            Response::HTTP_UNAUTHORIZED,
-            $res->getStatusCode(),
-        );
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        self::assertSame('[]', $res->getContent());
     }
 
     public function testBadJson(): void

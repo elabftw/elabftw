@@ -33,8 +33,7 @@ final readonly class MfaVerifier implements MfaVerifierInterface
     {
         $user = new Users($userid);
 
-        $secret = $user->userData['mfa_secret']
-            ?? $this->Session->get('mfa_secret');
+        $secret = $user->userData['mfa_secret'] ?? $this->Session->get('mfa_secret');
 
         if (
             !is_string($secret)
@@ -46,9 +45,7 @@ final readonly class MfaVerifier implements MfaVerifierInterface
 
         // First MFA verification also confirms enrollment.
         if ($user->userData['mfa_secret'] === null) {
-            $user->update(
-                new UserParams('mfa_secret', $secret),
-            );
+            $user->update(new UserParams('mfa_secret', $secret));
         }
 
         $this->Session->remove('mfa_secret');

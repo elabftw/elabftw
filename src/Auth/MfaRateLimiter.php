@@ -103,21 +103,9 @@ final class MfaRateLimiter
                 WHERE users_id = :userid';
 
             $req = $this->Db->prepare($sql);
-            $req->bindValue(
-                ':failed_attempts',
-                $failedAttempts,
-                PDO::PARAM_INT,
-            );
-            $req->bindValue(
-                ':reset_window',
-                $withinWindow ? 0 : 1,
-                PDO::PARAM_INT,
-            );
-            $req->bindValue(
-                ':is_blocked',
-                $isBlocked ? 1 : 0,
-                PDO::PARAM_INT,
-            );
+            $req->bindValue(':failed_attempts', $failedAttempts, PDO::PARAM_INT);
+            $req->bindValue(':reset_window', $withinWindow ? 0 : 1, PDO::PARAM_INT);
+            $req->bindValue(':is_blocked', $isBlocked ? 1 : 0, PDO::PARAM_INT);
             $req->bindValue(':userid', $userid, PDO::PARAM_INT);
             $this->Db->execute($req);
 
@@ -133,9 +121,7 @@ final class MfaRateLimiter
 
     public function clear(int $userid): void
     {
-        $sql = 'DELETE FROM mfa_rate_limits
-            WHERE users_id = :userid';
-
+        $sql = 'DELETE FROM mfa_rate_limits WHERE users_id = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);

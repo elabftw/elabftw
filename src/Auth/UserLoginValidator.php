@@ -44,16 +44,8 @@ final class UserLoginValidator
             LIMIT 1";
 
         $req = $this->Db->prepare($sql);
-        $req->bindValue(
-            ':userid',
-            $authentication->userid,
-            PDO::PARAM_INT,
-        );
-        $req->bindValue(
-            ':team_id',
-            $teamId,
-            PDO::PARAM_INT,
-        );
+        $req->bindValue(':userid', $authentication->userid, PDO::PARAM_INT);
+        $req->bindValue(':team_id', $teamId, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         $user = $req->fetch();
@@ -63,21 +55,15 @@ final class UserLoginValidator
         }
 
         if ((bool) $user['is_archived']) {
-            throw new ImproperActionException(
-                _('This account is archived in this team and cannot login.'),
-            );
+            throw new ImproperActionException(_('This account is archived in this team and cannot login.'));
         }
 
         if (!(bool) $user['is_valid']) {
-            throw new ImproperActionException(
-                _('Your account has expired. Contact your team Admin to extend its validity.'),
-            );
+            throw new ImproperActionException(_('Your account has expired. Contact your team Admin to extend its validity.'));
         }
 
         if (!(bool) $user['is_validated']) {
-            throw new ImproperActionException(
-                _('Your account is not validated. An admin of your team needs to validate it!'),
-            );
+            throw new ImproperActionException(_('Your account is not validated. An admin of your team needs to validate it!'));
         }
 
         return new UserLoginContext(

@@ -16,13 +16,10 @@ use DateTimeImmutable;
 
 final readonly class PasswordRenewalPolicy
 {
-    public function __construct(
-        private int $maxPasswordAgeDays,
-    ) {}
+    public function __construct(private int $maxPasswordAgeDays) {}
 
-    public function isRequired(
-        DateTimeImmutable $passwordModifiedAt,
-    ): bool {
+    public function isRequired(DateTimeImmutable $passwordModifiedAt): bool
+    {
         if ($this->maxPasswordAgeDays === 0) {
             return false;
         }

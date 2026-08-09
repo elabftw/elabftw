@@ -59,7 +59,6 @@ final class RememberMe
     public function clear(): void
     {
         $this->captured = null;
-
         $this->setCookie('', time() - 3600);
     }
 

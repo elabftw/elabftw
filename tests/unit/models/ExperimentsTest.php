@@ -30,9 +30,11 @@ use Elabftw\Services\Check;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function bin2hex;
 use function count;
 use function is_array;
 use function json_decode;
+use function random_bytes;
 use function sprintf;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
@@ -377,5 +379,43 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         foreach ($experiments as $experiment) {
             $this->assertSame(BasePermissions::Full->value, $experiment['canread_base']);
         }
+    }
+
+    public function testFastqForAnonymousUserOnlyReturnsPublicEntries(): void
+    {
+        $titlePrefix = 'anonymous-fastq-' . bin2hex(random_bytes(8));
+
+        foreach (BasePermissions::cases() as $permission) {
+            $Experiments = $this->getFreshExperimentWithGivenUser(
+                $this->Users,
+            );
+            $Experiments->patch(
+                Action::Update,
+                array(
+                    'title' => sprintf(
+                        '%s-%d',
+                        $titlePrefix,
+                        $permission->value,
+                    ),
+                    'canread_base' => $permission->value,
+                ),
+            );
+        }
+
+        $AnonymousUser = new AnonymousUser(1);
+        $AnonymousExperiments = new Experiments($AnonymousUser);
+        $DisplayParams = new DisplayParams(
+            $AnonymousUser,
+            EntityType::Experiments,
+            new InputBag(array('fastq' => $titlePrefix)),
+        );
+
+        $results = $AnonymousExperiments->readAll($DisplayParams);
+
+        self::assertCount(1, $results);
+        self::assertSame(
+            sprintf('%s-%d', $titlePrefix, BasePermissions::Full->value),
+            $results[0]['title'],
+        );
     }
 }

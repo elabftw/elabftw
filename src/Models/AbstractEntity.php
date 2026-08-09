@@ -16,7 +16,6 @@ use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\AccessPermissions;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
-use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
@@ -685,8 +684,7 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
-        $canFilter = $CanSqlBuilder->getCanFilter();
+        $canFilter = $this->getSqlBuilder()->getCanFilter(AccessType::Read->value);
         $displayParams->setSkipOrderPinned(true);
         $intQuery = intval($displayParams->getFastq());
         // if the query has a numeric part, we also try and match the custom_id or id exactly
@@ -708,7 +706,7 @@ abstract class AbstractEntity extends AbstractRest
             LEFT JOIN ' . $this->entityType->toStatusTable() . ' AS statust ON entity.status = statust.id
             LEFT JOIN users ON entity.userid = users.userid
             LEFT JOIN
-                users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)
+                users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)
             WHERE 1=1
             ' . $canFilter . '
                 AND (entity.title LIKE :query ' . $idSql . ')
@@ -716,8 +714,8 @@ abstract class AbstractEntity extends AbstractRest
             ' . $displayParams->getStatesSql('entity') . '
             ' . $displayParams->getSql();
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
-        $req->bindParam(':teamid', $this->Users->requester->team, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':teamid', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $displayParams->getFastq() . '%');
         if ($intQuery > 0) {
             $req->bindValue(':intQuery', $intQuery, PDO::PARAM_INT);

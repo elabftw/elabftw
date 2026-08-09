@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Models\Config;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,6 +52,21 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/teams/curent', 'GET'));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
+    }
+
+    public function testAnonymousUserCannotQueryUsersEndpoint(): void
+    {
+        $Controller = new Apiv2Controller(
+            new AnonymousUser(1),
+            Request::create('/?req=/api/v2/users', 'GET'),
+        );
+
+        $res = $Controller->getResponse();
+
+        self::assertSame(
+            Response::HTTP_UNAUTHORIZED,
+            $res->getStatusCode(),
+        );
     }
 
     public function testBadJson(): void

@@ -3,6 +3,9 @@
 ARG ELABTMP_TAG=latest
 FROM elabftw/elabtmp:${ELABTMP_TAG}
 
+# run yarn install again because we removed yarn stuff on elabimg build
+RUN yarn install --immutable
+
 # add tests related folders and files to the image
 COPY ./tests /elabftw/tests
 COPY ./eslint.config.mjs /elabftw

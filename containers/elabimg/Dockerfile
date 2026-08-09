@@ -347,9 +347,9 @@ RUN if [ "$BUILD_ALL" = "1" ]; then \
         else \
             yarn run buildall:prod \
             && yarn workspaces focus -A --production \
-            && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a \
-            && yarn cache clean; \
-        fi; \
+            && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a; \
+        fi \
+        && rm -rf /run/elabftw/yarn /run/elabftw/cache /run/composer; \
     fi
 # PHP: add php config after composer step so open_basedir is not an issue
 COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini.tpl

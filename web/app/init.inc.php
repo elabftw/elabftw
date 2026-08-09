@@ -82,7 +82,11 @@ try {
         $Session->set('csrf', $Csrf->getToken());
     }
     // CSRF doesn't apply to SAML Assertion Consumer Service endpoint
-    if (basename($Request->getScriptName()) !== 'index.php') {
+    $isSamlAcs = basename($Request->getScriptName()) === 'LoginController.php'
+        && $Request->query->has('acs')
+        && $Request->request->has('SAMLResponse');
+
+    if (!$isSamlAcs) {
         $Csrf->validate();
     }
     // END CSRF

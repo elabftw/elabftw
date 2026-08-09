@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Token;
@@ -36,6 +37,24 @@ class DeviceTokenValidatorTest extends \PHPUnit\Framework\TestCase
         $validToken = DeviceToken::getToken(1);
         $TokenAttacker = new DeviceTokenValidator($this->config, $validToken, 80);
         $this->assertFalse($TokenAttacker->validate());
+    }
+
+    public function testExpiredTokenIsRejected(): void
+    {
+        $token = $this->config->builder()
+            ->permittedFor('brute-force-protection')
+            ->issuedAt(new DateTimeImmutable('-2 hours'))
+            ->expiresAt(new DateTimeImmutable('-1 hour'))
+            ->withClaim('userid', 1)
+            ->getToken(
+                $this->config->signer(),
+                $this->config->signingKey(),
+            )
+            ->toString();
+
+        $validator = new DeviceTokenValidator($this->config, $token, 1);
+
+        self::assertFalse($validator->validate());
     }
 
     public function testUndecodableToken(): void

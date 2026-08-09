@@ -32,10 +32,12 @@ use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
 use Lcobucci\JWT\UnencryptedToken;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use OneLogin\Saml2\Auth as SamlAuthLib;
+use Symfony\Component\Clock\NativeClock;
 
 use function _;
 use function array_values;
@@ -80,6 +82,7 @@ final class Saml
         $config->setValidationConstraints(
             new PermittedFor(self::TOKEN_AUDIENCE),
             new SignedWith($config->signer(), $config->signingKey()),
+            new LooseValidAt(new NativeClock()),
         );
 
         return $config;

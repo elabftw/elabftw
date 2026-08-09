@@ -18,8 +18,10 @@ use Elabftw\Elabftw\Env;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Symfony\Component\Clock\NativeClock;
 
 /**
  * DeviceToken generator
@@ -65,6 +67,7 @@ final class DeviceToken
         $config->setValidationConstraints(
             new PermittedFor('brute-force-protection'),
             new SignedWith($config->signer(), $config->signingKey()),
+            new LooseValidAt(new NativeClock()),
         );
         return $config;
     }

@@ -1060,6 +1060,30 @@ final class SamlTest extends TestCase
         Saml::decodeToken($token);
     }
 
+    public function testDecodeTokenRejectsExpiredToken(): void
+    {
+        $config = Saml::getJWTConfig();
+
+        $token = $config->builder()
+            ->permittedFor('saml-session')
+            ->issuedAt(new DateTimeImmutable('-2 months'))
+            ->expiresAt(new DateTimeImmutable('-1 month'))
+            ->withClaim('sid', self::SESSION_INDEX)
+            ->withClaim('idp_id', 1)
+            ->withClaim('nameid', self::NAME_ID)
+            ->withClaim('nameid_format', self::NAME_ID_FORMAT)
+            ->getToken(
+                $config->signer(),
+                $config->signingKey(),
+            )
+            ->toString();
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('Decoding JWT Token failed');
+
+        Saml::decodeToken($token);
+    }
+
     public function testDecodeTokenRejectsInvalidSignature(): void
     {
         $config = Saml::getJWTConfig();

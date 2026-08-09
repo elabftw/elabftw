@@ -103,7 +103,6 @@ RUN ./configure \
         --with-http_ssl_module \
         --with-http_v2_module \
         --with-http_realip_module \
-        --with-http_gzip_static_module \
         --with-http_stub_status_module \
         --add-module=/build/ngx_brotli \
         --add-module=/build/headers-more-nginx-module \
@@ -256,8 +255,7 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-zip \
     php84-zlib \
     tzdata \
-    unzip \
-    zopfli
+    unzip
 
 # add a symlink to php8
 RUN ln -f /usr/bin/php84 /usr/bin/php
@@ -320,7 +318,7 @@ RUN mkdir -p /run/elabftw \
 # this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
 # pass it to build command with --build-arg BUILD_ALL=0
 ARG BUILD_ALL=1
-# enable this in CI to skip brotli/zopfli minification
+# enable this in CI to skip brotli minification
 ARG CI=0
 # install php and js dependencies and build assets
 # avoid installing cypress
@@ -342,7 +340,7 @@ RUN corepack enable
 # so in order for composer to take it into account, it must exist before we call the install command of composer.
 # in CI we use -o flag for composer because we will add other classes afterwards (tests)
 RUN if [ "$BUILD_ALL" = "1" ]; then \
-        yarn install \
+        yarn install --immutable \
         && if [ "$CI" = "1" ]; then \
             yarn run buildall:ci \
             && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress -o; \

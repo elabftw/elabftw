@@ -335,7 +335,7 @@ services:
         # DEV #
         #######
         # set to true in a development environment.
-        # This will remove php cache, serve assets directly (instead of the brotli/gzip version) and make composer available.
+        # This will remove php cache, serve assets directly (instead of the brotli version) and make composer available.
         # default value: false
         #- DEV_MODE=false
 

@@ -110,11 +110,16 @@ module.exports = (env, argv) => {
       },
       minimize: !isDevelopment,
       minimizer: [
-        '...',
+        // use parallel option to reduce RAM usage from parallelization during minimization
+         new MinimizerPlugin({
+          test: /\.[cm]?js(\?.*)?$/i,
+          parallel: 4,
+          minify: MinimizerPlugin.terserMinify,
+        }),
         new MinimizerPlugin({
           test: /\.css(\?.*)?$/i,
+          parallel: 4,
           minify: MinimizerPlugin.cssnanoMinify,
-          // Options - https://cssnano.github.io/cssnano/docs/config-file/
           minimizerOptions: {
             preset: 'default',
           },

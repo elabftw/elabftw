@@ -79,6 +79,7 @@ use function explode;
 use function rawurldecode;
 use function str_contains;
 use function str_starts_with;
+use function str_replace;
 
 /**
  * For all your authentication/login needs
@@ -437,6 +438,10 @@ final class LoginController implements ControllerInterface
             ),
         );
 
+        // Browsers strip TAB, CR and LF before parsing a URL, so a value such
+        // as "/\t/evil.com" would become scheme-relative after these checks.
+        $candidate = str_replace(array("\t", "\r", "\n"), '', $candidate);
+
         // Only allow local absolute paths.
         if (
             !str_starts_with($candidate, '/')
@@ -501,7 +506,7 @@ final class LoginController implements ControllerInterface
 
     private function getLocalAuthenticator(): AuthenticatorInterface
     {
-        if ($this->config['local_auth_enabled'] === '0') {
+        if (($this->config['local_auth_enabled'] ?? '0') !== '1') {
             throw new ImproperActionException(
                 'Local authentication is disabled on this instance.',
             );
@@ -691,10 +696,6 @@ final class LoginController implements ControllerInterface
      */
     private function validateDeviceToken(): void
     {
-        // skip for multi team auth
-        if ($this->Session->has('auth_userid')) {
-            return;
-        }
         // need the targeted user before validating the device token
         $email = Filter::sanitizeEmail($this->Request->request->getString('email'));
         try {

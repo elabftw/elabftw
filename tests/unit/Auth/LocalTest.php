@@ -94,7 +94,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
             $authentication = new Local(
                 'toto@yopmail.com',
                 'totototototo',
-                maxLoginAttempts: 0,
+                maxLoginAttempts: 1,
             )->authenticate();
 
             self::assertSame(1, $authentication->userid);

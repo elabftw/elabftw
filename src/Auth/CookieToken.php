@@ -44,6 +44,9 @@ final class CookieToken
      */
     public function saveToken(int $userid): bool
     {
+        if ($this->token === '') {
+            return true;
+        }
         $sql = 'UPDATE users SET token = :token, token_created_at = NOW() WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':token', $this->getToken());

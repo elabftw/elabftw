@@ -76,9 +76,8 @@ final class MfaRateLimiter
 
             $row = $this->Db->fetch($req);
 
-            if ((int) $row['is_blocked'] === 1) {
+            if ($row['is_blocked'] === 1) {
                 $this->Db->commit();
-
                 return true;
             }
 

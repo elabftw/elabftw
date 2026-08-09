@@ -97,30 +97,15 @@ try {
 
         $loggedInUser = new Users($App->Session->get('userid'));
 
-        $authMethod = AuthMethod::tryFrom(
-            $loggedInUser->userData['auth_service'],
-        ) ?? throw new UnauthorizedException();
+        $authService = $loggedInUser->userData['auth_service'] ?? throw new UnauthorizedException();
+        $authMethod = AuthMethod::tryFrom($authService) ?? throw new UnauthorizedException();
 
-        $teams = new SelectableTeamsProvider()
-            ->getForUser($loggedInUser->getUserid());
+        $teams = new SelectableTeamsProvider()->getForUser($loggedInUser->getUserid());
 
-        $App->Session->set(
-            'team_selection_required',
-            true,
-        );
-        $App->Session->set(
-            'team_selection',
-            $teams->all(),
-        );
-        $App->Session->set(
-            'auth_userid',
-            $loggedInUser->getUserid(),
-        );
-        $App->Session->set(
-            'auth_method',
-            $authMethod->value,
-        );
-
+        $App->Session->set('team_selection_required', true);
+        $App->Session->set('team_selection', $teams->all());
+        $App->Session->set('auth_userid', $loggedInUser->getUserid());
+        $App->Session->set('auth_method', $authMethod->value);
         $App->Session->remove('is_auth');
     }
 

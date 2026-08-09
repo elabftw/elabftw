@@ -125,7 +125,7 @@ final class Local implements AuthenticatorInterface
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        if ((int) $req->fetchColumn() > $this->maxLoginAttempts) {
+        if ((int) $req->fetchColumn() >= $this->maxLoginAttempts) {
             throw new ImproperActionException(_('Too many authentication tries in the last minute. Please try later.'));
         }
     }

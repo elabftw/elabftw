@@ -144,9 +144,12 @@ final class Saml
         $this->samlUserdata = $this->SamlAuthLib->getAttributes();
         $this->samlSessionIdx = $this->SamlAuthLib->getSessionIndex();
 
-        $email = $this->extractAttribute(
-            $this->settings['idp']['emailAttr'],
-        );
+        $emailAttr = $this->settings['idp']['emailAttr'] ?? null;
+        if (!is_string($emailAttr) || $emailAttr === '') {
+            throw new ImproperActionException('No email attribute configured for the IDP! Aborting.');
+        }
+        $email = $this->extractAttribute($emailAttr);
+
         $orgid = $this->getAttribute('orgidAttr');
         $orcid = $this->getAttribute('orcidAttr');
         $firstname = $this->getName();

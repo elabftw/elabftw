@@ -50,7 +50,7 @@ final class LoginHelper
 
         $this->populateSession();
 
-        if ($setCookie) {
+        if ($setCookie && !$this->context->isAnonymous()) {
             $this->setToken();
         }
 

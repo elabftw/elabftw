@@ -301,7 +301,7 @@ services:
         # IMPORTANT: end url values with trailing slash!
         # This is for the integration of the DNA Cloning tool
         - USE_OPENCLONING=true
-        - OPENCLONING_URL=http://opencloning-plugin:8000/
+        - OPENCLONING_URL=http://opencloning:8000/
 
         #######
         # DEV #
@@ -417,10 +417,19 @@ services:
     networks:
       - elabftw-net
 
-  opencloning-plugin:
+  # Run the opencloning container as read_only too
+  # https://github.com/OpenCloning/OpenCloning
+  opencloning:
     image: manulera/opencloning:prod-baseurl-opencloning
-    container_name: opencloning-plugin
+    container_name: opencloning
     restart: always
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     networks:
       - elabftw-net
     environment:

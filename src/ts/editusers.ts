@@ -14,7 +14,7 @@ import { notify } from './notify';
 import { core } from './core';
 import './users-table';
 
-document.getElementById('container').addEventListener('click', async (event) => {
+document.getElementById('container')?.addEventListener('click', async (event) => {
   const el = (event.target as HTMLElement);
   let userid = document.getElementById('editUserModal')?.dataset.userid;
   if (!userid) {

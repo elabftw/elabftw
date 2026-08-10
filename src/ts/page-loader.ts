@@ -96,13 +96,6 @@ if (window.location.pathname === '/team.php') {
   );
 }
 
-if (window.location.pathname === '/team.php') {
-  void import(
-    /* webpackChunkName: 'team' */
-    './team'
-  );
-}
-
 if (document.getElementById('uploadsDiv')) {
   void import(
     /* webpackChunkName: 'uploads' */

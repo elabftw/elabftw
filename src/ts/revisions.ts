@@ -10,6 +10,7 @@ import { ApiC } from './api';
 import { Action } from './interfaces';
 import DiffMatchPatch from 'diff-match-patch';
 import { notify } from './notify';
+import DOMPurify from 'dompurify';
 import { on } from './handlers';
 
 interface CheckedRevision {
@@ -76,7 +77,8 @@ on('compare-revisions', async (el: HTMLElement) => {
     }
     const span = document.createElement('span');
     span.style.color = color;
-    span.innerHTML = part[1];
+    const html = DOMPurify.sanitize(part[1], { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });
+    span.innerHTML = html;
     diffDiv.appendChild(span);
   });
 });

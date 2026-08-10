@@ -8,10 +8,10 @@
 import { createRoot } from 'react-dom/client'
 import KetcherEditor from './ketcher';
 
-const rootElement = createRoot(document.getElementById('ketcher-root'));
-if (rootElement) {
+const container = document.getElementById('ketcher-root');
+if (container) {
   // Note: use <StrictMode> in dev to spot errors
-  rootElement.render(
+  createRoot(container).render(
     <KetcherEditor />
   );
 }

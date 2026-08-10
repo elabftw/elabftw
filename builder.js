@@ -32,12 +32,11 @@ module.exports = (env, argv) => {
       main: [
         './src/scss/main.scss',
         './src/ts/common.ts',
+        './src/ts/page-loader.ts',
         './src/ts/create-new.ts',
         './src/ts/i18n.ts',
         './src/ts/steps-links.ts',
-        './src/ts/chem-editor.ts',
         './src/ts/dspace.ts',
-        './src/ts/ketcher-editor.jsx',
         './src/ts/compounds-table.jsx',
         './src/ts/users-table.jsx',
         './src/ts/tags.ts',

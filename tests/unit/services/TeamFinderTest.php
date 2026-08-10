@@ -42,7 +42,11 @@ class TeamFinderTest extends \PHPUnit\Framework\TestCase
 
     public function testFindInNothing(): void
     {
+        $finder = new TeamFinder(
+            'savethecheerleadersavetheworld.php',
+            '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+        );
         $this->expectException(ImproperActionException::class);
-        new TeamFinder('savethecheerleadersavetheworld.php', 'a');
+        $finder->findTeam();
     }
 }

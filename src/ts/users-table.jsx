@@ -231,7 +231,11 @@ const GridExample = () => {
 const App = () => {
   const [reloadKey, setReloadKey] = useState(0);
   // trigger this with document.dispatchEvent(new CustomEvent('dataReload'))
-  document.addEventListener('dataReload', () => setReloadKey(prevKey => prevKey + 1));
+  useEffect(() => {
+    const reloadTable = () => setReloadKey(prevKey => prevKey + 1);
+    document.addEventListener('dataReload', reloadTable);
+    return () => document.removeEventListener('dataReload', reloadTable);
+  }, []);
   return <GridExample key={reloadKey}/>;
 };
 

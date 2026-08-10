@@ -291,9 +291,56 @@ Before a major release, update the staging instance, optionally asking users if 
 
 .. note:: It is recommended to post a general announcement from the Communications tab in the Sysconfig Panel to inform users that this is a test instance, preventing them from mistakenly entering data.
 
+## Fix authentication issues after upgrading from MySQL 8.0 to 8.4
+
+MySQL 8.4 disables the deprecated `mysql_native_password` authentication plugin by default.
+
+If some MySQL users still use this authentication plugin, they may no longer be able to connect after upgrading from MySQL 8.0 to 8.4.
+
+Depending on how the connection is made, you may see an authentication error such as:
+
+~~~text
+ERROR 1045 (28000): Access denied for user 'user'@'host' (...)
+~~~
+
+Operations that explicitly use the disabled plugin can report:
+
+~~~text
+ERROR 1524 (HY000): Plugin 'mysql_native_password' is not loaded
+~~~
+
+To temporarily re-enable the plugin, start the MySQL container with:
+
+~~~yaml
+command: --mysql-native-password=ON
+~~~
+
+Then connect to MySQL using an administrative account and find users that still use `mysql_native_password`:
+
+~~~sql
+SELECT user, host, plugin
+FROM mysql.user
+WHERE plugin = 'mysql_native_password';
+~~~
+
+Migrate each affected user to `caching_sha2_password`:
+
+~~~sql
+ALTER USER 'user'@'host'
+    IDENTIFIED WITH caching_sha2_password
+    BY 'password';
+~~~
+
+Repeat this for all affected users.
+
+Once no users depend on `mysql_native_password`, remove the temporary `--mysql-native-password=ON` option and restart MySQL normally.
+
+`mysql_native_password` is deprecated and should only be enabled temporarily to allow migration to `caching_sha2_password`.
+
 ## Fix deprecation warning for old password storage
 
 If your MySQL log is filled with "WARNING "sha256_password' is deprecated and will be removed in a future release." messages, you will want to update the password storage mechanism. This message is present because you have the line `command: --default-authentication-plugin=mysql_native_password` present in your compose file. It used to be necessary, but it is no longer the case and even deprecated.
+
 
 :::warning
 Make sure to have a working backup of your MySQL database first!

@@ -369,7 +369,7 @@ services:
   # Note: if you already have a MySQL server running, you don't need to use this image, as you can use the already existing one
   # In this case, add the IP address of the server in DB_HOST and comment out or remove this block
   # Upgrading from 8.0 note: if you're updating from 8.0 and used to have the mysql_native_password option, see this doc:
-  # https://doc.elabftw.net/sysadmin-guide.html#fix-deprecation-warning-for-old-password-storage
+  # https://doc.elabftw.net/sysadmin-guide.html#fix-authentication-issues-after-upgrading-from-mysql-8-0-to-8-4
   mysql:
     image: mysql:8.4
     restart: always

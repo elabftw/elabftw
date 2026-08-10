@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "Без имени",
     "entity-delete-warning": "Выбранные элементы и все связанные данные будут удалены без возможности восстановления. Это не может быть отменено. Ты уверен?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Ошибка",
     "error-no-filename": "File name is missing.",

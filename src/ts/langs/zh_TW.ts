@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "無標題",
     "entity-delete-warning": "所選項目及其所有關聯資料將永久刪除。此操作無法撤銷。您確定嗎？",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "已處理 {{num, number}} 筆記錄",
     "error": "錯誤",
     "error-no-filename": "文件名缺失。",

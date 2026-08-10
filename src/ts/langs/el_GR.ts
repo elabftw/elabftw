@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "Χωρίς τίτλο",
     "entity-delete-warning": "Τα επιλεγμένα στοιχεία και όλα τα σχετικά δεδομένα θα διαγραφούν οριστικά. Αυτό δεν μπορεί να αναιρεθεί. Είσαι σίγουρος/η;",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Σφάλμα",
     "error-no-filename": "File name is missing.",

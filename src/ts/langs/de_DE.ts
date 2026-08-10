@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "Unbenannt",
     "entity-delete-warning": "Die ausgewählte(n) Ressource(n) und alle zugehörigen Daten werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden. Sind Sie sicher?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}} Einträge verarbeitet",
     "error": "Fehler",
     "error-no-filename": "Dateiname fehlt.",

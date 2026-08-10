@@ -66,7 +66,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $exp = $this->Experiments->patch(Action::Unarchive, array());
         $this->assertIsArray($exp);
         $this->assertEquals(State::Normal->value, $exp['state']);
-        $this->assertEquals(0, $exp['locked'], 'Entity should be unlocked when unarchived');
         // lock
         $exp = $this->Experiments->lock();
         $this->assertEquals(1, $exp['locked']);

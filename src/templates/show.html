@@ -233,16 +233,18 @@
   <div class='d-flex flex-wrap'>
     {# LEFT #}
     <div class='d-flex'>
-      <a title='{{ 'Select all'|trans }}' aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn btn-transparent'>
-        <i class='far fa-square'></i>
-      </a>
-      <a hidden title='{{ 'Invert selection'|trans }}' aria-label='{{ 'Invert selection'|trans }}' data-action='invert-entities-selection' href='#' class='ml-2 btn btn-transparent'>
-        <i class='fas fa-arrows-turn-to-dots'></i>
-      </a>
-      <div class='vertical-separator'></div>
-      <a title='{{ 'Toggle main text'|trans }}' aria-label='{{ 'Toggle main text'|trans }}' data-action='expand-all-entities' data-status='closed' href='#' class='btn btn-transparent'>
-        <i class='fas fa-maximize'></i>
-      </a>
+      {% if App.Users.userData.display_mode == 'it' %}
+        <a title='{{ 'Select all'|trans }}' aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn btn-transparent'>
+          <i class='far fa-square'></i>
+        </a>
+        <a hidden title='{{ 'Invert selection'|trans }}' aria-label='{{ 'Invert selection'|trans }}' data-action='invert-entities-selection' href='#' class='ml-2 btn btn-transparent'>
+          <i class='fas fa-arrows-turn-to-dots'></i>
+        </a>
+        <div class='vertical-separator'></div>
+        <a title='{{ 'Toggle main text'|trans }}' aria-label='{{ 'Toggle main text'|trans }}' data-action='expand-all-entities' data-status='closed' href='#' class='btn btn-transparent'>
+          <i class='fas fa-maximize'></i>
+        </a>
+      {% endif %}
     </div>
 
     {# RIGHT #}
@@ -505,7 +507,7 @@
   {% endif %}
 
   <div id='showModeContent'>
-      <div id='withSelected' class='d-none'>
+      <div id='withSelected' hidden>
         <div class='row mx-0'><p>{{ 'With selected:'|trans }}</p></div>
         {# First line #}
         <div class='row mx-0 form-inline mb-3'>

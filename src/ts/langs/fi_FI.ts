@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "Nimetön",
     "entity-delete-warning": "Valitut kohteet ja kaikki niihin liittyvät tiedot poistetaan pysyvästi. Tätä ei voi peruuttaa. Oletko varma?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Virhe",
     "error-no-filename": "File name is missing.",

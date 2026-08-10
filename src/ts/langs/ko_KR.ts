@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "제목없음",
     "entity-delete-warning": "선택한 항목과 관련된 모든 데이터가 영구적으로 삭제되며 취소할 수 없습니다. 확실합니까?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}} entries processed",
     "error": "오류",
     "error-no-filename": "File name is missing.",

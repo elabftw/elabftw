@@ -55,6 +55,7 @@ const t = {
     "entity-default-title": "Sans titre",
     "entity-delete-warning": "Le ou les objet(s) sélectionné(s) ainsi que toutes les données associées seront supprimés définitivement. Cela est irréversible. Êtes-vous sûr(e) ?",
     "entity-apply-both-permissions-warning": "Cela appliquera ces autorisations à la fois aux droits de lecture et d'écriture. Voulez-vous continuer ?",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}} entrées traitées",
     "error": "Erreur",
     "error-no-filename": "Le nom du fichier est manquant.",

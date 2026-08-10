@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\EnforceMfa;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -144,6 +145,14 @@ final class LoginFlowTest extends TestCase
 
         self::assertSame(1, $context->getUserid());
         self::assertSame(2, $context->getTeam());
+    }
+
+    public function testStartRejectsUserArchivedInAllTeams(): void
+    {
+        $this->replaceMemberships(array());
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('This account is archived in all teams and cannot login.');
+        $this->createFlow()->start(new Authentication(1, AuthMethod::Saml));
     }
 
     private function createFlow(

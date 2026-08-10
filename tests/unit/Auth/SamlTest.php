@@ -18,6 +18,7 @@ use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
+use Elabftw\Models\Users2Teams;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\Users\ValidatedUser;
@@ -1105,6 +1106,27 @@ final class SamlTest extends TestCase
         $this->expectException(UnauthorizedException::class);
 
         Saml::decodeToken($token);
+    }
+
+    public function testArchivedUserIsNotRecreatedAndActiveDuplicateIsPreferred(): void
+    {
+        $email = 'archived-saml-user@example.com';
+        $requester = new Users(1, 1);
+        $archivedUser = $this->createLocalUser($email, array(1));
+        new Users2Teams($requester)->archive($archivedUser->getUserid());
+
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = $email;
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+
+        $authentication = $this->assertAuthentication($this->assertIdpResponse($samlUserdata, $config));
+        self::assertSame($archivedUser->getUserid(), $authentication->userid);
+
+        // Preserve the active-account preference introduced for duplicate accounts.
+        $activeUser = $this->createLocalUser($email, array(2));
+        $authentication = $this->assertAuthentication($this->assertIdpResponse($samlUserdata, $config));
+        self::assertSame($activeUser->getUserid(), $authentication->userid);
     }
 
     private function assertIdpResponse(

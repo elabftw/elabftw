@@ -2536,6 +2536,7 @@ paths:
                   example: 'contaminated'
                 deletion_note:
                   type: string
+                  maxLength: 255
                   description: Free text (255 characters max), required with the `other` reason.
                   example: 'spilled in transit'
       responses:

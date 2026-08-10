@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
+use function _;
+
 enum ContainerDeletionReason: string
 {
     case UsedInAuthorisedWork = 'used_in_authorised_work';

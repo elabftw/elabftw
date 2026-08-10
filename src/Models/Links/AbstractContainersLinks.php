@@ -42,6 +42,7 @@ use function json_encode;
 use function mb_substr;
 use function number_format;
 use function sprintf;
+use function _;
 
 /**
  * All about containers links with entities
@@ -289,25 +290,6 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return $result;
     }
 
-    /**
-     * Reason for deletion, as a suffix to the changelog line. Empty unless the team requires it.
-     */
-    private function deletionReasonSuffix(): string
-    {
-        $teamConfig = new Teams($this->Entity->Users, $this->Entity->Users->team)->teamArr;
-        if (empty($teamConfig['capture_container_deletion_reason'])) {
-            return '';
-        }
-        $payload = Request::createFromGlobals()->getPayload();
-        $reason = ContainerDeletionReason::tryFrom($payload->getString('deletion_reason'))
-            ?? throw new ImproperActionException(_('A reason is required to delete a container.'));
-        $note = mb_substr(Filter::toPureString($payload->getString('deletion_note')), 0, 255);
-        if ($reason === ContainerDeletionReason::Other && $note === '') {
-            throw new ImproperActionException(_('Please describe the reason for deleting this container.'));
-        }
-        return sprintf(' (%s)', $note === '' ? $reason->toHuman() : $reason->toHuman() . ': ' . $note);
-    }
-
     public function destroyAll(): bool
     {
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE item_id = :item_id';
@@ -435,6 +417,25 @@ abstract class AbstractContainersLinks extends AbstractLinks
             return 'containers2experiments';
         }
         return 'containers2items';
+    }
+
+    /**
+     * Reason for deletion, as a suffix to the changelog line. Empty unless the team requires it.
+     */
+    private function deletionReasonSuffix(): string
+    {
+        $teamConfig = new Teams($this->Entity->Users, $this->Entity->Users->team)->teamArr;
+        if (empty($teamConfig['capture_container_deletion_reason'])) {
+            return '';
+        }
+        $payload = Request::createFromGlobals()->getPayload();
+        $reason = ContainerDeletionReason::tryFrom($payload->getString('deletion_reason'))
+            ?? throw new ImproperActionException(_('A reason is required to delete a container.'));
+        $note = mb_substr(Filter::toPureString($payload->getString('deletion_note')), 0, 255);
+        if ($reason === ContainerDeletionReason::Other && $note === '') {
+            throw new ImproperActionException(_('Please describe the reason for deleting this container.'));
+        }
+        return sprintf(' (%s)', $note === '' ? $reason->toHuman() : $reason->toHuman() . ': ' . $note);
     }
 
     private function moveToStorage(int $newStorageId): void

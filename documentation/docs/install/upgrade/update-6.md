@@ -190,3 +190,7 @@ The `chem-plugin` addon can now be completely removed! It is not useful anymore:
 - openbabel code for compound fingerprinting is now running in the main container
 
 It is then safe to remove the whole `chem-plugin` block in your docker compose file.
+
+### MySQL Persitent connection mode
+
+The environment variable `USE_PERSISTENT_MYSQL_CONN` now defaults to `false`. It used to be `true` by default but that caused more issues than it solved, so now it's set to `false`. This will have an impact if you did not set that value but expected it to be `true` for some reason. If that's the case, then add it explicitely.

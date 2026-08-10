@@ -62,7 +62,7 @@ if ((localStorage.getItem('id') == String(entity.id)) && (localStorage.getItem('
   const recoverNo = document.createElement('button');
   recoverNo.type = 'button';
   recoverNo.classList.add('button', 'btn', 'btn-danger');
-  recoverYes.dataset.action = 'recover-no';
+  recoverNo.dataset.action = 'recover-no';
   recoverNo.innerText = 'NO';
 
   bodyRecovery.append(

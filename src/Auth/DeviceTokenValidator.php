@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @author Nicolas CARPi / Deltablot
  * @copyright 2012 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Db;
 use Lcobucci\JWT\Configuration;

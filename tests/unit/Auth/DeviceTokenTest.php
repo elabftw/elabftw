@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @package elabftw
  */
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 class DeviceTokenTest extends \PHPUnit\Framework\TestCase
 {

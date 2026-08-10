@@ -19,7 +19,6 @@ use Elabftw\Enums\AuthMethod;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Notifications\NewVersionInstalled;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\DeviceToken;
 use PDO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 

@@ -2,7 +2,7 @@
 
 /**
  * @package   Elabftw\Elabftw
- * @author    Nicolas CARPi <nico-git@deltablot.email>
+ * @author    Nicolas CARPi / Deltablot
  * @copyright 2012 Nicolas CARPi
  * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
  * @see       https://www.elabftw.net Official website
@@ -10,18 +10,16 @@
 
 declare(strict_types=1);
 
-namespace Elabftw\Services;
+namespace Elabftw\Auth;
 
 use Elabftw\AuditEvent\UserLogin;
-use Elabftw\Auth\AnonymousLoginContext;
-use Elabftw\Auth\CookieToken;
-use Elabftw\Auth\UserLoginContext;
 use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Notifications\NewVersionInstalled;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\DeviceToken;
 use PDO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 

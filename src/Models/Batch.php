@@ -136,13 +136,9 @@ final class Batch extends AbstractRest
     private function loopOverEntries(array $entries, AbstractConcreteEntity|AbstractTemplateEntity $model, Action $action, array $params): void
     {
         foreach ($entries as $entry) {
-            try {
-                $model->setId($entry['id']);
-                $model->patch($action, $params);
-                $this->processed++;
-            } catch (IllegalActionException | ImproperActionException | UnauthorizedException $e) {
-                throw $e;
-            }
+            $model->setId($entry['id']);
+            $model->patch($action, $params);
+            $this->processed++;
         }
     }
 }

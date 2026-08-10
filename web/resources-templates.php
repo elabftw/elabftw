@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DatabaseController;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\Filter;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +29,18 @@ require_once 'app/init.inc.php';
 $Response = new Response();
 try {
     $Response->prepare($Request);
-    $Response = new DatabaseController($App, new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('id'))))->getResponse();
+    $id = Filter::intOrNull($Request->query->getInt('id'));
+    $bypassReadPermission = false;
+    // if we have an access_key we get the id from that
+    if ($App->Request->query->has('access_key')) {
+        // for that we fetch the id not from the id param but from the access_key, so we will get a valid id that corresponds to an entity
+        // with this access_key
+        $id = new AccessKeyHelper(EntityType::ItemsTypes)->getIdFromAccessKey($App->Request->query->getString('access_key'));
+        if ($id > 0) {
+            $bypassReadPermission = true;
+        }
+    }
+    $Response = new DatabaseController($App, new ItemsTypes($App->Users, $id, bypassReadPermission: $bypassReadPermission))->getResponse();
 } catch (AppException $e) {
     $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {

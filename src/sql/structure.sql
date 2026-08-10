@@ -63,7 +63,9 @@ CREATE TABLE `authfail` (
   `users_id` int(10) UNSIGNED NOT NULL,
   `attempt_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `device_token` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_authfail_users_attempt_time` (`users_id`, `attempt_time`),
+  KEY `idx_authfail_device_attempt_time` (`device_token`, `attempt_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -1401,6 +1403,23 @@ CREATE TABLE `users` (
   `primary_bg` CHAR(6) DEFAULT NULL,
   `primary_fg` CHAR(6) DEFAULT NULL,
   PRIMARY KEY (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mfa_rate_limits`
+--
+
+CREATE TABLE `mfa_rate_limits` (
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `failed_attempts` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `first_failed_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `locked_until` datetime DEFAULT NULL,
+  PRIMARY KEY (`users_id`),
+  CONSTRAINT `fk_mfa_rate_limits_user`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------

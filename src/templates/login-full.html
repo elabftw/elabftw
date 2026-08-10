@@ -14,6 +14,7 @@
 
 {# Allow non existing user to request access to a team #}
 {% if App.Session.has('initial_team_selection_required') %}
+{% set teaminitUserInfo = App.Session.get('teaminit_user_info') %}
   <h2>{{ 'Request access to a team'|trans }}</h2>
   <br>
   <form method='post' class='form-group' id='init-team-select' action='app/controllers/LoginController.php' autocomplete='off'>
@@ -28,10 +29,22 @@
         {% endfor %}
       </select>
       <label for='teaminit_firstname_input'>{{ 'Firstname'|trans }}</label>
-      <input required class='form-control' id='teaminit_firstname_input' name='teaminit_firstname' value='{{ App.Session.get('teaminit_firstname') }}' />
+      <input
+        required
+        class='form-control'
+        id='teaminit_firstname_input'
+        name='teaminit_firstname'
+        value='{{ teaminitUserInfo.firstname }}'
+      />
 
       <label for='teaminit_lastname_input'>{{ 'Lastname'|trans }}</label>
-      <input required class='form-control' id='teaminit_lastname_input' name='teaminit_lastname' value='{{ App.Session.get('teaminit_lastname') }}' />
+      <input
+        required
+        class='form-control'
+        id='teaminit_lastname_input'
+        name='teaminit_lastname'
+        value='{{ teaminitUserInfo.lastname }}'
+      />
       <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>
     </div>
   </form>
@@ -75,7 +88,7 @@
       {%- endif %}
       <label for='team_selection_select'>{{ 'Your account is linked to several teams. Select in which team you want to log in'|trans }}</label>
       <select name='selected_team' id='team_selection_select' class='form-control'>
-        {% for team in App.Session.get('team_selection')|filter(t => t.is_archived == 0) %}
+        {% for team in App.Session.get('team_selection') %}
           <option value='{{ team.id }}'>{{ team.name }}</option>
         {% endfor %}
       </select>
@@ -156,6 +169,9 @@
     <br>
     <form method='post' class='form-group' id='saml-login' action='app/controllers/LoginController.php' autocomplete='off'>
       <input type='hidden' name='auth_type' value='saml'>
+      {% if App.Config.configArr.remember_me_allowed %}
+        <input type='hidden' name='rememberme' value='on'>
+      {% endif %}
       {{ App.Session.get('csrf')|csrf }}
       <div class='form-group col-md-4 mx-auto'>
         {% if App.devMode -%}

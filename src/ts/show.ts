@@ -266,23 +266,6 @@ function preventReactiveSearchFormSubmit(): void {
   });
 }
 
-function bindMoreFiltersOutsideClick(): void {
-  const menu = document.querySelector('.show-more-filters-menu');
-  const details = menu?.closest('details');
-
-  if (!details) {
-    return;
-  }
-
-  document.addEventListener('click', event => {
-    const target = event.target;
-
-    if (details.open && target instanceof Node && !details.contains(target)) {
-      details.open = false;
-    }
-  });
-}
-
 function syncSelectedEntitiesFromDom(): void {
   const selectedIds = Array.from(
     document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked'),
@@ -325,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
 
   preventReactiveSearchFormSubmit();
-  bindMoreFiltersOutsideClick();
   hydrateFilterAutoControlsFromUrl();
 
   // TomSelect for extra fields & owner search select

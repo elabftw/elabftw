@@ -62,7 +62,7 @@ getEnv() {
     fingerprinter_url=${FINGERPRINTER_URL:-https://example.com:8000/}
     use_opencloning=${USE_OPENCLONING:-false}
     opencloning_url=${OPENCLONING_URL:-https://opencloning.elabftw.net/}
-    use_persistent_mysql_conn=${USE_PERSISTENT_MYSQL_CONN:-true}
+    use_persistent_mysql_conn=${USE_PERSISTENT_MYSQL_CONN:-false}
     pubchem_pug_url=${PUBCHEM_PUG_URL:-https://pubchem.ncbi.nlm.nih.gov/rest/pug}
     pubchem_pug_view_url=${PUBCHEM_PUG_VIEW_URL:-https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data}
 }
@@ -190,9 +190,9 @@ nginxConf() {
     sed -i -e "s/%WORKER_PROCESSES%/${nginx_work_proc}/" /run/nginx/nginx.conf
 
     # DEV MODE
-    # we don't want to serve brotli/gzip compressed assets in dev (or we would need to recompress them after every change!)
+    # we don't want to serve brotli compressed assets in dev (or we would need to recompress them after every change!)
     if ($dev_mode); then
-        rm -f /run/nginx/conf.d/brotli.conf /run/nginx/conf.d/gzip.conf
+        rm -f /run/nginx/conf.d/brotli.conf
     fi
     sed -i -e "s/%CUSTOM_CONNECT_SRC%/$(escape_sed_repl "${custom_connect_src}")/" /run/nginx/common.conf
     # put a random short string as the server header to prevent fingerprinting

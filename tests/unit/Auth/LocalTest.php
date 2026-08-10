@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
@@ -32,7 +33,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
         $user = $this->getRandomUserInTeam(2);
         $Local = new Local($user->userData['email'], 'notimportant', isDisplayed: false, isOnlySysadminWhenHidden: true);
         $this->expectException(IllegalActionException::class);
-        $Local->tryAuth();
+        $Local->authenticate();
     }
 
     public function testOnlySysadmin(): void
@@ -40,7 +41,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
         $user = $this->getRandomUserInTeam(2);
         $Local = new Local($user->userData['email'], 'notimportant', isOnlySysadmin: true);
         $this->expectException(ImproperActionException::class);
-        $Local->tryAuth();
+        $Local->authenticate();
     }
 
     public function testEmptyPassword(): void
@@ -51,9 +52,8 @@ class LocalTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuth(): void
     {
-        $authResponse = $this->AuthService->tryAuth();
-        $this->assertEquals(1, $authResponse->getAuthUserid());
-        $this->assertEquals(1, $authResponse->getSelectedTeam());
+        $authResponse = $this->AuthService->authenticate();
+        $this->assertSame(1, $authResponse->userid);
     }
 
     public function testTryAuthWithInvalidEmail(): void
@@ -66,26 +66,40 @@ class LocalTest extends \PHPUnit\Framework\TestCase
     {
         $AuthService = new Local('toto@yopmail.com', 'nopenope');
         $this->expectException(InvalidCredentialsException::class);
-        $AuthService->tryAuth();
+        $AuthService->authenticate();
     }
-
-    /*
-    public function testIsMfaEnforced(): void
-    {
-        $this->assertTrue($this->AuthService::isMfaEnforced(1, 3));
-        $this->assertTrue($this->AuthService::isMfaEnforced(1, 1));
-        $this->assertFalse($this->AuthService::isMfaEnforced(4, 1));
-        $admin2 = $this->getUserInTeam(team: 2, admin: 1);
-        $this->assertTrue($this->AuthService::isMfaEnforced($admin2->userid, 2));
-        $this->assertFalse($this->AuthService::isMfaEnforced(4, 0));
-    }
-     */
 
     public function testBruteForce(): void
     {
         $user = $this->getRandomUserInTeam(4);
         $Local = new Local($user->userData['email'], 'thisisnotthecorrectpassword', maxLoginAttempts: -1);
         $this->expectException(ImproperActionException::class);
-        $Local->tryAuth();
+        $Local->authenticate();
+    }
+
+    public function testBruteForceAttemptsAreScopedToUser(): void
+    {
+        $Db = Db::getConnection();
+        $cleanup = $Db->prepare(
+            'DELETE FROM authfail WHERE users_id IN (1, 2)',
+        );
+        $Db->execute($cleanup);
+
+        $insert = $Db->prepare(
+            'INSERT INTO authfail (users_id) VALUES (2)',
+        );
+        $Db->execute($insert);
+
+        try {
+            $authentication = new Local(
+                'toto@yopmail.com',
+                'totototototo',
+                maxLoginAttempts: 1,
+            )->authenticate();
+
+            self::assertSame(1, $authentication->userid);
+        } finally {
+            $Db->execute($cleanup);
+        }
     }
 }

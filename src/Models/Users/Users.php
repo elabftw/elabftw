@@ -612,7 +612,7 @@ class Users extends AbstractRest
     {
         $LocalAuth = new Local($this->userData['email'], $password);
         try {
-            $LocalAuth->tryAuth();
+            $LocalAuth->verifyPassword();
         } catch (InvalidCredentialsException) {
             return $this->updatePassword(array('password' => $password), true);
         }
@@ -635,7 +635,7 @@ class Users extends AbstractRest
         // set a high maxLoginAttempts because we're just trying to match current password here
         $LocalAuth = new Local($this->userData['email'], $currentPassword, maxLoginAttempts: 999);
         try {
-            $LocalAuth->tryAuth();
+            $LocalAuth->verifyPassword();
         } catch (InvalidCredentialsException) {
             throw new ImproperActionException('The current password is not valid!');
         }

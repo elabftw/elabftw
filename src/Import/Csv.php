@@ -16,7 +16,6 @@ use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
-use Elabftw\Params\EntityParams;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
@@ -90,10 +89,8 @@ final class Csv extends AbstractCsv
             }
             $status = empty($row['status_title']) ? null : $this->getStatusId($this->entityType, $row['status_title']);
             $customId = empty($row['custom_id']) ? null : (int) $row['custom_id'];
-            // metadata can come from the dedicated metadata column or from extra CSV columns
-            $csvMetadata = empty($row['metadata']) ? null : (string) $row['metadata'];
-            $columnMetadata = $this->collectMetadata($row);
-            $metadata = $csvMetadata ?? $columnMetadata;
+
+            $metadata = $this->getMetadataFromRow($row);
 
             $tags = empty($row['tags']) ? array() : explode(self::TAGS_SEPARATOR, $row['tags']);
             $canreadBase = empty($row['canread_base']) ? $this->canreadBase : $row['canread_base'];
@@ -107,16 +104,10 @@ final class Csv extends AbstractCsv
                 true
             )
             ) {
-                $entityId = $entity->postAction(Action::Create, array('template' => $this->template, 'title' => $row['title']));
+                $entityId = $entity->postAction(Action::Create, array('template' => $this->template, 'title' => $row['title'], 'metadata' => $metadata));
                 $entity->setId($entityId);
                 $this->processTags($entity, $tags);
                 $this->processLocation($entity, $row);
-                // preserve the template metadata schema while applying the explicit metadata payload first
-                if ($csvMetadata !== null) {
-                    $entity->update(new EntityParams('metadatamerge', $csvMetadata));
-                }
-                // merge remaining CSV columns as metadata, letting explicit columns override matching fields
-                $entity->update(new EntityParams('metadatamerge', $columnMetadata));
             } else {
                 $entityId = $entity->create(
                     title: $row['title'],
@@ -138,10 +129,6 @@ final class Csv extends AbstractCsv
                 // process inventory location after create because location links need the new resource id
                 if ($this->entityType === EntityType::Items) {
                     $this->processLocation($entity, $row);
-                }
-                // when a metadata column exists, create used it first, so merge extra CSV columns afterwards
-                if ($csvMetadata !== null) {
-                    $entity->update(new EntityParams('metadatamerge', $columnMetadata));
                 }
             }
 

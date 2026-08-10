@@ -16,10 +16,10 @@ use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\AccessPermissions;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
-use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\MetadataHelpers as Mh;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\Metadata;
 use Elabftw\Elabftw\Permissions;
@@ -61,6 +61,7 @@ use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
 use Elabftw\Models\Links\AbstractExperimentsLinks;
 use Elabftw\Models\Links\AbstractItemsLinks;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
@@ -82,7 +83,6 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
-use JsonException;
 
 use function array_column;
 use function array_merge;
@@ -109,11 +109,13 @@ use function array_map;
 use function count;
 use function array_replace;
 use function trim;
-use function strtolower;
 use function array_filter;
 use function preg_replace;
 use function preg_match;
 use function strlen;
+use function hash_equals;
+use function preg_replace_callback;
+use function rawurlencode;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -198,12 +200,28 @@ abstract class AbstractEntity extends AbstractRest
         return match ($action) {
             Action::Create => (
                 function () use ($reqBody) {
+                    $metadata = null;
+                    if (!empty($reqBody['metadata'])) {
+                        $metadata = is_string($reqBody['metadata'])
+                            ? $reqBody['metadata'] ?? '{}'
+                            : json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
+                    }
+
+
                     // create an entity from a template
                     if (isset($reqBody['template']) && ((int) $reqBody['template']) !== -1) {
-                        $entity = $this->entityType->toTemplateEntity($this->Users, (int) $reqBody['template']);
+                        $template = $this->entityType->toTemplateEntity($this->Users, (int) $reqBody['template']);
 
                         $title = $reqBody['title'] ?? null;
-                        return $this->copyEntityFrom(sourceEntity: $entity, title: $title, blankExtrafields: false);
+                        $overrideCreateParams = array();
+
+                        if ($metadata) {
+                            $overrideCreateParams['metadata'] = Mh::mergeMetadata(
+                                $template->entityData['metadata'],
+                                $metadata,
+                            );
+                        }
+                        return $this->copyEntityFrom(sourceEntity: $template, title: $title, blankExtrafields: false, overrideCreateParams: $overrideCreateParams);
                     }
                     // create a template from current entity
                     if (isset($reqBody['entity']) && ((int) $reqBody['entity']) !== -1) {
@@ -223,11 +241,7 @@ abstract class AbstractEntity extends AbstractRest
                     // convert to int only if not empty, otherwise send null: we don't want to convert a null to int, as it would send 0
                     $category = !empty($reqBody['category']) ? (int) $reqBody['category'] : null;
                     $status = !empty($reqBody['status']) ? (int) $reqBody['status'] : null;
-                    // force metadata to be a string
-                    $metadata = null;
-                    if (!empty($reqBody['metadata'])) {
-                        $metadata = json_encode($reqBody['metadata'], JSON_THROW_ON_ERROR);
-                    }
+
                     // force tags to be an array
                     $tags = $reqBody['tags'] ?? null;
                     if (is_string($tags)) {
@@ -575,7 +589,8 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
         }
-        $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
+        $request = Request::createFromGlobals();
+        $queryParams = $this->getQueryParams($request->query);
         $sql = $this->getSqlBuilder()->getReadSqlBeforeWhere(true);
 
         $sql .= sprintf(' WHERE entity.id = %d', $this->id);
@@ -620,6 +635,19 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->entityData['content_type'] === BodyContentType::Markdown->value) {
             $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
         }
+        $accessKey = $request->query->getString('access_key');
+        $entityAccessKey = (string) (
+            $this->entityData['access_key'] ?? ''
+        );
+
+        if (
+            $this->Users instanceof AnonymousUser
+            && $accessKey !== ''
+            && $entityAccessKey !== ''
+            && hash_equals($entityAccessKey, $accessKey)
+        ) {
+            $this->entityData['body_html'] = $this->appendAccessKeyToDownloadUrls($this->entityData['body_html'] ?? '', $accessKey);
+        }
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
@@ -653,8 +681,7 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
-        $canFilter = $CanSqlBuilder->getCanFilter();
+        $canFilter = $this->getSqlBuilder()->getCanFilter(AccessType::Read->value);
         $displayParams->setSkipOrderPinned(true);
         $intQuery = intval($displayParams->getFastq());
         // if the query has a numeric part, we also try and match the custom_id or id exactly
@@ -676,7 +703,7 @@ abstract class AbstractEntity extends AbstractRest
             LEFT JOIN ' . $this->entityType->toStatusTable() . ' AS statust ON entity.status = statust.id
             LEFT JOIN users ON entity.userid = users.userid
             LEFT JOIN
-                users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)
+                users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)
             WHERE 1=1
             ' . $canFilter . '
                 AND (entity.title LIKE :query ' . $idSql . ')
@@ -684,8 +711,8 @@ abstract class AbstractEntity extends AbstractRest
             ' . $displayParams->getStatesSql('entity') . '
             ' . $displayParams->getSql();
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
-        $req->bindParam(':teamid', $this->Users->requester->team, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':teamid', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $displayParams->getFastq() . '%');
         if ($intQuery > 0) {
             $req->bindValue(':intQuery', $intQuery, PDO::PARAM_INT);
@@ -834,7 +861,7 @@ abstract class AbstractEntity extends AbstractRest
             $content = $this->readColumn('body') . $content;
         }
         if ($params->getTarget() === 'metadatamerge') {
-            $content = $this->mergeMetadataValues($this->readColumn('metadata'), $content);
+            $content = Mh::mergeMetadataValues($this->readColumn('metadata'), $content);
         }
         // ensure no changes happen on entries with immutable permissions
         // admins can override the immutability of an entity's permissions. See #5800
@@ -1532,89 +1559,33 @@ abstract class AbstractEntity extends AbstractRest
         }
     }
 
-    private function mergeMetadataValues(string $baseMetadata, string $incomingMetadata): string
-    {
-        // base metadata comes from the template and contains the field schema
-        $base = $this->decodeMetadata($baseMetadata);
-        // incoming metadata usually comes from CSV/API and contains the values to inject.
-        $incoming = $this->decodeMetadata($incomingMetadata);
-        // ensure both metadata arrays have an extra_fields array.
-        $base['extra_fields'] ??= array();
-        $incoming['extra_fields'] ??= array();
+    private function appendAccessKeyToDownloadUrls(
+        string $html,
+        string $accessKey,
+    ): string {
+        return preg_replace_callback(
+            '~\b(src|href)=(["\'])(/?app/download\.php\?[^"\']*)\2~i',
+            static function (array $matches) use ($accessKey): string {
+                $url = $matches[3];
 
-        foreach ($incoming['extra_fields'] as $name => $incomingField) {
-            $value = $incomingField['value'] ?? '';
-
-            if (isset($base['extra_fields'][$name])) {
-                $baseField = &$base['extra_fields'][$name];
-                $type = $baseField['type'] ?? '';
-
-                // Add imported values to the field's options if they don't already exist.
-                $values = match ($type) {
-                    'select-multi' => is_array($value)
-                        ? $value
-                        : array_map('trim', explode(',', (string) $value)),
-                    'select', 'select-one', 'radio' => array($value),
-                    default => array(),
-                };
-
-                if (!empty($values)) {
-                    $baseField['options'] ??= array();
-                    foreach ($values as $option) {
-                        if ($option !== '' && !in_array($option, $baseField['options'], true)) {
-                            $baseField['options'][] = $option;
-                        }
-                    }
+                if (
+                    preg_match(
+                        '/(?:[?&]|&amp;)access_key=/',
+                        $url,
+                    ) === 1
+                ) {
+                    return $matches[0];
                 }
-                // Preserve the existing field schema and only update its value
-                $baseField['value'] = $this->normalizeMetadataValue($baseField, $value);
-                unset($baseField);
-                continue;
-            }
-            // new fields: keep incoming schema, but normalize its value if it has a known type.
-            $incomingField['value'] = $this->normalizeMetadataValue($incomingField, $value);
-            $base['extra_fields'][$name] = $incomingField;
-        }
 
-        return json_encode($base, JSON_THROW_ON_ERROR);
-    }
-
-    private function decodeMetadata(string $metadata): array
-    {
-        // Treat empty metadata as valid metadata with no fields.
-        if ($metadata === '' || $metadata === '{}') {
-            return array('extra_fields' => array());
-        }
-        try {
-            $decoded = json_decode($metadata, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            throw new ImproperActionException(_('Invalid metadata JSON provided.'));
-        }
-        return is_array($decoded) ? $decoded : array('extra_fields' => array());
-    }
-
-    private function normalizeMetadataValue(array $field, mixed $value): string
-    {
-        $value = trim((string) $value);
-
-        return match ($field['type'] ?? 'text') {
-            // checkboxes use "on" when checked.
-            'checkbox' => $this->normalizeCheckboxValue($value),
-            // normalize decimal commas for number fields.
-            'number' => str_replace(',', '.', $value),
-            // select/users/text/url/etc. keep the incoming string value.
-            default => $value,
-        };
-    }
-
-    private function normalizeCheckboxValue(string $value): string
-    {
-        $value = trim($value);
-        if ($value === '') {
-            return '';
-        }
-        // Common truthy values accepted from CSV/API imports.
-        $truthyValues = array('1', 'true', 'yes', 'y', 'x', 'on', 'checked', 'oui');
-        return in_array(strtolower($value), $truthyValues, true) ? 'on' : '';
+                return $matches[1]
+                    . '='
+                    . $matches[2]
+                    . $url
+                    . '&amp;access_key='
+                    . rawurlencode($accessKey)
+                    . $matches[2];
+            },
+            $html,
+        ) ?? $html;
     }
 }

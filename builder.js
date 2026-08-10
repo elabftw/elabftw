@@ -106,16 +106,20 @@ module.exports = (env, argv) => {
     },
     optimization: {
       splitChunks: {
-        chunks: 'all',
-        name: 'vendor',
+        chunks: 'async',
       },
       minimize: !isDevelopment,
       minimizer: [
-        '...',
+        // use parallel option to reduce RAM usage from parallelization during minimization
+         new MinimizerPlugin({
+          test: /\.[cm]?js(\?.*)?$/i,
+          parallel: 4,
+          minify: MinimizerPlugin.terserMinify,
+        }),
         new MinimizerPlugin({
           test: /\.css(\?.*)?$/i,
+          parallel: 4,
           minify: MinimizerPlugin.cssnanoMinify,
-          // Options - https://cssnano.github.io/cssnano/docs/config-file/
           minimizerOptions: {
             preset: 'default',
           },
@@ -206,11 +210,16 @@ module.exports = (env, argv) => {
         },
         { // SASS loader
           test: /\.scss$/,
-          type: 'asset/resource',
-          generator: {
-            filename: 'elabftw.min.css',
-          },
-          use: ['sass-loader'],
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                url: false,
+              },
+            },
+            'sass-loader',
+          ],
         },
         {
           test: /.(jpg|jpeg|png|svg)$/,

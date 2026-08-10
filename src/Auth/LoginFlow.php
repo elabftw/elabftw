@@ -15,9 +15,13 @@ namespace Elabftw\Auth;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Authentication;
 use Elabftw\Enums\AuthMethod;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\LoginStepInterface;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
+
+use function _;
 
 final class LoginFlow
 {
@@ -30,6 +34,9 @@ final class LoginFlow
 
     public function start(Authentication $authentication): LoginStepInterface
     {
+        if (TeamsHelper::isArchivedInAllTeams($authentication->userid)) {
+            throw new ImproperActionException(_('This account is archived in all teams and cannot login.'));
+        }
         $user = new Users($authentication->userid);
 
         if ($this->mfaPolicy->isRequired($user)) {

@@ -820,12 +820,12 @@ class Users extends AbstractRest
         // Prefer an active account, but return an archived account if it is the only match.
         $sql = sprintf(
             'SELECT userid FROM users WHERE %s = :term %s
-            ORDER BY EXISTS (
+             ORDER BY EXISTS (
               SELECT 1
               FROM users2teams AS ut
               WHERE ut.users_id = users.userid
                 AND ut.is_archived = 0
-            ) DESC
+            ) DESC, users.userid ASC
             LIMIT 1',
             $column->value,
             $filterValidated ? 'AND validated = 1' : 'AND 1=1',

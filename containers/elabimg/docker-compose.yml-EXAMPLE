@@ -26,8 +26,9 @@ services:
 
     # create a dedicated user to run the service as user mode and set it here
     # useradd --system --no-create-home --shell /usr/sbin/nologin elabftw-worker
-    user: elabftw-worker:elabftw-worker
-    # you can also use uid:gid here
+    # use the output of: id elabftw-worker and replace values below
+    # example: user: 1002:1002
+    user: <REPLACE WITH ELABFTW-WORKER UID>:<REPLACE WITH ELABFTW-WORKER GID>
 
     # this allows the container to run with a read-only filesystem
     # you will need to bind-mount /var/cache/nginx to a writable directory if you set this to true
@@ -298,8 +299,8 @@ services:
         # optional: define chemistry/biology plugin services domain name + port
         # IMPORTANT: end url values with trailing slash!
         # This is for the integration of the DNA Cloning tool
-        #- USE_OPENCLONING=false
-        #- OPENCLONING_URL=http://opencloning-plugin:8000/
+        - USE_OPENCLONING=true
+        - OPENCLONING_URL=http://opencloning-plugin:8000/
 
         #######
         # DEV #
@@ -310,7 +311,7 @@ services:
         #- DEV_MODE=false
 
     ports:
-        # Important note about exposing ports: due to the way Docker deals with the host firewall, it is recommended to use '127.0.0.1:1234:443'
+        # Important note about exposing ports: due to the way Docker deals with the host firewall, it is recommended to use '127.0.0.1:1234:8080'
         # if you only want to expose the service locally (on port 1234 in this example). See https://github.com/moby/moby/issues/22054
         # Another option is to use the "expose" directive instead of "ports" and let your reverse proxy figure things out.
         #

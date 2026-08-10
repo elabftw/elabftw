@@ -14,7 +14,7 @@ import {
 import { Target, Model, Action } from './interfaces';
 import './doodle';
 import { getEditor } from './Editor.class';
-import $ from 'jquery';
+import DOMPurify from 'dompurify';
 import { ApiC } from './api';
 import { Uploader } from './uploader';
 import { clearLocalStorage } from './localStorage';
@@ -37,31 +37,68 @@ editor.init('edit');
 
 // check if there is some local data with this id to recover
 if ((localStorage.getItem('id') == String(entity.id)) && (localStorage.getItem('type') == entity.type)) {
-  const bodyRecovery = $('<div></div>', {
-    class : 'alert alert-warning',
-    id: 'recoveryDiv',
-    html: 'Recovery data found (saved on ' + localStorage.getItem('date') + '). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?<br><button type="button" class="btn btn-primary recover-yes">YES</button> <button type="button" class="button btn btn-danger recover-no">NO</button><br><br>Here is what it looks like: ' + localStorage.getItem('body'),
+  const savedDate = localStorage.getItem('date') ?? '';
+  const savedBody = localStorage.getItem('body') ?? '';
+
+  const savedSpan = document.createElement('span');
+  savedSpan.innerText = savedDate;
+
+  const bodyRecovery = document.createElement('div');
+  bodyRecovery.id = 'recoveryDiv';
+  bodyRecovery.classList.add('alert', 'alert-warning');
+
+  const bodyHtml = document.createElement('div');
+  bodyHtml.innerHTML = DOMPurify.sanitize(savedBody, {
+    USE_PROFILES: { html: true },
+    FORBID_TAGS: ['style', 'script', 'iframe', 'form'],
   });
-  $('#main_section').before(bodyRecovery);
+
+  const recoverYes = document.createElement('button');
+  recoverYes.type = 'button';
+  recoverYes.classList.add('btn', 'btn-primary');
+  recoverYes.dataset.action = 'recover-yes';
+  recoverYes.innerText = 'YES';
+
+  const recoverNo = document.createElement('button');
+  recoverNo.type = 'button';
+  recoverNo.classList.add('button', 'btn', 'btn-danger');
+  recoverYes.dataset.action = 'recover-no';
+  recoverNo.innerText = 'NO';
+
+  bodyRecovery.append(
+    document.createTextNode('Recovery data found (saved on '),
+    savedSpan,
+    document.createTextNode('). It was probably saved because your session timed out and it could not be saved in the database. Do you want to recover it?'),
+    document.createElement('br'),
+    recoverYes,
+    document.createTextNode(' '),
+    recoverNo,
+    document.createElement('br'),
+    document.createElement('br'),
+    document.createTextNode('Here is what it looks like: '),
+    bodyHtml,
+  );
+
+  document.querySelector('#main_section').before(bodyRecovery);
 }
 
 // RECOVER YES
-$(document).on('click', '.recover-yes', function() {
+on('recover-yes', () => {
   const params = {};
   params[Target.Body] = localStorage.getItem('body');
+
   ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
     editor.replaceContent(localStorage.getItem('body'));
     clearLocalStorage();
-    document.getElementById('recoveryDiv').remove();
+    document.getElementById('recoveryDiv')?.remove();
   });
 });
 
 // RECOVER NO
-$(document).on('click', '.recover-no', function() {
+on('recover-no', () => {
   clearLocalStorage();
-  document.getElementById('recoveryDiv').remove();
+  document.getElementById('recoveryDiv')?.remove();
 });
-
 // END DATA RECOVERY
 ////////////////////
 

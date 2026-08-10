@@ -12,6 +12,7 @@ import type { SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
 import Heartbeat from './Heartbeat.class';
+import ScrollButtons from './ScrollButtons.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
 import {
   adjustHiddenState,
@@ -286,43 +287,7 @@ if (openedSidePanel === Model.Todolist) {
 document.querySelectorAll('[data-count-for]').forEach((container: HTMLElement) => new Counter(container));
 
 // BACK TO TOP BUTTON
-const btn = document.createElement('button');
-btn.type = 'button';
-btn.dataset.action = 'scroll-top';
-// make it look like a button, and on the right side of the screen, not too close from the bottom
-btn.classList.add('btn', 'btn-secondary', 'floating-middle-right');
-// element is invisible at first so we can make it visible so it triggers a css transition and appears progressively
-btn.style.opacity = '0';
-// will not be shown for small screens, only large ones
-btn.classList.add('d-none', 'd-xl-inline', 'd-lg-inline');
-// the button is an up arrow
-const icon = document.createElement('i');
-icon.classList.add('fas', 'fa-arrow-up');
-btn.replaceChildren(icon);
-// give it an id so we can remove it easily
-btn.id = 'backToTopButton';
-btn.setAttribute('aria-label', 'Back to top');
-btn.title = 'Back to top';
-
-// called when viewport approaches the footer
-const intersectionCallback = (entries): void => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && document.getElementById('backToTopButton')) {
-      // we're near the top of the screen, remove the button if it's here
-      document.getElementById('backToTopButton').remove();
-    } else if (!entry.isIntersecting && !document.getElementById('backToTopButton')){ // user scrolled the trigger out AND button is not here
-      const addedBtn = document.getElementById('container').appendChild(btn);
-      // here we use requestAnimationFrame or the browser won't see the change and the css transition won't be triggered
-      requestAnimationFrame(() => {
-        addedBtn.style.opacity = '100';
-      });
-    }
-  });
-};
-
-const observer = new IntersectionObserver(intersectionCallback);
-observer.observe(document.getElementById('scrollTopBtnAnchor'));
-// END BACK TO TOP BUTTON
+new ScrollButtons().init();
 
 listenTrigger();
 adjustHiddenState();

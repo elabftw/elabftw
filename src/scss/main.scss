@@ -1565,13 +1565,50 @@ input[type='color'] {
 
 /* SCROLL TO TOP OF PAGE BUTTON */
 .floating-middle-right {
+  align-items: flex-end;
+  gap: 0.5rem;
   position: fixed;
   right: 0.8%;
-  top: calc(100vh - 15rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20rem;
+  z-index: 1035;
 }
 
-#backToTopButton {
-  transition: all 0.5s ease;
+.scroll-button {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  white-space: nowrap;
+
+  .scroll-button-label {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      margin-right 0.2s ease,
+      max-width 0.3s ease,
+      opacity 0.2s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    .scroll-button-label {
+      margin-right: 0.5rem;
+      max-width: 18rem;
+      opacity: 1;
+    }
+  }
+}
+
+[data-scroll-btn] {
+  scroll-margin-top:
+    calc(
+      var(--navbar-height)
+      + var(--toolbar-height)
+      + 1rem
+      + var(--scroll-btn-y, 0px)
+    );
 }
 
 #scrollTopBtnAnchor {

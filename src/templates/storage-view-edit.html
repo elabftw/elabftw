@@ -2,7 +2,7 @@
 {% if Entity.entityType.value == 'experiments' or Entity.entityType.value == 'items' %}
 {% include 'add-container-modal.html' %}
 {% include 'move-container-modal.html' %}
-<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='storageDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Storage'|trans }} (<span id='containersCount'>{{ Entity.entityData.containers|length }}</span>)</h3>
+<h3 title='{{ 'Toggle visibility'|trans }}' data-scroll-btn='fa-flask-vial' data-scroll-btn-label='{{ 'Storage'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='storageDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Storage'|trans }} (<span id='containersCount'>{{ Entity.entityData.containers|length }}</span>)</h3>
 <div class='row mt-2' id='storageDivContent' data-save-hidden='storageDivContent' data-count-for='containersCount'>
   <div class='ml-3 mt-3 col-md-12'>
       {% if Entity.entityData.containers %}

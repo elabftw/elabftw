@@ -1,4 +1,4 @@
 {# RIGHT MENU: CREATE NEW BUTTON #}
-{% if not App.Session.get('is_anon') %}
+{% if not App.isAnonymous() %}
 <button type='button' data-action='toggle-create-modal' data-type='{{ entityType|default('') }}' class='btn btn-primary'>{{ 'Create'|trans }}</button>
 {% endif %}

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\Authentication;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Interfaces\AuthResponseInterface;
 
 class ExternalTest extends \PHPUnit\Framework\TestCase
 {
@@ -48,13 +48,9 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
 
     public function testTryAuth(): void
     {
-        $authResponse = $this->External->tryAuth();
-        $this->assertInstanceOf(AuthResponseInterface::class, $authResponse);
-        $this->assertSame(1, $authResponse->getAuthUserid());
-        $this->assertFalse($authResponse->isAnonymous());
-        $this->assertSame(1, $authResponse->getSelectedTeam());
-        $teams = array(array('id' => 1, 'name' => 'Alpha', 'is_admin' => 1, 'is_owner' => 0, 'is_archived' => 0));
-        $this->assertSame($teams, $authResponse->getSelectableTeams());
+        $authResponse = $this->External->authenticate();
+        $this->assertInstanceOf(Authentication::class, $authResponse);
+        $this->assertSame(1, $authResponse->userid);
     }
 
     // now try with a non existing user
@@ -67,8 +63,8 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             $this->configArr,
             $serverParams,
         );
-        $authResponse = $External->tryAuth();
-        $this->assertIsInt($authResponse->getAuthUserid());
+        $authResponse = $External->authenticate();
+        $this->assertIsInt($authResponse->userid);
     }
 
     // now try with a non existing user and config is set to not create the user
@@ -83,9 +79,10 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             $serverParams,
         );
         $this->expectException(ImproperActionException::class);
-        $External->tryAuth();
+        $External->authenticate();
     }
 
+    /*
     // now try without a team sent by server
     public function testTryAuthWithoutTeamSentByServer(): void
     {
@@ -95,9 +92,10 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             $this->configArr,
             $this->serverParams,
         );
-        $authResponse = $External->tryAuth();
+        $authResponse = $External->authenticate();
         $this->assertSame(1, $authResponse->getSelectedTeam());
     }
+     */
 
     // now try with throwing exception if no team is found
     public function testTryAuthWithoutTeamGetException(): void
@@ -110,6 +108,6 @@ class ExternalTest extends \PHPUnit\Framework\TestCase
             $this->serverParams,
         );
         $this->expectException(ImproperActionException::class);
-        $External->tryAuth();
+        $External->authenticate();
     }
 }

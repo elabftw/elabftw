@@ -152,7 +152,7 @@
             <a class='nav-item nav-link {{ isActive ? 'active' }}'
                 href='scheduler.php' {{ isActive ? 'aria-current="page"' }}>{{ 'Scheduler'|trans }}</a>
 
-            {% if not App.Session.has('is_anon') %}
+            {% if not App.isAnonymous() %}
             {% set isActive = scriptName == 'team.php' %}
             <a class='nav-item nav-link {{ isActive ? 'active' }}'
                 href='team.php' {{ isActive ? 'aria-current="page"' }}>{{ 'Team'|trans }}</a>
@@ -179,7 +179,7 @@
         </div>
 
         {# Notification bell #}
-        {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
+        {% if App.Session.has('is_auth') and not App.isAnonymous() %}
         <div class='ml-auto mt-2 d-flex'>
         <div class='nav-item dropdown ml-auto'>
           <button class='btn nav-link' id='createNewDropdown' type='button' aria-label='{{ 'Create new...'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-plus fa-2x'></i></button>
@@ -210,7 +210,7 @@
         {% endif %}
 
         {# Help/Community dropdown #}
-        <div class='nav-item dropdown {{ App.Session.has('is_anon') ? 'ml-auto' }}'>
+        <div class='nav-item dropdown {{ App.isAnonymous() ? 'ml-auto' }}'>
           <button class='btn nav-link border-0' id='navbarDropdownHelp' type='button' aria-label='{{ 'Help menu'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-circle-question fa-2x'></i></button>
           <div class='dropdown-menu dropdown-menu-right'>
             <a class='dropdown-item' href='{{ App.getWhatsnewLink(constant('Elabftw\\Elabftw\\BuildInfo::VERSION_INT')) }}' target='_blank' rel='noopener'><i class='fas fa-newspaper fa-fw'></i> {{ "What's new"|trans }}</a>
@@ -235,7 +235,7 @@
               <a href='login.php?switch_team=1' class='dropdown-item'><i class='fas fa-repeat fa-fw'></i> {{ 'Switch team'|trans }}</a>
             {% endif %}
             <div class='dropdown-divider'></div>
-            {% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
+            {% if App.Session.has('is_auth') and not App.isAnonymous() %}
               <a class='dropdown-item' href='/dashboard.php'><i class='fas fa-house fa-fw'></i> {{ 'Dashboard'|trans }}</a>
               <a class='dropdown-item' href='/profile.php'><i class='fas fa-user fa-fw'></i> {{ 'My profile'|trans }}</a>
               <a class='dropdown-item' data-action='toggle-sidepanel' data-target='todolist' href='#' aria-controls='todolistPanel'><i class='fas fa-list fa-fw'></i> {{ 'Todolist'|trans }}</a>
@@ -267,7 +267,7 @@
 </nav>
 
 {# SHOW FAVTAGS/TODOLIST PANELS #}
-{% if App.Session.has('is_auth') and not App.Session.has('is_anon') %}
+{% if App.Session.has('is_auth') and not App.isAnonymous() %}
   {% include 'create-new-modal.html' %}
   <div class='pr-2 mt-3 float-left d-flex flex-column' id='sidepanel-buttons'>
     <button type='button' class='bounce-right sidepanel-btn sidepanel-closed' id='favtagsPanelOpener' data-action='toggle-sidepanel' data-target='favtags' aria-expanded='false' aria-controls='favtagsPanel' title='{{ 'Toggle favorite tags'|trans }}' aria-label='{{ 'Toggle favorite tags'|trans }}'>

@@ -2164,7 +2164,7 @@ components:
             auth_service:
               type: integer
               nullable: true
-              description: What mechanism was used to login, see AuthType Enum.
+              description: What mechanism was used to login, see AuthMethod Enum.
             is_sysadmin:
               type: integer
               default: 0

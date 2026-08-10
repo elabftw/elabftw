@@ -11,7 +11,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\AnonymousLoginValidator;
+use Elabftw\Auth\LoginFlow;
+use Elabftw\Auth\MfaPolicy;
+use Elabftw\Auth\MfaRateLimiter;
+use Elabftw\Auth\MfaVerifier;
+use Elabftw\Auth\PasswordRenewalPolicy;
+use Elabftw\Auth\RememberMe;
+use Elabftw\Auth\SamlRequestState;
+use Elabftw\Auth\SelectableTeamsProvider;
+use Elabftw\Auth\UserLoginValidator;
 use Elabftw\Controllers\LoginController;
+use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\IllegalActionException;
@@ -34,11 +45,39 @@ $location = '/login.php';
 $Response = new RedirectResponse($location);
 
 try {
-    $Response = new LoginController($App->Config->configArr, $App->Request, $App->Session, $App->demoMode)->getResponse();
-} catch (InvalidCredentialsException | InvalidMfaCodeException $e) {
+    $enforceMfa = EnforceMfa::from((int) $App->Config->configArr['enforce_mfa']);
+    $loginFlow = new LoginFlow(
+        new MfaPolicy($enforceMfa),
+        new PasswordRenewalPolicy((int) $App->Config->configArr['max_password_age_days']),
+        new SelectableTeamsProvider(),
+        new UserLoginValidator(),
+    );
+    $Response = new LoginController(
+        $App->Config->configArr,
+        $App->Request,
+        $App->Session,
+        $loginFlow,
+        new MfaVerifier($App->Session),
+        new MfaRateLimiter(),
+        new AnonymousLoginValidator((bool) $App->Config->configArr['anon_users']),
+        new RememberMe(
+            $App->Request,
+            $App->Config->configArr['remember_me_allowed'] === '1',
+        ),
+        new SamlRequestState($App->Request),
+        $App->demoMode,
+    )->getResponse();
+
+} catch (InvalidCredentialsException $e) {
     $loginTries = (int) $App->Config->configArr['login_tries'];
-    $AuthFail = new AuthFail($loginTries, $e->getCode(), $App->Request->cookies->getAlnum('devicetoken'));
-    $AuthFail->register();
+    $deviceToken = $App->Request->cookies->getString('devicetoken');
+    new AuthFail(
+        $loginTries,
+        $e->getCode(),
+        $deviceToken !== '' ? $deviceToken : null,
+    )->register();
+    $App->Session->getFlashBag()->add('ko', $e->getMessage());
+} catch (InvalidMfaCodeException $e) {
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (IllegalActionException $e) {
     $App->Log->notice('', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('IllegalAction' => $e)));

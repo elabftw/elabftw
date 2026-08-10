@@ -14,6 +14,7 @@ namespace Elabftw\Models\Users;
 
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Scope;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Override;
 
 /**
@@ -26,6 +27,12 @@ final class AnonymousUser extends Users
     {
         parent::__construct(null, $team);
         $this->fillUserData();
+    }
+
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        return array();
     }
 
     #[Override]

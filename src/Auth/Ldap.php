@@ -12,146 +12,241 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Elabftw\Elabftw\Authentication;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
-use Elabftw\Interfaces\AuthInterface;
-use Elabftw\Interfaces\AuthResponseInterface;
+use Elabftw\Interfaces\AuthenticatorInterface;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\ExistingUser;
+use Elabftw\Models\Users\Users;
 use Elabftw\Models\Users\ValidatedUser;
-use Elabftw\Services\UsersHelper;
 use LdapRecord\Connection;
 use LdapRecord\Container;
 use LdapRecord\Models\Entry;
 use LdapRecord\Models\Model;
 use LdapRecord\Query\ObjectNotFoundException;
-use SensitiveParameter;
 use Override;
+use SensitiveParameter;
 
+use function _;
+use function array_values;
 use function explode;
 use function is_array;
-use function _;
 use function is_string;
 use function trim;
 
 /**
- * LDAP auth service
+ * Authenticate a user against LDAP and resolve the corresponding local user.
  */
-final class Ldap implements AuthInterface
+final class Ldap implements AuthenticatorInterface
 {
-    public function __construct(Connection $connection, private Entry $entries, private array $configArr, private string $login, #[SensitiveParameter] private string $password)
-    {
-        // add connection to the Container https://ldaprecord.com/docs/core/v3/connections/#container
+    public function __construct(
+        Connection $connection,
+        private readonly Entry $entries,
+        private readonly array $configArr,
+        private readonly string $login,
+        #[SensitiveParameter]
+        private readonly string $password,
+    ) {
         $connection->connect();
         Container::addConnection($connection);
     }
 
     #[Override]
-    public function tryAuth(): AuthResponseInterface
+    public function authenticate(): Authentication|InitialTeamSelectionRequired
     {
         $record = $this->getRecord();
+        $this->verifyCredentials($record);
+
+        $email = $this->getEmailFromRecord($record);
+        $teamsFromLdap = $this->getTeamsFromRecord($record);
+
+        try {
+            $user = ExistingUser::fromEmail($email);
+        } catch (ResourceNotFoundException) {
+            $user = $this->createLocalUser(
+                $record,
+                $email,
+                $teamsFromLdap,
+            );
+
+            if ($user instanceof InitialTeamSelectionRequired) {
+                return $user;
+            }
+        }
+
+        $this->synchronizeTeams(
+            $user,
+            $teamsFromLdap,
+        );
+
+        return new Authentication(
+            $user->getUserid(),
+            AuthMethod::Ldap,
+        );
+    }
+
+    private function verifyCredentials(Model $record): void
+    {
         $dn = $record->getDn();
         if ($dn === null) {
             throw new ImproperActionException('Error finding the dn!');
         }
+
         if (!Container::getConnection()->auth()->attempt($dn, $this->password)) {
             throw new InvalidCredentialsException();
         }
-
-        // this->login can also be uid
-        $email = $this->getEmailFromRecord($record);
-        $AuthResponse = new AuthResponse();
-        $allowTeamCreation = $this->configArr['ldap_team_create'] === '1';
-        $teamFromLdap = $record[$this->configArr['ldap_team']];
-        try {
-            $Users = ExistingUser::fromEmail($email);
-        } catch (ResourceNotFoundException) {
-            // the user doesn't exist yet in the db
-            // what do we do? Lookup the config setting for that case
-            if ($this->configArr['saml_user_default'] === '0') {
-                $msg = _('Could not find an existing user. Ask a Sysadmin to create your account.');
-                if ($this->configArr['user_msg_need_local_account_created']) {
-                    $msg = $this->configArr['user_msg_need_local_account_created'];
-                }
-                throw new ImproperActionException($msg);
-            }
-            // GET FIRSTNAME AND LASTNAME
-            $firstname = $record[$this->configArr['ldap_firstname']][0] ?? 'Unknown';
-            $lastname = $record[$this->configArr['ldap_lastname']][0] ?? 'Unknown';
-
-            // GET TEAMS
-            // the attribute is not found
-            if ($teamFromLdap === null) {
-                // we directly get the id from the stored config
-                $teamId = (int) $this->configArr['saml_team_default'];
-                if ($teamId === 0) {
-                    throw new ImproperActionException('Could not find team ID to assign user!');
-                }
-                // this setting is when we want to allow the user to make team selection
-                if ($teamId === -1) {
-                    $AuthResponse->setInitTeamRequired(true);
-                    $AuthResponse->setInitTeamInfo(array(
-                        'email' => $email,
-                        'firstname' => $firstname,
-                        'lastname' => $lastname,
-                    ));
-                    return $AuthResponse;
-                }
-                $teamFromLdap = array($teamId);
-                // it is found and it is a string
-            } elseif (is_string($teamFromLdap)) {
-                $teamFromLdap = array($teamFromLdap);
-                // it is found and it is an array
-            } elseif (is_array($teamFromLdap)) {
-                if (is_array($teamFromLdap[0])) {
-                    // go one level deeper
-                    $teamFromLdap = $teamFromLdap[0];
-                }
-            }
-            // ldap might return a "count" key, so we remove it or it will be interpreted as a team ID
-            unset($teamFromLdap['count']);
-            // CREATE USER (and force validation of user)
-            $Users = ValidatedUser::fromExternal($email, $teamFromLdap, $firstname, $lastname, allowTeamCreation: $allowTeamCreation);
-
-        }
-        // synchronize the teams from LDAP
-        // because teams can change since the time the user was created
-        if ($this->configArr['ldap_sync_teams'] === '1' && $teamFromLdap !== null && !empty($teamFromLdap)) {
-            $Teams = new Teams($Users);
-            $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teamFromLdap, $allowTeamCreation);
-            $Teams->synchronize($Users->getUserid(), $teams);
-        }
-
-        return $AuthResponse->setAuthenticatedUserid($Users->userData['userid'])
-            ->setTeams(new UsersHelper($Users->userData['userid']));
     }
 
-    // split the search attributes and search the user with them
+    /**
+     * @param list<mixed>|null $teamsFromLdap
+     */
+    private function createLocalUser(
+        Model $record,
+        string $email,
+        ?array $teamsFromLdap,
+    ): Users|InitialTeamSelectionRequired {
+        if ($this->configArr['saml_user_default'] === '0') {
+            $message = _(
+                'Could not find an existing user. Ask a Sysadmin to create your account.',
+            );
+
+            if ($this->configArr['user_msg_need_local_account_created']) {
+                $message = $this->configArr['user_msg_need_local_account_created'];
+            }
+
+            throw new ImproperActionException($message);
+        }
+
+        $firstname = $record[$this->configArr['ldap_firstname']][0]
+            ?? 'Unknown';
+        $lastname = $record[$this->configArr['ldap_lastname']][0]
+            ?? 'Unknown';
+
+        if ($teamsFromLdap === null) {
+            $teamId = (int) $this->configArr['saml_team_default'];
+
+            if ($teamId === 0) {
+                throw new ImproperActionException(
+                    'Could not find team ID to assign user!',
+                );
+            }
+
+            if ($teamId === -1) {
+                return new InitialTeamSelectionRequired(
+                    email: $email,
+                    firstname: $firstname,
+                    lastname: $lastname,
+                );
+            }
+
+            $teamsFromLdap = array($teamId);
+        }
+
+        return ValidatedUser::fromExternal(
+            $email,
+            $teamsFromLdap,
+            $firstname,
+            $lastname,
+            allowTeamCreation: $this->configArr['ldap_team_create'] === '1',
+        );
+    }
+
+    /**
+     * @return list<mixed>|null
+     */
+    private function getTeamsFromRecord(Model $record): ?array
+    {
+        $teams = $record[$this->configArr['ldap_team']];
+
+        if ($teams === null) {
+            return null;
+        }
+
+        if (is_string($teams)) {
+            return array($teams);
+        }
+
+        if (!is_array($teams)) {
+            throw new ImproperActionException(
+                'Invalid team attribute returned by LDAP.',
+            );
+        }
+
+        if (isset($teams[0]) && is_array($teams[0])) {
+            $teams = $teams[0];
+        }
+
+        // LdapRecord may expose a synthetic "count" key.
+        unset($teams['count']);
+
+        return array_values($teams);
+    }
+
+    /**
+     * @param list<mixed>|null $teamsFromLdap
+     */
+    private function synchronizeTeams(
+        Users $user,
+        ?array $teamsFromLdap,
+    ): void {
+        if (
+            $this->configArr['ldap_sync_teams'] !== '1'
+            || $teamsFromLdap === null
+            || $teamsFromLdap === array()
+        ) {
+            return;
+        }
+
+        $teams = new Teams($user);
+        $resolvedTeams = $teams->getTeamsFromIdOrNameOrOrgidArray(
+            $teamsFromLdap,
+            $this->configArr['ldap_team_create'] === '1',
+        );
+
+        $teams->synchronize(
+            $user->getUserid(),
+            $resolvedTeams,
+        );
+    }
+
     private function getRecord(): Model
     {
         $attributes = explode(',', $this->configArr['ldap_search_attr']);
         $this->entries->setDn($this->configArr['ldap_base_dn']);
+
         foreach ($attributes as $attribute) {
             try {
-                return $this->entries::findbyOrFail(trim($attribute), $this->login);
+                return $this->entries::findbyOrFail(
+                    trim($attribute),
+                    $this->login,
+                );
             } catch (ObjectNotFoundException) {
                 continue;
             }
         }
+
         throw new InvalidCredentialsException();
     }
 
     private function getEmailFromRecord(Model $record): string
     {
-        // if the login input is the email, we have it already
         if ($this->configArr['ldap_search_attr'] === 'mail') {
             return $this->login;
         }
-        $email = $record->getFirstAttribute($this->configArr['ldap_email']);
+
+        $email = $record->getFirstAttribute(
+            $this->configArr['ldap_email'],
+        );
+
         if ($email === null) {
-            throw new ImproperActionException('Could not find the mail attribute from the LDAP record.');
+            throw new ImproperActionException(
+                'Could not find the mail attribute from the LDAP record.',
+            );
         }
+
         return $email;
     }
 }

@@ -11,7 +11,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\EntityType;
+use Elabftw\Models\Users2Teams;
+use Elabftw\Models\Users\Users;
+
+use function array_column;
+use function sort;
 
 class UsersHelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -47,5 +53,33 @@ class UsersHelperTest extends \PHPUnit\Framework\TestCase
     {
         $UsersHelper = new UsersHelper(1337);
         $this->assertEmpty($UsersHelper->getTeamsFromUserid());
+    }
+
+    public function testGetSelectableTeams(): void
+    {
+        $requester = new Users(1, 1);
+        $userid = $requester->createOne(
+            'selectable-teams@example.com',
+            array(1, 2, 3),
+            new NullLocalPassword(),
+            automaticValidationEnabled: true,
+        );
+
+        try {
+            new Users2Teams($requester)->patchUser2Team(array(
+                'team' => 2,
+                'target' => 'is_archived',
+                'content' => 1,
+            ), $userid);
+
+            $teams = new UsersHelper($userid)->getSelectableTeams();
+            $teamIds = array_column($teams, 'id');
+            sort($teamIds);
+
+            self::assertSame(array(1, 3), $teamIds);
+            self::assertSame(array(0, 0), array_column($teams, 'is_archived'));
+        } finally {
+            new Users($userid, 1)->destroy();
+        }
     }
 }

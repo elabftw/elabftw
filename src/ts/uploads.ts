@@ -183,7 +183,21 @@ on('toggle-modal', async (el: HTMLElement) => {
   // set the title for modal window
   document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
   // get the file content
-  const response = await fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`);
+  const params = new URLSearchParams({
+    storage: el.dataset.storage,
+    f: el.dataset.path,
+  });
+  const accessKey = new URLSearchParams(
+    window.location.search,
+  ).get('access_key');
+
+  if (accessKey) {
+    params.set('access_key', accessKey);
+  }
+
+  const response = await fetch(
+    `app/download.php?${params.toString()}`,
+  );
   const plainTextContentDiv = document.getElementById('plainTextContentDiv');
   if (el.dataset.ext === 'md') {
     plainTextContentDiv.innerHTML = DOMPurify.sanitize(await marked(await response.text()), { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });

@@ -16,7 +16,6 @@ use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\AccessPermissions;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
-use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Env;
@@ -62,6 +61,7 @@ use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
 use Elabftw\Models\Links\AbstractExperimentsLinks;
 use Elabftw\Models\Links\AbstractItemsLinks;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\DisplayParams;
@@ -113,6 +113,9 @@ use function array_filter;
 use function preg_replace;
 use function preg_match;
 use function strlen;
+use function hash_equals;
+use function preg_replace_callback;
+use function rawurlencode;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -585,7 +588,8 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->id === null) {
             throw new IllegalActionException('No id was set!');
         }
-        $queryParams = $this->getQueryParams(Request::createFromGlobals()->query);
+        $request = Request::createFromGlobals();
+        $queryParams = $this->getQueryParams($request->query);
         $sql = $this->getSqlBuilder()->getReadSqlBeforeWhere(true);
 
         $sql .= sprintf(' WHERE entity.id = %d', $this->id);
@@ -630,6 +634,19 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->entityData['content_type'] === BodyContentType::Markdown->value) {
             $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
         }
+        $accessKey = $request->query->getString('access_key');
+        $entityAccessKey = (string) (
+            $this->entityData['access_key'] ?? ''
+        );
+
+        if (
+            $this->Users instanceof AnonymousUser
+            && $accessKey !== ''
+            && $entityAccessKey !== ''
+            && hash_equals($entityAccessKey, $accessKey)
+        ) {
+            $this->entityData['body_html'] = $this->appendAccessKeyToDownloadUrls($this->entityData['body_html'] ?? '', $accessKey);
+        }
         if (!empty($this->entityData['metadata'])) {
             $this->entityData['metadata_decoded'] = json_decode($this->entityData['metadata']);
         }
@@ -663,8 +680,7 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readAllSimple(QueryParamsInterface $displayParams): array
     {
-        $CanSqlBuilder = new CanSqlBuilder($this->Users->requester, AccessType::Read);
-        $canFilter = $CanSqlBuilder->getCanFilter();
+        $canFilter = $this->getSqlBuilder()->getCanFilter(AccessType::Read->value);
         $displayParams->setSkipOrderPinned(true);
         $intQuery = intval($displayParams->getFastq());
         // if the query has a numeric part, we also try and match the custom_id or id exactly
@@ -686,7 +702,7 @@ abstract class AbstractEntity extends AbstractRest
             LEFT JOIN ' . $this->entityType->toStatusTable() . ' AS statust ON entity.status = statust.id
             LEFT JOIN users ON entity.userid = users.userid
             LEFT JOIN
-                users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = :teamid)
+                users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)
             WHERE 1=1
             ' . $canFilter . '
                 AND (entity.title LIKE :query ' . $idSql . ')
@@ -694,8 +710,8 @@ abstract class AbstractEntity extends AbstractRest
             ' . $displayParams->getStatesSql('entity') . '
             ' . $displayParams->getSql();
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->requester->userid, PDO::PARAM_INT);
-        $req->bindParam(':teamid', $this->Users->requester->team, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
+        $req->bindParam(':teamid', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $displayParams->getFastq() . '%');
         if ($intQuery > 0) {
             $req->bindValue(':intQuery', $intQuery, PDO::PARAM_INT);
@@ -1551,5 +1567,35 @@ abstract class AbstractEntity extends AbstractRest
         if ($this->getCreatePermissionFromTeam($teamConfigArr) === false) {
             throw new ForbiddenException();
         }
+    }
+
+    private function appendAccessKeyToDownloadUrls(
+        string $html,
+        string $accessKey,
+    ): string {
+        return preg_replace_callback(
+            '~\b(src|href)=(["\'])(/?app/download\.php\?[^"\']*)\2~i',
+            static function (array $matches) use ($accessKey): string {
+                $url = $matches[3];
+
+                if (
+                    preg_match(
+                        '/(?:[?&]|&amp;)access_key=/',
+                        $url,
+                    ) === 1
+                ) {
+                    return $matches[0];
+                }
+
+                return $matches[1]
+                    . '='
+                    . $matches[2]
+                    . $url
+                    . '&amp;access_key='
+                    . rawurlencode($accessKey)
+                    . $matches[2];
+            },
+            $html,
+        ) ?? $html;
     }
 }

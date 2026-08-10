@@ -21,6 +21,8 @@ use PDO;
 
 use function array_column;
 use function sprintf;
+use function array_filter;
+use function array_values;
 
 /**
  * When we want to check for something.
@@ -76,6 +78,19 @@ class UsersHelper
         $this->Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    /**
+     * Get the teams where user is not archived
+     *
+     * @return array<int, array{id: int, name: string, is_owner: int, is_admin: int, is_archived: int}>
+     */
+    public function getSelectableTeams(): array
+    {
+        return array_values(array_filter(
+            $this->getTeamsFromUserid(),
+            static fn(array $team): bool => $team['is_archived'] === 0,
+        ));
     }
 
     /**

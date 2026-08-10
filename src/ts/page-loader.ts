@@ -12,3 +12,11 @@ if (document.getElementById('ketcher-root')) {
     './chem-editor'
   );
 }
+
+// only run on syc.php page
+if (document.getElementById('syc-root')) {
+  void import(
+    /* webpackChunkName: 'opencloning' */
+    './opencloning'
+  );
+}

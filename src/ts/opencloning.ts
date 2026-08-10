@@ -22,8 +22,4 @@ async function checkOpenCloningVersion(): Promise<void>
     notify.error(err);
   }
 }
-
-// only run on syc.php page
-if (document.getElementById('syc-root')) {
-  checkOpenCloningVersion();
-}
+checkOpenCloningVersion();

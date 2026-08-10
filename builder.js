@@ -43,7 +43,6 @@ module.exports = (env, argv) => {
         './src/ts/admin.ts',
         './src/ts/profile.ts',
         './src/ts/edit.ts',
-        './src/ts/scheduler.ts',
         './src/ts/team.ts',
         './src/ts/metadata.ts',
         './src/ts/uploads.ts',

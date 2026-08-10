@@ -6,6 +6,7 @@
  * @package elabftw
  */
 
+// Molecule editor
 if (document.getElementById('ketcher-root')) {
   void import(
     /* webpackChunkName: 'chem-editor' */
@@ -13,7 +14,7 @@ if (document.getElementById('ketcher-root')) {
   );
 }
 
-// only run on syc.php page
+// OpenCloning
 if (document.getElementById('syc-root')) {
   void import(
     /* webpackChunkName: 'opencloning' */
@@ -26,5 +27,13 @@ if (window.location.pathname === '/ucp.php') {
   void import(
     /* webpackChunkName: 'ucp' */
     './ucp'
+  );
+}
+
+// Scheduler
+if (window.location.pathname === '/scheduler.php') {
+  void import(
+    /* webpackChunkName: 'scheduler' */
+    './scheduler'
   );
 }

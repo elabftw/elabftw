@@ -222,52 +222,50 @@ on('toggle-modal', async (el: HTMLElement) => {
   }
 });
 
+displayPlasmidViewer(entity);
+displayMoleculeViewer();
+
+// MAKE FILE COMMENTS EDITABLE
+const malleableFilecomment = new Malle({
+  formClasses: ['d-inline-flex'],
+  fun: async (value, original) => {
+    const uploadid = parseInt(original.dataset.id, 10);
+    return ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {'comment': value})
+      .then(resp => resp.json()).then(json => json.comment);
+  },
+  inputClasses: ['form-control'],
+  listenOn: '.file-comment.editable',
+  onBlur: MalleAction.Submit,
+  onEdit: (original, event, input) => {
+    // remove the default text
+    // we use a data-isempty attribute so "Click to add comment" can be translated
+    if (original.dataset.isempty === '1') {
+      input.value = '';
+      original.dataset.isempty = '0';
+      return true;
+    }
+  },
+  returnedValueIsTrustedHtml: false,
+  tooltip: i18next.t('upload-file-comment'),
+});
+malleableFilecomment.listen();
+
+// reload uploads div when using spreadsheet editor (iframe sends message to parent window)
+window.addEventListener('message', (event) => {
+  if (event.origin !== window.location.origin) return;
+  if (event.data !== 'uploadsDiv') return;
+  reloadElements(['uploadsDiv']);
+});
+
+// ACTIVATE FANCYBOX
+$('[data-fancybox]').fancybox();
+
 const uploadsDiv = document.getElementById('uploadsDiv');
-if (uploadsDiv) {
-  displayPlasmidViewer(entity);
+new MutationObserver(() => {
   displayMoleculeViewer();
-
-  // MAKE FILE COMMENTS EDITABLE
-  const malleableFilecomment = new Malle({
-    formClasses: ['d-inline-flex'],
-    fun: async (value, original) => {
-      const uploadid = parseInt(original.dataset.id, 10);
-      return ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {'comment': value})
-        .then(resp => resp.json()).then(json => json.comment);
-    },
-    inputClasses: ['form-control'],
-    listenOn: '.file-comment.editable',
-    onBlur: MalleAction.Submit,
-    onEdit: (original, event, input) => {
-      // remove the default text
-      // we use a data-isempty attribute so "Click to add comment" can be translated
-      if (original.dataset.isempty === '1') {
-        input.value = '';
-        original.dataset.isempty = '0';
-        return true;
-      }
-    },
-    returnedValueIsTrustedHtml: false,
-    tooltip: i18next.t('upload-file-comment'),
-  });
+  displayPlasmidViewer(entity);
   malleableFilecomment.listen();
-
-  // reload uploads div when using spreadsheet editor (iframe sends message to parent window)
-  window.addEventListener('message', (event) => {
-    if (event.origin !== window.location.origin) return;
-    if (event.data !== 'uploadsDiv') return;
-    reloadElements(['uploadsDiv']);
-  });
-
-  // ACTIVATE FANCYBOX
-  $('[data-fancybox]').fancybox();
-
-  new MutationObserver(() => {
-    displayMoleculeViewer();
-    displayPlasmidViewer(entity);
-    malleableFilecomment.listen();
-    (new Uploader()).init();
-    relativeMoment();
-    // don't use option {subtree: true} or there is an infinite loop that will destroy the world
-  }).observe(uploadsDiv, {childList: true});
-}
+  (new Uploader()).init();
+  relativeMoment();
+  // don't use option {subtree: true} or there is an infinite loop that will destroy the world
+}).observe(uploadsDiv, {childList: true});

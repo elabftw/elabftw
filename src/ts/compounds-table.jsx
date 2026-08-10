@@ -28,199 +28,200 @@ import i18next from './i18n';
 import { notify } from './notify';
 import { getAgGridTheme } from './theme';
 
-if (document.getElementById('compounds-table')) {
-  provideGlobalGridOptions({ theme: 'legacy' });
-  ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    RowSelectionModule,
-    PaginationModule,
-    TextFilterModule,
-    QuickFilterModule,
-  ]);
+provideGlobalGridOptions({ theme: 'legacy' });
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule,
+  RowSelectionModule,
+  PaginationModule,
+  TextFilterModule,
+  QuickFilterModule,
+]);
 
-  const rowSelection = {
-      mode: 'multiRow',
-      headerCheckbox: false,
+const rowSelection = {
+    mode: 'multiRow',
+    headerCheckbox: false,
+};
+
+const GridExample = () => {
+    const [rowData, setRowData] = useState([]);
+    const [gridApi, setGridApi] = useState(null);
+    const onGridReady = (params) => {
+      setGridApi(params.api);
+    };
+
+    const [columnDefs] = useState([
+        { field: 'name', pinned: 'left' },
+        { field: 'cas_number', headerName: 'CAS Number' },
+        { field: 'iupac_name', headerName: 'IUPAC Name' },
+        { field: 'molecular_weight', headerName: 'Molecular weight (g/mol)' },
+        { field: 'molecular_formula', headerName: 'Molecular formula' },
+        { field: 'ec_number', headerName: 'EC Number' },
+        { field: 'pubchem_cid', headerName: 'PubChem CID' },
+        { field: 'smiles', headerName: 'SMILES' },
+        { field: 'inchi', headerName: 'InChI' },
+        { field: 'inchi_key', headerName: 'InChI Key' },
+        { field: 'userid_human', headerName: 'Owner' },
+        { field: 'team_name', headerName: 'Team' },
+        { field: 'modified_at', headerName: 'Modified at' },
+        { field: 'has_fingerprint', headerName: 'Has fingerprint' },
+        { field: 'is_corrosive', headerName: 'Corrosive' },
+        { field: 'is_explosive', headerName: 'Explosive' },
+        { field: 'is_flammable', headerName: 'Flammable' },
+        { field: 'is_gas_under_pressure', headerName: 'Gas under pressure' },
+        { field: 'is_hazardous2env', headerName: 'Hazardous to environment' },
+        { field: 'is_hazardous2health', headerName: 'Hazardous to health' },
+        { field: 'is_serious_health_hazard', headerName: 'Serious health hazard' },
+        { field: 'is_oxidising', headerName: 'Oxidising' },
+        { field: 'is_toxic', headerName: 'Toxic' },
+        { field: 'is_radioactive', headerName: 'Radioactive' },
+        { field: 'is_antibiotic', headerName: 'Antibiotic' },
+        { field: 'is_antibiotic_precursor', headerName: 'Antibiotic precursor' },
+        { field: 'is_drug', headerName: 'Drug' },
+        { field: 'is_drug_precursor', headerName: 'Drug precursor' },
+        { field: 'is_explosive_precursor', headerName: 'Explosive precursor' },
+        { field: 'is_cmr', headerName: 'CMR' },
+        { field: 'is_nano', headerName: 'Nanomaterial' },
+        { field: 'is_controlled', headerName: 'Controlled substance' },
+        { field: 'is_ed2health', headerName: 'Endocrine disruptor for human health' },
+        { field: 'is_ed2env', headerName: 'Endocrine disruptor for the environment' },
+        { field: 'is_pbt', headerName: 'Persistent, bioaccumulative and toxic' },
+        { field: 'is_vpvb', headerName: 'Very persistent and very bioaccumulative' },
+        { field: 'is_pmt', headerName: 'Persistent, mobile and toxic' },
+        { field: 'is_vpvm', headerName: 'Very persistent and very mobile' },
+        { field: 'id', type: 'numericColumn' },
+    ]);
+
+  // filter by deleted compounds
+  const [showDeleted, setShowDeleted] = useState(false);
+
+  // switch delete-compounds <=> restore-compounds buttons when showing deleted compounds
+  const showDeletedCompounds = (showDeleted) => {
+    const deleteBtn = document.getElementById('deleteCompoundsBtn');
+    const restoreBtn = document.getElementById('restoreCompoundsBtn');
+    if (showDeleted) {
+      deleteBtn?.setAttribute('hidden', 'hidden');
+      restoreBtn?.removeAttribute('hidden');
+    } else {
+      deleteBtn?.removeAttribute('hidden');
+      restoreBtn?.setAttribute('hidden', 'hidden');
+    }
   };
 
+  // Load data on component mount and refresh on showDeleted change
+  useEffect(() => {
+      showDeletedCompounds(showDeleted);
+      fetchData();
+  }, [showDeleted]);
 
-  const GridExample = () => {
-      const [rowData, setRowData] = useState([]);
-      const [gridApi, setGridApi] = useState(null);
-      const onGridReady = (params) => {
-        setGridApi(params.api);
-      };
-
-      const [columnDefs] = useState([
-          { field: 'name', pinned: 'left' },
-          { field: 'cas_number', headerName: 'CAS Number' },
-          { field: 'iupac_name', headerName: 'IUPAC Name' },
-          { field: 'molecular_weight', headerName: 'Molecular weight (g/mol)' },
-          { field: 'molecular_formula', headerName: 'Molecular formula' },
-          { field: 'ec_number', headerName: 'EC Number' },
-          { field: 'pubchem_cid', headerName: 'PubChem CID' },
-          { field: 'smiles', headerName: 'SMILES' },
-          { field: 'inchi', headerName: 'InChI' },
-          { field: 'inchi_key', headerName: 'InChI Key' },
-          { field: 'userid_human', headerName: 'Owner' },
-          { field: 'team_name', headerName: 'Team' },
-          { field: 'modified_at', headerName: 'Modified at' },
-          { field: 'has_fingerprint', headerName: 'Has fingerprint' },
-          { field: 'is_corrosive', headerName: 'Corrosive' },
-          { field: 'is_explosive', headerName: 'Explosive' },
-          { field: 'is_flammable', headerName: 'Flammable' },
-          { field: 'is_gas_under_pressure', headerName: 'Gas under pressure' },
-          { field: 'is_hazardous2env', headerName: 'Hazardous to environment' },
-          { field: 'is_hazardous2health', headerName: 'Hazardous to health' },
-          { field: 'is_serious_health_hazard', headerName: 'Serious health hazard' },
-          { field: 'is_oxidising', headerName: 'Oxidising' },
-          { field: 'is_toxic', headerName: 'Toxic' },
-          { field: 'is_radioactive', headerName: 'Radioactive' },
-          { field: 'is_antibiotic', headerName: 'Antibiotic' },
-          { field: 'is_antibiotic_precursor', headerName: 'Antibiotic precursor' },
-          { field: 'is_drug', headerName: 'Drug' },
-          { field: 'is_drug_precursor', headerName: 'Drug precursor' },
-          { field: 'is_explosive_precursor', headerName: 'Explosive precursor' },
-          { field: 'is_cmr', headerName: 'CMR' },
-          { field: 'is_nano', headerName: 'Nanomaterial' },
-          { field: 'is_controlled', headerName: 'Controlled substance' },
-          { field: 'is_ed2health', headerName: 'Endocrine disruptor for human health' },
-          { field: 'is_ed2env', headerName: 'Endocrine disruptor for the environment' },
-          { field: 'is_pbt', headerName: 'Persistent, bioaccumulative and toxic' },
-          { field: 'is_vpvb', headerName: 'Very persistent and very bioaccumulative' },
-          { field: 'is_pmt', headerName: 'Persistent, mobile and toxic' },
-          { field: 'is_vpvm', headerName: 'Very persistent and very mobile' },
-          { field: 'id', type: 'numericColumn' },
-      ]);
-
-    // filter by deleted compounds
-    const [showDeleted, setShowDeleted] = useState(false);
-
-    // switch delete-compounds <=> restore-compounds buttons when showing deleted compounds
-    const showDeletedCompounds = (showDeleted) => {
-      const deleteBtn = document.getElementById('deleteCompoundsBtn');
-      const restoreBtn = document.getElementById('restoreCompoundsBtn');
-      if (showDeleted) {
-        deleteBtn?.setAttribute('hidden', 'hidden');
-        restoreBtn?.removeAttribute('hidden');
-      } else {
-        deleteBtn?.removeAttribute('hidden');
-        restoreBtn?.setAttribute('hidden', 'hidden');
+  // all the compounds are loaded in the table, which does client side pagination
+  const fetchData = async () => {
+    let searchString = '';
+    if (document.getElementById('substructureSearchInput')) {
+      const subInput = document.getElementById('substructureSearchInput');
+      const urlParams = new URLSearchParams(window.location.search);
+      const exact = (document.getElementById('search-fp-exact').checked || Boolean(urlParams.get('exact'))) ? '&exact=1' : '';
+      if (subInput.value) {
+        searchString = `&search_fp_smi=${encodeURIComponent(subInput.value)}${exact}`;
       }
-    };
+    }
+    // adding deleted flag to query
+    const deletedParam = showDeleted ? '&state=3' : '';
+    try {
+      const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
+      setRowData(compounds);
+    } catch (error) {
+      notify.error(error);
+    }
+  };
 
-    // Load data on component mount and refresh on showDeleted change
-    useEffect(() => {
-        showDeletedCompounds(showDeleted);
-        fetchData();
-    }, [showDeleted]);
+    const defaultColDef = useMemo(() => {
+        return {
+            filter: 'agTextColumnFilter',
+            floatingFilter: true,
+            onCellValueChanged: (event) => {
+              const params = {};
+              params[event.column.colId] = event.newValue;
+              ApiC.patch(`compounds/${event.data.id}`, params);
+            }
+        };
+    }, []);
 
-    // all the compounds are loaded in the table, which does client side pagination
-    const fetchData = async () => {
-      let searchString = '';
-      if (document.getElementById('substructureSearchInput')) {
-        const subInput = document.getElementById('substructureSearchInput');
-        const urlParams = new URLSearchParams(window.location.search);
-        const exact = (document.getElementById('search-fp-exact').checked || Boolean(urlParams.get('exact'))) ? '&exact=1' : '';
-        if (subInput.value) {
-          searchString = `&search_fp_smi=${encodeURIComponent(subInput.value)}${exact}`;
-        }
-      }
-      // adding deleted flag to query
-      const deletedParam = showDeleted ? '&state=3' : '';
-      try {
-        const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
-        setRowData(compounds);
-      } catch (error) {
-        notify.error(error);
-      }
-    };
+  // when a row is selected with the checkbox
+  const selectionChanged = (event) => {
+    // we store the selected rows as data-target string on the delete and restore buttons
+    const selectedRows = event.api.getSelectedRows();
+    const selectedIds = selectedRows.map(c => c.id).join(',');
+    const deleteBtn = document.getElementById('deleteCompoundsBtn');
+    const restoreBtn = document.getElementById('restoreCompoundsBtn');
 
-      const defaultColDef = useMemo(() => {
-          return {
-              filter: 'agTextColumnFilter',
-              floatingFilter: true,
-              onCellValueChanged: (event) => {
-                const params = {};
-                params[event.column.colId] = event.newValue;
-                ApiC.patch(`compounds/${event.data.id}`, params);
-              }
-          };
-      }, []);
+    // buttons are disabled if no rows are selected.
+    if (deleteBtn) {
+      deleteBtn.disabled = selectedRows.length === 0;
+      deleteBtn.dataset.target = selectedIds;
+    }
+    if (restoreBtn) {
+      restoreBtn.disabled = selectedRows.length === 0;
+      restoreBtn.dataset.target = selectedIds;
+    }
+  };
 
-    // when a row is selected with the checkbox
-    const selectionChanged = (event) => {
-      // we store the selected rows as data-target string on the delete and restore buttons
-      const selectedRows = event.api.getSelectedRows();
-      const selectedIds = selectedRows.map(c => c.id).join(',');
-      const deleteBtn = document.getElementById('deleteCompoundsBtn');
-      const restoreBtn = document.getElementById('restoreCompoundsBtn');
+  const cellDoubleClicked = (event) => {
+    ApiC.getJson(`compounds/${event.data.id}`).then(json => {
+      toggleEditCompound(json);
+    });
+  };
+  const onQuickFilterChange = (e) => {
+    gridApi.setGridOption('quickFilterText', e.target.value);
+  };
 
-      // buttons are disabled if no rows are selected.
-      if (deleteBtn) {
-        deleteBtn.disabled = selectedRows.length === 0;
-        deleteBtn.dataset.target = selectedIds;
-      }
-      if (restoreBtn) {
-        restoreBtn.disabled = selectedRows.length === 0;
-        restoreBtn.dataset.target = selectedIds;
-      }
-    };
-
-    const cellDoubleClicked = (event) => {
-      ApiC.getJson(`compounds/${event.data.id}`).then(json => {
-        toggleEditCompound(json);
-      });
-    };
-    const onQuickFilterChange = (e) => {
-      gridApi.setGridOption('quickFilterText', e.target.value);
-    };
-
-    return (
-      <>
-        <input
-          type="text"
-          aria-label={i18next.t('search')}
-          placeholder={i18next.t('search')}
-          onChange={onQuickFilterChange}
-          className={'form-control mb-2'}
-        />
-        <div className={getAgGridTheme()} style={{ height: 650 }}>
-        <AgGridReact
-          rowData={rowData}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          rowSelection={rowSelection}
-          onCellDoubleClicked={cellDoubleClicked}
-          onGridReady={onGridReady}
-          onSelectionChanged={selectionChanged}
-          {...DEFAULT_AG_GRID_PAGINATION}
-        />
-        <div className='d-flex justify-content-end my-2'>
-          <button
-            type='button'
-            className={'btn btn-sm btn-ghost'}
-            onClick={() => setShowDeleted(!showDeleted)}
-          >
-            {showDeleted ? i18next.t('hide-deleted') : i18next.t('show-deleted')}
-          </button>
-        </div>
+  return (
+    <>
+      <input
+        type="text"
+        aria-label={i18next.t('search')}
+        placeholder={i18next.t('search')}
+        onChange={onQuickFilterChange}
+        className={'form-control mb-2'}
+      />
+      <div className={getAgGridTheme()} style={{ height: 650 }}>
+      <AgGridReact
+        rowData={rowData}
+        columnDefs={columnDefs}
+        defaultColDef={defaultColDef}
+        rowSelection={rowSelection}
+        onCellDoubleClicked={cellDoubleClicked}
+        onGridReady={onGridReady}
+        onSelectionChanged={selectionChanged}
+        {...DEFAULT_AG_GRID_PAGINATION}
+      />
+      <div className='d-flex justify-content-end my-2'>
+        <button
+          type='button'
+          className={'btn btn-sm btn-ghost'}
+          onClick={() => setShowDeleted(!showDeleted)}
+        >
+          {showDeleted ? i18next.t('hide-deleted') : i18next.t('show-deleted')}
+        </button>
       </div>
-    </>
-    );
-  };
-
-  // In order to reload the table, we wrap it in another element with a key that is incremented when a dataReload event happens
-  // This change will trigger a full remount of the element, and the table will be updated
-  const App = () => {
-    const [reloadKey, setReloadKey] = useState(0);
-    // trigger this with document.dispatchEvent(new CustomEvent('dataReload'))
-    document.addEventListener('dataReload', () => setReloadKey(prevKey => prevKey + 1));
-    return <GridExample key={reloadKey} />;
-  };
-
-  const root = createRoot(document.getElementById('compounds-table'));
-  root.render(
-    <App />
+    </div>
+  </>
   );
-}
+};
+
+// In order to reload the table, we wrap it in another element with a key that is incremented when a dataReload event happens
+// This change will trigger a full remount of the element, and the table will be updated
+const App = () => {
+  const [reloadKey, setReloadKey] = useState(0);
+  // trigger this with document.dispatchEvent(new CustomEvent('dataReload'))
+  useEffect(() => {
+    const reloadTable = () => setReloadKey(prevKey => prevKey + 1);
+    document.addEventListener('dataReload', reloadTable);
+    return () => document.removeEventListener('dataReload', reloadTable);
+  }, []);
+  return <GridExample key={reloadKey} />;
+};
+
+const root = createRoot(document.getElementById('compounds-table'));
+root.render(
+  <App />
+);

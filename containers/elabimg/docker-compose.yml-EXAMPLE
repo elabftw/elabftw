@@ -203,9 +203,10 @@ services:
 
         # optional: modify connection persistence for MySQL
         # pdo doc: https://www.php.net/manual/en/pdo.connections.php
-        # default: true
-        # example value: false
-        #- USE_PERSISTENT_MYSQL_CONN=true
+        # Note: this increases open connections and doesn't really have a performance impact
+        # default: false
+        # example value: true
+        #- USE_PERSISTENT_MYSQL_CONN=false
 
         # optional: adjust the number of worker processes nginx will spawn
         # default value: auto

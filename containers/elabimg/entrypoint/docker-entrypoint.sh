@@ -62,7 +62,7 @@ getEnv() {
     fingerprinter_url=${FINGERPRINTER_URL:-https://example.com:8000/}
     use_opencloning=${USE_OPENCLONING:-false}
     opencloning_url=${OPENCLONING_URL:-https://opencloning.elabftw.net/}
-    use_persistent_mysql_conn=${USE_PERSISTENT_MYSQL_CONN:-true}
+    use_persistent_mysql_conn=${USE_PERSISTENT_MYSQL_CONN:-false}
     pubchem_pug_url=${PUBCHEM_PUG_URL:-https://pubchem.ncbi.nlm.nih.gov/rest/pug}
     pubchem_pug_view_url=${PUBCHEM_PUG_VIEW_URL:-https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data}
 }

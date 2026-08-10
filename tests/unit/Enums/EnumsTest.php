@@ -64,11 +64,6 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('experiments-status.php', EntityType::Experiments->toStatusPage());
     }
 
-    public function testAuthType(): void
-    {
-        $this->assertIsInt(AuthType::Saml->asService());
-    }
-
     public function testCurrency(): void
     {
         $this->assertIsString(Currency::NOK->toHuman());
@@ -101,5 +96,13 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(500, Messages::CriticalError->toHttpCode());
         $this->assertSame(403, Messages::InsufficientPermissions->toHttpCode());
+    }
+
+    public function testThemeVariant(): void
+    {
+        $this->assertSame('', ThemeVariant::Auto->toCssClass());
+        $this->assertSame('', ThemeVariant::Light->toCssClass());
+        $this->assertSame('dark-mode', ThemeVariant::Dark->toCssClass());
+        $this->assertSame('midnight', ThemeVariant::Midnight->toCssClass());
     }
 }

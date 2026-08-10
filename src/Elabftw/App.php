@@ -47,6 +47,7 @@ use function textdomain;
 use function array_merge;
 use function bind_textdomain_codeset;
 use function sprintf;
+use function time;
 
 /**
  * This is a super class holding various global objects
@@ -63,6 +64,8 @@ final class App
     public array $itemsCategoryArr = array();
 
     public Teams $Teams;
+
+    private ?int $sessionExpiresAt = null;
 
     public function __construct(
         public Request $Request,
@@ -87,43 +90,49 @@ final class App
     //    |_.__/ \___/ \___/ \__|   //
     //                              //
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-//
-    public function boot(): void
-    {
-        // load the Users with a userid if we are auth and not anon
-        try {
-            if ($this->Session->has('is_auth') && $this->Session->get('userid') !== 0) {
-                $this->loadUser(new AuthenticatedUser(
-                    $this->Session->get('userid'),
-                    $this->Session->get('team'),
-                ));
-            }
-            // maybe the team in session is not valid anymore because sysadmin changed team, so logout user
-            // see #4051
-        } catch (IllegalActionException) {
-            $this->Session->invalidate();
-            throw new UnauthorizedException();
-        }
+    public function boot(
+        ?AnonymousUser $requestUser = null,
+    ): void {
+        $this->handleSessionExpiration();
 
-        // ANONYMOUS
-        if ($this->Session->get('is_anon') === 1) {
-            // anon user only has access to a subset of pages
-            $allowedPages = array(
-                'ApiController.php',
-                'database.php',
-                'download.php',
-                'experiments.php',
-                'index.php',
-                'logout.php',
-                'make.php',
-            );
-            if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {
+        if ($requestUser !== null) {
+            $this->loadUser($requestUser);
+        } else {
+            try {
+                if (
+                    $this->Session->has('is_auth')
+                    && $this->Session->get('userid') !== 0
+                ) {
+                    $this->loadUser(new AuthenticatedUser(
+                        $this->Session->get('userid'),
+                        $this->Session->get('team'),
+                    ));
+                }
+            } catch (IllegalActionException) {
+                $this->Session->invalidate();
                 throw new UnauthorizedException();
             }
 
-            $this->loadUser(new AnonymousUser(
-                $this->Session->get('team'),
-                Language::tryFrom($this->getLang()) ?? Language::EnglishGB,
-            ));
+            if ($this->Session->get('is_anon') === 1) {
+                // anon user only has access to a subset of pages
+                $allowedPages = array(
+                    'ApiController.php',
+                    'database.php',
+                    'download.php',
+                    'experiments.php',
+                    'index.php',
+                    'logout.php',
+                    'make.php',
+                );
+                if (!in_array(basename($this->Request->getScriptName()), $allowedPages, true)) {
+                    throw new UnauthorizedException();
+                }
+
+                $this->loadUser(new AnonymousUser(
+                    $this->Session->get('team'),
+                    Language::tryFrom($this->getLang()) ?? Language::EnglishGB,
+                ));
+            }
         }
 
         $this->Teams = new Teams($this->Users, $this->Users->team);
@@ -134,6 +143,11 @@ final class App
             $this->itemsCategoryArr = $ResourcesCategory->readAll($ResourcesCategory->getQueryParams(new InputBag(array('limit' => 9999))));
         }
         $this->initi18n();
+    }
+
+    public function isAnonymous(): bool
+    {
+        return $this->Users instanceof AnonymousUser;
     }
 
     /**
@@ -149,6 +163,7 @@ final class App
                     array(
                         'App' => $this,
                         'langsArr' => Language::getAllHuman(),
+                        'sessionExpiresAt' => $this->sessionExpiresAt,
                     ),
                     $variables,
                 )
@@ -215,6 +230,31 @@ final class App
         // 2. anon & guest preference (cookie)
         $cookie = $this->Request->cookies->getInt('theme_variant');
         return ThemeVariant::tryFrom($cookie) ?? ThemeVariant::Auto;
+    }
+
+    private function handleSessionExpiration(): void
+    {
+        if (!$this->Session->has('is_auth')) {
+            return;
+        }
+
+        $autologoutTime = (int) $this->Config->configArr['autologout_time'];
+
+        if ($autologoutTime <= 0) {
+            $this->Session->remove('session_expires_at');
+            return;
+        }
+
+        $now = time();
+        $expiresAt = (int) ($this->Session->get('session_expires_at') ?? 0);
+
+        if ($expiresAt !== 0 && $expiresAt <= $now) {
+            $this->Session->invalidate();
+            throw new UnauthorizedException();
+        }
+
+        $this->sessionExpiresAt = $now + $autologoutTime;
+        $this->Session->set('session_expires_at', $this->sessionExpiresAt);
     }
 
     /**

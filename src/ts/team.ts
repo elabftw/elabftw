@@ -13,61 +13,57 @@ import 'bootstrap/js/src/modal.js';
 import { Action, ProcurementState } from './interfaces';
 import { ApiC } from './api';
 import { collectForm, reloadElements } from './misc';
-import {on} from './handlers';
-import {notify} from './notify';
+import { on } from './handlers';
+import { notify } from './notify';
 
-if (window.location.pathname === '/team.php') {
+// transform the enum into the kind of object we want
+const procurementStateArr: SelectOptions[] = Object.keys(ProcurementState)
+  .filter(key => !isNaN(Number(key)))
+  .map(key => ({
+    selected: false,
+    text: ProcurementState[key],
+    value: key,
+  }));
 
-  // transform the enum into the kind of object we want
-  const procurementStateArr: SelectOptions[] = Object.keys(ProcurementState)
-    .filter(key => !isNaN(Number(key)))
-    .map(key => ({
-      selected: false,
-      text: ProcurementState[key],
-      value: key,
-    }));
+new Malle({
+  cancel : i18next.t('cancel'),
+  cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
+  inputClasses: ['form-control'],
+  fun: (value: string, original: HTMLElement) => {
+    return ApiC.patch(`teams/current/procurement_requests/${original.dataset.id}`, {state: value}).then(res => res.json()).then(json => json.state);
+  },
+  inputType: InputType.Select,
+  selectOptions: procurementStateArr,
+  listenOn: '.malleableState',
+  returnedValueIsTrustedHtml: false,
+  submit : i18next.t('save'),
+  submitClasses: ['btn', 'btn-primary', 'mt-2'],
+  tooltip: i18next.t('click-to-edit'),
+}).listen();
 
-  new Malle({
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['btn', 'btn-danger', 'mt-2', 'ml-1'],
-    inputClasses: ['form-control'],
-    fun: (value: string, original: HTMLElement) => {
-      return ApiC.patch(`teams/current/procurement_requests/${original.dataset.id}`, {state: value}).then(res => res.json()).then(json => json.state);
-    },
-    inputType: InputType.Select,
-    selectOptions: procurementStateArr,
-    listenOn: '.malleableState',
-    returnedValueIsTrustedHtml: false,
-    submit : i18next.t('save'),
-    submitClasses: ['btn', 'btn-primary', 'mt-2'],
-    tooltip: i18next.t('click-to-edit'),
-  }).listen();
-
-  on('receive-procurement-request', (el: HTMLElement) => ApiC.patch(`teams/current/procurement_requests/${el.dataset.id}`));
-  on('cancel-procurement-request', (el: HTMLElement) => {
-    if (confirm(i18next.t('generic-delete-warning'))) {
-      ApiC.delete(`teams/current/procurement_requests/${el.dataset.id}`).then(() => reloadElements(['procurementRequestsTable']));
-    }
-  });
-  on(Action.EmailTeam, (el: HTMLElement, event: Event) => {
-    event.preventDefault();
-    const form = document.getElementById('emailTeamForm') as HTMLFormElement;
-    const params = collectForm(form);
-    params['action'] = Action.EmailTeam;
-    const button = (el as HTMLButtonElement);
-    const buttonText = button.innerText;
-    button.disabled = true;
-    button.innerText = i18next.t('please-wait');
-    ApiC.post2location('instance', params).then(sentNum => {
-      form.reset();
-      button.innerText = buttonText;
-      console.log(sentNum);
-      notify.success('email-sent-to-x', {num: sentNum});
-    }).catch(() => {
-      button.innerText = i18next.t('error');
-      // TODO don't hardcode colors
-      button.style.backgroundColor = '#e6614c';
-    }).finally(() => button.disabled = false);
-  });
-
-}
+on('receive-procurement-request', (el: HTMLElement) => ApiC.patch(`teams/current/procurement_requests/${el.dataset.id}`));
+on('cancel-procurement-request', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`teams/current/procurement_requests/${el.dataset.id}`).then(() => reloadElements(['procurementRequestsTable']));
+  }
+});
+on(Action.EmailTeam, (el: HTMLElement, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('emailTeamForm') as HTMLFormElement;
+  const params = collectForm(form);
+  params['action'] = Action.EmailTeam;
+  const button = (el as HTMLButtonElement);
+  const buttonText = button.innerText;
+  button.disabled = true;
+  button.innerText = i18next.t('please-wait');
+  ApiC.post2location('instance', params).then(sentNum => {
+    form.reset();
+    button.innerText = buttonText;
+    console.log(sentNum);
+    notify.success('email-sent-to-x', {num: sentNum});
+  }).catch(() => {
+    button.innerText = i18next.t('error');
+    // TODO don't hardcode colors
+    button.style.backgroundColor = '#e6614c';
+  }).finally(() => button.disabled = false);
+});

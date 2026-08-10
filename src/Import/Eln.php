@@ -87,6 +87,7 @@ class Eln extends AbstractZip
 
     public function __construct(
         protected Users $requester,
+        protected Users $targetUser,
         protected UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
@@ -117,6 +118,12 @@ class Eln extends AbstractZip
     public function getCount(): int
     {
         return $this->count;
+    }
+
+    #[Override]
+    public function getTargetUserid(): int
+    {
+        return $this->targetUser->getUserid();
     }
 
     #[Override]
@@ -190,7 +197,7 @@ class Eln extends AbstractZip
 
     protected function getAuthor(array $dataset): Users
     {
-        return $this->requester;
+        return $this->targetUser;
     }
 
     protected function getEntityType(array $dataset): EntityType
@@ -352,7 +359,7 @@ class Eln extends AbstractZip
             switch ($attributeName) {
                 // CATEGORY
                 case 'about':
-                    $this->Entity->update(new EntityParams('category', (string) $categoryId));
+                    $this->Entity->update(new EntityParams('category', $categoryId));
                     break;
                     // COMMENTS
                 case 'comment':
@@ -462,7 +469,13 @@ class Eln extends AbstractZip
             }
         }
 
-        // do the CUSTOM ID after everything (especially after the category) so we can catch any error when setting it and we also have a chance to set the category before the custom_id is set
+        // Make sure an explicitly requested import category is applied before
+        // custom_id so uniqueness is checked against the final category.
+        if ($this->category !== null) {
+            $this->Entity->update(new EntityParams('category', $this->category));
+        }
+
+        // do the CUSTOM ID after everything (especially after the category)
         if (array_key_exists('alternateName', $dataset)) {
             try {
                 $this->Entity->patch(Action::Update, array('custom_id' => (string) $dataset['alternateName']));

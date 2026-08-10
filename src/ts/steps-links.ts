@@ -56,125 +56,123 @@ $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
   });
 });
 
-if (document.getElementById('stepsDiv')) {
-  const StepC = new Step(entity);
+const StepC = new Step(entity);
 
-  on('create-step', (_, event: Event) => {
-    event.preventDefault();
-    const form = document.getElementById('addStepForm') as HTMLFormElement;
-    const params = collectForm(form);
-    const content = String(params['step'] ?? '').trim();
-    if (!content) return;
-    StepC.create(content).then(() => {
-      reloadElements(['stepsDiv']).then(() => {
-        (document.getElementById('addStepInput') as HTMLInputElement).focus();
-      });
+on('create-step', (_, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('addStepForm') as HTMLFormElement;
+  const params = collectForm(form);
+  const content = String(params['step'] ?? '').trim();
+  if (!content) return;
+  StepC.create(content).then(() => {
+    reloadElements(['stepsDiv']).then(() => {
+      (document.getElementById('addStepInput') as HTMLInputElement).focus();
     });
   });
+});
 
-  on('step-update-deadline', (el: HTMLElement) => {
-    const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
-    const stepid = parseInt(el.dataset.stepid, 10);
-    StepC.update(stepid, value, Target.Deadline).then(() => {
-      StepC.notif(stepid).then(() => reloadElements(['stepsDiv']));
-    });
+on('step-update-deadline', (el: HTMLElement) => {
+  const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
+  const stepid = parseInt(el.dataset.stepid, 10);
+  StepC.update(stepid, value, Target.Deadline).then(() => {
+    StepC.notif(stepid).then(() => reloadElements(['stepsDiv']));
   });
+});
 
-  on('step-destroy-deadline', (el: HTMLElement) => {
-    StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline)
-      .then(() => reloadElements(['stepsDiv']));
-  });
+on('step-destroy-deadline', (el: HTMLElement) => {
+  StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline)
+    .then(() => reloadElements(['stepsDiv']));
+});
 
-  on('destroy-step', (el: HTMLElement) => {
-    if (confirm(i18next.t('step-delete-warning'))) {
-      StepC.destroy(parseInt(el.dataset.id, 10)).then(() => {
-        el.parentElement.parentElement.remove();
-        // keep to do list in sync
-        const todoStep = document.getElementById(`todo_step_${el.dataset.id}`);
-        if (todoStep) {
-          todoStep.parentElement.remove();
-        }
-      });
-    }
-  });
-
-  on('toggle-all-immutable', (el: HTMLInputElement) => {
-    ApiC.patch(`${entity.type}/${entity.id}/steps`, {action: el.checked ? Action.ForceLock : Action.ForceUnlock}).then(() => reloadElements(['stepsDiv']));
-  });
-
-  on('import-links', (el: HTMLElement) => {
-    Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(
-      `${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`,
-      {action: Action.Duplicate},
-    ))).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
-  });
-
-  on('destroy-link', (el: HTMLElement) => {
-    if (confirm(i18next.t('link-delete-warning'))) {
-      ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`)
-        .then(() => el.parentElement.parentElement.remove());
-    }
-  });
-
-  on('destroy-related-link', (el: HTMLElement) => {
-    if (confirm(i18next.t('link-delete-warning'))) {
-      ApiC.delete(`${el.dataset.endpoint.split('_')[0]}/${el.dataset.target}/${entity.type}_links/${entity.id}`)
-        .then(() => el.parentElement.parentElement.remove());
-    }
-  });
-
-  // UPDATE MALLEABLE STEP BODY, FINISH TIME OR DEADLINE (data-target attribute)
-  const malleableStep = new Malle({
-    cancel : i18next.t('cancel'),
-    cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
-    inputClasses: ['form-control'],
-    formClasses: ['w-100'],
-    fun: async (value, original) => {
-      return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
-        .then(resp => resp.json())
-        .then(json => original.dataset.target === Target.Body
-          ? json.body
-          : json.deadline,
-        );
-    },
-    listenOn: '.step.editable',
-    returnedValueIsTrustedHtml: false,
-    submit : i18next.t('save'),
-    submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
-    tooltip: i18next.t('click-to-edit'),
-  }).listen();
-
-  // add an observer so new steps will get an event handler too
-  new MutationObserver(() => {
-    malleableStep.listen();
-    adjustHiddenState();
-    makeSortableGreatAgain();
-    relativeMoment();
-  }).observe(document.getElementById('stepsDiv'), {childList: true});
-
-  // END STEPS
-
-  // CREATE LINK
-  // listen keypress, add link when it's enter or on blur
-  $(document).on('keypress blur', '.linkinput', function(e) {
-    // Enter is ascii code 13
-    if (e.which === 13 || e.type === 'focusout') {
-      // grab the id from the value of the input, but only before the first space, which is the ID
-      const target = parseInt(($(this).val() as string).split(' ')[0], 10);
-      // only send request if target is a number
-      if (Number.isNaN(target)) {
-        return;
+on('destroy-step', (el: HTMLElement) => {
+  if (confirm(i18next.t('step-delete-warning'))) {
+    StepC.destroy(parseInt(el.dataset.id, 10)).then(() => {
+      el.parentElement.parentElement.remove();
+      // keep to do list in sync
+      const todoStep = document.getElementById(`todo_step_${el.dataset.id}`);
+      if (todoStep) {
+        todoStep.parentElement.remove();
       }
-      ApiC.post(`${entity.type}/${entity.id}/${$(this).data('endpoint')}/${target}`).then(() => {
-        reloadElements(['linksDiv', 'linksExpDiv', 'compoundDiv']).then(() => {
-          // clear input field
-          $(this).val('');
-          addAutocompleteToLinkInputs();
-          addAutocompleteToCompoundsInputs();
-        });
-      });
+    });
+  }
+});
+
+on('toggle-all-immutable', (el: HTMLInputElement) => {
+  ApiC.patch(`${entity.type}/${entity.id}/steps`, {action: el.checked ? Action.ForceLock : Action.ForceUnlock}).then(() => reloadElements(['stepsDiv']));
+});
+
+on('import-links', (el: HTMLElement) => {
+  Promise.allSettled(['items_links', 'experiments_links'].map(endpoint => ApiC.post(
+    `${entity.type}/${entity.id}/${endpoint}/${el.dataset.target}`,
+    {action: Action.Duplicate},
+  ))).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+});
+
+on('destroy-link', (el: HTMLElement) => {
+  if (confirm(i18next.t('link-delete-warning'))) {
+    ApiC.delete(`${entity.type}/${entity.id}/${el.dataset.endpoint}/${el.dataset.target}`)
+      .then(() => el.parentElement.parentElement.remove());
+  }
+});
+
+on('destroy-related-link', (el: HTMLElement) => {
+  if (confirm(i18next.t('link-delete-warning'))) {
+    ApiC.delete(`${el.dataset.endpoint.split('_')[0]}/${el.dataset.target}/${entity.type}_links/${entity.id}`)
+      .then(() => el.parentElement.parentElement.remove());
+  }
+});
+
+// UPDATE MALLEABLE STEP BODY, FINISH TIME OR DEADLINE (data-target attribute)
+const malleableStep = new Malle({
+  cancel : i18next.t('cancel'),
+  cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+  inputClasses: ['form-control'],
+  formClasses: ['w-100'],
+  fun: async (value, original) => {
+    return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
+      .then(resp => resp.json())
+      .then(json => original.dataset.target === Target.Body
+        ? json.body
+        : json.deadline,
+      );
+  },
+  listenOn: '.step.editable',
+  returnedValueIsTrustedHtml: false,
+  submit : i18next.t('save'),
+  submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+  tooltip: i18next.t('click-to-edit'),
+}).listen();
+
+// add an observer so new steps will get an event handler too
+new MutationObserver(() => {
+  malleableStep.listen();
+  adjustHiddenState();
+  makeSortableGreatAgain();
+  relativeMoment();
+}).observe(document.getElementById('stepsDiv'), {childList: true});
+
+// END STEPS
+
+// CREATE LINK
+// listen keypress, add link when it's enter or on blur
+$(document).on('keypress blur', '.linkinput', function(e) {
+  // Enter is ascii code 13
+  if (e.which === 13 || e.type === 'focusout') {
+    // grab the id from the value of the input, but only before the first space, which is the ID
+    const target = parseInt(($(this).val() as string).split(' ')[0], 10);
+    // only send request if target is a number
+    if (Number.isNaN(target)) {
+      return;
     }
-  });
-  // AUTOCOMPLETE
-  addAutocompleteToCompoundsInputs();
-}
+    ApiC.post(`${entity.type}/${entity.id}/${$(this).data('endpoint')}/${target}`).then(() => {
+      reloadElements(['linksDiv', 'linksExpDiv', 'compoundDiv']).then(() => {
+        // clear input field
+        $(this).val('');
+        addAutocompleteToLinkInputs();
+        addAutocompleteToCompoundsInputs();
+      });
+    });
+  }
+});
+// AUTOCOMPLETE
+addAutocompleteToCompoundsInputs();

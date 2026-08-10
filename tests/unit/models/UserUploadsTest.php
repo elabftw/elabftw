@@ -12,9 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
 class UserUploadsTest extends \PHPUnit\Framework\TestCase
@@ -39,15 +42,51 @@ class UserUploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testCountAll(): void
     {
-        // count All without filter (normal, archived, deleted)
-        $countAll = $this->UserUploads->countAll();
-        $this->assertIsInt($this->UserUploads->countAll());
-        // count only archived
-        $queryParams = new InputBag(array('state' => 2));
-        $q = $this->UserUploads->getQueryParams($queryParams);
-        $countArchived = $this->UserUploads->countAll($q);
-        $this->assertIsInt($countArchived);
-        $this->assertNotEquals($countAll, $countArchived, 'Total count and archived count should differ');
+        $Db = Db::getConnection();
+        $Db->beginTransaction();
+
+        try {
+            $normalQuery = $this->UserUploads->getQueryParams(
+                new InputBag(array(
+                    'state' => State::Normal->value,
+                )),
+            );
+            $archivedQuery = $this->UserUploads->getQueryParams(
+                new InputBag(array(
+                    'state' => State::Archived->value,
+                )),
+            );
+
+            $normalBefore = $this->UserUploads->countAll($normalQuery);
+            $archivedBefore = $this->UserUploads->countAll($archivedQuery);
+
+            $sql = 'INSERT INTO uploads
+                (real_name, long_name, userid, type, state)
+                VALUES
+                (:normal_name, :normal_long_name, 1, :type, :normal_state),
+                (:archived_name, :archived_long_name, 1, :type, :archived_state)';
+
+            $req = $Db->prepare($sql);
+            $req->bindValue(':normal_name', 'useruploads-normal.txt');
+            $req->bindValue(':normal_long_name', 'test/useruploads-normal.txt');
+            $req->bindValue(':archived_name', 'useruploads-archived.txt');
+            $req->bindValue(':archived_long_name', 'test/useruploads-archived.txt');
+            $req->bindValue(':type', 'experiments');
+            $req->bindValue(':normal_state', State::Normal->value, PDO::PARAM_INT);
+            $req->bindValue(':archived_state', State::Archived->value, PDO::PARAM_INT);
+            $Db->execute($req);
+
+            $this->assertSame(
+                $normalBefore + 1,
+                $this->UserUploads->countAll($normalQuery),
+            );
+            $this->assertSame(
+                $archivedBefore + 1,
+                $this->UserUploads->countAll($archivedQuery),
+            );
+        } finally {
+            $Db->rollBack();
+        }
     }
 
     public function testRead(): void

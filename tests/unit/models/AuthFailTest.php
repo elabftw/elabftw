@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Services\DeviceToken;
+use Elabftw\Auth\DeviceToken;
 
 class AuthFailTest extends \PHPUnit\Framework\TestCase
 {

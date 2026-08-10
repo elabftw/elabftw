@@ -183,7 +183,21 @@ on('toggle-modal', async (el: HTMLElement) => {
   // set the title for modal window
   document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
   // get the file content
-  const response = await fetch(`app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`);
+  const params = new URLSearchParams({
+    storage: el.dataset.storage,
+    f: el.dataset.path,
+  });
+  const accessKey = new URLSearchParams(
+    window.location.search,
+  ).get('access_key');
+
+  if (accessKey) {
+    params.set('access_key', accessKey);
+  }
+
+  const response = await fetch(
+    `app/download.php?${params.toString()}`,
+  );
   const plainTextContentDiv = document.getElementById('plainTextContentDiv');
   if (el.dataset.ext === 'md') {
     plainTextContentDiv.innerHTML = DOMPurify.sanitize(await marked(await response.text()), { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });
@@ -208,52 +222,50 @@ on('toggle-modal', async (el: HTMLElement) => {
   }
 });
 
+displayPlasmidViewer(entity);
+displayMoleculeViewer();
+
+// MAKE FILE COMMENTS EDITABLE
+const malleableFilecomment = new Malle({
+  formClasses: ['d-inline-flex'],
+  fun: async (value, original) => {
+    const uploadid = parseInt(original.dataset.id, 10);
+    return ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {'comment': value})
+      .then(resp => resp.json()).then(json => json.comment);
+  },
+  inputClasses: ['form-control'],
+  listenOn: '.file-comment.editable',
+  onBlur: MalleAction.Submit,
+  onEdit: (original, event, input) => {
+    // remove the default text
+    // we use a data-isempty attribute so "Click to add comment" can be translated
+    if (original.dataset.isempty === '1') {
+      input.value = '';
+      original.dataset.isempty = '0';
+      return true;
+    }
+  },
+  returnedValueIsTrustedHtml: false,
+  tooltip: i18next.t('upload-file-comment'),
+});
+malleableFilecomment.listen();
+
+// reload uploads div when using spreadsheet editor (iframe sends message to parent window)
+window.addEventListener('message', (event) => {
+  if (event.origin !== window.location.origin) return;
+  if (event.data !== 'uploadsDiv') return;
+  reloadElements(['uploadsDiv']);
+});
+
+// ACTIVATE FANCYBOX
+$('[data-fancybox]').fancybox();
+
 const uploadsDiv = document.getElementById('uploadsDiv');
-if (uploadsDiv) {
-  displayPlasmidViewer(entity);
+new MutationObserver(() => {
   displayMoleculeViewer();
-
-  // MAKE FILE COMMENTS EDITABLE
-  const malleableFilecomment = new Malle({
-    formClasses: ['d-inline-flex'],
-    fun: async (value, original) => {
-      const uploadid = parseInt(original.dataset.id, 10);
-      return ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {'comment': value})
-        .then(resp => resp.json()).then(json => json.comment);
-    },
-    inputClasses: ['form-control'],
-    listenOn: '.file-comment.editable',
-    onBlur: MalleAction.Submit,
-    onEdit: (original, event, input) => {
-      // remove the default text
-      // we use a data-isempty attribute so "Click to add comment" can be translated
-      if (original.dataset.isempty === '1') {
-        input.value = '';
-        original.dataset.isempty = '0';
-        return true;
-      }
-    },
-    returnedValueIsTrustedHtml: false,
-    tooltip: i18next.t('upload-file-comment'),
-  });
+  displayPlasmidViewer(entity);
   malleableFilecomment.listen();
-
-  // reload uploads div when using spreadsheet editor (iframe sends message to parent window)
-  window.addEventListener('message', (event) => {
-    if (event.origin !== window.location.origin) return;
-    if (event.data !== 'uploadsDiv') return;
-    reloadElements(['uploadsDiv']);
-  });
-
-  // ACTIVATE FANCYBOX
-  $('[data-fancybox]').fancybox();
-
-  new MutationObserver(() => {
-    displayMoleculeViewer();
-    displayPlasmidViewer(entity);
-    malleableFilecomment.listen();
-    (new Uploader()).init();
-    relativeMoment();
-    // don't use option {subtree: true} or there is an infinite loop that will destroy the world
-  }).observe(uploadsDiv, {childList: true});
-}
+  (new Uploader()).init();
+  relativeMoment();
+  // don't use option {subtree: true} or there is an infinite loop that will destroy the world
+}).observe(uploadsDiv, {childList: true});

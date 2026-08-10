@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @package   Elabftw\Elabftw
+ * @author    Nicolas CARPi / Deltablot
+ * @copyright 2025 Nicolas CARPi
+ * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
+ * @see       https://www.elabftw.net Official website
+ */
+
+declare(strict_types=1);
+
+namespace Elabftw\Interfaces;
+
+use Elabftw\Auth\InitialTeamSelectionRequired;
+use Elabftw\Elabftw\Authentication;
+
+interface AuthenticatorInterface
+{
+    public function authenticate(): Authentication|InitialTeamSelectionRequired;
+}

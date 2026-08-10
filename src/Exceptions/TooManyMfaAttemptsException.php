@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @package   Elabftw\Elabftw
+ * @author    Nicolas CARPi / Deltablot
+ * @copyright 2026 Nicolas CARPi
+ * @license   https://www.gnu.org/licenses/agpl-3.0.html AGPL-3.0
+ * @see       https://www.elabftw.net Official website
+ */
+
+declare(strict_types=1);
+
+namespace Elabftw\Exceptions;
+
+use Override;
+
+use function _;
+
+final class TooManyMfaAttemptsException extends UnauthorizedException
+{
+    #[Override]
+    protected function getErrorMessage(): string
+    {
+        return _('Too many invalid authentication codes. Please try again later.');
+    }
+}

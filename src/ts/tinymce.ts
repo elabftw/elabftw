@@ -68,9 +68,10 @@ import { EntityType, Model } from './interfaces';
 import { reloadElements, escapeExtendedQuery, updateEntityBody, getNewIdFromPostRequest } from './misc';
 import { ApiC } from './api';
 import { isSortable } from './TableSorting.class';
-import type { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 declare const MathJax: MathJaxObject;
 import { entity } from './getEntity';
+import { isDarkTheme } from './theme';
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -210,7 +211,7 @@ export function getTinymceBaseConfig(page: string): object {
     removedMenuItems = 'newdocument, anchor';
   }
 
-  const isDark = document.documentElement.classList.contains('dark-mode');
+  const isDark = isDarkTheme();
   const templateEndpoint = (entity.type === EntityType.Experiment || entity.type === EntityType.Template)
     ? EntityType.Template
     : EntityType.ItemType;
@@ -538,15 +539,15 @@ export function getTinymceBaseConfig(page: string): object {
           // declaration as iFrame element required to avoid errors with getting srcdoc property
           const iframe = (document.querySelector('iframe.tox-dialog__iframe') as HTMLIFrameElement);
           if (iframe) {
-            iframe.onload = () => {
+            iframe.onload = async () => {
               const tinyDiv = document.createElement('div');
               tinyDiv.setAttribute('class', 'mce-content-body mce-preview-body');
-              iframe.contentDocument.body.childNodes.forEach((node) => {
+              Array.from(iframe.contentDocument.body.childNodes).forEach((node) => {
                 tinyDiv.append(node);
               });
               // iframe replaced with div element because MathJax otherwise doesn't render menus properly; see #5295
               iframe.replaceWith(tinyDiv);
-              MathJax.typesetPromise();
+              await MathJax.typesetPromise().catch(error => console.error(error));
             };
           }
         }

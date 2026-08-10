@@ -17,38 +17,29 @@ const MinimizerPlugin = require('minimizer-webpack-plugin');
 const webpack = require('webpack');
 const sveltePreprocess = require('svelte-preprocess');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const mathjaxNewcmRoot = path.resolve(
+  path.dirname(
+    require.resolve('@mathjax/mathjax-newcm-font/js/svg.js'),
+  ),
+  '..',
+);
 
-module.exports = (env) => {
+module.exports = (env, argv) => {
+  const mode = argv.mode ?? 'production';
+  const isDevelopment = mode === 'development';
   return {
     entry: {
       main: [
         './src/scss/main.scss',
         './src/ts/common.ts',
+        './src/ts/page-loader.ts',
         './src/ts/create-new.ts',
         './src/ts/i18n.ts',
-        './src/ts/steps-links.ts',
-        './src/ts/chem-editor.ts',
         './src/ts/dspace.ts',
-        './src/ts/ketcher-editor.jsx',
-        './src/ts/compounds-table.jsx',
-        './src/ts/users-table.jsx',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
-        './src/ts/profile.ts',
-        './src/ts/edit.ts',
-        './src/ts/scheduler.ts',
-        './src/ts/team.ts',
         './src/ts/metadata.ts',
-        './src/ts/uploads.ts',
-        './src/ts/todolist.ts',
-        './src/ts/ucp.ts',
-        './src/ts/view.ts',
-        './src/ts/revisions.ts',
-        './src/ts/toolbar.ts',
-        './src/ts/editusers.ts',
         './src/ts/show.ts',
-        './src/ts/sysconfig.ts',
-        './src/ts/opencloning.ts',
         'bootstrap/js/src/alert.js',
         'bootstrap/js/src/button.js',
         'bootstrap/js/src/collapse.js',
@@ -89,26 +80,29 @@ module.exports = (env) => {
         './src/ts/spreadsheet-utils.ts',
       ],
     },
-    // uncomment this to find where the error is coming from
-    // makes the build slower
-    //devtool: 'inline-source-map',
-    mode: 'production',
+    // faster but less precise source map
+    devtool: isDevelopment ? 'cheap-module-source-map' : false,
+    mode,
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'web/assets')
     },
     optimization: {
       splitChunks: {
-        chunks: 'all',
-        name: 'vendor',
+        chunks: 'async',
       },
-      minimize: true,
+      minimize: !isDevelopment,
       minimizer: [
-        '...',
+        // use parallel option to reduce RAM usage from parallelization during minimization
+         new MinimizerPlugin({
+          test: /\.[cm]?js(\?.*)?$/i,
+          parallel: 4,
+          minify: MinimizerPlugin.terserMinify,
+        }),
         new MinimizerPlugin({
           test: /\.css(\?.*)?$/i,
+          parallel: 4,
           minify: MinimizerPlugin.cssnanoMinify,
-          // Options - https://cssnano.github.io/cssnano/docs/config-file/
           minimizerOptions: {
             preset: 'default',
           },
@@ -136,6 +130,11 @@ module.exports = (env) => {
             to: '[name][ext]',
             noErrorOnMissing: false,
           },
+          {
+            from: path.join(mathjaxNewcmRoot, 'svg', 'dynamic'),
+            to: 'mathjax/mathjax-newcm-font/svg/dynamic',
+            noErrorOnMissing: false,
+          },
         ],
       }),
     ],
@@ -157,7 +156,7 @@ module.exports = (env) => {
             loader: 'ts-loader',
             options: {
               // in prod, we don't have the types of some libs, use transpileOnly to avoid errors
-              transpileOnly: env.production
+              transpileOnly: !isDevelopment,
               }
           },
         },
@@ -168,7 +167,15 @@ module.exports = (env) => {
             loader: 'svelte-loader',
             options: {
               emitCss: true,
-              preprocess: sveltePreprocess(),
+              preprocess: sveltePreprocess({
+                // preserve value imports used only in Svelte markup, such as child components.
+                // without this, TypeScript may remove them as unused before Svelte compiles the template
+                typescript: {
+                  compilerOptions: {
+                    verbatimModuleSyntax: true,
+                  },
+                },
+              }),
             },
           },
         },
@@ -186,11 +193,16 @@ module.exports = (env) => {
         },
         { // SASS loader
           test: /\.scss$/,
-          type: 'asset/resource',
-          generator: {
-            filename: 'elabftw.min.css',
-          },
-          use: ['sass-loader'],
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                url: false,
+              },
+            },
+            'sass-loader',
+          ],
         },
         {
           test: /.(jpg|jpeg|png|svg)$/,

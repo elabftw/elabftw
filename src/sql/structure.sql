@@ -63,7 +63,9 @@ CREATE TABLE `authfail` (
   `users_id` int(10) UNSIGNED NOT NULL,
   `attempt_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `device_token` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_authfail_users_attempt_time` (`users_id`, `attempt_time`),
+  KEY `idx_authfail_device_attempt_time` (`device_token`, `attempt_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -1342,7 +1344,7 @@ CREATE TABLE `users` (
   `orcid` varchar(19) NULL DEFAULT NULL,
   `orgid` varchar(255) NULL DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `token` varchar(255) DEFAULT NULL,
+  `token` char(32) CHARACTER SET ascii COLLATE ascii_bin NULL DEFAULT NULL,
   `token_created_at` TIMESTAMP NULL DEFAULT NULL,
   `limit_nb` tinyint UNSIGNED NOT NULL DEFAULT 15,
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',
@@ -1398,7 +1400,26 @@ CREATE TABLE `users` (
   `can_manage_compounds` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `can_manage_inventory_locations` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `theme_variant` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `primary_bg` CHAR(6) DEFAULT NULL,
+  `primary_fg` CHAR(6) DEFAULT NULL,
   PRIMARY KEY (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mfa_rate_limits`
+--
+
+CREATE TABLE `mfa_rate_limits` (
+  `users_id` int(10) UNSIGNED NOT NULL,
+  `failed_attempts` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `first_failed_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `locked_until` datetime DEFAULT NULL,
+  PRIMARY KEY (`users_id`),
+  CONSTRAINT `fk_mfa_rate_limits_user`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -2334,6 +2355,7 @@ ALTER TABLE `experiments_templates_edit_mode`
 --
 ALTER TABLE `users` ADD INDEX `idx_users_email_userid` (email, userid);
 ALTER TABLE `users` ADD INDEX `idx_users_orgid_userid` (orgid, userid);
+ALTER TABLE `users` ADD UNIQUE INDEX `idx_users_token` (`token`);
 
 --
 -- Indexes and Constraints for table `users2teams`

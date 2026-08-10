@@ -5,53 +5,55 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-@import 'variables';
-/* import this first to be able to modify bootstrap theme */
-@import 'bootstrap/scss/functions';
-@import 'bootstrap/scss/variables';
-/* override bootstrap theme */
-$theme-colors: (
-  'primary': $elabblue,
-  'secondary': $medium,
-  'danger': $dangerred,
-  'neutral': $medium,
+@use 'sass:meta';
+@use 'variables' as *;
+@use './fontawesome/variables' as fontawesome with (
+  $fa-font-path: $fa-font-path,
 );
 
-$dropdown-link-active-bg: var(--primary);
-/* make the non active link in navbar have slightly more contrast */
-$navbar-dark-color: var(--chrome-fg);
-$text-muted: var(--medium);
-@import 'bootstrap/scss/bootstrap';
-@import 'prismjs/themes/prism';
-@import '@deltablot/dropzone/src/dropzone';
-@import '@fancyapps/fancybox/dist/jquery.fancybox';
-@import 'jquery-ui/themes/base/core';
-@import 'jquery-ui/themes/base/autocomplete';
-@import 'jquery-ui/themes/base/menu';
-@import 'jquery-ui/themes/base/sortable';
-@import 'jquery-ui/themes/base/theme';
+/* import this first to be able to modify bootstrap theme */
+@include meta.load-css('bootstrap/scss/bootstrap', $with: (
+  'theme-colors': (
+    'primary': $elabblue,
+    'secondary': $medium,
+    'danger': $dangerred,
+    'neutral': $medium,
+  ),
+  'dropdown-link-active-bg': var(--primary),
+  // Make the non-active link in the navbar have slightly more contrast.
+  'navbar-dark-color': var(--chrome-fg),
+  'text-muted': var(--medium),
+));
+@include meta.load-css('prismjs/themes/prism');
+@include meta.load-css('@deltablot/dropzone/src/dropzone');
+@include meta.load-css('@fancyapps/fancybox/dist/jquery.fancybox');
+@include meta.load-css('jquery-ui/themes/base/core');
+@include meta.load-css('jquery-ui/themes/base/autocomplete');
+@include meta.load-css('jquery-ui/themes/base/menu');
+@include meta.load-css('jquery-ui/themes/base/sortable');
+@include meta.load-css('jquery-ui/themes/base/theme');
 
-@import './fontawesome/fontawesome';
-@import './fontawesome/solid';
-@import './fontawesome/brands';
-@import './fontawesome/regular';
-@import 'material-icons';
+@include meta.load-css('./fontawesome/fontawesome');
+@include meta.load-css('./fontawesome/solid');
+@include meta.load-css('./fontawesome/brands');
+@include meta.load-css('./fontawesome/regular');
+@include meta.load-css('material-icons');
 
-@import 'animations';
-@import 'autocomplete';
-@import 'buttons';
-@import 'charts';
-@import 'footer';
-@import 'header';
-@import 'star-rating';
-@import 'jsoneditor';
-@import 'ove';
-@import 'spreadsheet-editor';
-@import 'search-syntax-highlighting';
-@import 'tom-select';
-@import 'tinymce';
-@import 'prism';
-@import 'skeletons';
+@include meta.load-css('animations');
+@include meta.load-css('autocomplete');
+@include meta.load-css('buttons');
+@include meta.load-css('charts');
+@include meta.load-css('footer');
+@include meta.load-css('header');
+@include meta.load-css('star-rating');
+@include meta.load-css('jsoneditor');
+@include meta.load-css('ove');
+@include meta.load-css('spreadsheet-editor');
+@include meta.load-css('search-syntax-highlighting');
+@include meta.load-css('tom-select');
+@include meta.load-css('tinymce');
+@include meta.load-css('prism');
+@include meta.load-css('skeletons');
 
 /* Font is Lato */
 @font-face {
@@ -166,11 +168,11 @@ hr {
 /* LINKS */
 a,
 .link-like {
-  color: var(--primary);
+  color: var(--link);
   text-decoration: none;
 
   &:hover {
-    color: color-mix(in srgb, var(--primary) 85%, $white);
+    color: var(--link-hover);
     text-decoration: underline;
   }
 }
@@ -194,11 +196,11 @@ select:not([multiple]) {
 
 .form-control {
   background-color: var(--white);
-  border: 1px solid var(--firstlevel);
+  border: 1px solid var(--thirdlevel);
   color: var(--strongest);
 }
 
-.dark-mode {
+:is(.dark-mode, .midnight) {
   :where(input, textarea).form-control:read-only,
   .form-control:disabled {
     background-color: var(--firstlevel);
@@ -220,12 +222,6 @@ select:not([multiple]) {
     color: var(--mediumstrong);
   }
 
-  .hover-danger:hover {
-    background-color: var(--darkred);
-    border-color: var(--lightred);
-  }
-
-  /* autocomplete */
   .ui-autocomplete {
     background: var(--mainbackground);
   }
@@ -234,12 +230,15 @@ select:not([multiple]) {
     color: var(--strongest);
   }
 
+  .dropdown-divider {
+    border-top: 1px solid var(--thirdlevel);
+  }
 }
 
 .logo-dark { display: none; }
 
-.dark-mode .logo-dark { display: block; }
-.dark-mode .logo-light { display: none; }
+:is(.dark-mode, .midnight) .logo-dark { display: block; }
+:is(.dark-mode, .midnight) .logo-light { display: none; }
 
 /* prevent the caret from being too close from text */
 /* stylelint-disable-next-line selector-no-qualifying-type */
@@ -480,7 +479,7 @@ button:disabled {
 .beta {
   background: var(--primary);
   border-radius: 5px;
-  color: var(--white);
+  color: var(--strongest);
   display: inline-block;
   font-family: sans-serif;
   font-size: 10px;
@@ -690,7 +689,7 @@ tr:first-child td {
 }
 
 .overlay p {
-  color: var(--chrome-fg);
+  color: var(--primary-fg);
   font-weight: bold;
   margin-bottom: 0;
 }
@@ -870,7 +869,7 @@ tr:first-child td {
 
 .list-group-item {
   background-color: var(--white);
-  border: 1px solid var(--secondary);
+  border: 1px solid var(--thirdlevel);
 }
 
 .side-panel {
@@ -1193,8 +1192,8 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 /* replace flex container with a responsive grid */
-.suggested-tags-menu,
-.show-more-filters-menu {
+.suggested-tags-popover,
+.show-more-filters-popover {
   background: var(--white);
   border-radius: 5px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -1210,7 +1209,7 @@ the form-control fails to do that so we do the border ourselves */
   z-index: 100;
 }
 
-.show-more-filters-menu {
+.show-more-filters-popover {
   gap: 0.75rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   min-width: min(42rem, 90vw);
@@ -1943,7 +1942,7 @@ input:user-invalid {
 }
 
 #devPerfDiv {
-  background-color: $white;
+  background-color: var(--white);
   bottom: 0;
   left: 0;
   position: fixed;
@@ -1978,6 +1977,14 @@ div > .sticky-navbar {
   transition: top 0.2s ease;
   width: 100%;
   z-index: 50;
+}
+
+/* chemical compounds danger (hazard pictograms) */
+.ghs-pictogram {
+  background-color: var(--chrome-fg);
+  border-radius: 2px;
+  max-height: 3rem;
+  max-width: 3rem;
 }
 
 .sticky-navbar.hidden {

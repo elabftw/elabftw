@@ -55,6 +55,8 @@ enum UsersColumn: string
     case Orgid = 'orgid';
     case PdfFormat = 'pdf_format';
     case PdfSignature = 'pdf_sig';
+    case PrimaryBg = 'primary_bg';
+    case PrimaryFg = 'primary_fg';
     case ScCreate = 'sc_create';
     case ScEdit = 'sc_edit';
     case ScopeExperiments = 'scope_experiments';

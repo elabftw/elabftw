@@ -16,55 +16,44 @@ use Elabftw\Exceptions\ImproperActionException;
 
 class PasswordValidatorTest extends \PHPUnit\Framework\TestCase
 {
-    private PasswordValidator $PasswordValidator;
-
-    protected function setUp(): void
-    {
-        $this->PasswordValidator = new PasswordValidator(6, PasswordComplexity::None);
-
-    }
-
     public function testPasswordLength(): void
     {
         // 12 chars ascii
-        $this->assertTrue($this->PasswordValidator->validate('abcdefghijkl'));
+        $this->assertTrue(new PasswordValidator(6, PasswordComplexity::None, 'abcdefghijkl')->validate());
         $this->expectException(ImproperActionException::class);
-        $this->PasswordValidator->validate('aa');
+        new PasswordValidator(6, PasswordComplexity::None, 'ab')->validate();
     }
 
     public function testPasswordJapanese(): void
     {
         // 12 chars japanese
-        $this->assertTrue($this->PasswordValidator->validate('みうろねかたへゆのけをけ'));
+        $this->assertTrue(new PasswordValidator(6, PasswordComplexity::None, 'みうろねかたへゆのけをけ')->validate());
 
         // 5 chars japanese
         $this->expectException(ImproperActionException::class);
-        $this->PasswordValidator->validate('みうろねか');
+        new PasswordValidator(6, PasswordComplexity::None, 'みうろねか')->validate();
     }
 
     public function testPasswordWeak(): void
     {
-        $PasswordValidator = new PasswordValidator(6, PasswordComplexity::Weak);
-        $this->assertTrue($PasswordValidator->validate('Abcdef'));
+        $this->assertTrue(new PasswordValidator(6, PasswordComplexity::Weak, 'Abcdef')->validate());
         // no capital letters but japanese characters
-        $this->assertTrue($PasswordValidator->validate('みうろねのけをけか'));
+        $this->assertTrue(new PasswordValidator(6, PasswordComplexity::Weak, 'みうろねのけをけか')->validate());
         $this->expectException(ImproperActionException::class);
-        $PasswordValidator->validate('abcdefghijkl');
+        new PasswordValidator(6, PasswordComplexity::Weak, 'abcdefghijkl')->validate();
     }
 
     public function testPasswordMedium(): void
     {
-        $PasswordValidator = new PasswordValidator(6, PasswordComplexity::Medium);
-        $this->assertTrue($PasswordValidator->validate('Abcdefghijkl6'));
+        $this->assertTrue(new PasswordValidator(6, PasswordComplexity::Medium, 'Abcdefghijkl6')->validate());
         $this->expectException(ImproperActionException::class);
-        $PasswordValidator->validate('Abcdefghijkl');
+        new PasswordValidator(6, PasswordComplexity::Medium, 'Abcdefghijkl')->validate();
     }
 
     public function testPasswordStrong(): void
     {
-        $PasswordValidator = new PasswordValidator(6, PasswordComplexity::Strong);
-        $this->assertTrue($PasswordValidator->validate('Abcdefghijkl6.'));
+        $this->assertTrue(new PasswordValidator(6, PasswordComplexity::Strong, 'Abcdefghijkl6.')->validate());
         $this->expectException(ImproperActionException::class);
-        $PasswordValidator->validate('Abcdefghijkl6');
+        new PasswordValidator(6, PasswordComplexity::Strong, 'Abcdefghijkl6')->validate();
     }
 }

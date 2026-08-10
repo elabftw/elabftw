@@ -20,11 +20,13 @@ import {
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
+import { getAgGridTheme } from "./theme";
 
 // allow filtering by displayed values for cells that render their raw value differently
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
@@ -121,7 +123,6 @@ const EntitiesTable = ({
   relatedOrigin = '',
 }) => {
   const [rowData, setRowData] = useState([]);
-  const isDark = document.documentElement.classList.contains('dark-mode');
 
   const onGridReady = () => {
     fetchData();
@@ -219,6 +220,12 @@ const EntitiesTable = ({
 
   const getRowId = useCallback(params => String(params.data.id), []);
 
+  const processRowPostCreate = useCallback(params => {
+    if (params.node.data?.id) {
+      params.eRow.dataset.entityId = String(params.node.data.id);
+    }
+  }, []);
+
   // Load data on component mount and reload when entity filters change
   useEffect(() => {
     const handleEntityFiltersChanged = event => {
@@ -245,9 +252,9 @@ const EntitiesTable = ({
     }
 
     if (selectedIds.length > 0) {
-      withSelected.classList.remove('d-none');
+      withSelected.removeAttribute('hidden');
     } else {
-      withSelected.classList.add('d-none');
+      withSelected.setAttribute('hidden', 'hidden');
     }
   };
 
@@ -278,12 +285,13 @@ const EntitiesTable = ({
   return (
     <>
       <div
-        className={isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'} style={{ height: 650 }}>
+        className={getAgGridTheme()} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           getRowId={getRowId}
+          processRowPostCreate={processRowPostCreate}
           onGridReady={onGridReady}
           rowSelection={rowSelection}
           onCellClicked={cellClicked}

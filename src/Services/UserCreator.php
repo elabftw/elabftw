@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Config;
@@ -51,6 +52,7 @@ final class UserCreator
         return (new Users(null, null, $this->requester))->createOne(
             email: (new UserParams('email', $this->reqBody['email']))->getStringContent(),
             teams: $teams,
+            localPassword: new NullLocalPassword(),
             firstname: (new UserParams('firstname', $this->reqBody['firstname']))->getStringContent(),
             lastname: (new UserParams('lastname', $this->reqBody['lastname']))->getStringContent(),
             usergroup: Check::usergroup($this->requester, Usergroup::from((int) ($this->reqBody['usergroup'] ?? Usergroup::User->value))),

@@ -43,8 +43,8 @@ class ExclusiveEditModeTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->Experiments->ExclusiveEditMode->isActive());
         $this->assertTrue($this->Visitor->ExclusiveEditMode->isActive());
         $exclusiveArr = $this->Experiments->ExclusiveEditMode->readOne();
-        $this->assertEquals(1, $exclusiveArr['locked_by']);
-        $this->assertEquals('Toto Le sysadmin', $exclusiveArr['locked_by_human']);
+        $this->assertEquals($this->Experiments->Users->getUserid(), $exclusiveArr['locked_by']);
+        $this->assertEquals('Toto Le Sysadmin', $exclusiveArr['locked_by_human']);
         $this->assertIsString($exclusiveArr['locked_at']);
         $this->assertEquals(19, strlen($exclusiveArr['locked_at']));
         $this->Experiments->patch(Action::Update, array('title' => $this->Experiments->entityData['title']));

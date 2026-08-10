@@ -46,6 +46,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->logger,
             EntityType::Items,
@@ -67,6 +68,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         );
 
         $Import = new Csv(
+            new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->logger,
@@ -90,6 +92,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->logger,
             EntityType::Items,
@@ -111,12 +114,37 @@ class CsvTest extends \PHPUnit\Framework\TestCase
 
         $Import = new Csv(
             new Users(1, 1),
+            new Users(1, 1),
             $uploadedFile,
             $this->logger,
             EntityType::Items,
             category: 1,
         );
         $this->expectException(ImproperActionException::class);
+        $Import->import();
+    }
+
+    public function testImportRejectsInvalidExplicitMetadata(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/invalid-metadata.csv',
+            'invalid-metadata.csv',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Csv(
+            new Users(1, 1),
+            new Users(1, 1),
+            $uploadedFile,
+            $this->logger,
+            EntityType::Items,
+            category: 1,
+        );
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Invalid metadata JSON provided.');
         $Import->import();
     }
 
@@ -135,6 +163,7 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $requester = new Users(2, 1);
         $category = 1;
         $Import = new Csv(
+            $requester,
             $requester,
             $uploadedFile,
             $this->logger,

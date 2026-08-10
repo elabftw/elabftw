@@ -13,22 +13,21 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Services\Filter;
 use PDO;
 
 use function bin2hex;
-use function hash;
 use function random_bytes;
-use function mb_strlen;
+use function strlen;
 
 /**
  * The cookie "token" acts as a key to login back thanks to the cookie value and the value stored in database
  */
 final class CookieToken
 {
-    /** cookie is a sha256 sum: 64 chars */
-    private const int COOKIE_LENGTH = 64;
+    private const int COOKIE_RANDOM_BYTES = 16;
+
+    private const int COOKIE_HEX_LENGTH = self::COOKIE_RANDOM_BYTES * 2;
 
     private readonly string $token;
 
@@ -45,6 +44,9 @@ final class CookieToken
      */
     public function saveToken(int $userid): bool
     {
+        if ($this->token === '') {
+            return true;
+        }
         $sql = 'UPDATE users SET token = :token, token_created_at = NOW() WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':token', $this->getToken());
@@ -59,7 +61,7 @@ final class CookieToken
 
     public static function generate(): string
     {
-        return hash('sha256', bin2hex(random_bytes(self::COOKIE_LENGTH / 4)));
+        return bin2hex(random_bytes(self::COOKIE_RANDOM_BYTES));
     }
 
     public static function fromScratch(): self
@@ -72,8 +74,8 @@ final class CookieToken
         // filter out any non hexit
         $token = Filter::hexits($token);
         // and check length
-        if (mb_strlen($token) !== self::COOKIE_LENGTH) {
-            throw new IllegalActionException('Cookie token has invalid length!');
+        if (strlen($token) !== self::COOKIE_HEX_LENGTH) {
+            return '';
         }
         return $token;
     }

@@ -11,6 +11,7 @@ import { Malle, InputType } from '@deltablot/malle';
 import type { SelectOptions } from '@deltablot/malle';
 import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
+import Heartbeat from './Heartbeat.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
 import {
   adjustHiddenState,
@@ -19,6 +20,7 @@ import {
   escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
+  getInput,
   getSafeElementById,
   getRandomColor,
   listenTrigger,
@@ -45,7 +47,7 @@ import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
 import { Action, EntityType, Model, LinkSubModel, SingularEntityType } from './interfaces';
-import type { MathJaxObject } from 'mathjax-full/js/components/startup';
+import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 declare const MathJax: MathJaxObject;
 import 'bootstrap-markdown-fa5/js/bootstrap-markdown';
 import 'bootstrap-markdown-fa5/locale/bootstrap-markdown.de.js';
@@ -74,6 +76,9 @@ import Tab from './Tab.class';
 import { core } from './core';
 import { get as getFromSvelte } from 'svelte/store';
 import { writable } from 'svelte/store';
+import { applyTheme, isThemeVariant, updateThemeControls } from './theme';
+import { mount } from 'svelte';
+import PrimaryColorPicker from './components/PrimaryColorPicker.svelte';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -200,35 +205,39 @@ if (navbar) {
 
 const container = document.getElementById('container')!;
 
-on('toggle-dark-mode', (el: HTMLElement) => {
-  const currentTheme = parseInt(el.dataset.currentTheme, 10);
-  // Auto (0) and Light (1) should both toggle to Dark (2)
-  const targetTheme = currentTheme === 2 ? 1 : 2;
+on('set-theme', (el: HTMLElement) => {
+  const targetTheme = Number.parseInt(el.dataset.themeVariant ?? '', 10);
+  if (!isThemeVariant(targetTheme)) {
+    return;
+  }
   ApiC.patch(`${Model.User}/me`, { theme_variant: targetTheme }).then(() => {
-    const isDark = targetTheme === 2;
-    document.documentElement.classList.toggle('dark-mode', isDark);
-    document.cookie = `theme_variant=${targetTheme}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
-    el.dataset.currentTheme = String(targetTheme);
+    applyTheme(targetTheme);
+    updateThemeControls(targetTheme);
+    document.cookie = [`theme_variant=${targetTheme}`, 'Path=/', 'Max-Age=31536000', 'SameSite=Lax', 'Secure'].join('; ');
+    const styles = getComputedStyle(document.documentElement);
+    const primaryBg = styles.getPropertyValue('--primary');
+    const primaryFg = styles.getPropertyValue('--primary-fg');
+
+    // also set the value of inputs in appearance when theme changes page
+    getInput('primaryBgInput').value = primaryBg;
+    getInput('primaryFgInput').value = primaryFg;
   });
 });
 
-// HEARTBEAT
-// this function is to check periodically that we are still authenticated
-// and show a message if we the session is not valid anymore but we are still on a page requiring auth
-// only run if we are an authenticated user
-if (core.isAuth) {
-  // check every 5 minutes
-  const heartRate = 300000;
-  setInterval(() => {
-    fetch('app/controllers/HeartBeat.php').then(response => {
-      if (!response.ok) {
-        clearLocalStorage();
-        alert('Your session expired!');
-        window.location.replace('login.php');
-      }
-    }).catch(error => alert(error));
-  }, heartRate);
+const primaryColorPickerTarget = document.getElementById('primary-color-picker');
+
+if (primaryColorPickerTarget) {
+  mount(PrimaryColorPicker, {
+    target: primaryColorPickerTarget,
+  });
 }
+
+// HEARTBEAT
+if (core.isAuth) {
+  new Heartbeat();
+}
+// END HEARTBEAT
+
 
 const FavTagC = new FavTag();
 const TodolistC = new Todolist();
@@ -249,6 +258,7 @@ TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
 makeSortableGreatAgain();
+bindMoreFiltersOutsideClick();
 mountRors();
 
 const userPrefs = document.getElementById('user-prefs').dataset;
@@ -1529,7 +1539,7 @@ on('toggle-body', (el: HTMLElement) => {
   if (el.dataset.revid) {
     queryUrl += `/revisions/${el.dataset.revid}`;
   }
-  ApiC.getJson(queryUrl).then(json => {
+  ApiC.getJson(queryUrl).then(async json => {
     // skip extra fields on the revisions page (focus remains on body). See #6053
     if (window.location.pathname !== '/revisions.php') {
       // add extra fields elements from metadata json
@@ -1549,8 +1559,8 @@ on('toggle-body', (el: HTMLElement) => {
     const width = document.getElementById('parent_' + randId).clientWidth - 30;
     bodyDiv.style.width = String(width);
 
-    // ask mathjax to reparse the page
-    MathJax.typeset();
+    // ask mathjax to parse the freshly loaded body
+    await MathJax.typesetPromise([bodyDiv]);
 
     TableSortingC.init();
 
@@ -1686,3 +1696,17 @@ container.addEventListener('click', (event: Event) => {
     }
   });
 });
+
+function bindMoreFiltersOutsideClick(): void {
+  document.querySelectorAll<HTMLElement>('[class*="-popover"]').forEach(popover => {
+    const details = popover.closest('details');
+    if (!details) return;
+
+    document.addEventListener('click', event => {
+      const target = event.target;
+      if (details.open && target instanceof Node && !details.contains(target)) {
+        details.open = false;
+      }
+    });
+  });
+}

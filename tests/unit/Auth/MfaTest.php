@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
  * @copyright 2012 Nicolas CARPi
@@ -13,25 +14,25 @@ namespace Elabftw\Auth;
 
 use Elabftw\Exceptions\InvalidMfaCodeException;
 use Elabftw\Services\MfaHelper;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class MfaTest extends \PHPUnit\Framework\TestCase
 {
     public function testTryAuthWithInvalidCode(): void
     {
-        $MfaHelper = new MfaHelper();
-        $AuthService = new Mfa($MfaHelper, 1, '12');
+        $verifier = new MfaVerifier(new Session());
         $this->expectException(InvalidMfaCodeException::class);
-        $AuthService->tryAuth();
+        $verifier->verify(1, '12');
     }
 
     public function testTryAuthWithValidCode(): void
     {
         $MfaHelper = new MfaHelper();
         $code = $MfaHelper->getCode();
-        $AuthService = new Mfa($MfaHelper, 1, $code);
-        $authResponse = $AuthService->tryAuth();
-        $this->assertTrue($authResponse->hasVerifiedMfa());
-        $this->assertEquals(1, $authResponse->getAuthUserid());
-        $this->assertEquals(1, $authResponse->getSelectedTeam());
+        $session = new Session();
+        $session->set('mfa_secret', $MfaHelper->secret);
+        $verifier = new MfaVerifier($session);
+        $verifier->verify(1, $code);
+        $this->assertFalse($session->has('mfa_secret'));
     }
 }

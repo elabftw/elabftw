@@ -20,3 +20,11 @@ if (document.getElementById('syc-root')) {
     './opencloning'
   );
 }
+
+// Profile page
+if (window.location.pathname === '/ucp.php') {
+  void import(
+    /* webpackChunkName: 'ucp' */
+    './ucp'
+  );
+}

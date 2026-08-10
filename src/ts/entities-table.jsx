@@ -220,6 +220,12 @@ const EntitiesTable = ({
 
   const getRowId = useCallback(params => String(params.data.id), []);
 
+  const processRowPostCreate = useCallback(params => {
+    if (params.node.data?.id) {
+      params.eRow.dataset.entityId = String(params.node.data.id);
+    }
+  }, []);
+
   // Load data on component mount and reload when entity filters change
   useEffect(() => {
     const handleEntityFiltersChanged = event => {
@@ -246,9 +252,9 @@ const EntitiesTable = ({
     }
 
     if (selectedIds.length > 0) {
-      withSelected.classList.remove('d-none');
+      withSelected.removeAttribute('hidden');
     } else {
-      withSelected.classList.add('d-none');
+      withSelected.setAttribute('hidden', 'hidden');
     }
   };
 
@@ -285,6 +291,7 @@ const EntitiesTable = ({
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           getRowId={getRowId}
+          processRowPostCreate={processRowPostCreate}
           onGridReady={onGridReady}
           rowSelection={rowSelection}
           onCellClicked={cellClicked}

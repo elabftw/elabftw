@@ -965,14 +965,18 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           // set bg red for failed entries
           for (const id of failedIds) {
-            (document.querySelector(`[data-entity-id="${id}"`) as HTMLElement).style.backgroundColor = 'var(--lightred)';
+            // for table mode we use a different approach, so this only applies to item mode
+            const elem = document.querySelector(`[data-entity-id="${id}"`) as HTMLElement;
+            if (elem) { elem.style.backgroundColor = 'var(--lightred)'; }
           }
 
           const modifiedCount = checked.length - failedIds.length;
 
           notify.warning(
-            'entity-patch-multi-warning', {count: modifiedCount, failed: failedIds.length, failedIds: failedIds.join(', ')},
+            'entity-patch-multi-warning', {count: modifiedCount, failed: failedIds.length},
           );
+          console.warn('Ids of entities that could not be modified are logged below:');
+          console.warn(failedIds);
         }
 
         return reloadEntitiesShow();

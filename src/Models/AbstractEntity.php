@@ -493,7 +493,7 @@ abstract class AbstractEntity extends AbstractRest
             throw new UnprocessableContentException(_('Only the Restore action is allowed on a deleted entity.'));
         }
         if ($state === State::Archived->value && ($action !== Action::Unarchive && $action !== Action::Archive)) {
-            throw new UnprocessableContentException(_('Only the Unarchive action is allowed on an archived entity.'));
+            throw new UnprocessableContentException(_('This action is not allowed on an archived entity.'));
         }
 
         $requiredAccess = AccessType::Write;
@@ -515,7 +515,7 @@ abstract class AbstractEntity extends AbstractRest
             Action::Archive => (
                 function () {
                     $this->update(new EntityParams('state', State::Archived->value));
-                    $this->lock();
+                    $this->idempotentLock();
                     // clear any request action
                     $RequestActions = new RequestActions($this->Users, $this);
                     $RequestActions->remove(RequestableAction::Archive);
@@ -952,6 +952,14 @@ abstract class AbstractEntity extends AbstractRest
         $Revisions->dbInsert($this->entityData['body']);
 
         return $this->readOne();
+    }
+
+    protected function idempotentLock(): array
+    {
+        if ($this->entityData['locked'] === 1) {
+            return array();
+        }
+        return $this->lock();
     }
 
     protected function copyEntityFrom(

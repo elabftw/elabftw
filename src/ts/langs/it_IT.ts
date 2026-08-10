@@ -55,7 +55,7 @@ const t = {
     "entity-default-title": "Senza titolo",
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
-    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified: {{failedIds, string}}",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, numero}} voci elaborate",
     "error": "Errore",
     "error-no-filename": "Manca il nome del file.",

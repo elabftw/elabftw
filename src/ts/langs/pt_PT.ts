@@ -55,7 +55,7 @@ const t = {
     "entity-default-title": "Sem título",
     "entity-delete-warning": "O(s) item(ns) selecionado(s) e todos os dados associados serão eliminados permanentemente. Esta ação não pode ser desfeita. Tem a certeza?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
-    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified: {{failedIds, string}}",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Erro",
     "error-no-filename": "File name is missing.",

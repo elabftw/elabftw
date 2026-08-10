@@ -55,7 +55,7 @@ const t = {
     "entity-default-title": "無題",
     "entity-delete-warning": "選択したアイテムとすべての関連データが完全に削除されます。これは、元に戻すことはできません。実行して良いですか？",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
-    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified: {{failedIds, string}}",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}}のエントリーが処理された",
     "error": "エラー",
     "error-no-filename": "ファイル名がありません。",

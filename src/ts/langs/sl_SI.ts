@@ -55,7 +55,7 @@ const t = {
     "entity-default-title": "Brez naslova",
     "entity-delete-warning": "Izbrani predmet(i) in vsi pridruženi podatki bodo trajno izbrisani. Tega ni mogoče razveljaviti. Ali si prepričan?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
-    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified: {{failedIds, string}}",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}} entries processed",
     "error": "Napaka",
     "error-no-filename": "File name is missing.",

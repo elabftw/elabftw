@@ -55,7 +55,7 @@ const t = {
     "entity-default-title": "Bez tytułu",
     "entity-delete-warning": "Wybrany element(y) i wszystkie powiązane z nim dane zostaną nieodwracalnie usunięte. Ta operacja nie może być cofnięta. Jesteś pewny?",
     "entity-apply-both-permissions-warning": "This will apply these permissions to both read and write permissions. Continue?",
-    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified: {{failedIds, string}}",
+    "entity-patch-multi-warning": "Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.",
     "entries-processed": "{{num, number}}wpisy przewoworzoni",
     "error": "Błąd",
     "error-no-filename": "Brak nazwy pliku",

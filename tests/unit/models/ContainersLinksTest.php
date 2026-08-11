@@ -471,7 +471,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $entry = $this->latestChangelogEntry($Item, 'container_deleted');
         $this->assertNotNull($entry);
-        $this->assertStringEndsNotWith(')', $entry['content']);
+        $this->assertStringEndsWith(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
     public function testCascadeDeleteIgnoresTheReasonRequirement(): void

@@ -96,9 +96,9 @@ RUN ./configure \
         --error-log-path=/dev/stderr \
         --http-log-path=/dev/stdout \
         --lock-path=/run/nginx/nginx.lock \
-        --http-client-body-temp-path=/var/cache/nginx/client_body \
-        --http-fastcgi-temp-path=/var/cache/nginx/fastcgi \
-        --http-proxy-temp-path=/var/cache/nginx/proxy \
+        --http-client-body-temp-path=/var/cache/elabftw/nginx/client_body \
+        --http-fastcgi-temp-path=/var/cache/elabftw/nginx/fastcgi \
+        --http-proxy-temp-path=/var/cache/elabftw/nginx/proxy \
         --with-threads \
         --with-http_ssl_module \
         --with-http_v2_module \
@@ -195,8 +195,6 @@ COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=nginx-builder /etc/nginx/mime.types /etc/nginx/mime.types
 COPY --from=nginx-builder /etc/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
 
-RUN mkdir /var/cache/nginx
-
 # END NGINX
 
 # OpenBabel
@@ -290,6 +288,10 @@ RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/php
 # ELABFTW
 RUN mkdir /elabftw
 WORKDIR /elabftw
+
+ENV TMPDIR=/var/cache/elabftw/php/tmp
+ENV COREPACK_HOME=/var/cache/elabftw/corepack
+
 # we only copy the strict necessary
 COPY ./bin /elabftw/bin
 COPY ./.babelrc /elabftw
@@ -306,7 +308,7 @@ COPY ./yarn.lock /elabftw
 COPY ./.yarnrc.yml /elabftw
 
 # COMPOSER
-ENV COMPOSER_HOME=/run/composer
+ENV COMPOSER_HOME=/var/cache/elabftw/composer
 # 2.10.2 https://github.com/composer/composer/releases/tag/2.10.2
 COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
 
@@ -324,13 +326,6 @@ ARG CI=0
 ENV CYPRESS_INSTALL_BINARY=0
 # avoid download prompt
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-# this is necessary for yarn install in dev mode, as /tmp is not writable
-ENV TMPDIR=/run/elabftw/cache
-RUN mkdir -p "$TMPDIR" && chmod 1777 "$TMPDIR"
-
-ENV COREPACK_HOME=/run/elabftw/cache/node/corepack
-RUN mkdir -p $COREPACK_HOME
-
 
 # enable new yarn
 RUN corepack enable
@@ -348,17 +343,13 @@ RUN if [ "$BUILD_ALL" = "1" ]; then \
             && yarn workspaces focus -A --production \
             && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a; \
         fi \
-        && rm -rf /run/elabftw/yarn /run/elabftw/cache /run/composer; \
+        && rm -rf /var/cache/elabftw; \
     fi
 # PHP: add php config after composer step so open_basedir is not an issue
 COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini.tpl
 RUN rm -f /etc/php84/php.ini && ln -s /run/php/php.ini /etc/php84/php.ini
 COPY ./containers/elabimg/php/php-fpm.conf /etc/php84/php-fpm.conf
 COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf.tpl
-
-# Make PHP write errors to stderr
-RUN mkdir -p /var/log/php84 && ln -sf /dev/stderr /var/log/php84/error.log
-
 # END PHP
 
 # create invoker service

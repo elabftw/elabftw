@@ -5,7 +5,7 @@
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     strictBinaryOperands="true"
-    cacheDirectory="/run/elabftw/psalm"
+    cacheDirectory="/var/cache/elabftw/php/cache"
     checkForThrowsInGlobalScope="true"
     ignoreInternalFunctionFalseReturn="true"
     ignoreInternalFunctionNullReturn="false"

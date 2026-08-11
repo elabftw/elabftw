@@ -19,9 +19,9 @@ use Symfony\Component\Console\Output\NullOutput;
 /**
  * For twig cached files
  */
-class TwigCache extends AbstractCache
+class TwigCache extends ParentCache
 {
-    protected const string FOLDER = '/run/elabftw/cache/twig';
+    protected const string FOLDER = parent::FOLDER . '/twig';
 
     #[Override]
     public function warm(): bool

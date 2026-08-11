@@ -133,7 +133,7 @@ module.exports = (env, argv) => {
           {
             from: path.resolve(
               __dirname,
-              '/run/elabftw/yarn/unplugged/indigo-ketcher-npm-*/node_modules/indigo-ketcher/**/*.wasm',
+              '/var/cache/elabftw/yarn/unplugged/indigo-ketcher-npm-*/node_modules/indigo-ketcher/**/*.wasm',
             ),
             to: '[name][ext]',
             noErrorOnMissing: false,

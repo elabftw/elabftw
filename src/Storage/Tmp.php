@@ -17,5 +17,5 @@ namespace Elabftw\Storage;
  */
 final class Tmp extends AbstractStorage
 {
-    protected const string FOLDER = '/run/elabftw/tmp';
+    protected const string FOLDER = '/var/cache/elabftw/php/tmp';
 }

@@ -21,7 +21,7 @@ $finder = Finder::create()
 ;
 
 return (new Config())
-    ->setCacheFile('/run/elabftw/cache/.php-cs-fixer.cache')
+    ->setCacheFile('/var/cache/elabftw/php/.php-cs-fixer.cache')
     ->setRules(array(
         '@PER-CS2x0' => true,
         '@PHP8x3Migration' => true,

@@ -193,6 +193,19 @@ try {
 
 
 } catch (UnauthorizedException $e) {
+    if (isset($App) && $Session->get('is_anon') === 1) {
+        // Boot with an explicit user to initialize data required by the error template.
+        $App->boot(new AnonymousUser(
+            $Session->get('team'),
+            Language::tryFrom($App->getLang()) ?? Language::EnglishGB,
+        ));
+
+        $Response = $e->getResponseFromException($App);
+        $Response->setStatusCode(Response::HTTP_FORBIDDEN);
+        $Response->send();
+        exit;
+    }
+
     // KICK USER TO LOGOUT PAGE THAT WILL REDIRECT TO LOGIN PAGE
     $cookieOptions = array(
         'expires' => time() + 30,

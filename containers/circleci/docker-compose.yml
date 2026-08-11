@@ -44,7 +44,8 @@ services:
     tmpfs:
       - /run/nginx:mode=1770,uid=1001,gid=1002
       - /run/php:mode=1770,uid=1001,gid=1002
-      - /var/cache/elabftw:mode=1770,uid=1001,gid=1002,exec,nosuid,nodev
+      - /var/cache/elabftw/php:mode=1770,uid=1001,gid=1002,exec,nosuid,nodev
+      - /var/cache/elabftw/nginx:mode=1770,uid=1001,gid=1002,noexec,nosuid,nodev
       - /elabftw/tests/_output:mode=1770,uid=1001,gid=1002
       - /elabftw/tests/_support/_generated:mode=1770,uid=1001,gid=1002
       - /var/lib/elabftw/exports:mode=755,uid=1001,gid=1002,noexec,nosuid,nodev

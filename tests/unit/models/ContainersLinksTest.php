@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -22,6 +23,7 @@ use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
 
 use function sprintf;
+use function str_repeat;
 
 class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 {
@@ -477,6 +479,51 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links->postAction(Action::Destroy, array('deletion_reason' => 'other'));
     }
 
+    public function testDeleteNoteLongerThanTheLimitIsRejected(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for long note test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        try {
+            $Links->postAction(Action::Destroy, array(
+                'deletion_reason' => 'other',
+                'deletion_note' => str_repeat('a', 256),
+            ));
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException) {
+            $this->addToAssertionCount(1);
+        }
+        // refused, not silently shortened
+        $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
+    }
+
+    public function testDeleteNoteAtTheLimitIsAccepted(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for max note test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $note = str_repeat('a', 255);
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->postAction(Action::Destroy, array(
+            'deletion_reason' => 'other',
+            'deletion_note' => $note,
+        ));
+
+        $entry = $this->latestChangelogEntry($Item, 'container_deleted');
+        $this->assertNotNull($entry);
+        $this->assertStringEndsWith(sprintf('(Other: %s)', $note), $entry['content']);
+    }
+
     public function testDeleteWithoutReasonIsFineWhenNotRequired(): void
     {
         $Item = $this->getFreshItem();
@@ -522,7 +569,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
     private function latestContainerRowId(string $table, int $itemId): int
     {
-        $Db = \Elabftw\Elabftw\Db::getConnection();
+        $Db = Db::getConnection();
         $req = $Db->prepare('SELECT id FROM ' . $table . ' WHERE item_id = :item_id ORDER BY id DESC LIMIT 1');
         $req->bindValue(':item_id', $itemId, PDO::PARAM_INT);
         $Db->execute($req);
@@ -531,7 +578,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
     private function setCaptureDeletionReason(int $value): void
     {
-        $Db = \Elabftw\Elabftw\Db::getConnection();
+        $Db = Db::getConnection();
         $req = $Db->prepare('UPDATE teams SET capture_container_deletion_reason = :value WHERE id = 1');
         $req->bindValue(':value', $value, PDO::PARAM_INT);
         $Db->execute($req);
@@ -539,7 +586,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
     private function readContainerQty(string $table, int $id): float
     {
-        $Db = \Elabftw\Elabftw\Db::getConnection();
+        $Db = Db::getConnection();
         $req = $Db->prepare('SELECT qty_stored FROM ' . $table . ' WHERE id = :id');
         $req->bindValue(':id', $id, PDO::PARAM_INT);
         $Db->execute($req);

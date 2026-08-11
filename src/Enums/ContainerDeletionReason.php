@@ -2,7 +2,7 @@
 
 /**
  * @author Jonathan Griffiths <jgriffiths@cyclanabio.com>
- * @copyright 2026 Jonathan Griffiths
+ * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw

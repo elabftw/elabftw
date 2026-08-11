@@ -2462,7 +2462,10 @@ paths:
                     deletion_note:
                       type: string
                       maxLength: 255
-                      description: Free text (255 characters max), required with the `other` reason.
+                      description: |
+                        Free text, required with the `other` reason. Anything
+                        longer than 255 characters is rejected with a 400, not
+                        truncated, so that no audit record is silently shortened.
                       example: 'spilled in transit'
       responses:
         '201':

@@ -38,9 +38,10 @@ use Throwable;
 use function array_key_exists;
 use function intval;
 use function json_encode;
-use function mb_substr;
+use function mb_strlen;
 use function number_format;
 use function sprintf;
+use function trim;
 use function _;
 
 /**
@@ -48,6 +49,9 @@ use function _;
  */
 abstract class AbstractContainersLinks extends AbstractLinks
 {
+    // keep in sync with the maxlength attribute on the modal input and maxLength in the api doc
+    private const int MAX_DELETION_NOTE_LENGTH = 255;
+
     #[Override]
     public function getApiPath(): string
     {
@@ -402,27 +406,34 @@ abstract class AbstractContainersLinks extends AbstractLinks
             // already gone: still run the DELETE (idempotent), just skip the changelog
         }
 
-        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $result = $this->Db->execute($req);
+        // the row and its audit entry go together: a lost changelog must not leave a deleted container behind
+        $this->Db->beginTransaction();
+        try {
+            $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            $result = $this->Db->execute($req);
 
-        if ($current !== null && $req->rowCount() > 0) {
-            new Changelog($this->Entity)->create(new ContentParams(
-                'container_deleted',
-                sprintf(
-                    'Removed container with %s %s from "%s" (container #%d)%s',
-                    $current['qty_stored'],
-                    $current['qty_unit'],
-                    $storagePath,
-                    (int) $current['id'],
-                    $reasonSuffix,
-                ),
-            ));
+            if ($current !== null && $req->rowCount() > 0) {
+                new Changelog($this->Entity)->create(new ContentParams(
+                    'container_deleted',
+                    sprintf(
+                        'Removed container with %s %s from "%s" (container #%d)%s',
+                        $current['qty_stored'],
+                        $current['qty_unit'],
+                        $storagePath,
+                        (int) $current['id'],
+                        $reasonSuffix,
+                    ),
+                ));
+            }
+            $this->Db->commit();
+            return $result;
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
         }
-
-        return $result;
     }
 
     /**
@@ -436,7 +447,16 @@ abstract class AbstractContainersLinks extends AbstractLinks
         }
         $reason = ContainerDeletionReason::tryFrom((string) ($params['deletion_reason'] ?? ''))
             ?? throw new ImproperActionException(_('A reason is required to delete a container.'));
-        $note = mb_substr(Filter::toPureString((string) ($params['deletion_note'] ?? '')), 0, 255);
+        $rawNote = trim((string) ($params['deletion_note'] ?? ''));
+        // reject rather than truncate: a silently shortened audit record is worse than a refused deletion.
+        // measured on the input, so the limit matches what the user typed and what the api doc advertises
+        if (mb_strlen($rawNote) > self::MAX_DELETION_NOTE_LENGTH) {
+            throw new ImproperActionException(sprintf(
+                _('The note is too long: %d characters maximum.'),
+                self::MAX_DELETION_NOTE_LENGTH,
+            ));
+        }
+        $note = Filter::toPureString($rawNote);
         if ($reason === ContainerDeletionReason::Other && $note === '') {
             throw new ImproperActionException(_('Please describe the reason for deleting this container.'));
         }

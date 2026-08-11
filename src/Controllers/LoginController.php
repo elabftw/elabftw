@@ -537,15 +537,18 @@ final class LoginController implements ControllerInterface
             throw new UnauthorizedException();
         }
 
+        $firstname = $info['firstname'];
+        $lastname = $info['lastname'];
+        if ($this->config['allow_users_change_identity'] === '1') {
+            $firstname = $this->Request->request->getString('teaminit_firstname');
+            $lastname = $this->Request->request->getString('teaminit_lastname');
+        }
+
         $user = ExistingUser::fromScratch(
             $info['email'],
             array($teamId),
-            $this->Request->request->getString(
-                'teaminit_firstname',
-            ),
-            $this->Request->request->getString(
-                'teaminit_lastname',
-            ),
+            $firstname,
+            $lastname,
             orgid: $info['orgid'] ?? null,
             orcid: $info['orcid'] ?? null,
         );

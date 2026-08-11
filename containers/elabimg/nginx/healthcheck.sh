@@ -3,10 +3,10 @@
 # © 2020 Nicolas CARPi
 # https://www.deltablot.com/elabftw
 
-# the nginx server can be in http or https
-protocol=http
-if [ "$DISABLE_HTTPS" = false ]; then
-    protocol=https
+# HTTPS is enabled by default unless DISABLE_HTTPS=true
+protocol='https'
+if [ "${DISABLE_HTTPS:-false}" = 'true' ]; then
+    protocol='http'
 fi
 
 # special endpoint healthcheck will reply 204 if nginx is up

@@ -23,7 +23,7 @@
     <meta name='session-expires-at' content='{{ sessionExpiresAt }}'>
   {% endif %}
   <meta name='csrf-token' content='{{ App.Session.get('csrf') }}'/>
-  <link rel='manifest' href='/manifest.webmanifest' crossorigin='use-credentials'>
+  <link rel='manifest' href='/manifest.webmanifest?v={{ v }}' crossorigin='use-credentials'>
   <link rel='icon' href='/assets/images/favicon.ico' sizes='any'>{# 32×32 #}
   <link rel='icon' href='/api/v2/instance/branding/{{ constant('Elabftw\\Enums\\Branding::Favicon').value }}?format=binary'>
   <link rel='apple-touch-icon' href='/assets/images/apple-touch-icon.png'>{# 180×180 #}

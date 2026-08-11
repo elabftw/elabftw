@@ -58,13 +58,26 @@ describe('Login page', () => {
     cy.get('div.alert.alert-success').should('contain', answer);
   });
 
-  it ('logs in as anonymous user', () => {
+  it ('keeps anonymous user logged in after denied page access', () => {
     cy.visit('/login.php');
     cy.get('#anon-login').should('exist');
     cy.get('#anon_login_select').select(0);
     cy.get('#anon-login button[type="submit"]').click();
     cy.location('pathname').should('eq', '/experiments.php');
     cy.htmlvalidate();
+
+    cy.request({
+      url: '/scheduler.php',
+      failOnStatusCode: false,
+      followRedirect: false,
+    }).its('status').should('eq', 403);
+    cy.getCookie('kickreason').should('not.exist');
+
+    cy.visit('/scheduler.php', { failOnStatusCode: false });
+    cy.location('pathname').should('eq', '/scheduler.php');
+    cy.contains('Authentication required');
+    cy.visit('/experiments.php');
+    cy.location('pathname').should('eq', '/experiments.php');
     cy.request('/app/logout.php');
   });
 });

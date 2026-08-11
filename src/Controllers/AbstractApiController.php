@@ -65,7 +65,7 @@ abstract class AbstractApiController extends AbstractController
          *   string(1) "4"
          *   }
          */
-        $req = explode('/', rtrim($this->Request->query->getString('req'), '/'));
+        $req = explode('/', rtrim($this->Request->server->getString('ELABFTW_API_REQUEST_URI'), '/'));
 
         // now parse the query string (part after ?)
         if ($this->Request->query->has('limit')) {

@@ -42,7 +42,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testGetResponse(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $Controller = new Apiv2Controller($user, Request::create('/api/v2/info/me&limit=12&offset=1&search=wtf', 'GET'));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/info/me?limit=12&offset=1&search=wtf', 'GET'));
         $res = $Controller->getResponse();
         $this->assertInstanceOf(JsonResponse::class, $res);
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());

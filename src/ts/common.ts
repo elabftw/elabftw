@@ -1065,7 +1065,7 @@ const destroyContainer = (id: string) =>
   ApiC.delete(`${entity.type}/${entity.id}/containers/${id}`).then(() => reloadStorageAndContainers());
 
 // DELETE carries no body, so a deletion reason goes through a POST instead
-const destroyContainerWithReason = (id: string, params: Record<string, string>) =>
+const destroyContainerWithReason = (id: string, params: Record<string, string | number>) =>
   ApiC.post(`${entity.type}/${entity.id}/containers/${id}`, Object.assign({ action: 'destroy' }, params))
     .then(() => reloadStorageAndContainers());
 
@@ -1087,10 +1087,11 @@ if (containerDeletionModal) {
   const reasonSelect = document.getElementById('containerDeletionReasonSelect') as HTMLSelectElement;
   const noteInput = document.getElementById('containerDeletionNoteInput') as HTMLInputElement;
   const confirmBtn = document.getElementById('containerDeletionConfirmBtn') as HTMLButtonElement;
-  // a note is only mandatory for the catch-all reason
+  // which reasons need a note is decided server-side, and tagged on the option
   const refreshConfirmBtn = () => {
+    const needsNote = reasonSelect.selectedOptions[0]?.dataset.requiresNote !== undefined;
     confirmBtn.disabled = reasonSelect.value === ''
-      || (reasonSelect.value === 'other' && noteInput.value.trim() === '');
+      || (needsNote && noteInput.value.trim() === '');
   };
   reasonSelect.addEventListener('change', refreshConfirmBtn);
   noteInput.addEventListener('input', refreshConfirmBtn);
@@ -1102,7 +1103,7 @@ if (containerDeletionModal) {
 
   on('destroy-container-confirm', () => {
     destroyContainerWithReason(containerDeletionModal.dataset.containerId, {
-      deletion_reason: reasonSelect.value,
+      deletion_reason: Number(reasonSelect.value),
       deletion_note: noteInput.value,
     }).then(() => $('#containerDeletionReasonModal').modal('hide'));
   });

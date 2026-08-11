@@ -14,7 +14,7 @@
           <select class='custom-select' id='containerDeletionReasonSelect'>
             <option value=''>{{ 'Select a reason'|trans }}</option>
             {% for case in enum('Elabftw\\Enums\\ContainerDeletionReason').cases %}
-              <option value='{{ case.value }}'>{{ case.toHuman() }}</option>
+              <option value='{{ case.value }}'{% if case.requiresNote() %} data-requires-note{% endif %}>{{ case.toHuman() }}</option>
             {% endfor %}
           </select>
         </div>

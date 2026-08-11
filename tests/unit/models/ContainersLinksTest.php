@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\ContainerDeletionReason;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -396,7 +397,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $rowId = $this->latestContainerRowId('containers2items', $Item->id);
 
         $Links = new Containers2ItemsLinks($Item, $rowId);
-        $Links->postAction(Action::Destroy, array('deletion_reason' => 'contaminated'));
+        $Links->postAction(Action::Destroy, array('deletion_reason' => ContainerDeletionReason::Contaminated->value));
 
         $entry = $this->latestChangelogEntry($Item, 'container_deleted');
         $this->assertNotNull($entry);
@@ -414,7 +415,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $Links = new Containers2ItemsLinks($Item, $rowId);
         $Links->postAction(Action::Destroy, array(
-            'deletion_reason' => 'other',
+            'deletion_reason' => ContainerDeletionReason::Other->value,
             'deletion_note' => '<b>spilled</b> in transit',
         ));
 
@@ -465,6 +466,31 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
     }
 
+    // a non numeric reason casts to 0, which matches no case: it must be refused, not mapped onto one
+    public function testDestroyActionWithAnInvalidReasonIsRejected(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for invalid reason test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        // 'contaminated' is what the enum was backed with before it became int-backed
+        foreach (array(999, 0, 'banana', 'contaminated') as $reason) {
+            try {
+                $Links->postAction(Action::Destroy, array('deletion_reason' => $reason));
+                $this->fail(sprintf('Expected ImproperActionException was not thrown for "%s".', $reason));
+            } catch (ImproperActionException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+        // nothing was destroyed by any of them
+        $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
+    }
+
     public function testDeleteWithOtherReasonRequiresANote(): void
     {
         $this->setCaptureDeletionReason(1);
@@ -476,7 +502,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $Links = new Containers2ItemsLinks($Item, $rowId);
         $this->expectException(ImproperActionException::class);
-        $Links->postAction(Action::Destroy, array('deletion_reason' => 'other'));
+        $Links->postAction(Action::Destroy, array('deletion_reason' => ContainerDeletionReason::Other->value));
     }
 
     public function testDeleteNoteLongerThanTheLimitIsRejected(): void
@@ -491,7 +517,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links = new Containers2ItemsLinks($Item, $rowId);
         try {
             $Links->postAction(Action::Destroy, array(
-                'deletion_reason' => 'other',
+                'deletion_reason' => ContainerDeletionReason::Other->value,
                 'deletion_note' => str_repeat('a', 256),
             ));
             $this->fail('Expected ImproperActionException was not thrown.');
@@ -515,7 +541,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $note = str_repeat('a', 255);
         $Links = new Containers2ItemsLinks($Item, $rowId);
         $Links->postAction(Action::Destroy, array(
-            'deletion_reason' => 'other',
+            'deletion_reason' => ContainerDeletionReason::Other->value,
             'deletion_note' => $note,
         ));
 

@@ -14,18 +14,22 @@ namespace Elabftw\Enums;
 
 use function _;
 
-enum ContainerDeletionReason: string
+/**
+ * Values are spaced so a reason can be slotted in later without renumbering, and none is 0
+ * so that a non numeric deletion_reason casts to 0 and fails tryFrom() instead of matching a case.
+ */
+enum ContainerDeletionReason: int
 {
-    case UsedInAuthorisedWork = 'used_in_authorised_work';
-    case NoLongerRequired = 'no_longer_required';
-    case ConsentWithdrawn = 'consent_withdrawn';
-    case ApprovalPeriodEnded = 'approval_period_ended';
-    case ShelfLifeExceeded = 'shelf_life_exceeded';
-    case Unsuitable = 'unsuitable';
-    case Contaminated = 'contaminated';
-    case StorageOrTransportIncident = 'storage_or_transport_incident';
-    case RegisteredInError = 'registered_in_error';
-    case Other = 'other';
+    case UsedInAuthorisedWork = 10;
+    case NoLongerRequired = 20;
+    case ConsentWithdrawn = 30;
+    case ApprovalPeriodEnded = 40;
+    case ShelfLifeExceeded = 50;
+    case Unsuitable = 60;
+    case Contaminated = 70;
+    case StorageOrTransportIncident = 80;
+    case RegisteredInError = 90;
+    case Other = 100;
 
     public function toHuman(): string
     {
@@ -41,5 +45,11 @@ enum ContainerDeletionReason: string
             self::RegisteredInError => _('Collected or registered in error'),
             self::Other => _('Other'),
         };
+    }
+
+    // a catch-all reason says nothing on its own, so it must be spelled out
+    public function requiresNote(): bool
+    {
+        return $this === self::Other;
     }
 }

@@ -445,7 +445,8 @@ abstract class AbstractContainersLinks extends AbstractLinks
         if (empty($teamConfig['capture_container_deletion_reason'])) {
             return '';
         }
-        $reason = ContainerDeletionReason::tryFrom((string) ($params['deletion_reason'] ?? ''))
+        // anything non numeric casts to 0, which matches no case, so a bad value is rejected like a missing one
+        $reason = ContainerDeletionReason::tryFrom((int) ($params['deletion_reason'] ?? 0))
             ?? throw new ImproperActionException(_('A reason is required to delete a container.'));
         $rawNote = trim((string) ($params['deletion_note'] ?? ''));
         // reject rather than truncate: a silently shortened audit record is worse than a refused deletion.
@@ -457,7 +458,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
             ));
         }
         $note = Filter::toPureString($rawNote);
-        if ($reason === ContainerDeletionReason::Other && $note === '') {
+        if ($reason->requiresNote() && $note === '') {
             throw new ImproperActionException(_('Please describe the reason for deleting this container.'));
         }
         return sprintf(' (%s)', $note === '' ? $reason->toHuman() : $reason->toHuman() . ': ' . $note);

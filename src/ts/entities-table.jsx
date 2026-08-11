@@ -11,6 +11,7 @@
  */
 import {
   ClientSideRowModelModule,
+  ColumnApiModule,
   ModuleRegistry,
   PaginationModule,
   RowSelectionModule,
@@ -27,6 +28,8 @@ import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
 import { getAgGridTheme } from "./theme";
+
+const COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
 
 // allow filtering by displayed values for cells that render their raw value differently
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
@@ -87,6 +90,27 @@ const applyNumberParamFallback = (params, param, fallback) => {
   }
 };
 
+const getStoredColumnState = () => {
+  try {
+    return JSON.parse(
+      localStorage.getItem(COLUMN_STATE_STORAGE_KEY) ?? 'null'
+    );
+  } catch {
+    return null;
+  }
+};
+
+const storeColumnState = api => {
+  try {
+    localStorage.setItem(
+      COLUMN_STATE_STORAGE_KEY,
+      JSON.stringify(api.getColumnState())
+    );
+  } catch {
+    // localStorage might be unavailable
+  }
+};
+
 const getEntityFilterParams = event => {
   const detail = event?.detail;
 
@@ -124,8 +148,24 @@ const EntitiesTable = ({
 }) => {
   const [rowData, setRowData] = useState([]);
 
-  const onGridReady = () => {
+  const onGridReady = event => {
+    const columnState = getStoredColumnState();
+
+    if (Array.isArray(columnState)) {
+      event.api.applyColumnState({
+        state: columnState,
+        applyOrder: true,
+      });
+    }
     fetchData();
+  };
+
+  const columnStateChanged = event => {
+    if (event.finished === false) {
+      return;
+    }
+
+    storeColumnState(event.api);
   };
 
   const PastDateRenderer = ({ value }) => {
@@ -292,6 +332,11 @@ const EntitiesTable = ({
           defaultColDef={defaultColDef}
           getRowId={getRowId}
           processRowPostCreate={processRowPostCreate}
+          onColumnResized={columnStateChanged}
+          onColumnMoved={columnStateChanged}
+          onColumnVisible={columnStateChanged}
+          onColumnPinned={columnStateChanged}
+          onSortChanged={columnStateChanged}
           onGridReady={onGridReady}
           rowSelection={rowSelection}
           onCellClicked={cellClicked}
@@ -328,6 +373,7 @@ export const mountEntitiesTable = (
   provideGlobalGridOptions({ theme: 'legacy' });
   ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    ColumnApiModule,
     RowSelectionModule,
     PaginationModule,
     TextFilterModule,

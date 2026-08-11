@@ -203,7 +203,7 @@ nginxConf() {
     else
         server_header=${random:0:3}
     fi
-    sed -i -e "s/%SERVER_HEADER%/${server_header}/" /run/nginx/cors.conf
+    sed -i -e "s/%SERVER_HEADER%/${server_header}/" /run/nginx/common.conf
 
     ########
     # CORS #

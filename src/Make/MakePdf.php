@@ -94,6 +94,13 @@ class MakePdf extends AbstractMakePdf
             classification: $classification,
         );
 
+        if ($this->requester->userData['cjk_fonts']) {
+            // allow CJK glyphs to fall back from fonts such as monospace used by code/pre
+            $this->mpdf->useSubstitutions = true;
+            $this->mpdf->backupSubsFont[] = 'sun-exta';
+            $this->mpdf->backupSIPFont = 'sun-extb';
+        }
+
         $this->pdfa = $mpdfProvider->isPdfa();
         $this->mpdf->SetTitle($this->getTitle());
         $this->mpdf->SetKeywords($this->getKeywords());

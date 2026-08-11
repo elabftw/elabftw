@@ -116,6 +116,7 @@ escape_sed_repl() {
 nginxConf() {
     mkdir -pv /run/nginx/conf.d
     cp -v /etc/nginx/common.conf.tpl /run/nginx/common.conf
+    cp -v /etc/nginx/cors.conf /run/nginx/cors.conf
     conf="/run/nginx/conf.d"
     server_conf="${conf}/server.conf"
     # Switch http or https
@@ -202,25 +203,35 @@ nginxConf() {
     else
         server_header=${random:0:3}
     fi
-    sed -i -e "s/%SERVER_HEADER%/${server_header}/" /run/nginx/common.conf
-    # add Access-Control-Allow-Origin header if enabled
+    sed -i -e "s/%SERVER_HEADER%/${server_header}/" /run/nginx/cors.conf
+
+    ########
+    # CORS #
+    ########
     acao_header=""
+    acac_header=""
+    aceh_header=""
+    acam_header=""
+    acah_header=""
+    # add Access-Control-Allow-Origin header if enabled
     if [ -n "$allow_origin" ]; then
         acao_header="more_set_headers 'Access-Control-Allow-Origin: ${allow_origin}';"
+        acac_header="more_set_headers 'Access-Control-Allow-Credentials: true';"
+        aceh_header="more_set_headers 'Access-Control-Expose-Headers: Location, Content-Encoding, Content-Disposition, Cache-Control';"
+        # add Access-Control-Allow-Methods header if enabled
+        if [ -n "$allow_methods" ]; then
+            acam_header="more_set_headers 'Access-Control-Allow-Methods: ${allow_methods}';"
+        fi
+        # add Access-Control-Allow-Headers header if enabled
+        if [ -n "$allow_headers" ]; then
+            acah_header="more_set_headers 'Access-Control-Allow-Headers: ${allow_headers}';"
+        fi
     fi
-    sed -i -e "s#%ACAO_HEADER%#${acao_header}#" /run/nginx/common.conf
-    # add Access-Control-Allow-Methods header if enabled
-    acam_header=""
-    if [ -n "$allow_methods" ]; then
-        acam_header="more_set_headers 'Access-Control-Allow-Methods: ${allow_methods}';"
-    fi
-    sed -i -e "s/%ACAM_HEADER%/${acam_header}/" /run/nginx/common.conf
-    # add Access-Control-Allow-Headers header if enabled
-    acah_header=""
-    if [ -n "$allow_headers" ]; then
-        acah_header="more_set_headers 'Access-Control-Allow-Headers: ${allow_headers}';"
-    fi
-    sed -i -e "s/%ACAH_HEADER%/${acah_header}/" /run/nginx/common.conf
+    sed -i -e "s#%ACAO_HEADER%#${acao_header}#" /run/nginx/cors.conf
+    sed -i -e "s#%ACAC_HEADER%#${acac_header}#" /run/nginx/cors.conf
+    sed -i -e "s#%ACEH_HEADER%#${aceh_header}#" /run/nginx/cors.conf
+    sed -i -e "s/%ACAM_HEADER%/${acam_header}/" /run/nginx/cors.conf
+    sed -i -e "s/%ACAH_HEADER%/${acah_header}/" /run/nginx/cors.conf
 
     # create a password file for /php-status endpoint
     if [ -z "$status_password" ]; then

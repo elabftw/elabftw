@@ -1567,6 +1567,7 @@ input[type='color'] {
 .floating-middle-right {
   align-items: flex-end;
   gap: 0.5rem;
+  pointer-events: none;
   position: fixed;
   right: 0.8%;
   top: 50%;
@@ -1579,6 +1580,7 @@ input[type='color'] {
   align-items: center;
   display: flex;
   justify-content: flex-end;
+  pointer-events: auto;
   white-space: nowrap;
 
   .scroll-button-label {

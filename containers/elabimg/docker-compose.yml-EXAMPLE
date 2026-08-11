@@ -216,9 +216,9 @@ services:
         # optional: allow javascript code to call the API from an external service
         # this will add a response header Access-Control-Allow-Origin with content of the env var as value
         # mdn doc: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
+        # Note: do not use '*' as value, because Access-Control-Allow-Credentials are set to true, which is incompatible with wildcard Origin
         # default: header not set (empty value)
-        # example value: app.example.org
-        # example value: *
+        # example value: https://app.example.org
         #- ALLOW_ORIGIN=
 
         # optional: define methods allowed to javascript code calling the API from an external service

@@ -2,9 +2,9 @@
 
 ## Description
 
-This folder is copied into `/etc/nginx` in the image. It contains all the configuration files necessary for `nginx` to run.
+Nginx configuration templates are installed in `/etc/nginx`; runtime-generated configuration is written to `/run/nginx`.
 
-Some configuration files contain placeholders (`%EXAMPLE%`) that are replaced by a correct value at runtime (script [prepare.sh](../init/prepare.sh)).
+Some configuration files contain placeholders (`%EXAMPLE%`) that are replaced by a correct value at runtime (script [docker-entrypoint.sh](../entrypoint/docker-entrypoint.sh)).
 
 ## Files
 
@@ -14,6 +14,4 @@ Some configuration files contain placeholders (`%EXAMPLE%`) that are replaced by
 
 ## Configuration
 
-`Nginx` is configured and compiled with only the bare minimum, see the build step in `Dockerfile`.
-
-Custom error pages are also added.
+`Nginx` is configured and compiled with only the bare minimum, see the build step in `Dockerfile`. It also sets a custom 404 error page.

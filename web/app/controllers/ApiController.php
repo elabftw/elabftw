@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Controllers\Apiv1Controller;
 use Elabftw\Controllers\Apiv2Controller;
 use Elabftw\Controllers\Apiv3Controller;
 use Elabftw\Exceptions\AppException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\ApiKeys;
@@ -23,7 +23,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use function dirname;
-use function str_contains;
 use function str_starts_with;
 
 /**
@@ -59,13 +58,12 @@ try {
         }
     }
 
-    if (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v2')) {
-        $Controller = new Apiv2Controller($App->Users, $App->Request);
-    } elseif (str_contains($App->Request->server->get('QUERY_STRING'), 'api/v3')) {
-        $Controller = new Apiv3Controller($App->Users, $App->Request);
-    } else {
-        $Controller = new Apiv1Controller($App->Users, $App->Request);
-    }
+    $Controller = match ($App->Request->server->getInt('ELABFTW_API_VERSION')) {
+        2 => new Apiv2Controller($App->Users, $App->Request),
+        3 => new Apiv3Controller($App->Users, $App->Request),
+        default => throw new ImproperActionException('Incorrect API route'),
+    };
+
     $Controller->canWrite = $canWrite;
     $Controller->getResponse()->send();
 } catch (AppException $e) {

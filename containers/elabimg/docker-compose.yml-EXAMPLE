@@ -31,7 +31,7 @@ services:
     user: <REPLACE WITH ELABFTW-WORKER UID>:<REPLACE WITH ELABFTW-WORKER GID>
 
     # this allows the container to run with a read-only filesystem
-    # you will need to bind-mount /var/cache/nginx to a writable directory if you set this to true
+    # you will need to bind-mount /var/cache/elabftw to a writable directory if you set this to true
     # default value: true
     read_only: true
 
@@ -64,7 +64,7 @@ services:
     # example:
     # - /run:mode=755,uid=1002,gid=1002,exec,nosuid,nodev
     tmpfs:
-      - /run:mode=755,uid=<REPLACE WITH ELABFTW-WORKER UID>,gid=<REPLACE WITH ELABFTW-WORKER GID>,exec,nosuid,nodev
+      - /run:mode=755,uid=<REPLACE WITH ELABFTW-WORKER UID>,gid=<REPLACE WITH ELABFTW-WORKER GID>,exec,nosuid,nodev,size=64m
 
     # restrict capabilities of the process to the strict minimum
     # not really necessary in user mode but defense in-depth
@@ -321,11 +321,11 @@ services:
         - '443:8080'
         # if you are running the container on the same network than a reverse proxy, you don't need to expose ports at all
     volumes:
-        # this volume is necessary for nginx to work (remember, we use a read-only filesystem)
+        # this volume is necessary for the application to work correctly (remember, we use a read-only filesystem)
         # make sure this folder is writable by the service user
-        # mkdir -p /var/elabftw/.cache/nginx
-        # chown elabftw-worker:elabftw-worker /var/elabftw/.cache/nginx
-        - /var/elabftw/.cache/nginx:/var/cache/nginx
+        # mkdir -p /var/cache/elabftw
+        # chown elabftw-worker:elabftw-worker /var/cache/elabftw
+        - /var/cache/elabftw/:/var/cache/elabftw
 
         # this is where you will keep the uploaded files persistently
         # for Windows users it might look like this

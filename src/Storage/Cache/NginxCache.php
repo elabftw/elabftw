@@ -17,5 +17,5 @@ namespace Elabftw\Storage\Cache;
  */
 class NginxCache extends AbstractCache
 {
-    protected const string FOLDER = '/var/cache/nginx';
+    protected const string FOLDER = '/var/cache/elabftw/nginx';
 }

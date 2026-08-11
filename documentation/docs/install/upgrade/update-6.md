@@ -56,7 +56,7 @@ Next, add these lines below `image:`:
 user: <REPLACE WITH ELABFTW-WORKER UID>:<REPLACE WITH ELABFTW-WORKER GID>
 read_only: true
 tmpfs:
-  - /run:mode=755,uid=<REPLACE WITH ELABFTW-WORKER UID>,gid=<REPLACE WITH ELABFTW-WORKER GID>,exec,nosuid,nodev
+  - /run:mode=755,uid=<REPLACE WITH ELABFTW-WORKER UID>,gid=<REPLACE WITH ELABFTW-WORKER GID>,exec,nosuid,nodev,size=64m
 ~~~
 
 This will make the container start and run with `elabftw-worker` user, and a read-only filesystem.
@@ -71,7 +71,7 @@ Image=docker.io/elabftw/elabimg:6.0.0
 ReadOnly=true
 UserNS=keep-id
 HealthCmd=curl --fail --silent --show-error http://localhost:8080/healthcheck
-Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup
+Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup,tmpfs-size=64m
 ~~~
 
 Move the file into `${XDG_CONFIG_HOME:-$HOME/.config}/containers/systemd/` for your user.
@@ -82,22 +82,22 @@ See also sections below, adjust volumes accordingly.
 
 The `volumes:` section needs to be adjusted.
 
-#### Nginx cache folder
+#### Cache folder
 
-We will add a folder specific for nginx. First, we create it on the host and allow our `elabftw-worker` user to write to it:
+We will add a folder specific for cached files that the application will need to create. First, we create it on the host and allow our `elabftw-worker` user to write to it:
 
 ~~~bash
-mkdir -p /var/elabftw/.cache/nginx
-chown elabftw-worker:elabftw-worker /var/elabftw/.cache/nginx
+mkdir -p /var/cache/elabftw
+chown elabftw-worker:elabftw-worker /var/cache/elabftw
 ~~~
 
 Then in the configuration file, under `volumes:` section:
 
 ~~~yaml
 # docker
-  - /var/elabftw/.cache/nginx:/var/cache/nginx
+  - /var/cache/elabftw:/var/cache/elabftw
 # quadlet
-Volume=/var/elabftw/.cache/nginx:/var/cache/nginx:Z
+Volume=/var/cache/elabftw:/var/cache/elabftw:Z
 ~~~
 
 #### Uploads folder

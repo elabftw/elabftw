@@ -19,7 +19,7 @@ use Override;
  */
 class ParentCache extends AbstractCache
 {
-    protected const string FOLDER = '/run/elabftw/cache';
+    protected const string FOLDER = '/var/cache/elabftw/php/cache';
 
     #[Override]
     public function clear(): bool

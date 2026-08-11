@@ -186,7 +186,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $Uploads->setId($id);
         $fs = new Tmp()->getFs();
         $fs->write('a.file', 'yes');
-        $this->assertIsInt($Uploads->postAction(Action::Replace, array('real_name' => 'yep', 'filePath' => '/run/elabftw/tmp/a.file')));
+        $this->assertIsInt($Uploads->postAction(Action::Replace, array('real_name' => 'yep', 'filePath' => Tmp::getFolder() . '/a.file')));
     }
 
     public function testReplace(): void

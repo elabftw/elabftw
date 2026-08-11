@@ -60,7 +60,7 @@ commands:
     steps:
       - run:
           name: Start container
-          command: docker compose -f containers/circleci/docker-compose.yml up -d --no-build
+          command: docker compose -f containers/circleci/docker-compose.yml up -d --no-build --wait --wait-timeout 120
 
   start_mysql:
     steps:

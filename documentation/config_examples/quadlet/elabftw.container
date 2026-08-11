@@ -58,9 +58,9 @@ Secret=elabftw-s3-sk,type=env,target=ELAB_AWS_SECRET_KEY
 Volume=/mnt/data/elabftw_uploads:/var/lib/elabftw/uploads
 # this is necessary if you encrypt mysql connection and thus want the container to have access to the mysql cert
 Volume=/deltablot/mysql:/mysql-cert:z
-Volume=/var/elabftw/.cache/nginx:/var/cache/nginx:Z
+Volume=/var/cache/elabftw:/var/cache/elabftw:Z
 # Note the notmpcopyup option which is important
-Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup
+Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup,tmpfs-size=64m
 
 # NETWORKS
 Network=elabftw.network

@@ -3,7 +3,7 @@ sidebar_position: 10
 title: Using the API from a browser
 ---
 
-# Using eLabFTW's API from Javascript
+# Using eLabFTW's API from JavaScript
 
 It is possible to use a web application to interact with eLabFTW's API, but eLabFTW needs to be configured to accept connections from that external application. See [documentation on Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS).
 
@@ -13,7 +13,7 @@ On the server-side, there are some `ENV` variables that need to be set:
 
 ~~~yaml
 - environment:
-    # here the value must the of the service doing the request
+    # the value must be the origin of the page making the request
     - ALLOW_ORIGIN=https://app.example.com
     # comma separated list of methods (use GET, POST, PATCH, DELETE for full api access)
     - ALLOW_METHODS=GET,POST,PATCH

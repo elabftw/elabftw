@@ -2409,32 +2409,61 @@ paths:
           type: integer
     post:
       tags: ['Containers']
-      summary: Create a container for this entity.
+      summary: Create a container for this entity, or delete one giving a reason.
       description: |
-        Store this entity in a storage unit with a specified quantity.
+        With `action: create` (the default), store this entity in the storage
+        unit `subid` with a specified quantity.
 
         Rejected with `400` if the storage unit has a `capacity` and already holds
         that many containers. Containers of binned entities still occupy their slot,
         as binning a record does not empty a freezer.
+
+        With `action: destroy`, remove the container `subid`. This is the way to
+        delete when the team has `capture_container_deletion_reason` enabled: a
+        `deletion_reason` is then mandatory, and so is a `deletion_note` when the
+        reason is `other`. The reason is recorded in the changelog of the parent
+        entity. Otherwise, use `DELETE`, which takes no body.
       operationId: post-container
       requestBody:
-        description: Parameters for creating a container.
+        description: Parameters for creating or deleting a container.
         content:
           application/json:
             schema:
-              type: object
-              required: ['storage_id', 'qty_stored']
-              properties:
-                qty_stored:
-                  type: number
-                  description: Quantity stored.
-                  example: 10.5
-                qty_unit:
-                  type: string
-                  description: Unit of the quantity. Defaults to "unit" if not provided.
-                  example: "mL"
-                  # see Units enum
-                  enum: ['bar', '•', 'm', 'μL', 'mL', 'L', 'μg', 'mg', 'g', 'kg']
+              oneOf:
+                - title: Create
+                  type: object
+                  required: ['qty_stored']
+                  properties:
+                    action:
+                      type: string
+                      enum: ['create']
+                    qty_stored:
+                      type: number
+                      description: Quantity stored.
+                      example: 10.5
+                    qty_unit:
+                      type: string
+                      description: Unit of the quantity. Defaults to "unit" if not provided.
+                      example: "mL"
+                      # see Units enum
+                      enum: ['bar', '•', 'm', 'μL', 'mL', 'L', 'μg', 'mg', 'g', 'kg']
+                - title: Destroy
+                  type: object
+                  required: ['action']
+                  properties:
+                    action:
+                      type: string
+                      enum: ['destroy']
+                    deletion_reason:
+                      type: string
+                      # see ContainerDeletionReason enum
+                      enum: ['used_in_authorised_work', 'no_longer_required', 'consent_withdrawn', 'approval_period_ended', 'shelf_life_exceeded', 'unsuitable', 'contaminated', 'storage_or_transport_incident', 'registered_in_error', 'other']
+                      example: 'contaminated'
+                    deletion_note:
+                      type: string
+                      maxLength: 255
+                      description: Free text (255 characters max), required with the `other` reason.
+                      example: 'spilled in transit'
       responses:
         '201':
           description: The container has been created.
@@ -2443,6 +2472,8 @@ paths:
               description: An URL to the container that was created.
               schema:
                 type: string
+        '204':
+          description: The container was deleted with the `destroy` action.
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -2517,28 +2548,10 @@ paths:
       tags: ['Containers']
       summary: Delete a container.
       description: |
-        Remove an entity from a storage unit. When the team has
-        `capture_container_deletion_reason` enabled, a `deletion_reason` must be
-        provided, and a `deletion_note` is mandatory when the reason is `other`.
-        The reason is recorded in the changelog of the parent entity.
+        Remove an entity from a storage unit. Takes no body: when the team has
+        `capture_container_deletion_reason` enabled, this returns 400 and the
+        `POST` variant must be used instead.
       operationId: delete-container
-      requestBody:
-        description: Deletion reason, required when the team enables `capture_container_deletion_reason`.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                deletion_reason:
-                  type: string
-                  # see ContainerDeletionReason enum
-                  enum: ['used_in_authorised_work', 'no_longer_required', 'consent_withdrawn', 'approval_period_ended', 'shelf_life_exceeded', 'unsuitable', 'contaminated', 'storage_or_transport_incident', 'registered_in_error', 'other']
-                  example: 'contaminated'
-                deletion_note:
-                  type: string
-                  maxLength: 255
-                  description: Free text (255 characters max), required with the `other` reason.
-                  example: 'spilled in transit'
       responses:
         '204':
           description: The container was deleted.

@@ -33,7 +33,6 @@ use Elabftw\Params\ContentParams;
 use Elabftw\Services\Filter;
 use Override;
 use PDO;
-use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
 use function array_key_exists;
@@ -149,6 +148,8 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return match ($action) {
             Action::Create => $this->createWithQuantity((float) $reqBody['qty_stored'], $reqBody['qty_unit'] ?? Units::Unit->value),
             Action::Duplicate => $this->import(),
+            // a deletion reason cannot travel on a DELETE, so it comes as a POST with a body
+            Action::Destroy => (int) $this->destroyWithReason($reqBody),
             default => throw new ImproperActionException('Invalid action for links create.'),
         };
     }
@@ -252,42 +253,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     #[Override]
     public function destroy(): bool
     {
-        $this->Entity->canOrExplode(AccessType::Write);
-        // resolve before the DELETE: a missing reason must not destroy anything
-        $reasonSuffix = $this->deletionReasonSuffix();
-        $this->Entity->touch();
-
-        // read details for the changelog before the row is deleted
-        $current = null;
-        $storagePath = '';
-        try {
-            $current = $this->readOne();
-            $storagePath = $this->getStoragePath((int) $current['storage_id']);
-        } catch (ResourceNotFoundException) {
-            // already gone: still run the DELETE (idempotent), just skip the changelog
-        }
-
-        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $result = $this->Db->execute($req);
-
-        if ($current !== null && $req->rowCount() > 0) {
-            new Changelog($this->Entity)->create(new ContentParams(
-                'container_deleted',
-                sprintf(
-                    'Removed container with %s %s from "%s" (container #%d)%s',
-                    $current['qty_stored'],
-                    $current['qty_unit'],
-                    $storagePath,
-                    (int) $current['id'],
-                    $reasonSuffix,
-                ),
-            ));
-        }
-
-        return $result;
+        return $this->destroyWithReason(array());
     }
 
     public function destroyAll(): bool
@@ -419,19 +385,58 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return 'containers2items';
     }
 
+    private function destroyWithReason(array $params): bool
+    {
+        $this->Entity->canOrExplode(AccessType::Write);
+        // resolve before the DELETE: a missing reason must not destroy anything
+        $reasonSuffix = $this->deletionReasonSuffix($params);
+        $this->Entity->touch();
+
+        // read details for the changelog before the row is deleted
+        $current = null;
+        $storagePath = '';
+        try {
+            $current = $this->readOne();
+            $storagePath = $this->getStoragePath((int) $current['storage_id']);
+        } catch (ResourceNotFoundException) {
+            // already gone: still run the DELETE (idempotent), just skip the changelog
+        }
+
+        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $result = $this->Db->execute($req);
+
+        if ($current !== null && $req->rowCount() > 0) {
+            new Changelog($this->Entity)->create(new ContentParams(
+                'container_deleted',
+                sprintf(
+                    'Removed container with %s %s from "%s" (container #%d)%s',
+                    $current['qty_stored'],
+                    $current['qty_unit'],
+                    $storagePath,
+                    (int) $current['id'],
+                    $reasonSuffix,
+                ),
+            ));
+        }
+
+        return $result;
+    }
+
     /**
      * Reason for deletion, as a suffix to the changelog line. Empty unless the team requires it.
      */
-    private function deletionReasonSuffix(): string
+    private function deletionReasonSuffix(array $params): string
     {
         $teamConfig = new Teams($this->Entity->Users, $this->Entity->Users->team)->teamArr;
         if (empty($teamConfig['capture_container_deletion_reason'])) {
             return '';
         }
-        $payload = Request::createFromGlobals()->getPayload();
-        $reason = ContainerDeletionReason::tryFrom($payload->getString('deletion_reason'))
+        $reason = ContainerDeletionReason::tryFrom((string) ($params['deletion_reason'] ?? ''))
             ?? throw new ImproperActionException(_('A reason is required to delete a container.'));
-        $note = mb_substr(Filter::toPureString($payload->getString('deletion_note')), 0, 255);
+        $note = mb_substr(Filter::toPureString((string) ($params['deletion_note'] ?? '')), 0, 255);
         if ($reason === ContainerDeletionReason::Other && $note === '') {
             throw new ImproperActionException(_('Please describe the reason for deleting this container.'));
         }

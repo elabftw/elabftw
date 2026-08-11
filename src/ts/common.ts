@@ -1061,8 +1061,13 @@ if (storageModalEl) {
 
 on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadStorageTrees()));
 
-const destroyContainer = (id: string, params = {}) =>
-  ApiC.delete(`${entity.type}/${entity.id}/containers/${id}`, params).then(() => reloadStorageAndContainers());
+const destroyContainer = (id: string) =>
+  ApiC.delete(`${entity.type}/${entity.id}/containers/${id}`).then(() => reloadStorageAndContainers());
+
+// DELETE carries no body, so a deletion reason goes through a POST instead
+const destroyContainerWithReason = (id: string, params: Record<string, string>) =>
+  ApiC.post(`${entity.type}/${entity.id}/containers/${id}`, Object.assign({ action: 'destroy' }, params))
+    .then(() => reloadStorageAndContainers());
 
 // the modal is only rendered when the team requires a deletion reason
 const containerDeletionModal = document.getElementById('containerDeletionReasonModal');
@@ -1096,7 +1101,7 @@ if (containerDeletionModal) {
   });
 
   on('destroy-container-confirm', () => {
-    destroyContainer(containerDeletionModal.dataset.containerId, {
+    destroyContainerWithReason(containerDeletionModal.dataset.containerId, {
       deletion_reason: reasonSelect.value,
       deletion_note: noteInput.value,
     }).then(() => $('#containerDeletionReasonModal').modal('hide'));

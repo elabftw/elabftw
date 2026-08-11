@@ -250,6 +250,12 @@ final class Apiv2Controller extends AbstractApiController
             $this->reqBody['file'] = $file;
             $this->action = Action::tryFrom($this->Request->request->getString('action')) ?? Action::Update;
         }
+        // a POST that destroys (used when the deletion needs a body) has nothing to point a Location at
+        if ($this->action === Action::Destroy) {
+            $this->Model->postAction($this->action, $this->reqBody);
+            return new Response('', Response::HTTP_NO_CONTENT);
+        }
+
         $id = $this->Model->postAction($this->action, $this->reqBody);
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Env::asUrl('SITE_URL'), $this->Model->getApiPath(), $id)));
     }

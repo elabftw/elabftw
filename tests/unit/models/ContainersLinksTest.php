@@ -37,7 +37,6 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
     protected function tearDown(): void
     {
         $this->setCaptureDeletionReason(0);
-        unset($_POST['deletion_reason'], $_POST['deletion_note']);
     }
 
     public function testMoveContainerToAnotherStorage(): void
@@ -394,9 +393,8 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links->createWithQuantity(7.0, 'mL');
         $rowId = $this->latestContainerRowId('containers2items', $Item->id);
 
-        $_POST['deletion_reason'] = 'contaminated';
         $Links = new Containers2ItemsLinks($Item, $rowId);
-        $Links->destroy();
+        $Links->postAction(Action::Destroy, array('deletion_reason' => 'contaminated'));
 
         $entry = $this->latestChangelogEntry($Item, 'container_deleted');
         $this->assertNotNull($entry);
@@ -412,17 +410,19 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links->createWithQuantity(7.0, 'mL');
         $rowId = $this->latestContainerRowId('containers2items', $Item->id);
 
-        $_POST['deletion_reason'] = 'other';
-        $_POST['deletion_note'] = '<b>spilled</b> in transit';
         $Links = new Containers2ItemsLinks($Item, $rowId);
-        $Links->destroy();
+        $Links->postAction(Action::Destroy, array(
+            'deletion_reason' => 'other',
+            'deletion_note' => '<b>spilled</b> in transit',
+        ));
 
         $entry = $this->latestChangelogEntry($Item, 'container_deleted');
         $this->assertNotNull($entry);
         $this->assertStringEndsWith('(Other: spilled in transit)', $entry['content']);
     }
 
-    public function testDeleteWithoutReasonIsRejected(): void
+    // a bodyless DELETE cannot carry the reason, so it is refused when one is required
+    public function testDeleteVerbIsRejectedWhenAReasonIsRequired(): void
     {
         $this->setCaptureDeletionReason(1);
         $Item = $this->getFreshItem();
@@ -443,6 +443,26 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
     }
 
+    public function testDestroyActionWithoutReasonIsRejected(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for empty reason test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        try {
+            $Links->postAction(Action::Destroy, array());
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException) {
+            $this->addToAssertionCount(1);
+        }
+        $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
+    }
+
     public function testDeleteWithOtherReasonRequiresANote(): void
     {
         $this->setCaptureDeletionReason(1);
@@ -452,10 +472,9 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links->createWithQuantity(7.0, 'mL');
         $rowId = $this->latestContainerRowId('containers2items', $Item->id);
 
-        $_POST['deletion_reason'] = 'other';
         $Links = new Containers2ItemsLinks($Item, $rowId);
         $this->expectException(ImproperActionException::class);
-        $Links->destroy();
+        $Links->postAction(Action::Destroy, array('deletion_reason' => 'other'));
     }
 
     public function testDeleteWithoutReasonIsFineWhenNotRequired(): void

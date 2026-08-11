@@ -108,7 +108,7 @@ export class Api {
       keepalive: this.keepalive,
     };
 
-    if ([Method.POST, Method.PATCH, Method.DELETE].includes(method)) {
+    if ([Method.POST, Method.PATCH].includes(method)) {
       options.body = isFormData ? params : JSON.stringify(params);
     }
 
@@ -118,7 +118,7 @@ export class Api {
     }
 
     return fetch(`api/v2/${query}${urlParams}`, options).then(async response => {
-      if (response.status !== this.getOkStatusFromMethod(method)) {
+      if (!this.getOkStatusesFromMethod(method).includes(response.status)) {
         return response.json().then(json => {
           const error = new Error(json.message || json.description) as Error & { status?: number };
           error.status = response.status;
@@ -142,17 +142,18 @@ export class Api {
     });
   }
 
-  private getOkStatusFromMethod(method: Method): number {
+  private getOkStatusesFromMethod(method: Method): number[] {
     switch (method) {
     case Method.GET:
     case Method.PATCH:
-      return 200;
+      return [200];
+    // a POST with action: destroy answers 204, as there is nothing created
     case Method.POST:
-      return 201;
+      return [201, 204];
     case Method.DELETE:
-      return 204;
+      return [204];
     default:
-      return 200;
+      return [200];
     }
   }
 

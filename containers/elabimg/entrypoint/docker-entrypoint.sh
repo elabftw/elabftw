@@ -215,6 +215,12 @@ nginxConf() {
     acah_header=""
     # add Access-Control-Allow-Origin header if enabled
     if [ -n "$allow_origin" ]; then
+        if [ "$allow_origin" = "*" ]; then
+            echo "----------- ERROR -----------" >&2
+            echo "ALLOW_ORIGIN must be an explicit origin when credentials are enabled: do not use '*'!" >&2
+            echo "----------- ERROR -----------" >&2
+            exit 1
+        fi
         acao_header="more_set_headers 'Access-Control-Allow-Origin: ${allow_origin}';"
         acac_header="more_set_headers 'Access-Control-Allow-Credentials: true';"
         aceh_header="more_set_headers 'Access-Control-Expose-Headers: Location, Content-Encoding, Content-Disposition, Cache-Control';"

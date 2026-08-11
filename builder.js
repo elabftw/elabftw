@@ -114,6 +114,14 @@ module.exports = (env, argv) => {
         {
           filename: '[name].min.css',
           chunkFilename: '[name].min.css',
+          insert: function(linkTag) {
+            var mainStylesheet = document.getElementById('main-stylesheet');
+            if (mainStylesheet && mainStylesheet.parentNode) {
+              mainStylesheet.parentNode.insertBefore(linkTag, mainStylesheet);
+              return;
+            }
+            document.head.appendChild(linkTag);
+          },
         }
       ),
       // required to make process work in the browser

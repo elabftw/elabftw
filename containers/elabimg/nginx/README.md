@@ -2,7 +2,7 @@
 
 ## Description
 
-Nginx configuration is copied into `/run/nginx` in the image.
+Nginx configuration templates are installed in `/etc/nginx`; runtime-generated configuration is written to `/run/nginx`.
 
 Some configuration files contain placeholders (`%EXAMPLE%`) that are replaced by a correct value at runtime (script [docker-entrypoint.sh](../entrypoint/docker-entrypoint.sh)).
 

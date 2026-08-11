@@ -94,7 +94,7 @@
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
         {% endif %}
       </div>
-      <div class='d-flex ml-1'>
+      <div data-scroll-btn='fa-font' data-scroll-btn-label='{{ 'Main text end'|trans }}' data-scroll-btn-y='42' class='d-flex ml-1'>
         {# LAST SAVED #}
         <div>
           <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
@@ -108,7 +108,7 @@
 <hr>
 {# EXTRA FIELDS #}
 {% include('field-builder-modal.html') %}
-<h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Custom fields'|trans }}</h3>
+<h3 data-action='toggle-next' data-scroll-btn='fa-rectangle-list' data-scroll-btn-label='{{ 'Custom fields'|trans }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Custom fields'|trans }}</h3>
 <div data-save-hidden='metadataDiv' class='col-md-8 mt-4'>
   {# this div is filled in JS by Metadata.class.ts edit() #}
   <div id='metadataDiv'></div>
@@ -130,7 +130,7 @@
 {% include 'storage-view-edit.html' %}
 
 {# PERMISSIONS #}
-<h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
+<h3 title='{{ 'Toggle visibility'|trans }}' data-scroll-btn='fa-user-lock' data-scroll-btn-label='{{ 'Permissions'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
 <div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
   {% if Entity.entityData.canread_target %}
     <h5>{{ 'Permissions for the template'|trans }}</h5>

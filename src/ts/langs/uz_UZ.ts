@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "Foydalanuvchini arxivlash uning hisobi o'chirilishini anglatadi. Bu harakat qaytarilishi mumkin.",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",

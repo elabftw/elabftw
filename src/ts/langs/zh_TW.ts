@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "將使用者封存意味著其帳戶將被停用。此操作可撤銷。",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "可管理化合物",
     "can-manage-inventory-locations": "可以管理庫存位置",
     "can-manage-users2teams": "可以管理團隊用戶",

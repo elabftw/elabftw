@@ -1,5 +1,5 @@
 {# STEPS #}
-<h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} (<span id='stepsCount'>{{ Entity.entityData.steps|length }}</span>)</h3>
+<h3 data-action='toggle-next' data-scroll-btn='fa-list-check' data-scroll-btn-label='{{ 'Steps'|trans }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} (<span id='stepsCount'>{{ Entity.entityData.steps|length }}</span>)</h3>
 <div id='stepsDiv' class='mt-2' data-count-for='stepsCount' data-save-hidden='stepsDiv'>
   <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
     {# LOCK ALL STEPS #}

@@ -206,7 +206,7 @@
 <hr>
 <div class='d-flex flex-column align-items-end'>
   {# SHOW CREATED AT / LAST MOD #}
-  <div>{{ 'Created on %s'|trans|format(Entity.entityData.created_at ) }}</div>
+  <div>{{ 'Created on %s'|trans|format(Entity.entityData.created_at) }}</div>
   <div>{{ 'Last modified on %s'|trans|format(Entity.entityData.modified_at) }}</div>
   {# eLabID: add an if because templates don't have one #}
   {% if Entity.entityData.elabid %}

@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "Het archiveren van een gebruiker betekent dat zijn/haar account wordt uitgeschakeld. Deze actie is omkeerbaar.",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",

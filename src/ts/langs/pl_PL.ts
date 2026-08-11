@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "Archiwizacja użytkownika oznacza dezaktywację jego konta. To działanie jest odwracalne.",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "Może zarządzaś związkami",
     "can-manage-inventory-locations": "Może zarządzać lokalizacją wyposażenia",
     "can-manage-users2teams": "Możliwość zarządzania użytkownikami w zespołach",

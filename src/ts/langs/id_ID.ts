@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "Mengarsipkan pengguna berarti akun mereka akan dinonaktifkan. Tindakan ini dapat dibatalkan.",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "Dapat mengelola senyawa",
     "can-manage-inventory-locations": "Dapat mengelola lokasi inventaris",
     "can-manage-users2teams": "Dapat mengelola pengguna hingga tim",

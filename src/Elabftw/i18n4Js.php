@@ -59,6 +59,7 @@ final class i18n4Js
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),
             'association-date' => _('Association date'),
             'background-color' => _('Background color'),
+            'back-to-top' => _('Back to top'),
             'can-manage-compounds' => _('Can manage compounds'),
             'can-manage-inventory-locations' => _('Can manage inventory locations'),
             'can-manage-users2teams' => _('Can manage users to teams'),

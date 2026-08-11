@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "Die Archivierung eines Nutzers deaktiviert seinen Zugang. Diese Aktion ist umkehrbar.",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "Darf Substanzen verwalten",
     "can-manage-inventory-locations": "Darf Inventar-Standorte verwalten",
     "can-manage-users2teams": "Kann Nutzende Teams zuweisen",

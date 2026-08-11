@@ -25,7 +25,7 @@
 <div id='filesDiv'>
   <div class='d-flex justify-content-between'>
     <div>{# necessary div for flex #}
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='uploadsDiv' class='d-inline togglable-section-title' tabindex='0' role='button'>
+      <h3 title='{{ 'Toggle visibility'|trans }}' data-scroll-btn='fa-file-arrow-up' data-scroll-btn-label='{{ 'Attachments'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='uploadsDiv' class='d-inline togglable-section-title' tabindex='0' role='button'>
         <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
         {% plural Entity.entityData.uploads|length %}
         Attached files

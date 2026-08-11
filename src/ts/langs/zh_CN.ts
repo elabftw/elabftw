@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "归档用户意味着他们的账户将被禁用。此操作是可逆的。",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "可以管理化合物",
     "can-manage-inventory-locations": "可以管理库存位置",
     "can-manage-users2teams": "可以管理团队中用户",

@@ -316,6 +316,8 @@ COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0
 RUN mkdir -p /run/elabftw \
     && chmod 1777 /run/elabftw
 
+RUN mkdir -p "$TMPDIR" "$COREPACK_HOME" "$COMPOSER_HOME"
+
 # this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
 # pass it to build command with --build-arg BUILD_ALL=0
 ARG BUILD_ALL=1

@@ -332,7 +332,7 @@ phpConf() {
     # production open_basedir conf value
     # /etc/ssl/cert.pem is for openssl and timestamp related functions
     # for /run/s6-rc... see elabftw/elabftw#5249
-    open_basedir="/.dockerenv:/elabftw/:/var/lib/elabftw/:/var/cache/elabftw/php:/var/cache/elabftw/nginx:/usr/bin/unzip:/etc/ssl/cert.pem:/run/s6-rc/servicedirs/s6rc-oneshot-runner"
+    open_basedir="/.dockerenv:/elabftw/:/var/lib/elabftw/:/var/cache/elabftw/php:/run/elabftw:/var/cache/elabftw/nginx:/usr/bin/unzip:/etc/ssl/cert.pem:/run/s6-rc/servicedirs/s6rc-oneshot-runner"
     # DEV MODE
     if ($dev_mode); then
         # we don't want to use opcache as we want our changes to be immediately visible
@@ -347,7 +347,7 @@ phpConf() {
 }
 
 elabftwConf() {
-    rm -rfv /var/cache/elabftw/*
+    rm -rf /var/cache/elabftw/*
     mkdir -p /var/cache/elabftw/nginx/client_body /var/cache/elabftw/nginx/fastcgi /var/cache/elabftw/nginx/proxy /var/cache/elabftw/php/tmp /var/cache/elabftw/php/cache/elab /var/cache/elabftw/php/cache/mpdf /var/cache/elabftw/php/cache/twig /var/cache/elabftw/php/cache/purifier/CSS /var/cache/elabftw/php/cache/purifier/HTML /var/cache/elabftw/php/cache/purifier/URI
 }
 

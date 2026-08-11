@@ -17,11 +17,11 @@ use Override;
 use Symfony\Component\Console\Output\NullOutput;
 
 /**
- * For twig cached files
+ * For twig cached files. Do not inherit from ParentCache because of clear() override
  */
-class TwigCache extends ParentCache
+class TwigCache extends AbstractCache
 {
-    protected const string FOLDER = parent::FOLDER . '/twig';
+    protected const string FOLDER = '/var/cache/elabftw/php/cache/twig';
 
     #[Override]
     public function warm(): bool

@@ -71,7 +71,7 @@ Image=docker.io/elabftw/elabimg:6.0.0
 ReadOnly=true
 UserNS=keep-id
 HealthCmd=curl --fail --silent --show-error http://localhost:8080/healthcheck
-Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup
+Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup,tmpfs-size=64m
 ~~~
 
 Move the file into `${XDG_CONFIG_HOME:-$HOME/.config}/containers/systemd/` for your user.

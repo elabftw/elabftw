@@ -14,4 +14,4 @@ Some configuration files contain placeholders (`%EXAMPLE%`) that are replaced by
 
 ## Configuration
 
-`Nginx` is configured and compiled with only the bare minimum, see the build step in `Dockerfile`.
+`Nginx` is configured and compiled with only the bare minimum, see the build step in `Dockerfile`. It also sets a custom 404 error page.

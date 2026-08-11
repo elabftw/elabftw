@@ -21,23 +21,20 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function json_decode;
 
-/**
- * To emulate nginx rewrite rule, query is done with req param
- */
 class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
 
     public function testCanwriteFalse(): void
     {
-        $Controller = new Apiv2Controller($this->getRandomUserInTeam(1), Request::create('/?req=/api/v2/users', 'POST'));
+        $Controller = new Apiv2Controller($this->getRandomUserInTeam(1), Request::create('/api/v2/users', 'POST'));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
     }
 
     public function testInvalidEndpoint(): void
     {
-        $Controller = new Apiv2Controller($this->getRandomUserInTeam(1), Request::create('/?req=/api/v2/supercalifragilisticexpialidocious', 'GET', server: array('AUTHORIZATION' => 'apiKey4Test')));
+        $Controller = new Apiv2Controller($this->getRandomUserInTeam(1), Request::create('/api/v2/supercalifragilisticexpialidocious', 'GET', server: array('AUTHORIZATION' => 'apiKey4Test')));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
     }
@@ -45,11 +42,11 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testGetResponse(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/info/me&limit=12&offset=1&search=wtf', 'GET'));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/info/me&limit=12&offset=1&search=wtf', 'GET'));
         $res = $Controller->getResponse();
         $this->assertInstanceOf(JsonResponse::class, $res);
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
-        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/teams/curent', 'GET'));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/teams/curent', 'GET'));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
@@ -58,7 +55,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     {
         $Controller = new Apiv2Controller(
             new AnonymousUser(1),
-            Request::create('/?req=/api/v2/users', 'GET'),
+            Request::create('/api/v2/users', 'GET'),
         );
 
         $res = $Controller->getResponse();
@@ -70,7 +67,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testBadJson(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/users/', 'POST', content: '{'));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/users/', 'POST', content: '{'));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
     }
@@ -78,7 +75,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testBadAction(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/users/me', 'PATCH', content: '{"action": "wrong"}'));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/users/me', 'PATCH', content: '{"action": "wrong"}'));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
     }
@@ -86,7 +83,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testGetBinaryFail(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/experiments/&format=binary', 'GET'));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/experiments/?format=binary', 'GET'));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
     }
@@ -94,7 +91,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testConfigNotSysadmin(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/config', 'GET'));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/config', 'GET'));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_FORBIDDEN, $res->getStatusCode());
     }
@@ -102,7 +99,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testIncorrectContentType(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/users', 'POST', server: array('AUTHORIZATION' => 'apiKey4Test', 'CONTENT_TYPE' => 'not/valid')));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/users', 'POST', server: array('AUTHORIZATION' => 'apiKey4Test', 'CONTENT_TYPE' => 'not/valid')));
         $Controller->canWrite = true;
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
@@ -111,7 +108,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testGetCompounds(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/compounds', 'GET'));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/compounds', 'GET'));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
@@ -119,7 +116,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testGetExports(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $Controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/exports', 'GET'));
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/exports', 'GET'));
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
@@ -127,7 +124,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     public function testGetDspace(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $controller = new Apiv2Controller($user, Request::create('/?req=/api/v2/dspace&action=foo'));
+        $controller = new Apiv2Controller($user, Request::create('/api/v2/dspace?action=foo'));
         $Config = Config::getConfig();
         $Config->configArr['dspace_host'] = 'https://example.org';
         $response = $controller->getResponse();

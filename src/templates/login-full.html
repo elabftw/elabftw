@@ -34,6 +34,7 @@
         class='form-control'
         id='teaminit_firstname_input'
         name='teaminit_firstname'
+        {{ App.Config.configArr.allow_users_change_identity == '0' ? 'disabled' }}
         value='{{ teaminitUserInfo.firstname }}'
       />
 
@@ -43,6 +44,7 @@
         class='form-control'
         id='teaminit_lastname_input'
         name='teaminit_lastname'
+        {{ App.Config.configArr.allow_users_change_identity == '0' ? 'disabled' }}
         value='{{ teaminitUserInfo.lastname }}'
       />
       <button class='btn btn-primary mt-2' type='submit' name='submit'>{{ 'Request access'|trans }}</button>

@@ -64,6 +64,7 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
             'remember_me_allowed' => '1',
             'cookie_validity_time' => '300',
             'anon_users' => '1',
+            'allow_users_change_identity' => '1',
             'ldap_username' => 'admin',
             'ldap_password' => 'adm1n',
             'ldap_scheme' => 'http',
@@ -495,6 +496,46 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
         );
         self::assertSame(
             'Name',
+            $user->userData['lastname'],
+        );
+    }
+
+    public function testInitialTeamSelectionKeepsIdentityWhenChangesDisabled(): void
+    {
+        $email = 'login-controller-' . bin2hex(random_bytes(6)) . '@example.com';
+        $session = new Session();
+        $session->set('initial_team_selection_required', true);
+        $session->set('teaminit_user_info', array(
+            'email' => $email,
+            'firstname' => 'Login',
+            'lastname' => 'Controller',
+            'orgid' => null,
+            'orcid' => null,
+        ));
+
+        $request = Request::create('/login.php', 'POST', array(
+            'auth_type' => 'teaminit',
+            'team_id' => 1,
+            'teaminit_firstname' => 'Forged',
+            'teaminit_lastname' => 'Identity',
+        ));
+        $config = $this->config;
+        $config['allow_users_change_identity'] = '0';
+
+        $response = $this->createController(
+            $request,
+            session: $session,
+            config: $config,
+        )->getResponse();
+
+        self::assertRedirect($response, '/login.php');
+        $user = ExistingUser::fromEmail($email);
+        self::assertSame(
+            'Login',
+            $user->userData['firstname'],
+        );
+        self::assertSame(
+            'Controller',
             $user->userData['lastname'],
         );
     }

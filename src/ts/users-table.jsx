@@ -11,6 +11,7 @@
  */
 import {
   ClientSideRowModelModule,
+  ColumnApiModule,
   ModuleRegistry,
   PaginationModule,
   QuickFilterModule,
@@ -28,6 +29,8 @@ import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
 import { getAgGridTheme } from './theme';
+
+const COLUMN_STATE_STORAGE_KEY = 'persistent_users_table_column_state_v1';
 
 // allow filtering by values for cells that render icons or badges (team, isSysadmin, etc.,)
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
@@ -55,6 +58,7 @@ async function toggleUserModal(user) {
 provideGlobalGridOptions({ theme: 'legacy' });
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
+  ColumnApiModule,
   RowSelectionModule,
   PaginationModule,
   TextFilterModule,
@@ -66,13 +70,51 @@ const rowSelection = {
   headerCheckbox: false,
 };
 
+const getStoredColumnState = () => {
+  try {
+    return JSON.parse(
+      localStorage.getItem(COLUMN_STATE_STORAGE_KEY) ?? 'null'
+    );
+  } catch {
+    return null;
+  }
+};
+
+const storeColumnState = api => {
+  try {
+    localStorage.setItem(
+      COLUMN_STATE_STORAGE_KEY,
+      JSON.stringify(api.getColumnState())
+    );
+  } catch {
+    // localStorage might be unavailable
+  }
+};
+
 const GridExample = () => {
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
 
-  const onGridReady = (params) => {
-    setGridApi(params.api);
+  const onGridReady = event => {
+    const columnState = getStoredColumnState();
+
+    if (Array.isArray(columnState)) {
+      event.api.applyColumnState({
+        state: columnState,
+        applyOrder: true,
+      });
+    }
+    setGridApi(event.api);
   };
+
+  const columnStateChanged = event => {
+    if (event.finished === false) {
+      return;
+    }
+
+    storeColumnState(event.api);
+  };
+
   const onQuickFilterChange = (e) => {
     gridApi.setGridOption('quickFilterText', e.target.value);
   };
@@ -204,6 +246,11 @@ const GridExample = () => {
           rowData={rowData}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
+          onColumnResized={columnStateChanged}
+          onColumnMoved={columnStateChanged}
+          onColumnVisible={columnStateChanged}
+          onColumnPinned={columnStateChanged}
+          onSortChanged={columnStateChanged}
           onGridReady={onGridReady}
           rowSelection={rowSelection}
           onCellDoubleClicked={cellDoubleClicked}

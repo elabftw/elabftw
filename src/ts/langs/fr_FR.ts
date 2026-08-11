@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "L'archivage d'un utilisateur signifie que son compte sera désactivé. Cette action est réversible.",
     "association-date": "Date de création de l'association",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "Peut gérer la base de composés chimiques",
     "can-manage-inventory-locations": "Peut gérer les emplacements des stocks",
     "can-manage-users2teams": "Peut gérer les utilisateurs en équipes",

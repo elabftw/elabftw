@@ -5,6 +5,8 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import i18next from './i18n';
+
 export default class ScrollButtons {
   private readonly container: HTMLDivElement;
   private readonly backToTopButton: HTMLButtonElement;
@@ -19,7 +21,7 @@ export default class ScrollButtons {
       'flex-column',
     );
 
-    this.backToTopButton = this.createButton('fa-arrow-up', 'Back to top');
+    this.backToTopButton = this.createButton('fa-arrow-up', i18next.t('back-to-top'));
     this.backToTopButton.id = 'backToTopButton';
 
     this.backToTopButton.addEventListener('click', () => {

@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "Arxivar un usuari significa que el seu compte es desactivarà. Aquesta acció és reversible.",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "Pot regitionar components",
     "can-manage-inventory-locations": "Pot gestionar ubicació d'inventari",
     "can-manage-users2teams": "Pot gestionar usuaris a equips",

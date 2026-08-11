@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "사용자를 보관처리하면 해당 사용자의 계정이 비활성화됩니다. 이 작업은 되돌릴 수 있습니다.",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "Can manage compounds",
     "can-manage-inventory-locations": "Can manage inventory locations",
     "can-manage-users2teams": "Can manage users to teams",

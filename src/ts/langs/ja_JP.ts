@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "ユーザーをアーカイブすると、そのユーザーのアカウントは無効になります。この操作は元に戻すことができます。",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "化合物の管理が可能",
     "can-manage-inventory-locations": "在庫ロケーションの管理が可能",
     "can-manage-users2teams": "ユーザーをチーム単位で管理可能",

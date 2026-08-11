@@ -16,6 +16,7 @@ const t = {
     "archive-user-description": "Archivar a un usuario significa que su cuenta se desactivará. Esta acción es reversible.",
     "association-date": "Association date",
     "background-color": "Background color",
+    "back-to-top": "Back to top",
     "can-manage-compounds": "Puede gestionar compuestos",
     "can-manage-inventory-locations": "Puede gestionar ubicaciones de inventario",
     "can-manage-users2teams": "Puede administrar usuarios a equipos",

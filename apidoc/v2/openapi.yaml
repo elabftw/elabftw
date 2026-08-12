@@ -2792,12 +2792,19 @@ paths:
                   description: ID of the parent storage unit. Set to null for a top-level unit.
                   example: null
                 capacity:
-                  type: integer
                   nullable: true
+                  oneOf:
+                    - type: integer
+                      minimum: 0
+                      maximum: 4294967295
+                    - type: string
+                      pattern: '^(0|[1-9][0-9]*)?$'
                   description: |
                     Maximum number of containers this unit should hold.
-                    Omit, or pass `null`, for unlimited (the default). Pass `0` for a unit
-                    that holds other units but never containers.
+                    Omit, or pass `null` or `""`, for unlimited (the default). Pass `0` for
+                    a unit that holds other units but never containers.
+                    Accepted as an integer or as its decimal string form, so that form
+                    submissions need no conversion. The upper bound is 4294967295.
                   example: 96
       responses:
         '201':
@@ -2867,12 +2874,19 @@ paths:
                     Cannot be the unit itself or any of its descendants.
                   example: 5
                 capacity:
-                  type: integer
                   nullable: true
+                  oneOf:
+                    - type: integer
+                      minimum: 0
+                      maximum: 4294967295
+                    - type: string
+                      pattern: '^(0|[1-9][0-9]*)?$'
                   description: |
                     Maximum number of containers this unit should hold.
-                    Pass `null` or an empty string for unlimited. Pass `0` for a unit that
+                    Pass `null` or `""` for unlimited. Pass `0` for a unit that
                     holds other units but never containers.
+                    Accepted as an integer or as its decimal string form, so that form
+                    submissions need no conversion. The upper bound is 4294967295.
                     May be set below the current occupancy, so that an over-filled
                     location can be declared and then drained.
                   example: 96

@@ -45,6 +45,9 @@ final class StorageUnits extends AbstractRest
 {
     use SetIdTrait;
 
+    // upper bound of the INT UNSIGNED capacity column
+    public const int MAX_CAPACITY = 4294967295;
+
     /**
      * Tables holding real containers: a row in one of them occupies a slot. The template
      * tables are absent on purpose, as their containers are defaults copied on creation
@@ -307,14 +310,23 @@ final class StorageUnits extends AbstractRest
         if ($hasCapacity) {
             $newCapacity = $this->normalizeCapacity($params['capacity']);
         }
-        if ($hasName) {
-            $this->update(new CommentParam($params['name']));
-        }
-        if ($hasCapacity) {
-            $this->updateCapacity($newCapacity);
-        }
-        if ($hasParent) {
-            $this->applyMove($newParentId);
+        // one transaction for the lot: a move that fails at the database level must not
+        // leave the name or capacity from the same request behind
+        $this->Db->beginTransaction();
+        try {
+            if ($hasName) {
+                $this->update(new CommentParam($params['name']));
+            }
+            if ($hasCapacity) {
+                $this->updateCapacity($newCapacity);
+            }
+            if ($hasParent) {
+                $this->writeMove($newParentId);
+            }
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
         }
         return $this->readOne();
     }
@@ -525,6 +537,10 @@ final class StorageUnits extends AbstractRest
             if ($parsed < 0) {
                 throw new ImproperActionException('Capacity cannot be negative.');
             }
+            // the column is INT UNSIGNED: reject here rather than let MySQL truncate or error
+            if ($parsed > self::MAX_CAPACITY) {
+                throw new ImproperActionException(sprintf('Capacity cannot exceed %d.', self::MAX_CAPACITY));
+            }
             return $parsed;
         }
         throw new ImproperActionException('Invalid capacity: must be a whole number, or empty for unlimited.');
@@ -562,26 +578,37 @@ final class StorageUnits extends AbstractRest
         }
     }
 
+    /**
+     * Owns a transaction, so it is only for callers that have none. patch() writes a move
+     * alongside other columns and drives writeMove() from its own transaction instead.
+     */
     private function applyMove(?int $newParentId): bool
     {
-        $oldParentId = $this->readCurrentParentId();
-        if ($oldParentId === $newParentId) {
-            return true;
-        }
         $this->Db->beginTransaction();
         try {
-            $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
-            $req = $this->Db->prepare($sql);
-            $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
-            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-            $ok = $this->Db->execute($req);
-            $this->recordMove($oldParentId, $newParentId);
+            $ok = $this->writeMove($newParentId);
             $this->Db->commit();
             return $ok;
         } catch (Throwable $e) {
             $this->Db->rollBack();
             throw $e;
         }
+    }
+
+    // the move itself, with no transaction of its own: the caller must provide one
+    private function writeMove(?int $newParentId): bool
+    {
+        $oldParentId = $this->readCurrentParentId();
+        if ($oldParentId === $newParentId) {
+            return true;
+        }
+        $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $ok = $this->Db->execute($req);
+        $this->recordMove($oldParentId, $newParentId);
+        return $ok;
     }
 
     private function readCurrentParentId(): ?int

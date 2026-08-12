@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Users\Users;
@@ -252,6 +254,48 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->StorageUnits->patch(Action::Update, array('capacity' => 'lots'));
     }
 
+    public function testCapacityIsCappedAtTheColumnMaximum(): void
+    {
+        $unitId = $this->StorageUnits->create('Huge capacity test');
+        $this->StorageUnits->setId($unitId);
+        // the column is INT UNSIGNED, so its ceiling is a rejection rather than a truncation
+        $this->assertEquals(
+            StorageUnits::MAX_CAPACITY,
+            $this->StorageUnits->patch(Action::Update, array('capacity' => StorageUnits::MAX_CAPACITY))['capacity'],
+        );
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => StorageUnits::MAX_CAPACITY + 1));
+    }
+
+    public function testPatchIsRolledBackWhenTheMoveFails(): void
+    {
+        $destinationId = $this->StorageUnits->create('Rollback destination');
+        $unitId = $this->StorageUnits->create('Rollback source');
+        $this->StorageUnits->setId($unitId);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 5));
+
+        // every move writes a history row, so blocking that insert fails the move at the
+        // database level, after the name and capacity of the same request were written
+        $this->blockMoveHistoryInserts();
+        try {
+            $this->StorageUnits->patch(Action::Update, array(
+                'name' => 'Name that must not survive',
+                'capacity' => 42,
+                'parent_id' => $destinationId,
+            ));
+            $this->fail('The move should have failed at the database level.');
+        } catch (DatabaseErrorException) {
+            // expected
+        } finally {
+            $this->unblockMoveHistoryInserts();
+        }
+
+        $unit = $this->StorageUnits->readOne();
+        $this->assertEquals('Rollback source', $unit['name']);
+        $this->assertEquals(5, $unit['capacity']);
+        $this->assertNull($unit['parent_id']);
+    }
+
     public function testCountContainersIsNotAffectedByBinning(): void
     {
         $Item = $this->getFreshItem();
@@ -474,6 +518,21 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $history);
         $this->assertEquals($shelfA, (int) $history[0]['old_parent_id']);
         $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
+    }
+
+    private function blockMoveHistoryInserts(): void
+    {
+        $Db = Db::getConnection();
+        $Db->execute($Db->prepare(
+            "CREATE TRIGGER block_move_history BEFORE INSERT ON storage_units_history
+                FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'blocked by test'"
+        ));
+    }
+
+    private function unblockMoveHistoryInserts(): void
+    {
+        $Db = Db::getConnection();
+        $Db->execute($Db->prepare('DROP TRIGGER IF EXISTS block_move_history'));
     }
 
     /**

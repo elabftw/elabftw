@@ -325,7 +325,9 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $this->Db->beginTransaction();
         try {
             if ($enforceCapacity) {
-                new StorageUnits($this->Entity->Users, false)->assertHasRoom($this->id);
+                new StorageUnits($this->Entity->Users, false)->assertHasRoom(
+                    $this->id ?? throw new ImproperActionException('Missing storage unit id'),
+                );
             }
             $this->Entity->touch();
 

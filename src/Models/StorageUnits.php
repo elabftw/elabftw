@@ -69,6 +69,7 @@ final class StorageUnits extends AbstractRest
                     name,
                     parent_id,
                     parent_id AS original_parent_id,
+                    capacity,
                     CAST(name AS CHAR(1000)) AS full_path,
                     0 AS level_depth
                 FROM
@@ -85,6 +86,7 @@ final class StorageUnits extends AbstractRest
                     child.name,
                     parent.parent_id,
                     child.original_parent_id,
+                    child.capacity,
                     CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR(1000)) AS full_path,
                     child.level_depth + 1
                 FROM
@@ -99,6 +101,7 @@ final class StorageUnits extends AbstractRest
                 name,
                 full_path,
                 original_parent_id AS parent_id,
+                capacity,
                 level_depth
             FROM
                 storage_hierarchy
@@ -279,7 +282,8 @@ final class StorageUnits extends AbstractRest
         $this->canWriteOrExplode();
         $hasName = !empty($params['name']);
         $hasParent = array_key_exists('parent_id', $params);
-        if (!$hasName && !$hasParent) {
+        $hasCapacity = array_key_exists('capacity', $params);
+        if (!$hasName && !$hasParent && !$hasCapacity) {
             throw new ImproperActionException('No valid update target provided.');
         }
         $newParentId = null;
@@ -287,8 +291,15 @@ final class StorageUnits extends AbstractRest
             $newParentId = $this->normalizeParentId($params['parent_id']);
             $this->validateMoveTarget($newParentId);
         }
+        $newCapacity = null;
+        if ($hasCapacity) {
+            $newCapacity = $this->normalizeCapacity($params['capacity']);
+        }
         if ($hasName) {
             $this->update(new CommentParam($params['name']));
+        }
+        if ($hasCapacity) {
+            $this->updateCapacity($newCapacity);
         }
         if ($hasParent) {
             $this->applyMove($newParentId);
@@ -344,15 +355,17 @@ final class StorageUnits extends AbstractRest
         return $this->create(
             $reqBody['name'] ?? throw new ImproperActionException('Missing value for "name"'),
             Filter::intOrNull($reqBody['parent_id'] ?? 0),
+            $this->normalizeCapacity($reqBody['capacity'] ?? null),
         );
     }
 
-    public function create(string $unitName, ?int $parentId = null): int
+    public function create(string $unitName, ?int $parentId = null, ?int $capacity = null): int
     {
-        $sql = 'INSERT INTO storage_units(parent_id, name) VALUES(:parent_id, :name)';
+        $sql = 'INSERT INTO storage_units(parent_id, name, capacity) VALUES(:parent_id, :name, :capacity)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':parent_id', $parentId);
         $req->bindParam(':name', $unitName);
+        $req->bindValue(':capacity', $capacity, $capacity === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->lastInsertId();
     }
@@ -364,6 +377,15 @@ final class StorageUnits extends AbstractRest
             WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name', $params->getContent());
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    public function updateCapacity(?int $capacity): bool
+    {
+        $sql = 'UPDATE storage_units SET capacity = :capacity WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':capacity', $capacity, $capacity === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -410,6 +432,24 @@ final class StorageUnits extends AbstractRest
             return $parsed === 0 ? null : $parsed;
         }
         throw new ImproperActionException('Invalid parent_id');
+    }
+
+    /**
+     * null, an empty string or 0 all mean "unlimited"
+     */
+    private function normalizeCapacity(mixed $raw): ?int
+    {
+        if ($raw === null || $raw === '') {
+            return null;
+        }
+        if (is_int($raw) || (is_string($raw) && filter_var($raw, FILTER_VALIDATE_INT) !== false)) {
+            $parsed = (int) $raw;
+            if ($parsed < 0) {
+                throw new ImproperActionException('Capacity cannot be negative.');
+            }
+            return $parsed === 0 ? null : $parsed;
+        }
+        throw new ImproperActionException('Invalid capacity: must be a positive whole number.');
     }
 
     private function validateMoveTarget(?int $newParentId): void
@@ -500,6 +540,7 @@ final class StorageUnits extends AbstractRest
                 id,
                 name,
                 parent_id,
+                capacity,
                 name AS full_path,
                 0 AS level_depth,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
@@ -515,6 +556,7 @@ final class StorageUnits extends AbstractRest
                 child.id,
                 child.name,
                 child.parent_id,
+                child.capacity,
                 CONCAT(parent.full_path, ' > ', child.name) AS full_path,
                 parent.level_depth + 1,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
@@ -532,6 +574,7 @@ final class StorageUnits extends AbstractRest
             name,
             full_path,
             parent_id,
+            capacity,
             level_depth,
             children_count
         FROM

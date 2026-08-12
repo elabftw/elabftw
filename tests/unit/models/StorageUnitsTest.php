@@ -206,6 +206,49 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->StorageUnits->patch(Action::Update, array('parent_id' => 'bogus'));
     }
 
+    public function testCapacityDefaultsToUnlimited(): void
+    {
+        $unitId = $this->StorageUnits->create('No capacity set');
+        $this->StorageUnits->setId($unitId);
+        $this->assertNull($this->StorageUnits->readOne()['capacity']);
+    }
+
+    public function testCreateWithCapacity(): void
+    {
+        $unitId = $this->StorageUnits->postAction(Action::Create, array('name' => 'Box of 96', 'capacity' => 96));
+        $this->StorageUnits->setId($unitId);
+        $this->assertEquals(96, $this->StorageUnits->readOne()['capacity']);
+    }
+
+    public function testPatchCapacity(): void
+    {
+        $unitId = $this->StorageUnits->create('Capacity patch test');
+        $this->StorageUnits->setId($unitId);
+        $this->assertEquals(1, $this->StorageUnits->patch(Action::Update, array('capacity' => 1))['capacity']);
+        // a string works too, as sent by the frontend
+        $this->assertEquals(12, $this->StorageUnits->patch(Action::Update, array('capacity' => '12'))['capacity']);
+        // 0, null and an empty string all mean unlimited
+        $this->assertNull($this->StorageUnits->patch(Action::Update, array('capacity' => 0))['capacity']);
+        $this->assertNull($this->StorageUnits->patch(Action::Update, array('capacity' => null))['capacity']);
+        $this->assertNull($this->StorageUnits->patch(Action::Update, array('capacity' => ''))['capacity']);
+    }
+
+    public function testPatchWithNegativeCapacityIsRejected(): void
+    {
+        $unitId = $this->StorageUnits->create('Negative capacity test');
+        $this->StorageUnits->setId($unitId);
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => -1));
+    }
+
+    public function testPatchWithNonNumericCapacityIsRejected(): void
+    {
+        $unitId = $this->StorageUnits->create('Bogus capacity test');
+        $this->StorageUnits->setId($unitId);
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 'lots'));
+    }
+
     public function testPatchDoesNotPersistRenameWhenMoveFails(): void
     {
         $original = 'Atomicity test original';

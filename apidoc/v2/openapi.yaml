@@ -1975,6 +1975,11 @@ components:
           type: string
           description: Full hierarchical path from root to this unit
           example: "Building A > Room 101 > Freezer A"
+        capacity:
+          type: integer
+          nullable: true
+          description: Maximum number of containers this unit should hold. Null means unlimited.
+          example: 96
         level_depth:
           type: integer
           description: Depth level in the hierarchy (0 for root)
@@ -2487,7 +2492,7 @@ paths:
       description: |
         Without parameters, returns the full list of containers (assignments of experiments or resources to storage locations) that you have access to.
 
-        With `?hierarchy=true`, returns a flat list of all storage units (freezers, boxes, positions, etc.) with their hierarchy metadata (`id`, `name`, `parent_id`, `full_path`, `level_depth`, `children_count`). This allows clients to discover, traverse, or display the storage unit tree.
+        With `?hierarchy=true`, returns a flat list of all storage units (freezers, boxes, positions, etc.) with their hierarchy metadata (`id`, `name`, `parent_id`, `full_path`, `capacity`, `level_depth`, `children_count`). This allows clients to discover, traverse, or display the storage unit tree.
       operationId: read-storage-units
       parameters:
         - name: hierarchy
@@ -2497,7 +2502,7 @@ paths:
             type: boolean
           description: |
             When true, returns a flat list of all storage units in the hierarchy
-            (id, name, parent_id, full_path, level_depth, children_count)
+            (id, name, parent_id, full_path, capacity, level_depth, children_count)
             instead of the default container assignment list.
       responses:
         '200':
@@ -2718,6 +2723,11 @@ paths:
                           type: string
                           description: Full path from root to this unit, separated by " > ".
                           example: "Hospital > 4th floor > Freezer A"
+                        capacity:
+                          type: integer
+                          nullable: true
+                          description: Maximum number of containers this unit should hold. Null means unlimited.
+                          example: 96
                         level_depth:
                           type: integer
                           description: Depth in hierarchy (0 for root units).
@@ -2752,6 +2762,13 @@ paths:
                   nullable: true
                   description: ID of the parent storage unit. Set to null for a top-level unit.
                   example: null
+                capacity:
+                  type: integer
+                  nullable: true
+                  description: |
+                    Maximum number of containers this unit should hold.
+                    Omit, or pass `null` or `0`, for unlimited (the default).
+                  example: 96
       responses:
         '201':
           description: The storage unit has been created.
@@ -2795,7 +2812,7 @@ paths:
       tags: ['Storage units']
       summary: Modify a storage unit.
       description: |
-        Update the name and/or the parent of a storage unit. Setting
+        Update the name, the capacity and/or the parent of a storage unit. Setting
         `parent_id` reparents the unit (and everything under it) in place.
         Pass `parent_id: null` to move the unit to the root. Requires
         permission to manage inventory locations.
@@ -2819,6 +2836,14 @@ paths:
                     New parent storage unit id, or `null` to move to the root.
                     Cannot be the unit itself or any of its descendants.
                   example: 5
+                capacity:
+                  type: integer
+                  nullable: true
+                  description: |
+                    Maximum number of containers this unit should hold.
+                    Pass `null`, `0` or an empty string for unlimited.
+                    Not enforced when storing containers.
+                  example: 96
       responses:
         '200':
           description: The updated storage unit.

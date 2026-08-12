@@ -25,6 +25,14 @@
       </div>
     </div>
   {% endmacro %}
+  {# max number of containers this location should hold; unset means unlimited #}
+  {% macro render_capacity(unit, storage_editable) %}
+    {% if storage_editable %}
+      <span class='smallgray ml-2'>{{ 'Capacity'|trans }}: <span class='hl-hover p-1 rounded malleableColumn {{ not unit.capacity ? 'font-italic' }}' data-endpoint='storage_units' data-id='{{ unit.id }}' data-target='capacity' data-input-type='number'>{{ unit.capacity|default('unset'|trans) }}</span></span>
+    {% elseif unit.capacity %}
+      <span class='smallgray ml-2'>{{ 'Capacity: %s'|trans|format(unit.capacity) }}</span>
+    {% endif %}
+  {% endmacro %}
   {% macro render_items(items, groupedItems, storage_editable, is_entity=true, is_move=false, is_move_storage=false) %}
     <ul class='list-group'>
       {% for item in items %}
@@ -48,6 +56,7 @@
                 <button type='button' class='btn btn-ghost btn-sm' data-action='move-storage' data-id='{{ item.id }}'><i class='fas fa-arrows-up-down-left-right mr-1'></i>{{ 'Move'|trans }}</button>
                 <button type='button' class='btn btn-danger-ghost btn-sm' data-id='{{ item.id }}' data-action='destroy-storage'><i class='fas fa-minus-circle mr-1'></i>{{ 'Delete %s and its children'|trans|format(item.name) }}</button>
               {% endif %}
+              {{ _self.render_capacity(item, storage_editable) }}
             </div>
             {% if groupedItems[item.id] is defined %}
               {# Recursively render the children #}
@@ -66,6 +75,7 @@
       <div class='d-flex'>
         <div>
           <i class='fas fa-location-dot mr-2'></i><span class='{{ storage_editable ? 'malleableColumn hl-hover' }} p-1 rounded font-weight-bold' data-endpoint='storage_units' data-id='{{ root.id }}' data-target='name'>{{ root.name }}</span>
+          {{ _self.render_capacity(root, storage_editable) }}
         </div>
         {% if storage_editable %}
           <div class='ml-auto'>

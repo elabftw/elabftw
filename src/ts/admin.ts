@@ -64,6 +64,10 @@ function getSelected(): Selected {
     users_experiments_templates: collectSelectable('users_experiments_templates'),
     users_resources_templates: collectSelectable('users_resources_templates'),
     userid: collectInt('targetUserId'),
+    team: parseInt(
+      (document.getElementById('targetTeamId') as HTMLSelectElement).value,
+      10,
+    ),
     can: collectCan(),
     can_base: parseInt((document.getElementById('masscan_select_base') as HTMLSelectElement).value, 10),
   };

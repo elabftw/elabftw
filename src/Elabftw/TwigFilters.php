@@ -33,6 +33,7 @@ use function nl2br;
 use function _;
 use function array_key_exists;
 use function in_array;
+use function trim;
 
 /**
  * Twig filters
@@ -240,7 +241,12 @@ final class TwigFilters
         if ($metadataType === 'users' && $value !== '') {
             try {
                 $linkedUser = new Users((int) $value);
-                return $linkedUser->userData['fullname'];
+                $displayName = trim((string) ($linkedUser->userData['fullname'] ?? ''));
+                if ($displayName === '') {
+                    $displayName = (string) ($linkedUser->userData['email'] ?? $linkedUser->userData['userid'] ?? $value);
+                }
+
+                return $displayName;
             } catch (ResourceNotFoundException) {
                 return _('User could not be found.');
             }

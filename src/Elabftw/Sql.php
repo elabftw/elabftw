@@ -93,6 +93,29 @@ final class Sql
     }
 
     /**
+     * Execute a SQL file and compensate a failed migration with its down file
+     */
+    public function execFileWithRollback(string $filename, string $rollbackFilename, bool $force = false): int
+    {
+        if ($force) {
+            return $this->execFile($filename, true);
+        }
+
+        try {
+            return $this->execFile($filename);
+        } catch (DatabaseErrorException $e) {
+            if ($this->output !== null) {
+                $this->output->writeln(sprintf('<error>Failed to apply %s. Rolling back with %s.</error>', $filename, $rollbackFilename));
+            }
+            // DDL statements cannot be rolled back as a transaction in MySQL, so
+            // run the compensating migration and ignore operations that were not
+            // reached by the failed up migration.
+            $this->execFile($rollbackFilename, true);
+            throw $e;
+        }
+    }
+
+    /**
      * Read a file and return the significant lines as array
      */
     private function getLines(string $filename): array

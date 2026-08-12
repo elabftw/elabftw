@@ -41,6 +41,22 @@ class SqlTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(3, $this->Sql->execFile('dummy-broken.sql'));
     }
 
+    public function testExecFileWithRollback(): void
+    {
+        $fsMock = $this->createMock(Fs::class);
+        $fsMock->method('fileExists')->willReturn(false);
+        $fsMock->expects($this->exactly(2))
+            ->method('read')
+            ->willReturnMap(array(
+                array('broken.sql', 'SELECT * FROM users;' . PHP_EOL . 'SELECT not_existing FROM not_existing_either;'),
+                array('rollback.sql', 'SELECT * FROM teams;'),
+            ));
+        $Sql = new Sql($fsMock);
+
+        $this->expectException(DatabaseErrorException::class);
+        $Sql->execFileWithRollback('broken.sql', 'rollback.sql');
+    }
+
     public function testExecNonExistingFile(): void
     {
         $this->expectException(UnableToReadFile::class);

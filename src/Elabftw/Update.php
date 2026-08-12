@@ -65,8 +65,13 @@ final class Update
         // new style with SQL files instead of functions
         $Config = Config::getConfig();
         while ($this->currentSchema < SchemaVersionChecker::REQUIRED_SCHEMA) {
-            ++$this->currentSchema;
-            $this->Sql->execFile(sprintf('schema%d.sql', $this->currentSchema), $force);
+            $nextSchema = $this->currentSchema + 1;
+            $this->Sql->execFileWithRollback(
+                sprintf('schema%d.sql', $nextSchema),
+                sprintf('schema%d-down.sql', $nextSchema),
+                $force,
+            );
+            $this->currentSchema = $nextSchema;
             // this will bust cache
             $Config->patch(Action::Update, array('schema' => $this->currentSchema));
             // schema57: add an elabid to existing database items

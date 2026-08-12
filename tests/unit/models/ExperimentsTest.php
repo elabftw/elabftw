@@ -360,6 +360,13 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         ));
         $decoded = json_decode($res['metadata'], true);
         $this->assertSame('12.5', $decoded['extra_fields']['quantity']['value']);
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'quantity' => 12.5,
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertSame(12.5, $decoded['extra_fields']['quantity']['value']);
     }
 
     public function testUpdateJsonFieldRejectsMultipleValuesForSingleField(): void

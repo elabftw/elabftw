@@ -1439,7 +1439,7 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     // Update only one field in the metadata json
-    private function updateJsonField(string $key, string|array|int $value): bool
+    private function updateJsonField(string $key, string|array|int|float $value): bool
     {
         $extraFields = new Metadata($this->entityData['metadata'] ?? null)->getExtraFields();
         if (!array_key_exists($key, $extraFields)) {

@@ -22,10 +22,13 @@ use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
+use function sprintf;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
+
+    private const string BLOCK_MOVE_CONSTRAINT = 'block_move_history';
 
     private StorageUnits $StorageUnits;
 
@@ -276,7 +279,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 
         // every move writes a history row, so blocking that insert fails the move at the
         // database level, after the name and capacity of the same request were written
-        $this->blockMoveHistoryInserts();
+        $this->blockMoveHistoryInserts($destinationId);
         try {
             $this->StorageUnits->patch(Action::Update, array(
                 'name' => 'Name that must not survive',
@@ -520,19 +523,29 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
     }
 
-    private function blockMoveHistoryInserts(): void
+    /**
+     * Reject history rows pointing at $destinationId. A CHECK constraint rather than a
+     * trigger, as triggers need SUPER when binary logging is on. The destination is
+     * freshly created, so no existing row can violate the constraint as it is added.
+     */
+    private function blockMoveHistoryInserts(int $destinationId): void
     {
         $Db = Db::getConnection();
-        $Db->execute($Db->prepare(
-            "CREATE TRIGGER block_move_history BEFORE INSERT ON storage_units_history
-                FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'blocked by test'"
-        ));
+        $Db->execute($Db->prepare(sprintf(
+            'ALTER TABLE storage_units_history
+                ADD CONSTRAINT %s CHECK (new_parent_id <> %d)',
+            self::BLOCK_MOVE_CONSTRAINT,
+            $destinationId,
+        )));
     }
 
     private function unblockMoveHistoryInserts(): void
     {
         $Db = Db::getConnection();
-        $Db->execute($Db->prepare('DROP TRIGGER IF EXISTS block_move_history'));
+        // MySQL has no DROP CHECK IF EXISTS
+        $Db->execute($Db->prepare(
+            'ALTER TABLE storage_units_history DROP CHECK ' . self::BLOCK_MOVE_CONSTRAINT
+        ));
     }
 
     /**

@@ -841,9 +841,28 @@ on('toggle-next', (el: HTMLElement) => {
 });
 
 // START STORAGE
+
+/**
+ * Ids of the storage trees currently on the page. Several coexist (inventory page + modals)
+ * and they render different action controls, so each has its own id and all of them must be
+ * reloaded together to stay in sync.
+ */
+const storageTreeIds = (): string[] =>
+  Array.from(document.querySelectorAll('[data-storage-tree]')).map(el => el.id);
+
+const reloadStorageTrees = (): Promise<void> => reloadElements(storageTreeIds());
+
+/** Re-open a unit and its ancestors, in every tree that renders it. */
+function revealStorageUnit(storageId: string): void {
+  document.querySelectorAll(`details[data-id="${storageId}"]`).forEach((details: HTMLDetailsElement) => {
+    details.open = true;
+    getAncestorDetails(details).forEach(ancestor => ancestor.open = true);
+  });
+}
+
 on('toggle-all-storage', (el: HTMLElement) => {
-  // expand or collapse all storage nodes
-  const root = document.getElementById('storageDiv');
+  // expand or collapse all storage nodes of the tree these buttons belong to
+  const root = el.closest('[data-storage-tree]');
   const state = el.dataset.expand === '1';
   if (root) {
     const detailsElements = root.querySelectorAll('details');
@@ -857,14 +876,7 @@ on('rename-storage', (el: HTMLElement) => {
   const name = prompt('Name')?.trim();
   if (!name) return;
   ApiC.patch(`storage_units/${el.dataset.id}`, {name: name}).then(() => {
-    reloadElements(['storageDiv']).then(() => {
-      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${el.dataset.id}"]`);
-      if (parent) {
-        parent.open = true;
-        // now open ancestors too
-        getAncestorDetails(parent).forEach(details => details.open = true);
-      }
-    });
+    reloadStorageTrees().then(() => revealStorageUnit(el.dataset.id));
   });
 });
 on('add-storage-children', (el: HTMLElement) => {
@@ -877,14 +889,7 @@ on('add-storage-children', (el: HTMLElement) => {
     name: unitName.trim(),
   };
   ApiC.post('storage_units', params).then(() => {
-    reloadElements(['storageDiv']).then(() => {
-      const parent: HTMLDetailsElement = document.querySelector(`details[data-id="${params.parent_id}"]`);
-      if (parent) {
-        parent.open = true;
-        // now open ancestors too
-        getAncestorDetails(parent).forEach(details => details.open = true);
-      }
-    });
+    reloadStorageTrees().then(() => revealStorageUnit(params.parent_id));
   });
 });
 // CONTAINER DISTRIBUTION across multiple storage locations
@@ -1027,7 +1032,7 @@ if (storageModalEl) {
   });
 }
 
-on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv'])));
+on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadStorageTrees()));
 
 on('destroy-container', (el: HTMLElement) => {
   if (confirm(i18next.t('generic-delete-warning'))) {
@@ -1073,7 +1078,7 @@ on('move-storage-target', (el: HTMLElement) => {
   const newParentId = el.dataset.id;
   if (!storageId || !newParentId) return;
   ApiC.patch(`storage_units/${storageId}`, { parent_id: parseInt(newParentId, 10) })
-    .then(() => reloadElements(['storageDiv']))
+    .then(() => reloadStorageTrees())
     .catch((error) => notify.error(error));
 });
 
@@ -1082,7 +1087,7 @@ on('move-storage-to-root', () => {
   const storageId = modal?.dataset.storageId;
   if (!storageId) return;
   ApiC.patch(`storage_units/${storageId}`, { parent_id: null })
-    .then(() => reloadElements(['storageDiv']))
+    .then(() => reloadStorageTrees())
     .catch((error) => notify.error(error));
 });
 
@@ -1098,7 +1103,7 @@ on('move-container-target', (el: HTMLElement) => {
 
 on('destroy-storage', (el: HTMLElement) => {
   if (confirm(i18next.t('generic-delete-warning'))) {
-    ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadElements(['storageDiv']));
+    ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadStorageTrees());
   }
 });
 

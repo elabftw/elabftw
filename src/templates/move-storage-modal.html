@@ -14,7 +14,7 @@
           <div class='mb-2'>
             <button type='button' class='btn btn-ghost btn-sm' data-action='move-storage-to-root' data-dismiss='modal'><i class='fas fa-arrow-up mr-1'></i>{{ 'Move to root'|trans }}</button>
           </div>
-          {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': false, 'is_move_storage': true} %}
+          {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': false, 'is_move_storage': true, 'dom_id': 'moveStorageUnitStorageDiv'} %}
         </div>
       </div>
       <div class='modal-footer'>

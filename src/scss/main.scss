@@ -1809,7 +1809,8 @@ input:user-invalid {
   flex-shrink: 0; /* Ensure toolbars do not shrink */
 }
 
-#storageDiv {
+/* every storage tree, whatever its id: several coexist on a page */
+[data-storage-tree] {
   details,
   summary {
     margin: 10px 0;

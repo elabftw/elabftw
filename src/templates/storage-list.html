@@ -3,16 +3,20 @@
 {# var: is_move bool — when true, render a "Move here" button targeting move-container-target instead of "Store in X" #}
 {# var: is_move_storage bool — when true, render a "Move here" button targeting move-storage-target (admin context) #}
 {# var: storageUnitsArr array #}
+{# var: dom_id string — id of the tree wrapper; must be unique per page as several trees can coexist #}
 {% set is_move = is_move|default(false) %}
 {% set is_move_storage = is_move_storage|default(false) %}
-<div class='mb-2'>
-  <button type='button' class='btn btn-transparent' data-action='toggle-all-storage' data-expand='1'>{{ 'Expand all'|trans }}</button>
-  <button type='button' class='btn btn-transparent' data-action='toggle-all-storage'>{{ 'Collapse all'|trans }}</button>
-</div>
+{% set dom_id = dom_id|default('storageDiv') %}
 {% if App.devMode and storage_editable -%}
   <!-- [html-validate-disable-block prefer-native-element: suppress errors] -->
 {%- endif %}
-<div id='storageDiv'>
+{# data-storage-tree lets the js find every tree on the page without knowing their ids #}
+<div id='{{ dom_id }}' data-storage-tree='1'>
+  {# inside the wrapper so these buttons act on their own tree, and so a reload brings them back #}
+  <div class='mb-2'>
+    <button type='button' class='btn btn-transparent' data-action='toggle-all-storage' data-expand='1'>{{ 'Expand all'|trans }}</button>
+    <button type='button' class='btn btn-transparent' data-action='toggle-all-storage'>{{ 'Collapse all'|trans }}</button>
+  </div>
   {# stepper used in the entity-create flow to pick how many containers go in this location #}
   {% macro render_stepper(storage_id, storage_name) %}
     <div class='input-group input-group-sm mt-1' style='max-width:160px' data-storage-id='{{ storage_id }}'>

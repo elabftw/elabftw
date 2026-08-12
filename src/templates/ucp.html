@@ -112,6 +112,21 @@
     </div>
   </div>
 
+  {# TRAINING MODE #}
+  <h2 class='p-2 pl-3 section-title'>{{ 'Training mode'|trans }}</h2>
+  <div class='pl-3 mt-2 mb-5'>
+    <div class='d-flex justify-content-between'>
+      <div>
+        <label for='trainingMode' class='col-form-label'>{{ 'Enable training mode'|trans }}</label>
+        <p class='smallgray'>{{ 'Make the pointer easier to see and highlight mouse clicks.'|trans }}</p>
+      </div>
+      <label class='switch ucp-align'>
+        <input type='checkbox' id='trainingMode' data-action='toggle-training-mode'>
+        <span class='slider'></span>
+      </label>
+    </div>
+  </div>
+
   {# SCHEDULER SETTINGS #}
   <h2 id='schedulerSettings' class='p-2 pl-3 section-title'>{{ 'Scheduler'|trans }}</h2>
 

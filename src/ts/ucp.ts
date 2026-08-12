@@ -89,3 +89,15 @@ on('destroy-apikey', (el: HTMLElement) => {
       .then(() => el.parentElement.parentElement.remove());
   }
 });
+
+// TRAINING MODE
+const trainingModeInput = document.getElementById('trainingMode') as HTMLInputElement | null;
+if (trainingModeInput) {
+  trainingModeInput.checked = localStorage.getItem('trainingMode') === '1';
+}
+
+on('toggle-training-mode', (el: HTMLElement) => {
+  const input = el as HTMLInputElement;
+  localStorage.setItem('trainingMode', input.checked ? '1' : '0');
+  window.dispatchEvent(new Event('training-mode-change'));
+});

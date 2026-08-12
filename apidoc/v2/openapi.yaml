@@ -2470,9 +2470,10 @@ paths:
                       type: string
                       maxLength: 255
                       description: |
-                        Free text, required with the `other` (100) reason. Anything
-                        longer than 255 characters is rejected with a 400, not
-                        truncated, so that no audit record is silently shortened.
+                        Free text, accepted with any reason and required with
+                        `other` (100). Anything longer than 255 characters is
+                        rejected with a 400, not truncated, so that no audit
+                        record is silently shortened. Stored as typed.
                       example: 'spilled in transit'
       responses:
         '201':

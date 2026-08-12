@@ -416,12 +416,34 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links = new Containers2ItemsLinks($Item, $rowId);
         $Links->postAction(Action::Destroy, array(
             'deletion_reason' => ContainerDeletionReason::Other->value,
-            'deletion_note' => '<b>spilled</b> in transit',
+            'deletion_note' => '  spilled in transit  ',
         ));
 
         $entry = $this->latestChangelogEntry($Item, 'container_deleted');
         $this->assertNotNull($entry);
         $this->assertStringEndsWith('(Other: spilled in transit)', $entry['content']);
+    }
+
+    // the changelog cell is escaped when rendered, so the note is stored exactly as typed:
+    // encoding it here too would show the user "A &amp; B" where they wrote "A & B"
+    public function testDeleteNoteIsStoredVerbatim(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for verbatim note test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->postAction(Action::Destroy, array(
+            'deletion_reason' => ContainerDeletionReason::Other->value,
+            'deletion_note' => 'batch A & B, <10% left',
+        ));
+
+        $entry = $this->latestChangelogEntry($Item, 'container_deleted');
+        $this->assertNotNull($entry);
+        $this->assertStringEndsWith('(Other: batch A & B, <10% left)', $entry['content']);
     }
 
     // a bodyless DELETE cannot carry the reason, so it is refused when one is required
@@ -438,8 +460,9 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         try {
             $Links->destroy();
             $this->fail('Expected ImproperActionException was not thrown.');
-        } catch (ImproperActionException) {
-            $this->addToAssertionCount(1);
+        } catch (ImproperActionException $e) {
+            // the verb cannot carry a reason, so the message must point somewhere useful
+            $this->assertStringContainsString('POST', $e->getMessage());
         }
         // the container must still be there
         $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
@@ -459,8 +482,9 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         try {
             $Links->postAction(Action::Destroy, array());
             $this->fail('Expected ImproperActionException was not thrown.');
-        } catch (ImproperActionException) {
-            $this->addToAssertionCount(1);
+        } catch (ImproperActionException $e) {
+            // POST can carry a reason, so it gets no advice about the verb
+            $this->assertStringNotContainsString('POST', $e->getMessage());
         }
         $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
         $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));

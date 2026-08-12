@@ -30,7 +30,6 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Teams;
 use Elabftw\Params\ContentParams;
-use Elabftw\Services\Filter;
 use Override;
 use PDO;
 use Throwable;
@@ -257,7 +256,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     #[Override]
     public function destroy(): bool
     {
-        return $this->destroyWithReason(array());
+        return $this->destroyWithReason(array(), viaDeleteVerb: true);
     }
 
     public function destroyAll(): bool
@@ -389,11 +388,11 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return 'containers2items';
     }
 
-    private function destroyWithReason(array $params): bool
+    private function destroyWithReason(array $params, bool $viaDeleteVerb = false): bool
     {
         $this->Entity->canOrExplode(AccessType::Write);
         // resolve before the DELETE: a missing reason must not destroy anything
-        $reasonSuffix = $this->deletionReasonSuffix($params);
+        $reasonSuffix = $this->deletionReasonSuffix($params, $viaDeleteVerb);
         $this->Entity->touch();
 
         // read details for the changelog before the row is deleted
@@ -439,25 +438,31 @@ abstract class AbstractContainersLinks extends AbstractLinks
     /**
      * Reason for deletion, as a suffix to the changelog line. Empty unless the team requires it.
      */
-    private function deletionReasonSuffix(array $params): string
+    private function deletionReasonSuffix(array $params, bool $viaDeleteVerb): string
     {
         $teamConfig = new Teams($this->Entity->Users, $this->Entity->Users->team)->teamArr;
         if (empty($teamConfig['capture_container_deletion_reason'])) {
             return '';
         }
-        // anything non numeric casts to 0, which matches no case, so a bad value is rejected like a missing one
-        $reason = ContainerDeletionReason::tryFrom((int) ($params['deletion_reason'] ?? 0))
-            ?? throw new ImproperActionException(_('A reason is required to delete a container.'));
-        $rawNote = trim((string) ($params['deletion_note'] ?? ''));
-        // reject rather than truncate: a silently shortened audit record is worse than a refused deletion.
-        // measured on the input, so the limit matches what the user typed and what the api doc advertises
-        if (mb_strlen($rawNote) > self::MAX_DELETION_NOTE_LENGTH) {
+        $rawReason = $params['deletion_reason'] ?? null;
+        if ($rawReason === null || $rawReason === '') {
+            // DELETE has no body to carry a reason: point at the verb that does, and at a stale page reload
+            throw new ImproperActionException($viaDeleteVerb
+                ? _('A reason is required to delete a container. Use POST with action "destroy", or reload the page.')
+                : _('A reason is required to delete a container.'));
+        }
+        // anything non numeric casts to 0, which matches no case
+        $reason = ContainerDeletionReason::tryFrom((int) $rawReason)
+            ?? throw new ImproperActionException(_('Invalid reason for deleting a container.'));
+        // stored as typed: the changelog cell is escaped when rendered, so purifying here would double encode
+        $note = trim((string) ($params['deletion_note'] ?? ''));
+        // reject rather than truncate: a silently shortened audit record is worse than a refused deletion
+        if (mb_strlen($note) > self::MAX_DELETION_NOTE_LENGTH) {
             throw new ImproperActionException(sprintf(
                 _('The note is too long: %d characters maximum.'),
                 self::MAX_DELETION_NOTE_LENGTH,
             ));
         }
-        $note = Filter::toPureString($rawNote);
         if ($reason->requiresNote() && $note === '') {
             throw new ImproperActionException(_('Please describe the reason for deleting this container.'));
         }

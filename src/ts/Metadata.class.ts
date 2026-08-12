@@ -89,7 +89,7 @@ export class Metadata {
 
     let value: string|number|Array<string|number>;
     if (el instanceof HTMLSelectElement && el.multiple) {
-      value = [...el.selectedOptions].map(option => option.value);
+      value = Array.from(el.selectedOptions, option => option.value);
     } else {
       const inputValue = this.getInputValue(el);
       if (inputValue === null) {
@@ -99,7 +99,10 @@ export class Metadata {
 
       // also create a link automatically for experiments, resources and compounds.
       if (value !== '' && [ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
-        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
+        const reloadTargets = el.dataset.target === ExtraFieldInputType.Compounds.valueOf()
+          ? ['compoundDiv']
+          : ['linksDiv', 'linksExpDiv'];
+        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(reloadTargets));
       }
     }
 
@@ -135,8 +138,8 @@ export class Metadata {
 
   getMultiValues(holder: HTMLElement): Array<string|number>|null {
     const values: Array<string|number> = [];
-    for (const row of holder.querySelectorAll<HTMLElement>('[data-purpose="multi-value-row"]')) {
-      const radioHolder = row.querySelector<HTMLElement>('[data-purpose="radio-holder"]');
+    for (const row of Array.from(holder.querySelectorAll<HTMLElement>('[data-purpose="multi-value-row"]'))) {
+      const radioHolder = row.querySelector('[data-purpose="radio-holder"]');
       if (radioHolder) {
         const checked = radioHolder.querySelector<HTMLInputElement>('input[type="radio"]:checked');
         values.push(checked?.value ?? '');
@@ -321,7 +324,13 @@ export class Metadata {
       addButton.addEventListener('click', () => {
         const row = this.buildMultiValueRow(name, properties, '', holder);
         holder.insertBefore(row, addButton);
-        row.querySelector<HTMLElement>('input, select, textarea')?.focus();
+        const input = row.querySelector<HTMLElement>('input, select, textarea');
+        // Linked fields initialize their autocomplete from their click handler.
+        // Initialize it before focusing a newly added row so typing works immediately.
+        if (input?.dataset.action === 'autocomplete') {
+          input.click();
+        }
+        input?.focus();
       });
       holder.append(addButton);
     }

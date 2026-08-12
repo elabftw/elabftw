@@ -184,6 +184,15 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
     }
 
+    public function testMergeMetadataNormalizesMultiCompounds(): void
+    {
+        $source = '{"extra_fields":{"Components":{"type":"compounds","allow_multi_values":true,"value":[]}}}';
+        $incoming = '{"extra_fields":{"Components":{"value":["12","34"]}}}';
+        $expected = '{"extra_fields":{"Components":{"type":"compounds","allow_multi_values":true,"value":["12","34"]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
     public function testMergeMetadataNormalizesMultiCheckbox(): void
     {
         $source = '{"extra_fields":{"Certified":{"type":"checkbox","allow_multi_values":true,"value":[]}}}';

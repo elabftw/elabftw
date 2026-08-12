@@ -336,6 +336,19 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(array('first', 'second'), $decoded['extra_fields']['multitext']['value']);
     }
 
+    public function testUpdateJsonFieldWithMultipleCompoundValues(): void
+    {
+        $metadata = '{"extra_fields": {"components": {"type": "compounds", "value": [], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'components' => array(424242, 424243),
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertSame(array(424242, 424243), $decoded['extra_fields']['components']['value']);
+    }
+
     public function testUpdateJsonFieldRejectsSelfLinkInMultipleValues(): void
     {
         $metadata = '{"extra_fields": {"related": {"type": "experiments", "value": [], "allow_multi_values": true}}}';

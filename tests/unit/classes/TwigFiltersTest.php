@@ -135,6 +135,11 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
               "type": "checkbox",
               "allow_multi_values": true,
               "value": ["on", "off"]
+            },
+            "multi compounds": {
+              "type": "compounds",
+              "allow_multi_values": true,
+              "value": [12, 34]
             }
           }
         }';
@@ -146,6 +151,8 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('<p>1 mg</p><p>2 mg</p>', $result);
         $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox" checked="checked"></p>', $result);
         $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox"></p>', $result);
+        $this->assertStringContainsString('<p><span data-replace-with-title="true" data-id="12" data-endpoint="compounds">12</span></p>', $result);
+        $this->assertStringContainsString('<p><span data-replace-with-title="true" data-id="34" data-endpoint="compounds">34</span></p>', $result);
     }
 
     public function testFormatMetadataFailed(): void

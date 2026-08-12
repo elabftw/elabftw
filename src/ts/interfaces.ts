@@ -57,7 +57,7 @@ interface Selected {
   users_resources_templates: number[];
   tags: number[];
   userid: number;
-  team: number;
+  team?: number;
   can: string;
   can_base: number;
 }

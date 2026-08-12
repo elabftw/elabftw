@@ -263,6 +263,112 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($this->latestChangelogEntry($Item, 'container_qty_changed'));
     }
 
+    public function testCreateIsRejectedWhenLocationIsFull(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box with capacity 1');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(1.0, 'mL');
+        $this->setCapacity($box, 1);
+
+        try {
+            $Links->createWithQuantity(1.0, 'mL');
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException $e) {
+            $this->assertStringContainsString('capacity is 1', $e->getMessage());
+            $this->assertStringContainsString('already holds 1', $e->getMessage());
+        }
+
+        // the transaction rolled back, so nothing was stored
+        $this->assertSame(1, $this->StorageUnits->countContainers($box));
+    }
+
+    public function testCreateIsAllowedWhileCapacityHasRoom(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box with capacity 2');
+        $this->setCapacity($box, 2);
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(1.0, 'mL');
+        $Links->createWithQuantity(1.0, 'mL');
+        $this->assertSame(2, $this->StorageUnits->countContainers($box));
+    }
+
+    public function testCreateWithCapacityEnforcementDisabledIgnoresFullLocation(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for importer bypass');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(1.0, 'mL');
+        $this->setCapacity($box, 1);
+
+        // the CSV importer stores unenforced rather than dropping the container silently
+        $Links->createWithQuantity(1.0, 'mL', enforceCapacity: false);
+        $this->assertSame(2, $this->StorageUnits->countContainers($box));
+    }
+
+    public function testMoveIsRejectedWhenDestinationIsFull(): void
+    {
+        $Item = $this->getFreshItem();
+        $source = $this->StorageUnits->create('Source box');
+        $full = $this->StorageUnits->create('Full destination box');
+
+        new Containers2ItemsLinks($Item, $full)->createWithQuantity(1.0, 'mL');
+        $this->setCapacity($full, 1);
+        new Containers2ItemsLinks($Item, $source)->createWithQuantity(2.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        try {
+            $Links->patch(Action::Update, array('storage_id' => $full));
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException) {
+            $this->addToAssertionCount(1);
+        }
+
+        // rolled back: the container never left the source
+        $this->assertEquals($source, (int) $Links->readOne()['storage_id']);
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_moved'));
+    }
+
+    public function testNoOpMoveIntoFullLocationIsAllowed(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box at capacity for no-op move');
+        new Containers2ItemsLinks($Item, $box)->createWithQuantity(1.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+        $this->setCapacity($box, 1);
+
+        // moving a container to where it already is must not be counted against itself
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $result = $Links->patch(Action::Update, array('storage_id' => $box));
+        $this->assertEquals($box, (int) $result['storage_id']);
+    }
+
+    public function testMoveOutOfAFullLocationIsAllowed(): void
+    {
+        $Item = $this->getFreshItem();
+        $full = $this->StorageUnits->create('Full box to drain');
+        $elsewhere = $this->StorageUnits->create('Box to drain into');
+        $Links = new Containers2ItemsLinks($Item, $full);
+        $Links->createWithQuantity(1.0, 'mL');
+        $Links->createWithQuantity(1.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+        // capacity set below the current occupancy: the location must still be drainable
+        $this->setCapacity($full, 1);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $result = $Links->patch(Action::Update, array('storage_id' => $elsewhere));
+        $this->assertEquals($elsewhere, (int) $result['storage_id']);
+        $this->assertSame(1, $this->StorageUnits->countContainers($full));
+    }
+
+    private function setCapacity(int $storageId, int $capacity): void
+    {
+        $this->StorageUnits->setId($storageId);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => $capacity));
+    }
+
     private function latestChangelogEntry(Items $entity, string $target): ?array
     {
         foreach (new Changelog($entity)->readAll() as $row) {

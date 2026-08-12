@@ -2376,7 +2376,12 @@ paths:
     post:
       tags: ['Containers']
       summary: Create a container for this entity.
-      description: Store this entity in a storage unit with a specified quantity.
+      description: |
+        Store this entity in a storage unit with a specified quantity.
+
+        Rejected with `400` if the storage unit has a `capacity` and already holds
+        that many containers. Containers of binned entities still occupy their slot,
+        as binning a record does not empty a freezer.
       operationId: post-container
       requestBody:
         description: Parameters for creating a container.
@@ -2433,6 +2438,10 @@ paths:
         Update the quantity stored, the unit, or the storage location of a
         container. Setting `storage_id` moves the container to a different
         storage unit while preserving its `id` and `created_at`.
+
+        A move is rejected with `400` if the destination has a `capacity` and is
+        already full. Moving a container out of a full location is always allowed,
+        and moving it to where it already is remains a no-op.
       operationId: patch-container
       requestBody:
         description: Parameters for modifying a container.
@@ -2842,7 +2851,8 @@ paths:
                   description: |
                     Maximum number of containers this unit should hold.
                     Pass `null`, `0` or an empty string for unlimited.
-                    Not enforced when storing containers.
+                    May be set below the current occupancy, so that an over-filled
+                    location can be declared and then drained.
                   example: 96
       responses:
         '200':

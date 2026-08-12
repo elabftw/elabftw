@@ -249,6 +249,46 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->StorageUnits->patch(Action::Update, array('capacity' => 'lots'));
     }
 
+    public function testCountContainersIsNotAffectedByBinning(): void
+    {
+        $Item = $this->getFreshItem();
+        $storageId = $this->StorageUnits->create('Box for occupancy count');
+        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
+        $this->assertSame(1, $this->StorageUnits->countContainers($storageId));
+        // binning the resource does not take the container out of the box
+        $Item->destroy();
+        $this->assertSame(1, $this->StorageUnits->countContainers($storageId));
+    }
+
+    public function testAssertHasRoomWithoutCapacityNeverThrows(): void
+    {
+        $Item = $this->getFreshItem();
+        $storageId = $this->StorageUnits->create('Box with no capacity');
+        $Links = new Containers2ItemsLinks($Item, $storageId);
+        $Links->createWithQuantity(1.0, 'mL');
+        $Links->createWithQuantity(1.0, 'mL');
+        $this->StorageUnits->assertHasRoom($storageId);
+        $this->assertSame(2, $this->StorageUnits->countContainers($storageId));
+    }
+
+    public function testAssertHasRoomThrowsWhenFull(): void
+    {
+        $Item = $this->getFreshItem();
+        $storageId = $this->StorageUnits->create('Box that is full');
+        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
+        $this->StorageUnits->setId($storageId);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 1));
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->assertHasRoom($storageId);
+    }
+
+    public function testAssertHasRoomOnMissingUnitIsTolerated(): void
+    {
+        // no row to read a capacity from: the foreign key deals with it, not the guard
+        $this->StorageUnits->assertHasRoom(PHP_INT_MAX);
+        $this->assertSame(0, $this->StorageUnits->countContainers(PHP_INT_MAX));
+    }
+
     public function testPatchDoesNotPersistRenameWhenMoveFails(): void
     {
         $original = 'Atomicity test original';

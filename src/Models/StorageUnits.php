@@ -31,6 +31,7 @@ use function _;
 use function array_key_exists;
 use function array_map;
 use function filter_var;
+use function implode;
 use function in_array;
 use function is_int;
 use function is_string;
@@ -43,6 +44,13 @@ use function trim;
 final class StorageUnits extends AbstractRest
 {
     use SetIdTrait;
+
+    /**
+     * Tables holding real containers: a row in one of them occupies a slot. The template
+     * tables are absent on purpose, as their containers are defaults copied on creation
+     * rather than physical stock. Single source of truth for what "occupied" means.
+     */
+    private const array CONTAINER_TABLES = array('containers2items', 'containers2experiments');
 
     public function __construct(public Users $requester, private bool $requireEditRights, ?int $id = null)
     {
@@ -379,6 +387,52 @@ final class StorageUnits extends AbstractRest
         $req->bindValue(':name', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * How many containers sit directly in a unit. Deliberately unfiltered: a container
+     * occupies its slot whether or not the requester can read the entity, and whether or
+     * not that entity is in the bin. Binning a record does not empty a freezer.
+     */
+    public function countContainers(int $storageId): int
+    {
+        $sql = 'SELECT ' . implode(' + ', array_map(
+            static fn(string $table): string => sprintf('(SELECT COUNT(*) FROM %s WHERE storage_id = :storage_id)', $table),
+            self::CONTAINER_TABLES,
+        ));
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':storage_id', $storageId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    /**
+     * Refuse if one more container in $storageId would exceed its capacity.
+     * Callers must already be in a transaction: the FOR UPDATE lock below is what
+     * serializes concurrent writers to the same unit, and it has to be held until
+     * their insert commits to be worth anything.
+     */
+    public function assertHasRoom(int $storageId): void
+    {
+        // lock only the row that declares the limit, so contention is exactly as wide as the constraint
+        $req = $this->Db->prepare('SELECT capacity FROM storage_units WHERE id = :id FOR UPDATE');
+        $req->bindValue(':id', $storageId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $capacity = $req->fetchColumn();
+        // no such unit: leave it to the foreign key. NULL: unlimited, so never count
+        if ($capacity === false || $capacity === null) {
+            return;
+        }
+        $occupancy = $this->countContainers($storageId);
+        if ($occupancy < (int) $capacity) {
+            return;
+        }
+        throw new ImproperActionException(sprintf(
+            _('Cannot store in "%s": its capacity is %d and it already holds %d.'),
+            new self($this->requester, false, $storageId)->readOne()['full_path'] ?? '',
+            (int) $capacity,
+            $occupancy,
+        ));
     }
 
     public function updateCapacity(?int $capacity): bool

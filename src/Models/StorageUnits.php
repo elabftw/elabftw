@@ -419,18 +419,27 @@ final class StorageUnits extends AbstractRest
         $req->bindValue(':id', $storageId, PDO::PARAM_INT);
         $this->Db->execute($req);
         $capacity = $req->fetchColumn();
-        // no such unit: leave it to the foreign key. NULL: unlimited, so never count
+        // no such unit: leave it to the foreign key. NULL: unlimited, so never count.
+        // a strict comparison matters here, as a capacity of 0 is meaningful and falsy
         if ($capacity === false || $capacity === null) {
             return;
         }
+        $capacity = (int) $capacity;
         $occupancy = $this->countContainers($storageId);
-        if ($occupancy < (int) $capacity) {
+        if ($occupancy < $capacity) {
             return;
+        }
+        $path = new self($this->requester, false, $storageId)->readOne()['full_path'] ?? '';
+        if ($capacity === 0) {
+            throw new ImproperActionException(sprintf(
+                _('Nothing can be stored directly in "%s": its capacity is zero. Pick one of the locations inside it.'),
+                $path,
+            ));
         }
         throw new ImproperActionException(sprintf(
             _('Cannot store in "%s": its capacity is %d and it already holds %d.'),
-            new self($this->requester, false, $storageId)->readOne()['full_path'] ?? '',
-            (int) $capacity,
+            $path,
+            $capacity,
             $occupancy,
         ));
     }
@@ -489,7 +498,8 @@ final class StorageUnits extends AbstractRest
     }
 
     /**
-     * null, an empty string or 0 all mean "unlimited"
+     * null or an empty string mean "unlimited". 0 is a real capacity: it marks a unit that
+     * exists to hold child units rather than containers, such as a building or a room.
      */
     private function normalizeCapacity(mixed $raw): ?int
     {
@@ -501,9 +511,9 @@ final class StorageUnits extends AbstractRest
             if ($parsed < 0) {
                 throw new ImproperActionException('Capacity cannot be negative.');
             }
-            return $parsed === 0 ? null : $parsed;
+            return $parsed;
         }
-        throw new ImproperActionException('Invalid capacity: must be a positive whole number.');
+        throw new ImproperActionException('Invalid capacity: must be a whole number, or empty for unlimited.');
     }
 
     private function validateMoveTarget(?int $newParentId): void

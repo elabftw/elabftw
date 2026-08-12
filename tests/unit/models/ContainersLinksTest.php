@@ -307,6 +307,22 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(2, $this->StorageUnits->countContainers($box));
     }
 
+    public function testZeroCapacityBlocksStorageEntirely(): void
+    {
+        $Item = $this->getFreshItem();
+        $room = $this->StorageUnits->create('Room with capacity 0');
+        $this->setCapacity($room, 0);
+
+        $Links = new Containers2ItemsLinks($Item, $room);
+        try {
+            $Links->createWithQuantity(1.0, 'mL');
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException $e) {
+            $this->assertStringContainsString('capacity is zero', $e->getMessage());
+        }
+        $this->assertSame(0, $this->StorageUnits->countContainers($room));
+    }
+
     public function testMoveIsRejectedWhenDestinationIsFull(): void
     {
         $Item = $this->getFreshItem();

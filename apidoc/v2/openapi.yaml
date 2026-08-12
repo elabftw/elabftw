@@ -1978,7 +1978,10 @@ components:
         capacity:
           type: integer
           nullable: true
-          description: Maximum number of containers this unit should hold. Null means unlimited.
+          description: |
+            Maximum number of containers this unit should hold. Null means unlimited;
+            0 means nothing may be stored directly in this unit, which suits a unit that
+            exists to hold other units, such as a building or a room.
           example: 96
         level_depth:
           type: integer
@@ -2735,7 +2738,9 @@ paths:
                         capacity:
                           type: integer
                           nullable: true
-                          description: Maximum number of containers this unit should hold. Null means unlimited.
+                          description: |
+                            Maximum number of containers this unit should hold. Null means
+                            unlimited; 0 means nothing may be stored directly in this unit.
                           example: 96
                         level_depth:
                           type: integer
@@ -2776,7 +2781,8 @@ paths:
                   nullable: true
                   description: |
                     Maximum number of containers this unit should hold.
-                    Omit, or pass `null` or `0`, for unlimited (the default).
+                    Omit, or pass `null`, for unlimited (the default). Pass `0` for a unit
+                    that holds other units but never containers.
                   example: 96
       responses:
         '201':
@@ -2850,7 +2856,8 @@ paths:
                   nullable: true
                   description: |
                     Maximum number of containers this unit should hold.
-                    Pass `null`, `0` or an empty string for unlimited.
+                    Pass `null` or an empty string for unlimited. Pass `0` for a unit that
+                    holds other units but never containers.
                     May be set below the current occupancy, so that an over-filled
                     location can be declared and then drained.
                   example: 96

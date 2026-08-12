@@ -227,9 +227,11 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $this->StorageUnits->patch(Action::Update, array('capacity' => 1))['capacity']);
         // a string works too, as sent by the frontend
         $this->assertEquals(12, $this->StorageUnits->patch(Action::Update, array('capacity' => '12'))['capacity']);
-        // 0, null and an empty string all mean unlimited
-        $this->assertNull($this->StorageUnits->patch(Action::Update, array('capacity' => 0))['capacity']);
+        // 0 is a real capacity: a unit that holds child units but never containers
+        $this->assertEquals(0, $this->StorageUnits->patch(Action::Update, array('capacity' => 0))['capacity']);
+        // only null and an empty string mean unlimited
         $this->assertNull($this->StorageUnits->patch(Action::Update, array('capacity' => null))['capacity']);
+        $this->assertEquals(0, $this->StorageUnits->patch(Action::Update, array('capacity' => '0'))['capacity']);
         $this->assertNull($this->StorageUnits->patch(Action::Update, array('capacity' => ''))['capacity']);
     }
 
@@ -280,6 +282,31 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->StorageUnits->patch(Action::Update, array('capacity' => 1));
         $this->expectException(ImproperActionException::class);
         $this->StorageUnits->assertHasRoom($storageId);
+    }
+
+    public function testAssertHasRoomRejectsAnEmptyUnitWithZeroCapacity(): void
+    {
+        $storageId = $this->StorageUnits->create('Room that holds freezers, not tubes');
+        $this->StorageUnits->setId($storageId);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 0));
+        try {
+            $this->StorageUnits->assertHasRoom($storageId);
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException $e) {
+            // an empty structural node must not report itself as merely full
+            $this->assertStringContainsString('capacity is zero', $e->getMessage());
+        }
+    }
+
+    public function testZeroCapacityStillAcceptsChildUnits(): void
+    {
+        $parentId = $this->StorageUnits->create('Building with no storage of its own');
+        $this->StorageUnits->setId($parentId);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 0));
+        // capacity constrains containers, never child units
+        $childId = $this->StorageUnits->create('Freezer inside it', $parentId);
+        $this->StorageUnits->setId($childId);
+        $this->assertEquals($parentId, $this->StorageUnits->readOne()['parent_id']);
     }
 
     public function testAssertHasRoomOnMissingUnitIsTolerated(): void

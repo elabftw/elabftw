@@ -54,6 +54,7 @@
 @include meta.load-css('tinymce');
 @include meta.load-css('prism');
 @include meta.load-css('skeletons');
+@include meta.load-css('training');
 
 /* Font is Lato */
 @font-face {

@@ -1,0 +1,61 @@
+/**
+ * @author Nicolas CARPi / Deltablot
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+.training-pointer {
+  height: 0;
+  pointer-events: none;
+  position: fixed;
+  width: 0;
+  z-index: 2147483647;
+}
+
+.training-halo {
+  --training-halo-rgb: 12 88 171;
+  background-color: rgb(var(--training-halo-rgb) / 15%);
+  border: 3px solid rgb(var(--training-halo-rgb) / 85%);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgb(var(--training-halo-rgb) / 45%);
+  height: 44px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: translate(-50%, -50%);
+  width: 44px;
+}
+
+:global(html.dark-mode) .training-halo,
+:global(html.midnight) .training-halo {
+  --training-halo-rgb: 96 165 250;
+}
+
+.training-halo.clicked {
+  animation: training-click 260ms ease-out;
+}
+
+@keyframes training-click {
+  0% {
+    background-color: rgb(var(--training-halo-rgb) / 15%);
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  35% {
+    background-color: rgb(var(--training-halo-rgb) / 60%);
+    transform: translate(-50%, -50%) scale(0.72);
+  }
+
+  100% {
+    background-color: rgb(var(--training-halo-rgb) / 10%);
+    transform: translate(-50%, -50%) scale(1.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .training-halo.clicked {
+    animation: none;
+    background-color: rgb(255 105 180 / 60%);
+  }
+}

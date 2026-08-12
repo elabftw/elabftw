@@ -80,6 +80,7 @@ import { writable } from 'svelte/store';
 import { applyTheme, isThemeVariant, updateThemeControls } from './theme';
 import { mount } from 'svelte';
 import PrimaryColorPicker from './components/PrimaryColorPicker.svelte';
+import TrainingMode from './components/TrainingMode.svelte';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -232,6 +233,8 @@ if (primaryColorPickerTarget) {
     target: primaryColorPickerTarget,
   });
 }
+
+mount(TrainingMode, {target: document.body});
 
 // HEARTBEAT
 if (core.isAuth) {

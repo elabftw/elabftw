@@ -221,6 +221,25 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         MetadataHelpers::mergeMetadata($source, $incoming);
     }
 
+    public function testMergeMetadataRejectsEmptyArrayForSingleText(): void
+    {
+        $source = '{}';
+        $incoming = '{"extra_fields":{"Name":{"type":"text","value":[]}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field Name expects a single value.');
+        MetadataHelpers::mergeMetadata($source, $incoming);
+    }
+
+    public function testMergeMetadataAcceptsEmptyArrayForMultiText(): void
+    {
+        $source = '{"extra_fields":{"Names":{"type":"text","allow_multi_values":true,"value":["old"]}}}';
+        $incoming = '{"extra_fields":{"Names":{"value":[]}}}';
+        $expected = '{"extra_fields":{"Names":{"type":"text","allow_multi_values":true,"value":[]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
     public function testMergeMetadataRejectsMultipleValuesForSingleSelect(): void
     {
         $source = '{"extra_fields":{"Choice":{"type":"select","options":["A","B"],"value":"A"}}}';
@@ -272,6 +291,16 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $expected = '{"extra_fields":{"Weight":{"type":"number","unit":"g","value":"2"}}}';
 
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadataValues($base, $incoming));
+    }
+
+    public function testMergeMetadataValuesRejectsEmptyArrayForSingleText(): void
+    {
+        $base = '{}';
+        $incoming = '{"extra_fields":{"Name":{"type":"text","value":[]}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field Name expects a single value.');
+        MetadataHelpers::mergeMetadataValues($base, $incoming);
     }
 
     public function testMergeMetadataValuesRejectsIncompatibleType(): void

@@ -129,8 +129,9 @@ export class Metadata {
       if (rawValue === '') {
         return '';
       }
-      const id = parseInt(rawValue.split(' ')[0], 10);
-      return isNaN(id) ? null : id;
+      const match = rawValue.match(/^(\d+)(?:\s+-\s+.*)?$/);
+      const id = match ? Number(match[1]) : NaN;
+      return Number.isSafeInteger(id) ? id : null;
     }
 
     return value;

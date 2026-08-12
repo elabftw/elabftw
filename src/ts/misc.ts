@@ -805,7 +805,10 @@ export function replaceWithTitle(): void {
       // VIEW MODE (non-input): default = 'entity title'
       let value;
       const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';
-      const userDisplayName = String(json.fullname ?? '').trim() || String(json.email ?? json.userid ?? '');
+      const userDisplayName =
+        String(json.fullname ?? '').trim() ||
+        String(json.email ?? '').trim() ||
+        String(json.userid ?? '');
       if (!(el instanceof HTMLInputElement)) {
         switch (el.dataset.endpoint) {
         case Model.User:

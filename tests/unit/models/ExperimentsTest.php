@@ -349,6 +349,58 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(array(424242, 424243), $decoded['extra_fields']['components']['value']);
     }
 
+    public function testUpdateJsonFieldNormalizesValue(): void
+    {
+        $metadata = '{"extra_fields": {"quantity": {"type": "number", "value": ""}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'quantity' => '12,5',
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertSame('12.5', $decoded['extra_fields']['quantity']['value']);
+    }
+
+    public function testUpdateJsonFieldRejectsMultipleValuesForSingleField(): void
+    {
+        $metadata = '{"extra_fields": {"test": {"type": "text", "value": "old"}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field test expects a single value.');
+        $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'test' => array('first', 'second'),
+        ));
+    }
+
+    public function testUpdateJsonFieldRejectsInvalidSelectOption(): void
+    {
+        $metadata = '{"extra_fields": {"choice": {"type": "select", "value": "A", "options": ["A", "B"]}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field choice contains an invalid option.');
+        $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'choice' => 'C',
+        ));
+    }
+
+    public function testUpdateJsonFieldRejectsNestedMultipleValues(): void
+    {
+        $metadata = '{"extra_fields": {"multitext": {"type": "text", "value": [], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field multitext contains an invalid value.');
+        $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'multitext' => array(array('nested')),
+        ));
+    }
+
     public function testUpdateJsonFieldRejectsSelfLinkInMultipleValues(): void
     {
         $metadata = '{"extra_fields": {"related": {"type": "experiments", "value": [], "allow_multi_values": true}}}';

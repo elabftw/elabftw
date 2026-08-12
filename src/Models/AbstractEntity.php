@@ -1441,6 +1441,17 @@ abstract class AbstractEntity extends AbstractRest
     // Update only one field in the metadata json
     private function updateJsonField(string $key, string|array|int $value): bool
     {
+        $extraFields = new Metadata($this->entityData['metadata'] ?? null)->getExtraFields();
+        if (!array_key_exists($key, $extraFields)) {
+            throw new ImproperActionException(sprintf(_('Invalid metadata field %s.'), $key));
+        }
+        $value = Mh::validateAndNormalizeMetadataValue(
+            $key,
+            $extraFields[$key],
+            $value,
+            preserveNumericTypes: true,
+        );
+
         $Changelog = new Changelog($this);
         $valueAsString = is_array($value) ? implode(', ', $value) : (string) $value;
 

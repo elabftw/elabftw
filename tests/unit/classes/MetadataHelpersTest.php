@@ -157,6 +157,89 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
     }
 
+    public function testMergeMetadataNormalizesMultiText(): void
+    {
+        $source = '{"extra_fields":{"Names":{"type":"text","allow_multi_values":true,"value":[]}}}';
+        $incoming = '{"extra_fields":{"Names":{"value":["alpha","beta"]}}}';
+        $expected = '{"extra_fields":{"Names":{"type":"text","allow_multi_values":true,"value":["alpha","beta"]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataWrapsMultiTextScalarWithoutSplittingCommas(): void
+    {
+        $source = '{"extra_fields":{"Names":{"type":"text","allow_multi_values":true,"value":[]}}}';
+        $incoming = '{"extra_fields":{"Names":{"value":"alpha,beta"}}}';
+        $expected = '{"extra_fields":{"Names":{"type":"text","allow_multi_values":true,"value":["alpha,beta"]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataNormalizesMultiNumber(): void
+    {
+        $source = '{"extra_fields":{"Concentration":{"type":"number","allow_multi_values":true,"value":[]}}}';
+        $incoming = '{"extra_fields":{"Concentration":{"value":["12,5","13.7"]}}}';
+        $expected = '{"extra_fields":{"Concentration":{"type":"number","allow_multi_values":true,"value":["12.5","13.7"]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataNormalizesMultiCompounds(): void
+    {
+        $source = '{"extra_fields":{"Components":{"type":"compounds","allow_multi_values":true,"value":[]}}}';
+        $incoming = '{"extra_fields":{"Components":{"value":["12","34"]}}}';
+        $expected = '{"extra_fields":{"Components":{"type":"compounds","allow_multi_values":true,"value":["12","34"]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataNormalizesMultiCheckbox(): void
+    {
+        $source = '{"extra_fields":{"Certified":{"type":"checkbox","allow_multi_values":true,"value":[]}}}';
+        $incoming = '{"extra_fields":{"Certified":{"value":["yes","no"]}}}';
+        $expected = '{"extra_fields":{"Certified":{"type":"checkbox","allow_multi_values":true,"value":["on",""]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataNormalizesMultiRadio(): void
+    {
+        $source = '{"extra_fields":{"Choice":{"type":"radio","allow_multi_values":true,"options":["A","B","C"],"value":[]}}}';
+        $incoming = '{"extra_fields":{"Choice":{"value":["A","C"]}}}';
+        $expected = '{"extra_fields":{"Choice":{"type":"radio","allow_multi_values":true,"options":["A","B","C"],"value":["A","C"]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataRejectsMultipleValuesForSingleText(): void
+    {
+        $source = '{"extra_fields":{"Name":{"type":"text","value":"A"}}}';
+        $incoming = '{"extra_fields":{"Name":{"value":["A","B"]}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field Name expects a single value.');
+        MetadataHelpers::mergeMetadata($source, $incoming);
+    }
+
+    public function testMergeMetadataRejectsEmptyArrayForSingleText(): void
+    {
+        $source = '{}';
+        $incoming = '{"extra_fields":{"Name":{"type":"text","value":[]}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field Name expects a single value.');
+        MetadataHelpers::mergeMetadata($source, $incoming);
+    }
+
+    public function testMergeMetadataAcceptsEmptyArrayForMultiText(): void
+    {
+        $source = '{"extra_fields":{"Names":{"type":"text","allow_multi_values":true,"value":["old"]}}}';
+        $incoming = '{"extra_fields":{"Names":{"value":[]}}}';
+        $expected = '{"extra_fields":{"Names":{"type":"text","allow_multi_values":true,"value":[]}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
     public function testMergeMetadataRejectsMultipleValuesForSingleSelect(): void
     {
         $source = '{"extra_fields":{"Choice":{"type":"select","options":["A","B"],"value":"A"}}}';
@@ -208,6 +291,16 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $expected = '{"extra_fields":{"Weight":{"type":"number","unit":"g","value":"2"}}}';
 
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadataValues($base, $incoming));
+    }
+
+    public function testMergeMetadataValuesRejectsEmptyArrayForSingleText(): void
+    {
+        $base = '{}';
+        $incoming = '{"extra_fields":{"Name":{"type":"text","value":[]}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field Name expects a single value.');
+        MetadataHelpers::mergeMetadataValues($base, $incoming);
     }
 
     public function testMergeMetadataValuesRejectsIncompatibleType(): void
@@ -371,7 +464,7 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $incoming = '{"extra_fields":{"Choice":{"value":[["A"]]}}}';
 
         $this->expectException(ImproperActionException::class);
-        $this->expectExceptionMessage('Metadata field Choice contains an invalid option.');
+        $this->expectExceptionMessage('Metadata field Choice contains an invalid value.');
         MetadataHelpers::mergeMetadataValues($base, $incoming);
     }
 }

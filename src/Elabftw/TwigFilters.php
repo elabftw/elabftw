@@ -33,6 +33,7 @@ use function nl2br;
 use function _;
 use function array_key_exists;
 use function in_array;
+use function trim;
 
 /**
  * Twig filters
@@ -122,80 +123,26 @@ final class TwigFilters
                     : '';
                 $value = $field[MetadataEnum::Value->value] ?? '';
                 $metadataType = $field[MetadataEnum::Type->value] ?? 'text';
-                // special case: type:checkbox
-                if ($metadataType === 'checkbox') {
-                    $checked = $field[MetadataEnum::Value->value] === 'on' ? ' checked="checked"' : '';
-                    $value = '<input class="d-block" disabled type="checkbox"' . $checked . '>';
-                }
-                // special case: type:text (becomes a textarea, handling multiple lines)
-                elseif ($metadataType === 'text') {
-                    $value = nl2br(Tools::eLabHtmlspecialchars($value));
-                }
-                // special case: type:url
-                elseif ($metadataType === 'url') {
-                    $value = sprintf(
-                        '<a href="%1$s"%2$s>%1$s</a>',
-                        Tools::eLabHtmlspecialchars($value),
-                        $newTab,
-                    );
-                }
-                // special case: type:email (creates a mailto link)
-                elseif ($metadataType === 'email') {
-                    $value = sprintf(
-                        '<a href="mailto:%1$s">%1$s</a>',
-                        Tools::eLabHtmlspecialchars($value),
-                    );
-                }
-                // special case: type:exp/items (displays the title with a link to the entity)
-                elseif (in_array($metadataType, array(EntityType::Experiments->value, EntityType::Items->value), true)) {
-                    $id = isset($field[MetadataEnum::Value->value]) ? (int) $field[MetadataEnum::Value->value] : 0;
-                    $page = $metadataType === EntityType::Items->value ? EntityType::Items->toPage() : EntityType::Experiments->toPage();
-                    $value = sprintf(
-                        '<a href="/%s?mode=view&amp;id=%d"%s><span %s data-id="%d" data-endpoint=%s>%s</span></a>',
-                        $page,
-                        $id,
-                        $newTab,
-                        $id !== 0 ? 'data-replace-with-title="true"' : '',
-                        $id,
-                        $metadataType,
-                        Tools::eLabHtmlspecialchars($value),
-                    );
-                }
-                // special case: type:users (displays the full name of the user)
-                elseif ($metadataType === 'users' && !empty($value)) {
-                    try {
-                        $linkedUser = new Users((int) $field[MetadataEnum::Value->value]);
-                        $value = $linkedUser->userData['fullname'];
-                    } catch (ResourceNotFoundException) {
-                        $value = _('User could not be found.');
-                    }
-                }
-                // special case: type:compounds (displays the name and CAS number if available)
-                elseif ($metadataType === ApiEndpoint::Compounds->value && !empty($value)) {
-                    $id = (int) ($field[MetadataEnum::Value->value] ?? 0);
-                    $value = sprintf(
-                        '<span %s data-id="%d" data-endpoint="%s">%s</span>',
-                        $id !== 0 ? 'data-replace-with-title="true"' : '',
-                        $id,
-                        ApiEndpoint::Compounds->value,
-                        Tools::eLabHtmlspecialchars($value),
-                    );
-                }
-                // multi select will be an array of options
-                elseif (is_array($value)) {
-                    $html = '';
-                    foreach ($value as $option) {
-                        $html .= sprintf('<p>%s</p>', Tools::eLabHtmlspecialchars($option));
-                    }
-                    $value = $html;
-                } else {
-                    $value = Tools::eLabHtmlspecialchars($value);
-                }
-
                 $unit = '';
                 if (!empty($field['unit'])) {
                     // a space before the unit so if there are no units we don't have a trailing space
                     $unit = ' ' . Tools::eLabHtmlspecialchars($field['unit']);
+                }
+
+                if (is_array($value)) {
+                    $html = '';
+                    foreach ($value as $item) {
+                        $html .= sprintf(
+                            '<p>%s%s</p>',
+                            self::formatMetadataValue($metadataType, $item, $newTab),
+                            $unit,
+                        );
+                    }
+                    $value = $html;
+                    // the unit was rendered once for each value above
+                    $unit = '';
+                } else {
+                    $value = self::formatMetadataValue($metadataType, $value, $newTab);
                 }
 
                 $final .= sprintf(
@@ -251,5 +198,70 @@ final class TwigFilters
             return self::array2String($input);
         }
         return '';
+    }
+
+    private static function formatMetadataValue(string $metadataType, mixed $value, string $newTab): string
+    {
+        $value = (string) $value;
+
+        if ($metadataType === 'checkbox') {
+            $checked = $value === 'on' ? ' checked="checked"' : '';
+            return '<input class="d-block" disabled type="checkbox"' . $checked . '>';
+        }
+        if ($metadataType === 'text') {
+            return nl2br(Tools::eLabHtmlspecialchars($value));
+        }
+        if ($metadataType === 'url') {
+            return sprintf(
+                '<a href="%1$s"%2$s>%1$s</a>',
+                Tools::eLabHtmlspecialchars($value),
+                $newTab,
+            );
+        }
+        if ($metadataType === 'email') {
+            return sprintf(
+                '<a href="mailto:%1$s">%1$s</a>',
+                Tools::eLabHtmlspecialchars($value),
+            );
+        }
+        if (in_array($metadataType, array(EntityType::Experiments->value, EntityType::Items->value), true)) {
+            $id = (int) $value;
+            $page = $metadataType === EntityType::Items->value ? EntityType::Items->toPage() : EntityType::Experiments->toPage();
+            return sprintf(
+                '<a href="/%s?mode=view&amp;id=%d"%s><span %s data-id="%d" data-endpoint=%s>%s</span></a>',
+                $page,
+                $id,
+                $newTab,
+                $id !== 0 ? 'data-replace-with-title="true"' : '',
+                $id,
+                $metadataType,
+                Tools::eLabHtmlspecialchars($value),
+            );
+        }
+        if ($metadataType === 'users' && $value !== '') {
+            try {
+                $linkedUser = new Users((int) $value);
+                $displayName = trim((string) ($linkedUser->userData['fullname'] ?? ''));
+                if ($displayName === '') {
+                    $displayName = (string) ($linkedUser->userData['email'] ?? $linkedUser->userData['userid'] ?? $value);
+                }
+
+                return $displayName;
+            } catch (ResourceNotFoundException) {
+                return _('User could not be found.');
+            }
+        }
+        if ($metadataType === ApiEndpoint::Compounds->value && $value !== '') {
+            $id = (int) $value;
+            return sprintf(
+                '<span %s data-id="%d" data-endpoint="%s">%s</span>',
+                $id !== 0 ? 'data-replace-with-title="true"' : '',
+                $id,
+                ApiEndpoint::Compounds->value,
+                Tools::eLabHtmlspecialchars($value),
+            );
+        }
+
+        return Tools::eLabHtmlspecialchars($value);
     }
 }

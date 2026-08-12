@@ -22,7 +22,7 @@ enum Metadata: string
     case Options = 'options'; // options for the dropdown/radio element
     case Position = 'position'; // number to order the extra fields
     case BlankValueOnDuplicate = 'blank_value_on_duplicate'; // is value of extra field to be blanked when the entity is duplicated
-    case AllowMultiValues = 'allow_multi_values'; // for type=select, can multiple options be selected
+    case AllowMultiValues = 'allow_multi_values'; // can the extra field hold multiple values
     case Groups = 'extra_fields_groups'; // will be found in elabftw namespace
     case GroupId = 'group_id';
 }

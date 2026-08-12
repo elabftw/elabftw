@@ -852,6 +852,10 @@ const storageTreeIds = (): string[] =>
 
 const reloadStorageTrees = (): Promise<void> => reloadElements(storageTreeIds());
 
+/** Refresh the trees along with the entity's own container list: both show occupancy. */
+const reloadStorageAndContainers = (): Promise<void> =>
+  reloadElements(['storageDivContent', ...storageTreeIds()]);
+
 /** Re-open a unit and its ancestors, in every tree that renders it. */
 function revealStorageUnit(storageId: string): void {
   document.querySelectorAll(`details[data-id="${storageId}"]`).forEach((details: HTMLDetailsElement) => {
@@ -920,6 +924,18 @@ const containerTarget = (): number =>
 const containerAssigned = (): number =>
   containerStepperInputs().reduce((sum, input) => sum + intFromInput(input), 0);
 
+/**
+ * Room left in a location, read from the max the server rendered for it. An unlimited
+ * location has no max, hence Infinity. Full locations render no stepper at all, so they
+ * never reach here.
+ */
+const slotsLeft = (input: HTMLInputElement): number =>
+  input.max === '' ? Infinity : Math.max(0, Number(input.max));
+
+/** Room left across every location that can still take containers. */
+const totalSlotsLeft = (): number =>
+  containerStepperInputs().reduce((sum, input) => sum + slotsLeft(input), 0);
+
 /** Update the assigned/target counter and enable submit only at an exact match. */
 function refreshContainerDistribution(): void {
   const target = containerTarget();
@@ -928,6 +944,10 @@ function refreshContainerDistribution(): void {
   const targetEl = document.getElementById('containerTargetCount');
   if (assignedEl) assignedEl.textContent = String(assigned);
   if (targetEl) targetEl.textContent = String(target);
+  // the steppers cannot be pushed to an unreachable target, so say why rather than leaving
+  // the submit button disabled with no explanation
+  const notice = document.getElementById('containerCapacityNotice');
+  if (notice) notice.toggleAttribute('hidden', target <= totalSlotsLeft());
   const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
   if (submitBtn) submitBtn.disabled = target === 0 || assigned !== target;
 }
@@ -941,10 +961,13 @@ const otherSteppersTotal = (except: HTMLInputElement): number =>
     .filter(input => input !== except)
     .reduce((sum, input) => sum + intFromInput(input), 0);
 
-/** Set a stepper to a value, clamped so the total assigned can never exceed the target. */
+/**
+ * Set a stepper to a value under two ceilings: what is left of the target to distribute,
+ * and what this particular location can still hold.
+ */
 function setStepperValue(input: HTMLInputElement, value: number): void {
-  const max = Math.max(0, containerTarget() - otherSteppersTotal(input));
-  input.value = String(Math.min(Math.max(0, value), max));
+  const max = Math.min(containerTarget() - otherSteppersTotal(input), slotsLeft(input));
+  input.value = String(Math.min(Math.max(0, value), Math.max(0, max)));
   refreshContainerDistribution();
 }
 
@@ -953,10 +976,7 @@ function reclampAllSteppers(): void {
   const target = containerTarget();
   let running = 0;
   containerStepperInputs().forEach(input => {
-    let value = intFromInput(input);
-    if (running + value > target) {
-      value = Math.max(0, target - running);
-    }
+    const value = Math.min(intFromInput(input), Math.max(0, target - running), slotsLeft(input));
     input.value = String(value);
     running += value;
   });
@@ -998,13 +1018,17 @@ on('store-containers-distributed', () => {
   }
   // lock the button while the batch runs so a second click cannot create a duplicate distribution
   if (submitBtn) submitBtn.disabled = true;
-  // Execute all POST calls and reload elements after all are resolved
-  Promise.all(postCalls)
-    .then(() => {
-      reloadElements(['storageDivContent']);
-      $('#storageModal').modal('hide');
+  // allSettled, not all: one location refusing on capacity must not hide the containers that
+  // did land elsewhere. Each request reports its own error, so nothing is notified here.
+  Promise.allSettled(postCalls)
+    .then(results => {
+      // the tree lives inside this modal, so reloading it resets the steppers to fresh counts
+      reloadStorageAndContainers().then(() => refreshContainerDistribution());
+      // stay open on a partial failure, so what was refused can be redistributed
+      if (!results.some(result => result.status === 'rejected')) {
+        $('#storageModal').modal('hide');
+      }
     })
-    .catch((error) => notify.error(error))
     .finally(() => {
       if (submitBtn) submitBtn.disabled = false;
     });
@@ -1036,7 +1060,7 @@ on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.d
 
 on('destroy-container', (el: HTMLElement) => {
   if (confirm(i18next.t('generic-delete-warning'))) {
-    ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadElements(['storageDivContent']));
+    ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadStorageAndContainers());
   }
 });
 
@@ -1044,6 +1068,11 @@ on('move-container', (el: HTMLElement) => {
   const modal = document.getElementById('moveStorageModal');
   if (!modal) return;
   modal.dataset.containerId = el.dataset.id;
+  // a full destination would be refused by the server. The container's own location is exempt:
+  // moving it where it already sits is a no-op, and it is itself one of the occupants
+  modal.querySelectorAll('button[data-action="move-container-target"]').forEach((btn: HTMLButtonElement) => {
+    btn.disabled = btn.dataset.storageFull === '1' && btn.dataset.id !== el.dataset.currentStorageId;
+  });
   $('#moveStorageModal').modal('show');
 });
 
@@ -1097,7 +1126,7 @@ on('move-container-target', (el: HTMLElement) => {
   const newStorageId = el.dataset.id;
   if (!containerId || !newStorageId) return;
   ApiC.patch(`${entity.type}/${entity.id}/containers/${containerId}`, { storage_id: parseInt(newStorageId, 10) })
-    .then(() => reloadElements(['storageDivContent']))
+    .then(() => reloadStorageAndContainers())
     .catch((error) => notify.error(error));
 });
 

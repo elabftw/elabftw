@@ -1817,6 +1817,23 @@ input:user-invalid {
   }
 }
 
+/* how full a storage location is */
+.storage-occupancy {
+  background-color: var(--lightgold);
+  border-radius: 0.25rem;
+  color: var(--darkgold);
+  font-size: 80%;
+  font-weight: 600;
+  padding: 0.15em 0.45em;
+  white-space: nowrap;
+}
+
+/* no room left: the colour carries the limit, not the mere fact of being occupied */
+.storage-occupancy.storage-full {
+  background-color: var(--lightred);
+  color: var(--darkred);
+}
+
 /* top right button */
 .initials {
   color: var(--secondlevel);

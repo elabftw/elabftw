@@ -90,6 +90,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertContains($childId, $ids);
         $this->assertArrayHasKey('parent_id', $result[0]);
         $this->assertArrayHasKey('children_count', $result[0]);
+        $this->assertArrayHasKey('occupancy', $result[0]);
         $this->assertArrayNotHasKey('entity_id', $result[0]);
     }
 
@@ -262,6 +263,47 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $this->StorageUnits->countContainers($storageId));
     }
 
+    public function testHierarchyOccupancyCountsOnlyDirectContainers(): void
+    {
+        $Item = $this->getFreshItem();
+        $parentId = $this->StorageUnits->create('Freezer holding a box');
+        $childId = $this->StorageUnits->create('Box holding a tube', $parentId);
+        new Containers2ItemsLinks($Item, $childId)->createWithQuantity(1.0, 'mL');
+
+        $occupancy = $this->readOccupancyByUnitId();
+        // the container is inside the box, so the freezer around it stays empty: a capacity
+        // limits what a unit holds directly, never what its descendants hold
+        $this->assertEquals(0, $occupancy[$parentId]);
+        $this->assertEquals(1, $occupancy[$childId]);
+    }
+
+    public function testHierarchyOccupancyMatchesTheGuard(): void
+    {
+        $Item = $this->getFreshItem();
+        $storageId = $this->StorageUnits->create('Box the tree and the guard must agree on');
+        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
+        $Item->destroy();
+        // a displayed free slot the guard would then refuse is worse than showing nothing,
+        // so the tree has to count exactly what assertHasRoom() counts
+        $occupancy = $this->readOccupancyByUnitId();
+        $this->assertEquals($this->StorageUnits->countContainers($storageId), $occupancy[$storageId]);
+        $this->assertEquals(1, $occupancy[$storageId]);
+    }
+
+    public function testReadOneOccupancyIsThatOfTheRequestedUnit(): void
+    {
+        $Item = $this->getFreshItem();
+        $parentId = $this->StorageUnits->create('Parent walked through on the way up');
+        $childId = $this->StorageUnits->create('Child that holds the container', $parentId);
+        new Containers2ItemsLinks($Item, $childId)->createWithQuantity(1.0, 'mL');
+
+        // the cte climbs to the root, so this pins the count to the unit that was asked for
+        $this->StorageUnits->setId($childId);
+        $this->assertEquals(1, $this->StorageUnits->readOne()['occupancy']);
+        $this->StorageUnits->setId($parentId);
+        $this->assertEquals(0, $this->StorageUnits->readOne()['occupancy']);
+    }
+
     public function testAssertHasRoomWithoutCapacityNeverThrows(): void
     {
         $Item = $this->getFreshItem();
@@ -432,5 +474,14 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $history);
         $this->assertEquals($shelfA, (int) $history[0]['old_parent_id']);
         $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
+    }
+
+    /**
+     * Occupancy of every unit, keyed by unit id, as the storage tree receives it.
+     */
+    private function readOccupancyByUnitId(): array
+    {
+        $queryParams = $this->StorageUnits->getQueryParams(new InputBag(array('hierarchy' => 'true')));
+        return array_column($this->StorageUnits->readAll($queryParams), 'occupancy', 'id');
     }
 }

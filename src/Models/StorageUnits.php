@@ -67,6 +67,9 @@ final class StorageUnits extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        // the CTE walks upwards, so occupancy has to be counted for the requested unit
+        // (original_id) rather than for the ancestor the current row happens to be on
+        $occupancy = self::occupancySql('storage_hierarchy.original_id');
         // Recursive CTE to find the full path of a specific id
         $sql = "
             WITH RECURSIVE storage_hierarchy AS (
@@ -110,6 +113,7 @@ final class StorageUnits extends AbstractRest
                 full_path,
                 original_parent_id AS parent_id,
                 capacity,
+                {$occupancy} AS occupancy,
                 level_depth
             FROM
                 storage_hierarchy
@@ -396,10 +400,7 @@ final class StorageUnits extends AbstractRest
      */
     public function countContainers(int $storageId): int
     {
-        $sql = 'SELECT ' . implode(' + ', array_map(
-            static fn(string $table): string => sprintf('(SELECT COUNT(*) FROM %s WHERE storage_id = :storage_id)', $table),
-            self::CONTAINER_TABLES,
-        ));
+        $sql = 'SELECT ' . self::occupancySql(':storage_id');
         $req = $this->Db->prepare($sql);
         $req->bindValue(':storage_id', $storageId, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -480,6 +481,19 @@ final class StorageUnits extends AbstractRest
         if (!$this->canWrite()) {
             throw new IllegalActionException();
         }
+    }
+
+    /**
+     * SQL expression counting the containers stored directly in the unit designated by
+     * $idExpression. Shared so the occupancy displayed in the tree and the occupancy the
+     * capacity guard enforces are the same number by construction, not by coincidence.
+     */
+    private static function occupancySql(string $idExpression): string
+    {
+        return implode(' + ', array_map(
+            static fn(string $table): string => sprintf('(SELECT COUNT(*) FROM %s WHERE storage_id = %s)', $table, $idExpression),
+            self::CONTAINER_TABLES,
+        ));
     }
 
     private function normalizeParentId(mixed $raw): ?int
@@ -598,6 +612,9 @@ final class StorageUnits extends AbstractRest
 
     private function readHierarchyRows(): array
     {
+        // counted in the final projection, not in the CTE: the recursion does not need it,
+        // so this way it costs two indexed lookups per unit instead of two per branch
+        $occupancy = self::occupancySql('storage_hierarchy.id');
         $sql = "WITH RECURSIVE storage_hierarchy AS (
             -- Base case: Select all top-level units (those with no parent)
             SELECT
@@ -639,6 +656,7 @@ final class StorageUnits extends AbstractRest
             full_path,
             parent_id,
             capacity,
+            {$occupancy} AS occupancy,
             level_depth,
             children_count
         FROM

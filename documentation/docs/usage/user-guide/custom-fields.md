@@ -169,6 +169,8 @@ Here is a list and description of the properties that `extra_fields` objects can
 ### value (required)
 The field that will hold the selected/input value. You can set a default value here or leave it empty. It is the only required attribute for an `extra_field`.
 
+When `allow_multi_values` is `true`, `value` is an array. For example, a multi-value text field can use `"value": ["first", "second"]`.
+
 ### type (optional)
 
 #### checkbox
@@ -204,8 +206,8 @@ A text input that only accepts a valid URL. In view mode, the link will be click
 #### options (for type = select)
 An array of string (`[]`) with different options for the dropdown element.
 
-### allow_multi_values (for type = select)
-A `boolean` attribute for allowing the selection of multiple values from the dropdown menu (which then becomes a multi select input).
+### allow_multi_values
+A `boolean` attribute for allowing any custom field type to hold multiple values. The `value` property is stored as an array when enabled. Dropdown fields use a native multi-select input; other field types display repeatable inputs that can be added or removed individually.
 
 ### required
 A `boolean` attribute to indicate that filling this field is required. Please note that this won't prevent a user from leaving the page even if the value is empty. It will indicate visually that a value is required but won't block the workflow.

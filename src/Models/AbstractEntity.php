@@ -1444,9 +1444,16 @@ abstract class AbstractEntity extends AbstractRest
         $Changelog = new Changelog($this);
         $valueAsString = is_array($value) ? implode(', ', $value) : (string) $value;
 
-        // Either ExperimentsLinks or ItemsLinks could be used here
-        if ($this->ExperimentsLinks->isSelfLinkViaMetadata($key, $valueAsString)) {
-            throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
+        // Either ExperimentsLinks or ItemsLinks could be used here.
+        // Check every value independently so arrays cannot bypass the self-link protection.
+        $values = is_array($value) ? $value : array($value);
+        foreach ($values as $targetId) {
+            if (
+                $this->id === intval((string) $targetId)
+                && $this->ExperimentsLinks->isSelfLinkViaMetadata($key, (string) $targetId)
+            ) {
+                throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
+            }
         }
 
         $Changelog->create(new ContentParams('metadata_' . $key, $valueAsString));

@@ -64,6 +64,10 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $json = '{"extra_fields":{"To blank":{"type":"text","value":"some value","position":1}}}';
         $this->assertEquals($json, (new Metadata($json))->blankExtraFieldsValueOnDuplicate());
 
+        $json = '{"extra_fields":{"To blank":{"type":"text","allow_multi_values":true,"value":["one","two"],"blank_value_on_duplicate":true}}}';
+        $blankedJson = '{"extra_fields":{"To blank":{"type":"text","allow_multi_values":true,"value":[],"blank_value_on_duplicate":true}}}';
+        $this->assertEquals($blankedJson, (new Metadata($json))->blankExtraFieldsValueOnDuplicate());
+
         $this->assertNull((new Metadata(null))->blankExtraFieldsValueOnDuplicate());
     }
 

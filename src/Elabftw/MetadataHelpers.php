@@ -156,20 +156,28 @@ final class MetadataHelpers
     {
         $type = $field['type'] ?? 'text';
 
-        if (
-            $type === 'select-multi'
-            || ($type === 'select' && ($field['allow_multi_values'] ?? false) === true)
-        ) {
+        if (self::isMultiValueField($field)) {
             if (is_array($value)) {
-                return array_map(
-                    static fn(mixed $option): string => trim((string) $option),
-                    $value,
-                );
+                $values = $value;
+            } elseif (in_array($type, array('select', 'select-multi'), true)) {
+                // Preserve the existing comma-separated import behavior for multi-select fields.
+                $values = array_map('trim', explode(',', (string) $value));
+            } else {
+                // For every other field type, a scalar is one value, even if it contains commas.
+                $values = array($value);
             }
 
-            return array_map('trim', explode(',', (string) $value));
+            return array_map(
+                static fn(mixed $item): string => self::normalizeMetadataScalarValue($type, $item),
+                $values,
+            );
         }
 
+        return self::normalizeMetadataScalarValue($type, $value);
+    }
+
+    private static function normalizeMetadataScalarValue(string $type, mixed $value): string
+    {
         $value = trim((string) $value);
 
         return match ($type) {
@@ -177,6 +185,12 @@ final class MetadataHelpers
             'number' => str_replace(',', '.', $value),
             default => $value,
         };
+    }
+
+    private static function isMultiValueField(array $field): bool
+    {
+        return ($field['allow_multi_values'] ?? false) === true
+            || ($field['type'] ?? '') === 'select-multi';
     }
 
     private static function guardMetadataSchemaCompatibility(string $name, array $baseField, array $incomingField): void
@@ -206,15 +220,41 @@ final class MetadataHelpers
         }
 
         $type = $field['type'] ?? 'text';
+        $isMulti = self::isMultiValueField($field);
+
+        if (is_array($value)) {
+            if (!$isMulti) {
+                throw new ImproperActionException(
+                    sprintf(_('Metadata field %s expects a single value.'), $name)
+                );
+            }
+            $values = $value;
+        } elseif ($isMulti && in_array($type, array('select', 'select-multi'), true)) {
+            // Preserve the existing comma-separated import behavior for multi-select fields.
+            $values = array_map('trim', explode(',', (string) $value));
+        } else {
+            $values = array($value);
+        }
+
+        foreach ($values as $item) {
+            if ($item !== null && !is_scalar($item)) {
+                throw new ImproperActionException(
+                    sprintf(_('Metadata field %s contains an invalid value.'), $name)
+                );
+            }
+        }
 
         if ($type === 'number') {
-            if (
-                !is_scalar($value)
-                || !is_numeric(str_replace(',', '.', trim((string) $value)))
-            ) {
-                throw new ImproperActionException(
-                    sprintf(_('Metadata field %s expects a number.'), $name)
-                );
+            foreach ($values as $item) {
+                if (
+                    $item !== ''
+                    && $item !== null
+                    && !is_numeric(str_replace(',', '.', trim((string) $item)))
+                ) {
+                    throw new ImproperActionException(
+                        sprintf(_('Metadata field %s expects a number.'), $name)
+                    );
+                }
             }
 
             return;
@@ -237,25 +277,8 @@ final class MetadataHelpers
             $options,
         );
 
-        $isMulti = $type === 'select-multi'
-            || ($type === 'select' && ($field['allow_multi_values'] ?? false) === true);
-
-        if (is_array($value)) {
-            if (!$isMulti) {
-                throw new ImproperActionException(
-                    sprintf(_('Metadata field %s expects a single value.'), $name)
-                );
-            }
-
-            $values = $value;
-        } elseif ($isMulti) {
-            $values = array_map('trim', explode(',', (string) $value));
-        } else {
-            $values = array(trim((string) $value));
-        }
-
         foreach ($values as $option) {
-            if ($option !== '' && (!is_scalar($option) || !in_array((string) $option, $options, true))) {
+            if ($option !== '' && $option !== null && !in_array((string) $option, $options, true)) {
                 throw new ImproperActionException(
                     sprintf(
                         _('Metadata field %s contains an invalid option.'),

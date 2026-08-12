@@ -325,6 +325,29 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(array('val1', 'val2'), $decoded['extra_fields']['multiselect']['value']);
     }
 
+    public function testUpdateJsonFieldWithMultipleTextValues(): void
+    {
+        $metadata = '{"extra_fields": {"multitext": {"type": "text", "value": ["old"], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        // arrays are also accepted for non-select field types
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array('action' => Action::UpdateMetadataField->value, 'multitext' => array('first', 'second')));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertEquals(array('first', 'second'), $decoded['extra_fields']['multitext']['value']);
+    }
+
+    public function testUpdateJsonFieldRejectsSelfLinkInMultipleValues(): void
+    {
+        $metadata = '{"extra_fields": {"related": {"type": "experiments", "value": [], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $this->expectException(ImproperActionException::class);
+        $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'related' => array(0, $this->Experiments->id),
+        ));
+    }
+
     public function testUpdateExtraFieldsOrdering(): void
     {
         // create some metadata first

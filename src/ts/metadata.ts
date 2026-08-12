@@ -60,7 +60,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
 
   const saveButton = document.querySelector('[data-action="save-new-field"]') as HTMLButtonElement;
   const editButton = document.querySelector('[data-action="edit-extra-field"]') as HTMLButtonElement;
-  const multiSelectDiv = document.getElementById('allowMultiSelectDiv');
 
   // Add click listener and do action based on which element is clicked
   document.querySelector('.real-container').addEventListener('click', event => {
@@ -96,10 +95,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
         // set field type
         const fieldTypeSelect = document.getElementById('newFieldTypeSelect') as HTMLSelectElement;
         fieldTypeSelect.value = fieldType as string;
-        // type may be null due to json editing,if null return a default value
-        if (fieldType === ExtraFieldInputType.Select && multiSelectDiv.hidden) {
-          multiSelectDiv.removeAttribute('hidden');
-        }
         // prefill switches
         (document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked = !!fieldData.blank_value_on_duplicate;
         (document.getElementById('requiredSwitch') as HTMLInputElement).checked = !!fieldData.required;
@@ -147,11 +142,13 @@ if (document.getElementById('metadataDiv') && entity.id) {
         } else if (fieldType === ExtraFieldInputType.Checkbox) {
           toggleContentDiv('checkbox');
           const checkboxSelect = document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement;
-          checkboxSelect.value = fieldData.value === 'on' ? 'checked' : 'unchecked';
+          const fieldValue = Array.isArray(fieldData.value) ? fieldData.value[0] ?? '' : fieldData.value;
+          checkboxSelect.value = fieldValue === 'on' ? 'checked' : 'unchecked';
         } else {
           // Default handling for simple text-based inputs
           const fieldValueTextArea = document.getElementById('newFieldValueTextArea') as HTMLTextAreaElement;
-          fieldValueTextArea.value = fieldData.value || '';
+          const fieldValue = Array.isArray(fieldData.value) ? fieldData.value[0] ?? '' : fieldData.value;
+          fieldValueTextArea.value = String(fieldValue ?? '');
         }
 
         fieldGroupSelect.value = fieldData.group_id ?? '-1';
@@ -188,7 +185,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
           (div as HTMLDivElement).hidden = true;
         });
       document.getElementById('newFieldContentDiv_text').hidden = false;
-      multiSelectDiv.setAttribute('hidden', 'hidden');
       clearForm();
     });
 
@@ -198,7 +194,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
     document.getElementById('newFieldTypeSelect').addEventListener('change', event => {
       const fieldType = (event.target as HTMLSelectElement).value;
       const valueInput = document.getElementById('newFieldValueInput');
-      multiSelectDiv.setAttribute('hidden', 'hidden');
 
       switch (fieldType as ExtraFieldInputType) {
       case ExtraFieldInputType.Date:
@@ -214,7 +209,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
         toggleContentDiv('classic');
         break;
       case ExtraFieldInputType.Select:
-        multiSelectDiv.removeAttribute('hidden');
         toggleContentDiv('selectradio');
         break;
       case ExtraFieldInputType.Radio:
@@ -291,10 +285,10 @@ if (document.getElementById('metadataDiv') && entity.id) {
           // build the new field
           const field = {};
           field['type'] = (document.getElementById('newFieldTypeSelect') as HTMLSelectElement).value;
-          let fieldValue: string;
+          let fieldValue = '';
           if (field['type'] === ExtraFieldInputType.Text) {
             fieldValue = textAreaField.value.trim();
-          } else if (['date', 'datetime-local', 'email', 'time', 'url'].includes(field['type'])) {
+          } else if (['date', 'datetime-local', 'email', 'time', 'url', 'experiments', 'items', 'users', 'compounds'].includes(field['type'])) {
             fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
           } else if (['select', 'radio'].includes(field['type'])) {
             field['options'] = [];
@@ -320,7 +314,8 @@ if (document.getElementById('metadataDiv') && entity.id) {
           } else if (field['type'] === ExtraFieldInputType.Checkbox) {
             fieldValue = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
           }
-          field['value'] = fieldValue || '';
+          const allowMultiValues = (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked;
+          field['value'] = allowMultiValues ? [fieldValue || ''] : (fieldValue || '');
           // get the description
           if ((document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value) {
             field['description'] = (document.getElementById('newFieldDescriptionInput') as HTMLInputElement).value.trim();
@@ -332,7 +327,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if ((document.getElementById('requiredSwitch') as HTMLInputElement).checked) {
             field['required'] = true;
           }
-          if ((document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked) {
+          if (allowMultiValues) {
             field['allow_multi_values'] = true;
           }
           if (grpSel.value !== '-1') {
@@ -401,7 +396,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
             const val = (el?.value ?? '').trim();
             field['value'] = val || prevField?.value || '';
           } else if ([ExtraFieldInputType.Select, ExtraFieldInputType.Radio].includes(field['type'])) {
-            const prevVal = prevField?.value || '';
+            const prevVal = Array.isArray(prevField?.value) ? prevField.value[0] ?? '' : (prevField?.value || '');
             field['options'] = [];
             document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => {
               const val = (opt as HTMLInputElement).value.trim();
@@ -410,7 +405,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
             // keep old value if no new option is provided
             field['value'] = field['options'].includes(prevVal) ? prevVal : (field['options'][0] || '');
           } else if (field['type'] === ExtraFieldInputType.Number) {
-            const prevVal = prevField?.value || '';
+            const prevVal = Array.isArray(prevField?.value) ? prevField.value[0] ?? '' : (prevField?.value || '');
             const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
             field['value'] = val || prevVal;
             field['units'] = [];
@@ -436,6 +431,28 @@ if (document.getElementById('metadataDiv') && entity.id) {
             const el = document.getElementById(id) as HTMLInputElement | null;
             if (el?.checked) field[key] = true;
           }
+
+          const allowMultiValues = (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked;
+          const firstValue = Array.isArray(field['value']) ? field['value'][0] ?? '' : (field['value'] ?? '');
+          if (allowMultiValues) {
+            if (Array.isArray(prevField?.value) && (prevField.type ?? ExtraFieldInputType.Text) === field['type']) {
+              let values = [...prevField.value];
+              if (values.length === 0) {
+                values.push(firstValue);
+              } else {
+                values[0] = firstValue;
+              }
+              if ([ExtraFieldInputType.Select, ExtraFieldInputType.Radio].includes(field['type'])) {
+                values = values.filter(value => field['options'].includes(String(value)));
+              }
+              field['value'] = values;
+            } else {
+              field['value'] = [firstValue];
+            }
+          } else if (Array.isArray(field['value'])) {
+            field['value'] = firstValue;
+          }
+
           // preserve properties that aren't editable in this modal
           if (prevField?.readonly === true) field['readonly'] = true;
           if (typeof prevField?.position === 'number') field['position'] = prevField.position;

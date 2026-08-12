@@ -111,6 +111,43 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, TwigFilters::formatMetadata($metadataJson));
     }
 
+    public function testFormatMetadataWithMultipleValuesForAllTypes(): void
+    {
+        $metadataJson = '{
+          "extra_fields": {
+            "multi text": {
+              "type": "text",
+              "allow_multi_values": true,
+              "value": ["first", "second"]
+            },
+            "multi url": {
+              "type": "url",
+              "allow_multi_values": true,
+              "value": ["https://example.com/one", "https://example.com/two"]
+            },
+            "multi number": {
+              "type": "number",
+              "allow_multi_values": true,
+              "value": ["1", "2"],
+              "unit": "mg"
+            },
+            "multi checkbox": {
+              "type": "checkbox",
+              "allow_multi_values": true,
+              "value": ["on", "off"]
+            }
+          }
+        }';
+
+        $result = TwigFilters::formatMetadata($metadataJson);
+
+        $this->assertStringContainsString('<p>first</p><p>second</p>', $result);
+        $this->assertStringContainsString('<p><a href="https://example.com/one" target="_blank" rel="noopener">https://example.com/one</a></p>', $result);
+        $this->assertStringContainsString('<p>1 mg</p><p>2 mg</p>', $result);
+        $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox" checked="checked"></p>', $result);
+        $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox"></p>', $result);
+    }
+
     public function testFormatMetadataFailed(): void
     {
         $metadataJsonFailed = '{

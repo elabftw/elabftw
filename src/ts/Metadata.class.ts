@@ -62,15 +62,21 @@ export class Metadata {
   }
 
   /**
-   * Only save a single field value after a change
+   * Save a field value after a change.
+   * Multi-value fields are collected from all their rendered input rows.
    */
   handleEvent(event: Event): Promise<Response> | boolean {
-    const el = event.target as HTMLFormElement;
+    const el = event.target as HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement;
     if (el.reportValidity() === false || el.hasAttribute('readonly')) {
       return false;
     }
     if (el.dataset.units === '1') {
       return this.updateUnit(event);
+    }
+
+    const fieldName = el.dataset.field;
+    if (!fieldName) {
+      return false;
     }
 
     // prevent self links
@@ -81,48 +87,92 @@ export class Metadata {
       return false;
     }
 
-    // by default the value is simply the value of the input, which is the event target
-    let value = el.value;
-    // special case for checkboxes
-    if (el.type === 'checkbox') {
-      value = el.checked ? 'on': 'off';
-    }
-    // special case for multiselect
-    if (el.hasAttribute('multiple')) {
-      // collect all the selected options, and the value will be an array
+    let value: string|number|Array<string|number>;
+    if (el instanceof HTMLSelectElement && el.multiple) {
       value = [...el.selectedOptions].map(option => option.value);
-    }
-    // special case for Experiment/Resource/User/Compound link
-    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
-      const rawValue = value.trim();
-      if (rawValue === '') {
-        value = '';
-      } else {
-        value = parseInt(rawValue.split(' ')[0], 10);
-        if (isNaN(value)) {
-          return false;
-        }
-        // also create a link automatically for experiments, resources and compounds.
-        if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
-          ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
-        }
+    } else {
+      const inputValue = this.getInputValue(el);
+      if (inputValue === null) {
+        return false;
+      }
+      value = inputValue;
+
+      // also create a link automatically for experiments, resources and compounds.
+      if (value !== '' && [ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(el.dataset.target)) {
+        ApiC.post(`${this.entity.type}/${this.entity.id}/${el.dataset.target}_links/${value}`).then(() => reloadElements(['linksDiv', 'linksExpDiv']));
       }
     }
-    const params = {};
-    params['action'] = Action.UpdateMetadataField;
-    params[el.dataset.field] = value;
-    ApiC.patch(`${this.entity.type}/${this.entity.id}`, params).then(() => {
+
+    const multiValueHolder = el.closest('[data-purpose="multi-value-holder"]') as HTMLElement | null;
+    if (multiValueHolder) {
+      const values = this.getMultiValues(multiValueHolder);
+      if (values === null) {
+        return false;
+      }
+      value = values;
+    }
+
+    return this.updateMetadataField(fieldName, value);
+  }
+
+  getInputValue(element: HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement): string|number|null {
+    let value: string|number = element.value;
+    if (element instanceof HTMLInputElement && element.type === 'checkbox') {
+      value = element.checked ? 'on' : 'off';
+    }
+
+    if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(element.dataset.target)) {
+      const rawValue = String(value).trim();
+      if (rawValue === '') {
+        return '';
+      }
+      const id = parseInt(rawValue.split(' ')[0], 10);
+      return isNaN(id) ? null : id;
+    }
+
+    return value;
+  }
+
+  getMultiValues(holder: HTMLElement): Array<string|number>|null {
+    const values: Array<string|number> = [];
+    for (const row of holder.querySelectorAll<HTMLElement>('[data-purpose="multi-value-row"]')) {
+      const radioHolder = row.querySelector<HTMLElement>('[data-purpose="radio-holder"]');
+      if (radioHolder) {
+        const checked = radioHolder.querySelector<HTMLInputElement>('input[type="radio"]:checked');
+        values.push(checked?.value ?? '');
+        continue;
+      }
+
+      const input = row.querySelector<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>('[data-metadata-value="true"]');
+      if (!input) {
+        values.push('');
+        continue;
+      }
+      const value = this.getInputValue(input);
+      if (value === null) {
+        return null;
+      }
+      values.push(value);
+    }
+    return values;
+  }
+
+  updateMetadataField(fieldName: string, value: string|number|Array<string|number>): Promise<Response> {
+    const params: Record<string, unknown> = {action: Action.UpdateMetadataField};
+    params[fieldName] = value;
+    return ApiC.patch(`${this.entity.type}/${this.entity.id}`, params).then(response => {
       this.editor.loadMetadata();
-    }).catch(() => {
-      return;
+      return response;
     });
-    return true;
   }
 
   updateUnit(event: Event): Promise<Response> {
     const select = (event.target as HTMLSelectElement);
     const value = select.value;
-    const name = select.parentElement.parentElement.parentElement.querySelector('label').innerText;
+    const name = select.dataset.field;
+    if (!name) {
+      return Promise.reject(new Error('Missing metadata field name.'));
+    }
     return this.read().then(metadata => {
       metadata.extra_fields[name].unit = value;
       return this.save(metadata as ValidMetadata);
@@ -241,6 +291,97 @@ export class Metadata {
     return element;
   }
 
+  buildMultiValueInput(name: string, properties: ExtraFieldProperties): HTMLElement {
+    const holder = document.createElement('div');
+    holder.dataset.purpose = 'multi-value-holder';
+    holder.dataset.field = name;
+    holder.dataset.inputType = properties.type ?? ExtraFieldInputType.Text;
+    holder.id = this.getRandomId();
+
+    const values = Array.isArray(properties.value)
+      ? [...properties.value]
+      : [properties.value ?? ''];
+    if (values.length === 0) {
+      values.push('');
+    }
+
+    for (const value of values) {
+      holder.append(this.buildMultiValueRow(name, properties, value, holder));
+    }
+
+    if (properties.readonly !== true) {
+      const addButton = document.createElement('button');
+      addButton.type = 'button';
+      addButton.classList.add('btn', 'btn-secondary', 'btn-sm');
+      addButton.setAttribute('aria-label', i18next.t('add'));
+      addButton.setAttribute('title', i18next.t('add'));
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-plus');
+      addButton.append(icon);
+      addButton.addEventListener('click', () => {
+        const row = this.buildMultiValueRow(name, properties, '', holder);
+        holder.insertBefore(row, addButton);
+        row.querySelector<HTMLElement>('input, select, textarea')?.focus();
+      });
+      holder.append(addButton);
+    }
+
+    return holder;
+  }
+
+  buildMultiValueRow(
+    name: string,
+    properties: ExtraFieldProperties,
+    value: string|number,
+    holder: HTMLElement,
+  ): HTMLElement {
+    const row = document.createElement('div');
+    row.dataset.purpose = 'multi-value-row';
+    row.classList.add('d-flex', 'align-items-start', 'mb-1');
+
+    const inputWrapper = document.createElement('div');
+    inputWrapper.classList.add('flex-grow-1');
+    if (properties.type === ExtraFieldInputType.Checkbox) {
+      inputWrapper.classList.add('form-check');
+    }
+    inputWrapper.append(this.generateSingleInput(name, {
+      ...properties,
+      value,
+      allow_multi_values: false,
+    }));
+    row.append(inputWrapper);
+
+    if (properties.readonly !== true) {
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.classList.add('btn', 'btn-secondary', 'btn-sm', 'ml-2');
+      removeButton.setAttribute('aria-label', i18next.t('remove'));
+      removeButton.setAttribute('title', i18next.t('remove'));
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-minus');
+      removeButton.append(icon);
+      removeButton.addEventListener('click', () => {
+        row.remove();
+        this.saveMultiValueHolder(holder);
+      });
+      row.append(removeButton);
+    }
+
+    return row;
+  }
+
+  saveMultiValueHolder(holder: HTMLElement): Promise<Response>|boolean {
+    const fieldName = holder.dataset.field;
+    if (!fieldName) {
+      return false;
+    }
+    const values = this.getMultiValues(holder);
+    if (values === null) {
+      return false;
+    }
+    return this.updateMetadataField(fieldName, values);
+  }
+
   getRandomId(): string {
     return Math.random().toString(36).substring(2, 12);
   }
@@ -271,46 +412,61 @@ export class Metadata {
     nameCell.append(nameEl);
     nameCell.append(this.getDescription(properties));
 
-    let valueEl: HTMLElement;
-    // checkbox is special case
-    if (properties.type === ExtraFieldInputType.Checkbox) {
-      valueEl = document.createElement('input');
-      valueEl.setAttribute('type', 'checkbox');
-      valueEl.classList.add('d-block');
-      (valueEl as HTMLInputElement).disabled = true;
-      if (properties.value === 'on') {
-        (valueEl as HTMLInputElement).checked = true;
-      }
-    } else {
-      valueEl = document.createElement('div');
-      let value = properties.value as string;
-      if (properties.unit) {
-        value += ' ' + properties.unit;
-      }
-      valueEl.innerText = value || '—';
-      // the link is generated with javascript so we can still use innerText and
-      // not innerHTML with manual "<a href...>" which implicates security considerations
-      if (properties.type === ExtraFieldInputType.Url) {
-        valueEl.dataset.genLink = 'true';
-      }
-      if ([ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(properties.type)) {
-        valueEl.dataset.replaceWithTitle = 'true';
-        valueEl.dataset.endpoint = properties.type;
-        valueEl.dataset.id = properties.value as string;
-      }
-    }
     const valueCell = document.createElement('td');
     valueCell.classList.add('align-top');
-    valueCell.append(valueEl);
+    const values = Array.isArray(properties.value) ? properties.value : [properties.value];
+    if (values.length === 0) {
+      valueCell.append(this.generateViewableValue(properties, ''));
+    } else {
+      for (const value of values) {
+        valueCell.append(this.generateViewableValue(properties, value));
+      }
+    }
 
     row.append(nameCell, valueCell);
     return row;
+  }
+
+  generateViewableValue(properties: ExtraFieldProperties, value: string|number): HTMLElement {
+    if (properties.type === ExtraFieldInputType.Checkbox) {
+      const valueEl = document.createElement('input');
+      valueEl.setAttribute('type', 'checkbox');
+      valueEl.classList.add('d-block');
+      valueEl.disabled = true;
+      valueEl.checked = value === 'on';
+      return valueEl;
+    }
+
+    const valueEl = document.createElement('div');
+    let displayValue = String(value ?? '');
+    if (displayValue && properties.unit) {
+      displayValue += ' ' + properties.unit;
+    }
+    valueEl.innerText = displayValue || '—';
+    // the link is generated with javascript so we can still use innerText and
+    // not innerHTML with manual "<a href...>" which implicates security considerations
+    if (properties.type === ExtraFieldInputType.Url && displayValue) {
+      valueEl.dataset.genLink = 'true';
+    }
+    if (displayValue && [ExtraFieldInputType.Experiments.valueOf(), ExtraFieldInputType.Items.valueOf(), ExtraFieldInputType.Users.valueOf(), ExtraFieldInputType.Compounds.valueOf()].includes(properties.type)) {
+      valueEl.dataset.replaceWithTitle = 'true';
+      valueEl.dataset.endpoint = properties.type;
+      valueEl.dataset.id = String(value);
+    }
+    return valueEl;
   }
 
   /**
    * Take the json description of the field and build an input element to be injected
    */
   generateInput(name: string, properties: ExtraFieldProperties): Element {
+    if (properties.allow_multi_values === true && properties.type !== ExtraFieldInputType.Select) {
+      return this.buildMultiValueInput(name, properties);
+    }
+    return this.generateSingleInput(name, properties);
+  }
+
+  generateSingleInput(name: string, properties: ExtraFieldProperties): Element {
     // we don't know yet which kind of element it will be
     let element: HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement;
     // generate a unique id for the element so we can associate the label properly
@@ -341,7 +497,9 @@ export class Metadata {
       for (const option of properties.options) {
         const optionEl = document.createElement('option');
         optionEl.text = option;
-        if (properties.allow_multi_values === true && (properties.value as Array<string>).includes(option)) {
+        if (properties.allow_multi_values === true
+          && (Array.isArray(properties.value) ? properties.value : [properties.value]).includes(option)
+        ) {
           optionEl.setAttribute('selected', '');
         }
         element.add(optionEl);
@@ -368,7 +526,7 @@ export class Metadata {
         (element as HTMLInputElement).checked = properties.value === 'on' ? true : false;
       }
       if (properties.allow_multi_values !== true) {
-        element.value = properties.value as string;
+        element.value = String(properties.value ?? '');
       }
     }
 
@@ -393,8 +551,9 @@ export class Metadata {
     }
     element.classList.add(cssClass);
 
-    // add a data-field attribute so we know what to update on change
+    // add data attributes so we know what to update on change and can collect multi-value rows
     element.dataset.field = name;
+    element.dataset.metadataValue = 'true';
     // add an onChange listener to the element
     // so the json can be updated without having to click save
     // set the callback to the whole class so handleEvent is called and 'this' refers to the class
@@ -439,6 +598,7 @@ export class Metadata {
       unitsSel.classList.add('form-control', 'brl-none');
       // add this so we can differentiate the change event from the main input
       unitsSel.dataset.units = '1';
+      unitsSel.dataset.field = name;
       unitsSel.addEventListener('change', this, false);
       appendDiv.appendChild(unitsSel);
       unitsSel.disabled = properties.readonly === true;
@@ -680,6 +840,8 @@ export class Metadata {
               inputType = element.element.type;
             } else if (element.element.tagName === 'TEXTAREA') {
               inputType = 'text';
+            } else if (element.element.dataset.purpose === 'multi-value-holder') {
+              inputType = element.element.dataset.inputType ?? 'unknown';
             } else if (element.element.classList.contains('input-group')) {
               // find the first input element within the input group
               const input = element.element.querySelector('input');

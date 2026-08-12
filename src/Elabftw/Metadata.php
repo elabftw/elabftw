@@ -144,7 +144,10 @@ final class Metadata
             if (isset($field[MetadataEnum::BlankValueOnDuplicate->value])
                 && $field[MetadataEnum::BlankValueOnDuplicate->value] === true
             ) {
-                $field[MetadataEnum::Value->value] = '';
+                $field[MetadataEnum::Value->value] = ($field[MetadataEnum::AllowMultiValues->value] ?? false) === true
+                    || ($field[MetadataEnum::Type->value] ?? '') === 'select-multi'
+                    ? array()
+                    : '';
             }
         }
         $this->metadata[MetadataEnum::ExtraFields->value] = $extraFields;

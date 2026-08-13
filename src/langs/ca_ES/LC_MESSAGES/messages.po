@@ -643,7 +643,7 @@ msgstr "va comentar"
 #: src/templates/about-elabftw-modal.html:7
 #: src/templates/about-elabftw-modal.html:20
 #: src/templates/add-container-modal.html:7
-#: src/templates/add-container-modal.html:43 src/templates/base.html:103
+#: src/templates/add-container-modal.html:45 src/templates/base.html:103
 #: src/templates/base.html:110 src/templates/booking-params-modal.html:7
 #: src/templates/booking-params-modal.html:100
 #: src/templates/bookings-email-modal.html:6
@@ -885,7 +885,7 @@ msgstr "Editor JSON"
 msgid "Create experiment from template"
 msgstr "Creeu experiment a partir de la plantilla"
 
-#: src/templates/storage-list.html:9
+#: src/templates/storage-list.html:17
 msgid "Expand all"
 msgstr "Amplia tot"
 
@@ -3507,7 +3507,7 @@ msgstr "Cita"
 msgid "State"
 msgstr "Estat"
 
-#: src/templates/team.html:122
+#: src/templates/storage-list.html:50 src/templates/team.html:122
 msgid "unset"
 msgstr "sense fixar"
 
@@ -3889,10 +3889,6 @@ msgstr "PDF/A"
 msgid "Error"
 msgstr "Error"
 
-#: src/templates/related-snippet.html:23
-msgid "Related resources"
-msgstr "Recursos relacionats"
-
 #: src/templates/links.html:60
 msgid "Show related resources"
 msgstr "Mostra recursos relacionats"
@@ -3981,12 +3977,6 @@ msgstr "Pots revisar les sol·licituds aquí: %s"
 #: src/Models/Notifications/ActionRequested.php:51
 msgid "Action requested"
 msgstr "Acció sol·licitada"
-
-#: src/templates/admin.html:482 src/templates/admin.html:490
-#: src/templates/permissions-edit-modal.html:55
-#: src/templates/permissions-edit-modal.html:68
-msgid "(hold %sctrl%s key to select multiple entries, %sctrl%s + click to deselect a selected entry)"
-msgstr "(mantén premuda la tecla %sctrl%s per a seleccionar múltiples entrades, %sctrl%s + click per a deseleccionar una entrada seleccionada)"
 
 #: src/templates/export-menu-options.html:28
 msgid "Classification"
@@ -4205,14 +4195,6 @@ msgstr "Ajusta la capacitat i la unitat del contenidor"
 #: src/templates/add-container-modal.html:19
 msgid "Quantity unit"
 msgstr "Unitat de quantitat"
-
-#: src/templates/add-container-modal.html:34
-msgid "Adjust number of containers stored"
-msgstr "Ajustar el nombre de contenidors emmagatzemats"
-
-#: src/templates/add-container-modal.html:36
-msgid "Select a storage location below"
-msgstr "Seleccioneu una ubicació d'emmagatzematge a continuació"
 
 #: src/templates/admin.html:28 src/templates/admin.html:501
 #: src/templates/permissions-edit-modal.html:93
@@ -4468,10 +4450,6 @@ msgstr "Aquest document ha estat marcat amb data i hora per %s el %s."
 msgid "Timestamped by %s on %s at %s"
 msgstr "Marca de temps de %s el %s a les %s"
 
-#: src/templates/permissions-edit-modal.html:80
-msgid "Selecting a user group here will give access to all users part of this user group."
-msgstr "Si seleccioneu un grup d'usuaris aquí, tots els usuaris que en formen part tindran accés."
-
 #: src/templates/edit-user-modal.html:94
 msgid "Set user password"
 msgstr "Estableix la contrasenya de l'usuari"
@@ -4488,10 +4466,6 @@ msgstr "Espectacle caps de setmana"
 msgid "Layout: timeline"
 msgstr "Disseny: cronologia"
 
-#: src/templates/scheduler.html:142
-msgid "Cancel booking"
-msgstr "Cancel·la la reserva"
-
 #: src/templates/search-help-modal.html:5
 msgid "Search help"
 msgstr "Ajuda de cerca"
@@ -4507,10 +4481,6 @@ msgstr "Quan es cerca un terme a la barra de cerca, els resultats contindran aqu
 #: src/templates/search-help-modal.html:15
 msgid "The search bar supports searching with specific constraints such as \"title:Something\" and \"category:Tests\" (%s). You can combine them with logical expressions (AND, OR, NOT...) and group with parenthesis."
 msgstr "La barra de cerca admet la cerca amb restriccions específiques com ara \"title:Something\" i \"category:Tests\" (%s). Podeu combinar-les amb expressions lògiques (AND, OR, NOT...) i agrupar-les amb parèntesis."
-
-#: src/templates/search-help-modal.html:16
-msgid "To search in extra fields (metadata), use the dedicated helper to build your query. For example, to search all entries where \"Temperature\" is 37, you would use: \"extrafield:Temperature:37\" in the search bar."
-msgstr "Per cercar en camps addicionals (metadades), feu servir l'ajudant dedicat per crear la consulta. Per exemple, per cercar totes les entrades on \"Temperatura\" sigui 37, hauríeu d'utilitzar: \"extrafield:Temperatura:37\" a la barra de cerca."
 
 #: src/templates/search-help-modal.html:17
 msgid "Available fields"
@@ -4544,10 +4514,6 @@ msgstr "Suprimit"
 msgid "Normal or Archived"
 msgstr "Normal o Arxivat"
 
-#: src/templates/select-state.html:11
-msgid "Any"
-msgstr "Qualsevol"
-
 #: src/templates/show.html:244
 msgid "Toggle main text"
 msgstr "Activa/desactiva el text principal"
@@ -4558,41 +4524,21 @@ msgstr "Activa/desactiva el text principal"
 msgid "Search in resources"
 msgstr "Cerca en recursos"
 
-#: src/templates/steps-links-edit.html:68
-msgid "+1 week"
-msgstr "+1 setmana"
-
-#: src/templates/steps-links-edit.html:69
-msgid "+1 month"
-msgstr "+1 mes"
-
-#: src/templates/steps-links-edit.html:70
-msgid "+1 year"
-msgstr "+1 any"
-
-#: src/templates/storage-list.html:43 src/templates/storage-list.html:74
+#: src/templates/storage-list.html:70 src/templates/storage-list.html:104
 msgid "Display content"
 msgstr "Mostra el contingut"
 
-#: src/templates/storage-list.html:46 src/templates/storage-list.html:72
+#: src/templates/storage-list.html:73 src/templates/storage-list.html:102
 msgid "Add children to %s"
 msgstr "Afegeix fills a %s"
 
-#: src/templates/storage-list.html:49
+#: src/templates/storage-list.html:76
 msgid "Delete %s and its children"
 msgstr "Suprimeix %s i els seus fills"
 
-#: src/templates/storage-list.html:21
-msgid "Store in %s"
-msgstr "Desa a %s"
-
-#: src/templates/storage-list.html:65
+#: src/templates/storage-list.html:94
 msgid "Inventory location"
 msgstr "Ubicació de l'inventari"
-
-#: src/templates/storage-view-edit.html:4
-msgid "Containers"
-msgstr "Contenidors"
 
 #: src/templates/storage-view-edit.html:14
 msgid "in"
@@ -4601,10 +4547,6 @@ msgstr "en"
 #: src/templates/storage-view-edit.html:25
 msgid "No containers stored"
 msgstr "No s'han emmagatzemat contenidors"
-
-#: src/templates/storage-view-edit.html:28
-msgid "Modify storage"
-msgstr "Modifica l'emmagatzematge"
 
 #: src/templates/sysconfig.html:70
 msgid "Get users report"
@@ -4626,10 +4568,6 @@ msgstr "Obtenir informe d'inventari"
 msgid "Domain name or IP address. You can specify multiple entries for redundancy, separated by commas."
 msgstr "Nom de domini o adreça IP. Podeu especificar diverses entrades per a la redundància, separades per comes."
 
-#: src/templates/sysconfig.html:1114
-msgid "No places have been defined yet. Head to the %sInventory page%s to add places."
-msgstr "Encara no s'ha definit cap lloc. Aneu a la pàgina %sInventari%s per afegir llocs."
-
 #: src/Elabftw/i18n4Js.php:134
 msgid "Hide deleted"
 msgstr "Amaga eliminats"
@@ -4642,10 +4580,6 @@ msgstr "Mostra eliminats"
 msgid "Hi. %s left a comment. Have a look: %s"
 msgstr "Hola. %s ha deicat un comentari. Mira'l: %s"
 
-#: src/templates/create-new-item-modal.html:35
-msgid "Note: only pinned templates are displayed below."
-msgstr "Nota: només les plantilles fixades es mostren a continuació."
-
 #: src/Elabftw/i18n4Js.php:121
 msgid "Is Admin"
 msgstr "És Administrador"
@@ -4657,10 +4591,6 @@ msgstr "Selecciona un àmbit i busca recursos que es puguin reservar."
 #: src/templates/scheduler.html:36
 msgid "Filter events by owner"
 msgstr "Filtra esdeveniments per propietari"
-
-#: src/templates/scheduler.html:199
-msgid "Selected resource:"
-msgstr "Recurs seleccionat:"
 
 #: src/Elabftw/i18n4Js.php:57
 msgid "Use the autocompletion menu to add users."
@@ -4738,10 +4668,6 @@ msgstr "Codi original: %s"
 msgid "Restore selected compounds"
 msgstr "Restaura els compostos sel·leccionats"
 
-#: src/templates/create-new-item-modal.html:35
-msgid "Note: only templates that you have pinned are displayed below."
-msgstr "Nota: només es mostren a continuació les plantilles que has fixat."
-
 #: src/templates/head.html:226
 msgid "About eLabFTW"
 msgstr "Sobre eLabFTW"
@@ -4780,10 +4706,6 @@ msgstr "Pot gestionar usuaris a equips"
 msgid "You must allow at least one permission setting."
 msgstr "Has de permetre almenys un permís de configuració."
 
-#: src/Elabftw/i18n4Js.php:80
-msgid "There was an error while parsing metadata (extra fields). Full error has been logged to the browser console."
-msgstr "Hi ha hagut un error analitzant les metadades (camps extra). S'ha registrat l'error complert a la consola del navegador."
-
 #: src/Elabftw/i18n4Js.php:120
 msgid "This action cannot apply to current selection"
 msgstr "Aquesta acció no es pot aplicar a la selecció actual"
@@ -4820,10 +4742,6 @@ msgstr "Perdona, aquesta acció està desactivada en el mode demo."
 msgid "Only the Restore action is allowed on a deleted entity."
 msgstr "Només es pot Restaurar una entitat eliminada."
 
-#: src/Models/AbstractEntity.php:463
-msgid "Only the Unarchive action is allowed on an archived entity."
-msgstr "Només es permet l'acció de Desarxivar en una entrada arxivada."
-
 #: src/Models/AbstractEntity.php:874
 msgid "Cannot modify permissions on entry with immutable permissions."
 msgstr "No es poden modificar els permisos en una entrada amb permisos immutables."
@@ -4836,11 +4754,11 @@ msgstr "No es poden modificar permisos en configuracions immutables."
 msgid "Cannot delete a linked compound."
 msgstr "No es pot eliminar un compost enllaçat."
 
-#: src/Models/StorageUnits.php:376
+#: src/Models/StorageUnits.php:474
 msgid "Cannot delete a storage unit with children!"
 msgstr "No es pot eliminar una unitat d'emmagatzematge amb fills!"
 
-#: src/Models/StorageUnits.php:379
+#: src/Models/StorageUnits.php:477
 msgid "Cannot delete a storage unit with containers!"
 msgstr "No es pot eliminar una unitat d'emmagatzematge amb contenidors!"
 
@@ -5147,11 +5065,11 @@ msgstr "Elimina les entitats seleccionades"
 msgid "Restore the selected entities"
 msgstr "Restaura les entitats sel·leccionades"
 
-#: src/templates/storage-list.html:10
+#: src/templates/storage-list.html:18
 msgid "Collapse all"
 msgstr "Col·lapsa-ho tot"
 
-#: src/templates/storage-list.html:47
+#: src/templates/storage-list.html:74
 msgid "Rename"
 msgstr "Canvia el nom"
 
@@ -6225,15 +6143,15 @@ msgstr "Les reserves estan limitades a %d dia/dies d'antelació."
 msgid "Total number of containers to distribute"
 msgstr "Nombre total de contenidors que s'han de distribuir"
 
-#: src/templates/add-container-modal.html:31
+#: src/templates/add-container-modal.html:33
 msgid "assigned"
 msgstr "assignats"
 
-#: src/templates/add-container-modal.html:33
+#: src/templates/add-container-modal.html:35
 msgid "Store containers"
 msgstr "Emmagatzema els contenidors"
 
-#: src/templates/add-container-modal.html:37
+#: src/templates/add-container-modal.html:39
 msgid "Distribute containers across the storage locations below"
 msgstr "Distribuïu els contenidors entre les ubicacions d'emmagatzematge següents"
 
@@ -6503,24 +6421,24 @@ msgstr "Canvia els permisos de reserva"
 msgid "Do not allow booking this resource"
 msgstr "No permetis reservar aquest recurs"
 
-#: src/templates/storage-list.html:20
+#: src/templates/storage-list.html:36
 msgid "Decrease containers for %s"
 msgstr "Redueix el nombre de contenidors de %s"
 
-#: src/templates/storage-list.html:22
+#: src/templates/storage-list.html:39
 msgid "Number of containers for %s"
 msgstr "Nombre de contenidors de %s"
 
-#: src/templates/storage-list.html:24
+#: src/templates/storage-list.html:41
 msgid "Increase containers for %s"
 msgstr "Augmenta el nombre de contenidors de %s"
 
-#: src/templates/storage-list.html:37 src/templates/storage-list.html:39
-#: src/templates/storage-list.html:80 src/templates/storage-list.html:84
+#: src/templates/storage-list.html:63 src/templates/storage-list.html:66
+#: src/templates/storage-list.html:110 src/templates/storage-list.html:114
 msgid "Move here: %s"
 msgstr "Mou aquí: %s"
 
-#: src/templates/storage-list.html:48
+#: src/templates/storage-list.html:75
 msgid "Move"
 msgstr "Mou"
 
@@ -6946,3 +6864,35 @@ msgstr "Desa i mostra"
 #: src/templates/view.html:209
 msgid "Created on %s"
 msgstr "Creat el %s"
+
+#: src/Models/StorageUnits.php:448
+msgid "Nothing can be stored directly in \"%s\": its capacity is zero. Pick one of the locations inside it."
+msgstr "No es pot emmagatzemar res directament a «%s»: la seva capacitat és zero. Trieu una de les ubicacions que conté."
+
+#: src/Models/StorageUnits.php:453
+msgid "Cannot store in \"%s\": its capacity is %d and it already holds %d."
+msgstr "No es pot emmagatzemar a «%s»: té una capacitat de %d contenidors i ja en conté %d."
+
+#: src/templates/add-container-modal.html:30
+msgid "There is not enough room left in these locations for that many containers."
+msgstr "No queda prou espai en aquestes ubicacions per a tants contenidors."
+
+#: src/templates/storage-list.html:23
+msgid "Containers stored here, out of the maximum this location accepts"
+msgstr "Contenidors emmagatzemats aquí respecte del màxim que admet aquesta ubicació"
+
+#: src/templates/storage-list.html:25
+msgid "Containers already stored here"
+msgstr "Contenidors que ja hi ha emmagatzemats"
+
+#: src/templates/storage-list.html:32
+msgid "Holds no containers"
+msgstr "No admet contenidors"
+
+#: src/templates/storage-list.html:32
+msgid "Full"
+msgstr "Sense espai"
+
+#: src/templates/storage-list.html:50
+msgid "Capacity"
+msgstr "Capacitat"

@@ -1810,11 +1810,29 @@ input:user-invalid {
   flex-shrink: 0; /* Ensure toolbars do not shrink */
 }
 
-#storageDiv {
+/* every storage tree, whatever its id: several coexist on a page */
+[data-storage-tree] {
   details,
   summary {
     margin: 10px 0;
   }
+}
+
+/* how full a storage location is */
+.storage-occupancy {
+  background-color: var(--lightgold);
+  border-radius: 0.25rem;
+  color: var(--darkgold);
+  font-size: 80%;
+  font-weight: 600;
+  padding: 0.15em 0.45em;
+  white-space: nowrap;
+}
+
+/* no room left: the colour carries the limit, not the mere fact of being occupied */
+.storage-occupancy.storage-full {
+  background-color: var(--lightred);
+  color: var(--darkred);
 }
 
 /* top right button */

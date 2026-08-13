@@ -169,9 +169,12 @@ abstract class AbstractCsv extends AbstractImport
         $storageUnitId = $StorageUnits->createImmutable($locationSplit);
         $Containers2ItemsLinks = new Containers2ItemsLinks($entity, $storageUnitId);
 
+        // capacity is not enforced here: one row is one container, and there is no channel to
+        // report a per-row rejection, so a full location would abort a part-committed import
         $Containers2ItemsLinks->createWithQuantity(
             (float) ($row['quantity'] ?? 1.0),
             $row['unit'] ?? '•',
+            enforceCapacity: false,
         );
     }
 }

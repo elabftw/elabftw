@@ -23,6 +23,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_column;
 use function dirname;
 use function sprintf;
 
@@ -375,6 +376,52 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
         $Import->import();
         $this->assertEquals(2, $Import->getInserted());
+    }
+
+    public function testImportBenchLineage(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/benchlineage.eln',
+            'benchlineage.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Eln(
+            new Users(1, 1),
+            new Users(1, 1),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+        );
+        $Import->import();
+        $this->assertSame(1, $Import->getInserted());
+
+        $Experiment = $this->getExperimentFromTitle('Power-conversion and RC-filter characterization');
+        $this->assertCount(20, $Experiment->entityData['uploads']);
+        $this->assertEqualsCanonicalizing(array(
+            'benchlineage.json',
+            'buck-efficiency.json',
+            'buck-load-001.json',
+            'buck-load-001.json',
+            'buck-load-sweep.csv',
+            'cal-dmm-01-2026.json',
+            'cal-scope-01-2026.json',
+            'cal-source-01-2026.json',
+            'demo-report.html',
+            'dmm-01.json',
+            'rc-baseline-001.json',
+            'rc-baseline-001.json',
+            'rc-baseline.csv',
+            'rc-filter.json',
+            'rc-resistor-swap.csv',
+            'rc-swap-002.json',
+            'rc-swap-002.json',
+            'scope-01.json',
+            'seal-2026-08-05T080000-0000.json',
+            'source-01.json',
+        ), array_column($Experiment->entityData['uploads'], 'real_name'));
     }
 
     // test import keeps the state for archived/locked/deleted entries

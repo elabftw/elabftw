@@ -15,6 +15,7 @@ import esES from './langs/es_ES';
 import etEE from './langs/et_EE';
 import fiFI from './langs/fi_FI';
 import frFR from './langs/fr_FR';
+import hrHR from './langs/hr_HR';
 import idID from './langs/id_ID';
 import itIT from './langs/it_IT';
 import jaJP from './langs/ja_JP';
@@ -42,6 +43,7 @@ i18next.init({
     'et_EE',
     'fi_FI',
     'fr_FR',
+    'hr_HR',
     'id_ID',
     'it_IT',
     'ja_JP',
@@ -68,6 +70,7 @@ i18next.init({
     et_EE: etEE,
     fi_FI: fiFI,
     fr_FR: frFR,
+    hr_HR: hrHR,
     id_ID: idID,
     it_IT: itIT,
     ja_JP: jaJP,

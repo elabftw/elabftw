@@ -19,6 +19,7 @@ enum Language: string
 {
     // by alphabetical order of value
     case Catalan = 'ca_ES';
+    case Croatian = 'hr_HR';
     case Czech = 'cs_CZ';
     case German = 'de_DE';
     case Greek = 'el_GR';
@@ -55,6 +56,7 @@ enum Language: string
     {
         return match ($this) {
             self::Catalan => 'ca',
+            self::Croatian => 'hr',
             self::Czech => 'cs',
             self::German => 'de',
             self::Greek => 'el',
@@ -85,6 +87,7 @@ enum Language: string
     {
         return match ($this) {
             self::Catalan => 'Spanish (Catalan)',
+            self::Croatian => 'Croatian',
             self::Czech => 'Czech ',
             self::German => 'German',
             self::Greek => 'Greek',

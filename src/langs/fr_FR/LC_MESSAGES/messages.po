@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-13 11:14+0200\n"
+"POT-Creation-Date: 2026-08-13 16:24+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -1512,11 +1512,27 @@ msgstr ""
 msgid "This step is immutable: it cannot be modified."
 msgstr "Cette étape est immuable : elle ne peut pas être modifiée."
 
-#: src/Models/StorageUnits.php:376
+#: src/Models/StorageUnits.php:448
+#, php-format
+msgid ""
+"Nothing can be stored directly in \"%s\": its capacity is zero. Pick one of "
+"the locations inside it."
+msgstr ""
+"Rien ne peut être stocké directement dans « %s » : sa capacité est nulle. "
+"Choisissez l'un des emplacements qu'il contient."
+
+#: src/Models/StorageUnits.php:453
+#, php-format
+msgid "Cannot store in \"%s\": its capacity is %d and it already holds %d."
+msgstr ""
+"Impossible de stocker dans « %s » : sa capacité est de %d et il contient "
+"déjà %d."
+
+#: src/Models/StorageUnits.php:474
 msgid "Cannot delete a storage unit with children!"
 msgstr "Impossible de supprimer une unité de stockage avec des enfants !"
 
-#: src/Models/StorageUnits.php:379
+#: src/Models/StorageUnits.php:477
 msgid "Cannot delete a storage unit with containers!"
 msgstr "Impossible de supprimer une unité de stockage avec des conteneurs !"
 
@@ -1810,7 +1826,7 @@ msgstr "Paramètres"
 #: src/templates/about-elabftw-modal.html:7
 #: src/templates/about-elabftw-modal.html:20
 #: src/templates/add-container-modal.html:7
-#: src/templates/add-container-modal.html:43 src/templates/base.html:103
+#: src/templates/add-container-modal.html:45 src/templates/base.html:103
 #: src/templates/base.html:110 src/templates/booking-params-modal.html:7
 #: src/templates/booking-params-modal.html:100
 #: src/templates/bookings-email-modal.html:6
@@ -1904,15 +1920,22 @@ msgstr "Unité de quantité"
 msgid "Total number of containers to distribute"
 msgstr "Nombre total de conteneurs à distribuer"
 
-#: src/templates/add-container-modal.html:31
+#: src/templates/add-container-modal.html:30
+msgid ""
+"There is not enough room left in these locations for that many containers."
+msgstr ""
+"Il ne reste plus assez de place à ces emplacements pour accueillir autant de "
+"conteneurs."
+
+#: src/templates/add-container-modal.html:33
 msgid "assigned"
 msgstr "attribué"
 
-#: src/templates/add-container-modal.html:33
+#: src/templates/add-container-modal.html:35
 msgid "Store containers"
 msgstr "Stocker les récipients"
 
-#: src/templates/add-container-modal.html:37
+#: src/templates/add-container-modal.html:39
 msgid "Distribute containers across the storage locations below"
 msgstr ""
 "Répartissez les conteneurs entre les emplacements de stockage ci-dessous"
@@ -5521,52 +5544,77 @@ msgstr "Insérer l'étape à la position du curseur"
 msgid "Add a step"
 msgstr "Ajouter une étape"
 
-#: src/templates/storage-list.html:9
+#: src/templates/storage-list.html:17
 msgid "Expand all"
 msgstr "Développer tout"
 
-#: src/templates/storage-list.html:10
+#: src/templates/storage-list.html:18
 msgid "Collapse all"
 msgstr "Tout réduire"
 
-#: src/templates/storage-list.html:20
+#: src/templates/storage-list.html:23
+msgid "Containers stored here, out of the maximum this location accepts"
+msgstr ""
+"Conteneurs stockés ici, en dehors de la capacité maximale admise par ce site"
+
+#: src/templates/storage-list.html:25
+msgid "Containers already stored here"
+msgstr "Conteneurs déjà entreposés ici"
+
+#: src/templates/storage-list.html:32
+msgid "Holds no containers"
+msgstr "Ne contient aucun récipient"
+
+#: src/templates/storage-list.html:32
+msgid "Full"
+msgstr "Complet"
+
+#: src/templates/storage-list.html:36
 msgid "Decrease containers for %s"
 msgstr "Réduire le nombre de conteneurs pour %s"
 
-#: src/templates/storage-list.html:22
+#: src/templates/storage-list.html:39
 msgid "Number of containers for %s"
 msgstr "Nombre de conteneurs pour %s"
 
-#: src/templates/storage-list.html:24
+#: src/templates/storage-list.html:41
 msgid "Increase containers for %s"
 msgstr "Augmenter le nombre de conteneurs pour %s"
 
-#: src/templates/storage-list.html:37 src/templates/storage-list.html:39
-#: src/templates/storage-list.html:80 src/templates/storage-list.html:84
+#: src/templates/storage-list.html:50
+msgid "Capacity"
+msgstr "Capacité"
+
+#: src/templates/storage-list.html:50 src/templates/team.html:122
+msgid "unset"
+msgstr "non défini"
+
+#: src/templates/storage-list.html:63 src/templates/storage-list.html:66
+#: src/templates/storage-list.html:110 src/templates/storage-list.html:114
 msgid "Move here: %s"
 msgstr "Déplacer ici : %s"
 
-#: src/templates/storage-list.html:43 src/templates/storage-list.html:74
+#: src/templates/storage-list.html:70 src/templates/storage-list.html:104
 msgid "Display content"
 msgstr "Afficher le contenu"
 
-#: src/templates/storage-list.html:46 src/templates/storage-list.html:72
+#: src/templates/storage-list.html:73 src/templates/storage-list.html:102
 msgid "Add children to %s"
 msgstr "Ajouter des enfants à %s"
 
-#: src/templates/storage-list.html:47
+#: src/templates/storage-list.html:74
 msgid "Rename"
 msgstr "Renommer"
 
-#: src/templates/storage-list.html:48
+#: src/templates/storage-list.html:75
 msgid "Move"
 msgstr "Déplacer"
 
-#: src/templates/storage-list.html:49
+#: src/templates/storage-list.html:76
 msgid "Delete %s and its children"
 msgstr "Supprimer %s et ses enfants"
 
-#: src/templates/storage-list.html:65
+#: src/templates/storage-list.html:94
 msgid "Inventory location"
 msgstr "Emplacement de l'inventaire"
 
@@ -6719,10 +6767,6 @@ msgstr "Quantité reçue"
 #: src/templates/team.html:100
 msgid "Quote"
 msgstr "Devis"
-
-#: src/templates/team.html:122
-msgid "unset"
-msgstr "non défini"
 
 #: src/templates/team.html:127
 msgid "Cancel order"

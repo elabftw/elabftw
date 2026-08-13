@@ -4606,7 +4606,7 @@ msgstr "Selezionare i campi obbligatori."
 
 #: src/Elabftw/i18n4Js.php:104
 msgid "{{num, number}} entries processed"
-msgstr "{{num, numero}} voci elaborate"
+msgstr "{{num, number}} voci elaborate"
 
 #: src/Elabftw/i18n4Js.php:107
 msgid "There was an error while fetching the requested data: {{error}}"
@@ -5035,7 +5035,7 @@ msgstr "Mostra altri filtri"
 
 #: src/templates/show.html:322
 msgid "No resources categories have been defined for your team. Create some from this page: %sResources Categories%s."
-msgstr "Non sono state definite categorie di risorse per il vostro team. Crearne alcune da questa pagina: Categorie di risorse%s."
+msgstr "Non sono state definite categorie di risorse per il vostro team. Crearne alcune da questa pagina: %sCategorie di risorse%s."
 
 #: src/templates/show.html:525
 msgid "Lock the selected entities"
@@ -5310,7 +5310,7 @@ msgstr "Si vuole utilizzare la prima riga del file come intestazione di colonna?
 
 #: src/templates/show.html:505
 msgid "Tip: %screate categories%s to start organizing your work."
-msgstr "Suggerimento: %creare categorie%s per iniziare a organizzare il lavoro."
+msgstr "Suggerimento: %screare categorie%s per iniziare a organizzare il lavoro."
 
 #: src/templates/show.html:376
 msgid "Nothing here yet. Start by clicking Create (top-right) to add your first %s."

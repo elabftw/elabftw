@@ -15,6 +15,10 @@ Procedures are loaded and can be used in the sql files:
 
 See `src/sql/procedures.sql`.
 
+## Failed upgrades
+
+`db:update` automatically executes the matching `schemaN-down.sql` file if a schema migration fails. MySQL DDL statements cannot be rolled back as a transaction, so down migrations act as compensating rollbacks and must be safe to run after a partially applied up migration. Prefer `IF EXISTS` and the helper procedures above where applicable.
+
 ## Former columns
 
 Columns that should be removed after a while because they are not used anymore but were kept around so the `-down` action would not lose information:

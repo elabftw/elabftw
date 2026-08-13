@@ -15,7 +15,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\DatabaseErrorException;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\UnableToReadFile;
-use Symfony\Component\Console\Output\Output;
+use Symfony\Component\Console\Output\NullOutput;
 
 class SqlTest extends \PHPUnit\Framework\TestCase
 {
@@ -23,8 +23,7 @@ class SqlTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $outMock = $this->createMock(Output::class);
-        $this->Sql = new Sql(Storage::FIXTURES->getStorage()->getFs(), $outMock);
+        $this->Sql = new Sql(Storage::FIXTURES->getStorage()->getFs(), new NullOutput());
     }
 
     public function testExecFile(): void
@@ -41,6 +40,40 @@ class SqlTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(3, $this->Sql->execFile('dummy-broken.sql'));
     }
 
+    public function testExecFileWithRollback(): void
+    {
+        $fsMock = $this->createMock(Fs::class);
+        $fsMock->method('fileExists')->willReturn(false);
+        $fsMock->expects($this->exactly(2))
+            ->method('read')
+            ->willReturnMap(array(
+                array('broken.sql', 'SELECT * FROM users;' . PHP_EOL . 'SELECT not_existing FROM not_existing_either;'),
+                array('rollback.sql', 'SELECT * FROM teams;'),
+            ));
+        $Sql = new Sql($fsMock, new NullOutput());
+
+        $this->expectException(DatabaseErrorException::class);
+        $Sql->execFileWithRollback('broken.sql', 'rollback.sql');
+    }
+
+    public function testExecFileWithRollbackPreservesOriginalExceptionWhenRollbackFails(): void
+    {
+        $fsMock = $this->createMock(Fs::class);
+        $fsMock->method('fileExists')->willReturn(false);
+        $fsMock->expects($this->exactly(2))
+            ->method('read')
+            ->willReturnCallback(static function (string $filename): string {
+                if ($filename === 'broken.sql') {
+                    return 'SELECT not_existing FROM not_existing_either;';
+                }
+                throw new UnableToReadFile();
+            });
+        $Sql = new Sql($fsMock, new NullOutput());
+
+        $this->expectException(DatabaseErrorException::class);
+        $Sql->execFileWithRollback('broken.sql', 'rollback.sql');
+    }
+
     public function testExecNonExistingFile(): void
     {
         $this->expectException(UnableToReadFile::class);
@@ -51,7 +84,7 @@ class SqlTest extends \PHPUnit\Framework\TestCase
     {
         $fsMock = $this->createMock(Fs::class);
         $fsMock->method('read')->will($this->throwException(new UnableToReadFile()));
-        $Sql = new Sql($fsMock);
+        $Sql = new Sql($fsMock, new NullOutput());
         $this->expectException(UnableToReadFile::class);
         $Sql->execFile('osef');
     }

@@ -16,6 +16,7 @@ use Elabftw\Exceptions\DatabaseErrorException;
 use League\Flysystem\FilesystemOperator;
 use PDOException;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 use function array_filter;
 use function array_merge;
@@ -37,7 +38,7 @@ final class Sql
 
     private Db $Db;
 
-    public function __construct(private FilesystemOperator $filesystem, private ?OutputInterface $output = null)
+    public function __construct(private FilesystemOperator $filesystem, private OutputInterface $output)
     {
         $this->Db = Db::getConnection();
     }
@@ -47,13 +48,11 @@ final class Sql
      */
     public function execFile(string $filename, bool $force = false): int
     {
-        if ($this->output !== null) {
-            // add two for the spaces around
-            $len = strlen($filename) + 2;
-            $this->output->writeln(sprintf('<bg=green;fg=black>%s</>', str_repeat(' ', $len)));
-            $this->output->writeln(sprintf('<bg=green;fg=black> %s </>', strtoupper($filename)));
-            $this->output->writeln(sprintf('<bg=green;fg=black>%s</>', str_repeat(' ', $len)));
-        }
+        // add two for the spaces around
+        $len = strlen($filename) + 2;
+        $this->output->writeln(sprintf('<bg=green;fg=black>%s</>', str_repeat(' ', $len)));
+        $this->output->writeln(sprintf('<bg=green;fg=black> %s </>', strtoupper($filename)));
+        $this->output->writeln(sprintf('<bg=green;fg=black>%s</>', str_repeat(' ', $len)));
         $lines = $this->getLines($filename);
         // temporary variable, used to store current query
         $queryline = '';
@@ -65,18 +64,14 @@ final class Sql
             // If it has a semicolon at the end, it's the end of the query
             if (str_ends_with($line, ';')) {
                 // display which query we are running
-                if ($this->output !== null) {
-                    $this->output->writeln('Executing: ' . $queryline);
-                }
+                $this->output->writeln('Executing: ' . $queryline);
                 // Perform the query
                 try {
                     $this->Db->q($queryline);
                 } catch (PDOException | DatabaseErrorException $e) {
                     if ($force) {
-                        if ($this->output !== null) {
-                            $this->output->writeln('<bg=yellow;fg=black>WARNING: Ignoring error because of force option active.</>');
-                            $this->output->writeln($e->getMessage());
-                        }
+                        $this->output->writeln('<bg=yellow;fg=black>WARNING: Ignoring error because of force option active.</>');
+                        $this->output->writeln($e->getMessage());
                         // Reset temp variable to empty
                         $queryline = '';
                         $lineCount++;
@@ -90,6 +85,32 @@ final class Sql
             }
         }
         return $lineCount;
+    }
+
+    /**
+     * Execute a SQL file and compensate a failed migration with its down file
+     */
+    public function execFileWithRollback(string $filename, string $rollbackFilename, bool $force = false): int
+    {
+        if ($force) {
+            return $this->execFile($filename, true);
+        }
+
+        try {
+            return $this->execFile($filename);
+        } catch (DatabaseErrorException $e) {
+            $this->output->writeln(sprintf('<error>Failed to apply %s. Rolling back with %s.</error>', $filename, $rollbackFilename));
+            // DDL statements cannot be rolled back as a transaction in MySQL, so
+            // run the compensating migration and ignore operations that were not
+            // reached by the failed up migration.
+            try {
+                $this->execFile($rollbackFilename, true);
+            } catch (Throwable $rollbackException) {
+                $this->output->writeln(sprintf('<error>Failed to roll back with %s.</error>', $rollbackFilename));
+                $this->output->writeln($rollbackException->getMessage());
+            }
+            throw $e;
+        }
     }
 
     /**

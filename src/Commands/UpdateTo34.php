@@ -47,7 +47,7 @@ final class UpdateTo34 extends Command
             'Preparing database for 3.4 update',
             '=================================',
         ));
-        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
+        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output);
         try {
             $Sql->execFile('prepare34-a.sql');
         } catch (Exception) {

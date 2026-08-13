@@ -3,42 +3,69 @@
 {# var: is_move bool — when true, render a "Move here" button targeting move-container-target instead of "Store in X" #}
 {# var: is_move_storage bool — when true, render a "Move here" button targeting move-storage-target (admin context) #}
 {# var: storageUnitsArr array #}
+{# var: dom_id string — id of the tree wrapper; must be unique per page as several trees can coexist #}
 {% set is_move = is_move|default(false) %}
 {% set is_move_storage = is_move_storage|default(false) %}
-<div class='mb-2'>
-  <button type='button' class='btn btn-transparent' data-action='toggle-all-storage' data-expand='1'>{{ 'Expand all'|trans }}</button>
-  <button type='button' class='btn btn-transparent' data-action='toggle-all-storage'>{{ 'Collapse all'|trans }}</button>
-</div>
+{% set dom_id = dom_id|default('storageDiv') %}
 {% if App.devMode and storage_editable -%}
   <!-- [html-validate-disable-block prefer-native-element: suppress errors] -->
 {%- endif %}
-<div id='storageDiv'>
+{# data-storage-tree lets the js find every tree on the page without knowing their ids #}
+<div id='{{ dom_id }}' data-storage-tree='1'>
+  {# inside the wrapper so these buttons act on their own tree, and so a reload brings them back #}
+  <div class='mb-2'>
+    <button type='button' class='btn btn-transparent' data-action='toggle-all-storage' data-expand='1'>{{ 'Expand all'|trans }}</button>
+    <button type='button' class='btn btn-transparent' data-action='toggle-all-storage'>{{ 'Collapse all'|trans }}</button>
+  </div>
+  {# how full this location is, against its limit when it declares one #}
+  {% macro render_occupancy(unit, is_full) %}
+    {% if unit.capacity is not null %}
+      <span class='storage-occupancy {{ is_full ? 'storage-full' }} ml-1' title='{{ 'Containers stored here, out of the maximum this location accepts'|trans }}'><i class='fas fa-box mr-1'></i>{{ unit.occupancy }} / {{ unit.capacity }}</span>
+    {% elseif unit.occupancy > 0 %}
+      <span class='storage-occupancy ml-1' title='{{ 'Containers already stored here'|trans }}'><i class='fas fa-box mr-1'></i>{{ unit.occupancy }}</span>
+    {% endif %}
+  {% endmacro %}
   {# stepper used in the entity-create flow to pick how many containers go in this location #}
-  {% macro render_stepper(storage_id, storage_name) %}
-    <div class='input-group input-group-sm mt-1' style='max-width:160px' data-storage-id='{{ storage_id }}'>
-      <div class='input-group-prepend'>
-        <button type='button' class='btn btn-secondary' data-action='container-qty-minus' data-storage-id='{{ storage_id }}' aria-label='{{ 'Decrease containers for %s'|trans|format(storage_name) }}'><i class='fas fa-minus'></i></button>
+  {% macro render_stepper(unit, is_full) %}
+    {% if is_full %}
+      {# no input at all: anything typed here would be refused on submit #}
+      <span class='smallgray'><i class='fas fa-ban mr-1'></i>{{ unit.capacity == 0 ? 'Holds no containers'|trans : 'Full'|trans }}</span>
+    {% else %}
+      <div class='input-group input-group-sm mt-1' style='max-width:160px' data-storage-id='{{ unit.id }}'>
+        <div class='input-group-prepend'>
+          <button type='button' class='btn btn-secondary' data-action='container-qty-minus' data-storage-id='{{ unit.id }}' aria-label='{{ 'Decrease containers for %s'|trans|format(unit.name) }}'><i class='fas fa-minus'></i></button>
+        </div>
+        {# max is the room left here, so the browser's own spinner and the js clamp alike #}
+        <input type='number' class='form-control text-center' min='0' step='1' value='0' {% if unit.capacity is not null %}max='{{ unit.capacity - unit.occupancy }}'{% endif %} inputmode='numeric' autocomplete='off' data-action='container-qty-input' data-storage-id='{{ unit.id }}' aria-label='{{ 'Number of containers for %s'|trans|format(unit.name) }}' />
+        <div class='input-group-append'>
+          <button type='button' class='btn btn-secondary' data-action='container-qty-plus' data-storage-id='{{ unit.id }}' aria-label='{{ 'Increase containers for %s'|trans|format(unit.name) }}'><i class='fas fa-plus'></i></button>
+        </div>
       </div>
-      <input type='number' class='form-control text-center' min='0' step='1' value='0' inputmode='numeric' autocomplete='off' data-action='container-qty-input' data-storage-id='{{ storage_id }}' aria-label='{{ 'Number of containers for %s'|trans|format(storage_name) }}' />
-      <div class='input-group-append'>
-        <button type='button' class='btn btn-secondary' data-action='container-qty-plus' data-storage-id='{{ storage_id }}' aria-label='{{ 'Increase containers for %s'|trans|format(storage_name) }}'><i class='fas fa-plus'></i></button>
-      </div>
-    </div>
+    {% endif %}
+  {% endmacro %}
+  {# the declared limit, editable on the inventory page only; elsewhere the badge carries it #}
+  {% macro render_capacity(unit, storage_editable) %}
+    {% if storage_editable %}
+      {# an explicit null test, as a capacity of 0 is a real limit and would read as unset #}
+      <span class='smallgray ml-2'>{{ 'Capacity'|trans }}: <span class='hl-hover p-1 rounded malleableColumn {{ unit.capacity is null ? 'font-italic' }}' data-endpoint='storage_units' data-id='{{ unit.id }}' data-target='capacity' data-input-type='number'>{{ unit.capacity is null ? ('unset'|trans) : unit.capacity }}</span></span>
+    {% endif %}
   {% endmacro %}
   {% macro render_items(items, groupedItems, storage_editable, is_entity=true, is_move=false, is_move_storage=false) %}
     <ul class='list-group'>
       {% for item in items %}
+        {% set is_full = item.capacity is not null and item.occupancy >= item.capacity %}
         <li class='list-group-item py-1'>
           {# this data-id is used to open it up after adding children #}
           <details data-id='{{ item.id }}'>
-            <summary>{{ item.name }} {% if item.children_count > 0 %}({{ item.children_count }}){% endif %}</summary>
+            <summary>{{ item.name }} {% if item.children_count > 0 %}({{ item.children_count }}){% endif %}{{ _self.render_occupancy(item, is_full) }}</summary>
             <div class='mb-1'>
               {% if is_move_storage %}
                 <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='move-storage-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(item.name) }}</button>
               {% elseif is_entity and is_move %}
-                <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(item.name) }}</button>
+                {# the js disables full destinations on open, bar the container's own location #}
+                <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' {% if is_full %}data-storage-full='1'{% endif %} data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(item.name) }}</button>
               {% elseif is_entity %}
-                {{ _self.render_stepper(item.id, item.name) }}
+                {{ _self.render_stepper(item, is_full) }}
               {% else %}
                 <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1'></i>{{ 'Display content'|trans }}</a>
               {% endif %}
@@ -48,6 +75,7 @@
                 <button type='button' class='btn btn-ghost btn-sm' data-action='move-storage' data-id='{{ item.id }}'><i class='fas fa-arrows-up-down-left-right mr-1'></i>{{ 'Move'|trans }}</button>
                 <button type='button' class='btn btn-danger-ghost btn-sm' data-id='{{ item.id }}' data-action='destroy-storage'><i class='fas fa-minus-circle mr-1'></i>{{ 'Delete %s and its children'|trans|format(item.name) }}</button>
               {% endif %}
+              {{ _self.render_capacity(item, storage_editable) }}
             </div>
             {% if groupedItems[item.id] is defined %}
               {# Recursively render the children #}
@@ -61,11 +89,13 @@
 
   {# Start rendering from the root level, which has parent_id = null #}
   {% for root in storageUnitsArr[null] %}
+    {% set is_full = root.capacity is not null and root.occupancy >= root.capacity %}
     <div class='box' data-root-id='{{ root.id }}'>
       <p class='smallgray'>{{ 'Inventory location'|trans }}</p>
       <div class='d-flex'>
         <div>
-          <i class='fas fa-location-dot mr-2'></i><span class='{{ storage_editable ? 'malleableColumn hl-hover' }} p-1 rounded font-weight-bold' data-endpoint='storage_units' data-id='{{ root.id }}' data-target='name'>{{ root.name }}</span>
+          <i class='fas fa-location-dot mr-2'></i><span class='{{ storage_editable ? 'malleableColumn hl-hover' }} p-1 rounded font-weight-bold' data-endpoint='storage_units' data-id='{{ root.id }}' data-target='name'>{{ root.name }}</span>{{ _self.render_occupancy(root, is_full) }}
+          {{ _self.render_capacity(root, storage_editable) }}
         </div>
         {% if storage_editable %}
           <div class='ml-auto'>
@@ -81,11 +111,11 @@
           </div>
         {% elseif is_entity and is_move %}
           <div class='ml-auto'>
-            <button type='button' class='btn btn-primary btn-sm' data-id='{{ root.id }}' data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(root.name) }}</button>
+            <button type='button' class='btn btn-primary btn-sm' data-id='{{ root.id }}' {% if is_full %}data-storage-full='1'{% endif %} data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(root.name) }}</button>
           </div>
         {% elseif is_entity %}
           <div class='ml-auto'>
-            {{ _self.render_stepper(root.id, root.name) }}
+            {{ _self.render_stepper(root, is_full) }}
           </div>
         {% endif %}
       </div>

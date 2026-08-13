@@ -30,6 +30,7 @@ use Elabftw\Models\StorageUnits;
 use Elabftw\Params\ContentParams;
 use Override;
 use PDO;
+use Throwable;
 
 use function array_key_exists;
 use function intval;
@@ -312,35 +313,53 @@ abstract class AbstractContainersLinks extends AbstractLinks
             && $this->Entity->id === intval($targetId);
     }
 
-    public function createWithQuantity(float $qty, string $unit): int
+    /**
+     * $enforceCapacity is only ever false for bulk importers, which turn one request into
+     * many containers and have no way to report a per-container rejection. See the CSV importer.
+     */
+    public function createWithQuantity(float $qty, string $unit, bool $enforceCapacity = true): int
     {
         $this->Entity->canOrExplode(AccessType::Write);
-        $this->Entity->touch();
 
-        // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, storage_id, qty_stored, qty_unit)
-            VALUES(:item_id, :storage, :qty_stored, :qty_unit)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':storage', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':qty_stored', $qty);
-        $req->bindParam(':qty_unit', $unit);
+        // the guard's row lock has to be held until this insert commits, so both live in one transaction
+        $this->Db->beginTransaction();
+        try {
+            if ($enforceCapacity) {
+                new StorageUnits($this->Entity->Users, false)->assertHasRoom(
+                    $this->id ?? throw new ImproperActionException('Missing storage unit id'),
+                );
+            }
+            $this->Entity->touch();
 
-        $this->Db->execute($req);
+            // use IGNORE to avoid failure due to a key constraint violations
+            $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, storage_id, qty_stored, qty_unit)
+                VALUES(:item_id, :storage, :qty_stored, :qty_unit)';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            $req->bindParam(':storage', $this->id, PDO::PARAM_INT);
+            $req->bindParam(':qty_stored', $qty);
+            $req->bindParam(':qty_unit', $unit);
 
-        // INSERT IGNORE inserts nothing on a FK violation; only log a real insert
-        if ($req->rowCount() > 0) {
-            $containerId = $this->Db->lastInsertId();
-            new Changelog($this->Entity)->create(new ContentParams(
-                'container_created',
-                sprintf(
-                    'Added container with %s %s at "%s" (container #%d)',
-                    number_format((float) $qty, 2, '.', ''),
-                    $unit,
-                    $this->getStoragePath($this->id),
-                    $containerId,
-                ),
-            ));
+            $this->Db->execute($req);
+
+            // INSERT IGNORE inserts nothing on a FK violation; only log a real insert
+            if ($req->rowCount() > 0) {
+                $containerId = $this->Db->lastInsertId();
+                new Changelog($this->Entity)->create(new ContentParams(
+                    'container_created',
+                    sprintf(
+                        'Added container with %s %s at "%s" (container #%d)',
+                        number_format((float) $qty, 2, '.', ''),
+                        $unit,
+                        $this->getStoragePath($this->id),
+                        $containerId,
+                    ),
+                ));
+            }
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
         }
 
         return $this->id;
@@ -398,6 +417,9 @@ abstract class AbstractContainersLinks extends AbstractLinks
         }
         $current = $this->readOne();
         $oldStorageId = (int) $current['storage_id'];
+        // a no-op move must return before the capacity guard below, or the container
+        // would be counted as an occupant of its own destination and a full location
+        // would refuse to accept the container already sitting in it
         if ($oldStorageId === $newStorageId) {
             return;
         }
@@ -412,18 +434,27 @@ abstract class AbstractContainersLinks extends AbstractLinks
         // resolve old full_path for the changelog
         $oldPath = $this->getStoragePath($oldStorageId);
 
-        $this->update('storage_id', $newStorageId);
-        $this->Entity->touch();
+        // a move is an add to the destination; the source is never checked, as freeing a slot needs no permission
+        $this->Db->beginTransaction();
+        try {
+            $Destination->assertHasRoom($newStorageId);
+            $this->update('storage_id', $newStorageId);
+            $this->Entity->touch();
 
-        new Changelog($this->Entity)->create(new ContentParams(
-            'container_moved',
-            sprintf(
-                'From "%s" to "%s" (container #%d)',
-                $oldPath,
-                $destinationData['full_path'] ?? '',
-                $this->id ?? -1,
-            ),
-        ));
+            new Changelog($this->Entity)->create(new ContentParams(
+                'container_moved',
+                sprintf(
+                    'From "%s" to "%s" (container #%d)',
+                    $oldPath,
+                    $destinationData['full_path'] ?? '',
+                    $this->id ?? -1,
+                ),
+            ));
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
     }
 
     // full_path for changelog messages; read-only, so no edit rights required

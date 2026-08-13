@@ -11,7 +11,7 @@
       <div class='modal-body'>
         <div class='mb-2'>
           <h5>{{ 'Pick a new storage location'|trans }}</h5>
-          {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': true, 'is_move': true} %}
+          {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': true, 'is_move': true, 'dom_id': 'moveContainerStorageDiv'} %}
         </div>
       </div>
       <div class='modal-footer'>

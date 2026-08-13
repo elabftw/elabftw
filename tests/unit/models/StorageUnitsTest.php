@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Users\Users;
@@ -20,10 +22,13 @@ use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
+use function sprintf;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
+
+    private const string BLOCK_MOVE_CONSTRAINT = 'block_move_history';
 
     private StorageUnits $StorageUnits;
 
@@ -90,6 +95,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertContains($childId, $ids);
         $this->assertArrayHasKey('parent_id', $result[0]);
         $this->assertArrayHasKey('children_count', $result[0]);
+        $this->assertArrayHasKey('occupancy', $result[0]);
         $this->assertArrayNotHasKey('entity_id', $result[0]);
     }
 
@@ -204,6 +210,199 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->StorageUnits->setId($unitId);
         $this->expectException(ImproperActionException::class);
         $this->StorageUnits->patch(Action::Update, array('parent_id' => 'bogus'));
+    }
+
+    public function testCapacityDefaultsToUnlimited(): void
+    {
+        $unitId = $this->StorageUnits->create('No capacity set');
+        $this->StorageUnits->setId($unitId);
+        $this->assertNull($this->StorageUnits->readOne()['capacity']);
+    }
+
+    public function testCreateWithCapacity(): void
+    {
+        $unitId = $this->StorageUnits->postAction(Action::Create, array('name' => 'Box of 96', 'capacity' => 96));
+        $this->StorageUnits->setId($unitId);
+        $this->assertEquals(96, $this->StorageUnits->readOne()['capacity']);
+    }
+
+    public function testPatchCapacity(): void
+    {
+        $unitId = $this->StorageUnits->create('Capacity patch test');
+        $this->StorageUnits->setId($unitId);
+        $this->assertEquals(1, $this->StorageUnits->patch(Action::Update, array('capacity' => 1))['capacity']);
+        // a string works too, as sent by the frontend
+        $this->assertEquals(12, $this->StorageUnits->patch(Action::Update, array('capacity' => '12'))['capacity']);
+        // 0 is a real capacity: a unit that holds child units but never containers
+        $this->assertEquals(0, $this->StorageUnits->patch(Action::Update, array('capacity' => 0))['capacity']);
+        // only null and an empty string mean unlimited
+        $this->assertNull($this->StorageUnits->patch(Action::Update, array('capacity' => null))['capacity']);
+        $this->assertEquals(0, $this->StorageUnits->patch(Action::Update, array('capacity' => '0'))['capacity']);
+        $this->assertNull($this->StorageUnits->patch(Action::Update, array('capacity' => ''))['capacity']);
+    }
+
+    public function testPatchWithNegativeCapacityIsRejected(): void
+    {
+        $unitId = $this->StorageUnits->create('Negative capacity test');
+        $this->StorageUnits->setId($unitId);
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => -1));
+    }
+
+    public function testPatchWithNonNumericCapacityIsRejected(): void
+    {
+        $unitId = $this->StorageUnits->create('Bogus capacity test');
+        $this->StorageUnits->setId($unitId);
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 'lots'));
+    }
+
+    public function testCapacityIsCappedAtTheColumnMaximum(): void
+    {
+        $unitId = $this->StorageUnits->create('Huge capacity test');
+        $this->StorageUnits->setId($unitId);
+        // the column is INT UNSIGNED, so its ceiling is a rejection rather than a truncation
+        $this->assertEquals(
+            StorageUnits::MAX_CAPACITY,
+            $this->StorageUnits->patch(Action::Update, array('capacity' => StorageUnits::MAX_CAPACITY))['capacity'],
+        );
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => StorageUnits::MAX_CAPACITY + 1));
+    }
+
+    public function testPatchIsRolledBackWhenTheMoveFails(): void
+    {
+        $destinationId = $this->StorageUnits->create('Rollback destination');
+        $unitId = $this->StorageUnits->create('Rollback source');
+        $this->StorageUnits->setId($unitId);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 5));
+
+        // every move writes a history row, so blocking that insert fails the move at the
+        // database level, after the name and capacity of the same request were written
+        $this->blockMoveHistoryInserts($destinationId);
+        try {
+            $this->StorageUnits->patch(Action::Update, array(
+                'name' => 'Name that must not survive',
+                'capacity' => 42,
+                'parent_id' => $destinationId,
+            ));
+            $this->fail('The move should have failed at the database level.');
+        } catch (DatabaseErrorException) {
+            // expected
+        } finally {
+            $this->unblockMoveHistoryInserts();
+        }
+
+        $unit = $this->StorageUnits->readOne();
+        $this->assertEquals('Rollback source', $unit['name']);
+        $this->assertEquals(5, $unit['capacity']);
+        $this->assertNull($unit['parent_id']);
+    }
+
+    public function testCountContainersIsNotAffectedByBinning(): void
+    {
+        $Item = $this->getFreshItem();
+        $storageId = $this->StorageUnits->create('Box for occupancy count');
+        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
+        $this->assertSame(1, $this->StorageUnits->countContainers($storageId));
+        // binning the resource does not take the container out of the box
+        $Item->destroy();
+        $this->assertSame(1, $this->StorageUnits->countContainers($storageId));
+    }
+
+    public function testHierarchyOccupancyCountsOnlyDirectContainers(): void
+    {
+        $Item = $this->getFreshItem();
+        $parentId = $this->StorageUnits->create('Freezer holding a box');
+        $childId = $this->StorageUnits->create('Box holding a tube', $parentId);
+        new Containers2ItemsLinks($Item, $childId)->createWithQuantity(1.0, 'mL');
+
+        $occupancy = $this->readOccupancyByUnitId();
+        // the container is inside the box, so the freezer around it stays empty: a capacity
+        // limits what a unit holds directly, never what its descendants hold
+        $this->assertEquals(0, $occupancy[$parentId]);
+        $this->assertEquals(1, $occupancy[$childId]);
+    }
+
+    public function testHierarchyOccupancyMatchesTheGuard(): void
+    {
+        $Item = $this->getFreshItem();
+        $storageId = $this->StorageUnits->create('Box the tree and the guard must agree on');
+        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
+        $Item->destroy();
+        // a displayed free slot the guard would then refuse is worse than showing nothing,
+        // so the tree has to count exactly what assertHasRoom() counts
+        $occupancy = $this->readOccupancyByUnitId();
+        $this->assertEquals($this->StorageUnits->countContainers($storageId), $occupancy[$storageId]);
+        $this->assertEquals(1, $occupancy[$storageId]);
+    }
+
+    public function testReadOneOccupancyIsThatOfTheRequestedUnit(): void
+    {
+        $Item = $this->getFreshItem();
+        $parentId = $this->StorageUnits->create('Parent walked through on the way up');
+        $childId = $this->StorageUnits->create('Child that holds the container', $parentId);
+        new Containers2ItemsLinks($Item, $childId)->createWithQuantity(1.0, 'mL');
+
+        // the cte climbs to the root, so this pins the count to the unit that was asked for
+        $this->StorageUnits->setId($childId);
+        $this->assertEquals(1, $this->StorageUnits->readOne()['occupancy']);
+        $this->StorageUnits->setId($parentId);
+        $this->assertEquals(0, $this->StorageUnits->readOne()['occupancy']);
+    }
+
+    public function testAssertHasRoomWithoutCapacityNeverThrows(): void
+    {
+        $Item = $this->getFreshItem();
+        $storageId = $this->StorageUnits->create('Box with no capacity');
+        $Links = new Containers2ItemsLinks($Item, $storageId);
+        $Links->createWithQuantity(1.0, 'mL');
+        $Links->createWithQuantity(1.0, 'mL');
+        $this->StorageUnits->assertHasRoom($storageId);
+        $this->assertSame(2, $this->StorageUnits->countContainers($storageId));
+    }
+
+    public function testAssertHasRoomThrowsWhenFull(): void
+    {
+        $Item = $this->getFreshItem();
+        $storageId = $this->StorageUnits->create('Box that is full');
+        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
+        $this->StorageUnits->setId($storageId);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 1));
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->assertHasRoom($storageId);
+    }
+
+    public function testAssertHasRoomRejectsAnEmptyUnitWithZeroCapacity(): void
+    {
+        $storageId = $this->StorageUnits->create('Room that holds freezers, not tubes');
+        $this->StorageUnits->setId($storageId);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 0));
+        try {
+            $this->StorageUnits->assertHasRoom($storageId);
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException $e) {
+            // an empty structural node must not report itself as merely full
+            $this->assertStringContainsString('capacity is zero', $e->getMessage());
+        }
+    }
+
+    public function testZeroCapacityStillAcceptsChildUnits(): void
+    {
+        $parentId = $this->StorageUnits->create('Building with no storage of its own');
+        $this->StorageUnits->setId($parentId);
+        $this->StorageUnits->patch(Action::Update, array('capacity' => 0));
+        // capacity constrains containers, never child units
+        $childId = $this->StorageUnits->create('Freezer inside it', $parentId);
+        $this->StorageUnits->setId($childId);
+        $this->assertEquals($parentId, $this->StorageUnits->readOne()['parent_id']);
+    }
+
+    public function testAssertHasRoomOnMissingUnitIsTolerated(): void
+    {
+        // no row to read a capacity from: the foreign key deals with it, not the guard
+        $this->StorageUnits->assertHasRoom(PHP_INT_MAX);
+        $this->assertSame(0, $this->StorageUnits->countContainers(PHP_INT_MAX));
     }
 
     public function testPatchDoesNotPersistRenameWhenMoveFails(): void
@@ -322,5 +521,39 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $history);
         $this->assertEquals($shelfA, (int) $history[0]['old_parent_id']);
         $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
+    }
+
+    /**
+     * Reject history rows pointing at $destinationId. A CHECK constraint rather than a
+     * trigger, as triggers need SUPER when binary logging is on. The destination is
+     * freshly created, so no existing row can violate the constraint as it is added.
+     */
+    private function blockMoveHistoryInserts(int $destinationId): void
+    {
+        $Db = Db::getConnection();
+        $Db->execute($Db->prepare(sprintf(
+            'ALTER TABLE storage_units_history
+                ADD CONSTRAINT %s CHECK (new_parent_id <> %d)',
+            self::BLOCK_MOVE_CONSTRAINT,
+            $destinationId,
+        )));
+    }
+
+    private function unblockMoveHistoryInserts(): void
+    {
+        $Db = Db::getConnection();
+        // MySQL has no DROP CHECK IF EXISTS
+        $Db->execute($Db->prepare(
+            'ALTER TABLE storage_units_history DROP CHECK ' . self::BLOCK_MOVE_CONSTRAINT
+        ));
+    }
+
+    /**
+     * Occupancy of every unit, keyed by unit id, as the storage tree receives it.
+     */
+    private function readOccupancyByUnitId(): array
+    {
+        $queryParams = $this->StorageUnits->getQueryParams(new InputBag(array('hierarchy' => 'true')));
+        return array_column($this->StorageUnits->readAll($queryParams), 'occupancy', 'id');
     }
 }

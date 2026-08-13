@@ -2214,6 +2214,8 @@ CREATE TABLE IF NOT EXISTS storage_units (
     id INT unsigned NOT NULL AUTO_INCREMENT,
     name VARCHAR(255),
     parent_id INT unsigned,
+    -- NULL means unlimited
+    capacity INT unsigned DEFAULT NULL,
     FOREIGN KEY (parent_id) REFERENCES storage_units(id) ON DELETE CASCADE,
     PRIMARY KEY(`id`)
 );

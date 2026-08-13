@@ -31,6 +31,7 @@ use function _;
 use function array_key_exists;
 use function array_map;
 use function filter_var;
+use function implode;
 use function in_array;
 use function is_int;
 use function is_string;
@@ -43,6 +44,16 @@ use function trim;
 final class StorageUnits extends AbstractRest
 {
     use SetIdTrait;
+
+    // upper bound of the INT UNSIGNED capacity column
+    public const int MAX_CAPACITY = 4294967295;
+
+    /**
+     * Tables holding real containers: a row in one of them occupies a slot. The template
+     * tables are absent on purpose, as their containers are defaults copied on creation
+     * rather than physical stock. Single source of truth for what "occupied" means.
+     */
+    private const array CONTAINER_TABLES = array('containers2items', 'containers2experiments');
 
     public function __construct(public Users $requester, private bool $requireEditRights, ?int $id = null)
     {
@@ -59,6 +70,9 @@ final class StorageUnits extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        // the CTE walks upwards, so occupancy has to be counted for the requested unit
+        // (original_id) rather than for the ancestor the current row happens to be on
+        $occupancy = self::occupancySql('storage_hierarchy.original_id');
         // Recursive CTE to find the full path of a specific id
         $sql = "
             WITH RECURSIVE storage_hierarchy AS (
@@ -69,6 +83,7 @@ final class StorageUnits extends AbstractRest
                     name,
                     parent_id,
                     parent_id AS original_parent_id,
+                    capacity,
                     CAST(name AS CHAR(1000)) AS full_path,
                     0 AS level_depth
                 FROM
@@ -85,6 +100,7 @@ final class StorageUnits extends AbstractRest
                     child.name,
                     parent.parent_id,
                     child.original_parent_id,
+                    child.capacity,
                     CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR(1000)) AS full_path,
                     child.level_depth + 1
                 FROM
@@ -99,6 +115,8 @@ final class StorageUnits extends AbstractRest
                 name,
                 full_path,
                 original_parent_id AS parent_id,
+                capacity,
+                {$occupancy} AS occupancy,
                 level_depth
             FROM
                 storage_hierarchy
@@ -279,7 +297,8 @@ final class StorageUnits extends AbstractRest
         $this->canWriteOrExplode();
         $hasName = !empty($params['name']);
         $hasParent = array_key_exists('parent_id', $params);
-        if (!$hasName && !$hasParent) {
+        $hasCapacity = array_key_exists('capacity', $params);
+        if (!$hasName && !$hasParent && !$hasCapacity) {
             throw new ImproperActionException('No valid update target provided.');
         }
         $newParentId = null;
@@ -287,11 +306,27 @@ final class StorageUnits extends AbstractRest
             $newParentId = $this->normalizeParentId($params['parent_id']);
             $this->validateMoveTarget($newParentId);
         }
-        if ($hasName) {
-            $this->update(new CommentParam($params['name']));
+        $newCapacity = null;
+        if ($hasCapacity) {
+            $newCapacity = $this->normalizeCapacity($params['capacity']);
         }
-        if ($hasParent) {
-            $this->applyMove($newParentId);
+        // one transaction for the lot: a move that fails at the database level must not
+        // leave the name or capacity from the same request behind
+        $this->Db->beginTransaction();
+        try {
+            if ($hasName) {
+                $this->update(new CommentParam($params['name']));
+            }
+            if ($hasCapacity) {
+                $this->updateCapacity($newCapacity);
+            }
+            if ($hasParent) {
+                $this->writeMove($newParentId);
+            }
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
         }
         return $this->readOne();
     }
@@ -344,15 +379,17 @@ final class StorageUnits extends AbstractRest
         return $this->create(
             $reqBody['name'] ?? throw new ImproperActionException('Missing value for "name"'),
             Filter::intOrNull($reqBody['parent_id'] ?? 0),
+            $this->normalizeCapacity($reqBody['capacity'] ?? null),
         );
     }
 
-    public function create(string $unitName, ?int $parentId = null): int
+    public function create(string $unitName, ?int $parentId = null, ?int $capacity = null): int
     {
-        $sql = 'INSERT INTO storage_units(parent_id, name) VALUES(:parent_id, :name)';
+        $sql = 'INSERT INTO storage_units(parent_id, name, capacity) VALUES(:parent_id, :name, :capacity)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':parent_id', $parentId);
         $req->bindParam(':name', $unitName);
+        $req->bindValue(':capacity', $capacity, $capacity === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->lastInsertId();
     }
@@ -364,6 +401,67 @@ final class StorageUnits extends AbstractRest
             WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':name', $params->getContent());
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        return $this->Db->execute($req);
+    }
+
+    /**
+     * How many containers sit directly in a unit. Deliberately unfiltered: a container
+     * occupies its slot whether or not the requester can read the entity, and whether or
+     * not that entity is in the bin. Binning a record does not empty a freezer.
+     */
+    public function countContainers(int $storageId): int
+    {
+        $sql = 'SELECT ' . self::occupancySql(':storage_id');
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':storage_id', $storageId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
+    /**
+     * Refuse if one more container in $storageId would exceed its capacity.
+     * Callers must already be in a transaction: the FOR UPDATE lock below is what
+     * serializes concurrent writers to the same unit, and it has to be held until
+     * their insert commits to be worth anything.
+     */
+    public function assertHasRoom(int $storageId): void
+    {
+        // lock only the row that declares the limit, so contention is exactly as wide as the constraint
+        $req = $this->Db->prepare('SELECT capacity FROM storage_units WHERE id = :id FOR UPDATE');
+        $req->bindValue(':id', $storageId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $capacity = $req->fetchColumn();
+        // no such unit: leave it to the foreign key. NULL: unlimited, so never count.
+        // a strict comparison matters here, as a capacity of 0 is meaningful and falsy
+        if ($capacity === false || $capacity === null) {
+            return;
+        }
+        $capacity = (int) $capacity;
+        $occupancy = $this->countContainers($storageId);
+        if ($occupancy < $capacity) {
+            return;
+        }
+        $path = new self($this->requester, false, $storageId)->readOne()['full_path'] ?? '';
+        if ($capacity === 0) {
+            throw new ImproperActionException(sprintf(
+                _('Nothing can be stored directly in "%s": its capacity is zero. Pick one of the locations inside it.'),
+                $path,
+            ));
+        }
+        throw new ImproperActionException(sprintf(
+            _('Cannot store in "%s": its capacity is %d and it already holds %d.'),
+            $path,
+            $capacity,
+            $occupancy,
+        ));
+    }
+
+    public function updateCapacity(?int $capacity): bool
+    {
+        $sql = 'UPDATE storage_units SET capacity = :capacity WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':capacity', $capacity, $capacity === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -397,6 +495,19 @@ final class StorageUnits extends AbstractRest
         }
     }
 
+    /**
+     * SQL expression counting the containers stored directly in the unit designated by
+     * $idExpression. Shared so the occupancy displayed in the tree and the occupancy the
+     * capacity guard enforces are the same number by construction, not by coincidence.
+     */
+    private static function occupancySql(string $idExpression): string
+    {
+        return implode(' + ', array_map(
+            static fn(string $table): string => sprintf('(SELECT COUNT(*) FROM %s WHERE storage_id = %s)', $table, $idExpression),
+            self::CONTAINER_TABLES,
+        ));
+    }
+
     private function normalizeParentId(mixed $raw): ?int
     {
         if ($raw === null) {
@@ -410,6 +521,29 @@ final class StorageUnits extends AbstractRest
             return $parsed === 0 ? null : $parsed;
         }
         throw new ImproperActionException('Invalid parent_id');
+    }
+
+    /**
+     * null or an empty string mean "unlimited". 0 is a real capacity: it marks a unit that
+     * exists to hold child units rather than containers, such as a building or a room.
+     */
+    private function normalizeCapacity(mixed $raw): ?int
+    {
+        if ($raw === null || $raw === '') {
+            return null;
+        }
+        if (is_int($raw) || (is_string($raw) && filter_var($raw, FILTER_VALIDATE_INT) !== false)) {
+            $parsed = (int) $raw;
+            if ($parsed < 0) {
+                throw new ImproperActionException('Capacity cannot be negative.');
+            }
+            // the column is INT UNSIGNED: reject here rather than let MySQL truncate or error
+            if ($parsed > self::MAX_CAPACITY) {
+                throw new ImproperActionException(sprintf('Capacity cannot exceed %d.', self::MAX_CAPACITY));
+            }
+            return $parsed;
+        }
+        throw new ImproperActionException('Invalid capacity: must be a whole number, or empty for unlimited.');
     }
 
     private function validateMoveTarget(?int $newParentId): void
@@ -444,26 +578,37 @@ final class StorageUnits extends AbstractRest
         }
     }
 
+    /**
+     * Owns a transaction, so it is only for callers that have none. patch() writes a move
+     * alongside other columns and drives writeMove() from its own transaction instead.
+     */
     private function applyMove(?int $newParentId): bool
     {
-        $oldParentId = $this->readCurrentParentId();
-        if ($oldParentId === $newParentId) {
-            return true;
-        }
         $this->Db->beginTransaction();
         try {
-            $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
-            $req = $this->Db->prepare($sql);
-            $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
-            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-            $ok = $this->Db->execute($req);
-            $this->recordMove($oldParentId, $newParentId);
+            $ok = $this->writeMove($newParentId);
             $this->Db->commit();
             return $ok;
         } catch (Throwable $e) {
             $this->Db->rollBack();
             throw $e;
         }
+    }
+
+    // the move itself, with no transaction of its own: the caller must provide one
+    private function writeMove(?int $newParentId): bool
+    {
+        $oldParentId = $this->readCurrentParentId();
+        if ($oldParentId === $newParentId) {
+            return true;
+        }
+        $sql = 'UPDATE storage_units SET parent_id = :parent_id WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':parent_id', $newParentId, $newParentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $ok = $this->Db->execute($req);
+        $this->recordMove($oldParentId, $newParentId);
+        return $ok;
     }
 
     private function readCurrentParentId(): ?int
@@ -494,12 +639,16 @@ final class StorageUnits extends AbstractRest
 
     private function readHierarchyRows(): array
     {
+        // counted in the final projection, not in the CTE: the recursion does not need it,
+        // so this way it costs two indexed lookups per unit instead of two per branch
+        $occupancy = self::occupancySql('storage_hierarchy.id');
         $sql = "WITH RECURSIVE storage_hierarchy AS (
             -- Base case: Select all top-level units (those with no parent)
             SELECT
                 id,
                 name,
                 parent_id,
+                capacity,
                 name AS full_path,
                 0 AS level_depth,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
@@ -515,6 +664,7 @@ final class StorageUnits extends AbstractRest
                 child.id,
                 child.name,
                 child.parent_id,
+                child.capacity,
                 CONCAT(parent.full_path, ' > ', child.name) AS full_path,
                 parent.level_depth + 1,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
@@ -532,6 +682,8 @@ final class StorageUnits extends AbstractRest
             name,
             full_path,
             parent_id,
+            capacity,
+            {$occupancy} AS occupancy,
             level_depth,
             children_count
         FROM

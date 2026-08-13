@@ -1975,6 +1975,22 @@ components:
           type: string
           description: Full hierarchical path from root to this unit
           example: "Building A > Room 101 > Freezer A"
+        capacity:
+          type: integer
+          nullable: true
+          description: |
+            Maximum number of containers this unit should hold. Null means unlimited;
+            0 means nothing may be stored directly in this unit, which suits a unit that
+            exists to hold other units, such as a building or a room.
+          example: 96
+        occupancy:
+          type: integer
+          description: |
+            Number of containers stored directly in this unit, never counting the contents
+            of units nested inside it. Deliberately unfiltered: a container occupies its
+            slot whether or not you can read the entity it belongs to, and whether or not
+            that entity is in the bin. This is the number compared against `capacity`.
+          example: 12
         level_depth:
           type: integer
           description: Depth level in the hierarchy (0 for root)
@@ -2371,7 +2387,12 @@ paths:
     post:
       tags: ['Containers']
       summary: Create a container for this entity.
-      description: Store this entity in a storage unit with a specified quantity.
+      description: |
+        Store this entity in a storage unit with a specified quantity.
+
+        Rejected with `400` if the storage unit has a `capacity` and already holds
+        that many containers. Containers of binned entities still occupy their slot,
+        as binning a record does not empty a freezer.
       operationId: post-container
       requestBody:
         description: Parameters for creating a container.
@@ -2428,6 +2449,10 @@ paths:
         Update the quantity stored, the unit, or the storage location of a
         container. Setting `storage_id` moves the container to a different
         storage unit while preserving its `id` and `created_at`.
+
+        A move is rejected with `400` if the destination has a `capacity` and is
+        already full. Moving a container out of a full location is always allowed,
+        and moving it to where it already is remains a no-op.
       operationId: patch-container
       requestBody:
         description: Parameters for modifying a container.
@@ -2487,7 +2512,7 @@ paths:
       description: |
         Without parameters, returns the full list of containers (assignments of experiments or resources to storage locations) that you have access to.
 
-        With `?hierarchy=true`, returns a flat list of all storage units (freezers, boxes, positions, etc.) with their hierarchy metadata (`id`, `name`, `parent_id`, `full_path`, `level_depth`, `children_count`). This allows clients to discover, traverse, or display the storage unit tree.
+        With `?hierarchy=true`, returns a flat list of all storage units (freezers, boxes, positions, etc.) with their hierarchy metadata (`id`, `name`, `parent_id`, `full_path`, `capacity`, `occupancy`, `level_depth`, `children_count`). This allows clients to discover, traverse, or display the storage unit tree.
       operationId: read-storage-units
       parameters:
         - name: hierarchy
@@ -2497,7 +2522,7 @@ paths:
             type: boolean
           description: |
             When true, returns a flat list of all storage units in the hierarchy
-            (id, name, parent_id, full_path, level_depth, children_count)
+            (id, name, parent_id, full_path, capacity, occupancy, level_depth, children_count)
             instead of the default container assignment list.
       responses:
         '200':
@@ -2718,6 +2743,20 @@ paths:
                           type: string
                           description: Full path from root to this unit, separated by " > ".
                           example: "Hospital > 4th floor > Freezer A"
+                        capacity:
+                          type: integer
+                          nullable: true
+                          description: |
+                            Maximum number of containers this unit should hold. Null means
+                            unlimited; 0 means nothing may be stored directly in this unit.
+                          example: 96
+                        occupancy:
+                          type: integer
+                          description: |
+                            Containers stored directly in this unit, not counting units
+                            nested inside it. Unfiltered by state or by your read access,
+                            so it is directly comparable to `capacity`.
+                          example: 12
                         level_depth:
                           type: integer
                           description: Depth in hierarchy (0 for root units).
@@ -2752,6 +2791,21 @@ paths:
                   nullable: true
                   description: ID of the parent storage unit. Set to null for a top-level unit.
                   example: null
+                capacity:
+                  nullable: true
+                  oneOf:
+                    - type: integer
+                      minimum: 0
+                      maximum: 4294967295
+                    - type: string
+                      pattern: '^(0|[1-9][0-9]*)?$'
+                  description: |
+                    Maximum number of containers this unit should hold.
+                    Omit, or pass `null` or `""`, for unlimited (the default). Pass `0` for
+                    a unit that holds other units but never containers.
+                    Accepted as an integer or as its decimal string form, so that form
+                    submissions need no conversion. The upper bound is 4294967295.
+                  example: 96
       responses:
         '201':
           description: The storage unit has been created.
@@ -2795,7 +2849,7 @@ paths:
       tags: ['Storage units']
       summary: Modify a storage unit.
       description: |
-        Update the name and/or the parent of a storage unit. Setting
+        Update the name, the capacity and/or the parent of a storage unit. Setting
         `parent_id` reparents the unit (and everything under it) in place.
         Pass `parent_id: null` to move the unit to the root. Requires
         permission to manage inventory locations.
@@ -2819,6 +2873,23 @@ paths:
                     New parent storage unit id, or `null` to move to the root.
                     Cannot be the unit itself or any of its descendants.
                   example: 5
+                capacity:
+                  nullable: true
+                  oneOf:
+                    - type: integer
+                      minimum: 0
+                      maximum: 4294967295
+                    - type: string
+                      pattern: '^(0|[1-9][0-9]*)?$'
+                  description: |
+                    Maximum number of containers this unit should hold.
+                    Pass `null` or `""` for unlimited. Pass `0` for a unit that
+                    holds other units but never containers.
+                    Accepted as an integer or as its decimal string form, so that form
+                    submissions need no conversion. The upper bound is 4294967295.
+                    May be set below the current occupancy, so that an over-filled
+                    location can be declared and then drained.
+                  example: 96
       responses:
         '200':
           description: The updated storage unit.

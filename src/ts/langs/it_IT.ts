@@ -57,7 +57,7 @@ const t = {
     "entity-delete-warning": "Quanto è stato selezionato (nonché i dati associati) sarà definitivamente cancellato. Il processo è irreversibile. Si è veramente sicuri?",
     "entity-apply-both-permissions-warning": "Questi permessi verranno applicati sia ai permessi di lettura sia a quelli di scrittura. Continuare?",
     "entity-patch-multi-warning": "Modificate {{count, number}} voci, ma {{failed, number}} voci non sono state modificate. Sono state contrassegnate in rosso.",
-    "entries-processed": "{{num, numero}} voci elaborate",
+    "entries-processed": "{{num, number}} voci elaborate",
     "error": "Errore",
     "error-no-filename": "Manca il nome del file.",
     "error-fetch-request": "Si è verificato un errore durante il recupero dei dati richiesti: {{error}}",

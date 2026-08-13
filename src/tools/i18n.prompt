@@ -1,0 +1,32 @@
+Translate all missing entries in the attached eLabFTW `.po` file into [TARGET LANGUAGE].
+
+Requirements:
+
+- Translate only entries whose `msgstr` is empty. Preserve every existing translation unchanged.
+- Use natural, concise language suitable for a laboratory information-management application.
+- Keep terminology consistent across the catalog and with existing translations.
+- Consult the current eLabFTW source code at https://github.com/elabftw/elabftw to infer UI context, meaning, tone, and terminology whenever a string is ambiguous.
+- Preserve the `.po` structure, comments, references, contexts, ordering, encoding, and headers.
+- Preserve placeholders exactly, including their spelling, count, and formatting:
+  - printf placeholders such as `%s`, `%d`, `%1$s`
+  - ICU placeholders such as `{{num, number}}` and `{{error}}`
+  - HTML tags and entities
+  - URLs, identifiers, commands, and code fragments
+- Preserve punctuation when appropriate and do not translate product names, protocol names, acronyms, or technical identifiers unless an established localized term exists.
+- Translate every plural form correctly according to the catalog’s `Plural-Forms` header.
+- Do not mark translations as fuzzy.
+- Do not fill an entry with its English source text merely to make the catalog appear complete. Keep an English term only when it is normally used unchanged in the target language.
+- Do not alter or remove interpolation tokens, markup, whitespace with functional significance, or escaped characters.
+
+If you find a clearly incorrect existing translation, such as with incorrect number of placeholders, fix it and tell me about it.
+
+Before delivering the result:
+
+1. Validate the completed file with `msgfmt --check --check-format`.
+2. Confirm there are no untranslated or fuzzy entries.
+3. Compare placeholders in each source and translation and confirm there are no missing, added, or modified placeholders.
+4. Confirm that every required plural slot is populated.
+5. Confirm that all previously translated entries remain byte-for-byte unchanged.
+6. Review terminology and capitalization for consistency with eLabFTW’s interface and source-code context.
+
+Return the completed `.po` file as a downloadable artifact named "messages_<LANG>.po". Briefly report the number of translated entries, remaining untranslated and fuzzy entries, placeholder mismatches, and validation result.

@@ -24,6 +24,7 @@ use function putenv;
 use function setlocale;
 use function textdomain;
 use function sprintf;
+use function ngettext;
 
 /**
  * This class is used to generate the translations files for i18next (javascript)
@@ -107,7 +108,7 @@ final class i18n4Js
             'error-parsing-metadata' => _('There was an error while parsing metadata (custom fields). Full error has been logged to the browser console.'),
             'excellent-accessibility' => _('Excellent accessibility'),
             'existing-ror-associations' => _('Existing ROR associations'),
-            'experiment' => _('Experiment'),
+            'experiment' => ngettext('Experiment', 'Experiments', 1),
             'experiment-template' => _('Experiment template'),
             'export' => _('Export'),
             'export-success' => _('Export successful.'),
@@ -121,7 +122,7 @@ final class i18n4Js
             'is-archived' => _('Is Archived'),
             'is-owner' => _('Is Owner'),
             'is-sysadmin' => _('Is Sysadmin'),
-            'item' => _('Resource'),
+            'item' => ngettext('Resource', 'Resources', 1),
             'item-type' => _('Resource template'),
             'last-login' => _('Last login'),
             'lastname' => _('Lastname'),

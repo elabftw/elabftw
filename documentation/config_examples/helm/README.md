@@ -3,10 +3,10 @@
 The eLabFTW Helm chart is maintained in the
 [tugraz-rdm/elabftw-helm](https://github.com/tugraz-rdm/elabftw-helm) repository.
 
-> ⚠️ **Alpha Software**
+> ⚠️ **Beta Software**
 >
 > The Helm chart is an independent deployment project maintained outside the core eLabFTW repository.
-> It is currently in **Alpha status** and may contain breaking changes between releases.
+> It is currently in **Beta status** and may contain breaking changes between releases.
 >
 > Users should evaluate the chart carefully before using it in production environments.
 > Support for the Helm chart is provided through the
@@ -75,6 +75,12 @@ elabftw:
     autoDbInit: true
     autoDbUpdate: true
 
+  addons:
+    chemPlugin:
+      enabled: true
+    opencloning:
+      enabled: true
+
   secrets:
     secretKey: "REPLACE_WITH_RANDOM_SECRET_KEY"
 
@@ -85,14 +91,22 @@ mysql:
     password: "REPLACE_WITH_MYSQL_PASSWORD"
     database: "elabftw"
     username: "elabftw"
+
+redis:
+  enabled: false
+  auth:
+    enabled: true
+    password: "REPLACE_WITH_REDIS_PASSWORD"
 ```
 
 > Replace all `REPLACE_WITH_*` values before installing. Do not deploy with the example values.
 > The chart will create the required Kubernetes Secrets during installation using the values provided above.
 > For production environments, consider using pre-created Kubernetes Secrets and reference them instead of storing credentials in `values.yaml`.
-
+>
+> The example above enables the **ChemPlugin** and **OpenCloning** addons. Redis authentication is configured, but Redis is disabled by default. Set `redis.enabled: true` if Redis should be deployed.
 
 Install the chart with the custom configuration:
+
 ```bash
 helm install elabftw \
   oci://ghcr.io/tugraz-rdm/elabftw \

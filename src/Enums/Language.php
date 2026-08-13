@@ -19,7 +19,6 @@ enum Language: string
 {
     // by alphabetical order of value
     case Catalan = 'ca_ES';
-    case Croatian = 'hr_HR';
     case Czech = 'cs_CZ';
     case German = 'de_DE';
     case Greek = 'el_GR';
@@ -29,6 +28,7 @@ enum Language: string
     case Estonian = 'et_EE';
     case Finnish = 'fi_FI';
     case French = 'fr_FR';
+    case Croatian = 'hr_HR';
     case Indonesian = 'id_ID';
     case Italian = 'it_IT';
     case Japanese = 'ja_JP';

@@ -42,12 +42,20 @@ export default defineConfig({
         },
       );
 
-        config.env.webPhpPages = readdirSync(
-          join(config.projectRoot, 'web'),
-          { withFileTypes: true },
-        ).filter(entry =>
+      const ignoredPages = new Set([
+        'healthcheck.php',
+        'make.php',
+        'metadata.php',
+      ]);
+
+      config.env.webPhpPages = readdirSync(
+        join(config.projectRoot, 'web'),
+        { withFileTypes: true },
+      )
+        .filter(entry =>
           entry.isFile()
           && entry.name.endsWith('.php')
+          && !ignoredPages.has(entry.name)
         )
         .map(entry => entry.name)
         .sort();

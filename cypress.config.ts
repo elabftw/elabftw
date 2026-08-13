@@ -3,6 +3,7 @@ import { defineConfig } from 'cypress';
 import htmlvalidate from 'cypress-html-validate/plugin';
 import { Severity } from 'html-validate';
 import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
+import { join } from 'node:path';
 
 export default defineConfig({
   fixturesFolder: 'tests/cypress/fixtures',
@@ -41,15 +42,12 @@ export default defineConfig({
         },
       );
 
-      // Keep the translation smoke test synchronized with the public PHP
-      // entry points without maintaining a duplicate list.
-      const ignoredPages = new Set(['healthcheck.php', 'metadata.php']);
-
-      config.env.webPhpPages = readdirSync('web', { withFileTypes: true })
-        .filter(entry =>
+        config.env.webPhpPages = readdirSync(
+          join(config.projectRoot, 'web'),
+          { withFileTypes: true },
+        ).filter(entry =>
           entry.isFile()
           && entry.name.endsWith('.php')
-          && !ignoredPages.has(entry.name)
         )
         .map(entry => entry.name)
         .sort();

@@ -1,21 +1,13 @@
 const language = String(Cypress.env('translationLanguage') ?? 'fr_FR');
 const pages = Cypress.env('webPhpPages') as string[];
 
-// Cypress cannot cy.visit() non-HTML responses. They still need to be
-// requested so every top-level web/*.php entry point is covered.
-const requestOnlyPages = new Set([
-  'healthcheck.php',
-  'metadata.php',
-]);
-
 describe(`Translation pages (${language})`, () => {
   let originalUserLanguage: string | undefined;
   let originalInstanceLanguage: string | undefined;
 
   before(() => {
-    expect(pages, 'discovered web/*.php pages')
-      .to.be.an('array')
-      .and.not.be.empty;
+    expect(pages, 'discovered web/*.php pages').to.be.an('array');
+    expect(pages.length, 'discovered web/*.php pages').to.be.greaterThan(0);
 
     // Twig is rendered server-side, so loading the static assets adds no
     // coverage here and makes visiting all pages considerably slower.
@@ -84,3 +76,4 @@ describe(`Translation pages (${language})`, () => {
       });
     }
   });
+});

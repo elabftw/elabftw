@@ -27,6 +27,7 @@ import ptPT from './langs/pt_PT';
 import ruRU from './langs/ru_RU';
 import slSI from './langs/sl_SI';
 import skSK from './langs/sk_SK';
+import svSE from './langs/sv_SE';
 import uzUZ from './langs/uz_UZ';
 import zhCN from './langs/zh_CN';
 import zhTW from './langs/zh_TW';
@@ -55,6 +56,7 @@ i18next.init({
     'ru_RU',
     'sl_SI',
     'sk_SK',
+    'sv_SE',
     'uz_UZ',
     'zh_CN',
     'zh_TW',
@@ -82,6 +84,7 @@ i18next.init({
     ru_RU: ruRU,
     sk_SK: skSK,
     sl_SI: slSI,
+    sv_SE: svSE,
     uz_UZ: uzUZ,
     zh_CN: zhCN,
     zh_TW: zhTW,

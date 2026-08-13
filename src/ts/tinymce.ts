@@ -62,6 +62,7 @@ import '../js/tinymce-langs/ru_RU.js';
 import '../js/tinymce-langs/sk_SK.js';
 import '../js/tinymce-langs/sl_SI.js';
 import '../js/tinymce-langs/sv_SE.js';
+import '../js/tinymce-langs/uk_UA.js';
 import '../js/tinymce-langs/uz_UZ.js';
 import '../js/tinymce-langs/zh_CN.js';
 import '../js/tinymce-langs/zh_TW.js';

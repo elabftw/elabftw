@@ -96,7 +96,7 @@ final class Install extends Command
 
         $output->writeln('<info>→ Initializing MySQL database...</info>');
         $sqlFs = FsTools::getFs(dirname(__DIR__) . '/sql');
-        (new Sql($sqlFs))->execFile('structure.sql');
+        (new Sql($sqlFs, $output))->execFile('structure.sql');
         $output->writeln('<info>✓ Installation successful! Now creating the first team...</info>');
         // now create the default team
         $Teams = new Teams(new Users());

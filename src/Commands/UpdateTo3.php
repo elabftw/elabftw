@@ -44,7 +44,7 @@ final class UpdateTo3 extends Command
             'Preparing database for 3.0 update',
             '=================================',
         ));
-        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
+        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output);
         $Sql->execFile('prepare30.sql');
         $output->writeln('Database ready to be cleaned. Now running db:clean command...');
 

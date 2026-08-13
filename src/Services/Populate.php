@@ -570,7 +570,7 @@ final class Populate
         $Db->q('USE ' . Env::asString('DB_NAME'));
 
         // load structure
-        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')));
+        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $this->output);
         $Sql->execFile('structure.sql');
         new Branding(true)->populate();
     }

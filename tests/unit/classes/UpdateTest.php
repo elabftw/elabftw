@@ -15,6 +15,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use Symfony\Component\Console\Output\NullOutput;
 
 use function sprintf;
 
@@ -27,7 +28,7 @@ class UpdateTest extends \PHPUnit\Framework\TestCase
     public function setUp(): void
     {
         $this->Fs = new Fs(new InMemoryFilesystemAdapter());
-        $this->Sql = new Sql($this->Fs);
+        $this->Sql = new Sql($this->Fs, new NullOutput());
     }
 
     public function testCheckSchema(): void

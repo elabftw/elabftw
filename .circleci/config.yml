@@ -83,6 +83,7 @@ commands:
             docker cp tsconfig.json elab-cypress:/home/node/tsconfig.json
             docker cp tests/cypress/. elab-cypress:/home/node/tests/cypress/
             docker cp tests/_data/. elab-cypress:/home/node/tests/_data/
+            tar -cf - web/*.php | docker exec -i -u root elab-cypress tar -C /home/node -xf -
             docker exec -u root elab-cypress chown -R node:node /home/node/tests
 
 jobs:

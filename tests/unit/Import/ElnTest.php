@@ -377,6 +377,30 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2, $Import->getInserted());
     }
 
+    public function testImportBenchLineage(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/benchlineage.eln',
+            'benchlineage.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Eln(
+            new Users(1, 1),
+            new Users(1, 1),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+        );
+        $Import->import();
+        $this->assertSame(1, $Import->getInserted());
+
+        $Experiment = $this->getExperimentFromTitle('Power-conversion and RC-filter characterization');
+        $this->assertCount(20, $Experiment->entityData['uploads']);
+    }
+
     // test import keeps the state for archived/locked/deleted entries
     public function testImportRestoresLifecycle(): void
     {

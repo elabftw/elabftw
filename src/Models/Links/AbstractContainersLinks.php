@@ -20,7 +20,6 @@ use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Units;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\Config;
@@ -49,7 +48,7 @@ use function _;
 abstract class AbstractContainersLinks extends AbstractLinks
 {
     // keep in sync with the maxlength attribute on the modal input and maxLength in the api doc
-    private const int MAX_DELETION_NOTE_LENGTH = 255;
+    private const int MAX_DELETION_COMMENT_LENGTH = 255;
 
     #[Override]
     public function getApiPath(): string
@@ -394,19 +393,13 @@ abstract class AbstractContainersLinks extends AbstractLinks
     private function destroyWithReason(array $params, bool $viaDeleteVerb = false): bool
     {
         $this->Entity->canOrExplode(AccessType::Write);
+        // read details for the changelog before the row is deleted; a container that is
+        // already gone answers 404, so a failed deletion is never reported as a success
+        $current = $this->readOne();
+        $storagePath = $this->getStoragePath((int) $current['storage_id']);
         // resolve before the DELETE: a missing reason must not destroy anything
         $reasonSuffix = $this->deletionReasonSuffix($params, $viaDeleteVerb);
         $this->Entity->touch();
-
-        // read details for the changelog before the row is deleted
-        $current = null;
-        $storagePath = '';
-        try {
-            $current = $this->readOne();
-            $storagePath = $this->getStoragePath((int) $current['storage_id']);
-        } catch (ResourceNotFoundException) {
-            // already gone: still run the DELETE (idempotent), just skip the changelog
-        }
 
         // the row and its audit entry go together: a lost changelog must not leave a deleted container behind
         $this->Db->beginTransaction();
@@ -417,7 +410,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
             $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
             $result = $this->Db->execute($req);
 
-            if ($current !== null && $req->rowCount() > 0) {
+            if ($req->rowCount() > 0) {
                 new Changelog($this->Entity)->create(new ContentParams(
                     'container_deleted',
                     sprintf(
@@ -443,7 +436,8 @@ abstract class AbstractContainersLinks extends AbstractLinks
      */
     private function deletionReasonSuffix(array $params, bool $viaDeleteVerb): string
     {
-        $teamConfig = new Teams($this->Entity->Users, $this->Entity->Users->team)->teamArr;
+        // the setting belongs to the team that owns the entity, not to the team of whoever deletes
+        $teamConfig = new Teams($this->Entity->Users, (int) $this->Entity->entityData['team'])->teamArr;
         if (empty($teamConfig['capture_container_deletion_reason'])) {
             return '';
         }
@@ -458,18 +452,18 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $reason = ContainerDeletionReason::tryFrom((int) $rawReason)
             ?? throw new ImproperActionException(_('Invalid reason for deleting a container.'));
         // stored as typed: the changelog cell is escaped when rendered, so purifying here would double encode
-        $note = trim((string) ($params['deletion_note'] ?? ''));
+        $comment = trim((string) ($params['deletion_comment'] ?? ''));
         // reject rather than truncate: a silently shortened audit record is worse than a refused deletion
-        if (mb_strlen($note) > self::MAX_DELETION_NOTE_LENGTH) {
+        if (mb_strlen($comment) > self::MAX_DELETION_COMMENT_LENGTH) {
             throw new ImproperActionException(sprintf(
-                _('The note is too long: %d characters maximum.'),
-                self::MAX_DELETION_NOTE_LENGTH,
+                _('The comment is too long: %d characters maximum.'),
+                self::MAX_DELETION_COMMENT_LENGTH,
             ));
         }
-        if ($reason->requiresNote() && $note === '') {
+        if ($reason->requiresComment() && $comment === '') {
             throw new ImproperActionException(_('Please describe the reason for deleting this container.'));
         }
-        return sprintf(' (%s)', $note === '' ? $reason->toHuman() : $reason->toHuman() . ': ' . $note);
+        return sprintf(' (%s)', $comment === '' ? $reason->toHuman() : $reason->toHuman() . ': ' . $comment);
     }
 
     private function moveToStorage(int $newStorageId): void

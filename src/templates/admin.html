@@ -87,7 +87,7 @@
     {% include 'binary-setting.html' with {'model': model, 'src': src,
       'slug': 'capture_container_deletion_reason',
       'label': 'Capture reason for container deletion'|trans,
-      'help': 'Users will be asked to select a reason before removing a container, and it will be recorded in the changelog.'|trans} %}
+      'help': 'Users will be asked to select a reason before removing a container from an experiment or resource owned by this team, and it will be recorded in the changelog.'|trans} %}
 
     {# EXPERIMENTS (& status, categories, templates #}
     {% include 'binary-setting.html' with {'model': model, 'src': src,

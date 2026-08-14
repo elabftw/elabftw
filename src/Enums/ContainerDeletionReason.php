@@ -48,7 +48,7 @@ enum ContainerDeletionReason: int
     }
 
     // a catch-all reason says nothing on its own, so it must be spelled out
-    public function requiresNote(): bool
+    public function requiresComment(): bool
     {
         return $this === self::Other;
     }

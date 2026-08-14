@@ -1085,26 +1085,26 @@ on('destroy-container', (el: HTMLElement) => {
 
 if (containerDeletionModal) {
   const reasonSelect = document.getElementById('containerDeletionReasonSelect') as HTMLSelectElement;
-  const noteInput = document.getElementById('containerDeletionNoteInput') as HTMLInputElement;
+  const commentInput = document.getElementById('containerDeletionCommentInput') as HTMLInputElement;
   const confirmBtn = document.getElementById('containerDeletionConfirmBtn') as HTMLButtonElement;
-  // which reasons need a note is decided server-side, and tagged on the option
+  // which reasons need a comment is decided server-side, and tagged on the option
   const refreshConfirmBtn = () => {
-    const needsNote = reasonSelect.selectedOptions[0]?.dataset.requiresNote !== undefined;
+    const needsComment = reasonSelect.selectedOptions[0]?.dataset.requiresComment !== undefined;
     confirmBtn.disabled = reasonSelect.value === ''
-      || (needsNote && noteInput.value.trim() === '');
+      || (needsComment && commentInput.value.trim() === '');
   };
   reasonSelect.addEventListener('change', refreshConfirmBtn);
-  noteInput.addEventListener('input', refreshConfirmBtn);
+  commentInput.addEventListener('input', refreshConfirmBtn);
   $('#containerDeletionReasonModal').on('show.bs.modal', () => {
     reasonSelect.value = '';
-    noteInput.value = '';
+    commentInput.value = '';
     refreshConfirmBtn();
   });
 
   on('destroy-container-confirm', () => {
     destroyContainerWithReason(containerDeletionModal.dataset.containerId, {
       deletion_reason: Number(reasonSelect.value),
-      deletion_note: noteInput.value,
+      deletion_comment: commentInput.value,
     }).then(() => $('#containerDeletionReasonModal').modal('hide'));
   });
 }

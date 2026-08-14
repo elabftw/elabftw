@@ -2047,7 +2047,9 @@ components:
         capture_container_deletion_reason:
           type: integer
           default: 0
-          description: Binary toggle to require a reason (deletion_reason, and deletion_note for "other") when deleting a container.
+          description: |
+            Binary toggle to require a reason (deletion_reason, and deletion_comment
+            for "other") when deleting a container of an entity owned by this team.
         created_at:
           type: string
         orgid:
@@ -2479,8 +2481,9 @@ paths:
         and moving it to where it already is remains a no-op.
 
         With `action: destroy`, remove the container `subid`. This is the way to
-        delete when the team has `capture_container_deletion_reason` enabled: a
-        `deletion_reason` is then mandatory, and so is a `deletion_note` when the
+        delete when the team that owns the entity has
+        `capture_container_deletion_reason` enabled: a
+        `deletion_reason` is then mandatory, and so is a `deletion_comment` when the
         reason is `other` (100). The reason is recorded in the changelog of the
         parent entity. Otherwise, use `DELETE`, which takes no body.
       operationId: patch-container
@@ -2531,7 +2534,7 @@ paths:
                         80 storage or transport incident, 90 collected or
                         registered in error, 100 other.
                       example: 70
-                    deletion_note:
+                    deletion_comment:
                       type: string
                       maxLength: 255
                       description: |
@@ -2559,9 +2562,12 @@ paths:
       tags: ['Containers']
       summary: Delete a container.
       description: |
-        Remove an entity from a storage unit. Takes no body: when the team has
-        `capture_container_deletion_reason` enabled, this returns 400 and the
-        `POST` variant must be used instead.
+        Remove an entity from a storage unit. Takes no body: when the team that
+        owns the entity has `capture_container_deletion_reason` enabled, this
+        returns 400 and the `PATCH` variant must be used instead.
+
+        A container that does not exist returns 404, so a deletion that removed
+        nothing is never reported as a success.
       operationId: delete-container
       responses:
         '204':

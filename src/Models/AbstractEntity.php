@@ -554,6 +554,10 @@ abstract class AbstractEntity extends AbstractRest
                     if (array_key_exists('userid', $params) || array_key_exists('team', $params)) {
                         throw new ImproperActionException("Use the 'action:updateowner' to transfer ownership.");
                     }
+                    $contentType = BodyContentType::tryFrom((int) ($params['content_type'] ?? $this->entityData['content_type']))
+                        ?? throw new ImproperActionException('Invalid content type.');
+                    // Body filtering must use the final content type, regardless of parameter order.
+                    $this->entityData['content_type'] = $contentType->value;
                     foreach ($params as $key => $value) {
                         $this->update(new EntityParams($key, (string) $value));
                     }
@@ -856,7 +860,14 @@ abstract class AbstractEntity extends AbstractRest
     // Update an entity. The revision is saved before so it can easily compare old and new body.
     public function update(ContentParamsInterface $params): bool
     {
-        $content = $params->getContent();
+        if (
+            ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend')
+            && $this->entityData['content_type'] === BodyContentType::Markdown->value
+        ) {
+            $content = Filter::bodyMarkdown($params->getUnfilteredContent());
+        } else {
+            $content = $params->getContent();
+        }
         if ($params->getTarget() === 'bodyappend') {
             $content = $this->readColumn('body') . $content;
         }

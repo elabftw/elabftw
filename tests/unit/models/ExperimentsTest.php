@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Meaning;
@@ -36,6 +37,7 @@ use function is_array;
 use function json_decode;
 use function random_bytes;
 use function sprintf;
+use function str_replace;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -132,6 +134,47 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Untitled', $entityData['title']);
         $this->assertEquals('2016-07-29', $entityData['date']);
         $this->assertEquals('<p>Body</p>', $entityData['body']);
+    }
+
+    public function testMarkdownBodyPreservesDisplayMath(): void
+    {
+        $body = <<<'MARKDOWN'
+            $$
+            \begin{bmatrix}
+            H & \mathbf{1} \\
+            \mathbf{1}^{T} & 0
+            \end{bmatrix}
+            $$
+            MARKDOWN;
+        $new = $this->Experiments->create(body: $body, contentType: BodyContentType::Markdown);
+        $this->Experiments->setId($new);
+        $entityData = $this->Experiments->readOne();
+
+        $this->assertSame($body, $entityData['body']);
+        $this->assertStringContainsString('H &amp; \\mathbf{1}', $entityData['body_html']);
+        $this->assertStringNotContainsString('<br', $entityData['body_html']);
+
+        $updated = str_replace('H', 'G', $body);
+        $entityData = $this->Experiments->patch(Action::Update, array('body' => $updated));
+        $this->assertSame($updated, $entityData['body']);
+        $this->assertStringNotContainsString('&amp;', $entityData['body']);
+    }
+
+    public function testBodyUpdateUsesFinalContentType(): void
+    {
+        $new = $this->Experiments->create();
+        $this->Experiments->setId($new);
+        $entityData = $this->Experiments->patch(Action::Update, array(
+            'body' => 'H & \\mathbf{1}',
+            'content_type' => BodyContentType::Markdown->value,
+        ));
+        $this->assertSame('H & \\mathbf{1}', $entityData['body']);
+
+        $entityData = $this->Experiments->patch(Action::Update, array(
+            'content_type' => BodyContentType::Html->value,
+            'body' => '<p>safe</p><script>unsafe</script>',
+        ));
+        $this->assertSame('<p>safe</p>', $entityData['body']);
     }
 
     public function testUpdateIncorrectState(): void

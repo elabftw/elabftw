@@ -8,12 +8,16 @@
 import $ from 'jquery';
 import tinymce from 'tinymce/tinymce';
 import { getTinymceBaseConfig } from './tinymce';
-import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+import { Marked } from 'marked';
 import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 import { Target } from './interfaces';
 import type { Entity } from './interfaces';
 import { ApiC } from './api';
+import { displayMathExtension } from './markedDisplayMath';
 declare const MathJax: MathJaxObject;
+
+const markdown = new Marked(displayMathExtension);
 
 interface EditorInterface {
   type: string;
@@ -65,7 +69,7 @@ export class MdEditor extends Editor implements EditorInterface {
     /* eslint-disable-next-line */
     ($('.markdown-textarea') as any).markdown({
       onPreview: ed => {
-        const html = marked(ed.$textarea.val()) as string;
+        const html = DOMPurify.sanitize(markdown.parse(ed.$textarea.val() as string) as string);
 
         window.setTimeout(() => {
           void MathJax.typesetPromise().catch(error => {

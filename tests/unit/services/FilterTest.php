@@ -103,4 +103,10 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertNull(Filter::intOrNull(''));
         $this->assertSame(42, Filter::intOrNull('42'));
     }
+
+    public function testBodyPreservesTinyMceAccordionClass(): void
+    {
+        $input = '<details class="mce-accordion"><summary>Summary</summary><p>One</p><p>Two</p></details>';
+        $this->assertSame($input, Filter::body($input));
+    }
 }

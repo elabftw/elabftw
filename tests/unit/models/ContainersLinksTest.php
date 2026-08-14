@@ -646,7 +646,8 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $entry = $this->latestChangelogEntry($Item, 'container_deleted');
         $this->assertNotNull($entry);
-        $this->assertStringEndsNotWith(')', $entry['content']);
+        // no reason suffix: the line stops at the container id
+        $this->assertStringEndsWith(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
     private function setCapacity(int $storageId, int $capacity): void

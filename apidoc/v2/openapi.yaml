@@ -1867,7 +1867,7 @@ components:
         extra_fields:
           type: object
           nullable: true
-          description: See https://doc.elabftw.net/docs/usage/metadata#extra-fields-objects
+          description: See https://doc.elabftw.net/docs/usage/user-guide/custom-fields
           additionalProperties:
             type: object
             nullable: true
@@ -1875,10 +1875,29 @@ components:
               type:
                 nullable: true
                 type: string
-                enum: ['allow_multi_values', 'blank_value_on_duplicate', 'checkbox', 'date', 'datetime-local', 'description', 'email', 'experiments', 'group_id', 'items', 'number', 'options', 'position', 'radio', 'required', 'select', 'text', 'time', 'unit', 'url', 'users']
+                enum: ['checkbox', 'compounds', 'date', 'datetime-local', 'email', 'experiments', 'items', 'number', 'radio', 'select', 'text', 'time', 'uploads', 'url', 'users']
               value:
-                nullable: true
-                type: string
+                description: |
+                  The selected or input value. Fields accept a single string or number by default.
+                  When `allow_multi_values` is `true`, the value is stored as an array of strings
+                  or numbers. An empty array represents a multi-value field with no values.
+                oneOf:
+                  - type: string
+                    nullable: true
+                  - type: number
+                  - type: array
+                    items:
+                      oneOf:
+                        - type: string
+                        - type: number
+                example: ['first', 'second']
+              allow_multi_values:
+                type: boolean
+                default: false
+                description: |
+                  Allow this custom field to hold multiple values. When enabled, `value` is stored
+                  as an array. Dropdown fields use a multi-select input; all other field types use
+                  repeatable inputs. Arrays are not accepted for fields where this is `false`.
               group_id:
                 type: integer
                 nullable: true

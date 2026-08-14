@@ -170,10 +170,26 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Removed', $commandTester->getDisplay());
     }
 
+    public function testPruneExperimentsWithOpts(): void
+    {
+        $commandTester = new CommandTester(new PruneExperiments());
+        $commandTester->execute(array('--id' => ['1'], '--user' => ['1'], '--team' => ['1'], '--only' => 'experiments'));
+        $commandTester->assertCommandIsSuccessful();
+        $this->assertStringContainsString('Removed', $commandTester->getDisplay());
+    }
+
     public function testPruneItems(): void
     {
         $commandTester = new CommandTester(new PruneItems());
         $commandTester->execute(array());
+        $commandTester->assertCommandIsSuccessful();
+        $this->assertStringContainsString('Removed', $commandTester->getDisplay());
+    }
+
+    public function testPruneItemsWithOpts(): void
+    {
+        $commandTester = new CommandTester(new PruneItems());
+        $commandTester->execute(array('--team' => ['1'], '--since' => '1 week ago', '--only' => 'items,items_types'));
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString('Removed', $commandTester->getDisplay());
     }

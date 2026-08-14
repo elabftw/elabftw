@@ -2,7 +2,7 @@
 
 /**
  * @author Nicolas CARPi <nico-git@deltablot.email>
- * @copyright 2022 Nicolas CARPi
+ * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -44,7 +44,7 @@ final class EntityPruner implements CleanerInterface
 
     /**
      * Remove entity with deleted state from database
-     * This is a global function and should only be called by prune:items|experiments command
+     * This is a global function and should only be called by the prune:entries command
      */
     #[Override]
     public function cleanup(): int

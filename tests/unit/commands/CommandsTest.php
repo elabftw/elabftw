@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -18,6 +19,7 @@ use Elabftw\Services\Email;
 use Elabftw\Services\MfaHelper;
 use Elabftw\Storage\Fixtures;
 use Elabftw\Storage\Memory;
+use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Application;
@@ -25,12 +27,15 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Mailer\MailerInterface;
+use InvalidArgumentException;
 
 /**
  * This file bundles a bunch of commands test together, because most of them are quite short
  */
 class CommandsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Email $Email;
 
     protected function setUp(): void
@@ -162,36 +167,93 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('2FA code:', $commandTester->getDisplay());
     }
 
-    public function testPruneExperiments(): void
+    public function testPruneEntries(): void
     {
-        $commandTester = new CommandTester(new PruneExperiments());
+        $Exp = $this->getFreshExperiment();
+        $expId = $Exp->id;
+        $Exp->destroy();
+
+        $Item = $this->getFreshItem(1);
+        $itemId = $Item->id;
+        $Item->destroy();
+
+        $commandTester = new CommandTester(new PruneEntries());
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Removed', $commandTester->getDisplay());
+
+        $req = Db::getConnection()->prepare('SELECT id FROM experiments WHERE id = :id');
+        $req->execute(array(':id' => $expId));
+        $this->assertEmpty($req->fetchAll());
+
+        $req = Db::getConnection()->prepare('SELECT id FROM items WHERE id = :id');
+        $req->execute(array(':id' => $itemId));
+        $this->assertEmpty($req->fetchAll());
     }
 
-    public function testPruneExperimentsWithOpts(): void
+    public function testPruneEntriesWithOpts(): void
     {
-        $commandTester = new CommandTester(new PruneExperiments());
-        $commandTester->execute(array('--id' => ['1'], '--user' => ['1'], '--team' => ['1'], '--only' => 'experiments'));
+        $ExpMatch = $this->getFreshExperiment();
+        $matchId = $ExpMatch->id;
+        $ExpMatch->destroy();
+
+        $ExpNoMatch = $this->getFreshExperiment();
+        $noMatchId = $ExpNoMatch->id;
+        $ExpNoMatch->destroy();
+
+        $commandTester = new CommandTester(new PruneEntries());
+        $commandTester->execute(array(
+            '--id' => array((string) $matchId),
+            '--user' => array((string) $ExpMatch->Users->userid),
+            '--team' => array('1'),
+            '--since' => '1 week ago',
+            '--only' => 'experiments',
+        ));
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Removed', $commandTester->getDisplay());
+
+        $req = Db::getConnection()->prepare('SELECT id FROM experiments WHERE id = :id');
+
+        $req->execute(array(':id' => $matchId));
+        $this->assertEmpty($req->fetchAll());
+
+        $req->execute(array(':id' => $noMatchId));
+        $this->assertNotEmpty($req->fetchAll());
     }
 
-    public function testPruneItems(): void
+    public function testPruneEntriesWithOnlyItems(): void
     {
-        $commandTester = new CommandTester(new PruneItems());
-        $commandTester->execute(array());
+        $ItemMatch = $this->getFreshItem(1);
+        $matchId = $ItemMatch->id;
+        $ItemMatch->destroy();
+
+        $ItemNoMatch = $this->getFreshItem(2);
+        $noMatchId = $ItemNoMatch->id;
+        $ItemNoMatch->destroy();
+
+        $commandTester = new CommandTester(new PruneEntries());
+        $commandTester->execute(array(
+            '-t' => array('1'),
+            '-s' => '1 week ago',
+            '-o' => 'items',
+        ));
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Removed', $commandTester->getDisplay());
+
+        $req = Db::getConnection()->prepare('SELECT id FROM items WHERE id = :id');
+
+        $req->execute(array(':id' => $matchId));
+        $this->assertEmpty($req->fetchAll());
+
+        $req->execute(array(':id' => $noMatchId));
+        $this->assertNotEmpty($req->fetchAll());
     }
 
-    public function testPruneItemsWithOpts(): void
+    public function testPruneEntriesRejectsInvalidOnly(): void
     {
-        $commandTester = new CommandTester(new PruneItems());
-        $commandTester->execute(array('--team' => ['1'], '--since' => '1 week ago', '--only' => 'items,items_types'));
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Removed', $commandTester->getDisplay());
+        $this->expectException(InvalidArgumentException::class);
+
+        $commandTester = new CommandTester(new PruneEntries());
+        $commandTester->execute(array(
+            '--only' => 'invalid_type',
+        ));
     }
 
     public function testPruneUploads(): void

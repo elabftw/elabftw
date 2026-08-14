@@ -383,7 +383,7 @@ You can list available commands with `bin/console list` or `bin/init list`.
 
 Example: `docker exec -it elabftw bin/console list`.
 
-Check a command manual with `-h` flag. For example: `bin/console prune:experiments -h`.
+Check a command manual with `-h` flag. For example: `bin/console prune:entries -h`.
 
 ## External connections
 

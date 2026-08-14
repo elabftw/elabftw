@@ -157,7 +157,6 @@ interface Templates {
   category: number;
   category_title: string;
   category_color: string;
-  page: string;
   status: number;
   status_title: string;
   status_color: string;
@@ -189,7 +188,8 @@ function renderTemplates(templates: Templates[]): void {
           createBtn.dataset.type = type.value;
           createBtn.dataset.tplid = String(template[key]);
           const viewLink = cells[i].querySelector('a') as HTMLAnchorElement;
-          viewLink.href = `${template.page}?mode=view&id=${template.id}`;
+          const page = type.value === EntityType.Experiment ? 'templates.php' : 'resources-templates.php';
+          viewLink.href = `${page}?mode=view&id=${template.id}`;
           viewLink.classList.add('btn', 'btn-ghost');
           viewLink.title = i18next.t('view-template');
           viewLink.ariaLabel = i18next.t('view-template');

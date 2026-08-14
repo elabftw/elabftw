@@ -4644,7 +4644,7 @@ msgstr "Byla zadána neplatná syntaxe nebo informace."
 
 #: src/Elabftw/i18n4Js.php:159
 msgid "No matching result found."
-msgstr "Nenalezeny odpovídájící výsledky."
+msgstr "Nenalezeny odpovídající výsledky."
 
 #: src/Elabftw/i18n4Js.php:183
 msgid "Select two revisions to compare them."
@@ -4728,7 +4728,7 @@ msgstr "Je Archivováno"
 
 #: src/Elabftw/i18n4Js.php:167
 msgid "Only a Sysadmin can modify this."
-msgstr "Toto může upravovat jen Sysdamin."
+msgstr "Toto může upravovat jen Sysadmin."
 
 #: src/Elabftw/i18n4Js.php:224
 msgid "Userid"

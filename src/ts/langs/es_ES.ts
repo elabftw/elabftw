@@ -57,7 +57,7 @@ const t = {
     "entity-delete-warning": "Los ítem(s) seleccionados y todo los datos asociados serán permanentemente elilminados. Esto no puede deshacerse. Está seguro?",
     "entity-apply-both-permissions-warning": "Esto aplicará estos permisos tanto a los permisos de lectura como de escritura. ¿Continuar?",
     "entity-patch-multi-warning": "Se modificaron {{count, number}} entradas, pero {{failed, number}} entradas no pudieron modificarse. Se han marcado en rojo.",
-    "entries-processed": "{{num, number}} de entradas procesadas",
+    "entries-processed": "{{num, number}} entradas procesadas",
     "error": "Error",
     "error-no-filename": "Falta el nombre del archivo.",
     "error-fetch-request": "Ha habido un error al extraer los datos pedidos: {{error}}",

@@ -399,8 +399,8 @@ tinymce.addI18n("hr_HR", {
     "Line height": "Visina reda",
     "Dropped file type is not supported": "Dodana datoteka nije podr\u017eana",
     "Loading...": "U\u010ditavanje...",
-    "ImageProxy HTTP error: Rejected request": "",
-    "ImageProxy HTTP error: Could not find Image Proxy": "",
-    "ImageProxy HTTP error: Incorrect Image Proxy URL": "",
-    "ImageProxy HTTP error: Unknown ImageProxy error": ""
+    "ImageProxy HTTP error: Rejected request": "Pogreška HTTP ImageProxyja: zahtjev je odbijen",
+    "ImageProxy HTTP error: Could not find Image Proxy": "Pogreška HTTP ImageProxyja: ImageProxy nije pronađen",
+    "ImageProxy HTTP error: Incorrect Image Proxy URL": "Pogreška HTTP ImageProxyja: neispravan URL posrednika za slike",
+    "ImageProxy HTTP error: Unknown ImageProxy error": "Pogreška HTTP ImageProxyja: nepoznata pogreška ImageProxyja"
 });

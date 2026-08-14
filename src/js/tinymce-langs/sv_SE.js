@@ -21,7 +21,7 @@ tinymce.addI18n("sv_SE", {
     "Align center": "Centrera",
     "Align right": "H\xf6gerjustera",
     "No alignment": "Ingen justering",
-    "Justify": "Verifiera",
+    "Justify": "Marginaljustera",
     "Bullet list": "Punktlista",
     "Numbered list": "Nummerlista",
     "Decrease indent": "Minska indrag",

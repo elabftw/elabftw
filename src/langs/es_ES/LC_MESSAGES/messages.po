@@ -4606,7 +4606,7 @@ msgstr "Por favor comprueba los campos obligatorios."
 
 #: src/Elabftw/i18n4Js.php:104
 msgid "{{num, number}} entries processed"
-msgstr "{{num, number}} de entradas procesadas"
+msgstr "{{num, number}} entradas procesadas"
 
 #: src/Elabftw/i18n4Js.php:107
 msgid "There was an error while fetching the requested data: {{error}}"

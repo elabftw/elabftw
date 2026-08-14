@@ -321,6 +321,17 @@ workflows:
               browser:
                 - firefox
                 - chrome
+
+  weekly_translation_tests:
+    triggers:
+      - schedule:
+          cron: '0 0 * * 1'
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build_elabtmp_image
       - cypress_translation_tests:
           requires:
             - build_elabtmp_image

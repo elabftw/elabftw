@@ -28,6 +28,7 @@ enum Language: string
     case Estonian = 'et_EE';
     case Finnish = 'fi_FI';
     case French = 'fr_FR';
+    case Croatian = 'hr_HR';
     case Indonesian = 'id_ID';
     case Italian = 'it_IT';
     case Japanese = 'ja_JP';
@@ -37,8 +38,10 @@ enum Language: string
     case PortugueseBrazilian = 'pt_BR';
     case Portuguese = 'pt_PT';
     case Russian = 'ru_RU';
-    case Slovenian = 'sl_SI';
     case Slovak = 'sk_SK';
+    case Slovenian = 'sl_SI';
+    case Swedish = 'sv_SE';
+    case Ukrainian = 'uk_UA';
     case Uzbek = 'uz_UZ';
     case Chinese = 'zh_CN';
     case ChineseTraditional = 'zh_TW';
@@ -55,6 +58,7 @@ enum Language: string
     {
         return match ($this) {
             self::Catalan => 'ca',
+            self::Croatian => 'hr',
             self::Czech => 'cs',
             self::German => 'de',
             self::Greek => 'el',
@@ -75,6 +79,8 @@ enum Language: string
             self::Russian => 'ru',
             self::Slovenian => 'sl',
             self::Slovak => 'sk',
+            self::Swedish => 'sv',
+            self::Ukrainian => 'uk',
             self::Uzbek => 'uz',
             self::Chinese => 'zh-cn',
             self::ChineseTraditional => 'zh-tw',
@@ -85,6 +91,7 @@ enum Language: string
     {
         return match ($this) {
             self::Catalan => 'Spanish (Catalan)',
+            self::Croatian => 'Croatian',
             self::Czech => 'Czech ',
             self::German => 'German',
             self::Greek => 'Greek',
@@ -105,6 +112,8 @@ enum Language: string
             self::Russian => 'Russian',
             self::Slovenian => 'Slovenian',
             self::Slovak => 'Slovak',
+            self::Swedish => 'Swedish',
+            self::Ukrainian => 'Ukrainian',
             self::Uzbek => 'Uzbek',
             self::Chinese => 'Chinese Simplified',
             self::ChineseTraditional => 'Chinese Traditional',

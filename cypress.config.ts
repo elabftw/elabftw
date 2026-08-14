@@ -1,7 +1,9 @@
+import { readdirSync } from 'node:fs';
 import { defineConfig } from 'cypress';
 import htmlvalidate from 'cypress-html-validate/plugin';
 import { Severity } from 'html-validate';
 import installLogsPrinter from 'cypress-terminal-report/src/installLogsPrinter';
+import { join } from 'node:path';
 
 export default defineConfig({
   fixturesFolder: 'tests/cypress/fixtures',
@@ -39,7 +41,27 @@ export default defineConfig({
           ],
         },
       );
-      return require('./tests/cypress/plugins/index.ts')(on, config);
+
+      const ignoredPages = new Set([
+        'healthcheck.php',
+        'make.php',
+        'metadata.php',
+      ]);
+
+      config.env.webPhpPages = readdirSync(
+        join(config.projectRoot, 'web'),
+        { withFileTypes: true },
+      )
+        .filter(entry =>
+          entry.isFile()
+          && entry.name.endsWith('.php')
+          && !ignoredPages.has(entry.name)
+        )
+        .map(entry => entry.name)
+        .sort();
+
+      require('./tests/cypress/plugins/index.ts')(on, config);
+      return config;
     },
     baseUrl: 'https://elab.local:3148',
     specPattern: 'tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',

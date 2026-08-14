@@ -2409,44 +2409,109 @@ paths:
           type: integer
     post:
       tags: ['Containers']
-      summary: Create a container for this entity, or delete one giving a reason.
+      summary: Create a container for this entity.
       description: |
-        With `action: create` (the default), store this entity in the storage
-        unit `subid` with a specified quantity.
+        Store this entity in a storage unit with a specified quantity.
 
         Rejected with `400` if the storage unit has a `capacity` and already holds
         that many containers. Containers of binned entities still occupy their slot,
         as binning a record does not empty a freezer.
+      operationId: post-container
+      requestBody:
+        description: Parameters for creating a container.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['qty_stored']
+              properties:
+                qty_stored:
+                  type: number
+                  description: Quantity stored.
+                  example: 10.5
+                qty_unit:
+                  type: string
+                  description: Unit of the quantity. Defaults to "unit" if not provided.
+                  example: "mL"
+                  # see Units enum
+                  enum: ['bar', '•', 'm', 'μL', 'mL', 'L', 'μg', 'mg', 'g', 'kg']
+      responses:
+        '201':
+          description: The container has been created.
+          headers:
+            location:
+              description: An URL to the container that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    get:
+      tags: ['Containers']
+      summary: Read a container.
+      description: Get details of a specific container entry.
+      operationId: read-container
+      responses:
+        '200':
+          description: A container.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/container'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Containers']
+      summary: Modify a container, or delete one giving a reason.
+      description: |
+        With `action: update` (the default), update the quantity stored, the unit,
+        or the storage location of a container. Setting `storage_id` moves the
+        container to a different storage unit while preserving its `id` and
+        `created_at`.
+
+        A move is rejected with `400` if the destination has a `capacity` and is
+        already full. Moving a container out of a full location is always allowed,
+        and moving it to where it already is remains a no-op.
 
         With `action: destroy`, remove the container `subid`. This is the way to
         delete when the team has `capture_container_deletion_reason` enabled: a
         `deletion_reason` is then mandatory, and so is a `deletion_note` when the
         reason is `other` (100). The reason is recorded in the changelog of the
         parent entity. Otherwise, use `DELETE`, which takes no body.
-      operationId: post-container
+      operationId: patch-container
       requestBody:
-        description: Parameters for creating or deleting a container.
+        description: Parameters for modifying or deleting a container.
         content:
           application/json:
             schema:
               oneOf:
-                - title: Create
+                - title: Update
                   type: object
-                  required: ['qty_stored']
                   properties:
                     action:
                       type: string
-                      enum: ['create']
+                      enum: ['update']
                     qty_stored:
                       type: number
-                      description: Quantity stored.
-                      example: 10.5
+                      description: New quantity stored.
+                      example: 15.0
                     qty_unit:
                       type: string
-                      description: Unit of the quantity. Defaults to "unit" if not provided.
-                      example: "mL"
-                      # see Units enum
-                      enum: ['bar', '•', 'm', 'μL', 'mL', 'L', 'μg', 'mg', 'g', 'kg']
+                      description: New unit of the quantity.
+                      example: "g"
+                    storage_id:
+                      type: integer
+                      description: |
+                        New storage unit id. Moves the container to that storage
+                        unit. Requires write access on the parent entity and (when
+                        `inventory_require_edit_rights=1`) the
+                        `can_manage_inventory_locations` permission.
+                      example: 12
                 - title: Destroy
                   type: object
                   required: ['action']
@@ -2476,75 +2541,10 @@ paths:
                         record is silently shortened. Stored as typed.
                       example: 'spilled in transit'
       responses:
-        '201':
-          description: The container has been created.
-          headers:
-            location:
-              description: An URL to the container that was created.
-              schema:
-                type: string
-        '204':
-          description: The container was deleted with the `destroy` action.
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    get:
-      tags: ['Containers']
-      summary: Read a container.
-      description: Get details of a specific container entry.
-      operationId: read-container
-      responses:
         '200':
-          description: A container.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/container'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    patch:
-      tags: ['Containers']
-      summary: Modify a container.
-      description: |
-        Update the quantity stored, the unit, or the storage location of a
-        container. Setting `storage_id` moves the container to a different
-        storage unit while preserving its `id` and `created_at`.
-
-        A move is rejected with `400` if the destination has a `capacity` and is
-        already full. Moving a container out of a full location is always allowed,
-        and moving it to where it already is remains a no-op.
-      operationId: patch-container
-      requestBody:
-        description: Parameters for modifying a container.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                qty_stored:
-                  type: number
-                  description: New quantity stored.
-                  example: 15.0
-                qty_unit:
-                  type: string
-                  description: New unit of the quantity.
-                  example: "g"
-                storage_id:
-                  type: integer
-                  description: |
-                    New storage unit id. Moves the container to that storage
-                    unit. Requires write access on the parent entity and (when
-                    `inventory_require_edit_rights=1`) the
-                    `can_manage_inventory_locations` permission.
-                  example: 12
-      responses:
-        '200':
-          description: The updated container.
+          description: |
+            The updated container, or the container as it was just before an
+            `action: destroy` removed it.
           content:
             application/json:
               schema:

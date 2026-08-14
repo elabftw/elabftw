@@ -151,8 +151,6 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return match ($action) {
             Action::Create => $this->createWithQuantity((float) $reqBody['qty_stored'], $reqBody['qty_unit'] ?? Units::Unit->value),
             Action::Duplicate => $this->import(),
-            // a deletion reason cannot travel on a DELETE, so it comes as a POST with a body
-            Action::Destroy => (int) $this->destroyWithReason($reqBody),
             default => throw new ImproperActionException('Invalid action for links create.'),
         };
     }
@@ -162,6 +160,11 @@ abstract class AbstractContainersLinks extends AbstractLinks
     {
         $this->Entity->canOrExplode(AccessType::Write);
         $before = $this->readOne();
+        // a deletion reason cannot travel on a DELETE, so it comes as a PATCH with a body
+        if ($action === Action::Destroy) {
+            $this->destroyWithReason($params);
+            return $before;
+        }
         if (isset($params['storage_id'])) {
             $this->moveToStorage((int) $params['storage_id']);
         }
@@ -448,7 +451,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
         if ($rawReason === null || $rawReason === '') {
             // DELETE has no body to carry a reason: point at the verb that does, and at a stale page reload
             throw new ImproperActionException($viaDeleteVerb
-                ? _('A reason is required to delete a container. Use POST with action "destroy", or reload the page.')
+                ? _('A reason is required to delete a container. Use PATCH with action "destroy", or reload the page.')
                 : _('A reason is required to delete a container.'));
         }
         // anything non numeric casts to 0, which matches no case

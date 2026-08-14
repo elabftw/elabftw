@@ -118,7 +118,7 @@ export class Api {
     }
 
     return fetch(`api/v2/${query}${urlParams}`, options).then(async response => {
-      if (!this.getOkStatusesFromMethod(method).includes(response.status)) {
+      if (response.status !== this.getOkStatusFromMethod(method)) {
         return response.json().then(json => {
           const error = new Error(json.message || json.description) as Error & { status?: number };
           error.status = response.status;
@@ -142,18 +142,17 @@ export class Api {
     });
   }
 
-  private getOkStatusesFromMethod(method: Method): number[] {
+  private getOkStatusFromMethod(method: Method): number {
     switch (method) {
     case Method.GET:
     case Method.PATCH:
-      return [200];
-    // a POST with action: destroy answers 204, as there is nothing created
+      return 200;
     case Method.POST:
-      return [201, 204];
+      return 201;
     case Method.DELETE:
-      return [204];
+      return 204;
     default:
-      return [200];
+      return 200;
     }
   }
 

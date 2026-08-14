@@ -397,7 +397,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $rowId = $this->latestContainerRowId('containers2items', $Item->id);
 
         $Links = new Containers2ItemsLinks($Item, $rowId);
-        $Links->postAction(Action::Destroy, array('deletion_reason' => ContainerDeletionReason::Contaminated->value));
+        $Links->patch(Action::Destroy, array('deletion_reason' => ContainerDeletionReason::Contaminated->value));
 
         $entry = $this->latestChangelogEntry($Item, 'container_deleted');
         $this->assertNotNull($entry);
@@ -414,7 +414,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $rowId = $this->latestContainerRowId('containers2items', $Item->id);
 
         $Links = new Containers2ItemsLinks($Item, $rowId);
-        $Links->postAction(Action::Destroy, array(
+        $Links->patch(Action::Destroy, array(
             'deletion_reason' => ContainerDeletionReason::Other->value,
             'deletion_note' => '  spilled in transit  ',
         ));
@@ -436,7 +436,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $rowId = $this->latestContainerRowId('containers2items', $Item->id);
 
         $Links = new Containers2ItemsLinks($Item, $rowId);
-        $Links->postAction(Action::Destroy, array(
+        $Links->patch(Action::Destroy, array(
             'deletion_reason' => ContainerDeletionReason::Other->value,
             'deletion_note' => 'batch A & B, <10% left',
         ));
@@ -462,7 +462,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
             $this->fail('Expected ImproperActionException was not thrown.');
         } catch (ImproperActionException $e) {
             // the verb cannot carry a reason, so the message must point somewhere useful
-            $this->assertStringContainsString('POST', $e->getMessage());
+            $this->assertStringContainsString('PATCH', $e->getMessage());
         }
         // the container must still be there
         $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
@@ -480,11 +480,11 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $Links = new Containers2ItemsLinks($Item, $rowId);
         try {
-            $Links->postAction(Action::Destroy, array());
+            $Links->patch(Action::Destroy, array());
             $this->fail('Expected ImproperActionException was not thrown.');
         } catch (ImproperActionException $e) {
-            // POST can carry a reason, so it gets no advice about the verb
-            $this->assertStringNotContainsString('POST', $e->getMessage());
+            // PATCH can carry a reason, so it gets no advice about the verb
+            $this->assertStringNotContainsString('PATCH', $e->getMessage());
         }
         $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
         $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
@@ -504,7 +504,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         // 'contaminated' is what the enum was backed with before it became int-backed
         foreach (array(999, 0, 'banana', 'contaminated') as $reason) {
             try {
-                $Links->postAction(Action::Destroy, array('deletion_reason' => $reason));
+                $Links->patch(Action::Destroy, array('deletion_reason' => $reason));
                 $this->fail(sprintf('Expected ImproperActionException was not thrown for "%s".', $reason));
             } catch (ImproperActionException) {
                 $this->addToAssertionCount(1);
@@ -526,7 +526,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $Links = new Containers2ItemsLinks($Item, $rowId);
         $this->expectException(ImproperActionException::class);
-        $Links->postAction(Action::Destroy, array('deletion_reason' => ContainerDeletionReason::Other->value));
+        $Links->patch(Action::Destroy, array('deletion_reason' => ContainerDeletionReason::Other->value));
     }
 
     public function testDeleteNoteLongerThanTheLimitIsRejected(): void
@@ -540,7 +540,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $Links = new Containers2ItemsLinks($Item, $rowId);
         try {
-            $Links->postAction(Action::Destroy, array(
+            $Links->patch(Action::Destroy, array(
                 'deletion_reason' => ContainerDeletionReason::Other->value,
                 'deletion_note' => str_repeat('a', 256),
             ));
@@ -564,7 +564,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $note = str_repeat('a', 255);
         $Links = new Containers2ItemsLinks($Item, $rowId);
-        $Links->postAction(Action::Destroy, array(
+        $Links->patch(Action::Destroy, array(
             'deletion_reason' => ContainerDeletionReason::Other->value,
             'deletion_note' => $note,
         ));

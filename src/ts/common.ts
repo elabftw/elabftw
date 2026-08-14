@@ -1064,9 +1064,9 @@ on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.d
 const destroyContainer = (id: string) =>
   ApiC.delete(`${entity.type}/${entity.id}/containers/${id}`).then(() => reloadStorageAndContainers());
 
-// DELETE carries no body, so a deletion reason goes through a POST instead
+// DELETE carries no body, so a deletion reason goes through a PATCH instead
 const destroyContainerWithReason = (id: string, params: Record<string, string | number>) =>
-  ApiC.post(`${entity.type}/${entity.id}/containers/${id}`, Object.assign({ action: 'destroy' }, params))
+  ApiC.patch(`${entity.type}/${entity.id}/containers/${id}`, Object.assign({ action: 'destroy' }, params))
     .then(() => reloadStorageAndContainers());
 
 // the modal is only rendered when the team requires a deletion reason

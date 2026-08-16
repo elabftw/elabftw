@@ -112,7 +112,12 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $user = $this->getRandomUserInTeam(1);
         $Controller = new Apiv2Controller(
             $user,
-            Request::create('/api/v2/apikeys', 'POST', content: '{"name": "controller test key", "canwrite": 0}'),
+            Request::create(
+                '/api/v2/apikeys',
+                'POST',
+                server: array('CONTENT_TYPE' => 'application/json'),
+                content: '{"name": "controller test key", "canwrite": 0}',
+            ),
         );
         $Controller->canWrite = true;
         $res = $Controller->getResponse();

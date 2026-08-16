@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\ContainerDeletionReason;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -22,6 +24,7 @@ use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
 
 use function sprintf;
+use function str_repeat;
 
 class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,6 +35,12 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->StorageUnits = new StorageUnits(new Users(1, 1), true);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->setCaptureDeletionReason(0);
+        $this->setCaptureDeletionReason(0, 2);
     }
 
     public function testMoveContainerToAnotherStorage(): void
@@ -223,13 +232,22 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
-    public function testDeleteMissingRowIsTolerated(): void
+    public function testDeleteMissingRowIsRejected(): void
     {
         $Item = $this->getFreshItem();
-        // no container row for this id: destroy must not throw and must not log
+        // a container that is already gone is a 404: a no-op must not read as a successful deletion
         $Links = new Containers2ItemsLinks($Item, PHP_INT_MAX);
-        $this->assertTrue($Links->destroy());
-        $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
+        $this->expectException(ResourceNotFoundException::class);
+        $Links->destroy();
+    }
+
+    public function testDestroyActionOnAMissingRowIsRejected(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $Links = new Containers2ItemsLinks($Item, PHP_INT_MAX);
+        $this->expectException(ResourceNotFoundException::class);
+        $Links->patch(Action::Destroy, array('deletion_reason' => ContainerDeletionReason::Contaminated->value));
     }
 
     public function testNoOpQtyDoesNotLog(): void
@@ -379,6 +397,259 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $this->StorageUnits->countContainers($full));
     }
 
+    public function testDeleteWithReasonLogsIt(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for deletion reason test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->patch(Action::Destroy, array('deletion_reason' => ContainerDeletionReason::Contaminated->value));
+
+        $entry = $this->latestChangelogEntry($Item, 'container_deleted');
+        $this->assertNotNull($entry);
+        $this->assertStringEndsWith('(Contaminated)', $entry['content']);
+    }
+
+    public function testDeleteWithReasonAndCommentLogsBoth(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for deletion comment test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->patch(Action::Destroy, array(
+            'deletion_reason' => ContainerDeletionReason::Other->value,
+            'deletion_comment' => '  spilled in transit  ',
+        ));
+
+        $entry = $this->latestChangelogEntry($Item, 'container_deleted');
+        $this->assertNotNull($entry);
+        $this->assertStringEndsWith('(Other: spilled in transit)', $entry['content']);
+    }
+
+    // the changelog cell is escaped when rendered, so the comment is stored exactly as typed:
+    // encoding it here too would show the user "A &amp; B" where they wrote "A & B"
+    public function testDeleteCommentIsStoredVerbatim(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for verbatim comment test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->patch(Action::Destroy, array(
+            'deletion_reason' => ContainerDeletionReason::Other->value,
+            'deletion_comment' => 'batch A & B, <10% left',
+        ));
+
+        $entry = $this->latestChangelogEntry($Item, 'container_deleted');
+        $this->assertNotNull($entry);
+        $this->assertStringEndsWith('(Other: batch A & B, <10% left)', $entry['content']);
+    }
+
+    // a bodyless DELETE cannot carry the reason, so it is refused when one is required
+    public function testDeleteVerbIsRejectedWhenAReasonIsRequired(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for missing reason test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        try {
+            $Links->destroy();
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException $e) {
+            // the verb cannot carry a reason, so the message must point somewhere useful
+            $this->assertStringContainsString('PATCH', $e->getMessage());
+        }
+        // the container must still be there
+        $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
+    }
+
+    public function testDestroyActionWithoutReasonIsRejected(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for empty reason test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        try {
+            $Links->patch(Action::Destroy, array());
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException $e) {
+            // PATCH can carry a reason, so it gets no advice about the verb
+            $this->assertStringNotContainsString('PATCH', $e->getMessage());
+        }
+        $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
+    }
+
+    // a non numeric reason casts to 0, which matches no case: it must be refused, not mapped onto one
+    public function testDestroyActionWithAnInvalidReasonIsRejected(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for invalid reason test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        // 'contaminated' is what the enum was backed with before it became int-backed
+        foreach (array(999, 0, 'banana', 'contaminated') as $reason) {
+            try {
+                $Links->patch(Action::Destroy, array('deletion_reason' => $reason));
+                $this->fail(sprintf('Expected ImproperActionException was not thrown for "%s".', $reason));
+            } catch (ImproperActionException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+        // nothing was destroyed by any of them
+        $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
+    }
+
+    public function testDeleteWithOtherReasonRequiresAComment(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for empty comment test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $this->expectException(ImproperActionException::class);
+        $Links->patch(Action::Destroy, array('deletion_reason' => ContainerDeletionReason::Other->value));
+    }
+
+    public function testDeleteCommentLongerThanTheLimitIsRejected(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for long comment test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        try {
+            $Links->patch(Action::Destroy, array(
+                'deletion_reason' => ContainerDeletionReason::Other->value,
+                'deletion_comment' => str_repeat('a', 256),
+            ));
+            $this->fail('Expected ImproperActionException was not thrown.');
+        } catch (ImproperActionException) {
+            $this->addToAssertionCount(1);
+        }
+        // refused, not silently shortened
+        $this->assertEquals(7.0, $this->readContainerQty('containers2items', $rowId));
+        $this->assertNull($this->latestChangelogEntry($Item, 'container_deleted'));
+    }
+
+    public function testDeleteCommentAtTheLimitIsAccepted(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for max comment test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $comment = str_repeat('a', 255);
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->patch(Action::Destroy, array(
+            'deletion_reason' => ContainerDeletionReason::Other->value,
+            'deletion_comment' => $comment,
+        ));
+
+        $entry = $this->latestChangelogEntry($Item, 'container_deleted');
+        $this->assertNotNull($entry);
+        $this->assertStringEndsWith(sprintf('(Other: %s)', $comment), $entry['content']);
+    }
+
+    public function testDeleteWithoutReasonIsFineWhenNotRequired(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for disabled setting test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+
+        $Links = new Containers2ItemsLinks($Item, $rowId);
+        $Links->destroy();
+
+        $entry = $this->latestChangelogEntry($Item, 'container_deleted');
+        $this->assertNotNull($entry);
+        $this->assertStringEndsWith(sprintf('(container #%d)', $rowId), $entry['content']);
+    }
+
+    public function testCascadeDeleteIgnoresTheReasonRequirement(): void
+    {
+        $this->setCaptureDeletionReason(1);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for cascade test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+
+        $this->assertTrue($Links->destroyAll());
+    }
+
+    public function testTheSettingComesFromTheTeamOwningTheEntity(): void
+    {
+        // the requester stays in team 1, where the setting is off
+        $this->setCaptureDeletionReason(0);
+        $this->setCaptureDeletionReason(1, 2);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box owned by another team');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+        $this->moveItemToTeam($Item, 2);
+
+        // a fresh object, so entityData carries the new team rather than the cached one
+        $Reloaded = new Items($Item->Users, $Item->id);
+        $this->expectException(ImproperActionException::class);
+        new Containers2ItemsLinks($Reloaded, $rowId)->destroy();
+    }
+
+    public function testTheSettingIsNotTakenFromTheRequesterTeam(): void
+    {
+        // the mirror case: on for the requester, off for the team owning the entity
+        $this->setCaptureDeletionReason(1);
+        $this->setCaptureDeletionReason(0, 2);
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box owned by a team without the setting');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $Links->createWithQuantity(7.0, 'mL');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+        $this->moveItemToTeam($Item, 2);
+
+        $Item = new Items($Item->Users, $Item->id);
+        new Containers2ItemsLinks($Item, $rowId)->destroy();
+
+        $entry = $this->latestChangelogEntry($Item, 'container_deleted');
+        $this->assertNotNull($entry);
+        // no reason suffix: the line stops at the container id
+        $this->assertStringEndsWith(sprintf('(container #%d)', $rowId), $entry['content']);
+    }
+
     private function setCapacity(int $storageId, int $capacity): void
     {
         $this->StorageUnits->setId($storageId);
@@ -397,16 +668,34 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
     private function latestContainerRowId(string $table, int $itemId): int
     {
-        $Db = \Elabftw\Elabftw\Db::getConnection();
+        $Db = Db::getConnection();
         $req = $Db->prepare('SELECT id FROM ' . $table . ' WHERE item_id = :item_id ORDER BY id DESC LIMIT 1');
         $req->bindValue(':item_id', $itemId, PDO::PARAM_INT);
         $Db->execute($req);
         return (int) $req->fetchColumn();
     }
 
+    private function setCaptureDeletionReason(int $value, int $team = 1): void
+    {
+        $Db = Db::getConnection();
+        $req = $Db->prepare('UPDATE teams SET capture_container_deletion_reason = :value WHERE id = :team');
+        $req->bindValue(':value', $value, PDO::PARAM_INT);
+        $req->bindValue(':team', $team, PDO::PARAM_INT);
+        $Db->execute($req);
+    }
+
+    private function moveItemToTeam(Items $entity, int $team): void
+    {
+        $Db = Db::getConnection();
+        $req = $Db->prepare('UPDATE items SET team = :team WHERE id = :id');
+        $req->bindValue(':team', $team, PDO::PARAM_INT);
+        $req->bindValue(':id', $entity->id, PDO::PARAM_INT);
+        $Db->execute($req);
+    }
+
     private function readContainerQty(string $table, int $id): float
     {
-        $Db = \Elabftw\Elabftw\Db::getConnection();
+        $Db = Db::getConnection();
         $req = $Db->prepare('SELECT qty_stored FROM ' . $table . ' WHERE id = :id');
         $req->bindValue(':id', $id, PDO::PARAM_INT);
         $Db->execute($req);

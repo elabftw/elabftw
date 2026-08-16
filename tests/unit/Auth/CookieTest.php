@@ -14,8 +14,11 @@ namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Env;
 use Elabftw\Exceptions\UnauthorizedException;
 use PDO;
+
+use function hash_hmac;
 
 class CookieTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,13 +35,31 @@ class CookieTest extends \PHPUnit\Framework\TestCase
         $this->CookieToken->saveToken($this->userid);
     }
 
+    public function testTokenIsHashedBeforeStorage(): void
+    {
+        $req = $this->Db->prepare('SELECT token_hash FROM users WHERE userid = :userid');
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $storedTokenHash = $req->fetchColumn();
+        $expectedTokenHash = hash_hmac(
+            'sha256',
+            $this->CookieToken->getToken(),
+            Env::asString('SECRET_KEY'),
+            true,
+        );
+        $this->assertSame($expectedTokenHash, $this->CookieToken->getTokenHash());
+        $this->assertSame($expectedTokenHash, $storedTokenHash);
+        $this->assertNotSame($this->CookieToken->getToken(), $storedTokenHash);
+    }
+
     public function testTryAuthExpired(): void
     {
         // cookie is valid only one minute
         $CookieAuth = new Cookie(1, $this->CookieToken);
         // create a token but 4 minutes in the past
-        $req = $this->Db->prepare('UPDATE users SET token = :token, token_created_at = DATE_SUB(NOW(), INTERVAL 4 MINUTE) WHERE userid = :userid');
-        $req->bindValue(':token', $this->CookieToken->getToken());
+        $req = $this->Db->prepare('UPDATE users SET token_hash = :token_hash, token_created_at = DATE_SUB(NOW(), INTERVAL 4 MINUTE) WHERE userid = :userid');
+        $req->bindValue(':token_hash', $this->CookieToken->getTokenHash(), PDO::PARAM_LOB);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
         // now try login but our cookie isn't valid anymore
@@ -70,15 +91,15 @@ class CookieTest extends \PHPUnit\Framework\TestCase
 
     public function testEmptyTokenIsNotSaved(): void
     {
-        $currentToken = $this->CookieToken->getToken();
+        $currentTokenHash = $this->CookieToken->getTokenHash();
         $CookieToken = new CookieToken('invalid length');
 
         $this->assertTrue($CookieToken->saveToken($this->userid));
 
-        $req = $this->Db->prepare('SELECT token FROM users WHERE userid = :userid');
+        $req = $this->Db->prepare('SELECT token_hash FROM users WHERE userid = :userid');
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $this->assertSame($currentToken, $req->fetchColumn());
+        $this->assertSame($currentTokenHash, $req->fetchColumn());
     }
 }

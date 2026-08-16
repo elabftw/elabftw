@@ -18,6 +18,7 @@ use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthenticatorInterface;
 use Override;
+use PDO;
 
 use function sprintf;
 
@@ -32,14 +33,14 @@ final class Cookie implements AuthenticatorInterface
     public function authenticate(): Authentication
     {
         $Db = Db::getConnection();
-        // compare the provided token with the token saved in SQL database
+        // compare the hash of the provided token with the hash saved in SQL database
         $sql = sprintf(
             'SELECT userid
-            FROM users WHERE token = :token AND token_created_at > NOW() - INTERVAL %d MINUTE LIMIT 1',
+            FROM users WHERE token_hash = :token_hash AND token_created_at > NOW() - INTERVAL %d MINUTE LIMIT 1',
             $this->validityMinutes
         );
         $req = $Db->prepare($sql);
-        $req->bindValue(':token', $this->Token->getToken());
+        $req->bindValue(':token_hash', $this->Token->getTokenHash(), PDO::PARAM_LOB);
         $Db->execute($req);
         $userid = (int) $req->fetchColumn();
         if ($userid === 0) {

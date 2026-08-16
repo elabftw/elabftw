@@ -429,7 +429,7 @@ class Users extends AbstractRest
         unset($userData['password_hash']);
         unset($userData['salt']);
         unset($userData['mfa_secret']);
-        unset($userData['token']);
+        unset($userData['token_hash']);
         // keep sig_privkey in response if requester is target
         if ($this->requester->userData['userid'] !== $this->userData['userid']) {
             unset($userData['sig_privkey']);
@@ -535,7 +535,7 @@ class Users extends AbstractRest
      */
     public function invalidateToken(): bool
     {
-        $sql = 'UPDATE users SET token = NULL, token_created_at = NULL WHERE userid = :userid';
+        $sql = 'UPDATE users SET token_hash = NULL, token_created_at = NULL WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         return $this->Db->execute($req);

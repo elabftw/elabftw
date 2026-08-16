@@ -13,15 +13,17 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Env;
 use Elabftw\Services\Filter;
 use PDO;
 
 use function bin2hex;
+use function hash_hmac;
 use function random_bytes;
 use function strlen;
 
 /**
- * The cookie "token" acts as a key to login back thanks to the cookie value and the value stored in database
+ * The cookie token acts as a key to login back; only its hash is stored in the database
  */
 final class CookieToken
 {
@@ -40,16 +42,16 @@ final class CookieToken
     }
 
     /**
-     * Save the token in the database for a user
+     * Save the token hash in the database for a user
      */
     public function saveToken(int $userid): bool
     {
         if ($this->token === '') {
             return true;
         }
-        $sql = 'UPDATE users SET token = :token, token_created_at = NOW() WHERE userid = :userid';
+        $sql = 'UPDATE users SET token_hash = :token_hash, token_created_at = NOW() WHERE userid = :userid';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':token', $this->getToken());
+        $req->bindValue(':token_hash', $this->getTokenHash(), PDO::PARAM_LOB);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
@@ -57,6 +59,11 @@ final class CookieToken
     public function getToken(): string
     {
         return $this->token;
+    }
+
+    public function getTokenHash(): string
+    {
+        return hash_hmac('sha256', $this->token, Env::asString('SECRET_KEY'), true);
     }
 
     public static function generate(): string

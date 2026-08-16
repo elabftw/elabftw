@@ -13,13 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Models\Links;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\ContainerDeletionReason;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Units;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\Config;
@@ -27,6 +27,7 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\StorageUnits;
+use Elabftw\Models\Teams;
 use Elabftw\Params\ContentParams;
 use Override;
 use PDO;
@@ -35,14 +36,20 @@ use Throwable;
 use function array_key_exists;
 use function intval;
 use function json_encode;
+use function mb_strlen;
 use function number_format;
 use function sprintf;
+use function trim;
+use function _;
 
 /**
  * All about containers links with entities
  */
 abstract class AbstractContainersLinks extends AbstractLinks
 {
+    // keep in sync with the maxlength attribute on the modal input and maxLength in the api doc
+    private const int MAX_DELETION_COMMENT_LENGTH = 255;
+
     #[Override]
     public function getApiPath(): string
     {
@@ -152,6 +159,11 @@ abstract class AbstractContainersLinks extends AbstractLinks
     {
         $this->Entity->canOrExplode(AccessType::Write);
         $before = $this->readOne();
+        // a deletion reason cannot travel on a DELETE, so it comes as a PATCH with a body
+        if ($action === Action::Destroy) {
+            $this->destroyWithReason($params);
+            return $before;
+        }
         if (isset($params['storage_id'])) {
             $this->moveToStorage((int) $params['storage_id']);
         }
@@ -246,39 +258,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     #[Override]
     public function destroy(): bool
     {
-        $this->Entity->canOrExplode(AccessType::Write);
-        $this->Entity->touch();
-
-        // read details for the changelog before the row is deleted
-        $current = null;
-        $storagePath = '';
-        try {
-            $current = $this->readOne();
-            $storagePath = $this->getStoragePath((int) $current['storage_id']);
-        } catch (ResourceNotFoundException) {
-            // already gone: still run the DELETE (idempotent), just skip the changelog
-        }
-
-        $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $result = $this->Db->execute($req);
-
-        if ($current !== null && $req->rowCount() > 0) {
-            new Changelog($this->Entity)->create(new ContentParams(
-                'container_deleted',
-                sprintf(
-                    'Removed container with %s %s from "%s" (container #%d)',
-                    $current['qty_stored'],
-                    $current['qty_unit'],
-                    $storagePath,
-                    (int) $current['id'],
-                ),
-            ));
-        }
-
-        return $result;
+        return $this->destroyWithReason(array(), viaDeleteVerb: true);
     }
 
     public function destroyAll(): bool
@@ -408,6 +388,82 @@ abstract class AbstractContainersLinks extends AbstractLinks
             return 'containers2experiments';
         }
         return 'containers2items';
+    }
+
+    private function destroyWithReason(array $params, bool $viaDeleteVerb = false): bool
+    {
+        $this->Entity->canOrExplode(AccessType::Write);
+        // read details for the changelog before the row is deleted; a container that is
+        // already gone answers 404, so a failed deletion is never reported as a success
+        $current = $this->readOne();
+        $storagePath = $this->getStoragePath((int) $current['storage_id']);
+        // resolve before the DELETE: a missing reason must not destroy anything
+        $reasonSuffix = $this->deletionReasonSuffix($params, $viaDeleteVerb);
+        $this->Entity->touch();
+
+        // the row and its audit entry go together: a lost changelog must not leave a deleted container behind
+        $this->Db->beginTransaction();
+        try {
+            $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE id = :id AND item_id = :item_id';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            $result = $this->Db->execute($req);
+
+            if ($req->rowCount() > 0) {
+                new Changelog($this->Entity)->create(new ContentParams(
+                    'container_deleted',
+                    sprintf(
+                        'Removed container with %s %s from "%s" (container #%d)%s',
+                        $current['qty_stored'],
+                        $current['qty_unit'],
+                        $storagePath,
+                        (int) $current['id'],
+                        $reasonSuffix,
+                    ),
+                ));
+            }
+            $this->Db->commit();
+            return $result;
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Reason for deletion, as a suffix to the changelog line. Empty unless the team requires it.
+     */
+    private function deletionReasonSuffix(array $params, bool $viaDeleteVerb): string
+    {
+        // the setting belongs to the team that owns the entity, not to the team of whoever deletes
+        $teamConfig = new Teams($this->Entity->Users, (int) $this->Entity->entityData['team'])->teamArr;
+        if (empty($teamConfig['capture_container_deletion_reason'])) {
+            return '';
+        }
+        $rawReason = $params['deletion_reason'] ?? null;
+        if ($rawReason === null || $rawReason === '') {
+            // DELETE has no body to carry a reason: point at the verb that does, and at a stale page reload
+            throw new ImproperActionException($viaDeleteVerb
+                ? _('A reason is required to delete a container. Use PATCH with action "destroy", or reload the page.')
+                : _('A reason is required to delete a container.'));
+        }
+        // anything non numeric casts to 0, which matches no case
+        $reason = ContainerDeletionReason::tryFrom((int) $rawReason)
+            ?? throw new ImproperActionException(_('Invalid reason for deleting a container.'));
+        // stored as typed: the changelog cell is escaped when rendered, so purifying here would double encode
+        $comment = trim((string) ($params['deletion_comment'] ?? ''));
+        // reject rather than truncate: a silently shortened audit record is worse than a refused deletion
+        if (mb_strlen($comment) > self::MAX_DELETION_COMMENT_LENGTH) {
+            throw new ImproperActionException(sprintf(
+                _('The comment is too long: %d characters maximum.'),
+                self::MAX_DELETION_COMMENT_LENGTH,
+            ));
+        }
+        if ($reason->requiresComment() && $comment === '') {
+            throw new ImproperActionException(_('Please describe the reason for deleting this container.'));
+        }
+        return sprintf(' (%s)', $comment === '' ? $reason->toHuman() : $reason->toHuman() . ': ' . $comment);
     }
 
     private function moveToStorage(int $newStorageId): void

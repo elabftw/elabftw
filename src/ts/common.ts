@@ -1061,11 +1061,53 @@ if (storageModalEl) {
 
 on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadStorageTrees()));
 
+const destroyContainer = (id: string) =>
+  ApiC.delete(`${entity.type}/${entity.id}/containers/${id}`).then(() => reloadStorageAndContainers());
+
+// DELETE carries no body, so a deletion reason goes through a PATCH instead
+const destroyContainerWithReason = (id: string, params: Record<string, string | number>) =>
+  ApiC.patch(`${entity.type}/${entity.id}/containers/${id}`, Object.assign({ action: 'destroy' }, params))
+    .then(() => reloadStorageAndContainers());
+
+// the modal is only rendered when the team requires a deletion reason
+const containerDeletionModal = document.getElementById('containerDeletionReasonModal');
+
 on('destroy-container', (el: HTMLElement) => {
-  if (confirm(i18next.t('generic-delete-warning'))) {
-    ApiC.delete(`${entity.type}/${entity.id}/containers/${el.dataset.id}`).then(() => reloadStorageAndContainers());
+  if (!containerDeletionModal) {
+    if (confirm(i18next.t('generic-delete-warning'))) {
+      destroyContainer(el.dataset.id);
+    }
+    return;
   }
+  containerDeletionModal.dataset.containerId = el.dataset.id;
+  $('#containerDeletionReasonModal').modal('show');
 });
+
+if (containerDeletionModal) {
+  const reasonSelect = document.getElementById('containerDeletionReasonSelect') as HTMLSelectElement;
+  const commentInput = document.getElementById('containerDeletionCommentInput') as HTMLInputElement;
+  const confirmBtn = document.getElementById('containerDeletionConfirmBtn') as HTMLButtonElement;
+  // which reasons need a comment is decided server-side, and tagged on the option
+  const refreshConfirmBtn = () => {
+    const needsComment = reasonSelect.selectedOptions[0]?.dataset.requiresComment !== undefined;
+    confirmBtn.disabled = reasonSelect.value === ''
+      || (needsComment && commentInput.value.trim() === '');
+  };
+  reasonSelect.addEventListener('change', refreshConfirmBtn);
+  commentInput.addEventListener('input', refreshConfirmBtn);
+  $('#containerDeletionReasonModal').on('show.bs.modal', () => {
+    reasonSelect.value = '';
+    commentInput.value = '';
+    refreshConfirmBtn();
+  });
+
+  on('destroy-container-confirm', () => {
+    destroyContainerWithReason(containerDeletionModal.dataset.containerId, {
+      deletion_reason: Number(reasonSelect.value),
+      deletion_comment: commentInput.value,
+    }).then(() => $('#containerDeletionReasonModal').modal('hide'));
+  });
+}
 
 on('move-container', (el: HTMLElement) => {
   const modal = document.getElementById('moveStorageModal');

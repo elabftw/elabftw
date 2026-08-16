@@ -2044,6 +2044,12 @@ components:
           type: integer
           default: 0
           description: Binary toggle to force usage of templates.
+        capture_container_deletion_reason:
+          type: integer
+          default: 0
+          description: |
+            Binary toggle to require a reason (deletion_reason, and deletion_comment
+            for "other") when deleting a container of an entity owned by this team.
         created_at:
           type: string
         orgid:
@@ -2419,7 +2425,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: ['storage_id', 'qty_stored']
+              required: ['qty_stored']
               properties:
                 qty_stored:
                   type: number
@@ -2463,42 +2469,85 @@ paths:
           $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Containers']
-      summary: Modify a container.
+      summary: Modify a container, or delete one giving a reason.
       description: |
-        Update the quantity stored, the unit, or the storage location of a
-        container. Setting `storage_id` moves the container to a different
-        storage unit while preserving its `id` and `created_at`.
+        With `action: update` (the default), update the quantity stored, the unit,
+        or the storage location of a container. Setting `storage_id` moves the
+        container to a different storage unit while preserving its `id` and
+        `created_at`.
 
         A move is rejected with `400` if the destination has a `capacity` and is
         already full. Moving a container out of a full location is always allowed,
         and moving it to where it already is remains a no-op.
+
+        With `action: destroy`, remove the container `subid`. This is the way to
+        delete when the team that owns the entity has
+        `capture_container_deletion_reason` enabled: a
+        `deletion_reason` is then mandatory, and so is a `deletion_comment` when the
+        reason is `other` (100). The reason is recorded in the changelog of the
+        parent entity. Otherwise, use `DELETE`, which takes no body.
       operationId: patch-container
       requestBody:
-        description: Parameters for modifying a container.
+        description: Parameters for modifying or deleting a container.
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                qty_stored:
-                  type: number
-                  description: New quantity stored.
-                  example: 15.0
-                qty_unit:
-                  type: string
-                  description: New unit of the quantity.
-                  example: "g"
-                storage_id:
-                  type: integer
-                  description: |
-                    New storage unit id. Moves the container to that storage
-                    unit. Requires write access on the parent entity and (when
-                    `inventory_require_edit_rights=1`) the
-                    `can_manage_inventory_locations` permission.
-                  example: 12
+              oneOf:
+                - title: Update
+                  type: object
+                  properties:
+                    action:
+                      type: string
+                      enum: ['update']
+                    qty_stored:
+                      type: number
+                      description: New quantity stored.
+                      example: 15.0
+                    qty_unit:
+                      type: string
+                      description: New unit of the quantity.
+                      example: "g"
+                    storage_id:
+                      type: integer
+                      description: |
+                        New storage unit id. Moves the container to that storage
+                        unit. Requires write access on the parent entity and (when
+                        `inventory_require_edit_rights=1`) the
+                        `can_manage_inventory_locations` permission.
+                      example: 12
+                - title: Destroy
+                  type: object
+                  required: ['action']
+                  properties:
+                    action:
+                      type: string
+                      enum: ['destroy']
+                    deletion_reason:
+                      type: integer
+                      # see ContainerDeletionReason enum
+                      enum: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+                      description: |
+                        10 used up in authorised work, 20 no longer required,
+                        30 consent withdrawn or use prohibited, 40 approval or
+                        retention period ended, 50 shelf life exceeded,
+                        60 unsuitable for intended use, 70 contaminated,
+                        80 storage or transport incident, 90 collected or
+                        registered in error, 100 other.
+                      example: 70
+                    deletion_comment:
+                      type: string
+                      maxLength: 255
+                      description: |
+                        Free text, accepted with any reason and required with
+                        `other` (100). Anything longer than 255 characters is
+                        rejected with a 400, not truncated, so that no audit
+                        record is silently shortened. Stored as typed.
+                      example: 'spilled in transit'
       responses:
         '200':
-          description: The updated container.
+          description: |
+            The updated container, or the container as it was just before an
+            `action: destroy` removed it.
           content:
             application/json:
               schema:
@@ -2512,11 +2561,19 @@ paths:
     delete:
       tags: ['Containers']
       summary: Delete a container.
-      description: Remove an entity from a storage unit.
+      description: |
+        Remove an entity from a storage unit. Takes no body: when the team that
+        owns the entity has `capture_container_deletion_reason` enabled, this
+        returns 400 and the `PATCH` variant must be used instead.
+
+        A container that does not exist returns 404, so a deletion that removed
+        nothing is never reported as a success.
       operationId: delete-container
       responses:
         '204':
           description: The container was deleted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
            $ref: '#/components/responses/Unauthorized'
         '404':

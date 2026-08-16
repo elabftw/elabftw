@@ -90,6 +90,51 @@ final class SamlTest extends TestCase
         self::assertSame(AuthMethod::Saml, $authentication->method);
     }
 
+    public function testEmailLookupRejectsCollationEquivalentAttribute(): void
+    {
+        $victim = $this->createLocalUser(
+            'saml-collation-elab@example.com',
+        );
+
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = "saml-collation-\xC3\xA9lab@example.com";
+
+        try {
+            $this->assertIdpResponse($samlUserdata);
+            self::fail('A collation-equivalent SAML email must not bind an existing user.');
+        } catch (ImproperActionException) {
+            self::assertSame(
+                'saml-collation-elab@example.com',
+                (new ExistingUser($victim->getUserid()))->userData['email'],
+            );
+        }
+    }
+
+    public function testOrgidLookupRejectsCollationEquivalentAttribute(): void
+    {
+        $victim = $this->createLocalUser(
+            'saml-collation-orgid@example.com',
+            orgid: 'saml-collation-elab-id',
+        );
+
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-collation-orgid-attacker@example.com';
+        $samlUserdata['internal_id'] = "saml-collation-\xC3\xA9lab-id";
+
+        $config = $this->configArr;
+        $config['saml_fallback_orgid'] = '1';
+
+        try {
+            $this->assertIdpResponse($samlUserdata, $config);
+            self::fail('A collation-equivalent SAML orgid must not bind an existing user.');
+        } catch (ImproperActionException) {
+            self::assertSame(
+                'saml-collation-elab-id',
+                (new ExistingUser($victim->getUserid()))->userData['orgid'],
+            );
+        }
+    }
+
     public function testExistingUserDoesNotNeedTeamAttributeWhenSyncIsDisabled(): void
     {
         $samlUserdata = $this->samlUserdata;

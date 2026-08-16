@@ -125,7 +125,7 @@ final class Install extends Command
             $ApiKeys = new ApiKeys($Sysadmin);
             $ApiKeys->create('Sysadmin key', 1);
             $output->writeln('<info>✓ Sysadmin account successfully created.</info>');
-            $output->writeln(sprintf('<info>→ Sysadmin API key: %d-%s</info>', $ApiKeys->key, $ApiKeys->key));
+            $output->writeln(sprintf('<info>→ Sysadmin API key: %s</info>', $ApiKeys->key));
         } else {
             $output->writeln('<info>→ Register your Sysadmin account here: ' . Env::asUrl('SITE_URL') . '/register.php</info>');
         }

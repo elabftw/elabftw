@@ -11,7 +11,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Storage;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
@@ -22,10 +24,14 @@ use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\InputBag;
+use ZipArchive;
 
 use function array_column;
 use function dirname;
 use function sprintf;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
 
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_OK;
@@ -83,6 +89,62 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $this->logger,
             EntityType::Items,
             category: 1,
+        );
+    }
+
+    /**
+     * @dataProvider unsafeArchivePathProvider
+     */
+    public function testRejectUnsafeArchivePath(string $unsafePath): void
+    {
+        $exportsFs = Storage::EXPORTS->getStorage()->getFs();
+        $target = Tools::getUuidv4();
+        $exportsFs->write($target, 'original export');
+
+        $archivePath = tempnam(sys_get_temp_dir(), 'elabftw-unsafe-eln-');
+        $this->assertIsString($archivePath);
+        $archive = new ZipArchive();
+        $this->assertTrue($archive->open($archivePath, ZipArchive::OVERWRITE));
+        $this->assertTrue($archive->addFromString('ro-crate-metadata.json', '{}'));
+        $this->assertTrue($archive->addFromString(sprintf($unsafePath, $target), 'poisoned export'));
+        $this->assertTrue($archive->close());
+
+        $uploadedFile = new UploadedFile(
+            $archivePath,
+            'unsafe.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        try {
+            new Eln(
+                new Users(1, 1),
+                new Users(1, 1),
+                $uploadedFile,
+                $this->fs,
+                $this->logger,
+                EntityType::Experiments,
+            );
+            $this->fail('An ELN archive containing an unsafe path was accepted.');
+        } catch (ImproperActionException) {
+            $this->assertSame('original export', $exportsFs->read($target));
+        } finally {
+            $exportsFs->delete($target);
+            unlink($archivePath);
+        }
+    }
+
+    public static function unsafeArchivePathProvider(): array
+    {
+        return array(
+            'parent traversal' => array('../%s'),
+            'nested parent traversal' => array('attachments/../../%s'),
+            'backslash traversal' => array('..\\%s'),
+            'absolute path' => array('/%s'),
+            'Windows drive path' => array('C:/%s'),
+            'encoded traversal' => array('%%2e%%2e/%%2f%s'),
+            'double encoded traversal' => array('%%252e%%252e/%%252f%s'),
         );
     }
 

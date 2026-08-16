@@ -819,7 +819,7 @@ class Users extends AbstractRest
         $Db = Db::getConnection();
         // Prefer an active account, but return an archived account if it is the only match.
         $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term %s
+            'SELECT userid FROM users WHERE %s = :term AND CAST(%s AS BINARY) = CAST(:exact_term AS BINARY) %s
              ORDER BY EXISTS (
               SELECT 1
               FROM users2teams AS ut
@@ -828,10 +828,12 @@ class Users extends AbstractRest
             ) DESC, users.userid ASC
             LIMIT 1',
             $column->value,
+            $column->value,
             $filterValidated ? 'AND validated = 1' : 'AND 1=1',
         );
         $req = $Db->prepare($sql);
         $req->bindParam(':term', $term);
+        $req->bindParam(':exact_term', $term);
         $Db->execute($req);
         $res = (int) $req->fetchColumn();
         if ($res === 0) {

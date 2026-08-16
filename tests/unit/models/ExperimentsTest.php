@@ -177,6 +177,37 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('<p>safe</p>', $entityData['body']);
     }
 
+    public function testMarkdownToHtmlTypeOnlyUpdateSanitizesStoredBody(): void
+    {
+        $body = '<p>safe</p><script>unsafe</script>';
+        $new = $this->Experiments->create(body: $body, contentType: BodyContentType::Markdown);
+        $this->Experiments->setId($new);
+
+        $entityData = $this->Experiments->patch(Action::Update, array(
+            'content_type' => BodyContentType::Html->value,
+        ));
+
+        $this->assertSame('<p>safe</p>', $entityData['body']);
+        $this->assertSame($entityData['body'], $entityData['body_html']);
+    }
+
+    public function testMarkdownToHtmlBodyAppendSanitizesCompleteBody(): void
+    {
+        $body = '<p>stored</p><script>unsafe</script>';
+        $new = $this->Experiments->create(body: $body, contentType: BodyContentType::Markdown);
+        $this->Experiments->setId($new);
+
+        $entityData = $this->Experiments->patch(Action::Update, array(
+            'content_type' => BodyContentType::Html->value,
+            'bodyappend' => '<p>appended</p>',
+        ));
+
+        $this->assertStringContainsString('<p>stored</p>', $entityData['body']);
+        $this->assertStringContainsString('<p>appended</p>', $entityData['body']);
+        $this->assertStringNotContainsString('<script', $entityData['body']);
+        $this->assertSame($entityData['body'], $entityData['body_html']);
+    }
+
     public function testUpdateIncorrectState(): void
     {
         $new = $this->Experiments->create();

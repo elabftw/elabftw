@@ -23,14 +23,12 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
-use function bin2hex;
-use function password_hash;
-use function password_verify;
-use function random_bytes;
 use function _;
-use function explode;
-use function sprintf;
-use function str_contains;
+use function bin2hex;
+use function hash;
+use function password_verify;
+use function preg_match;
+use function random_bytes;
 
 /**
  * Api keys CRUD class
@@ -39,9 +37,11 @@ final class ApiKeys extends AbstractRest
 {
     use SetIdTrait;
 
-    public string $key = '';
+    private const int KEY_RANDOM_BYTES = 16;
 
-    public int $keyId = 0;
+    private const string LEGACY_KEY_PATTERN = '/\A([1-9][0-9]*)-(.+)\z/';
+
+    public string $key = '';
 
     public function __construct(private Users $Users, ?int $id = null)
     {
@@ -58,7 +58,7 @@ final class ApiKeys extends AbstractRest
     #[Override]
     public function getApiPath(): string
     {
-        return sprintf('%d-%s', $this->keyId, $this->key);
+        return $this->key;
     }
 
     /**
@@ -68,8 +68,8 @@ final class ApiKeys extends AbstractRest
      */
     public function createKnown(string $apiKey): int
     {
-        $hash = password_hash($apiKey, PASSWORD_BCRYPT);
-        return $this->insert('known key used from db:populate command', 1, $hash);
+        $this->key = $apiKey;
+        return $this->insert('known key used from db:populate command', 1, $this->getTokenHash($apiKey));
     }
 
     /**
@@ -78,7 +78,7 @@ final class ApiKeys extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = 'SELECT ak.id, ak.name, ak.created_at, ak.last_used_at, ak.hash, ak.can_write, ak.team, teams.name AS team_name
+        $sql = 'SELECT ak.id, ak.name, ak.created_at, ak.last_used_at, ak.can_write, ak.team, teams.name AS team_name
             FROM api_keys AS ak
             LEFT JOIN teams ON teams.id = ak.team
             WHERE ak.userid = :userid ORDER BY last_used_at DESC';
@@ -91,33 +91,22 @@ final class ApiKeys extends AbstractRest
 
     /**
      * Get a user from an API key
-     * Note: at some point we should drop support for keys without id header
-     * Id header avoids looping over all the keys to find the correct one
      */
     public function readFromApiKey(string $apiKey): array
     {
-        $idFilter = '';
-        // do we have key id information? old keys don't have it
-        if (str_contains($apiKey, '-')) {
-            // extract the keyId from the key
-            $exploded = explode('-', $apiKey, 2);
-            $this->keyId = (int) $exploded[0];
-            // we reassign it to this variable so it's transparent for the code below
-            $apiKey = $exploded[1] ?? '';
-            $idFilter = ' WHERE id = :id';
+        $tokenHash = $this->getTokenHash($apiKey);
+        $key = $this->readFromTokenHash($tokenHash);
+        if ($key !== false) {
+            return $key;
         }
-        $sql = 'SELECT id, hash, userid, can_write, team FROM api_keys' . $idFilter;
-        $req = $this->Db->prepare($sql);
-        if ($idFilter) {
-            $req->bindParam(':id', $this->keyId, PDO::PARAM_INT);
+
+        // Legacy keys are migrated to token_hash after their first successful use.
+        $key = $this->readLegacyKey($apiKey);
+        if ($key !== false) {
+            $this->migrateLegacyKey((int) $key['id'], $tokenHash);
+            return $key;
         }
-        $this->Db->execute($req);
-        foreach ($req->fetchAll() as $key) {
-            if (password_verify($apiKey, $key['hash'])) {
-                $this->touch($key['id']);
-                return $key;
-            }
-        }
+
         throw new UnauthorizedException(description: _('No corresponding API key found!'));
     }
 
@@ -153,13 +142,69 @@ final class ApiKeys extends AbstractRest
 
     public function create(string $name, int $canwrite): int
     {
-        $hash = password_hash($this->generateKey(), PASSWORD_BCRYPT);
-        return $this->insert(Filter::title($name), $canwrite, $hash);
+        $this->key = $this->generateKey();
+        return $this->insert(Filter::title($name), $canwrite, $this->getTokenHash($this->key));
+    }
+
+    private function readFromTokenHash(string $tokenHash): array|false
+    {
+        $sql = 'SELECT id, userid, can_write, team,
+                IF(last_used_at IS NULL OR last_used_at <= NOW() - INTERVAL 5 MINUTE, 1, 0) AS touch_required
+            FROM api_keys
+            WHERE token_hash = :token_hash
+            LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':token_hash', $tokenHash, PDO::PARAM_LOB);
+        $this->Db->execute($req);
+        $key = $req->fetch();
+        if ($key === false) {
+            return false;
+        }
+        if ((bool) $key['touch_required']) {
+            $this->touch((int) $key['id']);
+        }
+        unset($key['touch_required']);
+        return $key;
+    }
+
+    private function readLegacyKey(string $apiKey): array|false
+    {
+        if (preg_match(self::LEGACY_KEY_PATTERN, $apiKey, $matches) !== 1) {
+            return false;
+        }
+
+        $sql = 'SELECT id, hash, userid, can_write, team
+            FROM api_keys
+            WHERE id = :id AND hash IS NOT NULL
+            LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', (int) $matches[1], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $key = $req->fetch();
+        if ($key === false || !password_verify($matches[2], (string) $key['hash'])) {
+            return false;
+        }
+        unset($key['hash']);
+        return $key;
+    }
+
+    private function migrateLegacyKey(int $keyId, string $tokenHash): bool
+    {
+        $sql = 'UPDATE api_keys
+            SET token_hash = :token_hash, hash = NULL, last_used_at = NOW()
+            WHERE id = :id AND token_hash IS NULL AND hash IS NOT NULL';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':token_hash', $tokenHash, PDO::PARAM_LOB);
+        $req->bindValue(':id', $keyId, PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     private function touch(int $keyId): bool
     {
-        $sql = 'UPDATE api_keys SET last_used_at = NOW() WHERE id = :id';
+        $sql = 'UPDATE api_keys
+            SET last_used_at = NOW()
+            WHERE id = :id
+                AND (last_used_at IS NULL OR last_used_at <= NOW() - INTERVAL 5 MINUTE)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $keyId, PDO::PARAM_INT);
         return $this->Db->execute($req);
@@ -167,27 +212,30 @@ final class ApiKeys extends AbstractRest
 
     private function generateKey(): string
     {
-        // keep it in the object so we can display it to the user after
-        $this->key = bin2hex(random_bytes(42));
-        return $this->key;
+        return bin2hex(random_bytes(self::KEY_RANDOM_BYTES));
     }
 
-    private function insert(string $name, int $canwrite, string $hash): int
+    private function getTokenHash(string $apiKey): string
     {
-        $sql = 'INSERT INTO api_keys (name, hash, can_write, userid, team) VALUES (:name, :hash, :can_write, :userid, :team)';
+        return hash('sha256', $apiKey, true);
+    }
+
+    private function insert(string $name, int $canwrite, string $tokenHash): int
+    {
+        $sql = 'INSERT INTO api_keys (name, token_hash, can_write, userid, team)
+            VALUES (:name, :token_hash, :can_write, :userid, :team)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':hash', $hash);
+        $req->bindValue(':token_hash', $tokenHash, PDO::PARAM_LOB);
         $req->bindParam(':can_write', $canwrite, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $res = $this->Db->execute($req);
-        // we store the id of the key in the object to serve it as part of the key
         // must be executed before AuditLog request!
-        $this->keyId = $this->Db->lastInsertId();
+        $keyId = $this->Db->lastInsertId();
         if ($res) {
             AuditLogs::create(new ApiKeyCreated((int) $this->Users->requester->userid, (int) $this->Users->userid));
         }
-        return $this->keyId;
+        return $keyId;
     }
 }

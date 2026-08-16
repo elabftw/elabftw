@@ -31,13 +31,15 @@ SET time_zone = "+00:00";
 CREATE TABLE `api_keys` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `hash` varchar(255) NOT NULL,
+  `hash` varchar(255) DEFAULT NULL,
+  `token_hash` binary(32) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `can_write` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `userid` int(10) UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_api_keys_token_hash` (`token_hash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --

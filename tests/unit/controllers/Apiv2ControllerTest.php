@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -19,6 +20,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function basename;
 use function json_decode;
 
 class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
@@ -103,6 +105,26 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $Controller->canWrite = true;
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+    }
+
+    public function testCreateApiKeyReturnsRawTokenInLocation(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create('/api/v2/apikeys', 'POST', content: '{"name": "controller test key", "canwrite": 0}'),
+        );
+        $Controller->canWrite = true;
+        $res = $Controller->getResponse();
+
+        $this->assertSame(Response::HTTP_CREATED, $res->getStatusCode());
+        $apiKey = basename((string) $res->headers->get('Location'));
+        $this->assertMatchesRegularExpression('/\A[[:xdigit:]]{32}\z/', $apiKey);
+
+        $ApiKeys = new ApiKeys($user);
+        $storedKey = $ApiKeys->readFromApiKey($apiKey);
+        $ApiKeys->setId((int) $storedKey['id']);
+        $this->assertTrue($ApiKeys->destroy());
     }
 
     public function testGetCompounds(): void

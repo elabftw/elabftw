@@ -14,6 +14,7 @@ namespace Elabftw\Import;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\FilesystemOperator;
@@ -23,10 +24,18 @@ use League\Flysystem\ZipArchive\ZipArchiveAdapter;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use RuntimeException;
+use ZipArchive;
 
+use function explode;
 use function fclose;
+use function in_array;
+use function iterator_to_array;
+use function preg_match;
+use function rawurldecode;
 use function sprintf;
+use function str_contains;
 use function str_replace;
+use function str_starts_with;
 
 /**
  * Mother class for importing zip file
@@ -60,6 +69,7 @@ abstract class AbstractZip extends AbstractImport
         $this->emitLog(sprintf('temporary directory: %s', $this->tmpDir), LogLevel::DEBUG);
         // we use the Exports storage to store decompressed data
         $this->tmpFs = Storage::EXPORTS->getStorage()->getFs();
+        $this->assertArchiveMemberNamesAreSafe();
 
         $adapter = new ZipArchiveAdapter(
             new FilesystemZipArchiveProvider($this->UploadedFile->getPathname())
@@ -106,13 +116,42 @@ abstract class AbstractZip extends AbstractImport
     }
 
     /**
+     * Validate original ZIP member names before the Flysystem adapter normalizes them.
+     */
+    private function assertArchiveMemberNamesAreSafe(): void
+    {
+        $archive = new ZipArchive();
+        if ($archive->open($this->UploadedFile->getPathname(), ZipArchive::RDONLY) !== true) {
+            throw new ImproperActionException('The uploaded file is not a valid ZIP archive.');
+        }
+
+        try {
+            for ($index = 0; $index < $archive->numFiles; $index++) {
+                $rawPath = $archive->getNameIndex($index, ZipArchive::FL_UNCHANGED);
+                if ($rawPath === false) {
+                    throw new ImproperActionException('The archive contains an invalid path.');
+                }
+                $this->assertArchivePathIsSafe($rawPath);
+            }
+        } finally {
+            $archive->close();
+        }
+    }
+
+    /**
      * Extract everything from a ZIP-backed Flysystem into another directory
      * on any Flysystem backend (local, S3, etc).
      */
     private function extractZipFilesystemToDir(FilesystemAdapter $zipFs): void
     {
-        foreach ($zipFs->listContents('', true) as $item) {
+        // Validate the complete archive before writing anything. This prevents a
+        // later unsafe member from leaving a partially extracted import behind.
+        $items = iterator_to_array($zipFs->listContents('', true), false);
+        foreach ($items as $item) {
+            $this->assertArchivePathIsSafe($item->path());
+        }
 
+        foreach ($items as $item) {
             $rawPath = $item->path();
             $this->emitLog(sprintf('ZIP: extracting: %s', $rawPath), LogLevel::DEBUG);
 
@@ -136,6 +175,34 @@ abstract class AbstractZip extends AbstractImport
             } finally {
                 fclose($stream);
             }
+        }
+    }
+
+    /**
+     * Reject paths which can escape the per-import directory on any supported backend.
+     */
+    private function assertArchivePathIsSafe(string $rawPath): void
+    {
+        // Decode repeatedly so double-encoded traversal cannot become dangerous
+        // if another storage layer decodes the path in the future.
+        $decodedPath = $rawPath;
+        do {
+            $previousPath = $decodedPath;
+            $decodedPath = rawurldecode($decodedPath);
+        } while ($decodedPath !== $previousPath);
+
+        // ZIP member names use forward slashes. Backslashes are rejected instead
+        // of normalized so their meaning cannot vary between storage backends.
+        $normalizedPath = str_replace('\\', '/', $decodedPath);
+        if (
+            $normalizedPath === ''
+            || str_contains($decodedPath, "\0")
+            || str_contains($decodedPath, '\\')
+            || str_starts_with($normalizedPath, '/')
+            || preg_match('/^[a-zA-Z]:/', $normalizedPath) === 1
+            || in_array('..', explode('/', $normalizedPath), true)
+        ) {
+            throw new ImproperActionException('The archive contains an unsafe path.');
         }
     }
 }

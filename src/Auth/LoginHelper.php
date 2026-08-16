@@ -109,7 +109,7 @@ final class LoginHelper
     }
 
     /**
-     * Set a $_COOKIE['token'] and update the database with this token.
+     * Set a $_COOKIE['token'] and update the database with its hash.
      * Also set a token_team cookie for the team
      */
     private function setToken(): void

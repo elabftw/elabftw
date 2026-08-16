@@ -251,7 +251,10 @@ final class Apiv2Controller extends AbstractApiController
             $this->action = Action::tryFrom($this->Request->request->getString('action')) ?? Action::Update;
         }
         $id = $this->Model->postAction($this->action, $this->reqBody);
-        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s%d', Env::asUrl('SITE_URL'), $this->Model->getApiPath(), $id)));
+        $location = $this->Model instanceof ApiKeys
+            ? $this->Model->getApiPath()
+            : sprintf('%s%d', $this->Model->getApiPath(), $id);
+        return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s', Env::asUrl('SITE_URL'), $location)));
     }
 
     private function getArray(): array

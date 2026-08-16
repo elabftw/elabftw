@@ -554,6 +554,38 @@ abstract class AbstractEntity extends AbstractRest
                     if (array_key_exists('userid', $params) || array_key_exists('team', $params)) {
                         throw new ImproperActionException("Use the 'action:updateowner' to transfer ownership.");
                     }
+                    $currentContentType = BodyContentType::from((int) $this->entityData['content_type']);
+                    $contentType = BodyContentType::tryFrom((int) ($params['content_type'] ?? $this->entityData['content_type']))
+                        ?? throw new ImproperActionException('Invalid content type.');
+                    // Body filtering must use the final content type, regardless of parameter order.
+                    $this->entityData['content_type'] = $contentType->value;
+
+                    // Persist the safe content type before storing raw Markdown.
+                    if (
+                        $currentContentType === BodyContentType::Html
+                        && $contentType === BodyContentType::Markdown
+                    ) {
+                        $this->update(new EntityParams('content_type', (string) $contentType->value));
+                        unset($params['content_type']);
+                    }
+
+                    // Sanitize the complete resulting body before exposing it as HTML.
+                    if (
+                        $currentContentType === BodyContentType::Markdown
+                        && $contentType === BodyContentType::Html
+                    ) {
+                        $hasBodyUpdate = false;
+                        foreach ($params as $key => $value) {
+                            if ($key === 'body' || $key === 'bodyappend') {
+                                $this->update(new EntityParams($key, (string) $value));
+                                unset($params[$key]);
+                                $hasBodyUpdate = true;
+                            }
+                        }
+                        if (!$hasBodyUpdate) {
+                            $this->update(new EntityParams('body', $this->readColumn('body')));
+                        }
+                    }
                     foreach ($params as $key => $value) {
                         $this->update(new EntityParams($key, (string) $value));
                     }
@@ -856,9 +888,16 @@ abstract class AbstractEntity extends AbstractRest
     // Update an entity. The revision is saved before so it can easily compare old and new body.
     public function update(ContentParamsInterface $params): bool
     {
-        $content = $params->getContent();
-        if ($params->getTarget() === 'bodyappend') {
-            $content = $this->readColumn('body') . $content;
+        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
+            $content = $params->getUnfilteredContent();
+            if ($params->getTarget() === 'bodyappend') {
+                $content = $this->readColumn('body') . $content;
+            }
+            $content = $this->entityData['content_type'] === BodyContentType::Markdown->value
+                ? Filter::bodyMarkdown($content)
+                : Filter::body($content);
+        } else {
+            $content = $params->getContent();
         }
         if ($params->getTarget() === 'metadatamerge') {
             $content = Mh::mergeMetadataValues($this->readColumn('metadata'), $content);

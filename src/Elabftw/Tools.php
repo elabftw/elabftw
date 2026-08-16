@@ -12,8 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Markdown\DisplayMathExtension;
+use League\CommonMark\Environment\Environment;
 use League\CommonMark\Exception\UnexpectedEncodingException;
-use League\CommonMark\GithubFlavoredMarkdownConverter;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use League\CommonMark\MarkdownConverter;
 use Symfony\Component\HttpFoundation\Request;
 
 use function bin2hex;
@@ -60,16 +64,20 @@ final class Tools
     {
         $config = array(
             'allow_unsafe_links' => false,
+            'html_input' => 'strip',
             'max_nesting_level' => 42,
         );
 
         try {
-            $converter = new GithubFlavoredMarkdownConverter($config);
+            $environment = new Environment($config);
+            $environment->addExtension(new CommonMarkCoreExtension());
+            $environment->addExtension(new GithubFlavoredMarkdownExtension());
+            $environment->addExtension(new DisplayMathExtension());
+            $converter = new MarkdownConverter($environment);
             return trim($converter->convert($md)->getContent(), "\n");
         } catch (UnexpectedEncodingException) {
-            // fix for incorrect utf8 encoding, just return md and hope it's html
-            // so at least the thing is displayed instead of triggering a fatal error
-            return $md;
+            // At least display invalid UTF-8 instead of returning unsanitized HTML.
+            return self::eLabHtmlspecialchars($md);
         }
     }
 

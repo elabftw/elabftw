@@ -64,6 +64,13 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         Filter::body(str_repeat('a', 4120001));
     }
 
+    public function testBodyMarkdown(): void
+    {
+        $this->assertSame('H & \\mathbf{1}', Filter::bodyMarkdown('H & \\mathbf{1}'));
+        $this->expectException(ImproperActionException::class);
+        Filter::bodyMarkdown(str_repeat('a', 4120001));
+    }
+
     public function testBodyAllowsInternalLinksToOpenInNewWindow(): void
     {
         $link = '<a href="/experiments/1" target="_blank" rel="noreferrer noopener">Experiment</a>';

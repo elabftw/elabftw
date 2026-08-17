@@ -348,7 +348,7 @@ phpConf() {
 
 elabftwConf() {
     rm -rf /var/cache/elabftw/php/* /var/cache/elabftw/nginx/*
-    mkdir -p /var/cache/elabftw/nginx/client_body /var/cache/elabftw/nginx/fastcgi /var/cache/elabftw/nginx/proxy /var/cache/elabftw/php/tmp /var/cache/elabftw/php/cache/elab /var/cache/elabftw/php/cache/mpdf /var/cache/elabftw/php/cache/twig /var/cache/elabftw/php/cache/purifier/CSS /var/cache/elabftw/php/cache/purifier/HTML /var/cache/elabftw/php/cache/purifier/URI
+    mkdir -p /run/elabftw /var/cache/elabftw/nginx/client_body /var/cache/elabftw/nginx/fastcgi /var/cache/elabftw/nginx/proxy /var/cache/elabftw/php/tmp /var/cache/elabftw/php/cache/elab /var/cache/elabftw/php/cache/mpdf /var/cache/elabftw/php/cache/twig /var/cache/elabftw/php/cache/purifier/CSS /var/cache/elabftw/php/cache/purifier/HTML /var/cache/elabftw/php/cache/purifier/URI
 }
 
 ldapConf() {

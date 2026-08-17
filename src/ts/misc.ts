@@ -477,7 +477,7 @@ function configTomSelect(select: HTMLSelectElement) {
 
 // fetch users and return in an id - username (email) format
 async function fetchUsers(query: string) {
-  const users = await ApiC.getJson(`/users/search?q=${encodeURIComponent(query)}`);
+  const users = await ApiC.getJson(`users/?q=${encodeURIComponent(query)}`);
   return users.map((u) => ({
     value: `user:${u.userid}`,
     text: `${u.fullname} (${u.email})`,

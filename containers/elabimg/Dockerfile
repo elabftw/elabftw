@@ -232,7 +232,6 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # don't put line comments inside this instruction
 RUN apk upgrade -U -a && apk add --no-cache \
     bash \
-    brotli \
     freetype \
     ghostscript \
     git \
@@ -292,36 +291,10 @@ COPY ./containers/elabimg/php/run /etc/s6-overlay/s6-rc.d/php/
 RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/php
 # END S6-OVERLAY
 
-# ELABFTW
-RUN mkdir /elabftw
-WORKDIR /elabftw
-
-ENV TMPDIR=/var/cache/elabftw/php/tmp
-ENV COMPOSER_HOME=/var/cache/elabftw/composer
-
-# COMPOSER
-# 2.10.2 https://github.com/composer/composer/releases/tag/2.10.2
-COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
-
-RUN mkdir -p "$TMPDIR" "$COMPOSER_HOME"
-
-
 ###################
 # ELABFTW BUILDER #
 ###################
 FROM runtime-base AS app-builder
-
-# COREPACK
-ENV COREPACK_HOME=/var/cache/elabftw/corepack
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-
-RUN apk add --no-cache npm \
-    && mkdir -p "$COREPACK_HOME" \
-    && npm install -g corepack@0.35.0 \
-    && corepack enable
-
-# avoid installing cypress
-ENV CYPRESS_INSTALL_BINARY=0
 
 # this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
 # pass it to build command with --build-arg BUILD_ALL=0
@@ -329,10 +302,29 @@ ARG BUILD_ALL=1
 # enable this in CI to skip brotli minification
 ARG CI=0
 
+# COREPACK
+ENV COREPACK_HOME=/var/cache/elabftw/corepack
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+ENV COREPACK_VERSION=0.35.0
+
+RUN apk add --no-cache \
+    brotli \
+    npm \
+    && mkdir -p "$COREPACK_HOME" \
+    && npm install -g corepack@$COREPACK_VERSION \
+    && corepack enable
+
+# COMPOSER
+RUN mkdir /elabftw
+WORKDIR /elabftw
+ENV COMPOSER_HOME=/var/cache/elabftw/composer
+ENV TMPDIR=/var/cache/elabftw/php/tmp
+# 2.10.2 https://github.com/composer/composer/releases/tag/2.10.2
+COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
 # copy PHP dependency manifests first so application source changes don't invalidate this layer
 COPY ./composer.json /elabftw
 COPY ./composer.lock /elabftw
-
+RUN mkdir -p "$TMPDIR" "$COMPOSER_HOME"
 # install PHP dependencies without generating the autoloader yet
 # some ini settings are set on the command line to override the restrictive production ones already set
 RUN if [ "$BUILD_ALL" = "1" ]; then \
@@ -343,6 +335,7 @@ RUN if [ "$BUILD_ALL" = "1" ]; then \
         fi; \
     fi
 
+# YARN
 # copy JS dependency manifests and the files required by the custom yarn plugin
 COPY ./package.json /elabftw
 COPY ./yarn.lock /elabftw
@@ -350,6 +343,9 @@ COPY ./.yarnrc.yml /elabftw
 COPY ./src/tools/yarn-plugin-tinymce.js /elabftw/src/tools/yarn-plugin-tinymce.js
 COPY ./src/scss/_tinymce.scss /elabftw/src/scss/_tinymce.scss
 RUN mkdir -p /elabftw/web/assets
+
+# avoid installing cypress
+ENV CYPRESS_INSTALL_BINARY=0
 
 # install JS dependencies before copying the rest of the application source
 RUN if [ "$BUILD_ALL" = "1" ]; then \

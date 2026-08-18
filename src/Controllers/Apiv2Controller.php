@@ -413,6 +413,13 @@ final class Apiv2Controller extends AbstractApiController
             };
         }
         if ($this->Model instanceof Teams) {
+            if ($this->requester instanceof AnonymousUser) {
+                if ($this->requester->getTeam() !== $this->Model->id) {
+                    throw new ImproperActionException('Cannot query team information if not part of that team or not Sysadmin!');
+                }
+            } else {
+                $this->Model->readOne();
+            }
             return match ($submodel) {
                 // backward compatibility: Status == ExperimentsStatus
                 ApiSubModels::Status, ApiSubModels::ExperimentsStatus => new ExperimentsStatus($this->Model, $this->subId),

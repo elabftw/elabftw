@@ -85,6 +85,54 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
     }
 
+    public function testCannotReadAnotherTeamsSubmodel(): void
+    {
+        $Controller = new Apiv2Controller(
+            $this->getRandomUserInTeam(2),
+            Request::create('/api/v2/teams/1/procurement_requests', 'GET'),
+        );
+
+        $res = $Controller->getResponse();
+
+        self::assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+    }
+
+    public function testAnonymousUserCannotReadAnotherTeamsSubmodel(): void
+    {
+        $Controller = new Apiv2Controller(
+            new AnonymousUser(1),
+            Request::create('/api/v2/teams/2/status', 'GET'),
+        );
+
+        $res = $Controller->getResponse();
+
+        self::assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+    }
+
+    public function testAnonymousUserCanReadCurrentTeamsSubmodel(): void
+    {
+        $Controller = new Apiv2Controller(
+            new AnonymousUser(1),
+            Request::create('/api/v2/teams/1/status', 'GET'),
+        );
+
+        $res = $Controller->getResponse();
+
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+    }
+
+    public function testCanReadCurrentTeamsSubmodel(): void
+    {
+        $Controller = new Apiv2Controller(
+            $this->getRandomUserInTeam(1),
+            Request::create('/api/v2/teams/1/status', 'GET'),
+        );
+
+        $res = $Controller->getResponse();
+
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+    }
+
     public function testBadJson(): void
     {
         $user = $this->getRandomUserInTeam(1);

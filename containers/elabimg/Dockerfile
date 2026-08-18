@@ -174,6 +174,27 @@ RUN cmake -S . -B build \
         --parallel "$(getconf _NPROCESSORS_ONLN)" \
     && strip -s build/bin/obabel
 
+##############
+# S6 BUILDER #
+##############
+FROM alpine:3.24 AS s6-builder
+
+ARG S6_OVERLAY_VERSION=3.2.1.0
+# using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
+ARG TARGETPLATFORM
+ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
+
+RUN apk add --no-cache curl xz
+
+# ADD cannot be used cleanly here because the architecture-specific URL needs a shell-computed
+# mapping from Docker's TARGETPLATFORM to the architecture names used by s6-overlay.
+RUN mkdir -p /s6-root \
+    && if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=x86_64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=arm; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=aarch64; else ARCHITECTURE=amd64; fi \
+    && curl -sS -L -o /tmp/s6-overlay-arch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCHITECTURE}.tar.xz" \
+    && curl -sS -L -o /tmp/s6-overlay-noarch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
+    && tar xpJf /tmp/s6-overlay-arch.tar.xz -C /s6-root \
+    && tar xpJf /tmp/s6-overlay-noarch.tar.xz -C /s6-root
+
 #############################
 # ELABFTW + NGINX + PHP-FPM #
 #############################
@@ -212,7 +233,6 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 RUN apk upgrade -U -a && apk add --no-cache \
     bash \
     brotli \
-    curl \
     freetype \
     ghostscript \
     git \
@@ -260,20 +280,8 @@ RUN ln -f /usr/bin/php84 /usr/bin/php
 RUN git config --system --add safe.directory /elabftw
 
 # S6-OVERLAY
-# install s6-overlay, our init system. Workaround for different versions using TARGETPLATFORM
-# platform see https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
-ARG S6_OVERLAY_VERSION=3.2.1.0
-ENV S6_OVERLAY_VERSION=$S6_OVERLAY_VERSION
-
-# using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
-ARG TARGETPLATFORM
-ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=x86_64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=arm; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=aarch64; else ARCHITECTURE=amd64; fi \
-    && curl -sS -L -O --output-dir /tmp/ --create-dirs "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCHITECTURE}.tar.xz" \
-    && curl -sS -L -O --output-dir /tmp/ --create-dirs "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
-    && tar xpJf "/tmp/s6-overlay-${ARCHITECTURE}.tar.xz" -C / \
-    && tar xpJf "/tmp/s6-overlay-noarch.tar.xz" -C / \
-    && rm /tmp/s6-overlay*
+# install s6-overlay, our init system
+COPY --from=s6-builder /s6-root/ /
 # create nginx s6 service
 RUN mkdir -p /etc/s6-overlay/s6-rc.d/nginx && echo "longrun" > /etc/s6-overlay/s6-rc.d/nginx/type
 COPY ./containers/elabimg/nginx/run /etc/s6-overlay/s6-rc.d/nginx/

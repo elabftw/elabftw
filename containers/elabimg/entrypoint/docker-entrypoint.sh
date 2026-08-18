@@ -397,7 +397,6 @@ startupMessage() {
     http_mode=$([ "$disable_https" = true ] && echo "HTTP" || echo "HTTPS")
     say "info: eLabFTW version: ${ELABFTW_VERSION}"
     say "info: ${nginx_version}"
-    say "info: s6-overlay version: ${S6_OVERLAY_VERSION}"
     say "info: runtime configuration successfully finished"
     say "info: starting server listening internally on port 8080 in ${http_mode}"
 }

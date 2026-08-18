@@ -16,7 +16,7 @@
     </div>
     {% if App.devMode -%}
     {# no-redundant-role: 'Redundant role "spinbutton" on <input>' on '#ag-13-input' #}
-    <!-- [html-validate-disable-block prefer-native-element, no-redundant-role, element-permitted-content, {{ App.Request.getScriptName|split('/')|last == 'admin.php' ? 'no-missing-references' }}: ag-grid] -->
+    <!-- [html-validate-disable-block prefer-native-element, no-redundant-role, element-permitted-content] -->
     {%- endif %}
     <div id='users-table'></div>
   </div>

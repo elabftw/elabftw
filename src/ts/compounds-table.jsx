@@ -11,6 +11,7 @@
  */
 import {
   ClientSideRowModelModule,
+  CellStyleModule,
   ModuleRegistry,
   PaginationModule,
   QuickFilterModule,
@@ -31,6 +32,7 @@ import { getAgGridTheme } from './theme';
 provideGlobalGridOptions({ theme: 'legacy' });
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
+  CellStyleModule,
   RowSelectionModule,
   PaginationModule,
   TextFilterModule,

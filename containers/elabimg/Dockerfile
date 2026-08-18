@@ -219,7 +219,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
     imagemagick-heic \
     imagemagick-svg \
     nodejs \
-    npm \
     openssl \
     php84 \
     php84-pecl-apcu \
@@ -290,26 +289,31 @@ RUN mkdir /elabftw
 WORKDIR /elabftw
 
 ENV TMPDIR=/var/cache/elabftw/php/tmp
-ENV COREPACK_HOME=/var/cache/elabftw/corepack
 ENV COMPOSER_HOME=/var/cache/elabftw/composer
-# avoid installing cypress
-ENV CYPRESS_INSTALL_BINARY=0
-# avoid download prompt
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 # COMPOSER
 # 2.10.2 https://github.com/composer/composer/releases/tag/2.10.2
 COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
 
-RUN mkdir -p "$TMPDIR" "$COREPACK_HOME" "$COMPOSER_HOME"
+RUN mkdir -p "$TMPDIR" "$COMPOSER_HOME"
 
-# enable new yarn
-RUN npm install -g corepack@0.35.0 && corepack enable
 
 ###################
 # ELABFTW BUILDER #
 ###################
 FROM runtime-base AS app-builder
+
+# COREPACK
+ENV COREPACK_HOME=/var/cache/elabftw/corepack
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
+RUN apk add --no-cache npm \
+    && mkdir -p "$COREPACK_HOME" \
+    && npm install -g corepack@0.35.0 \
+    && corepack enable
+
+# avoid installing cypress
+ENV CYPRESS_INSTALL_BINARY=0
 
 # this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
 # pass it to build command with --build-arg BUILD_ALL=0

@@ -101,6 +101,29 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('newcontent', $tag['tag']);
     }
 
+    public function testUpdateTagFromOtherTeam(): void
+    {
+        $attackerTag = 'cross team merge attacker';
+        $victimTag = 'cross team merge victim';
+        $this->TeamTags->create(new TagParam($attackerTag));
+
+        $VictimUser = $this->getUserInTeam(2, 1);
+        $VictimTags = new Tags($this->getFreshExperimentWithGivenUser($VictimUser));
+        $victimTagId = $VictimTags->postAction(Action::Create, array('tag' => $victimTag));
+
+        $this->TeamTags->setId($victimTagId);
+        try {
+            $this->TeamTags->patch(Action::UpdateTag, array('tag' => $attackerTag));
+            $this->fail('Cross-team tag update should be rejected.');
+        } catch (IllegalActionException) {
+            $this->addToAssertionCount(1);
+        }
+
+        $VictimTeamTags = new TeamTags($VictimUser, $victimTagId);
+        $this->assertSame($victimTag, $VictimTeamTags->readOne()['tag']);
+        $this->assertSame($victimTagId, (int) $VictimTags->readAll()[0]['tag_id']);
+    }
+
     public function testDestroy(): void
     {
         $this->assertTrue($this->TeamTags->destroy());

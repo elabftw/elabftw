@@ -154,6 +154,19 @@ final class TeamTags extends AbstractRest
         return $this->Db->execute($req);
     }
 
+    private function assertTagBelongsToTeam(): void
+    {
+        $id = $this->id ?? throw new ImproperActionException('Missing id for tag');
+        $sql = 'SELECT id FROM tags WHERE id = :id AND team = :team LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        if ($req->fetchColumn() === false) {
+            throw new IllegalActionException('Cannot edit this tag.');
+        }
+    }
+
     private function getTagIdFromTag(TagParam $params): int
     {
         $sql = 'SELECT id
@@ -183,15 +196,26 @@ final class TeamTags extends AbstractRest
         // pop one out and keep this one
         $idToKeep = array_pop($idsArr);
 
-        $sql = 'UPDATE IGNORE tags2entity SET tag_id = :target_tag_id WHERE tag_id = :tag_id';
+        $sql = 'UPDATE IGNORE tags2entity
+            INNER JOIN tags ON tags.id = tags2entity.tag_id
+            SET tags2entity.tag_id = :target_tag_id
+            WHERE tags2entity.tag_id = :tag_id
+              AND tags.team = :team';
         $updateReq = $this->Db->prepare($sql);
         $updateReq->bindParam(':target_tag_id', $idToKeep, PDO::PARAM_INT);
+        $updateReq->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
-        $cleanupSql = 'DELETE FROM tags2entity WHERE tag_id = :tag_id';
+        $cleanupSql = 'DELETE tags2entity
+            FROM tags2entity
+            INNER JOIN tags ON tags.id = tags2entity.tag_id
+            WHERE tags2entity.tag_id = :tag_id
+              AND tags.team = :team';
         $cleanupReq = $this->Db->prepare($cleanupSql);
+        $cleanupReq->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
-        $sql = 'DELETE FROM tags WHERE id = :id';
+        $sql = 'DELETE FROM tags WHERE id = :id AND team = :team';
         $deleteReq = $this->Db->prepare($sql);
+        $deleteReq->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
 
         foreach ($idsArr as $id) {
             // remap first
@@ -208,6 +232,8 @@ final class TeamTags extends AbstractRest
 
     private function updateTag(TagParam $params): array
     {
+        $this->assertTagBelongsToTeam();
+
         // if the tag exists already the SQL Update statement will throw an error because of the unique key tag/team
         // what we want to do is to assign entries with the old tag to the new tag id, and then delete the old tag
         $id = $this->getTagIdFromTag($params);

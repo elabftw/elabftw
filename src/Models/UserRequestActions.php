@@ -37,6 +37,7 @@ final class UserRequestActions extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $this->requester->isSelfOrExplode();
         $tables = array(
             array(
                 'page' => EntityType::Experiments->toPage(),

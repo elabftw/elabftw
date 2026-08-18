@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Models\Users\Users;
 
 class UserRequestActionsTest extends \PHPUnit\Framework\TestCase
@@ -27,6 +28,13 @@ class UserRequestActionsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertIsArray($this->ura->readAll());
         $this->assertIsArray($this->ura->readAllFull());
+    }
+
+    public function testCannotReadAnotherUsersRequests(): void
+    {
+        $target = new Users(1, 1, new Users(2, 1));
+        $this->expectException(IllegalActionException::class);
+        new UserRequestActions($target)->readAll();
     }
 
     public function testGetApiPath(): void

@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Enums\ApiEndpoint;
+use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidEndpointException;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -41,6 +43,10 @@ abstract class AbstractApiController extends AbstractController
 
     protected function parseReq(): array
     {
+        if ($this->requester instanceof AnonymousUser && $this->Request->getMethod() !== Request::METHOD_GET) {
+            throw new IllegalActionException();
+        }
+
         if ($this->canWrite === false && $this->Request->getMethod() !== Request::METHOD_GET) {
             throw new ImproperActionException('You are using a read-only key to execute a write action.');
         }

@@ -36,7 +36,7 @@ abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterf
     public function getFileContent(): string
     {
         // load the CSV document from a string
-        $csv = Writer::createFromString('');
+        $csv = Writer::fromString('');
 
         // insert the header
         $csv->insertOne($this->getHeader());

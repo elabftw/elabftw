@@ -34,7 +34,13 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->Db = Db::getConnection();
+        $this->Db->beginTransaction();
         $this->ApiKeys = new ApiKeys(new Users(1, 1));
+    }
+
+    protected function tearDown(): void
+    {
+        $this->Db->rollBack();
     }
 
     public function testCreateAndGetApiPathAndDestroy(): void
@@ -87,6 +93,59 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(UnauthorizedException::class);
         $this->ApiKeys->readFromApiKey(str_repeat('0', 32));
+    }
+
+    public function testExpiredUserKeyIsRejected(): void
+    {
+        $this->ApiKeys->postAction(Action::Create, array('name' => 'expired user key'));
+        $apiKey = $this->ApiKeys->getApiPath();
+
+        $req = $this->Db->prepare('UPDATE users SET valid_until = :valid_until WHERE userid = 1');
+        $req->bindValue(':valid_until', '2000-01-01');
+        $this->Db->execute($req);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->ApiKeys->readFromApiKey($apiKey);
+    }
+
+    public function testSuspendedUserKeyIsRejected(): void
+    {
+        $this->ApiKeys->postAction(Action::Create, array('name' => 'suspended user key'));
+        $apiKey = $this->ApiKeys->getApiPath();
+
+        $req = $this->Db->prepare('UPDATE users SET validated = 0 WHERE userid = 1');
+        $this->Db->execute($req);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->ApiKeys->readFromApiKey($apiKey);
+    }
+
+    public function testArchivedTeamMembershipKeyIsRejected(): void
+    {
+        $this->ApiKeys->postAction(Action::Create, array('name' => 'archived user key'));
+        $apiKey = $this->ApiKeys->getApiPath();
+
+        $req = $this->Db->prepare(
+            'UPDATE users2teams SET is_archived = 1 WHERE users_id = 1 AND teams_id = 1',
+        );
+        $this->Db->execute($req);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->ApiKeys->readFromApiKey($apiKey);
+    }
+
+    public function testExpiredLegacyUserKeyIsRejected(): void
+    {
+        $secret = bin2hex(random_bytes(42));
+        $id = $this->createLegacyKey($secret);
+        $apiKey = sprintf('%d-%s', $id, $secret);
+
+        $req = $this->Db->prepare('UPDATE users SET valid_until = :valid_until WHERE userid = 1');
+        $req->bindValue(':valid_until', '2000-01-01');
+        $this->Db->execute($req);
+
+        $this->expectException(UnauthorizedException::class);
+        $this->ApiKeys->readFromApiKey($apiKey);
     }
 
     public function testLegacyKeyRequiresIdAndMigratesOnFirstUse(): void

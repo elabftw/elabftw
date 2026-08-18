@@ -148,10 +148,15 @@ final class ApiKeys extends AbstractRest
 
     private function readFromTokenHash(string $tokenHash): array|false
     {
-        $sql = 'SELECT id, userid, can_write, team,
-                IF(last_used_at IS NULL OR last_used_at <= NOW() - INTERVAL 5 MINUTE, 1, 0) AS touch_required
-            FROM api_keys
-            WHERE token_hash = :token_hash
+        $sql = 'SELECT ak.id, ak.userid, ak.can_write, ak.team,
+                IF(ak.last_used_at IS NULL OR ak.last_used_at <= NOW() - INTERVAL 5 MINUTE, 1, 0) AS touch_required
+            FROM api_keys AS ak
+            INNER JOIN users AS u ON u.userid = ak.userid
+            INNER JOIN users2teams AS u2t ON u2t.users_id = ak.userid AND u2t.teams_id = ak.team
+            WHERE ak.token_hash = :token_hash
+                AND u.validated = 1
+                AND IFNULL(u.valid_until, \'3000-01-01\') > NOW()
+                AND u2t.is_archived = 0
             LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':token_hash', $tokenHash, PDO::PARAM_LOB);
@@ -173,9 +178,14 @@ final class ApiKeys extends AbstractRest
             return false;
         }
 
-        $sql = 'SELECT id, hash, userid, can_write, team
-            FROM api_keys
-            WHERE id = :id AND hash IS NOT NULL
+        $sql = 'SELECT ak.id, ak.hash, ak.userid, ak.can_write, ak.team
+            FROM api_keys AS ak
+            INNER JOIN users AS u ON u.userid = ak.userid
+            INNER JOIN users2teams AS u2t ON u2t.users_id = ak.userid AND u2t.teams_id = ak.team
+            WHERE ak.id = :id AND ak.hash IS NOT NULL
+                AND u.validated = 1
+                AND IFNULL(u.valid_until, \'3000-01-01\') > NOW()
+                AND u2t.is_archived = 0
             LIMIT 1';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', (int) $matches[1], PDO::PARAM_INT);

@@ -82,9 +82,10 @@ final class ProcurementRequests extends AbstractRest
     public function readActiveForEntity(int $entityId): array
     {
         $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname, pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.body, pr.quote, pr.email_sent, pr.state
-            FROM procurement_requests AS pr LEFT JOIN users ON (requester_userid = users.userid) WHERE entity_id = :entity_id AND state NOT IN (:state_received, :state_archived)";
+            FROM procurement_requests AS pr LEFT JOIN users ON (requester_userid = users.userid) WHERE pr.entity_id = :entity_id AND pr.team = :team AND pr.state NOT IN (:state_received, :state_archived)";
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $entityId, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $req->bindValue(':state_received', ProcurementState::Received->value, PDO::PARAM_INT);
         $req->bindValue(':state_archived', ProcurementState::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);

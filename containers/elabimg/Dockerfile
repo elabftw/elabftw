@@ -226,7 +226,6 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # php8-gd is required by mpdf for transparent png
 # php8-tokenizer and php8-xmlwriter are for dev only
 # php8-iconv is required by LdapRecord php library
-# git is required by yarn
 # imagemagick-svg is for mathjax support in pdfs
 # imagemagick-heic is for support for heic/heif
 # don't put line comments inside this instruction
@@ -234,7 +233,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
     bash \
     freetype \
     ghostscript \
-    git \
     imagemagick-heic \
     imagemagick-svg \
     nodejs \
@@ -275,9 +273,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
 # add a symlink to php8
 RUN ln -f /usr/bin/php84 /usr/bin/php
 
-# fix git complaining: fatal: detected dubious ownership in repository at '/elabftw'
-RUN git config --system --add safe.directory /elabftw
-
 # S6-OVERLAY
 # install s6-overlay, our init system
 COPY --from=s6-builder /s6-root/ /
@@ -290,6 +285,8 @@ RUN mkdir -p /etc/s6-overlay/s6-rc.d/php && echo "longrun" > /etc/s6-overlay/s6-
 COPY ./containers/elabimg/php/run /etc/s6-overlay/s6-rc.d/php/
 RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/php
 # END S6-OVERLAY
+
+ENV TMPDIR=/var/cache/elabftw/php/tmp
 
 ###################
 # ELABFTW BUILDER #
@@ -307,6 +304,8 @@ ENV COREPACK_HOME=/var/cache/elabftw/corepack
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 ENV COREPACK_VERSION=0.35.0
 
+# brotli is used to compress assets after yarn build
+# npm is to install corepack (which enables yarn)
 RUN apk add --no-cache \
     brotli \
     npm \
@@ -318,15 +317,14 @@ RUN apk add --no-cache \
 RUN mkdir /elabftw
 WORKDIR /elabftw
 ENV COMPOSER_HOME=/var/cache/elabftw/composer
-ENV TMPDIR=/var/cache/elabftw/php/tmp
 # 2.10.2 https://github.com/composer/composer/releases/tag/2.10.2
 COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
 # copy PHP dependency manifests first so application source changes don't invalidate this layer
 COPY ./composer.json /elabftw
 COPY ./composer.lock /elabftw
 RUN mkdir -p "$TMPDIR" "$COMPOSER_HOME"
+
 # install PHP dependencies without generating the autoloader yet
-# some ini settings are set on the command line to override the restrictive production ones already set
 RUN if [ "$BUILD_ALL" = "1" ]; then \
         if [ "$CI" = "1" ]; then \
             /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-autoloader; \

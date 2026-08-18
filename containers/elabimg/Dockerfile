@@ -313,10 +313,6 @@ ENV COMPOSER_HOME=/var/cache/elabftw/composer
 # 2.10.2 https://github.com/composer/composer/releases/tag/2.10.2
 COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
 
-# this is bind-mounted at runtime to a tmpfs
-RUN mkdir -p /run/elabftw \
-    && chmod 1777 /run/elabftw
-
 RUN mkdir -p "$TMPDIR" "$COREPACK_HOME" "$COMPOSER_HOME"
 
 # this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway

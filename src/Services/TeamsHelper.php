@@ -108,6 +108,19 @@ final class TeamsHelper
         return !empty($this->getUserInTeam($userid));
     }
 
+    public function isActiveUserInTeam(int $userid): bool
+    {
+        $sql = 'SELECT 1 FROM `users2teams`
+            WHERE `teams_id` = :team
+                AND `users_id` = :userid
+                AND `is_archived` = 0';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchColumn() !== false;
+    }
+
     /**
      * Get all the userid of active admins of the team
      */

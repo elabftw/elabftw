@@ -5,7 +5,7 @@ title: FAIR
 
 # FAIR aspects
 
-FAIR stands for Findable, Accessible, Interoperable and Reusable. It applies to research data and an ELN such as eLabFTW can help you make your research data more FAIR.
+FAIR stands for Findable, Accessible, Interoperable and Reusable. This term applies to research data and an ELN such as eLabFTW can help you make your research data more FAIR.
 
 ## Persistent identifiers in eLabFTW
 

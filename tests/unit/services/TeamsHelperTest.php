@@ -38,6 +38,19 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Usergroup::Admin, $TeamsHelper->getGroup());
     }
 
+    public function testIsActiveUserInTeam(): void
+    {
+        $target = $this->getRandomUserInTeam(1);
+        $this->assertTrue($this->TeamsHelper->isActiveUserInTeam($target->userid));
+
+        $this->updateArchiveStatus($target->userid, 1);
+        try {
+            $this->assertFalse($this->TeamsHelper->isActiveUserInTeam($target->userid));
+        } finally {
+            $this->updateArchiveStatus($target->userid, 0);
+        }
+    }
+
     public function testIsArchivedInAllTeams(): void
     {
         $target = $this->getRandomUserInTeam(1);

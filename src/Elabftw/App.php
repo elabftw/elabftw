@@ -25,6 +25,7 @@ use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\TwigTrait;
 use Exception;
 use Monolog\Handler\ErrorLogHandler;
@@ -103,10 +104,12 @@ final class App
                     $this->Session->has('is_auth')
                     && $this->Session->get('userid') !== 0
                 ) {
-                    $this->loadUser(new AuthenticatedUser(
-                        $this->Session->get('userid'),
-                        $this->Session->get('team'),
-                    ));
+                    $userid = (int) $this->Session->get('userid');
+                    $team = (int) $this->Session->get('team');
+                    if (!new TeamsHelper($team)->isActiveUserInTeam($userid)) {
+                        throw new IllegalActionException();
+                    }
+                    $this->loadUser(new AuthenticatedUser($userid, $team));
                 }
             } catch (IllegalActionException) {
                 $this->Session->invalidate();

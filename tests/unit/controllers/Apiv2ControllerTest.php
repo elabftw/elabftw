@@ -85,6 +85,32 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
     }
 
+    public function testCannotAccessAnotherUsersSubmodel(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create('/api/v2/users/1/uploads', 'GET'),
+        );
+
+        $res = $Controller->getResponse();
+
+        self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+    }
+
+    public function testCannotReadAnotherUsersRequestActions(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create('/api/v2/users/1/request_actions', 'GET'),
+        );
+
+        $res = $Controller->getResponse();
+
+        self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+    }
+
     public function testBadJson(): void
     {
         $user = $this->getRandomUserInTeam(1);

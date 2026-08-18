@@ -19,6 +19,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\CommentParam;
 use Elabftw\Services\Filter;
@@ -485,6 +486,10 @@ final class StorageUnits extends AbstractRest
 
     public function canWrite(): bool
     {
+        if ($this->requester instanceof AnonymousUser) {
+            return false;
+        }
+
         return $this->requester->userData['can_manage_inventory_locations'] === 1 || $this->requireEditRights === false;
     }
 

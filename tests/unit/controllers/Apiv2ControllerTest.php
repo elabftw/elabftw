@@ -66,6 +66,25 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         self::assertSame('[]', $res->getContent());
     }
 
+    public function testAnonymousUserCannotWriteEvenWhenCanWriteIsTrue(): void
+    {
+        $Controller = new Apiv2Controller(
+            new AnonymousUser(1),
+            Request::create(
+                '/api/v2/info',
+                'POST',
+                server: array('CONTENT_TYPE' => 'application/json'),
+                content: '{}',
+            ),
+        );
+        // PHP session requests normally set this to true. Anonymous users must still be read-only.
+        $Controller->canWrite = true;
+
+        $res = $Controller->getResponse();
+
+        self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+    }
+
     public function testBadJson(): void
     {
         $user = $this->getRandomUserInTeam(1);

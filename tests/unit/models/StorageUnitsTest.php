@@ -17,6 +17,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Containers2ItemsLinks;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -194,6 +195,16 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $StorageUnitsAsUser->setId($unitId);
         $this->expectException(\Elabftw\Exceptions\IllegalActionException::class);
         $StorageUnitsAsUser->patch(Action::Update, array('parent_id' => $newParentId));
+    }
+
+    public function testAnonymousUserCannotWriteWhenEditRightsAreDisabled(): void
+    {
+        $StorageUnitsAsAnonymous = new StorageUnits(new AnonymousUser(1), false);
+
+        $this->assertFalse($StorageUnitsAsAnonymous->canWrite());
+        $this->expectException(\Elabftw\Exceptions\IllegalActionException::class);
+
+        $StorageUnitsAsAnonymous->canWriteOrExplode();
     }
 
     public function testPatchWithNoTargetIsRejected(): void

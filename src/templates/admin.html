@@ -1,5 +1,21 @@
 {% extends 'base.html' %}
 
+{% macro batchTransferOwnership(target, param, users) %}
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batch{{ param }}Div' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <div hidden class='mt-2' id='batch{{ param }}Div'>
+    {% for user in users %}
+      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
+        <label for='batch-{{ param }}-{{ user.userid }}' class='col-form-label clickable'>{{ user.fullname }} ({{ user.email }})</label>
+        <label class='switch ucp-align'><span class='sr-only'>{{ user.fullname }}</span>
+          <input type='checkbox' name='{{ param }}' value='{{ user.userid }}' autocomplete='off' data-action='update-counter-value' id='batch-{{ param }}-{{ user.userid }}'>
+          <span class='slider'></span>
+        </label>
+      </div>
+    {% endfor %}
+  </div>
+  <hr>
+{% endmacro %}
+
 {% block body %}
 {# UNVALIDATED USERS BLOCK #}
 <div id='unvalidatedUsersBox'>
@@ -446,21 +462,6 @@
   </div>
   <hr>
 
-  {% macro batchTransferOwnership(target, param, users) %}
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batch{{ param }}Div' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
-  <div hidden class='mt-2' id='batch{{ param }}Div'>
-    {% for user in users %}
-      <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
-        <label for='batch-{{ param }}-{{ user.userid }}' class='col-form-label clickable'>{{ user.fullname }} ({{ user.email }})</label>
-        <label class='switch ucp-align'><span class='sr-only'>{{ user.fullname }}</span>
-          <input type='checkbox' name='{{ param }}' value='{{ user.userid }}' autocomplete='off' data-action='update-counter-value' id='batch-{{ param }}-{{ user.userid }}'>
-          <span class='slider'></span>
-        </label>
-      </div>
-    {% endfor %}
-  </div>
-  <hr>
-  {% endmacro %}
   {{ _self.batchTransferOwnership('Experiments owner', 'users_experiments', allTeamUsersArr) }}
   {{ _self.batchTransferOwnership('Resources owner', 'users_resources', allTeamUsersArr) }}
   {{ _self.batchTransferOwnership('Experiments Templates owner', 'users_experiments_templates', allTeamUsersArr) }}

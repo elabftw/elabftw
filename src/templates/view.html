@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 
+{% macro writeLockNotice(locked_by_human) %}
+    {{ 'This entry is being edited by %s.'|trans|format(locked_by_human) }}
+        <button type='button' class='btn btn-sm btn-secondary' data-action='override-exclusive-edit-lock'>{{ 'Override lock'|trans }}</button>
+{% endmacro %}
+
 {% block body %}
 
 {% embed 'view-edit.html' %}
@@ -28,10 +33,6 @@
 {% if not App.isAnonymous() %}
   <div id='exclusiveEditModeInfo'>
     {% if Entity.entityData.exclusive_edit_mode.locked_by > 0 and Entity.entityData.exclusive_edit_mode.locked_by != App.Users.userid and not Entity.entityData.exclusive_edit_mode.is_stale %}
-    {% macro writeLockNotice(locked_by_human) %}
-    {{ 'This entry is being edited by %s.'|trans|format(locked_by_human) }}
-        <button type='button' class='btn btn-sm btn-secondary' data-action='override-exclusive-edit-lock'>{{ 'Override lock'|trans }}</button>
-    {% endmacro %}
     {{ _self.writeLockNotice(Entity.entityData.exclusive_edit_mode.locked_by_human)|msg('warning', false) }}
   {% endif %}
   </div>

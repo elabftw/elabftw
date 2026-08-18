@@ -51,7 +51,7 @@ final class Env
     {
         $val = self::asString($key);
         $validator = Validation::createValidator();
-        $violations = $validator->validate($val, new Url());
+        $violations = $validator->validate($val, new Url(requireTld: false));
         if (count($violations) > 0) {
             throw new ImproperActionException(sprintf('Error fetching %s: malformed URL.', $key));
         }

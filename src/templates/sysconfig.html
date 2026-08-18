@@ -1,5 +1,77 @@
 {% extends 'base.html' %}
 
+{% macro logo_block(title, brandingId, darkPreview) %}
+    {% set inputId = 'branding-file-' ~ brandingId %}
+
+    <h3>
+      <span class='text-nowrap'>
+        <label
+          for='{{ inputId }}'
+          title='{{ 'Upload new file'|trans }}'
+          class='btn btn-secondary mb-0'
+        >
+          <i class='fas fa-upload' aria-hidden='true'></i>
+          <span class='sr-only'>{{ 'Upload new file'|trans }}</span>
+        </label>
+
+        <input
+          id='{{ inputId }}'
+          data-action='upload-branding'
+          data-target='{{ brandingId }}'
+          type='file'
+          accept='image/svg+xml,image/png,image/jpeg,image/webp,image/x-icon'
+          class='sr-only'
+        >
+
+        <button
+          data-action='reset-branding'
+          data-target='{{ brandingId }}'
+          type='button'
+          title='{{ 'Restore default'|trans }}'
+          class='btn btn-danger-ghost'
+          aria-label='{{ 'Restore default'|trans }}'
+        >
+          <i class='fas fa-rotate-left'></i>
+        </button>
+      </span>{{ title }}
+    </h3>
+
+    <div class='{{ darkPreview ? 'bg-dark' : '' }} col-md-6 p-3 logo-preview'>
+      <img
+        data-branding-preview='{{ brandingId }}'
+        src='/api/v2/instance/branding/{{ brandingId }}?format=binary'
+        alt='{{ title }}'
+          class='{{ brandingId == constant('Elabftw\\Enums\\Branding::Favicon').value ? 'display-favicon' : 'img-fluid' }}'
+      >
+    </div>
+
+    <hr>
+{% endmacro %}
+
+{% macro policy(title, slug, configArr, devMode) %}
+    <h2 class='mb-3 p-2 pl-3 section-title'>{{ title|trans }}</h2>
+    <div class='pl-3'>
+      <div class='d-flex justify-content-between'>
+        <label for='{{ slug }}_name' class='col-form-label'>{{ 'Link name'|trans }}</label>
+        <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='{{ slug }}_name' type='text' value='{{ configArr[slug ~ '_name'] }}' id='{{ slug }}_name' />
+      </div>
+      <hr>
+      {% if not configArr[slug] %}
+        {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
+      {% endif %}
+      {% if devMode -%}
+        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, require-sri: suppress errors from tinymce] -->
+      {%- endif %}
+      <textarea id='{{ slug }}Input' class='mceditable' aria-label='{{ 'Set your text here'|trans }}'>
+        {{ configArr[slug]|default('Set your text here.')|raw }}
+      </textarea>
+      <div class='my-4 text-center'>
+        <button type='button' data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        <button type='button' data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+      </div>
+    </div>
+{% endmacro %}
+
 {% block body %}
 
 {% include('idp-modal.html') %}
@@ -189,53 +261,6 @@
 
   <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Organization branding'|trans }}</h2>
 
-  {% macro logo_block(title, brandingId, darkPreview) %}
-    {% set inputId = 'branding-file-' ~ brandingId %}
-
-    <h3>
-      <span class='text-nowrap'>
-        <label
-          for='{{ inputId }}'
-          title='{{ 'Upload new file'|trans }}'
-          class='btn btn-secondary mb-0'
-        >
-          <i class='fas fa-upload' aria-hidden='true'></i>
-          <span class='sr-only'>{{ 'Upload new file'|trans }}</span>
-        </label>
-
-        <input
-          id='{{ inputId }}'
-          data-action='upload-branding'
-          data-target='{{ brandingId }}'
-          type='file'
-          accept='image/svg+xml,image/png,image/jpeg,image/webp,image/x-icon'
-          class='sr-only'
-        >
-
-        <button
-          data-action='reset-branding'
-          data-target='{{ brandingId }}'
-          type='button'
-          title='{{ 'Restore default'|trans }}'
-          class='btn btn-danger-ghost'
-          aria-label='{{ 'Restore default'|trans }}'
-        >
-          <i class='fas fa-rotate-left'></i>
-        </button>
-      </span>{{ title }}
-    </h3>
-
-    <div class='{{ darkPreview ? 'bg-dark' : '' }} col-md-6 p-3 logo-preview'>
-      <img
-        data-branding-preview='{{ brandingId }}'
-        src='/api/v2/instance/branding/{{ brandingId }}?format=binary'
-        alt='{{ title }}'
-          class='{{ brandingId == constant('Elabftw\\Enums\\Branding::Favicon').value ? 'display-favicon' : 'img-fluid' }}'
-      >
-    </div>
-
-    <hr>
-  {% endmacro %}
 
   {% set brandingHeader = constant('Elabftw\\Enums\\Branding::Header').value %}
   {% set brandingLight = constant('Elabftw\\Enums\\Branding::Light').value %}
@@ -621,29 +646,6 @@
 {# TAB 7 POLICIES #}
 <div data-tabcontent='7' hidden>
 
-  {% macro policy(title, slug, configArr, devMode) %}
-    <h2 class='mb-3 p-2 pl-3 section-title'>{{ title|trans }}</h2>
-    <div class='pl-3'>
-      <div class='d-flex justify-content-between'>
-        <label for='{{ slug }}_name' class='col-form-label'>{{ 'Link name'|trans }}</label>
-        <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='{{ slug }}_name' type='text' value='{{ configArr[slug ~ '_name'] }}' id='{{ slug }}_name' />
-      </div>
-      <hr>
-      {% if not configArr[slug] %}
-        {{ 'Note: the text below is a template and must be edited and saved.'|trans|msg('ok', false) }}
-      {% endif %}
-      {% if devMode -%}
-        <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, require-sri: suppress errors from tinymce] -->
-      {%- endif %}
-      <textarea id='{{ slug }}Input' class='mceditable' aria-label='{{ 'Set your text here'|trans }}'>
-        {{ configArr[slug]|default('Set your text here.')|raw }}
-      </textarea>
-      <div class='my-4 text-center'>
-        <button type='button' data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='save' class='btn btn-primary'>{{ 'Save'|trans }}</button>
-        <button type='button' data-action='patch-policy' data-confname='{{ slug }}' data-textarea='{{ slug }}Input' data-operation='clear' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
-      </div>
-    </div>
-  {% endmacro %}
 
   {{ _self.policy('Privacy policy', 'privacy_policy', App.Config.configArr, App.devMode) }}
   {{ _self.policy('Terms of service', 'terms_of_service', App.Config.configArr, App.devMode) }}

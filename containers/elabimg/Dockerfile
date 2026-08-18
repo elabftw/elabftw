@@ -2,8 +2,12 @@
 # nginx custom + php-fpm + elabftw complete production files
 # https://github.com/elabftw/elabftw
 
+###############################
+# GO BUILDER: CHRONOS/INVOKER #
+###############################
 # https://hub.docker.com/layers/library/golang/1.26.6-alpine3.24/images/sha256-648921a68c7179241dd09daf8000fbfddc9e5ea9c1a24e7d0fe05b259dff2b5c
 FROM golang@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83 AS go-builder
+
 # using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
 ARG TARGETPLATFORM
 ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
@@ -14,8 +18,10 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
     && CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH go build -ldflags="-s -w" -o invoker invoker.go \
     && go build -ldflags="-s -w" -o chronos chronos.go
 
+#################
+# NGINX BUILDER #
+#################
 # build nginx with only the bare minimum of features or modules
-# Note: no need to chain the RUN commands here as it's a builder image and nothing will be kept
 FROM alpine:3.24 AS nginx-builder
 
 ENV NGINX_VERSION=1.30.4
@@ -195,21 +201,14 @@ RUN mkdir -p /s6-root \
     && tar xpJf /tmp/s6-overlay-arch.tar.xz -C /s6-root \
     && tar xpJf /tmp/s6-overlay-noarch.tar.xz -C /s6-root
 
-#############################
-# ELABFTW + NGINX + PHP-FPM #
-#############################
+################
+# RUNTIME BASE #
+################
 FROM alpine:3.24 AS runtime-base
 
 # set build version with --build-arg ELABFTW_VERSION=X.Y.Z
 ARG ELABFTW_VERSION=dev
 ENV ELABFTW_VERSION=$ELABFTW_VERSION
-
-
-LABEL net.elabftw.name="elabftw" \
-    net.elabftw.description="eLabFTW web service" \
-    net.elabftw.url="https://www.elabftw.net" \
-    net.elabftw.vcs-url="https://github.com/elabftw/elabftw" \
-    net.elabftw.elabftw-version=$ELABFTW_VERSION
 
 # NGINX
 # copy our nginx from the build image
@@ -374,10 +373,19 @@ RUN if [ "$BUILD_ALL" = "1" ]; then \
         && rm -rf /var/cache/elabftw; \
     fi
 
-#############################
-# ELABFTW + NGINX + PHP-FPM #
-#############################
+###########
+# RUNTIME #
+###########
 FROM runtime-base AS runtime
+
+LABEL org.opencontainers.image.description="eLabFTW web service" \
+    org.opencontainers.image.documentation="https://github.com/elabftw/elabftw/blob/master/containers/elabimg/README.md" \
+    org.opencontainers.image.license="AGPL-3.0-only" \
+    org.opencontainers.image.source="https://github.com/elabftw/elabftw" \
+    org.opencontainers.image.title="eLabFTW" \
+    org.opencontainers.image.url="https://www.elabftw.net" \
+    org.opencontainers.image.vendor="Deltablot" \
+    org.opencontainers.image.version="$ELABFTW_VERSION"
 
 COPY --from=app-builder /elabftw /elabftw
 # PHP: add php config after composer step so open_basedir is not an issue

@@ -49,9 +49,90 @@ final class EntityPruner implements CleanerInterface
     #[Override]
     public function cleanup(): int
     {
-        $sql = 'DELETE FROM ' . $this->entityType->value . ' WHERE state = :state';
+        // collect the IDs of entities that match the filter
+        $selectStmt = $this->buildSelectStmt();
+        $matchingIds = $selectStmt->fetchAll(PDO::FETCH_COLUMN);
+        if (empty($matchingIds)) {
+            return 0;
+        }
 
+        // delete orphaned tags2entity entries before the entity rows
+        $this->cleanupTags2entity($matchingIds);
+
+        // delete the entity rows
+        return $this->deleteEntities($matchingIds);
+    }
+
+    /**
+     * Build a prepared SELECT statement that returns the ids of matching deleted entities
+     */
+    private function buildSelectStmt(): \PDOStatement
+    {
+        $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE state = :state';
         $binds = array();
+        $this->applyFilters($sql, $binds);
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+        foreach ($binds as $key => $bindData) {
+            $req->bindValue($key, $bindData[0], $bindData[1]);
+        }
+        if ($this->since !== null) {
+            $req->bindValue(':since', $this->parseSince($this->since));
+        }
+        $this->Db->execute($req);
+        return $req;
+    }
+
+    /**
+     * Delete orphaned tag relations for the given entity ids
+     */
+    private function cleanupTags2entity(array $idValues): void
+    {
+        if (empty($idValues)) {
+            return;
+        }
+        $placeholders = array();
+        $binds = array();
+        foreach ($idValues as $k => $id) {
+            $key = ":id_$k";
+            $placeholders[] = $key;
+            $binds[$key] = array($id, PDO::PARAM_INT);
+        }
+        $sql = 'DELETE FROM tags2entity WHERE item_type = :item_type AND item_id IN (' . implode(',', $placeholders) . ')';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':item_type', $this->entityType->value, PDO::PARAM_STR);
+        foreach ($binds as $key => $bindData) {
+            $req->bindValue($key, $bindData[0], $bindData[1]);
+        }
+        $this->Db->execute($req);
+    }
+
+    /**
+     * Delete entity rows by id
+     */
+    private function deleteEntities(array $idValues): int
+    {
+        $placeholders = array();
+        $binds = array();
+        foreach ($idValues as $k => $id) {
+            $key = ":id_$k";
+            $placeholders[] = $key;
+            $binds[$key] = array($id, PDO::PARAM_INT);
+        }
+        $sql = 'DELETE FROM ' . $this->entityType->value . ' WHERE id IN (' . implode(',', $placeholders) . ')';
+        $req = $this->Db->prepare($sql);
+        foreach ($binds as $key => $bindData) {
+            $req->bindValue($key, $bindData[0], $bindData[1]);
+        }
+        $this->Db->execute($req);
+        return $req->rowCount();
+    }
+
+    /**
+     * Apply the filters (ids, userids, teams, since) to a SQL query string
+     */
+    private function applyFilters(string &$sql, array &$binds): void
+    {
         if (!empty($this->ids)) {
             $idPlaceholders = array();
             foreach ($this->ids as $k => $id) {
@@ -82,17 +163,6 @@ final class EntityPruner implements CleanerInterface
         if ($this->since !== null) {
             $sql .= ' AND created_at >= :since';
         }
-
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-        foreach ($binds as $key => $bindData) {
-            $req->bindValue($key, $bindData[0], $bindData[1]);
-        }
-        if ($this->since !== null) {
-            $req->bindValue(':since', $this->parseSince($this->since));
-        }
-        $this->Db->execute($req);
-        return $req->rowCount();
     }
 
     private function parseSince(string $since): string

@@ -5,9 +5,9 @@ title: Developer documentation
 
 # Developer documentation
 
-## Word of caution
+## Use latest doc
 
-It is possible that the gap between the current development version and the current stable version will render this documentation obsolete in parts. As we currently have no versioning of the doc to match stable releases of eLabFTW. I don't know, just do your best.
+Make sure you are reading the "edge" version of the documentation, that is built from `master` branch. Look in the top right of your screen, select Edge from the version dropdown selector.
 
 Another thing is that this documentation is targeted towards GNU/Linux users. If you are on Windows or MacOS, you will need to adapt some things. We currently do not provide detailed documentation for Windows or MacOS users, as we are avid open source software aficionados, and consider these operating systems as spyware.
 
@@ -19,7 +19,16 @@ But fear not, because there is a whole documentation about getting started, and 
 
 ## Note about repositories
 
-The eLabFTW project is split in different repositories. The main one with the actual PHP code is [elabftw/elabftw](https://github.com/elabftw/elabftw). The present document is generated from markdown files in [/documentation folder of elabftw](https://github.com/elabftw/elabftw/tree/master/documentation). So if you need to change the documentation, it will be in there.
+The eLabFTW project has everything you need in [elabftw/elabftw](https://github.com/elabftw/elabftw) repository:
+
+- eLabFTW source code is in `src/`, `var/` and `web/`
+- containers are in `containers`
+- documentation is in `documentation/`
+- api specifications are in `apidoc/`
+
+We previously had separate repositories, but we merged everything into one, which is much better.
+
+The present document is generated from markdown files in [/documentation folder of elabftw](https://github.com/elabftw/elabftw/tree/master/documentation). So if you need to change the documentation, it will be in there.
 
 The Docker image is built from the code in [/containers/elabimg folder](https://github.com/elabftw/elabftw/tree/master/containers/elabimg).
 
@@ -35,17 +44,22 @@ The target for Pull Requests is the `master` branch.
 
 Releases get tagged from a `release/X.Y` branch. And patch releases are built from cherry-picking bugfixes commits in `master`.
 
+## Note about images
+
+The `elabftw/elabimg` is the production runtime image. In dev, you'll want to run the `elabftw/elabdev` image.
+
 ### Code organization
 
 * Real accessible pages are in the web/ directory (experiments.php, database.php, login.php, etc…)
-* The rest is in app/ or src/ for PHP classes
+* The rest is in web/app/ or src/ for PHP classes
 * src/Models will contain classes with CRUD (Create, Read, Update, Destroy)
 * src/Services, src/Elabftw will contain services or utility classes
 * A new class will be loaded automagically thanks to the use of PSR-4 with composer (namespace Elabftw\\Elabftw)
 * Check out the scripts in `src/tools` too
 
 ## Working with JavaScript
-All JavaScript code is written in [TypeScript](https://www.typescriptlang.org/) in `src/ts`. During build, it is converted in JS by `tsc`. It is then bundled by [Webpack](https://webpack.js.org/). A full build can be quite time consuming, especially on hardware with limited CPU power.
+
+All JavaScript code is written in [TypeScript](https://www.typescriptlang.org/) in `src/ts`. During build, it is converted in JS by `tsc`. It is then bundled by [Webpack](https://webpack.js.org/).
 
 When working on some JS, what you want is to be able to save the file and immediately see the changes. For that, use `yarn watchjs` to build the JS and watch for changes. Now changes will take a very small time to compile and be visible.
 
@@ -69,9 +83,12 @@ Use vanilla JS and ban the use of jQuery selectors or functions.
 
 ## Glossary
 
-* Experiments + Database items + Experiments Templates = Entities. So when you see Entity it means it can be an experiment/template or a database item.
+* Experiments + Resources + Experiments Templates + Resources templates = Entities. So when you see Entity it means it can be an experiment/template or a database item.
+
+Resources are called Items in the code, Resources templates are called ItemsTypes.
 
 ## Build
+
 The javascript and css files are stored unminified in the source code. But the app uses the minified versions, so if you make a change to the javascript or css files, you need to rebuild them.
 
 * To minify files:
@@ -96,17 +113,6 @@ yarn test # will run the full test suite
 ~~~
 
 A good contribution you can make would be adding Cypress tests.
-
-In order for the tests to run successfully, you'll want to have a file in `tests/elabftw-user.env` with the following content:
-
-~~~bash
-ELABFTW_USER=sam
-ELABFTW_GROUP=wheel
-ELABFTW_USERID=1000
-ELABFTW_GROUPID=1000
-~~~
-
-In the example above, the user is `sam` and the main group is `wheel`. Find out this info with `id` command. This file will make the test container run as your user and prevent permissions issues.
 
 ## Exceptions handling
 
@@ -166,44 +172,6 @@ git checkout -b my-feature
 You might be used to access your local MySQL dev database with PHPMyadmin. Just uncomment the part related to phpmyadmin in the config file and `elabctl restart`.
 
 This will launch a docker container with phpmyadmin that you can reach on port 8080. Go to [localhost:8080](http://localhost:8080). Login with your mysql user (elabftw by default) and your mysql password found in the .yml configuration file. You should see the `elabftw` database now.
-
-## Using a trusted certificate for local dev
-
-When working locally, the docker image will generate a self-signed TLS certificate. This will show a warning in the browser address bar and multiple warnings in the console (when you press F12). To fix this, it is possible to generate certificates that are trusted by your local browser.
-
-We'll use [FiloSottile/mkcert](https://github.com/FiloSottile/mkcert) project to achieve this.
-
-### Step 1: use a real domain name
-
-I like to use elab.local on port 3148. Edit `/etc/hosts` and add a line with elab.local pointing to localhost like this:
-
-`127.0.0.1 elab.local`
-
-### Step 2: get certs
-
-Install [mkcert](https://github.com/FiloSottile/mkcert) and generate certificates for `elab.local`. Create a new folder somewhere to hold them:
-
-~~~bash
-mkdir -p $dev/certs/live/elab.local
-mv elab.local+3.pem $dev/certs/live/elab.local/fullchain.pem
-mv elab.local+3-key.pem $dev/certs/live/elab.local/privkey.pem
-~~~
-
-### Step 3: edit config to use certificates
-
-Edit the .yml file for elabftw, change `ENABLE_LETSENCRYPT` to `true`. Uncomment the volume line with `/ssl` and make it point to where you have the certs.
-
-Example:
-
-~~~yaml
-volumes:
-    - /home/user/.dev/elabftw:/elabftw
-    - /home/user/.dev/certs:/ssl
-~~~
-
-### Step 4: restart containers
-
-`elabctl restart`, and you should now have a valid certificate on your local dev install of elabftw :)
 
 ## How to test external auth
 

@@ -371,7 +371,6 @@ EOF_INSTALL
 
     # elab config
     echo "[4/4] Adjusting the configuration."
-    sed -i -e "s/SERVER_NAME=localhost/SERVER_NAME=$servername/" "$TMP_CONF_FILE"
     sed -i -e "s:/var/elabftw/web:${UPLOAD_DIR}:" "$TMP_CONF_FILE"
     sed -i -e "s/container_name: elabftw/container_name: ${ELAB_WEB_CONTAINER_NAME}/" "$TMP_CONF_FILE"
     sed -i -e "s/container_name: mysql/container_name: ${ELAB_MYSQL_CONTAINER_NAME}/" "$TMP_CONF_FILE"
@@ -383,12 +382,7 @@ EOF_INSTALL
         scheme="http://"
     fi
 
-    # enable letsencrypt
-    if [ "$hasdomain" -eq 1 ] && [ "$useselfsigned" -eq 0 ]; then
-        # even if we don't use Let's Encrypt, for using TLS certs we need this to be true, and volume mounted
-        sed -i -e "s:ENABLE_LETSENCRYPT=false:ENABLE_LETSENCRYPT=true:" "$TMP_CONF_FILE"
-        sed -i -e "s:#- /etc/letsencrypt:- /etc/letsencrypt:" "$TMP_CONF_FILE"
-    fi
+    # TODO: configure TLS semi-automatically
 
     sed -i -e "s#SITE_URL=#SITE_URL=$scheme$servername#" "$TMP_CONF_FILE"
 

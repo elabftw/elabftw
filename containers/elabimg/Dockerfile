@@ -422,7 +422,7 @@ COPY ./containers/elabimg/nginx/opencloning.conf /etc/nginx/opencloning.conf.tpl
 RUN rm -f /etc/nginx/opencloning.conf && ln -s /run/nginx/opencloning.conf /etc/nginx/opencloning.conf
 # the healthcheck.sh script checks if nginx replies to requests
 # the HEALTHCHECK instruction allows to show healthy/unhealthy in "docker ps" output next to the container name
-HEALTHCHECK --interval=2m --timeout=5s --retries=3 CMD sh /etc/nginx/healthcheck.sh
+HEALTHCHECK --interval=15s --timeout=5s --retries=3 --start-interval=5s --start-period=30s CMD sh /etc/nginx/healthcheck.sh
 # nginx will run on port 8080
 EXPOSE 8080
 # END NGINX PART 2

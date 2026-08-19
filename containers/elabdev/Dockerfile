@@ -1,6 +1,6 @@
 # Dev image for eLabFTW
-ARG ELABIMG_TAG=edge
-FROM elabftw/elabimg:${ELABIMG_TAG}
+# we use the locally built elabimg
+FROM elabimg
 
 # COREPACK/YARN
 ENV COREPACK_HOME=/var/cache/elabftw/corepack

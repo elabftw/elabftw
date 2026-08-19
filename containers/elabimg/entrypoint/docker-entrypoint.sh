@@ -13,6 +13,9 @@ set -e
 # get env values
 # and unset the sensitive ones so they cannot be accessed by a rogue process
 getEnv() {
+    cert_path="${CERT_PATH:-}"
+    key_path="${KEY_PATH:-}"
+    generate_cert="${GENERATE_CERT:-false}"
     custom_connect_src=${CUSTOM_CONNECT_SRC:-}
     db_host=${DB_HOST:-localhost}
     db_port=${DB_PORT:-3306}
@@ -24,9 +27,7 @@ getEnv() {
     site_url=${SITE_URL:-https://localhost}
     # remove trailing slash for site_url
     site_url=$(echo "${site_url}" | sed 's:/$::')
-    server_name=${SERVER_NAME:-localhost}
     disable_https=${DISABLE_HTTPS:-false}
-    enable_letsencrypt=${ENABLE_LETSENCRYPT:-false}
     secret_key=${SECRET_KEY:-}
     max_php_memory=${MAX_PHP_MEMORY:-2G}
     max_upload_size=${MAX_UPLOAD_SIZE:-100M}
@@ -86,29 +87,6 @@ copyConf() {
     chmod -v 600 "$n"
 }
 
-# fullchain.pem and privkey.pem should be in a volume linked to /ssl
-generateCert() {
-    cert_dir="/run/nginx/certs"
-    mkdir -pv "$cert_dir"
-
-    # here we generate a random CN because of this bug:
-    # https://bugzilla.redhat.com/show_bug.cgi?id=1204670
-    # https://bugzilla.mozilla.org/show_bug.cgi?id=1056341
-    # this way there is no more hangs
-    if [ ! -f "$cert_dir/server.crt" ]; then
-        randcn=$(openssl rand -hex 6)
-        openssl req \
-            -new \
-            -newkey rsa:4096 \
-            -days 9999 \
-            -nodes \
-            -x509 \
-            -subj "/C=FR/ST=France/L=Paris/O=elabftw/CN=$randcn" \
-            -keyout "$cert_dir/server.key" \
-            -out "$cert_dir/server.crt"
-    fi
-}
-
 escape_sed_repl() {
     printf '%s' "$1" | sed -e 's/[\/&]/\\&/g'
 }
@@ -119,32 +97,40 @@ nginxConf() {
     cp -v /etc/nginx/cors.conf /run/nginx/cors.conf
     conf="/run/nginx/conf.d"
     server_conf="${conf}/server.conf"
-    # Switch http or https
-    # false by default
-    if ($disable_https); then
-        # activate an HTTP server listening on port 443
-        cp -v /etc/nginx/http.conf $server_conf
 
-    # HTTPS
-    else
-        # generate a selfsigned certificate if we don't use Let's Encrypt
-        if (! $enable_letsencrypt); then
-            generateCert
-        fi
-        # activate an HTTPS server listening on port 8080
-        cp -v /etc/nginx/https.conf /run/nginx/conf.d/server.conf
-        if ($enable_letsencrypt); then
-            mkdir -p /ssl
-            sed -i -e "s:%CERT_PATH%:/ssl/live/${server_name}/fullchain.pem:" $server_conf
-            sed -i -e "s:%KEY_PATH%:/ssl/live/${server_name}/privkey.pem:" $server_conf
-        else
-            sed -i -e "s:%CERT_PATH%:/run/nginx/certs/server.crt:" $server_conf
-            sed -i -e "s:%KEY_PATH%:/run/nginx/certs/server.key:" $server_conf
-        fi
+    # HTTP
+    if $disable_https; then
+        cp -v /etc/nginx/http.conf "$server_conf"
+        return
     fi
-    # set the server name in nginx config
-    # works also for the ssl config if ssl is enabled
-    sed -i -e "s/%SERVER_NAME%/${server_name}/" $server_conf
+
+    if $generate_cert; then
+        generateCert
+        cert_path="/run/nginx/certs/server.pem"
+        key_path="/run/nginx/certs/server-key.pem"
+    fi
+
+    if [ -z "${cert_path:-}" ] || [ -z "${key_path:-}" ]; then
+        echo 'CERT_PATH and KEY_PATH must be set when HTTPS is enabled.' >&2
+        exit 1
+    fi
+
+    if [ ! -r "$cert_path" ]; then
+        echo "Certificate is not readable: $cert_path" >&2
+        exit 1
+    fi
+
+    if [ ! -r "$key_path" ]; then
+        echo "Private key is not readable: $key_path" >&2
+        exit 1
+    fi
+
+    cp -v /etc/nginx/https.conf "$server_conf"
+
+    sed -i \
+        -e "s:%CERT_PATH%:${cert_path}:" \
+        -e "s:%KEY_PATH%:${key_path}:" \
+        "$server_conf"
 
     # for maintenance mode we replace common.conf with maintenance.conf
     if ($maintenance_mode); then
@@ -276,6 +262,29 @@ phpfpmConf() {
     # pubchem urls
     sed -i -e "s|%PUBCHEM_PUG_URL%|${pubchem_pug_url}|" $f
     sed -i -e "s|%PUBCHEM_PUG_VIEW_URL%|${pubchem_pug_view_url}|" $f
+}
+
+# useful for CI or tests
+generateCert() {
+    cert_dir="/run/nginx/certs"
+    mkdir -pv "$cert_dir"
+
+    # here we generate a random CN because of this bug:
+    # https://bugzilla.redhat.com/show_bug.cgi?id=1204670
+    # https://bugzilla.mozilla.org/show_bug.cgi?id=1056341
+    # this way there is no more hangs
+    if [ ! -f "$cert_dir/server.pem" ]; then
+        randcn=$(openssl rand -hex 6)
+        openssl req \
+            -new \
+            -newkey rsa:4096 \
+            -days 9999 \
+            -nodes \
+            -x509 \
+            -subj "/C=FR/ST=France/L=Paris/O=elabftw/CN=$randcn" \
+            -keyout "$cert_dir/server-key.pem" \
+            -out "$cert_dir/server.pem"
+    fi
 }
 
 getRedisUri() {
@@ -446,14 +455,16 @@ dbUpdate
 startupMessage
 # add it at the end so it's maybe more visible
 warnDeprecated \
-    ENABLE_IPV6 \
     ELABFTW_USER \
     ELABFTW_GROUP \
     ELABFTW_USERID \
     ELABFTW_GROUPID \
-    INDIGO_URL \
-    SILENT_INIT \
-    USE_INDIGO \
-    USE_FINGERPRINTER \
+    ENABLE_IPV6 \
+    ENABLE_LETSENCRYPT \
     FINGERPRINTER_URL \
-    FINGERPRINTER_USE_PROXY
+    FINGERPRINTER_USE_PROXY \
+    INDIGO_URL \
+    SERVER_NAME \
+    SILENT_INIT \
+    USE_FINGERPRINTER \
+    USE_INDIGO

@@ -1,0 +1,235 @@
+# docker-elabftw configuration file for eLabFTW Version 6
+# this is the DEVELOPMENT version
+# it is simplified and uncommented
+# use : "docker compose up -d" to start containers
+name: elabftw
+networks:
+  elabftw-net:
+
+services:
+  # we don't actually want to deploy this, we just need it built. scale: 0 will do that.
+  elabimg:
+    scale: 0
+    build:
+      context: ../..
+      dockerfile: containers/elabimg/Dockerfile
+      args:
+        BUILD_ALL: 0
+  web:
+    # here we use elabftw/elabdev, which builds upon the production elabftw/elabimg image
+    image: elabftw/elabdev:edge
+    build:
+      context: ../..
+      dockerfile: ./containers/elabdev/Dockerfile
+      additional_contexts:
+        elabimg: service:elabimg
+    user: ${WORKER_UID}:${WORKER_GID}
+    # the /run folder is mounted as tmpfs, which is memory backed storage
+    tmpfs:
+      - /run:mode=755,uid=${WORKER_UID},gid=${WORKER_GID},exec,nosuid,nodev,size=64m
+
+    read_only: true
+    restart: always
+    container_name: elabftw
+    depends_on:
+      mysql:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+    environment:
+      # MYSQL
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=elabftw
+      - DB_USER=elabftw
+      - DB_PASSWORD=secr3t
+      # PHP
+      # better if changed (see list of available values: http://php.net/manual/en/timezones.php
+      - PHP_TIMEZONE=Europe/Paris
+      # again
+      - TZ=Europe/Paris
+      # TLS
+      - CERT_PATH=/etc/elabftw/certs/elab.localhost.pem
+      - KEY_PATH=/etc/elabftw/certs/elab.localhost-key.pem
+
+      # yes, all devs that didn't change that have the same secret key, but it's for dev, it's fine
+      # having it here simplifies setup
+      # to change it, go to https://get.elabftw.net/key
+      - SECRET_KEY=def00000f5e0c2bfb43329f40718b0b575c06fe2d8f464df07cf73df2ebe9324a7bf898e858404cb873f4a143ddd48d599ffd40f68a805916413d0f576843396053e23e5
+
+      - SITE_URL=https://elab.localhost:3148
+      - DISABLE_HTTPS=false
+      - USE_OPENCLONING=true
+      - OPENCLONING_URL=http://opencloning:8000/
+      - DEV_MODE=true
+
+    ports:
+      - '3148:8080'
+    volumes:
+      - ${HOME}/.local/share/elabdev/certs:/etc/elabftw/certs
+      - ${HOME}/.cache/elabdev:/var/cache/elabftw
+      - ${HOME}/.local/share/elabdev/uploads:/var/lib/elabftw/uploads
+      - ${HOME}/.local/share/elabdev/exports:/var/lib/elabftw/exports
+      - ../..:/elabftw
+
+    networks:
+      - elabftw-net
+
+  mysql:
+    image: mysql:8.4
+    restart: always
+    container_name: mysql
+    # add an healthcheck block so the web container knows when it is ready to accept connections
+    # use double $ here so env vars are correctly found
+    healthcheck:
+      test: "/usr/bin/mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --execute 'SHOW DATABASES;'"
+      interval: 5s
+      timeout: 5s
+      retries: 42
+    # drop some capabilities
+    cap_drop:
+        - AUDIT_WRITE
+        - MKNOD
+        - SYS_CHROOT
+        - SETFCAP
+        - NET_RAW
+    cap_add:
+        - SYS_NICE
+    environment:
+        - MYSQL_ROOT_PASSWORD=secr3t
+        - MYSQL_DATABASE=elabftw
+        - MYSQL_USER=elabftw
+        - MYSQL_PASSWORD=secr3t
+        # need to change, this is your timezone, see PHP_TIMEZONE from the elabftw container
+        - TZ=Europe/Paris
+
+    volumes:
+        - ${HOME}/.local/share/elabdev/mysql:/var/lib/mysql
+    expose:
+      - '3306'
+    networks:
+      - elabftw-net
+
+  # Run the opencloning container as read_only too
+  # https://github.com/OpenCloning/OpenCloning
+  opencloning:
+    image: manulera/opencloning:prod-baseurl-opencloning
+    container_name: opencloning
+    restart: always
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - elabftw-net
+    environment:
+      - ALLOWED_ORIGINS=*
+      - ROOT_PATH=/opencloning
+      - BACKEND_URL=/opencloning/
+      - SHOW_APP_BAR=false
+      - DATABASE=elabftw
+  # Optional environment variable used to restrict access to external repositories (e.g., WekWikGene).
+  # References:
+  #    https://github.com/manulera/OpenCloning_backend/blob/master/src/opencloning/app_settings.py
+  #    https://github.com/manulera/OpenCloning/blob/master/docker-compose.yml
+  # By default (i.e., if this environment variable is unset or empty), all external repositories are enabled.
+  # To restrict which external repositories users can access, set this variable to a comma-separated list of allowed base URLs.
+  #    - ALLOWED_EXTERNAL_URLS=https://www.addgene.org/,https://media.addgene.org/,https://seva-plasmids.com/,https://api.ncbi.nlm.nih.gov/datasets/v2alpha/,https://eutils.ncbi.nlm.nih.gov/entrez/eutils/,https://www.snapgene.com/local/fetch.php,https://benchling.com/,https://assets.opencloning.org/annotated-igem-distribution,http://www.euroscarf.de/
+  # Get this to valid addgene username / password if you want to be able to access addgene plasmids
+  # For details, see https://github.com/manulera/OpenCloning_backend?tab=readme-ov-file#addgene-authenticated-access
+  # These variables are only used in requests made by the backend, so they are not exposed to users of the frontend.
+  # default value: unset
+  #     - ADDGENE_USERNAME=your_addgene_username
+  #     - ADDGENE_PASSWORD=your_addgene_password
+
+
+  # example of a redis container
+  # uncomment if you want to spawn a redis container to manage sessions
+  #redis:
+  #  image: redis:8-alpine
+  #  restart: always
+  #  container_name: redis
+  #  networks:
+  #    - elabftw-net
+
+  # example of a keeex container (experimental!)
+  #keeex:
+  #  image: repo.keeex.me/fkeeex_daemon:latest
+  #  container_name: keeex
+  #  restart: always
+  #  environment:
+  #    - FKEEEX_CONFIG_USER=user@example.org
+  #    - FKEEEX_CONFIG_PASSWORD=
+  #    # Set a random passphrase here. You can generate one with "openssl rand -base64 32".
+  #    - FKEEEX_CONFIG_PASSPHRASE=
+  #  expose:
+  #    - 8080
+  #  networks:
+  #    - elabftw-net
+
+  # PHPMYADMIN
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin
+      environment:
+          - PMA_PORT=3307
+      links:
+          - mysql:db
+      ports:
+          - "8082:80"
+      networks:
+          - elabftw-net
+
+  # SWAGGER UI
+  # swagger allows you to consult the documentation generated by apidoc/v2/openapi.yaml
+  # running a local container is perfect to see the changes right after a change
+  swagger:
+    image: swaggerapi/swagger-ui:v5.31.2
+    restart: always
+    container_name: swagger-elab-local
+    ports:
+      - "8085:8080"
+    volumes:
+      - ../../apidoc/v2:/usr/share/nginx/html/swagger:ro
+    environment:
+      - API_URL=swagger/openapi.yaml
+    networks:
+        - elabftw-net
+
+
+  # LDAP
+  # example for ldap server + admin interface
+  # uncomment if you want to work on LDAP authentication
+  #ldap:
+  #    image: osixia/openldap:1.4.0
+  #    container_name: ldap
+  #    restart: always
+  #    hostname: example.org
+  #    environment:
+  #      - LDAP_TLS_VERIFY_CLIENT=try
+  #      - LDAP_OPENLDAP_UID=1000
+  #      - LDAP_OPENLDAP_GID=1000
+  #    ports:
+  #      - "389:389"
+  #      - "636:636"
+  #    volumes:
+  #      - /var/elabftw/ldap-data/ldap:/var/lib/ldap
+  #      - /var/elabftw/ldap-data/slapd.d:/etc/ldap/slapd.d
+  #    networks:
+  #        - elabftw-net
+  #ldapadmin:
+  #    image: osixia/phpldapadmin:0.9.0
+  #    container_name: ldapadmin
+  #    environment:
+  #      - PHPLDAPADMIN_LDAP_HOSTS=ldap
+  #    restart: always
+  #    ports:
+  #      - "6443:443"
+  #    networks:
+  #        - elabftw-net

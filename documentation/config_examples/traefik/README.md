@@ -14,7 +14,6 @@ For the `web` service:
 
 * Remove the `container_name`
 * Set `DISABLE_HTTPS=true`
-* Set `ENABLE_LETSENCRYPT=false`
 * Remove the `ports` section
 * Remove the `networks` section (or adapt it to your network)
 

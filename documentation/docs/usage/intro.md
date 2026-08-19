@@ -50,7 +50,7 @@ Every User needs to belong to at least one Team. Every team must have at least o
 
 ## Teams
 
-A Team generally correspond to a real life research group or service. It is not advisable to use Teams as Projects as this doesn't scale well (and Teamgroups can be used instead for that purpose). A User can belong to several teams if needed, they will then need to select a team upon login.
+A Team generally corresponds to a real life research group or service. It is not advisable to use Teams as Projects as this doesn't scale well (and Teamgroups can be used instead for that purpose). A User can belong to several teams if needed, they will then be prompted to select a team upon login.
 
 Every Team has one or several Admin, who can change many settings affecting users in the team, such as the default experimental template, categories for database items (Items Types), experiments Status, Tags, etc...
 

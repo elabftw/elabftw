@@ -90,6 +90,21 @@ abstract class AbstractCsv extends AbstractImport
         return $csv;
     }
 
+    /**
+     * Return the CSV header with each column name trimmed
+     *
+     * Column names with leading/trailing whitespace (e.g. " title ") would
+     * otherwise produce array keys that do not match the expected column
+     * names, causing import to fail with a misleading "Could not find the
+     * title column!" error.
+     *
+     * @return array<string>
+     */
+    protected function getTrimmedHeader(): array
+    {
+        return array_map('trim', $this->reader->getHeader());
+    }
+
     abstract protected function getProcessedColumns(): array;
 
     // we remove the columns processed as sql columns to be left with the ones we want in metadata as extra fields

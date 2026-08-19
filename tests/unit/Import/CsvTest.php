@@ -102,6 +102,29 @@ class CsvTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(3, $Import->getInserted());
     }
 
+    public function testImportTrimmedHeader(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/importable-trimmed-header.csv',
+            'importable-trimmed-header.csv',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Csv(
+            new Users(1, 1),
+            new Users(1, 1),
+            $uploadedFile,
+            $this->logger,
+            EntityType::Items,
+            category: 1,
+            template: 1,
+        );
+        $Import->import();
+        $this->assertEquals(3, $Import->getInserted());
+    }
+
     public function testImportNoTitle(): void
     {
         $uploadedFile = new UploadedFile(

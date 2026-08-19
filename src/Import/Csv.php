@@ -72,7 +72,7 @@ final class Csv extends AbstractCsv
     public function import(): int
     {
         $entity = $this->entityType->toInstance($this->targetUser);
-        foreach ($this->reader->getRecords() as $row) {
+        foreach ($this->reader->getRecords($this->getTrimmedHeader()) as $row) {
             // fail hard if no title column can be found, or we end up with a bunch of Untitled entries
             if (empty($row['title'])) {
                 throw new ImproperActionException('Could not find the title column!');

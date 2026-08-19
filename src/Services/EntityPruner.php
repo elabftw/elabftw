@@ -56,11 +56,21 @@ final class EntityPruner implements CleanerInterface
             return 0;
         }
 
-        // delete orphaned tags2entity entries before the entity rows
-        $this->cleanupTags2entity($matchingIds);
+        // wrap both deletes in a transaction to ensure consistency
+        $this->Db->beginTransaction();
+        try {
+            // delete orphaned tags2entity entries before the entity rows
+            $this->cleanupTags2entity($matchingIds);
 
-        // delete the entity rows
-        return $this->deleteEntities($matchingIds);
+            // delete the entity rows
+            $deleted = $this->deleteEntities($matchingIds);
+
+            $this->Db->commit();
+            return $deleted;
+        } catch (\Exception $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
     }
 
     /**

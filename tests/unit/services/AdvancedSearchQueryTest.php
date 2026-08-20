@@ -18,6 +18,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 use function implode;
+use function sprintf;
 
 class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 {

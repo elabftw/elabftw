@@ -7,7 +7,6 @@ FROM ${ELABIMG_BASE}
 # COREPACK/YARN
 ENV COREPACK_HOME=/var/cache/elabftw/corepack
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-ENV CYPRESS_INSTALL_BINARY=0
 
 # npm is to install corepack (which enables yarn)
 # php84-phar, unzip is for composer

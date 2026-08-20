@@ -316,9 +316,6 @@ COPY ./src/tools/yarn-plugin-tinymce.js /elabftw/src/tools/yarn-plugin-tinymce.j
 COPY ./src/scss/_tinymce.scss /elabftw/src/scss/_tinymce.scss
 RUN mkdir -p /elabftw/web/assets
 
-# avoid installing cypress
-ENV CYPRESS_INSTALL_BINARY=0
-
 # install JS dependencies before copying the rest of the application source
 RUN if [ "$BUILD_ALL" = "1" ]; then \
         yarn install --immutable; \

@@ -23,8 +23,8 @@ When requesting a new certificate, make sure that port 80 is open (and also port
 `certbot certonly --standalone -d elab.example.org`
 
 - Set `DISABLE_HTTPS=false`
-- Set `CERT_PATH=/etc/elabftw/certs/fullchain.pem`
-- Set `KEY_PATH=/etc/elabftw/certs/privkey.pem`
+- Set `TLS_CERT_PATH=/etc/elabftw/certs/fullchain.pem`
+- Set `TLS_KEY_PATH=/etc/elabftw/certs/privkey.pem`
 - Bind-mount `/etc/letsencrypt/live/<YOUR-DOMAIN>` to `/etc/elabftw/certs`. So in the `volumes:` section it should look like: `- /etc/letsencrypt/live/eln.example.org:/etc/elabftw/certs:ro`
 
 ## Option C: HTTPS mode with custom certificates
@@ -32,8 +32,8 @@ When requesting a new certificate, make sure that port 80 is open (and also port
 The webserver in the container expects TLS certificates to be in a particular order and format. Make sure that your certificate file contains certificates in this order: `<certificate> <intermediate ca> <root ca>`, with PEM encoding.
 
 - Set `DISABLE_HTTPS=false`
-- Set `CERT_PATH=/etc/elabftw/certs/name-of-your-cert.pem`
-- Set `KEY_PATH=/etc/elabftw/certs/name-of-your-key.pem`
+- Set `TLS_CERT_PATH=/etc/elabftw/certs/name-of-your-cert.pem`
+- Set `TLS_KEY_PATH=/etc/elabftw/certs/name-of-your-key.pem`
 - Bind-mount `/path/to/your/certs` to `/etc/elabftw/certs`. So in the `volumes:` section it should look like: `- /etc/my-certs-for-tls/elabftw:/etc/elabftw/certs:ro`
 
 ## Option D: HTTPS mode with self-signed certificate
@@ -45,7 +45,7 @@ Only use this for testing purposes!
 The container can generate its own self-signed certificate. This certificate will not be trusted and users will see a warning that they'll need to ignore. Do not use this option.
 
 - Set `DISABLE_HTTPS=false`.
-- Set `GENERATE_CERT=true`.
+- Set `GENERATE_TLS_CERT=true`.
 
 ## Configure TLS certificate renewal
 

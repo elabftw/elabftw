@@ -148,8 +148,8 @@ In the example below, the certificate is `fullchain.pem` and the key is `privkey
 Set these two new ENV variables in `environment:` section:
 
 ~~~yaml
-- CERT_PATH=/etc/elabftw/certs/fullchain.pem
-- KEY_PATH=/etc/elabftw/certs/privkey.pem
+- TLS_CERT_PATH=/etc/elabftw/certs/fullchain.pem
+- TLS_KEY_PATH=/etc/elabftw/certs/privkey.pem
 ~~~
 
 Now add the bind-mount in the `volumes:` section:
@@ -162,12 +162,12 @@ The user running the container (elabftw-worker) must have read access to the fil
 
 -------------
 
-Note: the `CERT_PATH` and `KEY_PATH` contain the full path. So if you want/need to do it differently, you can. For example:
+Note: the `TLS_CERT_PATH` and `TLS_KEY_PATH` contain the full path. So if you want/need to do it differently, you can. For example:
 
 ~~~yaml
 # environment:
-- CERT_PATH=/certificate/cert.crt
-- KEY_PATH=/private-key/key.crt
+- TLS_CERT_PATH=/certificate/cert.crt
+- TLS_KEY_PATH=/private-key/key.crt
 # volumes:
 - /srv/http/eln.example.org/cert:/certificate:ro
 - /etc/ssl/private/very-private:/private-key:ro

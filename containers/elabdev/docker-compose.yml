@@ -52,8 +52,8 @@ services:
       # again
       - TZ=Europe/Paris
       # TLS
-      - CERT_PATH=/etc/elabftw/certs/elab.localhost.pem
-      - KEY_PATH=/etc/elabftw/certs/elab.localhost-key.pem
+      - TLS_CERT_PATH=/etc/elabftw/certs/elab.localhost.pem
+      - TLS_KEY_PATH=/etc/elabftw/certs/elab.localhost-key.pem
 
       # yes, all devs that didn't change that have the same secret key, but it's for dev, it's fine
       # having it here simplifies setup

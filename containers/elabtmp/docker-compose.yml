@@ -25,7 +25,7 @@ services:
       - DB_PASSWORD=phpunit
       - SECRET_KEY=def00000195a92432f2ebb86bf6e9b9646b45ea955cab7b8f2d96ba2259a85c9e09b04647078c425c5392cb631fa3d9816974bbe8e458d61e16f897ef36c0def362458fd
       - DISABLE_HTTPS=false
-      - GENERATE_CERT=true
+      - GENERATE_TLS_CERT=true
       - MAX_UPLOAD_SIZE=200M
       - PHP_TIMEZONE=Europe/Paris
       - TZ=Europe/Paris

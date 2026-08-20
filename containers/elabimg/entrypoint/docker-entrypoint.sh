@@ -13,9 +13,9 @@ set -e
 # get env values
 # and unset the sensitive ones so they cannot be accessed by a rogue process
 getEnv() {
-    cert_path="${CERT_PATH:-}"
-    key_path="${KEY_PATH:-}"
-    generate_cert="${GENERATE_CERT:-false}"
+    tls_cert_path="${TLS_CERT_PATH:-}"
+    tls_key_path="${TLS_KEY_PATH:-}"
+    generate_tls_cert="${GENERATE_TLS_CERT:-false}"
     custom_connect_src=${CUSTOM_CONNECT_SRC:-}
     db_host=${DB_HOST:-localhost}
     db_port=${DB_PORT:-3306}
@@ -104,32 +104,32 @@ nginxConf() {
         return
     fi
 
-    if $generate_cert; then
-        generateCert
-        cert_path="/run/nginx/certs/server.pem"
-        key_path="/run/nginx/certs/server-key.pem"
+    if $generate_tls_cert; then
+        generateTlsCert
+        tls_cert_path="/run/nginx/certs/server.pem"
+        tls_key_path="/run/nginx/certs/server-key.pem"
     fi
 
-    if [ -z "${cert_path:-}" ] || [ -z "${key_path:-}" ]; then
-        echo 'CERT_PATH and KEY_PATH must be set when HTTPS is enabled.' >&2
+    if [ -z "${tls_cert_path:-}" ] || [ -z "${tls_key_path:-}" ]; then
+        echo 'TLS_CERT_PATH and TLS_KEY_PATH must be set when HTTPS is enabled.' >&2
         exit 1
     fi
 
-    if [ ! -r "$cert_path" ]; then
-        echo "Certificate is not readable: $cert_path" >&2
+    if [ ! -r "$tls_cert_path" ]; then
+        echo "Certificate is not readable: $tls_cert_path" >&2
         exit 1
     fi
 
-    if [ ! -r "$key_path" ]; then
-        echo "Private key is not readable: $key_path" >&2
+    if [ ! -r "$tls_key_path" ]; then
+        echo "Private key is not readable: $tls_key_path" >&2
         exit 1
     fi
 
     cp -v /etc/nginx/https.conf "$server_conf"
 
     sed -i \
-        -e "s:%CERT_PATH%:${cert_path}:" \
-        -e "s:%KEY_PATH%:${key_path}:" \
+        -e "s:%TLS_CERT_PATH%:${tls_cert_path}:" \
+        -e "s:%TLS_KEY_PATH%:${tls_key_path}:" \
         "$server_conf"
 
     # for maintenance mode we replace common.conf with maintenance.conf
@@ -265,7 +265,7 @@ phpfpmConf() {
 }
 
 # useful for CI or tests
-generateCert() {
+generateTlsCert() {
     cert_dir="/run/nginx/certs"
     mkdir -pv "$cert_dir"
 

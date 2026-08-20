@@ -186,8 +186,8 @@ services:
 
         # if you are running the container in HTTPS mode, you need to define a TLS certificate and its key paths
         # mount that folder in volumes section below
-        - CERT_PATH=/etc/elabftw/certs/<your-domain.pem>
-        - KEY_PATH=/etc/elabftw/certs/<your-domain-key.pem>
+        - TLS_CERT_PATH=/etc/elabftw/certs/<your-domain.pem>
+        - TLS_KEY_PATH=/etc/elabftw/certs/<your-domain-key.pem>
 
         # optional: enable if you want nginx to be configured with set_real_ip_from directives
         # default value: false

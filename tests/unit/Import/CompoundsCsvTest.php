@@ -113,15 +113,6 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    private function latestImportedStorageId(): int
-    {
-        $Db = Db::getConnection();
-        $req = $Db->prepare('SELECT storage_id FROM containers2items ORDER BY id DESC LIMIT 1');
-        $Db->execute($req);
-
-        return (int) $req->fetchColumn();
-    }
-
     public function testImportWithPaddedCasHeader(): void
     {
         $requester = new Users(1, 1);
@@ -155,5 +146,14 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
         } finally {
             unlink($csvPath);
         }
+    }
+
+    private function latestImportedStorageId(): int
+    {
+        $Db = Db::getConnection();
+        $req = $Db->prepare('SELECT storage_id FROM containers2items ORDER BY id DESC LIMIT 1');
+        $Db->execute($req);
+
+        return (int) $req->fetchColumn();
     }
 }

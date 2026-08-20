@@ -2,16 +2,25 @@
 set -e
 
 CYPRESS_IMG="elabftw/elab-cypress:15.20.0"
-X11_USER="$(id -un)"
+CONTAINER_UID="$(docker run --rm --entrypoint id "$CYPRESS_IMG" -u node)"
+X11_ACL="SI:localuser:#${CONTAINER_UID}"
+X11_AUTH_ADDED=0
+
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 
 cleanup() {
-    xhost "-SI:localuser:${X11_USER}" >/dev/null
+    if (( X11_AUTH_ADDED )); then
+        xhost "-${X11_ACL}" >/dev/null
+    fi
 }
 
 trap cleanup EXIT
-xhost "+SI:localuser:${X11_USER}" >/dev/null
+
+if ! xhost | grep -Fqx "${X11_ACL}"; then
+    xhost "+${X11_ACL}" >/dev/null
+    X11_AUTH_ADDED=1
+fi
 
 docker run --rm -it \
     --user node \

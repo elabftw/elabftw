@@ -1,6 +1,8 @@
 # Dev image for eLabFTW
 # we use the locally built elabimg
-FROM elabimg
+# but we can override it with elabftw/elabimg:edge for instance
+ARG ELABIMG_BASE=elabimg
+FROM ${ELABIMG_BASE}
 
 # COREPACK/YARN
 ENV COREPACK_HOME=/var/cache/elabftw/corepack

@@ -79,7 +79,7 @@ final class CompoundsCsv extends AbstractCsv
                 break;
             }
         }
-foreach ($this->reader->getRecords($trimmedHeader) as $row) {
+        foreach ($this->reader->getRecords($trimmedHeader) as $row) {
             // this might store the compound from pubchem
             $compound = false;
             $ids = array();

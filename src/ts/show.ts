@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function quoteSearchToken(value: string): string {
-    if (value === '""' || value === "''") {
+    if (value === '""' || value === '\'\'') {
       return '""';
     }
 
@@ -612,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return '';
     }
 
-    if (forceEmptyValue || value === '""' || value === "''") {
+    if (forceEmptyValue || value === '""' || value === '\'\'') {
       return `extrafield:${quoteSearchToken(key)}:""`;
     }
 

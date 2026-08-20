@@ -23,6 +23,7 @@ describe('Search', () => {
 
   it('Searches an experiment with an unchecked and checked checkbox using extended metadata syntax', () => {
     const fieldName = 'Approved';
+
     // create experiment with unchecked checkbox
     cy.createEntity().then(() => {
       cy.get('#documentTitle').invoke('text').then((titleUnchecked) => {
@@ -34,9 +35,11 @@ describe('Search', () => {
           cy.get('#documentTitle').invoke('text').then((titleChecked) => {
             const trimmedTitleChecked = titleChecked.trim();
             cy.addMetadataField(fieldName, 'checkbox');
-            // check the checkbox
+
+            // check the checkbox and wait for the PATCH update to complete
+            cy.intercept('PATCH', '**/api/v2/experiments/*').as('patchExp');
             cy.get(`input[type="checkbox"][data-field="${fieldName}"]`).click();
-            cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+            cy.wait('@patchExp');
 
             // 1. Search for empty/unchecked value
             cy.visit('experiments.php');

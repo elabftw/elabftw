@@ -20,6 +20,8 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CleanerInterface;
 use Override;
 use PDO;
+use PDOStatement;
+use Exception;
 
 use function implode;
 use function preg_match;
@@ -67,7 +69,7 @@ final class EntityPruner implements CleanerInterface
 
             $this->Db->commit();
             return $deleted;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->Db->rollBack();
             throw $e;
         }
@@ -76,7 +78,7 @@ final class EntityPruner implements CleanerInterface
     /**
      * Build a prepared SELECT statement that returns the ids of matching deleted entities
      */
-    private function buildSelectStmt(): \PDOStatement
+    private function buildSelectStmt(): PDOStatement
     {
         $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE state = :state';
         $binds = array();

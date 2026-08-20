@@ -112,7 +112,7 @@ yarn unit # will run the unit tests
 yarn test # will run the full test suite
 ~~~
 
-End to end testing is done with Cypress.
+End-to-end testing is done with Cypress.
 
 ### Running cypress locally
 

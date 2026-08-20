@@ -312,6 +312,11 @@ services:
         # default value: false
         #- DEV_MODE=false
 
+        # use this to generate a self-signed TLS certificate
+        # useful in CI for tests
+        # default value: false
+        #- GENERATE_TLS_CERT=false
+
     ports:
         # Important note about exposing ports: due to the way Docker deals with the host firewall, it is recommended to use '127.0.0.1:1234:8080'
         # if you only want to expose the service locally (on port 1234 in this example). See https://github.com/moby/moby/issues/22054

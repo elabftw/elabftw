@@ -26,7 +26,7 @@ When requesting a new certificate, make sure that port 80 is open (and also port
 - Set `TLS_CERT_PATH=/etc/letsencrypt/live/<YOUR-DOMAIN>/fullchain.pem`
 - Set `TLS_KEY_PATH=/etc/letsencrypt/live/<YOUR-DOMAIN>/privkey.pem`
 
-We need to bind-mount `live` and `archive` dirs because certs are symlinks. Note: we could also just bind-mount the full `/etc/letsencrypt` directory bind that would give the container access to other certs on the host, so we don't want that.
+We need to bind-mount `live` and `archive` dirs because certs are symlinks.
 
 In `volumes:` section:
 - `/etc/letsencrypt/live/<YOUR-DOMAIN>:/etc/letsencrypt/live/<YOUR-DOMAIN>:ro`

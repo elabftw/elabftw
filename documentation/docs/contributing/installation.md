@@ -57,8 +57,6 @@ Use `./containers/elabdev/stop.sh` to stop them. There is also `clean.sh` in the
 It can be a good idea to define an alias such as "alias elabc=docker exec -it elabftw". So you can use "elabc" to run commands in the container directly.
 :::
 
-It is important to run `yarn` before `composer` because `yarn` will generate a PHP class that needs to be picked up by composer.
-
 ## Finishing up
 
 * Now head to https://elab.localhost:3148

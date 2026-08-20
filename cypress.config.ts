@@ -63,7 +63,7 @@ export default defineConfig({
       require('./tests/cypress/plugins/index.ts')(on, config);
       return config;
     },
-    baseUrl: 'https://elab.local:3148',
+    baseUrl: 'https://elab.localhost:3148',
     specPattern: 'tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'tests/cypress/support/index.ts',
   },

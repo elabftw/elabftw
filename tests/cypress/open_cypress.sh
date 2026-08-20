@@ -13,9 +13,6 @@ cleanup() {
 trap cleanup EXIT
 xhost "+SI:localuser:${X11_USER}" >/dev/null
 
-echo "Project directory: ${PROJECT_DIR}"
-test -f "${PROJECT_DIR}/cypress.config.js" && echo "Cypress config found"
-
 docker run --rm -it \
     --user node \
     --add-host host.docker.internal:host-gateway \

@@ -23,9 +23,14 @@ When requesting a new certificate, make sure that port 80 is open (and also port
 `certbot certonly --standalone -d elab.example.org`
 
 - Set `DISABLE_HTTPS=false`
-- Set `TLS_CERT_PATH=/etc/elabftw/certs/fullchain.pem`
-- Set `TLS_KEY_PATH=/etc/elabftw/certs/privkey.pem`
-- Bind-mount `/etc/letsencrypt/live/<YOUR-DOMAIN>` to `/etc/elabftw/certs`. So in the `volumes:` section it should look like: `- /etc/letsencrypt/live/eln.example.org:/etc/elabftw/certs:ro`
+- Set `TLS_CERT_PATH=/etc/letsencrypt/live/<YOUR-DOMAIN>/fullchain.pem`
+- Set `TLS_KEY_PATH=/etc/letsencrypt/live/<YOUR-DOMAIN>/privkey.pem`
+
+We need to bind-mount `live` and `archive` dirs because certs are symlinks. Note: we could also just bind-mount the full `/etc/letsencrypt` directory bind that would give the container access to other certs on the host, so we don't want that.
+
+In `volumes:` section:
+- `/etc/letsencrypt/live/<YOUR-DOMAIN>:/etc/letsencrypt/live/<YOUR-DOMAIN>:ro`
+- `/etc/letsencrypt/archive/<YOUR-DOMAIN>:/etc/letsencrypt/archive/<YOUR-DOMAIN>:ro`
 
 ## Option C: HTTPS mode with custom certificates
 

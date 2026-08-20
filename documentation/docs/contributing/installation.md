@@ -5,7 +5,7 @@ title: Installing a dev environment
 
 # Development environment installation
 
-The dev environment for eLab is an hybrid between Docker and a local install. The files will be served by the webserver in Docker but the source code (`elabftw` folder) will be on your computer. This allows you to run the app as it would run in production, but still see your changes in the code immediately because the source is on your computer.
+The dev environment for eLab is a hybrid between Docker and a local install. The files will be served by the webserver in Docker but the source code (`elabftw` folder) will be on your computer. This allows you to run the app as it would run in production, but still see your changes in the code immediately because the source is on your computer.
 
 ## Pre-requisites
 

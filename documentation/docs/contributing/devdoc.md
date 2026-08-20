@@ -54,7 +54,7 @@ The `elabftw/elabimg` is the production runtime image. In dev, you'll want to ru
 * The rest is in web/app/ or src/ for PHP classes
 * src/Models will contain classes with CRUD (Create, Read, Update, Destroy)
 * src/Services, src/Elabftw will contain services or utility classes
-* A new class will be loaded automagically thanks to the use of PSR-4 with composer (namespace Elabftw\\Elabftw)
+* A new class will be loaded automagically thanks to the use of PSR-4 with Composer (namespace Elabftw\\Elabftw)
 * Check out the scripts in `src/tools` too
 
 ## Working with JavaScript

@@ -103,7 +103,7 @@ jobs:
       - build_image
       - run:
           name: Export image
-          command: docker image save -o /tmp/elabftw-circleci.tar elabftw/circleci
+          command: docker image save -o /tmp/elabftw-circleci.tar "elabftw/circleci:ci-${CIRCLE_SHA1}"
       - persist_to_workspace:
           root: /tmp
           paths:

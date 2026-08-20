@@ -20,4 +20,46 @@ describe('Search', () => {
       });
     });
   });
+
+  it('Searches an experiment with an unchecked and checked checkbox using extended metadata syntax', () => {
+    const fieldName = 'Approved';
+    // create experiment with unchecked checkbox
+    cy.createEntity().then(() => {
+      cy.get('#documentTitle').invoke('text').then((titleUnchecked) => {
+        const trimmedTitleUnchecked = titleUnchecked.trim();
+        cy.addMetadataField(fieldName, 'checkbox');
+
+        // create second experiment with checked checkbox
+        cy.createEntity().then(() => {
+          cy.get('#documentTitle').invoke('text').then((titleChecked) => {
+            const trimmedTitleChecked = titleChecked.trim();
+            cy.addMetadataField(fieldName, 'checkbox');
+            // check the checkbox
+            cy.get(`input[type="checkbox"][data-field="${fieldName}"]`).click();
+            cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+
+            // 1. Search for empty/unchecked value
+            cy.visit('experiments.php');
+            const emptyQuery = `extrafield:"${fieldName}":""`;
+            cy.get('#extendedArea').should('be.visible').type(`${emptyQuery}{enter}`);
+            cy.url().should('include', 'q=');
+
+            // Unchecked experiment should be visible, checked should not
+            cy.get('#itemList').should('be.visible').contains(trimmedTitleUnchecked).should('exist');
+            cy.get('#itemList').contains(trimmedTitleChecked).should('not.exist');
+
+            // 2. Search for checked value ("on")
+            cy.visit('experiments.php');
+            const checkedQuery = `extrafield:"${fieldName}":on`;
+            cy.get('#extendedArea').should('be.visible').type(`${checkedQuery}{enter}`);
+            cy.url().should('include', 'q=');
+
+            // Checked experiment should be visible, unchecked should not
+            cy.get('#itemList').should('be.visible').contains(trimmedTitleChecked).should('exist');
+            cy.get('#itemList').contains(trimmedTitleUnchecked).should('not.exist');
+          });
+        });
+      });
+    });
+  });
 });

@@ -124,9 +124,11 @@ final class QueryBuilderVisitor implements Visitor
             'additional_columns' => $column,
         );
         // value
+        $value = $metadataField->getValue();
+        $bindValue = $value === '' ? '' : $metadataField->getAffix() . $value . $metadataField->getAffix();
         $bindValues[] = array(
             'param' => $valueParam,
-            'value' => $metadataField->getAffix() . $metadataField->getValue() . $metadataField->getAffix(),
+            'value' => $bindValue,
             'additional_columns' => $column,
         );
 

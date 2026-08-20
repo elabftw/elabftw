@@ -105,14 +105,26 @@ When working on the code, it is best to have `yarn watchjs` and `yarn watchcss` 
 
 ## Tests
 
-The tests run on the Codeception framework for unit and api tests. End to end testing is done with Cypress.
+The tests run on the Codeception framework for unit and api tests.
 
 ~~~bash
 yarn unit # will run the unit tests
 yarn test # will run the full test suite
 ~~~
 
-A good contribution you can make would be adding Cypress tests.
+End-to-end testing is done with Cypress.
+
+### Running cypress locally
+
+:::warning
+This script only works on X11 display server.
+:::
+
+Run this script to start Cypress with all browsers locally, from a Docker image:
+
+~~~bash
+./tests/cypress/open_cypress.sh
+~~~
 
 ## Exceptions handling
 
@@ -212,25 +224,6 @@ fi
 ~~~
 
 Now when you commit it should run this script and prevent the commit if there are errors.
-
-## Running cypress locally
-
-In docker: `yarn run cy` (where `yarn` is the local command, not the one in container, because this starts docker images)
-
-Locally: current workaround:
-
-~~~bash
-cd /tmp
-git clone https://github.com/elabftw/elabftw
-cd elabftw
-npm i --no-save --no-package-lock cypress cypress-terminal-report
-./node_modules/.bin/cypress install
-./node_modules/.bin/cypress open
-# then once it's fixed
-rm -rf node_modules
-~~~
-
-Not great, not terrible.
 
 ## Debugging mysql queries
 

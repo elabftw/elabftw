@@ -14,6 +14,7 @@ Here are the main changes:
 - container port change
 - container volumes change
 - container user configuration change
+- container certificates paths
 
 Note: this guide assumes usage of `docker compose`, with hints related to `podman quadlets`. For other deployments, you will need to adapt the changes to your context.
 
@@ -138,6 +139,43 @@ Adjust the ownership with our new user:
 chown -R elabftw-worker:elabftw-worker /var/elabftw/exports
 ~~~
 
+#### TLS Certificates
+
+If you are running the container in HTTPS mode (meaning `DISABLE_HTTPS` is `false`, the default), then you need to bind-mount a directory containing your certificate and private key for TLS.
+
+In the example below, the certificate is `fullchain.pem` and the key is `privkey.pem`. On the host, they are located in `/etc/letsencrypt/live/eln.example.org/`.
+
+Set these two new ENV variables in `environment:` section:
+
+~~~yaml
+- CERT_PATH=/etc/elabftw/certs/fullchain.pem
+- KEY_PATH=/etc/elabftw/certs/privkey.pem
+~~~
+
+Now add the bind-mount in the `volumes:` section:
+
+~~~yaml
+- /etc/letsencrypt/live/eln.example.org:/etc/elabftw/certs:ro
+~~~
+
+The user running the container (elabftw-worker) must have read access to the files.
+
+-------------
+
+Note: the `CERT_PATH` and `KEY_PATH` contain the full path. So if you want/need to do it differently, you can. For example:
+
+~~~yaml
+# environment:
+- CERT_PATH=/certificate/cert.crt
+- KEY_PATH=/private-key/key.crt
+# volumes:
+- /srv/http/eln.example.org/cert:/certificate:ro
+- /etc/ssl/private/very-private:/private-key:ro
+~~~
+
+-------------
+
+
 ### Ports
 
 In the `ports:` section, we will need to change internal port `443` to `8080`.
@@ -171,6 +209,8 @@ ELABFTW_GROUP
 ELABFTW_USERID
 ELABFTW_GROUPID
 INDIGO_URL
+ENABLE_LETSENCRYPT
+SERVER_NAME
 SILENT_INIT
 USE_INDIGO
 USE_FINGERPRINTER

@@ -10,7 +10,7 @@ fi
 CSRF="$1"
 PHPSESSID="$2"
 
-BASE_URL="${BASE_URL:-https://elab.local:3148}"
+BASE_URL="${BASE_URL:-https://elab.localhost:3148}"
 REQUESTS="${REQUESTS:-30}"
 PARALLEL="${PARALLEL:-30}"
 

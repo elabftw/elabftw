@@ -16,7 +16,7 @@ ReadOnly=true
 UserNS=keep-id
 
 # HEALTHCHECK
-HealthCmd=curl --fail --silent --show-error http://localhost:8080/healthcheck
+HealthCmd=wget --quiet --spider http://localhost:8080/healthcheck
 HealthInterval=5s
 HealthTimeout=5s
 HealthRetries=20
@@ -29,7 +29,6 @@ Environment=DB_PORT=3306
 Secret=elabftw-db-password,type=env,target=DB_PASSWORD
 Environment=DB_CERT_PATH=/mysql-cert/mysql.pem
 Secret=elabftw-secret-key,type=env,target=SECRET_KEY
-Environment=SERVER_NAME=eln.example.org
 # in this example we run http server behind TLS terminating proxy
 Environment=DISABLE_HTTPS=true
 Environment=MAX_PHP_MEMORY=512M

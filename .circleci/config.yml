@@ -39,15 +39,19 @@ commands:
           command: |
             docker build \
               -t "elabftw/elabimg:ci-${CIRCLE_SHA1}" \
-              --build-arg CI=1 \
+              --build-arg BUILD_ALL=0 \
               -f containers/elabimg/Dockerfile .
             docker build \
-              -t "elabftw/elabtmp:${CIRCLE_SHA1}" \
+              -t "elabftw/elabdev:ci-${CIRCLE_SHA1}" \
+              --build-arg "ELABIMG_BASE=elabftw/elabimg:ci-${CIRCLE_SHA1}" \
+              -f containers/elabdev/Dockerfile .
+            docker build \
+              -t "elabftw/elabtmp:ci-${CIRCLE_SHA1}" \
               --build-arg "ELABIMG_TAG=ci-${CIRCLE_SHA1}" \
               -f containers/elabtmp/Dockerfile .
             docker build \
-              -t elabftw/circleci \
-              --build-arg "ELABTMP_TAG=${CIRCLE_SHA1}" \
+              -t "elabftw/circleci:ci-${CIRCLE_SHA1}" \
+              --build-arg "ELABTMP_TAG=ci-${CIRCLE_SHA1}" \
               -f containers/circleci/Dockerfile .
 
   load_image:
@@ -98,7 +102,7 @@ jobs:
       - build_image
       - run:
           name: Export image
-          command: docker image save -o /tmp/elabftw-circleci.tar elabftw/circleci
+          command: docker image save -o /tmp/elabftw-circleci.tar "elabftw/circleci:ci-${CIRCLE_SHA1}"
       - persist_to_workspace:
           root: /tmp
           paths:

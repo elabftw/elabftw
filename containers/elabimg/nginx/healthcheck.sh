@@ -10,8 +10,4 @@ if [ "${DISABLE_HTTPS:-false}" = 'true' ]; then
 fi
 
 # special endpoint healthcheck will reply 204 if nginx is up
-status=$(curl -sk -o /dev/null -w "%{http_code}" ${protocol}://localhost:8080/healthcheck)
-if [ "$status" = "204" ]; then
-    exit 0
-fi
-exit 1
+wget --quiet --spider --no-check-certificate ${protocol}://127.0.0.1:8080/healthcheck

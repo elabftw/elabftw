@@ -14,6 +14,7 @@ Here are the main changes:
 - container port change
 - container volumes change
 - container user configuration change
+- container certificates paths
 
 Note: this guide assumes usage of `docker compose`, with hints related to `podman quadlets`. For other deployments, you will need to adapt the changes to your context.
 
@@ -70,7 +71,7 @@ Only changed/added lines are shown:
 Image=docker.io/elabftw/elabimg:6.0.0
 ReadOnly=true
 UserNS=keep-id
-HealthCmd=curl --fail --silent --show-error http://localhost:8080/healthcheck
+HealthCmd=wget --quiet --spider http://localhost:8080/healthcheck
 Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup,tmpfs-size=64m
 ~~~
 
@@ -138,6 +139,12 @@ Adjust the ownership with our new user:
 chown -R elabftw-worker:elabftw-worker /var/elabftw/exports
 ~~~
 
+### TLS Certificates
+
+If you are running the container in HTTPS mode (meaning `DISABLE_HTTPS` is `false`, the default), then you need to modify env and volumes. The cert and key are now indicated by `TLS_CERT_PATH` and `TLS_KEY_PATH` env vars.
+
+Read the documentation about TLS configuration from this page: [TLS configuration doc](../installation/tls#option-b-https-mode-with-lets-encrypt-certificates).
+
 ### Ports
 
 In the `ports:` section, we will need to change internal port `443` to `8080`.
@@ -171,6 +178,8 @@ ELABFTW_GROUP
 ELABFTW_USERID
 ELABFTW_GROUPID
 INDIGO_URL
+ENABLE_LETSENCRYPT
+SERVER_NAME
 SILENT_INIT
 USE_INDIGO
 USE_FINGERPRINTER

@@ -2,8 +2,12 @@
 # nginx custom + php-fpm + elabftw complete production files
 # https://github.com/elabftw/elabftw
 
+###############################
+# GO BUILDER: CHRONOS/INVOKER #
+###############################
 # https://hub.docker.com/layers/library/golang/1.26.6-alpine3.24/images/sha256-648921a68c7179241dd09daf8000fbfddc9e5ea9c1a24e7d0fe05b259dff2b5c
 FROM golang@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83 AS go-builder
+
 # using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
 ARG TARGETPLATFORM
 ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
@@ -14,8 +18,10 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
     && CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH go build -ldflags="-s -w" -o invoker invoker.go \
     && go build -ldflags="-s -w" -o chronos chronos.go
 
+#################
+# NGINX BUILDER #
+#################
 # build nginx with only the bare minimum of features or modules
-# Note: no need to chain the RUN commands here as it's a builder image and nothing will be kept
 FROM alpine:3.24 AS nginx-builder
 
 ENV NGINX_VERSION=1.30.4
@@ -174,53 +180,58 @@ RUN cmake -S . -B build \
         --parallel "$(getconf _NPROCESSORS_ONLN)" \
     && strip -s build/bin/obabel
 
-#############################
-# ELABFTW + NGINX + PHP-FPM #
-#############################
-FROM alpine:3.24
+##############
+# S6 BUILDER #
+##############
+FROM alpine:3.24 AS s6-builder
+
+ARG S6_OVERLAY_VERSION=3.2.1.0
+# using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
+ARG TARGETPLATFORM
+ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
+
+RUN apk add --no-cache curl xz
+
+# ADD cannot be used cleanly here because the architecture-specific URL needs a shell-computed
+# mapping from Docker's TARGETPLATFORM to the architecture names used by s6-overlay.
+RUN mkdir -p /s6-root \
+    && if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=x86_64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=arm; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=aarch64; else ARCHITECTURE=amd64; fi \
+    && curl -sS -L -o /tmp/s6-overlay-arch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCHITECTURE}.tar.xz" \
+    && curl -sS -L -o /tmp/s6-overlay-noarch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
+    && tar xpJf /tmp/s6-overlay-arch.tar.xz -C /s6-root \
+    && tar xpJf /tmp/s6-overlay-noarch.tar.xz -C /s6-root
+
+################
+# RUNTIME BASE #
+################
+FROM alpine:3.24 AS runtime-base
 
 # set build version with --build-arg ELABFTW_VERSION=X.Y.Z
 ARG ELABFTW_VERSION=dev
 ENV ELABFTW_VERSION=$ELABFTW_VERSION
 
-
-LABEL net.elabftw.name="elabftw" \
-    net.elabftw.description="eLabFTW web service" \
-    net.elabftw.url="https://www.elabftw.net" \
-    net.elabftw.vcs-url="https://github.com/elabftw/elabftw" \
-    net.elabftw.elabftw-version=$ELABFTW_VERSION
-
 # NGINX
-# copy our nginx from the build image
 COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=nginx-builder /etc/nginx/mime.types /etc/nginx/mime.types
 COPY --from=nginx-builder /etc/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
-
 # END NGINX
 
-# OpenBabel
+# OPENBABEL
 COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/obabel
 
 # install required packages
 # php8-bcmath is required to send emails via Exchange (NTLM authenticator)
 # php8-gd is required by mpdf for transparent png
-# php8-tokenizer and php8-xmlwriter are for dev only
 # php8-iconv is required by LdapRecord php library
-# git is required by yarn
 # imagemagick-svg is for mathjax support in pdfs
 # imagemagick-heic is for support for heic/heif
 # don't put line comments inside this instruction
 RUN apk upgrade -U -a && apk add --no-cache \
     bash \
-    brotli \
-    curl \
-    freetype \
     ghostscript \
-    git \
     imagemagick-heic \
     imagemagick-svg \
     nodejs \
-    npm \
     openssl \
     php84 \
     php84-pecl-apcu \
@@ -234,7 +245,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-fileinfo \
     php84-fpm \
     php84-iconv \
-    php84-json \
     php84-intl \
     php84-ldap \
     php84-mbstring \
@@ -242,40 +252,115 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-openssl \
     php84-pdo_mysql \
     php84-pecl-imagick \
-    php84-phar \
     php84-redis \
     php84-simplexml \
     php84-session \
     php84-sodium \
-    php84-tokenizer \
     php84-xml \
-    php84-xmlwriter \
     php84-zip \
-    php84-zlib \
-    tzdata \
-    unzip
+    tzdata
 
 # add a symlink to php8
 RUN ln -f /usr/bin/php84 /usr/bin/php
 
-# fix git complaining: fatal: detected dubious ownership in repository at '/elabftw'
-RUN git config --system --add safe.directory /elabftw
+ENV TMPDIR=/var/cache/elabftw/php/tmp
+
+###################
+# ELABFTW BUILDER #
+###################
+FROM runtime-base AS app-builder
+
+# this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
+# pass it to build command with --build-arg BUILD_ALL=0
+ARG BUILD_ALL=1
+
+# COREPACK
+ENV COREPACK_HOME=/var/cache/elabftw/corepack
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+ENV COREPACK_VERSION=0.35.0
+
+# brotli is used to compress assets after yarn build
+# npm is to install corepack (which enables yarn)
+# php84-phar, unzip is for composer
+RUN apk add --no-cache \
+    brotli \
+    npm \
+    php84-phar \
+    unzip \
+    && mkdir -p "$COREPACK_HOME" \
+    && npm install -g corepack@$COREPACK_VERSION \
+    && corepack enable
+
+# COMPOSER
+RUN mkdir /elabftw
+WORKDIR /elabftw
+ENV COMPOSER_HOME=/var/cache/elabftw/composer
+# 2.10.2 https://github.com/composer/composer/releases/tag/2.10.2
+COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
+# copy PHP dependency manifests first so application source changes don't invalidate this layer
+COPY ./composer.json /elabftw
+COPY ./composer.lock /elabftw
+RUN mkdir -p "$TMPDIR" "$COMPOSER_HOME"
+
+# install PHP dependencies without generating the autoloader yet
+RUN if [ "$BUILD_ALL" = "1" ]; then \
+        /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev --no-autoloader; \
+    fi
+
+# YARN
+# copy JS dependency manifests and the files required by the custom yarn plugin
+COPY ./package.json /elabftw
+COPY ./yarn.lock /elabftw
+COPY ./.yarnrc.yml /elabftw
+COPY ./src/tools/yarn-plugin-tinymce.js /elabftw/src/tools/yarn-plugin-tinymce.js
+COPY ./src/scss/_tinymce.scss /elabftw/src/scss/_tinymce.scss
+RUN mkdir -p /elabftw/web/assets
+
+# avoid installing cypress
+ENV CYPRESS_INSTALL_BINARY=0
+
+# install JS dependencies before copying the rest of the application source
+RUN if [ "$BUILD_ALL" = "1" ]; then \
+        yarn install --immutable; \
+    fi
+
+# now copy the application source and build inputs
+COPY ./bin /elabftw/bin
+COPY ./.babelrc /elabftw
+COPY ./builder.js /elabftw
+COPY ./node-builder.js /elabftw
+COPY ./src /elabftw/src
+COPY ./tsconfig.json /elabftw
+COPY ./var /elabftw/var
+COPY ./web /elabftw/web
+
+# build assets, then generate the final composer autoloader after Parser.php exists
+RUN if [ "$BUILD_ALL" = "1" ]; then \
+        yarn run buildall:prod \
+        && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer dump-autoload --no-dev -a \
+        && rm -rf /var/cache/elabftw \
+        && rm -f .pnp.cjs .pnp.loader.mjs; \
+    fi
+
+###########
+# RUNTIME #
+###########
+FROM runtime-base AS runtime
+
+WORKDIR /elabftw
+
+LABEL org.opencontainers.image.description="eLabFTW web service" \
+    org.opencontainers.image.documentation="https://github.com/elabftw/elabftw/blob/master/containers/elabimg/README.md" \
+    org.opencontainers.image.license="AGPL-3.0-only" \
+    org.opencontainers.image.source="https://github.com/elabftw/elabftw" \
+    org.opencontainers.image.title="eLabFTW" \
+    org.opencontainers.image.url="https://www.elabftw.net" \
+    org.opencontainers.image.vendor="Deltablot" \
+    org.opencontainers.image.version="$ELABFTW_VERSION"
 
 # S6-OVERLAY
-# install s6-overlay, our init system. Workaround for different versions using TARGETPLATFORM
-# platform see https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
-ARG S6_OVERLAY_VERSION=3.2.1.0
-ENV S6_OVERLAY_VERSION=$S6_OVERLAY_VERSION
-
-# using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
-ARG TARGETPLATFORM
-ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=x86_64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=arm; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=aarch64; else ARCHITECTURE=amd64; fi \
-    && curl -sS -L -O --output-dir /tmp/ --create-dirs "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCHITECTURE}.tar.xz" \
-    && curl -sS -L -O --output-dir /tmp/ --create-dirs "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
-    && tar xpJf "/tmp/s6-overlay-${ARCHITECTURE}.tar.xz" -C / \
-    && tar xpJf "/tmp/s6-overlay-noarch.tar.xz" -C / \
-    && rm /tmp/s6-overlay*
+# install s6-overlay, our init system
+COPY --from=s6-builder /s6-root/ /
 # create nginx s6 service
 RUN mkdir -p /etc/s6-overlay/s6-rc.d/nginx && echo "longrun" > /etc/s6-overlay/s6-rc.d/nginx/type
 COPY ./containers/elabimg/nginx/run /etc/s6-overlay/s6-rc.d/nginx/
@@ -286,64 +371,7 @@ COPY ./containers/elabimg/php/run /etc/s6-overlay/s6-rc.d/php/
 RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/php
 # END S6-OVERLAY
 
-# ELABFTW
-RUN mkdir /elabftw
-WORKDIR /elabftw
-
-ENV TMPDIR=/var/cache/elabftw/php/tmp
-ENV COREPACK_HOME=/var/cache/elabftw/corepack
-
-# we only copy the strict necessary
-COPY ./bin /elabftw/bin
-COPY ./.babelrc /elabftw
-COPY ./builder.js /elabftw
-COPY ./composer.json /elabftw
-COPY ./composer.lock /elabftw
-COPY ./node-builder.js /elabftw
-COPY ./package.json /elabftw
-COPY ./src /elabftw/src
-COPY ./tsconfig.json /elabftw
-COPY ./var /elabftw/var
-COPY ./web /elabftw/web
-COPY ./yarn.lock /elabftw
-COPY ./.yarnrc.yml /elabftw
-
-# COMPOSER
-ENV COMPOSER_HOME=/var/cache/elabftw/composer
-# 2.10.2 https://github.com/composer/composer/releases/tag/2.10.2
-COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
-
-RUN mkdir -p "$TMPDIR" "$COREPACK_HOME" "$COMPOSER_HOME"
-
-# this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
-# pass it to build command with --build-arg BUILD_ALL=0
-ARG BUILD_ALL=1
-# enable this in CI to skip brotli minification
-ARG CI=0
-# install php and js dependencies and build assets
-# avoid installing cypress
-ENV CYPRESS_INSTALL_BINARY=0
-# avoid download prompt
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-
-# enable new yarn
-RUN npm install -g corepack@0.35.0 && corepack enable
-# some ini settings are set on the command line to override the restrictive production ones already set
-# IMPORTANT: the yarn/build step must be done before the composer/install step because a source file (advancedQuery) will be generated by yarn
-# so in order for composer to take it into account, it must exist before we call the install command of composer.
-# in CI we use -o flag for composer because we will add other classes afterwards (tests)
-RUN if [ "$BUILD_ALL" = "1" ]; then \
-        yarn install --immutable \
-        && if [ "$CI" = "1" ]; then \
-            yarn run buildall:ci \
-            && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress -o; \
-        else \
-            yarn run buildall:prod \
-            && yarn workspaces focus -A --production \
-            && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev -a; \
-        fi \
-        && rm -rf /var/cache/elabftw; \
-    fi
+COPY --from=app-builder /elabftw /elabftw
 # PHP: add php config after composer step so open_basedir is not an issue
 COPY ./containers/elabimg/php/php.ini /etc/php84/php.ini.tpl
 RUN rm -f /etc/php84/php.ini && ln -s /run/php/php.ini /etc/php84/php.ini
@@ -378,7 +406,7 @@ COPY ./containers/elabimg/nginx/opencloning.conf /etc/nginx/opencloning.conf.tpl
 RUN rm -f /etc/nginx/opencloning.conf && ln -s /run/nginx/opencloning.conf /etc/nginx/opencloning.conf
 # the healthcheck.sh script checks if nginx replies to requests
 # the HEALTHCHECK instruction allows to show healthy/unhealthy in "docker ps" output next to the container name
-HEALTHCHECK --interval=2m --timeout=5s --retries=3 CMD sh /etc/nginx/healthcheck.sh
+HEALTHCHECK --interval=15s --timeout=5s --retries=3 --start-interval=5s --start-period=30s CMD sh /etc/nginx/healthcheck.sh
 # nginx will run on port 8080
 EXPOSE 8080
 # END NGINX PART 2

@@ -4,11 +4,11 @@ sidebar_position: 3
 
 # Note about TLS certificates
 
-The eLabFTW container can run an HTTP or HTTPS server. Both will run internally on port 443. This page describes several options you can choose regarding TLS configuration.
+The eLabFTW container can run an HTTP or HTTPS server. Both will run internally on port 8080. This page describes several options you can choose regarding TLS configuration.
 
 ## Option A: HTTP mode with a reverse proxy (Apache, nginx, HAProxy, traefik, ...)
 
-You can run the container in HTTP mode (internal port 443) only if you have a reverse proxy in front doing TLS termination and sending the `X-Forwarded-Proto` header.
+You can run the container in HTTP mode only if you have a reverse proxy in front doing TLS termination and sending the `X-Forwarded-Proto` header.
 
 - Set `DISABLE_HTTPS=true`
 
@@ -23,20 +23,27 @@ When requesting a new certificate, make sure that port 80 is open (and also port
 `certbot certonly --standalone -d elab.example.org`
 
 - Set `DISABLE_HTTPS=false`
-- Set `ENABLE_LETSENCRYPT=true`
-- Set `SERVER_NAME` with a correct value
-- Uncomment the line `- /etc/letsencrypt:/ssl` in the `volumes:` part of the yml config file.
+- Set `TLS_CERT_PATH=/etc/letsencrypt/live/<YOUR-DOMAIN>/fullchain.pem`
+- Set `TLS_KEY_PATH=/etc/letsencrypt/live/<YOUR-DOMAIN>/privkey.pem`
+
+We need to bind-mount `live` and `archive` dirs because certs are symlinks.
+
+In `volumes:` section:
+- `/etc/letsencrypt/live/<YOUR-DOMAIN>:/etc/letsencrypt/live/<YOUR-DOMAIN>:ro`
+- `/etc/letsencrypt/archive/<YOUR-DOMAIN>:/etc/letsencrypt/archive/<YOUR-DOMAIN>:ro`
+
+The user running the container (elabftw-worker) must have read access to the files.
 
 ## Option C: HTTPS mode with custom certificates
 
-Have the private key and certificate in PEM format in the folder `/etc/letsencrypt/live/SERVER_NAME/` where `SERVER_NAME` matches the `SERVER_NAME` configuration variable. The files need to be named `fullchain.pem` and `privkey.pem`.
-
-The webserver in the container expects TLS certificates to be in a particular order and format. Make sure that your `fullchain.pem` file contains certificates in this order: `<certificate> <intermediate ca> <root ca>`, with PEM encoding.
+The webserver in the container expects TLS certificates to be in a particular order and format. Make sure that your certificate file contains certificates in this order: `<certificate> <intermediate ca> <root ca>`, with PEM encoding.
 
 - Set `DISABLE_HTTPS=false`
-- Set `ENABLE_LETSENCRYPT=true`
-- Set `SERVER_NAME` with a correct value
-- Uncomment the line `- /etc/letsencrypt:/ssl` in the `volumes:` part of the yml config file
+- Set `TLS_CERT_PATH=/etc/elabftw/certs/name-of-your-cert.pem`
+- Set `TLS_KEY_PATH=/etc/elabftw/certs/name-of-your-key.pem`
+- Bind-mount `/path/to/your/certs` to `/etc/elabftw/certs`. So in the `volumes:` section it should look like: `- /etc/my-certs-for-tls/elabftw:/etc/elabftw/certs:ro`
+
+The user running the container (elabftw-worker) must have read access to the files.
 
 ## Option D: HTTPS mode with self-signed certificate
 
@@ -47,7 +54,7 @@ Only use this for testing purposes!
 The container can generate its own self-signed certificate. This certificate will not be trusted and users will see a warning that they'll need to ignore. Do not use this option.
 
 - Set `DISABLE_HTTPS=false`.
-- Set `ENABLE_LETSENCRYPT=false`.
+- Set `GENERATE_TLS_CERT=true`.
 
 ## Configure TLS certificate renewal
 

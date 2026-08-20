@@ -2,7 +2,7 @@
 # login, set PHPSESSID env var to your php session cookie value and run
 set -euo pipefail
 
-url='https://elab.local:3148/api/v2/experiments?scope=3&limit=15'
+url='https://elab.localhost:3148/api/v2/experiments?scope=3&limit=15'
 cookie="PHPSESSID=$PHPSESSID"
 runs="${1:-30}"
 

@@ -254,7 +254,6 @@ function install
     declare servername='localhost'
     declare hasdomain=0
     declare usehttps=1
-    declare useselfsigned=0
 
     # exit on error
     set -e
@@ -328,21 +327,16 @@ EOF_INSTALL
             usehttps=1
 
             echo ""
-            echo "A proper certificate can come from Let's Encrypt or be provided by you."
-            echo "A self-signed certificate is generated automatically, but browsers display a warning."
-            if confirm "Use a proper TLS certificate? Answer no to let the container generate a self-signed certificate." yes; then
-                useselfsigned=0
-                echo "Configure the TLS certificate before starting the containers."
-            else
-                useselfsigned=1
-                echo "A self-signed certificate will be generated when the container starts."
-            fi
+            echo "You will need to edit the configuration to configure TLS certificates before starting the containers."
+            echo "The container will NOT start properly if you don't configure TLS certificates correctly beforehand."
         else
             usehttps=0
         fi
     else
-        servername="localhost"
-        hasdomain=0
+        echo ""
+        echo "For installation on a personal computer, use the dedicated development environment:"
+        echo "https://doc.elabftw.net/docs/contributing/installation"
+        exit 0
     fi
 
     echo ""
@@ -371,7 +365,6 @@ EOF_INSTALL
 
     # elab config
     echo "[4/4] Adjusting the configuration."
-    sed -i -e "s/SERVER_NAME=localhost/SERVER_NAME=$servername/" "$TMP_CONF_FILE"
     sed -i -e "s:/var/elabftw/web:${UPLOAD_DIR}:" "$TMP_CONF_FILE"
     sed -i -e "s/container_name: elabftw/container_name: ${ELAB_WEB_CONTAINER_NAME}/" "$TMP_CONF_FILE"
     sed -i -e "s/container_name: mysql/container_name: ${ELAB_MYSQL_CONTAINER_NAME}/" "$TMP_CONF_FILE"
@@ -381,13 +374,6 @@ EOF_INSTALL
     if [ "$usehttps" -eq 0 ]; then
         sed -i -e "s/DISABLE_HTTPS=false/DISABLE_HTTPS=true/" "$TMP_CONF_FILE"
         scheme="http://"
-    fi
-
-    # enable letsencrypt
-    if [ "$hasdomain" -eq 1 ] && [ "$useselfsigned" -eq 0 ]; then
-        # even if we don't use Let's Encrypt, for using TLS certs we need this to be true, and volume mounted
-        sed -i -e "s:ENABLE_LETSENCRYPT=false:ENABLE_LETSENCRYPT=true:" "$TMP_CONF_FILE"
-        sed -i -e "s:#- /etc/letsencrypt:- /etc/letsencrypt:" "$TMP_CONF_FILE"
     fi
 
     sed -i -e "s#SITE_URL=#SITE_URL=$scheme$servername#" "$TMP_CONF_FILE"

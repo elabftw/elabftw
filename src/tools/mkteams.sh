@@ -14,5 +14,5 @@ for ((i = 1; i <= N_TEAMS; i++)); do
         -k \
         -X POST \
         -d "{\"name\": \"$t\"}" \
-        'https://elab.local:3148/api/v2/teams'
+        'https://elab.localhost:3148/api/v2/teams'
 done

@@ -278,8 +278,7 @@ It is highly recommended to setup a staging instance.
 
 1. Copy the configuration file of the production instance (`/etc/elabftw.yml`) into another folder (`/path/to/elabftw-staging/docker-compose.yml`)
 2. Change the `SITE_URL` value: for example from elab.uni.de to elab-test.uni.de
-3. Similarly, change the `SERVER_NAME` value
-4. Modify the `volumes` so it points to another folder than the production one, for both containers
+3. Modify the `volumes` so it points to another folder than the production one, for both containers
 
 Of course, adjust these instructions relative to your setup. Try and have the most similar setup between both. If one is using NFS storage with external MySQL server, do the same for staging instance.
 

@@ -145,6 +145,13 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
             $Compounds = new Compounds($httpGetter, $requester, new NullFingerprinter(), false);
             $Import = new CompoundsCsv(new NullLogger(), $Items, $uploadedFile, $Compounds, 1);
             $this->assertSame(1, $Import->import());
+
+            // the whitespace-padded cas header must populate the persisted cas_number
+            $Db = Db::getConnection();
+            $req = $Db->prepare('SELECT cas_number FROM compounds WHERE name = :name ORDER BY id DESC LIMIT 1');
+            $req->execute(array(':name' => 'Test compound'));
+            $cas = $req->fetchColumn();
+            $this->assertSame('50-00-0', $cas);
         } finally {
             unlink($csvPath);
         }

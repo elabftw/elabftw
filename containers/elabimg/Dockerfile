@@ -211,13 +211,12 @@ ARG ELABFTW_VERSION=dev
 ENV ELABFTW_VERSION=$ELABFTW_VERSION
 
 # NGINX
-# copy our nginx from the build image
 COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=nginx-builder /etc/nginx/mime.types /etc/nginx/mime.types
 COPY --from=nginx-builder /etc/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
 # END NGINX
 
-# OpenBabel
+# OPENBABEL
 COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/obabel
 
 # install required packages
@@ -268,19 +267,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
 
 # add a symlink to php8
 RUN ln -f /usr/bin/php84 /usr/bin/php
-
-# S6-OVERLAY
-# install s6-overlay, our init system
-COPY --from=s6-builder /s6-root/ /
-# create nginx s6 service
-RUN mkdir -p /etc/s6-overlay/s6-rc.d/nginx && echo "longrun" > /etc/s6-overlay/s6-rc.d/nginx/type
-COPY ./containers/elabimg/nginx/run /etc/s6-overlay/s6-rc.d/nginx/
-RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/nginx
-# create php s6 service
-RUN mkdir -p /etc/s6-overlay/s6-rc.d/php && echo "longrun" > /etc/s6-overlay/s6-rc.d/php/type
-COPY ./containers/elabimg/php/run /etc/s6-overlay/s6-rc.d/php/
-RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/php
-# END S6-OVERLAY
 
 ENV TMPDIR=/var/cache/elabftw/php/tmp
 
@@ -381,6 +367,19 @@ LABEL org.opencontainers.image.description="eLabFTW web service" \
     org.opencontainers.image.url="https://www.elabftw.net" \
     org.opencontainers.image.vendor="Deltablot" \
     org.opencontainers.image.version="$ELABFTW_VERSION"
+
+# S6-OVERLAY
+# install s6-overlay, our init system
+COPY --from=s6-builder /s6-root/ /
+# create nginx s6 service
+RUN mkdir -p /etc/s6-overlay/s6-rc.d/nginx && echo "longrun" > /etc/s6-overlay/s6-rc.d/nginx/type
+COPY ./containers/elabimg/nginx/run /etc/s6-overlay/s6-rc.d/nginx/
+RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/nginx
+# create php s6 service
+RUN mkdir -p /etc/s6-overlay/s6-rc.d/php && echo "longrun" > /etc/s6-overlay/s6-rc.d/php/type
+COPY ./containers/elabimg/php/run /etc/s6-overlay/s6-rc.d/php/
+RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/php
+# END S6-OVERLAY
 
 COPY --from=app-builder /elabftw /elabftw
 # PHP: add php config after composer step so open_basedir is not an issue

@@ -177,8 +177,6 @@ services:
   phpmyadmin:
       image: phpmyadmin/phpmyadmin
       container_name: phpmyadmin
-      environment:
-          - PMA_PORT=3307
       links:
           - mysql:db
       ports:

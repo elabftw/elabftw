@@ -4,11 +4,11 @@ sidebar_position: 3
 
 # Note about TLS certificates
 
-The eLabFTW container can run an HTTP or HTTPS server. Both will run internally on port 443. This page describes several options you can choose regarding TLS configuration.
+The eLabFTW container can run an HTTP or HTTPS server. Both will run internally on port 8080. This page describes several options you can choose regarding TLS configuration.
 
 ## Option A: HTTP mode with a reverse proxy (Apache, nginx, HAProxy, traefik, ...)
 
-You can run the container in HTTP mode (internal port 443) only if you have a reverse proxy in front doing TLS termination and sending the `X-Forwarded-Proto` header.
+You can run the container in HTTP mode only if you have a reverse proxy in front doing TLS termination and sending the `X-Forwarded-Proto` header.
 
 - Set `DISABLE_HTTPS=true`
 

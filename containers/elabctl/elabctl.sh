@@ -333,8 +333,10 @@ EOF_INSTALL
             usehttps=0
         fi
     else
-        servername="localhost"
-        hasdomain=0
+        echo ""
+        echo "For installation on a personal computer, use the dedicated development environment:"
+        echo "https://doc.elabftw.net/docs/contributing/installation"
+        exit 0
     fi
 
     echo ""

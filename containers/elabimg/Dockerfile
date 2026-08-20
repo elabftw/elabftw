@@ -228,7 +228,6 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # don't put line comments inside this instruction
 RUN apk upgrade -U -a && apk add --no-cache \
     bash \
-    freetype \
     ghostscript \
     imagemagick-heic \
     imagemagick-svg \
@@ -246,7 +245,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-fileinfo \
     php84-fpm \
     php84-iconv \
-    php84-json \
     php84-intl \
     php84-ldap \
     php84-mbstring \
@@ -260,7 +258,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-sodium \
     php84-xml \
     php84-zip \
-    php84-zlib \
     tzdata
 
 # add a symlink to php8

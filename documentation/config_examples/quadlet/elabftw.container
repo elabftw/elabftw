@@ -16,7 +16,7 @@ ReadOnly=true
 UserNS=keep-id
 
 # HEALTHCHECK
-HealthCmd=curl --fail --silent --show-error http://localhost:8080/healthcheck
+HealthCmd=wget --quiet --spider http://localhost:8080/healthcheck
 HealthInterval=5s
 HealthTimeout=5s
 HealthRetries=20

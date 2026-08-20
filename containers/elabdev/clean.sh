@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-docker rmi elabftw-elabimg
-docker rmi elabftw/elabdev:edge
 set -eu
-# sudo because mysql files will be root owned
+
+WORKER_UID=$(id -u) WORKER_GID=$(id -g) docker compose -f containers/elabdev/docker-compose.yml down
+docker rmi elabftw-elabimg elabftw/elabdev:edge || true
+
 sudo rm -rv -- "${HOME:?HOME must be set}/.local/share/elabdev"
 rm -rv -- "${HOME:?HOME must be set}/.cache/elabdev"

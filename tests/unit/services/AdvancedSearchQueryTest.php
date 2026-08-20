@@ -18,6 +18,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
 
 use function implode;
+use function sprintf;
 
 class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
 {
@@ -152,5 +153,41 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         ));
         $advancedSearchQuery->getWhereClause();
         $this->assertEmpty($advancedSearchQuery->getException());
+    }
+
+    public function testExtraFieldEmptyValues(): void
+    {
+        $queries = array(
+            'extrafield:Approved:""',
+            'extrafield:\'Approved\':\'\'',
+            'extrafield:s:Approved:""',
+            '!extrafield:Approved:""',
+        );
+
+        foreach ($queries as $query) {
+            $advancedSearchQuery = new AdvancedSearchQuery($query, new VisitorParameters(
+                'experiments',
+                $this->groups,
+            ));
+            $whereClause = $advancedSearchQuery->getWhereClause();
+            $this->assertIsArray($whereClause);
+            $this->assertEmpty($advancedSearchQuery->getException(), sprintf('Expected no exception for query: %s', $query));
+            $this->assertStringContainsString('JSON_UNQUOTE(JSON_EXTRACT(LOWER(entity.metadata), LOWER(', $whereClause['where']);
+
+            $bindValues = $whereClause['bindValues'];
+            $this->assertCount(2, $bindValues);
+            $pathBind = null;
+            $valueBind = null;
+            foreach ($bindValues as $bind) {
+                if ($bind['value'] === '$.extra_fields."Approved".value') {
+                    $pathBind = $bind;
+                } else {
+                    $valueBind = $bind;
+                }
+            }
+            $this->assertNotNull($pathBind);
+            $this->assertNotNull($valueBind);
+            $this->assertSame('', $valueBind['value'], sprintf('Expected empty string value bind without wildcard for query: %s', $query));
+        }
     }
 }

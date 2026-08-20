@@ -107,6 +107,18 @@
                 type='text'
                 value='{{ Request.query.get('metavalue') != '' ? Request.query.get('metavalue') }}'
               />
+
+              <div class='input-group-append'>
+                <button
+                  type='button'
+                  class='btn btn-secondary'
+                  data-action='search-empty-extrafield'
+                  aria-label='{{ 'Search for empty value'|trans }}'
+                  title='{{ 'Search for empty value'|trans }}'
+                >
+                  <i class='fas fa-ban'></i>
+                </button>
+              </div>
             </div>
 
             <div id='autocompleteAnchorDiv_extra_fields_keys'></div>

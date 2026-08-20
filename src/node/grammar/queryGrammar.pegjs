@@ -177,7 +177,7 @@ ListString1
     [^\n\r\f\\']
     / "\\'" {return "'";}
     / Escape
-  )+
+  )*
   {
     return join("", $chars);
   }
@@ -190,7 +190,7 @@ ListString2
     [^\n\r\f\\"]
     / '\\"' {return '"';}
     / Escape
-  )+
+  )*
   {
     return join("", $chars);
   }

@@ -518,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function buildFilterHelperRegex(filterName: string): RegExp {
-    const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)+)")|(?:\'((?:\\\\\'|(?:(?!\')).)+)\')|([^\\s:\'"()&|!]+))';
+    const baseRegex = '(?:(?:"((?:\\\\"|(?:(?!")).)*)")|(?:\'((?:\\\\\'|(?:(?!\')).)*)\')|([^\\s:\'"()&|!]+))';
     const operatorRegex = '(?:[<>]=?|!?=)?';
     let valueRegex = baseRegex;
 
@@ -584,10 +584,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getSearchTokenRegexPart(): string {
-    return '(?:(?:"(?:\\\\"|[^"])+")|(?:\'(?:\\\\\'|[^\'])*\')|[^\\s:\'"()&|!]+)';
+    return '(?:(?:"(?:\\\\"|[^"])*")|(?:\'(?:\\\\\'|[^\'])*\')|[^\\s:\'"()&|!]+)';
   }
 
   function quoteSearchToken(value: string): string {
+    if (value === '""' || value === '\'\'') {
+      return '""';
+    }
+
     const escaped = value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
     if (/[\s:'"()&|!]/.test(escaped)) {
@@ -597,19 +601,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return escaped;
   }
 
-  function buildExtrafieldFilter(): string {
+  function buildExtrafieldFilter(forceEmptyValue = false): string {
     const metakey = document.getElementById('metakey') as HTMLSelectElement | null;
     const metavalue = document.getElementById('metavalue') as HTMLInputElement | null;
 
     const key = metakey?.value.trim() ?? '';
     const value = metavalue?.value.trim() ?? '';
 
-    if (key === '' && value === '') {
+    if (key === '') {
       return '';
     }
 
-    if (key === '' || value === '') {
-      return `extrafield:${quoteSearchToken(key || value)}`;
+    if (forceEmptyValue || value === '""' || value === '\'\'') {
+      return `extrafield:${quoteSearchToken(key)}:""`;
+    }
+
+    if (value === '') {
+      return '';
     }
 
     return `extrafield:${quoteSearchToken(key)}:${quoteSearchToken(value)}`;
@@ -623,12 +631,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // extrafield:Manufacturer:abc
     // extrafield:Manufacturer:"abc"
     // extrafield:"Some Field":"abc"
+    // extrafield:"Some Field":""
     return new RegExp(`(^|\\s)extrafield:${token}(?::${token})?\\s?`);
   }
 
-  function syncExtrafieldFilterToSearchQuery(): void {
+  function syncExtrafieldFilterToSearchQuery(forceEmptyValue = false): void {
     const curVal = get(searchQuery);
-    const filter = buildExtrafieldFilter();
+    const filter = buildExtrafieldFilter(forceEmptyValue);
     const regex = buildExtrafieldRegex();
 
     if (regex.test(curVal)) {
@@ -828,6 +837,19 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.remove('selected');
     });
     el.classList.add('selected');
+  });
+
+  on('search-empty-extrafield', () => {
+    const metakey = document.getElementById('metakey') as HTMLSelectElement | null;
+    const metavalue = document.getElementById('metavalue') as HTMLInputElement | null;
+    const key = metakey?.value.trim() ?? '';
+    if (key === '') {
+      return;
+    }
+    if (metavalue) {
+      metavalue.value = '';
+    }
+    syncExtrafieldFilterToSearchQuery(true);
   });
 
   // CHECK AN ENTITY BOX

@@ -262,8 +262,7 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-xml \
     php84-zip \
     php84-zlib \
-    tzdata \
-    unzip
+    tzdata
 
 # add a symlink to php8
 RUN ln -f /usr/bin/php84 /usr/bin/php
@@ -286,11 +285,12 @@ ENV COREPACK_VERSION=0.35.0
 
 # brotli is used to compress assets after yarn build
 # npm is to install corepack (which enables yarn)
-# php84-phar is for composer
+# php84-phar, unzip is for composer
 RUN apk add --no-cache \
     brotli \
     npm \
     php84-phar \
+    unzip \
     && mkdir -p "$COREPACK_HOME" \
     && npm install -g corepack@$COREPACK_VERSION \
     && corepack enable

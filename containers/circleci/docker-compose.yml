@@ -3,12 +3,10 @@ networks:
     name: elabftw-net
 services:
   web:
-    image: elabftw/circleci
+    image: elabftw/circleci:ci-${CIRCLE_SHA1}
+    pull_policy: never
     # circleci runs as id 1001 and gid 1002
     user: 1001:1002
-    build:
-      context: ../..
-      dockerfile: ./containers/circleci/Dockerfile
     container_name: elabtmp
     cap_drop:
       - ALL

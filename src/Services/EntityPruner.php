@@ -51,20 +51,21 @@ final class EntityPruner implements CleanerInterface
     #[Override]
     public function cleanup(): int
     {
-        // collect the IDs of entities that match the filter
-        $selectStmt = $this->buildSelectStmt();
-        $matchingIds = $selectStmt->fetchAll(PDO::FETCH_COLUMN);
-        if (empty($matchingIds)) {
-            return 0;
-        }
-
-        // wrap both deletes in a transaction to ensure consistency
+        // begin transaction before selecting so rows are locked with FOR UPDATE
         $this->Db->beginTransaction();
         try {
+            // select matching deleted entity ids with row lock
+            $selectStmt = $this->buildSelectStmt();
+            $matchingIds = $selectStmt->fetchAll(PDO::FETCH_COLUMN);
+            if (empty($matchingIds)) {
+                $this->Db->rollBack();
+                return 0;
+            }
+
             // delete orphaned tags2entity entries before the entity rows
             $this->cleanupTags2entity($matchingIds);
 
-            // delete the entity rows
+            // delete the entity rows, but only those still in Deleted state
             $deleted = $this->deleteEntities($matchingIds);
 
             $this->Db->commit();
@@ -83,6 +84,7 @@ final class EntityPruner implements CleanerInterface
         $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE state = :state';
         $binds = array();
         $this->applyFilters($sql, $binds);
+        $sql .= ' FOR UPDATE';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         foreach ($binds as $key => $bindData) {
@@ -131,11 +133,12 @@ final class EntityPruner implements CleanerInterface
             $placeholders[] = $key;
             $binds[$key] = array($id, PDO::PARAM_INT);
         }
-        $sql = 'DELETE FROM ' . $this->entityType->value . ' WHERE id IN (' . implode(',', $placeholders) . ')';
+        $sql = 'DELETE FROM ' . $this->entityType->value . ' WHERE id IN (' . implode(',', $placeholders) . ') AND state = :state';
         $req = $this->Db->prepare($sql);
         foreach ($binds as $key => $bindData) {
             $req->bindValue($key, $bindData[0], $bindData[1]);
         }
+        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->rowCount();
     }

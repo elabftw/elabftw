@@ -260,9 +260,7 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-simplexml \
     php84-session \
     php84-sodium \
-    php84-tokenizer \
     php84-xml \
-    php84-xmlwriter \
     php84-zip \
     php84-zlib \
     tzdata \
@@ -326,11 +324,7 @@ RUN mkdir -p "$TMPDIR" "$COMPOSER_HOME"
 
 # install PHP dependencies without generating the autoloader yet
 RUN if [ "$BUILD_ALL" = "1" ]; then \
-        if [ "$CI" = "1" ]; then \
-            /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-autoloader; \
-        else \
-            /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev --no-autoloader; \
-        fi; \
+        /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer install --prefer-dist --no-cache --no-progress --no-dev --no-autoloader; \
     fi
 
 # YARN

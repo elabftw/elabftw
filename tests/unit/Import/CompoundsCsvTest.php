@@ -121,4 +121,32 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
 
         return (int) $req->fetchColumn();
     }
+
+    public function testImportWithPaddedCasHeader(): void
+    {
+        $requester = new Users(1, 1);
+        $Items = new Items($requester);
+
+        // whitespace-padded cas header must still populate the CAS value
+        $csv = "name, cas ,tags\nTest compound,50-00-0,padcas-tag\n";
+        $csvPath = tempnam(sys_get_temp_dir(), 'compounds-padded-cas-');
+        file_put_contents($csvPath, $csv);
+
+        try {
+            $uploadedFile = new UploadedFile(
+                $csvPath,
+                'compounds-padded-cas.csv',
+                'text/csv',
+                UPLOAD_ERR_OK,
+                true,
+            );
+
+            $httpGetter = new HttpGetter(new Client(), '', false);
+            $Compounds = new Compounds($httpGetter, $requester, new NullFingerprinter(), false);
+            $Import = new CompoundsCsv(new NullLogger(), $Items, $uploadedFile, $Compounds, 1);
+            $this->assertSame(1, $Import->import());
+        } finally {
+            unlink($csvPath);
+        }
+    }
 }

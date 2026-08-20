@@ -9,8 +9,11 @@ ENV COREPACK_HOME=/var/cache/elabftw/corepack
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 ENV CYPRESS_INSTALL_BINARY=0
 
+# npm is to install corepack (which enables yarn)
+# php84-phar is for composer
 RUN apk add --no-cache \
     npm \
+    php84-phar \
     && mkdir -p "$COREPACK_HOME" \
     && npm install -g corepack@0.35.0 \
     && corepack enable

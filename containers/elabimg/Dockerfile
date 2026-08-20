@@ -256,7 +256,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-openssl \
     php84-pdo_mysql \
     php84-pecl-imagick \
-    php84-phar \
     php84-redis \
     php84-simplexml \
     php84-session \
@@ -305,9 +304,11 @@ ENV COREPACK_VERSION=0.35.0
 
 # brotli is used to compress assets after yarn build
 # npm is to install corepack (which enables yarn)
+# php84-phar is for composer
 RUN apk add --no-cache \
     brotli \
     npm \
+    php84-phar \
     && mkdir -p "$COREPACK_HOME" \
     && npm install -g corepack@$COREPACK_VERSION \
     && corepack enable

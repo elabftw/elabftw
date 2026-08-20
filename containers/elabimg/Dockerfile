@@ -339,16 +339,10 @@ COPY ./var /elabftw/var
 COPY ./web /elabftw/web
 
 # build assets, then generate the final composer autoloader after Parser.php exists
-# in CI we use -o flag for composer because we will add other classes afterwards (tests)
 RUN if [ "$BUILD_ALL" = "1" ]; then \
-        if [ "$CI" = "1" ]; then \
-            yarn run buildall:ci \
-            && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer dump-autoload -o; \
-        else \
-            yarn run buildall:prod \
-            && yarn workspaces focus -A --production \
-            && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer dump-autoload --no-dev -a; \
-        fi \
+        yarn run buildall:prod \
+        && yarn workspaces focus -A --production \
+        && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer dump-autoload --no-dev -a; \
         && rm -rf /var/cache/elabftw; \
     fi
 

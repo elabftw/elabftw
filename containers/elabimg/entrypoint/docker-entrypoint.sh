@@ -101,36 +101,36 @@ nginxConf() {
     # HTTP
     if $disable_https; then
         cp -v /etc/nginx/http.conf "$server_conf"
-        return
+    else
+        cp -v /etc/nginx/https.conf "$server_conf"
+
+        if $generate_tls_cert; then
+            generateTlsCert
+            tls_cert_path="/run/nginx/certs/server.pem"
+            tls_key_path="/run/nginx/certs/server-key.pem"
+        fi
+
+        if [ -z "${tls_cert_path:-}" ] || [ -z "${tls_key_path:-}" ]; then
+            echo 'TLS_CERT_PATH and TLS_KEY_PATH must be set when HTTPS is enabled.' >&2
+            exit 1
+        fi
+
+        if [ ! -r "$tls_cert_path" ]; then
+            echo "Certificate is not readable: $tls_cert_path" >&2
+            exit 1
+        fi
+
+        if [ ! -r "$tls_key_path" ]; then
+            echo "Private key is not readable: $tls_key_path" >&2
+            exit 1
+        fi
+
+
+        sed -i \
+            -e "s:%TLS_CERT_PATH%:${tls_cert_path}:" \
+            -e "s:%TLS_KEY_PATH%:${tls_key_path}:" \
+            "$server_conf"
     fi
-
-    if $generate_tls_cert; then
-        generateTlsCert
-        tls_cert_path="/run/nginx/certs/server.pem"
-        tls_key_path="/run/nginx/certs/server-key.pem"
-    fi
-
-    if [ -z "${tls_cert_path:-}" ] || [ -z "${tls_key_path:-}" ]; then
-        echo 'TLS_CERT_PATH and TLS_KEY_PATH must be set when HTTPS is enabled.' >&2
-        exit 1
-    fi
-
-    if [ ! -r "$tls_cert_path" ]; then
-        echo "Certificate is not readable: $tls_cert_path" >&2
-        exit 1
-    fi
-
-    if [ ! -r "$tls_key_path" ]; then
-        echo "Private key is not readable: $tls_key_path" >&2
-        exit 1
-    fi
-
-    cp -v /etc/nginx/https.conf "$server_conf"
-
-    sed -i \
-        -e "s:%TLS_CERT_PATH%:${tls_cert_path}:" \
-        -e "s:%TLS_KEY_PATH%:${tls_key_path}:" \
-        "$server_conf"
 
     # for maintenance mode we replace common.conf with maintenance.conf
     if ($maintenance_mode); then

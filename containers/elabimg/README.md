@@ -30,8 +30,6 @@ From the repository root folder:
 docker build -t elabftw/elabimg:X.Y.Z --build-arg ELABFTW_VERSION=X.Y.Z -f containers/elabimg/Dockerfile .
 ~~~
 
-For dev, add `--build-arg BUILD_ALL=0` to skip the installation of dependencies and building of assets, because the folder will be bind-mounted to your host anyway. `ELABFTW_VERSION` can be omitted in dev.
-
 ## Usage
 
 An example configuration file for docker compose can be fetched like this:

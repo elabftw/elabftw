@@ -254,7 +254,6 @@ function install
     declare servername='localhost'
     declare hasdomain=0
     declare usehttps=1
-    declare useselfsigned=0
 
     # exit on error
     set -e
@@ -328,15 +327,8 @@ EOF_INSTALL
             usehttps=1
 
             echo ""
-            echo "A proper certificate can come from Let's Encrypt or be provided by you."
-            echo "A self-signed certificate is generated automatically, but browsers display a warning."
-            if confirm "Use a proper TLS certificate? Answer no to let the container generate a self-signed certificate." yes; then
-                useselfsigned=0
-                echo "Configure the TLS certificate before starting the containers."
-            else
-                useselfsigned=1
-                echo "A self-signed certificate will be generated when the container starts."
-            fi
+            echo "You will need to edit the configuration to configure TLS certificates before starting the containers."
+            echo "The container will NOT start properly if you don't configure TLS certificates correctly beforehand."
         else
             usehttps=0
         fi
@@ -381,8 +373,6 @@ EOF_INSTALL
         sed -i -e "s/DISABLE_HTTPS=false/DISABLE_HTTPS=true/" "$TMP_CONF_FILE"
         scheme="http://"
     fi
-
-    # TODO: configure TLS semi-automatically
 
     sed -i -e "s#SITE_URL=#SITE_URL=$scheme$servername#" "$TMP_CONF_FILE"
 

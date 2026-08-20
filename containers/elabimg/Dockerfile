@@ -378,6 +378,8 @@ RUN if [ "$BUILD_ALL" = "1" ]; then \
 ###########
 FROM runtime-base AS runtime
 
+WORKDIR /elabftw
+
 LABEL org.opencontainers.image.description="eLabFTW web service" \
     org.opencontainers.image.documentation="https://github.com/elabftw/elabftw/blob/master/containers/elabimg/README.md" \
     org.opencontainers.image.license="AGPL-3.0-only" \

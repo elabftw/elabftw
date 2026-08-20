@@ -186,8 +186,14 @@ services:
 
         # if you are running the container in HTTPS mode, you need to define a TLS certificate and its key paths
         # mount that folder in volumes section below
-        - TLS_CERT_PATH=/etc/elabftw/certs/<your-domain.pem>
-        - TLS_KEY_PATH=/etc/elabftw/certs/<your-domain-key.pem>
+        # see the doc: https://doc.elabftw.net/docs/install/installation/tls
+        # for Let's Encrypt certs
+        - TLS_CERT_PATH=/etc/letsencrypt/live/<YOUR-DOMAIN>/fullchain.pem
+        - TLS_KEY_PATH=/etc/letsencrypt/live/<YOUR-DOMAIN>/privkey.pem
+
+        # for normal certs that are not symlinked
+        #- TLS_CERT_PATH=/etc/elabftw/certs/<YOUR-CERT.PEM>
+        #- TLS_KEY_PATH=/etc/elabftw/certs/<YOUR-KEY.PEM>
 
         # optional: enable if you want nginx to be configured with set_real_ip_from directives
         # default value: false
@@ -302,7 +308,7 @@ services:
         # DEV #
         #######
         # set to true in a development environment.
-        # This will remove php cache, serve assets directly (instead of the brotli version) and make composer available.
+        # This will remove php cache, serve assets directly (instead of the brotli version), and disable opcache
         # default value: false
         #- DEV_MODE=false
 
@@ -328,10 +334,16 @@ services:
         # host:container
         - /var/elabftw/web:/var/lib/elabftw/uploads
         #
-        # TLS configuration (only if DISABLE_HTTPS=false which is the default value)
-        # YOU NEED TO MODIFY THE FIRST PART BEFORE THE ":"
-        # example: /etc/letsencrypt/live/eln.example.org:/etc/elabftw/certs:ro
-        - /path/to/your/certs/folder:/etc/elabftw/certs:ro
+        #####################
+        # TLS CONFIGURATION #
+        #####################
+        # see the doc: https://doc.elabftw.net/docs/install/installation/tls
+        # example for Let's Encrypt:
+        - /etc/letsencrypt/live/<YOUR-DOMAIN>:/etc/letsencrypt/live/<YOUR-DOMAIN>:ro
+        - /etc/letsencrypt/archive/<YOUR-DOMAIN>:/etc/letsencrypt/archive/<YOUR-DOMAIN>:ro
+        # example for normal cert:
+        #- /etc/my-certs-for-tls/elabftw:/etc/elabftw/certs:ro
+
 
         #
         # MYSQL cert path

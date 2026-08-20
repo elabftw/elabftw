@@ -139,42 +139,11 @@ Adjust the ownership with our new user:
 chown -R elabftw-worker:elabftw-worker /var/elabftw/exports
 ~~~
 
-#### TLS Certificates
+### TLS Certificates
 
-If you are running the container in HTTPS mode (meaning `DISABLE_HTTPS` is `false`, the default), then you need to bind-mount a directory containing your certificate and private key for TLS.
+If you are running the container in HTTPS mode (meaning `DISABLE_HTTPS` is `false`, the default), then you need to modify env and volumes. The cert and key are now indicated by `TLS_CERT_PATH` and `TLS_KEY_PATH` env vars.
 
-In the example below, the certificate is `fullchain.pem` and the key is `privkey.pem`. On the host, they are located in `/etc/letsencrypt/live/eln.example.org/`.
-
-Set these two new ENV variables in `environment:` section:
-
-~~~yaml
-- TLS_CERT_PATH=/etc/elabftw/certs/fullchain.pem
-- TLS_KEY_PATH=/etc/elabftw/certs/privkey.pem
-~~~
-
-Now add the bind-mount in the `volumes:` section:
-
-~~~yaml
-- /etc/letsencrypt/live/eln.example.org:/etc/elabftw/certs:ro
-~~~
-
-The user running the container (elabftw-worker) must have read access to the files.
-
--------------
-
-Note: the `TLS_CERT_PATH` and `TLS_KEY_PATH` contain the full path. So if you want/need to do it differently, you can. For example:
-
-~~~yaml
-# environment:
-- TLS_CERT_PATH=/certificate/cert.crt
-- TLS_KEY_PATH=/private-key/key.crt
-# volumes:
-- /srv/http/eln.example.org/cert:/certificate:ro
-- /etc/ssl/private/very-private:/private-key:ro
-~~~
-
--------------
-
+Read the documentation about TLS configuration from this page: [TLS configuration doc](../installation/tls#option-b-https-mode-with-lets-encrypt-certificates).
 
 ### Ports
 

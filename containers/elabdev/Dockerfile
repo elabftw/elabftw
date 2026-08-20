@@ -18,5 +18,3 @@ RUN apk add --no-cache \
 # COMPOSER
 # 2.10.2
 COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
-
-WORKDIR /elabftw

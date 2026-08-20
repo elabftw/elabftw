@@ -32,6 +32,8 @@ In `volumes:` section:
 - `/etc/letsencrypt/live/<YOUR-DOMAIN>:/etc/letsencrypt/live/<YOUR-DOMAIN>:ro`
 - `/etc/letsencrypt/archive/<YOUR-DOMAIN>:/etc/letsencrypt/archive/<YOUR-DOMAIN>:ro`
 
+The user running the container (elabftw-worker) must have read access to the files.
+
 ## Option C: HTTPS mode with custom certificates
 
 The webserver in the container expects TLS certificates to be in a particular order and format. Make sure that your certificate file contains certificates in this order: `<certificate> <intermediate ca> <root ca>`, with PEM encoding.
@@ -40,6 +42,8 @@ The webserver in the container expects TLS certificates to be in a particular or
 - Set `TLS_CERT_PATH=/etc/elabftw/certs/name-of-your-cert.pem`
 - Set `TLS_KEY_PATH=/etc/elabftw/certs/name-of-your-key.pem`
 - Bind-mount `/path/to/your/certs` to `/etc/elabftw/certs`. So in the `volumes:` section it should look like: `- /etc/my-certs-for-tls/elabftw:/etc/elabftw/certs:ro`
+
+The user running the container (elabftw-worker) must have read access to the files.
 
 ## Option D: HTTPS mode with self-signed certificate
 

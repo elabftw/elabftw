@@ -340,9 +340,9 @@ COPY ./web /elabftw/web
 # build assets, then generate the final composer autoloader after Parser.php exists
 RUN if [ "$BUILD_ALL" = "1" ]; then \
         yarn run buildall:prod \
-        && yarn workspaces focus -A --production \
-        && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer dump-autoload --no-dev -a; \
-        && rm -rf /var/cache/elabftw; \
+        && /usr/bin/php84 -d memory_limit=256M /usr/local/bin/composer dump-autoload --no-dev -a \
+        && rm -rf /var/cache/elabftw \
+        && rm -f .pnp.cjs .pnp.loader.mjs; \
     fi
 
 ###########

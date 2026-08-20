@@ -1,3 +1,10 @@
+/**
+ * @author Nicolas CARPi / Deltablot
+ * @copyright 2020 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 import { readdirSync } from 'node:fs';
 import { defineConfig } from 'cypress';
 import htmlvalidate from 'cypress-html-validate/plugin';
@@ -67,9 +74,4 @@ export default defineConfig({
     specPattern: 'tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'tests/cypress/support/index.ts',
   },
-  // give more time
-  defaultCommandTimeout: 15000,
-  requestTimeout: 10000,
-  responseTimeout: 130000,
-  taskTimeout: 300000,
 });

@@ -222,7 +222,6 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # install required packages
 # php8-bcmath is required to send emails via Exchange (NTLM authenticator)
 # php8-gd is required by mpdf for transparent png
-# php8-tokenizer and php8-xmlwriter are for dev only
 # php8-iconv is required by LdapRecord php library
 # imagemagick-svg is for mathjax support in pdfs
 # imagemagick-heic is for support for heic/heif

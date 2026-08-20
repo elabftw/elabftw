@@ -44,7 +44,6 @@ commands:
             docker build \
               -t "elabftw/elabdev:ci-${CIRCLE_SHA1}" \
               --build-arg "ELABIMG_BASE=elabftw/elabimg:ci-${CIRCLE_SHA1}" \
-              --build-arg "ELABIMG_TAG=ci-${CIRCLE_SHA1}" \
               -f containers/elabdev/Dockerfile .
             docker build \
               -t "elabftw/elabtmp:ci-${CIRCLE_SHA1}" \

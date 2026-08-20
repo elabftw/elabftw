@@ -3,8 +3,9 @@
 ARG ELABTMP_TAG=latest
 FROM elabftw/elabtmp:${ELABTMP_TAG}
 
-# run yarn install again because we removed yarn stuff on elabimg build
+RUN composer install --prefer-dist --no-cache --no-progress
 RUN yarn install --immutable
+RUN yarn run buildall:ci
 
 # add tests related folders and files to the image
 COPY ./tests /elabftw/tests

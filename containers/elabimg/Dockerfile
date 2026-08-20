@@ -292,8 +292,6 @@ FROM runtime-base AS app-builder
 # this allows to skip the (long) build in dev mode where /elabftw will be bind-mounted anyway
 # pass it to build command with --build-arg BUILD_ALL=0
 ARG BUILD_ALL=1
-# enable this in CI to skip brotli minification
-ARG CI=0
 
 # COREPACK
 ENV COREPACK_HOME=/var/cache/elabftw/corepack

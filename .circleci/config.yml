@@ -39,7 +39,7 @@ commands:
           command: |
             docker build \
               -t "elabftw/elabimg:ci-${CIRCLE_SHA1}" \
-              --build-arg CI=1 \
+              --build-arg BUILD_ALL=0 \
               -f containers/elabimg/Dockerfile .
             docker build \
               -t "elabftw/elabdev:ci-${CIRCLE_SHA1}" \

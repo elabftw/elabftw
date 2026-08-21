@@ -205,7 +205,7 @@ Cypress.Commands.add('extractIdFromLocation', response => {
     throw new Error('Location header not found in response');
   }
 
-  // The Location header may include ports and full paths, e.g. https://elab.local:3148/api/v2/experiments/17
+  // The Location header may include ports and full paths, e.g. https://elab.localhost:3148/api/v2/experiments/17
   // Split the URL by '/' and take the last segment as the ID
   const segments = locationHeader.split('/');
   const idSegment = segments.pop();

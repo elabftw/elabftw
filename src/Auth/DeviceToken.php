@@ -37,7 +37,7 @@ final class DeviceToken
         $config = self::getConfig();
         $token = $config->builder()
                 // Configures the issuer (iss claim)
-                //->issuedBy('https://elab.local:3148')
+                //->issuedBy('https://elab.localhost:3148')
                 // Configures the audience (aud claim)
                 ->permittedFor('brute-force-protection')
                 // Configures the id (jti claim)

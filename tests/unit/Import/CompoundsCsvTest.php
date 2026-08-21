@@ -113,6 +113,41 @@ class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testImportWithPaddedCasHeader(): void
+    {
+        $requester = new Users(1, 1);
+        $Items = new Items($requester);
+
+        // whitespace-padded cas header must still populate the CAS value
+        $csv = "name, cas ,tags\nTest compound,50-00-0,padcas-tag\n";
+        $csvPath = tempnam(sys_get_temp_dir(), 'compounds-padded-cas-');
+        file_put_contents($csvPath, $csv);
+
+        try {
+            $uploadedFile = new UploadedFile(
+                $csvPath,
+                'compounds-padded-cas.csv',
+                'text/csv',
+                UPLOAD_ERR_OK,
+                true,
+            );
+
+            $httpGetter = new HttpGetter(new Client(), '', false);
+            $Compounds = new Compounds($httpGetter, $requester, new NullFingerprinter(), false);
+            $Import = new CompoundsCsv(new NullLogger(), $Items, $uploadedFile, $Compounds, 1);
+            $this->assertSame(1, $Import->import());
+
+            // the whitespace-padded cas header must populate the persisted cas_number
+            $Db = Db::getConnection();
+            $req = $Db->prepare('SELECT cas_number FROM compounds WHERE name = :name ORDER BY id DESC LIMIT 1');
+            $req->execute(array(':name' => 'Test compound'));
+            $cas = $req->fetchColumn();
+            $this->assertSame('50-00-0', $cas);
+        } finally {
+            unlink($csvPath);
+        }
+    }
+
     private function latestImportedStorageId(): int
     {
         $Db = Db::getConnection();

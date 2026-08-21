@@ -67,16 +67,19 @@ final class CompoundsCsv extends AbstractCsv
 
         $loopIndex = 0;
 
+        // cache the trimmed header for CAS detection and record iteration
+        $trimmedHeader = $this->getTrimmedHeader();
+
         // find out the correct case for CAS and keep it so if it's imported as custom field it has correct case
         // but do this so we can match any case for pubchem import
         $casKey = null;
-        foreach ($this->reader->getHeader() as $h) {
+        foreach ($trimmedHeader as $h) {
             if (strcasecmp($h, 'cas') === 0) {
                 $casKey = $h;
                 break;
             }
         }
-        foreach ($this->reader->getRecords() as $row) {
+        foreach ($this->reader->getRecords($trimmedHeader) as $row) {
             // this might store the compound from pubchem
             $compound = false;
             $ids = array();

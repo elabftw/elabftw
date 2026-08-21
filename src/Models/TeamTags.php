@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -80,11 +81,21 @@ final class TeamTags extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag, tags.team
+        $sql = "SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite,
+            COUNT(CASE
+                WHEN COALESCE(experiments.state, experiments_templates.state, items.state, items_types.state) <> :deleted_state
+                THEN tags2entity.id
+            END) AS item_count,
+            tags.tag, tags.team
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
+            LEFT JOIN experiments ON (tags2entity.item_type = 'experiments' AND experiments.id = tags2entity.item_id)
+            LEFT JOIN experiments_templates ON (tags2entity.item_type = 'experiments_templates' AND experiments_templates.id = tags2entity.item_id)
+            LEFT JOIN items ON (tags2entity.item_type = 'items' AND items.id = tags2entity.item_id)
+            LEFT JOIN items_types ON (tags2entity.item_type = 'items_types' AND items_types.id = tags2entity.item_id)
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
-            WHERE team = :team AND tags.id = :id HAVING tags.id IS NOT NULL';
+            WHERE tags.team = :team AND tags.id = :id HAVING tags.id IS NOT NULL";
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':deleted_state', State::Deleted->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -101,11 +112,21 @@ final class TeamTags extends AbstractRest
     {
         $queryParams ??= $this->getQueryParams();
         $query = $queryParams->getQuery()->getString('q');
-        $sql = 'SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite, COUNT(tags2entity.id) AS item_count, tags.tag, tags.team
+        $sql = "SELECT tags.id, (tags_id IS NOT NULL) AS is_favorite,
+            COUNT(CASE
+                WHEN COALESCE(experiments.state, experiments_templates.state, items.state, items_types.state) <> :deleted_state
+                THEN tags2entity.id
+            END) AS item_count,
+            tags.tag, tags.team
             FROM tags LEFT JOIN tags2entity ON tags2entity.tag_id = tags.id
+            LEFT JOIN experiments ON (tags2entity.item_type = 'experiments' AND experiments.id = tags2entity.item_id)
+            LEFT JOIN experiments_templates ON (tags2entity.item_type = 'experiments_templates' AND experiments_templates.id = tags2entity.item_id)
+            LEFT JOIN items ON (tags2entity.item_type = 'items' AND items.id = tags2entity.item_id)
+            LEFT JOIN items_types ON (tags2entity.item_type = 'items_types' AND items_types.id = tags2entity.item_id)
             LEFT JOIN favtags2users ON (favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id)
-            WHERE team = :team AND tags.tag LIKE :query GROUP BY tags.id ORDER BY tag';
+            WHERE tags.team = :team AND tags.tag LIKE :query GROUP BY tags.id ORDER BY tag";
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':deleted_state', State::Deleted->value, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $query . '%');

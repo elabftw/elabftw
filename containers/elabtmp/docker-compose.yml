@@ -3,11 +3,13 @@ networks:
     name: elabftw-net
 services:
   web:
-    image: elabtmp
+    image: elabftw/elabtmp:edge
     user: 1000:1000
     build:
       context: ../..
       dockerfile: ./containers/elabtmp/Dockerfile
+      args:
+        - ELABIMG_TAG=edge
     container_name: elabtmp
     cap_drop:
       - ALL

@@ -175,6 +175,26 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Email->sendEmail(new Address('a@a.fr', 'blah'), 's', '', htmlBody: $htmlBody));
     }
 
+    public function testMassEmailUngroupedPreservesAmpersandInUrl(): void
+    {
+        $url = 'https://elabftw.uni-heidelberg.de/database.php?mode=view&id=15246';
+        $body = 'Please check this link: ' . $url;
+        $MockMailer = $this->createMock(MailerInterface::class);
+        $MockMailer->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function (Memail $message) use ($url): bool {
+                $plainText = $message->getTextBody() ?? '';
+                $this->assertStringContainsString($url, (string) $plainText);
+                $this->assertStringNotContainsString('&amp;', (string) $plainText);
+                return true;
+            }));
+        $Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com');
+        $replyTo = new Address('sender@example.com', 'Test Sender');
+
+        // sendGrouped = false exercises the ungrouped sendInLoop() path
+        $this->assertSame(1, $Email->massEmail(EmailTarget::Sysadmins, null, 'Subject', $body, $replyTo, false));
+    }
+
     public function testNotifySysadminsTsBalance(): void
     {
         $this->assertTrue($this->Email->notifySysadminsTsBalance(12));

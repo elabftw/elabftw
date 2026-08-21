@@ -27,6 +27,7 @@ use function trim;
 use function _;
 use function ctype_alpha;
 use function explode;
+use function html_entity_decode;
 use function pathinfo;
 use function preg_replace;
 use function str_replace;
@@ -61,7 +62,8 @@ final class Filter
         $config->set('Cache.SerializerPath', $tmpDir);
         $config->set('HTML.Allowed', '');
         $config->set('AutoFormat.RemoveEmpty', true);
-        return new HTMLPurifier($config)->purify(trim($input));
+        $purified = new HTMLPurifier($config)->purify(trim($input));
+        return html_entity_decode($purified, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
     /**

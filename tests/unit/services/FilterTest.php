@@ -103,6 +103,11 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Roger', Filter::toPureString('<a href="attacker.com">Roger</a>'));
         $this->assertEquals('Roger', Filter::toPureString('<script>alert(1)</script><strong>Roger</strong>'));
         $this->assertEquals('Rabbit', Filter::toPureString('<i onwheel=alert(224)>Rabbit</i>'));
+        $url = 'https://elabftw.uni-heidelberg.de/database.php?mode=view&id=15246';
+        $this->assertSame($url, Filter::toPureString($url));
+        $this->assertSame('Tom & Jerry', Filter::toPureString('<strong>Tom & Jerry</strong>'));
+        $value = 'Tom & Jerry';
+        $this->assertSame($value, Filter::toPureString(Filter::toPureString($value)));
     }
 
     public function testIntOrNull(): void

@@ -20,7 +20,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CleanerInterface;
 use Override;
 use PDO;
-use PDOStatement;
 use Exception;
 
 use function implode;
@@ -51,22 +50,39 @@ final class EntityPruner implements CleanerInterface
     #[Override]
     public function cleanup(): int
     {
-        // begin transaction before selecting so rows are locked with FOR UPDATE
         $this->Db->beginTransaction();
         try {
-            // select matching deleted entity ids with row lock
-            $selectStmt = $this->buildSelectStmt();
-            $matchingIds = $selectStmt->fetchAll(PDO::FETCH_COLUMN);
-            if (empty($matchingIds)) {
-                $this->Db->rollBack();
-                return 0;
+            $baseWhere = ' WHERE state = :state';
+            $binds = array();
+            $this->applyFilters($baseWhere, $binds);
+            $entityTable = $this->entityType->value;
+
+            // delete orphaned tags2entity rows via subquery (no PHP-side ID list)
+            $tagsSql = 'DELETE FROM tags2entity WHERE item_type = :item_type'
+                     . ' AND item_id IN (SELECT id FROM ' . $entityTable . $baseWhere . ' FOR UPDATE)';
+            $tagsReq = $this->Db->prepare($tagsSql);
+            $tagsReq->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+            $tagsReq->bindValue(':item_type', $entityTable, PDO::PARAM_STR);
+            foreach ($binds as $key => $bindData) {
+                $tagsReq->bindValue($key, $bindData[0], $bindData[1]);
             }
+            if ($this->since !== null) {
+                $tagsReq->bindValue(':since', $this->parseSince($this->since));
+            }
+            $this->Db->execute($tagsReq);
 
-            // delete orphaned tags2entity entries before the entity rows
-            $this->cleanupTags2entity($matchingIds);
-
-            // delete the entity rows, but only those still in Deleted state
-            $deleted = $this->deleteEntities($matchingIds);
+            // delete the entity rows (same WHERE, so restored entities are skipped)
+            $entitySql = 'DELETE FROM ' . $entityTable . $baseWhere;
+            $entityReq = $this->Db->prepare($entitySql);
+            $entityReq->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+            foreach ($binds as $key => $bindData) {
+                $entityReq->bindValue($key, $bindData[0], $bindData[1]);
+            }
+            if ($this->since !== null) {
+                $entityReq->bindValue(':since', $this->parseSince($this->since));
+            }
+            $this->Db->execute($entityReq);
+            $deleted = $entityReq->rowCount();
 
             $this->Db->commit();
             return $deleted;
@@ -74,73 +90,6 @@ final class EntityPruner implements CleanerInterface
             $this->Db->rollBack();
             throw $e;
         }
-    }
-
-    /**
-     * Build a prepared SELECT statement that returns the ids of matching deleted entities
-     */
-    private function buildSelectStmt(): PDOStatement
-    {
-        $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE state = :state';
-        $binds = array();
-        $this->applyFilters($sql, $binds);
-        $sql .= ' FOR UPDATE';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-        foreach ($binds as $key => $bindData) {
-            $req->bindValue($key, $bindData[0], $bindData[1]);
-        }
-        if ($this->since !== null) {
-            $req->bindValue(':since', $this->parseSince($this->since));
-        }
-        $this->Db->execute($req);
-        return $req;
-    }
-
-    /**
-     * Delete orphaned tag relations for the given entity ids
-     */
-    private function cleanupTags2entity(array $idValues): void
-    {
-        if (empty($idValues)) {
-            return;
-        }
-        $placeholders = array();
-        $binds = array();
-        foreach ($idValues as $k => $id) {
-            $key = ":id_$k";
-            $placeholders[] = $key;
-            $binds[$key] = array($id, PDO::PARAM_INT);
-        }
-        $sql = 'DELETE FROM tags2entity WHERE item_type = :item_type AND item_id IN (' . implode(',', $placeholders) . ')';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':item_type', $this->entityType->value, PDO::PARAM_STR);
-        foreach ($binds as $key => $bindData) {
-            $req->bindValue($key, $bindData[0], $bindData[1]);
-        }
-        $this->Db->execute($req);
-    }
-
-    /**
-     * Delete entity rows by id
-     */
-    private function deleteEntities(array $idValues): int
-    {
-        $placeholders = array();
-        $binds = array();
-        foreach ($idValues as $k => $id) {
-            $key = ":id_$k";
-            $placeholders[] = $key;
-            $binds[$key] = array($id, PDO::PARAM_INT);
-        }
-        $sql = 'DELETE FROM ' . $this->entityType->value . ' WHERE id IN (' . implode(',', $placeholders) . ') AND state = :state';
-        $req = $this->Db->prepare($sql);
-        foreach ($binds as $key => $bindData) {
-            $req->bindValue($key, $bindData[0], $bindData[1]);
-        }
-        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->rowCount();
     }
 
     /**

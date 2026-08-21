@@ -59,7 +59,7 @@ final class EntityPruner implements CleanerInterface
 
             // delete orphaned tags2entity rows via subquery (no PHP-side ID list)
             $tagsSql = 'DELETE FROM tags2entity WHERE item_type = :item_type'
-                     . ' AND item_id IN (SELECT id FROM ' . $entityTable . $baseWhere . ')';
+                     . ' AND item_id IN (SELECT id FROM ' . $entityTable . $baseWhere . ' FOR UPDATE)';
             $tagsReq = $this->Db->prepare($tagsSql);
             $tagsReq->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
             $tagsReq->bindValue(':item_type', $entityTable, PDO::PARAM_STR);

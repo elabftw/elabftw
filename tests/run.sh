@@ -19,7 +19,7 @@ trap cleanup EXIT
 
 # make sure elabftw/elabimg:ci exists locally (elabtmp depends on it)
 if ! docker image inspect elabftw/elabtmp:edge >/dev/null 2>&1; then
-    docker build -t elabftw/elabtmp --build-arg ELABIMG_TAG=edge -f containers/elabtmp/Dockerfile .
+    docker build -t elabftw/elabtmp:edge --build-arg ELABIMG_TAG=edge -f containers/elabtmp/Dockerfile .
 fi
 
 # launch a fresh environment if needed

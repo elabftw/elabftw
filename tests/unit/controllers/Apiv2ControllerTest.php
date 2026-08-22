@@ -85,6 +85,20 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
     }
 
+    public function testAnonymousUserCannotReadCompounds(): void
+    {
+        foreach (array('/api/v2/compounds', '/api/v2/compounds/1') as $uri) {
+            $Controller = new Apiv2Controller(
+                new AnonymousUser(1),
+                Request::create($uri, 'GET'),
+            );
+
+            $res = $Controller->getResponse();
+
+            self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+        }
+    }
+
     public function testCannotReadAnotherTeamsSubmodel(): void
     {
         $Controller = new Apiv2Controller(

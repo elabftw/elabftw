@@ -23,6 +23,7 @@ use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\CompoundParams;
@@ -90,6 +91,7 @@ final class Compounds extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $this->canReadOrExplode();
         $queryParams ??= $this->getQueryParams();
         if (!empty($queryParams->getQuery()->get('search_pubchem_cid'))) {
             return $this->searchPubChem($queryParams->getQuery()->getInt('search_pubchem_cid'))->toArray();
@@ -160,6 +162,7 @@ final class Compounds extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        $this->canReadOrExplode();
         $sql = $this->getSelectBeforeWhere() . ' WHERE entity.id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -530,6 +533,13 @@ final class Compounds extends AbstractRest
     protected function canWriteOrExplode(): void
     {
         if (!$this->canWrite()) {
+            throw new IllegalActionException();
+        }
+    }
+
+    private function canReadOrExplode(): void
+    {
+        if ($this->requester instanceof AnonymousUser) {
             throw new IllegalActionException();
         }
     }

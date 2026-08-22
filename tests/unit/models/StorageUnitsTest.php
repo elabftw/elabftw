@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Containers2ItemsLinks;
@@ -23,6 +24,7 @@ use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
+use function array_filter;
 use function sprintf;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
@@ -98,6 +100,31 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('children_count', $result[0]);
         $this->assertArrayHasKey('occupancy', $result[0]);
         $this->assertArrayNotHasKey('entity_id', $result[0]);
+    }
+
+    public function testAnonymousUserOnlyReadsPublicEntitiesFromStorage(): void
+    {
+        $storageId = $this->StorageUnits->create('Anonymous read permission test');
+
+        $teamItem = $this->getFreshItem();
+        $teamItem->patch(Action::Update, array('canread_base' => BasePermissions::Team->value));
+        new Containers2ItemsLinks($teamItem, $storageId)->createWithQuantity(1.0, 'mL');
+
+        $publicItem = $this->getFreshItem();
+        $publicItem->patch(Action::Update, array('canread_base' => BasePermissions::Full->value));
+        new Containers2ItemsLinks($publicItem, $storageId)->createWithQuantity(1.0, 'mL');
+
+        $StorageUnitsAsAnonymous = new StorageUnits(new AnonymousUser(1), false);
+        $visibleItemIds = array_column(
+            array_filter(
+                $StorageUnitsAsAnonymous->readAll(),
+                static fn(array $row): bool => $row['page'] === 'database',
+            ),
+            'entity_id',
+        );
+
+        $this->assertNotContains($teamItem->id, $visibleItemIds);
+        $this->assertContains($publicItem->id, $visibleItemIds);
     }
 
     public function testReadAllFromStorage(): void

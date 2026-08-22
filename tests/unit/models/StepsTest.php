@@ -12,12 +12,16 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users\AuthenticatedUser;
+use Elabftw\Params\OrderingParams;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function array_filter;
 use function array_values;
+use function count;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
@@ -81,6 +85,83 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $Steps->patch(Action::Notif, array());
         // update finish time_time
         $Steps->patch(Action::Update, array('finished_time' => '2022-03-23 13:37:00'));
+    }
+
+    public function testUpdateOrdering(): void
+    {
+        $first = $this->Steps->postAction(Action::Create, array('body' => 'first'));
+        $second = $this->Steps->postAction(Action::Create, array('body' => 'second'));
+        $changelogCount = count((new Changelog($this->Experiments))->readAll());
+
+        $this->Steps->updateOrdering(new OrderingParams(array(
+            'table' => 'experiments_steps',
+            'ordering' => array('step_' . $second, 'step_' . $first),
+        )));
+
+        $steps = $this->Steps->readAll();
+        $this->assertSame($second, (int) $steps[0]['id']);
+        $this->assertSame($first, (int) $steps[1]['id']);
+        $this->assertCount($changelogCount + 1, (new Changelog($this->Experiments))->readAll());
+    }
+
+    public function testCannotReorderStepFromAnotherExperiment(): void
+    {
+        $victimStep = $this->Steps->postAction(Action::Create, array('body' => 'victim'));
+        $otherSteps = new Steps($this->getFreshExperiment());
+        $params = new OrderingParams(array(
+            'table' => 'experiments_steps',
+            'ordering' => array('step_' . $victimStep),
+        ));
+
+        try {
+            $otherSteps->updateOrdering($params);
+            $this->fail('A step from another experiment was reordered.');
+        } catch (ImproperActionException) {
+            $this->assertSame($victimStep, (int) $this->Steps->readAll()[0]['id']);
+        }
+    }
+
+    public function testCannotReorderPrivateExperimentFromAnotherTeam(): void
+    {
+        $victimExperiment = $this->getFreshExperimentWithGivenUser(new AuthenticatedUser(2, 1));
+        $victimSteps = new Steps($victimExperiment);
+        $first = $victimSteps->postAction(Action::Create, array('body' => 'first'));
+        $second = $victimSteps->postAction(Action::Create, array('body' => 'second'));
+        $attacker = $this->getUserInTeam(2);
+        $params = new OrderingParams(array(
+            'table' => 'experiments_steps',
+            'ordering' => array('step_' . $second, 'step_' . $first),
+        ));
+
+        try {
+            $attackerSteps = new Steps(new Experiments($attacker, $victimExperiment->id));
+            $attackerSteps->updateOrdering($params);
+            $this->fail('A user from another team reordered private experiment steps.');
+        } catch (ForbiddenException) {
+            $steps = $victimSteps->readAll();
+            $this->assertSame($first, (int) $steps[0]['id']);
+            $this->assertSame($second, (int) $steps[1]['id']);
+        }
+    }
+
+    public function testCannotReorderImmutableExperimentStep(): void
+    {
+        $first = $this->Steps->postAction(Action::Create, array('body' => 'first'));
+        $second = $this->Steps->postAction(Action::Create, array('body' => 'second'));
+        $this->Steps->patch(Action::ForceLock, array());
+        $params = new OrderingParams(array(
+            'table' => 'experiments_steps',
+            'ordering' => array('step_' . $second, 'step_' . $first),
+        ));
+
+        try {
+            $this->Steps->updateOrdering($params);
+            $this->fail('Immutable experiment steps were reordered.');
+        } catch (ImproperActionException) {
+            $steps = $this->Steps->readAll();
+            $this->assertSame($first, (int) $steps[0]['id']);
+            $this->assertSame($second, (int) $steps[1]['id']);
+        }
     }
 
     public function testCannotPatchImmutabilityFromExperiment(): void

@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\Orderable;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -29,6 +30,7 @@ use Elabftw\Models\Teams;
 use Elabftw\Models\Templates;
 use Elabftw\Models\Todolist;
 use Elabftw\Params\ExtraFieldsOrderingParams;
+use Elabftw\Params\Guard;
 use Elabftw\Params\OrderingParams;
 use Exception;
 use JsonException;
@@ -83,11 +85,19 @@ try {
             $Entity = new ItemsStatus(new Teams($App->Users));
             break;
         case Orderable::ExperimentsSteps:
-            $model = new Experiments($App->Users);
+            $entityId = Guard::getNonZeroPositiveIntValueOfRequiredParam(
+                'id',
+                (array) ($reqBody['entity'] ?? array()),
+            );
+            $model = new Experiments($App->Users, $entityId);
             $Entity = new Steps($model);
             break;
         case Orderable::ItemsSteps:
-            $model = new Items($App->Users);
+            $entityId = Guard::getNonZeroPositiveIntValueOfRequiredParam(
+                'id',
+                (array) ($reqBody['entity'] ?? array()),
+            );
+            $model = new Items($App->Users, $entityId);
             $Entity = new Steps($model);
             break;
         case Orderable::Todolist:
@@ -97,11 +107,19 @@ try {
             $Entity = new Templates($App->Users);
             break;
         case Orderable::ExperimentsTemplatesSteps:
-            $model = new Templates($App->Users);
+            $entityId = Guard::getNonZeroPositiveIntValueOfRequiredParam(
+                'id',
+                (array) ($reqBody['entity'] ?? array()),
+            );
+            $model = new Templates($App->Users, $entityId);
             $Entity = new Steps($model);
             break;
         case Orderable::ItemsTypesSteps:
-            $model = new ItemsTypes($App->Users);
+            $entityId = Guard::getNonZeroPositiveIntValueOfRequiredParam(
+                'id',
+                (array) ($reqBody['entity'] ?? array()),
+            );
+            $model = new ItemsTypes($App->Users, $entityId);
             $Entity = new Steps($model);
             break;
         default:
@@ -114,7 +132,7 @@ try {
         'res' => false,
         'msg' => Messages::InsufficientPermissions->toHuman(),
     ));
-} catch (ImproperActionException | UnauthorizedException $e) {
+} catch (ForbiddenException | ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,
         'msg' => $e->getMessage(),

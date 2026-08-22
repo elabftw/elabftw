@@ -14,17 +14,19 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AccessType;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Params\ContentParams;
+use Elabftw\Params\OrderingParams;
 use Elabftw\Params\StepParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
-use Elabftw\Traits\SortableTrait;
 use Override;
 use PDO;
 
+use function array_column;
 use function array_intersect;
 use function array_keys;
 use function _;
@@ -39,7 +41,6 @@ use function str_replace;
  */
 final class Steps extends AbstractRest
 {
-    use SortableTrait;
     use SetIdTrait;
 
     public function __construct(public AbstractEntity $Entity, ?int $id = null)
@@ -164,6 +165,50 @@ final class Steps extends AbstractRest
             $req->bindParam(':is_immutable', $step['is_immutable'], PDO::PARAM_INT);
             $this->Db->execute($req);
         }
+    }
+
+    /**
+     * Reorder steps belonging to the parent entity.
+     */
+    public function updateOrdering(OrderingParams $params): void
+    {
+        $this->Entity->canOrExplode(AccessType::Write);
+
+        $table = $this->Entity->entityType->value . '_steps';
+        if ($params->table->value !== $table) {
+            throw new ImproperActionException(_('The steps table does not match the entity type.'));
+        }
+
+        $steps = array_column($this->readAll(), null, 'id');
+        $enforceImmutability = in_array(
+            $this->Entity->entityType,
+            array(EntityType::Experiments, EntityType::Items),
+            true,
+        );
+        foreach ($params->ordering as $id) {
+            if (!array_key_exists($id, $steps)) {
+                throw new ImproperActionException(_('Cannot reorder a step that does not belong to this entity.'));
+            }
+            if ($enforceImmutability && (int) $steps[$id]['is_immutable'] === 1) {
+                throw new ImproperActionException(_('This step is immutable: it cannot be modified.'));
+            }
+        }
+
+        $sql = sprintf(
+            'UPDATE %s_steps SET ordering = :ordering WHERE id = :id AND item_id = :item_id',
+            $this->Entity->entityType->value,
+        );
+        $req = $this->Db->prepare($sql);
+        foreach ($params->ordering as $ordering => $id) {
+            $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
+            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+
+        $this->Entity->touch();
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams('steps', Action::Update->value));
     }
 
     #[Override]

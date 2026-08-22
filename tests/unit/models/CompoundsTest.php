@@ -18,6 +18,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Compounds2ExperimentsLinks;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
@@ -161,6 +162,24 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/compounds/', $this->Compounds->getApiPath());
+    }
+
+    public function testAnonymousUserCannotReadAll(): void
+    {
+        $Compounds = new Compounds($this->httpGetter, new AnonymousUser(1), new NullFingerprinter(), false);
+
+        $this->expectException(IllegalActionException::class);
+
+        $Compounds->readAll();
+    }
+
+    public function testAnonymousUserCannotReadOne(): void
+    {
+        $Compounds = new Compounds($this->httpGetter, new AnonymousUser(1), new NullFingerprinter(), false, 1);
+
+        $this->expectException(IllegalActionException::class);
+
+        $Compounds->readOne();
     }
 
     public function testReadAll(): void

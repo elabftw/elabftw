@@ -136,4 +136,34 @@ class EntityPrunerTest extends TestCase
         $Cleaner = new EntityPruner(EntityType::Experiments, array(), array(), array(), '2026-02-30');
         $Cleaner->cleanup();
     }
+
+    public function testCleanupRemovesOrphanedTags2entity(): void
+    {
+        $Exp = $this->getFreshExperiment();
+        $id = $Exp->id;
+        // add a tag to the experiment
+        $Tags = new \Elabftw\Models\Tags($Exp);
+        $Tags->create(new \Elabftw\Params\TagParam('test-tag'), true);
+        // verify the tag relation exists
+        $Db = Db::getConnection();
+        $req = $Db->prepare('SELECT COUNT(*) FROM tags2entity WHERE item_id = :id AND item_type = :type');
+        $req->execute(array(':id' => $id, ':type' => EntityType::Experiments->value));
+        $this->assertGreaterThan(0, (int) $req->fetchColumn());
+
+        // soft-delete and prune
+        $Exp->destroy();
+        $Cleaner = new EntityPruner(EntityType::Experiments, array($id));
+        $res = $Cleaner->cleanup();
+        $this->assertSame(1, $res);
+
+        // verify the entity is gone
+        $req = $Db->prepare('SELECT id FROM experiments WHERE id = :id');
+        $req->execute(array(':id' => $id));
+        $this->assertEmpty($req->fetchAll());
+
+        // verify the tags2entity rows are also gone (the bug from issue #6952)
+        $req = $Db->prepare('SELECT COUNT(*) FROM tags2entity WHERE item_id = :id AND item_type = :type');
+        $req->execute(array(':id' => $id, ':type' => EntityType::Experiments->value));
+        $this->assertSame(0, (int) $req->fetchColumn(), 'tags2entity rows should be removed after prune');
+    }
 }

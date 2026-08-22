@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CleanerInterface;
 use Override;
 use PDO;
+use Exception;
 
 use function implode;
 use function preg_match;
@@ -49,9 +50,53 @@ final class EntityPruner implements CleanerInterface
     #[Override]
     public function cleanup(): int
     {
-        $sql = 'DELETE FROM ' . $this->entityType->value . ' WHERE state = :state';
+        $this->Db->beginTransaction();
+        try {
+            $baseWhere = ' WHERE state = :state';
+            $binds = array();
+            $this->applyFilters($baseWhere, $binds);
+            $entityTable = $this->entityType->value;
 
-        $binds = array();
+            // delete orphaned tags2entity rows via subquery (no PHP-side ID list)
+            $tagsSql = 'DELETE FROM tags2entity WHERE item_type = :item_type'
+                     . ' AND item_id IN (SELECT id FROM ' . $entityTable . $baseWhere . ')';
+            $tagsReq = $this->Db->prepare($tagsSql);
+            $tagsReq->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+            $tagsReq->bindValue(':item_type', $entityTable, PDO::PARAM_STR);
+            foreach ($binds as $key => $bindData) {
+                $tagsReq->bindValue($key, $bindData[0], $bindData[1]);
+            }
+            if ($this->since !== null) {
+                $tagsReq->bindValue(':since', $this->parseSince($this->since));
+            }
+            $this->Db->execute($tagsReq);
+
+            // delete the entity rows (same WHERE, so restored entities are skipped)
+            $entitySql = 'DELETE FROM ' . $entityTable . $baseWhere;
+            $entityReq = $this->Db->prepare($entitySql);
+            $entityReq->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+            foreach ($binds as $key => $bindData) {
+                $entityReq->bindValue($key, $bindData[0], $bindData[1]);
+            }
+            if ($this->since !== null) {
+                $entityReq->bindValue(':since', $this->parseSince($this->since));
+            }
+            $this->Db->execute($entityReq);
+            $deleted = $entityReq->rowCount();
+
+            $this->Db->commit();
+            return $deleted;
+        } catch (Exception $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Apply the filters (ids, userids, teams, since) to a SQL query string
+     */
+    private function applyFilters(string &$sql, array &$binds): void
+    {
         if (!empty($this->ids)) {
             $idPlaceholders = array();
             foreach ($this->ids as $k => $id) {
@@ -82,17 +127,6 @@ final class EntityPruner implements CleanerInterface
         if ($this->since !== null) {
             $sql .= ' AND created_at >= :since';
         }
-
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-        foreach ($binds as $key => $bindData) {
-            $req->bindValue($key, $bindData[0], $bindData[1]);
-        }
-        if ($this->since !== null) {
-            $req->bindValue(':since', $this->parseSince($this->since));
-        }
-        $this->Db->execute($req);
-        return $req->rowCount();
     }
 
     private function parseSince(string $since): string

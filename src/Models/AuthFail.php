@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Auth\DeviceToken;
+use Elabftw\Auth\DeviceTokenValidator;
 use Elabftw\Elabftw\Db;
 use PDO;
 
@@ -32,6 +34,7 @@ final class AuthFail
      */
     public function register(): bool
     {
+        $this->validateDeviceToken();
         $this->create();
         if ($this->deviceToken === null) {
             return $this->countAndLockUser();
@@ -53,6 +56,21 @@ final class AuthFail
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
+    }
+
+    private function validateDeviceToken(): void
+    {
+        if ($this->deviceToken === null) {
+            return;
+        }
+        $validator = new DeviceTokenValidator(
+            DeviceToken::getConfig(),
+            $this->deviceToken,
+            $this->userid,
+        );
+        if (!$validator->validate()) {
+            $this->deviceToken = null;
+        }
     }
 
     /**

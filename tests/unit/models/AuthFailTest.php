@@ -34,6 +34,31 @@ class AuthFailTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($AuthFail->register());
     }
 
+    public function testInvalidDeviceTokenFallsBackToUserLockout(): void
+    {
+        $AuthFail = new AuthFail(0, 1, 'attacker-controlled');
+        $lockedDevices = $AuthFail->getLockoutDevicesCount();
+
+        $this->assertTrue($AuthFail->register());
+        $this->assertSame(
+            $lockedDevices,
+            $AuthFail->getLockoutDevicesCount(),
+        );
+    }
+
+    public function testDeviceTokenForAnotherUserFallsBackToUserLockout(): void
+    {
+        $deviceToken = DeviceToken::getToken(2);
+        $AuthFail = new AuthFail(0, 1, $deviceToken);
+        $lockedDevices = $AuthFail->getLockoutDevicesCount();
+
+        $this->assertTrue($AuthFail->register());
+        $this->assertSame(
+            $lockedDevices,
+            $AuthFail->getLockoutDevicesCount(),
+        );
+    }
+
     public function testLockDevice(): void
     {
         $DeviceToken = new DeviceToken();

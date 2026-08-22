@@ -22,6 +22,7 @@ use Elabftw\Params\DisplayParams;
 use Elabftw\Storage\Cache\ElabCache;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
+use ReflectionMethod;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\InputBag;
 use ZipArchive;
@@ -169,6 +170,48 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
+    }
+
+    public function testSanitizeImportedChangelogHtml(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+        $Import = new Eln(
+            new Users(1, 1),
+            new Users(1, 1),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            EntityType::Experiments,
+        );
+        $actions = array(
+            array(
+                '@type' => 'UpdateAction',
+                'startTime' => '2026-08-22T12:00:00+00:00',
+                'object' => 'body',
+                'result' => '<p>safe content</p><img src="gopher://127.0.0.1:39091/_payload">',
+            ),
+            array(
+                '@type' => 'UpdateAction',
+                'startTime' => '2026-08-22T12:00:00+00:00',
+                'object' => 'title',
+                'result' => '<img src="gopher://127.0.0.1:39091/_payload">',
+            ),
+        );
+
+        $Method = new ReflectionMethod($Import, 'updateActionsToChangelog');
+        /** @var array<array{content: string}> $changelog */
+        $changelog = $Method->invoke($Import, $actions);
+
+        $this->assertStringContainsString('<p>safe content</p>', $changelog[0]['content']);
+        $this->assertStringNotContainsString('gopher:', $changelog[0]['content']);
+        // Non-HTML targets are escaped by Twig and must retain their original value.
+        $this->assertSame($actions[1]['result'], $changelog[1]['content']);
     }
 
     public function testImportV103(): void

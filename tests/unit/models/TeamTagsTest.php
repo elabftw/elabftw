@@ -17,7 +17,9 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Params\TagParam;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function bin2hex;
 use function count;
+use function random_bytes;
 
 class TeamTagsTest extends \PHPUnit\Framework\TestCase
 {
@@ -50,6 +52,29 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertIsArray($this->TeamTags->readAll());
         // TODO test with query
+    }
+
+    public function testDeletedEntitiesAreNotCounted(): void
+    {
+        $Experiments = $this->getFreshExperiment();
+        $Tags = new Tags($Experiments);
+        $tagId = $Tags->postAction(Action::Create, array('tag' => 'deleted entity count ' . bin2hex(random_bytes(8))));
+        $this->TeamTags->setId($tagId);
+
+        $this->assertSame(1, (int) $this->TeamTags->readOne()['item_count']);
+
+        $Experiments->patch(Action::Destroy, array());
+
+        $this->assertSame(0, (int) $this->TeamTags->readOne()['item_count']);
+
+        foreach ($this->TeamTags->readAll() as $tag) {
+            if ((int) $tag['id'] !== $tagId) {
+                continue;
+            }
+            $this->assertSame(0, (int) $tag['item_count']);
+            return;
+        }
+        $this->fail('Tag not found in team tags.');
     }
 
     public function testNoAdmin(): void

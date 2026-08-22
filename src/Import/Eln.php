@@ -31,6 +31,7 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\TagParam;
+use Elabftw\Services\Filter;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
@@ -51,6 +52,7 @@ use function count;
 use function date;
 use function explode;
 use function filter_var;
+use function in_array;
 use function is_string;
 use function json_encode;
 use function parse_str;
@@ -530,10 +532,19 @@ class Eln extends AbstractZip
             if (($action['@type'] ?? '') !== 'UpdateAction') {
                 continue;
             }
+            $target = is_string($action['object'] ?? null) ? $action['object'] : 'import';
+            $content = is_string($action['result'] ?? null) ? $action['result'] : '';
+
+            // These targets are rendered as raw HTML in changelog-table.html. Imported
+            // history is untrusted and must pass through the same filter as entity bodies.
+            if (in_array($target, array('body', 'links', 'created'), true)) {
+                $content = Filter::body($content);
+            }
+
             $changelog[] = array(
                 'created_at' => new DateTimeImmutable($action['startTime'])->format('Y-m-d H:i:s'),
-                'target' => $action['object'] ?? 'import',
-                'content' => $action['result'] ?? '',
+                'target' => $target,
+                'content' => $content,
                 'userid' => $this->requester->getUserid(),
             );
         }

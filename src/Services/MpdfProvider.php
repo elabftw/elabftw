@@ -15,6 +15,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Mpdf\Config\ConfigVariables;
+use Mpdf\Container\SimpleContainer;
 use Mpdf\Mpdf;
 use Override;
 
@@ -49,7 +50,9 @@ final class MpdfProvider implements MpdfProviderInterface
             'default_font' => 'DejaVu',
             // disallow getting external things
             'whitelistStreamWrappers' => array(''),
-        ));
+        ), new SimpleContainer(array(
+            'httpClient' => new MpdfRemoteContentBlocker(),
+        )));
 
         // make sure we can read the pdf in a long time
         // will embed the font and make the pdf bigger

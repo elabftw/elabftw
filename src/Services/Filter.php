@@ -61,8 +61,7 @@ final class Filter
         $config->set('Cache.SerializerPath', $tmpDir);
         $config->set('HTML.Allowed', '');
         $config->set('AutoFormat.RemoveEmpty', true);
-        $purified = new HTMLPurifier($config)->purify(trim($input));
-        return $purified;
+        return new HTMLPurifier($config)->purify(trim($input));
     }
 
     /**

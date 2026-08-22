@@ -266,6 +266,24 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($user2->team, $entityData['team']);
     }
 
+    public function testUpdateOwnershipRequiresAdminOfSourceTeam(): void
+    {
+        $owner = $this->getUserInTeam(2);
+        $requester = $this->getUserInTeam(1);
+        $source = new Experiments($owner);
+        $id = $source->create(
+            canreadBase: BasePermissions::Organization,
+            canwriteBase: BasePermissions::Organization,
+        );
+        $shared = new Experiments($requester, $id);
+
+        $this->expectException(IllegalActionException::class);
+        $shared->patch(Action::UpdateOwner, array(
+            'userid' => $requester->getUserid(),
+            'team' => $requester->getTeam(),
+        ));
+    }
+
     public function testUpdateOwnershipWithoutUsingDedicatedAction(): void
     {
         $User = $this->getRandomUserInTeam(1);

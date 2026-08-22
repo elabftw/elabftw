@@ -1454,6 +1454,13 @@ abstract class AbstractEntity extends AbstractRest
 
     private function updateOwnership(int $userid, int $destinationTeam): void
     {
+        $sourceTeamHelper = new TeamsHelper((int) $this->entityData['team']);
+        if (!$this->Users->isSysadmin() && !$sourceTeamHelper->isAdminInTeam($this->Users->getUserid())) {
+            throw new IllegalActionException(_(
+                'Only an administrator of the entity team can transfer ownership.'
+            ));
+        }
+
         // non-admins cannot transfer outside their own team
         if (!$this->Users->isAdmin && $destinationTeam !== $this->Users->getTeam()) {
             throw new IllegalActionException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));

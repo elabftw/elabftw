@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\State;
 use PDO;
 
 use function is_int;
@@ -32,9 +33,10 @@ final class AccessKeyHelper
 
     public function getIdFromAccessKey(string $ak): int
     {
-        $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE access_key = :ak';
+        $sql = 'SELECT id FROM ' . $this->entityType->value . ' WHERE access_key = :ak AND state != :deleted';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':ak', $ak);
+        $req->bindValue(':deleted', State::Deleted->value, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }

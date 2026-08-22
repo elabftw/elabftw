@@ -29,5 +29,9 @@ class AccessKeyHelperTest extends \PHPUnit\Framework\TestCase
         // now remove ak
         $AkHelper->toggleAccessKey();
         $this->assertEquals(0, $AkHelper->getIdFromAccessKey($ak));
+        // a soft-deleted entity must not be resolved from its old access key
+        $ak = $AkHelper->toggleAccessKey();
+        $Entity->destroy();
+        $this->assertEquals(0, $AkHelper->getIdFromAccessKey($ak));
     }
 }

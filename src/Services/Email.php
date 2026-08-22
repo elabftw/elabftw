@@ -36,6 +36,7 @@ use function array_map;
 use function preg_replace;
 use function quoted_printable_encode;
 use function sprintf;
+use function html_entity_decode;
 
 /**
  * Email service
@@ -250,6 +251,7 @@ class Email
     {
         $subject = Filter::toPureString($subject);
         $content = Filter::toPureString($content);
+        $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         // send emails one by one
         $sentCount = 0;
         foreach ($addresses as $address) {

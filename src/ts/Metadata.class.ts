@@ -309,8 +309,8 @@ export class Metadata {
       values.push('');
     }
 
-    for (const value of values) {
-      holder.append(this.buildMultiValueRow(name, properties, value, holder));
+    for (const [index, value] of values.entries()) {
+      holder.append(this.buildMultiValueRow(name, properties, value, holder, index));
     }
 
     if (properties.readonly !== true) {
@@ -344,6 +344,7 @@ export class Metadata {
     properties: ExtraFieldProperties,
     value: string|number,
     holder: HTMLElement,
+    index?: number,
   ): HTMLElement {
     const row = document.createElement('div');
     row.dataset.purpose = 'multi-value-row';
@@ -360,6 +361,15 @@ export class Metadata {
       allow_multi_values: false,
     }));
     row.append(inputWrapper);
+
+    const label = properties.value_labels?.[index ?? -1];
+    if (label) {
+      const labelBadge = document.createElement('span');
+      labelBadge.classList.add('badge', 'badge-pill', 'badge-light', 'ml-2');
+      labelBadge.dataset.purpose = 'value-label';
+      labelBadge.textContent = label;
+      row.append(labelBadge);
+    }
 
     if (properties.readonly !== true) {
       const removeButton = document.createElement('button');
@@ -428,8 +438,16 @@ export class Metadata {
     if (values.length === 0) {
       valueCell.append(this.generateViewableValue(properties, ''));
     } else {
-      for (const value of values) {
+      for (const [index, value] of values.entries()) {
         valueCell.append(this.generateViewableValue(properties, value));
+        const label = properties.value_labels?.[index];
+        if (label) {
+          const labelBadge = document.createElement('span');
+          labelBadge.classList.add('badge', 'badge-pill', 'badge-light', 'ml-2');
+          labelBadge.dataset.purpose = 'value-label';
+          labelBadge.textContent = label;
+          valueCell.append(labelBadge);
+        }
       }
     }
 

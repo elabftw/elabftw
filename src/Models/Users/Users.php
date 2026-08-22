@@ -453,7 +453,7 @@ class Users extends AbstractRest
     public function isAdminSomewhere(): bool
     {
         // TODO use the existing userData instead of making a query
-        $sql = 'SELECT users_id FROM users2teams WHERE users_id = :userid AND is_admin = 1';
+        $sql = 'SELECT users_id FROM users2teams WHERE users_id = :userid AND is_admin = 1 AND is_archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -596,7 +596,8 @@ class Users extends AbstractRest
                     ON (u1.teams_id = u2.teams_id)
                 WHERE u1.users_id = :admin_userid
                     AND u2.users_id = :user_userid
-                    AND u1.is_admin = 1';
+                    AND u1.is_admin = 1
+                    AND u1.is_archived = 0';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':admin_userid', $this->getUserid(), PDO::PARAM_INT);
         $req->bindParam(':user_userid', $userid, PDO::PARAM_INT);

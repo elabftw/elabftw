@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
@@ -89,6 +90,53 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
             'content' => 0,
         );
         $this->assertEquals(0, $this->Users2Teams->patchUser2Team($params, 2));
+    }
+
+    public function testArchivedAdminCannotUnarchiveOwnMembership(): void
+    {
+        $sysadmin = new Users(1, 1);
+        $attackerUserid = $sysadmin->createOne(
+            'archived-admin-authorization@example.com',
+            array(1, 2),
+            new NullLocalPassword(),
+            usergroup: Usergroup::User,
+            automaticValidationEnabled: true,
+            alertAdmin: false,
+        );
+        $SysadminUsers2Teams = new Users2Teams($sysadmin);
+        $SysadminUsers2Teams->patchUser2Team(array(
+            'team' => 2,
+            'target' => 'is_admin',
+            'content' => 1,
+        ), $attackerUserid);
+        $SysadminUsers2Teams->patchUser2Team(array(
+            'team' => 2,
+            'target' => 'is_archived',
+            'content' => 1,
+        ), $attackerUserid);
+
+        // The requester remains active in team 1, but their archived admin row
+        // in team 2 must not authorize an explicit team 2 operation.
+        $attacker = new Users($attackerUserid, 1);
+        try {
+            try {
+                (new Users2Teams($attacker))->patchUser2Team(array(
+                    'team' => 2,
+                    'target' => 'is_archived',
+                    'content' => 0,
+                ), $attackerUserid);
+                $this->fail('Archived admin was able to unarchive their own membership.');
+            } catch (IllegalActionException) {
+                $this->addToAssertionCount(1);
+            }
+        } finally {
+            $SysadminUsers2Teams->patchUser2Team(array(
+                'team' => 2,
+                'target' => 'is_archived',
+                'content' => 0,
+            ), $attackerUserid);
+            (new Users($attackerUserid, 1, $sysadmin))->destroy();
+        }
     }
 
     public function testPatchIsOwner(): void

@@ -56,6 +56,29 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $Team1->readOne();
     }
 
+    public function testArchivedAdminCannotAccessTeamByExplicitId(): void
+    {
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $this->updateArchiveStatus($admin->userid, 1);
+        try {
+            $Teams = new Teams($admin, 2);
+            try {
+                $Teams->readOne();
+                $this->fail('Archived membership allowed reading the team.');
+            } catch (ImproperActionException) {
+                $this->addToAssertionCount(1);
+            }
+            try {
+                $Teams->canWriteOrExplode();
+                $this->fail('Archived admin membership allowed writing the team.');
+            } catch (IllegalActionException) {
+                $this->addToAssertionCount(1);
+            }
+        } finally {
+            $this->updateArchiveStatus($admin->userid, 0);
+        }
+    }
+
     public function testCanWriteOrExplode(): void
     {
         $Teams = new Teams($this->getUserInTeam(1));

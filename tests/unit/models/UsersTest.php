@@ -196,6 +196,22 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($admin2->isAdminOf(2));
     }
 
+    public function testArchivedRequesterIsNotAnAdmin(): void
+    {
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $target = $this->getUserInTeam(team: 2);
+        $this->assertTrue($admin->isAdminSomewhere());
+        $this->assertTrue($admin->isAdminOf($target->userid));
+
+        $this->updateArchiveStatus($admin->userid, 1);
+        try {
+            $this->assertFalse($admin->isAdminSomewhere());
+            $this->assertFalse($admin->isAdminOf($target->userid));
+        } finally {
+            $this->updateArchiveStatus($admin->userid, 0);
+        }
+    }
+
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/users/', $this->Users->getApiPath());

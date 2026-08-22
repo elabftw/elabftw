@@ -34,6 +34,7 @@ use function _;
 use function array_key_exists;
 use function in_array;
 use function trim;
+use function array_values;
 
 /**
  * Twig filters

@@ -7,7 +7,7 @@ title: Introduction
 
 ## What is Open Source?
 
-eLabFTW is Open Source/Libre Software. This means that users have the freedom to view, copy, distribute, run, and improve the code. The eLabFTW user community is very active on GitHub -join the conversation here: https://github.com/elabftw/elabftw
+eLabFTW is Open Source/Libre Software. This means that users have the freedom to view, copy, distribute, run, and improve the code. The eLabFTW user community is very active on [GitHub](https://github.com/elabftw/elabftw). Join the conversation.
 
 ## Lexicon
 

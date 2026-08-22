@@ -6,5 +6,5 @@ services:
   cypress:
     image: elabftw/elab-cypress:15.20.0
     extra_hosts:
-      - "elab.local:host-gateway"
+      - "elab.localhost:host-gateway"
     container_name: elab-cypress

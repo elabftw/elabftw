@@ -32,7 +32,7 @@ services:
       - PHP_TIMEZONE=Europe/Paris
       - TZ=Europe/Paris
       - DEV_MODE=true
-      - SITE_URL=https://elab.local:3148
+      - SITE_URL=https://elab.localhost:3148
       - ELAB_AWS_ACCESS_KEY=yep
       - ELAB_AWS_SECRET_KEY=yop
       - MAX_PHP_MEMORY=512M

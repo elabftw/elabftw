@@ -64,7 +64,8 @@ final class TeamsHelper
     {
         $sql = 'SELECT `is_admin` FROM `users2teams`
             WHERE `teams_id` = :team
-                AND `users_id` = :userid';
+                AND `users_id` = :userid
+                AND `is_archived` = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
@@ -89,7 +90,7 @@ final class TeamsHelper
 
     public function getUserInTeam(int $userid): array
     {
-        $sql = 'SELECT `users_id`, `is_admin` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid';
+        $sql = 'SELECT `users_id`, `is_admin` FROM `users2teams` WHERE `teams_id` = :team AND `users_id` = :userid AND `is_archived` = 0';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);

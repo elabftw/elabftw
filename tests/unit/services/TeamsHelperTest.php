@@ -38,6 +38,25 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Usergroup::Admin, $TeamsHelper->getGroup());
     }
 
+    public function testArchivedMembershipDoesNotGrantTeamAuthorization(): void
+    {
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $TeamsHelper = new TeamsHelper(2);
+        $this->assertTrue($TeamsHelper->isAdmin($admin->userid));
+        $this->assertTrue($TeamsHelper->isAdminInTeam($admin->userid));
+        $this->assertTrue($TeamsHelper->isUserInTeam($admin->userid));
+
+        $this->updateArchiveStatus($admin->userid, 1);
+        try {
+            $this->assertFalse($TeamsHelper->isAdmin($admin->userid));
+            $this->assertSame(array(), $TeamsHelper->getUserInTeam($admin->userid));
+            $this->assertFalse($TeamsHelper->isAdminInTeam($admin->userid));
+            $this->assertFalse($TeamsHelper->isUserInTeam($admin->userid));
+        } finally {
+            $this->updateArchiveStatus($admin->userid, 0);
+        }
+    }
+
     public function testIsActiveUserInTeam(): void
     {
         $target = $this->getRandomUserInTeam(1);

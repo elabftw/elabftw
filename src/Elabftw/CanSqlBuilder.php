@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\TeamGroups;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 
 use function array_column;
@@ -31,6 +32,9 @@ final class CanSqlBuilder
     public function getCanFilter(): string
     {
         $sql = '';
+        if ($this->requester instanceof AnonymousUser) {
+            $sql .= ' AND ' . $this->canAnon();
+        }
         $sql .= sprintf(
             ' AND (%s)',
             implode(' OR ', array(
@@ -45,6 +49,17 @@ final class CanSqlBuilder
         );
 
         return $sql;
+    }
+
+    /**
+     * anon filter
+     */
+    protected function canAnon(): string
+    {
+        return sprintf(
+            'entity.canread_base = %d',
+            BasePermissions::Full->value,
+        );
     }
 
     /**

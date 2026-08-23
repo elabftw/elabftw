@@ -85,7 +85,7 @@ export class MdEditor extends Editor implements EditorInterface {
     // Scoped to the body textarea so the shortcut only fires when editing
     // the entity body (not in titles, search fields or dialogs), and
     // shift is excluded to keep ctrl/cmd+shift+s untouched.
-    ($('.markdown-textarea') as any).on('keydown', event => {
+    document.querySelector('.markdown-textarea')?.addEventListener('keydown', (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key.toLowerCase() === 's') {
         event.preventDefault();
         updateEntityBody();

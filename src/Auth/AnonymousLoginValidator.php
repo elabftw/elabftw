@@ -29,7 +29,7 @@ final readonly class AnonymousLoginValidator
         }
 
         $Db = Db::getConnection();
-        $sql = 'SELECT 1 FROM teams WHERE id = :team_id';
+        $sql = 'SELECT 1 FROM teams WHERE id = :team_id AND visible = 1';
         $req = $Db->prepare($sql);
         $req->bindValue(':team_id', $teamId, PDO::PARAM_INT);
         $Db->execute($req);

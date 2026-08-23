@@ -21,6 +21,11 @@ const MAX_WORKSHEETS = 1_000;
 const MAX_CELL_LENGTH = 1_000_000;
 const RESPONSE_TIMEOUT_MS = 10_000;
 
+export const isSpreadsheetIframeMessage = (event: MessageEvent, iframeWindow: Window | null): boolean => {
+  // The iframe sandbox intentionally omits allow-same-origin, so its origin is opaque.
+  return event.source === iframeWindow && event.origin === 'null';
+};
+
 // save current spreadsheet as a new attachment
 export async function saveAsAttachment(workbook: SpreadsheetWorkbook, entityType: string, entityId: number, fileName?: string): Promise<{ id:number; name:string } | void> {
   const raw = fileName?.trim() || askFileName(FileType.Xlsx);
@@ -37,15 +42,17 @@ export async function replaceAttachment(workbook: SpreadsheetWorkbook, entityTyp
 // import file from computer: convert to spreadsheet
 export async function fileToWorkbook(file: File): Promise<SpreadsheetWorkbook> {
   const buffer = await file.arrayBuffer();
-  return parseFileToWorkbook(buffer);
+  return parseFileToWorkbook(buffer, inferFileTypeFromName(file.name));
 }
 
-function parseFileToWorkbook(buffer: ArrayBuffer): SpreadsheetWorkbook {
-  const wb = read(buffer, { type: 'array' });
+function parseFileToWorkbook(buffer: ArrayBuffer, fileType: FileType): SpreadsheetWorkbook {
+  const wb = read(buffer, fileType === FileType.Csv
+    ? { type: 'array', codepage: 65001 }
+    : { type: 'array' });
   if (!wb.SheetNames || wb.SheetNames.length === 0) {
     throw new Error('No sheets found in uploaded file.');
   }
-  return wb.SheetNames.map(name => {
+  const workbook = wb.SheetNames.map(name => {
     const ws = wb.Sheets[name];
     if (!ws) throw new Error(`Failed to load worksheet ${name}.`);
     return {
@@ -53,6 +60,10 @@ function parseFileToWorkbook(buffer: ArrayBuffer): SpreadsheetWorkbook {
       data: utils.sheet_to_json(ws, { header: 1, defval: '', raw: true, blankrows: true }) as Cell[][],
     };
   });
+  if (!isValidWorkbook(workbook)) {
+    throw new Error('Uploaded workbook exceeds spreadsheet limits.');
+  }
+  return workbook;
 }
 
 export async function loadInSpreadsheetEditor(storage: string, path: string, name: string, uploadId: number): Promise<void> {
@@ -62,7 +73,7 @@ export async function loadInSpreadsheetEditor(storage: string, path: string, nam
     });
     if (!res.ok) throw new Error('Failed to fetch uploaded file.');
     const buffer = await res.arrayBuffer();
-    const workbook = parseFileToWorkbook(buffer);
+    const workbook = parseFileToWorkbook(buffer, inferFileTypeFromName(name));
     const iframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
     await waitForSpreadsheetEditor(iframe);
     iframe.contentWindow?.postMessage({ type: 'jss-load-workbook', detail: { workbook, name, uploadId } }, '*');
@@ -84,7 +95,7 @@ const waitForSpreadsheetEditor = (iframe: HTMLIFrameElement): Promise<void> => {
       window.removeEventListener('message', onMessage);
     };
     const onMessage = (event: MessageEvent) => {
-      if (event.source !== iframeWindow || event.origin !== 'null') return;
+      if (!isSpreadsheetIframeMessage(event, iframeWindow)) return;
       if (event.data?.type !== 'jss-ready') return;
       cleanup();
       resolve();
@@ -139,7 +150,7 @@ export function requestSpreadsheetWorkbook(): Promise<SpreadsheetWorkbook> {
       window.removeEventListener('message', onMessage);
     };
     const onMessage = (event: MessageEvent) => {
-      if (event.source !== iframeWindow || event.origin !== 'null') return;
+      if (!isSpreadsheetIframeMessage(event, iframeWindow)) return;
       if (event.data?.type !== 'jss-workbook-response' || event.data.requestId !== requestId) return;
       cleanup();
       if (!isValidWorkbook(event.data.workbook)) {

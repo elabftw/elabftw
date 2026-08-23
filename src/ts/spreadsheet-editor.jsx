@@ -107,12 +107,16 @@ function SpreadsheetEditor() {
   const buildToolbar = (tb) => {
     // Keep the built-in save button as a local export only.
     const saveBtn = tb.items.find(it => it.content === 'save');
-    // we will also remove the ones that cannot be saved because of CE limitations, just target the indexes directly
-    // 7,8,9,10,14 indexes are for: format_bold, format_color_text, format_color_fill, select, fullscreen
-    const indices = new Set([7, 8, 9, 10, 14]);
-    tb.items = tb.items.filter((_, i) => !indices.has(i));
+    const unsupportedControls = new Set(['format_bold', 'format_color_text', 'format_color_fill', 'fullscreen']);
+    const verticalAlignmentOptions = ['vertical_align_top', 'vertical_align_center', 'vertical_align_bottom'];
+    tb.items = tb.items.filter(item => {
+      const isVerticalAlignment = item.type === 'select'
+        && Array.isArray(item.options)
+        && verticalAlignmentOptions.every(option => item.options.includes(option));
+      return !unsupportedControls.has(item.content) && !isVerticalAlignment;
+    });
 
-    Object.assign(saveBtn, { tooltip: i18next.t('export') });
+    if (saveBtn) saveBtn.tooltip = i18next.t('export');
     // we render the spreadsheet in an iframe, so we'll also use a custom fullscreen button
     const fullscreenBtn = { type: 'icon', class: 'mx-2 fas fa-expand', tooltip: i18next.t('fullscreen'), onclick: () => toggleFullscreen()};
     const clearBtn = { type: 'icon', class: 'ml-2 fas fa-trash', tooltip: i18next.t('clear'), onclick: clearSpreadsheet };

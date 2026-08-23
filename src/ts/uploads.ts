@@ -9,7 +9,13 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { loadInSpreadsheetEditor, replaceAttachment, requestSpreadsheetWorkbook, saveAsAttachment } from './spreadsheet-utils';
+import {
+  isSpreadsheetIframeMessage,
+  loadInSpreadsheetEditor,
+  replaceAttachment,
+  requestSpreadsheetWorkbook,
+  saveAsAttachment,
+} from './spreadsheet-utils';
 import type { SpreadsheetWorkbook } from './spreadsheet-utils';
 import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import DOMPurify from 'dompurify';
@@ -286,6 +292,7 @@ document.getElementById('spreadsheetSaveAsAttachment')?.addEventListener('click'
 replaceSpreadsheetButton?.addEventListener('click', () => {
   if (!spreadsheetUpload) return;
   void withSpreadsheetData(async workbook => {
+    if (!spreadsheetUpload) return;
     const result = await replaceAttachment(
       workbook,
       entity.type,
@@ -298,13 +305,12 @@ replaceSpreadsheetButton?.addEventListener('click', () => {
   });
 });
 
-// The sandbox has an opaque origin. Source identity is the trust check; only
-// state notifications are accepted without a parent-initiated request nonce.
+// Only state notifications are accepted without a parent-initiated request nonce.
 window.addEventListener('message', (event) => {
-  if (event.source !== spreadsheetIframe?.contentWindow || event.origin !== 'null') return;
-  if (event.data?.type === 'jss-dirty' && event.data.dirty === true) {
-    spreadsheetDirty = true;
-    document.getElementById('spreadsheetEditorUnsavedChanges').hidden = false;
+  if (!isSpreadsheetIframeMessage(event, spreadsheetIframe?.contentWindow ?? null)) return;
+  if (event.data?.type === 'jss-dirty' && typeof event.data.dirty === 'boolean') {
+    spreadsheetDirty = event.data.dirty;
+    document.getElementById('spreadsheetEditorUnsavedChanges').hidden = !spreadsheetDirty;
   } else if (event.data?.type === 'jss-new-document') {
     spreadsheetUpload = null;
     replaceSpreadsheetButton.disabled = true;

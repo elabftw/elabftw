@@ -25,6 +25,7 @@ use Elabftw\Auth\TeamRequestRequired;
 use Elabftw\Auth\TeamSelectionRequired;
 use Elabftw\Auth\UserLoginContext;
 use Elabftw\Elabftw\Authentication;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\LoginAction;
 use Elabftw\Exceptions\IllegalActionException;
@@ -36,6 +37,7 @@ use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Interfaces\AuthenticatorInterface;
 use Elabftw\Interfaces\LoginStepInterface;
 use Elabftw\Interfaces\MfaVerifierInterface;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Traits\TestsUtilsTrait;
 use LogicException;
@@ -259,6 +261,25 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
             $request,
             anonymousLoginValidator: new AnonymousLoginValidator(true),
         )->getResponse();
+    }
+
+    public function testAnonymousLoginRejectsInvisibleTeam(): void
+    {
+        $Team = new Teams($this->getUserInTeam(1, 1), 1);
+        $wasVisible = $Team->teamArr['visible'];
+        $Team->patch(Action::Update, array('visible' => 0));
+
+        try {
+            try {
+                $Validator = new AnonymousLoginValidator(true);
+                $Validator->validate(1);
+                self::fail('Anonymous login to an invisible team should be rejected.');
+            } catch (UnauthorizedException) {
+                self::addToAssertionCount(1);
+            }
+        } finally {
+            $Team->patch(Action::Update, array('visible' => $wasVisible));
+        }
     }
 
     public function testAnonymousLoginCompletesLogin(): void

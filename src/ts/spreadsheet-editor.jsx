@@ -18,7 +18,7 @@ import { Spreadsheet, Worksheet } from "@jspreadsheet-ce/react";
 import "jsuites/dist/jsuites.css";
 import "jspreadsheet-ce/dist/jspreadsheet.css";
 import i18next from './i18n';
-import { fileToAOA } from './spreadsheet-utils';
+import { fileToWorkbook } from './spreadsheet-utils';
 import { assignKey } from './keymaster';
 import { notify } from './notify';
 
@@ -26,7 +26,7 @@ function SpreadsheetEditor() {
   // disable keyboard shortcuts completely
   assignKey.filter = () => false;
 
-  const [data, setData] = useState([[]]);
+  const [workbook, setWorkbook] = useState([{ name: 'Sheet1', data: [[]] }]);
   const [spreadsheetRevision, setSpreadsheetRevision] = useState(0);
   const isDirtyRef = useRef(false);
 
@@ -55,9 +55,10 @@ function SpreadsheetEditor() {
       if (event.source !== window.parent) return;
       if (event.data?.type === 'jss-ping') {
         window.parent.postMessage({ type: 'jss-ready' }, '*');
-      } else if (event.data?.type === 'jss-load-aoa') {
-        const { aoa } = event.data.detail || {};
-        setData(aoa);
+      } else if (event.data?.type === 'jss-load-workbook') {
+        const { workbook: nextWorkbook } = event.data.detail || {};
+        if (!isWorkbook(nextWorkbook)) return;
+        setWorkbook(nextWorkbook);
         setSpreadsheetRevision(revision => revision + 1);
         setUnsavedWarning(false);
       } else if (event.data?.type === 'jss-saved') {
@@ -74,8 +75,8 @@ function SpreadsheetEditor() {
   const handleImportFile = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const aoa = await fileToAOA(file);
-    setData(aoa);
+    const nextWorkbook = await fileToWorkbook(file);
+    setWorkbook(nextWorkbook);
     setSpreadsheetRevision(revision => revision + 1);
     setUnsavedWarning(true);
     window.parent.postMessage({ type: 'jss-new-document' }, '*');
@@ -85,8 +86,8 @@ function SpreadsheetEditor() {
 
   const clearSpreadsheet = () => {
     if (!window.confirm(i18next.t('confirm-clear-spreadsheet'))) return;
-    const empty = [[]];
-    setData(empty);
+    const empty = [{ name: 'Sheet1', data: [[]] }];
+    setWorkbook(empty);
     setSpreadsheetRevision(revision => revision + 1);
     setUnsavedWarning(true);
     window.parent.postMessage({ type: 'jss-new-document' }, '*');
@@ -123,32 +124,48 @@ function SpreadsheetEditor() {
     <>
       <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
       {/* move Spreadsheet into a child component to safely re-init on file uploads */}
-      <SpreadsheetInner key={spreadsheetRevision} data={data} buildToolbar={buildToolbar} onSpreadsheetChange={markUnsaved}/>
+      <SpreadsheetInner key={spreadsheetRevision} workbook={workbook} buildToolbar={buildToolbar} onSpreadsheetChange={markUnsaved}/>
     </>
   );
 }
-function SpreadsheetInner({ data, buildToolbar, onSpreadsheetChange }) {
+const isWorkbook = (value) => Array.isArray(value)
+  && value.length > 0
+  && value.every(worksheet => typeof worksheet?.name === 'string' && Array.isArray(worksheet.data));
+
+function SpreadsheetInner({ workbook, buildToolbar, onSpreadsheetChange }) {
   const spreadsheetRef = useRef(null);
   useEffect(() => {
     const onMessage = (event) => {
       if (event.source !== window.parent) return;
-      if (event.data?.type !== 'jss-aoa-request' || typeof event.data.requestId !== 'string') return;
+      if (event.data?.type !== 'jss-workbook-request' || typeof event.data.requestId !== 'string') return;
+      const worksheets = spreadsheetRef.current;
       window.parent.postMessage({
-        type: 'jss-aoa-response',
+        type: 'jss-workbook-response',
         requestId: event.data.requestId,
-        aoa: spreadsheetRef.current?.[0]?.getData?.() ?? data,
+        workbook: Array.isArray(worksheets) && worksheets.length > 0
+          ? worksheets.map((worksheet, index) => ({
+            name: worksheet.options?.worksheetName || workbook[index]?.name || `Sheet${index + 1}`,
+            data: worksheet.getData?.() ?? workbook[index]?.data ?? [[]],
+          }))
+          : workbook,
       }, '*');
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
-  }, [data]);
+  }, [workbook]);
   return (
     <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar} onchange={onSpreadsheetChange}>
-      <Worksheet data={data} minDimensions={[
-          Math.max(12, data[0]?.length || 0),
-          Math.max(12, data.length)
-        ]}
-      />
+      {workbook.map((worksheet, index) => (
+        <Worksheet
+          key={index}
+          worksheetName={worksheet.name}
+          data={worksheet.data}
+          minDimensions={[
+            Math.max(12, worksheet.data[0]?.length || 0),
+            Math.max(12, worksheet.data.length)
+          ]}
+        />
+      ))}
     </Spreadsheet>
   );
 }

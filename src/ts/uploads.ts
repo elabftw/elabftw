@@ -9,7 +9,8 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { loadInSpreadsheetEditor, replaceAttachment, requestSpreadsheetAOA, saveAsAttachment } from './spreadsheet-utils';
+import { loadInSpreadsheetEditor, replaceAttachment, requestSpreadsheetWorkbook, saveAsAttachment } from './spreadsheet-utils';
+import type { SpreadsheetWorkbook } from './spreadsheet-utils';
 import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import DOMPurify from 'dompurify';
 import { displayPlasmidViewer } from './ove';
@@ -23,7 +24,6 @@ import { entity } from './getEntity';
 import { notify } from './notify';
 import { read as readXlsx, utils as xlsxUtils } from '@e965/xlsx';
 import { on } from './handlers';
-type Cell = string | number | boolean | null;
 let spreadsheetUpload: { id: number; name: string } | null = null;
 let spreadsheetDirty = false;
 const spreadsheetIframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
@@ -265,17 +265,17 @@ const markSpreadsheetSaved = (): void => {
   reloadElements(['uploadsDiv']);
 };
 
-const withSpreadsheetData = async (callback: (aoa: Cell[][]) => Promise<void>): Promise<void> => {
+const withSpreadsheetData = async (callback: (workbook: SpreadsheetWorkbook) => Promise<void>): Promise<void> => {
   try {
-    await callback(await requestSpreadsheetAOA());
+    await callback(await requestSpreadsheetWorkbook());
   } catch (error) {
     notify.error(error instanceof Error ? error.message : 'Unexpected spreadsheet error.');
   }
 };
 
 document.getElementById('spreadsheetSaveAsAttachment')?.addEventListener('click', () => {
-  void withSpreadsheetData(async aoa => {
-    const result = await saveAsAttachment(aoa, entity.type, entity.id);
+  void withSpreadsheetData(async workbook => {
+    const result = await saveAsAttachment(workbook, entity.type, entity.id);
     if (!result) return;
     spreadsheetUpload = result;
     replaceSpreadsheetButton.disabled = false;
@@ -285,9 +285,9 @@ document.getElementById('spreadsheetSaveAsAttachment')?.addEventListener('click'
 
 replaceSpreadsheetButton?.addEventListener('click', () => {
   if (!spreadsheetUpload) return;
-  void withSpreadsheetData(async aoa => {
+  void withSpreadsheetData(async workbook => {
     const result = await replaceAttachment(
-      aoa,
+      workbook,
       entity.type,
       entity.id,
       spreadsheetUpload.id,

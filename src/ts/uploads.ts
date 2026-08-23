@@ -9,7 +9,7 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { loadInSpreadsheetEditor } from './spreadsheet-utils';
+import { loadInSpreadsheetEditor, replaceAttachment, requestSpreadsheetAOA, saveAsAttachment } from './spreadsheet-utils';
 import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import DOMPurify from 'dompurify';
 import { displayPlasmidViewer } from './ove';
@@ -20,9 +20,14 @@ import { marked } from 'marked';
 import Prism from 'prismjs';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
+import { notify } from './notify';
 import { read as readXlsx, utils as xlsxUtils } from '@e965/xlsx';
 import { on } from './handlers';
 type Cell = string | number | boolean | null;
+let spreadsheetUpload: { id: number; name: string } | null = null;
+let spreadsheetDirty = false;
+const spreadsheetIframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
+const replaceSpreadsheetButton = document.getElementById('spreadsheetReplaceAttachment') as HTMLButtonElement;
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
@@ -159,6 +164,9 @@ on('set-3dmol-style', (el: HTMLElement) => {
 // LOAD SPREADSHEET FILE
 on('xls-load-file', async (el: HTMLElement) => {
   await loadInSpreadsheetEditor(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
+  spreadsheetUpload = { id: Number(el.dataset.uploadid), name: el.dataset.name };
+  replaceSpreadsheetButton.disabled = false;
+  spreadsheetDirty = false;
   ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
 });
 
@@ -250,11 +258,63 @@ const malleableFilecomment = new Malle({
 });
 malleableFilecomment.listen();
 
-// reload uploads div when using spreadsheet editor (iframe sends message to parent window)
-window.addEventListener('message', (event) => {
-  if (event.origin !== window.location.origin) return;
-  if (event.data !== 'uploadsDiv') return;
+const markSpreadsheetSaved = (): void => {
+  spreadsheetDirty = false;
+  document.getElementById('spreadsheetEditorUnsavedChanges').hidden = true;
+  spreadsheetIframe.contentWindow?.postMessage({ type: 'jss-saved' }, '*');
   reloadElements(['uploadsDiv']);
+};
+
+const withSpreadsheetData = async (callback: (aoa: Cell[][]) => Promise<void>): Promise<void> => {
+  try {
+    await callback(await requestSpreadsheetAOA());
+  } catch (error) {
+    notify.error(error instanceof Error ? error.message : 'Unexpected spreadsheet error.');
+  }
+};
+
+document.getElementById('spreadsheetSaveAsAttachment')?.addEventListener('click', () => {
+  void withSpreadsheetData(async aoa => {
+    const result = await saveAsAttachment(aoa, entity.type, entity.id);
+    if (!result) return;
+    spreadsheetUpload = result;
+    replaceSpreadsheetButton.disabled = false;
+    markSpreadsheetSaved();
+  });
+});
+
+replaceSpreadsheetButton?.addEventListener('click', () => {
+  if (!spreadsheetUpload) return;
+  void withSpreadsheetData(async aoa => {
+    const result = await replaceAttachment(
+      aoa,
+      entity.type,
+      entity.id,
+      spreadsheetUpload.id,
+      spreadsheetUpload.name,
+    );
+    if (!result) return;
+    markSpreadsheetSaved();
+  });
+});
+
+// The sandbox has an opaque origin. Source identity is the trust check; only
+// state notifications are accepted without a parent-initiated request nonce.
+window.addEventListener('message', (event) => {
+  if (event.source !== spreadsheetIframe?.contentWindow || event.origin !== 'null') return;
+  if (event.data?.type === 'jss-dirty' && event.data.dirty === true) {
+    spreadsheetDirty = true;
+    document.getElementById('spreadsheetEditorUnsavedChanges').hidden = false;
+  } else if (event.data?.type === 'jss-new-document') {
+    spreadsheetUpload = null;
+    replaceSpreadsheetButton.disabled = true;
+  }
+});
+
+window.addEventListener('beforeunload', event => {
+  if (!spreadsheetDirty) return;
+  event.preventDefault();
+  event.returnValue = '';
 });
 
 // ACTIVATE FANCYBOX

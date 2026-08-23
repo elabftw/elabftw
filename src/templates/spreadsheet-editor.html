@@ -7,14 +7,21 @@
   {% include 'infotip.html' with {text} %}
   <div class='d-flex justify-content-between align-items-center'>
     <span hidden id='spreadsheetEditorUnsavedChanges'>{{ 'You have unsaved changes'|trans|msg('warning', false) }}</span>
-    <a class='btn btn-ghost ml-auto mr-2 external-link' href='https://doc.elabftw.net/docs/usage/user-guide/experiments#spreadsheet-editor' target='_blank' rel='noopener'>{{ 'Documentation'|trans }}</a>
+    <div class='ml-auto'>
+      <button type='button' id='spreadsheetSaveAsAttachment' class='btn btn-primary'>
+        <i class='fas fa-floppy-disk fa-fw mr-1'></i>{{ 'Save as attachment'|trans }}
+      </button>
+      <button type='button' id='spreadsheetReplaceAttachment' class='btn btn-secondary' disabled>
+        <i class='fas fa-rotate fa-fw mr-1'></i>{{ 'Replace attachment'|trans }}
+      </button>
+      <a class='btn btn-ghost mr-2 external-link' href='https://doc.elabftw.net/docs/usage/user-guide/experiments#spreadsheet-editor' target='_blank' rel='noopener'>{{ 'Documentation'|trans }}</a>
+    </div>
   </div>
   <div id='spreadsheetEditorDiv' class='m-2' hidden data-save-hidden='spreadsheetEditorDiv'>
     {% if App.devMode -%}
       <!-- [html-validate-disable-block unique-landmark, no-deprecated-attr, prefer-native-element: suppress errors from spreadsheet editor] -->
     {%- endif %}
-    {# allow-modals is needed for prompts asking the filename #}
-    <iframe id='spreadsheetIframe' title='{{ 'Spreadsheet Editor'|trans }}' src='/spreadsheet.html' sandbox='allow-scripts allow-same-origin allow-forms allow-downloads allow-modals'></iframe>
+    <iframe id='spreadsheetIframe' title='{{ 'Spreadsheet Editor'|trans }}' src='/spreadsheet.html' sandbox='allow-scripts allow-downloads allow-modals'></iframe>
   </div>
 </section>
 <hr>

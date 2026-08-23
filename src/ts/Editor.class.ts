@@ -15,6 +15,7 @@ import { Target } from './interfaces';
 import type { Entity } from './interfaces';
 import { ApiC } from './api';
 import { displayMathExtension } from './markedDisplayMath';
+import { updateEntityBody } from './misc';
 declare const MathJax: MathJaxObject;
 
 const markdown = new Marked(displayMathExtension);
@@ -79,6 +80,13 @@ export class MdEditor extends Editor implements EditorInterface {
 
         return html;
       },
+    });
+    // ctrl+s saves the entry in the markdown editor too (see #7075)
+    document.addEventListener('keydown', event => {
+      if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+        updateEntityBody();
+      }
     });
   }
   getContent(): string {

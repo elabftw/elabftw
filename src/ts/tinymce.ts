@@ -436,6 +436,9 @@ export function getTinymceBaseConfig(page: string): object {
         },
       });
       // some shortcuts
+      // explicit ctrl+s: the save plugin only registers meta+s, which is remapped to
+      // ctrl+s on macOS but does nothing on Windows/Linux (see #7075)
+      editor.addShortcut('ctrl+s', 'save', () => editor.execCommand('mceSave'));
       editor.addShortcut('ctrl+shift+d', 'add date/time at cursor', addDatetimeOnCursor);
       editor.addShortcut('ctrl+=', 'subscript', () => editor.execCommand('subscript'));
       editor.addShortcut('ctrl+shift+=', 'superscript', () => editor.execCommand('superscript'));

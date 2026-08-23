@@ -163,7 +163,13 @@ function SpreadsheetInner({ workbook, buildToolbar, onSpreadsheetChange }) {
     return () => window.removeEventListener('message', onMessage);
   }, [workbook]);
   return (
-    <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar} onchange={onSpreadsheetChange}>
+    <Spreadsheet
+      ref={spreadsheetRef}
+      tabs={true}
+      toolbar={buildToolbar}
+      onchange={onSpreadsheetChange}
+      oncreateworksheet={onSpreadsheetChange}
+    >
       {workbook.map((worksheet, index) => (
         <Worksheet
           key={index}

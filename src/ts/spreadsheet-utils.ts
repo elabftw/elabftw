@@ -8,7 +8,7 @@
  */
 
 import { read, utils, write } from '@e965/xlsx';
-import type { WorkBook } from '@e965/xlsx';
+import type { WorkBook, WorkSheet } from '@e965/xlsx';
 import { Action, FileType, Model } from './interfaces';
 import { askFileName, getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';
@@ -17,6 +17,7 @@ import { getBookType, getMime, inferFileTypeFromName } from './spreadsheet-forma
 type Cell = string | number | boolean | null;
 export type SpreadsheetWorkbook = Array<{ name: string; data: Cell[][] }>;
 const MAX_SPREADSHEET_CELLS = 1_000_000;
+const MAX_SPREADSHEET_ROWS = 100_000;
 const MAX_WORKSHEETS = 1_000;
 const MAX_CELL_LENGTH = 1_000_000;
 const RESPONSE_TIMEOUT_MS = 10_000;
@@ -45,6 +46,20 @@ export async function fileToWorkbook(file: File): Promise<SpreadsheetWorkbook> {
   return parseFileToWorkbook(buffer, inferFileTypeFromName(file.name));
 }
 
+const sheetToSpreadsheetData = (worksheet: WorkSheet): Cell[][] => {
+  const data = utils.sheet_to_json(worksheet, { header: 1, defval: '', raw: true, blankrows: true }) as Cell[][];
+  for (const address of Object.keys(worksheet)) {
+    if (address.startsWith('!')) continue;
+    const formula = worksheet[address]?.f;
+    if (typeof formula !== 'string') continue;
+    const { r, c } = utils.decode_cell(address);
+    while (data.length <= r) data.push([]);
+    while (data[r].length <= c) data[r].push('');
+    data[r][c] = `=${formula}`;
+  }
+  return data;
+};
+
 function parseFileToWorkbook(buffer: ArrayBuffer, fileType: FileType): SpreadsheetWorkbook {
   const wb = read(buffer, fileType === FileType.Csv
     ? { type: 'array', codepage: 65001 }
@@ -57,7 +72,7 @@ function parseFileToWorkbook(buffer: ArrayBuffer, fileType: FileType): Spreadshe
     if (!ws) throw new Error(`Failed to load worksheet ${name}.`);
     return {
       name,
-      data: utils.sheet_to_json(ws, { header: 1, defval: '', raw: true, blankrows: true }) as Cell[][],
+      data: sheetToSpreadsheetData(ws),
     };
   });
   if (!isValidWorkbook(workbook)) {
@@ -122,10 +137,20 @@ const isCell = (value: unknown): value is Cell => {
 const isValidWorkbook = (value: unknown): value is SpreadsheetWorkbook => {
   if (!Array.isArray(value) || value.length === 0 || value.length > MAX_WORKSHEETS) return false;
   let cellCount = 0;
+  const worksheetNames = new Set<string>();
   for (const worksheet of value) {
     if (!worksheet || typeof worksheet !== 'object') return false;
     if (typeof worksheet.name !== 'string' || !worksheet.name || worksheet.name.length > 31) return false;
-    if (!Array.isArray(worksheet.data)) return false;
+    /* eslint-disable quotes */
+    const hasInvalidName = /[:\\/?*[\]]/.test(worksheet.name)
+      || worksheet.name.startsWith("'")
+      || worksheet.name.endsWith("'");
+    /* eslint-enable quotes */
+    if (hasInvalidName) return false;
+    const normalizedName = worksheet.name.toLowerCase();
+    if (normalizedName === 'history' || worksheetNames.has(normalizedName)) return false;
+    worksheetNames.add(normalizedName);
+    if (!Array.isArray(worksheet.data) || worksheet.data.length > MAX_SPREADSHEET_ROWS) return false;
     for (const row of worksheet.data) {
       if (!Array.isArray(row)) return false;
       cellCount += row.length;
@@ -198,7 +223,12 @@ const uploadUrl = (entityType: string, entityId: number, uploadId?: number): str
 const wbFromSpreadsheet = (workbook: SpreadsheetWorkbook): WorkBook => {
   const wb = utils.book_new();
   workbook.forEach(worksheet => {
-    utils.book_append_sheet(wb, utils.aoa_to_sheet(worksheet.data), worksheet.name);
+    const data = worksheet.data.map(row => row.map(cell => {
+      return typeof cell === 'string' && cell.length > 1 && cell.startsWith('=')
+        ? { t: 'n' as const, f: cell.slice(1) }
+        : cell;
+    }));
+    utils.book_append_sheet(wb, utils.aoa_to_sheet(data), worksheet.name);
   });
   return wb;
 };
@@ -214,6 +244,9 @@ const fileFromWB = (wb: WorkBook, name: string) => {
 // upload to eLab as attachment (save/replace)
 async function uploadWorkbook(workbook: SpreadsheetWorkbook, name: string, entityType: string, entityId: number, uploadId?: number): Promise<{ id: number; name: string } | void> {
   if (!workbook?.length) return;
+  if (!isValidWorkbook(workbook)) {
+    throw new Error('Spreadsheet contains invalid data or worksheet names.');
+  }
   if (inferFileTypeFromName(name) === FileType.Csv && workbook.length > 1) {
     throw new Error('CSV files can contain only one worksheet. Save the spreadsheet as XLSX to preserve all worksheets.');
   }

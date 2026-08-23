@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Services\Check;
+use PDO;
 
 final readonly class AccessKeyDownloadValidator
 {
@@ -31,15 +33,19 @@ final readonly class AccessKeyDownloadValidator
             LEFT JOIN experiments
                 ON uploads.type = 'experiments'
                 AND uploads.item_id = experiments.id
+                AND experiments.state != :experiments_deleted
             LEFT JOIN experiments_templates
                 ON uploads.type = 'experiments_templates'
                 AND uploads.item_id = experiments_templates.id
+                AND experiments_templates.state != :experiments_templates_deleted
             LEFT JOIN items
                 ON uploads.type = 'items'
                 AND uploads.item_id = items.id
+                AND items.state != :items_deleted
             LEFT JOIN items_types
                 ON uploads.type = 'items_types'
                 AND uploads.item_id = items_types.id
+                AND items_types.state != :items_types_deleted
             WHERE (
                 uploads.long_name = :long_name
                 OR CONCAT(uploads.long_name, '_th.jpg') = :thumbnail_name
@@ -56,6 +62,10 @@ final readonly class AccessKeyDownloadValidator
         $req->bindValue(':long_name', $longName);
         $req->bindValue(':thumbnail_name', $longName);
         $req->bindValue(':access_key', $accessKey);
+        $req->bindValue(':experiments_deleted', State::Deleted->value, PDO::PARAM_INT);
+        $req->bindValue(':experiments_templates_deleted', State::Deleted->value, PDO::PARAM_INT);
+        $req->bindValue(':items_deleted', State::Deleted->value, PDO::PARAM_INT);
+        $req->bindValue(':items_types_deleted', State::Deleted->value, PDO::PARAM_INT);
 
         $Db->execute($req);
 

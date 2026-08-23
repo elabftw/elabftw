@@ -66,7 +66,7 @@ function parseFileToWorkbook(buffer: ArrayBuffer, fileType: FileType): Spreadshe
   return workbook;
 }
 
-export async function loadInSpreadsheetEditor(storage: string, path: string, name: string, uploadId: number): Promise<void> {
+export async function loadInSpreadsheetEditor(storage: string, path: string, name: string, uploadId: number): Promise<boolean> {
   try {
     const res = await fetch(`app/download.php?f=${encodeURIComponent(path)}&storage=${storage}`, {
       headers: new Headers({ 'cache-control': 'no-cache' }),
@@ -77,8 +77,10 @@ export async function loadInSpreadsheetEditor(storage: string, path: string, nam
     const iframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
     await waitForSpreadsheetEditor(iframe);
     iframe.contentWindow?.postMessage({ type: 'jss-load-workbook', detail: { workbook, name, uploadId } }, '*');
+    return true;
   } catch (e) {
     notify.error(e.message || 'Unexpected error while loading spreadsheet.');
+    return false;
   }
 }
 

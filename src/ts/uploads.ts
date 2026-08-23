@@ -169,7 +169,13 @@ on('set-3dmol-style', (el: HTMLElement) => {
 
 // LOAD SPREADSHEET FILE
 on('xls-load-file', async (el: HTMLElement) => {
-  await loadInSpreadsheetEditor(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
+  const loaded = await loadInSpreadsheetEditor(
+    el.dataset.storage,
+    el.dataset.path,
+    el.dataset.name,
+    Number(el.dataset.uploadid),
+  );
+  if (!loaded) return;
   spreadsheetUpload = { id: Number(el.dataset.uploadid), name: el.dataset.name };
   replaceSpreadsheetButton.disabled = false;
   spreadsheetDirty = false;

@@ -73,15 +73,20 @@ function SpreadsheetEditor() {
   /* local import/export actions included in the toolbar */
   // import a new file from computer
   const handleImportFile = async (e) => {
-    const file = e.target.files?.[0];
+    const input = e.target;
+    const file = input.files?.[0];
     if (!file) return;
-    const nextWorkbook = await fileToWorkbook(file);
-    setWorkbook(nextWorkbook);
-    setSpreadsheetRevision(revision => revision + 1);
-    setUnsavedWarning(true);
-    window.parent.postMessage({ type: 'jss-new-document' }, '*');
-    // clear input too
-    e.target.value = '';
+    try {
+      const nextWorkbook = await fileToWorkbook(file);
+      setWorkbook(nextWorkbook);
+      setSpreadsheetRevision(revision => revision + 1);
+      setUnsavedWarning(true);
+      window.parent.postMessage({ type: 'jss-new-document' }, '*');
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : 'Unexpected error while importing spreadsheet.');
+    } finally {
+      input.value = '';
+    }
   };
 
   const clearSpreadsheet = () => {

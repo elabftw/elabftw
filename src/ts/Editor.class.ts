@@ -81,9 +81,12 @@ export class MdEditor extends Editor implements EditorInterface {
         return html;
       },
     });
-    // ctrl+s saves the entry in the markdown editor too (see #7075)
-    document.addEventListener('keydown', event => {
-      if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 's') {
+    // ctrl+s saves the entry in the markdown editor too (see #7075).
+    // Scoped to the body textarea so the shortcut only fires when editing
+    // the entity body (not in titles, search fields or dialogs), and
+    // shift is excluded to keep ctrl/cmd+shift+s untouched.
+    ($('.markdown-textarea') as any).on('keydown', event => {
+      if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key.toLowerCase() === 's') {
         event.preventDefault();
         updateEntityBody();
       }

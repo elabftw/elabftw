@@ -40,7 +40,7 @@ final class AccessKeyDownloadValidatorTest extends TestCase
         $this->Db->rollBack();
     }
 
-    public function testValidateAcceptsUploadAndThumbnail(): void
+    public function testValidateAcceptsActiveUploadAndRejectsItAfterEntityDeletion(): void
     {
         $Experiments = new Experiments(new Users(1, 1));
         $experimentId = $Experiments->create();
@@ -68,6 +68,16 @@ final class AccessKeyDownloadValidatorTest extends TestCase
             1,
             $validator->validate($accessKey, $longName . '_th.jpg'),
         );
+
+        $sql = 'UPDATE experiments SET state = :deleted WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':deleted', State::Deleted->value, PDO::PARAM_INT);
+        $req->bindValue(':id', $experimentId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $this->expectException(UnauthorizedException::class);
+
+        $validator->validate($accessKey, $longName);
     }
 
     public function testValidateRejectsUnknownAccessKey(): void

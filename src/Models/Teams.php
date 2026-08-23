@@ -63,7 +63,7 @@ final class Teams extends AbstractRest
     public function getTeamsFromIdOrNameOrOrgidArray(array $teams, bool $allowTeamCreation = false): array
     {
         $res = array();
-        $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
+        $sql = 'SELECT id, name FROM teams WHERE visible = 1 AND (id = :query OR name = :query OR orgid = :query)';
         $req = $this->Db->prepare($sql);
         foreach ($teams as $query) {
             $req->bindValue(':query', trim((string) $query));

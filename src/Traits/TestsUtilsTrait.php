@@ -43,7 +43,7 @@ trait TestsUtilsTrait
     protected function getRandomUserInTeam(int $team, int $admin = 0, int $archived = 0): AuthenticatedUser
     {
         $Db = Db::getConnection();
-        $sql = 'SELECT * FROM users2teams INNER JOIN users ON users.userid = users2teams.users_id WHERE users.validated = 1 AND teams_id = :team AND is_admin = :admin AND is_archived = :archived';
+        $sql = 'SELECT * FROM users2teams INNER JOIN users ON users.userid = users2teams.users_id WHERE users.validated = 1 AND (users.valid_until IS NULL OR users.valid_until > NOW()) AND teams_id = :team AND is_admin = :admin AND is_archived = :archived';
         $req = $Db->prepare($sql);
         $req->bindValue(':team', $team, PDO::PARAM_INT);
         $req->bindValue(':admin', $admin, PDO::PARAM_INT);

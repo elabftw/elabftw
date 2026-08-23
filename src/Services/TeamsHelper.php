@@ -111,10 +111,13 @@ final class TeamsHelper
 
     public function isActiveUserInTeam(int $userid): bool
     {
-        $sql = 'SELECT 1 FROM `users2teams`
-            WHERE `teams_id` = :team
-                AND `users_id` = :userid
-                AND `is_archived` = 0';
+        $sql = 'SELECT 1 FROM `users2teams` AS u2t
+            INNER JOIN `users` AS u ON u.userid = u2t.users_id
+            WHERE u2t.teams_id = :team
+                AND u2t.users_id = :userid
+                AND u2t.is_archived = 0
+                AND u.validated = 1
+                AND IFNULL(u.valid_until, \'3000-01-01\') > NOW()';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);

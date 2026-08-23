@@ -9,7 +9,7 @@
 
 import { read, utils, write } from '@e965/xlsx';
 import type { WorkBook } from '@e965/xlsx';
-import { FileType, Model } from './interfaces';
+import { Action, FileType, Model } from './interfaces';
 import { askFileName, getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';
 import { getBookType, getMime, inferFileTypeFromName } from './spreadsheet-formats';
@@ -148,9 +148,10 @@ export function requestSpreadsheetAOA(): Promise<Cell[][]> {
   });
 }
 
-async function postAndReturnId(file: File, url: string): Promise<number> {
+async function postAndReturnId(file: File, url: string, action?: Action): Promise<number> {
   const fd = new FormData();
   fd.append('file', file);
+  if (action) fd.append('action', action);
   const res = await fetch(url, { method: 'POST', body: fd });
   if (!res.ok) {
     const msg = `Upload failed (${res.status})`;
@@ -193,6 +194,6 @@ async function uploadAOA(aoa: Cell[][], name: string, entityType: string, entity
   const wb = wbFromAOA(aoa);
   const file = fileFromWB(wb, name);
   const url = uploadUrl(entityType, entityId, uploadId);
-  const id = await postAndReturnId(file, url);
+  const id = await postAndReturnId(file, url, uploadId ? Action.Replace : undefined);
   return { id, name };
 }

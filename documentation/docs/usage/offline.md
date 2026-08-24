@@ -5,13 +5,13 @@ title: Offline application
 
 # Offline application
 
-A desktop application working offline is available. It allows recording experimental data acquired in a context without access to Internet, and later to synchronize this data with the hosted eLabFTW instance.
+A desktop application working offline is available. It allows recording experimental data acquired in a context without Internet access, and later uploading this data to an eLabFTW instance when a connection becomes available.
 
-The application works on Windows, Mac and GNU/Linux computers.
+The application works on Windows, Mac OS and GNU/Linux computers.
 
 ## Download
 
-You can download the latest version on the Release page:
+You can download the latest version from the Releases page:
 
 https://github.com/elabftw/desktop/releases
 
@@ -21,7 +21,7 @@ After downloading the latest release for your operating system, open the applica
 
 <figure>
   <img src="/img/desktop/desktop-create-profile.webp" alt="create profile" />
-  <figcaption>Create profile.</figcaption>
+  <figcaption>Create a profile.</figcaption>
 </figure>
 
 <figure>
@@ -31,45 +31,55 @@ After downloading the latest release for your operating system, open the applica
 
 <figure>
   <img src="/img/desktop/desktop-select-profile.webp" alt="select profile" />
-  <figcaption>Select your profile</figcaption>
+  <figcaption>Select your profile.</figcaption>
 </figure>
 
 <figure>
   <img src="/img/desktop/desktop-list.webp" alt="empty list" />
-  <figcaption>Listing entries (empty for now)</figcaption>
+  <figcaption>View your local entries (empty for now).</figcaption>
 </figure>
 
 <figure>
   <img src="/img/desktop/desktop-add-instance.webp" alt="add instance" />
-  <figcaption>Add your instance.</figcaption>
+  <figcaption>Add your eLabFTW instance.</figcaption>
 </figure>
 
 <figure>
   <img src="/img/desktop/desktop-add-instance-1.webp" alt="add instance 1" />
-  <figcaption>Enter URL and API key.</figcaption>
+  <figcaption>Enter the instance URL and your API key.</figcaption>
 </figure>
 
 <figure>
   <img src="/img/desktop/desktop-add-instance-2.webp" alt="add instance 2" />
-  <figcaption>Save changes.</figcaption>
+  <figcaption>Save the instance configuration.</figcaption>
 </figure>
 
 <figure>
   <img src="/img/desktop/desktop-create.webp" alt="create entry" />
-  <figcaption>Create your first entry.</figcaption>
+  <figcaption>Create your first local entry.</figcaption>
 </figure>
 
 <figure>
   <img src="/img/desktop/desktop-edit.webp" alt="edit entry" />
-  <figcaption>Edit your first entry.</figcaption>
+  <figcaption>Edit and save your entry locally.</figcaption>
 </figure>
 
 <figure>
-  <img src="/img/desktop/desktop-push-button.webp" alt="synchronize with instance" />
-  <figcaption>Click this button to push entry to your live instance.</figcaption>
+  <img src="/img/desktop/desktop-upload.webp" alt="add attachment" />
+  <figcaption>Attach files to your entry.</figcaption>
 </figure>
 
 <figure>
-  <img src="/img/desktop/desktop-push.webp" alt="synchronize with instance 2" />
+  <img src="/img/desktop/desktop-push-button.webp" alt="push entry to instance" />
+  <figcaption>Click this button to push the entry to your eLabFTW instance.</figcaption>
+</figure>
+
+<figure>
+  <img src="/img/desktop/desktop-push.webp" alt="push entry to instance 2" />
   <figcaption>Select the type of entry and click Push.</figcaption>
+</figure>
+
+<figure>
+  <img src="/img/desktop/desktop-entry-in-remote.webp" alt="entry in instance" />
+  <figcaption>The entry has been successfully sent.</figcaption>
 </figure>

@@ -131,6 +131,23 @@ tr:nth-child(odd) {
   border: 1px solid #ccc;
 }
 
+/* mirrors .extra-field-label in main.scss. mpdf understands neither css custom
+   properties nor color-mix, so the tinted background arrives as a plain hex
+   value in a style attribute computed by TwigFilters::formatMetadataLabel() */
+.extra-field-label {
+  border-radius: 10rem;
+  font-size: 80%;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+/* the pdf stylesheet does not ship the bootstrap flex utilities, so float the
+   label right instead of relying on d-flex/ml-auto from the view page markup */
+.extra-field-label-wrapper {
+  float: right;
+  padding-left: 0.5em;
+}
+
 .noborder {
   border-style: none;
 }

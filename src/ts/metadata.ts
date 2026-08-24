@@ -37,6 +37,42 @@ function clearForm() {
   form.reset();
 }
 
+/**
+ * Read the label inputs of the field builder modal.
+ * Returns undefined when no text was entered, so the key is simply absent
+ * from the field instead of being stored as an empty object.
+ */
+function collectFieldLabel(): {text: string, color?: string} | undefined {
+  const textInput = document.getElementById('newFieldLabelTextInput') as HTMLInputElement | null;
+  const text = textInput?.value.trim();
+  if (!text) {
+    return undefined;
+  }
+  const label: {text: string, color?: string} = {text: text};
+  const colorInput = document.getElementById('newFieldLabelColorInput') as HTMLInputElement | null;
+  // the color input always holds a value, so only keep it if it is a real color
+  const color = (colorInput?.value ?? '').replace(/^#/, '').toLowerCase();
+  if (/^[0-9a-f]{6}$/.test(color)) {
+    label.color = color;
+  }
+  return label;
+}
+
+/**
+ * Fill the label inputs from an existing field, or reset them when it has no label.
+ */
+function fillFieldLabelInputs(label?: {text?: string, color?: string}): void {
+  const textInput = document.getElementById('newFieldLabelTextInput') as HTMLInputElement | null;
+  const colorInput = document.getElementById('newFieldLabelColorInput') as HTMLInputElement | null;
+  if (textInput) {
+    textInput.value = label?.text ?? '';
+  }
+  if (colorInput) {
+    const color = (label?.color ?? '').replace(/^#/, '').toLowerCase();
+    colorInput.value = /^[0-9a-f]{6}$/.test(color) ? '#' + color : '#29aeb9';
+  }
+}
+
 function toggleContentDiv(key: string) {
   const keys = ['text', 'classic', 'selectradio', 'checkbox', 'number'];
   document.getElementById('newFieldContentDiv_' + key).toggleAttribute('hidden', false);
@@ -99,6 +135,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
         (document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked = !!fieldData.blank_value_on_duplicate;
         (document.getElementById('requiredSwitch') as HTMLInputElement).checked = !!fieldData.required;
         (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked = !!fieldData.allow_multi_values;
+        fillFieldLabelInputs(fieldData.label);
 
         let containerId, sourceArray, toggleDiv;
         // same behaviour is applied for select, radio and number. Only div name is different
@@ -333,6 +370,10 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if (grpSel.value !== '-1') {
             field['group_id'] = parseInt(grpSel.value);
           }
+          const newLabel = collectFieldLabel();
+          if (newLabel) {
+            field['label'] = newLabel;
+          }
 
           json['extra_fields'][fieldKey] = field;
 
@@ -453,6 +494,16 @@ if (document.getElementById('metadataDiv') && entity.id) {
             field['value'] = firstValue;
           }
 
+          // the label is editable here: an empty text input removes it
+          const editedLabel = collectFieldLabel();
+          if (editedLabel) {
+            // keep the title of the previous label, it has no input of its own
+            if (typeof prevField?.label?.title === 'string') {
+              editedLabel['title'] = prevField.label.title;
+            }
+            field['label'] = editedLabel;
+          }
+
           // preserve properties that aren't editable in this modal
           if (prevField?.readonly === true) field['readonly'] = true;
           if (typeof prevField?.position === 'number') field['position'] = prevField.position;
@@ -472,6 +523,10 @@ if (document.getElementById('metadataDiv') && entity.id) {
             });
           });
         });
+      // CLEAR THE LABEL INPUTS
+      // closest() because the button holds an icon, so the click target can be the <i>
+      } else if (el.closest('[data-action="clear-field-label"]')) {
+        fillFieldLabelInputs(undefined);
       // ADD OPTION FOR SELECT OR RADIO
       } else if (el.matches('[data-action="new-field-add-option"]')) {
         const newGroup = document.createElement('div');

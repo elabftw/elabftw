@@ -1059,7 +1059,11 @@ if (storageModalEl) {
   });
 }
 
-on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadStorageTrees()));
+on('delete-storage-root', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadStorageTrees());
+  }
+});
 
 const destroyContainer = (id: string) =>
   ApiC.delete(`${entity.type}/${entity.id}/containers/${id}`).then(() => reloadStorageAndContainers());

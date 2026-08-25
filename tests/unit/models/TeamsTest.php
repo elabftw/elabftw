@@ -19,6 +19,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function array_column;
+use function count;
 
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
@@ -183,6 +184,14 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
                 $this->fail('A hidden team was resolved from an external identifier.');
             } catch (ImproperActionException) {
                 $this->addToAssertionCount(1);
+            }
+
+            $teamCount = count($this->Teams->selectAll());
+            try {
+                $this->Teams->getTeamsFromIdOrNameOrOrgidArray(array($orgid), true);
+                $this->fail('A hidden team caused a duplicate team to be created.');
+            } catch (ImproperActionException) {
+                $this->assertCount($teamCount, $this->Teams->selectAll());
             }
         } finally {
             $HiddenTeam->destroy();

@@ -373,6 +373,10 @@ export function getTinymceBaseConfig(page: string): object {
         if (page !== 'admin' && page !== 'sysconfig') {
           editor.execCommand('lineheight', false, '1');
         }
+        // recalculate after the initial layout to avoid an oversized editor. See #7301.
+        if (page === 'edit' && editor.plugins.autoresize) {
+          window.requestAnimationFrame(() => editor.execCommand('mceAutoResize'));
+        }
       });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
       editor.on('blur', () => {

@@ -80,6 +80,13 @@ class Users extends AbstractRest
 
     public bool $isAdmin = false;
 
+    /**
+     * Id of the api key used to authenticate this request, if any. Not a secret: it is the
+     * primary key of the api_keys row, and it lets a webhook subscriber recognise the changes
+     * it made itself through its own key.
+     */
+    public ?int $apiKeyId = null;
+
     public function __construct(public ?int $userid = null, public ?int $team = null, ?self $requester = null)
     {
         parent::__construct();

@@ -43,6 +43,7 @@ enum ApiSubModels: string
     case Tags = 'tags';
     case Teamgroups = 'teamgroups';
     case Uploads = 'uploads';
+    case Webhooks = 'webhooks';
 
     public static function validSubModelsForEndpoint(ApiEndpoint $apiEndpoint): array
     {
@@ -93,6 +94,7 @@ enum ApiSubModels: string
                 self::Status,
                 self::Tags,
                 self::Teamgroups,
+                self::Webhooks,
             ),
         );
     }
@@ -107,6 +109,7 @@ enum ApiSubModels: string
                 self::SigKeys,
                 self::Rors,
                 self::Uploads,
+                self::Webhooks,
             ),
         );
     }
@@ -139,6 +142,7 @@ enum ApiSubModels: string
             array(
                 self::Branding,
                 self::Rors,
+                self::Webhooks,
             ),
         );
     }

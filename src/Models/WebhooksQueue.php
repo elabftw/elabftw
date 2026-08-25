@@ -124,9 +124,13 @@ final class WebhooksQueue
     public function claim(int $limit): array
     {
         $token = bin2hex(random_bytes(16));
+        // a disabled webhook receives nothing, including whatever was queued before it was
+        // turned off: an admin switching it off expects deliveries to stop, not to drain
         $sql = 'UPDATE webhooks_queue
             SET state = :sending, claim_token = :token, attempts = attempts + 1, next_attempt_at = NOW()
-            WHERE state = :queued AND next_attempt_at <= NOW()
+            WHERE state = :queued
+                AND next_attempt_at <= NOW()
+                AND webhooks_id IN (SELECT id FROM webhooks WHERE enabled = 1)
             ORDER BY id ASC
             LIMIT :limit';
         $req = $this->Db->prepare($sql);
@@ -136,7 +140,7 @@ final class WebhooksQueue
         $req->bindValue(':limit', $limit, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $sql = 'SELECT q.id, q.event, q.event_id, q.body, q.attempts, w.id AS webhook_id, w.url, w.secret
+        $sql = 'SELECT q.id, q.event, q.event_id, q.body, q.attempts, q.claim_token, w.id AS webhook_id, w.url, w.secret
             FROM webhooks_queue AS q
             INNER JOIN webhooks AS w ON (w.id = q.webhooks_id)
             WHERE q.claim_token = :token
@@ -147,42 +151,61 @@ final class WebhooksQueue
         return $req->fetchAll();
     }
 
-    public function markDelivered(int $id): void
+    /**
+     * Every state change carries the token the row was claimed with. A drain that hung long
+     * enough for releaseStaleClaims() to hand its row to someone else would otherwise
+     * overwrite the newer result on its way out, and could requeue an already delivered row.
+     *
+     * @return bool false when the claim was lost, meaning another drain owns the row now
+     */
+    public function markDelivered(int $id, string $token): bool
     {
         $sql = 'UPDATE webhooks_queue
             SET state = :state, delivered_at = NOW(), claim_token = NULL, last_error = NULL
-            WHERE id = :id';
+            WHERE id = :id AND claim_token = :token';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', WebhookState::Delivered->value, PDO::PARAM_INT);
         $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $req->bindValue(':token', $token);
         $this->Db->execute($req);
+        return $req->rowCount() === 1;
     }
 
     /**
      * Put a row back in the queue, due again after $delay seconds.
+     *
+     * @return bool false when the claim was lost
      */
-    public function markRetry(int $id, string $error, int $delay): void
+    public function markRetry(int $id, string $token, string $error, int $delay): bool
     {
         $sql = 'UPDATE webhooks_queue
             SET state = :state, claim_token = NULL, last_error = :error,
                 next_attempt_at = DATE_ADD(NOW(), INTERVAL :delay SECOND)
-            WHERE id = :id';
+            WHERE id = :id AND claim_token = :token';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', WebhookState::Queued->value, PDO::PARAM_INT);
         $req->bindValue(':error', $this->truncate($error));
         $req->bindValue(':delay', $delay, PDO::PARAM_INT);
         $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $req->bindValue(':token', $token);
         $this->Db->execute($req);
+        return $req->rowCount() === 1;
     }
 
-    public function markFailed(int $id, string $error): void
+    /**
+     * @return bool false when the claim was lost
+     */
+    public function markFailed(int $id, string $token, string $error): bool
     {
-        $sql = 'UPDATE webhooks_queue SET state = :state, claim_token = NULL, last_error = :error WHERE id = :id';
+        $sql = 'UPDATE webhooks_queue SET state = :state, claim_token = NULL, last_error = :error
+            WHERE id = :id AND claim_token = :token';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state', WebhookState::Failed->value, PDO::PARAM_INT);
         $req->bindValue(':error', $this->truncate($error));
         $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $req->bindValue(':token', $token);
         $this->Db->execute($req);
+        return $req->rowCount() === 1;
     }
 
     /**
@@ -204,9 +227,13 @@ final class WebhooksQueue
     public function pruneDelivered(): int
     {
         $sql = 'DELETE FROM webhooks_queue
-            WHERE state = :state AND delivered_at < DATE_SUB(NOW(), INTERVAL :days DAY)';
+            WHERE (state = :delivered AND delivered_at < DATE_SUB(NOW(), INTERVAL :days DAY))
+                OR (state = :queued AND created_at < DATE_SUB(NOW(), INTERVAL :days DAY))';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':state', WebhookState::Delivered->value, PDO::PARAM_INT);
+        $req->bindValue(':delivered', WebhookState::Delivered->value, PDO::PARAM_INT);
+        // queued rows this old belong to a webhook that was disabled or is long dead: the
+        // longest backoff is an hour, so nothing legitimate waits for days
+        $req->bindValue(':queued', WebhookState::Queued->value, PDO::PARAM_INT);
         $req->bindValue(':days', self::KEEP_DELIVERED_DAYS, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->rowCount();

@@ -99,6 +99,7 @@ final class WebhookDispatcher
     private function deliver(array $row, OutputInterface $output): bool
     {
         $id = (int) $row['id'];
+        $token = (string) $row['claim_token'];
         $webhookId = (int) $row['webhook_id'];
         $body = (string) $row['body'];
         try {
@@ -110,24 +111,29 @@ final class WebhookDispatcher
             $response = $this->httpGetter->post($url, $this->getOptions($row, $body, $resolved));
             $status = $response->getStatusCode();
             if ($status >= 200 && $status < 300) {
-                $this->Queue->markDelivered($id);
+                if (!$this->Queue->markDelivered($id, $token)) {
+                    // another drain owns this row now, its result is the one that counts
+                    return false;
+                }
                 $this->Webhooks->recordSuccess($webhookId);
                 return true;
             }
-            $this->handleFailure($id, $webhookId, (int) $row['attempts'], sprintf('target answered %d', $status), $output);
+            $this->handleFailure($id, $token, $webhookId, (int) $row['attempts'], sprintf('target answered %d', $status), $output);
         } catch (Throwable $e) {
-            $this->handleFailure($id, $webhookId, (int) $row['attempts'], $e->getMessage(), $output);
+            $this->handleFailure($id, $token, $webhookId, (int) $row['attempts'], $e->getMessage(), $output);
         }
         return false;
     }
 
-    private function handleFailure(int $id, int $webhookId, int $attempts, string $error, OutputInterface $output): void
+    private function handleFailure(int $id, string $token, int $webhookId, int $attempts, string $error, OutputInterface $output): void
     {
         if ($attempts < self::MAX_ATTEMPTS) {
-            $this->Queue->markRetry($id, $error, $this->getRetryDelay($attempts));
+            $this->Queue->markRetry($id, $token, $error, $this->getRetryDelay($attempts));
             return;
         }
-        $this->Queue->markFailed($id, $error);
+        if (!$this->Queue->markFailed($id, $token, $error)) {
+            return;
+        }
         $disabled = $this->Webhooks->recordFailure($webhookId, $error);
         if ($output->isVerbose()) {
             $output->writeln(sprintf(

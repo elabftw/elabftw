@@ -57,6 +57,9 @@ abstract class AbstractWebhooks extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        // a webhook target is an outbound data flow, so reading one takes the same
+        // authority as changing it: sysadmin, team admin, or the owning user
+        $this->canwriteOrExplode();
         $sql = sprintf(
             'SELECT %s FROM webhooks WHERE scope = :scope AND teams_id <=> :teams_id AND users_id <=> :users_id ORDER BY id ASC',
             $this->getColumns(),
@@ -70,15 +73,15 @@ abstract class AbstractWebhooks extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        $this->canwriteOrExplode();
         if ($this->id === null) {
             return $this->readAll();
         }
-        // the secret is only readable by someone who may write the webhook: it cannot be
-        // hashed like an api key (we need it to sign), so the owner has to be able to read it back
-        $columns = $this->canwrite ? $this->getColumns() . ', secret' : $this->getColumns();
+        // the secret cannot be hashed like an api key, we need it to sign, so whoever may
+        // write the webhook can read it back
         $sql = sprintf(
             'SELECT %s FROM webhooks WHERE id = :id AND scope = :scope AND teams_id <=> :teams_id AND users_id <=> :users_id',
-            $columns,
+            $this->getColumns() . ', secret',
         );
         $req = $this->Db->prepare($sql);
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);

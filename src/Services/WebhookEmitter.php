@@ -87,7 +87,6 @@ final class WebhookEmitter
         if ($owner === null) {
             return;
         }
-        self::$emitted[$key] = true;
 
         $payload = array(
             'event' => $event->value,
@@ -110,6 +109,9 @@ final class WebhookEmitter
         );
 
         new WebhooksQueue()->fanout($event, $payload, (int) $owner['team'], (int) $owner['userid']);
+        // only now: if the fanout throws, the next write for this entity gets another
+        // chance instead of being swallowed by the dedup cache
+        self::$emitted[$key] = true;
     }
 
     /**

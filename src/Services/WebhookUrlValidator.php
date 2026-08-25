@@ -19,23 +19,21 @@ use function array_values;
 use function dns_get_record;
 use function filter_var;
 use function gethostbynamel;
+use function inet_ntop;
 use function inet_pton;
 use function intdiv;
 use function is_array;
 use function ord;
 use function parse_url;
 use function sprintf;
-use function str_contains;
+use function str_repeat;
 use function strlen;
-use function strrpos;
 use function strtolower;
 use function substr;
 use function trim;
 
 use const DNS_A;
 use const DNS_AAAA;
-use const FILTER_FLAG_IPV4;
-use const FILTER_FLAG_IPV6;
 use const FILTER_VALIDATE_IP;
 use const PHP_URL_FRAGMENT;
 
@@ -51,6 +49,9 @@ use const PHP_URL_FRAGMENT;
 final class WebhookUrlValidator
 {
     public const int MAX_URL_LENGTH = 512;
+
+    /** length of an ipv4 address in binary form */
+    private const int V4_LENGTH = 4;
 
     /** @var array<int, array{0: string, 1: int}> network/prefix pairs that must never be reached */
     private const array BLOCKED_V4 = array(
@@ -180,19 +181,23 @@ final class WebhookUrlValidator
         if ($this->strict === false) {
             return;
         }
-        // ipv4 written as ipv6, unwrap it so the v4 rules apply
-        if (str_contains($address, '.') && str_contains($address, ':')) {
-            $address = substr($address, (int) strrpos($address, ':') + 1);
+        $binary = inet_pton($address);
+        if ($binary === false) {
+            throw new ImproperActionException(sprintf('Webhook host resolves to an invalid address: %s', $address));
         }
-        if (filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false) {
+        if (strlen($binary) === self::V4_LENGTH) {
             $this->guardAgainst($address, self::BLOCKED_V4);
             return;
         }
-        if (filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false) {
-            $this->guardAgainst($address, self::BLOCKED_V6);
+        // Only a v4-mapped address (::ffff:a.b.c.d) really carries a v4 address, and that has
+        // to be decided on the bytes: fc00::1.2.3.4 is written with dots as well, but it is an
+        // ordinary unique-local v6 address, and judging it as v4 would walk it straight past
+        // the v6 rules.
+        if (substr($binary, 0, 10) === str_repeat("\0", 10) && substr($binary, 10, 2) === "\xff\xff") {
+            $this->guardAgainst((string) inet_ntop(substr($binary, 12, self::V4_LENGTH)), self::BLOCKED_V4);
             return;
         }
-        throw new ImproperActionException(sprintf('Webhook host resolves to an invalid address: %s', $address));
+        $this->guardAgainst($address, self::BLOCKED_V6);
     }
 
     /**

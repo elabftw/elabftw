@@ -57,14 +57,28 @@ class InstanceWebhooksTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($initialCount, count($this->InstanceWebhooks->readAll()));
     }
 
-    public function testSecretIsHiddenWithoutWriteAccess(): void
+    /**
+     * A webhook target is an outbound data flow, so its url, its events and its failure
+     * history are not public: reading takes the same authority as writing.
+     */
+    public function testReadingWithoutPermissionIsRefused(): void
     {
         $id = $this->InstanceWebhooks->postAction(Action::Create, array(
             'url' => 'https://192.0.2.11/hook',
             'events' => array(WebhookEvent::ItemCreated->value),
         ));
-        $webhook = new InstanceWebhooks(false, $id)->readOne();
-        $this->assertArrayNotHasKey('secret', $webhook);
+        try {
+            new InstanceWebhooks(false, $id)->readOne();
+            $this->fail('reading a webhook without permission should have been refused');
+        } catch (IllegalActionException) {
+            $this->addToAssertionCount(1);
+        }
+        try {
+            new InstanceWebhooks(false)->readAll();
+            $this->fail('listing webhooks without permission should have been refused');
+        } catch (IllegalActionException) {
+            $this->addToAssertionCount(1);
+        }
         new InstanceWebhooks(true, $id)->destroy();
     }
 

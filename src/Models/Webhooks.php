@@ -19,6 +19,8 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\TeamsHelper;
 use PDO;
 
+use function array_map;
+use function intval;
 use function mb_substr;
 
 /**
@@ -107,7 +109,7 @@ final class Webhooks
     {
         return match (WebhookScope::from($webhook['scope'])) {
             WebhookScope::User => array((int) $webhook['users_id']),
-            WebhookScope::Team => new TeamsHelper((int) $webhook['teams_id'])->getAllAdminsUserid(),
+            WebhookScope::Team => array_map(intval(...), new TeamsHelper((int) $webhook['teams_id'])->getAllAdminsUserid()),
             WebhookScope::Instance => $this->getSysadmins(),
         };
     }
@@ -120,6 +122,6 @@ final class Webhooks
         $sql = 'SELECT userid FROM users WHERE is_sysadmin = 1 AND validated = 1';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return $req->fetchAll(PDO::FETCH_COLUMN);
+        return array_map(intval(...), $req->fetchAll(PDO::FETCH_COLUMN));
     }
 }

@@ -88,6 +88,13 @@ class WebhookUrlValidatorTest extends \PHPUnit\Framework\TestCase
             'https://[::1]/hook',
             'https://[fe80::1]/hook',
             'https://[fc00::1]/hook',
+            // these are v6 addresses whose last 32 bits happen to be written with dots.
+            // Treating them as v4 because of the dots walks them past every v6 rule.
+            'https://[fc00::1.2.3.4]/hook',
+            'https://[fe80::1.2.3.4]/hook',
+            // a real v4-mapped address has to be judged by the v4 rules
+            'https://[::ffff:10.0.0.1]/hook',
+            'https://[::ffff:127.0.0.1]/hook',
         );
         foreach ($blocked as $url) {
             try {
@@ -107,6 +114,12 @@ class WebhookUrlValidatorTest extends \PHPUnit\Framework\TestCase
     {
         $url = 'http://127.0.0.1:9099/hook';
         $this->assertEquals($url, $this->relaxed->validate($url));
+    }
+
+    public function testMappedPublicAddressIsAccepted(): void
+    {
+        $url = 'https://[::ffff:93.184.216.34]/hook';
+        $this->assertEquals($url, $this->strict->validate($url));
     }
 
     public function testAddressLiteralIsReturnedAsIs(): void

@@ -183,6 +183,11 @@ final class Db
         return $this->connection->beginTransaction();
     }
 
+    public function inTransaction(): bool
+    {
+        return $this->connection->inTransaction();
+    }
+
     public function commit(): bool
     {
         return $this->connection->commit();

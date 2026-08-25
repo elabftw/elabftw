@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\WebhookEvent;
 use Elabftw\Enums\WebhookState;
 use PDO;
+use Throwable;
 
 use function bin2hex;
 use function json_encode;
@@ -78,17 +79,36 @@ final class WebhooksQueue
 
         $body = json_encode($payload, JSON_THROW_ON_ERROR);
         $sql = 'INSERT INTO webhooks_queue (webhooks_id, event_id, event, body) VALUES (:webhooks_id, :event_id, :event, :body)';
-        $req = $this->Db->prepare($sql);
-        $count = 0;
-        foreach ($webhooks as $webhook) {
-            $req->bindValue(':webhooks_id', $webhook['id'], PDO::PARAM_INT);
-            // the same event id on every copy: a subscriber can tell two deliveries of one
-            // event apart from two separate events
-            $req->bindValue(':event_id', (string) $payload['event_id']);
-            $req->bindValue(':event', $event->value);
-            $req->bindValue(':body', $body);
-            $this->Db->execute($req);
-            $count++;
+
+        // All or nothing: a fanout that inserted three rows and then failed would leave the
+        // event half delivered, and the retry would carry a different event id. If a caller
+        // already opened a transaction, ride along with theirs instead of nesting, which
+        // pdo does not support.
+        $ownTransaction = !$this->Db->inTransaction();
+        if ($ownTransaction) {
+            $this->Db->beginTransaction();
+        }
+        try {
+            $req = $this->Db->prepare($sql);
+            $count = 0;
+            foreach ($webhooks as $webhook) {
+                $req->bindValue(':webhooks_id', $webhook['id'], PDO::PARAM_INT);
+                // the same event id on every copy: a subscriber can tell two deliveries of
+                // one event apart from two separate events
+                $req->bindValue(':event_id', (string) $payload['event_id']);
+                $req->bindValue(':event', $event->value);
+                $req->bindValue(':body', $body);
+                $this->Db->execute($req);
+                $count++;
+            }
+            if ($ownTransaction) {
+                $this->Db->commit();
+            }
+        } catch (Throwable $e) {
+            if ($ownTransaction) {
+                $this->Db->rollBack();
+            }
+            throw $e;
         }
         return $count;
     }

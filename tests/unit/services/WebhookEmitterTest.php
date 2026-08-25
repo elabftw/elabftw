@@ -128,6 +128,22 @@ class WebhookEmitterTest extends \PHPUnit\Framework\TestCase
         new InstanceWebhooks(true, $probeId)->destroy();
     }
 
+    /**
+     * Entity writes happen inside a transaction in places (storage units, container links),
+     * and pdo has no nested transactions, so the fanout must ride along rather than open
+     * its own.
+     */
+    public function testFanoutJoinsAnExistingTransaction(): void
+    {
+        $Db = Db::getConnection();
+        $Db->beginTransaction();
+        $Experiment = $this->getFreshExperiment();
+        $Db->commit();
+
+        $this->assertCount(1, $this->getQueued(WebhookEvent::ExperimentCreated));
+        $this->assertNotNull($Experiment->id);
+    }
+
     private function getStatusId(string $table): int
     {
         $Db = Db::getConnection();

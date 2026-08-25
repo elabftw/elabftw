@@ -431,9 +431,9 @@
         params['owner'] = currentOwner;
       }
 
-      if (currentTags.length > 0) {
-        params['tags[]'] = currentTags;
-      }
+      currentTags.forEach((tag, index) => {
+        params[`tags[${index}]`] = tag;
+      });
 
       if (currentState.length > 0) {
         params['state'] = currentState;

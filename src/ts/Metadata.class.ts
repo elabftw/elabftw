@@ -108,11 +108,10 @@ export class Metadata {
 
     const multiValueHolder = el.closest('[data-purpose="multi-value-holder"]') as HTMLElement | null;
     if (multiValueHolder) {
-      const values = this.getMultiValues(multiValueHolder);
-      if (values === null) {
-        return false;
-      }
-      value = values;
+      // structural edits (add/remove row) shift value indexes: value_labels
+      // must be rebuilt together with value, so persist both via a full
+      // metadata save instead of the value-only field update.
+      return this.saveMultiValueHolder(multiValueHolder);
     }
 
     return this.updateMetadataField(fieldName, value);
@@ -390,6 +389,20 @@ export class Metadata {
     return row;
   }
 
+  /**
+   * Collect the labels of the rendered multi-value rows, index-aligned with
+   * the values. Rows without a badge yield an empty string so the
+   * value <-> label association survives add/remove/reorder operations.
+   */
+  getMultiValueLabels(holder: HTMLElement): string[] {
+    const labels: Array<string> = [];
+    for (const row of Array.from(holder.querySelectorAll<HTMLElement>('[data-purpose="multi-value-row"]'))) {
+      const badge = row.querySelector<HTMLElement>('[data-purpose="value-label"]');
+      labels.push(badge?.textContent ?? '');
+    }
+    return labels;
+  }
+
   saveMultiValueHolder(holder: HTMLElement): Promise<Response>|boolean {
     const fieldName = holder.dataset.field;
     if (!fieldName) {
@@ -399,7 +412,27 @@ export class Metadata {
     if (values === null) {
       return false;
     }
-    return this.updateMetadataField(fieldName, values);
+    // persist value and value_labels together: a value-only PATCH leaves
+    // stale labels behind after rows are removed or added.
+    return this.read().then(metadata => {
+      if (!metadata.extra_fields || !metadata.extra_fields[fieldName]) {
+        return this.updateMetadataField(fieldName, values);
+      }
+      metadata.extra_fields[fieldName].value = values;
+      const labels = this.getMultiValueLabels(holder);
+      // only keep a labels array when at least one row actually has one,
+      // so plain fields stay exactly as before
+      if (labels.some(label => label !== '')) {
+        metadata.extra_fields[fieldName].value_labels = labels;
+      } else {
+        delete metadata.extra_fields[fieldName].value_labels;
+      }
+      return this.save(metadata as ValidMetadata).then(response => {
+        this.editor.loadMetadata();
+        // re-render the fields so the UI reflects the persisted arrays
+        return this.display('edit').then(() => response);
+      });
+    });
   }
 
   getRandomId(): string {
@@ -439,15 +472,20 @@ export class Metadata {
       valueCell.append(this.generateViewableValue(properties, ''));
     } else {
       for (const [index, value] of values.entries()) {
-        valueCell.append(this.generateViewableValue(properties, value));
+        // keep each value and its label badge in a shared row container so
+        // the badge sits beside its value instead of on a separate line
+        const valueRow = document.createElement('div');
+        valueRow.classList.add('d-flex', 'align-items-center');
+        valueRow.append(this.generateViewableValue(properties, value));
         const label = properties.value_labels?.[index];
         if (label) {
           const labelBadge = document.createElement('span');
           labelBadge.classList.add('badge', 'badge-pill', 'badge-light', 'ml-2');
           labelBadge.dataset.purpose = 'value-label';
           labelBadge.textContent = label;
-          valueCell.append(labelBadge);
+          valueRow.append(labelBadge);
         }
+        valueCell.append(valueRow);
       }
     }
 

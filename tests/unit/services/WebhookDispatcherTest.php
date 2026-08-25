@@ -149,6 +149,28 @@ class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(WebhookState::Sending->value, (int) $this->getRow()['state']);
     }
 
+    /**
+     * When the drain runs out of time it hands back what it has not started, rather than
+     * leaving those rows in Sending until the stale window expires. The attempt is given
+     * back with them, since nothing was sent.
+     */
+    public function testReleasedRowsAreDueAgainWithoutBurningAnAttempt(): void
+    {
+        $Queue = new WebhooksQueue();
+        $claimed = $this->claimOurs($Queue);
+        $this->assertNotNull($claimed);
+        $this->assertEquals(1, (int) $this->getRow()['attempts']);
+
+        $this->assertEquals(1, $Queue->release(array($claimed)));
+
+        $row = $this->getRow();
+        $this->assertEquals(WebhookState::Queued->value, (int) $row['state']);
+        $this->assertEquals(0, (int) $row['attempts']);
+        $this->assertNull($row['claim_token']);
+        // due right away, it was never tried
+        $this->assertLessThanOrEqual(0, (int) $row['due_in_seconds']);
+    }
+
     private function claimOurs(WebhooksQueue $Queue): ?array
     {
         foreach ($Queue->claim(20) as $row) {

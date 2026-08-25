@@ -209,6 +209,31 @@ final class WebhooksQueue
     }
 
     /**
+     * Hand back rows that were claimed but never attempted, so they are due again at once
+     * instead of waiting out the stale window. The attempt is given back too: nothing was
+     * sent, so it should not count against the row's five tries.
+     *
+     * @param array<int, array<string, mixed>> $rows as returned by claim()
+     * @return int number of rows handed back
+     */
+    public function release(array $rows): int
+    {
+        $sql = 'UPDATE webhooks_queue
+            SET state = :queued, claim_token = NULL, attempts = attempts - 1
+            WHERE id = :id AND claim_token = :token';
+        $req = $this->Db->prepare($sql);
+        $released = 0;
+        foreach ($rows as $row) {
+            $req->bindValue(':queued', WebhookState::Queued->value, PDO::PARAM_INT);
+            $req->bindValue(':id', (int) $row['id'], PDO::PARAM_INT);
+            $req->bindValue(':token', (string) $row['claim_token']);
+            $this->Db->execute($req);
+            $released += $req->rowCount();
+        }
+        return $released;
+    }
+
+    /**
      * Rows left in Sending by a drain that died. Without this they would never be retried.
      */
     public function releaseStaleClaims(): int

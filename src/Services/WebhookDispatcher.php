@@ -17,6 +17,7 @@ use Elabftw\Models\WebhooksQueue;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
+use function array_slice;
 use function hash_hmac;
 use function max;
 use function min;
@@ -48,7 +49,10 @@ final class WebhookDispatcher
     /** rows taken per round */
     private const int BATCH_SIZE = 20;
 
-    /** stop starting new rounds after this many seconds, chronos ticks every 60 */
+    /**
+     * Stop taking on work after this many seconds. chronos ticks every 60, and a delivery
+     * already under way may still add up to REQUEST_TIMEOUT on top.
+     */
     private const int TIME_BUDGET = 45;
 
     private const int CONNECT_TIMEOUT = 5;
@@ -85,7 +89,14 @@ final class WebhookDispatcher
             if (empty($batch)) {
                 break;
             }
-            foreach ($batch as $row) {
+            foreach ($batch as $index => $row) {
+                // the deadline has to be checked per row, not per batch: a batch of slow
+                // targets would otherwise run for batch size times the request timeout, and
+                // the next chronos tick would start on top of this one
+                if (time() >= $deadline) {
+                    $this->Queue->release(array_slice($batch, $index));
+                    break 2;
+                }
                 if ($this->deliver($row, $output)) {
                     $delivered++;
                 }

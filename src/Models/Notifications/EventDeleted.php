@@ -16,12 +16,16 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Enums\Notifications;
+use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
 use Elabftw\Services\Filter;
+use Elabftw\Services\TeamsHelper;
 use Override;
 
 use function _;
@@ -59,17 +63,24 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        if (!$this->canNotify()) {
+            throw new IllegalActionException();
+        }
         if (!empty($reqBody['msg'])) {
             $this->msg = Filter::body($reqBody['msg']);
         }
-        // target can be bookable_item, team or teamgroup
-        $this->target = EmailTarget::from($reqBody['target']);
+        $target = EmailTarget::tryFrom((string) ($reqBody['target'] ?? ''));
+        if ($target === null) {
+            throw new ImproperActionException('Invalid target for an event deletion notification.');
+        }
+        $this->target = $target;
+        $targetId = $this->getTargetId($reqBody);
         $range = array(
             'direction' => $reqBody['range_direction'] ?? null,
             'value' => $reqBody['range_value'] ?? null,
             'unit' => $reqBody['range_unit'] ?? null,
         );
-        $userids = Email::getIdsOfRecipients($this->target, $reqBody['targetid'], $range);
+        $userids = Email::getIdsOfRecipients($this->target, $targetId, $range);
         foreach ($userids as $userid) {
             $recipient = new Users($userid);
             $Notif = new self($recipient, $this->event, $this->actor, $this->msg, $this->target);
@@ -122,5 +133,37 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
             'msg' => $this->msg,
             'target' => $this->target,
         );
+    }
+
+    private function canNotify(): bool
+    {
+        $userid = $this->targetUser->getUserid();
+        if ($this->event['userid'] === $userid) {
+            return true;
+        }
+        return (new TeamsHelper($this->event['team']))->isAdminInTeam($userid);
+    }
+
+    private function getTargetId(array $reqBody): int
+    {
+        return match ($this->target) {
+            EmailTarget::Team => $this->event['team'],
+            EmailTarget::BookableItem,
+            EmailTarget::BookableItemRange => $this->event['item'],
+            EmailTarget::TeamGroup => $this->getTeamGroupTargetId((int) ($reqBody['targetid'] ?? 0)),
+            default => throw new ImproperActionException('Invalid target for an event deletion notification.'),
+        };
+    }
+
+    private function getTeamGroupTargetId(int $targetId): int
+    {
+        if ($targetId < 1) {
+            throw new ImproperActionException('A team group target is required.');
+        }
+        $teamGroup = (new TeamGroups($this->targetUser, $targetId))->readOne();
+        if ($teamGroup['team'] !== $this->event['team']) {
+            throw new ImproperActionException('The team group does not belong to the event team.');
+        }
+        return $targetId;
     }
 }

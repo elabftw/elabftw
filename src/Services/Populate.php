@@ -115,7 +115,6 @@ final class Populate
             $Teams = new Teams($Users, $teamid);
 
             $columns = array(
-                'visible',
                 'onboarding_email_body',
                 'onboarding_email_subject',
                 'onboarding_email_active',
@@ -137,6 +136,12 @@ final class Populate
             }
             for ($i = 0; $i < $iter; $i++) {
                 $this->createUser($teamid, array());
+            }
+            // Hide the team only after its users have been populated.
+            if (isset($team['visible'])) {
+                $Teams->patch(Action::Update, array(
+                    'visible' => (int) $team['visible'],
+                ));
             }
 
             // USER GROUPS

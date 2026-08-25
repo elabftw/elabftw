@@ -18,6 +18,9 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function array_column;
+use function count;
+
 class TeamsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
@@ -153,6 +156,46 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         $this->Teams->getTeamsFromIdOrNameOrOrgidArray(array('Not existing'), false);
+    }
+
+    public function testHiddenTeamCannotBeResolvedByExternalIdentifier(): void
+    {
+        $name = 'Hidden external auth team';
+        $id = $this->Teams->postAction(Action::Create, array('name' => $name));
+        $HiddenTeam = new Teams(new Users(1, 1), $id);
+        $orgid = 'hidden-external-auth-team';
+        $HiddenTeam->patch(Action::Update, array(
+            'visible' => 0,
+            'orgid' => $orgid,
+        ));
+
+        try {
+            $visibleTeam = $this->Teams->readAllVisible()[0];
+            $resolvedTeams = $this->Teams->getTeamsFromIdOrNameOrOrgidArray(array(
+                (string) $id,
+                $name,
+                $orgid,
+                (string) $visibleTeam['id'],
+            ));
+            $this->assertSame(array($visibleTeam['id']), array_column($resolvedTeams, 'id'));
+
+            try {
+                $this->Teams->getTeamsFromIdOrNameOrOrgidArray(array((string) $id, $name, $orgid));
+                $this->fail('A hidden team was resolved from an external identifier.');
+            } catch (ImproperActionException) {
+                $this->addToAssertionCount(1);
+            }
+
+            $teamCount = count($this->Teams->selectAll());
+            try {
+                $this->Teams->getTeamsFromIdOrNameOrOrgidArray(array($orgid), true);
+                $this->fail('A hidden team caused a duplicate team to be created.');
+            } catch (ImproperActionException) {
+                $this->assertCount($teamCount, $this->Teams->selectAll());
+            }
+        } finally {
+            $HiddenTeam->destroy();
+        }
     }
 
     public function testCannotCreateWithoutTeamPermission(): void

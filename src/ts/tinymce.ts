@@ -225,6 +225,10 @@ export function getTinymceBaseConfig(page: string): object {
     isToolbarSticky = true;
   }
 
+  // prevent autoresize from collapsing an empty editor while allowing editors with content to shrink
+  const bodyArea = document.getElementById('body_area') as HTMLTextAreaElement | null;
+  const minHeight = page === 'edit' && !bodyArea?.value.trim() ? 500 : 100;
+
   return {
     selector: '.mceditable',
     table_default_styles: {
@@ -243,6 +247,7 @@ export function getTinymceBaseConfig(page: string): object {
     // remove the "Upgrade" button
     promotion: false,
     autoresize_bottom_margin: 50,
+    min_height: minHeight,
     // autoresize plugin will disallow manually resizing, but setting resize to true will make the scrollbar disappear
     //resize: true,
     plugins: plugins,

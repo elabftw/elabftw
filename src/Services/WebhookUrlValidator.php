@@ -45,8 +45,10 @@ use const PHP_URL_FRAGMENT;
  *
  * In DEV_MODE the address checks are relaxed, because a development instance talks to a
  * receiver on a private address by definition.
+ *
+ * @final mocked in tests
  */
-final class WebhookUrlValidator
+class WebhookUrlValidator
 {
     public const int MAX_URL_LENGTH = 512;
 

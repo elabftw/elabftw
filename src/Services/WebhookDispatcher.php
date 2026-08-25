@@ -18,15 +18,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 use function array_slice;
+use function filter_var;
 use function hash_hmac;
+use function implode;
 use function max;
 use function min;
 use function parse_url;
 use function sprintf;
+use function str_contains;
 use function strtolower;
 use function time;
+use function trim;
 
 use const CURLOPT_RESOLVE;
+use const FILTER_VALIDATE_IP;
 
 /**
  * Drains the webhook queue: this is the only place that talks to the outside world.
@@ -205,12 +210,25 @@ final class WebhookDispatcher
         if ($parts === false || empty($parts['host'])) {
             return array();
         }
-        $host = strtolower($parts['host']);
-        $port = $parts['port'] ?? (strtolower($parts['scheme'] ?? 'https') === 'http' ? 80 : 443);
-        $list = array();
-        foreach ($this->validator->resolve($host) as $address) {
-            $list[] = sprintf('%s:%d:%s', $host, $port, $address);
+        $host = strtolower(trim($parts['host'], '[]'));
+        // an address literal has no name to rebind, so there is nothing to pin: curl resolves
+        // it to itself. Building an entry here would only hand curl a host part containing
+        // colons, which it cannot read.
+        if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
+            return array();
         }
-        return $list;
+        $port = $parts['port'] ?? (strtolower($parts['scheme'] ?? 'https') === 'http' ? 80 : 443);
+        $addresses = array();
+        foreach ($this->validator->resolve($host) as $address) {
+            // curl splits the entry on colons, so an ipv6 address has to be bracketed or the
+            // entry is misread and the pinning quietly stops working
+            $addresses[] = str_contains($address, ':') ? sprintf('[%s]', $address) : $address;
+        }
+        if (empty($addresses)) {
+            return array();
+        }
+        // one entry per host and port, with the addresses comma separated: repeating the
+        // same host and port in several entries makes curl keep only one of them
+        return array(sprintf('%s:%d:%s', $host, $port, implode(',', $addresses)));
     }
 }

@@ -140,10 +140,14 @@ final class WebhooksQueue
         $req->bindValue(':limit', $limit, PDO::PARAM_INT);
         $this->Db->execute($req);
 
+        // enabled is checked again here: a webhook switched off between the two statements
+        // would otherwise still be handed to the dispatcher. This narrows the window rather
+        // than closing it, since a webhook can also be switched off while a request is in
+        // flight, which no amount of coordination can catch.
         $sql = 'SELECT q.id, q.event, q.event_id, q.body, q.attempts, q.claim_token, w.id AS webhook_id, w.url, w.secret
             FROM webhooks_queue AS q
             INNER JOIN webhooks AS w ON (w.id = q.webhooks_id)
-            WHERE q.claim_token = :token
+            WHERE q.claim_token = :token AND w.enabled = 1
             ORDER BY q.id ASC';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':token', $token);

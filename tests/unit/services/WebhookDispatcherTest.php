@@ -25,6 +25,8 @@ use Symfony\Component\Console\Output\NullOutput;
 
 use function hash_hmac;
 
+use const CURLOPT_RESOLVE;
+
 class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
@@ -68,9 +70,8 @@ class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
     {
         $this->send(new Response(200, array(), '{"ok":true}'));
 
-        $this->assertCount(1, $this->captured);
-        [$url, $options] = $this->captured[0];
-        $this->assertEquals('https://192.0.2.30/hook', $url);
+        $options = $this->capturedFor('https://192.0.2.30/hook');
+        $this->assertNotNull($options);
 
         $expected = 'sha256=' . hash_hmac('sha256', $options['body'], $this->secret);
         $this->assertEquals($expected, $options['headers'][WebhookDispatcher::SIGNATURE_HEADER]);
@@ -113,7 +114,7 @@ class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
 
         $this->send(new Response(200, array(), '{"ok":true}'));
 
-        $this->assertCount(0, $this->captured);
+        $this->assertNull($this->capturedFor('https://192.0.2.30/hook'));
         $this->assertEquals(WebhookState::Queued->value, (int) $this->getRow()['state']);
     }
 
@@ -150,6 +151,48 @@ class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * The pinning is the defence against a second dns answer, so the entry has to be in the
+     * shape curl actually reads: one entry per host and port, addresses comma separated,
+     * ipv6 in brackets. Get it wrong and curl falls back to resolving on its own, silently.
+     */
+    public function testResolveEntryIsInCurlsFormat(): void
+    {
+        $webhookId = new InstanceWebhooks(true)->postAction(Action::Create, array(
+            'name' => 'named target',
+            'url' => 'https://hook.example.test:8443/hook',
+            'events' => array(WebhookEvent::ExperimentCreated->value),
+        ));
+        WebhookEmitter::reset();
+        $this->getFreshExperiment();
+
+        // a stub, because the test environment has no dns and the point here is the format
+        $validatorStub = $this->createStub(WebhookUrlValidator::class);
+        $validatorStub->method('resolve')->willReturn(array('198.51.100.7', '2001:db8::1'));
+        $this->sendWith($validatorStub, new Response(200, array(), '{"ok":true}'));
+
+        $options = $this->capturedFor('https://hook.example.test:8443/hook');
+        $this->assertNotNull($options);
+        $this->assertEquals(
+            array('hook.example.test:8443:198.51.100.7,[2001:db8::1]'),
+            $options['curl'][CURLOPT_RESOLVE],
+        );
+
+        new InstanceWebhooks(true, $webhookId)->destroy();
+    }
+
+    /**
+     * An address literal has no name to rebind, so there is nothing to pin.
+     */
+    public function testAddressLiteralGetsNoResolveEntry(): void
+    {
+        $this->send(new Response(200, array(), '{"ok":true}'));
+
+        $options = $this->capturedFor('https://192.0.2.30/hook');
+        $this->assertNotNull($options);
+        $this->assertEquals(array(), $options['curl'][CURLOPT_RESOLVE]);
+    }
+
+    /**
      * When the drain runs out of time it hands back what it has not started, rather than
      * leaving those rows in Sending until the stale window expires. The attempt is given
      * back with them, since nothing was sent.
@@ -171,6 +214,22 @@ class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertLessThanOrEqual(0, (int) $row['due_in_seconds']);
     }
 
+    /**
+     * The queue is shared, so a test looks at its own delivery rather than at the first one
+     * that happened to go out.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function capturedFor(string $url): ?array
+    {
+        foreach ($this->captured as [$captureUrl, $options]) {
+            if ($captureUrl === $url) {
+                return $options;
+            }
+        }
+        return null;
+    }
+
     private function claimOurs(WebhooksQueue $Queue): ?array
     {
         foreach ($Queue->claim(20) as $row) {
@@ -183,6 +242,11 @@ class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
 
     private function send(Response $response): void
     {
+        $this->sendWith(new WebhookUrlValidator(false), $response);
+    }
+
+    private function sendWith(WebhookUrlValidator $validator, Response $response): void
+    {
         $getterStub = $this->createStub(HttpGetter::class);
         $getterStub->method('post')->willReturnCallback(
             function (string $url, array $options) use ($response): Response {
@@ -190,8 +254,7 @@ class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
                 return $response;
             }
         );
-        // not strict: the target is a documentation address, there is nothing to resolve
-        new WebhookDispatcher($getterStub, new WebhookUrlValidator(false))->send(new NullOutput());
+        new WebhookDispatcher($getterStub, $validator)->send(new NullOutput());
     }
 
     private function getRow(): array

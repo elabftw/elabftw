@@ -47,12 +47,23 @@ export async function fileToWorkbook(file: File): Promise<SpreadsheetWorkbook> {
 }
 
 const sheetToSpreadsheetData = (worksheet: WorkSheet): Cell[][] => {
+  const ref = worksheet['!ref'];
+  if (!ref) return [];
+  const range = utils.decode_range(ref);
+  const rowCount = range.e.r - range.s.r + 1;
+  const columnCount = range.e.c - range.s.c + 1;
+  if (rowCount > MAX_SPREADSHEET_ROWS || rowCount * columnCount > MAX_SPREADSHEET_CELLS) {
+    throw new Error('Uploaded worksheet exceeds spreadsheet limits.');
+  }
   const data = utils.sheet_to_json(worksheet, { header: 1, defval: '', raw: true, blankrows: true }) as Cell[][];
   for (const address of Object.keys(worksheet)) {
     if (address.startsWith('!')) continue;
     const formula = worksheet[address]?.f;
     if (typeof formula !== 'string') continue;
-    const { r, c } = utils.decode_cell(address);
+    const cell = utils.decode_cell(address);
+    const r = cell.r - range.s.r;
+    const c = cell.c - range.s.c;
+    if (r < 0 || c < 0 || r >= rowCount || c >= columnCount) continue;
     while (data.length <= r) data.push([]);
     while (data[r].length <= c) data[r].push('');
     data[r][c] = `=${formula}`;

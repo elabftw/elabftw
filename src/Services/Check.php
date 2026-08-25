@@ -163,7 +163,7 @@ final class Check
 
     public static function accessKey(string $ak): string
     {
-        if (preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-(?:1[0-9A-F]{3}-[0-9A-F]{4}|4[0-9A-F]{3}-[89AB][0-9A-F]{3})-[0-9A-F]{12}$/i', $ak) === 1) {
+        if (preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-(?:1[0-9A-F]{3}-[89AB][0-9A-F]{3}|4[0-9A-F]{3}-[89AB][0-9A-F]{3})-[0-9A-F]{12}$/i', $ak) === 1) {
             return $ak;
         }
         throw new ImproperActionException('Incorrect value for access key!');

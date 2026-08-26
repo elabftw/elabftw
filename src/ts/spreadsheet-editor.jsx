@@ -29,11 +29,14 @@ function SpreadsheetEditor() {
   const [workbook, setWorkbook] = useState([{ name: 'Sheet1', data: [[]] }]);
   const [spreadsheetRevision, setSpreadsheetRevision] = useState(0);
   const isDirtyRef = useRef(false);
+  const portRef = useRef(null);
+  const workbookRef = useRef(workbook);
+  const workbookReaderRef = useRef(null);
 
   // on changes in the spreadsheet, notify that there's unsaved changes
   const setUnsavedWarning = (visible) => {
     isDirtyRef.current = visible;
-    window.parent.postMessage({ type: 'jss-dirty', dirty: visible }, '*');
+    portRef.current?.postMessage({ type: 'jss-dirty', dirty: visible });
   };
 
   const markUnsaved = () => setUnsavedWarning(true);
@@ -49,25 +52,47 @@ function SpreadsheetEditor() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  // load an attachment into the editor, capture filename & id
+  // Establish a private channel before accepting spreadsheet data.
   useEffect(() => {
-    const onMessage = (event) => {
-      if (event.source !== window.parent) return;
-      if (event.data?.type === 'jss-ping') {
-        window.parent.postMessage({ type: 'jss-ready' }, '*');
-      } else if (event.data?.type === 'jss-load-workbook') {
+    const onPortMessage = (event) => {
+      if (event.data?.type === 'jss-load-workbook') {
         const { workbook: nextWorkbook } = event.data.detail || {};
         if (!isWorkbook(nextWorkbook)) return;
+        workbookRef.current = nextWorkbook;
         setWorkbook(nextWorkbook);
         setSpreadsheetRevision(revision => revision + 1);
         setUnsavedWarning(false);
       } else if (event.data?.type === 'jss-saved') {
         setUnsavedWarning(false);
+      } else if (event.data?.type === 'jss-workbook-request' && typeof event.data.requestId === 'string') {
+        portRef.current?.postMessage({
+          type: 'jss-workbook-response',
+          requestId: event.data.requestId,
+          workbook: workbookReaderRef.current?.() ?? workbookRef.current,
+        });
+      }
+    };
+    const onMessage = (event) => {
+      if (event.source !== window.parent) return;
+      if (event.data?.type === 'jss-ping') {
+        window.parent.postMessage({ type: 'jss-ready' }, '*');
+      } else if (event.data?.type === 'jss-connect' && !portRef.current) {
+        const port = event.ports?.[0];
+        if (!port) return;
+        portRef.current = port;
+        port.addEventListener('message', onPortMessage);
+        port.start();
+        port.postMessage({ type: 'jss-connected' });
       }
     };
     window.addEventListener('message', onMessage);
     window.parent.postMessage({ type: 'jss-ready' }, '*');
-    return () => window.removeEventListener('message', onMessage);
+    return () => {
+      window.removeEventListener('message', onMessage);
+      portRef.current?.removeEventListener('message', onPortMessage);
+      portRef.current?.close();
+      portRef.current = null;
+    };
   }, []);
 
   /* local import/export actions included in the toolbar */
@@ -78,10 +103,11 @@ function SpreadsheetEditor() {
     if (!file) return;
     try {
       const nextWorkbook = await fileToWorkbook(file);
+      workbookRef.current = nextWorkbook;
       setWorkbook(nextWorkbook);
       setSpreadsheetRevision(revision => revision + 1);
       setUnsavedWarning(true);
-      window.parent.postMessage({ type: 'jss-new-document' }, '*');
+      portRef.current?.postMessage({ type: 'jss-new-document' });
     } catch (error) {
       notify.error(error instanceof Error ? error.message : 'Unexpected error while importing spreadsheet.');
     } finally {
@@ -92,10 +118,11 @@ function SpreadsheetEditor() {
   const clearSpreadsheet = () => {
     if (!window.confirm(i18next.t('confirm-clear-spreadsheet'))) return;
     const empty = [{ name: 'Sheet1', data: [[]] }];
+    workbookRef.current = empty;
     setWorkbook(empty);
     setSpreadsheetRevision(revision => revision + 1);
     setUnsavedWarning(true);
-    window.parent.postMessage({ type: 'jss-new-document' }, '*');
+    portRef.current?.postMessage({ type: 'jss-new-document' });
   };
 
   const toggleFullscreen = () => {
@@ -133,7 +160,13 @@ function SpreadsheetEditor() {
     <>
       <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
       {/* move Spreadsheet into a child component to safely re-init on file uploads */}
-      <SpreadsheetInner key={spreadsheetRevision} workbook={workbook} buildToolbar={buildToolbar} onSpreadsheetChange={markUnsaved}/>
+      <SpreadsheetInner
+        key={spreadsheetRevision}
+        workbook={workbook}
+        workbookReaderRef={workbookReaderRef}
+        buildToolbar={buildToolbar}
+        onSpreadsheetChange={markUnsaved}
+      />
     </>
   );
 }
@@ -141,27 +174,22 @@ const isWorkbook = (value) => Array.isArray(value)
   && value.length > 0
   && value.every(worksheet => typeof worksheet?.name === 'string' && Array.isArray(worksheet.data));
 
-function SpreadsheetInner({ workbook, buildToolbar, onSpreadsheetChange }) {
+function SpreadsheetInner({ workbook, workbookReaderRef, buildToolbar, onSpreadsheetChange }) {
   const spreadsheetRef = useRef(null);
   useEffect(() => {
-    const onMessage = (event) => {
-      if (event.source !== window.parent) return;
-      if (event.data?.type !== 'jss-workbook-request' || typeof event.data.requestId !== 'string') return;
+    workbookReaderRef.current = () => {
       const worksheets = spreadsheetRef.current;
-      window.parent.postMessage({
-        type: 'jss-workbook-response',
-        requestId: event.data.requestId,
-        workbook: Array.isArray(worksheets) && worksheets.length > 0
-          ? worksheets.map((worksheet, index) => ({
-            name: worksheet.options?.worksheetName || workbook[index]?.name || `Sheet${index + 1}`,
-            data: worksheet.getData?.() ?? workbook[index]?.data ?? [[]],
-          }))
-          : workbook,
-      }, '*');
+      return Array.isArray(worksheets) && worksheets.length > 0
+        ? worksheets.map((worksheet, index) => ({
+          name: worksheet.options?.worksheetName || workbook[index]?.name || `Sheet${index + 1}`,
+          data: worksheet.getData?.() ?? workbook[index]?.data ?? [[]],
+        }))
+        : workbook;
     };
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
-  }, [workbook]);
+    return () => {
+      workbookReaderRef.current = null;
+    };
+  }, [workbook, workbookReaderRef]);
   return (
     <Spreadsheet
       ref={spreadsheetRef}
@@ -169,6 +197,7 @@ function SpreadsheetInner({ workbook, buildToolbar, onSpreadsheetChange }) {
       toolbar={buildToolbar}
       onchange={onSpreadsheetChange}
       oncreateworksheet={onSpreadsheetChange}
+      ondeleteworksheet={onSpreadsheetChange}
     >
       {workbook.map((worksheet, index) => (
         <Worksheet

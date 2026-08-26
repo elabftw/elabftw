@@ -21,6 +21,7 @@ const MAX_SPREADSHEET_ROWS = 100_000;
 const MAX_WORKSHEETS = 1_000;
 const MAX_CELL_LENGTH = 1_000_000;
 const RESPONSE_TIMEOUT_MS = 10_000;
+let spreadsheetPortPromise: Promise<MessagePort> | null = null;
 
 export const isSpreadsheetIframeMessage = (event: MessageEvent, iframeWindow: Window | null): boolean => {
   // The iframe sandbox intentionally omits allow-same-origin, so its origin is opaque.
@@ -50,19 +51,24 @@ const sheetToSpreadsheetData = (worksheet: WorkSheet): Cell[][] => {
   const ref = worksheet['!ref'];
   if (!ref) return [];
   const range = utils.decode_range(ref);
-  const rowCount = range.e.r - range.s.r + 1;
-  const columnCount = range.e.c - range.s.c + 1;
+  // Keep the original coordinates so formula references retain their meaning.
+  const rowCount = range.e.r + 1;
+  const columnCount = range.e.c + 1;
   if (rowCount > MAX_SPREADSHEET_ROWS || rowCount * columnCount > MAX_SPREADSHEET_CELLS) {
     throw new Error('Uploaded worksheet exceeds spreadsheet limits.');
   }
-  const data = utils.sheet_to_json(worksheet, { header: 1, defval: '', raw: true, blankrows: true }) as Cell[][];
+  const data = utils.sheet_to_json(worksheet, {
+    header: 1,
+    defval: '',
+    raw: true,
+    blankrows: true,
+    range: { s: { r: 0, c: 0 }, e: range.e },
+  }) as Cell[][];
   for (const address of Object.keys(worksheet)) {
     if (address.startsWith('!')) continue;
     const formula = worksheet[address]?.f;
     if (typeof formula !== 'string') continue;
-    const cell = utils.decode_cell(address);
-    const r = cell.r - range.s.r;
-    const c = cell.c - range.s.c;
+    const { r, c } = utils.decode_cell(address);
     if (r < 0 || c < 0 || r >= rowCount || c >= columnCount) continue;
     while (data.length <= r) data.push([]);
     while (data[r].length <= c) data[r].push('');
@@ -100,9 +106,8 @@ export async function loadInSpreadsheetEditor(storage: string, path: string, nam
     if (!res.ok) throw new Error('Failed to fetch uploaded file.');
     const buffer = await res.arrayBuffer();
     const workbook = parseFileToWorkbook(buffer, inferFileTypeFromName(name));
-    const iframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
-    await waitForSpreadsheetEditor(iframe);
-    iframe.contentWindow?.postMessage({ type: 'jss-load-workbook', detail: { workbook, name, uploadId } }, '*');
+    const port = await getSpreadsheetEditorPort();
+    port.postMessage({ type: 'jss-load-workbook', detail: { workbook, name, uploadId } });
     return true;
   } catch (e) {
     notify.error(e.message || 'Unexpected error while loading spreadsheet.');
@@ -111,22 +116,40 @@ export async function loadInSpreadsheetEditor(storage: string, path: string, nam
 }
 
 // helpers
-const waitForSpreadsheetEditor = (iframe: HTMLIFrameElement): Promise<void> => {
+const getSpreadsheetEditorPort = (): Promise<MessagePort> => {
+  if (spreadsheetPortPromise) return spreadsheetPortPromise;
+  const iframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
   const iframeWindow = iframe?.contentWindow;
   if (!iframeWindow) return Promise.reject(new Error('Spreadsheet editor is not available.'));
 
-  return new Promise<void>((resolve, reject) => {
+  const connection = new Promise<MessagePort>((resolve, reject) => {
+    let channel: MessageChannel | null = null;
+    let portMessageHandler: ((event: MessageEvent) => void) | null = null;
     const cleanup = () => {
       window.clearTimeout(timeout);
       window.clearInterval(interval);
       iframe.removeEventListener('load', ping);
       window.removeEventListener('message', onMessage);
+      if (channel && portMessageHandler) {
+        channel.port1.removeEventListener('message', portMessageHandler);
+      }
     };
     const onMessage = (event: MessageEvent) => {
       if (!isSpreadsheetIframeMessage(event, iframeWindow)) return;
       if (event.data?.type !== 'jss-ready') return;
-      cleanup();
-      resolve();
+      window.clearInterval(interval);
+      iframe.removeEventListener('load', ping);
+      window.removeEventListener('message', onMessage);
+      channel = new MessageChannel();
+      portMessageHandler = (portEvent: MessageEvent) => {
+        if (portEvent.data?.type !== 'jss-connected') return;
+        cleanup();
+        channel.port1.start();
+        resolve(channel.port1);
+      };
+      channel.port1.addEventListener('message', portMessageHandler);
+      channel.port1.start();
+      iframeWindow.postMessage({ type: 'jss-connect' }, '*', [channel.port2]);
     };
     const ping = () => iframeWindow.postMessage({ type: 'jss-ping' }, '*');
     const timeout = window.setTimeout(() => {
@@ -139,7 +162,23 @@ const waitForSpreadsheetEditor = (iframe: HTMLIFrameElement): Promise<void> => {
     iframe.addEventListener('load', ping, { once: true });
     ping();
   });
+  spreadsheetPortPromise = connection.catch(error => {
+    spreadsheetPortPromise = null;
+    throw error;
+  });
+  return spreadsheetPortPromise;
 };
+
+export async function listenForSpreadsheetMessages(listener: (event: MessageEvent) => void): Promise<void> {
+  const port = await getSpreadsheetEditorPort();
+  port.addEventListener('message', listener);
+  port.start();
+}
+
+export async function sendSpreadsheetMessage(message: object): Promise<void> {
+  const port = await getSpreadsheetEditorPort();
+  port.postMessage(message);
+}
 
 const isCell = (value: unknown): value is Cell => {
   return value === null || ['string', 'number', 'boolean'].includes(typeof value);
@@ -176,19 +215,15 @@ const isValidWorkbook = (value: unknown): value is SpreadsheetWorkbook => {
   return true;
 };
 
-export function requestSpreadsheetWorkbook(): Promise<SpreadsheetWorkbook> {
-  const iframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
-  const iframeWindow = iframe?.contentWindow;
-  if (!iframeWindow) return Promise.reject(new Error('Spreadsheet editor is not available.'));
-
+export async function requestSpreadsheetWorkbook(): Promise<SpreadsheetWorkbook> {
+  const port = await getSpreadsheetEditorPort();
   const requestId = crypto.randomUUID();
   return new Promise<SpreadsheetWorkbook>((resolve, reject) => {
     const cleanup = () => {
       window.clearTimeout(timeout);
-      window.removeEventListener('message', onMessage);
+      port.removeEventListener('message', onMessage);
     };
     const onMessage = (event: MessageEvent) => {
-      if (!isSpreadsheetIframeMessage(event, iframeWindow)) return;
       if (event.data?.type !== 'jss-workbook-response' || event.data.requestId !== requestId) return;
       cleanup();
       if (!isValidWorkbook(event.data.workbook)) {
@@ -202,8 +237,8 @@ export function requestSpreadsheetWorkbook(): Promise<SpreadsheetWorkbook> {
       reject(new Error('Spreadsheet editor did not respond.'));
     }, RESPONSE_TIMEOUT_MS);
 
-    window.addEventListener('message', onMessage);
-    iframeWindow.postMessage({ type: 'jss-workbook-request', requestId }, '*');
+    port.addEventListener('message', onMessage);
+    port.postMessage({ type: 'jss-workbook-request', requestId });
   });
 }
 

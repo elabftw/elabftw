@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import i18next from './i18n';
-import { clearForm, collectForm, delayConfirmation, populateUserModal, reloadElements } from './misc';
+import { clearForm, collectForm, delayConfirmation, getInput, populateUserModal, reloadElements } from './misc';
 import { ApiC } from './api';
 import { Action, Model } from './interfaces';
 import $ from 'jquery';
@@ -180,9 +180,9 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
   } else if (el.matches('[data-action="open-destroy-user2team-modal"]')) {
     const destroyButton = document.getElementById('destroyUser2teamButton') as HTMLButtonElement;
     destroyButton.dataset.teamid = el.dataset.teamid ?? '';
-    const firstname = (document.getElementById('userInput-firstname') as HTMLInputElement).value;
-    const lastname = (document.getElementById('userInput-lastname') as HTMLInputElement).value;
-    const email = (document.getElementById('userInput-email') as HTMLInputElement).value;
+    const firstname = getInput('userInput-firstname').value;
+    const lastname = getInput('userInput-lastname').value;
+    const email = getInput('userInput-email').value;
     document.getElementById('destroyUser2teamUser').textContent = `${firstname} ${lastname}`.trim() || email;
     document.getElementById('destroyUser2teamTeam').textContent = el.dataset.teamname ?? '';
 

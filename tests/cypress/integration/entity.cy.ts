@@ -73,6 +73,7 @@ describe('Experiments', () => {
     cy.get('button[title="More options"]').click();
     cy.get('button[data-action="toggle-modal"][data-target="deleteSelectedEntitiesModal"]').click();
     cy.get('button[data-action="delete-selected-entities"]').should('be.disabled');
+    // the delete button for some use-cases is voluntarily delayed for 2.5s
     cy.wait(2500);
     cy.get('button[data-action="delete-selected-entities"]').should('not.be.disabled').click();
   };

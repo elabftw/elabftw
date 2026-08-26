@@ -1008,6 +1008,8 @@ export function mkSpinStop(el: HTMLElement, oldHTML: string): void {
   el.removeAttribute('disabled');
 }
 
+// store the active timeout for each confirmation button without preventing
+// the button element from being garbage-collected when removed from DOM
 const confirmationTimeouts = new WeakMap<HTMLButtonElement, number>();
 
 export function delayConfirmation(button: HTMLButtonElement, delay = 2000): void {

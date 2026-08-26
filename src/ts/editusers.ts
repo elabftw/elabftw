@@ -16,9 +16,7 @@ import './users-table';
 
 document.getElementById('container')?.addEventListener('click', async (event) => {
   const el = (event.target as HTMLElement).closest<HTMLElement>('[data-action]');
-  if (!el) {
-    return;
-  }
+  if (!el) return;
   let userid = document.getElementById('editUserModal')?.dataset.userid;
   if (!userid) {
     userid = el.dataset.userid;

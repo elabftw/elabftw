@@ -207,6 +207,34 @@ if (navbar) {
 
 const container = document.getElementById('container')!;
 
+// tomSelect with searchable categories in the dropdown for the main Navbar
+const renderNavbarCategory = (
+  data: Record<string, unknown>,
+  escape: (value: string) => string,
+): string => {
+  const rawColor = String(data['color'] ?? '');
+  const color = /^[a-f0-9]{6}$/i.test(rawColor) ? rawColor : 'bdbdbd';
+  return `<div><span class="round-spot mr-1" style="background-color: #${color}"></span>${escape(String(data['text'] ?? ''))}</div>`;
+};
+
+document.querySelectorAll<HTMLSelectElement>('.navbar-category-select').forEach(select => {
+  // keep the Bootstrap navbar dropdown open while using TomSelect
+  select.closest('.navbar-category-picker')?.addEventListener('click', event => {
+    event.stopPropagation();
+  });
+  new TomSelect(select, { maxOptions: null, plugins: [
+    'dropdown_input',
+    'no_active_items',
+  ],
+  onChange(value: string | number) {
+    if (value) {
+      window.location.href = String(value);
+    }
+  },
+  render: { option: renderNavbarCategory, item: renderNavbarCategory },
+  });
+});
+
 on('set-theme', (el: HTMLElement) => {
   const targetTheme = Number.parseInt(el.dataset.themeVariant ?? '', 10);
   if (!isThemeVariant(targetTheme)) {

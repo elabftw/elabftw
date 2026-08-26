@@ -103,10 +103,19 @@
                 {% set isActive = scriptName == 'experiments-status.php' %}
                 <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_experiments_status and not App.Users.isAdmin ? 'disabled' }}' href='experiments-status.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-list-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Experiment status'|trans }}</a>
                 <div class='dropdown-divider'></div>
-                {% for entity in App.experimentsCategoryArr|filter(c => c.is_current_team == 1) %}
-                  {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('category') == entity.id %}
-                  <a class='dropdown-item {{ isActive ? 'active' }}' href='experiments.php?category={{ entity.id }}' {{ isActive ? 'aria-current="page"' }}><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
-                {% endfor %}
+                  {% set experimentCategories = App.experimentsCategoryArr|filter(c => c.is_current_team == 1) %}
+                  {% if experimentCategories|length %}
+                      <div class='dropdown-item navbar-category-picker'>
+                          <label class='sr-only' for='nav-experiments-category'>{{ 'Experiment categories'|trans }}</label>
+                          <select id='nav-experiments-category' class='form-control navbar-category-select' autocomplete='off'>
+                              <option value=''>{{ 'Browse by category'|trans }}</option>
+                              {% for entity in experimentCategories %}
+                                  {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('category') == entity.id %}
+                                  <option value='experiments.php?category={{ entity.id }}' data-color='{{ entity.color }}' {{ isActive ? 'selected' }}>{{ entity.title }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  {% endif %}
                 </div>
             </div>
             <div class='nav-item dropdown'>
@@ -142,10 +151,19 @@
                 {% set isActive = scriptName == 'resources-status.php' %}
                 <a class='dropdown-item {{ isActive ? 'active' }} {{ not App.Teams.teamArr.users_canwrite_resources_status and not App.Users.isAdmin ? 'disabled' }}' href='resources-status.php' {{ isActive ? 'aria-current="page"' }}><i class='fas fa-list-check fa-fw mr-1 {{ isActive ? 'color-white' }}'></i>{{ 'Resource status'|trans }}</a>
                 <div class='dropdown-divider'></div>
-                {% for entity in App.itemsCategoryArr|filter(c => c.is_current_team == 1) %}
-                  {% set isActive = scriptName == 'database.php' and App.Request.query.get('category') == entity.id %}
-                  <a class='dropdown-item {{ isActive ? 'active' }}' href='database.php?category={{ entity.id }}' {{ isActive ? 'aria-current="page"' }}><span class='round-spot mr-1' style='background-color: #{{ entity.color }}'></span>{{ entity.title }}</a>
-                {% endfor %}
+                  {% set resourceCategories = App.itemsCategoryArr|filter(c => c.is_current_team == 1) %}
+                  {% if resourceCategories|length %}
+                      <div class='dropdown-item navbar-category-picker'>
+                          <label class='sr-only' for='nav-resources-category'>{{ 'Resource categories'|trans }}</label>
+                          <select id='nav-resources-category' class='form-control navbar-category-select' autocomplete='off'>
+                              <option value=''>{{ 'Browse by category'|trans }}</option>
+                              {% for entity in resourceCategories %}
+                                  {% set isActive = scriptName == 'database.php' and App.Request.query.get('category') == entity.id %}
+                                  <option value='database.php?category={{ entity.id }}' data-color='{{ entity.color }}' {{ isActive ? 'selected' }}>{{ entity.title }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                  {% endif %}
                 </div>
             </div>
             {% set isActive = scriptName == 'scheduler.php' %}

@@ -104,13 +104,20 @@ describe('Metadata Extra fields', () => {
     // one matched, letting the read run before the label is stored
     cy.intercept('PATCH', '/api/v2/experiments/*').as('saveField');
 
-    // add a label to the existing field. the modal is prefilled asynchronously
-    // from MetadataC.read(), so wait for that before typing, or the callback
-    // overwrites what was typed
+    // add a label to the existing field. the prefill reads the entity through
+    // MetadataC.read(), and
+    // fillFieldLabelInputs() clears the label input when it resolves, so typing
+    // before that loses characters. no input value can gate this: the key input
+    // still holds the name addMetadataField() typed, and text is the type select's
+    // own default, so both are already set before the callback runs. wait for the
+    // request itself instead
+    cy.intercept('GET', '/api/v2/experiments/*').as('readForEdit');
     cy.get('[data-action="metadata-edit-field"]').first().click();
     cy.get('#fieldBuilderModal').should('be.visible');
-    cy.get('#newFieldTypeSelect').should('have.value', 'text');
-    cy.get('#newFieldLabelTextInput').clear().type('Unverified');
+    cy.wait('@readForEdit');
+    cy.get('#newFieldLabelTextInput').should('have.value', '');
+    cy.get('#newFieldLabelTextInput').type('Unverified');
+    cy.get('#newFieldLabelTextInput').should('have.value', 'Unverified');
     cy.get('#newFieldLabelColorInput').invoke('val', '#e6614c').trigger('input');
     cy.get('[data-action="edit-extra-field"]').click();
     cy.wait('@saveField');

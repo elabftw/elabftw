@@ -1228,6 +1228,13 @@ the form-control fails to do that so we do the border ourselves */
   white-space: nowrap;
 }
 
+/* the label sits at the right edge of the field box; the parent is a flex
+   container, so the auto margin is what pushes it there */
+.extra-field-label-wrapper {
+  margin-left: auto;
+  padding-left: 0.5rem;
+}
+
 /* make the details shrink-to-fit and establish a positioning context */
 .suggested-tags {
   display: inline-block;

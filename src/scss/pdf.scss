@@ -141,10 +141,17 @@ tr:nth-child(odd) {
   white-space: nowrap;
 }
 
-/* the pdf stylesheet does not ship the bootstrap flex utilities, so float the
-   label right instead of relying on d-flex/ml-auto from the view page markup */
+/* the pdf stylesheet does not ship the bootstrap flex utilities, so the label
+   cannot sit beside the value the way it does on the view page. It follows the
+   field content on its own line instead, indented to the edge of the value so
+   it still reads as belonging to that field. Floating it right is not worth it,
+   both variants were rendered and compared: mpdf ignores a float on an
+   auto-width block, and giving it a width parks the label at the right margin,
+   half a page away from the field it labels. Emitting the wrapper before the
+   content does float it, but it then becomes the first content of the <li> and
+   mpdf moves the list marker onto the label's line, leaving the field name
+   without one. */
 .extra-field-label-wrapper {
-  float: right;
   padding-left: 0.5em;
 }
 

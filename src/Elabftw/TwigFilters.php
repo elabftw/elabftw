@@ -149,15 +149,28 @@ final class TwigFilters
                     $value = self::formatMetadataValue($metadataType, $value, $newTab);
                 }
 
-                $labelHtml = self::formatMetadataLabel($field[MetadataEnum::Label->value] ?? null);
-                $final .= sprintf(
-                    '<div class="d-flex align-items-start"><div><h5 class="mb-0">%s</h5>%s<h6>%s%s</h6></div>%s</div>',
+                $fieldHtml = sprintf(
+                    '<h5 class="mb-0">%s</h5>%s<h6>%s%s</h6>',
                     Tools::eLabHtmlspecialchars($field['name']),
                     $description,
                     $value,
                     $unit,
-                    $labelHtml === '' ? '' : sprintf('<div class="extra-field-label-wrapper ml-auto pl-2">%s</div>', $labelHtml),
                 );
+                // only a field that actually carries a label gets wrapped, so a
+                // field without one produces exactly the markup it did before
+                $labelHtml = self::formatMetadataLabel($field[MetadataEnum::Label->value] ?? null);
+                if ($labelHtml !== '') {
+                    // the label stays after the field content. Putting it first
+                    // would let mpdf float it alongside the value, but it also
+                    // makes it the first content of the <li>, and mpdf then puts
+                    // the list marker on the label's line, at the right margin
+                    $fieldHtml = sprintf(
+                        '<div class="d-flex align-items-start"><div>%s</div><div class="extra-field-label-wrapper">%s</div></div>',
+                        $fieldHtml,
+                        $labelHtml,
+                    );
+                }
+                $final .= $fieldHtml;
                 $final .= '</li>';
             }
             $final .= '</ul></div>';
@@ -250,7 +263,7 @@ final class TwigFilters
         // neither custom properties nor color-mix and would otherwise render the
         // pill with no background at all
         return sprintf(
-            '<span class="extra-field-label ml-2" style="background-color: #%s; --label-bg: #%s"%s>%s</span>',
+            '<span class="extra-field-label" style="background-color: #%s; --label-bg: #%s"%s>%s</span>',
             self::tintColor($color),
             $color,
             $title,

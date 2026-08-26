@@ -432,7 +432,11 @@ export class Metadata {
         valueCell.append(this.generateViewableValue(properties, value));
       }
     }
-    valueCell.append(this.getLabel(properties));
+    // a field without a label must not gain an empty wrapper in the dom
+    const label = this.getLabel(properties);
+    if (label !== null) {
+      valueCell.append(label);
+    }
 
     row.append(nameCell, valueCell);
     return row;
@@ -740,13 +744,13 @@ export class Metadata {
 
   /**
    * Build the label of a field: a rounded pill tinted with the user color.
-   * Returns an empty wrapper if the field has no label.
+   * Returns null if the field has no label, so nothing is added to the dom.
    */
-  getLabel(properties: ExtraFieldProperties): HTMLElement {
-    const labelWrapper = document.createElement('div');
+  getLabel(properties: ExtraFieldProperties): HTMLElement|null {
     if (!properties.label?.text) {
-      return labelWrapper;
+      return null;
     }
+    const labelWrapper = document.createElement('div');
     // right-align it inside the cell, mirroring the view page where the label
     // sits at the right edge of the field box
     labelWrapper.classList.add('text-right');

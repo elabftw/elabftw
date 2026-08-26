@@ -225,6 +225,7 @@ document.querySelectorAll<HTMLSelectElement>('.navbar-category-select').forEach(
   new TomSelect(select, { maxOptions: null, plugins: [
     'dropdown_input',
     'no_active_items',
+    'remove_button',
   ],
   onChange(value: string | number) {
     if (value) {

@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import i18next from './i18n';
-import { clearForm, collectForm, populateUserModal, reloadElements } from './misc';
+import { clearForm, collectForm, delayConfirmation, populateUserModal, reloadElements } from './misc';
 import { ApiC } from './api';
 import { Action, Model } from './interfaces';
 import $ from 'jquery';
@@ -15,7 +15,10 @@ import { core } from './core';
 import './users-table';
 
 document.getElementById('container')?.addEventListener('click', async (event) => {
-  const el = (event.target as HTMLElement);
+  const el = (event.target as HTMLElement).closest<HTMLElement>('[data-action]');
+  if (!el) {
+    return;
+  }
   let userid = document.getElementById('editUserModal')?.dataset.userid;
   if (!userid) {
     userid = el.dataset.userid;
@@ -175,14 +178,39 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
     const requests = idList.map(userid => ApiC.patch(`${Model.User}/${userid}`, {action: Action.Add, team: core.currentTeam}));
     await Promise.all(requests);
     document.dispatchEvent(new CustomEvent('dataReload'));
+  // OPEN REMOVE USER FROM TEAM CONFIRMATION
+  } else if (el.matches('[data-action="open-destroy-user2team-modal"]')) {
+    const destroyButton = document.getElementById('destroyUser2teamButton') as HTMLButtonElement;
+    destroyButton.dataset.teamid = el.dataset.teamid ?? '';
+    const firstname = (document.getElementById('userInput-firstname') as HTMLInputElement).value;
+    const lastname = (document.getElementById('userInput-lastname') as HTMLInputElement).value;
+    const email = (document.getElementById('userInput-email') as HTMLInputElement).value;
+    document.getElementById('destroyUser2teamUser').textContent = `${firstname} ${lastname}`.trim() || email;
+    document.getElementById('destroyUser2teamTeam').textContent = el.dataset.teamname ?? '';
+
+    const editUserModal = $('#editUserModal');
+    const destroyUser2teamModal = $('#destroyUser2teamModal');
+    editUserModal.one('hidden.bs.modal', () => {
+      delayConfirmation(destroyButton);
+      destroyUser2teamModal.modal('show');
+    });
+    destroyUser2teamModal.one('hidden.bs.modal', () => editUserModal.modal('show'));
+    editUserModal.modal('hide');
   // REMOVE USER FROM TEAM
   } else if (el.matches('[data-action="destroy-user2team"]')) {
-    alert('It is currently not recommended to remove a user from a team. Use the "Is Archived" property instead to mark them as inactive.');
-    /*
-      const team = parseInt(el.dataset.teamid, 10);
-      ApiC.patch(`${Model.User}/${userid}`, {action: Action.Unreference, team: team})
-        .then(response => response.json()).then(user => populateUserModal(user));
+    const team = parseInt(el.dataset.teamid ?? '', 10);
+    if (!userid || Number.isNaN(team)) {
+      return;
     }
-   */
+    el.setAttribute('disabled', 'disabled');
+    try {
+      const response = await ApiC.patch(`${Model.User}/${userid}`, {action: Action.Unreference, team});
+      await populateUserModal(await response.json());
+      document.dispatchEvent(new CustomEvent('dataReload'));
+      $('#destroyUser2teamModal').modal('hide');
+    } catch (error) {
+      el.removeAttribute('disabled');
+      notify.error(error);
+    }
   }
 });

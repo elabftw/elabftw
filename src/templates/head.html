@@ -106,14 +106,15 @@
                   {% set experimentCategories = App.experimentsCategoryArr|filter(c => c.is_current_team == 1) %}
                   {% if experimentCategories|length %}
                       <div class='dropdown-item navbar-category-picker'>
-                          <label class='sr-only' for='nav-experiments-category'>{{ 'Experiment categories'|trans }}</label>
-                          <select id='nav-experiments-category' class='form-control navbar-category-select' autocomplete='off'>
+                          {% if App.devMode -%}<!-- [html-validate-disable prefer-native-element: suppress errors from tom-select] -->{%- endif %}
+                          <select id='nav-experiments-category' class='form-control navbar-category-select' autocomplete='off' aria-label='{{ 'Experiment categories'|trans }}'>
                               <option value=''>{{ 'Browse by category'|trans }}</option>
                               {% for entity in experimentCategories %}
                                   {% set isActive = scriptName == 'experiments.php' and App.Request.query.get('category') == entity.id %}
                                   <option value='experiments.php?category={{ entity.id }}' data-color='{{ entity.color }}' {{ isActive ? 'selected' }}>{{ entity.title }}</option>
                               {% endfor %}
                           </select>
+                          {% if App.devMode -%}<!-- [html-validate-enable prefer-native-element: suppress errors from tom-select] -->{%- endif %}
                       </div>
                   {% endif %}
                 </div>
@@ -154,14 +155,15 @@
                   {% set resourceCategories = App.itemsCategoryArr|filter(c => c.is_current_team == 1) %}
                   {% if resourceCategories|length %}
                       <div class='dropdown-item navbar-category-picker'>
-                          <label class='sr-only' for='nav-resources-category'>{{ 'Resource categories'|trans }}</label>
-                          <select id='nav-resources-category' class='form-control navbar-category-select' autocomplete='off'>
+                          {% if App.devMode -%}<!-- [html-validate-disable prefer-native-element: suppress errors from tom-select] -->{%- endif %}
+                          <select id='nav-resources-category' class='form-control navbar-category-select' autocomplete='off' aria-label='{{ 'Resource categories'|trans }}'>
                               <option value=''>{{ 'Browse by category'|trans }}</option>
                               {% for entity in resourceCategories %}
                                   {% set isActive = scriptName == 'database.php' and App.Request.query.get('category') == entity.id %}
                                   <option value='database.php?category={{ entity.id }}' data-color='{{ entity.color }}' {{ isActive ? 'selected' }}>{{ entity.title }}</option>
                               {% endfor %}
                           </select>
+                          {% if App.devMode -%}<!-- [html-validate-enable prefer-native-element: suppress errors from tom-select] -->{%- endif %}
                       </div>
                   {% endif %}
                 </div>

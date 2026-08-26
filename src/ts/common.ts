@@ -223,8 +223,8 @@ document.querySelectorAll<HTMLSelectElement>('.navbar-category-select').forEach(
     event.stopPropagation();
   });
   new TomSelect(select, { maxOptions: null, plugins: [
-    'dropdown_input',
     'no_active_items',
+    'no_backspace_delete',
     'remove_button',
   ],
   onChange(value: string | number) {

@@ -174,7 +174,13 @@ This attribute (`null` by default) can be set as a number after a Category is se
 This is the title of the Experiment. A duplicated Experiment will have a «I» character appended to the title upon creation.
 
 ## Category
-You can assign a "Category" to each Experiment. Only an Admin can define the categories that are available for your team to use. Categories can correspond to projects, types of Experiments, and other strategies for grouping Experiment entries. You can easily browse groups of Experiments by Category from the main Experiment page.
+You can assign a "Category" to each Experiment. Only an Admin can define the categories that are available for your team to use. Categories can correspond to projects, types of Experiments, and other strategies for grouping Experiment entries.
+
+You can easily browse groups of Experiments by Category from the main Experiments page, or from any page using the Experiments menu in the navigation bar. The same goes for Resources.
+<figure>
+  <img src="/img/experiment-categories-menu.webp" alt="Experiments category menu" width="250"/>
+  <figcaption>Browse experiments by category.</figcaption>
+</figure>
 
 ## Status
 This feature lets you set the 'Status' of an Experiment. The default status options are:

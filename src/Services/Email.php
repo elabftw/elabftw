@@ -251,10 +251,12 @@ class Email
     {
         // send emails one by one
         $sentCount = 0;
+        $plainSubject = self::toPlainText($subject);
+        $plainContent = self::toPlainText($content);
         foreach ($addresses as $address) {
             // use a try catch so we finish the loop even if errors are encountered
             try {
-                if ($this->sendEmail($address, self::toPlainText($subject), self::toPlainText($content), replyTo: $replyTo)) {
+                if ($this->sendEmail($address, $plainSubject, $plainContent, replyTo: $replyTo)) {
                     $sentCount++;
                     continue;
                 }

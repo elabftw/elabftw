@@ -85,6 +85,7 @@ use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
 
 use function array_column;
+use function array_is_list;
 use function array_merge;
 use function implode;
 use function in_array;
@@ -1549,7 +1550,7 @@ abstract class AbstractEntity extends AbstractRest
                 throw new ImproperActionException(sprintf(_('Invalid metadata value for field %s.'), $key));
             }
             $valueLabels = $value['value_labels'];
-            if ($valueLabels !== null && !is_array($valueLabels)) {
+            if ($valueLabels !== null && (!is_array($valueLabels) || !array_is_list($valueLabels))) {
                 throw new ImproperActionException(sprintf(_('Metadata field %s has invalid value labels.'), $key));
             }
             foreach ($valueLabels ?? array() as $label) {
@@ -1571,6 +1572,12 @@ abstract class AbstractEntity extends AbstractRest
             $value,
             preserveNumericTypes: true,
         );
+        if ($hasValueLabels && $valueLabels !== null) {
+            $valueCount = is_array($value) ? count($value) : 1;
+            if (count($valueLabels) > $valueCount) {
+                throw new ImproperActionException(sprintf(_('Metadata field %s has invalid value labels.'), $key));
+            }
+        }
 
         $Changelog = new Changelog($this);
         $valueAsString = is_array($value) ? implode(', ', $value) : (string) $value;

@@ -1611,7 +1611,6 @@ abstract class AbstractEntity extends AbstractRest
             if ($valueLabels === null) {
                 $metadataExpression = 'JSON_REMOVE(' . $metadataExpression . ', :labelsField)';
             } else {
-                $labels = json_encode($valueLabels, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
                 $metadataExpression = 'JSON_SET(' . $metadataExpression . ', :labelsField, CAST(:labels AS JSON))';
             }
         }
@@ -1623,7 +1622,7 @@ abstract class AbstractEntity extends AbstractRest
         if ($hasValueLabels) {
             $req->bindParam(':labelsField', $labelsField);
             if ($valueLabels !== null) {
-                $req->bindValue(':labels', $labels);
+                $req->bindValue(':labels', json_encode($valueLabels, JSON_HEX_APOS | JSON_THROW_ON_ERROR));
             }
         }
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

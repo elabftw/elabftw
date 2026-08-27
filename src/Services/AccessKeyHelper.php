@@ -47,7 +47,8 @@ final class AccessKeyHelper
         $accessKey = $this->getAccessKey() === null ? Tools::getUuidv4() : null;
         $sql = 'UPDATE ' . $this->entityType->value . ' SET access_key = :access_key WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':access_key', $accessKey, $accessKey === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $pdoType = $accessKey === null ? PDO::PARAM_NULL : PDO::PARAM_STR;
+        $req->bindValue(':access_key', $accessKey, $pdoType);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->getAccessKey();

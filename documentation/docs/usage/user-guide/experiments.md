@@ -178,7 +178,7 @@ You can assign a "Category" to each Experiment. Only an Admin can define the cat
 
 You can easily browse groups of Experiments by Category from the main Experiments page, or from any page using the Experiments menu in the navigation bar. The same goes for Resources.
 <figure>
-  <img src="/img/experiment-categories-menu.webp" alt="tags" width="250"/>
+  <img src="/img/experiment-categories-menu.webp" alt="Experiments category menu" width="250"/>
   <figcaption>Browse experiments by category.</figcaption>
 </figure>
 

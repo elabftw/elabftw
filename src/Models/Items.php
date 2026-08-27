@@ -22,6 +22,7 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\AccessType;
+use Elabftw\Enums\Scope;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Services\Filter;
@@ -119,9 +120,12 @@ final class Items extends AbstractConcreteEntity
     /**
      * Get all items with is_bookable that we can read
      */
-    public function readBookable(): array
+    public function readBookable(?Scope $scope = null): array
     {
         $Request = Request::createFromGlobals();
+        if ($scope !== null) {
+            $Request->query->set('scope', $scope->value);
+        }
         $DisplayParams = new DisplayParams($this->Users, EntityType::Items, $Request->query);
         // we only want the bookable type of items
         $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);

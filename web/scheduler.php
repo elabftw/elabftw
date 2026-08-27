@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Models\Items;
 use Elabftw\Models\ResourcesCategories;
@@ -34,8 +35,14 @@ try {
     $Response->prepare($Request);
     $Items = new Items($App->Users);
     $ResourcesCategories = new ResourcesCategories($App->Teams);
+    $scope = null;
+    if ($Request->query->has('items')) {
+        $scope = Scope::Everything;
+        // keep the displayed scope in sync with the scope used to find the selected resources. See #6990
+        $Request->query->set('scope', $scope->value);
+    }
     // only the bookable categories
-    $bookableItemsArr = $Items->readBookable();
+    $bookableItemsArr = $Items->readBookable($scope);
     $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
     $allCategories = $ResourcesCategories->readAll();
     $bookableCategories = array_filter(

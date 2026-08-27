@@ -105,12 +105,14 @@ function toggleBindState(entity: 'experiment' | 'item', bound: boolean) {
   document.getElementById(`bindInputs${suffix}`)?.classList.toggle('d-none', bound);
 }
 
-function lockScopeButton(selectedItems: string[]): void {
-  const scopeBtn = document.getElementById('scopeEventBtn');
-  const lockedBtn = document.getElementById('scopeLocked');
+function lockScopeButtons(selectedItems: string[]): void {
   const showLocked = selectedItems.length > 0;
-  scopeBtn?.toggleAttribute('hidden', showLocked);
-  lockedBtn?.toggleAttribute('hidden', !showLocked);
+  ['scopeBtn', 'scopeEventBtn'].forEach(id => {
+    document.getElementById(id)?.toggleAttribute('hidden', showLocked);
+  });
+  ['scopeItemsLocked', 'scopeLocked'].forEach(id => {
+    document.getElementById(id)?.toggleAttribute('hidden', !showLocked);
+  });
 }
 
 document.getElementById('loading-spinner')?.remove();
@@ -171,7 +173,7 @@ if (calendarEl) {
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
 
     if (itemSelect?.tomselect?.items?.length) {
-      lockScopeButton(itemSelect.tomselect.items);
+      lockScopeButtons(itemSelect.tomselect.items);
       itemSelect.tomselect.items.forEach(id => {
         params.append('items[]', id);
       });
@@ -680,7 +682,7 @@ if (calendarEl) {
       controlInput: '#itemSelectInput',
       dropdownParent: '#itemSelectWrapper',
       onChange: (selectedItems: string[]) => {
-        lockScopeButton(selectedItems);
+        lockScopeButtons(selectedItems);
         const container = document.getElementById('selectedItemsContainer')!;
         const display = document.getElementById('selectedItemsDisplay')!;
         display.innerHTML = '';
@@ -709,7 +711,7 @@ if (calendarEl) {
 
     if (selectedItems.length > 0) {
       itemTs.setValue(selectedItems);
-      lockScopeButton(selectedItems);
+      lockScopeButtons(selectedItems);
     }
 
     categorySelect.addEventListener('change', () => {

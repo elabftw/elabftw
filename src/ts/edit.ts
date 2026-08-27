@@ -29,6 +29,16 @@ window.onbeforeunload = function() {
 // Which editor are we using? md or tiny
 const editor = getEditor();
 editor.init('edit');
+
+if (editor.type === 'md') {
+  document.getElementById('body_area')?.addEventListener('keydown', event => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+      event.preventDefault();
+      updateEntityBody(false);
+    }
+  });
+}
+
 // initialize the file uploader
 (new Uploader()).init();
 

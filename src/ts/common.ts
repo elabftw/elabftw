@@ -40,6 +40,7 @@ import {
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
   mountRors,
+  delayConfirmation,
   initPermissionsTomSelects,
   PERMISSION_SELECT_IDS,
   reloadEntitiesShow,
@@ -143,9 +144,8 @@ on('toggle-modal', (el: HTMLElement) => {
       deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
     }
 
-    deleteButton.disabled = true;
+    delayConfirmation(deleteButton);
     showModalAndFocusFirstInput(modalSelector);
-    setTimeout(() => deleteButton.disabled = false, 2000);
   }
 });
 

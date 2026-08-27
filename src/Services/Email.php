@@ -149,18 +149,15 @@ class Email
         $content = $body . $sender . $this->footer;
 
         if ($sendGrouped) {
-            $plainSubject = html_entity_decode(Filter::toPureString($subject), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-            $plainContent = html_entity_decode(Filter::toPureString($content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
             // send one single email to everyone
             $message = (new Memail())
-            ->subject($plainSubject)
+            ->subject(self::toPlainText($subject))
             ->from($this->from)
             ->to($replyTo)
             // set recipients in BCC to hide email addresses
             ->bcc(...$addresses)
             ->replyTo($replyTo)
-            ->text($plainContent);
+            ->text(self::toPlainText($content));
 
             return $this->send($message) ? $addressesCount : 0;
         }
@@ -252,15 +249,12 @@ class Email
 
     private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int
     {
-        $plainSubject = html_entity_decode(Filter::toPureString($subject), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $plainContent = html_entity_decode(Filter::toPureString($content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
         // send emails one by one
         $sentCount = 0;
         foreach ($addresses as $address) {
             // use a try catch so we finish the loop even if errors are encountered
             try {
-                if ($this->sendEmail($address, $plainSubject, $plainContent, replyTo: $replyTo)) {
+                if ($this->sendEmail($address, self::toPlainText($subject), self::toPlainText($content), replyTo: $replyTo)) {
                     $sentCount++;
                     continue;
                 }
@@ -334,5 +328,14 @@ class Email
         $Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    private static function toPlainText(string $input): string
+    {
+        return html_entity_decode(
+            Filter::toPureString($input),
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8',
+        );
     }
 }

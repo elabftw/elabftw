@@ -108,9 +108,8 @@ export class Metadata {
 
     const multiValueHolder = el.closest('[data-purpose="multi-value-holder"]') as HTMLElement | null;
     if (multiValueHolder) {
-      // structural edits (add/remove row) shift value indexes: value_labels
-      // must be rebuilt together with value, so persist both via a full
-      // metadata save instead of the value-only field update.
+      // Structural edits (add/remove row) shift value indexes: value_labels
+      // must be rebuilt together with value, so persist both in one field update.
       return this.saveMultiValueHolder(multiValueHolder);
     }
 
@@ -163,6 +162,15 @@ export class Metadata {
   updateMetadataField(fieldName: string, value: string|number|Array<string|number>): Promise<Response> {
     const params: Record<string, unknown> = {action: Action.UpdateMetadataField};
     params[fieldName] = value;
+    return ApiC.patch(`${this.entity.type}/${this.entity.id}`, params).then(response => {
+      this.editor.loadMetadata();
+      return response;
+    });
+  }
+
+  updateMultiValueMetadataField(fieldName: string, value: Array<string|number>, valueLabels: string[]|null): Promise<Response> {
+    const params: Record<string, unknown> = {action: Action.UpdateMetadataField};
+    params[fieldName] = {value, value_labels: valueLabels};
     return ApiC.patch(`${this.entity.type}/${this.entity.id}`, params).then(response => {
       this.editor.loadMetadata();
       return response;
@@ -412,27 +420,12 @@ export class Metadata {
     if (values === null) {
       return false;
     }
-    // persist value and value_labels together: a value-only PATCH leaves
-    // stale labels behind after rows are removed or added.
-    return this.read().then(metadata => {
-      if (!metadata.extra_fields || !metadata.extra_fields[fieldName]) {
-        return this.updateMetadataField(fieldName, values);
-      }
-      metadata.extra_fields[fieldName].value = values;
-      const labels = this.getMultiValueLabels(holder);
-      // only keep a labels array when at least one row actually has one,
-      // so plain fields stay exactly as before
-      if (labels.some(label => label !== '')) {
-        metadata.extra_fields[fieldName].value_labels = labels;
-      } else {
-        delete metadata.extra_fields[fieldName].value_labels;
-      }
-      return this.save(metadata as ValidMetadata).then(response => {
-        this.editor.loadMetadata();
-        // re-render the fields so the UI reflects the persisted arrays
-        return this.display('edit').then(() => response);
-      });
-    });
+    // Persist value and value_labels in one metadata JSON update. A value-only
+    // PATCH leaves stale labels behind after rows are removed or added, while
+    // a full metadata read/replace can overwrite a concurrent field update.
+    const labels = this.getMultiValueLabels(holder);
+    const valueLabels = labels.some(label => label !== '') ? labels : null;
+    return this.updateMultiValueMetadataField(fieldName, values, valueLabels);
   }
 
   getRandomId(): string {

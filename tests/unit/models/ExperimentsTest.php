@@ -428,6 +428,33 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(array('first', 'second'), $decoded['extra_fields']['multitext']['value']);
     }
 
+    public function testUpdateJsonFieldWithValueLabels(): void
+    {
+        $metadata = '{"extra_fields": {"multitext": {"type": "text", "value": ["old", "other"], "value_labels": ["Old label", "Other label"], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'multitext' => array(
+                'value' => array('other'),
+                'value_labels' => array('Other label'),
+            ),
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertSame(array('other'), $decoded['extra_fields']['multitext']['value']);
+        $this->assertSame(array('Other label'), $decoded['extra_fields']['multitext']['value_labels']);
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'multitext' => array(
+                'value' => array('other'),
+                'value_labels' => null,
+            ),
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertArrayNotHasKey('value_labels', $decoded['extra_fields']['multitext']);
+    }
+
     public function testUpdateJsonFieldWithMultipleCompoundValues(): void
     {
         $metadata = '{"extra_fields": {"components": {"type": "compounds", "value": [], "allow_multi_values": true}}}';

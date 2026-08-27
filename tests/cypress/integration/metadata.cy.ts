@@ -40,9 +40,16 @@ describe('Metadata Extra fields', () => {
         const holder = `[data-purpose="multi-value-holder"][data-field="${fieldName}"]`;
 
         cy.get(`${holder} [data-purpose="multi-value-row"]`).should('have.length', 2);
+        cy.intercept('GET', `**/api/v2/experiments/${experimentId}`).as('readMetadata');
         cy.intercept('PATCH', `**/api/v2/experiments/${experimentId}`).as('saveMetadata');
         cy.get(`${holder} [data-purpose="multi-value-row"]`).first().find('button').click();
+        cy.wait('@readMetadata').its('response.statusCode').should('eq', 200);
         cy.wait('@saveMetadata').its('response.statusCode').should('eq', 200);
+        // Saving refreshes both the JSON editor and the rendered fields. Wait
+        // for both reads before reloading so Firefox does not abort them.
+        cy.wait(['@readMetadata', '@readMetadata']).then(interceptions => {
+          interceptions.forEach(interception => expect(interception.response.statusCode).to.eq(200));
+        });
 
         cy.reload();
         cy.get(`${holder} [data-purpose="multi-value-row"]`).should('have.length', 1)

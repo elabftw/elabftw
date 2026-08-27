@@ -336,7 +336,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),
-            ApiEndpoint::Info => new Info(),
+            ApiEndpoint::Info => new Info($this->requester),
             ApiEndpoint::Instance => new Instance($this->requester, $this->getEmail(), (bool) Config::getConfig()->configArr['email_send_grouped']),
             ApiEndpoint::Export => new Exports(App::getDefaultLogger(), $this->requester, Storage::EXPORTS->getStorage(), $this->id),
             ApiEndpoint::Experiments,

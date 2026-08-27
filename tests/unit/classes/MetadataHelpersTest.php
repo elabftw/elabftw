@@ -40,7 +40,7 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
     public function testMergeMetadataPreservesValueLabels(): void
     {
         $source = '{"extra_fields":{"Checks":{"type":"checkbox","allow_multi_values":true,"value_labels":["Calibrated","Reviewed"],"value":["on","off"]}}}';
-        $incoming = '{"extra_fields":{"Checks":{"type":"text","value":["on","on"]}}}';
+        $incoming = '{"extra_fields":{"Checks":{"type":"text","value_labels":["Incoming A","Incoming B"],"value":["on","on"]}}}';
         $expected = '{"extra_fields":{"Checks":{"type":"checkbox","allow_multi_values":true,"value_labels":["Calibrated","Reviewed"],"value":["on","on"]}}}';
 
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));

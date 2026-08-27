@@ -126,8 +126,8 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
 
         $result = TwigFilters::formatMetadata($metadataJson);
 
-        $this->assertStringContainsString('<span class="badge badge-pill badge-light ml-2">Calibrated</span>', $result);
-        $this->assertStringContainsString('<span class="badge badge-pill badge-light ml-2">Reviewed &lt;&amp;&quot; done</span>', $result);
+        $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox" checked="checked"><span class="badge badge-pill badge-light ml-2">Calibrated</span></p>', $result);
+        $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox"><span class="badge badge-pill badge-light ml-2">Reviewed &lt;&amp;&quot; done</span></p>', $result);
     }
 
     public function testFormatMetadataWithMultipleValuesForAllTypes(): void

@@ -448,6 +448,59 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     /**
+     * Read the small entity projection used by the dashboard's latest lists.
+     *
+     * Keep permission, scope and state filtering aligned with readShow(), but
+     * limit the entity rows before joining categories. The dashboard does not
+     * use pinned ordering, tags, statuses, owners, steps or comments.
+     */
+    public function readLatestForDashboard(QueryParamsInterface $displayParams): array
+    {
+        $this->alwaysShowOwned = ($this->Users->userData['always_show_owned'] ?? 0) === 1;
+        $displayParams->setSkipOrderPinned(true);
+        $EntitySqlBuilder = $this->getSqlBuilder();
+
+        $sql = sprintf(
+            'SELECT recent.id,
+                recent.title,
+                recent.modified_at,
+                categoryt.title AS category_title,
+                categoryt.color AS category_color
+            FROM (
+                SELECT entity.id,
+                    entity.title,
+                    entity.modified_at,
+                    entity.category
+                FROM %1$s AS entity
+                LEFT JOIN users2teams
+                    ON (users2teams.users_id = entity.userid
+                        AND users2teams.teams_id = %3$d)
+                WHERE 1=1
+                    %4$s
+                    %5$s
+                    %6$s
+                    %7$s
+            ) AS recent
+            LEFT JOIN %2$s AS categoryt
+                ON (categoryt.id = recent.category)
+            ORDER BY recent.modified_at DESC, recent.id DESC',
+            $this->entityType->value,
+            $this->entityType->toCategoryTable(),
+            $this->Users->getTeam(),
+            $displayParams->getFilterSql(),
+            $EntitySqlBuilder->getCanFilter(AccessType::Read->value),
+            $displayParams->getStatesSql('entity'),
+            $displayParams->getSql(),
+        );
+
+        $req = $this->Db->prepare($sql);
+        $userid = $this->Users->getUserid();
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
+    /**
      * Read the tags of the entity
      * $items the results of all items from readShow()
      */

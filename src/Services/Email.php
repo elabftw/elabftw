@@ -36,6 +36,7 @@ use function array_map;
 use function preg_replace;
 use function quoted_printable_encode;
 use function sprintf;
+use function html_entity_decode;
 
 /**
  * Email service
@@ -148,15 +149,18 @@ class Email
         $content = $body . $sender . $this->footer;
 
         if ($sendGrouped) {
+            $plainSubject = html_entity_decode(Filter::toPureString($subject), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $plainContent = html_entity_decode(Filter::toPureString($content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
             // send one single email to everyone
             $message = (new Memail())
-            ->subject($subject)
+            ->subject($plainSubject)
             ->from($this->from)
             ->to($replyTo)
             // set recipients in BCC to hide email addresses
             ->bcc(...$addresses)
             ->replyTo($replyTo)
-            ->text($content);
+            ->text($plainContent);
 
             return $this->send($message) ? $addressesCount : 0;
         }
@@ -248,14 +252,15 @@ class Email
 
     private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int
     {
-        $subject = Filter::toPureString($subject);
-        $content = Filter::toPureString($content);
+        $plainSubject = html_entity_decode(Filter::toPureString($subject), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $plainContent = html_entity_decode(Filter::toPureString($content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
         // send emails one by one
         $sentCount = 0;
         foreach ($addresses as $address) {
             // use a try catch so we finish the loop even if errors are encountered
             try {
-                if ($this->sendEmail($address, $subject, $content, replyTo: $replyTo)) {
+                if ($this->sendEmail($address, $plainSubject, $plainContent, replyTo: $replyTo)) {
                     $sentCount++;
                     continue;
                 }

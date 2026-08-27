@@ -107,12 +107,6 @@ abstract class AbstractEntityController implements ControllerInterface
     {
         // used to get all tags for top page tag filter
         $TeamTags = new TeamTags($this->App->Users, $this->App->Users->userData['team']);
-
-        // must be before the call to readShow
-        if (($this->App->Users->userData['always_show_owned'] ?? null) === 1) {
-            $this->Entity->alwaysShowOwned = true;
-        }
-
         // read all based on query parameters or user defaults
         $orderBy = Orderby::tryFrom($this->App->Users->userData['orderby']) ?? Orderby::Lastchange;
         $skipOrderPinned = $this->App->Request->query->getBoolean('skip_pinned');

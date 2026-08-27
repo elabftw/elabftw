@@ -376,6 +376,8 @@ abstract class AbstractEntity extends AbstractRest
      */
     public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
     {
+        // Allow owned entries to pass the permission filter regardless of their team
+        $this->alwaysShowOwned = ($this->Users->userData['always_show_owned'] ?? 0) === 1;
         if ($displayParams->isFast()) {
             return $this->readAllSimple($displayParams);
         }

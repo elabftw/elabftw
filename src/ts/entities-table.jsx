@@ -180,6 +180,15 @@ const EntitiesTable = ({
       : <span title={value}><i className='fas fa-circle-xmark mr-2'></i>{value}</span>;
   };
 
+  const ColorDotRenderer = ({ value, data, colDef }) => {
+    if (!value) {
+      return null;
+    }
+
+    const color = data[`${colDef.field}_color`];
+    return <span><i className='fas fa-circle fa-fw' style={{ '--bg': `#${color}`, color: 'var(--bg)' }}></i> {value}</span>;
+  };
+
   const RatingsRenderer = ({ value }) => {
     return Number(value) > 0
       ? <span className='rating-show rounded p-1 font-weight-bold'><i className='fas fa-star mr-1' aria-hidden='true'></i>{value}</span>
@@ -219,8 +228,8 @@ const EntitiesTable = ({
     { field: 'title', headerName: i18next.t('title') },
     { field: 'team_name', headerName: i18next.t('team') },
     { field: 'date', headerName: i18next.t('started-on'), valueGetter: p => lastLoginText(p.data.date), filterValueGetter: p => lastLoginText(p.data.date), cellRenderer: PastDateRenderer},
-    { field: 'category', headerName: i18next.t('category'), valueGetter: p => p.data.category_title },
-    { field: 'status', headerName: i18next.t('status'), valueGetter: p => p.data.status_title },
+    { field: 'category', headerName: i18next.t('category'), valueGetter: p => p.data.category_title, cellRenderer: ColorDotRenderer },
+    { field: 'status', headerName: i18next.t('status'), valueGetter: p => p.data.status_title, cellRenderer: ColorDotRenderer },
     { field: 'tags_decoded', headerName: i18next.t('tags'), valueGetter: p => p.data.tags_decoded, filterValueGetter: p => p.data.tags_decoded?.map(tagData => tagData.tag).join(' ') ?? '', cellRenderer: TagsRenderer },
     { field: 'id', headerName: i18next.t('id') },
     { field: 'custom_id', headerName: i18next.t('custom-id') },

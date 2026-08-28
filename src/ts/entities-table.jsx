@@ -192,6 +192,10 @@ const EntitiesTable = ({
     }
 
     const color = data[`${colDef.field}_color`];
+    if (!color) {
+      return <span>{value}</span>;
+    }
+
     return <span><i className='fas fa-circle fa-fw' style={{ '--bg': `#${color}`, color: 'var(--bg)' }}></i> {value}</span>;
   };
 
@@ -336,8 +340,8 @@ const EntitiesTable = ({
             label: event.data[entityFilter.labelField] ?? String(value),
           },
         }));
+        return;
       }
-      return;
     }
 
     if (

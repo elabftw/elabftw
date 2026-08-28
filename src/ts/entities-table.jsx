@@ -139,6 +139,12 @@ const rowSelection = {
   selectAll: 'currentPage',
 };
 
+const entityFilterByColumn = {
+  category: { param: 'category', valueField: 'category', labelField: 'category_title' },
+  status: { param: 'status', valueField: 'status', labelField: 'status_title' },
+  fullname: { param: 'owner', valueField: 'userid', labelField: 'fullname' },
+};
+
 const EntitiesTable = ({
   selectedEntities,
   order = 'date',
@@ -317,6 +323,22 @@ const EntitiesTable = ({
   const cellClicked = event => {
     const target = event.event?.target;
     const url = `?mode=view&id=${encodeURIComponent(event.data.id)}`;
+
+    const entityFilter = entityFilterByColumn[event.colDef.field];
+    if (entityFilter) {
+      const value = event.data[entityFilter.valueField];
+
+      if (value !== null && value !== undefined && String(value).length > 0) {
+        window.dispatchEvent(new CustomEvent('entity-filter-requested', {
+          detail: {
+            param: entityFilter.param,
+            value: String(value),
+            label: event.data[entityFilter.labelField] ?? String(value),
+          },
+        }));
+      }
+      return;
+    }
 
     if (
       target instanceof HTMLElement

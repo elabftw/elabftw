@@ -86,6 +86,8 @@ enum Action {
 
   AccessKey = 'accesskey',
   Add = 'add',
+  AddCanRead = 'addcanread',
+  AddCanWrite = 'addcanwrite',
   Archive = 'archive',
   Bloxberg = 'bloxberg',
   CancelRequestableAction = 'cancelrequestableaction',

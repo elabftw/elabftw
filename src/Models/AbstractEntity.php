@@ -71,6 +71,7 @@ use Elabftw\Params\Guard;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\AdvancedSearchQuery;
 use Elabftw\Services\AdvancedSearchQuery\Visitors\VisitorParameters;
+use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\SignatureHelper;
@@ -84,8 +85,11 @@ use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
 
+use function array_any;
 use function array_column;
 use function array_merge;
+use function array_unique;
+use function array_values;
 use function implode;
 use function in_array;
 use function is_bool;
@@ -567,6 +571,8 @@ abstract class AbstractEntity extends AbstractRest
         $this->ExclusiveEditMode->canPatchOrExplode($action);
         match ($action) {
             Action::AccessKey => (new AccessKeyHelper($this->entityType, $this->id))->toggleAccessKey(),
+            Action::AddCanRead  => $this->handleCanAdd($params, AccessType::Read),
+            Action::AddCanWrite => $this->handleCanAdd($params, AccessType::Write),
             Action::Archive => (
                 function () {
                     $this->update(new EntityParams('state', State::Archived->value));
@@ -1505,6 +1511,73 @@ abstract class AbstractEntity extends AbstractRest
         $key = $type->value;
         $this->update(new EntityParams($key, (string) $params['can']));
         $this->update(new EntityParams($key . '_base', (int) $params['can_base']));
+    }
+
+    /**
+     * Add explicit permissions while holding a row lock so concurrent changes
+     * are merged with the latest stored permission JSON.
+     */
+    private function handleCanAdd(array $params, AccessType $type): void
+    {
+        $additions = $this->decodePermissionJson(Guard::getNonEmptyStringValueOfRequiredParam('can', $params));
+        $key = $type->value;
+        $immutableKey = $key . '_is_immutable';
+        $this->Db->beginTransaction();
+
+        try {
+            $sql = 'SELECT ' . $key . ', ' . $immutableKey . ' FROM ' . $this->entityType->value . ' WHERE id = :id FOR UPDATE';
+            $req = $this->Db->prepare($sql);
+            $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $this->Db->execute($req);
+            $current = $req->fetch(PDO::FETCH_ASSOC);
+            if ($current === false) {
+                throw new ResourceNotFoundException();
+            }
+
+            // update() checks this field before writing; refresh it from the locked row.
+            $this->entityData[$immutableKey] = (int) $current[$immutableKey];
+            $merged = $this->mergePermissionJson((string) $current[$key], $additions);
+            $this->update(new EntityParams($key, $merged));
+            $this->Db->commit();
+        } catch (\Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Decode and validate the three explicit permission lists.
+     *
+     * @return array{teams: list<int>, teamgroups: list<int>, users: list<int>}
+     */
+    private function decodePermissionJson(string $permissions): array
+    {
+        Check::visibility($permissions);
+        $decoded = json_decode($permissions, true, 3, JSON_THROW_ON_ERROR);
+        foreach (array('teams', 'teamgroups', 'users') as $key) {
+            if (array_any($decoded[$key], static fn(mixed $id): bool => !is_int($id) || $id <= 0)) {
+                throw new ImproperActionException(sprintf('The visibility parameter %s is wrong.', $key));
+            }
+        }
+        return array(
+            'teams' => array_values($decoded['teams']),
+            'teamgroups' => array_values($decoded['teamgroups']),
+            'users' => array_values($decoded['users']),
+        );
+    }
+
+    /**
+     * Merge explicit permissions by set union while retaining other JSON keys.
+     *
+     * @param array{teams: list<int>, teamgroups: list<int>, users: list<int>} $additions
+     */
+    private function mergePermissionJson(string $current, array $additions): string
+    {
+        $currentPermissions = $this->decodePermissionJson($current);
+        foreach (array('teams', 'teamgroups', 'users') as $key) {
+            $currentPermissions[$key] = array_values(array_unique(array_merge($currentPermissions[$key], $additions[$key])));
+        }
+        return json_encode($currentPermissions, JSON_HEX_APOS | JSON_THROW_ON_ERROR);
     }
 
     private function updateOwnership(int $userid, int $destinationTeam): void

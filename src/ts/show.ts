@@ -50,39 +50,6 @@ type EntityFilterRequestedDetail = {
 };
 
 type PermissionTarget = 'canread' | 'canwrite';
-type PermissionKey = 'teams' | 'teamgroups' | 'users';
-type Permissions = Record<PermissionKey, number[]>;
-
-function parsePermissionList(value: unknown): number[] {
-  if (!Array.isArray(value) || value.some(id => typeof id !== 'number' || !Number.isInteger(id))) {
-    throw new Error('Invalid permission data');
-  }
-  return value;
-}
-
-function parsePermissions(value: unknown): Permissions {
-  const parsed = typeof value === 'string' ? JSON.parse(value) as unknown : value;
-  if (!parsed || typeof parsed !== 'object') {
-    throw new Error('Invalid permission data');
-  }
-  const record = parsed as Record<string, unknown>;
-  return {
-    teams: parsePermissionList(record.teams),
-    teamgroups: parsePermissionList(record.teamgroups),
-    users: parsePermissionList(record.users),
-  };
-}
-
-function mergePermissions(current: unknown, additions: string): string {
-  const currentPermissions = parsePermissions(current);
-  const addedPermissions = parsePermissions(additions);
-  const merged: Permissions = {
-    teams: [...new Set([...currentPermissions.teams, ...addedPermissions.teams])],
-    teamgroups: [...new Set([...currentPermissions.teamgroups, ...addedPermissions.teamgroups])],
-    users: [...new Set([...currentPermissions.users, ...addedPermissions.users])],
-  };
-  return JSON.stringify(merged);
-}
 
 function collectPermissionsFromModal(identifier: string): string {
   const values = ['teams', 'teamgroups', 'users'].flatMap(type => {
@@ -807,7 +774,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const additions = collectPermissionsFromModal(identifier);
-    if (!Object.values(parsePermissions(additions)).some(items => items.length > 0)) {
+    const parsedAdditions = JSON.parse(additions) as Record<string, unknown>;
+    if (!['teams', 'teamgroups', 'users'].some(key => Array.isArray(parsedAdditions[key]) && parsedAdditions[key].length > 0)) {
       notify.error('invalid-info');
       return;
     }
@@ -816,20 +784,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const action = rw === 'canread' ? Action.AddCanRead : Action.AddCanWrite;
     const params: Record<string, unknown> = {
-      [rw]: additions,
+      action,
+      can: additions,
       notifOnSaved: 0,
       notifOnError: 0,
     };
     const btn = el as HTMLButtonElement;
     const oldHTML = mkSpin(btn);
-    const requests = checked.map(async id => {
-      const current = await ApiC.getJson<Record<string, unknown>>(`${entity.type}/${id}`, {notifOnError: 0});
-      return ApiC.patch(`${entity.type}/${id}`, {
-        ...params,
-        [rw]: mergePermissions(current[rw], additions),
-      });
-    });
+    const requests = checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params}));
 
     Promise.allSettled(requests)
       .then(results => {

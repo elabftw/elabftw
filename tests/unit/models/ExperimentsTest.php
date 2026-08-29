@@ -35,6 +35,7 @@ use function bin2hex;
 use function count;
 use function is_array;
 use function json_decode;
+use function json_encode;
 use function random_bytes;
 use function sprintf;
 use function str_replace;
@@ -246,6 +247,54 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
                 $this->assertIsArray($this->Experiments->patch(Action::Update, array($column => $perm->value)));
             }
         }
+    }
+
+    public function testAddPermissionsMergesWithCurrentValues(): void
+    {
+        $existingUser = $this->getRandomUserInTeam(1);
+        $addedUser = $this->getRandomUserInTeam(1);
+        $experiment = $this->getFreshExperimentWithGivenUser($existingUser);
+        $initialPermissions = array(
+            'teams' => array(1),
+            'teamgroups' => array(),
+            'users' => array($existingUser->userid),
+        );
+        $addedPermissions = array(
+            'teams' => array(1),
+            'teamgroups' => array(),
+            'users' => array($addedUser->userid),
+        );
+
+        $experiment->patch(Action::Update, array(
+            'canread' => json_encode($initialPermissions),
+            'canread_base' => BasePermissions::UserOnly->value,
+            'canwrite' => json_encode($initialPermissions),
+            'canwrite_base' => BasePermissions::UserOnly->value,
+        ));
+
+        $experiment->patch(Action::AddCanRead, array('can' => json_encode($addedPermissions)));
+        $experiment->patch(Action::AddCanWrite, array('can' => json_encode($addedPermissions)));
+        $entityData = $experiment->readOne();
+
+        $expected = array(
+            'teams' => array(1),
+            'teamgroups' => array(),
+            'users' => array($existingUser->userid, $addedUser->userid),
+        );
+        $this->assertSame($expected, json_decode($entityData['canread'], true));
+        $this->assertSame($expected, json_decode($entityData['canwrite'], true));
+        $this->assertSame(BasePermissions::UserOnly->value, $entityData['canread_base']);
+        $this->assertSame(BasePermissions::UserOnly->value, $entityData['canwrite_base']);
+    }
+
+    public function testAddPermissionsRejectsInvalidPrincipalIds(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->Experiments->patch(Action::AddCanRead, array('can' => json_encode(array(
+            'teams' => array(1),
+            'teamgroups' => array(),
+            'users' => array('1'),
+        ))));
     }
 
     public function testUpdateCategory(): void

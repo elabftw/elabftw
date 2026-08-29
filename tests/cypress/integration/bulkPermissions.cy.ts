@@ -115,11 +115,15 @@ describe('Bulk entity permissions', () => {
               cy.on('window:confirm', () => true);
               cy.get('#permModal-canreadBatch [data-cy="save-batch-permissions"]').click();
               cy.wait('@readPermissionPatch').then(({request}) => {
-                expect(request.body).to.have.property('canread');
+                expect(request.body).to.include({ action: 'addcanread' });
+                expect(request.body).to.have.property('can');
+                expect(request.body).not.to.have.property('canread');
                 expect(request.body).not.to.have.property('canread_base');
               });
               cy.wait('@readPermissionPatch').then(({request}) => {
-                expect(request.body).to.have.property('canread');
+                expect(request.body).to.include({ action: 'addcanread' });
+                expect(request.body).to.have.property('can');
+                expect(request.body).not.to.have.property('canread');
                 expect(request.body).not.to.have.property('canread_base');
               });
 
@@ -150,11 +154,15 @@ describe('Bulk entity permissions', () => {
               cy.intercept('PATCH', '**/api/v2/experiments/*').as('writePermissionPatch');
               cy.get('#permModal-canwriteBatch [data-cy="save-batch-permissions"]').click();
               cy.wait('@writePermissionPatch').then(({request}) => {
-                expect(request.body).to.have.property('canwrite');
+                expect(request.body).to.include({ action: 'addcanwrite' });
+                expect(request.body).to.have.property('can');
+                expect(request.body).not.to.have.property('canwrite');
                 expect(request.body).not.to.have.property('canwrite_base');
               });
               cy.wait('@writePermissionPatch').then(({request}) => {
-                expect(request.body).to.have.property('canwrite');
+                expect(request.body).to.include({ action: 'addcanwrite' });
+                expect(request.body).to.have.property('can');
+                expect(request.body).not.to.have.property('canwrite');
                 expect(request.body).not.to.have.property('canwrite_base');
               });
 
@@ -177,6 +185,60 @@ describe('Bulk entity permissions', () => {
                 expect(response.body.canwrite_base).to.eq(30);
               });
             });
+        }),
+      ),
+    );
+  });
+
+  it('preserves concurrent additions to the same permission list', () => {
+    const title = 'Cypress concurrent bulk permissions ' + Date.now();
+
+    return findUserId('titi@yopmail.com').then(firstAddedUserId =>
+      findUserId('tutu@yopmail.com').then(secondAddedUserId =>
+        createExperiment(
+          title,
+          { teams: [], teamgroups: [], users: [] },
+          20,
+          { teams: [], teamgroups: [], users: [] },
+          20,
+        ).then(entityId => {
+          entityIds.push(entityId);
+          cy.visit('/experiments.php?q=' + encodeURIComponent(title));
+          return cy.get('meta[name="csrf-token"]').invoke('attr', 'content').then(csrf => {
+            const permissionsFor = (userid: number) => JSON.stringify({
+              teams: [],
+              teamgroups: [],
+              users: [userid],
+            });
+            return cy.window().then(win => {
+              const patch = (userid: number) => win.fetch(
+                '/api/v2/experiments/' + entityId,
+                {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': String(csrf),
+                    'X-Requested-With': 'XMLHttpRequest',
+                  },
+                  body: JSON.stringify({
+                    action: 'addcanread',
+                    can: permissionsFor(userid),
+                  }),
+                },
+              ).then(response => {
+                expect(response.status).to.eq(200);
+              });
+
+              return Cypress.Promise.all([patch(firstAddedUserId), patch(secondAddedUserId)]);
+            });
+          }).then(() => cy.request('/api/v2/experiments/' + entityId).then(response => {
+            expect(response.status).to.eq(200);
+            expectPermissionIds(response.body.canread, {
+              teams: [],
+              teamgroups: [],
+              users: [firstAddedUserId, secondAddedUserId],
+            });
+          }));
         }),
       ),
     );

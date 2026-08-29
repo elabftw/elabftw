@@ -16,6 +16,8 @@ enum Action: string
 {
     case AccessKey = 'accesskey';
     case Add = 'add';
+    case AddCanRead = 'addcanread';
+    case AddCanWrite = 'addcanwrite';
     case AllowUntrusted = 'allowuntrusted';
     case Archive = 'archive';
     case Bloxberg = 'bloxberg';

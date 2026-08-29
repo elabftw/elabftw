@@ -89,7 +89,7 @@ final class Local implements AuthenticatorInterface
         }
         // there is also a setting that only allows sysadmins to login
         if ($this->isOnlySysadmin && $this->result['is_sysadmin'] === 0) {
-            throw new ImproperActionException(_('Only a Sysadmin account can use local authentication.'));
+            throw new ForbiddenException(_('Only a Sysadmin account can use local authentication.'));
         }
     }
 

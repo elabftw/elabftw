@@ -40,7 +40,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getRandomUserInTeam(2);
         $Local = new Local($user->userData['email'], 'notimportant', isOnlySysadmin: true);
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Local->authenticate();
     }
 

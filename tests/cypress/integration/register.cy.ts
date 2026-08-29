@@ -23,7 +23,7 @@ describe('Register new user', () => {
     cy.get('#lastname').type('User').blur();
     cy.get('form').submit();
 
-    cy.get('div.alert.alert-danger').should('contain', 'Sorry, you are not allowed to perform that action.');
+    cy.get('div.alert.alert-danger').should('contain', 'The bot field');
   });
 
   it('marks password requirements as met', () => {

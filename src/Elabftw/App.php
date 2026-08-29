@@ -213,10 +213,11 @@ final class App
     public function getResponseFromException(Exception $e): Response
     {
         $userid = $this->Session->get('userid') ?? -1;
+        $requestId = $_SERVER['ELABFTW_REQUEST_ID'] ?? '';
 
         if ($e instanceof AppException) {
             $e->emitLog($this->Log, $userid);
-            return $this->getErrorResponse($e->getMessage(), $e->getHttpCode());
+            return $this->getErrorResponse($e->getMessage(), $e->getHttpCode(), $requestId);
         }
 
         $this->Log->error('', array(
@@ -225,7 +226,7 @@ final class App
         ));
 
         $error = Messages::CriticalError;
-        return $this->getErrorResponse($error->toHuman(), $error->toHttpCode());
+        return $this->getErrorResponse($error->toHuman(), $error->toHttpCode(), $requestId);
     }
 
     public function getThemeVariant(): ThemeVariant
@@ -240,12 +241,12 @@ final class App
         return ThemeVariant::tryFrom($cookie) ?? ThemeVariant::Auto;
     }
 
-    private function getErrorResponse(string $message, int $status): Response
+    private function getErrorResponse(string $message, int $status, string $requestId): Response
     {
         return new Response(
             $this->render('error.html', array(
                 'error' => $message,
-                'requestId' => $_SERVER['ELABFTW_REQUEST_ID'] ?? '',
+                'requestId' => $requestId,
             )),
             $status,
         );

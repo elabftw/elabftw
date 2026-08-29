@@ -251,10 +251,8 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testAddPermissionsMergesWithCurrentValues(): void
     {
-        $existingUser = $this->getRandomUserInTeam(1);
-        do {
-            $addedUser = $this->getRandomUserInTeam(1);
-        } while ($addedUser->userid === $existingUser->userid);
+        $existingUser = new Users(1, 1);
+        $addedUser = new Users(2, 1);
         $experiment = $this->getFreshExperimentWithGivenUser($existingUser);
         $initialPermissions = array(
             'teams' => array(1),

@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\AccessType;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\ExperimentsStatus;
@@ -130,8 +129,6 @@ try {
         'usersArr' => $usersArr,
     );
     $Response->setContent($App->render($template, $renderArr));
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

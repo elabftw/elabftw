@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\AccessType;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Revisions;
 use Exception;
@@ -51,8 +50,6 @@ try {
     );
 
     $Response->setContent($App->render($template, $renderArr));
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

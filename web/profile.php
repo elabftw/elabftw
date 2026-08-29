@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Make\Exports;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Enums\Orderby;
@@ -86,8 +85,6 @@ try {
         'visibilityArr' => $PermissionsHelper->getAssociativeArray(),
     );
     $Response->setContent($App->render($template, $renderArr));
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

@@ -12,18 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Exceptions;
 
-use Override;
-use Psr\Log\LoggerInterface;
-
 /**
  * For permissions issues
  */
-final class IllegalActionException extends ForbiddenException
-{
-    #[Override]
-    protected function emitLog(LoggerInterface $logger, int $userid): void
-    {
-        // use notice level
-        $logger->notice('', array(array('userid' => $userid), array('IllegalAction', $this)));
-    }
-}
+final class IllegalActionException extends ForbiddenException {}

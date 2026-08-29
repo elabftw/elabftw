@@ -15,7 +15,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\Classification;
 use Elabftw\Enums\PasswordComplexity;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
@@ -122,8 +121,6 @@ try {
         'usersArr' => $App->Users->readAllActiveFromTeam(),
     );
     $Response->setContent($App->render($template, $renderArr));
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

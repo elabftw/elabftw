@@ -200,7 +200,7 @@ try {
             Language::tryFrom($App->getLang()) ?? Language::EnglishGB,
         ));
 
-        $Response = $e->getResponseFromException($App);
+        $Response = $App->getResponseFromException($e);
         $Response->setStatusCode(Response::HTTP_FORBIDDEN);
         $Response->send();
         exit;

@@ -220,7 +220,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(0, (int) $user->userData['can_manage_inventory_locations'], 'Test fixture changed: expected an unprivileged user.');
         $StorageUnitsAsUser = new StorageUnits($user, true);
         $StorageUnitsAsUser->setId($unitId);
-        $this->expectException(\Elabftw\Exceptions\IllegalActionException::class);
+        $this->expectException(\Elabftw\Exceptions\ForbiddenException::class);
         $StorageUnitsAsUser->patch(Action::Update, array('parent_id' => $newParentId));
     }
 
@@ -229,7 +229,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $StorageUnitsAsAnonymous = new StorageUnits(new AnonymousUser(1), false);
 
         $this->assertFalse($StorageUnitsAsAnonymous->canWrite());
-        $this->expectException(\Elabftw\Exceptions\IllegalActionException::class);
+        $this->expectException(\Elabftw\Exceptions\ForbiddenException::class);
 
         $StorageUnitsAsAnonymous->canWriteOrExplode();
     }
@@ -537,7 +537,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(0, (int) $user->userData['can_manage_inventory_locations'], 'Test fixture changed: expected an unprivileged user.');
         $StorageUnitsAsUser = new StorageUnits($user, true);
         $StorageUnitsAsUser->setId($unitId);
-        $this->expectException(\Elabftw\Exceptions\IllegalActionException::class);
+        $this->expectException(\Elabftw\Exceptions\ForbiddenException::class);
         $StorageUnitsAsUser->readHistory();
     }
 

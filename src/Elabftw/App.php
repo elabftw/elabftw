@@ -16,7 +16,7 @@ use Elabftw\Enums\Language;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\ThemeVariant;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\AuthenticatedUser;
@@ -108,11 +108,11 @@ final class App
                     $userid = (int) $this->Session->get('userid');
                     $team = (int) $this->Session->get('team');
                     if (!new TeamsHelper($team)->isActiveUserInTeam($userid)) {
-                        throw new IllegalActionException();
+                        throw new ForbiddenException();
                     }
                     $this->loadUser(new AuthenticatedUser($userid, $team));
                 }
-            } catch (IllegalActionException) {
+            } catch (ForbiddenException) {
                 $this->Session->invalidate();
                 throw new UnauthorizedException();
             }

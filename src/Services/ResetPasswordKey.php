@@ -15,7 +15,6 @@ namespace Elabftw\Services;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Defuse\Crypto\Key;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\Users\ValidatedUser;
@@ -66,7 +65,7 @@ final class ResetPasswordKey
         }
         $exploded = explode(self::SEPARATOR, $decryptedKey);
         if (count($exploded) !== 2) {
-            throw new IllegalActionException('Something is wrong with the number of exploded values during password reset.');
+            throw new ImproperActionException('Something is wrong with the number of exploded values during password reset.');
         }
         $email = $exploded[0];
         $deadline = $exploded[1];

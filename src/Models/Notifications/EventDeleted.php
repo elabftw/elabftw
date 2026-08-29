@@ -16,7 +16,7 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Enums\Notifications;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -64,7 +64,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     public function postAction(Action $action, array $reqBody): int
     {
         if (!$this->canNotify()) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
         if (!empty($reqBody['msg'])) {
             $this->msg = Filter::body($reqBody['msg']);

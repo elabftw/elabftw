@@ -28,7 +28,7 @@ use Elabftw\Elabftw\Authentication;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\LoginAction;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidMfaCodeException;
@@ -438,7 +438,7 @@ final class LoginControllerTest extends \PHPUnit\Framework\TestCase
             'team_id' => 0,
         ));
 
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
 
         $this->createController(
             $request,

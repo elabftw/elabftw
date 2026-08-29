@@ -17,7 +17,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
 use Elabftw\Params\StatusParams;
@@ -147,7 +147,7 @@ abstract class AbstractStatus extends AbstractCategory
         if (array_key_exists('is_private', $params)) {
             $helper = new TeamsHelper($this->Teams->id ?? 0);
             if ($helper->isAdminInTeam($this->Teams->Users->getUserid()) === false) {
-                throw new IllegalActionException(description: _('Only a team Admin can modify the visibility.'));
+                throw new ForbiddenException(description: _('Only a team Admin can modify the visibility.'));
             }
         }
         foreach ($params as $key => $value) {

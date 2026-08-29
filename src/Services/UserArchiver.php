@@ -17,7 +17,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Users2TeamsTargets;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\ApiKeys;
@@ -112,11 +112,11 @@ final class UserArchiver
     {
         if (Config::getConfig()->configArr['admins_archive_users'] === '0' &&
             $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
         // make sure requester is admin of target user
         if (!$this->requester->isAdminOf($this->target->userid ?? 0) && $this->requester->userData['can_manage_users2teams'] === 0) {
-            throw new IllegalActionException('User tried to patch is_archived of another user but they are not admin');
+            throw new ForbiddenException('User tried to patch is_archived of another user but they are not admin');
         }
     }
 }

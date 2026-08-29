@@ -23,7 +23,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidApiSubModelException;
 use Elabftw\Factories\LinksFactory;
@@ -471,7 +471,7 @@ final class Apiv2Controller extends AbstractApiController
     private function applyRestrictions(): void
     {
         if (($this->Model instanceof Config) && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
+            throw new ForbiddenException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 
         $contentType = $this->Request->headers->get('content-type') ?? '';

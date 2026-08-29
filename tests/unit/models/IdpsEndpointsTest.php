@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\SamlBinding;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -54,7 +54,7 @@ class IdpsEndpointsTest extends \PHPUnit\Framework\TestCase
     public function testNotSysadmin(): void
     {
         $IdpsCerts = new IdpsEndpoints($this->getUserInTeam(1));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $IdpsCerts->postAction(Action::Create, array());
     }
 

@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\AccessType;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\FavTags;
@@ -44,7 +44,7 @@ $Response = new Response();
 try {
     $Response->prepare($App->Request);
     if (!$App->Users->isAdmin) {
-        throw new IllegalActionException('Non admin user tried to access admin controller.');
+        throw new ForbiddenException('Non admin user tried to access admin controller.');
     }
 
     $ItemsTypes = new ItemsTypes($App->Users, Filter::intOrNull($Request->query->getInt('templateid')));

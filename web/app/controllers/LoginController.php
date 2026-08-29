@@ -25,7 +25,7 @@ use Elabftw\Controllers\LoginController;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\InvalidDeviceTokenException;
@@ -79,7 +79,7 @@ try {
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
 } catch (InvalidMfaCodeException $e) {
     $App->Session->getFlashBag()->add('ko', $e->getMessage());
-} catch (IllegalActionException $e) {
+} catch (ForbiddenException $e) {
     $App->Log->notice('', array(array('ip' => $App->Request->server->get('REMOTE_ADDR')), array('IllegalAction' => $e)));
     $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
 } catch (ImproperActionException | InvalidDeviceTokenException | UnauthorizedException $e) {

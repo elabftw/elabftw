@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Traits;
 
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 
 /**
@@ -31,7 +31,7 @@ trait SetIdTrait
             return;
         }
         if (Check::id($id) === false) {
-            throw new IllegalActionException('The id parameter is not valid!');
+            throw new ImproperActionException('The id parameter is not valid!');
         }
     }
 }

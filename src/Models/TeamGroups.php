@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
@@ -49,7 +49,7 @@ final class TeamGroups extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         if (!$this->Users->isAdmin) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
         return $this->create($reqBody['name'] ?? _('Untitled'));
     }
@@ -342,7 +342,7 @@ final class TeamGroups extends AbstractRest
     {
         $teamgroup = $this->readOne();
         if (!($this->Users->isAdmin && $this->Users->userData['team'] === $teamgroup['team'])) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 

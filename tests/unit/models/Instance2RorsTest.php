@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -52,7 +52,7 @@ class Instance2RorsTest extends \PHPUnit\Framework\TestCase
     public function testNotSysadmin(): void
     {
         $Instance2Rors = new Instance2Rors(false, $this->ror);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Instance2Rors->postAction(Action::Create, array());
     }
 

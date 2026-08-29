@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Enums\ReportScopes;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\StorageUnits;
@@ -77,14 +77,14 @@ class MakeCsvTest extends \PHPUnit\Framework\TestCase
         $Maker = new MakeTeamReport(new Users(1, 1));
         $this->assertIsString($Maker->getFileContent());
         // with non admin user
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         new MakeTeamReport(new Users(2, 1));
     }
 
     public function testMakeInstanceReport(): void
     {
         // with non sysadmin user
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         new MakeReport(new Users(2, 1));
     }
 

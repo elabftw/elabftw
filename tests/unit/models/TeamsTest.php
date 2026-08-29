@@ -13,7 +13,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ForbiddenException;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -74,7 +73,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             try {
                 $Teams->canWriteOrExplode();
                 $this->fail('Archived admin membership allowed writing the team.');
-            } catch (IllegalActionException) {
+            } catch (ForbiddenException) {
                 $this->addToAssertionCount(1);
             }
         } finally {
@@ -85,7 +84,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     public function testCanWriteOrExplode(): void
     {
         $Teams = new Teams($this->getUserInTeam(1));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Teams->canWriteOrExplode();
     }
 
@@ -145,7 +144,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         ));
 
         $Team = new Teams(new Users(2, 1), 1);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Team->patch(
             Action::SendOnboardingEmails,
             $userids,

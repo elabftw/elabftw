@@ -19,7 +19,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\StorageInterface;
@@ -245,7 +245,7 @@ final class Exports extends AbstractRest
         foreach ($entitySlugs as $slug) {
             try {
                 $entityArr[] = $slug->type->toInstance($this->requester, $slug->id);
-            } catch (IllegalActionException) {
+            } catch (ForbiddenException) {
                 // TODO figure out why we encounter instances with no read access in the first place
                 continue;
             }

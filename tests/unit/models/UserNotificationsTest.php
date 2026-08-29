@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Notifications\UserNotifications;
@@ -61,7 +61,7 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $Notif = new StepDeadline($this->OtherUsers, 1, 1, 'experiments', '2026-05-27 03:29:21');
         $Notif->create();
         $this->OtherUsers->requester = $this->Users->requester;
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $this->OtherUserNotifications->readAll();
     }
 
@@ -80,7 +80,7 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 
         $this->OtherUsers->requester = $this->Users->requester;
         $this->OtherUserNotifications->setId($id);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $this->OtherUserNotifications->readOne();
     }
 
@@ -102,7 +102,7 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
 
         $this->OtherUsers->requester = $this->Users->requester;
         $this->OtherUserNotifications->setId($id);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $this->OtherUserNotifications->patch(Action::Update, array());
     }
 
@@ -117,7 +117,7 @@ class UserNotificationsTest extends \PHPUnit\Framework\TestCase
         $Notif->create();
 
         $this->OtherUsers->requester = $this->Users->requester;
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $this->OtherUserNotifications->destroy();
     }
 }

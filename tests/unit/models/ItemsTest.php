@@ -18,7 +18,6 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AuthenticatedUser;
@@ -139,14 +138,14 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     public function testCannotReadOneWithoutId(): void
     {
         $this->Items->setId(null);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->Items->readOne();
     }
 
     public function testCannotCheckPermissionsWithoutId(): void
     {
         $this->Items->setId(null);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->Items->canOrExplode(AccessType::Read);
     }
 

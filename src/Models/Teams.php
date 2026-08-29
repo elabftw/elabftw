@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
@@ -341,7 +341,7 @@ final class Teams extends AbstractRest
     public function canWriteOrExplode(): void
     {
         if (!$this->canWrite()) {
-            throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
+            throw new ForbiddenException('User tried to update a team setting but they are not admin of that team.');
         }
     }
 

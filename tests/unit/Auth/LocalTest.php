@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -32,7 +32,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getRandomUserInTeam(2);
         $Local = new Local($user->userData['email'], 'notimportant', isDisplayed: false, isOnlySysadminWhenHidden: true);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Local->authenticate();
     }
 

@@ -18,7 +18,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
@@ -197,7 +197,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         }
         // Ensure User 2 can not perform any action on visible(non-bookable) event.
         $Scheduler2->setId($eventId);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Scheduler2->patch(Action::Update, array('target' => 'end', 'delta' => $this->delta));
     }
 
@@ -481,7 +481,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $UserScheduler = new Scheduler(new Items($User, $Items->id));
         $UserScheduler->setId($adminEventId);
         // try write event created by admin as user
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $UserScheduler->patch(Action::Update, array('target' => 'experiment', 'id' => 3));
     }
 

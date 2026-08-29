@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\BuildInfo;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\StringMakerInterface;
 use Elabftw\Models\AbstractEntity;
@@ -65,7 +65,7 @@ class MakeJson extends AbstractMake implements StringMakerInterface
                 $all['elabftw_version'] = BuildInfo::VERSION;
                 $all['elabftw_version_int'] = BuildInfo::VERSION_INT;
                 ksort($all);
-            } catch (IllegalActionException | ResourceNotFoundException) {
+            } catch (ForbiddenException | ResourceNotFoundException) {
                 continue;
             }
             $res[] = $all;

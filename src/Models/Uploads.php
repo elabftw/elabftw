@@ -26,7 +26,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\MakeThumbnailFactory;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
@@ -373,7 +373,7 @@ final class Uploads extends AbstractRest
     public function setId(int $id): void
     {
         if (Check::id($id) === false) {
-            throw new IllegalActionException('The id parameter is not valid!');
+            throw new ImproperActionException('The id parameter is not valid!');
         }
         $this->id = $id;
         // load it
@@ -526,7 +526,7 @@ final class Uploads extends AbstractRest
     private function canWriteOrExplode(): void
     {
         if ($this->uploadData['immutable'] === 1) {
-            throw new IllegalActionException('User tried to edit an immutable upload.');
+            throw new ForbiddenException('User tried to edit an immutable upload.');
         }
         $this->Entity->canOrExplode(AccessType::Write);
     }

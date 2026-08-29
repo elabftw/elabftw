@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EmailTarget;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Users\Users;
@@ -80,7 +80,7 @@ class EventDeletedTest extends \PHPUnit\Framework\TestCase
     public function testReadOnlyUserCannotNotifyEventRecipients(): void
     {
         $requester = $this->getRandomUserInTeam(1);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $this->getNotifications($requester, eventOwner: -1)->postAction(Action::Create, array(
             'target' => EmailTarget::Team->value,
         ));

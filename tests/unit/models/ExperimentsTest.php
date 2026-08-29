@@ -19,7 +19,7 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AnonymousUser;
@@ -96,7 +96,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testSetId(): void
     {
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->Experiments->setId(0);
     }
 
@@ -277,7 +277,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         );
         $shared = new Experiments($requester, $id);
 
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $shared->patch(Action::UpdateOwner, array(
             'userid' => $requester->getUserid(),
             'team' => $requester->getTeam(),
@@ -310,7 +310,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $user1->isAdmin = false;
         $user2 = new Users(2, 2);
         $exp = $this->getFreshExperimentWithGivenUser($user1);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $exp->patch(Action::UpdateOwner, array('userid' => $user2->userid, 'team' => 2));
     }
 

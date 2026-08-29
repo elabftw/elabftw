@@ -15,7 +15,7 @@ namespace Elabftw\Auth;
 use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\AuthMethod;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -85,7 +85,7 @@ final class Local implements AuthenticatorInterface
     {
         // if local_login is disabled, only a sysadmin can login if local_login_hidden_only_sysadmin is set
         if (!$this->isDisplayed && $this->result['is_sysadmin'] === 0 && $this->isOnlySysadminWhenHidden) {
-            throw new IllegalActionException(_('Only a Sysadmin account can use local authentication when it is hidden.'));
+            throw new ForbiddenException(_('Only a Sysadmin account can use local authentication when it is hidden.'));
         }
         // there is also a setting that only allows sysadmins to login
         if ($this->isOnlySysadmin && $this->result['is_sysadmin'] === 0) {

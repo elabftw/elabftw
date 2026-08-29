@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
@@ -373,7 +373,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         } elseif ($this->entity instanceof AbstractTemplateEntity) {
             return;
         } else {
-            throw new IllegalActionException('Nope.');
+            throw new ImproperActionException('Nope.');
         }
         $this->selectSql[] = "GROUP_CONCAT(
                 DISTINCT team_events.start

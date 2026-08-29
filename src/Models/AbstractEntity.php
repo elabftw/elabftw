@@ -37,7 +37,6 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ForbiddenException;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnprocessableContentException;
@@ -674,7 +673,7 @@ abstract class AbstractEntity extends AbstractRest
     public function readOne(): array
     {
         if ($this->id === null) {
-            throw new IllegalActionException('No id was set!');
+            throw new ImproperActionException('No id was set!');
         }
         $request = Request::createFromGlobals();
         $queryParams = $this->getQueryParams($request->query);
@@ -812,7 +811,7 @@ abstract class AbstractEntity extends AbstractRest
     public function canOrExplode(AccessType $rw): void
     {
         if ($this->id === null) {
-            throw new IllegalActionException('Cannot check permissions without an id!');
+            throw new ImproperActionException('Cannot check permissions without an id!');
         }
         if ($this->bypassWritePermission && $rw === AccessType::Write) {
             return;
@@ -1063,7 +1062,7 @@ abstract class AbstractEntity extends AbstractRest
         array $overrideCreateParams = array(),
         bool $blankExtrafields = true,
     ): int {
-        $sourceId = $sourceEntity->id ?? throw new IllegalActionException('No id was set!');
+        $sourceId = $sourceEntity->id ?? throw new ImproperActionException('No id was set!');
         $fromTemplate = $sourceEntity instanceof AbstractTemplateEntity;
         $toTemplate = $this instanceof AbstractTemplateEntity;
 
@@ -1511,14 +1510,14 @@ abstract class AbstractEntity extends AbstractRest
     {
         $sourceTeamHelper = new TeamsHelper((int) $this->entityData['team']);
         if (!$this->Users->isSysadmin() && !$sourceTeamHelper->isAdminInTeam($this->Users->getUserid())) {
-            throw new IllegalActionException(_(
+            throw new ForbiddenException(_(
                 'Only an administrator of the entity team can transfer ownership.'
             ));
         }
 
         // non-admins cannot transfer outside their own team
         if (!$this->Users->isAdmin && $destinationTeam !== $this->Users->getTeam()) {
-            throw new IllegalActionException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
+            throw new ForbiddenException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
         }
         $teamsHelper = new TeamsHelper($destinationTeam);
         // target user must belong to destination team

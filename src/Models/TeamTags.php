@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
@@ -72,7 +72,7 @@ final class TeamTags extends AbstractRest
     public function postAction(Action $action, array $reqBody): int
     {
         if (!$this->Users->isAdmin) {
-            throw new IllegalActionException('Only an admin can do this!');
+            throw new ForbiddenException('Only an admin can do this!');
         }
         $tag = $reqBody['tag'] ?? throw new ImproperActionException('Missing required tag key!');
         return $this->create(new TagParam($tag));
@@ -139,7 +139,7 @@ final class TeamTags extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         if (!$this->Users->isAdmin) {
-            throw new IllegalActionException('Only an admin can do this!');
+            throw new ForbiddenException('Only an admin can do this!');
         }
         return match ($action) {
             Action::UpdateTag => $this->updateTag(new TagParam($params['tag'])),
@@ -154,7 +154,7 @@ final class TeamTags extends AbstractRest
     public function destroy(): bool
     {
         if (!$this->Users->isAdmin) {
-            throw new IllegalActionException('Only an admin can delete a tag!');
+            throw new ForbiddenException('Only an admin can delete a tag!');
         }
         // first unreference the tag
         $sql = 'DELETE tags2entity
@@ -184,7 +184,7 @@ final class TeamTags extends AbstractRest
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
         if ($req->fetchColumn() === false) {
-            throw new IllegalActionException('Cannot edit this tag.');
+            throw new ForbiddenException('Cannot edit this tag.');
         }
     }
 

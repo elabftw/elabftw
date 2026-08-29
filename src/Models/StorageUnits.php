@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -496,7 +496,7 @@ final class StorageUnits extends AbstractRest
     public function canWriteOrExplode(): void
     {
         if (!$this->canWrite()) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 

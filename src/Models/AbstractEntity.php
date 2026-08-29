@@ -84,6 +84,7 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
+use Throwable;
 
 use function array_any;
 use function array_column;
@@ -120,6 +121,7 @@ use function strlen;
 use function hash_equals;
 use function preg_replace_callback;
 use function rawurlencode;
+use function is_int;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -1539,7 +1541,7 @@ abstract class AbstractEntity extends AbstractRest
             $merged = $this->mergePermissionJson((string) $current[$key], $additions);
             $this->update(new EntityParams($key, $merged));
             $this->Db->commit();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->Db->rollBack();
             throw $e;
         }

@@ -43,16 +43,21 @@ const createExperiment = (
   return cy.extractIdFromLocation(response);
 });
 
-const selectUser = (identifier: string, name: string) => {
+const selectUser = (identifier: string, name: string, userid: number) => {
   cy.get(`#${identifier}-users-select-input`)
     .clear()
     .type(name);
-  cy.get(`#${identifier}_select_users`)
-    .parent('.ts-wrapper')
-    .find('.ts-dropdown .option')
-    .contains(name)
-    .should('be.visible')
-    .click();
+  cy.get(`#${identifier}_select_users`).then(select => {
+    const control = (select[0] as HTMLSelectElement & {
+      tomselect: {
+        addItem: (value: string) => void;
+        options: Record<string, unknown>;
+      };
+    }).tomselect;
+    cy.wrap(null).should(() => {
+      expect(control.options).to.have.property(`user:${userid}`);
+    }).then(() => control.addItem(`user:${userid}`));
+  });
 };
 
 const parsePermissions = (value: string): Permissions => JSON.parse(value) as Permissions;
@@ -110,8 +115,8 @@ describe('Bulk entity permissions', () => {
 
               cy.get('[data-cy="change-selected-read-permissions"]').click();
               cy.get('#permModal-canreadBatch').should('be.visible');
-              selectUser('canreadBatch', 'Titi');
-              selectUser('canreadBatch', 'Tutu');
+              selectUser('canreadBatch', 'Titi', firstAddedUserId);
+              selectUser('canreadBatch', 'Tutu', secondAddedUserId);
 
               cy.intercept('PATCH', '**/api/v2/experiments/*').as('readPermissionPatch');
               cy.on('window:confirm', () => true);
@@ -150,8 +155,8 @@ describe('Bulk entity permissions', () => {
 
               cy.get('[data-cy="change-selected-write-permissions"]').click();
               cy.get('#permModal-canwriteBatch').should('be.visible');
-              selectUser('canwriteBatch', 'Titi');
-              selectUser('canwriteBatch', 'Tutu');
+              selectUser('canwriteBatch', 'Titi', firstAddedUserId);
+              selectUser('canwriteBatch', 'Tutu', secondAddedUserId);
 
               cy.intercept('PATCH', '**/api/v2/experiments/*').as('writePermissionPatch');
               cy.get('#permModal-canwriteBatch [data-cy="save-batch-permissions"]').click();

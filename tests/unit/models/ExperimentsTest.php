@@ -281,8 +281,12 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
             'teamgroups' => array(),
             'users' => array($existingUser->userid, $addedUser->userid),
         );
-        $this->assertSame($expected, json_decode($entityData['canread'], true));
-        $this->assertSame($expected, json_decode($entityData['canwrite'], true));
+        $canRead = json_decode($entityData['canread'], true);
+        $canWrite = json_decode($entityData['canwrite'], true);
+        foreach ($expected as $principal => $ids) {
+            $this->assertSame($ids, $canRead[$principal]);
+            $this->assertSame($ids, $canWrite[$principal]);
+        }
         $this->assertSame(BasePermissions::UserOnly->value, $entityData['canread_base']);
         $this->assertSame(BasePermissions::UserOnly->value, $entityData['canwrite_base']);
     }

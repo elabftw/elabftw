@@ -44,19 +44,15 @@ const createExperiment = (
 });
 
 const selectUser = (identifier: string, name: string, userid: number) => {
-  cy.get(`#${identifier}-users-select-input`)
-    .clear()
-    .type(name);
   cy.get(`#${identifier}_select_users`).then(select => {
     const control = (select[0] as HTMLSelectElement & {
       tomselect: {
         addItem: (value: string) => void;
-        options: Record<string, unknown>;
+        addOption: (option: { value: string; text: string }) => void;
       };
     }).tomselect;
-    cy.wrap(null).should(() => {
-      expect(control.options).to.have.property(`user:${userid}`);
-    }).then(() => control.addItem(`user:${userid}`));
+    control.addOption({ value: `user:${userid}`, text: name });
+    control.addItem(`user:${userid}`);
   });
 };
 

@@ -47,7 +47,9 @@ const selectUser = (identifier: string, name: string) => {
   cy.get(`#${identifier}-users-select-input`)
     .clear()
     .type(name);
-  cy.get(`#permModal-${identifier} .ts-dropdown .option`)
+  cy.get(`#${identifier}_select_users`)
+    .parent('.ts-wrapper')
+    .find('.ts-dropdown .option')
     .contains(name)
     .should('be.visible')
     .click();

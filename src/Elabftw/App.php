@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\ThemeVariant;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\AnonymousUser;
@@ -211,16 +212,20 @@ final class App
 
     public function getResponseFromException(Exception $e): Response
     {
-        // generate a unique error so user can communicate this error to support and it's easy to find in the logs
-        $errorIdent = Tools::getUuidv4();
-        $this->Log->error('', array(array('userid' => $this->Session->get('userid'), 'error-identifier' => $errorIdent), array('Exception' => $e)));
-        $template = 'error.html';
+        $userid = $this->Session->get('userid') ?? -1;
+
+        if ($e instanceof AppException) {
+            $e->emitLog($this->Log, $userid);
+            return $this->getErrorResponse($e->getMessage(), $e->getHttpCode());
+        }
+
+        $this->Log->error('', array(
+            array('userid' => $userid),
+            array('Exception' => $e),
+        ));
+
         $error = Messages::CriticalError;
-        $renderArr = array('error' => sprintf('%s %s', $error->toHuman(), $errorIdent));
-        $Response = new Response();
-        $Response->setContent($this->render($template, $renderArr));
-        $Response->setStatusCode($error->toHttpCode());
-        return $Response;
+        return $this->getErrorResponse($error->toHuman(), $error->toHttpCode());
     }
 
     public function getThemeVariant(): ThemeVariant
@@ -233,6 +238,17 @@ final class App
         // 2. anon & guest preference (cookie)
         $cookie = $this->Request->cookies->getInt('theme_variant');
         return ThemeVariant::tryFrom($cookie) ?? ThemeVariant::Auto;
+    }
+
+    private function getErrorResponse(string $message, int $status): Response
+    {
+        return new Response(
+            $this->render('error.html', array(
+                'error' => $message,
+                'requestId' => $_SERVER['ELABFTW_REQUEST_ID'] ?? '',
+            )),
+            $status,
+        );
     }
 
     private function handleSessionExpiration(): void

@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Scope;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Models\Items;
 use Elabftw\Models\ResourcesCategories;
 use Exception;
@@ -57,8 +56,6 @@ try {
     );
 
     $Response->setContent($App->render($template, $renderArr));
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

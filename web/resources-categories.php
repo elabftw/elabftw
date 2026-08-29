@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ResourcesCategoriesController;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ForbiddenException;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,8 +29,6 @@ try {
         throw new ForbiddenException();
     }
     $Response = new ResourcesCategoriesController($App)->getResponse();
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

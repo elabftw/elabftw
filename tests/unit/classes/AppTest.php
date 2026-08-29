@@ -67,13 +67,14 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
     public function testGetResponseFromServerAppException(): void
     {
-        $Exception = new DatabaseErrorException(array('HY000', 1234, 'Expected database error'));
+        $rawDatabaseError = 'Sensitive database diagnostic';
+        $Exception = new DatabaseErrorException(array('HY000', 1234, $rawDatabaseError));
         $Log = $this->createMock(LoggerInterface::class);
         $Log->expects(self::once())
             ->method('log')
             ->with(
                 'error',
-                'Expected database error',
+                $rawDatabaseError,
                 array(
                     'userid' => 123,
                     'request-id' => '',
@@ -82,9 +83,11 @@ class AppTest extends \PHPUnit\Framework\TestCase
             );
 
         $Response = $this->getApp($Log)->getResponseFromException($Exception);
+        $content = (string) $Response->getContent();
 
         self::assertSame(500, $Response->getStatusCode());
-        self::assertStringContainsString('Expected database error', (string) $Response->getContent());
+        self::assertStringContainsString(Messages::CriticalError->toHuman(), $content);
+        self::assertStringNotContainsString($rawDatabaseError, $content);
     }
 
     public function testGetResponseFromUnexpectedException(): void

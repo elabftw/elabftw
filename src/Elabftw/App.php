@@ -217,7 +217,11 @@ final class App
 
         if ($e instanceof AppException) {
             $e->emitLog($this->Log, $userid);
-            return $this->getErrorResponse($e->getMessage(), $e->getHttpCode(), $requestId);
+            $message = $e->getHttpCode() >= Response::HTTP_INTERNAL_SERVER_ERROR
+                ? Messages::CriticalError->toHuman()
+                : $e->getMessage();
+
+            return $this->getErrorResponse($message, $e->getHttpCode(), $requestId);
         }
 
         $this->Log->error('', array(

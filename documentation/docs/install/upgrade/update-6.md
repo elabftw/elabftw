@@ -203,3 +203,7 @@ It is then safe to remove the whole `chem-plugin` block in your docker compose f
 ### MySQL Persistent connection mode
 
 The environment variable `USE_PERSISTENT_MYSQL_CONN` now defaults to `false`. It used to be `true` by default but that caused more issues than it solved, so now it's set to `false`. This will have an impact if you did not set that value but expected it to be `true` for some reason. If that's the case, then add it explicitly.
+
+### NGINX access logs now use structured JSON
+
+The default NGINX access log format has been replaced with a structured JSON format providing significantly more diagnostic information, including request IDs, request and upstream response timings, response sizes, connection information, and compression ratios. Administrators parsing NGINX access logs should update their log-processing configuration accordingly.

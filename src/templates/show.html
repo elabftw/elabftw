@@ -541,6 +541,8 @@
           <button data-action='patch-selected-entities' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Unarchive the selected entities'|trans }}' title='{{ 'Unarchive the selected entities'|trans }}'>{{ 'Unarchive'|trans }}</button>
           <button data-action='toggle-modal' data-target='deleteSelectedEntitiesModal' type='button' class='btn btn-danger-ghost mr-1 mb-2' aria-label='{{ 'Delete the selected entities'|trans }}' title='{{ 'Delete the selected entities'|trans }}'>{{ 'Delete'|trans }}</button>
           <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Restore the selected entities'|trans }}' title='{{ 'Restore the selected entities'|trans }}'>{{ 'Restore'|trans }}</button>
+          <button data-cy='change-selected-read-permissions' data-action='toggle-modal' data-target='permModal-canreadBatch' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Change read permissions'|trans }}</button>
+          <button data-cy='change-selected-write-permissions' data-action='toggle-modal' data-target='permModal-canwriteBatch' type='button' class='btn btn-primary mr-1 mb-2'>{{ 'Change write permissions'|trans }}</button>
         </div>
 
         <form id='multiChangesForm' class='row mx-0 form-inline'>
@@ -706,4 +708,6 @@
   >
   </div>
 </div>
+{% include 'permissions-edit-modal.html' with {'batchPage': true, 'rw': 'canread'} %}
+{% include 'permissions-edit-modal.html' with {'batchPage': true, 'rw': 'canwrite'} %}
 {% endblock body %}

@@ -10,6 +10,7 @@ import {
   collectForm,
   mkSpin,
   mkSpinStop,
+  permissionsToJson,
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
@@ -47,6 +48,49 @@ type EntityFilterRequestedDetail = {
   value: string;
   label?: string | null;
 };
+
+type PermissionTarget = 'canread' | 'canwrite';
+type PermissionKey = 'teams' | 'teamgroups' | 'users';
+type Permissions = Record<PermissionKey, number[]>;
+
+function parsePermissionList(value: unknown): number[] {
+  if (!Array.isArray(value) || value.some(id => typeof id !== 'number' || !Number.isInteger(id))) {
+    throw new Error('Invalid permission data');
+  }
+  return value;
+}
+
+function parsePermissions(value: unknown): Permissions {
+  const parsed = typeof value === 'string' ? JSON.parse(value) as unknown : value;
+  if (!parsed || typeof parsed !== 'object') {
+    throw new Error('Invalid permission data');
+  }
+  const record = parsed as Record<string, unknown>;
+  return {
+    teams: parsePermissionList(record.teams),
+    teamgroups: parsePermissionList(record.teamgroups),
+    users: parsePermissionList(record.users),
+  };
+}
+
+function mergePermissions(current: unknown, additions: string): string {
+  const currentPermissions = parsePermissions(current);
+  const addedPermissions = parsePermissions(additions);
+  const merged: Permissions = {
+    teams: [...new Set([...currentPermissions.teams, ...addedPermissions.teams])],
+    teamgroups: [...new Set([...currentPermissions.teamgroups, ...addedPermissions.teamgroups])],
+    users: [...new Set([...currentPermissions.users, ...addedPermissions.users])],
+  };
+  return JSON.stringify(merged);
+}
+
+function collectPermissionsFromModal(identifier: string): string {
+  const values = ['teams', 'teamgroups', 'users'].flatMap(type => {
+    const select = document.getElementById(`${identifier}_select_${type}`) as HTMLSelectElement | null;
+    return select ? Array.from(select.selectedOptions, option => option.value) : [];
+  });
+  return permissionsToJson(values);
+}
 
 const activeFilters = document.getElementById('activeFiltersDiv');
 let debounceTimer: number | undefined;
@@ -748,6 +792,75 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // START ACTION LISTENERS
+  on('save-batch-permissions', (el: HTMLElement) => {
+    const checked = get(selectedEntities);
+    if (checked.length === 0) {
+      notify.error('nothing-selected');
+      return;
+    }
+
+    const rw = el.dataset.rw as PermissionTarget | undefined;
+    const identifier = el.dataset.identifier;
+    if (!identifier || !rw) {
+      notify.error('invalid-info');
+      return;
+    }
+
+    const additions = collectPermissionsFromModal(identifier);
+    if (!Object.values(parsePermissions(additions)).some(items => items.length > 0)) {
+      notify.error('invalid-info');
+      return;
+    }
+
+    if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
+      return;
+    }
+
+    const params: Record<string, unknown> = {
+      [rw]: additions,
+      notifOnSaved: 0,
+      notifOnError: 0,
+    };
+    const btn = el as HTMLButtonElement;
+    const oldHTML = mkSpin(btn);
+    const requests = checked.map(async id => {
+      const current = await ApiC.getJson<Record<string, unknown>>(`${entity.type}/${id}`, {notifOnError: 0});
+      return ApiC.patch(`${entity.type}/${id}`, {
+        ...params,
+        [rw]: mergePermissions(current[rw], additions),
+      });
+    });
+
+    Promise.allSettled(requests)
+      .then(results => {
+        const failedIds = results
+          .map((result, index) => result.status === 'rejected' ? checked[index] : null)
+          .filter((id): id is typeof checked[number] => id !== null);
+
+        if (failedIds.length === 0) {
+          notify.success();
+        } else {
+          failedIds.forEach(id => {
+            const elem = document.querySelector(`[data-entity-id="${id}"]`) as HTMLElement | null;
+            if (elem) {
+              elem.style.backgroundColor = 'var(--lightred)';
+            }
+          });
+          notify.warning(
+            'entity-patch-multi-warning',
+            {count: checked.length - failedIds.length, failed: failedIds.length},
+          );
+          console.warn('Ids of entities that could not be modified are logged below:');
+          console.warn(failedIds);
+        }
+
+        return reloadEntitiesShow();
+      })
+      .finally(() => {
+        mkSpinStop(btn, oldHTML);
+      });
+  });
+
   on('save-multi-changes', (el: HTMLElement, event: Event) => {
     // prevent form submission
     event.preventDefault();

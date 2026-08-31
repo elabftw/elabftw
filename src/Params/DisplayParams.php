@@ -75,6 +75,12 @@ final class DisplayParams extends BaseQueryParams
     }
 
     #[Override]
+    public function getSkipOrderPinned(): bool
+    {
+        return $this->skipOrderPinned;
+    }
+
+    #[Override]
     public function getSql(): string
     {
         if ($this->skipOrderPinned === true) {

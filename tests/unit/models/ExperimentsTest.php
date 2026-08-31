@@ -124,6 +124,28 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($fast);
     }
 
+    public function testDefaultReadPaginatesPinnedEntitiesFirst(): void
+    {
+        $pinnedId = $this->Experiments->create(title: 'Pinned fast read entity');
+        $PinnedExperiment = new Experiments($this->Users, $pinnedId);
+        new Pins($PinnedExperiment)->togglePin();
+
+        $firstPage = $this->Experiments->readAll(new DisplayParams(
+            requester: $this->Users,
+            entityType: EntityType::Experiments,
+            limit: 1,
+        ));
+        $secondPage = $this->Experiments->readAll(new DisplayParams(
+            requester: $this->Users,
+            entityType: EntityType::Experiments,
+            limit: 1,
+            offset: 1,
+        ));
+
+        self::assertSame($pinnedId, $firstPage[0]['id']);
+        self::assertNotSame($pinnedId, $secondPage[0]['id']);
+    }
+
     public function testUpdate(): void
     {
         $new = $this->Experiments->create();

@@ -299,7 +299,7 @@ services:
 
         # only log queries that take longer than DB_QUERY_LOG_MIN_MS milliseconds
         # default value: 500
-        #- DB_QUERY_LOG_MIN_MS=800
+        #- DB_QUERY_LOG_MIN_MS=500
 
         ###########
         # PLUGINS #

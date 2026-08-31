@@ -293,6 +293,14 @@ services:
         # example value: https://example.com https://example.org
         #- CUSTOM_CONNECT_SRC=
 
+        # enable sql profiling
+        # default value: false
+        #- DB_QUERY_PROFILING=false
+
+        # only log queries that take longer than DB_QUERY_LOG_MIN_MS milliseconds
+        # default value: 500
+        #- DB_QUERY_LOG_MIN_MS=500
+
         ###########
         # PLUGINS #
         ###########

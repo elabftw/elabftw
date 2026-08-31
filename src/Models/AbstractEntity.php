@@ -33,7 +33,9 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
+use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ForbiddenException;
@@ -403,6 +405,12 @@ abstract class AbstractEntity extends AbstractRest
         $EntitySqlBuilder = $this->getSqlBuilder();
         if ($searchJoinSql !== '' && $EntitySqlBuilder instanceof EntitySqlBuilder) {
             $EntitySqlBuilder->setSearchJoinSql($searchJoinSql);
+        }
+        if (
+            $EntitySqlBuilder instanceof EntitySqlBuilder
+            && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds)
+        ) {
+            return $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can);
         }
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
@@ -1419,6 +1427,59 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     protected function enforceTemplate(array $teamConfigArr): void {}
+
+    private function canUseDefaultReadFastPath(
+        QueryParamsInterface $displayParams,
+        bool $extended,
+        string $searchJoinSql,
+        bool $withCompounds,
+    ): bool {
+        return $displayParams instanceof DisplayParams
+            && !($this->Users instanceof AnonymousUser)
+            && !$extended
+            && $searchJoinSql === ''
+            && !$displayParams->hasUserQuery()
+            && !$displayParams->isFull()
+            && $displayParams->getRelatedOrigin() === null
+            && !$withCompounds
+            && $this->filterSql === ''
+            && $displayParams->orderby === Orderby::Lastchange
+            && $displayParams->sort === Sort::Desc
+            && $displayParams->getLimit() > 0;
+    }
+
+    /**
+     * This function exists so that default page load with no search is fast
+     */
+    private function readShowDefaultPage(
+        QueryParamsInterface $displayParams,
+        EntitySqlBuilder $EntitySqlBuilder,
+        string $displayFilterSql,
+        string $can,
+    ): array {
+        $pageSql = $EntitySqlBuilder->getReadPageSql(
+            $displayFilterSql,
+            $displayParams->getStatesSql('entity'),
+            $can,
+            $displayParams->getLimit(),
+            $displayParams->getOffset(),
+            $displayParams->getSkipOrderPinned(),
+        );
+        $sql = sprintf(
+            '%s INNER JOIN (%s) AS page
+                ON page.id = entity.id
+            ORDER BY page.is_pinned DESC, page.modified_at DESC, page.id DESC',
+            $EntitySqlBuilder->getReadSqlBeforeWhere(),
+            $pageSql,
+        );
+
+        $req = $this->Db->prepare($sql);
+        $userid = $this->Users->getUserid();
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->hydrateTags($req->fetchAll());
+    }
 
     private function addSimpleQueryBindValues(string $query): void
     {

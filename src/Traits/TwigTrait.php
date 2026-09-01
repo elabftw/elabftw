@@ -81,6 +81,7 @@ trait TwigTrait
         $memoryUsage = new TwigFunction('memoryUsage', '\Elabftw\Elabftw\TwigFunctions::getMemoryUsage');
         $envAsBool = new TwigFunction('envAsBool', '\Elabftw\Elabftw\TwigFunctions::envAsBool');
         $numberOfQueries = new TwigFunction('numberOfQueries', '\Elabftw\Elabftw\TwigFunctions::getNumberOfQueries');
+        $serverTimezone = new TwigFunction('serverTimezone', '\Elabftw\Elabftw\TwigFunctions::getServerTimezone');
         $ext2icon = new TwigFunction('ext2icon', '\Elabftw\Elabftw\Extensions::getIconFromExtension');
         $getExtendedSearchExample = new TwigFunction('getExtendedSearchExample', '\Elabftw\Elabftw\TwigFunctions::getExtendedSearchExample');
 
@@ -116,6 +117,7 @@ trait TwigTrait
         $TwigEnvironment->addFunction($memoryUsage);
         $TwigEnvironment->addFunction($envAsBool);
         $TwigEnvironment->addFunction($numberOfQueries);
+        $TwigEnvironment->addFunction($serverTimezone);
         $TwigEnvironment->addFunction($ext2icon);
         $TwigEnvironment->addFunction($getExtendedSearchExample);
 

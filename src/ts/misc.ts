@@ -65,21 +65,23 @@ export const getInput = (id: string): HTMLInputElement => {
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
-  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
+  const userPrefs = document.getElementById('user-prefs')?.dataset;
+  const locale = userPrefs?.jslang ?? 'en';
+  const timezone = userPrefs?.timezone ?? 'system';
   document.querySelectorAll('.relative-moment').forEach(el => {
     const span = el as HTMLElement;
     // do nothing if it's already loaded, prevent infinite loop with mutation observer
     if (span.innerText) {
       return;
     }
-    span.innerText = toRelative(span.title, locale);
+    span.innerText = toRelative(span.title, locale, timezone);
   });
 }
 
-export function toRelative(title: string, locale: string): string {
+export function toRelative(title: string, locale: string, timezone = document.getElementById('user-prefs')?.dataset.timezone ?? 'system'): string {
   return (
     DateTime
-      .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale})
+      .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale, 'zone': timezone})
       .toRelative() ?? ''
   );
 }

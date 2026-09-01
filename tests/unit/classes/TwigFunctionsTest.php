@@ -13,6 +13,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Models\AbstractEntity;
 
+use function date_default_timezone_get;
+
 class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetLimitOptions(): void

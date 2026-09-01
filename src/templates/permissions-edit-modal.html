@@ -1,5 +1,12 @@
 {# required vars: rw visibilityArr teamsArr scopedTeamgroupsArr usersArr #}
-{% if ucpPage %}{# set this to true on ucp page for default permissions #}
+{% set withSelected = withSelected|default(false) %}
+{% if withSelected %}
+  {% set identifier = rw ~ 'Selected' %}
+  {% set column = rw == 'canread' ? 'default_read' : 'default_write' %}
+  {% set permissionsJson = App.Users.userData[column] %}
+  {% set can_base = App.Users.userData[column ~ '_base'] %}
+  {% set base_target = rw ~ '_base' %}
+{% elseif ucpPage %}{# set this to true on ucp page for default permissions #}
   {% set column = rw == 'canread' ? 'default_read' : 'default_write' %}
   {% set permissionsJson = App.Users.userData[column] %}
   {% set identifier = rw ~ 'defaultPermissions' %}
@@ -123,7 +130,7 @@
             <input type='text' class='form-control mt-2' id='{{ identifier }}-users-select-input' placeholder='{{ 'Search for users'|trans }}' aria-label='{{ 'Search for users'|trans }}'>
           </div>
         </div>
-        {% if rw == 'canread' and App.Config.configArr.anon_users and not ucpPage %}
+        {% if rw == 'canread' and App.Config.configArr.anon_users and not ucpPage and not withSelected %}
           <hr>
           <div class='custom-control custom-checkbox'>
             <input type='checkbox' class='custom-control-input' id='readAccessCheckbox' data-action='toggle-anonymous-access' autocomplete='off' {{ Entity.entityData.access_key ? 'checked' }}>
@@ -142,10 +149,10 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
-        {% if not ucpPage and (rw == 'canread' or rw == 'canwrite') %}
+        {% if not ucpPage and not withSelected and (rw == 'canread' or rw == 'canwrite') %}
           <button type='button' class='btn btn-ghost' data-dismiss='modal' data-identifier='{{ identifier }}' data-action='save-permissions-both'>{{ 'Apply to Read & Write'|trans }}</button>
         {% endif %}
-        <button type='button' class='btn btn-primary' data-dismiss='modal' data-identifier='{{ identifier }}' data-rw='{{ rw }}' {{ ucpPage ? 'data-is-user-default="1"' }} data-action='save-permissions'>{{ 'Save'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-identifier='{{ identifier }}' data-rw='{{ rw }}' {{ ucpPage ? 'data-is-user-default="1"' }} {{ withSelected ? 'data-with-selected="1"' }} data-action='save-permissions'>{{ 'Save'|trans }}</button>
       </div>
     </div>
   </div>

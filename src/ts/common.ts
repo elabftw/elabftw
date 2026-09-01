@@ -804,6 +804,23 @@ on('save-permissions', (el: HTMLElement) => {
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   params[baseSelect.name] = baseSelect.value;
 
+  if (el.dataset.withSelected) {
+    const checked = getFromSvelte(selectedEntities);
+    if (checked.length === 0) {
+      notify.error('nothing-selected');
+      return;
+    }
+    if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
+      return;
+    }
+    const requests = checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params, notifOnSaved: 0}));
+    Promise.all(requests).then(() => {
+      notify.success();
+      reloadEntitiesShow();
+    });
+    return;
+  }
+
   const divId = el.dataset.identifier + 'Div';
   // if we're editing the default read/write permissions for experiments, this data attribute will be set
   if (el.dataset.isUserDefault) {

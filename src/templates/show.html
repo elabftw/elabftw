@@ -564,20 +564,10 @@
                 <option value='{{ status.id }}'>{{ status.title }}</option>
             {% endfor %}
           </select>
-          {# CANREAD BASE #}
-          <select aria-label='{{ 'Change read permissions'|trans }}' name='canread_base' autocomplete='off' class='mr-1 mb-2 form-control'>
-            <option selected disabled value=''>{{ 'Change read permissions'|trans }}</option>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}'>{{ value }}</option>
-            {% endfor %}
-          </select>
-          {# CANWRITE BASE #}
-          <select aria-label='{{ 'Change write permissions'|trans }}' name='canwrite_base' autocomplete='off' class='mr-1 mb-2 form-control'>
-            <option selected disabled value=''>{{ 'Change write permissions'|trans }}</option>
-            {% for key, value in visibilityArr %}
-              <option value='{{ key }}'>{{ value }}</option>
-            {% endfor %}
-          </select>
+          {# CANREAD #}
+          <button data-action='toggle-modal' data-target='permModal-canreadSelected' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Change read permissions'|trans }}'>{{ 'Change read permissions'|trans }}</button>
+          {# CANWRITE #}
+          <button data-action='toggle-modal' data-target='permModal-canwriteSelected' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Change write permissions'|trans }}'>{{ 'Change write permissions'|trans }}</button>
             {% if pageName == 'database' %}
             {# CANBOOK #}
             <select aria-label='{{ 'Change book permissions'|trans }}' name='is_bookable' autocomplete='off' class='mr-1 mb-2 form-control'>
@@ -706,4 +696,6 @@
   >
   </div>
 </div>
+{% include 'permissions-edit-modal.html' with {'withSelected': true, 'rw': 'canread'} %}
+{% include 'permissions-edit-modal.html' with {'withSelected': true, 'rw': 'canwrite'} %}
 {% endblock body %}

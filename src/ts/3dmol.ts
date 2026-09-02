@@ -6,31 +6,49 @@
  * @package elabftw
  */
 
-declare global {
-  interface i3dmol {
-    // https://github.com/3dmol/3Dmol.js/blob/master/src/autoload.ts
-    // upstream is not typed, let's just go with ani and call it a day.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    autoload: any;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    viewers: any;
-  }
-}
-
 export async function displayMoleculeViewer(): Promise<void> {
-  // check first if there are elements to render
-  const elements = document.getElementsByClassName('viewer_3Dmoljs');
-  if (elements.length < 1) {
+  const elements = document.querySelectorAll<HTMLElement>(
+    '.viewer_3Dmoljs:not([data-initialized])',
+  );
+
+  if (elements.length === 0) {
     return;
   }
-  // now dynamically load the lib and use autoload function
-  // Note: using createViewer() function  on individual elements is tricky
-  // because of the reload aspect of uploadsDiv and the canvas getting killed
-  // and the renderer becoming like this meme from pulp fiction
-  get3dmol().then(($3Dmol) => $3Dmol.autoload());
+
+  const $3Dmol = await get3dmol();
+
+  await Promise.all(Array.from(elements).map(async element => {
+    element.dataset.initialized = '1';
+
+    const response = await fetch(element.dataset.href);
+    const molecule = await response.text();
+
+    const viewer = $3Dmol.createViewer(element, {
+      backgroundColor: 'white',
+    });
+
+    $3Dmol.viewers[element.id] = viewer;
+
+    const extension = new URL(
+      element.dataset.href,
+      window.location.href,
+    ).searchParams.get('name')?.split('.').pop();
+
+    viewer.addModel(molecule, extension);
+
+    viewer.setStyle(
+      {},
+      extension === 'pdb'
+        ? { cartoon: { color: 'spectrum' } }
+        : { stick: {} },
+    );
+
+    viewer.zoomTo();
+    viewer.render();
+  }));
 }
 
-export async function get3dmol(): Promise<i3dmol>
+export function get3dmol()
 {
   return import('3dmol');
 }

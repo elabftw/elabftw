@@ -24,6 +24,7 @@ use function round;
 use function array_rand;
 use function array_splice;
 use function count;
+use function date_default_timezone_get;
 use function in_array;
 use function json_decode;
 
@@ -88,6 +89,11 @@ final class TwigFunctions
     {
         $Db = Db::getConnection();
         return $Db->getNumberOfQueries();
+    }
+
+    public static function getServerTimezone(): string
+    {
+        return date_default_timezone_get();
     }
 
     /**

@@ -814,7 +814,7 @@ on('save-permissions', (el: HTMLElement) => {
       return;
     }
     const requests = checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params, notifOnSaved: 0}));
-    Promise.all(requests).then(() => {
+    Promise.allSettled(requests).then(() => {
       notify.success();
       reloadEntitiesShow();
     });

@@ -237,16 +237,10 @@ class AutoComplete {
   }
 
   show() {
-    const offset = this.editor.inline ? this.offsetInline() : this.offset();
-
-    this.$dropdown = $(this.renderDropdown())
-      .css({
-        'top': offset.top,
-        'left': offset.left,
-      });
-
+    this.$dropdown = $(this.renderDropdown());
     $('body').append(this.$dropdown);
 
+    this.positionDropdown();
     this.$dropdown.on('click', this.autoCompleteClick.bind(this));
   }
 
@@ -274,6 +268,7 @@ class AutoComplete {
 
     if (result.length) {
       this.$dropdown.html(result.join('')).show();
+      this.positionDropdown();
     } else {
       this.$dropdown.hide();
     }
@@ -363,22 +358,44 @@ class AutoComplete {
     }
   }
 
+  positionDropdown() {
+    const offset = this.editor.inline ? this.offsetInline() : this.offset();
+    const viewportMargin = 8;
+    const viewportLeft = window.scrollX;
+    const viewportRight = viewportLeft + document.documentElement.clientWidth;
+    const dropdownWidth = this.$dropdown.outerWidth() ?? 0;
+    const left = Math.max(
+      viewportLeft + viewportMargin,
+      Math.min(offset.left, viewportRight - dropdownWidth - viewportMargin),
+    );
+    const arrowLeft = Math.max(
+      9,
+      Math.min(dropdownWidth - 21, offset.left - left + 9),
+    );
+
+    this.$dropdown.css({
+      top: offset.top,
+      left: left,
+      '--rte-autocomplete-arrow-left': `${arrowLeft}px`,
+    });
+  }
+
   offset() {
-    const contentAreaPosition = $(this.editor.getContentAreaContainer()).offset();
-    const nodePosition = $(this.editor.dom.select('#data-tiny-complete')).offset();
+    const contentAreaRect = this.editor.getContentAreaContainer().getBoundingClientRect();
+    const nodeRect = this.editor.dom.select('#data-tiny-complete')[0].getBoundingClientRect();
 
     return {
-      top: contentAreaPosition.top + nodePosition.top + $(this.editor.selection.getNode()).innerHeight() - $(this.editor.getDoc()).scrollTop() + 5,
-      left: contentAreaPosition.left + nodePosition.left,
+      top: window.scrollY + contentAreaRect.top + nodeRect.bottom + 5,
+      left: window.scrollX + contentAreaRect.left + nodeRect.left,
     };
   }
 
   offsetInline() {
-    const nodePosition = $(this.editor.dom.select('#data-tiny-complete')).offset();
+    const nodeRect = this.editor.dom.select('#data-tiny-complete')[0].getBoundingClientRect();
 
     return {
-      top: nodePosition.top + $(this.editor.selection.getNode()).innerHeight() + 5,
-      left: nodePosition.left,
+      top: window.scrollY + nodeRect.bottom + 5,
+      left: window.scrollX + nodeRect.left,
     };
   }
 }

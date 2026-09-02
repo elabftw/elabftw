@@ -113,18 +113,38 @@ class AppTest extends \PHPUnit\Framework\TestCase
 
     public function testArchivedUserSessionIsRejected(): void
     {
+        $this->assertInactiveUserSessionIsRejected(
+            'UPDATE users2teams SET is_archived = 1 WHERE users_id = :userid AND teams_id = 1',
+        );
+    }
+
+    public function testExpiredUserSessionIsRejected(): void
+    {
+        $this->assertInactiveUserSessionIsRejected(
+            "UPDATE users SET valid_until = '2000-01-01' WHERE userid = :userid",
+        );
+    }
+
+    public function testDevalidatedUserSessionIsRejected(): void
+    {
+        $this->assertInactiveUserSessionIsRejected(
+            'UPDATE users SET validated = 0 WHERE userid = :userid',
+        );
+    }
+
+    private function assertInactiveUserSessionIsRejected(string $sql): void
+    {
         $User = $this->getRandomUserInTeam(1);
         $Session = new Session(new MockArraySessionStorage());
         $Session->set('is_auth', 1);
-        $Session->set('userid', $User->userid);
-        $Session->set('team', 1);
+        $Session->set('userid', $User->getUserid());
+        $Session->set('team', $User->getTeam());
         $Db = Db::getConnection();
         $Db->beginTransaction();
 
         try {
-            $req = $Db->prepare('UPDATE users2teams SET is_archived = 1 WHERE users_id = :userid AND teams_id = :team');
-            $req->bindValue(':userid', $User->userid, PDO::PARAM_INT);
-            $req->bindValue(':team', 1, PDO::PARAM_INT);
+            $req = $Db->prepare($sql);
+            $req->bindValue(':userid', $User->getUserid(), PDO::PARAM_INT);
             $Db->execute($req);
 
             $App = new App(
@@ -136,7 +156,7 @@ class AppTest extends \PHPUnit\Framework\TestCase
             );
             try {
                 $App->boot();
-                self::fail('Expected archived user session to be rejected.');
+                self::fail('Expected inactive user session to be rejected.');
             } catch (UnauthorizedException) {
                 self::assertFalse($Session->has('is_auth'));
             }

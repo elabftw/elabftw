@@ -37,9 +37,6 @@ updates:
     open-pull-requests-limit: 10
     cooldown:
         default-days: 12
-        semver-major-days: 32
-        semver-minor-days: 24
-        semver-patch-days: 3
     groups:
       github-actions:
         applies-to: version-updates

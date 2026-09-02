@@ -93,7 +93,9 @@ interface Status extends SelectOptions {
 export const selectedEntities = writable<string[]>([]);
 
 // only on entity page
-const pageMode = new URLSearchParams(document.location.search).get('mode');
+const pageParams = new URLSearchParams(document.location.search);
+const pageMode = pageParams.get('mode');
+const isSingleEntityPage = pageParams.has('id');
 
 const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityType => {
   switch (entity) {
@@ -117,10 +119,10 @@ const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityT
 // Listen for this event to populate the modal text dynamically.
 // On view/edit pages, use the current entity id,
 // on the show page, get the item id of all checked boxes.
-on('toggle-modal', (el: HTMLElement) => {
+on('toggle-modal', async (el: HTMLElement) => {
   if (el.matches('[data-target="deleteSelectedEntitiesModal"]')) {
     let checked = [];
-    if (pageMode == 'view' || pageMode == 'edit') {
+    if (isSingleEntityPage) {
       checked.push(entity.id);
     } else {
       checked = getFromSvelte(selectedEntities);
@@ -133,6 +135,7 @@ on('toggle-modal', (el: HTMLElement) => {
     const modalSelector = `#${el.dataset.target}`;
     const deleteMsg = document.getElementById('deleteEntityMessage');
     const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
+    const deleteContainersCheckbox = document.getElementById('deleteContainersCheckbox') as HTMLInputElement;
     const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
     const entryName = getSingularEntryTypeFromEntityType(entity.type);
     const translatedEntryName = i18next.t(entryName.replace('_', '-')).toLowerCase();
@@ -144,14 +147,23 @@ on('toggle-modal', (el: HTMLElement) => {
     }
 
     deleteButton.disabled = true;
+    deleteContainersCheckbox.checked = false;
+    deleteContainersCheckbox.disabled = true;
     showModalAndFocusFirstInput(modalSelector);
     setTimeout(() => deleteButton.disabled = false, 2000);
+
+    const entitiesContainers = await Promise.all(checked.map(id =>
+      ApiC.getJson<{has_containers: boolean}>(`${entity.type}/${id}/containers?has_any=1`),
+    ));
+    deleteContainersCheckbox.disabled = !entitiesContainers.some(result => result.has_containers);
   }
 });
 
 on('delete-selected-entities', async () => {
-  if (pageMode == 'view' || pageMode == 'edit') {
-    await ApiC.delete(`${entity.type}/${entity.id}`, { notifOnSaved:0 });
+  const deleteContainers = (document.getElementById('deleteContainersCheckbox') as HTMLInputElement).checked;
+  const deleteContainersParam = deleteContainers ? '?delete_containers=1' : '';
+  if (isSingleEntityPage) {
+    await ApiC.delete(`${entity.type}/${entity.id}${deleteContainersParam}`, { notifOnSaved:0 });
     sessionStorage.setItem('flash_deleted', i18next.t('delete_success'));
     window.location.href = window.location.pathname;
     return;
@@ -163,7 +175,7 @@ on('delete-selected-entities', async () => {
   }
   // perform deletes
   const deletes = checked.map(id =>
-    ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
+    ApiC.delete(`${entity.type}/${id}${deleteContainersParam}`, { notifOnSaved:0 }),
   );
   Promise.all(deletes).then(() => {
     notify.success(i18next.t('delete_success'));
@@ -1059,11 +1071,7 @@ if (storageModalEl) {
   });
 }
 
-on('delete-storage-root', (el: HTMLElement) => {
-  if (confirm(i18next.t('generic-delete-warning'))) {
-    ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadStorageTrees());
-  }
-});
+on('delete-storage-root', (el: HTMLElement) => ApiC.delete(`storage_units/${el.dataset.id}`).then(() => reloadStorageTrees()));
 
 const destroyContainer = (id: string) =>
   ApiC.delete(`${entity.type}/${entity.id}/containers/${id}`).then(() => reloadStorageAndContainers());

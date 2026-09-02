@@ -269,6 +269,15 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return $this->Db->execute($req);
     }
 
+    public function hasContainers(): bool
+    {
+        $sql = 'SELECT EXISTS(SELECT 1 FROM ' . $this->getTable() . ' WHERE item_id = :item_id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (bool) $req->fetchColumn();
+    }
+
     #[Override]
     public function isSelfLinkViaMetadata(string $extraFieldKey, string $targetId): bool
     {

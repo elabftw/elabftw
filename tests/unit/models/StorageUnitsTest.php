@@ -78,29 +78,6 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Test box', $result['full_path']);
     }
 
-    public function testDestroyRecursivelyDeletesChildrenAndContainers(): void
-    {
-        $Item = $this->getFreshItem();
-        $parentId = $this->StorageUnits->create('Recursive deletion parent');
-        $childId = $this->StorageUnits->create('Recursive deletion child', $parentId);
-        $grandchildId = $this->StorageUnits->create('Recursive deletion grandchild', $childId);
-        new Containers2ItemsLinks($Item, $grandchildId)->createWithQuantity(1.0, 'mL');
-
-        $this->StorageUnits->setId($parentId);
-        $this->assertTrue($this->StorageUnits->destroy());
-
-        $Db = Db::getConnection();
-        $req = $Db->prepare(
-            'SELECT COUNT(*) FROM storage_units WHERE id IN (:parent_id, :child_id, :grandchild_id)'
-        );
-        $req->bindValue(':parent_id', $parentId);
-        $req->bindValue(':child_id', $childId);
-        $req->bindValue(':grandchild_id', $grandchildId);
-        $Db->execute($req);
-        $this->assertSame(0, (int) $req->fetchColumn());
-        $this->assertSame(0, $this->StorageUnits->countContainers($grandchildId));
-    }
-
     public function testReadAll(): void
     {
         $this->assertIsArray($this->StorageUnits->readAll());
@@ -360,15 +337,15 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($unit['parent_id']);
     }
 
-    public function testDeletingEntityRemovesContainers(): void
+    public function testCountContainersIsNotAffectedByBinning(): void
     {
         $Item = $this->getFreshItem();
         $storageId = $this->StorageUnits->create('Box for occupancy count');
         new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
         $this->assertSame(1, $this->StorageUnits->countContainers($storageId));
-        // Regression test for #6418: soft-deleting an entity must free its storage slot
+        // binning the resource does not take the container out of the box
         $Item->destroy();
-        $this->assertSame(0, $this->StorageUnits->countContainers($storageId));
+        $this->assertSame(1, $this->StorageUnits->countContainers($storageId));
     }
 
     public function testHierarchyOccupancyCountsOnlyDirectContainers(): void
@@ -391,10 +368,11 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $storageId = $this->StorageUnits->create('Box the tree and the guard must agree on');
         new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
         $Item->destroy();
-        // The displayed occupancy and the capacity guard must both see the freed slot
+        // a displayed free slot the guard would then refuse is worse than showing nothing,
+        // so the tree has to count exactly what assertHasRoom() counts
         $occupancy = $this->readOccupancyByUnitId();
         $this->assertEquals($this->StorageUnits->countContainers($storageId), $occupancy[$storageId]);
-        $this->assertEquals(0, $occupancy[$storageId]);
+        $this->assertEquals(1, $occupancy[$storageId]);
     }
 
     public function testReadOneOccupancyIsThatOfTheRequestedUnit(): void

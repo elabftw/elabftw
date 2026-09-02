@@ -600,7 +600,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertStringEndsWith(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
-    public function testEntityDeletionIgnoresTheContainerReasonRequirement(): void
+    public function testEntityDeletionWithContainersIgnoresTheReasonRequirement(): void
     {
         $this->setCaptureDeletionReason(1);
         $Item = $this->getFreshItem();
@@ -609,8 +609,8 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links->createWithQuantity(7.0, 'mL');
 
         $this->assertSame(1, $this->StorageUnits->countContainers($box));
-        // Cascading from entity deletion is automatic, so it must not require a reason
-        $this->assertTrue($Item->destroy());
+        // container deletion requested with entity deletion does not require a reason
+        $this->assertTrue($Item->destroy(deleteContainers: true));
         $this->assertSame(0, $this->StorageUnits->countContainers($box));
     }
 

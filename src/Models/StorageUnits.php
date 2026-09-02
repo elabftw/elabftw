@@ -407,10 +407,9 @@ final class StorageUnits extends AbstractRest
     }
 
     /**
-     * How many container rows point directly to this unit.
-     * Do not apply entity permission filters here: storage occupancy must not depend on
-     * who requests it. Containers belonging to soft-deleted entities are removed by
-     * AbstractEntity::destroy() as part of the fix for #6418.
+     * How many containers sit directly in a unit. Deliberately unfiltered: a container
+     * occupies its slot whether or not the requester can read the entity, and whether or
+     * not that entity is in the bin. Binning a record does not empty a freezer.
      */
     public function countContainers(int $storageId): int
     {
@@ -472,9 +471,13 @@ final class StorageUnits extends AbstractRest
     public function destroy(): bool
     {
         $this->canWriteOrExplode();
-        // ON DELETE CASCADE applies to child storage units and their container assignments.
-        // Deleting this row therefore deletes the full subtree, as promised by the UI (#6418).
-        $sql = 'DELETE FROM storage_units WHERE id = :id';
+        if ($this->hasChildren()) {
+            throw new ImproperActionException(_('Cannot delete a storage unit with children!'));
+        }
+        if ($this->hasContainers()) {
+            throw new ImproperActionException(_('Cannot delete a storage unit with containers!'));
+        }
+        $sql = 'DELETE FROM storage_units WHERE id = :id OR parent_id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
@@ -695,6 +698,34 @@ final class StorageUnits extends AbstractRest
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    private function hasContainers(): bool
+    {
+        $sql = 'SELECT
+          IF(
+            EXISTS (SELECT 1 FROM containers2experiments            WHERE storage_id = :storage_id)
+         OR EXISTS (SELECT 1 FROM containers2experiments_templates  WHERE storage_id = :storage_id)
+         OR EXISTS (SELECT 1 FROM containers2items                  WHERE storage_id = :storage_id)
+         OR EXISTS (SELECT 1 FROM containers2items_types            WHERE storage_id = :storage_id),
+            1,
+            0
+          ) AS has_container';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':storage_id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+        return (bool) $req->fetchColumn();
+    }
+
+    private function hasChildren(): bool
+    {
+        $sql = 'SELECT id FROM storage_units WHERE parent_id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        $this->Db->execute($req);
+        return (bool) $req->fetchColumn();
     }
 
     private function searchStorage(string $unitName, ?int $parentId): array|false

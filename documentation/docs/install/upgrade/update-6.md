@@ -202,10 +202,10 @@ It is then safe to remove the whole `chem-plugin` block in your docker compose f
 
 ### OpenCloning in Quadlet
 
-If you are running OpenCloning as user with Quadlets, make sure to to add:
+If you are running OpenCloning as a user with Quadlets, make sure to add:
 
-`Environment=GUNICORN_CMD_ARGS=--worker-tmp-dir=/dev/shm --no-control-socket
-`
+`Environment=GUNICORN_CMD_ARGS=--worker-tmp-dir=/dev/shm --no-control-socket`
+
 Or the worker will die when a request arrives.
 
 ### MySQL Persistent connection mode

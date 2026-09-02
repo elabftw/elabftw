@@ -74,6 +74,9 @@ final class ProcurementRequests extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        if ($this->Teams->Users instanceof AnonymousUser) {
+            throw new ForbiddenException();
+        }
         $sql = 'SELECT id, created_at, team, requester_userid, entity_id, qty_ordered, qty_received, body, quote, email_sent, state
             FROM procurement_requests WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);

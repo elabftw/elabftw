@@ -696,6 +696,8 @@
   >
   </div>
 </div>
+{% if not App.isAnonymous() %}
 {% include 'permissions-edit-modal.html' with {'withSelected': true, 'rw': 'canread'} %}
 {% include 'permissions-edit-modal.html' with {'withSelected': true, 'rw': 'canwrite'} %}
+{% endif %}
 {% endblock body %}

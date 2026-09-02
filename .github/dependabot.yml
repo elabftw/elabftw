@@ -6,12 +6,6 @@ updates:
       interval: monthly
       day: wednesday
       time: "06:12"
-    open-pull-requests-limit: 10
-    cooldown:
-        default-days: 12
-        semver-major-days: 32
-        semver-minor-days: 24
-        semver-patch-days: 3
   - package-ecosystem: composer
     directory: "/"
     schedule:
@@ -27,9 +21,9 @@ updates:
         applies-to: version-updates
         patterns:
           - "*"
-  open-pull-requests-limit: 10
-  cooldown:
-      default-days: 12
-      semver-major-days: 32
-      semver-minor-days: 24
-      semver-patch-days: 3
+open-pull-requests-limit: 10
+cooldown:
+    default-days: 12
+    semver-major-days: 32
+    semver-minor-days: 24
+    semver-patch-days: 3

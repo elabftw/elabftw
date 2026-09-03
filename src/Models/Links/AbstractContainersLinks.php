@@ -278,7 +278,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return (bool) $req->fetchColumn();
     }
 
-    /* used in show & view to count how many containers belong to selected entries */
+    // used in show & view to count how many containers belong to selected entries
     public function countContainersForEntity(): int
     {
         $sql = 'SELECT COUNT(*) FROM ' . $this->getTable() . ' WHERE item_id = :item_id';

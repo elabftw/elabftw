@@ -162,7 +162,6 @@ on('toggle-modal', async (el: HTMLElement) => {
     deleteContainersCheckbox.disabled = true;
     deleteContainersCount.textContent = '0';
     showModalAndFocusFirstInput(modalSelector);
-    setTimeout(() => deleteButton.disabled = false, 2000);
 
     const entitiesContainers = await Promise.all(checked.map(id =>
       ApiC.getJson<{has_containers: boolean; containers_count: number}>(`${entity.type}/${id}/containers?has_any=1`),

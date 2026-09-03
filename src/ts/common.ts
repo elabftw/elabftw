@@ -133,9 +133,16 @@ on('toggle-modal', async (el: HTMLElement) => {
     }
     const count = checked.length;
     const modalSelector = `#${el.dataset.target}`;
-    const deleteMsg = document.getElementById('deleteEntityMessage');
-    const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
-    const deleteContainersCheckbox = document.getElementById('deleteContainersCheckbox') as HTMLInputElement;
+    const modal = document.querySelector<HTMLElement>(modalSelector);
+    if (!modal) {
+      return;
+    }
+    const deleteMsg = modal.querySelector<HTMLElement>('#deleteEntityMessage');
+    const deleteButton = modal.querySelector<HTMLButtonElement>('#deleteSelectedEntitiesButton');
+    const deleteContainersCheckbox = modal.querySelector<HTMLInputElement>('input[name="delete_containers"]');
+    if (!deleteMsg || !deleteButton || !deleteContainersCheckbox) {
+      return;
+    }
     const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
     const entryName = getSingularEntryTypeFromEntityType(entity.type);
     const translatedEntryName = i18next.t(entryName.replace('_', '-')).toLowerCase();
@@ -159,8 +166,10 @@ on('toggle-modal', async (el: HTMLElement) => {
   }
 });
 
-on('delete-selected-entities', async () => {
-  const deleteContainers = (document.getElementById('deleteContainersCheckbox') as HTMLInputElement).checked;
+on('delete-selected-entities', async (el: HTMLElement) => {
+  const deleteContainers = el.closest('.modal')
+    ?.querySelector<HTMLInputElement>('input[name="delete_containers"]')
+    ?.checked ?? false;
   const deleteContainersParam = deleteContainers ? '?delete_containers=1' : '';
   if (isSingleEntityPage) {
     await ApiC.delete(`${entity.type}/${entity.id}${deleteContainersParam}`, { notifOnSaved:0 });

@@ -861,9 +861,7 @@ abstract class AbstractEntity extends AbstractRest
                 LinksFactory::getContainersLinks($this)->destroyAll();
             }
             $result = $this->update(new EntityParams('state', State::Deleted->value));
-            if ($deleteContainers) {
-                $this->Db->commit();
-            }
+            $this->Db->commit();
             return $result;
         } catch (Throwable $e) {
             $this->Db->rollBack();

@@ -18,7 +18,7 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Enums\UsersColumn;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
@@ -171,7 +171,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUpdateCanManageUsers2TeamsAsUser(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $user->update(new UserParams('can_manage_users2teams', '1'));
     }
 
@@ -229,7 +229,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users = new Users(4, 2, new Users(4, 2));
         $this->assertIsArray($Users->patch(Action::Disable2fa, array()));
         $Users = new Users(2, 1, new Users(4, 2));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Disable2fa, array());
     }
 
@@ -263,7 +263,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUpdateValidatedAsNonAdmin(): void
     {
         $Users = $this->getUserInTeam(1);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Update, array('validated' => 1));
     }
 
@@ -271,7 +271,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $Users = $this->getUserInTeam(1);
         $date = new DateTimeImmutable('tomorrow');
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Update, array('valid_until' => $date->format('Y-m-d')));
     }
 
@@ -296,7 +296,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testTryToBecomeSysadmin(): void
     {
         $Users = new Users(4, 2, new Users(4, 2));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Update, array('is_sysadmin' => 1));
     }
 
@@ -344,7 +344,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $user2 = $this->getUserInTeam(team: 2);
         $Users = new Users($user2->userid, 2, $Admin);
         $this->Config->patch(Action::Update, array('admins_archive_users' => 0));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Archive, array());
     }
 
@@ -361,7 +361,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($Users->patch(Action::Add, array('team' => 1)));
         // try the reverse
         $Users = new Users(1, 1, new Users($user2->userid, 2));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Add, array('team' => 2));
     }
 

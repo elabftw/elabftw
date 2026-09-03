@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Traits\EntityTrait;
 use Elabftw\Traits\SortableTrait;
 use PDO;
@@ -64,7 +64,7 @@ abstract class AbstractCategory extends AbstractRest
     {
         $property = sprintf('users_canwrite_%s', $this->getUsersCanwriteName());
         if ($this->Teams->teamArr[$property] === 0 and !$this->Teams->Users->isAdmin) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 }

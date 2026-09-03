@@ -19,6 +19,12 @@ use PDOException;
 use PDOStatement;
 
 use function debug_print_backtrace;
+use function hash;
+use function hrtime;
+use function json_encode;
+use function preg_replace;
+use function round;
+use function trim;
 
 /**
  * Connect to the database with a singleton class
@@ -26,6 +32,10 @@ use function debug_print_backtrace;
 final class Db
 {
     public const int DUPLICATE_CONSTRAINT_ERROR = 1062;
+
+    private bool $profileQueries;
+
+    private int $queryLogMinMs;
 
     private PDO $connection;
 
@@ -42,6 +52,9 @@ final class Db
      */
     private function __construct()
     {
+        $this->profileQueries = Env::asBool('DB_QUERY_PROFILING');
+        $this->queryLogMinMs = Env::asInt('DB_QUERY_LOG_MIN_MS');
+
         $pdoOptions = array();
         // throw exception if error
         $pdoOptions[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
@@ -104,6 +117,7 @@ final class Db
      */
     public function execute(PDOStatement $req): bool
     {
+        $startedAt = hrtime(true);
         try {
             $res = $req->execute();
         } catch (PDOException $e) {
@@ -111,6 +125,8 @@ final class Db
                 debug_print_backtrace();
             }
             throw new DatabaseErrorException($e->errorInfo ?? array('OOPS', 42, 'where error?'));
+        } finally {
+            $this->logQuery($req->queryString, $startedAt);
         }
         if (!$res) {
             throw new DatabaseErrorException(array('OOPS', 42, 'Something went wrong :/'));
@@ -138,7 +154,12 @@ final class Db
      */
     public function q(string $sql): PDOStatement
     {
-        $res = $this->connection->query($sql);
+        $startedAt = hrtime(true);
+        try {
+            $res = $this->connection->query($sql);
+        } finally {
+            $this->logQuery($sql, $startedAt);
+        }
         if ($res === false) {
             throw new DatabaseErrorException(array('OOPS', 42, 'Something went wrong :/'));
         }
@@ -191,5 +212,32 @@ final class Db
     public function rollBack(): bool
     {
         return $this->connection->rollBack();
+    }
+
+    private function logQuery(string $sql, int $startedAt): void
+    {
+        if (!$this->profileQueries) {
+            return;
+        }
+
+        $durationMs = (hrtime(true) - $startedAt) / 1_000_000;
+        if ($durationMs < $this->queryLogMinMs) {
+            return;
+        }
+
+        $normalizedSql = preg_replace('/\\s+/', ' ', trim($sql)) ?? $sql;
+        $entry = json_encode(array(
+            'event' => 'sql_query',
+            'request_id' => $_SERVER['ELABFTW_REQUEST_ID'] ?? '',
+            'duration_ms' => round($durationMs, 3),
+            'query_id' => hash('sha256', $normalizedSql),
+            // Do not log bound values: they can contain secrets or personal data.
+            'sql' => $normalizedSql,
+        ));
+
+        if ($entry !== false) {
+            $logger = App::getDefaultLogger();
+            $logger->debug($entry);
+        }
     }
 }

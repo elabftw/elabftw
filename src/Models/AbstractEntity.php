@@ -33,11 +33,12 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\Metadata as MetadataEnum;
+use Elabftw\Enums\Orderby;
 use Elabftw\Enums\RequestableAction;
+use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ForbiddenException;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnprocessableContentException;
@@ -377,6 +378,8 @@ abstract class AbstractEntity extends AbstractRest
      */
     public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
     {
+        // Allow owned entries to pass the permission filter regardless of their team
+        $this->alwaysShowOwned = ($this->Users->userData['always_show_owned'] ?? 0) === 1;
         if ($displayParams->isFast()) {
             return $this->readAllSimple($displayParams);
         }
@@ -403,6 +406,12 @@ abstract class AbstractEntity extends AbstractRest
         $EntitySqlBuilder = $this->getSqlBuilder();
         if ($searchJoinSql !== '' && $EntitySqlBuilder instanceof EntitySqlBuilder) {
             $EntitySqlBuilder->setSearchJoinSql($searchJoinSql);
+        }
+        if (
+            $EntitySqlBuilder instanceof EntitySqlBuilder
+            && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds)
+        ) {
+            return $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can);
         }
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
@@ -444,6 +453,59 @@ abstract class AbstractEntity extends AbstractRest
         $entities = $req->fetchAll();
 
         return $this->hydrateTags($entities);
+    }
+
+    /**
+     * Read the small entity projection used by the dashboard's latest lists.
+     *
+     * Keep permission, scope and state filtering aligned with readShow(), but
+     * limit the entity rows before joining categories. The dashboard does not
+     * use pinned ordering, tags, statuses, owners, steps or comments.
+     */
+    public function readLatestForDashboard(QueryParamsInterface $displayParams): array
+    {
+        $this->alwaysShowOwned = ($this->Users->userData['always_show_owned'] ?? 0) === 1;
+        $displayParams->setSkipOrderPinned(true);
+        $EntitySqlBuilder = $this->getSqlBuilder();
+
+        $sql = sprintf(
+            'SELECT recent.id,
+                recent.title,
+                recent.modified_at,
+                categoryt.title AS category_title,
+                categoryt.color AS category_color
+            FROM (
+                SELECT entity.id,
+                    entity.title,
+                    entity.modified_at,
+                    entity.category
+                FROM %1$s AS entity
+                LEFT JOIN users2teams
+                    ON (users2teams.users_id = entity.userid
+                        AND users2teams.teams_id = %3$d)
+                WHERE 1=1
+                    %4$s
+                    %5$s
+                    %6$s
+                    %7$s
+            ) AS recent
+            LEFT JOIN %2$s AS categoryt
+                ON (categoryt.id = recent.category)
+            ORDER BY recent.modified_at DESC, recent.id DESC',
+            $this->entityType->value,
+            $this->entityType->toCategoryTable(),
+            $this->Users->getTeam(),
+            $displayParams->getFilterSql(),
+            $EntitySqlBuilder->getCanFilter(AccessType::Read->value),
+            $displayParams->getStatesSql('entity'),
+            $displayParams->getSql(),
+        );
+
+        $req = $this->Db->prepare($sql);
+        $userid = $this->Users->getUserid();
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     /**
@@ -620,7 +682,7 @@ abstract class AbstractEntity extends AbstractRest
     public function readOne(): array
     {
         if ($this->id === null) {
-            throw new IllegalActionException('No id was set!');
+            throw new ImproperActionException('No id was set!');
         }
         $request = Request::createFromGlobals();
         $queryParams = $this->getQueryParams($request->query);
@@ -758,7 +820,7 @@ abstract class AbstractEntity extends AbstractRest
     public function canOrExplode(AccessType $rw): void
     {
         if ($this->id === null) {
-            throw new IllegalActionException('Cannot check permissions without an id!');
+            throw new ImproperActionException('Cannot check permissions without an id!');
         }
         if ($this->bypassWritePermission && $rw === AccessType::Write) {
             return;
@@ -1020,7 +1082,7 @@ abstract class AbstractEntity extends AbstractRest
         array $overrideCreateParams = array(),
         bool $blankExtrafields = true,
     ): int {
-        $sourceId = $sourceEntity->id ?? throw new IllegalActionException('No id was set!');
+        $sourceId = $sourceEntity->id ?? throw new ImproperActionException('No id was set!');
         $fromTemplate = $sourceEntity instanceof AbstractTemplateEntity;
         $toTemplate = $this instanceof AbstractTemplateEntity;
 
@@ -1378,6 +1440,59 @@ abstract class AbstractEntity extends AbstractRest
 
     protected function enforceTemplate(array $teamConfigArr): void {}
 
+    private function canUseDefaultReadFastPath(
+        QueryParamsInterface $displayParams,
+        bool $extended,
+        string $searchJoinSql,
+        bool $withCompounds,
+    ): bool {
+        return $displayParams instanceof DisplayParams
+            && !($this->Users instanceof AnonymousUser)
+            && !$extended
+            && $searchJoinSql === ''
+            && !$displayParams->hasUserQuery()
+            && !$displayParams->isFull()
+            && $displayParams->getRelatedOrigin() === null
+            && !$withCompounds
+            && $this->filterSql === ''
+            && $displayParams->orderby === Orderby::Lastchange
+            && $displayParams->sort === Sort::Desc
+            && $displayParams->getLimit() > 0;
+    }
+
+    /**
+     * This function exists so that default page load with no search is fast
+     */
+    private function readShowDefaultPage(
+        QueryParamsInterface $displayParams,
+        EntitySqlBuilder $EntitySqlBuilder,
+        string $displayFilterSql,
+        string $can,
+    ): array {
+        $pageSql = $EntitySqlBuilder->getReadPageSql(
+            $displayFilterSql,
+            $displayParams->getStatesSql('entity'),
+            $can,
+            $displayParams->getLimit(),
+            $displayParams->getOffset(),
+            $displayParams->getSkipOrderPinned(),
+        );
+        $sql = sprintf(
+            '%s INNER JOIN (%s) AS page
+                ON page.id = entity.id
+            ORDER BY page.is_pinned DESC, page.modified_at DESC, page.id DESC',
+            $EntitySqlBuilder->getReadSqlBeforeWhere(),
+            $pageSql,
+        );
+
+        $req = $this->Db->prepare($sql);
+        $userid = $this->Users->getUserid();
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->hydrateTags($req->fetchAll());
+    }
+
     private function addSimpleQueryBindValues(string $query): void
     {
         $this->extendedValues[] = array(
@@ -1468,14 +1583,14 @@ abstract class AbstractEntity extends AbstractRest
     {
         $sourceTeamHelper = new TeamsHelper((int) $this->entityData['team']);
         if (!$this->Users->isSysadmin() && !$sourceTeamHelper->isAdminInTeam($this->Users->getUserid())) {
-            throw new IllegalActionException(_(
+            throw new ForbiddenException(_(
                 'Only an administrator of the entity team can transfer ownership.'
             ));
         }
 
         // non-admins cannot transfer outside their own team
         if (!$this->Users->isAdmin && $destinationTeam !== $this->Users->getTeam()) {
-            throw new IllegalActionException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
+            throw new ForbiddenException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
         }
         $teamsHelper = new TeamsHelper($destinationTeam);
         // target user must belong to destination team

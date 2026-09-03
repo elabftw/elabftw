@@ -19,7 +19,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Instance2Rors;
@@ -117,7 +117,7 @@ class MakeEln extends AbstractMakeEln
         foreach ($this->entityArr as $entity) {
             try {
                 $this->processEntity($entity);
-            } catch (IllegalActionException) {
+            } catch (ForbiddenException) {
                 continue;
             }
         }
@@ -524,7 +524,7 @@ class MakeEln extends AbstractMakeEln
                 if ($asMentions && $linkAtId !== false) {
                     $mentions[] = array('@id' => './' . $linkAtId);
                 }
-            } catch (IllegalActionException $ex) {
+            } catch (ForbiddenException $ex) {
                 $this->logger->warning(sprintf(
                     'Skipping linked entity %s:%d during ELN export: %s',
                     $type,

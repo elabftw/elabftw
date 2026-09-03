@@ -214,6 +214,7 @@ ENV ELABFTW_VERSION=$ELABFTW_VERSION
 COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=nginx-builder /etc/nginx/mime.types /etc/nginx/mime.types
 COPY --from=nginx-builder /etc/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
+RUN echo 'fastcgi_param ELABFTW_REQUEST_ID $request_id;' >> /etc/nginx/fastcgi.conf
 # END NGINX
 
 # OPENBABEL

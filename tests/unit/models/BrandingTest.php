@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -93,7 +93,7 @@ class BrandingTest extends \PHPUnit\Framework\TestCase
     {
         $Branding = new Branding(false, 1);
 
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Branding->postAction(Action::Update, array());
     }
 

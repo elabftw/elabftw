@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 
 use DOMDocument;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
@@ -45,7 +45,7 @@ class IdpsSourcesTest extends \PHPUnit\Framework\TestCase
     public function testNotSysadmin(): void
     {
         $IdpsSources = new IdpsSources(new Users(2, 1));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $IdpsSources->readAll();
     }
 

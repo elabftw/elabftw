@@ -56,7 +56,13 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 
         $Notifications = new EventDeleted(
             $targetUser,
-            array('item' => 12, 'start' => $d->format('Y-m-d H:i:s'), 'end' => $d->format('Y-m-d H:i:s')),
+            array(
+                'item' => 12,
+                'team' => 1,
+                'userid' => 1,
+                'start' => $d->format('Y-m-d H:i:s'),
+                'end' => $d->format('Y-m-d H:i:s'),
+            ),
             'Daniel Balavoine',
         );
         $targetCount = $Notifications->postAction(Action::Create, array(

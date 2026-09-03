@@ -18,37 +18,25 @@ import { Spreadsheet, Worksheet } from "@jspreadsheet-ce/react";
 import "jsuites/dist/jsuites.css";
 import "jspreadsheet-ce/dist/jspreadsheet.css";
 import i18next from './i18n';
-import { fileToAOA, replaceAttachment, saveAsAttachment} from './spreadsheet-utils';
-import { getEntity } from './misc';
+import { fileToWorkbook } from './spreadsheet-utils';
 import { assignKey } from './keymaster';
 import { notify } from './notify';
 
 function SpreadsheetEditor() {
-  const spreadsheetRef = useRef(null);
   // disable keyboard shortcuts completely
   assignKey.filter = () => false;
 
-  const [data, setData] = useState([[]]);
-  const [currentUploadId, setCurrentUploadId] = useState(0);
-  const [replaceName, setReplaceName] = useState(null);
-  // loading state to prevent spamming save btn
-  const [isSaving, setIsSaving] = useState(false);
-
-  // refs that always have the latest values (for toolbar onclick)
-  const replaceIdRef = useRef(null);
-  const replaceNameRef = useRef(null);
+  const [workbook, setWorkbook] = useState([{ name: 'Sheet1', data: [[]] }]);
+  const [spreadsheetRevision, setSpreadsheetRevision] = useState(0);
   const isDirtyRef = useRef(false);
-  const isSavingRef = useRef(false);
+  const portRef = useRef(null);
+  const workbookRef = useRef(workbook);
+  const workbookReaderRef = useRef(null);
 
-  useEffect(() => { replaceIdRef.current = currentUploadId; }, [currentUploadId]);
-  useEffect(() => { replaceNameRef.current = replaceName; }, [replaceName]);
   // on changes in the spreadsheet, notify that there's unsaved changes
   const setUnsavedWarning = (visible) => {
     isDirtyRef.current = visible;
-    const unsavedChangesWarning = window.parent.document.getElementById('spreadsheetEditorUnsavedChanges');
-    if (unsavedChangesWarning) {
-      unsavedChangesWarning.hidden = !visible;
-    }
+    portRef.current?.postMessage({ type: 'jss-dirty', dirty: visible });
   };
 
   const markUnsaved = () => setUnsavedWarning(true);
@@ -56,97 +44,85 @@ function SpreadsheetEditor() {
   // if Dirty state, ask user if he wants to save before leaving the page
   useEffect(() => {
     const handleBeforeUnload = (event) => {
-      if (!isDirtyRef.current) {
-        return;
-      }
+      if (!isDirtyRef.current) return;
       event.preventDefault();
       event.returnValue = '';
     };
-    window.parent.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  // Establish a private channel before accepting spreadsheet data.
+  useEffect(() => {
+    const onPortMessage = (event) => {
+      if (event.data?.type === 'jss-load-workbook') {
+        const { workbook: nextWorkbook } = event.data.detail || {};
+        if (!isWorkbook(nextWorkbook)) return;
+        workbookRef.current = nextWorkbook;
+        setWorkbook(nextWorkbook);
+        setSpreadsheetRevision(revision => revision + 1);
+        setUnsavedWarning(false);
+      } else if (event.data?.type === 'jss-saved') {
+        setUnsavedWarning(false);
+      } else if (event.data?.type === 'jss-workbook-request' && typeof event.data.requestId === 'string') {
+        portRef.current?.postMessage({
+          type: 'jss-workbook-response',
+          requestId: event.data.requestId,
+          workbook: workbookReaderRef.current?.() ?? workbookRef.current,
+        });
+      }
+    };
+    const onMessage = (event) => {
+      if (event.source !== window.parent) return;
+      if (event.data?.type === 'jss-ping') {
+        window.parent.postMessage({ type: 'jss-ready' }, '*');
+      } else if (event.data?.type === 'jss-connect' && !portRef.current) {
+        const port = event.ports?.[0];
+        if (!port) return;
+        portRef.current = port;
+        port.addEventListener('message', onPortMessage);
+        port.start();
+        port.postMessage({ type: 'jss-connected' });
+      }
+    };
+    window.addEventListener('message', onMessage);
+    window.parent.postMessage({ type: 'jss-ready' }, '*');
     return () => {
-      window.parent.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('message', onMessage);
+      portRef.current?.removeEventListener('message', onPortMessage);
+      portRef.current?.close();
+      portRef.current = null;
     };
   }, []);
 
-  const getAOA = () => spreadsheetRef.current?.[0]?.getData?.() ?? data;
-  const entity = getEntity(true);
-
-  // keep tracking the latest upload info
-  const keepResult = (res) => {
-    if (!res) return;
-    if (res.id) setCurrentUploadId(res.id);
-    if (res.name) setReplaceName(res.name);
-  };
-
-  const onSaveOrReplace = async () => {
-    if (isSavingRef.current) return;
-    isSavingRef.current = true;
-    setIsSaving(true);
-    try {
-      const aoa = getAOA();
-      const replaceId = replaceIdRef.current;
-      const replaceName = replaceNameRef.current;
-      let res;
-      if (replaceId && replaceName) {
-        // REPLACE MODE
-        res = await replaceAttachment(aoa, entity.type, entity.id, replaceId, replaceName);
-      } else {
-        // SAVE MODE
-        res = await saveAsAttachment(aoa, entity.type, entity.id);
-      }
-      if (!res) return;
-      keepResult(res);
-      setUnsavedWarning(false);
-    } finally {
-      window.parent.postMessage('uploadsDiv', window.location.origin);
-      isSavingRef.current = false;
-      setIsSaving(false);
-    }
-  };
-
-  // reload spreadsheet data after state changes
-  useEffect(() => {
-    const instance = spreadsheetRef.current?.[0];
-    if (instance) instance.setData(data);
-  }, [data]);
-
-  // load an attachment into the editor, capture filename & id
-  useEffect(() => {
-    const onMessage = (event) => {
-      if (event.origin !== window.location.origin) return;
-      if (event.data?.type === 'jss-load-aoa') {
-        const { aoa, name, uploadId } = event.data.detail || {};
-        setData(aoa);
-        setReplaceName(name ?? null);
-        setCurrentUploadId(typeof uploadId === 'number' ? uploadId : null);
-      }
-    }
-    window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
-  }, []);
-
-  /* actions (import, save, replace) included in the toolbar */
+  /* local import/export actions included in the toolbar */
   // import a new file from computer
   const handleImportFile = async (e) => {
-    const file = e.target.files?.[0];
+    const input = e.target;
+    const file = input.files?.[0];
     if (!file) return;
-    const aoa = await fileToAOA(file);
-    setData(aoa);
-    // clear any current spreadsheet id tracking
-    setCurrentUploadId(null);
-    setReplaceName(null);
-    // clear input too
-    e.target.value = '';
+    try {
+      const nextWorkbook = await fileToWorkbook(file);
+      workbookRef.current = nextWorkbook;
+      setWorkbook(nextWorkbook);
+      setSpreadsheetRevision(revision => revision + 1);
+      setUnsavedWarning(true);
+      portRef.current?.postMessage({ type: 'jss-new-document' });
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : 'Unexpected error while importing spreadsheet.');
+    } finally {
+      input.value = '';
+    }
   };
 
   const clearSpreadsheet = () => {
     if (!window.confirm(i18next.t('confirm-clear-spreadsheet'))) return;
-    const inst = spreadsheetRef.current?.[0];
-    const empty = [[]];
-    inst?.setData?.(empty);
-    setData(empty);
-    setCurrentUploadId(null);
-    setReplaceName(null);
+    const empty = [{ name: 'Sheet1', data: [[]] }];
+    workbookRef.current = empty;
+    setWorkbook(empty);
+    setSpreadsheetRevision(revision => revision + 1);
+    setUnsavedWarning(true);
+    portRef.current?.postMessage({ type: 'jss-new-document' });
   };
 
   const toggleFullscreen = () => {
@@ -161,57 +137,79 @@ function SpreadsheetEditor() {
   };
   // CUSTOM TOOLBAR ICONS (they are placed at the end)
   const buildToolbar = (tb) => {
-    // we will replace the save button with ours, and add an export button that has the same behavior as default save button
+    // Keep the built-in save button as a local export only.
     const saveBtn = tb.items.find(it => it.content === 'save');
-    const originalSave = saveBtn && typeof saveBtn.onclick === 'function' ? saveBtn.onclick : null;
-    // we will also remove the ones that cannot be saved because of CE limitations, just target the indexes directly
-    // 7,8,9,10,14 indexes are for: format_bold, format_color_text, format_color_fill, select, fullscreen
-    const indices = new Set([7, 8, 9, 10, 14]);
-    tb.items = tb.items.filter((_, i) => !indices.has(i));
+    const unsupportedControls = new Set(['format_bold', 'format_color_text', 'format_color_fill', 'fullscreen']);
+    const verticalAlignmentOptions = ['vertical_align_top', 'vertical_align_center', 'vertical_align_bottom'];
+    tb.items = tb.items.filter(item => {
+      const isVerticalAlignment = item.type === 'select'
+        && Array.isArray(item.options)
+        && verticalAlignmentOptions.every(option => item.options.includes(option));
+      return !unsupportedControls.has(item.content) && !isVerticalAlignment;
+    });
 
-    const exportBtn = {
-      type: 'icon',
-      class: 'ml-2 fas fa-download',
-      tooltip: i18next.t('export'),
-      // reuse the same handler signature (itemEl, event, spreadsheetInstance)
-      onclick: (el, ev, inst) => originalSave(el, ev, inst),
-    };
+    if (saveBtn) saveBtn.tooltip = i18next.t('export');
     // we render the spreadsheet in an iframe, so we'll also use a custom fullscreen button
     const fullscreenBtn = { type: 'icon', class: 'mx-2 fas fa-expand', tooltip: i18next.t('fullscreen'), onclick: () => toggleFullscreen()};
     const clearBtn = { type: 'icon', class: 'ml-2 fas fa-trash', tooltip: i18next.t('clear'), onclick: clearSpreadsheet };
     const importBtn = { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() };
-    // replace original save & fullscreen buttons with our custom functions
-    Object.assign(saveBtn, {
-      content: '',
-      type: 'icon',
-      class: 'ml-2 fas fa-floppy-disk',
-      tooltip: i18next.t('save-attachment'),
-      onclick: onSaveOrReplace,
-    });
-
-    tb.items.push(fullscreenBtn, importBtn, exportBtn, clearBtn );
+    tb.items.push(fullscreenBtn, importBtn, clearBtn);
     return tb;
   };
-  // pass a dynamic key to force SpreadsheetInner to remount when data shape changes
-  const spreadsheetKey = `${data.length}-${data[0]?.length || 0}`;
-
   return (
     <>
       <input hidden type='file' accept='.xlsx,.csv,.ods' onChange={handleImportFile} id='importFileInput' name='file' />
       {/* move Spreadsheet into a child component to safely re-init on file uploads */}
-      <SpreadsheetInner key={spreadsheetKey} data={data} buildToolbar={buildToolbar} onSpreadsheetChange={markUnsaved}/>
+      <SpreadsheetInner
+        key={spreadsheetRevision}
+        workbook={workbook}
+        workbookReaderRef={workbookReaderRef}
+        buildToolbar={buildToolbar}
+        onSpreadsheetChange={markUnsaved}
+      />
     </>
   );
 }
-function SpreadsheetInner({ data, buildToolbar, onSpreadsheetChange }) {
+const isWorkbook = (value) => Array.isArray(value)
+  && value.length > 0
+  && value.every(worksheet => typeof worksheet?.name === 'string' && Array.isArray(worksheet.data));
+
+function SpreadsheetInner({ workbook, workbookReaderRef, buildToolbar, onSpreadsheetChange }) {
   const spreadsheetRef = useRef(null);
+  useEffect(() => {
+    workbookReaderRef.current = () => {
+      const worksheets = spreadsheetRef.current;
+      return Array.isArray(worksheets) && worksheets.length > 0
+        ? worksheets.map((worksheet, index) => ({
+          name: worksheet.options?.worksheetName || workbook[index]?.name || `Sheet${index + 1}`,
+          data: worksheet.getData?.() ?? workbook[index]?.data ?? [[]],
+        }))
+        : workbook;
+    };
+    return () => {
+      workbookReaderRef.current = null;
+    };
+  }, [workbook, workbookReaderRef]);
   return (
-    <Spreadsheet ref={spreadsheetRef} tabs={true} toolbar={buildToolbar} onchange={onSpreadsheetChange}>
-      <Worksheet data={data} minDimensions={[
-          Math.max(12, data[0]?.length || 0),
-          Math.max(12, data.length)
-        ]}
-      />
+    <Spreadsheet
+      ref={spreadsheetRef}
+      tabs={true}
+      toolbar={buildToolbar}
+      onchange={onSpreadsheetChange}
+      oncreateworksheet={onSpreadsheetChange}
+      ondeleteworksheet={onSpreadsheetChange}
+    >
+      {workbook.map((worksheet, index) => (
+        <Worksheet
+          key={index}
+          worksheetName={worksheet.name}
+          data={worksheet.data}
+          minDimensions={[
+            Math.max(12, worksheet.data[0]?.length || 0),
+            Math.max(12, worksheet.data.length)
+          ]}
+        />
+      ))}
     </Spreadsheet>
   );
 }

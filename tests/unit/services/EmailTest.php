@@ -175,6 +175,35 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Email->sendEmail(new Address('a@a.fr', 'blah'), 's', '', htmlBody: $htmlBody));
     }
 
+    public function testMassEmailPreservesAmpersandsInGroupedAndUngrouped(): void
+    {
+        $expectedUrl = 'https://elabftw.uni-heidelberg.de/database.php?mode=view&id=15246';
+        $expectedSubject = 'R&D update';
+        $body = 'Please check this link: https://elabftw.uni-heidelberg.de/database.php?mode=view&amp;id=15246';
+        $subject = 'R&amp;D update';
+
+        foreach (array(true, false) as $sendGrouped) {
+            $MockMailer = $this->createMock(MailerInterface::class);
+            $MockMailer->expects($this->once())
+                ->method('send')
+                ->with($this->callback(function (Memail $message) use ($expectedUrl, $expectedSubject): bool {
+                    $plainText = $message->getTextBody() ?? '';
+                    $this->assertSame($expectedSubject, $message->getSubject());
+                    $this->assertStringContainsString($expectedUrl, (string) $plainText);
+                    $this->assertStringNotContainsString('&amp;', (string) $plainText);
+                    return true;
+                }));
+
+            $Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com');
+            $replyTo = new Address('sender@example.com', 'Test Sender');
+
+            $this->assertSame(
+                1,
+                $Email->massEmail(EmailTarget::Sysadmins, null, $subject, $body, $replyTo, $sendGrouped),
+            );
+        }
+    }
+
     public function testNotifySysadminsTsBalance(): void
     {
         $this->assertTrue($this->Email->notifySysadminsTsBalance(12));

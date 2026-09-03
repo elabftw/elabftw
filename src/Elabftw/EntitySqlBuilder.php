@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
@@ -42,6 +42,104 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     public function setSearchJoinSql(string $sql): void
     {
         $this->searchJoinSql = $sql;
+    }
+
+    /**
+     * Select the page of entity IDs before hydrating the show-mode projection.
+     *
+     * Pinned and unpinned entities are separate ordered streams so the normal
+     * entity ordering indexes can be used without sorting the complete result.
+     */
+    public function getReadPageSql(
+        string $displayFilterSql,
+        string $stateSql,
+        string $can,
+        int $limit,
+        int $offset,
+        bool $skipPinned,
+    ): string {
+        $table = $this->entity->entityType->value;
+        $membershipJoinSql = $this->getUserTeamMembershipJoinSql();
+        $canFilterSql = $this->getCanFilter($can);
+
+        if ($skipPinned) {
+            return sprintf(
+                'SELECT entity.id, entity.modified_at, 0 AS is_pinned
+                FROM %1$s AS entity
+                %2$s
+                WHERE 1=1
+                    %3$s
+                    %4$s
+                    %5$s
+                ORDER BY entity.modified_at DESC, entity.id DESC
+                LIMIT %6$d OFFSET %7$d',
+                $table,
+                $membershipJoinSql,
+                $displayFilterSql,
+                $canFilterSql,
+                $stateSql,
+                $limit,
+                $offset,
+            );
+        }
+
+        $candidateLimit = $limit + $offset;
+        $pinTable = sprintf('pin_%s2users', $table);
+        $userid = $this->entity->Users->getUserid();
+        $pinnedSql = sprintf(
+            'SELECT entity.id, entity.modified_at, 1 AS is_pinned
+            FROM %1$s AS candidate_pin
+            INNER JOIN %2$s AS entity
+                ON entity.id = candidate_pin.entity_id
+            %3$s
+            WHERE candidate_pin.users_id = %4$d
+                %5$s
+                %6$s
+                %7$s
+            ORDER BY entity.modified_at DESC, entity.id DESC
+            LIMIT %8$d',
+            $pinTable,
+            $table,
+            $membershipJoinSql,
+            $userid,
+            $displayFilterSql,
+            $canFilterSql,
+            $stateSql,
+            $candidateLimit,
+        );
+        $unpinnedSql = sprintf(
+            'SELECT entity.id, entity.modified_at, 0 AS is_pinned
+            FROM %1$s AS entity
+            LEFT JOIN %2$s AS candidate_pin
+                ON (candidate_pin.entity_id = entity.id
+                    AND candidate_pin.users_id = %3$d)
+            %4$s
+            WHERE candidate_pin.entity_id IS NULL
+                %5$s
+                %6$s
+                %7$s
+            ORDER BY entity.modified_at DESC, entity.id DESC
+            LIMIT %8$d',
+            $table,
+            $pinTable,
+            $userid,
+            $membershipJoinSql,
+            $displayFilterSql,
+            $canFilterSql,
+            $stateSql,
+            $candidateLimit,
+        );
+
+        return sprintf(
+            'SELECT candidate.id, candidate.modified_at, candidate.is_pinned
+            FROM ((%1$s) UNION ALL (%2$s)) AS candidate
+            ORDER BY candidate.is_pinned DESC, candidate.modified_at DESC, candidate.id DESC
+            LIMIT %3$d OFFSET %4$d',
+            $pinnedSql,
+            $unpinnedSql,
+            $limit,
+            $offset,
+        );
     }
 
     /**
@@ -355,7 +453,12 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     private function userTeamMembership(): void
     {
-        $this->joinsSql[] = sprintf(
+        $this->joinsSql[] = $this->getUserTeamMembershipJoinSql();
+    }
+
+    private function getUserTeamMembershipJoinSql(): string
+    {
+        return sprintf(
             'LEFT JOIN users2teams
                 ON (users2teams.users_id = entity.userid
                     AND users2teams.teams_id = %d)',
@@ -373,7 +476,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         } elseif ($this->entity instanceof AbstractTemplateEntity) {
             return;
         } else {
-            throw new IllegalActionException('Nope.');
+            throw new ImproperActionException('Nope.');
         }
         $this->selectSql[] = "GROUP_CONCAT(
                 DISTINCT team_events.start

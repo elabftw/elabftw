@@ -24,7 +24,7 @@ use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\UnprocessableContentException;
 
 use function array_diff;
@@ -72,7 +72,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
     public function testNonAdminCannotSelectAnotherOwner(): void
     {
         $handler = new Handler(new Users(2, 1), new ConsoleLogger(new NullOutput()));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $handler->postAction(Action::Update, $this->getCsvRequest(1));
     }
 

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Params\CommentParam;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -67,7 +67,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
     {
         $ImmutableComments = new ImmutableComments($this->Entity);
         $ImmutableComments->setId($ImmutableComments->create(new CommentParam('An immutable comment')));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $ImmutableComments->update(new CommentParam('Nope'));
     }
 
@@ -80,7 +80,7 @@ class CommentsTest extends \PHPUnit\Framework\TestCase
 
     public function testSetWrongId(): void
     {
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->Comments->setId(0);
     }
 }

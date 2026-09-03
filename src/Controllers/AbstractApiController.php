@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Enums\ApiEndpoint;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidEndpointException;
 use Elabftw\Models\Users\AnonymousUser;
@@ -44,7 +44,7 @@ abstract class AbstractApiController extends AbstractController
     protected function parseReq(): array
     {
         if ($this->requester instanceof AnonymousUser && $this->Request->getMethod() !== Request::METHOD_GET) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
 
         if ($this->canWrite === false && $this->Request->getMethod() !== Request::METHOD_GET) {

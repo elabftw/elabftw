@@ -56,7 +56,8 @@ final class NotificationsFactory
             Notifications::SelfIsValidated => new SelfIsValidated($this->targetUser),
             Notifications::OnboardingEmail => new OnboardingEmail($this->targetUser, $this->body['team'], $this->body['forAdmin'] ?? false),
             // note: not sure why the bypassReadPermission is necessary here...
-            Notifications::ActionRequested => new ActionRequested($this->targetUser, new Users($this->body['requester_userid']), RequestableAction::from($this->body['action_enum_value']), EntityType::from($this->body['entity_type_value'])->toInstance(new Users($this->body['requester_userid']), $this->body['entity_id'], bypassReadPermission: true)),
+            // note: here the team is not used, so just put 0 in the Users constructor
+            Notifications::ActionRequested => new ActionRequested($this->targetUser, new Users($this->body['requester_userid']), RequestableAction::from($this->body['action_enum_value']), EntityType::from($this->body['entity_type_value'])->toInstance(new Users($this->body['requester_userid'], 0), $this->body['entity_id'], bypassReadPermission: true)),
             default => throw new ImproperActionException(sprintf('This notification (%d) is not mailable.', $this->category)),
         };
     }

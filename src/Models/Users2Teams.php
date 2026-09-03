@@ -18,7 +18,7 @@ use Elabftw\AuditEvent\TeamRemoval;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\Users2TeamsTargets;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Notifications\OnboardingEmail;
 use Elabftw\Models\Users\Users;
@@ -151,7 +151,7 @@ final class Users2Teams
             || $this->requester->userData['can_manage_users2teams']
             || $TeamsHelper->isAdminInTeam($this->requester->userData['userid'])
         )) {
-            throw new IllegalActionException('User tried to modify a team where they are not admin');
+            throw new ForbiddenException('User tried to modify a team where they are not admin');
         }
     }
 
@@ -202,7 +202,7 @@ final class Users2Teams
         }
         // only sysdamin can do that
         if (!$this->requester->isSysadmin()) {
-            throw new IllegalActionException('Only a sysadmin can modify is_owner value.');
+            throw new ForbiddenException('Only a sysadmin can modify is_owner value.');
         }
         $sql = 'UPDATE users2teams SET ' . $what->value . ' = :content WHERE `users_id` = :userid AND `teams_id` = :team';
         $req = $this->Db->prepare($sql);

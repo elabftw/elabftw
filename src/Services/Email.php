@@ -36,6 +36,7 @@ use function array_map;
 use function preg_replace;
 use function quoted_printable_encode;
 use function sprintf;
+use function html_entity_decode;
 
 /**
  * Email service
@@ -150,13 +151,13 @@ class Email
         if ($sendGrouped) {
             // send one single email to everyone
             $message = (new Memail())
-            ->subject($subject)
+            ->subject(self::toPlainText($subject))
             ->from($this->from)
             ->to($replyTo)
             // set recipients in BCC to hide email addresses
             ->bcc(...$addresses)
             ->replyTo($replyTo)
-            ->text($content);
+            ->text(self::toPlainText($content));
 
             return $this->send($message) ? $addressesCount : 0;
         }
@@ -248,14 +249,14 @@ class Email
 
     private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int
     {
-        $subject = Filter::toPureString($subject);
-        $content = Filter::toPureString($content);
         // send emails one by one
         $sentCount = 0;
+        $plainSubject = self::toPlainText($subject);
+        $plainContent = self::toPlainText($content);
         foreach ($addresses as $address) {
             // use a try catch so we finish the loop even if errors are encountered
             try {
-                if ($this->sendEmail($address, $subject, $content, replyTo: $replyTo)) {
+                if ($this->sendEmail($address, $plainSubject, $plainContent, replyTo: $replyTo)) {
                     $sentCount++;
                     continue;
                 }
@@ -329,5 +330,14 @@ class Email
         $Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    private static function toPlainText(string $input): string
+    {
+        return html_entity_decode(
+            Filter::toPureString($input),
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8',
+        );
     }
 }

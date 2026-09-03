@@ -13,7 +13,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -68,7 +68,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
             'lastname' => 'Fontaine',
             'usergroup' => Usergroup::Sysadmin->value,
         ));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $UserCreator->create();
     }
 
@@ -83,7 +83,7 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
             'lastname' => 'Fontaine',
             'usergroup' => Usergroup::Sysadmin->value,
         ));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $UserCreator->create();
     }
 }

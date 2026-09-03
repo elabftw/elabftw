@@ -65,21 +65,23 @@ export const getInput = (id: string): HTMLInputElement => {
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
-  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
+  const userPrefs = document.getElementById('user-prefs')?.dataset;
+  const locale = userPrefs?.jslang ?? 'en';
+  const timezone = userPrefs?.timezone ?? 'system';
   document.querySelectorAll('.relative-moment').forEach(el => {
     const span = el as HTMLElement;
     // do nothing if it's already loaded, prevent infinite loop with mutation observer
     if (span.innerText) {
       return;
     }
-    span.innerText = toRelative(span.title, locale);
+    span.innerText = toRelative(span.title, locale, timezone);
   });
 }
 
-export function toRelative(title: string, locale: string): string {
+export function toRelative(title: string, locale: string, timezone = document.getElementById('user-prefs')?.dataset.timezone ?? 'system'): string {
   return (
     DateTime
-      .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale})
+      .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale, 'zone': timezone})
       .toRelative() ?? ''
   );
 }
@@ -1007,6 +1009,23 @@ export function mkSpinStop(el: HTMLElement, oldHTML: string): void {
   el.innerHTML = oldHTML;
   el.removeAttribute('disabled');
 }
+
+// store the active timeout for each confirmation button without preventing
+// the button element from being garbage-collected when removed from DOM
+const confirmationTimeouts = new WeakMap<HTMLButtonElement, number>();
+
+export function delayConfirmation(button: HTMLButtonElement, delay = 2000): void {
+  const timeoutId = confirmationTimeouts.get(button);
+  if (timeoutId !== undefined) {
+    window.clearTimeout(timeoutId);
+  }
+  button.disabled = true;
+  confirmationTimeouts.set(button, window.setTimeout(() => {
+    button.disabled = false;
+    confirmationTimeouts.delete(button);
+  }, delay));
+}
+
 export async function populateUserModal(user: Record<string, string|number>) {
   const manageTeamsDiv = document.getElementById('manageTeamsDiv');
   if (!manageTeamsDiv) {
@@ -1025,15 +1044,19 @@ export async function populateUserModal(user: Record<string, string|number>) {
     teamBadge.classList.add('user-badge', 'm-1');
     teamBadge.innerText = team.name;
     // REMOVE TEAM BUTTON
-    // prevent deleting association of the team we are currently logged in, allow it for other users
-    if (team.id !== requester.team || user.userid !== requester.userid) {
-      const removeTeamBtn = document.createElement('span');
+    // users must keep one team; requester cannot remove themselves from their current team
+    if (userTeams.length > 1 && (team.id !== requester.team || user.userid !== requester.userid)) {
+      const removeTeamBtn = document.createElement('button');
+      removeTeamBtn.type = 'button';
       removeTeamBtn.classList.add('btn', 'btn-danger-ghost', 'btn-sm', 'ml-2');
       removeTeamBtn.title = i18next.t('delete');
-      removeTeamBtn.dataset.action = 'destroy-user2team';
-      removeTeamBtn.dataset.teamid = team.id;
+      removeTeamBtn.setAttribute('aria-label', i18next.t('delete'));
+      removeTeamBtn.dataset.action = 'open-destroy-user2team-modal';
+      removeTeamBtn.dataset.teamid = String(team.id);
+      removeTeamBtn.dataset.teamname = String(team.name);
       const removeTeamIcon = document.createElement('i');
       removeTeamIcon.classList.add('fas', 'fa-xmark');
+      removeTeamIcon.setAttribute('aria-hidden', 'true');
       removeTeamBtn.appendChild(removeTeamIcon);
       teamBadge.appendChild(removeTeamBtn);
     }

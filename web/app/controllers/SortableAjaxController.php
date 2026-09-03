@@ -15,7 +15,6 @@ use Elabftw\Enums\Messages;
 use Elabftw\Enums\Orderable;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ForbiddenException;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Experiments;
@@ -123,15 +122,9 @@ try {
             $Entity = new Steps($model);
             break;
         default:
-            throw new IllegalActionException('Bad table for updateOrdering.');
+            throw new ImproperActionException('Bad table for updateOrdering.');
     }
     $Entity->updateOrdering($OrderingParams);
-} catch (IllegalActionException $e) {
-    $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
-    $Response->setData(array(
-        'res' => false,
-        'msg' => Messages::InsufficientPermissions->toHuman(),
-    ));
 } catch (ForbiddenException | ImproperActionException | UnauthorizedException $e) {
     $Response->setData(array(
         'res' => false,

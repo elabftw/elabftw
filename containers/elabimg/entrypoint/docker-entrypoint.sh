@@ -21,6 +21,8 @@ getEnv() {
     db_port=${DB_PORT:-3306}
     db_name=${DB_NAME:-elabftw}
     db_user=${DB_USER:-elabftw}
+    db_query_profiling="${DB_QUERY_PROFILING:-false}"
+    db_query_log_min_ms="${DB_QUERY_LOG_MIN_MS:-500}"
     # Note: no default value here
     db_password=${DB_PASSWORD:-}
     db_cert_path=${DB_CERT_PATH:-}
@@ -398,6 +400,10 @@ populatePhpEnv() {
         sed -i -e "/%ELAB_AWS_ACCESS_KEY%/d" $f
         sed -i -e "/%ELAB_AWS_SECRET_KEY%/d" $f
     fi
+
+    sed -i -e "s/%DB_QUERY_PROFILING%/${db_query_profiling}/" $f
+    sed -i -e "s/%DB_QUERY_LOG_MIN_MS%/${db_query_log_min_ms}/" $f
+
 }
 
 # display a friendly message with running versions

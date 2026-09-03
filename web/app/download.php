@@ -15,7 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Controllers\DownloadController;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Exception;
 
@@ -36,7 +36,7 @@ try {
     // Check for LONG_NAME
     $longName = $App->Request->query->getString('f');
     if (strpos($longName, "\0") !== false) {
-        throw new IllegalActionException('Missing parameter for download');
+        throw new ImproperActionException('Missing parameter for download');
     }
 
     $storage = $App->Request->query->getInt('storage');

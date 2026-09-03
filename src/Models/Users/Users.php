@@ -28,7 +28,7 @@ use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -478,14 +478,14 @@ class Users extends AbstractRest
                     $Config = Config::getConfig();
                     $hasPermission = $this->requester->isSysadmin() || $this->requester->userData['can_manage_users2teams'] === 1;
                     if (!$hasPermission && $Config->configArr['admins_import_users'] === '0') {
-                        throw new IllegalActionException('Adding a user in your team is disabled at the instance level (config: admins_import_users)');
+                        throw new ForbiddenException('Adding a user in your team is disabled at the instance level (config: admins_import_users)');
                     }
                     // need to be admin to "import" a user in a team
                     $team = (int) ($params['team'] ?? $this->requester->userData['team']);
                     $TeamsHelper = new TeamsHelper($team);
                     $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
                     if (!$hasPermission && $isAdmin === false) {
-                        throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
+                        throw new ForbiddenException('Only Admin can add a user to a team (where they are Admin)');
                     }
                     new Users2Teams($this->requester)->create($this->userData['userid'], $team, isValidated: $this->userData['validated'] === 1);
                 }
@@ -499,7 +499,7 @@ class Users extends AbstractRest
                 function () use ($params) {
                     // only a sysadmin can edit anything about another sysadmin
                     if (!$this->requester->isSysadmin() && $this->getUserid() !== $this->requester->getUserid() && $this->isSysadmin()) {
-                        throw new IllegalActionException('A sysadmin level account is required to edit another sysadmin account.');
+                        throw new ForbiddenException('A sysadmin level account is required to edit another sysadmin account.');
                     }
                     $Config = Config::getConfig();
                     foreach ($params as $target => $content) {
@@ -692,7 +692,7 @@ class Users extends AbstractRest
         if ($params->getTarget() === 'email' && $params->getContent() !== strtolower($this->userData['email'])) {
             // we can only edit our own email, or be sysadmin
             if (!$this->isSelf() && !$this->requester->isSysadmin()) {
-                throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
+                throw new ForbiddenException('User tried to edit email of another user but is not sysadmin.');
             }
             // run email validator
             $Config = Config::getConfig();
@@ -787,7 +787,7 @@ class Users extends AbstractRest
     public function isSysadminOrExplode(): void
     {
         if ($this->isSysadmin() === false) {
-            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
         }
     }
 
@@ -799,7 +799,7 @@ class Users extends AbstractRest
     public function isAdminOrExplode(): void
     {
         if (!$this->isSysadmin() && !$this->isAdmin()) {
-            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
         }
     }
 
@@ -811,7 +811,7 @@ class Users extends AbstractRest
     public function isSelfOrExplode(): void
     {
         if ($this->isSelf() === false) {
-            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
         }
     }
 
@@ -820,7 +820,8 @@ class Users extends AbstractRest
         $Db = Db::getConnection();
         // Prefer an active account, but return an archived account if it is the only match.
         $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term AND CAST(%s AS BINARY) = CAST(:exact_term AS BINARY) %s
+            'SELECT userid FROM users WHERE %s = :term
+             AND CAST(LOWER(%s) AS BINARY) = CAST(LOWER(:exact_term) AS BINARY) %s
              ORDER BY EXISTS (
               SELECT 1
               FROM users2teams AS ut
@@ -850,7 +851,7 @@ class Users extends AbstractRest
             $this->update(new UserParams('mfa_secret', null));
             return $this->readOne();
         }
-        throw new IllegalActionException('User tried to disable 2fa but is not sysadmin or same user.');
+        throw new ForbiddenException('User tried to disable 2fa but is not sysadmin or same user.');
     }
 
     private function canReadOrExplode(): void
@@ -860,11 +861,11 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdmin && !$this->isSelf()) {
-            throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
+            throw new ForbiddenException('This endpoint requires admin privileges to access other users.');
         }
         // check we view user of our team, unless we are sysadmin and we can access it
         if (!$this->requester->isAdminOf($this->getUserid())) {
-            throw new IllegalActionException('User tried to access user from other team.');
+            throw new ForbiddenException('User tried to access user from other team.');
         }
     }
 
@@ -920,7 +921,7 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
-            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
         }
     }
 

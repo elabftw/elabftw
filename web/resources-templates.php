@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DatabaseController;
 use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\Filter;
@@ -41,8 +40,6 @@ try {
         }
     }
     $Response = new DatabaseController($App, new ItemsTypes($App->Users, $id, bypassReadPermission: $bypassReadPermission))->getResponse();
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

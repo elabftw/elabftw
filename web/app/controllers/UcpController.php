@@ -13,7 +13,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AuthMethod;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DemoModeException;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\MfaHelper;
@@ -62,8 +61,6 @@ try {
             $App->Session->getFlashBag()->add('ko', _('Invalid authentication code.'));
         }
     }
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

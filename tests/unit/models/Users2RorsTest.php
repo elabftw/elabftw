@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -56,7 +56,7 @@ class Users2RorsTest extends \PHPUnit\Framework\TestCase
     public function testNotAdmin(): void
     {
         $Users2Rors = new Users2Rors($this->getUserInTeam(2)->getUserid(), false, $this->ror);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users2Rors->postAction(Action::Create, array());
     }
 

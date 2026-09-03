@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -145,18 +145,19 @@ final class StorageUnits extends AbstractRest
     }
 
     /**
-     * Get containers from a given storage unit id
+     * Get containers from a given storage unit and its descendants.
      */
     public function readAllFromStorage(int $storageId): array
     {
         $sql = $this->getRecursiveSql(
-            (int) $this->requester->userData['userid'],
-            (int) $this->requester->userData['team'],
-            ' sh.storage_id = :storage_id',
-        );
+            $this->requester->getUserid(),
+            $this->requester->getTeam(),
+            ' sh.storage_id IN (SELECT storage_id FROM selected_storage_hierarchy)',
+            true,
+        ) . ' ORDER BY full_path, entity_title';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':storage_id', $storageId, PDO::PARAM_INT);
-        $req->bindValue(':userid', $this->requester->userid, PDO::PARAM_INT);
+        $req->bindValue(':userid', $this->requester->getUserid(), PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -496,7 +497,7 @@ final class StorageUnits extends AbstractRest
     public function canWriteOrExplode(): void
     {
         if (!$this->canWrite()) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 
@@ -752,10 +753,28 @@ final class StorageUnits extends AbstractRest
         }
     }
 
-    private function getRecursiveSql(int $userid, int $team, string $discriminator): string
-    {
+    private function getRecursiveSql(
+        int $userid,
+        int $team,
+        string $discriminator,
+        bool $includeStorageDescendants = false,
+    ): string {
         $CanSqlBuilder = new CanSqlBuilder($this->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
+        $selectedStorageHierarchy = $includeStorageDescendants
+            ? ', selected_storage_hierarchy AS (
+                SELECT id AS storage_id
+                FROM storage_units
+                WHERE id = :storage_id
+
+                UNION ALL
+
+                SELECT child.id
+                FROM storage_units AS child
+                INNER JOIN selected_storage_hierarchy AS parent
+                    ON child.parent_id = parent.storage_id
+            )'
+            : '';
         return sprintf(
             "WITH RECURSIVE storage_hierarchy AS (
                 SELECT
@@ -776,6 +795,7 @@ final class StorageUnits extends AbstractRest
                 FROM storage_units AS su
                 INNER JOIN storage_hierarchy AS parent ON su.parent_id = parent.storage_id
             )
+            %s
 
                 SELECT
                     entity.id AS entity_id,
@@ -905,6 +925,7 @@ final class StorageUnits extends AbstractRest
                 WHERE
                     -- can sql AND query or storage_id
                     1=1 AND entity.state IN (1,2) AND %s %s",
+            $selectedStorageHierarchy,
             $userid,
             $team,
             $discriminator,

@@ -39,7 +39,8 @@
 
   let showDomains = $state(false);
 
-  const passwordLabels: PasswordLabels = {
+  // keep labels in sync if the reactive options prop changes. -> docs/svelte/$derived
+  const passwordLabels: PasswordLabels = $derived.by(() => ({
     length: options.labels.passwordLength,
     letters: options.labels.passwordLetters,
     digit: options.labels.passwordDigit,
@@ -47,7 +48,7 @@
     met: options.labels.met,
     notMet: options.labels.notMet,
     showPassword: options.labels.showPassword,
-  };
+  }));
 </script>
 
 <form method='post' autocomplete='off' action='app/controllers/RegisterController.php'>

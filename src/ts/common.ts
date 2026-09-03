@@ -40,6 +40,7 @@ import {
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
   mountRors,
+  delayConfirmation,
   initPermissionsTomSelects,
   PERMISSION_SELECT_IDS,
   reloadEntitiesShow,
@@ -155,6 +156,7 @@ on('toggle-modal', async (el: HTMLElement) => {
       deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
     }
 
+    delayConfirmation(deleteButton);
     deleteButton.disabled = true;
     deleteContainersCheckbox.checked = false;
     deleteContainersCheckbox.disabled = true;
@@ -192,7 +194,7 @@ on('delete-selected-entities', async (el: HTMLElement) => {
     ApiC.delete(`${entity.type}/${id}${deleteContainersParam}`, { notifOnSaved:0 }),
   );
   Promise.all(deletes).then(() => {
-    notify.success(i18next.t('delete_success'));
+    notify.success(i18next.t('delete-success'));
     reloadEntitiesShow();
   });
 });
@@ -232,6 +234,35 @@ if (navbar) {
 }
 
 const container = document.getElementById('container')!;
+
+// tomSelect with searchable categories in the dropdown for the main Navbar
+const renderNavbarCategory = (
+  data: Record<string, unknown>,
+  escape: (value: string) => string,
+): string => {
+  const rawColor = String(data['color'] ?? '');
+  const color = /^[a-f0-9]{6}$/i.test(rawColor) ? rawColor : 'bdbdbd';
+  return `<div><span class="round-spot mr-1" style="background-color: #${color}"></span>${escape(String(data['text'] ?? ''))}</div>`;
+};
+
+document.querySelectorAll<HTMLSelectElement>('.navbar-category-select').forEach(select => {
+  // keep the Bootstrap navbar dropdown open while using TomSelect
+  select.closest('.navbar-category-picker')?.addEventListener('click', event => {
+    event.stopPropagation();
+  });
+  new TomSelect(select, { maxOptions: null, plugins: [
+    'no_active_items',
+    'no_backspace_delete',
+    'remove_button',
+  ],
+  onChange(value: string | number) {
+    if (value) {
+      window.location.href = String(value);
+    }
+  },
+  render: { option: renderNavbarCategory, item: renderNavbarCategory },
+  });
+});
 
 on('set-theme', (el: HTMLElement) => {
   const targetTheme = Number.parseInt(el.dataset.themeVariant ?? '', 10);

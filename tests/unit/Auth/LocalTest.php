@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -32,7 +32,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getRandomUserInTeam(2);
         $Local = new Local($user->userData['email'], 'notimportant', isDisplayed: false, isOnlySysadminWhenHidden: true);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Local->authenticate();
     }
 
@@ -40,7 +40,7 @@ class LocalTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getRandomUserInTeam(2);
         $Local = new Local($user->userData['email'], 'notimportant', isOnlySysadmin: true);
-        $this->expectException(ImproperActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Local->authenticate();
     }
 
@@ -54,6 +54,23 @@ class LocalTest extends \PHPUnit\Framework\TestCase
     {
         $authResponse = $this->AuthService->authenticate();
         $this->assertSame(1, $authResponse->userid);
+    }
+
+    public function testTryAuthWithDifferentStoredEmailCase(): void
+    {
+        $Db = Db::getConnection();
+        $email = 'ToTo@YopMail.Com';
+        $update = $Db->prepare('UPDATE users SET email = :email WHERE userid = 1');
+        $update->bindParam(':email', $email);
+        $Db->execute($update);
+
+        try {
+            $authentication = new Local('toto@yopmail.com', 'totototototo')->authenticate();
+            self::assertSame(1, $authentication->userid);
+        } finally {
+            $email = 'toto@yopmail.com';
+            $Db->execute($update);
+        }
     }
 
     public function testTryAuthWithInvalidEmail(): void

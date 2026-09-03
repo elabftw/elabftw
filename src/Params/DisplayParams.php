@@ -75,6 +75,12 @@ final class DisplayParams extends BaseQueryParams
     }
 
     #[Override]
+    public function getSkipOrderPinned(): bool
+    {
+        return $this->skipOrderPinned;
+    }
+
+    #[Override]
     public function getSql(): string
     {
         if ($this->skipOrderPinned === true) {
@@ -168,8 +174,8 @@ final class DisplayParams extends BaseQueryParams
         if ($scope === Scope::User && empty($query->get('owner')) && empty($query->get('extended'))) {
             $this->appendFilterSql(FilterableColumn::Owner, $this->requester->userData['userid']);
         }
-        // add filter on team only if scope is not set to everything
-        if ($this->requester->userData['scope_' . $this->entityType->value] === Scope::Team->value && $scope !== Scope::Everything) {
+        // filter by the current team only when the effective scope is Team
+        if ($scope === Scope::Team) {
             $this->appendFilterSql(FilterableColumn::Team, $this->requester->team ?? 0);
         }
         // TAGS SEARCH

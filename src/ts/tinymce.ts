@@ -225,6 +225,10 @@ export function getTinymceBaseConfig(page: string): object {
     isToolbarSticky = true;
   }
 
+  // prevent autoresize from collapsing an empty editor while allowing editors with content to shrink
+  const bodyArea = document.getElementById('body_area') as HTMLTextAreaElement | null;
+  const minHeight = page === 'edit' && !bodyArea?.value.trim() ? 500 : 100;
+
   return {
     selector: '.mceditable',
     table_default_styles: {
@@ -243,6 +247,7 @@ export function getTinymceBaseConfig(page: string): object {
     // remove the "Upgrade" button
     promotion: false,
     autoresize_bottom_margin: 50,
+    min_height: minHeight,
     // autoresize plugin will disallow manually resizing, but setting resize to true will make the scrollbar disappear
     //resize: true,
     plugins: plugins,
@@ -344,7 +349,7 @@ export function getTinymceBaseConfig(page: string): object {
       plugins: [ 'autolink', 'image', 'link', 'lists', 'save', 'table', 'mention' ],
     },
     // use a custom function for the save button in toolbar
-    save_onsavecallback: (): Promise<void> => updateEntityBody(),
+    save_onsavecallback: (): Promise<void> => updateEntityBody(false),
     // keyboard shortcut to insert today's date at cursor in editor
     menu: {
       file: { title: 'File', items: fileMenuItems },
@@ -372,6 +377,10 @@ export function getTinymceBaseConfig(page: string): object {
         // doing this will give focus to the editor, which is OK for entities but on admin page it's not wanted, so avoid it
         if (page !== 'admin' && page !== 'sysconfig') {
           editor.execCommand('lineheight', false, '1');
+        }
+        // recalculate after the initial layout to avoid an oversized editor. See #7301.
+        if (page === 'edit' && editor.plugins.autoresize) {
+          window.requestAnimationFrame(() => editor.execCommand('mceAutoResize'));
         }
       });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor

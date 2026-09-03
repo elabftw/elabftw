@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -45,5 +46,17 @@ class InfoTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($hist['items']);
         $this->assertIsArray($hist['experiments']);
         $this->assertIsArray($hist['users']);
+    }
+
+    public function testAnonymousUserCannotRead(): void
+    {
+        $Info = new Info(new AnonymousUser(1));
+
+        $this->assertSame(array(), $Info->readAll());
+        $this->assertSame(array(), $Info->readOne());
+        $this->assertSame(
+            array(),
+            $Info->readAll(new BaseQueryParams(new InputBag(array('hist' => 1)))),
+        );
     }
 }

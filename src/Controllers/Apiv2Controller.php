@@ -23,7 +23,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidApiSubModelException;
 use Elabftw\Factories\LinksFactory;
@@ -349,7 +349,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),
-            ApiEndpoint::Info => new Info(),
+            ApiEndpoint::Info => new Info($this->requester),
             ApiEndpoint::Instance => new Instance($this->requester, $this->getEmail(), (bool) Config::getConfig()->configArr['email_send_grouped']),
             ApiEndpoint::Export => new Exports(App::getDefaultLogger(), $this->requester, Storage::EXPORTS->getStorage(), $this->id),
             ApiEndpoint::Experiments,
@@ -484,7 +484,7 @@ final class Apiv2Controller extends AbstractApiController
     private function applyRestrictions(): void
     {
         if (($this->Model instanceof Config) && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
+            throw new ForbiddenException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 
         $contentType = $this->Request->headers->get('content-type') ?? '';

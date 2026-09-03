@@ -180,7 +180,7 @@
                 class='btn btn-danger-ghost'
                 title={t('delete')}
                 aria-label={t('delete')}
-                on:click={() => deleteRor(rorAssociation.ror)}
+                onclick={() => deleteRor(rorAssociation.ror)}
               >
                 <i class='fas fa-trash-alt fa-fw'></i>
               </button>
@@ -193,7 +193,7 @@
     {t('no-rors')}
   {/if}
 
-  <form on:submit|preventDefault={addRor}>
+  <form onsubmit={(event) => { event.preventDefault(); void addRor();}}>
     <label for={rorInputId}>{t('ror-input-label')}</label>
 
     <div class='input-group'>

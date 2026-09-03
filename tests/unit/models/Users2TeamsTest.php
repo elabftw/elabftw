@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\UsersHelper;
@@ -54,7 +54,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
     {
         $admin = $this->getUserInTeam(2, admin: 1);
         $Users2Teams = new Users2Teams($admin);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users2Teams->archive(2);
     }
 
@@ -66,7 +66,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         // user in bravo, adding them to alpha
         $user2 = $this->getUserInTeam(team: 2, admin: 0);
         $Users2Teams->addUserToTeams($user2->userid, array(1));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users2Teams->destroy(6, 1);
     }
 
@@ -126,7 +126,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
                     'content' => 0,
                 ), $attackerUserid);
                 $this->fail('Archived admin was able to unarchive their own membership.');
-            } catch (IllegalActionException) {
+            } catch (ForbiddenException) {
                 $this->addToAssertionCount(1);
             }
         } finally {
@@ -148,7 +148,7 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         );
         $this->assertEquals(1, $this->Users2Teams->patchUser2Team($params, 3));
         // now do it with a non sysadmin user
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users2Teams = new Users2Teams(new Users(2, 1));
         $Users2Teams->patchUser2Team($params, 2);
     }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use PDO;
@@ -43,19 +44,14 @@ final class AccessKeyHelper
 
     public function toggleAccessKey(): ?string
     {
-        $sql = 'UPDATE ' . $this->entityType->value . ' SET access_key = ' . $this->getSqlValue() . ' WHERE id = :id';
+        $accessKey = $this->getAccessKey() === null ? Tools::getUuidv4() : null;
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET access_key = :access_key WHERE id = :id';
         $req = $this->Db->prepare($sql);
+        $pdoType = $accessKey === null ? PDO::PARAM_NULL : PDO::PARAM_STR;
+        $req->bindValue(':access_key', $accessKey, $pdoType);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->getAccessKey();
-    }
-
-    private function getSqlValue(): string
-    {
-        if ($this->getAccessKey() === null) {
-            return 'UUID()';
-        }
-        return 'NULL';
     }
 
     private function getAccessKey(): ?string

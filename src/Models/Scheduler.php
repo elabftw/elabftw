@@ -17,7 +17,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -679,7 +679,7 @@ final class Scheduler extends AbstractRest
     private function canWriteOrExplode(): void
     {
         if ($this->canWrite() === false) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 

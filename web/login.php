@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\SelectableTeamsProvider;
 use Elabftw\Enums\AuthMethod;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Idps;
@@ -144,8 +143,6 @@ try {
         'hideTitle' => true,
     );
     $Response->setContent($App->render($template, $renderArr));
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

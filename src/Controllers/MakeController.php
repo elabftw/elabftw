@@ -18,7 +18,7 @@ use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\ReportScopes;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
@@ -157,7 +157,7 @@ final class MakeController extends AbstractController
                 return $this->makeZip();
 
             default:
-                throw new IllegalActionException('Bad make format value');
+                throw new ImproperActionException('Bad make format value');
         }
     }
 
@@ -185,7 +185,7 @@ final class MakeController extends AbstractController
         } elseif ($this->Request->query->has('owner')) {
             // only admin can export a user, or it is ourself
             if (!$this->requester->isAdminOf($this->Request->query->getInt('owner'))) {
-                throw new IllegalActionException('User tried to export another user but is not admin.');
+                throw new ForbiddenException('User tried to export another user but is not admin.');
             }
             $targetUserid = $this->Request->query->getInt('owner');
             $entity = $entityType->toInstance($this->requester);
@@ -199,7 +199,7 @@ final class MakeController extends AbstractController
         foreach ($idArr as $id) {
             try {
                 $this->entityArr[] = $entityType->toInstance($this->requester, $id);
-            } catch (IllegalActionException) {
+            } catch (ForbiddenException) {
                 continue;
             }
         }

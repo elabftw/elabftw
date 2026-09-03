@@ -14,7 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Usergroup;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use PDO;
 
 final class TeamsHelper
@@ -38,7 +38,7 @@ final class TeamsHelper
         $this->Db->execute($req);
         $team = $req->fetch();
         if ($team == false || $team['visible'] !== 1) {
-            throw new IllegalActionException("There is no visible team with ID $this->team .");
+            throw new ForbiddenException("There is no visible team with ID $this->team .");
         }
     }
 

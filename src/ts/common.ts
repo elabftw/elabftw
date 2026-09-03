@@ -140,7 +140,9 @@ on('toggle-modal', async (el: HTMLElement) => {
     const deleteMsg = modal.querySelector<HTMLElement>('#deleteEntityMessage');
     const deleteButton = modal.querySelector<HTMLButtonElement>('#deleteSelectedEntitiesButton');
     const deleteContainersCheckbox = modal.querySelector<HTMLInputElement>('input[name="delete_containers"]');
-    if (!deleteMsg || !deleteButton || !deleteContainersCheckbox) {
+    // displays total count for ALL selected entries in show mode
+    const deleteContainersCount = modal.querySelector<HTMLElement>('[data-output="delete-containers-count"]');
+    if (!deleteMsg || !deleteButton || !deleteContainersCheckbox || !deleteContainersCount) {
       return;
     }
     const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
@@ -156,13 +158,16 @@ on('toggle-modal', async (el: HTMLElement) => {
     deleteButton.disabled = true;
     deleteContainersCheckbox.checked = false;
     deleteContainersCheckbox.disabled = true;
+    deleteContainersCount.textContent = '0';
     showModalAndFocusFirstInput(modalSelector);
     setTimeout(() => deleteButton.disabled = false, 2000);
 
     const entitiesContainers = await Promise.all(checked.map(id =>
-      ApiC.getJson<{has_containers: boolean}>(`${entity.type}/${id}/containers?has_any=1`),
+      ApiC.getJson<{has_containers: boolean; containers_count: number}>(`${entity.type}/${id}/containers?has_any=1`),
     ));
-    deleteContainersCheckbox.disabled = !entitiesContainers.some(result => result.has_containers);
+    const containersCount = entitiesContainers.reduce((total, result) => total + result.containers_count, 0);
+    deleteContainersCount.textContent = containersCount.toString();
+    deleteContainersCheckbox.disabled = containersCount === 0;
   }
 });
 

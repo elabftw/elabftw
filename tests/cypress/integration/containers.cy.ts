@@ -103,6 +103,7 @@ describe('Containers', () => {
               .should('be.enabled')
               .check()
               .should('be.checked');
+            cy.get('[data-output="delete-containers-count"]').should('have.text', '5');
             cy.get('#deleteSelectedEntitiesButton').wait(2500).click();
             cy.wait('@deleteItemWithContainers');
 

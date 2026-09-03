@@ -68,7 +68,10 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             Request::create(sprintf('/api/v2/items/%d/containers?has_any=1', $Item->id)),
         );
         $hasContainersResponse = $hasContainersController->getResponse();
-        self::assertSame(array('has_containers' => true), json_decode((string) $hasContainersResponse->getContent(), true));
+        self::assertSame(
+            array('has_containers' => true, 'containers_count' => 1),
+            json_decode((string) $hasContainersResponse->getContent(), true),
+        );
 
         $Controller = new Apiv2Controller(
             $Item->Users,
@@ -86,7 +89,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
     {
         $Controller = new Apiv2Controller(
             new AnonymousUser(1),
-            Request::create('/api/v2/users', 'GET'),
+            Request::create('/api/v2/users'),
         );
 
         $res = $Controller->getResponse();

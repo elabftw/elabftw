@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Links\Containers2ItemsLinks;
@@ -83,6 +84,25 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
 
         self::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
         self::assertSame(0, $StorageUnits->countContainers($storageId));
+    }
+
+    public function testDeleteNonEntityModel(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $StorageUnits = new StorageUnits($user, true);
+        $storageId = $StorageUnits->create('API deletion test');
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create(
+                sprintf('/api/v2/storage_units/%d', $storageId),
+                Request::METHOD_DELETE,
+            ),
+        );
+        $Controller->canWrite = true;
+        $response = $Controller->getResponse();
+        self::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+        $this->expectException(ResourceNotFoundException::class);
+        new StorageUnits($user, true, $storageId)->readOne();
     }
 
     public function testAnonymousUserCannotQueryUsersEndpoint(): void

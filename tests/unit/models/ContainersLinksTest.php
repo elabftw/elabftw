@@ -43,6 +43,22 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->setCaptureDeletionReason(0, 2);
     }
 
+    public function testHasAndCountsContainersForEntity(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for container count test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+
+        $this->assertFalse($Links->hasContainers());
+        $this->assertSame(0, $Links->countContainersForEntity());
+
+        $Links->createWithQuantity(1.0, 'mL');
+        $Links->createWithQuantity(2.0, 'mL');
+
+        $this->assertTrue($Links->hasContainers());
+        $this->assertSame(2, $Links->countContainersForEntity());
+    }
+
     public function testMoveContainerToAnotherStorage(): void
     {
         $Item = $this->getFreshItem();

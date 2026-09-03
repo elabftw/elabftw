@@ -19,32 +19,40 @@ export async function displayMoleculeViewer(): Promise<void> {
 
   await Promise.all(Array.from(elements).map(async element => {
     element.dataset.initialized = '1';
+    try {
+      const response = await fetch(element.dataset.href);
+      if (!response.ok) {
+        throw new Error(`Could not load molecule: ${response.status}`);
+      }
 
-    const response = await fetch(element.dataset.href);
-    const molecule = await response.text();
+      const molecule = await response.text();
 
-    const viewer = $3Dmol.createViewer(element, {
-      backgroundColor: 'white',
-    });
+      const viewer = $3Dmol.createViewer(element, {
+        backgroundColor: 'white',
+      });
 
-    $3Dmol.viewers[element.id] = viewer;
+      $3Dmol.viewers[element.id] = viewer;
 
-    const extension = new URL(
-      element.dataset.href,
-      window.location.href,
-    ).searchParams.get('name')?.split('.').pop();
+      const extension = new URL(
+        element.dataset.href,
+        window.location.href,
+      ).searchParams.get('name')?.split('.').pop();
 
-    viewer.addModel(molecule, extension);
+      viewer.addModel(molecule, extension);
 
-    viewer.setStyle(
-      {},
-      extension === 'pdb'
-        ? { cartoon: { color: 'spectrum' } }
-        : { stick: {} },
-    );
+      viewer.setStyle(
+        {},
+        extension === 'pdb'
+          ? { cartoon: { color: 'spectrum' } }
+          : { stick: {} },
+      );
 
-    viewer.zoomTo();
-    viewer.render();
+      viewer.zoomTo();
+      viewer.render();
+    } catch (error) {
+      delete element.dataset.initialized;
+      throw error;
+    }
   }));
 }
 

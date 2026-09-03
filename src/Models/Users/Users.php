@@ -820,7 +820,8 @@ class Users extends AbstractRest
         $Db = Db::getConnection();
         // Prefer an active account, but return an archived account if it is the only match.
         $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term AND CAST(%s AS BINARY) = CAST(:exact_term AS BINARY) %s
+            'SELECT userid FROM users WHERE %s = :term
+             AND CAST(LOWER(%s) AS BINARY) = CAST(LOWER(:exact_term) AS BINARY) %s
              ORDER BY EXISTS (
               SELECT 1
               FROM users2teams AS ut

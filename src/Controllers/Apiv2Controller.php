@@ -268,12 +268,12 @@ final class Apiv2Controller extends AbstractApiController
 
     private function getArray(): array
     {
+        if (($this->id !== null && !$this->hasSubmodel) || ($this->subId !== null && $this->hasSubmodel)) {
+            return $this->Model->readOne();
+        }
         if ($this->Model instanceof AbstractContainersLinks && $this->Request->query->getBoolean('has_any')) {
             $containersCount = $this->Model->countContainersForEntity();
             return array('has_containers' => $containersCount > 0, 'containers_count' => $containersCount);
-        }
-        if (($this->id !== null && !$this->hasSubmodel) || ($this->subId !== null && $this->hasSubmodel)) {
-            return $this->Model->readOne();
         }
         $queryParams = $this->Model->getQueryParams($this->Request->query);
         return $this->Model->readAll($queryParams);

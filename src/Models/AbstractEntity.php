@@ -86,6 +86,7 @@ use Symfony\Component\HttpFoundation\Request;
 use ZipArchive;
 
 use function array_column;
+use function array_is_list;
 use function array_merge;
 use function implode;
 use function in_array;
@@ -1602,6 +1603,25 @@ abstract class AbstractEntity extends AbstractRest
     // Update only one field in the metadata json
     private function updateJsonField(string $key, string|array|int|float $value): bool
     {
+        $hasValueLabels = false;
+        $valueLabels = null;
+        if (is_array($value) && array_key_exists('value_labels', $value)) {
+            if (!array_key_exists('value', $value)) {
+                throw new ImproperActionException(sprintf(_('Invalid metadata value for field %s.'), $key));
+            }
+            $valueLabels = $value['value_labels'];
+            if ($valueLabels !== null && (!is_array($valueLabels) || !array_is_list($valueLabels))) {
+                throw new ImproperActionException(sprintf(_('Metadata field %s has invalid value labels.'), $key));
+            }
+            foreach ($valueLabels ?? array() as $label) {
+                if (!is_string($label)) {
+                    throw new ImproperActionException(sprintf(_('Metadata field %s has invalid value labels.'), $key));
+                }
+            }
+            $hasValueLabels = true;
+            $value = $value['value'];
+        }
+
         $extraFields = new Metadata($this->entityData['metadata'] ?? null)->getExtraFields();
         if (!array_key_exists($key, $extraFields)) {
             throw new ImproperActionException(sprintf(_('Invalid metadata field %s.'), $key));
@@ -1612,6 +1632,12 @@ abstract class AbstractEntity extends AbstractRest
             $value,
             preserveNumericTypes: true,
         );
+        if ($hasValueLabels && $valueLabels !== null) {
+            $valueCount = is_array($value) ? count($value) : 1;
+            if (count($valueLabels) > $valueCount) {
+                throw new ImproperActionException(sprintf(_('Metadata field %s has invalid value labels.'), $key));
+            }
+        }
 
         $Changelog = new Changelog($this);
         $valueAsString = is_array($value) ? implode(', ', $value) : (string) $value;
@@ -1638,11 +1664,34 @@ abstract class AbstractEntity extends AbstractRest
             json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
         );
 
-        // the CAST as json is necessary to avoid double encoding
-        $sql = 'UPDATE ' . $this->entityType->value . ' SET metadata = JSON_SET(metadata, :field, CAST(:value AS JSON)) WHERE id = :id';
+        // The CAST as json is necessary to avoid double encoding. When labels
+        // are supplied, update both arrays in the same SQL expression so a
+        // concurrent metadata change cannot leave value and value_labels out
+        // of sync.
+        $metadataExpression = 'JSON_SET(metadata, :field, CAST(:value AS JSON))';
+        if ($hasValueLabels) {
+            $labelsField = sprintf(
+                '$.%s.%s.value_labels',
+                MetadataEnum::ExtraFields->value,
+                json_encode($key, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+            );
+            if ($valueLabels === null) {
+                $metadataExpression = 'JSON_REMOVE(' . $metadataExpression . ', :labelsField)';
+            } else {
+                $metadataExpression = 'JSON_SET(' . $metadataExpression . ', :labelsField, CAST(:labels AS JSON))';
+            }
+        }
+
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET metadata = ' . $metadataExpression . ' WHERE id = :id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':field', $field);
         $req->bindValue(':value', $value);
+        if ($hasValueLabels) {
+            $req->bindParam(':labelsField', $labelsField);
+            if ($valueLabels !== null) {
+                $req->bindValue(':labels', json_encode($valueLabels, JSON_HEX_APOS | JSON_THROW_ON_ERROR));
+            }
+        }
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

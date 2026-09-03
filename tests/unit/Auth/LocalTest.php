@@ -56,6 +56,23 @@ class LocalTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, $authResponse->userid);
     }
 
+    public function testTryAuthWithDifferentStoredEmailCase(): void
+    {
+        $Db = Db::getConnection();
+        $email = 'ToTo@YopMail.Com';
+        $update = $Db->prepare('UPDATE users SET email = :email WHERE userid = 1');
+        $update->bindParam(':email', $email);
+        $Db->execute($update);
+
+        try {
+            $authentication = new Local('toto@yopmail.com', 'totototototo')->authenticate();
+            self::assertSame(1, $authentication->userid);
+        } finally {
+            $email = 'toto@yopmail.com';
+            $Db->execute($update);
+        }
+    }
+
     public function testTryAuthWithInvalidEmail(): void
     {
         $this->expectException(InvalidCredentialsException::class);

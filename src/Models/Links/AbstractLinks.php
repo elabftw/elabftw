@@ -129,14 +129,14 @@ abstract class AbstractLinks extends AbstractRest
         $jsonPath = sprintf(
             '$.%s.%s.type',
             MetadataEnum::ExtraFields->value,
-            json_encode($extraFieldKey, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+            json_encode($extraFieldKey, JSON_THROW_ON_ERROR)
         );
         $sql = sprintf(
-            "SELECT metadata->>'%s' FROM %s WHERE id = :id",
-            $jsonPath,
+            'SELECT JSON_UNQUOTE(JSON_EXTRACT(metadata, :json_path)) FROM %s WHERE id = :id',
             $this->Entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':json_path', $jsonPath);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $extraFieldType = $req->fetchColumn();

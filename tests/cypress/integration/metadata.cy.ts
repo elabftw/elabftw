@@ -9,4 +9,9 @@ describe('Metadata Extra fields', () => {
     cy.removeMetadataField();
     cy.addUserMetadataField('Owner', 'Titi');
   });
+
+  it('Preserves apostrophes in custom field names', () => {
+    cy.createEntity();
+    cy.addTextMetadataField('l\'appartement');
+  });
 });

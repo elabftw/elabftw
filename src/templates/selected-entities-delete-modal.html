@@ -12,7 +12,7 @@
         <p>{{ "Please note this action is reversible: to retrieve deleted entries, filter your search results to retrieve entries with the 'Deleted' state."|trans }}</p>
         <div class='form-check'>
           <input class='form-check-input' type='checkbox' id='deleteContainersCheckbox' name='delete_containers' disabled>
-          <label class='form-check-label' for='deleteContainersCheckbox'>{{ 'Also permanently delete the containers associated with the selected entries? This cannot be undone.'|trans }}<p class='text-muted'>({{ 'Containers'|trans }}: <span data-output='delete-containers-count'>0</span>)</p></label>
+          <label class='form-check-label' for='deleteContainersCheckbox'>{{ 'Also permanently delete the containers associated with the selected entries? This cannot be undone.'|trans }}<span class='text-muted'>({{ 'Containers'|trans }}: <span data-output='delete-containers-count'>0</span>)</span></label>
         </div>
       </div>
       <div class='modal-footer d-flex justify-content-end'>

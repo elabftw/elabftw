@@ -25,6 +25,7 @@ use PDO;
 
 use function sprintf;
 use function str_repeat;
+use function json_encode;
 
 class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 {
@@ -648,6 +649,21 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertNotNull($entry);
         // no reason suffix: the line stops at the container id
         $this->assertStringEndsWith(sprintf('(container #%d)', $rowId), $entry['content']);
+    }
+
+    public function testDetectsSelfLinkViaMetadataWithApostrophe(): void
+    {
+        $Item = $this->getFreshItem();
+        $fieldName = "aujourd'hui";
+        $Item->patch(Action::Update, array(
+            'metadata' => json_encode(array(
+                'extra_fields' => array($fieldName => array('type' => $Item->entityType->value, 'value' => array())),
+            ), JSON_THROW_ON_ERROR),
+        ));
+        // calling through Containers2ItemsLinks specifically covers AbstractContainersLinks::isSelfLinkViaMetadata()
+        $Links = new Containers2ItemsLinks($Item);
+        $this->assertTrue($Links->isSelfLinkViaMetadata($fieldName, (string) $Item->id));
+        $this->assertFalse($Links->isSelfLinkViaMetadata($fieldName, (string) ($Item->id + 1)));
     }
 
     private function setCapacity(int $storageId, int $capacity): void

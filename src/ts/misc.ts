@@ -705,9 +705,9 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// used in metadata.ts to normalize field names only by trimming out double and simple quotes, causing to SQL issues
+// used in metadata.ts to normalize field names by removing double quotes and normalizing whitespace
 export function normalizeFieldName(input: string): string {
-  return input.replace(/['"]/g, '').trim().replace(/\s+/g, ' ');
+  return input.replace(/"/g, '').trim().replace(/\s+/g, ' ');
 }
 
 export function askFileName(extension: FileType): string | undefined {

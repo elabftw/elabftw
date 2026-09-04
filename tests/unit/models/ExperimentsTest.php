@@ -38,6 +38,7 @@ use function json_decode;
 use function random_bytes;
 use function sprintf;
 use function str_replace;
+use function json_encode;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -450,6 +451,19 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(array('first', 'second'), $decoded['extra_fields']['multitext']['value']);
     }
 
+    public function testUpdateJsonFieldWithApostropheInName(): void
+    {
+        $metadata = '{"extra_fields": {"l\'appartement": {"type": "text", "value": "old"}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            "l'appartement" => 'new',
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertSame('new', $decoded['extra_fields']["l'appartement"]['value']);
+    }
+
     public function testUpdateJsonFieldWithMultipleCompoundValues(): void
     {
         $metadata = '{"extra_fields": {"components": {"type": "compounds", "value": [], "allow_multi_values": true}}}';
@@ -524,13 +538,22 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateJsonFieldRejectsSelfLinkInMultipleValues(): void
     {
-        $metadata = '{"extra_fields": {"related": {"type": "experiments", "value": [], "allow_multi_values": true}}}';
+        $fieldName = "l'expérience associée";
+        $metadata = json_encode(array(
+            'extra_fields' => array(
+                $fieldName => array(
+                    'type' => 'experiments',
+                    'value' => array(),
+                    'allow_multi_values' => true,
+                ),
+            ),
+        ), JSON_THROW_ON_ERROR);
         $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
 
         $this->expectException(ImproperActionException::class);
         $this->Experiments->patch(Action::UpdateMetadataField, array(
             'action' => Action::UpdateMetadataField->value,
-            'related' => array(0, $this->Experiments->id),
+            $fieldName => array(0, $this->Experiments->id),
         ));
     }
 

@@ -849,20 +849,16 @@ tr:first-child td {
     }
 
     &:hover {
-      background-color: var(--secondlevel);
+      background-color: var(--primary);
     }
   }
 
   &.sidepanel-opened {
-    background-color: var(--mediumstrong);
+    background-color: var(--primary);
     box-shadow: -1rem 0 0 var(--mediumstrong);
 
     i {
-      color: var(--mainbackground);
-    }
-
-    &:hover {
-      background-color: var(--medium);
+      color: var(--primary-fg);
     }
   }
 }

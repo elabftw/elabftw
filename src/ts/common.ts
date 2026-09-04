@@ -93,8 +93,10 @@ interface Status extends SelectOptions {
 
 export const selectedEntities = writable<string[]>([]);
 
-// only on entity page
-const pageMode = new URLSearchParams(document.location.search).get('mode');
+const pageParams = new URLSearchParams(document.location.search);
+const pageMode = pageParams.get('mode');
+// check if we're on view/edit mode
+const isSingleEntityPage = pageParams.has('id');
 
 const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityType => {
   switch (entity) {
@@ -118,10 +120,10 @@ const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityT
 // Listen for this event to populate the modal text dynamically.
 // On view/edit pages, use the current entity id,
 // on the show page, get the item id of all checked boxes.
-on('toggle-modal', (el: HTMLElement) => {
+on('toggle-modal', async (el: HTMLElement) => {
   if (el.matches('[data-target="deleteSelectedEntitiesModal"]')) {
     let checked = [];
-    if (pageMode == 'view' || pageMode == 'edit') {
+    if (isSingleEntityPage) {
       checked.push(entity.id);
     } else {
       checked = getFromSvelte(selectedEntities);
@@ -132,8 +134,16 @@ on('toggle-modal', (el: HTMLElement) => {
     }
     const count = checked.length;
     const modalSelector = `#${el.dataset.target}`;
-    const deleteMsg = document.getElementById('deleteEntityMessage');
-    const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
+    const modal = document.querySelector<HTMLElement>(modalSelector);
+    if (!modal) return;
+    const deleteMsg = modal.querySelector<HTMLElement>('#deleteEntityMessage');
+    const deleteButton = modal.querySelector<HTMLButtonElement>('#deleteSelectedEntitiesButton');
+    const deleteContainersCheckbox = modal.querySelector<HTMLInputElement>('input[name="delete_containers"]');
+    // displays total count for ALL selected entries in show mode
+    const deleteContainersCount = modal.querySelector<HTMLElement>('[data-output="delete-containers-count"]');
+    if (!deleteMsg || !deleteButton || !deleteContainersCheckbox || !deleteContainersCount) {
+      return;
+    }
     const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
     const entryName = getSingularEntryTypeFromEntityType(entity.type);
     const translatedEntryName = i18next.t(entryName.replace('_', '-')).toLowerCase();
@@ -145,13 +155,32 @@ on('toggle-modal', (el: HTMLElement) => {
     }
 
     delayConfirmation(deleteButton);
+    // reset the checkbox whenever the deletion modal is opened, and disable it until containers count is loaded
+    deleteContainersCheckbox.checked = false;
+    deleteContainersCheckbox.disabled = true;
+    deleteContainersCount.textContent = '0';
     showModalAndFocusFirstInput(modalSelector);
+
+    const entitiesContainers = await Promise.all(checked.map(id =>
+      ApiC.getJson<{containers_count: number}>(`${entity.type}/${id}/containers?has_any=1`),
+    ));
+    let containersCount = 0;
+    for (const result of entitiesContainers) {
+      containersCount += result.containers_count;
+    }
+    deleteContainersCount.textContent = containersCount.toString();
+    // re-enable the checkbox only when at least one selected entity has a container
+    deleteContainersCheckbox.disabled = containersCount === 0;
   }
 });
 
-on('delete-selected-entities', async () => {
-  if (pageMode == 'view' || pageMode == 'edit') {
-    await ApiC.delete(`${entity.type}/${entity.id}`, { notifOnSaved:0 });
+on('delete-selected-entities', async (el: HTMLElement) => {
+  const deleteContainers = el.closest('.modal')
+    ?.querySelector<HTMLInputElement>('input[name="delete_containers"]')
+    ?.checked ?? false;
+  const deleteContainersParam = deleteContainers ? '?delete_containers=1' : '';
+  if (isSingleEntityPage) {
+    await ApiC.delete(`${entity.type}/${entity.id}${deleteContainersParam}`, { notifOnSaved:0 });
     sessionStorage.setItem('flash_deleted', i18next.t('delete-success'));
     window.location.href = window.location.pathname;
     return;
@@ -163,7 +192,7 @@ on('delete-selected-entities', async () => {
   }
   // perform deletes
   const deletes = checked.map(id =>
-    ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
+    ApiC.delete(`${entity.type}/${id}${deleteContainersParam}`, { notifOnSaved:0 }),
   );
   Promise.all(deletes).then(() => {
     notify.success(i18next.t('delete-success'));

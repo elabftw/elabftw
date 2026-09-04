@@ -44,6 +44,17 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->setCaptureDeletionReason(0, 2);
     }
 
+    public function testCountContainersForEntity(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for container count test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $this->assertSame(0, $Links->countContainersForEntity());
+        $Links->createWithQuantity(1.0, 'mL');
+        $Links->createWithQuantity(2.0, 'mL');
+        $this->assertSame(2, $Links->countContainersForEntity());
+    }
+
     public function testMoveContainerToAnotherStorage(): void
     {
         $Item = $this->getFreshItem();
@@ -601,7 +612,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertStringEndsWith(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
-    public function testCascadeDeleteIgnoresTheReasonRequirement(): void
+    public function testEntityDeletionWithContainersIgnoresTheReasonRequirement(): void
     {
         $this->setCaptureDeletionReason(1);
         $Item = $this->getFreshItem();
@@ -609,7 +620,10 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links = new Containers2ItemsLinks($Item, $box);
         $Links->createWithQuantity(7.0, 'mL');
 
-        $this->assertTrue($Links->destroyAll());
+        $this->assertSame(1, $this->StorageUnits->countContainers($box));
+        // container deletion requested with entity deletion does not require a reason
+        $this->assertTrue($Item->destroy(deleteContainers: true));
+        $this->assertSame(0, $this->StorageUnits->countContainers($box));
     }
 
     public function testTheSettingComesFromTheTeamOwningTheEntity(): void

@@ -83,6 +83,7 @@ use PDOStatement;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+use Throwable;
 use ZipArchive;
 
 use function array_column;
@@ -908,15 +909,26 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $deleteContainers = false): bool
     {
         $this->canOrExplode(AccessType::Write);
-        // remove the custom_id upon deletion
-        $this->update(new EntityParams('custom_id', ''));
-        // delete from pinned too
-        new Pins($this)->cleanup();
-        $this->Uploads->destroyAll();
-        return $this->update(new EntityParams('state', State::Deleted->value));
+        $this->Db->beginTransaction();
+        try {
+            // remove the custom_id upon deletion
+            $this->update(new EntityParams('custom_id', ''));
+            // delete from pinned too
+            new Pins($this)->cleanup();
+            $this->Uploads->destroyAll();
+            if ($deleteContainers) {
+                LinksFactory::getContainersLinks($this)->destroyAll();
+            }
+            $result = $this->update(new EntityParams('state', State::Deleted->value));
+            $this->Db->commit();
+            return $result;
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
     }
 
     public function restore(): bool

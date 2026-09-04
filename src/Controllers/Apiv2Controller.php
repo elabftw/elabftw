@@ -52,6 +52,7 @@ use Elabftw\Models\Instance;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\Links\AbstractContainersLinks;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\ProcurementRequests;
@@ -128,7 +129,7 @@ final class Apiv2Controller extends AbstractApiController
             return match ($this->Request->getMethod()) {
                 Request::METHOD_GET => $this->handleGet(),
                 Request::METHOD_POST => $this->handlePost(),
-                Request::METHOD_DELETE => new JsonResponse($this->Model->destroy(), Response::HTTP_NO_CONTENT),
+                Request::METHOD_DELETE => new JsonResponse($this->handleDelete(), Response::HTTP_NO_CONTENT),
                 Request::METHOD_PATCH => new JsonResponse($this->handlePatch()),
                 // send error 405 for Method Not Allowed, with Allow header as per spec:
                 // https://tools.ietf.org/html/rfc7231#section-7.4.1
@@ -257,10 +258,22 @@ final class Apiv2Controller extends AbstractApiController
         return new Response('', Response::HTTP_CREATED, array('Location' => sprintf('%s/%s', Env::asUrl('SITE_URL'), $location)));
     }
 
+    private function handleDelete(): bool
+    {
+        if ($this->Model instanceof AbstractEntity) {
+            return $this->Model->destroy($this->Request->query->getBoolean('delete_containers'));
+        }
+        return $this->Model->destroy();
+    }
+
     private function getArray(): array
     {
         if (($this->id !== null && !$this->hasSubmodel) || ($this->subId !== null && $this->hasSubmodel)) {
             return $this->Model->readOne();
+        }
+        if ($this->Model instanceof AbstractContainersLinks && $this->Request->query->getBoolean('has_any')) {
+            $containersCount = $this->Model->countContainersForEntity();
+            return array('has_containers' => $containersCount > 0, 'containers_count' => $containersCount);
         }
         $queryParams = $this->Model->getQueryParams($this->Request->query);
         return $this->Model->readAll($queryParams);

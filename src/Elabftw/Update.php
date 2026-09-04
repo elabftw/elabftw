@@ -21,7 +21,7 @@ use function bin2hex;
 use function random_bytes;
 use function sha1;
 use function sprintf;
-use function mb_substr;
+use function preg_match;
 
 /**
  * Run the update schema script
@@ -47,10 +47,13 @@ final class Update
      */
     public function runUpdateScript(bool $force = false): int
     {
-        // make sure we run MySQL version 8 at least
-        $mysqlVersion = (int) mb_substr($this->Db->getAttribute(PDO::ATTR_SERVER_VERSION) ?? '1', 0, 1);
-        if ($mysqlVersion < 8) {
-            throw new ImproperActionException('It looks like MySQL server version is less than 8. Update your MySQL server!');
+        // make sure we run MySQL version 8.4 at least
+        $mysqlVersion = (string) $this->Db->getAttribute(PDO::ATTR_SERVER_VERSION);
+        if (preg_match('/^(\d+)\.(\d+)/', $mysqlVersion, $matches) !== 1
+            || (int) $matches[1] !== 8
+            || (int) $matches[2] !== 4
+        ) {
+            throw new ImproperActionException(sprintf('MySQL 8.4 is required, found %s', $mysqlVersion));
         }
 
         // old style update functions have been removed, so add a block to prevent upgrade from very very old to newest directly

@@ -215,3 +215,7 @@ The environment variable `USE_PERSISTENT_MYSQL_CONN` now defaults to `false`. It
 ### NGINX access logs now use structured JSON
 
 The default NGINX access log format has been replaced with a structured JSON format providing significantly more diagnostic information, including request IDs, request and upstream response timings, response sizes, connection information, and compression ratios. Administrators parsing NGINX access logs should update their log-processing configuration accordingly.
+
+### MySQL 8.4 becomes the minimum supported version
+
+MySQL 8.0 reached its official end-of-life (EOL) on April 30, 2026. eLabFTW version 6 requires running MySQL 8.4 as it uses features available only in this version.

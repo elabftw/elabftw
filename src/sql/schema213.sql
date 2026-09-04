@@ -35,7 +35,8 @@ JOIN (
 SET
     entity.`signature_count` = signatures.`signature_count`,
     entity.`last_signed_at` = signatures.`last_signed_at`,
-    entity.`last_signed_by` = signatures.`last_signed_by`;
+    entity.`last_signed_by` = signatures.`last_signed_by`,
+    entity.`modified_at` = entity.`modified_at`;
 
 UPDATE `experiments_templates` AS entity
 JOIN (
@@ -52,7 +53,8 @@ JOIN (
 SET
     entity.`signature_count` = signatures.`signature_count`,
     entity.`last_signed_at` = signatures.`last_signed_at`,
-    entity.`last_signed_by` = signatures.`last_signed_by`;
+    entity.`last_signed_by` = signatures.`last_signed_by`,
+    entity.`modified_at` = entity.`modified_at`;
 
 UPDATE `items` AS entity
 JOIN (
@@ -69,7 +71,8 @@ JOIN (
 SET
     entity.`signature_count` = signatures.`signature_count`,
     entity.`last_signed_at` = signatures.`last_signed_at`,
-    entity.`last_signed_by` = signatures.`last_signed_by`;
+    entity.`last_signed_by` = signatures.`last_signed_by`,
+    entity.`modified_at` = entity.`modified_at`;
 
 UPDATE `items_types` AS entity
 JOIN (
@@ -86,4 +89,5 @@ JOIN (
 SET
     entity.`signature_count` = signatures.`signature_count`,
     entity.`last_signed_at` = signatures.`last_signed_at`,
-    entity.`last_signed_by` = signatures.`last_signed_by`;
+    entity.`last_signed_by` = signatures.`last_signed_by`,
+    entity.`modified_at` = entity.`modified_at`;

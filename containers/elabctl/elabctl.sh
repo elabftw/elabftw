@@ -605,8 +605,7 @@ function uninstall
 
     # remove docker images
     docker rmi elabftw/elabimg || true
-    docker rmi mysql:5.7 || true
-    docker rmi mysql:8.0 || true
+    docker rmi mysql:8.4 || true
 
     echo ""
     echo "[✓] Everything has been obliterated. Have a nice day :)"

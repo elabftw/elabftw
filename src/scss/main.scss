@@ -273,22 +273,24 @@ select.form-control {
 }
 
 .dropdown-item {
-  color: var(--medium);
-  cursor: pointer;
-
-  a,
-  i {
-    color: var(--strongest);
-  }
-}
-
-.dropdown-item > a {
   color: var(--strongest);
+  cursor: pointer;
 }
 
 .dropdown-item:hover {
   background-color: var(--superlight);
   color: var(--strongest);
+}
+
+.dropdown-item.active i {
+  color: var(--primary-fg);
+}
+
+.dropdown-item.active:hover {
+  color: var(--strongest);
+  i {
+    color: var(--strongest);
+  }
 }
 
 /* BLOCKQUOTE */
@@ -874,9 +876,8 @@ tr:first-child td {
 }
 
 .side-panel {
-  background: var(--mediumstrong);
+  background: var(--firstlevel);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-  color: var(--white);
   height: 100%;
   left: 0;
   overflow: hidden;
@@ -885,12 +886,6 @@ tr:first-child td {
   position: fixed;
   top: 0;
   width: max(24%, 330px);
-
-  .fas,
-  .far,
-  h3 {
-    color: var(--white);
-  }
 
   .btn-primary {
     .fas,
@@ -902,11 +897,7 @@ tr:first-child td {
   .list-group-item {
     background-color: var(--white);
     border: 1px solid var(--chrome-muted);
-    color: var(--mediumstrong);
-
-    .fas {
-      color: var(--mediumstrong);
-    }
+    color: var(--strongest);
   }
 
   .side-panel-item {
@@ -915,18 +906,23 @@ tr:first-child td {
     /* Favtags will show up as selected */
     &.selected {
       background-color: var(--primary);
-      color: var(--chrome-fg);
+      color: var(--primary-fg);
       cursor: initial;
+
+      // three icons on the side (exp, resource, bin)
+      .fas {
+        color: var(--primary-fg);
+      }
     }
 
     &:hover:not(.selected) {
-      background-color: var(--disabled);
+      background-color: var(--superlight);
     }
   }
 
   /* Make the titles that you can click on to toggle the steps visibly clickable */
   [data-action='toggle-next']:hover {
-    background-color: var(--secondary);
+    color: var(--link);
   }
 }
 

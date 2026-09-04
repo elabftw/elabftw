@@ -47,6 +47,8 @@ try {
         $key = $ApiKeys->readFromApiKey($App->Request->server->get('HTTP_AUTHORIZATION') ?? '');
         // replace the Users in App
         $App->Users = new AuthenticatedUser($key['userid'], $key['team']);
+        // carry the (non secret) api key id so outgoing webhook events can name the actual actor
+        $App->Users->apiKeyId = (int) $key['id'];
         $canWrite = (bool) $key['can_write'];
     } else {
         if (!$isPublicBrandingBinaryRequest && $App->Session->get('is_auth') !== 1) {

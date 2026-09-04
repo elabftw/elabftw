@@ -155,16 +155,21 @@ on('toggle-modal', async (el: HTMLElement) => {
     }
 
     delayConfirmation(deleteButton);
+    // reset the checkbox whenever the deletion modal is opened, and disable it until containers count is loaded
     deleteContainersCheckbox.checked = false;
     deleteContainersCheckbox.disabled = true;
     deleteContainersCount.textContent = '0';
     showModalAndFocusFirstInput(modalSelector);
 
     const entitiesContainers = await Promise.all(checked.map(id =>
-      ApiC.getJson<{has_containers: boolean; containers_count: number}>(`${entity.type}/${id}/containers?has_any=1`),
+      ApiC.getJson<{containers_count: number}>(`${entity.type}/${id}/containers?has_any=1`),
     ));
-    const containersCount = entitiesContainers.reduce((total, result) => total + result.containers_count, 0);
+    let containersCount = 0;
+    for (const result of entitiesContainers) {
+      containersCount += result.containers_count;
+    }
     deleteContainersCount.textContent = containersCount.toString();
+    // re-enable the checkbox only when at least one selected entity has a container
     deleteContainersCheckbox.disabled = containersCount === 0;
   }
 });

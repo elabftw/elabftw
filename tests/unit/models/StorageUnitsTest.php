@@ -146,6 +146,28 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $res);
     }
 
+    public function testReadAllFromStorageIncludesDescendantsInHierarchyOrder(): void
+    {
+        $rootId = $this->StorageUnits->create('Scoped freezer');
+        $boxAId = $this->StorageUnits->create('Box A', $rootId);
+        $positionId = $this->StorageUnits->create('Position 1', $boxAId);
+        $boxBId = $this->StorageUnits->create('Box B', $rootId);
+        $outsideId = $this->StorageUnits->create('Outside freezer');
+
+        $Item = $this->getFreshItem();
+        new Containers2ItemsLinks($Item, $boxBId)->createWithQuantity(1.0, 'mL');
+        new Containers2ItemsLinks($Item, $outsideId)->createWithQuantity(1.0, 'mL');
+        new Containers2ItemsLinks($Item, $positionId)->createWithQuantity(1.0, 'mL');
+        new Containers2ItemsLinks($Item, $boxAId)->createWithQuantity(1.0, 'mL');
+
+        $result = $this->StorageUnits->readAllFromStorage($rootId);
+
+        $this->assertSame(
+            array($boxAId, $positionId, $boxBId),
+            array_column($result, 'storage_id'),
+        );
+    }
+
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/storage_units/', $this->StorageUnits->getApiPath());

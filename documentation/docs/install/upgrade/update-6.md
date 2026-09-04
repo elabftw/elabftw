@@ -200,6 +200,14 @@ The `chem-plugin` addon can now be completely removed! It is not useful anymore:
 
 It is then safe to remove the whole `chem-plugin` block in your docker compose file.
 
+### OpenCloning in Quadlet
+
+If you are running OpenCloning as a user with Quadlets, make sure to add:
+
+`Environment=GUNICORN_CMD_ARGS=--worker-tmp-dir=/dev/shm --no-control-socket`
+
+Or the worker will die when a request arrives.
+
 ### MySQL Persistent connection mode
 
 The environment variable `USE_PERSISTENT_MYSQL_CONN` now defaults to `false`. It used to be `true` by default but that caused more issues than it solved, so now it's set to `false`. This will have an impact if you did not set that value but expected it to be `true` for some reason. If that's the case, then add it explicitly.
@@ -207,3 +215,7 @@ The environment variable `USE_PERSISTENT_MYSQL_CONN` now defaults to `false`. It
 ### NGINX access logs now use structured JSON
 
 The default NGINX access log format has been replaced with a structured JSON format providing significantly more diagnostic information, including request IDs, request and upstream response timings, response sizes, connection information, and compression ratios. Administrators parsing NGINX access logs should update their log-processing configuration accordingly.
+
+### MySQL 8.4 becomes the minimum supported version
+
+MySQL 8.0 reached its official end-of-life (EOL) on April 30, 2026. eLabFTW version 6 requires running MySQL 8.4 as it uses features available only in this version.

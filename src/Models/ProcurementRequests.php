@@ -15,8 +15,10 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Currency;
 use Elabftw\Enums\ProcurementState;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Params\ProcurementRequestParams;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\SetIdTrait;
@@ -42,6 +44,7 @@ final class ProcurementRequests extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $this->isAuthOrExplode();
         $sql = "SELECT
             CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname,
             pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.qty_received,
@@ -69,6 +72,7 @@ final class ProcurementRequests extends AbstractRest
     #[Override]
     public function readOne(): array
     {
+        $this->isAuthOrExplode();
         $sql = 'SELECT id, created_at, team, requester_userid, entity_id, qty_ordered, qty_received, body, quote, email_sent, state
             FROM procurement_requests WHERE id = :id AND team = :team';
         $req = $this->Db->prepare($sql);
@@ -159,8 +163,16 @@ final class ProcurementRequests extends AbstractRest
         }
     }
 
+    private function isAuthOrExplode(): void
+    {
+        if ($this->Teams->Users instanceof AnonymousUser) {
+            throw new ForbiddenException();
+        }
+    }
+
     private function canReadOrExplode(int $entityId): void
     {
+        $this->isAuthOrExplode();
         // A user can only create a procurement request for a resource they can read.
         // setId() calls readOne(), which checks read permissions with canOrExplode().
         new Items($this->Teams->Users, $entityId);

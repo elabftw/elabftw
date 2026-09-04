@@ -65,21 +65,23 @@ export const getInput = (id: string): HTMLInputElement => {
 // DISPLAY TIME RELATIVE TO NOW
 // the datetime is taken from the title of the element so mouse hover will show raw datetime
 export function relativeMoment(): void {
-  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
+  const userPrefs = document.getElementById('user-prefs')?.dataset;
+  const locale = userPrefs?.jslang ?? 'en';
+  const timezone = userPrefs?.timezone ?? 'system';
   document.querySelectorAll('.relative-moment').forEach(el => {
     const span = el as HTMLElement;
     // do nothing if it's already loaded, prevent infinite loop with mutation observer
     if (span.innerText) {
       return;
     }
-    span.innerText = toRelative(span.title, locale);
+    span.innerText = toRelative(span.title, locale, timezone);
   });
 }
 
-export function toRelative(title: string, locale: string): string {
+export function toRelative(title: string, locale: string, timezone = document.getElementById('user-prefs')?.dataset.timezone ?? 'system'): string {
   return (
     DateTime
-      .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale})
+      .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale, 'zone': timezone})
       .toRelative() ?? ''
   );
 }
@@ -703,9 +705,9 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// used in metadata.ts to normalize field names only by trimming out double and simple quotes, causing to SQL issues
+// used in metadata.ts to normalize field names by removing double quotes and normalizing whitespace
 export function normalizeFieldName(input: string): string {
-  return input.replace(/['"]/g, '').trim().replace(/\s+/g, ' ');
+  return input.replace(/"/g, '').trim().replace(/\s+/g, ' ');
 }
 
 export function askFileName(extension: FileType): string | undefined {

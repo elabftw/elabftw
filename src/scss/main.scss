@@ -275,22 +275,19 @@ select.form-control {
 .dropdown-item {
   color: var(--strongest);
   cursor: pointer;
-}
 
-.dropdown-item:hover {
-  background-color: var(--superlight);
-  color: var(--strongest);
-}
-
-.dropdown-item.active i {
-  color: var(--primary-fg);
-}
-
-.dropdown-item.active:hover {
-  color: var(--strongest);
-  i {
+  &:hover {
+    background-color: var(--superlight);
     color: var(--strongest);
   }
+
+  &.active i {
+    color: var(--primary-fg);
+  }
+
+  &.active:hover i {
+      color: inherit;
+    }
 }
 
 /* BLOCKQUOTE */

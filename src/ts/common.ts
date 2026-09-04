@@ -93,9 +93,9 @@ interface Status extends SelectOptions {
 
 export const selectedEntities = writable<string[]>([]);
 
-// only on entity page
 const pageParams = new URLSearchParams(document.location.search);
 const pageMode = pageParams.get('mode');
+// check if we're on view/edit mode
 const isSingleEntityPage = pageParams.has('id');
 
 const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityType => {
@@ -135,9 +135,7 @@ on('toggle-modal', async (el: HTMLElement) => {
     const count = checked.length;
     const modalSelector = `#${el.dataset.target}`;
     const modal = document.querySelector<HTMLElement>(modalSelector);
-    if (!modal) {
-      return;
-    }
+    if (!modal) return;
     const deleteMsg = modal.querySelector<HTMLElement>('#deleteEntityMessage');
     const deleteButton = modal.querySelector<HTMLButtonElement>('#deleteSelectedEntitiesButton');
     const deleteContainersCheckbox = modal.querySelector<HTMLInputElement>('input[name="delete_containers"]');
@@ -157,7 +155,6 @@ on('toggle-modal', async (el: HTMLElement) => {
     }
 
     delayConfirmation(deleteButton);
-    deleteButton.disabled = true;
     deleteContainersCheckbox.checked = false;
     deleteContainersCheckbox.disabled = true;
     deleteContainersCount.textContent = '0';
@@ -179,7 +176,7 @@ on('delete-selected-entities', async (el: HTMLElement) => {
   const deleteContainersParam = deleteContainers ? '?delete_containers=1' : '';
   if (isSingleEntityPage) {
     await ApiC.delete(`${entity.type}/${entity.id}${deleteContainersParam}`, { notifOnSaved:0 });
-    sessionStorage.setItem('flash_deleted', i18next.t('delete_success'));
+    sessionStorage.setItem('flash_deleted', i18next.t('delete-success'));
     window.location.href = window.location.pathname;
     return;
   }

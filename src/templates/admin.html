@@ -199,7 +199,7 @@
   {# SHOW EXISTING USER GROUPS #}
   <div id='team_groups_div'>
     <h2 class='p-2 pl-3 section-title'>{{ 'Existing user groups'|trans }}</h2>
-    {% include 'filter-input-snippet.html' with {'target': 'teamGroupsFilter'} %}
+    {% include 'filter-input-snippet.html' with {'target': 'teamGroupsFilter', 'targetType': '.team-group-filter-item'} %}
     <div class='pl-3' id='teamGroupsFilter'>
       {% if not teamGroupsArr %}
         <p class='mt-3'>{{ 'No user group created yet.'|trans }}</p>

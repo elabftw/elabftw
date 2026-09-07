@@ -35,6 +35,7 @@ const COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
 const lastLoginText = v => v === null ? i18next.t('never') : v;
 let entitiesTableRoot = null;
+let entitiesTableApi = null;
 
 const normalizeStringParam = value => {
   if (value === null || value === undefined) {
@@ -155,6 +156,7 @@ const EntitiesTable = ({
   const [rowData, setRowData] = useState([]);
 
   const onGridReady = event => {
+    entitiesTableApi = event.api;
     const columnState = getStoredColumnState();
 
     if (Array.isArray(columnState)) {
@@ -438,4 +440,10 @@ export const unmountEntitiesTable = () => {
 
   entitiesTableRoot.unmount();
   entitiesTableRoot = null;
+  entitiesTableApi = null;
+};
+
+export const resetEntitiesTableColumnState = () => {
+  entitiesTableApi?.resetColumnState();
+  localStorage.removeItem(COLUMN_STATE_STORAGE_KEY);
 };

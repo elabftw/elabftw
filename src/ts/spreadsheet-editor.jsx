@@ -148,12 +148,16 @@ function SpreadsheetEditor() {
       return !unsupportedControls.has(item.content) && !isVerticalAlignment;
     });
 
-    if (saveBtn) saveBtn.tooltip = i18next.t('export');
+    if (saveBtn) {
+        saveBtn.content = 'file_download';
+        saveBtn.tooltip = i18next.t('export');
+    }
     // we render the spreadsheet in an iframe, so we'll also use a custom fullscreen button
     const fullscreenBtn = { type: 'icon', class: 'mx-2 fas fa-expand', tooltip: i18next.t('fullscreen'), onclick: () => toggleFullscreen()};
-    const clearBtn = { type: 'icon', class: 'ml-2 fas fa-trash', tooltip: i18next.t('clear'), onclick: clearSpreadsheet };
+    const clearBtn = { type: 'icon', class: 'fas fa-trash', tooltip: i18next.t('clear'), onclick: clearSpreadsheet };
     const importBtn = { type: 'icon', class: 'fas fa-upload', tooltip: i18next.t('import'), onclick: () => document.getElementById('importFileInput').click() };
-    tb.items.push(fullscreenBtn, importBtn, clearBtn);
+    tb.items.splice(tb.items.indexOf(saveBtn), 0, importBtn);
+    tb.items.push(fullscreenBtn, clearBtn);
     return tb;
   };
   return (

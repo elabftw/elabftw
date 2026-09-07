@@ -50,8 +50,8 @@ final class Update
         // make sure we run MySQL version 8.4 at least
         $mysqlVersion = (string) $this->Db->getAttribute(PDO::ATTR_SERVER_VERSION);
         if (preg_match('/^(\d+)\.(\d+)/', $mysqlVersion, $matches) !== 1
-            || (int) $matches[1] !== 8
-            || (int) $matches[2] !== 4
+            || (int) $matches[1] < 8
+            || ((int) $matches[1] === 8 && (int) $matches[2] < 4)
         ) {
             throw new ImproperActionException(sprintf('MySQL 8.4 is required, found %s', $mysqlVersion));
         }

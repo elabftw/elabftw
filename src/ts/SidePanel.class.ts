@@ -26,8 +26,8 @@ export default class SidePanel {
     // store the current state
     localStorage.removeItem('opened-sidepanel');
     const opener = document.getElementById(`${this.panelId}Opener`);
-    opener.classList.add('bounce-right');
-    opener.classList.remove('bounce-left');
+    opener.classList.add('btn-neutral');
+    opener.classList.remove('btn-secondary');
     opener.setAttribute('aria-expanded', 'false');
   }
 
@@ -38,8 +38,8 @@ export default class SidePanel {
     // store the current state
     localStorage.setItem('opened-sidepanel', this.model);
     const opener = document.getElementById(`${this.panelId}Opener`);
-    opener.classList.remove('bounce-right');
-    opener.classList.add('bounce-left');
+    opener.classList.add('btn-secondary');
+    opener.classList.remove('btn-neutral');
     opener.setAttribute('aria-expanded', 'true');
   }
 

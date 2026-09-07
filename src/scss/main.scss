@@ -834,35 +834,6 @@ tr:first-child td {
   z-index: 19850;
 }
 
-/* SIDE PANEL */
-.sidepanel-btn {
-  border-radius: 0 5px 5px 0;
-  padding: 10px 5px;
-
-  &.sidepanel-closed {
-    background-color: var(--firstlevel);
-    border: 1px solid var(--firstlevel);
-    box-shadow: -1rem 0 0 var(--firstlevel);
-
-    i {
-      color: var(--strongest);
-    }
-
-    &:hover {
-      background-color: var(--primary);
-    }
-  }
-
-  &.sidepanel-opened {
-    background-color: var(--primary);
-    box-shadow: -1rem 0 0 var(--mediumstrong);
-
-    i {
-      color: var(--primary-fg);
-    }
-  }
-}
-
 .list-group-item {
   background-color: var(--white);
   border: 1px solid var(--thirdlevel);

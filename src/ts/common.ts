@@ -392,11 +392,9 @@ on('team-scope-change', async (el: HTMLElement) => {
   if (menu) {
     menu.querySelectorAll('.dropdown-item').forEach((item) => {
       item.classList.remove('active');
-      item.querySelector('i')?.classList.remove('color-white');
     });
   }
   el.classList.add('active');
-  el.querySelector('i')?.classList.add('color-white');
 
   const btn = el.closest('.btn-group')?.querySelector('button.dropdown-toggle');
   if (btn) {

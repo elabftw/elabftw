@@ -275,19 +275,17 @@ select.form-control {
 .dropdown-item {
   color: var(--strongest);
   cursor: pointer;
-
   &:hover {
     background-color: var(--superlight);
-    color: var(--strongest);
   }
+}
 
-  &.active i {
-    color: var(--primary-fg);
-  }
-
-  &.active:hover i {
-    color: inherit;
-  }
+.dropdown-item.active {
+  color: var(--primary-fg);
+  background-color: var(--primary);
+}
+.dropdown-item.active i {
+  color: var(--primary-fg);
 }
 
 /* BLOCKQUOTE */
@@ -1021,10 +1019,6 @@ the form-control fails to do that so we do the border ourselves */
 
 .color-disabled {
   color: var(--disabled) !important;
-}
-
-.color-white {
-  color: var(--white) !important;
 }
 
 .color-danger {

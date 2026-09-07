@@ -501,7 +501,9 @@ final class Apiv2Controller extends AbstractApiController
 
     private function applyAnonymousRestrictions(): void
     {
-        if (!($this->requester instanceof AnonymousUser)) return;
+        if (!($this->requester instanceof AnonymousUser)) {
+            return;
+        }
         // anon users cannot enumerate another user's endpoint
         if (
             $this->endpoint === ApiEndpoint::Users

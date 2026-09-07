@@ -445,5 +445,9 @@ export const unmountEntitiesTable = () => {
 
 export const resetEntitiesTableColumnState = () => {
   entitiesTableApi?.resetColumnState();
-  localStorage.removeItem(COLUMN_STATE_STORAGE_KEY);
+  try {
+    localStorage.removeItem(COLUMN_STATE_STORAGE_KEY);
+  } catch {
+    // localStorage might be unavailable
+  }
 };

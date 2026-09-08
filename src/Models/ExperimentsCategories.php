@@ -26,5 +26,4 @@ final class ExperimentsCategories extends AbstractStatus
     {
         return true;
     }
-
 }

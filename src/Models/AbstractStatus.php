@@ -17,6 +17,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
@@ -178,18 +179,32 @@ abstract class AbstractStatus extends AbstractCategory
         $title = Filter::title($title);
         $color ??= $this->getRandomDarkColor();
         $color = Check::color($color);
-        $colorFg ??= '#ffffff';
-        $colorFg = Check::color($colorFg);
-
-        $sql = sprintf('INSERT INTO %s (title, color, color_fg, team)
+        if ($this->supportsForegroundColor()) {
+            $colorFg ??= '#ffffff';
+            $colorFg = Check::color($colorFg);
+            $sql = sprintf('INSERT INTO %s (title, color, color_fg, team)
             VALUES(:title, :color, :color_fg, :team)', $this->table);
+        } else {
+            $sql = sprintf('INSERT INTO %s (title, color, team)
+            VALUES(:title, :color, :team)', $this->table);
+        }
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title);
         $req->bindParam(':color', $color);
+        if ($this->supportsForegroundColor()) {
+            $req->bindParam(':color_fg', $colorFg);
+        }
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
+    }
+
+    // only available for categories
+    // we dont need that for statuses (for now at least?)
+    protected function supportsForegroundColor(): bool
+    {
+        return false;
     }
 
     private function update(StatusParams $params): bool
@@ -200,12 +215,5 @@ abstract class AbstractStatus extends AbstractCategory
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindValue(':team', $this->Teams->Users->getTeam(), PDO::PARAM_INT);
         return $this->Db->execute($req);
-    }
-
-    // only available for categories
-    // we dont need that for statuses (for now at least?)
-    protected function supportsForegroundColor(): bool
-    {
-        return false;
     }
 }

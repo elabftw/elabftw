@@ -1148,6 +1148,11 @@ the form-control fails to do that so we do the border ourselves */
     }
   }
 }
+
+.catstat-preview-content {
+  min-height: calc(1.5em + 0.75rem + 2px);
+}
+
 .smallgray {
   color: var(--medium);
   font-size: 80%;

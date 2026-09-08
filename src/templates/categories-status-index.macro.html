@@ -18,8 +18,8 @@
   {% endif %}
   <ul class='list-group sortable d-flex' data-axis='y' data-table='{{ table }}'>
     {% for cat in sourceArr %}
-      <li id='expcat_{{ cat.id }}' data-statusid='expcat_{{ cat.id }}' class='list-group-item'>
-      <ul class='list-inline d-flex flex-wrap align-items-end mb-0'>
+      <li id='expcat_{{ cat.id }}' data-statusid='expcat_{{ cat.id }}' data-catstat-row class='list-group-item'>
+      <ul class='list-inline d-flex flex-wrap align-items-start mb-0'>
           <li class='list-inline-item'>
             <span class='draggable sortableHandle'>
               <i class='fas fa-grip-vertical fa-fw'></i>
@@ -41,14 +41,21 @@
                   <label for='expcatColorFg_{{ cat.id }}'>{{ 'Text color'|trans }}</label>
                   <input class='form-control color-input' type='color' id='expcatColorFg_{{ cat.id }}' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='color_fg' value='#{{ cat.color_fg|default('ffffff') }}' />
               </li>
+              <li class='list-inline-item'>
+                  <span class='d-block mb-2'>{{ 'Preview'|trans }}</span>
+                  <div class='d-flex align-items-center catstat-preview-content'>
+                      <span data-catstat-preview class='catstat-btn category-btn' style='--bg: #{{ cat.color }}; --fg: #{{ cat.color_fg|default('ffffff') }}'>{{ cat.title }}</span>
+                      <span data-catstat-contrast class='small ml-2'></span>
+                  </div>
+              </li>
           {% endif %}
 
           {# MARK AS PRIVATE #}
-          <li class='list-inline-item ml-auto d-flex align-items-center catstat-privacy'>
+          <li class='list-inline-item ml-auto d-flex align-items-center align-self-end catstat-privacy'>
               {# toggle between locked/unlocked icon for private category #}
               <span class='catstat-privacy-indicator mr-2' aria-hidden='true'>
-                  <i class='fas fa-lock private-icon'></i>
-                  <i class='fas fa-lock-open public-icon'></i>
+                <i class='fas fa-lock private-icon'></i>
+                <i class='fas fa-lock-open public-icon'></i>
               </span>
               <label for='expcatIsPrivate_{{ cat.id }}' class='mb-0 mr-2'>{{ 'Private'|trans }}</label>
               <label class='switch ucp-align {{ not isAdmin ? 'disabled' }}'><span class='sr-only'>{{ 'Mark as private'|trans }}</span>
@@ -83,21 +90,13 @@
               <input class='form-control col-md-6' type='text' name='name' placeholder='{{ newNamePlaceholder }}' required id='createCatStatName' />
             </div>
             <hr>
-
             {% if hasForegroundColor %}
                 <hr>
-
                 <div class='d-flex justify-content-between'>
                     <label for='createCatStatColorFg' class='col-form-label'>
                         {{ 'Text color'|trans }}
                     </label>
-                    <input
-                            class='form-control col-md-3 color-input'
-                            type='color'
-                            name='color_fg'
-                            id='createCatStatColorFg'
-                            value='#ffffff'
-                    />
+                    <input class='form-control col-md-3 color-input' type='color' name='color_fg' id='createCatStatColorFg' value='#ffffff'/>
                 </div>
             {% endif %}
 

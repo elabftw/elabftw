@@ -1,4 +1,5 @@
 {% macro catstatidx(type, table, subtitle, infotip, sourceArr, emptyWarning, modalTitle, newNamePlaceholder, teamName, isAdmin) %}
+{% set hasForegroundColor = type in ['experiments_categories', 'resources_categories'] %}
 <h2>{{ teamName }}</h2>
 <div class='mb-5 d-flex justify-content-between'>
   <div class='d-flex'>
@@ -31,7 +32,24 @@
           </li>
 
           <li class='list-inline-item align-top'>
-            <label for='expcatColor_{{ cat.id }}'>{{ 'Color'|trans }}</label>
+              {# "background color" for categories, since they have a foreground too #}
+            <label for='expcatColor_{{ cat.id }}'>
+              {{ (hasForegroundColor ? 'Background color' : 'Color')|trans }}
+            </label>
+          {% if hasForegroundColor %}
+            <li class='list-inline-item align-top'>
+                <label for='expcatColorFg_{{ cat.id }}'>{{ 'Text color'|trans }}</label>
+                <input
+                        class='form-control color-input'
+                        type='color'
+                        id='expcatColorFg_{{ cat.id }}'
+                        data-trigger='change'
+                        data-model='teams/current/{{ type }}/{{ cat.id }}'
+                        data-target='color_fg'
+                        value='#{{ cat.color_fg|default('ffffff') }}'
+                />
+            </li>
+            {% endif %}
             <input class='form-control color-input' type='color' id='expcatColor_{{ cat.id }}' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='color' value='#{{ cat.color }}' />
           </li>
 
@@ -69,6 +87,23 @@
               <input class='form-control col-md-6' type='text' name='name' placeholder='{{ newNamePlaceholder }}' required id='createCatStatName' />
             </div>
             <hr>
+
+            {% if hasForegroundColor %}
+                <hr>
+
+                <div class='d-flex justify-content-between'>
+                    <label for='createCatStatColorFg' class='col-form-label'>
+                        {{ 'Text color'|trans }}
+                    </label>
+                    <input
+                            class='form-control col-md-3 color-input'
+                            type='color'
+                            name='color_fg'
+                            id='createCatStatColorFg'
+                            value='#ffffff'
+                    />
+                </div>
+            {% endif %}
 
             <div class='d-flex justify-content-between'>
               <label for='createCatStatColor' class='col-form-label'>{{ 'Color'|trans }}</label>

@@ -563,6 +563,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       const splitValue = value.split('|');
       elem.dataset.id = splitValue[0];
       elem.style.setProperty('--bg', `#${splitValue[1]}`);
+      elem.style.setProperty('--fg', `#${splitValue[2] ?? 'ffffff'}`);
       return true;
     },
     onEdit: selectCurrentCatStatOption,

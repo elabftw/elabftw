@@ -201,7 +201,6 @@ abstract class AbstractStatus extends AbstractCategory
     }
 
     // only available for categories
-    // we dont need that for statuses (for now at least?)
     protected function supportsForegroundColor(): bool
     {
         return false;

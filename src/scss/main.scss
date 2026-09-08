@@ -1107,7 +1107,6 @@ the form-control fails to do that so we do the border ourselves */
 
   /* Only Category */
   &.category-btn {
-    // keep the category background but with less opacity to make it readable in all circumstances, even white or black
     background-color: var(--bg);
     color: var(--fg, var(--mediumstrong));
 

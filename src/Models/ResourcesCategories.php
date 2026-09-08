@@ -26,4 +26,10 @@ final class ResourcesCategories extends AbstractStatus
     {
         return 'resources_categories';
     }
+
+    #[Override]
+    protected function supportsForegroundColor(): bool
+    {
+        return true;
+    }
 }

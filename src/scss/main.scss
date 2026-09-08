@@ -1133,6 +1133,21 @@ the form-control fails to do that so we do the border ourselves */
   }
 }
 
+.catstat-privacy {
+  .private-icon {
+    display: none;
+  }
+
+  &:has(input:checked) {
+    .private-icon {
+      display: inline-block;
+    }
+
+    .public-icon {
+      display: none;
+    }
+  }
+}
 .smallgray {
   color: var(--medium);
   font-size: 80%;

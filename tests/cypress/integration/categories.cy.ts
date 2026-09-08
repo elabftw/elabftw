@@ -3,7 +3,7 @@ describe('Categories', () => {
     cy.login();
   });
 
-    it('Preview resource category colors', () => {
+  it('Preview resource category colors', () => {
     const catname = 'Justice';
 
     cy.intercept('PATCH', '**/api/v2/teams/current/resources_categories/*').as('patchCategory');

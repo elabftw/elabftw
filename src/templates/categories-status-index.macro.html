@@ -32,8 +32,8 @@
           </li>
 
           <li class='list-inline-item align-top'>
-              <label for='expcatColor_{{ cat.id }}'>{{ (hasForegroundColor ? 'Background color' : 'Color')|trans }}</label>
-              <input class='form-control color-input' type='color' id='expcatColor_{{ cat.id }}' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='color' value='#{{ cat.color }}' />
+            <label for='expcatColor_{{ cat.id }}'>{{ (hasForegroundColor ? 'Background color' : 'Color')|trans }}</label>
+            <input class='form-control color-input' type='color' id='expcatColor_{{ cat.id }}' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='color' value='#{{ cat.color }}' />
           </li>
 
           {% if hasForegroundColor %}

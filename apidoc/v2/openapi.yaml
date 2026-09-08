@@ -1938,7 +1938,7 @@ components:
           type: string
         userid:
           type: integer
-    # experiments_status, experiments_categories, resources_categories and items_status are statuslike
+    # experiments_status and items_status are statuslike
     statuslike:
       type: object
       properties:
@@ -1948,6 +1948,18 @@ components:
           type: string
         color:
           type: string
+    # experiments_categories and resources_categories are categorylike
+    categorylike:
+      allOf:
+        - $ref: '#/components/schemas/statuslike'
+        - type: object
+          properties:
+            color_fg:
+              type: string
+              description: |
+                Hex text color without leading \#.
+              default: 'ffffff'
+              example: 'ffffff'
     step:
       type: object
       properties:
@@ -5479,7 +5491,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/statuslike'
+                  $ref: '#/components/schemas/categorylike'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -5502,6 +5514,12 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
+                color_fg:
+                  type: string
+                  description: |
+                    Hex text color without leading \#.
+                  default: 'ffffff'
+                  example: 'ffffff'
       responses:
         '201':
           description: Create a category.
@@ -5540,7 +5558,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/statuslike'
+                $ref: '#/components/schemas/categorylike'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -5554,14 +5572,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/statuslike'
+              $ref: '#/components/schemas/categorylike'
       responses:
         '200':
           description: The updated category.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/statuslike'
+                $ref: '#/components/schemas/categorylike'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -5601,7 +5619,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/statuslike'
+                  $ref: '#/components/schemas/categorylike'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -5624,6 +5642,12 @@ paths:
                   type: string
                   description: |
                     Hex color without leading \#.
+                color_fg:
+                  type: string
+                  description: |
+                    Hex text color without leading \#.
+                  default: 'ffffff'
+                  example: 'ffffff'
       responses:
         '201':
           description: Create a resource category.
@@ -5662,7 +5686,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/statuslike'
+                $ref: '#/components/schemas/categorylike'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -5676,14 +5700,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/statuslike'
+              $ref: '#/components/schemas/categorylike'
       responses:
         '200':
           description: The updated resource category.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/statuslike'
+                $ref: '#/components/schemas/categorylike'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

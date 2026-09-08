@@ -1839,6 +1839,7 @@ document.addEventListener('input', event => {
   }
 });
 
+// display for each category
 document.querySelectorAll<HTMLElement>('[data-catstat-row]').forEach(row => {
   const colorInput = row.querySelector<HTMLInputElement>('[data-target="color"]');
   if (colorInput) {

@@ -19,7 +19,7 @@
   <ul class='list-group sortable d-flex' data-axis='y' data-table='{{ table }}'>
     {% for cat in sourceArr %}
       <li id='expcat_{{ cat.id }}' data-statusid='expcat_{{ cat.id }}' class='list-group-item'>
-        <ul class='list-inline'>
+      <ul class='list-inline d-flex flex-wrap align-items-end mb-0'>
           <li class='list-inline-item'>
             <span class='draggable sortableHandle'>
               <i class='fas fa-grip-vertical fa-fw'></i>
@@ -43,8 +43,8 @@
               </li>
           {% endif %}
 
-          <li class='list-inline-item'>
-              <label for='expcatIsPrivate_{{ cat.id }}'>{{ 'Mark as private'|trans }}</label>
+          <li class='list-inline-item ml-auto d-flex align-items-center'>
+              <label for='expcatIsPrivate_{{ cat.id }}' class='mb-0 mr-2'>{{ 'Mark as private'|trans }}</label>
               <label class='switch ucp-align {{ not isAdmin ? 'disabled' }}'><span class='sr-only'>{{ 'Mark as private'|trans }}</span>
                   <input type='checkbox' autocomplete='off' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='is_private' {{ cat.is_private ? 'checked="checked"' }} {{ not isAdmin ? 'disabled="disabled"' }} id='expcatIsPrivate_{{ cat.id }}'>
                   <span class='slider'></span>
@@ -52,7 +52,7 @@
           </li>
 
           <li class='list-inline-item'>
-              <button type='button' data-id='{{ cat.id }}' data-endpoint='{{ type }}' data-action='destroy-catstat' class='btn btn-danger'>{{ 'Delete'|trans }}</button>
+              <button type='button' data-id='{{ cat.id }}' data-endpoint='{{ type }}' data-action='destroy-catstat' class='btn btn-danger-ghost' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-fw fa-trash-alt'></i></button>
           </li>
         </ul>
       </li>

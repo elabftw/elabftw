@@ -32,37 +32,27 @@
           </li>
 
           <li class='list-inline-item align-top'>
-              {# "background color" for categories, since they have a foreground too #}
-            <label for='expcatColor_{{ cat.id }}'>
-              {{ (hasForegroundColor ? 'Background color' : 'Color')|trans }}
-            </label>
+              <label for='expcatColor_{{ cat.id }}'>{{ (hasForegroundColor ? 'Background color' : 'Color')|trans }}</label>
+              <input class='form-control color-input' type='color' id='expcatColor_{{ cat.id }}' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='color' value='#{{ cat.color }}' />
+          </li>
+
           {% if hasForegroundColor %}
-            <li class='list-inline-item align-top'>
-                <label for='expcatColorFg_{{ cat.id }}'>{{ 'Text color'|trans }}</label>
-                <input
-                        class='form-control color-input'
-                        type='color'
-                        id='expcatColorFg_{{ cat.id }}'
-                        data-trigger='change'
-                        data-model='teams/current/{{ type }}/{{ cat.id }}'
-                        data-target='color_fg'
-                        value='#{{ cat.color_fg|default('ffffff') }}'
-                />
-            </li>
-            {% endif %}
-            <input class='form-control color-input' type='color' id='expcatColor_{{ cat.id }}' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='color' value='#{{ cat.color }}' />
+              <li class='list-inline-item align-top'>
+                  <label for='expcatColorFg_{{ cat.id }}'>{{ 'Text color'|trans }}</label>
+                  <input class='form-control color-input' type='color' id='expcatColorFg_{{ cat.id }}' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='color_fg' value='#{{ cat.color_fg|default('ffffff') }}' />
+              </li>
+          {% endif %}
+
+          <li class='list-inline-item'>
+              <label for='expcatIsPrivate_{{ cat.id }}'>{{ 'Mark as private'|trans }}</label>
+              <label class='switch ucp-align {{ not isAdmin ? 'disabled' }}'><span class='sr-only'>{{ 'Mark as private'|trans }}</span>
+                  <input type='checkbox' autocomplete='off' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='is_private' {{ cat.is_private ? 'checked="checked"' }} {{ not isAdmin ? 'disabled="disabled"' }} id='expcatIsPrivate_{{ cat.id }}'>
+                  <span class='slider'></span>
+              </label>
           </li>
 
           <li class='list-inline-item'>
-            <label for='expcatIsPrivate_{{ cat.id }}'>{{ 'Mark as private'|trans }}</label>
-            <label class='switch ucp-align {{ not isAdmin ? 'disabled' }}'><span class='sr-only'>{{ 'Mark as private'|trans }}</span>
-              <input type='checkbox' autocomplete='off' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='is_private' {{ cat.is_private ? 'checked="checked"' }} {{ not isAdmin ? 'disabled="disabled"' }} id='expcatIsPrivate_{{ cat.id }}'>
-              <span class='slider'></span>
-            </label>
-          </li>
-
-          <li class='list-inline-item'>
-            <button type='button' data-id='{{ cat.id }}' data-endpoint='{{ type }}' data-action='destroy-catstat' class='btn btn-danger' >{{ 'Delete'|trans }}</button>
+              <button type='button' data-id='{{ cat.id }}' data-endpoint='{{ type }}' data-action='destroy-catstat' class='btn btn-danger'>{{ 'Delete'|trans }}</button>
           </li>
         </ul>
       </li>

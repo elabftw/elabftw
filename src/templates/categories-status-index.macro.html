@@ -51,20 +51,19 @@
           {% endif %}
 
           {# MARK AS PRIVATE #}
-          <li class='list-inline-item ml-auto d-flex align-items-center align-self-end catstat-privacy'>
-              {# toggle between locked/unlocked icon for private category #}
-              <span class='catstat-privacy-indicator mr-2' aria-hidden='true'>
-                <i class='fas fa-lock private-icon'></i>
-                <i class='fas fa-lock-open public-icon'></i>
-              </span>
-              <label for='expcatIsPrivate_{{ cat.id }}' class='mb-0 mr-2'>{{ 'Private'|trans }}</label>
-              <label class='switch ucp-align {{ not isAdmin ? 'disabled' }}'><span class='sr-only'>{{ 'Mark as private'|trans }}</span>
-                  <input type='checkbox' autocomplete='off' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='is_private' {{ cat.is_private ? 'checked="checked"' }} {{ not isAdmin ? 'disabled="disabled"' }} id='expcatIsPrivate_{{ cat.id }}'>
-                  <span class='slider'></span>
-              </label>
-          </li>
-
-          <li class='list-inline-item'>
+          <li class='list-inline-item ml-auto d-flex align-items-center align-self-center'>
+              <div class='d-flex align-items-center catstat-privacy mr-3'>
+                  {# toggle between locked/unlocked icon for private category #}
+                  <span class='catstat-privacy-indicator mr-2' aria-hidden='true'>
+                    <i class='fas fa-lock private-icon'></i>
+                    <i class='fas fa-lock-open public-icon'></i>
+                  </span>
+                  <label for='expcatIsPrivate_{{ cat.id }}' class='mb-0 mr-2'>{{ 'Private'|trans }}</label>
+                  <label class='switch ucp-align {{ not isAdmin ? 'disabled' }}'><span class='sr-only'>{{ 'Mark as private'|trans }}</span>
+                      <input type='checkbox' autocomplete='off' data-trigger='change' data-model='teams/current/{{ type }}/{{ cat.id }}' data-target='is_private' {{ cat.is_private ? 'checked="checked"' }} {{ not isAdmin ? 'disabled="disabled"' }} id='expcatIsPrivate_{{ cat.id }}'>
+                      <span class='slider'></span>
+                  </label>
+              </div>
               <button type='button' data-id='{{ cat.id }}' data-endpoint='{{ type }}' data-action='destroy-catstat' class='btn btn-danger-ghost' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-fw fa-trash-alt'></i></button>
           </li>
         </ul>

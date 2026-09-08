@@ -66,6 +66,17 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         self::assertSame('[]', $res->getContent());
     }
 
+    // the restriction does not accidentally block an anonymous user from accessing /api/v2/users/me
+    public function testAnonymousUserCanReadOwnProfile(): void
+    {
+        $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create('/api/v2/users/me'));
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        $content = $res->getContent();
+        self::assertIsString($content);
+        self::assertSame(0, json_decode($content, true)['userid']);
+    }
+
     public function testAnonymousUserCannotWriteEvenWhenCanWriteIsTrue(): void
     {
         $Controller = new Apiv2Controller(
@@ -142,15 +153,30 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
     }
 
-    public function testAnonymousUserCanReadCurrentTeamsSubmodel(): void
+    public function testAnonymousUserCannotReadSensitiveEndpoints(): void
     {
-        $Controller = new Apiv2Controller(
-            new AnonymousUser(1),
-            Request::create('/api/v2/teams/1/status', 'GET'),
+        $uris = array(
+            '/api/v2/users/1',
+            '/api/v2/teams/1/teamgroups',
+            '/api/v2/teams/1/teamgroups/1',
+            '/api/v2/teams/1/status',
+            '/api/v2/teams/1/status/1',
+            '/api/v2/teams/1/experiments_status',
+            '/api/v2/teams/1/experiments_categories',
+            '/api/v2/teams/1/resources_categories',
+            '/api/v2/teams/1/items_status',
         );
 
-        $res = $Controller->getResponse();
-        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        foreach ($uris as $uri) {
+            $Controller = new Apiv2Controller(
+                new AnonymousUser(1),
+                Request::create($uri, 'GET'),
+            );
+
+            $res = $Controller->getResponse();
+
+            self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode(), $uri);
+        }
     }
 
     public function testCanReadCurrentTeamsSubmodel(): void

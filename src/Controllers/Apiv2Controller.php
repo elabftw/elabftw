@@ -32,6 +32,7 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\ReportsHandler;
 use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\AbstractStatus;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Batch;
 use Elabftw\Models\Branding;
@@ -470,6 +471,8 @@ final class Apiv2Controller extends AbstractApiController
 
     private function applyRestrictions(): void
     {
+        $this->applyAnonymousRestrictions();
+
         if (($this->Model instanceof Config) && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new ForbiddenException('Non sysadmin user tried to use a restricted api endpoint.');
         }
@@ -493,6 +496,25 @@ final class Apiv2Controller extends AbstractApiController
         // only accept json content-type unless it's GET or DELETE (also prevents csrf!)
         if (!in_array($this->Request->getMethod(), array(Request::METHOD_GET, Request::METHOD_DELETE), true) && $contentType !== 'application/json') {
             throw new ImproperActionException('Incorrect content-type header.');
+        }
+    }
+
+    private function applyAnonymousRestrictions(): void
+    {
+        if (!($this->requester instanceof AnonymousUser)) {
+            return;
+        }
+        // anon users cannot enumerate another user's endpoint
+        if (
+            $this->endpoint === ApiEndpoint::Users
+            && $this->id !== null
+            && $this->id !== $this->requester->userData['userid']
+        ) {
+            throw new ForbiddenException();
+        }
+        // these team submodels contain internal organizational metadata
+        if ($this->Model instanceof AbstractStatus || $this->Model instanceof TeamGroups) {
+            throw new ForbiddenException();
         }
     }
 }

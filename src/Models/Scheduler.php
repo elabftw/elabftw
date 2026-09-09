@@ -392,6 +392,7 @@ final class Scheduler extends AbstractRest
         $this->Db->execute($req);
     }
 
+    // Handle updates that apply to the entire recurring booking series, in a single transaction
     private function updateSeries(array $params): void
     {
         $event = $this->readOne();
@@ -448,6 +449,8 @@ final class Scheduler extends AbstractRest
                 $this->checkConstraints($candidate['start'], $candidate['end'], $seriesId, true);
             }
             $this->checkCandidateOverlaps($candidates);
+            // Use a direct query here instead of update(), as each occurrence may have different dates
+            // and the whole series must be updated atomically in a single transaction
             $sql = 'UPDATE team_events SET '
                 . ($newTitle !== null ? 'title = :title' : '')
                 . ($newTitle !== null && $changeDateTime ? ', ' : '')
@@ -474,6 +477,7 @@ final class Scheduler extends AbstractRest
         }
     }
 
+    // Delete all occurrences belonging to the same recurring booking
     private function destroySeries(): bool
     {
         $this->Db->beginTransaction();

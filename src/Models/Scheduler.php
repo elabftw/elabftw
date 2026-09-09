@@ -317,6 +317,7 @@ final class Scheduler extends AbstractRest
         return $this->deleteEvent($event);
     }
 
+    // Ensure the current user is allowed to delete this booking.
     private function assertCanDestroy(array $event): void
     {
         $createdAt = new DateTimeImmutable($event['created_at']);
@@ -345,6 +346,7 @@ final class Scheduler extends AbstractRest
         return $this->Db->execute($req);
     }
 
+    // send a notification to all team admins
     private function notifyAdminsOfDeletion(array $event): void
     {
         $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
@@ -359,7 +361,7 @@ final class Scheduler extends AbstractRest
         }
     }
 
-    /** Lock the resource row to serialize concurrent booking creation for the same item. */
+    // Prevent other booking operations from modifying this resource until the current transaction is finished
     private function lockItemForBooking(): void
     {
         $sql = 'SELECT id FROM items WHERE id = :item FOR UPDATE';
@@ -415,7 +417,7 @@ final class Scheduler extends AbstractRest
         $this->Db->beginTransaction();
         try {
             $this->lockItemForBooking();
-            // Re-read under the resource lock so concurrent series changes cannot make validation stale.
+            // Re-read the bookings after locking the resource so the validation uses the latest data
             $event = $this->readOne();
             $seriesId = $event['recurrence_series_id'];
             if ($seriesId === null) {

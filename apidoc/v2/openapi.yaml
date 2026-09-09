@@ -4969,7 +4969,7 @@ paths:
                       maximum: 100
       responses:
         '201':
-          description: The booking has been created. For a recurring booking, the location identifies the first occurrence in the series.
+          description: The booking slot has been created.
           headers:
             location:
               description: An URL to the booking slot that was created. For a recurring booking, this points to the first occurrence in the series.

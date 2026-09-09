@@ -404,43 +404,21 @@ if (calendarEl) {
         };
       }
 
-      // case 1: Already selected items -> checkboxes with selected
+      // case 1: Already selected items -> display them as badges
       if (selectedItemIds.length > 0) {
-        const container = document.getElementById('selectedItemsCheckboxes')!;
-        container.innerHTML = '';
+        const display = document.getElementById('selectedItemsDisplayReview')!;
+        display.innerHTML = '';
 
         selectedItemIds.forEach(itemId => {
-          const option = itemSelectEl.querySelector(`option[value="${itemId}"]`);
-          const labelText = option?.textContent || `Item ${itemId}`;
-
-          const div = document.createElement('div');
-          div.className = 'form-check';
-
-          const input = document.createElement('input');
-          input.className = 'form-check-input';
-          input.type = 'checkbox';
-          input.value = itemId;
-          input.id = `selectedItem${itemId}`;
-          input.checked = true;
-
-          const label = document.createElement('label');
-          label.className = 'form-check-label';
-          label.htmlFor = input.id;
-          label.textContent = labelText;
-
-          div.appendChild(input);
-          div.appendChild(label);
-          container.appendChild(div);
+          createBadge(itemSelectEl, itemSelectEl.tomselect, display, itemId);
         });
 
         showModalAndFocusFirstInput('#itemPickerReviewModal');
 
         handleConfirm('confirmItemReview', () => {
-          const checked = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked');
-          return Array.from(checked).map(cb => cb.value);
+          return itemSelectEl.tomselect?.items || [];
         });
       }
-
       // case 2: no items selected -> modal with tomSelect
       else {
         const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };

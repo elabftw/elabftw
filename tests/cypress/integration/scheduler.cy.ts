@@ -6,11 +6,12 @@ describe('Scheduler', () => {
   });
 
   it('Displays Scheduler page', () => {
-    // Scheduler
     cy.visit('/scheduler.php');
     cy.get('h1#pageTitle').should('have.text', 'Scheduler');
     cy.get('#loading-spinner').should('not.exist');
-    cy.get('.scheduler-recurrence-frequency').should('have.length', 2);
+    cy.get('#itemPickerSelectModal')
+      .find('.scheduler-recurrence-frequency')
+      .should('have.length', 1);
     cy.htmlvalidate();
   });
 
@@ -41,7 +42,7 @@ describe('Scheduler', () => {
           title: 'Recurring Cypress booking',
           start: start.toFormat('yyyy-MM-dd HH:mm:ss'),
           end: start.plus({ hours: 1 }).toFormat('yyyy-MM-dd HH:mm:ss'),
-          // once a day for three days
+          // repeat once a day for three occurrences
           recurrence: {
             frequency: 'daily',
             interval: 1,

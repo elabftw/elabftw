@@ -1449,13 +1449,13 @@ components:
           type: string
           format: uuid
           nullable: true
-          description: Identifier shared by materialized occurrences of a recurring booking.
+          description: Identifier linking all occurrences that belong to the same recurring booking.
         recurrence_index:
           type: integer
           nullable: true
           minimum: 1
           maximum: 100
-          description: One-based position of this occurrence in its recurring series.
+          description: Position of this booking within its recurring series, starting at 1.
         start:
           type: string
           format: date-time
@@ -4938,14 +4938,14 @@ paths:
               properties:
                 title:
                   type: string
-                  description: A name for this booking slot.
+                  description: A name for this booking slot. When updating a recurring series, the title is applied to all occurrences in the series.
                   default: Untitled
                   example: 'This is an event.'
                 start:
                   type: string
                   format: date-time
-                  description: ISO 8601 date-time with timezone offset.
-                  example: '2026-03-15T13:30:00+01:00'
+                  description: Date and time of the booking in ISO 8601 format, including the timezone offset.
+                  example: "2026-02-19T15:30:00+01:00"
                 end:
                   type: string
                   format: date-time
@@ -4953,7 +4953,7 @@ paths:
                   example: '2026-03-15T15:30:00+01:00'
                 recurrence:
                   type: object
-                  description: Optional finite recurrence. At most 100 occurrences spanning at most 10 years are accepted.
+                  description: Optional settings to make this booking repeat. A recurring booking can contain up to 100 occurrences over a maximum period of 10 years.
                   required: [frequency, interval, count]
                   properties:
                     frequency:
@@ -4969,10 +4969,10 @@ paths:
                       maximum: 100
       responses:
         '201':
-          description: The booking slot or finite recurring series has been created. The location identifies the first occurrence.
+          description: The booking has been created. For a recurring booking, the location identifies the first occurrence in the series.
           headers:
             location:
-              description: An URL to the booking slot that was created.
+              description: An URL to the booking slot that was created. For a recurring booking, this points to the first occurrence in the series.
               schema:
                 type: string
         '400':
@@ -5039,7 +5039,7 @@ paths:
                     scope:
                       type: string
                       enum: [event, series]
-                      description: Apply the update to this occurrence or every occurrence in its series.
+                      description: Choose whether to update only this occurrence or all occurrences in the recurring series.
                 - type: object
                   properties:
                     target:

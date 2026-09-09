@@ -64,8 +64,6 @@
   <hr>
   {# Click on the scheduler: Search items to book #}
   {% include 'scheduler-pick-items-modal.html' %}
-  {# Items already selected: Modal with checkboxes to confirm selection #}
-  {% include 'scheduler-review-picked-items-modal.html' %}
   {# No bookable items WARNING #}
   {% if itemsArr|length == 0 %}{{ 'No bookable items.'|trans|msg('warning', false) }}{% else %}
   {% include 'loading-spinner.html' %}

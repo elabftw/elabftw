@@ -41,7 +41,7 @@ import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
 import { rebuildTomSelectOptions } from './misc';
-import { showModalAndFocusFirstInput} from './common';
+import { showModal, showModalAndFocusFirstInput } from './common';
 
 type CancelNotificationPayload = {
   action: Action;
@@ -122,12 +122,16 @@ function lockScopeButtons(selectedItems: string[]): void {
 
 document.getElementById('loading-spinner')?.remove();
 
+// on loading the book event modal a second time, we need the options to be available
+function updateRecurrenceFields(select: HTMLSelectElement): void {
+  select.closest('.scheduler-recurrence-fields')
+    ?.querySelectorAll('.scheduler-recurrence-options')
+    .forEach(element => element.classList.toggle('d-none', select.value === ''));
+}
+
 document.querySelectorAll<HTMLSelectElement>('.scheduler-recurrence-frequency').forEach(select => {
-  select.addEventListener('change', () => {
-    select.closest('.scheduler-recurrence-fields')
-      ?.querySelectorAll('.scheduler-recurrence-options')
-      .forEach(element => element.classList.toggle('d-none', select.value === ''));
-  });
+  select.addEventListener('change', () => updateRecurrenceFields(select));
+  updateRecurrenceFields(select);
 });
 
 function getRecurrence(modal: Element): Recurrence | null | false {
@@ -356,9 +360,7 @@ if (calendarEl) {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
       const selectedItemIds: string[] = itemSelectEl.tomselect?.items || [];
 
-      let manualSelect: TomSelect | null = null;
-
-      // Handle post action for modals
+      // Handle post action for modal
       function handleConfirm(buttonId: string, getIdsFn: () => string[]) {
         const confirmBtn = document.getElementById(buttonId) as HTMLButtonElement;
         if (!confirmBtn) {
@@ -382,14 +384,21 @@ if (calendarEl) {
           if (recurrence === false) {
             return;
           }
-          const postParams: {start: string; end: string; title: string; recurrence?: Recurrence} = {
+          const postParams: {
+            start: string;
+            end: string;
+            title: string;
+            recurrence?: Recurrence;
+          } = {
             start: info.startStr,
             end: info.endStr,
             title,
           };
+
           if (recurrence !== null) {
             postParams.recurrence = recurrence;
           }
+
           Promise.all(
             itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
           ).then(() => {
@@ -404,60 +413,53 @@ if (calendarEl) {
         };
       }
 
-      // case 1: Already selected items -> display them as badges
-      if (selectedItemIds.length > 0) {
-        const display = document.getElementById('selectedItemsDisplayReview')!;
+      const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
+      const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
+
+      const renderSelectedItems = (selectedItems: string[]): void => {
+        const container = document.getElementById('selectedItemsContainerModal')!;
+        const display = document.getElementById('selectedItemsDisplayModal')!;
         display.innerHTML = '';
-
-        selectedItemIds.forEach(itemId => {
-          createBadge(itemSelectEl, itemSelectEl.tomselect, display, itemId);
-        });
-
-        showModalAndFocusFirstInput('#itemPickerReviewModal');
-
-        handleConfirm('confirmItemReview', () => {
-          return itemSelectEl.tomselect?.items || [];
-        });
-      }
-      // case 2: no items selected -> modal with tomSelect
-      else {
-        const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
-        const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
-
-        // init TomSelect if not already
-        if (!itemSelectModalEl.tomselect) {
-          manualSelect = new TomSelect(itemSelectModalEl, {
-            ...sharedTomSelectOptions,
-            dropdownParent: '#itemSelectWrapperModal',
-            controlInput: '#itemSelectInputModal',
-            onChange: (selectedItems: string[]) => {
-              const container = document.getElementById('selectedItemsContainerModal')!;
-              const display = document.getElementById('selectedItemsDisplayModal')!;
-              display.innerHTML = '';
-              if (selectedItems.length === 0) {
-                container.classList.add('d-none');
-                return;
-              }
-              container.classList.remove('d-none');
-              selectedItems.forEach(id => {
-                createBadge(itemSelectModalEl, manualSelect, display, id);
-              });
-            },
-          });
-
-          categorySelectModalEl.addEventListener('change', () => {
-            const selectedCategory = categorySelectModalEl.value;
-            filterOptionsByCategory(itemSelectModalEl, selectedCategory);
-          });
-        } else {
-          manualSelect = itemSelectModalEl.tomselect;
+        if (selectedItems.length === 0) {
+          container.classList.add('d-none');
+          return;
         }
+        container.classList.remove('d-none');
+        selectedItems.forEach(id => {
+          createBadge(itemSelectModalEl, itemSelectModalEl.tomselect, display, id);
+        });
+      };
 
-        showModalAndFocusFirstInput('#itemPickerSelectModal');
+      let manualSelect: TomSelect;
+      if (!itemSelectModalEl.tomselect) {
+        manualSelect = new TomSelect(itemSelectModalEl, {
+          ...sharedTomSelectOptions,
+          dropdownParent: '#itemSelectWrapperModal',
+          controlInput: '#itemSelectInputModal',
+          onChange: renderSelectedItems,
+        });
 
-        // confirm handler uses selected TomSelect items
-        handleConfirm('confirmItemSelect', () => manualSelect?.items || []);
+        categorySelectModalEl.addEventListener('change', () => {
+          filterOptionsByCategory(itemSelectModalEl, categorySelectModalEl.value);
+        });
+      } else {
+        manualSelect = itemSelectModalEl.tomselect;
       }
+
+      // preselect resources currently selected in the Scheduler (shows badges)
+      manualSelect.clear(true);
+      manualSelect.setValue(selectedItemIds, true);
+      renderSelectedItems(selectedItemIds);
+
+      // Restore the correct recurrence fields when reopening the modal
+      const recurrenceSelect = document.querySelector<HTMLSelectElement>(
+        '#itemPickerSelectModal .scheduler-recurrence-frequency',
+      );
+      if (recurrenceSelect) {
+        updateRecurrenceFields(recurrenceSelect);
+      }
+      showModal('#itemPickerSelectModal');
+      handleConfirm('confirmItemSelect', () => manualSelect.items);
     },
     // on click activate modal window
     eventClick: function(info): void {

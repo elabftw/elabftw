@@ -701,6 +701,7 @@ final class Scheduler extends AbstractRest
         }
     }
 
+    // Check that the user has enough booking slots available for all requested occurrences
     private function checkMaxSlots(int $requestedSlots = 1): void
     {
         if ($this->Items->entityData['book_max_slots'] === 0) {
@@ -714,6 +715,7 @@ final class Scheduler extends AbstractRest
         $count = (int) $req->fetchColumn();
         $maxSlots = (int) $this->Items->entityData['book_max_slots'];
 
+        // Account for every occurrence when creating a recurring booking
         if ($count + $requestedSlots > $maxSlots) {
             throw new ImproperActionException(
                 sprintf(_('You cannot book any more slots. Maximum of %d reached.'), $maxSlots),

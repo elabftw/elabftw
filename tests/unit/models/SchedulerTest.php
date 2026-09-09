@@ -127,7 +127,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function testCreateWeeklySeriesPreservesLocalTimeAcrossDst(): void
+    // Ensure weekly bookings keep the same local time when daylight saving time changes
+    public function testWeeklySeriesKeepsSameTimeAcrossDaylightSavingTime(): void
     {
         $previousTimezone = date_default_timezone_get();
         date_default_timezone_set('America/New_York');

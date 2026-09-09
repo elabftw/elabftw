@@ -583,10 +583,10 @@ if (calendarEl) {
     payload.notifOnSaved = 0;
     // The notification must be sent before deletion, otherwise the event ID is lost (Nothing to show with this id)
     ApiC.post(`event/${el.dataset.id}/notifications`, payload)
-      // async maybe
-      .then(() => {
+      .then(async () => {
         const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
-        return ApiC.delete(`event/${el.dataset.id}?scope=${scope}`).then(() => calendar.refetchEvents()).catch();
+        await ApiC.delete(`event/${el.dataset.id}?scope=${scope}`);
+        return calendar.refetchEvents();
       })
       .then(() => notify.success());
   });

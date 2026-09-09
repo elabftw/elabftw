@@ -46,6 +46,7 @@ use function sprintf;
 use function str_replace;
 use function trim;
 use function usort;
+use function array_values;
 
 /**
  * All about the team's scheduler
@@ -58,11 +59,11 @@ final class Scheduler extends AbstractRest
 
     public const string EVENT_END = '2037-12-31 00:00:00';
 
+    public const int MAX_RECURRENCE_OCCURRENCES = 100;
+
     private const string DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     private const int GRACE_PERIOD_MINUTES = 5;
-
-    public const int MAX_RECURRENCE_OCCURRENCES = 100;
 
     private const int MAX_RECURRENCE_INTERVAL = 365;
 
@@ -157,7 +158,7 @@ final class Scheduler extends AbstractRest
             $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindValue(':recurrence_series_id', $seriesId);
             $eventId = 0;
-            foreach ($occurrences as $index => $occurrence) {
+            foreach (array_values($occurrences) as $index => $occurrence) {
                 $req->bindValue(':start', $occurrence['start']);
                 $req->bindValue(':end', $occurrence['end']);
                 $req->bindValue(':recurrence_index', $seriesId === null ? null : $index + 1, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
@@ -309,7 +310,7 @@ final class Scheduler extends AbstractRest
         $this->canWriteOrExplode();
         $event = $this->readOne();
         if ($this->recurringEvents && $event['recurrence_series_id'] !== null) {
-            return $this->destroySeries($event);
+            return $this->destroySeries();
         }
         $this->assertCanDestroy($event);
         $this->notifyAdminsOfDeletion($event);
@@ -471,7 +472,7 @@ final class Scheduler extends AbstractRest
         }
     }
 
-    private function destroySeries(array $event): bool
+    private function destroySeries(): bool
     {
         $this->Db->beginTransaction();
         try {
@@ -704,10 +705,12 @@ final class Scheduler extends AbstractRest
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
-        $count = $req->fetchColumn();
-        if ($count + $requestedSlots > $this->Items->entityData['book_max_slots']) {
+        $count = (int) $req->fetchColumn();
+        $maxSlots = (int) $this->Items->entityData['book_max_slots'];
+
+        if ($count + $requestedSlots > $maxSlots) {
             throw new ImproperActionException(
-                sprintf(_('You cannot book any more slots. Maximum of %d reached.'), $this->Items->entityData['book_max_slots'])
+                sprintf(_('You cannot book any more slots. Maximum of %d reached.'), $maxSlots),
             );
         }
     }
@@ -717,8 +720,7 @@ final class Scheduler extends AbstractRest
         string $end,
         ?string $excludedSeriesId = null,
         bool $includeOccurrence = false,
-    ): void
-    {
+    ): void {
         $this->checkOverlap($start, $end, $excludedSeriesId, $includeOccurrence);
         $this->checkSlotTime($start, $end);
         $this->checkEndAfterStart($start, $end);
@@ -769,8 +771,7 @@ final class Scheduler extends AbstractRest
         string $end,
         ?string $excludedSeriesId = null,
         bool $includeOccurrence = false,
-    ): void
-    {
+    ): void {
         if ($this->Items->entityData['book_can_overlap'] === 1) {
             return;
         }
@@ -796,8 +797,12 @@ final class Scheduler extends AbstractRest
             if (!$includeOccurrence) {
                 throw new ImproperActionException(_('Overlapping booking slots is not permitted.'));
             }
-            throw new ImproperActionException(sprintf(
-                _('The occurrence from %s to %s conflicts with an existing booking.'), $start, $end)
+            throw new ImproperActionException(
+                sprintf(
+                    _('The occurrence from %s to %s conflicts with an existing booking.'),
+                    $start,
+                    $end
+                )
             );
         }
     }
@@ -878,11 +883,10 @@ final class Scheduler extends AbstractRest
         return $candidate;
     }
 
-    /** @param array<int, array{start: string, end: string}> $occurrences */
     private function checkCandidateOverlaps(array $occurrences): void
     {
         $ordered = $occurrences;
-        usort($ordered, static fn (array $left, array $right): int => $left['start'] <=> $right['start']);
+        usort($ordered, static fn(array $left, array $right): int => $left['start'] <=> $right['start']);
         $previousEnd = null;
         foreach ($ordered as $occurrence) {
             if ($previousEnd !== null && $occurrence['start'] < $previousEnd) {

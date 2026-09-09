@@ -147,7 +147,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             date_default_timezone_set($previousTimezone);
         }
         $this->assertSame(array('10:00:00', '10:00:00', '10:00:00'), array_map(
-            static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
+            static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
             $events,
         ));
         $this->assertSame(array(
@@ -155,7 +155,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             $transition->format('Y-m-d'),
             $transition->modify('+1 week')->format('Y-m-d'),
         ), array_map(
-            static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
+            static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
             $events,
         ));
     }
@@ -174,7 +174,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(
             array(sprintf('%s-01-15', $year), sprintf('%s-02-15', $year), sprintf('%s-03-15', $year)),
             array_map(
-                static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
+                static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
                 $this->getSortedEvents($Items),
             ),
         );
@@ -335,7 +335,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
         $events = $this->getSortedEvents($Items);
         $this->assertSame(array('11:00:00', '10:00:00', '10:00:00'), array_map(
-            static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
+            static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
             $events,
         ));
 
@@ -374,10 +374,10 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         } catch (ImproperActionException) {
             $series = array_filter(
                 $this->getSortedEvents($Items),
-                static fn (array $event): bool => $event['recurrence_series_id'] !== null,
+                static fn(array $event): bool => $event['recurrence_series_id'] !== null,
             );
             $this->assertSame(array('10:00:00', '10:00:00', '10:00:00'), array_values(array_map(
-                static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
+                static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
                 $series,
             )));
         }
@@ -819,7 +819,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     private function getSortedEvents(Items $Items): array
     {
         $events = (new Scheduler($Items))->readOne();
-        usort($events, static fn (array $left, array $right): int => $left['start'] <=> $right['start']);
+        usort($events, static fn(array $left, array $right): int => $left['start'] <=> $right['start']);
         return $events;
     }
 

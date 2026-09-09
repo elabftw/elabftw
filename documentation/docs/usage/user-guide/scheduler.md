@@ -7,22 +7,9 @@ title: Scheduler
 
 It is possible to use the scheduler (calendar) to book Resources.
 
-Bookings can repeat daily, weekly, or monthly. Choose the interval and number of occurrences when creating the booking. A recurring booking can include up to 100 reservations over a period of up to 10 years.
+Before proceeding, make sure you have a **bookable resource**. See [Make a resource bookable](./resources#making-a-resource-bookable) section.
 
-A monthly series is rejected if its day does not exist in one of the requested months (for example, January 31 followed by February).
-
-Every occurrence is a normal reservation. Before creating or changing a series, eLabFTW checks every occurrence for resource permissions, booking limits, and conflicts. If one occurrence is invalid, none of the series is changed.
-
-:::tip
-
-When editing or deleting a recurring reservation, you can choose whether the action applies only to that reservation or to the complete series.
-
-**Dragging or resizing a reservation in the calendar changes only that occurrence, not the complete series.**
-
-:::
-
-Before proceeding, make sure you have a bookable resource. See [Make a resource bookable](./resources#making-a-resource-bookable) section.
-Select an item by typing its name in the searchbar.
+Select an item by typing its name in the search bar.
 <figure>
   <img src="/img/scheduler-select-item.webp" width='500' alt="select an item" />
   <figcaption>Select an item to create an event.</figcaption>
@@ -56,6 +43,17 @@ On the scheduler page, the items listed are called Events. Clicking an existing 
 The first line indicates the Title (or Comment) of the event. It is defined by the user when creating or editing the event.
 
 Below are the date of the event, the time slot, and the duration in minutes.
+
+### Recurring events
+
+Bookings can repeat daily, weekly, or monthly. Choose the interval and number of occurrences when creating the booking. A recurring booking can include up to 100 reservations over a period of up to 10 years.
+
+:::warning
+
+A monthly series is rejected if its day does not exist in one of the requested months (for example, January 31 followed by February).
+:::
+
+Every occurrence is a normal reservation. Before creating or changing a series, eLabFTW checks every occurrence for resource permissions, booking limits, and conflicts. If one occurrence is invalid, none of the series is changed.
 
 ### Bindings
 
@@ -100,6 +98,13 @@ Click the `Cancel` button to cancel an event.
 </figure>
 
 You can add a custom message to inform the team members who are connected to this event. You can either send to **Members of the team** or to a list of users who booked this resource in a specific time range.
+
+:::tip
+
+When editing or deleting a recurring reservation, you can choose whether the action applies only to that reservation or to the complete series.
+
+**Dragging or resizing a reservation in the calendar changes only that occurrence, not the complete series.**
+:::
 
 ### Browse events
 

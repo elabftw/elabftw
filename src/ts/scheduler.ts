@@ -53,6 +53,11 @@ type CancelNotificationPayload = {
   range_unit?: string;
   notifOnSaved?: number;
 };
+type Recurrence = {
+  frequency: 'daily' | 'weekly' | 'monthly';
+  interval: number;
+  count: number;
+};
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
 const GRID_VIEWS: Record<Range, string> = {
@@ -116,6 +121,33 @@ function lockScopeButtons(selectedItems: string[]): void {
 }
 
 document.getElementById('loading-spinner')?.remove();
+
+document.querySelectorAll<HTMLSelectElement>('.scheduler-recurrence-frequency').forEach(select => {
+  select.addEventListener('change', () => {
+    select.closest('.scheduler-recurrence-fields')
+      ?.querySelectorAll('.scheduler-recurrence-options')
+      .forEach(element => element.classList.toggle('d-none', select.value === ''));
+  });
+});
+
+function getRecurrence(modal: Element): Recurrence | null | false {
+  const frequency = modal.querySelector<HTMLSelectElement>('.scheduler-recurrence-frequency')!;
+  if (frequency.value === '') {
+    return null;
+  }
+  const interval = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-interval')!;
+  const count = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-count')!;
+  if (!interval.checkValidity() || !count.checkValidity()) {
+    interval.reportValidity();
+    count.reportValidity();
+    return false;
+  }
+  return {
+    frequency: frequency.value as Recurrence['frequency'],
+    interval: interval.valueAsNumber,
+    count: count.valueAsNumber,
+  };
+}
 
 // TomSelect settings shared on page & modal selects
 const sharedTomSelectOptions = {
@@ -346,7 +378,18 @@ if (calendarEl) {
           const titleInput = modal?.querySelector<HTMLInputElement>('input[id^="eventTitleInput"]');
           const title = titleInput ? titleInput.value.trim() : '';
 
-          const postParams = { start: info.startStr, end: info.endStr, title };
+          const recurrence = getRecurrence(modal!);
+          if (recurrence === false) {
+            return;
+          }
+          const postParams: {start: string; end: string; title: string; recurrence?: Recurrence} = {
+            start: info.startStr,
+            end: info.endStr,
+            title,
+          };
+          if (recurrence !== null) {
+            postParams.recurrence = recurrence;
+          }
           Promise.all(
             itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
           ).then(() => {
@@ -467,6 +510,14 @@ if (calendarEl) {
       endInput.dataset.eventid = info.event.id;
       refreshBoundDivs(info.event.extendedProps);
 
+      // todo: fix (wip actually but it works) on load after having submitted once, we have to re toggle the selection
+      const isRecurring = Boolean(info.event.extendedProps.recurrence_series_id);
+      document.getElementById('viewRecurrence')?.classList.toggle('d-none', !isRecurring);
+      document.getElementById('editRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
+      document.getElementById('deleteRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
+      (document.getElementById('editScopeEvent') as HTMLInputElement).checked = true;
+      (document.getElementById('deleteScopeEvent') as HTMLInputElement).checked = true;
+
       // cancel block: show if event is cancellable OR user is Admin)
       const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
       const isCancellable = isAdmin || bookIsCancellable === 1;
@@ -531,7 +582,8 @@ if (calendarEl) {
   }
 
   on('cancel-event', (el: HTMLElement) => {
-    ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
+    const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
+    ApiC.delete(`event/${el.dataset.id}?scope=${scope}`).then(() => calendar.refetchEvents()).catch();
   });
 
   on('cancel-event-with-message', (el: HTMLElement) => {
@@ -551,7 +603,11 @@ if (calendarEl) {
     payload.notifOnSaved = 0;
     // The notification must be sent before deletion, otherwise the event ID is lost (Nothing to show with this id)
     ApiC.post(`event/${el.dataset.id}/notifications`, payload)
-      .then(() => ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch())
+      // async maybe
+      .then(() => {
+        const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
+        return ApiC.delete(`event/${el.dataset.id}?scope=${scope}`).then(() => calendar.refetchEvents()).catch();
+      })
       .then(() => notify.success());
   });
 

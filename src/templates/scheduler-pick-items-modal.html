@@ -18,6 +18,7 @@
           <label for='eventTitleInputModal'>{{ 'Comment'|trans }}</label>
           <input class='form-control' type='text' id='eventTitleInputModal' placeholder='{{ 'Add details (optional)…'|trans }}' />
         </div>
+        {% include 'scheduler-recurrence-fields.html' %}
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>

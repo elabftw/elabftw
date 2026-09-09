@@ -4,6 +4,17 @@
     <h5>{{ 'Cancel booking slot'|trans }}</h5>
     <h6><label for='cancelEventTextarea'>{{ 'Add a custom message'|trans }}</label></h6>
     <textarea id='cancelEventTextarea' class='form-control'></textarea>
+    <fieldset id='deleteRecurrenceScope' class='mt-3 d-none'>
+      <legend class='h6'>{{ 'Apply to'|trans }}</legend>
+      <div class='form-check'>
+        <input class='form-check-input' type='radio' name='deleteRecurrenceScope' value='event' id='deleteScopeEvent' checked>
+        <label class='form-check-label' for='deleteScopeEvent'>{{ 'This reservation'|trans }}</label>
+      </div>
+      <div class='form-check'>
+        <input class='form-check-input' type='radio' name='deleteRecurrenceScope' value='series' id='deleteScopeSeries'>
+        <label class='form-check-label' for='deleteScopeSeries'>{{ 'All reservations in this series'|trans }}</label>
+      </div>
+    </fieldset>
     <hr>
     <h5>{{ 'Send to'|trans }}</h5>
     <div class='form-check'>

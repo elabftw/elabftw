@@ -27,8 +27,16 @@ use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
+use function array_filter;
+use function array_map;
+use function array_unique;
+use function array_values;
+use function count;
+use function date_default_timezone_get;
+use function date_default_timezone_set;
 use function json_encode;
 use function sprintf;
+use function usort;
 
 class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
@@ -90,6 +98,289 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $this->Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => 'Yep'));
         $this->assertIsInt($id);
         return $id;
+    }
+
+    public function testCreateDailyRecurringSeries(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('+2 days 10:00');
+        $id = $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->add(new DateInterval('PT2H'))->format('c'),
+            'title' => 'Daily series',
+            'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
+        ));
+
+        $events = $this->getSortedEvents($Items);
+        $this->assertCount(3, $events);
+        $this->assertEquals($id, $events[0]['id']);
+        $this->assertCount(1, array_unique(array_column($events, 'recurrence_series_id')));
+        $this->assertSame(array(1, 2, 3), array_map('intval', array_column($events, 'recurrence_index')));
+        $this->assertSame(array(
+            $start->format('Y-m-d H:i:s'),
+            $start->modify('+1 day')->format('Y-m-d H:i:s'),
+            $start->modify('+2 days')->format('Y-m-d H:i:s'),
+        ), array_column($events, 'start'));
+        foreach ($events as $event) {
+            $this->assertSame(120, (new DateTimeImmutable($event['start']))->diff(new DateTimeImmutable($event['end']))->h * 60);
+        }
+    }
+
+    public function testCreateWeeklySeriesPreservesLocalTimeAcrossDst(): void
+    {
+        $previousTimezone = date_default_timezone_get();
+        date_default_timezone_set('America/New_York');
+        try {
+            $year = (new DateTimeImmutable('+1 year'))->format('Y');
+            $transition = new DateTimeImmutable(sprintf('second sunday of March %s 10:00', $year));
+            $start = $transition->modify('-1 week');
+            $Items = $this->getFreshBookableItem(2);
+            $Scheduler = new Scheduler($Items);
+            $Scheduler->postAction(Action::Create, array(
+                'start' => $start->format('c'),
+                'end' => $start->modify('+90 minutes')->format('c'),
+                'recurrence' => array('frequency' => 'weekly', 'interval' => 1, 'count' => 3),
+            ));
+            $events = $this->getSortedEvents($Items);
+        } finally {
+            date_default_timezone_set($previousTimezone);
+        }
+        $this->assertSame(array('10:00:00', '10:00:00', '10:00:00'), array_map(
+            static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
+            $events,
+        ));
+        $this->assertSame(array(
+            $start->format('Y-m-d'),
+            $transition->format('Y-m-d'),
+            $transition->modify('+1 week')->format('Y-m-d'),
+        ), array_map(
+            static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
+            $events,
+        ));
+    }
+
+    public function testCreateMonthlySeries(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($Items);
+        $year = (new DateTimeImmutable('first day of January next year'))->format('Y');
+        $Scheduler->postAction(Action::Create, array(
+            'start' => sprintf('%s-01-15T09:00:00-05:00', $year),
+            'end' => sprintf('%s-01-15T10:00:00-05:00', $year),
+            'recurrence' => array('frequency' => 'monthly', 'interval' => 1, 'count' => 3),
+        ));
+
+        $this->assertSame(
+            array(sprintf('%s-01-15', $year), sprintf('%s-02-15', $year), sprintf('%s-03-15', $year)),
+            array_map(
+                static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
+                $this->getSortedEvents($Items),
+            ),
+        );
+    }
+
+    public function testInvalidRecurrencesAreRejected(): void
+    {
+        $invalid = array(
+            'daily',
+            array('frequency' => 'hourly', 'interval' => 1, 'count' => 2),
+            array('frequency' => 'daily', 'interval' => 0, 'count' => 2),
+            array('frequency' => 'daily', 'interval' => -1, 'count' => 2),
+            array('frequency' => 'daily', 'interval' => 1, 'count' => 0),
+            array('frequency' => 'daily', 'interval' => 1, 'count' => Scheduler::MAX_RECURRENCE_OCCURRENCES + 1),
+            array('frequency' => 'daily', 'interval' => 365, 'count' => 12),
+        );
+        $rejected = 0;
+        foreach ($invalid as $recurrence) {
+            try {
+                $this->Scheduler->postAction(Action::Create, array(
+                    'start' => $this->start,
+                    'end' => $this->end,
+                    'recurrence' => $recurrence,
+                ));
+            } catch (ImproperActionException) {
+                $rejected++;
+            }
+        }
+        $this->assertSame(count($invalid), $rejected);
+        $this->assertEmpty($this->Scheduler->readOne());
+    }
+
+    public function testInvalidMonthlyDayIsRejected(): void
+    {
+        $year = (new DateTimeImmutable('first day of January next year'))->format('Y');
+        $this->expectException(ImproperActionException::class);
+        $this->Scheduler->postAction(Action::Create, array(
+            'start' => sprintf('%s-01-31T09:00:00-05:00', $year),
+            'end' => sprintf('%s-01-31T10:00:00-05:00', $year),
+            'recurrence' => array('frequency' => 'monthly', 'interval' => 1, 'count' => 2),
+        ));
+    }
+
+    public function testRecurringSeriesObeysMaximumSlots(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Items->patch(Action::Update, array('book_max_slots' => 2));
+        $Scheduler = new Scheduler($Items);
+        try {
+            $Scheduler->postAction(Action::Create, array(
+                'start' => $this->start,
+                'end' => $this->end,
+                'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
+            ));
+            $this->fail('The series should exceed the resource maximum slot count.');
+        } catch (ImproperActionException) {
+            $this->assertEmpty((new Scheduler($Items))->readOne());
+        }
+    }
+
+    public function testUnauthorizedUserCannotCreateRecurringSeries(): void
+    {
+        $RestrictedBookableItem = $this->getFreshBookableItem(2);
+        $RestrictedBookableItem->update(new EntityParams('canread_base', BasePermissions::Full->value));
+        $RestrictedBookableItem->update(new EntityParams('canbook_base', BasePermissions::UserOnly->value));
+        $Scheduler = new Scheduler(new Items($this->getRandomUserInTeam(1), $RestrictedBookableItem->id));
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->postAction(Action::Create, array(
+            'start' => $this->start,
+            'end' => $this->end,
+            'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
+        ));
+    }
+
+    public function testRecurringConflictRollsBackCompleteSeries(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Items->patch(Action::Update, array('book_can_overlap' => 0));
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('+2 days 10:00');
+        $conflictStart = $start->modify('+2 weeks');
+        $Scheduler->postAction(Action::Create, array(
+            'start' => $conflictStart->format('c'),
+            'end' => $conflictStart->add(new DateInterval('PT2H'))->format('c'),
+        ));
+
+        try {
+            $Scheduler->postAction(Action::Create, array(
+                'start' => $start->format('c'),
+                'end' => $start->add(new DateInterval('PT2H'))->format('c'),
+                'recurrence' => array('frequency' => 'weekly', 'interval' => 1, 'count' => 4),
+            ));
+            $this->fail('The conflicting series should have been rejected.');
+        } catch (ImproperActionException $e) {
+            $this->assertStringContainsString($conflictStart->format('Y-m-d'), $e->getMessage());
+        }
+        $this->assertCount(1, (new Scheduler($Items))->readOne());
+    }
+
+    public function testUpdateAndDeleteRecurringSeries(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('+3 days 10:00');
+        $id = $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->add(new DateInterval('PT1H'))->format('c'),
+            'title' => 'Before',
+            'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
+        ));
+        $Scheduler->setId($id);
+        $Scheduler->patch(Action::Update, array(
+            'target' => 'datetime',
+            'scope' => 'series',
+            'start' => $start->modify('+1 hour')->format('c'),
+            'end' => $start->modify('+3 hours')->format('c'),
+            'title' => 'After',
+        ));
+
+        $events = $this->getSortedEvents($Items);
+        $this->assertCount(3, $events);
+        foreach ($events as $event) {
+            $this->assertSame('After', $event['title_only']);
+            $this->assertSame('11:00:00', (new DateTimeImmutable($event['start']))->format('H:i:s'));
+            $this->assertSame('13:00:00', (new DateTimeImmutable($event['end']))->format('H:i:s'));
+        }
+
+        $unrelatedId = (new Scheduler($Items))->postAction(Action::Create, array(
+            'start' => $start->modify('+20 days')->format('c'),
+            'end' => $start->modify('+20 days +1 hour')->format('c'),
+            'title' => 'Unrelated',
+        ));
+
+        $SeriesScheduler = new Scheduler($Items, $id, recurringEvents: true);
+        $this->assertTrue($SeriesScheduler->destroy());
+        $remaining = (new Scheduler($Items))->readOne();
+        $this->assertCount(1, $remaining);
+        $this->assertEquals($unrelatedId, $remaining[0]['id']);
+    }
+
+    public function testUpdateSingleOccurrenceAndDeleteSingleOccurrence(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('+4 days 10:00');
+        $id = $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->add(new DateInterval('PT1H'))->format('c'),
+            'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
+        ));
+
+        $Scheduler->setId($id);
+        $Scheduler->patch(Action::Update, array(
+            'target' => 'datetime',
+            'scope' => 'event',
+            'start' => $start->modify('+1 hour')->format('c'),
+            'end' => $start->modify('+2 hours')->format('c'),
+        ));
+        $events = $this->getSortedEvents($Items);
+        $this->assertSame(array('11:00:00', '10:00:00', '10:00:00'), array_map(
+            static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
+            $events,
+        ));
+
+        $this->assertTrue($Scheduler->destroy());
+        $remaining = $this->getSortedEvents($Items);
+        $this->assertCount(2, $remaining);
+        $this->assertSame(array(2, 3), array_map('intval', array_column($remaining, 'recurrence_index')));
+    }
+
+    public function testConflictingSeriesUpdateRollsBackCompletely(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Items->patch(Action::Update, array('book_can_overlap' => 0));
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('+5 days 10:00');
+        $id = $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->add(new DateInterval('PT1H'))->format('c'),
+            'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
+        ));
+        $blockerStart = $start->modify('+1 day +2 hours');
+        $Scheduler->postAction(Action::Create, array(
+            'start' => $blockerStart->format('c'),
+            'end' => $blockerStart->add(new DateInterval('PT1H'))->format('c'),
+        ));
+        $Scheduler->setId($id);
+
+        try {
+            $Scheduler->patch(Action::Update, array(
+                'target' => 'datetime',
+                'scope' => 'series',
+                'start' => $start->modify('+2 hours')->format('c'),
+                'end' => $start->modify('+3 hours')->format('c'),
+            ));
+            $this->fail('The conflicting series update should have been rejected.');
+        } catch (ImproperActionException) {
+            $series = array_filter(
+                $this->getSortedEvents($Items),
+                static fn (array $event): bool => $event['recurrence_series_id'] !== null,
+            );
+            $this->assertSame(array('10:00:00', '10:00:00', '10:00:00'), array_values(array_map(
+                static fn (array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
+                $series,
+            )));
+        }
     }
 
     public function testRepeatedOverlappingBookingsCreateOnlyOneEvent(): void
@@ -523,6 +814,13 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end));
         $Scheduler->setId($id);
         return $Scheduler;
+    }
+
+    private function getSortedEvents(Items $Items): array
+    {
+        $events = (new Scheduler($Items))->readOne();
+        usort($events, static fn (array $left, array $right): int => $left['start'] <=> $right['start']);
+        return $events;
     }
 
     private function assertReadAllReturnsValidEvents(Scheduler $Scheduler, int $scope): void

@@ -90,6 +90,7 @@ use Override;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 
+use function _;
 use function implode;
 use function in_array;
 use function json_decode;
@@ -345,7 +346,13 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::ExperimentsTemplates,
             ApiEndpoint::ItemsTypes => EntityType::from($this->endpoint->value)->toInstance($this->requester, $this->id),
             // for a single event, the id is the id of the event
-            ApiEndpoint::Event => new Scheduler(new Items($this->requester), $this->id),
+            ApiEndpoint::Event => new Scheduler(new Items($this->requester), $this->id,
+                recurringEvents: match ($this->Request->query->getString('scope', 'event')) {
+                    'event' => false,
+                    'series' => true,
+                    default => throw new ImproperActionException(_('Incorrect recurrence scope.')),
+                },
+            ),
             // otherwise it's the id of the item
             ApiEndpoint::Events => new Scheduler(
                 new Items($this->requester, $this->id),

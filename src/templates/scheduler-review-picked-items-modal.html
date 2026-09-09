@@ -15,6 +15,7 @@
           <label for='eventTitleInputReview'>{{ 'Title'|trans }}</label>
           <input class='form-control' type='text' id='eventTitleInputReview' placeholder='{{ 'Comment'|trans }}' />
         </div>
+        {% include 'scheduler-recurrence-fields.html' %}
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-primary' id='confirmItemReview'>{{ 'Create event(s)'|trans }}</button>

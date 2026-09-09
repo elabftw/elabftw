@@ -7,6 +7,10 @@ title: Scheduler
 
 It is possible to use the scheduler (calendar) to book Resources.
 
+Bookings can repeat daily, weekly, or monthly. Choose the interval and number of occurrences when creating the booking. Recurring bookings are finite: a series can contain at most 100 reservations and span at most 10 years. A monthly series is rejected if its day does not exist in one of the requested months (for example, January 31 followed by February).
+
+Every occurrence is a normal reservation. Before creating or changing a series, eLabFTW checks every occurrence for resource permissions, booking limits, and conflicts. If one occurrence is invalid, none of the series is changed. When editing or deleting a recurring reservation, choose whether the action applies only to that reservation or to the complete series. Dragging or resizing an occurrence changes only that occurrence.
+
 Before proceeding, make sure you have a bookable resource. See [Make a resource bookable](./resources#making-a-resource-bookable) section.
 
 Select an item by typing its name in the searchbar.

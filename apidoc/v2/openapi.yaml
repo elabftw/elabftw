@@ -1445,6 +1445,17 @@ components:
           type: string
           format: date-time
           example: '2026-03-02 16:29:27'
+        recurrence_series_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Identifier shared by materialized occurrences of a recurring booking.
+        recurrence_index:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 100
+          description: One-based position of this occurrence in its recurring series.
         start:
           type: string
           format: date-time
@@ -4923,6 +4934,7 @@ paths:
           application/json:
             schema:
               type: object
+              required: [start, end]
               properties:
                 title:
                   type: string
@@ -4939,9 +4951,25 @@ paths:
                   format: date-time
                   description: ISO 8601 date-time with timezone offset.
                   example: '2026-03-15T15:30:00+01:00'
+                recurrence:
+                  type: object
+                  description: Optional finite recurrence. At most 100 occurrences spanning at most 10 years are accepted.
+                  required: [frequency, interval, count]
+                  properties:
+                    frequency:
+                      type: string
+                      enum: [daily, weekly, monthly]
+                    interval:
+                      type: integer
+                      minimum: 1
+                      maximum: 365
+                    count:
+                      type: integer
+                      minimum: 1
+                      maximum: 100
       responses:
         '201':
-          description: The booking slot has been created.
+          description: The booking slot or finite recurring series has been created. The location identifies the first occurrence.
           headers:
             location:
               description: An URL to the booking slot that was created.
@@ -5005,6 +5033,13 @@ paths:
                       format: date-time
                       description: ISO 8601 date-time with timezone offset.
                       example: "2026-02-19T15:30:00+01:00"
+                    title:
+                      type: string
+                      description: Optional new title for the selected occurrence or series.
+                    scope:
+                      type: string
+                      enum: [event, series]
+                      description: Apply the update to this occurrence or every occurrence in its series.
                 - type: object
                   properties:
                     target:
@@ -5049,6 +5084,13 @@ paths:
       tags: ['Events']
       summary: Delete a booking slot.
       operationId: delete-event
+      parameters:
+        - name: scope
+          in: query
+          description: Delete this occurrence or every occurrence in its series.
+          schema:
+            type: string
+            enum: [event, series]
       responses:
         '204':
           description: The event was deleted.

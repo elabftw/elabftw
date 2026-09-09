@@ -1,0 +1,27 @@
+<fieldset class='scheduler-recurrence-fields mt-3'>
+  <legend class='h6'>{{ 'Repeat'|trans }}</legend>
+  <div class='form-row'>
+    <div class='col-md-5'>
+      <select class='form-control scheduler-recurrence-frequency' aria-label='{{ 'Recurrence'|trans }}'>
+        <option value=''>{{ 'Does not repeat'|trans }}</option>
+        <option value='daily'>{{ 'Daily'|trans }}</option>
+        <option value='weekly'>{{ 'Weekly'|trans }}</option>
+        <option value='monthly'>{{ 'Monthly'|trans }}</option>
+      </select>
+    </div>
+    <div class='scheduler-recurrence-options col-md-7 d-none'>
+      <div class='form-row align-items-center'>
+        <label class='col-auto mb-0'>{{ 'Every'|trans }}</label>
+        <div class='col-3'>
+          <input class='form-control scheduler-recurrence-interval' type='number' min='1' max='365' value='1' aria-label='{{ 'Recurrence interval'|trans }}'>
+        </div>
+        <label class='col-auto mb-0'>{{ 'for'|trans }}</label>
+        <div class='col-3'>
+          <input class='form-control scheduler-recurrence-count' type='number' min='1' max='100' value='10' aria-label='{{ 'Number of occurrences'|trans }}'>
+        </div>
+        <span class='col-auto'>{{ 'occurrences'|trans }}</span>
+      </div>
+    </div>
+  </div>
+  <small class='scheduler-recurrence-options form-text text-muted d-none'>{{ 'A recurring reservation is limited to 100 occurrences and 10 years.'|trans }}</small>
+</fieldset>

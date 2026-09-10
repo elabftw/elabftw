@@ -52,8 +52,8 @@ describe('Scheduler', () => {
 
         cy.request('GET', `/api/v2/events/${itemId}`).then(eventsResponse => {
           expect(eventsResponse.body).to.have.length(3);
-          const [first, second] = eventsResponse.body;
-          expect(first.recurrence_series_id).to.equal(second.recurrence_series_id);
+          const [first, second, third] = eventsResponse.body;
+          expect(first.recurrence_series_id).to.equal(third.recurrence_series_id);
 
           // delete only one
           cy.request('DELETE', `/api/v2/event/${first.id}`)

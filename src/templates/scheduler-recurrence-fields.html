@@ -13,11 +13,11 @@
       <div class='form-row align-items-center'>
         <label class='col-auto mb-0'>{{ 'Every'|trans }}</label>
         <div class='col-3'>
-          <input class='form-control scheduler-recurrence-interval' type='number' min='1' max='365' value='1' aria-label='{{ 'Recurrence interval'|trans }}'>
+          <input class='form-control scheduler-recurrence-interval' type='number' min='1' max='365' value='1' required aria-label='{{ 'Recurrence interval'|trans }}'>
         </div>
         <label class='col-auto mb-0'>{{ 'for'|trans }}</label>
         <div class='col-3'>
-          <input class='form-control scheduler-recurrence-count' type='number' min='1' max='100' value='10' aria-label='{{ 'Number of occurrences'|trans }}'>
+          <input class='form-control scheduler-recurrence-count' type='number' min='1' max='100' value='10' required aria-label='{{ 'Number of occurrences'|trans }}'>
         </div>
         <span class='col-auto'>{{ 'occurrences'|trans }}</span>
       </div>

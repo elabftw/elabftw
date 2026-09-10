@@ -19,8 +19,7 @@ import i18next from './i18n';
 import { ApiC } from './api';
 import { notify } from './notify';
 import { entity } from './getEntity';
-import { mountEntitiesTable, resetEntitiesTableColumnState, unmountEntitiesTable,
-} from './entities-table';
+import { mountEntitiesTable, unmountEntitiesTable } from './entities-table';
 import { get } from 'svelte/store';
 import { mount, unmount } from 'svelte';
 import { writable } from 'svelte/store';
@@ -221,11 +220,6 @@ async function displayEntities(
   relatedOrigin: string = getCurrentUrlParam('related_origin'),
 ) {
   const rootEl = document.getElementById('entityList');
-  // reset columns for ag grid table. Only visible when in table mode
-  const resetColumnsButton = document.getElementById('resetEntitiesTableColumns');
-  if (resetColumnsButton) {
-    resetColumnsButton.hidden = mode !== 'tb';
-  }
   if (mode === 'tb') {
     unmountEntityListSv();
     mountEntitiesTable(rootEl, selectedEntities, order, sort, related, relatedOrigin);
@@ -835,10 +829,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('realContainer')?.classList.toggle('max-width-70', target === 'it');
       displayEntities(target, getPreferredOrder(json), getPreferredSort(json));
     });
-  });
-
-  on('reset-entities-table-columns', () => {
-    resetEntitiesTableColumnState();
   });
 
   on('add-tag-filter', (el: HTMLElement) => {

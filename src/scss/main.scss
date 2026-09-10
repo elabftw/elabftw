@@ -891,8 +891,14 @@ tr:first-child td {
   }
 }
 
-#favtagsPanelOpener, #todolistPanelOpener {
-  transform: translateX(-3px);
+#favtagsPanelOpener,
+ #todolistPanelOpener {
+  transform: translateX(-5px);
+
+  &:hover {
+    transform: translateX(-2px);
+    transition: 0.1s ease;
+  }
 }
 
 .item-info {

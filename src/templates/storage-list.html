@@ -43,6 +43,9 @@
           <button type='button' class='btn btn-secondary' data-action='container-qty-plus' data-storage-id='{{ unit.id }}' aria-label='{{ 'Increase containers for %s'|trans|format(unit.name) }}'><i class='fas fa-plus'></i></button>
         </div>
       </div>
+      {# revealed by the js when the room left cannot be split across every selected entry:
+         the occupancy badge still shows free slots, so the dead stepper needs a reason #}
+      <span class='smallgray' hidden data-batch-full-notice='1' data-storage-id='{{ unit.id }}'><i class='fas fa-ban mr-1'></i>{{ 'Not enough room here for every selected entry'|trans }}</span>
     {% endif %}
   {% endmacro %}
   {# the declared limit, editable on the inventory page only; elsewhere the badge carries it #}

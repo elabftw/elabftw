@@ -173,11 +173,8 @@ on('toggle-modal', async (el: HTMLElement) => {
   }
 });
 
-on('delete-selected-entities', async (el: HTMLElement) => {
-  const deleteContainers = el.closest('.modal')
-    ?.querySelector<HTMLInputElement>('input[name="delete_containers"]')
-    ?.checked ?? false;
-  const deleteContainersParam = deleteContainers ? '?delete_containers=1' : '';
+on('delete-selected-entities', async () => {
+  const deleteContainersParam = '?delete_containers=1';
   if (isSingleEntityPage) {
     await ApiC.delete(`${entity.type}/${entity.id}${deleteContainersParam}`, { notifOnSaved:0 });
     sessionStorage.setItem('flash_deleted', i18next.t('delete-success'));

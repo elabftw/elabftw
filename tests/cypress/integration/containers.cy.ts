@@ -95,14 +95,14 @@ describe('Containers', () => {
               expect(inB).to.eq(2);
             });
 
-            // deleting the entity with the option checked must also free its storage locations
+            // deleting the entity must also free its storage locations
             cy.intercept('GET', `/api/v2/items/${itemId}/containers?has_any=1`).as('getItemContainers');
             cy.intercept('DELETE', `/api/v2/items/${itemId}?delete_containers=1`).as('deleteItemWithContainers');
             cy.get('button[title="More options"]').click();
             cy.get('button[data-action="toggle-modal"][data-target="deleteSelectedEntitiesModal"]').click();
-            cy.get('[data-output="delete-containers-count"]').should('have.text', '5');
             cy.wait('@getItemContainers');
-            cy.get('#deleteSelectedEntitiesButton').wait(2500).click();
+            cy.get('[data-output="delete-containers-count"]').should('have.text', '5');
+            cy.get('#deleteSelectedEntitiesButton').should('be.enabled').click();
             cy.wait('@deleteItemWithContainers');
 
             cy.request({ method: 'GET', url: `/api/v2/storage_units/${storageA}` }).its('body.occupancy').should('eq', 0);

@@ -11,6 +11,7 @@
  */
 import {
   ClientSideRowModelModule,
+  ColumnAutoSizeModule,
   ColumnApiModule,
   ModuleRegistry,
   PaginationModule,
@@ -59,6 +60,7 @@ async function toggleUserModal(user) {
 provideGlobalGridOptions({ theme: 'legacy' });
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
+  ColumnAutoSizeModule,
   ColumnApiModule,
   RowSelectionModule,
   PaginationModule,

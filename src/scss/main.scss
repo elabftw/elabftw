@@ -2049,13 +2049,22 @@ div > .sticky-navbar {
   transform: translateY(-100%);
 }
 
-.ag-grid-table-options {
-  position: absolute;
-  bottom: 2px;
-  left: 8px;
-  z-index: 4;
+.ag-grid-table-wrapper {
+  position: relative;
 
-  .dropdown-menu {
-    min-width: 220px;
+  .ag-paging-panel {
+    // reserve room for the gear on small screens too
+    padding-left: 48px;
+  }
+
+  .ag-grid-table-options {
+    bottom: 2px;
+    left: 8px;
+    position: absolute;
+    z-index: 4;
+
+    .dropdown-menu {
+      min-width: 220px;
+    }
   }
 }

@@ -12,6 +12,8 @@
 import {
   ClientSideRowModelModule,
   CellStyleModule,
+  ColumnApiModule,
+  ColumnAutoSizeModule,
   ModuleRegistry,
   PaginationModule,
   QuickFilterModule,
@@ -36,6 +38,8 @@ provideGlobalGridOptions({ theme: 'legacy' });
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   CellStyleModule,
+  ColumnApiModule,
+  ColumnAutoSizeModule,
   RowSelectionModule,
   PaginationModule,
   TextFilterModule,

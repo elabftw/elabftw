@@ -71,6 +71,7 @@ final class i18n4Js
             'clear' => _('Clear'),
             'click-to-edit' => _('Click to edit'),
             'check-required' => _('Please check required fields.'),
+            'container-batch-summary' => _('{{entries, number}} entries × {{perEntry, number}} containers = {{total, number}} containers total'),
             'copied' => _('Copied to clipboard.'),
             'comment-add' => _('Add a comment'),
             'confirm-clear-spreadsheet' => _('Discard current spreadsheet? All unsaved changes will be lost.'),

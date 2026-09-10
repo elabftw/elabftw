@@ -922,11 +922,14 @@ on('toggle-next', (el: HTMLElement) => {
 const storageTreeIds = (): string[] =>
   Array.from(document.querySelectorAll('[data-storage-tree]')).map(el => el.id);
 
-const reloadStorageTrees = (): Promise<void> => reloadElements(storageTreeIds());
+// a re-render restores each stepper's max to the raw free-slot count, so the per-entry
+// ceilings are re-applied here rather than at every call site
+const reloadStorageTrees = (): Promise<void> =>
+  reloadElements(storageTreeIds()).then(() => applyPerEntryCeilings());
 
 /** Refresh the trees along with the entity's own container list: both show occupancy. */
 const reloadStorageAndContainers = (): Promise<void> =>
-  reloadElements(['storageDivContent', ...storageTreeIds()]);
+  reloadElements(['storageDivContent', ...storageTreeIds()]).then(() => applyPerEntryCeilings());
 
 /** Re-open a unit and its ancestors, in every tree that renders it. */
 function revealStorageUnit(storageId: string): void {
@@ -997,9 +1000,47 @@ const containerAssigned = (): number =>
   containerStepperInputs().reduce((sum, input) => sum + intFromInput(input), 0);
 
 /**
- * Room left in a location, read from the max the server rendered for it. An unlimited
- * location has no max, hence Infinity. Full locations render no stepper at all, so they
- * never reach here.
+ * The same distribution is applied to every entity, so all the counts in this modal are
+ * per entry: on the show page that is one per selected entry, elsewhere a single entity.
+ */
+const containerEntryCount = (): number => {
+  const modal = document.getElementById('storageModal');
+  if (!modal?.dataset.withSelected) {
+    return 1;
+  }
+  return getFromSvelte(selectedEntities).length;
+};
+
+/**
+ * Narrow every stepper's max from the free slots a location has to what a single entry may
+ * claim, so a distribution can never overbook a location once multiplied by the selection.
+ * A location without room for the whole selection is refused outright, as a full one is.
+ * Runs in both directions, as the selection can shrink between two openings of the modal.
+ */
+function applyPerEntryCeilings(): void {
+  const entries = Math.max(1, containerEntryCount());
+  containerStepperInputs().forEach(input => {
+    // unlimited locations render no slot count and keep their absent max
+    if (input.dataset.slotsLeft === undefined) {
+      return;
+    }
+    // the remainder is unusable: a slot left over cannot be given to every entry
+    const perEntry = Math.floor(Math.max(0, Number(input.dataset.slotsLeft)) / entries);
+    input.max = String(perEntry);
+    input.disabled = perEntry === 0;
+    if (perEntry === 0) {
+      input.value = '0';
+    }
+    input.closest('.input-group')?.querySelectorAll('button').forEach((btn: HTMLButtonElement) => {
+      btn.disabled = perEntry === 0;
+    });
+  });
+}
+
+/**
+ * Room left in a location for one entry, read from its max. An unlimited location has no
+ * max, hence Infinity. Full locations render no stepper at all, so they never reach here.
+ * See applyPerEntryCeilings: max counts what a single entry may claim, not the raw slots.
  */
 const slotsLeft = (input: HTMLInputElement): number =>
   input.max === '' ? Infinity : Math.max(0, Number(input.max));
@@ -1022,6 +1063,12 @@ function refreshContainerDistribution(): void {
   if (notice) notice.toggleAttribute('hidden', target <= totalSlotsLeft());
   const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
   if (submitBtn) submitBtn.disabled = target === 0 || assigned !== target;
+  // only rendered by the batch modal, where the total is not simply the target
+  const summary = document.getElementById('containerBatchSummary');
+  if (summary) {
+    const entries = containerEntryCount();
+    summary.textContent = i18next.t('container-batch-summary', {entries: entries, perEntry: target, total: entries * target});
+  }
 }
 
 /**
@@ -1068,6 +1115,79 @@ on('container-qty-minus', (el: HTMLElement) => {
   if (input) setStepperValue(input, intFromInput(input) - 1);
 });
 
+/** The distribution to create, once per entity: one entry per location that was given containers. */
+const containerPlan = (): {storageId: string, count: number}[] =>
+  containerStepperInputs()
+    .map(input => ({storageId: input.dataset.storageId, count: intFromInput(input)}))
+    .filter(item => item.count > 0);
+
+/**
+ * Run a task over a list with a bounded number in flight. A batch reaches one request per
+ * container per entity, and every one of them row locks its destination location to check
+ * capacity, so firing them all at once only trades browser queueing for database contention.
+ */
+async function runWithConcurrency<T>(items: T[], limit: number, task: (item: T) => Promise<void>): Promise<void> {
+  const queue = items.slice();
+  await Promise.all(Array.from({ length: Math.min(limit, queue.length) }, async () => {
+    for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
+      await task(next);
+    }
+  }));
+}
+
+/**
+ * Apply the distribution to every entity selected on the show page. The steppers are already
+ * capped so that no location can be overbooked, but each container is still created under the
+ * entity's own write permission, so an entity can be refused and is reported as such.
+ */
+async function storeContainersForSelection(
+  plan: {storageId: string, count: number}[],
+  qtyStored: string,
+  qtyUnit: string,
+): Promise<void> {
+  const checked = getFromSvelte(selectedEntities);
+  if (checked.length === 0) {
+    notify.error('nothing-selected');
+    return;
+  }
+  if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
+    return;
+  }
+  const failedIds: string[] = [];
+  await runWithConcurrency(checked, 4, async id => {
+    // sequential within an entity: the first refusal condemns the rest of its distribution too
+    try {
+      for (const item of plan) {
+        for (let i = 0; i < item.count; i++) {
+          await ApiC.post(`${entity.type}/${id}/containers/${item.storageId}`, {
+            qty_stored: qtyStored,
+            qty_unit: qtyUnit,
+            notifOnSaved: 0,
+            notifOnError: 0,
+          });
+        }
+      }
+    } catch {
+      failedIds.push(id);
+    }
+  });
+  // the tree lives inside this modal, so reloading it resets the steppers to fresh counts.
+  // The entity list is deliberately left alone: reloading it would drop the selection and the
+  // red marks below, and nothing it displays has changed
+  await reloadStorageTrees();
+  if (failedIds.length === 0) {
+    notify.success();
+    $('#storageModal').modal('hide');
+    return;
+  }
+  for (const id of failedIds) {
+    const elem = document.querySelector(`[data-entity-id="${id}"]`) as HTMLElement;
+    if (elem) { elem.style.backgroundColor = 'var(--lightred)'; }
+  }
+  // stay open on a partial failure, so what was refused can be redistributed
+  notify.warning('entity-patch-multi-warning', {count: checked.length - failedIds.length, failed: failedIds.length});
+}
+
 on('store-containers-distributed', () => {
   const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
   // guard against double submit: a disabled button means a batch is already in flight
@@ -1076,20 +1196,31 @@ on('store-containers-distributed', () => {
   }
   const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
   const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
-  const postCalls = containerStepperInputs().flatMap(input => {
-    const count = intFromInput(input);
-    return Array.from({ length: count }, () =>
-      ApiC.post(`${entity.type}/${entity.id}/containers/${input.dataset.storageId}`, {
+  const plan = containerPlan();
+  if (plan.length === 0) {
+    return;
+  }
+  if (document.getElementById('storageModal')?.dataset.withSelected) {
+    // a batch can be hundreds of requests, so spin the button as the other batch actions do
+    const oldHTML = submitBtn ? mkSpin(submitBtn) : '';
+    storeContainersForSelection(plan, qty_stored, qty_unit).finally(() => {
+      if (submitBtn) mkSpinStop(submitBtn, oldHTML);
+      // after mkSpinStop, which re-enables the button unconditionally
+      refreshContainerDistribution();
+    });
+    return;
+  }
+
+  // lock the button while the batch runs so a second click cannot create a duplicate distribution
+  if (submitBtn) submitBtn.disabled = true;
+  const postCalls = plan.flatMap(item =>
+    Array.from({ length: item.count }, () =>
+      ApiC.post(`${entity.type}/${entity.id}/containers/${item.storageId}`, {
         qty_stored: qty_stored,
         qty_unit: qty_unit,
       }),
-    );
-  });
-  if (postCalls.length === 0) {
-    return;
-  }
-  // lock the button while the batch runs so a second click cannot create a duplicate distribution
-  if (submitBtn) submitBtn.disabled = true;
+    ),
+  );
   // allSettled, not all: one location refusing on capacity must not hide the containers that
   // did land elsewhere. Each request reports its own error, so nothing is notified here.
   Promise.allSettled(postCalls)
@@ -1124,6 +1255,9 @@ if (storageModalEl) {
   // reset all steppers each time the modal opens so a reopened modal starts clean
   $('#storageModal').on('show.bs.modal', () => {
     containerStepperInputs().forEach(input => { input.value = '0'; });
+    // the ceilings depend on how many entities are selected, and the selection cannot change
+    // while the modal is open, so opening it is the moment to recompute them
+    applyPerEntryCeilings();
     refreshContainerDistribution();
   });
 }

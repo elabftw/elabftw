@@ -16,7 +16,7 @@ Here are the main changes:
 - container user configuration change
 - container certificates paths
 
-Note: this guide assumes usage of `docker compose`, with hints related to `podman quadlets`. For other deployments, you will need to adapt the changes to your context.
+Note: this guide assumes usage of `docker compose`, with hints related to `podman quadlets` (which is another container engine). For other deployments, you will need to adapt the changes to your context.
 
 ## Making backups
 
@@ -62,7 +62,9 @@ tmpfs:
 
 This will make the container start and run with `elabftw-worker` user, and a read-only filesystem.
 
-### Quadlet
+### Quadlets
+
+Ignore this section if you use `docker compose`.
 
 Only changed/added lines are shown:
 
@@ -97,7 +99,7 @@ Then in the configuration file, under `volumes:` section:
 ~~~yaml
 # docker
   - /var/cache/elabftw:/var/cache/elabftw
-# quadlet
+# quadlets example (only add this line if you use quadlets, not in a docker compose file)
 Volume=/var/cache/elabftw:/var/cache/elabftw:Z
 ~~~
 
@@ -165,7 +167,7 @@ ports:
 
 It is the right-hand side that needs to be modified: the listening port in the container.
 
-For quadlets, adjust PublishPort if you're using this, or adjust your reverse proxy to use port 8080.
+For quadlets/podman, adjust PublishPort if you're using this, or adjust your reverse proxy to use port 8080.
 
 ### Environment
 
@@ -200,7 +202,7 @@ The `chem-plugin` addon can now be completely removed! It is not useful anymore:
 
 It is then safe to remove the whole `chem-plugin` block in your docker compose file.
 
-### OpenCloning in Quadlet
+### OpenCloning in Quadlets
 
 If you are running OpenCloning as a user with Quadlets, make sure to add:
 

@@ -893,6 +893,9 @@ final class Scheduler extends AbstractRest
 
     private function checkCandidateOverlaps(array $occurrences): void
     {
+        if ($this->Items->entityData['book_can_overlap'] === 1) {
+            return;
+        }
         $ordered = $occurrences;
         usort($ordered, static fn(array $left, array $right): int => $left['start'] <=> $right['start']);
         $previousEnd = null;

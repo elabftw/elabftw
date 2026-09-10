@@ -1175,10 +1175,8 @@ async function storeContainersForSelection(
       failedIds.push(id);
     }
   });
-  // the tree lives inside this modal, so reloading it resets the steppers to fresh counts.
-  // The entity list is deliberately left alone: reloading it would drop the selection and the
-  // red marks below, and nothing it displays has changed
-  await reloadStorageTrees();
+  containerStepperInputs().forEach(input => { input.value = '0'; });
+  await reloadStorageTrees().catch(() => undefined);
   if (failedIds.length === 0) {
     notify.success();
     $('#storageModal').modal('hide');

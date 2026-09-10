@@ -2048,3 +2048,21 @@ div > .sticky-navbar {
 .sticky-navbar.hidden {
   transform: translateY(-100%);
 }
+
+.entities-table-wrapper {
+  .ag-paging-panel {
+    // reserve room for the gear on small screens too
+    padding-left: 48px;
+  }
+}
+
+.entities-table-options {
+  bottom: 2px;
+  left: 8px;
+  position: absolute;
+  z-index: 4;
+
+  .dropdown-menu {
+    min-width: 220px;
+  }
+}

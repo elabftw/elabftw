@@ -273,22 +273,22 @@ select.form-control {
 }
 
 .dropdown-item {
-  color: var(--medium);
+  color: var(--strongest);
   cursor: pointer;
 
-  a,
-  i {
+  &:hover {
+    background-color: var(--superlight);
     color: var(--strongest);
   }
 }
 
-.dropdown-item > a {
-  color: var(--strongest);
+.dropdown-item.active {
+  background-color: var(--primary);
+  color: var(--primary-fg);
 }
 
-.dropdown-item:hover {
-  background-color: var(--superlight);
-  color: var(--strongest);
+.dropdown-item.active i {
+  color: var(--primary-fg);
 }
 
 /* BLOCKQUOTE */
@@ -835,48 +835,14 @@ tr:first-child td {
   z-index: 19850;
 }
 
-/* SIDE PANEL */
-.sidepanel-btn {
-  border-radius: 0 5px 5px 0;
-  padding: 10px 5px;
-
-  &.sidepanel-closed {
-    background-color: var(--firstlevel);
-    border: 1px solid var(--firstlevel);
-    box-shadow: -1rem 0 0 var(--firstlevel);
-
-    i {
-      color: var(--strongest);
-    }
-
-    &:hover {
-      background-color: var(--secondlevel);
-    }
-  }
-
-  &.sidepanel-opened {
-    background-color: var(--mediumstrong);
-    box-shadow: -1rem 0 0 var(--mediumstrong);
-
-    i {
-      color: var(--mainbackground);
-    }
-
-    &:hover {
-      background-color: var(--medium);
-    }
-  }
-}
-
 .list-group-item {
   background-color: var(--white);
   border: 1px solid var(--thirdlevel);
 }
 
 .side-panel {
-  background: var(--mediumstrong);
+  background: var(--firstlevel);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
-  color: var(--white);
   height: 100%;
   left: 0;
   overflow: hidden;
@@ -885,12 +851,6 @@ tr:first-child td {
   position: fixed;
   top: 0;
   width: max(24%, 330px);
-
-  .fas,
-  .far,
-  h3 {
-    color: var(--white);
-  }
 
   .btn-primary {
     .fas,
@@ -902,11 +862,7 @@ tr:first-child td {
   .list-group-item {
     background-color: var(--white);
     border: 1px solid var(--chrome-muted);
-    color: var(--mediumstrong);
-
-    .fas {
-      color: var(--mediumstrong);
-    }
+    color: var(--strongest);
   }
 
   .side-panel-item {
@@ -915,18 +871,33 @@ tr:first-child td {
     /* Favtags will show up as selected */
     &.selected {
       background-color: var(--primary);
-      color: var(--chrome-fg);
+      color: var(--primary-fg);
       cursor: initial;
+
+      // three icons on the side (exp, resource, bin)
+      .fas {
+        color: var(--primary-fg);
+      }
     }
 
     &:hover:not(.selected) {
-      background-color: var(--disabled);
+      background-color: var(--superlight);
     }
   }
 
   /* Make the titles that you can click on to toggle the steps visibly clickable */
   [data-action='toggle-next']:hover {
-    background-color: var(--secondary);
+    color: var(--link);
+  }
+}
+
+#favtagsPanelOpener,
+#todolistPanelOpener {
+  transform: translateX(-5px);
+
+  &:hover {
+    transform: translateX(-2px);
+    transition: 0.1s ease;
   }
 }
 
@@ -1061,10 +1032,6 @@ the form-control fails to do that so we do the border ourselves */
 
 .color-disabled {
   color: var(--disabled) !important;
-}
-
-.color-white {
-  color: var(--white) !important;
 }
 
 .color-danger {

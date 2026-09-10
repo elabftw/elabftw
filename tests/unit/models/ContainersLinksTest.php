@@ -621,7 +621,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(1, $this->StorageUnits->countContainers($box));
         // container deletion requested with entity deletion does not require a reason
-        $this->assertTrue($Item->destroy(deleteContainers: true));
+        $this->assertTrue($Item->destroy(recursive: true));
         $this->assertSame(0, $this->StorageUnits->countContainers($box));
     }
 

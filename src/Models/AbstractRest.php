@@ -59,7 +59,7 @@ abstract class AbstractRest implements RestInterface
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy($recursive = false): bool
     {
         throw new ImproperActionException('No DELETE action for this endpoint!');
     }

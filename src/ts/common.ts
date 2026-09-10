@@ -138,10 +138,9 @@ on('toggle-modal', async (el: HTMLElement) => {
     if (!modal) return;
     const deleteMsg = modal.querySelector<HTMLElement>('#deleteEntityMessage');
     const deleteButton = modal.querySelector<HTMLButtonElement>('#deleteSelectedEntitiesButton');
-    const deleteContainersCheckbox = modal.querySelector<HTMLInputElement>('input[name="delete_containers"]');
     // displays total count for ALL selected entries in show mode
     const deleteContainersCount = modal.querySelector<HTMLElement>('[data-output="delete-containers-count"]');
-    if (!deleteMsg || !deleteButton || !deleteContainersCheckbox || !deleteContainersCount) {
+    if (!deleteMsg || !deleteButton || !deleteContainersCount) {
       return;
     }
     const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
@@ -156,8 +155,7 @@ on('toggle-modal', async (el: HTMLElement) => {
 
     delayConfirmation(deleteButton);
     // reset the checkbox whenever the deletion modal is opened, and disable it until containers count is loaded
-    deleteContainersCheckbox.checked = false;
-    deleteContainersCheckbox.disabled = true;
+    const deleteContainersDiv = document.getElementById('deleteContainersDiv');
     deleteContainersCount.textContent = '0';
     showModalAndFocusFirstInput(modalSelector);
 
@@ -169,8 +167,9 @@ on('toggle-modal', async (el: HTMLElement) => {
       containersCount += result.containers_count;
     }
     deleteContainersCount.textContent = containersCount.toString();
-    // re-enable the checkbox only when at least one selected entity has a container
-    deleteContainersCheckbox.disabled = containersCount === 0;
+    if (deleteContainersDiv && containersCount > 0) {
+      deleteContainersDiv.removeAttribute('hidden');
+    }
   }
 });
 

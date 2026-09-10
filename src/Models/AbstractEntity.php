@@ -909,7 +909,7 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     #[Override]
-    public function destroy(bool $deleteContainers = false): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canOrExplode(AccessType::Write);
         $this->Db->beginTransaction();
@@ -919,7 +919,7 @@ abstract class AbstractEntity extends AbstractRest
             // delete from pinned too
             new Pins($this)->cleanup();
             $this->Uploads->destroyAll();
-            if ($deleteContainers) {
+            if ($recursive) {
                 LinksFactory::getContainersLinks($this)->destroyAll();
             }
             $result = $this->update(new EntityParams('state', State::Deleted->value));

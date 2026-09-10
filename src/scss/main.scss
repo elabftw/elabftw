@@ -2049,17 +2049,10 @@ div > .sticky-navbar {
   transform: translateY(-100%);
 }
 
-.entities-table-wrapper {
-  .ag-paging-panel {
-    // reserve room for the gear on small screens too
-    padding-left: 48px;
-  }
-}
-
-.entities-table-options {
+.ag-grid-table-options {
+  position: absolute;
   bottom: 2px;
   left: 8px;
-  position: absolute;
   z-index: 4;
 
   .dropdown-menu {

@@ -29,6 +29,7 @@ import { notify } from './notify';
 import i18next from './i18n';
 import $ from 'jquery';
 import { getAgGridTheme } from './theme';
+import AgGridTableOptions from './ag-grid-table-options';
 
 const COLUMN_STATE_STORAGE_KEY = 'persistent_users_table_column_state_v1';
 
@@ -241,7 +242,9 @@ const GridExample = () => {
         aria-label={i18next.t('search')}
       />
       <div
-        className={getAgGridTheme()} style={{ height: 650 }}>
+        className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`}
+        style={{ height: 650 }}
+      >
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}
@@ -256,6 +259,10 @@ const GridExample = () => {
           onCellDoubleClicked={cellDoubleClicked}
           onSelectionChanged={selectionChanged}
           {...DEFAULT_AG_GRID_PAGINATION}
+        />
+        <AgGridTableOptions
+          gridApi={gridApi}
+          storageKey={COLUMN_STATE_STORAGE_KEY}
         />
       </div>
       <div className='d-flex justify-content-start my-2'>

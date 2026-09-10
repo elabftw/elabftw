@@ -28,7 +28,8 @@ import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
-import { getAgGridTheme } from "./theme";
+import { getAgGridTheme } from './theme';
+import AgGridTableOptions from './ag-grid-table-options';
 
 const COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
 
@@ -36,7 +37,6 @@ const COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
 const lastLoginText = v => v === null ? i18next.t('never') : v;
 let entitiesTableRoot = null;
-let entitiesTableApi = null;
 
 const normalizeStringParam = value => {
   if (value === null || value === undefined) {
@@ -44,14 +44,6 @@ const normalizeStringParam = value => {
   }
 
   return String(value).trim();
-};
-
-const autoSizeEntitiesTableColumns = () => {
-  entitiesTableApi?.autoSizeAllColumns();
-};
-
-const fitEntitiesTableColumns = () => {
-  entitiesTableApi?.sizeColumnsToFit();
 };
 
 const normalizeNumberParam = value => {
@@ -163,10 +155,11 @@ const EntitiesTable = ({
   relatedOrigin = '',
 }) => {
   const [rowData, setRowData] = useState([]);
+  const [gridApi, setGridApi] = useState(null);
 
   const onGridReady = event => {
-    entitiesTableApi = event.api;
     const columnState = getStoredColumnState();
+    setGridApi(event.api);
 
     if (Array.isArray(columnState)) {
       event.api.applyColumnState({
@@ -369,7 +362,7 @@ const EntitiesTable = ({
   };
 
   return (
-    <div className={`entities-table-wrapper position-relative ${getAgGridTheme()}`} style={{ height: 650 }}>
+    <div className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`} style={{ height: 650 }}>
       <AgGridReact
         rowData={rowData}
         columnDefs={columnDefs}
@@ -387,31 +380,7 @@ const EntitiesTable = ({
         onSelectionChanged={selectionChanged}
         {...DEFAULT_AG_GRID_PAGINATION}
       />
-      <div className='entities-table-options dropup'>
-        {/* table options gear icon*/}
-        <button type='button' className='btn btn-transparent dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label={i18next.t('Table options')} title={i18next.t('Table options')}>
-          <i className='fas fa-cog fa-fw' aria-hidden='true'></i>
-        </button>
-        <div className='dropdown-menu'>
-          <h6 className='dropdown-header'>
-            {i18next.t('Table options')}
-          </h6>
-          <button type='button' className='btn btn-dropdown-item dropdown-item' onClick={autoSizeEntitiesTableColumns}>
-            <i className='fas fa-arrows-left-right fa-fw mr-2'></i>
-            {i18next.t('Auto-size columns')}
-          </button>
-
-          <button type='button' className='btn btn-dropdown-item dropdown-item' onClick={fitEntitiesTableColumns}>
-            <i className='fas fa-expand fa-fw mr-2'></i>
-            {i18next.t('Fit columns to table')}
-          </button>
-          <div className='dropdown-divider'></div>
-          <button type='button' className='btn btn-dropdown-item dropdown-item' onClick={resetEntitiesTableColumnState}>
-            <i className='fas fa-rotate-left fa-fw mr-2'></i>
-            {i18next.t('Restore default layout')}
-          </button>
-        </div>
-      </div>
+      <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
     </div>
   );
 };
@@ -472,14 +441,4 @@ export const unmountEntitiesTable = () => {
 
   entitiesTableRoot.unmount();
   entitiesTableRoot = null;
-  entitiesTableApi = null;
-};
-
-export const resetEntitiesTableColumnState = () => {
-  entitiesTableApi?.resetColumnState();
-  try {
-    localStorage.removeItem(COLUMN_STATE_STORAGE_KEY);
-  } catch {
-    // localStorage might be unavailable
-  }
 };

@@ -1,13 +1,11 @@
-{% set text = 'Beta Notice: The spreadsheet editor is currently in beta (preview release) and should be used with caution. Please avoid storing important data in it. Additionally, files that include styling or advanced features such as graphics may not display as they originally appear. This editor is best suited for simple calculations and handling formulas. We welcome any feedback you may have.'|trans %}
 <section id='spreadsheetEditor' aria-label='{{ 'Spreadsheet Editor'|trans }}'>
   <h3 data-action='toggle-next' data-scroll-btn='fa-file-excel' data-scroll-btn-label='{{ 'Spreadsheet editor'|trans }}' data-toggle-target='spreadsheetEditorDiv' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title mt-2' tabindex='0' role='button' aria-expanded='false' aria-controls='spreadsheetEditorDiv'>
     <i id='sheetEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Spreadsheet Editor'|trans }}
   </h3>
-  <span class='beta'>beta</span>
-  {% include 'infotip.html' with {text} %}
+  <div id='spreadsheetEditorDiv' class='m-2' hidden data-save-hidden='spreadsheetEditorDiv'>
   <div class='d-flex justify-content-between align-items-center'>
     <span hidden id='spreadsheetEditorUnsavedChanges'>{{ 'You have unsaved changes'|trans|msg('warning', false) }}</span>
-    <div class='ml-auto'>
+    <div class='ml-auto mb-2'>
       <button type='button' id='spreadsheetSaveAsAttachment' class='btn btn-primary mr-2'>
         <i class='fas fa-paperclip fa-fw mr-1'></i>{{ 'Save as attachment'|trans }}
       </button>
@@ -17,7 +15,6 @@
       <a class='btn btn-ghost external-link' href='https://doc.elabftw.net/docs/usage/user-guide/experiments#spreadsheet-editor' target='_blank' rel='noopener' title='{{ 'Documentation'|trans }}' aria-label='{{ 'Documentation'|trans }}'><i class='fas fa-circle-question fa-fw'></i></a>
     </div>
   </div>
-  <div id='spreadsheetEditorDiv' class='m-2' hidden data-save-hidden='spreadsheetEditorDiv'>
     {% if App.devMode -%}
       <!-- [html-validate-disable-block unique-landmark, no-deprecated-attr, prefer-native-element: suppress errors from spreadsheet editor] -->
     {%- endif %}

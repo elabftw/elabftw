@@ -157,6 +157,7 @@ Make sure the `elabftw-worker` user can write to these folders.
 This is a Quadlets example, ignore this section if you use Docker Compose.
 
 ~~~yaml
+[Container]
 Volume=/var/cache/elabftw:/var/cache/elabftw:Z
 Volume=/var/elabftw/uploads:/var/lib/elabftw/uploads:Z
 Volume=/var/elabftw/exports:/var/lib/elabftw/exports:Z

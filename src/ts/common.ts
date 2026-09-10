@@ -1011,6 +1011,10 @@ function applyPerEntryCeilings(): void {
     input.closest('.input-group')?.querySelectorAll('button').forEach((btn: HTMLButtonElement) => {
       btn.disabled = perEntry === 0;
     });
+    // the aggregate notice cannot be relied on here: it stays silent as soon as one location
+    // declares no capacity, so each refused location says so for itself
+    document.querySelector(`[data-batch-full-notice][data-storage-id="${input.dataset.storageId}"]`)
+      ?.toggleAttribute('hidden', perEntry !== 0);
   });
 }
 

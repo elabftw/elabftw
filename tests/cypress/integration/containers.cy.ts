@@ -28,6 +28,9 @@ describe('Containers', () => {
   const stepperInput = (storageId: number): string =>
     `[data-storage-id="${storageId}"] input[data-action="container-qty-input"]`;
 
+  const fullNotice = (storageId: number): string =>
+    `[data-batch-full-notice][data-storage-id="${storageId}"]`;
+
   // the per-row checkboxes only exist in item mode; table mode has its own
   const visitShowPageInItemMode = (): void => {
     cy.request({ method: 'PATCH', url: '/api/v2/users/me', body: { display_mode: 'it' } });
@@ -184,6 +187,8 @@ describe('Containers', () => {
               .should('have.attr', 'data-slots-left', '1')
               .and('have.attr', 'max', '0')
               .and('be.disabled');
+            // reached through occupancy rather than a small capacity, but refused all the same
+            cy.get(fullNotice(storageId)).should('be.visible');
           });
         });
       });
@@ -214,6 +219,7 @@ describe('Containers', () => {
                       .should('not.have.attr', 'max')
                       .and('not.have.attr', 'data-slots-left')
                       .and('be.enabled');
+                    cy.get(fullNotice(unlimited)).should('not.be.visible');
 
                     // floor(2 / 3) is 0: room for some entries is room for none of them
                     cy.get(stepperInput(tooSmall))
@@ -221,9 +227,12 @@ describe('Containers', () => {
                       .and('be.disabled');
                     cy.get(`[data-storage-id="${tooSmall}"] [data-action="container-qty-plus"]`)
                       .should('be.disabled');
+                    // the badge still shows 0 / 2, so the reason has to be spelled out
+                    cy.get(fullNotice(tooSmall)).should('be.visible');
 
                     // floor(3 / 3) is exactly 1
                     cy.get(stepperInput(exactly)).should('have.attr', 'max', '1').and('be.enabled');
+                    cy.get(fullNotice(exactly)).should('not.be.visible');
 
                     // occupancy is subtracted before the division: floor((9 - 3) / 3)
                     cy.get(stepperInput(occupied))
@@ -246,21 +255,30 @@ describe('Containers', () => {
   });
 
   it('widens the ceilings again when the selection shrinks', () => {
+    const stamp = Date.now();
     // 4 free slots gives 1 per entry for 3 entries, but 2 per entry once one is unselected
-    createStorageUnit(`Freezer D ${Date.now()}`, 4).then(storageId => {
-      createItem().then(first => {
-        createItem().then(second => {
-          createItem().then(third => {
-            visitShowPageInItemMode();
-            selectEntities([first, second, third]);
+    createStorageUnit(`Freezer D ${stamp}`, 4).then(storageId => {
+      // 2 free slots is nothing per entry for 3 entries, but 1 each for 2 entries
+      createStorageUnit(`Freezer D refused ${stamp}`, 2).then(refusedId => {
+        createItem().then(first => {
+          createItem().then(second => {
+            createItem().then(third => {
+              visitShowPageInItemMode();
+              selectEntities([first, second, third]);
 
-            openBatchContainerModal();
-            cy.get(stepperInput(storageId)).should('have.attr', 'max', '1');
-            closeBatchContainerModal();
+              openBatchContainerModal();
+              cy.get(stepperInput(storageId)).should('have.attr', 'max', '1');
+              cy.get(stepperInput(refusedId)).should('have.attr', 'max', '0').and('be.disabled');
+              cy.get(fullNotice(refusedId)).should('be.visible');
+              closeBatchContainerModal();
 
-            cy.get(`[data-action="checkbox-entity"][data-id="${third}"]`).uncheck();
-            openBatchContainerModal();
-            cy.get(stepperInput(storageId)).should('have.attr', 'max', '2');
+              cy.get(`[data-action="checkbox-entity"][data-id="${third}"]`).uncheck();
+              openBatchContainerModal();
+              cy.get(stepperInput(storageId)).should('have.attr', 'max', '2');
+              // the location is usable again, so its reason has to be taken back down
+              cy.get(stepperInput(refusedId)).should('have.attr', 'max', '1').and('be.enabled');
+              cy.get(fullNotice(refusedId)).should('not.be.visible');
+            });
           });
         });
       });

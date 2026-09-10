@@ -137,7 +137,7 @@ final class ProcurementRequests extends AbstractRest
 
     // destroy is soft delete to prevent destructive actions on procurement requests so we can trust its log
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
         return $this->update(new ProcurementRequestParams('state', (string) ProcurementState::Cancelled->value));

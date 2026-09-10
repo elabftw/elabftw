@@ -235,7 +235,7 @@ final class Teams extends AbstractRest
      * Delete a team only if all the stats are at zero
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
 

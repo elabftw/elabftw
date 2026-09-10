@@ -114,7 +114,7 @@ class Comments extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
         $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_comments WHERE id = :id AND userid = :userid AND item_id = :item_id';

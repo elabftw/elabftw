@@ -560,7 +560,7 @@ class Users extends AbstractRest
      * Destroy user. Will completely remove everything from the user.
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
 

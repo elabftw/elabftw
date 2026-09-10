@@ -16,7 +16,7 @@ Here are the main changes:
 - container user configuration change
 - container certificates paths
 
-Note: this guide assumes usage of `docker compose`, with hints related to `podman quadlets`. For other deployments, you will need to adapt the changes to your context.
+Note: this guide assumes usage of `docker compose`, with hints related to `podman/quadlets` (podman is another container engine and quadlets are systemd-managed container unit files). For other deployments, you will need to adapt the changes to your context.
 
 ## Making backups
 
@@ -62,7 +62,9 @@ tmpfs:
 
 This will make the container start and run with `elabftw-worker` user, and a read-only filesystem.
 
-### Quadlet
+### Quadlets
+
+Ignore this section if you use `docker compose`.
 
 Only changed/added lines are shown:
 
@@ -95,10 +97,8 @@ chown elabftw-worker:elabftw-worker /var/cache/elabftw
 Then in the configuration file, under `volumes:` section:
 
 ~~~yaml
-# docker
+volumes:
   - /var/cache/elabftw:/var/cache/elabftw
-# quadlet
-Volume=/var/cache/elabftw:/var/cache/elabftw:Z
 ~~~
 
 #### Uploads folder
@@ -139,6 +139,30 @@ Adjust the ownership with our new user:
 chown -R elabftw-worker:elabftw-worker /var/elabftw/exports
 ~~~
 
+#### Summary for volumes
+
+The whole `volumes` section should then look like:
+
+~~~yaml
+volumes:
+  - /var/cache/elabftw:/var/cache/elabftw
+  - /var/elabftw/web:/var/lib/elabftw/uploads
+  - /var/elabftw/exports:/var/lib/elabftw/exports
+~~~
+
+Make sure the `elabftw-worker` user can write to these folders.
+
+##### Same thing for Quadlets
+
+This is a Quadlets example, ignore this section if you use Docker Compose.
+
+~~~conf
+[Container]
+Volume=/var/cache/elabftw:/var/cache/elabftw:Z
+Volume=/var/elabftw/web:/var/lib/elabftw/uploads:Z
+Volume=/var/elabftw/exports:/var/lib/elabftw/exports:Z
+~~~
+
 ### TLS Certificates
 
 If you are running the container in HTTPS mode (meaning `DISABLE_HTTPS` is `false`, the default), then you need to modify env and volumes. The cert and key are now indicated by `TLS_CERT_PATH` and `TLS_KEY_PATH` env vars.
@@ -165,7 +189,7 @@ ports:
 
 It is the right-hand side that needs to be modified: the listening port in the container.
 
-For quadlets, adjust PublishPort if you're using this, or adjust your reverse proxy to use port 8080.
+For Quadlets, adjust PublishPort if you're using this, or adjust your reverse proxy to use port 8080.
 
 ### Environment
 
@@ -200,7 +224,7 @@ The `chem-plugin` addon can now be completely removed! It is not useful anymore:
 
 It is then safe to remove the whole `chem-plugin` block in your docker compose file.
 
-### OpenCloning in Quadlet
+### OpenCloning in Quadlets
 
 If you are running OpenCloning as a user with Quadlets, make sure to add:
 

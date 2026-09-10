@@ -362,26 +362,28 @@ const EntitiesTable = ({
   };
 
   return (
-    <div className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`} style={{ height: 650 }}>
-      <AgGridReact
-        rowData={rowData}
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        getRowId={getRowId}
-        processRowPostCreate={processRowPostCreate}
-        onColumnResized={columnStateChanged}
-        onColumnMoved={columnStateChanged}
-        onColumnVisible={columnStateChanged}
-        onColumnPinned={columnStateChanged}
-        onSortChanged={columnStateChanged}
-        onGridReady={onGridReady}
-        rowSelection={rowSelection}
-        onCellClicked={cellClicked}
-        onSelectionChanged={selectionChanged}
-        {...DEFAULT_AG_GRID_PAGINATION}
-      />
-      <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
-    </div>
+    <>
+      <div className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`} style={{ height: 650 }}>
+        <AgGridReact
+          rowData={rowData}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          getRowId={getRowId}
+          processRowPostCreate={processRowPostCreate}
+          onColumnResized={columnStateChanged}
+          onColumnMoved={columnStateChanged}
+          onColumnVisible={columnStateChanged}
+          onColumnPinned={columnStateChanged}
+          onSortChanged={columnStateChanged}
+          onGridReady={onGridReady}
+          rowSelection={rowSelection}
+          onCellClicked={cellClicked}
+          onSelectionChanged={selectionChanged}
+          {...DEFAULT_AG_GRID_PAGINATION}
+        />
+        <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
+      </div>
+    </>
   );
 };
 

@@ -891,6 +891,10 @@ tr:first-child td {
   }
 }
 
+#favtagsPanelOpener, #todolistPanelOpener {
+  transform: translateX(-3px);
+}
+
 .item-info {
   padding-left: 20px;
 }

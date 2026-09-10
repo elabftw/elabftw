@@ -31,10 +31,17 @@ describe('Containers', () => {
   const fullNotice = (storageId: number): string =>
     `[data-batch-full-notice][data-storage-id="${storageId}"]`;
 
-  // the per-row checkboxes only exist in item mode; table mode has its own
+  // show() takes orderby, sort and limit_nb from the user record, so all three are pinned
+  // here: the resources each test creates have to reach the first page for the checkbox
+  // lookups below. skip_pinned drops the pinned-first ordering on top of that.
+  // The per-row checkboxes also only exist in item mode; table mode has its own
   const visitShowPageInItemMode = (): void => {
-    cy.request({ method: 'PATCH', url: '/api/v2/users/me', body: { display_mode: 'it' } });
-    cy.visit('/database.php');
+    cy.request({
+      method: 'PATCH',
+      url: '/api/v2/users/me',
+      body: { display_mode: 'it', orderby: 'lastchange', sort: 'desc', limit_nb: 15 },
+    });
+    cy.visit('/database.php?skip_pinned=1');
   };
 
   const selectEntities = (ids: number[]): void => {

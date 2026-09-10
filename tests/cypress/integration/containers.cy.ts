@@ -4,8 +4,15 @@ describe('Containers', () => {
   });
 
   // create a storage location via the API and return its id (parsed from the Location header)
-  const createStorageUnit = (name: string): Cypress.Chainable<number> =>
-    cy.request({ method: 'POST', url: '/api/v2/storage_units', body: { name } })
+  const createStorageUnit = (name: string, capacity?: number): Cypress.Chainable<number> =>
+    cy.request({ method: 'POST', url: '/api/v2/storage_units', body: { name, capacity } })
+      .then(resp => {
+        expect(resp.status).to.eq(201);
+        return parseInt(resp.headers['location'].toString().split('/').pop(), 10);
+      });
+
+  const createItem = (): Cypress.Chainable<number> =>
+    cy.request({ method: 'POST', url: '/api/v2/items', body: { title: `Cypress container item ${Date.now()}` } })
       .then(resp => {
         expect(resp.status).to.eq(201);
         return parseInt(resp.headers['location'].toString().split('/').pop(), 10);
@@ -95,6 +102,59 @@ describe('Containers', () => {
               expect(inB).to.eq(2);
             });
           });
+      });
+    });
+  });
+
+  it('applies the distribution to every entity selected on the show page', () => {
+    // capacity 7 with 3 entries selected leaves room for 2 containers per entry, remainder unusable
+    createStorageUnit(`Freezer C ${Date.now()}`, 7).then(storageId => {
+      createItem().then(first => {
+        createItem().then(second => {
+          createItem().then(third => {
+            const ids = [first, second, third];
+            // the per-row checkboxes below only exist in item mode; table mode has its own
+            cy.request({ method: 'PATCH', url: '/api/v2/users/me', body: { display_mode: 'it' } });
+            cy.visit('/database.php');
+
+            // select the three items we just made, whatever else the team already holds
+            ids.forEach(id => {
+              cy.get(`[data-action="checkbox-entity"][data-id="${id}"]`).check();
+            });
+            cy.get('#withSelected').should('be.visible');
+
+            cy.get('[data-action="toggle-modal"][data-target="storageModal"]').click();
+            cy.get('#storageModal').should('be.visible');
+
+            const stepper = `[data-storage-id="${storageId}"]`;
+            // the ceiling is per entry: floor(7 / 3), not the 7 free slots the server rendered
+            cy.get(`${stepper} input[data-action="container-qty-input"]`)
+              .should('have.attr', 'max', '2')
+              .and('have.attr', 'data-slots-left', '7');
+
+            // 2 containers per entry across 3 entries
+            cy.get('#containerMultiplierInput').invoke('val', '2').trigger('input');
+            // asserted as non-empty rather than by wording, which is translated
+            cy.get('#containerBatchSummary').should('not.have.text', '');
+            cy.get('#storeContainersBtn').should('be.disabled');
+
+            cy.get(`${stepper} input[data-action="container-qty-input"]`).invoke('val', '2').trigger('input');
+            cy.get('#containerAssignedCount').should('have.text', '2');
+            cy.get('#storeContainersBtn').should('be.enabled').click();
+
+            cy.get('#storageModal').should('not.be.visible');
+
+            // every selected entity got the same distribution
+            ids.forEach(id => {
+              cy.request({ method: 'GET', url: `/api/v2/items/${id}/containers` }).then(resp => {
+                expect(resp.status).to.eq(200);
+                const containers = resp.body as Array<{ storage_id: number }>;
+                expect(containers).to.have.length(2);
+                expect(containers.every(c => c.storage_id === storageId)).to.eq(true);
+              });
+            });
+          });
+        });
       });
     });
   });

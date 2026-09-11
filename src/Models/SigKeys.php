@@ -109,7 +109,7 @@ final class SigKeys extends AbstractRest
      * Make all existing keys inactive (state:archived) for that user
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $sql = 'UPDATE sig_keys SET state = :state WHERE userid = :userid';
         $req = $this->Db->prepare($sql);

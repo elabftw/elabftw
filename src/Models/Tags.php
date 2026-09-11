@@ -133,7 +133,7 @@ final class Tags extends AbstractRest
      * even when nothing is referencing it. Admin can manage tags anyway if it needs to be destroyed.
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->Entity->canOrExplode(AccessType::Write);
         $sql = 'DELETE FROM tags2entity WHERE item_id = :id AND item_type = :type';

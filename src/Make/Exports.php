@@ -186,7 +186,7 @@ final class Exports extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $request = $this->readOne();
         if ($request['long_name']) {

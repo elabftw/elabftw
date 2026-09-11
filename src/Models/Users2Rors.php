@@ -61,7 +61,7 @@ final class Users2Rors extends Abstract2Rors
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canwriteOrExplode();
         $sql = 'DELETE FROM users2rors WHERE users_id = :users_id AND ror = :ror';

@@ -36,10 +36,12 @@ describe('Search', () => {
             const trimmedTitleChecked = titleChecked.trim();
             cy.addMetadataField(fieldName, 'checkbox');
 
-            // check the checkbox and wait for the PATCH update to complete
+            // check the checkbox and wait for the update and metadata reload to complete
             cy.intercept('PATCH', '**/api/v2/experiments/*').as('patchExp');
+            cy.intercept('GET', '**/api/v2/experiments/*').as('reloadExp');
             cy.get(`input[type="checkbox"][data-field="${fieldName}"]`).click();
             cy.wait('@patchExp');
+            cy.wait('@reloadExp');
 
             // 1. Search for empty/unchecked value
             cy.visit('experiments.php');

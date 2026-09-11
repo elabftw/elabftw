@@ -54,7 +54,7 @@ final class Instance2Rors extends Abstract2Rors
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canwriteOrExplode();
         $sql = 'DELETE FROM instance2rors WHERE ror = :ror';

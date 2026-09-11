@@ -11,6 +11,7 @@
  */
 import {
   ClientSideRowModelModule,
+  ColumnAutoSizeModule,
   ColumnApiModule,
   ModuleRegistry,
   PaginationModule,
@@ -27,7 +28,8 @@ import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
-import { getAgGridTheme } from "./theme";
+import { getAgGridTheme } from './theme';
+import AgGridTableOptions from './ag-grid-table-options';
 
 const COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
 
@@ -153,9 +155,11 @@ const EntitiesTable = ({
   relatedOrigin = '',
 }) => {
   const [rowData, setRowData] = useState([]);
+  const [gridApi, setGridApi] = useState(null);
 
   const onGridReady = event => {
     const columnState = getStoredColumnState();
+    setGridApi(event.api);
 
     if (Array.isArray(columnState)) {
       event.api.applyColumnState({
@@ -359,8 +363,7 @@ const EntitiesTable = ({
 
   return (
     <>
-      <div
-        className={getAgGridTheme()} style={{ height: 650 }}>
+      <div className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}
@@ -378,6 +381,7 @@ const EntitiesTable = ({
           onSelectionChanged={selectionChanged}
           {...DEFAULT_AG_GRID_PAGINATION}
         />
+        <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
       </div>
     </>
   );
@@ -408,6 +412,7 @@ export const mountEntitiesTable = (
   provideGlobalGridOptions({ theme: 'legacy' });
   ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    ColumnAutoSizeModule,
     ColumnApiModule,
     RowSelectionModule,
     PaginationModule,

@@ -12,6 +12,8 @@
 import {
   ClientSideRowModelModule,
   CellStyleModule,
+  ColumnApiModule,
+  ColumnAutoSizeModule,
   ModuleRegistry,
   PaginationModule,
   QuickFilterModule,
@@ -28,11 +30,16 @@ import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
 import i18next from './i18n';
 import { notify } from './notify';
 import { getAgGridTheme } from './theme';
+import AgGridTableOptions from './ag-grid-table-options';
+
+const COLUMN_STATE_STORAGE_KEY = 'persistent_compounds_table_column_state_v1';
 
 provideGlobalGridOptions({ theme: 'legacy' });
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   CellStyleModule,
+  ColumnApiModule,
+  ColumnAutoSizeModule,
   RowSelectionModule,
   PaginationModule,
   TextFilterModule,
@@ -44,12 +51,48 @@ const rowSelection = {
     headerCheckbox: false,
 };
 
+const getStoredColumnState = () => {
+  try {
+    return JSON.parse(
+      localStorage.getItem(COLUMN_STATE_STORAGE_KEY) ?? 'null'
+    );
+  } catch {
+    return null;
+  }
+};
+
+const storeColumnState = api => {
+  try {
+    localStorage.setItem(
+      COLUMN_STATE_STORAGE_KEY,
+      JSON.stringify(api.getColumnState())
+    );
+  } catch {
+    // localStorage might be unavailable
+  }
+};
+
 const GridExample = () => {
     const [rowData, setRowData] = useState([]);
     const [gridApi, setGridApi] = useState(null);
-    const onGridReady = (params) => {
-      setGridApi(params.api);
+    const onGridReady = (event) => {
+      const columnState = getStoredColumnState();
+      if (Array.isArray(columnState)) {
+        event.api.applyColumnState({
+          state: columnState,
+          applyOrder: true,
+        });
+      }
+      setGridApi(event.api);
     };
+
+  const columnStateChanged = event => {
+    if (event.finished === false) {
+      return;
+    }
+
+    storeColumnState(event.api);
+  };
 
     const [columnDefs] = useState([
         { field: 'name', pinned: 'left' },
@@ -185,16 +228,28 @@ const GridExample = () => {
         onChange={onQuickFilterChange}
         className={'form-control mb-2'}
       />
-      <div className={getAgGridTheme()} style={{ height: 650 }}>
+      <div
+        className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`}
+        style={{ height: 650 }}
+      >
       <AgGridReact
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
+        onColumnResized={columnStateChanged}
+        onColumnMoved={columnStateChanged}
+        onColumnVisible={columnStateChanged}
+        onColumnPinned={columnStateChanged}
+        onSortChanged={columnStateChanged}
         rowSelection={rowSelection}
         onCellDoubleClicked={cellDoubleClicked}
         onGridReady={onGridReady}
         onSelectionChanged={selectionChanged}
         {...DEFAULT_AG_GRID_PAGINATION}
+      />
+      <AgGridTableOptions
+        gridApi={gridApi}
+        storageKey={COLUMN_STATE_STORAGE_KEY}
       />
       <div className='d-flex justify-content-end my-2'>
         <button

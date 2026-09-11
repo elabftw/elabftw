@@ -21,9 +21,5 @@ final class ExperimentsCategories extends AbstractStatus
 {
     protected string $table = 'experiments_categories';
 
-    #[Override]
-    protected function supportsForegroundColor(): bool
-    {
-        return true;
-    }
+    protected bool $hasForegroundColor = true;
 }

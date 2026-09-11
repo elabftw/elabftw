@@ -104,6 +104,7 @@ final class CanSqlBuilder
                         WHERE u2t.users_id = :userid
                           AND u2t.teams_id = entity.team
                           AND u2t.is_admin = 1
+                          AND u2t.is_archived = 0
                       )
                 )
             )',

@@ -815,6 +815,18 @@ class Users extends AbstractRest
         }
     }
 
+    // Return IDs of teams where the user has an active membership
+    public function getActiveTeamIds(): array
+    {
+        $teamIds = array();
+        foreach ($this->userData['teams'] ?? array() as $team) {
+            if ((int) $team['is_archived'] === 0) {
+                $teamIds[] = (int) $team['id'];
+            }
+        }
+        return $teamIds;
+    }
+
     protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self
     {
         $Db = Db::getConnection();

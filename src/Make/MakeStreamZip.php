@@ -141,7 +141,7 @@ class MakeStreamZip extends AbstractMakeZip
         $this->addPdf($entity);
         // add a full json export too, if requested
         if ($this->includeJson) {
-            $JsonMaker = new MakeFullJson(array($entity));
+            $JsonMaker = new MakeFullJson(array($entity), $this->includeLinkedEntities);
             $this->Zip->addFile(
                 $this->folder . '/' . $JsonMaker->getFileName(),
                 json_encode(array('data' => $JsonMaker->getJsonContent(), 'meta' => $this->getMeta()), JSON_THROW_ON_ERROR, 512),

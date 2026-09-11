@@ -173,11 +173,7 @@ final class MakeController extends AbstractController
 
     private function shouldIncludeLinkedEntities(): bool
     {
-        $includeLinkedEntities = false;
-        if ($this->Request->query->has('links')) {
-            $includeLinkedEntities = $this->Request->query->getBoolean('links');
-        }
-        return $includeLinkedEntities;
+        return $this->Request->query->getBoolean('links');
     }
 
     private function populateSlugs(): void

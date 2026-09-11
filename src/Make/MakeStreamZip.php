@@ -40,7 +40,6 @@ class MakeStreamZip extends AbstractMakeZip
         protected array $entityArr,
         protected bool $usePdfa = false,
         protected bool $includeChangelog = false,
-        protected bool $includeLinkedEntities = true,
         protected bool $includeJson = false,
         protected Classification $classification = Classification::None,
     ) {
@@ -90,7 +89,6 @@ class MakeStreamZip extends AbstractMakeZip
             teams2Rors: $teams2Rors,
             users2Rors: $users2Rors,
             includeChangelog: $this->includeChangelog,
-            includeLinkedEntities: $this->includeLinkedEntities,
             classification: $this->classification,
         );
     }
@@ -141,7 +139,7 @@ class MakeStreamZip extends AbstractMakeZip
         $this->addPdf($entity);
         // add a full json export too, if requested
         if ($this->includeJson) {
-            $JsonMaker = new MakeFullJson(array($entity), $this->includeLinkedEntities);
+            $JsonMaker = new MakeFullJson(array($entity));
             $this->Zip->addFile(
                 $this->folder . '/' . $JsonMaker->getFileName(),
                 json_encode(array('data' => $JsonMaker->getJsonContent(), 'meta' => $this->getMeta()), JSON_THROW_ON_ERROR, 512),

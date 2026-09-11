@@ -86,7 +86,7 @@ class MakePdf extends AbstractMakePdf
         protected Teams2Rors $teams2Rors,
         protected Users2Rors $users2Rors,
         bool $includeChangelog = false,
-        bool $includeLinkedEntities = false,
+        bool $includeLinkedEntities = true,
         Classification $classification = Classification::None,
     ) {
         parent::__construct(

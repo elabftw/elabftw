@@ -37,7 +37,7 @@ abstract class AbstractMakePdf extends AbstractMake implements PdfMakerInterface
     public function __construct(
         MpdfProviderInterface $mpdfProvider,
         protected bool $includeChangelog = false,
-        protected bool $includeLinkedEntities = false,
+        protected bool $includeLinkedEntities = true,
         protected Classification $classification = Classification::None,
     ) {
         parent::__construct();

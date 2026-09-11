@@ -55,7 +55,9 @@ describe('Containers', () => {
 
   const openBatchContainerModal = (): void => {
     cy.get('[data-action="toggle-modal"][data-target="storageModal"]').click();
-    cy.get('#storageModal').should('be.visible');
+    // the fade leaves the modal visible but still opaque part way through, and bootstrap drops
+    // a hide that arrives then. Opacity reaches 1 only once the transition is over
+    cy.get('#storageModal').should('be.visible').and('have.css', 'opacity', '1');
   };
 
   const closeBatchContainerModal = (): void => {
@@ -192,6 +194,13 @@ describe('Containers', () => {
 
             cy.get('#storageModal').should('not.be.visible');
 
+            // a batch that went through in full drops the selection, so nothing is left behind
+            // that a second batch could give the same distribution to all over again
+            cy.get('#withSelected').should('not.be.visible');
+            ids.forEach(id => {
+              cy.get(`[data-action="checkbox-entity"][data-id="${id}"]`).should('not.be.checked');
+            });
+
             // every selected entity got the same distribution
             ids.forEach(id => {
               cy.request({ method: 'GET', url: `/api/v2/items/${id}/containers` }).then(resp => {
@@ -204,6 +213,7 @@ describe('Containers', () => {
 
             // reopening recomputes from fresh occupancy: 7 - 6 = 1 free slot, so no entry
             // can be given a container any more and the location is refused
+            selectEntities(ids);
             openBatchContainerModal();
             cy.get(stepperInput(storageId))
               .should('have.attr', 'data-slots-left', '1')

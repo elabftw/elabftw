@@ -1261,6 +1261,8 @@ async function storeContainersForSelection(
   await reloadStorageTrees().catch(error => console.error(error));
   const failed = results.filter(result => result.stored < result.planned);
   if (failed.length === 0) {
+    // as on the partial path: a selection left standing invites a second, duplicating batch
+    clearEntitiesSelection();
     notify.success();
     $('#storageModal').modal('hide');
     return;

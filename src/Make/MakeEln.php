@@ -74,6 +74,7 @@ class MakeEln extends AbstractMakeEln
         protected Teams2Rors $teams2Rors,
         protected Users2Rors $users2Rors,
         protected bool $includeLinkedEntities = true,
+        protected bool $includeChangelog = false,
     ) {
         parent::__construct($Zip, $instance2Rors);
     }
@@ -287,7 +288,7 @@ class MakeEln extends AbstractMakeEln
             array('comment' => $comments),
             array('conditionsOfAccess' => $e['locked'] === 1 ? 'Locked' : 'Unlocked'),
             array('creativeWorkStatus' => $e['status_title'] ?? ''),
-            array('subjectOf' => $this->changelogToUpdateActions($e['changelog'] ?? array())),
+            array('subjectOf' => $this->includeChangelog ? $this->changelogToUpdateActions($e['changelog'] ?? array()) : array()),
             array('status' => State::from($e['state'])->name),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),

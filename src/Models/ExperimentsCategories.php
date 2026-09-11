@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Override;
-
 /**
  * Categories for experiments
  */

@@ -53,6 +53,27 @@
   </div>
 </div>
 
+{# Modal for ELN export #}
+<div class='modal fade' id='elnExportModal' tabindex='-1' role='dialog' aria-labelledby='elnExportModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='elnExportModalLabel'><i class='fas fa-fw fa-file-pdf mr-1'></i>{{ 'Export as ELN'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {% include 'export-menu-options.html' with {'format': 'eln'} %}
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to' data-format='eln' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {# Modal for QRPNG export #}
 <div class='modal fade' id='qrpngExportModal' tabindex='-1' role='dialog' aria-labelledby='qrpngExportModalLabel'>
   <div class='modal-dialog' role='document'>
@@ -126,9 +147,9 @@
     <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='zipExportModal'>
       <i class='fas fa-file-archive fa-fw'></i> {{ 'ZIP Archive'|trans }}
     </button>
-    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=eln'>
+    <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='elnExportModal'>
       <i class='fas fa-box-archive fa-fw'></i> {{ 'ELN Archive'|trans }}
-    </a>
+    </button>
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=csv'>
       <i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}
     </a>

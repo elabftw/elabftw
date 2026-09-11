@@ -40,6 +40,7 @@ class MakeStreamZip extends AbstractMakeZip
         protected array $entityArr,
         protected bool $usePdfa = false,
         protected bool $includeChangelog = false,
+        protected bool $includeLinkedEntities = true,
         protected bool $includeJson = false,
         protected Classification $classification = Classification::None,
     ) {
@@ -89,6 +90,7 @@ class MakeStreamZip extends AbstractMakeZip
             teams2Rors: $teams2Rors,
             users2Rors: $users2Rors,
             includeChangelog: $this->includeChangelog,
+            includeLinkedEntities: $this->includeLinkedEntities,
             classification: $this->classification,
         );
     }

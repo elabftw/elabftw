@@ -268,6 +268,7 @@ final class MakeController extends AbstractController
             $this->entityArr,
             $this->pdfa,
             $this->shouldIncludeChangelog(),
+            $this->shouldIncludeLinkedEntities(),
             $this->Request->query->getBoolean('json'),
             $classification,
         ));

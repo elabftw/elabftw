@@ -1241,8 +1241,16 @@ CREATE TABLE `team_events` (
   `item_link` int(10) UNSIGNED DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `recurrence_series_id` CHAR(36) DEFAULT NULL,
+  `recurrence_index` SMALLINT UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `chk_end_after_start` CHECK (`end` >= `start`)
+  CONSTRAINT `chk_end_after_start` CHECK (`end` >= `start`),
+  CONSTRAINT `chk_team_events_recurrence_metadata`
+    CHECK (
+      (`recurrence_series_id` IS NULL AND `recurrence_index` IS NULL)
+      OR
+      (`recurrence_series_id` IS NOT NULL AND `recurrence_index` IS NOT NULL)
+    )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -1251,6 +1259,7 @@ CREATE TABLE `team_events` (
 CREATE INDEX `idx_team_events_item_start_end` ON `team_events` (`item`, `start`, `end`);
 CREATE INDEX `idx_team_events_team_start_end` ON `team_events` (`team`, `start`, `end`);
 CREATE INDEX `idx_team_events_user_start_end` ON `team_events` (`userid`, `start`, `end`);
+CREATE UNIQUE INDEX `uniq_team_events_recurrence_series_index` ON `team_events` (`recurrence_series_id`, `recurrence_index`);
 
 --
 -- RELATIONSHIPS FOR TABLE `team_events`:

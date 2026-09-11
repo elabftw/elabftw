@@ -58,14 +58,12 @@
     </div>
   </div>
   <div id='selectedItemsContainer' class='m-4 d-none'>
-    <strong class='d-block mb-2'>{{ 'Selected items:'|trans }}</strong>
+    <strong class='d-block mb-2'>{{ 'Selected resources:'|trans }}</strong>
     <div id='selectedItemsDisplay' data-cy='selectedItemsDisplay' class='d-flex flex-wrap'></div>
   </div>
   <hr>
   {# Click on the scheduler: Search items to book #}
   {% include 'scheduler-pick-items-modal.html' %}
-  {# Items already selected: Modal with checkboxes to confirm selection #}
-  {% include 'scheduler-review-picked-items-modal.html' %}
   {# No bookable items WARNING #}
   {% if itemsArr|length == 0 %}{{ 'No bookable items.'|trans|msg('warning', false) }}{% else %}
   {% include 'loading-spinner.html' %}

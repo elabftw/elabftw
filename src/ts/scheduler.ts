@@ -41,7 +41,7 @@ import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
 import { rebuildTomSelectOptions } from './misc';
-import { showModalAndFocusFirstInput} from './common';
+import { showModal, showModalAndFocusFirstInput } from './common';
 
 type CancelNotificationPayload = {
   action: Action;
@@ -52,6 +52,11 @@ type CancelNotificationPayload = {
   range_value?: number;
   range_unit?: string;
   notifOnSaved?: number;
+};
+type Recurrence = {
+  frequency: 'daily' | 'weekly' | 'monthly';
+  interval: number;
+  count: number;
 };
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
@@ -116,6 +121,37 @@ function lockScopeButtons(selectedItems: string[]): void {
 }
 
 document.getElementById('loading-spinner')?.remove();
+
+// on loading the book event modal a second time, we need the options to be available
+function updateRecurrenceFields(select: HTMLSelectElement): void {
+  select.closest('.scheduler-recurrence-fields')
+    ?.querySelectorAll('.scheduler-recurrence-options')
+    .forEach(element => element.classList.toggle('d-none', select.value === ''));
+}
+
+document.querySelectorAll<HTMLSelectElement>('.scheduler-recurrence-frequency').forEach(select => {
+  select.addEventListener('change', () => updateRecurrenceFields(select));
+  updateRecurrenceFields(select);
+});
+
+function getRecurrence(modal: Element): Recurrence | null | false {
+  const frequency = modal.querySelector<HTMLSelectElement>('.scheduler-recurrence-frequency')!;
+  if (frequency.value === '') {
+    return null;
+  }
+  const interval = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-interval')!;
+  const count = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-count')!;
+  if (!interval.checkValidity() || !count.checkValidity()) {
+    interval.reportValidity();
+    count.reportValidity();
+    return false;
+  }
+  return {
+    frequency: frequency.value as Recurrence['frequency'],
+    interval: interval.valueAsNumber,
+    count: count.valueAsNumber,
+  };
+}
 
 // TomSelect settings shared on page & modal selects
 const sharedTomSelectOptions = {
@@ -324,9 +360,7 @@ if (calendarEl) {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
       const selectedItemIds: string[] = itemSelectEl.tomselect?.items || [];
 
-      let manualSelect: TomSelect | null = null;
-
-      // Handle post action for modals
+      // Handle post action for modal
       function handleConfirm(buttonId: string, getIdsFn: () => string[]) {
         const confirmBtn = document.getElementById(buttonId) as HTMLButtonElement;
         if (!confirmBtn) {
@@ -346,7 +380,25 @@ if (calendarEl) {
           const titleInput = modal?.querySelector<HTMLInputElement>('input[id^="eventTitleInput"]');
           const title = titleInput ? titleInput.value.trim() : '';
 
-          const postParams = { start: info.startStr, end: info.endStr, title };
+          const recurrence = getRecurrence(modal!);
+          if (recurrence === false) {
+            return;
+          }
+          const postParams: {
+            start: string;
+            end: string;
+            title: string;
+            recurrence?: Recurrence;
+          } = {
+            start: info.startStr,
+            end: info.endStr,
+            title,
+          };
+
+          if (recurrence !== null) {
+            postParams.recurrence = recurrence;
+          }
+
           Promise.all(
             itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
           ).then(() => {
@@ -361,82 +413,53 @@ if (calendarEl) {
         };
       }
 
-      // case 1: Already selected items -> checkboxes with selected
-      if (selectedItemIds.length > 0) {
-        const container = document.getElementById('selectedItemsCheckboxes')!;
-        container.innerHTML = '';
+      const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
+      const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
 
-        selectedItemIds.forEach(itemId => {
-          const option = itemSelectEl.querySelector(`option[value="${itemId}"]`);
-          const labelText = option?.textContent || `Item ${itemId}`;
-
-          const div = document.createElement('div');
-          div.className = 'form-check';
-
-          const input = document.createElement('input');
-          input.className = 'form-check-input';
-          input.type = 'checkbox';
-          input.value = itemId;
-          input.id = `selectedItem${itemId}`;
-          input.checked = true;
-
-          const label = document.createElement('label');
-          label.className = 'form-check-label';
-          label.htmlFor = input.id;
-          label.textContent = labelText;
-
-          div.appendChild(input);
-          div.appendChild(label);
-          container.appendChild(div);
-        });
-
-        showModalAndFocusFirstInput('#itemPickerReviewModal');
-
-        handleConfirm('confirmItemReview', () => {
-          const checked = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked');
-          return Array.from(checked).map(cb => cb.value);
-        });
-      }
-
-      // case 2: no items selected -> modal with tomSelect
-      else {
-        const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
-        const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
-
-        // init TomSelect if not already
-        if (!itemSelectModalEl.tomselect) {
-          manualSelect = new TomSelect(itemSelectModalEl, {
-            ...sharedTomSelectOptions,
-            dropdownParent: '#itemSelectWrapperModal',
-            controlInput: '#itemSelectInputModal',
-            onChange: (selectedItems: string[]) => {
-              const container = document.getElementById('selectedItemsContainerModal')!;
-              const display = document.getElementById('selectedItemsDisplayModal')!;
-              display.innerHTML = '';
-              if (selectedItems.length === 0) {
-                container.classList.add('d-none');
-                return;
-              }
-              container.classList.remove('d-none');
-              selectedItems.forEach(id => {
-                createBadge(itemSelectModalEl, manualSelect, display, id);
-              });
-            },
-          });
-
-          categorySelectModalEl.addEventListener('change', () => {
-            const selectedCategory = categorySelectModalEl.value;
-            filterOptionsByCategory(itemSelectModalEl, selectedCategory);
-          });
-        } else {
-          manualSelect = itemSelectModalEl.tomselect;
+      const renderSelectedItems = (selectedItems: string[]): void => {
+        const container = document.getElementById('selectedItemsContainerModal')!;
+        const display = document.getElementById('selectedItemsDisplayModal')!;
+        display.innerHTML = '';
+        if (selectedItems.length === 0) {
+          container.classList.add('d-none');
+          return;
         }
+        container.classList.remove('d-none');
+        selectedItems.forEach(id => {
+          createBadge(itemSelectModalEl, itemSelectModalEl.tomselect, display, id);
+        });
+      };
 
-        showModalAndFocusFirstInput('#itemPickerSelectModal');
+      let manualSelect: TomSelect;
+      if (!itemSelectModalEl.tomselect) {
+        manualSelect = new TomSelect(itemSelectModalEl, {
+          ...sharedTomSelectOptions,
+          dropdownParent: '#itemSelectWrapperModal',
+          controlInput: '#itemSelectInputModal',
+          onChange: renderSelectedItems,
+        });
 
-        // confirm handler uses selected TomSelect items
-        handleConfirm('confirmItemSelect', () => manualSelect?.items || []);
+        categorySelectModalEl.addEventListener('change', () => {
+          filterOptionsByCategory(itemSelectModalEl, categorySelectModalEl.value);
+        });
+      } else {
+        manualSelect = itemSelectModalEl.tomselect;
       }
+
+      // preselect resources currently selected in the Scheduler (shows badges)
+      manualSelect.clear(true);
+      manualSelect.setValue(selectedItemIds, true);
+      renderSelectedItems(selectedItemIds);
+
+      // Restore the correct recurrence fields when reopening the modal
+      const recurrenceSelect = document.querySelector<HTMLSelectElement>(
+        '#itemPickerSelectModal .scheduler-recurrence-frequency',
+      );
+      if (recurrenceSelect) {
+        updateRecurrenceFields(recurrenceSelect);
+      }
+      showModal('#itemPickerSelectModal');
+      handleConfirm('confirmItemSelect', () => manualSelect.items);
     },
     // on click activate modal window
     eventClick: function(info): void {
@@ -466,6 +489,14 @@ if (calendarEl) {
       startInput.dataset.eventid = info.event.id;
       endInput.dataset.eventid = info.event.id;
       refreshBoundDivs(info.event.extendedProps);
+
+      // todo: fix (wip actually but it works) on load after having submitted once, we have to re toggle the selection
+      const isRecurring = Boolean(info.event.extendedProps.recurrence_series_id);
+      document.getElementById('viewRecurrence')?.classList.toggle('d-none', !isRecurring);
+      document.getElementById('editRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
+      document.getElementById('deleteRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
+      (document.getElementById('editScopeEvent') as HTMLInputElement).checked = true;
+      (document.getElementById('deleteScopeEvent') as HTMLInputElement).checked = true;
 
       // cancel block: show if event is cancellable OR user is Admin)
       const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
@@ -531,7 +562,8 @@ if (calendarEl) {
   }
 
   on('cancel-event', (el: HTMLElement) => {
-    ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
+    const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
+    ApiC.delete(`event/${el.dataset.id}?scope=${scope}`).then(() => calendar.refetchEvents()).catch();
   });
 
   on('cancel-event-with-message', (el: HTMLElement) => {
@@ -551,7 +583,11 @@ if (calendarEl) {
     payload.notifOnSaved = 0;
     // The notification must be sent before deletion, otherwise the event ID is lost (Nothing to show with this id)
     ApiC.post(`event/${el.dataset.id}/notifications`, payload)
-      .then(() => ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch())
+      .then(async () => {
+        const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
+        await ApiC.delete(`event/${el.dataset.id}?scope=${scope}`);
+        return calendar.refetchEvents();
+      })
       .then(() => notify.success());
   });
 

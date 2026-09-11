@@ -28,6 +28,8 @@ describe('Containers', () => {
   const stepperInput = (storageId: number): string =>
     `[data-storage-id="${storageId}"] input[data-action="container-qty-input"]`;
 
+  // the notice is shown and hidden with the hidden attribute, and asserting on that attribute
+  // rather than on visibility keeps the check free of where the modal's list has scrolled to
   const fullNotice = (storageId: number): string =>
     `[data-batch-full-notice][data-storage-id="${storageId}"]`;
 
@@ -208,7 +210,7 @@ describe('Containers', () => {
               .and('have.attr', 'max', '0')
               .and('be.disabled');
             // reached through occupancy rather than a small capacity, but refused all the same
-            cy.get(fullNotice(storageId)).should('be.visible');
+            cy.get(fullNotice(storageId)).should('not.have.attr', 'hidden');
           });
         });
       });
@@ -234,12 +236,13 @@ describe('Containers', () => {
                     selectEntities([first, second, third]);
                     openBatchContainerModal();
 
-                    // no capacity declared, so no ceiling to narrow and no slot count to read
-                    cy.get(stepperInput(unlimited))
-                      .should('not.have.attr', 'max')
-                      .and('not.have.attr', 'data-slots-left')
-                      .and('be.enabled');
-                    cy.get(fullNotice(unlimited)).should('not.be.visible');
+                    // no capacity declared, so no ceiling to narrow and no slot count to read.
+                    // one get per attribute: a passing not.have.attr yields undefined, and a
+                    // chained assertion would then be made on that instead of on the element
+                    cy.get(stepperInput(unlimited)).should('not.have.attr', 'max');
+                    cy.get(stepperInput(unlimited)).should('not.have.attr', 'data-slots-left');
+                    cy.get(stepperInput(unlimited)).should('be.enabled');
+                    cy.get(fullNotice(unlimited)).should('have.attr', 'hidden');
 
                     // floor(2 / 3) is 0: room for some entries is room for none of them
                     cy.get(stepperInput(tooSmall))
@@ -248,11 +251,11 @@ describe('Containers', () => {
                     cy.get(`[data-storage-id="${tooSmall}"] [data-action="container-qty-plus"]`)
                       .should('be.disabled');
                     // the badge still shows 0 / 2, so the reason has to be spelled out
-                    cy.get(fullNotice(tooSmall)).should('be.visible');
+                    cy.get(fullNotice(tooSmall)).should('not.have.attr', 'hidden');
 
                     // floor(3 / 3) is exactly 1
                     cy.get(stepperInput(exactly)).should('have.attr', 'max', '1').and('be.enabled');
-                    cy.get(fullNotice(exactly)).should('not.be.visible');
+                    cy.get(fullNotice(exactly)).should('have.attr', 'hidden');
 
                     // occupancy is subtracted before the division: floor((9 - 3) / 3)
                     cy.get(stepperInput(occupied))
@@ -289,7 +292,7 @@ describe('Containers', () => {
               openBatchContainerModal();
               cy.get(stepperInput(storageId)).should('have.attr', 'max', '1');
               cy.get(stepperInput(refusedId)).should('have.attr', 'max', '0').and('be.disabled');
-              cy.get(fullNotice(refusedId)).should('be.visible');
+              cy.get(fullNotice(refusedId)).should('not.have.attr', 'hidden');
               closeBatchContainerModal();
 
               cy.get(`[data-action="checkbox-entity"][data-id="${third}"]`).uncheck();
@@ -297,7 +300,7 @@ describe('Containers', () => {
               cy.get(stepperInput(storageId)).should('have.attr', 'max', '2');
               // the location is usable again, so its reason has to be taken back down
               cy.get(stepperInput(refusedId)).should('have.attr', 'max', '1').and('be.enabled');
-              cy.get(fullNotice(refusedId)).should('not.be.visible');
+              cy.get(fullNotice(refusedId)).should('have.attr', 'hidden');
             });
           });
         });

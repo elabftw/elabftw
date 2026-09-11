@@ -103,6 +103,7 @@ final class MakeController extends AbstractController
                     new Instance2Rors(),
                     new Teams2Rors($this->requester->getTeam(), false),
                     new Users2Rors($this->requester->getUserid(), false),
+                    includeLinkedEntities: $this->shouldIncludeLinkedEntities(),
                 ));
 
             case ExportFormat::ElnHtml:

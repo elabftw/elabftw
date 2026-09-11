@@ -1,47 +1,89 @@
 {# use with var "format" zip, eln or pdf #}
+{% set features = exportFeatures[format]|default([]) %}
+
 {# CHANGELOG #}
-<div class='d-flex justify-content-between mb-2'>
-  <div>
-    <label class='d-inline mr-1' for='{{ format }}_exportWithChangelog'>{{ 'Include changelog'|trans }}</label>
-    <p class='smallgray'>{{ 'The files will contain the changelog.'|trans }}</p>
+{% if 'changelog' in features %}
+  <div class='d-flex justify-content-between mb-2'>
+    <div>
+      <label class='d-inline mr-1' for='{{ format }}_exportWithChangelog'>{{ 'Include changelog'|trans }}</label>
+      <p class='smallgray'>{{ 'The files will contain the changelog.'|trans }}</p>
+    </div>
+    <label class='switch' title='{{ 'Include changelog'|trans }}'><span class='sr-only'>{{ 'Include changelog'|trans }}</span>
+      <input type='checkbox' id='{{ format }}_exportWithChangelog'>
+      <span class='slider'></span>
+    </label>
   </div>
-  <label class='switch' title='{{ 'Include changelog'|trans }}'><span class='sr-only'>{{ 'Include changelog'|trans }}</span>
-    <input type='checkbox' id='{{ format }}_exportWithChangelog'>
-    <span class='slider'></span>
-  </label>
-</div>
+{% endif %}
 
 {# LINKS #}
-<div class='d-flex justify-content-between mb-2'>
-  <div>
-    <label class='d-inline mr-1' for='{{ format }}_exportWithLinks'>{{ 'Include links'|trans }}</label>
-    <p class='smallgray'>{{ 'The files will contain the attached links.'|trans }}</p>
+{% if 'links' in features %}
+  <div class='d-flex justify-content-between mb-2'>
+    <div>
+      <label class='d-inline mr-1' for='{{ format }}_exportWithLinks'>{{ 'Include links'|trans }}</label>
+      <p class='smallgray'>{{ 'The files will contain the attached links.'|trans }}</p>
+    </div>
+    <label class='switch' title='{{ 'Include attached links'|trans }}'><span class='sr-only'>{{ 'Include attached links'|trans }}</span>
+      <input type='checkbox' id='{{ format }}_exportWithLinks'>
+      <span class='slider'></span>
+    </label>
   </div>
-  <label class='switch' title='{{ 'Include attached links'|trans }}'><span class='sr-only'>{{ 'Include attached links'|trans }}</span>
-    <input type='checkbox' id='{{ format }}_exportWithLinks'>
-    <span class='slider'></span>
-  </label>
-</div>
+{% endif %}
 
 {# pdf/a #}
-<div class='d-flex justify-content-between mb-2'>
-  <div>
-    <label class='d-inline mr-1' for='{{ format }}_exportPdfa'>{{ 'use pdf/a'|trans }}</label>
-    <p class='smallgray'>{{ 'for long term archiving. warning: using this option will make the files much bigger!'|trans }}</p>
+{% if 'pdfa' in features %}
+  <div class='d-flex justify-content-between mb-2'>
+    <div>
+      <label class='d-inline mr-1' for='{{ format }}_exportPdfa'>{{ 'use pdf/a'|trans }}</label>
+      <p class='smallgray'>{{ 'For long term archiving. warning: using this option will make the files much bigger!'|trans }}</p>
+    </div>
+    <label class='switch' title='{{ 'use pdf/a'|trans }}'><span class='sr-only'>{{ 'use pdf/a'|trans }}</span>
+      <input type='checkbox' id='{{ format }}_exportPdfa'>
+      <span class='slider'></span>
+    </label>
   </div>
-  <label class='switch' title='{{ 'use pdf/a'|trans }}'><span class='sr-only'>{{ 'use pdf/a'|trans }}</span>
-    <input type='checkbox' id='{{ format }}_exportPdfa'>
-    <span class='slider'></span>
-  </label>
-</div>
+{% endif %}
 
 {# CLASSIFICATION #}
-<div class='mb-2'>
-  <label for='{{ format }}_exportClassification'>{{ 'Classification'|trans }}</label>
-  <p class='smallgray'>{{ 'Add a classification level in the footer.'|trans }}</p>
-  <select id='{{ format }}_exportClassification' class='form-control'>
-    {% for value, text in classificationArr|default([]) %}
-      <option value='{{ value }}'>{{ text }}</option>
-    {% endfor %}
-  </select>
-</div>
+{% if 'classification' in features %}
+  <div class='mb-2'>
+    <div>
+    <label for='{{ format }}_exportClassification'>{{ 'Classification'|trans }}</label>
+    <p class='smallgray'>{{ 'Add a classification level in the footer.'|trans }}</p>
+    </div>
+    <select id='{{ format }}_exportClassification' class='form-control'>
+      {% for value, text in classificationArr|default([]) %}
+        <option value='{{ value }}'>{{ text }}</option>
+      {% endfor %}
+    </select>
+  </div>
+{% endif %}
+
+
+{# JSON #}
+{% if 'json' in features %}
+  <div class='d-flex justify-content-between mb-2'>
+    <div>
+      <label class='d-inline mr-1' for='zip_exportJson'>{{ 'Include JSON'|trans }}</label>
+      <p class='smallgray'>{{ 'Include a full JSON export for each entry.'|trans }}</p>
+    </div>
+    <label class='switch' title='{{ 'Include JSON'|trans }}'><span class='sr-only'>{{ 'Include JSON'|trans }}</span>
+      <input type='checkbox' id='zip_exportJson'>
+      <span class='slider'></span>
+    </label>
+  </div>
+{% endif %}
+
+{# FULLJSON #}
+{% if 'fulljson' in features %}
+  <div class='d-flex justify-content-between mb-2'>
+    <div>
+      <label class='d-inline mr-1' for='json_exportFullJson'>{{ 'Include full JSON'|trans }}</label>
+      <p class='smallgray'>{{ 'Include a full JSON export for each entry.'|trans }}</p>
+    </div>
+    <label class='switch' title='{{ 'Include full JSON'|trans }}'><span class='sr-only'>{{ 'Include full JSON'|trans }}</span>
+      <input type='checkbox' id='json_exportFullJson'>
+      <span class='slider'></span>
+    </label>
+  </div>
+  {# checkbox id="{{ format }}_exportFullJson" #}
+{% endif %}

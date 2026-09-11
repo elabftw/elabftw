@@ -1,3 +1,11 @@
+{% set exportFeatures = {
+  'pdf': ['changelog', 'links', 'pdfa', 'classification'],
+  'zip': ['changelog', 'pdfa', 'json'],
+  'eln': ['changelog', 'links'],
+  'json': ['fulljson', 'changelog'],
+}
+%}
+
 {# Modal for PDF export #}
 <div class='modal fade' id='pdfExportModal' tabindex='-1' role='dialog' aria-labelledby='pdfExportModalLabel'>
   <div class='modal-dialog' role='document'>
@@ -31,19 +39,6 @@
       </div>
       <div class='modal-body'>
         {% include 'export-menu-options.html' with {'format': 'zip'} %}
-
-        {# JSON #}
-        <div class='d-flex justify-content-between mb-2'>
-          <div>
-            <label class='d-inline mr-1' for='zip_exportJson'>{{ 'Include JSON'|trans }}</label>
-            <p class='smallgray'>{{ 'Only for ZIP: include a full JSON export for each entry.'|trans }}</p>
-          </div>
-          <label class='switch' title='{{ 'Include JSON'|trans }}'><span class='sr-only'>{{ 'Include JSON'|trans }}</span>
-            <input type='checkbox' id='zip_exportJson'>
-            <span class='slider'></span>
-          </label>
-        </div>
-
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
@@ -133,6 +128,27 @@
   </div>
 </div>
 
+{# Modal for JSON export #}
+<div class='modal fade' id='jsonExportModal' tabindex='-1' role='dialog' aria-labelledby='jsonExportModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='jsonExportModalLabel'><i class='fas fa-fw fa-file-pdf mr-1'></i>{{ 'Export as JSON'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        {% include 'export-menu-options.html' with {'format': 'json'} %}
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to' data-format='eln' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% include 'export-menu-dspace-modal.html' %}
 
 {# requires Entity #}
@@ -156,9 +172,9 @@
     <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='qrpngExportModal'>
       <i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}
     </button>
-    <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}' target='_blank' rel='noopener noreferrer'>
+    <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='jsonExportModal'>
       <i class='fas fa-code fa-fw'></i> {{ 'JSON'|trans }}
-    </a>
+    </button>
     <hr>
     {% set isDisabled = App.Config.configArr.dspace_host == '' or Entity.isReadOnly %}
     <button type='button' class='dropdown-item {{ isDisabled ? 'disabled' }}' data-action='open-dspace-modal' {{ isDisabled ? 'disabled aria-disabled="true"' : '' }}>

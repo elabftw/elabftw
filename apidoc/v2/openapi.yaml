@@ -3720,7 +3720,7 @@ paths:
         required: true
         schema:
           type: string
-          pattern: '^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$'
+          pattern: '^0[a-hj-km-np-tv-z0-9A-HJ-KM-NP-TV-Z]{6}[0-9]{2}$'
         example: '05kxdq627'
     post:
       tags: ['RORs']
@@ -6614,7 +6614,7 @@ paths:
         required: true
         schema:
           type: string
-          pattern: '^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$'
+          pattern: '^0[a-hj-km-np-tv-z0-9A-HJ-KM-NP-TV-Z]{6}[0-9]{2}$'
         example: '05kxdq627'
     post:
       tags: ['RORs']
@@ -6714,7 +6714,7 @@ paths:
         required: true
         schema:
           type: string
-          pattern: '^0[a-hj-km-np-tv-z0-9]{6}[0-9]{2}$'
+          pattern: '^0[a-hj-km-np-tv-z0-9A-HJ-KM-NP-TV-Z]{6}[0-9]{2}$'
         example: '05kxdq627'
     post:
       tags: ['RORs']

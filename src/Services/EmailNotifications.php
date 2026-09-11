@@ -19,10 +19,10 @@ use Elabftw\Factories\NotificationsFactory;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users\Users;
-use Exception;
 use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Mime\Address;
+use Throwable;
 
 use function bindtextdomain;
 use function dirname;
@@ -78,7 +78,7 @@ class EmailNotifications
                     }
                 }
                 $count++;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $output->writeln(sprintf('Error sending notification: %s', $e->getMessage()));
             }
         }

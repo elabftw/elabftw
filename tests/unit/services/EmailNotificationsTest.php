@@ -15,6 +15,8 @@ use DateTime;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Notifications;
+use Elabftw\Factories\NotificationsFactory;
 use Elabftw\Models\Notifications\CommentCreated;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\MathjaxFailed;
@@ -26,8 +28,10 @@ use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use PDO;
+use TypeError;
 
 class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 {
@@ -116,6 +120,43 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 
         // Restore user archive status
         $this->updateArchiveStatus($targetUser->userid, 0);
+    }
+
+    public function testAccountNotificationsWithoutTeam(): void
+    {
+        $targetUser = new Users(1);
+        foreach (array(Notifications::UserCreated, Notifications::UserNeedValidation) as $category) {
+            foreach (array(
+                array('{"userid":3}', ''),
+                array('{"userid":3,"team":null}', ''),
+                array('{"userid":3,"team":"Some team name"}', 'Some team name'),
+            ) as [$body, $team]) {
+                $Factory = new NotificationsFactory($targetUser, $category->value, $body);
+                $expected = $category === Notifications::UserCreated
+                    ? new UserCreated($targetUser, 3, $team)
+                    : new UserNeedValidation($targetUser, 3, $team);
+                $this->assertSame($expected->getEmail(), $Factory->getMailable()->getEmail());
+            }
+        }
+    }
+
+    public function testSendEmailsContinuesAfterTypeError(): void
+    {
+        // send existing notifications before testing two new ones
+        $this->stubEmail();
+        $targetUser = new Users(1);
+        new SelfIsValidated($targetUser)->create();
+        new SelfIsValidated($targetUser)->create();
+
+        $email = $this->createMock(Email::class);
+        $email->expects($this->exactly(2))
+            ->method('sendEmail')
+            ->willThrowException(new TypeError('Invalid notification payload'));
+        $output = new BufferedOutput();
+        $EmailNotifications = new EmailNotifications($email);
+        $EmailNotifications->sendEmails($output);
+
+        $this->assertStringContainsString('Error sending notification: Invalid notification payload', $output->fetch());
     }
 
     private function stubEmail(): void

@@ -48,8 +48,8 @@ final class NotificationsFactory
     {
         return match (Notifications::from($this->category)) {
             Notifications::CommentCreated => new CommentCreated($this->targetUser, $this->body['page'], $this->body['entity_id'], $this->body['commenter_userid']),
-            Notifications::UserCreated => new UserCreated($this->targetUser, $this->body['userid'], $this->body['team']),
-            Notifications::UserNeedValidation => new UserNeedValidation($this->targetUser, $this->body['userid'], $this->body['team']),
+            Notifications::UserCreated => new UserCreated($this->targetUser, $this->body['userid'], $this->body['team'] ?? ''),
+            Notifications::UserNeedValidation => new UserNeedValidation($this->targetUser, $this->body['userid'], $this->body['team'] ?? ''),
             Notifications::StepDeadline => new StepDeadline($this->targetUser, $this->body['step_id'], $this->body['entity_id'], $this->body['entity_page'], $this->body['deadline']),
             Notifications::EventDeleted => new EventDeleted($this->targetUser, $this->body['event'], $this->body['actor'], $this->body['msg'], EmailTarget::from($this->body['target'])),
             Notifications::SelfNeedValidation => new SelfNeedValidation($this->targetUser),

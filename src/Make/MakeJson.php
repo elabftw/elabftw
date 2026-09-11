@@ -28,7 +28,7 @@ use function mb_strlen;
  */
 class MakeJson extends AbstractMake implements StringMakerInterface
 {
-    public function __construct(private array $entityArr, private bool $includeLinkedEntities = true)
+    public function __construct(private array $entityArr, private bool $includeChangelog = true)
     {
         parent::__construct();
         $this->contentType = 'application/json';
@@ -61,13 +61,8 @@ class MakeJson extends AbstractMake implements StringMakerInterface
         foreach ($this->entityArr as $entity) {
             try {
                 $all = $this->getEntityData($entity);
-                if (!$this->includeLinkedEntities) {
-                    unset(
-                        $all['experiments_links'],
-                        $all['items_links'],
-                        $all['related_experiments_links'],
-                        $all['related_items_links'],
-                    );
+                if (!$this->includeChangelog) {
+                    unset($all['changelog']);
                 }
                 // add eLabFTW version number
                 $all['elabftw_version'] = BuildInfo::VERSION;

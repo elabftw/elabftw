@@ -26,6 +26,7 @@ use Elabftw\Make\MakeCsv;
 use Elabftw\Make\MakeEln;
 use Elabftw\Make\MakeElnHtml;
 use Elabftw\Make\MakeJson;
+use Elabftw\Make\MakeFullJson;
 use Elabftw\Make\MakeMultiPdf;
 use Elabftw\Make\MakePdf;
 use Elabftw\Make\MakeProcurementRequestsCsv;
@@ -118,7 +119,11 @@ final class MakeController extends AbstractController
                 )->getResponse();
 
             case ExportFormat::Json:
-                return new MakeJson($this->entityArr)->getResponse();
+                $includeChangelog = $this->shouldIncludeChangelog();
+                $Maker = $this->Request->query->getBoolean('fulljson')
+                  ? new MakeFullJson($this->entityArr, $includeChangelog)
+                  : new MakeJson($this->entityArr, $includeChangelog);
+                return $Maker->getResponse();
 
             case ExportFormat::PdfA:
                 $this->pdfa = true;

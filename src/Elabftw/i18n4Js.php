@@ -71,6 +71,8 @@ final class i18n4Js
             'clear' => _('Clear'),
             'click-to-edit' => _('Click to edit'),
             'check-required' => _('Please check required fields.'),
+            'container-batch-report-stored' => _('{{stored, number}} of {{planned, number}} containers stored'),
+            'container-batch-report-summary' => _('Stored {{count, number}} of {{total, number}} entries in full. {{failed, number}} entries need attention:'),
             'container-batch-summary' => _('{{entries, number}} entries × {{perEntry, number}} containers = {{total, number}} containers total'),
             'copied' => _('Copied to clipboard.'),
             'comment-add' => _('Add a comment'),

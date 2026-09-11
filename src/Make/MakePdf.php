@@ -86,11 +86,13 @@ class MakePdf extends AbstractMakePdf
         protected Teams2Rors $teams2Rors,
         protected Users2Rors $users2Rors,
         bool $includeChangelog = false,
+        bool $includeLinkedEntities = false,
         Classification $classification = Classification::None,
     ) {
         parent::__construct(
             mpdfProvider: $mpdfProvider,
             includeChangelog: $includeChangelog,
+            includeLinkedEntities: $includeLinkedEntities,
             classification: $classification,
         );
 
@@ -282,6 +284,7 @@ class MakePdf extends AbstractMakePdf
             'date' => $date->format('Y-m-d'),
             'entityData' => $this->Entity->entityData,
             'includeChangelog' => $this->includeChangelog,
+            'includeLinkedEntities' => $this->includeLinkedEntities,
             'ghsImagesPath' => self::GHS_FOLDER,
             'includeFiles' => $this->includeAttachments,
             'isLocked' => $isLocked,

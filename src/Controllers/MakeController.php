@@ -170,6 +170,15 @@ final class MakeController extends AbstractController
         return $includeChangelog;
     }
 
+    private function shouldIncludeLinkedEntities(): bool
+    {
+        $includeLinkedEntities = false;
+        if ($this->Request->query->has('links')) {
+            $includeLinkedEntities = $this->Request->query->getBoolean('links');
+        }
+        return $includeLinkedEntities;
+    }
+
     private function populateSlugs(): void
     {
         try {
@@ -224,7 +233,7 @@ final class MakeController extends AbstractController
         $users2Rors = new Users2Rors($this->requester->getUserid());
         $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         if (count($this->entityArr) === 1) {
-            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $classification))->getResponse();
+            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
         }
         return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog()))->getResponse();
     }

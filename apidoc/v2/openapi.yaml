@@ -2153,6 +2153,41 @@ components:
         fullname:
           type: string
 
+    # ROR
+    ror:
+      type: object
+      required: ['ror', 'created_at']
+      properties:
+        ror:
+          type: string
+          description: Research Organization Registry identifier.
+          pattern: '^0[a-hj-km-np-tv-z0-9A-HJ-KM-NP-TV-Z]{6}[0-9]{2}$'
+          example: '05kxdq627'
+        created_at:
+          type: string
+          description: Timestamp at which the ROR was associated.
+          example: '2026-09-11 12:49:00'
+    team_ror:
+      allOf:
+        - $ref: '#/components/schemas/ror'
+        - type: object
+          required: ['teams_id']
+          properties:
+            teams_id:
+              type: integer
+              description: ID of the associated team.
+              example: 4
+    user_ror:
+      allOf:
+        - $ref: '#/components/schemas/ror'
+        - type: object
+          required: ['users_id']
+          properties:
+            users_id:
+              type: integer
+              description: ID of the associated user.
+              example: 42
+
     # users seen as a user, with limited columns
     users:
       description: Response for when requester is a regular user.
@@ -3651,6 +3686,67 @@ paths:
               description: An URL ending with the integer returned by the action.
               schema:
                 type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  # INSTANCE RORS
+  /instance/rors:
+    summary: Manage RORs associated with the instance.
+    get:
+      tags: ['RORs']
+      summary: Read all RORs associated with the instance.
+      operationId: read-instance-rors
+      responses:
+        '200':
+          description: A list of RORs associated with the instance.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ror'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /instance/rors/{ror}:
+    summary: Manage a ROR associated with the instance.
+    parameters:
+      - name: ror
+        in: path
+        description: Research Organization Registry identifier.
+        required: true
+        schema:
+          type: string
+          pattern: '^0[a-hj-km-np-tv-z0-9A-HJ-KM-NP-TV-Z]{6}[0-9]{2}$'
+        example: '05kxdq627'
+    post:
+      tags: ['RORs']
+      summary: Associate a ROR with the instance. Requires Sysadmin permissions.
+      operationId: post-instance-ror
+      responses:
+        '201':
+          description: The ROR was associated with the instance.
+          headers:
+            location:
+              description: URL returned for the created association.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    delete:
+      tags: ['RORs']
+      summary: Remove a ROR from the instance. Requires Sysadmin permissions.
+      operationId: delete-instance-ror
+      responses:
+        '204':
+          description: The ROR was removed from the instance.
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -6475,6 +6571,186 @@ paths:
           $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/Unprocessable'
+
+  # TEAM RORS
+  /teams/{id}/rors:
+    summary: Manage RORs associated with a team.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['RORs']
+      summary: Read all RORs associated with a team.
+      operationId: read-team-rors
+      responses:
+        '200':
+          description: A list of RORs associated with the team.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/team_ror'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /teams/{id}/rors/{ror}:
+    summary: Manage a ROR associated with a team.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+      - name: ror
+        in: path
+        description: Research Organization Registry identifier.
+        required: true
+        schema:
+          type: string
+          pattern: '^0[a-hj-km-np-tv-z0-9A-HJ-KM-NP-TV-Z]{6}[0-9]{2}$'
+        example: '05kxdq627'
+    post:
+      tags: ['RORs']
+      summary: Associate a ROR with a team. Requires write access to the team.
+      operationId: post-team-ror
+      responses:
+        '201':
+          description: The ROR was associated with the team.
+          headers:
+            location:
+              description: URL returned for the created association.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['RORs']
+      summary: Remove a ROR from a team. Requires write access to the team.
+      operationId: delete-team-ror
+      responses:
+        '204':
+          description: The ROR was removed from the team.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # USER RORS
+  /users/{id}/rors:
+    summary: Manage RORs associated with a user.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user or `me`.
+        required: true
+        schema:
+          oneOf:
+            - type: integer
+            - type: string
+              enum: ['me']
+        examples:
+          first:
+            summary: Access our own user.
+            value: 'me'
+          second:
+            summary: Access user with ID 42.
+            value: 42
+    get:
+      tags: ['RORs']
+      summary: Read all RORs associated with a user.
+      operationId: read-user-rors
+      responses:
+        '200':
+          description: A list of RORs associated with the user.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user_ror'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /users/{id}/rors/{ror}:
+    summary: Manage a ROR associated with a user.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user or `me`.
+        required: true
+        schema:
+          oneOf:
+            - type: integer
+            - type: string
+              enum: ['me']
+        examples:
+          first:
+            summary: Access our own user.
+            value: 'me'
+          second:
+            summary: Access user with ID 42.
+            value: 42
+      - name: ror
+        in: path
+        description: Research Organization Registry identifier.
+        required: true
+        schema:
+          type: string
+          pattern: '^0[a-hj-km-np-tv-z0-9A-HJ-KM-NP-TV-Z]{6}[0-9]{2}$'
+        example: '05kxdq627'
+    post:
+      tags: ['RORs']
+      summary: Associate a ROR with a user. Requires Admin permissions for the user.
+      operationId: post-user-ror
+      responses:
+        '201':
+          description: The ROR was associated with the user.
+          headers:
+            location:
+              description: URL returned for the created association.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['RORs']
+      summary: Remove a ROR from a user. Requires Admin permissions for the user.
+      operationId: delete-user-ror
+      responses:
+        '204':
+          description: The ROR was removed from the user.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # USERS UPLOADS
   /users/{id}/uploads:

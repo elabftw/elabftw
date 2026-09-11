@@ -82,6 +82,7 @@ import { applyTheme, isThemeVariant, updateThemeControls } from './theme';
 import { mount } from 'svelte';
 import PrimaryColorPicker from './components/PrimaryColorPicker.svelte';
 import TrainingMode from './components/TrainingMode.svelte';
+import { getContrastResult } from './a11y_utils';
 
 // we need to extend the interface from malle to add more properties
 interface Status extends SelectOptions {
@@ -586,6 +587,7 @@ if (entity.type !== EntityType.Other && (pageMode === 'view' || pageMode === 'ed
       const splitValue = value.split('|');
       elem.dataset.id = splitValue[0];
       elem.style.setProperty('--bg', `#${splitValue[1]}`);
+      elem.style.setProperty('--fg', `#${splitValue[2] ?? 'ffffff'}`);
       return true;
     },
     onEdit: selectCurrentCatStatOption,
@@ -1823,3 +1825,47 @@ function bindMoreFiltersOutsideClick(): void {
     });
   });
 }
+
+// update category preview on catstat page & show WCAG contrast result
+function updateCatStatPreview(input: HTMLInputElement): void {
+  const row = input.closest<HTMLElement>('[data-catstat-row]');
+  if (!row) return;
+
+  const preview = row.querySelector<HTMLElement>('[data-catstat-preview]');
+  if (!preview) return;
+
+  if (input.dataset.target === 'title') {
+    preview.textContent = input.value;
+  } else if (input.dataset.target === 'color') {
+    preview.style.setProperty('--bg', input.value);
+  } else if (input.dataset.target === 'color_fg') {
+    preview.style.setProperty('--fg', input.value);
+  }
+
+  const backgroundInput = row.querySelector<HTMLInputElement>('[data-target="color"]');
+  const foregroundInput = row.querySelector<HTMLInputElement>('[data-target="color_fg"]');
+  const contrastElement = row.querySelector<HTMLElement>('[data-catstat-contrast]');
+  if (!backgroundInput || !foregroundInput || !contrastElement) return;
+
+  const contrast = getContrastResult(backgroundInput.value, foregroundInput.value);
+  contrastElement.className = `small ml-2 ${contrast.className}`;
+  contrastElement.textContent = `${contrast.icon} ${contrast.level} ${contrast.ratio.toFixed(1)}:1`;
+  contrastElement.title = contrast.description;
+}
+
+document.addEventListener('input', event => {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement) || !input.closest('#catStatDiv')) return;
+
+  if (input.dataset.target === 'title' || input.dataset.target === 'color' || input.dataset.target === 'color_fg') {
+    updateCatStatPreview(input);
+  }
+});
+
+// display for each category
+document.querySelectorAll<HTMLElement>('[data-catstat-row]').forEach(row => {
+  const colorInput = row.querySelector<HTMLInputElement>('[data-target="color"]');
+  if (colorInput) {
+    updateCatStatPreview(colorInput);
+  }
+});

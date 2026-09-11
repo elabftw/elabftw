@@ -103,6 +103,35 @@ describe('Experiments', () => {
     //cy.get('#catStatDiv').should('contain', catname);
   });
 
+  it('Preview resource category colors', () => {
+    const catname = `Cypress preview ${Date.now()}`;
+    cy.visit('/resources-categories.php');
+    // create our own category so this test can run standalone
+    cy.get('[data-target="createCatStatModal"]').click();
+    cy.get('#createCatStatName').should('be.visible').type(catname);
+    cy.get('[data-action="create-catstat"]').click();
+
+    cy.get(`[data-cy="expcatName"][value="${catname}"]`)
+      .closest('[data-catstat-row]')
+      .as('categoryRow');
+
+    // preview reacts immediately to the color inputs
+    cy.get('@categoryRow').find('[data-target="color"]').invoke('val', '#ffffff').trigger('input');
+    cy.get('@categoryRow').find('[data-target="color_fg"]').invoke('val', '#000000').trigger('input');
+
+    cy.get('@categoryRow').find('[data-catstat-preview]')
+      .should('contain', catname)
+      .and('have.css', 'background-color', 'rgb(255, 255, 255)')
+      .and('have.css', 'color', 'rgb(0, 0, 0)');
+
+    cy.get('@categoryRow').find('[data-catstat-contrast]')
+      .should('contain', 'AAA 21.0:1');
+
+    // cleanup
+    cy.on('window:confirm', () => true);
+    cy.get('@categoryRow').find('[data-action="destroy-catstat"]').click();
+  });
+
   it('Create and edit an experiment', () => {
     cy.createEntity('experiment', 'Cypress created experiment').then(() => {
       entityCatStat('Not set', 'Demo', 'Success');

@@ -32,6 +32,7 @@
     category?: string | null;
     category_title?: string | null;
     category_color?: string | null;
+    category_color_fg?: string | null;
     status?: string | null;
     status_title?: string | null;
     status_color?: string | null;
@@ -667,7 +668,7 @@
               <button
                 class='btn catstat-btn category-btn mr-1'
                 type='button'
-                style={`--bg: #${getLeftColor(entity)};line-height:normal;`}
+                style={`--bg: #${getLeftColor(entity)}; --fg: #${entity.category_color_fg}; line-height:normal;`}
                 data-key='category'
                 data-value={entity.category}
                 onclick={event => handleFilterClick(event, 'category', entity.category, entity.category_title)}

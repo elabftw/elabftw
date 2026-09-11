@@ -22,6 +22,12 @@ final class ResourcesCategories extends AbstractStatus
     protected string $table = 'items_categories';
 
     #[Override]
+    protected function supportsForegroundColor(): bool
+    {
+        return true;
+    }
+
+    #[Override]
     protected function getUsersCanwriteName(): string
     {
         return 'resources_categories';

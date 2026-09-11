@@ -12,7 +12,7 @@
       </div>
       <div class='modal-body'>
         {# STORAGE #}
-        <div class='mb-2'>
+        <div class='mb-2' id='containerDistributeSection'>
           <h5><label for='containerQtyStoredInput'>{{ 'Adjust container capacity and unit'|trans }}</label></h5>
           <div class='input-group mb-2'>
             {# set default value to 1 instead of 0 as we probably want to add at least one thing #}
@@ -45,6 +45,14 @@
           <h5 class='mt-2'>{{ 'Distribute containers across the storage locations below'|trans }}</h5>
           {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': true} %}
         </div>
+        {% if withSelected %}
+          {# takes the place of the section above once a batch did not go through in full: the
+             containers that were made cannot be taken back, so each entry reports what it got #}
+          <div id='containerBatchReport' hidden>
+            <p id='containerBatchReportSummary'></p>
+            <ul class='list-group' id='containerBatchReportList'></ul>
+          </div>
+        {% endif %}
       </div>
 
       <div class='modal-footer'>

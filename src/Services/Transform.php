@@ -128,6 +128,16 @@ final class Transform
                     ),
                     $notif['created_at'],
                 ),
+            Notifications::WebhookDisabled =>
+                sprintf(
+                    '<span data-action="ack-notif" data-id="%d">%s</span>' . $relativeMoment,
+                    (int) $notif['id'],
+                    sprintf(
+                        _('A webhook was disabled after too many failed deliveries: %s'),
+                        $notif['body']['url'],
+                    ),
+                    $notif['created_at'],
+                ),
             default => throw new ImproperActionException('Invalid notification type.'),
         };
     }

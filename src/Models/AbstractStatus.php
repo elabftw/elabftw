@@ -45,8 +45,6 @@ abstract class AbstractStatus extends AbstractCategory
 
     protected string $table;
 
-    protected bool $hasForegroundColor = false;
-
     #[Override]
     public function updateOrdering(OrderingParams $params): void
     {
@@ -85,7 +83,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function readOne(): array
     {
-        $colorFgSql = $this->hasForegroundColor ? ', color_fg' : '';
+        $colorFgSql = $this->supportsForegroundColor() ? ', color_fg' : '';
         $sql = sprintf('SELECT id, title, color%s, ordering, state, team, is_private
             FROM %s WHERE id = :id AND team = :team', $colorFgSql, $this->table);
         $req = $this->Db->prepare($sql);
@@ -104,7 +102,7 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $colorFgSql = $this->hasForegroundColor ? ', entity.color_fg' : '';
+        $colorFgSql = $this->supportsForegroundColor() ? ', entity.color_fg' : '';
         $sql = sprintf(
             'SELECT
                 entity.id,
@@ -138,7 +136,7 @@ abstract class AbstractStatus extends AbstractCategory
      */
     public function readAllIgnoreState(): array
     {
-        $colorFgSql = $this->hasForegroundColor ? ', color_fg' : '';
+        $colorFgSql = $this->supportsForegroundColor() ? ', color_fg' : '';
         $sql = sprintf('SELECT id, title, color%s
             FROM %s WHERE team = :team ORDER BY ordering ASC', $colorFgSql, $this->table);
         $req = $this->Db->prepare($sql);
@@ -158,7 +156,7 @@ abstract class AbstractStatus extends AbstractCategory
                 throw new ForbiddenException(description: _('Only a team Admin can modify the visibility.'));
             }
         }
-        if (array_key_exists('color_fg', $params) && !$this->hasForegroundColor) {
+        if (array_key_exists('color_fg', $params) && !$this->supportsForegroundColor()) {
             throw new ImproperActionException('Foreground color is only available for categories.');
         }
         foreach ($params as $key => $value) {
@@ -181,7 +179,7 @@ abstract class AbstractStatus extends AbstractCategory
         $title = Filter::title($title);
         $color ??= $this->getRandomDarkColor();
         $color = Check::color($color);
-        if ($this->hasForegroundColor) {
+        if ($this->supportsForegroundColor()) {
             $colorFg ??= '#ffffff';
             $colorFg = Check::color($colorFg);
             $sql = sprintf('INSERT INTO %s (title, color, color_fg, team)
@@ -193,13 +191,18 @@ abstract class AbstractStatus extends AbstractCategory
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title);
         $req->bindParam(':color', $color);
-        if ($this->hasForegroundColor) {
+        if ($this->supportsForegroundColor()) {
             $req->bindParam(':color_fg', $colorFg);
         }
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
+    }
+
+    protected function supportsForegroundColor(): bool
+    {
+        return false;
     }
 
     private function update(StatusParams $params): bool

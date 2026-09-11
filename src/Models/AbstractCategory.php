@@ -30,9 +30,6 @@ abstract class AbstractCategory extends AbstractRest
 
     protected string $table;
 
-    // default to false because AbstractStatus extends it
-    protected bool $hasForegroundColor = false;
-
     public function __construct(protected Teams $Teams, ?int $id = null)
     {
         parent::__construct();

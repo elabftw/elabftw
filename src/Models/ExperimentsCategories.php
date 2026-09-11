@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Override;
+
 /**
  * Categories for experiments
  */
@@ -19,5 +21,9 @@ final class ExperimentsCategories extends AbstractStatus
 {
     protected string $table = 'experiments_categories';
 
-    protected bool $hasForegroundColor = true;
+    #[Override]
+    protected function supportsForegroundColor(): bool
+    {
+        return true;
+    }
 }

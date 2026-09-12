@@ -93,6 +93,28 @@ interface Status extends SelectOptions {
 
 export const selectedEntities = writable<string[]>([]);
 
+/**
+ * Drop the show page selection everywhere it is held: the store, the checkboxes, the row
+ * highlights, and the controls that only appear once something is selected.
+ */
+export function clearEntitiesSelection(): void {
+  selectedEntities.set([]);
+  document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked').forEach(checkbox => {
+    checkbox.checked = false;
+    const row = checkbox.closest('.entity') as HTMLElement | null;
+    if (row) { row.style.backgroundColor = ''; }
+  });
+  document.getElementById('withSelected')?.setAttribute('hidden', 'hidden');
+  document.querySelector('a[data-action="invert-entities-selection"]')?.setAttribute('hidden', 'hidden');
+  const selectAll = document.querySelector<HTMLElement>('[data-action="toggle-select-all-entities"]');
+  if (selectAll && selectAll.dataset.target === 'unselect') {
+    selectAll.dataset.target = 'select';
+    selectAll.querySelector('i')?.classList.replace('fa-square-check', 'fa-square');
+  }
+  // table mode keeps its own selection inside ag-grid, out of reach of the checkbox query above
+  window.dispatchEvent(new CustomEvent('entities-selection-cleared'));
+}
+
 const pageParams = new URLSearchParams(document.location.search);
 const pageMode = pageParams.get('mode');
 // check if we're on view/edit mode
@@ -922,11 +944,14 @@ on('toggle-next', (el: HTMLElement) => {
 const storageTreeIds = (): string[] =>
   Array.from(document.querySelectorAll('[data-storage-tree]')).map(el => el.id);
 
-const reloadStorageTrees = (): Promise<void> => reloadElements(storageTreeIds());
+// a re-render restores each stepper's max to the raw free-slot count, so the per-entry
+// ceilings are re-applied here rather than at every call site
+const reloadStorageTrees = (): Promise<void> =>
+  reloadElements(storageTreeIds()).then(() => applyPerEntryCeilings());
 
 /** Refresh the trees along with the entity's own container list: both show occupancy. */
 const reloadStorageAndContainers = (): Promise<void> =>
-  reloadElements(['storageDivContent', ...storageTreeIds()]);
+  reloadElements(['storageDivContent', ...storageTreeIds()]).then(() => applyPerEntryCeilings());
 
 /** Re-open a unit and its ancestors, in every tree that renders it. */
 function revealStorageUnit(storageId: string): void {
@@ -997,9 +1022,51 @@ const containerAssigned = (): number =>
   containerStepperInputs().reduce((sum, input) => sum + intFromInput(input), 0);
 
 /**
- * Room left in a location, read from the max the server rendered for it. An unlimited
- * location has no max, hence Infinity. Full locations render no stepper at all, so they
- * never reach here.
+ * The same distribution is applied to every entity, so all the counts in this modal are
+ * per entry: on the show page that is one per selected entry, elsewhere a single entity.
+ */
+const containerEntryCount = (): number => {
+  const modal = document.getElementById('storageModal');
+  if (!modal?.dataset.withSelected) {
+    return 1;
+  }
+  return getFromSvelte(selectedEntities).length;
+};
+
+/**
+ * Narrow every stepper's max from the free slots a location has to what a single entry may
+ * claim, so a distribution can never overbook a location once multiplied by the selection.
+ * A location without room for the whole selection is refused outright, as a full one is.
+ * Runs in both directions, as the selection can shrink between two openings of the modal.
+ */
+function applyPerEntryCeilings(): void {
+  const entries = Math.max(1, containerEntryCount());
+  containerStepperInputs().forEach(input => {
+    // unlimited locations render no slot count and keep their absent max
+    if (input.dataset.slotsLeft === undefined) {
+      return;
+    }
+    // the remainder is unusable: a slot left over cannot be given to every entry
+    const perEntry = Math.floor(Math.max(0, Number(input.dataset.slotsLeft)) / entries);
+    input.max = String(perEntry);
+    input.disabled = perEntry === 0;
+    if (perEntry === 0) {
+      input.value = '0';
+    }
+    input.closest('.input-group')?.querySelectorAll('button').forEach((btn: HTMLButtonElement) => {
+      btn.disabled = perEntry === 0;
+    });
+    // the aggregate notice cannot be relied on here: it stays silent as soon as one location
+    // declares no capacity, so each refused location says so for itself
+    document.querySelector(`[data-batch-full-notice][data-storage-id="${input.dataset.storageId}"]`)
+      ?.toggleAttribute('hidden', perEntry !== 0);
+  });
+}
+
+/**
+ * Room left in a location for one entry, read from its max. An unlimited location has no
+ * max, hence Infinity. Full locations render no stepper at all, so they never reach here.
+ * See applyPerEntryCeilings: max counts what a single entry may claim, not the raw slots.
  */
 const slotsLeft = (input: HTMLInputElement): number =>
   input.max === '' ? Infinity : Math.max(0, Number(input.max));
@@ -1022,6 +1089,12 @@ function refreshContainerDistribution(): void {
   if (notice) notice.toggleAttribute('hidden', target <= totalSlotsLeft());
   const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
   if (submitBtn) submitBtn.disabled = target === 0 || assigned !== target;
+  // only rendered by the batch modal, where the total is not simply the target
+  const summary = document.getElementById('containerBatchSummary');
+  if (summary) {
+    const entries = containerEntryCount();
+    summary.textContent = i18next.t('container-batch-summary', {entries: entries, perEntry: target, total: entries * target});
+  }
 }
 
 /**
@@ -1068,6 +1141,144 @@ on('container-qty-minus', (el: HTMLElement) => {
   if (input) setStepperValue(input, intFromInput(input) - 1);
 });
 
+/** The distribution to create, once per entity: one entry per location that was given containers. */
+const containerPlan = (): {storageId: string, count: number}[] =>
+  containerStepperInputs()
+    .map(input => ({storageId: input.dataset.storageId, count: intFromInput(input)}))
+    .filter(item => item.count > 0);
+
+/**
+ * Run a task over a list with a bounded number in flight. A batch reaches one request per
+ * container per entity, and every one of them row locks its destination location to check
+ * capacity, so firing them all at once only trades browser queueing for database contention.
+ */
+async function runWithConcurrency<T>(items: T[], limit: number, task: (item: T) => Promise<void>): Promise<void> {
+  const queue = items.slice();
+  await Promise.all(Array.from({ length: Math.min(limit, queue.length) }, async () => {
+    for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
+      await task(next);
+    }
+  }));
+}
+
+/** What one entry was given out of the distribution, and the refusal that stopped it there. */
+type BatchResult = {id: string, stored: number, planned: number, reason?: string};
+
+/**
+ * Name an entry the way the show page names it, so the report reads like the list behind it.
+ * Item mode and table mode render the title differently, and neither is guaranteed to be there.
+ */
+const entityLabel = (id: string): string => {
+  const row = document.querySelector(`[data-entity-id="${id}"]`);
+  const title = (row?.querySelector('.title a') ?? row?.querySelector('[col-id="title"]'))?.textContent?.trim();
+  return title ? `#${id} ${title}` : `#${id}`;
+};
+
+/** One line of the report: what the entry got, out of what was asked, and why it stopped. */
+function buildReportItem(result: BatchResult): HTMLLIElement {
+  const item = document.createElement('li');
+  item.className = 'list-group-item py-2';
+  const label = document.createElement('p');
+  label.className = 'mb-1 font-weight-bold';
+  label.textContent = entityLabel(result.id);
+  const counts = document.createElement('p');
+  counts.className = 'mb-1';
+  counts.textContent = i18next.t('container-batch-report-stored', {stored: result.stored, planned: result.planned});
+  item.append(label, counts);
+  if (result.reason) {
+    const reason = document.createElement('p');
+    reason.className = 'smallgray mb-0';
+    // the message the api sent back, not a key: textContent, as it can carry anything
+    reason.textContent = result.reason;
+    item.append(reason);
+  }
+  return item;
+}
+
+/**
+ * Put the report in the place of the distribution controls, which takes the steppers and the
+ * submit button with it: the containers that were made cannot be taken back from here, so a
+ * second run over the same entries could only add to them.
+ */
+function showBatchReport(results: BatchResult[], failed: BatchResult[]): void {
+  const report = document.getElementById('containerBatchReport');
+  const summary = document.getElementById('containerBatchReportSummary');
+  const list = document.getElementById('containerBatchReportList');
+  if (!report || !summary || !list) {
+    return;
+  }
+  summary.textContent = i18next.t('container-batch-report-summary', {
+    count: results.length - failed.length,
+    total: results.length,
+    failed: failed.length,
+  });
+  list.replaceChildren(...failed.map(result => buildReportItem(result)));
+  document.getElementById('containerDistributeSection')?.setAttribute('hidden', 'hidden');
+  report.removeAttribute('hidden');
+}
+
+/**
+ * Apply the distribution to every entity selected on the show page. The steppers are already
+ * capped so that no location can be overbooked, but each container is still created under the
+ * entity's own write permission, so an entity can be refused and is reported as such.
+ */
+async function storeContainersForSelection(
+  plan: {storageId: string, count: number}[],
+  qtyStored: string,
+  qtyUnit: string,
+): Promise<void> {
+  const checked = getFromSvelte(selectedEntities);
+  if (checked.length === 0) {
+    notify.error('nothing-selected');
+    return;
+  }
+  if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
+    return;
+  }
+  const planned = plan.reduce((sum, item) => sum + item.count, 0);
+  const results: BatchResult[] = checked.map(id => ({id: id, stored: 0, planned: planned}));
+  await runWithConcurrency(results, 4, async result => {
+    // sequential within an entity: the first refusal condemns the rest of its distribution too
+    try {
+      for (const item of plan) {
+        for (let i = 0; i < item.count; i++) {
+          await ApiC.post(`${entity.type}/${result.id}/containers/${item.storageId}`, {
+            qty_stored: qtyStored,
+            qty_unit: qtyUnit,
+            notifOnSaved: 0,
+            notifOnError: 0,
+          });
+          result.stored++;
+        }
+      }
+    } catch (error) {
+      result.reason = (error as Error).message;
+    }
+  });
+  containerStepperInputs().forEach(input => { input.value = '0'; });
+  // the containers exist whether or not the trees can be redrawn, and a red toast next to the
+  // success one would read as a failed batch. A stale tree is recomputed on the next open
+  await reloadStorageTrees().catch(error => console.error(error));
+  const failed = results.filter(result => result.stored < result.planned);
+  if (failed.length === 0) {
+    // as on the partial path: a selection left standing invites a second, duplicating batch
+    clearEntitiesSelection();
+    notify.success();
+    $('#storageModal').modal('hide');
+    return;
+  }
+  // a partial failure ends the batch: the entries that did get their containers are still
+  // selected, so a second run over the same selection would give them a second distribution.
+  // Drop the selection, then report what each entry was left with
+  clearEntitiesSelection();
+  for (const result of failed) {
+    const elem = document.querySelector(`[data-entity-id="${result.id}"]`) as HTMLElement;
+    if (elem) { elem.style.backgroundColor = 'var(--lightred)'; }
+  }
+  showBatchReport(results, failed);
+  notify.warning('entity-patch-multi-warning', {count: results.length - failed.length, failed: failed.length});
+}
+
 on('store-containers-distributed', () => {
   const submitBtn = document.getElementById('storeContainersBtn') as HTMLButtonElement | null;
   // guard against double submit: a disabled button means a batch is already in flight
@@ -1076,20 +1287,31 @@ on('store-containers-distributed', () => {
   }
   const qty_stored = (document.getElementById('containerQtyStoredInput') as HTMLInputElement).value;
   const qty_unit = (document.getElementById('containerQtyUnitSelect') as HTMLSelectElement).value;
-  const postCalls = containerStepperInputs().flatMap(input => {
-    const count = intFromInput(input);
-    return Array.from({ length: count }, () =>
-      ApiC.post(`${entity.type}/${entity.id}/containers/${input.dataset.storageId}`, {
+  const plan = containerPlan();
+  if (plan.length === 0) {
+    return;
+  }
+  if (document.getElementById('storageModal')?.dataset.withSelected) {
+    // a batch can be hundreds of requests, so spin the button as the other batch actions do
+    const oldHTML = submitBtn ? mkSpin(submitBtn) : '';
+    storeContainersForSelection(plan, qty_stored, qty_unit).finally(() => {
+      if (submitBtn) mkSpinStop(submitBtn, oldHTML);
+      // after mkSpinStop, which re-enables the button unconditionally
+      refreshContainerDistribution();
+    });
+    return;
+  }
+
+  // lock the button while the batch runs so a second click cannot create a duplicate distribution
+  if (submitBtn) submitBtn.disabled = true;
+  const postCalls = plan.flatMap(item =>
+    Array.from({ length: item.count }, () =>
+      ApiC.post(`${entity.type}/${entity.id}/containers/${item.storageId}`, {
         qty_stored: qty_stored,
         qty_unit: qty_unit,
       }),
-    );
-  });
-  if (postCalls.length === 0) {
-    return;
-  }
-  // lock the button while the batch runs so a second click cannot create a duplicate distribution
-  if (submitBtn) submitBtn.disabled = true;
+    ),
+  );
   // allSettled, not all: one location refusing on capacity must not hide the containers that
   // did land elsewhere. Each request reports its own error, so nothing is notified here.
   Promise.allSettled(postCalls)
@@ -1124,6 +1346,12 @@ if (storageModalEl) {
   // reset all steppers each time the modal opens so a reopened modal starts clean
   $('#storageModal').on('show.bs.modal', () => {
     containerStepperInputs().forEach(input => { input.value = '0'; });
+    // the report of a previous batch would otherwise still stand in for the controls
+    document.getElementById('containerBatchReport')?.setAttribute('hidden', 'hidden');
+    document.getElementById('containerDistributeSection')?.removeAttribute('hidden');
+    // the ceilings depend on how many entities are selected, and the selection cannot change
+    // while the modal is open, so opening it is the moment to recompute them
+    applyPerEntryCeilings();
     refreshContainerDistribution();
   });
 }

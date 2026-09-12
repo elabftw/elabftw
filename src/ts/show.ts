@@ -27,7 +27,7 @@ import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
-import { selectedEntities } from './common';
+import { clearEntitiesSelection, selectedEntities } from './common';
 import { on } from './handlers';
 
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
@@ -801,20 +801,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearForm(document.getElementById(el.dataset.target));
 
     if (el.dataset.target === 'multiChangesForm') {
-      selectedEntities.set([]);
-
-      document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked').forEach(checkbox => {
-        checkbox.checked = false;
-        (checkbox.closest('.entity') as HTMLElement).style.backgroundColor = '';
-      });
-
-      document.getElementById('withSelected')?.setAttribute('hidden', 'hidden');
-      document.querySelector('a[data-action="invert-entities-selection"]')?.setAttribute('hidden', 'hidden');
-      const selectAll = document.querySelector<HTMLElement>('[data-action="toggle-select-all-entities"]');
-      if (selectAll && selectAll.dataset.target === 'unselect') {
-        selectAll.dataset.target = 'select';
-        selectAll.querySelector('i')?.classList.replace('fa-square-check', 'fa-square');
-      }
+      clearEntitiesSelection();
     }
   });
 

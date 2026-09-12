@@ -4,12 +4,66 @@ describe('Containers', () => {
   });
 
   // create a storage location via the API and return its id (parsed from the Location header)
-  const createStorageUnit = (name: string): Cypress.Chainable<number> =>
-    cy.request({ method: 'POST', url: '/api/v2/storage_units', body: { name } })
+  const createStorageUnit = (name: string, capacity?: number): Cypress.Chainable<number> =>
+    cy.request({ method: 'POST', url: '/api/v2/storage_units', body: { name, capacity } })
       .then(resp => {
         expect(resp.status).to.eq(201);
         return parseInt(resp.headers['location'].toString().split('/').pop(), 10);
       });
+
+  const createItem = (): Cypress.Chainable<number> =>
+    cy.request({ method: 'POST', url: '/api/v2/items', body: { title: `Cypress container item ${Date.now()}` } })
+      .then(resp => {
+        expect(resp.status).to.eq(201);
+        return parseInt(resp.headers['location'].toString().split('/').pop(), 10);
+      });
+
+  // occupy a location, so that a ceiling computed from it proves occupancy was subtracted
+  const createContainer = (itemId: number, storageId: number): Cypress.Chainable =>
+    cy.request({ method: 'POST', url: `/api/v2/items/${itemId}/containers/${storageId}`, body: { qty_stored: 1 } })
+      .then(resp => {
+        expect(resp.status).to.eq(201);
+      });
+
+  const stepperInput = (storageId: number): string =>
+    `[data-storage-id="${storageId}"] input[data-action="container-qty-input"]`;
+
+  // the notice is shown and hidden with the hidden attribute, and asserting on that attribute
+  // rather than on visibility keeps the check free of where the modal's list has scrolled to
+  const fullNotice = (storageId: number): string =>
+    `[data-batch-full-notice][data-storage-id="${storageId}"]`;
+
+  // show() takes orderby, sort and limit_nb from the user record, so all three are pinned
+  // here: the resources each test creates have to reach the first page for the checkbox
+  // lookups below. skip_pinned drops the pinned-first ordering on top of that.
+  // The per-row checkboxes also only exist in item mode; table mode has its own
+  const visitShowPageInItemMode = (): void => {
+    cy.request({
+      method: 'PATCH',
+      url: '/api/v2/users/me',
+      body: { display_mode: 'it', orderby: 'lastchange', sort: 'desc', limit_nb: 15 },
+    });
+    cy.visit('/database.php?skip_pinned=1');
+  };
+
+  const selectEntities = (ids: number[]): void => {
+    ids.forEach(id => {
+      cy.get(`[data-action="checkbox-entity"][data-id="${id}"]`).check();
+    });
+    cy.get('#withSelected').should('be.visible');
+  };
+
+  const openBatchContainerModal = (): void => {
+    cy.get('[data-action="toggle-modal"][data-target="storageModal"]').click();
+    // the fade leaves the modal visible but still opaque part way through, and bootstrap drops
+    // a hide that arrives then. Opacity reaches 1 only once the transition is over
+    cy.get('#storageModal').should('be.visible').and('have.css', 'opacity', '1');
+  };
+
+  const closeBatchContainerModal = (): void => {
+    cy.get('#storageModal .modal-footer button[data-dismiss="modal"]').click();
+    cy.get('#storageModal').should('not.be.visible');
+  };
 
   it('distributes containers and deletes them with their entity', () => {
     // set up two storage locations and a resource to store them in
@@ -108,6 +162,186 @@ describe('Containers', () => {
             cy.request({ method: 'GET', url: `/api/v2/storage_units/${storageA}` }).its('body.occupancy').should('eq', 0);
             cy.request({ method: 'GET', url: `/api/v2/storage_units/${storageB}` }).its('body.occupancy').should('eq', 0);
           });
+      });
+    });
+  });
+
+  it('applies the distribution to every entity selected on the show page', () => {
+    // capacity 7 with 3 entries selected leaves room for 2 containers per entry, remainder unusable
+    createStorageUnit(`Freezer C ${Date.now()}`, 7).then(storageId => {
+      createItem().then(first => {
+        createItem().then(second => {
+          createItem().then(third => {
+            const ids = [first, second, third];
+            visitShowPageInItemMode();
+            selectEntities(ids);
+            openBatchContainerModal();
+
+            // the ceiling is per entry: floor(7 / 3), not the 7 free slots the server rendered
+            cy.get(stepperInput(storageId))
+              .should('have.attr', 'max', '2')
+              .and('have.attr', 'data-slots-left', '7');
+
+            // 2 containers per entry across 3 entries
+            cy.get('#containerMultiplierInput').invoke('val', '2').trigger('input');
+            // asserted as non-empty rather than by wording, which is translated
+            cy.get('#containerBatchSummary').should('not.have.text', '');
+            cy.get('#storeContainersBtn').should('be.disabled');
+
+            cy.get(stepperInput(storageId)).invoke('val', '2').trigger('input');
+            cy.get('#containerAssignedCount').should('have.text', '2');
+            cy.get('#storeContainersBtn').should('be.enabled').click();
+
+            cy.get('#storageModal').should('not.be.visible');
+
+            // a batch that went through in full drops the selection, so nothing is left behind
+            // that a second batch could give the same distribution to all over again
+            cy.get('#withSelected').should('not.be.visible');
+            ids.forEach(id => {
+              cy.get(`[data-action="checkbox-entity"][data-id="${id}"]`).should('not.be.checked');
+            });
+
+            // every selected entity got the same distribution
+            ids.forEach(id => {
+              cy.request({ method: 'GET', url: `/api/v2/items/${id}/containers` }).then(resp => {
+                expect(resp.status).to.eq(200);
+                const containers = resp.body as Array<{ storage_id: number }>;
+                expect(containers).to.have.length(2);
+                expect(containers.every(c => c.storage_id === storageId)).to.eq(true);
+              });
+            });
+
+            // reopening recomputes from fresh occupancy: 7 - 6 = 1 free slot, so no entry
+            // can be given a container any more and the location is refused
+            selectEntities(ids);
+            openBatchContainerModal();
+            cy.get(stepperInput(storageId))
+              .should('have.attr', 'data-slots-left', '1')
+              .and('have.attr', 'max', '0')
+              .and('be.disabled');
+            // reached through occupancy rather than a small capacity, but refused all the same
+            cy.get(fullNotice(storageId)).should('not.have.attr', 'hidden');
+          });
+        });
+      });
+    });
+  });
+
+  it('caps each location by what one selected entry may claim', () => {
+    const stamp = Date.now();
+    // unlimited, too small for the selection, exactly the selection, and partly occupied
+    createStorageUnit(`Unlimited ${stamp}`).then(unlimited => {
+      createStorageUnit(`Too small ${stamp}`, 2).then(tooSmall => {
+        createStorageUnit(`Exactly three ${stamp}`, 3).then(exactly => {
+          createStorageUnit(`Partly occupied ${stamp}`, 9).then(occupied => {
+            createItem().then(holder => {
+              // 3 of the 9 slots taken, so 6 remain and the ceiling must be floor(6 / 3)
+              createContainer(holder, occupied);
+              createContainer(holder, occupied);
+              createContainer(holder, occupied);
+              createItem().then(first => {
+                createItem().then(second => {
+                  createItem().then(third => {
+                    visitShowPageInItemMode();
+                    selectEntities([first, second, third]);
+                    openBatchContainerModal();
+
+                    // no capacity declared, so no ceiling to narrow and no slot count to read.
+                    // one get per attribute: a passing not.have.attr yields undefined, and a
+                    // chained assertion would then be made on that instead of on the element
+                    cy.get(stepperInput(unlimited)).should('not.have.attr', 'max');
+                    cy.get(stepperInput(unlimited)).should('not.have.attr', 'data-slots-left');
+                    cy.get(stepperInput(unlimited)).should('be.enabled');
+                    cy.get(fullNotice(unlimited)).should('have.attr', 'hidden');
+
+                    // floor(2 / 3) is 0: room for some entries is room for none of them
+                    cy.get(stepperInput(tooSmall))
+                      .should('have.attr', 'max', '0')
+                      .and('be.disabled');
+                    cy.get(`[data-storage-id="${tooSmall}"] [data-action="container-qty-plus"]`)
+                      .should('be.disabled');
+                    // the badge still shows 0 / 2, so the reason has to be spelled out
+                    cy.get(fullNotice(tooSmall)).should('not.have.attr', 'hidden');
+
+                    // floor(3 / 3) is exactly 1
+                    cy.get(stepperInput(exactly)).should('have.attr', 'max', '1').and('be.enabled');
+                    cy.get(fullNotice(exactly)).should('have.attr', 'hidden');
+
+                    // occupancy is subtracted before the division: floor((9 - 3) / 3)
+                    cy.get(stepperInput(occupied))
+                      .should('have.attr', 'data-slots-left', '6')
+                      .and('have.attr', 'max', '2');
+
+                    // the plus button clamps to the per-entry ceiling, not to the free slots
+                    cy.get('#containerMultiplierInput').invoke('val', '3').trigger('input');
+                    cy.get(`[data-storage-id="${exactly}"] [data-action="container-qty-plus"]`).click();
+                    cy.get(`[data-storage-id="${exactly}"] [data-action="container-qty-plus"]`).click();
+                    cy.get(stepperInput(exactly)).should('have.value', '1');
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it('widens the ceilings again when the selection shrinks', () => {
+    const stamp = Date.now();
+    // 4 free slots gives 1 per entry for 3 entries, but 2 per entry once one is unselected
+    createStorageUnit(`Freezer D ${stamp}`, 4).then(storageId => {
+      // 2 free slots is nothing per entry for 3 entries, but 1 each for 2 entries
+      createStorageUnit(`Freezer D refused ${stamp}`, 2).then(refusedId => {
+        createItem().then(first => {
+          createItem().then(second => {
+            createItem().then(third => {
+              visitShowPageInItemMode();
+              selectEntities([first, second, third]);
+
+              openBatchContainerModal();
+              cy.get(stepperInput(storageId)).should('have.attr', 'max', '1');
+              cy.get(stepperInput(refusedId)).should('have.attr', 'max', '0').and('be.disabled');
+              cy.get(fullNotice(refusedId)).should('not.have.attr', 'hidden');
+              closeBatchContainerModal();
+
+              cy.get(`[data-action="checkbox-entity"][data-id="${third}"]`).uncheck();
+              openBatchContainerModal();
+              cy.get(stepperInput(storageId)).should('have.attr', 'max', '2');
+              // the location is usable again, so its reason has to be taken back down
+              cy.get(stepperInput(refusedId)).should('have.attr', 'max', '1').and('be.enabled');
+              cy.get(fullNotice(refusedId)).should('have.attr', 'hidden');
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it('refuses a target that no location has room for across the selection', () => {
+    // 3 free slots is 1 per entry, so a target of 2 per entry cannot be distributed at all
+    createStorageUnit(`Freezer E ${Date.now()}`, 3).then(storageId => {
+      createItem().then(first => {
+        createItem().then(second => {
+          createItem().then(third => {
+            visitShowPageInItemMode();
+            selectEntities([first, second, third]);
+            openBatchContainerModal();
+
+            cy.get(stepperInput(storageId)).should('have.attr', 'max', '1');
+            // submit stays out of reach: the steppers cannot sum to the target.
+            // #containerCapacityNotice is deliberately not asserted here, as totalSlotsLeft()
+            // is Infinity as soon as the team owns one location with no declared capacity
+            cy.get('#containerMultiplierInput').invoke('val', '2').trigger('input');
+            cy.get('#containerAssignedCount').should('have.text', '0');
+            cy.get('#storeContainersBtn').should('be.disabled');
+
+            cy.get(`[data-storage-id="${storageId}"] [data-action="container-qty-plus"]`).click();
+            cy.get(`[data-storage-id="${storageId}"] [data-action="container-qty-plus"]`).click();
+            cy.get('#containerAssignedCount').should('have.text', '1');
+            cy.get('#storeContainersBtn').should('be.disabled');
+          });
+        });
       });
     });
   });

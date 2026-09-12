@@ -517,8 +517,15 @@ final class Apiv2Controller extends AbstractApiController
         ) {
             throw new ForbiddenException();
         }
-        // these team submodels contain internal organizational metadata
-        if ($this->Model instanceof AbstractStatus || $this->Model instanceof TeamGroups) {
+        // these team-scoped models contain data reserved for authenticated members
+        if (
+            $this->Model instanceof AbstractStatus
+            || $this->Model instanceof TeamGroups
+            || (
+                $this->Model instanceof UnfinishedSteps
+                && $this->Request->query->getString('scope') === 'team'
+            )
+        ) {
             throw new ForbiddenException();
         }
     }

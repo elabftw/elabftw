@@ -70,7 +70,7 @@
 {% endif %}
 
 {% set links = entityData.experiments_links|default([])|merge(entityData.related_experiments_links|default([])) %}
-{% if links %}
+{% if includeLinkedEntities %}
   <section class='no-break'>
     <h3>{% trans %}
       Linked experiment
@@ -87,7 +87,7 @@
 {% endif %}
 
 {% set links = entityData.items_links|default([])|merge(entityData.related_items_links|default([])) %}
-{% if links %}
+{% if includeLinkedEntities %}
   <section class='no-break'>
     <h3>{% trans %}
       Linked resource

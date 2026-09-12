@@ -128,14 +128,15 @@ on(Action.CancelRequestableAction, (el: HTMLElement) => {
 
 on('export-to', (el: HTMLElement) => {
   const format = el.dataset.format;
-  const changelog = (document.getElementById(`${format}_exportWithChangelog`) as HTMLInputElement).checked ? 1 : 0;
-  const classification = (document.getElementById(`${format}_exportClassification`) as HTMLSelectElement).value;
-  let json = 0;
-  if (format === 'zip') {
-    json = (document.getElementById(`${format}_exportJson`) as HTMLInputElement).checked ? 1 : 0;
-  }
-  const finalFormat = (document.getElementById(`${format}_exportPdfa`) as HTMLInputElement).checked ? format + 'a' : format;
-  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=${finalFormat}&changelog=${changelog}&json=${json}&classification=${classification}`, '_blank');
+  const checked = (option: string): number => (document.getElementById(`${format}_${option}`) as HTMLInputElement| null)?.checked ? 1 : 0;
+  const changelog = checked('exportWithChangelog');
+  const linkedEntities = checked('exportWithLinks');
+  const json = checked('exportJson');
+  const fullJson = checked('exportFullJson');
+  const pdfa = checked('exportPdfa');
+  const classification = (document.getElementById(`${format}_exportClassification`) as HTMLSelectElement)?.value ?? 0;
+  const finalFormat = pdfa ? `${format}a` : format;
+  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=${finalFormat}&changelog=${changelog}&links=${linkedEntities}&json=${json}&fulljson=${fullJson}&classification=${classification}`, '_blank');
 });
 
 on('export-to-qrpng', (el: HTMLElement) => {

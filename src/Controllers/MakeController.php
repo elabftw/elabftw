@@ -26,6 +26,7 @@ use Elabftw\Make\MakeCsv;
 use Elabftw\Make\MakeEln;
 use Elabftw\Make\MakeElnHtml;
 use Elabftw\Make\MakeJson;
+use Elabftw\Make\MakeFullJson;
 use Elabftw\Make\MakeMultiPdf;
 use Elabftw\Make\MakePdf;
 use Elabftw\Make\MakeProcurementRequestsCsv;
@@ -103,6 +104,7 @@ final class MakeController extends AbstractController
                     new Instance2Rors(),
                     new Teams2Rors($this->requester->getTeam(), false),
                     new Users2Rors($this->requester->getUserid(), false),
+                    includeLinkedEntities: $this->shouldIncludeLinkedEntities(),
                 ));
 
             case ExportFormat::ElnHtml:
@@ -117,7 +119,11 @@ final class MakeController extends AbstractController
                 )->getResponse();
 
             case ExportFormat::Json:
-                return new MakeJson($this->entityArr)->getResponse();
+                $includeChangelog = $this->shouldIncludeChangelog();
+                $Maker = $this->Request->query->getBoolean('fulljson')
+                  ? new MakeFullJson($this->entityArr, $includeChangelog)
+                  : new MakeJson($this->entityArr, $includeChangelog);
+                return $Maker->getResponse();
 
             case ExportFormat::PdfA:
                 $this->pdfa = true;
@@ -168,6 +174,11 @@ final class MakeController extends AbstractController
             $includeChangelog = $this->Request->query->getBoolean('changelog');
         }
         return $includeChangelog;
+    }
+
+    private function shouldIncludeLinkedEntities(): bool
+    {
+        return $this->Request->query->getBoolean('links');
     }
 
     private function populateSlugs(): void
@@ -224,7 +235,7 @@ final class MakeController extends AbstractController
         $users2Rors = new Users2Rors($this->requester->getUserid());
         $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         if (count($this->entityArr) === 1) {
-            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $classification))->getResponse();
+            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
         }
         return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog()))->getResponse();
     }

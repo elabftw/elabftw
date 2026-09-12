@@ -73,6 +73,8 @@ class MakeEln extends AbstractMakeEln
         protected Instance2Rors $instance2Rors,
         protected Teams2Rors $teams2Rors,
         protected Users2Rors $users2Rors,
+        protected bool $includeLinkedEntities = true,
+        protected bool $includeChangelog = false,
     ) {
         parent::__construct($Zip, $instance2Rors);
     }
@@ -250,20 +252,22 @@ class MakeEln extends AbstractMakeEln
         // LINKS (mentions)
         // this array will be added to the "mentions" attribute of the main dataset
         $mentions = array();
-        foreach (array('experiments', 'items') as $type) {
-            $mentions = array_merge(
-                $mentions,
-                $this->processEntityLinks($e[$type . '_links'] ?? array(), $type, true),
+        if ($this->includeLinkedEntities) {
+            foreach (array('experiments', 'items') as $type) {
+                $mentions = array_merge(
+                    $mentions,
+                    $this->processEntityLinks($e[$type . '_links'] ?? array(), $type, true),
+                );
+            }
+            // RELATED LINKS
+            // These are entities linking to the current one. Process them so their own mentions restore the original direction.
+            $relatedLinkTypes = array(
+                'related_experiments_links' => 'experiments',
+                'related_items_links' => 'items',
             );
-        }
-        // RELATED LINKS
-        // These are entities linking to the current one. Process them so their own mentions restore the original direction.
-        $relatedLinkTypes = array(
-            'related_experiments_links' => 'experiments',
-            'related_items_links' => 'items',
-        );
-        foreach ($relatedLinkTypes as $key => $type) {
-            $this->processEntityLinks($e[$key] ?? array(), $type, false);
+            foreach ($relatedLinkTypes as $key => $type) {
+                $this->processEntityLinks($e[$key] ?? array(), $type, false);
+            }
         }
 
         $datasetNode = array(
@@ -284,7 +288,7 @@ class MakeEln extends AbstractMakeEln
             array('comment' => $comments),
             array('conditionsOfAccess' => $e['locked'] === 1 ? 'Locked' : 'Unlocked'),
             array('creativeWorkStatus' => $e['status_title'] ?? ''),
-            array('subjectOf' => $this->changelogToUpdateActions($e['changelog'] ?? array())),
+            array('subjectOf' => $this->includeChangelog ? $this->changelogToUpdateActions($e['changelog'] ?? array()) : array()),
             array('status' => State::from($e['state'])->name),
             array('hasPart' => $hasPart),
             array('identifier' => $e['elabid'] ?? ''),

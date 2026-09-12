@@ -12,8 +12,10 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Notifications;
 use Elabftw\Enums\Scope;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\Users2TeamsTargets;
@@ -23,10 +25,14 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\TestsUtilsTrait;
+use PDO;
 
+use function bin2hex;
 use function count;
 use function is_array;
+use function random_bytes;
 use function strtoupper;
 
 class UsersTest extends \PHPUnit\Framework\TestCase
@@ -338,6 +344,61 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($this->Users->createOne('blahblah2@yop.fr', array('Bravo'), new NullLocalPassword(), 'yep', 'yop', Usergroup::Admin, true, false));
     }
 
+    public function testRequestTeamAccessHonorsAdminValidationPolicy(): void
+    {
+        $originalAdminValidate = $this->Config->configArr['admin_validate'];
+        try {
+            $this->Config->patch(Action::Update, array('admin_validate' => 1));
+            $pendingUserid = $this->createTeamlessValidatedUser();
+            $validationNotifications = $this->countNotifications(
+                Notifications::UserNeedValidation,
+            );
+
+            $requiresValidation = (new Users($pendingUserid))
+                ->requestTeamAccess(2);
+
+            self::assertTrue($requiresValidation);
+            self::assertSame(
+                0,
+                (new Users($pendingUserid))->userData['validated'],
+            );
+            self::assertTrue(
+                (new TeamsHelper(2))->isUserInTeam($pendingUserid),
+            );
+            self::assertGreaterThan(
+                $validationNotifications,
+                $this->countNotifications(Notifications::UserNeedValidation),
+            );
+
+            $this->Config->patch(Action::Update, array('admin_validate' => 0));
+            $validatedUserid = $this->createTeamlessValidatedUser();
+            $creationNotifications = $this->countNotifications(
+                Notifications::UserCreated,
+            );
+
+            $requiresValidation = (new Users($validatedUserid))
+                ->requestTeamAccess(2);
+
+            self::assertFalse($requiresValidation);
+            self::assertSame(
+                1,
+                (new Users($validatedUserid))->userData['validated'],
+            );
+            self::assertTrue(
+                (new TeamsHelper(2))->isUserInTeam($validatedUserid),
+            );
+            self::assertGreaterThan(
+                $creationNotifications,
+                $this->countNotifications(Notifications::UserCreated),
+            );
+        } finally {
+            $this->Config->patch(
+                Action::Update,
+                array('admin_validate' => $originalAdminValidate),
+            );
+        }
+    }
+
     public function testArchiveWithoutPermission(): void
     {
         $Admin = $this->getUserInTeam(team: 2, admin: 1);
@@ -377,5 +438,39 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         $this->Users->destroy();
+    }
+
+    private function createTeamlessValidatedUser(): int
+    {
+        $userid = $this->Users->createOne(
+            'team-access-' . bin2hex(random_bytes(8)) . '@example.com',
+            array(3),
+            new NullLocalPassword(),
+            usergroup: Usergroup::User,
+            automaticValidationEnabled: true,
+            alertAdmin: false,
+        );
+
+        // The public model intentionally prevents removing a user's last team;
+        // reproduce the legacy teamless-account state directly.
+        $Db = Db::getConnection();
+        $req = $Db->prepare(
+            'DELETE FROM users2teams WHERE users_id = :userid',
+        );
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $Db->execute($req);
+
+        return $userid;
+    }
+
+    private function countNotifications(Notifications $category): int
+    {
+        $Db = Db::getConnection();
+        $req = $Db->prepare(
+            'SELECT COUNT(*) FROM notifications WHERE category = :category',
+        );
+        $req->bindValue(':category', $category->value, PDO::PARAM_INT);
+        $Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 }

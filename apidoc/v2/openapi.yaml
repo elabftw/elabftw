@@ -1712,7 +1712,7 @@ components:
           type: string
           nullable: true
         source:
-          type: int
+          type: integer
           nullable: true
         certs:
           type: array

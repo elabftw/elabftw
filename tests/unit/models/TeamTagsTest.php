@@ -14,7 +14,9 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\TagParam;
+use Symfony\Component\HttpFoundation\InputBag;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function bin2hex;
@@ -51,7 +53,18 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
     public function testReadAll(): void
     {
         $this->assertIsArray($this->TeamTags->readAll());
-        // TODO test with query
+    }
+
+    public function testReadAllWithQuery(): void
+    {
+        $this->TeamTags->create(new TagParam('microscopy'));
+        $this->TeamTags->create(new TagParam('chemistry'));
+
+        $queryParams = new BaseQueryParams(new InputBag(array('q' => 'micro')));
+        $tags = $this->TeamTags->readAll($queryParams);
+
+        $this->assertCount(1, $tags);
+        $this->assertSame('microscopy', $tags[0]['tag']);
     }
 
     public function testDeletedEntitiesAreNotCounted(): void

@@ -126,48 +126,9 @@ on(Action.CancelRequestableAction, (el: HTMLElement) => {
   }
 });
 
-const exportOptions = new Map<string, string[]>([
-  ['pdf', [
-    'changelog', 'pdf_exportWithChangelog',
-    'links', 'pdf_exportWithLinks',
-    'pdfa', 'pdf_exportPdfa',
-    'classification', 'pdf_exportClassification',
-  ]],
-  ['zip', [
-    'changelog', 'zip_exportWithChangelog',
-    'pdfa', 'zip_exportPdfa',
-    'json', 'zip_exportJson',
-  ]],
-  ['eln', [
-    'changelog', 'eln_exportWithChangelog',
-    'links', 'eln_exportWithLinks',
-  ]],
-  ['json', [
-    'changelog', 'json_exportWithChangelog',
-    'json', 'json_exportFullJson',
-  ]],
-]);
-
 on('export-to', (el: HTMLElement) => {
   const format = el.dataset.format;
-  const options = exportOptions.get(format);
   const params = new URLSearchParams({format});
-  options.forEach(([param, elementId]) => {
-    const input = document.getElementById(elementId);
-    if (param === 'pdfa') {
-      if (input instanceof HTMLInputElement && input.checked) {
-        params.set('format', `${format}a`);
-      }
-      return;
-    }
-
-    if (input instanceof HTMLInputElement) {
-      params.set(param, input.checked ? '1' : '0');
-    } else if (input instanceof HTMLSelectElement) {
-      params.set(param, input.value);
-    }
-  });
-
   window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?${params.toString()}`, '_blank');
 });
 

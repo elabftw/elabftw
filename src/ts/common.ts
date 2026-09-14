@@ -115,6 +115,28 @@ const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityT
   }
 };
 
+const exportOptions = new Map<string, string[]>([
+  ['pdf', [
+    'changelog',
+    'links',
+    'pdfa',
+    'classification',
+  ]],
+  ['zip', [
+    'changelog',
+    'pdfa',
+    'json',
+  ]],
+  ['eln', [
+    'changelog',
+    'links',
+  ]],
+  ['json', [
+    'changelog',
+    'fulljson',
+  ]],
+]);
+
 // Listen for this event to populate the modal text dynamically.
 // On view/edit pages, use the current entity id,
 // on the show page, get the item id of all checked boxes.
@@ -146,6 +168,16 @@ on('toggle-modal', (el: HTMLElement) => {
 
     delayConfirmation(deleteButton);
     showModalAndFocusFirstInput(modalSelector);
+  } else if (el.matches('[data-target="exportModal"]')) {
+    // Reinialize everyone to hidden to avoid cross format pollution
+    document.querySelectorAll<HTMLElement>('[id^="exportToggleDiv_"]').forEach(element => {
+      element.setAttribute('hidden', '');
+    });
+
+    const options = exportOptions.get(el.dataset.format) ?? [];
+    options.forEach((option) => {
+      document.getElementById(`exportToggleDiv_${option}`)?.removeAttribute('hidden');
+    });
   }
 });
 

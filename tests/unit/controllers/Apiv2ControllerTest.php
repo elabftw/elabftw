@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
+use Elabftw\Models\Links\Containers2ItemsLinks;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function basename;
 use function json_decode;
+use function sprintf;
 
 class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
 {
@@ -53,11 +57,59 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
 
+    public function testDeleteEntityWithContainers(): void
+    {
+        $Item = $this->getFreshItem();
+        $StorageUnits = new StorageUnits($Item->Users, true);
+        $storageId = $StorageUnits->create('Container deletion test');
+        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
+
+        $hasContainersController = new Apiv2Controller(
+            $Item->Users,
+            Request::create(sprintf('/api/v2/items/%d/containers?has_any=1', $Item->id)),
+        );
+        $hasContainersResponse = $hasContainersController->getResponse();
+        self::assertSame(
+            array('has_containers' => true, 'containers_count' => 1),
+            json_decode((string) $hasContainersResponse->getContent(), true),
+        );
+
+        $Controller = new Apiv2Controller(
+            $Item->Users,
+            Request::create(sprintf('/api/v2/items/%d?delete_containers=1', $Item->id), Request::METHOD_DELETE),
+        );
+        $Controller->canWrite = true;
+
+        $response = $Controller->getResponse();
+
+        self::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+        self::assertSame(0, $StorageUnits->countContainers($storageId));
+    }
+
+    public function testDeleteNonEntityModel(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $StorageUnits = new StorageUnits($user, true);
+        $storageId = $StorageUnits->create('API deletion test');
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create(
+                sprintf('/api/v2/storage_units/%d', $storageId),
+                Request::METHOD_DELETE,
+            ),
+        );
+        $Controller->canWrite = true;
+        $response = $Controller->getResponse();
+        self::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+        $this->expectException(ResourceNotFoundException::class);
+        new StorageUnits($user, true, $storageId)->readOne();
+    }
+
     public function testAnonymousUserCannotQueryUsersEndpoint(): void
     {
         $Controller = new Apiv2Controller(
             new AnonymousUser(1),
-            Request::create('/api/v2/users', 'GET'),
+            Request::create('/api/v2/users'),
         );
 
         $res = $Controller->getResponse();

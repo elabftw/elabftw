@@ -48,40 +48,6 @@
   }
 }
 
-@keyframes bounce-left {
-  0%,
-  100%,
-  50%,
-  80% {
-    transform: translateX(0);
-  }
-
-  50% {
-    transform: translateX(-6px);
-  }
-}
-
-@keyframes bounce-right {
-  0%,
-  100%,
-  50%,
-  80% {
-    transform: translateX(0);
-  }
-
-  50% {
-    transform: translateX(6px);
-  }
-}
-
-.bounce-left:hover {
-  animation: bounce-left 250ms;
-}
-
-.bounce-right:hover {
-  animation: bounce-right 250ms;
-}
-
 /* OVERLAY notifications animation */
 @keyframes slideInOut {
   0% {

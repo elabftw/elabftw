@@ -212,7 +212,7 @@ final class Idps extends AbstractRest implements IdpsInterface
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->requester->isSysadminOrExplode();
         $sql = 'DELETE FROM idps WHERE id = :id';

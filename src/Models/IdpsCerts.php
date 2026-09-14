@@ -135,7 +135,7 @@ final class IdpsCerts extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->requester->isSysadminOrExplode();
         $sql = 'DELETE FROM idps_certs WHERE id = :id AND idp = :idp';

@@ -96,7 +96,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->Entity->canOrExplode(AccessType::Write);
         $sql = 'DELETE FROM ' . $this->getTable() . ' WHERE compound_id = :compound_id AND entity_id = :entity_id';

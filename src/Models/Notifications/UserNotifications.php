@@ -109,7 +109,7 @@ final class UserNotifications extends AbstractRest
      * Delete all notifications for that user
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->users->isSelfOrExplode();
         $sql = 'DELETE FROM notifications WHERE userid = :userid';

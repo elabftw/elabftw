@@ -104,6 +104,7 @@ final class CanSqlBuilder
                         WHERE u2t.users_id = :userid
                           AND u2t.teams_id = entity.team
                           AND u2t.is_admin = 1
+                          AND u2t.is_archived = 0
                       )
                 )
             )',
@@ -132,13 +133,14 @@ final class CanSqlBuilder
      */
     protected function canTeams(): string
     {
-        if (!empty($this->requester->userData['teams'])) {
-            // JSON_OVERLAPS checks for the intersection of two arrays
-            // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
+        $teamsOfUser = $this->requester->getActiveTeamIds();
+        if (!empty($teamsOfUser)) {
+            // grant access when the entity is explicitly shared with at least
+            // one team in which the requester still has an active membership
             return sprintf(
                 "JSON_OVERLAPS(entity.%s->'$.teams', CAST('[%s]' AS JSON))",
                 $this->accessType->value,
-                implode(', ', array_column($this->requester->userData['teams'], 'id')),
+                implode(', ', $teamsOfUser),
             );
         }
         return '1=2';

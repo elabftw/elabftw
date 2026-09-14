@@ -20,7 +20,6 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\TeamsHelper;
 
 use function json_decode;
-use function array_column;
 use function in_array;
 
 /**
@@ -102,8 +101,9 @@ final class Permissions
         }
 
         // check for teams
+        // only active memberships count: an archived team must no longer grant access
         if (!empty($can['teams'])) {
-            $teamsOfUser = array_column($this->Users->userData['teams'], 'id');
+            $teamsOfUser = $this->Users->getActiveTeamIds();
             foreach ($can['teams'] as $team) {
                 if (in_array($team, $teamsOfUser, true)) {
                     return true;

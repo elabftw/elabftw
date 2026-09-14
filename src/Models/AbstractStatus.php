@@ -157,7 +157,7 @@ abstract class AbstractStatus extends AbstractCategory
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
         // set state to deleted

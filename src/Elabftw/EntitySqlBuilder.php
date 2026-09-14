@@ -405,11 +405,12 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      */
     protected function canTeams(string $can): string
     {
-        // ultra admin has userid=null during cli eln export so we use the team id
-        $teamsOfUser = array($this->entity->Users->userData['team']);
-
-        if (!empty($this->entity->Users->userData['teams'])) {
-            $teamsOfUser = array_column($this->entity->Users->userData['teams'], 'id');
+        // cross-team permissions must only consider active memberships
+        $teamsOfUser = $this->entity->Users->getActiveTeamIds();
+        // UltraAdmin used by cli exports has no regular team membership data
+        // so preserve the current team as a fallback for that special case
+        if ($this->entity->Users->userid === null && $this->entity->Users->team !== null) {
+            $teamsOfUser = array($this->entity->Users->team);
         }
 
         if (!empty($teamsOfUser)) {
@@ -421,6 +422,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
                 implode(', ', $teamsOfUser),
             );
         }
+        // no active team membership = no explicit cross-team permission
         return '0';
     }
 

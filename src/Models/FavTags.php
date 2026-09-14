@@ -62,7 +62,7 @@ final class FavTags extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $sql = 'DELETE FROM favtags2users WHERE users_id = :userid AND tags_id = :tagId';
         $req = $this->Db->prepare($sql);

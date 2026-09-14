@@ -256,7 +256,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         return $this->destroyWithReason(array(), viaDeleteVerb: true);
     }
@@ -267,6 +267,16 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    // used in show & view to count how many containers belong to selected entries
+    public function countContainersForEntity(): int
+    {
+        $sql = 'SELECT COUNT(*) FROM ' . $this->getTable() . ' WHERE item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     #[Override]

@@ -222,7 +222,7 @@ final class Compounds extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
         // check if the compound is linked somewhere first

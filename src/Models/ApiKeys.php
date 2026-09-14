@@ -111,7 +111,7 @@ final class ApiKeys extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $sql = 'DELETE FROM api_keys WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);

@@ -105,7 +105,7 @@ abstract class AbstractLinks extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->Entity->canOrExplode(AccessType::Write);
 

@@ -357,7 +357,7 @@ final class Config extends AbstractRest
      * Restore default values
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $sql = 'DELETE FROM config';
         $req = $this->Db->prepare($sql);

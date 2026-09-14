@@ -103,7 +103,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         return false;
     }

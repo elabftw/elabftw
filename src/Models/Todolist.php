@@ -91,7 +91,7 @@ final class Todolist extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $sql = 'DELETE FROM todolist WHERE id = :id AND userid = :userid';
         $req = $this->Db->prepare($sql);

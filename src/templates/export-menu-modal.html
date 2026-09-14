@@ -1,0 +1,100 @@
+<div class='modal fade' id='exportModal' tabindex='-1' role='dialog' aria-labelledby='exportModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='exportModalLabel'><i class='fas fa-fw fa-box-archive mr-1'></i>{{ 'Export'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+
+        {# CHANGELOG #}
+        <div hidden id='exportToggleDiv_changelog'>
+          <div class='d-flex justify-content-between mb-2'>
+            <div>
+              <label class='d-inline mr-1' for='exportToggle_changelog'>{{ 'Include changelog'|trans }}</label>
+              <p class='smallgray'>{{ 'The files will contain the changelog.'|trans }}</p>
+            </div>
+            <label class='switch' title='{{ 'Include changelog'|trans }}'><span class='sr-only'>{{ 'Include changelog'|trans }}</span>
+              <input type='checkbox' id='exportToggle_changelog'>
+              <span class='slider'></span>
+            </label>
+          </div>
+        </div>
+
+        {# LINKS #}
+        <div hidden id='exportToggleDiv_links'>
+        <div class='d-flex justify-content-between mb-2'>
+          <div>
+            <label class='d-inline mr-1' for='exportToggle_links'>{{ 'Include links'|trans }}</label>
+            <p class='smallgray'>{{ 'The files will contain the attached links.'|trans }}</p>
+          </div>
+          <label class='switch' title='{{ 'Include attached links'|trans }}'><span class='sr-only'>{{ 'Include attached links'|trans }}</span>
+            <input type='checkbox' id='exportToggle_links'>
+            <span class='slider'></span>
+          </label>
+        </div>
+        </div>
+
+        {# PDF/A #}
+        <div hidden id='exportToggleDiv_pdfa'>
+          <div class='d-flex justify-content-between mb-2'>
+            <div>
+              <label class='d-inline mr-1' for='exportToggle_pdfa'>{{ 'Use PDF/A'|trans }}</label>
+              <p class='smallgray'>{{ 'For long term archiving. Warning: using this option will make the files much bigger!'|trans }}</p>
+            </div>
+            <label class='switch' title='{{ 'Use PDF/A'|trans }}'><span class='sr-only'>{{ 'Use PDF/A'|trans }}</span>
+              <input type='checkbox' id='exportToggle_pdfa'>
+              <span class='slider'></span>
+            </label>
+          </div>
+        </div>
+
+        {# CLASSIFICATION #}
+        <div class='mb-2' hidden id='exportToggleDiv_classification'>
+          <label for='exportToggle_classification'>{{ 'Classification'|trans }}</label>
+          <p class='smallgray'>{{ 'Add a classification level in the footer.'|trans }}</p>
+          <select id='exportToggle_classification' class='form-control'>
+            {% for value, text in classificationArr|default([]) %}
+              <option value='{{ value }}'>{{ text }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        {# JSON #}
+        <div hidden id='exportToggleDiv_json'>
+          <div class='d-flex justify-content-between mb-2'>
+            <div>
+              <label class='d-inline mr-1' for='exportToggle_json'>{{ 'Include JSON'|trans }}</label>
+              <p class='smallgray'>{{ 'Include a full JSON export for each entry.'|trans }}</p>
+            </div>
+            <label class='switch' title='{{ 'Include JSON'|trans }}'><span class='sr-only'>{{ 'Include JSON'|trans }}</span>
+              <input type='checkbox' id='exportToggle_json'>
+              <span class='slider'></span>
+            </label>
+          </div>
+        </div>
+
+        {# FULLJSON #}
+        <div hidden id='exportToggleDiv_fulljson'>
+          <div class='d-flex justify-content-between mb-2'>
+            <div>
+              <label class='d-inline mr-1' for='exportToggle_fulljson'>{{ 'Include full JSON'|trans }}</label>
+              <p class='smallgray'>{{ 'Include a full JSON export for each entry.'|trans }}</p>
+            </div>
+            <label class='switch' title='{{ 'Include full JSON'|trans }}'><span class='sr-only'>{{ 'Include full JSON'|trans }}</span>
+              <input type='checkbox' id='exportToggle_fulljson'>
+              <span class='slider'></span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to' data-format='eln' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>

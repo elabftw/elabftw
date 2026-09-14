@@ -238,7 +238,7 @@ final class MakeController extends AbstractController
         if (count($this->entityArr) === 1) {
             return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
         }
-        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities()))->getResponse();
+        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
     }
 
     private function makeSchedulerReport(): Response

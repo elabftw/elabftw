@@ -46,7 +46,7 @@ Below are the date of the event, the time slot, and the duration in minutes.
 
 ### Recurring events
 
-Bookings can repeat daily, weekly, or monthly. Choose the interval and number of occurrences when creating the booking. A recurring booking can include up to 100 reservations over a period of up to 10 years.
+Enable **Repeat** when creating a booking, then choose how often it repeats and after how many occurrences it ends. Bookings can repeat daily, weekly, or monthly. A recurring booking can include up to 100 reservations over a period of up to 10 years.
 
 :::warning
 
@@ -101,7 +101,10 @@ You can add a custom message to inform the team members who are connected to thi
 
 :::tip
 
-When editing or deleting a recurring reservation, you can choose whether the action applies only to that reservation or to the complete series.
+When editing or deleting a recurring reservation, you can choose whether the action applies:
+- only to that reservation,
+- to that reservation and all future reservations,
+- or to the complete series.
 
 **Dragging or resizing a reservation in the calendar changes only that occurrence, not the complete series.**
 :::

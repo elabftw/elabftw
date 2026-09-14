@@ -309,11 +309,50 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             'title' => 'Unrelated',
         ));
 
-        $SeriesScheduler = new Scheduler($Items, $id, recurringEvents: true);
+        $SeriesScheduler = new Scheduler($Items, $id, recurrenceScope: 'series');
         $this->assertTrue($SeriesScheduler->destroy());
         $remaining = (new Scheduler($Items))->readOne();
         $this->assertCount(1, $remaining);
         $this->assertEquals($unrelatedId, $remaining[0]['id']);
+    }
+
+    public function testUpdateAndDeleteFutureOccurrences(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('+3 days 10:00');
+        $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->add(new DateInterval('PT1H'))->format('c'),
+            'title' => 'Before',
+            'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 4),
+        ));
+
+        $events = $this->getSortedEvents($Items);
+        $second = $events[1];
+        $secondStart = new DateTimeImmutable($second['start']);
+        $FutureScheduler = new Scheduler($Items, (int) $second['id']);
+        $FutureScheduler->patch(Action::Update, array(
+            'target' => 'datetime',
+            'scope' => 'future',
+            'start' => $secondStart->modify('+2 hours')->format('c'),
+            'end' => $secondStart->modify('+3 hours')->format('c'),
+            'title' => 'After',
+        ));
+
+        $events = $this->getSortedEvents($Items);
+        $this->assertSame(array('Before', 'After', 'After', 'After'), array_column($events, 'title_only'));
+        $this->assertSame(array('10:00:00', '12:00:00', '12:00:00', '12:00:00'), array_map(
+            static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
+            $events,
+        ));
+
+        $third = $events[2];
+        $FutureScheduler = new Scheduler($Items, (int) $third['id'], recurrenceScope: 'future');
+        $this->assertTrue($FutureScheduler->destroy());
+        $remaining = $this->getSortedEvents($Items);
+        $this->assertCount(2, $remaining);
+        $this->assertSame(array(1, 2), array_map('intval', array_column($remaining, 'recurrence_index')));
     }
 
     public function testUpdateSingleOccurrenceAndDeleteSingleOccurrence(): void

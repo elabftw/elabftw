@@ -10,7 +10,7 @@ describe('Scheduler', () => {
     cy.get('h1#pageTitle').should('have.text', 'Scheduler');
     cy.get('#loading-spinner').should('not.exist');
     cy.get('#itemPickerSelectModal')
-      .find('.scheduler-recurrence-frequency')
+      .find('.scheduler-recurrence-enabled')
       .should('have.length', 1);
     cy.htmlvalidate();
   });

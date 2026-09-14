@@ -79,17 +79,20 @@ final class Scheduler extends AbstractRest
 
     private array $filterBindings = array();
 
-    private bool $recurringEvents;
+    private string $recurrenceScope;
 
     public function __construct(
         AbstractEntity $Items,
         ?int $id = null,
         ?string $start = null,
         ?string $end = null,
-        bool $recurringEvents = false,
+        string $recurrenceScope = 'event',
     ) {
         if (!$Items instanceof Items) {
             throw new ImproperActionException('Scheduler can only work with resources (items).');
+        }
+        if (!in_array($recurrenceScope, array('event', 'future', 'series'), true)) {
+            throw new ImproperActionException(_('Incorrect recurrence scope.'));
         }
         $this->Items = $Items;
         parent::__construct();
@@ -100,7 +103,7 @@ final class Scheduler extends AbstractRest
         if ($end !== null) {
             $this->end = $end;
         }
-        $this->recurringEvents = $recurringEvents;
+        $this->recurrenceScope = $recurrenceScope;
     }
 
     #[Override]
@@ -285,11 +288,11 @@ final class Scheduler extends AbstractRest
     {
         $this->canWriteOrExplode();
         $scope = $params['scope'] ?? 'event';
-        if (!in_array($scope, array('event', 'series'), true)) {
+        if (!in_array($scope, array('event', 'future', 'series'), true)) {
             throw new ImproperActionException(_('Incorrect recurrence scope.'));
         }
-        if ($scope === 'series') {
-            $this->updateSeries($params);
+        if ($scope !== 'event') {
+            $this->updateSeries($params, $scope);
             return $this->readOne();
         }
         match ($params['target']) {
@@ -309,15 +312,15 @@ final class Scheduler extends AbstractRest
     {
         $this->canWriteOrExplode();
         $event = $this->readOne();
-        if ($this->recurringEvents && $event['recurrence_series_id'] !== null) {
-            return $this->destroySeries();
+        if ($this->recurrenceScope !== 'event' && $event['recurrence_series_id'] !== null) {
+            return $this->destroySeries($this->recurrenceScope);
         }
         $this->assertCanDestroy($event);
         $this->notifyAdminsOfDeletion($event);
         return $this->deleteEvent($event);
     }
 
-    // Ensure the current user is allowed to delete this booking.
+    // Ensure the current user is allowed to delete this booking
     private function assertCanDestroy(array $event): void
     {
         $createdAt = new DateTimeImmutable($event['created_at']);
@@ -392,8 +395,8 @@ final class Scheduler extends AbstractRest
         $this->Db->execute($req);
     }
 
-    // Handle updates that apply to the entire recurring booking series, in a single transaction
-    private function updateSeries(array $params): void
+    // Handle updates that apply to multiple occurrences in a recurring booking
+    private function updateSeries(array $params, string $scope): void
     {
         $event = $this->readOne();
         $seriesId = $event['recurrence_series_id'];
@@ -402,7 +405,7 @@ final class Scheduler extends AbstractRest
             return;
         }
         if (!in_array($params['target'] ?? '', array('title', 'datetime'), true)) {
-            throw new ImproperActionException(_('Series scope is only supported for title and datetime updates.'));
+            throw new ImproperActionException(_('Recurring scope is only supported for title and datetime updates.'));
         }
         $newTitle = array_key_exists('title', $params) ? $this->filterTitle((string) $params['title']) : null;
         $changeDateTime = array_key_exists('start', $params) || array_key_exists('end', $params);
@@ -424,8 +427,9 @@ final class Scheduler extends AbstractRest
             if ($seriesId === null) {
                 throw new ImproperActionException(_('This reservation no longer belongs to a recurring series.'));
             }
-            $events = $this->readSeriesEvents($seriesId);
-            $this->assertSeriesOwnership($events, $event);
+            $allEvents = $this->readSeriesEvents($seriesId);
+            $this->assertSeriesOwnership($allEvents, $event);
+            $events = $this->getSeriesEventsForScope($allEvents, $event, $scope);
             $candidates = array();
             if ($changeDateTime) {
                 $requestedStart = $this->formatDate($this->normalizeDate($params['start']));
@@ -448,9 +452,23 @@ final class Scheduler extends AbstractRest
                 $this->isFutureOrExplode($this->formatDate($candidate['end']));
                 $this->checkConstraints($candidate['start'], $candidate['end'], $seriesId, true);
             }
-            $this->checkCandidateOverlaps($candidates);
+            if ($changeDateTime) {
+                $overlapCandidates = $candidates;
+                if ($scope === 'future') {
+                    foreach ($allEvents as $seriesEvent) {
+                        if ((int) $seriesEvent['recurrence_index'] >= (int) $event['recurrence_index']) {
+                            continue;
+                        }
+                        $overlapCandidates[] = array(
+                            'start' => $seriesEvent['start'],
+                            'end' => $seriesEvent['end'],
+                        );
+                    }
+                }
+                $this->checkCandidateOverlaps($overlapCandidates);
+            }
             // Use a direct query here instead of update(), as each occurrence may have different dates
-            // and the whole series must be updated atomically in a single transaction
+            // and the selected occurrences must be updated atomically in a single transaction
             $sql = 'UPDATE team_events SET '
                 . ($newTitle !== null ? 'title = :title' : '')
                 . ($newTitle !== null && $changeDateTime ? ', ' : '')
@@ -477,8 +495,8 @@ final class Scheduler extends AbstractRest
         }
     }
 
-    // Delete all occurrences belonging to the same recurring booking
-    private function destroySeries(): bool
+    // Delete the selected part of a recurring booking in a single transaction
+    private function destroySeries(string $scope): bool
     {
         $this->Db->beginTransaction();
         try {
@@ -487,17 +505,24 @@ final class Scheduler extends AbstractRest
             if ($event['recurrence_series_id'] === null) {
                 throw new ImproperActionException(_('This reservation no longer belongs to a recurring series.'));
             }
-            $events = $this->readSeriesEvents($event['recurrence_series_id']);
-            $this->assertSeriesOwnership($events, $event);
+            $allEvents = $this->readSeriesEvents($event['recurrence_series_id']);
+            $this->assertSeriesOwnership($allEvents, $event);
+            $events = $this->getSeriesEventsForScope($allEvents, $event, $scope);
             foreach ($events as $seriesEvent) {
                 $this->assertCanDestroy($seriesEvent);
             }
             $sql = 'DELETE FROM team_events WHERE team = :team AND recurrence_series_id = :recurrence_series_id';
+            if ($scope === 'future') {
+                $sql .= ' AND recurrence_index >= :recurrence_index';
+            }
             $req = $this->Db->prepare($sql);
             $req->bindValue(':team', $event['team'], PDO::PARAM_INT);
             $req->bindValue(':recurrence_series_id', $event['recurrence_series_id']);
+            if ($scope === 'future') {
+                $req->bindValue(':recurrence_index', $event['recurrence_index'], PDO::PARAM_INT);
+            }
             $result = $this->Db->execute($req);
-            // A series cancellation produces one administrator notification, not one per occurrence.
+            // A recurring cancellation produces one administrator notification, not one per occurrence
             $this->notifyAdminsOfDeletion($event);
             $this->Db->commit();
             return $result;
@@ -518,6 +543,19 @@ final class Scheduler extends AbstractRest
         $req->bindValue(':recurrence_series_id', $seriesId);
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    // Select either the complete series or the anchor occurrence and everything after it
+    private function getSeriesEventsForScope(array $events, array $anchor, string $scope): array
+    {
+        if ($scope === 'series') {
+            return $events;
+        }
+        $anchorIndex = (int) $anchor['recurrence_index'];
+        return array_values(array_filter(
+            $events,
+            static fn(array $seriesEvent): bool => (int) $seriesEvent['recurrence_index'] >= $anchorIndex,
+        ));
     }
 
     private function assertSeriesOwnership(array $events, array $anchor): void

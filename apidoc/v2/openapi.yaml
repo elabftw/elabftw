@@ -5134,8 +5134,8 @@ paths:
                       description: Optional new title for the selected occurrence or series.
                     scope:
                       type: string
-                      enum: [event, series]
-                      description: Choose whether to update only this occurrence or all occurrences in the recurring series.
+                      enum: [event, future, series]
+                      description: Choose whether to update only this occurrence, this and all future occurrences, or all occurrences in the recurring series.
                 - type: object
                   properties:
                     target:
@@ -5183,13 +5183,15 @@ paths:
       parameters:
         - name: scope
           in: query
-          description: Delete this occurrence or every occurrence in its series.
+          description: Choose whether to delete only this occurrence, this and all future occurrences, or all occurrences in its series.
           schema:
             type: string
-            enum: [event, series]
+            enum: [event, future, series]
       responses:
         '204':
           description: The event was deleted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

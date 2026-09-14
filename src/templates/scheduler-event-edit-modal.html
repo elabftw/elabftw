@@ -18,7 +18,11 @@
       <legend class='h6'>{{ 'Apply to'|trans }}</legend>
       <div class='form-check'>
         <input class='form-check-input' type='radio' name='scope' value='event' id='editScopeEvent' checked>
-        <label class='form-check-label' for='editScopeEvent'>{{ 'This reservation'|trans }}</label>
+        <label class='form-check-label' for='editScopeEvent'>{{ 'This reservation only'|trans }}</label>
+      </div>
+      <div class='form-check'>
+        <input class='form-check-input' type='radio' name='scope' value='future' id='editScopeFuture'>
+        <label class='form-check-label' for='editScopeFuture'>{{ 'This and all future reservations'|trans }}</label>
       </div>
       <div class='form-check'>
         <input class='form-check-input' type='radio' name='scope' value='series' id='editScopeSeries'>

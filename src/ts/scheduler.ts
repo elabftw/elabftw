@@ -123,22 +123,24 @@ function lockScopeButtons(selectedItems: string[]): void {
 document.getElementById('loading-spinner')?.remove();
 
 // on loading the book event modal a second time, we need the options to be available
-function updateRecurrenceFields(select: HTMLSelectElement): void {
-  select.closest('.scheduler-recurrence-fields')
-    ?.querySelectorAll('.scheduler-recurrence-options')
-    .forEach(element => element.classList.toggle('d-none', select.value === ''));
+function updateRecurrenceFields(fields: Element): void {
+  const enabled = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
+  fields.querySelectorAll('.scheduler-recurrence-options')
+    .forEach(element => element.classList.toggle('d-none', !enabled.checked));
 }
 
-document.querySelectorAll<HTMLSelectElement>('.scheduler-recurrence-frequency').forEach(select => {
-  select.addEventListener('change', () => updateRecurrenceFields(select));
-  updateRecurrenceFields(select);
+document.querySelectorAll<HTMLElement>('.scheduler-recurrence-fields').forEach(fields => {
+  const enabled = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
+  enabled.addEventListener('change', () => updateRecurrenceFields(fields));
+  updateRecurrenceFields(fields);
 });
 
 function getRecurrence(modal: Element): Recurrence | null | false {
-  const frequency = modal.querySelector<HTMLSelectElement>('.scheduler-recurrence-frequency')!;
-  if (frequency.value === '') {
+  const enabled = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
+  if (!enabled.checked) {
     return null;
   }
+  const frequency = modal.querySelector<HTMLSelectElement>('.scheduler-recurrence-frequency')!;
   const interval = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-interval')!;
   const count = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-count')!;
   if (!interval.checkValidity() || !count.checkValidity()) {
@@ -452,11 +454,11 @@ if (calendarEl) {
       renderSelectedItems(selectedItemIds);
 
       // Restore the correct recurrence fields when reopening the modal
-      const recurrenceSelect = document.querySelector<HTMLSelectElement>(
-        '#itemPickerSelectModal .scheduler-recurrence-frequency',
+      const recurrenceFields = document.querySelector<HTMLElement>(
+        '#itemPickerSelectModal .scheduler-recurrence-fields',
       );
-      if (recurrenceSelect) {
-        updateRecurrenceFields(recurrenceSelect);
+      if (recurrenceFields) {
+        updateRecurrenceFields(recurrenceFields);
       }
       showModal('#itemPickerSelectModal');
       handleConfirm('confirmItemSelect', () => manualSelect.items);

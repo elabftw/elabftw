@@ -105,6 +105,7 @@ final class MakeController extends AbstractController
                     new Teams2Rors($this->requester->getTeam(), false),
                     new Users2Rors($this->requester->getUserid(), false),
                     includeLinkedEntities: $this->shouldIncludeLinkedEntities(),
+                    includeChangelog: $this->shouldIncludeChangelog(),
                 ));
 
             case ExportFormat::ElnHtml:
@@ -237,7 +238,7 @@ final class MakeController extends AbstractController
         if (count($this->entityArr) === 1) {
             return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
         }
-        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog()))->getResponse();
+        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities()))->getResponse();
     }
 
     private function makeSchedulerReport(): Response

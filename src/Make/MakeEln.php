@@ -74,7 +74,7 @@ class MakeEln extends AbstractMakeEln
         protected Teams2Rors $teams2Rors,
         protected Users2Rors $users2Rors,
         protected bool $includeLinkedEntities = true,
-        protected bool $includeChangelog = false,
+        protected bool $includeChangelog = true,
     ) {
         parent::__construct($Zip, $instance2Rors);
     }

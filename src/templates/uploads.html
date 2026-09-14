@@ -32,8 +32,10 @@
         {% endtrans %} (<span id='uploadsCount'>{{ Entity.entityData.uploads|length }}</span>)
       </h3>
     </div>
+  </div>
 
-    <div id='uploadsViewToggler'>
+  <div class='row mt-2 mx-0' id='uploadsDiv' data-count-for='uploadsCount' data-save-hidden='uploadsDiv'>
+    <div id='uploadsViewToggler' class='w-100 text-right'>
       <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn btn-transparent' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
         <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
         <i class='fas fa-fw fa-table-cells'></i>
@@ -42,9 +44,6 @@
         <i class='fas fa-fw fa-box-archive'></i>
       </button>
     </div>
-  </div>
-
-  <div class='row mt-2 mx-0' id='uploadsDiv' data-count-for='uploadsCount' data-save-hidden='uploadsDiv'>
     {# ADD NEW FILE #}
     {% if mode == 'edit' %}
       <div class='col-md-4 col-sm-6'>

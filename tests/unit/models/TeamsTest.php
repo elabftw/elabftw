@@ -15,6 +15,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
+use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function array_column;
@@ -132,6 +134,25 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Teams->setId(1);
         $this->expectException(ImproperActionException::class);
         $this->Teams->destroy();
+    }
+
+    public function testSynchronizeMakesFirstUserInTeamAdmin(): void
+    {
+        $user = $this->getUserInTeam(1);
+        $userid = $user->getUserid();
+        $originalTeams = (new UsersHelper($userid))->getTeamsFromUserid();
+        $teamId = $this->Teams->postAction(Action::Create, array('name' => 'Empty synchronized team'));
+        $teams = $originalTeams;
+        $teams[] = array('id' => $teamId);
+
+        try {
+            $this->Teams->synchronize($userid, $teams);
+
+            $this->assertTrue((new TeamsHelper($teamId))->isAdminInTeam($userid));
+        } finally {
+            $this->Teams->synchronize($userid, $originalTeams);
+            $this->Teams->destroy();
+        }
     }
 
     public function testSendOnboardingEmails(): void

@@ -560,7 +560,7 @@ class Users extends AbstractRest
      * Destroy user. Will completely remove everything from the user.
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
 
@@ -813,6 +813,18 @@ class Users extends AbstractRest
         if ($this->isSelf() === false) {
             throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
         }
+    }
+
+    // Return IDs of teams where the user has an active membership
+    public function getActiveTeamIds(): array
+    {
+        $teamIds = array();
+        foreach ($this->userData['teams'] ?? array() as $team) {
+            if ((int) $team['is_archived'] === 0) {
+                $teamIds[] = (int) $team['id'];
+            }
+        }
+        return $teamIds;
     }
 
     protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self

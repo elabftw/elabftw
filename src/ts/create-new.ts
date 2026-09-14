@@ -99,10 +99,8 @@ function onScopeChange(ev: Event) {
   scopeSelect.querySelector('i').classList.value = `fas ${getScopeIcon(Number(scope))} fa-fw mx-1`;
   scopeSelect.querySelectorAll('button.createNewScopeBtn').forEach((btn: HTMLButtonElement) => {
     btn.classList.remove('active');
-    btn.querySelector('i').classList.remove('color-white');
     if (btn.dataset.value === scope) {
       btn.classList.add('active');
-      btn.querySelector('i').classList.add('color-white');
     }
   });
   ApiC.getJson(`${getActiveTemplateEndpoint()}/?fastq&scope=${scope}`).then(templates => {

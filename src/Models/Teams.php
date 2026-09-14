@@ -109,7 +109,13 @@ final class Teams extends AbstractRest
         $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $addToTeams = array_diff($teamIdArr, $currentTeams);
-        $Users2Teams->addUserToTeams($userid, $addToTeams, isValidated: $this->Users->userData['validated'] === 1);
+        $isValidated = $this->Users->userData['validated'] === 1;
+        foreach ($addToTeams as $teamId) {
+            $isAdmin = (new TeamsHelper($teamId))->isFirstUserInTeam()
+                ? BinaryValue::True
+                : BinaryValue::False;
+            $Users2Teams->create($userid, $teamId, $isAdmin, $isValidated);
+        }
         $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $rmFromTeams = array_diff($currentTeams, $teamIdArr);
@@ -235,7 +241,7 @@ final class Teams extends AbstractRest
      * Delete a team only if all the stats are at zero
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
 

@@ -151,7 +151,7 @@ final class TeamTags extends AbstractRest
      * Destroy a tag completely. Unreference it from everywhere and then delete it
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         if (!$this->Users->isAdmin) {
             throw new ForbiddenException('Only an admin can delete a tag!');

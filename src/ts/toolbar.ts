@@ -129,7 +129,20 @@ on(Action.CancelRequestableAction, (el: HTMLElement) => {
 on('export-to', (el: HTMLElement) => {
   const format = el.dataset.format;
   const params = new URLSearchParams({format});
-  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?${params.toString()}`, '_blank');
+
+  document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
+    '#exportModal [id^="exportToggleDiv_"]:not([hidden]) [id^="exportToggle_"]',
+  ).forEach(input => {
+    const option = input.id.replace('exportToggle_', '');
+    const value = input instanceof HTMLInputElement ? input.checked ? '1' : '0' : input.value;
+    params.set(option, value);
+  });
+
+  if (params.get('pdfa') === '1') {
+    params.set('format', `${format}a`);
+    params.delete('pdfa');
+  }
+  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?${params}`, '_blank');
 });
 
 on('export-to-qrpng', (el: HTMLElement) => {

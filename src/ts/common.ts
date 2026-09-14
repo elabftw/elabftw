@@ -174,10 +174,15 @@ on('toggle-modal', (el: HTMLElement) => {
       element.setAttribute('hidden', '');
     });
 
-    const options = exportOptions.get(el.dataset.format) ?? [];
+    const format = el.dataset.format;
+    const options = exportOptions.get(format) ?? [];
     options.forEach((option) => {
       document.getElementById(`exportToggleDiv_${option}`)?.removeAttribute('hidden');
     });
+    const exportButton = document.querySelector<HTMLElement>('[data-action="export-to"]');
+    if (exportButton) {
+      exportButton.dataset.format = format;
+    }
   }
 });
 

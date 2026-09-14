@@ -128,23 +128,23 @@ on(Action.CancelRequestableAction, (el: HTMLElement) => {
 
 const exportOptions = new Map<string, string[]>([
   ['pdf', [
-    ['changelog', 'pdf_exportWithChangelog'],
-    ['links', 'pdf_exportWithLinks'],
-    ['pdfa', 'pdf_exportPdfa'],
-    ['classification', 'pdf_exportClassification'],
+    'changelog', 'pdf_exportWithChangelog',
+    'links', 'pdf_exportWithLinks',
+    'pdfa', 'pdf_exportPdfa',
+    'classification', 'pdf_exportClassification',
   ]],
   ['zip', [
-    ['changelog', 'zip_exportWithChangelog'],
-    ['pdfa', 'zip_exportPdfa'],
-    ['json', 'zip_exportJson'],
+    'changelog', 'zip_exportWithChangelog',
+    'pdfa', 'zip_exportPdfa',
+    'json', 'zip_exportJson',
   ]],
   ['eln', [
-    ['changelog', 'eln_exportWithChangelog'],
-    ['links', 'eln_exportWithLinks'],
+    'changelog', 'eln_exportWithChangelog',
+    'links', 'eln_exportWithLinks',
   ]],
   ['json', [
-    ['changelog', 'json_exportWithChangelog'],
-    ['json', 'json_exportFullJson'],
+    'changelog', 'json_exportWithChangelog',
+    'json', 'json_exportFullJson',
   ]],
 ]);
 

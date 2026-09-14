@@ -68,7 +68,7 @@ Congratulations, you are now running the latest version! Make sure to keep your 
 
 If you encounter an issue during the database migration, open a GitHub issue!
 
-Note that you can use `db:revert XYZ` to revert the changes made by schema `XYZ`, or use `--force` to ignore errors (only do that if you know what you are doing!).
+Use `db:check` to list applied and pending migrations. `db:revert` rolls back the last migration batch, and `db:revert --step=1` rolls back the last migration. Rollbacks can remove data. Legacy numbered schemas still support `db:revert XYZ`; `--force` ignores SQL errors only for those legacy schemas. Timestamped migrations always stop on errors. See `src/sql/README.md` for explicit history repair commands.
 
 ## Updating from incredibly old versions
 

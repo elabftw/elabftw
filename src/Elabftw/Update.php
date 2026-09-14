@@ -27,11 +27,11 @@ use function preg_match;
  * Run the update schema script
  *
  * How to modify the structure:
- * 1. Generate a schema with bin/console dev:genschema
+ * 1. Generate a migration with bin/console dev:genschema descriptive_name
  * 2. Fix permissions as they might be owned by root from the container
  * 3. Edit them to make changes in the db in both directions (up and down)
  * 4. Run `bin/console db:update` to apply the changes as if you were upgrading
- * 5. reflect the changes in src/sql/structure.sql (or models/Config.php for the config table)
+ * 5. Keep structure.sql and Config::create() as the fixed legacy baseline; new installs also run migrations.
  */
 final class Update
 {
@@ -45,7 +45,7 @@ final class Update
     /**
      * Update the database schema if needed
      */
-    public function runUpdateScript(bool $force = false): int
+    public function runUpdateScript(bool $force = false, bool $step = false): int
     {
         // make sure we run MySQL version 8.4 at least
         $mysqlVersion = (string) $this->Db->getAttribute(PDO::ATTR_SERVER_VERSION);
@@ -54,6 +54,10 @@ final class Update
             || ((int) $matches[1] === 8 && (int) $matches[2] < 4)
         ) {
             throw new ImproperActionException(sprintf('MySQL 8.4 is required, found %s', $mysqlVersion));
+        }
+
+        if ($this->currentSchema > SchemaVersionChecker::REQUIRED_SCHEMA) {
+            throw new ImproperActionException('The database legacy schema is newer than this checkout.');
         }
 
         // old style update functions have been removed, so add a block to prevent upgrade from very very old to newest directly
@@ -83,6 +87,9 @@ final class Update
                 $this->fixExperimentsRevisions();
             }
         }
+        $Migrations = new Migrations($this->Sql->getFilesystem(), $this->Sql->getOutput());
+        $Migrations->migrate($step);
+        $Config->configArr = $Config->readAll();
         return $this->currentSchema;
     }
 

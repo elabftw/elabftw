@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\LocalPassword;
 use Elabftw\Elabftw\Sql;
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
@@ -577,6 +578,10 @@ final class Populate
         // load structure
         $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $this->output);
         $Sql->execFile('structure.sql');
+        $Config = Config::getConfig();
+        $Config->configArr = $Config->readAll();
+        (new Migrations($Sql->getFilesystem(), $this->output))->migrate();
+        $Config->configArr = $Config->readAll();
         new Branding(true)->populate();
     }
 }

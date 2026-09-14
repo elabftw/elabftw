@@ -16,11 +16,13 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\LocalPassword;
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Hash\LocalPasswordHash;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Branding;
+use Elabftw\Models\Config;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\PasswordValidator;
@@ -97,6 +99,10 @@ final class Install extends Command
         $output->writeln('<info>→ Initializing MySQL database...</info>');
         $sqlFs = FsTools::getFs(dirname(__DIR__) . '/sql');
         (new Sql($sqlFs, $output))->execFile('structure.sql');
+        $Config = Config::getConfig();
+        $Config->configArr = $Config->readAll();
+        (new Migrations($sqlFs, $output))->migrate();
+        $Config->configArr = $Config->readAll();
         $output->writeln('<info>✓ Installation successful! Now creating the first team...</info>');
         // now create the default team
         $Teams = new Teams(new Users());

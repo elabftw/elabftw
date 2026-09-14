@@ -12,16 +12,19 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Enums\Action;
+use Elabftw\Elabftw\Migrations;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
-use function sprintf;
+use function ctype_digit;
 
 /**
  * For dev purposes: force the schema to a particular version
@@ -29,21 +32,37 @@ use function sprintf;
 #[AsCommand(name: 'dev:forceschema')]
 final class ForceSchema extends Command
 {
+    public function __construct(private FilesystemOperator $fs)
+    {
+        parent::__construct();
+    }
+
     #[Override]
     protected function configure(): void
     {
-        $this->setDescription('Directly set a schema number in the general config')
-            ->addArgument('schema', InputArgument::REQUIRED, 'Target schema number')
-            ->setHelp('This command allows you to directly set the value of the schema number in the config table.');
+        $this->setDescription('Repair migration history without executing migration SQL')
+            ->addArgument('schema', InputArgument::REQUIRED, 'Migration ID, or a legacy schema number')
+            ->addOption('forget', null, InputOption::VALUE_NONE, 'Mark the named migration as pending')
+            ->setHelp('By default, mark one migration as applied. --forget removes its history record. Neither operation changes the schema. Numeric arguments only repair the legacy baseline.');
     }
 
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $schemaNumber = $input->getArgument('schema');
-        $Config = Config::getConfig();
-        $Config->patch(Action::Update, array('schema' => $schemaNumber));
-        $output->writeln(sprintf('Changing schema to %d', $schemaNumber));
+        $name = (string) $input->getArgument('schema');
+        $Migrations = new Migrations($this->fs, $output);
+        if (ctype_digit($name)) {
+            if ($input->getOption('forget')) {
+                throw new ImproperActionException('--forget requires a timestamped migration ID.');
+            }
+            $Migrations->forceLegacy($name);
+            $Config = Config::getConfig();
+            $Config->configArr = $Config->readAll();
+            $output->writeln('Changing schema to ' . $name . ' (metadata only).');
+        } else {
+            $Migrations->mark($name, $input->getOption('forget'));
+            $output->writeln($name . ($input->getOption('forget') ? ' marked as pending.' : ' marked as applied.') . ' No migration SQL was executed.');
+        }
         return Command::SUCCESS;
     }
 }

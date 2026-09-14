@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\SchemaVersionChecker;
+use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Migrations;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,6 +22,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
 use function sprintf;
+use function dirname;
+use function array_diff;
+use function array_keys;
 
 /**
  * Check the the current schema version versus the required one
@@ -27,7 +32,7 @@ use function sprintf;
 #[AsCommand(name: 'db:check')]
 final class CheckDatabase extends Command
 {
-    public function __construct(private int $currentSchema)
+    public function __construct(private int $currentSchema, private ?Migrations $migrations = null)
     {
         parent::__construct();
     }
@@ -50,15 +55,35 @@ final class CheckDatabase extends Command
         $output->writeln(array(
             'Database check',
             '==============',
-            sprintf('Current version: %d', $this->currentSchema),
-            sprintf('Required version: %d', SchemaVersionChecker::REQUIRED_SCHEMA),
+            sprintf('Legacy baseline: %d', $this->currentSchema),
+            sprintf('Required legacy baseline: %d', SchemaVersionChecker::REQUIRED_SCHEMA),
         ));
-        if ($this->currentSchema === SchemaVersionChecker::REQUIRED_SCHEMA) {
-            $output->writeln('No upgrade required.');
-            return Command::SUCCESS;
+        if ($this->currentSchema > SchemaVersionChecker::REQUIRED_SCHEMA) {
+            $output->writeln('<error>The database is newer than this checkout.</error>');
+            return Command::INVALID;
         }
-
-        $output->writeln('An upgrade is required.');
-        return Command::FAILURE;
+        if ($this->currentSchema < SchemaVersionChecker::REQUIRED_SCHEMA) {
+            $output->writeln('An upgrade is required.');
+            return Command::FAILURE;
+        }
+        $Migrations = $this->migrations ?? new Migrations(FsTools::getFs(dirname(__DIR__) . '/sql'), $output);
+        $applied = $Migrations->applied();
+        $available = $Migrations->available();
+        foreach ($available as $name) {
+            $output->writeln(sprintf('%s  %s', isset($applied[$name]) ? 'Applied (batch ' . $applied[$name] . ')' : 'Pending', $name));
+        }
+        $unknown = array_diff(array_keys($applied), $available);
+        foreach ($unknown as $name) {
+            $output->writeln('<error>Applied migration missing from checkout: ' . $name . '</error>');
+        }
+        if ($unknown !== array()) {
+            return Command::INVALID;
+        }
+        if (!$Migrations->isInstalled() || $Migrations->pending() !== array()) {
+            $output->writeln('An upgrade is required.');
+            return Command::FAILURE;
+        }
+        $output->writeln('No upgrade required.');
+        return Command::SUCCESS;
     }
 }

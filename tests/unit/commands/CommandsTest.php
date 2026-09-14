@@ -87,15 +87,6 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    public function testForceSchema(): void
-    {
-        $commandTester = new CommandTester(new ForceSchema());
-        $Config = Config::getConfig();
-        $commandTester->execute(array('schema' => $Config->configArr['schema']));
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Changing schema to', $commandTester->getDisplay());
-    }
-
     public function testCache(): void
     {
         $commandTester = new CommandTester(new Cache());
@@ -147,7 +138,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     public function testGenSchema(): void
     {
         $commandTester = new CommandTester(new GenSchema((new Memory())->getFs()));
-        $commandTester->execute(array());
+        $commandTester->execute(array('name' => 'add_booking_color'));
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString('Created file', $commandTester->getDisplay());
     }
@@ -262,13 +253,6 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString('Removed', $commandTester->getDisplay());
-    }
-
-    public function testRevertSchema(): void
-    {
-        $commandTester = new CommandTester(new RevertSchema((new Fixtures())->getFs()));
-        $commandTester->execute(array('number' => '42'));
-        $commandTester->assertCommandIsSuccessful();
     }
 
     public function testExecuteCache(): void

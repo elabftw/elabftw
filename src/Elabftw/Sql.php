@@ -43,6 +43,16 @@ final class Sql
         $this->Db = Db::getConnection();
     }
 
+    public function getFilesystem(): FilesystemOperator
+    {
+        return $this->filesystem;
+    }
+
+    public function getOutput(): OutputInterface
+    {
+        return $this->output;
+    }
+
     /**
      * Read a SQL file from a folder and execute the contents
      */

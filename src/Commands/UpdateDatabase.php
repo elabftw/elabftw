@@ -26,7 +26,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
 use function dirname;
-use function sprintf;
 
 /**
  * Update the database schema
@@ -38,7 +37,8 @@ final class UpdateDatabase extends Command
     protected function configure(): void
     {
         $this->setDescription('Update the database structure')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors in legacy numbered migrations only')
+            ->addOption('step', null, InputOption::VALUE_NONE, 'Run each timestamped migration in its own batch')
             ->setHelp('This command allows you to update the structure of the database to the latest version.');
     }
 
@@ -55,7 +55,10 @@ final class UpdateDatabase extends Command
         $cmdInput = new ArrayInput($arguments);
         $returnCode = $command->run($cmdInput, $output);
 
-        if ($returnCode === 1) {
+        if ($returnCode === Command::INVALID) {
+            return Command::INVALID;
+        }
+        if ($returnCode === Command::FAILURE) {
             $output->writeln(array(
                 'Database update starting',
                 '========================',
@@ -63,8 +66,8 @@ final class UpdateDatabase extends Command
 
             $Config = Config::getConfig();
             $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output));
-            $newSchema = $Update->runUpdateScript($input->getOption('force'));
-            $output->writeln(sprintf('<info>Updated to schema %d.</info>', $newSchema));
+            $Update->runUpdateScript($input->getOption('force'), $input->getOption('step'));
+            $output->writeln('<info>All pending migrations have been applied.</info>');
         }
         return Command::SUCCESS;
     }

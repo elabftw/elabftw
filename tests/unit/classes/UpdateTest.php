@@ -18,6 +18,8 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Symfony\Component\Console\Output\NullOutput;
 
 use function sprintf;
+use function dirname;
+use function str_replace;
 
 class UpdateTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,6 +31,14 @@ class UpdateTest extends \PHPUnit\Framework\TestCase
     {
         $this->Fs = new Fs(new InMemoryFilesystemAdapter());
         $this->Sql = new Sql($this->Fs, new NullOutput());
+        $this->Fs->write('migrations.sql', FsTools::getFs(dirname(__DIR__, 3) . '/src/sql')->read('migrations.sql'));
+        $this->Sql->execFile('migrations.sql');
+        Db::getConnection()->q(str_replace('CREATE TABLE IF NOT EXISTS', 'CREATE TEMPORARY TABLE', $this->Fs->read('migrations.sql')));
+    }
+
+    protected function tearDown(): void
+    {
+        Db::getConnection()->q('DROP TEMPORARY TABLE IF EXISTS schema_migrations');
     }
 
     public function testCheckSchema(): void
@@ -41,9 +51,13 @@ class UpdateTest extends \PHPUnit\Framework\TestCase
     public function testRunUpdateScript(): void
     {
         // create a fake schema file
-        $this->Fs->write(sprintf('schema%d.sql', SchemaVersionChecker::REQUIRED_SCHEMA), 'SELECT 1');
+        $this->Fs->write(sprintf('schema%d.sql', SchemaVersionChecker::REQUIRED_SCHEMA), 'SELECT 1;');
+        $id = '2026_09_14_090000_after_legacy';
+        $this->Fs->write('migrations/' . $id . '.sql', 'SELECT 1;');
+        $this->Fs->write('migrations/' . $id . '-down.sql', 'SELECT 1;');
         $Update = new Update(SchemaVersionChecker::REQUIRED_SCHEMA - 1, $this->Sql);
         $this->assertSame(SchemaVersionChecker::REQUIRED_SCHEMA, $Update->runUpdateScript());
+        self::assertSame(array($id => 1), (new Migrations($this->Fs, new NullOutput()))->applied());
     }
 
     public function testOldAfInstance(): void

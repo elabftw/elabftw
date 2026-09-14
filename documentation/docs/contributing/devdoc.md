@@ -69,7 +69,7 @@ Use vanilla JS and ban the use of jQuery selectors or functions.
 
 ## Miscellaneous
 
-* if you make a change to the SQL structure, you need to add a schema file in `src/sql`. See the existing files for an example. Then increment the required version in `src/classes/Update`. Modify `src/sql/structure.sql` so new installs will get the correct structure. See also `dev:genschema` command.
+* For database changes, run `bin/console dev:genschema descriptive_name` and fill in the timestamped up/down SQL files in `src/sql/migrations`. Apply them with `db:update`. Do not increment `REQUIRED_SCHEMA` or change the frozen baseline in `structure.sql` and `Config::create()`. Fresh installs also run these migrations. See `src/sql/README.md` for rollback and history repair.
 * comment your code wisely, what is important is the why, not the what
 * your code must follow [the PSR standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)
 * add a plugin to your editor to show trailing whitespaces in red

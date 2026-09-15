@@ -302,6 +302,18 @@ const EntitiesTable = ({
     };
   }, [fetchData]);
 
+  // the selection can also be dropped from outside the grid, as a batch action does once it
+  // is finished: the ticks have to follow, or the next tick would bring the old rows back
+  useEffect(() => {
+    const handleSelectionCleared = () => gridApi?.deselectAll();
+
+    window.addEventListener('entities-selection-cleared', handleSelectionCleared);
+
+    return () => {
+      window.removeEventListener('entities-selection-cleared', handleSelectionCleared);
+    };
+  }, [gridApi]);
+
   // when a row is selected with the checkbox
   const selectionChanged = (event) => {
     const selectedRows = event.api.getSelectedRows();

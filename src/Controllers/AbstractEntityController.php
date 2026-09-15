@@ -139,6 +139,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'pageTitle' => $this->getPageTitle(),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
+            'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
             'teamsArr' => $this->App->Teams->readAllVisible(),
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),

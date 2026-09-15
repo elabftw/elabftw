@@ -35,12 +35,17 @@
         <div class='input-group-prepend'>
           <button type='button' class='btn btn-secondary' data-action='container-qty-minus' data-storage-id='{{ unit.id }}' aria-label='{{ 'Decrease containers for %s'|trans|format(unit.name) }}'><i class='fas fa-minus'></i></button>
         </div>
-        {# max is the room left here, so the browser's own spinner and the js clamp alike #}
-        <input type='number' class='form-control text-center' min='0' step='1' value='0' {% if unit.capacity is not null %}max='{{ unit.capacity - unit.occupancy }}'{% endif %} inputmode='numeric' autocomplete='off' data-action='container-qty-input' data-storage-id='{{ unit.id }}' aria-label='{{ 'Number of containers for %s'|trans|format(unit.name) }}' />
+        {# max is the room left here, so the browser's own spinner and the js clamp alike. When the
+           same distribution is applied to several entries at once, the js narrows max to what one
+           entry may claim; data-slots-left keeps the unnarrowed count a re-render can restore from #}
+        <input type='number' class='form-control text-center' min='0' step='1' value='0' {% if unit.capacity is not null %}max='{{ unit.capacity - unit.occupancy }}' data-slots-left='{{ unit.capacity - unit.occupancy }}'{% endif %} inputmode='numeric' autocomplete='off' data-action='container-qty-input' data-storage-id='{{ unit.id }}' aria-label='{{ 'Number of containers for %s'|trans|format(unit.name) }}' />
         <div class='input-group-append'>
           <button type='button' class='btn btn-secondary' data-action='container-qty-plus' data-storage-id='{{ unit.id }}' aria-label='{{ 'Increase containers for %s'|trans|format(unit.name) }}'><i class='fas fa-plus'></i></button>
         </div>
       </div>
+      {# revealed by the js when the room left cannot be split across every selected entry:
+         the occupancy badge still shows free slots, so the dead stepper needs a reason #}
+      <span class='smallgray' hidden data-batch-full-notice='1' data-storage-id='{{ unit.id }}'><i class='fas fa-ban mr-1'></i>{{ 'Not enough room here for every selected entry'|trans }}</span>
     {% endif %}
   {% endmacro %}
   {# the declared limit, editable on the inventory page only; elsewhere the badge carries it #}

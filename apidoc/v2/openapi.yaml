@@ -5093,9 +5093,6 @@ paths:
                   type: object
                   description: Optional settings to make this booking repeat. A recurring booking can contain up to 100 occurrences over a maximum period of 10 years.
                   required: [frequency, interval]
-                  oneOf:
-                    - required: [count]
-                    - required: [until]
                   properties:
                     frequency:
                       type: string

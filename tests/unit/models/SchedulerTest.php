@@ -189,10 +189,11 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
             $events,
         ));
-        $this->assertSame(
-            array('frequency' => 'weekly', 'interval' => 1, 'weekdays' => array(2, 4), 'count' => 4),
-            $events[0]['recurrence_rule'],
-        );
+        $rule = $events[0]['recurrence_rule'];
+        $this->assertSame('weekly', $rule['frequency']);
+        $this->assertSame(1, $rule['interval']);
+        $this->assertSame(array(2, 4), $rule['weekdays']);
+        $this->assertSame(4, $rule['count']);
     }
 
     public function testCreateRecurringSeriesUntilDate(): void

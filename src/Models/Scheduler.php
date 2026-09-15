@@ -702,7 +702,10 @@ final class Scheduler extends AbstractRest
         $req->bindValue(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        return $req->fetchAll();
+        return array_map(
+            fn(array $event): array => $this->decodeRecurrenceRule($event),
+            $req->fetchAll(),
+        );
     }
 
     // the title (comment) can be an empty string

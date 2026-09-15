@@ -8,8 +8,10 @@
  */
 .fc-event.scheduler-event-colored {
   --scheduler-event-mix-bg: var(--chrome-fg);
-  background-color: color-mix(in srgb, var(--scheduler-event-color) 22%, var(--scheduler-event-mix-bg)) !important;
-  border-color: transparent !important;
+  --scheduler-event-bg: color-mix(in srgb, var(--scheduler-event-color) 22%, var(--scheduler-event-mix-bg));
+  background-color: var(--scheduler-event-bg) !important;
+  border: 1px solid var(--scheduler-event-bg) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--scheduler-event-color) 35%, transparent);
   border-left: 3px solid var(--scheduler-event-color) !important;
   color: color-mix(in srgb, var(--scheduler-event-color) 70%, var(--strongest)) !important;
 
@@ -44,7 +46,7 @@
 }
 
 .calendar-event-hover {
-  box-shadow: 5px 4px 4px var(--medium) !important;
+  box-shadow: 5px 4px 4px var(--scheduler-event-color) !important;
 }
 
 .calendar-event-disabled {

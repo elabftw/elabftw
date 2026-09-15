@@ -115,7 +115,7 @@ final class Apiv2Controller extends AbstractApiController
 
     private array $reqBody = array();
 
-    private ExportFormat $format = ExportFormat::Json;
+    private ExportFormat $format = ExportFormat::None;
 
     private Action $action = Action::Create;
 
@@ -288,6 +288,7 @@ final class Apiv2Controller extends AbstractApiController
             ExportFormat::Csv,
             ExportFormat::Eln,
             ExportFormat::ElnHtml,
+            ExportFormat::Json,
             ExportFormat::QrPdf,
             ExportFormat::QrPng,
             ExportFormat::Pdf,

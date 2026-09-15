@@ -25,16 +25,16 @@
 
         {# LINKS #}
         <div hidden id='exportToggleDiv_links'>
-        <div class='d-flex justify-content-between mb-2'>
-          <div>
-            <label class='d-inline mr-1' for='exportToggle_links'>{{ 'Include links'|trans }}</label>
-            <p class='smallgray'>{{ 'The files will contain the attached links.'|trans }}</p>
+          <div class='d-flex justify-content-between mb-2'>
+            <div>
+              <label class='d-inline mr-1' for='exportToggle_links'>{{ 'Include links'|trans }}</label>
+              <p class='smallgray'>{{ 'The files will contain the attached links.'|trans }}</p>
+            </div>
+            <label class='switch' title='{{ 'Include attached links'|trans }}'><span class='sr-only'>{{ 'Include attached links'|trans }}</span>
+              <input type='checkbox' id='exportToggle_links'>
+              <span class='slider'></span>
+            </label>
           </div>
-          <label class='switch' title='{{ 'Include attached links'|trans }}'><span class='sr-only'>{{ 'Include attached links'|trans }}</span>
-            <input type='checkbox' id='exportToggle_links'>
-            <span class='slider'></span>
-          </label>
-        </div>
         </div>
 
         {# PDF/A #}
@@ -91,6 +91,7 @@
         </div>
 
       </div>
+
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
         <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>

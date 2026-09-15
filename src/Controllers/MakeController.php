@@ -168,13 +168,12 @@ final class MakeController extends AbstractController
         }
     }
 
-    private function shouldIncludeChangelog(): bool
+    private function shouldIncludeChangelog(bool $default = false): bool
     {
-        $includeChangelog =  $this->pdfa;
         if ($this->Request->query->has('changelog')) {
-            $includeChangelog = $this->Request->query->getBoolean('changelog');
+            return $this->Request->query->getBoolean('changelog');
         }
-        return $includeChangelog;
+        return $default;
     }
 
     private function shouldIncludeLinkedEntities(): bool
@@ -236,7 +235,7 @@ final class MakeController extends AbstractController
         $users2Rors = new Users2Rors($this->requester->getUserid());
         $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         if (count($this->entityArr) === 1) {
-            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
+            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog($this->pdfa), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
         }
         return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
     }

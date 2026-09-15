@@ -276,7 +276,7 @@ final class Exports extends AbstractRest
                     );
                 } else {
                     $Maker = new MakeBackupZip($ZipStream, $this->requester, $entityArr, $usePdfa, $includeChangelog, $includeJson);
-                };
+                }
                 $Maker->getStreamZip();
                 fclose($fileStream);
                 break;

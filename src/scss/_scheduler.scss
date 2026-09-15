@@ -52,3 +52,24 @@
 .calendar-event-disabled {
   opacity: 0.5;
 }
+
+/* the buttons at the top right (day/week etc.) */
+.fc .fc-toolbar-chunk:last-child {
+  .btn-primary {
+    background-color: transparent !important;
+    border-color: var(--secondary) !important;
+    color: var(--secondary) !important;
+
+    &:hover {
+      background-color: var(--thirdlevel) !important;
+      border-color: var(--strongest) !important;
+      color: var(--chrome-fg) !important;
+    }
+
+    &.active {
+      background-color: var(--primary) !important;
+      border-color: var(--primary) !important;
+      color: var(--primary-fg) !important;
+    }
+  }
+}

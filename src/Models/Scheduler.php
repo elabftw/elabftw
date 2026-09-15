@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateInterval;
 use DateTime;
 use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
@@ -37,11 +38,14 @@ use function _;
 use function array_filter;
 use function array_key_exists;
 use function array_map;
+use function array_unique;
 use function count;
 use function filter_var;
 use function implode;
 use function in_array;
 use function is_array;
+use function is_string;
+use function sort;
 use function sprintf;
 use function str_replace;
 use function trim;
@@ -881,22 +885,56 @@ final class Scheduler extends AbstractRest
             throw new ImproperActionException(_('Invalid recurrence frequency.'));
         }
         $interval = $this->getRecurrenceInteger($recurrence, 'interval', 1, self::MAX_RECURRENCE_INTERVAL);
-        $count = $this->getRecurrenceInteger($recurrence, 'count', 1, self::MAX_RECURRENCE_OCCURRENCES);
+        $hasCount = array_key_exists('count', $recurrence);
+        $hasUntil = array_key_exists('until', $recurrence);
+        if ($hasCount === $hasUntil) {
+            throw new ImproperActionException(_('Recurrence must end after a number of occurrences or on a date.'));
+        }
+        $count = $hasCount
+            ? $this->getRecurrenceInteger($recurrence, 'count', 1, self::MAX_RECURRENCE_OCCURRENCES)
+            : null;
+        $until = $hasUntil ? $this->getRecurrenceUntil($recurrence) : null;
         $startDate = $this->formatDate($start);
         $duration = $startDate->diff($this->formatDate($end));
-        $occurrences = array();
         $lastAllowed = $startDate->modify(sprintf('+%d years', self::MAX_RECURRENCE_SPAN_YEARS));
-        for ($index = 0; $index < $count; $index++) {
+        if ($until !== null) {
+            if ($until < $startDate) {
+                throw new ImproperActionException(_('The last occurrence cannot be before the first occurrence.'));
+            }
+            if ($until > $lastAllowed) {
+                throw new ImproperActionException(sprintf(
+                    _('Recurring reservations cannot span more than %d years.'),
+                    self::MAX_RECURRENCE_SPAN_YEARS,
+                ));
+            }
+        }
+
+        if ($frequency === 'weekly') {
+            return $this->generateWeeklyOccurrences($startDate, $duration, $interval, $count, $until, $lastAllowed, $recurrence);
+        }
+
+        $occurrences = array();
+        for ($index = 0; ; $index++) {
+            if ($count !== null && count($occurrences) >= $count) {
+                break;
+            }
             $step = $index * $interval;
-            $occurrenceStart = match ($frequency) {
-                'daily' => $startDate->modify(sprintf('+%d days', $step)),
-                'weekly' => $startDate->modify(sprintf('+%d weeks', $step)),
-                'monthly' => $this->addMonthsStrict($startDate, $step),
-            };
+            $occurrenceStart = $frequency === 'daily'
+                ? $startDate->modify(sprintf('+%d days', $step))
+                : $this->addMonthsStrict($startDate, $step);
+            if ($until !== null && $occurrenceStart > $until) {
+                break;
+            }
             if ($occurrenceStart > $lastAllowed) {
                 throw new ImproperActionException(sprintf(
                     _('Recurring reservations cannot span more than %d years.'),
                     self::MAX_RECURRENCE_SPAN_YEARS,
+                ));
+            }
+            if (count($occurrences) >= self::MAX_RECURRENCE_OCCURRENCES) {
+                throw new ImproperActionException(sprintf(
+                    _('Recurring reservations are limited to %d occurrences.'),
+                    self::MAX_RECURRENCE_OCCURRENCES,
                 ));
             }
             $occurrences[] = array(
@@ -905,6 +943,93 @@ final class Scheduler extends AbstractRest
             );
         }
         return $occurrences;
+    }
+
+    private function generateWeeklyOccurrences(
+        DateTimeImmutable $startDate,
+        DateInterval $duration,
+        int $interval,
+        ?int $count,
+        ?DateTimeImmutable $until,
+        DateTimeImmutable $lastAllowed,
+        array $recurrence,
+    ): array {
+        $weekdays = $this->getRecurrenceWeekdays($recurrence, (int) $startDate->format('N'));
+        $startWeekday = (int) $startDate->format('N');
+        $weekStart = $startDate->modify(sprintf('-%d days', $startWeekday - 1));
+        $occurrences = array();
+        for ($weekIndex = 0; ; $weekIndex++) {
+            $recurrenceWeek = $weekStart->modify(sprintf('+%d weeks', $weekIndex * $interval));
+            foreach ($weekdays as $weekday) {
+                if ($count !== null && count($occurrences) >= $count) {
+                    return $occurrences;
+                }
+                $occurrenceStart = $recurrenceWeek
+                    ->modify(sprintf('+%d days', $weekday - 1))
+                    ->setTime(
+                        (int) $startDate->format('H'),
+                        (int) $startDate->format('i'),
+                        (int) $startDate->format('s'),
+                    );
+                if ($occurrenceStart < $startDate) {
+                    continue;
+                }
+                if ($until !== null && $occurrenceStart > $until) {
+                    return $occurrences;
+                }
+                if ($occurrenceStart > $lastAllowed) {
+                    throw new ImproperActionException(sprintf(
+                        _('Recurring reservations cannot span more than %d years.'),
+                        self::MAX_RECURRENCE_SPAN_YEARS,
+                    ));
+                }
+                if (count($occurrences) >= self::MAX_RECURRENCE_OCCURRENCES) {
+                    throw new ImproperActionException(sprintf(
+                        _('Recurring reservations are limited to %d occurrences.'),
+                        self::MAX_RECURRENCE_OCCURRENCES,
+                    ));
+                }
+                $occurrences[] = array(
+                    'start' => $this->adjustMidnight($occurrenceStart->format(self::DATETIME_FORMAT)),
+                    'end' => $occurrenceStart->add($duration)->format(self::DATETIME_FORMAT),
+                );
+            }
+        }
+    }
+
+    private function getRecurrenceWeekdays(array $recurrence, int $startWeekday): array
+    {
+        $weekdays = $recurrence['weekdays'] ?? array($startWeekday);
+        if (!is_array($weekdays) || empty($weekdays)) {
+            throw new ImproperActionException(_('At least one weekday is required for a weekly recurrence.'));
+        }
+        $validated = array();
+        foreach ($weekdays as $weekday) {
+            $value = filter_var($weekday, FILTER_VALIDATE_INT);
+            if ($value === false || $value < 1 || $value > 7) {
+                throw new ImproperActionException(_('Recurrence weekdays must be between 1 and 7.'));
+            }
+            $validated[] = $value;
+        }
+        $validated = array_values(array_unique($validated));
+        sort($validated);
+        if (!in_array($startWeekday, $validated, true)) {
+            throw new ImproperActionException(_('The first booking day must be included in the weekly recurrence.'));
+        }
+        return $validated;
+    }
+
+    private function getRecurrenceUntil(array $recurrence): DateTimeImmutable
+    {
+        $value = $recurrence['until'] ?? null;
+        if (!is_string($value)) {
+            throw new ImproperActionException(_('Recurrence end date must use the YYYY-MM-DD format.'));
+        }
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+        if ($date === false || $date->format('Y-m-d') !== $value) {
+            throw new ImproperActionException(_('Recurrence end date must use the YYYY-MM-DD format.'));
+        }
+        return $date->setTime(23, 59, 59);
     }
 
     private function getRecurrenceInteger(array $recurrence, string $field, int $minimum, int $maximum): int

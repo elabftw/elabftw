@@ -163,6 +163,58 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
+    public function testCreateWeeklySeriesOnMultipleDays(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('next Tuesday 10:00');
+        $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->modify('+1 hour')->format('c'),
+            'recurrence' => array(
+                'frequency' => 'weekly',
+                'interval' => 1,
+                'weekdays' => array(2, 4),
+                'count' => 4,
+            ),
+        ));
+
+        $this->assertSame(array(
+            $start->format('Y-m-d'),
+            $start->modify('+2 days')->format('Y-m-d'),
+            $start->modify('+1 week')->format('Y-m-d'),
+            $start->modify('+1 week +2 days')->format('Y-m-d'),
+        ), array_map(
+            static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
+            $this->getSortedEvents($Items),
+        ));
+    }
+
+    public function testCreateRecurringSeriesUntilDate(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('+2 days 10:00');
+        $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->modify('+1 hour')->format('c'),
+            'recurrence' => array(
+                'frequency' => 'daily',
+                'interval' => 1,
+                'until' => $start->modify('+2 days')->format('Y-m-d'),
+            ),
+        ));
+
+        $this->assertSame(array(
+            $start->format('Y-m-d'),
+            $start->modify('+1 day')->format('Y-m-d'),
+            $start->modify('+2 days')->format('Y-m-d'),
+        ), array_map(
+            static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
+            $this->getSortedEvents($Items),
+        ));
+    }
+
     public function testCreateMonthlySeries(): void
     {
         $Items = $this->getFreshBookableItem(2);
@@ -191,6 +243,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             array('frequency' => 'daily', 'interval' => 0, 'count' => 2),
             array('frequency' => 'daily', 'interval' => -1, 'count' => 2),
             array('frequency' => 'daily', 'interval' => 1, 'count' => 0),
+            array('frequency' => 'daily', 'interval' => 1),
+            array('frequency' => 'daily', 'interval' => 1, 'count' => 2, 'until' => '2030-01-01'),
+            array('frequency' => 'weekly', 'interval' => 1, 'weekdays' => array(8), 'count' => 2),
             array('frequency' => 'daily', 'interval' => 1, 'count' => Scheduler::MAX_RECURRENCE_OCCURRENCES + 1),
             array('frequency' => 'daily', 'interval' => 365, 'count' => 12),
         );

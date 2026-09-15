@@ -5061,19 +5061,38 @@ paths:
                 recurrence:
                   type: object
                   description: Optional settings to make this booking repeat. A recurring booking can contain up to 100 occurrences over a maximum period of 10 years.
-                  required: [frequency, interval, count]
+                  required: [frequency, interval]
+                  oneOf:
+                    - required: [count]
+                    - required: [until]
                   properties:
                     frequency:
                       type: string
                       enum: [daily, weekly, monthly]
+                      description: Unit used to repeat the booking.
                     interval:
                       type: integer
                       minimum: 1
                       maximum: 365
+                      description: Repeat every N days, weeks, or months.
+                    weekdays:
+                      type: array
+                      uniqueItems: true
+                      minItems: 1
+                      description: ISO weekdays used by weekly recurrence, where Monday is 1 and Sunday is 7. The weekday of the first booking must be included.
+                      items:
+                        type: integer
+                        minimum: 1
+                        maximum: 7
                     count:
                       type: integer
                       minimum: 1
                       maximum: 100
+                      description: Stop after this number of occurrences. Cannot be combined with until.
+                    until:
+                      type: string
+                      format: date
+                      description: Date of the last possible occurrence, inclusive. Cannot be combined with count.
       responses:
         '201':
           description: The booking slot has been created.

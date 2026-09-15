@@ -56,7 +56,9 @@ type CancelNotificationPayload = {
 type Recurrence = {
   frequency: 'daily' | 'weekly' | 'monthly';
   interval: number;
-  count: number;
+  count?: number;
+  until?: string;
+  weekdays?: number[];
 };
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
@@ -122,37 +124,149 @@ function lockScopeButtons(selectedItems: string[]): void {
 
 document.getElementById('loading-spinner')?.remove();
 
-// on loading the book event modal a second time, we need the options to be available
+function getRecurrenceInterval(fields: Element, reportValidity = false): number | false {
+  const mode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-interval-mode')!.value;
+  if (mode === 'every') {
+    return 1;
+  }
+  if (mode === 'other') {
+    return 2;
+  }
+  const interval = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-interval')!;
+  if (!interval.checkValidity()) {
+    if (reportValidity) {
+      interval.reportValidity();
+    }
+    return false;
+  }
+  return interval.valueAsNumber;
+}
+
 function updateRecurrenceFields(fields: Element): void {
   const enabled = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
   fields.querySelectorAll('.scheduler-recurrence-options')
     .forEach(element => element.classList.toggle('d-none', !enabled.checked));
+  if (!enabled.checked) {
+    return;
+  }
+
+  const intervalMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-interval-mode')!;
+  const interval = getRecurrenceInterval(fields);
+  fields.querySelector('.scheduler-recurrence-custom-interval')
+    ?.classList.toggle('d-none', intervalMode.value !== 'custom');
+  fields.querySelectorAll<HTMLOptionElement>('.scheduler-recurrence-frequency option').forEach(option => {
+    option.textContent = interval === 1 ? option.dataset.singular ?? '' : option.dataset.plural ?? '';
+  });
+
+  const frequency = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-frequency')!;
+  const isWeekly = frequency.value === 'weekly';
+  fields.querySelector('.scheduler-recurrence-weekly')?.classList.toggle('d-none', !isWeekly);
+  const weekdayMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-weekday-mode')!;
+  fields.querySelector('.scheduler-recurrence-weekdays')
+    ?.classList.toggle('d-none', !isWeekly || weekdayMode.value !== 'custom');
+
+  const endMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-end-mode')!;
+  fields.querySelector('.scheduler-recurrence-count-wrapper')?.classList.toggle('d-none', endMode.value !== 'count');
+  fields.querySelector('.scheduler-recurrence-until-wrapper')?.classList.toggle('d-none', endMode.value !== 'date');
+}
+
+function configureRecurrenceFields(fields: HTMLElement, start: Date, locale: string): void {
+  const startDate = DateTime.fromJSDate(start).setLocale(locale);
+  const startWeekday = startDate.weekday;
+  const secondDate = startDate.plus({ days: 2 });
+  fields.dataset.startWeekday = String(startWeekday);
+  fields.dataset.secondWeekday = String(secondDate.weekday);
+
+  const weekdayMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-weekday-mode')!;
+  const onDay = fields.dataset.onDay ?? 'on %s';
+  const onTwoDays = fields.dataset.onTwoDays ?? 'on %s & %s';
+  weekdayMode.querySelector<HTMLOptionElement>('option[value="start"]')!.textContent =
+    onDay.replace('%s', startDate.toFormat('cccc'));
+  weekdayMode.querySelector<HTMLOptionElement>('option[value="start-and-two-days"]')!.textContent =
+    onTwoDays.replace('%s', startDate.toFormat('cccc')).replace('%s', secondDate.toFormat('cccc'));
+  const weekdaysOption = weekdayMode.querySelector<HTMLOptionElement>('option[value="weekdays"]')!;
+  weekdaysOption.disabled = startWeekday > 5;
+  if (weekdaysOption.disabled && weekdayMode.value === 'weekdays') {
+    weekdayMode.value = 'start';
+  }
+
+  fields.querySelectorAll<HTMLInputElement>('.scheduler-recurrence-weekday').forEach(checkbox => {
+    const isStartDay = Number(checkbox.value) === startWeekday;
+    checkbox.checked = isStartDay;
+    checkbox.disabled = isStartDay;
+  });
+
+  const until = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-until')!;
+  const startDateValue = startDate.toISODate()!;
+  until.min = startDateValue;
+  if (until.value === '' || until.value < startDateValue) {
+    until.value = startDate.plus({ months: 1 }).toISODate()!;
+  }
+  updateRecurrenceFields(fields);
 }
 
 document.querySelectorAll<HTMLElement>('.scheduler-recurrence-fields').forEach(fields => {
-  const enabled = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
-  enabled.addEventListener('change', () => updateRecurrenceFields(fields));
+  fields.querySelectorAll('select, input').forEach(input => {
+    input.addEventListener('change', () => updateRecurrenceFields(fields));
+  });
+  fields.querySelector<HTMLInputElement>('.scheduler-recurrence-interval')
+    ?.addEventListener('input', () => updateRecurrenceFields(fields));
   updateRecurrenceFields(fields);
 });
 
 function getRecurrence(modal: Element): Recurrence | null | false {
-  const enabled = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
+  const fields = modal.querySelector<HTMLElement>('.scheduler-recurrence-fields')!;
+  const enabled = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
   if (!enabled.checked) {
     return null;
   }
-  const frequency = modal.querySelector<HTMLSelectElement>('.scheduler-recurrence-frequency')!;
-  const interval = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-interval')!;
-  const count = modal.querySelector<HTMLInputElement>('.scheduler-recurrence-count')!;
-  if (!interval.checkValidity() || !count.checkValidity()) {
-    interval.reportValidity();
-    count.reportValidity();
+
+  const interval = getRecurrenceInterval(fields, true);
+  if (interval === false) {
     return false;
   }
-  return {
+  const frequency = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-frequency')!;
+  const recurrence: Recurrence = {
     frequency: frequency.value as Recurrence['frequency'],
-    interval: interval.valueAsNumber,
-    count: count.valueAsNumber,
+    interval,
   };
+
+  if (recurrence.frequency === 'weekly') {
+    const startWeekday = Number(fields.dataset.startWeekday);
+    const secondWeekday = Number(fields.dataset.secondWeekday);
+    const weekdayMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-weekday-mode')!.value;
+    if (weekdayMode === 'start') {
+      recurrence.weekdays = [startWeekday];
+    } else if (weekdayMode === 'start-and-two-days') {
+      recurrence.weekdays = [startWeekday, secondWeekday].sort((left, right) => left - right);
+    } else if (weekdayMode === 'weekdays') {
+      recurrence.weekdays = [1, 2, 3, 4, 5];
+    } else {
+      recurrence.weekdays = Array.from(
+        fields.querySelectorAll<HTMLInputElement>('.scheduler-recurrence-weekday:checked'),
+        checkbox => Number(checkbox.value),
+      ).sort((left, right) => left - right);
+    }
+  }
+
+  const endMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-end-mode')!.value;
+  if (endMode === 'count') {
+    const count = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-count')!;
+    if (!count.checkValidity()) {
+      count.reportValidity();
+      return false;
+    }
+    recurrence.count = count.valueAsNumber;
+  } else {
+    const until = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-until')!;
+    if (until.value === '' || !until.checkValidity()) {
+      until.reportValidity();
+      return false;
+    }
+    recurrence.until = until.value;
+  }
+
+  return recurrence;
 }
 
 function getRecurrenceDescription(container: HTMLElement, frequency: Recurrence['frequency'], interval: number): string {
@@ -464,7 +578,7 @@ if (calendarEl) {
         '#itemPickerSelectModal .scheduler-recurrence-fields',
       );
       if (recurrenceFields) {
-        updateRecurrenceFields(recurrenceFields);
+        configureRecurrenceFields(recurrenceFields, info.start, calendarEl.dataset.lang || 'en');
       }
       showModal('#itemPickerSelectModal');
       handleConfirm('confirmItemSelect', () => manualSelect.items);

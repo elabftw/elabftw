@@ -234,8 +234,7 @@ class Users extends AbstractRest
     {
         $TeamsHelper = new TeamsHelper($teamId);
         $TeamsHelper->teamIsVisibleOrExplode();
-        $requiresValidation = $this->userData['validated'] === 0
-            || (bool) Config::getConfig()->configArr['admin_validate'];
+        $requiresValidation = (bool) Config::getConfig()->configArr['admin_validate'];
         $userid = $this->getUserid();
 
         $this->Db->beginTransaction();
@@ -243,12 +242,18 @@ class Users extends AbstractRest
             // Serialize requests for this user so concurrent submissions cannot
             // associate the same account with several teams.
             $lockReq = $this->Db->prepare(
-                'SELECT userid FROM users WHERE userid = :userid FOR UPDATE',
+                'SELECT validated FROM users WHERE userid = :userid FOR UPDATE',
             );
             $lockReq->bindValue(':userid', $userid, PDO::PARAM_INT);
             $this->Db->execute($lockReq);
-            if ($lockReq->fetchColumn() === false) {
+            $validated = $lockReq->fetchColumn();
+            if ($validated === false) {
                 throw new ResourceNotFoundException();
+            }
+            if ($validated !== 1) {
+                throw new ImproperActionException(
+                    'Cannot request team access: the user is not validated.',
+                );
             }
 
             $membershipReq = $this->Db->prepare(
@@ -264,6 +269,16 @@ class Users extends AbstractRest
                 );
             }
 
+            // Recreate an archived target membership so its former permissions
+            // cannot be restored by this self-service flow.
+            $archivedMembershipReq = $this->Db->prepare(
+                'DELETE FROM users2teams
+                    WHERE users_id = :userid AND teams_id = :team AND is_archived = 1',
+            );
+            $archivedMembershipReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $archivedMembershipReq->bindValue(':team', $teamId, PDO::PARAM_INT);
+            $this->Db->execute($archivedMembershipReq);
+
             $wasInserted = new Users2Teams($this)->create(
                 $userid,
                 $teamId,
@@ -278,21 +293,22 @@ class Users extends AbstractRest
             if ($requiresValidation) {
                 $this->rawUpdate(UsersColumn::Validated, 0);
             }
+
+            $this->notifyAdmins(
+                $TeamsHelper->getAllAdminsUserid(),
+                $userid,
+                !$requiresValidation,
+                new Teams($this, $teamId)->teamArr['name'],
+            );
+            if ($requiresValidation) {
+                new SelfNeedValidation($this)->create();
+            }
             $this->Db->commit();
         } catch (Throwable $e) {
             $this->Db->rollBack();
             throw $e;
         }
 
-        $this->notifyAdmins(
-            $TeamsHelper->getAllAdminsUserid(),
-            $userid,
-            !$requiresValidation,
-            new Teams($this, $teamId)->teamArr['name'],
-        );
-        if ($requiresValidation) {
-            new SelfNeedValidation($this)->create();
-        }
         return $requiresValidation;
     }
 

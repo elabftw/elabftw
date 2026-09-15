@@ -399,6 +399,68 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testRequestTeamAccessRejectsUnvalidatedUser(): void
+    {
+        $userid = $this->createTeamlessValidatedUser();
+        $Db = Db::getConnection();
+        $req = $Db->prepare('UPDATE users SET validated = 0 WHERE userid = :userid');
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $Db->execute($req);
+
+        try {
+            (new Users($userid))->requestTeamAccess(2);
+            self::fail('An unvalidated user must not be allowed to request team access.');
+        } catch (ImproperActionException $e) {
+            self::assertSame(
+                'Cannot request team access: the user is not validated.',
+                $e->getMessage(),
+            );
+        }
+        self::assertFalse((new TeamsHelper(2))->isUserInTeam($userid));
+    }
+
+    public function testRequestTeamAccessRestoresArchivedMembership(): void
+    {
+        $originalAdminValidate = $this->Config->configArr['admin_validate'];
+        try {
+            $this->Config->patch(Action::Update, array('admin_validate' => 0));
+            $userid = $this->Users->createOne(
+                'team-access-' . bin2hex(random_bytes(8)) . '@example.com',
+                array(2),
+                new NullLocalPassword(),
+                usergroup: Usergroup::User,
+                automaticValidationEnabled: true,
+                alertAdmin: false,
+            );
+            $Db = Db::getConnection();
+            $req = $Db->prepare(
+                'UPDATE users2teams
+                    SET is_archived = 1, is_admin = 1
+                    WHERE users_id = :userid AND teams_id = 2',
+            );
+            $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $Db->execute($req);
+
+            self::assertFalse((new Users($userid))->requestTeamAccess(2));
+            self::assertTrue((new TeamsHelper(2))->isUserInTeam($userid));
+            $req = $Db->prepare(
+                'SELECT is_archived, is_admin FROM users2teams
+                    WHERE users_id = :userid AND teams_id = 2',
+            );
+            $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $Db->execute($req);
+            self::assertSame(
+                array('is_archived' => 0, 'is_admin' => 0),
+                $Db->fetch($req),
+            );
+        } finally {
+            $this->Config->patch(
+                Action::Update,
+                array('admin_validate' => $originalAdminValidate),
+            );
+        }
+    }
+
     public function testArchiveWithoutPermission(): void
     {
         $Admin = $this->getUserInTeam(team: 2, admin: 1);

@@ -55,6 +55,7 @@
 @include meta.load-css('prism');
 @include meta.load-css('skeletons');
 @include meta.load-css('training');
+@include meta.load-css('scheduler');
 
 /* Font is Lato */
 @font-face {
@@ -1838,14 +1839,6 @@ input:user-invalid {
 .table-bordered th,
 .fc-event {
   border: 1px solid var(--secondary-muted);
-}
-
-.calendar-event-hover {
-  box-shadow: 5px 4px 4px var(--medium) !important;
-}
-
-.calendar-event-disabled {
-  opacity: 0.5;
 }
 
 .color-input {

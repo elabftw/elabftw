@@ -493,7 +493,16 @@ if (calendarEl) {
     eventClassNames: (info) => {
       const canBook = Number(info.event.extendedProps.canbook);
       const eventOwnerId = Number(info.event.extendedProps.userid);
-      return (canBook === 0 && currentUserId !== eventOwnerId) ? ['calendar-event-disabled'] : [];
+      const classNames = ['scheduler-event-colored'];
+      if (canBook === 0 && currentUserId !== eventOwnerId) {
+        classNames.push('calendar-event-disabled');
+      }
+      return classNames;
+    },
+    // apply the category color to the scheduler event style
+    eventDidMount: (info) => {
+      const eventColor = info.event.backgroundColor || info.event.borderColor || '#0c58ab';
+      info.el.style.setProperty('--scheduler-event-color', eventColor);
     },
     // prevent any actions on disabled events
     eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1,

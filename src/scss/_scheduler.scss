@@ -1,0 +1,48 @@
+/**
+ * @author Nicolas CARPi <Deltablot>
+ * @author Mouss <Deltablot>
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+.fc-event.scheduler-event-colored {
+  // keep the category color while using a lighter background for readability
+  background-color: color-mix(in srgb, var(--scheduler-event-color) 22%, var(--chrome-fg)) !important;
+  border-color: transparent !important;
+  border-left: 3px solid var(--scheduler-event-color) !important;
+  color: color-mix(in srgb, var(--scheduler-event-color) 70%, var(--strongest)) !important;
+
+  .fc-event-main,
+  .fc-event-time,
+  .fc-event-title {
+    color: inherit !important;
+  }
+
+  .fc-event-title {
+    font-weight: 700;
+  }
+}
+
+.fc-list-event.scheduler-event-colored {
+  .fc-list-event-dot {
+    border-color: var(--scheduler-event-color) !important;
+  }
+
+  .fc-list-event-time,
+  .fc-list-event-title a {
+    color: color-mix(in srgb, var(--scheduler-event-color) 70%, var(--strongest)) !important;
+  }
+
+  .fc-list-event-title a {
+    font-weight: 700;
+  }
+}
+
+.calendar-event-hover {
+  box-shadow: 5px 4px 4px var(--medium) !important;
+}
+
+.calendar-event-disabled {
+  opacity: 0.5;
+}

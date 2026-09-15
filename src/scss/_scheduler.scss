@@ -7,8 +7,8 @@
  * @package elabftw
  */
 .fc-event.scheduler-event-colored {
-  // keep the category color while using a lighter background for readability
-  background-color: color-mix(in srgb, var(--scheduler-event-color) 22%, var(--chrome-fg)) !important;
+  --scheduler-event-mix-bg: var(--chrome-fg);
+  background-color: color-mix(in srgb, var(--scheduler-event-color) 22%, var(--scheduler-event-mix-bg)) !important;
   border-color: transparent !important;
   border-left: 3px solid var(--scheduler-event-color) !important;
   color: color-mix(in srgb, var(--scheduler-event-color) 70%, var(--strongest)) !important;
@@ -22,6 +22,10 @@
   .fc-event-title {
     font-weight: 700;
   }
+}
+
+:is(.dark-mode, .midnight) .fc-event.scheduler-event-colored {
+  --scheduler-event-mix-bg: var(--chrome-bg);
 }
 
 .fc-list-event.scheduler-event-colored {

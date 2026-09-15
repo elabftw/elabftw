@@ -45,6 +45,8 @@ use function implode;
 use function in_array;
 use function is_array;
 use function is_string;
+use function json_decode;
+use function json_encode;
 use function sort;
 use function sprintf;
 use function str_replace;
@@ -148,6 +150,22 @@ final class Scheduler extends AbstractRest
         $seriesId = $recurrence === null ? null : Tools::getUuidv4();
         $recurrenceFrequency = is_array($recurrence) ? (string) ($recurrence['frequency'] ?? '') : null;
         $recurrenceInterval = is_array($recurrence) ? (int) ($recurrence['interval'] ?? 0) : null;
+        $recurrenceRule = null;
+        if (is_array($recurrence)) {
+            $recurrenceRule = array(
+                'frequency' => $recurrenceFrequency,
+                'interval' => $recurrenceInterval,
+            );
+            if ($recurrenceFrequency === 'weekly') {
+                $startWeekday = (int) $this->formatDate($start)->format('N');
+                $recurrenceRule['weekdays'] = $this->getRecurrenceWeekdays($recurrence, $startWeekday);
+            }
+            if (array_key_exists('count', $recurrence)) {
+                $recurrenceRule['count'] = (int) $recurrence['count'];
+            } else {
+                $recurrenceRule['until'] = (string) $recurrence['until'];
+            }
+        }
         // handle constraints during transaction
         $this->Db->beginTransaction();
         try {
@@ -159,8 +177,8 @@ final class Scheduler extends AbstractRest
             $this->checkCandidateOverlaps($occurrences);
             $this->checkMaxSlots(count($occurrences));
 
-            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_series_id, recurrence_index, recurrence_frequency, recurrence_interval)
-                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_series_id, :recurrence_index, :recurrence_frequency, :recurrence_interval)';
+            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_series_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule)
+                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_series_id, :recurrence_index, :recurrence_frequency, :recurrence_interval, :recurrence_rule)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
@@ -169,6 +187,11 @@ final class Scheduler extends AbstractRest
             $req->bindValue(':recurrence_series_id', $seriesId, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $req->bindValue(':recurrence_frequency', $recurrenceFrequency, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $req->bindValue(':recurrence_interval', $recurrenceInterval, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            $req->bindValue(
+                ':recurrence_rule',
+                $recurrenceRule === null ? null : json_encode($recurrenceRule, JSON_THROW_ON_ERROR),
+                $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_STR,
+            );
             $eventId = 0;
             foreach (array_values($occurrences) as $index => $occurrence) {
                 $req->bindValue(':start', $occurrence['start']);
@@ -251,6 +274,7 @@ final class Scheduler extends AbstractRest
                 team_events.recurrence_index,
                 team_events.recurrence_frequency,
                 team_events.recurrence_interval,
+                team_events.recurrence_rule,
                 TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end) AS event_duration_minutes,
                 CONCAT(u.firstname, ' ', u.lastname) AS fullname,
                 CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
@@ -291,7 +315,10 @@ final class Scheduler extends AbstractRest
             $req->bindValue(":$param", $value, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
-        return $req->fetchAll();
+        return array_map(
+            fn(array $event): array => $this->decodeRecurrenceRule($event),
+            $req->fetchAll(),
+        );
     }
 
     #[Override]
@@ -327,8 +354,16 @@ final class Scheduler extends AbstractRest
             return $this->destroySeries($this->recurrenceScope);
         }
         $this->assertCanDestroy($event);
-        $this->notifyAdminsOfDeletion($event);
-        return $this->deleteEvent($event);
+        $this->Db->beginTransaction();
+        try {
+            $result = $this->deleteEvent($event);
+            $this->notifyAdminsOfDeletion($event);
+            $this->Db->commit();
+            return $result;
+        } catch (Throwable $e) {
+            $this->Db->rollback();
+            throw $e;
+        }
     }
 
     // Ensure the current user is allowed to delete this booking
@@ -700,6 +735,7 @@ final class Scheduler extends AbstractRest
                 team_events.recurrence_index,
                 team_events.recurrence_frequency,
                 team_events.recurrence_interval,
+                team_events.recurrence_rule,
                 items.book_is_cancellable,
                 items.book_cancel_minutes,
                 team_events.title AS title_only,
@@ -718,9 +754,22 @@ final class Scheduler extends AbstractRest
         $req->bindValue(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $event = $this->Db->fetch($req);
+        $event = $this->decodeRecurrenceRule($this->Db->fetch($req));
         $this->Items->setId($event['item']);
         ksort($event);
+        return $event;
+    }
+
+    private function decodeRecurrenceRule(array $event): array
+    {
+        if (is_string($event['recurrence_rule'] ?? null)) {
+            $event['recurrence_rule'] = json_decode(
+                $event['recurrence_rule'],
+                true,
+                512,
+                JSON_THROW_ON_ERROR,
+            );
+        }
         return $event;
     }
 

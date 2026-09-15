@@ -15,6 +15,32 @@ describe('Scheduler', () => {
     cy.htmlvalidate();
   });
 
+  it('Configures recurring bookings from the booking form', () => {
+    cy.visit('/scheduler.php');
+    cy.get('#itemPickerSelectModal')
+      .invoke('addClass', 'show')
+      .invoke('css', 'display', 'block');
+    cy.get('#itemPickerSelectModal').within(() => {
+      cy.get('.scheduler-recurrence-options').should('not.be.visible');
+      cy.get('.scheduler-recurrence-enabled').check({ force: true });
+      cy.get('.scheduler-recurrence-options').should('be.visible');
+
+      cy.get('.scheduler-recurrence-interval-mode').select('custom');
+      cy.get('.scheduler-recurrence-interval').should('be.visible').clear().type('3');
+      cy.get('.scheduler-recurrence-frequency').select('weekly');
+      cy.get('.scheduler-recurrence-weekly').should('be.visible');
+
+      cy.get('.scheduler-recurrence-weekday-mode').select('custom');
+      cy.get('.scheduler-recurrence-weekdays').should('be.visible');
+      cy.get('.scheduler-recurrence-weekday[value="2"]').check();
+      cy.get('.scheduler-recurrence-weekday[value="4"]').check();
+
+      cy.get('.scheduler-recurrence-end-mode').select('date');
+      cy.get('.scheduler-recurrence-count-wrapper').should('not.be.visible');
+      cy.get('.scheduler-recurrence-until-wrapper').should('be.visible');
+    });
+  });
+
   it('Display Scheduler with selected item', () => {
     // TODO: itemId currently has no real active use
     cy.request('PATCH', '/api/v2/users/me', { scope_items: 2 });
@@ -56,6 +82,11 @@ describe('Scheduler', () => {
           expect(first.recurrence_series_id).to.equal(third.recurrence_series_id);
           expect(first.recurrence_frequency).to.equal('daily');
           expect(Number(first.recurrence_interval)).to.equal(1);
+          expect(first.recurrence_rule).to.deep.equal({
+            frequency: 'daily',
+            interval: 1,
+            count: 3,
+          });
 
           // delete only one
           cy.request('DELETE', `/api/v2/event/${first.id}`)

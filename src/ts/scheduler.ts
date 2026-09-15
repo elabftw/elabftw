@@ -52,6 +52,7 @@ type CancelNotificationPayload = {
   range_value?: number;
   range_unit?: string;
   notifOnSaved?: number;
+  cancel_event?: boolean;
 };
 type Recurrence = {
   frequency: 'daily' | 'weekly' | 'monthly';
@@ -269,10 +270,29 @@ function getRecurrence(modal: Element): Recurrence | null | false {
   return recurrence;
 }
 
-function getRecurrenceDescription(container: HTMLElement, frequency: Recurrence['frequency'], interval: number): string {
-  const key = interval === 1 ? frequency : `${frequency}Interval`;
+function getRecurrenceDescription(container: HTMLElement, recurrence: Recurrence, locale: string): string {
+  const key = recurrence.interval === 1 ? recurrence.frequency : `${recurrence.frequency}Interval`;
   const template = container.dataset[key] ?? '';
-  return template.replace('%d', String(interval));
+  let description = template.replace('%d', String(recurrence.interval));
+
+  if (recurrence.frequency === 'weekly' && recurrence.weekdays?.length) {
+    const monday = DateTime.fromISO('2026-09-14').setLocale(locale);
+    const weekdayNames = recurrence.weekdays.map(weekday => monday.plus({ days: weekday - 1 }).toFormat('cccc'));
+    const weekdayList = new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(weekdayNames);
+    description += ` ${(container.dataset.onDays ?? 'on %s').replace('%s', weekdayList)}`;
+  }
+
+  if (recurrence.count !== undefined) {
+    const countTemplate = recurrence.count === 1
+      ? container.dataset.endOnce ?? 'and ends after one occurrence'
+      : container.dataset.endCount ?? 'and ends after %d occurrences';
+    description += ` ${countTemplate.replace('%d', String(recurrence.count))}`;
+  } else if (recurrence.until) {
+    const endDate = DateTime.fromISO(recurrence.until).setLocale(locale).toLocaleString(DateTime.DATE_MED);
+    description += ` ${(container.dataset.endDate ?? 'and ends on %s').replace('%s', endDate)}`;
+  }
+
+  return `${description}.`;
 }
 
 // TomSelect settings shared on page & modal selects
@@ -619,9 +639,10 @@ if (calendarEl) {
       viewRecurrence.classList.toggle('d-none', !isRecurring);
       viewRecurrenceText.textContent = '';
       if (isRecurring) {
-        const frequency = info.event.extendedProps.recurrence_frequency as Recurrence['frequency'];
-        const interval = Number(info.event.extendedProps.recurrence_interval);
-        viewRecurrenceText.textContent = getRecurrenceDescription(viewRecurrence, frequency, interval);
+        const recurrence = info.event.extendedProps.recurrence_rule as Recurrence;
+        if (recurrence) {
+          viewRecurrenceText.textContent = getRecurrenceDescription(viewRecurrence, recurrence, calendarEl.dataset.lang || 'en');
+        }
       }
       document.getElementById('editRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
       document.getElementById('deleteRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
@@ -711,13 +732,10 @@ if (calendarEl) {
       payload.range_unit = (document.getElementById('cancelEventRangeUnit') as HTMLSelectElement).value;
     }
     payload.notifOnSaved = 0;
-    // The notification must be sent before deletion, otherwise the event ID is lost (Nothing to show with this id)
-    ApiC.post(`event/${el.dataset.id}/notifications`, payload)
-      .then(async () => {
-        const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
-        await ApiC.delete(`event/${el.dataset.id}?scope=${scope}`);
-        return calendar.refetchEvents();
-      })
+    payload.cancel_event = true;
+    const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
+    ApiC.post(`event/${el.dataset.id}/notifications?scope=${scope}`, payload)
+      .then(() => calendar.refetchEvents())
       .then(() => notify.success());
   });
 

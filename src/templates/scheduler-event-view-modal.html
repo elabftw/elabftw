@@ -6,12 +6,16 @@
     <div
       id='viewRecurrence'
       class='d-flex align-items-center mb-3 d-none'
-      data-daily='{{ 'This event repeats every day.'|trans }}'
-      data-daily-interval='{{ 'This event repeats every %d days.'|trans }}'
-      data-weekly='{{ 'This event repeats every week.'|trans }}'
-      data-weekly-interval='{{ 'This event repeats every %d weeks.'|trans }}'
-      data-monthly='{{ 'This event repeats every month.'|trans }}'
-      data-monthly-interval='{{ 'This event repeats every %d months.'|trans }}'>
+      data-daily='{{ 'This event repeats every day'|trans }}'
+      data-daily-interval='{{ 'This event repeats every %d days'|trans }}'
+      data-weekly='{{ 'This event repeats every week'|trans }}'
+      data-weekly-interval='{{ 'This event repeats every %d weeks'|trans }}'
+      data-monthly='{{ 'This event repeats every month'|trans }}'
+      data-monthly-interval='{{ 'This event repeats every %d months'|trans }}'
+      data-on-days='{{ 'on %s'|trans }}'
+      data-end-once='{{ 'and ends after one occurrence'|trans }}'
+      data-end-count='{{ 'and ends after %d occurrences'|trans }}'
+      data-end-date='{{ 'and ends on %s'|trans }}'>
       <i class='fas fa-rotate fa-fw mr-2 text-muted'></i><span id='viewRecurrenceText'></span>
     </div>
     {# =============== BINDINGS SECTION =============== #}

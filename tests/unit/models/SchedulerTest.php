@@ -179,6 +179,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             ),
         ));
 
+        $events = $this->getSortedEvents($Items);
         $this->assertSame(array(
             $start->format('Y-m-d'),
             $start->modify('+2 days')->format('Y-m-d'),
@@ -186,8 +187,12 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             $start->modify('+1 week +2 days')->format('Y-m-d'),
         ), array_map(
             static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
-            $this->getSortedEvents($Items),
+            $events,
         ));
+        $this->assertSame(
+            array('frequency' => 'weekly', 'interval' => 1, 'weekdays' => array(2, 4), 'count' => 4),
+            $events[0]['recurrence_rule'],
+        );
     }
 
     public function testCreateRecurringSeriesUntilDate(): void
@@ -205,14 +210,16 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             ),
         ));
 
+        $events = $this->getSortedEvents($Items);
         $this->assertSame(array(
             $start->format('Y-m-d'),
             $start->modify('+1 day')->format('Y-m-d'),
             $start->modify('+2 days')->format('Y-m-d'),
         ), array_map(
             static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
-            $this->getSortedEvents($Items),
+            $events,
         ));
+        $this->assertSame($start->modify('+2 days')->format('Y-m-d'), $events[0]['recurrence_rule']['until']);
     }
 
     public function testCreateMonthlySeries(): void

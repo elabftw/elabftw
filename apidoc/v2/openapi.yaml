@@ -1467,6 +1467,37 @@ components:
           minimum: 1
           maximum: 365
           description: Number of days, weeks, or months between occurrences, depending on the recurrence frequency.
+        recurrence_rule:
+          type: object
+          nullable: true
+          description: Complete recurrence rule used to create this booking series.
+          required: [frequency, interval]
+          properties:
+            frequency:
+              type: string
+              enum: [daily, weekly, monthly]
+            interval:
+              type: integer
+              minimum: 1
+              maximum: 365
+            weekdays:
+              type: array
+              uniqueItems: true
+              minItems: 1
+              description: ISO weekdays for weekly recurrence, where Monday is 1 and Sunday is 7.
+              items:
+                type: integer
+                minimum: 1
+                maximum: 7
+            count:
+              type: integer
+              minimum: 1
+              maximum: 100
+              description: Number of occurrences requested for a count-based series.
+            until:
+              type: string
+              format: date
+              description: Inclusive end date for a date-based series.
         start:
           type: string
           format: date-time

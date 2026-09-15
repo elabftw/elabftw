@@ -457,7 +457,12 @@ final class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Scheduler) {
             return match ($submodel) {
-                ApiSubModels::Notifications => new EventDeleted($this->requester, $this->Model->readOne(), $this->requester->userData['fullname']),
+                ApiSubModels::Notifications => new EventDeleted(
+                    $this->requester,
+                    $this->Model->readOne(),
+                    $this->requester->userData['fullname'],
+                    scheduler: $this->Model,
+                ),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
             };
         }

@@ -1245,15 +1245,16 @@ CREATE TABLE `team_events` (
   `recurrence_index` SMALLINT UNSIGNED DEFAULT NULL,
   `recurrence_frequency` VARCHAR(7) DEFAULT NULL,
   `recurrence_interval` SMALLINT UNSIGNED DEFAULT NULL,
+  `recurrence_rule` JSON DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `chk_end_after_start` CHECK (`end` >= `start`),
   CONSTRAINT `chk_team_events_recurrence_metadata`
     CHECK (
       (`recurrence_series_id` IS NULL AND `recurrence_index` IS NULL
-        AND `recurrence_frequency` IS NULL AND `recurrence_interval` IS NULL)
+        AND `recurrence_frequency` IS NULL AND `recurrence_interval` IS NULL AND `recurrence_rule` IS NULL)
       OR
       (`recurrence_series_id` IS NOT NULL AND `recurrence_index` IS NOT NULL
-        AND `recurrence_frequency` IS NOT NULL AND `recurrence_interval` IS NOT NULL)
+        AND `recurrence_frequency` IS NOT NULL AND `recurrence_interval` IS NOT NULL AND `recurrence_rule` IS NOT NULL)
     )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

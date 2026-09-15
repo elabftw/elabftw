@@ -85,6 +85,7 @@ module.exports = (env, argv) => {
     mode,
     output: {
       filename: '[name].bundle.js',
+      chunkFilename: '[name].[contenthash].bundle.js',
       path: path.resolve(__dirname, 'web/assets')
     },
     optimization: {
@@ -113,7 +114,7 @@ module.exports = (env, argv) => {
       new MiniCssExtractPlugin(
         {
           filename: '[name].min.css',
-          chunkFilename: '[name].min.css',
+          chunkFilename: '[name].[contenthash].min.css',
           insert: function(linkTag) {
             var mainStylesheet = document.getElementById('main-stylesheet');
             if (mainStylesheet && mainStylesheet.parentNode) {

@@ -32,7 +32,6 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\ReportsHandler;
 use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\AbstractStatus;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Batch;
 use Elabftw\Models\Branding;
@@ -510,16 +509,23 @@ final class Apiv2Controller extends AbstractApiController
         if (!($this->requester instanceof AnonymousUser)) {
             return;
         }
+        $allowedEndpoints = array(
+            ApiEndpoint::Experiments,
+            ApiEndpoint::Items,
+            ApiEndpoint::ExperimentsTemplates,
+            ApiEndpoint::ItemsTypes,
+            ApiEndpoint::ExtraFieldsKeys,
+            ApiEndpoint::Users,
+        );
+        if (!in_array($this->endpoint, $allowedEndpoints, true)) {
+            throw new ForbiddenException();
+        };
         // anon users cannot enumerate another user's endpoint
         if (
             $this->endpoint === ApiEndpoint::Users
             && $this->id !== null
             && $this->id !== $this->requester->userData['userid']
         ) {
-            throw new ForbiddenException();
-        }
-        // these team submodels contain internal organizational metadata
-        if ($this->Model instanceof AbstractStatus || $this->Model instanceof TeamGroups) {
             throw new ForbiddenException();
         }
     }

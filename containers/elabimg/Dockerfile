@@ -24,7 +24,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
 # build nginx with only the bare minimum of features or modules
 FROM alpine:3.24 AS nginx-builder
 
-ENV NGINX_VERSION=1.30.4
+ENV NGINX_VERSION=1.30.5
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
 ENV NGX_BROTLI_COMMIT=a71f9312c2deb28875acc7bacfdd5695a111aa53

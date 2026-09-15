@@ -350,7 +350,11 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::ExperimentsTemplates,
             ApiEndpoint::ItemsTypes => EntityType::from($this->endpoint->value)->toInstance($this->requester, $this->id),
             // for a single event, the id is the id of the event
-            ApiEndpoint::Event => new Scheduler(new Items($this->requester), $this->id),
+            ApiEndpoint::Event => new Scheduler(
+                new Items($this->requester),
+                $this->id,
+                recurrenceScope: $this->Request->query->getString('scope', 'event'),
+            ),
             // otherwise it's the id of the item
             ApiEndpoint::Events => new Scheduler(
                 new Items($this->requester, $this->id),
@@ -453,7 +457,12 @@ final class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Scheduler) {
             return match ($submodel) {
-                ApiSubModels::Notifications => new EventDeleted($this->requester, $this->Model->readOne(), $this->requester->userData['fullname']),
+                ApiSubModels::Notifications => new EventDeleted(
+                    $this->requester,
+                    $this->Model->readOne(),
+                    $this->requester->userData['fullname'],
+                    scheduler: $this->Model,
+                ),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
             };
         }

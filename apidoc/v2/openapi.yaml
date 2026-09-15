@@ -1456,6 +1456,17 @@ components:
           minimum: 1
           maximum: 100
           description: Position of this booking within its recurring series, starting at 1.
+        recurrence_frequency:
+          type: string
+          nullable: true
+          enum: [daily, weekly, monthly]
+          description: How often the recurring booking repeats.
+        recurrence_interval:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 365
+          description: Number of days, weeks, or months between occurrences, depending on the recurrence frequency.
         start:
           type: string
           format: date-time

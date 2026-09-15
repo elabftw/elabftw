@@ -3,8 +3,16 @@
     {# "Title" and Date time will be replaced with real title name by js #}
     <h4 id='viewTitle'>{{ 'Title'|trans }}</h4>
     <div id='viewDatetime' class='mb-3'></div>
-    <div id='viewRecurrence' class='smallgray mb-3 d-none'>
-      <i class='fas fa-rotate fa-fw mr-1'></i>{{ 'Part of a recurring series'|trans }}
+    <div
+      id='viewRecurrence'
+      class='d-flex align-items-center mb-3 d-none'
+      data-daily='{{ 'This event repeats every day.'|trans }}'
+      data-daily-interval='{{ 'This event repeats every %d days.'|trans }}'
+      data-weekly='{{ 'This event repeats every week.'|trans }}'
+      data-weekly-interval='{{ 'This event repeats every %d weeks.'|trans }}'
+      data-monthly='{{ 'This event repeats every month.'|trans }}'
+      data-monthly-interval='{{ 'This event repeats every %d months.'|trans }}'>
+      <i class='fas fa-rotate fa-fw mr-2 text-muted'></i><span id='viewRecurrenceText'></span>
     </div>
     {# =============== BINDINGS SECTION =============== #}
     <hr>

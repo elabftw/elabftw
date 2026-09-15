@@ -139,8 +139,11 @@ final class Scheduler extends AbstractRest
         $this->isFutureOrExplode(DateTime::createFromFormat(self::DATETIME_FORMAT, $start));
 
         $start = $this->adjustMidnight($start);
-        $occurrences = $this->generateOccurrences($start, $end, $reqBody['recurrence'] ?? null);
-        $seriesId = isset($reqBody['recurrence']) ? Tools::getUuidv4() : null;
+        $recurrence = $reqBody['recurrence'] ?? null;
+        $occurrences = $this->generateOccurrences($start, $end, $recurrence);
+        $seriesId = $recurrence === null ? null : Tools::getUuidv4();
+        $recurrenceFrequency = is_array($recurrence) ? (string) ($recurrence['frequency'] ?? '') : null;
+        $recurrenceInterval = is_array($recurrence) ? (int) ($recurrence['interval'] ?? 0) : null;
         // handle constraints during transaction
         $this->Db->beginTransaction();
         try {
@@ -152,14 +155,16 @@ final class Scheduler extends AbstractRest
             $this->checkCandidateOverlaps($occurrences);
             $this->checkMaxSlots(count($occurrences));
 
-            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_series_id, recurrence_index)
-                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_series_id, :recurrence_index)';
+            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_series_id, recurrence_index, recurrence_frequency, recurrence_interval)
+                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_series_id, :recurrence_index, :recurrence_frequency, :recurrence_interval)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
             $req->bindValue(':title', $this->filterTitle($reqBody['title'] ?? ''));
             $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
-            $req->bindValue(':recurrence_series_id', $seriesId);
+            $req->bindValue(':recurrence_series_id', $seriesId, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $req->bindValue(':recurrence_frequency', $recurrenceFrequency, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $req->bindValue(':recurrence_interval', $recurrenceInterval, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
             $eventId = 0;
             foreach (array_values($occurrences) as $index => $occurrence) {
                 $req->bindValue(':start', $occurrence['start']);
@@ -240,6 +245,8 @@ final class Scheduler extends AbstractRest
                 team_events.modified_at,
                 team_events.recurrence_series_id,
                 team_events.recurrence_index,
+                team_events.recurrence_frequency,
+                team_events.recurrence_interval,
                 TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end) AS event_duration_minutes,
                 CONCAT(u.firstname, ' ', u.lastname) AS fullname,
                 CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
@@ -687,6 +694,8 @@ final class Scheduler extends AbstractRest
                 team_events.modified_at,
                 team_events.recurrence_series_id,
                 team_events.recurrence_index,
+                team_events.recurrence_frequency,
+                team_events.recurrence_interval,
                 items.book_is_cancellable,
                 items.book_cancel_minutes,
                 team_events.title AS title_only,

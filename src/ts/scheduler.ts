@@ -155,6 +155,12 @@ function getRecurrence(modal: Element): Recurrence | null | false {
   };
 }
 
+function getRecurrenceDescription(container: HTMLElement, frequency: Recurrence['frequency'], interval: number): string {
+  const key = interval === 1 ? frequency : `${frequency}Interval`;
+  const template = container.dataset[key] ?? '';
+  return template.replace('%d', String(interval));
+}
+
 // TomSelect settings shared on page & modal selects
 const sharedTomSelectOptions = {
   maxItems: null,
@@ -494,7 +500,15 @@ if (calendarEl) {
 
       // todo: fix (wip actually but it works) on load after having submitted once, we have to re toggle the selection
       const isRecurring = Boolean(info.event.extendedProps.recurrence_series_id);
-      document.getElementById('viewRecurrence')?.classList.toggle('d-none', !isRecurring);
+      const viewRecurrence = document.getElementById('viewRecurrence')!;
+      const viewRecurrenceText = document.getElementById('viewRecurrenceText')!;
+      viewRecurrence.classList.toggle('d-none', !isRecurring);
+      viewRecurrenceText.textContent = '';
+      if (isRecurring) {
+        const frequency = info.event.extendedProps.recurrence_frequency as Recurrence['frequency'];
+        const interval = Number(info.event.extendedProps.recurrence_interval);
+        viewRecurrenceText.textContent = getRecurrenceDescription(viewRecurrence, frequency, interval);
+      }
       document.getElementById('editRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
       document.getElementById('deleteRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
       (document.getElementById('editScopeEvent') as HTMLInputElement).checked = true;

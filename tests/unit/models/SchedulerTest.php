@@ -117,6 +117,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($id, $events[0]['id']);
         $this->assertCount(1, array_unique(array_column($events, 'recurrence_series_id')));
         $this->assertSame(array(1, 2, 3), array_map('intval', array_column($events, 'recurrence_index')));
+        $this->assertSame(array('daily', 'daily', 'daily'), array_column($events, 'recurrence_frequency'));
+        $this->assertSame(array(1, 1, 1), array_map('intval', array_column($events, 'recurrence_interval')));
         $this->assertSame(array(
             $start->format('Y-m-d H:i:s'),
             $start->modify('+1 day')->format('Y-m-d H:i:s'),

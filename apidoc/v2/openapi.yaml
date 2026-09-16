@@ -5083,12 +5083,12 @@ paths:
                   type: string
                   format: date-time
                   description: Date and time of the booking in ISO 8601 format, including the timezone offset.
-                  example: "2026-02-19T15:30:00+01:00"
+                  example: "2026-09-19T15:30:00+01:00"
                 end:
                   type: string
                   format: date-time
                   description: ISO 8601 date-time with timezone offset.
-                  example: '2026-03-15T15:30:00+01:00'
+                  example: '2026-09-19T17:30:00+01:00'
                 recurrence:
                   type: object
                   description: Optional settings to make this booking repeat. A recurring booking can contain up to 100 occurrences over a maximum period of 10 years.

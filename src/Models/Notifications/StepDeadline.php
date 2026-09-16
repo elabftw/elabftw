@@ -69,7 +69,7 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
             $this->stepId,
         );
         $body = sprintf(
-            _('%s%s%s'),
+            _('%s %s%s'),
             $subject,
             $url,
             Email::makeFooter(),

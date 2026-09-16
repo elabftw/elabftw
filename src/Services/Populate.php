@@ -43,6 +43,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ResourcesCategories;
+use Elabftw\Models\Scheduler;
 use Elabftw\Models\Steps;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
@@ -241,10 +242,12 @@ final class Populate
             // generate random experiments before the defined ones
             $user = $this->getRandomUserInTeam($teamid);
             if ($this->yaml['generate_random_experiments'] ?? false) {
-                $this->generate(new Experiments($user));
+                $iterations = array_key_exists('random_experiments', $team) ? (int) $team['random_experiments'] : null;
+                $this->generate(new Experiments($user), $iterations);
             }
             if ($this->yaml['generate_random_resources'] ?? false) {
-                $this->generate(new Items($user));
+                $iterations = array_key_exists('random_resources', $team) ? (int) $team['random_resources'] : null;
+                $this->generate(new Items($user), $iterations);
             }
 
             // EXPERIMENTS
@@ -301,6 +304,7 @@ final class Populate
             // randomize the entries so they look like they are not added at once
 
             // ITEMS
+            $itemIds = array();
             if (isset($team['items'])) {
                 shuffle($team['items']);
                 foreach ($team['items'] as $item) {
@@ -315,6 +319,7 @@ final class Populate
                         rating: $item['rating'] ?? 0,
                     );
                     $Items->setId($id);
+                    $itemIds[$item['title']] = $id;
                     // bookable cannot be set in create function
                     $Items->update(new EntityParams('is_bookable', $item['is_bookable'] ?? '0'));
                     // don't override the items type metadata
@@ -335,6 +340,23 @@ final class Populate
                     }
                     $this->output->writeln(sprintf('├ + resource: %s (id: %d in team: %d)', $item['title'], $id, $teamid));
                 }
+            }
+
+            // EVENTS
+            foreach ($team['events'] ?? array() as $event) {
+                $itemId = $itemIds[$event['item']] ?? null;
+                if ($itemId === null) {
+                    throw new ResourceNotFoundException(sprintf('Could not find resource "%s" for populated event.', $event['item']));
+                }
+                $user = $this->getRandomUserInTeam($teamid);
+                $Scheduler = new Scheduler(new Items($user, $itemId));
+                $id = $Scheduler->postAction(Action::Create, array(
+                    'title' => $event['title'] ?? '',
+                    'start' => (new DateTimeImmutable($event['start']))->format('c'),
+                    'end' => (new DateTimeImmutable($event['end']))->format('c'),
+                    'recurrence' => $event['recurrence'] ?? null,
+                ));
+                $this->output->writeln(sprintf('├ + event: %s (id: %d for resource: %s)', $event['title'] ?? '', $id, $event['item']));
             }
         }
 

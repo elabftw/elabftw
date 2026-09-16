@@ -334,6 +334,8 @@ if (calendarEl) {
   const eventResourceSelect = new TomSelect(eventResourceSelectEl, {
     maxItems: 1,
     create: false,
+    plugins: ['dropdown_input', 'no_active_items', 'clear_button'],
+    placeholder: eventResourceSelectEl.options[0]?.text,
     onChange: value => {
       const selectedItemId = String(value);
       viewBookedResource.href = selectedItemId ? `database.php?mode=view&id=${selectedItemId}` : '#';

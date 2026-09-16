@@ -6,10 +6,10 @@
         <div class='d-flex form-row align-items-start'>
           {# form-row and mb-2 are here for responsive when there's long-name items #}
           <div class='flex-grow-1 mr-2 mb-2'>
-            <select id='eventResourceSelect' autocomplete='off' placeholder='{{ 'Select a resource'|trans }}'>
-              <option value=''></option>
+            <select id='eventResourceSelect' autocomplete='off' aria-label='{{ 'Select a resource'|trans }}'>
+              <option value=''>{{ 'Search resources'|trans }}</option>
               {% for item in itemsArr %}
-                <option value='{{ item.id }}'>{{ item.category_title }} - {{ item.title }}</option>
+                <option value='{{ item.id }}'>{{ item.category_title ? item.category_title ~ ' - ' : '' }}{{ item.title }}</option>
               {% endfor %}
             </select>
           </div>

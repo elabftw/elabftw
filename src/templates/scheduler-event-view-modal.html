@@ -1,11 +1,21 @@
 <div id='eventViewMode'>
-  <div class='modal-body'>
-    {# "Title" and Date time will be replaced with real title name by js #}
-    <h4 id='viewTitle'>{{ 'Title'|trans }}</h4>
-    <div id='viewDatetime' class='mb-3'></div>
+  <form id='editEventForm' aria-label='{{ 'Edit event'|trans }}'>
+    <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+      <label for='title'>{{ 'Comment'|trans }}</label>
+      <input class='form-control' type='text' id='title' name='title'>
+      <div class='form-row mt-3'>
+        <div class='col-md-6'>
+          <label for='schedulerEventModalStart'>{{ 'Start time'|trans }}</label>
+          <input id='schedulerEventModalStart' class='form-control' type='datetime-local'>
+        </div>
+        <div class='col-md-6'>
+          <label for='schedulerEventModalEnd'>{{ 'End time'|trans }}</label>
+          <input id='schedulerEventModalEnd' class='form-control' type='datetime-local'>
+        </div>
+      </div>
     <div
       id='viewRecurrence'
-      class='d-flex align-items-center mb-3 d-none'
+      class='mt-3 d-none'
       data-daily='{{ 'This event repeats every day'|trans }}'
       data-daily-interval='{{ 'This event repeats every %d days'|trans }}'
       data-weekly='{{ 'This event repeats every week'|trans }}'
@@ -16,8 +26,26 @@
       data-end-once='{{ 'and ends after one occurrence'|trans }}'
       data-end-count='{{ 'and ends after %d occurrences'|trans }}'
       data-end-date='{{ 'and ends on %s'|trans }}'>
-      <i class='fas fa-rotate fa-fw mr-2 text-muted'></i><span id='viewRecurrenceText'></span>
+      <div class='d-flex align-items-center'>
+        <i class='fas fa-rotate fa-fw mr-2 text-muted'></i>
+        <span id='viewRecurrenceText'></span>
+      </div>
     </div>
+    <fieldset id='editRecurrenceScope' class='mt-3 d-none'>
+      <legend class='h6'>{{ 'Apply to'|trans }}</legend>
+      <div class='form-check'>
+        <input class='form-check-input' type='radio' name='scope' value='event' id='editScopeEvent' checked>
+        <label class='form-check-label' for='editScopeEvent'>{{ 'This reservation only'|trans }}</label>
+      </div>
+      <div class='form-check'>
+        <input class='form-check-input' type='radio' name='scope' value='future' id='editScopeFuture'>
+        <label class='form-check-label' for='editScopeFuture'>{{ 'This and all future reservations'|trans }}</label>
+      </div>
+      <div class='form-check'>
+        <input class='form-check-input' type='radio' name='scope' value='series' id='editScopeSeries'>
+        <label class='form-check-label' for='editScopeSeries'>{{ 'All reservations in this series'|trans }}</label>
+      </div>
+    </fieldset>
     {# =============== BINDINGS SECTION =============== #}
     <hr>
     <h4>{{ 'Bindings'|trans }}</h4>
@@ -77,9 +105,11 @@
       </div>
       {# =============== end of bind resource div =============== #}
     </div>
-  </div>
-  <div class='modal-footer d-flex justify-content-end'>
-    <button type='button' class='btn btn-secondary mr-2' data-action='scheduler-edit-mode'>{{ 'Edit'|trans }}</button>
-    <button type='button' class='btn btn-danger' data-action='scheduler-delete-mode'>{{ 'Delete'|trans }}</button>
-  </div>
+    </div>
+    <div class='modal-footer d-flex justify-content-end'>
+      <button type='button' class='btn btn-danger mr-auto' data-action='scheduler-delete-mode'>{{ 'Delete'|trans }}</button>
+      <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      <button type='submit' class='btn btn-primary' data-action='edit-event'>{{ 'Save'|trans }}</button>
+    </div>
+  </form>
 </div>

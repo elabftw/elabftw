@@ -81,13 +81,11 @@ function toDateTimeInputValueNumber(datetime: Date): number {
   return datetime.valueOf() - offset;
 }
 
-function setSchedulerMode(mode: 'view' | 'edit' | 'delete'): void {
+function setSchedulerMode(mode: 'view' | 'delete'): void {
   document.getElementById('eventViewMode')!.classList.toggle('d-none', mode !== 'view');
-  document.getElementById('editEventForm')!.classList.toggle('d-none', mode !== 'edit');
   document.getElementById('eventDeleteMode')!.classList.toggle('d-none', mode !== 'delete');
 }
 
-on('scheduler-edit-mode', () => setSchedulerMode('edit'));
 on('scheduler-delete-mode', () => setSchedulerMode('delete'));
 on('back-to-event', () => setSchedulerMode('view'));
 
@@ -672,31 +670,6 @@ if (calendarEl) {
           el.dataset.targetid = info.event.extendedProps.items_id;
         }
       });
-      // populate view section
-      const start = info.event.start!;
-      const end = info.event.end!;
-      // format date using fullcalendar locale
-      const dateLine = calendar.formatDate(start, { weekday: 'long',  year: 'numeric',  month: 'long',  day: 'numeric' });
-      const startTime = calendar.formatDate(start, { hour: '2-digit',  minute: '2-digit' });
-      const endTime = calendar.formatDate(end, { hour: '2-digit',  minute: '2-digit' });
-      const timeLine = `${startTime} – ${endTime}`;
-      // duration in minutes
-      const durationMinutes = Math.round(
-        (end.getTime() - start.getTime()) / 60000,
-      );
-      // Set modal content
-      document.getElementById('viewTitle')!.textContent = info.event.extendedProps.title_only;
-      const viewDatetime = document.getElementById('viewDatetime')!;
-      const br = document.createElement('br');
-      br.classList.add('mb-2');
-      const strong = document.createElement('strong');
-      strong.textContent = timeLine;
-      viewDatetime.replaceChildren(
-        dateLine,
-        br,
-        strong,
-        ` (${durationMinutes} ${i18next.t('minutes')})`,
-      );
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {

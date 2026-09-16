@@ -35,13 +35,13 @@ final class SelfIsValidated extends AbstractNotifications implements MailableInt
         $subject = _('Account validated');
         $url = Env::asUrl('SITE_URL') . '/login.php';
         $body = sprintf(
-          _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: %s%s'),
-          $url,
-          Email::makeFooter(),
+            _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: %s%s'),
+            $url,
+            Email::makeFooter(),
         );
         return array(
-          'subject' => $subject,
-          'body' => $body,
+            'subject' => $subject,
+            'body' => $body,
         );
     }
 }

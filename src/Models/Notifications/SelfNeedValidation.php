@@ -35,12 +35,12 @@ final class SelfNeedValidation extends AbstractNotifications implements Mailable
     {
         $subject = _('Your account has been created');
         $body = sprintf(
-          _('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.%s'),
-          Email::makeFooter(),
+            _('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.%s'),
+            Email::makeFooter(),
         );
         return array(
-          'subject' => $subject,
-          'body' => $body,
+            'subject' => $subject,
+            'body' => $body,
         );
     }
 }

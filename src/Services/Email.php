@@ -247,6 +247,11 @@ class Email
         return $emails;
     }
 
+    public static function makeFooter(): string
+    {
+        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL'));
+    }
+
     private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int
     {
         // send emails one by one
@@ -268,11 +273,6 @@ class Email
             }
         }
         return $sentCount;
-    }
-
-    public static function makeFooter(): string
-    {
-        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL'));
     }
 
     private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null, ?array $range = null): array

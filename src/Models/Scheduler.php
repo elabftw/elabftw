@@ -340,6 +340,7 @@ final class Scheduler extends AbstractRest
         match ($params['target']) {
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
+            'item' => $this->updateItem((int) ($params['id'] ?? 0)),
             'title', 'datetime' => $this->update($params),
             default => throw new ImproperActionException('Incorrect target parameter.'),
         };
@@ -800,6 +801,53 @@ final class Scheduler extends AbstractRest
         $req->bindParam(':entity', $entityid, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    private function updateItem(int $itemId): void
+    {
+        if ($itemId < 1) {
+            throw new ImproperActionException(_('A valid resource is required.'));
+        }
+        $event = $this->readOne();
+        if ((int) $event['item'] === $itemId) {
+            return;
+        }
+
+        $TargetItems = new Items($this->Items->Users, $itemId);
+        if ((int) ($TargetItems->entityData['is_bookable'] ?? 0) !== 1 || !$TargetItems->canBook()) {
+            throw new ImproperActionException(_('The selected resource cannot be booked.'));
+        }
+
+        // Validate the reservation against the new resource before moving it
+        $this->Items = $TargetItems;
+        $this->Db->beginTransaction();
+        try {
+            $this->lockItemForBooking();
+            $this->checkConstraints($event['start'], $event['end']);
+            if ($this->formatDate($event['start']) > new DateTimeImmutable()) {
+                $this->checkMaxSlots();
+            }
+
+            // A recurring series must stay on one resource, so moving one occurrence detaches it from the series
+            // That behavior is displayed as a warning for the events that have a series
+            $sql = 'UPDATE team_events SET
+                item = :item,
+                recurrence_series_id = NULL,
+                recurrence_index = NULL,
+                recurrence_frequency = NULL,
+                recurrence_interval = NULL,
+                recurrence_rule = NULL
+                WHERE team = :team AND id = :id';
+            $req = $this->Db->prepare($sql);
+            $req->bindValue(':item', $itemId, PDO::PARAM_INT);
+            $req->bindValue(':team', $event['team'], PDO::PARAM_INT);
+            $req->bindValue(':id', $event['id'], PDO::PARAM_INT);
+            $this->Db->execute($req);
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollback();
+            throw $e;
+        }
     }
 
     private function checkSlotTime(string $start, string $end): void

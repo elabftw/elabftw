@@ -507,6 +507,37 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(array(2, 3), array_map('intval', array_column($remaining, 'recurrence_index')));
     }
 
+    public function testChangingResourceDetachesRecurringOccurrence(): void
+    {
+        $SourceItems = $this->getFreshBookableItem(2);
+        $TargetItems = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($SourceItems);
+        $start = new DateTimeImmutable('+4 days 10:00');
+        $id = $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->modify('+1 hour')->format('c'),
+            'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
+        ));
+        $seriesId = $this->getSortedEvents($SourceItems)[0]['recurrence_series_id'];
+
+        $Scheduler->setId($id);
+        $event = $Scheduler->patch(Action::Update, array(
+            'target' => 'item',
+            'id' => $TargetItems->id,
+        ));
+
+        $this->assertSame($TargetItems->id, (int) $event['item']);
+        $this->assertNull($event['recurrence_series_id']);
+        $this->assertNull($event['recurrence_index']);
+        $this->assertNull($event['recurrence_rule']);
+
+        $remaining = $this->getSortedEvents($SourceItems);
+        $this->assertCount(2, $remaining);
+        $this->assertSame(array(2, 3), array_map('intval', array_column($remaining, 'recurrence_index')));
+        $this->assertSame(array($seriesId), array_values(array_unique(array_column($remaining, 'recurrence_series_id'))));
+        $this->assertCount(1, $this->getSortedEvents($TargetItems));
+    }
+
     public function testConflictingSeriesUpdateRollsBackCompletely(): void
     {
         $Items = $this->getFreshBookableItem(2);

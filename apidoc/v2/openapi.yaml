@@ -5203,6 +5203,16 @@ paths:
                       type: integer
                       description: Entity id.
                 - type: object
+                  required: [target, id]
+                  properties:
+                    target:
+                      type: string
+                      enum: ['item']
+                      description: Change the resource booked by this event. This always affects only the selected occurrence.
+                    id:
+                      type: integer
+                      description: ID of the new bookable resource. A recurring occurrence is detached from its series when its resource is changed!
+                - type: object
                   properties:
                     target:
                       type: string

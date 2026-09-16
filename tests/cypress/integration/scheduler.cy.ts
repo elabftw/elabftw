@@ -55,6 +55,21 @@ describe('Scheduler', () => {
     });
   });
 
+  it('Displays the booked resource and booker in the event modal', () => {
+    cy.createBooking().then(itemId => {
+      cy.request('GET', `/api/v2/events/${itemId}`).then(response => {
+        const event = response.body[0];
+        cy.visit(`/scheduler.php?items[]=${itemId}`);
+        cy.get('#loading-spinner').should('not.exist');
+        cy.contains('.fc-event', event.item_title).click();
+        cy.get('#eventModal').should('be.visible');
+        cy.get('#eventModalResourceTitle').should('have.text', event.item_title);
+        cy.get('#eventModalResourceMeta').should('contain', event.fullname);
+        cy.get('#eventResourceSelect').should('have.value', String(itemId));
+      });
+    });
+  });
+
   it('Creates and cancels a finite recurring series', () => {
     cy.createResource().then(response => {
       cy.extractIdFromLocation(response).then(itemId => {

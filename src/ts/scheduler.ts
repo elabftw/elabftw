@@ -328,6 +328,19 @@ const calendarEl: HTMLElement = document.getElementById('scheduler');
 const currentUserId = Number(calendarEl?.dataset.userId);
 const isAdmin = calendarEl?.dataset.isAdmin === 'true';
 if (calendarEl) {
+  const eventResourceSelectEl = document.getElementById('eventResourceSelect') as HTMLSelectElement;
+  const changeEventResourceBtn = document.getElementById('changeEventResourceBtn') as HTMLButtonElement;
+  const viewBookedResource = document.getElementById('viewBookedResource') as HTMLAnchorElement;
+  const eventResourceSelect = new TomSelect(eventResourceSelectEl, {
+    maxItems: 1,
+    create: false,
+    onChange: value => {
+      const selectedItemId = String(value);
+      viewBookedResource.href = selectedItemId ? `database.php?mode=view&id=${selectedItemId}` : '#';
+      changeEventResourceBtn.disabled = selectedItemId === '' || selectedItemId === changeEventResourceBtn.dataset.itemId;
+    },
+  });
+
   const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
   const layout = (layoutCheckbox && layoutCheckbox.checked)
     ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
@@ -626,6 +639,27 @@ if (calendarEl) {
       }
       setSchedulerMode('view');
       showModalAndFocusFirstInput('#eventModal');
+
+      // Show the booked resource and booker directly in the modal header
+      const modalLabel = document.getElementById('eventModalLabel')!;
+      const resourceTitle = info.event.extendedProps.item_title || i18next.t('Event');
+      const categoryTitle = info.event.extendedProps.items_category_title || '';
+      const booker = info.event.extendedProps.fullname || '';
+      const bookedBy = booker ? (modalLabel.dataset.bookedBy ?? '%s').replace('%s', booker) : '';
+      document.getElementById('eventModalResourceTitle')!.textContent = resourceTitle;
+      document.getElementById('eventModalResourceMeta')!.textContent = [categoryTitle, bookedBy].filter(Boolean).join(' · ');
+
+      // Preselect the resource currently reserved by this event
+      const itemId = String(info.event.extendedProps.items_id);
+      if (!eventResourceSelect.options[itemId]) {
+        eventResourceSelect.addOption({ value: itemId, text: resourceTitle });
+      }
+      eventResourceSelect.setValue(itemId, true);
+      changeEventResourceBtn.dataset.id = info.event.id;
+      changeEventResourceBtn.dataset.itemId = itemId;
+      changeEventResourceBtn.disabled = true;
+      viewBookedResource.href = `database.php?mode=view&id=${itemId}`;
+
       // set the event id on the various elements
       document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
       document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn: HTMLButtonElement) => btn.dataset.eventid = info.event.id);
@@ -648,6 +682,7 @@ if (calendarEl) {
 
       // The event modal is reused, so reset recurrence visibility and scope selection on every open
       const isRecurring = Boolean(info.event.extendedProps.recurrence_series_id);
+      document.getElementById('eventResourceRecurrenceHelp')?.classList.toggle('d-none', !isRecurring);
       const viewRecurrence = document.getElementById('viewRecurrence')!;
       const viewRecurrenceText = document.getElementById('viewRecurrenceText')!;
       viewRecurrence.classList.toggle('d-none', !isRecurring);
@@ -765,6 +800,23 @@ if (calendarEl) {
       await ApiC.patch(`event/${eventId}`, params);
       calendar.refetchEvents();
       $('#eventModal').modal('hide');
+    } catch (err) {
+      notify.error(err);
+    }
+  });
+
+  on('change-event-resource', async (el: HTMLElement) => {
+    const eventId = el.dataset.id;
+    const itemId = Number(eventResourceSelect.getValue());
+    if (!eventId || !Number.isInteger(itemId) || itemId < 1) {
+      notify.error('form-validation-error');
+      return;
+    }
+    try {
+      await ApiC.patch(`event/${eventId}`, { target: 'item', id: itemId });
+      calendar.refetchEvents();
+      $('#eventModal').modal('hide');
+      notify.success();
     } catch (err) {
       notify.error(err);
     }

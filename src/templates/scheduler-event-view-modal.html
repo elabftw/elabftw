@@ -1,6 +1,29 @@
 <div id='eventViewMode'>
   <form id='editEventForm' aria-label='{{ 'Edit event'|trans }}'>
     <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
+      <div class='form-group'>
+        <label for='eventResourceSelect'>{{ 'Booked resource'|trans }}</label>
+        <div class='d-flex align-items-start'>
+          <div class='flex-grow-1 mr-2'>
+            <select id='eventResourceSelect' autocomplete='off' placeholder='{{ 'Select a resource'|trans }}'>
+              <option value=''></option>
+              {% for item in itemsArr %}
+                <option value='{{ item.id }}'>{{ item.category_title }} - {{ item.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <a id='viewBookedResource' class='btn btn-ghost mr-2' href='#' target='_blank'>
+            <i class='fas fa-eye fa-fw mr-1'></i>{{ 'View'|trans }}
+          </a>
+          <button id='changeEventResourceBtn' class='btn btn-secondary' type='button' data-action='change-event-resource' disabled>
+            {{ 'Change'|trans }}
+          </button>
+        </div>
+        <small id='eventResourceRecurrenceHelp' class='form-text text-muted d-none'>
+          {{ 'Changing the resource affects only this reservation and removes it from its recurring series.'|trans }}
+        </small>
+      </div>
+      <hr>
       <label for='title'>{{ 'Comment'|trans }}</label>
       <input class='form-control' type='text' id='title' name='title'>
       <div class='form-row mt-3'>

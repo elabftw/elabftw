@@ -357,12 +357,12 @@ final class Populate
         $Compounds = new Compounds($httpGetter, $Users, new NullFingerprinter(), false);
         foreach ($this->yaml['compounds'] ?? array() as $compound) {
             $id = $Compounds->create(
-                name: $compound['name'],
-                molecularFormula: $compound['molecular_formula'],
-                casNumber: $compound['cas_number'],
                 inchi: $compound['inchi'],
                 inchiKey: $compound['inchi_key'],
+                name: $compound['name'],
+                casNumber: $compound['cas_number'],
                 iupacName: $compound['iupac_name'],
+                molecularFormula: $compound['molecular_formula'],
                 molecularWeight: (float) $compound['molecular_weight'],
                 pubchemCid: (int) $compound['pubchem_cid'],
                 smiles: $compound['smiles'],
@@ -451,13 +451,13 @@ final class Populate
         $category = empty($categoryArr) ? null : $this->faker->randomElement($categoryArr)['id'];
         for ($i = 0; $i < $iterations; $i++) {
             $id = $Entity->create(
-                category: $category,
-                status: $this->faker->randomElement($statusArr)['id'],
+                title: $this->faker->sentence(),
+                body: $this->faker->realText(1000),
+                date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                 canreadBase: $this->faker->randomElement($visibilityArr),
                 canwriteBase: $this->faker->randomElement($visibilityArr),
-                title: $this->faker->sentence(),
-                date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
-                body: $this->faker->realText(1000),
+                category: $category,
+                status: $this->faker->randomElement($statusArr)['id'],
             );
             $Entity->setId($id);
             // variable tag number

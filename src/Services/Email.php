@@ -270,7 +270,7 @@ class Email
         return $sentCount;
     }
 
-    private function makeFooter(): string
+    public static function makeFooter(): string
     {
         return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL'));
     }

@@ -111,14 +111,22 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
     #[Override]
     public function getEmail(): array
     {
-        $info = _('A booked slot was deleted from the scheduler.');
-        $url = Env::asUrl('SITE_URL') . '/scheduler.php?items[]=' . $this->event['item'];
-        $body = sprintf(_('Hi. %s (%s). See item: %s. It was booked from %s to %s.'), $info, $this->actor, $url, $this->event['start'], $this->event['end']);
+        $subject = _('A booked slot was deleted from the scheduler.');
+        $url = sprintf('%s/scheduler.php?items[]=%s', Env::asUrl('SITE_URL'), $this->event['item']);
+        $body = sprintf(
+          _('Hi. %s (%s). See item: %s. It was booked from %s to %s.'),
+          $subject,
+          $this->actor,
+          $url,
+          $this->event['start'],
+          $this->event['end'],
+        );
         if (!empty($this->msg)) {
             $body .= "\n\n" . _('Message:') . "\n" . $this->msg;
         }
+        $body .= sprintf(_('%s'), Email::makeFooter());
         return array(
-            'subject' => $info,
+            'subject' => $subject,
             'body' => $body,
             'target' => $this->target,
         );

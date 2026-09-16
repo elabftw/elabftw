@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\Email;
 use PDO;
 use Override;
 
@@ -58,18 +59,24 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
     #[Override]
     public function getEmail(): array
     {
-        $body = sprintf(
-            '%s%s/%s?mode=view&id=%d&highlightstep=%d#step_view_%d',
-            _('Hello. A step deadline is approaching: '),
+        $subject = _('A step deadline is approaching.');
+        $url = sprintf(
+            _('%s/%s?mode=view&id=%d&highlightstep=%d#step_view_%d'),
             Env::asUrl('SITE_URL'),
             $this->entityPage,
             $this->entityId,
             $this->stepId,
             $this->stepId,
         );
+        $body = sprintf(
+            _('%s%s%s'),
+            $subject,
+            $url,
+            Email::makeFooter(),
+        );
 
         return array(
-            'subject' => _('A step deadline is approaching.'),
+            'subject' => $subject,
             'body' => $body,
         );
     }

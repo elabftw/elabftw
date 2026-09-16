@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\Email;
 use Override;
 
 use function _;
@@ -37,13 +38,14 @@ final class UserNeedValidation extends UserCreated implements MailableInterface
     {
         $subject = sprintf(_('[ACTION REQUIRED]') . ' ' . _('New user added to team: %s'), $this->team);
         $user = new Users($this->userid);
-        $base = sprintf(
-            _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
+        $url = Env::asUrl('SITE_URL') . '/admin.php';
+        $body = sprintf(
+            _('Hi. A new user registered an account on eLabFTW: %s (%s). Head to the admin panel to validate the account: %s%s'),
             $user->userData['fullname'],
             $user->userData['email'],
+            $url,
+            Email::makeFooter(),
         );
-        $url = Env::asUrl('SITE_URL') . '/admin.php';
-        $body = $base . ' ' . sprintf(_('Head to the admin panel to validate the account: %s'), $url);
 
         return array(
             'subject' => $subject,

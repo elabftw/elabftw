@@ -14,9 +14,11 @@ namespace Elabftw\Models\Notifications;
 
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
+use Elabftw\Services\Email;
 use Override;
 
 use function _;
+use function sprintf;
 
 /**
  * Send an email to a new user to notify that admin validation is required.
@@ -32,7 +34,13 @@ final class SelfNeedValidation extends AbstractNotifications implements Mailable
     public function getEmail(): array
     {
         $subject = _('Your account has been created');
-        $body = _('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.');
-        return array('subject' => $subject, 'body' => $body);
+        $body = sprintf(
+          _('Hi. Your account has been created but it is currently inactive (you cannot log in). The team admin has been notified and will validate your account. You will receive an email when it is done.%s'),
+          Email::makeFooter(),
+        );
+        return array(
+          'subject' => $subject,
+          'body' => $body,
+        );
     }
 }

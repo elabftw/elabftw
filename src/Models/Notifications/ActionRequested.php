@@ -18,6 +18,7 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\Email;
 use Override;
 
 use function _;
@@ -37,6 +38,8 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
     #[Override]
     public function getEmail(): array
     {
+        $subject = _('Action requested');
+        $url = sprintf('%s/%s?mode=view&id=%d', Env::asUrl('SITE_URL'), $this->entity->entityType->toPage(), $this->entity->id ?? 0);
         // body is split in two so we can reuse the translated string in web notification
         $body = sprintf(
             _('%s has requested %s from you.'),
@@ -44,11 +47,12 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
             $this->action->toHuman(),
         );
         $body .= ' ' . sprintf(
-            _('You can review the request here: %s'),
-            sprintf('%s/%s?mode=view&id=%d', Env::asUrl('SITE_URL'), $this->entity->entityType->toPage(), $this->entity->id ?? 0)
+            _('You can review the request here: %s%s'),
+            $url,
+            Email::makeFooter(),
         );
         return array(
-            'subject' => _('Action requested'),
+            'subject' => $subject,
             'body' => $body,
             'replyTo' => $this->requester->userData['email'],
         );

@@ -196,6 +196,32 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(4, $rule['count']);
     }
 
+    public function testWeeklySeriesUntilDateSkipsDaysBeforeStart(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('next Tuesday 10:00');
+        $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->modify('+1 hour')->format('c'),
+            'recurrence' => array(
+                'frequency' => 'weekly',
+                'interval' => 1,
+                'weekdays' => array(1, 2, 4),
+                'until' => $start->modify('+2 days')->format('Y-m-d'),
+            ),
+        ));
+
+        $events = $this->getSortedEvents($Items);
+        $this->assertSame(array(
+            $start->format('Y-m-d'),
+            $start->modify('+2 days')->format('Y-m-d'),
+        ), array_map(
+            static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('Y-m-d'),
+            $events,
+        ));
+    }
+
     public function testCreateRecurringSeriesUntilDate(): void
     {
         $Items = $this->getFreshBookableItem(2);
@@ -245,6 +271,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidRecurrencesAreRejected(): void
     {
+        $start = new DateTimeImmutable($this->start);
+        $startWeekday = (int) $start->format('N');
         $invalid = array(
             'daily',
             array('frequency' => 'hourly', 'interval' => 1, 'count' => 2),
@@ -256,6 +284,15 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             array('frequency' => 'weekly', 'interval' => 1, 'weekdays' => array(8), 'count' => 2),
             array('frequency' => 'daily', 'interval' => 1, 'count' => Scheduler::MAX_RECURRENCE_OCCURRENCES + 1),
             array('frequency' => 'daily', 'interval' => 365, 'count' => 12),
+            array('frequency' => 'daily', 'interval' => 1, 'until' => $start->modify('-1 day')->format('Y-m-d')),
+            array('frequency' => 'daily', 'interval' => 1, 'until' => $start->modify('+11 years')->format('Y-m-d')),
+            array('frequency' => 'daily', 'interval' => 1, 'until' => 123),
+            array('frequency' => 'daily', 'interval' => 1, 'until' => 'invalid-date'),
+            array('frequency' => 'weekly', 'interval' => 1, 'weekdays' => array(), 'count' => 2),
+            array('frequency' => 'weekly', 'interval' => 1, 'weekdays' => array(($startWeekday % 7) + 1), 'count' => 2),
+            array('frequency' => 'daily', 'interval' => 1, 'until' => $start->modify('+200 days')->format('Y-m-d')),
+            array('frequency' => 'weekly', 'interval' => 1, 'weekdays' => array(1, 2, 3, 4, 5, 6, 7), 'until' => $start->modify('+1 year')->format('Y-m-d')),
+            array('frequency' => 'weekly', 'interval' => 52, 'weekdays' => array($startWeekday), 'count' => 20),
         );
         $rejected = 0;
         foreach ($invalid as $recurrence) {
@@ -271,6 +308,26 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         }
         $this->assertSame(count($invalid), $rejected);
         $this->assertEmpty($this->Scheduler->readOne());
+    }
+
+    public function testRecurringOccurrencesCannotOverlapEachOther(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Items->patch(Action::Update, array('book_can_overlap' => 0));
+        $Scheduler = new Scheduler($Items);
+        $start = new DateTimeImmutable('next Tuesday 10:00');
+
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->modify('+3 days')->format('c'),
+            'recurrence' => array(
+                'frequency' => 'weekly',
+                'interval' => 1,
+                'weekdays' => array(2, 4),
+                'count' => 2,
+            ),
+        ));
     }
 
     public function testInvalidMonthlyDayIsRejected(): void

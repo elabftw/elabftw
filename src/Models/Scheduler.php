@@ -150,6 +150,8 @@ final class Scheduler extends AbstractRest
         $seriesId = $recurrence === null ? null : Tools::getUuidv4();
         $recurrenceFrequency = is_array($recurrence) ? (string) ($recurrence['frequency'] ?? '') : null;
         $recurrenceInterval = is_array($recurrence) ? (int) ($recurrence['interval'] ?? 0) : null;
+        // Store a normalized rule so the API and UI can describe the whole original series
+        // Allows for 'This event occurs once every X days and ends by X/X/X"
         $recurrenceRule = null;
         if (is_array($recurrence)) {
             $recurrenceRule = array(
@@ -166,7 +168,7 @@ final class Scheduler extends AbstractRest
                 $recurrenceRule['until'] = (string) $recurrence['until'];
             }
         }
-        // handle constraints during transaction
+        // Validate the complete set before inserting anything so recurring creation is all-or-nothing
         $this->Db->beginTransaction();
         try {
             // Serialize concurrent booking attempts for the same resource.
@@ -192,6 +194,7 @@ final class Scheduler extends AbstractRest
                 $recurrenceRule === null ? null : json_encode($recurrenceRule, JSON_THROW_ON_ERROR),
                 $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_STR,
             );
+            // Reuse one prepared statement and return the id of the first occurrence
             $eventId = 0;
             foreach (array_values($occurrences) as $index => $occurrence) {
                 $req->bindValue(':start', $occurrence['start']);
@@ -329,6 +332,7 @@ final class Scheduler extends AbstractRest
         if (!in_array($scope, array('event', 'future', 'series'), true)) {
             throw new ImproperActionException(_('Incorrect recurrence scope.'));
         }
+        // single-event updates use the normal path while future and series updates use one transaction
         if ($scope !== 'event') {
             $this->updateSeries($params, $scope);
             return $this->readOne();
@@ -350,6 +354,8 @@ final class Scheduler extends AbstractRest
     {
         $this->canWriteOrExplode();
         $event = $this->readOne();
+        // DELETE scope is stored on Scheduler because destroy() does not receive request parameters
+        // TODO: we did talk about a query object for Delete, but PR 7415 too big currently
         if ($this->recurrenceScope !== 'event' && $event['recurrence_series_id'] !== null) {
             return $this->destroySeries($this->recurrenceScope);
         }
@@ -475,6 +481,7 @@ final class Scheduler extends AbstractRest
             }
             $allEvents = $this->readSeriesEvents($seriesId);
             $this->assertSeriesOwnership($allEvents, $event);
+            // The selected event is the anchor used to decide whether scope means future or the complete series
             $events = $this->getSeriesEventsForScope($allEvents, $event, $scope);
             $candidates = array();
             if ($changeDateTime) {
@@ -483,6 +490,7 @@ final class Scheduler extends AbstractRest
                 $this->checkEndAfterStart($requestedStart->format(self::DATETIME_FORMAT), $requestedEnd->format(self::DATETIME_FORMAT));
                 $startDelta = $this->formatDate($event['start'])->diff($requestedStart);
                 $duration = $requestedStart->diff($requestedEnd);
+                // Shift each selected occurrence by the same offset and apply the requested duration
                 foreach ($events as $seriesEvent) {
                     $candidateStart = $this->formatDate($seriesEvent['start'])->add($startDelta);
                     $candidateEnd = $candidateStart->add($duration);
@@ -500,6 +508,8 @@ final class Scheduler extends AbstractRest
             }
             if ($changeDateTime) {
                 $overlapCandidates = $candidates;
+                // Database overlap checks exclude the current series
+                // Add untouched earlier occurrences back for future updates so self-overlaps are still detected
                 if ($scope === 'future') {
                     foreach ($allEvents as $seriesEvent) {
                         if ((int) $seriesEvent['recurrence_index'] >= (int) $event['recurrence_index']) {
@@ -580,6 +590,7 @@ final class Scheduler extends AbstractRest
 
     private function readSeriesEvents(string $seriesId): array
     {
+        // Keep recurrence order stable because future scope is based on recurrence_index
         $sql = 'SELECT team_events.*, items.book_is_cancellable, items.book_cancel_minutes
             FROM team_events
             LEFT JOIN items ON (team_events.item = items.id)
@@ -606,6 +617,7 @@ final class Scheduler extends AbstractRest
 
     private function assertSeriesOwnership(array $events, array $anchor): void
     {
+        // Guard against malformed series data before applying a bulk update or delete
         if (empty($events)) {
             throw new ImproperActionException(_('No reservations were found in this recurring series.'));
         }
@@ -890,6 +902,7 @@ final class Scheduler extends AbstractRest
         if ($this->id !== null) {
             $sql .= ' AND id != :id';
         }
+        // series updates ignore existing rows here because self-overlaps are checked from candidate dates
         if ($excludedSeriesId !== null) {
             $sql .= ' AND (recurrence_series_id IS NULL OR recurrence_series_id != :recurrence_series_id)';
         }
@@ -939,6 +952,7 @@ final class Scheduler extends AbstractRest
         $interval = $this->getRecurrenceInteger($recurrence, 'interval', 1, self::MAX_RECURRENCE_INTERVAL);
         $hasCount = array_key_exists('count', $recurrence);
         $hasUntil = array_key_exists('until', $recurrence);
+        // A finite series must use exactly one end condition
         if ($hasCount === $hasUntil) {
             throw new ImproperActionException(_('Recurrence must end after a number of occurrences or on a date.'));
         }
@@ -961,6 +975,7 @@ final class Scheduler extends AbstractRest
             }
         }
 
+        // weekly recurrence has its own generator because one recurrence week may contain several weekdays
         if ($frequency === 'weekly') {
             return $this->generateWeeklyOccurrences($startDate, $duration, $interval, $count, $until, $lastAllowed, $recurrence);
         }
@@ -1008,6 +1023,7 @@ final class Scheduler extends AbstractRest
     ): array {
         $weekdays = $this->getRecurrenceWeekdays($recurrence, (int) $startDate->format('N'));
         $startWeekday = (int) $startDate->format('N');
+        // ISO weekday values are relative to Monday, so anchor each recurrence block to the start of its week
         $weekStart = $startDate->modify(sprintf('-%d days', $startWeekday - 1));
         $occurrences = array();
         for ($weekIndex = 0; ; $weekIndex++) {
@@ -1023,6 +1039,7 @@ final class Scheduler extends AbstractRest
                         (int) $startDate->format('i'),
                         (int) $startDate->format('s'),
                     );
+                // ignore selected weekdays before the anchor during the first recurrence week
                 if ($occurrenceStart < $startDate) {
                     continue;
                 }
@@ -1051,6 +1068,7 @@ final class Scheduler extends AbstractRest
 
     private function getRecurrenceWeekdays(array $recurrence, int $startWeekday): array
     {
+        // the anchor booking is the first occurrence and must remain part of the weekly rule
         $weekdays = $recurrence['weekdays'] ?? array($startWeekday);
         if (!is_array($weekdays) || empty($weekdays)) {
             throw new ImproperActionException(_('At least one weekday is required for a weekly recurrence.'));
@@ -1073,6 +1091,7 @@ final class Scheduler extends AbstractRest
 
     private function getRecurrenceUntil(array $recurrence): DateTimeImmutable
     {
+        // Treat the selected date as inclusive for occurrences at any time that day
         $value = $recurrence['until'] ?? null;
         if (!is_string($value)) {
             throw new ImproperActionException(_('Recurrence end date must use the YYYY-MM-DD format.'));
@@ -1100,6 +1119,7 @@ final class Scheduler extends AbstractRest
 
     private function addMonthsStrict(DateTimeImmutable $date, int $months): DateTimeImmutable
     {
+        // Avoid PHP date rollover such as January 31 becoming a date in March
         $targetMonth = $date->modify('first day of this month')->modify(sprintf('+%d months', $months));
         $candidate = $targetMonth->setDate(
             (int) $targetMonth->format('Y'),
@@ -1121,6 +1141,7 @@ final class Scheduler extends AbstractRest
             return;
         }
         $ordered = $occurrences;
+        // After sorting, only adjacent occurrences need to be compared
         usort($ordered, static fn(array $left, array $right): int => $left['start'] <=> $right['start']);
         $previousEnd = null;
         foreach ($ordered as $occurrence) {

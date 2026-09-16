@@ -6,6 +6,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+// Mix the category color with the theme surface so events stay readable without losing category identity
 .fc-event.scheduler-event-colored {
   --scheduler-event-mix-bg: var(--chrome-fg);
   --scheduler-event-bg: color-mix(in srgb, var(--scheduler-event-color) 22%, var(--scheduler-event-mix-bg));
@@ -26,6 +27,7 @@
   }
 }
 
+// Use the dark theme surface as the mix base instead of the light foreground
 :is(.dark-mode, .midnight) .fc-event.scheduler-event-colored {
   --scheduler-event-mix-bg: var(--chrome-bg);
 }
@@ -53,7 +55,8 @@
   opacity: 0.5;
 }
 
-/* the buttons at the top right (day/week etc.) */
+// Keep inactive scheduler views (buttons) subtle while highlighting the active view
+// couldn't change them to ghost buttons.. they are f-calendar native
 .fc .fc-toolbar-chunk:last-child {
   .btn-primary {
     background-color: transparent !important;

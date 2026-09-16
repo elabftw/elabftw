@@ -349,7 +349,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Items,
             ApiEndpoint::ExperimentsTemplates,
             ApiEndpoint::ItemsTypes => EntityType::from($this->endpoint->value)->toInstance($this->requester, $this->id),
-            // for a single event, the id is the id of the event
+            // for an event, this->id is the Event id. And scope controls the recurrence range
             ApiEndpoint::Event => new Scheduler(
                 new Items($this->requester),
                 $this->id,
@@ -457,6 +457,7 @@ final class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Scheduler) {
             return match ($submodel) {
+                // Reuse the same Scheduler so notification-driven cancellation keeps the event id and recurrence scope
                 ApiSubModels::Notifications => new EventDeleted(
                     $this->requester,
                     $this->Model->readOne(),

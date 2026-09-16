@@ -123,6 +123,7 @@ function lockScopeButtons(selectedItems: string[]): void {
 
 document.getElementById('loading-spinner')?.remove();
 
+// map the every/every other/custom controls to the numeric API interval
 function getRecurrenceInterval(fields: Element, reportValidity = false): number | false {
   const mode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-interval-mode')!.value;
   if (mode === 'every') {
@@ -141,6 +142,7 @@ function getRecurrenceInterval(fields: Element, reportValidity = false): number 
   return interval.valueAsNumber;
 }
 
+// Keep recurrence controls and singular/plural labels in sync with the current form state
 function updateRecurrenceFields(fields: Element): void {
   const enabled = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
   fields.querySelectorAll('.scheduler-recurrence-options')
@@ -169,6 +171,7 @@ function updateRecurrenceFields(fields: Element): void {
   fields.querySelector('.scheduler-recurrence-until-wrapper')?.classList.toggle('d-none', endMode.value !== 'date');
 }
 
+// configure weekday shortcuts and end-date limits from the calendar slot used as the anchor occurrence
 function configureRecurrenceFields(fields: HTMLElement, start: Date, locale: string): void {
   const startDate = DateTime.fromJSDate(start).setLocale(locale);
   const startWeekday = startDate.weekday;
@@ -189,12 +192,14 @@ function configureRecurrenceFields(fields: HTMLElement, start: Date, locale: str
     weekdayMode.value = 'start';
   }
 
+  // The anchor weekday must stay selected because the first booking is part of the series
   fields.querySelectorAll<HTMLInputElement>('.scheduler-recurrence-weekday').forEach(checkbox => {
     const isStartDay = Number(checkbox.value) === startWeekday;
     checkbox.checked = isStartDay;
     checkbox.disabled = isStartDay;
   });
 
+  // give date-based recurrence a useful default while preventing dates before the anchor
   const until = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-until')!;
   const startDateValue = startDate.toISODate()!;
   until.min = startDateValue;
@@ -213,6 +218,7 @@ document.querySelectorAll<HTMLElement>('.scheduler-recurrence-fields').forEach(f
   updateRecurrenceFields(fields);
 });
 
+// null means recurrence disabled, false means invalid input, otherwise return API payload
 function getRecurrence(modal: Element): Recurrence | null | false {
   const fields = modal.querySelector<HTMLElement>('.scheduler-recurrence-fields')!;
   const enabled = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
@@ -274,6 +280,7 @@ function getRecurrenceDescription(container: HTMLElement, recurrence: Recurrence
   let description = template.replace('%d', String(recurrence.interval));
 
   if (recurrence.frequency === 'weekly' && recurrence.weekdays?.length) {
+    // Use a known Monday only as an ISO weekday anchor for localized weekday names
     const monday = DateTime.fromISO('2026-09-14').setLocale(locale);
     const weekdayNames = recurrence.weekdays.map(weekday => monday.plus({ days: weekday - 1 }).toFormat('cccc'));
     const weekdayList = new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(weekdayNames);
@@ -639,7 +646,7 @@ if (calendarEl) {
       endInput.dataset.eventid = info.event.id;
       refreshBoundDivs(info.event.extendedProps);
 
-      // todo: fix (wip actually but it works) on load after having submitted once, we have to re toggle the selection
+      // The event modal is reused, so reset recurrence visibility and scope selection on every open
       const isRecurring = Boolean(info.event.extendedProps.recurrence_series_id);
       const viewRecurrence = document.getElementById('viewRecurrence')!;
       const viewRecurrenceText = document.getElementById('viewRecurrenceText')!;
@@ -714,6 +721,7 @@ if (calendarEl) {
       payload.range_unit = (document.getElementById('cancelEventRangeUnit') as HTMLSelectElement).value;
     }
     payload.notifOnSaved = 0;
+    // Delete inside the notification request so a failed cancellation cannot still send cancellation notifications
     payload.cancel_event = true;
     const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
     ApiC.post(`event/${el.dataset.id}/notifications?scope=${scope}`, payload)
@@ -829,6 +837,7 @@ if (calendarEl) {
       }
       const startIso = DateTime.fromJSDate(info.event.start, { zone: 'system' }).toISO({ suppressMilliseconds: true });
       const endIso = DateTime.fromJSDate(info.event.end, { zone: 'system' }).toISO({ suppressMilliseconds: true });
+      // Drag and resize intentionally omit scope so only the moved occurrence is updated
       await ApiC.patch(`event/${info.event.id}`, {target: 'datetime', start: startIso, end: endIso});
     } catch (err) {
       console.error(err);

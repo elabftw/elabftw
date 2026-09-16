@@ -312,13 +312,14 @@ final class Populate
                     $ResourcesCategories = new ResourcesCategories($Teams);
                     $Items = new Items($user);
                     $id = $Items->create(
-                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? 'Default'),
                         title: $item['title'],
                         body: $item['body'] ?? '',
                         date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
+                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? 'Default'),
                         rating: $item['rating'] ?? 0,
                     );
                     $Items->setId($id);
+                    // Keep explicit resource ids by title because configured events refer to those titles later
                     $itemIds[$item['title']] = $id;
                     // bookable cannot be set in create function
                     $Items->update(new EntityParams('is_bookable', $item['is_bookable'] ?? '0'));
@@ -342,7 +343,7 @@ final class Populate
                 }
             }
 
-            // EVENTS
+            // Create configured bookings through Scheduler so populate data follows normal booking validation
             foreach ($team['events'] ?? array() as $event) {
                 $itemId = $itemIds[$event['item']] ?? null;
                 if ($itemId === null) {

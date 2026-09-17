@@ -275,7 +275,7 @@ class Email
     {
         return array(
             'plain' => sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL')),
-            'html' => sprintf("<div><br />~~~<br />%s %s</div>", _('Sent from eLabFTW'), Env::asUrl('SITE_URL'))
+            'html' => sprintf('<div><br />~~~<br />%s %s</div>', _('Sent from eLabFTW'), Env::asUrl('SITE_URL')),
         );
     }
 
@@ -345,5 +345,3 @@ class Email
         );
     }
 }
-
-

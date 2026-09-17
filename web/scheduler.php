@@ -17,6 +17,7 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ResourcesCategories;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function _;
 use function array_column;
@@ -40,8 +41,10 @@ try {
         // keep the displayed scope in sync with the scope used to find the selected resources. See #6990
         $Request->query->set('scope', $scope->value);
     }
+    $query = new InputBag($Request->query->all());
+    $query->remove('category');
     // only the bookable categories
-    $bookableItemsArr = $Items->readBookable($scope);
+    $bookableItemsArr = $Items->readBookable($scope, $query);
     $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
     $allCategories = $ResourcesCategories->readAll();
     $bookableCategories = array_filter(

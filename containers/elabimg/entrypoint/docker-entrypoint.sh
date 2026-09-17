@@ -363,11 +363,13 @@ elabftwConf() {
 }
 
 ldapConf() {
-    mkdir -p /etc/openldap
+    mkdir -p /run/openldap
+    f="/run/openldap/ldap.conf"
+    cp -v /etc/openldap/ldap.conf.tpl "$f"
     if [ "$ldap_tls_reqcert" != false ]; then
         # remove a possibly existing line or it will append every time container is restarted
-        sed -i -e '/^TLS_REQCERT/d' /etc/openldap/ldap.conf
-        echo "TLS_REQCERT ${ldap_tls_reqcert}" >> /etc/openldap/ldap.conf
+        sed -i -e '/^TLS_REQCERT/d' "$f"
+        echo "TLS_REQCERT ${ldap_tls_reqcert}" >> "$f"
     fi
 }
 

@@ -44,7 +44,7 @@ use function html_entity_decode;
  */
 class Email
 {
-    public string $footer;
+    public array $footer;
 
     private Address $from;
 
@@ -126,7 +126,8 @@ class Email
         ->subject('[eLabFTW] ' . _('Test email'))
         ->from($this->from)
         ->to(new Address($email, 'Admin eLabFTW'))
-        ->text('Congratulations, you correctly configured eLabFTW to send emails! :)' . $this->footer);
+        ->text('Congratulations, you correctly configured eLabFTW to send emails! :)' . $this->footer['plain'])
+        ->html('Congratulations, you correctly configured eLabFTW to send (HTML) emails! :)' . $this->footer['html']);
 
         return $this->send($message) ? 1 : 0;
     }
@@ -146,7 +147,7 @@ class Email
 
         $sender = sprintf("\n\nEmail sent by %s. You can reply directly to this email.\n", $replyTo->getName());
 
-        $content = $body . $sender . $this->footer;
+        $content = $body . $sender . $this->footer['plain'];
 
         if ($sendGrouped) {
             // send one single email to everyone
@@ -181,7 +182,7 @@ class Email
         ->subject($subject)
         ->from($this->from)
         ->to($to)
-        ->text($body);
+        ->text($body . $this->footer['plain']);
 
         if (!empty($cc)) {
             $message->cc(...$cc);
@@ -192,7 +193,7 @@ class Email
         }
 
         if (!empty($htmlBody)) {
-            $message->html($htmlBody);
+            $message->html($htmlBody . $this->footer['html']);
 
             if (empty($body)) {
                 $textWithLinks = (new Transformer())
@@ -221,7 +222,7 @@ class Email
             ->subject($subject)
             ->from($this->from)
             ->to(...$emails)
-            ->text($body . $this->footer);
+            ->text($body . $this->footer['plain']);
         return $this->send($message);
     }
 
@@ -247,11 +248,6 @@ class Email
         return $emails;
     }
 
-    public static function makeFooter(): string
-    {
-        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL'));
-    }
-
     private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int
     {
         // send emails one by one
@@ -273,6 +269,14 @@ class Email
             }
         }
         return $sentCount;
+    }
+
+    private function makeFooter(): array
+    {
+        return array(
+            'plain' => sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL')),
+            'html' => sprintf("<div><br />~~~<br />%s %s</div>", _('Sent from eLabFTW'), Env::asUrl('SITE_URL'))
+        );
     }
 
     private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null, ?array $range = null): array
@@ -341,3 +345,5 @@ class Email
         );
     }
 }
+
+

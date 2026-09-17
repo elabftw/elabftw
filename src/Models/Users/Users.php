@@ -402,14 +402,16 @@ class Users extends AbstractRest
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
         );
-        // if the user is Admin somewhere (or Sysadmin), return a pretty complete response
-        // Note: having something where you get different response depending if the user is part of your team or not seems too complex to implement and maintain
-        if ($this->requester->isAdminSomewhere() || $this->requester->isSysadmin()) {
-            return $users;
-        }
-        // otherwise, remove some more data, here we want only the super basic data for basic users
-        $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'last_login', 'valid_until', 'is_sysadmin', 'teams');
-        return array_map(function ($user) use ($removeKeys) {
+        $isSysadmin = $this->requester->isSysadmin();
+        $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'valid_until', 'is_sysadmin', 'teams');
+        return array_map(function (array $user) use ($isSysadmin, $removeKeys): array {
+            if (!$isSysadmin) {
+                unset($user['last_login']);
+            }
+            if ($isSysadmin || $this->requester->isAdminOf($user['userid'])) {
+                return $user;
+            }
+            // return only basic data when the requester is not an Admin of this user
             foreach ($removeKeys as $k) {
                 unset($user[$k]);
             }
@@ -430,8 +432,11 @@ class Users extends AbstractRest
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token_hash']);
+        if (!$this->requester->isSysadmin()) {
+            unset($userData['last_login']);
+        }
         // keep sig_privkey in response if requester is target
-        if ($this->requester->userData['userid'] !== $this->userData['userid']) {
+        if ($this->requester->getUserid() !== $this->getUserid()) {
             unset($userData['sig_privkey']);
         }
         return $userData;

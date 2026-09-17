@@ -66,6 +66,9 @@ use function in_array;
 use function json_decode;
 use function sprintf;
 use function strtolower;
+use function strlen;
+use function strrpos;
+use function substr;
 
 /**
  * Users

@@ -16,7 +16,6 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\Email;
 use PDO;
 use Override;
 
@@ -69,10 +68,9 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
             $this->stepId,
         );
         $body = sprintf(
-            _('%s %s%s'),
+            _('%s %s'),
             $subject,
             $url,
-            Email::makeFooter(),
         );
 
         return array(

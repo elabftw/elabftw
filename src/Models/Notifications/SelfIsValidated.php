@@ -15,7 +15,6 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
-use Elabftw\Services\Email;
 use Override;
 
 use function _;
@@ -35,9 +34,8 @@ final class SelfIsValidated extends AbstractNotifications implements MailableInt
         $subject = _('Account validated');
         $url = Env::asUrl('SITE_URL') . '/login.php';
         $body = sprintf(
-            _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: %s%s'),
+            _('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login: %s'),
             $url,
-            Email::makeFooter(),
         );
         return array(
             'subject' => $subject,

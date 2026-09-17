@@ -15,7 +15,6 @@ namespace Elabftw\Models\Notifications;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\Email;
 use Override;
 
 use function _;
@@ -37,10 +36,9 @@ class UserCreated extends AbstractNotifications implements MailableInterface
     {
         $user = new Users($this->userid);
         $body = sprintf(
-            _('Hi. A new user registered an account on eLabFTW: %s (%s).%s'),
+            _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
             $user->userData['fullname'],
             $user->userData['email'],
-            Email::makeFooter(),
         );
         return array(
             'subject' => sprintf(_('New user added to team: %s'), $this->team),

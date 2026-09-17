@@ -16,7 +16,6 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Notifications;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\Email;
 use Override;
 
 use function _;
@@ -40,10 +39,9 @@ final class CommentCreated extends AbstractNotifications implements MailableInte
         $url = sprintf('%s/%s?mode=view&id=%d', Env::asUrl('SITE_URL'), $this->page, $this->entityId);
 
         $body = sprintf(
-            _('Hi. %s left a comment. Have a look: %s%s'),
+            _('Hi. %s left a comment. Have a look: %s'),
             $commenter->userData['fullname'],
             $url,
-            Email::makeFooter(),
         );
         return array(
             'subject' => _('New comment posted'),

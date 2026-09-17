@@ -124,7 +124,6 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         if (!empty($this->msg)) {
             $body .= "\n\n" . _('Message:') . "\n" . $this->msg;
         }
-        $body .= sprintf(_('%s'), Email::makeFooter());
         return array(
             'subject' => $subject,
             'body' => $body,

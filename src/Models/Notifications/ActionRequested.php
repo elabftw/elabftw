@@ -18,7 +18,6 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\Email;
 use Override;
 
 use function _;
@@ -47,9 +46,8 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
             $this->action->toHuman(),
         );
         $body .= ' ' . sprintf(
-            _('You can review the request here: %s%s'),
+            _('You can review the request here: %s'),
             $url,
-            Email::makeFooter(),
         );
         return array(
             'subject' => $subject,

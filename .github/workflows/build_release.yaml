@@ -31,7 +31,7 @@ jobs:
         steps:
             # https://github.com/CycodeLabs/cimon-action
             - name: Cimon supply chain attack protection
-              uses: cycodelabs/cimon-action@a0870cc3d9e3bf3cedd28bdb67bf3fd3281e5941 # v0.10
+              uses: cycodelabs/cimon-action@1374f7193c5a4390740fa451feb05ce812955958 # v0.10
               with:
                 prevent: true
                 allowed-hosts: >
@@ -113,7 +113,7 @@ jobs:
         steps:
             # https://github.com/CycodeLabs/cimon-action
             - name: Cimon supply chain attack protection
-              uses: cycodelabs/cimon-action@a0870cc3d9e3bf3cedd28bdb67bf3fd3281e5941 # v0.10
+              uses: cycodelabs/cimon-action@1374f7193c5a4390740fa451feb05ce812955958 # v0.10
               with:
                 prevent: true
                 allowed-hosts: >
@@ -215,7 +215,7 @@ jobs:
 
             # https://github.com/docker/setup-qemu-action#usage
             - name: Set up QEMU
-              uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4
+              uses: docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a # v4
 
             # ATTESTATION
             - name: Create build provenance attestation

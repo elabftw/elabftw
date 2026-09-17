@@ -25,6 +25,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function array_column;
 use function count;
 use function is_array;
 use function strtoupper;
@@ -177,14 +178,39 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll(): void
     {
-        // read as Admin
+        // Sysadmins receive the extended response, including last login information.
         $res = $this->Users->readAll();
         $this->assertArrayHasKey('last_login', $res[0]);
-        // now as user
+
+        // Admins receive extended information only for users they administer.
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $managedUser = $this->getUserInTeam(team: 2);
+        $res = array_column((new Users(null, null, $admin))->readAll(), null, 'userid');
+        $this->assertArrayHasKey('auth_service', $res[$managedUser->getUserid()]);
+        $this->assertArrayNotHasKey('last_login', $res[$managedUser->getUserid()]);
+        $this->assertFalse($admin->isAdminOf(2));
+        $this->assertArrayNotHasKey('auth_service', $res[2]);
+        $this->assertArrayNotHasKey('last_login', $res[2]);
+
+        // Regular users receive only basic information.
         $user = $this->getUserInTeam(2);
         $Users = new Users(null, null, $user);
         $res = $Users->readAll();
         $this->assertArrayNotHasKey('auth_service', $res[0]);
+    }
+
+    public function testReadOneLastLoginIsRestrictedToSysadmins(): void
+    {
+        $this->assertArrayHasKey('last_login', $this->Users->readOne());
+
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $user = $this->getUserInTeam(team: 2);
+        $res = (new Users($user->getUserid(), 2, $admin))->readOne();
+        $this->assertArrayHasKey('auth_service', $res);
+        $this->assertArrayNotHasKey('last_login', $res);
+
+        $res = (new Users($user->getUserid(), 2, $user))->readOne();
+        $this->assertArrayNotHasKey('last_login', $res);
     }
 
     public function testIsAdminOf(): void

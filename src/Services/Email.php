@@ -147,7 +147,7 @@ class Email
 
         $sender = sprintf("\n\nEmail sent by %s. You can reply directly to this email.\n", $replyTo->getName());
 
-        $content = $body . $sender . $this->footer['plain'];
+        $content = $body . $sender;
 
         if ($sendGrouped) {
             // send one single email to everyone

@@ -473,7 +473,8 @@ abstract class AbstractEntity extends AbstractRest
                 recent.title,
                 recent.modified_at,
                 categoryt.title AS category_title,
-                categoryt.color AS category_color
+                categoryt.color AS category_color,
+                categoryt.color_fg AS category_color_fg
             FROM (
                 SELECT entity.id,
                     entity.title,

@@ -693,9 +693,10 @@ export async function updateCatStat(target: string, entity: Entity, value: strin
   params[target] = value;
   const newEntity = await ApiC.patch(`${entity.type}/${entity.id}`, params).then(resp => resp.json());
   // return a string separated with | with the id first so we can use it in data-id of new element
-  let response = value + '|';
-  /* eslint-disable-next-line */
-  return response += (target === 'category' ? newEntity.category_color : newEntity.status_color) ?? 'bdbdbd';
+  if (target === 'category') {
+    return `${value}|${newEntity.category_color ?? 'bdbdbd'}|${newEntity.category_color_fg ?? 'ffffff'}`;
+  }
+  return `${value}|${newEntity.status_color ?? 'bdbdbd'}`;
 }
 
 // used in edit.ts to build search patterns from strings that contain special characters

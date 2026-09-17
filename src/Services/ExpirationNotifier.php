@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Env;
+use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use PDO;
 use Symfony\Component\Mime\Address;
@@ -40,6 +41,7 @@ final class ExpirationNotifier extends EmailNotifications
 
     protected function sendUsersEmails(): array
     {
+        $config = Config::getConfig();
         // this will hold the results organized by teams
         $targets = array();
         $emailSubject = _('Account expiration warning');
@@ -49,7 +51,15 @@ final class ExpirationNotifier extends EmailNotifications
             $this->setLang($targetUser->userData['lang']);
             $emailBody = sprintf(_('Your account on %s is due to expire on %s and become inaccessible (archived) passed this date. All your data will still be visible to others, but you will not be able to access it through this account.'), Env::asUrl('SITE_URL'), $targetUser->userData['valid_until']);
             $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-            $this->emailService->sendEmail($to, self::BASE_SUBJECT . $emailSubject, $emailBody);
+            $this->emailService->sendEmail(
+                $to,
+                sprintf(
+                    _('%s %s'),
+                    $config->configArr['mail_subject_prefix'],
+                    $emailSubject,
+                ),
+                $emailBody
+            );
             $UsersHelper = new UsersHelper($userid);
             $teams = $UsersHelper->getTeamsFromUserid();
             // add the user in each team for the admin message
@@ -69,6 +79,7 @@ final class ExpirationNotifier extends EmailNotifications
 
     protected function sendAdminsEmails(array $targets): int
     {
+        $config = Config::getConfig();
         $emailSubject = _('Account expiration information');
         $cnt = 0;
         // loop on each team
@@ -85,7 +96,15 @@ final class ExpirationNotifier extends EmailNotifications
                     $emailBody .= "\n− " . implode(', ', $user);
                 }
                 $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-                $this->emailService->sendEmail($to, self::BASE_SUBJECT . $emailSubject, $emailBody);
+                $this->emailService->sendEmail(
+                    $to,
+                    sprintf(
+                        _('%s%s'),
+                        $config->configArr['mail_subject_prefix'],
+                        $emailSubject
+                    ),
+                    $emailBody
+                );
                 $cnt += 1;
             }
         }

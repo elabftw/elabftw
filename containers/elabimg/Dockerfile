@@ -377,6 +377,10 @@ COPY ./containers/elabimg/php/php-fpm.conf /etc/php84/php-fpm.conf
 COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf.tpl
 # END PHP
 
+# LDAP: keep the runtime configuration on the writable /run tmpfs
+RUN mv /etc/openldap/ldap.conf /etc/openldap/ldap.conf.tpl \
+    && ln -s /run/openldap/ldap.conf /etc/openldap/ldap.conf
+
 # create invoker service
 RUN mkdir -p /etc/s6-overlay/s6-rc.d/invoker && echo "longrun" > /etc/s6-overlay/s6-rc.d/invoker/type
 COPY ./containers/elabimg/invoker/run /etc/s6-overlay/s6-rc.d/invoker/

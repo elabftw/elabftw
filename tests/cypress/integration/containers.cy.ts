@@ -55,9 +55,11 @@ describe('Containers', () => {
 
   const openBatchContainerModal = (): void => {
     cy.get('[data-action="toggle-modal"][data-target="storageModal"]').click();
-    // the fade leaves the modal visible but still opaque part way through, and bootstrap drops
-    // a hide that arrives then. Opacity reaches 1 only once the transition is over
-    cy.get('#storageModal').should('be.visible').and('have.css', 'opacity', '1');
+    // bootstrap drops a hide() that arrives while the modal is still transitioning, and it
+    // clears that flag off the dialog's 0.3s transform, not the modal's 0.15s opacity, so a
+    // settled opacity still leaves 150ms in which a close is silently thrown away
+    cy.get('#storageModal').should('be.visible');
+    cy.get('#storageModal .modal-dialog').should('have.css', 'transform', 'none');
   };
 
   const closeBatchContainerModal = (): void => {

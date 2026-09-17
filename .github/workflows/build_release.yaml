@@ -31,7 +31,7 @@ jobs:
         steps:
             # https://github.com/CycodeLabs/cimon-action
             - name: Cimon supply chain attack protection
-              uses: cycodelabs/cimon-action@a0870cc3d9e3bf3cedd28bdb67bf3fd3281e5941 # v0.10
+              uses: cycodelabs/cimon-action@1374f7193c5a4390740fa451feb05ce812955958 # v0.10
               with:
                 prevent: true
                 allowed-hosts: >
@@ -113,7 +113,7 @@ jobs:
         steps:
             # https://github.com/CycodeLabs/cimon-action
             - name: Cimon supply chain attack protection
-              uses: cycodelabs/cimon-action@a0870cc3d9e3bf3cedd28bdb67bf3fd3281e5941 # v0.10
+              uses: cycodelabs/cimon-action@1374f7193c5a4390740fa451feb05ce812955958 # v0.10
               with:
                 prevent: true
                 allowed-hosts: >

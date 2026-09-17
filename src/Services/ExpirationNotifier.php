@@ -54,7 +54,7 @@ final class ExpirationNotifier extends EmailNotifications
             $this->emailService->sendEmail(
                 $to,
                 sprintf(
-                    _('%s%s%'),
+                    _('%s%s'),
                     $config->configArr['mail_subject_prefix'],
                     $emailSubject,
                 ),

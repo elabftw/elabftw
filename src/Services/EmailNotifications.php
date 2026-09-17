@@ -67,7 +67,7 @@ class EmailNotifications
                 $isEmailSent = $this->emailService->sendEmail(
                     $to,
                     sprintf(
-                        _('%s%s'),
+                        _('%s %s'),
                         $config->configArr['mail_subject_prefix'],
                         $email['subject'],
                     ),

@@ -2,6 +2,7 @@
   <form id='editEventForm' aria-label='{{ 'Edit event'|trans }}'>
     <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
       <div class='form-group'>
+        {% if App.devMode -%}<!-- [html-validate-disable-block valid-for, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->{%- endif %}
         <label for='eventResourceSelect'>{{ 'Booked resource'|trans }}</label>
         <div class='d-flex form-row align-items-start'>
           {# form-row and mb-2 are here for responsive when there's long-name items #}

@@ -57,7 +57,8 @@ describe('Scheduler', () => {
 
   it('Displays the booked resource and booker in the event modal', () => {
     cy.createBooking().then(itemId => {
-      cy.request('GET', `/api/v2/events/${itemId}`).then(response => {
+      // Use the same endpoint as FullCalendar so the test checks the data used by the modal
+      cy.request('GET', `/api/v2/events?items[]=${itemId}`).then(response => {
         const event = response.body[0];
         cy.visit(`/scheduler.php?items[]=${itemId}`);
         cy.get('#loading-spinner').should('not.exist');

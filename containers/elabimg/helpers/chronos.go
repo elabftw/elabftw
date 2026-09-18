@@ -40,6 +40,7 @@ func main() {
 	go scheduleDaily(ctx, 13, 37, []string{"notifications:tsbalance"})
 	go scheduleDaily(ctx, 3, 37, []string{"idps:refresh"})
 	go scheduleEveryMinute(ctx, []string{"notifications:send"})
+	go scheduleEveryMinute(ctx, []string{"webhooks:send"})
 	log.Println("scheduled tasks started")
 
 	// wait until context is canceled

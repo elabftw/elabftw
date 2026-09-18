@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Services\WebhookEmitter;
 use PDO;
 
 use function is_string;
@@ -57,7 +58,13 @@ final class Changelog
         $req->bindParam(':users_id', $this->entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':target', $params->getTarget());
         $req->bindParam(':content', $content);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+        if ($res) {
+            // the changelog is where "something changed" is already recorded, so it is also
+            // where outgoing events are emitted from
+            WebhookEmitter::fromChangelog($this->entity, $params->getTarget());
+        }
+        return $res;
     }
 
     public function readAll(): array

@@ -308,17 +308,6 @@ const EntitiesTable = ({
     const selectedIds = selectedRows.map(row => String(row.id));
 
     selectedEntities?.set(selectedIds);
-
-    const withSelected = document.getElementById('withSelected');
-    if (!withSelected) {
-      return;
-    }
-
-    if (selectedIds.length > 0) {
-      withSelected.removeAttribute('hidden');
-    } else {
-      withSelected.setAttribute('hidden', 'hidden');
-    }
   };
 
   const defaultColDef = useMemo(() => {

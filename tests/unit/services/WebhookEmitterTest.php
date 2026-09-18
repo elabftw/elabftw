@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * @author Moritz IHLER
- * @copyright 2026 Moritz IHLER
+ * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -16,6 +16,8 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\WebhookEvent;
 use Elabftw\Models\InstanceWebhooks;
+use Elabftw\Models\TeamsWebhooks;
+use Elabftw\Models\UsersWebhooks;
 use Elabftw\Params\EntityParams;
 use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
@@ -129,9 +131,38 @@ class WebhookEmitterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * A team webhook sees its own team only, a user webhook the entries of that user only.
+     */
+    public function testScopedWebhooksOnlySeeWhatTheyAreEntitledTo(): void
+    {
+        $events = array('events' => array(WebhookEvent::ExperimentCreated->value));
+        $ownTeam = new TeamsWebhooks(1, true);
+        $ownTeamId = $ownTeam->postAction(Action::Create, array('name' => 'own team', 'url' => 'https://192.0.2.30/hook') + $events);
+        $otherTeam = new TeamsWebhooks(2, true);
+        $otherTeamId = $otherTeam->postAction(Action::Create, array('name' => 'other team', 'url' => 'https://192.0.2.31/hook') + $events);
+        $owner = new UsersWebhooks(1, true);
+        $ownerId = $owner->postAction(Action::Create, array('name' => 'owner', 'url' => 'https://192.0.2.32/hook') + $events);
+        $otherUser = new UsersWebhooks(2, true);
+        $otherUserId = $otherUser->postAction(Action::Create, array('name' => 'other user', 'url' => 'https://192.0.2.33/hook') + $events);
+        WebhookEmitter::reset();
+
+        // owned by user 1 in team 1
+        $this->getFreshExperiment();
+
+        $this->assertCount(1, $this->getEventsFor($ownTeamId));
+        $this->assertCount(0, $this->getEventsFor($otherTeamId));
+        $this->assertCount(1, $this->getEventsFor($ownerId));
+        $this->assertCount(0, $this->getEventsFor($otherUserId));
+
+        new TeamsWebhooks(1, true, $ownTeamId)->destroy();
+        new TeamsWebhooks(2, true, $otherTeamId)->destroy();
+        new UsersWebhooks(1, true, $ownerId)->destroy();
+        new UsersWebhooks(2, true, $otherUserId)->destroy();
+    }
+
+    /**
      * Entity writes happen inside a transaction in places (storage units, container links),
-     * and pdo has no nested transactions, so the fanout must ride along rather than open
-     * its own.
+     * and pdo has no nested transactions, so the fanout must not try to open its own.
      */
     public function testFanoutJoinsAnExistingTransaction(): void
     {

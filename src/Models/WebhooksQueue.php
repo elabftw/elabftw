@@ -2,7 +2,7 @@
 
 /**
  * @author Moritz IHLER
- * @copyright 2026 Moritz IHLER
+ * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -14,9 +14,9 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\WebhookEvent;
+use Elabftw\Enums\WebhookScope;
 use Elabftw\Enums\WebhookState;
 use PDO;
-use Throwable;
 
 use function bin2hex;
 use function json_encode;
@@ -29,8 +29,8 @@ use const JSON_THROW_ON_ERROR;
  * The webhooks_queue table: one row per delivery, so a slow or broken target only affects
  * its own rows.
  *
- * Nothing here talks HTTP. Rows are inserted during a normal request (cheap: one select and
- * one insert per subscriber) and drained out of band by the webhooks:send command.
+ * Nothing here talks HTTP. Rows are inserted during a normal request (cheap: a single
+ * insert ... select per event) and drained out of band by the webhooks:send command.
  */
 final class WebhooksQueue
 {
@@ -59,58 +59,35 @@ final class WebhooksQueue
      */
     public function fanout(WebhookEvent $event, array $payload, int $teamId, int $ownerId): int
     {
-        $sql = "SELECT id FROM webhooks
+        // Selection and insert are one statement on purpose. A single statement is atomic in
+        // InnoDB whether or not the caller already opened a transaction, so a failure cannot
+        // leave the event queued for some webhooks and not for others. With a loop of inserts
+        // inside the caller's transaction, a partial fanout would have been committed along
+        // with the entity write, and the next write would have queued the event again under
+        // a different event id.
+        // The same event id goes on every copy: a subscriber can tell two deliveries of one
+        // event apart from two separate events.
+        $sql = 'INSERT INTO webhooks_queue (webhooks_id, event_id, event, body)
+            SELECT id, :event_id, :event, :body FROM webhooks
             WHERE enabled = 1
-                AND JSON_CONTAINS(events, JSON_QUOTE(:event))
+                AND JSON_CONTAINS(events, JSON_QUOTE(:subscribed_event))
                 AND (
-                    scope = 'instance'
-                    OR (scope = 'team' AND teams_id = :team)
-                    OR (scope = 'user' AND users_id = :owner)
-                )";
+                    scope = :scope_instance
+                    OR (scope = :scope_team AND teams_id = :team)
+                    OR (scope = :scope_user AND users_id = :owner)
+                )';
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':event_id', $payload['event_id']);
         $req->bindValue(':event', $event->value);
+        $req->bindValue(':body', json_encode($payload, JSON_THROW_ON_ERROR));
+        $req->bindValue(':subscribed_event', $event->value);
+        $req->bindValue(':scope_instance', WebhookScope::Instance->value, PDO::PARAM_INT);
+        $req->bindValue(':scope_team', WebhookScope::Team->value, PDO::PARAM_INT);
+        $req->bindValue(':scope_user', WebhookScope::User->value, PDO::PARAM_INT);
         $req->bindValue(':team', $teamId, PDO::PARAM_INT);
         $req->bindValue(':owner', $ownerId, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $webhooks = $req->fetchAll();
-        if (empty($webhooks)) {
-            return 0;
-        }
-
-        $body = json_encode($payload, JSON_THROW_ON_ERROR);
-        $sql = 'INSERT INTO webhooks_queue (webhooks_id, event_id, event, body) VALUES (:webhooks_id, :event_id, :event, :body)';
-
-        // All or nothing: a fanout that inserted three rows and then failed would leave the
-        // event half delivered, and the retry would carry a different event id. If a caller
-        // already opened a transaction, ride along with theirs instead of nesting, which
-        // pdo does not support.
-        $ownTransaction = !$this->Db->inTransaction();
-        if ($ownTransaction) {
-            $this->Db->beginTransaction();
-        }
-        try {
-            $req = $this->Db->prepare($sql);
-            $count = 0;
-            foreach ($webhooks as $webhook) {
-                $req->bindValue(':webhooks_id', $webhook['id'], PDO::PARAM_INT);
-                // the same event id on every copy: a subscriber can tell two deliveries of
-                // one event apart from two separate events
-                $req->bindValue(':event_id', (string) $payload['event_id']);
-                $req->bindValue(':event', $event->value);
-                $req->bindValue(':body', $body);
-                $this->Db->execute($req);
-                $count++;
-            }
-            if ($ownTransaction) {
-                $this->Db->commit();
-            }
-        } catch (Throwable $e) {
-            if ($ownTransaction) {
-                $this->Db->rollBack();
-            }
-            throw $e;
-        }
-        return $count;
+        return $req->rowCount();
     }
 
     /**
@@ -229,7 +206,7 @@ final class WebhooksQueue
         $released = 0;
         foreach ($rows as $row) {
             $req->bindValue(':queued', WebhookState::Queued->value, PDO::PARAM_INT);
-            $req->bindValue(':id', (int) $row['id'], PDO::PARAM_INT);
+            $req->bindValue(':id', $row['id'], PDO::PARAM_INT);
             $req->bindValue(':token', (string) $row['claim_token']);
             $this->Db->execute($req);
             $released += $req->rowCount();

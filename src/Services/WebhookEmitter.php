@@ -2,7 +2,7 @@
 
 /**
  * @author Moritz IHLER
- * @copyright 2026 Moritz IHLER
+ * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -92,7 +92,7 @@ final class WebhookEmitter
             'event' => $event->value,
             'event_id' => bin2hex(random_bytes(16)),
             'id' => $entity->id,
-            'team' => (int) $owner['team'],
+            'team' => $owner['team'],
             'url' => sprintf(
                 '%s/api/v2/%s/%d',
                 rtrim(Env::asUrl('SITE_URL'), '/'),
@@ -108,7 +108,7 @@ final class WebhookEmitter
             ),
         );
 
-        new WebhooksQueue()->fanout($event, $payload, (int) $owner['team'], (int) $owner['userid']);
+        new WebhooksQueue()->fanout($event, $payload, $owner['team'], $owner['userid']);
         // only now: if the fanout throws, the next write for this entity gets another
         // chance instead of being swallowed by the dedup cache
         self::$emitted[$key] = true;
@@ -132,6 +132,6 @@ final class WebhookEmitter
         if ($res === false) {
             return null;
         }
-        return array('team' => (int) $res['team'], 'userid' => (int) $res['userid']);
+        return array('team' => $res['team'], 'userid' => $res['userid']);
     }
 }

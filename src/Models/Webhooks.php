@@ -2,7 +2,7 @@
 
 /**
  * @author Moritz IHLER
- * @copyright 2026 Moritz IHLER
+ * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -19,8 +19,6 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\TeamsHelper;
 use PDO;
 
-use function array_map;
-use function intval;
 use function mb_substr;
 
 /**
@@ -65,7 +63,7 @@ final class Webhooks
         $this->Db->execute($req);
 
         $webhook = $this->readOne($id);
-        if ($webhook === null || (int) $webhook['enabled'] !== 1 || (int) $webhook['consecutive_failures'] < self::FAILURE_CAP) {
+        if ($webhook === null || $webhook['enabled'] !== 1 || $webhook['consecutive_failures'] < self::FAILURE_CAP) {
             return false;
         }
         $this->disable($id);
@@ -98,7 +96,7 @@ final class Webhooks
     private function notifyOwners(array $webhook): void
     {
         foreach ($this->getOwnersUserid($webhook) as $userid) {
-            new WebhookDisabled(new Users($userid), (int) $webhook['id'], (string) $webhook['url'])->create();
+            new WebhookDisabled(new Users($userid), $webhook['id'], $webhook['url'])->create();
         }
     }
 
@@ -108,8 +106,8 @@ final class Webhooks
     private function getOwnersUserid(array $webhook): array
     {
         return match (WebhookScope::from($webhook['scope'])) {
-            WebhookScope::User => array((int) $webhook['users_id']),
-            WebhookScope::Team => array_map(intval(...), new TeamsHelper((int) $webhook['teams_id'])->getAllAdminsUserid()),
+            WebhookScope::User => array($webhook['users_id']),
+            WebhookScope::Team => new TeamsHelper($webhook['teams_id'])->getAllAdminsUserid(),
             WebhookScope::Instance => $this->getSysadmins(),
         };
     }
@@ -122,6 +120,6 @@ final class Webhooks
         $sql = 'SELECT userid FROM users WHERE is_sysadmin = 1 AND validated = 1';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
-        return array_map(intval(...), $req->fetchAll(PDO::FETCH_COLUMN));
+        return $req->fetchAll(PDO::FETCH_COLUMN);
     }
 }

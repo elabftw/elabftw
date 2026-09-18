@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * @author Moritz IHLER
- * @copyright 2026 Moritz IHLER
+ * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw

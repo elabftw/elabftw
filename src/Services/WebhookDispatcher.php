@@ -2,7 +2,7 @@
 
 /**
  * @author Moritz IHLER
- * @copyright 2026 Moritz IHLER
+ * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
@@ -114,9 +114,9 @@ final class WebhookDispatcher
 
     private function deliver(array $row, OutputInterface $output): bool
     {
-        $id = (int) $row['id'];
+        $id = $row['id'];
         $token = (string) $row['claim_token'];
-        $webhookId = (int) $row['webhook_id'];
+        $webhookId = $row['webhook_id'];
         $body = (string) $row['body'];
         try {
             $url = (string) $row['url'];
@@ -134,9 +134,9 @@ final class WebhookDispatcher
                 $this->Webhooks->recordSuccess($webhookId);
                 return true;
             }
-            $this->handleFailure($id, $token, $webhookId, (int) $row['attempts'], sprintf('target answered %d', $status), $output);
+            $this->handleFailure($id, $token, $webhookId, $row['attempts'], sprintf('target answered %d', $status), $output);
         } catch (Throwable $e) {
-            $this->handleFailure($id, $token, $webhookId, (int) $row['attempts'], $e->getMessage(), $output);
+            $this->handleFailure($id, $token, $webhookId, $row['attempts'], $e->getMessage(), $output);
         }
         return false;
     }
@@ -193,7 +193,11 @@ final class WebhookDispatcher
             // a non 2xx answer is a failed delivery, not an exception to unwind
             'http_errors' => false,
             // pin the connection to the addresses that were just checked, otherwise a second
-            // dns answer could send the request somewhere else entirely
+            // dns answer could send the request somewhere else entirely.
+            // The pinning is only end to end when curl resolves the name itself: a direct
+            // connection, or a proxy mode that resolves locally (socks4, socks5). With an http
+            // proxy or socks4a/socks5h the proxy resolves the host on its own and this entry
+            // has no effect on where the request lands.
             'curl' => array(CURLOPT_RESOLVE => $resolved),
         );
     }

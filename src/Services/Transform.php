@@ -19,6 +19,7 @@ use Elabftw\Exceptions\ImproperActionException;
 
 use function sprintf;
 use function _;
+use function htmlspecialchars;
 
 /**
  * When values need to be transformed before display
@@ -134,7 +135,7 @@ final class Transform
                     (int) $notif['id'],
                     sprintf(
                         _('A webhook was disabled after too many failed deliveries: %s'),
-                        $notif['body']['url'],
+                        htmlspecialchars($notif['body']['url'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
                     ),
                     $notif['created_at'],
                 ),

@@ -2353,7 +2353,7 @@ CREATE TABLE branding (
 -- layer instead, where each scope is its own class and hardcodes both values.
 CREATE TABLE `webhooks` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `scope` varchar(8) NOT NULL,
+  `scope` int(10) UNSIGNED NOT NULL,
   `teams_id` int(10) UNSIGNED DEFAULT NULL,
   `users_id` int(10) UNSIGNED DEFAULT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
@@ -2387,6 +2387,7 @@ CREATE TABLE `webhooks_queue` (
   `delivered_at` datetime DEFAULT NULL,
   `last_error` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_webhooks_queue_drain` (`state`, `next_attempt_at`),
   KEY `idx_webhooks_queue_claim_token` (`claim_token`),

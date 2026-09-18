@@ -111,6 +111,10 @@
   opacity: 0;
   transition: grid-template-rows 250ms ease, opacity 200ms ease;
 
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
   > .reveal-content {
     min-height: 0;
     overflow: hidden;

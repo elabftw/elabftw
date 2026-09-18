@@ -519,7 +519,9 @@
   {% endif %}
 
   <div id='showModeContent'>
-      <div id='withSelected' hidden>
+    {# inert prevents interaction/focus while the collapsed element stays in the DOM for animation. #}
+      <div id='withSelected' class='reveal' inert>
+        <div class='reveal-content'>
         <div class='row mx-0'><p>{{ 'With selected:'|trans }}</p></div>
         {# First line #}
         <div class='row mx-0 form-inline mb-3'>
@@ -606,6 +608,7 @@
           <button data-action='save-multi-changes' type='submit' class='btn btn-primary mr-1 mb-2'>{{ 'Save'|trans }}</button>
           <button data-action='clear-form' data-target='multiChangesForm' type='reset' class='btn btn-danger-ghost mb-2'>{{ 'Reset'|trans }}</button>
         </form>
+      </div>
       </div>
 
       {# SKELETONS #}

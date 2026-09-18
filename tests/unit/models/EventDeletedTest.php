@@ -86,6 +86,31 @@ class EventDeletedTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
+    public function testNotificationCanCancelEventBeforeSending(): void
+    {
+        $Items = $this->getFreshBookableItem(1);
+        $start = new DateTimeImmutable('+1 day 10:00');
+        $Scheduler = new Scheduler($Items);
+        $id = $Scheduler->postAction(Action::Create, array(
+            'start' => $start->format('c'),
+            'end' => $start->modify('+1 hour')->format('c'),
+        ));
+        $Scheduler->setId($id);
+        $Notifications = new EventDeleted(
+            $Items->Users,
+            $Scheduler->readOne(),
+            'Test User',
+            scheduler: $Scheduler,
+        );
+
+        $Notifications->postAction(Action::Create, array(
+            'target' => EmailTarget::Team->value,
+            'cancel_event' => true,
+        ));
+
+        $this->assertEmpty((new Scheduler($Items))->readOne());
+    }
+
     private function getNotifications(Users $requester, ?int $eventOwner = null): EventDeleted
     {
         $now = new DateTimeImmutable();

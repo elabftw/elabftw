@@ -1445,6 +1445,59 @@ components:
           type: string
           format: date-time
           example: '2026-03-02 16:29:27'
+        recurrence_series_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Identifier linking all occurrences that belong to the same recurring booking.
+        recurrence_index:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 100
+          description: Position of this booking within its recurring series, starting at 1.
+        recurrence_frequency:
+          type: string
+          nullable: true
+          enum: [daily, weekly, monthly]
+          description: How often the recurring booking repeats.
+        recurrence_interval:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 365
+          description: Number of days, weeks, or months between occurrences, depending on the recurrence frequency.
+        recurrence_rule:
+          type: object
+          nullable: true
+          description: Complete recurrence rule used to create this booking series.
+          required: [frequency, interval]
+          properties:
+            frequency:
+              type: string
+              enum: [daily, weekly, monthly]
+            interval:
+              type: integer
+              minimum: 1
+              maximum: 365
+            weekdays:
+              type: array
+              uniqueItems: true
+              minItems: 1
+              description: ISO weekdays for weekly recurrence, where Monday is 1 and Sunday is 7.
+              items:
+                type: integer
+                minimum: 1
+                maximum: 7
+            count:
+              type: integer
+              minimum: 1
+              maximum: 100
+              description: Number of occurrences requested for a count-based series.
+            until:
+              type: string
+              format: date
+              description: Inclusive end date for a date-based series.
         start:
           type: string
           format: date-time
@@ -5019,28 +5072,61 @@ paths:
           application/json:
             schema:
               type: object
+              required: [start, end]
               properties:
                 title:
                   type: string
-                  description: A name for this booking slot.
+                  description: A name for this booking slot. When updating a recurring series, the title is applied to all occurrences in the series.
                   default: Untitled
                   example: 'This is an event.'
                 start:
                   type: string
                   format: date-time
-                  description: ISO 8601 date-time with timezone offset.
-                  example: '2026-03-15T13:30:00+01:00'
+                  description: Date and time of the booking in ISO 8601 format, including the timezone offset.
+                  example: "2026-09-19T15:30:00+01:00"
                 end:
                   type: string
                   format: date-time
                   description: ISO 8601 date-time with timezone offset.
-                  example: '2026-03-15T15:30:00+01:00'
+                  example: '2026-09-19T17:30:00+01:00'
+                recurrence:
+                  type: object
+                  description: Optional settings to make this booking repeat. A recurring booking can contain up to 100 occurrences over a maximum period of 10 years.
+                  required: [frequency, interval]
+                  properties:
+                    frequency:
+                      type: string
+                      enum: [daily, weekly, monthly]
+                      description: Unit used to repeat the booking.
+                    interval:
+                      type: integer
+                      minimum: 1
+                      maximum: 365
+                      description: Repeat every N days, weeks, or months.
+                    weekdays:
+                      type: array
+                      uniqueItems: true
+                      minItems: 1
+                      description: ISO weekdays used by weekly recurrence, where Monday is 1 and Sunday is 7. The weekday of the first booking must be included.
+                      items:
+                        type: integer
+                        minimum: 1
+                        maximum: 7
+                    count:
+                      type: integer
+                      minimum: 1
+                      maximum: 100
+                      description: Stop after this number of occurrences. Cannot be combined with until.
+                    until:
+                      type: string
+                      format: date
+                      description: Date of the last possible occurrence, inclusive. Cannot be combined with count.
       responses:
         '201':
           description: The booking slot has been created.
           headers:
             location:
-              description: An URL to the booking slot that was created.
+              description: An URL to the booking slot that was created. For a recurring booking, this points to the first occurrence in the series.
               schema:
                 type: string
         '400':
@@ -5101,6 +5187,13 @@ paths:
                       format: date-time
                       description: ISO 8601 date-time with timezone offset.
                       example: "2026-02-19T15:30:00+01:00"
+                    title:
+                      type: string
+                      description: Optional new title for the selected occurrence or series.
+                    scope:
+                      type: string
+                      enum: [event, future, series]
+                      description: Choose whether to update only this occurrence, this and all future occurrences, or all occurrences in the recurring series.
                 - type: object
                   properties:
                     target:
@@ -5109,6 +5202,16 @@ paths:
                     id:
                       type: integer
                       description: Entity id.
+                - type: object
+                  required: [target, id]
+                  properties:
+                    target:
+                      type: string
+                      enum: ['item']
+                      description: Change the resource booked by this event. This always affects only the selected occurrence.
+                    id:
+                      type: integer
+                      description: ID of the new bookable resource. A recurring occurrence is detached from its series when its resource is changed!
                 - type: object
                   properties:
                     target:
@@ -5145,9 +5248,18 @@ paths:
       tags: ['Events']
       summary: Delete a booking slot.
       operationId: delete-event
+      parameters:
+        - name: scope
+          in: query
+          description: Choose whether to delete only this occurrence, this and all future occurrences, or all occurrences in its series.
+          schema:
+            type: string
+            enum: [event, future, series]
       responses:
         '204':
           description: The event was deleted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

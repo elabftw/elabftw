@@ -41,7 +41,7 @@ import { collectForm, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
 import { rebuildTomSelectOptions } from './misc';
-import { showModalAndFocusFirstInput} from './common';
+import { showModal, showModalAndFocusFirstInput } from './common';
 
 type CancelNotificationPayload = {
   action: Action;
@@ -52,6 +52,14 @@ type CancelNotificationPayload = {
   range_value?: number;
   range_unit?: string;
   notifOnSaved?: number;
+  cancel_event?: boolean;
+};
+type Recurrence = {
+  frequency: 'daily' | 'weekly' | 'monthly';
+  interval: number;
+  count?: number;
+  until?: string;
+  weekdays?: number[];
 };
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
@@ -73,13 +81,11 @@ function toDateTimeInputValueNumber(datetime: Date): number {
   return datetime.valueOf() - offset;
 }
 
-function setSchedulerMode(mode: 'view' | 'edit' | 'delete'): void {
+function setSchedulerMode(mode: 'view' | 'delete'): void {
   document.getElementById('eventViewMode')!.classList.toggle('d-none', mode !== 'view');
-  document.getElementById('editEventForm')!.classList.toggle('d-none', mode !== 'edit');
   document.getElementById('eventDeleteMode')!.classList.toggle('d-none', mode !== 'delete');
 }
 
-on('scheduler-edit-mode', () => setSchedulerMode('edit'));
 on('scheduler-delete-mode', () => setSchedulerMode('delete'));
 on('back-to-event', () => setSchedulerMode('view'));
 
@@ -117,6 +123,183 @@ function lockScopeButtons(selectedItems: string[]): void {
 
 document.getElementById('loading-spinner')?.remove();
 
+// map the every/every other/custom controls to the numeric API interval
+function getRecurrenceInterval(fields: Element, reportValidity = false): number | false {
+  const mode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-interval-mode')!.value;
+  if (mode === 'every') {
+    return 1;
+  }
+  if (mode === 'other') {
+    return 2;
+  }
+  const interval = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-interval')!;
+  if (!interval.checkValidity()) {
+    if (reportValidity) {
+      interval.reportValidity();
+    }
+    return false;
+  }
+  return interval.valueAsNumber;
+}
+
+// Keep recurrence controls and singular/plural labels in sync with the current form state
+function updateRecurrenceFields(fields: Element): void {
+  const enabled = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
+  fields.querySelectorAll('.scheduler-recurrence-options')
+    .forEach(element => element.classList.toggle('d-none', !enabled.checked));
+  if (!enabled.checked) {
+    return;
+  }
+
+  const intervalMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-interval-mode')!;
+  const interval = getRecurrenceInterval(fields);
+  fields.querySelector('.scheduler-recurrence-custom-interval')
+    ?.classList.toggle('d-none', intervalMode.value !== 'custom');
+  fields.querySelectorAll<HTMLOptionElement>('.scheduler-recurrence-frequency option').forEach(option => {
+    option.textContent = interval === 1 ? option.dataset.singular ?? '' : option.dataset.plural ?? '';
+  });
+
+  const frequency = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-frequency')!;
+  const isWeekly = frequency.value === 'weekly';
+  fields.querySelector('.scheduler-recurrence-weekly')?.classList.toggle('d-none', !isWeekly);
+  const weekdayMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-weekday-mode')!;
+  fields.querySelector('.scheduler-recurrence-weekdays')
+    ?.classList.toggle('d-none', !isWeekly || weekdayMode.value !== 'custom');
+
+  const endMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-end-mode')!;
+  fields.querySelector('.scheduler-recurrence-count-wrapper')?.classList.toggle('d-none', endMode.value !== 'count');
+  fields.querySelector('.scheduler-recurrence-until-wrapper')?.classList.toggle('d-none', endMode.value !== 'date');
+}
+
+// configure weekday shortcuts and end-date limits from the calendar slot used as the anchor occurrence
+function configureRecurrenceFields(fields: HTMLElement, start: Date, locale: string): void {
+  const startDate = DateTime.fromJSDate(start).setLocale(locale);
+  const startWeekday = startDate.weekday;
+  const secondDate = startDate.plus({ days: 2 });
+  fields.dataset.startWeekday = String(startWeekday);
+  fields.dataset.secondWeekday = String(secondDate.weekday);
+
+  const weekdayMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-weekday-mode')!;
+  const onDay = fields.dataset.onDay ?? 'on %s';
+  const onTwoDays = fields.dataset.onTwoDays ?? 'on %s & %s';
+  weekdayMode.querySelector<HTMLOptionElement>('option[value="start"]')!.textContent =
+    onDay.replace('%s', startDate.toFormat('cccc'));
+  weekdayMode.querySelector<HTMLOptionElement>('option[value="start-and-two-days"]')!.textContent =
+    onTwoDays.replace('%s', startDate.toFormat('cccc')).replace('%s', secondDate.toFormat('cccc'));
+  const weekdaysOption = weekdayMode.querySelector<HTMLOptionElement>('option[value="weekdays"]')!;
+  weekdaysOption.disabled = startWeekday > 5;
+  if (weekdaysOption.disabled && weekdayMode.value === 'weekdays') {
+    weekdayMode.value = 'start';
+  }
+
+  // The anchor weekday must stay selected because the first booking is part of the series
+  fields.querySelectorAll<HTMLInputElement>('.scheduler-recurrence-weekday').forEach(checkbox => {
+    const isStartDay = Number(checkbox.value) === startWeekday;
+    checkbox.checked = isStartDay;
+    checkbox.disabled = isStartDay;
+  });
+
+  // give date-based recurrence a useful default while preventing dates before the anchor
+  const until = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-until')!;
+  const startDateValue = startDate.toISODate()!;
+  until.min = startDateValue;
+  if (until.value === '' || until.value < startDateValue) {
+    until.value = startDate.plus({ months: 1 }).toISODate()!;
+  }
+  updateRecurrenceFields(fields);
+}
+
+document.querySelectorAll<HTMLElement>('.scheduler-recurrence-fields').forEach(fields => {
+  fields.querySelectorAll('select, input').forEach(input => {
+    input.addEventListener('change', () => updateRecurrenceFields(fields));
+  });
+  fields.querySelector<HTMLInputElement>('.scheduler-recurrence-interval')
+    ?.addEventListener('input', () => updateRecurrenceFields(fields));
+  updateRecurrenceFields(fields);
+});
+
+// null means recurrence disabled, false means invalid input, otherwise return API payload
+function getRecurrence(modal: Element): Recurrence | null | false {
+  const fields = modal.querySelector<HTMLElement>('.scheduler-recurrence-fields')!;
+  const enabled = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-enabled')!;
+  if (!enabled.checked) {
+    return null;
+  }
+
+  const interval = getRecurrenceInterval(fields, true);
+  if (interval === false) {
+    return false;
+  }
+  const frequency = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-frequency')!;
+  const recurrence: Recurrence = {
+    frequency: frequency.value as Recurrence['frequency'],
+    interval,
+  };
+
+  if (recurrence.frequency === 'weekly') {
+    const startWeekday = Number(fields.dataset.startWeekday);
+    const secondWeekday = Number(fields.dataset.secondWeekday);
+    const weekdayMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-weekday-mode')!.value;
+    if (weekdayMode === 'start') {
+      recurrence.weekdays = [startWeekday];
+    } else if (weekdayMode === 'start-and-two-days') {
+      recurrence.weekdays = [startWeekday, secondWeekday].sort((left, right) => left - right);
+    } else if (weekdayMode === 'weekdays') {
+      recurrence.weekdays = [1, 2, 3, 4, 5];
+    } else {
+      recurrence.weekdays = Array.from(
+        fields.querySelectorAll<HTMLInputElement>('.scheduler-recurrence-weekday:checked'),
+        checkbox => Number(checkbox.value),
+      ).sort((left, right) => left - right);
+    }
+  }
+
+  const endMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-end-mode')!.value;
+  if (endMode === 'count') {
+    const count = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-count')!;
+    if (!count.checkValidity()) {
+      count.reportValidity();
+      return false;
+    }
+    recurrence.count = count.valueAsNumber;
+  } else {
+    const until = fields.querySelector<HTMLInputElement>('.scheduler-recurrence-until')!;
+    if (until.value === '' || !until.checkValidity()) {
+      until.reportValidity();
+      return false;
+    }
+    recurrence.until = until.value;
+  }
+
+  return recurrence;
+}
+
+function getRecurrenceDescription(container: HTMLElement, recurrence: Recurrence, locale: string): string {
+  const key = recurrence.interval === 1 ? recurrence.frequency : `${recurrence.frequency}Interval`;
+  const template = container.dataset[key] ?? '';
+  let description = template.replace('%d', String(recurrence.interval));
+
+  if (recurrence.frequency === 'weekly' && recurrence.weekdays?.length) {
+    // Use a known Monday only as an ISO weekday anchor for localized weekday names
+    const monday = DateTime.fromISO('2026-09-14').setLocale(locale);
+    const weekdayNames = recurrence.weekdays.map(weekday => monday.plus({ days: weekday - 1 }).toFormat('cccc'));
+    const weekdayList = new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(weekdayNames);
+    description += ` ${(container.dataset.onDays ?? 'on %s').replace('%s', weekdayList)}`;
+  }
+
+  if (recurrence.count !== undefined) {
+    const countTemplate = recurrence.count === 1
+      ? container.dataset.endOnce ?? 'and ends after one occurrence'
+      : container.dataset.endCount ?? 'and ends after %d occurrences';
+    description += ` ${countTemplate.replace('%d', String(recurrence.count))}`;
+  } else if (recurrence.until) {
+    const endDate = DateTime.fromISO(recurrence.until).setLocale(locale).toLocaleString(DateTime.DATE_MED);
+    description += ` ${(container.dataset.endDate ?? 'and ends on %s').replace('%s', endDate)}`;
+  }
+
+  return `${description}.`;
+}
+
 // TomSelect settings shared on page & modal selects
 const sharedTomSelectOptions = {
   maxItems: null,
@@ -145,6 +328,21 @@ const calendarEl: HTMLElement = document.getElementById('scheduler');
 const currentUserId = Number(calendarEl?.dataset.userId);
 const isAdmin = calendarEl?.dataset.isAdmin === 'true';
 if (calendarEl) {
+  const eventResourceSelectEl = document.getElementById('eventResourceSelect') as HTMLSelectElement;
+  const changeEventResourceBtn = document.getElementById('changeEventResourceBtn') as HTMLButtonElement;
+  const viewBookedResource = document.getElementById('viewBookedResource') as HTMLAnchorElement;
+  const eventResourceSelect = new TomSelect(eventResourceSelectEl, {
+    maxItems: 1,
+    create: false,
+    plugins: ['dropdown_input', 'no_active_items', 'clear_button'],
+    placeholder: eventResourceSelectEl.options[0]?.text,
+    onChange: value => {
+      const selectedItemId = String(value);
+      viewBookedResource.href = selectedItemId ? `database.php?mode=view&id=${selectedItemId}` : '#';
+      changeEventResourceBtn.disabled = selectedItemId === '' || selectedItemId === changeEventResourceBtn.dataset.itemId;
+    },
+  });
+
   const layoutCheckbox = document.getElementById('scheduler_layout') as HTMLInputElement;
   const layout = (layoutCheckbox && layoutCheckbox.checked)
     ? 'timelineDay,timelineWeek,listWeek,timelineMonth' // horizontal axis
@@ -311,7 +509,16 @@ if (calendarEl) {
     eventClassNames: (info) => {
       const canBook = Number(info.event.extendedProps.canbook);
       const eventOwnerId = Number(info.event.extendedProps.userid);
-      return (canBook === 0 && currentUserId !== eventOwnerId) ? ['calendar-event-disabled'] : [];
+      const classNames = ['scheduler-event-colored'];
+      if (canBook === 0 && currentUserId !== eventOwnerId) {
+        classNames.push('calendar-event-disabled');
+      }
+      return classNames;
+    },
+    // apply the category color to the scheduler event style
+    eventDidMount: (info) => {
+      const eventColor = info.event.backgroundColor || info.event.borderColor || '#0c58ab';
+      info.el.style.setProperty('--scheduler-event-color', eventColor);
     },
     // prevent any actions on disabled events
     eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1,
@@ -320,9 +527,7 @@ if (calendarEl) {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
       const selectedItemIds: string[] = itemSelectEl.tomselect?.items || [];
 
-      let manualSelect: TomSelect | null = null;
-
-      // Handle post action for modals
+      // Handle post action for modal
       function handleConfirm(buttonId: string, getIdsFn: () => string[]) {
         const confirmBtn = document.getElementById(buttonId) as HTMLButtonElement;
         if (!confirmBtn) {
@@ -342,7 +547,25 @@ if (calendarEl) {
           const titleInput = modal?.querySelector<HTMLInputElement>('input[id^="eventTitleInput"]');
           const title = titleInput ? titleInput.value.trim() : '';
 
-          const postParams = { start: info.startStr, end: info.endStr, title };
+          const recurrence = getRecurrence(modal!);
+          if (recurrence === false) {
+            return;
+          }
+          const postParams: {
+            start: string;
+            end: string;
+            title: string;
+            recurrence?: Recurrence;
+          } = {
+            start: info.startStr,
+            end: info.endStr,
+            title,
+          };
+
+          if (recurrence !== null) {
+            postParams.recurrence = recurrence;
+          }
+
           Promise.all(
             itemIdsToPost.map(itemId => ApiC.post(`events/${itemId}`, postParams)),
           ).then(() => {
@@ -357,82 +580,53 @@ if (calendarEl) {
         };
       }
 
-      // case 1: Already selected items -> checkboxes with selected
-      if (selectedItemIds.length > 0) {
-        const container = document.getElementById('selectedItemsCheckboxes')!;
-        container.innerHTML = '';
+      const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
+      const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
 
-        selectedItemIds.forEach(itemId => {
-          const option = itemSelectEl.querySelector(`option[value="${itemId}"]`);
-          const labelText = option?.textContent || `Item ${itemId}`;
-
-          const div = document.createElement('div');
-          div.className = 'form-check';
-
-          const input = document.createElement('input');
-          input.className = 'form-check-input';
-          input.type = 'checkbox';
-          input.value = itemId;
-          input.id = `selectedItem${itemId}`;
-          input.checked = true;
-
-          const label = document.createElement('label');
-          label.className = 'form-check-label';
-          label.htmlFor = input.id;
-          label.textContent = labelText;
-
-          div.appendChild(input);
-          div.appendChild(label);
-          container.appendChild(div);
-        });
-
-        showModalAndFocusFirstInput('#itemPickerReviewModal');
-
-        handleConfirm('confirmItemReview', () => {
-          const checked = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked');
-          return Array.from(checked).map(cb => cb.value);
-        });
-      }
-
-      // case 2: no items selected -> modal with tomSelect
-      else {
-        const itemSelectModalEl = document.getElementById('itemSelectModal') as HTMLSelectElement & { tomselect?: TomSelect };
-        const categorySelectModalEl = document.getElementById('categorySelectModal') as HTMLSelectElement;
-
-        // init TomSelect if not already
-        if (!itemSelectModalEl.tomselect) {
-          manualSelect = new TomSelect(itemSelectModalEl, {
-            ...sharedTomSelectOptions,
-            dropdownParent: '#itemSelectWrapperModal',
-            controlInput: '#itemSelectInputModal',
-            onChange: (selectedItems: string[]) => {
-              const container = document.getElementById('selectedItemsContainerModal')!;
-              const display = document.getElementById('selectedItemsDisplayModal')!;
-              display.innerHTML = '';
-              if (selectedItems.length === 0) {
-                container.classList.add('d-none');
-                return;
-              }
-              container.classList.remove('d-none');
-              selectedItems.forEach(id => {
-                createBadge(itemSelectModalEl, manualSelect, display, id);
-              });
-            },
-          });
-
-          categorySelectModalEl.addEventListener('change', () => {
-            const selectedCategory = categorySelectModalEl.value;
-            filterOptionsByCategory(itemSelectModalEl, selectedCategory);
-          });
-        } else {
-          manualSelect = itemSelectModalEl.tomselect;
+      const renderSelectedItems = (selectedItems: string[]): void => {
+        const container = document.getElementById('selectedItemsContainerModal')!;
+        const display = document.getElementById('selectedItemsDisplayModal')!;
+        display.innerHTML = '';
+        if (selectedItems.length === 0) {
+          container.classList.add('d-none');
+          return;
         }
+        container.classList.remove('d-none');
+        selectedItems.forEach(id => {
+          createBadge(itemSelectModalEl, itemSelectModalEl.tomselect, display, id);
+        });
+      };
 
-        showModalAndFocusFirstInput('#itemPickerSelectModal');
+      let manualSelect: TomSelect;
+      if (!itemSelectModalEl.tomselect) {
+        manualSelect = new TomSelect(itemSelectModalEl, {
+          ...sharedTomSelectOptions,
+          dropdownParent: '#itemSelectWrapperModal',
+          controlInput: '#itemSelectInputModal',
+          onChange: renderSelectedItems,
+        });
 
-        // confirm handler uses selected TomSelect items
-        handleConfirm('confirmItemSelect', () => manualSelect?.items || []);
+        categorySelectModalEl.addEventListener('change', () => {
+          filterOptionsByCategory(itemSelectModalEl, categorySelectModalEl.value);
+        });
+      } else {
+        manualSelect = itemSelectModalEl.tomselect;
       }
+
+      // preselect resources currently selected in the Scheduler (shows badges)
+      manualSelect.clear(true);
+      manualSelect.setValue(selectedItemIds, true);
+      renderSelectedItems(selectedItemIds);
+
+      // Restore the correct recurrence fields when reopening the modal
+      const recurrenceFields = document.querySelector<HTMLElement>(
+        '#itemPickerSelectModal .scheduler-recurrence-fields',
+      );
+      if (recurrenceFields) {
+        configureRecurrenceFields(recurrenceFields, info.start, calendarEl.dataset.lang || 'en');
+      }
+      showModal('#itemPickerSelectModal');
+      handleConfirm('confirmItemSelect', () => manualSelect.items);
     },
     // on click activate modal window
     eventClick: function(info): void {
@@ -443,6 +637,27 @@ if (calendarEl) {
       }
       setSchedulerMode('view');
       showModalAndFocusFirstInput('#eventModal');
+
+      // Show the booked resource and booker directly in the modal header
+      const modalLabel = document.getElementById('eventModalLabel')!;
+      const resourceTitle = info.event.extendedProps.item_title || i18next.t('Event');
+      const categoryTitle = info.event.extendedProps.items_category_title || '';
+      const booker = info.event.extendedProps.fullname || '';
+      const bookedBy = booker ? (modalLabel.dataset.bookedBy ?? '%s').replace('%s', booker) : '';
+      document.getElementById('eventModalResourceTitle')!.textContent = resourceTitle;
+      document.getElementById('eventModalResourceMeta')!.textContent = [categoryTitle, bookedBy].filter(Boolean).join(' · ');
+
+      // Preselect the resource currently reserved by this event
+      const itemId = String(info.event.extendedProps.items_id);
+      if (!eventResourceSelect.options[itemId]) {
+        eventResourceSelect.addOption({ value: itemId, text: resourceTitle });
+      }
+      eventResourceSelect.setValue(itemId, true);
+      changeEventResourceBtn.dataset.id = info.event.id;
+      changeEventResourceBtn.dataset.itemId = itemId;
+      changeEventResourceBtn.disabled = true;
+      viewBookedResource.href = `database.php?mode=view&id=${itemId}`;
+
       // set the event id on the various elements
       document.querySelectorAll('[data-action="scheduler-bind-entity"]').forEach((btn: HTMLButtonElement) => btn.dataset.id = info.event.id);
       document.querySelectorAll('[data-action="scheduler-rm-bind"]').forEach((btn: HTMLButtonElement) => btn.dataset.eventid = info.event.id);
@@ -463,6 +678,24 @@ if (calendarEl) {
       endInput.dataset.eventid = info.event.id;
       refreshBoundDivs(info.event.extendedProps);
 
+      // The event modal is reused, so reset recurrence visibility and scope selection on every open
+      const isRecurring = Boolean(info.event.extendedProps.recurrence_series_id);
+      document.getElementById('eventResourceRecurrenceHelp')?.classList.toggle('d-none', !isRecurring);
+      const viewRecurrence = document.getElementById('viewRecurrence')!;
+      const viewRecurrenceText = document.getElementById('viewRecurrenceText')!;
+      viewRecurrence.classList.toggle('d-none', !isRecurring);
+      viewRecurrenceText.textContent = '';
+      if (isRecurring) {
+        const recurrence = info.event.extendedProps.recurrence_rule as Recurrence;
+        if (recurrence) {
+          viewRecurrenceText.textContent = getRecurrenceDescription(viewRecurrence, recurrence, calendarEl.dataset.lang || 'en');
+        }
+      }
+      document.getElementById('editRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
+      document.getElementById('deleteRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
+      (document.getElementById('editScopeEvent') as HTMLInputElement).checked = true;
+      (document.getElementById('deleteScopeEvent') as HTMLInputElement).checked = true;
+
       // cancel block: show if event is cancellable OR user is Admin)
       const bookIsCancellable = Number(info.event.extendedProps.book_is_cancellable);
       const isCancellable = isAdmin || bookIsCancellable === 1;
@@ -477,31 +710,6 @@ if (calendarEl) {
           el.dataset.targetid = info.event.extendedProps.items_id;
         }
       });
-      // populate view section
-      const start = info.event.start!;
-      const end = info.event.end!;
-      // format date using fullcalendar locale
-      const dateLine = calendar.formatDate(start, { weekday: 'long',  year: 'numeric',  month: 'long',  day: 'numeric' });
-      const startTime = calendar.formatDate(start, { hour: '2-digit',  minute: '2-digit' });
-      const endTime = calendar.formatDate(end, { hour: '2-digit',  minute: '2-digit' });
-      const timeLine = `${startTime} – ${endTime}`;
-      // duration in minutes
-      const durationMinutes = Math.round(
-        (end.getTime() - start.getTime()) / 60000,
-      );
-      // Set modal content
-      document.getElementById('viewTitle')!.textContent = info.event.extendedProps.title_only;
-      const viewDatetime = document.getElementById('viewDatetime')!;
-      const br = document.createElement('br');
-      br.classList.add('mb-2');
-      const strong = document.createElement('strong');
-      strong.textContent = timeLine;
-      viewDatetime.replaceChildren(
-        dateLine,
-        br,
-        strong,
-        ` (${durationMinutes} ${i18next.t('minutes')})`,
-      );
     },
     // on mouse enter add shadow and show title
     eventMouseEnter: function(info): void {
@@ -527,7 +735,8 @@ if (calendarEl) {
   }
 
   on('cancel-event', (el: HTMLElement) => {
-    ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch();
+    const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
+    ApiC.delete(`event/${el.dataset.id}?scope=${scope}`).then(() => calendar.refetchEvents()).catch();
   });
 
   on('cancel-event-with-message', (el: HTMLElement) => {
@@ -545,9 +754,11 @@ if (calendarEl) {
       payload.range_unit = (document.getElementById('cancelEventRangeUnit') as HTMLSelectElement).value;
     }
     payload.notifOnSaved = 0;
-    // The notification must be sent before deletion, otherwise the event ID is lost (Nothing to show with this id)
-    ApiC.post(`event/${el.dataset.id}/notifications`, payload)
-      .then(() => ApiC.delete(`event/${el.dataset.id}`).then(() => calendar.refetchEvents()).catch())
+    // Delete inside the notification request so a failed cancellation cannot still send cancellation notifications
+    payload.cancel_event = true;
+    const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
+    ApiC.post(`event/${el.dataset.id}/notifications?scope=${scope}`, payload)
+      .then(() => calendar.refetchEvents())
       .then(() => notify.success());
   });
 
@@ -587,6 +798,23 @@ if (calendarEl) {
       await ApiC.patch(`event/${eventId}`, params);
       calendar.refetchEvents();
       $('#eventModal').modal('hide');
+    } catch (err) {
+      notify.error(err);
+    }
+  });
+
+  on('change-event-resource', async (el: HTMLElement) => {
+    const eventId = el.dataset.id;
+    const itemId = Number(eventResourceSelect.getValue());
+    if (!eventId || !Number.isInteger(itemId) || itemId < 1) {
+      notify.error('form-validation-error');
+      return;
+    }
+    try {
+      await ApiC.patch(`event/${eventId}`, { target: 'item', id: itemId });
+      calendar.refetchEvents();
+      $('#eventModal').modal('hide');
+      notify.success();
     } catch (err) {
       notify.error(err);
     }
@@ -659,6 +887,7 @@ if (calendarEl) {
       }
       const startIso = DateTime.fromJSDate(info.event.start, { zone: 'system' }).toISO({ suppressMilliseconds: true });
       const endIso = DateTime.fromJSDate(info.event.end, { zone: 'system' }).toISO({ suppressMilliseconds: true });
+      // Drag and resize intentionally omit scope so only the moved occurrence is updated
       await ApiC.patch(`event/${info.event.id}`, {target: 'datetime', start: startIso, end: endIso});
     } catch (err) {
       console.error(err);

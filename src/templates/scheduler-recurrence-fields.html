@@ -1,0 +1,70 @@
+<div
+  class='scheduler-recurrence-fields mt-3'
+  data-on-day='{{ 'on %s'|trans }}'
+  data-on-two-days='{{ 'on %s & %s'|trans }}'>
+  <div class='d-flex justify-content-between'>
+    <label for='schedulerRecurrenceEnabled' class='col-form-label font-weight-bold'>{{ 'Repeat'|trans }}</label>
+    <label class='switch ucp-align'>
+      <span class='sr-only'>{{ 'Repeat'|trans }}</span>
+      <input id='schedulerRecurrenceEnabled' class='scheduler-recurrence-enabled' type='checkbox' autocomplete='off'>
+      <span class='slider'></span>
+    </label>
+  </div>
+  <div class='scheduler-recurrence-options d-none mt-3'>
+    <div class='form-row align-items-center'>
+      <div class='col-md-4'>
+        <select class='form-control scheduler-recurrence-interval-mode' aria-label='{{ 'Recurrence interval'|trans }}'>
+          <option value='every'>{{ 'every'|trans }}</option>
+          <option value='other'>{{ 'every other'|trans }}</option>
+          <option value='custom'>{{ 'every (number)'|trans }}</option>
+        </select>
+      </div>
+      <div class='col-3 scheduler-recurrence-custom-interval d-none'>
+        <input class='form-control scheduler-recurrence-interval' type='number' min='1' max='365' value='2' required aria-label='{{ 'Recurrence interval'|trans }}'>
+      </div>
+      <div class='col-md-4 scheduler-recurrence-frequency-wrapper'>
+        <select class='form-control scheduler-recurrence-frequency' aria-label='{{ 'Recurrence frequency'|trans }}'>
+          <option value='daily' data-singular='{{ 'day'|trans }}' data-plural='{{ 'days'|trans }}'>{{ 'day'|trans }}</option>
+          <option value='weekly' data-singular='{{ 'week'|trans }}' data-plural='{{ 'weeks'|trans }}'>{{ 'week'|trans }}</option>
+          <option value='monthly' data-singular='{{ 'month'|trans }}' data-plural='{{ 'months'|trans }}'>{{ 'month'|trans }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class='scheduler-recurrence-weekly d-none mt-2'>
+      <select class='form-control scheduler-recurrence-weekday-mode' aria-label='{{ 'Days of the week'|trans }}'>
+        <option value='start'></option>
+        <option value='start-and-two-days'></option>
+        <option value='weekdays'>{{ 'on weekdays'|trans }}</option>
+        <option value='custom'>{{ 'on (select days)'|trans }}</option>
+      </select>
+      <div class='scheduler-recurrence-weekdays d-none mt-3'>
+        <div class='d-flex justify-content-between'>
+          {% for label in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+            <label class='text-center mb-0'>
+              <input class='d-block mx-auto mb-1 scheduler-recurrence-weekday' type='checkbox' value='{{ loop.index }}'>
+              {{ label|trans }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class='form-row align-items-center mt-3'>
+      <div class='col-md-6'>
+        <select class='form-control scheduler-recurrence-end-mode' aria-label='{{ 'Recurrence end'|trans }}'>
+          <option value='count'>{{ 'Occurs (number) times'|trans }}</option>
+          <option value='date'>{{ 'Last occurs on (date)'|trans }}</option>
+        </select>
+      </div>
+      <div class='col-3 scheduler-recurrence-count-wrapper'>
+        <input class='form-control scheduler-recurrence-count' type='number' min='1' max='100' value='10' required aria-label='{{ 'Number of occurrences'|trans }}'>
+      </div>
+      <div class='col-md-4 scheduler-recurrence-until-wrapper d-none'>
+        <input class='form-control scheduler-recurrence-until' type='date' required aria-label='{{ 'Last occurrence date'|trans }}'>
+      </div>
+    </div>
+
+    <small class='form-text text-muted'>{{ 'A recurring reservation is limited to 100 occurrences and 10 years.'|trans }}</small>
+  </div>
+</div>

@@ -4,6 +4,8 @@
 {% set model = model|default('config') %}
 {% set src = src|default(App.Config.configArr) %}
 {% set slugId = slug ~ (affix ? '-' ~ affix) %}
+{# some templates already have a separator before the footer, so make the binary setting's <hr> optional to avoid duplicate lines #}
+{% set hasHr = hasHr is defined ? hasHr : true %}
 <div class='d-flex justify-content-between'>
   <label for='{{ slugId }}' class='col-form-label'>{{ label }}</label>
   <label class='switch ucp-align'><span class='sr-only'>{{ label }}</span>
@@ -14,4 +16,4 @@
 {% if help %}
   <p class='smallgray'>{{ help }}</p>
 {% endif %}
-<hr>
+{% if hasHr %}<hr>{% endif %}

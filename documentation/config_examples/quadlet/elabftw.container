@@ -16,7 +16,6 @@ ReadOnly=true
 UserNS=keep-id
 
 # HEALTHCHECK
-HealthCmd=wget --quiet --spider http://localhost:8080/healthcheck
 HealthInterval=5s
 HealthTimeout=5s
 HealthRetries=20
@@ -55,6 +54,7 @@ Secret=elabftw-s3-sk,type=env,target=ELAB_AWS_SECRET_KEY
 # do NOT add :z here because NFS cause an issue #
 # host:container
 Volume=/mnt/data/elabftw_uploads:/var/lib/elabftw/uploads
+Volume=/mnt/data/elabftw_exports:/var/lib/elabftw/exports
 # this is necessary if you encrypt mysql connection and thus want the container to have access to the mysql cert
 Volume=/deltablot/mysql:/mysql-cert:z
 Volume=/var/cache/elabftw:/var/cache/elabftw:Z

@@ -6190,7 +6190,7 @@ paths:
     summary: Todolist for current user.
     get:
       tags: ['Todolist']
-      summary: Read all todoitems.
+      summary: Read all todo items.
       operationId: read-todolist
       responses:
         '200':
@@ -6208,7 +6208,7 @@ paths:
       summary: Create a todo item
       operationId: post-todolist
       requestBody:
-        description: Parameters for creating a todoitem.
+        description: Parameters for creating a todo item.
         content:
           application/json:
             schema:
@@ -6236,7 +6236,7 @@ paths:
     parameters:
       - name: id
         in: path
-        description: ID of the todoitem.
+        description: ID of the todo item.
         required: true
         schema:
           type: integer
@@ -6246,7 +6246,7 @@ paths:
       operationId: read-todoitem
       responses:
         '200':
-          description: A todoitem.
+          description: A todo item.
           content:
             application/json:
               schema:
@@ -6258,10 +6258,10 @@ paths:
     patch:
       tags: ['Todolist']
       summary: |
-        Actions on a todoitem.
+        Actions on a todo item.
       operationId: patch-todoitem
       requestBody:
-        description: Parameters for modifying a todoitem.
+        description: Parameters for modifying a todo item.
         content:
           application/json:
             schema:
@@ -6272,7 +6272,7 @@ paths:
                   type: string
       responses:
         '200':
-          description: The updated todoitem.
+          description: The updated todo item.
           content:
             application/json:
               schema:
@@ -6285,11 +6285,11 @@ paths:
           $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Todolist']
-      summary: Delete a todoitem.
+      summary: Delete a todo item.
       operationId: delete-todoitem
       responses:
         '204':
-          description: The todoitem was removed.
+          description: The todo item was removed.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

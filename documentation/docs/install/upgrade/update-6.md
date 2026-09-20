@@ -73,7 +73,6 @@ Only changed/added lines are shown:
 Image=docker.io/elabftw/elabimg:6.0.0
 ReadOnly=true
 UserNS=keep-id
-HealthCmd=wget --quiet --spider http://localhost:8080/healthcheck
 Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup,tmpfs-size=64m
 ~~~
 
@@ -242,4 +241,4 @@ The default NGINX access log format has been replaced with a structured JSON for
 
 ### MySQL 8.4 becomes the minimum supported version
 
-MySQL 8.0 reached its official end-of-life (EOL) on April 30, 2026. eLabFTW version 6 requires running MySQL 8.4 as it uses features available only in this version.
+MySQL 8.0 reached its official end-of-life (EOL) on April 30, 2026. eLabFTW version 6 still works with MySQL 8.0, but the officially supported MySQL version is 8.4.

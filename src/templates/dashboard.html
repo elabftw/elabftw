@@ -115,15 +115,31 @@
       </div>
     </div>
     <hr>
-    <div class='list-group mt-1' id='scheduledBookings'>
-      {% for booking in bookingsArr|sort((a, b) => (a.start|date('U')) - (b.start|date('U'))) %}
-        <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}' class='list-group-item breakable'>
-          {% if booking.items_category_title %}
-            <span style='--bg: {{ booking.color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ booking.items_category_title }}</span>
-          {% endif %}
-          {{ booking.title }} <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span>
-        </a>
-      {% endfor %}
+    {% set sortedBookings = bookingsArr|sort((a, b) => (a.start|date('U')) - (b.start|date('U'))) %}
+    {% set bookingLimit = 10 %}
+    <div id='scheduledBookings'>
+      <div class='list-group mt-1'>
+        {% for booking in sortedBookings %}
+          <a href='scheduler.php?items[]={{ booking.items_id }}&amp;start={{ booking.start|url_encode }}'
+            class='list-group-item breakable{% if loop.index > bookingLimit %} scheduled-booking-extra d-none{% elseif loop.index == bookingLimit and sortedBookings|length > bookingLimit %} scheduled-booking-limit rounded-bottom{% endif %}'
+          >
+            {% if booking.items_category_title %}
+              <span style='--bg: {{ booking.color }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ booking.items_category_title }}</span>
+            {% endif %}
+            {{ booking.title }} <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span>
+          </a>
+        {% endfor %}
+      </div>
+      {% if sortedBookings|length > bookingLimit %}
+        <button type='button' class='btn btn-ghost btn-block mt-2' data-action='toggle-scheduled-bookings' data-expanded='false' aria-expanded='false'>
+          <span data-role='show-more'>
+            {{ 'Show more'|trans }} <i class='fas fa-chevron-down fa-fw ml-1'></i>
+          </span>
+          <span data-role='show-less' class='d-none'>
+            {{ 'Show less'|trans }} <i class='fas fa-chevron-up fa-fw ml-1'></i>
+          </span>
+        </button>
+      {% endif %}
     </div>
   </div>
 </div>

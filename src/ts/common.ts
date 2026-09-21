@@ -1813,6 +1813,22 @@ on('delete-compounds', (el: HTMLElement) => {
   document.dispatchEvent(new CustomEvent('dataReload'));
 });
 
+on('toggle-scheduled-bookings', (el: HTMLElement) => {
+  const scheduledBookings = el.closest('#scheduledBookings');
+  if (!scheduledBookings) {
+    return;
+  }
+  const expanded = el.dataset.expanded === 'true';
+  scheduledBookings.querySelectorAll<HTMLElement>('.scheduled-booking-extra')
+    .forEach(booking => booking.classList.toggle('d-none', expanded));
+  scheduledBookings.querySelector<HTMLElement>('.scheduled-booking-limit')
+    ?.classList.toggle('rounded-bottom', expanded);
+  el.querySelector('[data-role="show-more"]')?.classList.toggle('d-none', !expanded);
+  el.querySelector('[data-role="show-less"]')?.classList.toggle('d-none', expanded);
+  el.dataset.expanded = String(!expanded);
+  el.setAttribute('aria-expanded', String(!expanded));
+});
+
 on('scope-change', async (el: HTMLElement) => {
   // only set it in query if we want to, which prevents an issue on dashboard where value was taken from query param "scope"
   if (el.dataset.setQueryParam === '1') {

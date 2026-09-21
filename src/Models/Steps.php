@@ -35,6 +35,7 @@ use function count;
 use function in_array;
 use function sprintf;
 use function str_replace;
+use function is_array;
 
 /**
  * All about the steps

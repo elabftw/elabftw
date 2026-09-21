@@ -27,6 +27,7 @@ use function array_column;
 use function array_key_exists;
 use function count;
 use function sprintf;
+use function is_array;
 
 /**
  * Groups used to organize entity steps.

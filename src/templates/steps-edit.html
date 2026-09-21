@@ -1,105 +1,90 @@
 {# STEPS #}
+{% set stepGroups = Entity.entityData.step_groups|default([]) %}
 <h3 data-action='toggle-next' data-scroll-btn='fa-list-check' data-scroll-btn-label='{{ 'Steps'|trans }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} (<span id='stepsCount'>{{ Entity.entityData.steps|length }}</span>)</h3>
 <div id='stepsDiv' class='mt-2' data-count-for='stepsCount' data-save-hidden='stepsDiv'>
-  <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
-    {# LOCK ALL STEPS #}
-    {% if Entity.entityType.value in ['experiments_templates', 'items_types'] and (Entity.entityData.steps|length > 0) %}
-    {% set allLocked = (Entity.entityData.steps|length > 0) and (Entity.entityData.steps|filter(s => s.is_immutable == 1)|length == Entity.entityData.steps|length) %}
-    <div class='d-flex'>
-      <label for='toggle-all-steps' class='col-form-label mr-2'>{{ 'Lock / Unlock all steps'|trans }}</label>
-      <label class='switch ucp-align'>
-        <input {{ allLocked ? 'checked' }} data-action='toggle-all-immutable' type='checkbox' autocomplete='off' id='toggle-all-steps'>
-        <span class='slider'></span>
-      </label>
-    </div>
-    {% endif %}
-    {% for step in Entity.entityData.steps %}
-      {# DRAG AND DROP #}
-      <div class='input-group mb-2 countable' id='step_{{ step.id }}'>
-        <div class='input-group-prepend'>
-          {% set disabled = step.is_immutable == 1 and (Entity.entityType.value in ['experiments', 'items']) %}
-          <button {{ disabled ? 'disabled="disabled"' : '' }} type='button' class='btn btn-ghost draggable sortableHandle' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
-            <i class='fas fa-sort'></i>
-          </button>
-        </div>
-        {# LOCK/UNLOCK A STEP #}
-        {% set steps_table = '%s/%d/steps'|format(Entity.entityType.value, Entity.id) %}
-        {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
-        {% set label = (step.is_immutable ? 'Unlock' : 'Lock')|trans %}
-        <div class='input-group-prepend'>
-          <label class='btn btn-ghost d-flex align-items-center mb-0' title='{{ label }}'>
-            <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ steps_table ~ '/' ~ step.id }}' data-target='is_immutable' id='stepIsImmutable_{{ step.id }}' {{ step.is_immutable ? 'checked' }} data-reload='step_{{ step.id }}' class='d-none'>
-            <i class='fas fa-lock {{ not step.is_immutable ? 'd-none' }}'></i>
-            <i class='fas fa-lock-open {{ step.is_immutable ? 'd-none' }}'></i>
-          </label>
-        </div>
-        {% endif %}
-        {# DESTROY #}
-        <div class='input-group-prepend'>
-          <button {{ disabled ? 'disabled="disabled"' : '' }} class='btn btn-ghost' data-action='destroy-step' data-id='{{ step.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' type='button'>
-            <i class='fas fa-trash-alt'></i>
-          </button>
-        </div>
-        {# FINISH/UNFINISH #}
-        <div class='input-group-prepend'>
-          <button class='btn btn-ghost'>
-            <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} data-stepid='{{ step.id }}' data-id='{{ Entity.id }}' class='stepbox'>
-          </button>
-        </div>
-        <div class='pl-2 step-static form-control-plaintext d-flex flex-wrap'>
-          <span class='step {{ not disabled ? 'editable hl-hover' }} align-self-center {{- step.finished ? ' finished' }}' data-target='body' data-stepid='{{ step.id }}'>{{ step.body }}</span>
-          {% if step.finished %}
-          <span class='mx-2 text-muted align-self-center'>
-            {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
-          </span>
-          {% endif %}
-          <button class='btn btn-transparent ml-auto mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
-            <i class='fas fa-caret-right fa-fw'></i>
-          </button>
-          <div hidden data-save-hidden='extendedStep_{{ step.id }}' class='w-100'>
-          {{ 'Completion time:'|trans }}
-          {% if step.finished %}
-            <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable p-1 rounded hl-hover'>{{ step.finished_time|format_datetime() }}</span>
-          {% else %}
-            {{ 'Not finished'|trans }}
-          {% endif %}
-          <br>
+  {# LOCK ALL STEPS #}
+  {% if Entity.entityType.value in ['experiments_templates', 'items_types'] and (Entity.entityData.steps|length > 0) %}
+  {% set allLocked = (Entity.entityData.steps|length > 0) and (Entity.entityData.steps|filter(s => s.is_immutable == 1)|length == Entity.entityData.steps|length) %}
+  <div class='d-flex'>
+    <label for='toggle-all-steps' class='col-form-label mr-2'>{{ 'Lock / Unlock all steps'|trans }}</label>
+    <label class='switch ucp-align'>
+      <input {{ allLocked ? 'checked' }} data-action='toggle-all-immutable' type='checkbox' autocomplete='off' id='toggle-all-steps'>
+      <span class='slider'></span>
+    </label>
+  </div>
+  {% endif %}
 
-          <div id='stepDeadlineDiv_{{ step.id }}'>
-            {% if step.deadline %}
-              {{ 'Deadline:'|trans }}
-              {# here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable #}
-              <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover p-1 rounded'>{{ step.deadline|format_datetime() }}</span>
-              <button class='btn btn-danger-ghost ml-2' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}' aria-label='{{ 'Clear deadline'|trans }}'>
-                <i class='fas fa-trash-alt'></i>
-              </button>
-            {% else %}
-              <button data-action='replace-with-next' type='button' class='btn btn-sm btn-secondary'>{{ 'Add a deadline'|trans }}</button>
-              <div hidden class='input-group'>
-                <select class='custom-select col-md-3' id='stepSelectDeadline_{{ step.id }}'>
-                  <option disabled>{{ 'Set deadline in'|trans }}</option>
-                  <option value='{{ '+1 hour'|toDatetime }}'>{{ '%d hour'|trans|format(1) }}</option>
-                  <option value='{{ '+1 day'|toDatetime }}'>{{ '%d day'|trans|format(1) }}</option>
-                  <option value='{{ '+1 week'|toDatetime }}'>{{ '%d week'|trans|format(1) }}</option>
-                  <option value='{{ '+1 month'|toDatetime }}'>{{ '%d month'|trans|format(1) }}</option>
-                  <option value='{{ '+1 year'|toDatetime }}'>{{ '%d year'|trans|format(1) }}</option>
-                </select>
-                <div class='input-group-append'>
-                  <button class='btn btn-primary' type='button' data-action='step-update-deadline' data-stepid='{{ step.id }}'>{{ 'Save'|trans }}</button>
-                </div>
-              </div>
-            {% endif %}
-            </div>
-            <div data-action='import-step-body' data-stepid='{{ step.id }}'><i class='fas fa-file-import'></i> {{ 'Copy step to cursor position'|trans }}</div>
+  {% if stepGroups is empty %}
+    <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
+      {% for step in Entity.entityData.steps %}
+        {% include 'step-edit-row.html' %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class='step-groups-sortable'>
+      {% for group in stepGroups %}
+        {% set groupSteps = Entity.entityData.steps|filter(s => s.group_id == group.id) %}
+        <div class='step-group mb-3' id='step_group_{{ group.id }}' data-groupid='{{ group.id }}'>
+          <div class='step-group-header d-flex align-items-center rounded px-2 py-1 mb-1'>
+            <button type='button' class='btn btn-ghost draggable step-group-sortable-handle' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+              <i class='fas fa-sort'></i>
+            </button>
+            <button class='btn btn-transparent px-1' data-action='toggle-next' data-toggle-target='step_group_steps_{{ group.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_{{ group.id }}'>
+              <i class='fas fa-caret-down fa-fw'></i>
+            </button>
+            <strong class='step-group-title editable hl-hover rounded px-1' data-groupid='{{ group.id }}'>{{ group.title }}</strong>
+            <span class='text-muted ml-2'>{{ groupSteps|filter(s => s.finished)|length }}/{{ groupSteps|length }}</span>
+            <button class='btn btn-danger-ghost ml-auto' data-action='destroy-step-group' data-id='{{ group.id }}' data-confirm='{{ 'Delete this group? Its steps will move to General steps.'|trans }}' title='{{ 'Delete group'|trans }}' aria-label='{{ 'Delete group'|trans }}' type='button'>
+              <i class='fas fa-trash-alt'></i>
+            </button>
+          </div>
+          <div id='step_group_steps_{{ group.id }}' class='steps-sortable step-group-steps' data-groupid='{{ group.id }}' data-save-hidden='step_group_steps_{{ group.id }}'>
+            {% for step in groupSteps %}
+              {% include 'step-edit-row.html' %}
+            {% endfor %}
           </div>
         </div>
+      {% endfor %}
+    </div>
+
+    {% set ungroupedSteps = Entity.entityData.steps|filter(s => s.group_id is null) %}
+    <div class='step-group mb-3'>
+      <div class='step-group-header d-flex align-items-center rounded px-2 py-2 mb-1'>
+        <button class='btn btn-transparent px-1' data-action='toggle-next' data-toggle-target='step_group_steps_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_general' title='{{ 'Toggle visibility'|trans }}'>
+          <i class='fas fa-caret-down fa-fw'></i>
+        </button>
+        <strong>{{ 'General steps'|trans }}</strong>
+        <span class='text-muted ml-2'>{{ ungroupedSteps|filter(s => s.finished)|length }}/{{ ungroupedSteps|length }}</span>
       </div>
-    {% endfor %}
-  </div>
+      <div id='step_group_steps_general' class='steps-sortable step-group-steps' data-groupid='' data-save-hidden='step_group_steps_general'>
+        {% for step in ungroupedSteps %}
+          {% include 'step-edit-row.html' %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <form aria-label='{{ 'Add a step group'|trans }}' id='addStepGroupForm'>
+    <div class='input-group mt-3'>
+      <input aria-label='{{ 'Group name'|trans }}' type='text' name='title' class='form-control' required id='addStepGroupInput' placeholder='{{ 'Group name'|trans }}' />
+      <div class='input-group-append'>
+        <button class='btn btn-secondary' data-action='create-step-group' type='submit'>{{ 'Add group'|trans }}</button>
+      </div>
+    </div>
+  </form>
+
   {# Add step input #}
   <form aria-label='{{ 'Add a step'|trans }}' id='addStepForm'>
-    <div class='input-group mt-4'>
+    <div class='input-group mt-3'>
       <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' name='step' class='form-control' required data-id='{{ Entity.id }}' id='addStepInput' />
+      {% if stepGroups is not empty %}
+      <select aria-label='{{ 'Step group'|trans }}' name='group_id' class='custom-select col-md-3'>
+        <option value=''>{{ 'General steps'|trans }}</option>
+        {% for group in stepGroups %}
+          <option value='{{ group.id }}'>{{ group.title }}</option>
+        {% endfor %}
+      </select>
+      {% endif %}
       <div class='input-group-append'>
         <button class='btn btn-primary' data-action='create-step' type='submit'>{{ 'Add a step'|trans }}</button>
       </div>

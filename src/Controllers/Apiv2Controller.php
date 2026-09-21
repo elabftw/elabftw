@@ -61,6 +61,7 @@ use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\SigKeys;
+use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
@@ -412,6 +413,7 @@ final class Apiv2Controller extends AbstractApiController
                     (int) $Config->configArr['min_days_revisions'],
                     $this->subId
                 ),
+                ApiSubModels::StepGroups => new StepGroups($this->Model, $this->subId),
                 ApiSubModels::Steps => new Steps($this->Model, $this->subId),
                 ApiSubModels::Tags => new Tags($this->Model, $this->subId),
                 ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),

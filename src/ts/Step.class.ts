@@ -19,8 +19,8 @@ export default class Step {
     this.model = Model.Step;
   }
 
-  create(content: string): Promise<Response> {
-    return ApiC.post(`${this.entity.type}/${this.entity.id}/${this.model}`, {body: content});
+  create(content: string, groupId: number|null = null): Promise<Response> {
+    return ApiC.post(`${this.entity.type}/${this.entity.id}/${this.model}`, {body: content, group_id: groupId});
   }
 
   update(id: number, content: string|null, target = Target.Body): Promise<Response> {

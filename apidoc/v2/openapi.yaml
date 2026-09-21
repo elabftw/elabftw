@@ -5350,7 +5350,7 @@ paths:
           description: The tag has been added.
           headers:
             location:
-              description: A URL ending with 0 if the tag was already here, or an URL to the newly created tag.
+              description: A URL ending with 0 if the tag was already here, or a URL to the newly created tag.
               schema:
                 type: string
         '400':

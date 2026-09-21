@@ -10,6 +10,11 @@ describe('Metadata Extra fields', () => {
     cy.addUserMetadataField('Owner', 'Titi');
   });
 
+  it('Preserves apostrophes in custom field names', () => {
+    cy.createEntity();
+    cy.addTextMetadataField('l\'appartement');
+  });
+
   it('Keeps multi-value labels paired after deleting a row', () => {
     const fieldName = 'Checks';
     const metadata = JSON.stringify({

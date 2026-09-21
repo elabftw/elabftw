@@ -14,7 +14,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Usergroup;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
@@ -36,12 +36,12 @@ final class UserCreator
             $Config = Config::getConfig();
             // check for instance setting allowing/disallowing creation of users by admins
             if ($Config->configArr['admins_create_users'] === '0' && $Config->configArr['admins_create_users_remote_dir'] === '0') {
-                throw new IllegalActionException('Admin tried to create user but user creation is disabled for admins.');
+                throw new ForbiddenException('Admin tried to create user but user creation is disabled for admins.');
             }
             // force using the team in which we are logged in if we are not sysadmin
             $teams = array('id' => $this->requester->userData['team']);
             if (!$this->requester->isAdmin) {
-                throw new IllegalActionException('User tried to create user and this is not allowed');
+                throw new ForbiddenException('User tried to create user and this is not allowed');
             }
         }
         $validUntil = $this->reqBody['valid_until'] ?? null;

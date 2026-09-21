@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\CertPurpose;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
@@ -56,7 +56,7 @@ class IdpsCertsTest extends \PHPUnit\Framework\TestCase
     public function testNotSysadmin(): void
     {
         $IdpsCerts = new IdpsCerts($this->getUserInTeam(1));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $IdpsCerts->postAction(Action::Create, array());
     }
 

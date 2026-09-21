@@ -123,7 +123,7 @@ final class IdpsSources extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->requester->isSysadminOrExplode();
         $sql = 'DELETE FROM idps_sources WHERE id = :id';

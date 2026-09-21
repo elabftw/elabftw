@@ -19,7 +19,7 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AnonymousUser;
@@ -38,6 +38,7 @@ use function json_decode;
 use function random_bytes;
 use function sprintf;
 use function str_replace;
+use function json_encode;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -96,7 +97,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testSetId(): void
     {
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->Experiments->setId(0);
     }
 
@@ -122,6 +123,28 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $DisplayParams->getQuery()->add(array('fastq' => 1));
         $fast = $this->Experiments->readAll($DisplayParams);
         $this->assertNotEmpty($fast);
+    }
+
+    public function testDefaultReadPaginatesPinnedEntitiesFirst(): void
+    {
+        $pinnedId = $this->Experiments->create(title: 'Pinned fast read entity');
+        $PinnedExperiment = new Experiments($this->Users, $pinnedId);
+        new Pins($PinnedExperiment)->togglePin();
+
+        $firstPage = $this->Experiments->readAll(new DisplayParams(
+            requester: $this->Users,
+            entityType: EntityType::Experiments,
+            limit: 1,
+        ));
+        $secondPage = $this->Experiments->readAll(new DisplayParams(
+            requester: $this->Users,
+            entityType: EntityType::Experiments,
+            limit: 1,
+            offset: 1,
+        ));
+
+        self::assertSame($pinnedId, $firstPage[0]['id']);
+        self::assertNotSame($pinnedId, $secondPage[0]['id']);
     }
 
     public function testUpdate(): void
@@ -277,7 +300,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         );
         $shared = new Experiments($requester, $id);
 
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $shared->patch(Action::UpdateOwner, array(
             'userid' => $requester->getUserid(),
             'team' => $requester->getTeam(),
@@ -310,7 +333,7 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $user1->isAdmin = false;
         $user2 = new Users(2, 2);
         $exp = $this->getFreshExperimentWithGivenUser($user1);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $exp->patch(Action::UpdateOwner, array('userid' => $user2->userid, 'team' => 2));
     }
 
@@ -426,6 +449,19 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $res = $this->Experiments->patch(Action::UpdateMetadataField, array('action' => Action::UpdateMetadataField->value, 'multitext' => array('first', 'second')));
         $decoded = json_decode($res['metadata'], true);
         $this->assertEquals(array('first', 'second'), $decoded['extra_fields']['multitext']['value']);
+    }
+
+    public function testUpdateJsonFieldWithApostropheInName(): void
+    {
+        $metadata = '{"extra_fields": {"l\'appartement": {"type": "text", "value": "old"}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            "l'appartement" => 'new',
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertSame('new', $decoded['extra_fields']["l'appartement"]['value']);
     }
 
     public function testUpdateJsonFieldWithValueLabels(): void
@@ -595,13 +631,22 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateJsonFieldRejectsSelfLinkInMultipleValues(): void
     {
-        $metadata = '{"extra_fields": {"related": {"type": "experiments", "value": [], "allow_multi_values": true}}}';
+        $fieldName = "l'expérience associée";
+        $metadata = json_encode(array(
+            'extra_fields' => array(
+                $fieldName => array(
+                    'type' => 'experiments',
+                    'value' => array(),
+                    'allow_multi_values' => true,
+                ),
+            ),
+        ), JSON_THROW_ON_ERROR);
         $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
 
         $this->expectException(ImproperActionException::class);
         $this->Experiments->patch(Action::UpdateMetadataField, array(
             'action' => Action::UpdateMetadataField->value,
-            'related' => array(0, $this->Experiments->id),
+            $fieldName => array(0, $this->Experiments->id),
         ));
     }
 

@@ -1305,6 +1305,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedTags = Array.isArray(value) ? value as string[] : [];
 
         setEntityFilterParamValues('tags[]', selectedTags);
+        renderActiveFilters();
       },
 
       onItemAdd() {
@@ -1319,7 +1320,13 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     }) as TomSelectWithAllOptions;
 
+    filterControls.push({
+      control: tsTagFilter,
+      param: 'tags[]',
+      title: i18next.t('tags'),
+    });
     hydrateTomSelectFromUrl(tsTagFilter, 'tags[]');
+    renderActiveFilters();
 
     if (dropdownRoot) {
       $(dropdownRoot).on('shown.bs.dropdown', function() {

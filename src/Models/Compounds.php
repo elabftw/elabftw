@@ -19,7 +19,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -222,7 +222,7 @@ final class Compounds extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
         // check if the compound is linked somewhere first
@@ -533,14 +533,14 @@ final class Compounds extends AbstractRest
     protected function canWriteOrExplode(): void
     {
         if (!$this->canWrite()) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 
     private function canReadOrExplode(): void
     {
         if ($this->requester instanceof AnonymousUser) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 

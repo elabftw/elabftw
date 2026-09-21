@@ -159,17 +159,13 @@ if (calendarEl) {
       ? LIST_WEEK_VIEW
       : viewMap[range];
 
-  // clean up 'category' parameter on page refresh or else it keeps it as the only available value in the Select
-  if (params.has('category')) {
-    params.delete('category');
-    window.location.replace(`${location.pathname}?${params.toString()}`);
-  }
+  const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
+  categorySelect.value = params.get('category') ?? '';
 
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
     ['items[]', 'category', 'eventOwner'].forEach((param) => params.delete(param));
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
-    const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
 
     if (itemSelect?.tomselect?.items?.length) {
@@ -672,7 +668,6 @@ if (calendarEl) {
 
   function initTomSelect(): void {
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
-    const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
 
     const urlParams = new URLSearchParams(window.location.search);
     const selectedItems = urlParams.getAll('items[]');
@@ -708,6 +703,10 @@ if (calendarEl) {
         reloadCalendarEvents();
       },
     });
+
+    if (categorySelect.value) {
+      filterOptionsByCategory(itemSelect, categorySelect.value);
+    }
 
     if (selectedItems.length > 0) {
       itemTs.setValue(selectedItems);

@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Compounds2ExperimentsLinks;
 use Elabftw\Models\Users\AnonymousUser;
@@ -115,7 +115,7 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $Compounds->postAction(Action::Create, array());
         // now lock down edition
         $Compounds = new Compounds($this->httpGetter, $user, new NullFingerprinter(), true);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Compounds->postAction(Action::Create, array());
     }
 
@@ -168,7 +168,7 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
     {
         $Compounds = new Compounds($this->httpGetter, new AnonymousUser(1), new NullFingerprinter(), false);
 
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
 
         $Compounds->readAll();
     }
@@ -177,7 +177,7 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
     {
         $Compounds = new Compounds($this->httpGetter, new AnonymousUser(1), new NullFingerprinter(), false, 1);
 
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
 
         $Compounds->readOne();
     }

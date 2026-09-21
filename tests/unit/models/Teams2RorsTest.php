@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 
 use function count;
@@ -51,7 +51,7 @@ class Teams2RorsTest extends \PHPUnit\Framework\TestCase
     {
         $teamId = 3;
         $Teams2Rors = new Teams2Rors($teamId, false, $this->ror);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Teams2Rors->postAction(Action::Create, array());
     }
 

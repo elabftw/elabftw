@@ -185,7 +185,7 @@ final class RequestActions extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $sql = sprintf(
             'DELETE FROM %s_request_actions WHERE id = :id

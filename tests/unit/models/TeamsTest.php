@@ -13,9 +13,10 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ForbiddenException;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\TeamsHelper;
+use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function array_column;
@@ -74,7 +75,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
             try {
                 $Teams->canWriteOrExplode();
                 $this->fail('Archived admin membership allowed writing the team.');
-            } catch (IllegalActionException) {
+            } catch (ForbiddenException) {
                 $this->addToAssertionCount(1);
             }
         } finally {
@@ -85,7 +86,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     public function testCanWriteOrExplode(): void
     {
         $Teams = new Teams($this->getUserInTeam(1));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Teams->canWriteOrExplode();
     }
 
@@ -135,6 +136,25 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Teams->destroy();
     }
 
+    public function testSynchronizeMakesFirstUserInTeamAdmin(): void
+    {
+        $user = $this->getUserInTeam(1);
+        $userid = $user->getUserid();
+        $originalTeams = (new UsersHelper($userid))->getTeamsFromUserid();
+        $teamId = $this->Teams->postAction(Action::Create, array('name' => 'Empty synchronized team'));
+        $teams = $originalTeams;
+        $teams[] = array('id' => $teamId);
+
+        try {
+            $this->Teams->synchronize($userid, $teams);
+
+            $this->assertTrue((new TeamsHelper($teamId))->isAdminInTeam($userid));
+        } finally {
+            $this->Teams->synchronize($userid, $originalTeams);
+            $this->Teams->destroy();
+        }
+    }
+
     public function testSendOnboardingEmails(): void
     {
         $userids = array('userids' => array(1, 2, 3, 4, 5));
@@ -145,7 +165,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         ));
 
         $Team = new Teams(new Users(2, 1), 1);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Team->patch(
             Action::SendOnboardingEmails,
             $userids,

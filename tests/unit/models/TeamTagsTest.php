@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\TagParam;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -81,7 +81,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
     {
         $Users = new Users(2, 1);
         $TeamTags = new TeamTags($Users);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $TeamTags->patch(Action::UpdateTag, array());
     }
 
@@ -89,7 +89,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
     {
         $Users = new Users(2, 1);
         $TeamTags = new TeamTags($Users);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $TeamTags->destroy();
     }
 
@@ -140,7 +140,7 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
         try {
             $this->TeamTags->patch(Action::UpdateTag, array('tag' => $attackerTag));
             $this->fail('Cross-team tag update should be rejected.');
-        } catch (IllegalActionException) {
+        } catch (ForbiddenException) {
             $this->addToAssertionCount(1);
         }
 

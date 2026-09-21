@@ -18,13 +18,14 @@ use Elabftw\Enums\Scope;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\Users2TeamsTargets;
 use Elabftw\Enums\UsersColumn;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function array_column;
 use function count;
 use function is_array;
 use function strtoupper;
@@ -171,20 +172,45 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUpdateCanManageUsers2TeamsAsUser(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $user->update(new UserParams('can_manage_users2teams', '1'));
     }
 
     public function testReadAll(): void
     {
-        // read as Admin
+        // Sysadmins receive the extended response, including last login information.
         $res = $this->Users->readAll();
         $this->assertArrayHasKey('last_login', $res[0]);
-        // now as user
+
+        // Admins receive extended information only for users they administer.
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $managedUser = $this->getUserInTeam(team: 2);
+        $res = array_column((new Users(null, null, $admin))->readAll(), null, 'userid');
+        $this->assertArrayHasKey('auth_service', $res[$managedUser->getUserid()]);
+        $this->assertArrayNotHasKey('last_login', $res[$managedUser->getUserid()]);
+        $this->assertFalse($admin->isAdminOf(2));
+        $this->assertArrayNotHasKey('auth_service', $res[2]);
+        $this->assertArrayNotHasKey('last_login', $res[2]);
+
+        // Regular users receive only basic information.
         $user = $this->getUserInTeam(2);
         $Users = new Users(null, null, $user);
         $res = $Users->readAll();
         $this->assertArrayNotHasKey('auth_service', $res[0]);
+    }
+
+    public function testReadOneLastLoginIsRestrictedToSysadmins(): void
+    {
+        $this->assertArrayHasKey('last_login', $this->Users->readOne());
+
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $user = $this->getUserInTeam(team: 2);
+        $res = (new Users($user->getUserid(), 2, $admin))->readOne();
+        $this->assertArrayHasKey('auth_service', $res);
+        $this->assertArrayNotHasKey('last_login', $res);
+
+        $res = (new Users($user->getUserid(), 2, $user))->readOne();
+        $this->assertArrayNotHasKey('last_login', $res);
     }
 
     public function testIsAdminOf(): void
@@ -229,7 +255,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users = new Users(4, 2, new Users(4, 2));
         $this->assertIsArray($Users->patch(Action::Disable2fa, array()));
         $Users = new Users(2, 1, new Users(4, 2));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Disable2fa, array());
     }
 
@@ -263,7 +289,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testUpdateValidatedAsNonAdmin(): void
     {
         $Users = $this->getUserInTeam(1);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Update, array('validated' => 1));
     }
 
@@ -271,7 +297,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $Users = $this->getUserInTeam(1);
         $date = new DateTimeImmutable('tomorrow');
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Update, array('valid_until' => $date->format('Y-m-d')));
     }
 
@@ -296,7 +322,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     public function testTryToBecomeSysadmin(): void
     {
         $Users = new Users(4, 2, new Users(4, 2));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Update, array('is_sysadmin' => 1));
     }
 
@@ -344,7 +370,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $user2 = $this->getUserInTeam(team: 2);
         $Users = new Users($user2->userid, 2, $Admin);
         $this->Config->patch(Action::Update, array('admins_archive_users' => 0));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Archive, array());
     }
 
@@ -361,7 +387,7 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($Users->patch(Action::Add, array('team' => 1)));
         // try the reverse
         $Users = new Users(1, 1, new Users($user2->userid, 2));
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Users->patch(Action::Add, array('team' => 2));
     }
 

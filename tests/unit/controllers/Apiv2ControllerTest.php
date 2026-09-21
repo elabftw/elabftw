@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
+use Elabftw\Models\Links\Containers2ItemsLinks;
+use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function basename;
 use function json_decode;
+use function sprintf;
 
 class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
 {
@@ -53,17 +57,76 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
 
+    public function testDeleteEntityWithContainers(): void
+    {
+        $Item = $this->getFreshItem();
+        $StorageUnits = new StorageUnits($Item->Users, true);
+        $storageId = $StorageUnits->create('Container deletion test');
+        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
+
+        $hasContainersController = new Apiv2Controller(
+            $Item->Users,
+            Request::create(sprintf('/api/v2/items/%d/containers?has_any=1', $Item->id)),
+        );
+        $hasContainersResponse = $hasContainersController->getResponse();
+        self::assertSame(
+            array('has_containers' => true, 'containers_count' => 1),
+            json_decode((string) $hasContainersResponse->getContent(), true),
+        );
+
+        $Controller = new Apiv2Controller(
+            $Item->Users,
+            Request::create(sprintf('/api/v2/items/%d?delete_containers=1', $Item->id), Request::METHOD_DELETE),
+        );
+        $Controller->canWrite = true;
+
+        $response = $Controller->getResponse();
+
+        self::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+        self::assertSame(0, $StorageUnits->countContainers($storageId));
+    }
+
+    public function testDeleteNonEntityModel(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $StorageUnits = new StorageUnits($user, true);
+        $storageId = $StorageUnits->create('API deletion test');
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create(
+                sprintf('/api/v2/storage_units/%d', $storageId),
+                Request::METHOD_DELETE,
+            ),
+        );
+        $Controller->canWrite = true;
+        $response = $Controller->getResponse();
+        self::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+        $this->expectException(ResourceNotFoundException::class);
+        new StorageUnits($user, true, $storageId)->readOne();
+    }
+
     public function testAnonymousUserCannotQueryUsersEndpoint(): void
     {
         $Controller = new Apiv2Controller(
             new AnonymousUser(1),
-            Request::create('/api/v2/users', 'GET'),
+            Request::create('/api/v2/users'),
         );
 
         $res = $Controller->getResponse();
 
         self::assertSame(Response::HTTP_OK, $res->getStatusCode());
         self::assertSame('[]', $res->getContent());
+    }
+
+    // the restriction does not accidentally block an anonymous user from accessing /api/v2/users/me
+    public function testAnonymousUserCanReadOwnProfile(): void
+    {
+        $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create('/api/v2/users/me'));
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        $content = $res->getContent();
+        self::assertIsString($content);
+        self::assertSame(0, json_decode($content, true)['userid']);
     }
 
     public function testAnonymousUserCannotWriteEvenWhenCanWriteIsTrue(): void
@@ -142,15 +205,31 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
     }
 
-    public function testAnonymousUserCanReadCurrentTeamsSubmodel(): void
+    public function testAnonymousUserCannotReadSensitiveEndpoints(): void
     {
-        $Controller = new Apiv2Controller(
-            new AnonymousUser(1),
-            Request::create('/api/v2/teams/1/status', 'GET'),
+        $uris = array(
+            '/api/v2/users/1',
+            '/api/v2/teams/1/teamgroups',
+            '/api/v2/teams/1/teamgroups/1',
+            '/api/v2/teams/1/status',
+            '/api/v2/teams/1/status/1',
+            '/api/v2/teams/1/experiments_status',
+            '/api/v2/teams/1/experiments_categories',
+            '/api/v2/teams/1/resources_categories',
+            '/api/v2/teams/1/items_status',
+            '/api/v2/unfinished_steps?scope=team',
         );
 
-        $res = $Controller->getResponse();
-        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        foreach ($uris as $uri) {
+            $Controller = new Apiv2Controller(
+                new AnonymousUser(1),
+                Request::create($uri, 'GET'),
+            );
+
+            $res = $Controller->getResponse();
+
+            self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode(), $uri);
+        }
     }
 
     public function testCanReadCurrentTeamsSubmodel(): void

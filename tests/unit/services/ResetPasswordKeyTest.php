@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Defuse\Crypto\Key;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 
@@ -47,7 +46,7 @@ class ResetPasswordKeyTest extends \PHPUnit\Framework\TestCase
     public function testValidateIllegalKey(): void
     {
         $key = $this->ResetPasswordKey->generate('a@a.com@BiB6y21q>,6;,*C;A.b$$BpD"Mal<%1*');
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->ResetPasswordKey->validate($key);
     }
 

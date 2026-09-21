@@ -48,15 +48,16 @@ final class NotificationsFactory
     {
         return match (Notifications::from($this->category)) {
             Notifications::CommentCreated => new CommentCreated($this->targetUser, $this->body['page'], $this->body['entity_id'], $this->body['commenter_userid']),
-            Notifications::UserCreated => new UserCreated($this->targetUser, $this->body['userid'], $this->body['team']),
-            Notifications::UserNeedValidation => new UserNeedValidation($this->targetUser, $this->body['userid'], $this->body['team']),
+            Notifications::UserCreated => new UserCreated($this->targetUser, $this->body['userid'], $this->body['team'] ?? ''),
+            Notifications::UserNeedValidation => new UserNeedValidation($this->targetUser, $this->body['userid'], $this->body['team'] ?? ''),
             Notifications::StepDeadline => new StepDeadline($this->targetUser, $this->body['step_id'], $this->body['entity_id'], $this->body['entity_page'], $this->body['deadline']),
             Notifications::EventDeleted => new EventDeleted($this->targetUser, $this->body['event'], $this->body['actor'], $this->body['msg'], EmailTarget::from($this->body['target'])),
             Notifications::SelfNeedValidation => new SelfNeedValidation($this->targetUser),
             Notifications::SelfIsValidated => new SelfIsValidated($this->targetUser),
             Notifications::OnboardingEmail => new OnboardingEmail($this->targetUser, $this->body['team'], $this->body['forAdmin'] ?? false),
             // note: not sure why the bypassReadPermission is necessary here...
-            Notifications::ActionRequested => new ActionRequested($this->targetUser, new Users($this->body['requester_userid']), RequestableAction::from($this->body['action_enum_value']), EntityType::from($this->body['entity_type_value'])->toInstance(new Users($this->body['requester_userid']), $this->body['entity_id'], bypassReadPermission: true)),
+            // note: here the team is not used, so just put 0 in the Users constructor
+            Notifications::ActionRequested => new ActionRequested($this->targetUser, new Users($this->body['requester_userid']), RequestableAction::from($this->body['action_enum_value']), EntityType::from($this->body['entity_type_value'])->toInstance(new Users($this->body['requester_userid'], 0), $this->body['entity_id'], bypassReadPermission: true)),
             default => throw new ImproperActionException(sprintf('This notification (%d) is not mailable.', $this->category)),
         };
     }

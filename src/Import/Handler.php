@@ -18,7 +18,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Exceptions\ImproperActionException;
@@ -89,7 +89,7 @@ final class Handler extends AbstractRest
         if ($targetUserid !== $requesterId) {
             // check if admin in that team. Only admin in destination team can select another owner
             if (!$TeamsHelper->isAdminInTeam($requesterId)) {
-                throw new IllegalActionException('Only an administrator in the destination team may select another owner.');
+                throw new ForbiddenException('Only an administrator in the destination team may select another owner.');
             }
             if (!$TeamsHelper->isUserInTeam($targetUserid)) {
                 throw new UnprocessableContentException('The selected owner must belong to the destination team.');

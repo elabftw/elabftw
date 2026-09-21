@@ -115,6 +115,18 @@ class BaseQueryParams implements QueryParamsInterface
     }
 
     #[Override]
+    public function getOffset(): int
+    {
+        return $this->offset;
+    }
+
+    #[Override]
+    public function getSkipOrderPinned(): bool
+    {
+        return false;
+    }
+
+    #[Override]
     public function getSql(): string
     {
         $sql = sprintf(

@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\AuditEvent\PasswordResetRequested;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\DatabaseErrorException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -149,7 +149,7 @@ try {
             );
         }
     }
-} catch (IllegalActionException $e) {
+} catch (ForbiddenException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e)));
     $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
 } catch (ImproperActionException $e) {

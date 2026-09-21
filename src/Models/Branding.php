@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Branding as BrandingEnum;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Override;
 use PDO;
@@ -135,7 +135,7 @@ final class Branding extends AbstractRest
     private function update(array $params): int
     {
         if (!$this->canwrite) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
         $branding = BrandingEnum::tryFrom($this->id ?? 0) ?? throw new ImproperActionException('Invalid branding id.');
 

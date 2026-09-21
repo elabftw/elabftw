@@ -18,7 +18,7 @@ use Elabftw\Enums\Classification;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\ReportScopes;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Interfaces\ZipMakerInterface;
@@ -26,6 +26,7 @@ use Elabftw\Make\MakeCsv;
 use Elabftw\Make\MakeEln;
 use Elabftw\Make\MakeElnHtml;
 use Elabftw\Make\MakeJson;
+use Elabftw\Make\MakeFullJson;
 use Elabftw\Make\MakeMultiPdf;
 use Elabftw\Make\MakePdf;
 use Elabftw\Make\MakeProcurementRequestsCsv;
@@ -103,6 +104,8 @@ final class MakeController extends AbstractController
                     new Instance2Rors(),
                     new Teams2Rors($this->requester->getTeam(), false),
                     new Users2Rors($this->requester->getUserid(), false),
+                    includeLinkedEntities: $this->shouldIncludeLinkedEntities(),
+                    includeChangelog: $this->shouldIncludeChangelog(),
                 ));
 
             case ExportFormat::ElnHtml:
@@ -117,7 +120,11 @@ final class MakeController extends AbstractController
                 )->getResponse();
 
             case ExportFormat::Json:
-                return new MakeJson($this->entityArr)->getResponse();
+                $includeChangelog = $this->shouldIncludeChangelog();
+                $Maker = $this->Request->query->getBoolean('fulljson')
+                  ? new MakeFullJson($this->entityArr, $includeChangelog)
+                  : new MakeJson($this->entityArr, $includeChangelog);
+                return $Maker->getResponse();
 
             case ExportFormat::PdfA:
                 $this->pdfa = true;
@@ -157,17 +164,21 @@ final class MakeController extends AbstractController
                 return $this->makeZip();
 
             default:
-                throw new IllegalActionException('Bad make format value');
+                throw new ImproperActionException('Bad make format value');
         }
     }
 
-    private function shouldIncludeChangelog(): bool
+    private function shouldIncludeChangelog(bool $default = false): bool
     {
-        $includeChangelog =  $this->pdfa;
         if ($this->Request->query->has('changelog')) {
-            $includeChangelog = $this->Request->query->getBoolean('changelog');
+            return $this->Request->query->getBoolean('changelog');
         }
-        return $includeChangelog;
+        return $default;
+    }
+
+    private function shouldIncludeLinkedEntities(): bool
+    {
+        return $this->Request->query->getBoolean('links');
     }
 
     private function populateSlugs(): void
@@ -185,7 +196,7 @@ final class MakeController extends AbstractController
         } elseif ($this->Request->query->has('owner')) {
             // only admin can export a user, or it is ourself
             if (!$this->requester->isAdminOf($this->Request->query->getInt('owner'))) {
-                throw new IllegalActionException('User tried to export another user but is not admin.');
+                throw new ForbiddenException('User tried to export another user but is not admin.');
             }
             $targetUserid = $this->Request->query->getInt('owner');
             $entity = $entityType->toInstance($this->requester);
@@ -199,7 +210,7 @@ final class MakeController extends AbstractController
         foreach ($idArr as $id) {
             try {
                 $this->entityArr[] = $entityType->toInstance($this->requester, $id);
-            } catch (IllegalActionException) {
+            } catch (ForbiddenException) {
                 continue;
             }
         }
@@ -224,9 +235,9 @@ final class MakeController extends AbstractController
         $users2Rors = new Users2Rors($this->requester->getUserid());
         $classification = Classification::tryFrom($this->Request->query->getInt('classification', Classification::None->value)) ?? Classification::None;
         if (count($this->entityArr) === 1) {
-            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $classification))->getResponse();
+            return (new MakePdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog($this->pdfa), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
         }
-        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog()))->getResponse();
+        return (new MakeMultiPdf($log, $this->getMpdfProvider(), $this->requester, $this->entityArr, $instance2Rors, $teams2Rors, $users2Rors, $this->shouldIncludeChangelog(), $this->shouldIncludeLinkedEntities(), $classification))->getResponse();
     }
 
     private function makeSchedulerReport(): Response

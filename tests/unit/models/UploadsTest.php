@@ -16,7 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Storage\Tmp;
@@ -167,7 +167,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-immutable.zip', dirname(__DIR__, 2) . '/_data/importable.zip', immutable: 1));
         $this->Entity->Uploads->setId($id);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $this->Entity->Uploads->patch(Action::Update, array('real_name' => 'new'));
     }
 
@@ -208,7 +208,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
 
     public function testInvalidId(): void
     {
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->Entity->Uploads->setId(0);
     }
 

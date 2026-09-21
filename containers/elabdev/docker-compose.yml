@@ -65,6 +65,8 @@ services:
       - USE_OPENCLONING=true
       - OPENCLONING_URL=http://opencloning:8000/
       - DEV_MODE=true
+      #- DB_QUERY_PROFILING=true
+      #- DB_QUERY_LOG_MIN_MS=30
 
     ports:
       - '3148:8080'

@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -70,7 +70,7 @@ class AbstractCategoryTest extends \PHPUnit\Framework\TestCase
 
         $Category = new ExperimentsCategories($Teams);
 
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
 
         $Category->postAction(Action::Create, array(
             'title' => 'Forbidden category',
@@ -84,7 +84,7 @@ class AbstractCategoryTest extends \PHPUnit\Framework\TestCase
         $Teams = new Teams($user, 1);
         $Category = new ExperimentsCategories($Teams);
 
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
 
         $Category->patch(Action::Update, array(
             'title' => 'Secret category',

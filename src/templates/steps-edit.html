@@ -1,5 +1,6 @@
 {# STEPS #}
 {% set stepGroups = Entity.entityData.step_groups|default([]) %}
+{% set generalSteps = Entity.entityData.steps|filter(s => s.group_id is null) %}
 <h3 data-action='toggle-next' data-scroll-btn='fa-list-check' data-scroll-btn-label='{{ 'Steps'|trans }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDiv'><i class='fas fa-caret-down mr-2 fa-fw'></i> {{ 'Steps'|trans }} (<span id='stepsCount'>{{ Entity.entityData.steps|length }}</span>)</h3>
 <div id='stepsDiv' class='mt-2' data-count-for='stepsCount' data-save-hidden='stepsDiv'>
   {# LOCK ALL STEPS #}
@@ -14,79 +15,75 @@
   </div>
   {% endif %}
 
-  {% if stepGroups is empty %}
-    <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
-      {% for step in Entity.entityData.steps %}
-        {% include 'step-edit-row.html' %}
-      {% endfor %}
-    </div>
-  {% else %}
+  {% if stepGroups is not empty %}
     <div class='step-groups-sortable'>
       {% for group in stepGroups %}
         {% set groupSteps = Entity.entityData.steps|filter(s => s.group_id == group.id) %}
-        <div class='step-group mb-3' id='step_group_{{ group.id }}' data-groupid='{{ group.id }}'>
-          <div class='step-group-header d-flex align-items-center rounded px-2 py-1 mb-1'>
-            <button type='button' class='btn btn-ghost draggable step-group-sortable-handle' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
-              <i class='fas fa-sort'></i>
-            </button>
+        <div class='step-group step-group-card mb-3' id='step_group_{{ group.id }}' data-groupid='{{ group.id }}'>
+          <div class='step-group-header d-flex align-items-center px-2 py-2'>
             <button class='btn btn-transparent px-1' data-action='toggle-next' data-toggle-target='step_group_steps_{{ group.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_{{ group.id }}'>
               <i class='fas fa-caret-down fa-fw'></i>
             </button>
             <strong class='step-group-title editable hl-hover rounded px-1' data-groupid='{{ group.id }}'>{{ group.title }}</strong>
-            <span class='text-muted ml-2'>{{ groupSteps|filter(s => s.finished)|length }}/{{ groupSteps|length }}</span>
-            <button class='btn btn-danger-ghost ml-auto' data-action='destroy-step-group' data-id='{{ group.id }}' data-confirm='{{ 'Delete this group? Its steps will move to General steps.'|trans }}' title='{{ 'Delete group'|trans }}' aria-label='{{ 'Delete group'|trans }}' type='button'>
+            <span class='text-muted ml-2'>{{ groupSteps|length }} {{ 'Steps'|trans|lower }}</span>
+            <button type='button' class='btn btn-transparent color-weak draggable step-group-sortable-handle ml-auto px-1' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+              <i class='fas fa-sort'></i>
+            </button>
+            <button class='btn btn-danger-ghost px-1' data-action='destroy-step-group' data-id='{{ group.id }}' data-confirm='{{ 'Delete this group? Its steps will move to General steps.'|trans }}' title='{{ 'Delete group'|trans }}' aria-label='{{ 'Delete group'|trans }}' type='button'>
               <i class='fas fa-trash-alt'></i>
             </button>
           </div>
-          <div id='step_group_steps_{{ group.id }}' class='steps-sortable step-group-steps' data-groupid='{{ group.id }}' data-save-hidden='step_group_steps_{{ group.id }}'>
-            {% for step in groupSteps %}
-              {% include 'step-edit-row.html' %}
-            {% endfor %}
+          <div id='step_group_steps_{{ group.id }}' class='step-group-body px-3 py-2' data-save-hidden='step_group_steps_{{ group.id }}'>
+            <div class='steps-sortable step-group-steps' data-groupid='{{ group.id }}'>
+              {% for step in groupSteps %}
+                {% include 'step-edit-row.html' %}
+              {% endfor %}
+            </div>
+            {% set stepGroupId = group.id %}
+            {% set stepAddSuffix = 'group_' ~ group.id %}
+            {% include 'step-add-form.html' %}
           </div>
         </div>
       {% endfor %}
     </div>
-
-    {% set ungroupedSteps = Entity.entityData.steps|filter(s => s.group_id is null) %}
-    <div class='step-group mb-3'>
-      <div class='step-group-header d-flex align-items-center rounded px-2 py-2 mb-1'>
-        <button class='btn btn-transparent px-1' data-action='toggle-next' data-toggle-target='step_group_steps_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_general' title='{{ 'Toggle visibility'|trans }}'>
-          <i class='fas fa-caret-down fa-fw'></i>
-        </button>
-        <strong>{{ 'General steps'|trans }}</strong>
-        <span class='text-muted ml-2'>{{ ungroupedSteps|filter(s => s.finished)|length }}/{{ ungroupedSteps|length }}</span>
-      </div>
-      <div id='step_group_steps_general' class='steps-sortable step-group-steps' data-groupid='' data-save-hidden='step_group_steps_general'>
-        {% for step in ungroupedSteps %}
-          {% include 'step-edit-row.html' %}
-        {% endfor %}
-      </div>
-    </div>
   {% endif %}
 
-  <form aria-label='{{ 'Add a step group'|trans }}' id='addStepGroupForm'>
-    <div class='input-group mt-3'>
+  <div class='step-group step-group-card mb-3'>
+    <div class='step-group-header d-flex align-items-center px-2 py-2'>
+      <button class='btn btn-transparent px-1' data-action='toggle-next' data-toggle-target='step_group_steps_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_general' title='{{ 'Toggle visibility'|trans }}'>
+        <i class='fas fa-caret-down fa-fw'></i>
+      </button>
+      <strong>{{ 'General steps'|trans }}</strong>
+      <span class='text-muted ml-2'>{{ generalSteps|length }} {{ 'Steps'|trans|lower }}</span>
+    </div>
+    <div id='step_group_steps_general' class='step-group-body px-3 py-2' data-save-hidden='step_group_steps_general'>
+      {% if stepGroups is empty %}
+        <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
+          {% for step in generalSteps %}
+            {% include 'step-edit-row.html' %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class='steps-sortable step-group-steps' data-groupid=''>
+          {% for step in generalSteps %}
+            {% include 'step-edit-row.html' %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% set stepGroupId = '' %}
+      {% set stepAddSuffix = 'general' %}
+      {% include 'step-add-form.html' %}
+    </div>
+  </div>
+
+  <button type='button' class='btn btn-transparent text-muted text-left w-100 px-3 py-2 add-step-group-toggle' data-action='toggle-inline-form' data-toggle-target='addStepGroupForm' aria-expanded='false' aria-controls='addStepGroupForm'>
+    <i class='fas fa-plus fa-fw mr-1'></i>{{ 'Add a group'|trans }}
+  </button>
+  <form hidden aria-label='{{ 'Add a step group'|trans }}' id='addStepGroupForm' class='mt-2'>
+    <div class='input-group'>
       <input aria-label='{{ 'Group name'|trans }}' type='text' name='title' class='form-control' required id='addStepGroupInput' placeholder='{{ 'Group name'|trans }}' />
       <div class='input-group-append'>
         <button class='btn btn-secondary' data-action='create-step-group' type='submit'>{{ 'Add group'|trans }}</button>
-      </div>
-    </div>
-  </form>
-
-  {# Add step input #}
-  <form aria-label='{{ 'Add a step'|trans }}' id='addStepForm'>
-    <div class='input-group mt-3'>
-      <input aria-label='{{ 'Add a step'|trans }}' type='text' size='60' name='step' class='form-control' required data-id='{{ Entity.id }}' id='addStepInput' />
-      {% if stepGroups is not empty %}
-      <select aria-label='{{ 'Step group'|trans }}' name='group_id' class='custom-select col-md-3'>
-        <option value=''>{{ 'General steps'|trans }}</option>
-        {% for group in stepGroups %}
-          <option value='{{ group.id }}'>{{ group.title }}</option>
-        {% endfor %}
-      </select>
-      {% endif %}
-      <div class='input-group-append'>
-        <button class='btn btn-primary' data-action='create-step' type='submit'>{{ 'Add a step'|trans }}</button>
       </div>
     </div>
   </form>

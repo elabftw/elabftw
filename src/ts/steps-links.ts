@@ -59,9 +59,20 @@ $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
 const StepC = new Step(entity);
 const stepGroupsEndpoint = `${entity.type}/${entity.id}/step_groups`;
 
-on('create-step', (_, event: Event) => {
+on('toggle-inline-form', (el: HTMLElement) => {
+  const target = document.getElementById(el.dataset.toggleTarget ?? '');
+  if (!(target instanceof HTMLFormElement)) return;
+  const isHidden = target.toggleAttribute('hidden');
+  el.setAttribute('aria-expanded', String(!isHidden));
+  if (!isHidden) {
+    target.querySelector<HTMLInputElement>('input:not([type="hidden"])')?.focus();
+  }
+});
+
+on('create-step', (el: HTMLElement, event: Event) => {
   event.preventDefault();
-  const form = document.getElementById('addStepForm') as HTMLFormElement;
+  const form = el.closest('form');
+  if (!(form instanceof HTMLFormElement)) return;
   const params = collectForm(form);
   const content = String(params['step'] ?? '').trim();
   if (!content) return;
@@ -69,7 +80,13 @@ on('create-step', (_, event: Event) => {
   const groupId = rawGroupId === '' ? null : parseInt(rawGroupId, 10);
   StepC.create(content, groupId).then(() => {
     reloadElements(['stepsDiv']).then(() => {
-      (document.getElementById('addStepInput') as HTMLInputElement).focus();
+      // Keep the inline form open for quickly adding several steps to the same group.
+      const reloadedForm = document.querySelector<HTMLFormElement>(`.add-step-form[data-groupid='${rawGroupId}']`);
+      if (!reloadedForm) return;
+      reloadedForm.removeAttribute('hidden');
+      document.querySelector<HTMLElement>(`[data-toggle-target='${reloadedForm.id}']`)
+        ?.setAttribute('aria-expanded', 'true');
+      reloadedForm.querySelector<HTMLInputElement>('input[name="step"]')?.focus();
     });
   });
 });

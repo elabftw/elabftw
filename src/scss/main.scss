@@ -939,8 +939,19 @@ the form-control fails to do that so we do the border ourselves */
 }
 
 
+.step-group-card {
+  border: 1px solid var(--secondlevel);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
 .step-group-header {
   background-color: var(--firstlevel);
+  border-bottom: 1px solid var(--secondlevel);
+}
+
+.step-group-body {
+  background-color: var(--white);
 }
 
 .step-group-steps {
@@ -951,6 +962,20 @@ the form-control fails to do that so we do the border ourselves */
 .step-group-steps:empty {
   border: 1px dashed var(--secondary);
   border-radius: 4px;
+}
+
+.add-step-toggle:hover {
+  text-decoration: none;
+}
+
+.add-step-group-toggle {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+
+  &:hover {
+    background-color: var(--firstlevel);
+    text-decoration: none;
+  }
 }
 
 .step-sortable-placeholder {

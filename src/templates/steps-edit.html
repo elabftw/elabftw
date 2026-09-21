@@ -21,15 +21,15 @@
         {% set groupSteps = Entity.entityData.steps|filter(s => s.group_id == group.id) %}
         <div class='step-group step-group-card mb-3' id='step_group_{{ group.id }}' data-groupid='{{ group.id }}'>
           <div class='step-group-header d-flex align-items-center px-2 py-2'>
-            <button class='btn btn-transparent px-1' data-action='toggle-next' data-toggle-target='step_group_steps_{{ group.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_{{ group.id }}'>
+            <button class='btn btn-transparent mr-2' data-action='toggle-next' data-toggle-target='step_group_steps_{{ group.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_{{ group.id }}'>
               <i class='fas fa-caret-down fa-fw'></i>
             </button>
-            <strong class='step-group-title editable hl-hover rounded px-1' data-groupid='{{ group.id }}'>{{ group.title }}</strong>
+            <strong class='step-group-title editable hl-hover rounded' data-groupid='{{ group.id }}'>{{ group.title }}</strong>
             <span class='text-muted ml-2'>{{ groupSteps|length }} {{ 'Steps'|trans|lower }}</span>
-            <button type='button' class='btn btn-transparent color-weak draggable step-group-sortable-handle ml-auto px-1' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+            <button type='button' class='btn btn-transparent draggable step-group-sortable-handle ml-auto mr-2' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
               <i class='fas fa-sort'></i>
             </button>
-            <button class='btn btn-danger-ghost px-1' data-action='destroy-step-group' data-id='{{ group.id }}' data-confirm='{{ 'Delete this group? Its steps will move to General steps.'|trans }}' title='{{ 'Delete group'|trans }}' aria-label='{{ 'Delete group'|trans }}' type='button'>
+            <button class='btn btn-danger-ghost' data-action='destroy-step-group' data-id='{{ group.id }}' data-confirm='{{ 'Delete this group? Its steps will move to General steps.'|trans }}' title='{{ 'Delete group'|trans }}' aria-label='{{ 'Delete group'|trans }}' type='button'>
               <i class='fas fa-trash-alt'></i>
             </button>
           </div>
@@ -50,7 +50,7 @@
 
   <div class='step-group step-group-card mb-3'>
     <div class='step-group-header d-flex align-items-center px-2 py-2'>
-      <button class='btn btn-transparent px-1' data-action='toggle-next' data-toggle-target='step_group_steps_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_general' title='{{ 'Toggle visibility'|trans }}'>
+      <button class='btn btn-transparent mr-2' data-action='toggle-next' data-toggle-target='step_group_steps_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_general' title='{{ 'Toggle visibility'|trans }}'>
         <i class='fas fa-caret-down fa-fw'></i>
       </button>
       <strong>{{ 'General steps'|trans }}</strong>

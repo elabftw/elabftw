@@ -37,8 +37,6 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
     #[Override]
     public function getEmail(): array
     {
-        $subject = _('Action requested');
-        $url = sprintf('%s/%s?mode=view&id=%d', Env::asUrl('SITE_URL'), $this->entity->entityType->toPage(), $this->entity->id ?? 0);
         // body is split in two so we can reuse the translated string in web notification
         $body = sprintf(
             _('%s has requested %s from you.'),
@@ -47,10 +45,10 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
         );
         $body .= ' ' . sprintf(
             _('You can review the request here: %s'),
-            $url,
+                sprintf('%s/%s?mode=view&id=%d', Env::asUrl('SITE_URL'), $this->entity->entityType->toPage(), $this->entity->id ?? 0),
         );
         return array(
-            'subject' => $subject,
+            'subject' => _('Action requested'),
             'body' => $body,
             'replyTo' => $this->requester->userData['email'],
         );

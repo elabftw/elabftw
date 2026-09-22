@@ -158,7 +158,7 @@ class Email
             // set recipients in BCC to hide email addresses
             ->bcc(...$addresses)
             ->replyTo($replyTo)
-            ->text(self::toPlainText($content));
+            ->text(self::toPlainText($content . $this->footer['plain']));
 
             return $this->send($message) ? $addressesCount : 0;
         }
@@ -206,7 +206,7 @@ class Email
                 // <a href="url">link text</a> => link text (url)
                 $plainText = preg_replace('/<a href="([^"]*)">([^<]*)<\/a>/iu', '$2 ($1)', $textWithLinks);
 
-                $message->text($plainText);
+                $message->text($plainText . $this->footer['plain']);
             }
         }
 

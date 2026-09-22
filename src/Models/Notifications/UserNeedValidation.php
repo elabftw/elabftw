@@ -37,7 +37,6 @@ final class UserNeedValidation extends UserCreated implements MailableInterface
     {
         $subject = sprintf(_('[ACTION REQUIRED]') . ' ' . _('New user added to team: %s'), $this->team);
         $user = new Users($this->userid);
-        $url = Env::asUrl('SITE_URL') . '/admin.php';
         $base = sprintf(
             _('Hi. A new user registered an account on eLabFTW: %s (%s).'),
             $user->userData['fullname'],

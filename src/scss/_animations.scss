@@ -104,3 +104,24 @@
   height: 16px;
   width: 16px;
 }
+
+.reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 250ms ease, opacity 200ms ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  > .reveal-content {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &.is-visible {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}

@@ -36,13 +36,16 @@ export class KeyboardShortcuts {
   init() {
     // CREATE EXPERIMENT or DATABASE item with shortcut
     assignKey(this.create, () => {
+      if (!['/experiments.php', '/database.php'].includes(this.page)) {
+        return;
+      }
       // add current tags in there too
       const urlParams = new URLSearchParams(document.location.search);
       const tags = urlParams.getAll('tags[]');
       // use default template
       const params = {category_id: 0, tags: tags};
       let entityType = EntityType.Experiment;
-      if (document.location.pathname === '/database.php') {
+      if (this.page === '/database.php') {
         entityType = EntityType.Item;
       }
       ApiC.post2location(entityType, params).then(id => {

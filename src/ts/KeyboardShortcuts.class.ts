@@ -10,6 +10,7 @@ import { ApiC } from './api';
 import { EntityType } from './interfaces';
 import FavTag from './FavTag.class';
 import { assignKey } from './keymaster';
+import { getEntityTypeFromPage } from './misc';
 
 export class KeyboardShortcuts {
 
@@ -34,10 +35,10 @@ export class KeyboardShortcuts {
   }
 
   init() {
-    // CREATE EXPERIMENT or DATABASE item with shortcut
+    // CREATE EXPERIMENT, RESOURCE or TEMPLATES with shortcut
     assignKey(this.create, () => {
-      const page = this.page.split('/').pop() || '';
-      if (!['experiments.php', 'database.php'].includes(page)) {
+      const entityType = getEntityTypeFromPage(document.location);
+      if (entityType === EntityType.Other) {
         return;
       }
       // add current tags in there too
@@ -45,10 +46,6 @@ export class KeyboardShortcuts {
       const tags = urlParams.getAll('tags[]');
       // use default template
       const params = {category_id: 0, tags: tags};
-      let entityType = EntityType.Experiment;
-      if (page === 'database.php') {
-        entityType = EntityType.Item;
-      }
       ApiC.post2location(entityType, params).then(id => {
         window.location.href = `?mode=edit&id=${id}`;
       });

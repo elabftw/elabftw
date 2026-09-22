@@ -1712,7 +1712,7 @@ components:
           type: string
           nullable: true
         source:
-          type: int
+          type: integer
           nullable: true
         certs:
           type: array
@@ -2475,7 +2475,7 @@ paths:
           description: The container has been created.
           headers:
             location:
-              description: An URL to the container that was created.
+              description: A URL to the container that was created.
               schema:
                 type: string
         '400':
@@ -2920,7 +2920,7 @@ paths:
           description: The storage unit has been created.
           headers:
             location:
-              description: An URL to the storage unit that was created.
+              description: A URL to the storage unit that was created.
               schema:
                 type: string
         '400':
@@ -3273,7 +3273,7 @@ paths:
           description: The experiment has been created.
           headers:
             location:
-              description: An URL to the experiment that was created.
+              description: A URL to the experiment that was created.
               schema:
                 type: string
         '400':
@@ -3329,7 +3329,7 @@ paths:
           description: The experiment has been duplicated.
           headers:
             location:
-              description: An URL to the experiment that was duplicated.
+              description: A URL to the experiment that was duplicated.
               schema:
                 type: string
         '400':
@@ -3683,7 +3683,7 @@ paths:
           description: The action was successful.
           headers:
             location:
-              description: An URL ending with the integer returned by the action.
+              description: A URL ending with the integer returned by the action.
               schema:
                 type: string
         '400':
@@ -3853,7 +3853,7 @@ paths:
           description: The branding asset has been updated.
           headers:
             location:
-              description: An URL to the branding asset that was updated
+              description: A URL to the branding asset that was updated
               schema:
                 type: string
         '400':
@@ -3881,7 +3881,7 @@ paths:
           description: The item has been created.
           headers:
             location:
-              description: An URL to the item that was created.
+              description: A URL to the item that was created.
               schema:
                 type: string
         '400':
@@ -3935,7 +3935,7 @@ paths:
           description: The item has been duplicated.
           headers:
             location:
-              description: An URL to the item that was duplicated.
+              description: A URL to the item that was duplicated.
               schema:
                 type: string
         '400':
@@ -4311,7 +4311,7 @@ paths:
           description: The comment has been created.
           headers:
             location:
-              description: An URL to the comment that was created.
+              description: A URL to the comment that was created.
               schema:
                 type: string
         '400':
@@ -4487,7 +4487,7 @@ paths:
           description: The link has been created.
           headers:
             location:
-              description: An URL to the link that was created.
+              description: A URL to the link that was created.
               schema:
                 type: string
         '400':
@@ -4586,7 +4586,7 @@ paths:
           description: The link has been created.
           headers:
             location:
-              description: An URL to the link that was created.
+              description: A URL to the link that was created.
               schema:
                 type: string
         '400':
@@ -4685,7 +4685,7 @@ paths:
           description: The link has been created.
           headers:
             location:
-              description: An URL to the link that was created.
+              description: A URL to the link that was created.
               schema:
                 type: string
         '400':
@@ -4725,7 +4725,7 @@ paths:
           description: The experiment template has been created.
           headers:
             location:
-              description: An URL to the experiment template that was created.
+              description: A URL to the experiment template that was created.
               schema:
                 type: string
         '400':
@@ -4779,7 +4779,7 @@ paths:
           description: The experiment template has been duplicated.
           headers:
             location:
-              description: An URL to the experiment template that was duplicated.
+              description: A URL to the experiment template that was duplicated.
               schema:
                 type: string
         '400':
@@ -4863,7 +4863,7 @@ paths:
           description: The resource template has been created.
           headers:
             location:
-              description: An URL to the resource template that was created.
+              description: A URL to the resource template that was created.
               schema:
                 type: string
         '400':
@@ -4917,7 +4917,7 @@ paths:
           description: The resource template has been duplicated.
           headers:
             location:
-              description: An URL to the resource template that was duplicated.
+              description: A URL to the resource template that was duplicated.
               schema:
                 type: string
         '400':
@@ -5040,7 +5040,7 @@ paths:
           description: The booking slot has been created.
           headers:
             location:
-              description: An URL to the booking slot that was created.
+              description: A URL to the booking slot that was created.
               schema:
                 type: string
         '400':
@@ -5350,7 +5350,7 @@ paths:
           description: The tag has been added.
           headers:
             location:
-              description: An URL ending with 0 if the tag was already here, or an URL to the newly created tag.
+              description: A URL ending with 0 if the tag was already here, or a URL to the newly created tag.
               schema:
                 type: string
         '400':
@@ -5473,7 +5473,7 @@ paths:
           description: The team has been created.
           headers:
             location:
-              description: An URL to the team that was created.
+              description: A URL to the team that was created.
               schema:
                 type: string
         '400':
@@ -5603,7 +5603,7 @@ paths:
           description: Create a category.
           headers:
             location:
-              description: An URL to the category that was created.
+              description: A URL to the category that was created.
               schema:
                 type: string
         '400':
@@ -5725,7 +5725,7 @@ paths:
           description: Create a resource category.
           headers:
             location:
-              description: An URL to the category that was created.
+              description: A URL to the category that was created.
               schema:
                 type: string
         '400':
@@ -5847,7 +5847,7 @@ paths:
           description: New experiment status created.
           headers:
             location:
-              description: An URL to the experiment status that was created.
+              description: A URL to the experiment status that was created.
               schema:
                 type: string
         '400':
@@ -5967,7 +5967,7 @@ paths:
           description: New resource status created.
           headers:
             location:
-              description: An URL to the resource status that was created.
+              description: A URL to the resource status that was created.
               schema:
                 type: string
         '400':
@@ -6094,7 +6094,7 @@ paths:
           description: New teamgroup.
           headers:
             location:
-              description: An URL to the teamgroup that was created.
+              description: A URL to the teamgroup that was created.
               schema:
                 type: string
         '400':
@@ -6190,7 +6190,7 @@ paths:
     summary: Todolist for current user.
     get:
       tags: ['Todolist']
-      summary: Read all todoitems.
+      summary: Read all todo items.
       operationId: read-todolist
       responses:
         '200':
@@ -6208,7 +6208,7 @@ paths:
       summary: Create a todo item
       operationId: post-todolist
       requestBody:
-        description: Parameters for creating a todoitem.
+        description: Parameters for creating a todo item.
         content:
           application/json:
             schema:
@@ -6222,7 +6222,7 @@ paths:
           description: The todo entry has been created.
           headers:
             location:
-              description: An URL to the todo item that was created.
+              description: A URL to the todo item that was created.
               schema:
                 type: string
         '400':
@@ -6236,7 +6236,7 @@ paths:
     parameters:
       - name: id
         in: path
-        description: ID of the todoitem.
+        description: ID of the todo item.
         required: true
         schema:
           type: integer
@@ -6246,7 +6246,7 @@ paths:
       operationId: read-todoitem
       responses:
         '200':
-          description: A todoitem.
+          description: A todo item.
           content:
             application/json:
               schema:
@@ -6258,10 +6258,10 @@ paths:
     patch:
       tags: ['Todolist']
       summary: |
-        Actions on a todoitem.
+        Actions on a todo item.
       operationId: patch-todoitem
       requestBody:
-        description: Parameters for modifying a todoitem.
+        description: Parameters for modifying a todo item.
         content:
           application/json:
             schema:
@@ -6272,7 +6272,7 @@ paths:
                   type: string
       responses:
         '200':
-          description: The updated todoitem.
+          description: The updated todo item.
           content:
             application/json:
               schema:
@@ -6285,11 +6285,11 @@ paths:
           $ref: '#/components/responses/NotFound'
     delete:
       tags: ['Todolist']
-      summary: Delete a todoitem.
+      summary: Delete a todo item.
       operationId: delete-todoitem
       responses:
         '204':
-          description: The todoitem was removed.
+          description: The todo item was removed.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -6442,7 +6442,7 @@ paths:
           description: The user has been created.
           headers:
             location:
-              description: An URL to the user that was created.
+              description: A URL to the user that was created.
               schema:
                 type: string
         '400':
@@ -7003,7 +7003,7 @@ paths:
           description: The step has been created.
           headers:
             location:
-              description: An URL to the step that was created.
+              description: A URL to the step that was created.
               schema:
                 type: string
         '400':
@@ -7157,7 +7157,7 @@ paths:
           description: The tag has been created.
           headers:
             location:
-              description: An URL to the tag that was created.
+              description: A URL to the tag that was created.
               schema:
                 type: string
         '400':
@@ -7318,7 +7318,7 @@ paths:
           description: The file has been uploaded.
           headers:
             location:
-              description: An URL to the uploaded file that was created.
+              description: A URL to the uploaded file that was created.
               schema:
                 type: string
         '400':
@@ -7405,7 +7405,7 @@ paths:
           description: The file has been uploaded.
           headers:
             location:
-              description: An URL to the uploaded file that was created.
+              description: A URL to the uploaded file that was created.
               schema:
                 type: string
         '400':
@@ -7530,7 +7530,7 @@ paths:
           description: The idp has been created.
           headers:
             location:
-              description: An URL to the idp that was created.
+              description: A URL to the idp that was created.
               schema:
                 type: string
         '400':
@@ -7655,7 +7655,7 @@ paths:
           description: The idp endpoint has been created.
           headers:
             location:
-              description: An URL to the idp endpoint that was created.
+              description: A URL to the idp endpoint that was created.
               schema:
                 type: string
         '400':
@@ -7759,7 +7759,7 @@ paths:
           description: The idp cert has been created.
           headers:
             location:
-              description: An URL to the idp cert that was created.
+              description: A URL to the idp cert that was created.
               schema:
                 type: string
         '400':
@@ -7850,7 +7850,7 @@ paths:
           description: The idp source has been created.
           headers:
             location:
-              description: An URL to the idp source that was created.
+              description: A URL to the idp source that was created.
               schema:
                 type: string
         '400':

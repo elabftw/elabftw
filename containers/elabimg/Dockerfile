@@ -24,7 +24,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
 # build nginx with only the bare minimum of features or modules
 FROM alpine:3.24 AS nginx-builder
 
-ENV NGINX_VERSION=1.30.4
+ENV NGINX_VERSION=1.30.5
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
 ENV NGX_BROTLI_COMMIT=a71f9312c2deb28875acc7bacfdd5695a111aa53
@@ -376,6 +376,10 @@ RUN rm -f /etc/php84/php.ini && ln -s /run/php/php.ini /etc/php84/php.ini
 COPY ./containers/elabimg/php/php-fpm.conf /etc/php84/php-fpm.conf
 COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf.tpl
 # END PHP
+
+# LDAP: keep the runtime configuration on the writable /run tmpfs
+RUN mv /etc/openldap/ldap.conf /etc/openldap/ldap.conf.tpl \
+    && ln -s /run/openldap/ldap.conf /etc/openldap/ldap.conf
 
 # create invoker service
 RUN mkdir -p /etc/s6-overlay/s6-rc.d/invoker && echo "longrun" > /etc/s6-overlay/s6-rc.d/invoker/type

@@ -67,6 +67,9 @@ use function in_array;
 use function json_decode;
 use function sprintf;
 use function strtolower;
+use function strlen;
+use function strrpos;
+use function substr;
 
 /**
  * Users
@@ -490,14 +493,20 @@ class Users extends AbstractRest
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
         );
-        // if the user is Admin somewhere (or Sysadmin), return a pretty complete response
-        // Note: having something where you get different response depending if the user is part of your team or not seems too complex to implement and maintain
-        if ($this->requester->isAdminSomewhere() || $this->requester->isSysadmin()) {
-            return $users;
-        }
-        // otherwise, remove some more data, here we want only the super basic data for basic users
-        $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'last_login', 'valid_until', 'is_sysadmin', 'teams');
-        return array_map(function ($user) use ($removeKeys) {
+        $isSysadmin = $this->requester->isSysadmin();
+        $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'valid_until', 'is_sysadmin', 'teams');
+        return array_map(function (array $user) use ($isSysadmin, $removeKeys): array {
+            if (!$isSysadmin) {
+                unset($user['last_login']);
+            }
+            if ($isSysadmin || $this->requester->isAdminOf($user['userid'])) {
+                return $user;
+            }
+            // Keep the requester's own email visible, but mask other users' emails.
+            if ($this->requester->getUserid() !== (int) $user['userid']) {
+                $user['email'] = self::maskEmail($user['email']);
+            }
+            // return only basic data when the requester is not an Admin of this user
             foreach ($removeKeys as $k) {
                 unset($user[$k]);
             }
@@ -518,8 +527,11 @@ class Users extends AbstractRest
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token_hash']);
+        if (!$this->requester->isSysadmin()) {
+            unset($userData['last_login']);
+        }
         // keep sig_privkey in response if requester is target
-        if ($this->requester->userData['userid'] !== $this->userData['userid']) {
+        if ($this->requester->getUserid() !== $this->getUserid()) {
             unset($userData['sig_privkey']);
         }
         return $userData;
@@ -1054,5 +1066,24 @@ class Users extends AbstractRest
             $Notifications = $isValidated ? new UserCreated($adminUser, $userid, $team) : new UserNeedValidation($adminUser, $userid, $team);
             $Notifications->create();
         }
+    }
+
+    private static function maskEmail(string $email): string
+    {
+        $separatorPosition = strrpos($email, '@');
+        if ($separatorPosition === false) {
+            return '***';
+        }
+        $localPart = substr($email, 0, $separatorPosition);
+        $domain = substr($email, $separatorPosition + 1);
+        $length = strlen($localPart);
+
+        $maskedLocalPart = match (true) {
+            $length <= 1 => '*',
+            $length === 2 => $localPart[0] . '***',
+            $length >= 8 => substr($localPart, 0, 2) . '***' . substr($localPart, -2),
+            default => $localPart[0] . '***' . substr($localPart, -1),
+        };
+        return sprintf('%s@%s', $maskedLocalPart, $domain);
     }
 }

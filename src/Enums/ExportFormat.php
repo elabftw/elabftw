@@ -25,6 +25,9 @@ enum ExportFormat: string
     case Json = 'json';
     case QrPdf = 'qrpdf';
     case QrPng = 'qrpng';
+
+    // default value for format param: not an export format: needed to discriminate between normal json and json export with options
+    case None = 'none';
     case Pdf = 'pdf';
     case PdfA = 'pdfa';
     case SchedulerReport = 'schedulerReport';

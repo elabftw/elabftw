@@ -239,7 +239,8 @@ class MakeEln extends AbstractMakeEln
                     'creativeWorkStatus' => State::from($file['state'])->name,
                     // TODO actually store content type Mime for uploaded files in that column
                     'encodingFormat' => $file['content_type'] ?? 'application/octet-stream',
-                    'contentSize' => $file['filesize'],
+                    // cast to string because that's what the ELN spec expects
+                    'contentSize' => (string) $file['filesize'],
                     'sha256' => $file['hash'] ?? hash_file('sha256', $uploadAtId),
                 );
                 // add the file comment as description but only if it's present

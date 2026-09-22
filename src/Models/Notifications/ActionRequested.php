@@ -45,7 +45,7 @@ final class ActionRequested extends AbstractNotifications implements MailableInt
         );
         $body .= ' ' . sprintf(
             _('You can review the request here: %s'),
-                sprintf('%s/%s?mode=view&id=%d', Env::asUrl('SITE_URL'), $this->entity->entityType->toPage(), $this->entity->id ?? 0),
+            sprintf('%s/%s?mode=view&id=%d', Env::asUrl('SITE_URL'), $this->entity->entityType->toPage(), $this->entity->id ?? 0)
         );
         return array(
             'subject' => _('Action requested'),

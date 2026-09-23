@@ -17,7 +17,7 @@ UserNS=keep-id
 # HARDENING
 ReadOnly=true
 NoNewPrivileges=true
-DropCapabilities=all
+DropCapability=all
 
 # HEALTHCHECK
 HealthInterval=5s

@@ -84,9 +84,12 @@ final class StepGroups extends AbstractRest
         $req->bindValue(':title', $title);
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
+        $id = $this->Db->lastInsertId();
         $this->Entity->touch();
-        new Changelog($this->Entity)->create(new ContentParams('step_groups', Action::Create->value));
-        return $this->Db->lastInsertId();
+        new Changelog($this->Entity)->create(
+            new ContentParams('step_groups', Action::Create->value)
+        );
+        return $id;
     }
 
     #[Override]

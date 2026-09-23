@@ -15,6 +15,7 @@
   </div>
   {% endif %}
 
+  {# Named groups use connected sortables so steps can move between groups #}
   {% if stepGroups is not empty %}
     <div class='step-groups-sortable'>
       {% for group in stepGroups %}
@@ -48,6 +49,7 @@
     </div>
   {% endif %}
 
+  {# General steps is the fallback group for steps with no group_id #}
   <div class='step-group step-group-card mb-3'>
     <div class='step-group-header d-flex align-items-center px-2 py-2'>
       <button class='btn btn-transparent mr-2' data-action='toggle-next' data-toggle-target='step_group_steps_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_general' title='{{ 'Toggle visibility'|trans }}'>
@@ -57,6 +59,7 @@
       <span class='text-muted ml-2'>{{ generalSteps|length }} {{ 'Steps'|trans|lower }}</span>
     </div>
     <div id='step_group_steps_general' class='step-group-body px-3 py-2' data-save-hidden='step_group_steps_general'>
+      {# Keep the original flat sortable until the first named group is created #}
       {% if stepGroups is empty %}
         <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
           {% for step in generalSteps %}
@@ -64,6 +67,7 @@
           {% endfor %}
         </div>
       {% else %}
+        {# Once groups exist, General steps joins the same connected sortable system #}
         <div class='steps-sortable step-group-steps' data-groupid=''>
           {% for step in generalSteps %}
             {% include 'step-edit-row.html' %}

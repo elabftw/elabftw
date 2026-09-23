@@ -1,4 +1,6 @@
 -- schema 225
+-- Keep one step-group table per entity type so groups can use real foreign keys
+-- to the same parent tables as the existing step tables.
 CREATE TABLE `experiments_step_groups` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `item_id` INT UNSIGNED NOT NULL,
@@ -39,6 +41,8 @@ CREATE TABLE `items_types_step_groups` (
     CONSTRAINT `fk_items_types_step_groups_item_id` FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- A NULL group_id represents General steps. ON DELETE SET NULL ensures that
+-- deleting a group never deletes its steps. They go to general steps
 ALTER TABLE `experiments_steps`
     ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL AFTER `item_id`,
     ADD KEY `idx_experiments_steps_group_id` (`group_id`),

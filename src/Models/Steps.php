@@ -129,6 +129,8 @@ final class Steps extends AbstractRest
     {
         $stepTable = $this->Entity->entityType->value . '_steps';
         $groupTable = $this->Entity->entityType->value . '_step_groups';
+        // Step ordering is local to each group. Named groups follow their group
+        // ordering, while General steps (group_id = NULL) are displayed last
         $sql = sprintf(
             'SELECT st.* FROM %s AS st
                 LEFT JOIN %s AS sg ON sg.id = st.group_id AND sg.item_id = st.item_id
@@ -161,6 +163,8 @@ final class Steps extends AbstractRest
     {
         $sourceTable = $this->Entity->entityType->value;
         $targetTable = $targetEntity->entityType->value;
+        // Copy groups first because copied steps must reference the new group ids,
+        // not the ids belonging to the source entity
         $groupMap = new StepGroups($this->Entity)->duplicate($targetEntity, $id, $newId);
         $stepsql = sprintf('SELECT body, ordering, is_immutable, group_id FROM %s_steps WHERE item_id = :id', $sourceTable);
         $stepreq = $this->Db->prepare($stepsql);
@@ -229,6 +233,8 @@ final class Steps extends AbstractRest
     {
         $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
+        // Connected sortables update the whole step layout at once, so this
+        // collection-level PATCH does not target one specific step id.
         if ($action === Action::Update && $this->id === null && array_key_exists('grouped_ordering', $params)) {
             if (!is_array($params['grouped_ordering'])) {
                 throw new ImproperActionException(_('Invalid grouped steps ordering.'));
@@ -354,6 +360,10 @@ final class Steps extends AbstractRest
         return $this->Db->lastInsertId();
     }
 
+    /**
+     * Move one step to another group, or back to General steps
+     * A direct group change appends the step to the end of its new group
+     */
     private function updateGroupId(mixed $value): bool
     {
         $groupId = $value === null || $value === '' ? null : (int) $value;
@@ -371,9 +381,12 @@ final class Steps extends AbstractRest
         return $this->Db->execute($req);
     }
 
+     // Apply the complete group/step layout sent after drag and drop
     private function updateGroupedOrdering(array $groups): void
     {
         $steps = array_column($this->readAll(), null, 'id');
+        // Keep the original position of every step
+        // Immutable steps may be part of the payload, but they are only rejected when they actually moved
         $positions = array();
         $nextPosition = array();
         foreach ($steps as $step) {
@@ -422,6 +435,7 @@ final class Steps extends AbstractRest
         }
     }
 
+    // Make sure a group belongs to the same parent entity as the step
     private function assertGroupBelongsToEntity(?int $groupId): void
     {
         if ($groupId === null) {
@@ -430,11 +444,16 @@ final class Steps extends AbstractRest
         if ($groupId < 1) {
             throw new ImproperActionException(_('Invalid step group.'));
         }
+        // The foreign key only proves that the group exists
+        // readOne() also checks item_id, preventing a step from using another entity's group
         new StepGroups($this->Entity, $groupId)->readOne();
     }
 
+    // Return the next position inside one group. NULL means General steps
     private function getNextOrdering(?int $groupId): int
     {
+        // MySQL's <=> is null-safe, so this query works for both a real group
+        // id and General steps where group_id is NULL
         $sql = sprintf(
             'SELECT COALESCE(MAX(ordering), -1) + 1 AS next_ordering FROM %s_steps WHERE item_id = :item_id AND group_id <=> :group_id',
             $this->Entity->entityType->value,

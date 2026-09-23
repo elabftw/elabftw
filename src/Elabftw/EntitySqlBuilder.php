@@ -304,6 +304,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected function steps(): void
     {
+        // Keep next_step consistent with the order shown in the Steps UI:
+        // named groups first in group order, then General steps
         $this->selectSql[] = '(SELECT st.body
             FROM %1$s_steps AS st
             LEFT JOIN %1$s_step_groups AS sg

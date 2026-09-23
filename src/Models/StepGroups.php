@@ -84,6 +84,8 @@ final class StepGroups extends AbstractRest
         $req->bindValue(':title', $title);
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
+        // Keep this id before touch() and the changelog create other rows,
+        // otherwise lastInsertId() would no longer point to the new step group
         $id = $this->Db->lastInsertId();
         $this->Entity->touch();
         new Changelog($this->Entity)->create(
@@ -99,6 +101,8 @@ final class StepGroups extends AbstractRest
             throw new ImproperActionException('Invalid action for step groups.');
         }
         $this->Entity->canOrExplode(AccessType::Write);
+        // PATCH without a group id targets the collection itself and is used
+        // to save the order of groups after drag and drop
         if ($this->id === null) {
             if (!array_key_exists('ordering', $params) || !is_array($params['ordering'])) {
                 throw new ImproperActionException('Invalid step group ordering.');
@@ -130,6 +134,8 @@ final class StepGroups extends AbstractRest
         $this->Entity->canOrExplode(AccessType::Write);
         $this->readOne();
 
+        // Deleting a group must keep its steps. Move them back to General steps
+        // before removing the group itself.
         $stepSql = sprintf('UPDATE %s_steps SET group_id = NULL WHERE item_id = :item_id AND group_id = :group_id', $this->Entity->entityType->value);
         $stepReq = $this->Db->prepare($stepSql);
         $stepReq->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
@@ -149,6 +155,8 @@ final class StepGroups extends AbstractRest
 
     /**
      * Duplicate groups and return a source id => target id map.
+     * Groups get new database ids when copied. Steps::duplicate() uses this map
+     * to reconnect each copied step to the matching copied group
      */
     public function duplicate(AbstractEntity $targetEntity, int $sourceId, int $targetId): array
     {
@@ -187,6 +195,11 @@ final class StepGroups extends AbstractRest
         }
     }
 
+    /**
+     * Renumber General steps after a group is removed
+     * Steps moved out of the deleted group can bring ordering values that
+     * overlap with steps already in General steps
+     */
     private function normalizeUngroupedStepOrdering(): void
     {
         $stepTable = $this->Entity->entityType->value . '_steps';

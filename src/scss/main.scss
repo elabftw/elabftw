@@ -509,6 +509,27 @@ button:disabled {
     overflow-wrap: break-word;
     word-wrap: break-word;
   }
+
+  // make nested accordions easier to read with indent & left border
+  // border left is a % of primary color
+  .mce-accordion {
+    --accordion-border-tint: 100%;
+    border-inline-start: 3px solid color-mix(in srgb, var(--primary) var(--accordion-border-tint), transparent);
+    padding-inline-start: 0.75rem;
+  }
+
+  .mce-accordion .mce-accordion {
+    --accordion-border-tint: 75%;
+    margin-inline-start: 1rem;
+  }
+
+  .mce-accordion .mce-accordion .mce-accordion {
+    --accordion-border-tint: 50%;
+  }
+
+  .mce-accordion .mce-accordion .mce-accordion .mce-accordion {
+    --accordion-border-tint: 30%;
+  }
 }
 
 /* fix for big images uploaded in the text */

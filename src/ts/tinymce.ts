@@ -228,6 +228,7 @@ export function getTinymceBaseConfig(page: string): object {
   // prevent autoresize from collapsing an empty editor while allowing editors with content to shrink
   const bodyArea = document.getElementById('body_area') as HTMLTextAreaElement | null;
   const minHeight = page === 'edit' && !bodyArea?.value.trim() ? 500 : 100;
+  const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
 
   return {
     selector: '.mceditable',
@@ -242,7 +243,23 @@ export function getTinymceBaseConfig(page: string): object {
     skin: isDark ? 'oxide-dark' : 'oxide',
     content_css: isDark ? ['/assets/tinymce_content_dark.min.css', '/assets/tinymce_content.min.css'] : ['/assets/tinymce_content.min.css'],
     // Prevent inserted images from overflowing the editor. See #5050.
-    content_style: 'img { max-width: 100%; height: auto; }',
+    // Also make nested accordions readable in edit mode
+    content_style: `
+      :root { --accordion-primary: ${primaryColor}; }
+      img { max-width: 100%; height: auto; }
+      .mce-accordion {
+        --accordion-border-tint: 100%;
+        border: 0;
+        border-inline-start: 3px solid color-mix(in srgb, var(--accordion-primary) var(--accordion-border-tint), transparent);
+        padding-inline-start: 0.75rem;
+      }
+      .mce-accordion .mce-accordion {
+        --accordion-border-tint: 75%;
+        margin-inline-start: 1rem;
+      }
+      .mce-accordion .mce-accordion .mce-accordion { --accordion-border-tint: 50%; }
+      .mce-accordion .mce-accordion .mce-accordion .mce-accordion { --accordion-border-tint: 30%; }
+    `,
     emoticons_database_url: 'assets/tinymce_emojis.js',
     // remove the "Upgrade" button
     promotion: false,

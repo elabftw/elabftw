@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @author Nicolas CARPi <Deltablot>
  * @author Moustapha <Deltablot>
+ * @author Nicolas CARPi <Deltablot>
  * @copyright 2026 Nicolas CARPi
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
@@ -146,8 +146,6 @@ final class StepGroups extends AbstractRest
 
     /**
      * Duplicate groups and return a source id => target id map.
-     *
-     * @return array<int, int>
      */
     public function duplicate(AbstractEntity $targetEntity, int $sourceId, int $targetId): array
     {
@@ -169,7 +167,6 @@ final class StepGroups extends AbstractRest
         return $map;
     }
 
-    /** @param array<int, int|string> $ordering */
     private function updateOrdering(array $ordering): void
     {
         $groups = array_column($this->readAll(), null, 'id');

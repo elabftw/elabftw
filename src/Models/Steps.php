@@ -371,7 +371,6 @@ final class Steps extends AbstractRest
         return $this->Db->execute($req);
     }
 
-    /** @param array<int, array{group_id: int|null, step_ids: array<int, int|string>}> $groups */
     private function updateGroupedOrdering(array $groups): void
     {
         $steps = array_column($this->readAll(), null, 'id');

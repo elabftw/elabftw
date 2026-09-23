@@ -516,6 +516,12 @@ button:disabled {
     --accordion-border-tint: 100%;
     border-inline-start: 3px solid color-mix(in srgb, var(--primary) var(--accordion-border-tint), transparent);
     padding-inline-start: 0.75rem;
+
+    > summary {
+      cursor: pointer;
+      font-weight: bold;
+      padding-block: 0.25rem;
+    }
   }
 
   .mce-accordion .mce-accordion {
@@ -524,10 +530,6 @@ button:disabled {
   }
 
   .mce-accordion .mce-accordion .mce-accordion {
-    --accordion-border-tint: 50%;
-  }
-
-  .mce-accordion .mce-accordion .mce-accordion .mce-accordion {
     --accordion-border-tint: 30%;
   }
 }

@@ -516,6 +516,18 @@ button:disabled {
     --accordion-border-tint: 100%;
     border-inline-start: 3px solid color-mix(in srgb, var(--primary) var(--accordion-border-tint), transparent);
     padding-inline-start: 0.75rem;
+    position: relative;
+
+    // make the left border a larger click target
+    &::before {
+      content: '';
+      cursor: pointer;
+      inset-block: 0;
+      inset-inline-start: -3px;
+      position: absolute;
+      width: 10px;
+      z-index: 1;
+    }
 
     > summary {
       cursor: pointer;

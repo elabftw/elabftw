@@ -243,7 +243,7 @@ export function getTinymceBaseConfig(page: string): object {
     skin: isDark ? 'oxide-dark' : 'oxide',
     content_css: isDark ? ['/assets/tinymce_content_dark.min.css', '/assets/tinymce_content.min.css'] : ['/assets/tinymce_content.min.css'],
     // Prevent inserted images from overflowing the editor. See #5050.
-    // Also make nested accordions readable in edit mode
+    // Also make nested accordions readable in edit mode and left border toggle on click
     content_style: `
   :root { --accordion-primary: ${primaryColor}; }
   img { max-width: 100%; height: auto; }
@@ -252,6 +252,16 @@ export function getTinymceBaseConfig(page: string): object {
     border: 0;
     border-inline-start: 3px solid color-mix(in srgb, var(--accordion-primary) var(--accordion-border-tint), transparent);
     padding-inline-start: 0.75rem;
+    position: relative;
+  }
+  .mce-accordion::before {
+    content: '';
+    cursor: pointer;
+    inset-block: 0;
+    inset-inline-start: -3px;
+    position: absolute;
+    width: 10px;
+    z-index: 1;
   }
   .mce-accordion > summary {
     cursor: pointer;
@@ -380,6 +390,13 @@ export function getTinymceBaseConfig(page: string): object {
     setup: (editor: Editor): void => {
       // holds the timer setTimeout function
       let typingTimer;
+      // Toggle an accordion when clicking its left border.
+      editor.on('click', event => {
+        const accordion = event.target as HTMLDetailsElement;
+        if (accordion.matches('details.mce-accordion')) {
+          accordion.open = !accordion.open;
+        }
+      });
       // use event SkinLoaded instead of init so we're sure skinNode is present
       editor.on('SkinLoaded', () => {
         // prevent skin.min.css from changing appearance of .mce-preview-body element

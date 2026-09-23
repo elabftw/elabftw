@@ -923,6 +923,14 @@ on('select-lang', () => {
   fetch(`app/controllers/UnauthRequestHandler.php?lang=${select.value}`).then(() => window.location.reload());
 });
 
+// Toggle an accordion when clicking its left border
+document.getElementById('body_view')?.addEventListener('click', event => {
+  const accordion = event.target as HTMLDetailsElement;
+  if (accordion.matches('details.mce-accordion')) {
+    accordion.open = !accordion.open;
+  }
+});
+
 /* TOGGLE NEXT ACTION
  * An element with "toggle-next" as data-action value will appear clickable.
  * Clicking on it will toggle the "hidden" attribute of the next sibling element by default.

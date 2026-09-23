@@ -57,6 +57,7 @@ use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
 use RuntimeException;
+use Throwable;
 
 use function _;
 use function array_column;
@@ -225,6 +226,93 @@ class Users extends AbstractRest
         // it's okay to not have requester for this (register page)
         AuditLogs::create(new UserRegister($this->requester->userid ?? 0, $this->userid));
         return $this->userid;
+    }
+
+    /**
+     * Associate a teamless user with a visible team through the access-request flow.
+     *
+     * @return bool Whether an admin must validate the request before login
+     */
+    public function requestTeamAccess(int $teamId): bool
+    {
+        $TeamsHelper = new TeamsHelper($teamId);
+        $TeamsHelper->teamIsVisibleOrExplode();
+        $requiresValidation = (bool) Config::getConfig()->configArr['admin_validate'];
+        $userid = $this->getUserid();
+
+        $this->Db->beginTransaction();
+        try {
+            // Serialize requests for this user so concurrent submissions cannot
+            // associate the same account with several teams.
+            $lockReq = $this->Db->prepare(
+                'SELECT validated FROM users WHERE userid = :userid FOR UPDATE',
+            );
+            $lockReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $this->Db->execute($lockReq);
+            $validated = $lockReq->fetchColumn();
+            if ($validated === false) {
+                throw new ResourceNotFoundException();
+            }
+            if ($validated !== 1) {
+                throw new ImproperActionException(
+                    'Cannot request team access: the user is not validated.',
+                );
+            }
+
+            $membershipReq = $this->Db->prepare(
+                'SELECT 1 FROM users2teams
+                    WHERE users_id = :userid AND is_archived = 0
+                    LIMIT 1',
+            );
+            $membershipReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $this->Db->execute($membershipReq);
+            if ($membershipReq->fetchColumn() !== false) {
+                throw new ImproperActionException(
+                    'Cannot request team access: the user already has an active team.',
+                );
+            }
+
+            // Recreate an archived target membership so its former permissions
+            // cannot be restored by this self-service flow.
+            $archivedMembershipReq = $this->Db->prepare(
+                'DELETE FROM users2teams
+                    WHERE users_id = :userid AND teams_id = :team AND is_archived = 1',
+            );
+            $archivedMembershipReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $archivedMembershipReq->bindValue(':team', $teamId, PDO::PARAM_INT);
+            $this->Db->execute($archivedMembershipReq);
+
+            $wasInserted = new Users2Teams($this)->create(
+                $userid,
+                $teamId,
+                isValidated: !$requiresValidation,
+            );
+            if (!$wasInserted) {
+                throw new ImproperActionException(
+                    'Cannot request team access: this team is already associated with the user.',
+                );
+            }
+
+            if ($requiresValidation) {
+                $this->rawUpdate(UsersColumn::Validated, 0);
+            }
+
+            $this->notifyAdmins(
+                $TeamsHelper->getAllAdminsUserid(),
+                $userid,
+                !$requiresValidation,
+                new Teams($this, $teamId)->teamArr['name'],
+            );
+            if ($requiresValidation) {
+                new SelfNeedValidation($this)->create();
+            }
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
+
+        return $requiresValidation;
     }
 
     /**

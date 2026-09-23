@@ -12,8 +12,12 @@ After=network.target
 # Note: it is recommended to pin to a specific version instead of using the "stable" tag.
 Image=docker.io/elabftw/elabimg:stable
 ContainerName=elabftw
-ReadOnly=true
 UserNS=keep-id
+
+# HARDENING
+ReadOnly=true
+NoNewPrivileges=true
+DropCapability=all
 
 # HEALTHCHECK
 HealthInterval=5s
@@ -53,10 +57,10 @@ Secret=elabftw-s3-sk,type=env,target=ELAB_AWS_SECRET_KEY
 # If you use S3, you do not need to have bind-mounts for uploads or exports.
 # Note: if your folder is an NFS mounted directory, do not add :Z at the end
 # host:container
-Volume=/mnt/data/elabftw_uploads:/var/lib/elabftw/uploads:Z
-Volume=/mnt/data/elabftw_exports:/var/lib/elabftw/exports:Z
+Volume=/mnt/data/elabftw_uploads:/var/lib/elabftw/uploads:Z,noexec
+Volume=/mnt/data/elabftw_exports:/var/lib/elabftw/exports:Z,noexec
 # this is necessary if you encrypt mysql connection and thus want the container to have access to the mysql cert
-Volume=/path/to/mysql-certs:/mysql-cert:z
+Volume=/path/to/mysql-certs:/mysql-cert:z,ro
 Volume=/var/cache/elabftw:/var/cache/elabftw:Z
 # Note the notmpcopyup option which is important
 Mount=type=tmpfs,destination=/run,U=true,tmpfs-mode=0755,notmpcopyup,tmpfs-size=64m

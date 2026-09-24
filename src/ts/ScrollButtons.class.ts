@@ -95,23 +95,32 @@ export default class ScrollButtons {
       menu.setAttribute('aria-hidden', String(!open));
     };
     const refresh = (): void => this.populateTextNavigation(target, menu);
+    let closeTimer: number | undefined;
+    const cancelClose = (): void => {
+      window.clearTimeout(closeTimer);
+      closeTimer = undefined;
+    };
 
     wrapper.addEventListener('pointerenter', () => {
+      cancelClose();
       refresh();
       setOpen(true);
     });
     wrapper.addEventListener('pointerleave', () => {
       if (!wrapper.contains(document.activeElement)) {
-        setOpen(false);
+        cancelClose();
+        closeTimer = window.setTimeout(() => setOpen(false), 250);
       }
     });
     trigger.addEventListener('focus', () => {
+      cancelClose();
       refresh();
       setOpen(true);
     });
     wrapper.addEventListener('focusout', event => {
       const nextTarget = event.relatedTarget;
       if (!(nextTarget instanceof Node) || !wrapper.contains(nextTarget)) {
+        cancelClose();
         setOpen(false);
       }
     });
@@ -122,9 +131,11 @@ export default class ScrollButtons {
 
   private populateTextNavigation(target: HTMLElement, menu: HTMLElement): void {
     const topTarget = document.getElementById(target.dataset.scrollBtnTop ?? '');
-    const iframe = document.getElementById(target.dataset.scrollBtnHeadings ?? '') as HTMLIFrameElement | null;
-    const editorBody = iframe?.contentDocument?.body;
-    if (!topTarget || !editorBody) {
+    const headingsSource = document.getElementById(target.dataset.scrollBtnHeadings ?? '');
+    const headingsRoot = headingsSource instanceof HTMLIFrameElement
+      ? headingsSource.contentDocument?.body
+      : headingsSource;
+    if (!topTarget || !headingsRoot) {
       menu.replaceChildren();
       return;
     }
@@ -140,7 +151,7 @@ export default class ScrollButtons {
       () => this.scrollElementIntoView(topTarget, scrollOffset),
     ));
 
-    const headings = Array.from(editorBody.querySelectorAll<HTMLElement>('h1, h2, h3'));
+    const headings = Array.from(headingsRoot.querySelectorAll<HTMLElement>('h1, h2, h3'));
     let currentList = list;
     let currentLevel = 0;
     let lastItem: HTMLLIElement | null = null;

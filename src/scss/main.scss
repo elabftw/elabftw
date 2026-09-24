@@ -1582,8 +1582,15 @@ input[type='color'] {
   }
 }
 
-.scroll-text-navigation-trigger .scroll-button-label {
-  display: none;
+.scroll-text-navigation-trigger {
+  &:hover,
+  &:focus-visible {
+    .scroll-button-label {
+      margin-right: 0;
+      max-width: 0;
+      opacity: 0;
+    }
+  }
 }
 
 .scroll-text-navigation-menu {

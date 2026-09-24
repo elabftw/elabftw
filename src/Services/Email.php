@@ -36,6 +36,7 @@ use function array_map;
 use function preg_replace;
 use function quoted_printable_encode;
 use function sprintf;
+use function html_entity_decode;
 
 /**
  * Email service
@@ -43,7 +44,7 @@ use function sprintf;
  */
 class Email
 {
-    public string $footer;
+    public array $footer;
 
     private Address $from;
 
@@ -125,7 +126,8 @@ class Email
         ->subject('[eLabFTW] ' . _('Test email'))
         ->from($this->from)
         ->to(new Address($email, 'Admin eLabFTW'))
-        ->text('Congratulations, you correctly configured eLabFTW to send emails! :)' . $this->footer);
+        ->text('Congratulations, you correctly configured eLabFTW to send emails! :)' . $this->footer['plain'])
+        ->html('Congratulations, you correctly configured eLabFTW to send (HTML) emails! :)' . $this->footer['html']);
 
         return $this->send($message) ? 1 : 0;
     }
@@ -145,18 +147,18 @@ class Email
 
         $sender = sprintf("\n\nEmail sent by %s. You can reply directly to this email.\n", $replyTo->getName());
 
-        $content = $body . $sender . $this->footer;
+        $content = $body . $sender;
 
         if ($sendGrouped) {
             // send one single email to everyone
             $message = (new Memail())
-            ->subject($subject)
+            ->subject(self::toPlainText($subject))
             ->from($this->from)
             ->to($replyTo)
             // set recipients in BCC to hide email addresses
             ->bcc(...$addresses)
             ->replyTo($replyTo)
-            ->text($content);
+            ->text(self::toPlainText($content . $this->footer['plain']));
 
             return $this->send($message) ? $addressesCount : 0;
         }
@@ -180,7 +182,7 @@ class Email
         ->subject($subject)
         ->from($this->from)
         ->to($to)
-        ->text($body);
+        ->text($body . $this->footer['plain']);
 
         if (!empty($cc)) {
             $message->cc(...$cc);
@@ -191,7 +193,7 @@ class Email
         }
 
         if (!empty($htmlBody)) {
-            $message->html($htmlBody);
+            $message->html($htmlBody . $this->footer['html']);
 
             if (empty($body)) {
                 $textWithLinks = (new Transformer())
@@ -204,7 +206,7 @@ class Email
                 // <a href="url">link text</a> => link text (url)
                 $plainText = preg_replace('/<a href="([^"]*)">([^<]*)<\/a>/iu', '$2 ($1)', $textWithLinks);
 
-                $message->text($plainText);
+                $message->text($plainText . $this->footer['plain']);
             }
         }
 
@@ -220,7 +222,7 @@ class Email
             ->subject($subject)
             ->from($this->from)
             ->to(...$emails)
-            ->text($body . $this->footer);
+            ->text($body . $this->footer['plain']);
         return $this->send($message);
     }
 
@@ -248,14 +250,14 @@ class Email
 
     private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int
     {
-        $subject = Filter::toPureString($subject);
-        $content = Filter::toPureString($content);
         // send emails one by one
         $sentCount = 0;
+        $plainSubject = self::toPlainText($subject);
+        $plainContent = self::toPlainText($content);
         foreach ($addresses as $address) {
             // use a try catch so we finish the loop even if errors are encountered
             try {
-                if ($this->sendEmail($address, $subject, $content, replyTo: $replyTo)) {
+                if ($this->sendEmail($address, $plainSubject, $plainContent, replyTo: $replyTo)) {
                     $sentCount++;
                     continue;
                 }
@@ -269,9 +271,12 @@ class Email
         return $sentCount;
     }
 
-    private function makeFooter(): string
+    private function makeFooter(): array
     {
-        return sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL'));
+        return array(
+            'plain' => sprintf("\n\n~~~\n%s %s\n", _('Sent from eLabFTW'), Env::asUrl('SITE_URL')),
+            'html' => sprintf('<div><br />~~~<br />%s %s</div>', _('Sent from eLabFTW'), Env::asUrl('SITE_URL')),
+        );
     }
 
     private static function getAllEmailAddressesRawData(EmailTarget $target, ?int $targetId = null, ?array $range = null): array
@@ -329,5 +334,14 @@ class Email
         $Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    private static function toPlainText(string $input): string
+    {
+        return html_entity_decode(
+            Filter::toPureString($input),
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8',
+        );
     }
 }

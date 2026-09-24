@@ -28,7 +28,7 @@ use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidCredentialsException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -57,6 +57,7 @@ use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
 use RuntimeException;
+use Throwable;
 
 use function _;
 use function array_column;
@@ -66,6 +67,9 @@ use function in_array;
 use function json_decode;
 use function sprintf;
 use function strtolower;
+use function strlen;
+use function strrpos;
+use function substr;
 
 /**
  * Users
@@ -229,6 +233,93 @@ class Users extends AbstractRest
         // it's okay to not have requester for this (register page)
         AuditLogs::create(new UserRegister($this->requester->userid ?? 0, $this->userid));
         return $this->userid;
+    }
+
+    /**
+     * Associate a teamless user with a visible team through the access-request flow.
+     *
+     * @return bool Whether an admin must validate the request before login
+     */
+    public function requestTeamAccess(int $teamId): bool
+    {
+        $TeamsHelper = new TeamsHelper($teamId);
+        $TeamsHelper->teamIsVisibleOrExplode();
+        $requiresValidation = (bool) Config::getConfig()->configArr['admin_validate'];
+        $userid = $this->getUserid();
+
+        $this->Db->beginTransaction();
+        try {
+            // Serialize requests for this user so concurrent submissions cannot
+            // associate the same account with several teams.
+            $lockReq = $this->Db->prepare(
+                'SELECT validated FROM users WHERE userid = :userid FOR UPDATE',
+            );
+            $lockReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $this->Db->execute($lockReq);
+            $validated = $lockReq->fetchColumn();
+            if ($validated === false) {
+                throw new ResourceNotFoundException();
+            }
+            if ($validated !== 1) {
+                throw new ImproperActionException(
+                    'Cannot request team access: the user is not validated.',
+                );
+            }
+
+            $membershipReq = $this->Db->prepare(
+                'SELECT 1 FROM users2teams
+                    WHERE users_id = :userid AND is_archived = 0
+                    LIMIT 1',
+            );
+            $membershipReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $this->Db->execute($membershipReq);
+            if ($membershipReq->fetchColumn() !== false) {
+                throw new ImproperActionException(
+                    'Cannot request team access: the user already has an active team.',
+                );
+            }
+
+            // Recreate an archived target membership so its former permissions
+            // cannot be restored by this self-service flow.
+            $archivedMembershipReq = $this->Db->prepare(
+                'DELETE FROM users2teams
+                    WHERE users_id = :userid AND teams_id = :team AND is_archived = 1',
+            );
+            $archivedMembershipReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $archivedMembershipReq->bindValue(':team', $teamId, PDO::PARAM_INT);
+            $this->Db->execute($archivedMembershipReq);
+
+            $wasInserted = new Users2Teams($this)->create(
+                $userid,
+                $teamId,
+                isValidated: !$requiresValidation,
+            );
+            if (!$wasInserted) {
+                throw new ImproperActionException(
+                    'Cannot request team access: this team is already associated with the user.',
+                );
+            }
+
+            if ($requiresValidation) {
+                $this->rawUpdate(UsersColumn::Validated, 0);
+            }
+
+            $this->notifyAdmins(
+                $TeamsHelper->getAllAdminsUserid(),
+                $userid,
+                !$requiresValidation,
+                new Teams($this, $teamId)->teamArr['name'],
+            );
+            if ($requiresValidation) {
+                new SelfNeedValidation($this)->create();
+            }
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
+
+        return $requiresValidation;
     }
 
     /**
@@ -409,14 +500,20 @@ class Users extends AbstractRest
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
         );
-        // if the user is Admin somewhere (or Sysadmin), return a pretty complete response
-        // Note: having something where you get different response depending if the user is part of your team or not seems too complex to implement and maintain
-        if ($this->requester->isAdminSomewhere() || $this->requester->isSysadmin()) {
-            return $users;
-        }
-        // otherwise, remove some more data, here we want only the super basic data for basic users
-        $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'last_login', 'valid_until', 'is_sysadmin', 'teams');
-        return array_map(function ($user) use ($removeKeys) {
+        $isSysadmin = $this->requester->isSysadmin();
+        $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'valid_until', 'is_sysadmin', 'teams');
+        return array_map(function (array $user) use ($isSysadmin, $removeKeys): array {
+            if (!$isSysadmin) {
+                unset($user['last_login']);
+            }
+            if ($isSysadmin || $this->requester->isAdminOf($user['userid'])) {
+                return $user;
+            }
+            // Keep the requester's own email visible, but mask other users' emails.
+            if ($this->requester->getUserid() !== (int) $user['userid']) {
+                $user['email'] = self::maskEmail($user['email']);
+            }
+            // return only basic data when the requester is not an Admin of this user
             foreach ($removeKeys as $k) {
                 unset($user[$k]);
             }
@@ -437,8 +534,11 @@ class Users extends AbstractRest
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token_hash']);
+        if (!$this->requester->isSysadmin()) {
+            unset($userData['last_login']);
+        }
         // keep sig_privkey in response if requester is target
-        if ($this->requester->userData['userid'] !== $this->userData['userid']) {
+        if ($this->requester->getUserid() !== $this->getUserid()) {
             unset($userData['sig_privkey']);
         }
         return $userData;
@@ -485,14 +585,14 @@ class Users extends AbstractRest
                     $Config = Config::getConfig();
                     $hasPermission = $this->requester->isSysadmin() || $this->requester->userData['can_manage_users2teams'] === 1;
                     if (!$hasPermission && $Config->configArr['admins_import_users'] === '0') {
-                        throw new IllegalActionException('Adding a user in your team is disabled at the instance level (config: admins_import_users)');
+                        throw new ForbiddenException('Adding a user in your team is disabled at the instance level (config: admins_import_users)');
                     }
                     // need to be admin to "import" a user in a team
                     $team = (int) ($params['team'] ?? $this->requester->userData['team']);
                     $TeamsHelper = new TeamsHelper($team);
                     $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
                     if (!$hasPermission && $isAdmin === false) {
-                        throw new IllegalActionException('Only Admin can add a user to a team (where they are Admin)');
+                        throw new ForbiddenException('Only Admin can add a user to a team (where they are Admin)');
                     }
                     new Users2Teams($this->requester)->create($this->userData['userid'], $team, isValidated: $this->userData['validated'] === 1);
                 }
@@ -506,7 +606,7 @@ class Users extends AbstractRest
                 function () use ($params) {
                     // only a sysadmin can edit anything about another sysadmin
                     if (!$this->requester->isSysadmin() && $this->getUserid() !== $this->requester->getUserid() && $this->isSysadmin()) {
-                        throw new IllegalActionException('A sysadmin level account is required to edit another sysadmin account.');
+                        throw new ForbiddenException('A sysadmin level account is required to edit another sysadmin account.');
                     }
                     $Config = Config::getConfig();
                     foreach ($params as $target => $content) {
@@ -567,7 +667,7 @@ class Users extends AbstractRest
      * Destroy user. Will completely remove everything from the user.
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
 
@@ -699,7 +799,7 @@ class Users extends AbstractRest
         if ($params->getTarget() === 'email' && $params->getContent() !== strtolower($this->userData['email'])) {
             // we can only edit our own email, or be sysadmin
             if (!$this->isSelf() && !$this->requester->isSysadmin()) {
-                throw new IllegalActionException('User tried to edit email of another user but is not sysadmin.');
+                throw new ForbiddenException('User tried to edit email of another user but is not sysadmin.');
             }
             // run email validator
             $Config = Config::getConfig();
@@ -794,7 +894,7 @@ class Users extends AbstractRest
     public function isSysadminOrExplode(): void
     {
         if ($this->isSysadmin() === false) {
-            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
         }
     }
 
@@ -806,7 +906,7 @@ class Users extends AbstractRest
     public function isAdminOrExplode(): void
     {
         if (!$this->isSysadmin() && !$this->isAdmin()) {
-            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
         }
     }
 
@@ -818,8 +918,20 @@ class Users extends AbstractRest
     public function isSelfOrExplode(): void
     {
         if ($this->isSelf() === false) {
-            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
         }
+    }
+
+    // Return IDs of teams where the user has an active membership
+    public function getActiveTeamIds(): array
+    {
+        $teamIds = array();
+        foreach ($this->userData['teams'] ?? array() as $team) {
+            if ((int) $team['is_archived'] === 0) {
+                $teamIds[] = (int) $team['id'];
+            }
+        }
+        return $teamIds;
     }
 
     protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self
@@ -827,7 +939,8 @@ class Users extends AbstractRest
         $Db = Db::getConnection();
         // Prefer an active account, but return an archived account if it is the only match.
         $sql = sprintf(
-            'SELECT userid FROM users WHERE %s = :term AND CAST(%s AS BINARY) = CAST(:exact_term AS BINARY) %s
+            'SELECT userid FROM users WHERE %s = :term
+             AND CAST(LOWER(%s) AS BINARY) = CAST(LOWER(:exact_term) AS BINARY) %s
              ORDER BY EXISTS (
               SELECT 1
               FROM users2teams AS ut
@@ -857,7 +970,7 @@ class Users extends AbstractRest
             $this->update(new UserParams('mfa_secret', null));
             return $this->readOne();
         }
-        throw new IllegalActionException('User tried to disable 2fa but is not sysadmin or same user.');
+        throw new ForbiddenException('User tried to disable 2fa but is not sysadmin or same user.');
     }
 
     private function canReadOrExplode(): void
@@ -867,11 +980,11 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdmin && !$this->isSelf()) {
-            throw new IllegalActionException('This endpoint requires admin privileges to access other users.');
+            throw new ForbiddenException('This endpoint requires admin privileges to access other users.');
         }
         // check we view user of our team, unless we are sysadmin and we can access it
         if (!$this->requester->isAdminOf($this->getUserid())) {
-            throw new IllegalActionException('User tried to access user from other team.');
+            throw new ForbiddenException('User tried to access user from other team.');
         }
     }
 
@@ -927,7 +1040,7 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
-            throw new IllegalActionException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
         }
     }
 
@@ -960,5 +1073,24 @@ class Users extends AbstractRest
             $Notifications = $isValidated ? new UserCreated($adminUser, $userid, $team) : new UserNeedValidation($adminUser, $userid, $team);
             $Notifications->create();
         }
+    }
+
+    private static function maskEmail(string $email): string
+    {
+        $separatorPosition = strrpos($email, '@');
+        if ($separatorPosition === false) {
+            return '***';
+        }
+        $localPart = substr($email, 0, $separatorPosition);
+        $domain = substr($email, $separatorPosition + 1);
+        $length = strlen($localPart);
+
+        $maskedLocalPart = match (true) {
+            $length <= 1 => '*',
+            $length === 2 => $localPart[0] . '***',
+            $length >= 8 => substr($localPart, 0, 2) . '***' . substr($localPart, -2),
+            default => $localPart[0] . '***' . substr($localPart, -1),
+        };
+        return sprintf('%s@%s', $maskedLocalPart, $domain);
     }
 }

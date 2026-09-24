@@ -24,7 +24,7 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
 # build nginx with only the bare minimum of features or modules
 FROM alpine:3.24 AS nginx-builder
 
-ENV NGINX_VERSION=1.30.4
+ENV NGINX_VERSION=1.30.5
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
 ENV NGX_BROTLI_COMMIT=a71f9312c2deb28875acc7bacfdd5695a111aa53
@@ -214,6 +214,7 @@ ENV ELABFTW_VERSION=$ELABFTW_VERSION
 COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=nginx-builder /etc/nginx/mime.types /etc/nginx/mime.types
 COPY --from=nginx-builder /etc/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
+RUN echo 'fastcgi_param ELABFTW_REQUEST_ID $request_id;' >> /etc/nginx/fastcgi.conf
 # END NGINX
 
 # OPENBABEL
@@ -223,6 +224,7 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # php8-bcmath is required to send emails via Exchange (NTLM authenticator)
 # php8-gd is required by mpdf for transparent png
 # php8-iconv is required by LdapRecord php library
+# php84-xmlwriter is required for multipart uploads with S3
 # imagemagick-svg is for mathjax support in pdfs
 # imagemagick-heic is for support for heic/heif
 # don't put line comments inside this instruction
@@ -257,6 +259,7 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-session \
     php84-sodium \
     php84-xml \
+    php84-xmlwriter \
     php84-zip \
     tzdata
 
@@ -375,6 +378,10 @@ RUN rm -f /etc/php84/php.ini && ln -s /run/php/php.ini /etc/php84/php.ini
 COPY ./containers/elabimg/php/php-fpm.conf /etc/php84/php-fpm.conf
 COPY ./containers/elabimg/php/elabpool.conf /etc/php84/php-fpm.d/elabpool.conf.tpl
 # END PHP
+
+# LDAP: keep the runtime configuration on the writable /run tmpfs
+RUN mv /etc/openldap/ldap.conf /etc/openldap/ldap.conf.tpl \
+    && ln -s /run/openldap/ldap.conf /etc/openldap/ldap.conf
 
 # create invoker service
 RUN mkdir -p /etc/s6-overlay/s6-rc.d/invoker && echo "longrun" > /etc/s6-overlay/s6-rc.d/invoker/type

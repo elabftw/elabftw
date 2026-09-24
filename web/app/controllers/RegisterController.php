@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Exceptions\DemoModeException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Hash\LocalPasswordHash;
 use Elabftw\Params\UserParams;
@@ -45,7 +45,7 @@ try {
 
     // Stop bot registration by checking if the (invisible to humans) bot input is filled
     if (!empty($App->Request->request->get('bot'))) {
-        throw new IllegalActionException('The bot field was filled on register page. Possible automated registration attempt.');
+        throw new ImproperActionException('The bot field was filled on register page. Possible automated registration attempt.');
     }
 
     if (Check::id($App->Request->request->getInt('team')) === false
@@ -87,7 +87,7 @@ try {
     }
     // store the email here so we can put it in the login field
     $App->Session->set('email', $App->Request->request->getString('email'));
-} catch (IllegalActionException $e) {
+} catch (ForbiddenException $e) {
     $App->Log->notice('', array(array('userid' => $App->Session->get('userid')), array('IllegalAction', $e->getMessage())));
     $App->Session->getFlashBag()->add('ko', Messages::InsufficientPermissions->toHuman());
     $location = '/register.php';

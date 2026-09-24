@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
@@ -51,7 +51,7 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
     public function testUserNotSysadmin(): void
     {
         $Instance = new Instance($this->getUserInTeam(2), $this->email, true);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         $Instance->postAction(Action::Destroy, array());
     }
 

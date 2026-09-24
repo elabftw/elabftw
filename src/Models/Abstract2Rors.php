@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Check;
 use Override;
@@ -47,7 +47,7 @@ abstract class Abstract2Rors extends AbstractRest
     protected function canwriteOrExplode(): void
     {
         if (!$this->canwrite) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 

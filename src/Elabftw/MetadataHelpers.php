@@ -291,12 +291,12 @@ final class MetadataHelpers
         }
 
         $options = array_map(
-            static fn(mixed $option): mixed => is_scalar($option) ? (string) $option : $option,
+            static fn(mixed $option): mixed => is_scalar($option) ? mb_strtolower(trim((string) $option)) : $option,
             $options,
         );
 
         foreach ($values as $option) {
-            if ($option !== '' && $option !== null && !in_array((string) $option, $options, true)) {
+            if ($option !== '' && $option !== null && !in_array(mb_strtolower(trim((string) $option)), $options, true)) {
                 throw new ImproperActionException(
                     sprintf(
                         _('Metadata field %s contains an invalid option.'),

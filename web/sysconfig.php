@@ -16,7 +16,6 @@ use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\PasswordComplexity;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
@@ -132,8 +131,6 @@ try {
         'permissions' => BasePermissions::cases(),
     );
     $Response->setContent($App->render($template, $renderArr));
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

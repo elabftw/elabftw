@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\OnboardingEmail;
@@ -63,16 +63,24 @@ final class Teams extends AbstractRest
     public function getTeamsFromIdOrNameOrOrgidArray(array $teams, bool $allowTeamCreation = false): array
     {
         $res = array();
-        $sql = 'SELECT id, name FROM teams WHERE id = :query OR name = :query OR orgid = :query';
+        $sql = 'SELECT id, name FROM teams WHERE visible = 1 AND (id = :query OR name = :query OR orgid = :query)';
+        $existsSql = 'SELECT 1 FROM teams WHERE id = :query OR name = :query OR orgid = :query LIMIT 1';
         $req = $this->Db->prepare($sql);
+        $existsReq = $this->Db->prepare($existsSql);
         foreach ($teams as $query) {
-            $req->bindValue(':query', trim((string) $query));
+            $identifier = trim((string) $query);
+            $req->bindValue(':query', $identifier);
             $this->Db->execute($req);
             $team = $req->fetch();
             // team was not found, we need to create it, but only if we're allowed to
             if ($team === false && $allowTeamCreation === true) {
-                $freshTeam = new self($this->Users, $this->create($query));
-                $team = $freshTeam->selectOne();
+                $existsReq->bindValue(':query', $identifier);
+                $this->Db->execute($existsReq);
+                // Only create if the team does not already exist, including hidden teams.
+                if ($existsReq->fetch() === false) {
+                    $freshTeam = new self($this->Users, $this->create($identifier));
+                    $team = $freshTeam->selectOne();
+                }
             }
             // this prevents adding a bool(false)
             if (is_array($team)) {
@@ -101,7 +109,13 @@ final class Teams extends AbstractRest
         $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $addToTeams = array_diff($teamIdArr, $currentTeams);
-        $Users2Teams->addUserToTeams($userid, $addToTeams, isValidated: $this->Users->userData['validated'] === 1);
+        $isValidated = $this->Users->userData['validated'] === 1;
+        foreach ($addToTeams as $teamId) {
+            $isAdmin = (new TeamsHelper($teamId))->isFirstUserInTeam()
+                ? BinaryValue::True
+                : BinaryValue::False;
+            $Users2Teams->create($userid, $teamId, $isAdmin, $isValidated);
+        }
         $currentTeams = $UsersHelper->getTeamsIdFromUserid();
 
         $rmFromTeams = array_diff($currentTeams, $teamIdArr);
@@ -227,7 +241,7 @@ final class Teams extends AbstractRest
      * Delete a team only if all the stats are at zero
      */
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
 
@@ -333,7 +347,7 @@ final class Teams extends AbstractRest
     public function canWriteOrExplode(): void
     {
         if (!$this->canWrite()) {
-            throw new IllegalActionException('User tried to update a team setting but they are not admin of that team.');
+            throw new ForbiddenException('User tried to update a team setting but they are not admin of that team.');
         }
     }
 

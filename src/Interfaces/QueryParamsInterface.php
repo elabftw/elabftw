@@ -23,6 +23,8 @@ interface QueryParamsInterface
 
     public function getLimit(): int;
 
+    public function getOffset(): int;
+
     public function getStatesSql(string $tableName): string;
 
     public function getStates(): array;
@@ -38,6 +40,8 @@ interface QueryParamsInterface
     public function getRelatedOrigin(): ?EntityType;
 
     public function getFilterSql(): string;
+
+    public function getSkipOrderPinned(): bool;
 
     public function setSkipOrderPinned(bool $value): void;
 

@@ -32,5 +32,5 @@ interface RestInterface
 
     public function getApiPath(): string;
 
-    public function destroy(): bool;
+    public function destroy(bool $recursive = false): bool;
 }

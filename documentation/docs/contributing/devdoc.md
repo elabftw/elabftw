@@ -131,10 +131,8 @@ Run this script to start Cypress with all browsers locally, from a Docker image:
 Here are some ground rules for exceptions thrown in the code:
 
 * Code should not throw a generic Exception, but one of Elabftw\Exceptions
-* ImproperActionException when something forbidden happens but it's not suspicious. Error is not logged, and message is shown to user
-* DatabaseErrorException when a SQL query failed, the error is logged and message is shown to user
-* IllegalActionException when something should not happen in normal conditions unless someone is poking around by editing the requests. Error is logged and generic permission error is shown
-* FilesystemErrorException, same as DatabaseErrorException but for file operations
+* ImproperActionException when the request is wrong
+* ForbiddenException for authorization issues
 * For the rest, the error is logged and a generic error message is shown to user
 * Code should throw an Exception as soon as something goes wrong
 * Exceptions should not be caught in the code (models), only in the controllers

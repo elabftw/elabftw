@@ -94,7 +94,7 @@
   let isLoading = $state(false);
   let isLoadingMore = $state(false);
   let hasMore = $state(true);
-  let sentinelEl: HTMLDivElement | null = null;
+  let sentinelEl = $state<HTMLDivElement | null>(null);
   let currentQueryKey = '';
   let reloadVersion = $state(0);
   let debouncedSearchQuery = $state('');
@@ -431,9 +431,9 @@
         params['owner'] = currentOwner;
       }
 
-      if (currentTags.length > 0) {
-        params['tags[]'] = currentTags;
-      }
+      currentTags.forEach((tag, index) => {
+        params[`tags[${index}]`] = tag;
+      });
 
       if (currentState.length > 0) {
         params['state'] = currentState;
@@ -757,17 +757,17 @@
 
           <div class='d-flex flex-row'>
             {#if template}
-              <a
+              <button
+                type='button'
                 data-action='create-entity'
                 data-type={createDataType}
                 data-tplid={entity.id}
-                href='#'
                 class='btn btn-primary left-icon mr-1 lh-normal p-2 border-0 hl-hover-gray'
                 title={createLabel}
                 aria-label={createLabel}
               >
                 <i class='fas fa-file-circle-plus fa-fw'></i>
-              </a>
+              </button>
             {/if}
 
             {#if entity.locked}

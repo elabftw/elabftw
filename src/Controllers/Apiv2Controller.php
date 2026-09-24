@@ -23,7 +23,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidApiSubModelException;
 use Elabftw\Factories\LinksFactory;
@@ -53,6 +53,7 @@ use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\InstanceWebhooks;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
+use Elabftw\Models\Links\AbstractContainersLinks;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\ProcurementRequests;
@@ -116,7 +117,7 @@ final class Apiv2Controller extends AbstractApiController
 
     private array $reqBody = array();
 
-    private ExportFormat $format = ExportFormat::Json;
+    private ExportFormat $format = ExportFormat::None;
 
     private Action $action = Action::Create;
 
@@ -131,7 +132,7 @@ final class Apiv2Controller extends AbstractApiController
             return match ($this->Request->getMethod()) {
                 Request::METHOD_GET => $this->handleGet(),
                 Request::METHOD_POST => $this->handlePost(),
-                Request::METHOD_DELETE => new JsonResponse($this->Model->destroy(), Response::HTTP_NO_CONTENT),
+                Request::METHOD_DELETE => new JsonResponse($this->Model->destroy($this->Request->query->getBoolean('delete_containers')), Response::HTTP_NO_CONTENT),
                 Request::METHOD_PATCH => new JsonResponse($this->handlePatch()),
                 // send error 405 for Method Not Allowed, with Allow header as per spec:
                 // https://tools.ietf.org/html/rfc7231#section-7.4.1
@@ -265,6 +266,10 @@ final class Apiv2Controller extends AbstractApiController
         if (($this->id !== null && !$this->hasSubmodel) || ($this->subId !== null && $this->hasSubmodel)) {
             return $this->Model->readOne();
         }
+        if ($this->Model instanceof AbstractContainersLinks && $this->Request->query->getBoolean('has_any')) {
+            $containersCount = $this->Model->countContainersForEntity();
+            return array('has_containers' => $containersCount > 0, 'containers_count' => $containersCount);
+        }
         $queryParams = $this->Model->getQueryParams($this->Request->query);
         return $this->Model->readAll($queryParams);
     }
@@ -285,6 +290,7 @@ final class Apiv2Controller extends AbstractApiController
             ExportFormat::Csv,
             ExportFormat::Eln,
             ExportFormat::ElnHtml,
+            ExportFormat::Json,
             ExportFormat::QrPdf,
             ExportFormat::QrPng,
             ExportFormat::Pdf,
@@ -339,7 +345,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),
             ApiEndpoint::IdpsSources => new IdpsSources($this->requester, $this->id),
             ApiEndpoint::Import => new ImportHandler($this->requester, App::getDefaultLogger()),
-            ApiEndpoint::Info => new Info(),
+            ApiEndpoint::Info => new Info($this->requester),
             ApiEndpoint::Instance => new Instance($this->requester, $this->getEmail(), (bool) Config::getConfig()->configArr['email_send_grouped']),
             ApiEndpoint::Export => new Exports(App::getDefaultLogger(), $this->requester, Storage::EXPORTS->getStorage(), $this->id),
             ApiEndpoint::Experiments,
@@ -476,8 +482,10 @@ final class Apiv2Controller extends AbstractApiController
 
     private function applyRestrictions(): void
     {
+        $this->applyAnonymousRestrictions();
+
         if (($this->Model instanceof Config) && $this->requester->userData['is_sysadmin'] !== 1) {
-            throw new IllegalActionException('Non sysadmin user tried to use a restricted api endpoint.');
+            throw new ForbiddenException('Non sysadmin user tried to use a restricted api endpoint.');
         }
 
         $contentType = $this->Request->headers->get('content-type') ?? '';
@@ -499,6 +507,32 @@ final class Apiv2Controller extends AbstractApiController
         // only accept json content-type unless it's GET or DELETE (also prevents csrf!)
         if (!in_array($this->Request->getMethod(), array(Request::METHOD_GET, Request::METHOD_DELETE), true) && $contentType !== 'application/json') {
             throw new ImproperActionException('Incorrect content-type header.');
+        }
+    }
+
+    private function applyAnonymousRestrictions(): void
+    {
+        if (!($this->requester instanceof AnonymousUser)) {
+            return;
+        }
+        $allowedEndpoints = array(
+            ApiEndpoint::Experiments,
+            ApiEndpoint::Items,
+            ApiEndpoint::ExperimentsTemplates,
+            ApiEndpoint::ItemsTypes,
+            ApiEndpoint::ExtraFieldsKeys,
+            ApiEndpoint::Users,
+        );
+        if (!in_array($this->endpoint, $allowedEndpoints, true)) {
+            throw new ForbiddenException();
+        };
+        // anon users cannot enumerate another user's endpoint
+        if (
+            $this->endpoint === ApiEndpoint::Users
+            && $this->id !== null
+            && $this->id !== $this->requester->userData['userid']
+        ) {
+            throw new ForbiddenException();
         }
     }
 }

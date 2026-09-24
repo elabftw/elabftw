@@ -15,6 +15,10 @@
       <div class='d-flex flex-row'>
         {#  TODO: make scopeBtn work without full page reload #}
         {# RESOURCES SCOPE #}
+        {# If an item is selected, it's forced to 'Everything' and disabled #}
+        <div id='scopeItemsLocked' class='btn-group' hidden>
+          <button disabled class='btn dropdown-toggle' type='button' aria-label='Scope' title='Scope'><i class='fas fa-globe fa-fw mr-1'></i></button>
+        </div>
         {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
         {# FILTERS GROUP CATEGORY AND RESOURCE #}
         {% include 'scheduler-filter-items.html' %}

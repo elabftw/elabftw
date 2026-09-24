@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\AppException;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\TeamGroups;
 use Exception;
@@ -41,8 +40,6 @@ try {
     );
 
     $Response->setContent($App->render($template, $renderArr));
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

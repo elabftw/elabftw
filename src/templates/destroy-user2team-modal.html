@@ -1,0 +1,34 @@
+{# Confirmation modal for removing a user from a team #}
+<div class='modal fade' id='destroyUser2teamModal' tabindex='-1' role='dialog' aria-labelledby='destroyUser2teamModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='destroyUser2teamModalLabel'>{{ 'Remove user from team'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body'>
+        <dl class='row mb-3'>
+          <dt class='col-sm-3'>{{ 'User'|trans }}</dt>
+          <dd class='col-sm-9' id='destroyUser2teamUser'></dd>
+          <dt class='col-sm-3'>{{ 'Team'|trans }}</dt>
+          <dd class='col-sm-9' id='destroyUser2teamTeam'></dd>
+        </dl>
+        <p>{{ 'This action removes the association between the user and the team and deletes their API keys for that team. It does not delete the user or their entries.'|trans }}</p>
+        <div class='alert alert-warning' role='alert'>
+          <p class='font-weight-bold'>{{ 'Removing a user from a team is not recommended.'|trans }}</p>
+          <p>{{ "Existing entries owned by this user may disappear from this team's listings while remaining accessible through direct links or the API."|trans }}</p>
+          <span>{{ 'Archive the user in this team instead unless you specifically need to remove the association.'|trans }}</span>
+        </div>
+        <span>{{ 'Are you sure you want to continue?'|trans }}</span>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='button' class='btn btn-danger' id='destroyUser2teamButton' data-action='destroy-user2team' disabled>
+          {{ 'Remove user from team'|trans }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

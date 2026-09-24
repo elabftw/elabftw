@@ -301,6 +301,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (about.page !== 'show') {
     return;
   }
+
+  const withSelected = document.getElementById('withSelected');
+  if (withSelected) {
+    selectedEntities.subscribe(selected => {
+      const isVisible = selected.length > 0;
+      withSelected.classList.toggle('is-visible', isVisible);
+      withSelected.toggleAttribute('inert', !isVisible);
+    });
+  }
+
   // can't have await at top level, so wrap it
   void (async (): Promise<void> => {
     const me = await getMe();
@@ -808,7 +818,6 @@ document.addEventListener('DOMContentLoaded', () => {
         (checkbox.closest('.entity') as HTMLElement).style.backgroundColor = '';
       });
 
-      document.getElementById('withSelected')?.setAttribute('hidden', 'hidden');
       document.querySelector('a[data-action="invert-entities-selection"]')?.setAttribute('hidden', 'hidden');
       const selectAll = document.querySelector<HTMLElement>('[data-action="toggle-select-all-entities"]');
       if (selectAll && selectAll.dataset.target === 'unselect') {
@@ -864,11 +873,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const anyChecked = get(selectedEntities).length > 0;
     const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]') as HTMLAnchorElement;
     if (anyChecked) {
-      document.getElementById('withSelected')?.removeAttribute('hidden');
       invertSelections?.removeAttribute('hidden');
     } else {
-      // Remove withSelected actions if there are no more checked checkboxes
-      document.getElementById('withSelected')?.setAttribute('hidden', 'hidden');
       invertSelections?.setAttribute('hidden', 'hidden');
     }
   });
@@ -910,7 +916,6 @@ document.addEventListener('DOMContentLoaded', () => {
         (box as HTMLInputElement).checked = true;
         (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
       });
-      document.getElementById('withSelected')?.removeAttribute('hidden');
       el.dataset.target = 'unselect';
     } else {
       document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
@@ -918,7 +923,6 @@ document.addEventListener('DOMContentLoaded', () => {
         (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
       });
       el.dataset.target = 'select';
-      document.getElementById('withSelected')?.setAttribute('hidden', 'hidden');
     }
     const icon = el.querySelector('i');
     icon.classList.toggle('fa-square');
@@ -944,15 +948,6 @@ document.addEventListener('DOMContentLoaded', () => {
       (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
     });
     syncSelectedEntitiesFromDom();
-
-    const anyChecked = get(selectedEntities).length > 0;
-    // Remove withSelected actions if there are no more checked checkboxes
-    const withSelected = document.getElementById('withSelected') as HTMLDivElement;
-    if (anyChecked) {
-      withSelected.removeAttribute('hidden');
-    } else {
-      withSelected.setAttribute('hidden', 'hidden');
-    }
   });
 
   // PATCH ACTIONS FOR CHECKED BOXES : lock, unlock, timestamp, archive
@@ -1305,6 +1300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedTags = Array.isArray(value) ? value as string[] : [];
 
         setEntityFilterParamValues('tags[]', selectedTags);
+        renderActiveFilters();
       },
 
       onItemAdd() {
@@ -1319,7 +1315,13 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     }) as TomSelectWithAllOptions;
 
+    filterControls.push({
+      control: tsTagFilter,
+      param: 'tags[]',
+      title: i18next.t('tags'),
+    });
     hydrateTomSelectFromUrl(tsTagFilter, 'tags[]');
+    renderActiveFilters();
 
     if (dropdownRoot) {
       $(dropdownRoot).on('shown.bs.dropdown', function() {

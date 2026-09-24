@@ -25,6 +25,7 @@ use PDO;
 
 use function sprintf;
 use function str_repeat;
+use function json_encode;
 
 class ContainersLinksTest extends \PHPUnit\Framework\TestCase
 {
@@ -41,6 +42,17 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
     {
         $this->setCaptureDeletionReason(0);
         $this->setCaptureDeletionReason(0, 2);
+    }
+
+    public function testCountContainersForEntity(): void
+    {
+        $Item = $this->getFreshItem();
+        $box = $this->StorageUnits->create('Box for container count test');
+        $Links = new Containers2ItemsLinks($Item, $box);
+        $this->assertSame(0, $Links->countContainersForEntity());
+        $Links->createWithQuantity(1.0, 'mL');
+        $Links->createWithQuantity(2.0, 'mL');
+        $this->assertSame(2, $Links->countContainersForEntity());
     }
 
     public function testMoveContainerToAnotherStorage(): void
@@ -600,7 +612,7 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertStringEndsWith(sprintf('(container #%d)', $rowId), $entry['content']);
     }
 
-    public function testCascadeDeleteIgnoresTheReasonRequirement(): void
+    public function testEntityDeletionWithContainersIgnoresTheReasonRequirement(): void
     {
         $this->setCaptureDeletionReason(1);
         $Item = $this->getFreshItem();
@@ -608,7 +620,10 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links = new Containers2ItemsLinks($Item, $box);
         $Links->createWithQuantity(7.0, 'mL');
 
-        $this->assertTrue($Links->destroyAll());
+        $this->assertSame(1, $this->StorageUnits->countContainers($box));
+        // container deletion requested with entity deletion does not require a reason
+        $this->assertTrue($Item->destroy(recursive: true));
+        $this->assertSame(0, $this->StorageUnits->countContainers($box));
     }
 
     public function testTheSettingComesFromTheTeamOwningTheEntity(): void
@@ -648,6 +663,21 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $this->assertNotNull($entry);
         // no reason suffix: the line stops at the container id
         $this->assertStringEndsWith(sprintf('(container #%d)', $rowId), $entry['content']);
+    }
+
+    public function testDetectsSelfLinkViaMetadataWithApostrophe(): void
+    {
+        $Item = $this->getFreshItem();
+        $fieldName = "aujourd'hui";
+        $Item->patch(Action::Update, array(
+            'metadata' => json_encode(array(
+                'extra_fields' => array($fieldName => array('type' => $Item->entityType->value, 'value' => array())),
+            ), JSON_THROW_ON_ERROR),
+        ));
+        // calling through Containers2ItemsLinks specifically covers AbstractContainersLinks::isSelfLinkViaMetadata()
+        $Links = new Containers2ItemsLinks($Item);
+        $this->assertTrue($Links->isSelfLinkViaMetadata($fieldName, (string) $Item->id));
+        $this->assertFalse($Links->isSelfLinkViaMetadata($fieldName, (string) ($Item->id + 1)));
     }
 
     private function setCapacity(int $storageId, int $capacity): void

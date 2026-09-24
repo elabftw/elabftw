@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Override;
 
 /**
@@ -25,7 +25,7 @@ final class MakeTeamReport extends MakeReport
     protected function canReadOrExplode(): void
     {
         if (!$this->requester->isAdmin) {
-            throw new IllegalActionException('Non Admin user tried to generate report.');
+            throw new ForbiddenException('Non Admin user tried to generate report.');
         }
     }
 

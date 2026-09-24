@@ -256,7 +256,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         return $this->destroyWithReason(array(), viaDeleteVerb: true);
     }
@@ -269,6 +269,16 @@ abstract class AbstractContainersLinks extends AbstractLinks
         return $this->Db->execute($req);
     }
 
+    // used in show & view to count how many containers belong to selected entries
+    public function countContainersForEntity(): int
+    {
+        $sql = 'SELECT COUNT(*) FROM ' . $this->getTable() . ' WHERE item_id = :item_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
+    }
+
     #[Override]
     public function isSelfLinkViaMetadata(string $extraFieldKey, string $targetId): bool
     {
@@ -277,14 +287,14 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $jsonPath = sprintf(
             '$.%s.%s.type',
             MetadataEnum::ExtraFields->value,
-            json_encode($extraFieldKey, JSON_HEX_APOS | JSON_THROW_ON_ERROR)
+            json_encode($extraFieldKey, JSON_THROW_ON_ERROR)
         );
         $sql = sprintf(
-            "SELECT metadata->>'%s' FROM %s WHERE id = :id",
-            $jsonPath,
+            'SELECT JSON_UNQUOTE(JSON_EXTRACT(metadata, :json_path)) FROM %s WHERE id = :id',
             $this->Entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
+        $req->bindValue(':json_path', $jsonPath);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $extraFieldType = $req->fetchColumn();

@@ -13,10 +13,11 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\AccessType;
+use Elabftw\Enums\Scope;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AuthenticatedUser;
@@ -137,20 +138,30 @@ class ItemsTest extends \PHPUnit\Framework\TestCase
     public function testCannotReadOneWithoutId(): void
     {
         $this->Items->setId(null);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->Items->readOne();
     }
 
     public function testCannotCheckPermissionsWithoutId(): void
     {
         $this->Items->setId(null);
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ImproperActionException::class);
         $this->Items->canOrExplode(AccessType::Read);
     }
 
     public function testReadBookable(): void
     {
-        $this->assertIsArray($this->Items->readBookable());
+        $otherTeamItems = new Items($this->getRandomUserInTeam(2));
+        $otherTeamItemId = $otherTeamItems->create(
+            title: 'Bookable resource from another team',
+            canreadBase: BasePermissions::Organization,
+            isBookable: BinaryValue::True,
+        );
+        $teamItemIds = array_column($this->Items->readBookable(Scope::Team), 'id');
+        $everythingItemIds = array_column($this->Items->readBookable(Scope::Everything), 'id');
+
+        $this->assertNotContains($otherTeamItemId, $teamItemIds);
+        $this->assertContains($otherTeamItemId, $everythingItemIds);
     }
 
     public function testCanBookInPast(): void

@@ -15,4 +15,6 @@ docker exec -t elabftw bin/init db:populate -y src/tools/populate-config.yml.dis
 echo "−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−"
 echo "elabftw dev instance running at: https://elab.localhost:3148"
 echo "login with toto@yopmail.com and password: totototototo"
+echo "phpmyadmin is running on http://localhost:8082"
+echo "swagger is running on http://localhost:8085"
 echo "−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−"

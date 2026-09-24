@@ -75,8 +75,10 @@ class CheckTest extends \PHPUnit\Framework\TestCase
 
     public function testAk(): void
     {
-        $ak = '4da7ac2a-a3f0-11ed-bb95-0242ac160008';
-        $this->assertEquals($ak, Check::accessKey($ak));
+        $uuidV1 = '4da7ac2a-a3f0-11ed-bb95-0242ac160008';
+        $this->assertEquals($uuidV1, Check::accessKey($uuidV1));
+        $uuidV4 = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
+        $this->assertEquals($uuidV4, Check::accessKey($uuidV4));
         $this->expectException(ImproperActionException::class);
         Check::accessKey('pwet');
     }

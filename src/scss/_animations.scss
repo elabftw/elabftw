@@ -48,40 +48,6 @@
   }
 }
 
-@keyframes bounce-left {
-  0%,
-  100%,
-  50%,
-  80% {
-    transform: translateX(0);
-  }
-
-  50% {
-    transform: translateX(-6px);
-  }
-}
-
-@keyframes bounce-right {
-  0%,
-  100%,
-  50%,
-  80% {
-    transform: translateX(0);
-  }
-
-  50% {
-    transform: translateX(6px);
-  }
-}
-
-.bounce-left:hover {
-  animation: bounce-left 250ms;
-}
-
-.bounce-right:hover {
-  animation: bounce-right 250ms;
-}
-
 /* OVERLAY notifications animation */
 @keyframes slideInOut {
   0% {
@@ -137,4 +103,25 @@
   display: inline-block;
   height: 16px;
   width: 16px;
+}
+
+.reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 250ms ease, opacity 200ms ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  > .reveal-content {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &.is-visible {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
 }

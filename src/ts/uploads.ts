@@ -9,7 +9,15 @@ import $ from 'jquery';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
-import { loadInSpreadsheetEditor } from './spreadsheet-utils';
+import {
+  listenForSpreadsheetMessages,
+  loadInSpreadsheetEditor,
+  replaceAttachment,
+  requestSpreadsheetWorkbook,
+  saveAsAttachment,
+  sendSpreadsheetMessage,
+} from './spreadsheet-utils';
+import type { SpreadsheetWorkbook } from './spreadsheet-utils';
 import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import DOMPurify from 'dompurify';
 import { displayPlasmidViewer } from './ove';
@@ -20,9 +28,18 @@ import { marked } from 'marked';
 import Prism from 'prismjs';
 import { Uploader } from './uploader';
 import { entity } from './getEntity';
+import { notify } from './notify';
 import { read as readXlsx, utils as xlsxUtils } from '@e965/xlsx';
 import { on } from './handlers';
 type Cell = string | number | boolean | null;
+let spreadsheetUpload: { id: number; name: string } | null = null;
+let spreadsheetDirty = false;
+let spreadsheetRevision = 0;
+let spreadsheetDocumentRevision = 0;
+let spreadsheetSaving = false;
+const spreadsheetIframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
+const replaceSpreadsheetButton = document.getElementById('spreadsheetReplaceAttachment') as HTMLButtonElement;
+const saveSpreadsheetButton = document.getElementById('spreadsheetSaveAsAttachment') as HTMLButtonElement;
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
@@ -158,7 +175,18 @@ on('set-3dmol-style', (el: HTMLElement) => {
 
 // LOAD SPREADSHEET FILE
 on('xls-load-file', async (el: HTMLElement) => {
-  await loadInSpreadsheetEditor(el.dataset.storage, el.dataset.path, el.dataset.name, Number(el.dataset.uploadid));
+  const loaded = await loadInSpreadsheetEditor(
+    el.dataset.storage,
+    el.dataset.path,
+    el.dataset.name,
+    Number(el.dataset.uploadid),
+  );
+  if (!loaded) return;
+  spreadsheetRevision += 1;
+  spreadsheetDocumentRevision += 1;
+  spreadsheetUpload = { id: Number(el.dataset.uploadid), name: el.dataset.name };
+  replaceSpreadsheetButton.disabled = spreadsheetSaving;
+  spreadsheetDirty = false;
   ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
 });
 
@@ -250,11 +278,84 @@ const malleableFilecomment = new Malle({
 });
 malleableFilecomment.listen();
 
-// reload uploads div when using spreadsheet editor (iframe sends message to parent window)
-window.addEventListener('message', (event) => {
-  if (event.origin !== window.location.origin) return;
-  if (event.data !== 'uploadsDiv') return;
+const markSpreadsheetSaved = (revision: number): void => {
   reloadElements(['uploadsDiv']);
+  if (revision !== spreadsheetRevision) return;
+  spreadsheetDirty = false;
+  document.getElementById('spreadsheetEditorUnsavedChanges').hidden = true;
+  void sendSpreadsheetMessage({ type: 'jss-saved' });
+};
+
+const withSpreadsheetData = async (callback: (
+  workbook: SpreadsheetWorkbook,
+  revision: number,
+  documentRevision: number,
+) => Promise<void>): Promise<void> => {
+  if (spreadsheetSaving) return;
+  spreadsheetSaving = true;
+  saveSpreadsheetButton.disabled = true;
+  replaceSpreadsheetButton.disabled = true;
+  const revision = spreadsheetRevision;
+  const documentRevision = spreadsheetDocumentRevision;
+  try {
+    const workbook = await requestSpreadsheetWorkbook();
+    if (revision !== spreadsheetRevision) return;
+    await callback(workbook, revision, documentRevision);
+  } catch (error) {
+    notify.error(error instanceof Error ? error.message : 'Unexpected spreadsheet error.');
+  } finally {
+    spreadsheetSaving = false;
+    saveSpreadsheetButton.disabled = false;
+    replaceSpreadsheetButton.disabled = !spreadsheetUpload;
+  }
+};
+
+document.getElementById('spreadsheetSaveAsAttachment')?.addEventListener('click', () => {
+  void withSpreadsheetData(async (workbook, revision, documentRevision) => {
+    const result = await saveAsAttachment(workbook, entity.type, entity.id);
+    if (!result) return;
+    if (documentRevision === spreadsheetDocumentRevision) spreadsheetUpload = result;
+    markSpreadsheetSaved(revision);
+  });
+});
+
+replaceSpreadsheetButton?.addEventListener('click', () => {
+  if (!spreadsheetUpload) return;
+  void withSpreadsheetData(async (workbook, revision, documentRevision) => {
+    if (!spreadsheetUpload) return;
+    const upload = spreadsheetUpload;
+    const result = await replaceAttachment(
+      workbook,
+      entity.type,
+      entity.id,
+      upload.id,
+      upload.name,
+    );
+    if (!result) return;
+    if (documentRevision === spreadsheetDocumentRevision) spreadsheetUpload = result;
+    markSpreadsheetSaved(revision);
+  });
+});
+
+if (spreadsheetIframe) {
+  void listenForSpreadsheetMessages(event => {
+    if (event.data?.type === 'jss-dirty' && typeof event.data.dirty === 'boolean') {
+      if (event.data.dirty) spreadsheetRevision += 1;
+      spreadsheetDirty = event.data.dirty;
+      document.getElementById('spreadsheetEditorUnsavedChanges').hidden = !spreadsheetDirty;
+    } else if (event.data?.type === 'jss-new-document') {
+      spreadsheetRevision += 1;
+      spreadsheetDocumentRevision += 1;
+      spreadsheetUpload = null;
+      replaceSpreadsheetButton.disabled = true;
+    }
+  }).catch(error => notify.error(error instanceof Error ? error.message : 'Spreadsheet editor is not available.'));
+}
+
+window.addEventListener('beforeunload', event => {
+  if (!spreadsheetDirty) return;
+  event.preventDefault();
+  event.returnValue = '';
 });
 
 // ACTIVATE FANCYBOX

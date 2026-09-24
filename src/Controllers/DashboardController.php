@@ -89,10 +89,10 @@ final class DashboardController extends AbstractHtmlController
             array(
                 'bookingsArr' => $Scheduler->readAll(),
                 'itemsStatusArr' => $ItemsStatus->readAll(),
-                'experimentsArr' => $Experiments->readShow($DisplayParamsExp),
+                'experimentsArr' => $Experiments->readLatestForDashboard($DisplayParamsExp),
                 'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999)))),
                 'favTagsArr' => $favTagsArr,
-                'itemsArr' => $Items->readShow($DisplayParamsItems),
+                'itemsArr' => $Items->readLatestForDashboard($DisplayParamsItems),
                 'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
                 'requestActionsArr' => $UserRequestActions->readAllFull(),
                 'templatesArr' => $Templates->readAllSimple($DisplayParamsTemplates),

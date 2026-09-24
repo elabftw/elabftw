@@ -29,6 +29,16 @@ window.onbeforeunload = function() {
 // Which editor are we using? md or tiny
 const editor = getEditor();
 editor.init('edit');
+
+if (editor.type === 'md') {
+  document.getElementById('body_area')?.addEventListener('keydown', event => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+      event.preventDefault();
+      updateEntityBody(false);
+    }
+  });
+}
+
 // initialize the file uploader
 (new Uploader()).init();
 
@@ -245,12 +255,12 @@ document.getElementById('filesDiv')?.addEventListener('submit', event => {
       ) {
         return true;
       }
-      // now replace all occurrence of the old file in the body with the long_name of the new file
+      // now replace all occurrences of the old file in the body with the long_name of the new file
       const newId = getNewIdFromPostRequest(resp);
       // fetch info about the newly created upload
       return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
     }).then(json => {
-      // use regExp in replace to find all occurrence
+      // use regExp in replace to find all occurrences
       // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
       // '.', '?', '[' and '(' need to be escaped in js regex
       const editorNewContent = editorCurrentContent.replace(

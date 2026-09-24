@@ -15,6 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\ProcurementState;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Traits\TestsUtilsTrait;
 
 class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
@@ -59,6 +60,14 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($res);
         $this->assertNotEmpty($res);
         $this->assertIsString($res[0]['state_human']);
+    }
+
+    public function testAnonymousUserCannotRead(): void
+    {
+        $ProcurementRequests = new ProcurementRequests(new Teams(new AnonymousUser(1), 1));
+
+        $this->expectException(ForbiddenException::class);
+        $ProcurementRequests->readAll();
     }
 
     public function testReadRecordNotFound(): void

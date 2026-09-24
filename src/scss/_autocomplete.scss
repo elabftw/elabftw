@@ -26,7 +26,7 @@
     border-right: 7px solid transparent;
     content: '';
     display: inline-block;
-    left: 9px;
+    left: var(--rte-autocomplete-arrow-left, 9px);
     position: absolute;
     top: -7px;
   }
@@ -37,7 +37,7 @@
     border-right: 6px solid transparent;
     content: '';
     display: inline-block;
-    left: 10px;
+    left: calc(var(--rte-autocomplete-arrow-left, 9px) + 1px);
     position: absolute;
     top: -6px;
   }

@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\ExperimentsController;
 use Elabftw\Enums\EntityType;
-use Elabftw\Exceptions\AppException;
 use Elabftw\Models\Experiments;
 use Elabftw\Services\AccessKeyHelper;
 use Elabftw\Services\Filter;
@@ -40,8 +39,6 @@ try {
         }
     }
     $Response = new ExperimentsController($App, new Experiments($App->Users, $id, bypassReadPermission: $bypassReadPermission))->getResponse();
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

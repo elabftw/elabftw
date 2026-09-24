@@ -40,6 +40,7 @@ import {
   updateCatStat,
   makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
   mountRors,
+  delayConfirmation,
   initPermissionsTomSelects,
   PERMISSION_SELECT_IDS,
   reloadEntitiesShow,
@@ -92,8 +93,10 @@ interface Status extends SelectOptions {
 
 export const selectedEntities = writable<string[]>([]);
 
-// only on entity page
-const pageMode = new URLSearchParams(document.location.search).get('mode');
+const pageParams = new URLSearchParams(document.location.search);
+const pageMode = pageParams.get('mode');
+// check if we're on view/edit mode
+const isSingleEntityPage = pageParams.has('id');
 
 const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityType => {
   switch (entity) {
@@ -114,13 +117,35 @@ const getSingularEntryTypeFromEntityType = (entity: EntityType): SingularEntityT
   }
 };
 
+const exportOptions = new Map<string, string[]>([
+  ['pdf', [
+    'changelog',
+    'links',
+    'pdfa',
+    'classification',
+  ]],
+  ['zip', [
+    'changelog',
+    'pdfa',
+    'json',
+  ]],
+  ['eln', [
+    'changelog',
+    'links',
+  ]],
+  ['json', [
+    'changelog',
+    'fulljson',
+  ]],
+]);
+
 // Listen for this event to populate the modal text dynamically.
 // On view/edit pages, use the current entity id,
 // on the show page, get the item id of all checked boxes.
-on('toggle-modal', (el: HTMLElement) => {
+on('toggle-modal', async (el: HTMLElement) => {
   if (el.matches('[data-target="deleteSelectedEntitiesModal"]')) {
     let checked = [];
-    if (pageMode == 'view' || pageMode == 'edit') {
+    if (isSingleEntityPage) {
       checked.push(entity.id);
     } else {
       checked = getFromSvelte(selectedEntities);
@@ -131,8 +156,15 @@ on('toggle-modal', (el: HTMLElement) => {
     }
     const count = checked.length;
     const modalSelector = `#${el.dataset.target}`;
-    const deleteMsg = document.getElementById('deleteEntityMessage');
-    const deleteButton = document.getElementById('deleteSelectedEntitiesButton') as HTMLButtonElement;
+    const modal = document.querySelector<HTMLElement>(modalSelector);
+    if (!modal) return;
+    const deleteMsg = modal.querySelector<HTMLElement>('#deleteEntityMessage');
+    const deleteButton = modal.querySelector<HTMLButtonElement>('#deleteSelectedEntitiesButton');
+    // displays total count for ALL selected entries in show mode
+    const deleteContainersCount = modal.querySelector<HTMLElement>('[data-output="delete-containers-count"]');
+    if (!deleteMsg || !deleteButton || !deleteContainersCount) {
+      return;
+    }
     const entityName = document.getElementById('pageTitle')?.textContent?.trim().toLowerCase() ?? '';
     const entryName = getSingularEntryTypeFromEntityType(entity.type);
     const translatedEntryName = i18next.t(entryName.replace('_', '-')).toLowerCase();
@@ -143,15 +175,45 @@ on('toggle-modal', (el: HTMLElement) => {
       deleteMsg.textContent = i18next.t('info-deleted-entries', {count: count, entity: entityName});
     }
 
-    deleteButton.disabled = true;
+    delayConfirmation(deleteButton);
+    // reset the checkbox whenever the deletion modal is opened, and disable it until containers count is loaded
+    const deleteContainersDiv = document.getElementById('deleteContainersDiv');
+    deleteContainersCount.textContent = '0';
     showModalAndFocusFirstInput(modalSelector);
-    setTimeout(() => deleteButton.disabled = false, 2000);
+
+    const entitiesContainers = await Promise.all(checked.map(id =>
+      ApiC.getJson<{containers_count: number}>(`${entity.type}/${id}/containers?has_any=1`),
+    ));
+    let containersCount = 0;
+    for (const result of entitiesContainers) {
+      containersCount += result.containers_count;
+    }
+    deleteContainersCount.textContent = containersCount.toString();
+    if (deleteContainersDiv && containersCount > 0) {
+      deleteContainersDiv.removeAttribute('hidden');
+    }
+  } else if (el.matches('[data-target="exportModal"]')) {
+    // Reinialize everyone to hidden to avoid cross format pollution
+    document.querySelectorAll<HTMLElement>('[id^="exportToggleDiv_"]').forEach(element => {
+      element.setAttribute('hidden', '');
+    });
+
+    const format = el.dataset.format;
+    const options = exportOptions.get(format) ?? [];
+    options.forEach((option) => {
+      document.getElementById(`exportToggleDiv_${option}`)?.removeAttribute('hidden');
+    });
+    const exportButton = document.querySelector<HTMLElement>('[data-action="export-to"]');
+    if (exportButton) {
+      exportButton.dataset.format = format;
+    }
   }
 });
 
 on('delete-selected-entities', async () => {
-  if (pageMode == 'view' || pageMode == 'edit') {
-    await ApiC.delete(`${entity.type}/${entity.id}`, { notifOnSaved:0 });
+  const deleteContainersParam = '?delete_containers=1';
+  if (isSingleEntityPage) {
+    await ApiC.delete(`${entity.type}/${entity.id}${deleteContainersParam}`, { notifOnSaved:0 });
     sessionStorage.setItem('flash_deleted', i18next.t('delete-success'));
     window.location.href = window.location.pathname;
     return;
@@ -163,7 +225,7 @@ on('delete-selected-entities', async () => {
   }
   // perform deletes
   const deletes = checked.map(id =>
-    ApiC.delete(`${entity.type}/${id}`, { notifOnSaved:0 }),
+    ApiC.delete(`${entity.type}/${id}${deleteContainersParam}`, { notifOnSaved:0 }),
   );
   Promise.all(deletes).then(() => {
     notify.success(i18next.t('delete-success'));
@@ -206,6 +268,35 @@ if (navbar) {
 }
 
 const container = document.getElementById('container')!;
+
+// tomSelect with searchable categories in the dropdown for the main Navbar
+const renderNavbarCategory = (
+  data: Record<string, unknown>,
+  escape: (value: string) => string,
+): string => {
+  const rawColor = String(data['color'] ?? '');
+  const color = /^[a-f0-9]{6}$/i.test(rawColor) ? rawColor : 'bdbdbd';
+  return `<div><span class="round-spot mr-1" style="background-color: #${color}"></span>${escape(String(data['text'] ?? ''))}</div>`;
+};
+
+document.querySelectorAll<HTMLSelectElement>('.navbar-category-select').forEach(select => {
+  // keep the Bootstrap navbar dropdown open while using TomSelect
+  select.closest('.navbar-category-picker')?.addEventListener('click', event => {
+    event.stopPropagation();
+  });
+  new TomSelect(select, { maxOptions: null, plugins: [
+    'no_active_items',
+    'no_backspace_delete',
+    'remove_button',
+  ],
+  onChange(value: string | number) {
+    if (value) {
+      window.location.href = String(value);
+    }
+  },
+  render: { option: renderNavbarCategory, item: renderNavbarCategory },
+  });
+});
 
 on('set-theme', (el: HTMLElement) => {
   const targetTheme = Number.parseInt(el.dataset.themeVariant ?? '', 10);
@@ -363,11 +454,9 @@ on('team-scope-change', async (el: HTMLElement) => {
   if (menu) {
     menu.querySelectorAll('.dropdown-item').forEach((item) => {
       item.classList.remove('active');
-      item.querySelector('i')?.classList.remove('color-white');
     });
   }
   el.classList.add('active');
-  el.querySelector('i')?.classList.add('color-white');
 
   const btn = el.closest('.btn-group')?.querySelector('button.dropdown-toggle');
   if (btn) {
@@ -774,6 +863,23 @@ on('save-permissions', (el: HTMLElement) => {
   params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);
   const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
   params[baseSelect.name] = baseSelect.value;
+
+  if (el.dataset.withSelected) {
+    const checked = getFromSvelte(selectedEntities);
+    if (checked.length === 0) {
+      notify.error('nothing-selected');
+      return;
+    }
+    if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
+      return;
+    }
+    const requests = checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params, notifOnSaved: 0}));
+    Promise.allSettled(requests).then(() => {
+      notify.success();
+      reloadEntitiesShow();
+    });
+    return;
+  }
 
   const divId = el.dataset.identifier + 'Div';
   // if we're editing the default read/write permissions for experiments, this data attribute will be set

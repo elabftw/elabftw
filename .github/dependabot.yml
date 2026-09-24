@@ -1,26 +1,44 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: monthly
-    day: wednesday
-    time: "06:12"
-  open-pull-requests-limit: 10
-  cooldown:
-      default-days: 12
-      semver-major-days: 32
-      semver-minor-days: 24
-      semver-patch-days: 3
-- package-ecosystem: composer
-  directory: "/"
-  schedule:
-    interval: monthly
-    day: wednesday
-    time: "06:12"
-  open-pull-requests-limit: 10
-  cooldown:
-      default-days: 12
-      semver-major-days: 32
-      semver-minor-days: 24
-      semver-patch-days: 3
+  - package-ecosystem: npm
+    directory: "/"
+    commit-message:
+      prefix: "bump: npm"
+    schedule:
+      interval: monthly
+      day: wednesday
+      time: "06:12"
+    open-pull-requests-limit: 10
+    cooldown:
+        default-days: 12
+        semver-major-days: 32
+        semver-minor-days: 24
+        semver-patch-days: 3
+  - package-ecosystem: composer
+    directory: "/"
+    commit-message:
+      prefix: "bump: composer"
+    schedule:
+      interval: monthly
+      day: wednesday
+      time: "06:12"
+    open-pull-requests-limit: 10
+    cooldown:
+        default-days: 12
+        semver-major-days: 32
+        semver-minor-days: 24
+        semver-patch-days: 3
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    commit-message:
+      prefix: "bump: actions"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    cooldown:
+        default-days: 12
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns:
+          - "*"

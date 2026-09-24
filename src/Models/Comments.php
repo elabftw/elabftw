@@ -14,7 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AccessType;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\CommentCreated;
@@ -114,7 +114,7 @@ class Comments extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
         $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_comments WHERE id = :id AND userid = :userid AND item_id = :item_id';
@@ -147,7 +147,7 @@ class Comments extends AbstractRest
     {
         $comment = $this->readOne();
         if ($comment['immutable'] === 1) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 

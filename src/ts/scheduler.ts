@@ -105,12 +105,14 @@ function toggleBindState(entity: 'experiment' | 'item', bound: boolean) {
   document.getElementById(`bindInputs${suffix}`)?.classList.toggle('d-none', bound);
 }
 
-function lockScopeButton(selectedItems: string[]): void {
-  const scopeBtn = document.getElementById('scopeEventBtn');
-  const lockedBtn = document.getElementById('scopeLocked');
+function lockScopeButtons(selectedItems: string[]): void {
   const showLocked = selectedItems.length > 0;
-  scopeBtn?.toggleAttribute('hidden', showLocked);
-  lockedBtn?.toggleAttribute('hidden', !showLocked);
+  ['scopeBtn', 'scopeEventBtn'].forEach(id => {
+    document.getElementById(id)?.toggleAttribute('hidden', showLocked);
+  });
+  ['scopeItemsLocked', 'scopeLocked'].forEach(id => {
+    document.getElementById(id)?.toggleAttribute('hidden', !showLocked);
+  });
 }
 
 document.getElementById('loading-spinner')?.remove();
@@ -157,21 +159,17 @@ if (calendarEl) {
       ? LIST_WEEK_VIEW
       : viewMap[range];
 
-  // clean up 'category' parameter on page refresh or else it keeps it as the only available value in the Select
-  if (params.has('category')) {
-    params.delete('category');
-    window.location.replace(`${location.pathname}?${params.toString()}`);
-  }
+  const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
+  categorySelect.value = params.get('category') ?? '';
 
   // remove existing params to build new event sources for the calendar
   function buildEventSourcesUrl(): string {
     ['items[]', 'category', 'eventOwner'].forEach((param) => params.delete(param));
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
-    const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
     const ownerInput = document.getElementById('eventOwnerSelect') as HTMLInputElement;
 
     if (itemSelect?.tomselect?.items?.length) {
-      lockScopeButton(itemSelect.tomselect.items);
+      lockScopeButtons(itemSelect.tomselect.items);
       itemSelect.tomselect.items.forEach(id => {
         params.append('items[]', id);
       });
@@ -670,7 +668,6 @@ if (calendarEl) {
 
   function initTomSelect(): void {
     const itemSelect = document.getElementById('itemSelect') as HTMLSelectElement;
-    const categorySelect = document.getElementById('categorySelect') as HTMLSelectElement;
 
     const urlParams = new URLSearchParams(window.location.search);
     const selectedItems = urlParams.getAll('items[]');
@@ -680,7 +677,7 @@ if (calendarEl) {
       controlInput: '#itemSelectInput',
       dropdownParent: '#itemSelectWrapper',
       onChange: (selectedItems: string[]) => {
-        lockScopeButton(selectedItems);
+        lockScopeButtons(selectedItems);
         const container = document.getElementById('selectedItemsContainer')!;
         const display = document.getElementById('selectedItemsDisplay')!;
         display.innerHTML = '';
@@ -707,9 +704,13 @@ if (calendarEl) {
       },
     });
 
+    if (categorySelect.value) {
+      filterOptionsByCategory(itemSelect, categorySelect.value);
+    }
+
     if (selectedItems.length > 0) {
       itemTs.setValue(selectedItems);
-      lockScopeButton(selectedItems);
+      lockScopeButtons(selectedItems);
     }
 
     categorySelect.addEventListener('change', () => {

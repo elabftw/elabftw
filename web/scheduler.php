@@ -12,11 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Exceptions\AppException;
+use Elabftw\Enums\Scope;
 use Elabftw\Models\Items;
 use Elabftw\Models\ResourcesCategories;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\InputBag;
 
 use function _;
 use function array_column;
@@ -34,8 +35,16 @@ try {
     $Response->prepare($Request);
     $Items = new Items($App->Users);
     $ResourcesCategories = new ResourcesCategories($App->Teams);
+    $scope = null;
+    if ($Request->query->has('items')) {
+        $scope = Scope::Everything;
+        // keep the displayed scope in sync with the scope used to find the selected resources. See #6990
+        $Request->query->set('scope', $scope->value);
+    }
+    $query = new InputBag($Request->query->all());
+    $query->remove('category');
     // only the bookable categories
-    $bookableItemsArr = $Items->readBookable();
+    $bookableItemsArr = $Items->readBookable($scope, $query);
     $categoriesOfBookableItems = array_column($bookableItemsArr, 'category');
     $allCategories = $ResourcesCategories->readAll();
     $bookableCategories = array_filter(
@@ -50,8 +59,6 @@ try {
     );
 
     $Response->setContent($App->render($template, $renderArr));
-} catch (AppException $e) {
-    $Response = $e->getResponseFromException($App);
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

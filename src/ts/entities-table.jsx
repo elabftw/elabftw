@@ -11,6 +11,7 @@
  */
 import {
   ClientSideRowModelModule,
+  ColumnAutoSizeModule,
   ColumnApiModule,
   ModuleRegistry,
   PaginationModule,
@@ -27,7 +28,8 @@ import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
-import { getAgGridTheme } from "./theme";
+import { getAgGridTheme } from './theme';
+import AgGridTableOptions from './ag-grid-table-options';
 
 const COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
 
@@ -139,6 +141,12 @@ const rowSelection = {
   selectAll: 'currentPage',
 };
 
+const entityFilterByColumn = {
+  category: { param: 'category', valueField: 'category', labelField: 'category_title' },
+  status: { param: 'status', valueField: 'status', labelField: 'status_title' },
+  fullname: { param: 'owner', valueField: 'userid', labelField: 'fullname' },
+};
+
 const EntitiesTable = ({
   selectedEntities,
   order = 'date',
@@ -147,9 +155,11 @@ const EntitiesTable = ({
   relatedOrigin = '',
 }) => {
   const [rowData, setRowData] = useState([]);
+  const [gridApi, setGridApi] = useState(null);
 
   const onGridReady = event => {
     const columnState = getStoredColumnState();
+    setGridApi(event.api);
 
     if (Array.isArray(columnState)) {
       event.api.applyColumnState({
@@ -178,6 +188,19 @@ const EntitiesTable = ({
     return value === i18next.t('yes')
       ? <span title={value}><i className='fas fa-circle-check mr-2'></i>{value}</span>
       : <span title={value}><i className='fas fa-circle-xmark mr-2'></i>{value}</span>;
+  };
+
+  const ColorDotRenderer = ({ value, data, colDef }) => {
+    if (!value) {
+      return null;
+    }
+
+    const color = data[`${colDef.field}_color`];
+    if (!color) {
+      return <span>{value}</span>;
+    }
+
+    return <span><i className='fas fa-circle fa-fw' style={{ '--bg': `#${color}`, color: 'var(--bg)' }}></i> {value}</span>;
   };
 
   const RatingsRenderer = ({ value }) => {
@@ -219,8 +242,8 @@ const EntitiesTable = ({
     { field: 'title', headerName: i18next.t('title') },
     { field: 'team_name', headerName: i18next.t('team') },
     { field: 'date', headerName: i18next.t('started-on'), valueGetter: p => lastLoginText(p.data.date), filterValueGetter: p => lastLoginText(p.data.date), cellRenderer: PastDateRenderer},
-    { field: 'category', headerName: i18next.t('category'), valueGetter: p => p.data.category_title },
-    { field: 'status', headerName: i18next.t('status'), valueGetter: p => p.data.status_title },
+    { field: 'category', headerName: i18next.t('category'), valueGetter: p => p.data.category_title, cellRenderer: ColorDotRenderer },
+    { field: 'status', headerName: i18next.t('status'), valueGetter: p => p.data.status_title, cellRenderer: ColorDotRenderer },
     { field: 'tags_decoded', headerName: i18next.t('tags'), valueGetter: p => p.data.tags_decoded, filterValueGetter: p => p.data.tags_decoded?.map(tagData => tagData.tag).join(' ') ?? '', cellRenderer: TagsRenderer },
     { field: 'id', headerName: i18next.t('id') },
     { field: 'custom_id', headerName: i18next.t('custom-id') },
@@ -285,17 +308,6 @@ const EntitiesTable = ({
     const selectedIds = selectedRows.map(row => String(row.id));
 
     selectedEntities?.set(selectedIds);
-
-    const withSelected = document.getElementById('withSelected');
-    if (!withSelected) {
-      return;
-    }
-
-    if (selectedIds.length > 0) {
-      withSelected.removeAttribute('hidden');
-    } else {
-      withSelected.setAttribute('hidden', 'hidden');
-    }
   };
 
   const defaultColDef = useMemo(() => {
@@ -308,6 +320,22 @@ const EntitiesTable = ({
   const cellClicked = event => {
     const target = event.event?.target;
     const url = `?mode=view&id=${encodeURIComponent(event.data.id)}`;
+
+    const entityFilter = entityFilterByColumn[event.colDef.field];
+    if (entityFilter) {
+      const value = event.data[entityFilter.valueField];
+
+      if (value !== null && value !== undefined && String(value).length > 0) {
+        window.dispatchEvent(new CustomEvent('entity-filter-requested', {
+          detail: {
+            param: entityFilter.param,
+            value: String(value),
+            label: event.data[entityFilter.labelField] ?? String(value),
+          },
+        }));
+        return;
+      }
+    }
 
     if (
       target instanceof HTMLElement
@@ -324,8 +352,7 @@ const EntitiesTable = ({
 
   return (
     <>
-      <div
-        className={getAgGridTheme()} style={{ height: 650 }}>
+      <div className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}
@@ -343,6 +370,7 @@ const EntitiesTable = ({
           onSelectionChanged={selectionChanged}
           {...DEFAULT_AG_GRID_PAGINATION}
         />
+        <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
       </div>
     </>
   );
@@ -373,6 +401,7 @@ export const mountEntitiesTable = (
   provideGlobalGridOptions({ theme: 'legacy' });
   ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    ColumnAutoSizeModule,
     ColumnApiModule,
     RowSelectionModule,
     PaginationModule,

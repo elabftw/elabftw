@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Override;
 use PDO;
@@ -29,6 +30,11 @@ final class Info extends AbstractRest
 {
     private const int DEFAULT_HIST_BUCKET_SIZE = 120;
 
+    public function __construct(private ?Users $requester = null)
+    {
+        parent::__construct();
+    }
+
     #[Override]
     public function getApiPath(): string
     {
@@ -38,6 +44,9 @@ final class Info extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        if ($this->requester instanceof AnonymousUser) {
+            return array();
+        }
         if ($queryParams && $queryParams->getQuery()->has('hist')) {
             $columns = $queryParams->getQuery()->has('columns') ? $queryParams->getQuery()->getInt('columns') : null;
             return $this->hist($columns);

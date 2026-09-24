@@ -11,7 +11,7 @@ CREATE TABLE `webhooks` (
   `users_id` int(10) UNSIGNED DEFAULT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
   `url` varchar(512) NOT NULL,
-  `secret` varchar(64) NOT NULL,
+  `secret` text NOT NULL,
   `events` json NOT NULL,
   `enabled` tinyint NOT NULL DEFAULT 1,
   `consecutive_failures` int(10) UNSIGNED NOT NULL DEFAULT 0,

@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Enums;
 
-use function array_map;
-use function implode;
+use Elabftw\Traits\EnumsTrait;
+
 use function in_array;
 use function is_string;
 
@@ -24,6 +24,8 @@ use function is_string;
  */
 enum WebhookEvent: string
 {
+    use EnumsTrait;
+
     case ExperimentCreated = 'experiment.created';
     case ExperimentUpdated = 'experiment.updated';
     case ExperimentStatusChanged = 'experiment.status_changed';
@@ -52,11 +54,6 @@ enum WebhookEvent: string
             // no events for templates and items types in this version
             EntityType::Templates, EntityType::ItemsTypes => null,
         };
-    }
-
-    public static function toCsList(): string
-    {
-        return implode(', ', array_map(fn(self $case): string => $case->value, self::cases()));
     }
 
     /**

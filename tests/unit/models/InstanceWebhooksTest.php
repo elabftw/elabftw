@@ -12,10 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\WebhookEvent;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
+use PDO;
 
 use function count;
 
@@ -55,6 +57,32 @@ class InstanceWebhooksTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue($Webhook->destroy());
         $this->assertEquals($initialCount, count($this->InstanceWebhooks->readAll()));
+    }
+
+    /**
+     * The secret is encrypted with SECRET_KEY in the database, and handed back in clear
+     * only through readOne().
+     */
+    public function testSecretIsEncryptedAtRest(): void
+    {
+        $id = $this->InstanceWebhooks->postAction(Action::Create, array(
+            'url' => 'https://192.0.2.12/hook',
+            'events' => array(WebhookEvent::ItemUpdated->value),
+        ));
+        $Webhook = new InstanceWebhooks(true, $id);
+        $secret = $Webhook->readOne()['secret'];
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $secret);
+
+        $Db = Db::getConnection();
+        $req = $Db->prepare('SELECT secret FROM webhooks WHERE id = :id');
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $Db->execute($req);
+        $stored = (string) $req->fetchColumn();
+        $this->assertNotSame($secret, $stored);
+        $this->assertStringNotContainsString($secret, $stored);
+        $this->assertSame($secret, AbstractWebhooks::decryptSecret($stored));
+
+        $Webhook->destroy();
     }
 
     /**

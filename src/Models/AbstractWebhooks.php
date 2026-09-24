@@ -12,11 +12,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\WebhookEvent;
 use Elabftw\Enums\WebhookScope;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\IllegalActionException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -87,7 +91,9 @@ abstract class AbstractWebhooks extends AbstractRest
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         $this->bindScope($req);
         $this->Db->execute($req);
-        return $this->Db->fetch($req);
+        $webhook = $this->Db->fetch($req);
+        $webhook['secret'] = self::decryptSecret((string) $webhook['secret']);
+        return $webhook;
     }
 
     #[Override]
@@ -122,6 +128,24 @@ abstract class AbstractWebhooks extends AbstractRest
         return $this->Db->execute($req);
     }
 
+    /**
+     * The secret is stored encrypted with SECRET_KEY, like the passwords in Config.
+     * It cannot be hashed the way an api key is, because it is needed in clear to sign.
+     */
+    public static function encryptSecret(string $secret): string
+    {
+        return Crypto::encrypt($secret, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+    }
+
+    public static function decryptSecret(string $encrypted): string
+    {
+        try {
+            return Crypto::decrypt($encrypted, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
+        } catch (WrongKeyOrModifiedCiphertextException $e) {
+            throw new AppException(sprintf('Error decrypting webhook secret: %s. This can be caused by having a different SECRET_KEY than the one that was used to encrypt it. Delete the webhook and create it again.', $e->getMessage()), 500);
+        }
+    }
+
     abstract protected function getScope(): WebhookScope;
 
     abstract protected function getTeamId(): ?int;
@@ -145,8 +169,8 @@ abstract class AbstractWebhooks extends AbstractRest
         $this->bindScope($req);
         $req->bindValue(':name', Filter::title((string) ($reqBody['name'] ?? '')));
         $req->bindValue(':url', $url);
-        // 32 bytes of entropy, stored as 64 hex characters
-        $req->bindValue(':secret', bin2hex(random_bytes(32)));
+        // 32 bytes of entropy as 64 hex characters, encrypted at rest
+        $req->bindValue(':secret', self::encryptSecret(bin2hex(random_bytes(32))));
         $req->bindValue(':events', json_encode($events, JSON_THROW_ON_ERROR));
         $this->Db->execute($req);
 

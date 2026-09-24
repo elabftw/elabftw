@@ -130,7 +130,7 @@ final class Steps extends AbstractRest
         $stepTable = $this->Entity->entityType->value . '_steps';
         $groupTable = $this->Entity->entityType->value . '_step_groups';
         // Step ordering is local to each group. Named groups follow their group
-        // ordering, while General steps (group_id = NULL) are displayed last
+        // ordering, while Default group (group_id = NULL) are displayed last
         $sql = sprintf(
             'SELECT st.* FROM %s AS st
                 LEFT JOIN %s AS sg ON sg.id = st.group_id AND sg.item_id = st.item_id
@@ -361,7 +361,7 @@ final class Steps extends AbstractRest
     }
 
     /**
-     * Move one step to another group, or back to General steps
+     * Move one step to another group, or back to Default group
      * A direct group change appends the step to the end of its new group
      */
     private function updateGroupId(mixed $value): bool
@@ -449,11 +449,11 @@ final class Steps extends AbstractRest
         new StepGroups($this->Entity, $groupId)->readOne();
     }
 
-    // Return the next position inside one group. NULL means General steps
+    // Return the next position inside one group. NULL means Default group
     private function getNextOrdering(?int $groupId): int
     {
         // MySQL's <=> is null-safe, so this query works for both a real group
-        // id and General steps where group_id is NULL
+        // id and Default group where group_id is NULL
         $sql = sprintf(
             'SELECT COALESCE(MAX(ordering), -1) + 1 AS next_ordering FROM %s_steps WHERE item_id = :item_id AND group_id <=> :group_id',
             $this->Entity->entityType->value,

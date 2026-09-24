@@ -76,7 +76,7 @@ on('create-step', (el: HTMLElement, event: Event) => {
   const params = collectForm(form);
   const content = String(params['step'] ?? '').trim();
   if (!content) return;
-  // An empty hidden group id means this step belongs to General steps
+  // An empty hidden group id means this step belongs to Default group
   const rawGroupId = String(params['group_id'] ?? '');
   const groupId = rawGroupId === '' ? null : parseInt(rawGroupId, 10);
   StepC.create(content, groupId).then(() => {
@@ -195,7 +195,7 @@ const malleableStepGroupTitle = new Malle({
 
 let groupedStepsSyncTimer: number | undefined;
 
-// Serialize the final DOM layout of every connected step list. General steps
+// Serialize the final DOM layout of every connected step list. Default group
 // use a null group id so the backend can store them with group_id = NULL
 function syncGroupedStepOrdering(): void {
   const groupedOrdering = Array.from(document.querySelectorAll<HTMLElement>('.steps-sortable')).map(container => ({

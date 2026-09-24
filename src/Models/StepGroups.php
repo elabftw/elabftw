@@ -134,7 +134,7 @@ final class StepGroups extends AbstractRest
         $this->Entity->canOrExplode(AccessType::Write);
         $this->readOne();
 
-        // Deleting a group must keep its steps. Move them back to General steps
+        // Deleting a group must keep its steps. Move them back to Default group
         // before removing the group itself.
         $stepSql = sprintf('UPDATE %s_steps SET group_id = NULL WHERE item_id = :item_id AND group_id = :group_id', $this->Entity->entityType->value);
         $stepReq = $this->Db->prepare($stepSql);
@@ -196,9 +196,9 @@ final class StepGroups extends AbstractRest
     }
 
     /**
-     * Renumber General steps after a group is removed
+     * Renumber Default group after a group is removed
      * Steps moved out of the deleted group can bring ordering values that
-     * overlap with steps already in General steps
+     * overlap with steps already in Default group
      */
     private function normalizeUngroupedStepOrdering(): void
     {

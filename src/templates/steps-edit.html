@@ -30,7 +30,7 @@
             <button type='button' class='btn btn-transparent draggable step-group-sortable-handle ml-auto mr-2' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
               <i class='fas fa-sort'></i>
             </button>
-            <button class='btn btn-danger-ghost' data-action='destroy-step-group' data-id='{{ group.id }}' data-confirm='{{ 'Delete this group? Its steps will move to General steps.'|trans }}' title='{{ 'Delete group'|trans }}' aria-label='{{ 'Delete group'|trans }}' type='button'>
+            <button class='btn btn-danger-ghost' data-action='destroy-step-group' data-id='{{ group.id }}' data-confirm='{{ 'Delete this group? Its steps will move to Default group.'|trans }}' title='{{ 'Delete group'|trans }}' aria-label='{{ 'Delete group'|trans }}' type='button'>
               <i class='fas fa-trash-alt'></i>
             </button>
           </div>
@@ -49,13 +49,13 @@
     </div>
   {% endif %}
 
-  {# General steps is the fallback group for steps with no group_id #}
+  {# Default group is the fallback group for steps with no group_id #}
   <div class='step-group step-group-card mb-3'>
     <div class='step-group-header d-flex align-items-center px-2 py-2'>
       <button class='btn btn-transparent mr-2' data-action='toggle-next' data-toggle-target='step_group_steps_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_general' title='{{ 'Toggle visibility'|trans }}'>
         <i class='fas fa-caret-down fa-fw'></i>
       </button>
-      <strong>{{ 'General steps'|trans }}</strong>
+      <strong>{{ 'Default group'|trans }}</strong>
       <span class='text-muted ml-2'>{{ generalSteps|length }} {{ 'Steps'|trans|lower }}</span>
     </div>
     <div id='step_group_steps_general' class='step-group-body px-3 py-2' data-save-hidden='step_group_steps_general'>
@@ -67,7 +67,7 @@
           {% endfor %}
         </div>
       {% else %}
-        {# Once groups exist, General steps joins the same connected sortable system #}
+        {# Once groups exist, Default group joins the same connected sortable system #}
         <div class='steps-sortable step-group-steps' data-groupid=''>
           {% for step in generalSteps %}
             {% include 'step-edit-row.html' %}

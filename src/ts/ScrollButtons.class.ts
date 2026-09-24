@@ -133,13 +133,11 @@ export default class ScrollButtons {
 
     const list = document.createElement('ul');
     list.classList.add('scroll-text-navigation-list');
-    const extraOffset = Number.parseInt(target.dataset.scrollBtnY ?? '0', 10);
-    const scrollOffset = Number.isFinite(extraOffset) ? extraOffset : 0;
 
     list.append(this.createTextNavigationItem(
       target.dataset.scrollBtnTopLabel ?? '',
       'fa-arrow-up',
-      () => this.scrollElementIntoView(topTarget, scrollOffset),
+      () => this.scrollElementIntoView(topTarget),
     ));
 
     const headings = Array.from(headingsRoot.querySelectorAll<HTMLElement>('h1, h2, h3'));
@@ -171,7 +169,7 @@ export default class ScrollButtons {
       lastItem = this.createTextNavigationItem(
         label,
         null,
-        () => this.scrollElementIntoView(heading, scrollOffset),
+        () => this.scrollElementIntoView(heading),
       );
       currentList.append(lastItem);
       currentLevel = level;
@@ -180,7 +178,7 @@ export default class ScrollButtons {
     list.append(this.createTextNavigationItem(
       target.dataset.scrollBtnBottomLabel ?? '',
       'fa-arrow-down',
-      () => target.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      () => this.scrollElementIntoView(target),
     ));
     menu.replaceChildren(list);
   }
@@ -212,7 +210,7 @@ export default class ScrollButtons {
     return item;
   }
 
-  private scrollElementIntoView(target: HTMLElement, extraOffset: number): void {
+  private scrollElementIntoView(target: HTMLElement): void {
     const frame = target.ownerDocument.defaultView?.frameElement;
     const editorWindow = target.ownerDocument.defaultView;
     let targetTop = target.getBoundingClientRect().top + window.scrollY;
@@ -222,13 +220,17 @@ export default class ScrollButtons {
         + target.getBoundingClientRect().top
         + (editorWindow?.scrollY ?? 0);
     }
-    const styles = getComputedStyle(document.documentElement);
-    const navbarHeight = Number.parseFloat(styles.getPropertyValue('--navbar-height')) || 0;
-    const toolbarHeight = Number.parseFloat(styles.getPropertyValue('--toolbar-height')) || 0;
-    const rootFontSize = Number.parseFloat(styles.fontSize) || 16;
+
+    const navbarHeight = document.querySelector<HTMLElement>('.sticky-navbar')?.offsetHeight ?? 0;
+    const toolbarHeight = document.getElementById('entityToolbar')?.offsetHeight ?? 0;
+    const editorHeaderHeight = frame instanceof HTMLIFrameElement
+      ? frame.closest('.tox-tinymce')?.querySelector<HTMLElement>('.tox-editor-header')?.offsetHeight ?? 0
+      : 0;
+    const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const offset = navbarHeight + toolbarHeight + editorHeaderHeight + rootFontSize;
 
     window.scrollTo({
-      top: targetTop - navbarHeight - toolbarHeight - rootFontSize - extraOffset,
+      top: targetTop - offset,
       behavior: 'smooth',
     });
   }

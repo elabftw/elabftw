@@ -2423,8 +2423,9 @@ components:
             parsing.
 
         A delivery counts as successful on a 2xx answer. Anything else, including a
-        timeout, is retried up to 5 times with a delay that doubles from 1 minute to at
-        most 1 hour. Redirects are not followed.
+        timeout, is tried again: 5 attempts in all, the first one and then four retries
+        after 1, 2, 4 and 8 minutes. A target that is still unreachable a quarter of an
+        hour after the event loses that delivery. Redirects are not followed.
 
         One save produces one delivery per subscribed webhook, even when it changed
         several fields. A retry repeats the same `event_id`, so a receiver can recognise a

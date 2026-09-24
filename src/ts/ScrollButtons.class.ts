@@ -100,7 +100,10 @@ export default class ScrollButtons {
       refresh();
       setOpen(true);
     });
-    wrapper.addEventListener('pointerleave', () => {
+    wrapper.addEventListener('pointerleave', event => {
+      if (event.pointerType === 'touch') {
+        return;
+      }
       if (!wrapper.contains(document.activeElement)) {
         setOpen(false);
       }
@@ -115,8 +118,27 @@ export default class ScrollButtons {
         setOpen(false);
       }
     });
+    wrapper.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        trigger.focus({ preventScroll: true });
+        setOpen(false);
+      }
+    });
+    menu.addEventListener('click', event => {
+      const clicked = event.target;
+      if (clicked instanceof Element && clicked.closest('.scroll-text-navigation-link')) {
+        trigger.focus({ preventScroll: true });
+        setOpen(false);
+      }
+    });
+    document.addEventListener('pointerdown', event => {
+      const clicked = event.target;
+      if (clicked instanceof Node && !wrapper.contains(clicked)) {
+        setOpen(false);
+      }
+    });
 
-    wrapper.replaceChildren(menu, trigger);
+    wrapper.replaceChildren(trigger, menu);
     return wrapper;
   }
 
@@ -141,10 +163,11 @@ export default class ScrollButtons {
     ));
 
     const headings = Array.from(headingsRoot.querySelectorAll<HTMLElement>('h1, h2, h3'));
-    let currentList = list;
-    let currentLevel = 0;
-    let lastItem: HTMLLIElement | null = null;
-    const listStack: Array<{level: number; list: HTMLUListElement}> = [];
+    const parents: Array<{
+      level: number;
+      item: HTMLLIElement;
+      childList?: HTMLUListElement;
+    }> = [];
 
     headings.forEach(heading => {
       const label = heading.textContent?.trim() ?? '';
@@ -152,27 +175,28 @@ export default class ScrollButtons {
         return;
       }
       const level = Number.parseInt(heading.tagName.slice(1), 10);
-      if (listStack.length === 0) {
-        listStack.push({ level, list });
-      } else if (level > currentLevel && lastItem) {
-        const sublist = document.createElement('ul');
-        sublist.classList.add('scroll-text-navigation-list', 'scroll-text-navigation-sublist');
-        lastItem.append(sublist);
-        listStack.push({ level, list: sublist });
-      } else if (level < currentLevel) {
-        while (listStack.length > 1 && level < listStack[listStack.length - 1].level) {
-          listStack.pop();
-        }
+      while (parents.length > 0 && parents[parents.length - 1].level >= level) {
+        parents.pop();
       }
 
-      currentList = listStack[listStack.length - 1].list;
-      lastItem = this.createTextNavigationItem(
+      let targetList = list;
+      const parent = parents[parents.length - 1];
+      if (parent) {
+        if (!parent.childList) {
+          parent.childList = document.createElement('ul');
+          parent.childList.classList.add('scroll-text-navigation-list', 'scroll-text-navigation-sublist');
+          parent.item.append(parent.childList);
+        }
+        targetList = parent.childList;
+      }
+
+      const item = this.createTextNavigationItem(
         label,
         null,
         () => this.scrollElementIntoView(heading),
       );
-      currentList.append(lastItem);
-      currentLevel = level;
+      targetList.append(item);
+      parents.push({ level, item });
     });
 
     list.append(this.createTextNavigationItem(

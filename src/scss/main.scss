@@ -1580,6 +1580,16 @@ input[type='color'] {
     pointer-events: auto;
     visibility: visible;
   }
+
+  &.is-open::before {
+    content: '';
+    height: min(70vh, 32rem);
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.5rem;
+  }
 }
 
 .scroll-text-navigation-trigger {

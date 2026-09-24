@@ -95,32 +95,23 @@ export default class ScrollButtons {
       menu.setAttribute('aria-hidden', String(!open));
     };
     const refresh = (): void => this.populateTextNavigation(target, menu);
-    let closeTimer: number | undefined;
-    const cancelClose = (): void => {
-      window.clearTimeout(closeTimer);
-      closeTimer = undefined;
-    };
 
     wrapper.addEventListener('pointerenter', () => {
-      cancelClose();
       refresh();
       setOpen(true);
     });
     wrapper.addEventListener('pointerleave', () => {
       if (!wrapper.contains(document.activeElement)) {
-        cancelClose();
-        closeTimer = window.setTimeout(() => setOpen(false), 250);
+        setOpen(false);
       }
     });
     trigger.addEventListener('focus', () => {
-      cancelClose();
       refresh();
       setOpen(true);
     });
     wrapper.addEventListener('focusout', event => {
       const nextTarget = event.relatedTarget;
       if (!(nextTarget instanceof Node) || !wrapper.contains(nextTarget)) {
-        cancelClose();
         setOpen(false);
       }
     });

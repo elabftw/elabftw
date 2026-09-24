@@ -97,6 +97,7 @@
       <div data-scroll-btn='fa-font'
         data-scroll-btn-label='{{ Entity.entityData.content_type == '2' ? 'Main text end'|trans : 'Main text'|trans }}'
         {% if Entity.entityData.content_type != '2' %}
+          {# body_area_ifr is the id of tinymce iframe #}
           data-scroll-btn-headings='body_area_ifr'
           data-scroll-btn-top='entityBodyEditorDiv'
           data-scroll-btn-top-label='{{ 'Top of text'|trans }}'

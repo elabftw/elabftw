@@ -239,14 +239,21 @@ export default class ScrollButtons {
     const editorWindow = target.ownerDocument.defaultView;
     let targetTop = target.getBoundingClientRect().top + window.scrollY;
     if (frame instanceof HTMLIFrameElement) {
-      target.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-      targetTop = frame.getBoundingClientRect().top
-        + window.scrollY
-        + target.getBoundingClientRect().top
-        + (editorWindow?.scrollY ?? 0);
+      const scrollingElement = target.ownerDocument.scrollingElement;
+      const targetTopInEditor = target.getBoundingClientRect().top
+        + (scrollingElement?.scrollTop ?? editorWindow?.scrollY ?? 0);
+      const hasInternalScroll = scrollingElement
+        && scrollingElement.scrollHeight > scrollingElement.clientHeight + 1;
+
+      if (hasInternalScroll) {
+        scrollingElement.scrollTo({
+          top: targetTopInEditor,
+          behavior: 'smooth',
+        });
+        targetTop = frame.getBoundingClientRect().top + window.scrollY;
+      } else {
+        targetTop = frame.getBoundingClientRect().top + window.scrollY + targetTopInEditor;
+      }
     }
 
     const navbarHeight = document.querySelector<HTMLElement>('.sticky-navbar')?.offsetHeight ?? 0;

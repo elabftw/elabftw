@@ -124,13 +124,6 @@ export default class ScrollButtons {
         setOpen(false);
       }
     });
-    menu.addEventListener('click', event => {
-      const clicked = event.target;
-      if (clicked instanceof Element && clicked.closest('.scroll-text-navigation-link')) {
-        trigger.focus({ preventScroll: true });
-        setOpen(false);
-      }
-    });
     document.addEventListener('pointerdown', event => {
       const clicked = event.target;
       if (clicked instanceof Node && !wrapper.contains(clicked)) {

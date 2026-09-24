@@ -233,6 +233,7 @@ final class Filter
             'language-vhdl',
             'language-yaml',
             'mce-accordion',
+            'page-break',
         ));
         // note: hyphens and word-break are not supported
         $config->set('CSS.AllowedProperties', array(

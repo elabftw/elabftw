@@ -95,11 +95,14 @@ export default class ScrollButtons {
       menu.setAttribute('aria-hidden', String(!open));
     };
     const refresh = (): void => this.populateTextNavigation(target, menu);
-
-    wrapper.addEventListener('pointerenter', () => {
-      refresh();
+    const open = (): void => {
+      if (!wrapper.classList.contains('is-open')) {
+        refresh();
+      }
       setOpen(true);
-    });
+    };
+
+    wrapper.addEventListener('pointerenter', open);
     wrapper.addEventListener('pointerleave', event => {
       if (event.pointerType === 'touch') {
         return;
@@ -108,10 +111,7 @@ export default class ScrollButtons {
         setOpen(false);
       }
     });
-    trigger.addEventListener('focus', () => {
-      refresh();
-      setOpen(true);
-    });
+    trigger.addEventListener('focus', open);
     wrapper.addEventListener('focusout', event => {
       const nextTarget = event.relatedTarget;
       if (!(nextTarget instanceof Node) || !wrapper.contains(nextTarget)) {

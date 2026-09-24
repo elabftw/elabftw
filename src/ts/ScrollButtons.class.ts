@@ -58,6 +58,11 @@ export default class ScrollButtons {
       const label = target.dataset.scrollBtnLabel ?? target.innerText.trim();
       const button = this.createButton(iconClass, label);
 
+      if (target.dataset.scrollBtnHeadings && target.dataset.scrollBtnTop) {
+        this.container.append(this.createTextNavigation(target, button));
+        return;
+      }
+
       button.addEventListener('click', () => {
         target.scrollIntoView({
           behavior: 'smooth',
@@ -66,6 +71,195 @@ export default class ScrollButtons {
       });
 
       this.container.append(button);
+    });
+  }
+
+  private createTextNavigation(target: HTMLElement, trigger: HTMLButtonElement): HTMLDivElement {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('scroll-text-navigation');
+
+    const menu = document.createElement('nav');
+    menu.id = 'scrollTextNavigationMenu';
+    menu.classList.add('scroll-text-navigation-menu');
+    menu.setAttribute('aria-label', target.dataset.scrollBtnLabel ?? '');
+    menu.setAttribute('aria-hidden', 'true');
+
+    trigger.classList.add('scroll-text-navigation-trigger');
+    trigger.setAttribute('aria-controls', menu.id);
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-haspopup', 'true');
+
+    const setOpen = (open: boolean): void => {
+      wrapper.classList.toggle('is-open', open);
+      trigger.setAttribute('aria-expanded', String(open));
+      menu.setAttribute('aria-hidden', String(!open));
+    };
+    const refresh = (): void => this.populateTextNavigation(target, menu);
+    const open = (): void => {
+      if (!wrapper.classList.contains('is-open')) {
+        refresh();
+      }
+      setOpen(true);
+    };
+
+    wrapper.addEventListener('pointerenter', open);
+    wrapper.addEventListener('pointerleave', event => {
+      if (event.pointerType === 'touch') {
+        return;
+      }
+      if (!wrapper.contains(document.activeElement)) {
+        setOpen(false);
+      }
+    });
+    trigger.addEventListener('focus', open);
+    wrapper.addEventListener('focusout', event => {
+      const nextTarget = event.relatedTarget;
+      if (!(nextTarget instanceof Node) || !wrapper.contains(nextTarget)) {
+        setOpen(false);
+      }
+    });
+    wrapper.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        trigger.focus({ preventScroll: true });
+        setOpen(false);
+      }
+    });
+    document.addEventListener('pointerdown', event => {
+      const clicked = event.target;
+      if (clicked instanceof Node && !wrapper.contains(clicked)) {
+        setOpen(false);
+      }
+    });
+
+    wrapper.replaceChildren(trigger, menu);
+    return wrapper;
+  }
+
+  private populateTextNavigation(target: HTMLElement, menu: HTMLElement): void {
+    const topTarget = document.getElementById(target.dataset.scrollBtnTop ?? '');
+    const headingsSource = document.getElementById(target.dataset.scrollBtnHeadings ?? '');
+    const headingsRoot = headingsSource instanceof HTMLIFrameElement
+      ? headingsSource.contentDocument?.body
+      : headingsSource;
+    if (!topTarget || !headingsRoot) {
+      menu.replaceChildren();
+      return;
+    }
+
+    const list = document.createElement('ul');
+    list.classList.add('scroll-text-navigation-list');
+
+    list.append(this.createTextNavigationItem(
+      target.dataset.scrollBtnTopLabel ?? '',
+      'fa-arrow-up',
+      () => this.scrollElementIntoView(topTarget),
+    ));
+
+    const headings = Array.from(headingsRoot.querySelectorAll<HTMLElement>('h1, h2, h3'));
+    const parents: Array<{
+      level: number;
+      item: HTMLLIElement;
+      childList?: HTMLUListElement;
+    }> = [];
+
+    headings.forEach(heading => {
+      const label = heading.textContent?.trim() ?? '';
+      if (!label) {
+        return;
+      }
+      const level = Number.parseInt(heading.tagName.slice(1), 10);
+      while (parents.length > 0 && parents[parents.length - 1].level >= level) {
+        parents.pop();
+      }
+
+      let targetList = list;
+      const parent = parents[parents.length - 1];
+      if (parent) {
+        if (!parent.childList) {
+          parent.childList = document.createElement('ul');
+          parent.childList.classList.add('scroll-text-navigation-list', 'scroll-text-navigation-sublist');
+          parent.item.append(parent.childList);
+        }
+        targetList = parent.childList;
+      }
+
+      const item = this.createTextNavigationItem(
+        label,
+        null,
+        () => this.scrollElementIntoView(heading),
+      );
+      targetList.append(item);
+      parents.push({ level, item });
+    });
+
+    list.append(this.createTextNavigationItem(
+      target.dataset.scrollBtnBottomLabel ?? '',
+      'fa-arrow-down',
+      () => this.scrollElementIntoView(target),
+    ));
+    menu.replaceChildren(list);
+  }
+
+  private createTextNavigationItem(
+    label: string,
+    iconClass: string | null,
+    onClick: () => void,
+  ): HTMLLIElement {
+    const item = document.createElement('li');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.classList.add('scroll-text-navigation-link');
+    button.title = label;
+    button.addEventListener('click', onClick);
+
+    if (iconClass) {
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-fw', iconClass);
+      icon.setAttribute('aria-hidden', 'true');
+      button.append(icon);
+    }
+
+    const text = document.createElement('span');
+    text.classList.add('scroll-text-navigation-label');
+    text.textContent = label;
+    button.append(text);
+    item.append(button);
+    return item;
+  }
+
+  private scrollElementIntoView(target: HTMLElement): void {
+    const frame = target.ownerDocument.defaultView?.frameElement;
+    const editorWindow = target.ownerDocument.defaultView;
+    let targetTop = target.getBoundingClientRect().top + window.scrollY;
+    if (frame instanceof HTMLIFrameElement) {
+      const scrollingElement = target.ownerDocument.scrollingElement;
+      const targetTopInEditor = target.getBoundingClientRect().top
+        + (scrollingElement?.scrollTop ?? editorWindow?.scrollY ?? 0);
+      const hasInternalScroll = scrollingElement
+        && scrollingElement.scrollHeight > scrollingElement.clientHeight + 1;
+
+      if (hasInternalScroll) {
+        scrollingElement.scrollTo({
+          top: targetTopInEditor,
+          behavior: 'smooth',
+        });
+        targetTop = frame.getBoundingClientRect().top + window.scrollY;
+      } else {
+        targetTop = frame.getBoundingClientRect().top + window.scrollY + targetTopInEditor;
+      }
+    }
+
+    const navbarHeight = document.querySelector<HTMLElement>('.sticky-navbar')?.offsetHeight ?? 0;
+    const toolbarHeight = document.getElementById('entityToolbar')?.offsetHeight ?? 0;
+    const editorHeaderHeight = frame instanceof HTMLIFrameElement
+      ? frame.closest('.tox-tinymce')?.querySelector<HTMLElement>('.tox-editor-header')?.offsetHeight ?? 0
+      : 0;
+    const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const offset = navbarHeight + toolbarHeight + editorHeaderHeight + rootFontSize;
+
+    window.scrollTo({
+      top: targetTop - offset,
+      behavior: 'smooth',
     });
   }
 

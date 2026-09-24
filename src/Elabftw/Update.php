@@ -26,19 +26,24 @@ use function preg_match;
 /**
  * Run the update schema script
  *
+ * Numeric schemas are kept as a legacy upgrade path up to REQUIRED_SCHEMA.
+ * New migrations use UUIDv7 filenames and are tracked independently in schema_migrations.
+ *
  * How to modify the structure:
- * 1. Generate a schema with bin/console dev:genschema
- * 2. Fix permissions as they might be owned by root from the container
- * 3. Edit them to make changes in the db in both directions (up and down)
- * 4. Run `bin/console db:update` to apply the changes as if you were upgrading
- * 5. reflect the changes in src/sql/structure.sql (or models/Config.php for the config table)
+ * 1. Generate a migration with `bin/console dev:genschema descriptive_name`.
+ * 2. Edit the generated .sql and .down.sql files.
+ * 3. Run `bin/console db:update` to test the migration.
+ * 4. Reflect the final structure in src/sql/structure.sql (or Models/Config.php for config entries).
  */
 final class Update
 {
     private Db $Db;
 
-    public function __construct(private int $currentSchema, private readonly Sql $Sql)
-    {
+    public function __construct(
+        private int $currentSchema,
+        private readonly Sql $Sql,
+        private readonly Migrations $Migrations,
+    ) {
         $this->Db = Db::getConnection();
     }
 
@@ -64,7 +69,7 @@ final class Update
             throw new ImproperActionException('Please update first to latest version from 2.0 branch before updating to 3.0 branch! See documentation.');
         }
 
-        // new style with SQL files instead of functions
+        // Keep the historical numeric migrations as the upgrade path for existing installations.
         $Config = Config::getConfig();
         while ($this->currentSchema < SchemaVersionChecker::REQUIRED_SCHEMA) {
             $nextSchema = $this->currentSchema + 1;
@@ -82,7 +87,27 @@ final class Update
                 $this->fixExperimentsRevisions();
             }
         }
+
+        $this->runUuidMigrations($force);
         return $this->currentSchema;
+    }
+
+    private function runUuidMigrations(bool $force): void
+    {
+        $pending = $this->Migrations->getPending();
+        if ($pending === array()) {
+            return;
+        }
+
+        $batch = $this->Migrations->nextBatch();
+        foreach ($pending as $migration => $filename) {
+            $this->Sql->execFileWithRollback(
+                $filename,
+                Migrations::getDownFilename($filename),
+                $force,
+            );
+            $this->Migrations->recordApplied($migration, $batch);
+        }
     }
 
     private function addElabidToItems(): void
@@ -118,7 +143,6 @@ final class Update
         $this->Db->execute($req);
 
         if ($req->rowCount() === 0) {
-            // Now, add the constraints
             $sql = 'ALTER TABLE `experiments_revisions`
                 ADD CONSTRAINT `fk_experiments_revisions_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
                 ADD CONSTRAINT `fk_experiments_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;';

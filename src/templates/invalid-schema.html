@@ -52,7 +52,8 @@
     </style>
 
     <h1>Almost there!</h1>
-    <p>Your MySQL database structure needs to be updated. You are currently on schema version %CURRENT_SCHEMA% and the required schema is %REQUIRED_SCHEMA%.</p>
+    <p>Your MySQL database structure needs to be updated.</p>
+    <p>Legacy schema: %CURRENT_SCHEMA% / %REQUIRED_SCHEMA%. Pending UUIDv7 migrations: %PENDING_MIGRATIONS%.</p>
     <h2>To finish the update, run the "bin/console db:update" command:</h2>
     <pre>docker exec -it elabftw bin/console db:update</pre>
     <p>See <a target='_blank' rel='noopener' href='https://doc.elabftw.net/docs/install/update'>documentation</a>.</p>

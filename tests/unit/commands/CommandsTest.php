@@ -91,9 +91,9 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     {
         $commandTester = new CommandTester(new ForceSchema());
         $Config = Config::getConfig();
-        $commandTester->execute(array('schema' => $Config->configArr['schema']));
+        $commandTester->execute(array('identifier' => $Config->configArr['schema']));
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Changing schema to', $commandTester->getDisplay());
+        $this->assertStringContainsString('Changing legacy schema to', $commandTester->getDisplay());
     }
 
     public function testCache(): void
@@ -267,7 +267,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     public function testRevertSchema(): void
     {
         $commandTester = new CommandTester(new RevertSchema((new Fixtures())->getFs()));
-        $commandTester->execute(array('number' => '42'));
+        $commandTester->execute(array('migration' => '42'));
         $commandTester->assertCommandIsSuccessful();
     }
 

@@ -97,6 +97,24 @@ CREATE TABLE `config` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `schema_migrations`
+--
+
+CREATE TABLE `schema_migrations` (
+  `migration` CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `batch` INT UNSIGNED NOT NULL,
+  `applied_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`migration`),
+  KEY `idx_schema_migrations_batch` (`batch`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `schema_migrations`:
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `experiments`
 --
 

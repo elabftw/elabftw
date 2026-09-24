@@ -94,7 +94,15 @@
           <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
         {% endif %}
       </div>
-      <div data-scroll-btn='fa-font' data-scroll-btn-label='{{ 'Main text end'|trans }}' data-scroll-btn-y='42' class='d-flex ml-1'>
+      <div data-scroll-btn='fa-font'
+        data-scroll-btn-label='{{ Entity.entityData.content_type == '2' ? 'Main text end'|trans : 'Main text'|trans }}'
+        {% if Entity.entityData.content_type != '2' %}
+          data-scroll-btn-headings='body_area_ifr'
+          data-scroll-btn-top='entityBodyEditorDiv'
+          data-scroll-btn-top-label='{{ 'Top of text'|trans }}'
+          data-scroll-btn-bottom-label='{{ 'Bottom of text'|trans }}'
+        {% endif %}
+        data-scroll-btn-y='42' class='d-flex ml-1'>
         {# LAST SAVED #}
         <div>
           <span class='smallgray'>{{ 'Last saved:'|trans }}</span>

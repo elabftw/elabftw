@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Models\AbstractWebhooks;
 use Elabftw\Models\Webhooks;
 use Elabftw\Models\WebhooksQueue;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -183,7 +182,7 @@ final class WebhookDispatcher
                 'Content-Type' => 'application/json',
                 'User-Agent' => 'eLabFTW-Webhook',
                 // signature is over the raw body, so a receiver can verify without reparsing
-                self::SIGNATURE_HEADER => 'sha256=' . hash_hmac('sha256', $body, AbstractWebhooks::decryptSecret((string) $row['secret'])),
+                self::SIGNATURE_HEADER => 'sha256=' . hash_hmac('sha256', $body, WebhookSecret::decrypt((string) $row['secret'])),
                 self::EVENT_HEADER => (string) $row['event'],
                 self::DELIVERY_HEADER => (string) $row['event_id'],
             ),

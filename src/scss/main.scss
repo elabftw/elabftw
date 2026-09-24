@@ -53,6 +53,7 @@
 @include meta.load-css('tom-select');
 @include meta.load-css('tinymce');
 @include meta.load-css('prism');
+@include meta.load-css('scroll-buttons');
 @include meta.load-css('skeletons');
 @include meta.load-css('training');
 
@@ -1585,61 +1586,6 @@ input[type='color'] {
   border-top-right-radius: 0;
 }
 
-/* SCROLL TO TOP OF PAGE BUTTON */
-.floating-middle-right {
-  align-items: flex-end;
-  gap: 0.5rem;
-  pointer-events: none;
-  position: fixed;
-  right: 0.8%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20rem;
-  z-index: 1035;
-}
-
-.scroll-button {
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  pointer-events: auto;
-  white-space: nowrap;
-
-  .scroll-button-label {
-    max-width: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition:
-      margin-right 0.2s ease,
-      max-width 0.3s ease,
-      opacity 0.2s ease;
-  }
-
-  &:hover,
-  &:focus-visible {
-    .scroll-button-label {
-      margin-right: 0.5rem;
-      max-width: 18rem;
-      opacity: 1;
-    }
-  }
-}
-
-[data-scroll-btn] {
-  scroll-margin-top:
-    calc(
-      var(--navbar-height)
-      + var(--toolbar-height)
-      + 1rem
-      + var(--scroll-btn-y, 0px)
-    );
-}
-
-#scrollTopBtnAnchor {
-  bottom: 0;
-  position: absolute;
-}
-/* END BACK TO TOP BUTTON */
 
 .border-white {
   border: 1px solid var(--mainbackground);

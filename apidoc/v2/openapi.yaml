@@ -2261,6 +2261,217 @@ components:
                   is_archived:
                     type: integer
 
+    # WEBHOOKS
+    webhook:
+      type: object
+      description: |
+        A webhook subscription. Reading takes the same permissions as writing, because the
+        target url and the failure history are not public information.
+      properties:
+        id:
+          type: integer
+          example: 3
+        scope:
+          type: integer
+          description: |
+            Level the webhook lives at, and therefore what it is entitled to receive:
+              - 0: Instance. Every event of the instance. Sysadmin only.
+              - 1: Team. Events for entries of that team.
+              - 2: User. Events for entries owned by that user.
+          enum: [0, 1, 2]
+          example: 1
+        teams_id:
+          type: integer
+          nullable: true
+          description: Team the webhook belongs to, null for the other scopes.
+          example: 1
+        users_id:
+          type: integer
+          nullable: true
+          description: User the webhook belongs to, null for the other scopes.
+          example: 4
+        name:
+          type: string
+          description: Free text label, to tell webhooks apart.
+          example: LIMS handover
+        url:
+          type: string
+          description: |
+            Where deliveries are sent. Must be https, without credentials or fragment, and
+            must not resolve to a private, loopback, link-local or otherwise reserved
+            address. The address is checked again at delivery time, so a name that starts
+            answering with an internal address later is refused then.
+          example: https://lims.example.org/elabftw-hook
+        events:
+          type: array
+          description: Events this webhook subscribes to. At least one is required.
+          items:
+            $ref: '#/components/schemas/webhook_event'
+          example: ['experiment.updated', 'experiment.status_changed']
+        enabled:
+          type: integer
+          description: |
+            0 means nothing is queued for this webhook and nothing is delivered. Repeated
+            delivery failures set this to 0 automatically.
+          enum: [0, 1]
+          example: 1
+        consecutive_failures:
+          type: integer
+          description: |
+            Deliveries that gave up in a row. Reset by a successful delivery. When it
+            reaches 10 the webhook is disabled and its owner gets a notification.
+          example: 0
+        last_error:
+          type: string
+          nullable: true
+          description: Why the last delivery failed.
+          example: target answered 500
+        disabled_at:
+          type: string
+          nullable: true
+          description: When the webhook was disabled because of repeated failures.
+          example: "2026-09-22 15:26:54"
+        created_at:
+          type: string
+          example: "2026-09-20 09:12:03"
+        modified_at:
+          type: string
+          example: "2026-09-21 11:40:22"
+        secret:
+          type: string
+          description: |
+            Key the signature is computed with, 64 hexadecimal characters. Generated when
+            the webhook is created and not changeable. Stored encrypted, and returned only
+            when reading a single webhook, never in the list.
+          example: 6f1e0c2a9b7d4e3f8a5c1b0d9e2f7a4c3b6d5e8f1a0c9b2d7e4f3a6c5b8d1e0f
+    webhook_event:
+      type: string
+      description: |
+        An event a webhook can subscribe to. Only concrete entities emit events: templates
+        and resource types do not.
+      enum:
+        - experiment.created
+        - experiment.updated
+        - experiment.status_changed
+        - item.created
+        - item.updated
+        - item.status_changed
+    webhook_create_request:
+      type: object
+      required: ['url', 'events']
+      properties:
+        url:
+          type: string
+          description: |
+            Where deliveries are sent. Must be https, without credentials or fragment, and
+            must not resolve to a private, loopback, link-local or otherwise reserved
+            address.
+          example: https://lims.example.org/elabftw-hook
+        events:
+          type: array
+          description: Events to subscribe to. At least one valid event is required.
+          items:
+            $ref: '#/components/schemas/webhook_event'
+          example: ['experiment.updated']
+        name:
+          type: string
+          description: Free text label, to tell webhooks apart.
+          example: LIMS handover
+    webhook_patch_request:
+      type: object
+      description: |
+        Only these four columns can be changed. The secret and the scope cannot: create a
+        new webhook instead. An unknown key is refused rather than ignored.
+      properties:
+        action:
+          type: string
+          enum: ['update']
+          description: Optional, this is the default action for a PATCH.
+          default: update
+        name:
+          type: string
+          example: LIMS handover
+        url:
+          type: string
+          description: Checked the same way as on creation.
+          example: https://lims.example.org/elabftw-hook
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/webhook_event'
+          example: ['experiment.updated', 'item.updated']
+        enabled:
+          type: integer
+          description: |
+            Set to 0 to stop delivering without deleting the webhook. Setting it back to 1
+            is also how an admin acknowledges the failures that disabled it: the failure
+            counter, the last error and the disabling timestamp are cleared.
+          enum: [0, 1]
+          example: 1
+    webhook_delivery:
+      type: object
+      description: |
+        Body of an outgoing delivery: what eLabFTW POSTs to the webhook url. It carries
+        identifiers only, never the content of the entry, so a subscriber fetches the url
+        with its own api key and sees exactly what that key is allowed to see.
+
+        Three headers come with it:
+          - `X-Elabftw-Event`: the event name, same as the `event` field.
+          - `X-Elabftw-Delivery`: the event id, same as the `event_id` field.
+          - `X-Elabftw-Signature`: `sha256=` followed by the HMAC-SHA256 of the raw body,
+            keyed with the webhook secret. Verify it over the bytes as received, before
+            parsing.
+
+        A delivery counts as successful on a 2xx answer. Anything else, including a
+        timeout, is retried up to 5 times with a delay that doubles from 1 minute to at
+        most 1 hour. Redirects are not followed.
+
+        One save produces one delivery per subscribed webhook, even when it changed
+        several fields. A retry repeats the same `event_id`, so a receiver can recognise a
+        delivery it has already processed. Receivers should be idempotent: a reply that is
+        lost on the way back makes eLabFTW retry a delivery that did arrive.
+      properties:
+        event:
+          $ref: '#/components/schemas/webhook_event'
+        event_id:
+          type: string
+          description: Identifies this event, 32 hexadecimal characters. Stays the same across retries.
+          example: 9f2c4d6a8b0e1f3a5c7d9e2f4a6b8c0d
+        id:
+          type: integer
+          description: ID of the entry that changed.
+          example: 42
+        team:
+          type: integer
+          description: Team the entry belongs to.
+          example: 1
+        url:
+          type: string
+          description: API url of the entry, to fetch it with your own api key.
+          example: https://eln.example.org/api/v2/experiments/42
+        at:
+          type: string
+          format: date-time
+          description: When the event was emitted.
+          example: "2026-09-22T15:26:54+00:00"
+        actor:
+          type: object
+          description: Who caused the change.
+          properties:
+            userid:
+              type: integer
+              nullable: true
+              example: 4
+            apikey_id:
+              type: integer
+              nullable: true
+              description: |
+                ID of the api key the change came through, null when it came from the web
+                interface. This is the key's id, never the key itself. An integration that
+                writes back through the api compares it with its own key id to skip the
+                events it caused itself.
+              example: 7
+
   # RESPONSES
   responses:
     BadRequest:
@@ -8087,3 +8298,390 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+
+  # WEBHOOKS
+  # Three levels, same table and same shape: what differs is who may write one and which
+  # events it is entitled to receive.
+  /instance/webhooks:
+    summary: Manage webhooks for the whole instance.
+    description: |
+      An instance webhook receives events for every entry of the instance, regardless of team
+      or owner. Sysadmin only.
+
+      A webhook is a url, a secret and a list of events. When one of those events happens,
+      eLabFTW POSTs a small json body to the url, signed with the secret: see the
+      `webhook_delivery` schema for the body, the headers and the retry behaviour. Delivery
+      happens out of band, from a command that runs every minute, so a slow or dead target
+      never slows down the save that caused the event.
+    get:
+      tags: ['Webhooks']
+      summary: Read all instance webhooks.
+      description: The secret is not part of the list, read a single webhook to get it.
+      operationId: read-instance_webhooks
+      responses:
+        '200':
+          description: A list of webhooks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: ['Webhooks']
+      summary: Create an instance webhook.
+      description: |
+        The secret is generated by eLabFTW, it cannot be supplied. Read the newly created
+        webhook to get it.
+      operationId: post-instance_webhook
+      requestBody:
+        description: Parameters for creating a webhook.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook_create_request'
+      responses:
+        '201':
+          description: The webhook has been created.
+          headers:
+            location:
+              description: An URL to the newly created webhook.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /instance/webhooks/{id}:
+    summary: Read, modify or delete one instance webhook.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the webhook.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Webhooks']
+      summary: Read an instance webhook, including its secret.
+      operationId: read-instance_webhook
+      responses:
+        '200':
+          description: A webhook.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    patch:
+      tags: ['Webhooks']
+      summary: Modify an instance webhook.
+      operationId: patch-instance_webhook
+      requestBody:
+        description: Parameters for modifying a webhook.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook_patch_request'
+      responses:
+        '200':
+          description: The modified webhook.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    delete:
+      tags: ['Webhooks']
+      summary: Delete an instance webhook.
+      description: Deliveries already queued for it are dropped along with it.
+      operationId: delete-instance_webhook
+      responses:
+        '204':
+          description: The webhook was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /teams/{id}/webhooks:
+    summary: Manage webhooks at the team level.
+    description: |
+      A team webhook receives events for entries of that team only. Requires Admin
+      permissions in that team. See `/instance/webhooks` for how a webhook works, and the
+      `webhook_delivery` schema for what is delivered.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Webhooks']
+      summary: Read all webhooks of the team.
+      description: The secret is not part of the list, read a single webhook to get it.
+      operationId: read-team_webhooks
+      responses:
+        '200':
+          description: A list of webhooks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: ['Webhooks']
+      summary: Create a webhook in the team.
+      operationId: post-team_webhook
+      requestBody:
+        description: Parameters for creating a webhook.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook_create_request'
+      responses:
+        '201':
+          description: The webhook has been created.
+          headers:
+            location:
+              description: An URL to the newly created webhook.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /teams/{id}/webhooks/{subid}:
+    summary: Read, modify or delete one webhook of the team.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the team.
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the webhook.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Webhooks']
+      summary: Read a webhook of the team, including its secret.
+      operationId: read-team_webhook
+      responses:
+        '200':
+          description: A webhook.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Webhooks']
+      summary: Modify a webhook of the team.
+      operationId: patch-team_webhook
+      requestBody:
+        description: Parameters for modifying a webhook.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook_patch_request'
+      responses:
+        '200':
+          description: The modified webhook.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Webhooks']
+      summary: Delete a webhook of the team.
+      operationId: delete-team_webhook
+      responses:
+        '204':
+          description: The webhook was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /users/{id}/webhooks:
+    summary: Manage webhooks at the user level.
+    description: |
+      A user webhook receives events for entries owned by that user only. A user manages
+      their own, an Admin of that user may manage them too. See `/instance/webhooks` for how
+      a webhook works, and the `webhook_delivery` schema for what is delivered.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user, or "me" for the requester.
+        required: true
+        schema:
+          type: string
+          example: me
+    get:
+      tags: ['Webhooks']
+      summary: Read all webhooks of the user.
+      description: The secret is not part of the list, read a single webhook to get it.
+      operationId: read-user_webhooks
+      responses:
+        '200':
+          description: A list of webhooks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: ['Webhooks']
+      summary: Create a webhook for the user.
+      operationId: post-user_webhook
+      requestBody:
+        description: Parameters for creating a webhook.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook_create_request'
+      responses:
+        '201':
+          description: The webhook has been created.
+          headers:
+            location:
+              description: An URL to the newly created webhook.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /users/{id}/webhooks/{subid}:
+    summary: Read, modify or delete one webhook of the user.
+    parameters:
+      - name: id
+        in: path
+        description: ID of the user, or "me" for the requester.
+        required: true
+        schema:
+          type: string
+          example: me
+      - name: subid
+        in: path
+        description: ID of the webhook.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Webhooks']
+      summary: Read a webhook of the user, including its secret.
+      operationId: read-user_webhook
+      responses:
+        '200':
+          description: A webhook.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Webhooks']
+      summary: Modify a webhook of the user.
+      operationId: patch-user_webhook
+      requestBody:
+        description: Parameters for modifying a webhook.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhook_patch_request'
+      responses:
+        '200':
+          description: The modified webhook.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Webhooks']
+      summary: Delete a webhook of the user.
+      operationId: delete-user_webhook
+      responses:
+        '204':
+          description: The webhook was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'

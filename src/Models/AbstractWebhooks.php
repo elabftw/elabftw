@@ -17,7 +17,7 @@ use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\WebhookEvent;
 use Elabftw\Enums\WebhookScope;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
@@ -114,7 +114,7 @@ abstract class AbstractWebhooks extends AbstractRest
     }
 
     #[Override]
-    public function destroy(): bool
+    public function destroy(bool $recursive = false): bool
     {
         $this->canwriteOrExplode();
         $this->idOrExplode();
@@ -134,7 +134,7 @@ abstract class AbstractWebhooks extends AbstractRest
     protected function canwriteOrExplode(): void
     {
         if (!$this->canwrite) {
-            throw new IllegalActionException();
+            throw new ForbiddenException();
         }
     }
 

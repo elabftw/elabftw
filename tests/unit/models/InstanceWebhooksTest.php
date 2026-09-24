@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\WebhookEvent;
-use Elabftw\Exceptions\IllegalActionException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
@@ -99,13 +99,13 @@ class InstanceWebhooksTest extends \PHPUnit\Framework\TestCase
         try {
             new InstanceWebhooks(false, $id)->readOne();
             $this->fail('reading a webhook without permission should have been refused');
-        } catch (IllegalActionException) {
+        } catch (ForbiddenException) {
             $this->addToAssertionCount(1);
         }
         try {
             new InstanceWebhooks(false)->readAll();
             $this->fail('listing webhooks without permission should have been refused');
-        } catch (IllegalActionException) {
+        } catch (ForbiddenException) {
             $this->addToAssertionCount(1);
         }
         new InstanceWebhooks(true, $id)->destroy();
@@ -113,7 +113,7 @@ class InstanceWebhooksTest extends \PHPUnit\Framework\TestCase
 
     public function testNotSysadmin(): void
     {
-        $this->expectException(IllegalActionException::class);
+        $this->expectException(ForbiddenException::class);
         new InstanceWebhooks(false)->postAction(Action::Create, array(
             'url' => 'https://192.0.2.12/hook',
             'events' => array(WebhookEvent::ExperimentCreated->value),

@@ -239,6 +239,10 @@ export default class ScrollButtons {
     const editorWindow = target.ownerDocument.defaultView;
     let targetTop = target.getBoundingClientRect().top + window.scrollY;
     if (frame instanceof HTMLIFrameElement) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
       targetTop = frame.getBoundingClientRect().top
         + window.scrollY
         + target.getBoundingClientRect().top

@@ -34,6 +34,7 @@ use function _;
 use function array_key_exists;
 use function in_array;
 use function trim;
+use function array_values;
 
 /**
  * Twig filters
@@ -131,11 +132,20 @@ final class TwigFilters
 
                 if (is_array($value)) {
                     $html = '';
-                    foreach ($value as $item) {
+                    $valueLabels = $field['value_labels'] ?? array();
+                    foreach (array_values($value) as $index => $item) {
+                        $label = '';
+                        if (isset($valueLabels[$index]) && is_string($valueLabels[$index]) && $valueLabels[$index] !== '') {
+                            $label = sprintf(
+                                '<span class="badge badge-pill badge-light ml-2">%s</span>',
+                                Tools::eLabHtmlspecialchars($valueLabels[$index]),
+                            );
+                        }
                         $html .= sprintf(
-                            '<p>%s%s</p>',
+                            '<p>%s%s%s</p>',
                             self::formatMetadataValue($metadataType, $item, $newTab),
                             $unit,
+                            $label,
                         );
                     }
                     $value = $html;

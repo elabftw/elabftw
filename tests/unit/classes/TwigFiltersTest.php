@@ -111,6 +111,25 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, TwigFilters::formatMetadata($metadataJson));
     }
 
+    public function testFormatMetadataWithMultiValueLabels(): void
+    {
+        $metadataJson = '{
+          "extra_fields": {
+            "checks": {
+              "type": "checkbox",
+              "allow_multi_values": true,
+              "value": ["on", "off"],
+              "value_labels": ["Calibrated", "Reviewed <&\\" done"]
+            }
+          }
+        }';
+
+        $result = TwigFilters::formatMetadata($metadataJson);
+
+        $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox" checked="checked"><span class="badge badge-pill badge-light ml-2">Calibrated</span></p>', $result);
+        $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox"><span class="badge badge-pill badge-light ml-2">Reviewed &lt;&amp;&quot; done</span></p>', $result);
+    }
+
     public function testFormatMetadataWithMultipleValuesForAllTypes(): void
     {
         $metadataJson = '{

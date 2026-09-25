@@ -39,6 +39,7 @@ export interface ExtraFieldProperties {
   group_id?: number;
   position?: number;
   options?: string[];
+  value_labels?: string[];
   description?: string;
   allow_multi_values?: boolean;
   required?: boolean;

@@ -98,8 +98,8 @@ try {
         ->subject('[eLabFTW] Password reset')
         ->from(new Address($App->Config->configArr['mail_from'], 'eLabFTW'))
         ->to(new Address($email, $Users->userData['fullname']))
-        ->html($htmlBody . nl2br($Email->footer))
-        ->text($textBody . $Email->footer);
+        ->html($htmlBody . nl2br($Email->footer['html']))
+        ->text($textBody . $Email->footer['plain']);
         $Email->send($message);
 
         // keep a trace of the request

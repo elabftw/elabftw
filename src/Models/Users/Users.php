@@ -57,6 +57,7 @@ use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
 use RuntimeException;
+use Throwable;
 
 use function _;
 use function array_column;
@@ -66,6 +67,9 @@ use function in_array;
 use function json_decode;
 use function sprintf;
 use function strtolower;
+use function strlen;
+use function strrpos;
+use function substr;
 
 /**
  * Users
@@ -222,6 +226,93 @@ class Users extends AbstractRest
         // it's okay to not have requester for this (register page)
         AuditLogs::create(new UserRegister($this->requester->userid ?? 0, $this->userid));
         return $this->userid;
+    }
+
+    /**
+     * Associate a teamless user with a visible team through the access-request flow.
+     *
+     * @return bool Whether an admin must validate the request before login
+     */
+    public function requestTeamAccess(int $teamId): bool
+    {
+        $TeamsHelper = new TeamsHelper($teamId);
+        $TeamsHelper->teamIsVisibleOrExplode();
+        $requiresValidation = (bool) Config::getConfig()->configArr['admin_validate'];
+        $userid = $this->getUserid();
+
+        $this->Db->beginTransaction();
+        try {
+            // Serialize requests for this user so concurrent submissions cannot
+            // associate the same account with several teams.
+            $lockReq = $this->Db->prepare(
+                'SELECT validated FROM users WHERE userid = :userid FOR UPDATE',
+            );
+            $lockReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $this->Db->execute($lockReq);
+            $validated = $lockReq->fetchColumn();
+            if ($validated === false) {
+                throw new ResourceNotFoundException();
+            }
+            if ($validated !== 1) {
+                throw new ImproperActionException(
+                    'Cannot request team access: the user is not validated.',
+                );
+            }
+
+            $membershipReq = $this->Db->prepare(
+                'SELECT 1 FROM users2teams
+                    WHERE users_id = :userid AND is_archived = 0
+                    LIMIT 1',
+            );
+            $membershipReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $this->Db->execute($membershipReq);
+            if ($membershipReq->fetchColumn() !== false) {
+                throw new ImproperActionException(
+                    'Cannot request team access: the user already has an active team.',
+                );
+            }
+
+            // Recreate an archived target membership so its former permissions
+            // cannot be restored by this self-service flow.
+            $archivedMembershipReq = $this->Db->prepare(
+                'DELETE FROM users2teams
+                    WHERE users_id = :userid AND teams_id = :team AND is_archived = 1',
+            );
+            $archivedMembershipReq->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $archivedMembershipReq->bindValue(':team', $teamId, PDO::PARAM_INT);
+            $this->Db->execute($archivedMembershipReq);
+
+            $wasInserted = new Users2Teams($this)->create(
+                $userid,
+                $teamId,
+                isValidated: !$requiresValidation,
+            );
+            if (!$wasInserted) {
+                throw new ImproperActionException(
+                    'Cannot request team access: this team is already associated with the user.',
+                );
+            }
+
+            if ($requiresValidation) {
+                $this->rawUpdate(UsersColumn::Validated, 0);
+            }
+
+            $this->notifyAdmins(
+                $TeamsHelper->getAllAdminsUserid(),
+                $userid,
+                !$requiresValidation,
+                new Teams($this, $teamId)->teamArr['name'],
+            );
+            if ($requiresValidation) {
+                new SelfNeedValidation($this)->create();
+            }
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
+        }
+
+        return $requiresValidation;
     }
 
     /**
@@ -402,14 +493,20 @@ class Users extends AbstractRest
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
         );
-        // if the user is Admin somewhere (or Sysadmin), return a pretty complete response
-        // Note: having something where you get different response depending if the user is part of your team or not seems too complex to implement and maintain
-        if ($this->requester->isAdminSomewhere() || $this->requester->isSysadmin()) {
-            return $users;
-        }
-        // otherwise, remove some more data, here we want only the super basic data for basic users
-        $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'last_login', 'valid_until', 'is_sysadmin', 'teams');
-        return array_map(function ($user) use ($removeKeys) {
+        $isSysadmin = $this->requester->isSysadmin();
+        $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'valid_until', 'is_sysadmin', 'teams');
+        return array_map(function (array $user) use ($isSysadmin, $removeKeys): array {
+            if (!$isSysadmin) {
+                unset($user['last_login']);
+            }
+            if ($isSysadmin || $this->requester->isAdminOf($user['userid'])) {
+                return $user;
+            }
+            // Keep the requester's own email visible, but mask other users' emails.
+            if ($this->requester->getUserid() !== (int) $user['userid']) {
+                $user['email'] = self::maskEmail($user['email']);
+            }
+            // return only basic data when the requester is not an Admin of this user
             foreach ($removeKeys as $k) {
                 unset($user[$k]);
             }
@@ -430,8 +527,11 @@ class Users extends AbstractRest
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token_hash']);
+        if (!$this->requester->isSysadmin()) {
+            unset($userData['last_login']);
+        }
         // keep sig_privkey in response if requester is target
-        if ($this->requester->userData['userid'] !== $this->userData['userid']) {
+        if ($this->requester->getUserid() !== $this->getUserid()) {
             unset($userData['sig_privkey']);
         }
         return $userData;
@@ -966,5 +1066,24 @@ class Users extends AbstractRest
             $Notifications = $isValidated ? new UserCreated($adminUser, $userid, $team) : new UserNeedValidation($adminUser, $userid, $team);
             $Notifications->create();
         }
+    }
+
+    private static function maskEmail(string $email): string
+    {
+        $separatorPosition = strrpos($email, '@');
+        if ($separatorPosition === false) {
+            return '***';
+        }
+        $localPart = substr($email, 0, $separatorPosition);
+        $domain = substr($email, $separatorPosition + 1);
+        $length = strlen($localPart);
+
+        $maskedLocalPart = match (true) {
+            $length <= 1 => '*',
+            $length === 2 => $localPart[0] . '***',
+            $length >= 8 => substr($localPart, 0, 2) . '***' . substr($localPart, -2),
+            default => $localPart[0] . '***' . substr($localPart, -1),
+        };
+        return sprintf('%s@%s', $maskedLocalPart, $domain);
     }
 }

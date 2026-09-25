@@ -40,6 +40,7 @@ services:
       - ALL
 
     environment:
+
       # MYSQL
       - DB_HOST=mysql
       - DB_PORT=3306
@@ -67,6 +68,10 @@ services:
       - DEV_MODE=true
       #- DB_QUERY_PROFILING=true
       #- DB_QUERY_LOG_MIN_MS=30
+      # Allow requests from Swagger UI
+      - ALLOW_ORIGIN=http://elab.localhost:8085
+      - ALLOW_METHODS=OPTIONS, GET, POST, PATCH, DELETE
+      - ALLOW_HEADERS=Content-Type, Authorization
 
     ports:
       - '3148:8080'

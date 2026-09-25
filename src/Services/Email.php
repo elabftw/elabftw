@@ -130,7 +130,7 @@ class Email
         $message = (new Memail())
         ->subject($config->configArr['mail_subject_prefix'] . ' ' . _('Test email'))
         ->from($this->from)
-        ->to(new Address($email, $config->configArr['mail_from_name']))
+        ->to(new Address($email))
         ->text('Congratulations, you correctly configured eLabFTW to send emails! :)' . $this->footer['plain'])
         ->html('Congratulations, you correctly configured eLabFTW to send (HTML) emails! :)' . $this->footer['html']);
 

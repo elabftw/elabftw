@@ -212,6 +212,11 @@ class MakeEln extends AbstractMakeEln
         foreach ($e['compounds_links'] ?? array() as $compound) {
             $id = sprintf('#compound-%d', $compound['id']);
             $compounds[] = array('@id' => $id);
+            // A compound may be referenced by several exported datasets,
+            // but each '@id' must occur only once in the graph.
+            if (in_array($id, array_column($this->dataEntities, '@id'), true)) {
+                continue;
+            }
             $identifiers = array();
             if (!empty($compound['cas_number'])) {
                 $identifiers[] = array(

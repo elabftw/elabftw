@@ -116,13 +116,18 @@ class Users extends AbstractRest
         bool $skipDomainValidation = false,
         BinaryValue $canManageCompounds = BinaryValue::False,
         BinaryValue $canManageInventoryLocations = BinaryValue::False,
+        bool $includeHiddenTeams = false,
     ): int {
         $Config = Config::getConfig();
         $Teams = new Teams($this);
 
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
-        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
+        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray(
+            $teams,
+            $allowTeamCreation,
+            $includeHiddenTeams,
+        );
         $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
         // make email lowercase every time

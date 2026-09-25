@@ -15,6 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Config;
+use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -57,6 +58,33 @@ class UserCreatorTest extends \PHPUnit\Framework\TestCase
             'usergroup' => Usergroup::User->value,
         ));
         $this->assertIsInt($UserCreator->create());
+    }
+
+    public function testSysadminCanCreateUserInHiddenTeam(): void
+    {
+        $Sysadmin = new Users(1, 1);
+        $teamId = new Teams($Sysadmin)->create('Hidden team user creation');
+        $HiddenTeam = new Teams($Sysadmin, $teamId);
+        $HiddenTeam->patch(Action::Update, array('visible' => 0));
+        $userid = null;
+
+        try {
+            $UserCreator = new UserCreator($Sysadmin, array(
+                'team' => $teamId,
+                'email' => 'hidden-team-user@example.com',
+                'firstname' => 'Hidden',
+                'lastname' => 'User',
+                'usergroup' => Usergroup::User->value,
+            ));
+
+            $userid = $UserCreator->create();
+            $this->assertIsInt($userid);
+        } finally {
+            if ($userid !== null) {
+                new Users($userid, $teamId, $Sysadmin)->destroy();
+            }
+            $HiddenTeam->destroy();
+        }
     }
 
     public function testCreateSysadminFromAdminUser(): void

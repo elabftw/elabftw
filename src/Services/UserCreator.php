@@ -60,6 +60,7 @@ final class UserCreator
             alertAdmin: false,
             validUntil: $validUntil,
             orgid: $orgid,
+            includeHiddenTeams: true,
         );
     }
 }

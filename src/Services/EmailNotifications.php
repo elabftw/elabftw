@@ -18,6 +18,7 @@ use Elabftw\Enums\Notifications;
 use Elabftw\Factories\NotificationsFactory;
 use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\AuditLogs;
+use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use PDO;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,14 +32,13 @@ use function setlocale;
 use function textdomain;
 use function array_key_exists;
 use function sprintf;
+use function _;
 
 /**
  * Email notification system
  */
 class EmailNotifications
 {
-    protected const BASE_SUBJECT = '[eLabFTW] ';
-
     protected Db $Db;
 
     public function __construct(protected Email $emailService)
@@ -48,6 +48,7 @@ class EmailNotifications
 
     public function sendEmails(OutputInterface $output): int
     {
+        $config = Config::getConfig();
         $toSend = $this->getNotificationsToSend();
         $count = 0;
         foreach ($toSend as $notif) {
@@ -65,7 +66,11 @@ class EmailNotifications
                 }
                 $isEmailSent = $this->emailService->sendEmail(
                     $to,
-                    self::BASE_SUBJECT . $email['subject'],
+                    sprintf(
+                        _('%s %s'),
+                        $config->configArr['mail_subject_prefix'],
+                        $email['subject'],
+                    ),
                     $email['body'],
                     $cc,
                     $htmlBody,

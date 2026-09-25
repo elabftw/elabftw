@@ -76,6 +76,8 @@ final class Config extends AbstractRest
             ('lang', 'en_GB'),
             ('login_tries', '3'),
             ('mail_from', 'notconfigured@example.com'),
+            ('mail_from_name', 'Admin eLabFTW'),
+            ('mail_subject_prefix', '[eLabFTW]'),
             ('proxy', ''),
             ('user_msg_need_local_account_created', ''),
             ('smtp_address', 'mail.example.com'),

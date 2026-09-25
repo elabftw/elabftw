@@ -19,6 +19,7 @@ use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use PDO;
 use Psr\Log\LoggerInterface;
@@ -59,8 +60,11 @@ class Email
         private readonly string $mailFrom,
         private readonly bool $demoMode = false,
     ) {
+        $config = Config::getConfig();
         $this->footer = $this->makeFooter();
-        $this->from = new Address($mailFrom, 'eLabFTW');
+        // provide fallback value: schema update process includes the class, and
+        // any schema update started below 225 would fail
+        $this->from = new Address($mailFrom, $config->configArr['mail_from_name'] ?? '');
     }
 
     public function notifyBookers(Users $requester, string $subject, string $content, AbstractEntity $entity): int
@@ -122,10 +126,11 @@ class Email
      */
     public function testemailSend(string $email): int
     {
+        $config = Config::getConfig();
         $message = (new Memail())
-        ->subject('[eLabFTW] ' . _('Test email'))
+        ->subject($config->configArr['mail_subject_prefix'] . ' ' . _('Test email'))
         ->from($this->from)
-        ->to(new Address($email, 'Admin eLabFTW'))
+        ->to(new Address($email))
         ->text('Congratulations, you correctly configured eLabFTW to send emails! :)' . $this->footer['plain'])
         ->html('Congratulations, you correctly configured eLabFTW to send (HTML) emails! :)' . $this->footer['html']);
 
@@ -137,8 +142,13 @@ class Email
      */
     public function massEmail(EmailTarget $target, ?int $targetId, string $subject, string $body, Address $replyTo, bool $sendGrouped): int
     {
+        $config = Config::getConfig();
+
         if (empty($subject)) {
-            $subject = '[eLabFTW] No subject';
+            $subject = sprintf(
+                _('%s No subject'),
+                $config->configArr['mail_subject_prefix'],
+            );
         }
 
         // get all email addresses
@@ -215,8 +225,12 @@ class Email
 
     public function notifySysadminsTsBalance(int $tsBalance): bool
     {
+        $config = Config::getConfig();
         $emails = self::getAllEmailAddresses(EmailTarget::Sysadmins);
-        $subject = '[eLabFTW] Warning: timestamp balance low!';
+        $subject = sprintf(
+            _('%s Warning: timestamp balance low!'),
+            $config->configArr['mail_subject_prefix'],
+        );
         $body = sprintf('Warning: the number of timestamps left is low! %d timestamps left.', $tsBalance);
         $message = (new Memail())
             ->subject($subject)

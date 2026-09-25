@@ -207,6 +207,40 @@ class MakeEln extends AbstractMakeEln
                 'author' => array('@id' => $this->getAuthorId(new Users((int) $comment['userid']))),
             );
         }
+        // COMPOUNDS
+        $compounds = array();
+        foreach ($e['compounds_links'] ?? array() as $compound) {
+            $id = sprintf('#compound-%d', $compound['id']);
+            $compounds[] = array('@id' => $id);
+            $identifiers = array();
+            if (!empty($compound['cas_number'])) {
+                $identifiers[] = array(
+                    '@type' => 'PropertyValue',
+                    'propertyID' => 'CAS Registry Number',
+                    'value' => $compound['cas_number'],
+                );
+            }
+            if (!empty($compound['pubchem_cid'])) {
+                $identifiers[] = array(
+                    '@type' => 'PropertyValue',
+                    'propertyID' => 'PubChem CID',
+                    'value' => $compound['pubchem_cid'],
+                    'sameAs' => sprintf('https://pubchem.ncbi.nlm.nih.gov/#query=%d', $compound['pubchem_cid']),
+                );
+            }
+            $this->dataEntities[] = array(
+                '@id' => $id,
+                '@type' => 'MolecularEntity',
+                'name' => $compound['name'],
+                'molecularFormula' => $compound['molecular_formula'],
+                'inChI' => $compound['inchi'],
+                'inChIKey' => $compound['inchi_key'],
+                'iupacName' => $compound['iupac_name'],
+                'molecularWeight' => $compound['molecular_weight'],
+                'smiles' => $compound['smiles'],
+                'identifier' => $identifiers,
+            );
+        }
         // TAGS
         $keywords = array();
         if (!empty($e['tags'] ?? array())) {
@@ -270,7 +304,6 @@ class MakeEln extends AbstractMakeEln
                 $this->processEntityLinks($e[$key] ?? array(), $type, false);
             }
         }
-
         $datasetNode = array(
             '@id' => './' . $currentDatasetFolder,
             '@type' => 'Dataset',
@@ -287,6 +320,7 @@ class MakeEln extends AbstractMakeEln
             $datasetNode,
             array('alternateName' => $e['custom_id'] ?? ''),
             array('comment' => $comments),
+            array('compounds_links' => $compounds),
             array('conditionsOfAccess' => $e['locked'] === 1 ? 'Locked' : 'Unlocked'),
             array('creativeWorkStatus' => $e['status_title'] ?? ''),
             array('subjectOf' => $this->includeChangelog ? $this->changelogToUpdateActions($e['changelog'] ?? array()) : array()),

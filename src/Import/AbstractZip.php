@@ -21,6 +21,7 @@ use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use League\Flysystem\ZipArchive\FilesystemZipArchiveProvider;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
+use League\Flysystem\UnableToDeleteDirectory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use RuntimeException;
@@ -85,7 +86,18 @@ abstract class AbstractZip extends AbstractImport
         if ($this->tmpDir === '') {
             return;
         }
-        $this->tmpFs->deleteDirectory($this->tmpDir);
+        try {
+            $this->tmpFs->deleteDirectory($this->tmpDir);
+        } catch (UnableToDeleteDirectory $e) {
+            $this->emitLog(
+                sprintf(
+                    'Could not delete temporary import directory %s: %s',
+                    $this->tmpDir,
+                    $e->getMessage(),
+                ),
+                LogLevel::ERROR,
+            );
+        }
     }
 
     /**

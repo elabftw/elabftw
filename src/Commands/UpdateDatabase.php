@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Models\Config;
@@ -39,7 +40,7 @@ final class UpdateDatabase extends Command
     {
         $this->setDescription('Update the database structure')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
-            ->setHelp('This command allows you to update the structure of the database to the latest version.');
+            ->setHelp('Apply legacy numeric schemas and all pending UUIDv7 migrations.');
     }
 
     #[Override]
@@ -48,23 +49,25 @@ final class UpdateDatabase extends Command
         /** @psalm-suppress PossiblyNullReference */
         $command = $this->getApplication()->find('db:check');
 
-        $arguments = array(
-            'command' => 'db:check',
-        );
-
-        $cmdInput = new ArrayInput($arguments);
+        $cmdInput = new ArrayInput(array('command' => 'db:check'));
         $returnCode = $command->run($cmdInput, $output);
 
-        if ($returnCode === 1) {
+        if ($returnCode === Command::FAILURE) {
             $output->writeln(array(
                 'Database update starting',
                 '========================',
             ));
 
             $Config = Config::getConfig();
-            $Update = new Update((int) $Config->configArr['schema'], new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $output));
+            $sqlFs = new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'));
+            $Migrations = new Migrations($sqlFs);
+            $Update = new Update(
+                (int) $Config->configArr['schema'],
+                new Sql($sqlFs, $output),
+                $Migrations,
+            );
             $newSchema = $Update->runUpdateScript($input->getOption('force'));
-            $output->writeln(sprintf('<info>Updated to schema %d.</info>', $newSchema));
+            $output->writeln(sprintf('<info>Database is up to date (legacy schema %d).</info>', $newSchema));
         }
         return Command::SUCCESS;
     }

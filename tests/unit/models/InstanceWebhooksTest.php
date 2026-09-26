@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use PDO;
 
 use function count;
+use function sprintf;
 
 class InstanceWebhooksTest extends \PHPUnit\Framework\TestCase
 {
@@ -166,6 +167,34 @@ class InstanceWebhooksTest extends \PHPUnit\Framework\TestCase
             'url' => 'https://192.0.2.14/hook',
             'events' => array('experiment.exploded'),
         ));
+    }
+
+    /**
+     * Every event is a delivery per webhook, drained one after another inside a fixed time
+     * budget, so the number of them cannot be left open.
+     */
+    public function testCreateBeyondTheLimitIsRefused(): void
+    {
+        // the number openapi.yaml promises, spelled out rather than read from the model: it is
+        // part of the documented contract, so moving it should make a test fail
+        $limit = 10;
+        $created = array();
+        try {
+            // one more than the limit, however many the shared scope already holds
+            for ($i = 0; $i <= $limit; $i++) {
+                $created[] = $this->InstanceWebhooks->postAction(Action::Create, array(
+                    'url' => sprintf('https://192.0.2.%d/hook', 100 + $i),
+                    'events' => array(WebhookEvent::ExperimentCreated->value),
+                ));
+            }
+            $this->fail('creating more webhooks than the limit should have been refused');
+        } catch (ImproperActionException) {
+            $this->assertCount($limit, $this->InstanceWebhooks->readAll());
+        } finally {
+            foreach ($created as $id) {
+                new InstanceWebhooks(true, $id)->destroy();
+            }
+        }
     }
 
     public function testUpdateWithUnknownParameter(): void

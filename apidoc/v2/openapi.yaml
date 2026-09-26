@@ -2459,8 +2459,14 @@ components:
 
         A delivery counts as successful on a 2xx answer. Anything else, including a
         timeout, is tried again: 5 attempts in all, the first one and then four retries
-        after 1, 2, 4 and 8 minutes. A target that is still unreachable a quarter of an
-        hour after the event loses that delivery. Redirects are not followed.
+        after 1, 2, 4 and 8 minutes, so a target that stays unreachable loses the delivery
+        about a quarter of an hour after the event. Redirects are not followed.
+
+        Those delays are when a retry becomes due, not when it is made. A target that fails
+        is set aside for the rest of that drain, so of several deliveries waiting for the
+        same target only one is attempted per run and the rest keep their turn for the next
+        one. A target that is down while its deliveries pile up therefore takes longer than
+        a quarter of an hour to give up on them, and longer to be disabled.
 
         One save produces one delivery per subscribed webhook, even when it changed
         several fields. A retry repeats the same `event_id`, so a receiver can recognise a
@@ -8590,6 +8596,12 @@ paths:
       `webhook_delivery` schema for the body, the headers and the retry behaviour. Delivery
       happens out of band, from a command that runs every minute, so a slow or dead target
       never slows down the save that caused the event.
+
+      Each scope holds at most 10 webhooks: the instance, every team and every user has its
+      own ten. Creating one beyond that is refused, delete one first. The queue is drained one
+      delivery after another within a fixed budget, so this keeps a single scope from owning
+      the drain. A target that fails is set aside for the rest of that run for the same
+      reason, and its deliveries are picked up again on the next one.
     get:
       tags: ['Webhooks']
       summary: Read all instance webhooks.

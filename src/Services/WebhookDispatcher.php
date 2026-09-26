@@ -17,6 +17,7 @@ use Elabftw\Models\WebhooksQueue;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
+use function array_keys;
 use function array_slice;
 use function filter_var;
 use function hash_hmac;
@@ -89,8 +90,22 @@ final class WebhookDispatcher
         $this->Queue->releaseStaleClaims();
 
         $delivered = 0;
+        /**
+         * Webhooks set aside for the rest of this run, as id => true. A drain that lost its
+         * claim mid flight lands here too, although its target answered: the row belongs to
+         * another drain either way, and a drain that hung past the stale window is evidence
+         * enough that this target is worth leaving until the next tick.
+         *
+         * @var array<int, bool> $setAside
+         */
+        $setAside = array();
         while (time() < $deadline) {
-            $batch = $this->Queue->claim(self::BATCH_SIZE);
+            // a webhook that already failed here is skipped for the rest of the run. One
+            // unreachable target with a long backlog would otherwise spend the whole budget
+            // waiting out REQUEST_TIMEOUT per row, and the queue is shared by the instance:
+            // everyone else's deliveries would wait for it. Its rows stay queued and are due
+            // again on the next tick, so nothing is lost, it just does not get to go first.
+            $batch = $this->Queue->claim(self::BATCH_SIZE, array_keys($setAside));
             if (empty($batch)) {
                 break;
             }
@@ -102,9 +117,18 @@ final class WebhookDispatcher
                     $this->Queue->release(array_slice($batch, $index));
                     break 2;
                 }
+                $webhookId = (int) $row['webhook_id'];
+                // the batch was claimed before this webhook failed, so its remaining rows are
+                // already in hand: hand them back rather than spend a timeout each on them
+                if (isset($setAside[$webhookId])) {
+                    $this->Queue->release(array($row));
+                    continue;
+                }
                 if ($this->deliver($row, $output)) {
                     $delivered++;
+                    continue;
                 }
+                $setAside[$webhookId] = true;
             }
         }
         $this->Queue->pruneDelivered();

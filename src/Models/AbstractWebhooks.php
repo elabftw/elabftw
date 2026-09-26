@@ -50,6 +50,17 @@ use const JSON_THROW_ON_ERROR;
  */
 abstract class AbstractWebhooks extends AbstractRest
 {
+    /**
+     * Webhooks allowed per scope, so per instance, per team and per user.
+     *
+     * Every event is one delivery per subscribed webhook, and deliveries go out one after
+     * another inside a fixed time budget. Without a cap, one scope could fill the queue with
+     * targets that each hold a connection open for the request timeout, and the queue is
+     * shared by the whole instance. Ten is far more than a lab needs and low enough that a
+     * single scope cannot own the drain.
+     */
+    private const int MAX_PER_SCOPE = 10;
+
     public function __construct(
         protected readonly bool $canwrite = false,
         protected readonly ?int $id = null,
@@ -142,6 +153,7 @@ abstract class AbstractWebhooks extends AbstractRest
 
     protected function create(array $reqBody): int
     {
+        $this->limitOrExplode();
         $url = $this->getValidator()->validate((string) ($reqBody['url'] ?? ''));
         $events = $this->filterEvents($reqBody['events'] ?? array());
         $sql = 'INSERT INTO webhooks (scope, teams_id, users_id, name, url, secret, events)
@@ -189,6 +201,20 @@ abstract class AbstractWebhooks extends AbstractRest
             }
         }
         return $this->readOne();
+    }
+
+    private function limitOrExplode(): void
+    {
+        $sql = 'SELECT COUNT(id) FROM webhooks WHERE scope = :scope AND teams_id <=> :teams_id AND users_id <=> :users_id';
+        $req = $this->Db->prepare($sql);
+        $this->bindScope($req);
+        $this->Db->execute($req);
+        if ((int) $req->fetchColumn() >= self::MAX_PER_SCOPE) {
+            throw new ImproperActionException(sprintf(
+                'Cannot have more than %d webhooks here. Delete one before adding another.',
+                self::MAX_PER_SCOPE,
+            ));
+        }
     }
 
     private function getValidator(): WebhookUrlValidator

@@ -18,10 +18,14 @@ use Elabftw\Enums\WebhookScope;
 use Elabftw\Enums\WebhookState;
 use PDO;
 
+use function array_keys;
+use function array_values;
 use function bin2hex;
+use function implode;
 use function json_encode;
 use function mb_substr;
 use function random_bytes;
+use function sprintf;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -96,25 +100,41 @@ final class WebhooksQueue
      * The claim is a two step update/select on a random token instead of a plain select:
      * two overlapping drains would otherwise both pick up the same row and deliver it twice.
      *
+     * Rows of an excluded webhook are left where they are rather than claimed and handed
+     * back: claiming them would burn an attempt, and releasing them makes them due again at
+     * once, so the next round would pick up the same rows and the drain would spin.
+     *
+     * @param array<int, int> $excluded webhook ids to leave alone
      * @return array<int, array<string, mixed>>
      */
-    public function claim(int $limit): array
+    public function claim(int $limit, array $excluded = array()): array
     {
         $token = bin2hex(random_bytes(16));
+        $placeholders = array();
+        foreach (array_keys(array_values($excluded)) as $i) {
+            $placeholders[] = sprintf(':excluded%d', $i);
+        }
         // a disabled webhook receives nothing, including whatever was queued before it was
         // turned off: an admin switching it off expects deliveries to stop, not to drain
-        $sql = 'UPDATE webhooks_queue
+        $sql = sprintf(
+            'UPDATE webhooks_queue
             SET state = :sending, claim_token = :token, attempts = attempts + 1, next_attempt_at = NOW()
             WHERE state = :queued
                 AND next_attempt_at <= NOW()
                 AND webhooks_id IN (SELECT id FROM webhooks WHERE enabled = 1)
+                %s
             ORDER BY id ASC
-            LIMIT :limit';
+            LIMIT :limit',
+            empty($placeholders) ? '' : sprintf('AND webhooks_id NOT IN (%s)', implode(', ', $placeholders)),
+        );
         $req = $this->Db->prepare($sql);
         $req->bindValue(':sending', WebhookState::Sending->value, PDO::PARAM_INT);
         $req->bindValue(':queued', WebhookState::Queued->value, PDO::PARAM_INT);
         $req->bindValue(':token', $token);
         $req->bindValue(':limit', $limit, PDO::PARAM_INT);
+        foreach (array_values($excluded) as $i => $webhookId) {
+            $req->bindValue(sprintf(':excluded%d', $i), $webhookId, PDO::PARAM_INT);
+        }
         $this->Db->execute($req);
 
         // enabled is checked again here: a webhook switched off between the two statements

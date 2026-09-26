@@ -23,6 +23,7 @@ use GuzzleHttp\Psr7\Response;
 use PDO;
 use Symfony\Component\Console\Output\NullOutput;
 
+use function count;
 use function hash_hmac;
 
 use const CURLOPT_RESOLVE;
@@ -215,6 +216,52 @@ class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Deliveries go out one after another with a request timeout each, inside a budget that
+     * has to fit in a chronos tick. A target that hangs or refuses is therefore tried once
+     * per run and then left alone until the next tick: its backlog would otherwise spend the
+     * whole budget, and the queue is shared, so everybody else would wait behind it.
+     */
+    public function testAFailingTargetIsTriedOncePerRun(): void
+    {
+        $healthyId = new InstanceWebhooks(true)->postAction(Action::Create, array(
+            'name' => 'healthy target',
+            'url' => 'https://192.0.2.31/hook',
+            'events' => array(WebhookEvent::ExperimentCreated->value),
+        ));
+        // two more events, so both webhooks have several rows waiting
+        foreach (array(1, 2) as $ignored) {
+            WebhookEmitter::reset();
+            $this->getFreshExperiment();
+        }
+        try {
+            $this->assertGreaterThan(1, count($this->getRowsFor($this->webhookId)));
+
+            $this->sendWithResponses(array(
+                'https://192.0.2.30/hook' => new Response(500, array(), 'nope'),
+                'https://192.0.2.31/hook' => new Response(200, array(), '{"ok":true}'),
+            ));
+
+            // one attempt spent on the broken target, and its other rows are untouched: still
+            // queued, and the attempt they were claimed with handed back
+            $attempted = 0;
+            foreach ($this->getRowsFor($this->webhookId) as $row) {
+                $this->assertEquals(WebhookState::Queued->value, (int) $row['state']);
+                $attempted += (int) $row['attempts'];
+            }
+            $this->assertEquals(1, $attempted);
+
+            // meanwhile the healthy target behind it got everything it had queued
+            $healthyRows = $this->getRowsFor($healthyId);
+            $this->assertGreaterThan(1, count($healthyRows));
+            foreach ($healthyRows as $row) {
+                $this->assertEquals(WebhookState::Delivered->value, (int) $row['state']);
+            }
+        } finally {
+            new InstanceWebhooks(true, $healthyId)->destroy();
+        }
+    }
+
+    /**
      * The queue is shared, so a test looks at its own delivery rather than at the first one
      * that happened to go out.
      *
@@ -240,9 +287,39 @@ class WebhookDispatcherTest extends \PHPUnit\Framework\TestCase
         return null;
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function getRowsFor(int $webhookId): array
+    {
+        $Db = Db::getConnection();
+        $req = $Db->prepare('SELECT state, attempts FROM webhooks_queue WHERE webhooks_id = :id ORDER BY id ASC');
+        $req->bindValue(':id', $webhookId, PDO::PARAM_INT);
+        $Db->execute($req);
+        return $req->fetchAll();
+    }
+
     private function send(Response $response): void
     {
         $this->sendWith(new WebhookUrlValidator(false), $response);
+    }
+
+    /**
+     * A run where each target answers differently, so one broken target can be told apart
+     * from the rest.
+     *
+     * @param array<string, Response> $responses keyed by url
+     */
+    private function sendWithResponses(array $responses): void
+    {
+        $getterStub = $this->createStub(HttpGetter::class);
+        $getterStub->method('post')->willReturnCallback(
+            function (string $url, array $options) use ($responses): Response {
+                $this->captured[] = array($url, $options);
+                return $responses[$url] ?? new Response(200, array(), '{"ok":true}');
+            }
+        );
+        new WebhookDispatcher($getterStub, new WebhookUrlValidator(false))->send(new NullOutput());
     }
 
     private function sendWith(WebhookUrlValidator $validator, Response $response): void

@@ -63,6 +63,63 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
     }
 
+    public function testMergeMetadataNormalizesDateFormats(): void
+    {
+        $source = '{"extra_fields":{"Date Received":{"type":"date","value":""}}}';
+        $values = array(
+            '18.12.2025' => '2025-12-18',
+            '18-12-2025' => '2025-12-18',
+            '18/12/2025' => '2025-12-18',
+            '2025-12-18' => '2025-12-18',
+            'December 18, 2025' => '2025-12-18',
+        );
+
+        foreach ($values as $value => $expectedValue) {
+            $incoming = json_encode(array(
+                'extra_fields' => array(
+                    'Date Received' => array('value' => $value),
+                ),
+            ), JSON_THROW_ON_ERROR);
+            $result = json_decode(MetadataHelpers::mergeMetadata($source, $incoming), true, 512, JSON_THROW_ON_ERROR);
+
+            $this->assertSame($expectedValue, $result['extra_fields']['Date Received']['value']);
+        }
+    }
+
+    public function testMergeMetadataNormalizesDateTimeFormats(): void
+    {
+        $source = '{"extra_fields":{"Modified on":{"type":"datetime-local","value":""}}}';
+        $values = array(
+            '09.01.2026 19:35' => '2026-01-09T19:35',
+            '09-01-2026 19:35' => '2026-01-09T19:35',
+            '18/12/2025 19:35' => '2025-12-18T19:35',
+            '2026-01-09 19:35' => '2026-01-09T19:35',
+            '2026-01-09T19:35' => '2026-01-09T19:35',
+            '09.01.2026 19:35:42' => '2026-01-09T19:35:42',
+        );
+
+        foreach ($values as $value => $expectedValue) {
+            $incoming = json_encode(array(
+                'extra_fields' => array(
+                    'Modified on' => array('value' => $value),
+                ),
+            ), JSON_THROW_ON_ERROR);
+            $result = json_decode(MetadataHelpers::mergeMetadata($source, $incoming), true, 512, JSON_THROW_ON_ERROR);
+
+            $this->assertSame($expectedValue, $result['extra_fields']['Modified on']['value']);
+        }
+    }
+
+    public function testMergeMetadataRejectsInvalidDate(): void
+    {
+        $source = '{"extra_fields":{"Date Received":{"type":"date","value":""}}}';
+        $incoming = '{"extra_fields":{"Date Received":{"value":"31.02.2025"}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field Date Received contains an invalid date.');
+        MetadataHelpers::mergeMetadata($source, $incoming);
+    }
+
     public function testMergeMetadataRejectsInvalidNumber(): void
     {
         $source = '{"extra_fields":{"Weight":{"type":"number","value":""}}}';

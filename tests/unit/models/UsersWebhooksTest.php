@@ -26,7 +26,12 @@ class UsersWebhooksTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
 
-    /** a user who belongs to more than one team */
+    /** the team the user and the team admin have in common */
+    private const int SHARED_TEAM = 2;
+
+    /** a second team the user is in and that admin is not */
+    private const int OTHER_TEAM = 1;
+
     private int $userid;
 
     protected function setUp(): void
@@ -73,40 +78,54 @@ class UsersWebhooksTest extends \PHPUnit\Framework\TestCase
      */
     public function testTeamAdminCannotManageAUsersWebhooks(): void
     {
-        $teamAdmin = $this->getUserInTeam(team: 2, admin: 1);
-        // the premise: the admin administers this user, and the user is in a team the admin
-        // is not in. Without both, this test would pass for the wrong reason.
-        $this->assertTrue($teamAdmin->isAdminOf($this->userid));
-        $this->assertNotEmpty($this->getTeamsOnlyTheUserIsIn($teamAdmin->getUserid()));
+        $teamAdmin = $this->getUserInTeam(team: self::SHARED_TEAM, admin: 1);
+        // populate puts nobody in two teams, so the scenario is built here rather than looked
+        // up: relying on fixture state would make this pass or fail on test order
+        $Users2Teams = new Users2Teams($this->getSysadmin());
+        $added = $Users2Teams->create($this->userid, self::OTHER_TEAM);
+        try {
+            // the premise: the admin administers this user through the team they share, and the
+            // user is in a team the admin is not in. Without both this would pass for the wrong
+            // reason, so it is asserted rather than assumed.
+            $this->assertTrue($teamAdmin->isAdminOf($this->userid));
+            $this->assertEquals(
+                array(self::OTHER_TEAM),
+                $this->getTeamsOnlyTheUserIsIn($teamAdmin->getUserid()),
+            );
 
-        try {
-            UsersWebhooks::forRequester($teamAdmin, $this->userid)->readAll();
-            $this->fail('a team admin listing a user webhook should have been refused');
-        } catch (ForbiddenException) {
-            $this->addToAssertionCount(1);
-        }
-        try {
-            UsersWebhooks::forRequester($teamAdmin, $this->userid)->postAction(Action::Create, array(
-                'url' => 'https://192.0.2.42/hook',
+            try {
+                UsersWebhooks::forRequester($teamAdmin, $this->userid)->readAll();
+                $this->fail('a team admin listing a user webhook should have been refused');
+            } catch (ForbiddenException) {
+                $this->addToAssertionCount(1);
+            }
+            try {
+                UsersWebhooks::forRequester($teamAdmin, $this->userid)->postAction(Action::Create, array(
+                    'url' => 'https://192.0.2.42/hook',
+                    'events' => array(WebhookEvent::ExperimentCreated->value),
+                ));
+                $this->fail('a team admin creating a user webhook should have been refused');
+            } catch (ForbiddenException) {
+                $this->addToAssertionCount(1);
+            }
+
+            // and the secret of a webhook the user set up themselves stays out of reach
+            $id = UsersWebhooks::forRequester(new Users($this->userid), $this->userid)->postAction(Action::Create, array(
+                'url' => 'https://192.0.2.43/hook',
                 'events' => array(WebhookEvent::ExperimentCreated->value),
             ));
-            $this->fail('a team admin creating a user webhook should have been refused');
-        } catch (ForbiddenException) {
-            $this->addToAssertionCount(1);
+            try {
+                UsersWebhooks::forRequester($teamAdmin, $this->userid, $id)->readOne();
+                $this->fail('a team admin reading a user webhook should have been refused');
+            } catch (ForbiddenException) {
+                $this->addToAssertionCount(1);
+            }
+            UsersWebhooks::forRequester($this->getSysadmin(), $this->userid, $id)->destroy();
+        } finally {
+            if ($added) {
+                $Users2Teams->rmUserFromTeams($this->userid, array(self::OTHER_TEAM));
+            }
         }
-
-        // and the secret of a webhook the user set up themselves stays out of reach
-        $id = UsersWebhooks::forRequester(new Users($this->userid), $this->userid)->postAction(Action::Create, array(
-            'url' => 'https://192.0.2.43/hook',
-            'events' => array(WebhookEvent::ExperimentCreated->value),
-        ));
-        try {
-            UsersWebhooks::forRequester($teamAdmin, $this->userid, $id)->readOne();
-            $this->fail('a team admin reading a user webhook should have been refused');
-        } catch (ForbiddenException) {
-            $this->addToAssertionCount(1);
-        }
-        UsersWebhooks::forRequester($this->getSysadmin(), $this->userid, $id)->destroy();
     }
 
     private function getSysadmin(): Users

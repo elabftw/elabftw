@@ -3853,7 +3853,7 @@ paths:
           description: The branding asset has been updated.
           headers:
             location:
-              description: A URL to the branding asset that was updated
+              description: A URL to the branding asset that was updated.
               schema:
                 type: string
         '400':

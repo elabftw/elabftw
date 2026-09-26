@@ -8832,9 +8832,12 @@ paths:
   /users/{id}/webhooks:
     summary: Manage webhooks at the user level.
     description: |
-      A user webhook receives events for entries owned by that user only. A user manages
-      their own, an Admin of that user may manage them too. See `/instance/webhooks` for how
-      a webhook works, and the `webhook_delivery` schema for what is delivered.
+      A user webhook receives events for entries owned by that user only. It is personal:
+      only that user and a Sysadmin may manage it, an Admin of the user may not, because
+      these events are not bound to a team and follow the owner into every team they are in.
+      An Admin who wants their team's events uses `/teams/{id}/webhooks`. See
+      `/instance/webhooks` for how a webhook works, and the `webhook_delivery` schema for
+      what is delivered.
     parameters:
       - name: id
         in: path

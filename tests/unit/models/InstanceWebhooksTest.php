@@ -60,6 +60,36 @@ class InstanceWebhooksTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * A caller sends events as a list, so it gets a list back: the json in the column is an
+     * implementation detail, and a string here would force every client to parse it.
+     */
+    public function testEventsAreReadBackAsAList(): void
+    {
+        $events = array(WebhookEvent::ExperimentCreated->value, WebhookEvent::ItemStatusChanged->value);
+        $id = $this->InstanceWebhooks->postAction(Action::Create, array(
+            'url' => 'https://192.0.2.16/hook',
+            'events' => $events,
+        ));
+        $Webhook = new InstanceWebhooks(true, $id);
+        $this->assertEquals($events, $Webhook->readOne()['events']);
+
+        $listed = null;
+        foreach ($this->InstanceWebhooks->readAll() as $webhook) {
+            if ((int) $webhook['id'] === $id) {
+                $listed = $webhook;
+            }
+        }
+        $this->assertNotNull($listed);
+        $this->assertEquals($events, $listed['events']);
+
+        // also after a patch, which answers with the webhook it just changed
+        $patched = $Webhook->patch(Action::Update, array('events' => array(WebhookEvent::ItemCreated->value)));
+        $this->assertEquals(array(WebhookEvent::ItemCreated->value), $patched['events']);
+
+        $Webhook->destroy();
+    }
+
+    /**
      * The secret is encrypted with SECRET_KEY in the database, and handed back in clear
      * only through readOne().
      */

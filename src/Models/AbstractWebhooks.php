@@ -29,9 +29,11 @@ use PDOStatement;
 
 use function array_key_exists;
 use function array_keys;
+use function array_map;
 use function bin2hex;
 use function in_array;
 use function is_array;
+use function json_decode;
 use function json_encode;
 use function random_bytes;
 use function sprintf;
@@ -68,7 +70,7 @@ abstract class AbstractWebhooks extends AbstractRest
         $req = $this->Db->prepare($sql);
         $this->bindScope($req);
         $this->Db->execute($req);
-        return $req->fetchAll();
+        return array_map($this->decodeEvents(...), $req->fetchAll());
     }
 
     #[Override]
@@ -88,7 +90,7 @@ abstract class AbstractWebhooks extends AbstractRest
         $req->bindValue(':id', $this->id, PDO::PARAM_INT);
         $this->bindScope($req);
         $this->Db->execute($req);
-        $webhook = $this->Db->fetch($req);
+        $webhook = $this->decodeEvents($this->Db->fetch($req));
         $webhook['secret'] = WebhookSecret::decrypt((string) $webhook['secret']);
         return $webhook;
     }
@@ -192,6 +194,19 @@ abstract class AbstractWebhooks extends AbstractRest
     private function getValidator(): WebhookUrlValidator
     {
         return new WebhookUrlValidator(!Env::asBool('DEV_MODE'));
+    }
+
+    /**
+     * The column holds json, but the api contract says events is a list: a caller sends a
+     * list to create the webhook and must get a list back, not a string it has to parse.
+     *
+     * @param array<string, mixed> $webhook
+     * @return array<string, mixed>
+     */
+    private function decodeEvents(array $webhook): array
+    {
+        $webhook['events'] = json_decode((string) $webhook['events'], true, 3, JSON_THROW_ON_ERROR);
+        return $webhook;
     }
 
     /**

@@ -57,18 +57,54 @@ $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
 });
 
 const StepC = new Step(entity);
+const stepGroupsEndpoint = `${entity.type}/${entity.id}/step_groups`;
 
-on('create-step', (_, event: Event) => {
+on('toggle-inline-form', (el: HTMLElement) => {
+  const target = document.getElementById(el.dataset.toggleTarget ?? '');
+  if (!(target instanceof HTMLFormElement)) return;
+  const isHidden = target.toggleAttribute('hidden');
+  el.setAttribute('aria-expanded', String(!isHidden));
+  if (!isHidden) {
+    target.querySelector<HTMLInputElement>('input:not([type="hidden"])')?.focus();
+  }
+});
+
+on('create-step', (el: HTMLElement, event: Event) => {
   event.preventDefault();
-  const form = document.getElementById('addStepForm') as HTMLFormElement;
+  const form = el.closest('form');
+  if (!(form instanceof HTMLFormElement)) return;
   const params = collectForm(form);
   const content = String(params['step'] ?? '').trim();
   if (!content) return;
-  StepC.create(content).then(() => {
+  // An empty hidden group id means this step belongs to Default group
+  const rawGroupId = String(params['group_id'] ?? '');
+  const groupId = rawGroupId === '' ? null : parseInt(rawGroupId, 10);
+  StepC.create(content, groupId).then(() => {
     reloadElements(['stepsDiv']).then(() => {
-      (document.getElementById('addStepInput') as HTMLInputElement).focus();
+      // Keep the inline form open for quickly adding several steps to the same group.
+      const reloadedForm = document.querySelector<HTMLFormElement>(`.add-step-form[data-groupid='${rawGroupId}']`);
+      if (!reloadedForm) return;
+      reloadedForm.removeAttribute('hidden');
+      document.querySelector<HTMLElement>(`[data-toggle-target='${reloadedForm.id}']`)
+        ?.setAttribute('aria-expanded', 'true');
+      reloadedForm.querySelector<HTMLInputElement>('input[name="step"]')?.focus();
     });
   });
+});
+
+on('create-step-group', (_, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('addStepGroupForm') as HTMLFormElement;
+  const params = collectForm(form);
+  const title = String(params['title'] ?? '').trim();
+  if (!title) return;
+  ApiC.post(stepGroupsEndpoint, {title}).then(() => reloadElements(['stepsDiv']));
+});
+
+on('destroy-step-group', (el: HTMLElement) => {
+  if (confirm(el.dataset.confirm)) {
+    ApiC.delete(`${stepGroupsEndpoint}/${el.dataset.id}`).then(() => reloadElements(['stepsDiv']));
+  }
 });
 
 on('step-update-deadline', (el: HTMLElement) => {
@@ -143,11 +179,103 @@ const malleableStep = new Malle({
   tooltip: i18next.t('click-to-edit'),
 }).listen();
 
+const malleableStepGroupTitle = new Malle({
+  cancel : i18next.t('cancel'),
+  cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+  inputClasses: ['form-control'],
+  fun: async (value, original) => ApiC.patch(`${stepGroupsEndpoint}/${original.dataset.groupid}`, {title: value})
+    .then(resp => resp.json())
+    .then(json => json.title),
+  listenOn: '.step-group-title.editable',
+  returnedValueIsTrustedHtml: false,
+  submit : i18next.t('save'),
+  submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+  tooltip: i18next.t('click-to-edit'),
+}).listen();
+
+let groupedStepsSyncTimer: number | undefined;
+
+// Serialize the final DOM layout of every connected step list. Default group
+// use a null group id so the backend can store them with group_id = NULL
+function syncGroupedStepOrdering(): void {
+  const groupedOrdering = Array.from(document.querySelectorAll<HTMLElement>('.steps-sortable')).map(container => ({
+    group_id: container.dataset.groupid ? parseInt(container.dataset.groupid, 10) : null,
+    step_ids: Array.from(container.querySelectorAll<HTMLElement>(':scope > .countable'))
+      .map(step => parseInt(step.id.replace('step_', ''), 10)),
+  }));
+  ApiC.patch(`${entity.type}/${entity.id}/steps`, {grouped_ordering: groupedOrdering})
+    .then(() => reloadElements(['stepsDiv']));
+}
+
+// A move between connected sortables triggers events on both the source and
+// destination. Debounce them so one drag produces one API request using the
+// final DOM ordering.
+function scheduleGroupedStepOrderingSync(): void {
+  window.clearTimeout(groupedStepsSyncTimer);
+  groupedStepsSyncTimer = window.setTimeout(syncGroupedStepOrdering, 0);
+}
+
+function initStepGroupSortables(): void {
+  const stepSortables = $('.steps-sortable');
+  if (stepSortables.length) {
+    // This function is called again after stepsDiv is reloaded. Destroy an
+    // existing sortable first so handlers are never registered twice.
+    stepSortables.each(function() {
+      if ($(this).hasClass('ui-sortable')) {
+        $(this).sortable('destroy');
+      }
+    });
+
+    stepSortables.sortable({
+      connectWith: '.steps-sortable',
+      items: '> .countable',
+      handle: '.sortableHandle',
+      // jQuery UI Sortable cancels drag starts from buttons by default.
+      // Step drag handles are buttons, so explicitly allow them.
+      cancel: 'nonSortable',
+      helper: 'clone',
+      dropOnEmpty: true,
+      forcePlaceholderSize: true,
+      placeholder: 'step-sortable-placeholder',
+      tolerance: 'pointer',
+      receive: scheduleGroupedStepOrderingSync,
+      update: scheduleGroupedStepOrderingSync,
+    });
+  }
+
+  // Groups themselves are sortable independently from the steps they contain
+  const groupSortable = $('.step-groups-sortable');
+  if (groupSortable.length) {
+    if (groupSortable.hasClass('ui-sortable')) {
+      groupSortable.sortable('destroy');
+    }
+    groupSortable.sortable({
+      axis: 'y',
+      items: '> .step-group',
+      handle: '.step-group-sortable-handle',
+      // Group drag handles are buttons too, so allow them as drag handles.
+      cancel: 'nonSortable',
+      helper: 'clone',
+      forcePlaceholderSize: true,
+      placeholder: 'step-group-sortable-placeholder',
+      update: function() {
+        const ordering = Array.from(this.querySelectorAll(':scope > .step-group[data-groupid]'))
+          .map((group:HTMLElement) => parseInt(group.dataset.groupid, 10));
+        ApiC.patch(stepGroupsEndpoint, {ordering}).then(() => reloadElements(['stepsDiv']));
+      },
+    });
+  }
+}
+
+initStepGroupSortables();
+
 // add an observer so new steps will get an event handler too
 new MutationObserver(() => {
   malleableStep.listen();
+  malleableStepGroupTitle.listen();
   adjustHiddenState();
   makeSortableGreatAgain();
+  initStepGroupSortables();
   relativeMoment();
 }).observe(document.getElementById('stepsDiv'), {childList: true});
 

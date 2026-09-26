@@ -974,6 +974,60 @@ the form-control fails to do that so we do the border ourselves */
   border-radius: 0 4px 4px 0;
 }
 
+
+.step-group-card {
+  border: 1px solid var(--secondlevel);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.step-group-header {
+  background-color: var(--firstlevel);
+  border-bottom: 1px solid var(--secondlevel);
+}
+
+.step-group-body {
+  background-color: var(--white);
+}
+
+.step-group-steps {
+  min-height: 2.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.step-group-steps:empty {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+}
+
+.add-step-toggle:hover {
+  text-decoration: none;
+}
+
+.add-step-group-toggle {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+
+  &:hover {
+    background-color: var(--firstlevel);
+    text-decoration: none;
+  }
+}
+
+.step-sortable-placeholder {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  min-height: 2.5rem;
+}
+
+.step-group-sortable-placeholder {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  min-height: 3rem;
+}
+
 .finished {
   color: var(--green);
 }

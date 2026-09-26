@@ -1,25 +1,52 @@
 {# STEPS #}
 {% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last|replace({'.php': ''})) %}
+{% set stepGroups = Entity.entityData.step_groups|default([]) %}
 <div id='stepsDiv'>
-{% if Entity.entityData.steps %}
+{% if Entity.entityData.steps or stepGroups %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }} ({{ Entity.entityData.steps|length }})</h3>
   <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
     <div class='ml-3 mt-3 col-md-12'>
-      {% for step in Entity.entityData.steps %}
-        <div id='step_view_{{ step.id }}' class='countable mb-2 rounded p-1 {{ step.finished ? 'finished' }} {{ App.Request.query.get('highlightstep') == step.id ? 'highlighted' }}'>
-          <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ entityPage == 'templates' or entityPage == 'resources-templates' ? 'disabled' }} data-id='{{ Entity.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-2' id='stepCheckbox_{{ step.id }}' />{{ step.body }}
-        {% if step.finished %}
-        <span class='mr-2 text-muted'>
-            {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
-        </span>
+      {% if stepGroups is empty %}
+        {% for step in Entity.entityData.steps %}
+          {% include 'step-view-row.html' %}
+        {% endfor %}
+      {% else %}
+        {% for group in stepGroups %}
+          {% set groupSteps = Entity.entityData.steps|filter(s => s.group_id == group.id) %}
+          <div class='step-group mb-3'>
+            <div class='step-group-header d-flex align-items-center rounded px-2 py-2 mb-1'>
+              <button class='btn btn-transparent p-0 mr-1' data-action='toggle-next' data-toggle-target='step_group_view_{{ group.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_view_{{ group.id }}'>
+                <i class='fas fa-caret-down fa-fw'></i>
+              </button>
+              <strong>{{ group.title }}</strong>
+              <span class='text-muted ml-2'>{{ groupSteps|filter(s => s.finished)|length }}/{{ groupSteps|length }}</span>
+            </div>
+            <div id='step_group_view_{{ group.id }}' data-save-hidden='step_group_view_{{ group.id }}'>
+              {% for step in groupSteps %}
+                {% include 'step-view-row.html' %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+
+        {% set ungroupedSteps = Entity.entityData.steps|filter(s => s.group_id is null) %}
+        {% if ungroupedSteps is not empty %}
+          <div class='step-group mb-3'>
+            <div class='step-group-header d-flex align-items-center rounded px-2 py-2 mb-1'>
+              <button class='btn btn-transparent p-0 mr-1' data-action='toggle-next' data-toggle-target='step_group_view_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_view_general' title='{{ 'Toggle visibility'|trans }}'>
+                <i class='fas fa-caret-down fa-fw'></i>
+              </button>
+              <strong>{{ 'Default group'|trans }}</strong>
+              <span class='text-muted ml-2'>{{ ungroupedSteps|filter(s => s.finished)|length }}/{{ ungroupedSteps|length }}</span>
+            </div>
+            <div id='step_group_view_general' data-save-hidden='step_group_view_general'>
+              {% for step in ungroupedSteps %}
+                {% include 'step-view-row.html' %}
+              {% endfor %}
+            </div>
+          </div>
         {% endif %}
-        {% if step.deadline %}
-        <span class='mr-2 text-muted'>
-            {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
-        </span>
-        {% endif %}
-        </div>
-      {% endfor %}
+      {% endif %}
     </div>
   </div>
   <hr>

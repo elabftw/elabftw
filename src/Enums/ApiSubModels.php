@@ -39,6 +39,7 @@ enum ApiSubModels: string
     case Rors = 'rors';
     case SigKeys = 'sig_keys';
     case Status = 'status';
+    case StepGroups = 'step_groups';
     case Steps = 'steps';
     case Tags = 'tags';
     case Teamgroups = 'teamgroups';
@@ -71,6 +72,7 @@ enum ApiSubModels: string
                 self::ItemsLinks,
                 self::RequestActions,
                 self::Revisions,
+                self::StepGroups,
                 self::Steps,
                 self::Containers,
                 self::Tags,

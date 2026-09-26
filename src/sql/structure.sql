@@ -277,12 +277,27 @@ CREATE TABLE `items_types_revisions` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `experiments_step_groups`
+--
+
+CREATE TABLE `experiments_step_groups` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `item_id` INT UNSIGNED NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `ordering` INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_experiments_step_groups_item_id` (`item_id`),
+  CONSTRAINT `fk_experiments_step_groups_item_id` FOREIGN KEY (`item_id`) REFERENCES `experiments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
 -- Table structure for table `experiments_steps`
 --
 
 CREATE TABLE `experiments_steps` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int(10) UNSIGNED NOT NULL,
+  `group_id` INT UNSIGNED NULL DEFAULT NULL,
   `body` text NOT NULL,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `finished` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -290,7 +305,9 @@ CREATE TABLE `experiments_steps` (
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_experiments_steps_group_id` (`group_id`),
+  CONSTRAINT `fk_experiments_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `experiments_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -921,12 +938,27 @@ CREATE TABLE `items_types2items` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `items_types_step_groups`
+--
+
+CREATE TABLE `items_types_step_groups` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `item_id` INT UNSIGNED NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `ordering` INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_items_types_step_groups_item_id` (`item_id`),
+  CONSTRAINT `fk_items_types_step_groups_item_id` FOREIGN KEY (`item_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
 -- Table structure for table `items_types_steps`
 --
 
 CREATE TABLE `items_types_steps` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `item_id` int UNSIGNED NOT NULL,
+  `group_id` INT UNSIGNED NULL DEFAULT NULL,
   `body` text NOT NULL,
   `ordering` int UNSIGNED DEFAULT NULL,
   `finished` tinyint NOT NULL DEFAULT 0,
@@ -934,7 +966,9 @@ CREATE TABLE `items_types_steps` (
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_items_types_steps_group_id` (`group_id`),
+  CONSTRAINT `fk_items_types_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `items_types_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -2023,9 +2057,20 @@ ALTER TABLE `uploads`
   -- ADD CONSTRAINT `fk_uploads_users_userid` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- schema 49
+CREATE TABLE `items_step_groups` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `item_id` INT UNSIGNED NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `ordering` INT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`),
+    KEY `idx_items_step_groups_item_id` (`item_id`),
+    CONSTRAINT `fk_items_step_groups_item_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `items_steps` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `item_id` int(10) unsigned NOT NULL,
+    `group_id` INT UNSIGNED NULL DEFAULT NULL,
     `body` text NOT NULL,
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -2035,12 +2080,25 @@ CREATE TABLE `items_steps` (
     `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
-    CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    KEY `idx_items_steps_group_id` (`group_id`),
+    CONSTRAINT `fk_items_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_items_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `items_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE `experiments_templates_step_groups` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `item_id` INT UNSIGNED NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `ordering` INT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`),
+    KEY `idx_experiments_templates_step_groups_item_id` (`item_id`),
+    CONSTRAINT `fk_experiments_templates_step_groups_item_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `experiments_templates_steps` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `item_id` int(10) unsigned NOT NULL,
+    `group_id` INT UNSIGNED NULL DEFAULT NULL,
     `body` text NOT NULL,
     `ordering` int(10) unsigned DEFAULT NULL,
     `finished` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -2050,7 +2108,9 @@ CREATE TABLE `experiments_templates_steps` (
     `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
-    CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    KEY `idx_experiments_templates_steps_group_id` (`group_id`),
+    CONSTRAINT `fk_experiments_templates_steps_items_id` FOREIGN KEY (`item_id`) REFERENCES `experiments_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_experiments_templates_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `experiments_templates_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 CREATE TABLE `items2items` (

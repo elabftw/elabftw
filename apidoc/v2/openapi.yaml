@@ -1080,44 +1080,44 @@ components:
     # CONTAINER
     container:
       type: object
-      description: A container represents the storage of an entity in a specific storage unit
+      description: A container represents the storage of an entity in a specific storage unit.
       properties:
         id:
           type: integer
-          description: The container link ID
+          description: The container link ID.
           example: 1
         qty_stored:
           type: string
-          description: Quantity stored in this container
+          description: Quantity stored in this container.
           example: 10.5
         qty_unit:
           type: string
-          description: Unit of the quantity stored
+          description: Unit of the quantity stored.
           example: "mL"
           enum: ["bar", "•", "m", "μL", "mL", "L", "μg", "mg", "g", "kg"]
         storage_id:
           type: integer
-          description: ID of the storage unit
+          description: ID of the storage unit.
           example: 5
         item_id:
           type: integer
-          description: ID of the entity (experiment or resource)
+          description: ID of the entity (experiment or resource).
           example: 42
         created_at:
           type: string
-          description: When the container entry was created
+          description: When the container entry was created.
           example: "2024-05-28T02:42:19Z"
         modified_at:
           type: string
-          description: When the container entry was last modified
+          description: When the container entry was last modified.
           example: "2024-05-28T02:42:31Z"
         storage_name:
           type: string
-          description: Name of the storage unit
+          description: Name of the storage unit.
           example: "Freezer A"
         full_path:
           type: string
-          description: Full hierarchical path of the storage unit
+          description: Full hierarchical path of the storage unit.
           example: "Building A > Room 101 > Freezer A"
     # ENTITY COMPONENT: EXTENDS ENTITY_EDITABLE
     entity:

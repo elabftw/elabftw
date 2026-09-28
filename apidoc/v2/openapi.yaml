@@ -1956,8 +1956,7 @@ components:
           properties:
             color_fg:
               type: string
-              description: |
-                Hex text color without leading \#.
+              description: Hex text color without leading \#.
               default: 'ffffff'
               example: 'ffffff'
     step:
@@ -5830,8 +5829,7 @@ paths:
                     Hex color without leading \#.
                 color_fg:
                   type: string
-                  description: |
-                    Hex text color without leading \#.
+                  description: Hex text color without leading \#.
                   default: 'ffffff'
                   example: 'ffffff'
       responses:
@@ -5958,8 +5956,7 @@ paths:
                     Hex color without leading \#.
                 color_fg:
                   type: string
-                  description: |
-                    Hex text color without leading \#.
+                  description: Hex text color without leading \#.
                   default: 'ffffff'
                   example: 'ffffff'
       responses:

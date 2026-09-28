@@ -1,4 +1,4 @@
--- revert schema 225
+-- revert schema 226
 CALL DropColumn('experiments_categories', 'color_fg');
 CALL DropColumn('items_categories', 'color_fg');
 

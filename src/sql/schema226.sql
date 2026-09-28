@@ -1,4 +1,4 @@
--- schema225
+-- schema226
 ALTER TABLE `experiments_categories`
   ADD COLUMN `color_fg` CHAR(6) NOT NULL DEFAULT 'ffffff' AFTER `color`;
 

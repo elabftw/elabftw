@@ -32,7 +32,6 @@ use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\ReportsHandler;
 use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\AbstractStatus;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Batch;
 use Elabftw\Models\Branding;
@@ -51,6 +50,7 @@ use Elabftw\Models\IdpsSources;
 use Elabftw\Models\Info;
 use Elabftw\Models\Instance;
 use Elabftw\Models\Instance2Rors;
+use Elabftw\Models\InstanceWebhooks;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\Links\AbstractContainersLinks;
@@ -68,12 +68,14 @@ use Elabftw\Models\Tags;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Teams2Rors;
+use Elabftw\Models\TeamsWebhooks;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users2Rors;
+use Elabftw\Models\UsersWebhooks;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
@@ -115,7 +117,7 @@ final class Apiv2Controller extends AbstractApiController
 
     private array $reqBody = array();
 
-    private ExportFormat $format = ExportFormat::Json;
+    private ExportFormat $format = ExportFormat::None;
 
     private Action $action = Action::Create;
 
@@ -288,6 +290,7 @@ final class Apiv2Controller extends AbstractApiController
             ExportFormat::Csv,
             ExportFormat::Eln,
             ExportFormat::ElnHtml,
+            ExportFormat::Json,
             ExportFormat::QrPdf,
             ExportFormat::QrPng,
             ExportFormat::Pdf,
@@ -434,6 +437,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::ItemsStatus => new ItemsStatus($this->Model, $this->subId),
                 ApiSubModels::ProcurementRequests => new ProcurementRequests($this->Model, $this->subId),
                 ApiSubModels::Rors => new Teams2Rors($this->Model->id ?? 0, $this->Model->canWrite(), $this->subIdString),
+                ApiSubModels::Webhooks => new TeamsWebhooks($this->Model->id ?? 0, $this->Model->canWrite(), $this->subId),
                 ApiSubModels::Tags => new TeamTags($this->requester, $this->subId),
                 ApiSubModels::Teamgroups => new TeamGroups($this->requester, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Teams),
@@ -446,6 +450,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::RequestActions => new UserRequestActions($this->Model),
                 ApiSubModels::SigKeys => new SigKeys($this->requester, $this->subId),
                 ApiSubModels::Rors => new Users2Rors($this->Model->getUserid(), $this->requester->isAdminOf($this->Model->getUserid()), $this->subIdString),
+                ApiSubModels::Webhooks => UsersWebhooks::forRequester($this->requester, $this->Model->getUserid(), $this->subId),
                 // the uploads users/X/uploads endpoint forces the use of the requester
                 ApiSubModels::Uploads => new UserUploads($this->requester, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Users),
@@ -468,6 +473,7 @@ final class Apiv2Controller extends AbstractApiController
             return match ($submodel) {
                 ApiSubModels::Branding => new Branding($this->requester->isSysadmin(), $this->subId),
                 ApiSubModels::Rors => new Instance2Rors($this->requester->isSysadmin(), $this->subIdString),
+                ApiSubModels::Webhooks => new InstanceWebhooks($this->requester->isSysadmin(), $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Instance),
             };
         }
@@ -509,16 +515,23 @@ final class Apiv2Controller extends AbstractApiController
         if (!($this->requester instanceof AnonymousUser)) {
             return;
         }
+        $allowedEndpoints = array(
+            ApiEndpoint::Experiments,
+            ApiEndpoint::Items,
+            ApiEndpoint::ExperimentsTemplates,
+            ApiEndpoint::ItemsTypes,
+            ApiEndpoint::ExtraFieldsKeys,
+            ApiEndpoint::Users,
+        );
+        if (!in_array($this->endpoint, $allowedEndpoints, true)) {
+            throw new ForbiddenException();
+        };
         // anon users cannot enumerate another user's endpoint
         if (
             $this->endpoint === ApiEndpoint::Users
             && $this->id !== null
             && $this->id !== $this->requester->userData['userid']
         ) {
-            throw new ForbiddenException();
-        }
-        // these team submodels contain internal organizational metadata
-        if ($this->Model instanceof AbstractStatus || $this->Model instanceof TeamGroups) {
             throw new ForbiddenException();
         }
     }

@@ -217,6 +217,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             '/api/v2/teams/1/experiments_categories',
             '/api/v2/teams/1/resources_categories',
             '/api/v2/teams/1/items_status',
+            '/api/v2/unfinished_steps?scope=team',
         );
 
         foreach ($uris as $uri) {

@@ -15,6 +15,7 @@ config.php*
 *.bundle.js
 .pnp.*
 exports/
+containers/elabdev/env.local
 web/test.php
 web/assets/*.LICENSE.txt
 web/assets/*.svg

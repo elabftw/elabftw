@@ -128,14 +128,21 @@ on(Action.CancelRequestableAction, (el: HTMLElement) => {
 
 on('export-to', (el: HTMLElement) => {
   const format = el.dataset.format;
-  const changelog = (document.getElementById(`${format}_exportWithChangelog`) as HTMLInputElement).checked ? 1 : 0;
-  const classification = (document.getElementById(`${format}_exportClassification`) as HTMLSelectElement).value;
-  let json = 0;
-  if (format === 'zip') {
-    json = (document.getElementById(`${format}_exportJson`) as HTMLInputElement).checked ? 1 : 0;
+  const params = new URLSearchParams({format});
+
+  document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
+    '#exportModal [id^="exportToggleDiv_"]:not([hidden]) [id^="exportToggle_"]',
+  ).forEach(input => {
+    const option = input.id.replace('exportToggle_', '');
+    const value = input instanceof HTMLInputElement ? input.checked ? '1' : '0' : input.value;
+    params.set(option, value);
+  });
+
+  if (params.get('pdfa') === '1') {
+    params.set('format', `${format}a`);
+    params.delete('pdfa');
   }
-  const finalFormat = (document.getElementById(`${format}_exportPdfa`) as HTMLInputElement).checked ? format + 'a' : format;
-  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=${finalFormat}&changelog=${changelog}&json=${json}&classification=${classification}`, '_blank');
+  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?${params}`, '_blank');
 });
 
 on('export-to-qrpng', (el: HTMLElement) => {

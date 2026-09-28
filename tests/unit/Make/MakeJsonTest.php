@@ -35,4 +35,13 @@ class MakeJsonTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertIsString($this->Make->getFileContent());
     }
+
+    public function testGetJsonWithoutChangelog(): void
+    {
+        $Experiment = $this->getFreshExperiment();
+        $withChangelog = new MakeJson(array($Experiment), includeChangelog: true);
+        $withoutChangelog = new MakeJson(array($Experiment), includeChangelog: false);
+        $this->assertArrayHasKey('changelog', $withChangelog->getJsonContent()[0]);
+        $this->assertArrayNotHasKey('changelog', $withoutChangelog->getJsonContent()[0]);
+    }
 }

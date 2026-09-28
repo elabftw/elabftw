@@ -90,6 +90,7 @@ $Application->add(new MfaCode());
 $Application->add(new RefreshIdps($Config->configArr['proxy']));
 $Application->add(new SendNotifications($Email));
 $Application->add(new SendExpirationNotifications($Email));
+$Application->add(new SendWebhooks());
 $Application->add(new TagsTeamsSync());
 $Application->add(new PruneUploads());
 $Application->add(new PruneEntries());

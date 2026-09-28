@@ -255,12 +255,12 @@ document.getElementById('filesDiv')?.addEventListener('submit', event => {
       ) {
         return true;
       }
-      // now replace all occurrence of the old file in the body with the long_name of the new file
+      // now replace all occurrences of the old file in the body with the long_name of the new file
       const newId = getNewIdFromPostRequest(resp);
       // fetch info about the newly created upload
       return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
     }).then(json => {
-      // use regExp in replace to find all occurrence
+      // use regExp in replace to find all occurrences
       // images are identified by 'src="app/download.php?f=' (html) and '![image](app/download.php?f=' (md)
       // '.', '?', '[' and '(' need to be escaped in js regex
       const editorNewContent = editorCurrentContent.replace(

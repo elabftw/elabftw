@@ -69,6 +69,8 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
         document.getElementById('archivedUsersFound').setAttribute('hidden', 'hidden');
         document.dispatchEvent(new CustomEvent('dataReload'));
       });
+    } catch {
+      // errors are already handled by form validation & ApiC
     } finally {
       el.removeAttribute('disabled');
     }

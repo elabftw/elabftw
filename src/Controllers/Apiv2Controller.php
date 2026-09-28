@@ -20,6 +20,7 @@ use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\ApiSubModels;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\EventScope;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
@@ -99,6 +100,7 @@ use function json_decode;
 use function sprintf;
 use function str_starts_with;
 use function trim;
+use function _;
 
 /**
  * For API V2 requests
@@ -356,7 +358,9 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Event => new Scheduler(
                 new Items($this->requester),
                 $this->id,
-                recurrenceScope: $this->Request->query->getString('scope', 'event'),
+                recurrenceScope: EventScope::tryFrom(
+                    $this->Request->query->getString('scope', EventScope::Event->value),
+                ) ?? throw new ImproperActionException(_('Incorrect recurrence scope.')),
             ),
             // otherwise it's the id of the item
             ApiEndpoint::Events => new Scheduler(

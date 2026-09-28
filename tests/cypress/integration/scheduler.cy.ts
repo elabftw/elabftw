@@ -71,7 +71,7 @@ describe('Scheduler', () => {
     });
   });
 
-  it('Creates and cancels a finite recurring series', () => {
+  it('Creates and cancels a finite recurrence', () => {
     cy.createResource().then(response => {
       cy.extractIdFromLocation(response).then(itemId => {
         cy.editResource({ itemId, body: { is_bookable: 1 } });
@@ -95,7 +95,7 @@ describe('Scheduler', () => {
         cy.request('GET', `/api/v2/events/${itemId}`).then(eventsResponse => {
           expect(eventsResponse.body).to.have.length(3);
           const [first, second, third] = eventsResponse.body;
-          expect(first.recurrence_series_id).to.equal(third.recurrence_series_id);
+          expect(first.recurrence_id).to.equal(third.recurrence_id);
           expect(first.recurrence_frequency).to.equal('daily');
           expect(Number(first.recurrence_interval)).to.equal(1);
           expect(first.recurrence_rule).to.deep.equal({
@@ -110,7 +110,7 @@ describe('Scheduler', () => {
             .should('eq', 204);
 
           // delete all remaining occurrences in one shot
-          cy.request('DELETE', `/api/v2/event/${second.id}?scope=series`)
+          cy.request('DELETE', `/api/v2/event/${second.id}?scope=recurrence`)
             .its('status')
             .should('eq', 204);
         });

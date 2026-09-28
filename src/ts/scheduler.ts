@@ -192,7 +192,7 @@ function configureRecurrenceFields(fields: HTMLElement, start: Date, locale: str
     weekdayMode.value = 'start';
   }
 
-  // The anchor weekday must stay selected because the first booking is part of the series
+  // The anchor weekday must stay selected because the first booking is part of the recurrence
   fields.querySelectorAll<HTMLInputElement>('.scheduler-recurrence-weekday').forEach(checkbox => {
     const isStartDay = Number(checkbox.value) === startWeekday;
     checkbox.checked = isStartDay;
@@ -679,7 +679,7 @@ if (calendarEl) {
       refreshBoundDivs(info.event.extendedProps);
 
       // The event modal is reused, so reset recurrence visibility and scope selection on every open
-      const isRecurring = Boolean(info.event.extendedProps.recurrence_series_id);
+      const isRecurring = Boolean(info.event.extendedProps.recurrence_id);
       document.getElementById('eventResourceRecurrenceHelp')?.classList.toggle('d-none', !isRecurring);
       const viewRecurrence = document.getElementById('viewRecurrence')!;
       const viewRecurrenceText = document.getElementById('viewRecurrenceText')!;

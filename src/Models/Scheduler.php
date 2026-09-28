@@ -18,6 +18,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EventScope;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -85,20 +86,19 @@ final class Scheduler extends AbstractRest
 
     private array $filterBindings = array();
 
-    private string $recurrenceScope;
+    private EventScope $recurrenceScope;
+
+    private readonly EventsReccurence $EventsReccurence;
 
     public function __construct(
         AbstractEntity $Items,
         ?int $id = null,
         ?string $start = null,
         ?string $end = null,
-        string $recurrenceScope = 'event',
+        EventScope $recurrenceScope = EventScope::Event,
     ) {
         if (!$Items instanceof Items) {
             throw new ImproperActionException('Scheduler can only work with resources (items).');
-        }
-        if (!in_array($recurrenceScope, array('event', 'future', 'series'), true)) {
-            throw new ImproperActionException(_('Incorrect recurrence scope.'));
         }
         $this->Items = $Items;
         parent::__construct();
@@ -110,6 +110,7 @@ final class Scheduler extends AbstractRest
             $this->end = $end;
         }
         $this->recurrenceScope = $recurrenceScope;
+        $this->EventsReccurence = new EventsReccurence($this);
     }
 
     #[Override]
@@ -117,6 +118,11 @@ final class Scheduler extends AbstractRest
     {
         // We don't use team.php?item= because the id will be the id of the event upon creation
         return 'api/v2/event/';
+    }
+
+    public function getRecurrenceScope(): EventScope
+    {
+        return $this->recurrenceScope;
     }
 
     /**
@@ -147,10 +153,10 @@ final class Scheduler extends AbstractRest
         $start = $this->adjustMidnight($start);
         $recurrence = $reqBody['recurrence'] ?? null;
         $occurrences = $this->generateOccurrences($start, $end, $recurrence);
-        $seriesId = $recurrence === null ? null : Tools::getUuidv4();
+        $recurrenceId = $recurrence === null ? null : Tools::getUuidv4();
         $recurrenceFrequency = is_array($recurrence) ? (string) ($recurrence['frequency'] ?? '') : null;
         $recurrenceInterval = is_array($recurrence) ? (int) ($recurrence['interval'] ?? 0) : null;
-        // Store a normalized rule so the API and UI can describe the whole original series
+        // Store a normalized rule so the API and UI can describe the whole original recurrence
         // Allows for 'This event occurs once every X days and ends by X/X/X"
         $recurrenceRule = null;
         if (is_array($recurrence)) {
@@ -174,32 +180,32 @@ final class Scheduler extends AbstractRest
             // Serialize concurrent booking attempts for the same resource.
             $this->lockItemForBooking();
             foreach ($occurrences as $occurrence) {
-                $this->checkConstraints($occurrence['start'], $occurrence['end'], includeOccurrence: $seriesId !== null);
+                $this->checkConstraints($occurrence['start'], $occurrence['end'], includeOccurrence: $recurrenceId !== null);
             }
             $this->checkCandidateOverlaps($occurrences);
             $this->checkMaxSlots(count($occurrences));
 
-            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_series_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule)
-                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_series_id, :recurrence_index, :recurrence_frequency, :recurrence_interval, :recurrence_rule)';
+            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule)
+                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_id, :recurrence_index, :recurrence_frequency, :recurrence_interval, :recurrence_rule)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
             $req->bindValue(':title', $this->filterTitle($reqBody['title'] ?? ''));
             $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
-            $req->bindValue(':recurrence_series_id', $seriesId, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
-            $req->bindValue(':recurrence_frequency', $recurrenceFrequency, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
-            $req->bindValue(':recurrence_interval', $recurrenceInterval, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            $req->bindValue(':recurrence_id', $recurrenceId, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $req->bindValue(':recurrence_frequency', $recurrenceFrequency, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $req->bindValue(':recurrence_interval', $recurrenceInterval, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
             $req->bindValue(
                 ':recurrence_rule',
                 $recurrenceRule === null ? null : json_encode($recurrenceRule, JSON_THROW_ON_ERROR),
-                $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_STR,
+                $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_STR,
             );
             // Reuse one prepared statement and return the id of the first occurrence
             $eventId = 0;
             foreach (array_values($occurrences) as $index => $occurrence) {
                 $req->bindValue(':start', $occurrence['start']);
                 $req->bindValue(':end', $occurrence['end']);
-                $req->bindValue(':recurrence_index', $seriesId === null ? null : $index + 1, $seriesId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+                $req->bindValue(':recurrence_index', $recurrenceId === null ? null : $index + 1, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
                 $this->Db->execute($req);
                 $eventId = $eventId ?: $this->Db->lastInsertId();
             }
@@ -273,7 +279,7 @@ final class Scheduler extends AbstractRest
                 team_events.userid,
                 team_events.created_at,
                 team_events.modified_at,
-                team_events.recurrence_series_id,
+                team_events.recurrence_id,
                 team_events.recurrence_index,
                 team_events.recurrence_frequency,
                 team_events.recurrence_interval,
@@ -328,14 +334,10 @@ final class Scheduler extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
-        $scope = $params['scope'] ?? 'event';
-        if (!in_array($scope, array('event', 'future', 'series'), true)) {
-            throw new ImproperActionException(_('Incorrect recurrence scope.'));
-        }
-        // single-event updates use the normal path while future and series updates use one transaction
-        if ($scope !== 'event') {
-            $this->updateSeries($params, $scope);
-            return $this->readOne();
+        $scope = EventScope::tryFrom((string) ($params['scope'] ?? EventScope::Event->value))
+            ?? throw new ImproperActionException(_('Incorrect recurrence scope.'));
+        if ($scope !== EventScope::Event) {
+            return $this->EventsReccurence->patch($action, $params);
         }
         match ($params['target']) {
             'experiment' => $this->bind('experiment', $params['id']),
@@ -355,10 +357,8 @@ final class Scheduler extends AbstractRest
     {
         $this->canWriteOrExplode();
         $event = $this->readOne();
-        // DELETE scope is stored on Scheduler because destroy() does not receive request parameters
-        // TODO: we did talk about a query object for Delete, but PR 7415 too big currently
-        if ($this->recurrenceScope !== 'event' && $event['recurrence_series_id'] !== null) {
-            return $this->destroySeries($this->recurrenceScope);
+        if ($this->recurrenceScope !== EventScope::Event && $event['recurrence_id'] !== null) {
+            return $this->EventsReccurence->destroy();
         }
         $this->assertCanDestroy($event);
         $this->Db->beginTransaction();
@@ -374,7 +374,7 @@ final class Scheduler extends AbstractRest
     }
 
     // Ensure the current user is allowed to delete this booking
-    private function assertCanDestroy(array $event): void
+    public function assertCanDestroy(array $event): void
     {
         $createdAt = new DateTimeImmutable($event['created_at']);
         $start = new DateTimeImmutable($event['start']);
@@ -394,16 +394,8 @@ final class Scheduler extends AbstractRest
         }
     }
 
-    private function deleteEvent(array $event): bool
-    {
-        $sql = 'DELETE FROM team_events WHERE id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':id', $event['id'], PDO::PARAM_INT);
-        return $this->Db->execute($req);
-    }
-
     // send a notification to all team admins
-    private function notifyAdminsOfDeletion(array $event): void
+    public function notifyAdminsOfDeletion(array $event): void
     {
         $TeamsHelper = new TeamsHelper($this->Items->Users->userData['team']);
         $admins = $TeamsHelper->getAllAdminsUserid();
@@ -418,7 +410,7 @@ final class Scheduler extends AbstractRest
     }
 
     // Prevent other booking operations from modifying this resource until the current transaction is finished
-    private function lockItemForBooking(): void
+    public function lockItemForBooking(): void
     {
         $sql = 'SELECT id FROM items WHERE id = :item FOR UPDATE';
         $req = $this->Db->prepare($sql);
@@ -427,6 +419,128 @@ final class Scheduler extends AbstractRest
         if ($req->fetchColumn() === false) {
             throw new ImproperActionException('Could not lock item for booking.');
         }
+    }
+
+    // the title (comment) can be an empty string
+    public function filterTitle(string $title): string
+    {
+        $filteredTitle = '';
+        if (!empty($title)) {
+            $filteredTitle = Filter::title($title);
+        }
+        return $filteredTitle;
+    }
+
+    public function checkConstraints(
+        string $start,
+        string $end,
+        ?string $excludedRecurrenceId = null,
+        bool $includeOccurrence = false,
+    ): void {
+        $this->checkOverlap($start, $end, $excludedRecurrenceId, $includeOccurrence);
+        $this->checkSlotTime($start, $end);
+        $this->checkEndAfterStart($start, $end);
+        $this->checkBookingWindow($start);
+    }
+
+    public function formatDate(string $input): DateTimeImmutable
+    {
+        $date = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $input);
+        if ($date === false) {
+            throw new ImproperActionException('Could not understand date format!');
+        }
+        return $date;
+    }
+
+    public function checkEndAfterStart(string $start, string $end): void
+    {
+        $startDate = $this->formatDate($start);
+        $endDate = $this->formatDate($end);
+        if ($endDate < $startDate) {
+            throw new UnprocessableContentException(sprintf(
+                _('End time %s cannot be before start time %s.'),
+                $endDate->format(self::DATETIME_FORMAT),
+                $startDate->format(self::DATETIME_FORMAT)
+            ));
+        }
+    }
+
+    public function adjustMidnight(string $start): string
+    {
+        // Booking exactly at midnight historically fails at the Monday boundary. See #2765.
+        return str_replace('00:00:00', '00:00:01', $start);
+    }
+
+    public function checkCandidateOverlaps(array $occurrences): void
+    {
+        if ($this->Items->entityData['book_can_overlap'] === 1) {
+            return;
+        }
+        $ordered = $occurrences;
+        // After sorting, only adjacent occurrences need to be compared
+        usort($ordered, static fn(array $left, array $right): int => $left['start'] <=> $right['start']);
+        $previousEnd = null;
+        foreach ($ordered as $occurrence) {
+            if ($previousEnd !== null && $occurrence['start'] < $previousEnd) {
+                throw new ImproperActionException(sprintf(
+                    _('The occurrence from %s to %s overlaps another occurrence in this recurrence.'),
+                    $occurrence['start'],
+                    $occurrence['end'],
+                ));
+            }
+            $previousEnd = $occurrence['end'];
+        }
+    }
+
+    /**
+     * Check that the date is in the future
+     * Unlike Admins, Users can't create/modify something in the past, unless book_users_can_in_past is truthy
+     * Input can be false because DateTime::createFromFormat will return false on failure
+     */
+    public function isFutureOrExplode(DateTime|DateTimeImmutable|false $date): void
+    {
+        if ($this->Items->canBookInPast()) {
+            return;
+        }
+        if ($date === false) {
+            throw new ImproperActionException('Could not understand date format!');
+        }
+        $now = new DateTime();
+        if ($now > $date) {
+            throw new ImproperActionException(_('Creation/modification of events in the past is not allowed!'));
+        }
+    }
+
+    // Date can be DateTime::ATOM, 'Y-m-d H:i:s' (MySQL DATETIME), or 'Y-m-d' (date-only)
+    public function normalizeDate(string $date, bool $rmDay = false): string
+    {
+        // Try ISO 8601
+        $dt = DateTimeImmutable::createFromFormat(DateTime::ATOM, $date);
+        // fallback: MySQL style DATETIME
+        if ($dt === false) {
+            $dt = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $date);
+        }
+        // fallback: date-only
+        if ($dt === false) {
+            $dt = DateTimeImmutable::createFromFormat('Y-m-d', $date);
+            if ($dt === false) {
+                throw new ImproperActionException('Could not understand date format!');
+            }
+            $dt = $dt->setTime(0, 1);
+            // we don't want the end date to go over one day
+            if ($rmDay) {
+                $dt = $dt->modify('-3 minutes');
+            }
+        }
+        return $dt->format(self::DATETIME_FORMAT);
+    }
+
+    private function deleteEvent(array $event): bool
+    {
+        $sql = 'DELETE FROM team_events WHERE id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $event['id'], PDO::PARAM_INT);
+        return $this->Db->execute($req);
     }
 
     private function update(array $params): void
@@ -446,187 +560,6 @@ final class Scheduler extends AbstractRest
         $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-    }
-
-    // Handle updates that apply to multiple occurrences in a recurring booking
-    private function updateSeries(array $params, string $scope): void
-    {
-        $event = $this->readOne();
-        $seriesId = $event['recurrence_series_id'];
-        if ($seriesId === null) {
-            $this->update($params);
-            return;
-        }
-        if (!in_array($params['target'] ?? '', array('title', 'datetime'), true)) {
-            throw new ImproperActionException(_('Recurring scope is only supported for title and datetime updates.'));
-        }
-        $newTitle = array_key_exists('title', $params) ? $this->filterTitle((string) $params['title']) : null;
-        $changeDateTime = array_key_exists('start', $params) || array_key_exists('end', $params);
-        if ($newTitle === null && !$changeDateTime) {
-            return;
-        }
-        if ($changeDateTime) {
-            if (!isset($params['start'], $params['end'])) {
-                throw new ImproperActionException('Start and end must both be provided.');
-            }
-        }
-
-        $this->Db->beginTransaction();
-        try {
-            $this->lockItemForBooking();
-            // Re-read the bookings after locking the resource so the validation uses the latest data
-            $event = $this->readOne();
-            $seriesId = $event['recurrence_series_id'];
-            if ($seriesId === null) {
-                throw new ImproperActionException(_('This reservation no longer belongs to a recurring series.'));
-            }
-            $allEvents = $this->readSeriesEvents($seriesId);
-            $this->assertSeriesOwnership($allEvents, $event);
-            // The selected event is the anchor used to decide whether scope means future or the complete series
-            $events = $this->getSeriesEventsForScope($allEvents, $event, $scope);
-            $candidates = array();
-            if ($changeDateTime) {
-                $requestedStart = $this->formatDate($this->normalizeDate($params['start']));
-                $requestedEnd = $this->formatDate($this->normalizeDate($params['end'], true));
-                $this->checkEndAfterStart($requestedStart->format(self::DATETIME_FORMAT), $requestedEnd->format(self::DATETIME_FORMAT));
-                $startDelta = $this->formatDate($event['start'])->diff($requestedStart);
-                $duration = $requestedStart->diff($requestedEnd);
-                // Shift each selected occurrence by the same offset and apply the requested duration
-                foreach ($events as $seriesEvent) {
-                    $candidateStart = $this->formatDate($seriesEvent['start'])->add($startDelta);
-                    $candidateEnd = $candidateStart->add($duration);
-                    $candidates[] = array(
-                        'id' => $seriesEvent['id'],
-                        'start' => $this->adjustMidnight($candidateStart->format(self::DATETIME_FORMAT)),
-                        'end' => $candidateEnd->format(self::DATETIME_FORMAT),
-                    );
-                }
-            }
-            foreach ($candidates as $candidate) {
-                $this->isFutureOrExplode($this->formatDate($candidate['start']));
-                $this->isFutureOrExplode($this->formatDate($candidate['end']));
-                $this->checkConstraints($candidate['start'], $candidate['end'], $seriesId, true);
-            }
-            if ($changeDateTime) {
-                $overlapCandidates = $candidates;
-                // Database overlap checks exclude the current series
-                // Add untouched earlier occurrences back for future updates so self-overlaps are still detected
-                if ($scope === 'future') {
-                    foreach ($allEvents as $seriesEvent) {
-                        if ((int) $seriesEvent['recurrence_index'] >= (int) $event['recurrence_index']) {
-                            continue;
-                        }
-                        $overlapCandidates[] = array(
-                            'start' => $seriesEvent['start'],
-                            'end' => $seriesEvent['end'],
-                        );
-                    }
-                }
-                $this->checkCandidateOverlaps($overlapCandidates);
-            }
-            // Use a direct query here instead of update(), as each occurrence may have different dates
-            // and the selected occurrences must be updated atomically in a single transaction
-            $sql = 'UPDATE team_events SET '
-                . ($newTitle !== null ? 'title = :title' : '')
-                . ($newTitle !== null && $changeDateTime ? ', ' : '')
-                . ($changeDateTime ? 'start = :start, end = :end' : '')
-                . ' WHERE team = :team AND id = :id AND recurrence_series_id = :recurrence_series_id';
-            $req = $this->Db->prepare($sql);
-            foreach ($events as $index => $seriesEvent) {
-                if ($newTitle !== null) {
-                    $req->bindValue(':title', $newTitle);
-                }
-                if ($changeDateTime) {
-                    $req->bindValue(':start', $candidates[$index]['start']);
-                    $req->bindValue(':end', $candidates[$index]['end']);
-                }
-                $req->bindValue(':team', $event['team'], PDO::PARAM_INT);
-                $req->bindValue(':id', $seriesEvent['id'], PDO::PARAM_INT);
-                $req->bindValue(':recurrence_series_id', $seriesId);
-                $this->Db->execute($req);
-            }
-            $this->Db->commit();
-        } catch (Throwable $e) {
-            $this->Db->rollback();
-            throw $e;
-        }
-    }
-
-    // Delete the selected part of a recurring booking in a single transaction
-    private function destroySeries(string $scope): bool
-    {
-        $this->Db->beginTransaction();
-        try {
-            $this->lockItemForBooking();
-            $event = $this->readOne();
-            if ($event['recurrence_series_id'] === null) {
-                throw new ImproperActionException(_('This reservation no longer belongs to a recurring series.'));
-            }
-            $allEvents = $this->readSeriesEvents($event['recurrence_series_id']);
-            $this->assertSeriesOwnership($allEvents, $event);
-            $events = $this->getSeriesEventsForScope($allEvents, $event, $scope);
-            foreach ($events as $seriesEvent) {
-                $this->assertCanDestroy($seriesEvent);
-            }
-            $sql = 'DELETE FROM team_events WHERE team = :team AND recurrence_series_id = :recurrence_series_id';
-            if ($scope === 'future') {
-                $sql .= ' AND recurrence_index >= :recurrence_index';
-            }
-            $req = $this->Db->prepare($sql);
-            $req->bindValue(':team', $event['team'], PDO::PARAM_INT);
-            $req->bindValue(':recurrence_series_id', $event['recurrence_series_id']);
-            if ($scope === 'future') {
-                $req->bindValue(':recurrence_index', $event['recurrence_index'], PDO::PARAM_INT);
-            }
-            $result = $this->Db->execute($req);
-            // A recurring cancellation produces one administrator notification, not one per occurrence
-            $this->notifyAdminsOfDeletion($event);
-            $this->Db->commit();
-            return $result;
-        } catch (Throwable $e) {
-            $this->Db->rollback();
-            throw $e;
-        }
-    }
-
-    private function readSeriesEvents(string $seriesId): array
-    {
-        // Keep recurrence order stable because future scope is based on recurrence_index
-        $sql = 'SELECT team_events.*, items.book_is_cancellable, items.book_cancel_minutes
-            FROM team_events
-            LEFT JOIN items ON (team_events.item = items.id)
-            WHERE team_events.recurrence_series_id = :recurrence_series_id
-            ORDER BY team_events.recurrence_index';
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':recurrence_series_id', $seriesId);
-        $this->Db->execute($req);
-        return $req->fetchAll();
-    }
-
-    // Select either the complete series or the anchor occurrence and everything after it
-    private function getSeriesEventsForScope(array $events, array $anchor, string $scope): array
-    {
-        if ($scope === 'series') {
-            return $events;
-        }
-        $anchorIndex = (int) $anchor['recurrence_index'];
-        return array_values(array_filter(
-            $events,
-            static fn(array $seriesEvent): bool => (int) $seriesEvent['recurrence_index'] >= $anchorIndex,
-        ));
-    }
-
-    private function assertSeriesOwnership(array $events, array $anchor): void
-    {
-        // Guard against malformed series data before applying a bulk update or delete
-        if (empty($events)) {
-            throw new ImproperActionException(_('No reservations were found in this recurring series.'));
-        }
-        foreach ($events as $event) {
-            if ($event['team'] !== $anchor['team'] || $event['userid'] !== $anchor['userid'] || $event['item'] !== $anchor['item']) {
-                throw new ForbiddenException(_('A recurring series cannot span owners, teams or resources.'));
-            }
-        }
     }
 
     private function updateTitle(array $params, array &$updates, array &$bindings): void
@@ -721,16 +654,6 @@ final class Scheduler extends AbstractRest
         );
     }
 
-    // the title (comment) can be an empty string
-    private function filterTitle(string $title): string
-    {
-        $filteredTitle = '';
-        if (!empty($title)) {
-            $filteredTitle = Filter::title($title);
-        }
-        return $filteredTitle;
-    }
-
     private function readOneEvent(): array
     {
         $boundSelects = $this->getBoundSelects();
@@ -747,7 +670,7 @@ final class Scheduler extends AbstractRest
                 team_events.item_link,
                 team_events.created_at,
                 team_events.modified_at,
-                team_events.recurrence_series_id,
+                team_events.recurrence_id,
                 team_events.recurrence_index,
                 team_events.recurrence_frequency,
                 team_events.recurrence_interval,
@@ -828,11 +751,11 @@ final class Scheduler extends AbstractRest
                 $this->checkMaxSlots();
             }
 
-            // A recurring series must stay on one resource, so moving one occurrence detaches it from the series
-            // That behavior is displayed as a warning for the events that have a series
+            // A recurrence must stay on one resource, so moving one occurrence detaches it from the recurrence
+            // That behavior is displayed as a warning for the events that have a recurrence
             $sql = 'UPDATE team_events SET
                 item = :item,
-                recurrence_series_id = NULL,
+                recurrence_id = NULL,
                 recurrence_index = NULL,
                 recurrence_frequency = NULL,
                 recurrence_interval = NULL,
@@ -886,40 +809,6 @@ final class Scheduler extends AbstractRest
         }
     }
 
-    private function checkConstraints(
-        string $start,
-        string $end,
-        ?string $excludedSeriesId = null,
-        bool $includeOccurrence = false,
-    ): void {
-        $this->checkOverlap($start, $end, $excludedSeriesId, $includeOccurrence);
-        $this->checkSlotTime($start, $end);
-        $this->checkEndAfterStart($start, $end);
-        $this->checkBookingWindow($start);
-    }
-
-    private function formatDate(string $input): DateTimeImmutable
-    {
-        $date = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $input);
-        if ($date === false) {
-            throw new ImproperActionException('Could not understand date format!');
-        }
-        return $date;
-    }
-
-    private function checkEndAfterStart(string $start, string $end): void
-    {
-        $startDate = $this->formatDate($start);
-        $endDate = $this->formatDate($end);
-        if ($endDate < $startDate) {
-            throw new UnprocessableContentException(sprintf(
-                _('End time %s cannot be before start time %s.'),
-                $endDate->format(self::DATETIME_FORMAT),
-                $startDate->format(self::DATETIME_FORMAT)
-            ));
-        }
-    }
-
     private function checkBookingWindow(string $start): void
     {
         $maxDays = (int) ($this->Items->entityData['booking_window_days'] ?? 0);
@@ -940,7 +829,7 @@ final class Scheduler extends AbstractRest
     private function checkOverlap(
         string $start,
         string $end,
-        ?string $excludedSeriesId = null,
+        ?string $excludedRecurrenceId = null,
         bool $includeOccurrence = false,
     ): void {
         if ($this->Items->entityData['book_can_overlap'] === 1) {
@@ -950,9 +839,9 @@ final class Scheduler extends AbstractRest
         if ($this->id !== null) {
             $sql .= ' AND id != :id';
         }
-        // series updates ignore existing rows here because self-overlaps are checked from candidate dates
-        if ($excludedSeriesId !== null) {
-            $sql .= ' AND (recurrence_series_id IS NULL OR recurrence_series_id != :recurrence_series_id)';
+        // recurrence updates ignore existing rows here because self-overlaps are checked from candidate dates
+        if ($excludedRecurrenceId !== null) {
+            $sql .= ' AND (recurrence_id IS NULL OR recurrence_id != :recurrence_id)';
         }
         $req = $this->Db->prepare($sql);
         $req->bindParam(':start', $start);
@@ -961,8 +850,8 @@ final class Scheduler extends AbstractRest
         if ($this->id !== null) {
             $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         }
-        if ($excludedSeriesId !== null) {
-            $req->bindValue(':recurrence_series_id', $excludedSeriesId);
+        if ($excludedRecurrenceId !== null) {
+            $req->bindValue(':recurrence_id', $excludedRecurrenceId);
         }
         $this->Db->execute($req);
         if (!empty($req->fetchAll())) {
@@ -977,12 +866,6 @@ final class Scheduler extends AbstractRest
                 )
             );
         }
-    }
-
-    private function adjustMidnight(string $start): string
-    {
-        // Booking exactly at midnight historically fails at the Monday boundary. See #2765.
-        return str_replace('00:00:00', '00:00:01', $start);
     }
 
     private function generateOccurrences(string $start, string $end, mixed $recurrence): array
@@ -1000,7 +883,7 @@ final class Scheduler extends AbstractRest
         $interval = $this->getRecurrenceInteger($recurrence, 'interval', 1, self::MAX_RECURRENCE_INTERVAL);
         $hasCount = array_key_exists('count', $recurrence);
         $hasUntil = array_key_exists('until', $recurrence);
-        // A finite series must use exactly one end condition
+        // A finite recurrence must use exactly one end condition
         if ($hasCount === $hasUntil) {
             throw new ImproperActionException(_('Recurrence must end after a number of occurrences or on a date.'));
         }
@@ -1183,46 +1066,6 @@ final class Scheduler extends AbstractRest
         return $candidate;
     }
 
-    private function checkCandidateOverlaps(array $occurrences): void
-    {
-        if ($this->Items->entityData['book_can_overlap'] === 1) {
-            return;
-        }
-        $ordered = $occurrences;
-        // After sorting, only adjacent occurrences need to be compared
-        usort($ordered, static fn(array $left, array $right): int => $left['start'] <=> $right['start']);
-        $previousEnd = null;
-        foreach ($ordered as $occurrence) {
-            if ($previousEnd !== null && $occurrence['start'] < $previousEnd) {
-                throw new ImproperActionException(sprintf(
-                    _('The occurrence from %s to %s overlaps another occurrence in this series.'),
-                    $occurrence['start'],
-                    $occurrence['end'],
-                ));
-            }
-            $previousEnd = $occurrence['end'];
-        }
-    }
-
-    /**
-     * Check that the date is in the future
-     * Unlike Admins, Users can't create/modify something in the past, unless book_users_can_in_past is truthy
-     * Input can be false because DateTime::createFromFormat will return false on failure
-     */
-    private function isFutureOrExplode(DateTime|DateTimeImmutable|false $date): void
-    {
-        if ($this->Items->canBookInPast()) {
-            return;
-        }
-        if ($date === false) {
-            throw new ImproperActionException('Could not understand date format!');
-        }
-        $now = new DateTime();
-        if ($now > $date) {
-            throw new ImproperActionException(_('Creation/modification of events in the past is not allowed!'));
-        }
-    }
-
     /**
      * Check that the item has been created in the last minutes (GRACE_PERIOD_MINUTES)
      * Users can't delete events in the past (see #5596) unless in this span of time.
@@ -1243,30 +1086,6 @@ final class Scheduler extends AbstractRest
             return;
         }
         $this->isFutureOrExplode($startDate);
-    }
-
-    // Date can be DateTime::ATOM, 'Y-m-d H:i:s' (MySQL DATETIME), or 'Y-m-d' (date-only)
-    private function normalizeDate(string $date, bool $rmDay = false): string
-    {
-        // Try ISO 8601
-        $dt = DateTimeImmutable::createFromFormat(DateTime::ATOM, $date);
-        // fallback: MySQL style DATETIME
-        if ($dt === false) {
-            $dt = DateTimeImmutable::createFromFormat(self::DATETIME_FORMAT, $date);
-        }
-        // fallback: date-only
-        if ($dt === false) {
-            $dt = DateTimeImmutable::createFromFormat('Y-m-d', $date);
-            if ($dt === false) {
-                throw new ImproperActionException('Could not understand date format!');
-            }
-            $dt = $dt->setTime(0, 1);
-            // we don't want the end date to go over one day
-            if ($rmDay) {
-                $dt = $dt->modify('-3 minutes');
-            }
-        }
-        return $dt->format(self::DATETIME_FORMAT);
     }
 
     /**

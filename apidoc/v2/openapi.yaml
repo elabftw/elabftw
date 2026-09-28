@@ -1445,7 +1445,7 @@ components:
           type: string
           format: date-time
           example: '2026-03-02 16:29:27'
-        recurrence_series_id:
+        recurrence_id:
           type: string
           format: uuid
           nullable: true
@@ -1455,7 +1455,7 @@ components:
           nullable: true
           minimum: 1
           maximum: 100
-          description: Position of this booking within its recurring series, starting at 1.
+          description: Position of this booking within its recurrence, starting at 1.
         recurrence_frequency:
           type: string
           nullable: true
@@ -1470,7 +1470,7 @@ components:
         recurrence_rule:
           type: object
           nullable: true
-          description: Complete recurrence rule used to create this booking series.
+          description: Complete recurrence rule used to create this recurrence.
           required: [frequency, interval]
           properties:
             frequency:
@@ -1493,11 +1493,11 @@ components:
               type: integer
               minimum: 1
               maximum: 100
-              description: Number of occurrences requested for a count-based series.
+              description: Number of occurrences requested for a count-based recurrence.
             until:
               type: string
               format: date
-              description: Inclusive end date for a date-based series.
+              description: Inclusive end date for a date-based recurrence.
         start:
           type: string
           format: date-time
@@ -5306,7 +5306,7 @@ paths:
               properties:
                 title:
                   type: string
-                  description: A name for this booking slot. When updating a recurring series, the title is applied to all occurrences in the series.
+                  description: A name for this booking slot. When updating a recurrence, the title is applied to all occurrences in the recurrence.
                   default: Untitled
                   example: 'This is an event.'
                 start:
@@ -5419,11 +5419,11 @@ paths:
                       example: "2026-02-19T15:30:00+01:00"
                     title:
                       type: string
-                      description: Optional new title for the selected occurrence or series.
+                      description: Optional new title for the selected occurrence or recurrence.
                     scope:
                       type: string
-                      enum: [event, future, series]
-                      description: Choose whether to update only this occurrence, this and all future occurrences, or all occurrences in the recurring series.
+                      enum: [event, future, recurrence]
+                      description: Choose whether to update only this occurrence, this and all future occurrences, or all occurrences in the recurrence.
                 - type: object
                   properties:
                     target:
@@ -5441,7 +5441,7 @@ paths:
                       description: Change the resource booked by this event. This always affects only the selected occurrence.
                     id:
                       type: integer
-                      description: ID of the new bookable resource. A recurring occurrence is detached from its series when its resource is changed!
+                      description: ID of the new bookable resource. A recurring occurrence is detached from its recurrence when its resource is changed!
                 - type: object
                   properties:
                     target:
@@ -5481,10 +5481,10 @@ paths:
       parameters:
         - name: scope
           in: query
-          description: Choose whether to delete only this occurrence, this and all future occurrences, or all occurrences in its series.
+          description: Choose whether to delete only this occurrence, this and all future occurrences, or all occurrences in its recurrence.
           schema:
             type: string
-            enum: [event, future, series]
+            enum: [event, future, recurrence]
       responses:
         '204':
           description: The event was deleted.

@@ -22,7 +22,7 @@
           </button>
         </div>
         <small id='eventResourceRecurrenceHelp' class='form-text text-muted d-none'>
-          {{ 'Changing the resource affects only this reservation and removes it from its recurring series.'|trans }}
+          {{ 'Changing the resource affects only this reservation and removes it from its recurrence.'|trans }}
         </small>
       </div>
       <hr>
@@ -67,8 +67,8 @@
         <label class='form-check-label' for='editScopeFuture'>{{ 'This and all future reservations'|trans }}</label>
       </div>
       <div class='form-check'>
-        <input class='form-check-input' type='radio' name='scope' value='series' id='editScopeSeries'>
-        <label class='form-check-label' for='editScopeSeries'>{{ 'All reservations in this series'|trans }}</label>
+        <input class='form-check-input' type='radio' name='scope' value='recurrence' id='editScopeRecurrence'>
+        <label class='form-check-label' for='editScopeRecurrence'>{{ 'All reservations in this recurrence'|trans }}</label>
       </div>
     </fieldset>
     {# =============== BINDINGS SECTION =============== #}

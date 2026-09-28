@@ -50,10 +50,10 @@ Enable **Repeat** when creating a booking, then choose whether it repeats every 
 
 :::warning
 
-A monthly series is rejected if its day does not exist in one of the requested months (for example, January 31 followed by February).
+A monthly recurrence is rejected if its day does not exist in one of the requested months (for example, January 31 followed by February).
 :::
 
-Every occurrence is a normal reservation. Before creating or changing a series, eLabFTW checks every occurrence for resource permissions, booking limits, and conflicts. If one occurrence is invalid, none of the series is changed.
+Every occurrence is a normal reservation. Before creating or changing a recurrence, eLabFTW checks every occurrence for resource permissions, booking limits, and conflicts. If one occurrence is invalid, none of its occurrences are changed.
 
 ### Bindings
 
@@ -104,9 +104,9 @@ You can add a custom message to inform the team members who are connected to thi
 When editing or deleting a recurring reservation, you can choose whether the action applies:
 - only to that reservation,
 - to that reservation and all future reservations,
-- or to the complete series.
+- or to the complete recurrence.
 
-**Dragging or resizing a reservation in the calendar changes only that occurrence, not the complete series.**
+**Dragging or resizing a reservation in the calendar changes only that occurrence, not the complete recurrence.**
 :::
 
 ### Browse events

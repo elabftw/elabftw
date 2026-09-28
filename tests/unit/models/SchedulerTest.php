@@ -16,6 +16,7 @@ use DateTime;
 use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EventScope;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ForbiddenException;
@@ -100,7 +101,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         return $id;
     }
 
-    public function testCreateDailyRecurringSeries(): void
+    public function testCreateDailyRecurrence(): void
     {
         $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items);
@@ -108,14 +109,14 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $id = $Scheduler->postAction(Action::Create, array(
             'start' => $start->format('c'),
             'end' => $start->add(new DateInterval('PT2H'))->format('c'),
-            'title' => 'Daily series',
+            'title' => 'Daily recurrence',
             'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
         ));
 
         $events = $this->getSortedEvents($Items);
         $this->assertCount(3, $events);
         $this->assertEquals($id, $events[0]['id']);
-        $this->assertCount(1, array_unique(array_column($events, 'recurrence_series_id')));
+        $this->assertCount(1, array_unique(array_column($events, 'recurrence_id')));
         $this->assertSame(array(1, 2, 3), array_map('intval', array_column($events, 'recurrence_index')));
         $this->assertSame(array('daily', 'daily', 'daily'), array_column($events, 'recurrence_frequency'));
         $this->assertSame(array(1, 1, 1), array_map('intval', array_column($events, 'recurrence_interval')));
@@ -130,7 +131,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     }
 
     // Ensure weekly bookings keep the same local time when daylight saving time changes
-    public function testWeeklySeriesKeepsSameTimeAcrossDaylightSavingTime(): void
+    public function testWeeklyRecurrenceKeepsSameTimeAcrossDaylightSavingTime(): void
     {
         $previousTimezone = date_default_timezone_get();
         date_default_timezone_set('America/New_York');
@@ -163,7 +164,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
-    public function testCreateWeeklySeriesOnMultipleDays(): void
+    public function testCreateWeeklyRecurrenceOnMultipleDays(): void
     {
         $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items);
@@ -196,7 +197,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(4, $rule['count']);
     }
 
-    public function testWeeklySeriesUntilDateSkipsDaysBeforeStart(): void
+    public function testWeeklyRecurrenceUntilDateSkipsDaysBeforeStart(): void
     {
         $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items);
@@ -222,7 +223,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
-    public function testCreateRecurringSeriesUntilDate(): void
+    public function testCreateRecurrenceUntilDate(): void
     {
         $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items);
@@ -249,7 +250,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($start->modify('+2 days')->format('Y-m-d'), $events[0]['recurrence_rule']['until']);
     }
 
-    public function testCreateMonthlySeries(): void
+    public function testCreateMonthlyRecurrence(): void
     {
         $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items);
@@ -341,7 +342,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
-    public function testRecurringSeriesObeysMaximumSlots(): void
+    public function testRecurrenceObeysMaximumSlots(): void
     {
         $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_max_slots' => 2));
@@ -352,13 +353,13 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
                 'end' => $this->end,
                 'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
             ));
-            $this->fail('The series should exceed the resource maximum slot count.');
+            $this->fail('The recurrence should exceed the resource maximum slot count.');
         } catch (ImproperActionException) {
             $this->assertEmpty((new Scheduler($Items))->readOne());
         }
     }
 
-    public function testUnauthorizedUserCannotCreateRecurringSeries(): void
+    public function testUnauthorizedUserCannotCreateRecurrence(): void
     {
         $RestrictedBookableItem = $this->getFreshBookableItem(2);
         $RestrictedBookableItem->update(new EntityParams('canread_base', BasePermissions::Full->value));
@@ -390,14 +391,14 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
                 'end' => $start->add(new DateInterval('PT2H'))->format('c'),
                 'recurrence' => array('frequency' => 'weekly', 'interval' => 1, 'count' => 4),
             ));
-            $this->fail('The conflicting series should have been rejected.');
+            $this->fail('The conflicting recurrence should have been rejected.');
         } catch (ImproperActionException $e) {
             $this->assertStringContainsString($conflictStart->format('Y-m-d'), $e->getMessage());
         }
         $this->assertCount(1, (new Scheduler($Items))->readOne());
     }
 
-    public function testUpdateAndDeleteRecurringSeries(): void
+    public function testUpdateAndDeleteRecurrence(): void
     {
         $Items = $this->getFreshBookableItem(2);
         $Scheduler = new Scheduler($Items);
@@ -411,7 +412,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler->setId($id);
         $Scheduler->patch(Action::Update, array(
             'target' => 'datetime',
-            'scope' => 'series',
+            'scope' => 'recurrence',
             'start' => $start->modify('+1 hour')->format('c'),
             'end' => $start->modify('+3 hours')->format('c'),
             'title' => 'After',
@@ -431,8 +432,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             'title' => 'Unrelated',
         ));
 
-        $SeriesScheduler = new Scheduler($Items, $id, recurrenceScope: 'series');
-        $this->assertTrue($SeriesScheduler->destroy());
+        $RecurrenceScheduler = new Scheduler($Items, $id, recurrenceScope: EventScope::Recurrence);
+        $this->assertTrue($RecurrenceScheduler->destroy());
         $remaining = (new Scheduler($Items))->readOne();
         $this->assertCount(1, $remaining);
         $this->assertEquals($unrelatedId, $remaining[0]['id']);
@@ -470,7 +471,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
 
         $third = $events[2];
-        $FutureScheduler = new Scheduler($Items, (int) $third['id'], recurrenceScope: 'future');
+        $FutureScheduler = new Scheduler($Items, (int) $third['id'], recurrenceScope: EventScope::Future);
         $this->assertTrue($FutureScheduler->destroy());
         $remaining = $this->getSortedEvents($Items);
         $this->assertCount(2, $remaining);
@@ -518,7 +519,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             'end' => $start->modify('+1 hour')->format('c'),
             'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
         ));
-        $seriesId = $this->getSortedEvents($SourceItems)[0]['recurrence_series_id'];
+        $recurrenceId = $this->getSortedEvents($SourceItems)[0]['recurrence_id'];
 
         $Scheduler->setId($id);
         $event = $Scheduler->patch(Action::Update, array(
@@ -527,18 +528,18 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
 
         $this->assertSame($TargetItems->id, (int) $event['item']);
-        $this->assertNull($event['recurrence_series_id']);
+        $this->assertNull($event['recurrence_id']);
         $this->assertNull($event['recurrence_index']);
         $this->assertNull($event['recurrence_rule']);
 
         $remaining = $this->getSortedEvents($SourceItems);
         $this->assertCount(2, $remaining);
         $this->assertSame(array(2, 3), array_map('intval', array_column($remaining, 'recurrence_index')));
-        $this->assertSame(array($seriesId), array_values(array_unique(array_column($remaining, 'recurrence_series_id'))));
+        $this->assertSame(array($recurrenceId), array_values(array_unique(array_column($remaining, 'recurrence_id'))));
         $this->assertCount(1, $this->getSortedEvents($TargetItems));
     }
 
-    public function testConflictingSeriesUpdateRollsBackCompletely(): void
+    public function testConflictingRecurrenceUpdateRollsBackCompletely(): void
     {
         $Items = $this->getFreshBookableItem(2);
         $Items->patch(Action::Update, array('book_can_overlap' => 0));
@@ -559,19 +560,19 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         try {
             $Scheduler->patch(Action::Update, array(
                 'target' => 'datetime',
-                'scope' => 'series',
+                'scope' => 'recurrence',
                 'start' => $start->modify('+2 hours')->format('c'),
                 'end' => $start->modify('+3 hours')->format('c'),
             ));
-            $this->fail('The conflicting series update should have been rejected.');
+            $this->fail('The conflicting recurrence update should have been rejected.');
         } catch (ImproperActionException) {
-            $series = array_filter(
+            $recurrence = array_filter(
                 $this->getSortedEvents($Items),
-                static fn(array $event): bool => $event['recurrence_series_id'] !== null,
+                static fn(array $event): bool => $event['recurrence_id'] !== null,
             );
             $this->assertSame(array('10:00:00', '10:00:00', '10:00:00'), array_values(array_map(
                 static fn(array $event): string => (new DateTimeImmutable($event['start']))->format('H:i:s'),
-                $series,
+                $recurrence,
             )));
         }
     }

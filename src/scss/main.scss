@@ -1111,13 +1111,13 @@ the form-control fails to do that so we do the border ourselves */
   /* Only Category */
   &.category-btn {
     background-color: var(--bg);
-    color: var(--fg, var(--mediumstrong));
     border: 1px solid var(--bg); // so that it is kept on hover
+    color: var(--fg, var(--mediumstrong));
 
     &:hover {
       background-color: var(--fg, var(--mediumstrong));
       color: var(--bg);
-      transition: all .1s ease;
+      transition: all 0.1s ease;
     }
   }
 

@@ -1890,11 +1890,11 @@ function updateCatStatPreview(input: HTMLInputElement): void {
   contrastElement.title = contrast.description;
 }
 
-document.addEventListener('input', event => {
+const catStatDiv = document.getElementById('catStatDiv');
+catStatDiv?.addEventListener('input', event => {
   const input = event.target;
-  if (!(input instanceof HTMLInputElement) || !input.closest('#catStatDiv')) return;
-
-  if (input.dataset.target === 'title' || input.dataset.target === 'color' || input.dataset.target === 'color_fg') {
+  if (!(input instanceof HTMLInputElement)) return;
+  if (['title', 'color', 'color_fg'].includes(input.dataset.target ?? '')) {
     updateCatStatPreview(input);
   }
 });

@@ -11,7 +11,7 @@ Addons are services that can be deployed to provide extended functionality for e
 
 ## Description
 
-[OpenCloning](https://opencloning.org/) is an application used to plan and document cloning. DNA data can be loaded from various sources, and the application is tightly integrated with eLabFTW. This means that you can easily use Resource entries in eLabFTW and their attached files to perform cloning operations. See [usage documentation](../tutorials/opencloning).
+[OpenCloning](https://opencloning.org/) is an application used to plan and document cloning. DNA data can be loaded from various sources, and the application is tightly integrated with eLabFTW. This means that you can easily use Resource entries in eLabFTW and their attached files to perform cloning operations. See [usage documentation](../tutorials/opencloning.md).
 
 ## How to install
 

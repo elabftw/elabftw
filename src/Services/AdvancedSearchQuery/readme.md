@@ -6,9 +6,9 @@ The grammar file `src/node/grammar/queryGrammar.pegjs` is the input for the pars
 
 The parser will build an abstract syntax tree AST with the grammar elements (PHP classes) located in `src/services/advancedSearchQuery/grammar/`: `AndExpression`, `AndOperand`, `DateField`, `Field`, `NotExpression`, `OrExpression`, `OrOperand`, `SimpleValueWrapper`, and `TimestampField`. The grammar file defines the hierarchy of the grammar elements but additionally the hierarchy is reflected by the parameter type hinting.
 
-After the AST is build successfully (syntax errors are reported to the user) it can be visited. Here the visitor pattern is used and there are tree visitors located in `src/services/advancedSearchQuery/visitors`: `DepthValidatorVisitor`, `FieldValidatorVisitor`, and `QueryBuilderVisitor`.
+After the AST is built successfully (syntax errors are reported to the user) it can be visited. Here the visitor pattern is used and there are tree visitors located in `src/services/advancedSearchQuery/visitors`: `DepthValidatorVisitor`, `FieldValidatorVisitor`, and `QueryBuilderVisitor`.
 
-1. `DepthValidatorVisitor` checks the complexity of the query. How deep it the AST? (Not used currently.)
+1. `DepthValidatorVisitor` checks the complexity of the query. How deep is the AST? (Not used currently.)
 2. `FieldValidatorVisitor` checks if fields/values are allowed, e.g., the `timestamped` field is only meaningful for experiments or items. Feedback is given for illegal fields/values.
 3. `QueryBuilderVisitor` is the workhorse and builds the SQL where clause.
 
@@ -30,4 +30,4 @@ The `FieldValidatorVisitor` and `QueryBuilderVisitor` use collectors (`src/servi
 - add a user query fragment to the unit test `tests/unit/services/AdvancedSearchQueryTest.php`, e.g.: `new_field:"test query"`
 - update the search syntax documentation `src/templates/search-help-modal.html`
 
-This is not a comprehensive set of instructions that will work for all fields. There can be more complex code changes like for example for the date or timestamp fields. In this cases the new grammar classes (`src/services/advancedSearchQuery/grammar`) and interfaces (`src/services/advancedSearchQuery/interfaces/`) also need to be added/extended.
+This is not a comprehensive set of instructions that will work for all fields. There can be more complex code changes like for example for the date or timestamp fields. In these cases the new grammar classes (`src/services/advancedSearchQuery/grammar`) and interfaces (`src/services/advancedSearchQuery/interfaces/`) also need to be added/extended.

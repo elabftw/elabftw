@@ -1112,10 +1112,12 @@ the form-control fails to do that so we do the border ourselves */
   &.category-btn {
     background-color: var(--bg);
     color: var(--fg, var(--mediumstrong));
+    border: 1px solid var(--bg); // so that no hover it is kept
 
     &:hover {
-      background-color: var(--bg);
-      color: var(--chrome-fg);
+      background-color: var(--fg, var(--mediumstrong));
+      color: var(--bg);
+      transition: all .1s ease;
     }
   }
 

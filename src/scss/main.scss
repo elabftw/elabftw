@@ -1112,7 +1112,7 @@ the form-control fails to do that so we do the border ourselves */
   &.category-btn {
     background-color: var(--bg);
     color: var(--fg, var(--mediumstrong));
-    border: 1px solid var(--bg); // so that no hover it is kept
+    border: 1px solid var(--bg); // so that it is kept on hover
 
     &:hover {
       background-color: var(--fg, var(--mediumstrong));

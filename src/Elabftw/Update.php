@@ -47,13 +47,12 @@ final class Update
      */
     public function runUpdateScript(bool $force = false): int
     {
-        // make sure we run MySQL version 8.4 at least
+        // make sure we run MySQL version 8.0 at least
         $mysqlVersion = (string) $this->Db->getAttribute(PDO::ATTR_SERVER_VERSION);
         if (preg_match('/^(\d+)\.(\d+)/', $mysqlVersion, $matches) !== 1
             || (int) $matches[1] < 8
-            || ((int) $matches[1] === 8 && (int) $matches[2] < 4)
         ) {
-            throw new ImproperActionException(sprintf('MySQL 8.4 is required, found %s', $mysqlVersion));
+            throw new ImproperActionException(sprintf('MySQL 8.0 is required, found %s', $mysqlVersion));
         }
 
         // old style update functions have been removed, so add a block to prevent upgrade from very very old to newest directly

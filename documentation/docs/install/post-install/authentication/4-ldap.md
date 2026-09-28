@@ -104,10 +104,12 @@ services:
     volumes:
       ...
       - /path/to/eLabFTW/certpath:/custom_certs
-      - /path/to/eLabFTW/openldap:/etc/openldap
+      - /path/to/eLabFTW/openldap/ldap.conf:/etc/openldap/ldap.conf.tpl:ro
   ...
 ...
 ~~~
+
+Do not mount the entire `/etc/openldap` directory, as this would hide configuration files provided by the container image.
 
 Then, add your custom cert file to `/path/to/eLabFTW/certpath` and at `/path/to/eLabFTW/openldap/` add a new file `ldap.conf` with the content
 

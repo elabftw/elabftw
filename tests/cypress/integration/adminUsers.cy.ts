@@ -7,7 +7,7 @@ describe('Users tab in Admin page', () => {
   it('cannot create user with empty fields', () => {
     cy.get('#initialCreateUserBtn').should('exist').click();
     cy.get('#createUserForm').then(($form) => {
-      expect(($form[0] as HTMLFormElement).checkValidity()).to.be.false;
+      expect(($form[0] as HTMLFormElement).checkValidity()).to.equal(false);
     });
     cy.get('#initialCreateUserBtn').should('not.be.disabled');
   });

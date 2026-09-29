@@ -55,7 +55,6 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Idps;
 use Elabftw\Models\Users\Users;
-use Elabftw\Models\Users2Teams;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Services\ResetPasswordKey;
@@ -80,6 +79,7 @@ use function rawurldecode;
 use function str_contains;
 use function str_starts_with;
 use function str_replace;
+use function _;
 
 /**
  * For all your authentication/login needs
@@ -478,14 +478,19 @@ final class LoginController implements ControllerInterface
         $authentication = $this->getPendingAuthentication();
         $teamId = $this->Request->request->getInt('team_id');
 
-        // Users may only request a visible team.
-        new TeamsHelper($teamId)->teamIsVisibleOrExplode();
+        $requiresValidation = new Users($authentication->userid)
+            ->requestTeamAccess($teamId);
 
-        new Users2Teams(new Users($authentication->userid))
-            ->create($authentication->userid, $teamId);
-
-        $this->Session->remove('team_request_selection_required');
-
+        // Never leave an authenticated continuation behind after submitting a
+        // request. A validated request can continue with the local value below.
+        $this->clearPendingLoginState();
+        if ($requiresValidation) {
+            $this->Session->getFlashBag()->add(
+                'ok',
+                _('Your team access request has been submitted. An admin must approve it before you can log in.'),
+            );
+            return new RedirectResponse('/login.php');
+        }
         return $this->handleLoginStep(
             $this->loginFlow->afterPasswordRenewal($authentication),
         );

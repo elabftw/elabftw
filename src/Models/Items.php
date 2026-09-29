@@ -28,6 +28,7 @@ use Elabftw\Params\DisplayParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
 
@@ -120,17 +121,17 @@ final class Items extends AbstractConcreteEntity
     /**
      * Get all items with is_bookable that we can read
      */
-    public function readBookable(?Scope $scope = null): array
+    public function readBookable(?Scope $scope = null, ?InputBag $query = null): array
     {
-        $Request = Request::createFromGlobals();
+        $query ??= Request::createFromGlobals()->query;
         if ($scope !== null) {
-            $Request->query->set('scope', $scope->value);
+            $query->set('scope', $scope->value);
         }
-        $DisplayParams = new DisplayParams($this->Users, EntityType::Items, $Request->query);
+        $DisplayParams = new DisplayParams($this->Users, EntityType::Items, $query);
         // we only want the bookable type of items
         $DisplayParams->appendFilterSql(FilterableColumn::Bookable, 1);
         // filter on the canbook or canread depending on query param
-        if ($Request->query->has('canbook')) {
+        if ($query->has('canbook')) {
             return $this->readShow($DisplayParams, true, 'canbook');
         }
         return $this->readShow($DisplayParams, true);

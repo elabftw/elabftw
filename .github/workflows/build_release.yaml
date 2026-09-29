@@ -209,10 +209,6 @@ jobs:
                 digest=$(docker buildx imagetools inspect docker.io/elabftw/elabimg:${{ github.ref_name }} | awk '/^Digest:/ { print $2; exit }')
                 echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
-            - name: Send request to webhook to trigger update of demo
-              run: |
-                curl -H 'X-Hook-Secret: ${{ secrets.HOOK_SECRET }}' ${{ secrets.HOOK_URL }}
-
             # ATTESTATION
             - name: Create build provenance attestation
               uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2

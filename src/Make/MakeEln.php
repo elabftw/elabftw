@@ -57,6 +57,9 @@ use function random_bytes;
 use function sprintf;
 use function strtr;
 use function array_map;
+use function hash_final;
+use function hash_init;
+use function hash_update_stream;
 
 /**
  * Make an ELN archive
@@ -382,13 +385,13 @@ class MakeEln extends AbstractMakeEln
     {
         foreach ($filesArr as &$file) {
             $storageFs = Storage::from($file['storage'])->getStorage()->getFs();
-            $content = $storageFs->read($file['long_name']);
-            if (empty($file['content_type'])) {
-                $file['content_type'] = $storageFs->mimeType($file['long_name']);
-            }
             // make sure we have a hash
             if (empty($file['hash'])) {
-                $file['hash'] = hash($this->hashAlgorithm, $content);
+                $context = hash_init($this->hashAlgorithm);
+                $stream = $storageFs->readStream($file['long_name']);
+                hash_update_stream($context, $stream);
+                $file['hash'] = hash_final($context);
+                fclose($stream);
             }
             // add files to archive
             $file['uuid'] = Tools::getUuidv4();

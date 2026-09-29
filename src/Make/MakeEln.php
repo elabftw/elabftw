@@ -289,6 +289,7 @@ class MakeEln extends AbstractMakeEln
                 $this->dataEntities[] = $fileNode;
             }
         }
+
         // LINKS (mentions)
         // this array will be added to the "mentions" attribute of the main dataset
         $mentions = array();
@@ -381,9 +382,13 @@ class MakeEln extends AbstractMakeEln
     {
         foreach ($filesArr as &$file) {
             $storageFs = Storage::from($file['storage'])->getStorage()->getFs();
+            $content = $storageFs->read($file['long_name']);
+            if (empty($file['content_type'])) {
+                $file['content_type'] = $storageFs->mimeType($file['long_name']);
+            }
             // make sure we have a hash
             if (empty($file['hash'])) {
-                $file['hash'] = hash($this->hashAlgorithm, $storageFs->read($file['long_name']));
+                $file['hash'] = hash($this->hashAlgorithm, $content);
             }
             // add files to archive
             $file['uuid'] = Tools::getUuidv4();

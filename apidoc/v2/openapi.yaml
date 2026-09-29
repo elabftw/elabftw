@@ -5292,6 +5292,24 @@ paths:
         required: true
         schema:
           type: integer
+    get:
+      tags: ['Events']
+      summary: Read all events for an item.
+      description: Returns all scheduler events associated with the item specified by id.
+      operationId: read-item-events
+      responses:
+        '200':
+          description: A list of booked slots for the item.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/event'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Events']
       summary: Create an event for the item specified as id.

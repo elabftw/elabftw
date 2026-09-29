@@ -21,7 +21,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\RestInterface;
-use Elabftw\Models\Scheduler;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
@@ -45,7 +44,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         private string $actor,
         private string $msg = '',
         private EmailTarget $target = EmailTarget::BookableItem,
-        private ?Scheduler $scheduler = null,
+        private ?RestInterface $eventModel = null,
     ) {
         parent::__construct($targetUser);
     }
@@ -86,10 +85,10 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         // This prevents a failed cancellation from still producing cancellation notifications
         $userids = Email::getIdsOfRecipients($this->target, $targetId, $range);
         if (($reqBody['cancel_event'] ?? false) === true) {
-            if ($this->scheduler === null) {
-                throw new ImproperActionException('Cannot cancel an event without a scheduler context.');
+            if ($this->eventModel === null) {
+                throw new ImproperActionException('Cannot cancel an event without an event model context.');
             }
-            $this->scheduler->destroy();
+            $this->eventModel->destroy();
         }
         foreach ($userids as $userid) {
             $recipient = new Users($userid);

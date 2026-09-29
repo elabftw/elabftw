@@ -20,7 +20,6 @@ use Elabftw\Enums\ApiEndpoint;
 use Elabftw\Enums\ApiSubModels;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
-use Elabftw\Enums\EventScope;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
@@ -100,7 +99,6 @@ use function json_decode;
 use function sprintf;
 use function str_starts_with;
 use function trim;
-use function _;
 
 /**
  * For API V2 requests
@@ -354,14 +352,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Items,
             ApiEndpoint::ExperimentsTemplates,
             ApiEndpoint::ItemsTypes => EntityType::from($this->endpoint->value)->toInstance($this->requester, $this->id),
-            // for an event, this->id is the Event id. And scope controls the recurrence range
-            ApiEndpoint::Event => new Scheduler(
-                new Items($this->requester),
-                $this->id,
-                recurrenceScope: EventScope::tryFrom(
-                    $this->Request->query->getString('scope', EventScope::Event->value),
-                ) ?? throw new ImproperActionException(_('Incorrect recurrence scope.')),
-            ),
+            ApiEndpoint::Event => new Scheduler(new Items($this->requester), $this->id),
             // otherwise it's the id of the item
             ApiEndpoint::Events => new Scheduler(
                 new Items($this->requester, $this->id),
@@ -466,12 +457,14 @@ final class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Scheduler) {
             return match ($submodel) {
-                // Reuse the same Scheduler so notification-driven cancellation keeps the event id and recurrence scope
                 ApiSubModels::Notifications => new EventDeleted(
                     $this->requester,
                     $this->Model->readOne(),
                     $this->requester->userData['fullname'],
-                    scheduler: $this->Model,
+                    eventModel: $this->getScopedEventModel($this->Model),
+                ),
+                ApiSubModels::Recurrence => $this->Model->EventsReccurence->setScope(
+                    $this->Request->query->getString('scope', 'recurrence'),
                 ),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
             };
@@ -492,6 +485,15 @@ final class Apiv2Controller extends AbstractApiController
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');
+    }
+
+    private function getScopedEventModel(Scheduler $Scheduler): RestInterface
+    {
+        $scope = $this->Request->query->getString('scope', 'event');
+        if ($scope === 'event') {
+            return $Scheduler;
+        }
+        return $Scheduler->EventsReccurence->setScope($scope);
     }
 
     private function applyRestrictions(): void

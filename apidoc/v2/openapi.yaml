@@ -5419,11 +5419,32 @@ paths:
                       example: "2026-02-19T15:30:00+01:00"
                     title:
                       type: string
-                      description: Optional new title for the selected occurrence or recurrence.
-                    scope:
-                      type: string
-                      enum: [event, future, recurrence]
-                      description: Choose whether to update only this occurrence, this and all future occurrences, or all occurrences in the recurrence.
+                      description: Optional new title for the selected occurrence.
+                - type: object
+                  required: [recurrence]
+                  properties:
+                    recurrence:
+                      type: object
+                      required: [target, scope]
+                      properties:
+                        target:
+                          type: string
+                          enum: ['title', 'datetime']
+                        start:
+                          type: string
+                          format: date-time
+                          description: ISO 8601 date-time with timezone offset. Required for datetime updates.
+                        end:
+                          type: string
+                          format: date-time
+                          description: ISO 8601 date-time with timezone offset. Required for datetime updates.
+                        title:
+                          type: string
+                          description: Optional new title for the selected recurrence occurrences.
+                        scope:
+                          type: string
+                          enum: [future, recurrence]
+                          description: Choose whether to update this and all future occurrences or all occurrences in the recurrence.
                 - type: object
                   properties:
                     target:
@@ -5478,16 +5499,84 @@ paths:
       tags: ['Events']
       summary: Delete a booking slot.
       operationId: delete-event
-      parameters:
-        - name: scope
-          in: query
-          description: Choose whether to delete only this occurrence, this and all future occurrences, or all occurrences in its recurrence.
-          schema:
-            type: string
-            enum: [event, future, recurrence]
       responses:
         '204':
           description: The event was deleted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /event/{id}/recurrence:
+    summary: For a recurring scheduler booking.
+    parameters:
+      - name: id
+        in: path
+        description: ID of an occurrence in the recurrence.
+        required: true
+        schema:
+          type: integer
+    patch:
+      tags: ['Events']
+      summary: Modify multiple occurrences of a recurring booking.
+      operationId: patch-event-recurrence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target, scope]
+              properties:
+                target:
+                  type: string
+                  enum: ['title', 'datetime']
+                start:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 date-time with timezone offset. Required for datetime updates.
+                end:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 date-time with timezone offset. Required for datetime updates.
+                title:
+                  type: string
+                scope:
+                  type: string
+                  enum: [future, recurrence]
+                  default: recurrence
+      responses:
+        '200':
+          description: The patched event.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+    delete:
+      tags: ['Events']
+      summary: Delete occurrences from a recurring booking.
+      operationId: delete-event-recurrence
+      parameters:
+        - name: scope
+          in: query
+          description: Delete this and all future occurrences, or the complete recurrence.
+          schema:
+            type: string
+            enum: [future, recurrence]
+            default: recurrence
+      responses:
+        '204':
+          description: The recurrence occurrences were deleted.
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

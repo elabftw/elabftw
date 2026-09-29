@@ -18,7 +18,6 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
-use Elabftw\Enums\EventScope;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -78,6 +77,8 @@ final class Scheduler extends AbstractRest
 
     public Items $Items;
 
+    public readonly EventsReccurence $EventsReccurence;
+
     private string $start = self::EVENT_START;
 
     private string $end = self::EVENT_END;
@@ -86,16 +87,11 @@ final class Scheduler extends AbstractRest
 
     private array $filterBindings = array();
 
-    private EventScope $recurrenceScope;
-
-    private readonly EventsReccurence $EventsReccurence;
-
     public function __construct(
         AbstractEntity $Items,
         ?int $id = null,
         ?string $start = null,
         ?string $end = null,
-        EventScope $recurrenceScope = EventScope::Event,
     ) {
         if (!$Items instanceof Items) {
             throw new ImproperActionException('Scheduler can only work with resources (items).');
@@ -109,7 +105,6 @@ final class Scheduler extends AbstractRest
         if ($end !== null) {
             $this->end = $end;
         }
-        $this->recurrenceScope = $recurrenceScope;
         $this->EventsReccurence = new EventsReccurence($this);
     }
 
@@ -118,11 +113,6 @@ final class Scheduler extends AbstractRest
     {
         // We don't use team.php?item= because the id will be the id of the event upon creation
         return 'api/v2/event/';
-    }
-
-    public function getRecurrenceScope(): EventScope
-    {
-        return $this->recurrenceScope;
     }
 
     /**
@@ -333,12 +323,13 @@ final class Scheduler extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->canWriteOrExplode();
-        $scope = EventScope::tryFrom((string) ($params['scope'] ?? EventScope::Event->value))
-            ?? throw new ImproperActionException(_('Incorrect recurrence scope.'));
-        if ($scope !== EventScope::Event) {
-            return $this->EventsReccurence->patch($action, $params);
+        if (array_key_exists('recurrence', $params)) {
+            if (!is_array($params['recurrence'])) {
+                throw new ImproperActionException(_('Incorrect recurrence parameter.'));
+            }
+            return $this->EventsReccurence->patch($action, $params['recurrence']);
         }
+        $this->canWriteOrExplode();
         match ($params['target']) {
             'experiment' => $this->bind('experiment', $params['id']),
             'item_link' => $this->bind('item_link', $params['id']),
@@ -357,9 +348,6 @@ final class Scheduler extends AbstractRest
     {
         $this->canWriteOrExplode();
         $event = $this->readOne();
-        if ($this->recurrenceScope !== EventScope::Event && $event['recurrence_id'] !== null) {
-            return $this->EventsReccurence->destroy();
-        }
         $this->assertCanDestroy($event);
         $this->Db->beginTransaction();
         try {
@@ -533,6 +521,13 @@ final class Scheduler extends AbstractRest
             }
         }
         return $dt->format(self::DATETIME_FORMAT);
+    }
+
+    public function canWriteOrExplode(): void
+    {
+        if ($this->canWrite() === false) {
+            throw new ForbiddenException();
+        }
     }
 
     private function deleteEvent(array $event): bool
@@ -1103,13 +1098,6 @@ final class Scheduler extends AbstractRest
         // if it's not, we need to be admin in the same team as the event/user
         $TeamsHelper = new TeamsHelper($event['team']);
         return $TeamsHelper->isAdminInTeam($this->Items->Users->userData['userid']);
-    }
-
-    private function canWriteOrExplode(): void
-    {
-        if ($this->canWrite() === false) {
-            throw new ForbiddenException();
-        }
     }
 
     private function appendFilterSql(string $column, string $paramName, int $value): void

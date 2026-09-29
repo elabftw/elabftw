@@ -100,7 +100,7 @@ class EventDeletedTest extends \PHPUnit\Framework\TestCase
             $Items->Users,
             $Scheduler->readOne(),
             'Test User',
-            scheduler: $Scheduler,
+            eventModel: $Scheduler,
         );
 
         $Notifications->postAction(Action::Create, array(

@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Enums\EventScope;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Override;
@@ -25,6 +24,7 @@ use function array_filter;
 use function array_key_exists;
 use function array_values;
 use function in_array;
+use function implode;
 use function sprintf;
 
 /**
@@ -33,6 +33,14 @@ use function sprintf;
 final class EventsReccurence extends AbstractRest
 {
     private const string DATETIME_FORMAT = 'Y-m-d H:i:s';
+
+    private const string SCOPE_FUTURE = 'future';
+
+    private const string SCOPE_RECURRENCE = 'recurrence';
+
+    private const array SCOPES = array(self::SCOPE_FUTURE, self::SCOPE_RECURRENCE);
+
+    private string $scope = self::SCOPE_RECURRENCE;
 
     public function __construct(private readonly Scheduler $Scheduler)
     {
@@ -49,20 +57,22 @@ final class EventsReccurence extends AbstractRest
         );
     }
 
+    public function setScope(string $scope): self
+    {
+        $this->scope = $this->validateScope($scope);
+        return $this;
+    }
+
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $scope = EventScope::tryFrom((string) ($params['scope'] ?? EventScope::Event->value))
-            ?? throw new ImproperActionException(_('Incorrect recurrence scope.'));
-        if ($scope === EventScope::Event) {
-            return $this->Scheduler->patch($action, $params);
-        }
+        $this->Scheduler->canWriteOrExplode();
+        $scope = $this->validateScope((string) ($params['scope'] ?? self::SCOPE_RECURRENCE));
 
         $event = $this->Scheduler->readOne();
         $recurrenceId = $event['recurrence_id'];
         if ($recurrenceId === null) {
-            $params['scope'] = EventScope::Event->value;
-            return $this->Scheduler->patch($action, $params);
+            throw new ImproperActionException(_('This reservation does not belong to a recurrence.'));
         }
         if (!in_array($params['target'] ?? '', array('title', 'datetime'), true)) {
             throw new ImproperActionException(_('Recurring scope is only supported for title and datetime updates.'));
@@ -119,7 +129,7 @@ final class EventsReccurence extends AbstractRest
             if ($changeDateTime) {
                 $overlapCandidates = $candidates;
                 // Add untouched earlier occurrences back so self-overlaps are detected for future-only updates.
-                if ($scope === EventScope::Future) {
+                if ($scope === self::SCOPE_FUTURE) {
                     foreach ($allEvents as $recurrenceEvent) {
                         if ((int) $recurrenceEvent['recurrence_index'] >= (int) $event['recurrence_index']) {
                             continue;
@@ -163,11 +173,8 @@ final class EventsReccurence extends AbstractRest
     #[Override]
     public function destroy(bool $recursive = false): bool
     {
-        $scope = $this->Scheduler->getRecurrenceScope();
-        if ($scope === EventScope::Event) {
-            return $this->Scheduler->destroy($recursive);
-        }
-
+        $this->Scheduler->canWriteOrExplode();
+        $scope = $this->scope;
         $this->Db->beginTransaction();
         try {
             $this->Scheduler->lockItemForBooking();
@@ -183,13 +190,13 @@ final class EventsReccurence extends AbstractRest
             }
 
             $sql = 'DELETE FROM team_events WHERE team = :team AND recurrence_id = :recurrence_id';
-            if ($scope === EventScope::Future) {
+            if ($scope === self::SCOPE_FUTURE) {
                 $sql .= ' AND recurrence_index >= :recurrence_index';
             }
             $req = $this->Db->prepare($sql);
             $req->bindValue(':team', $event['team'], PDO::PARAM_INT);
             $req->bindValue(':recurrence_id', $event['recurrence_id']);
-            if ($scope === EventScope::Future) {
+            if ($scope === self::SCOPE_FUTURE) {
                 $req->bindValue(':recurrence_index', $event['recurrence_index'], PDO::PARAM_INT);
             }
             $result = $this->Db->execute($req);
@@ -216,9 +223,9 @@ final class EventsReccurence extends AbstractRest
         return $req->fetchAll();
     }
 
-    private function getRecurrenceEventsForScope(array $events, array $anchor, EventScope $scope): array
+    private function getRecurrenceEventsForScope(array $events, array $anchor, string $scope): array
     {
-        if ($scope === EventScope::Recurrence) {
+        if ($scope === self::SCOPE_RECURRENCE) {
             return $events;
         }
         $anchorIndex = (int) $anchor['recurrence_index'];
@@ -226,6 +233,17 @@ final class EventsReccurence extends AbstractRest
             $events,
             static fn(array $recurrenceEvent): bool => (int) $recurrenceEvent['recurrence_index'] >= $anchorIndex,
         ));
+    }
+
+    private function validateScope(string $scope): string
+    {
+        if (!in_array($scope, self::SCOPES, true)) {
+            throw new ImproperActionException(sprintf(
+                _('Incorrect recurrence scope. Available values are: %s.'),
+                implode(', ', self::SCOPES),
+            ));
+        }
+        return $scope;
     }
 
     private function assertRecurrenceOwnership(array $events, array $anchor): void

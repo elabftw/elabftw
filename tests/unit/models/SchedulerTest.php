@@ -16,7 +16,6 @@ use DateTime;
 use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Enums\EventScope;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ForbiddenException;
@@ -411,11 +410,13 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
         $Scheduler->setId($id);
         $Scheduler->patch(Action::Update, array(
-            'target' => 'datetime',
-            'scope' => 'recurrence',
-            'start' => $start->modify('+1 hour')->format('c'),
-            'end' => $start->modify('+3 hours')->format('c'),
-            'title' => 'After',
+            'recurrence' => array(
+                'target' => 'datetime',
+                'scope' => 'recurrence',
+                'start' => $start->modify('+1 hour')->format('c'),
+                'end' => $start->modify('+3 hours')->format('c'),
+                'title' => 'After',
+            ),
         ));
 
         $events = $this->getSortedEvents($Items);
@@ -432,8 +433,8 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             'title' => 'Unrelated',
         ));
 
-        $RecurrenceScheduler = new Scheduler($Items, $id, recurrenceScope: EventScope::Recurrence);
-        $this->assertTrue($RecurrenceScheduler->destroy());
+        $RecurrenceScheduler = new Scheduler($Items, $id);
+        $this->assertTrue($RecurrenceScheduler->EventsReccurence->destroy());
         $remaining = (new Scheduler($Items))->readOne();
         $this->assertCount(1, $remaining);
         $this->assertEquals($unrelatedId, $remaining[0]['id']);
@@ -456,11 +457,13 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $secondStart = new DateTimeImmutable($second['start']);
         $FutureScheduler = new Scheduler($Items, (int) $second['id']);
         $FutureScheduler->patch(Action::Update, array(
-            'target' => 'datetime',
-            'scope' => 'future',
-            'start' => $secondStart->modify('+2 hours')->format('c'),
-            'end' => $secondStart->modify('+3 hours')->format('c'),
-            'title' => 'After',
+            'recurrence' => array(
+                'target' => 'datetime',
+                'scope' => 'future',
+                'start' => $secondStart->modify('+2 hours')->format('c'),
+                'end' => $secondStart->modify('+3 hours')->format('c'),
+                'title' => 'After',
+            ),
         ));
 
         $events = $this->getSortedEvents($Items);
@@ -471,8 +474,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
 
         $third = $events[2];
-        $FutureScheduler = new Scheduler($Items, (int) $third['id'], recurrenceScope: EventScope::Future);
-        $this->assertTrue($FutureScheduler->destroy());
+        $FutureScheduler = new Scheduler($Items, (int) $third['id']);
+        $FutureScheduler->EventsReccurence->setScope('future');
+        $this->assertTrue($FutureScheduler->EventsReccurence->destroy());
         $remaining = $this->getSortedEvents($Items);
         $this->assertCount(2, $remaining);
         $this->assertSame(array(1, 2), array_map('intval', array_column($remaining, 'recurrence_index')));
@@ -492,7 +496,6 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler->setId($id);
         $Scheduler->patch(Action::Update, array(
             'target' => 'datetime',
-            'scope' => 'event',
             'start' => $start->modify('+1 hour')->format('c'),
             'end' => $start->modify('+2 hours')->format('c'),
         ));
@@ -559,10 +562,12 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         try {
             $Scheduler->patch(Action::Update, array(
-                'target' => 'datetime',
-                'scope' => 'recurrence',
-                'start' => $start->modify('+2 hours')->format('c'),
-                'end' => $start->modify('+3 hours')->format('c'),
+                'recurrence' => array(
+                    'target' => 'datetime',
+                    'scope' => 'recurrence',
+                    'start' => $start->modify('+2 hours')->format('c'),
+                    'end' => $start->modify('+3 hours')->format('c'),
+                ),
             ));
             $this->fail('The conflicting recurrence update should have been rejected.');
         } catch (ImproperActionException) {

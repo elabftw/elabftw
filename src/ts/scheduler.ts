@@ -736,7 +736,10 @@ if (calendarEl) {
 
   on('cancel-event', (el: HTMLElement) => {
     const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
-    ApiC.delete(`event/${el.dataset.id}?scope=${scope}`).then(() => calendar.refetchEvents()).catch();
+    const endpoint = scope === 'event'
+      ? `event/${el.dataset.id}`
+      : `event/${el.dataset.id}/recurrence?scope=${scope}`;
+    ApiC.delete(endpoint).then(() => calendar.refetchEvents()).catch();
   });
 
   on('cancel-event-with-message', (el: HTMLElement) => {
@@ -766,6 +769,8 @@ if (calendarEl) {
     e.preventDefault();
     const form = document.getElementById('editEventForm') as HTMLFormElement;
     const params = collectForm(form);
+    const scope = String(params['scope'] ?? 'event');
+    delete params['scope'];
     const eventId = startInput.dataset.eventid;
     if (!eventId) {
       notify.error('form-validation-error');
@@ -794,8 +799,11 @@ if (calendarEl) {
     params['start'] = startDt.toISO({ suppressMilliseconds: true });
     params['end'] = endDt.toISO({ suppressMilliseconds: true });
     params['target'] = 'datetime';
+    const patchParams = scope === 'event'
+      ? params
+      : { recurrence: { ...params, scope } };
     try {
-      await ApiC.patch(`event/${eventId}`, params);
+      await ApiC.patch(`event/${eventId}`, patchParams);
       calendar.refetchEvents();
       $('#eventModal').modal('hide');
     } catch (err) {

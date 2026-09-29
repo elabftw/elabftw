@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Override;
 use PDO;
 use Throwable;
@@ -61,6 +62,24 @@ final class EventsReccurence extends AbstractRest
     {
         $this->scope = $this->validateScope($scope);
         return $this;
+    }
+
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $event = $this->Scheduler->readOne();
+        $recurrenceId = $event['recurrence_id'];
+
+        if ($recurrenceId === null) {
+            throw new ImproperActionException(
+                _('This reservation does not belong to a recurrence.')
+            );
+        }
+
+        $events = $this->readRecurrenceEvents($recurrenceId);
+        $this->assertRecurrenceOwnership($events, $event);
+
+        return $events;
     }
 
     #[Override]

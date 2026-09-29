@@ -53,7 +53,7 @@ abstract class AbstractCategory extends AbstractRest
         return $res;
     }
 
-    abstract public function create(string $title, ?string $color = null): int;
+    abstract public function create(string $title, ?string $color = null, ?string $colorFg = null): int;
 
     protected function getUsersCanwriteName(): string
     {

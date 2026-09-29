@@ -5437,33 +5437,6 @@ paths:
                       type: string
                       description: Optional new title for the selected occurrence.
                 - type: object
-                  required: [recurrence]
-                  properties:
-                    recurrence:
-                      type: object
-                      description: Apply an update to multiple occurrences in the recurrence containing this event.
-                      required: [target]
-                      properties:
-                        target:
-                          type: string
-                          enum: ['title', 'datetime']
-                        start:
-                          type: string
-                          format: date-time
-                          description: ISO 8601 date-time with timezone offset. Required for datetime updates.
-                        end:
-                          type: string
-                          format: date-time
-                          description: ISO 8601 date-time with timezone offset. Required for datetime updates.
-                        title:
-                          type: string
-                          description: Optional new title for the selected recurrence occurrences.
-                        scope:
-                          type: string
-                          enum: [future, recurrence]
-                          description: Choose whether to update this and all future occurrences or all occurrences in the recurrence. Defaults to the complete recurrence.
-                          default: recurrence
-                - type: object
                   properties:
                     target:
                       type: string
@@ -5527,7 +5500,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /event/{id}/recurrence:
+  /event/{id}/recurrences:
     summary: Operations on the recurrence containing an event occurrence.
     parameters:
       - name: id
@@ -5540,7 +5513,7 @@ paths:
       tags: ['Events']
       summary: Read all occurrences in a recurrence.
       description: Returns every occurrence belonging to the same recurrence as the event specified by id, ordered by recurrence_index. The id may refer to any occurrence in the recurrence.
-      operationId: read-event-recurrence
+      operationId: read-event-recurrences
       responses:
         '200':
           description: A list of all occurrences in the recurrence.
@@ -5559,7 +5532,14 @@ paths:
     patch:
       tags: ['Events']
       summary: Modify multiple occurrences of a recurring booking.
-      operationId: patch-event-recurrence
+      operationId: patch-event-recurrences
+      parameters:
+        - name: future
+          in: query
+          description: If true, update the selected occurrence and all later occurrences. If false or omitted, update the complete recurrence.
+          schema:
+            type: boolean
+            default: false
       requestBody:
         required: true
         content:
@@ -5583,11 +5563,6 @@ paths:
                 title:
                   type: string
                   description: New title for the selected occurrences. Used when target is title and may also accompany a datetime update.
-                scope:
-                  type: string
-                  enum: [future, recurrence]
-                  description: Use future for the selected occurrence and all later occurrences, or recurrence for every occurrence.
-                  default: recurrence
       responses:
         '200':
           description: The patched event.
@@ -5606,15 +5581,14 @@ paths:
     delete:
       tags: ['Events']
       summary: Delete occurrences from a recurring booking.
-      operationId: delete-event-recurrence
+      operationId: delete-event-recurrences
       parameters:
-        - name: scope
+        - name: recursive
           in: query
-          description: Use future to delete the selected occurrence and all later occurrences, or recurrence to delete every occurrence. Defaults to the complete recurrence.
+          description: If true, delete the selected occurrence and all later occurrences. If false or omitted, delete the complete recurrence.
           schema:
-            type: string
-            enum: [future, recurrence]
-            default: recurrence
+            type: boolean
+            default: false
       responses:
         '204':
           description: The recurrence occurrences were deleted.

@@ -25,23 +25,16 @@ use function array_filter;
 use function array_key_exists;
 use function array_values;
 use function in_array;
-use function implode;
 use function sprintf;
 
 /**
  * REST operations applying to multiple occurrences of a recurring event.
  */
-final class EventsReccurence extends AbstractRest
+final class EventsRecurrence extends AbstractRest
 {
     private const string DATETIME_FORMAT = 'Y-m-d H:i:s';
 
-    private const string SCOPE_FUTURE = 'future';
-
-    private const string SCOPE_RECURRENCE = 'recurrence';
-
-    private const array SCOPES = array(self::SCOPE_FUTURE, self::SCOPE_RECURRENCE);
-
-    private string $scope = self::SCOPE_RECURRENCE;
+    private bool $futureOnly = false;
 
     public function __construct(private readonly Scheduler $Scheduler)
     {
@@ -52,15 +45,15 @@ final class EventsReccurence extends AbstractRest
     public function getApiPath(): string
     {
         return sprintf(
-            '%s%d/recurrence/',
+            '%s%d/recurrences/',
             $this->Scheduler->getApiPath(),
             $this->Scheduler->id ?? 0,
         );
     }
 
-    public function setScope(string $scope): self
+    public function setFutureOnly(bool $futureOnly): self
     {
-        $this->scope = $this->validateScope($scope);
+        $this->futureOnly = $futureOnly;
         return $this;
     }
 
@@ -86,7 +79,6 @@ final class EventsReccurence extends AbstractRest
     public function patch(Action $action, array $params): array
     {
         $this->Scheduler->canWriteOrExplode();
-        $scope = $this->validateScope((string) ($params['scope'] ?? self::SCOPE_RECURRENCE));
 
         $event = $this->Scheduler->readOne();
         $recurrenceId = $event['recurrence_id'];
@@ -94,7 +86,7 @@ final class EventsReccurence extends AbstractRest
             throw new ImproperActionException(_('This reservation does not belong to a recurrence.'));
         }
         if (!in_array($params['target'] ?? '', array('title', 'datetime'), true)) {
-            throw new ImproperActionException(_('Recurring scope is only supported for title and datetime updates.'));
+            throw new ImproperActionException(_('Recurrence updates are only supported for title and datetime.'));
         }
         $newTitle = array_key_exists('title', $params)
             ? $this->Scheduler->filterTitle((string) $params['title'])
@@ -118,7 +110,7 @@ final class EventsReccurence extends AbstractRest
             }
             $allEvents = $this->readRecurrenceEvents($recurrenceId);
             $this->assertRecurrenceOwnership($allEvents, $event);
-            $events = $this->getRecurrenceEventsForScope($allEvents, $event, $scope);
+            $events = $this->getTargetEvents($allEvents, $event, $this->futureOnly);
             $candidates = array();
             if ($changeDateTime) {
                 $requestedStart = $this->Scheduler->formatDate($this->Scheduler->normalizeDate($params['start']));
@@ -148,7 +140,7 @@ final class EventsReccurence extends AbstractRest
             if ($changeDateTime) {
                 $overlapCandidates = $candidates;
                 // Add untouched earlier occurrences back so self-overlaps are detected for future-only updates.
-                if ($scope === self::SCOPE_FUTURE) {
+                if ($this->futureOnly) {
                     foreach ($allEvents as $recurrenceEvent) {
                         if ((int) $recurrenceEvent['recurrence_index'] >= (int) $event['recurrence_index']) {
                             continue;
@@ -193,7 +185,6 @@ final class EventsReccurence extends AbstractRest
     public function destroy(bool $recursive = false): bool
     {
         $this->Scheduler->canWriteOrExplode();
-        $scope = $this->scope;
         $this->Db->beginTransaction();
         try {
             $this->Scheduler->lockItemForBooking();
@@ -203,19 +194,19 @@ final class EventsReccurence extends AbstractRest
             }
             $allEvents = $this->readRecurrenceEvents($event['recurrence_id']);
             $this->assertRecurrenceOwnership($allEvents, $event);
-            $events = $this->getRecurrenceEventsForScope($allEvents, $event, $scope);
+            $events = $this->getTargetEvents($allEvents, $event, $recursive);
             foreach ($events as $recurrenceEvent) {
                 $this->Scheduler->assertCanDestroy($recurrenceEvent);
             }
 
             $sql = 'DELETE FROM team_events WHERE team = :team AND recurrence_id = :recurrence_id';
-            if ($scope === self::SCOPE_FUTURE) {
+            if ($recursive) {
                 $sql .= ' AND recurrence_index >= :recurrence_index';
             }
             $req = $this->Db->prepare($sql);
             $req->bindValue(':team', $event['team'], PDO::PARAM_INT);
             $req->bindValue(':recurrence_id', $event['recurrence_id']);
-            if ($scope === self::SCOPE_FUTURE) {
+            if ($recursive) {
                 $req->bindValue(':recurrence_index', $event['recurrence_index'], PDO::PARAM_INT);
             }
             $result = $this->Db->execute($req);
@@ -242,9 +233,9 @@ final class EventsReccurence extends AbstractRest
         return $req->fetchAll();
     }
 
-    private function getRecurrenceEventsForScope(array $events, array $anchor, string $scope): array
+    private function getTargetEvents(array $events, array $anchor, bool $futureOnly): array
     {
-        if ($scope === self::SCOPE_RECURRENCE) {
+        if (!$futureOnly) {
             return $events;
         }
         $anchorIndex = (int) $anchor['recurrence_index'];
@@ -252,17 +243,6 @@ final class EventsReccurence extends AbstractRest
             $events,
             static fn(array $recurrenceEvent): bool => (int) $recurrenceEvent['recurrence_index'] >= $anchorIndex,
         ));
-    }
-
-    private function validateScope(string $scope): string
-    {
-        if (!in_array($scope, self::SCOPES, true)) {
-            throw new ImproperActionException(sprintf(
-                _('Incorrect recurrence scope. Available values are: %s.'),
-                implode(', ', self::SCOPES),
-            ));
-        }
-        return $scope;
     }
 
     private function assertRecurrenceOwnership(array $events, array $anchor): void

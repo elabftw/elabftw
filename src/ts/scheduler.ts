@@ -738,7 +738,7 @@ if (calendarEl) {
     const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
     const endpoint = scope === 'event'
       ? `event/${el.dataset.id}`
-      : `event/${el.dataset.id}/recurrence?scope=${scope}`;
+      : `event/${el.dataset.id}/recurrences${scope === 'future' ? '?recursive=1' : ''}`;
     ApiC.delete(endpoint).then(() => calendar.refetchEvents()).catch();
   });
 
@@ -759,8 +759,7 @@ if (calendarEl) {
     payload.notifOnSaved = 0;
     // Delete inside the notification request so a failed cancellation cannot still send cancellation notifications
     payload.cancel_event = true;
-    const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
-    ApiC.post(`event/${el.dataset.id}/notifications?scope=${scope}`, payload)
+    ApiC.post(`event/${el.dataset.id}/notifications`, payload)
       .then(() => calendar.refetchEvents())
       .then(() => notify.success());
   });
@@ -799,11 +798,11 @@ if (calendarEl) {
     params['start'] = startDt.toISO({ suppressMilliseconds: true });
     params['end'] = endDt.toISO({ suppressMilliseconds: true });
     params['target'] = 'datetime';
-    const patchParams = scope === 'event'
-      ? params
-      : { recurrence: { ...params, scope } };
+    const endpoint = scope === 'event'
+      ? `event/${eventId}`
+      : `event/${eventId}/recurrences${scope === 'future' ? '?future=1' : ''}`;
     try {
-      await ApiC.patch(`event/${eventId}`, patchParams);
+      await ApiC.patch(endpoint, params);
       calendar.refetchEvents();
       $('#eventModal').modal('hide');
     } catch (err) {

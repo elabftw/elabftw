@@ -110,7 +110,7 @@ describe('Scheduler', () => {
             .should('eq', 204);
 
           // delete all remaining occurrences in one shot
-          cy.request('DELETE', `/api/v2/event/${second.id}/recurrence`)
+          cy.request('DELETE', `/api/v2/event/${second.id}/recurrences`)
             .its('status')
             .should('eq', 204);
         });

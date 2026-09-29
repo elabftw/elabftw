@@ -212,9 +212,9 @@ on('toggle-modal', async (el: HTMLElement) => {
 });
 
 on('delete-selected-entities', async () => {
-  const deleteContainersParam = '?delete_containers=1';
+  const recursiveParam = '?recursive=1';
   if (isSingleEntityPage) {
-    await ApiC.delete(`${entity.type}/${entity.id}${deleteContainersParam}`, { notifOnSaved:0 });
+    await ApiC.delete(`${entity.type}/${entity.id}${recursiveParam}`, { notifOnSaved:0 });
     sessionStorage.setItem('flash_deleted', i18next.t('delete-success'));
     window.location.href = window.location.pathname;
     return;
@@ -226,7 +226,7 @@ on('delete-selected-entities', async () => {
   }
   // perform deletes
   const deletes = checked.map(id =>
-    ApiC.delete(`${entity.type}/${id}${deleteContainersParam}`, { notifOnSaved:0 }),
+    ApiC.delete(`${entity.type}/${id}${recursiveParam}`, { notifOnSaved:0 }),
   );
   Promise.all(deletes).then(() => {
     notify.success(i18next.t('delete-success'));

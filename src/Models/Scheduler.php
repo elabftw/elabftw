@@ -77,7 +77,7 @@ final class Scheduler extends AbstractRest
 
     public Items $Items;
 
-    public readonly EventsReccurence $EventsReccurence;
+    public readonly EventsRecurrence $EventsRecurrence;
 
     private string $start = self::EVENT_START;
 
@@ -105,7 +105,7 @@ final class Scheduler extends AbstractRest
         if ($end !== null) {
             $this->end = $end;
         }
-        $this->EventsReccurence = new EventsReccurence($this);
+        $this->EventsRecurrence = new EventsRecurrence($this);
     }
 
     #[Override]
@@ -323,12 +323,6 @@ final class Scheduler extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        if (array_key_exists('recurrence', $params)) {
-            if (!is_array($params['recurrence'])) {
-                throw new ImproperActionException(_('Incorrect recurrence parameter.'));
-            }
-            return $this->EventsReccurence->patch($action, $params['recurrence']);
-        }
         $this->canWriteOrExplode();
         match ($params['target']) {
             'experiment' => $this->bind('experiment', $params['id']),

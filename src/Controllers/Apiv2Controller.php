@@ -132,7 +132,7 @@ final class Apiv2Controller extends AbstractApiController
             return match ($this->Request->getMethod()) {
                 Request::METHOD_GET => $this->handleGet(),
                 Request::METHOD_POST => $this->handlePost(),
-                Request::METHOD_DELETE => new JsonResponse($this->Model->destroy($this->Request->query->getBoolean('delete_containers')), Response::HTTP_NO_CONTENT),
+                Request::METHOD_DELETE => new JsonResponse($this->Model->destroy($this->Request->query->getBoolean('recursive')), Response::HTTP_NO_CONTENT),
                 Request::METHOD_PATCH => new JsonResponse($this->handlePatch()),
                 // send error 405 for Method Not Allowed, with Allow header as per spec:
                 // https://tools.ietf.org/html/rfc7231#section-7.4.1
@@ -461,10 +461,10 @@ final class Apiv2Controller extends AbstractApiController
                     $this->requester,
                     $this->Model->readOne(),
                     $this->requester->userData['fullname'],
-                    eventModel: $this->getScopedEventModel($this->Model),
+                    eventModel: $this->Model,
                 ),
-                ApiSubModels::Recurrence => $this->Model->EventsReccurence->setScope(
-                    $this->Request->query->getString('scope', 'recurrence'),
+                ApiSubModels::Recurrences => $this->Model->EventsRecurrence->setFutureOnly(
+                    $this->Request->query->getBoolean('future'),
                 ),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
             };
@@ -485,15 +485,6 @@ final class Apiv2Controller extends AbstractApiController
             };
         }
         throw new ImproperActionException('Incorrect endpoint.');
-    }
-
-    private function getScopedEventModel(Scheduler $Scheduler): RestInterface
-    {
-        $scope = $this->Request->query->getString('scope', 'event');
-        if ($scope === 'event') {
-            return $Scheduler;
-        }
-        return $Scheduler->EventsReccurence->setScope($scope);
     }
 
     private function applyRestrictions(): void

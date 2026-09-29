@@ -409,14 +409,11 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
             'recurrence' => array('frequency' => 'daily', 'interval' => 1, 'count' => 3),
         ));
         $Scheduler->setId($id);
-        $Scheduler->patch(Action::Update, array(
-            'recurrence' => array(
-                'target' => 'datetime',
-                'scope' => 'recurrence',
-                'start' => $start->modify('+1 hour')->format('c'),
-                'end' => $start->modify('+3 hours')->format('c'),
-                'title' => 'After',
-            ),
+        $Scheduler->EventsRecurrence->patch(Action::Update, array(
+            'target' => 'datetime',
+            'start' => $start->modify('+1 hour')->format('c'),
+            'end' => $start->modify('+3 hours')->format('c'),
+            'title' => 'After',
         ));
 
         $events = $this->getSortedEvents($Items);
@@ -434,7 +431,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         ));
 
         $RecurrenceScheduler = new Scheduler($Items, $id);
-        $this->assertTrue($RecurrenceScheduler->EventsReccurence->destroy());
+        $this->assertTrue($RecurrenceScheduler->EventsRecurrence->destroy());
         $remaining = (new Scheduler($Items))->readOne();
         $this->assertCount(1, $remaining);
         $this->assertEquals($unrelatedId, $remaining[0]['id']);
@@ -456,14 +453,11 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $second = $events[1];
         $secondStart = new DateTimeImmutable($second['start']);
         $FutureScheduler = new Scheduler($Items, (int) $second['id']);
-        $FutureScheduler->patch(Action::Update, array(
-            'recurrence' => array(
-                'target' => 'datetime',
-                'scope' => 'future',
-                'start' => $secondStart->modify('+2 hours')->format('c'),
-                'end' => $secondStart->modify('+3 hours')->format('c'),
-                'title' => 'After',
-            ),
+        $FutureScheduler->EventsRecurrence->setFutureOnly(true)->patch(Action::Update, array(
+            'target' => 'datetime',
+            'start' => $secondStart->modify('+2 hours')->format('c'),
+            'end' => $secondStart->modify('+3 hours')->format('c'),
+            'title' => 'After',
         ));
 
         $events = $this->getSortedEvents($Items);
@@ -475,8 +469,7 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         $third = $events[2];
         $FutureScheduler = new Scheduler($Items, (int) $third['id']);
-        $FutureScheduler->EventsReccurence->setScope('future');
-        $this->assertTrue($FutureScheduler->EventsReccurence->destroy());
+        $this->assertTrue($FutureScheduler->EventsRecurrence->destroy(true));
         $remaining = $this->getSortedEvents($Items);
         $this->assertCount(2, $remaining);
         $this->assertSame(array(1, 2), array_map('intval', array_column($remaining, 'recurrence_index')));
@@ -561,13 +554,10 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler->setId($id);
 
         try {
-            $Scheduler->patch(Action::Update, array(
-                'recurrence' => array(
-                    'target' => 'datetime',
-                    'scope' => 'recurrence',
-                    'start' => $start->modify('+2 hours')->format('c'),
-                    'end' => $start->modify('+3 hours')->format('c'),
-                ),
+            $Scheduler->EventsRecurrence->patch(Action::Update, array(
+                'target' => 'datetime',
+                'start' => $start->modify('+2 hours')->format('c'),
+                'end' => $start->modify('+3 hours')->format('c'),
             ));
             $this->fail('The conflicting recurrence update should have been rejected.');
         } catch (ImproperActionException) {

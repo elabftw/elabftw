@@ -33,7 +33,7 @@ enum ApiSubModels: string
     case ItemsLinks = 'items_links';
     case ItemsStatus = 'items_status';
     case Notifications = 'notifications';
-    case Recurrence = 'recurrence';
+    case Recurrences = 'recurrences';
     case ProcurementRequests = 'procurement_requests';
     case RequestActions = 'request_actions';
     case Revisions = 'revisions';
@@ -121,7 +121,7 @@ enum ApiSubModels: string
             fn(self $case): string => $case->value,
             array(
                 self::Notifications,
-                self::Recurrence,
+                self::Recurrences,
             ),
         );
     }

@@ -1470,7 +1470,7 @@ components:
         recurrence_rule:
           type: object
           nullable: true
-          description: Complete recurrence rule used to create this recurrence.
+          description: Complete recurrence rule used to create this recurrence. It contains exactly one end condition, `count` or `until`.
           required: [frequency, interval]
           properties:
             frequency:
@@ -5288,14 +5288,14 @@ paths:
     parameters:
       - name: id
         in: path
-        description: ID of the item to book.
+        description: ID of the item (resource). This is not an event ID.
         required: true
         schema:
           type: integer
     get:
       tags: ['Events']
       summary: Read all events for an item.
-      description: Returns all scheduler events associated with the item specified by id.
+      description: Returns all scheduler events associated with the item specified by id. The path id is an item ID, not an event ID.
       operationId: read-item-events
       responses:
         '200':
@@ -5308,8 +5308,6 @@ paths:
                   $ref: '#/components/schemas/event'
         '401':
           $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
     post:
       tags: ['Events']
       summary: Create an event for the item specified as id.
@@ -5339,7 +5337,7 @@ paths:
                   example: '2026-09-19T17:30:00+01:00'
                 recurrence:
                   type: object
-                  description: Optional settings to make this booking repeat. A recurring booking can contain up to 100 occurrences over a maximum period of 10 years.
+                  description: Optional settings to make this booking repeat. Exactly one of `count` or `until` is required. A recurring booking can contain up to 100 occurrences over a maximum period of 10 years. Monthly recurrences preserve the start day of month and are rejected if that day does not exist in a requested month.
                   required: [frequency, interval]
                   properties:
                     frequency:
@@ -5355,7 +5353,7 @@ paths:
                       type: array
                       uniqueItems: true
                       minItems: 1
-                      description: ISO weekdays used by weekly recurrence, where Monday is 1 and Sunday is 7. The weekday of the first booking must be included.
+                      description: Optional ISO weekdays used by weekly recurrence, where Monday is 1 and Sunday is 7. If omitted, the weekday of the first booking is used. If provided, the first booking weekday must be included.
                       items:
                         type: integer
                         minimum: 1
@@ -5374,7 +5372,7 @@ paths:
           description: The booking slot has been created.
           headers:
             location:
-              description: A URL to the booking slot that was created.
+              description: A URL to the booking slot that was created. For a recurrence, this points to the first occurrence.
               schema:
                 type: string
         '400':
@@ -5384,11 +5382,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
   /event/{id}:
-    summary: For scheduler booking.
+    summary: Operations on a single scheduler event occurrence.
     parameters:
       - name: id
         in: path
-        description: ID of the event to modify.
+        description: ID of the event occurrence.
         required: true
         schema:
           type: integer
@@ -5443,7 +5441,8 @@ paths:
                   properties:
                     recurrence:
                       type: object
-                      required: [target, scope]
+                      description: Apply an update to multiple occurrences in the recurrence containing this event.
+                      required: [target]
                       properties:
                         target:
                           type: string
@@ -5462,7 +5461,8 @@ paths:
                         scope:
                           type: string
                           enum: [future, recurrence]
-                          description: Choose whether to update this and all future occurrences or all occurrences in the recurrence.
+                          description: Choose whether to update this and all future occurrences or all occurrences in the recurrence. Defaults to the complete recurrence.
+                          default: recurrence
                 - type: object
                   properties:
                     target:
@@ -5528,14 +5528,34 @@ paths:
           $ref: '#/components/responses/NotFound'
 
   /event/{id}/recurrence:
-    summary: For a recurring scheduler booking.
+    summary: Operations on the recurrence containing an event occurrence.
     parameters:
       - name: id
         in: path
-        description: ID of an occurrence in the recurrence.
+        description: ID of any event occurrence used to identify its recurrence. This is an event ID, not the recurrence UUID.
         required: true
         schema:
           type: integer
+    get:
+      tags: ['Events']
+      summary: Read all occurrences in a recurrence.
+      description: Returns every occurrence belonging to the same recurrence as the event specified by id, ordered by recurrence_index. The id may refer to any occurrence in the recurrence.
+      operationId: read-event-recurrence
+      responses:
+        '200':
+          description: A list of all occurrences in the recurrence.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       tags: ['Events']
       summary: Modify multiple occurrences of a recurring booking.
@@ -5546,11 +5566,12 @@ paths:
           application/json:
             schema:
               type: object
-              required: [target, scope]
+              required: [target]
               properties:
                 target:
                   type: string
                   enum: ['title', 'datetime']
+                  description: Select whether to update the title or date/time of the selected occurrences.
                 start:
                   type: string
                   format: date-time
@@ -5561,9 +5582,11 @@ paths:
                   description: ISO 8601 date-time with timezone offset. Required for datetime updates.
                 title:
                   type: string
+                  description: New title for the selected occurrences. Used when target is title and may also accompany a datetime update.
                 scope:
                   type: string
                   enum: [future, recurrence]
+                  description: Use future for the selected occurrence and all later occurrences, or recurrence for every occurrence.
                   default: recurrence
       responses:
         '200':
@@ -5587,7 +5610,7 @@ paths:
       parameters:
         - name: scope
           in: query
-          description: Delete this and all future occurrences, or the complete recurrence.
+          description: Use future to delete the selected occurrence and all later occurrences, or recurrence to delete every occurrence. Defaults to the complete recurrence.
           schema:
             type: string
             enum: [future, recurrence]

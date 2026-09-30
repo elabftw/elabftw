@@ -1865,7 +1865,9 @@ components:
         extra_fields:
           type: object
           nullable: true
-          description: See https://doc.elabftw.net/docs/usage/user-guide/custom-fields
+          description: |
+            Custom fields for the item. The object keys are the custom field names.
+            See https://doc.elabftw.net/docs/usage/user-guide/custom-fields
           additionalProperties:
             type: object
             nullable: true

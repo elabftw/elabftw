@@ -70,6 +70,7 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
             '18.12.2025' => '2025-12-18',
             '18-12-2025' => '2025-12-18',
             '18/12/2025' => '2025-12-18',
+            '09/01/2026' => '2026-01-09',
             '2025-12-18' => '2025-12-18',
             'December 18, 2025' => '2025-12-18',
         );
@@ -108,6 +109,15 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
 
             $this->assertSame($expectedValue, $result['extra_fields']['Modified on']['value']);
         }
+    }
+
+    public function testMergeMetadataRejectsRelativeDate(): void
+    {
+        $source = '{"extra_fields":{"Date Received":{"type":"date","value":""}}}';
+        $incoming = '{"extra_fields":{"Date Received":{"value":"tomorrow"}}}';
+
+        $this->expectException(ImproperActionException::class);
+        MetadataHelpers::mergeMetadata($source, $incoming);
     }
 
     public function testMergeMetadataRejectsInvalidDate(): void

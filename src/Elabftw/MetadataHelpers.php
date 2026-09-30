@@ -33,6 +33,7 @@ use function sprintf;
 use function str_replace;
 use function trim;
 use function mb_strtolower;
+use function date_parse;
 
 final class MetadataHelpers
 {
@@ -239,6 +240,20 @@ final class MetadataHelpers
 
     private static function parseMetadataDate(string $value): DateTimeImmutable|false
     {
+        // PHP interprets slash-separated dates as MM/DD/YYYY, so try the common
+        // European CSV representation before the generic parser.
+        foreach (array('!d/m/Y H:i:s', '!d/m/Y H:i', '!d/m/Y') as $format) {
+            $date = DateTimeImmutable::createFromFormat($format, $value);
+            $errors = DateTimeImmutable::getLastErrors();
+            if ($date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))) {
+                return $date;
+            }
+        }
+
+        if (isset(date_parse($value)['relative'])) {
+            return false;
+        }
+
         try {
             $date = new DateTimeImmutable($value);
         } catch (DateMalformedStringException) {
@@ -248,15 +263,6 @@ final class MetadataHelpers
         if ($date !== false) {
             $errors = DateTimeImmutable::getLastErrors();
             if ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0)) {
-                return $date;
-            }
-        }
-        // PHP interprets slash-separated dates as MM/DD/YYYY, try the common
-        // European CSV representation explicitly when the generic parser fails
-        foreach (array('!d/m/Y H:i:s', '!d/m/Y H:i', '!d/m/Y') as $format) {
-            $date = DateTimeImmutable::createFromFormat($format, $value);
-            $errors = DateTimeImmutable::getLastErrors();
-            if ($date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))) {
                 return $date;
             }
         }

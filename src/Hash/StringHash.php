@@ -13,18 +13,29 @@ declare(strict_types=1);
 namespace Elabftw\Hash;
 
 use Override;
+use RuntimeException;
 
 use function mb_strlen;
+use function hash;
 
 class StringHash extends AbstractHash
 {
     // length of input above which we don't process it
-    protected const int THRESHOLD = 268435456;
+    protected const int THRESHOLD = 268_435_456;
 
     public function __construct(protected readonly string $input) {}
 
     #[Override]
-    protected function getContent(): string
+    /**
+     * @return resource
+     */
+    protected function getContent()
+    {
+        throw new RuntimeException('getContent() is not implemented on StringHash');
+    }
+
+    #[Override]
+    protected function getStringContent(): string
     {
         return $this->input;
     }
@@ -33,5 +44,14 @@ class StringHash extends AbstractHash
     protected function canCompute(): bool
     {
         return mb_strlen($this->input) < self::THRESHOLD;
+    }
+
+    #[Override]
+    protected function compute(): ?string
+    {
+        if ($this->canCompute()) {
+            return hash(self::HASH_ALGORITHM, $this->getStringContent());
+        }
+        return null;
     }
 }

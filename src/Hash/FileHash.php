@@ -31,9 +31,12 @@ class FileHash extends StringHash
     ) {}
 
     #[Override]
-    protected function getContent(): string
+    /**
+     * @return resource
+     */
+    protected function getContent()
     {
-        return $this->filesystem->read($this->filename);
+        return $this->filesystem->readStream($this->filename);
     }
 
     #[Override]

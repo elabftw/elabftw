@@ -18,5 +18,5 @@ interface HashInterface
 
     public function getHash(): ?string;
 
-    public function getAlgo(): ?string;
+    public function getAlgo(): string;
 }

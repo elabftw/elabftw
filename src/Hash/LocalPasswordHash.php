@@ -22,7 +22,7 @@ class LocalPasswordHash extends StringHash
     protected function compute(): ?string
     {
         if ($this->canCompute()) {
-            return password_hash($this->getContent(), PASSWORD_DEFAULT);
+            return password_hash($this->getStringContent(), PASSWORD_DEFAULT);
         }
         return null;
     }

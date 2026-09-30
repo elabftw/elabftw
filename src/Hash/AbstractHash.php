@@ -16,7 +16,10 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\HashInterface;
 use Override;
 
-use function hash;
+use function fclose;
+use function hash_final;
+use function hash_init;
+use function hash_update_stream;
 
 abstract class AbstractHash implements HashInterface
 {
@@ -46,17 +49,26 @@ abstract class AbstractHash implements HashInterface
     }
 
     #[Override]
-    public function getAlgo(): ?string
+    public function getAlgo(): string
     {
         return self::HASH_ALGORITHM;
     }
 
-    abstract protected function getContent(): string;
+    /**
+     * @return resource
+     */
+    abstract protected function getContent();
+
+    abstract protected function getStringContent(): string;
 
     protected function compute(): ?string
     {
         if ($this->canCompute()) {
-            return hash(self::HASH_ALGORITHM, $this->getContent());
+            $stream = $this->getContent();
+            $context = hash_init($this->getAlgo());
+            hash_update_stream($context, $stream);
+            fclose($stream);
+            return hash_final($context);
         }
         return null;
     }

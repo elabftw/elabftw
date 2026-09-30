@@ -16,6 +16,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Exception;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -184,6 +185,11 @@ abstract class AbstractZip extends AbstractImport
 
             try {
                 $this->tmpFs->writeStream($targetPath, $stream);
+            } catch (Exception $e) {
+                $this->emitLog(
+                    $e->getMessage(),
+                    LogLevel::ERROR,
+                );
             } finally {
                 fclose($stream);
             }

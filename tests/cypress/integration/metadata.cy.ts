@@ -136,4 +136,52 @@ describe('Metadata Extra fields', () => {
     cy.wait('@saveField');
     cy.getMetadataOf('Rotation').should('not.have.property', 'label');
   });
+
+  it('Does not recolor a label whose stored color is unusable', () => {
+    const metadata = {
+      extra_fields: {
+        BadColor: {
+          type: 'text',
+          value: 'fallback',
+          position: 1,
+          label: { text: 'Neutral', color: 'nope' },
+        },
+      },
+    };
+    cy.createEntity();
+    cy.url().then(url => {
+      const id = new URL(url).searchParams.get('id');
+      cy.request({
+        method: 'PATCH',
+        url: `/api/v2/experiments/${id}`,
+        body: { metadata: JSON.stringify(metadata) },
+      });
+      cy.intercept('PATCH', '/api/v2/experiments/*').as('saveField');
+      cy.intercept('GET', '/api/v2/experiments/*').as('readForEdit');
+      cy.visit(`/experiments.php?mode=edit&id=${id}`);
+
+      // wait for the field to be rendered before opening its modal. the test above
+      // gets this for free from addMetadataField(); clicking into a page that is
+      // still rendering toggles the modal twice, and the close resets the footer
+      // buttons through the hidden.bs.modal handler
+      cy.get('#metadataDiv').should('be.visible').should('contain', 'BadColor');
+
+      // the picker cannot hold "nope", and it always hands a value back to
+      // collectFieldLabel(), so it has to be prefilled with the grey the field is
+      // actually rendered with rather than the teal default for a new label
+      cy.get('[data-action="metadata-edit-field"]').first().click();
+      cy.get('#fieldBuilderModal').should('be.visible');
+      cy.get('[data-action="edit-extra-field"]').should('be.visible');
+      cy.wait('@readForEdit');
+      cy.get('#newFieldLabelTextInput').should('have.value', 'Neutral');
+      cy.get('#newFieldLabelColorInput').should('have.value', '#bdbdbd');
+
+      // editing an unrelated property must not repaint the label
+      cy.get('#newFieldDescriptionInput').clear().type('touched something else');
+      cy.get('[data-action="edit-extra-field"]').click();
+      cy.wait('@saveField');
+      cy.getMetadataOf('BadColor').its('label.text').should('eq', 'Neutral');
+      cy.getMetadataOf('BadColor').its('label.color').should('eq', 'bdbdbd');
+    });
+  });
 });

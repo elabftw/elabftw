@@ -69,7 +69,12 @@ function fillFieldLabelInputs(label?: {text?: string, color?: string}): void {
   }
   if (colorInput) {
     const color = (label?.color ?? '').replace(/^#/, '').toLowerCase();
-    colorInput.value = /^[0-9a-f]{6}$/.test(color) ? '#' + color : '#29aeb9';
+    // a label whose color is unusable is rendered with the neutral grey, so prefill
+    // that rather than the teal default: the picker always has a value and
+    // collectFieldLabel() stores it, so editing any other property of the field
+    // would otherwise recolor the label from grey to teal without anyone asking
+    const fallback = label?.text ? '#bdbdbd' : '#29aeb9';
+    colorInput.value = /^[0-9a-f]{6}$/.test(color) ? '#' + color : fallback;
   }
 }
 

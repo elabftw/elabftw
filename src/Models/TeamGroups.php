@@ -82,7 +82,7 @@ final class TeamGroups extends AbstractRest
             )
             LEFT JOIN users AS u ON ug.userid = u.userid
             WHERE tg.team = :team
-            AND tg.name LIKE :query
+            AND tg.name LIKE :query ESCAPE '\\'
             ORDER BY
                 tg.id,
                 CASE WHEN u.userid IS NULL THEN 1 ELSE 0 END,
@@ -91,6 +91,7 @@ final class TeamGroups extends AbstractRest
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $query = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query);
         $req->bindValue(':query', '%' . $query . '%');
         $this->Db->execute($req);
 

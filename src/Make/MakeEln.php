@@ -132,7 +132,6 @@ class MakeEln extends AbstractMakeEln
             '@id' => './',
             'identifier' => Tools::getUuidv4(),
             'conformsTo' => array(
-                '@id' => 'https://w3id.org/ro/crate/1.2',
                 '@id' => 'https://purl.archive.org/purl/elnconsortium/eln-spec/1.2+20260923',
             ),
             '@type' => 'Dataset',

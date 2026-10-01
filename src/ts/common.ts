@@ -1626,6 +1626,45 @@ on('update-to-now', (el: HTMLElement) => {
   input.dispatchEvent(new Event('change'));
 });
 
+/**
+ * Render the entity metadata, body HTML, MathJax formulas, and table sorting into a target element
+ */
+export async function renderEntityContent(
+  targetDiv: HTMLElement,
+  entityType: EntityType,
+  entityId: number,
+  bodyHtml: string,
+  options: { renderMetadata?: boolean } = {},
+): Promise<void> {
+  const shouldRenderMetadata = options.renderMetadata ?? (window.location.pathname !== '/revisions.php');
+
+  targetDiv.innerHTML = '';
+
+  const metadataContainer = document.createElement('div');
+  metadataContainer.className = 'entity-metadata mb-2';
+
+  const bodyContainer = document.createElement('div');
+  bodyContainer.className = 'entity-body-content';
+  bodyContainer.innerHTML = bodyHtml;
+
+  targetDiv.append(metadataContainer);
+  targetDiv.append(bodyContainer);
+
+  if (shouldRenderMetadata) {
+    const entity = { type: entityType, id: entityId };
+    const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
+    MetadataC.metadataDiv = metadataContainer;
+    await MetadataC.display('view');
+    generateMetadataLink();
+  }
+
+  if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+    await MathJax.typesetPromise([targetDiv]);
+  }
+
+  TableSortingC.init();
+}
+
 // TOGGLE BODY
 on('toggle-body', (el: HTMLElement) => {
   const randId = el.dataset.randid;
@@ -1653,29 +1692,20 @@ on('toggle-body', (el: HTMLElement) => {
     queryUrl += `/revisions/${el.dataset.revid}`;
   }
   ApiC.getJson(queryUrl).then(async json => {
-    // skip extra fields on the revisions page (focus remains on body). See #6053
-    if (window.location.pathname !== '/revisions.php') {
-      // add extra fields elements from metadata json
-      const entity = {type: el.dataset.type as EntityType, id: entityId};
-      const MetadataC = new Metadata(entity, new JsonEditorHelper(entity));
-      MetadataC.metadataDiv = contentDiv;
-      MetadataC.display('view').then(() => {
-        // go over all the type: url elements and create a link dynamically
-        generateMetadataLink();
-      });
-    }
-    // add html content
-    contentDiv.innerHTML = json.body_html;
+    await renderEntityContent(
+      contentDiv,
+      el.dataset.type as EntityType,
+      entityId,
+      json.body_html,
+    );
 
     // adjust the width of the children
     // get the width of the parent. The -30 is to make it smaller than parent even with the margins
-    const width = document.getElementById('parent_' + randId).clientWidth - 30;
-    bodyDiv.style.width = String(width);
-
-    // ask mathjax to parse the freshly loaded body
-    await MathJax.typesetPromise([bodyDiv]);
-
-    TableSortingC.init();
+    const parentEl = document.getElementById('parent_' + randId);
+    if (parentEl) {
+      const width = parentEl.clientWidth - 30;
+      bodyDiv.style.width = String(width);
+    }
 
     bodyDiv.toggleAttribute('hidden');
     bodyDiv.dataset.bodyLoaded = '1';

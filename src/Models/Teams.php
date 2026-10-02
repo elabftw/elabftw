@@ -59,11 +59,16 @@ final class Teams extends AbstractRest
      * and the response is an array of teams, with id and name for each
      * Input can come from external auth and reference an uncreated team
      * so with this the team will be created on the fly (if it's allowed)
+     * Hidden teams stay excluded by default so external authentication cannot target them.
      */
-    public function getTeamsFromIdOrNameOrOrgidArray(array $teams, bool $allowTeamCreation = false): array
-    {
+    public function getTeamsFromIdOrNameOrOrgidArray(
+        array $teams,
+        bool $allowTeamCreation = false,
+        bool $includeHiddenTeams = false,
+    ): array {
         $res = array();
-        $sql = 'SELECT id, name FROM teams WHERE visible = 1 AND (id = :query OR name = :query OR orgid = :query)';
+        $visibilitySql = $includeHiddenTeams ? '' : 'visible = 1 AND ';
+        $sql = 'SELECT id, name FROM teams WHERE ' . $visibilitySql . '(id = :query OR name = :query OR orgid = :query)';
         $existsSql = 'SELECT 1 FROM teams WHERE id = :query OR name = :query OR orgid = :query LIMIT 1';
         $req = $this->Db->prepare($sql);
         $existsReq = $this->Db->prepare($existsSql);

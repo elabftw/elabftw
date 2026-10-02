@@ -12,7 +12,15 @@ declare(strict_types=1);
 
 namespace Elabftw\Hash;
 
-final class ExistingHash extends StringHash
+use Override;
+
+final class ExistingHash extends AbstractHash
 {
     public function __construct(protected ?string $hash = null) {}
+
+    #[Override]
+    protected function compute(): ?string
+    {
+        return $this->hash;
+    }
 }

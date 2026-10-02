@@ -20,7 +20,7 @@ use Elabftw\Elabftw\CreateUploadFromUploadedFile;
 use Elabftw\Enums\AccessType;
 use Elabftw\Hash\ExistingHash;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Hash\StringHash;
+use Elabftw\Hash\FileHash;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
@@ -457,7 +457,7 @@ final class Uploads extends AbstractRest
         $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
         $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state, hasher: new StringHash($content)));
+        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state, hasher: new FileHash($tmpFilePathFs, basename($tmpFilePath))));
     }
 
     /**

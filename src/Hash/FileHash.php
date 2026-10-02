@@ -15,7 +15,10 @@ namespace Elabftw\Hash;
 use League\Flysystem\FilesystemOperator;
 use Override;
 
-use function stream_get_contents;
+use function fclose;
+use function hash_final;
+use function hash_init;
+use function hash_update_stream;
 
 /**
  * To hash a file
@@ -27,7 +30,6 @@ class FileHash extends AbstractHash
         protected string $filename,
     ) {}
 
-    #[Override]
     /**
      * @return resource
      */
@@ -37,9 +39,15 @@ class FileHash extends AbstractHash
     }
 
     #[Override]
-    protected function getStringContent(): string
+    protected function compute(): ?string
     {
-        $inputStream = $this->getContent();
-        return stream_get_contents($inputStream, 64 * 1024);
+        $stream = $this->getContent();
+        $context = hash_init($this->getAlgo());
+        try {
+            hash_update_stream($context, $stream);
+            return hash_final($context);
+        } finally {
+            fclose($stream);
+        }
     }
 }

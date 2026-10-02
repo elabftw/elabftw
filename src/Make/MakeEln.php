@@ -20,6 +20,7 @@ use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Hash\FileHash;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Instance2Rors;
@@ -57,9 +58,6 @@ use function random_bytes;
 use function sprintf;
 use function strtr;
 use function array_map;
-use function hash_final;
-use function hash_init;
-use function hash_update_stream;
 
 /**
  * Make an ELN archive
@@ -387,11 +385,8 @@ class MakeEln extends AbstractMakeEln
             $storageFs = Storage::from($file['storage'])->getStorage()->getFs();
             // make sure we have a hash
             if (empty($file['hash'])) {
-                $context = hash_init($this->hashAlgorithm);
-                $stream = $storageFs->readStream($file['long_name']);
-                hash_update_stream($context, $stream);
-                $file['hash'] = hash_final($context);
-                fclose($stream);
+                $hasher = new FileHash($storageFs, $file['long_name']);
+                $file['hash'] = $hasher->getSafeHash();
             }
             // add files to archive
             $file['uuid'] = Tools::getUuidv4();

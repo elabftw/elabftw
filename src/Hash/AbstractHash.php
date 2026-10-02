@@ -16,11 +16,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\HashInterface;
 use Override;
 
-use function fclose;
-use function hash_final;
-use function hash_init;
-use function hash_update_stream;
-
 abstract class AbstractHash implements HashInterface
 {
     protected const string HASH_ALGORITHM = 'sha256';
@@ -54,19 +49,5 @@ abstract class AbstractHash implements HashInterface
         return self::HASH_ALGORITHM;
     }
 
-    /**
-     * @return resource
-     */
-    abstract protected function getContent();
-
-    abstract protected function getStringContent(): string;
-
-    protected function compute(): ?string
-    {
-        $stream = $this->getContent();
-        $context = hash_init($this->getAlgo());
-        hash_update_stream($context, $stream);
-        fclose($stream);
-        return hash_final($context);
-    }
+    abstract protected function compute(): ?string;
 }

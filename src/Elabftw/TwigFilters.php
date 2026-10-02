@@ -18,8 +18,10 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\MessageLevels;
 use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\Scope;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\Check;
 use Exception;
 
 use function is_array;
@@ -34,6 +36,8 @@ use function _;
 use function array_key_exists;
 use function in_array;
 use function trim;
+use function round;
+use function hexdec;
 
 /**
  * Twig filters
@@ -145,13 +149,28 @@ final class TwigFilters
                     $value = self::formatMetadataValue($metadataType, $value, $newTab);
                 }
 
-                $final .= sprintf(
+                $fieldHtml = sprintf(
                     '<h5 class="mb-0">%s</h5>%s<h6>%s%s</h6>',
                     Tools::eLabHtmlspecialchars($field['name']),
                     $description,
                     $value,
                     $unit,
                 );
+                // only a field that actually carries a label gets wrapped, so a
+                // field without one produces exactly the markup it did before
+                $labelHtml = self::formatMetadataLabel($field[MetadataEnum::Label->value] ?? null);
+                if ($labelHtml !== '') {
+                    // the label stays after the field content. Putting it first
+                    // would let mpdf float it alongside the value, but it also
+                    // makes it the first content of the <li>, and mpdf then puts
+                    // the list marker on the label's line, at the right margin
+                    $fieldHtml = sprintf(
+                        '<div class="d-flex align-items-start"><div>%s</div><div class="extra-field-label-wrapper">%s</div></div>',
+                        $fieldHtml,
+                        $labelHtml,
+                    );
+                }
+                $final .= $fieldHtml;
                 $final .= '</li>';
             }
             $final .= '</ul></div>';
@@ -198,6 +217,58 @@ final class TwigFilters
             return self::array2String($input);
         }
         return '';
+    }
+
+    /**
+     * Flatten a color to the same 40% tint that color-mix() produces in the
+     * browser, but composited over white. This is only for mpdf, which cannot
+     * evaluate color-mix() or css custom properties.
+     */
+    private static function tintColor(string $color): string
+    {
+        $tinted = '';
+        foreach (str_split($color, 2) as $channel) {
+            // 40% of the color over a white backdrop
+            $value = (int) round((float) hexdec($channel) * 0.4 + 153.0);
+            $tinted .= sprintf('%02x', $value);
+        }
+        return $tinted;
+    }
+
+    /**
+     * Render the optional label of an extra field as a colored badge.
+     * Returns an empty string when there is no usable label, so fields
+     * without one are rendered exactly as before.
+     */
+    private static function formatMetadataLabel(mixed $label): string
+    {
+        if (!is_array($label) || !is_string($label['text'] ?? null) || $label['text'] === '') {
+            return '';
+        }
+        // an invalid color degrades to the neutral grey instead of throwing:
+        // rendering a view must not fail over a presentation detail
+        $color = 'bdbdbd';
+        if (is_string($label['color'] ?? null)) {
+            try {
+                $color = Check::color($label['color']);
+            } catch (ImproperActionException) {
+            }
+        }
+        $title = '';
+        if (is_string($label['title'] ?? null) && $label['title'] !== '') {
+            $title = sprintf(' title="%s"', Tools::eLabHtmlspecialchars($label['title']));
+        }
+        // --label-bg drives the color-mix in main.scss for the browser; the flat
+        // background-color is the same tint precomputed for mpdf, which supports
+        // neither custom properties nor color-mix and would otherwise render the
+        // pill with no background at all
+        return sprintf(
+            '<span class="extra-field-label" style="background-color: #%s; --label-bg: #%s"%s>%s</span>',
+            self::tintColor($color),
+            $color,
+            $title,
+            Tools::eLabHtmlspecialchars($label['text']),
+        );
     }
 
     private static function formatMetadataValue(string $metadataType, mixed $value, string $newTab): string

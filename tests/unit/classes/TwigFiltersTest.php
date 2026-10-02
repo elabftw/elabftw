@@ -13,6 +13,8 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\MessageLevels;
 
+use function sprintf;
+
 class TwigFiltersTest extends \PHPUnit\Framework\TestCase
 {
     public function testDisplayMessage(): void
@@ -153,6 +155,83 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox"></p>', $result);
         $this->assertStringContainsString('<p><span data-replace-with-title="true" data-id="12" data-endpoint="compounds">12</span></p>', $result);
         $this->assertStringContainsString('<p><span data-replace-with-title="true" data-id="34" data-endpoint="compounds">34</span></p>', $result);
+    }
+
+    public function testFormatMetadataWithLabel(): void
+    {
+        $metadataJson = '{
+          "extra_fields": {
+            "Rotation": {
+              "type": "number",
+              "value": "10.0",
+              "unit": "rpm",
+              "label": {"text": "Unverified", "color": "e6614c", "title": "written by the LIMS"}
+            }
+          }
+        }';
+
+        $result = TwigFilters::formatMetadata($metadataJson);
+
+        // the flat background is the color mixed at 40% over white for mpdf, the
+        // custom property is what main.scss mixes with color-mix() in the browser
+        $this->assertStringContainsString(
+            '<div class="d-flex align-items-start"><div><h5 class="mb-0">Rotation</h5><h6>10.0 rpm</h6></div><div class="extra-field-label-wrapper"><span class="extra-field-label" style="background-color: #f5c0b7; --label-bg: #e6614c" title="written by the LIMS">Unverified</span></div></div>',
+            $result,
+        );
+    }
+
+    public function testFormatMetadataLabelIsEscaped(): void
+    {
+        $metadataJson = '{
+          "extra_fields": {
+            "Rotation": {
+              "type": "number",
+              "value": "10.0",
+              "label": {"text": "<b>Unverified</b>", "color": "e6614c", "title": "she said \"hi\" & <bye>"}
+            }
+          }
+        }';
+
+        $result = TwigFilters::formatMetadata($metadataJson);
+
+        $this->assertStringContainsString('title="she said &quot;hi&quot; &amp; &lt;bye&gt;"', $result);
+        $this->assertStringContainsString('>&lt;b&gt;Unverified&lt;/b&gt;</span>', $result);
+        $this->assertStringNotContainsString('<b>', $result);
+    }
+
+    public function testFormatMetadataLabelWithInvalidColor(): void
+    {
+        // an unusable color must degrade to the neutral grey instead of throwing:
+        // a view must not fail over a presentation detail
+        foreach (array('"not a color"', '"#12345"', '""', '42', 'null') as $color) {
+            $metadataJson = sprintf(
+                '{"extra_fields": {"Rotation": {"type": "number", "value": "10.0", "label": {"text": "Unverified", "color": %s}}}}',
+                $color,
+            );
+
+            $result = TwigFilters::formatMetadata($metadataJson);
+
+            $this->assertStringContainsString('style="background-color: #e5e5e5; --label-bg: #bdbdbd"', $result);
+            $this->assertStringContainsString('>Unverified</span>', $result);
+        }
+    }
+
+    public function testFormatMetadataWithoutLabelIsNotWrapped(): void
+    {
+        // a field that carries no usable label must render exactly as it did
+        // before the label feature existed: no wrapper, no flex container
+        foreach (array('', ', "label": {"text": ""}', ', "label": "Unverified"', ', "label": {"color": "e6614c"}') as $label) {
+            $metadataJson = sprintf(
+                '{"extra_fields": {"Rotation": {"type": "number", "value": "10.0", "unit": "rpm"%s}}}',
+                $label,
+            );
+
+            $result = TwigFilters::formatMetadata($metadataJson);
+
+            $this->assertStringContainsString('<li class="list-group-item"><h5 class="mb-0">Rotation</h5><h6>10.0 rpm</h6></li>', $result);
+            $this->assertStringNotContainsString('extra-field-label', $result);
+            $this->assertStringNotContainsString('d-flex align-items-start', $result);
+        }
     }
 
     public function testFormatMetadataFailed(): void

@@ -78,6 +78,19 @@
           <label for='newFieldDescriptionInput'>{{ 'Description'|trans }}</label>
           <input type='text' autocomplete='off' placeholder='{{ 'Enter a description for this field'|trans }}' id='newFieldDescriptionInput' class='form-control'>
 
+          {# LABEL #}
+          <label for='newFieldLabelTextInput'>{{ 'Label'|trans }}</label>
+          <div class='input-group'>
+            <input type='text' autocomplete='off' placeholder='{{ 'Short label shown next to the value'|trans }}' id='newFieldLabelTextInput' class='form-control'>
+            <div class='input-group-append'>
+              <label class='sr-only' for='newFieldLabelColorInput'>{{ 'Label color'|trans }}</label>
+              <input type='color' autocomplete='off' value='#29aeb9' title='{{ 'Label color'|trans }}' id='newFieldLabelColorInput' class='form-control'>
+              <button type='button' class='btn btn-secondary' data-action='clear-field-label' title='{{ 'Remove label'|trans }}'>
+                <i class='fas fa-trash-alt'></i><span class='sr-only'>{{ 'Remove label'|trans }}</span>
+              </button>
+            </div>
+          </div>
+
           {# TEXTAREA #}
           <div id='newFieldContentDiv_text'>
             <label for='newFieldValueTextArea'>{{ 'Default value'|trans }}</label>

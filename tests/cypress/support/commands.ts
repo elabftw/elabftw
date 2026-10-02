@@ -120,6 +120,17 @@ Cypress.Commands.add('removeMetadataField', () => {
   cy.get('[data-action="metadata-rm-field"]').click();
 });
 
+// read one extra field back from the API, to assert on what was actually stored
+Cypress.Commands.add('getMetadataOf', (fieldName: string) => {
+  return cy.url().then(url => {
+    const id = new URL(url).searchParams.get('id');
+    return cy.request({ method: 'GET', url: `/api/v2/experiments/${id}` }).then(res => {
+      expect(res.status).to.eq(200);
+      return JSON.parse(res.body.metadata).extra_fields[fieldName];
+    });
+  });
+});
+
 Cypress.Commands.add('getAllBookings', () => {
   cy.request({
     method: 'GET',

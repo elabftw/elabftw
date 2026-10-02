@@ -432,6 +432,11 @@ export class Metadata {
         valueCell.append(this.generateViewableValue(properties, value));
       }
     }
+    // a field without a label must not gain an empty wrapper in the dom
+    const label = this.getLabel(properties);
+    if (label !== null) {
+      valueCell.append(label);
+    }
 
     row.append(nameCell, valueCell);
     return row;
@@ -735,6 +740,45 @@ export class Metadata {
       descriptionWrapper.append(descriptionEl);
     }
     return descriptionWrapper;
+  }
+
+  /**
+   * Build the label of a field: a rounded pill tinted with the user color.
+   * Returns null if the field has no label, so nothing is added to the dom.
+   */
+  getLabel(properties: ExtraFieldProperties): HTMLElement|null {
+    if (!properties.label?.text) {
+      return null;
+    }
+    const labelWrapper = document.createElement('div');
+    // right-align it inside the cell, mirroring the view page where the label
+    // sits at the right edge of the field box
+    labelWrapper.classList.add('text-right');
+    const labelEl = document.createElement('span');
+    labelEl.classList.add('extra-field-label');
+    if (properties.label.title) {
+      labelEl.title = properties.label.title;
+    }
+    // an unusable color falls back to the same neutral grey as the view page
+    const color = Metadata.normalizeColor(properties.label.color) ?? 'bdbdbd';
+    labelEl.style.setProperty('--label-bg', '#' + color);
+    labelEl.textContent = properties.label.text;
+    labelWrapper.append(labelEl);
+    return labelWrapper;
+  }
+
+  /**
+   * Same rule as Check::color() on the backend: an optional leading #, then
+   * exactly six hex digits. Returns null for anything else, so an invalid
+   * color coming from the API degrades to a neutral badge instead of
+   * breaking the rendering of the whole metadata block.
+   */
+  static normalizeColor(color?: string): string|null {
+    if (!color) {
+      return null;
+    }
+    const stripped = color.startsWith('#') ? color.slice(1) : color;
+    return /^[0-9a-fA-F]{6}$/.test(stripped) ? stripped.toLowerCase() : null;
   }
 
   getGroups(mode: string, json: ValidMetadata) {

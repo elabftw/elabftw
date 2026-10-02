@@ -456,6 +456,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           // preserve properties that aren't editable in this modal
           if (prevField?.readonly === true) field['readonly'] = true;
           if (typeof prevField?.position === 'number') field['position'] = prevField.position;
+          if (Array.isArray(prevField?.value_labels)) field['value_labels'] = prevField.value_labels;
           // ensure the old extra field is replaced
           if (!json['extra_fields']) json['extra_fields'] = {};
           if (originalFieldKey && originalFieldKey !== newFieldKey) {

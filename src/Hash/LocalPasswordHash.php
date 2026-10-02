@@ -21,9 +21,6 @@ class LocalPasswordHash extends StringHash
     #[Override]
     protected function compute(): ?string
     {
-        if ($this->canCompute()) {
-            return password_hash($this->getStringContent(), PASSWORD_DEFAULT);
-        }
-        return null;
+        return password_hash($this->getStringContent(), PASSWORD_DEFAULT);
     }
 }

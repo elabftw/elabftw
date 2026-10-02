@@ -63,15 +63,10 @@ abstract class AbstractHash implements HashInterface
 
     protected function compute(): ?string
     {
-        if ($this->canCompute()) {
-            $stream = $this->getContent();
-            $context = hash_init($this->getAlgo());
-            hash_update_stream($context, $stream);
-            fclose($stream);
-            return hash_final($context);
-        }
-        return null;
+        $stream = $this->getContent();
+        $context = hash_init($this->getAlgo());
+        hash_update_stream($context, $stream);
+        fclose($stream);
+        return hash_final($context);
     }
-
-    abstract protected function canCompute(): bool;
 }

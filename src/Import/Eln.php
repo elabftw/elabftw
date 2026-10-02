@@ -101,7 +101,7 @@ class Eln extends AbstractZip
         protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
         protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
         private bool $verifyChecksum = true,
-        private bool $checksumErrorSkip = true,
+        private bool $checksumErrorSkip = false,
     ) {
         parent::__construct(
             $requester,

@@ -15,16 +15,13 @@ namespace Elabftw\Hash;
 use League\Flysystem\FilesystemOperator;
 use Override;
 
+use function stream_get_contents;
+
 /**
  * To hash a file
  */
-class FileHash extends StringHash
+class FileHash extends AbstractHash
 {
-    protected const string HASH_ALGORITHM = 'sha256';
-
-    // size of a file in bytes above which we don't process it (100 Mb)
-    protected const int THRESHOLD = 100000000;
-
     public function __construct(
         protected FilesystemOperator $filesystem,
         protected string $filename,
@@ -40,9 +37,9 @@ class FileHash extends StringHash
     }
 
     #[Override]
-    protected function canCompute(): bool
+    protected function getStringContent(): string
     {
-        $filesize = $this->filesystem->fileSize($this->filename);
-        return $filesize < self::THRESHOLD;
+        $inputStream = $this->getContent();
+        return stream_get_contents($inputStream, 64 * 1024);
     }
 }

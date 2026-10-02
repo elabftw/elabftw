@@ -132,7 +132,7 @@ final class Apiv2Controller extends AbstractApiController
             return match ($this->Request->getMethod()) {
                 Request::METHOD_GET => $this->handleGet(),
                 Request::METHOD_POST => $this->handlePost(),
-                Request::METHOD_DELETE => new JsonResponse($this->Model->destroy($this->Request->query->getBoolean('delete_containers')), Response::HTTP_NO_CONTENT),
+                Request::METHOD_DELETE => new JsonResponse($this->Model->destroy($this->Request->query->getBoolean('recursive')), Response::HTTP_NO_CONTENT),
                 Request::METHOD_PATCH => new JsonResponse($this->handlePatch()),
                 // send error 405 for Method Not Allowed, with Allow header as per spec:
                 // https://tools.ietf.org/html/rfc7231#section-7.4.1
@@ -352,7 +352,6 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::Items,
             ApiEndpoint::ExperimentsTemplates,
             ApiEndpoint::ItemsTypes => EntityType::from($this->endpoint->value)->toInstance($this->requester, $this->id),
-            // for a single event, the id is the id of the event
             ApiEndpoint::Event => new Scheduler(new Items($this->requester), $this->id),
             // otherwise it's the id of the item
             ApiEndpoint::Events => new Scheduler(
@@ -458,7 +457,15 @@ final class Apiv2Controller extends AbstractApiController
         }
         if ($this->Model instanceof Scheduler) {
             return match ($submodel) {
-                ApiSubModels::Notifications => new EventDeleted($this->requester, $this->Model->readOne(), $this->requester->userData['fullname']),
+                ApiSubModels::Notifications => new EventDeleted(
+                    $this->requester,
+                    $this->Model->readOne(),
+                    $this->requester->userData['fullname'],
+                    eventModel: $this->Model,
+                ),
+                ApiSubModels::Recurrences => $this->Model->EventsRecurrence->setFutureOnly(
+                    $this->Request->query->getBoolean('future'),
+                ),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
             };
         }

@@ -1665,7 +1665,7 @@ components:
         binding:
           type: integer
           description: |
-            The type of binding: POST or redirect(see SamlBinding enum)
+            The type of binding: POST or redirect (see SamlBinding enum)
           enum: [ 0, 1 ]
           example: 0
         location:

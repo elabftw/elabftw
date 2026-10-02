@@ -415,6 +415,10 @@ class Eln extends AbstractZip
                         // (in 103 we have an array of id)
                         // INTERNAL_ELN_VERSION < 103
                         if ($this->internalElnVersion < 103) {
+                            // crates from other tools have no version but are flattened: resolve a bare {"@id": ...} to its PropertyValue node
+                            if (!array_key_exists('propertyID', $propval) && array_key_exists('@id', $propval)) {
+                                $propval = $this->getNodeFromId($propval['@id']);
+                            }
                             if (array_key_exists('propertyID', $propval) && $propval['propertyID'] === 'elabftw_metadata') {
                                 // we look for the special elabftw_metadata property and that's what we import
                                 $this->Entity->update(new EntityParams('metadata', $propval['value']));

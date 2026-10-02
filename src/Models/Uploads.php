@@ -20,7 +20,7 @@ use Elabftw\Elabftw\CreateUploadFromUploadedFile;
 use Elabftw\Enums\AccessType;
 use Elabftw\Hash\ExistingHash;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Hash\StringHash;
+use Elabftw\Hash\FileHash;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
@@ -37,6 +37,7 @@ use Elabftw\Params\UploadParams;
 use Elabftw\Services\Check;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
+use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use Override;
 use PDO;
 use RuntimeException;
@@ -58,6 +59,7 @@ use function str_replace;
 use function stream_copy_to_stream;
 use function stream_get_meta_data;
 use function str_contains;
+use function stream_get_contents;
 
 /**
  * All about the file uploads
@@ -93,6 +95,7 @@ final class Uploads extends AbstractRest
 
         // original file name
         $realName = $params->getFilename();
+
         $ext = $this->getExtensionOrExplode($realName);
 
         // name for the stored file, includes folder and extension (ab/ab34[...].ext)
@@ -111,6 +114,7 @@ final class Uploads extends AbstractRest
         $filesize = $sourceFs->filesize($tmpFilename);
         // read the file as a stream
         $inputStream = $sourceFs->readStream($tmpFilename);
+
         // get metadata about the stream to see if it's seekable
         $meta = stream_get_meta_data($inputStream);
         if (empty($meta['seekable'])) {
@@ -119,14 +123,32 @@ final class Uploads extends AbstractRest
             if ($tmp === false) {
                 throw new RuntimeException('Could not create temporary seekable stream.');
             }
+
             stream_copy_to_stream($inputStream, $tmp);
             fclose($inputStream);
             $inputStream = $tmp;
         }
+
         $isRewind = rewind($inputStream);
         if ($isRewind === false) {
             throw new RuntimeException('Could not rewind stream.');
         }
+
+        // Inspect the content instead of relying on the source backend's metadata.
+        $sample = stream_get_contents($inputStream, 64 * 1024);
+        if ($sample === false) {
+            throw new RuntimeException('Could not read stream for MIME type detection.');
+        }
+
+        if (rewind($inputStream) === false) {
+            throw new RuntimeException('Could not rewind stream after MIME type detection.');
+        }
+
+        $detector = new FinfoMimeTypeDetector();
+        $mimeType = $detector->detectMimeType($realName, $sample)
+            ?? $detector->detectMimeTypeFromBuffer($sample)
+            ?? 'application/octet-stream';
+
         // we don't hash big files as this could take too much time/resources
         // same with thumbnails
         // TODO add the filesize check inside the makethumnailclass like we did for hasher
@@ -135,7 +157,7 @@ final class Uploads extends AbstractRest
             // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException
             try {
                 MakeThumbnailFactory::getMaker(
-                    $sourceFs->mimeType($tmpFilename),
+                    $mimeType,
                     $inputStream,
                     $longName,
                     $storageFs,
@@ -435,7 +457,7 @@ final class Uploads extends AbstractRest
         $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
         $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state, hasher: new StringHash($content)));
+        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state, hasher: new FileHash($tmpFilePathFs, basename($tmpFilePath))));
     }
 
     /**

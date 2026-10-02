@@ -14,8 +14,6 @@ namespace Elabftw\Hash;
 
 use Elabftw\Storage\Memory;
 
-use function str_repeat;
-
 class HashTest extends \PHPUnit\Framework\TestCase
 {
     public function testHash(): void
@@ -23,12 +21,19 @@ class HashTest extends \PHPUnit\Framework\TestCase
         $fs = new Memory()->getFs();
         $filename = 'a.file';
         $fs->write($filename, 'with content');
-        $Hasher = new NolimitFileHash($fs, $filename);
+        $Hasher = new FileHash($fs, $filename);
         $knownHash = '3a09fff7054453655afd4c3adc1a819ca1af9e01e1c2de46be339e412fa3bb6a';
         $ExistingHash = new ExistingHash($knownHash);
         $this->assertEquals($ExistingHash->getHash(), $Hasher->getHash());
-        // now try something we can't compute
-        $veryLongString = str_repeat('!', 268435456 + 1);
-        $this->assertNull(new StringHash($veryLongString)->getHash());
+    }
+
+    public function testExistingHash(): void
+    {
+        $hash = null;
+        $hasher = new ExistingHash($hash);
+        $this->assertSame($hash, $hasher->getHash());
+        $hash = 'something';
+        $hasher = new ExistingHash($hash);
+        $this->assertSame($hash, $hasher->getHash());
     }
 }

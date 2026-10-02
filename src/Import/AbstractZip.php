@@ -190,6 +190,7 @@ abstract class AbstractZip extends AbstractImport
                     $e->getMessage(),
                     LogLevel::ERROR,
                 );
+                throw $e;
             } finally {
                 fclose($stream);
             }

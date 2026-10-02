@@ -26,4 +26,14 @@ class HashTest extends \PHPUnit\Framework\TestCase
         $ExistingHash = new ExistingHash($knownHash);
         $this->assertEquals($ExistingHash->getHash(), $Hasher->getHash());
     }
+
+    public function testExistingHash(): void
+    {
+        $hash = null;
+        $hasher = new ExistingHash($hash);
+        $this->assertSame($hash, $hasher->getHash());
+        $hash = 'something';
+        $hasher = new ExistingHash($hash);
+        $this->assertSame($hash, $hasher->getHash());
+    }
 }

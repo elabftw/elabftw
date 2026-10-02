@@ -14,6 +14,7 @@ namespace Elabftw\Hash;
 
 use League\Flysystem\FilesystemOperator;
 use Override;
+use RuntimeException;
 
 use function fclose;
 use function hash_final;
@@ -44,7 +45,10 @@ class FileHash extends AbstractHash
         $stream = $this->getContent();
         $context = hash_init($this->getAlgo());
         try {
-            hash_update_stream($context, $stream);
+            $bytesHashed = hash_update_stream($context, $stream);
+            if ($bytesHashed !== $this->filesystem->fileSize($this->filename)) {
+                throw new RuntimeException('Could not hash the complete file.');
+            }
             return hash_final($context);
         } finally {
             fclose($stream);

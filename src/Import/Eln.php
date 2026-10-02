@@ -602,7 +602,6 @@ class Eln extends AbstractZip
         $filepath = strtr($filepath, '|', '_');
         $filepath = strtr($filepath, '"', '_');
 
-        //$hasher = new LocalFileHash($filepath);
         $hasher = new FileHash($this->tmpFs, $filepath);
         $hash = $hasher->getHash();
         // CHECKSUM

@@ -180,7 +180,7 @@ function checkForUpdate() {
       updateButton.type = 'button';
       updateButton.classList.add('btn', 'btn-primary', 'ml-2', 'external-link');
       updateButton.innerText = i18next.t('view-upgrade-guide');
-      updateButton.addEventListener('click', () => window.open('https://doc.elabftw.net/docs/install/update', '_blank'));
+      updateButton.addEventListener('click', () => window.open('https://doc.elabftw.net/docs/install/upgrade/update', '_blank'));
       const changelogButton = document.createElement('button');
       changelogButton.type = 'button';
       changelogButton.classList.add('btn', 'btn-primary', 'ml-2', 'external-link');

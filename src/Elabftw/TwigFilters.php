@@ -238,7 +238,7 @@ final class TwigFilters
             $id = (int) $value;
             $page = $metadataType === EntityType::Items->value ? EntityType::Items->toPage() : EntityType::Experiments->toPage();
             return sprintf(
-                '<a href="/%s?mode=view&amp;id=%d"%s><span %s data-id="%d" data-endpoint=%s>%s</span></a>',
+                '<a href="/%s?mode=view&amp;id=%d"%s><span %s data-id="%d" data-endpoint="%s">%s</span></a>',
                 $page,
                 $id,
                 $newTab,

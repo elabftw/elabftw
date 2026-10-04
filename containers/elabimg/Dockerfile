@@ -224,6 +224,7 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # php8-bcmath is required to send emails via Exchange (NTLM authenticator)
 # php8-gd is required by mpdf for transparent png
 # php8-iconv is required by LdapRecord php library
+# php84-xmlwriter is required for multipart uploads with S3
 # imagemagick-svg is for mathjax support in pdfs
 # imagemagick-heic is for support for heic/heif
 # don't put line comments inside this instruction
@@ -258,6 +259,7 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-session \
     php84-sodium \
     php84-xml \
+    php84-xmlwriter \
     php84-zip \
     tzdata
 

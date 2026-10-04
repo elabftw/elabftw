@@ -90,7 +90,8 @@ copyConf() {
 }
 
 escape_sed_repl() {
-    printf '%s' "$1" | sed -e 's/[\/&]/\\&/g'
+    # Escape backslashes, the / delimiter, and & in replacement values.
+    printf '%s' "$1" | sed -e 's/[\\/&]/\\&/g'
 }
 
 nginxConf() {
@@ -129,8 +130,8 @@ nginxConf() {
 
 
         sed -i \
-            -e "s:%TLS_CERT_PATH%:${tls_cert_path}:" \
-            -e "s:%TLS_KEY_PATH%:${tls_key_path}:" \
+            -e "s/%TLS_CERT_PATH%/$(escape_sed_repl "${tls_cert_path}")/" \
+            -e "s/%TLS_KEY_PATH%/$(escape_sed_repl "${tls_key_path}")/" \
             "$server_conf"
     fi
 
@@ -141,14 +142,13 @@ nginxConf() {
 
     # set the list of php files that can be processed by php-fpm
     php_files_nginx_allowlist=$(find /elabftw/web -type f -name '*.php' | sed 's:/elabftw/web/::' | tr '\n' '|' | sed 's/|$//')
-    # use : because of the / in the list of files
-    sed -i -e "s:%PHP_FILES_NGINX_ALLOWLIST%:${php_files_nginx_allowlist}:" /run/nginx/common.conf
+    sed -i -e "s/%PHP_FILES_NGINX_ALLOWLIST%/$(escape_sed_repl "${php_files_nginx_allowlist}")/" /run/nginx/common.conf
 
     # adjust keepalive_timeout
-    sed -i -e "s/%KEEPALIVE_TIMEOUT%/${keepalive_timeout}/" /run/nginx/nginx.conf
+    sed -i -e "s/%KEEPALIVE_TIMEOUT%/$(escape_sed_repl "${keepalive_timeout}")/" /run/nginx/nginx.conf
 
     # adjust client_max_body_size
-    sed -i -e "s/%CLIENT_MAX_BODY_SIZE%/${max_upload_size}/" /run/nginx/nginx.conf
+    sed -i -e "s/%CLIENT_MAX_BODY_SIZE%/$(escape_sed_repl "${max_upload_size}")/" /run/nginx/nginx.conf
 
     # ADJUST PLUGINS
     if [ "$opencloning_url" != "false" ] && [ -n "$opencloning_url" ] && [ "$use_opencloning" != "false" ] && [ -n "$use_opencloning" ]; then
@@ -156,7 +156,7 @@ nginxConf() {
         # remove the trailing / if it exists, or it doesn't work
         oc_url=${opencloning_url%/}
         sed -i -e "s|^#\s*include /etc/nginx/opencloning.conf|include /etc/nginx/opencloning.conf|" /run/nginx/common.conf
-        sed -i -e "s|%OPENCLONING_URL%|${oc_url}|" /run/nginx/opencloning.conf
+        sed -i -e "s/%OPENCLONING_URL%/$(escape_sed_repl "${oc_url}")/" /run/nginx/opencloning.conf
     fi
 
     # SET REAL IP CONFIG
@@ -168,15 +168,14 @@ nginxConf() {
         do
             conf_string+="set_real_ip_from ${element};"
         done
-        # use pipe for sed separation because CIDR might have a /
-        sed -i -e "s|#%REAL_IP_CONF%|${conf_string}|" /run/nginx/common.conf
+        sed -i -e "s/#%REAL_IP_CONF%/$(escape_sed_repl "${conf_string}")/" /run/nginx/common.conf
         # enable real_ip_header config
         sed -i -e "s/#real_ip_header X-Forwarded-For;/real_ip_header X-Forwarded-For;/" /run/nginx/common.conf
         sed -i -e "s/#real_ip_recursive on;/real_ip_recursive on;/" /run/nginx/common.conf
     fi
 
     # SET WORKER PROCESSES (default is auto)
-    sed -i -e "s/%WORKER_PROCESSES%/${nginx_work_proc}/" /run/nginx/nginx.conf
+    sed -i -e "s/%WORKER_PROCESSES%/$(escape_sed_repl "${nginx_work_proc}")/" /run/nginx/nginx.conf
 
     # DEV MODE
     # we don't want to serve brotli compressed assets in dev (or we would need to recompress them after every change!)
@@ -191,7 +190,7 @@ nginxConf() {
     else
         server_header=${random:0:3}
     fi
-    sed -i -e "s/%SERVER_HEADER%/${server_header}/" /run/nginx/common.conf
+    sed -i -e "s/%SERVER_HEADER%/$(escape_sed_repl "${server_header}")/" /run/nginx/common.conf
 
     ########
     # CORS #
@@ -221,11 +220,11 @@ nginxConf() {
             acah_header="more_set_headers 'Access-Control-Allow-Headers: ${allow_headers}';"
         fi
     fi
-    sed -i -e "s#%ACAO_HEADER%#${acao_header}#" /run/nginx/cors.conf
-    sed -i -e "s#%ACAC_HEADER%#${acac_header}#" /run/nginx/cors.conf
-    sed -i -e "s#%ACEH_HEADER%#${aceh_header}#" /run/nginx/cors.conf
-    sed -i -e "s/%ACAM_HEADER%/${acam_header}/" /run/nginx/cors.conf
-    sed -i -e "s/%ACAH_HEADER%/${acah_header}/" /run/nginx/cors.conf
+    sed -i -e "s/%ACAO_HEADER%/$(escape_sed_repl "${acao_header}")/" /run/nginx/cors.conf
+    sed -i -e "s/%ACAC_HEADER%/$(escape_sed_repl "${acac_header}")/" /run/nginx/cors.conf
+    sed -i -e "s/%ACEH_HEADER%/$(escape_sed_repl "${aceh_header}")/" /run/nginx/cors.conf
+    sed -i -e "s/%ACAM_HEADER%/$(escape_sed_repl "${acam_header}")/" /run/nginx/cors.conf
+    sed -i -e "s/%ACAH_HEADER%/$(escape_sed_repl "${acah_header}")/" /run/nginx/cors.conf
 
     # create a password file for /php-status endpoint
     if [ -z "$status_password" ]; then
@@ -242,28 +241,27 @@ phpfpmConf() {
     f="/run/php/elabpool.conf"
     # create a PSK for invoker
     INVOKER_PSK=$(openssl rand -base64 42)
-    # allow php to read it. use | separator as / is in base64
-    sed -i -e "s|^env\[INVOKER_PSK\] = .*|env[INVOKER_PSK] = ${INVOKER_PSK}|" $f
+    # allow php to read it
+    sed -i -e "s/^env\[INVOKER_PSK\] = .*/env[INVOKER_PSK] = $(escape_sed_repl "${INVOKER_PSK}")/" $f
     # expose it to services started through with-contenv
     printf '%s' "$INVOKER_PSK" > /run/s6/container_environment/INVOKER_PSK
     chmod 600 /run/s6/container_environment/INVOKER_PSK
     # increase max number of simultaneous requests
-    sed -i -e "s/%PHP_MAX_CHILDREN%/${php_max_children}/" $f
+    sed -i -e "s/%PHP_MAX_CHILDREN%/$(escape_sed_repl "${php_max_children}")/" $f
     # allow using more memory for php-fpm
-    sed -i -e "s/%PHP_MAX_MEMORY%/${max_php_memory}/" $f
+    sed -i -e "s/%PHP_MAX_MEMORY%/$(escape_sed_repl "${max_php_memory}")/" $f
     # external services, we want to easily know from php app if they are available
-    sed -i -e "s/%USE_FINGERPRINTER%/${use_fingerprinter}/" $f
-    sed -i -e "s/%FINGERPRINTER_USE_PROXY%/${fingerprinter_use_proxy}/" $f
-    # use # because url has / in it
-    sed -i -e "s#%FINGERPRINTER_URL%#${fingerprinter_url}#" $f
-    sed -i -e "s/%USE_OPENCLONING%/${use_opencloning}/" $f
+    sed -i -e "s/%USE_FINGERPRINTER%/$(escape_sed_repl "${use_fingerprinter}")/" $f
+    sed -i -e "s/%FINGERPRINTER_USE_PROXY%/$(escape_sed_repl "${fingerprinter_use_proxy}")/" $f
+    sed -i -e "s/%FINGERPRINTER_URL%/$(escape_sed_repl "${fingerprinter_url}")/" $f
+    sed -i -e "s/%USE_OPENCLONING%/$(escape_sed_repl "${use_opencloning}")/" $f
     # persistent mysql connection setting
-    sed -i -e "s/%USE_PERSISTENT_MYSQL_CONN%/${use_persistent_mysql_conn}/" $f
-    sed -i -e "s/%DEV_MODE%/${dev_mode}/" $f
-    sed -i -e "s/%DEMO_MODE%/${demo_mode}/" $f
+    sed -i -e "s/%USE_PERSISTENT_MYSQL_CONN%/$(escape_sed_repl "${use_persistent_mysql_conn}")/" $f
+    sed -i -e "s/%DEV_MODE%/$(escape_sed_repl "${dev_mode}")/" $f
+    sed -i -e "s/%DEMO_MODE%/$(escape_sed_repl "${demo_mode}")/" $f
     # pubchem urls
-    sed -i -e "s|%PUBCHEM_PUG_URL%|${pubchem_pug_url}|" $f
-    sed -i -e "s|%PUBCHEM_PUG_VIEW_URL%|${pubchem_pug_view_url}|" $f
+    sed -i -e "s/%PUBCHEM_PUG_URL%/$(escape_sed_repl "${pubchem_pug_url}")/" $f
+    sed -i -e "s/%PUBCHEM_PUG_VIEW_URL%/$(escape_sed_repl "${pubchem_pug_view_url}")/" $f
 }
 
 # useful for CI or tests
@@ -292,15 +290,14 @@ generateTlsCert() {
 getRedisUri() {
     username=""
     password=""
-    # the & and ? are escaped because of the sed
-    # it's probably a good idea to not have to many weird characters in redis username/password
-    query_link="\&"
+    # Leave sed escaping to the caller.
+    query_link="&"
     if [ -n "$redis_username" ]; then
-        username="\?auth[user]=${redis_username}"
+        username="?auth[user]=${redis_username}"
     fi
     if [ -n "$redis_password" ]; then
         if [ -z "$redis_username" ]; then
-            query_link="\?"
+            query_link="?"
         fi
         password="${query_link}auth[pass]=${redis_password}"
     fi
@@ -314,9 +311,9 @@ phpConf() {
     f="/run/php/php.ini"
     cp -v $src $f
     # allow using more memory for php
-    sed -i -e "s/%PHP_MEMORY_LIMIT%/${max_php_memory}/" $f
+    sed -i -e "s/%PHP_MEMORY_LIMIT%/$(escape_sed_repl "${max_php_memory}")/" $f
     # change upload_max_filesize and post_max_size
-    sed -i -e "s/%PHP_MAX_UPLOAD_SIZE%/${max_upload_size}/" $f
+    sed -i -e "s/%PHP_MAX_UPLOAD_SIZE%/$(escape_sed_repl "${max_upload_size}")/" $f
 
     # PHP SESSIONS
     # default values for sessions (with files)
@@ -332,13 +329,13 @@ phpConf() {
         chmod 700 "$sess_save_path"
     fi
     # now set the values
-    sed -i -e "s:%SESSION_SAVE_HANDLER%:${sess_save_handler}:" $f
-    sed -i -e "s|%SESSION_SAVE_PATH%|${sess_save_path}|" $f
+    sed -i -e "s/%SESSION_SAVE_HANDLER%/$(escape_sed_repl "${sess_save_handler}")/" $f
+    sed -i -e "s/%SESSION_SAVE_PATH%/$(escape_sed_repl "${sess_save_path}")/" $f
 
-    # config for timezone, use : because timezone will contain /
-    sed -i -e "s:%TIMEZONE%:${php_timezone}:" $f
+    # config for timezone
+    sed -i -e "s/%TIMEZONE%/$(escape_sed_repl "${php_timezone}")/" $f
     # allow longer requests execution time
-    sed -i -e "s/%PHP_MAX_EXECUTION_TIME%/${php_max_execution_time}/" $f
+    sed -i -e "s/%PHP_MAX_EXECUTION_TIME%/$(escape_sed_repl "${php_max_execution_time}")/" $f
 
     # production open_basedir conf value
     # /etc/ssl/cert.pem is for openssl and timestamp related functions
@@ -354,7 +351,7 @@ phpConf() {
         sed -i -e "s/tmpfile, //" $f
     fi
     # now set value for open_basedir
-    sed -i -e "s|%OPEN_BASEDIR%|${open_basedir}|" $f
+    sed -i -e "s/%OPEN_BASEDIR%/$(escape_sed_repl "${open_basedir}")/" $f
 }
 
 elabftwConf() {
@@ -376,35 +373,33 @@ ldapConf() {
 populatePhpEnv() {
 
     f="/run/php/elabpool.conf"
-    sed -i -e "s/%DB_HOST%/${db_host}/" $f
-    sed -i -e "s/%DB_PORT%/${db_port}/" $f
-    sed -i -e "s/%DB_NAME%/${db_name}/" $f
-    sed -i -e "s/%DB_USER%/${db_user}/" $f
+    sed -i -e "s/%DB_HOST%/$(escape_sed_repl "${db_host}")/" $f
+    sed -i -e "s/%DB_PORT%/$(escape_sed_repl "${db_port}")/" $f
+    sed -i -e "s/%DB_NAME%/$(escape_sed_repl "${db_name}")/" $f
+    sed -i -e "s/%DB_USER%/$(escape_sed_repl "${db_user}")/" $f
     sed -i -e "s/%DB_PASSWORD%/$(escape_sed_repl "${db_password}")/" $f
     # don't add empty stuff
     if [ -n "$db_cert_path" ]; then
-        # use # as separator instead of slash
-        sed -i -e "s#%DB_CERT_PATH%#${db_cert_path}#" $f
+        sed -i -e "s/%DB_CERT_PATH%/$(escape_sed_repl "${db_cert_path}")/" $f
     else
         # remove this if not in use
         sed -i -e "/%DB_CERT_PATH%/d" $f
     fi
-    sed -i -e "s/%SECRET_KEY%/${secret_key}/" $f
-    sed -i -e "s/%MAX_UPLOAD_SIZE%/${max_upload_size}/" $f
-    sed -i -e "s/%MAX_UPLOAD_TIME%/${max_upload_time}/" $f
-    # use # as separator instead of slash
-    sed -i -e "s#%SITE_URL%#${site_url}#" $f
+    sed -i -e "s/%SECRET_KEY%/$(escape_sed_repl "${secret_key}")/" $f
+    sed -i -e "s/%MAX_UPLOAD_SIZE%/$(escape_sed_repl "${max_upload_size}")/" $f
+    sed -i -e "s/%MAX_UPLOAD_TIME%/$(escape_sed_repl "${max_upload_time}")/" $f
+    sed -i -e "s/%SITE_URL%/$(escape_sed_repl "${site_url}")/" $f
     # assume that if ak is set, then sk is too
     if [ -n "$aws_ak" ]; then
-        sed -i -e "s|%ELAB_AWS_ACCESS_KEY%|${aws_ak}|" $f
-        sed -i -e "s|%ELAB_AWS_SECRET_KEY%|${aws_sk}|" $f
+        sed -i -e "s/%ELAB_AWS_ACCESS_KEY%/$(escape_sed_repl "${aws_ak}")/" $f
+        sed -i -e "s/%ELAB_AWS_SECRET_KEY%/$(escape_sed_repl "${aws_sk}")/" $f
     else
         sed -i -e "/%ELAB_AWS_ACCESS_KEY%/d" $f
         sed -i -e "/%ELAB_AWS_SECRET_KEY%/d" $f
     fi
 
-    sed -i -e "s/%DB_QUERY_PROFILING%/${db_query_profiling}/" $f
-    sed -i -e "s/%DB_QUERY_LOG_MIN_MS%/${db_query_log_min_ms}/" $f
+    sed -i -e "s/%DB_QUERY_PROFILING%/$(escape_sed_repl "${db_query_profiling}")/" $f
+    sed -i -e "s/%DB_QUERY_LOG_MIN_MS%/$(escape_sed_repl "${db_query_log_min_ms}")/" $f
 
 }
 

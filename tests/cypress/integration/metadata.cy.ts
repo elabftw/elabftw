@@ -93,9 +93,17 @@ describe('Metadata Extra fields', () => {
         });
         // Simulate a different field being saved after this page was loaded.
         cy.request('PATCH', url, { action: 'updatemetadatafield', Untouched: 'after' });
+        let awaitingLabelRefresh = false;
         cy.intercept('PATCH', `**${url}`, request => {
           if (request.body.action === 'updatemetadatafield' && request.body.Numbers) {
             request.alias = 'saveLabel';
+            awaitingLabelRefresh = true;
+          }
+        });
+        cy.intercept('GET', `**${url}`, request => {
+          if (awaitingLabelRefresh) {
+            request.alias = 'readLabelMetadata';
+            awaitingLabelRefresh = false;
           }
         });
         const checkSaved = (expected: string[]|null) => {
@@ -105,6 +113,8 @@ describe('Metadata Extra fields', () => {
               action: 'updatemetadatafield', Numbers: { value: ['1', '2'], value_labels: expected },
             });
           });
+          // The save also refreshes the JSON editor; finish that read before reloading.
+          cy.wait('@readLabelMetadata').its('response.statusCode').should('eq', 200);
           cy.request(url).then(saved => {
             const fields = JSON.parse(saved.body.metadata).extra_fields;
             expect(fields.Numbers.value_labels ?? null).to.deep.eq(expected);

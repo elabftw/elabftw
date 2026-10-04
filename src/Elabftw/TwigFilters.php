@@ -137,15 +137,15 @@ final class TwigFilters
                         $label = '';
                         if (isset($valueLabels[$index]) && is_string($valueLabels[$index]) && $valueLabels[$index] !== '') {
                             $label = sprintf(
-                                '<span class="badge badge-pill badge-light ml-2">%s</span>',
+                                '<span class="badge badge-pill badge-light metadata-value-label">%s</span><br>',
                                 Tools::eLabHtmlspecialchars($valueLabels[$index]),
                             );
                         }
                         $html .= sprintf(
-                            '<p>%s%s%s</p>',
+                            $label === '' ? '<p>%s%s%s</p>' : '<p class="metadata-value">%s%s%s</p>',
+                            $label,
                             self::formatMetadataValue($metadataType, $item, $newTab),
                             $unit,
-                            $label,
                         );
                     }
                     $value = $html;

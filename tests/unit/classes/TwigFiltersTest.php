@@ -126,8 +126,32 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
 
         $result = TwigFilters::formatMetadata($metadataJson);
 
-        $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox" checked="checked"><span class="badge badge-pill badge-light ml-2">Calibrated</span></p>', $result);
-        $this->assertStringContainsString('<p><input class="d-block" disabled type="checkbox"><span class="badge badge-pill badge-light ml-2">Reviewed &lt;&amp;&quot; done</span></p>', $result);
+        $this->assertStringContainsString('<p class="metadata-value"><span class="badge badge-pill badge-light metadata-value-label">Calibrated</span><br><input class="d-block" disabled type="checkbox" checked="checked"></p>', $result);
+        $this->assertStringContainsString('<p class="metadata-value"><span class="badge badge-pill badge-light metadata-value-label">Reviewed &lt;&amp;&quot; done</span><br><input class="d-block" disabled type="checkbox"></p>', $result);
+    }
+
+    public function testFormatMetadataWithPartialValueLabels(): void
+    {
+        $metadataJson = '{
+          "extra_fields": {
+            "numbers": {
+              "type": "number",
+              "value": ["1", "2", "3"],
+              "unit": "mg",
+              "value_labels": ["0", "", "<img src=x onerror=alert(1)>"]
+            },
+            "short labels": {"value": ["A", "B"], "value_labels": ["first"]},
+            "no labels": {"value": ["C"], "value_labels": null}
+          }
+        }';
+
+        $result = TwigFilters::formatMetadata($metadataJson);
+
+        $this->assertStringContainsString('metadata-value-label">0</span><br>1 mg</p><p>2 mg</p>', $result);
+        $this->assertStringContainsString('metadata-value-label">&lt;img src=x onerror=alert(1)&gt;</span><br>3 mg</p>', $result);
+        $this->assertStringContainsString('metadata-value-label">first</span><br>A</p><p>B</p>', $result);
+        $this->assertStringContainsString('<p>C</p>', $result);
+        $this->assertStringNotContainsString('<img', $result);
     }
 
     public function testFormatMetadataWithMultipleValuesForAllTypes(): void

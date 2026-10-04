@@ -332,7 +332,7 @@ export class Metadata {
       addButton.addEventListener('click', () => {
         const row = this.buildMultiValueRow(name, properties, '', holder);
         holder.insertBefore(row, addButton);
-        const input = row.querySelector<HTMLElement>('input, select, textarea');
+        const input = row.querySelector<HTMLElement>('[data-metadata-value="true"], [data-purpose="radio-holder"] input');
         // Linked fields initialize their autocomplete from their click handler.
         // Initialize it before focusing a newly added row so typing works immediately.
         if (input?.dataset.action === 'autocomplete') {
@@ -359,24 +359,41 @@ export class Metadata {
 
     const inputWrapper = document.createElement('div');
     inputWrapper.classList.add('flex-grow-1');
-    if (properties.type === ExtraFieldInputType.Checkbox) {
-      inputWrapper.classList.add('form-check');
+    const label = properties.value_labels?.[index ?? -1] ?? '';
+    if (properties.readonly !== true) {
+      const labelInput = document.createElement('input');
+      labelInput.type = 'text';
+      labelInput.classList.add('form-control', 'form-control-sm', 'mb-1');
+      labelInput.dataset.purpose = 'value-label';
+      labelInput.placeholder = i18next.t('name');
+      labelInput.setAttribute('aria-label', `${name}: ${i18next.t('name')}`);
+      labelInput.value = label;
+      // A label is not a linked value: editing it must not create entity links.
+      labelInput.addEventListener('change', () => this.saveMultiValueHolder(holder));
+      inputWrapper.append(labelInput);
+    } else if (label !== '') {
+      const labelWrapper = document.createElement('div');
+      labelWrapper.classList.add('mb-1');
+      const labelBadge = document.createElement('span');
+      labelBadge.classList.add('badge', 'badge-pill', 'badge-light');
+      labelBadge.dataset.purpose = 'value-label';
+      labelBadge.textContent = label;
+      labelWrapper.append(labelBadge);
+      inputWrapper.append(labelWrapper);
     }
-    inputWrapper.append(this.generateSingleInput(name, {
+
+    const valueWrapper = document.createElement('div');
+    if (properties.type === ExtraFieldInputType.Checkbox) {
+      // Checkbox inputs are absolutely positioned: reserve their row height.
+      valueWrapper.classList.add('form-check', 'pb-4');
+    }
+    valueWrapper.append(this.generateSingleInput(name, {
       ...properties,
       value,
       allow_multi_values: false,
     }));
+    inputWrapper.append(valueWrapper);
     row.append(inputWrapper);
-
-    const label = properties.value_labels?.[index ?? -1];
-    if (label) {
-      const labelBadge = document.createElement('span');
-      labelBadge.classList.add('badge', 'badge-pill', 'badge-light', 'ml-2');
-      labelBadge.dataset.purpose = 'value-label';
-      labelBadge.textContent = label;
-      row.append(labelBadge);
-    }
 
     if (properties.readonly !== true) {
       const removeButton = document.createElement('button');
@@ -399,14 +416,14 @@ export class Metadata {
 
   /**
    * Collect the labels of the rendered multi-value rows, index-aligned with
-   * the values. Rows without a badge yield an empty string so the
+   * the values. Unnamed rows yield an empty string so the
    * value <-> label association survives add/remove/reorder operations.
    */
   getMultiValueLabels(holder: HTMLElement): string[] {
     const labels: Array<string> = [];
     for (const row of Array.from(holder.querySelectorAll<HTMLElement>('[data-purpose="multi-value-row"]'))) {
-      const badge = row.querySelector<HTMLElement>('[data-purpose="value-label"]');
-      labels.push(badge?.textContent ?? '');
+      const label = row.querySelector<HTMLElement>('[data-purpose="value-label"]');
+      labels.push(label instanceof HTMLInputElement ? label.value : label?.textContent ?? '');
     }
     return labels;
   }
@@ -465,19 +482,18 @@ export class Metadata {
       valueCell.append(this.generateViewableValue(properties, ''));
     } else {
       for (const [index, value] of values.entries()) {
-        // keep each value and its label badge in a shared row container so
-        // the badge sits beside its value instead of on a separate line
+        // Keep the label above its value, matching the editable rows.
         const valueRow = document.createElement('div');
-        valueRow.classList.add('d-flex', 'align-items-center');
-        valueRow.append(this.generateViewableValue(properties, value));
+        valueRow.classList.add('mb-2');
         const label = properties.value_labels?.[index];
         if (label) {
           const labelBadge = document.createElement('span');
-          labelBadge.classList.add('badge', 'badge-pill', 'badge-light', 'ml-2');
+          labelBadge.classList.add('badge', 'badge-pill', 'badge-light', 'mb-1');
           labelBadge.dataset.purpose = 'value-label';
           labelBadge.textContent = label;
           valueRow.append(labelBadge);
         }
+        valueRow.append(this.generateViewableValue(properties, value));
         valueCell.append(valueRow);
       }
     }

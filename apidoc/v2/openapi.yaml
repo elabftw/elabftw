@@ -210,7 +210,7 @@ components:
 
   requestBodies:
     PatchEntity:
-      description: Parameters for patching an entity
+      description: Parameters for patching an entity.
       required: true
       content:
         application/json:
@@ -220,7 +220,7 @@ components:
               - $ref: "#/components/schemas/entity_editable"
 
     PatchItem:
-      description: Parameters for patching an item
+      description: Parameters for patching an item.
       required: true
       content:
         application/json:
@@ -1080,7 +1080,7 @@ components:
     # CONTAINER
     container:
       type: object
-      description: A container represents the storage of an entity in a specific storage unit
+      description: A container represents the storage of an entity in a specific storage unit.
       properties:
         id:
           type: integer

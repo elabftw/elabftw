@@ -218,6 +218,11 @@ An array of string (`[]`) with different options for the dropdown element.
 ### allow_multi_values
 A `boolean` attribute, which defaults to `false`, for allowing any custom field type to hold multiple values. The `value` property is stored as an array when enabled. Dropdown fields use a native multi-select input; other field types display repeatable inputs that can be added or removed individually.
 
+### value_labels
+An optional array of strings, aligned by index with the `value` array of a multi-value field. For example, `"value": ["A", "B"]` and `"value_labels": ["Sample A", "Sample B"]` give each value its own label. Empty strings and missing entries leave the corresponding value unnamed; use `null` or omit `value_labels` when no labels are needed.
+
+For repeatable inputs, edit the label in the `Name` input above each value. Removing a row removes its label with it. Read-only fields display labels without editable controls. Labels also appear above their values in the view page and PDF export.
+
 ### required
 A `boolean` attribute to indicate that filling this field is required. Please note that this won't prevent a user from leaving the page even if the value is empty. It will indicate visually that a value is required but won't block the workflow.
 

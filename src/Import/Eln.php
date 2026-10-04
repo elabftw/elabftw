@@ -622,7 +622,6 @@ class Eln extends AbstractZip
             $this->tmpFs,
             $file['name'] ?? basename($file['@id']),
             $filepath,
-            $hasher,
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
             state: ($file['creativeWorkStatus'] ?? '') === State::Archived->name ? State::Archived : State::Normal,
         ));

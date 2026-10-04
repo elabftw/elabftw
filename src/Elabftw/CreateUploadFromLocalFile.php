@@ -13,15 +13,12 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\State;
-use Elabftw\Hash\FileHash;
-use Elabftw\Interfaces\HashInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Override;
 
 use function dirname;
-use function basename;
 
 final class CreateUploadFromLocalFile extends CreateUpload
 {
@@ -33,18 +30,12 @@ final class CreateUploadFromLocalFile extends CreateUpload
         State $state = State::Normal,
     ) {
         $this->filePath = $filePath;
-        parent::__construct($realName, $filePath, $this->getHasher(), $comment, $immutable, $state);
+        parent::__construct($realName, $filePath, $comment, $immutable, $state);
     }
 
     #[Override]
     public function getSourceFs(): FilesystemOperator
     {
         return new Filesystem(new LocalFilesystemAdapter(dirname($this->filePath)));
-    }
-
-    #[Override]
-    public function getHasher(): HashInterface
-    {
-        return new FileHash($this->getSourceFs(), basename($this->filePath));
     }
 }

@@ -18,9 +18,7 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\CreateUploadFromUploadedFile;
 use Elabftw\Enums\AccessType;
-use Elabftw\Hash\ExistingHash;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Hash\FileHash;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
@@ -29,6 +27,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\MakeThumbnailFactory;
+use Elabftw\Hash\StreamHasher;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\ContentParams;
@@ -174,9 +173,18 @@ final class Uploads extends AbstractRest
         if ($isRewind === false) {
             throw new RuntimeException('Could not rewind stream.');
         }
+
         $storageFs->createDirectory($folder);
-        $storageFs->writeStream($longName, $inputStream);
+        $hasher = new StreamHasher($inputStream);
+        $uploadStream = $hasher->getResource();
+
+        $storageFs->writeStream($longName, $uploadStream);
+
+        $hash = $hasher->getHash();
+
+        fclose($uploadStream);
         fclose($inputStream);
+
 
         $this->Entity->touch();
 
@@ -216,8 +224,8 @@ final class Uploads extends AbstractRest
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':type', $this->Entity->entityType->value);
-        $req->bindValue(':hash', $params->getHasher()->getHash());
-        $req->bindValue(':hash_algorithm', $params->getHasher()->getAlgo());
+        $req->bindValue(':hash', $hash);
+        $req->bindValue(':hash_algorithm', $hasher->getAlgo());
         $req->bindValue(':state', $params->getState()->value, PDO::PARAM_INT);
         $req->bindParam(':storage', $storage, PDO::PARAM_INT);
         $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
@@ -457,7 +465,7 @@ final class Uploads extends AbstractRest
         $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
         $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state, hasher: new FileHash($tmpFilePathFs, basename($tmpFilePath))));
+        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state));
     }
 
     /**
@@ -497,7 +505,6 @@ final class Uploads extends AbstractRest
             return new CreateUpload(
                 realName: $upload['real_name'],
                 filePath: $prefix . $upload['long_name'],
-                hasher: new ExistingHash($upload['hash']),
                 comment: $upload['comment'],
                 state: State::from($upload['state']),
             );
@@ -505,7 +512,6 @@ final class Uploads extends AbstractRest
         return new CreateUploadFromS3(
             realName: $upload['real_name'],
             filePath: $upload['long_name'],
-            hasher: new ExistingHash($upload['hash']),
             comment: $upload['comment'],
             state: State::from($upload['state']),
         );

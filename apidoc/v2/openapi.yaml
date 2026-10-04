@@ -1080,7 +1080,7 @@ components:
     # CONTAINER
     container:
       type: object
-      description: A container represents the storage of an entity in a specific storage unit
+      description: A container represents the storage of an entity in a specific storage unit.
       properties:
         id:
           type: integer

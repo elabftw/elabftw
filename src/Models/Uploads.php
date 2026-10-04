@@ -145,7 +145,6 @@ final class Uploads extends AbstractRest
 
         $detector = new FinfoMimeTypeDetector();
         $mimeType = $detector->detectMimeType($realName, $sample)
-            ?? $detector->detectMimeTypeFromBuffer($sample)
             ?? 'application/octet-stream';
 
         // we don't hash big files as this could take too much time/resources
@@ -178,7 +177,7 @@ final class Uploads extends AbstractRest
         $hasher = new StreamHasher($inputStream);
         $uploadStream = $hasher->getResource();
 
-        $storageFs->writeStream($longName, $uploadStream);
+        $storageFs->writeStream($longName, $uploadStream, array('mimetype' => $mimeType));
 
         $hash = $hasher->getHash();
 

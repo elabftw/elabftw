@@ -75,7 +75,7 @@ Keep in mind that what the builder menu will do for you is simply create some JS
 ## Positions
 In order to assign a particular position to the inputs, you can drag them around.
 
-If you are using the API, use the `position` key, with a number as value. The inputs will then be ordered based on this value. Lowest value being on top. Groups are shown in the position they are defined.
+If you are using the API, use the `position` key with a number as the value. The inputs will then be ordered based on this value, with the lowest value at the top. Groups are shown in the position they are defined.
 
 ## Removing an input
 If you wish to remove an input, click the trash icon present in edit mode on the right side of the input block.
@@ -195,7 +195,7 @@ A date and time input.
 An email input: only a valid email address will be accepted.
 
 #### number
-A text input that only accepts a number as value.
+A text input that only accepts a number as the value.
 
 #### radio
 A radio input similar to select but all options are immediately visible.
@@ -228,7 +228,7 @@ A `string` attribute that will be displayed under the name of the field.
 An array (`[]`) with different units for the units dropdown element. Requires a `unit` attribute to store the selected unit.
 
 ### unit
-An attribute used to store the selected unit, will be updated with a change from the `units` generated dropdown menu.
+An attribute used to store the selected unit. It will be updated when the `units` generated dropdown menu is changed.
 
 ### position
 Add a number as a value to correctly order the custom fields how you want them.

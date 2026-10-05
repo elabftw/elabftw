@@ -453,11 +453,12 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $second = $events[1];
         $secondStart = new DateTimeImmutable($second['start']);
         $FutureScheduler = new Scheduler($Items, (int) $second['id']);
-        $FutureScheduler->EventsRecurrence->setFutureOnly(true)->patch(Action::Update, array(
+        $FutureScheduler->EventsRecurrence->patch(Action::Update, array(
             'target' => 'datetime',
             'start' => $secondStart->modify('+2 hours')->format('c'),
             'end' => $secondStart->modify('+3 hours')->format('c'),
             'title' => 'After',
+            'future' => true,
         ));
 
         $events = $this->getSortedEvents($Items);

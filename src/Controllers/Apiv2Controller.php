@@ -463,9 +463,7 @@ final class Apiv2Controller extends AbstractApiController
                     $this->requester->userData['fullname'],
                     eventModel: $this->Model,
                 ),
-                ApiSubModels::Recurrences => $this->Model->EventsRecurrence->setFutureOnly(
-                    $this->Request->query->getBoolean('future'),
-                ),
+                ApiSubModels::Recurrences => $this->Model->EventsRecurrence,
                 default => throw new InvalidApiSubModelException(ApiEndpoint::Event),
             };
         }

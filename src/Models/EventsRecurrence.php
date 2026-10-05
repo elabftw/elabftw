@@ -34,8 +34,6 @@ final class EventsRecurrence extends AbstractRest
 {
     private const string DATETIME_FORMAT = 'Y-m-d H:i:s';
 
-    private bool $futureOnly = false;
-
     public function __construct(private readonly Scheduler $Scheduler)
     {
         parent::__construct();
@@ -49,12 +47,6 @@ final class EventsRecurrence extends AbstractRest
             $this->Scheduler->getApiPath(),
             $this->Scheduler->id ?? 0,
         );
-    }
-
-    public function setFutureOnly(bool $futureOnly): self
-    {
-        $this->futureOnly = $futureOnly;
-        return $this;
     }
 
     #[Override]
@@ -110,7 +102,8 @@ final class EventsRecurrence extends AbstractRest
             }
             $allEvents = $this->readRecurrenceEvents($recurrenceId);
             $this->assertRecurrenceOwnership($allEvents, $event);
-            $events = $this->getTargetEvents($allEvents, $event, $this->futureOnly);
+            $future = (bool) ($params['future'] ?? false);
+            $events = $this->getTargetEvents($allEvents, $event, $future);
             $candidates = array();
             if ($changeDateTime) {
                 $requestedStart = $this->Scheduler->formatDate($this->Scheduler->normalizeDate($params['start']));
@@ -140,7 +133,7 @@ final class EventsRecurrence extends AbstractRest
             if ($changeDateTime) {
                 $overlapCandidates = $candidates;
                 // Add untouched earlier occurrences back so self-overlaps are detected for future-only updates.
-                if ($this->futureOnly) {
+                if ($future) {
                     foreach ($allEvents as $recurrenceEvent) {
                         if ((int) $recurrenceEvent['recurrence_index'] >= (int) $event['recurrence_index']) {
                             continue;

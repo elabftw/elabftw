@@ -1,4 +1,4 @@
--- schema 225
+-- schema 228
 -- Keep one step-group table per entity type so groups can use real foreign keys
 -- to the same parent tables as the existing step tables.
 CREATE TABLE `experiments_step_groups` (

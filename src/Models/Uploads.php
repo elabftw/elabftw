@@ -147,9 +147,7 @@ final class Uploads extends AbstractRest
         $mimeType = $detector->detectMimeType($realName, $sample)
             ?? 'application/octet-stream';
 
-        // we don't hash big files as this could take too much time/resources
-        // same with thumbnails
-        // TODO add the filesize check inside the makethumnailclass like we did for hasher
+        // keep a size limit for thumbnail generation
         if ($filesize < self::BIG_FILE_THRESHOLD) {
             // get a thumbnail
             // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException

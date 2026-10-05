@@ -18,9 +18,7 @@ use Elabftw\Elabftw\CreateUpload;
 use Elabftw\Elabftw\CreateUploadFromS3;
 use Elabftw\Elabftw\CreateUploadFromUploadedFile;
 use Elabftw\Enums\AccessType;
-use Elabftw\Hash\ExistingHash;
 use Elabftw\Elabftw\FsTools;
-use Elabftw\Hash\StringHash;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\FileFromString;
@@ -29,6 +27,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\MakeThumbnailFactory;
+use Elabftw\Hash\StreamHasher;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\ContentParams;
@@ -37,6 +36,7 @@ use Elabftw\Params\UploadParams;
 use Elabftw\Services\Check;
 use ImagickException;
 use League\Flysystem\UnableToRetrieveMetadata;
+use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use Override;
 use PDO;
 use RuntimeException;
@@ -58,6 +58,7 @@ use function str_replace;
 use function stream_copy_to_stream;
 use function stream_get_meta_data;
 use function str_contains;
+use function stream_get_contents;
 
 /**
  * All about the file uploads
@@ -93,6 +94,7 @@ final class Uploads extends AbstractRest
 
         // original file name
         $realName = $params->getFilename();
+
         $ext = $this->getExtensionOrExplode($realName);
 
         // name for the stored file, includes folder and extension (ab/ab34[...].ext)
@@ -111,6 +113,7 @@ final class Uploads extends AbstractRest
         $filesize = $sourceFs->filesize($tmpFilename);
         // read the file as a stream
         $inputStream = $sourceFs->readStream($tmpFilename);
+
         // get metadata about the stream to see if it's seekable
         $meta = stream_get_meta_data($inputStream);
         if (empty($meta['seekable'])) {
@@ -119,23 +122,38 @@ final class Uploads extends AbstractRest
             if ($tmp === false) {
                 throw new RuntimeException('Could not create temporary seekable stream.');
             }
+
             stream_copy_to_stream($inputStream, $tmp);
             fclose($inputStream);
             $inputStream = $tmp;
         }
+
         $isRewind = rewind($inputStream);
         if ($isRewind === false) {
             throw new RuntimeException('Could not rewind stream.');
         }
-        // we don't hash big files as this could take too much time/resources
-        // same with thumbnails
-        // TODO add the filesize check inside the makethumnailclass like we did for hasher
+
+        // Inspect the content instead of relying on the source backend's metadata.
+        $sample = stream_get_contents($inputStream, 64 * 1024);
+        if ($sample === false) {
+            throw new RuntimeException('Could not read stream for MIME type detection.');
+        }
+
+        if (rewind($inputStream) === false) {
+            throw new RuntimeException('Could not rewind stream after MIME type detection.');
+        }
+
+        $detector = new FinfoMimeTypeDetector();
+        $mimeType = $detector->detectMimeType($realName, $sample)
+            ?? 'application/octet-stream';
+
+        // keep a size limit for thumbnail generation
         if ($filesize < self::BIG_FILE_THRESHOLD) {
             // get a thumbnail
             // Imagick cannot open password protected PDFs, thumbnail generation will throw ImagickException
             try {
                 MakeThumbnailFactory::getMaker(
-                    $sourceFs->mimeType($tmpFilename),
+                    $mimeType,
                     $inputStream,
                     $longName,
                     $storageFs,
@@ -152,9 +170,18 @@ final class Uploads extends AbstractRest
         if ($isRewind === false) {
             throw new RuntimeException('Could not rewind stream.');
         }
+
         $storageFs->createDirectory($folder);
-        $storageFs->writeStream($longName, $inputStream);
+        $hasher = new StreamHasher($inputStream);
+        $uploadStream = $hasher->getResource();
+
+        $storageFs->writeStream($longName, $uploadStream, array('mimetype' => $mimeType));
+
+        $hash = $hasher->getHash();
+
+        fclose($uploadStream);
         fclose($inputStream);
+
 
         $this->Entity->touch();
 
@@ -194,8 +221,8 @@ final class Uploads extends AbstractRest
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':type', $this->Entity->entityType->value);
-        $req->bindValue(':hash', $params->getHasher()->getHash());
-        $req->bindValue(':hash_algorithm', $params->getHasher()->getAlgo());
+        $req->bindValue(':hash', $hash);
+        $req->bindValue(':hash_algorithm', $hasher->getAlgo());
         $req->bindValue(':state', $params->getState()->value, PDO::PARAM_INT);
         $req->bindParam(':storage', $storage, PDO::PARAM_INT);
         $req->bindParam(':filesize', $filesize, PDO::PARAM_INT);
@@ -435,7 +462,7 @@ final class Uploads extends AbstractRest
         $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
         $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state, hasher: new StringHash($content)));
+        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state));
     }
 
     /**
@@ -475,7 +502,6 @@ final class Uploads extends AbstractRest
             return new CreateUpload(
                 realName: $upload['real_name'],
                 filePath: $prefix . $upload['long_name'],
-                hasher: new ExistingHash($upload['hash']),
                 comment: $upload['comment'],
                 state: State::from($upload['state']),
             );
@@ -483,7 +509,6 @@ final class Uploads extends AbstractRest
         return new CreateUploadFromS3(
             realName: $upload['real_name'],
             filePath: $upload['long_name'],
-            hasher: new ExistingHash($upload['hash']),
             comment: $upload['comment'],
             state: State::from($upload['state']),
         );

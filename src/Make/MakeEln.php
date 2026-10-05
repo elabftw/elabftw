@@ -20,6 +20,7 @@ use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Hash\FileHash;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Instance2Rors;
@@ -289,6 +290,7 @@ class MakeEln extends AbstractMakeEln
                 $this->dataEntities[] = $fileNode;
             }
         }
+
         // LINKS (mentions)
         // this array will be added to the "mentions" attribute of the main dataset
         $mentions = array();
@@ -383,7 +385,8 @@ class MakeEln extends AbstractMakeEln
             $storageFs = Storage::from($file['storage'])->getStorage()->getFs();
             // make sure we have a hash
             if (empty($file['hash'])) {
-                $file['hash'] = hash($this->hashAlgorithm, $storageFs->read($file['long_name']));
+                $hasher = new FileHash($storageFs, $file['long_name']);
+                $file['hash'] = $hasher->getSafeHash();
             }
             // add files to archive
             $file['uuid'] = Tools::getUuidv4();

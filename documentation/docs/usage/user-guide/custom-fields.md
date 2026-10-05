@@ -213,7 +213,7 @@ A time input.
 A text input that only accepts a valid URL. In view mode, the link will be clickable. By default, the link will open in a new tab. Add `"open_in_current_tab" : true` to make it open in the current tab.
 
 #### options (for type = select)
-An array of string (`[]`) with different options for the dropdown element.
+An array of strings (`[]`) with different options for the dropdown element.
 
 ### allow_multi_values
 A `boolean` attribute, which defaults to `false`, for allowing any custom field type to hold multiple values. The `value` property is stored as an array when enabled. Dropdown fields use a native multi-select input; other field types display repeatable inputs that can be added or removed individually.

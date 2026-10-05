@@ -56,6 +56,7 @@
 @include meta.load-css('scroll-buttons');
 @include meta.load-css('skeletons');
 @include meta.load-css('training');
+@include meta.load-css('scheduler');
 
 /* Font is Lato */
 @font-face {
@@ -509,6 +510,41 @@ button:disabled {
     // break super long words, see #4169
     overflow-wrap: break-word;
     word-wrap: break-word;
+  }
+
+  // make nested accordions easier to read with indent & left border
+  // border left is a % of primary color
+  .mce-accordion {
+    --accordion-border-tint: 100%;
+    border-inline-start: 3px solid color-mix(in srgb, var(--primary) var(--accordion-border-tint), transparent);
+    padding-inline-start: 0.75rem;
+    position: relative;
+
+    // make the left border a larger click target
+    &::before {
+      content: '';
+      cursor: pointer;
+      inset-block: 0;
+      inset-inline-start: -3px;
+      position: absolute;
+      width: 10px;
+      z-index: 1;
+    }
+
+    > summary {
+      cursor: pointer;
+      font-weight: bold;
+      padding-block: 0.25rem;
+    }
+  }
+
+  .mce-accordion .mce-accordion {
+    --accordion-border-tint: 75%;
+    margin-inline-start: 1rem;
+  }
+
+  .mce-accordion .mce-accordion .mce-accordion {
+    --accordion-border-tint: 30%;
   }
 }
 
@@ -1129,13 +1165,14 @@ the form-control fails to do that so we do the border ourselves */
 
   /* Only Category */
   &.category-btn {
-    // keep the category background but with less opacity to make it readable in all circumstances, even white or black
-    background-color: color-mix(in srgb, var(--bg) 40%, transparent);
-    color: var(--mediumstrong);
+    background-color: var(--bg);
+    border: 1px solid var(--bg); // so that it is kept on hover
+    color: var(--fg, var(--mediumstrong));
 
     &:hover {
-      background-color: var(--bg);
-      color: var(--chrome-fg);
+      background-color: var(--fg, var(--mediumstrong));
+      color: var(--bg);
+      transition: all 0.1s ease;
     }
   }
 
@@ -1153,6 +1190,26 @@ the form-control fails to do that so we do the border ourselves */
       color: var(--bg);
     }
   }
+}
+
+.catstat-privacy {
+  .private-icon {
+    display: none;
+  }
+
+  &:has(input:checked) {
+    .private-icon {
+      display: inline-block;
+    }
+
+    .public-icon {
+      display: none;
+    }
+  }
+}
+
+.catstat-preview-content {
+  min-height: calc(1.5em + 0.75rem + 2px);
 }
 
 .smallgray {
@@ -1838,14 +1895,6 @@ input:user-invalid {
 .table-bordered th,
 .fc-event {
   border: 1px solid var(--secondary-muted);
-}
-
-.calendar-event-hover {
-  box-shadow: 5px 4px 4px var(--medium) !important;
-}
-
-.calendar-event-disabled {
-  opacity: 0.5;
 }
 
 .color-input {

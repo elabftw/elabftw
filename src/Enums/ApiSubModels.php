@@ -33,6 +33,7 @@ enum ApiSubModels: string
     case ItemsLinks = 'items_links';
     case ItemsStatus = 'items_status';
     case Notifications = 'notifications';
+    case Recurrences = 'recurrences';
     case ProcurementRequests = 'procurement_requests';
     case RequestActions = 'request_actions';
     case Revisions = 'revisions';
@@ -44,6 +45,7 @@ enum ApiSubModels: string
     case Tags = 'tags';
     case Teamgroups = 'teamgroups';
     case Uploads = 'uploads';
+    case Webhooks = 'webhooks';
 
     public static function validSubModelsForEndpoint(ApiEndpoint $apiEndpoint): array
     {
@@ -95,6 +97,7 @@ enum ApiSubModels: string
                 self::Status,
                 self::Tags,
                 self::Teamgroups,
+                self::Webhooks,
             ),
         );
     }
@@ -109,6 +112,7 @@ enum ApiSubModels: string
                 self::SigKeys,
                 self::Rors,
                 self::Uploads,
+                self::Webhooks,
             ),
         );
     }
@@ -119,6 +123,7 @@ enum ApiSubModels: string
             fn(self $case): string => $case->value,
             array(
                 self::Notifications,
+                self::Recurrences,
             ),
         );
     }
@@ -141,6 +146,7 @@ enum ApiSubModels: string
             array(
                 self::Branding,
                 self::Rors,
+                self::Webhooks,
             ),
         );
     }

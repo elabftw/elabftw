@@ -14,7 +14,6 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\State;
 use Elabftw\Interfaces\CreateUploadParamsInterface;
-use Elabftw\Interfaces\HashInterface;
 use Elabftw\Services\Filter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemOperator;
@@ -29,7 +28,6 @@ class CreateUpload implements CreateUploadParamsInterface
     public function __construct(
         protected readonly string $realName,
         protected string $filePath,
-        public readonly HashInterface $hasher,
         protected readonly ?string $comment = null,
         protected readonly int $immutable = 0,
         protected readonly State $state = State::Normal,
@@ -78,11 +76,5 @@ class CreateUpload implements CreateUploadParamsInterface
     public function getState(): State
     {
         return $this->state;
-    }
-
-    #[Override]
-    public function getHasher(): HashInterface
-    {
-        return $this->hasher;
     }
 }

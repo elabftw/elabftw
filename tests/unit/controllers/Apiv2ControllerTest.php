@@ -76,7 +76,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
 
         $Controller = new Apiv2Controller(
             $Item->Users,
-            Request::create(sprintf('/api/v2/items/%d?delete_containers=1', $Item->id), Request::METHOD_DELETE),
+            Request::create(sprintf('/api/v2/items/%d?recursive=1', $Item->id), Request::METHOD_DELETE),
         );
         $Controller->canWrite = true;
 

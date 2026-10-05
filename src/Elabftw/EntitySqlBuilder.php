@@ -263,8 +263,9 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected function category(): void
     {
-        $this->selectSql[] = 'categoryt.title AS category_title, categoryt.color AS category_color';
-
+        $this->selectSql[] = 'categoryt.title AS category_title,
+            categoryt.color AS category_color,
+            categoryt.color_fg AS category_color_fg';
         $this->joinsSql[] = sprintf(
             'LEFT JOIN %s AS categoryt ON (categoryt.id = entity.category)',
             $this->entity->entityType->toCategoryTable()

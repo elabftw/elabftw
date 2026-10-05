@@ -56,6 +56,14 @@ on('override-exclusive-edit-lock', () => {
     .then(() => window.location.href = `?mode=view&id=${entity.id}`);
 });
 
+// Toggle an accordion when clicking its left border
+document.getElementById('body_view')?.addEventListener('click', event => {
+  const accordion = event.target as HTMLDetailsElement;
+  if (accordion.matches('details.mce-accordion')) {
+    accordion.open = !accordion.open;
+  }
+});
+
 // add the title in the page name (see #324)
 const titleElement = document.getElementById('documentTitle');
 document.title = titleElement?.textContent ? `${titleElement.textContent} - eLabFTW` : 'eLabFTW';

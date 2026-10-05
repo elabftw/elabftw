@@ -86,6 +86,11 @@ The scheduler page loads with the selected item:
   <figcaption>Selected item in the scheduler page.</figcaption>
 </figure>
 
+<figure>
+  <img src="/img/create-event-with-recurring.webp" width='650' alt="create event with recurring" />
+  <figcaption>Create an event along with recurring bookings.</figcaption>
+</figure>
+
 You can now move on to the [Scheduler](./scheduler) section to see how to work with your events.
 
 ## Making a Resource procurable

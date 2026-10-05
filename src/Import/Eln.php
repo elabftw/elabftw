@@ -101,7 +101,7 @@ class Eln extends AbstractZip
         protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
         protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
         private bool $verifyChecksum = true,
-        private bool $checksumErrorSkip = true,
+        private bool $checksumErrorSkip = false,
     ) {
         parent::__construct(
             $requester,
@@ -602,7 +602,6 @@ class Eln extends AbstractZip
         $filepath = strtr($filepath, '|', '_');
         $filepath = strtr($filepath, '"', '_');
 
-        //$hasher = new LocalFileHash($filepath);
         $hasher = new FileHash($this->tmpFs, $filepath);
         $hash = $hasher->getHash();
         // CHECKSUM
@@ -623,7 +622,6 @@ class Eln extends AbstractZip
             $this->tmpFs,
             $file['name'] ?? basename($file['@id']),
             $filepath,
-            $hasher,
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
             state: ($file['creativeWorkStatus'] ?? '') === State::Archived->name ? State::Archived : State::Normal,
         ));

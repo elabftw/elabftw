@@ -15,14 +15,14 @@ eLabFTW can run fine on modest hardware. It really depends if you're aiming to s
 
 ### Minimal
 
-- 2 Gb of RAM
+- 2 GB of RAM
 - 1 CPU with at least 2 cores
 - Some disk space for uploaded files
 - a MySQL container running alongside eLabFTW on the same VM
 
 ### Recommended for small instances
 
-- 4 Gb of RAM
+- 4 GB of RAM
 - 1 CPU with at least 4 cores
 - Some disk space for uploaded files
 - a MySQL container running alongside eLabFTW on the same VM
@@ -30,7 +30,7 @@ eLabFTW can run fine on modest hardware. It really depends if you're aiming to s
 ### Recommended for big instances
 
 - Load balancer
-- 2 workers nodes with each 8 Gb of RAM and 4+ CPU cores
+- 2 workers nodes with each 8 GB of RAM and 4+ CPU cores
 - S3 or NFS backend for uploaded files
 - Redis for user sessions
 - MySQL cluster

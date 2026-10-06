@@ -1,10 +1,7 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
-import {
-  useDocsPreferredVersion,
-  useLatestVersion,
-} from '@docusaurus/plugin-content-docs/client';
+import {useLatestVersion} from '@docusaurus/plugin-content-docs/client';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
@@ -14,10 +11,7 @@ import styles from './index.module.css';
 
 function HomepageHeader(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
-  const latestVersion = useLatestVersion(undefined);
-  const {preferredVersion} = useDocsPreferredVersion();
-
-  const version = preferredVersion ?? latestVersion;
+  const version = useLatestVersion(undefined);
 
   const getDocPath = (id: string): string => {
     const doc = version.docs.find(candidate => candidate.id === id);

@@ -1445,6 +1445,59 @@ components:
           type: string
           format: date-time
           example: '2026-03-02 16:29:27'
+        recurrence_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: Identifier linking all occurrences that belong to the same recurring booking.
+        recurrence_index:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 100
+          description: Position of this booking within its recurrence, starting at 1.
+        recurrence_frequency:
+          type: string
+          nullable: true
+          enum: [daily, weekly, monthly]
+          description: How often the recurring booking repeats.
+        recurrence_interval:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 365
+          description: Number of days, weeks, or months between occurrences, depending on the recurrence frequency.
+        recurrence_rule:
+          type: object
+          nullable: true
+          description: Complete recurrence rule used to create this recurrence. It contains exactly one end condition, `count` or `until`.
+          required: [frequency, interval]
+          properties:
+            frequency:
+              type: string
+              enum: [daily, weekly, monthly]
+            interval:
+              type: integer
+              minimum: 1
+              maximum: 365
+            weekdays:
+              type: array
+              uniqueItems: true
+              minItems: 1
+              description: ISO weekdays for weekly recurrence, where Monday is 1 and Sunday is 7.
+              items:
+                type: integer
+                minimum: 1
+                maximum: 7
+            count:
+              type: integer
+              minimum: 1
+              maximum: 100
+              description: Number of occurrences requested for a count-based recurrence.
+            until:
+              type: string
+              format: date
+              description: Inclusive end date for a date-based recurrence.
         start:
           type: string
           format: date-time
@@ -5237,10 +5290,26 @@ paths:
     parameters:
       - name: id
         in: path
-        description: ID of the item to book.
+        description: ID of the item (resource). This is not an event ID.
         required: true
         schema:
           type: integer
+    get:
+      tags: ['Events']
+      summary: Read all events for an item.
+      description: Returns all scheduler events associated with the item specified by id. The path id is an item ID, not an event ID.
+      operationId: read-item-events
+      responses:
+        '200':
+          description: A list of booked slots for the item.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/event'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     post:
       tags: ['Events']
       summary: Create an event for the item specified as id.
@@ -5251,28 +5320,61 @@ paths:
           application/json:
             schema:
               type: object
+              required: [start, end]
               properties:
                 title:
                   type: string
-                  description: A name for this booking slot.
+                  description: A name for this booking slot. When updating a recurrence, the title is applied to all occurrences in the recurrence.
                   default: Untitled
                   example: 'This is an event.'
                 start:
                   type: string
                   format: date-time
-                  description: ISO 8601 date-time with timezone offset.
-                  example: '2026-03-15T13:30:00+01:00'
+                  description: Date and time of the booking in ISO 8601 format, including the timezone offset.
+                  example: "2026-09-19T15:30:00+01:00"
                 end:
                   type: string
                   format: date-time
                   description: ISO 8601 date-time with timezone offset.
-                  example: '2026-03-15T15:30:00+01:00'
+                  example: '2026-09-19T17:30:00+01:00'
+                recurrence:
+                  type: object
+                  description: Optional settings to make this booking repeat. Exactly one of `count` or `until` is required. A recurring booking can contain up to 100 occurrences over a maximum period of 10 years. Monthly recurrences preserve the start day of month and are rejected if that day does not exist in a requested month.
+                  required: [frequency, interval]
+                  properties:
+                    frequency:
+                      type: string
+                      enum: [daily, weekly, monthly]
+                      description: Unit used to repeat the booking.
+                    interval:
+                      type: integer
+                      minimum: 1
+                      maximum: 365
+                      description: Repeat every N days, weeks, or months.
+                    weekdays:
+                      type: array
+                      uniqueItems: true
+                      minItems: 1
+                      description: Optional ISO weekdays used by weekly recurrence, where Monday is 1 and Sunday is 7. If omitted, the weekday of the first booking is used. If provided, the first booking weekday must be included.
+                      items:
+                        type: integer
+                        minimum: 1
+                        maximum: 7
+                    count:
+                      type: integer
+                      minimum: 1
+                      maximum: 100
+                      description: Stop after this number of occurrences. Cannot be combined with until.
+                    until:
+                      type: string
+                      format: date
+                      description: Date of the last possible occurrence, inclusive. Cannot be combined with count.
       responses:
         '201':
           description: The booking slot has been created.
           headers:
             location:
-              description: A URL to the booking slot that was created.
+              description: A URL to the booking slot that was created. For a recurrence, this points to the first occurrence.
               schema:
                 type: string
         '400':
@@ -5282,11 +5384,11 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
   /event/{id}:
-    summary: For scheduler booking.
+    summary: Operations on a single scheduler event occurrence.
     parameters:
       - name: id
         in: path
-        description: ID of the event to modify.
+        description: ID of the event occurrence.
         required: true
         schema:
           type: integer
@@ -5333,6 +5435,9 @@ paths:
                       format: date-time
                       description: ISO 8601 date-time with timezone offset.
                       example: "2026-02-19T15:30:00+01:00"
+                    title:
+                      type: string
+                      description: Optional new title for the selected occurrence.
                 - type: object
                   properties:
                     target:
@@ -5341,6 +5446,16 @@ paths:
                     id:
                       type: integer
                       description: Entity id.
+                - type: object
+                  required: [target, id]
+                  properties:
+                    target:
+                      type: string
+                      enum: ['item']
+                      description: Change the resource booked by this event. This always affects only the selected occurrence.
+                    id:
+                      type: integer
+                      description: ID of the new bookable resource. A recurring occurrence is detached from its recurrence when its resource is changed!
                 - type: object
                   properties:
                     target:
@@ -5380,6 +5495,107 @@ paths:
       responses:
         '204':
           description: The event was deleted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /event/{id}/recurrences:
+    summary: Operations on the recurrence containing an event occurrence.
+    parameters:
+      - name: id
+        in: path
+        description: ID of any event occurrence used to identify its recurrence. This is an event ID, not the recurrence UUID.
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Events']
+      summary: Read all occurrences in a recurrence.
+      description: Returns every occurrence belonging to the same recurrence as the event specified by id, ordered by recurrence_index. The id may refer to any occurrence in the recurrence.
+      operationId: read-event-recurrences
+      responses:
+        '200':
+          description: A list of all occurrences in the recurrence.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Events']
+      summary: Modify multiple occurrences of a recurring booking.
+      operationId: patch-event-recurrences
+      parameters:
+        - name: future
+          in: query
+          description: If true, update the selected occurrence and all later occurrences. If false or omitted, update the complete recurrence.
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target]
+              properties:
+                target:
+                  type: string
+                  enum: ['title', 'datetime']
+                  description: Select whether to update the title or date/time of the selected occurrences.
+                start:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 date-time with timezone offset. Required for datetime updates.
+                end:
+                  type: string
+                  format: date-time
+                  description: ISO 8601 date-time with timezone offset. Required for datetime updates.
+                title:
+                  type: string
+                  description: New title for the selected occurrences. Used when target is title and may also accompany a datetime update.
+      responses:
+        '200':
+          description: The patched event.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+    delete:
+      tags: ['Events']
+      summary: Delete occurrences from a recurring booking.
+      operationId: delete-event-recurrences
+      parameters:
+        - name: recursive
+          in: query
+          description: If true, delete the selected occurrence and all later occurrences. If false or omitted, delete the complete recurrence.
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '204':
+          description: The recurrence occurrences were deleted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

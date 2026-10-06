@@ -68,6 +68,7 @@ use function preg_replace;
 use function str_replace;
 use function str_starts_with;
 use function ucfirst;
+use function array_filter;
 
 /**
  * Import a .eln file.
@@ -506,7 +507,23 @@ class Eln extends AbstractZip
                                 $pubchemCid = $identifier['value'];
                             }
                         }
-                        $compoundId = $Compounds->create(inchi: $inchi, inchiKey: $inchiKey, smiles: $smiles, name: $name, molecularFormula: $molecularFormula, molecularWeight: (float) $molecularWeight, iupacName: $iupacName, casNumber: $casNumber, pubchemCid: $pubchemCid);
+                        $uniqueKeys = array_filter(
+                            array(
+                                'cas_number' => $casNumber,
+                                'inchi_key' => $inchiKey,
+                                'pubchem_cid' => $pubchemCid,
+                            ),
+                            fn($value) => $value !== null && $value !== '',
+                        );
+
+                        $compoundId = null;
+
+                        if ($uniqueKeys !== array()) {
+                            $compoundId = $Compounds->findCompoundByUniqueKey($uniqueKeys);
+                        }
+                        if ($compoundId === null) {
+                            $compoundId = $Compounds->create(inchi: $inchi, inchiKey: $inchiKey, smiles: $smiles, name: $name, molecularFormula: $molecularFormula, molecularWeight: (float) $molecularWeight, iupacName: $iupacName, casNumber: $casNumber, pubchemCid: $pubchemCid);
+                        }
                         $CompoundsLinks = LinksFactory::getCompoundsLinks($this->Entity, $compoundId);
                         $CompoundsLinks->postAction(Action::Create, array());
                     }

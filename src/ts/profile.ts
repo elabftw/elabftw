@@ -181,6 +181,7 @@ if (window.location.pathname === '/profile.php') {
       }
     }).catch(error => {
       notify.error(`Import error: ${error.message}`);
+      console.log(`Import error: ${error}`);
     }).finally(() => {
       submitBtn.removeAttribute('disabled');
       submitBtn.textContent = originalBtnContent;

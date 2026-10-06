@@ -397,8 +397,13 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $exp = new Experiments($this->Users, $newId);
         $newStepId = (int) new Steps($exp)->readAll()[0]['id'];
         $body = (string) $exp->entityData['body'];
-        $this->assertStringContainsString(sprintf('?mode=view&amp;id=%d&amp;highlightstep=%d#step_view_%d', $newId, $newStepId, $newStepId), $body);
-        $this->assertStringNotContainsString(sprintf('?mode=view&amp;id=%d&amp;', $tplId), $body);
+        $newLink = sprintf('?mode=view&amp;id=%d&amp;highlightstep=%d#step_view_%d', $newId, $newStepId, $newStepId);
+        $oldLink = sprintf('?mode=view&amp;id=%d&amp;highlightstep=%d#step_view_%d', $tplId, $stepId, $stepId);
+        $this->assertStringContainsString($newLink, $body);
+        // template and experiment ids can be equal, then the old link is the new one
+        if ($oldLink !== $newLink) {
+            $this->assertStringNotContainsString($oldLink, $body);
+        }
         // the upload link was rewritten too
         $this->assertStringNotContainsString($longName, $body);
     }
@@ -409,14 +414,17 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $Experiment = new Experiments($this->Users, $id);
         $stepId = new Steps($Experiment)->postAction(Action::Create, array('body' => 'first step'));
         $otherLink = sprintf('[other entry](?mode=view&id=%d&highlightstep=%d#step_view_%d)', $id + 1000, $stepId, $stepId);
-        $Experiment->patch(Action::Update, array('body' => sprintf("[first step](?mode=view&id=%d&highlightstep=%d#step_view_%d)\n\n%s", $id, $stepId, $stepId, $otherLink)));
+        // a link with a page names that page, it is not a link to this entry's own steps
+        $pageLink = sprintf('[database entry](database.php?mode=view&id=%d&highlightstep=%d#step_view_%d)', $id, $stepId, $stepId);
+        $Experiment->patch(Action::Update, array('body' => sprintf("[first step](?mode=view&id=%d&highlightstep=%d#step_view_%d)\n\n%s\n\n%s", $id, $stepId, $stepId, $otherLink, $pageLink)));
         $newId = $Experiment->postAction(Action::Duplicate, array());
         $new = new Experiments($this->Users, $newId);
         $newStepId = (int) new Steps($new)->readAll()[0]['id'];
         $body = (string) $new->entityData['body'];
         $this->assertStringContainsString(sprintf('[first step](?mode=view&id=%d&highlightstep=%d#step_view_%d)', $newId, $newStepId, $newStepId), $body);
-        // a link to another entry is left alone
+        // a link to another entry and a link with a page are left alone
         $this->assertStringContainsString($otherLink, $body);
+        $this->assertStringContainsString($pageLink, $body);
     }
 
     public function testDuplicate(): void

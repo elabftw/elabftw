@@ -1805,13 +1805,15 @@ abstract class AbstractEntity extends AbstractRest
 
     /**
      * Point step links in a copied body (?mode=view&id=X&highlightstep=Y#step_view_Y) at the new entry and its new steps
+     * Only relative links (href or markdown target starting with ?mode=view) are rewritten: a link with a page
+     * (templates.php?..., database.php?...) still points at that page and is left as is
      *
      * @param array<int, int> $stepsMap source step id => new step id
      */
     private function rewriteStepLinks(string $body, int $sourceId, int $newId, array $stepsMap): string
     {
         return preg_replace_callback(
-            '/([?&](?:amp;)?)id=(\\d+)(&(?:amp;)?highlightstep=)(\\d+)(#step_view_)(\\d+)/',
+            '/((?:href=["\']|\\]\\()\\?mode=view&(?:amp;)?)id=(\\d+)(&(?:amp;)?highlightstep=)(\\d+)(#step_view_)(\\d+)/',
             function (array $m) use ($sourceId, $newId, $stepsMap): string {
                 $stepId = (int) $m[4];
                 if ((int) $m[2] !== $sourceId || !isset($stepsMap[$stepId]) || (int) $m[6] !== $stepId) {

@@ -6,6 +6,8 @@
  * @package elabftw
  */
 
+@use './variables' as *;
+
 .navbar {
   background-color: var(--nav-bg);
   border: 0;
@@ -16,6 +18,42 @@
 
 .navbar-brand {
   padding: 5px 5px 5px 0;
+}
+
+.nav-link {
+  border: 1px solid transparent;
+  border-bottom: 6px;
+  color: var(--secondlevel);
+  font-size: 90%;
+  line-height: 40px;
+  margin-left: 15px;
+  margin-right: 15px;
+  /* fix navbar height getting smaller on profile/ucp/admin/… pages */
+  min-height: 43px;
+  /* we want the border bottom to be same width as the text
+       and the text centered on the bar */
+  padding: 0 5px !important;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  &:hover {
+    border-color: $mainbackground !important;
+    color: $mainbackground !important;
+  }
+
+  /* selected nav entry */
+  &.active {
+    background-image: linear-gradient(to top, var(--nav-active) 0%, var(--nav-active) 100%);
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: 100% 6px;
+    border-color: var(--nav-active) !important;
+  }
+
+  i {
+    color: var(--secondlevel);
+  }
 }
 
 /* make the notification dropdown larger so english version fits in one line */
@@ -45,24 +83,37 @@
 
 /* Responsive drawer / desktop sidebar navigation */
 #main-nav > .navbar-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+
   .nav-link {
-    border-left: 3px solid transparent;
+    align-items: center;
+    background-image: none;
+    border: 0 !important;
+    border-left: 3px solid transparent !important;
     border-radius: 0.25rem;
     color: var(--chrome-fg);
     display: flex;
-    font-size: 90%;
     line-height: 1.25;
-    margin-bottom: 0.25rem;
-    padding: 0.65rem 0.75rem;
+    margin: 0 0 0.25rem;
+    min-height: auto;
+    padding: 0.65rem 0.75rem !important;
+    text-align: left;
+    text-transform: none;
 
     &:hover,
     &.active {
       background-color: rgba(255, 255, 255, 0.08);
-      color: var(--chrome-fg);
+      color: var(--chrome-fg) !important;
     }
 
     &.active {
-      border-left-color: var(--primary);
+      border-left-color: var(--primary) !important;
+    }
+
+    i {
+      color: inherit;
     }
   }
 
@@ -84,33 +135,38 @@
     transform: translateY(-0.25rem) !important;
     transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease, margin 0.3s ease, visibility 0s linear 0.3s;
     visibility: hidden;
+  }
 
-    &.show {
-      margin-bottom: 0.5rem;
-      max-height: 45rem;
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0) !important;
-      transition-delay: 0s;
-      visibility: visible;
-    }
+  > .dropdown > .dropdown-menu.show {
+    margin-bottom: 0.5rem;
+    max-height: 45rem;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) !important;
+    transition-delay: 0s;
+    visibility: visible;
   }
 
   .dropdown-item {
     color: var(--chrome-fg);
     padding: 0.45rem 0.75rem;
 
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.08);
+    i {
+      color: inherit;
     }
 
-    &.active:not(:hover) {
-      color: var(--primary-fg);
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--chrome-fg);
     }
 
     &.disabled {
       color: var(--chrome-muted);
     }
+  }
+
+  .dropdown-item.active {
+    color: var(--primary-fg);
   }
 
   .dropdown-divider {
@@ -128,21 +184,7 @@
   position: relative;
 
   .nav-link {
-    color: var(--secondlevel);
-    font-size: 90%;
-    line-height: 40px;
     margin: 0 0.25rem;
-    min-height: 43px;
-    padding: 0 5px !important;
-    text-align: center;
-
-    &:hover {
-      color: var(--chrome-fg);
-    }
-
-    i {
-      color: inherit;
-    }
   }
 
   .dropdown {
@@ -161,18 +203,33 @@
     right: auto !important;
     top: auto !important;
     transform: translateX(-0.5rem) !important;
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
     visibility: hidden;
     z-index: 110;
-
-    &.show {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(0) !important;
-      transition-delay: 0s;
-      visibility: visible;
-    }
   }
+
+  .dropdown-menu.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0) !important;
+    visibility: visible;
+  }
+}
+
+.navbar-backdrop {
+  background: rgba(0, 0, 0, 0.45);
+  border: 0;
+  inset: 40px 0 0;
+  position: fixed;
+  z-index: 1;
+}
+
+#main-nav {
+  z-index: 2;
+}
+
+#main-nav:not(.show) + .navbar-backdrop {
+  display: none;
 }
 
 .has-main-nav #main-navbar.sticky-navbar.hidden {
@@ -202,10 +259,11 @@
     --navbar-height: 40px;
   }
 
-  .has-main-nav #main-navbar {
+  #main-navbar {
     margin-bottom: 0;
     padding: 0 1rem;
   }
+
 
   #main-nav {
     background: var(--nav-bg);
@@ -216,28 +274,15 @@
     padding: 1rem;
     position: fixed;
     width: min(20rem, 88vw);
-    z-index: 2;
-
-    &.show {
-      display: flex;
-      flex-direction: column;
-    }
-
-    &.collapsing {
-      transition: none;
-    }
   }
 
-  .navbar-backdrop {
-    background: rgba(0, 0, 0, 0.45);
-    border: 0;
-    inset: 40px 0 0;
-    position: fixed;
-    z-index: 1;
+  #main-nav.show {
+    display: flex;
+    flex-direction: column;
   }
 
-  #main-nav:not(.show) + .navbar-backdrop {
-    display: none;
+  #main-nav.collapsing {
+    transition: none;
   }
 }
 
@@ -265,41 +310,40 @@
     width: 100% !important;
   }
 
-  .has-main-nav {
-    .side-panel {
-      left: 17rem;
-      z-index: 90;
-    }
+  .has-main-nav .side-panel {
+    left: 17rem;
+    z-index: 90;
+  }
 
-    #main-navbar {
-      align-items: stretch;
-      border-right: 1px solid var(--chrome-muted);
-      flex-direction: column;
-      flex-wrap: nowrap;
-      height: 100vh;
-      inset: 0 auto 0 0;
-      margin: 0;
-      padding: 1rem;
-      position: fixed;
-      width: 17rem;
+  .has-main-nav #main-navbar {
+    align-items: stretch;
+    border-right: 1px solid var(--chrome-muted);
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height: 100vh;
+    inset: 0 auto 0 0;
+    margin: 0;
+    padding: 1rem;
+    position: fixed;
+    width: 17rem;
+  }
 
-      .navbar-brand {
-        margin: 0 auto 1rem !important;
-        padding: 0;
-      }
-    }
+  .has-main-nav #main-navbar .navbar-brand {
+    margin: 0 auto 1rem !important;
+    padding: 0;
+  }
 
-    #main-nav {
-      align-items: stretch;
-      flex: 1 1 auto;
-      flex-direction: column;
-      min-height: 0;
-      overflow: visible;
-      width: 100%;
+  .has-main-nav #main-nav {
+    align-items: stretch;
+    display: flex !important;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow: visible;
+    width: 100%;
+  }
 
-      > .navbar-nav {
-        flex-direction: column;
-      }
-    }
+  .has-main-nav #main-nav > .navbar-nav {
+    flex-direction: column;
   }
 }

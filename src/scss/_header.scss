@@ -80,3 +80,219 @@
 .navbar-toggler i {
   color: var(--chrome-fg);
 }
+
+/* Responsive drawer / desktop sidebar navigation */
+#main-nav > .navbar-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+
+  .nav-link {
+    align-items: center;
+    background-image: none;
+    border: 0 !important;
+    border-left: 3px solid transparent !important;
+    border-radius: 0.25rem;
+    display: flex;
+    line-height: 1.25;
+    margin: 0 0 0.25rem;
+    min-height: auto;
+    padding: 0.65rem 0.75rem !important;
+    text-align: left;
+    text-transform: none;
+
+    &:hover,
+    &.active {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--chrome-fg) !important;
+    }
+
+    &.active {
+      border-left-color: var(--primary) !important;
+    }
+  }
+
+  .dropdown-toggle::after {
+    margin-left: auto;
+  }
+
+  .dropdown-menu {
+    background: transparent;
+    border: 0;
+    margin: 0 0 0.5rem;
+    padding: 0 0 0 0.75rem;
+    position: static !important;
+    transform: none !important;
+  }
+
+  .dropdown-item {
+    color: var(--chrome-muted);
+    padding: 0.45rem 0.75rem;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--chrome-fg);
+    }
+  }
+
+  .dropdown-item.active {
+    color: var(--primary-fg);
+  }
+
+  :is(form.dropdown-item, .navbar-category-picker):hover {
+    background: transparent;
+  }
+}
+
+.navbar-utilities {
+  border-top: 1px solid var(--chrome-muted);
+  flex: 0 0 auto;
+  position: relative;
+
+  .nav-link {
+    margin: 0 0.25rem;
+  }
+
+  .dropdown {
+    position: static;
+  }
+
+  .dropdown-menu {
+    bottom: 0;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+    display: block;
+    left: calc(100% + 0.75rem) !important;
+    max-height: calc(100vh - 2rem);
+    opacity: 0;
+    overflow-y: auto;
+    pointer-events: none;
+    right: auto !important;
+    top: auto !important;
+    transform: translateX(-0.5rem) !important;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    visibility: hidden;
+    z-index: 110;
+  }
+
+  .dropdown-menu.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0) !important;
+    visibility: visible;
+  }
+}
+
+.navbar-backdrop {
+  background: rgba(0, 0, 0, 0.45);
+  border: 0;
+  inset: 40px 0 0;
+  position: fixed;
+  z-index: 1;
+}
+
+#main-nav {
+  z-index: 2;
+}
+
+#main-nav:not(.show) + .navbar-backdrop {
+  display: none;
+}
+
+.has-main-nav #main-navbar.sticky-navbar.hidden {
+  transform: none;
+}
+
+@media (max-width: 1199.98px) {
+  #container.has-main-nav {
+    --navbar-height: 40px;
+  }
+
+  #main-navbar {
+    margin-bottom: 0;
+    padding: 0 1rem;
+  }
+
+
+  #main-nav {
+    background: var(--nav-bg);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+    height: auto !important;
+    inset: 40px auto 0 0;
+    overflow: visible;
+    padding: 1rem;
+    position: fixed;
+    width: min(20rem, 88vw);
+  }
+
+  #main-nav.show {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #main-nav.collapsing {
+    transition: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .navbar-utilities .dropdown-menu {
+    bottom: 1rem !important;
+    left: 1rem !important;
+    max-width: none;
+    position: fixed !important;
+    right: 1rem !important;
+    transform: translateY(0.5rem) !important;
+    width: auto;
+  }
+
+  .navbar-utilities .dropdown-menu.show {
+    transform: translateY(0) !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  #container.has-main-nav {
+    --navbar-height: 0;
+    margin-left: 0 !important;
+    padding-left: 17rem;
+    width: 100% !important;
+  }
+
+  .has-main-nav .side-panel {
+    left: 17rem;
+    z-index: 90;
+  }
+
+  .has-main-nav #main-navbar {
+    align-items: stretch;
+    border-right: 1px solid var(--chrome-muted);
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height: 100vh;
+    inset: 0 auto 0 0;
+    margin: 0;
+    padding: 1rem;
+    position: fixed;
+    width: 17rem;
+  }
+
+
+  .has-main-nav #main-navbar .navbar-brand {
+    margin: 0 auto 1rem !important;
+    padding: 0;
+  }
+
+  .has-main-nav #main-nav {
+    align-items: stretch;
+    display: flex !important;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow: visible;
+    width: 100%;
+  }
+
+  .has-main-nav #main-nav > .navbar-nav {
+    flex-direction: column;
+  }
+}

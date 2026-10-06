@@ -269,22 +269,6 @@ if (navbar) {
 }
 
 const container = document.getElementById('container')!;
-const desktopNavToggle = document.getElementById('desktopNavToggle');
-const desktopNavStorageKey = 'elabftw-main-nav-collapsed';
-
-if (desktopNavToggle) {
-  const applyDesktopNavState = (collapsed: boolean): void => {
-    container.classList.toggle('main-nav-collapsed', collapsed);
-    desktopNavToggle.setAttribute('aria-expanded', String(!collapsed));
-  };
-
-  applyDesktopNavState(localStorage.getItem(desktopNavStorageKey) === '1');
-  desktopNavToggle.addEventListener('click', () => {
-    const collapsed = !container.classList.contains('main-nav-collapsed');
-    applyDesktopNavState(collapsed);
-    localStorage.setItem(desktopNavStorageKey, collapsed ? '1' : '0');
-  });
-}
 
 // tomSelect with searchable categories in the dropdown for the main Navbar
 const renderNavbarCategory = (

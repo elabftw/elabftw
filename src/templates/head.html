@@ -290,20 +290,6 @@
   {% endif %}
 </nav>
 
-{% if App.Session.has('is_auth') %}
-  <button
-    type='button'
-    id='desktopNavToggle'
-    class='btn btn-secondary d-none d-xl-flex align-items-center justify-content-center p-0 rounded-circle shadow-sm desktop-nav-toggle'
-    aria-label='{{ 'Toggle navigation'|trans }}'
-    aria-controls='main-navbar'
-    aria-expanded='true'
-  >
-    <i class='fas fa-chevron-left' aria-hidden='true'></i>
-    <i class='fas fa-chevron-right' aria-hidden='true'></i>
-  </button>
-{% endif %}
-
 {# SHOW FAVTAGS/TODOLIST PANELS #}
 {% if App.Session.has('is_auth') and not App.isAnonymous() %}
   {% include 'create-new-modal.html' %}

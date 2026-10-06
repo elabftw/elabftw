@@ -1133,7 +1133,21 @@ abstract class AbstractEntity extends AbstractRest
         LinksFactory::getExperimentsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getCompoundsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getContainersLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
+        $stepsMap = new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
+        // step links in the body point at the source entry and its steps: point them at the copy
+        $body = (string) $fresh->entityData['body'];
+        if ($stepsMap !== array() && str_contains($body, 'highlightstep')) {
+            $newBody = $this->rewriteStepLinks($body, $sourceId, $newId, $stepsMap);
+            if ($newBody !== $body) {
+                $sql = sprintf('UPDATE %s SET body = :body WHERE id = :id', $this->entityType->value);
+                $req = $this->Db->prepare($sql);
+                $req->bindValue(':body', $newBody);
+                $req->bindValue(':id', $newId, PDO::PARAM_INT);
+                $this->Db->execute($req);
+                // Uploads->duplicate() below works on this body, keep it in sync
+                $fresh->entityData['body'] = $newBody;
+            }
+        }
 
         $freshTags = new Tags($fresh);
         foreach (array_column(new Tags($sourceEntity)->readAll(), 'tag') as $tag) {
@@ -1787,5 +1801,26 @@ abstract class AbstractEntity extends AbstractRest
             },
             $html,
         ) ?? $html;
+    }
+
+    /**
+     * Point step links in a copied body (?mode=view&id=X&highlightstep=Y#step_view_Y) at the new entry and its new steps
+     *
+     * @param array<int, int> $stepsMap source step id => new step id
+     */
+    private function rewriteStepLinks(string $body, int $sourceId, int $newId, array $stepsMap): string
+    {
+        return preg_replace_callback(
+            '/([?&](?:amp;)?)id=(\\d+)(&(?:amp;)?highlightstep=)(\\d+)(#step_view_)(\\d+)/',
+            function (array $m) use ($sourceId, $newId, $stepsMap): string {
+                $stepId = (int) $m[4];
+                if ((int) $m[2] !== $sourceId || !isset($stepsMap[$stepId]) || (int) $m[6] !== $stepId) {
+                    return $m[0];
+                }
+                $newStepId = $stepsMap[$stepId];
+                return $m[1] . 'id=' . $newId . $m[3] . $newStepId . $m[5] . $newStepId;
+            },
+            $body,
+        ) ?? $body;
     }
 }

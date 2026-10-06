@@ -377,6 +377,48 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         )));
     }
 
+    public function testCreateFromTemplateRewritesStepLinks(): void
+    {
+        $Templates = new Templates($this->Users);
+        $tplId = $Templates->create(title: 'step links');
+        $tpl = new Templates($this->Users, $tplId);
+        $stepId = new Steps($tpl)->postAction(Action::Create, array('body' => 'first step'));
+        // an embedded upload makes Uploads->duplicate() patch the body of the new entry too
+        $uploadId = $tpl->Uploads->createFromString(FileFromString::Json, 'embedded.json', '{}');
+        $longName = new Uploads($tpl, $uploadId)->uploadData['long_name'];
+        $tpl->patch(Action::Update, array('body' => sprintf(
+            "<p><a href='app/download.php?f=%s&storage=1'>embedded.json</a></p><p><a href='?mode=view&id=%d&highlightstep=%d#step_view_%d'>first step</a></p>",
+            $longName,
+            $tplId,
+            $stepId,
+            $stepId,
+        )));
+        $newId = $this->Experiments->postAction(Action::Create, array('template' => $tplId));
+        $exp = new Experiments($this->Users, $newId);
+        $newStepId = (int) new Steps($exp)->readAll()[0]['id'];
+        $body = (string) $exp->entityData['body'];
+        $this->assertStringContainsString(sprintf('?mode=view&amp;id=%d&amp;highlightstep=%d#step_view_%d', $newId, $newStepId, $newStepId), $body);
+        $this->assertStringNotContainsString(sprintf('?mode=view&amp;id=%d&amp;', $tplId), $body);
+        // the upload link was rewritten too
+        $this->assertStringNotContainsString($longName, $body);
+    }
+
+    public function testDuplicateRewritesStepLinks(): void
+    {
+        $id = $this->Experiments->create(title: 'step links', contentType: BodyContentType::Markdown);
+        $Experiment = new Experiments($this->Users, $id);
+        $stepId = new Steps($Experiment)->postAction(Action::Create, array('body' => 'first step'));
+        $otherLink = sprintf('[other entry](?mode=view&id=%d&highlightstep=%d#step_view_%d)', $id + 1000, $stepId, $stepId);
+        $Experiment->patch(Action::Update, array('body' => sprintf("[first step](?mode=view&id=%d&highlightstep=%d#step_view_%d)\n\n%s", $id, $stepId, $stepId, $otherLink)));
+        $newId = $Experiment->postAction(Action::Duplicate, array());
+        $new = new Experiments($this->Users, $newId);
+        $newStepId = (int) new Steps($new)->readAll()[0]['id'];
+        $body = (string) $new->entityData['body'];
+        $this->assertStringContainsString(sprintf('[first step](?mode=view&id=%d&highlightstep=%d#step_view_%d)', $newId, $newStepId, $newStepId), $body);
+        // a link to another entry is left alone
+        $this->assertStringContainsString($otherLink, $body);
+    }
+
     public function testDuplicate(): void
     {
         $linkTargetExperimentId = $this->Experiments->create();

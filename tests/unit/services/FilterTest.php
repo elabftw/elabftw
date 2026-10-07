@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\TestsUtilsTrait;
 
 use function str_repeat;
 use function hash;
@@ -20,6 +21,8 @@ use function uniqid;
 
 class FilterTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     public function testFormatLocalDate(): void
     {
         $input = '2024-10-16 17:12:47';
@@ -54,6 +57,13 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('no whitespace around', Filter::title(' no whitespace around '));
         // test a too long string
         $this->assertEquals(str_repeat('A', 255), Filter::title(str_repeat('A', 260)));
+    }
+
+    public function testToFsTitleSanitizesCategory(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Entity->entityData['category_title'] = 'Category 07/10/2026';
+        $this->assertStringStartsWith('Category-07-10-2026 - ', $Entity->toFsTitle());
     }
 
     public function testToAsciiSlug(): void

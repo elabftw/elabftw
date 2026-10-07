@@ -35,15 +35,18 @@ use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function _;
+use function array_filter;
 use function array_flip;
 use function array_intersect_key;
 use function array_keys;
 use function array_map;
 use function array_sum;
 use function implode;
+use function is_string;
 use function rtrim;
 use function sprintf;
 use function str_contains;
+use function trim;
 
 /**
  * Compounds are chemical entities stored in the `compounds` SQL table
@@ -76,7 +79,7 @@ final class Compounds extends AbstractRest
         'wikipedia',
     );
 
-    public function __construct(protected HttpGetter $httpGetter, public Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights, ?int $id = null)
+    public function __construct(protected HttpGetter $httpGetter, public Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights = false, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -452,6 +455,15 @@ final class Compounds extends AbstractRest
      */
     public function findCompoundByUniqueKey(array $uniqueKeys): ?int
     {
+        // Missing identifiers cannot identify an existing compound.
+        $uniqueKeys = array_filter(
+            $uniqueKeys,
+            static fn($value): bool => $value !== null && (!is_string($value) || trim($value) !== ''),
+        );
+        if ($uniqueKeys === array()) {
+            return null;
+        }
+
         $params = array_map(fn($key) => "$key = :$key", array_keys($uniqueKeys));
         $sql = sprintf(
             'SELECT id FROM compounds WHERE %s LIMIT 1',

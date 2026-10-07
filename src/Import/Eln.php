@@ -68,7 +68,6 @@ use function preg_replace;
 use function str_replace;
 use function str_starts_with;
 use function ucfirst;
-use function array_filter;
 
 /**
  * Import a .eln file.
@@ -486,7 +485,6 @@ class Eln extends AbstractZip
                         $httpGetter,
                         $this->requester,
                         new OpenBabelFingerprinter(),
-                        requireEditRights: false,
                     );
                     foreach ($value as $compoundLink) {
                         $compound = $this->getNodeFromId($compoundLink['@id']);
@@ -507,23 +505,17 @@ class Eln extends AbstractZip
                                 $pubchemCid = $identifier['value'];
                             }
                         }
-                        $uniqueKeys = array_filter(
-                            array(
-                                'cas_number' => $casNumber,
-                                'inchi_key' => $inchiKey,
-                                'pubchem_cid' => $pubchemCid,
-                            ),
-                            fn($value) => $value !== null && $value !== '',
+                        $compoundId = $Compounds->create(
+                            inchi: $inchi,
+                            inchiKey: $inchiKey,
+                            smiles: $smiles,
+                            name: $name,
+                            molecularFormula: $molecularFormula,
+                            molecularWeight: (float) $molecularWeight,
+                            iupacName: $iupacName,
+                            casNumber: $casNumber,
+                            pubchemCid: $pubchemCid,
                         );
-
-                        $compoundId = null;
-
-                        if ($uniqueKeys !== array()) {
-                            $compoundId = $Compounds->findCompoundByUniqueKey($uniqueKeys);
-                        }
-                        if ($compoundId === null) {
-                            $compoundId = $Compounds->create(inchi: $inchi, inchiKey: $inchiKey, smiles: $smiles, name: $name, molecularFormula: $molecularFormula, molecularWeight: (float) $molecularWeight, iupacName: $iupacName, casNumber: $casNumber, pubchemCid: $pubchemCid);
-                        }
                         $CompoundsLinks = LinksFactory::getCompoundsLinks($this->Entity, $compoundId);
                         $CompoundsLinks->postAction(Action::Create, array());
                     }

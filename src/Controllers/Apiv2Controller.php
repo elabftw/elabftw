@@ -234,6 +234,7 @@ final class Apiv2Controller extends AbstractApiController
             $this->reqBody['target'] = $this->Request->request->getString('target');
             $this->reqBody['filePath'] = $file->getPathname();
             $this->reqBody['comment'] = $this->Request->request->get('comment');
+            $this->reqBody['group_id'] = $this->Request->request->get('group_id');
             $this->reqBody['entity_type'] = $this->Request->request->get('entity_type'); // can be null
             $this->reqBody['category'] = $this->Request->request->get('category'); // can be null
             $this->reqBody['owner'] = $this->Request->request->getInt('owner');

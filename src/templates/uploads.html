@@ -20,6 +20,17 @@
   </div>
 {% endmacro %}
 
+{% macro groupUploadButton(groupId, suffix, mode) %}
+  {% if mode == 'edit' %}
+    <div class='mt-2'>
+      <button type='button' class='btn btn-transparent' data-action='upload-file-to-group' data-inputid='upload_group_file_{{ suffix }}' title='{{ 'Upload file'|trans }}' aria-label='{{ 'Upload file'|trans }}'>
+        <i class='fas fa-upload fa-fw mr-1'></i>{{ 'Upload file'|trans }}
+      </button>
+      <input hidden multiple type='file' class='upload-group-file-input' id='upload_group_file_{{ suffix }}' data-groupid='{{ groupId is not null ? groupId : '' }}' aria-label='{{ 'Upload file'|trans }}'>
+    </div>
+  {% endif %}
+{% endmacro %}
+
 {# Modal to display plain text content #}
 <div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
@@ -65,7 +76,7 @@
       </button>
     </div>
 
-    {# New uploads start ungrouped and appear under General once groups exist. #}
+    {# New uploads start ungrouped and appear under Attachments once groups exist #}
     {% if mode == 'edit' %}
       <div class='col-md-4 col-sm-6'>
         {% if App.devMode -%}
@@ -129,6 +140,7 @@
                   </tbody>
                 </table>
               </div>
+              {{ _self.groupUploadButton(null, 'default', mode) }}
             </div>
           </div>
         {% endif %}
@@ -160,6 +172,7 @@
                     </tbody>
                   </table>
                 </div>
+                {{ _self.groupUploadButton(group.id, group.id, mode) }}
               </div>
             </div>
           {% endfor %}
@@ -177,6 +190,7 @@
                   {% include 'upload-grid-card.html' %}
                 {% endfor %}
               </div>
+              {{ _self.groupUploadButton(null, 'default', mode) }}
             </div>
           </div>
         {% endif %}
@@ -192,6 +206,7 @@
                     {% include 'upload-grid-card.html' %}
                   {% endfor %}
                 </div>
+                {{ _self.groupUploadButton(group.id, group.id, mode) }}
               </div>
             </div>
           {% endfor %}

@@ -19,7 +19,7 @@ import {
   sendSpreadsheetMessage,
 } from './spreadsheet-utils';
 import type { SpreadsheetWorkbook } from './spreadsheet-utils';
-import { collectForm, ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
+import { adjustHiddenState, collectForm, ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import DOMPurify from 'dompurify';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
@@ -42,6 +42,11 @@ const spreadsheetIframe = document.getElementById('spreadsheetIframe') as HTMLIF
 const replaceSpreadsheetButton = document.getElementById('spreadsheetReplaceAttachment') as HTMLButtonElement;
 const saveSpreadsheetButton = document.getElementById('spreadsheetSaveAsAttachment') as HTMLButtonElement;
 const uploadGroupsEndpoint = `${entity.type}/${entity.id}/upload_groups`;
+
+async function reloadUploads(elementIds: string[] = ['uploadsDiv']): Promise<void> {
+  await reloadElements(elementIds);
+  adjustHiddenState();
+}
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
@@ -122,25 +127,60 @@ on('create-upload-group', (_, event: Event) => {
   const params = collectForm(form);
   const title = String(params['title'] ?? '').trim();
   if (!title) return;
-  ApiC.post(uploadGroupsEndpoint, {title}).then(() => reloadElements(['uploadsDiv']));
+  ApiC.post(uploadGroupsEndpoint, {title}).then(() => reloadUploads());
+});
+
+on('upload-file-to-group', (el: HTMLElement) => {
+  const input = document.getElementById(el.dataset.inputid);
+  if (input instanceof HTMLInputElement) {
+    input.click();
+  }
+});
+
+document.getElementById('uploadsDiv')?.addEventListener('change', async event => {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement) || !input.classList.contains('upload-group-file-input')) return;
+
+  const files = Array.from(input.files ?? []);
+  if (files.length === 0) return;
+
+  const groupId = input.dataset.groupid;
+  let uploaded = false;
+  for (const file of files) {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (groupId) {
+      formData.append('group_id', groupId);
+    }
+    try {
+      await ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, formData);
+      uploaded = true;
+    } catch {
+      break;
+    }
+  }
+  input.value = '';
+  if (uploaded) {
+    await reloadUploads();
+  }
 });
 
 on('destroy-upload-group', (el: HTMLElement) => {
   if (confirm(i18next.t('generic-delete-warning'))) {
-    ApiC.delete(`${uploadGroupsEndpoint}/${el.dataset.id}`).then(() => reloadElements(['uploadsDiv']));
+    ApiC.delete(`${uploadGroupsEndpoint}/${el.dataset.id}`).then(() => reloadUploads());
   }
 });
 
 on('duplicate-upload', (el: HTMLElement) => {
   const uploadId = parseInt(el.dataset.uploadid, 10);
   ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}/${uploadId}`, { action: Action.Duplicate })
-    .then(() => reloadElements(['uploadsDiv']));
+    .then(() => reloadUploads());
 });
 
 on('toggle-uploads-layout', (el: HTMLElement) => {
   ApiC.patch(`${Model.User}/me`, { notifOnSaved: 0, uploads_layout: el.dataset.targetLayout })
     // toggler needs to be reloaded too so the target value will be updated
-    .then(() => reloadElements(['uploadsDiv', 'uploadsViewToggler']));
+    .then(() => reloadUploads(['uploadsDiv', 'uploadsViewToggler']));
 });
 
 on('toggle-uploads-show-archived', () => {
@@ -184,7 +224,7 @@ on('save-mol-as-png', (el: HTMLElement) => {
     'content': (document.getElementById(el.dataset.canvasid) as HTMLCanvasElement).toDataURL(),
   };
   ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params)
-    .then(() => reloadElements(['uploadsDiv']));
+    .then(() => reloadUploads());
 });
 
 // CHANGE 3DMOL FILES VISUALIZATION STYLE
@@ -220,7 +260,7 @@ on('xls-load-file', async (el: HTMLElement) => {
 on('archive-upload', (el: HTMLElement) => {
   const uploadid = parseInt(el.dataset.uploadid, 10);
   ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`, {action: Action.Archive})
-    .then(() => reloadElements(['uploadsDiv']));
+    .then(() => reloadUploads());
 });
 
 // DESTROY UPLOAD
@@ -228,7 +268,7 @@ on('destroy-upload', (el: HTMLElement) => {
   const uploadid = parseInt(el.dataset.uploadid, 10);
   if (confirm(i18next.t('generic-delete-warning'))) {
     ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`)
-      .then(() => reloadElements(['uploadsDiv']));
+      .then(() => reloadUploads());
   }
 });
 
@@ -328,7 +368,7 @@ function syncGroupedUploadOrdering(): void {
       .map(upload => parseInt(upload.id.replace('uploadDiv_', ''), 10)),
   }));
   ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}`, {grouped_ordering: groupedOrdering})
-    .then(() => reloadElements(['uploadsDiv']));
+    .then(() => reloadUploads());
 }
 
 function scheduleGroupedUploadOrderingSync(): void {
@@ -372,7 +412,7 @@ function initUploadGroupSortables(): void {
         update: function() {
           const ordering = Array.from(this.querySelectorAll(':scope > .upload-group[data-groupid]'))
             .map((group: HTMLElement) => parseInt(group.dataset.groupid, 10));
-          ApiC.patch(uploadGroupsEndpoint, {ordering}).then(() => reloadElements(['uploadsDiv']));
+          ApiC.patch(uploadGroupsEndpoint, {ordering}).then(() => reloadUploads());
         },
       });
     });
@@ -382,7 +422,7 @@ function initUploadGroupSortables(): void {
 initUploadGroupSortables();
 
 const markSpreadsheetSaved = (revision: number): void => {
-  reloadElements(['uploadsDiv']);
+  void reloadUploads();
   if (revision !== spreadsheetRevision) return;
   spreadsheetDirty = false;
   document.getElementById('spreadsheetEditorUnsavedChanges').hidden = true;

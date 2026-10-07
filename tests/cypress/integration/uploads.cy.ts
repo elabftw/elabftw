@@ -96,10 +96,10 @@ describe('Upload groups', () => {
           cy.visit(`/experiments.php?mode=edit&id=${entityId}`);
 
           createUploadGroup('Raw data').then(rawGroupId => {
-            // Creating the first named group reveals the ungrouped attachments as General.
+            // Creating the first named group reveals the ungrouped attachments as Attachments
             cy.get('#upload_group_body_default')
               .closest('.upload-group')
-              .should('contain.text', 'General');
+              .should('contain.text', 'Attachments');
 
             createUploadGroup('Processed data').then(processedGroupId => {
               cy.intercept('PATCH', `**/api/v2/experiments/${entityId}/uploads`).as('updateUploadOrdering');
@@ -113,7 +113,16 @@ describe('Upload groups', () => {
               cy.wait('@updateUploadOrdering').its('response.statusCode').should('eq', 200);
               cy.get(`#upload_group_${processedGroupId} #uploadDiv_${secondUploadId}`).should('exist');
 
-              // General disappears once no attachment is left ungrouped.
+              // Reordering attachments must not reopen another collapsed group
+              cy.get(`[data-toggle-target="upload_group_body_${processedGroupId}"]`).click();
+              cy.get(`#upload_group_body_${processedGroupId}`).should('not.be.visible');
+              cy.get(`#upload_group_${rawGroupId} .uploads-sortable`).then($container => {
+                triggerSortableUpdate($container[0]);
+              });
+              cy.wait('@updateUploadOrdering').its('response.statusCode').should('eq', 200);
+              cy.get(`#upload_group_body_${processedGroupId}`).should('not.be.visible');
+
+              // Attachments disappears once no attachment is left ungrouped.
               cy.get('#upload_group_body_default').should('not.exist');
 
               // The action menu must escape the group card instead of being clipped by it.
@@ -133,6 +142,15 @@ describe('Upload groups', () => {
               cy.get(`#upload_group_${rawGroupId} #uploadDiv_${firstUploadId} [data-action="duplicate-upload"]`).click();
               cy.get(`#upload_group_${rawGroupId} .uploads-sortable > .countable`).should('have.length', 2);
 
+              // Files uploaded from a group are assigned directly to that group
+              cy.intercept('POST', `**/api/v2/experiments/${entityId}/uploads`).as('uploadToGroup');
+              cy.get(`#upload_group_${rawGroupId} [data-action="upload-file-to-group"]`).click();
+              cy.get(`#upload_group_file_${rawGroupId}`)
+                .selectFile('tests/_data/example.png', {force: true});
+              cy.wait('@uploadToGroup').its('response.statusCode').should('eq', 201);
+              cy.get(`#upload_group_${rawGroupId}`).should('contain.text', 'example.png');
+              cy.get(`#upload_group_body_${processedGroupId}`).should('not.be.visible');
+
               // Group titles remain editable.
               cy.get(`#upload_group_${rawGroupId} .upload-group-title`).click();
               cy.get(`#upload_group_${rawGroupId} input.form-control`).clear().type('Contracts');
@@ -146,7 +164,7 @@ describe('Upload groups', () => {
                 .first()
                 .should('have.attr', 'data-groupid', String(processedGroupId));
 
-              // New attachments still land in General while named groups exist.
+              // New attachments still land in Attachments while named groups exist.
               createUpload(entityId, 'general.json', '{"upload":3}').then(generalUploadId => {
                 cy.reload();
                 cy.get('#upload_group_body_default')
@@ -155,7 +173,7 @@ describe('Upload groups', () => {
                   .should('exist');
                 cy.get('#upload_group_body_default')
                   .closest('.upload-group')
-                  .should('contain.text', 'General');
+                  .should('contain.text', 'Attachments');
 
                 // Grouping survives switching to the table layout.
                 cy.get('[data-action="toggle-uploads-layout"]').click();
@@ -164,13 +182,13 @@ describe('Upload groups', () => {
                 cy.get(`#upload_group_${rawGroupId} tbody.uploads-sortable #uploadDiv_${firstUploadId}`)
                   .should('exist');
 
-                // Deleting a group returns its attachments to General.
+                // Deleting a group returns its attachments to Attachments
                 cy.on('window:confirm', () => true);
                 cy.get(`#upload_group_${rawGroupId} [data-action="destroy-upload-group"]`).click();
                 cy.get(`#upload_group_${rawGroupId}`).should('not.exist');
                 cy.get('#upload_group_body_default')
                   .closest('.upload-group')
-                  .should('contain.text', 'General');
+                  .should('contain.text', 'Attachments');
                 cy.get('#upload_group_body_default').find(`#uploadDiv_${firstUploadId}`).should('exist');
 
                 // Removing the last named group falls back to the original flat uploads UI.

@@ -129,13 +129,13 @@ final class Steps extends AbstractRest
     {
         $stepTable = $this->Entity->entityType->value . '_steps';
         $groupTable = $this->Entity->entityType->value . '_step_groups';
-        // Step ordering is local to each group. Named groups follow their group
-        // ordering, while Default group (group_id = NULL) are displayed last
+        // Step ordering is local to each group. Default group (group_id = NULL)
+        // is displayed first, followed by named groups using their group ordering
         $sql = sprintf(
             'SELECT st.* FROM %s AS st
-                LEFT JOIN %s AS sg ON sg.id = st.group_id AND sg.item_id = st.item_id
+                LEFT JOIN %s AS sg ON sg.id = st.group_id AND sg.entity_id = st.item_id
                 WHERE st.item_id = :id
-                ORDER BY (st.group_id IS NULL) ASC, sg.ordering ASC, sg.id ASC, st.ordering ASC, st.id ASC',
+                ORDER BY (st.group_id IS NOT NULL) ASC, sg.ordering ASC, sg.id ASC, st.ordering ASC, st.id ASC',
             $stepTable,
             $groupTable,
         );
@@ -445,7 +445,7 @@ final class Steps extends AbstractRest
             throw new ImproperActionException(_('Invalid step group.'));
         }
         // The foreign key only proves that the group exists
-        // readOne() also checks item_id, preventing a step from using another entity's group
+        // readOne() also checks entity_id, preventing a step from using another entity's group
         new StepGroups($this->Entity, $groupId)->readOne();
     }
 

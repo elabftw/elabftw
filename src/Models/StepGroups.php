@@ -51,9 +51,9 @@ final class StepGroups extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $sql = sprintf('SELECT * FROM %s WHERE item_id = :item_id ORDER BY ordering, id', $this->getTable());
+        $sql = sprintf('SELECT * FROM %s WHERE entity_id = :entity_id ORDER BY ordering, id', $this->getTable());
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -61,10 +61,10 @@ final class StepGroups extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $sql = sprintf('SELECT * FROM %s WHERE id = :id AND item_id = :item_id', $this->getTable());
+        $sql = sprintf('SELECT * FROM %s WHERE id = :id AND entity_id = :entity_id', $this->getTable());
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
     }
@@ -78,9 +78,9 @@ final class StepGroups extends AbstractRest
         $this->Entity->canOrExplode(AccessType::Write);
         $title = Filter::title((string) ($reqBody['title'] ?? ''));
         $ordering = count($this->readAll()) + 1;
-        $sql = sprintf('INSERT INTO %s (item_id, title, ordering) VALUES (:item_id, :title, :ordering)', $this->getTable());
+        $sql = sprintf('INSERT INTO %s (entity_id, title, ordering) VALUES (:entity_id, :title, :ordering)', $this->getTable());
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':title', $title);
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -117,11 +117,11 @@ final class StepGroups extends AbstractRest
             throw new ImproperActionException('Invalid parameter for step groups.');
         }
         $title = Filter::title((string) $params['title']);
-        $sql = sprintf('UPDATE %s SET title = :title WHERE id = :id AND item_id = :item_id', $this->getTable());
+        $sql = sprintf('UPDATE %s SET title = :title WHERE id = :id AND entity_id = :entity_id', $this->getTable());
         $req = $this->Db->prepare($sql);
         $req->bindValue(':title', $title);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $this->Entity->touch();
         new Changelog($this->Entity)->create(new ContentParams('step_groups', Action::Update->value));
@@ -142,10 +142,10 @@ final class StepGroups extends AbstractRest
         $stepReq->bindParam(':group_id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($stepReq);
 
-        $sql = sprintf('DELETE FROM %s WHERE id = :id AND item_id = :item_id', $this->getTable());
+        $sql = sprintf('DELETE FROM %s WHERE id = :id AND entity_id = :entity_id', $this->getTable());
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $result = $this->Db->execute($req);
         $this->normalizeUngroupedStepOrdering();
         $this->Entity->touch();
@@ -160,14 +160,14 @@ final class StepGroups extends AbstractRest
      */
     public function duplicate(AbstractEntity $targetEntity, int $sourceId, int $targetId): array
     {
-        $sql = sprintf('SELECT id, title, ordering FROM %s WHERE item_id = :item_id ORDER BY ordering, id', $this->getTable());
+        $sql = sprintf('SELECT id, title, ordering FROM %s WHERE entity_id = :entity_id ORDER BY ordering, id', $this->getTable());
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $sourceId, PDO::PARAM_INT);
+        $req->bindParam(':entity_id', $sourceId, PDO::PARAM_INT);
         $this->Db->execute($req);
 
-        $insert = sprintf('INSERT INTO %s (item_id, title, ordering) VALUES (:item_id, :title, :ordering)', $this->getTable($targetEntity));
+        $insert = sprintf('INSERT INTO %s (entity_id, title, ordering) VALUES (:entity_id, :title, :ordering)', $this->getTable($targetEntity));
         $insertReq = $this->Db->prepare($insert);
-        $insertReq->bindParam(':item_id', $targetId, PDO::PARAM_INT);
+        $insertReq->bindParam(':entity_id', $targetId, PDO::PARAM_INT);
         $map = array();
         while ($group = $req->fetch()) {
             $insertReq->bindParam(':title', $group['title']);
@@ -181,7 +181,7 @@ final class StepGroups extends AbstractRest
     private function updateOrdering(array $ordering): void
     {
         $groups = array_column($this->readAll(), null, 'id');
-        $sql = sprintf('UPDATE %s SET ordering = :ordering WHERE id = :id AND item_id = :item_id', $this->getTable());
+        $sql = sprintf('UPDATE %s SET ordering = :ordering WHERE id = :id AND entity_id = :entity_id', $this->getTable());
         $req = $this->Db->prepare($sql);
         foreach ($ordering as $position => $rawId) {
             $id = (int) $rawId;
@@ -190,7 +190,7 @@ final class StepGroups extends AbstractRest
             }
             $req->bindValue(':ordering', $position, PDO::PARAM_INT);
             $req->bindValue(':id', $id, PDO::PARAM_INT);
-            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
     }

@@ -15,11 +15,53 @@
   </div>
   {% endif %}
 
+  {# Default group is the fallback group for steps with no group_id #}
+  {% set stepGroupId = '' %}
+  {% if generalSteps is not empty %}
+    <div class='step-group step-group-card mb-3'>
+      <div class='step-group-header d-flex align-items-center px-2 py-2'>
+        <button class='btn btn-transparent mr-2' data-action='toggle-next' data-toggle-target='step_group_steps_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_general' title='{{ 'Toggle visibility'|trans }}'>
+          <i class='fas fa-caret-down fa-fw'></i>
+        </button>
+        <strong>{{ 'Default group'|trans }}</strong>
+        <span class='text-muted ml-2'>{{ generalSteps|length }} {{ 'Steps'|trans|lower }}</span>
+      </div>
+      <div id='step_group_steps_general' class='step-group-body px-3 py-2' data-save-hidden='step_group_steps_general'>
+        {# Keep the original flat sortable until the first named group is created #}
+        {% if stepGroups is empty %}
+          <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
+            {% for step in generalSteps %}
+              {% include 'step-edit-row.html' %}
+            {% endfor %}
+          </div>
+        {% else %}
+          {# Once groups exist, Default group joins the same connected sortable system #}
+          <div class='steps-sortable step-group-steps' data-groupid=''>
+            {% for step in generalSteps %}
+              {% include 'step-edit-row.html' %}
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% include 'step-add-form.html' %}
+      </div>
+    </div>
+  {% elseif stepGroups is empty %}
+    <div class='mb-3'>
+      {% include 'step-add-form.html' %}
+    </div>
+  {% else %}
+    {# Keep Default group hidden when empty, but retain a visible connected drop target. #}
+    <div class='steps-sortable mb-3' data-groupid=''>
+      {% include 'step-add-form.html' %}
+    </div>
+  {% endif %}
+
   {# Named groups use connected sortables so steps can move between groups #}
   {% if stepGroups is not empty %}
     <div class='step-groups-sortable'>
       {% for group in stepGroups %}
         {% set groupSteps = Entity.entityData.steps|filter(s => s.group_id == group.id) %}
+        {% set stepGroupId = group.id %}
         <div class='step-group step-group-card mb-3' id='step_group_{{ group.id }}' data-groupid='{{ group.id }}'>
           <div class='step-group-header d-flex align-items-center px-2 py-2'>
             <button class='btn btn-transparent mr-2' data-action='toggle-next' data-toggle-target='step_group_steps_{{ group.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_{{ group.id }}'>
@@ -39,46 +81,18 @@
               {% for step in groupSteps %}
                 {% include 'step-edit-row.html' %}
               {% endfor %}
+              {% if groupSteps is empty %}
+                {% include 'step-add-form.html' %}
+              {% endif %}
             </div>
-            {% set stepGroupId = group.id %}
-            {% set stepAddSuffix = 'group_' ~ group.id %}
-            {% include 'step-add-form.html' %}
+            {% if groupSteps is not empty %}
+              {% include 'step-add-form.html' %}
+            {% endif %}
           </div>
         </div>
       {% endfor %}
     </div>
   {% endif %}
-
-  {# Default group is the fallback group for steps with no group_id #}
-  <div class='step-group step-group-card mb-3'>
-    <div class='step-group-header d-flex align-items-center px-2 py-2'>
-      <button class='btn btn-transparent mr-2' data-action='toggle-next' data-toggle-target='step_group_steps_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_steps_general' title='{{ 'Toggle visibility'|trans }}'>
-        <i class='fas fa-caret-down fa-fw'></i>
-      </button>
-      <strong>{{ 'Default group'|trans }}</strong>
-      <span class='text-muted ml-2'>{{ generalSteps|length }} {{ 'Steps'|trans|lower }}</span>
-    </div>
-    <div id='step_group_steps_general' class='step-group-body px-3 py-2' data-save-hidden='step_group_steps_general'>
-      {# Keep the original flat sortable until the first named group is created #}
-      {% if stepGroups is empty %}
-        <div class='sortable' id='steps_div_{{ Entity.id }}' data-axis='y' data-table='{{ Entity.entityType.value }}_steps'>
-          {% for step in generalSteps %}
-            {% include 'step-edit-row.html' %}
-          {% endfor %}
-        </div>
-      {% else %}
-        {# Once groups exist, Default group joins the same connected sortable system #}
-        <div class='steps-sortable step-group-steps' data-groupid=''>
-          {% for step in generalSteps %}
-            {% include 'step-edit-row.html' %}
-          {% endfor %}
-        </div>
-      {% endif %}
-      {% set stepGroupId = '' %}
-      {% set stepAddSuffix = 'general' %}
-      {% include 'step-add-form.html' %}
-    </div>
-  </div>
 
   <button type='button' class='btn btn-transparent text-muted text-left w-100 px-3 py-2 add-step-group-toggle' data-action='toggle-inline-form' data-toggle-target='addStepGroupForm' aria-expanded='false' aria-controls='addStepGroupForm'>
     <i class='fas fa-plus fa-fw mr-1'></i>{{ 'Add a group'|trans }}

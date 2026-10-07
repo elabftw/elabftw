@@ -55,14 +55,17 @@ final class StepGroupsTest extends TestCase
             array('group_id' => null, 'step_ids' => array()),
         )));
 
+        $defaultStep = $this->Steps->postAction(Action::Create, array('body' => 'default step'));
         $steps = $this->Steps->readAll();
-        $this->assertSame($firstStep, (int) $steps[0]['id']);
-        $this->assertSame($secondStep, (int) $steps[1]['id']);
+        $this->assertSame($defaultStep, (int) $steps[0]['id']);
+        $this->assertSame($firstStep, (int) $steps[1]['id']);
+        $this->assertSame($secondStep, (int) $steps[2]['id']);
 
         $this->StepGroups->patch(Action::Update, array('ordering' => array($secondGroup, $firstGroup)));
         $steps = $this->Steps->readAll();
-        $this->assertSame($secondStep, (int) $steps[0]['id']);
-        $this->assertSame($firstStep, (int) $steps[1]['id']);
+        $this->assertSame($defaultStep, (int) $steps[0]['id']);
+        $this->assertSame($secondStep, (int) $steps[1]['id']);
+        $this->assertSame($firstStep, (int) $steps[2]['id']);
     }
 
     public function testGroupsAreDuplicatedWithTemplateSteps(): void

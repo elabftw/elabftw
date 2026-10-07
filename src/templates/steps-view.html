@@ -11,24 +11,6 @@
           {% include 'step-view-row.html' %}
         {% endfor %}
       {% else %}
-        {% for group in stepGroups %}
-          {% set groupSteps = Entity.entityData.steps|filter(s => s.group_id == group.id) %}
-          <div class='step-group mb-3'>
-            <div class='step-group-header d-flex align-items-center rounded px-2 py-2 mb-1'>
-              <button class='btn btn-transparent p-0 mr-1' data-action='toggle-next' data-toggle-target='step_group_view_{{ group.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_view_{{ group.id }}'>
-                <i class='fas fa-caret-down fa-fw'></i>
-              </button>
-              <strong>{{ group.title }}</strong>
-              <span class='text-muted ml-2'>{{ groupSteps|filter(s => s.finished)|length }}/{{ groupSteps|length }}</span>
-            </div>
-            <div id='step_group_view_{{ group.id }}' data-save-hidden='step_group_view_{{ group.id }}'>
-              {% for step in groupSteps %}
-                {% include 'step-view-row.html' %}
-              {% endfor %}
-            </div>
-          </div>
-        {% endfor %}
-
         {% set ungroupedSteps = Entity.entityData.steps|filter(s => s.group_id is null) %}
         {% if ungroupedSteps is not empty %}
           <div class='step-group mb-3'>
@@ -46,6 +28,24 @@
             </div>
           </div>
         {% endif %}
+
+        {% for group in stepGroups %}
+          {% set groupSteps = Entity.entityData.steps|filter(s => s.group_id == group.id) %}
+          <div class='step-group mb-3'>
+            <div class='step-group-header d-flex align-items-center rounded px-2 py-2 mb-1'>
+              <button class='btn btn-transparent p-0 mr-1' data-action='toggle-next' data-toggle-target='step_group_view_{{ group.id }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_view_{{ group.id }}'>
+                <i class='fas fa-caret-down fa-fw'></i>
+              </button>
+              <strong>{{ group.title }}</strong>
+              <span class='text-muted ml-2'>{{ groupSteps|filter(s => s.finished)|length }}/{{ groupSteps|length }}</span>
+            </div>
+            <div id='step_group_view_{{ group.id }}' data-save-hidden='step_group_view_{{ group.id }}'>
+              {% for step in groupSteps %}
+                {% include 'step-view-row.html' %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
       {% endif %}
     </div>
   </div>

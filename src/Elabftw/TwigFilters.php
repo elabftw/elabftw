@@ -38,6 +38,7 @@ use function in_array;
 use function trim;
 use function round;
 use function hexdec;
+use function array_values;
 
 /**
  * Twig filters
@@ -135,9 +136,18 @@ final class TwigFilters
 
                 if (is_array($value)) {
                     $html = '';
-                    foreach ($value as $item) {
+                    $valueLabels = $field['value_labels'] ?? array();
+                    foreach (array_values($value) as $index => $item) {
+                        $label = '';
+                        if (isset($valueLabels[$index]) && is_string($valueLabels[$index]) && $valueLabels[$index] !== '') {
+                            $label = sprintf(
+                                '<span class="badge badge-pill badge-light">%s</span><br>',
+                                Tools::eLabHtmlspecialchars($valueLabels[$index]),
+                            );
+                        }
                         $html .= sprintf(
-                            '<p>%s%s</p>',
+                            '<p>%s%s%s</p>',
+                            $label,
                             self::formatMetadataValue($metadataType, $item, $newTab),
                             $unit,
                         );
@@ -299,7 +309,7 @@ final class TwigFilters
             $id = (int) $value;
             $page = $metadataType === EntityType::Items->value ? EntityType::Items->toPage() : EntityType::Experiments->toPage();
             return sprintf(
-                '<a href="/%s?mode=view&amp;id=%d"%s><span %s data-id="%d" data-endpoint=%s>%s</span></a>',
+                '<a href="/%s?mode=view&amp;id=%d"%s><span %s data-id="%d" data-endpoint="%s">%s</span></a>',
                 $page,
                 $id,
                 $newTab,

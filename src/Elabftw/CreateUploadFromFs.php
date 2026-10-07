@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\State;
-use Elabftw\Interfaces\HashInterface;
 use League\Flysystem\FilesystemOperator;
 use Override;
 
@@ -23,7 +22,6 @@ final class CreateUploadFromFs extends CreateUpload
         protected FilesystemOperator $fs,
         string $realName,
         string $filePath,
-        HashInterface $hasher,
         ?string $comment = null,
         int $immutable = 0,
         State $state = State::Normal,
@@ -31,7 +29,6 @@ final class CreateUploadFromFs extends CreateUpload
         parent::__construct(
             $realName,
             $filePath,
-            $hasher,
             $comment,
             $immutable,
             $state,

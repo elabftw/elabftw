@@ -73,6 +73,10 @@ services:
       - ALLOW_METHODS=OPTIONS, GET, POST, PATCH, DELETE
       - ALLOW_HEADERS=Content-Type, Authorization
 
+    env_file:
+      - path: ./env.local
+        required: false
+
     ports:
       - '3148:8080'
     volumes:

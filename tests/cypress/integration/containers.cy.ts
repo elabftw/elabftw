@@ -97,7 +97,7 @@ describe('Containers', () => {
 
             // deleting the entity must also free its storage locations
             cy.intercept('GET', `/api/v2/items/${itemId}/containers?has_any=1`).as('getItemContainers');
-            cy.intercept('DELETE', `/api/v2/items/${itemId}?delete_containers=1`).as('deleteItemWithContainers');
+            cy.intercept('DELETE', `/api/v2/items/${itemId}?recursive=1`).as('deleteItemWithContainers');
             cy.get('button[title="More options"]').click();
             cy.get('button[data-action="toggle-modal"][data-target="deleteSelectedEntitiesModal"]').click();
             cy.wait('@getItemContainers');

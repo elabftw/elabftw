@@ -65,7 +65,7 @@
       </button>
     </div>
 
-    {# ADD NEW FILE: new uploads start in Default group and can then be dragged #}
+    {# New uploads start ungrouped and appear under General once groups exist. #}
     {% if mode == 'edit' %}
       <div class='col-md-4 col-sm-6'>
         {% if App.devMode -%}
@@ -109,7 +109,7 @@
 
         {% if defaultUploads is not empty %}
           <div class='step-group step-group-card mt-3 mb-3 upload-group'>
-            {{ _self.groupHeader(null, 'default', 'Default group'|trans, defaultUploads|length, mode) }}
+            {{ _self.groupHeader(null, 'default', 'Attachments'|trans, defaultUploads|length, mode) }}
             <div id='upload_group_body_default' class='step-group-body px-3 py-2' data-save-hidden='upload_group_body_default'>
               <div class='table mb-0'>
                 <table class='table mb-0' aria-label='{{ 'Attached files'|trans }}'>
@@ -170,7 +170,7 @@
       <div class='w-100'>
         {% if defaultUploads is not empty %}
           <div class='step-group step-group-card mb-3 upload-group'>
-            {{ _self.groupHeader(null, 'default', 'Default group'|trans, defaultUploads|length, mode) }}
+            {{ _self.groupHeader(null, 'default', 'Attachments'|trans, defaultUploads|length, mode) }}
             <div id='upload_group_body_default' class='step-group-body px-3 py-2' data-save-hidden='upload_group_body_default'>
               <div class='row mx-0 uploads-sortable' data-groupid=''>
                 {% for upload in defaultUploads %}

@@ -1029,6 +1029,11 @@ the form-control fails to do that so we do the border ourselves */
   min-height: 3rem;
 }
 
+.upload-group.step-group-card {
+  // Attachment action dropdowns need to escape the group card boundaries.
+  overflow: visible;
+}
+
 .upload-group-drop-target {
   border: 1px dashed var(--secondary);
   border-radius: 4px;

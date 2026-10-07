@@ -40,6 +40,7 @@ describe('Experiments', () => {
     // delete step
     cy.get('[data-action="destroy-step"]').click();
     cy.contains('some step').should('not.exist');
+    cy.get('#stepsDiv').should('not.contain.text', 'Default group');
   };
 
   const entityComment = () => {

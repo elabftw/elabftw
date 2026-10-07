@@ -71,8 +71,6 @@ You'll probably want to use python or a shell language to build a more meaningfu
 
 The complete documentation of all endpoints with code examples is available here: [elabftw's API documentation](https://doc.elabftw.net/api/).
 
-## Model Context Protocol (MCP) and LLM clients
+## Model Context Protocol (MCP)
 
-The community-maintained [eLabFTW MCP adapter](https://bitbucket.org/grahampheath/elabftw-mcp) is an unofficial Model Context Protocol (MCP) server for connecting large language model (LLM) clients to eLabFTW API v2. It runs locally over stdio and provides tools for experiment operations and image attachments. See the adapter repository for installation, client configuration, supported operations, and limitations.
-
-The adapter is a separate project and is not part of eLabFTW. API keys determine the client's access to your instance; use a dedicated account with only the permissions needed for the intended workflow.
+[eLabFTW MCP adapter](https://bitbucket.org/grahampheath/elabftw-mcp) is an unofficial Model Context Protocol (MCP) server for the eLabFTW API v2. It runs locally and provides tools for experiment operations and image attachments.

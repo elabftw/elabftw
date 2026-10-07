@@ -166,7 +166,7 @@ Volume=/var/elabftw/exports:/var/lib/elabftw/exports:Z
 
 If you are running the container in HTTPS mode (meaning `DISABLE_HTTPS` is `false`, the default), then you need to modify env and volumes. The cert and key are now indicated by `TLS_CERT_PATH` and `TLS_KEY_PATH` env vars.
 
-Read the documentation about TLS configuration from this page: [TLS configuration doc](../installation/tls#option-b-https-mode-with-lets-encrypt-certificates).
+Read the documentation about TLS configuration from this page: [TLS configuration doc](../installation/3-tls.md#option-b-https-mode-with-lets-encrypt-certificates).
 
 ### Ports
 

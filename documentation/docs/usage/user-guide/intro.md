@@ -3,7 +3,7 @@ sidebar_position: 1
 title: Concepts
 ---
 
-This guide is for Users. See also the guides for [Admins](../admin-guide) and for [Sysadmins](../sysadmin-guide).
+This guide is for Users. See also the guides for [Admins](../admin-guide.md) and for [Sysadmins](../sysadmin-guide.md).
 
 # Concepts
 

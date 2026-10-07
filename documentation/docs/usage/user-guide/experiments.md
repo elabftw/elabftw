@@ -114,11 +114,11 @@ For both Experiment and Resource entries, the top part of the page displays a to
   <figcaption>Duplicate modal</figcaption>
 </figure>
 
-4. **Signature**: Add a signature to prove that this entry has been approved by a referenced human. See [Signatures documentation](../traceability-and-auditability#electronic-signatures).
+4. **Signature**: Add a signature to prove that this entry has been approved by a referenced human. See [Signatures documentation](../traceability-and-auditability.md#electronic-signatures).
 
-5. **RFC3161 Timestamping**: See [RFC 3161 Timestamping section](../traceability-and-auditability#trusted-timestamps)
+5. **RFC3161 Timestamping**: See [RFC 3161 Timestamping section](../traceability-and-auditability.md#trusted-timestamps)
 
-6. **Blockchain timestamping**: See [Blockchain Timestamping section](../traceability-and-auditability#blockchain-timestamps)
+6. **Blockchain timestamping**: See [Blockchain Timestamping section](../traceability-and-auditability.md#blockchain-timestamps)
 
 7. **Export**: Export your entry into different file formats, or to external repositories.
 <figure>

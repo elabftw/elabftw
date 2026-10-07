@@ -346,6 +346,16 @@ export class Metadata {
     return holder;
   }
 
+  buildInputGroupPrepend(text: string): HTMLElement {
+    const prepend = document.createElement('div');
+    prepend.classList.add('input-group-prepend');
+    const label = document.createElement('span');
+    label.classList.add('input-group-text');
+    label.textContent = text;
+    prepend.append(label);
+    return prepend;
+  }
+
   buildMultiValueRow(
     name: string,
     properties: ExtraFieldProperties,
@@ -355,22 +365,24 @@ export class Metadata {
   ): HTMLElement {
     const row = document.createElement('div');
     row.dataset.purpose = 'multi-value-row';
-    row.classList.add('d-flex', 'align-items-start', 'mb-1');
+    row.classList.add('d-flex', 'align-items-start', 'mb-3');
 
     const inputWrapper = document.createElement('div');
     inputWrapper.classList.add('flex-grow-1');
+    const labelGroup = document.createElement('div');
+    labelGroup.classList.add('input-group', 'mb-1');
     const label = properties.value_labels?.[index ?? -1] ?? '';
     if (properties.readonly !== true) {
       const labelInput = document.createElement('input');
       labelInput.type = 'text';
-      labelInput.classList.add('form-control', 'form-control-sm', 'mb-1');
+      labelInput.classList.add('form-control');
       labelInput.dataset.purpose = 'value-label';
-      labelInput.placeholder = i18next.t('name');
-      labelInput.setAttribute('aria-label', `${name}: ${i18next.t('name')}`);
+      labelInput.setAttribute('aria-label', `${name}: ${i18next.t('label')}`);
       labelInput.value = label;
       // A label is not a linked value: editing it must not create entity links.
       labelInput.addEventListener('change', () => this.saveMultiValueHolder(holder));
-      inputWrapper.append(labelInput);
+      labelGroup.append(this.buildInputGroupPrepend(i18next.t('label')), labelInput);
+      inputWrapper.append(labelGroup);
     } else if (label !== '') {
       const labelWrapper = document.createElement('div');
       labelWrapper.classList.add('mb-1');
@@ -382,23 +394,44 @@ export class Metadata {
       inputWrapper.append(labelWrapper);
     }
 
-    const valueWrapper = document.createElement('div');
-    if (properties.type === ExtraFieldInputType.Checkbox) {
-      // Checkbox inputs are absolutely positioned: reserve their row height.
-      valueWrapper.classList.add('form-check', 'pb-4');
-    }
-    valueWrapper.append(this.generateSingleInput(name, {
+    const valueInput = this.generateSingleInput(name, {
       ...properties,
       value,
       allow_multi_values: false,
-    }));
+    });
+    // Reuse groups containing units, date/time buttons or autocomplete icons.
+    const valueWrapper = valueInput.classList.contains('input-group')
+      ? valueInput
+      : document.createElement('div');
+    if (valueWrapper !== valueInput) {
+      if (properties.readonly !== true && [ExtraFieldInputType.Checkbox, ExtraFieldInputType.Radio].includes(properties.type)) {
+        const valueControl = document.createElement('div');
+        valueControl.classList.add('form-control', 'h-auto');
+        if (properties.type === ExtraFieldInputType.Checkbox) {
+          valueControl.classList.add('d-flex', 'align-items-center');
+          valueInput.classList.add('position-static', 'm-0');
+        }
+        valueControl.append(valueInput);
+        valueWrapper.append(valueControl);
+      } else {
+        if (properties.type === ExtraFieldInputType.Checkbox) {
+          // Read-only checkbox inputs still need their row height reserved.
+          valueWrapper.classList.add('form-check', 'pb-4');
+        }
+        valueWrapper.append(valueInput);
+      }
+    }
+    if (properties.readonly !== true) {
+      valueWrapper.classList.add('input-group');
+      valueWrapper.prepend(this.buildInputGroupPrepend(i18next.t('value')));
+    }
     inputWrapper.append(valueWrapper);
     row.append(inputWrapper);
 
     if (properties.readonly !== true) {
       const removeButton = document.createElement('button');
       removeButton.type = 'button';
-      removeButton.classList.add('btn', 'btn-secondary', 'btn-sm', 'ml-2');
+      removeButton.classList.add('btn', 'btn-secondary');
       removeButton.setAttribute('aria-label', i18next.t('remove'));
       removeButton.setAttribute('title', i18next.t('remove'));
       const icon = document.createElement('i');
@@ -408,7 +441,10 @@ export class Metadata {
         row.remove();
         this.saveMultiValueHolder(holder);
       });
-      row.append(removeButton);
+      const append = document.createElement('div');
+      append.classList.add('input-group-append');
+      append.append(removeButton);
+      labelGroup.append(append);
     }
 
     return row;

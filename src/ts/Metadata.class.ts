@@ -108,11 +108,9 @@ export class Metadata {
 
     const multiValueHolder = el.closest('[data-purpose="multi-value-holder"]') as HTMLElement | null;
     if (multiValueHolder) {
-      const values = this.getMultiValues(multiValueHolder);
-      if (values === null) {
-        return false;
-      }
-      value = values;
+      // Structural edits (add/remove row) shift value indexes: value_labels
+      // must be rebuilt together with value, so persist both in one field update.
+      return this.saveMultiValueHolder(multiValueHolder);
     }
 
     return this.updateMetadataField(fieldName, value);
@@ -164,6 +162,15 @@ export class Metadata {
   updateMetadataField(fieldName: string, value: string|number|Array<string|number>): Promise<Response> {
     const params: Record<string, unknown> = {action: Action.UpdateMetadataField};
     params[fieldName] = value;
+    return ApiC.patch(`${this.entity.type}/${this.entity.id}`, params).then(response => {
+      this.editor.loadMetadata();
+      return response;
+    });
+  }
+
+  updateMultiValueMetadataField(fieldName: string, value: Array<string|number>, valueLabels: string[]|null): Promise<Response> {
+    const params: Record<string, unknown> = {action: Action.UpdateMetadataField};
+    params[fieldName] = {value, value_labels: valueLabels};
     return ApiC.patch(`${this.entity.type}/${this.entity.id}`, params).then(response => {
       this.editor.loadMetadata();
       return response;
@@ -309,8 +316,8 @@ export class Metadata {
       values.push('');
     }
 
-    for (const value of values) {
-      holder.append(this.buildMultiValueRow(name, properties, value, holder));
+    for (const [index, value] of values.entries()) {
+      holder.append(this.buildMultiValueRow(name, properties, value, holder, index));
     }
 
     if (properties.readonly !== true) {
@@ -325,7 +332,7 @@ export class Metadata {
       addButton.addEventListener('click', () => {
         const row = this.buildMultiValueRow(name, properties, '', holder);
         holder.insertBefore(row, addButton);
-        const input = row.querySelector<HTMLElement>('input, select, textarea');
+        const input = row.querySelector<HTMLElement>('[data-metadata-value="true"], [data-purpose="radio-holder"] input');
         // Linked fields initialize their autocomplete from their click handler.
         // Initialize it before focusing a newly added row so typing works immediately.
         if (input?.dataset.action === 'autocomplete') {
@@ -339,32 +346,92 @@ export class Metadata {
     return holder;
   }
 
+  buildInputGroupPrepend(text: string): HTMLElement {
+    const prepend = document.createElement('div');
+    prepend.classList.add('input-group-prepend');
+    const label = document.createElement('span');
+    label.classList.add('input-group-text');
+    label.textContent = text;
+    prepend.append(label);
+    return prepend;
+  }
+
   buildMultiValueRow(
     name: string,
     properties: ExtraFieldProperties,
     value: string|number,
     holder: HTMLElement,
+    index?: number,
   ): HTMLElement {
     const row = document.createElement('div');
     row.dataset.purpose = 'multi-value-row';
-    row.classList.add('d-flex', 'align-items-start', 'mb-1');
+    row.classList.add('d-flex', 'align-items-start', 'mb-3');
 
     const inputWrapper = document.createElement('div');
     inputWrapper.classList.add('flex-grow-1');
-    if (properties.type === ExtraFieldInputType.Checkbox) {
-      inputWrapper.classList.add('form-check');
+    const labelGroup = document.createElement('div');
+    labelGroup.classList.add('input-group', 'mb-1');
+    const label = properties.value_labels?.[index ?? -1] ?? '';
+    if (properties.readonly !== true) {
+      const labelInput = document.createElement('input');
+      labelInput.type = 'text';
+      labelInput.classList.add('form-control');
+      labelInput.dataset.purpose = 'value-label';
+      labelInput.setAttribute('aria-label', `${name}: ${i18next.t('label')}`);
+      labelInput.value = label;
+      // A label is not a linked value: editing it must not create entity links.
+      labelInput.addEventListener('change', () => this.saveMultiValueHolder(holder));
+      labelGroup.append(this.buildInputGroupPrepend(i18next.t('label')), labelInput);
+      inputWrapper.append(labelGroup);
+    } else if (label !== '') {
+      const labelWrapper = document.createElement('div');
+      labelWrapper.classList.add('mb-1');
+      const labelBadge = document.createElement('span');
+      labelBadge.classList.add('badge', 'badge-pill', 'badge-light');
+      labelBadge.dataset.purpose = 'value-label';
+      labelBadge.textContent = label;
+      labelWrapper.append(labelBadge);
+      inputWrapper.append(labelWrapper);
     }
-    inputWrapper.append(this.generateSingleInput(name, {
+
+    const valueInput = this.generateSingleInput(name, {
       ...properties,
       value,
       allow_multi_values: false,
-    }));
+    });
+    // Reuse groups containing units, date/time buttons or autocomplete icons.
+    const valueWrapper = valueInput.classList.contains('input-group')
+      ? valueInput
+      : document.createElement('div');
+    if (valueWrapper !== valueInput) {
+      if (properties.readonly !== true && [ExtraFieldInputType.Checkbox, ExtraFieldInputType.Radio].includes(properties.type)) {
+        const valueControl = document.createElement('div');
+        valueControl.classList.add('form-control', 'h-auto');
+        if (properties.type === ExtraFieldInputType.Checkbox) {
+          valueControl.classList.add('d-flex', 'align-items-center');
+          valueInput.classList.add('position-static', 'm-0');
+        }
+        valueControl.append(valueInput);
+        valueWrapper.append(valueControl);
+      } else {
+        if (properties.type === ExtraFieldInputType.Checkbox) {
+          // Read-only checkbox inputs still need their row height reserved.
+          valueWrapper.classList.add('form-check', 'pb-4');
+        }
+        valueWrapper.append(valueInput);
+      }
+    }
+    if (properties.readonly !== true) {
+      valueWrapper.classList.add('input-group');
+      valueWrapper.prepend(this.buildInputGroupPrepend(i18next.t('value')));
+    }
+    inputWrapper.append(valueWrapper);
     row.append(inputWrapper);
 
     if (properties.readonly !== true) {
       const removeButton = document.createElement('button');
       removeButton.type = 'button';
-      removeButton.classList.add('btn', 'btn-secondary', 'btn-sm', 'ml-2');
+      removeButton.classList.add('btn', 'btn-secondary');
       removeButton.setAttribute('aria-label', i18next.t('remove'));
       removeButton.setAttribute('title', i18next.t('remove'));
       const icon = document.createElement('i');
@@ -374,10 +441,27 @@ export class Metadata {
         row.remove();
         this.saveMultiValueHolder(holder);
       });
-      row.append(removeButton);
+      const append = document.createElement('div');
+      append.classList.add('input-group-append');
+      append.append(removeButton);
+      labelGroup.append(append);
     }
 
     return row;
+  }
+
+  /**
+   * Collect the labels of the rendered multi-value rows, index-aligned with
+   * the values. Unnamed rows yield an empty string so the
+   * value <-> label association survives add/remove/reorder operations.
+   */
+  getMultiValueLabels(holder: HTMLElement): string[] {
+    const labels: Array<string> = [];
+    for (const row of Array.from(holder.querySelectorAll<HTMLElement>('[data-purpose="multi-value-row"]'))) {
+      const label = row.querySelector<HTMLElement>('[data-purpose="value-label"]');
+      labels.push(label instanceof HTMLInputElement ? label.value : label?.textContent ?? '');
+    }
+    return labels;
   }
 
   saveMultiValueHolder(holder: HTMLElement): Promise<Response>|boolean {
@@ -389,7 +473,12 @@ export class Metadata {
     if (values === null) {
       return false;
     }
-    return this.updateMetadataField(fieldName, values);
+    // Persist value and value_labels in one metadata JSON update. A value-only
+    // PATCH leaves stale labels behind after rows are removed or added, while
+    // a full metadata read/replace can overwrite a concurrent field update.
+    const labels = this.getMultiValueLabels(holder);
+    const valueLabels = labels.some(label => label !== '') ? labels : null;
+    return this.updateMultiValueMetadataField(fieldName, values, valueLabels);
   }
 
   getRandomId(): string {
@@ -428,8 +517,20 @@ export class Metadata {
     if (values.length === 0) {
       valueCell.append(this.generateViewableValue(properties, ''));
     } else {
-      for (const value of values) {
-        valueCell.append(this.generateViewableValue(properties, value));
+      for (const [index, value] of values.entries()) {
+        // Keep the label above its value, matching the editable rows.
+        const valueRow = document.createElement('div');
+        valueRow.classList.add('mb-2');
+        const label = properties.value_labels?.[index];
+        if (label) {
+          const labelBadge = document.createElement('span');
+          labelBadge.classList.add('badge', 'badge-pill', 'badge-light', 'mb-1');
+          labelBadge.dataset.purpose = 'value-label';
+          labelBadge.textContent = label;
+          valueRow.append(labelBadge);
+        }
+        valueRow.append(this.generateViewableValue(properties, value));
+        valueCell.append(valueRow);
       }
     }
 

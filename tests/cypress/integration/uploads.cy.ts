@@ -12,7 +12,7 @@ describe('Upload groups', () => {
     cy.request({
       method: 'PATCH',
       url: '/api/v2/users/me',
-      body: { notifOnSaved: 0, uploads_layout: 1 },
+      body: {notifOnSaved: 0, uploads_layout: 1},
     });
   });
 
@@ -20,7 +20,7 @@ describe('Upload groups', () => {
     return cy.request({
       method: 'POST',
       url: '/api/v2/experiments',
-      body: { title: `Cypress upload groups ${Date.now()}` },
+      body: {title: `Cypress upload groups ${Date.now()}`},
     }).then(response => {
       expect(response.status).to.eq(201);
       return cy.extractIdFromLocation(response);
@@ -180,4 +180,12 @@ describe('Upload groups', () => {
                 cy.get('#uploadsTable').find(`#uploadDiv_${secondUploadId}`).should('exist');
                 cy.get('#uploadsTable').find(`#uploadDiv_${generalUploadId}`).should('exist');
 
-                cy.request({ method: 'DELETE', url: `/api/v2/experiments/${entityId}` });
+                cy.request({method: 'DELETE', url: `/api/v2/experiments/${entityId}`});
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+});

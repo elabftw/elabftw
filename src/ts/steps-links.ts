@@ -123,12 +123,12 @@ on('step-destroy-deadline', (el: HTMLElement) => {
 on('destroy-step', (el: HTMLElement) => {
   if (confirm(i18next.t('step-delete-warning'))) {
     StepC.destroy(parseInt(el.dataset.id, 10)).then(() => {
-      el.parentElement.parentElement.remove();
       // keep to do list in sync
       const todoStep = document.getElementById(`todo_step_${el.dataset.id}`);
       if (todoStep) {
         todoStep.parentElement.remove();
       }
+      reloadElements(['stepsDiv']);
     });
   }
 });

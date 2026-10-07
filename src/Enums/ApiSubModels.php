@@ -44,6 +44,7 @@ enum ApiSubModels: string
     case Steps = 'steps';
     case Tags = 'tags';
     case Teamgroups = 'teamgroups';
+    case UploadGroups = 'upload_groups';
     case Uploads = 'uploads';
     case Webhooks = 'webhooks';
 
@@ -78,6 +79,7 @@ enum ApiSubModels: string
                 self::Steps,
                 self::Containers,
                 self::Tags,
+                self::UploadGroups,
                 self::Uploads,
             ),
         );

@@ -73,6 +73,7 @@ use Elabftw\Models\TeamsWebhooks;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
+use Elabftw\Models\UploadGroups;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users2Rors;
@@ -418,6 +419,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::StepGroups => new StepGroups($this->Model, $this->subId),
                 ApiSubModels::Steps => new Steps($this->Model, $this->subId),
                 ApiSubModels::Tags => new Tags($this->Model, $this->subId),
+                ApiSubModels::UploadGroups => new UploadGroups($this->Model, $this->subId),
                 ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::from($this->Model->entityType->value)),
             };

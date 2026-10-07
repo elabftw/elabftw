@@ -1353,6 +1353,20 @@ CREATE TABLE `todolist` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `upload_groups`
+--
+
+CREATE TABLE `upload_groups` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `entity_id` INT UNSIGNED NOT NULL,
+  `entity_type` VARCHAR(255) NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `ordering` INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_upload_groups_entity` (`entity_id`, `entity_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
 -- Table structure for table `uploads`
 --
 
@@ -1362,6 +1376,8 @@ CREATE TABLE `uploads` (
   `long_name` text NOT NULL,
   `comment` text NULL DEFAULT NULL,
   `item_id` int(10) UNSIGNED DEFAULT NULL,
+  `group_id` INT UNSIGNED NULL DEFAULT NULL,
+  `ordering` INT UNSIGNED NULL DEFAULT NULL,
   `userid` int UNSIGNED NOT NULL,
   `type` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1371,7 +1387,9 @@ CREATE TABLE `uploads` (
   `filesize` bigint UNSIGNED NULL DEFAULT NULL,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `immutable` tinyint UNSIGNED NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_uploads_group_id` (`group_id`),
+  CONSTRAINT `fk_uploads_group_id` FOREIGN KEY (`group_id`) REFERENCES `upload_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --

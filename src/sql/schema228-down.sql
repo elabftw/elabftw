@@ -1,4 +1,10 @@
 -- revert schema 228
+CALL DropFK('uploads', 'fk_uploads_group_id');
+CALL DropIdx('uploads', 'idx_uploads_group_id');
+CALL DropColumn('uploads', 'ordering');
+CALL DropColumn('uploads', 'group_id');
+DROP TABLE IF EXISTS `upload_groups`;
+
 CALL DropFK('experiments_steps', 'fk_experiments_steps_group_id');
 CALL DropIdx('experiments_steps', 'idx_experiments_steps_group_id');
 CALL DropColumn('experiments_steps', 'group_id');

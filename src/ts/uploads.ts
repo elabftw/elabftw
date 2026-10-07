@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import $ from 'jquery';
+import 'jquery-ui/ui/widgets/sortable';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
@@ -18,7 +19,7 @@ import {
   sendSpreadsheetMessage,
 } from './spreadsheet-utils';
 import type { SpreadsheetWorkbook } from './spreadsheet-utils';
-import { ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
+import { collectForm, ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
 import DOMPurify from 'dompurify';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
@@ -40,6 +41,7 @@ let spreadsheetSaving = false;
 const spreadsheetIframe = document.getElementById('spreadsheetIframe') as HTMLIFrameElement;
 const replaceSpreadsheetButton = document.getElementById('spreadsheetReplaceAttachment') as HTMLButtonElement;
 const saveSpreadsheetButton = document.getElementById('spreadsheetSaveAsAttachment') as HTMLButtonElement;
+const uploadGroupsEndpoint = `${entity.type}/${entity.id}/upload_groups`;
 
 function processNewFilename(event, original: HTMLElement, parent: HTMLElement): void {
   if (event.key === 'Enter' || event.type === 'blur') {
@@ -103,6 +105,30 @@ on('rename-upload', (el: HTMLElement) => {
   });
   filenameLink.replaceWith(filenameInput);
   filenameInput.focus();
+});
+
+on('toggle-upload-group-form', (el: HTMLElement) => {
+  const form = document.getElementById('addUploadGroupForm');
+  if (!(form instanceof HTMLFormElement)) return;
+  const isHidden = form.toggleAttribute('hidden');
+  el.setAttribute('aria-expanded', String(!isHidden));
+  if (!isHidden) form.querySelector<HTMLInputElement>('input[name="title"]')?.focus();
+});
+
+on('create-upload-group', (_, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('addUploadGroupForm');
+  if (!(form instanceof HTMLFormElement)) return;
+  const params = collectForm(form);
+  const title = String(params['title'] ?? '').trim();
+  if (!title) return;
+  ApiC.post(uploadGroupsEndpoint, {title}).then(() => reloadElements(['uploadsDiv']));
+});
+
+on('destroy-upload-group', (el: HTMLElement) => {
+  if (confirm(i18next.t('generic-delete-warning'))) {
+    ApiC.delete(`${uploadGroupsEndpoint}/${el.dataset.id}`).then(() => reloadElements(['uploadsDiv']));
+  }
 });
 
 on('duplicate-upload', (el: HTMLElement) => {
@@ -202,7 +228,7 @@ on('destroy-upload', (el: HTMLElement) => {
   const uploadid = parseInt(el.dataset.uploadid, 10);
   if (confirm(i18next.t('generic-delete-warning'))) {
     ApiC.delete(`${entity.type}/${entity.id}/${Model.Upload}/${uploadid}`)
-      .then(() => document.getElementById(`uploadDiv_${uploadid}`).remove());
+      .then(() => reloadElements(['uploadsDiv']));
   }
 });
 
@@ -277,6 +303,83 @@ const malleableFilecomment = new Malle({
   tooltip: i18next.t('upload-file-comment'),
 });
 malleableFilecomment.listen();
+
+const malleableUploadGroupTitle = new Malle({
+  cancel : i18next.t('cancel'),
+  cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+  inputClasses: ['form-control'],
+  fun: async (value, original) => ApiC.patch(`${uploadGroupsEndpoint}/${original.dataset.groupid}`, {title: value})
+    .then(resp => resp.json())
+    .then(json => json.title),
+  listenOn: '.upload-group-title.editable',
+  returnedValueIsTrustedHtml: false,
+  submit : i18next.t('save'),
+  submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+  tooltip: i18next.t('click-to-edit'),
+});
+malleableUploadGroupTitle.listen();
+
+let groupedUploadsSyncTimer: number | undefined;
+
+function syncGroupedUploadOrdering(): void {
+  const groupedOrdering = Array.from(document.querySelectorAll<HTMLElement>('.uploads-sortable')).map(container => ({
+    group_id: container.dataset.groupid ? parseInt(container.dataset.groupid, 10) : null,
+    upload_ids: Array.from(container.querySelectorAll<HTMLElement>(':scope > .countable'))
+      .map(upload => parseInt(upload.id.replace('uploadDiv_', ''), 10)),
+  }));
+  ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}`, {grouped_ordering: groupedOrdering})
+    .then(() => reloadElements(['uploadsDiv']));
+}
+
+function scheduleGroupedUploadOrderingSync(): void {
+  window.clearTimeout(groupedUploadsSyncTimer);
+  groupedUploadsSyncTimer = window.setTimeout(syncGroupedUploadOrdering, 0);
+}
+
+function initUploadGroupSortables(): void {
+  const uploadSortables = $('.uploads-sortable');
+  if (uploadSortables.length && $('.upload-sortable-handle').length) {
+    uploadSortables.each(function() {
+      if ($(this).hasClass('ui-sortable')) $(this).sortable('destroy');
+    });
+    uploadSortables.sortable({
+      connectWith: '.uploads-sortable',
+      items: '> .countable',
+      handle: '.upload-sortable-handle',
+      cancel: 'nonSortable',
+      helper: 'clone',
+      dropOnEmpty: true,
+      forcePlaceholderSize: true,
+      placeholder: 'step-sortable-placeholder',
+      tolerance: 'pointer',
+      receive: scheduleGroupedUploadOrderingSync,
+      update: scheduleGroupedUploadOrderingSync,
+    });
+  }
+
+  const groupSortable = $('.upload-groups-sortable');
+  if (groupSortable.length && $('.upload-group-sortable-handle').length) {
+    groupSortable.each(function() {
+      if ($(this).hasClass('ui-sortable')) $(this).sortable('destroy');
+      $(this).sortable({
+        axis: 'y',
+        items: '> .upload-group[data-groupid]',
+        handle: '.upload-group-sortable-handle',
+        cancel: 'nonSortable',
+        helper: 'clone',
+        forcePlaceholderSize: true,
+        placeholder: 'step-group-sortable-placeholder',
+        update: function() {
+          const ordering = Array.from(this.querySelectorAll(':scope > .upload-group[data-groupid]'))
+            .map((group: HTMLElement) => parseInt(group.dataset.groupid, 10));
+          ApiC.patch(uploadGroupsEndpoint, {ordering}).then(() => reloadElements(['uploadsDiv']));
+        },
+      });
+    });
+  }
+}
+
+initUploadGroupSortables();
 
 const markSpreadsheetSaved = (revision: number): void => {
   reloadElements(['uploadsDiv']);
@@ -366,6 +469,8 @@ new MutationObserver(() => {
   displayMoleculeViewer();
   displayPlasmidViewer(entity);
   malleableFilecomment.listen();
+  malleableUploadGroupTitle.listen();
+  initUploadGroupSortables();
   (new Uploader()).init();
   relativeMoment();
   // don't use option {subtree: true} or there is an infinite loop that will destroy the world

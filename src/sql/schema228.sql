@@ -41,6 +41,22 @@ CREATE TABLE `items_types_step_groups` (
     CONSTRAINT `fk_items_types_step_groups_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `upload_groups` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `entity_id` INT UNSIGNED NOT NULL,
+    `entity_type` VARCHAR(255) NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `ordering` INT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`),
+    KEY `idx_upload_groups_entity` (`entity_id`, `entity_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE `uploads`
+    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL AFTER `item_id`,
+    ADD COLUMN `ordering` INT UNSIGNED NULL DEFAULT NULL AFTER `group_id`,
+    ADD KEY `idx_uploads_group_id` (`group_id`),
+    ADD CONSTRAINT `fk_uploads_group_id` FOREIGN KEY (`group_id`) REFERENCES `upload_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
 -- A NULL group_id represents Default group. ON DELETE SET NULL ensures that
 -- deleting a group never deletes its steps. They go to Default group
 ALTER TABLE `experiments_steps`

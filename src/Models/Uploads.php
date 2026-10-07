@@ -45,7 +45,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function mb_substr;
 use function _;
+use function array_column;
+use function array_key_exists;
 use function array_map;
+use function is_array;
 use function base64_decode;
 use function basename;
 use function dirname;
@@ -82,7 +85,7 @@ final class Uploads extends AbstractRest
      * Main method for normal file upload
      * @psalm-suppress UndefinedClass
      */
-    public function create(CreateUploadParamsInterface $params, bool $isTimestamp = false): int
+    public function create(CreateUploadParamsInterface $params, bool $isTimestamp = false, ?int $groupId = null): int
     {
         // by default we need write access to an entity to upload files
         $rw = AccessType::Write;
@@ -91,6 +94,8 @@ final class Uploads extends AbstractRest
             $rw = AccessType::Read;
         }
         $this->Entity->canOrExplode($rw);
+        $this->assertGroupBelongsToEntity($groupId);
+        $ordering = $this->getNextOrdering($groupId);
 
         // original file name
         $realName = $params->getFilename();
@@ -191,6 +196,8 @@ final class Uploads extends AbstractRest
             long_name,
             comment,
             item_id,
+            group_id,
+            ordering,
             userid,
             type,
             hash,
@@ -204,6 +211,8 @@ final class Uploads extends AbstractRest
             :long_name,
             :comment,
             :item_id,
+            :group_id,
+            :ordering,
             :userid,
             :type,
             :hash,
@@ -219,6 +228,8 @@ final class Uploads extends AbstractRest
         $req->bindParam(':long_name', $longName);
         $req->bindValue(':comment', $params->getComment());
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':type', $this->Entity->entityType->value);
         $req->bindValue(':hash', $hash);
@@ -240,11 +251,13 @@ final class Uploads extends AbstractRest
     // entity is target entity
     public function duplicate(AbstractEntity $entity): void
     {
+        $groupMap = new UploadGroups($this->Entity)->duplicate($entity);
         $uploads = $this->selectAll(array(State::Normal));
         $body = $entity->entityData['body'];
         foreach ($uploads as $upload) {
             $param = $this->makeCreateUploadParam($upload);
-            $id = $entity->Uploads->create($param);
+            $groupId = $upload['group_id'] === null ? null : ($groupMap[(int) $upload['group_id']] ?? null);
+            $id = $entity->Uploads->create($param, groupId: $groupId);
             $fresh = new self($entity, $id);
             // replace links in body with the new long_name. Skip if body is null
             if ($body === null) {
@@ -261,7 +274,8 @@ final class Uploads extends AbstractRest
     {
         $this->canWriteOrExplode();
         $param = $this->makeCreateUploadParam($this->uploadData);
-        return $this->Entity->Uploads->create($param);
+        $groupId = $this->uploadData['group_id'] === null ? null : (int) $this->uploadData['group_id'];
+        return $this->Entity->Uploads->create($param, groupId: $groupId);
     }
 
     /**
@@ -310,11 +324,20 @@ final class Uploads extends AbstractRest
         // if no states array is provided, select all
         $states ??= array(State::Normal, State::Archived, State::Deleted);
         $statesSql = sprintf(' AND uploads.state IN (%s)', implode(', ', array_map(fn($state) => $state->value, $states)));
+        $hasGroups = (new UploadGroups($this->Entity))->readAll() !== array();
+        $orderSql = $hasGroups
+            ? '(uploads.group_id IS NOT NULL) ASC, upload_groups.ordering ASC, upload_groups.id ASC, uploads.ordering ASC, uploads.id ASC'
+            : 'uploads.created_at DESC';
         $sql = sprintf(
-            'SELECT uploads.*, CONCAT (users.firstname, " ", users.lastname) AS fullname
-            FROM uploads LEFT JOIN users ON (uploads.userid = users.userid)
-            WHERE item_id = :id AND type = :type %s ORDER BY created_at DESC',
-            $statesSql
+            'SELECT uploads.*, MAX(uploads.id) OVER () AS latest_upload_id, CONCAT (users.firstname, " ", users.lastname) AS fullname
+            FROM uploads
+            LEFT JOIN users ON uploads.userid = users.userid
+            LEFT JOIN upload_groups ON upload_groups.id = uploads.group_id
+                AND upload_groups.entity_id = uploads.item_id
+                AND upload_groups.entity_type = uploads.type
+            WHERE uploads.item_id = :id AND uploads.type = :type %s ORDER BY %s',
+            $statesSql,
+            $orderSql,
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
@@ -337,6 +360,19 @@ final class Uploads extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        if ($action === Action::Update && $this->id === null && array_key_exists('grouped_ordering', $params)) {
+            $this->Entity->canOrExplode(AccessType::Write);
+            if (!is_array($params['grouped_ordering'])) {
+                throw new ImproperActionException(_('Invalid grouped uploads ordering.'));
+            }
+            $this->updateGroupedOrdering($params['grouped_ordering']);
+            $this->Entity->touch();
+            new Changelog($this->Entity)->create(new ContentParams('uploads', Action::Update->value));
+            return $this->readAll();
+        }
+        if ($this->id === null) {
+            throw new ImproperActionException(_('An upload id is required for this update.'));
+        }
         $this->canWriteOrExplode();
         $this->Entity->touch();
         if ($action === Action::Archive) {
@@ -357,12 +393,16 @@ final class Uploads extends AbstractRest
             ? Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody)
             : ($this->uploadData['real_name']
                 ?? Guard::getNonEmptyStringValueOfRequiredParam('real_name', $reqBody));
+        $groupId = ($reqBody['group_id'] ?? null) === null || ($reqBody['group_id'] ?? '') === ''
+            ? null
+            : (int) $reqBody['group_id'];
         return match ($action) {
             Action::Create => $this->create(
-                new CreateUploadFromUploadedFile(new UploadedFile($reqBody['filePath'], $realName), $reqBody['comment'])
+                new CreateUploadFromUploadedFile(new UploadedFile($reqBody['filePath'], $realName), $reqBody['comment']),
+                groupId: $groupId,
             ),
             Action::CreateFromString => (
-                function () use ($reqBody, $realName) {
+                function () use ($reqBody, $realName, $groupId) {
                     $fileType = FileFromString::tryFrom($reqBody['file_type']);
                     if ($fileType === null) {
                         throw new ImproperActionException(sprintf('Invalid file_type parameter. Valid values are: %s.', FileFromString::toCsList()));
@@ -370,7 +410,7 @@ final class Uploads extends AbstractRest
                     if (empty($reqBody['content'])) {
                         throw new ImproperActionException('Cannot create file from string with empty content!');
                     }
-                    return $this->createFromString($fileType, $realName, $reqBody['content']);
+                    return $this->createFromString($fileType, $realName, $reqBody['content'], groupId: $groupId);
                 }
             )(),
             Action::Duplicate => $this->duplicateOne(),
@@ -446,7 +486,7 @@ final class Uploads extends AbstractRest
     /**
      * Create an upload from a string (binary png data or json string or mol file)
      */
-    public function createFromString(FileFromString $fileType, string $realName, string $content, State $state = State::Normal): int
+    public function createFromString(FileFromString $fileType, string $realName, string $content, State $state = State::Normal, ?int $groupId = null): int
     {
         // a png file will be received as dataurl, so we need to convert it to binary before saving it
         if ($fileType === FileFromString::Png) {
@@ -462,7 +502,7 @@ final class Uploads extends AbstractRest
         $tmpFilePathFs = FsTools::getFs(dirname($tmpFilePath));
         $tmpFilePathFs->write(basename($tmpFilePath), $content);
 
-        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state));
+        return $this->create(new CreateUpload($realName, $tmpFilePath, state: $state), groupId: $groupId);
     }
 
     /**
@@ -471,8 +511,9 @@ final class Uploads extends AbstractRest
      */
     public function replace(CreateUploadParamsInterface $params): int
     {
+        $groupId = $this->uploadData['group_id'] === null ? null : (int) $this->uploadData['group_id'];
         $this->archive();
-        return $this->create($params);
+        return $this->create($params, groupId: $groupId);
     }
 
     // transfer ownership of all uploaded files for an entity, except immutable ones
@@ -533,6 +574,60 @@ final class Uploads extends AbstractRest
         );
         $Changelog->create($contentParams);
         return $this->Db->execute($req);
+    }
+
+    private function updateGroupedOrdering(array $groups): void
+    {
+        $uploads = array_column($this->selectAll(array(State::Normal, State::Archived)), null, 'id');
+        $seen = array();
+        $sql = 'UPDATE uploads SET group_id = :group_id, ordering = :ordering WHERE id = :id AND item_id = :entity_id AND type = :entity_type';
+        $req = $this->Db->prepare($sql);
+        foreach ($groups as $group) {
+            if (!is_array($group) || !array_key_exists('upload_ids', $group) || !is_array($group['upload_ids'])) {
+                throw new ImproperActionException(_('Invalid grouped uploads ordering.'));
+            }
+            $rawGroupId = $group['group_id'] ?? null;
+            $groupId = $rawGroupId === null || $rawGroupId === '' ? null : (int) $rawGroupId;
+            $this->assertGroupBelongsToEntity($groupId);
+
+            foreach ($group['upload_ids'] as $ordering => $rawUploadId) {
+                $uploadId = (int) $rawUploadId;
+                if (!array_key_exists($uploadId, $uploads) || isset($seen[$uploadId])) {
+                    throw new ImproperActionException(_('Cannot reorder an upload that does not belong to this entity.'));
+                }
+                $seen[$uploadId] = true;
+                $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+                $req->bindValue(':ordering', $ordering, PDO::PARAM_INT);
+                $req->bindValue(':id', $uploadId, PDO::PARAM_INT);
+                $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+                $req->bindValue(':entity_type', $this->Entity->entityType->value);
+                $this->Db->execute($req);
+            }
+        }
+    }
+
+    private function assertGroupBelongsToEntity(?int $groupId): void
+    {
+        if ($groupId === null) {
+            return;
+        }
+        if ($groupId < 1) {
+            throw new ImproperActionException(_('Invalid upload group.'));
+        }
+        new UploadGroups($this->Entity, $groupId)->readOne();
+    }
+
+    private function getNextOrdering(?int $groupId): int
+    {
+        $sql = 'SELECT COALESCE(MAX(ordering), -1) + 1 FROM uploads
+            WHERE item_id = :entity_id AND type = :entity_type AND group_id <=> :group_id AND state != :state_deleted';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':entity_type', $this->Entity->entityType->value);
+        $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindValue(':state_deleted', State::Deleted->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     /**

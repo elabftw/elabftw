@@ -1029,6 +1029,16 @@ the form-control fails to do that so we do the border ourselves */
   min-height: 3rem;
 }
 
+.upload-group-drop-target {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+  min-height: 3rem;
+}
+
+tr.upload-group-drop-target td {
+  height: 3rem;
+}
+
 .finished {
   color: var(--green);
 }

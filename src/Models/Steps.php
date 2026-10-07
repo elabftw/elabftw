@@ -381,7 +381,7 @@ final class Steps extends AbstractRest
         return $this->Db->execute($req);
     }
 
-     // Apply the complete group/step layout sent after drag and drop
+    // Apply the complete group/step layout sent after drag and drop
     private function updateGroupedOrdering(array $groups): void
     {
         $steps = array_column($this->readAll(), null, 'id');

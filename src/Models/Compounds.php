@@ -458,9 +458,12 @@ final class Compounds extends AbstractRest
         $this->setId($id);
         $this->update(new CompoundParams('state', State::Normal->value));
         foreach ($compoundData as $key => $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
             // Do not update empty pubchem_cid during upsert.
             // This avoids errors on this unique nullable field.
-            if ($key === 'pubchem_cid' && ($value === null || $value === '')) {
+            if ($key === 'pubchem_cid') {
                 continue;
             }
 

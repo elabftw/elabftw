@@ -126,8 +126,8 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
 
         $result = TwigFilters::formatMetadata($metadataJson);
 
-        $this->assertStringContainsString('<p class="metadata-value"><span class="badge badge-pill badge-light metadata-value-label">Calibrated</span><br><input class="d-block" disabled type="checkbox" checked="checked"></p>', $result);
-        $this->assertStringContainsString('<p class="metadata-value"><span class="badge badge-pill badge-light metadata-value-label">Reviewed &lt;&amp;&quot; done</span><br><input class="d-block" disabled type="checkbox"></p>', $result);
+        $this->assertStringContainsString('<p><span class="badge badge-pill badge-light">Calibrated</span><br><input class="d-block" disabled type="checkbox" checked="checked"></p>', $result);
+        $this->assertStringContainsString('<p><span class="badge badge-pill badge-light">Reviewed &lt;&amp;&quot; done</span><br><input class="d-block" disabled type="checkbox"></p>', $result);
     }
 
     public function testFormatMetadataWithPartialValueLabels(): void
@@ -147,9 +147,9 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
 
         $result = TwigFilters::formatMetadata($metadataJson);
 
-        $this->assertStringContainsString('metadata-value-label">0</span><br>1 mg</p><p>2 mg</p>', $result);
-        $this->assertStringContainsString('metadata-value-label">&lt;img src=x onerror=alert(1)&gt;</span><br>3 mg</p>', $result);
-        $this->assertStringContainsString('metadata-value-label">first</span><br>A</p><p>B</p>', $result);
+        $this->assertStringContainsString('">0</span><br>1 mg</p><p>2 mg</p>', $result);
+        $this->assertStringContainsString('">&lt;img src=x onerror=alert(1)&gt;</span><br>3 mg</p>', $result);
+        $this->assertStringContainsString('">first</span><br>A</p><p>B</p>', $result);
         $this->assertStringContainsString('<p>C</p>', $result);
         $this->assertStringNotContainsString('<img', $result);
     }

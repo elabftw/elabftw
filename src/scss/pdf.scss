@@ -55,17 +55,11 @@ code {
   list-style-type: none;
 }
 
-// PDF exports do not load Bootstrap's badge/spacing utilities.
-.metadata-value {
-  line-height: 1.6;
-  margin: 0.5em 0 1em;
-}
-
-.metadata-value-label {
-  background-color: $firstlevel;
-  color: $medium;
-  font-size: 90%;
-  font-weight: normal;
+// mimic bootstrap badge: note: border-radius doesn't work on span elements
+.badge {
+  background-color: #eee;
+  font-size: 80%;
+  white-space: nowrap;
 }
 
 /* fix table being collapsed on export */

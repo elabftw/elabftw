@@ -449,37 +449,6 @@ final class Compounds extends AbstractRest
         return $compoundId;
     }
 
-    /**
-     * Find existing compound to perform an upsert.
-     * Compare in db using unique keys (find at structure.sql - 159)
-     */
-    public function findCompoundByUniqueKey(array $uniqueKeys): ?int
-    {
-        // Missing identifiers cannot identify an existing compound.
-        $uniqueKeys = array_filter(
-            $uniqueKeys,
-            static fn($value): bool => $value !== null && (!is_string($value) || trim($value) !== ''),
-        );
-        if ($uniqueKeys === array()) {
-            return null;
-        }
-
-        $params = array_map(fn($key) => "$key = :$key", array_keys($uniqueKeys));
-        $sql = sprintf(
-            'SELECT id FROM compounds WHERE %s LIMIT 1',
-            implode(' OR ', $params)
-        );
-        $req = $this->Db->prepare($sql);
-
-        foreach ($uniqueKeys as $key => $value) {
-            $req->bindValue(":$key", $value);
-        }
-        $this->Db->execute($req);
-        $result = $req->fetch(PDO::FETCH_ASSOC);
-
-        return $result ? (int) $result['id'] : null;
-    }
-
     /*
      * Update the existing compound with incoming data.
      * For deleted compounds, restore by setting the state to 1.
@@ -547,6 +516,37 @@ final class Compounds extends AbstractRest
         if (!$this->canWrite()) {
             throw new ForbiddenException();
         }
+    }
+
+    /**
+     * Find existing compound to perform an upsert.
+     * Compare in db using unique keys (find at structure.sql - 159)
+     */
+    private function findCompoundByUniqueKey(array $uniqueKeys): ?int
+    {
+        // Missing identifiers cannot identify an existing compound.
+        $uniqueKeys = array_filter(
+            $uniqueKeys,
+            static fn($value): bool => $value !== null && (!is_string($value) || trim($value) !== ''),
+        );
+        if ($uniqueKeys === array()) {
+            return null;
+        }
+
+        $params = array_map(fn($key) => "$key = :$key", array_keys($uniqueKeys));
+        $sql = sprintf(
+            'SELECT id FROM compounds WHERE %s LIMIT 1',
+            implode(' OR ', $params)
+        );
+        $req = $this->Db->prepare($sql);
+
+        foreach ($uniqueKeys as $key => $value) {
+            $req->bindValue(":$key", $value);
+        }
+        $this->Db->execute($req);
+        $result = $req->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? (int) $result['id'] : null;
     }
 
     private function canReadOrExplode(): void

@@ -874,8 +874,12 @@ export class Metadata {
    * color coming from the API degrades to a neutral badge instead of
    * breaking the rendering of the whole metadata block.
    */
-  static normalizeColor(color?: string): string|null {
-    if (!color) {
+  static normalizeColor(color?: unknown): string|null {
+    // metadata is free-form json, so the color is only a string by convention:
+    // a numeric one would throw on startsWith() below and the exception would
+    // travel up through getGroups() to display(), leaving the whole metadata
+    // block unrendered over one bad field. the php side guards the same way
+    if (typeof color !== 'string' || color === '') {
       return null;
     }
     const stripped = color.startsWith('#') ? color.slice(1) : color;

@@ -7,7 +7,7 @@ title: Scheduler
 
 It is possible to use the scheduler (calendar) to book Resources.
 
-Before proceeding, make sure you have a **bookable resource**. See [Make a resource bookable](./resources#making-a-resource-bookable) section.
+Before proceeding, make sure you have a **bookable resource**. See [Make a resource bookable](./resources.md#making-a-resource-bookable) section.
 
 Select an item by typing its name in the search bar.
 <figure>
@@ -136,4 +136,4 @@ By default, it will match the `Visibility` permission of the entry, but it can b
 
 ## Archiving and deleting resources
 
-Resources can be archived or deleted just like experiments. The behavior is the exact same. See [Archival](./experiments#archival) section.
+Resources can be archived or deleted just like experiments. The behavior is the exact same. See [Archival](./experiments.md#archival) section.

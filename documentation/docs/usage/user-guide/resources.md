@@ -33,11 +33,11 @@ Resources default permissions allow anyone from the Team to edit them, but you a
 
 ## Imports
 
-Look at the [Importing data](../import-export#importing-data) section to learn how to import your Resources from a spreadsheet file or through the API.
+Look at the [Importing data](../import-export.md#importing-data) section to learn how to import your Resources from a spreadsheet file or through the API.
 
 ## Links
 Once you have your Resources present, you can mention them in your Experiments by typing `#` and their title, and selecting the proposed autocompletion, or use directly the Link system to link them to an Experiment.
-See [Links](./experiments#linked-resourcesexperiments) section.
+See [Links](./experiments.md#linked-resourcesexperiments) section.
 
 Furthermore, Resources can be made bookable, see section below.
 
@@ -91,7 +91,7 @@ The scheduler page loads with the selected item:
   <figcaption>Create an event along with recurring bookings.</figcaption>
 </figure>
 
-You can now move on to the [Scheduler](./scheduler) section to see how to work with your events.
+You can now move on to the [Scheduler](./scheduler.md) section to see how to work with your events.
 
 ## Making a Resource procurable
 

@@ -1,7 +1,27 @@
 import React, {useEffect, type ReactNode} from 'react';
+import Link from '@docusaurus/Link';
+import {
+  useDocsPreferredVersion,
+  useLatestVersion,
+} from '@docusaurus/plugin-content-docs/client';
 import Details from '@theme/Details';
 import {useLocation} from '@docusaurus/router';
 import styles from './styles.module.css';
+
+function DocLink({docId, children}: {docId: string; children: ReactNode}): ReactNode {
+  const latestVersion = useLatestVersion(undefined);
+  const {preferredVersion} = useDocsPreferredVersion();
+  const version = preferredVersion ?? latestVersion;
+  const doc = version.docs.find(candidate => candidate.id === docId);
+
+  if (!doc) {
+    throw new Error(
+      `Documentation page "${docId}" does not exist in version "${version.name}".`,
+    );
+  }
+
+  return <Link to={doc.path}>{children}</Link>;
+}
 
 type FAQItem = {
   id: string;
@@ -64,7 +84,7 @@ const FAQ: FAQItem[] = [
           <li>You can import your old database stored in an excel file</li>
           <li>You can use it in your language</li>
           <li>
-            <a href="/docs/features">and much more…</a>
+            <DocLink docId="usage/user-guide/intro">and much more…</DocLink>
           </li>
         </ul>
         <p>
@@ -91,7 +111,7 @@ const FAQ: FAQItem[] = [
           if an issue is found it is quickly reported and fixed.
         </p>
         <p>
-          However, having an automated <a href="/docs/install/backup">backup</a> strategy is mandatory in
+          However, having an automated <DocLink docId="install/backups">backup</DocLink> strategy is mandatory in
           order to be sure <strong>nothing will be lost</strong>.
         </p>
         <p>Being able to do backups is yet another advantage over paper (you can't backup paper!).</p>
@@ -153,7 +173,7 @@ const FAQ: FAQItem[] = [
       <>
         <p>
           Yes. You can import data into the database from a file, either from the web interface, or by using a dedicated import script. See{" "}
-          <a href="/docs/tutorials/import-csv">Tutorial to import data programmatically</a>.
+          <DocLink docId="tutorials/import-csv">Tutorial to import data programmatically</DocLink>.
         </p>
       </>
     ),

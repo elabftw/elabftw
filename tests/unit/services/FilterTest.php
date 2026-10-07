@@ -56,6 +56,12 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(str_repeat('A', 255), Filter::title(str_repeat('A', 260)));
     }
 
+    public function testToAsciiSlug(): void
+    {
+        $this->assertEquals('test-export-07-10-2026', Filter::toAsciiSlug('test export 07/10/2026'));
+        $this->assertEquals('From-07-10-2026-to-10-10-2026', Filter::toAsciiSlug('From 07/10/2026 to 10/10/2026'));
+    }
+
     public function testBody(): void
     {
         $this->assertEquals('my body', Filter::body('my body'));

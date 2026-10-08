@@ -88,9 +88,7 @@ final class StepGroups extends AbstractRest
         // otherwise lastInsertId() would no longer point to the new step group
         $id = $this->Db->lastInsertId();
         $this->Entity->touch();
-        new Changelog($this->Entity)->create(
-            new ContentParams('step_groups', Action::Create->value)
-        );
+        new Changelog($this->Entity)->create(new ContentParams('step_groups', sprintf('Created step group "%s" with id: %d', $title, $id)));
         return $id;
     }
 
@@ -109,7 +107,7 @@ final class StepGroups extends AbstractRest
             }
             $this->updateOrdering($params['ordering']);
             $this->Entity->touch();
-            new Changelog($this->Entity)->create(new ContentParams('step_groups', Action::Update->value));
+            new Changelog($this->Entity)->create(new ContentParams('step_groups', 'Reordered step groups'));
             return $this->readAll();
         }
 
@@ -117,6 +115,7 @@ final class StepGroups extends AbstractRest
             throw new ImproperActionException('Invalid parameter for step groups.');
         }
         $title = Filter::title((string) $params['title']);
+        $previousTitle = $this->readOne()['title'];
         $sql = sprintf('UPDATE %s SET title = :title WHERE id = :id AND entity_id = :entity_id', $this->getTable());
         $req = $this->Db->prepare($sql);
         $req->bindValue(':title', $title);
@@ -124,7 +123,7 @@ final class StepGroups extends AbstractRest
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $this->Entity->touch();
-        new Changelog($this->Entity)->create(new ContentParams('step_groups', Action::Update->value));
+        new Changelog($this->Entity)->create(new ContentParams('step_groups', sprintf('Renamed step group with id: %d from "%s" to "%s"', $this->id, $previousTitle, $title)));
         return $this->readOne();
     }
 
@@ -132,7 +131,7 @@ final class StepGroups extends AbstractRest
     public function destroy(bool $recursive = false): bool
     {
         $this->Entity->canOrExplode(AccessType::Write);
-        $this->readOne();
+        $title = $this->readOne()['title'];
 
         // The steps FK uses ON DELETE SET NULL to move steps to Default group
         $sql = sprintf('DELETE FROM %s WHERE id = :id AND entity_id = :entity_id', $this->getTable());
@@ -142,7 +141,7 @@ final class StepGroups extends AbstractRest
         $result = $this->Db->execute($req);
         $this->normalizeUngroupedStepOrdering();
         $this->Entity->touch();
-        new Changelog($this->Entity)->create(new ContentParams('step_groups', Action::Destroy->value));
+        new Changelog($this->Entity)->create(new ContentParams('step_groups', sprintf('Deleted step group "%s" with id: %d', $title, $this->id)));
         return $result;
     }
 

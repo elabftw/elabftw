@@ -83,4 +83,19 @@ final class StepGroupsTest extends TestCase
         $this->assertSame('Acquisition', $groups[0]['title']);
         $this->assertSame((int) $groups[0]['id'], (int) $steps[0]['group_id']);
     }
+
+    public function testChangelogDescribesGroupChanges(): void
+    {
+        $groupId = $this->StepGroups->postAction(Action::Create, array('title' => 'Preparation'));
+        $Group = new StepGroups($this->Experiments, $groupId);
+        $Group->patch(Action::Update, array('title' => 'Sample preparation'));
+        $this->StepGroups->patch(Action::Update, array('ordering' => array($groupId)));
+        $this->assertTrue($Group->destroy());
+
+        $entries = array_column((new Changelog($this->Experiments))->readAll(), 'content');
+        $this->assertContains(sprintf('Created step group "Preparation" with id: %d', $groupId), $entries);
+        $this->assertContains(sprintf('Renamed step group with id: %d from "Preparation" to "Sample preparation"', $groupId), $entries);
+        $this->assertContains('Reordered step groups', $entries);
+        $this->assertContains(sprintf('Deleted step group "Sample preparation" with id: %d', $groupId), $entries);
+    }
 }

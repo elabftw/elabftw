@@ -89,4 +89,19 @@ final class UploadGroupsTest extends TestCase
         $this->assertSame('Microscopy', $groups[0]['title']);
         $this->assertSame((int) $groups[0]['id'], (int) $uploads[0]['group_id']);
     }
+
+    public function testChangelogDescribesGroupChanges(): void
+    {
+        $groupId = $this->UploadGroups->postAction(Action::Create, array('title' => 'Preparation'));
+        $Group = new UploadGroups($this->Experiments, $groupId);
+        $Group->patch(Action::Update, array('title' => 'Sample preparation'));
+        $this->UploadGroups->patch(Action::Update, array('ordering' => array($groupId)));
+        $this->assertTrue($Group->destroy());
+
+        $entries = array_column((new Changelog($this->Experiments))->readAll(), 'content');
+        $this->assertContains(sprintf('Created upload group "Preparation" with id: %d', $groupId), $entries);
+        $this->assertContains(sprintf('Renamed upload group with id: %d from "Preparation" to "Sample preparation"', $groupId), $entries);
+        $this->assertContains('Reordered upload groups', $entries);
+        $this->assertContains(sprintf('Deleted upload group "Sample preparation" with id: %d', $groupId), $entries);
+    }
 }

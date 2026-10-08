@@ -94,7 +94,7 @@ final class UploadGroups extends AbstractRest
         $this->Db->execute($req);
         $id = $this->Db->lastInsertId();
         $this->Entity->touch();
-        new Changelog($this->Entity)->create(new ContentParams('upload_groups', Action::Create->value));
+        new Changelog($this->Entity)->create(new ContentParams('upload_groups', sprintf('Created upload group "%s" with id: %d', $title, $id)));
         return $id;
     }
 
@@ -111,7 +111,7 @@ final class UploadGroups extends AbstractRest
             }
             $this->updateOrdering($params['ordering']);
             $this->Entity->touch();
-            new Changelog($this->Entity)->create(new ContentParams('upload_groups', Action::Update->value));
+            new Changelog($this->Entity)->create(new ContentParams('upload_groups', 'Reordered upload groups'));
             return $this->readAll();
         }
 
@@ -119,6 +119,7 @@ final class UploadGroups extends AbstractRest
             throw new ImproperActionException('Invalid parameter for upload groups.');
         }
         $title = Filter::title((string) $params['title']);
+        $previousTitle = $this->readOne()['title'];
         $sql = 'UPDATE upload_groups SET title = :title WHERE id = :id AND entity_id = :entity_id AND entity_type = :entity_type';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':title', $title);
@@ -127,7 +128,7 @@ final class UploadGroups extends AbstractRest
         $req->bindValue(':entity_type', $this->Entity->entityType->toInt(), PDO::PARAM_INT);
         $this->Db->execute($req);
         $this->Entity->touch();
-        new Changelog($this->Entity)->create(new ContentParams('upload_groups', Action::Update->value));
+        new Changelog($this->Entity)->create(new ContentParams('upload_groups', sprintf('Renamed upload group with id: %d from "%s" to "%s"', $this->id, $previousTitle, $title)));
         return $this->readOne();
     }
 
@@ -135,7 +136,7 @@ final class UploadGroups extends AbstractRest
     public function destroy(bool $recursive = false): bool
     {
         $this->Entity->canOrExplode(AccessType::Write);
-        $this->readOne();
+        $title = $this->readOne()['title'];
 
         // The uploads FK uses ON DELETE SET NULL to move files to Default group
         $sql = 'DELETE FROM upload_groups WHERE id = :id AND entity_id = :entity_id AND entity_type = :entity_type';
@@ -146,7 +147,7 @@ final class UploadGroups extends AbstractRest
         $result = $this->Db->execute($req);
         $this->normalizeDefaultUploadOrdering();
         $this->Entity->touch();
-        new Changelog($this->Entity)->create(new ContentParams('upload_groups', Action::Destroy->value));
+        new Changelog($this->Entity)->create(new ContentParams('upload_groups', sprintf('Deleted upload group "%s" with id: %d', $title, $this->id)));
         return $result;
     }
 

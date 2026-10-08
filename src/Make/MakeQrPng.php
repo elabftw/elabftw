@@ -45,9 +45,9 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
 
     private const int SPACE_UNDER_QR = 15;
 
-    protected string $contentType = 'image/png';
+    private const DEFAULT_TITLE_FONT_SIZE = 16;
 
-    private int $fontSize = 16;
+    protected string $contentType = 'image/png';
 
     public function __construct(
         private IQRCodeProvider $qrCodeProvider,
@@ -56,11 +56,13 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
         private bool $withTitle = true,
         private int $maxLines = 0,
         private int $maxLineChars = 0,
+        private int $titleFontSize = 0,
     ) {
         // 0 means no query parameter for size
         $this->size = $this->size > 0 ? $this->size : self::DEFAULT_IMAGE_SIZE_PX;
         $this->maxLineChars = $this->maxLineChars > 0 ? $this->maxLineChars : self::DEFAULT_MAX_LINE_CHARS;
         $this->maxLines = $this->maxLines > 0 ? $this->maxLines : self::DEFAULT_MAX_LINES;
+        $this->titleFontSize = $this->titleFontSize > 0 ? $this->titleFontSize : self::DEFAULT_TITLE_FONT_SIZE;
     }
 
     #[Override]
@@ -82,7 +84,7 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
         $draw = new ImagickDraw();
         $draw->setTextAlignment(Imagick::ALIGN_LEFT);
         $draw->setFont(dirname(__DIR__, 2) . '/vendor/mpdf/mpdf/ttfonts/Sun-ExtA.ttf');
-        $draw->setFontSize($this->fontSize);
+        $draw->setFontSize($this->titleFontSize);
 
 
         // Create a new image to hold the qrcode + text

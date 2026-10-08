@@ -48,6 +48,15 @@
           <input type='number' min='1' max='1337' class='form-control col-md-3' value='29' id='qrpng_exportTitleChars'>
         </div>
 
+        {# TITLE FONT SIZE #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div>
+            <label class='d-inline mr-1' for='qrpng_exportTitleFontSize'>{{ 'Title font size'|trans }}</label>
+            <p class='smallgray'>{{ 'Adjust the font size of the title'|trans }}</p>
+          </div>
+          <input type='number' min='1' max='80' class='form-control col-md-3' value='16' id='qrpng_exportTitleFontSize'>
+        </div>
+
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>

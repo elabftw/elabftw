@@ -44,6 +44,7 @@ use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
@@ -264,6 +265,16 @@ final class Populate
                     rating: $experiment['rating'] ?? 0,
                 );
                 $Experiments->setId($id);
+                if (isset($experiment['step_groups'])) {
+                    $StepGroups = new StepGroups($Experiments);
+                    $Steps = new Steps($Experiments);
+                    foreach ($experiment['step_groups'] as $group) {
+                        $groupId = $StepGroups->postAction(Action::Create, array('title' => $group['title']));
+                        foreach ($group['steps'] ?? array() as $step) {
+                            $Steps->postAction(Action::Create, array('body' => $step, 'group_id' => $groupId));
+                        }
+                    }
+                }
                 if (isset($experiment['locked'])) {
                     $Experiments->toggleLock();
                 }

@@ -30,6 +30,7 @@ use function count;
 use function implode;
 use function sprintf;
 use function strtotime;
+use function usleep;
 
 /**
  * Timestamp experiments in bulk
@@ -38,6 +39,10 @@ use function strtotime;
 final class ExperimentsTimestamp extends Command
 {
     private const int TOLERANCE = 5;
+
+    private const int SLEEP_RETRY_TIMESTAMP = 100000; // in us
+
+    private const int MAX_RETRIES_TIMESTAMP = 5;
 
     #[Override]
     protected function configure(): void
@@ -96,12 +101,17 @@ final class ExperimentsTimestamp extends Command
                 $output->writeln(sprintf('Timestamping experiment %d', $exp['id']));
             }
             $Experiments->setId($exp['id']);
-            try {
-                $Experiments->timestamp();
-            } catch (Exception $e) {
-                $output->writeln(sprintf('Error timestamping experiment with ID %d: %s', $exp['id'], $e->getMessage()));
+            for ($retry_count = 0; $retry_count < self::MAX_RETRIES_TIMESTAMP; $retry_count++) {
+                try {
+                    $Experiments->timestamp();
+                    break;
+                } catch (Exception $e) {
+                    if ($retry_count === self::MAX_RETRIES_TIMESTAMP - 1) {
+                        $output->writeln(sprintf('Error timestamping experiment with ID %d: %s', $exp['id'], $e->getMessage()));
+                    }
+                    usleep(self::SLEEP_RETRY_TIMESTAMP);
+                }
             }
-
         }
 
         return 0;

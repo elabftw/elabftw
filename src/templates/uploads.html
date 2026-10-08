@@ -31,6 +31,18 @@
   {% endif %}
 {% endmacro %}
 
+{% macro uploadTableHeader() %}
+  <thead>
+    <tr>
+      <th scope='col' class='col-4'>{{ 'Filename'|trans }}</th>
+      <th scope='col'>{{ 'Comment'|trans }}</th>
+      <th scope='col'>{{ 'Creation date'|trans }}</th>
+      <th scope='col'>{{ 'Filesize'|trans }}</th>
+      <th scope='col'><span class='sr-only'>{{ 'Actions'|trans }}</span></th>
+    </tr>
+  </thead>
+{% endmacro %}
+
 {# Modal to display plain text content #}
 <div class='modal fade' id='plainTextModal' tabindex='-1' role='dialog' aria-labelledby='plainTextModalLabel'>
   <div class='modal-dialog modal-lg' role='document'>
@@ -92,15 +104,7 @@
         {% include 'filter-input-snippet.html' with {'target': 'uploadsTable'} %}
         <div class='table'>
           <table class='table mt-3' aria-label='{{ 'Attached files'|trans }}' data-table-sort='true'>
-            <thead>
-              <tr>
-                <th scope='col' class='col-4'>{{ 'Filename'|trans }}</th>
-                <th scope='col'>{{ 'Comment'|trans }}</th>
-                <th scope='col'>{{ 'Creation date'|trans }}</th>
-                <th scope='col'>{{ 'Filesize'|trans }}</th>
-                <th scope='col'><span class='sr-only'>{{ 'Actions'|trans }}</span></th>
-              </tr>
-            </thead>
+            {{ _self.uploadTableHeader() }}
             <tbody id='uploadsTable'>
               {% for upload in Entity.entityData.uploads %}
                 {% include 'upload-table-row.html' %}
@@ -124,15 +128,7 @@
             <div id='upload_group_body_default' class='step-group-body px-3 py-2' data-save-hidden='upload_group_body_default'>
               <div class='table mb-0'>
                 <table class='table mb-0' aria-label='{{ 'Attached files'|trans }}'>
-                  <thead>
-                    <tr>
-                      <th scope='col' class='col-4'>{{ 'Filename'|trans }}</th>
-                      <th scope='col'>{{ 'Comment'|trans }}</th>
-                      <th scope='col'>{{ 'Creation date'|trans }}</th>
-                      <th scope='col'>{{ 'Filesize'|trans }}</th>
-                      <th scope='col'><span class='sr-only'>{{ 'Actions'|trans }}</span></th>
-                    </tr>
-                  </thead>
+                  {{ _self.uploadTableHeader() }}
                   <tbody class='uploads-sortable' data-groupid=''>
                     {% for upload in defaultUploads %}
                       {% include 'upload-table-row.html' %}
@@ -153,15 +149,7 @@
               <div id='upload_group_body_{{ group.id }}' class='step-group-body px-3 py-2' data-save-hidden='upload_group_body_{{ group.id }}'>
                 <div class='table mb-0'>
                   <table class='table mb-0' aria-label='{{ 'Attached files'|trans }}'>
-                    <thead>
-                      <tr>
-                        <th scope='col' class='col-4'>{{ 'Filename'|trans }}</th>
-                        <th scope='col'>{{ 'Comment'|trans }}</th>
-                        <th scope='col'>{{ 'Creation date'|trans }}</th>
-                        <th scope='col'>{{ 'Filesize'|trans }}</th>
-                        <th scope='col'><span class='sr-only'>{{ 'Actions'|trans }}</span></th>
-                      </tr>
-                    </thead>
+                    {{ _self.uploadTableHeader() }}
                     <tbody class='uploads-sortable' data-groupid='{{ group.id }}'>
                       {% for upload in groupUploads %}
                         {% include 'upload-table-row.html' %}

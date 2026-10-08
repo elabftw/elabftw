@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import 'jquery-ui/ui/widgets/sortable';
 import { Action as MalleAction, Malle } from '@deltablot/malle';
 import '@fancyapps/fancybox/dist/jquery.fancybox.js';
 import { Action, Model } from './interfaces';
@@ -33,6 +32,7 @@ import { notify } from './notify';
 import { read as readXlsx, utils as xlsxUtils } from '@e965/xlsx';
 import { on } from './handlers';
 import { createGroupedSortables } from './grouped-sortables';
+
 type Cell = string | number | boolean | null;
 let spreadsheetUpload: { id: number; name: string } | null = null;
 let spreadsheetDirty = false;

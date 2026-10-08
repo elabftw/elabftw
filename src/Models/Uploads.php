@@ -334,7 +334,7 @@ final class Uploads extends AbstractRest
             LEFT JOIN users ON uploads.userid = users.userid
             LEFT JOIN upload_groups ON upload_groups.id = uploads.group_id
                 AND upload_groups.entity_id = uploads.item_id
-                AND upload_groups.entity_type = uploads.type
+                AND upload_groups.entity_type = :group_entity_type
             WHERE uploads.item_id = :id AND uploads.type = :type %s ORDER BY %s',
             $statesSql,
             $orderSql,
@@ -342,6 +342,7 @@ final class Uploads extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':type', $this->Entity->entityType->value);
+        $req->bindValue(':group_entity_type', $this->Entity->entityType->toInt(), PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $req->fetchAll();

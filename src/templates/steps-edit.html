@@ -5,7 +5,7 @@
 <div id='stepsDiv' class='mt-2' data-count-for='stepsCount' data-save-hidden='stepsDiv'>
   {# LOCK ALL STEPS #}
   {% if Entity.entityType.value in ['experiments_templates', 'items_types'] and (Entity.entityData.steps|length > 0) %}
-  {% set allLocked = (Entity.entityData.steps|length > 0) and (Entity.entityData.steps|filter(s => s.is_immutable == 1)|length == Entity.entityData.steps|length) %}
+  {% set allLocked = Entity.entityData.steps|filter(s => s.is_immutable == 1)|length == Entity.entityData.steps|length %}
   <div class='d-flex'>
     <label for='toggle-all-steps' class='col-form-label mr-2'>{{ 'Lock / Unlock all steps'|trans }}</label>
     <label class='switch ucp-align'>

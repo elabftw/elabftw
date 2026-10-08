@@ -134,14 +134,7 @@ final class StepGroups extends AbstractRest
         $this->Entity->canOrExplode(AccessType::Write);
         $this->readOne();
 
-        // Deleting a group must keep its steps. Move them back to Default group
-        // before removing the group itself.
-        $stepSql = sprintf('UPDATE %s_steps SET group_id = NULL WHERE item_id = :item_id AND group_id = :group_id', $this->Entity->entityType->value);
-        $stepReq = $this->Db->prepare($stepSql);
-        $stepReq->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $stepReq->bindParam(':group_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($stepReq);
-
+        // The steps FK uses ON DELETE SET NULL to move steps to Default group
         $sql = sprintf('DELETE FROM %s WHERE id = :id AND entity_id = :entity_id', $this->getTable());
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

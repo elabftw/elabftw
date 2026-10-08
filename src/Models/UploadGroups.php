@@ -137,13 +137,7 @@ final class UploadGroups extends AbstractRest
         $this->Entity->canOrExplode(AccessType::Write);
         $this->readOne();
 
-        $uploadSql = 'UPDATE uploads SET group_id = NULL WHERE item_id = :entity_id AND type = :entity_type AND group_id = :group_id';
-        $uploadReq = $this->Db->prepare($uploadSql);
-        $uploadReq->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $uploadReq->bindValue(':entity_type', $this->Entity->entityType->value);
-        $uploadReq->bindParam(':group_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($uploadReq);
-
+        // The uploads FK uses ON DELETE SET NULL to move files to Default group
         $sql = 'DELETE FROM upload_groups WHERE id = :id AND entity_id = :entity_id AND entity_type = :entity_type';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

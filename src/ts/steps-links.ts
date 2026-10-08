@@ -23,6 +23,7 @@ import { Action, Target } from './interfaces';
 import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import { createGroupedSortables } from './grouped-sortables';
 
 addAutocompleteToLinkInputs();
 
@@ -59,15 +60,6 @@ $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
 const StepC = new Step(entity);
 const stepGroupsEndpoint = `${entity.type}/${entity.id}/step_groups`;
 
-on('toggle-inline-form', (el: HTMLElement) => {
-  const target = document.getElementById(el.dataset.toggleTarget ?? '');
-  if (!(target instanceof HTMLFormElement)) return;
-  const isHidden = target.toggleAttribute('hidden');
-  el.setAttribute('aria-expanded', String(!isHidden));
-  if (!isHidden) {
-    target.querySelector<HTMLInputElement>('input:not([type="hidden"])')?.focus();
-  }
-});
 
 on('create-step', (el: HTMLElement, event: Event) => {
   event.preventDefault();
@@ -193,79 +185,18 @@ const malleableStepGroupTitle = new Malle({
   tooltip: i18next.t('click-to-edit'),
 }).listen();
 
-let groupedStepsSyncTimer: number | undefined;
-
-// Serialize the final DOM layout of every connected step list. Default group
-// use a null group id so the backend can store them with group_id = NULL
-function syncGroupedStepOrdering(): void {
-  const groupedOrdering = Array.from(document.querySelectorAll<HTMLElement>('.steps-sortable')).map(container => ({
-    group_id: container.dataset.groupid ? parseInt(container.dataset.groupid, 10) : null,
-    step_ids: Array.from(container.querySelectorAll<HTMLElement>(':scope > .countable'))
-      .map(step => parseInt(step.id.replace('step_', ''), 10)),
-  }));
-  ApiC.patch(`${entity.type}/${entity.id}/steps`, {grouped_ordering: groupedOrdering})
-    .then(() => reloadElements(['stepsDiv']));
-}
-
-// A move between connected sortables triggers events on both the source and
-// destination. Debounce them so one drag produces one API request using the
-// final DOM ordering.
-function scheduleGroupedStepOrderingSync(): void {
-  window.clearTimeout(groupedStepsSyncTimer);
-  groupedStepsSyncTimer = window.setTimeout(syncGroupedStepOrdering, 0);
-}
-
-function initStepGroupSortables(): void {
-  const stepSortables = $('.steps-sortable');
-  if (stepSortables.length) {
-    // This function is called again after stepsDiv is reloaded. Destroy an
-    // existing sortable first so handlers are never registered twice.
-    stepSortables.each(function() {
-      if ($(this).hasClass('ui-sortable')) {
-        $(this).sortable('destroy');
-      }
-    });
-
-    stepSortables.sortable({
-      connectWith: '.steps-sortable',
-      items: '> .countable',
-      handle: '.sortableHandle',
-      // jQuery UI Sortable cancels drag starts from buttons by default.
-      // Step drag handles are buttons, so explicitly allow them.
-      cancel: 'nonSortable',
-      helper: 'clone',
-      dropOnEmpty: true,
-      forcePlaceholderSize: true,
-      placeholder: 'step-sortable-placeholder',
-      tolerance: 'pointer',
-      receive: scheduleGroupedStepOrderingSync,
-      update: scheduleGroupedStepOrderingSync,
-    });
-  }
-
-  // Groups themselves are sortable independently from the steps they contain
-  const groupSortable = $('.step-groups-sortable');
-  if (groupSortable.length) {
-    if (groupSortable.hasClass('ui-sortable')) {
-      groupSortable.sortable('destroy');
-    }
-    groupSortable.sortable({
-      axis: 'y',
-      items: '> .step-group',
-      handle: '.step-group-sortable-handle',
-      // Group drag handles are buttons too, so allow them as drag handles.
-      cancel: 'nonSortable',
-      helper: 'clone',
-      forcePlaceholderSize: true,
-      placeholder: 'step-group-sortable-placeholder',
-      update: function() {
-        const ordering = Array.from(this.querySelectorAll(':scope > .step-group[data-groupid]'))
-          .map((group:HTMLElement) => parseInt(group.dataset.groupid, 10));
-        ApiC.patch(stepGroupsEndpoint, {ordering}).then(() => reloadElements(['stepsDiv']));
-      },
-    });
-  }
-}
+const initStepGroupSortables = createGroupedSortables({
+  itemContainerSelector: '.steps-sortable',
+  itemHandleSelector: '.sortableHandle',
+  itemIdPrefix: 'step_',
+  itemIdsKey: 'step_ids',
+  itemEndpoint: `${entity.type}/${entity.id}/steps`,
+  groupContainerSelector: '.step-groups-sortable',
+  groupItemSelector: '.step-group',
+  groupHandleSelector: '.step-group-sortable-handle',
+  groupEndpoint: stepGroupsEndpoint,
+  reload: () => reloadElements(['stepsDiv']),
+});
 
 initStepGroupSortables();
 

@@ -44,7 +44,7 @@ CREATE TABLE `items_types_step_groups` (
 CREATE TABLE `upload_groups` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `entity_id` INT UNSIGNED NOT NULL,
-    `entity_type` VARCHAR(255) NOT NULL,
+    `entity_type` TINYINT UNSIGNED NOT NULL,
     `title` VARCHAR(255) NOT NULL,
     `ordering` INT UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),

@@ -76,7 +76,7 @@
       </button>
     </div>
 
-    {# New uploads start ungrouped and appear under Attachments once groups exist #}
+    {# New uploads start ungrouped and appear under Default group once groups exist #}
     {% if mode == 'edit' %}
       <div class='col-md-4 col-sm-6'>
         {% if App.devMode -%}
@@ -120,7 +120,7 @@
 
         {% if defaultUploads is not empty %}
           <div class='step-group step-group-card mt-3 mb-3 upload-group'>
-            {{ _self.groupHeader(null, 'default', 'Attachments'|trans, defaultUploads|length, mode) }}
+            {{ _self.groupHeader(null, 'default', 'Default group'|trans, defaultUploads|length, mode) }}
             <div id='upload_group_body_default' class='step-group-body px-3 py-2' data-save-hidden='upload_group_body_default'>
               <div class='table mb-0'>
                 <table class='table mb-0' aria-label='{{ 'Attached files'|trans }}'>
@@ -183,7 +183,7 @@
       <div class='w-100'>
         {% if defaultUploads is not empty %}
           <div class='step-group step-group-card mb-3 upload-group'>
-            {{ _self.groupHeader(null, 'default', 'Attachments'|trans, defaultUploads|length, mode) }}
+            {{ _self.groupHeader(null, 'default', 'Default group'|trans, defaultUploads|length, mode) }}
             <div id='upload_group_body_default' class='step-group-body px-3 py-2' data-save-hidden='upload_group_body_default'>
               <div class='row mx-0 uploads-sortable' data-groupid=''>
                 {% for upload in defaultUploads %}
@@ -216,7 +216,7 @@
 
     {% if mode == 'edit' %}
       <div class='w-100'>
-        <button type='button' class='btn btn-transparent text-muted text-left w-100 px-3 py-2 add-step-group-toggle' data-action='toggle-upload-group-form' aria-expanded='false' aria-controls='addUploadGroupForm'>
+        <button type='button' class='btn btn-transparent text-muted text-left w-100 px-3 py-2 add-step-group-toggle' data-action='toggle-next' data-focus-first-input='true' data-toggle-target='addUploadGroupForm' aria-expanded='false' aria-controls='addUploadGroupForm'>
           <i class='fas fa-plus fa-fw mr-1'></i>{{ 'Add a group'|trans }}
         </button>
         <form hidden aria-label='{{ 'Add a group'|trans }}' id='addUploadGroupForm' class='mt-2'>

@@ -55,7 +55,7 @@ final class UploadGroups extends AbstractRest
         $sql = 'SELECT * FROM upload_groups WHERE entity_id = :entity_id AND entity_type = :entity_type ORDER BY ordering, id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':entity_type', $this->Entity->entityType->value);
+        $req->bindValue(':entity_type', $this->Entity->entityType->toInt(), PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -67,7 +67,7 @@ final class UploadGroups extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':entity_type', $this->Entity->entityType->value);
+        $req->bindValue(':entity_type', $this->Entity->entityType->toInt(), PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
     }
@@ -88,7 +88,7 @@ final class UploadGroups extends AbstractRest
         $sql = 'INSERT INTO upload_groups (entity_id, entity_type, title, ordering) VALUES (:entity_id, :entity_type, :title, :ordering)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':entity_type', $this->Entity->entityType->value);
+        $req->bindValue(':entity_type', $this->Entity->entityType->toInt(), PDO::PARAM_INT);
         $req->bindValue(':title', $title);
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -124,7 +124,7 @@ final class UploadGroups extends AbstractRest
         $req->bindValue(':title', $title);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':entity_type', $this->Entity->entityType->value);
+        $req->bindValue(':entity_type', $this->Entity->entityType->toInt(), PDO::PARAM_INT);
         $this->Db->execute($req);
         $this->Entity->touch();
         new Changelog($this->Entity)->create(new ContentParams('upload_groups', Action::Update->value));
@@ -148,7 +148,7 @@ final class UploadGroups extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':entity_type', $this->Entity->entityType->value);
+        $req->bindValue(':entity_type', $this->Entity->entityType->toInt(), PDO::PARAM_INT);
         $result = $this->Db->execute($req);
         $this->normalizeDefaultUploadOrdering();
         $this->Entity->touch();
@@ -165,7 +165,7 @@ final class UploadGroups extends AbstractRest
         $sql = 'INSERT INTO upload_groups (entity_id, entity_type, title, ordering) VALUES (:entity_id, :entity_type, :title, :ordering)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $targetEntity->id, PDO::PARAM_INT);
-        $req->bindValue(':entity_type', $targetEntity->entityType->value);
+        $req->bindValue(':entity_type', $targetEntity->entityType->toInt(), PDO::PARAM_INT);
         $map = array();
         foreach ($groups as $group) {
             $req->bindValue(':title', $group['title']);
@@ -189,7 +189,7 @@ final class UploadGroups extends AbstractRest
             $req->bindValue(':ordering', $position, PDO::PARAM_INT);
             $req->bindValue(':id', $id, PDO::PARAM_INT);
             $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-            $req->bindValue(':entity_type', $this->Entity->entityType->value);
+            $req->bindValue(':entity_type', $this->Entity->entityType->toInt(), PDO::PARAM_INT);
             $this->Db->execute($req);
         }
     }

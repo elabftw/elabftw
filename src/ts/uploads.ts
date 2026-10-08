@@ -32,6 +32,7 @@ import { entity } from './getEntity';
 import { notify } from './notify';
 import { read as readXlsx, utils as xlsxUtils } from '@e965/xlsx';
 import { on } from './handlers';
+import { createGroupedSortables } from './grouped-sortables';
 type Cell = string | number | boolean | null;
 let spreadsheetUpload: { id: number; name: string } | null = null;
 let spreadsheetDirty = false;
@@ -112,13 +113,6 @@ on('rename-upload', (el: HTMLElement) => {
   filenameInput.focus();
 });
 
-on('toggle-upload-group-form', (el: HTMLElement) => {
-  const form = document.getElementById('addUploadGroupForm');
-  if (!(form instanceof HTMLFormElement)) return;
-  const isHidden = form.toggleAttribute('hidden');
-  el.setAttribute('aria-expanded', String(!isHidden));
-  if (!isHidden) form.querySelector<HTMLInputElement>('input[name="title"]')?.focus();
-});
 
 on('create-upload-group', (_, event: Event) => {
   event.preventDefault();
@@ -359,65 +353,19 @@ const malleableUploadGroupTitle = new Malle({
 });
 malleableUploadGroupTitle.listen();
 
-let groupedUploadsSyncTimer: number | undefined;
-
-function syncGroupedUploadOrdering(): void {
-  const groupedOrdering = Array.from(document.querySelectorAll<HTMLElement>('.uploads-sortable')).map(container => ({
-    group_id: container.dataset.groupid ? parseInt(container.dataset.groupid, 10) : null,
-    upload_ids: Array.from(container.querySelectorAll<HTMLElement>(':scope > .countable'))
-      .map(upload => parseInt(upload.id.replace('uploadDiv_', ''), 10)),
-  }));
-  ApiC.patch(`${entity.type}/${entity.id}/${Model.Upload}`, {grouped_ordering: groupedOrdering})
-    .then(() => reloadUploads());
-}
-
-function scheduleGroupedUploadOrderingSync(): void {
-  window.clearTimeout(groupedUploadsSyncTimer);
-  groupedUploadsSyncTimer = window.setTimeout(syncGroupedUploadOrdering, 0);
-}
-
-function initUploadGroupSortables(): void {
-  const uploadSortables = $('.uploads-sortable');
-  if (uploadSortables.length && $('.upload-sortable-handle').length) {
-    uploadSortables.each(function() {
-      if ($(this).hasClass('ui-sortable')) $(this).sortable('destroy');
-    });
-    uploadSortables.sortable({
-      connectWith: '.uploads-sortable',
-      items: '> .countable',
-      handle: '.upload-sortable-handle',
-      cancel: 'nonSortable',
-      helper: 'clone',
-      dropOnEmpty: true,
-      forcePlaceholderSize: true,
-      placeholder: 'step-sortable-placeholder',
-      tolerance: 'pointer',
-      receive: scheduleGroupedUploadOrderingSync,
-      update: scheduleGroupedUploadOrderingSync,
-    });
-  }
-
-  const groupSortable = $('.upload-groups-sortable');
-  if (groupSortable.length && $('.upload-group-sortable-handle').length) {
-    groupSortable.each(function() {
-      if ($(this).hasClass('ui-sortable')) $(this).sortable('destroy');
-      $(this).sortable({
-        axis: 'y',
-        items: '> .upload-group[data-groupid]',
-        handle: '.upload-group-sortable-handle',
-        cancel: 'nonSortable',
-        helper: 'clone',
-        forcePlaceholderSize: true,
-        placeholder: 'step-group-sortable-placeholder',
-        update: function() {
-          const ordering = Array.from(this.querySelectorAll(':scope > .upload-group[data-groupid]'))
-            .map((group: HTMLElement) => parseInt(group.dataset.groupid, 10));
-          ApiC.patch(uploadGroupsEndpoint, {ordering}).then(() => reloadUploads());
-        },
-      });
-    });
-  }
-}
+const initUploadGroupSortables = createGroupedSortables({
+  itemContainerSelector: '.uploads-sortable',
+  itemHandleSelector: '.upload-sortable-handle',
+  itemIdPrefix: 'uploadDiv_',
+  itemIdsKey: 'upload_ids',
+  itemEndpoint: `${entity.type}/${entity.id}/${Model.Upload}`,
+  groupContainerSelector: '.upload-groups-sortable',
+  groupItemSelector: '.upload-group[data-groupid]',
+  groupHandleSelector: '.upload-group-sortable-handle',
+  groupEndpoint: uploadGroupsEndpoint,
+  requireHandles: true,
+  reload: () => reloadUploads(),
+});
 
 initUploadGroupSortables();
 

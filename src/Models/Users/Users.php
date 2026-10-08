@@ -61,6 +61,7 @@ use Throwable;
 
 use function _;
 use function array_column;
+use function array_diff;
 use function array_map;
 use function implode;
 use function in_array;
@@ -502,6 +503,10 @@ class Users extends AbstractRest
         );
         $isSysadmin = $this->requester->isSysadmin();
         $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'valid_until', 'is_sysadmin', 'teams');
+        // Admins can see other users' teams only when importing users is enabled.
+        if ($this->requester->isAdmin && Config::getConfig()->configArr['admins_import_users'] === '1') {
+            $removeKeys = array_diff($removeKeys, array('teams'));
+        }
         return array_map(function (array $user) use ($isSysadmin, $removeKeys): array {
             if (!$isSysadmin) {
                 unset($user['last_login']);

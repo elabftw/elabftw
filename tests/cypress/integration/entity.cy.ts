@@ -27,8 +27,13 @@ describe('Experiments', () => {
     cy.get('div.tags').contains('some tag').should('not.exist');
 
     // create step
-    cy.get('#addStepInput').type('some step');
-    cy.get('[data-action="create-step"').click();
+    cy.get('#stepsDiv .add-step-toggle').first().click();
+    cy.get('#stepsDiv .add-step-form:not([hidden])').within(() => {
+      cy.get('input[name="step"]')
+        .should('be.visible')
+        .type('some step');
+      cy.get('[data-action="create-step"]').click();
+    });
     cy.get('.step-static').should('contain', 'some step');
 
     // complete step

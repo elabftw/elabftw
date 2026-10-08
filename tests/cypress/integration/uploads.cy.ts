@@ -12,7 +12,7 @@ describe('Upload groups', () => {
     cy.request({
       method: 'PATCH',
       url: '/api/v2/users/me',
-      body: {notifOnSaved: 0, uploads_layout: 1},
+      body: {uploads_layout: 1},
     });
   });
 
@@ -114,12 +114,19 @@ describe('Upload groups', () => {
               cy.get(`#upload_group_${processedGroupId} #uploadDiv_${secondUploadId}`).should('exist');
 
               // Reordering attachments must not reopen another collapsed group
-              cy.get(`[data-toggle-target="upload_group_body_${processedGroupId}"]`).click();
-              cy.get(`#upload_group_body_${processedGroupId}`).should('not.be.visible');
-              cy.get(`#upload_group_${rawGroupId} .uploads-sortable`).then($container => {
-                triggerSortableUpdate($container[0]);
+              // Keep a reference to the current group so we can wait for reloadUploads()
+              // to actually replace the DOM after the PATCH response
+              cy.get(`#upload_group_${processedGroupId}`).then($groupBeforeReload => {
+                cy.get(`[data-toggle-target="upload_group_body_${processedGroupId}"]`).click();
+                cy.get(`#upload_group_body_${processedGroupId}`).should('not.be.visible');
+                cy.get(`#upload_group_${rawGroupId} .uploads-sortable`).then($container => {
+                  triggerSortableUpdate($container[0]);
+                });
+                cy.wait('@updateUploadOrdering').its('response.statusCode').should('eq', 200);
+                cy.get(`#upload_group_${processedGroupId}`).should($groupAfterReload => {
+                  expect($groupAfterReload[0]).not.to.eq($groupBeforeReload[0]);
+                });
               });
-              cy.wait('@updateUploadOrdering').its('response.statusCode').should('eq', 200);
               cy.get(`#upload_group_body_${processedGroupId}`).should('not.be.visible');
 
               // Attachments disappears once no attachment is left ungrouped.
@@ -153,7 +160,9 @@ describe('Upload groups', () => {
 
               // Group titles remain editable.
               cy.get(`#upload_group_${rawGroupId} .upload-group-title`).click();
-              cy.get(`#upload_group_${rawGroupId} input.form-control`).clear().type('Contracts');
+              cy.get(`#upload_group_${rawGroupId} .step-group-header input.form-control[type="text"]`)
+                .should('be.visible')
+                .clear().type('Contracts');
               cy.get(`#upload_group_${rawGroupId}`).contains('button', 'Save').click();
               cy.get(`#upload_group_${rawGroupId} .upload-group-title`).should('have.text', 'Contracts');
 

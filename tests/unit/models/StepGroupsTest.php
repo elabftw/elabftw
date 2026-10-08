@@ -8,6 +8,9 @@ use Elabftw\Enums\Action;
 use Elabftw\Traits\TestsUtilsTrait;
 use PHPUnit\Framework\TestCase;
 
+use function array_column;
+use function sprintf;
+
 final class StepGroupsTest extends TestCase
 {
     use TestsUtilsTrait;

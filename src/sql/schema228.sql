@@ -52,29 +52,29 @@ CREATE TABLE `upload_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 ALTER TABLE `uploads`
-    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL AFTER `item_id`,
-    ADD COLUMN `ordering` INT UNSIGNED NULL DEFAULT NULL AFTER `group_id`,
+    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL,
+    ADD COLUMN `ordering` INT UNSIGNED NULL DEFAULT NULL,
     ADD KEY `idx_uploads_group_id` (`group_id`),
     ADD CONSTRAINT `fk_uploads_group_id` FOREIGN KEY (`group_id`) REFERENCES `upload_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- A NULL group_id represents Default group. ON DELETE SET NULL ensures that
 -- deleting a group never deletes its steps. They go to Default group
 ALTER TABLE `experiments_steps`
-    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL AFTER `item_id`,
+    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL,
     ADD KEY `idx_experiments_steps_group_id` (`group_id`),
     ADD CONSTRAINT `fk_experiments_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `experiments_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE `items_steps`
-    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL AFTER `item_id`,
+    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL,
     ADD KEY `idx_items_steps_group_id` (`group_id`),
     ADD CONSTRAINT `fk_items_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `items_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE `experiments_templates_steps`
-    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL AFTER `item_id`,
+    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL,
     ADD KEY `idx_experiments_templates_steps_group_id` (`group_id`),
     ADD CONSTRAINT `fk_experiments_templates_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `experiments_templates_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE `items_types_steps`
-    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL AFTER `item_id`,
+    ADD COLUMN `group_id` INT UNSIGNED NULL DEFAULT NULL,
     ADD KEY `idx_items_types_steps_group_id` (`group_id`),
     ADD CONSTRAINT `fk_items_types_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `items_types_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;

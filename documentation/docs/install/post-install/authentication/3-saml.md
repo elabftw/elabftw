@@ -91,7 +91,7 @@ If you configure the `uid` (Userid/Internal ID) parameter for an IdP, the value 
 - for user creation on the fly, the `orgid` (Organization ID) field of the user will contain the value of the `uid` attribute
 - for an existing user logging in, the `orgid` will not be modified
 
-If you enable "Fallback to internal id if existing user cannot be matched with email", then the `uid` will be used to try and match an existing user if, during login, the match could not be done on the `email` field (user changed email for instance). You can then chose to enable "If user is matched with internal id, update the email sent by IdP?" so that the email sent by the IdP is updated in the local database.
+If you enable "Fallback to internal id if existing user cannot be matched with email", then the `uid` will be used to try and match an existing user if, during login, the match could not be done on the `email` field (user changed email for instance). You can then choose to enable "If user is matched with internal id, update the email sent by IdP?" so that the email sent by the IdP is updated in the local database.
 
 ## Disable local login/register
 

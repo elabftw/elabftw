@@ -29,13 +29,20 @@ interface EditorInterface {
   replaceContent(content: string): void;
 }
 
-class Editor {
+abstract class Editor {
   type: string;
   typeAsInt: number;
+  abstract getContent(): string;
   switch(entity: Entity): Promise<Response> {
     const params = {};
+    params[Target.Body] = this.getContent();
     params[Target.ContentType] = this.type === 'tiny' ? 2 : 1;
-    return ApiC.patch(`${entity.type}/${entity.id}`, params);
+    return ApiC.patch(`${entity.type}/${entity.id}`, params).then(response => {
+      if (this.type === 'tiny') {
+        tinymce.activeEditor.setDirty(false);
+      }
+      return response;
+    });
   }
 }
 

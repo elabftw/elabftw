@@ -225,7 +225,7 @@ final class Steps extends AbstractRest
 
         $this->Entity->touch();
         $Changelog = new Changelog($this->Entity);
-        $Changelog->create(new ContentParams('steps', Action::Update->value));
+        $Changelog->create(new ContentParams('steps', 'Reordered steps'));
     }
 
     #[Override]
@@ -241,7 +241,7 @@ final class Steps extends AbstractRest
             }
             $this->updateGroupedOrdering($params['grouped_ordering']);
             $Changelog = new Changelog($this->Entity);
-            $Changelog->create(new ContentParams('steps', Action::Update->value));
+            $Changelog->create(new ContentParams('steps', 'Reordered steps'));
             return $this->readAll();
         }
         if ($action === Action::Update && $this->id === null) {
@@ -279,7 +279,16 @@ final class Steps extends AbstractRest
             default => throw new ImproperActionException('Invalid action for steps.'),
         };
         $Changelog = new Changelog($this->Entity);
-        $Changelog->create(new ContentParams('steps', $action->value));
+        $message = $action->value;
+        if ($this->id !== null) {
+            if ($action === Action::Finish) {
+                $finished = (int) $this->readOne()['finished'] === 1;
+                $message = sprintf('%s step with id: %d', $finished ? 'Finished' : 'Unfinished', $this->id);
+            } elseif ($action === Action::Update) {
+                $message = sprintf('Updated step with id: %d', $this->id);
+            }
+        }
+        $Changelog->create(new ContentParams('steps', $message));
         if ($this->id) {
             return $this->readOne();
         }
@@ -291,12 +300,13 @@ final class Steps extends AbstractRest
     {
         $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
-        $Changelog = new Changelog($this->Entity);
-        $Changelog->create(new ContentParams('steps', $action->value));
         $groupId = ($reqBody['group_id'] ?? null) === null || ($reqBody['group_id'] ?? '') === ''
             ? null
             : (int) $reqBody['group_id'];
-        return $this->create($reqBody['body'] ?? 'RTFM', $groupId);
+        $id = $this->create($reqBody['body'] ?? 'RTFM', $groupId);
+        $Changelog = new Changelog($this->Entity);
+        $Changelog->create(new ContentParams('steps', sprintf('Created step with id: %d', $id)));
+        return $id;
     }
 
     #[Override]
@@ -306,7 +316,7 @@ final class Steps extends AbstractRest
         $this->Entity->touch();
         $Changelog = new Changelog($this->Entity);
         /** @psalm-suppress PossiblyNullArgument */
-        $Changelog->create(new ContentParams('steps', sprintf('Removed step with id: %d', $this->id)));
+        $Changelog->create(new ContentParams('steps', sprintf('Deleted step with id: %d', $this->id)));
 
         $this->getStepDeadline()->destroy();
 

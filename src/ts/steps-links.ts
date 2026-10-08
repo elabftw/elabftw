@@ -76,10 +76,8 @@ on('create-step', (el: HTMLElement, event: Event) => {
       // Keep the inline form open for quickly adding several steps to the same group.
       const reloadedForm = document.querySelector<HTMLFormElement>(`.add-step-form[data-groupid='${rawGroupId}']`);
       if (!reloadedForm) return;
-      reloadedForm.removeAttribute('hidden');
-      document.querySelector<HTMLElement>(`[data-toggle-target='${reloadedForm.id}']`)
-        ?.setAttribute('aria-expanded', 'true');
-      reloadedForm.querySelector<HTMLInputElement>('input[name="step"]')?.focus();
+      // Reuse toggle-next so the form, icon, aria-expanded and focus stay in sync
+      document.querySelector<HTMLButtonElement>(`[data-toggle-target='${reloadedForm.id}']`)?.click();
     });
   });
 });

@@ -293,6 +293,7 @@ final class Apiv2Controller extends AbstractApiController
             ExportFormat::Json,
             ExportFormat::QrPdf,
             ExportFormat::QrPng,
+            ExportFormat::QrSvg,
             ExportFormat::Pdf,
             ExportFormat::PdfA,
             ExportFormat::ZipA,

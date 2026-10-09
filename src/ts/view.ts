@@ -64,6 +64,28 @@ document.getElementById('body_view')?.addEventListener('click', event => {
   }
 });
 
+// From the steps list, jump to where the step was inserted in the main text (see #7483)
+on('scroll-to-step-in-body', (el: HTMLElement) => {
+  const bodyView = document.getElementById('body_view');
+  const link = bodyView?.querySelector<HTMLAnchorElement>(`a[href*="highlightstep=${el.dataset.stepid}#"]`);
+  if (!link) {
+    return;
+  }
+  // expand the main text if it was collapsed
+  if (bodyView.hidden) {
+    (bodyView.previousElementSibling as HTMLElement)?.click();
+  }
+  // and any accordion containing the link
+  let details = link.closest('details');
+  while (details) {
+    details.open = true;
+    details = details.parentElement?.closest('details');
+  }
+  link.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  link.classList.add('highlighted');
+  setTimeout(() => link.classList.remove('highlighted'), 3000);
+});
+
 // add the title in the page name (see #324)
 const titleElement = document.getElementById('documentTitle');
 document.title = titleElement?.textContent ? `${titleElement.textContent} - eLabFTW` : 'eLabFTW';

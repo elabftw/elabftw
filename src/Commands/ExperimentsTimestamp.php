@@ -30,7 +30,7 @@ use function count;
 use function implode;
 use function sprintf;
 use function strtotime;
-use function usleep;
+use function sleep;
 
 /**
  * Timestamp experiments in bulk
@@ -40,7 +40,7 @@ final class ExperimentsTimestamp extends Command
 {
     private const int TOLERANCE = 5;
 
-    private const int RETRY_DELAY_US = 100000; // in us
+    private const int BASE_DELAY_SECS = 1;
 
     private const int MAX_RETRIES = 5;
 
@@ -101,15 +101,17 @@ final class ExperimentsTimestamp extends Command
                 $output->writeln(sprintf('Timestamping experiment %d', $exp['id']));
             }
             $Experiments->setId($exp['id']);
-            for ($retry_count = 0; $retry_count < self::MAX_RETRIES; $retry_count++) {
+            for ($retryCount = 0; $retryCount < self::MAX_RETRIES; $retryCount++) {
                 try {
                     $Experiments->timestamp();
                     break;
                 } catch (Exception $e) {
-                    if ($retry_count === self::MAX_RETRIES - 1) {
-                        $output->writeln(sprintf('Error timestamping experiment with ID %d: %s', $exp['id'], $e->getMessage()));
+                    if ($retryCount === self::MAX_RETRIES - 1) {
+                        $output->writeln(sprintf('Error timestamping experiment with ID %d: %s. This experiment will be skipped.', $exp['id'], $e->getMessage()));
                     }
-                    usleep(self::RETRY_DELAY_US);
+                    $delay = self::BASE_DELAY_SECS * (int) (2 ** $retryCount);
+                    $output->writeln(sprintf('Error timestamping experiment with ID %d: %s. Retrying in %d seconds...', $exp['id'], $e->getMessage(), $delay));
+                    sleep($delay);
                 }
             }
         }

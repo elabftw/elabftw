@@ -48,6 +48,12 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('Monday, July 14, 2025', Filter::formatLocalDate(new DateTimeImmutable('2025-07-14')));
     }
 
+    public function testToBinary(): void
+    {
+        $this->assertSame(0, Filter::toBinary('off'));
+        $this->assertSame(1, Filter::toBinary('yep'));
+    }
+
     public function testTitle(): void
     {
         $this->assertEquals('My super title', Filter::title('My super title'));

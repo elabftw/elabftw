@@ -132,4 +132,53 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $input = '<details class="mce-accordion"><summary>Summary</summary><p>One</p><p>Two</p></details>';
         $this->assertSame($input, Filter::body($input));
     }
+
+    public function testForFilesystemTitlePreservesUnicode(): void
+    {
+        $this->assertSame(
+            '研究---Study---دراسة',
+            Filter::forFilesystemTitle('研究 / Study / دراسة'),
+        );
+
+        $this->assertSame(
+            '한국어-제목---中文标题',
+            Filter::forFilesystemTitle('한국어 제목 / 中文标题'),
+        );
+
+        $this->assertSame(
+            'Étude-expérimentale',
+            Filter::forFilesystemTitle('Étude expérimentale'),
+        );
+    }
+
+    public function testForFilesystemTitlePreservesEmojis(): void
+    {
+        $this->assertSame(
+            'Analyse-🧪',
+            Filter::forFilesystemTitle('Analyse 🧪'),
+        );
+
+        $this->assertSame(
+            'Chercheuse-👩🏽‍🔬',
+            Filter::forFilesystemTitle('Chercheuse 👩🏽‍🔬'),
+        );
+
+        $this->assertSame(
+            '🧪',
+            Filter::forFilesystemTitle('🧪'),
+        );
+    }
+
+    public function testForFilesystemTitleHandlesEmptyResult(): void
+    {
+        $this->assertSame(
+            'Untitled',
+            Filter::forFilesystemTitle('///'),
+        );
+
+        $this->assertSame(
+            'Untitled',
+            Filter::forFilesystemTitle('/,.\\'),
+        );
+    }
 }

@@ -152,7 +152,13 @@ class MakePdf extends AbstractMakePdf
         $now = (new DateTimeImmutable())->format('Y-m-d');
         $date = $this->Entity->entityData['date'] ?? $now;
 
-        return sprintf('%s-%s.pdf', $date, Filter::toAsciiSlug($this->getTitle()));
+        $name = sprintf(
+            '%s-%s',
+            $date,
+            Filter::forFilesystemTitle($this->getTitle()),
+        );
+
+        return Filter::appendFilesystemSuffix($name, '.pdf');
     }
 
     protected function getTitle(): string

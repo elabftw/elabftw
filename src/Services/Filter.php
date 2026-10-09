@@ -15,12 +15,14 @@ namespace Elabftw\Services;
 use DateTimeImmutable;
 use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
+use Symfony\Component\String\UnicodeString;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
 
 use function filter_var;
 use function grapheme_substr;
 use function grapheme_strlen;
+use function grapheme_extract;
 use function strlen;
 use function strtolower;
 use function trim;
@@ -30,6 +32,9 @@ use function explode;
 use function pathinfo;
 use function preg_replace;
 use function str_replace;
+use function rtrim;
+use function preg_match;
+use function sprintf;
 
 /**
  * When values need to be filtered
@@ -43,6 +48,10 @@ final class Filter
      * Anyway, a few millions characters should be enough to report an experiment.
      */
     private const int MAX_BODY_SIZE = 4120000;
+
+    private const int MAX_FILESYSTEM_TITLE_BYTES = 100;
+
+    private const string LEFT_TO_RIGHT_MARK = "\u{200E}";
 
     public static function toBinary(string|bool|int $input): int
     {
@@ -115,6 +124,52 @@ final class Filter
         }
         // make it lowercase every time
         return trim(strtolower($output));
+    }
+
+    /**
+     * Sanitize a title used as a single filesystem path component.
+     * Unicode letters, marks, symbols and emojis are preserved.
+     */
+    public static function forFilesystemTitle(string $input): string
+    {
+        $safe = (new UnicodeString($input))
+            ->normalize()
+            // Characters forbidden by Windows and control characters.
+            ->replaceMatches('/[<>:"\/\\\\|?*\p{Cc}]+/u', '-')
+            // Remove user-controlled directional and invisible characters.
+            // U+200C and U+200D are intentionally preserved for languages
+            // and composed emojis such as 👩‍🔬.
+            ->replaceMatches('/[\x{061C}\x{200B}\x{200E}\x{200F}\x{202A}-\x{202E}\x{2060}\x{2066}-\x{2069}\x{FEFF}]/u', '')
+            ->replaceMatches('/[\p{Z}\s]+/u', '-')
+            ->trim(' ._-')
+            ->toString();
+
+        // \p{S} allows symbols and emoji-only titles.
+        if ($safe === '' || preg_match('/[\p{L}\p{N}\p{S}]/u', $safe) !== 1) {
+            return 'Untitled';
+        }
+
+        $truncated = grapheme_extract($safe, self::MAX_FILESYSTEM_TITLE_BYTES, GRAPHEME_EXTR_MAXBYTES);
+
+        if ($truncated === false) {
+            throw new ImproperActionException('Error reducing filesystem title size!');
+        }
+
+        $truncated = rtrim($truncated, ' ._-');
+
+        return $truncated === '' ? 'Untitled' : $truncated;
+    }
+
+    /**
+     * Append a suffix while keeping it visually after an RTL title.
+     */
+    public static function appendFilesystemSuffix(string $name, string $suffix): string
+    {
+        if (preg_match('/[\p{Arabic}\p{Hebrew}]/u', $name) !== 1) {
+            return $name . $suffix;
+        }
+
+        return sprintf('%1$s%2$s%1$s%3$s%1$s', self::LEFT_TO_RIGHT_MARK, $name, $suffix);
     }
 
     /**

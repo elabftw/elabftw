@@ -40,9 +40,9 @@ final class ExperimentsTimestamp extends Command
 {
     private const int TOLERANCE = 5;
 
-    private const int SLEEP_RETRY_TIMESTAMP = 100000; // in us
+    private const int RETRY_DELAY_US = 100000; // in us
 
-    private const int MAX_RETRIES_TIMESTAMP = 5;
+    private const int MAX_RETRIES = 5;
 
     #[Override]
     protected function configure(): void
@@ -101,15 +101,15 @@ final class ExperimentsTimestamp extends Command
                 $output->writeln(sprintf('Timestamping experiment %d', $exp['id']));
             }
             $Experiments->setId($exp['id']);
-            for ($retry_count = 0; $retry_count < self::MAX_RETRIES_TIMESTAMP; $retry_count++) {
+            for ($retry_count = 0; $retry_count < self::MAX_RETRIES; $retry_count++) {
                 try {
                     $Experiments->timestamp();
                     break;
                 } catch (Exception $e) {
-                    if ($retry_count === self::MAX_RETRIES_TIMESTAMP - 1) {
+                    if ($retry_count === self::MAX_RETRIES - 1) {
                         $output->writeln(sprintf('Error timestamping experiment with ID %d: %s', $exp['id'], $e->getMessage()));
                     }
-                    usleep(self::SLEEP_RETRY_TIMESTAMP);
+                    usleep(self::RETRY_DELAY_US);
                 }
             }
         }

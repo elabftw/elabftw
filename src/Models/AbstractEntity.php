@@ -854,10 +854,12 @@ abstract class AbstractEntity extends AbstractRest
             $prefix = Filter::forFilesystemTitle($this->entityData['category_title']) . ' - ';
         }
 
-        $name = sprintf('%s%s', $prefix, Filter::forFilesystemTitle($this->entityData['title']));
-        $suffix = sprintf(' - %s', Tools::getShortElabid($this->entityData['elabid'] ?? ''));
-
-        return Filter::appendFilesystemSuffix($name, $suffix);
+        return  sprintf(
+            '%s%s - %s',
+            $prefix,
+            mb_substr(Filter::forFilesystemTitle($this->entityData['title']), 0, 100),
+            Tools::getShortElabid($this->entityData['elabid'] ?? ''),
+        );
     }
 
     /**

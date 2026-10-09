@@ -59,19 +59,6 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(str_repeat('A', 255), Filter::title(str_repeat('A', 260)));
     }
 
-    public function testToFsTitleSanitizesCategory(): void
-    {
-        $Entity = $this->getFreshExperiment();
-        $Entity->entityData['category_title'] = 'Category 07/10/2026';
-        $this->assertStringStartsWith('Category-07-10-2026 - ', $Entity->toFsTitle());
-    }
-
-    public function testToAsciiSlug(): void
-    {
-        $this->assertEquals('test-export-07-10-2026', Filter::toAsciiSlug('test export 07/10/2026'));
-        $this->assertEquals('From-07-10-2026-to-10-10-2026', Filter::toAsciiSlug('From 07/10/2026 to 10/10/2026'));
-    }
-
     public function testBody(): void
     {
         $this->assertEquals('my body', Filter::body('my body'));
@@ -133,52 +120,36 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($input, Filter::body($input));
     }
 
+    public function testToFsTitleSanitizesCategory(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Entity->entityData['category_title'] = 'Category 07/10/2026';
+        $this->assertStringStartsWith('Category-07-10-2026 - ', $Entity->toFsTitle());
+    }
+
+    public function testToAsciiSlug(): void
+    {
+        $this->assertEquals('test-export-07-10-2026', Filter::toAsciiSlug('test export 07/10/2026'));
+        $this->assertEquals('From-07-10-2026-to-10-10-2026', Filter::toAsciiSlug('From 07/10/2026 to 10/10/2026'));
+    }
+
     public function testForFilesystemTitlePreservesUnicode(): void
     {
-        $this->assertSame(
-            '研究---Study---دراسة',
-            Filter::forFilesystemTitle('研究 / Study / دراسة'),
-        );
-
-        $this->assertSame(
-            '한국어-제목---中文标题',
-            Filter::forFilesystemTitle('한국어 제목 / 中文标题'),
-        );
-
-        $this->assertSame(
-            'Étude-expérimentale',
-            Filter::forFilesystemTitle('Étude expérimentale'),
-        );
+        $this->assertSame('研究---Study', Filter::forFilesystemTitle('研究 / Study'));
+        $this->assertSame('한국어-제목---中文标题', Filter::forFilesystemTitle('한국어 제목 / 中文标题'));
+        $this->assertSame('Étude-expérimentale', Filter::forFilesystemTitle('Étude expérimentale'));
     }
 
     public function testForFilesystemTitlePreservesEmojis(): void
     {
-        $this->assertSame(
-            'Analyse-🧪',
-            Filter::forFilesystemTitle('Analyse 🧪'),
-        );
-
-        $this->assertSame(
-            'Chercheuse-👩🏽‍🔬',
-            Filter::forFilesystemTitle('Chercheuse 👩🏽‍🔬'),
-        );
-
-        $this->assertSame(
-            '🧪',
-            Filter::forFilesystemTitle('🧪'),
-        );
+        $this->assertSame('Analyse-🧪', Filter::forFilesystemTitle('Analyse 🧪'));
+        $this->assertSame('Chercheuse-👩🏽‍🔬', Filter::forFilesystemTitle('Chercheuse 👩🏽‍🔬'));
+        $this->assertSame('🧪', Filter::forFilesystemTitle('🧪'));
     }
 
     public function testForFilesystemTitleHandlesEmptyResult(): void
     {
-        $this->assertSame(
-            'Untitled',
-            Filter::forFilesystemTitle('///'),
-        );
-
-        $this->assertSame(
-            'Untitled',
-            Filter::forFilesystemTitle('/,.\\'),
-        );
+        $this->assertSame('Untitled', Filter::forFilesystemTitle('///'));
+        $this->assertSame('Untitled', Filter::forFilesystemTitle('/,.\\'));
     }
 }

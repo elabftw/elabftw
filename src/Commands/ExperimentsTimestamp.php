@@ -108,10 +108,11 @@ final class ExperimentsTimestamp extends Command
                 } catch (Exception $e) {
                     if ($retryCount === self::MAX_RETRIES - 1) {
                         $output->writeln(sprintf('Error timestamping experiment with ID %d: %s. This experiment will be skipped.', $exp['id'], $e->getMessage()));
+                    } else {
+                        $delay = self::BASE_DELAY_SECS * (int) (2 ** $retryCount);
+                        $output->writeln(sprintf('Error timestamping experiment with ID %d: %s. Retrying in %d seconds...', $exp['id'], $e->getMessage(), $delay));
+                        sleep($delay);
                     }
-                    $delay = self::BASE_DELAY_SECS * (int) (2 ** $retryCount);
-                    $output->writeln(sprintf('Error timestamping experiment with ID %d: %s. Retrying in %d seconds...', $exp['id'], $e->getMessage(), $delay));
-                    sleep($delay);
                 }
             }
         }

@@ -17,10 +17,9 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
+use ValueError;
 
 use function filter_var;
-use function grapheme_substr;
-use function grapheme_strlen;
 use function strlen;
 use function strtolower;
 use function trim;
@@ -30,12 +29,19 @@ use function explode;
 use function pathinfo;
 use function preg_replace;
 use function str_replace;
+use function grapheme_extract;
+
+use const GRAPHEME_EXTR_MAXBYTES;
 
 /**
  * When values need to be filtered
  */
 final class Filter
 {
+    // Conservative byte limit for ZIP extraction compatibility with Windows MAX_PATH.
+    // https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
+    private const int MAX_FILESYSTEM_TITLE_BYTES = 100;
+
     /**
      * ~= max size of MEDIUMTEXT in MySQL for UTF-8
      * But here it's less than that because while trying different sizes
@@ -131,19 +137,26 @@ final class Filter
         }
         // remove linebreak to avoid problem in javascript link list generation on editXP
         $title = str_replace(array("\r\n", "\n", "\r"), ' ', $title);
-        $maxCharacters = 255;
-        if (grapheme_strlen($title) > $maxCharacters) {
-            $title = grapheme_substr($title, 0, $maxCharacters);
-            if ($title === false) {
-                throw new ImproperActionException('Error reducing title size!');
-            }
-        }
-        return $title;
+        return self::truncateString($title, 255);
     }
 
     public static function toAsciiSlug(string $input): string
     {
         return new FileSlugger()->slug($input)->toString();
+    }
+
+    /**
+     * Use grapheme_extract to truncate strings correctly: meaning not in the middle of a grapheme like が
+     */
+    public static function truncateString(string $input, int $size = self::MAX_FILESYSTEM_TITLE_BYTES): string
+    {
+        $truncated = grapheme_extract($input, $size, GRAPHEME_EXTR_MAXBYTES);
+
+        if ($truncated === false) {
+            throw new ImproperActionException('Error reducing filesystem title size!');
+        }
+
+        return $truncated;
     }
 
     /**
@@ -166,7 +179,11 @@ final class Filter
 
     public static function forFilesystemTitle(string $input): string
     {
-        return new FileSlugger()->unicodeSlug($input)->toString();
+        try {
+            return new FileSlugger()->nonEmptyUnicodeSlug(self::truncateString($input))->toString();
+        } catch (ValueError) {
+            return _('Untitled');
+        }
     }
 
     public static function intOrNull(string|int $input): ?int

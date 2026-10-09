@@ -24,6 +24,7 @@ use Override;
 use function strlen;
 use function count;
 use function dirname;
+use function ceil;
 use function mb_strlen;
 use function mb_substr;
 use function sprintf;
@@ -93,16 +94,22 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
 
         $splitTitle = array();
         $titleWidth = 0;
+
+        $fontScale = $this->titleFontSize / self::DEFAULT_TITLE_FONT_SIZE;
+        $charWidthPx = (int) ceil((float) self::CHAR_WIDTH_PX * (float) $fontScale);
+        $lineHeightPx = (int) ceil((float) self::LINE_HEIGHT_PX * (float) $fontScale);
+        $spaceUnderQr = (int) ceil((float) self::SPACE_UNDER_QR * (float) $fontScale);
+
         if ($this->withTitle) {
             $splitTitle = $this->splitTitle($this->entity->entityData['title']);
-            $titleWidth =  mb_strlen($splitTitle[0]) * self::CHAR_WIDTH_PX;
+            $titleWidth = mb_strlen($splitTitle[0]) * $charWidthPx;
         }
 
         if ($titleWidth < $qrCodeWidth) {
             $titleWidth = $qrCodeWidth;
         }
         $qrCodeWidth += $titleWidth - $qrCodeWidth;
-        $height = $qrCode->getImageHeight() + (count($splitTitle) * self::LINE_HEIGHT_PX);
+        $height = $qrCode->getImageHeight() + (count($splitTitle) * $lineHeightPx);
         $newImage->newImage($qrCodeWidth, $height, new ImagickPixel('white'));
         // Copy the original image to the new image
         $newImage->compositeImage($qrCode, Imagick::COMPOSITE_OVER, 0, 0);
@@ -112,7 +119,7 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
             $titleMarginLeft = 5;
         }
         foreach ($splitTitle as $key => $line) {
-            $newImage->annotateImage($draw, $titleMarginLeft, $qrCode->getImageHeight() + (((int) $key + 1) * self::SPACE_UNDER_QR), 0, $line);
+            $newImage->annotateImage($draw, $titleMarginLeft, $qrCode->getImageHeight() + (((int) $key + 1) * $spaceUnderQr), 0, $line);
         }
         $newImage->setImageFormat('png');
 

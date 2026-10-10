@@ -203,6 +203,36 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users = new Users(null, null, $user);
         $res = $Users->readAll();
         $this->assertArrayNotHasKey('auth_service', $res[0]);
+        $this->assertArrayNotHasKey('teams', $res[0]);
+    }
+
+    public function testReadAllTeamAssociationsFollowAdminImportSetting(): void
+    {
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $user = $this->getUserInTeam(2);
+        $expectedTeams = array_column($this->Users->readAll(), 'teams', 'userid')[2];
+        $originalSetting = $this->Config->configArr['admins_import_users'];
+        $this->assertFalse($admin->isAdminOf(2));
+
+        try {
+            foreach (array('0', '1') as $enabled) {
+                $this->Config->patch(Action::Update, array('admins_import_users' => $enabled));
+                $res = array_column((new Users(null, null, $admin))->readAll(), null, 'userid');
+                if ($enabled === '1') {
+                    $this->assertArrayHasKey('teams', $res[2]);
+                    $this->assertSame($expectedTeams, $res[2]['teams']);
+                } else {
+                    $this->assertArrayNotHasKey('teams', $res[2]);
+                }
+                $this->assertArrayNotHasKey('auth_service', $res[2]);
+                $this->assertArrayNotHasKey('last_login', $res[2]);
+
+                $res = array_column((new Users(null, null, $user))->readAll(), null, 'userid');
+                $this->assertArrayNotHasKey('teams', $res[2]);
+            }
+        } finally {
+            $this->Config->patch(Action::Update, array('admins_import_users' => $originalSetting));
+        }
     }
 
     public function testReadOneLastLoginIsRestrictedToSysadmins(): void

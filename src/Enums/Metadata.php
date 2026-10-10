@@ -25,4 +25,5 @@ enum Metadata: string
     case AllowMultiValues = 'allow_multi_values'; // can the extra field hold multiple values
     case Groups = 'extra_fields_groups'; // will be found in elabftw namespace
     case GroupId = 'group_id';
+    case Label = 'label'; // optional colored label displayed next to the value
 }

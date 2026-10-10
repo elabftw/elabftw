@@ -33,6 +33,12 @@ export enum ExtraFieldInputType {
   Url = 'url',
 }
 
+export interface ExtraFieldLabel {
+  text: string;
+  color?: string;
+  title?: string;
+}
+
 export interface ExtraFieldProperties {
   type?: ExtraFieldInputType;
   value: string|number|Array<string|number>;
@@ -46,6 +52,7 @@ export interface ExtraFieldProperties {
   unit?: string;
   units?: string[];
   readonly?: boolean;
+  label?: ExtraFieldLabel;
   element?: HTMLElement;
 }
 

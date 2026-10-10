@@ -17,10 +17,9 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
+use ValueError;
 
 use function filter_var;
-use function grapheme_substr;
-use function grapheme_strlen;
 use function strlen;
 use function strtolower;
 use function trim;
@@ -30,12 +29,20 @@ use function explode;
 use function pathinfo;
 use function preg_replace;
 use function str_replace;
+use function grapheme_extract;
+use function sprintf;
+
+use const GRAPHEME_EXTR_MAXBYTES;
 
 /**
  * When values need to be filtered
  */
 final class Filter
 {
+    // Conservative byte limit for ZIP extraction compatibility with Windows MAX_PATH.
+    // https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
+    private const int MAX_FILESYSTEM_TITLE_BYTES = 100;
+
     /**
      * ~= max size of MEDIUMTEXT in MySQL for UTF-8
      * But here it's less than that because while trying different sizes
@@ -131,14 +138,7 @@ final class Filter
         }
         // remove linebreak to avoid problem in javascript link list generation on editXP
         $title = str_replace(array("\r\n", "\n", "\r"), ' ', $title);
-        $maxCharacters = 255;
-        if (grapheme_strlen($title) > $maxCharacters) {
-            $title = grapheme_substr($title, 0, $maxCharacters);
-            if ($title === false) {
-                throw new ImproperActionException('Error reducing title size!');
-            }
-        }
-        return $title;
+        return self::truncateStringToChars($title, 255);
     }
 
     public static function toAsciiSlug(string $input): string
@@ -147,9 +147,25 @@ final class Filter
     }
 
     /**
-     * Remove all non ascii characters. Used for files saved on the filesystem (pdf, zip, ...)
-     * FIXME: this should be improved so valid utf-8 strings are still accepted
-     * see: https://github.com/elabftw/elabftw/issues/5783#issuecomment-3043949949
+     * Use grapheme_extract to truncate strings correctly: meaning not in the middle of a grapheme like が
+     */
+    public static function truncateString(string $input, int $size = self::MAX_FILESYSTEM_TITLE_BYTES): string
+    {
+        return self::truncateWithGrapheme($input, $size, GRAPHEME_EXTR_MAXBYTES);
+    }
+
+    /**
+     * This one uses characters instead of bytes
+     */
+    public static function truncateStringToChars(string $input, int $size): string
+    {
+        return self::truncateWithGrapheme($input, $size, GRAPHEME_EXTR_MAXCHARS);
+    }
+
+    /**
+     * Convert a filename to an ASCII slug while preserving its extension.
+     * This method expects a filename, not a title or a path.
+     * Use forFilesystemTitle() for user's titles containing Unicode.
      */
     public static function forFilesystem(string $input): string
     {
@@ -162,6 +178,15 @@ final class Filter
             return $safe . '.' . $ext;
         }
         return $safe;
+    }
+
+    public static function forFilesystemTitle(string $input): string
+    {
+        try {
+            return new FileSlugger()->nonEmptyUnicodeSlug(self::truncateString($input))->toString();
+        } catch (ValueError) {
+            return _('Untitled');
+        }
     }
 
     public static function intOrNull(string|int $input): ?int
@@ -296,6 +321,20 @@ final class Filter
             return null;
         }
         return Check::color($input);
+    }
+
+    private static function truncateWithGrapheme(string $input, int $size, int $type): string
+    {
+        if ($input === '') {
+            return '';
+        }
+        $truncated = grapheme_extract($input, $size, $type);
+
+        if ($truncated === false) {
+            throw new ImproperActionException(sprintf('Error reducing string to size %d!', $size));
+        }
+
+        return $truncated;
     }
 
     private static function validateBodySize(?string $input): string

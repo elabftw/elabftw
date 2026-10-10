@@ -851,14 +851,13 @@ abstract class AbstractEntity extends AbstractRest
     {
         $prefix = '';
         if ($this->entityData['category_title']) {
-            $prefix = Filter::forFilesystem($this->entityData['category_title']) . ' - ';
+            $prefix = Filter::forFilesystemTitle($this->entityData['category_title']) . ' - ';
         }
 
         return sprintf(
             '%s%s - %s',
             $prefix,
-            // prevent a zip name with too much characters from the title, see #3966
-            mb_substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
+            Filter::forFilesystemTitle($this->entityData['title']),
             Tools::getShortElabid($this->entityData['elabid'] ?? ''),
         );
     }

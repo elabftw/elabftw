@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\TestsUtilsTrait;
 
 use function str_repeat;
 use function hash;
@@ -20,6 +21,8 @@ use function uniqid;
 
 class FilterTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     public function testFormatLocalDate(): void
     {
         $input = '2024-10-16 17:12:47';
@@ -43,6 +46,21 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         );
         $this->assertEquals($expected, Filter::separateDateAndTime($input));
         $this->assertSame('Monday, July 14, 2025', Filter::formatLocalDate(new DateTimeImmutable('2025-07-14')));
+    }
+
+    public function testToBinary(): void
+    {
+        $this->assertSame(0, Filter::toBinary('off'));
+        $this->assertSame(1, Filter::toBinary('yep'));
+    }
+
+    public function testTruncateString(): void
+    {
+        $this->assertSame(str_repeat('🧪', 12), Filter::truncateStringToChars(str_repeat('🧪', 13), 12));
+        $this->assertSame('', Filter::truncateString(''));
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Error reducing string to size 12!');
+        Filter::truncateStringToChars("\xFF", 12);
     }
 
     public function testTitle(): void
@@ -115,5 +133,45 @@ class FilterTest extends \PHPUnit\Framework\TestCase
     {
         $input = '<details class="mce-accordion"><summary>Summary</summary><p>One</p><p>Two</p></details>';
         $this->assertSame($input, Filter::body($input));
+    }
+
+    public function testToFsTitleSanitizesCategory(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Entity->entityData['category_title'] = 'Category 07/10/2026';
+        $this->assertStringStartsWith('Category-07-10-2026 - ', $Entity->toFsTitle());
+    }
+
+    public function testToAsciiSlug(): void
+    {
+        $this->assertEquals('test-export-07-10-2026', Filter::toAsciiSlug('test export 07/10/2026'));
+        $this->assertEquals('From-07-10-2026-to-10-10-2026', Filter::toAsciiSlug('From 07/10/2026 to 10/10/2026'));
+    }
+
+    public function testForFilesystemTitlePreservesUnicode(): void
+    {
+        $this->assertSame('研究---Study', Filter::forFilesystemTitle('研究 / Study'));
+        $this->assertSame('한국어-제목---中文标题', Filter::forFilesystemTitle('한국어 제목 / 中文标题'));
+        $this->assertSame('Étude-expérimentale', Filter::forFilesystemTitle('Étude expérimentale'));
+    }
+
+    public function testForFilesystemTitlePreservesEmojis(): void
+    {
+        $this->assertSame('Analyse-🧪', Filter::forFilesystemTitle('Analyse 🧪'));
+        $this->assertSame('Chercheuse-👩🏽‍🔬', Filter::forFilesystemTitle('Chercheuse 👩🏽‍🔬'));
+        $this->assertSame('🧪', Filter::forFilesystemTitle('🧪'));
+    }
+
+    public function testForFilesystemTitleHandlesEmptyResult(): void
+    {
+        $this->assertSame('Untitled', Filter::forFilesystemTitle('///'));
+        $this->assertSame('Untitled', Filter::forFilesystemTitle('/,.\\'));
+    }
+
+    public function testFirstLetter(): void
+    {
+        $this->assertSame('y', Filter::firstLetter('yo'));
+        $this->expectException(ImproperActionException::class);
+        Filter::firstLetter('');
     }
 }

@@ -24,6 +24,7 @@ use Override;
 use function strlen;
 use function count;
 use function dirname;
+use function ceil;
 use function mb_strlen;
 use function mb_substr;
 use function sprintf;
@@ -45,9 +46,9 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
 
     private const int SPACE_UNDER_QR = 15;
 
-    protected string $contentType = 'image/png';
+    private const DEFAULT_TITLE_FONT_SIZE = 16;
 
-    private int $fontSize = 16;
+    protected string $contentType = 'image/png';
 
     public function __construct(
         private IQRCodeProvider $qrCodeProvider,
@@ -56,11 +57,13 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
         private bool $withTitle = true,
         private int $maxLines = 0,
         private int $maxLineChars = 0,
+        private int $titleFontSize = 0,
     ) {
         // 0 means no query parameter for size
         $this->size = $this->size > 0 ? $this->size : self::DEFAULT_IMAGE_SIZE_PX;
         $this->maxLineChars = $this->maxLineChars > 0 ? $this->maxLineChars : self::DEFAULT_MAX_LINE_CHARS;
         $this->maxLines = $this->maxLines > 0 ? $this->maxLines : self::DEFAULT_MAX_LINES;
+        $this->titleFontSize = $this->titleFontSize > 0 ? $this->titleFontSize : self::DEFAULT_TITLE_FONT_SIZE;
     }
 
     #[Override]
@@ -82,7 +85,7 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
         $draw = new ImagickDraw();
         $draw->setTextAlignment(Imagick::ALIGN_LEFT);
         $draw->setFont(dirname(__DIR__, 2) . '/vendor/mpdf/mpdf/ttfonts/Sun-ExtA.ttf');
-        $draw->setFontSize($this->fontSize);
+        $draw->setFontSize($this->titleFontSize);
 
 
         // Create a new image to hold the qrcode + text
@@ -91,16 +94,22 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
 
         $splitTitle = array();
         $titleWidth = 0;
+
+        $fontScale = $this->titleFontSize / self::DEFAULT_TITLE_FONT_SIZE;
+        $charWidthPx = (int) ceil((float) self::CHAR_WIDTH_PX * (float) $fontScale);
+        $lineHeightPx = (int) ceil((float) self::LINE_HEIGHT_PX * (float) $fontScale);
+        $spaceUnderQr = (int) ceil((float) self::SPACE_UNDER_QR * (float) $fontScale);
+
         if ($this->withTitle) {
             $splitTitle = $this->splitTitle($this->entity->entityData['title']);
-            $titleWidth =  mb_strlen($splitTitle[0]) * self::CHAR_WIDTH_PX;
+            $titleWidth = mb_strlen($splitTitle[0]) * $charWidthPx;
         }
 
         if ($titleWidth < $qrCodeWidth) {
             $titleWidth = $qrCodeWidth;
         }
         $qrCodeWidth += $titleWidth - $qrCodeWidth;
-        $height = $qrCode->getImageHeight() + (count($splitTitle) * self::LINE_HEIGHT_PX);
+        $height = $qrCode->getImageHeight() + (count($splitTitle) * $lineHeightPx);
         $newImage->newImage($qrCodeWidth, $height, new ImagickPixel('white'));
         // Copy the original image to the new image
         $newImage->compositeImage($qrCode, Imagick::COMPOSITE_OVER, 0, 0);
@@ -110,7 +119,7 @@ final class MakeQrPng extends AbstractMake implements StringMakerInterface
             $titleMarginLeft = 5;
         }
         foreach ($splitTitle as $key => $line) {
-            $newImage->annotateImage($draw, $titleMarginLeft, $qrCode->getImageHeight() + (((int) $key + 1) * self::SPACE_UNDER_QR), 0, $line);
+            $newImage->annotateImage($draw, $titleMarginLeft, $qrCode->getImageHeight() + (((int) $key + 1) * $spaceUnderQr), 0, $line);
         }
         $newImage->setImageFormat('png');
 

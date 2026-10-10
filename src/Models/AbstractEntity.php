@@ -704,10 +704,12 @@ abstract class AbstractEntity extends AbstractRest
         }
         $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = new Steps($this)->readAll();
+        $this->entityData['step_groups'] = new StepGroups($this)->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
+        $this->entityData['upload_groups'] = new UploadGroups($this)->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['changelog'] = new Changelog($this)->readAll();
         $this->entityData['comments'] = new Comments($this)->readAll();

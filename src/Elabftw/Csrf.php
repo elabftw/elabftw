@@ -52,8 +52,8 @@ final class Csrf
      */
     public function validate(): void
     {
-        // get requests are not checked, same for api requests or the reset password page
-        if ($this->Request->getMethod() === 'GET' ||
+        // safe methods are not checked (GET, HEAD, OPTIONS, TRACE), same for api requests or the reset password page
+        if ($this->Request->isMethodSafe() ||
             $this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ResetPasswordController.php' ||
             $this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ApiController.php') {
             return;

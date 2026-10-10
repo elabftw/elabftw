@@ -21,7 +21,7 @@ Note: this guide assumes usage of `docker compose`, with hints related to `podma
 ## Issue with notifications
 
 :::warning
-This update will resolve a bug that would prevent some notifications from being sent. That means that there is a chance that your users will receive a deluge of notifications upon upgrade. To prevent this issue, we recommand running this command before the upgrade: `docker exec -it elabftw bin/console notifications:clear -v`.
+This update will resolve a bug that would prevent some notifications from being sent. That means that there is a chance that your users will receive a deluge of notifications upon upgrade. To prevent this issue, we recommend running this command before the upgrade: `docker exec -it elabftw bin/console notifications:clear -v`.
 :::
 
 ## Making backups

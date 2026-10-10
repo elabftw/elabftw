@@ -70,6 +70,24 @@ describe('Make', () => {
     });
   });
 
+  it('qrsvg', () => {
+    cy.getExperimentId().then(expid => {
+      cy.request(`/api/v2/experiments/${expid}?format=qrsvg`).then(resp => {
+        expect(resp.status).to.eq(200);
+        expect(resp.headers['content-type']).to.contain('image/svg+xml');
+        expect(resp.body).to.contain('<svg');
+        expect(resp.body).to.contain('<text');
+      });
+      cy.request(`/api/v2/experiments/${expid}?format=qrsvg&size=50&withTitle=0`).then(resp => {
+        expect(resp.status).to.eq(200);
+        expect(resp.body).to.contain('viewBox="0 0 50 50"');
+        expect(resp.body).not.to.contain('<text');
+      });
+      cy.visit(`/make.php?format=qrsvg&type=experiments&id=${expid}%2B${expid}`, { failOnStatusCode: false });
+      cy.get('div.alert.alert-danger').should('contain', 'QR SVG format is only suitable for one ID.');
+    });
+  });
+
   it('instance level report', () => {
     cy.request('/make.php?format=instance').then(resp => {
       expect(resp.status).to.eq(200);

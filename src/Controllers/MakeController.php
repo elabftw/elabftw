@@ -32,6 +32,7 @@ use Elabftw\Make\MakePdf;
 use Elabftw\Make\MakeProcurementRequestsCsv;
 use Elabftw\Make\MakeQrPdf;
 use Elabftw\Make\MakeQrPng;
+use Elabftw\Make\MakeQrSvg;
 use Elabftw\Make\MakeSchedulerReport;
 use Elabftw\Make\MakeStreamZip;
 use Elabftw\Make\ReportsHandler;
@@ -136,6 +137,7 @@ final class MakeController extends AbstractController
                 return (new MakeQrPdf($this->getMpdfProvider(), $this->requester, $this->entityArr))->getResponse();
 
             case ExportFormat::QrPng:
+            case ExportFormat::QrSvg:
                 $withTitle = true;
                 // this is needed or omitting the query param will result in false, but we want the default to be with the title
                 if ($this->Request->query->has('withTitle')) {
@@ -143,7 +145,16 @@ final class MakeController extends AbstractController
                 }
                 // only works for 1 entry
                 if (count($this->entityArr) !== 1) {
-                    throw new ImproperActionException('QR PNG format is only suitable for one ID.');
+                    throw new ImproperActionException(sprintf('QR %s format is only suitable for one ID.', $format === ExportFormat::QrSvg ? 'SVG' : 'PNG'));
+                }
+                if ($format === ExportFormat::QrSvg) {
+                    return new MakeQrSvg(
+                        $this->entityArr[0],
+                        $this->Request->query->getInt('size'),
+                        $withTitle,
+                        $this->Request->query->getInt('titleLines'),
+                        $this->Request->query->getInt('titleChars'),
+                    )->getResponse();
                 }
                 return (new MakeQrPng(
                     new MpdfQrProvider(),

@@ -20,6 +20,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\EntityParams;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
@@ -106,6 +107,9 @@ final class Csv extends AbstractCsv
             ) {
                 $entityId = $entity->postAction(Action::Create, array('template' => $this->template, 'title' => $row['title'], 'metadata' => $metadata));
                 $entity->setId($entityId);
+                if ($status !== null) {
+                    $entity->update(new EntityParams('status', $status));
+                }
                 $this->processTags($entity, $tags);
                 $this->processLocation($entity, $row);
             } else {

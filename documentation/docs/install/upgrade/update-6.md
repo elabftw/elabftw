@@ -18,6 +18,12 @@ Here are the main changes:
 
 Note: this guide assumes usage of `docker compose`, with hints related to `podman/quadlets` (podman is another container engine and quadlets are systemd-managed container unit files). For other deployments, you will need to adapt the changes to your context.
 
+## Issue with notifications
+
+:::warning
+This update will resolve a bug that would prevent some notifications from being sent. That means that there is a chance that your users will receive a deluge of notifications upon upgrade. To prevent this issue, we recommand running this command before the upgrade: `docker exec -it elabftw bin/console notifications:clear -v`.
+:::
+
 ## Making backups
 
 Make a backup of your configuration file:

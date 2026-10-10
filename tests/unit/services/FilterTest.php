@@ -57,6 +57,7 @@ class FilterTest extends \PHPUnit\Framework\TestCase
     public function testTruncateString(): void
     {
         $this->assertSame(str_repeat('🧪', 12), Filter::truncateStringToChars(str_repeat('🧪', 13), 12));
+        $this->assertSame('', Filter::truncateString(''));
         $this->expectException(ImproperActionException::class);
         $this->expectExceptionMessage('Error reducing string to size 12!');
         Filter::truncateStringToChars("\xFF", 12);

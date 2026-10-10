@@ -54,6 +54,14 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(1, Filter::toBinary('yep'));
     }
 
+    public function testTruncateString(): void
+    {
+        $this->assertSame(str_repeat('🧪', 12), Filter::truncateStringToChars(str_repeat('🧪', 13), 12));
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Error reducing string to size 12!');
+        Filter::truncateStringToChars("\xFF", 12);
+    }
+
     public function testTitle(): void
     {
         $this->assertEquals('My super title', Filter::title('My super title'));
@@ -157,5 +165,12 @@ class FilterTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame('Untitled', Filter::forFilesystemTitle('///'));
         $this->assertSame('Untitled', Filter::forFilesystemTitle('/,.\\'));
+    }
+
+    public function testFirstLetter(): void
+    {
+        $this->assertSame('y', Filter::firstLetter('yo'));
+        $this->expectException(ImproperActionException::class);
+        Filter::firstLetter('');
     }
 }

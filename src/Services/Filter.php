@@ -30,6 +30,7 @@ use function pathinfo;
 use function preg_replace;
 use function str_replace;
 use function grapheme_extract;
+use function sprintf;
 
 use const GRAPHEME_EXTR_MAXBYTES;
 
@@ -137,7 +138,7 @@ final class Filter
         }
         // remove linebreak to avoid problem in javascript link list generation on editXP
         $title = str_replace(array("\r\n", "\n", "\r"), ' ', $title);
-        return self::truncateString($title, 255);
+        return self::truncateStringToChars($title, 255);
     }
 
     public static function toAsciiSlug(string $input): string
@@ -150,13 +151,15 @@ final class Filter
      */
     public static function truncateString(string $input, int $size = self::MAX_FILESYSTEM_TITLE_BYTES): string
     {
-        $truncated = grapheme_extract($input, $size, GRAPHEME_EXTR_MAXBYTES);
+        return self::truncateWithGrapheme($input, $size, GRAPHEME_EXTR_MAXBYTES);
+    }
 
-        if ($truncated === false) {
-            throw new ImproperActionException('Error reducing filesystem title size!');
-        }
-
-        return $truncated;
+    /**
+     * This one uses characters instead of bytes
+     */
+    public static function truncateStringToChars(string $input, int $size): string
+    {
+        return self::truncateWithGrapheme($input, $size, GRAPHEME_EXTR_MAXCHARS);
     }
 
     /**
@@ -318,6 +321,20 @@ final class Filter
             return null;
         }
         return Check::color($input);
+    }
+
+    private static function truncateWithGrapheme(string $input, int $size, int $type): string
+    {
+        if ($input === '') {
+            return '';
+        }
+        $truncated = grapheme_extract($input, $size, $type);
+
+        if ($truncated === false) {
+            throw new ImproperActionException(sprintf('Error reducing string to size %d!', $size));
+        }
+
+        return $truncated;
     }
 
     private static function validateBodySize(?string $input): string

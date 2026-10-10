@@ -576,7 +576,11 @@ export function getTinymceBaseConfig(page: string): object {
       },
     ],
     toolbar_sticky: isToolbarSticky,
-    toolbar_sticky_offset: isToolbarSticky ? ((document.querySelector<HTMLElement>('.sticky-navbar')?.offsetHeight ?? 0) + (entityToolbar?.offsetHeight ?? 0)) : 0,
+    toolbar_sticky_offset: isToolbarSticky
+      ? ((Number.parseFloat(getComputedStyle(document.getElementById('container') ?? document.documentElement)
+        .getPropertyValue('--navbar-height')) || 0)
+        + (entityToolbar?.offsetHeight ?? 0))
+      : 0,
     // render MathJax for TinyMCE preview
     init_instance_callback: (editor) => {
       editor.on('ExecCommand', (e) => {

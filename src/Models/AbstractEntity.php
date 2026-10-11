@@ -53,6 +53,7 @@ use Elabftw\Make\MakeDeltablotTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Make\MakeDgnTimestamp;
 use Elabftw\Make\MakeDigicertTimestamp;
+use Elabftw\Make\MakeDtrustTimestamp;
 use Elabftw\Make\MakeEvidencyTimestamp;
 use Elabftw\Make\MakeEvidencyTimestampDev;
 use Elabftw\Make\MakeFullJson;
@@ -1351,6 +1352,7 @@ abstract class AbstractEntity extends AbstractRest
             'dgn' => new MakeDgnTimestamp($this->Users, $this, $config, $dataFormat),
             'universign' => Env::asBool('DEV_MODE') ? new MakeUniversignTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $this, $config, $dataFormat),
             'digicert' => new MakeDigicertTimestamp($this->Users, $this, $config, $dataFormat),
+            'dtrust' => new MakeDtrustTimestamp($this->Users, $this, $config, $dataFormat),
             'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
             'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
             'evidency' => Env::asBool('DEV_MODE') ? new MakeEvidencyTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeEvidencyTimestamp($this->Users, $this, $config, $dataFormat),

@@ -33,6 +33,7 @@ use function grapheme_extract;
 use function sprintf;
 
 use const GRAPHEME_EXTR_MAXBYTES;
+use const GRAPHEME_EXTR_MAXCHARS;
 
 /**
  * When values need to be filtered
@@ -42,6 +43,9 @@ final class Filter
     // Conservative byte limit for ZIP extraction compatibility with Windows MAX_PATH.
     // https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
     private const int MAX_FILESYSTEM_TITLE_BYTES = 100;
+
+    // Step bodies are stored in TEXT columns, whose capacity is measured in bytes.
+    private const int MAX_STEP_BODY_BYTES = 65535;
 
     /**
      * ~= max size of MEDIUMTEXT in MySQL for UTF-8
@@ -125,20 +129,26 @@ final class Filter
     }
 
     /**
-     * Sanitize title with a filter_var and remove the line breaks.
+     * Trim a title, remove line breaks and limit it to 255 Unicode code points.
      *
      * @param string $input The title to sanitize
      * @return string Will return Untitled if there is no input.
      */
     public static function title(string $input): string
     {
-        $title = trim($input);
-        if ($title === '') {
-            return _('Untitled');
+        return self::truncateStringToChars(self::singleLine($input), 255);
+    }
+
+    /**
+     * Normalize a step and reject content that exceeds its TEXT column's byte limit.
+     */
+    public static function step(string $input): string
+    {
+        $step = self::singleLine($input);
+        if (strlen($step) > self::MAX_STEP_BODY_BYTES) {
+            throw new ImproperActionException(sprintf(_('Step is too long! (maximum: %d bytes)'), self::MAX_STEP_BODY_BYTES));
         }
-        // remove linebreak to avoid problem in javascript link list generation on editXP
-        $title = str_replace(array("\r\n", "\n", "\r"), ' ', $title);
-        return self::truncateStringToChars($title, 255);
+        return $step;
     }
 
     public static function toAsciiSlug(string $input): string
@@ -183,7 +193,10 @@ final class Filter
     public static function forFilesystemTitle(string $input): string
     {
         try {
-            return new FileSlugger()->nonEmptyUnicodeSlug(self::truncateString($input))->toString();
+            $Slugger = new FileSlugger();
+            $safe = $Slugger->nonEmptyUnicodeSlug($input)->toString();
+            // Normalize before limiting bytes, then validate the truncated prefix again.
+            return $Slugger->nonEmptyUnicodeSlug(self::truncateString($safe))->toString();
         } catch (ValueError) {
             return _('Untitled');
         }
@@ -321,6 +334,16 @@ final class Filter
             return null;
         }
         return Check::color($input);
+    }
+
+    private static function singleLine(string $input): string
+    {
+        $input = trim($input);
+        if ($input === '') {
+            return _('Untitled');
+        }
+        // Remove line breaks to avoid problems in JavaScript link list generation on editXP.
+        return str_replace(array("\r\n", "\n", "\r"), ' ', $input);
     }
 
     private static function truncateWithGrapheme(string $input, int $size, int $type): string

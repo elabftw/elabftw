@@ -74,6 +74,50 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(str_repeat('A', 255), Filter::title(str_repeat('A', 260)));
     }
 
+    public function testTitleLimitsCodePointsWithoutSplittingGraphemes(): void
+    {
+        $this->assertSame(str_repeat('🧪', 255), Filter::title(str_repeat('🧪', 256)));
+        $this->assertSame(str_repeat('👩🏽‍🔬', 63), Filter::title(str_repeat('👩🏽‍🔬', 100)));
+    }
+
+    public function testStepPreservesLongBodies(): void
+    {
+        $this->assertSame(str_repeat("か\u{3099}", 1000), Filter::step(str_repeat("か\u{3099}", 1000)));
+        $this->assertSame(str_repeat('👩🏽‍🔬', 1000), Filter::step(str_repeat('👩🏽‍🔬', 1000)));
+        $this->assertSame(str_repeat('A', 1000), Filter::step(str_repeat('A', 1000)));
+        $this->assertSame('Untitled', Filter::step(' '));
+        $this->assertSame('First Second Third Fourth', Filter::step(" First\r\nSecond\nThird\rFourth "));
+    }
+
+    public function testStepAcceptsTextByteLimit(): void
+    {
+        $ascii = str_repeat('A', 65535);
+        $unicode = str_repeat('🧪', 16383) . 'end';
+        $this->assertSame($ascii, Filter::step($ascii));
+        $this->assertSame($unicode, Filter::step($unicode));
+    }
+
+    public function testStepNormalizesBeforeCheckingSize(): void
+    {
+        $body = str_repeat('A', 65535);
+        $this->assertSame($body, Filter::step(" \r\n" . $body . "\r\n "));
+        $this->assertSame('Head ' . str_repeat('A', 65530), Filter::step("Head\r\n" . str_repeat('A', 65530)));
+    }
+
+    public function testStepRejectsAsciiBodyOverTextByteLimit(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Step is too long! (maximum: 65535 bytes)');
+        Filter::step(str_repeat('A', 65536));
+    }
+
+    public function testStepRejectsUnicodeBodyOverTextByteLimit(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Step is too long! (maximum: 65535 bytes)');
+        Filter::step(str_repeat('🧪', 16384));
+    }
+
     public function testBody(): void
     {
         $this->assertEquals('my body', Filter::body('my body'));
@@ -162,10 +206,28 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('🧪', Filter::forFilesystemTitle('🧪'));
     }
 
+    public function testForFilesystemTitleLimitsBytesAfterNormalization(): void
+    {
+        // U+0958 normalizes to U+0915 + U+093C, growing from three to six bytes.
+        $this->assertSame(str_repeat("\u{0915}\u{093C}", 16), Filter::forFilesystemTitle(str_repeat("\u{0958}", 33)));
+        // Normalization can also shrink a title that fits only after composition.
+        $this->assertSame(str_repeat('é', 50), Filter::forFilesystemTitle(str_repeat("e\u{0301}", 50)));
+    }
+
+    public function testForFilesystemTitleTruncatesAtGraphemeBoundaries(): void
+    {
+        $this->assertSame(str_repeat('A', 100), Filter::forFilesystemTitle(str_repeat('A', 101)));
+        $this->assertSame(str_repeat('🧪', 25), Filter::forFilesystemTitle(str_repeat('🧪', 26)));
+        $this->assertSame(str_repeat('👩🏽‍🔬', 6), Filter::forFilesystemTitle(str_repeat('👩🏽‍🔬', 7)));
+    }
+
     public function testForFilesystemTitleHandlesEmptyResult(): void
     {
         $this->assertSame('Untitled', Filter::forFilesystemTitle('///'));
         $this->assertSame('Untitled', Filter::forFilesystemTitle('/,.\\'));
+        $this->assertSame('Untitled', Filter::forFilesystemTitle(str_repeat('.', 100) . 'Study'));
+        $this->assertSame('Untitled', Filter::forFilesystemTitle('x' . str_repeat("\u{0301}", 100)));
+        $this->assertSame('Study', Filter::forFilesystemTitle(str_repeat('/', 100) . 'Study'));
     }
 
     public function testFirstLetter(): void

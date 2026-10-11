@@ -307,7 +307,7 @@ final class Steps extends AbstractRest
 
     private function create(string $body): int
     {
-        $body = Filter::title($body);
+        $body = Filter::step($body);
         // make sure the newly added step is at the bottom
         // count the number of steps and add 1 to be sure we're last
         $ordering = count($this->readAll()) + 1;

@@ -22,6 +22,7 @@ use Elabftw\Traits\TestsUtilsTrait;
 use function array_filter;
 use function array_values;
 use function count;
+use function str_repeat;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
@@ -62,6 +63,51 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $this->Steps->setId($id);
         $result = $this->Steps->readOne();
         $this->assertEquals($result['body'], $body);
+    }
+
+    public function testCreateAndUpdatePreserveUnicodeStepBody(): void
+    {
+        $body = str_repeat("か\u{3099}", 1000) . ' ' . str_repeat('👩🏽‍🔬', 300);
+        $id = $this->Steps->postAction(Action::Create, array('body' => $body));
+        $this->Steps->setId($id);
+        $this->assertSame($body, $this->Steps->readOne()['body']);
+        $step = $this->Steps->patch(Action::Update, array('body' => $body));
+        $this->assertSame($body, $step['body']);
+    }
+
+    public function testCreateAndUpdateAtTextByteLimit(): void
+    {
+        $body = str_repeat('🧪', 16383) . 'end';
+        $id = $this->Steps->postAction(Action::Create, array('body' => $body));
+        $this->Steps->setId($id);
+        $this->assertSame($body, $this->Steps->readOne()['body']);
+
+        $body = str_repeat('A', 65535);
+        $step = $this->Steps->patch(Action::Update, array('body' => $body));
+        $this->assertSame($body, $step['body']);
+    }
+
+    public function testCannotCreateStepOverTextByteLimit(): void
+    {
+        $steps = $this->Steps->readAll();
+        try {
+            $this->Steps->postAction(Action::Create, array('body' => str_repeat('🧪', 16384)));
+            $this->fail('An oversized step was created.');
+        } catch (ImproperActionException) {
+            $this->assertSame($steps, $this->Steps->readAll());
+        }
+    }
+
+    public function testCannotUpdateStepOverTextByteLimit(): void
+    {
+        $id = $this->Steps->postAction(Action::Create, array('body' => 'Original body'));
+        $this->Steps->setId($id);
+        try {
+            $this->Steps->patch(Action::Update, array('body' => str_repeat('🧪', 16384)));
+            $this->fail('An oversized step body was saved.');
+        } catch (ImproperActionException) {
+            $this->assertSame('Original body', $this->Steps->readOne()['body']);
+        }
     }
 
     public function testCannotReadOneFromAnotherExperiment(): void

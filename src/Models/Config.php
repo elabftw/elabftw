@@ -17,7 +17,6 @@ use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Defuse\Crypto\Key;
 use Elabftw\AuditEvent\ConfigModified;
 use Elabftw\Elabftw\Env;
-use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\S3Config;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
@@ -220,12 +219,7 @@ final class Config extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', SchemaVersionChecker::REQUIRED_SCHEMA);
 
-        $created = $this->Db->execute($req);
-        if ($created) {
-            // structure.sql already contains the latest structure on fresh installs.
-            Migrations::getDefault()->markAllAvailableAsApplied();
-        }
-        return $created;
+        return $this->Db->execute($req);
     }
 
     /**

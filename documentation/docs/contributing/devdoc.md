@@ -96,7 +96,7 @@ bin/console db:update          # apply it again
 
 `db:revert` without an identifier reverts the most recently applied batch. `dev:forceschema <uuid>` marks a migration as applied without running SQL; `dev:forceschema <uuid> --remove` marks it as pending. These development commands modify migration state, not the database structure, so use them with care.
 
-On update, eLabFTW runs any remaining legacy numbered schemas first, followed by pending migrations in identifier order. Applied migrations are recorded in the `schema_migrations` table, including their batch and application timestamp. On fresh installations, `structure.sql` already includes the current structure, so available migrations are recorded as applied instead of being executed again.
+On update, eLabFTW runs any remaining legacy numbered schemas first, followed by pending migrations in identifier order. New migrations must succeed even with `db:update --force`, so partially applied migrations cannot be recorded as completed. Applied migrations are recorded in the `schema_migrations` table, including their batch and application timestamp. On fresh installations, `structure.sql` already includes the current structure, so available migrations are recorded as applied instead of being executed again.
 
 ## Miscellaneous
 

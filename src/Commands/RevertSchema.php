@@ -93,6 +93,10 @@ final class RevertSchema extends Command
         }
 
         $Sql->execFile(Migrations::getDownFilename($filename), $force);
+        if ($Sql->hadIgnoredErrors()) {
+            $output->writeln(sprintf('<error>Migration %s was only partially reverted; it remains marked as applied.</error>', $migration));
+            return Command::FAILURE;
+        }
         $Migrations->removeApplied($migration);
         $output->writeln(sprintf('<info>Reverted migration %s.</info>', $migration));
         return Command::SUCCESS;

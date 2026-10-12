@@ -88,25 +88,34 @@ final class Update
             }
         }
 
-        $this->runPendingMigrations($force);
+        $this->runPendingMigrations();
         return $this->currentSchema;
     }
 
-    private function runPendingMigrations(bool $force): void
+    private function runPendingMigrations(): void
     {
-        $pending = $this->Migrations->getPending();
-        if ($pending === array()) {
-            return;
+        // Prevent concurrent containers from executing the same DDL.
+        if ((int) $this->Db->q("SELECT GET_LOCK('elabftw_migrations', 30)")->fetchColumn() !== 1) {
+            throw new ImproperActionException('Could not acquire the database migration lock.');
         }
 
-        $batch = $this->Migrations->nextBatch();
-        foreach ($pending as $migration => $filename) {
-            $this->Sql->execFileWithRollback(
-                $filename,
-                Migrations::getDownFilename($filename),
-                $force,
-            );
-            $this->Migrations->recordApplied($migration, $batch);
+        try {
+            $pending = $this->Migrations->getPending();
+            if ($pending === array()) {
+                return;
+            }
+
+            $batch = $this->Migrations->nextBatch();
+            foreach ($pending as $migration => $filename) {
+                // Never mark a partially applied migration as successful, even with --force.
+                $this->Sql->execFileWithRollback(
+                    $filename,
+                    Migrations::getDownFilename($filename),
+                );
+                $this->Migrations->recordApplied($migration, $batch);
+            }
+        } finally {
+            $this->Db->q("SELECT RELEASE_LOCK('elabftw_migrations')");
         }
     }
 

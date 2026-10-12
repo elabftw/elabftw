@@ -39,7 +39,7 @@ final class UpdateDatabase extends Command
     protected function configure(): void
     {
         $this->setDescription('Update the database structure')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore SQL errors in legacy schema updates only')
             ->setHelp('Apply legacy numeric schemas and all pending migrations.');
     }
 

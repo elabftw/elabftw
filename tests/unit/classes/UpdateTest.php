@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\InvalidSchemaException;
 use League\Flysystem\Filesystem as Fs;
@@ -44,6 +45,22 @@ class UpdateTest extends \PHPUnit\Framework\TestCase
         $this->Fs->write(sprintf('schema%d.sql', SchemaVersionChecker::REQUIRED_SCHEMA), 'SELECT 1');
         $Update = new Update(SchemaVersionChecker::REQUIRED_SCHEMA - 1, $this->Sql, new Migrations($this->Fs));
         $this->assertSame(SchemaVersionChecker::REQUIRED_SCHEMA, $Update->runUpdateScript());
+    }
+
+    public function testForcedMigrationErrorIsNotRecorded(): void
+    {
+        $uuid = Migrations::generateUuidV7();
+        $this->Fs->write(sprintf('migration-%s.sql', $uuid), 'SELECT not_existing FROM not_existing_either;');
+        $this->Fs->write(sprintf('migration-%s.down.sql', $uuid), 'SELECT 1;');
+        $Migrations = new Migrations($this->Fs);
+        $Update = new Update(SchemaVersionChecker::REQUIRED_SCHEMA, $this->Sql, $Migrations);
+
+        try {
+            $Update->runUpdateScript(true);
+            $this->fail('Expected the migration to fail.');
+        } catch (DatabaseErrorException) {
+            $this->assertFalse($Migrations->isApplied($uuid));
+        }
     }
 
     public function testOldAfInstance(): void

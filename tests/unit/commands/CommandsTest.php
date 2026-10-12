@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -269,6 +270,24 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $commandTester = new CommandTester(new RevertSchema((new Fixtures())->getFs()));
         $commandTester->execute(array('migration' => '42'));
         $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testForcedRevertPreservesAppliedRecordOnSqlError(): void
+    {
+        $fs = (new Memory())->getFs();
+        $uuid = Migrations::generateUuidV7();
+        $fs->write(sprintf('migration-%s.sql', $uuid), 'SELECT 1;');
+        $fs->write(sprintf('migration-%s.down.sql', $uuid), 'SELECT not_existing FROM not_existing_either;');
+        $Migrations = new Migrations($fs);
+        $Migrations->recordApplied($uuid, $Migrations->nextBatch());
+
+        try {
+            $commandTester = new CommandTester(new RevertSchema($fs));
+            $this->assertSame(Command::FAILURE, $commandTester->execute(array('migration' => $uuid, '--force' => true)));
+            $this->assertTrue($Migrations->isApplied($uuid));
+        } finally {
+            $Migrations->removeApplied($uuid);
+        }
     }
 
     public function testExecuteCache(): void

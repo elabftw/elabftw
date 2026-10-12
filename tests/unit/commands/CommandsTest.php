@@ -30,6 +30,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Mailer\MailerInterface;
 use InvalidArgumentException;
 
+use function sprintf;
+
 /**
  * This file bundles a bunch of commands test together, because most of them are quite short
  */

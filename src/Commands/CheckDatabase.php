@@ -30,9 +30,9 @@ final class CheckDatabase extends Command
 {
     private readonly Migrations $Migrations;
 
-    public function __construct(private int $currentSchema, ?Migrations $Migrations = null)
+    public function __construct(private int $currentSchema)
     {
-        $this->Migrations = $Migrations ?? Migrations::getDefault();
+        $this->Migrations = Migrations::getDefault();
         parent::__construct();
     }
 

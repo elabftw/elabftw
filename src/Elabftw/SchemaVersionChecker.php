@@ -26,9 +26,9 @@ final class SchemaVersionChecker
 
     private readonly Migrations $Migrations;
 
-    public function __construct(public int $currentSchema, ?Migrations $Migrations = null)
+    public function __construct(public int $currentSchema)
     {
-        $this->Migrations = $Migrations ?? Migrations::getDefault();
+        $this->Migrations = Migrations::getDefault();
     }
 
     /**

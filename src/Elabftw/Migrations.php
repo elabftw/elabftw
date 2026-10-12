@@ -33,11 +33,11 @@ final class Migrations
 {
     public const string FILE_REGEX = '/^migration-([0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})(?:_[a-z0-9][a-z0-9-]*)?\.sql$/';
 
-    private ?Db $Db;
+    private Db $Db;
 
-    public function __construct(private readonly FilesystemOperator $fs, ?Db $Db = null)
+    public function __construct(private readonly FilesystemOperator $fs)
     {
-        $this->Db = $Db;
+        $this->Db = Db::getConnection();
     }
 
     public static function getDefault(): self
@@ -94,7 +94,7 @@ final class Migrations
         if (!$this->tableExists()) {
             return array();
         }
-        $req = $this->db()->q('SELECT migration FROM schema_migrations ORDER BY migration ASC');
+        $req = $this->Db->q('SELECT migration FROM schema_migrations ORDER BY migration ASC');
         return array_column($req->fetchAll(), 'migration');
     }
 
@@ -123,7 +123,7 @@ final class Migrations
 
     public function ensureTable(): void
     {
-        $this->db()->q(
+        $this->Db->q(
             'CREATE TABLE IF NOT EXISTS schema_migrations (
                 migration CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
                 batch INT UNSIGNED NOT NULL,
@@ -137,17 +137,17 @@ final class Migrations
     public function nextBatch(): int
     {
         $this->ensureTable();
-        $req = $this->db()->q('SELECT COALESCE(MAX(batch), 0) + 1 AS next_batch FROM schema_migrations');
+        $req = $this->Db->q('SELECT COALESCE(MAX(batch), 0) + 1 AS next_batch FROM schema_migrations');
         return (int) $req->fetchColumn();
     }
 
     public function recordApplied(string $migration, int $batch): void
     {
         $this->ensureTable();
-        $req = $this->db()->prepare('INSERT INTO schema_migrations (migration, batch) VALUES (:migration, :batch)');
+        $req = $this->Db->prepare('INSERT INTO schema_migrations (migration, batch) VALUES (:migration, :batch)');
         $req->bindValue(':migration', $migration);
         $req->bindValue(':batch', $batch, PDO::PARAM_INT);
-        $this->db()->execute($req);
+        $this->Db->execute($req);
     }
 
     public function removeApplied(string $migration): void
@@ -155,9 +155,9 @@ final class Migrations
         if (!$this->tableExists()) {
             return;
         }
-        $req = $this->db()->prepare('DELETE FROM schema_migrations WHERE migration = :migration');
+        $req = $this->Db->prepare('DELETE FROM schema_migrations WHERE migration = :migration');
         $req->bindValue(':migration', $migration);
-        $this->db()->execute($req);
+        $this->Db->execute($req);
     }
 
     public function isApplied(string $migration): bool
@@ -165,9 +165,9 @@ final class Migrations
         if (!$this->tableExists()) {
             return false;
         }
-        $req = $this->db()->prepare('SELECT COUNT(*) FROM schema_migrations WHERE migration = :migration');
+        $req = $this->Db->prepare('SELECT COUNT(*) FROM schema_migrations WHERE migration = :migration');
         $req->bindValue(':migration', $migration);
-        $this->db()->execute($req);
+        $this->Db->execute($req);
         return (int) $req->fetchColumn() === 1;
     }
 
@@ -191,7 +191,7 @@ final class Migrations
         if (!$this->tableExists()) {
             return array();
         }
-        $req = $this->db()->q(
+        $req = $this->Db->q(
             'SELECT migration FROM schema_migrations
              WHERE batch = (SELECT MAX(batch) FROM schema_migrations)
              ORDER BY migration DESC'
@@ -201,17 +201,11 @@ final class Migrations
 
     private function tableExists(): bool
     {
-        $req = $this->db()->prepare(
+        $req = $this->Db->prepare(
             "SELECT COUNT(*) FROM information_schema.tables
              WHERE table_schema = DATABASE() AND table_name = 'schema_migrations'"
         );
-        $this->db()->execute($req);
+        $this->Db->execute($req);
         return (int) $req->fetchColumn() === 1;
-    }
-
-    private function db(): Db
-    {
-        $this->Db ??= Db::getConnection();
-        return $this->Db;
     }
 }

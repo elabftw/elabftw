@@ -177,11 +177,11 @@ json_extract(canwrite, '$.base') = 10;
 
 Ignore this if you are not a CNRS lab.
 
-This allows to query an external endpoint to get a list of users that can be added to the eLabFTW local users database.
+This allows you to query an external endpoint to get a list of users that can be added to the eLabFTW local users database.
 
 ### Users tab
 
-The Sysadmin can manage Users the same way Admins can manage Users from their Team, but with more options, such as changing the password or attributes, and manage the teams for users.
+The Sysadmin can manage Users in the same way that Admins manage Users on their Team, but Sysadmins have additional options, such as changing passwords or attributes and managing users' teams.
 
 To make a User part of multiple teams, search for a User, and double click its row to open a modal window. From the section "Manage teams for user" you can add or remove teams, or archive a User in a given team. A User can be Admin in a team and not Admin in another.
 

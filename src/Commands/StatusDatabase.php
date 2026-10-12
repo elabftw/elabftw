@@ -24,7 +24,7 @@ use function array_flip;
 use function sprintf;
 
 /**
- * Show UUIDv7 migration state.
+ * Show migration state.
  */
 #[AsCommand(name: 'db:status')]
 final class StatusDatabase extends Command
@@ -37,7 +37,7 @@ final class StatusDatabase extends Command
     #[Override]
     protected function configure(): void
     {
-        $this->setDescription('Show UUIDv7 database migration status');
+        $this->setDescription('Show database migration status');
     }
 
     #[Override]
@@ -46,7 +46,7 @@ final class StatusDatabase extends Command
         $Migrations = new Migrations($this->fs);
         $available = $Migrations->getAvailable();
         if ($available === array()) {
-            $output->writeln('No UUIDv7 migrations found.');
+            $output->writeln('No migrations found.');
             return Command::SUCCESS;
         }
 

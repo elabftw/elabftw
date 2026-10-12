@@ -27,7 +27,7 @@ use function preg_match;
  * Run the update schema script
  *
  * Numeric schemas are kept as a legacy upgrade path up to REQUIRED_SCHEMA.
- * New migrations use UUIDv7 filenames and are tracked independently in schema_migrations.
+ * New migrations are tracked independently in schema_migrations.
  *
  * How to modify the structure:
  * 1. Generate a migration with `bin/console dev:genschema descriptive_name`.
@@ -88,11 +88,11 @@ final class Update
             }
         }
 
-        $this->runUuidMigrations($force);
+        $this->runPendingMigrations($force);
         return $this->currentSchema;
     }
 
-    private function runUuidMigrations(bool $force): void
+    private function runPendingMigrations(bool $force): void
     {
         $pending = $this->Migrations->getPending();
         if ($pending === array()) {

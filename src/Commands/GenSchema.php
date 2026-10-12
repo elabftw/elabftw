@@ -41,7 +41,7 @@ final class GenSchema extends Command
     protected function configure(): void
     {
         $this->setDescription('Generate a new database migration file')
-            ->setHelp('Generate a UUIDv7 migration pair. The optional name is appended to make filenames easier to read.')
+            ->setHelp('Generate a pair of migration files. The optional name makes filenames easier to read.')
             ->addArgument('name', InputArgument::OPTIONAL, 'Short migration description, for example add_step_groups');
     }
 

@@ -27,7 +27,7 @@ use function ctype_digit;
 use function sprintf;
 
 /**
- * Revert a migration or the latest UUIDv7 migration batch.
+ * Revert a migration or the latest migration batch.
  */
 #[AsCommand(name: 'db:revert')]
 final class RevertSchema extends Command
@@ -41,7 +41,7 @@ final class RevertSchema extends Command
     protected function configure(): void
     {
         $this->setDescription('Revert a database migration.')
-            ->setHelp('Pass a UUIDv7 to revert one migration, a legacy schema number to revert an old migration, or no argument to revert the latest UUIDv7 batch.')
+            ->setHelp('Pass an identifier to revert one migration, a legacy schema number to revert an old migration, or no argument to revert the latest batch.')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
             ->addArgument('migration', InputArgument::OPTIONAL, 'UUIDv7 migration identifier or legacy schema number');
     }
@@ -64,7 +64,7 @@ final class RevertSchema extends Command
 
         $batch = $Migrations->getLastBatch();
         if ($batch === array()) {
-            $output->writeln('No UUIDv7 migration batch to revert.');
+            $output->writeln('No migration batch to revert.');
             return Command::SUCCESS;
         }
         foreach ($batch as $migration) {

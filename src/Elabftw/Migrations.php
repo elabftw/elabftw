@@ -27,7 +27,7 @@ use function preg_match;
 use function substr;
 
 /**
- * Discover UUIDv7 migration files and keep track of applied migrations.
+ * Discover migration files and keep track of applied migrations.
  */
 final class Migrations
 {
@@ -56,7 +56,7 @@ final class Migrations
     }
 
     /**
-     * @return array<string, string> UUID => filename, sorted chronologically by UUIDv7.
+     * @return array<string, string> UUID => filename, sorted by identifier.
      */
     public function getAvailable(): array
     {

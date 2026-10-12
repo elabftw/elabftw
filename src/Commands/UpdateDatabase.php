@@ -40,7 +40,7 @@ final class UpdateDatabase extends Command
     {
         $this->setDescription('Update the database structure')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Ignore errors during execution')
-            ->setHelp('Apply legacy numeric schemas and all pending UUIDv7 migrations.');
+            ->setHelp('Apply legacy numeric schemas and all pending migrations.');
     }
 
     #[Override]

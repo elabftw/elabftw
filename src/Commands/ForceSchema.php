@@ -27,7 +27,7 @@ use function ctype_digit;
 use function sprintf;
 
 /**
- * For dev purposes: force legacy schema state or UUIDv7 migration state.
+ * For dev purposes: force the legacy schema or migration state.
  */
 #[AsCommand(name: 'dev:forceschema')]
 final class ForceSchema extends Command
@@ -45,8 +45,8 @@ final class ForceSchema extends Command
     {
         $this->setDescription('Force database migration state without executing SQL')
             ->addArgument('identifier', InputArgument::REQUIRED, 'Legacy schema number or UUIDv7 migration identifier')
-            ->addOption('remove', 'r', InputOption::VALUE_NONE, 'Mark a UUIDv7 migration as pending instead of applied')
-            ->setHelp('Legacy numbers update config.schema. UUIDv7 identifiers are added to or removed from schema_migrations.');
+            ->addOption('remove', 'r', InputOption::VALUE_NONE, 'Mark a migration as pending instead of applied')
+            ->setHelp('Legacy numbers update config.schema. Migration identifiers are tracked in schema_migrations.');
     }
 
     #[Override]

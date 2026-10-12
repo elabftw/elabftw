@@ -23,7 +23,7 @@ use Override;
 use function sprintf;
 
 /**
- * Check the current legacy schema and pending UUIDv7 migrations.
+ * Check the current legacy schema and pending migrations.
  */
 #[AsCommand(name: 'db:check')]
 final class CheckDatabase extends Command
@@ -40,7 +40,7 @@ final class CheckDatabase extends Command
     protected function configure(): void
     {
         $this->setDescription('Check the database version')
-            ->setHelp('Check the legacy schema baseline and whether UUIDv7 migrations are pending.');
+            ->setHelp('Check the legacy schema baseline and whether migrations are pending.');
     }
 
     /**
@@ -54,7 +54,7 @@ final class CheckDatabase extends Command
             'Database check',
             '==============',
             sprintf('Legacy schema: %d / %d', $this->currentSchema, SchemaVersionChecker::REQUIRED_SCHEMA),
-            sprintf('Pending UUIDv7 migrations: %d', $pending),
+            sprintf('Pending migrations: %d', $pending),
         ));
         if ($this->currentSchema === SchemaVersionChecker::REQUIRED_SCHEMA && $pending === 0) {
             $output->writeln('No upgrade required.');

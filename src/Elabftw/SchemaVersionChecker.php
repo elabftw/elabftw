@@ -15,12 +15,12 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\InvalidSchemaException;
 
 /**
- * Check the legacy schema baseline and UUIDv7 migration state.
+ * Check the legacy schema baseline and migration state.
  */
 final class SchemaVersionChecker
 {
     /**
-     * Legacy numeric schema baseline. New migrations use UUIDv7 and are tracked in schema_migrations.
+     * Legacy numeric schema baseline. New migrations are tracked in schema_migrations.
      */
     public const int REQUIRED_SCHEMA = 227;
 

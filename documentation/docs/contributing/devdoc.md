@@ -67,9 +67,40 @@ You'll also want to configure your favorite text editor to display TypeScript er
 
 Use vanilla JS and ban the use of jQuery selectors or functions.
 
+## Database migrations
+
+Database changes are managed through SQL migrations in `src/sql/`. The old numbered `schemaNNN.sql` files are kept for upgrading existing installations, but new changes use migration files with UUIDv7 identifiers. Do not increment `SchemaVersionChecker::REQUIRED_SCHEMA` when adding a new migration.
+
+Generate a pair of migration files from the repository root:
+
+~~~bash
+bin/console dev:genschema add_step_groups
+~~~
+
+The optional name is converted to a filename-friendly suffix. This command creates two files, for example:
+
+* `src/sql/migration-<uuid>_add-step-groups.sql`: SQL to apply the change.
+* `src/sql/migration-<uuid>_add-step-groups.down.sql`: SQL to revert the change.
+
+Edit both files so the change can be applied and reverted. Also update `src/sql/structure.sql` to reflect the final structure for fresh installations (and `src/Models/Config.php` if changing configuration defaults). The generated files are templates; `dev:genschema` does not update the database or `structure.sql` itself.
+
+To test the migration on your development database:
+
+~~~bash
+bin/console db:update          # apply pending migrations
+bin/console db:status          # list applied and pending migrations
+bin/console db:check           # check whether an update is needed
+bin/console db:revert <uuid>   # revert a specific migration
+bin/console db:update          # apply it again
+~~~
+
+`db:revert` without an identifier reverts the most recently applied batch. `dev:forceschema <uuid>` marks a migration as applied without running SQL; `dev:forceschema <uuid> --remove` marks it as pending. These development commands modify migration state, not the database structure, so use them with care.
+
+On update, eLabFTW runs any remaining legacy numbered schemas first, followed by pending migrations in identifier order. Applied migrations are recorded in the `schema_migrations` table, including their batch and application timestamp. On fresh installations, `structure.sql` already includes the current structure, so available migrations are recorded as applied instead of being executed again.
+
 ## Miscellaneous
 
-* if you make a change to the SQL structure, you need to add a schema file in `src/sql`. See the existing files for an example. Then increment the required version in `src/classes/Update`. Modify `src/sql/structure.sql` so new installs will get the correct structure. See also `dev:genschema` command.
+* for database changes, follow the [database migrations](#database-migrations) instructions above
 * comment your code wisely, what is important is the why, not the what
 * your code must follow [the PSR standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)
 * add a plugin to your editor to show trailing whitespaces in red

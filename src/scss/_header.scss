@@ -306,6 +306,8 @@
     }
 
     .navbar-utilities {
+      // The bottom border was visible over the rounded sidebar corner.
+      border-bottom: 0;
       height: 3rem;
       left: 17rem;
       padding-right: 2rem;

@@ -34,9 +34,9 @@ final class ForceSchema extends Command
 {
     private readonly Migrations $Migrations;
 
-    public function __construct(?Migrations $Migrations = null)
+    public function __construct()
     {
-        $this->Migrations = $Migrations ?? Migrations::getDefault();
+        $this->Migrations = Migrations::getDefault();
         parent::__construct();
     }
 

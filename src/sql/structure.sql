@@ -108,10 +108,6 @@ CREATE TABLE `schema_migrations` (
   KEY `idx_schema_migrations_batch` (`batch`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
---
--- RELATIONSHIPS FOR TABLE `schema_migrations`:
---
-
 -- --------------------------------------------------------
 
 --

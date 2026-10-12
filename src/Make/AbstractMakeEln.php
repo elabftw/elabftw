@@ -27,7 +27,7 @@ abstract class AbstractMakeEln extends AbstractMakeZip
 {
     protected const string HASH_ALGO = 'sha256';
 
-    protected const int INTERNAL_ELN_VERSION = 107;
+    protected const int INTERNAL_ELN_VERSION = 108;
 
     protected string $extension = '.eln';
 

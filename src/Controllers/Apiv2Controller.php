@@ -62,6 +62,7 @@ use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\SigKeys;
+use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
@@ -72,6 +73,7 @@ use Elabftw\Models\TeamsWebhooks;
 use Elabftw\Models\TeamTags;
 use Elabftw\Models\Todolist;
 use Elabftw\Models\UnfinishedSteps;
+use Elabftw\Models\UploadGroups;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\UserRequestActions;
 use Elabftw\Models\Users2Rors;
@@ -232,6 +234,7 @@ final class Apiv2Controller extends AbstractApiController
             $this->reqBody['target'] = $this->Request->request->getString('target');
             $this->reqBody['filePath'] = $file->getPathname();
             $this->reqBody['comment'] = $this->Request->request->get('comment');
+            $this->reqBody['group_id'] = $this->Request->request->get('group_id');
             $this->reqBody['entity_type'] = $this->Request->request->get('entity_type'); // can be null
             $this->reqBody['category'] = $this->Request->request->get('category'); // can be null
             $this->reqBody['owner'] = $this->Request->request->getInt('owner');
@@ -414,8 +417,10 @@ final class Apiv2Controller extends AbstractApiController
                     (int) $Config->configArr['min_days_revisions'],
                     $this->subId
                 ),
+                ApiSubModels::StepGroups => new StepGroups($this->Model, $this->subId),
                 ApiSubModels::Steps => new Steps($this->Model, $this->subId),
                 ApiSubModels::Tags => new Tags($this->Model, $this->subId),
+                ApiSubModels::UploadGroups => new UploadGroups($this->Model, $this->subId),
                 ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::from($this->Model->entityType->value)),
             };

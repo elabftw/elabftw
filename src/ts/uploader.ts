@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import Dropzone from '@deltablot/dropzone';
-import { reloadElements, sizeToMb } from './misc';
+import { adjustHiddenState, reloadElements, sizeToMb } from './misc';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { notify } from './notify';
@@ -30,7 +30,7 @@ export class Uploader
         // once all files are uploaded
         this.on('queuecomplete', function() {
           if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-            reloadElements(['uploadsDiv']);
+            reloadElements(['uploadsDiv']).then(() => adjustHiddenState());
           }
         });
       },

@@ -936,6 +936,9 @@ on('toggle-next', (el: HTMLElement) => {
   }
   const isHidden = targetEl.toggleAttribute('hidden');
   el.setAttribute('aria-expanded', String(!isHidden));
+  if (!isHidden && el.dataset.focusFirstInput === 'true' && targetEl instanceof HTMLFormElement) {
+    targetEl.querySelector<HTMLInputElement>('input:not([type="hidden"])')?.focus();
+  }
 
   // might want to toggle another element with toggle-extra
   if (el.dataset.toggleTargetExtra) {

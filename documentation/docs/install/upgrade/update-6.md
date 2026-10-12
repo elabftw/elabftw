@@ -18,6 +18,12 @@ Here are the main changes:
 
 Note: this guide assumes usage of `docker compose`, with hints related to `podman/quadlets` (podman is another container engine and quadlets are systemd-managed container unit files). For other deployments, you will need to adapt the changes to your context.
 
+## Issue with notifications
+
+:::warning
+This update will resolve a bug that would prevent some notifications from being sent. That means that there is a chance that your users will receive a deluge of notifications upon upgrade. To prevent this issue, we recommend running this command before the upgrade: `docker exec -it elabftw bin/console notifications:clear -v`.
+:::
+
 ## Making backups
 
 Make a backup of your configuration file:
@@ -166,7 +172,7 @@ Volume=/var/elabftw/exports:/var/lib/elabftw/exports:Z
 
 If you are running the container in HTTPS mode (meaning `DISABLE_HTTPS` is `false`, the default), then you need to modify env and volumes. The cert and key are now indicated by `TLS_CERT_PATH` and `TLS_KEY_PATH` env vars.
 
-Read the documentation about TLS configuration from this page: [TLS configuration doc](../installation/tls#option-b-https-mode-with-lets-encrypt-certificates).
+Read the documentation about TLS configuration from this page: [TLS configuration doc](../installation/3-tls.md#option-b-https-mode-with-lets-encrypt-certificates).
 
 ### Ports
 

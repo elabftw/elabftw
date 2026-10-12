@@ -125,6 +125,7 @@ final class i18n4Js
             'is-sysadmin' => _('Is Sysadmin'),
             'item' => ngettext('Resource', 'Resources', 1),
             'item-type' => _('Resource template'),
+            'label' => _('Label'),
             'last-login' => _('Last login'),
             'lastname' => _('Lastname'),
             'file-imported' => _('File imported successfully'),
@@ -229,6 +230,7 @@ final class i18n4Js
             'users' => _('Users'),
             'valid-until' => _('Valid until'),
             'validated' => _('Validated'),
+            'value' => _('Value'),
             'view-template' => _('View template'),
             'view-upgrade-guide' => _('View upgrade guide'),
         );

@@ -43,6 +43,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ResourcesCategories;
+use Elabftw\Models\Scheduler;
 use Elabftw\Models\Steps;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
@@ -241,10 +242,12 @@ final class Populate
             // generate random experiments before the defined ones
             $user = $this->getRandomUserInTeam($teamid);
             if ($this->yaml['generate_random_experiments'] ?? false) {
-                $this->generate(new Experiments($user));
+                $iterations = array_key_exists('random_experiments', $team) ? (int) $team['random_experiments'] : null;
+                $this->generate(new Experiments($user), $iterations);
             }
             if ($this->yaml['generate_random_resources'] ?? false) {
-                $this->generate(new Items($user));
+                $iterations = array_key_exists('random_resources', $team) ? (int) $team['random_resources'] : null;
+                $this->generate(new Items($user), $iterations);
             }
 
             // EXPERIMENTS
@@ -301,6 +304,7 @@ final class Populate
             // randomize the entries so they look like they are not added at once
 
             // ITEMS
+            $itemIds = array();
             if (isset($team['items'])) {
                 shuffle($team['items']);
                 foreach ($team['items'] as $item) {
@@ -308,13 +312,15 @@ final class Populate
                     $ResourcesCategories = new ResourcesCategories($Teams);
                     $Items = new Items($user);
                     $id = $Items->create(
-                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? 'Default'),
                         title: $item['title'],
                         body: $item['body'] ?? '',
                         date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
+                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? 'Default'),
                         rating: $item['rating'] ?? 0,
                     );
                     $Items->setId($id);
+                    // Keep explicit resource ids by title because configured events refer to those titles later
+                    $itemIds[$item['title']] = $id;
                     // bookable cannot be set in create function
                     $Items->update(new EntityParams('is_bookable', $item['is_bookable'] ?? '0'));
                     // don't override the items type metadata
@@ -335,6 +341,23 @@ final class Populate
                     }
                     $this->output->writeln(sprintf('├ + resource: %s (id: %d in team: %d)', $item['title'], $id, $teamid));
                 }
+            }
+
+            // Create configured bookings through Scheduler so populate data follows normal booking validation
+            foreach ($team['events'] ?? array() as $event) {
+                $itemId = $itemIds[$event['item']] ?? null;
+                if ($itemId === null) {
+                    throw new ResourceNotFoundException(sprintf('Could not find resource "%s" for populated event.', $event['item']));
+                }
+                $user = $this->getRandomUserInTeam($teamid);
+                $Scheduler = new Scheduler(new Items($user, $itemId));
+                $id = $Scheduler->postAction(Action::Create, array(
+                    'title' => $event['title'] ?? '',
+                    'start' => (new DateTimeImmutable($event['start']))->format('c'),
+                    'end' => (new DateTimeImmutable($event['end']))->format('c'),
+                    'recurrence' => $event['recurrence'] ?? null,
+                ));
+                $this->output->writeln(sprintf('├ + event: %s (id: %d for resource: %s)', $event['title'] ?? '', $id, $event['item']));
             }
         }
 
@@ -357,12 +380,12 @@ final class Populate
         $Compounds = new Compounds($httpGetter, $Users, new NullFingerprinter(), false);
         foreach ($this->yaml['compounds'] ?? array() as $compound) {
             $id = $Compounds->create(
-                name: $compound['name'],
-                molecularFormula: $compound['molecular_formula'],
-                casNumber: $compound['cas_number'],
                 inchi: $compound['inchi'],
                 inchiKey: $compound['inchi_key'],
+                name: $compound['name'],
+                casNumber: $compound['cas_number'],
                 iupacName: $compound['iupac_name'],
+                molecularFormula: $compound['molecular_formula'],
                 molecularWeight: (float) $compound['molecular_weight'],
                 pubchemCid: (int) $compound['pubchem_cid'],
                 smiles: $compound['smiles'],
@@ -451,13 +474,13 @@ final class Populate
         $category = empty($categoryArr) ? null : $this->faker->randomElement($categoryArr)['id'];
         for ($i = 0; $i < $iterations; $i++) {
             $id = $Entity->create(
-                category: $category,
-                status: $this->faker->randomElement($statusArr)['id'],
+                title: $this->faker->sentence(),
+                body: $this->faker->realText(1000),
+                date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                 canreadBase: $this->faker->randomElement($visibilityArr),
                 canwriteBase: $this->faker->randomElement($visibilityArr),
-                title: $this->faker->sentence(),
-                date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
-                body: $this->faker->realText(1000),
+                category: $category,
+                status: $this->faker->randomElement($statusArr)['id'],
             );
             $Entity->setId($id);
             // variable tag number

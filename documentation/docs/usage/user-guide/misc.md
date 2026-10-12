@@ -133,3 +133,42 @@ Click "Save" and it will look similar to this now:
 </figure>
 
 You can also do something similar for edition permissions.
+
+## Search tips and quirks
+
+### Simple search
+
+The simple search field searches the following content of experiments and resources:
+
+- Title
+- Main text
+- eLabID
+
+The search uses full-text word matching. Search terms are treated as word prefixes, meaning that a term can only match from the beginning of a word.
+
+For example, searching for:
+
+- `chem` will match `chem`, `chemical` and `chemistry`;
+- `micro` will match `microscope`;
+- `scope` will not match `microscope`;
+- `istry` will not match `chemistry`.
+
+The simple search is therefore not a substring search: it cannot find arbitrary sequences of characters located in the middle or at the end of a word.
+
+A substring is simply a sequence of characters that appears anywhere inside a word. For example, `scope` is a substring of `microscope`, because the letters scope appear at the end of that word.
+
+This behavior is intentional and is used to improve search performance. Prefix-based full-text searches can use the database full-text index efficiently, whereas arbitrary substring searches generally cannot and would require much more expensive scans of the stored text, especially on installations containing a large number of entries.
+
+When several words are entered, each word is treated as a search token and all tokens must be present in the matching entry.
+
+For example:
+
+- cell culture
+
+will search for entries containing a word beginning with cell and a word beginning with culture.
+
+#### Other identifiers
+
+The simple search also recognizes an exact custom ID when the search term corresponds to one.
+
+Very short search terms (one or two characters) receive special handling because they cannot normally be used by the full-text index. In that case, eLabFTW also performs a substring search against the title, date, and eLabID fields.

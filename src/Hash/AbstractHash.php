@@ -16,8 +16,6 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\HashInterface;
 use Override;
 
-use function hash;
-
 abstract class AbstractHash implements HashInterface
 {
     protected const string HASH_ALGORITHM = 'sha256';
@@ -46,20 +44,10 @@ abstract class AbstractHash implements HashInterface
     }
 
     #[Override]
-    public function getAlgo(): ?string
+    public function getAlgo(): string
     {
         return self::HASH_ALGORITHM;
     }
 
-    abstract protected function getContent(): string;
-
-    protected function compute(): ?string
-    {
-        if ($this->canCompute()) {
-            return hash(self::HASH_ALGORITHM, $this->getContent());
-        }
-        return null;
-    }
-
-    abstract protected function canCompute(): bool;
+    abstract protected function compute(): ?string;
 }

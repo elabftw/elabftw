@@ -1,0 +1,297 @@
+<?php
+
+/**
+ * @author Moritz IHLER
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+declare(strict_types=1);
+
+namespace Elabftw\Models;
+
+use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Env;
+use Elabftw\Enums\Action;
+use Elabftw\Enums\WebhookEvent;
+use Elabftw\Enums\WebhookScope;
+use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Services\Filter;
+use Elabftw\Services\WebhookSecret;
+use Elabftw\Services\WebhookUrlValidator;
+use Override;
+use PDO;
+use PDOStatement;
+
+use function array_key_exists;
+use function array_keys;
+use function array_map;
+use function bin2hex;
+use function in_array;
+use function is_array;
+use function json_decode;
+use function json_encode;
+use function random_bytes;
+use function sprintf;
+
+use const JSON_THROW_ON_ERROR;
+
+/**
+ * Mother class for the three webhook levels: instance, team and user.
+ *
+ * The three levels share one table, because a webhook is a row with a dozen columns and
+ * triplicating that DDL buys nothing. What differs per level is who may write it and which
+ * events it is entitled to see, and both of those live outside the table anyway: the first
+ * in the controller, the second in WebhooksQueue::fanout().
+ */
+abstract class AbstractWebhooks extends AbstractRest
+{
+    /**
+     * Webhooks allowed per scope, so per instance, per team and per user.
+     *
+     * Every event is one delivery per subscribed webhook, and deliveries go out one after
+     * another inside a fixed time budget. Without a cap, one scope could fill the queue with
+     * targets that each hold a connection open for the request timeout, and the queue is
+     * shared by the whole instance. Ten is far more than a lab needs and low enough that a
+     * single scope cannot own the drain.
+     */
+    private const int MAX_PER_SCOPE = 10;
+
+    public function __construct(
+        protected readonly bool $canwrite = false,
+        protected readonly ?int $id = null,
+    ) {
+        $this->Db = Db::getConnection();
+    }
+
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        // a webhook target is an outbound data flow, so reading one takes the same
+        // authority as changing it: sysadmin, team admin, or the owning user
+        $this->canwriteOrExplode();
+        $sql = sprintf(
+            'SELECT %s FROM webhooks WHERE scope = :scope AND teams_id <=> :teams_id AND users_id <=> :users_id ORDER BY id ASC',
+            $this->getColumns(),
+        );
+        $req = $this->Db->prepare($sql);
+        $this->bindScope($req);
+        $this->Db->execute($req);
+        return array_map($this->decodeEvents(...), $req->fetchAll());
+    }
+
+    #[Override]
+    public function readOne(): array
+    {
+        $this->canwriteOrExplode();
+        if ($this->id === null) {
+            return $this->readAll();
+        }
+        // the secret cannot be hashed like an api key, we need it to sign, so whoever may
+        // write the webhook can read it back
+        $sql = sprintf(
+            'SELECT %s FROM webhooks WHERE id = :id AND scope = :scope AND teams_id <=> :teams_id AND users_id <=> :users_id',
+            $this->getColumns() . ', secret',
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $this->bindScope($req);
+        $this->Db->execute($req);
+        $webhook = $this->decodeEvents($this->Db->fetch($req));
+        $webhook['secret'] = WebhookSecret::decrypt((string) $webhook['secret']);
+        return $webhook;
+    }
+
+    #[Override]
+    public function postAction(Action $action, array $reqBody): int
+    {
+        $this->canwriteOrExplode();
+        return match ($action) {
+            Action::Create => $this->create($reqBody),
+            default => throw new ImproperActionException('Incorrect action for webhook.'),
+        };
+    }
+
+    #[Override]
+    public function patch(Action $action, array $params): array
+    {
+        $this->canwriteOrExplode();
+        return match ($action) {
+            Action::Update => $this->update($params),
+            default => throw new ImproperActionException('Incorrect action for webhook.'),
+        };
+    }
+
+    #[Override]
+    public function destroy(bool $recursive = false): bool
+    {
+        $this->canwriteOrExplode();
+        $this->idOrExplode();
+        $sql = 'DELETE FROM webhooks WHERE id = :id AND scope = :scope AND teams_id <=> :teams_id AND users_id <=> :users_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $this->bindScope($req);
+        return $this->Db->execute($req);
+    }
+
+    abstract protected function getScope(): WebhookScope;
+
+    abstract protected function getTeamId(): ?int;
+
+    abstract protected function getUserId(): ?int;
+
+    protected function canwriteOrExplode(): void
+    {
+        if (!$this->canwrite) {
+            throw new ForbiddenException();
+        }
+    }
+
+    protected function create(array $reqBody): int
+    {
+        $this->limitOrExplode();
+        $url = $this->getValidator()->validate((string) ($reqBody['url'] ?? ''));
+        $events = $this->filterEvents($reqBody['events'] ?? array());
+        $sql = 'INSERT INTO webhooks (scope, teams_id, users_id, name, url, secret, events)
+            VALUES (:scope, :teams_id, :users_id, :name, :url, :secret, :events)';
+        $req = $this->Db->prepare($sql);
+        $this->bindScope($req);
+        $req->bindValue(':name', Filter::title((string) ($reqBody['name'] ?? '')));
+        $req->bindValue(':url', $url);
+        // 32 bytes of entropy as 64 hex characters, encrypted at rest
+        $req->bindValue(':secret', WebhookSecret::encrypt(bin2hex(random_bytes(32))));
+        $req->bindValue(':events', json_encode($events, JSON_THROW_ON_ERROR));
+        $this->Db->execute($req);
+
+        return $this->Db->lastInsertId();
+    }
+
+    protected function update(array $params): array
+    {
+        $this->idOrExplode();
+        // the action is how we got here, it is not a column
+        unset($params['action']);
+        // an unknown key is a typo on the client side, and silently ignoring it means the
+        // caller believes they changed something they did not
+        $allowed = array('name', 'url', 'events', 'enabled');
+        foreach (array_keys($params) as $key) {
+            if (!in_array($key, $allowed, true)) {
+                throw new ImproperActionException(sprintf('Invalid parameter for webhook: %s', $key));
+            }
+        }
+        if (array_key_exists('name', $params)) {
+            $this->updateColumn('name', Filter::title((string) $params['name']));
+        }
+        if (array_key_exists('url', $params)) {
+            $this->updateColumn('url', $this->getValidator()->validate((string) $params['url']));
+        }
+        if (array_key_exists('events', $params)) {
+            $this->updateColumn('events', json_encode($this->filterEvents($params['events']), JSON_THROW_ON_ERROR));
+        }
+        if (array_key_exists('enabled', $params)) {
+            $enabled = (bool) $params['enabled'];
+            $this->updateColumn('enabled', $enabled ? 1 : 0);
+            // re-enabling is how an admin acknowledges the failures that disabled it
+            if ($enabled) {
+                $this->resetFailures();
+            }
+        }
+        return $this->readOne();
+    }
+
+    private function limitOrExplode(): void
+    {
+        $sql = 'SELECT COUNT(id) FROM webhooks WHERE scope = :scope AND teams_id <=> :teams_id AND users_id <=> :users_id';
+        $req = $this->Db->prepare($sql);
+        $this->bindScope($req);
+        $this->Db->execute($req);
+        if ((int) $req->fetchColumn() >= self::MAX_PER_SCOPE) {
+            throw new ImproperActionException(sprintf(
+                'Cannot have more than %d webhooks here. Delete one before adding another.',
+                self::MAX_PER_SCOPE,
+            ));
+        }
+    }
+
+    private function getValidator(): WebhookUrlValidator
+    {
+        return new WebhookUrlValidator(!Env::asBool('DEV_MODE'));
+    }
+
+    /**
+     * The column holds json, but the api contract says events is a list: a caller sends a
+     * list to create the webhook and must get a list back, not a string it has to parse.
+     *
+     * @param array<string, mixed> $webhook
+     * @return array<string, mixed>
+     */
+    private function decodeEvents(array $webhook): array
+    {
+        $webhook['events'] = json_decode((string) $webhook['events'], true, 3, JSON_THROW_ON_ERROR);
+        return $webhook;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function filterEvents(mixed $events): array
+    {
+        if (!is_array($events)) {
+            throw new ImproperActionException(sprintf('Webhook events must be a list. Available values are: %s.', WebhookEvent::toCsList()));
+        }
+        $filtered = WebhookEvent::filterValid($events);
+        if (empty($filtered)) {
+            throw new ImproperActionException(sprintf('A webhook must subscribe to at least one valid event. Available values are: %s.', WebhookEvent::toCsList()));
+        }
+        return $filtered;
+    }
+
+    private function updateColumn(string $column, string|int $value): void
+    {
+        // $column is never user input: it comes from the allow list above
+        $sql = sprintf(
+            'UPDATE webhooks SET %s = :value WHERE id = :id AND scope = :scope AND teams_id <=> :teams_id AND users_id <=> :users_id',
+            $column,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':value', $value);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $this->bindScope($req);
+        $this->Db->execute($req);
+    }
+
+    private function resetFailures(): void
+    {
+        $sql = 'UPDATE webhooks SET consecutive_failures = 0, disabled_at = NULL, last_error = NULL
+            WHERE id = :id AND scope = :scope AND teams_id <=> :teams_id AND users_id <=> :users_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $this->bindScope($req);
+        $this->Db->execute($req);
+    }
+
+    private function idOrExplode(): void
+    {
+        if ($this->id === null) {
+            throw new ImproperActionException('Missing webhook id in URL.');
+        }
+    }
+
+    private function bindScope(PDOStatement $req): void
+    {
+        $teamId = $this->getTeamId();
+        $userId = $this->getUserId();
+        $req->bindValue(':scope', $this->getScope()->value);
+        $req->bindValue(':teams_id', $teamId, $teamId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $req->bindValue(':users_id', $userId, $userId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+    }
+
+    private function getColumns(): string
+    {
+        return 'id, scope, teams_id, users_id, name, url, events, enabled, consecutive_failures, last_error, disabled_at, created_at, modified_at';
+    }
+}

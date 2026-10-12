@@ -23,7 +23,7 @@ The [Bloxberg](https://bloxberg.org/) blockchain is integrated in eLabFTW. Click
 
 ## Keeex
 
-eLabFTW provides a way to use a [Keeex](https://keeex.me/) service during the timestamp action. It is a technology that allows to guarantee integrity and authenticity of files, autonomously and without third party.
+eLabFTW provides a way to use a [Keeex](https://keeex.me/) service during the timestamp action. It is a technology that helps guarantee the integrity and authenticity of files autonomously and without relying on a third party.
 
 When enabled, the generated pdf for timestamping will be sent over to a Keeex Fusion service running on your network in http mode for keeex/timestamping of the pdf, before being timestamped via your RFC3161 provider.
 

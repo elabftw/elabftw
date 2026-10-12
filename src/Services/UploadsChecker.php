@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Elabftw\Db;
-use Elabftw\Hash\NolimitFileHash;
+use Elabftw\Hash\FileHash;
 use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\HashInterface;
 use League\Flysystem\UnableToRetrieveMetadata;
@@ -92,7 +92,7 @@ final class UploadsChecker
         $uploads = $req->fetchAll();
         foreach ($uploads as $upload) {
             $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
-            $hasher = new NolimitFileHash($storageFs, $upload['long_name']);
+            $hasher = new FileHash($storageFs, $upload['long_name']);
             $hash = $hasher->getSafeHash();
             if ($upload['hash'] !== $hash) {
                 $this->output->writeln(sprintf('Found hash mismatch for upload id: %d, stored at %s', $upload['id'], $upload['long_name']));
@@ -114,7 +114,7 @@ final class UploadsChecker
         $fixedCount = 0;
         foreach ($toFix as $upload) {
             $storageFs = Storage::from($upload['storage'])->getStorage()->getFs();
-            $hasher = new NolimitFileHash($storageFs, $upload['long_name']);
+            $hasher = new FileHash($storageFs, $upload['long_name']);
             $this->updateHash($upload['id'], $hasher);
             $fixedCount += 1;
         }

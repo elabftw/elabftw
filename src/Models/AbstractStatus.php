@@ -17,6 +17,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\Sort;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\OrderingParams;
@@ -64,6 +65,7 @@ abstract class AbstractStatus extends AbstractCategory
         return $this->create(
             $reqBody['name'] ?? _('Untitled'),
             $reqBody['color'] ?? null,
+            $reqBody['color_fg'] ?? null,
         );
     }
 
@@ -81,8 +83,9 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function readOne(): array
     {
-        $sql = sprintf('SELECT id, title, color, ordering, state, team, is_private
-            FROM %s WHERE id = :id AND team = :team', $this->table);
+        $colorFgSql = $this->supportsForegroundColor() ? ', color_fg' : '';
+        $sql = sprintf('SELECT id, title, color%s, ordering, state, team, is_private
+            FROM %s WHERE id = :id AND team = :team', $colorFgSql, $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
@@ -99,11 +102,12 @@ abstract class AbstractStatus extends AbstractCategory
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $colorFgSql = $this->supportsForegroundColor() ? ', entity.color_fg' : '';
         $sql = sprintf(
             'SELECT
                 entity.id,
                 entity.title,
-                entity.color,
+                entity.color%s,
                 entity.ordering,
                 entity.state,
                 entity.team,
@@ -113,6 +117,7 @@ abstract class AbstractStatus extends AbstractCategory
              FROM %s AS entity
              INNER JOIN teams ON teams.id = entity.team
              WHERE (entity.is_private = 0 OR entity.team = :team)',
+            $colorFgSql,
             $this->table
         );
 
@@ -131,8 +136,9 @@ abstract class AbstractStatus extends AbstractCategory
      */
     public function readAllIgnoreState(): array
     {
-        $sql = sprintf('SELECT id, title, color
-            FROM %s WHERE team = :team ORDER BY ordering ASC', $this->table);
+        $colorFgSql = $this->supportsForegroundColor() ? ', color_fg' : '';
+        $sql = sprintf('SELECT id, title, color%s
+            FROM %s WHERE team = :team ORDER BY ordering ASC', $colorFgSql, $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -150,6 +156,9 @@ abstract class AbstractStatus extends AbstractCategory
                 throw new ForbiddenException(description: _('Only a team Admin can modify the visibility.'));
             }
         }
+        if (array_key_exists('color_fg', $params) && !$this->supportsForegroundColor()) {
+            throw new ImproperActionException('Foreground color is only available for categories.');
+        }
         foreach ($params as $key => $value) {
             $this->update(new StatusParams($key, (string) $value));
         }
@@ -165,21 +174,35 @@ abstract class AbstractStatus extends AbstractCategory
     }
 
     #[Override]
-    public function create(string $title = '', ?string $color = null): int
+    public function create(string $title = '', ?string $color = null, ?string $colorFg = null): int
     {
         $title = Filter::title($title);
         $color ??= $this->getRandomDarkColor();
         $color = Check::color($color);
-
-        $sql = sprintf('INSERT INTO %s (title, color, team)
+        if ($this->supportsForegroundColor()) {
+            $colorFg ??= '#ffffff';
+            $colorFg = Check::color($colorFg);
+            $sql = sprintf('INSERT INTO %s (title, color, color_fg, team)
+            VALUES(:title, :color, :color_fg, :team)', $this->table);
+        } else {
+            $sql = sprintf('INSERT INTO %s (title, color, team)
             VALUES(:title, :color, :team)', $this->table);
+        }
         $req = $this->Db->prepare($sql);
         $req->bindParam(':title', $title);
         $req->bindParam(':color', $color);
+        if ($this->supportsForegroundColor()) {
+            $req->bindParam(':color_fg', $colorFg);
+        }
         $req->bindParam(':team', $this->Teams->id, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return $this->Db->lastInsertId();
+    }
+
+    protected function supportsForegroundColor(): bool
+    {
+        return false;
     }
 
     private function update(StatusParams $params): bool

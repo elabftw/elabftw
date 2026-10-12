@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\State;
-use Elabftw\Hash\FileHash;
-use Elabftw\Interfaces\HashInterface;
 use Elabftw\Storage\Tmp;
 use League\Flysystem\FilesystemOperator;
 use Override;
@@ -30,7 +28,7 @@ final class CreateUploadFromUploadedFile extends CreateUpload
         int $immutable = 0,
         State $state = State::Normal,
     ) {
-        parent::__construct($this->getFilename(), $this->getFilePath(), $this->getHasher(), $comment, $immutable, $state);
+        parent::__construct($this->getFilename(), $this->getFilePath(), $comment, $immutable, $state);
     }
 
     #[Override]
@@ -55,11 +53,5 @@ final class CreateUploadFromUploadedFile extends CreateUpload
     public function getSourceFs(): FilesystemOperator
     {
         return new Tmp()->getFs();
-    }
-
-    #[Override]
-    public function getHasher(): HashInterface
-    {
-        return new FileHash($this->getSourceFs(), $this->getTmpFilePath());
     }
 }

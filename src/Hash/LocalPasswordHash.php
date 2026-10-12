@@ -16,14 +16,15 @@ use Override;
 
 use function password_hash;
 
-class LocalPasswordHash extends StringHash
+class LocalPasswordHash extends AbstractHash
 {
+    public function __construct(
+        protected readonly string $input,
+    ) {}
+
     #[Override]
     protected function compute(): ?string
     {
-        if ($this->canCompute()) {
-            return password_hash($this->getContent(), PASSWORD_DEFAULT);
-        }
-        return null;
+        return password_hash($this->input, PASSWORD_DEFAULT);
     }
 }

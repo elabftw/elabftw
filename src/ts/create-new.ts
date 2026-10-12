@@ -155,6 +155,7 @@ interface Templates {
   category: number;
   category_title: string;
   category_color: string;
+  category_color_fg: string;
   status: number;
   status_title: string;
   status_color: string;
@@ -202,6 +203,7 @@ function renderTemplates(templates: Templates[]): void {
             catspan.dataset.target = 'tplCreateNewTable';
             catspan.dataset.catid = String(template.category);
             catspan.style.setProperty('--bg', `#${template.category_color}`);
+            catspan.style.setProperty('--fg', `#${template.category_color_fg ?? 'ffffff'}`);
             catspan.innerText = template.category_title;
           }
           const statusspan = document.createElement('span');

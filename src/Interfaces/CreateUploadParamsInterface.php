@@ -33,6 +33,4 @@ interface CreateUploadParamsInterface
     public function getImmutable(): int;
 
     public function getState(): State;
-
-    public function getHasher(): HashInterface;
 }

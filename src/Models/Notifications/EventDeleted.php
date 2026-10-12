@@ -44,6 +44,7 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
         private string $actor,
         private string $msg = '',
         private EmailTarget $target = EmailTarget::BookableItem,
+        private ?RestInterface $eventModel = null,
     ) {
         parent::__construct($targetUser);
     }
@@ -80,7 +81,15 @@ final class EventDeleted extends AbstractNotifications implements MailableInterf
             'value' => $reqBody['range_value'] ?? null,
             'unit' => $reqBody['range_unit'] ?? null,
         );
+        // resolve recipients while the event still exists, then delete before creating notifications
+        // This prevents a failed cancellation from still producing cancellation notifications
         $userids = Email::getIdsOfRecipients($this->target, $targetId, $range);
+        if (($reqBody['cancel_event'] ?? false) === true) {
+            if ($this->eventModel === null) {
+                throw new ImproperActionException('Cannot cancel an event without an event model context.');
+            }
+            $this->eventModel->destroy();
+        }
         foreach ($userids as $userid) {
             $recipient = new Users($userid);
             $Notif = new self($recipient, $this->event, $this->actor, $this->msg, $this->target);

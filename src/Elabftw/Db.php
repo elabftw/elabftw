@@ -18,7 +18,6 @@ use PDO;
 use PDOException;
 use PDOStatement;
 
-use function debug_print_backtrace;
 use function hash;
 use function hrtime;
 use function json_encode;
@@ -122,7 +121,10 @@ final class Db
             $res = $req->execute();
         } catch (PDOException $e) {
             if (Env::asBool('DEV_MODE')) {
-                debug_print_backtrace();
+                App::getDefaultLogger()->debug(
+                    'SQL execution failed',
+                    array('exception' => $e),
+                );
             }
             throw new DatabaseErrorException($e->errorInfo ?? array('OOPS', 42, 'where error?'));
         } finally {

@@ -14,32 +14,44 @@ namespace Elabftw\Hash;
 
 use League\Flysystem\FilesystemOperator;
 use Override;
+use RuntimeException;
+
+use function fclose;
+use function hash_final;
+use function hash_init;
+use function hash_update_stream;
 
 /**
  * To hash a file
  */
-class FileHash extends StringHash
+class FileHash extends AbstractHash
 {
-    protected const string HASH_ALGORITHM = 'sha256';
-
-    // size of a file in bytes above which we don't process it (100 Mb)
-    protected const int THRESHOLD = 100000000;
-
     public function __construct(
         protected FilesystemOperator $filesystem,
         protected string $filename,
     ) {}
 
-    #[Override]
-    protected function getContent(): string
+    /**
+     * @return resource
+     */
+    protected function getContent()
     {
-        return $this->filesystem->read($this->filename);
+        return $this->filesystem->readStream($this->filename);
     }
 
     #[Override]
-    protected function canCompute(): bool
+    protected function compute(): ?string
     {
-        $filesize = $this->filesystem->fileSize($this->filename);
-        return $filesize < self::THRESHOLD;
+        $stream = $this->getContent();
+        $context = hash_init($this->getAlgo());
+        try {
+            $bytesHashed = hash_update_stream($context, $stream);
+            if ($bytesHashed !== $this->filesystem->fileSize($this->filename)) {
+                throw new RuntimeException('Could not hash the complete file.');
+            }
+            return hash_final($context);
+        } finally {
+            fclose($stream);
+        }
     }
 }

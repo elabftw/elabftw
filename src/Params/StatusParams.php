@@ -22,7 +22,7 @@ final class StatusParams extends ContentParams
     public function getContent(): mixed
     {
         return match ($this->target) {
-            'color' => Check::color($this->asString()),
+            'color', 'color_fg' => Check::color($this->asString()),
             'is_private' => $this->getBinary(),
             'title' => parent::getContent(),
             'state' => $this->getState(),

@@ -565,6 +565,29 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(State::Deleted->value, $Deleted->entityData['state']);
     }
 
+    public function testImportCompounds(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/with-compounds.eln',
+            'compounds.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Eln(
+            new Users(1, 1),
+            new Users(1, 1),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            EntityType::Items,
+            category: 1,
+        );
+        $Import->import();
+        $this->assertEquals(1, $Import->getInserted());
+    }
+
     private function getExperimentFromTitle(string $title): Experiments
     {
         $Experiments = new Experiments(new Users(1, 1));

@@ -22,7 +22,7 @@ final class SchemaVersionChecker
     /**
      * Legacy numeric schema baseline. New migrations use UUIDv7 and are tracked in schema_migrations.
      */
-    public const int REQUIRED_SCHEMA = 224;
+    public const int REQUIRED_SCHEMA = 227;
 
     private readonly Migrations $Migrations;
 

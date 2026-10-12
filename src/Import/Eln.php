@@ -14,6 +14,7 @@ namespace Elabftw\Import;
 
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUploadFromFs;
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
@@ -21,17 +22,23 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Hash\FileHash;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Comments;
+use Elabftw\Models\Config;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\TagParam;
 use Elabftw\Services\Filter;
+use Elabftw\Services\HttpGetter;
+use Elabftw\Services\OpenBabelFingerprinter;
+use GuzzleHttp\Client;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToReadFile;
@@ -101,7 +108,7 @@ class Eln extends AbstractZip
         protected string $canread = AbstractEntity::EMPTY_CAN_JSON,
         protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
         private bool $verifyChecksum = true,
-        private bool $checksumErrorSkip = true,
+        private bool $checksumErrorSkip = false,
     ) {
         parent::__construct(
             $requester,
@@ -466,7 +473,54 @@ class Eln extends AbstractZip
                         }
                     }
                     break;
+                case 'compounds_links':
+                    $Config = Config::getConfig();
+                    $httpGetter = new HttpGetter(
+                        new Client(),
+                        $Config->configArr['proxy'],
+                        !Env::asBool('DEV_MODE'),
+                    );
 
+                    $Compounds = new Compounds(
+                        $httpGetter,
+                        $this->requester,
+                        new OpenBabelFingerprinter(),
+                    );
+                    foreach ($value as $compoundLink) {
+                        $compound = $this->getNodeFromId($compoundLink['@id']);
+                        $inchi = $compound['inChI'];
+                        $inchiKey = $compound['inChIKey'];
+                        $name = $compound['name'];
+                        $iupacName = $compound['iupacName'];
+                        $smiles = $compound['smiles'];
+                        $molecularFormula = $compound['molecularFormula'];
+                        $molecularWeight = $compound['molecularWeight'];
+                        $casNumber = null;
+                        $pubchemCid = null;
+                        foreach ($compound['identifier'] as $identifier) {
+                            if ($identifier['propertyID'] === 'CAS Registry Number') {
+                                $casNumber = $identifier['value'];
+                            }
+                            if ($identifier['propertyID'] === 'PubChem CID') {
+                                $pubchemCid = $identifier['value'];
+                            }
+                        }
+                        $compoundId = $Compounds->create(
+                            inchi: $inchi,
+                            inchiKey: $inchiKey,
+                            smiles: $smiles,
+                            name: $name,
+                            molecularFormula: $molecularFormula,
+                            molecularWeight: (float) $molecularWeight,
+                            iupacName: $iupacName,
+                            casNumber: $casNumber,
+                            pubchemCid: $pubchemCid,
+                        );
+                        $CompoundsLinks = LinksFactory::getCompoundsLinks($this->Entity, $compoundId);
+                        $CompoundsLinks->postAction(Action::Create, array());
+                    }
+
+                    break;
                 default:
             }
         }
@@ -602,7 +656,6 @@ class Eln extends AbstractZip
         $filepath = strtr($filepath, '|', '_');
         $filepath = strtr($filepath, '"', '_');
 
-        //$hasher = new LocalFileHash($filepath);
         $hasher = new FileHash($this->tmpFs, $filepath);
         $hash = $hasher->getHash();
         // CHECKSUM
@@ -623,7 +676,6 @@ class Eln extends AbstractZip
             $this->tmpFs,
             $file['name'] ?? basename($file['@id']),
             $filepath,
-            $hasher,
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
             state: ($file['creativeWorkStatus'] ?? '') === State::Archived->name ? State::Archived : State::Normal,
         ));

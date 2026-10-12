@@ -49,6 +49,8 @@ teams:
     onboarding_email_body: <p>Test email body <strong>with</strong> HTML.</p>
     onboarding_email_active: 1
     random_users: 12
+    random_experiments: 23
+    random_resources: 20
     users:
       - email: toto@yopmail.com
         password: totototototo
@@ -252,6 +254,14 @@ teams:
           $$
           <br><br>
 
+      - title: Confocal imaging optimization
+        category: Biology
+        body: '<p>Compare acquisition settings and document the best signal-to-noise ratio for live-cell imaging.</p>'
+        tags:
+          - microscopy
+          - imaging
+          - generated from yml
+
 
     user_groups:
       - name: Super secret project
@@ -300,6 +310,46 @@ teams:
       - name: Waiting
       - name: Open
       - name: Closed
+
+    items:
+      - title: Nikon A1R confocal microscope
+        category: 🔬 Microscope
+        is_bookable: 1
+      - title: pDemo-GFP plasmid
+        category: 🧬 Plasmid
+        is_bookable: 1
+      - title: Anti-GFP antibody
+        category: Antibody
+        is_bookable: 1
+      - title: BY4741 yeast strain
+        category: Yeast
+        is_bookable: 1
+
+    events:
+      - item: Nikon A1R confocal microscope
+        title: Weekly imaging session
+        start: next Monday 09:00
+        end: next Monday 10:30
+        recurrence:
+          frequency: weekly
+          interval: 1
+          count: 4
+      - item: pDemo-GFP plasmid
+        title: Plasmid prep
+        start: next Tuesday 13:00
+        end: next Tuesday 14:00
+      - item: Anti-GFP antibody
+        title: Antibody staining
+        start: next Wednesday 10:00
+        end: next Wednesday 11:30
+      - item: BY4741 yeast strain
+        title: Yeast culture
+        start: next Thursday 15:00
+        end: next Thursday 16:00
+      - item: Nikon A1R confocal microscope
+        title: Live-cell imaging
+        start: next Friday 11:00
+        end: next Friday 12:30
 
 
   # 2 - Microbiology
@@ -359,7 +409,7 @@ teams:
         metadata: '{"extra_fields":{"Strain name":{"type":"text","value":""},"Genotype":{"type":"text","value":""},"Selection marker":{"type":"select","value":"URA3","options":["URA3","LEU2","HIS3","TRP1","KanMX","NatMX"]},"Growth temperature":{"type":"number","value":"","description":"in °C"},"Mating type":{"type":"select","value":"haploid a","options":["haploid a","haploid α","diploid"]},"Storage condition":{"type":"select","value":"-80 °C","options":["-80 °C","4 °C","on plate","in liquid culture"]},"Person in charge":{"type":"users","value":"","description":"Select the person responsible for this strain"}}}'
 
       - name: 🦠 Cell line
-        category: Cells
+        category: 🦠 Cell line
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1,"name": "Basic information"},{"id": 2,"name": "Storage"}]},"extra_fields": {"Species": {"type": "select","value": "Human","options": ["Human","Mouse","Chinese Hamster","Rat","African Green Monkey","Dog","Horse","Klingon","Ewok","Na’vi"],"group_id": 1,"required": true,"description": "What species is it from?"},"Date of acquisition": {"type": "date","value": "","group_id": 1,"required": true},"Number of aliquots left": {"type": "number","unit": "","units": [],"value": "","group_id": 2}}}'
 
     items_status:

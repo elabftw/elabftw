@@ -61,6 +61,7 @@ use Throwable;
 
 use function _;
 use function array_column;
+use function array_diff;
 use function array_map;
 use function implode;
 use function in_array;
@@ -83,6 +84,13 @@ class Users extends AbstractRest
     public self $requester;
 
     public bool $isAdmin = false;
+
+    /**
+     * Id of the api key used to authenticate this request, if any. Not a secret: it is the
+     * primary key of the api_keys row, and it lets a webhook subscriber recognise the changes
+     * it made itself through its own key.
+     */
+    public ?int $apiKeyId = null;
 
     public function __construct(public ?int $userid = null, public ?int $team = null, ?self $requester = null)
     {
@@ -495,6 +503,10 @@ class Users extends AbstractRest
         );
         $isSysadmin = $this->requester->isSysadmin();
         $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'valid_until', 'is_sysadmin', 'teams');
+        // Admins can see other users' teams only when importing users is enabled.
+        if ($this->requester->isAdmin && Config::getConfig()->configArr['admins_import_users'] === '1') {
+            $removeKeys = array_diff($removeKeys, array('teams'));
+        }
         return array_map(function (array $user) use ($isSysadmin, $removeKeys): array {
             if (!$isSysadmin) {
                 unset($user['last_login']);

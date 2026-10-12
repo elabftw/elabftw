@@ -118,7 +118,8 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->Email->massEmail(EmailTarget::Admins, null, 'Important message to admins', 'yep', $replyTo, true) > 1);
         $this->assertEquals(1, $this->Email->massEmail(EmailTarget::Sysadmins, null, 'Important message to sysadmins', 'yep', $replyTo, true));
         // legacy behaviour
-        $this->assertEquals(0, $this->Email->massEmail(EmailTarget::BookableItem, 1, 'Oops', 'My cells died', $replyTo, true));
+        $item = $this->getFreshBookableItem(1);
+        $this->assertEquals(0, $this->Email->massEmail(EmailTarget::BookableItem, $item->id, 'Oops', 'My cells died', $replyTo, true));
         // new range-based target
         $this->assertIsInt($this->Email->massEmail(EmailTarget::BookableItemRange, 1, 'Oops', 'My cells died', $replyTo, true));
         $this->assertEquals($team1Stats['active_admins_count'], $this->Email->massEmail(EmailTarget::AdminsOfTeam, 1, 'Important message to admins of a team', 'yep', $replyTo, true));

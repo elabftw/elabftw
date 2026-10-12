@@ -141,11 +141,11 @@ final class UploadsCheckerTest extends \PHPUnit\Framework\TestCase
         $upload = $this->createUpload();
         $expectedHash = $upload['hash'];
         $expectedAlgorithm = $upload['hash_algorithm'];
-        $this->setHash((int) $upload['id'], null, null);
+        $this->setHash($upload['id'], null, null);
 
         $this->assertSame(1, $this->UploadsChecker->fixNullHash());
 
-        $fresh = $this->fetchUpload((int) $upload['id']);
+        $fresh = $this->fetchUpload($upload['id']);
         $this->assertSame($expectedHash, $fresh['hash']);
         $this->assertSame($expectedAlgorithm, $fresh['hash_algorithm']);
     }

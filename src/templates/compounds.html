@@ -26,13 +26,10 @@
     <button type='button' {{ compoundsDisabled ? 'disabled' }} data-action='toggle-modal' data-target='createCompoundModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>
   </div>
   <p class='smallgray'>{{ 'Double-click a row in the table below to view complete information about a compound.'|trans }}</p>
-  <div id='compounds-table'></div>
-  {% if not compoundsDisabled %}
-    <div class='my-2'>
-      <button type='button' id='deleteCompoundsBtn' disabled data-action='delete-compounds' class='btn btn-danger btn-sm'>{{ 'Delete selected compounds'|trans }}</button>
-      <button type='button' id='restoreCompoundsBtn' disabled data-action='restore-compounds' class='btn btn-primary btn-sm'>{{ 'Restore selected compounds'|trans }}</button>
-    </div>
-  {% endif %}
+  <div id='compounds-table'
+       data-can-manage-compounds="{{ compoundsDisabled ? '0' : '1' }}"
+       data-delete-label="{{ 'Delete selected compounds'|trans }}"
+       data-restore-label="{{ 'Restore selected compounds'|trans }}"></div>
 
   <div class='mt-5'>
     <hr>

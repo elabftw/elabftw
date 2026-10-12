@@ -129,7 +129,16 @@
       <div {% if Entity.entityData.hide_main_text %}hidden='hidden'{% endif %}>
         <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
         <div id='body_view' class='pt-2 ml-3 overflow-auto' data-save-hidden='body_view'>{{ body|raw }}</div>
-        <hr>
+        {% if Entity.entityData.content_type == '2' or Entity.entityData.hide_main_text %}
+          <hr>
+        {% else %}
+          <hr data-scroll-btn='fa-font'
+            data-scroll-btn-label='{{ 'Main text'|trans }}'
+            data-scroll-btn-headings='body_view'
+            data-scroll-btn-top='body_view'
+            data-scroll-btn-top-label='{{ 'Top of text'|trans }}'
+            data-scroll-btn-bottom-label='{{ 'Bottom of text'|trans }}'>
+        {% endif %}
       </div>
   {% endif %}
 

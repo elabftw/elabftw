@@ -242,15 +242,41 @@
   }
 
   .has-main-nav {
-    .navbar-brand {
-      margin-left: 0 !important;
-      margin-right: auto !important;
+    // Keep the hamburger, logo and actions in the same row at tablet/mobile widths.
+    #main-navbar {
+      flex-wrap: nowrap;
+      gap: 0.75rem;
+      min-height: 40px;
+      padding: 0 0.75rem;
     }
 
+    #main-navbar .navbar-toggler {
+      flex: 0 0 auto;
+      margin: 0;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .navbar-brand {
+      flex: 0 1 auto;
+      margin: 0 auto 0 0 !important;
+      min-width: 0;
+      padding: 0;
+
+      .logo-header {
+        height: 32px;
+        max-width: 100%;
+        width: 88px;
+      }
+    }
+
+    // Avoid the fixed-position actions overlapping the logo when resizing.
     .navbar-utilities {
+      border-bottom: 0;
+      flex: 0 0 auto;
       height: 40px;
-      right: 0;
-      top: 0;
+      margin-left: auto;
+      padding: 0;
+      position: static;
     }
   }
 
@@ -349,8 +375,12 @@
   }
 }
 @media (max-width: 575.98px) {
+  .has-main-nav #main-navbar {
+    gap: 0.5rem;
+  }
+
   .has-main-nav .navbar-brand {
-    display: none;
+    display: block;
   }
 
   .navbar-utilities .dropdown-menu {
@@ -361,6 +391,24 @@
     right: 0.5rem !important;
     top: 40px !important;
     width: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .has-main-nav {
+    #main-navbar {
+      gap: 0.375rem;
+      padding: 0 0.5rem;
+    }
+
+    .navbar-brand .logo-header {
+      width: 76px;
+    }
+
+    .navbar-utilities .nav-link {
+      margin: 0;
+      padding: 0 3px !important;
+    }
   }
 }
 

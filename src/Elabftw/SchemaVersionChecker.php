@@ -24,9 +24,7 @@ final class SchemaVersionChecker
      */
     public const int REQUIRED_SCHEMA = 228;
 
-    public function __construct(public int $currentSchema, private readonly Migrations $Migrations)
-    {
-    }
+    public function __construct(public int $currentSchema, private readonly Migrations $Migrations) {}
 
     /**
      * Check if the Db structure needs updating.

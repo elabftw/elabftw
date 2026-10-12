@@ -22,21 +22,20 @@ import { showModalAndFocusFirstInput } from './common';
 // CREATE NEW CODE                  //
 // code related to create new modal //
 //////////////////////////////////////
-function setTypeRadio(type: EntityType, scope: string = '') {
-  // change text of create button
+function setCreateType(type: EntityType, scope: string = '') {
   const createBtn = document.getElementById('createNoTplBtn');
-  createBtn.innerText = i18next.t(`create-one-${type}`);
-  // set type on create button
   createBtn.dataset.type = type;
+  const typeInput = getInput('createNewType');
+  typeInput.value = type;
+  createBtn.toggleAttribute('disabled', typeInput.getAttribute(`data-write-${type}`) !== '1');
+  const label = document.getElementById('createModalEntityLabel');
+  label.textContent = label.dataset[type] ?? '';
   const templateToggleBtn = document.getElementById('createTplToggleBtn');
   const createNewTemplatesDiv = document.getElementById('createNewTemplatesDiv');
   templateToggleBtn.removeAttribute('disabled');
-  // set radio button checked & enable createBtn
-  const selectedRadio = document.querySelector<HTMLInputElement>(`input[type="radio"][name="type"][value="${type}"]`);
-  if (selectedRadio) {
-    selectedRadio.checked = true;
-    createBtn.toggleAttribute('disabled', selectedRadio.disabled);
-  }
+  // Reset the template picker when opening the modal for another entity type.
+  createNewTemplatesDiv.setAttribute('hidden', '');
+  toggleIcon(templateToggleBtn, true);
   const manageTplLink = document.getElementById('manageTplLink') as HTMLAnchorElement;
   manageTplLink.href = type === EntityType.Experiment || type === EntityType.Template ? 'templates.php' : 'resources-templates.php';
   if (type === EntityType.Template || type === EntityType.ItemType) {
@@ -55,13 +54,6 @@ function setTypeRadio(type: EntityType, scope: string = '') {
 function toggleCategoryList(type: EntityType) {
   document.querySelectorAll('.createNewCategoryList').forEach(el => el.setAttribute('hidden', 'hidden'));
   document.getElementById(`createNewCategoryList_${type}`).removeAttribute('hidden');
-}
-
-function onTypeChange(ev: Event) {
-  const el = ev.currentTarget;
-  if (!(el instanceof HTMLInputElement)) return;
-  // with radios, change fires on the one that became checked
-  setTypeRadio(el.value as EntityType);
 }
 
 function getScopeIcon(value: number) {
@@ -130,7 +122,7 @@ on('filter-category', (el: HTMLElement) => {
 on('toggle-create-modal', async (el: HTMLElement) => {
   // allow data-type to override selected type (for instance on dashboard)
   const entityType = el.dataset.type ? el.dataset.type as EntityType : getEntityTypeFromPage(window.location);
-  setTypeRadio(entityType);
+  setCreateType(entityType);
   if (el.dataset.getCompoundIdFrom) {
     const compoundId = (document.getElementById(el.dataset.getCompoundIdFrom) as HTMLElement).dataset.compoundId;
     getInput('createNewCompoundInput').value = compoundId;
@@ -171,8 +163,8 @@ const templateCols: (keyof Templates)[] = [
 function renderTemplates(templates: Templates[]): void {
   const tbody = document.getElementById('tplCreateNewTable') as HTMLTableSectionElement;
   const templateRow = document.getElementById('templateRow') as HTMLTemplateElement;
-  // pass the type of the selected entity (either experiments, or items)
-  const type = document.querySelector('input[name="type"]:checked') as HTMLSelectElement;
+  // The entity type is selected in the Create dropdown, not inside the modal.
+  const type = getInput('createNewType').value;
 
   tbody.replaceChildren(
     ...templates.map(template => {
@@ -184,10 +176,10 @@ function renderTemplates(templates: Templates[]): void {
         // ACTIONS
         if (key === 'id') {
           const createBtn = cells[i].querySelector('button[data-action="create-entity"]') as HTMLButtonElement;
-          createBtn.dataset.type = type.value;
+          createBtn.dataset.type = type;
           createBtn.dataset.tplid = String(template[key]);
           const viewLink = cells[i].querySelector('a') as HTMLAnchorElement;
-          const page = type.value === EntityType.Experiment ? 'templates.php' : 'resources-templates.php';
+          const page = type === EntityType.Experiment ? 'templates.php' : 'resources-templates.php';
           viewLink.href = `${page}?mode=view&id=${template.id}`;
           viewLink.classList.add('btn', 'btn-ghost');
           viewLink.title = i18next.t('view-template');
@@ -225,14 +217,6 @@ function renderTemplates(templates: Templates[]): void {
     }),
   );
 }
-
-const typeRadios = document.querySelectorAll<HTMLInputElement>(
-  'input[type="radio"][name="type"]',
-);
-
-typeRadios.forEach(radio => {
-  radio.addEventListener('change', onTypeChange);
-});
 
 const categorySelects = document.querySelectorAll<HTMLSelectElement>(
   '.createNewCategoryList',

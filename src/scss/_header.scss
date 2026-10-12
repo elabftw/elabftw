@@ -79,7 +79,7 @@
     border-left: 0;
     line-height: 40px;
     margin: 0 0.25rem;
-    min-height: 43px;
+    min-height: 40px;
     padding: 0 5px !important;
   }
 }
@@ -179,26 +179,31 @@
 }
 
 .navbar-utilities {
-  border-top: 1px solid var(--chrome-muted);
-  flex: 0 0 auto;
-  position: relative;
+  align-items: center;
+  background-color: var(--nav-bg);
+  border-bottom: 1px solid var(--chrome-muted);
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 1rem;
+  position: fixed;
+  z-index: 105;
 
   .dropdown {
-    position: static;
+    position: relative;
   }
 
   .dropdown-menu {
-    bottom: 0;
+    bottom: auto !important;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
     display: block;
-    left: calc(100% + 0.75rem) !important;
-    max-height: calc(100vh - 2rem);
+    left: auto !important;
+    max-height: calc(100vh - 5rem);
     opacity: 0;
     overflow-y: auto;
     pointer-events: none;
-    right: auto !important;
-    top: auto !important;
-    transform: translateX(-0.5rem) !important;
+    right: 0 !important;
+    top: 100% !important;
+    transform: translateY(-0.5rem) !important;
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
     visibility: hidden;
     z-index: 110;
@@ -206,7 +211,7 @@
     &.show {
       opacity: 1;
       pointer-events: auto;
-      transform: translateX(0) !important;
+      transform: translateY(0) !important;
       transition-delay: 0s;
       visibility: visible;
     }
@@ -234,6 +239,19 @@
 @media (max-width: 1199.98px) {
   #container.has-main-nav {
     --navbar-height: 40px;
+  }
+
+  .has-main-nav {
+    .navbar-brand {
+      margin-left: 0 !important;
+      margin-right: auto !important;
+    }
+
+    .navbar-utilities {
+      height: 40px;
+      right: 0;
+      top: 0;
+    }
   }
 
   #main-nav {
@@ -270,19 +288,44 @@
   }
 }
 
+
+// Keep the desktop content below the fixed top bar. This intentionally leaves
+// the existing desktop sidebar media query untouched.
+@media (min-width: 1200px) {
+  html #container.has-main-nav {
+    --navbar-height: 4rem;
+  }
+
+  .has-main-nav {
+    #realContainer {
+      padding-top: 4rem;
+    }
+
+    #sidepanel-buttons {
+      padding-top: 4rem;
+    }
+
+    .navbar-utilities {
+      height: 4rem;
+      left: 17rem;
+      right: 0;
+      top: 0;
+    }
+  }
+}
 @media (max-width: 575.98px) {
+  .has-main-nav .navbar-brand {
+    display: none;
+  }
+
   .navbar-utilities .dropdown-menu {
-    bottom: 1rem !important;
-    left: 1rem !important;
+    bottom: auto !important;
+    left: 0.5rem !important;
     max-width: none;
     position: fixed !important;
-    right: 1rem !important;
-    transform: translateY(0.5rem) !important;
+    right: 0.5rem !important;
+    top: 40px !important;
     width: auto;
-
-    &.show {
-      transform: translateY(0) !important;
-    }
   }
 }
 

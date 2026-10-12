@@ -152,6 +152,7 @@ final class MakeController extends AbstractController
                     $withTitle,
                     $this->Request->query->getInt('titleLines'),
                     $this->Request->query->getInt('titleChars'),
+                    $this->Request->query->getInt('titleFont'),
                 ))->getResponse();
 
             case ExportFormat::SchedulerReport:

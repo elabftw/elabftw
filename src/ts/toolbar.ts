@@ -150,7 +150,8 @@ on('export-to-qrpng', (el: HTMLElement) => {
   const title = (document.getElementById('qrpng_exportTitle') as HTMLInputElement).checked ? 1: 0;
   const titleLines = (document.getElementById('qrpng_exportTitleLines') as HTMLInputElement).value;
   const titleChars = (document.getElementById('qrpng_exportTitleChars') as HTMLInputElement).value;
-  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
+  const titleFont = (document.getElementById('qrpng_exportTitleFontSize') as HTMLInputElement).value;
+  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}&titleFont=${titleFont}`, '_blank');
 });
 
 on(Action.Destroy, () => {

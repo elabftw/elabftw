@@ -146,12 +146,16 @@ final class Steps extends AbstractRest
         return $this->Db->fetch($req);
     }
 
-    // Copy Steps from one entity to another
-    public function duplicate(AbstractEntity $targetEntity, int $id, int $newId): void
+    /**
+     * Copy Steps from one entity to another
+     *
+     * @return array<int, int> map of source step id to new step id
+     */
+    public function duplicate(AbstractEntity $targetEntity, int $id, int $newId): array
     {
         $sourceTable = $this->Entity->entityType->value;
         $targetTable = $targetEntity->entityType->value;
-        $stepsql = sprintf('SELECT body, ordering, is_immutable FROM %s_steps WHERE item_id = :id', $sourceTable);
+        $stepsql = sprintf('SELECT id, body, ordering, is_immutable FROM %s_steps WHERE item_id = :id', $sourceTable);
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($stepreq);
@@ -159,12 +163,15 @@ final class Steps extends AbstractRest
         $sql = sprintf('INSERT INTO %s_steps (item_id, body, ordering, is_immutable) VALUES (:item_id, :body, :ordering, :is_immutable)', $targetTable);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
+        $stepsMap = array();
         while ($step = $stepreq->fetch()) {
             $req->bindParam(':body', $step['body']);
             $req->bindParam(':ordering', $step['ordering'], PDO::PARAM_INT);
             $req->bindParam(':is_immutable', $step['is_immutable'], PDO::PARAM_INT);
             $this->Db->execute($req);
+            $stepsMap[(int) $step['id']] = $this->Db->lastInsertId();
         }
+        return $stepsMap;
     }
 
     /**

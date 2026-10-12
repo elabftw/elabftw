@@ -34,7 +34,7 @@ class UpdateTest extends \PHPUnit\Framework\TestCase
 
     public function testCheckSchema(): void
     {
-        $checker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA - 1);
+        $checker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA - 1, new Migrations($this->Fs));
         $this->expectException(InvalidSchemaException::class);
         $checker->checkSchema();
     }

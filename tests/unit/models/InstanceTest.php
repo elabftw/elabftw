@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ForbiddenException;
@@ -20,6 +21,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
 use Elabftw\Services\TeamsHelper;
+use Elabftw\Storage\Memory;
 use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
@@ -42,7 +44,7 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
         $logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
         // we don't need to mock it, just give it the required schema as arg
-        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA, new Migrations((new Memory())->getFs()));
         $this->email = new Email($schemaVersionChecker, $MockMailer, $logger, 'toto@yopmail.com', demoMode: false);
         $this->requester = new Users(1, 1);
         $this->Instance = new Instance($this->requester, $this->email, true);

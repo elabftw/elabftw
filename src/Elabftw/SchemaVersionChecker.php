@@ -24,11 +24,8 @@ final class SchemaVersionChecker
      */
     public const int REQUIRED_SCHEMA = 228;
 
-    private readonly Migrations $Migrations;
-
-    public function __construct(public int $currentSchema)
+    public function __construct(public int $currentSchema, private readonly Migrations $Migrations)
     {
-        $this->Migrations = Migrations::getDefault();
     }
 
     /**

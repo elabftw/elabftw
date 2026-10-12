@@ -11,12 +11,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\EmailTarget;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Info;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\UltraAdmin;
+use Elabftw\Storage\Memory;
 use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
@@ -39,13 +41,16 @@ class EmailTest extends \PHPUnit\Framework\TestCase
 
     private SchemaVersionChecker $schemaVersionChecker;
 
+    private Migrations $Migrations;
+
     protected function setUp(): void
     {
         $this->Logger = new Logger('elabftw');
         // use NullHandler because we don't care about logs here
         $this->Logger->pushHandler(new NullHandler());
         // we don't need to mock it, just give it the required schema as arg
-        $this->schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
+        $this->Migrations = new Migrations(new Memory()->getFs());
+        $this->schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA, $this->Migrations);
         $MockMailer = $this->createMock(MailerInterface::class);
         $this->Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: false);
     }
@@ -214,7 +219,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
     {
         $MockMailer = $this->createMock(MailerInterface::class);
         // incorrect schema version
-        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA - 9000);
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA - 9000, $this->Migrations);
         $Email = new Email($schemaVersionChecker, $MockMailer, $this->Logger, 'yep@nope.blah');
         $this->assertFalse($Email->sendEmail(new Address('a@a.fr', 'b'), 's', 'b'));
     }

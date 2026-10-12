@@ -21,7 +21,6 @@ use function array_diff_key;
 use function array_flip;
 use function array_keys;
 use function count;
-use function dirname;
 use function ksort;
 use function preg_match;
 use function substr;
@@ -38,11 +37,6 @@ final class Migrations
     public function __construct(private readonly FilesystemOperator $fs)
     {
         $this->Db = Db::getConnection();
-    }
-
-    public static function getDefault(): self
-    {
-        return new self(FsTools::getFs(dirname(__DIR__) . '/sql'));
     }
 
     public static function generateUuidV7(): string

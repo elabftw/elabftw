@@ -32,11 +32,8 @@ use function sprintf;
 #[AsCommand(name: 'dev:forceschema')]
 final class ForceSchema extends Command
 {
-    private readonly Migrations $Migrations;
-
-    public function __construct()
+    public function __construct(private readonly Migrations $Migrations)
     {
-        $this->Migrations = Migrations::getDefault();
         parent::__construct();
     }
 

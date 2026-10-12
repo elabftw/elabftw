@@ -94,7 +94,8 @@ try {
 
     // Show helpful screen if database schema needs update
     // throws InvalidSchemaException if schema is incorrect
-    new SchemaVersionChecker((int) $Config->configArr['schema'])->checkSchema();
+    $Migrations = new Migrations(FsTools::getFs(dirname(__DIR__, 2) . '/src/sql'));
+    new SchemaVersionChecker((int) $Config->configArr['schema'], $Migrations)->checkSchema();
 
     $App = new App($Request, $Session, $Config, $Logger, new Users(), Env::asBool('DEV_MODE'), Env::asBool('DEMO_MODE'));
     //-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-//

@@ -41,13 +41,16 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
 
     private Email $Email;
 
+    private Migrations $Migrations;
+
     protected function setUp(): void
     {
         $Logger = new Logger('elabftw');
         // use NullHandler because we don't care about logs here
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
+        $this->Migrations = new Migrations((new Memory())->getFs());
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA, $this->Migrations);
         $this->Email = new Email($schemaVersionChecker, $MockMailer, $Logger, 'toto@yopmail.com', demoMode: false);
     }
 
@@ -92,7 +95,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
 
     public function testForceSchema(): void
     {
-        $commandTester = new CommandTester(new ForceSchema());
+        $commandTester = new CommandTester(new ForceSchema($this->Migrations));
         $Config = Config::getConfig();
         $commandTester->execute(array('identifier' => $Config->configArr['schema']));
         $commandTester->assertCommandIsSuccessful();
@@ -302,7 +305,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     public function testExecuteCheckDatabase(): void
     {
         $Config = Config::getConfig();
-        $commandTester = new CommandTester(new CheckDatabase((int) $Config->configArr['schema']));
+        $commandTester = new CommandTester(new CheckDatabase((int) $Config->configArr['schema'], $this->Migrations));
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
@@ -311,7 +314,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteCheckDatabaseNeedsUpdate(): void
     {
-        $commandTester = new CommandTester(new CheckDatabase(42));
+        $commandTester = new CommandTester(new CheckDatabase(42, $this->Migrations));
         $statusCode = $commandTester->execute(array());
         $this->assertSame(1, $statusCode);
         $this->assertStringContainsString('An upgrade is required.', $commandTester->getDisplay());

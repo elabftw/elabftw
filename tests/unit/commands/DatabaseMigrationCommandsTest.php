@@ -137,7 +137,7 @@ class DatabaseMigrationCommandsTest extends TestCase
 
     public function testForceSchemaRejectsInvalidAndUnknownIdentifiers(): void
     {
-        $tester = new CommandTester(new ForceSchema());
+        $tester = new CommandTester(new ForceSchema(new Migrations($this->fs)));
         $this->assertSame(Command::INVALID, $tester->execute(array('identifier' => 'invalid')));
         $this->assertStringContainsString('Identifier must be a UUIDv7', $tester->getDisplay());
 
@@ -151,7 +151,7 @@ class DatabaseMigrationCommandsTest extends TestCase
         $current = (int) Config::getConfig()->configArr['schema'];
         $this->assertSame(SchemaVersionChecker::REQUIRED_SCHEMA, $current);
         $app = new Application();
-        $app->add(new CheckDatabase($current));
+        $app->add(new CheckDatabase($current, new Migrations($this->fs)));
         $app->add(new UpdateDatabase());
 
         $tester = new CommandTester($app->find('db:update'));

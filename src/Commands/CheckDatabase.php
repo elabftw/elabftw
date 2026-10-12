@@ -28,11 +28,8 @@ use function sprintf;
 #[AsCommand(name: 'db:check')]
 final class CheckDatabase extends Command
 {
-    private readonly Migrations $Migrations;
-
-    public function __construct(private int $currentSchema)
+    public function __construct(private int $currentSchema, private readonly Migrations $Migrations)
     {
-        $this->Migrations = Migrations::getDefault();
         parent::__construct();
     }
 

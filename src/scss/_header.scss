@@ -293,23 +293,56 @@
 // the existing desktop sidebar media query untouched.
 @media (min-width: 1200px) {
   html #container.has-main-nav {
-    --navbar-height: 4rem;
+    --navbar-height: 3rem;
   }
 
   .has-main-nav {
     #realContainer {
-      padding-top: 4rem;
+      padding-top: 3rem;
     }
 
     #sidepanel-buttons {
-      padding-top: 4rem;
+      padding-top: 3rem;
     }
 
     .navbar-utilities {
-      height: 4rem;
+      height: 3rem;
       left: 17rem;
+      padding-right: 2rem;
       right: 0;
       top: 0;
+    }
+
+    .navbar-entity-type {
+      color: var(--chrome-fg);
+      font-size: 0.8rem;
+      font-weight: 600;
+      left: 50%;
+      letter-spacing: 0.08em;
+      opacity: 0.7;
+      pointer-events: none;
+      position: absolute;
+      text-transform: uppercase;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+    }
+
+    // No gray divider at the join between the sidebar and the top bar.
+    #main-navbar {
+      border-right: 0;
+
+      // Concave rounded corner where the dark sidebar meets the page content.
+      &::before {
+        background: radial-gradient(circle at bottom right, transparent calc(0.75rem - 1px), var(--nav-bg) 0.75rem);
+        content: '';
+        height: 0.75rem;
+        pointer-events: none;
+        position: absolute;
+        right: -0.75rem;
+        top: 3rem;
+        width: 0.75rem;
+      }
     }
   }
 }

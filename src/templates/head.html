@@ -87,7 +87,7 @@
         <div class='navbar-nav w-100'>
             {% if not App.isAnonymous() %}
             <div class='nav-item dropdown mb-2'>
-              <button type='button' id='sidebarCreateDropdown' class='btn btn-primary btn-block dropdown-toggle' data-toggle='dropdown' aria-expanded='false' aria-haspopup='true'><i class='fas fa-plus fa-fw mr-2'></i>{{ 'Create'|trans }}</button>
+              <button type='button' id='sidebarCreateDropdown' class='btn btn-primary btn-block' data-toggle='dropdown' aria-expanded='false' aria-haspopup='true'>{{ 'Create'|trans }}<i class='fas fa-chevron-down fa-xs ml-2' aria-hidden='true'></i></button>
               <div class='dropdown-menu'>{{ _self.createMenuOptions(App) }}</div>
             </div>
             {% endif %}
@@ -258,6 +258,16 @@
 
     {# The utility bar stays visible while the sidebar scrolls. #}
     <div class='navbar-utilities d-flex align-items-center'>
+        {# Show the current entity type in the desktop top bar on View/Edit pages. #}
+        {% if scriptName in ['experiments.php', 'templates.php', 'database.php', 'resources-templates.php'] and App.Request.query.get('mode') in ['view', 'edit'] %}
+          {% set navbarEntityTypes = {
+            'experiments': 'Experiment'|trans,
+            'experiments_templates': 'Experiment template'|trans,
+            'items': 'Resource'|trans,
+            'items_types': 'Resource template'|trans,
+          } %}
+          <span class='navbar-entity-type d-none d-xl-block'>{{ navbarEntityTypes[Entity.entityType.value]|default('') }}</span>
+        {% endif %}
         {% if App.Session.has('is_auth') and not App.isAnonymous() %}
         <div class='nav-item dropdown'>
           <button class='btn nav-link border-0' id='createNewDropdown' type='button' aria-label='{{ 'Create new...'|trans }}' title='{{ 'Create new...'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-plus fa-lg'></i></button>

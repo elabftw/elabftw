@@ -58,6 +58,7 @@ use function random_bytes;
 use function sprintf;
 use function strtr;
 use function array_map;
+use function array_values;
 
 /**
  * Make an ELN archive
@@ -256,6 +257,7 @@ class MakeEln extends AbstractMakeEln
         }
 
         // UPLOADS
+        $uploadGroups = $this->groupsToJsonLd($e['upload_groups'] ?? array(), 'Collection', './' . $currentDatasetFolder);
         // ignore the uploads from entity and fetch a new list including archived uploads
         $uploadedFilesArr = $entity->Uploads->readAll(new BaseQueryParams(
             limit: PHP_INT_MAX,
@@ -283,6 +285,14 @@ class MakeEln extends AbstractMakeEln
                     'contentSize' => (string) $file['filesize'],
                     'sha256' => $file['hash'] ?? hash_file('sha256', $uploadAtId),
                 );
+                if (isset($file['ordering'])) {
+                    $fileNode['position'] = (int) $file['ordering'];
+                }
+                $groupId = $file['group_id'] ?? null;
+                if ($groupId !== null && isset($uploadGroups['ids'][$groupId])) {
+                    $fileNode['isPartOf'] = $uploadGroups['ids'][$groupId];
+                    $uploadGroups['nodes'][$groupId]['hasPart'][] = array('@id' => $uploadAtId);
+                }
                 // add the file comment as description but only if it's present
                 if (!empty($file['comment'])) {
                     $fileNode['description'] = $file['comment'];
@@ -290,6 +300,9 @@ class MakeEln extends AbstractMakeEln
                 $this->dataEntities[] = $fileNode;
             }
         }
+        // Keep files directly in hasPart for older importers, and also describe their groups.
+        $hasPart = array_merge($hasPart, array_values($uploadGroups['ids']));
+        array_push($this->dataEntities, ...array_values($uploadGroups['nodes']));
 
         // LINKS (mentions)
         // this array will be added to the "mentions" attribute of the main dataset
@@ -367,10 +380,12 @@ class MakeEln extends AbstractMakeEln
             );
         }
         // STEPS
-        if (!empty($e['steps'])) {
-            // $datasetNode['step'] = $this->stepsToJsonLd($e['steps']);
-            $processedSteps = $this->stepsToJsonLd($e['steps']);
-            $datasetNode['step'] = $processedSteps['ids'];
+        if (!empty($e['steps']) || !empty($e['step_groups'])) {
+            $processedSteps = $this->stepsToJsonLd($e['steps'] ?? array(), $e['step_groups'] ?? array(), './' . $currentDatasetFolder);
+            if ($processedSteps['ids'] !== array()) {
+                $datasetNode['step'] = $processedSteps['ids'];
+            }
+            $datasetNode['hasPart'] = array_merge($datasetNode['hasPart'] ?? array(), $processedSteps['group_ids']);
             array_push($this->dataEntities, ...$processedSteps['nodes']);
         }
 
@@ -409,10 +424,34 @@ class MakeEln extends AbstractMakeEln
         return $datasetNode;
     }
 
-    protected function stepsToJsonLd(array $steps): array
+    /**
+     * Use contextual entities rather than extra directories or database IDs for groups.
+     * Empty groups are exported too. Their position records the named-group order.
+     */
+    protected function groupsToJsonLd(array $groups, string $type, string $datasetId): array
     {
-        // we will return two arrays, the array of @id, and an array of nodes of @type HowToStep
         $res = array('ids' => array(), 'nodes' => array());
+        $membersProperty = $type === 'HowToSection' ? 'itemListElement' : 'hasPart';
+        foreach ($groups as $group) {
+            $id = '#group-' . Tools::getUuidv4();
+            $res['ids'][$group['id']] = array('@id' => $id);
+            $res['nodes'][$group['id']] = array(
+                '@id' => $id,
+                '@type' => $type,
+                'name' => $group['title'],
+                'position' => (int) $group['ordering'],
+                'isPartOf' => array('@id' => $datasetId),
+                $membersProperty => array(),
+            );
+        }
+        return $res;
+    }
+
+    protected function stepsToJsonLd(array $steps, array $groups = array(), string $datasetId = './'): array
+    {
+        // Keep the flat step references and add sections describing their group membership.
+        $stepGroups = $this->groupsToJsonLd($groups, 'HowToSection', $datasetId);
+        $res = array('ids' => array(), 'nodes' => array(), 'group_ids' => array_values($stepGroups['ids']));
         foreach ($steps as $step) {
             $id = 'howtostep://' . Tools::getUuidv4();
             $res['ids'][] = array('@id' => $id);
@@ -422,6 +461,11 @@ class MakeEln extends AbstractMakeEln
                 'position' => $step['ordering'],
                 'creativeWorkStatus' => $step['finished'] === 1 ? 'finished' : 'unfinished',
             );
+            $groupId = $step['group_id'] ?? null;
+            if ($groupId !== null && isset($stepGroups['ids'][$groupId])) {
+                $node['isPartOf'] = $stepGroups['ids'][$groupId];
+                $stepGroups['nodes'][$groupId]['itemListElement'][] = array('@id' => $id);
+            }
             if ($step['deadline']) {
                 $node['expires'] = (new DateTimeImmutable($step['deadline']))->format(DateTimeImmutable::ATOM);
             }
@@ -438,6 +482,7 @@ class MakeEln extends AbstractMakeEln
                 'text' => $step['body'],
             );
         }
+        array_push($res['nodes'], ...array_values($stepGroups['nodes']));
         return $res;
     }
 

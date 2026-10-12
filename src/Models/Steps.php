@@ -62,15 +62,17 @@ final class Steps extends AbstractRest
      *
      * @param array<string, mixed> $step
      */
-    public function import(array $step): void
+    public function import(array $step, ?int $groupId = null): void
     {
         $this->Entity->canOrExplode(AccessType::Write);
+        $this->assertGroupBelongsToEntity($groupId);
 
         $body = str_replace('|', ' ', $step['body']);
-        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, body, ordering, finished, finished_time)
-            VALUES(:item_id, :body, :ordering, :finished, :finished_time)';
+        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, group_id, body, ordering, finished, finished_time)
+            VALUES(:item_id, :group_id, :body, :ordering, :finished, :finished_time)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
         $req->bindParam(':body', $body);
         $req->bindParam(':ordering', $step['ordering'], PDO::PARAM_INT);
         $req->bindParam(':finished', $step['finished'], PDO::PARAM_INT);
@@ -91,14 +93,14 @@ final class Steps extends AbstractRest
      *  }
      * },
      */
-    public function importFromHowToStep(array $howToStep, string $body): void
+    public function importFromHowToStep(array $howToStep, string $body, ?int $groupId = null): void
     {
         $this->import(array(
             'body' => $body,
             'finished' => $howToStep['creativeWorkStatus'] === 'finished' ? 1 : 0,
             'finished_time' => $howToStep['temporal'] ?? null,
             'ordering' => $howToStep['position'] ?? null,
-        ));
+        ), $groupId);
     }
 
     /**

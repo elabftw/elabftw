@@ -1,6 +1,9 @@
 /**
- * Shared sortable behavior for steps and uploads, including grouping and ordering.
+ * @author Nicolas CARPi / Deltablot
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
+ * @package elabftw
  */
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/sortable';
@@ -76,8 +79,8 @@ export function createGroupedSortables(options: GroupedSortableOptions): () => v
         forcePlaceholderSize: true,
         placeholder: 'step-group-sortable-placeholder',
         update: function() {
-          const ordering = Array.from(this.querySelectorAll<HTMLElement>(`:scope > ${options.groupItemSelector}`))
-            .map(group => parseInt(group.dataset.groupid, 10));
+          const ordering = Array.from(this.querySelectorAll(`:scope > ${options.groupItemSelector}`))
+            .map(group => parseInt((group as HTMLElement).dataset.groupid, 10));
           ApiC.patch(options.groupEndpoint, {ordering}).then(() => options.reload());
         },
       });

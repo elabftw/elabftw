@@ -1,6 +1,14 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * @author Nicolas CARPi <Deltablot>
+ * @author Mouss <Deltablot>
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
 namespace Elabftw\Commands;
 

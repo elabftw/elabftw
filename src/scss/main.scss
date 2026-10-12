@@ -28,8 +28,6 @@
 @include meta.load-css('@deltablot/dropzone/src/dropzone');
 @include meta.load-css('@fancyapps/fancybox/dist/jquery.fancybox');
 @include meta.load-css('jquery-ui/themes/base/core');
-@include meta.load-css('jquery-ui/themes/base/autocomplete');
-@include meta.load-css('jquery-ui/themes/base/menu');
 @include meta.load-css('jquery-ui/themes/base/sortable');
 @include meta.load-css('jquery-ui/themes/base/theme');
 
@@ -223,14 +221,6 @@ select:not([multiple]) {
   .form-control-plaintext,
   pre {
     color: var(--mediumstrong);
-  }
-
-  .ui-autocomplete {
-    background: var(--mainbackground);
-  }
-
-  .ui-menu-item-wrapper {
-    color: var(--strongest);
   }
 
   .dropdown-divider {

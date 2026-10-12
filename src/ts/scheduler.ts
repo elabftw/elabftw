@@ -33,7 +33,6 @@ import timelinePlugin from '@fullcalendar/timeline';
 import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
-import 'jquery-ui/ui/widgets/autocomplete';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { Action } from './interfaces';

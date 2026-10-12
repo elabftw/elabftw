@@ -178,6 +178,15 @@
   }
 }
 
+// Bootstrap already updates aria-expanded for the sidebar Create dropdown.
+#sidebarCreateDropdown .fa-chevron-down {
+  transition: transform 0.2s ease;
+}
+
+#sidebarCreateDropdown[aria-expanded='true'] .fa-chevron-down {
+  transform: rotate(180deg);
+}
+
 .navbar-utilities {
   align-items: center;
   background-color: var(--nav-bg);

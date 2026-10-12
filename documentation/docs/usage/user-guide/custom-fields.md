@@ -75,7 +75,7 @@ Keep in mind that what the builder menu will do for you is simply create some JS
 ## Positions
 In order to assign a particular position to the inputs, you can drag them around.
 
-If you are using the API, use the `position` key, with a number as value. The inputs will then be ordered based on this value. Lowest value being on top. Groups are shown in the position they are defined.
+If you are using the API, use the `position` key, with a number as the value. The inputs will then be ordered based on this value. Lowest value being on top. Groups are shown in the position they are defined.
 
 ## Removing an input
 If you wish to remove an input, click the trash icon present in edit mode on the right side of the input block.
@@ -195,7 +195,7 @@ A date and time input.
 An email input: only a valid email address will be accepted.
 
 #### number
-A text input that only accepts a number as value.
+A text input that only accepts a number as the value.
 
 #### radio
 A radio input similar to select but all options are immediately visible.
@@ -213,7 +213,7 @@ A time input.
 A text input that only accepts a valid URL. In view mode, the link will be clickable. By default, the link will open in a new tab. Add `"open_in_current_tab" : true` to make it open in the current tab.
 
 #### options (for type = select)
-An array of string (`[]`) with different options for the dropdown element.
+An array of strings (`[]`) with different options for the dropdown element.
 
 ### allow_multi_values
 A `boolean` attribute, which defaults to `false`, for allowing any custom field type to hold multiple values. The `value` property is stored as an array when enabled. Dropdown fields use a native multi-select input; other field types display repeatable inputs that can be added or removed individually.
@@ -249,4 +249,4 @@ A number corresponding to the `id` of a group defined in the `elabftw.extra_fiel
 Another object, with key `elabftw` is used to define some parameters.
 
 ### extra_fields_groups
-An array of objects that have an `id` and `name` and corresponds to groups.
+An array of objects that have an `id` and `name` and correspond to groups.

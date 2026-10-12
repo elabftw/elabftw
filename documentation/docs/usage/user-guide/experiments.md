@@ -237,6 +237,14 @@ After clicking the "eye" icon for preview:
   <figcaption>Main text editor.</figcaption>
 </figure>
 
+### Spell checking and autocorrect
+
+eLabFTW uses your web browser's spell checker in the rich text editor. The underlined words you see are possible spelling errors detected by the browser.
+
+To use spelling suggestions, enable spell checking in your browser settings and select or install a dictionary for the language you are writing in. Right-click an underlined word and choose a suggested correction. You can also add scientific terms to your dictionary so they are no longer flagged. See the instructions for [Firefox](https://support.mozilla.org/en-US/kb/how-do-i-use-firefox-spell-checker) or [Chrome](https://support.google.com/chrome/answer/12027911).
+
+Spell checking offers suggestions; it does not automatically replace words. eLabFTW does not include its own autocorrect feature or a setting to enable one. If your browser, operating system or keyboard supports automatic spelling correction, configure it there. Its availability and behavior depend on your browser, device and language.
+
 ### Inserting an image
 
 To insert an image into the main text, simply drag and drop it into the text editor. There is also an icon in the toolbar to open the file browser and select your file.

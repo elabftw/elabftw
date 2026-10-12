@@ -61,20 +61,32 @@ describe('Upload groups', () => {
       });
   };
 
-  const triggerSortableUpdate = (container: HTMLElement): void => {
+  const triggerSortableUpdate = (container: HTMLElement, requestAlias: `@${string}`): void => {
+    const groupsBeforeReload = container.ownerDocument.querySelector('.upload-groups-sortable');
+    if (!groupsBeforeReload) {
+      throw new Error('Could not find upload groups before reloading.');
+    }
     const appWindow = container.ownerDocument.defaultView as Window & { $: AppJquery };
     const update = appWindow.$(container).sortable('option', 'update');
     if (typeof update !== 'function') {
       throw new Error('Upload sortable update callback is not initialized.');
     }
     (update as SortableUpdate).call(container);
+
+    // The helpers move nodes immediately, so existence/order assertions can pass
+    // before reloadUploads() finishes. Wait for the fragment to be replaced after
+    // every update to keep refreshes from overlapping and closing action menus.
+    cy.wait(requestAlias).its('response.statusCode').should('eq', 200);
+    cy.get('.upload-groups-sortable').should($groupsAfterReload => {
+      expect($groupsAfterReload[0]).not.to.eq(groupsBeforeReload);
+    });
   };
 
   const moveUploadToGroup = (uploadId: number, groupId: number): void => {
     cy.get(`#uploadDiv_${uploadId}`).then($upload => {
       cy.get(`.uploads-sortable[data-groupid="${groupId}"]`).then($target => {
         $target[0].append($upload[0]);
-        triggerSortableUpdate($target[0]);
+        triggerSortableUpdate($target[0], '@updateUploadOrdering');
       });
     });
   };
@@ -86,7 +98,7 @@ describe('Upload groups', () => {
         throw new Error(`Could not find upload group ${groupId}.`);
       }
       $container[0].prepend(group);
-      triggerSortableUpdate($container[0]);
+      triggerSortableUpdate($container[0], '@updateUploadGroupOrdering');
     });
   };
 
@@ -107,26 +119,16 @@ describe('Upload groups', () => {
               cy.intercept('PATCH', `**/api/v2/experiments/${entityId}/upload_groups`).as('updateUploadGroupOrdering');
 
               moveUploadToGroup(firstUploadId, rawGroupId);
-              cy.wait('@updateUploadOrdering').its('response.statusCode').should('eq', 200);
               cy.get(`#upload_group_${rawGroupId} #uploadDiv_${firstUploadId}`).should('exist');
 
               moveUploadToGroup(secondUploadId, processedGroupId);
-              cy.wait('@updateUploadOrdering').its('response.statusCode').should('eq', 200);
               cy.get(`#upload_group_${processedGroupId} #uploadDiv_${secondUploadId}`).should('exist');
 
               // Reordering attachments must not reopen another collapsed group
-              // Keep a reference to the current group so we can wait for reloadUploads()
-              // to actually replace the DOM after the PATCH response
-              cy.get(`#upload_group_${processedGroupId}`).then($groupBeforeReload => {
-                cy.get(`[data-toggle-target="upload_group_body_${processedGroupId}"]`).click();
-                cy.get(`#upload_group_body_${processedGroupId}`).should('not.be.visible');
-                cy.get(`#upload_group_${rawGroupId} .uploads-sortable`).then($container => {
-                  triggerSortableUpdate($container[0]);
-                });
-                cy.wait('@updateUploadOrdering').its('response.statusCode').should('eq', 200);
-                cy.get(`#upload_group_${processedGroupId}`).should($groupAfterReload => {
-                  expect($groupAfterReload[0]).not.to.eq($groupBeforeReload[0]);
-                });
+              cy.get(`[data-toggle-target="upload_group_body_${processedGroupId}"]`).click();
+              cy.get(`#upload_group_body_${processedGroupId}`).should('not.be.visible');
+              cy.get(`#upload_group_${rawGroupId} .uploads-sortable`).then($container => {
+                triggerSortableUpdate($container[0], '@updateUploadOrdering');
               });
               cy.get(`#upload_group_body_${processedGroupId}`).should('not.be.visible');
 
@@ -169,7 +171,6 @@ describe('Upload groups', () => {
 
               // Group reordering uses the same sortable callback as a real drag operation.
               moveGroupToTop(processedGroupId);
-              cy.wait('@updateUploadGroupOrdering').its('response.statusCode').should('eq', 200);
               cy.get('.upload-groups-sortable > .upload-group[data-groupid]')
                 .first()
                 .should('have.attr', 'data-groupid', String(processedGroupId));

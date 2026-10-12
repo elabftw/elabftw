@@ -68,7 +68,6 @@ abstract class AbstractMakeEln extends AbstractMakeZip
                     'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.2'),
                     'dateCreated' => $this->creationDateTime->format(DateTimeImmutable::ATOM),
                     'sdPublisher' => array('@id' => '#publisher'),
-                    'version' => '1.0',
                 ),
             ),
         );
@@ -110,7 +109,7 @@ abstract class AbstractMakeEln extends AbstractMakeZip
         );
     }
 
-    // Create Action: https://www.researchobject.org/ro-crate/1.1/provenance.html#recording-changes-to-ro-crates
+    // Create Action: https://www.researchobject.org/ro-crate/specification/1.2/provenance.html
     protected function getCreateActionNode(): array
     {
         return array(

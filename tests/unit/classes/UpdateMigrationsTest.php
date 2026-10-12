@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
+
 /**
  * @author Nicolas CARPi <Deltablot>
  * @author Mouss <Deltablot>

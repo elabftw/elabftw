@@ -1,6 +1,7 @@
 {# STEPS #}
 {% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last|replace({'.php': ''})) %}
 <div id='stepsDiv'>
+{% set showStepInBody = Entity.entityData.body_html is defined and Entity.entityData.body_html != '' and not Entity.entityData.hide_main_text %}
 {% if Entity.entityData.steps %}
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }} ({{ Entity.entityData.steps|length }})</h3>
   <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
@@ -17,6 +18,12 @@
         <span class='mr-2 text-muted'>
             {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
         </span>
+        {% endif %}
+        {# the step was inserted in the main text: allow jumping to it #}
+        {% if showStepInBody and ('highlightstep=' ~ step.id ~ '#') in Entity.entityData.body %}
+        <button type='button' class='btn btn-ghost btn-sm' data-action='scroll-to-step-in-body' data-stepid='{{ step.id }}' title='{{ 'Show in main text'|trans }}' aria-label='{{ 'Show in main text'|trans }}'>
+          <i class='fas fa-font fa-fw'></i>
+        </button>
         {% endif %}
         </div>
       {% endfor %}

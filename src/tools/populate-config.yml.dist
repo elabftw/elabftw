@@ -262,6 +262,157 @@ teams:
           - imaging
           - generated from yml
 
+      - title: PCR amplification and gel electrophoresis
+        category: Biology
+        tags:
+          - PCR
+          - molecular biology
+          - workflow
+          - generated from yml
+        body: |
+          <h2>Objective</h2>
+          <p>Amplify a GFP fragment from template DNA and verify the expected amplicon by agarose gel electrophoresis.</p>
+          <p>The grouped steps below demonstrate how a longer laboratory workflow can be split into clear phases while preserving the order of each task.</p>
+        step_groups:
+          - title: Preparation
+            steps:
+              - Disinfect the bench and prepare a clean PCR workspace.
+              - Thaw template DNA, primers, PCR mix, and nuclease-free water on ice.
+              - Mix reagents gently and briefly centrifuge the tubes.
+              - Label sample tubes, a positive control, and a no-template control.
+              - Record reagent lot numbers and template identifiers in the experiment notes.
+          - title: PCR setup
+            steps:
+              - Calculate the master mix volume with enough excess for pipetting loss.
+              - Prepare the master mix in a clean tube and mix thoroughly.
+              - Dispense master mix into the labeled PCR tubes.
+              - Add template DNA to the sample tubes and control material to the control tubes.
+              - Close the tubes, mix gently, briefly centrifuge, and place them in the thermocycler.
+          - title: Thermal cycling
+            steps:
+              - Select the validated PCR program for the primer pair.
+              - Confirm the sample layout and thermocycler lid settings before starting the run.
+              - Start the PCR run and record the program name in the experiment.
+              - When the run is complete, keep the reactions chilled until gel preparation is ready.
+          - title: Gel electrophoresis
+            steps:
+              - Prepare an agarose gel suitable for the expected DNA fragment size.
+              - Load a DNA ladder and the PCR reactions into the assigned wells.
+              - Run the gel until the marker bands are sufficiently separated.
+              - Image the gel using the laboratory gel documentation system.
+              - Save the original image as an attachment before performing any image processing.
+          - title: Analysis and cleanup
+            steps:
+              - Compare sample bands with the DNA ladder and verify the expected product size.
+              - Confirm that the positive control amplified and the no-template control remained negative.
+              - Record unexpected bands, weak amplification, or other deviations in the main text.
+              - Store or discard remaining PCR products according to the laboratory workflow.
+              - Clean the workspace and return shared reagents and equipment to their storage locations.
+
+      - title: Recombinant protein purification - rich text showcase
+        category: Biology
+        tags:
+          - protein purification
+          - rich text
+          - accordion
+          - generated from yml
+        body: |
+          <h1>Recombinant protein purification</h1>
+          <p>This demonstration entry combines headings, nested accordions, and a results table. The headings also populate the floating main-text navigation menu.</p>
+
+          <h2>Objective</h2>
+          <p>Purify a recombinant GFP-tagged protein by affinity chromatography and document the fractions selected for downstream analysis.</p>
+
+          <h2>Materials and setup</h2>
+          <details class="mce-accordion">
+            <summary>Reagents and buffers</summary>
+            <p>Prepare all buffers before starting the purification and record the lot number of critical reagents.</p>
+            <details class="mce-accordion">
+              <summary>Lysis buffer</summary>
+              <ul>
+                <li>Buffered salt solution</li>
+                <li>Protease inhibitor added immediately before use</li>
+                <li>Optional nuclease for viscous lysates</li>
+              </ul>
+            </details>
+            <details class="mce-accordion">
+              <summary>Wash and elution buffers</summary>
+              <ul>
+                <li>Wash buffer prepared from the same buffer system as the lysate</li>
+                <li>Elution buffer prepared with the validated affinity reagent concentration</li>
+              </ul>
+            </details>
+          </details>
+
+          <details class="mce-accordion">
+            <summary>Equipment</summary>
+            <ul>
+              <li>Refrigerated centrifuge</li>
+              <li>Affinity chromatography column</li>
+              <li>UV-visible spectrophotometer</li>
+              <li>Protein gel electrophoresis equipment</li>
+            </ul>
+            <details class="mce-accordion">
+              <summary>Pre-run checks</summary>
+              <p>Confirm that the centrifuge, chromatography system, and spectrophotometer are available and within their maintenance period.</p>
+            </details>
+          </details>
+
+          <h3>Culture harvest</h3>
+          <p>Record the culture identifier, final optical density, harvest time, and pellet storage conditions.</p>
+
+          <h2>Purification</h2>
+          <details class="mce-accordion">
+            <summary>Sample preparation</summary>
+            <p>Resuspend the harvested material, lyse the sample using the validated laboratory method, and clarify the lysate before loading.</p>
+            <details class="mce-accordion">
+              <summary>Clarification checkpoints</summary>
+              <ol>
+                <li>Keep an aliquot of the total lysate.</li>
+                <li>Keep an aliquot of the clarified soluble fraction.</li>
+                <li>Record the appearance and approximate volume of the clarified sample.</li>
+              </ol>
+            </details>
+          </details>
+
+          <details class="mce-accordion">
+            <summary>Affinity chromatography</summary>
+            <p>Equilibrate the column, load the clarified sample, wash away unbound material, and collect elution fractions.</p>
+            <details class="mce-accordion">
+              <summary>Fractions to retain</summary>
+              <ul>
+                <li>Flow-through</li>
+                <li>Final wash</li>
+                <li>Individual elution fractions</li>
+              </ul>
+            </details>
+          </details>
+
+          <h3>Quality control</h3>
+          <p>Measure protein concentration and inspect representative fractions by protein gel electrophoresis before pooling.</p>
+
+          <h2>Results</h2>
+          <table style="border-collapse: collapse; width: 100%;" border="1">
+            <thead>
+              <tr>
+                <th>Fraction</th>
+                <th>Volume (mL)</th>
+                <th>Protein (mg/mL)</th>
+                <th>Purity estimate</th>
+                <th>Decision</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Flow-through</td><td>8.0</td><td>0.42</td><td>Low</td><td>Keep for troubleshooting</td></tr>
+              <tr><td>Elution 1</td><td>1.0</td><td>0.85</td><td>70%</td><td>Analyze separately</td></tr>
+              <tr><td>Elution 2</td><td>1.0</td><td>1.75</td><td>92%</td><td>Pool</td></tr>
+              <tr><td>Elution 3</td><td>1.0</td><td>1.30</td><td>90%</td><td>Pool</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Conclusion</h2>
+          <p>Elution fractions 2 and 3 contained the strongest target-protein signal and were selected for pooling. The pooled sample can now proceed to buffer exchange and downstream characterization.</p>
+
 
     user_groups:
       - name: Super secret project

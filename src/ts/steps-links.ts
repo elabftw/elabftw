@@ -23,6 +23,7 @@ import { Action, Target } from './interfaces';
 import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import { createGroupedSortables } from './grouped-sortables';
 
 addAutocompleteToLinkInputs();
 
@@ -57,18 +58,43 @@ $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
 });
 
 const StepC = new Step(entity);
+const stepGroupsEndpoint = `${entity.type}/${entity.id}/step_groups`;
 
-on('create-step', (_, event: Event) => {
+
+on('create-step', (el: HTMLElement, event: Event) => {
   event.preventDefault();
-  const form = document.getElementById('addStepForm') as HTMLFormElement;
+  const form = el.closest('form');
+  if (!(form instanceof HTMLFormElement)) return;
   const params = collectForm(form);
   const content = String(params['step'] ?? '').trim();
   if (!content) return;
-  StepC.create(content).then(() => {
+  // An empty hidden group id means this step belongs to Default group
+  const rawGroupId = String(params['group_id'] ?? '');
+  const groupId = rawGroupId === '' ? null : parseInt(rawGroupId, 10);
+  StepC.create(content, groupId).then(() => {
     reloadElements(['stepsDiv']).then(() => {
-      (document.getElementById('addStepInput') as HTMLInputElement).focus();
+      // Keep the inline form open for quickly adding several steps to the same group.
+      const reloadedForm = document.querySelector<HTMLFormElement>(`.add-step-form[data-groupid='${rawGroupId}']`);
+      if (!reloadedForm) return;
+      // Reuse toggle-next so the form, icon, aria-expanded and focus stay in sync
+      document.querySelector<HTMLButtonElement>(`[data-toggle-target='${reloadedForm.id}']`)?.click();
     });
   });
+});
+
+on('create-step-group', (_, event: Event) => {
+  event.preventDefault();
+  const form = document.getElementById('addStepGroupForm') as HTMLFormElement;
+  const params = collectForm(form);
+  const title = String(params['title'] ?? '').trim();
+  if (!title) return;
+  ApiC.post(stepGroupsEndpoint, {title}).then(() => reloadElements(['stepsDiv']));
+});
+
+on('destroy-step-group', (el: HTMLElement) => {
+  if (confirm(el.dataset.confirm)) {
+    ApiC.delete(`${stepGroupsEndpoint}/${el.dataset.id}`).then(() => reloadElements(['stepsDiv']));
+  }
 });
 
 on('step-update-deadline', (el: HTMLElement) => {
@@ -87,12 +113,12 @@ on('step-destroy-deadline', (el: HTMLElement) => {
 on('destroy-step', (el: HTMLElement) => {
   if (confirm(i18next.t('step-delete-warning'))) {
     StepC.destroy(parseInt(el.dataset.id, 10)).then(() => {
-      el.parentElement.parentElement.remove();
       // keep to do list in sync
       const todoStep = document.getElementById(`todo_step_${el.dataset.id}`);
       if (todoStep) {
         todoStep.parentElement.remove();
       }
+      reloadElements(['stepsDiv']);
     });
   }
 });
@@ -143,11 +169,42 @@ const malleableStep = new Malle({
   tooltip: i18next.t('click-to-edit'),
 }).listen();
 
+const malleableStepGroupTitle = new Malle({
+  cancel : i18next.t('cancel'),
+  cancelClasses: ['button', 'btn', 'btn-danger', 'mt-2'],
+  inputClasses: ['form-control'],
+  fun: async (value, original) => ApiC.patch(`${stepGroupsEndpoint}/${original.dataset.groupid}`, {title: value})
+    .then(resp => resp.json())
+    .then(json => json.title),
+  listenOn: '.step-group-title.editable',
+  returnedValueIsTrustedHtml: false,
+  submit : i18next.t('save'),
+  submitClasses: ['button', 'btn', 'btn-primary', 'mt-2'],
+  tooltip: i18next.t('click-to-edit'),
+}).listen();
+
+const initStepGroupSortables = createGroupedSortables({
+  itemContainerSelector: '.steps-sortable',
+  itemHandleSelector: '.sortableHandle',
+  itemIdPrefix: 'step_',
+  itemIdsKey: 'step_ids',
+  itemEndpoint: `${entity.type}/${entity.id}/steps`,
+  groupContainerSelector: '.step-groups-sortable',
+  groupItemSelector: '.step-group',
+  groupHandleSelector: '.step-group-sortable-handle',
+  groupEndpoint: stepGroupsEndpoint,
+  reload: () => reloadElements(['stepsDiv']),
+});
+
+initStepGroupSortables();
+
 // add an observer so new steps will get an event handler too
 new MutationObserver(() => {
   malleableStep.listen();
+  malleableStepGroupTitle.listen();
   adjustHiddenState();
   makeSortableGreatAgain();
+  initStepGroupSortables();
   relativeMoment();
 }).observe(document.getElementById('stepsDiv'), {childList: true});
 

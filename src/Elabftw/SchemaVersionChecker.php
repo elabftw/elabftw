@@ -22,7 +22,7 @@ final class SchemaVersionChecker
     /**
      * Legacy numeric schema baseline. New migrations are tracked in schema_migrations.
      */
-    public const int REQUIRED_SCHEMA = 227;
+    public const int REQUIRED_SCHEMA = 228;
 
     private readonly Migrations $Migrations;
 

@@ -1193,16 +1193,15 @@ tr.upload-group-drop-target td {
 
   /* Only Status */
   &.status-btn {
-    background-color: var(--firstlevel);
+    background-color: var(--superlight);
     color: var(--mediumstrong);
 
     &:hover {
-      background-color: var(--secondlevel);
-      color: var(--chrome-bg);
+      background-color: var(--firstlevel);
     }
 
     i {
-      color: var(--bg);
+      color: var(--mediumstrong);
     }
   }
 }

@@ -1,5 +1,5 @@
 {% set entityPage = entityPage|default(App.Request.getScriptName|split('/')|last|replace({'.php': ''})) %}
-{% set color = Entity.entityData.category_color|default('bdbdbd') %}
+{% set color = Entity.entityData.category_color|default('4d4c4c') %}
 {% set colorFg = Entity.entityData.category_color_fg|default('ffffff') %}
 <div class='d-flex mb-2 align-items-center'>
   {# ID #}

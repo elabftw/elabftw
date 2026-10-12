@@ -24,7 +24,6 @@ use function count;
 use function dirname;
 use function ksort;
 use function preg_match;
-use function sprintf;
 use function substr;
 
 /**

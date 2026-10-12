@@ -203,19 +203,17 @@
     {% endif %}
 
     {% if mode == 'edit' %}
-      <div class='w-100'>
-        <button type='button' class='btn btn-transparent text-muted text-left w-100 px-3 py-2 add-step-group-toggle' data-action='toggle-next' data-focus-first-input='true' data-toggle-target='addUploadGroupForm' aria-expanded='false' aria-controls='addUploadGroupForm'>
-          <i class='fas fa-plus fa-fw mr-1'></i>{{ 'Add a group'|trans }}
-        </button>
-        <form hidden aria-label='{{ 'Add a group'|trans }}' id='addUploadGroupForm' class='mt-2'>
-          <div class='input-group'>
-            <input aria-label='{{ 'Group name'|trans }}' type='text' name='title' class='form-control' required placeholder='{{ 'Group name'|trans }}' />
-            <div class='input-group-append'>
-              <button class='btn btn-secondary' data-action='create-upload-group' type='submit'>{{ 'Add group'|trans }}</button>
-            </div>
+      <button type='button' class='btn btn-transparent text-muted text-left w-100 px-3 py-2 add-step-group-toggle' data-action='toggle-next' data-focus-first-input='true' data-toggle-target='addUploadGroupForm' aria-expanded='false' aria-controls='addUploadGroupForm'>
+        <i class='fas fa-plus fa-fw mr-1 mt-2'></i>{{ 'Add a group'|trans }}
+      </button>
+      <form hidden aria-label='{{ 'Add a group'|trans }}' id='addUploadGroupForm' class='mt-2'>
+        <div class='input-group'>
+          <input aria-label='{{ 'Group name'|trans }}' type='text' name='title' class='form-control' required placeholder='{{ 'Group name'|trans }}' />
+          <div class='input-group-append'>
+            <button class='btn btn-secondary' data-action='create-upload-group' type='submit'>{{ 'Add group'|trans }}</button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     {% endif %}
   </div>
   <hr>

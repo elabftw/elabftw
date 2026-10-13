@@ -33,16 +33,19 @@ abstract class Editor {
   type: string;
   typeAsInt: number;
   abstract getContent(): string;
-  switch(entity: Entity): Promise<Response> {
-    const params = {};
-    params[Target.Body] = this.getContent();
-    params[Target.ContentType] = this.type === 'tiny' ? 2 : 1;
-    return ApiC.patch(`${entity.type}/${entity.id}`, params).then(response => {
-      if (this.type === 'tiny') {
-        tinymce.activeEditor.setDirty(false);
-      }
-      return response;
+  async switch(entity: Entity): Promise<Response> {
+    const endpoint = `${entity.type}/${entity.id}`;
+    await ApiC.patch(endpoint, {
+      [Target.Body]: this.getContent(),
+      notifOnSaved: 0,
     });
+    const response = await ApiC.patch(endpoint, {
+      [Target.ContentType]: this.type === 'tiny' ? 2 : 1,
+    });
+    if (this.type === 'tiny') {
+      tinymce.activeEditor.setDirty(false);
+    }
+    return response;
   }
 }
 

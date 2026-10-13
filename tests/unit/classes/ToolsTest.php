@@ -103,11 +103,16 @@ class ToolsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringNotContainsString('<div>$$', $html);
     }
 
-    public function testMd2htmlStripsRawHtml(): void
+    public function testMd2htmlSanitizesRawHtml(): void
     {
-        $html = Tools::md2html('<span onclick="alert(1)">text</span> **safe**');
+        $markdown = '<h1>Hello World</h1>' . "\n\n" . '<span onclick="alert(1)">text</span> **safe**'
+            . "\n\n" . '<script>alert(1)</script>';
+        $html = Tools::md2html($markdown);
 
-        $this->assertSame('<p>text <strong>safe</strong></p>', $html);
+        $this->assertStringContainsString('<h1>Hello World</h1>', $html);
+        $this->assertStringContainsString('<strong>safe</strong>', $html);
+        $this->assertStringNotContainsString('onclick', $html);
+        $this->assertStringNotContainsString('<script', $html);
     }
 
     public function testGetShortElabid(): void

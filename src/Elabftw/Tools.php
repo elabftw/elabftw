@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Markdown\DisplayMathExtension;
+use Elabftw\Services\Filter;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Exception\UnexpectedEncodingException;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
@@ -64,7 +65,7 @@ final class Tools
     {
         $config = array(
             'allow_unsafe_links' => false,
-            'html_input' => 'strip',
+            'html_input' => 'allow',
             'max_nesting_level' => 42,
         );
 
@@ -74,7 +75,8 @@ final class Tools
             $environment->addExtension(new GithubFlavoredMarkdownExtension());
             $environment->addExtension(new DisplayMathExtension());
             $converter = new MarkdownConverter($environment);
-            return trim($converter->convert($md)->getContent(), "\n");
+            // HTML embedded in Markdown must be purified before it is exposed as body_html.
+            return trim(Filter::body($converter->convert($md)->getContent()), "\n");
         } catch (UnexpectedEncodingException) {
             // At least display invalid UTF-8 instead of returning unsanitized HTML.
             return self::eLabHtmlspecialchars($md);

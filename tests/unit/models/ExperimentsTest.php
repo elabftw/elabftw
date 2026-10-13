@@ -159,6 +159,18 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('<p>Body</p>', $entityData['body']);
     }
 
+    public function testMarkdownBodyRendersSafeHtml(): void
+    {
+        $body = '<h1>Hello World</h1>' . "\n\n" . '<p onclick="alert(1)">Safe</p>';
+        $new = $this->Experiments->create(body: $body, contentType: BodyContentType::Markdown);
+        $this->Experiments->setId($new);
+        $entityData = $this->Experiments->readOne();
+
+        $this->assertSame($body, $entityData['body']);
+        $this->assertStringContainsString('<h1>Hello World</h1>', $entityData['body_html']);
+        $this->assertStringNotContainsString('onclick', $entityData['body_html']);
+    }
+
     public function testMarkdownBodyPreservesDisplayMath(): void
     {
         $body = <<<'MARKDOWN'

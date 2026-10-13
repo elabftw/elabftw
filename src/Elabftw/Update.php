@@ -95,7 +95,7 @@ final class Update
     private function runPendingMigrations(): void
     {
         // Prevent concurrent containers from executing the same DDL.
-        if ((int) $this->Db->q("SELECT GET_LOCK('elabftw_migrations', 30)")->fetchColumn() !== 1) {
+        if ((int) $this->Db->q("SELECT GET_LOCK(CONCAT('elab:migrations:', SHA1(DATABASE())), 30)")->fetchColumn() !== 1) {
             throw new ImproperActionException('Could not acquire the database migration lock.');
         }
 
@@ -115,7 +115,7 @@ final class Update
                 $this->Migrations->recordApplied($migration, $batch);
             }
         } finally {
-            $this->Db->q("SELECT RELEASE_LOCK('elabftw_migrations')");
+            $this->Db->q("SELECT RELEASE_LOCK(CONCAT('elab:migrations:', SHA1(DATABASE()))");
         }
     }
 

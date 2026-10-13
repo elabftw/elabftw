@@ -302,7 +302,19 @@ final class Steps extends AbstractRest
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+
+        if ($params->getColumn() === 'deadline') {
+            // Use the stored deadline so the notification has the same datetime format.
+            $step = $this->readOne();
+            if ($step['deadline'] === null) {
+                $this->destroyNotif();
+            } elseif ((int) $step['deadline_notif'] === 1) {
+                $this->getStepDeadline($step['deadline'])->updateDeadline();
+            }
+        }
+
+        return $res;
     }
 
     private function create(string $body): int

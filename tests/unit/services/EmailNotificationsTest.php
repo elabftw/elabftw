@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 
 use DateTime;
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Notifications;
@@ -30,8 +31,12 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use PDO;
+use RuntimeException;
 use TypeError;
+
+use function sprintf;
 
 class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 {
@@ -157,6 +162,95 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         $EmailNotifications->sendEmails($output);
 
         $this->assertStringContainsString('Error sending notification: Invalid notification payload', $output->fetch());
+    }
+
+    public function testSendEmailsIsExclusive(): void
+    {
+        $this->stubEmail();
+        $id = new SelfIsValidated(new Users(1))->create();
+        // A separate connection represents another container; named locks are reentrant on the same connection.
+        $connection = $this->getIndependentConnection();
+        try {
+            $this->assertSame(1, $this->acquireNotificationsLock($connection));
+            $email = $this->createMock(Email::class);
+            $email->expects($this->never())->method('sendEmail');
+            $output = new BufferedOutput(OutputInterface::VERBOSITY_VERBOSE);
+            $this->assertSame(0, new EmailNotifications($email)->sendEmails($output));
+            $this->assertStringContainsString('Another process is sending notifications; skipping.', $output->fetch());
+            $this->assertSame(0, $this->getNotificationEmailSent($id));
+            $connection->exec("DO RELEASE_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())))");
+
+            $email = $this->createMock(Email::class);
+            $email->expects($this->once())->method('sendEmail')->willReturnCallback(function () use ($connection): bool {
+                // The lock must remain held during SMTP delivery, before email_sent is updated.
+                $this->assertSame(0, $this->acquireNotificationsLock($connection));
+                return true;
+            });
+            $sender = new EmailNotifications($email);
+            $this->assertSame(1, $sender->sendEmails(new BufferedOutput()));
+            $this->assertSame(1, $this->getNotificationEmailSent($id));
+            $this->assertSame(0, $sender->sendEmails(new BufferedOutput()));
+            // Both the successful run and the empty run must release their lock.
+            $this->assertSame(1, $this->acquireNotificationsLock($connection));
+        } finally {
+            $connection->exec("DO RELEASE_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())))");
+        }
+    }
+
+    public function testSendEmailsReleasesLockAfterException(): void
+    {
+        $this->stubEmail();
+        new SelfIsValidated(new Users(1))->create();
+        $connection = $this->getIndependentConnection();
+        $email = $this->createMock(Email::class);
+        $email->expects($this->once())->method('sendEmail')->willThrowException(new TypeError('Invalid notification payload'));
+        $output = $this->createMock(OutputInterface::class);
+        $output->expects($this->once())->method('writeln')->willThrowException(new RuntimeException('Output error'));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Output error');
+        try {
+            new EmailNotifications($email)->sendEmails($output);
+        } finally {
+            try {
+                $this->assertSame(1, $this->acquireNotificationsLock($connection));
+            } finally {
+                $connection->exec("DO RELEASE_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())))");
+                // The failed notification remains pending and can be retried.
+                $this->stubEmail();
+            }
+        }
+    }
+
+    private function getIndependentConnection(): PDO
+    {
+        $options = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
+        if (!empty(Env::asString('DB_CERT_PATH'))) {
+            /** @psalm-suppress UndefinedConstant */
+            $options[PDO::MYSQL_ATTR_SSL_CA] = Env::asString('DB_CERT_PATH');
+        }
+        return new PDO(
+            sprintf('mysql:host=%s;port=%s;dbname=%s', Env::asString('DB_HOST'), Env::asString('DB_PORT'), Env::asString('DB_NAME')),
+            Env::asString('DB_USER'),
+            Env::asString('DB_PASSWORD'),
+            $options,
+        );
+    }
+
+    private function acquireNotificationsLock(PDO $connection): int
+    {
+        $req = $connection->query("SELECT GET_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())), 0)");
+        $this->assertNotFalse($req);
+        return (int) $req->fetchColumn();
+    }
+
+    private function getNotificationEmailSent(int $id): int
+    {
+        $Db = Db::getConnection();
+        $req = $Db->prepare('SELECT email_sent FROM notifications WHERE id = :id');
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $Db->execute($req);
+        return (int) $req->fetchColumn();
     }
 
     private function stubEmail(): void

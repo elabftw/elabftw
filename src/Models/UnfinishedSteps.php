@@ -12,16 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Enums\BasePermissions;
+use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\Users;
-use Elabftw\Services\UsersHelper;
 use Override;
 use PDO;
 
-use function array_column;
 use function explode;
 use function sprintf;
 
@@ -64,7 +62,11 @@ final class UnfinishedSteps extends AbstractRest
             ) AS stepst ON (stepst.item_id = entity.id)';
 
         $sql .= ' JOIN users2teams ON (users2teams.users_id = entity.userid AND users2teams.teams_id = :teamid)';
-        $sql .= ' WHERE ' . ($this->teamScoped ? $this->getTeamWhereClause($model) : 'entity.userid = :userid');
+        $sql .= ' WHERE ' . ($this->teamScoped ? '1 = 1' : 'entity.userid = :userid');
+        $sql .= new EntitySqlBuilder($model->toInstance($this->Users))->getCanFilter('canread');
+        if ($this->teamScoped) {
+            $sql .= ' AND entity.team = :teamid';
+        }
 
         $sql .= sprintf(' AND entity.state = %d GROUP BY entity.id ORDER BY entity.id DESC', State::Normal->value);
         $req = $this->Db->prepare($sql);
@@ -96,63 +98,5 @@ final class UnfinishedSteps extends AbstractRest
         }
 
         return $res;
-    }
-
-    private function getTeamWhereClause(EntityType $model): string
-    {
-        // add team id filter for items + pub/org visibility filter
-        $sql = sprintf(
-            "%s AND (
-                (JSON_EXTRACT(entity.canread, '$.base') = %d OR JSON_EXTRACT(entity.canread, '$.base') = %d)
-                AND users2teams.users_id = entity.userid
-            )",
-            $model === EntityType::Items ? 'entity.team = :teamid' : '1 = 1',
-            BasePermissions::Full->value,
-            BasePermissions::Organization->value,
-        );
-
-        // add team filter
-        $sql .= sprintf(
-            " OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND users2teams.users_id = entity.userid)",
-            BasePermissions::Team->value,
-        );
-
-        // add user filter
-        $sql .= sprintf(
-            " OR JSON_EXTRACT(entity.canread, '$.base') = %d ",
-            BasePermissions::User->value,
-        );
-
-        // add entities in useronly visibility only if we own them
-        $sql .= sprintf(
-            " OR (JSON_EXTRACT(entity.canread, '$.base') = %d AND entity.userid = :userid)",
-            BasePermissions::UserOnly->value,
-        );
-
-        // look for teams
-        $UsersHelper = new UsersHelper($this->Users->userData['userid']);
-        $teamsOfUser = $UsersHelper->getTeamsIdFromUserid();
-        foreach ($teamsOfUser as $team) {
-            $sql .= sprintf(
-                ' OR (%d MEMBER OF (entity.canread->>"$.teams"))',
-                $team,
-            );
-        }
-
-        // look for teamgroups
-        $teamgroupsOfUser = array_column((new TeamGroups($this->Users))->readGroupsFromUser(), 'id');
-        if (!empty($teamgroupsOfUser)) {
-            foreach ($teamgroupsOfUser as $teamgroup) {
-                $sql .= sprintf(
-                    ' OR (%d MEMBER OF (entity.canread->>"$.teamgroups"))',
-                    $teamgroup,
-                );
-            }
-        }
-
-        // look for our userid in users part of the json
-        $sql .= ' OR (:userid MEMBER OF (entity.canread->>"$.users"))';
-
-        return sprintf('(%s)', $sql);
     }
 }

@@ -152,6 +152,7 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [elabftw-gdpr](https://github.com/harrytyp/elabftw-gdpr): Compiles a report of the personal data stored about a user for EU GDPR Art. 15 Data Subject Access Requests
 * [Galaxy integration](https://galaxyproject.org/news/2025-04-02-elabftw-integration/): Bring data to Galaxy straight from the lab.
 * [eLabFTW MCP adapter](https://bitbucket.org/grahampheath/elabftw-mcp): an unofficial MCP server for experiment operations and image attachments through eLabFTW API v2.
+* [elabmcp](https://github.com/tum-research-data-hub/elabmcp): another unofficial MCP server for eLabFTW API v2, also covering items, templates, steps, links and tags.
 
 ### Deprecated projects using retired api v1
 * [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects

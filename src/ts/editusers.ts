@@ -63,16 +63,16 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
         }
       }
 
-      ApiC.post('users', values).then(() => {
+      await ApiC.post('users', values).then(() => {
         // use form.reset() so user-invalid pseudo-class isn't present
         form.reset();
         document.getElementById('archivedUsersFound').setAttribute('hidden', 'hidden');
-        document.getElementById('initialCreateUserBtn').removeAttribute('disabled');
         document.dispatchEvent(new CustomEvent('dataReload'));
       });
-    } catch (error) {
+    } catch {
+      // errors are already handled by form validation & ApiC
+    } finally {
       el.removeAttribute('disabled');
-      notify.error(error);
     }
 
   // EDIT USER

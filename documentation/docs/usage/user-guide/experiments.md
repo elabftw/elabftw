@@ -114,11 +114,11 @@ For both Experiment and Resource entries, the top part of the page displays a to
   <figcaption>Duplicate modal</figcaption>
 </figure>
 
-4. **Signature**: Add a signature to prove that this entry has been approved by a referenced human. See [Signatures documentation](../traceability-and-auditability#electronic-signatures).
+4. **Signature**: Add a signature to prove that this entry has been approved by a referenced human. See [Signatures documentation](../traceability-and-auditability.md#electronic-signatures).
 
-5. **RFC3161 Timestamping**: See [RFC 3161 Timestamping section](../traceability-and-auditability#trusted-timestamps)
+5. **RFC3161 Timestamping**: See [RFC 3161 Timestamping section](../traceability-and-auditability.md#trusted-timestamps)
 
-6. **Blockchain timestamping**: See [Blockchain Timestamping section](../traceability-and-auditability#blockchain-timestamps)
+6. **Blockchain timestamping**: See [Blockchain Timestamping section](../traceability-and-auditability.md#blockchain-timestamps)
 
 7. **Export**: Export your entry into different file formats, or to external repositories.
 <figure>
@@ -236,6 +236,14 @@ After clicking the "eye" icon for preview:
   <img src="/img/user-tinymce-preview.webp" alt="tinymce preview" />
   <figcaption>Main text editor.</figcaption>
 </figure>
+
+### Spell checking and autocorrect
+
+eLabFTW uses your web browser's spell checker in the rich text editor. The underlined words you see are possible spelling errors detected by the browser.
+
+To use spelling suggestions, enable spell checking in your browser settings and select or install a dictionary for the language you are writing in. Right-click an underlined word and choose a suggested correction. You can also add scientific terms to your dictionary so they are no longer flagged. See the instructions for [Firefox](https://support.mozilla.org/en-US/kb/how-do-i-use-firefox-spell-checker) or [Chrome](https://support.google.com/chrome/answer/12027911).
+
+Spell checking offers suggestions; it does not automatically replace words. eLabFTW does not include its own autocorrect feature or a setting to enable one. If your browser, operating system or keyboard supports automatic spelling correction, configure it there. Its availability and behavior depend on your browser, device and language.
 
 ### Inserting an image
 

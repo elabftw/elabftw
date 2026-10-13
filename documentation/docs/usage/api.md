@@ -8,7 +8,7 @@ title: API
 It's a way to read or write data to eLabFTW from an external program (like a Python script).
 
 For instance, instead of using a web browser to access the web interface and create an experiment,
-you make a call to the API saying "hey, create an experiment for me", and the api will reply with the ID of the newly created experiment.
+you make a call to the API saying "hey, create an experiment for me", and the API will respond with the ID of the newly created experiment.
 
 It can be used to directly feed data to eLabFTW, coming from a piece of equipment for instance.
 
@@ -24,18 +24,18 @@ Protect this key like you would do with a password, as it gives access to your a
 
 ## Basic request
 
-The public API works with HTTP requests, so you are free to use any technology capable to make HTTP requests, which basically includes everything under the sun.
+The public API works with HTTP requests, so you are free to use any technology capable of making HTTP requests, which basically includes everything under the sun.
 
-A simple tool to get started is `curl` (most likely already available if using a GNU/Linux system). Here is how to fetch data of experiment with ID 42:
+A simple tool to get started is `curl` (most likely already available if using a GNU/Linux system). Here is how to fetch data for the experiment with ID 42:
 
 ~~~bash
 export KEY=3-cb2314b00d2845a...
 curl -H "Authorization: $KEY" https://eln.example.org/api/v2/experiments/42
 ~~~
 
-What we've done is use `curl` to make a `GET` request to eLabFTW api v2 endpoint. Sending the key in the `Authorization` header, and specifying that we want the experiment with id 42 in the URL. The response is a JSON object.
+We use `curl` to make a `GET` request to the eLabFTW API v2 endpoint. We send the key in the `Authorization` header and specify that we want the experiment with ID 42 in the URL. The response is a JSON object.
 
-Mainly, the API is using HTTP verbs for different actions. `GET` to read things (will not modify anything), `POST` to create things, `PATCH` to modify things, `DELETE` to, you guessed it, delete things.
+Mainly, the API is using HTTP verbs for different actions. `GET` to read things (will not modify anything), `POST` to create things, `PATCH` to modify things, `DELETE` to delete things.
 
 For instance, to create an experiment:
 
@@ -65,7 +65,7 @@ curl -H "Content-Type: application/json" \
 
 Everything is described in the [documentation](https://doc.elabftw.net/api/v2/) generated from the specification.
 
-You'll probably want to use python or a shell language to build a more meaningful script. Fortunately, a [python library](https://github.com/elabftw/elabapi-python) is available to make things easy for you (look at the `examples` folder!).
+You'll probably want to use python or a shell language to build a more meaningful script. Fortunately, a [Python library](https://github.com/elabftw/elabapi-python) is available to make things easy for you (see the `examples` folder).
 
 ## Read the doc
 

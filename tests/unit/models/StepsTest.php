@@ -33,6 +33,8 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
 
+    private Db $Db;
+
     private Experiments $Experiments;
 
     private Templates $Templates;
@@ -41,6 +43,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
+        $this->Db = Db::getConnection();
         $this->Experiments = $this->getFreshExperiment();
         $this->Templates = $this->getFreshTemplate();
         $this->Steps = new Steps($this->Experiments);
@@ -199,11 +202,10 @@ class StepsTest extends \PHPUnit\Framework\TestCase
             $this->assertSame($before['id'], $after['id']);
             $this->assertSame($before['userid'], $after['userid']);
             $this->assertSame('2030-06-10 16:00:00', json_decode($after['body'], true, 512, JSON_THROW_ON_ERROR)['deadline']);
-            $Db = Db::getConnection();
-            $req = $Db->prepare('SELECT body FROM notifications WHERE id = :id');
+            $req = $this->Db->prepare('SELECT body FROM notifications WHERE id = :id');
             $req->bindValue(':id', $otherId, PDO::PARAM_INT);
-            $Db->execute($req);
-            $this->assertSame('2030-06-10 14:00:00', json_decode($Db->fetch($req)['body'], true, 512, JSON_THROW_ON_ERROR)['deadline']);
+            $this->Db->execute($req);
+            $this->assertSame('2030-06-10 14:00:00', json_decode($this->Db->fetch($req)['body'], true, 512, JSON_THROW_ON_ERROR)['deadline']);
         } finally {
             $otherNotification->destroy();
         }
@@ -347,21 +349,19 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     private function readDeadlineNotifications(Steps $Steps): array
     {
-        $Db = Db::getConnection();
-        $req = $Db->prepare('SELECT * FROM notifications WHERE category = :category
+        $req = $this->Db->prepare('SELECT * FROM notifications WHERE category = :category
             AND body->"$.step_id" = :step_id AND body->"$.entity_page" = :entity_page');
         $req->bindValue(':category', Notifications::StepDeadline->value, PDO::PARAM_INT);
         $req->bindValue(':step_id', $Steps->id, PDO::PARAM_INT);
         $req->bindValue(':entity_page', $Steps->Entity->entityType->toPage());
-        $Db->execute($req);
+        $this->Db->execute($req);
         return $req->fetchAll();
     }
 
     private function markNotificationSent(int $id): void
     {
-        $Db = Db::getConnection();
-        $req = $Db->prepare('UPDATE notifications SET email_sent = 1, email_sent_at = "2030-06-10 13:30:00", is_ack = 1 WHERE id = :id');
+        $req = $this->Db->prepare('UPDATE notifications SET email_sent = 1, email_sent_at = "2030-06-10 13:30:00", is_ack = 1 WHERE id = :id');
         $req->bindValue(':id', $id, PDO::PARAM_INT);
-        $Db->execute($req);
+        $this->Db->execute($req);
     }
 }

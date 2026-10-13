@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
@@ -60,7 +61,7 @@ final class UpdateDatabase extends Command
 
             $Config = Config::getConfig();
             $sqlFs = new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'));
-            $Migrations = new Migrations($sqlFs);
+            $Migrations = new Migrations($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE'));
             $Update = new Update(
                 (int) $Config->configArr['schema'],
                 new Sql($sqlFs, $output),

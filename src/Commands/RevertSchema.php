@@ -32,7 +32,7 @@ use function sprintf;
 #[AsCommand(name: 'db:revert')]
 final class RevertSchema extends Command
 {
-    public function __construct(private FilesystemOperator $fs)
+    public function __construct(private FilesystemOperator $fs, private readonly bool $useBuildInfo = true)
     {
         parent::__construct();
     }
@@ -57,7 +57,7 @@ final class RevertSchema extends Command
             return Command::SUCCESS;
         }
 
-        $Migrations = new Migrations($this->fs);
+        $Migrations = new Migrations($this->fs, $this->useBuildInfo);
         if ($identifier !== null) {
             return $this->revertMigration((string) $identifier, $Migrations, $Sql, $input->getOption('force'), $output);
         }

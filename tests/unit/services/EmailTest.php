@@ -49,7 +49,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         // use NullHandler because we don't care about logs here
         $this->Logger->pushHandler(new NullHandler());
         // we don't need to mock it, just give it the required schema as arg
-        $this->Migrations = new Migrations(new Memory()->getFs());
+        $this->Migrations = new Migrations(new Memory()->getFs(), useBuildInfo: false);
         $this->schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA, $this->Migrations);
         $MockMailer = $this->createMock(MailerInterface::class);
         $this->Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com', demoMode: false);

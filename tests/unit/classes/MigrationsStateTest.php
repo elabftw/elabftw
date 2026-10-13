@@ -37,7 +37,7 @@ class MigrationsStateTest extends TestCase
         $fs->write(sprintf('migration-%s_INVALID.sql', $first), 'SELECT 1;');
         $fs->write(sprintf('nested/migration-%s.sql', $first), 'SELECT 1;');
 
-        $migrations = new Migrations($fs);
+        $migrations = new Migrations($fs, useBuildInfo: false);
         $this->assertSame(array(
             $first => sprintf('migration-%s_first-change.sql', $first),
             $second => sprintf('migration-%s_second-change.sql', $second),
@@ -49,7 +49,7 @@ class MigrationsStateTest extends TestCase
 
     public function testNoMigrationsArePendingWithAnEmptyFilesystem(): void
     {
-        $migrations = new Migrations(new Fs(new InMemoryFilesystemAdapter()));
+        $migrations = new Migrations(new Fs(new InMemoryFilesystemAdapter()), useBuildInfo: false);
         $this->assertSame(array(), $migrations->getPending());
         $this->assertSame(0, $migrations->getPendingCount());
         $migrations->markAllAvailableAsApplied();
@@ -62,7 +62,7 @@ class MigrationsStateTest extends TestCase
         $second = Migrations::generateUuidV7();
         $fs->write(sprintf('migration-%s.sql', $first), 'SELECT 1;');
         $fs->write(sprintf('migration-%s.sql', $second), 'SELECT 2;');
-        $migrations = new Migrations($fs);
+        $migrations = new Migrations($fs, useBuildInfo: false);
 
         try {
             $this->assertSame(2, $migrations->getPendingCount());
@@ -93,7 +93,7 @@ class MigrationsStateTest extends TestCase
         $fs = new Fs(new InMemoryFilesystemAdapter());
         $uuid = Migrations::generateUuidV7();
         $fs->write(sprintf('migration-%s.sql', $uuid), 'SELECT 1;');
-        $migrations = new Migrations($fs);
+        $migrations = new Migrations($fs, useBuildInfo: false);
 
         try {
             $migrations->markAllAvailableAsApplied();

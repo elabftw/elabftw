@@ -34,8 +34,10 @@ final class Migrations
 
     private Db $Db;
 
-    public function __construct(private readonly FilesystemOperator $fs)
-    {
+    public function __construct(
+        private readonly FilesystemOperator $fs,
+        private readonly bool $useBuildInfo = true,
+    ) {
         $this->Db = Db::getConnection();
     }
 
@@ -54,6 +56,11 @@ final class Migrations
      */
     public function getAvailable(): array
     {
+        // The caller selects the immutable build manifest or filesystem discovery.
+        if ($this->useBuildInfo) {
+            return BuildInfo::MIGRATIONS;
+        }
+
         $available = array();
         foreach ($this->fs->listContents('', false) as $entry) {
             if (!$entry->isFile()) {

@@ -48,7 +48,7 @@ try {
 }
 
 $sqlFs = FsTools::getFs(dirname(__DIR__) . '/src/sql');
-$Migrations = new Migrations($sqlFs);
+$Migrations = new Migrations($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE'));
 
 try {
     $Email = new Email(
@@ -83,8 +83,8 @@ $Application->add(new ExportEln($exportsFs));
 $Application->add(new ImportEln($exportsFs));
 $Application->add(new ImportCompoundsCsv($exportsFs));
 $Application->add(new UpdateDatabase());
-$Application->add(new StatusDatabase($sqlFs));
-$Application->add(new RevertSchema($sqlFs));
+$Application->add(new StatusDatabase($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')));
+$Application->add(new RevertSchema($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')));
 $Application->add(new UpdateTo3());
 $Application->add(new UpdateTo34());
 $Application->add(new SnapFingers());

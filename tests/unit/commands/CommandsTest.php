@@ -49,7 +49,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         // use NullHandler because we don't care about logs here
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $this->Migrations = new Migrations((new Memory())->getFs());
+        $this->Migrations = new Migrations((new Memory())->getFs(), useBuildInfo: false);
         $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA, $this->Migrations);
         $this->Email = new Email($schemaVersionChecker, $MockMailer, $Logger, 'toto@yopmail.com', demoMode: false);
     }
@@ -272,7 +272,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
 
     public function testRevertSchema(): void
     {
-        $commandTester = new CommandTester(new RevertSchema((new Fixtures())->getFs()));
+        $commandTester = new CommandTester(new RevertSchema((new Fixtures())->getFs(), useBuildInfo: false));
         $commandTester->execute(array('migration' => '42'));
         $commandTester->assertCommandIsSuccessful();
     }
@@ -283,11 +283,11 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $uuid = Migrations::generateUuidV7();
         $fs->write(sprintf('migration-%s.sql', $uuid), 'SELECT 1;');
         $fs->write(sprintf('migration-%s.down.sql', $uuid), 'SELECT not_existing FROM not_existing_either;');
-        $Migrations = new Migrations($fs);
+        $Migrations = new Migrations($fs, useBuildInfo: false);
         $Migrations->recordApplied($uuid, $Migrations->nextBatch());
 
         try {
-            $commandTester = new CommandTester(new RevertSchema($fs));
+            $commandTester = new CommandTester(new RevertSchema($fs, useBuildInfo: false));
             $this->assertSame(Command::FAILURE, $commandTester->execute(array('migration' => $uuid, '--force' => true)));
             $this->assertTrue($Migrations->isApplied($uuid));
         } finally {

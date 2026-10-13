@@ -29,7 +29,7 @@ use function sprintf;
 #[AsCommand(name: 'db:status')]
 final class StatusDatabase extends Command
 {
-    public function __construct(private FilesystemOperator $fs)
+    public function __construct(private FilesystemOperator $fs, private readonly bool $useBuildInfo = true)
     {
         parent::__construct();
     }
@@ -43,7 +43,7 @@ final class StatusDatabase extends Command
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $Migrations = new Migrations($this->fs);
+        $Migrations = new Migrations($this->fs, $this->useBuildInfo);
         $available = $Migrations->getAvailable();
         if ($available === array()) {
             $output->writeln('No migrations found.');

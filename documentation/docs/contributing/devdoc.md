@@ -84,6 +84,8 @@ The optional name is converted to a filename-friendly suffix. This command creat
 
 Edit both files so the change can be applied and reverted. Also update `src/sql/structure.sql` to reflect the final structure for fresh installations (and `src/Models/Config.php` if changing configuration defaults). The generated files are templates; `dev:genschema` does not update the database or `structure.sql` itself.
 
+Production builds generate `BuildInfo::MIGRATIONS` through Composer's `pre-autoload-dump` hook, so requests do not scan the SQL directory. Set `DEV_MODE=true` to discover migration files directly during development. Run `composer dump-autoload` to regenerate the production migration list after adding or removing files.
+
 To test the migration on your development database:
 
 ~~~bash

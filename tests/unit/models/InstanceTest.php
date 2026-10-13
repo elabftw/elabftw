@@ -44,7 +44,7 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
         $logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
         // we don't need to mock it, just give it the required schema as arg
-        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA, new Migrations((new Memory())->getFs()));
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA, new Migrations((new Memory())->getFs(), useBuildInfo: false));
         $this->email = new Email($schemaVersionChecker, $MockMailer, $logger, 'toto@yopmail.com', demoMode: false);
         $this->requester = new Users(1, 1);
         $this->Instance = new Instance($this->requester, $this->email, true);

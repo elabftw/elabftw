@@ -37,7 +37,7 @@ class DatabaseMigrationCommandsTest extends TestCase
 
     public function testStatusReportsEmptyFilesystem(): void
     {
-        $tester = new CommandTester(new StatusDatabase($this->fs));
+        $tester = new CommandTester(new StatusDatabase($this->fs, useBuildInfo: false));
         $tester->execute(array());
         $tester->assertCommandIsSuccessful();
         $this->assertStringContainsString('No migrations found.', $tester->getDisplay());
@@ -49,11 +49,11 @@ class DatabaseMigrationCommandsTest extends TestCase
         $pending = Migrations::generateUuidV7();
         $this->fs->write(sprintf('migration-%s_applied.sql', $applied), 'SELECT 1;');
         $this->fs->write(sprintf('migration-%s_pending.sql', $pending), 'SELECT 1;');
-        $migrations = new Migrations($this->fs);
+        $migrations = new Migrations($this->fs, useBuildInfo: false);
 
         try {
             $migrations->recordApplied($applied, $migrations->nextBatch());
-            $tester = new CommandTester(new StatusDatabase($this->fs));
+            $tester = new CommandTester(new StatusDatabase($this->fs, useBuildInfo: false));
             $tester->execute(array());
             $tester->assertCommandIsSuccessful();
             $this->assertStringContainsString(sprintf('applied %s migration-%s_applied.sql', $applied, $applied), $tester->getDisplay());
@@ -65,7 +65,7 @@ class DatabaseMigrationCommandsTest extends TestCase
 
     public function testRevertRejectsInvalidIdentifier(): void
     {
-        $tester = new CommandTester(new RevertSchema($this->fs));
+        $tester = new CommandTester(new RevertSchema($this->fs, useBuildInfo: false));
         $this->assertSame(Command::INVALID, $tester->execute(array('migration' => 'not-a-uuid')));
         $this->assertStringContainsString('must be a UUIDv7', $tester->getDisplay());
     }
@@ -74,7 +74,7 @@ class DatabaseMigrationCommandsTest extends TestCase
     {
         $uuid = Migrations::generateUuidV7();
         $this->fs->write(sprintf('migration-%s.sql', $uuid), 'SELECT 1;');
-        $tester = new CommandTester(new RevertSchema($this->fs));
+        $tester = new CommandTester(new RevertSchema($this->fs, useBuildInfo: false));
         $this->assertSame(Command::FAILURE, $tester->execute(array('migration' => $uuid)));
         $this->assertStringContainsString('is not applied.', $tester->getDisplay());
     }
@@ -82,10 +82,10 @@ class DatabaseMigrationCommandsTest extends TestCase
     public function testRevertRejectsMissingMigrationFile(): void
     {
         $uuid = Migrations::generateUuidV7();
-        $migrations = new Migrations($this->fs);
+        $migrations = new Migrations($this->fs, useBuildInfo: false);
         try {
             $migrations->recordApplied($uuid, $migrations->nextBatch());
-            $tester = new CommandTester(new RevertSchema($this->fs));
+            $tester = new CommandTester(new RevertSchema($this->fs, useBuildInfo: false));
             $this->assertSame(Command::FAILURE, $tester->execute(array('migration' => $uuid)));
             $this->assertStringContainsString('was not found.', $tester->getDisplay());
             $this->assertTrue($migrations->isApplied($uuid));
@@ -98,10 +98,10 @@ class DatabaseMigrationCommandsTest extends TestCase
     {
         $uuid = Migrations::generateUuidV7();
         $this->writeMigration($uuid);
-        $migrations = new Migrations($this->fs);
+        $migrations = new Migrations($this->fs, useBuildInfo: false);
         try {
             $migrations->recordApplied($uuid, $migrations->nextBatch());
-            $tester = new CommandTester(new RevertSchema($this->fs));
+            $tester = new CommandTester(new RevertSchema($this->fs, useBuildInfo: false));
             $tester->execute(array('migration' => $uuid));
             $tester->assertCommandIsSuccessful();
             $this->assertStringContainsString(sprintf('Reverted migration %s.', $uuid), $tester->getDisplay());
@@ -117,12 +117,12 @@ class DatabaseMigrationCommandsTest extends TestCase
         $second = Migrations::generateUuidV7();
         $this->writeMigration($first);
         $this->writeMigration($second);
-        $migrations = new Migrations($this->fs);
+        $migrations = new Migrations($this->fs, useBuildInfo: false);
         try {
             $batch = $migrations->nextBatch();
             $migrations->recordApplied($first, $batch);
             $migrations->recordApplied($second, $batch);
-            $tester = new CommandTester(new RevertSchema($this->fs));
+            $tester = new CommandTester(new RevertSchema($this->fs, useBuildInfo: false));
             $tester->execute(array());
             $tester->assertCommandIsSuccessful();
             $this->assertStringContainsString(sprintf('Reverted migration %s.', $first), $tester->getDisplay());
@@ -137,7 +137,7 @@ class DatabaseMigrationCommandsTest extends TestCase
 
     public function testForceSchemaRejectsInvalidAndUnknownIdentifiers(): void
     {
-        $tester = new CommandTester(new ForceSchema(new Migrations($this->fs)));
+        $tester = new CommandTester(new ForceSchema(new Migrations($this->fs, useBuildInfo: false)));
         $this->assertSame(Command::INVALID, $tester->execute(array('identifier' => 'invalid')));
         $this->assertStringContainsString('Identifier must be a UUIDv7', $tester->getDisplay());
 
@@ -151,7 +151,7 @@ class DatabaseMigrationCommandsTest extends TestCase
         $current = (int) Config::getConfig()->configArr['schema'];
         $this->assertSame(SchemaVersionChecker::REQUIRED_SCHEMA, $current);
         $app = new Application();
-        $app->add(new CheckDatabase($current, new Migrations($this->fs)));
+        $app->add(new CheckDatabase($current, new Migrations($this->fs, useBuildInfo: false)));
         $app->add(new UpdateDatabase());
 
         $tester = new CommandTester($app->find('db:update'));

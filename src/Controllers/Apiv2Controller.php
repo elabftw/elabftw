@@ -394,7 +394,10 @@ final class Apiv2Controller extends AbstractApiController
         return new Email(
             new SchemaVersionChecker(
                 (int) $Config->configArr['schema'],
-                new Migrations(FsTools::getFs(dirname(__DIR__) . '/sql')),
+                new Migrations(
+                    FsTools::getFs(dirname(__DIR__) . '/sql'),
+                    useBuildInfo: !Env::asBool('DEV_MODE'),
+                ),
             ),
             new Mailer(Transport::fromDsn($Config->getDsn())),
             App::getDefaultLogger(),

@@ -30,7 +30,7 @@ class UpdateMigrationsTest extends TestCase
         $uuid = Migrations::generateUuidV7();
         $fs->write(sprintf('migration-%s_create-test.sql', $uuid), 'SELECT 1;');
         $fs->write(sprintf('migration-%s_create-test.down.sql', $uuid), 'SELECT 1;');
-        $migrations = new Migrations($fs);
+        $migrations = new Migrations($fs, useBuildInfo: false);
         $update = new Update(SchemaVersionChecker::REQUIRED_SCHEMA, new Sql($fs, new NullOutput()), $migrations);
 
         try {
@@ -57,7 +57,7 @@ class UpdateMigrationsTest extends TestCase
         $fs->write(sprintf('migration-%s.down.sql', $first), 'SELECT 1;');
         $fs->write(sprintf('migration-%s.sql', $second), 'SELECT not_existing FROM not_existing_either;');
         $fs->write(sprintf('migration-%s.down.sql', $second), 'SELECT 1;');
-        $migrations = new Migrations($fs);
+        $migrations = new Migrations($fs, useBuildInfo: false);
         $update = new Update(SchemaVersionChecker::REQUIRED_SCHEMA, new Sql($fs, new NullOutput()), $migrations);
 
         try {

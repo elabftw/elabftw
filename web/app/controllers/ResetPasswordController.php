@@ -50,7 +50,10 @@ try {
     $Email = new Email(
         new SchemaVersionChecker(
             (int) $App->Config->configArr['schema'],
-            new Migrations(FsTools::getFs(dirname(__DIR__, 3) . '/src/sql')),
+            new Migrations(
+                FsTools::getFs(dirname(__DIR__, 3) . '/src/sql'),
+                useBuildInfo: !Env::asBool('DEV_MODE'),
+            ),
         ),
         new Mailer(Transport::fromDsn($App->Config->getDsn())),
         $App->Log,

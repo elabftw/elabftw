@@ -115,7 +115,7 @@ final class Update
                 $this->Migrations->recordApplied($migration, $batch);
             }
         } finally {
-            $this->Db->q("SELECT RELEASE_LOCK(CONCAT('elab:migrations:', SHA1(DATABASE()))");
+            $this->Db->q("SELECT RELEASE_LOCK(CONCAT('elab:migrations:', SHA1(DATABASE())))");
         }
     }
 

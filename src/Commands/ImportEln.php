@@ -95,14 +95,19 @@ final class ImportEln extends Command
             verifyChecksum: (bool) $input->getOption('checksum'),
             checksumErrorSkip: (bool) $input->getOption('checksum-error-skip'),
         );
-        if ($input->getOption('dry-run')) {
-            // this is necessary so -vv isn't required to get dry run info
-            $output->setVerbosity(Output::VERBOSITY_VERY_VERBOSE);
-            $logger->info(sprintf('%d records found', $Importer->getCount()));
-            return Command::SUCCESS;
+        try {
+            $Importer->prepare();
+            if ($input->getOption('dry-run')) {
+                // this is necessary so -vv isn't required to get dry run info
+                $output->setVerbosity(Output::VERBOSITY_VERY_VERBOSE);
+                $logger->info(sprintf('%d records found', $Importer->getCount()));
+                return Command::SUCCESS;
+            }
+            $Importer->requesterIsAuthor = $requesterIsAuthor;
+            $Importer->import();
+        } finally {
+            $Importer->cleanup();
         }
-        $Importer->requesterIsAuthor = $requesterIsAuthor;
-        $Importer->import();
         $logger->info(sprintf('Import finished for Team with ID %d%s', $teamid, $infoTrailer));
         /** @var QuestionHelper */
         $helper = $this->getHelper('question');

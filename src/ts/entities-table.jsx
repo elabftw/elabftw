@@ -23,13 +23,14 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
 import { getAgGridTheme } from './theme';
 import AgGridTableOptions from './ag-grid-table-options';
+import { renderEntityContent } from './common';
 
 const COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
 
@@ -147,6 +148,33 @@ const entityFilterByColumn = {
   fullname: { param: 'owner', valueField: 'userid', labelField: 'fullname' },
 };
 
+const ToggleBodyRenderer = ({ data, context }) => {
+  if (!data?.id) {
+    return null;
+  }
+
+  const isExpanded = context?.expandedEntityId === data.id;
+
+  return (
+    <button
+      type='button'
+      className='btn btn-ghost btn-sm p-1 lh-normal border-0'
+      title={i18next.t('Toggle content')}
+      aria-label={i18next.t('Toggle content')}
+      aria-expanded={isExpanded}
+      onClick={event => {
+        event.stopPropagation();
+        context?.setExpandedEntityId(prev => (prev === data.id ? null : data.id));
+      }}
+    >
+      <i
+        className={`fas ${isExpanded ? 'fa-caret-down' : 'fa-caret-right'} fa-fw`}
+        aria-hidden='true'
+      ></i>
+    </button>
+  );
+};
+
 const EntitiesTable = ({
   selectedEntities,
   order = 'date',
@@ -156,6 +184,7 @@ const EntitiesTable = ({
 }) => {
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
+  const [expandedEntityId, setExpandedEntityId] = useState(null);
 
   const onGridReady = event => {
     const columnState = getStoredColumnState();
@@ -238,7 +267,20 @@ const EntitiesTable = ({
     );
   };
 
-  const [columnDefs] = useState([
+  const columnDefs = useMemo(() => [
+    {
+      colId: 'toggle_body',
+      headerName: '',
+      width: 44,
+      minWidth: 44,
+      maxWidth: 44,
+      pinned: 'left',
+      sortable: false,
+      filter: false,
+      resizable: false,
+      suppressMovable: true,
+      cellRenderer: ToggleBodyRenderer,
+    },
     { field: 'title', headerName: i18next.t('title') },
     { field: 'team_name', headerName: i18next.t('team') },
     { field: 'date', headerName: i18next.t('started-on'), valueGetter: p => lastLoginText(p.data.date), filterValueGetter: p => lastLoginText(p.data.date), cellRenderer: PastDateRenderer},
@@ -253,7 +295,16 @@ const EntitiesTable = ({
     { field: 'locked', headerName: i18next.t('is-locked'), valueGetter: p => yesNo(p.data.locked), filterValueGetter: p => yesNo(p.data.locked), cellRenderer: BinaryRenderer },
     { field: 'rating', headerName: i18next.t('rating'), cellRenderer: RatingsRenderer },
     { field: 'next_step', headerName: i18next.t('next-step'),  cellRenderer: ({ value }) => value ? value.split('|')[0] : null }
-  ]);
+  ], []);
+
+  const gridContext = useMemo(() => ({
+    expandedEntityId,
+    setExpandedEntityId,
+  }), [expandedEntityId]);
+
+  useEffect(() => {
+    gridApi?.refreshCells({ columns: ['toggle_body'], force: true });
+  }, [gridApi, expandedEntityId]);
 
   const getResolvedEntityFilterParams = useCallback(event => {
     const params = getEntityFilterParams(event);
@@ -350,6 +401,21 @@ const EntitiesTable = ({
     window.location = url;
   };
 
+  useEffect(() => {
+    if (expandedEntityId === null) {
+      return;
+    }
+    const exists = rowData.some(row => row.id === expandedEntityId);
+    if (!exists) {
+      setExpandedEntityId(null);
+    }
+  }, [rowData, expandedEntityId]);
+
+  const expandedEntity = useMemo(
+    () => rowData.find(row => row.id === expandedEntityId) ?? null,
+    [rowData, expandedEntityId]
+  );
+
   return (
     <>
       <div className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`} style={{ height: 650 }}>
@@ -359,6 +425,7 @@ const EntitiesTable = ({
           defaultColDef={defaultColDef}
           getRowId={getRowId}
           processRowPostCreate={processRowPostCreate}
+          context={gridContext}
           onColumnResized={columnStateChanged}
           onColumnMoved={columnStateChanged}
           onColumnVisible={columnStateChanged}
@@ -372,7 +439,113 @@ const EntitiesTable = ({
         />
         <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
       </div>
+      {expandedEntityId !== null && (
+        <EntityDetailPanel
+          entityId={expandedEntityId}
+          entity={expandedEntity}
+          onClose={() => setExpandedEntityId(null)}
+        />
+      )}
     </>
+  );
+};
+
+const EntityDetailPanel = ({ entityId, entity, onClose }) => {
+  const contentRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    if (contentRef.current) {
+      contentRef.current.innerHTML = '';
+    }
+
+    setLoading(true);
+    setError(null);
+
+    const endpoint = getEntityTypeFromPage(window.location);
+
+    ApiC.getJson(`${endpoint}/${entityId}`)
+      .then(async json => {
+        if (isCancelled) {
+          return;
+        }
+
+        if (contentRef.current) {
+          await renderEntityContent(
+            contentRef.current,
+            endpoint,
+            entityId,
+            json.body_html ?? ''
+          );
+        }
+
+        if (isCancelled) {
+          return;
+        }
+
+        setLoading(false);
+      })
+      .catch(err => {
+        if (!isCancelled) {
+          console.error(`Could not load entity ${entityId}:`, err);
+          setError(err?.message || i18next.t('Error loading content'));
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [entityId]);
+
+  const viewUrl = `?mode=view&id=${encodeURIComponent(entityId)}`;
+
+  return (
+    <div className='card mt-3 shadow-sm entity-table-detail-panel'>
+      <div className='card-header d-flex align-items-center justify-content-between py-2'>
+        <div className='d-flex align-items-center text-truncate mr-2'>
+          <i className='fas fa-file-lines mr-2 text-muted' aria-hidden='true'></i>
+          <span className='font-weight-bold text-truncate'>
+            {entity?.custom_id ? `${entity.custom_id} - ` : ''}
+            {entity?.title || `${i18next.t('Entry')} #${entityId}`}
+          </span>
+          <a
+            href={viewUrl}
+            className='btn btn-ghost btn-sm ml-2 text-nowrap'
+            title={i18next.t('View')}
+            aria-label={i18next.t('View')}
+          >
+            <i className='fas fa-arrow-up-right-from-square' aria-hidden='true'></i>
+          </a>
+        </div>
+        <button
+          type='button'
+          className='btn btn-ghost btn-sm p-1'
+          onClick={onClose}
+          aria-label={i18next.t('Close')}
+          title={i18next.t('Close')}
+        >
+          <i className='fas fa-times fa-fw' aria-hidden='true'></i>
+        </button>
+      </div>
+      <div className='card-body p-3' style={{ maxHeight: '600px', overflowY: 'auto' }}>
+        {loading && (
+          <div className='d-flex align-items-center justify-content-center p-4 text-muted'>
+            <i className='fas fa-spinner fa-spin mr-2' aria-hidden='true'></i>
+            <span>{i18next.t('loading')}</span>
+          </div>
+        )}
+        {error && (
+          <div className='alert alert-danger mb-0' role='alert'>
+            {error}
+          </div>
+        )}
+        <div ref={contentRef} style={{ display: loading || error ? 'none' : 'block' }}></div>
+      </div>
+    </div>
   );
 };
 

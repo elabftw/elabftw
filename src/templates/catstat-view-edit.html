@@ -7,5 +7,5 @@
   {# CATEGORY #}
   <button data-target='category' type='button' class='mr-2 btn catstat-btn category-btn malleableCategory lh-normal' id='categoryBtn' style='--bg: #{{ color }}; --fg: #{{ colorFg }};' data-id='{{ Entity.entityData.category }}'>{{ Entity.entityData.category_title|default('Add category'|trans) }}</button>
   {# STATUS #}
-  <button data-target='status' type='button' class='btn catstat-btn status-btn malleableStatus lh-normal border-0'><i class='fas fa-circle fa-fw' style='--bg: #{{ Entity.entityData.status_color|default('bdbdbd') }}'></i> {{ Entity.entityData.status_title|default('Add status'|trans) }}</button>
+  <button data-target='status' type='button' class='btn catstat-btn status-btn malleableStatus lh-normal border-0'><i class='fas fa-circle fa-fw' style='--bg: #{{ Entity.entityData.status_color|default('--mediumstrong') }}'></i> {{ Entity.entityData.status_title|default('Add status'|trans) }}</button>
 </div>

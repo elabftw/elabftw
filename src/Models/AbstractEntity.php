@@ -53,6 +53,7 @@ use Elabftw\Make\MakeDeltablotTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Make\MakeDgnTimestamp;
 use Elabftw\Make\MakeDigicertTimestamp;
+use Elabftw\Make\MakeDtrustTimestamp;
 use Elabftw\Make\MakeEvidencyTimestamp;
 use Elabftw\Make\MakeEvidencyTimestampDev;
 use Elabftw\Make\MakeFullJson;
@@ -704,10 +705,12 @@ abstract class AbstractEntity extends AbstractRest
         }
         $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = new Steps($this)->readAll();
+        $this->entityData['step_groups'] = new StepGroups($this)->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
+        $this->entityData['upload_groups'] = new UploadGroups($this)->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['changelog'] = new Changelog($this)->readAll();
         $this->entityData['comments'] = new Comments($this)->readAll();
@@ -1350,6 +1353,7 @@ abstract class AbstractEntity extends AbstractRest
             'dgn' => new MakeDgnTimestamp($this->Users, $this, $config, $dataFormat),
             'universign' => Env::asBool('DEV_MODE') ? new MakeUniversignTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $this, $config, $dataFormat),
             'digicert' => new MakeDigicertTimestamp($this->Users, $this, $config, $dataFormat),
+            'dtrust' => new MakeDtrustTimestamp($this->Users, $this, $config, $dataFormat),
             'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
             'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
             'evidency' => Env::asBool('DEV_MODE') ? new MakeEvidencyTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeEvidencyTimestamp($this->Users, $this, $config, $dataFormat),

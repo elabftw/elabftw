@@ -369,7 +369,7 @@ final class Steps extends AbstractRest
 
     private function create(string $body, ?int $groupId = null): int
     {
-        $body = Filter::title($body);
+        $body = Filter::step($body);
         $this->assertGroupBelongsToEntity($groupId);
         $ordering = $this->getNextOrdering($groupId);
 

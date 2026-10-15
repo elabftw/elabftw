@@ -119,7 +119,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         try {
-            new Eln(
+            $Import = new Eln(
                 new Users(1, 1),
                 new Users(1, 1),
                 $uploadedFile,
@@ -127,6 +127,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 $this->logger,
                 EntityType::Experiments,
             );
+            $Import->prepare();
             $this->fail('An ELN archive containing an unsafe path was accepted.');
         } catch (ImproperActionException) {
             $this->assertSame('original export', $exportsFs->read($target));
@@ -381,7 +382,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(ImproperActionException::class);
-        new Eln(
+        $Import = new Eln(
             new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
@@ -390,6 +391,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             EntityType::Experiments,
             category: 1,
         );
+        $Import->prepare();
     }
 
     public function testInvalidShasum(): void

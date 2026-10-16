@@ -6221,7 +6221,7 @@ __metadata:
     jspreadsheet-ce: "npm:^5.0.4"
     jsuites: "npm:^5.13.5"
     ketcher-core: "npm:3.17.2"
-    ketcher-react: "npm:3.17.2"
+    ketcher-react: "patch:ketcher-react@npm%3A3.17.2#~/src/patches/ketcher-react-npm-3.17.2-ea8e2927f9.patch"
     ketcher-standalone: "npm:^3.17.2"
     lodash-es: "npm:^4.18.1"
     luxon: "npm:^3.7.2"
@@ -8335,6 +8335,56 @@ __metadata:
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
   checksum: 10c0/09211dd19d623e29d32125a3a46186d5f87a55b2e70f00b766d524d5fa8a46ceed8a60ecc4033ef5a18476149e8a25522df3da88cfcf80e511847754254cd133
+  languageName: node
+  linkType: hard
+
+"ketcher-react@patch:ketcher-react@npm%3A3.17.2#~/src/patches/ketcher-react-npm-3.17.2-ea8e2927f9.patch":
+  version: 3.17.2
+  resolution: "ketcher-react@patch:ketcher-react@npm%3A3.17.2#~/src/patches/ketcher-react-npm-3.17.2-ea8e2927f9.patch::version=3.17.2&hash=3ecdeb"
+  dependencies:
+    "@babel/runtime": "npm:^7.26.10"
+    "@emotion/react": "npm:^11.7.1"
+    "@emotion/styled": "npm:^11.14.1"
+    "@lexical/react": "npm:^0.40.0"
+    "@lexical/rich-text": "npm:^0.40.0"
+    "@lexical/selection": "npm:^0.40.0"
+    "@mui/material": "npm:^5.18.0"
+    cfb: "npm:^1.2.2"
+    clsx: "npm:^1.1.1"
+    dpdm: "npm:^4.2.0"
+    element-closest-polyfill: "npm:^1.0.2"
+    file-saver: "npm:^2.0.2"
+    font-face-observer: "npm:^1.0.0"
+    hoist-non-react-statics: "npm:^3.3.2"
+    intersection-observer: "npm:^0.12.2"
+    jsonschema: "npm:^1.5.0"
+    ketcher-core: "npm:*"
+    lexical: "npm:^0.40.0"
+    lodash: "npm:^4.18.1"
+    miew-react: "npm:0.11.0"
+    paper: "npm:^0.12.18"
+    react-colorful: "npm:^5.4.0"
+    react-contexify: "npm:^6.0.0"
+    react-device-detect: "npm:^2.2.2"
+    react-dropzone: "npm:^11.7.1"
+    react-intersection-observer: "npm:^9.16.0"
+    react-redux: "npm:^9.2.0"
+    react-virtualized: "npm:^9.22.6"
+    redux: "npm:^5.0.1"
+    redux-logger: "npm:^3.0.6"
+    redux-thunk: "npm:^3.1.0"
+    regenerator-runtime: "npm:^0.13.7"
+    remark-gfm: "npm:^1.0.0"
+    remark-parse: "npm:^9.0.0"
+    reselect: "npm:^4.0.0"
+    subscription: "npm:^3.0.0"
+    url-search-params-polyfill: "npm:^8.1.1"
+    use-resize-observer: "npm:^7.0.0"
+    whatwg-fetch: "npm:^3.4.1"
+  peerDependencies:
+    react: ^18.2.0 || ^19.0.0
+    react-dom: ^18.2.0 || ^19.0.0
+  checksum: 10c0/c7c0c074fb88667c42615c047b7ab4183928f8eb3374f1df4b32f173eff2a0acba28ba1522f1a14e15f20ee3c5dcb06f14b6c4813dc96231de1a3879d4aac98b
   languageName: node
   linkType: hard
 

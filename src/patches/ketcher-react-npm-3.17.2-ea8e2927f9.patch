@@ -1,0 +1,26 @@
+diff --git a/dist/cjs/index.js b/dist/cjs/index.js
+index 996c0d5ccda8613b558df3618ed0223d9e8ae822..3c3a91f865257b8358dd34ce05d24fdd27bd22ce 100644
+--- a/dist/cjs/index.js
++++ b/dist/cjs/index.js
+@@ -574,7 +574,7 @@ var ClipArea = function (_Component) {
+         "data-cliparea": true,
+         contentEditable: true,
+         autoFocus
+-        : true,
++        : false,
+         suppressContentEditableWarning: true
+       });
+     }
+diff --git a/dist/index.js b/dist/index.js
+index 37c41ad424aaec36aa664bc3be2ffb1126a56e6b..f15e3115ad5ef229c0a9ee36bd7e0ae402a4ed1f 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -513,7 +513,7 @@ var ClipArea = function (_Component) {
+         "data-cliparea": true,
+         contentEditable: true,
+         autoFocus
+-        : true,
++        : false,
+         suppressContentEditableWarning: true
+       });
+     }

@@ -83,7 +83,7 @@
     "jspreadsheet-ce": "^5.0.4",
     "jsuites": "^5.13.5",
     "ketcher-core": "3.17.2",
-    "ketcher-react": "3.17.2",
+    "ketcher-react": "patch:ketcher-react@npm%3A3.17.2#~/src/patches/ketcher-react-npm-3.17.2-ea8e2927f9.patch",
     "ketcher-standalone": "^3.17.2",
     "lodash-es": "^4.18.1",
     "luxon": "^3.7.2",

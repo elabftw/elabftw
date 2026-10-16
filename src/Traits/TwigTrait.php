@@ -23,6 +23,7 @@ use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 use function dirname;
+use function microtime;
 
 /**
  * To get Twig

@@ -183,10 +183,10 @@ class Eln extends AbstractZip
             $entity = $linkToCreate['origin_entity_type']->toInstance($this->Entity->Users, $linkToCreate['origin_id'], true, true);
             if ($linkToCreate['link_entity_type'] === EntityType::Experiments) {
                 $entity->ExperimentsLinks->setId($linkToCreate['link_id']);
-                $entity->ExperimentsLinks->postAction(Action::Create, array());
+                $entity->ExperimentsLinks->createForImport();
             } else {
                 $entity->ItemsLinks->setId($linkToCreate['link_id']);
-                $entity->ItemsLinks->postAction(Action::Create, array());
+                $entity->ItemsLinks->createForImport();
             }
             // now update the body with links to old id that should now point to the new id
             $linkPreviousId = $this->grabIdFromUrl($linkToCreate['link_previous_url'] ?? '');

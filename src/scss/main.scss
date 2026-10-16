@@ -2032,8 +2032,9 @@ input:user-invalid {
 #devPerfDiv {
   background-color: var(--white);
   bottom: 0;
-  left: 0;
+  right: 0;
   position: fixed;
+  z-index: 10000;
 }
 
 /* we set font-size to 0 and color transparent to prevent visible alt-text flash before image paints */

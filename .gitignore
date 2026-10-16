@@ -17,6 +17,7 @@ config.php*
 exports/
 containers/elabdev/env.local
 web/test.php
+web/assets/dev-reload.txt
 web/assets/*.LICENSE.txt
 web/assets/*.svg
 web/assets/*.ttf

@@ -11,6 +11,7 @@
  * because I don't want any path clash with the web folder when
  * doing autocompletion.
  */
+const fs = require('node:fs');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MinimizerPlugin = require('minimizer-webpack-plugin');
@@ -23,6 +24,17 @@ const mathjaxNewcmRoot = path.resolve(
   ),
   '..',
 );
+
+// Update the reload marker only after Webpack finishes a successful development build.
+class DevReloadPlugin {
+  apply(compiler) {
+    compiler.hooks.done.tap('DevReloadPlugin', stats => {
+      if (!stats.hasErrors()) {
+        fs.writeFileSync(path.join(compiler.options.output.path, 'dev-reload.txt'), String(Date.now()));
+      }
+    });
+  }
+}
 
 module.exports = (env, argv) => {
   const mode = argv.mode ?? 'production';
@@ -74,6 +86,7 @@ module.exports = (env, argv) => {
         'prismjs/components/prism-tcl.js',
         'prismjs/components/prism-vhdl.js',
         'prismjs/components/prism-yaml.js',
+        ...(isDevelopment ? ['./src/ts/dev-reload.ts'] : []),
       ],
       spreadsheet: [
         './src/ts/spreadsheet-editor.jsx',
@@ -146,6 +159,7 @@ module.exports = (env, argv) => {
           },
         ],
       }),
+      ...(isDevelopment ? [new DevReloadPlugin()] : []),
     ],
     resolve: {
       extensions: ['.ts', '.js', '.jsx', '.svelte'],

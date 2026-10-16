@@ -20,7 +20,7 @@
         </span>
         {% endif %}
         {# the step was inserted in the main text: allow jumping to it #}
-        {% if showStepInBody and ('highlightstep=' ~ step.id ~ '#') in Entity.entityData.body %}
+        {% if showStepInBody and Entity.entityData.body_html matches ('/href="[^"]*highlightstep=' ~ step.id ~ '#/') %}
         <button type='button' class='btn btn-ghost btn-sm' data-action='scroll-to-step-in-body' data-stepid='{{ step.id }}' title='{{ 'Show in main text'|trans }}' aria-label='{{ 'Show in main text'|trans }}'>
           <i class='fas fa-font fa-fw'></i>
         </button>

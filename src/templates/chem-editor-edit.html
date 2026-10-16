@@ -1,0 +1,26 @@
+{# CHEM EDITOR #}
+<section id='chem-editor' aria-label='{{ 'CHEM Editor'|trans }}'>
+  {# id for icon is used when focusing after loading from file #}
+  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='chemEditorDiv'><i id='chemEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'CHEM Editor'|trans }}</h3>
+
+  <div id='chemEditorDiv' class='m-2' hidden data-save-hidden='chemEditorDiv'>
+<div id='ketcher-root' class='my-2'></div>
+<div id='ketcher-actions'>
+  <div class='input-group my-2'>
+    <button type='button' {{ App.Users.userData.can_manage_compounds == 0 and App.Config.configArr.compounds_require_edit_rights == 1 ? 'disabled' }} class='btn btn-primary mr-2' data-action='create-compound-from-editor'>{{ 'Add to compounds database'|trans }}</button>
+    <div class='input-group-append'>
+      <button type='button' class='btn btn-primary rounded-left' data-action='search-from-editor'>{{ 'Search similar structures'|trans }}</button>
+      <div class='input-group-text rounded-right'>
+        <input type='checkbox' name='exact' id='search-fp-exact' {{ App.Request.query.get('exact') == 'on' ? 'checked="checked"' }} aria-label='{{ 'Search exact structure'|trans }}'><span class='ml-1'>{{ 'Exact structure'|trans }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div id='searchFpResultsDiv' hidden>
+  <h3 class='mb-2'>{{ 'Compounds substructure search results'|trans }}</h3>
+  <input type='hidden' id='substructureSearchInput' />
+  <ul id='searchFpSmiList' class='list-group'></ul>
+  <div id='compounds-table'></div>
+</div>
+  </div>
+</section>

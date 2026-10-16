@@ -152,9 +152,13 @@ module.exports = (env, argv) => {
       conditionNames: ['svelte', 'browser', '...'],
       mainFields: ['svelte', 'browser', 'module', 'main'],
       fallback: {
+        assert: require.resolve('assert'),
         // required by react 18
         process: require.resolve('process/browser'),
         util: require.resolve('util/'),
+      },
+      alias: {
+        'paper$': 'paper/dist/paper-core.js',
       },
     },
     module: {

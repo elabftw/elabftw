@@ -7619,10 +7619,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"indigo-ketcher@npm:1.45.1":
-  version: 1.45.1
-  resolution: "indigo-ketcher@npm:1.45.1"
-  checksum: 10c0/11f100e88cf62e2279a89d901fbe891ab2d4e7d72e628e241f7365702ccaaca2f6bdf3fa2b3f10c313092a5e7469d51aa0dd3d53b770de8ed80e0d2cccc840c6
+"indigo-ketcher@npm:1.46.0":
+  version: 1.46.0
+  resolution: "indigo-ketcher@npm:1.46.0"
+  checksum: 10c0/2de9cfbe5b0a18836400668f4ddd46b1cb714daddc1d06c14d8351a262380345a057267a7f528280279f6ed2257059330db3d20f925ad390aabb07a42aeba040
   languageName: node
   linkType: hard
 
@@ -8339,13 +8339,14 @@ __metadata:
   linkType: hard
 
 "ketcher-standalone@npm:^3.17.2":
-  version: 3.17.2
-  resolution: "ketcher-standalone@npm:3.17.2"
+  version: 3.18.0
+  resolution: "ketcher-standalone@npm:3.18.0"
   dependencies:
     "@babel/runtime": "npm:^7.26.10"
-    indigo-ketcher: "npm:1.45.1"
+    indigo-ketcher: "npm:1.46.0"
     ketcher-core: "npm:*"
-  checksum: 10c0/2fd05293fb78e08ceb4a8cc98fcb9a2a9b331ed3ba1fd718d31191b8c3bed4bc5f971a1d4323771fb813cf17235178e53bb6f74ad89a264c5eebdd64f57991bd
+    lodash: "npm:^4.18.1"
+  checksum: 10c0/91c851b4b432d72bce42ce82f73f00e4aab642d535cf79860004667c991578d3b32bb20bdc2fe22b523d5d5b239c2e69a3fc8cf8d45ea5261ae6745cc5e40cc1
   languageName: node
   linkType: hard
 

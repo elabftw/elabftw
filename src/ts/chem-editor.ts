@@ -49,4 +49,4 @@ on('create-compound-from-editor', async () => {
     console.error('Ketcher error:', error);
   }
 });
-document.getElementById('loading-spinner').remove();
+document.getElementById('loading-spinner')?.remove();

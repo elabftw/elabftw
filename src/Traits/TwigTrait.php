@@ -123,7 +123,11 @@ trait TwigTrait
 
         // use the image BUILD_ID to use as parameter for loading assets
         // this helps with busting the cache in browsers
-        $TwigEnvironment->addGlobal('v', BuildInfo::ID);
+        // in dev we use something that changes everytime instead
+        $TwigEnvironment->addGlobal(
+            'v',
+            $debug ? (string) microtime(true) : BuildInfo::ID,
+        );
 
         return $TwigEnvironment;
     }

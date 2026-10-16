@@ -16,6 +16,7 @@ namespace Elabftw\Commands;
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
@@ -46,9 +47,12 @@ try {
     exit;
 }
 
+$sqlFs = FsTools::getFs(dirname(__DIR__) . '/src/sql');
+$Migrations = new Migrations($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE'));
+
 try {
     $Email = new Email(
-        new SchemaVersionChecker((int) $Config->configArr['schema']),
+        new SchemaVersionChecker((int) $Config->configArr['schema'], $Migrations),
         new Mailer(Transport::fromDsn($Config->getDsn())),
         App::getDefaultLogger(),
         $Config->configArr['mail_from'],
@@ -63,14 +67,13 @@ try {
 }
 
 $exportsFs = Storage::EXPORTS->getStorage();
-$sqlFs = FsTools::getFs(dirname(__DIR__) . '/src/sql');
 
 $Application->add(new InstallRedir());
 $Application->add(new GenI18n4Js());
 $Application->add(new Cache());
 $Application->add(new CacheTwig());
 $Application->add(new CacheNginx());
-$Application->add(new CheckDatabase((int) $Config->configArr['schema']));
+$Application->add(new CheckDatabase((int) $Config->configArr['schema'], $Migrations));
 $Application->add(new CheckTsBalance((int) $Config->configArr['ts_balance'], $Email));
 $Application->add(new CleanDatabase());
 $Application->add(new ClearNotifications());
@@ -80,11 +83,12 @@ $Application->add(new ExportEln($exportsFs));
 $Application->add(new ImportEln($exportsFs));
 $Application->add(new ImportCompoundsCsv($exportsFs));
 $Application->add(new UpdateDatabase());
-$Application->add(new RevertSchema($sqlFs));
+$Application->add(new StatusDatabase($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')));
+$Application->add(new RevertSchema($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')));
 $Application->add(new UpdateTo3());
 $Application->add(new UpdateTo34());
 $Application->add(new SnapFingers());
-$Application->add(new ForceSchema());
+$Application->add(new ForceSchema($Migrations));
 $Application->add(new GenSchema($sqlFs));
 $Application->add(new MfaCode());
 $Application->add(new RefreshIdps($Config->configArr['proxy']));

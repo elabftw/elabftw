@@ -1,9 +1,9 @@
-{# Modal for QRPNG export #}
-<div class='modal fade' id='qrpngExportModal' tabindex='-1' role='dialog' aria-labelledby='qrpngExportModalLabel'>
+{# Modal for QRSVG export #}
+<div class='modal fade' id='qrsvgExportModal' tabindex='-1' role='dialog' aria-labelledby='qrsvgExportModalLabel'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='qrpngExportModalLabel'><i class='fas fa-fw fa-file-archive mr-1'></i>{{ 'Create a QR Code'|trans }}</h5>
+        <h5 class='modal-title' id='qrsvgExportModalLabel'><i class='fas fa-fw fa-file-archive mr-1'></i>{{ 'Create a QR Code'|trans }}</h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
@@ -13,19 +13,19 @@
         {# SIZE #}
         <div class='d-flex justify-content-between mb-2'>
           <div>
-            <label class='d-inline mr-1' for='qrpng_exportSize'>{{ 'Size'|trans }}</label>
+            <label class='d-inline mr-1' for='qrsvg_exportSize'>{{ 'Size'|trans }}</label>
             <p class='smallgray'>{{ 'Select image size (in pixels)'|trans }}</p>
           </div>
-          <input type='number' min='10' max='1337' class='form-control col-md-3' value='250' id='qrpng_exportSize'>
+          <input type='number' min='10' max='1337' class='form-control col-md-3' value='250' id='qrsvg_exportSize'>
         </div>
 
         {# TITLE #}
         <div class='d-flex justify-content-between mb-2'>
           <div>
-            <label class='d-inline mr-1' for='qrpng_exportTitle'>{{ 'Include title'|trans }}</label>
+            <label class='d-inline mr-1' for='qrsvg_exportTitle'>{{ 'Include title'|trans }}</label>
           </div>
           <label class='switch' title='{{ 'Include title'|trans }}'><span class='sr-only'>{{ 'Include title'|trans }}</span>
-            <input type='checkbox' checked='checked' id='qrpng_exportTitle'>
+            <input type='checkbox' checked='checked' id='qrsvg_exportTitle'>
             <span class='slider'></span>
           </label>
         </div>
@@ -33,25 +33,25 @@
         {# MAX LINES #}
         <div class='d-flex justify-content-between mb-2'>
           <div>
-            <label class='d-inline mr-1' for='qrpng_exportTitleLines'>{{ 'Number of lines for title'|trans }}</label>
+            <label class='d-inline mr-1' for='qrsvg_exportTitleLines'>{{ 'Number of lines for title'|trans }}</label>
             <p class='smallgray'>{{ 'Split the title into this many lines'|trans }}</p>
           </div>
-          <input type='number' min='1' max='1337' class='form-control col-md-3' value='2' id='qrpng_exportTitleLines'>
+          <input type='number' min='1' max='1337' class='form-control col-md-3' value='2' id='qrsvg_exportTitleLines'>
         </div>
 
         {# MAX LINE SIZE #}
         <div class='d-flex justify-content-between mb-2'>
           <div>
-            <label class='d-inline mr-1' for='qrpng_exportTitleChars'>{{ 'Number of characters per line'|trans }}</label>
+            <label class='d-inline mr-1' for='qrsvg_exportTitleChars'>{{ 'Number of characters per line'|trans }}</label>
             <p class='smallgray'>{{ 'Adjust how the title is displayed'|trans }}</p>
           </div>
-          <input type='number' min='1' max='1337' class='form-control col-md-3' value='29' id='qrpng_exportTitleChars'>
+          <input type='number' min='1' max='1337' class='form-control col-md-3' value='29' id='qrsvg_exportTitleChars'>
         </div>
 
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to-qrpng' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+        <button type='button' class='btn btn-primary' data-dismiss='modal' data-action='export-to-qrsvg' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
       </div>
     </div>
   </div>
@@ -78,7 +78,7 @@
     <a class='dropdown-item' href='api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}?format=csv'>
       <i class='fas fa-file-csv fa-fw'></i> {{ 'CSV File'|trans }}
     </a>
-    <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='qrpngExportModal'>
+    <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='qrsvgExportModal'>
       <i class='fas fa-qrcode fa-fw'></i> {{ 'QR Code'|trans }}
     </button>
     <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='exportModal' data-format='json'>

@@ -145,12 +145,12 @@ on('export-to', (el: HTMLElement) => {
   window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?${params}`, '_blank');
 });
 
-on('export-to-qrpng', (el: HTMLElement) => {
-  const size = (document.getElementById('qrpng_exportSize') as HTMLInputElement).value;
-  const title = (document.getElementById('qrpng_exportTitle') as HTMLInputElement).checked ? 1: 0;
-  const titleLines = (document.getElementById('qrpng_exportTitleLines') as HTMLInputElement).value;
-  const titleChars = (document.getElementById('qrpng_exportTitleChars') as HTMLInputElement).value;
-  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
+on('export-to-qrsvg', (el: HTMLElement) => {
+  const size = (document.getElementById('qrsvg_exportSize') as HTMLInputElement).value;
+  const title = (document.getElementById('qrsvg_exportTitle') as HTMLInputElement).checked ? 1: 0;
+  const titleLines = (document.getElementById('qrsvg_exportTitleLines') as HTMLInputElement).value;
+  const titleChars = (document.getElementById('qrsvg_exportTitleChars') as HTMLInputElement).value;
+  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrsvg&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
 });
 
 on(Action.Destroy, () => {

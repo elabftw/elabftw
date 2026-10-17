@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
+import Autocomplete from './Autocomplete.class';
 import { Action, EntityType, Model, Target, FileType } from './interfaces';
 import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
@@ -588,7 +589,6 @@ export function adjustHiddenState(): void {
 
 // AUTOCOMPLETE
 export function addAutocompleteToLinkInputs(): void {
-  const cache = {};
   [{
     selectElid: 'addLinkCatFilter',
     itemType: EntityType.Item,
@@ -600,90 +600,68 @@ export function addAutocompleteToLinkInputs(): void {
     filterFamily: 'owner',
     inputElId: 'addLinkExpInput',
   }].forEach(object => {
-    const filterEl = (document.getElementById(object.selectElid) as HTMLInputElement);
-    if (filterEl) {
-      cache[object.selectElid] = {};
-      // when we change the category filter, reset the cache
-      filterEl.addEventListener('change', () => {
-        cache[object.selectElid] = {};
-      });
-      $(`#${object.inputElId}`).autocomplete({
-        source: function(request: Record<string, string>, response: (data) => void): void {
-          const term = request.term;
-          const format = entity => {
-            const category = entity.category_title ? `${entity.category_title} - `: '';
-            const status = entity.status_title ? `${entity.status_title} - `: '';
-            const customid = entity.custom_id ? `${entity.custom_id} - `: '';
-            return `${entity.id} - ${category}${status}${customid}${entity.title.substring(0, 60)}`;
-          };
-          if (term in cache[object.selectElid]) {
-            const res = [];
-            cache[object.selectElid][term].forEach(entity => {
-              res.push(format(entity));
-            });
-            response(res);
-            return;
-          }
-          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&fastq=${escapeExtendedQuery(request.term)}&scope=3`).then(json => {
-            cache[object.selectElid][term] = json;
-            const res = [];
-            json.forEach(entity => {
-              res.push(format(entity));
-            });
-            response(res);
-          });
-        },
-        select: function(event: Event, ui): boolean {
-          const inputEl = event.target as HTMLInputElement;
-          inputEl.value = ui.item.label;
-          // don't let autocomplete change value of input element
-          return false;
-        },
-      });
-    }
+    const filterEl = document.getElementById(object.selectElid) as HTMLSelectElement | null;
+    const inputEl = document.getElementById(object.inputElId) as HTMLInputElement | null;
+    if (!filterEl || !inputEl || Autocomplete.get(inputEl)) return;
+    const cache = new Map<string, string[]>();
+    Autocomplete.attach(inputEl, {
+      dependencies: [filterEl],
+      source: async term => {
+        // Include the filter in the key so a response to an old search cannot
+        // populate the cache for the currently selected category/owner.
+        const key = JSON.stringify([filterEl.value, term]);
+        const cached = cache.get(key);
+        if (cached) return cached;
+        const params = new URLSearchParams({
+          [object.filterFamily]: filterEl.value,
+          fastq: escapeExtendedQuery(term),
+          scope: '3',
+        });
+        const json = await ApiC.getJson(`${object.itemType}/?${params}`);
+        const results = json.map(entity => {
+          const category = entity.category_title ? `${entity.category_title} - ` : '';
+          const status = entity.status_title ? `${entity.status_title} - ` : '';
+          const customid = entity.custom_id ? `${entity.custom_id} - ` : '';
+          return `${entity.id} - ${category}${status}${customid}${entity.title.substring(0, 60)}`;
+        });
+        cache.set(key, results);
+        return results;
+      },
+    });
   });
 }
 
 export function addAutocompleteToTagInputs(): void {
-  $('[data-autocomplete="tags"]').autocomplete({
-    source: function(request: Record<string, string>, response: (data) => void): void {
-      ApiC.getJson(`${Model.Team}/current/${Model.Tag}?q=${request.term}`).then(json => {
-        const res = [];
-        json.forEach(tag => {
-          res.push(tag.tag);
-        });
-        response(res);
-      });
-    },
+  document.querySelectorAll<HTMLInputElement>('[data-autocomplete="tags"]').forEach(input => {
+    Autocomplete.attach(input, {
+      source: async term => {
+        const json = await ApiC.getJson(`${Model.Team}/current/${Model.Tag}`, { q: term });
+        return json.map(tag => tag.tag);
+      },
+    });
   });
 }
 
 export function addAutocompleteToCompoundsInputs(): void {
-  $('[data-autocomplete="compounds"]').autocomplete({
-    source: function(request: Record<string, string>, response: (data) => void): void {
-      ApiC.getJson(`${Model.Compounds}?q=${request.term}`).then(json => {
-        const res = [];
-        json.forEach(cpd => {
-          res.push(`${cpd.id} - ${cpd.name}`);
-        });
-        response(res);
-      });
-    },
+  document.querySelectorAll<HTMLInputElement>('[data-autocomplete="compounds"]').forEach(input => {
+    Autocomplete.attach(input, {
+      source: async term => {
+        const json = await ApiC.getJson(Model.Compounds, { q: term });
+        return json.map(cpd => `${cpd.id} - ${cpd.name}`);
+      },
+    });
   });
 }
 
 export function addAutocompleteToExtraFieldsKeyInputs(): void {
-  $('[data-autocomplete="extraFieldsKeys"]').autocomplete({
-    appendTo: '#autocompleteAnchorDiv_extra_fields_keys',
-    source: function(request: Record<string, string>, response: (data) => void): void {
-      ApiC.getJson(`${Model.ExtraFieldsKeys}/?q=${request.term}`).then(json => {
-        const res = [];
-        json.forEach(entry => {
-          res.push(entry.extra_fields_key);
-        });
-        response(res);
-      });
-    },
+  document.querySelectorAll<HTMLInputElement>('[data-autocomplete="extraFieldsKeys"]').forEach(input => {
+    Autocomplete.attach(input, {
+      appendTo: document.getElementById('autocompleteAnchorDiv_extra_fields_keys'),
+      source: async term => {
+        const json = await ApiC.getJson(`${Model.ExtraFieldsKeys}/`, { q: term });
+        return json.map(entry => entry.extra_fields_key);
+      },
+    });
   });
 }
 

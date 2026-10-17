@@ -5,7 +5,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
 import i18next from './i18n';

@@ -8,7 +8,6 @@
 import i18next from './i18n';
 import { Malle, InputType } from '@deltablot/malle';
 import type { SelectOptions } from '@deltablot/malle';
-import 'jquery-ui/ui/widgets/autocomplete';
 import 'bootstrap/js/src/modal.js';
 import { Action, ProcurementState } from './interfaces';
 import { ApiC } from './api';

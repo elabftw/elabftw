@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import $ from 'jquery';
+import Autocomplete from './Autocomplete.class';
 import { ApiC } from './api';
 import { Malle, InputType } from '@deltablot/malle';
 import type { SelectOptions } from '@deltablot/malle';
@@ -1725,6 +1726,7 @@ on('toggle-body', (el: HTMLElement) => {
 });
 
 on('autocomplete', (el: HTMLElement) => {
+  if (!(el instanceof HTMLInputElement) || Autocomplete.get(el)) return;
   // depending on the type of results, we will want different attributes and formatting
   let transformer = entity => {
     const cat = entity.category_title ? `${entity.category_title} - ` : '';
@@ -1739,20 +1741,17 @@ on('autocomplete', (el: HTMLElement) => {
     transformer = compound => `${compound.id} - ${compound.name} ${compound.cas_number ? ` (CAS: ${compound.cas_number})` : ''}`;
   }
 
-  // use autocomplete jquery-ui plugin
-  $(el).autocomplete({
-    // this option is necessary or the autocomplete box will get lost under the permissions modal
-    appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
-    source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
-      const term = (request.term || '').trim();
+  const teamFilter = el.dataset.team ? document.getElementById(el.dataset.team) : null;
+  Autocomplete.attach(el, {
+    appendTo: el.dataset.identifier ? document.getElementById(`autocompleteAnchorDiv_${el.dataset.identifier}`) : null,
+    dependencies: teamFilter ? [teamFilter] : [],
+    source: async searchTerm => {
+      const term = searchTerm.trim();
       // for East/Southeast Asian terms, we allow search with 1 grapheme
       const isShortScript = hasEastSEAsian(term);
       const minChars = isShortScript ? 1 : 3;
       if (countGraphemes(term) < minChars) {
-        const msg = isShortScript ? [] : [i18next.t('type-3-chars')];
-        response(msg);
-        return;
-        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
+        return isShortScript ? [] : [{ label: i18next.t('type-3-chars'), disabled: true }];
       }
       const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
         ? escapeExtendedQuery(term)
@@ -1762,19 +1761,17 @@ on('autocomplete', (el: HTMLElement) => {
       params.set('q', queryTerm);
 
       // allow filtering users within a specific team
-      if (el.dataset.team) {
-        const teamId = document.getElementById(el.dataset.team) as HTMLInputElement | HTMLSelectElement;
-        if (teamId?.value) {
-          params.set('team', teamId.value);
+      if (teamFilter) {
+        const teamId = (teamFilter as HTMLInputElement | HTMLSelectElement).value;
+        if (teamId) {
+          params.set('team', teamId);
         }
       }
-      ApiC.getJson(`${el.dataset.target}/?${params.toString()}`).then(json => {
-        if (!Array.isArray(json) || json.length === 0) {
-          response([i18next.t('not-found')]);
-          return;
-        }
-        response(json.map(entry => transformer(entry)));
-      });
+      const json = await ApiC.getJson(`${el.dataset.target}/?${params}`);
+      if (!Array.isArray(json) || json.length === 0) {
+        return [{ label: i18next.t('not-found'), disabled: true }];
+      }
+      return json.map(entry => transformer(entry));
     },
   });
 });

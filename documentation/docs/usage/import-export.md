@@ -9,7 +9,7 @@ title: Import / Export
 
 When users add information into systems like eLabFTW, that information can get trapped in this system. We do not want that. We want information to flow freely.
 
-As such, eLabFTW allows users to freely export and import data, in different file formats, as well as accessing it through a [public API](../usage/api), for automation tools.
+As such, eLabFTW allows users to freely export and import data, in different file formats, as well as accessing it through a [public API](../usage/api.md), for automation tools.
 
 This page describes the Import and Export features available in eLabFTW.
 
@@ -180,7 +180,7 @@ Click **Import**. Every CSV row creates one entry. The import reports an error i
 
 ### Using the API to control how things are imported
 
-If you want to have complete control over the import process, you can use a few lines of python to do the import. Follow our [tutorial to import data from spreadsheet files](../tutorials/import-csv).
+If you want to have complete control over the import process, you can use a few lines of python to do the import. Follow our [tutorial to import data from spreadsheet files](../tutorials/import-csv.md).
 
 
 ### Importing compounds through CLI (csv file)

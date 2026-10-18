@@ -18,6 +18,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users\Users;
 use Exception;
+use GuzzleHttp\Exception\ServerException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -106,13 +107,15 @@ final class ExperimentsTimestamp extends Command
                     $Experiments->timestamp();
                     break;
                 } catch (Exception $e) {
-                    if ($retryCount === self::MAX_RETRIES - 1) {
+                    $isRetryable = $e instanceof ImproperActionException && $e->getPrevious() instanceof ServerException;
+                    if (!$isRetryable || $retryCount === self::MAX_RETRIES - 1) {
                         $output->writeln(sprintf('Error timestamping experiment with ID %d: %s. This experiment will be skipped.', $exp['id'], $e->getMessage()));
-                    } else {
-                        $delay = self::BASE_DELAY_SECS * (int) (2 ** $retryCount);
-                        $output->writeln(sprintf('Error timestamping experiment with ID %d: %s. Retrying in %d seconds...', $exp['id'], $e->getMessage(), $delay));
-                        sleep($delay);
+                        break;
                     }
+                    $delay = self::BASE_DELAY_SECS * (int) (2 ** $retryCount);
+                    $output->writeln(sprintf('Error timestamping experiment with ID %d: %s. Retrying in %d seconds...', $exp['id'], $e->getMessage(), $delay));
+                    sleep($delay);
+
                 }
             }
         }

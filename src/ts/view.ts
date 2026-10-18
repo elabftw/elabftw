@@ -65,7 +65,8 @@ document.getElementById('body_view')?.addEventListener('click', event => {
 });
 
 // From the steps list, jump to where the step was inserted in the main text (see #7483)
-on('scroll-to-step-in-body', (el: HTMLElement) => {
+on('scroll-to-step-in-body', (el: HTMLElement, event: Event) => {
+  event.preventDefault();
   const bodyView = document.getElementById('body_view');
   const link = bodyView?.querySelector<HTMLAnchorElement>(`a[href*="highlightstep=${el.dataset.stepid}#"]`);
   if (!link) {

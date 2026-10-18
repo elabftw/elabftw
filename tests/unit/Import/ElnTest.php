@@ -29,11 +29,14 @@ use ZipArchive;
 
 use function array_column;
 use function dirname;
+use function json_decode;
+use function json_encode;
 use function sprintf;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
 
+use const JSON_THROW_ON_ERROR;
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_OK;
 
@@ -527,6 +530,88 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             'seal-2026-08-05T080000-0000.json',
             'source-01.json',
         ), array_column($Experiment->entityData['uploads'], 'real_name'));
+    }
+
+    // a crate from another tool: flattened as RO-Crate requires, so variableMeasured only holds references,
+    // and no eLabFTW "version" on the root node
+    public function testImportFlattenedMetadataWithoutVersion(): void
+    {
+        $title = 'Flattened metadata without version';
+        $crate = array(
+            '@context' => 'https://w3id.org/ro/crate/1.2/context',
+            '@graph' => array(
+                array(
+                    '@id' => 'ro-crate-metadata.json',
+                    '@type' => 'CreativeWork',
+                    'about' => array('@id' => './'),
+                    'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.2'),
+                ),
+                array(
+                    '@id' => './',
+                    '@type' => 'Dataset',
+                    'name' => 'Export from another tool',
+                    'hasPart' => array(array('@id' => './experiment/')),
+                ),
+                array(
+                    '@id' => './experiment/',
+                    '@type' => 'Dataset',
+                    'name' => $title,
+                    'variableMeasured' => array(
+                        array('@id' => '#viscosity'),
+                        array('@id' => '#elabftw-metadata'),
+                    ),
+                ),
+                array(
+                    '@id' => '#viscosity',
+                    '@type' => 'PropertyValue',
+                    'propertyID' => 'viscosity',
+                    'value' => 2300,
+                    'unitText' => 'mPa.s',
+                ),
+                array(
+                    '@id' => '#elabftw-metadata',
+                    '@type' => 'PropertyValue',
+                    'propertyID' => 'elabftw_metadata',
+                    'value' => '{"extra_fields": {"Viscosity": {"type": "text", "value": "2300"}}}',
+                ),
+            ),
+        );
+
+        $archivePath = tempnam(sys_get_temp_dir(), 'elabftw-flattened-eln-');
+        $this->assertIsString($archivePath);
+        $archive = new ZipArchive();
+        $this->assertTrue($archive->open($archivePath, ZipArchive::OVERWRITE));
+        $json = json_encode($crate, JSON_THROW_ON_ERROR);
+        $this->assertTrue($archive->addFromString('flattened-crate/ro-crate-metadata.json', $json));
+        $this->assertTrue($archive->close());
+
+        $uploadedFile = new UploadedFile(
+            $archivePath,
+            'flattened.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        try {
+            $Import = new Eln(
+                new Users(1, 1),
+                new Users(1, 1),
+                $uploadedFile,
+                $this->fs,
+                $this->logger,
+                EntityType::Experiments,
+            );
+            $Import->import();
+            $this->assertSame(1, $Import->getInserted());
+
+            $Experiment = $this->getExperimentFromTitle($title);
+            $this->assertIsString($Experiment->entityData['metadata']);
+            $metadata = json_decode($Experiment->entityData['metadata'], true);
+            $this->assertSame('2300', $metadata['extra_fields']['Viscosity']['value']);
+        } finally {
+            unlink($archivePath);
+        }
     }
 
     // test import keeps the state for archived/locked/deleted entries

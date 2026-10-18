@@ -27,10 +27,12 @@ use Elabftw\Hash\FileHash;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
+use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\Compounds;
+use Elabftw\Models\UploadGroups;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
@@ -47,6 +49,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 
 use function array_find;
+use function array_values;
 use function basename;
 use function is_array;
 use function json_decode;
@@ -68,6 +71,7 @@ use function preg_replace;
 use function str_replace;
 use function str_starts_with;
 use function ucfirst;
+use function usort;
 
 /**
  * Import a .eln file.
@@ -93,6 +97,13 @@ class Eln extends AbstractZip
     private int $count;
 
     private int $internalElnVersion = -1;
+
+    // RO-Crate IDs are mapped to freshly created groups for the current entity only.
+    private array $groupIds = array();
+
+    private array $groupMembers = array();
+
+    private array $importedUploads = array();
 
     public function __construct(
         protected Users $requester,
@@ -334,6 +345,8 @@ class Eln extends AbstractZip
         $entityId = $this->Entity->create();
         $this->Entity->setId($entityId);
         $this->logger->debug(sprintf('Created %s with id: %d', $this->Entity->entityType->value, $entityId));
+        // Groups must exist before steps or files are imported, regardless of JSON property order.
+        $this->importGroups($dataset);
 
         // DATE
         $date = date('Y-m-d');
@@ -422,6 +435,10 @@ class Eln extends AbstractZip
                         // (in 103 we have an array of id)
                         // INTERNAL_ELN_VERSION < 103
                         if ($this->internalElnVersion < 103) {
+                            // crates from other tools have no version but are flattened: resolve a bare {"@id": ...} to its PropertyValue node
+                            if (!array_key_exists('propertyID', $propval) && array_key_exists('@id', $propval)) {
+                                $propval = $this->getNodeFromId($propval['@id']);
+                            }
                             if (array_key_exists('propertyID', $propval) && $propval['propertyID'] === 'elabftw_metadata') {
                                 // we look for the special elabftw_metadata property and that's what we import
                                 $this->Entity->update(new EntityParams('metadata', $propval['value']));
@@ -456,7 +473,7 @@ class Eln extends AbstractZip
                         foreach ($value as $id) {
                             $step = $this->getNodeFromId($id['@id']);
                             $body = $this->getNodeFromId($step['itemListElement']['@id'])['text'];
-                            new Steps($this->Entity)->importFromHowToStep($step, $body);
+                            new Steps($this->Entity)->importFromHowToStep($step, $body, $this->getImportedGroupId($step, 'steps'));
                         }
                     }
                     break;
@@ -560,6 +577,7 @@ class Eln extends AbstractZip
         foreach ($dataset['hasPart'] ?? array() as $part) {
             $this->importPart($this->getNodeFromId($part['@id']));
         }
+        $this->restoreUploadOrdering();
 
         // Restore entity state (normal, archived, deleted).
         $state = State::fromName($dataset['status'] ?? State::Normal->name);
@@ -576,6 +594,63 @@ class Eln extends AbstractZip
         if (!empty($dataset['subjectOf'])) {
             new Changelog($this->Entity)->replaceAll($this->updateActionsToChangelog($dataset['subjectOf']));
         }
+    }
+
+    /**
+     * Recreate named groups, including empty groups, before importing their members.
+     */
+    private function importGroups(array $dataset): void
+    {
+        $this->groupIds = array('steps' => array(), 'uploads' => array());
+        $this->groupMembers = array('steps' => array(), 'uploads' => array());
+        $this->importedUploads = array();
+        $groups = array();
+        foreach ($dataset['hasPart'] ?? array() as $part) {
+            $group = $this->getNodeFromId($part['@id']);
+            if (!in_array($group['@type'] ?? '', array('HowToSection', 'Collection'), true)) {
+                continue;
+            }
+            // A group belonging to another dataset must not be reused for this entity.
+            if (($group['isPartOf']['@id'] ?? $dataset['@id']) !== $dataset['@id']) {
+                continue;
+            }
+            $groups[$group['@id']] = $group;
+        }
+        $groups = array_values($groups);
+        usort($groups, static fn(array $a, array $b): int => (int) ($a['position'] ?? 0) <=> (int) ($b['position'] ?? 0));
+        foreach ($groups as $group) {
+            $isStepGroup = $group['@type'] === 'HowToSection';
+            $kind = $isStepGroup ? 'steps' : 'uploads';
+            $Groups = $isStepGroup ? new StepGroups($this->Entity) : new UploadGroups($this->Entity);
+            $id = $Groups->postAction(Action::Create, array('title' => $this->transformIfNecessary($group['name'] ?? _('Untitled'))));
+            $this->groupIds[$kind][$group['@id']] = $id;
+            foreach ($group[$isStepGroup ? 'itemListElement' : 'hasPart'] ?? array() as $member) {
+                $this->groupMembers[$kind][$member['@id']] = $id;
+            }
+        }
+    }
+
+    private function getImportedGroupId(array $node, string $kind): ?int
+    {
+        return $this->groupIds[$kind][$node['isPartOf']['@id'] ?? '']
+            ?? $this->groupMembers[$kind][$node['@id']]
+            ?? null;
+    }
+
+    private function restoreUploadOrdering(): void
+    {
+        if ($this->groupIds['uploads'] === array() || $this->importedUploads === array()) {
+            return;
+        }
+        $uploads = array_values($this->importedUploads);
+        usort($uploads, static fn(array $a, array $b): int => $a['position'] <=> $b['position']);
+        $ordering = array();
+        foreach ($uploads as $upload) {
+            $key = $upload['group_id'] ?? 'default';
+            $ordering[$key] ??= array('group_id' => $upload['group_id'], 'upload_ids' => array());
+            $ordering[$key]['upload_ids'][] = $upload['id'];
+        }
+        $this->Entity->Uploads->patch(Action::Update, array('grouped_ordering' => array_values($ordering)));
     }
 
     // convert export UpdateAction to changelog dataset
@@ -626,6 +701,18 @@ class Eln extends AbstractZip
         }
 
         switch ($part['@type']) {
+            case 'Collection':
+                if (!isset($this->groupIds['uploads'][$part['@id']])) {
+                    break;
+                }
+                // Files can be referenced by both the entity and the collection. importFile deduplicates them.
+                foreach ($part['hasPart'] ?? array() as $reference) {
+                    $file = $this->getNodeFromId($reference['@id']);
+                    if (($file['@type'] ?? '') === 'File') {
+                        $this->importPart($file);
+                    }
+                }
+                break;
             case 'Dataset':
                 $this->Entity->patch(Action::Update, array('bodyappend' => $this->part2html($part)));
                 foreach ($part['hasPart'] ?? array() as $subpart) {
@@ -647,6 +734,9 @@ class Eln extends AbstractZip
 
     private function importFile(array $file): void
     {
+        if (isset($this->importedUploads[$file['@id']])) {
+            return;
+        }
         // note: we cannot have path transversal vuln here because we use a temporary filesystem that cannot be escaped
         $filepath = $this->tmpDir . '/' . basename($this->root) . '/' . $file['@id'];
         $this->logger->debug(sprintf('Importing file: %s', $filepath));
@@ -672,13 +762,19 @@ class Eln extends AbstractZip
             }
         }
         // CREATE
+        $groupId = $this->getImportedGroupId($file, 'uploads');
         $newUploadId = $this->Entity->Uploads->create(new CreateUploadFromFs(
             $this->tmpFs,
             $file['name'] ?? basename($file['@id']),
             $filepath,
             $this->transformIfNecessary($file['description'] ?? '', true) ?: null,
             state: ($file['creativeWorkStatus'] ?? '') === State::Archived->name ? State::Archived : State::Normal,
-        ));
+        ), groupId: $groupId);
+        $this->importedUploads[$file['@id']] = array(
+            'id' => $newUploadId,
+            'group_id' => $groupId,
+            'position' => (int) ($file['position'] ?? count($this->importedUploads)),
+        );
         // the alternateName holds the previous long_name of the file
         if (!empty($file['alternateName'])) {
             // read the newly created upload so we can get the new long_name to replace the old in the body

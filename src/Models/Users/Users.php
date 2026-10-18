@@ -61,6 +61,7 @@ use Throwable;
 
 use function _;
 use function array_column;
+use function array_diff;
 use function array_map;
 use function implode;
 use function in_array;
@@ -123,13 +124,18 @@ class Users extends AbstractRest
         bool $skipDomainValidation = false,
         BinaryValue $canManageCompounds = BinaryValue::False,
         BinaryValue $canManageInventoryLocations = BinaryValue::False,
+        bool $includeHiddenTeams = false,
     ): int {
         $Config = Config::getConfig();
         $Teams = new Teams($this);
 
         // make sure that all the teams in which the user will be are created/exist
         // this might throw an exception if the team doesn't exist and we can't create it on the fly
-        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray($teams, $allowTeamCreation);
+        $teams = $Teams->getTeamsFromIdOrNameOrOrgidArray(
+            $teams,
+            $allowTeamCreation,
+            $includeHiddenTeams,
+        );
         $TeamsHelper = new TeamsHelper($teams[0]['id']);
 
         // make email lowercase every time
@@ -502,6 +508,10 @@ class Users extends AbstractRest
         );
         $isSysadmin = $this->requester->isSysadmin();
         $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'valid_until', 'is_sysadmin', 'teams');
+        // Admins can see other users' teams only when importing users is enabled.
+        if ($this->requester->isAdmin && Config::getConfig()->configArr['admins_import_users'] === '1') {
+            $removeKeys = array_diff($removeKeys, array('teams'));
+        }
         return array_map(function (array $user) use ($isSysadmin, $removeKeys): array {
             if (!$isSysadmin) {
                 unset($user['last_login']);

@@ -14,6 +14,7 @@ namespace Elabftw\Params;
 
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Services\Filter;
 use Override;
 
 use function mb_strlen;
@@ -42,6 +43,6 @@ final class StepParams extends ContentParams
         if (mb_strlen($content) < self::MIN_CONTENT_SIZE) {
             throw new ImproperActionException(sprintf(_('Input is too short! (minimum: %d)'), self::MIN_CONTENT_SIZE));
         }
-        return $content;
+        return Filter::step($content);
     }
 }

@@ -262,9 +262,15 @@ components:
             - pin
             - sign
             - timestamp
+            - updateentries
             - updatemetadatafield
             - update
             - updateowner
+          description: >
+            The updateentries action is only available on experiment and resource templates.
+            It adds missing tags, links and custom fields to writable entries created from
+            the template, preserving existing field definitions and values. Locked,
+            archived and deleted entries are ignored. Returns updated and skipped counts.
         passphrase:
           type: string
           description: >

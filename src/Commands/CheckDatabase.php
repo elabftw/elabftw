@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -22,12 +23,12 @@ use Override;
 use function sprintf;
 
 /**
- * Check the the current schema version versus the required one
+ * Check the current legacy schema and pending migrations.
  */
 #[AsCommand(name: 'db:check')]
 final class CheckDatabase extends Command
 {
-    public function __construct(private int $currentSchema)
+    public function __construct(private int $currentSchema, private readonly Migrations $Migrations)
     {
         parent::__construct();
     }
@@ -36,24 +37,23 @@ final class CheckDatabase extends Command
     protected function configure(): void
     {
         $this->setDescription('Check the database version')
-            ->setHelp('This command allows you to compare the database version with the current required schema.');
+            ->setHelp('Check the legacy schema baseline and whether migrations are pending.');
     }
 
     /**
-     * Execute
-     *
      * @return int 0 if no need to upgrade, 1 if need to upgrade
      */
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $pending = $this->Migrations->getPendingCount();
         $output->writeln(array(
             'Database check',
             '==============',
-            sprintf('Current version: %d', $this->currentSchema),
-            sprintf('Required version: %d', SchemaVersionChecker::REQUIRED_SCHEMA),
+            sprintf('Legacy schema: %d / %d', $this->currentSchema, SchemaVersionChecker::REQUIRED_SCHEMA),
+            sprintf('Pending migrations: %d', $pending),
         ));
-        if ($this->currentSchema === SchemaVersionChecker::REQUIRED_SCHEMA) {
+        if ($this->currentSchema === SchemaVersionChecker::REQUIRED_SCHEMA && $pending === 0) {
             $output->writeln('No upgrade required.');
             return Command::SUCCESS;
         }

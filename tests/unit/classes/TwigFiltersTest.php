@@ -111,6 +111,49 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, TwigFilters::formatMetadata($metadataJson));
     }
 
+    public function testFormatMetadataWithMultiValueLabels(): void
+    {
+        $metadataJson = '{
+          "extra_fields": {
+            "checks": {
+              "type": "checkbox",
+              "allow_multi_values": true,
+              "value": ["on", "off"],
+              "value_labels": ["Calibrated", "Reviewed <&\\" done"]
+            }
+          }
+        }';
+
+        $result = TwigFilters::formatMetadata($metadataJson);
+
+        $this->assertStringContainsString('<p><span class="badge badge-pill badge-light">Calibrated</span><br><input class="d-block" disabled type="checkbox" checked="checked"></p>', $result);
+        $this->assertStringContainsString('<p><span class="badge badge-pill badge-light">Reviewed &lt;&amp;&quot; done</span><br><input class="d-block" disabled type="checkbox"></p>', $result);
+    }
+
+    public function testFormatMetadataWithPartialValueLabels(): void
+    {
+        $metadataJson = '{
+          "extra_fields": {
+            "numbers": {
+              "type": "number",
+              "value": ["1", "2", "3"],
+              "unit": "mg",
+              "value_labels": ["0", "", "<img src=x onerror=alert(1)>"]
+            },
+            "short labels": {"value": ["A", "B"], "value_labels": ["first"]},
+            "no labels": {"value": ["C"], "value_labels": null}
+          }
+        }';
+
+        $result = TwigFilters::formatMetadata($metadataJson);
+
+        $this->assertStringContainsString('">0</span><br>1 mg</p><p>2 mg</p>', $result);
+        $this->assertStringContainsString('">&lt;img src=x onerror=alert(1)&gt;</span><br>3 mg</p>', $result);
+        $this->assertStringContainsString('">first</span><br>A</p><p>B</p>', $result);
+        $this->assertStringContainsString('<p>C</p>', $result);
+        $this->assertStringNotContainsString('<img', $result);
+    }
+
     public function testFormatMetadataWithMultipleValuesForAllTypes(): void
     {
         $metadataJson = '{

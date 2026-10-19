@@ -268,6 +268,13 @@ if (navbar) {
   }, { passive: true });
 }
 
+const entityToolbar = document.getElementById('entityToolbar');
+if (entityToolbar) {
+  // Scrolling up reveals the navbar, so reserve its height even while it is hidden.
+  const offset = (navbar?.offsetHeight ?? 0) + entityToolbar.offsetHeight;
+  root.style.setProperty('--step-scroll-offset', `${offset}px`);
+}
+
 const container = document.getElementById('container')!;
 
 // tomSelect with searchable categories in the dropdown for the main Navbar
@@ -936,6 +943,9 @@ on('toggle-next', (el: HTMLElement) => {
   }
   const isHidden = targetEl.toggleAttribute('hidden');
   el.setAttribute('aria-expanded', String(!isHidden));
+  if (!isHidden && el.dataset.focusFirstInput === 'true' && targetEl instanceof HTMLFormElement) {
+    targetEl.querySelector<HTMLInputElement>('input:not([type="hidden"])')?.focus();
+  }
 
   // might want to toggle another element with toggle-extra
   if (el.dataset.toggleTargetExtra) {

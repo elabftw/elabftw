@@ -55,6 +55,13 @@ code {
   list-style-type: none;
 }
 
+// mimic bootstrap badge: note: border-radius doesn't work on span elements
+.badge {
+  background-color: #eee;
+  font-size: 80%;
+  white-space: nowrap;
+}
+
 /* fix table being collapsed on export */
 table {
   border-collapse: collapse;

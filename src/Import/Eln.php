@@ -22,6 +22,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Hash\FileHash;
 use Elabftw\Models\AbstractEntity;
@@ -34,7 +35,9 @@ use Elabftw\Models\Changelog;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\UploadGroups;
 use Elabftw\Models\Uploads;
+use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Users\Users;
+use Elabftw\Models\Users\ValidatedUser;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\TagParam;
 use Elabftw\Services\Filter;
@@ -659,18 +662,25 @@ class Eln extends AbstractZip
             }
             $target = is_string($action['object'] ?? null) ? $action['object'] : 'import';
             $content = is_string($action['result'] ?? null) ? $action['result'] : '';
+            $agent = $action['agent'];
+            $person = $this->getNodeFromId($agent['@id']);
+            try {
+                $Author = ExistingUser::fromEmail($person['email'] ?? 'undefined');
+            } catch (ResourceNotFoundException) {
+                $Author = ValidatedUser::createFromPerson($person, $this->requester->team ?? 0);
+                $this->logger->info(sprintf('Created user with email: %s', $person['email']));
+            }
 
             // These targets are rendered as raw HTML in changelog-table.html. Imported
             // history is untrusted and must pass through the same filter as entity bodies.
             if (in_array($target, array('body', 'links', 'created'), true)) {
                 $content = Filter::body($content);
             }
-
             $changelog[] = array(
                 'created_at' => new DateTimeImmutable($action['startTime'])->format('Y-m-d H:i:s'),
                 'target' => $target,
                 'content' => $content,
-                'userid' => $this->requester->getUserid(),
+                'userid' => $Author->getUserid(),
             );
         }
         return $changelog;

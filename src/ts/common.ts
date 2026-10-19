@@ -268,6 +268,13 @@ if (navbar) {
   }, { passive: true });
 }
 
+const entityToolbar = document.getElementById('entityToolbar');
+if (entityToolbar) {
+  // Scrolling up reveals the navbar, so reserve its height even while it is hidden.
+  const offset = (navbar?.offsetHeight ?? 0) + entityToolbar.offsetHeight;
+  root.style.setProperty('--step-scroll-offset', `${offset}px`);
+}
+
 const container = document.getElementById('container')!;
 
 // tomSelect with searchable categories in the dropdown for the main Navbar

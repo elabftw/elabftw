@@ -12,38 +12,71 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Enums\Action;
 use Elabftw\Models\Config;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
+use function ctype_digit;
 use function sprintf;
 
 /**
- * For dev purposes: force the schema to a particular version
+ * For dev purposes: force the legacy schema or migration state.
  */
 #[AsCommand(name: 'dev:forceschema')]
 final class ForceSchema extends Command
 {
+    public function __construct(private readonly Migrations $Migrations)
+    {
+        parent::__construct();
+    }
+
     #[Override]
     protected function configure(): void
     {
-        $this->setDescription('Directly set a schema number in the general config')
-            ->addArgument('schema', InputArgument::REQUIRED, 'Target schema number')
-            ->setHelp('This command allows you to directly set the value of the schema number in the config table.');
+        $this->setDescription('Force database migration state without executing SQL')
+            ->addArgument('identifier', InputArgument::REQUIRED, 'Legacy schema number or UUIDv7 migration identifier')
+            ->addOption('remove', 'r', InputOption::VALUE_NONE, 'Mark a migration as pending instead of applied')
+            ->setHelp('Legacy numbers update config.schema. Migration identifiers are tracked in schema_migrations.');
     }
 
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $schemaNumber = $input->getArgument('schema');
-        $Config = Config::getConfig();
-        $Config->patch(Action::Update, array('schema' => $schemaNumber));
-        $output->writeln(sprintf('Changing schema to %d', $schemaNumber));
+        $identifier = (string) $input->getArgument('identifier');
+        if (ctype_digit($identifier)) {
+            $schemaNumber = (int) $identifier;
+            $Config = Config::getConfig();
+            $Config->patch(Action::Update, array('schema' => $schemaNumber));
+            $output->writeln(sprintf('Changing legacy schema to %d', $schemaNumber));
+            return Command::SUCCESS;
+        }
+
+        if (!Migrations::isUuidV7($identifier)) {
+            $output->writeln('<error>Identifier must be a UUIDv7 or a legacy schema number.</error>');
+            return Command::INVALID;
+        }
+        if ($this->Migrations->getFilename($identifier) === null) {
+            $output->writeln(sprintf('<error>Migration file for %s was not found.</error>', $identifier));
+            return Command::FAILURE;
+        }
+
+        if ($input->getOption('remove')) {
+            $this->Migrations->removeApplied($identifier);
+            $output->writeln(sprintf('Marked migration %s as pending', $identifier));
+            return Command::SUCCESS;
+        }
+
+        if (!$this->Migrations->isApplied($identifier)) {
+            $this->Migrations->recordApplied($identifier, $this->Migrations->nextBatch());
+        }
+        $output->writeln(sprintf('Marked migration %s as applied', $identifier));
         return Command::SUCCESS;
     }
 }

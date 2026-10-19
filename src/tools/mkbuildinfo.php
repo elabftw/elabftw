@@ -12,12 +12,38 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use DirectoryIterator;
+
 use function bin2hex;
+use function implode;
+use function ksort;
 use function preg_match;
 use function random_bytes;
 use function dirname;
 use function file_put_contents;
 use function getenv;
+use function sprintf;
+
+// Composer runs this before generating its autoloader. Reading the filename
+// pattern does not instantiate Migrations or connect to the database.
+require_once dirname(__DIR__) . '/Elabftw/Migrations.php';
+
+$migrations = array();
+foreach (new DirectoryIterator(dirname(__DIR__) . '/sql') as $entry) {
+    if ($entry->isFile() && preg_match(Migrations::FILE_REGEX, $entry->getFilename(), $matches) === 1) {
+        $migrations[$matches[1]] = $entry->getFilename();
+    }
+}
+ksort($migrations, SORT_STRING);
+
+$migrationEntries = array();
+foreach ($migrations as $uuid => $filename) {
+    // FILE_REGEX restricts both values to characters safe inside single quotes.
+    $migrationEntries[] = sprintf("        '%s' => '%s',", $uuid, $filename);
+}
+$migrationsCode = $migrationEntries === array()
+    ? 'array()'
+    : "array(\n" . implode("\n", $migrationEntries) . "\n    )";
 
 $version = getenv('ELABFTW_VERSION') ?: 'dev';
 
@@ -48,6 +74,9 @@ $content = <<<PHP
         public const string VERSION = '{$version}';
 
         public const int VERSION_INT = {$versionInt};
+
+        /** @var array<string, string> UUID => filename, sorted by identifier. */
+        public const array MIGRATIONS = {$migrationsCode};
     }
     PHP;
 

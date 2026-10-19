@@ -286,6 +286,7 @@ abstract class AbstractLinks extends AbstractRest
                     categoryt.id AS category_id,
                     categoryt.title AS category_title,
                     categoryt.color AS category_color,
+                    categoryt.color_fg AS category_color_fg,
                     statust.id AS status_id,
                     statust.title AS status_title,
                     statust.color AS status_color

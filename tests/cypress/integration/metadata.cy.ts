@@ -153,6 +153,18 @@ describe('Metadata Extra fields', () => {
           value: '',
           required: true,
         },
+        'Optional radio': {
+          type: 'radio',
+          options: ['x', 'y'],
+          value: '',
+          required: false,
+        },
+        'Optional dropdown': {
+          type: 'select',
+          options: ['x', 'y'],
+          value: '',
+          required: false,
+        },
       },
     });
 
@@ -179,6 +191,12 @@ describe('Metadata Extra fields', () => {
           cy.wrap(radio).should('match', ':invalid');
         });
         cy.get(dropdown).should('match', ':invalid');
+
+        // required: false must not make the field required
+        cy.get('#metadataDiv input[type="radio"][data-field="Optional radio"]').should('have.length', 2).each(radio => {
+          cy.wrap(radio).should('not.have.attr', 'required');
+        });
+        cy.get('#metadataDiv select[data-field="Optional dropdown"]').should('not.have.attr', 'required');
 
         // choosing an option makes the whole radio group valid
         cy.get(`${radios}[value="x"]`).check();

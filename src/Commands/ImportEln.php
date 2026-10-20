@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Storage;
 use Elabftw\Import\TrustedEln;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Users\UltraAdmin;
@@ -88,7 +89,7 @@ final class ImportEln extends Command
             $user,
             $user,
             $UploadedFile,
-            $this->Fs->getFs(),
+            Storage::EXPORTS->getStorage()->getFs(),
             $logger,
             $entityType,
             category: $defaultCategory,

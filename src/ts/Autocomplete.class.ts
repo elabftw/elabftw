@@ -15,6 +15,9 @@ export interface AutocompleteItem {
 
 export type AutocompleteResult = string | AutocompleteItem;
 
+const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+export const countGraphemes = (text: string): number => Array.from(segmenter.segment(text)).length;
+
 export interface AutocompleteOptions {
   source: (term: string) => AutocompleteResult[] | Promise<AutocompleteResult[]>;
   appendTo?: HTMLElement | null;
@@ -31,11 +34,9 @@ export interface AutocompleteOptions {
  * Selection emits native input/change events, then calls onSelect if provided.
  */
 export default class Autocomplete implements EventListenerObject {
-  private static instances = new WeakMap<HTMLInputElement, Autocomplete>();
-  private static attached = new Set<Autocomplete>();
+  private static instances = new Map<HTMLInputElement, Autocomplete>();
   private static observer: MutationObserver | undefined;
   private static nextId = 0;
-  private static segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
   static get(input: HTMLInputElement): Autocomplete | undefined {
     return this.instances.get(input);
@@ -103,12 +104,11 @@ export default class Autocomplete implements EventListenerObject {
     this.getPopupParent().append(this.menu);
 
     Autocomplete.instances.set(input, this);
-    Autocomplete.attached.add(this);
     // Fragment reloads remove inputs without calling destroy(). Clean up their
     // popups and listeners instead of retaining detached elements indefinitely.
     if (!Autocomplete.observer) {
       Autocomplete.observer = new this.view.MutationObserver(() => {
-        for (const instance of Autocomplete.attached) {
+        for (const instance of Autocomplete.instances.values()) {
           if (!instance.input.isConnected) instance.destroy();
         }
       });
@@ -160,23 +160,24 @@ export default class Autocomplete implements EventListenerObject {
     }
   }
 
+  private get canSearch(): boolean {
+    return !this.destroyed && !this.composing && !this.input.disabled && !this.input.readOnly
+      && this.input.isConnected && this.document.activeElement === this.input;
+  }
+
   private scheduleSearch(): void {
     this.close();
-    if (this.input.disabled || this.input.readOnly) return;
+    if (!this.canSearch) return;
     this.timer = this.view.setTimeout(() => {
       this.timer = undefined;
       void this.search();
     }, this.options.delay ?? 300);
   }
 
-  async search(): Promise<void> {
-    if (this.destroyed) return;
+  async search(direction: -1 | 0 | 1 = 0): Promise<void> {
     this.close();
     const term = this.input.value;
-    if (this.destroyed || this.composing || this.input.disabled || this.input.readOnly
-      || !this.input.isConnected || this.document.activeElement !== this.input
-      || Array.from(Autocomplete.segmenter.segment(term)).length < (this.options.minLength ?? 1)
-    ) return;
+    if (!this.canSearch || countGraphemes(term) < (this.options.minLength ?? 1)) return;
 
     const requestId = this.requestId;
     this.input.setAttribute('aria-busy', 'true');
@@ -184,12 +185,11 @@ export default class Autocomplete implements EventListenerObject {
       const results = await this.options.source(term);
       if (requestId !== this.requestId) return;
       this.input.setAttribute('aria-busy', 'false');
-      if (!this.input.isConnected || this.input.disabled || this.input.readOnly
-        || this.document.activeElement !== this.input || this.input.value !== term
-      ) return;
-      if (results.length === 0) return;
+      if (!this.canSearch || this.input.value !== term || results.length === 0) return;
       this.items = results.map(result => typeof result === 'string' ? { label: result } : result);
       this.render();
+      // Apply arrow navigation only to the search that produced these results.
+      if (direction) this.moveActive(direction);
     } catch {
       // API sources already report errors through ApiC. Consume the rejection
       // here and only close the popup if this was still the current search.
@@ -262,7 +262,7 @@ export default class Autocomplete implements EventListenerObject {
     case 'ArrowUp': {
       event.preventDefault();
       const direction = event.key === 'ArrowDown' ? 1 : -1;
-      if (this.menu.hidden) void this.search().then(() => this.moveActive(direction));
+      if (this.menu.hidden) void this.search(direction);
       else this.moveActive(direction);
       break;
     }
@@ -354,8 +354,7 @@ export default class Autocomplete implements EventListenerObject {
       else this.input.setAttribute(name, value);
     }
     Autocomplete.instances.delete(this.input);
-    Autocomplete.attached.delete(this);
-    if (Autocomplete.attached.size === 0) {
+    if (Autocomplete.instances.size === 0) {
       Autocomplete.observer?.disconnect();
       Autocomplete.observer = undefined;
     }

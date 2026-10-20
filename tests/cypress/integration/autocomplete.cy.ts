@@ -113,6 +113,20 @@ describe('Autocomplete', () => {
     cy.get('#autocompleteInput').should('have.attr', 'aria-expanded', 'false');
   });
 
+  it('Does not activate newer suggestions when an older arrow-key search finishes', () => {
+    const pending = new Map<string, (results: AutocompleteResult[]) => void>();
+    setup({ source: term => new Promise(resolve => pending.set(term, resolve)), delay: 0 });
+    cy.get('#autocompleteInput').focus().invoke('val', 'a').type('{downarrow}');
+    cy.wrap(pending).should('have.property', 'size', 1);
+    cy.get('#autocompleteInput').type('b');
+    cy.wrap(pending).should('have.property', 'size', 2);
+    cy.then(() => pending.get('ab')(['New result']));
+    cy.get('.elab-autocomplete:visible').should('have.text', 'New result');
+    cy.then(() => pending.get('a')(['Old result']));
+    cy.get('#autocompleteInput').should('not.have.attr', 'aria-activedescendant');
+    cy.get('.elab-autocomplete:visible [role="option"]').should('have.attr', 'aria-selected', 'false');
+  });
+
   it('Waits for IME composition to finish and lets Escape dismiss suggestions', () => {
     cy.clock();
     const source = cy.stub().as('source').returns(['日本']);
@@ -214,5 +228,30 @@ describe('Autocomplete initialization', () => {
     });
     selectCollaborator();
     cy.get('@searchUsers.all').should('have.length', 1);
+  });
+
+  it('Initializes tags, compounds and field names inserted after page load', () => {
+    cy.get('[data-cy="addMetadataField"]').first().click();
+    cy.get('#fieldBuilderModal').should('be.visible');
+    [
+      { kind: 'tags', path: '/api/v2/teams/current/tags', results: [{ tag: 'Cypress tag' }], label: 'Cypress tag' },
+      { kind: 'compounds', path: '/api/v2/compounds', results: [{ id: 42, name: 'Cypress compound' }], label: '42 - Cypress compound' },
+      { kind: 'extraFieldsKeys', path: '/api/v2/extra_fields_keys/', results: [{ extra_fields_key: 'Cypress field' }], label: 'Cypress field' },
+    ].forEach(({ kind, path, results, label }, index) => {
+      cy.intercept({ method: 'GET', pathname: path, query: { q: 'x&y' } }, { body: results }).as(`suggestions${index}`);
+      cy.document().then(doc => {
+        const input = doc.createElement('input');
+        input.id = `dynamicAutocomplete${index}`;
+        input.dataset.autocomplete = kind;
+        doc.querySelector('#fieldBuilderModal .modal-body').append(input);
+        input.focus();
+      });
+      cy.focused().type('x&y');
+      cy.wait(`@suggestions${index}`).its('request.query.q').should('eq', 'x&y');
+      cy.get(`#dynamicAutocomplete${index}`).invoke('attr', 'aria-controls').then(id => {
+        cy.get(`#${id}`).contains('[role="option"]', label).click();
+      });
+      cy.get(`#dynamicAutocomplete${index}`).should('have.value', label).then($input => $input.remove());
+    });
   });
 });

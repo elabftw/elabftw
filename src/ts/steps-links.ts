@@ -10,8 +10,6 @@ import { Malle } from '@deltablot/malle';
 import Step from './Step.class';
 import i18next from './i18n';
 import {
-  addAutocompleteToCompoundsInputs,
-  addAutocompleteToLinkInputs,
   adjustHiddenState,
   collectForm,
   makeSortableGreatAgain,
@@ -23,8 +21,6 @@ import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
 import { createGroupedSortables } from './grouped-sortables';
-
-addAutocompleteToLinkInputs();
 
 // FINISH: outside if stepsDiv because can be from Todolist panel
 $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
@@ -224,11 +220,7 @@ $(document).on('keypress blur', '.linkinput', function(e) {
       reloadElements(['linksDiv', 'linksExpDiv', 'compoundDiv']).then(() => {
         // clear input field
         $(this).val('');
-        addAutocompleteToLinkInputs();
-        addAutocompleteToCompoundsInputs();
       });
     });
   }
 });
-// AUTOCOMPLETE
-addAutocompleteToCompoundsInputs();

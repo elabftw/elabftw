@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import Autocomplete from './Autocomplete.class';
+import { initAutocompletes } from './autocomplete';
 import { ApiC } from './api';
 import { Malle, InputType } from '@deltablot/malle';
 import type { SelectOptions } from '@deltablot/malle';
@@ -19,7 +19,6 @@ import {
   adjustHiddenState,
   clearForm,
   collectForm,
-  escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
   getInput,
@@ -347,17 +346,6 @@ const FavTagC = new FavTag();
 const TodolistC = new Todolist();
 
 const TableSortingC = new TableSorting();
-// for searching inputs, allow specific triggers for East & South East Asian characters
-const hasEastSEAsian = (s: string): boolean => (
-  /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Khmer}|\p{Script=Myanmar}|\p{Script=Bopomofo}/u.test(s)
-);
-
-const countGraphemes = (text: string): number => {
-  // use Intl.Segmenter to handle locale-sensitive text segmentation (graphemes, sentences, etc.,)
-  const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
-  return Array.from(graphemeSegmenter.segment(text)).length;
-};
-
 TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
@@ -1732,68 +1720,7 @@ on('toggle-body', (el: HTMLElement) => {
   });
 });
 
-function initAutocomplete(el: HTMLElement): void {
-  if (!(el instanceof HTMLInputElement) || Autocomplete.get(el)) return;
-  // depending on the type of results, we will want different attributes and formatting
-  let transformer = entity => {
-    const cat = entity.category_title ? `${entity.category_title} - ` : '';
-    const stat = entity.status_title ? `${entity.status_title} - ` : '';
-    return `${entity.id} - ${cat}${stat}${entity.title}`;
-  };
-  // useid data attribute is used in admin panel to grab the userid from input
-  if (el.dataset.target === 'users') {
-    transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
-  }
-  if (el.dataset.target === 'compounds') {
-    transformer = compound => `${compound.id} - ${compound.name} ${compound.cas_number ? ` (CAS: ${compound.cas_number})` : ''}`;
-  }
-
-  const teamFilter = el.dataset.team ? document.getElementById(el.dataset.team) : null;
-  Autocomplete.attach(el, {
-    appendTo: el.dataset.identifier ? document.getElementById(`autocompleteAnchorDiv_${el.dataset.identifier}`) : null,
-    dependencies: teamFilter ? [teamFilter] : [],
-    source: async searchTerm => {
-      const term = searchTerm.trim();
-      // for East/Southeast Asian terms, we allow search with 1 grapheme
-      const isShortScript = hasEastSEAsian(term);
-      const minChars = isShortScript ? 1 : 3;
-      if (countGraphemes(term) < minChars) {
-        return isShortScript ? [] : [{ label: i18next.t('type-3-chars'), disabled: true }];
-      }
-      const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
-        ? escapeExtendedQuery(term)
-        : term;
-
-      const params = new URLSearchParams();
-      params.set('q', queryTerm);
-
-      // allow filtering users within a specific team
-      if (teamFilter) {
-        const teamId = (teamFilter as HTMLInputElement | HTMLSelectElement).value;
-        if (teamId) {
-          params.set('team', teamId);
-        }
-      }
-      const json = await ApiC.getJson(`${el.dataset.target}/?${params}`);
-      if (!Array.isArray(json) || json.length === 0) {
-        return [{ label: i18next.t('not-found'), disabled: true }];
-      }
-      return json.map(entry => transformer(entry));
-    },
-  });
-}
-
-on('autocomplete', initAutocomplete);
-
-// Be ready before the first keystroke, including when a modal focuses the field.
-document.querySelectorAll<HTMLInputElement>('input[data-action="autocomplete"]').forEach(initAutocomplete);
-// Fragment reloads and metadata editors also insert inputs after page load.
-container.addEventListener('focusin', event => {
-  const input = event.target;
-  if (input instanceof HTMLInputElement && input.dataset.action === 'autocomplete') {
-    initAutocomplete(input);
-  }
-});
+initAutocompletes(container);
 
 on('query', (el: HTMLElement) => {
   const url = new URL(window.location.href);

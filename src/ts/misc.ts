@@ -6,7 +6,6 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import Autocomplete from './Autocomplete.class';
 import { Action, EntityType, Model, Target, FileType } from './interfaces';
 import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
@@ -434,10 +433,6 @@ export function getCheckedBoxes(): Array<CheckableItem> {
 // reload the entities in show mode
 export async function reloadEntitiesShow(): Promise<void | Response> {
   window.dispatchEvent(new CustomEvent('entity-filters-changed'));
-  // rebind autocomplete for links input
-  addAutocompleteToLinkInputs();
-  // tags too
-  addAutocompleteToTagInputs();
   // listen to data-trigger elements
   listenTrigger();
   // and set relative moments
@@ -584,84 +579,6 @@ export function adjustHiddenState(): void {
     // now make the button icon match the new state
     const isHidden = el.hasAttribute('hidden');
     toggleIcon((button as HTMLElement), isHidden);
-  });
-}
-
-// AUTOCOMPLETE
-export function addAutocompleteToLinkInputs(): void {
-  [{
-    selectElid: 'addLinkCatFilter',
-    itemType: EntityType.Item,
-    filterFamily: 'category',
-    inputElId: 'addLinkItemsInput',
-  }, {
-    selectElid: 'addLinkOwnerFilter',
-    itemType: EntityType.Experiment,
-    filterFamily: 'owner',
-    inputElId: 'addLinkExpInput',
-  }].forEach(object => {
-    const filterEl = document.getElementById(object.selectElid) as HTMLSelectElement | null;
-    const inputEl = document.getElementById(object.inputElId) as HTMLInputElement | null;
-    if (!filterEl || !inputEl || Autocomplete.get(inputEl)) return;
-    const cache = new Map<string, string[]>();
-    Autocomplete.attach(inputEl, {
-      dependencies: [filterEl],
-      source: async term => {
-        // Include the filter in the key so a response to an old search cannot
-        // populate the cache for the currently selected category/owner.
-        const key = JSON.stringify([filterEl.value, term]);
-        const cached = cache.get(key);
-        if (cached) return cached;
-        const params = new URLSearchParams({
-          [object.filterFamily]: filterEl.value,
-          fastq: escapeExtendedQuery(term),
-          scope: '3',
-        });
-        const json = await ApiC.getJson(`${object.itemType}/?${params}`);
-        const results = json.map(entity => {
-          const category = entity.category_title ? `${entity.category_title} - ` : '';
-          const status = entity.status_title ? `${entity.status_title} - ` : '';
-          const customid = entity.custom_id ? `${entity.custom_id} - ` : '';
-          return `${entity.id} - ${category}${status}${customid}${entity.title.substring(0, 60)}`;
-        });
-        cache.set(key, results);
-        return results;
-      },
-    });
-  });
-}
-
-export function addAutocompleteToTagInputs(): void {
-  document.querySelectorAll<HTMLInputElement>('[data-autocomplete="tags"]').forEach(input => {
-    Autocomplete.attach(input, {
-      source: async term => {
-        const json = await ApiC.getJson(`${Model.Team}/current/${Model.Tag}`, { q: term });
-        return json.map(tag => tag.tag);
-      },
-    });
-  });
-}
-
-export function addAutocompleteToCompoundsInputs(): void {
-  document.querySelectorAll<HTMLInputElement>('[data-autocomplete="compounds"]').forEach(input => {
-    Autocomplete.attach(input, {
-      source: async term => {
-        const json = await ApiC.getJson(Model.Compounds, { q: term });
-        return json.map(cpd => `${cpd.id} - ${cpd.name}`);
-      },
-    });
-  });
-}
-
-export function addAutocompleteToExtraFieldsKeyInputs(): void {
-  document.querySelectorAll<HTMLInputElement>('[data-autocomplete="extraFieldsKeys"]').forEach(input => {
-    Autocomplete.attach(input, {
-      appendTo: document.getElementById('autocompleteAnchorDiv_extra_fields_keys'),
-      source: async term => {
-        const json = await ApiC.getJson(`${Model.ExtraFieldsKeys}/`, { q: term });
-        return json.map(entry => entry.extra_fields_key);
-      },
-    });
   });
 }
 

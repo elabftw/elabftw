@@ -14,6 +14,8 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\FsTools;
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ApiEndpoint;
@@ -95,6 +97,7 @@ use Override;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 
+use function dirname;
 use function implode;
 use function in_array;
 use function json_decode;
@@ -296,6 +299,7 @@ final class Apiv2Controller extends AbstractApiController
             ExportFormat::Json,
             ExportFormat::QrPdf,
             ExportFormat::QrPng,
+            ExportFormat::QrSvg,
             ExportFormat::Pdf,
             ExportFormat::PdfA,
             ExportFormat::ZipA,
@@ -389,7 +393,13 @@ final class Apiv2Controller extends AbstractApiController
     {
         $Config = Config::getConfig();
         return new Email(
-            new SchemaVersionChecker((int) $Config->configArr['schema']),
+            new SchemaVersionChecker(
+                (int) $Config->configArr['schema'],
+                new Migrations(
+                    FsTools::getFs(dirname(__DIR__) . '/sql'),
+                    useBuildInfo: !Env::asBool('DEV_MODE'),
+                ),
+            ),
             new Mailer(Transport::fromDsn($Config->getDsn())),
             App::getDefaultLogger(),
             $Config->configArr['mail_from'],

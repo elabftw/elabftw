@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import $ from 'jquery';
+import { initAutocompletes } from './autocomplete';
 import { ApiC } from './api';
 import { Malle, InputType } from '@deltablot/malle';
 import type { SelectOptions } from '@deltablot/malle';
@@ -18,7 +19,6 @@ import {
   adjustHiddenState,
   clearForm,
   collectForm,
-  escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
   getInput,
@@ -234,6 +234,47 @@ on('delete-selected-entities', async () => {
   });
 });
 
+// code to hide navbar on scroll down, and show it on scroll up.
+const root = document.documentElement;
+const navbar = document.getElementById('main-navbar');
+
+if (navbar) {
+  const navbarHeight = `${navbar.offsetHeight}px`;
+  root.style.setProperty('--navbar-height', navbarHeight);
+  let lastScroll = Math.max(0, window.scrollY);
+  let ticking = false;
+  let isNavbarHidden = false;
+
+  window.addEventListener('scroll', () => {
+    if (ticking) {
+      return;
+    }
+
+    ticking = true;
+
+    window.requestAnimationFrame(() => {
+      const currentScroll = Math.max(0, window.scrollY);
+      const shouldHide = currentScroll > 0 && currentScroll > lastScroll;
+
+      if (shouldHide !== isNavbarHidden) {
+        navbar.classList.toggle('hidden', shouldHide);
+        root.style.setProperty('--navbar-height', shouldHide ? '0px' : navbarHeight);
+        isNavbarHidden = shouldHide;
+      }
+
+      lastScroll = currentScroll;
+      ticking = false;
+    });
+  }, { passive: true });
+}
+
+const entityToolbar = document.getElementById('entityToolbar');
+if (entityToolbar) {
+  // Scrolling up reveals the navbar, so reserve its height even while it is hidden.
+  const offset = (navbar?.offsetHeight ?? 0) + entityToolbar.offsetHeight;
+  root.style.setProperty('--step-scroll-offset', `${offset}px`);
+}
+
 const container = document.getElementById('container')!;
 
 // tomSelect with searchable categories in the dropdown for the main Navbar
@@ -305,17 +346,6 @@ const FavTagC = new FavTag();
 const TodolistC = new Todolist();
 
 const TableSortingC = new TableSorting();
-// for searching inputs, allow specific triggers for East & South East Asian characters
-const hasEastSEAsian = (s: string): boolean => (
-  /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Khmer}|\p{Script=Myanmar}|\p{Script=Bopomofo}/u.test(s)
-);
-
-const countGraphemes = (text: string): number => {
-  // use Intl.Segmenter to handle locale-sensitive text segmentation (graphemes, sentences, etc.,)
-  const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
-  return Array.from(graphemeSegmenter.segment(text)).length;
-};
-
 TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
@@ -1690,60 +1720,7 @@ on('toggle-body', (el: HTMLElement) => {
   });
 });
 
-on('autocomplete', (el: HTMLElement) => {
-  // depending on the type of results, we will want different attributes and formatting
-  let transformer = entity => {
-    const cat = entity.category_title ? `${entity.category_title} - ` : '';
-    const stat = entity.status_title ? `${entity.status_title} - ` : '';
-    return `${entity.id} - ${cat}${stat}${entity.title}`;
-  };
-  // useid data attribute is used in admin panel to grab the userid from input
-  if (el.dataset.target === 'users') {
-    transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
-  }
-  if (el.dataset.target === 'compounds') {
-    transformer = compound => `${compound.id} - ${compound.name} ${compound.cas_number ? ` (CAS: ${compound.cas_number})` : ''}`;
-  }
-
-  // use autocomplete jquery-ui plugin
-  $(el).autocomplete({
-    // this option is necessary or the autocomplete box will get lost under the permissions modal
-    appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
-    source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
-      const term = (request.term || '').trim();
-      // for East/Southeast Asian terms, we allow search with 1 grapheme
-      const isShortScript = hasEastSEAsian(term);
-      const minChars = isShortScript ? 1 : 3;
-      if (countGraphemes(term) < minChars) {
-        const msg = isShortScript ? [] : [i18next.t('type-3-chars')];
-        response(msg);
-        return;
-        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
-      }
-      const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
-        ? escapeExtendedQuery(term)
-        : term;
-
-      const params = new URLSearchParams();
-      params.set('q', queryTerm);
-
-      // allow filtering users within a specific team
-      if (el.dataset.team) {
-        const teamId = document.getElementById(el.dataset.team) as HTMLInputElement | HTMLSelectElement;
-        if (teamId?.value) {
-          params.set('team', teamId.value);
-        }
-      }
-      ApiC.getJson(`${el.dataset.target}/?${params.toString()}`).then(json => {
-        if (!Array.isArray(json) || json.length === 0) {
-          response([i18next.t('not-found')]);
-          return;
-        }
-        response(json.map(entry => transformer(entry)));
-      });
-    },
-  });
-});
+initAutocompletes(container);
 
 on('query', (el: HTMLElement) => {
   const url = new URL(window.location.href);

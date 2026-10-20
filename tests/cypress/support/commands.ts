@@ -110,8 +110,8 @@ Cypress.Commands.add('addTextMetadataField', (fieldName: string) => {
 });
 Cypress.Commands.add('addUserMetadataField', (fieldName: string, username = 'Titi') => {
   cy.addMetadataField(fieldName, 'users');
-  cy.get(`[data-field="${fieldName}"][data-target="users"]`).wait(500).type(`${username}{enter}`);
-  cy.get('ul.ui-autocomplete').should('be.visible').contains('div.ui-menu-item-wrapper', username).click();
+  cy.get(`[data-field="${fieldName}"][data-target="users"]`).type(username);
+  cy.get('.elab-autocomplete:visible').contains('[role="option"]', username).click();
   cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
 });
 Cypress.Commands.add('removeMetadataField', () => {

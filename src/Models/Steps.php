@@ -160,15 +160,19 @@ final class Steps extends AbstractRest
         return $this->Db->fetch($req);
     }
 
-    // Copy Steps from one entity to another
-    public function duplicate(AbstractEntity $targetEntity, int $id, int $newId): void
+    /**
+     * Copy Steps from one entity to another
+     *
+     * @return array<int, int> map of source step id to new step id
+     */
+    public function duplicate(AbstractEntity $targetEntity, int $id, int $newId): array
     {
         $sourceTable = $this->Entity->entityType->value;
         $targetTable = $targetEntity->entityType->value;
         // Copy groups first because copied steps must reference the new group ids,
         // not the ids belonging to the source entity
         $groupMap = new StepGroups($this->Entity)->duplicate($targetEntity, $id, $newId);
-        $stepsql = sprintf('SELECT body, ordering, is_immutable, group_id FROM %s_steps WHERE item_id = :id', $sourceTable);
+        $stepsql = sprintf('SELECT id, body, ordering, is_immutable, group_id FROM %s_steps WHERE item_id = :id', $sourceTable);
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($stepreq);
@@ -176,6 +180,7 @@ final class Steps extends AbstractRest
         $sql = sprintf('INSERT INTO %s_steps (item_id, body, ordering, is_immutable, group_id) VALUES (:item_id, :body, :ordering, :is_immutable, :group_id)', $targetTable);
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
+        $stepsMap = array();
         while ($step = $stepreq->fetch()) {
             $groupId = $step['group_id'] === null ? null : ($groupMap[(int) $step['group_id']] ?? null);
             $req->bindParam(':body', $step['body']);
@@ -183,7 +188,9 @@ final class Steps extends AbstractRest
             $req->bindParam(':is_immutable', $step['is_immutable'], PDO::PARAM_INT);
             $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
             $this->Db->execute($req);
+            $stepsMap[(int) $step['id']] = $this->Db->lastInsertId();
         }
+        return $stepsMap;
     }
 
     /**
@@ -352,12 +359,24 @@ final class Steps extends AbstractRest
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+        $res = $this->Db->execute($req);
+
+        if ($params->getColumn() === 'deadline') {
+            // Use the stored deadline so the notification has the same datetime format.
+            $step = $this->readOne();
+            if ($step['deadline'] === null) {
+                $this->destroyNotif();
+            } elseif ((int) $step['deadline_notif'] === 1) {
+                $this->getStepDeadline($step['deadline'])->updateDeadline();
+            }
+        }
+
+        return $res;
     }
 
     private function create(string $body, ?int $groupId = null): int
     {
-        $body = Filter::title($body);
+        $body = Filter::step($body);
         $this->assertGroupBelongsToEntity($groupId);
         $ordering = $this->getNextOrdering($groupId);
 

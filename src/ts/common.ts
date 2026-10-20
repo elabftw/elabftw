@@ -1732,7 +1732,7 @@ on('toggle-body', (el: HTMLElement) => {
   });
 });
 
-on('autocomplete', (el: HTMLElement) => {
+function initAutocomplete(el: HTMLElement): void {
   if (!(el instanceof HTMLInputElement) || Autocomplete.get(el)) return;
   // depending on the type of results, we will want different attributes and formatting
   let transformer = entity => {
@@ -1781,6 +1781,18 @@ on('autocomplete', (el: HTMLElement) => {
       return json.map(entry => transformer(entry));
     },
   });
+}
+
+on('autocomplete', initAutocomplete);
+
+// Be ready before the first keystroke, including when a modal focuses the field.
+document.querySelectorAll<HTMLInputElement>('input[data-action="autocomplete"]').forEach(initAutocomplete);
+// Fragment reloads and metadata editors also insert inputs after page load.
+container.addEventListener('focusin', event => {
+  const input = event.target;
+  if (input instanceof HTMLInputElement && input.dataset.action === 'autocomplete') {
+    initAutocomplete(input);
+  }
 });
 
 on('query', (el: HTMLElement) => {

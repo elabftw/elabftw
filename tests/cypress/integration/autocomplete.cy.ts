@@ -149,3 +149,62 @@ describe('Autocomplete', () => {
       .should('not.have.attr', 'role').should('not.have.attr', 'aria-controls');
   });
 });
+
+describe('Autocomplete initialization', () => {
+  beforeEach(() => {
+    cy.login();
+    cy.intercept({ method: 'GET', pathname: '/api/v2/users/', query: { q: 'Cypress' } }, {
+      body: [{ userid: 42, fullname: 'Cypress Collaborator', email: 'collaborator@example.com' }],
+    }).as('searchUsers');
+    cy.request('POST', '/api/v2/experiments', { title: `Cypress autocomplete ${Date.now()}` }).then(response => {
+      cy.extractIdFromLocation(response).then(id => cy.visit(`/experiments.php?mode=edit&id=${id}`));
+    });
+  });
+
+  const openRequestAction = () => {
+    cy.get('[data-action="toggle-modal"][data-target="requestActionModal"]').click();
+    cy.focused().should('have.id', 'requestActionUserSelect');
+  };
+
+  const selectCollaborator = () => {
+    // Keep the modal's autofocus: clicking this input would hide the regression.
+    cy.focused().should('have.id', 'requestActionUserSelect').clear().type('Cypress');
+    cy.wait('@searchUsers').its('request.query.q').should('eq', 'Cypress');
+    cy.get('#requestActionModal .elab-autocomplete:visible').contains('[role="option"]', 'Cypress Collaborator').click();
+    cy.get('#requestActionUserSelect').should('have.value', '42 - Cypress Collaborator (collaborator@example.com)')
+      .should('have.focus').should('have.attr', 'aria-expanded', 'false');
+    cy.get('#autocompleteAnchorDiv_requestActionUserSelect .elab-autocomplete').should('have.length', 1);
+  };
+
+  it('Works on the first modal autofocus and after reopening it without clicking the field', () => {
+    cy.get('#requestActionUserSelect').should('have.attr', 'role', 'combobox').then($input => {
+      $input.on('click', cy.stub().as('collaboratorClick'));
+    });
+    openRequestAction();
+    selectCollaborator();
+    cy.get('#requestActionModal [data-dismiss="modal"]').last().click();
+    cy.get('#requestActionModal').should('not.be.visible');
+    openRequestAction();
+    selectCollaborator();
+    cy.get('@collaboratorClick').should('not.have.been.called');
+    cy.get('@searchUsers.all').should('have.length', 2);
+  });
+
+  it('Initializes a replacement input when it is focused without a click', () => {
+    openRequestAction();
+    cy.get('#requestActionUserSelect').then($input => {
+      const original = $input[0];
+      const replacement = original.ownerDocument.createElement('input');
+      replacement.type = 'text';
+      replacement.id = original.id;
+      replacement.className = original.className;
+      replacement.dataset.action = 'autocomplete';
+      replacement.dataset.target = 'users';
+      replacement.dataset.identifier = original.dataset.identifier;
+      original.replaceWith(replacement);
+      replacement.focus();
+    });
+    selectCollaborator();
+    cy.get('@searchUsers.all').should('have.length', 1);
+  });
+});

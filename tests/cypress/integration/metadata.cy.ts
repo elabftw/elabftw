@@ -217,6 +217,7 @@ describe('Metadata Extra fields', () => {
     cy.get('#newFieldEmptyValueCheckbox').check();
     cy.get('[data-action="save-new-field"]').click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
-    cy.get(`#metadataDiv select[data-field="${fieldName}"]`).should('have.value', '');
+    // no option selected: jQuery val() gives null, so check the DOM property
+    cy.get(`#metadataDiv select[data-field="${fieldName}"]`).should('have.prop', 'value', '');
   });
 });

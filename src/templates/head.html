@@ -224,10 +224,32 @@
               </div>
             </div>
             {% if App.Users.isAdmin %}
-              <a class='nav-item nav-link {{ scriptName == 'admin.php' ? 'active' }}' href='admin.php'><i class='fas fa-user-gear fa-fw'></i><span class='nav-label'>{{ 'Admin panel'|trans }}</span></a>
+              <div class='nav-item dropdown'>
+                <a id='navAdminDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName == 'admin.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                  <i class='fas fa-user-gear fa-fw'></i><span class='nav-label'>{{ 'Admin panel'|trans }}</span>
+                </a>
+                <div class='dropdown-menu'>
+                  {% set adminTabs = ['Team'|trans, 'User Groups'|trans, 'Users'|trans, 'Export'|trans, 'Tag manager'|trans, 'Batch actions'|trans] %}
+                  {% for tabLabel in adminTabs %}
+                    {% set isActive = scriptName == 'admin.php' and App.Request.query.get('tab')|default(1) == loop.index %}
+                    <a class='dropdown-item {{ isActive ? 'active' }}' href='admin.php?tab={{ loop.index }}' {{ isActive ? 'aria-current="page"' }}>{{ tabLabel }}</a>
+                  {% endfor %}
+                </div>
+              </div>
             {% endif %}
             {% if App.Users.userData.is_sysadmin %}
-              <a class='nav-item nav-link {{ scriptName == 'sysconfig.php' ? 'active' }}' href='sysconfig.php'><i class='fas fa-gears fa-fw'></i><span class='nav-label'>{{ 'Sysadmin panel'|trans }}</span></a>
+              <div class='nav-item dropdown'>
+                <a id='navSysadminDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName == 'sysconfig.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                  <i class='fas fa-gears fa-fw'></i><span class='nav-label'>{{ 'Sysadmin panel'|trans }}</span>
+                </a>
+                <div class='dropdown-menu'>
+                  {% set sysadminTabs = ['Server'|trans, 'Teams'|trans, 'Users'|trans, 'Communication'|trans, 'Email'|trans, 'Security'|trans, 'Policies'|trans, 'Uploads'|trans, 'Timestamp'|trans, 'Local auth'|trans, 'SAML', 'LDAP', 'External auth'|trans, 'Audit Logs'|trans] %}
+                  {% for tabLabel in sysadminTabs %}
+                    {% set isActive = scriptName == 'sysconfig.php' and App.Request.query.get('tab')|default(1) == loop.index %}
+                    <a class='dropdown-item {{ isActive ? 'active' }}' href='sysconfig.php?tab={{ loop.index }}' {{ isActive ? 'aria-current="page"' }}>{{ tabLabel }}</a>
+                  {% endfor %}
+                </div>
+              </div>
             {% endif %}
             {% if not App.isAnonymous() %}
               <div class='navbar-side-bottom'>

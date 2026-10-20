@@ -1964,11 +1964,18 @@ input:user-invalid {
 
 #metadataDiv {
   textarea,
-  input {
+  input,
+  select {
     &:required:invalid {
       background-color: var(--mediumyellow);
       color: var(--chrome-bg);
     }
+  }
+
+  [data-purpose='radio-holder']:has(input:required:invalid) {
+    background-color: var(--mediumyellow);
+    border-radius: 4px;
+    padding: 4px 8px;
   }
 }
 

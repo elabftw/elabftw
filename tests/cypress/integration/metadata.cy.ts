@@ -137,4 +137,53 @@ describe('Metadata Extra fields', () => {
       });
     });
   });
+
+  it('Highlights empty required dropdown and radio fields', () => {
+    const metadata = JSON.stringify({
+      extra_fields: {
+        'Required radio': {
+          type: 'radio',
+          options: ['x', 'y'],
+          value: '',
+          required: true,
+        },
+        'Required dropdown': {
+          type: 'select',
+          options: ['x', 'y'],
+          value: '',
+          required: true,
+        },
+      },
+    });
+
+    cy.request({
+      method: 'POST',
+      url: '/api/v2/experiments',
+      body: { title: `Cypress required fields ${Date.now()}` },
+    }).then(createResponse => {
+      expect(createResponse.status).to.eq(201);
+      cy.extractIdFromLocation(createResponse).then(experimentId => {
+        cy.request({
+          method: 'PATCH',
+          url: `/api/v2/experiments/${experimentId}`,
+          body: { metadata },
+        }).its('status').should('eq', 200);
+
+        cy.visit(`/experiments.php?mode=edit&id=${experimentId}`);
+        const radios = '#metadataDiv input[type="radio"][data-field="Required radio"]';
+        const dropdown = '#metadataDiv select[data-field="Required dropdown"]';
+
+        // empty required fields are invalid, which the stylesheet highlights
+        cy.get(radios).should('have.length', 2).each(radio => {
+          cy.wrap(radio).should('have.attr', 'required');
+          cy.wrap(radio).should('match', ':invalid');
+        });
+        cy.get(dropdown).should('match', ':invalid');
+
+        // choosing an option makes the whole radio group valid
+        cy.get(`${radios}[value="x"]`).check();
+        cy.get(`${radios}:invalid`).should('have.length', 0);
+      });
+    });
+  });
 });

@@ -284,6 +284,9 @@ export class Metadata {
       // add a data-field attribute so we know what to update on change
       radioInput.dataset.field = name;
       radioInput.disabled = properties.readonly === true;
+      if (Object.prototype.hasOwnProperty.call(properties, 'required')) {
+        radioInput.required = true;
+      }
       radioInputs.push(radioInput);
     }
 

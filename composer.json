@@ -17,6 +17,7 @@
     "ext-openssl": "*",
     "ext-gd": "*",
     "ext-pdo": "*",
+    "ext-simplexml": "*",
     "ext-zip": "*",
     "defuse/php-encryption": "^2.4.0",
     "mpdf/mpdf": "^8.1.0",

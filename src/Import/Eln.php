@@ -173,7 +173,7 @@ class Eln extends AbstractZip
             $changes = $pending['changes'];
 
             foreach ($changes as $index => $change) {
-                if (in_array($change['target'], array('links', 'created'), true)) {
+                if (in_array($change['target'], array('links', 'created', 'body', 'bodyappend'), true)) {
                     $changes[$index]['content'] = strtr($change['content'], $linkReplacements);
                 }
             }
@@ -278,7 +278,7 @@ class Eln extends AbstractZip
                 continue;
             }
 
-            $newHref = sprintf('href="%s?mode=view&amp;id=%d"', $entity['entity_type']->toPage(), $entity['id']);
+            $newHref = sprintf('href="/%s?mode=view&amp;id=%d"', $entity['entity_type']->toPage(), $entity['id']);
             // Support absolute and relative source URLs
             foreach (array($url, $source['path'] . '?' . $source['query']) as $oldUrl) {
                 $replacements[sprintf('href="%s"', Tools::eLabHtmlspecialchars($oldUrl))] = $newHref;

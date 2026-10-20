@@ -15,6 +15,7 @@ namespace Elabftw\Import;
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUploadFromFs;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
@@ -108,6 +109,9 @@ class Eln extends AbstractZip
 
     private array $importedUploads = array();
 
+    /** @var list<array{changelog: Changelog, changes: array}> */
+    private array $changelogsToRestore = array();
+
     public function __construct(
         protected Users $requester,
         protected Users $targetUser,
@@ -161,6 +165,20 @@ class Eln extends AbstractZip
             $current++;
         }
 
+        // All imported entities now have their target IDs
+        $linkReplacements = $this->getChangelogLinkReplacements();
+
+        // Restore the original changelog before creating links
+        foreach ($this->changelogsToRestore as $pending) {
+            $changes = $pending['changes'];
+
+            foreach ($changes as $index => $change) {
+                if (in_array($change['target'], array('links', 'created'), true)) {
+                    $changes[$index]['content'] = strtr($change['content'], $linkReplacements);
+                }
+            }
+            $pending['changelog']->replaceAll($changes);
+        }
         // NOW CREATE THE LINKS
         // TODO avoid having 2 foreach loops...
         $result = array();
@@ -243,6 +261,30 @@ class Eln extends AbstractZip
         $this->logger->notice('Could not find entity type (genre), falling back to Resource');
         return EntityType::Items;
 
+    }
+
+    private function getChangelogLinkReplacements(): array
+    {
+        $replacements = array();
+        foreach ($this->insertedEntities as $entity) {
+            $dataset = $this->getNodeFromId($entity['item_@id']);
+            $url = $dataset['url'] ?? null;
+
+            if (!is_string($url)) {
+                continue;
+            }
+            $source = parse_url($url);
+            if (!isset($source['path'], $source['query'])) {
+                continue;
+            }
+
+            $newHref = sprintf('href="%s?mode=view&amp;id=%d"', $entity['entity_type']->toPage(), $entity['id']);
+            // Support absolute and relative source URLs
+            foreach (array($url, $source['path'] . '?' . $source['query']) as $oldUrl) {
+                $replacements[sprintf('href="%s"', Tools::eLabHtmlspecialchars($oldUrl))] = $newHref;
+            }
+        }
+        return $replacements;
     }
 
     private function grabIdFromUrl(string $url): ?int
@@ -593,9 +635,12 @@ class Eln extends AbstractZip
             default => null,
         };
 
-        // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
+        // Prepare the original changelog; restore it once all imported entity IDs are known
         if (!empty($dataset['subjectOf'])) {
-            new Changelog($this->Entity)->replaceAll($this->updateActionsToChangelog($dataset['subjectOf']));
+            $this->changelogsToRestore[] = array(
+                'changelog' => new Changelog($this->Entity),
+                'changes' => $this->updateActionsToChangelog($dataset['subjectOf']),
+            );
         }
     }
 

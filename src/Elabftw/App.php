@@ -47,6 +47,8 @@ use function putenv;
 use function setlocale;
 use function textdomain;
 use function array_merge;
+use function array_key_exists;
+use function array_key_first;
 use function bind_textdomain_codeset;
 use function sprintf;
 use function time;
@@ -166,7 +168,7 @@ final class App
                 array_merge(
                     array(
                         'App' => $this,
-                        'langsArr' => Language::getAllHuman(),
+                        'langsArr' => $this->getLanguages(),
                         'sessionExpiresAt' => $this->sessionExpiresAt,
                     ),
                     $variables,
@@ -188,12 +190,30 @@ final class App
         if ($this->Users instanceof AuthenticatedUser) {
             return $this->Users->userData['lang'];
         }
-        // we can also set it in Session (even when anon)
-        if ($this->Session->has('lang')) {
+        $languages = $this->getLanguages();
+        // Recheck session values in case the policy has changed since they were saved.
+        if ($this->Session->has('lang') && array_key_exists($this->Session->get('lang'), $languages)) {
             return $this->Session->get('lang');
         }
-        // default lang is the server configured one
-        return $this->Config->configArr['lang'];
+        $default = $this->Config->configArr['lang'];
+        if (array_key_exists($default, $languages)) {
+            return $default;
+        }
+        return array_key_first($languages) ?? Language::EnglishGB->value;
+    }
+
+    public function getLanguages(): array
+    {
+        return $this->Users instanceof AuthenticatedUser
+            ? Language::getAllHuman()
+            : $this->Config->getAllowedUnauthenticatedLanguages();
+    }
+
+    public function setLang(Language $language): void
+    {
+        if (array_key_exists($language->value, $this->getLanguages())) {
+            $this->Session->set('lang', $language->value);
+        }
     }
 
     /** @psalm-suppress PossiblyUnusedMethod this method is used in twig templates */

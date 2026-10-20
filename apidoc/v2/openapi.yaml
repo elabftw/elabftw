@@ -1232,6 +1232,11 @@ components:
             status_title:
               type: string
               nullable: true
+            step_groups:
+              type: array
+              description: Named step groups, ordered by their ordering value and ID. The implicit Default group is not included.
+              items:
+                $ref: '#/components/schemas/step_group'
             steps:
               type: array
               items:
@@ -1254,6 +1259,11 @@ components:
               nullable: true
             type:
               type: string
+            upload_groups:
+              type: array
+              description: Named attachment groups, ordered by their ordering value and ID. The implicit Default group is not included.
+              items:
+                $ref: '#/components/schemas/upload_group'
             uploads:
               type: array
               items:
@@ -2024,8 +2034,13 @@ components:
           type: integer
         body:
           type: string
+        group_id:
+          type: integer
+          nullable: true
+          description: ID of a step group belonging to this entity. Null means Default group.
         ordering:
           type: integer
+          description: Position within the step's group.
         finished:
           type: integer
         finished_time:
@@ -2038,6 +2053,66 @@ components:
           description: Only editable via templates. Immutability persists on derived experiments or resources.
           enum: [ 0, 1 ]
           type: integer
+    step_group:
+      type: object
+      properties:
+        id:
+          type: integer
+        entity_id:
+          type: integer
+          description: ID of the entity containing this group.
+        title:
+          type: string
+        ordering:
+          type: integer
+          description: Position among the entity's named step groups.
+    group_title:
+      type: object
+      required: ['title']
+      properties:
+        title:
+          type: string
+          description: The name of the group.
+          example: Sample preparation
+    group_ordering:
+      type: object
+      required: ['ordering']
+      properties:
+        ordering:
+          type: array
+          description: Group IDs in the desired display order. All IDs must belong to this entity. Omitted groups keep their existing ordering values.
+          items:
+            type: integer
+          example: [3, 1, 2]
+    grouped_steps_ordering:
+      type: object
+      required: ['grouped_ordering']
+      properties:
+        grouped_ordering:
+          type: array
+          description: |
+            Assign and reorder steps within groups. Named groups must belong to this entity;
+            use null for Default group. Each step ID must belong to this entity and may appear
+            only once in the request. Omitted steps are unchanged. Immutable steps in experiments
+            and resources cannot be moved or reordered. Group order is updated separately through step_groups.
+          items:
+            type: object
+            required: ['step_ids']
+            properties:
+              group_id:
+                type: integer
+                nullable: true
+                default: null
+              step_ids:
+                type: array
+                description: Step IDs in their desired order within this group.
+                items:
+                  type: integer
+          example:
+            - group_id: null
+              step_ids: [1]
+            - group_id: 2
+              step_ids: [4, 3]
     # STORAGE UNIT
     storage_unit:
       type: object
@@ -2199,6 +2274,14 @@ components:
           type: string
         item_id:
           type: integer
+        group_id:
+          type: integer
+          nullable: true
+          description: ID of an attachment group belonging to this entity. Null means Default group.
+        ordering:
+          type: integer
+          nullable: true
+          description: Position within the attachment's group. Can be null for uploads created before grouping was introduced.
         userid:
           type: integer
         type:
@@ -2219,6 +2302,54 @@ components:
           type: integer
         fullname:
           type: string
+
+    upload_group:
+      type: object
+      properties:
+        id:
+          type: integer
+        entity_id:
+          type: integer
+          description: ID of the entity containing this group.
+        entity_type:
+          type: integer
+          enum: [1, 2, 3, 4]
+          description: 'Entity type: 1 (Experiment), 2 (Resource), 3 (Experiment template), 4 (Resource template).'
+        title:
+          type: string
+        ordering:
+          type: integer
+          description: Position among the entity's named attachment groups.
+    grouped_uploads_ordering:
+      type: object
+      required: ['grouped_ordering']
+      properties:
+        grouped_ordering:
+          type: array
+          description: |
+            Assign and reorder attachments within groups. Named groups must belong to this entity;
+            use null for Default group. Each upload ID must belong to this entity, refer to a normal
+            or archived upload, and appear only once in the request. Omitted uploads are unchanged.
+            Group order is updated separately through upload_groups. Use this collection-level
+            operation to move attachments; group_id cannot be changed through the single-upload PATCH endpoint.
+          items:
+            type: object
+            required: ['upload_ids']
+            properties:
+              group_id:
+                type: integer
+                nullable: true
+                default: null
+              upload_ids:
+                type: array
+                description: Upload IDs in their desired order within this group.
+                items:
+                  type: integer
+          example:
+            - group_id: null
+              upload_ids: [1]
+            - group_id: 2
+              upload_ids: [4, 3]
 
     # ROR
     ror:
@@ -7409,6 +7540,181 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # STEP GROUPS
+  /{entity_type}/{id}/step_groups:
+    summary: Manage step groups for an entity.
+    description: |
+      Available for experiments, resources and their templates. Default group is implicit:
+      it is not returned by this endpoint and cannot be created, renamed or deleted.
+      Entries with a null group_id belong to Default group.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Step groups']
+      summary: Read all named step groups.
+      operationId: read-step-groups
+      responses:
+        '200':
+          description: Groups ordered by their ordering value, then ID.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/step_group'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: ['Step groups']
+      summary: Create a step group.
+      description: The new group is appended after the existing named groups. Requires write access to the entity.
+      operationId: post-step-group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/group_title'
+      responses:
+        '201':
+          description: The group has been created.
+          headers:
+            location:
+              description: A URL to the group that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Step groups']
+      summary: Reorder named step groups.
+      description: Requires write access to the entity. Default group always appears first and is not included in ordering.
+      operationId: patch-step-groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/group_ordering'
+      responses:
+        '200':
+          description: The updated list of groups.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/step_group'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /{entity_type}/{id}/step_groups/{subid}:
+    summary: Manage a step group of an entity.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the group
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Step groups']
+      summary: Read a step group.
+      operationId: read-step-group
+      responses:
+        '200':
+          description: The group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/step_group'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Step groups']
+      summary: Rename a step group.
+      description: Requires write access to the entity.
+      operationId: patch-step-group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/group_title'
+      responses:
+        '200':
+          description: The updated group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/step_group'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Step groups']
+      summary: Delete a step group.
+      description: Requires write access to the entity. Its steps are preserved and moved to Default group with group_id set to null.
+      operationId: delete-step-group
+      responses:
+        '204':
+          description: The group was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # STEPS
   /{entity_type}/{id}/steps:
     summary: Show steps for this entity.
@@ -7429,6 +7735,7 @@ paths:
     get:
       tags: ['Steps']
       summary: Read all steps of that entity.
+      description: Default group first, followed by named groups in group order; steps are ordered within each group.
       operationId: read-steps
       responses:
         '200':
@@ -7441,6 +7748,34 @@ paths:
                   $ref: '#/components/schemas/step'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Steps']
+      summary: Move and reorder steps within groups.
+      description: Requires write access to the entity. Does not change the order of the named groups.
+      operationId: patch-steps
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/grouped_steps_ordering'
+      responses:
+        '200':
+          description: The updated list of steps.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/step'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
     post:
@@ -7458,6 +7793,11 @@ paths:
                   type: string
                   description: |
                     The text content of the step.
+                group_id:
+                  type: integer
+                  nullable: true
+                  default: null
+                  description: ID of a step group belonging to this entity. Omit or use null to create the step in Default group.
       responses:
         '201':
           description: The step has been created.
@@ -7505,7 +7845,6 @@ paths:
           application/json:
             schema:
               type: object
-              required: ['action']
               properties:
                 action:
                   type: string
@@ -7516,6 +7855,10 @@ paths:
                 body:
                   type: string
                   description: The text content of the step.
+                group_id:
+                  type: integer
+                  nullable: true
+                  description: Move this step to a group belonging to the entity, or use null for Default group. Appends it at the end of the target group. Omit action when updating this field. Immutable steps in experiments and resources cannot be moved.
                 finished:
                   type: integer
             examples:
@@ -7527,6 +7870,14 @@ paths:
                 summary: Edit the body of a step
                 value:
                   body: Put on the safety gloves first.
+              third:
+                summary: Move a step into a named group
+                value:
+                  group_id: 2
+              fourth:
+                summary: Move a step back to Default group
+                value:
+                  group_id: null
       responses:
         '200':
           description: The updated step.
@@ -7707,6 +8058,181 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # UPLOAD GROUPS
+  /{entity_type}/{id}/upload_groups:
+    summary: Manage attachment groups for an entity.
+    description: |
+      Available for experiments, resources and their templates. Default group is implicit:
+      it is not returned by this endpoint and cannot be created, renamed or deleted.
+      Entries with a null group_id belong to Default group.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Upload groups']
+      summary: Read all named attachment groups.
+      operationId: read-upload-groups
+      responses:
+        '200':
+          description: Groups ordered by their ordering value, then ID.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/upload_group'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: ['Upload groups']
+      summary: Create a attachment group.
+      description: The new group is appended after the existing named groups. Requires write access to the entity.
+      operationId: post-upload-group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/group_title'
+      responses:
+        '201':
+          description: The group has been created.
+          headers:
+            location:
+              description: A URL to the group that was created.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Upload groups']
+      summary: Reorder named attachment groups.
+      description: Requires write access to the entity. Default group always appears first and is not included in ordering.
+      operationId: patch-upload-groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/group_ordering'
+      responses:
+        '200':
+          description: The updated list of groups.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/upload_group'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /{entity_type}/{id}/upload_groups/{subid}:
+    summary: Manage a attachment group of an entity.
+    parameters:
+      - name: entity_type
+        in: path
+        description: Entity type
+        required: true
+        schema:
+          type: string
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
+      - name: id
+        in: path
+        description: ID of the entity
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the group
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Upload groups']
+      summary: Read a attachment group.
+      operationId: read-upload-group
+      responses:
+        '200':
+          description: The group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/upload_group'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Upload groups']
+      summary: Rename a attachment group.
+      description: Requires write access to the entity.
+      operationId: patch-upload-group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/group_title'
+      responses:
+        '200':
+          description: The updated group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/upload_group'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Upload groups']
+      summary: Delete a attachment group.
+      description: Requires write access to the entity. Its attachments are preserved and moved to Default group with group_id set to null.
+      operationId: delete-upload-group
+      responses:
+        '204':
+          description: The group was deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # UPLOADS
   /{entity_type}/{id}/uploads:
     parameters:
@@ -7716,7 +8242,7 @@ paths:
         required: true
         schema:
           type: string
-          enum: ['experiments', 'items']
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
       - name: id
         in: path
         description: ID of the entity
@@ -7740,6 +8266,7 @@ paths:
     get:
       tags: ['Uploads']
       summary: Read attached files of that entity.
+      description: When named groups exist, Default group comes first, followed by named groups in group order and uploads in their within-group order. Otherwise uploads are newest first.
       operationId: read-uploads
       responses:
         '200':
@@ -7752,6 +8279,34 @@ paths:
                   $ref: '#/components/schemas/upload'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: ['Uploads']
+      summary: Move and reorder attachments within groups.
+      description: Requires write access to the entity. Does not change the order of the named groups.
+      operationId: patch-uploads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/grouped_uploads_ordering'
+      responses:
+        '200':
+          description: The updated list of attachments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/upload'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
     post:
@@ -7773,6 +8328,32 @@ paths:
                 comment:
                   type: string
                   description: Optional file comment.
+                group_id:
+                  type: integer
+                  nullable: true
+                  description: ID of an attachment group belonging to this entity. Omit or leave empty to upload into Default group.
+          application/json:
+            schema:
+              type: object
+              required: ['action', 'real_name', 'file_type', 'content']
+              properties:
+                action:
+                  type: string
+                  enum: ['create_from_string']
+                real_name:
+                  type: string
+                  description: Name of the new attachment.
+                file_type:
+                  type: string
+                  enum: ['chemjson', 'json', 'mol', 'png', 'rxn', 'xlsx']
+                content:
+                  type: string
+                  description: File contents. For PNG files, use a base64 data URL.
+                group_id:
+                  type: integer
+                  nullable: true
+                  default: null
+                  description: ID of an attachment group belonging to this entity. Omit or use null for Default group.
       responses:
         '201':
           description: The file has been uploaded.
@@ -7795,7 +8376,7 @@ paths:
         required: true
         schema:
           type: string
-          enum: ['experiments', 'items']
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
       - name: id
         in: path
         description: ID of the entity
@@ -7844,6 +8425,7 @@ paths:
     post:
       tags: ['Uploads']
       summary: Replace an existing uploaded file. The existing file will be archived and the new one will be added.
+      description: The replacement keeps the original attachment's group.
       operationId: post-upload-replace
       requestBody:
         description: Parameters for replacing an upload.

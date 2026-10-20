@@ -13,6 +13,7 @@ namespace Elabftw\Services;
 
 use DateTimeImmutable;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Traits\TestsUtilsTrait;
 
 use function str_repeat;
 use function hash;
@@ -20,6 +21,8 @@ use function uniqid;
 
 class FilterTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     public function testFormatLocalDate(): void
     {
         $input = '2024-10-16 17:12:47';
@@ -45,6 +48,21 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('Monday, July 14, 2025', Filter::formatLocalDate(new DateTimeImmutable('2025-07-14')));
     }
 
+    public function testToBinary(): void
+    {
+        $this->assertSame(0, Filter::toBinary('off'));
+        $this->assertSame(1, Filter::toBinary('yep'));
+    }
+
+    public function testTruncateString(): void
+    {
+        $this->assertSame(str_repeat('🧪', 12), Filter::truncateStringToChars(str_repeat('🧪', 13), 12));
+        $this->assertSame('', Filter::truncateString(''));
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Error reducing string to size 12!');
+        Filter::truncateStringToChars("\xFF", 12);
+    }
+
     public function testTitle(): void
     {
         $this->assertEquals('My super title', Filter::title('My super title'));
@@ -54,6 +72,50 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('no whitespace around', Filter::title(' no whitespace around '));
         // test a too long string
         $this->assertEquals(str_repeat('A', 255), Filter::title(str_repeat('A', 260)));
+    }
+
+    public function testTitleLimitsCodePointsWithoutSplittingGraphemes(): void
+    {
+        $this->assertSame(str_repeat('🧪', 255), Filter::title(str_repeat('🧪', 256)));
+        $this->assertSame(str_repeat('👩🏽‍🔬', 63), Filter::title(str_repeat('👩🏽‍🔬', 100)));
+    }
+
+    public function testStepPreservesLongBodies(): void
+    {
+        $this->assertSame(str_repeat("か\u{3099}", 1000), Filter::step(str_repeat("か\u{3099}", 1000)));
+        $this->assertSame(str_repeat('👩🏽‍🔬', 1000), Filter::step(str_repeat('👩🏽‍🔬', 1000)));
+        $this->assertSame(str_repeat('A', 1000), Filter::step(str_repeat('A', 1000)));
+        $this->assertSame('Untitled', Filter::step(' '));
+        $this->assertSame('First Second Third Fourth', Filter::step(" First\r\nSecond\nThird\rFourth "));
+    }
+
+    public function testStepAcceptsTextByteLimit(): void
+    {
+        $ascii = str_repeat('A', 65535);
+        $unicode = str_repeat('🧪', 16383) . 'end';
+        $this->assertSame($ascii, Filter::step($ascii));
+        $this->assertSame($unicode, Filter::step($unicode));
+    }
+
+    public function testStepNormalizesBeforeCheckingSize(): void
+    {
+        $body = str_repeat('A', 65535);
+        $this->assertSame($body, Filter::step(" \r\n" . $body . "\r\n "));
+        $this->assertSame('Head ' . str_repeat('A', 65530), Filter::step("Head\r\n" . str_repeat('A', 65530)));
+    }
+
+    public function testStepRejectsAsciiBodyOverTextByteLimit(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Step is too long! (maximum: 65535 bytes)');
+        Filter::step(str_repeat('A', 65536));
+    }
+
+    public function testStepRejectsUnicodeBodyOverTextByteLimit(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Step is too long! (maximum: 65535 bytes)');
+        Filter::step(str_repeat('🧪', 16384));
     }
 
     public function testBody(): void
@@ -115,5 +177,63 @@ class FilterTest extends \PHPUnit\Framework\TestCase
     {
         $input = '<details class="mce-accordion"><summary>Summary</summary><p>One</p><p>Two</p></details>';
         $this->assertSame($input, Filter::body($input));
+    }
+
+    public function testToFsTitleSanitizesCategory(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Entity->entityData['category_title'] = 'Category 07/10/2026';
+        $this->assertStringStartsWith('Category-07-10-2026 - ', $Entity->toFsTitle());
+    }
+
+    public function testToAsciiSlug(): void
+    {
+        $this->assertEquals('test-export-07-10-2026', Filter::toAsciiSlug('test export 07/10/2026'));
+        $this->assertEquals('From-07-10-2026-to-10-10-2026', Filter::toAsciiSlug('From 07/10/2026 to 10/10/2026'));
+    }
+
+    public function testForFilesystemTitlePreservesUnicode(): void
+    {
+        $this->assertSame('研究---Study', Filter::forFilesystemTitle('研究 / Study'));
+        $this->assertSame('한국어-제목---中文标题', Filter::forFilesystemTitle('한국어 제목 / 中文标题'));
+        $this->assertSame('Étude-expérimentale', Filter::forFilesystemTitle('Étude expérimentale'));
+    }
+
+    public function testForFilesystemTitlePreservesEmojis(): void
+    {
+        $this->assertSame('Analyse-🧪', Filter::forFilesystemTitle('Analyse 🧪'));
+        $this->assertSame('Chercheuse-👩🏽‍🔬', Filter::forFilesystemTitle('Chercheuse 👩🏽‍🔬'));
+        $this->assertSame('🧪', Filter::forFilesystemTitle('🧪'));
+    }
+
+    public function testForFilesystemTitleLimitsBytesAfterNormalization(): void
+    {
+        // U+0958 normalizes to U+0915 + U+093C, growing from three to six bytes.
+        $this->assertSame(str_repeat("\u{0915}\u{093C}", 16), Filter::forFilesystemTitle(str_repeat("\u{0958}", 33)));
+        // Normalization can also shrink a title that fits only after composition.
+        $this->assertSame(str_repeat('é', 50), Filter::forFilesystemTitle(str_repeat("e\u{0301}", 50)));
+    }
+
+    public function testForFilesystemTitleTruncatesAtGraphemeBoundaries(): void
+    {
+        $this->assertSame(str_repeat('A', 100), Filter::forFilesystemTitle(str_repeat('A', 101)));
+        $this->assertSame(str_repeat('🧪', 25), Filter::forFilesystemTitle(str_repeat('🧪', 26)));
+        $this->assertSame(str_repeat('👩🏽‍🔬', 6), Filter::forFilesystemTitle(str_repeat('👩🏽‍🔬', 7)));
+    }
+
+    public function testForFilesystemTitleHandlesEmptyResult(): void
+    {
+        $this->assertSame('Untitled', Filter::forFilesystemTitle('///'));
+        $this->assertSame('Untitled', Filter::forFilesystemTitle('/,.\\'));
+        $this->assertSame('Untitled', Filter::forFilesystemTitle(str_repeat('.', 100) . 'Study'));
+        $this->assertSame('Untitled', Filter::forFilesystemTitle('x' . str_repeat("\u{0301}", 100)));
+        $this->assertSame('Study', Filter::forFilesystemTitle(str_repeat('/', 100) . 'Study'));
+    }
+
+    public function testFirstLetter(): void
+    {
+        $this->assertSame('y', Filter::firstLetter('yo'));
+        $this->expectException(ImproperActionException::class);
+        Filter::firstLetter('');
     }
 }

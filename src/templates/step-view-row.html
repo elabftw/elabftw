@@ -1,0 +1,23 @@
+<div id='step_view_{{ step.id }}' class='countable mb-2 rounded p-1 {{ step.finished ? 'finished' }} {{ App.Request.query.get('highlightstep') == step.id ? 'highlighted' }}'>
+  <input aria-label='{{ 'Toggle completion'|trans }}' type='checkbox' {{ step.finished ? 'checked' }} {{ entityPage == 'templates' or entityPage == 'resources-templates' ? 'disabled' }} data-id='{{ Entity.id }}' autocomplete='off' data-stepid='{{ step.id }}' class='stepbox mr-2' id='stepCheckbox_{{ step.id }}' />
+  {# make the step a link to its position in the body if it's in there #}
+  {% if showStepInBody and Entity.entityData.body_html matches ('/href="[^"]*highlightstep=' ~ step.id ~ '#/') %}
+    <a href='#body_view'
+       data-action='scroll-to-step-in-body'
+       data-stepid='{{ step.id }}'
+       title='{{ 'Show in main text'|trans }}'>{{ step.body }}</a>
+  {% else %}
+    {{ step.body }}
+  {% endif %}
+
+  {% if step.finished %}
+    <span class='mr-2 text-muted'>
+      {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
+    </span>
+  {% endif %}
+  {% if step.deadline %}
+    <span class='mr-2 text-muted'>
+      {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
+    </span>
+  {% endif %}
+</div>

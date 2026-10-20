@@ -27,8 +27,13 @@ describe('Experiments', () => {
     cy.get('div.tags').contains('some tag').should('not.exist');
 
     // create step
-    cy.get('#addStepInput').type('some step');
-    cy.get('[data-action="create-step"').click();
+    cy.get('#stepsDiv .add-step-toggle').first().click();
+    cy.get('#stepsDiv .add-step-form:not([hidden])').within(() => {
+      cy.get('input[name="step"]')
+        .should('be.visible')
+        .type('some step');
+      cy.get('[data-action="create-step"]').click();
+    });
     cy.get('.step-static').should('contain', 'some step');
 
     // complete step
@@ -40,6 +45,7 @@ describe('Experiments', () => {
     // delete step
     cy.get('[data-action="destroy-step"]').click();
     cy.contains('some step').should('not.exist');
+    cy.get('#stepsDiv').should('not.contain.text', 'Default group');
   };
 
   const entityComment = () => {
@@ -153,6 +159,27 @@ describe('Experiments', () => {
       entityDestroy();
       entityRestore('database.php');
       entityList('database.php');
+    });
+  });
+
+  it('Jump from a step to its link in the main text', () => {
+    cy.request('POST', '/api/v2/experiments', { title: `Cypress step link ${Date.now()}` }).then(resp => {
+      cy.extractIdFromLocation(resp).then(id => {
+        // one step inserted in the main text, one not
+        cy.request('POST', `/api/v2/experiments/${id}/steps`, { body: 'linked step' }).then(stepResp => {
+          cy.extractIdFromLocation(stepResp).then(stepId => {
+            cy.request('POST', `/api/v2/experiments/${id}/steps`, { body: 'other step' });
+            cy.request('PATCH', `/api/v2/experiments/${id}`, {
+              body: `<p>Intro</p><p><a href="?mode=view&amp;id=${id}&amp;highlightstep=${stepId}#step_view_${stepId}">linked step</a></p>`,
+            });
+            cy.visit(`/experiments.php?mode=view&id=${id}`);
+            cy.get('[data-action="scroll-to-step-in-body"]').should('have.length', 1)
+              .and('have.attr', 'data-stepid', String(stepId))
+              .click();
+            cy.get('#body_view a.highlighted').should('contain', 'linked step');
+          });
+        });
+      });
     });
   });
 

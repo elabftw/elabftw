@@ -53,6 +53,7 @@ use Elabftw\Make\MakeDeltablotTimestamp;
 use Elabftw\Make\MakeDfnTimestamp;
 use Elabftw\Make\MakeDgnTimestamp;
 use Elabftw\Make\MakeDigicertTimestamp;
+use Elabftw\Make\MakeDtrustTimestamp;
 use Elabftw\Make\MakeEvidencyTimestamp;
 use Elabftw\Make\MakeEvidencyTimestampDev;
 use Elabftw\Make\MakeFullJson;
@@ -704,10 +705,12 @@ abstract class AbstractEntity extends AbstractRest
         }
         $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = new Steps($this)->readAll();
+        $this->entityData['step_groups'] = new StepGroups($this)->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
+        $this->entityData['upload_groups'] = new UploadGroups($this)->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['changelog'] = new Changelog($this)->readAll();
         $this->entityData['comments'] = new Comments($this)->readAll();
@@ -851,14 +854,13 @@ abstract class AbstractEntity extends AbstractRest
     {
         $prefix = '';
         if ($this->entityData['category_title']) {
-            $prefix = Filter::forFilesystem($this->entityData['category_title']) . ' - ';
+            $prefix = Filter::forFilesystemTitle($this->entityData['category_title']) . ' - ';
         }
 
         return sprintf(
             '%s%s - %s',
             $prefix,
-            // prevent a zip name with too much characters from the title, see #3966
-            mb_substr(Filter::forFilesystem($this->entityData['title']), 0, 100),
+            Filter::forFilesystemTitle($this->entityData['title']),
             Tools::getShortElabid($this->entityData['elabid'] ?? ''),
         );
     }
@@ -1134,7 +1136,21 @@ abstract class AbstractEntity extends AbstractRest
         LinksFactory::getExperimentsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getCompoundsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getContainersLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
-        new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
+        $stepsMap = new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
+        // step links in the body point at the source entry and its steps: point them at the copy
+        $body = (string) $fresh->entityData['body'];
+        if ($stepsMap !== array() && str_contains($body, 'highlightstep')) {
+            $newBody = $this->rewriteStepLinks($body, $sourceId, $newId, $stepsMap);
+            if ($newBody !== $body) {
+                $sql = sprintf('UPDATE %s SET body = :body WHERE id = :id', $this->entityType->value);
+                $req = $this->Db->prepare($sql);
+                $req->bindValue(':body', $newBody);
+                $req->bindValue(':id', $newId, PDO::PARAM_INT);
+                $this->Db->execute($req);
+                // Uploads->duplicate() below works on this body, keep it in sync
+                $fresh->entityData['body'] = $newBody;
+            }
+        }
 
         $freshTags = new Tags($fresh);
         foreach (array_column(new Tags($sourceEntity)->readAll(), 'tag') as $tag) {
@@ -1351,6 +1367,7 @@ abstract class AbstractEntity extends AbstractRest
             'dgn' => new MakeDgnTimestamp($this->Users, $this, $config, $dataFormat),
             'universign' => Env::asBool('DEV_MODE') ? new MakeUniversignTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeUniversignTimestamp($this->Users, $this, $config, $dataFormat),
             'digicert' => new MakeDigicertTimestamp($this->Users, $this, $config, $dataFormat),
+            'dtrust' => new MakeDtrustTimestamp($this->Users, $this, $config, $dataFormat),
             'sectigo' => new MakeSectigoTimestamp($this->Users, $this, $config, $dataFormat),
             'globalsign' => new MakeGlobalSignTimestamp($this->Users, $this, $config, $dataFormat),
             'evidency' => Env::asBool('DEV_MODE') ? new MakeEvidencyTimestampDev($this->Users, $this, $config, $dataFormat) : new MakeEvidencyTimestamp($this->Users, $this, $config, $dataFormat),
@@ -1836,5 +1853,28 @@ abstract class AbstractEntity extends AbstractRest
             },
             $html,
         ) ?? $html;
+    }
+
+    /**
+     * Point step links in a copied body (?mode=view&id=X&highlightstep=Y#step_view_Y) at the new entry and its new steps
+     * Only relative links (href or markdown target starting with ?mode=view) are rewritten: a link with a page
+     * (templates.php?..., database.php?...) still points at that page and is left as is
+     *
+     * @param array<int, int> $stepsMap source step id => new step id
+     */
+    private function rewriteStepLinks(string $body, int $sourceId, int $newId, array $stepsMap): string
+    {
+        return preg_replace_callback(
+            '/((?:href=["\']|\\]\\()\\?mode=view&(?:amp;)?)id=(\\d+)(&(?:amp;)?highlightstep=)(\\d+)(#step_view_)(\\d+)/',
+            function (array $m) use ($sourceId, $newId, $stepsMap): string {
+                $stepId = (int) $m[4];
+                if ((int) $m[2] !== $sourceId || !isset($stepsMap[$stepId]) || (int) $m[6] !== $stepId) {
+                    return $m[0];
+                }
+                $newStepId = $stepsMap[$stepId];
+                return $m[1] . 'id=' . $newId . $m[3] . $newStepId . $m[5] . $newStepId;
+            },
+            $body,
+        ) ?? $body;
     }
 }

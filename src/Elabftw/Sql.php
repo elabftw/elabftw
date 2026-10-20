@@ -38,6 +38,8 @@ final class Sql
 
     private Db $Db;
 
+    private bool $hadIgnoredErrors = false;
+
     public function __construct(private FilesystemOperator $filesystem, private OutputInterface $output)
     {
         $this->Db = Db::getConnection();
@@ -53,6 +55,7 @@ final class Sql
         $this->output->writeln(sprintf('<bg=green;fg=black>%s</>', str_repeat(' ', $len)));
         $this->output->writeln(sprintf('<bg=green;fg=black> %s </>', strtoupper($filename)));
         $this->output->writeln(sprintf('<bg=green;fg=black>%s</>', str_repeat(' ', $len)));
+        $this->hadIgnoredErrors = false;
         $lines = $this->getLines($filename);
         // temporary variable, used to store current query
         $queryline = '';
@@ -70,6 +73,7 @@ final class Sql
                     $this->Db->q($queryline);
                 } catch (PDOException | DatabaseErrorException $e) {
                     if ($force) {
+                        $this->hadIgnoredErrors = true;
                         $this->output->writeln('<bg=yellow;fg=black>WARNING: Ignoring error because of force option active.</>');
                         $this->output->writeln($e->getMessage());
                         // Reset temp variable to empty
@@ -85,6 +89,11 @@ final class Sql
             }
         }
         return $lineCount;
+    }
+
+    public function hadIgnoredErrors(): bool
+    {
+        return $this->hadIgnoredErrors;
     }
 
     /**

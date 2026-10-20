@@ -16,47 +16,34 @@ export default class SidePanel {
     this.model = model;
   }
 
-  hide(): void {
-    // make container great again
-    if (!document.getElementById(this.panelId)?.closest('.navbar-side-bottom')) {
-      $('#container').css('width', '100%').css('margin-left', 'auto');
+  // Keep legacy floating panels intact; navbar panels only toggle inline.
+  private setOpen(open: boolean): void {
+    const panel = document.getElementById(this.panelId);
+    if (!panel) return;
+    const inNavbar = !!panel.closest('.navbar-side-bottom');
+    if (!inNavbar) {
+      $('#container').css('width', open ? '76%' : '100%')
+        .css('margin-left', open ? 'max(24%, 330px)' : 'auto');
     }
-    // hide panel
-    const panelId = document.getElementById(this.panelId);
-    if (!panelId) return;
-    panelId.toggleAttribute('hidden', true);
-    // store the current state
-    localStorage.removeItem('opened-sidepanel');
-    const opener = document.getElementById(`${this.panelId}Opener`);
-    if (!panelId.closest('.navbar-side-bottom')) {
-      opener.classList.add('btn-neutral');
-      opener.classList.remove('btn-secondary');
-    }
-    opener.setAttribute('aria-expanded', 'false');
-  }
-
-  show(): void {
-    if (!document.getElementById(this.panelId)?.closest('.navbar-side-bottom')) {
-      $('#container').css('width', '76%').css('margin-left', 'max(24%, 330px)');
-    }
-    // show panel
-    document.getElementById(this.panelId).removeAttribute('hidden');
-    // store the current state
-    localStorage.setItem('opened-sidepanel', this.model);
-    const opener = document.getElementById(`${this.panelId}Opener`);
-    if (!document.getElementById(this.panelId)?.closest('.navbar-side-bottom')) {
-      opener.classList.add('btn-secondary');
-      opener.classList.remove('btn-neutral');
-    }
-    opener.setAttribute('aria-expanded', 'true');
-  }
-
-  // TOGGLE PANEL VISIBILITY
-  toggle(): void {
-    if (document.getElementById(this.panelId).hasAttribute('hidden')) {
-      this.show();
+    panel.toggleAttribute('hidden', !open);
+    if (open) {
+      localStorage.setItem('opened-sidepanel', this.model);
     } else {
-      this.hide();
+      localStorage.removeItem('opened-sidepanel');
     }
+    const opener = document.getElementById(`${this.panelId}Opener`);
+    if (!inNavbar) {
+      opener?.classList.toggle('btn-neutral', !open);
+      opener?.classList.toggle('btn-secondary', open);
+    }
+    opener?.setAttribute('aria-expanded', String(open));
+  }
+
+  hide(): void { this.setOpen(false); }
+
+  show(): void { this.setOpen(true); }
+
+  toggle(): void {
+    this.setOpen(document.getElementById(this.panelId)?.hasAttribute('hidden') ?? false);
   }
 }

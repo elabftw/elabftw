@@ -46,6 +46,22 @@
 {# container-fluid is from bootstrap #}
 <div id='container' class='container-fluid {{ App.Session.has('is_auth') ? 'has-main-nav' }}'>
 
+{# Create actions are shared by the compact sidebar and the topbar. #}
+{% macro createEntityOptions(App) %}
+  {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments %}
+    <button type='button' class='dropdown-item' data-action='toggle-create-modal' data-type='experiments'><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Experiment'|trans }}</button>
+  {% endif %}
+  {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments_templates %}
+    <button type='button' class='dropdown-item' data-action='toggle-create-modal' data-type='experiments_templates'><i class='fas fa-copy fa-fw mr-1'></i>{{ 'Experiment template'|trans }}</button>
+  {% endif %}
+  {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources %}
+    <button type='button' class='dropdown-item' data-action='toggle-create-modal' data-type='items'><i class='fas fa-cubes-stacked fa-fw mr-1'></i>{{ 'Resource'|trans }}</button>
+  {% endif %}
+  {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources_templates %}
+    <button type='button' class='dropdown-item' data-action='toggle-create-modal' data-type='items_types'><i class='fas fa-copy fa-fw mr-1'></i>{{ 'Resource template'|trans }}</button>
+  {% endif %}
+{% endmacro %}
+
 {# begin main menu #}
 <nav aria-label='{{ 'Main menu'|trans }}' id='main-navbar' class='navbar navbar-expand-xl navbar-dark sticky-navbar'>
     {% if App.Session.has('is_auth') %}
@@ -77,18 +93,7 @@
                   <i class='fas fa-plus fa-fw' aria-hidden='true'></i><span class='nav-label'>{{ 'Create'|trans }}</span>
                 </button>
                 <div class='dropdown-menu'>
-                  {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments %}
-                    <button type='button' class='dropdown-item' data-action='toggle-create-modal' data-type='experiments'><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Experiment'|trans }}</button>
-                  {% endif %}
-                  {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments_templates %}
-                    <button type='button' class='dropdown-item' data-action='toggle-create-modal' data-type='experiments_templates'><i class='fas fa-copy fa-fw mr-1'></i>{{ 'Experiment template'|trans }}</button>
-                  {% endif %}
-                  {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources %}
-                    <button type='button' class='dropdown-item' data-action='toggle-create-modal' data-type='items'><i class='fas fa-cubes-stacked fa-fw mr-1'></i>{{ 'Resource'|trans }}</button>
-                  {% endif %}
-                  {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources_templates %}
-                    <button type='button' class='dropdown-item' data-action='toggle-create-modal' data-type='items_types'><i class='fas fa-copy fa-fw mr-1'></i>{{ 'Resource template'|trans }}</button>
-                  {% endif %}
+                  {{ _self.createEntityOptions(App) }}
                 </div>
               </div>
             {% endif %}
@@ -270,18 +275,7 @@
         <div class='nav-item dropdown ml-auto'>
           <button class='btn nav-link' id='createNewDropdown' type='button' aria-label='{{ 'Create new...'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='far fa-plus fa-2x'></i></button>
           <div class='dropdown-menu dropdown-menu-right sticky-dropdown' id='navbar-create-dropdown'><span class='dropdown-header'>{{ 'Create new...'|trans }}</span>
-            {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments %}
-              <button type='button' data-action='toggle-create-modal' data-type='experiments' class='dropdown-item'><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Experiment'|trans }}</button>
-            {% endif %}
-            {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_experiments_templates %}
-              <button type='button' data-action='toggle-create-modal' data-type='experiments_templates' class='dropdown-item'><i class='fas fa-copy fa-fw mr-1'></i>{{ 'Experiment template'|trans }}</button>
-            {% endif %}
-            {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources %}
-              <button type='button' data-action='toggle-create-modal' data-type='items' class='dropdown-item'><i class='fas fa-cubes-stacked fa-fw mr-1'></i>{{ 'Resource'|trans }}</button>
-            {% endif %}
-            {% if App.Users.isAdmin or App.Teams.teamArr.users_canwrite_resources_templates %}
-              <button type='button' data-action='toggle-create-modal' data-type='items_types' class='dropdown-item'><i class='fas fa-copy fa-fw mr-1'></i>{{ 'Resource template'|trans }}</button>
-            {% endif %}
+            {{ _self.createEntityOptions(App) }}
           </div>
         </div>
 

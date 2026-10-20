@@ -231,8 +231,12 @@ describe('Autocomplete initialization', () => {
   });
 
   it('Initializes tags, compounds and field names inserted after page load', () => {
+    cy.window().its('jQuery').then(($: JQueryStatic) => {
+      $('#fieldBuilderModal').one('shown.bs.modal', cy.stub().as('fieldBuilderShown'));
+    });
     cy.get('[data-cy="addMetadataField"]').first().click();
-    cy.get('#fieldBuilderModal').should('be.visible');
+    // Visibility precedes Bootstrap's final focus change at the end of the fade.
+    cy.get('@fieldBuilderShown').should('have.been.calledOnce');
     [
       { kind: 'tags', path: '/api/v2/teams/current/tags', results: [{ tag: 'Cypress tag' }], label: 'Cypress tag' },
       { kind: 'compounds', path: '/api/v2/compounds', results: [{ id: 42, name: 'Cypress compound' }], label: '42 - Cypress compound' },
@@ -246,7 +250,8 @@ describe('Autocomplete initialization', () => {
         doc.querySelector('#fieldBuilderModal .modal-body').append(input);
         input.focus();
       });
-      cy.focused().type('x&y');
+      cy.focused().should('have.id', `dynamicAutocomplete${index}`)
+        .should('have.attr', 'role', 'combobox').type('x&y').should('have.value', 'x&y').should('have.focus');
       cy.wait(`@suggestions${index}`).its('request.query.q').should('eq', 'x&y');
       cy.get(`#dynamicAutocomplete${index}`).invoke('attr', 'aria-controls').then(id => {
         cy.get(`#${id}`).contains('[role="option"]', label).click();

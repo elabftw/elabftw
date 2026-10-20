@@ -20,6 +20,7 @@ use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Users\Users;
 use PDO;
+use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Mime\Address;
 use Throwable;
@@ -48,41 +49,59 @@ class EmailNotifications
 
     public function sendEmails(OutputInterface $output): int
     {
-        $toSend = $this->getNotificationsToSend();
-        $count = 0;
-        foreach ($toSend as $notif) {
-            try {
-                $targetUser = new Users($notif['userid']);
-                $this->setLang($targetUser->userData['lang']);
-                $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
-                $Factory = new NotificationsFactory($targetUser, $notif['category'], $notif['body']);
-                $email = $Factory->getMailable()->getEmail();
-                $cc = array_key_exists('cc', $email) ? $email['cc'] : null;
-                $htmlBody = array_key_exists('htmlBody', $email) ? (string) $email['htmlBody'] : null;
-                $replyTo = null;
-                if (isset($email['replyTo'])) {
-                    $replyTo = new Address($email['replyTo']);
-                }
-                $isEmailSent = $this->emailService->sendEmail(
-                    $to,
-                    self::BASE_SUBJECT . $email['subject'],
-                    $email['body'],
-                    $cc,
-                    $htmlBody,
-                    replyTo: $replyTo,
-                );
-                if ($isEmailSent) {
-                    $this->setEmailSent($notif['id']);
-                    if (Notifications::tryFrom($notif['category']) === Notifications::OnboardingEmail) {
-                        AuditLogs::create(new OnboardingEmailSent($email['team'], $notif['userid'], $email['forAdmin']));
-                    }
-                }
-                $count++;
-            } catch (Throwable $e) {
-                $output->writeln(sprintf('Error sending notification: %s', $e->getMessage()));
-            }
+        // Lock before reading pending notifications so concurrent containers cannot send the same emails.
+        // Hash the database name to keep the database-specific lock below MySQL's 64-character limit.
+        $lock = $this->Db->q("SELECT GET_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())), 0)")->fetchColumn();
+        if ($lock === null || $lock === false) {
+            throw new RuntimeException('Could not acquire the email notifications lock.');
         }
-        return $count;
+        if ((int) $lock !== 1) {
+            if ($output->isVerbose()) {
+                $output->writeln('Another process is sending notifications; skipping.');
+            }
+            return 0;
+        }
+
+        try {
+            $toSend = $this->getNotificationsToSend();
+            $count = 0;
+            foreach ($toSend as $notif) {
+                try {
+                    $targetUser = new Users($notif['userid']);
+                    $this->setLang($targetUser->userData['lang']);
+                    $to = new Address($targetUser->userData['email'], $targetUser->userData['fullname']);
+                    $Factory = new NotificationsFactory($targetUser, $notif['category'], $notif['body']);
+                    $email = $Factory->getMailable()->getEmail();
+                    $cc = array_key_exists('cc', $email) ? $email['cc'] : null;
+                    $htmlBody = array_key_exists('htmlBody', $email) ? (string) $email['htmlBody'] : null;
+                    $replyTo = null;
+                    if (isset($email['replyTo'])) {
+                        $replyTo = new Address($email['replyTo']);
+                    }
+                    $isEmailSent = $this->emailService->sendEmail(
+                        $to,
+                        self::BASE_SUBJECT . $email['subject'],
+                        $email['body'],
+                        $cc,
+                        $htmlBody,
+                        replyTo: $replyTo,
+                    );
+                    if ($isEmailSent) {
+                        $this->setEmailSent($notif['id']);
+                        if (Notifications::tryFrom($notif['category']) === Notifications::OnboardingEmail) {
+                            AuditLogs::create(new OnboardingEmailSent($email['team'], $notif['userid'], $email['forAdmin']));
+                        }
+                    }
+                    $count++;
+                } catch (Throwable $e) {
+                    $output->writeln(sprintf('Error sending notification: %s', $e->getMessage()));
+                }
+            }
+            return $count;
+        } finally {
+            // Named locks are connection-scoped, so release explicitly even with persistent connections.
+            $this->Db->q("SELECT RELEASE_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())))");
+        }
     }
 
     /**

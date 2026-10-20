@@ -134,7 +134,7 @@ class MakeEln extends AbstractMakeEln
             '@id' => './',
             'identifier' => Tools::getUuidv4(),
             'conformsTo' => array(
-                '@id' => 'https://purl.archive.org/purl/elnconsortium/eln-spec/1.2+20260923',
+                '@id' => 'https://purl.org/elnconsortium/eln-spec/1.2+20260923',
             ),
             '@type' => 'Dataset',
             'datePublished' => (new DateTimeImmutable())->format(DateTimeImmutable::ATOM),

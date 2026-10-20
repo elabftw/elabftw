@@ -7,6 +7,13 @@
 {% set scopeValue = App.Request.query.has('scope') ? App.Request.query.getInt('scope') : App.Users.userData[target] %}
 {% set setQueryParam = setQueryParam|default(0) %}
 {% set withLabel = withLabel|default('') %}
+{% set scopeLabels = {
+  'scope_experiments': ['My experiments'|trans, 'Team experiments'|trans, 'All experiments'|trans],
+  'scope_items': ['My resources'|trans, 'Team resources'|trans, 'All resources'|trans],
+  'scope_experiments_templates': ['My experiment templates'|trans, 'Team experiment templates'|trans, 'All experiment templates'|trans],
+  'scope_items_types': ['My resource templates'|trans, 'Team resource templates'|trans, 'All resource templates'|trans],
+} %}
+{% set labels = scopeLabels[target]|default(['Self'|trans, 'Team'|trans, 'Everything'|trans]) %}
 {% if not scopeValue %}
   {% set scopeValue = 2 %}
 {% endif %}
@@ -15,15 +22,15 @@
   <div class='dropdown-menu'>
     <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>
     <button type='button' data-target='{{ target }}' data-action='scope-change' data-reload='{{ reload }}' data-value='1' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 1 ? 'active' }}'>
-      <i class='fas fa-user fa-fw mr-1'></i>{{ 'Self'|trans }}
+      <i class='fas fa-user fa-fw mr-1'></i>{{ labels[0] }}
     </button>
 
     <button type='button' data-target='{{ target }}' data-action='scope-change' data-reload='{{ reload }}'  data-value='2' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 2 ? 'active' }}'>
-      <i class='fas fa-users fa-fw mr-1'></i>{{ 'Team'|trans }}
+      <i class='fas fa-users fa-fw mr-1'></i>{{ labels[1] }}
     </button>
 
     <button type='button' data-target='{{ target }}' data-action='scope-change' data-reload='{{ reload }}' data-value='3' data-set-query-param='{{ setQueryParam }}' class='btn btn-dropdown-item dropdown-item {{ scopeValue == 3 ? 'active' }}'>
-      <i class='fas fa-globe fa-fw mr-1'></i>{{ 'Everything'|trans }}
+      <i class='fas fa-globe fa-fw mr-1'></i>{{ labels[2] }}
     </button>
   </div>
 </div>

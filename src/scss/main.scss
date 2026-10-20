@@ -942,6 +942,11 @@ tr:first-child td {
   padding-left: 20px;
 }
 
+/* Keep linked steps below the sticky navigation and entity toolbar. */
+[id^='step_view_'] {
+  scroll-margin-top: calc(var(--step-scroll-offset, 0px) + 1rem);
+}
+
 /* for steps highlight, because .active only works on list-group-item */
 .highlighted {
   border: 1px solid var(--primary);
@@ -1193,12 +1198,11 @@ tr.upload-group-drop-target td {
 
   /* Only Status */
   &.status-btn {
-    background-color: var(--firstlevel);
+    background-color: var(--superlight);
     color: var(--mediumstrong);
 
     &:hover {
-      background-color: var(--secondlevel);
-      color: var(--chrome-bg);
+      background-color: var(--firstlevel);
     }
 
     i {

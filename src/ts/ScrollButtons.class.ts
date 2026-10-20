@@ -249,7 +249,7 @@ export default class ScrollButtons {
       }
     }
 
-    const navbarHeight = document.querySelector<HTMLElement>('.sticky-navbar')?.offsetHeight ?? 0;
+    const navbarHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--navbar-height')) || 0;
     const toolbarHeight = document.getElementById('entityToolbar')?.offsetHeight ?? 0;
     const editorHeaderHeight = frame instanceof HTMLIFrameElement
       ? frame.closest('.tox-tinymce')?.querySelector<HTMLElement>('.tox-editor-header')?.offsetHeight ?? 0

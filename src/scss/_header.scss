@@ -80,3 +80,536 @@
 .navbar-toggler i {
   color: var(--chrome-fg);
 }
+
+/* Two fixed navigation bars, retaining the theme's original chrome colors. */
+.has-main-nav #main-navbar {
+  background: var(--nav-bg);
+  color: var(--chrome-fg);
+  margin: 0;
+  z-index: 1050;
+}
+
+.has-main-nav #main-navbar .navbar-brand {
+  align-items: center;
+  display: flex;
+  height: 52px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.has-main-nav #main-navbar .navbar-brand .sidebar-compact-logo { display: none; }
+
+.has-main-nav #main-nav > .navbar-nav {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.has-main-nav #main-nav .nav-link,
+.has-main-nav #main-nav .sidebar-panel-link {
+  align-items: center;
+  background-image: none;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 0.25rem;
+  color: var(--chrome-fg);
+  display: flex;
+  font-size: 0.95rem;
+  gap: 0.75rem;
+  line-height: 1.25;
+  margin: 0 0 0.25rem;
+  min-height: 43px;
+  padding: 0.6rem 0.75rem !important;
+  text-align: left;
+  text-decoration: none;
+  text-transform: none;
+  width: 100%;
+}
+
+.has-main-nav #main-nav .nav-link:hover,
+.has-main-nav #main-nav .sidebar-panel-link:hover {
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  color: var(--chrome-fg) !important;
+}
+
+.has-main-nav #main-nav .nav-link.active {
+  background: var(--primary);
+  border-left-color: var(--primary);
+  color: var(--primary-fg) !important;
+}
+
+.has-main-nav #main-nav .nav-link i { color: inherit; }
+.has-main-nav #main-nav .nav-link.dropdown-toggle::after { margin-left: auto; }
+.has-main-nav #main-nav .dropdown > .dropdown-menu {
+  background: var(--nav-bg);
+  border-color: var(--chrome-muted);
+  margin: 0 0 0.5rem;
+  padding: 0.25rem;
+}
+.has-main-nav #main-nav .dropdown-item { color: var(--chrome-fg); }
+.has-main-nav #main-nav .dropdown-item:hover { background: color-mix(in srgb, var(--primary) 16%, var(--nav-bg)); }
+.has-main-nav #main-nav .dropdown-item.active { background: var(--primary); color: var(--primary-fg); }
+.has-main-nav #main-nav .dropdown-item.disabled { color: var(--chrome-muted); }
+
+.has-main-nav #main-nav .sidebar-create { margin: 0 0 0.75rem; }
+.has-main-nav #main-nav .sidebar-create .btn-primary { min-height: 45px; }
+.has-main-nav #main-nav .sidebar-create .nav-label { margin-left: 0.5rem; }
+.has-main-nav #main-nav .sidebar-panel-link { cursor: pointer; }
+.has-main-nav #main-nav .navbar-side-bottom { margin-top: auto; padding-top: 1rem; }
+
+/* Override the old floating sidepanel opener styles without touching button themes. */
+.has-main-nav #favtagsPanelOpener,
+.has-main-nav #todolistPanelOpener,
+.has-main-nav #favtagsPanelOpener:hover,
+.has-main-nav #todolistPanelOpener:hover { transform: none; }
+
+.navbar-utilities {
+  align-items: center;
+  background: var(--nav-bg);
+  color: var(--chrome-fg);
+  display: flex;
+  height: 52px;
+  justify-content: flex-end;
+  padding: 0 1rem;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1040;
+}
+
+.navbar-utilities .nav-link {
+  background: transparent;
+  background-image: none;
+  border: 0;
+  color: var(--chrome-fg);
+  line-height: 1;
+  margin: 0 0.35rem;
+  min-height: 43px;
+  padding: 0.35rem 0.55rem !important;
+  text-transform: none;
+}
+.navbar-utilities .nav-link:hover { background: color-mix(in srgb, var(--primary) 16%, transparent); color: var(--chrome-fg) !important; }
+.navbar-utilities .nav-link i { color: inherit; }
+.navbar-utilities .dropdown-menu { color: var(--strongest); background: var(--white); }
+.navbar-utilities .dropdown-item { color: var(--strongest); }
+.navbar-utilities .dropdown-item.active { background: var(--primary); color: var(--primary-fg); }
+.navbar-utilities #navbarNotifDropdown.notif-active::after { border-color: var(--nav-bg); }
+
+.navbar-entity-details {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 1rem;
+  min-width: 0;
+}
+.navbar-entity-heading {
+  color: var(--chrome-fg);
+  font-size: 0.875rem;
+  max-width: 26vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#navbarEntityMeta { flex: 0 0 auto; }
+#navbarEntityMeta > .d-flex { margin-bottom: 0 !important; }
+#navbarEntityMeta > .d-flex > span { color: var(--chrome-fg); font-size: 0.85rem; }
+#navbarEntityMeta .catstat-btn { margin-bottom: 0; }
+
+/* Menus keep their own contrast in light, dark and midnight variants. */
+.has-main-nav #main-nav .dropdown > .dropdown-menu {
+  border: 0;
+  border-left: 2px solid var(--primary);
+  border-radius: 0;
+  margin-left: 0.55rem;
+  padding-left: 0.5rem;
+}
+.has-main-nav #main-nav .dropdown-menu .dropdown-item i,
+.navbar-utilities .dropdown-menu .dropdown-item i { color: inherit; }
+.has-main-nav #main-nav .dropdown-menu .dropdown-item:hover {
+  color: var(--chrome-fg);
+}
+.has-main-nav #main-nav .dropdown-menu .dropdown-item.active,
+.has-main-nav #main-nav .dropdown-menu .dropdown-item.active i {
+  color: var(--primary-fg);
+}
+.has-main-nav #main-nav .sidebar-create .dropdown-menu {
+  background: var(--nav-bg);
+}
+
+/* The two panels expand in the menu instead of covering the page. */
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel {
+  background: transparent;
+  box-shadow: none;
+  color: var(--chrome-fg);
+  height: auto;
+  left: auto;
+  margin: 0 0 0.5rem 0.55rem;
+  max-height: 55vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0.25rem 0 0.25rem 0.5rem;
+  position: static;
+  top: auto;
+  width: auto;
+  border-left: 2px solid var(--primary);
+}
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel[hidden] { display: none !important; }
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel .p-3 { padding: 0.5rem !important; }
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel h3 {
+  color: var(--chrome-fg);
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel .list-group-item {
+  background: var(--nav-bg);
+  border-color: var(--chrome-muted);
+  color: var(--chrome-fg);
+  overflow-wrap: anywhere;
+}
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel a { color: var(--link); }
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel .side-panel-item {
+  padding: 0.5rem 0.25rem;
+}
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel :is(input, select) { min-width: 0; }
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel .input-group { flex-wrap: nowrap; }
+/* Ghost-style panel toggles: no light button background over white text. */
+.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link,
+.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
+  background: transparent;
+  border: 0;
+  border-left: 3px solid transparent;
+  box-shadow: none;
+  color: var(--chrome-fg);
+}
+.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link:hover,
+.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link:focus-visible {
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  color: var(--chrome-fg);
+}
+.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link i { color: inherit; }
+.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link[aria-expanded='true'] {
+  border-left-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 18%, var(--nav-bg));
+  color: var(--chrome-fg);
+}
+.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link[aria-expanded='true'] i { color: inherit; }
+
+/* Keep the editable title visible on the dark topbar. */
+.navbar-entity-heading {
+  color: var(--chrome-fg);
+  font-size: 1rem;
+  font-weight: 500;
+  flex: 1 1 auto;
+  max-width: none;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.navbar-entity-heading #navbarEntityTitle {
+  color: var(--chrome-fg);
+  font-size: inherit;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.navbar-entity-heading #navbarEntityTitle { display: inline; }
+.navbar-entity-heading #documentTitle {
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  padding: 0 !important;
+  white-space: nowrap;
+}
+/* Inline Malle editing must not push the title beneath 'Experiment:'. */
+.navbar-entity-heading {
+  align-items: center;
+  display: flex;
+  gap: 0.35rem;
+  min-width: 0;
+  overflow: visible;
+}
+.navbar-entity-prefix { flex: 0 0 auto; }
+.navbar-entity-heading #navbarEntityTitle {
+  align-items: center;
+  display: inline-flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+/* Malle replaces #documentTitle with a form while editing. The form must
+   stretch, not just the input inside it. */
+.navbar-entity-heading #navbarEntityTitle > form {
+  display: flex;
+  flex: 1 1 100%;
+  margin: 0;
+  min-width: 0;
+  width: 100%;
+}
+.navbar-entity-heading :is(input, textarea) {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  margin: 0;
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+/* The Create modal/backdrop must be above both fixed bars. */
+body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
+.has-main-nav #createModal { z-index: 1080; }
+.has-main-nav #createModal .modal-dialog { margin-top: 4.25rem; }
+.has-main-nav #createTplToggleBtn[hidden] { display: none !important; }
+
+@media (min-width: 1200px) {
+  #container.has-main-nav { padding-left: 5rem; width: 100%; }
+  .has-main-nav #main-navbar {
+    align-items: stretch;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height: calc(100vh - 52px);
+    left: 0;
+    padding: 0.65rem;
+    position: fixed;
+    top: 52px;
+    transition: width 0.2s ease;
+    width: 5rem;
+  }
+  .has-main-nav #main-navbar:hover,
+  .has-main-nav #main-navbar:has(:focus-visible),
+  .has-main-nav #main-navbar:has(#main-nav .dropdown-menu.show),
+  .has-main-nav #main-navbar:has(#main-nav .navbar-side-bottom > .side-panel:not([hidden])) {
+    width: 17rem;
+  }
+
+  /* The only visible desktop logo now lives in .navbar-utilities. */
+  .has-main-nav #main-navbar .navbar-brand { display: none; }
+
+  .has-main-nav #main-nav {
+    align-items: stretch;
+    display: flex !important;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%;
+  }
+  .has-main-nav #main-nav > .navbar-nav {
+    flex: 1;
+    scrollbar-width: none;
+  }
+  .has-main-nav #main-nav > .navbar-nav::-webkit-scrollbar { display: none; }
+  /* Same centered icon and horizontal spacing for every compact menu item. */
+  .has-main-nav #main-nav .nav-link,
+  .has-main-nav #main-nav .sidebar-panel-link {
+    box-sizing: border-box;
+    justify-content: flex-start;
+    min-height: 3.25rem;
+    padding: 0.6rem 0.75rem !important;
+    width: 100%;
+  }
+  .has-main-nav #main-nav .nav-link > i,
+  .has-main-nav #main-nav .sidebar-panel-link > i {
+    flex: 0 0 1.25rem;
+    margin: 0;
+    text-align: center;
+  }
+  /* Keep the icons centered in the compact 5rem rail, including the 3px
+     active border. Use the same padding in both active and inactive states. */
+  .has-main-nav #main-nav .nav-link,
+  .has-main-nav #main-nav .sidebar-panel-link {
+    padding-left: calc(0.75rem + 5px) !important;
+  }
+  .has-main-nav #main-nav .nav-label { display: none; }
+  .has-main-nav #main-navbar:hover .nav-label,
+  .has-main-nav #main-navbar:has(:focus-visible) .nav-label,
+  .has-main-nav #main-navbar:has(#main-nav .dropdown-menu.show) .nav-label,
+  .has-main-nav #main-navbar:has(#main-nav .navbar-side-bottom > .side-panel:not([hidden])) .nav-label {
+    display: inline;
+  }
+  .has-main-nav #main-nav .dropdown-toggle::after { display: none; }
+  .has-main-nav #main-navbar:hover .dropdown-toggle::after,
+  .has-main-nav #main-navbar:has(:focus-visible) .dropdown-toggle::after,
+  .has-main-nav #main-navbar:has(#main-nav .dropdown-menu.show) .dropdown-toggle::after,
+  .has-main-nav #main-navbar:has(#main-nav .navbar-side-bottom > .side-panel:not([hidden])) .dropdown-toggle::after {
+    display: inline-block;
+  }
+  .has-main-nav #main-nav .dropdown > .dropdown-menu { display: none; }
+  .has-main-nav #main-nav .dropdown > .dropdown-menu.show { display: block; position: static !important; transform: none !important; }
+
+  /* No horizontal movement when the labels appear. */
+  .has-main-nav #main-nav .sidebar-create .btn-primary {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+  }
+  /* A visible inline panel keeps the sidebar expanded until it is closed. */
+
+  .has-main-nav .navbar-utilities { left: 0; }
+  .has-main-nav .navbar-actions { flex: 0 0 auto; margin-left: auto; }
+  .has-main-nav #realContainer { padding-top: 52px; }
+  .has-main-nav #realContainer .original-entity-title,
+  .has-main-nav #realContainer h1:has(#documentTitle),
+  .has-main-nav #realContainer .d-flex:has(> #categoryBtn) { display: none !important; }
+  .has-main-nav .side-panel { left: 5rem; top: 52px; height: calc(100vh - 52px); z-index: 1042; }
+}
+
+@media (max-width: 1199.98px) {
+  .has-main-nav #main-navbar {
+    align-items: center;
+    height: 52px;
+    left: 0;
+    padding: 0 12rem 0 1rem;
+    position: fixed;
+    right: 0;
+    top: 0;
+  }
+  .has-main-nav #main-navbar .navbar-brand { width: auto; margin: 0 auto 0 0; }
+  .has-main-nav #main-navbar .navbar-brand .logo-header { height: 40px; width: 110px; }
+  .has-main-nav #main-nav {
+    background: var(--nav-bg);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+    height: calc(100vh - 52px);
+    left: 0;
+    max-width: 90vw;
+    overflow-y: auto;
+    padding: 1rem;
+    position: fixed;
+    top: 52px;
+    width: 20rem;
+    z-index: 3;
+  }
+  .has-main-nav #main-nav > .navbar-nav { overflow: visible; }
+  .has-main-nav #main-nav .dropdown > .dropdown-menu.show { display: block; position: static !important; transform: none !important; }
+  /* Share one 52px row with the hamburger and logo, not two stacked bars. */
+  .has-main-nav .navbar-utilities {
+    background: transparent;
+    height: 52px;
+    left: auto;
+    padding: 0 0.5rem;
+    right: 0;
+    top: 0;
+    z-index: 1060;
+  }
+  .has-main-nav #realContainer { padding-top: 52px; }
+  .has-main-nav .side-panel { left: 0; top: 52px; height: calc(100vh - 52px); z-index: 1042; }
+  .navbar-entity-details { display: none; }
+  .navbar-backdrop {
+    background: rgba(0, 0, 0, 0.45);
+    border: 0;
+    inset: 52px 0 0;
+    position: fixed;
+    z-index: 2;
+  }
+  #main-nav:not(.show) + .navbar-backdrop { display: none; }
+}
+
+@media (max-width: 575.98px) {
+  .has-main-nav #main-navbar { padding-right: 10rem; }
+  .has-main-nav #main-navbar .navbar-brand .logo-header { height: 32px; width: 80px; }
+  .has-main-nav .navbar-utilities .nav-link {
+    margin: 0;
+    min-height: 40px;
+    padding: 0.25rem 0.3rem !important;
+  }
+  .has-main-nav .navbar-utilities .fa-2x { font-size: 1.5rem; }
+}
+
+/* The sidebar uses the page's light surface in Light mode; Dark/Midnight
+   remain legible because these are the current theme's semantic colors. */
+.has-main-nav #main-navbar {
+  // Try var(--white) here for a brighter sidebar in the Light theme.
+  background: var(--mainbackground);
+  border-right: 1px solid var(--thirdlevel);
+  color: var(--mediumstrong);
+}
+.has-main-nav #main-nav .nav-link,
+.has-main-nav #main-nav .sidebar-panel-link,
+.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
+  color: var(--mediumstrong);
+}
+.has-main-nav #main-nav .nav-link:hover,
+.has-main-nav #main-nav .sidebar-panel-link:hover,
+.has-main-nav #main-nav .sidebar-panel-link:focus-visible {
+  background: color-mix(in srgb, var(--primary) 13%, var(--mainbackground));
+  color: var(--mediumstrong) !important;
+}
+.has-main-nav #main-nav .nav-link.active {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  border-left-color: var(--primary);
+  color: var(--primary) !important;
+}
+.has-main-nav #main-nav .nav-link.active i {
+  background: transparent;
+  color: inherit;
+}
+.has-main-nav #main-nav .dropdown > .dropdown-menu,
+.has-main-nav #main-nav .sidebar-create .dropdown-menu {
+  background: var(--mainbackground);
+}
+.has-main-nav #main-nav .dropdown-item,
+.has-main-nav #main-nav .dropdown-menu .dropdown-item:hover {
+  color: var(--mediumstrong);
+}
+.has-main-nav #main-nav .dropdown-item:hover {
+  background: color-mix(in srgb, var(--primary) 13%, var(--mainbackground));
+}
+.has-main-nav #main-nav .dropdown-menu .dropdown-item.active,
+.has-main-nav #main-nav .dropdown-menu .dropdown-item.active i {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel,
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel h3,
+.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link[aria-expanded='true'] {
+  color: var(--mediumstrong);
+}
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel .list-group-item {
+  background: var(--white);
+  border-color: var(--thirdlevel);
+  color: var(--mediumstrong);
+}
+/* SidePanel.class.ts adds btn-neutral/btn-secondary; neither should paint a
+   white background on top of the ghost navigation links. */
+.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link,
+.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
+  background: transparent;
+  border: 0;
+  border-left: 3px solid transparent;
+  box-shadow: none;
+  color: var(--mediumstrong);
+}
+.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link:hover,
+.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link:focus-visible {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+}
+.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link[aria-expanded='true'],
+.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link[aria-expanded='true']:is(.btn-neutral, .btn-secondary) {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  border-left-color: var(--primary);
+  color: var(--primary);
+}
+.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link i { color: inherit; }
+.has-main-nav #main-nav .navbar-side-bottom > .side-panel .side-panel-item.selected {
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+/* Topbar always retains the original dark navigation chrome. */
+.has-main-nav .navbar-utilities {
+  background: var(--nav-bg);
+  color: var(--chrome-fg);
+  z-index: 1060;
+}
+.navbar-top-logo {
+  align-items: center;
+  flex: 0 0 auto;
+  height: 52px;
+  margin-right: 1.5rem;
+  padding: 0 0.5rem;
+}
+.navbar-top-logo .logo-header { object-fit: contain; max-height: 42px; }
+.navbar-top-logo:hover { text-decoration: none; }
+.navbar-entity-details { flex: 1 1 auto; }
+.navbar-entity-heading { flex: 1 1 auto; }
+#navbarEntityMeta { flex: 0 0 auto; }

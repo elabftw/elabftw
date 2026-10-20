@@ -7,46 +7,27 @@
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='createModalLabel'>{{ 'Create a new entry'|trans }}</h5>
+        <h5 class='modal-title' id='createModalLabel'>{{ 'Create'|trans }} <span id='createModalEntityLabel' data-experiments='{{ 'Experiment'|trans }}' data-experiments_templates='{{ 'Experiment template'|trans }}' data-items='{{ 'Resource'|trans }}' data-items_types='{{ 'Resource template'|trans }}'></span></h5>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <form id='createNewForm' aria-label='{{ 'Create a new entry'|trans }}'>
         <input id='createNewCompoundInput' type='hidden' name='compound' value='' />
+        <input id='createNewType' type='hidden' name='type' value=''
+          data-write-experiments='{{ canWriteExperiments ? '1' : '0' }}'
+          data-write-experiments_templates='{{ canWriteExperimentsTemplates ? '1' : '0' }}'
+          data-write-items='{{ canWriteResources ? '1' : '0' }}'
+          data-write-items_types='{{ canWriteResourcesTemplates ? '1' : '0' }}' />
         <div class='modal-body mb-3'>
-          <div class='mb-4'>
-            <label class='d-block'>{{ 'Select a type'|trans }}</label>
-            {% macro createTypeOption(value, id, label, canWrite) %}
-              <div class='form-check-inline'>
-                {% set disabled = not canWrite %}
-                <input type='radio' class='form-check-input' name='type' required autocomplete='off' value='{{ value }}' id='{{ id }}' {{ disabled ? 'disabled' }}/>
-                <div class='{{ disabled ? 'infotip' }}'>
-                  <label class='form-check-label {{ disabled ? 'color-weak infotip-icon' }}' for='{{ id }}'>{{ label|trans }}</label>
-                  {% if disabled %}<p class='infotip-text'>{{ 'This option has been disabled by your admin.'|trans }}</p>{% endif %}
-                </div>
-              </div>
-            {% endmacro %}
-            {{ _self.createTypeOption('experiments', 'createNewTypeExperiments', 'Experiment', canWriteExperiments) }}
-            {{ _self.createTypeOption('items', 'createNewTypeItems', 'Resource', canWriteResources) }}
-            {{ _self.createTypeOption('experiments_templates', 'createNewTypeExperimentsTemplates', 'Experiment template', canWriteExperimentsTemplates) }}
-            {{ _self.createTypeOption('items_types', 'createNewTypeItemsTypes', 'Resource template', canWriteResourcesTemplates) }}
-          </div>
           <div class='my-2'>
             <label for='createNewFormTitle'>{{ 'Enter a title'|trans }}</label>
             <input name='title' placeholder='{{ 'Type a descriptive title...'|trans }}' class='form-control' type='text' id='createNewFormTitle' />
           </div>
           <hr>
-          <div class='d-lg-flex'>
-            <div>
-              <button type='button' data-action='toggle-templates' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='btn btn-ghost mt-1' id='createTplToggleBtn'>
-               <i class='fas fa-caret-right mr-1'></i>{{ 'Start from a template'|trans }}
-              </button>
-            </div>
-            <div class='ml-auto'>
-              <button type='submit' data-cy='create-entity' data-action='create-entity' data-type='' class='btn btn-secondary mt-1' id='createNoTplBtn'>{{ 'Create without template'|trans }}</button>
-            </div>
-          </div>
+          <button type='button' data-action='toggle-templates' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='btn btn-ghost' id='createTplToggleBtn'>
+            <i class='fas fa-caret-right mr-1'></i>{{ 'Start from a template'|trans }}
+          </button>
           <div id='createNewTemplatesDiv' class='mt-2' hidden>
             <h6>{{ 'Select a template'|trans }}</h6>
             <p class='smallgray'>{{ 'Adjust the scope and select a category to filter results.'|trans }}</p>
@@ -116,10 +97,9 @@
             <a href='replacedinjs' class='btn btn-ghost' id='manageTplLink'><i class='fas fa-cogs mr-1'></i>{{ 'Manage templates'|trans }}</a>
           </div>
         </div>
-        <div class='modal-footer d-flex'>
-          <div class='ml-auto'>
-            <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-          </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' data-cy='create-entity' data-action='create-entity' data-type='' class='btn btn-primary' id='createNoTplBtn'>{{ 'Create'|trans }}</button>
         </div>
       </form>
     </div>

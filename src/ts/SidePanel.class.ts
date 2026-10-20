@@ -18,7 +18,9 @@ export default class SidePanel {
 
   hide(): void {
     // make container great again
-    $('#container').css('width', '100%').css('margin-left', 'auto');
+    if (!document.getElementById(this.panelId)?.closest('.navbar-side-bottom')) {
+      $('#container').css('width', '100%').css('margin-left', 'auto');
+    }
     // hide panel
     const panelId = document.getElementById(this.panelId);
     if (!panelId) return;
@@ -26,20 +28,26 @@ export default class SidePanel {
     // store the current state
     localStorage.removeItem('opened-sidepanel');
     const opener = document.getElementById(`${this.panelId}Opener`);
-    opener.classList.add('btn-neutral');
-    opener.classList.remove('btn-secondary');
+    if (!panelId.closest('.navbar-side-bottom')) {
+      opener.classList.add('btn-neutral');
+      opener.classList.remove('btn-secondary');
+    }
     opener.setAttribute('aria-expanded', 'false');
   }
 
   show(): void {
-    $('#container').css('width', '76%').css('margin-left', 'max(24%, 330px)');
+    if (!document.getElementById(this.panelId)?.closest('.navbar-side-bottom')) {
+      $('#container').css('width', '76%').css('margin-left', 'max(24%, 330px)');
+    }
     // show panel
     document.getElementById(this.panelId).removeAttribute('hidden');
     // store the current state
     localStorage.setItem('opened-sidepanel', this.model);
     const opener = document.getElementById(`${this.panelId}Opener`);
-    opener.classList.add('btn-secondary');
-    opener.classList.remove('btn-neutral');
+    if (!document.getElementById(this.panelId)?.closest('.navbar-side-bottom')) {
+      opener.classList.add('btn-secondary');
+      opener.classList.remove('btn-neutral');
+    }
     opener.setAttribute('aria-expanded', 'true');
   }
 

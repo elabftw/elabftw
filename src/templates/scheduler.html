@@ -5,6 +5,14 @@
   {% include 'scheduler-exports-modal.html' %}
   {% include 'scheduler-event-modal.html' %}
 
+  <section class='mb-3' aria-label='{{ 'Booking requests'|trans }}'>
+    <h4>{{ 'Booking requests'|trans }}</h4>
+    <div class='btn-group mb-2' role='group' aria-label='{{ 'Booking request lists'|trans }}'>
+      <button type='button' class='btn btn-secondary' data-action='booking-show-requests' data-kind='my'>{{ 'My bookings'|trans }}</button>
+      <button type='button' class='btn btn-secondary' data-action='booking-show-requests' data-kind='pending'>{{ 'Pending approvals'|trans }}</button>
+    </div>
+    <div id='bookingRequestsList' class='list-group d-none' aria-live='polite'></div>
+  </section>
   <div>{{ 'Book a resource by clicking on the scheduler.'|trans }}</div>
   <hr>
   {# FILTERS #}

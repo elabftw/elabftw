@@ -829,6 +829,16 @@ on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
   const params = collectForm(form);
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
+  const requiredInput = document.getElementById('requiresValidationSwitch') as HTMLInputElement | null;
+  if (requiredInput) {
+    const usersInput = document.getElementById('bookApprovalUsers') as HTMLSelectElement;
+    await ApiC.patch(`items/${form.dataset.itemId}`, {
+      action: Action.Update,
+      target: 'book_approval',
+      requires_validation: requiredInput.checked ? 1 : 0,
+      userids: Array.from(usersInput.selectedOptions, option => Number(option.value)),
+    });
+  }
   reloadElements(['topToolbar', 'permissionsDiv']);
   $('#bookingParamsModal').modal('hide');
 });

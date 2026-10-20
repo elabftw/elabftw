@@ -47,6 +47,22 @@
   }
 }
 
+.fc-event.scheduler-event-pending {
+  // Placeholder visible for scheduling conflicts, but not interactive.
+  background-color: #dedede !important;
+  border: 1px dashed #888 !important;
+  border-left: 3px solid #888 !important;
+  box-shadow: none !important;
+  color: #303030 !important;
+  cursor: default;
+  pointer-events: none;
+  opacity: 1;
+
+  .fc-event-main, .fc-event-title, .fc-event-time {
+    color: #303030 !important;
+  }
+}
+
 .calendar-event-hover {
   box-shadow: 1px 3px 10px var(--scheduler-event-color) !important;
 }

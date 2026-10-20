@@ -128,6 +128,9 @@
             {% if booking.items_category_title and category %}
               <span style='--bg: #{{ category.color }}; --fg: #{{ category.color_fg }}' class='d-inline-block catstat-btn category-btn mr-2'>{{ booking.items_category_title }}</span>
             {% endif %}
+            {% if booking.approval_status == 0 %}
+              <i class='fas fa-clock mr-1' title='{{ 'Pending approval'|trans }}'></i>
+            {% endif %}
             {{ booking.title }} <span title='{{ booking.start|date('Y-m-d H:i:s') }}' class='relative-moment text-nowrap smallgray'></span>
           </a>
         {% endfor %}

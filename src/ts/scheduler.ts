@@ -510,7 +510,10 @@ if (calendarEl) {
       const canBook = Number(info.event.extendedProps.canbook);
       const eventOwnerId = Number(info.event.extendedProps.userid);
       const classNames = ['scheduler-event-colored'];
-      if (canBook === 0 && currentUserId !== eventOwnerId) {
+      if (Number(info.event.extendedProps.approval_status) === 0) {
+        classNames.push('scheduler-event-pending');
+      }
+      if (canBook === 0 && currentUserId !== eventOwnerId && Number(info.event.extendedProps.canapprove) !== 1) {
         classNames.push('calendar-event-disabled');
       }
       return classNames;
@@ -632,7 +635,8 @@ if (calendarEl) {
     eventClick: function(info): void {
       const canBook = Number(info.event.extendedProps.canbook);
       const eventOwnerId = Number(info.event.extendedProps.userid);
-      if (canBook === 0 && currentUserId !== eventOwnerId) {
+      const isPending = Number(info.event.extendedProps.approval_status) === 0;
+      if (isPending || (canBook === 0 && currentUserId !== eventOwnerId)) {
         return;
       }
       setSchedulerMode('view');
@@ -656,6 +660,7 @@ if (calendarEl) {
       changeEventResourceBtn.dataset.id = info.event.id;
       changeEventResourceBtn.dataset.itemId = itemId;
       changeEventResourceBtn.disabled = true;
+      changeEventResourceBtn.classList.toggle('d-none', Number(info.event.extendedProps.requires_validation) !== 0);
       viewBookedResource.href = `database.php?mode=view&id=${itemId}`;
 
       // set the event id on the various elements
@@ -733,6 +738,106 @@ if (calendarEl) {
     calendar.render();
     calendar.updateSize();
   }
+
+  // A compact request list uses the same approval action handlers as the calendar.
+  // History is intentionally limited to a useful window; it is not a full audit export.
+  on('booking-show-requests', async (button: HTMLElement) => {
+    const kind = button.dataset.kind === 'pending' ? 'pending' : 'my';
+    const list = document.getElementById('bookingRequestsList')!;
+    list.classList.remove('d-none');
+    list.textContent = i18next.t('Loading...');
+    const start = DateTime.now().minus({ months: 3 }).toISO()!;
+    const end = DateTime.now().plus({ months: 6 }).toISO()!;
+    const query = `events?approval_view=${kind}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+    try {
+      const bookings = await ApiC.getJson<Array<{
+        id: number; item_title: string; title_only: string; start: string; end: string;
+        approval_status: number; canapprove: number; recurrence_id: string | null;
+      }>>(query);
+      list.replaceChildren();
+      if (bookings.length === 0) {
+        list.textContent = i18next.t('No booking requests found.');
+        return;
+      }
+      for (const booking of bookings) {
+        const row = document.createElement('div');
+        row.className = 'list-group-item d-flex justify-content-between align-items-center flex-wrap';
+        const label = document.createElement('span');
+        const statusText = booking.approval_status === 0 ? 'Pending approval'
+          : booking.approval_status === 1 ? 'Approved'
+            : booking.approval_status === 2 ? 'Rejected' : 'Expired';
+        label.textContent = `${booking.item_title}: ${booking.start} - ${booking.end} (${i18next.t(statusText)})`;
+        row.appendChild(label);
+        if (kind === 'pending' && booking.canapprove === 1) {
+          const actions = document.createElement('div');
+          actions.className = 'btn-group ml-2';
+          for (const [action, title, style] of [
+            ['booking-approve', 'Approve', 'btn-success'],
+            ['booking-reject', 'Reject', 'btn-danger'],
+          ]) {
+            const control = document.createElement('button');
+            control.type = 'button';
+            control.className = `btn btn-sm ${style}`;
+            control.dataset.action = action;
+            control.dataset.eventid = String(booking.id);
+            control.textContent = i18next.t(title);
+            actions.appendChild(control);
+          }
+          row.appendChild(actions);
+        }
+        if (kind === 'my' && booking.approval_status === 0) {
+          const cancel = document.createElement('button');
+          cancel.type = 'button';
+          cancel.className = 'btn btn-sm btn-outline-danger ml-2';
+          cancel.textContent = i18next.t('Cancel request');
+          cancel.addEventListener('click', async () => {
+            if (!window.confirm(i18next.t('Cancel this booking request?'))) {
+              return;
+            }
+            const endpoint = booking.recurrence_id
+              ? `event/${booking.id}/recurrences?recursive=1`
+              : `event/${booking.id}`;
+            try {
+              await ApiC.delete(endpoint);
+              row.remove();
+              calendar.refetchEvents();
+            } catch (error) {
+              notify.error(error);
+            }
+          });
+          row.appendChild(cancel);
+        }
+        list.appendChild(row);
+      }
+    } catch (error) {
+      list.textContent = i18next.t('Could not load booking requests.');
+      notify.error(error);
+    }
+  });
+
+  on('booking-approve', async (el: HTMLElement) => {
+    try {
+      await ApiC.patch(`event/${el.dataset.eventid}`, { action: Action.Update, target: 'approval', decision: 'approved' });
+      $('#eventModal').modal('hide');
+      calendar.refetchEvents();
+    } catch (error) {
+      notify.error(error);
+    }
+  });
+
+  on('booking-reject', async (el: HTMLElement) => {
+    const reason = window.prompt(i18next.t('Reason for rejection (optional)'));
+    if (reason === null) {
+      return;
+    }
+    try {
+      await ApiC.patch(`event/${el.dataset.eventid}`, { action: Action.Update, target: 'approval', decision: 'rejected', comment: reason });
+      $('#eventModal').modal('hide');
+      calendar.refetchEvents();
+    } catch (error) {
+      notify.error(error);
+    }
+  });
 
   on('cancel-event', (el: HTMLElement) => {
     const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;

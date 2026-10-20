@@ -25,6 +25,7 @@ use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Scope;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Services\BookingApproval;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
@@ -44,6 +45,25 @@ final class Items extends AbstractConcreteEntity
     protected const string FORCE_TEMPLATE_KEY = 'force_res_tpl';
 
     public EntityType $entityType = EntityType::Items;
+
+    /** The configured individual validators, for the resource settings UI. */
+    public function getBookingValidatorIds(): array
+    {
+        return (new BookingApproval($this->Users))->getDesignatedUserIds($this->id ?? 0);
+    }
+
+    #[Override]
+    public function patch(Action $action, array $params): array
+    {
+        if ($action === Action::Update && ($params['target'] ?? null) === 'book_approval') {
+            $this->canOrExplode(AccessType::Write);
+            $this->ExclusiveEditMode->canPatchOrExplode($action);
+            (new BookingApproval($this->Users))->configure($this, $params);
+            $this->setId($this->id);
+            return $this->readOne();
+        }
+        return parent::patch($action, $params);
+    }
 
     #[Override]
     public function create(

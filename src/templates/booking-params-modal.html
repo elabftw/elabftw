@@ -29,6 +29,23 @@
                 <span class='slider'></span>
               </label>
             </div>
+            <hr>
+            <h4>{{ 'Booking approval'|trans }}</h4>
+            <div class='d-flex justify-content-between mb-2'>
+              <label for='requiresValidationSwitch'>{{ 'Require validation for bookings'|trans }}</label>
+              <label class='switch' title='{{ 'Require validation for bookings'|trans }}'>
+                <input type='checkbox' id='requiresValidationSwitch' data-ignore='1' {{ Entity.entityData.requires_validation == 1 ? 'checked="checked"' }}>
+                <span class='slider'></span>
+              </label>
+            </div>
+            <label for='bookApprovalUsers'>{{ 'Validators (one or more users)'|trans }}</label>
+            {% set selectedBookingValidators = Entity.getBookingValidatorIds() %}
+            <select id='bookApprovalUsers' data-ignore='1' class='form-control mb-2' multiple>
+              {% for user in usersArr %}
+                <option value='{{ user.userid }}' {{ user.userid in selectedBookingValidators ? 'selected' }}>{{ user.fullname }}</option>
+              {% endfor %}
+            </select>
+            <p class='smallgray'>{{ 'Validators can book without approval. Pending requests block the time slot.'|trans }}</p>
             {# Allow users booking in past #}
             <div class='d-flex justify-content-between mb-2'>
               <label class='d-inline mr-1' for='isBookableInPastSwitch'>{{ 'Allow users booking in past'|trans }}</label>

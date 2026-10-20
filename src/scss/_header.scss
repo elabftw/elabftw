@@ -495,7 +495,8 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
   .has-main-nav .side-panel { left: 0; top: 52px; height: calc(100vh - 52px); z-index: 1042; }
   .navbar-entity-details { display: none; }
   .navbar-backdrop {
-    background: rgba(0, 0, 0, 0.45);
+    // Keep click-outside dismissal without dimming the page or fading in.
+    background: transparent;
     border: 0;
     inset: 52px 0 0;
     position: fixed;
@@ -613,3 +614,107 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
 .navbar-entity-details { flex: 1 1 auto; }
 .navbar-entity-heading { flex: 1 1 auto; }
 #navbarEntityMeta { flex: 0 0 auto; }
+/* Keep the mobile navbar visually consistent with the desktop chrome.
+   The topbar and the drawer are separate surfaces, in every theme. */
+@media (max-width: 1199.98px) {
+  /* The logo is white: the entire 52px header must keep the chrome background. */
+  .has-main-nav #main-navbar {
+    background: var(--nav-bg);
+    border-bottom: 0;
+    border-right: 0;
+    color: var(--chrome-fg);
+  }
+
+  .has-main-nav #main-navbar .navbar-toggler {
+    border-color: var(--chrome-muted);
+    flex: 0 0 auto;
+    margin: 0 0.5rem 0 0;
+  }
+  .has-main-nav #main-navbar .navbar-toggler i { color: var(--chrome-fg); }
+  .has-main-nav #main-navbar .navbar-brand {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  /* Light sidebar surface and readable labels/icons (also theme-aware). */
+  .has-main-nav #main-nav {
+    background: var(--mainbackground);
+    border-right: 1px solid var(--thirdlevel);
+    color: var(--mediumstrong);
+    max-width: min(21rem, 90vw);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    width: 21rem;
+  }
+  .has-main-nav #main-nav > .navbar-nav {
+    height: auto;
+    overflow: visible;
+  }
+  .has-main-nav #main-nav .nav-link,
+  .has-main-nav #main-nav .sidebar-panel-link,
+  .has-main-nav #main-nav .dropdown-item {
+    color: var(--mediumstrong);
+  }
+  .has-main-nav #main-nav .nav-link.active,
+  .has-main-nav #main-nav .sidebar-panel-link[aria-expanded='true'] {
+    background: color-mix(in srgb, var(--primary) 14%, transparent);
+    border-left-color: var(--primary);
+    color: var(--primary) !important;
+  }
+  .has-main-nav #main-nav .nav-link i,
+  .has-main-nav #main-nav .sidebar-panel-link i,
+  .has-main-nav #main-nav .dropdown-item i { color: inherit; }
+
+  .has-main-nav #main-nav .dropdown > .dropdown-menu,
+  .has-main-nav #main-nav .sidebar-create .dropdown-menu {
+    background: var(--mainbackground);
+    border-color: var(--thirdlevel);
+  }
+
+  /* These panels live inside the menu, not in a second off-canvas overlay.
+     Scroll the drawer as a whole instead of squeezing panel contents. */
+  .has-main-nav #main-nav .navbar-side-bottom > .side-panel {
+    background: var(--mainbackground);
+    color: var(--mediumstrong);
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    width: auto;
+  }
+  .has-main-nav #main-nav .navbar-side-bottom > .side-panel h3,
+  .has-main-nav #main-nav .navbar-side-bottom > .side-panel .side-panel-item {
+    color: var(--mediumstrong);
+    overflow-wrap: anywhere;
+  }
+  .has-main-nav #main-nav .navbar-side-bottom > .side-panel .side-panel-item.selected {
+    color: var(--primary-fg);
+  }
+
+  /* Utility menus must remain on-screen on narrow phones. */
+  .has-main-nav .navbar-utilities .dropdown-menu {
+    max-height: calc(100dvh - 60px);
+    max-width: calc(100vw - 1rem);
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .has-main-nav #main-navbar {
+    gap: 0.25rem;
+    padding-left: 0.5rem;
+  }
+  .has-main-nav #main-navbar .navbar-toggler {
+    margin-right: 0.25rem;
+    padding: 0.25rem 0.45rem;
+  }
+  .has-main-nav .navbar-utilities { padding-right: 0.35rem; }
+  .has-main-nav .navbar-utilities .dropdown-menu {
+    left: auto !important;
+    right: 0.5rem !important;
+    top: 52px !important;
+    transform: none !important;
+  }
+}
+

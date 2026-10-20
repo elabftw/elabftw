@@ -125,9 +125,9 @@ export default class Autocomplete implements EventListenerObject {
       }
       break;
     case 'change':
-      // Selection already emitted change. A browser may emit it again on blur
-      // after the user typed the search term; avoid running save handlers twice.
-      if (event.isTrusted && this.committedValue === this.input.value) event.stopImmediatePropagation();
+      // Selection already emitted change. Ignore duplicate blur notifications,
+      // including synthetic events, while letting select() emit its own change.
+      if (!this.selecting && this.committedValue === this.input.value) event.stopImmediatePropagation();
       break;
     case 'compositionstart':
       this.composing = true;

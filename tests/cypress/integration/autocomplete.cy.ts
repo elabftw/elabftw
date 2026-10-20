@@ -67,9 +67,15 @@ describe('Autocomplete', () => {
     });
     cy.get('.elab-autocomplete [role="option"]').click();
     cy.get('#autocompleteInput').should('have.value', label).should('have.focus');
-    cy.then(() => expect(events).to.deep.eq(['input', 'change']));
+    cy.then(() => expect([...events]).to.deep.eq(['input', 'change']));
+    cy.get('#autocompleteInput').trigger('change');
+    cy.then(() => expect([...events]).to.deep.eq(['input', 'change']));
     cy.get('#nextInput').focus();
-    cy.then(() => expect(events).to.deep.eq(['input', 'change', 'blur']));
+    cy.then(() => expect([...events]).to.deep.eq(['input', 'change', 'blur']));
+    // A later edit must still notify change handlers when the input loses focus.
+    cy.get('#autocompleteInput').focus().type('b').should('have.value', `${label}b`);
+    cy.get('#nextInput').focus();
+    cy.then(() => expect([...events]).to.deep.eq(['input', 'change', 'blur', 'input', 'change', 'blur']));
   });
 
   it('Ignores old responses, including after the input loses focus', () => {
@@ -120,7 +126,8 @@ describe('Autocomplete', () => {
     cy.get('@source').should('have.been.calledOnceWithExactly', '日');
     cy.get('.elab-autocomplete:visible').should('contain.text', '日本');
     cy.get('#autocompleteInput').type('{downarrow}{esc}').should('have.value', '日')
-      .should('not.have.attr', 'aria-activedescendant').should('have.attr', 'aria-expanded', 'false');
+      .should('have.attr', 'aria-expanded', 'false');
+    cy.get('#autocompleteInput').should('not.have.attr', 'aria-activedescendant');
   });
 
   it('Reuses initialization and cleans up after fragment replacement', () => {
@@ -145,8 +152,9 @@ describe('Autocomplete', () => {
     cy.get('#autocompleteInput').should('have.attr', 'aria-busy', 'false');
     cy.get('.elab-autocomplete:visible').should('not.exist');
     cy.then(() => instance.destroy());
-    cy.get('#autocompleteInput').should('have.attr', 'autocomplete', 'on')
-      .should('not.have.attr', 'role').should('not.have.attr', 'aria-controls');
+    cy.get('#autocompleteInput').should('have.attr', 'autocomplete', 'on');
+    cy.get('#autocompleteInput').should('not.have.attr', 'role');
+    cy.get('#autocompleteInput').should('not.have.attr', 'aria-controls');
   });
 });
 

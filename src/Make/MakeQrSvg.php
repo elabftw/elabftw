@@ -65,7 +65,7 @@ final class MakeQrSvg extends AbstractMake implements StringMakerInterface
     {
         return sprintf(
             '%s-qr-code.elabftw.svg',
-            Filter::forFilesystem($this->entity->entityData['title']),
+            Filter::forFilesystemTitle($this->entity->entityData['title']),
         );
     }
 

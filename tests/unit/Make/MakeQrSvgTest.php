@@ -38,12 +38,13 @@ class MakeQrSvgTest extends \PHPUnit\Framework\TestCase
         $content = $Maker->getFileContent();
         $svg = new SimpleXMLElement($content);
         $this->assertSame(array('' => 'http://www.w3.org/2000/svg'), $svg->getDocNamespaces());
-        $this->assertSame('250', (string) $svg['width']);
+        $this->assertSame('292', (string) $svg['width']);
         $this->assertSame('270', (string) $svg['height']);
-        $this->assertSame('0 0 250 270', (string) $svg['viewBox']);
+        $this->assertSame('0 0 292 270', (string) $svg['viewBox']);
         $this->assertGreaterThan(1, $svg->rect->count());
         $this->assertSame(0, $svg->image->count());
         $this->assertSame('PCR amplification', (string) $svg->text[0]);
+        $this->assertSame('16', (string) $svg->text[0]['font-size']);
         $this->assertGreaterThan(250, (int) $svg->text[0]['y']);
         $this->assertSame(strlen($content), $Maker->getContentSize());
         $this->assertSame('image/svg+xml', $Maker->getContentType());
@@ -52,7 +53,7 @@ class MakeQrSvgTest extends \PHPUnit\Framework\TestCase
 
     public function testGetFileContentWithoutTitle(): void
     {
-        $svg = new SimpleXMLElement(new MakeQrSvg($this->Entity, 50, false)->getFileContent());
+        $svg = new SimpleXMLElement(new MakeQrSvg($this->Entity, 50, false, fontSize: 64)->getFileContent());
         $this->assertSame('0 0 50 50', (string) $svg['viewBox']);
         $this->assertSame(0, $svg->text->count());
     }
@@ -74,19 +75,70 @@ class MakeQrSvgTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(2, $svg->text->count());
         $this->assertSame('日本語', (string) $svg->text[0]);
         $this->assertSame('ABC', (string) $svg->text[1]);
-        $this->assertSame('265', (string) $svg->text[0]['y']);
-        $this->assertSame('285', (string) $svg->text[1]['y']);
+        $this->assertSame('266', (string) $svg->text[0]['y']);
+        $this->assertSame('286', (string) $svg->text[1]['y']);
     }
 
     public function testWideTitleFitsTheCanvas(): void
     {
         $this->Entity->entityData['title'] = '日本語WWWW';
         $svg = new SimpleXMLElement(new MakeQrSvg($this->Entity, 50)->getFileContent());
-        $this->assertSame('90', (string) $svg['width']);
-        $this->assertSame('80', (string) $svg->text[0]['textLength']);
-        $this->assertSame('spacingAndGlyphs', (string) $svg->text[0]['lengthAdjust']);
-        $this->assertSame('90', (string) $svg->rect[0]['width']);
+        $this->assertSame('170', (string) $svg['width']);
+        $this->assertFalse(isset($svg->text[0]['textLength']));
+        $this->assertFalse(isset($svg->text[0]['lengthAdjust']));
+        $this->assertSame('170', (string) $svg->rect[0]['width']);
         $this->assertSame('70', (string) $svg->rect[0]['height']);
+    }
+
+    public function testWideLatinTitleIsNotCompressed(): void
+    {
+        $this->Entity->entityData['title'] = 'WWWW';
+        $svg = new SimpleXMLElement(new MakeQrSvg($this->Entity, 10)->getFileContent());
+        $this->assertSame('74', (string) $svg['width']);
+        $this->assertSame('16', (string) $svg->text[0]['font-size']);
+        $this->assertSame('WWWW', (string) $svg->text[0]);
+        $this->assertFalse(isset($svg->text[0]['textLength']));
+        $this->assertFalse(isset($svg->text[0]['lengthAdjust']));
+    }
+
+    public function testCustomFontSizeAdjustsTheTitleLayout(): void
+    {
+        $this->Entity->entityData['title'] = 'WWWWWWWW';
+        $svg = new SimpleXMLElement(new MakeQrSvg($this->Entity, 50, maxLineChars: 4, fontSize: 32)->getFileContent());
+        $this->assertSame('0 0 138 130', (string) $svg['viewBox']);
+        $this->assertSame('138', (string) $svg->rect[0]['width']);
+        $this->assertSame('130', (string) $svg->rect[0]['height']);
+        $this->assertSame(2, $svg->text->count());
+        $this->assertSame('32', (string) $svg->text[0]['font-size']);
+        $this->assertSame('32', (string) $svg->text[1]['font-size']);
+        $this->assertSame('82', (string) $svg->text[0]['y']);
+        $this->assertSame('122', (string) $svg->text[1]['y']);
+    }
+
+    public function testSmallFontSizeAdjustsTheTitleLayout(): void
+    {
+        $this->Entity->entityData['title'] = 'WWWWWWWW';
+        $svg = new SimpleXMLElement(new MakeQrSvg($this->Entity, 50, maxLineChars: 4, fontSize: 8)->getFileContent());
+        $this->assertSame('0 0 50 70', (string) $svg['viewBox']);
+        $this->assertSame('8', (string) $svg->text[0]['font-size']);
+        $this->assertSame('58', (string) $svg->text[0]['y']);
+        $this->assertSame('68', (string) $svg->text[1]['y']);
+    }
+
+    public function testNonPositiveFontSizesUseTheDefault(): void
+    {
+        foreach (array(0, -16) as $fontSize) {
+            $svg = new SimpleXMLElement(new MakeQrSvg($this->Entity, 250, fontSize: $fontSize)->getFileContent());
+            $this->assertSame('16', (string) $svg->text[0]['font-size']);
+            $this->assertSame('0 0 292 270', (string) $svg['viewBox']);
+        }
+    }
+
+    public function testPositiveFontSizeIsNotCappedByTheUiLimit(): void
+    {
+        $svg = new SimpleXMLElement(new MakeQrSvg($this->Entity, 250, fontSize: 1500)->getFileContent());
+        $this->assertSame('1500', (string) $svg->text[0]['font-size']);
+        $this->assertSame('2125', (string) $svg['height']);
     }
 
     public function testEmptyTitle(): void

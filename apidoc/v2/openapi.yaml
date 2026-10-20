@@ -3813,6 +3813,13 @@ paths:
             mediumSize:
               summary: Small QR code
               value: 50
+        - name: titleFontSize
+          in: query
+          schema:
+            type: integer
+            default: 16
+          description: |
+            Title font size in pixels. Only applicable if format is qrsvg and withTitle is true. Non-positive values use the default.
         - name: changelog
           in: query
           schema:
@@ -4420,6 +4427,13 @@ paths:
             mediumSize:
               summary: Small QR code
               value: 50
+        - name: titleFontSize
+          in: query
+          schema:
+            type: integer
+            default: 16
+          description: |
+            Title font size in pixels. Only applicable if format is qrsvg and withTitle is true. Non-positive values use the default.
         - name: changelog
           in: query
           schema:

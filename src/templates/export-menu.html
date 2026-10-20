@@ -30,6 +30,15 @@
           </label>
         </div>
 
+        {# TITLE FONT SIZE #}
+        <div class='d-flex justify-content-between mb-2'>
+          <div>
+            <label class='d-inline mr-1' for='qrsvg_exportTitleFontSize'>{{ 'Font size'|trans }}</label>
+            <p class='smallgray'>{{ 'Title font size (in pixels)'|trans }}</p>
+          </div>
+          <input type='number' min='1' max='1337' class='form-control col-md-3' value='16' id='qrsvg_exportTitleFontSize'>
+        </div>
+
         {# MAX LINES #}
         <div class='d-flex justify-content-between mb-2'>
           <div>

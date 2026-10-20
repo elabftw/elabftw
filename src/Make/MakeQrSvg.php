@@ -22,6 +22,7 @@ use RuntimeException;
 use SimpleXMLElement;
 
 use function count;
+use function ceil;
 use function htmlspecialchars;
 use function max;
 use function mb_strlen;
@@ -37,17 +38,11 @@ final class MakeQrSvg extends AbstractMake implements StringMakerInterface
 {
     private const int DEFAULT_IMAGE_SIZE_PX = 250;
 
-    private const int CHAR_WIDTH_PX = 8;
-
-    private const int FONT_SIZE_PX = 16;
-
-    private const int LINE_HEIGHT_PX = 20;
+    private const int DEFAULT_FONT_SIZE_PX = 16;
 
     private const int DEFAULT_MAX_LINE_CHARS = 42;
 
     private const int DEFAULT_MAX_LINES = 2;
-
-    private const int SPACE_UNDER_QR = 15;
 
     protected string $contentType = 'image/svg+xml';
 
@@ -57,10 +52,12 @@ final class MakeQrSvg extends AbstractMake implements StringMakerInterface
         private bool $withTitle = true,
         private int $maxLines = 0,
         private int $maxLineChars = 0,
+        private int $fontSize = 0,
     ) {
         $this->size = $this->size > 0 ? $this->size : self::DEFAULT_IMAGE_SIZE_PX;
         $this->maxLineChars = $this->maxLineChars > 0 ? $this->maxLineChars : self::DEFAULT_MAX_LINE_CHARS;
         $this->maxLines = $this->maxLines > 0 ? $this->maxLines : self::DEFAULT_MAX_LINES;
+        $this->fontSize = $this->fontSize > 0 ? $this->fontSize : self::DEFAULT_FONT_SIZE_PX;
     }
 
     #[Override]
@@ -83,9 +80,11 @@ final class MakeQrSvg extends AbstractMake implements StringMakerInterface
         $titleMarginLeft = $this->size < 100 ? 5 : 10;
         $width = $this->size;
         foreach ($splitTitle as $line) {
-            $width = max($width, mb_strwidth($line) * self::CHAR_WIDTH_PX + 2 * $titleMarginLeft);
+            // Allow one em per display-width unit, leaving room for wide glyphs and fallback fonts.
+            $width = max($width, mb_strwidth($line) * $this->fontSize + 2 * $titleMarginLeft);
         }
-        $height = $this->size + count($splitTitle) * self::LINE_HEIGHT_PX;
+        $lineHeight = (int) ceil((float) $this->fontSize * 1.25);
+        $height = $this->size + count($splitTitle) * $lineHeight;
         $svg['width'] = (string) $width;
         $svg['height'] = (string) $height;
         $svg['viewBox'] = sprintf('0 0 %d %d', $width, $height);
@@ -97,13 +96,10 @@ final class MakeQrSvg extends AbstractMake implements StringMakerInterface
         foreach ($splitTitle as $key => $line) {
             $text = $svg->addChild('text', htmlspecialchars($line, ENT_XML1 | ENT_QUOTES | ENT_SUBSTITUTE | ENT_DISALLOWED, 'UTF-8')) ?? throw new RuntimeException('Could not process title line!');
             $text->addAttribute('x', (string) $titleMarginLeft);
-            $text->addAttribute('y', (string) ($this->size + self::SPACE_UNDER_QR + $key * self::LINE_HEIGHT_PX));
+            $text->addAttribute('y', (string) ($this->size + $this->fontSize + $key * $lineHeight));
             $text->addAttribute('font-family', 'sans-serif');
-            $text->addAttribute('font-size', (string) self::FONT_SIZE_PX);
+            $text->addAttribute('font-size', (string) $this->fontSize);
             $text->addAttribute('fill', 'black');
-            // Fix the rendered width so font substitution cannot clip the title.
-            $text->addAttribute('textLength', (string) (mb_strwidth($line) * self::CHAR_WIDTH_PX));
-            $text->addAttribute('lengthAdjust', 'spacingAndGlyphs');
         }
 
         $content = $svg->asXML() ?: throw new RuntimeException('Could not generate QR SVG image.');

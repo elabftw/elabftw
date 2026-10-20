@@ -150,7 +150,8 @@ on('export-to-qrsvg', (el: HTMLElement) => {
   const title = (document.getElementById('qrsvg_exportTitle') as HTMLInputElement).checked ? 1: 0;
   const titleLines = (document.getElementById('qrsvg_exportTitleLines') as HTMLInputElement).value;
   const titleChars = (document.getElementById('qrsvg_exportTitleChars') as HTMLInputElement).value;
-  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrsvg&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
+  const titleFontSize = (document.getElementById('qrsvg_exportTitleFontSize') as HTMLInputElement).value;
+  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrsvg&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}&titleFontSize=${titleFontSize}`, '_blank');
 });
 
 on(Action.Destroy, () => {

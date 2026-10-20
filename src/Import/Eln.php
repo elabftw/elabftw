@@ -230,7 +230,7 @@ class Eln extends AbstractZip
         }
         $limited = new LimitedReadStream(
             $input,
-            min($this->limits->maxMetadataBytes, $this->limits->maxMemberBytes, $this->limits->maxTotalBytes),
+            $this->enforceLimits ? min($this->limits->maxMetadataBytes, $this->limits->maxMemberBytes, $this->limits->maxTotalBytes) : null,
         );
         try {
             $json = json_decode($limited->getContents(), true, 512, JSON_THROW_ON_ERROR);

@@ -51,6 +51,8 @@ abstract class AbstractZip extends AbstractImport
 
     protected ZipLimits $limits;
 
+    protected bool $enforceLimits = true;
+
     // in version 5.0.0 we switched from filter input to escape output
     // setting this to true will convert html escaped entities into the correct character
     protected bool $switchToEscapeOutput = false;
@@ -64,7 +66,7 @@ abstract class AbstractZip extends AbstractImport
         protected LoggerInterface $logger,
     ) {
         parent::__construct($requester, $UploadedFile, $logger);
-        $this->limits = ZipLimits::fromEnvironment();
+        $this->limits = $this->enforceLimits ? ZipLimits::fromEnvironment() : new ZipLimits();
     }
 
     /**
@@ -163,7 +165,7 @@ abstract class AbstractZip extends AbstractImport
      */
     private function assertArchiveIsSafe(ZipArchive $archive): void
     {
-        if ($archive->numFiles > $this->limits->maxMembers) {
+        if ($this->enforceLimits && $archive->numFiles > $this->limits->maxMembers) {
             throw new ImproperActionException('The archive exceeds the member count limit.');
         }
         $totalBytes = 0;
@@ -173,6 +175,9 @@ abstract class AbstractZip extends AbstractImport
                 throw new ImproperActionException('The archive contains invalid member metadata.');
             }
             $this->assertArchivePathIsSafe($stat['name']);
+            if (!$this->enforceLimits) {
+                continue;
+            }
             if ($stat['size'] > $this->limits->maxMemberBytes) {
                 throw new ImproperActionException('An archive member exceeds the uncompressed size limit.');
             }
@@ -216,13 +221,13 @@ abstract class AbstractZip extends AbstractImport
             }
             $limited = new LimitedReadStream(
                 $input,
-                $this->limits->maxMemberBytes,
-                function (int $bytes) use (&$totalBytes): void {
+                $this->enforceLimits ? $this->limits->maxMemberBytes : null,
+                $this->enforceLimits ? function (int $bytes) use (&$totalBytes): void {
                     if ($bytes > $this->limits->maxTotalBytes - $totalBytes) {
                         throw new ImproperActionException('The archive exceeds the total uncompressed size limit.');
                     }
                     $totalBytes += $bytes;
-                },
+                } : null,
             );
             try {
                 $this->tmpFs->writeStream($targetPath, $limited->getResource());

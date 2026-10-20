@@ -38,14 +38,18 @@ final class LimitedReadStream
 
     /**
      * @param resource $stream
+     * @param int|null $maxBytes Null disables the per-member byte limit.
      * @param Closure(int): void|null $onRead
      */
-    public function __construct(mixed $stream, private readonly int $maxBytes, private readonly ?Closure $onRead = null)
+    public function __construct(mixed $stream, private readonly ?int $maxBytes, private readonly ?Closure $onRead = null)
     {
-        if (!is_resource($stream) || $maxBytes < 1) {
-            throw new InvalidArgumentException('Expected a stream resource and a positive size limit.');
+        if (!is_resource($stream) || ($maxBytes !== null && $maxBytes < 1)) {
+            throw new InvalidArgumentException('Expected a stream resource and a positive size limit, or null for no limit.');
         }
         $this->stream = $stream;
+        if ($maxBytes === null && $onRead === null) {
+            return;
+        }
         if (
             !in_array(self::FILTER_NAME, stream_get_filters(), true)
             && !stream_filter_register(self::FILTER_NAME, ReadLimitFilter::class)
@@ -83,7 +87,7 @@ final class LimitedReadStream
     {
         $this->assertNoFailure();
         try {
-            if ($bytes > $this->maxBytes - $this->bytesRead) {
+            if ($this->maxBytes !== null && $bytes > $this->maxBytes - $this->bytesRead) {
                 throw new ImproperActionException('An archive member exceeds the uncompressed size limit.');
             }
             if ($this->onRead !== null) {

@@ -51,6 +51,36 @@ class LimitedReadStreamTest extends TestCase
         $stream->assertNoFailure();
     }
 
+    public function testNullLimitReadsAllContents(): void
+    {
+        $contents = str_repeat('a', 20000);
+        $stream = new LimitedReadStream(Utils::streamFor($contents)->detach(), null);
+        try {
+            $this->assertSame($contents, $stream->getContents());
+            $stream->assertFullyRead();
+        } finally {
+            $stream->close();
+        }
+    }
+
+    public function testNullLimitStillEnforcesReadCallback(): void
+    {
+        $stream = new LimitedReadStream(
+            Utils::streamFor('12345')->detach(),
+            null,
+            function (int $bytes): void {
+                throw new ImproperActionException('Total size limit exceeded.');
+            },
+        );
+        try {
+            $this->expectException(ImproperActionException::class);
+            $this->expectExceptionMessage('Total size limit exceeded.');
+            $stream->getContents();
+        } finally {
+            $stream->close();
+        }
+    }
+
     public function testGetContentsAlsoEnforcesLimit(): void
     {
         $stream = new LimitedReadStream(Utils::streamFor(str_repeat('a', 20000))->detach(), 10000);

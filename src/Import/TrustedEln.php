@@ -29,6 +29,9 @@ final class TrustedEln extends Eln
 {
     public bool $requesterIsAuthor = false;
 
+    // CLI imports are not subject to the web interface's archive limits.
+    protected bool $enforceLimits = false;
+
     #[Override]
     protected function getAuthor(array $dataset): Users
     {

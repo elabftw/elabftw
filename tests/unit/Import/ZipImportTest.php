@@ -10,7 +10,6 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\UnableToWriteFile;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use ReflectionClass;
@@ -62,6 +61,52 @@ class ZipImportTest extends TestCase
             'total bytes across members' => array(new ZipLimits(maxMemberBytes: 4, maxTotalBytes: 7), array('root/a' => '1234', 'root/b' => '5678'), 'total uncompressed'),
             'compression ratio' => array(new ZipLimits(maxCompressionRatio: 2), array('root/file' => str_repeat('a', 65536)), 'compression ratio'),
             'unsafe path' => array(new ZipLimits(), array('../outside' => 'a'), 'unsafe path'),
+        );
+    }
+
+    public function testTrustedImportBypassesAllLimits(): void
+    {
+        $fs = new Filesystem(new InMemoryFilesystemAdapter());
+        $metadata = '{"@graph":[]}';
+        $payload = str_repeat('a', 65536);
+        $importer = $this->createTrustedImporter(
+            $this->archive(array('root/ro-crate-metadata.json' => $metadata, 'root/payload' => $payload)),
+            $fs,
+            new ZipLimits(maxMembers: 1, maxMemberBytes: 1, maxTotalBytes: 1, maxCompressionRatio: 1, maxMetadataBytes: 1),
+        );
+        try {
+            $importer->prepare();
+            $directory = new ReflectionProperty(AbstractZip::class, 'tmpDir')->getValue($importer);
+            $this->assertSame($metadata, $fs->read($directory . '/root/ro-crate-metadata.json'));
+            $this->assertSame($payload, $fs->read($directory . '/root/payload'));
+            $this->assertSame(0, $importer->getCount());
+        } finally {
+            $importer->cleanup();
+        }
+        $this->assertSame(array(), $fs->listContents('', true)->toArray());
+    }
+
+    /**
+     * @dataProvider invalidTrustedArchiveProvider
+     */
+    public function testTrustedImportStillValidatesArchive(array $members, string $message): void
+    {
+        $fs = $this->createMock(FilesystemOperator::class);
+        $fs->expects($this->never())->method('createDirectory');
+        $fs->expects($this->never())->method('writeStream');
+        $importer = $this->createTrustedImporter($this->archive($members), $fs, new ZipLimits());
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage($message);
+        $importer->prepare();
+    }
+
+    public static function invalidTrustedArchiveProvider(): array
+    {
+        return array(
+            'unsafe path' => array(array('../outside' => 'a'), 'unsafe path'),
+            'missing metadata' => array(array('root/payload' => 'data'), 'missing ro-crate-metadata.json'),
+            'invalid graph' => array(array('root/ro-crate-metadata.json' => '{}'), '@graph array'),
+            'invalid graph node' => array(array('root/ro-crate-metadata.json' => '{"@graph":[{}]}'), 'invalid graph node'),
         );
     }
 
@@ -236,6 +281,13 @@ class ZipImportTest extends TestCase
         foreach (array('UploadedFile' => new UploadedFile($path, 'import.eln', test: true), 'tmpFs' => $fs, 'limits' => $limits, 'logger' => new NullLogger()) as $name => $value) {
             new ReflectionProperty($importer, $name)->setValue($importer, $value);
         }
+    }
+
+    private function createTrustedImporter(string $path, FilesystemOperator $fs, ZipLimits $limits): TrustedEln
+    {
+        $importer = new ReflectionClass(TrustedEln::class)->newInstanceWithoutConstructor();
+        $this->initializeImporter($importer, $path, $fs, $limits);
+        return $importer;
     }
 
     private function archive(array $members): string

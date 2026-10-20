@@ -254,7 +254,7 @@ export class Metadata {
     if (properties.value) {
       element.value = properties.value as string;
     }
-    element.required = properties.required === true;
+    element.required = Object.prototype.hasOwnProperty.call(properties, 'required') && properties.required === true;
     element.dataset.field = name;
     element.addEventListener('change', this, false);
     return element;
@@ -282,7 +282,7 @@ export class Metadata {
       // add a data-field attribute so we know what to update on change
       radioInput.dataset.field = name;
       radioInput.disabled = properties.readonly === true;
-      radioInput.required = properties.required === true;
+      radioInput.required = Object.prototype.hasOwnProperty.call(properties, 'required') && properties.required === true;
       radioInputs.push(radioInput);
     }
 
@@ -640,7 +640,7 @@ export class Metadata {
       }
     }
 
-    element.required = properties.required === true;
+    element.required = Object.prototype.hasOwnProperty.call(properties, 'required') && properties.required === true;
     const mustDisable = element instanceof HTMLSelectElement ||
       (element instanceof HTMLInputElement && ['checkbox', 'radio'].includes(element.type));
     if (Object.prototype.hasOwnProperty.call(properties, 'readonly') && properties.readonly === true) {

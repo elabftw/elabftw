@@ -99,6 +99,8 @@ if (document.getElementById('metadataDiv') && entity.id) {
         (document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked = !!fieldData.blank_value_on_duplicate;
         (document.getElementById('requiredSwitch') as HTMLInputElement).checked = !!fieldData.required;
         (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked = !!fieldData.allow_multi_values;
+        const currentValue = Array.isArray(fieldData.value) ? fieldData.value[0] : fieldData.value;
+        (document.getElementById('newFieldEmptyValueCheckbox') as HTMLInputElement).checked = !currentValue;
 
         let containerId, sourceArray, toggleDiv;
         // same behaviour is applied for select, radio and number. Only div name is different
@@ -293,8 +295,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
           } else if (['select', 'radio'].includes(field['type'])) {
             field['options'] = [];
             document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push(opt.value));
-            // just take the first one as selected value
-            fieldValue = field['options'][0];
+            // take the first one as selected value, unless user wants to start empty
+            const startEmpty = (document.getElementById('newFieldEmptyValueCheckbox') as HTMLInputElement).checked;
+            fieldValue = startEmpty ? '' : field['options'][0];
           } else if (field['type'] === ExtraFieldInputType.Number) {
             fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
             field['units'] = [];
@@ -403,7 +406,8 @@ if (document.getElementById('metadataDiv') && entity.id) {
               if (val) field['options'].push(val);
             });
             // keep old value if no new option is provided
-            field['value'] = field['options'].includes(prevVal) ? prevVal : (field['options'][0] || '');
+            const startEmpty = (document.getElementById('newFieldEmptyValueCheckbox') as HTMLInputElement).checked;
+            field['value'] = startEmpty ? '' : (field['options'].includes(prevVal) ? prevVal : (field['options'][0] || ''));
           } else if (field['type'] === ExtraFieldInputType.Number) {
             const prevVal = Array.isArray(prevField?.value) ? prevField.value[0] ?? '' : (prevField?.value || '');
             const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();

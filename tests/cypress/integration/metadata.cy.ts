@@ -204,4 +204,19 @@ describe('Metadata Extra fields', () => {
       });
     });
   });
+
+  it('Creates a dropdown field with an empty value from the builder', () => {
+    const fieldName = 'Empty dropdown';
+    cy.createEntity();
+    cy.get('[data-cy="addMetadataField"]').first().click();
+    cy.get('#fieldBuilderModal').should('be.visible');
+    cy.get('#newFieldTypeSelect').select('select');
+    cy.get('#newFieldKeyInput').wait(500).type(fieldName);
+    cy.get('#choicesInputDiv input').eq(0).type('x');
+    cy.get('#choicesInputDiv input').eq(1).type('y');
+    cy.get('#newFieldEmptyValueCheckbox').check();
+    cy.get('[data-action="save-new-field"]').click();
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+    cy.get(`#metadataDiv select[data-field="${fieldName}"]`).should('have.value', '');
+  });
 });

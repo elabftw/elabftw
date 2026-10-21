@@ -29,8 +29,10 @@ use ZipArchive;
 
 use function array_column;
 use function dirname;
+use function getenv;
 use function json_decode;
 use function json_encode;
+use function putenv;
 use function sprintf;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -122,7 +124,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         try {
-            new Eln(
+            $Import = new Eln(
                 new Users(1, 1),
                 new Users(1, 1),
                 $uploadedFile,
@@ -130,6 +132,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 $this->logger,
                 EntityType::Experiments,
             );
+            $Import->prepare();
             $this->fail('An ELN archive containing an unsafe path was accepted.');
         } catch (ImproperActionException) {
             $this->assertSame('original export', $exportsFs->read($target));
@@ -314,17 +317,24 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             true,
         );
 
-        $Import = new TrustedEln(
-            new Users(1, 1),
-            new Users(1, 1),
-            $uploadedFile,
-            $this->fs,
-            $this->logger,
-            EntityType::Experiments,
-            category: 1,
-        );
-        $Import->import();
-        $this->assertEquals(1, $Import->getInserted());
+        // Invalid web limit configuration must not affect CLI imports.
+        $previous = getenv('IMPORT_MAX_TOTAL_BYTES');
+        putenv('IMPORT_MAX_TOTAL_BYTES=0');
+        try {
+            $Import = new TrustedEln(
+                new Users(1, 1),
+                new Users(1, 1),
+                $uploadedFile,
+                $this->fs,
+                $this->logger,
+                EntityType::Experiments,
+                category: 1,
+            );
+            $Import->import();
+            $this->assertEquals(1, $Import->getInserted());
+        } finally {
+            putenv($previous === false ? 'IMPORT_MAX_TOTAL_BYTES' : 'IMPORT_MAX_TOTAL_BYTES=' . $previous);
+        }
     }
 
     public function testImportExperimentsMulti(): void
@@ -384,7 +394,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(ImproperActionException::class);
-        new Eln(
+        $Import = new Eln(
             new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
@@ -393,6 +403,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             EntityType::Experiments,
             category: 1,
         );
+        $Import->prepare();
     }
 
     public function testInvalidShasum(): void

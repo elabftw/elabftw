@@ -53,15 +53,14 @@
   border: 1px dashed #888 !important;
   border-left: 3px solid #888 !important;
   box-shadow: none !important;
-  color: #303030 !important;
+  color: var(--chrome-bg) !important;
   cursor: default;
-  opacity: 1;
   pointer-events: none;
 
   .fc-event-main,
- .fc-event-title,
- .fc-event-time {
-    color: #303030 !important;
+  .fc-event-title,
+  .fc-event-time {
+    color: var(--chrome-bg) !important;
   }
 }
 

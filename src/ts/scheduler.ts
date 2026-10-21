@@ -739,12 +739,9 @@ if (calendarEl) {
     calendar.updateSize();
   }
 
-  // A compact request list uses the same approval action handlers as the calendar.
-  // History is intentionally limited to a useful window; it is not a full audit export.
-  // Each tab has its own request list; the calendar is kept intact in the first tab.
+  // Request lists share the existing booking decision handlers.
   async function loadBookingRequests(kind: 'my' | 'pending'): Promise<void> {
-    const listId = kind === 'my' ? 'bookingRequestsMyList' : 'bookingRequestsPendingList';
-    const list = document.getElementById(listId)!;
+    const list = document.getElementById(kind === 'my' ? 'bookingRequestsMyList' : 'bookingRequestsPendingList')!;
     list.textContent = i18next.t('Loading...');
     // MySQL date-only strings avoid ISO precision/timezone parsing issues in Scheduler.
     const start = DateTime.now().minus({ months: 3 }).toFormat('yyyy-MM-dd');
@@ -752,8 +749,8 @@ if (calendarEl) {
     const query = `events?approval_view=${kind}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
     try {
       const bookings = await ApiC.getJson<Array<{
-        id: number; item_title: string; title_only: string; start: string; end: string;
-        approval_status: number; canapprove: number; recurrence_id: string | null;
+        id: number; item_title: string; fullname: string; start: string; end: string;
+        approval_status: number; approval_comment: string | null; canapprove: number; recurrence_id: string | null;
       }>>(query);
       list.replaceChildren();
       if (bookings.length === 0) {
@@ -762,41 +759,90 @@ if (calendarEl) {
       }
       for (const booking of bookings) {
         const status = Number(booking.approval_status);
-        const canApprove = Number(booking.canapprove) === 1;
+        const statusText = ['Pending approval', 'Approved', 'Rejected', 'Expired'][status] ?? 'Unknown';
+        const badgeColors = [
+          ['lightgold', 'darkgold', 'gold'],
+          ['primary', 'primary-fg', 'primary'],
+          ['lightred', 'darkred', 'dangerred'],
+          ['firstlevel', 'mediumstrong', 'secondlevel'],
+        ][status] ?? ['firstlevel', 'mediumstrong', 'secondlevel'];
         const row = document.createElement('div');
-        row.className = 'list-group-item d-flex justify-content-between align-items-center flex-wrap';
-        const label = document.createElement('span');
-        const statusText = status === 0 ? 'Pending approval'
-          : status === 1 ? 'Approved'
-            : status === 2 ? 'Rejected' : 'Expired';
-        label.textContent = `${booking.item_title}: ${booking.start} - ${booking.end} (${i18next.t(statusText)})`;
-        row.appendChild(label);
-        if (kind === 'pending' && canApprove) {
-          const actions = document.createElement('div');
-          actions.className = 'btn-group ml-2';
-          for (const [action, title, style] of [
-            ['booking-approve', 'Approve', 'btn-success'],
-            ['booking-reject', 'Reject', 'btn-danger'],
+        row.className = 'box mb-3';
+        const layout = document.createElement('div');
+        layout.className = 'd-flex justify-content-between align-items-center flex-wrap';
+        const summary = document.createElement('div');
+        summary.className = 'd-flex align-items-start flex-grow-1 mr-3 mb-2 mb-md-0';
+        const icon = document.createElement('i');
+        icon.className = 'far fa-calendar-alt fa-fw fa-lg';
+        const iconBackground = document.createElement('span');
+        iconBackground.className = 'badge badge-secondary rounded-circle p-2 mr-3';
+        iconBackground.style.backgroundColor = 'var(--firstlevel)';
+        icon.style.color = 'var(--mediumstrong)';
+        iconBackground.appendChild(icon);
+        const details = document.createElement('div');
+        const title = document.createElement('strong');
+        title.className = 'd-block mb-1';
+        title.textContent = booking.item_title;
+        details.appendChild(title);
+        if (kind === 'pending') {
+          const requester = document.createElement('div');
+          requester.textContent = `${i18next.t('Requested by')}: ${booking.fullname}`;
+          details.appendChild(requester);
+        }
+        const dates = document.createElement('div');
+        const clock = document.createElement('i');
+        clock.className = 'far fa-clock fa-fw mr-1';
+        dates.append(clock, document.createTextNode(`${booking.start.slice(0, 16)} → ${booking.end.slice(0, 16)}`));
+        details.appendChild(dates);
+
+        const badge = document.createElement('span');
+        badge.className = 'badge p-2 mr-2';
+        badge.style.backgroundColor = `var(--${badgeColors[0]})`;
+        badge.style.color = `var(--${badgeColors[1]})`;
+        badge.style.border = `1px solid var(--${badgeColors[2]})`;
+        const statusIcon = document.createElement('i');
+        statusIcon.className = `fas fa-fw fa-${['clock', 'check-circle', 'times-circle', 'hourglass-end'][status] ?? 'question-circle'} mr-1`;
+        statusIcon.style.color = 'inherit';
+        badge.append(statusIcon, document.createTextNode(i18next.t(statusText)));
+        if (kind === 'pending') {
+          badge.classList.add('mt-2');
+          details.appendChild(badge);
+        }
+        if (kind === 'my' && status === 2 && booking.approval_comment) {
+          const reason = document.createElement('div');
+          reason.className = 'mt-2';
+          const info = document.createElement('i');
+          info.className = 'fas fa-info-circle fa-fw mr-1';
+          reason.append(info, document.createTextNode(`${i18next.t('Reason')}: ${booking.approval_comment}`));
+          details.appendChild(reason);
+        }
+        summary.append(iconBackground, details);
+        layout.appendChild(summary);
+
+        const actions = document.createElement('div');
+        actions.className = 'd-flex align-items-center flex-wrap';
+        if (kind === 'my') actions.appendChild(badge);
+        if (kind === 'pending' && Number(booking.canapprove) === 1) {
+          for (const [action, label, style] of [
+            ['booking-approve', 'Approve', 'btn-primary'],
+            ['booking-reject', 'Reject', 'btn-danger-ghost'],
           ]) {
-            const control = document.createElement('button');
-            control.type = 'button';
-            control.className = `btn btn-sm ${style}`;
-            control.dataset.action = action;
-            control.dataset.eventid = String(booking.id);
-            control.textContent = i18next.t(title);
-            actions.appendChild(control);
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = `btn btn-sm ml-2 ${style}`;
+            button.dataset.action = action;
+            button.dataset.eventid = String(booking.id);
+            button.textContent = i18next.t(label);
+            actions.appendChild(button);
           }
-          row.appendChild(actions);
         }
         if (kind === 'my' && status === 0) {
           const cancel = document.createElement('button');
           cancel.type = 'button';
-          cancel.className = 'btn btn-sm btn-outline-danger ml-2';
+          cancel.className = 'btn btn-sm btn-danger-ghost ml-2';
           cancel.textContent = i18next.t('Cancel request');
           cancel.addEventListener('click', async () => {
-            if (!window.confirm(i18next.t('Cancel this booking request?'))) {
-              return;
-            }
+            if (!window.confirm(i18next.t('Cancel this booking request?'))) return;
             const endpoint = booking.recurrence_id
               ? `event/${booking.id}/recurrences?recursive=1`
               : `event/${booking.id}`;
@@ -808,8 +854,10 @@ if (calendarEl) {
               // ApiC already notifies the user.
             }
           });
-          row.appendChild(cancel);
+          actions.appendChild(cancel);
         }
+        layout.appendChild(actions);
+        row.appendChild(layout);
         list.appendChild(row);
       }
     } catch {

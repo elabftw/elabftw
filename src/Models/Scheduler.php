@@ -299,6 +299,7 @@ final class Scheduler extends AbstractRest
                 team_events.approval_status,
                 team_events.approval_decided_by,
                 team_events.approval_decided_at,
+                %s AS approval_comment,
                 team_events.recurrence_id,
                 team_events.recurrence_index,
                 team_events.recurrence_frequency,
@@ -334,6 +335,7 @@ final class Scheduler extends AbstractRest
                 AND team_events.end >= :start
                 AND %s
                 %s",
+            $approvalView === 'my' ? 'team_events.approval_comment' : 'NULL',
             $boundSelects['experiment'],
             $boundSelects['item_link'],
             $canBookExpr,

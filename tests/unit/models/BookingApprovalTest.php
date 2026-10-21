@@ -9,7 +9,6 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BookingApprovalStatus;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Users\Users;
 use Elabftw\Services\BookingApproval;
 use Elabftw\Traits\TestsUtilsTrait;
 use PHPUnit\Framework\TestCase;

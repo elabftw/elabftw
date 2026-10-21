@@ -18,6 +18,16 @@ use Elabftw\Models\Users\Users;
 use PDO;
 use Throwable;
 
+use function array_filter;
+use function array_map;
+use function array_merge;
+use function array_unique;
+use function array_values;
+use function count;
+use function date;
+use function filter_var;
+use function is_array;
+
 /** Resource booking approval rules. Administrators do not bypass configured approvers. */
 final class BookingApproval
 {
@@ -298,5 +308,4 @@ final class BookingApproval
         $this->Db->execute($req);
         return $req->fetchColumn() !== false;
     }
-
 }

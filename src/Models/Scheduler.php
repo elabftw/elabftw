@@ -55,6 +55,7 @@ use function str_replace;
 use function trim;
 use function usort;
 use function array_values;
+use function date;
 
 /**
  * All about the team's scheduler
@@ -245,7 +246,7 @@ final class Scheduler extends AbstractRest
     {
         // A normal calendar never displays rejected requests. Users can inspect
         // their own history; validators can filter requests assigned to them.
-        $approvalView = $queryParams?->getQuery()->getAlpha('approval_view') ?? '';
+        $approvalView = $queryParams === null ? '' : $queryParams->getQuery()->getAlpha('approval_view');
         if ($approvalView === 'my') {
             $this->appendFilterSql('team_events.userid', 'mybooker', (int) $this->Items->Users->userid);
         } elseif ($approvalView === 'pending') {

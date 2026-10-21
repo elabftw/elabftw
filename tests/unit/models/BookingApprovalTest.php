@@ -73,7 +73,11 @@ final class BookingApprovalTest extends TestCase
             // Expected overlap, even when book_can_overlap is configured on the resource.
         }
 
-        $item->patch(Action::Update, array('target' => 'book_approval', 'mode' => 0));
+        $item->patch(Action::Update, array(
+            'target' => 'book_approval',
+            'requires_validation' => 0,
+            'userids' => array($validator->userid),
+        ));
         self::assertSame(BookingApprovalStatus::Approved->value, (int) (new Scheduler(new Items($requester, $item->id), $eventId))->readOne()['approval_status']);
     }
 }

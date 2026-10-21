@@ -97,7 +97,7 @@
   width: 100%;
 }
 
-.has-main-nav #main-navbar .navbar-brand .sidebar-compact-logo { display: none; }
+.has-main-nav .navbar-brand .sidebar-compact-logo { display: none; }
 
 .has-main-nav #main-nav > .navbar-nav {
   display: flex;
@@ -128,16 +128,16 @@
   width: 100%;
 }
 
-.has-main-nav #main-nav .nav-link i { color: inherit; }
+#main-nav .nav-link i { color: inherit; }
 .has-main-nav #main-nav .nav-link.dropdown-toggle::after { margin-left: auto; }
 .has-main-nav #main-nav .dropdown-item.disabled { color: var(--chrome-muted); }
 
 .has-main-nav #main-nav .sidebar-create { margin: 0 0 0.75rem 3px; }
-.has-main-nav #main-nav .sidebar-create .btn-primary { min-height: 45px; }
-.has-main-nav #main-nav .sidebar-create .nav-label { margin-left: 0.5rem; }
+#main-nav .sidebar-create .btn-primary { min-height: 45px; }
+#main-nav .sidebar-create .nav-label { margin-left: 0.5rem; }
 .has-main-nav #main-nav .sidebar-panel-link { cursor: pointer; }
 
-.has-main-nav #main-nav .navbar-side-bottom { margin-top: auto;
+#main-nav .navbar-side-bottom { margin-top: auto;
   padding-top: 1rem; }
 
 /* Override the old floating sidepanel opener styles without touching button themes. */
@@ -199,7 +199,7 @@
 #navbarEntityMeta .catstat-btn { margin-bottom: 0; }
 
 /* Menus keep their own contrast in light, dark and midnight variants. */
-.has-main-nav #main-nav .dropdown > .dropdown-menu {
+#main-nav .dropdown > .dropdown-menu {
   background: var(--mainbackground);
   border: 0;
   border-left: 2px solid var(--primary);
@@ -208,11 +208,11 @@
   padding: 0.25rem 0.25rem 0.25rem 0.5rem;
 }
 
-.has-main-nav #main-nav .dropdown-menu .dropdown-item i,
-.navbar-utilities .dropdown-menu .dropdown-item i { color: inherit; }
+#main-nav .dropdown-item i,
+.navbar-utilities .dropdown-item i { color: inherit; }
 
 /* The two panels expand in the menu instead of covering the page. */
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel {
+#main-nav .navbar-side-bottom > .side-panel {
   background: transparent;
   border-left: 2px solid var(--primary);
   box-shadow: none;
@@ -228,28 +228,28 @@
   top: auto;
   width: auto;
 }
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel[hidden] { display: none !important; }
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel .p-3 { padding: 0.5rem !important; }
+#main-nav .navbar-side-bottom > .side-panel[hidden] { display: none !important; }
+#main-nav .side-panel .p-3 { padding: 0.5rem !important; }
 
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel h3 {
+#main-nav .side-panel h3 {
   color: var(--chrome-fg);
   font-size: 0.95rem;
   overflow-wrap: anywhere;
 }
 
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel .list-group-item {
+#main-nav .side-panel .list-group-item {
   background: var(--nav-bg);
   border-color: var(--chrome-muted);
   color: var(--chrome-fg);
   overflow-wrap: anywhere;
 }
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel a { color: var(--link); }
+#main-nav .side-panel a { color: var(--link); }
 
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel .side-panel-item {
+#main-nav .side-panel .side-panel-item {
   padding: 0.5rem 0.25rem;
 }
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel :is(input, select) { min-width: 0; }
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel .input-group { flex-wrap: nowrap; }
+#main-nav .side-panel :is(input, select) { min-width: 0; }
+#main-nav .side-panel .input-group { flex-wrap: nowrap; }
 /* Keep the editable title visible on the dark topbar. */
 .navbar-entity-heading #documentTitle {
   color: inherit;
@@ -326,7 +326,7 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
     width: 5rem;
   }
   /* Keep open menus/panels accessible when the mouse leaves the rail. */
-  .has-main-nav #main-navbar:is(:hover, :has(:focus-visible), :has(#main-nav .dropdown-menu.show), :has(#main-nav .navbar-side-bottom > .side-panel:not([hidden]))) {
+  .has-main-nav #main-navbar:is(:hover, :has(:focus-visible), :has(.dropdown-menu.show), :has(.side-panel:not([hidden]))) {
     width: 17rem;
     .nav-label { display: inline; }
     #main-nav .dropdown-toggle::after { display: inline-block; }
@@ -359,8 +359,8 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
     width: 100%;
   }
 
-  .has-main-nav #main-nav .nav-link > i,
-  .has-main-nav #main-nav .sidebar-panel-link > i {
+  #main-nav .nav-link > i,
+  #main-nav .sidebar-panel-link > i {
     flex: 0 0 1.25rem;
     margin: 0;
     text-align: center;
@@ -373,14 +373,14 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
 
   .has-main-nav #main-nav .nav-label,
   .has-main-nav #main-nav .dropdown-toggle::after { display: none; }
-  .has-main-nav #main-nav .dropdown > .dropdown-menu { display: none; }
+  #main-nav .dropdown > .dropdown-menu { display: none; }
 
-  .has-main-nav #main-nav .dropdown > .dropdown-menu.show { display: block;
+  #main-nav .dropdown > .dropdown-menu.show { display: block;
     position: static !important;
     transform: none !important; }
 
   /* No horizontal movement when the labels appear. */
-  .has-main-nav #main-nav .sidebar-create .btn-primary {
+  #main-nav .sidebar-create .btn-primary {
     padding: 0.5rem 0.75rem;
     text-align: left;
   }
@@ -394,7 +394,7 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
 
   .has-main-nav #realContainer .original-entity-title,
   .has-main-nav #realContainer h1:has(#documentTitle),
-  .has-main-nav #realContainer .d-flex:has(> #categoryBtn) { display: none !important; }
+  #realContainer .d-flex:has(> #categoryBtn) { display: none !important; }
 
   .has-main-nav .side-panel { height: calc(100vh - 52px);
     left: 5rem;
@@ -416,7 +416,7 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
   .has-main-nav #main-navbar .navbar-brand { margin: 0 auto 0 0;
     width: auto; }
 
-  .has-main-nav #main-navbar .navbar-brand .logo-header { height: 40px;
+  .has-main-nav .navbar-brand .logo-header { height: 40px;
     width: 110px; }
 
   .has-main-nav #main-nav {
@@ -430,7 +430,7 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
     z-index: 3;
   }
 
-  .has-main-nav #main-nav .dropdown > .dropdown-menu.show { display: block;
+  #main-nav .dropdown > .dropdown-menu.show { display: block;
     position: static !important;
     transform: none !important; }
   /* Share one 52px row with the hamburger and logo, not two stacked bars. */
@@ -464,7 +464,7 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
 @media (max-width: 575.98px) {
   .has-main-nav #main-navbar { padding-right: 10rem; }
 
-  .has-main-nav #main-navbar .navbar-brand .logo-header { height: 32px;
+  .has-main-nav .navbar-brand .logo-header { height: 32px;
     width: 80px; }
 
   .has-main-nav .navbar-utilities .nav-link {
@@ -486,7 +486,7 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
 
 .has-main-nav #main-nav .nav-link,
 .has-main-nav #main-nav .sidebar-panel-link,
-.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
+#main-nav .navbar-side-bottom .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
   color: var(--mediumstrong);
 }
 
@@ -503,13 +503,13 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
   color: var(--primary) !important;
 }
 
-.has-main-nav #main-nav .nav-link.active i {
+#main-nav .nav-link.active i {
   background: transparent;
   color: inherit;
 }
 
 .has-main-nav #main-nav .dropdown-item,
-.has-main-nav #main-nav .dropdown-menu .dropdown-item:hover {
+#main-nav .dropdown-item:hover {
   color: var(--mediumstrong);
 }
 
@@ -517,27 +517,27 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
   background: color-mix(in srgb, var(--primary) 13%, var(--mainbackground));
 }
 
-.has-main-nav #main-nav .dropdown-menu .dropdown-item.active,
-.has-main-nav #main-nav .dropdown-menu .dropdown-item.active i {
+#main-nav .dropdown-item.active,
+#main-nav .dropdown-item.active i {
   background: var(--primary);
   color: var(--primary-fg);
 }
 
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel,
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel h3,
-.has-main-nav #main-nav .navbar-side-bottom .sidebar-panel-link[aria-expanded='true'] {
+#main-nav .navbar-side-bottom > .side-panel,
+#main-nav .side-panel h3,
+#main-nav .navbar-side-bottom .sidebar-panel-link[aria-expanded='true'] {
   color: var(--mediumstrong);
 }
 
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel .list-group-item {
+#main-nav .side-panel .list-group-item {
   background: var(--white);
   border-color: var(--thirdlevel);
   color: var(--mediumstrong);
 }
 /* SidePanel.class.ts adds btn-neutral/btn-secondary; neither should paint a
    white background on top of the ghost navigation links. */
-.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link,
-.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
+#main-nav .navbar-side-bottom > .sidebar-panel-link,
+#main-nav .navbar-side-bottom > .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
   background: transparent;
   border: 0;
   border-left: 3px solid transparent;
@@ -545,21 +545,21 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
   color: var(--mediumstrong);
 }
 
-.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link:hover,
-.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link:focus-visible {
+#main-nav .navbar-side-bottom > .sidebar-panel-link:hover,
+#main-nav .navbar-side-bottom > .sidebar-panel-link:focus-visible {
   background: color-mix(in srgb, var(--primary) 12%, transparent);
   color: var(--primary);
 }
 
-.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link[aria-expanded='true'],
-.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link[aria-expanded='true']:is(.btn-neutral, .btn-secondary) {
+#main-nav .navbar-side-bottom > .sidebar-panel-link[aria-expanded='true'],
+#main-nav .navbar-side-bottom > .sidebar-panel-link[aria-expanded='true']:is(.btn-neutral, .btn-secondary) {
   background: color-mix(in srgb, var(--primary) 14%, transparent);
   border-left-color: var(--primary);
   color: var(--primary);
 }
-.has-main-nav #main-nav .navbar-side-bottom > .sidebar-panel-link i { color: inherit; }
+#main-nav .sidebar-panel-link i { color: inherit; }
 
-.has-main-nav #main-nav .navbar-side-bottom > .side-panel .side-panel-item.selected {
+#main-nav .side-panel .side-panel-item.selected {
   background: var(--primary);
   color: var(--primary-fg);
 }
@@ -597,7 +597,7 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
     flex: 0 0 auto;
     margin: 0 0.5rem 0 0;
   }
-  .has-main-nav #main-navbar .navbar-toggler i { color: var(--chrome-fg); }
+  #main-navbar .navbar-toggler i { color: var(--chrome-fg); }
 
   .has-main-nav #main-navbar .navbar-brand {
     flex: 0 1 auto;
@@ -635,19 +635,19 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
     color: var(--primary) !important;
   }
 
-  .has-main-nav #main-nav .nav-link i,
-  .has-main-nav #main-nav .sidebar-panel-link i,
-  .has-main-nav #main-nav .dropdown-item i { color: inherit; }
+  #main-nav .nav-link i,
+  #main-nav .sidebar-panel-link i,
+  #main-nav .dropdown-item i { color: inherit; }
 
-  .has-main-nav #main-nav .dropdown > .dropdown-menu,
-  .has-main-nav #main-nav .sidebar-create .dropdown-menu {
+  #main-nav .dropdown > .dropdown-menu,
+  #main-nav .sidebar-create .dropdown-menu {
     background: var(--mainbackground);
     border-color: var(--thirdlevel);
   }
 
   /* These panels live inside the menu, not in a second off-canvas overlay.
      Scroll the drawer as a whole instead of squeezing panel contents. */
-  .has-main-nav #main-nav .navbar-side-bottom > .side-panel {
+  #main-nav .navbar-side-bottom > .side-panel {
     background: var(--mainbackground);
     color: var(--mediumstrong);
     height: auto;
@@ -656,13 +656,13 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
     width: auto;
   }
 
-  .has-main-nav #main-nav .navbar-side-bottom > .side-panel h3,
-  .has-main-nav #main-nav .navbar-side-bottom > .side-panel .side-panel-item {
+  #main-nav .side-panel h3,
+  #main-nav .side-panel .side-panel-item {
     color: var(--mediumstrong);
     overflow-wrap: anywhere;
   }
 
-  .has-main-nav #main-nav .navbar-side-bottom > .side-panel .side-panel-item.selected {
+  #main-nav .side-panel .side-panel-item.selected {
     color: var(--primary-fg);
   }
 

@@ -72,8 +72,6 @@ use function str_replace;
 use function str_starts_with;
 use function ucfirst;
 use function usort;
-use function strlen;
-use function substr;
 
 /**
  * Import a .eln file.
@@ -285,56 +283,33 @@ class Eln extends AbstractZip
                 continue;
             }
 
-            $page = basename($source['path']);
-            $sourceType = match ($page) {
+            $query = array();
+            parse_str($source['query'], $query);
+            $sourceId = filter_var($query['id'] ?? null, FILTER_VALIDATE_INT);
+            if ($sourceId === false) {
+                continue;
+            }
+            $sourcePage = basename($source['path']);
+            $sourceType = match ($sourcePage) {
                 'experiments.php' => EntityType::Experiments,
-                'database.php' => EntityTYpe::Items,
+                'database.php' => EntityType::Items,
                 'templates.php' => EntityType::Templates,
                 'resources-templates.php' => EntityType::ItemsTypes,
                 default => null,
             };
-            $query = array();
-            parse_str($source['query'], $query);
-            $sourceId = filter_var($query['id'] ?? null, FILTER_VALIDATE_INT);
-            if ($sourceType === null || $sourceId === false || $sourceId < 1) {
+            if ($sourceType === null) {
                 continue;
             }
-            $newEntityUrl = sprintf('/%s?mode=view&id=%d', $entity['entity_type']->toPage(), $entity['id']);
-            $newRevisionsUrl = sprintf('revisions.php?type=%s&item_id=%d', $entity['entity_type']->value, $entity['id']);
-            $replacements[sprintf('href="%s"', Tools::eLabHtmlspecialchars($url))] = sprintf('href="%s"', Tools::eLabHtmlspecialchars($newEntityUrl));
+            $targetPage = $entity['entity_type']->toPage();
+            $targetType = $entity['entity_type']->value;
+            $targetId = $entity['id'];
 
-            $urls = array(
-                $page . '?' . $source['query'] => $newEntityUrl,
-                sprintf('%s?mode=view&id=%d', $page, $sourceId) => $newEntityUrl,
-                sprintf('%s?id=%d&mode=view', $page, $sourceId) => $newEntityUrl,
-                sprintf(
-                    'revisions.php?type=%s&item_id=%d',
-                    $sourceType->value,
-                    $sourceId,
-                ) => $newRevisionsUrl,
-                sprintf(
-                    'revisions.php?item_id=%d&type=%s',
-                    $sourceId,
-                    $sourceType->value,
-                ) => $newRevisionsUrl,
-            );
-            $pathPrefix = substr($source['path'], 0, -strlen($page));
-            $absolutePrefix = substr(
-                explode('?', $url, 2)[0],
-                0,
-                -strlen($page),
-            );
-            foreach ($urls as $oldUrl => $newUrl) {
-                foreach (array('', $pathPrefix, $absolutePrefix) as $prefix) {
-                    $replacements[sprintf(
-                        'href="%s"',
-                        Tools::eLabHtmlspecialchars($prefix . $oldUrl),
-                    )] = sprintf(
-                        'href="%s"',
-                        Tools::eLabHtmlspecialchars($newUrl),
-                    );
-                }
-            }
+            // Entity links
+            $replacements[sprintf('%s?mode=view&amp;id=%d', $sourcePage, $sourceId)] = sprintf('%s?mode=view&amp;id=%d', $targetPage, $targetId);
+            // Entity revisions
+            $replacements[sprintf('revisions.php?type=%s&amp;item_id=%d', $sourceType->value, $sourceId)] = sprintf('revisions.php?type=%s&amp;item_id=%d', $targetType, $targetId);
+            // URL in the body.
+            $replacements[sprintf('%s?id=%d&amp;mode=view', $sourcePage, $sourceId)] = sprintf('%s?mode=view&amp;id=%d', $targetPage, $targetId);
         }
         return $replacements;
     }

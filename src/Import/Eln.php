@@ -68,11 +68,12 @@ use function is_string;
 use function json_encode;
 use function parse_str;
 use function parse_url;
-use function preg_replace;
 use function str_replace;
 use function str_starts_with;
 use function ucfirst;
 use function usort;
+use function strlen;
+use function substr;
 
 /**
  * Import a .eln file.
@@ -165,6 +166,22 @@ class Eln extends AbstractZip
         // All imported entities now have their target IDs
         $linkReplacements = $this->getChangelogLinkReplacements();
 
+        // Rewrite each body once, before restoring its original history.
+        foreach ($this->insertedEntities as $inserted) {
+            $entity = $inserted['entity_type']->toInstance(
+                $this->Entity->Users,
+                $inserted['id'],
+                true,
+                true,
+            );
+
+            $oldBody = $entity->entityData['body'] ?? '';
+            $body = strtr($oldBody, $linkReplacements);
+
+            if ($body !== $oldBody) {
+                $entity->update(new EntityParams('body', $body));
+            }
+        }
         // Restore the original changelog before creating links
         foreach ($this->changelogsToRestore as $pending) {
             $changes = $pending['changes'];
@@ -182,15 +199,11 @@ class Eln extends AbstractZip
         foreach ($this->linksToCreate as $link) {
             foreach ($this->insertedEntities as $entity) {
                 if ($link['link_@id'] === $entity['item_@id']) {
-                    // grab the link node so we can get its url
-                    $linkNode = $this->getNodeFromId($link['link_@id']);
                     $result[] = array(
                         'origin_entity_type' => $link['origin_entity_type'],
                         'origin_id' => $link['origin_id'],
                         'link_id' => $entity['id'],
-                        'link_previous_url' => $linkNode['url'],
                         'link_entity_type' => $entity['entity_type'],
-                        'link_original_id' => $link['link_@id'],
                     );
                     break;
                 }
@@ -205,13 +218,6 @@ class Eln extends AbstractZip
             } else {
                 $entity->ItemsLinks->setId($linkToCreate['link_id']);
                 $entity->ItemsLinks->createForImport();
-            }
-            // now update the body with links to old id that should now point to the new id
-            $linkPreviousId = $this->grabIdFromUrl($linkToCreate['link_previous_url'] ?? '');
-            if ($linkPreviousId) {
-                $body = preg_replace(sprintf('/(?:experiments|database)\.php\?mode=view&amp;id=(%d)/', $linkPreviousId), $linkToCreate['link_entity_type']->toPage() . '?mode=view&amp;id=' . $linkToCreate['link_id'], $entity->entityData['body'] ?? '');
-                /** @psalm-suppress PossiblyInvalidCast */
-                $entity->update(new EntityParams('body', (string) $body));
             }
         }
         return $this->getInserted();
@@ -238,7 +244,7 @@ class Eln extends AbstractZip
         return $this->targetUser;
     }
 
-    protected function getChangelogAuthor(array $dataset): Users
+    protected function getChangelogAuthor(array $action): Users
     {
         return $this->requester;
     }
@@ -271,7 +277,6 @@ class Eln extends AbstractZip
         foreach ($this->insertedEntities as $entity) {
             $dataset = $this->getNodeFromId($entity['item_@id']);
             $url = $dataset['url'] ?? null;
-
             if (!is_string($url)) {
                 continue;
             }
@@ -280,30 +285,58 @@ class Eln extends AbstractZip
                 continue;
             }
 
-            $newHref = sprintf('href="/%s?mode=view&amp;id=%d"', $entity['entity_type']->toPage(), $entity['id']);
-            // Support absolute and relative source URLs
-            foreach (array($url, $source['path'] . '?' . $source['query']) as $oldUrl) {
-                $replacements[sprintf('href="%s"', Tools::eLabHtmlspecialchars($oldUrl))] = $newHref;
+            $page = basename($source['path']);
+            $sourceType = match ($page) {
+                'experiments.php' => EntityType::Experiments,
+                'database.php' => EntityTYpe::Items,
+                'templates.php' => EntityType::Templates,
+                'resources-templates.php' => EntityType::ItemsTypes,
+                default => null,
+            };
+            $query = array();
+            parse_str($source['query'], $query);
+            $sourceId = filter_var($query['id'] ?? null, FILTER_VALIDATE_INT);
+            if ($sourceType === null || $sourceId === false || $sourceId < 1) {
+                continue;
+            }
+            $newEntityUrl = sprintf('/%s?mode=view&id=%d', $entity['entity_type']->toPage(), $entity['id']);
+            $newRevisionsUrl = sprintf('revisions.php?type=%s&item_id=%d', $entity['entity_type']->value, $entity['id']);
+            $replacements[sprintf('href="%s"', Tools::eLabHtmlspecialchars($url))] = sprintf('href="%s"', Tools::eLabHtmlspecialchars($newEntityUrl));
+
+            $urls = array(
+                $page . '?' . $source['query'] => $newEntityUrl,
+                sprintf('%s?mode=view&id=%d', $page, $sourceId) => $newEntityUrl,
+                sprintf('%s?id=%d&mode=view', $page, $sourceId) => $newEntityUrl,
+                sprintf(
+                    'revisions.php?type=%s&item_id=%d',
+                    $sourceType->value,
+                    $sourceId,
+                ) => $newRevisionsUrl,
+                sprintf(
+                    'revisions.php?item_id=%d&type=%s',
+                    $sourceId,
+                    $sourceType->value,
+                ) => $newRevisionsUrl,
+            );
+            $pathPrefix = substr($source['path'], 0, -strlen($page));
+            $absolutePrefix = substr(
+                explode('?', $url, 2)[0],
+                0,
+                -strlen($page),
+            );
+            foreach ($urls as $oldUrl => $newUrl) {
+                foreach (array('', $pathPrefix, $absolutePrefix) as $prefix) {
+                    $replacements[sprintf(
+                        'href="%s"',
+                        Tools::eLabHtmlspecialchars($prefix . $oldUrl),
+                    )] = sprintf(
+                        'href="%s"',
+                        Tools::eLabHtmlspecialchars($newUrl),
+                    );
+                }
             }
         }
         return $replacements;
-    }
-
-    private function grabIdFromUrl(string $url): ?int
-    {
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return null;
-        }
-        $parsedUrl = parse_url($url);
-        if (!isset($parsedUrl['query'])) {
-            return null;
-        }
-        $queryParams = array();
-        parse_str($parsedUrl['query'], $queryParams);
-        if ($queryParams['id']) {
-            return (int) $queryParams['id'];
-        }
-        return null;
     }
 
     private function preProcess(): int

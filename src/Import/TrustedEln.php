@@ -32,9 +32,9 @@ final class TrustedEln extends Eln
     public bool $requesterIsAuthor = false;
 
     #[Override]
-    protected function getChangelogAuthor(array $dataset): Users
+    protected function getChangelogAuthor(array $action): Users
     {
-        $agent = $dataset['agent'] ?? null;
+        $agent = $action['agent'] ?? null;
         if (!is_array($agent) || !is_string($agent['@id'] ?? null)) {
             throw new ImproperActionException(
                 'Cannot restore changelog author: missing or invalid agent.'

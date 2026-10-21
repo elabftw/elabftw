@@ -829,7 +829,23 @@ $(document).on('shown.bs.modal', '#bookingParamsModal', () => {
     plugins: ['checkbox_options', 'dropdown_input', 'remove_button'],
     placeholder: i18next.t('Search validators...'),
   });
+  syncBookingValidatorsState();
 });
+
+// Preserve selections when disabled so they are restored when approval is re-enabled.
+function syncBookingValidatorsState(): void {
+  const select = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
+  if (!select?.tomselect) return;
+  const required = document.getElementById('requiresValidationSwitch') as HTMLInputElement | null;
+  const bookable = document.getElementById('isBookableSwitch') as HTMLInputElement | null;
+  if (required?.checked && bookable?.checked) {
+    select.tomselect.enable();
+  } else {
+    select.tomselect.disable();
+  }
+}
+
+$(document).on('change', '#requiresValidationSwitch, #isBookableSwitch', syncBookingValidatorsState);
 
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();

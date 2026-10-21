@@ -264,9 +264,11 @@ final class Scheduler extends AbstractRest
         $itemParams = $queryParams?->getQuery()->all('items');
         $itemId = !empty($itemParams) ? (int) $itemParams[0] : 0;
         $scopeInt = $this->getScope($itemId);
-        if ($scopeInt === Scope::User->value) {
+        // Booking approval lists use their own owner/validator filters, not the
+        // saved scheduler event scope (which may be set to only "my" events).
+        if ($approvalView === '' && $scopeInt === Scope::User->value) {
             $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
-        } elseif ($scopeInt === Scope::Team->value) {
+        } elseif ($approvalView === '' && $scopeInt === Scope::Team->value) {
             $this->appendFilterSql('team_events.team', 'team', $this->Items->Users->userData['team']);
         }
 

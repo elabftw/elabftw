@@ -522,8 +522,9 @@ if (calendarEl) {
       const eventColor = info.event.backgroundColor || info.event.borderColor || '#0c58ab';
       info.el.style.setProperty('--scheduler-event-color', eventColor);
     },
-    // prevent any actions on disabled events
-    eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1,
+    // Pending approval cannot be moved by drag and drop.
+    eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1
+      && Number(event.extendedProps.approval_status) !== 0,
     // selection
     select: function(info): void {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
@@ -740,13 +741,14 @@ if (calendarEl) {
 
   // A compact request list uses the same approval action handlers as the calendar.
   // History is intentionally limited to a useful window; it is not a full audit export.
-  on('booking-show-requests', async (button: HTMLElement) => {
-    const kind = button.dataset.kind === 'pending' ? 'pending' : 'my';
-    const list = document.getElementById('bookingRequestsList')!;
-    list.classList.remove('d-none');
+  // Each tab has its own request list; the calendar is kept intact in the first tab.
+  async function loadBookingRequests(kind: 'my' | 'pending'): Promise<void> {
+    const listId = kind === 'my' ? 'bookingRequestsMyList' : 'bookingRequestsPendingList';
+    const list = document.getElementById(listId)!;
     list.textContent = i18next.t('Loading...');
-    const start = DateTime.now().minus({ months: 3 }).toISO({ suppressMilliseconds: true })!;
-    const end = DateTime.now().plus({ months: 6 }).toISO({ suppressMilliseconds: true })!;
+    // MySQL date-only strings avoid ISO precision/timezone parsing issues in Scheduler.
+    const start = DateTime.now().minus({ months: 3 }).toFormat('yyyy-MM-dd');
+    const end = DateTime.now().plus({ months: 12 }).toFormat('yyyy-MM-dd');
     const query = `events?approval_view=${kind}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
     try {
       const bookings = await ApiC.getJson<Array<{
@@ -759,15 +761,17 @@ if (calendarEl) {
         return;
       }
       for (const booking of bookings) {
+        const status = Number(booking.approval_status);
+        const canApprove = Number(booking.canapprove) === 1;
         const row = document.createElement('div');
         row.className = 'list-group-item d-flex justify-content-between align-items-center flex-wrap';
         const label = document.createElement('span');
-        const statusText = booking.approval_status === 0 ? 'Pending approval'
-          : booking.approval_status === 1 ? 'Approved'
-            : booking.approval_status === 2 ? 'Rejected' : 'Expired';
+        const statusText = status === 0 ? 'Pending approval'
+          : status === 1 ? 'Approved'
+            : status === 2 ? 'Rejected' : 'Expired';
         label.textContent = `${booking.item_title}: ${booking.start} - ${booking.end} (${i18next.t(statusText)})`;
         row.appendChild(label);
-        if (kind === 'pending' && booking.canapprove === 1) {
+        if (kind === 'pending' && canApprove) {
           const actions = document.createElement('div');
           actions.className = 'btn-group ml-2';
           for (const [action, title, style] of [
@@ -784,7 +788,7 @@ if (calendarEl) {
           }
           row.appendChild(actions);
         }
-        if (kind === 'my' && booking.approval_status === 0) {
+        if (kind === 'my' && status === 0) {
           const cancel = document.createElement('button');
           cancel.type = 'button';
           cancel.className = 'btn btn-sm btn-outline-danger ml-2';
@@ -798,10 +802,10 @@ if (calendarEl) {
               : `event/${booking.id}`;
             try {
               await ApiC.delete(endpoint);
-              row.remove();
               calendar.refetchEvents();
-            } catch (error) {
-              notify.error(error);
+              void loadBookingRequests('my');
+            } catch {
+              // ApiC already notifies the user.
             }
           });
           row.appendChild(cancel);
@@ -812,15 +816,33 @@ if (calendarEl) {
       list.textContent = i18next.t('Could not load booking requests.');
       // ApiC already displays the API error; avoid a duplicate notification.
     }
+  }
+
+  // The standard Tab helper handles content visibility and URL state.
+  // Fetch only the active list and resize FullCalendar when returning to it.
+  document.querySelectorAll<HTMLButtonElement>('.tabbed-menu [data-tabtarget]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = Number(tab.dataset.tabtarget);
+      if (target === 1) {
+        window.requestAnimationFrame(() => calendar.updateSize());
+      } else if (target === 2 || target === 3) {
+        void loadBookingRequests(target === 2 ? 'my' : 'pending');
+      }
+    });
   });
+  const initialTab = new URLSearchParams(window.location.search).get('tab');
+  if (initialTab === '2' || initialTab === '3') {
+    void loadBookingRequests(initialTab === '2' ? 'my' : 'pending');
+  }
 
   on('booking-approve', async (el: HTMLElement) => {
     try {
       await ApiC.patch(`event/${el.dataset.eventid}`, { action: Action.Update, target: 'approval', decision: 'approved' });
       $('#eventModal').modal('hide');
       calendar.refetchEvents();
-    } catch (error) {
-      notify.error(error);
+      void loadBookingRequests('pending');
+    } catch {
+      // ApiC already notifies the user.
     }
   });
 
@@ -833,8 +855,9 @@ if (calendarEl) {
       await ApiC.patch(`event/${el.dataset.eventid}`, { action: Action.Update, target: 'approval', decision: 'rejected', comment: reason });
       $('#eventModal').modal('hide');
       calendar.refetchEvents();
-    } catch (error) {
-      notify.error(error);
+      void loadBookingRequests('pending');
+    } catch {
+      // ApiC already notifies the user.
     }
   });
 

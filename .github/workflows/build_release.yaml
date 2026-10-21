@@ -186,8 +186,6 @@ jobs:
 
                 for attempt in 1 2 3 4 5; do
                   if docker buildx imagetools create \
-                    -t elabftw/elabimg:stable \
-                    -t elabftw/elabimg:latest \
                     -t elabftw/elabimg:${{ github.ref_name }} \
                     "${refs[@]}"; then
                     break

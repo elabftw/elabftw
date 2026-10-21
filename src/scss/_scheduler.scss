@@ -55,10 +55,12 @@
   box-shadow: none !important;
   color: #303030 !important;
   cursor: default;
-  pointer-events: none;
   opacity: 1;
+  pointer-events: none;
 
-  .fc-event-main, .fc-event-title, .fc-event-time {
+  .fc-event-main,
+ .fc-event-title,
+ .fc-event-time {
     color: #303030 !important;
   }
 }

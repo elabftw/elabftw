@@ -124,7 +124,7 @@ RUN make install
 #############################
 # ELABFTW + NGINX + PHP-FPM #
 #############################
-FROM alpine:3.23
+FROM alpine:3.24
 
 # set build version with --build-arg ELABFTW_VERSION=X.Y.Z
 ARG ELABFTW_VERSION=dev

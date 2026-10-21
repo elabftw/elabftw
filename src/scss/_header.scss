@@ -81,8 +81,26 @@
   color: var(--chrome-fg);
 }
 
-/* Two fixed navigation bars, retaining the theme's original chrome colors. */
+/* Fixed topbar and responsive sidebar. Theme colors remain semantic. */
+#container:not(.has-main-nav) #main-navbar {
+  height: 52px;
+  margin-bottom: 0;
+  padding: 0 1rem;
+}
+
+#container:not(.has-main-nav) .navbar-brand {
+  align-items: center;
+  display: flex;
+  height: 52px;
+  padding: 0;
+}
+
+#container:not(.has-main-nav) .navbar-utilities { position: absolute; }
+
 .has-main-nav #main-navbar {
+  background: var(--mainbackground);
+  border-right: 1px solid var(--thirdlevel);
+  color: var(--mediumstrong);
   margin: 0;
   z-index: 1050;
 }
@@ -97,55 +115,6 @@
   width: 100%;
 }
 
-.has-main-nav .navbar-brand .sidebar-compact-logo { display: none; }
-
-.has-main-nav #main-nav > .navbar-nav {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.has-main-nav #main-nav .nav-link,
-.has-main-nav #main-nav .sidebar-panel-link {
-  align-items: center;
-  background-image: none;
-  border: 0;
-  border-left: 3px solid transparent;
-  border-radius: 0.25rem;
-  color: var(--chrome-fg);
-  display: flex;
-  font-size: 0.95rem;
-  gap: 0.75rem;
-  line-height: 1.25;
-  margin: 0 0 0.25rem;
-  min-height: 43px;
-  padding: 0.6rem 0.75rem !important;
-  text-align: left;
-  text-decoration: none;
-  text-transform: none;
-  width: 100%;
-}
-
-#main-nav .nav-link i { color: inherit; }
-.has-main-nav #main-nav .nav-link.dropdown-toggle::after { margin-left: auto; }
-.has-main-nav #main-nav .dropdown-item.disabled { color: var(--chrome-muted); }
-
-.has-main-nav #main-nav .sidebar-create { margin: 0 0 0.75rem 3px; }
-#main-nav .sidebar-create .btn-primary { min-height: 45px; }
-#main-nav .sidebar-create .nav-label { margin-left: 0.5rem; }
-.has-main-nav #main-nav .sidebar-panel-link { cursor: pointer; }
-
-#main-nav .navbar-side-bottom { margin-top: auto;
-  padding-top: 1rem; }
-
-/* Override the old floating sidepanel opener styles without touching button themes. */
-.has-main-nav #favtagsPanelOpener,
-.has-main-nav #todolistPanelOpener,
-.has-main-nav #favtagsPanelOpener:hover,
-.has-main-nav #todolistPanelOpener:hover { transform: none; }
-
 .navbar-utilities {
   align-items: center;
   background: var(--nav-bg);
@@ -157,7 +126,7 @@
   position: fixed;
   right: 0;
   top: 0;
-  z-index: 1040;
+  z-index: 1060;
 }
 
 .navbar-utilities .nav-link {
@@ -172,9 +141,13 @@
   text-transform: none;
 }
 
-.navbar-utilities .nav-link:hover { background: color-mix(in srgb, var(--primary) 16%, transparent);
-  color: var(--chrome-fg) !important; }
-.navbar-utilities .nav-link i { color: inherit; }
+.navbar-utilities .nav-link:hover {
+  background: color-mix(in srgb, var(--primary) 16%, transparent);
+  color: var(--chrome-fg) !important;
+}
+
+.navbar-utilities .nav-link i,
+.navbar-utilities .dropdown-item i { color: inherit; }
 
 .navbar-utilities .dropdown-menu { background: var(--white);
   color: var(--strongest); }
@@ -184,6 +157,186 @@
   color: var(--primary-fg); }
 .navbar-utilities #navbarNotifDropdown.notif-active::after { border-color: var(--nav-bg); }
 
+.navbar-top-logo {
+  align-items: center;
+  flex: 0 0 auto;
+  height: 52px;
+  margin-right: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.navbar-top-logo .logo-header { max-height: 42px;
+  object-fit: contain; }
+.navbar-top-logo:hover { text-decoration: none; }
+
+/* Sidebar items share the same padding in the compact and expanded states. */
+#main-nav > .navbar-nav {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#main-nav .nav-link,
+#main-nav .sidebar-panel-link {
+  align-items: center;
+  background-image: none;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 0.25rem;
+  color: var(--mediumstrong);
+  display: flex;
+  font-size: 0.95rem;
+  gap: 0.75rem;
+  line-height: 1.25;
+  margin: 0 0 0.25rem;
+  min-height: 3.25rem;
+  padding: 0.6rem 0.75rem !important;
+  text-align: left;
+  text-decoration: none;
+  text-transform: none;
+  width: 100%;
+}
+
+#main-nav .nav-link:hover,
+#main-nav .sidebar-panel-link:hover,
+#main-nav .sidebar-panel-link:focus-visible {
+  background: color-mix(in srgb, var(--primary) 13%, transparent);
+  border-color: transparent !important;
+  color: var(--mediumstrong) !important;
+}
+
+#main-nav .nav-link.active,
+#main-nav .sidebar-panel-link[aria-expanded='true'] {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  border-color: transparent !important;
+  border-left-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+#main-nav .nav-link i,
+#main-nav .sidebar-panel-link i,
+#main-nav .dropdown-item i { color: inherit; }
+#main-nav .nav-link.active i { background: transparent; }
+#main-nav .dropdown-toggle::after { margin-left: auto; }
+#main-nav .dropdown-item.disabled { color: var(--chrome-muted); }
+
+#main-nav .sidebar-create { margin: 0 0 0.75rem 3px; }
+
+#sidebarCreateDropdown {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  min-height: 45px;
+  padding: 0.5rem 0;
+  text-align: center;
+}
+
+#sidebarCreateDropdown .nav-label { margin-left: 0; }
+
+#main-nav .navbar-side-bottom { margin-top: auto;
+  padding-top: 1rem; }
+#main-nav .sidebar-panel-link { cursor: pointer; }
+
+#main-nav .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
+  background: transparent;
+  box-shadow: none;
+  color: var(--mediumstrong);
+}
+
+#main-nav .sidebar-panel-link[aria-expanded='true']:is(.btn-neutral, .btn-secondary) {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
+}
+
+#main-nav :is(#favtagsPanelOpener, #todolistPanelOpener) { transform: none; }
+
+/* Bootstrap's show class drives both opening and closing transitions. */
+#main-nav .dropdown > .dropdown-menu {
+  background: var(--mainbackground);
+  border: 0;
+  border-left: 2px solid var(--primary);
+  border-radius: 0;
+  display: block;
+  margin: 0 0 0 0.55rem;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0 0.25rem 0 0.5rem;
+  pointer-events: none;
+  position: static !important;
+  transform: translateY(-0.25rem) !important;
+  transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease, margin 0.3s ease, visibility 0s linear 0.3s;
+  visibility: hidden;
+}
+
+#main-nav .dropdown > .dropdown-menu.show {
+  margin-bottom: 0.5rem;
+  max-height: 45rem;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) !important;
+  transition-delay: 0s;
+  visibility: visible;
+}
+
+#main-nav .dropdown-item { color: var(--mediumstrong); }
+#main-nav .dropdown-item:hover { background: color-mix(in srgb, var(--primary) 13%, transparent); }
+
+#main-nav .dropdown-item.active { background: var(--primary);
+  color: var(--primary-fg); }
+#main-nav :is(form.dropdown-item, .navbar-category-picker):hover { background: transparent; }
+
+/* Favorite tags and Todolist are inline panels, not floating overlays. */
+#main-nav .navbar-side-bottom > .side-panel {
+  background: transparent;
+  border-left: 2px solid var(--primary);
+  box-shadow: none;
+  color: var(--mediumstrong);
+  height: auto;
+  left: auto;
+  margin: 0 0 0.5rem 0.55rem;
+  max-height: 55vh;
+  opacity: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0.25rem 0 0.25rem 0.5rem;
+  position: static;
+  top: auto;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  width: auto;
+}
+
+#main-nav .side-panel[hidden] {
+  display: none;
+  opacity: 0;
+  transform: translateY(-0.25rem);
+}
+
+#main-nav .side-panel .p-3 { padding: 0.5rem !important; }
+#main-nav .side-panel :is(input, select) { min-width: 0; }
+#main-nav .side-panel .input-group { flex-wrap: nowrap; }
+
+#main-nav .side-panel h3 { color: var(--mediumstrong);
+  font-size: 0.95rem;
+  overflow-wrap: anywhere; }
+
+#main-nav .side-panel .list-group-item { background: var(--white);
+  border-color: var(--thirdlevel);
+  color: var(--mediumstrong);
+  overflow-wrap: anywhere; }
+#main-nav .side-panel a { color: var(--link); }
+
+#main-nav .side-panel .side-panel-item { overflow-wrap: anywhere;
+  padding: 0.5rem 0.25rem; }
+
+#main-nav .side-panel .side-panel-item.selected { background: var(--primary);
+  color: var(--primary-fg); }
+
+/* Reuse the real editable title, category and status controls in the topbar. */
 .navbar-entity-details {
   align-items: center;
   display: flex;
@@ -191,6 +344,7 @@
   gap: 1rem;
   min-width: 0;
 }
+
 #navbarEntityMeta { flex: 0 0 auto; }
 #navbarEntityMeta > .d-flex { margin-bottom: 0 !important; }
 
@@ -198,67 +352,6 @@
   font-size: 0.85rem; }
 #navbarEntityMeta .catstat-btn { margin-bottom: 0; }
 
-/* Menus keep their own contrast in light, dark and midnight variants. */
-#main-nav .dropdown > .dropdown-menu {
-  background: var(--mainbackground);
-  border: 0;
-  border-left: 2px solid var(--primary);
-  border-radius: 0;
-  margin: 0 0 0.5rem 0.55rem;
-  padding: 0.25rem 0.25rem 0.25rem 0.5rem;
-}
-
-#main-nav .dropdown-item i,
-.navbar-utilities .dropdown-item i { color: inherit; }
-
-/* The two panels expand in the menu instead of covering the page. */
-#main-nav .navbar-side-bottom > .side-panel {
-  background: transparent;
-  border-left: 2px solid var(--primary);
-  box-shadow: none;
-  color: var(--chrome-fg);
-  height: auto;
-  left: auto;
-  margin: 0 0 0.5rem 0.55rem;
-  max-height: 55vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 0.25rem 0 0.25rem 0.5rem;
-  position: static;
-  top: auto;
-  width: auto;
-}
-#main-nav .navbar-side-bottom > .side-panel[hidden] { display: none !important; }
-#main-nav .side-panel .p-3 { padding: 0.5rem !important; }
-
-#main-nav .side-panel h3 {
-  color: var(--chrome-fg);
-  font-size: 0.95rem;
-  overflow-wrap: anywhere;
-}
-
-#main-nav .side-panel .list-group-item {
-  background: var(--nav-bg);
-  border-color: var(--chrome-muted);
-  color: var(--chrome-fg);
-  overflow-wrap: anywhere;
-}
-#main-nav .side-panel a { color: var(--link); }
-
-#main-nav .side-panel .side-panel-item {
-  padding: 0.5rem 0.25rem;
-}
-#main-nav .side-panel :is(input, select) { min-width: 0; }
-#main-nav .side-panel .input-group { flex-wrap: nowrap; }
-/* Keep the editable title visible on the dark topbar. */
-.navbar-entity-heading #documentTitle {
-  color: inherit;
-  font: inherit;
-  font-weight: 700;
-  padding: 0 !important;
-  white-space: nowrap;
-}
-/* Inline Malle editing must not push the title beneath 'Experiment:'. */
 .navbar-entity-heading {
   align-items: center;
   color: var(--chrome-fg);
@@ -271,39 +364,38 @@
   overflow: visible;
   white-space: nowrap;
 }
+
 .navbar-entity-prefix { flex: 0 0 auto; }
 
-.navbar-entity-heading #navbarEntityTitle {
-  align-items: center;
-  color: var(--chrome-fg);
+.navbar-entity-heading #documentTitle { color: inherit;
+  font: inherit;
+  font-weight: 700;
+  padding: 0 !important;
+  white-space: nowrap; }
+
+.navbar-entity-heading #navbarEntityTitle { align-items: center;
+  color: inherit;
   display: inline-flex;
   flex: 1 1 auto;
-  font-size: inherit;
   font-weight: 700;
   line-height: 1.3;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* Malle replaces #documentTitle with a form while editing. The form must
-   stretch, not just the input inside it. */
-.navbar-entity-heading #navbarEntityTitle > form {
-  display: flex;
+  text-overflow: ellipsis; }
+
+.navbar-entity-heading #navbarEntityTitle > form { display: flex;
   flex: 1 1 100%;
   margin: 0;
   min-width: 0;
-  width: 100%;
-}
+  width: 100%; }
 
-.navbar-entity-heading :is(input, textarea) {
-  box-sizing: border-box;
+.navbar-entity-heading :is(input, textarea) { box-sizing: border-box;
   flex: 1 1 auto;
   margin: 0;
   max-width: 100%;
   min-width: 0;
-  width: 100%;
-}
-/* The Create modal/backdrop must be above both fixed bars. */
+  width: 100%; }
+
 body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
 .has-main-nav #createModal { z-index: 1080; }
 .has-main-nav #createModal .modal-dialog { margin-top: 4.25rem; }
@@ -325,86 +417,53 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
     transition: width 0.2s ease;
     width: 5rem;
   }
-  /* Keep open menus/panels accessible when the mouse leaves the rail. */
+
   .has-main-nav #main-navbar:is(:hover, :has(:focus-visible), :has(.dropdown-menu.show), :has(.side-panel:not([hidden]))) {
     width: 17rem;
+
     .nav-label { display: inline; }
-    #main-nav .dropdown-toggle::after { display: inline-block; }
+    .dropdown-toggle::after { display: inline-block; }
+    #sidebarCreateDropdown .fa-plus { display: none; }
   }
 
-  /* The only visible desktop logo now lives in .navbar-utilities. */
   .has-main-nav #main-navbar .navbar-brand { display: none; }
 
-  .has-main-nav #main-nav {
-    align-items: stretch;
+  #main-nav { align-items: stretch;
     display: flex !important;
     flex: 1;
     flex-direction: column;
     min-height: 0;
-    width: 100%;
-  }
+    width: 100%; }
 
-  .has-main-nav #main-nav > .navbar-nav {
-    flex: 1;
-    scrollbar-width: none;
-  }
-  .has-main-nav #main-nav > .navbar-nav::-webkit-scrollbar { display: none; }
-  /* Same centered icon and horizontal spacing for every compact menu item. */
-  .has-main-nav #main-nav .nav-link,
-  .has-main-nav #main-nav .sidebar-panel-link {
-    box-sizing: border-box;
-    justify-content: flex-start;
-    min-height: 3.25rem;
-    padding: 0.6rem 0.75rem !important;
-    width: 100%;
-  }
+  #main-nav > .navbar-nav { flex: 1;
+    scrollbar-width: none; }
+  #main-nav > .navbar-nav::-webkit-scrollbar { display: none; }
+
+  #main-nav .nav-label,
+  #main-nav .dropdown-toggle::after { display: none; }
+
+  #main-nav .nav-link,
+  #main-nav .sidebar-panel-link { padding-left: calc(0.75rem + 5px) !important; }
 
   #main-nav .nav-link > i,
-  #main-nav .sidebar-panel-link > i {
-    flex: 0 0 1.25rem;
+  #main-nav .sidebar-panel-link > i { flex: 0 0 1.25rem;
     margin: 0;
-    text-align: center;
-  }
-  /* Keep the same icon placement whether a link is active or not. */
-  .has-main-nav #main-nav .nav-link,
-  .has-main-nav #main-nav .sidebar-panel-link {
-    padding-left: calc(0.75rem + 5px) !important;
-  }
-
-  .has-main-nav #main-nav .nav-label,
-  .has-main-nav #main-nav .dropdown-toggle::after { display: none; }
-  #main-nav .dropdown > .dropdown-menu { display: none; }
-
-  #main-nav .dropdown > .dropdown-menu.show { display: block;
-    position: static !important;
-    transform: none !important; }
-
-  /* No horizontal movement when the labels appear. */
-  #main-nav .sidebar-create .btn-primary {
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-  }
-  /* A visible inline panel keeps the sidebar expanded until it is closed. */
+    text-align: center; }
 
   .has-main-nav .navbar-utilities { left: 0; }
-
-  .has-main-nav .navbar-actions { flex: 0 0 auto;
-    margin-left: auto; }
   .has-main-nav #realContainer { padding-top: 52px; }
 
-  .has-main-nav #realContainer .original-entity-title,
-  .has-main-nav #realContainer h1:has(#documentTitle),
+  #realContainer .original-entity-title,
+  #realContainer h1:has(#documentTitle),
   #realContainer .d-flex:has(> #categoryBtn) { display: none !important; }
-
-  .has-main-nav .side-panel { height: calc(100vh - 52px);
-    left: 5rem;
-    top: 52px;
-    z-index: 1042; }
 }
 
 @media (max-width: 1199.98px) {
   .has-main-nav #main-navbar {
     align-items: center;
+    background: var(--nav-bg);
+    border: 0;
+    color: var(--chrome-fg);
     height: 52px;
     left: 0;
     padding: 0 12rem 0 1rem;
@@ -413,284 +472,87 @@ body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
     top: 0;
   }
 
-  .has-main-nav #main-navbar .navbar-brand { margin: 0 auto 0 0;
+  .has-main-nav #main-navbar .navbar-toggler { border-color: var(--chrome-muted);
+    flex: 0 0 auto;
+    margin: 0 0.5rem 0 0; }
+  #main-navbar .navbar-toggler i { color: var(--chrome-fg); }
+
+  .has-main-nav #main-navbar .navbar-brand { flex: 0 1 auto;
+    margin: 0 auto 0 0;
+    min-width: 0;
     width: auto; }
 
   .has-main-nav .navbar-brand .logo-header { height: 40px;
     width: 110px; }
 
   .has-main-nav #main-nav {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
-    height: calc(100vh - 52px);
-    left: 0;
-    overflow-y: auto;
-    padding: 1rem;
-    position: fixed;
-    top: 52px;
-    z-index: 3;
-  }
-
-  #main-nav .dropdown > .dropdown-menu.show { display: block;
-    position: static !important;
-    transform: none !important; }
-  /* Share one 52px row with the hamburger and logo, not two stacked bars. */
-  .has-main-nav .navbar-utilities {
-    height: 52px;
-    left: auto;
-    padding: 0 0.5rem;
-    right: 0;
-    top: 0;
-    z-index: 1060;
-  }
-  .has-main-nav #realContainer { padding-top: 52px; }
-
-  .has-main-nav .side-panel { height: calc(100vh - 52px);
-    left: 0;
-    top: 52px;
-    z-index: 1042; }
-  .navbar-entity-details { display: none; }
-
-  .navbar-backdrop {
-    // Keep click-outside dismissal without dimming the page or fading in.
-    background: transparent;
-    border: 0;
-    inset: 52px 0 0;
-    position: fixed;
-    z-index: 2;
-  }
-  #main-nav:not(.show) + .navbar-backdrop { display: none; }
-}
-
-@media (max-width: 575.98px) {
-  .has-main-nav #main-navbar { padding-right: 10rem; }
-
-  .has-main-nav .navbar-brand .logo-header { height: 32px;
-    width: 80px; }
-
-  .has-main-nav .navbar-utilities .nav-link {
-    margin: 0;
-    min-height: 40px;
-    padding: 0.25rem 0.3rem !important;
-  }
-  .has-main-nav .navbar-utilities .fa-2x { font-size: 1.5rem; }
-}
-
-/* The sidebar uses the page's light surface in Light mode; Dark/Midnight
-   remain legible because these are the current theme's semantic colors. */
-.has-main-nav #main-navbar {
-  // Try var(--white) here for a brighter sidebar in the Light theme.
-  background: var(--mainbackground);
-  border-right: 1px solid var(--thirdlevel);
-  color: var(--mediumstrong);
-}
-
-.has-main-nav #main-nav .nav-link,
-.has-main-nav #main-nav .sidebar-panel-link,
-#main-nav .navbar-side-bottom .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
-  color: var(--mediumstrong);
-}
-
-.has-main-nav #main-nav .nav-link:hover,
-.has-main-nav #main-nav .sidebar-panel-link:hover,
-.has-main-nav #main-nav .sidebar-panel-link:focus-visible {
-  background: color-mix(in srgb, var(--primary) 13%, var(--mainbackground));
-  color: var(--mediumstrong) !important;
-}
-
-.has-main-nav #main-nav .nav-link.active {
-  background: color-mix(in srgb, var(--primary) 14%, transparent);
-  border-left-color: var(--primary);
-  color: var(--primary) !important;
-}
-
-#main-nav .nav-link.active i {
-  background: transparent;
-  color: inherit;
-}
-
-.has-main-nav #main-nav .dropdown-item,
-#main-nav .dropdown-item:hover {
-  color: var(--mediumstrong);
-}
-
-.has-main-nav #main-nav .dropdown-item:hover {
-  background: color-mix(in srgb, var(--primary) 13%, var(--mainbackground));
-}
-
-#main-nav .dropdown-item.active,
-#main-nav .dropdown-item.active i {
-  background: var(--primary);
-  color: var(--primary-fg);
-}
-
-#main-nav .navbar-side-bottom > .side-panel,
-#main-nav .side-panel h3,
-#main-nav .navbar-side-bottom .sidebar-panel-link[aria-expanded='true'] {
-  color: var(--mediumstrong);
-}
-
-#main-nav .side-panel .list-group-item {
-  background: var(--white);
-  border-color: var(--thirdlevel);
-  color: var(--mediumstrong);
-}
-/* SidePanel.class.ts adds btn-neutral/btn-secondary; neither should paint a
-   white background on top of the ghost navigation links. */
-#main-nav .navbar-side-bottom > .sidebar-panel-link,
-#main-nav .navbar-side-bottom > .sidebar-panel-link:is(.btn-neutral, .btn-secondary) {
-  background: transparent;
-  border: 0;
-  border-left: 3px solid transparent;
-  box-shadow: none;
-  color: var(--mediumstrong);
-}
-
-#main-nav .navbar-side-bottom > .sidebar-panel-link:hover,
-#main-nav .navbar-side-bottom > .sidebar-panel-link:focus-visible {
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
-  color: var(--primary);
-}
-
-#main-nav .navbar-side-bottom > .sidebar-panel-link[aria-expanded='true'],
-#main-nav .navbar-side-bottom > .sidebar-panel-link[aria-expanded='true']:is(.btn-neutral, .btn-secondary) {
-  background: color-mix(in srgb, var(--primary) 14%, transparent);
-  border-left-color: var(--primary);
-  color: var(--primary);
-}
-#main-nav .sidebar-panel-link i { color: inherit; }
-
-#main-nav .side-panel .side-panel-item.selected {
-  background: var(--primary);
-  color: var(--primary-fg);
-}
-/* Topbar always retains the original dark navigation chrome. */
-.has-main-nav .navbar-utilities {
-  background: var(--nav-bg);
-  color: var(--chrome-fg);
-  z-index: 1060;
-}
-
-.navbar-top-logo {
-  align-items: center;
-  flex: 0 0 auto;
-  height: 52px;
-  margin-right: 1.5rem;
-  padding: 0 0.5rem;
-}
-
-.navbar-top-logo .logo-header { max-height: 42px;
-  object-fit: contain; }
-.navbar-top-logo:hover { text-decoration: none; }
-/* Keep the mobile navbar visually consistent with the desktop chrome.
-   The topbar and the drawer are separate surfaces, in every theme. */
-@media (max-width: 1199.98px) {
-  /* The logo is white: the entire 52px header must keep the chrome background. */
-  .has-main-nav #main-navbar {
-    background: var(--nav-bg);
-    border-bottom: 0;
-    border-right: 0;
-    color: var(--chrome-fg);
-  }
-
-  .has-main-nav #main-navbar .navbar-toggler {
-    border-color: var(--chrome-muted);
-    flex: 0 0 auto;
-    margin: 0 0.5rem 0 0;
-  }
-  #main-navbar .navbar-toggler i { color: var(--chrome-fg); }
-
-  .has-main-nav #main-navbar .navbar-brand {
-    flex: 0 1 auto;
-    min-width: 0;
-  }
-
-  /* Light sidebar surface and readable labels/icons (also theme-aware). */
-  .has-main-nav #main-nav {
     background: var(--mainbackground);
     border-right: 1px solid var(--thirdlevel);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
     color: var(--mediumstrong);
+    height: calc(100vh - 52px);
+    left: 0;
     max-width: min(21rem, 90vw);
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
+    padding: 1rem;
+    position: fixed;
     scrollbar-width: thin;
+    top: 52px;
     width: 21rem;
+    z-index: 3;
   }
 
-  .has-main-nav #main-nav > .navbar-nav {
-    height: auto;
-    overflow: visible;
-  }
+  #main-nav > .navbar-nav { height: auto;
+    overflow: visible; }
+  #sidebarCreateDropdown .fa-plus { display: none; }
 
-  .has-main-nav #main-nav .nav-link,
-  .has-main-nav #main-nav .sidebar-panel-link,
-  .has-main-nav #main-nav .dropdown-item {
-    color: var(--mediumstrong);
-  }
+  .has-main-nav .navbar-utilities { left: auto;
+    padding: 0 0.5rem;
+    right: 0; }
+  .has-main-nav #realContainer { padding-top: 52px; }
+  .navbar-entity-details { display: none; }
 
-  .has-main-nav #main-nav .nav-link.active,
-  .has-main-nav #main-nav .sidebar-panel-link[aria-expanded='true'] {
-    background: color-mix(in srgb, var(--primary) 14%, transparent);
-    border-left-color: var(--primary);
-    color: var(--primary) !important;
-  }
-
-  #main-nav .nav-link i,
-  #main-nav .sidebar-panel-link i,
-  #main-nav .dropdown-item i { color: inherit; }
-
-  #main-nav .dropdown > .dropdown-menu,
-  #main-nav .sidebar-create .dropdown-menu {
-    background: var(--mainbackground);
-    border-color: var(--thirdlevel);
-  }
-
-  /* These panels live inside the menu, not in a second off-canvas overlay.
-     Scroll the drawer as a whole instead of squeezing panel contents. */
-  #main-nav .navbar-side-bottom > .side-panel {
-    background: var(--mainbackground);
-    color: var(--mediumstrong);
-    height: auto;
+  #main-nav .side-panel { background: var(--mainbackground);
     max-height: none;
-    overflow: visible;
-    width: auto;
-  }
+    overflow: visible; }
 
-  #main-nav .side-panel h3,
-  #main-nav .side-panel .side-panel-item {
-    color: var(--mediumstrong);
-    overflow-wrap: anywhere;
-  }
-
-  #main-nav .side-panel .side-panel-item.selected {
-    color: var(--primary-fg);
-  }
-
-  /* Utility menus must remain on-screen on narrow phones. */
-  .has-main-nav .navbar-utilities .dropdown-menu {
-    max-height: calc(100dvh - 60px);
-    max-width: calc(100vw - 1rem);
-    overflow-y: auto;
-  }
+  .navbar-backdrop { background: transparent;
+    border: 0;
+    inset: 52px 0 0;
+    position: fixed;
+    z-index: 2; }
+  #main-nav:not(.show) + .navbar-backdrop { display: none; }
 }
 
 @media (max-width: 575.98px) {
-  .has-main-nav #main-navbar {
-    gap: 0.25rem;
-    padding-left: 0.5rem;
-  }
+  .has-main-nav #main-navbar { gap: 0.25rem;
+    padding: 0 10rem 0 0.5rem; }
 
-  .has-main-nav #main-navbar .navbar-toggler {
-    margin-right: 0.25rem;
-    padding: 0.25rem 0.45rem;
-  }
+  .has-main-nav .navbar-brand .logo-header { height: 32px;
+    width: 80px; }
+
+  .has-main-nav .navbar-utilities .nav-link { margin: 0;
+    min-height: 40px;
+    padding: 0.25rem 0.3rem !important; }
+  .has-main-nav .navbar-utilities .fa-2x { font-size: 1.5rem; }
+
+  .has-main-nav #main-navbar .navbar-toggler { margin-right: 0.25rem;
+    padding: 0.25rem 0.45rem; }
   .has-main-nav .navbar-utilities { padding-right: 0.35rem; }
 
-  .has-main-nav .navbar-utilities .dropdown-menu {
-    left: auto !important;
+  .has-main-nav .navbar-utilities .dropdown-menu { left: auto !important;
+    max-height: calc(100dvh - 60px);
+    max-width: calc(100vw - 1rem);
+    overflow-y: auto;
     right: 0.5rem !important;
     top: 52px !important;
-    transform: none !important;
-  }
+    transform: none !important; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  #main-nav .dropdown > .dropdown-menu,
+  #main-nav .side-panel,
+  .has-main-nav #main-navbar { transition: none; }
+}

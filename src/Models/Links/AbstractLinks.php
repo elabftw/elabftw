@@ -145,29 +145,14 @@ abstract class AbstractLinks extends AbstractRest
             && $this->Entity->id === intval($targetId);
     }
 
-    // Add a link to an entity
     public function create(): int
     {
-        $this->Entity->canOrExplode(AccessType::Write);
-        // don't insert a link to the same entity, make sure we check for the type too
-        if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
-            return 0;
-        }
-        // this will throw exception if we don't have read access to target entity
-        $this->getTargetType()->toInstance($this->Entity->Users, $this->id);
+        return $this->insertLinkToEntity(true);
+    }
 
-        // use IGNORE to avoid failure due to a key constraint violations
-        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
-
-        $res = $this->Db->execute($req);
-        if ($res && $req->rowCount() > 0) {
-            $this->createChangelog();
-            $this->Entity->touch();
-        }
-        return $this->id;
+    public function createForImport(): int
+    {
+        return $this->insertLinkToEntity(false);
     }
 
     abstract protected function getTargetType(): EntityType;
@@ -187,6 +172,32 @@ abstract class AbstractLinks extends AbstractRest
     abstract protected function getImportTargetTable(): string;
 
     abstract protected function getOtherImportTargetTable(): string;
+
+    private function insertLinkToEntity(bool $createChangelog): int
+    {
+        $this->Entity->canOrExplode(AccessType::Write);
+        // don't insert a link to the same entity, make sure we check for the type too
+        if ($this->Entity->id === $this->id && $this->Entity->entityType === $this->getTargetType()) {
+            return 0;
+        }
+        // this will throw exception if we don't have read access to target entity
+        $this->getTargetType()->toInstance($this->Entity->Users, $this->id);
+
+        // use IGNORE to avoid failure due to a key constraint violations
+        $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (item_id, link_id) VALUES(:item_id, :link_id)';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':link_id', $this->id, PDO::PARAM_INT);
+
+        $res = $this->Db->execute($req);
+        if ($res && $req->rowCount() > 0) {
+            if ($createChangelog) {
+                $this->createChangelog();
+            }
+            $this->Entity->touch();
+        }
+        return $this->id;
+    }
 
     // returns title of the new link
     private function getTargetTitle(): string

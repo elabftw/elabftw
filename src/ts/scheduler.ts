@@ -757,6 +757,12 @@ if (calendarEl) {
         list.textContent = i18next.t('No booking requests found.');
         return;
       }
+      const element = <T extends keyof HTMLElementTagNameMap>(tag: T, className: string, text?: string): HTMLElementTagNameMap[T] => {
+        const node = document.createElement(tag);
+        node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      };
       for (const booking of bookings) {
         const status = Number(booking.approval_status);
         const statusText = ['Pending approval', 'Approved', 'Rejected', 'Expired'][status] ?? 'Unknown';
@@ -766,42 +772,28 @@ if (calendarEl) {
           ['lightred', 'darkred', 'dangerred'],
           ['firstlevel', 'mediumstrong', 'secondlevel'],
         ][status] ?? ['firstlevel', 'mediumstrong', 'secondlevel'];
-        const row = document.createElement('div');
-        row.className = 'box mb-3';
-        const layout = document.createElement('div');
-        layout.className = 'd-flex justify-content-between align-items-center flex-wrap';
-        const summary = document.createElement('div');
-        summary.className = 'd-flex align-items-start flex-grow-1 mr-3 mb-2 mb-md-0';
-        const icon = document.createElement('i');
-        icon.className = 'far fa-calendar-alt fa-fw fa-lg';
-        const iconBackground = document.createElement('span');
-        iconBackground.className = 'badge badge-secondary rounded-circle p-2 mr-3';
+        const row = element('div', 'box mb-3');
+        const layout = element('div', 'd-flex justify-content-between align-items-center flex-wrap');
+        const summary = element('div', 'd-flex align-items-start flex-grow-1 mr-3 mb-2 mb-md-0');
+        const icon = element('i', 'far fa-calendar-alt fa-fw fa-lg');
+        const iconBackground = element('span', 'badge badge-secondary rounded-circle p-2 mr-3');
         iconBackground.style.backgroundColor = 'var(--firstlevel)';
         icon.style.color = 'var(--mediumstrong)';
         iconBackground.appendChild(icon);
-        const details = document.createElement('div');
-        const title = document.createElement('strong');
-        title.className = 'd-block mb-1';
-        title.textContent = booking.item_title;
-        details.appendChild(title);
+        const details = element('div', '');
+        details.append(element('strong', 'd-block mb-1', booking.item_title));
         if (kind === 'pending') {
-          const requester = document.createElement('div');
-          requester.textContent = `${i18next.t('Requested by')}: ${booking.fullname}`;
-          details.appendChild(requester);
+          details.append(element('div', '', `${i18next.t('Requested by')}: ${booking.fullname}`));
         }
-        const dates = document.createElement('div');
-        const clock = document.createElement('i');
-        clock.className = 'far fa-clock fa-fw mr-1';
-        dates.append(clock, document.createTextNode(`${booking.start.slice(0, 16)} → ${booking.end.slice(0, 16)}`));
+        const dates = element('div', '');
+        dates.append(element('i', 'far fa-clock fa-fw mr-1'), document.createTextNode(`${booking.start.slice(0, 16)} → ${booking.end.slice(0, 16)}`));
         details.appendChild(dates);
 
-        const badge = document.createElement('span');
-        badge.className = 'badge p-2 mr-2';
+        const badge = element('span', 'badge p-2 mr-2');
         badge.style.backgroundColor = `var(--${badgeColors[0]})`;
         badge.style.color = `var(--${badgeColors[1]})`;
         badge.style.border = `1px solid var(--${badgeColors[2]})`;
-        const statusIcon = document.createElement('i');
-        statusIcon.className = `fas fa-fw fa-${['clock', 'check-circle', 'times-circle', 'hourglass-end'][status] ?? 'question-circle'} mr-1`;
+        const statusIcon = element('i', `fas fa-fw fa-${['clock', 'check-circle', 'times-circle', 'hourglass-end'][status] ?? 'question-circle'} mr-1`);
         statusIcon.style.color = 'inherit';
         badge.append(statusIcon, document.createTextNode(i18next.t(statusText)));
         if (kind === 'pending') {
@@ -809,27 +801,22 @@ if (calendarEl) {
           details.appendChild(badge);
         }
         if (kind === 'my' && status === 2 && booking.approval_comment) {
-          const reason = document.createElement('div');
-          reason.className = 'mt-2';
-          const info = document.createElement('i');
-          info.className = 'fas fa-info-circle fa-fw mr-1';
-          reason.append(info, document.createTextNode(`${i18next.t('Reason')}: ${booking.approval_comment}`));
+          const reason = element('div', 'mt-2');
+          reason.append(element('i', 'fas fa-info-circle fa-fw mr-1'), document.createTextNode(`${i18next.t('Reason')}: ${booking.approval_comment}`));
           details.appendChild(reason);
         }
         summary.append(iconBackground, details);
         layout.appendChild(summary);
 
-        const actions = document.createElement('div');
-        actions.className = 'd-flex align-items-center flex-wrap';
+        const actions = element('div', 'd-flex align-items-center flex-wrap');
         if (kind === 'my') actions.appendChild(badge);
         if (kind === 'pending' && Number(booking.canapprove) === 1) {
           for (const [action, label, style] of [
             ['booking-approve', 'Approve', 'btn-primary'],
             ['booking-reject', 'Reject', 'btn-danger-ghost'],
           ]) {
-            const button = document.createElement('button');
+            const button = element('button', `btn btn-sm ml-2 ${style}`);
             button.type = 'button';
-            button.className = `btn btn-sm ml-2 ${style}`;
             button.dataset.action = action;
             button.dataset.eventid = String(booking.id);
             button.textContent = i18next.t(label);
@@ -837,10 +824,8 @@ if (calendarEl) {
           }
         }
         if (kind === 'my' && status === 0) {
-          const cancel = document.createElement('button');
+          const cancel = element('button', 'btn btn-sm btn-danger-ghost ml-2', i18next.t('Cancel request'));
           cancel.type = 'button';
-          cancel.className = 'btn btn-sm btn-danger-ghost ml-2';
-          cancel.textContent = i18next.t('Cancel request');
           cancel.addEventListener('click', async () => {
             if (!window.confirm(i18next.t('Cancel this booking request?'))) return;
             const endpoint = booking.recurrence_id
@@ -883,30 +868,21 @@ if (calendarEl) {
     void loadBookingRequests(initialTab === '2' ? 'my' : 'pending');
   }
 
-  on('booking-approve', async (el: HTMLElement) => {
+  async function decideBooking(el: HTMLElement, decision: 'approved' | 'rejected', comment?: string): Promise<void> {
     try {
-      await ApiC.patch(`event/${el.dataset.eventid}`, { action: Action.Update, target: 'approval', decision: 'approved' });
+      await ApiC.patch(`event/${el.dataset.eventid}`, { action: Action.Update, target: 'approval', decision, comment });
       $('#eventModal').modal('hide');
       calendar.refetchEvents();
       void loadBookingRequests('pending');
     } catch {
       // ApiC already notifies the user.
     }
-  });
+  }
 
-  on('booking-reject', async (el: HTMLElement) => {
+  on('booking-approve', (el: HTMLElement) => decideBooking(el, 'approved'));
+  on('booking-reject', (el: HTMLElement) => {
     const reason = window.prompt(i18next.t('Reason for rejection (optional)'));
-    if (reason === null) {
-      return;
-    }
-    try {
-      await ApiC.patch(`event/${el.dataset.eventid}`, { action: Action.Update, target: 'approval', decision: 'rejected', comment: reason });
-      $('#eventModal').modal('hide');
-      calendar.refetchEvents();
-      void loadBookingRequests('pending');
-    } catch {
-      // ApiC already notifies the user.
-    }
+    if (reason !== null) return decideBooking(el, 'rejected', reason);
   });
 
   on('cancel-event', (el: HTMLElement) => {

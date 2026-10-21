@@ -26,6 +26,7 @@ use function array_values;
 use function count;
 use function date;
 use function filter_var;
+use function in_array;
 use function is_array;
 
 /** Resource booking approval rules. Administrators do not bypass configured approvers. */
@@ -54,10 +55,11 @@ final class BookingApproval
         if ((int) $item['requires_validation'] !== 1) {
             return BookingApprovalStatus::Approved;
         }
-        if (!$this->getValidators($item)) {
+        $validators = $this->getValidators($item);
+        if (!$validators) {
             throw new ImproperActionException('No active validator is configured for this resource.');
         }
-        return $this->canApprove($item, $userid)
+        return in_array($userid, $validators, true)
             ? BookingApprovalStatus::Approved
             : BookingApprovalStatus::Pending;
     }

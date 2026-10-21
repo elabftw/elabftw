@@ -257,6 +257,10 @@ export function collectForm(form: HTMLElement): object {
   let params = {};
   inputs.forEach(input => {
     const el = input;
+    // TomSelect checkbox_options inserts inputs without a name attribute.
+    if (!el.name) {
+      return;
+    }
     el.classList.remove('border-danger');
     if (el.reportValidity() === false) {
       console.error(el);

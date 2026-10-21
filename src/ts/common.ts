@@ -813,6 +813,24 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     });
 });
 
+// Searchable multiple booking validators using TomSelect's existing plugins.
+// Keep the original select in sync so booking settings use the selected users.
+$(document).on('shown.bs.modal', '#bookingParamsModal', () => {
+  const select = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
+  if (!select || select.tomselect) {
+    return;
+  }
+  new TomSelect(select, {
+    maxItems: null,
+    maxOptions: null,
+    create: false,
+    hideSelected: false,
+    closeAfterSelect: false,
+    plugins: ['checkbox_options', 'dropdown_input', 'remove_button'],
+    placeholder: i18next.t('Search validators...'),
+  });
+});
+
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
@@ -820,12 +838,14 @@ on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
   const requiredInput = document.getElementById('requiresValidationSwitch') as HTMLInputElement | null;
   if (requiredInput) {
-    const usersInput = document.getElementById('bookApprovalUsers') as HTMLSelectElement;
+    const usersInput = document.getElementById('bookApprovalUsers') as HTMLSelectElement & { tomselect?: TomSelect };
     await ApiC.patch(`items/${form.dataset.itemId}`, {
       action: Action.Update,
       target: 'book_approval',
       requires_validation: requiredInput.checked ? 1 : 0,
-      userids: Array.from(usersInput.selectedOptions, option => Number(option.value)),
+      userids: usersInput.tomselect
+        ? usersInput.tomselect.items.map(Number)
+        : Array.from(usersInput.selectedOptions, option => Number(option.value)),
     });
   }
   reloadElements(['topToolbar', 'permissionsDiv']);

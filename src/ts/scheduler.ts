@@ -745,8 +745,8 @@ if (calendarEl) {
     const list = document.getElementById('bookingRequestsList')!;
     list.classList.remove('d-none');
     list.textContent = i18next.t('Loading...');
-    const start = DateTime.now().minus({ months: 3 }).toISO()!;
-    const end = DateTime.now().plus({ months: 6 }).toISO()!;
+    const start = DateTime.now().minus({ months: 3 }).toISO({ suppressMilliseconds: true })!;
+    const end = DateTime.now().plus({ months: 6 }).toISO({ suppressMilliseconds: true })!;
     const query = `events?approval_view=${kind}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
     try {
       const bookings = await ApiC.getJson<Array<{
@@ -808,9 +808,9 @@ if (calendarEl) {
         }
         list.appendChild(row);
       }
-    } catch (error) {
+    } catch {
       list.textContent = i18next.t('Could not load booking requests.');
-      notify.error(error);
+      // ApiC already displays the API error; avoid a duplicate notification.
     }
   });
 

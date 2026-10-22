@@ -383,7 +383,14 @@
   overflow: hidden;
   text-overflow: ellipsis; }
 
-.navbar-entity-heading #navbarEntityTitle > form { display: flex;
+.navbar-entity-heading #navbarEntityTitle > h1 {
+  font: inherit;
+  margin: 0;
+  min-width: 0;
+  width: 100%;
+}
+
+.navbar-entity-heading #navbarEntityTitle form { display: flex;
   flex: 1 1 100%;
   margin: 0;
   min-width: 0;
@@ -397,7 +404,7 @@
   width: 100%; }
 
 body:has(.has-main-nav) .modal-backdrop { z-index: 1070; }
-.has-main-nav #createModal { z-index: 1080; }
+.has-main-nav .modal { z-index: 1080; }
 .has-main-nav #createModal .modal-dialog { margin-top: 4.25rem; }
 .has-main-nav #createTplToggleBtn[hidden] { display: none !important; }
 

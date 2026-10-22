@@ -306,16 +306,16 @@ if (topbarEntityMeta && categoryRow) {
 // the page on mobile. No duplicate #documentTitle or edit control is created.
 const sourceTitle = document.getElementById('documentTitle');
 const topbarTitle = document.getElementById('navbarEntityTitle');
-if (sourceTitle && topbarTitle) {
+const titleHeading = sourceTitle?.closest('h1');
+if (sourceTitle && topbarTitle && titleHeading) {
   const originalPosition = document.createComment('original editable title position');
-  const titleHeading = sourceTitle.closest('h1');
-  titleHeading?.classList.add('original-entity-title');
-  sourceTitle.before(originalPosition);
+  titleHeading.classList.add('original-entity-title');
+  titleHeading.before(originalPosition);
   const positionTitle = (): void => {
     if (window.matchMedia('(min-width: 1200px)').matches) {
-      if (!topbarTitle.contains(sourceTitle)) topbarTitle.replaceChildren(sourceTitle);
-    } else if (originalPosition.nextSibling !== sourceTitle) {
-      originalPosition.after(sourceTitle);
+      if (!topbarTitle.contains(titleHeading)) topbarTitle.replaceChildren(titleHeading);
+    } else if (originalPosition.nextSibling !== titleHeading) {
+      originalPosition.after(titleHeading);
       // Preserve the server-rendered heading when switching back to desktop.
       topbarTitle.textContent = sourceTitle.textContent ?? '';
     }

@@ -224,6 +224,9 @@
             </div>
             {% if App.Users.isAdmin %}
               <div class='nav-item dropdown'>
+                {% if App.devMode -%}
+                  <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
+                {%- endif %}
                 <a id='navAdminDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName == 'admin.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                   <i class='fas fa-user-gear fa-fw'></i><span class='nav-label'>{{ 'Admin panel'|trans }}</span>
                 </a>
@@ -238,6 +241,9 @@
             {% endif %}
             {% if App.Users.userData.is_sysadmin %}
               <div class='nav-item dropdown'>
+                {% if App.devMode -%}
+                  <!-- [html-validate-disable-next prefer-native-element: using a button here will mess up the navbar] -->
+                {%- endif %}
                 <a id='navSysadminDropdown' href='#' class='nav-link dropdown-toggle {{ scriptName == 'sysconfig.php' ? 'active' }}' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                   <i class='fas fa-gears fa-fw'></i><span class='nav-label'>{{ 'Sysadmin panel'|trans }}</span>
                 </a>
@@ -279,7 +285,7 @@
         'items_types': 'Resource template'|trans,
       } %}
       <div class='navbar-entity-details'>
-        <span class='navbar-entity-heading' title='{{ Entity.entityData.title }}'><span class='navbar-entity-prefix'>{{ navbarEntityTypes[Entity.entityType.value]|default('') }}:</span> <span id='navbarEntityTitle'>{{ Entity.entityData.title }}</span></span>
+        <div class='navbar-entity-heading' title='{{ Entity.entityData.title }}'><span class='navbar-entity-prefix'>{{ navbarEntityTypes[Entity.entityType.value]|default('') }}:</span> <div id='navbarEntityTitle'>{{ Entity.entityData.title }}</div></div>
         {# Display category/status immediately; JavaScript replaces this preview with the real editable controls. #}
         <div id='navbarEntityMeta'>
           <div class='d-flex align-items-center'>

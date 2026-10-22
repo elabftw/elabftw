@@ -97,11 +97,6 @@ final class BookingApproval
         }
         $team = (int) $Item->entityData['team'];
         $helper = new TeamsHelper($team);
-        // Only the resource owner or an admin of its team may configure approval.
-        if ((int) $Item->entityData['userid'] !== (int) $this->actor->userid
-            && !$helper->isAdminInTeam((int) $this->actor->userid)) {
-            throw new ForbiddenException();
-        }
         $requiresValidation = filter_var($params['requires_validation'] ?? null, FILTER_VALIDATE_INT);
         if ($requiresValidation !== 0 && $requiresValidation !== 1) {
             throw new ImproperActionException('Invalid requires_validation value.');

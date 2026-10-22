@@ -7,11 +7,11 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BookingApprovalStatus;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\BookingApproval;
-use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -87,17 +87,22 @@ final class BookingApprovalTest extends TestCase
         self::assertSame(BookingApprovalStatus::Approved->value, (int) (new Scheduler(new Items($requester, $item->id), $eventId))->readOne()['approval_status']);
     }
 
-    public function testOnlyOwnerOrTeamAdminCanConfigureBookingApproval(): void
+    public function testTeamMemberWithWriteAccessCanConfigureBookingApproval(): void
     {
-        $admin = $this->getUserInTeam(2, admin: 1);
-        $otherUser = $this->getUserInTeam(2);
-        $item = $this->getFreshItemWithGivenUser($admin);
+        $owner = $this->getUserInTeam(2, admin: 1);
+        $writer = $this->getUserInTeam(2);
+        $item = $this->getFreshItemWithGivenUser($owner);
+        $item->patch(Action::Update, array('canwrite_base' => BasePermissions::Team->value));
 
-        $this->expectException(ForbiddenException::class);
-        (new BookingApproval($otherUser))->configure($item, array(
+        $writerItem = new Items($writer, $item->id);
+        $writerItem->patch(Action::Update, array(
+            'target' => 'book_approval',
             'requires_validation' => 1,
-            'userids' => array($otherUser->userid),
+            'userids' => array($writer->userid),
         ));
+
+        self::assertSame(array((int) $writer->userid), $writerItem->getBookingValidatorIds());
+        self::assertSame(1, (int) (new Items($owner, $item->id))->entityData['requires_validation']);
     }
 
     public function testApprovalRequiredAlsoPreventsOverlappingRecurrenceOccurrences(): void
@@ -118,19 +123,18 @@ final class BookingApprovalTest extends TestCase
         ));
     }
 
-    public function testAnAdminOfAnotherTeamCannotChangeApprovalConfiguration(): void
+    public function testUserWithoutWriteAccessCannotConfigureBookingApproval(): void
     {
-        $foreignAdmin = $this->getUserInTeam(1, admin: 1);
-        $owner = $this->getUserInTeam(2);
+        $owner = $this->getUserInTeam(2, admin: 1);
+        $otherUser = $this->getUserInTeam(2);
         $item = $this->getFreshItemWithGivenUser($owner);
-        self::assertTrue($foreignAdmin->isAdmin);
-        // A user may administer another team, but not necessarily this resource's team.
-        self::assertFalse((new TeamsHelper(2))->isAdminInTeam((int) $foreignAdmin->userid));
+        $item->patch(Action::Update, array('canwrite_base' => BasePermissions::UserOnly->value));
 
         $this->expectException(ForbiddenException::class);
-        (new BookingApproval($foreignAdmin))->configure($item, array(
+        (new Items($otherUser, $item->id))->patch(Action::Update, array(
+            'target' => 'book_approval',
             'requires_validation' => 1,
-            'userids' => array($owner->userid),
+            'userids' => array($otherUser->userid),
         ));
     }
 

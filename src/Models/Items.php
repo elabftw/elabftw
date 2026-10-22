@@ -32,6 +32,7 @@ use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
+use Throwable;
 
 use function _;
 
@@ -55,24 +56,21 @@ final class Items extends AbstractConcreteEntity
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        if ($action === Action::Update && (isset($params['requires_validation']) || ($params['target'] ?? null) === 'book_approval')) {
+        if ($action === Action::Update && isset($params['requires_validation'])) {
             $this->canOrExplode(AccessType::Write);
             $this->ExclusiveEditMode->canPatchOrExplode($action);
             $approvalParams = $params;
             unset($params['requires_validation'], $params['userids'], $params['action']);
-            if (($params['target'] ?? null) === 'book_approval') {
-                unset($params['target']);
-            }
 
             // Save booking settings and validators together or roll back both.
             $this->Db->beginTransaction();
             try {
-                (new BookingApproval($this->Users))->configure($this, $approvalParams, withinTransaction: true);
+                (new BookingApproval($this->Users))->configure($this, $approvalParams);
                 if ($params) {
                     parent::patch($action, $params);
                 }
                 $this->Db->commit();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->Db->rollBack();
                 throw $e;
             }

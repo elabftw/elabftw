@@ -89,8 +89,8 @@ final class BookingApproval
         return array_values(array_filter($ids, static fn(int $id): bool => $helper->isActiveUserInTeam($id)));
     }
 
-    /** Configure resource booking approval, optionally inside a caller-owned transaction. */
-    public function configure(Items $Item, array $params, bool $withinTransaction = false): void
+    /** Configure booking approval within the resource PATCH transaction. */
+    public function configure(Items $Item, array $params): void
     {
         if ($Item->id === null) {
             throw new ImproperActionException('A resource is required.');
@@ -116,65 +116,52 @@ final class BookingApproval
             throw new ImproperActionException('Select at least one validator.');
         }
 
-        if (!$withinTransaction) {
-            $this->Db->beginTransaction();
+        $req = $this->Db->prepare('SELECT requires_validation FROM items WHERE id = :id AND team = :team FOR UPDATE');
+        $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
+        $req->bindValue(':team', $team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $previousRequired = $req->fetchColumn();
+        if ($previousRequired === false) {
+            throw new ImproperActionException('Resource not found.');
         }
-        try {
-            $req = $this->Db->prepare('SELECT requires_validation FROM items WHERE id = :id AND team = :team FOR UPDATE');
-            $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
-            $req->bindValue(':team', $team, PDO::PARAM_INT);
+        $oldValidators = $this->getValidators($Item->entityData);
+        $req = $this->Db->prepare('UPDATE items SET requires_validation = :required WHERE id = :id AND team = :team');
+        $req->bindValue(':required', $requiresValidation, PDO::PARAM_INT);
+        $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
+        $req->bindValue(':team', $team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $req = $this->Db->prepare('DELETE FROM items_booking_validators WHERE item_id = :item');
+        $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $req = $this->Db->prepare('INSERT INTO items_booking_validators(item_id, userid) VALUES(:item, :userid)');
+        foreach ($users as $userid) {
+            $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
+            $req->bindValue(':userid', $userid, PDO::PARAM_INT);
             $this->Db->execute($req);
-            $previousRequired = $req->fetchColumn();
-            if ($previousRequired === false) {
-                throw new ImproperActionException('Resource not found.');
-            }
-            $oldValidators = $this->getValidators($Item->entityData);
-            $req = $this->Db->prepare('UPDATE items SET requires_validation = :required WHERE id = :id AND team = :team');
-            $req->bindValue(':required', $requiresValidation, PDO::PARAM_INT);
-            $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
-            $req->bindValue(':team', $team, PDO::PARAM_INT);
+        }
+        // Agreement: disabling approval explicitly approves pending requests.
+        // Resolve recipients before changing statuses, and enqueue inside this transaction.
+        if ((int) $previousRequired === 1 && $requiresValidation === 0) {
+            $req = $this->Db->prepare('SELECT * FROM team_events WHERE item = :item AND approval_status = :pending ORDER BY start');
+            $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
+            $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
             $this->Db->execute($req);
-            $req = $this->Db->prepare('DELETE FROM items_booking_validators WHERE item_id = :item');
+            $pendingEvents = $req->fetchAll(PDO::FETCH_ASSOC);
+            $req = $this->Db->prepare('UPDATE team_events SET approval_status = :approved, approval_decided_at = NOW(), approval_decided_by = :actor WHERE item = :item AND approval_status = :pending');
+            $req->bindValue(':approved', BookingApprovalStatus::Approved->value, PDO::PARAM_INT);
+            $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
+            $req->bindValue(':actor', $this->actor->userid, PDO::PARAM_INT);
             $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $this->Db->execute($req);
-            $req = $this->Db->prepare('INSERT INTO items_booking_validators(item_id, userid) VALUES(:item, :userid)');
-            foreach ($users as $userid) {
-                $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
-                $req->bindValue(':userid', $userid, PDO::PARAM_INT);
-                $this->Db->execute($req);
-            }
-            // Agreement: disabling approval explicitly approves pending requests.
-            // Resolve recipients before changing statuses, and enqueue inside this transaction.
-            if ((int) $previousRequired === 1 && $requiresValidation === 0) {
-                $req = $this->Db->prepare('SELECT * FROM team_events WHERE item = :item AND approval_status = :pending ORDER BY start');
-                $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
-                $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
-                $this->Db->execute($req);
-                $pendingEvents = $req->fetchAll(PDO::FETCH_ASSOC);
-                $req = $this->Db->prepare('UPDATE team_events SET approval_status = :approved, approval_decided_at = NOW(), approval_decided_by = :actor WHERE item = :item AND approval_status = :pending');
-                $req->bindValue(':approved', BookingApprovalStatus::Approved->value, PDO::PARAM_INT);
-                $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
-                $req->bindValue(':actor', $this->actor->userid, PDO::PARAM_INT);
-                $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
-                $this->Db->execute($req);
-                $notified = array();
-                foreach ($pendingEvents as $pendingEvent) {
-                    $key = $this->getRequestKey($pendingEvent);
-                    if (isset($notified[$key])) {
-                        continue;
-                    }
-                    $notified[$key] = true;
-                    $this->finalizeRequest($Item->entityData, $pendingEvent, BookingApprovalStatus::Approved, null, $oldValidators);
+            $notified = array();
+            foreach ($pendingEvents as $pendingEvent) {
+                $key = $this->getRequestKey($pendingEvent);
+                if (isset($notified[$key])) {
+                    continue;
                 }
+                $notified[$key] = true;
+                $this->finalizeRequest($Item->entityData, $pendingEvent, BookingApprovalStatus::Approved, null, $oldValidators);
             }
-            if (!$withinTransaction) {
-                $this->Db->commit();
-            }
-        } catch (Throwable $e) {
-            if (!$withinTransaction) {
-                $this->Db->rollBack();
-            }
-            throw $e;
         }
     }
 

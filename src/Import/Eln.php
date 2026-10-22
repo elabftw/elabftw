@@ -641,7 +641,6 @@ class Eln extends AbstractZip
             $state === State::Archived => $this->Entity->patch(Action::Archive, array()),
             $state === State::Deleted => $this->Entity->patch(Action::Update, array('state' => $state->value)),
             // Restore locked/unlocked condition.
-            //($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->Entity->patch(Action::Lock, array()),
             ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->restoreLock($dataset),
             default => null,
         };

@@ -95,8 +95,11 @@ final class BookingApproval
         if ($Item->id === null) {
             throw new ImproperActionException('A resource is required.');
         }
-        // Only the owner or a team admin may change who approves bookings.
-        if (!$this->actor->isAdmin && (int) $Item->entityData['userid'] !== (int) $this->actor->userid) {
+        $team = (int) $Item->entityData['team'];
+        $helper = new TeamsHelper($team);
+        // Only the resource owner or an admin of its team may configure approval.
+        if ((int) $Item->entityData['userid'] !== (int) $this->actor->userid
+            && !$helper->isAdminInTeam((int) $this->actor->userid)) {
             throw new ForbiddenException();
         }
         $requiresValidation = filter_var($params['requires_validation'] ?? null, FILTER_VALIDATE_INT);
@@ -107,8 +110,6 @@ final class BookingApproval
             throw new ImproperActionException('Expected an array of validator user IDs.');
         }
         $users = array();
-        $team = (int) $Item->entityData['team'];
-        $helper = new TeamsHelper($team);
         foreach ($params['userids'] as $id) {
             $id = filter_var($id, FILTER_VALIDATE_INT);
             if ($id === false || $id < 1 || !$helper->isActiveUserInTeam($id)) {

@@ -1791,6 +1791,20 @@ on('scope-change', async (el: HTMLElement) => {
   document.dispatchEvent(new Event('scope-changed'));
 });
 
+function runAction(action: string, el: HTMLElement, event: Event): void {
+  const set =  get(action);
+  if (!set) return;
+  // do not use for..of here!
+  set.forEach(fn => {
+    try {
+      fn(el, event);
+    } catch (err) {
+      console.error('Handler error for action:', action, err);
+      notify.error(err);
+    }
+  });
+}
+
 /**
  * MAIN click listener on container
  */
@@ -1798,17 +1812,17 @@ container.addEventListener('click', (event: Event) => {
   const rawTarget = event.target as HTMLElement | null;
   const el = rawTarget?.closest('[data-action]') as HTMLElement | null;
   if (!el || ! container.contains(el)) return;
-  const set =  get(el.dataset.action);
-  if (!set) return;
-  // do not use for..of here!
-  set.forEach(fn => {
-    try {
-      fn(el, event);
-    } catch (err) {
-      console.error('Handler error for action:', el.dataset.action, err);
-      notify.error(err);
-    }
-  });
+  runAction(el.dataset.action, el, event);
+});
+
+/**
+ * MAIN change listener on container
+ * Use data-change-action on a select: its options do not receive click events in every browser
+ */
+container.addEventListener('change', (event: Event) => {
+  const el = event.target as HTMLElement | null;
+  if (!el?.dataset.changeAction) return;
+  runAction(el.dataset.changeAction, el, event);
 });
 
 function bindMoreFiltersOutsideClick(): void {

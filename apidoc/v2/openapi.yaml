@@ -228,6 +228,7 @@ components:
             anyOf:
               - $ref: "#/components/schemas/PatchAction"
               - $ref: "#/components/schemas/EntityAndItemEditable"
+              - $ref: "#/components/schemas/BookingApprovalConfiguration"
   securitySchemes:
     token:
       in: header
@@ -295,6 +296,29 @@ components:
             Non-admin users can only transfer ownership within their current team.
           example: 5
       required: [action]
+
+    BookingApprovalConfiguration:
+      type: object
+      description: Only a resource owner or team administrator with write access can configure booking validators.
+      required: [action, target, requires_validation, userids]
+      properties:
+        action:
+          type: string
+          enum: [update]
+        target:
+          type: string
+          enum: [book_approval]
+        requires_validation:
+          type: integer
+          enum: [0, 1]
+          description: Require approval before bookings are confirmed. Disabling it approves pending requests.
+        userids:
+          type: array
+          uniqueItems: true
+          description: Active team-member IDs authorized to approve bookings; at least one when validation is enabled.
+          items:
+            type: integer
+            minimum: 1
 
     EntityAndItemEditable:
       allOf:
@@ -1447,6 +1471,30 @@ components:
           type: integer
           description: Whether the event is bookable (1 = yes, 0 = no)
           example: 1
+        canapprove:
+          type: integer
+          enum: [0, 1]
+          description: Whether the current user is a designated active validator for this pending event.
+        approval_status:
+          type: integer
+          enum: [0, 1, 2, 3]
+          description: 0 pending, 1 approved, 2 rejected, 3 expired (reserved).
+        approval_decided_by:
+          type: integer
+          nullable: true
+          description: User ID of the person who made the approval decision.
+        approval_decided_at:
+          type: string
+          nullable: true
+          description: Timestamp of the approval decision.
+        approval_comment:
+          type: string
+          nullable: true
+          description: Reason for rejection, visible in the user's own booking requests.
+        requires_validation:
+          type: integer
+          enum: [0, 1]
+          description: Whether bookings of this resource require approval.
         created_at:
           type: string
           format: date-time
@@ -1867,6 +1915,12 @@ components:
       allOf:
         - $ref: '#/components/schemas/entity'
         - $ref: '#/components/schemas/item_editable'
+        - type: object
+          properties:
+            requires_validation:
+              type: integer
+              enum: [0, 1]
+              description: Whether bookings of this resource require approval.
     link:
       type: object
       properties:
@@ -5420,6 +5474,25 @@ paths:
       tags: ['Events']
       summary: Read all events in the team.
       operationId: read-events
+      parameters:
+        - name: approval_view
+          in: query
+          description: 'my: current user booking history; pending: requests awaiting a decision from the current designated validator.'
+          schema:
+            type: string
+            enum: [my, pending]
+        - name: start
+          in: query
+          description: Beginning of the requested date range (YYYY-MM-DD).
+          schema:
+            type: string
+            format: date
+        - name: end
+          in: query
+          description: End of the requested date range (YYYY-MM-DD).
+          schema:
+            type: string
+            format: date
       responses:
         '200':
           description: A list of booked slots.
@@ -5563,6 +5636,22 @@ paths:
           application/json:
             schema:
               oneOf:
+                - type: object
+                  required: [action, target, decision]
+                  description: Approve or reject a pending request. Only its designated active validators may decide.
+                  properties:
+                    action:
+                      type: string
+                      enum: [update]
+                    target:
+                      type: string
+                      enum: [approval]
+                    decision:
+                      type: string
+                      enum: [approved, rejected]
+                    comment:
+                      type: string
+                      description: Optional reason for the decision, especially rejection.
                 - type: object
                   required: [target, start, end]
                   properties:

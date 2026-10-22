@@ -41,7 +41,7 @@ final class BookingApprovalUpdated extends AbstractNotifications implements Mail
             $this->details['start'],
             $this->details['end'],
             $status,
-            sprintf('%s/scheduler.php?items[]=%d', Env::asUrl('SITE_URL'), $this->details['item_id']),
+            sprintf('%s/scheduler.php?tab=2', Env::asUrl('SITE_URL')),
         );
         if (!empty($this->details['comment'])) {
             $body .= sprintf("\n\n%s: %s", _('Comment'), $this->details['comment']);

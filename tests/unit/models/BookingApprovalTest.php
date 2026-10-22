@@ -80,4 +80,35 @@ final class BookingApprovalTest extends TestCase
         ));
         self::assertSame(BookingApprovalStatus::Approved->value, (int) (new Scheduler(new Items($requester, $item->id), $eventId))->readOne()['approval_status']);
     }
+
+    public function testOnlyOwnerOrTeamAdminCanConfigureBookingApproval(): void
+    {
+        $admin = $this->getUserInTeam(2, admin: 1);
+        $otherUser = $this->getUserInTeam(2);
+        $item = $this->getFreshItemWithGivenUser($admin);
+
+        $this->expectException(ForbiddenException::class);
+        (new BookingApproval($otherUser))->configure($item, array(
+            'requires_validation' => 1,
+            'userids' => array($otherUser->userid),
+        ));
+    }
+
+    public function testApprovalRequiredAlsoPreventsOverlappingRecurrenceOccurrences(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $validator = $this->getUserInTeam(2);
+        $item->patch(Action::Update, array(
+            'target' => 'book_approval',
+            'requires_validation' => 1,
+            'userids' => array($validator->userid),
+        ));
+
+        $scheduler = new Scheduler($item);
+        $this->expectException(ImproperActionException::class);
+        $scheduler->checkCandidateOverlaps(array(
+            array('start' => '2027-03-01 10:00:00', 'end' => '2027-03-01 12:00:00'),
+            array('start' => '2027-03-01 11:00:00', 'end' => '2027-03-01 13:00:00'),
+        ));
+    }
 }

@@ -49,12 +49,11 @@
 
 .fc-event.scheduler-event-pending {
   // Placeholder visible for scheduling conflicts, but not interactive.
-  background-color: #dedede !important;
+  background-color: #ded !important;
   border: 1px dashed #888 !important;
   border-left: 3px solid #888 !important;
   box-shadow: none !important;
   color: var(--chrome-bg) !important;
-  cursor: default;
   pointer-events: none;
 
   .fc-event-main,

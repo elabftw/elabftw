@@ -743,10 +743,9 @@ if (calendarEl) {
   async function loadBookingRequests(kind: 'my' | 'pending'): Promise<void> {
     const list = document.getElementById(kind === 'my' ? 'bookingRequestsMyList' : 'bookingRequestsPendingList')!;
     list.textContent = i18next.t('Loading...');
-    // MySQL date-only strings avoid ISO precision/timezone parsing issues in Scheduler.
-    const start = DateTime.now().minus({ months: 3 }).toFormat('yyyy-MM-dd');
-    const end = DateTime.now().plus({ months: 12 }).toFormat('yyyy-MM-dd');
-    const query = `events?approval_view=${kind}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+    // Pending approvals must include every date; My requests keep a bounded history.
+    const start = kind === 'pending' ? '2012-12-31' : DateTime.now().minus({ months: 3 }).toFormat('yyyy-MM-dd');
+    const query = `events?approval_view=${kind}&start=${start}&end=9999-12-31`;
     try {
       const bookings = await ApiC.getJson<Array<{
         id: number; item_title: string; fullname: string; start: string; end: string;

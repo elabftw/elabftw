@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * @author Nicolas CARPi / Deltablot
+ * @author Moustapha / Deltablot
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
 declare(strict_types=1);
 
 namespace Elabftw\Models\Notifications;
@@ -37,7 +46,7 @@ final class BookingApprovalRequested extends AbstractNotifications implements Ma
                 $this->details['start'],
                 $this->details['end'],
                 $this->details['occurrences'],
-                sprintf('%s/scheduler.php?items[]=%d', Env::asUrl('SITE_URL'), $this->details['item_id']),
+                sprintf('%s/scheduler.php?tab=3', Env::asUrl('SITE_URL')),
             ),
         );
     }

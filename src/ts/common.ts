@@ -850,18 +850,23 @@ $(document).on('change', '#requiresValidationSwitch, #isBookableSwitch', syncBoo
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
+  const requiredInput = document.getElementById('requiresValidationSwitch') as HTMLInputElement | null;
+  const usersInput = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
+  const userids = usersInput?.tomselect
+    ? usersInput.tomselect.items.map(Number)
+    : Array.from(usersInput?.selectedOptions ?? [], option => Number(option.value));
+  if (requiredInput?.checked && userids.length === 0) {
+    notify.error('Select at least one validator.');
+    return;
+  }
   const params = collectForm(form);
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
-  const requiredInput = document.getElementById('requiresValidationSwitch') as HTMLInputElement | null;
   if (requiredInput) {
-    const usersInput = document.getElementById('bookApprovalUsers') as HTMLSelectElement & { tomselect?: TomSelect };
     await ApiC.patch(`items/${form.dataset.itemId}`, {
       action: Action.Update,
       target: 'book_approval',
       requires_validation: requiredInput.checked ? 1 : 0,
-      userids: usersInput.tomselect
-        ? usersInput.tomselect.items.map(Number)
-        : Array.from(usersInput.selectedOptions, option => Number(option.value)),
+      userids,
     });
   }
   reloadElements(['topToolbar', 'permissionsDiv']);

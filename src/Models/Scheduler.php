@@ -537,7 +537,8 @@ final class Scheduler extends AbstractRest
 
     public function checkCandidateOverlaps(array $occurrences): void
     {
-        if ($this->Items->entityData['book_can_overlap'] === 1) {
+        if ($this->Items->entityData['book_can_overlap'] === 1
+            && (int) $this->Items->entityData['requires_validation'] === 0) {
             return;
         }
         $ordered = $occurrences;
@@ -657,6 +658,7 @@ final class Scheduler extends AbstractRest
             $start = $this->normalizeDate($params['start']);
             $end = $this->normalizeDate($params['end'], true);
             $event = $this->readOne();
+            // Changing dates would bypass the approval granted for the original slot.
             if ((int) $this->Items->entityData['requires_validation'] !== 0
                 && ($start !== $event['start'] || $end !== $event['end'])) {
                 throw new ImproperActionException('The time of an approval-controlled booking cannot be changed.');
@@ -924,9 +926,7 @@ final class Scheduler extends AbstractRest
         ?string $excludedRecurrenceId = null,
         bool $includeOccurrence = false,
     ): void {
-        // While approvals are enabled, pending requests must block the slot.
-        // Approval rules take precedence over book_can_overlap until overlap
-        // semantics are defined for approval-controlled resources.
+        // Approval-controlled resources cannot overlap, even when book_can_overlap is enabled.
         if ($this->Items->entityData['book_can_overlap'] === 1
             && (int) $this->Items->entityData['requires_validation'] === 0) {
             return;

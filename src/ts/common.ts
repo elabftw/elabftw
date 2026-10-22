@@ -860,15 +860,10 @@ on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
     return;
   }
   const params = collectForm(form);
-  await ApiC.patch(`items/${form.dataset.itemId}`, params);
   if (requiredInput) {
-    await ApiC.patch(`items/${form.dataset.itemId}`, {
-      action: Action.Update,
-      target: 'book_approval',
-      requires_validation: requiredInput.checked ? 1 : 0,
-      userids,
-    });
+    Object.assign(params, { requires_validation: requiredInput.checked ? 1 : 0, userids });
   }
+  await ApiC.patch(`items/${form.dataset.itemId}`, params);
   reloadElements(['topToolbar', 'permissionsDiv']);
   $('#bookingParamsModal').modal('hide');
 });

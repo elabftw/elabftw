@@ -105,6 +105,46 @@ final class BookingApprovalTest extends TestCase
         self::assertSame(1, (int) (new Items($owner, $item->id))->entityData['requires_validation']);
     }
 
+    public function testBookingSettingsAndValidatorsAreSavedInOnePatch(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $validator = $this->getUserInTeam(2);
+        $item->patch(Action::Update, array(
+            'book_max_slots' => 3,
+            'requires_validation' => 1,
+            'userids' => array($validator->userid),
+        ));
+
+        $updated = new Items($item->Users, $item->id);
+        self::assertSame(3, (int) $updated->entityData['book_max_slots']);
+        self::assertSame(1, (int) $updated->entityData['requires_validation']);
+        self::assertSame(array((int) $validator->userid), $updated->getBookingValidatorIds());
+    }
+
+    public function testInvalidBookingSettingsRollBackValidatorsAndResourceChanges(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $validator = $this->getUserInTeam(2);
+        $originalSlots = (int) $item->entityData['book_max_slots'];
+
+        try {
+            $item->patch(Action::Update, array(
+                'book_max_slots' => 3,
+                'invalid_setting' => 'x',
+                'requires_validation' => 1,
+                'userids' => array($validator->userid),
+            ));
+            self::fail('The PATCH should reject an invalid resource parameter.');
+        } catch (ImproperActionException) {
+            // Both kinds of settings must remain unchanged.
+        }
+
+        $updated = new Items($item->Users, $item->id);
+        self::assertSame($originalSlots, (int) $updated->entityData['book_max_slots']);
+        self::assertSame(0, (int) $updated->entityData['requires_validation']);
+        self::assertSame(array(), $updated->getBookingValidatorIds());
+    }
+
     public function testApprovalRequiredAlsoPreventsOverlappingRecurrenceOccurrences(): void
     {
         $item = $this->getFreshBookableItem(2);

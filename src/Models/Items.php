@@ -55,10 +55,27 @@ final class Items extends AbstractConcreteEntity
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        if ($action === Action::Update && ($params['target'] ?? null) === 'book_approval') {
+        if ($action === Action::Update && (isset($params['requires_validation']) || ($params['target'] ?? null) === 'book_approval')) {
             $this->canOrExplode(AccessType::Write);
             $this->ExclusiveEditMode->canPatchOrExplode($action);
-            (new BookingApproval($this->Users))->configure($this, $params);
+            $approvalParams = $params;
+            unset($params['requires_validation'], $params['userids'], $params['action']);
+            if (($params['target'] ?? null) === 'book_approval') {
+                unset($params['target']);
+            }
+
+            // Save booking settings and validators together or roll back both.
+            $this->Db->beginTransaction();
+            try {
+                (new BookingApproval($this->Users))->configure($this, $approvalParams, withinTransaction: true);
+                if ($params) {
+                    parent::patch($action, $params);
+                }
+                $this->Db->commit();
+            } catch (\Throwable $e) {
+                $this->Db->rollBack();
+                throw $e;
+            }
             $this->setId($this->id);
             return $this->readOne();
         }

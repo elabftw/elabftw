@@ -89,8 +89,8 @@ final class BookingApproval
         return array_values(array_filter($ids, static fn(int $id): bool => $helper->isActiveUserInTeam($id)));
     }
 
-    /** PATCH items/{id}: {action:'update', target:'book_approval', requires_validation, userids}. */
-    public function configure(Items $Item, array $params): void
+    /** Configure resource booking approval, optionally inside a caller-owned transaction. */
+    public function configure(Items $Item, array $params, bool $withinTransaction = false): void
     {
         if ($Item->id === null) {
             throw new ImproperActionException('A resource is required.');
@@ -116,7 +116,9 @@ final class BookingApproval
             throw new ImproperActionException('Select at least one validator.');
         }
 
-        $this->Db->beginTransaction();
+        if (!$withinTransaction) {
+            $this->Db->beginTransaction();
+        }
         try {
             $req = $this->Db->prepare('SELECT requires_validation FROM items WHERE id = :id AND team = :team FOR UPDATE');
             $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
@@ -165,9 +167,13 @@ final class BookingApproval
                     $this->finalizeRequest($Item->entityData, $pendingEvent, BookingApprovalStatus::Approved, null, $oldValidators);
                 }
             }
-            $this->Db->commit();
+            if (!$withinTransaction) {
+                $this->Db->commit();
+            }
         } catch (Throwable $e) {
-            $this->Db->rollback();
+            if (!$withinTransaction) {
+                $this->Db->rollBack();
+            }
             throw $e;
         }
     }

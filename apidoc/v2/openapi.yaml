@@ -220,7 +220,7 @@ components:
               - $ref: "#/components/schemas/entity_editable"
 
     PatchItem:
-      description: Parameters for patching an item.
+      description: Parameters for patching an item, including optional booking approval settings.
       required: true
       content:
         application/json:
@@ -228,7 +228,6 @@ components:
             anyOf:
               - $ref: "#/components/schemas/PatchAction"
               - $ref: "#/components/schemas/EntityAndItemEditable"
-              - $ref: "#/components/schemas/BookingApprovalConfiguration"
   securitySchemes:
     token:
       in: header
@@ -296,29 +295,6 @@ components:
             Non-admin users can only transfer ownership within their current team.
           example: 5
       required: [action]
-
-    BookingApprovalConfiguration:
-      type: object
-      description: Only a resource owner or team administrator with write access can configure booking validators.
-      required: [action, target, requires_validation, userids]
-      properties:
-        action:
-          type: string
-          enum: [update]
-        target:
-          type: string
-          enum: [book_approval]
-        requires_validation:
-          type: integer
-          enum: [0, 1]
-          description: Require approval before bookings are confirmed. Disabling it approves pending requests.
-        userids:
-          type: array
-          uniqueItems: true
-          description: Active team-member IDs authorized to approve bookings; at least one when validation is enabled.
-          items:
-            type: integer
-            minimum: 1
 
     EntityAndItemEditable:
       allOf:
@@ -1858,6 +1834,17 @@ components:
       properties:
         is_bookable:
           type: integer
+        requires_validation:
+          type: integer
+          enum: [0, 1]
+          description: Require booking approval. When updating this field, also supply userids; disabling it approves pending requests.
+        userids:
+          type: array
+          uniqueItems: true
+          description: PATCH-only list of active team-member validator IDs, with at least one if validation is enabled. Requires resource write access.
+          items:
+            type: integer
+            minimum: 1
         canbook_base:
           type: number
           description: |

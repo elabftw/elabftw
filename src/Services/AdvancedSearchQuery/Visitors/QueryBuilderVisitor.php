@@ -62,6 +62,7 @@ final class QueryBuilderVisitor implements Visitor
                 OR entity.date LIKE %1$s
                 OR entity.elabid LIKE %1$s
                 OR entity.custom_id = %3$s
+                OR entity.metadata_search LIKE %1$s
                 OR compounds.cas_number LIKE %1$s
                 OR compounds.ec_number LIKE %1$s
                 OR compounds.name LIKE %1$s

@@ -152,7 +152,7 @@ class DatabaseMigrationCommandsTest extends TestCase
         $this->assertSame(SchemaVersionChecker::REQUIRED_SCHEMA, $current);
         $app = new Application();
         $app->add(new CheckDatabase($current, new Migrations($this->fs, useBuildInfo: false)));
-        $app->add(new UpdateDatabase());
+        $app->add(new UpdateDatabase($this->fs, useBuildInfo: false));
 
         $tester = new CommandTester($app->find('db:update'));
         $tester->execute(array());
@@ -162,9 +162,11 @@ class DatabaseMigrationCommandsTest extends TestCase
 
     public function testUpdateDatabaseRunsUpdateWhenCheckFails(): void
     {
-        // Trigger the update command's branch without changing the real schema.
-        // The DB is already current and this filesystem has no pending migrations.
+        // Only execute a fixture migration, never the application's real DDL.
         $this->assertSame(SchemaVersionChecker::REQUIRED_SCHEMA, (int) Config::getConfig()->configArr['schema']);
+        $uuid = Migrations::generateUuidV7();
+        $this->writeMigration($uuid);
+        $migrations = new Migrations($this->fs, useBuildInfo: false);
         $check = new class ('db:check') extends Command {
             protected function execute(InputInterface $input, OutputInterface $output): int
             {
@@ -173,13 +175,18 @@ class DatabaseMigrationCommandsTest extends TestCase
         };
         $app = new Application();
         $app->add($check);
-        $app->add(new UpdateDatabase());
+        $app->add(new UpdateDatabase($this->fs, useBuildInfo: false));
 
-        $tester = new CommandTester($app->find('db:update'));
-        $tester->execute(array());
-        $tester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Database update starting', $tester->getDisplay());
-        $this->assertStringContainsString('Database is up to date', $tester->getDisplay());
+        try {
+            $tester = new CommandTester($app->find('db:update'));
+            $tester->execute(array());
+            $tester->assertCommandIsSuccessful();
+            $this->assertStringContainsString('Database update starting', $tester->getDisplay());
+            $this->assertStringContainsString('Database is up to date', $tester->getDisplay());
+            $this->assertTrue($migrations->isApplied($uuid));
+        } finally {
+            $migrations->removeApplied($uuid);
+        }
     }
 
     private function writeMigration(string $uuid): void

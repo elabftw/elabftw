@@ -148,6 +148,10 @@ CREATE TABLE `experiments` (
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
+  `metadata_search` LONGTEXT GENERATED ALWAYS AS (COALESCE(JSON_UNQUOTE(CONCAT(CHAR(34),
+      REPLACE(REPLACE(REPLACE(JSON_EXTRACT(`metadata`, '$.extra_fields.*.value'),
+        CHAR(92, 92), ' '), CHAR(92, 34), ' '), CHAR(34), ' '),
+      CHAR(34))), '')) STORED,
   `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `access_key` varchar(36) NULL DEFAULT NULL,
@@ -388,6 +392,10 @@ CREATE TABLE `experiments_templates` (
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
+  `metadata_search` LONGTEXT GENERATED ALWAYS AS (COALESCE(JSON_UNQUOTE(CONCAT(CHAR(34),
+      REPLACE(REPLACE(REPLACE(JSON_EXTRACT(`metadata`, '$.extra_fields.*.value'),
+        CHAR(92, 92), ' '), CHAR(92, 34), ' '), CHAR(34), ' '),
+      CHAR(34))), '')) STORED,
   `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
@@ -686,6 +694,10 @@ CREATE TABLE `items` (
   `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `lastchangeby` int(10) UNSIGNED NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
+  `metadata_search` LONGTEXT GENERATED ALWAYS AS (COALESCE(JSON_UNQUOTE(CONCAT(CHAR(34),
+      REPLACE(REPLACE(REPLACE(JSON_EXTRACT(`metadata`, '$.extra_fields.*.value'),
+        CHAR(92, 92), ' '), CHAR(92, 34), ' '), CHAR(34), ' '),
+      CHAR(34))), '')) STORED,
   `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
@@ -895,6 +907,10 @@ CREATE TABLE `items_types` (
   `lockedby` int UNSIGNED DEFAULT NULL,
   `locked_at` timestamp NULL DEFAULT NULL,
   `metadata` json NULL DEFAULT NULL,
+  `metadata_search` LONGTEXT GENERATED ALWAYS AS (COALESCE(JSON_UNQUOTE(CONCAT(CHAR(34),
+      REPLACE(REPLACE(REPLACE(JSON_EXTRACT(`metadata`, '$.extra_fields.*.value'),
+        CHAR(92, 92), ' '), CHAR(92, 34), ' '), CHAR(34), ' '),
+      CHAR(34))), '')) STORED,
   `hide_main_text` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `state` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `status` INT UNSIGNED NULL DEFAULT NULL,
@@ -2675,16 +2691,16 @@ CREATE UNIQUE INDEX uniq_tags2entity_type_item_tag
 -- schema 216
 -- Add fulltext indexes used by the plain q search fast path.
 ALTER TABLE `experiments`
-  ADD FULLTEXT INDEX `idx_experiments_q` (`title`, `body`, `elabid`);
+  ADD FULLTEXT INDEX `idx_experiments_q` (`title`, `body`, `elabid`, `metadata_search`);
 
 ALTER TABLE `items`
-  ADD FULLTEXT INDEX `idx_items_q` (`title`, `body`, `elabid`);
+  ADD FULLTEXT INDEX `idx_items_q` (`title`, `body`, `elabid`, `metadata_search`);
 
 ALTER TABLE `experiments_templates`
-  ADD FULLTEXT INDEX `idx_experiments_templates_q` (`title`, `body`, `elabid`);
+  ADD FULLTEXT INDEX `idx_experiments_templates_q` (`title`, `body`, `elabid`, `metadata_search`);
 
 ALTER TABLE `items_types`
-  ADD FULLTEXT INDEX `idx_items_types_q` (`title`, `body`, `elabid`);
+  ADD FULLTEXT INDEX `idx_items_types_q` (`title`, `body`, `elabid`, `metadata_search`);
 
 ALTER TABLE `compounds`
   ADD FULLTEXT INDEX `idx_compounds_q` (

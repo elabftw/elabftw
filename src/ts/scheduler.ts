@@ -742,7 +742,7 @@ if (calendarEl) {
   // Request lists share the existing booking decision handlers.
   async function loadBookingRequests(kind: 'my' | 'pending'): Promise<void> {
     const list = document.getElementById(kind === 'my' ? 'bookingRequestsMyList' : 'bookingRequestsPendingList')!;
-    list.textContent = i18next.t('Loading...');
+    list.textContent = i18next.t('booking-loading');
     // Pending approvals must include every date; My requests keep a bounded history.
     const start = kind === 'pending' ? '2012-12-31' : DateTime.now().minus({ months: 3 }).toFormat('yyyy-MM-dd');
     const query = `events?approval_view=${kind}&start=${start}&end=9999-12-31`;
@@ -753,7 +753,7 @@ if (calendarEl) {
       }>>(query);
       list.replaceChildren();
       if (bookings.length === 0) {
-        list.textContent = i18next.t('No booking requests found.');
+        list.textContent = i18next.t('booking-no-requests');
         return;
       }
       const element = <T extends keyof HTMLElementTagNameMap>(tag: T, className: string, text?: string): HTMLElementTagNameMap[T] => {
@@ -764,7 +764,12 @@ if (calendarEl) {
       };
       for (const booking of bookings) {
         const status = Number(booking.approval_status);
-        const statusText = ['Pending approval', 'Approved', 'Rejected', 'Expired'][status] ?? 'Unknown';
+        const statusText = [
+          i18next.t('booking-status-pending'),
+          i18next.t('booking-status-approved'),
+          i18next.t('booking-status-rejected'),
+          i18next.t('booking-status-expired'),
+        ][status] ?? i18next.t('booking-status-unknown');
         const badgeColors = [
           ['lightgold', 'darkgold', 'gold'],
           ['primary', 'primary-fg', 'primary'],
@@ -782,7 +787,7 @@ if (calendarEl) {
         const details = element('div', '');
         details.append(element('strong', 'd-block mb-1', booking.item_title));
         if (kind === 'pending') {
-          details.append(element('div', '', `${i18next.t('Requested by')}: ${booking.fullname}`));
+          details.append(element('div', '', `${i18next.t('booking-requested-by')}: ${booking.fullname}`));
         }
         const dates = element('div', '');
         dates.append(element('i', 'far fa-clock fa-fw mr-1'), document.createTextNode(`${booking.start.slice(0, 16)} → ${booking.end.slice(0, 16)}`));
@@ -794,14 +799,14 @@ if (calendarEl) {
         badge.style.border = `1px solid var(--${badgeColors[2]})`;
         const statusIcon = element('i', `fas fa-fw fa-${['clock', 'check-circle', 'times-circle', 'hourglass-end'][status] ?? 'question-circle'} mr-1`);
         statusIcon.style.color = 'inherit';
-        badge.append(statusIcon, document.createTextNode(i18next.t(statusText)));
+        badge.append(statusIcon, document.createTextNode(statusText));
         if (kind === 'pending') {
           badge.classList.add('mt-2');
           details.appendChild(badge);
         }
         if (kind === 'my' && status === 2 && booking.approval_comment) {
           const reason = element('div', 'mt-2');
-          reason.append(element('i', 'fas fa-info-circle fa-fw mr-1'), document.createTextNode(`${i18next.t('Reason')}: ${booking.approval_comment}`));
+          reason.append(element('i', 'fas fa-info-circle fa-fw mr-1'), document.createTextNode(`${i18next.t('booking-reason')}: ${booking.approval_comment}`));
           details.appendChild(reason);
         }
         summary.append(iconBackground, details);
@@ -810,23 +815,23 @@ if (calendarEl) {
         const actions = element('div', 'd-flex align-items-center flex-wrap');
         if (kind === 'my') actions.appendChild(badge);
         if (kind === 'pending' && Number(booking.canapprove) === 1) {
-          for (const [action, label, style] of [
-            ['booking-approve', 'Approve', 'btn-primary'],
-            ['booking-reject', 'Reject', 'btn-danger-ghost'],
+          for (const [action, style] of [
+            ['booking-approve', 'btn-primary'],
+            ['booking-reject', 'btn-danger-ghost'],
           ]) {
             const button = element('button', `btn btn-sm ml-2 ${style}`);
             button.type = 'button';
             button.dataset.action = action;
             button.dataset.eventid = String(booking.id);
-            button.textContent = i18next.t(label);
+            button.textContent = i18next.t(action);
             actions.appendChild(button);
           }
         }
         if (kind === 'my' && status === 0) {
-          const cancel = element('button', 'btn btn-sm btn-danger-ghost ml-2', i18next.t('Cancel request'));
+          const cancel = element('button', 'btn btn-sm btn-danger-ghost ml-2', i18next.t('booking-cancel-request'));
           cancel.type = 'button';
           cancel.addEventListener('click', async () => {
-            if (!window.confirm(i18next.t('Cancel this booking request?'))) return;
+            if (!window.confirm(i18next.t('booking-cancel-confirm'))) return;
             const endpoint = booking.recurrence_id
               ? `event/${booking.id}/recurrences?recursive=1`
               : `event/${booking.id}`;
@@ -845,7 +850,7 @@ if (calendarEl) {
         list.appendChild(row);
       }
     } catch {
-      list.textContent = i18next.t('Could not load booking requests.');
+      list.textContent = i18next.t('error-booking-requests-load');
       // ApiC already displays the API error; avoid a duplicate notification.
     }
   }
@@ -880,7 +885,7 @@ if (calendarEl) {
 
   on('booking-approve', (el: HTMLElement) => decideBooking(el, 'approved'));
   on('booking-reject', (el: HTMLElement) => {
-    const reason = window.prompt(i18next.t('Reason for rejection (optional)'));
+    const reason = window.prompt(i18next.t('booking-rejection-reason'));
     if (reason !== null) return decideBooking(el, 'rejected', reason);
   });
 

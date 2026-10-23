@@ -827,7 +827,7 @@ $(document).on('shown.bs.modal', '#bookingParamsModal', () => {
     hideSelected: false,
     closeAfterSelect: false,
     plugins: ['checkbox_options', 'dropdown_input', 'remove_button'],
-    placeholder: i18next.t('Search approvers...'),
+    placeholder: i18next.t('search-approvers'),
   });
   syncBookingApproversState();
 });
@@ -856,7 +856,7 @@ on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
     ? usersInput.tomselect.items.map(Number)
     : Array.from(usersInput?.selectedOptions ?? [], option => Number(option.value));
   if (requiredInput?.checked && userids.length === 0) {
-    notify.error('Select at least one approver.');
+    notify.error('error-approver-required');
     return;
   }
   const params = collectForm(form);

@@ -355,7 +355,7 @@ final class Populate
                 }
             }
 
-            // Create configured bookings through Scheduler so populate data follows normal booking approval rules
+            // Create configured bookings through Scheduler so populate data follows normal booking validation
             foreach ($team['events'] ?? array() as $event) {
                 $itemId = $itemIds[$event['item']] ?? null;
                 if ($itemId === null) {

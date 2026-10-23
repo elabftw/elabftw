@@ -789,6 +789,7 @@ if (calendarEl) {
     const end = DateTime.fromSQL(booking.end).setLocale(bookingLocale);
     const endLabel = end.hasSame(start, 'day') ? end.toLocaleString(DateTime.TIME_SIMPLE) : end.toLocaleString(DateTime.DATETIME_MED);
     const container = element('div', 'd-flex flex-column justify-content-center h-100');
+    container.style.lineHeight = '1.5';
     const slot = element('div');
     slot.append(element('strong', 'mr-2', formatBookingDuration(start, end)),
       element('span', 'smallgray', `${start.toLocaleString(DateTime.DATETIME_MED)} → ${endLabel}`));
@@ -817,7 +818,7 @@ if (calendarEl) {
   }
 
   function renderBookingActions(booking: BookingRequestRow, kind: 'my' | 'pending'): HTMLElement {
-    const actions = element('div', 'd-flex align-items-center h-100');
+    const actions = element('div', 'd-flex align-items-center justify-content-center h-100');
     if (kind === 'pending' && Number(booking.canapprove) === 1) {
       for (const [action, style] of [['booking-approve', 'btn-primary'], ['booking-reject', 'btn-danger-ghost']]) {
         const button = element('button', `btn btn-sm mr-2 ${style}`, i18next.t(action));
@@ -881,10 +882,11 @@ if (calendarEl) {
       ];
       const columnDefs: ColDef<BookingRequestRow>[] = [
         { field: 'item_title', headerName: i18next.t('item'), flex: 1, minWidth: 160 },
-        ...(kind === 'pending' ? [{ field: 'fullname', headerName: i18next.t('booking-requested-by'), flex: 1, minWidth: 150 }] : []),
+        ...(kind === 'pending' ? [{ field: 'fullname' as const, headerName: i18next.t('booking-requested-by'), flex: 1, minWidth: 150 }] : []),
         { field: 'start', headerName: i18next.t('booking-when'), flex: 2, minWidth: 350,
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingSchedule(data) : null },
         { field: 'approval_status', headerName: i18next.t('status'), width: 155,
+          cellStyle: { display: 'flex', alignItems: 'center' },
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
             if (!data) return null;
             const colors = statusColors[Number(data.approval_status)] ?? statusColors[3];
@@ -895,6 +897,7 @@ if (calendarEl) {
             return badge;
           } },
         { colId: 'actions', headerName: i18next.t('action'), width: kind === 'pending' ? 195 : 175, sortable: false, filter: false,
+          cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingActions(data, kind) : null },
       ];
       bookingGrids[kind] = createGrid<BookingRequestRow>(list, {
@@ -903,7 +906,7 @@ if (calendarEl) {
         rowData: rows,
         getRowId: params => params.data.recurrence_id ?? `event:${params.data.id}`,
         domLayout: 'autoHeight',
-        getRowHeight: params => params.data?.recurrence_id ? (params.data.recurrence_rule?.weekdays?.length ? 132 : 108) : 54,
+        getRowHeight: params => params.data?.recurrence_id ? (params.data.recurrence_rule?.weekdays?.length ? 110 : 90) : 54,
         defaultColDef: { sortable: true, resizable: true, filter: true },
         overlayNoRowsTemplate: i18next.t('booking-no-requests'),
       });

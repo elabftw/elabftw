@@ -1450,7 +1450,7 @@ components:
         canapprove:
           type: integer
           enum: [0, 1]
-          description: Whether the current user is a designated active validator for this pending event.
+          description: Whether the current user is a designated active approver for this pending event.
         approval_status:
           type: integer
           enum: [0, 1, 2, 3]
@@ -1467,7 +1467,7 @@ components:
           type: string
           nullable: true
           description: Reason for rejection, visible in the user's own booking requests.
-        requires_validation:
+        requires_approval:
           type: integer
           enum: [0, 1]
           description: Whether bookings of this resource require approval.
@@ -1834,14 +1834,14 @@ components:
       properties:
         is_bookable:
           type: integer
-        requires_validation:
+        requires_approval:
           type: integer
           enum: [0, 1]
           description: Require booking approval. When updating this field, also supply userids; disabling it approves pending requests.
         userids:
           type: array
           uniqueItems: true
-          description: PATCH-only list of active team-member validator IDs, with at least one if validation is enabled. Requires resource write access.
+          description: PATCH-only list of active team-member approver IDs, with at least one if approval is enabled. Requires resource write access.
           items:
             type: integer
             minimum: 1
@@ -1904,7 +1904,7 @@ components:
         - $ref: '#/components/schemas/item_editable'
         - type: object
           properties:
-            requires_validation:
+            requires_approval:
               type: integer
               enum: [0, 1]
               description: Whether bookings of this resource require approval.
@@ -5464,7 +5464,7 @@ paths:
       parameters:
         - name: approval_view
           in: query
-          description: 'my: current user booking history; pending: requests awaiting a decision from the current designated validator.'
+          description: 'my: current user booking history; pending: requests awaiting a decision from the current designated approver.'
           schema:
             type: string
             enum: [my, pending]
@@ -5625,7 +5625,7 @@ paths:
               oneOf:
                 - type: object
                   required: [action, target, decision]
-                  description: Approve or reject a pending request. Only its designated active validators may decide.
+                  description: Approve or reject a pending request. Only its designated active approvers may decide.
                   properties:
                     action:
                       type: string

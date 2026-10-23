@@ -813,7 +813,7 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     });
 });
 
-// Searchable multiple booking validators using TomSelect's existing plugins.
+// Searchable multiple booking approvers using TomSelect's existing plugins.
 // Keep the original select in sync so booking settings use the selected users.
 $(document).on('shown.bs.modal', '#bookingParamsModal', () => {
   const select = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
@@ -827,16 +827,16 @@ $(document).on('shown.bs.modal', '#bookingParamsModal', () => {
     hideSelected: false,
     closeAfterSelect: false,
     plugins: ['checkbox_options', 'dropdown_input', 'remove_button'],
-    placeholder: i18next.t('Search validators...'),
+    placeholder: i18next.t('Search approvers...'),
   });
-  syncBookingValidatorsState();
+  syncBookingApproversState();
 });
 
 // Preserve selections when disabled so they are restored when approval is re-enabled.
-function syncBookingValidatorsState(): void {
+function syncBookingApproversState(): void {
   const select = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
   if (!select?.tomselect) return;
-  const required = document.getElementById('requiresValidationSwitch') as HTMLInputElement | null;
+  const required = document.getElementById('requiresApprovalSwitch') as HTMLInputElement | null;
   const bookable = document.getElementById('isBookableSwitch') as HTMLInputElement | null;
   if (required?.checked && bookable?.checked) {
     select.tomselect.enable();
@@ -845,23 +845,23 @@ function syncBookingValidatorsState(): void {
   }
 }
 
-$(document).on('change', '#requiresValidationSwitch, #isBookableSwitch', syncBookingValidatorsState);
+$(document).on('change', '#requiresApprovalSwitch, #isBookableSwitch', syncBookingApproversState);
 
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
-  const requiredInput = document.getElementById('requiresValidationSwitch') as HTMLInputElement | null;
+  const requiredInput = document.getElementById('requiresApprovalSwitch') as HTMLInputElement | null;
   const usersInput = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
   const userids = usersInput?.tomselect
     ? usersInput.tomselect.items.map(Number)
     : Array.from(usersInput?.selectedOptions ?? [], option => Number(option.value));
   if (requiredInput?.checked && userids.length === 0) {
-    notify.error('Select at least one validator.');
+    notify.error('Select at least one approver.');
     return;
   }
   const params = collectForm(form);
   if (requiredInput) {
-    Object.assign(params, { requires_validation: requiredInput.checked ? 1 : 0, userids });
+    Object.assign(params, { requires_approval: requiredInput.checked ? 1 : 0, userids });
   }
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
   reloadElements(['topToolbar', 'permissionsDiv']);

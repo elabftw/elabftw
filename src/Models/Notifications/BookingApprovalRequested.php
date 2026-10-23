@@ -22,7 +22,7 @@ use Override;
 use function _;
 use function sprintf;
 
-/** Send a booking approval request to an authorized validator. */
+/** Send a booking approval request to an authorized approver. */
 final class BookingApprovalRequested extends AbstractNotifications implements MailableInterface
 {
     protected const PREF = 'notif_booking_approval_requested';

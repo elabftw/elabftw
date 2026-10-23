@@ -48,10 +48,10 @@ final class BookingApproval
         $this->Db = Db::getConnection();
     }
 
-    /** Admin role never bypasses the resource-specific validator list. */
+    /** Admin role never bypasses the resource-specific approver list. */
     public function canApprove(array $item, int $userid): bool
     {
-        if ((int) $item['requires_validation'] !== 1) {
+        if ((int) $item['requires_approval'] !== 1) {
             return false;
         }
         $helper = new TeamsHelper((int) $item['team']);
@@ -61,28 +61,28 @@ final class BookingApproval
 
     public function initialStatus(array $item, int $userid): BookingApprovalStatus
     {
-        if ((int) $item['requires_validation'] !== 1) {
+        if ((int) $item['requires_approval'] !== 1) {
             return BookingApprovalStatus::Approved;
         }
-        $validators = $this->getValidators($item);
-        if (!$validators) {
-            throw new ImproperActionException('No active validator is configured for this resource.');
+        $approvers = $this->getApprovers($item);
+        if (!$approvers) {
+            throw new ImproperActionException('No active approver is configured for this resource.');
         }
-        return in_array($userid, $validators, true)
+        return in_array($userid, $approvers, true)
             ? BookingApprovalStatus::Approved
             : BookingApprovalStatus::Pending;
     }
 
     public function getDesignatedUserIds(int $itemId): array
     {
-        $req = $this->Db->prepare('SELECT userid FROM items_booking_validators WHERE item_id = :item ORDER BY userid');
+        $req = $this->Db->prepare('SELECT userid FROM items_booking_approvers WHERE item_id = :item ORDER BY userid');
         $req->bindValue(':item', $itemId, PDO::PARAM_INT);
         $this->Db->execute($req);
         return array_map('intval', $req->fetchAll(PDO::FETCH_COLUMN));
     }
 
-    /** Active designated validators belonging to the resource team. */
-    public function getValidators(array $item): array
+    /** Active designated approvers belonging to the resource team. */
+    public function getApprovers(array $item): array
     {
         $ids = $this->getDesignatedUserIds((int) $item['id']);
         $helper = new TeamsHelper((int) $item['team']);
@@ -97,26 +97,26 @@ final class BookingApproval
         }
         $team = (int) $Item->entityData['team'];
         $helper = new TeamsHelper($team);
-        $requiresValidation = filter_var($params['requires_validation'] ?? null, FILTER_VALIDATE_INT);
-        if ($requiresValidation !== 0 && $requiresValidation !== 1) {
-            throw new ImproperActionException('Invalid requires_validation value.');
+        $requiresApproval = filter_var($params['requires_approval'] ?? null, FILTER_VALIDATE_INT);
+        if ($requiresApproval !== 0 && $requiresApproval !== 1) {
+            throw new ImproperActionException('Invalid requires_approval value.');
         }
         if (!isset($params['userids']) || !is_array($params['userids'])) {
-            throw new ImproperActionException('Expected an array of validator user IDs.');
+            throw new ImproperActionException('Expected an array of approver user IDs.');
         }
         $users = array();
         foreach ($params['userids'] as $id) {
             $id = filter_var($id, FILTER_VALIDATE_INT);
             if ($id === false || $id < 1 || !$helper->isActiveUserInTeam($id)) {
-                throw new ImproperActionException('All validators must be active members of the resource team.');
+                throw new ImproperActionException('All approvers must be active members of the resource team.');
             }
             $users[$id] = $id;
         }
-        if ($requiresValidation === 1 && !$users) {
-            throw new ImproperActionException('Select at least one validator.');
+        if ($requiresApproval === 1 && !$users) {
+            throw new ImproperActionException('Select at least one approver.');
         }
 
-        $req = $this->Db->prepare('SELECT requires_validation FROM items WHERE id = :id AND team = :team FOR UPDATE');
+        $req = $this->Db->prepare('SELECT requires_approval FROM items WHERE id = :id AND team = :team FOR UPDATE');
         $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
         $req->bindValue(':team', $team, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -124,16 +124,16 @@ final class BookingApproval
         if ($previousRequired === false) {
             throw new ImproperActionException('Resource not found.');
         }
-        $oldValidators = $this->getValidators($Item->entityData);
-        $req = $this->Db->prepare('UPDATE items SET requires_validation = :required WHERE id = :id AND team = :team');
-        $req->bindValue(':required', $requiresValidation, PDO::PARAM_INT);
+        $oldApprovers = $this->getApprovers($Item->entityData);
+        $req = $this->Db->prepare('UPDATE items SET requires_approval = :required WHERE id = :id AND team = :team');
+        $req->bindValue(':required', $requiresApproval, PDO::PARAM_INT);
         $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
         $req->bindValue(':team', $team, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $req = $this->Db->prepare('DELETE FROM items_booking_validators WHERE item_id = :item');
+        $req = $this->Db->prepare('DELETE FROM items_booking_approvers WHERE item_id = :item');
         $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $req = $this->Db->prepare('INSERT INTO items_booking_validators(item_id, userid) VALUES(:item, :userid)');
+        $req = $this->Db->prepare('INSERT INTO items_booking_approvers(item_id, userid) VALUES(:item, :userid)');
         foreach ($users as $userid) {
             $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $req->bindValue(':userid', $userid, PDO::PARAM_INT);
@@ -141,7 +141,7 @@ final class BookingApproval
         }
         // Agreement: disabling approval explicitly approves pending requests.
         // Resolve recipients before changing statuses, and enqueue inside this transaction.
-        if ((int) $previousRequired === 1 && $requiresValidation === 0) {
+        if ((int) $previousRequired === 1 && $requiresApproval === 0) {
             $req = $this->Db->prepare('SELECT * FROM team_events WHERE item = :item AND approval_status = :pending ORDER BY start');
             $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
@@ -160,7 +160,7 @@ final class BookingApproval
                     continue;
                 }
                 $notified[$key] = true;
-                $this->finalizeRequest($Item->entityData, $pendingEvent, BookingApprovalStatus::Approved, null, $oldValidators);
+                $this->finalizeRequest($Item->entityData, $pendingEvent, BookingApprovalStatus::Approved, null, $oldApprovers);
             }
         }
     }
@@ -255,14 +255,14 @@ final class BookingApproval
             'status' => 'pending',
             'comment' => null,
         );
-        foreach ($this->getValidators($item) as $validatorId) {
-            (new BookingApprovalRequested(new Users($validatorId), $data))->create();
+        foreach ($this->getApprovers($item) as $approverId) {
+            (new BookingApprovalRequested(new Users($approverId), $data))->create();
         }
         (new BookingApprovalUpdated(new Users((int) $user->userid), $data))->create();
     }
 
     /** Notify booker and all current approvers; suppress undelivered obsolete requests. */
-    private function finalizeRequest(array $item, array $event, BookingApprovalStatus $status, ?string $comment, ?array $notifyValidators = null): void
+    private function finalizeRequest(array $item, array $event, BookingApprovalStatus $status, ?string $comment, ?array $notifyApprovers = null): void
     {
         $key = $this->getRequestKey($event);
         $req = $this->Db->prepare('UPDATE notifications SET send_email = 0, is_ack = 1 WHERE category = :category AND email_sent = 0 AND body->>"$.request_key" = :request_key');
@@ -286,7 +286,7 @@ final class BookingApproval
             },
             'comment' => $comment,
         );
-        $recipients = array_unique(array_merge(array((int) $event['userid']), $notifyValidators ?? $this->getValidators($item)));
+        $recipients = array_unique(array_merge(array((int) $event['userid']), $notifyApprovers ?? $this->getApprovers($item)));
         foreach ($recipients as $userid) {
             (new BookingApprovalUpdated(new Users($userid), $data))->create();
         }
@@ -306,7 +306,7 @@ final class BookingApproval
 
     private function isDesignatedUser(int $itemId, int $userid): bool
     {
-        $req = $this->Db->prepare('SELECT 1 FROM items_booking_validators WHERE item_id = :item AND userid = :userid');
+        $req = $this->Db->prepare('SELECT 1 FROM items_booking_approvers WHERE item_id = :item AND userid = :userid');
         $req->bindValue(':item', $itemId, PDO::PARAM_INT);
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);

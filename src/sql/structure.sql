@@ -697,7 +697,7 @@ CREATE TABLE `items` (
   `timestamped_at` timestamp NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `is_bookable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
-  `requires_validation` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `requires_approval` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_slots` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_can_overlap` TINYINT UNSIGNED NOT NULL DEFAULT 1,
@@ -1537,14 +1537,14 @@ CREATE TABLE `users2team_groups` (
 --       `users` -> `userid`
 --
 
--- Many-to-many validators: a user may approve bookings on several resources.
-CREATE TABLE `items_booking_validators` (
+-- Many-to-many approvers: a user may approve bookings on several resources.
+CREATE TABLE `items_booking_approvers` (
   `item_id` INT UNSIGNED NOT NULL,
   `userid` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`item_id`, `userid`),
-  INDEX `idx_items_booking_validators_userid` (`userid`),
-  CONSTRAINT `fk_items_booking_validators_item` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_items_booking_validators_user` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
+  INDEX `idx_items_booking_approvers_userid` (`userid`),
+  CONSTRAINT `fk_items_booking_approvers_item` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_items_booking_approvers_user` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------

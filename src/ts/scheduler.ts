@@ -660,7 +660,7 @@ if (calendarEl) {
       changeEventResourceBtn.dataset.id = info.event.id;
       changeEventResourceBtn.dataset.itemId = itemId;
       changeEventResourceBtn.disabled = true;
-      changeEventResourceBtn.classList.toggle('d-none', Number(info.event.extendedProps.requires_validation) !== 0);
+      changeEventResourceBtn.classList.toggle('d-none', Number(info.event.extendedProps.requires_approval) !== 0);
       viewBookedResource.href = `database.php?mode=view&id=${itemId}`;
 
       // set the event id on the various elements

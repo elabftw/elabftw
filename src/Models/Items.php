@@ -47,8 +47,8 @@ final class Items extends AbstractConcreteEntity
 
     public EntityType $entityType = EntityType::Items;
 
-    /** The configured individual validators, for the resource settings UI. */
-    public function getBookingValidatorIds(): array
+    /** The configured individual approvers, for the resource settings UI. */
+    public function getBookingApproverIds(): array
     {
         return (new BookingApproval($this->Users))->getDesignatedUserIds($this->id ?? 0);
     }
@@ -56,13 +56,13 @@ final class Items extends AbstractConcreteEntity
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        if ($action === Action::Update && isset($params['requires_validation'])) {
+        if ($action === Action::Update && isset($params['requires_approval'])) {
             $this->canOrExplode(AccessType::Write);
             $this->ExclusiveEditMode->canPatchOrExplode($action);
             $approvalParams = $params;
-            unset($params['requires_validation'], $params['userids'], $params['action']);
+            unset($params['requires_approval'], $params['userids'], $params['action']);
 
-            // Save booking settings and validators together or roll back both.
+            // Save booking settings and approvers together or roll back both.
             $this->Db->beginTransaction();
             try {
                 (new BookingApproval($this->Users))->configure($this, $approvalParams);

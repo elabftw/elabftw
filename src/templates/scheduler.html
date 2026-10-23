@@ -82,13 +82,13 @@
   <div data-tabcontent='2' hidden>
     <h2 class='p-2 pl-3 section-title'>{{ 'My booking requests'|trans }}</h2>
     <p class='smallgray pl-3'>{{ 'View your booking requests and their status (pending, approved or rejected). You can cancel requests that are still pending.'|trans }}</p>
-    <div id='bookingRequestsMyList' class='list-group' aria-live='polite'></div>
+    <div id='bookingRequestsMyList' class='ag-theme-alpine' aria-live='polite'></div>
   </div>
 
   <div data-tabcontent='3' hidden>
     <h2 class='p-2 pl-3 section-title'>{{ 'Pending approvals'|trans }}</h2>
     <p class='smallgray pl-3'>{{ 'Review requests awaiting your decision for resources where you are a designated approver.'|trans }}</p>
-    <div id='bookingRequestsPendingList' class='list-group' aria-live='polite'></div>
+    <div id='bookingRequestsPendingList' class='ag-theme-alpine' aria-live='polite'></div>
   </div>
 
 {% endblock body %}

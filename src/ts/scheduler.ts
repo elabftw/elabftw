@@ -30,6 +30,11 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
+import { ClientSideRowModelModule, createGrid, ModuleRegistry, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import type { ColDef, GridApi, ICellRendererParams } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
@@ -41,6 +46,9 @@ import { notify } from './notify';
 import { on } from './handlers';
 import { rebuildTomSelectOptions } from './misc';
 import { showModal, showModalAndFocusFirstInput } from './common';
+import { getAgGridTheme } from './theme';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, NumberFilterModule, TextFilterModule]);
 
 type CancelNotificationPayload = {
   action: Action;
@@ -60,6 +68,22 @@ type Recurrence = {
   until?: string;
   weekdays?: number[];
 };
+type BookingRequest = {
+  id: number;
+  item_title: string;
+  fullname: string;
+  start: string;
+  end: string;
+  approval_status: number;
+  approval_comment: string | null;
+  canapprove: number;
+  recurrence_id: string | null;
+  recurrence_frequency: 'daily' | 'weekly' | 'monthly' | null;
+  recurrence_interval: number | null;
+  recurrence_rule: Recurrence | null;
+};
+
+type BookingRequestRow = BookingRequest & { occurrences: number; lastStart: string };
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
 const GRID_VIEWS: Record<Range, string> = {
@@ -739,137 +763,152 @@ if (calendarEl) {
     calendar.updateSize();
   }
 
-  // Request lists share the existing booking decision handlers.
+  // The API returns one event per occurrence; approvals already apply to the whole recurrence.
+  const bookingGrids: Partial<Record<'my' | 'pending', GridApi<BookingRequestRow>>> = {};
+  const bookingLocale = i18next.language.replace('_', '-');
+  const element = <T extends keyof HTMLElementTagNameMap>(tag: T, className = '', text?: string): HTMLElementTagNameMap[T] => {
+    const node = document.createElement(tag);
+    node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  };
+  const formatBookingDuration = (start: DateTime, end: DateTime): string => {
+    const minutes = Math.max(0, Math.round(end.diff(start, 'minutes').minutes));
+    return ([
+      ['day', Math.floor(minutes / 1440)],
+      ['hour', Math.floor((minutes % 1440) / 60)],
+      ['minute', minutes % 60],
+    ] as const)
+      .filter(([, value]) => value > 0)
+      .map(([unit, value]) => new Intl.NumberFormat(bookingLocale, { style: 'unit', unit, unitDisplay: 'long' }).format(value))
+      .join(' ') || new Intl.NumberFormat(bookingLocale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(0);
+  };
+
+  function renderBookingSchedule(booking: BookingRequestRow): HTMLElement {
+    const start = DateTime.fromSQL(booking.start).setLocale(bookingLocale);
+    const end = DateTime.fromSQL(booking.end).setLocale(bookingLocale);
+    const endLabel = end.hasSame(start, 'day') ? end.toLocaleString(DateTime.TIME_SIMPLE) : end.toLocaleString(DateTime.DATETIME_MED);
+    const container = element('div', 'd-flex flex-column justify-content-center h-100');
+    const slot = element('div');
+    slot.append(element('strong', 'mr-2', formatBookingDuration(start, end)),
+      element('span', 'smallgray', `${start.toLocaleString(DateTime.DATETIME_MED)} → ${endLabel}`));
+    container.appendChild(slot);
+    if (booking.recurrence_id) {
+      const cadenceUnits = { daily: 'day', weekly: 'week', monthly: 'month' } as const;
+      const unit = booking.recurrence_frequency ? cadenceUnits[booking.recurrence_frequency] : null;
+      const interval = unit ? new Intl.NumberFormat(bookingLocale, { style: 'unit', unit, unitDisplay: 'long' }).format(booking.recurrence_interval || 1) : null;
+      const cadence = unit && booking.recurrence_interval === 1
+        ? i18next.t(`booking-every-${unit}`)
+        : interval ? i18next.t('booking-repeats-every', { interval }) : null;
+      container.appendChild(element('div', 'smallgray', [
+        i18next.t('booking-recurring'),
+        i18next.t(booking.occurrences === 1 ? 'booking-one-occurrence' : 'booking-occurrences', { num: booking.occurrences }),
+        ...(cadence ? [cadence] : []),
+      ].join(' · ')));
+      if (booking.recurrence_rule?.weekdays?.length) {
+        const monday = DateTime.fromISO('2026-09-14').setLocale(bookingLocale);
+        const weekdays = booking.recurrence_rule.weekdays.map(day => monday.plus({ days: day - 1 }).toFormat('ccc'));
+        container.appendChild(element('div', 'smallgray', i18next.t('booking-on-weekdays', { days: new Intl.ListFormat(bookingLocale, { type: 'conjunction' }).format(weekdays) })));
+      }
+      const last = DateTime.fromSQL(booking.lastStart).setLocale(bookingLocale);
+      container.appendChild(element('div', 'smallgray', i18next.t('booking-last-occurrence', { date: last.toLocaleString(DateTime.DATETIME_MED) })));
+    }
+    return container;
+  }
+
+  function renderBookingActions(booking: BookingRequestRow, kind: 'my' | 'pending'): HTMLElement {
+    const actions = element('div', 'd-flex align-items-center h-100');
+    if (kind === 'pending' && Number(booking.canapprove) === 1) {
+      for (const [action, style] of [['booking-approve', 'btn-primary'], ['booking-reject', 'btn-danger-ghost']]) {
+        const button = element('button', `btn btn-sm mr-2 ${style}`, i18next.t(action));
+        button.type = 'button';
+        button.dataset.action = action;
+        button.dataset.eventid = String(booking.id);
+        actions.appendChild(button);
+      }
+    } else if (kind === 'my' && Number(booking.approval_status) === 0) {
+      const cancel = element('button', 'btn btn-sm btn-danger-ghost', i18next.t('booking-cancel-request'));
+      cancel.type = 'button';
+      cancel.addEventListener('click', async () => {
+        if (!window.confirm(i18next.t('booking-cancel-confirm'))) return;
+        const endpoint = booking.recurrence_id
+          ? `event/${booking.id}/recurrences?recursive=1`
+          : `event/${booking.id}`;
+        try {
+          await ApiC.delete(endpoint);
+          calendar.refetchEvents();
+          void loadBookingRequests('my');
+        } catch {
+          // ApiC already notifies the user.
+        }
+      });
+      actions.appendChild(cancel);
+    }
+    return actions;
+  }
+
   async function loadBookingRequests(kind: 'my' | 'pending'): Promise<void> {
     const list = document.getElementById(kind === 'my' ? 'bookingRequestsMyList' : 'bookingRequestsPendingList')!;
-    list.textContent = i18next.t('booking-loading');
-    // Pending approvals must include every date; My requests keep a bounded history.
-    const start = kind === 'pending' ? '2012-12-31' : DateTime.now().minus({ months: 3 }).toFormat('yyyy-MM-dd');
-    const query = `events?approval_view=${kind}&start=${start}&end=9999-12-31`;
+    if (!bookingGrids[kind]) list.textContent = i18next.t('booking-loading');
     try {
-      const bookings = await ApiC.getJson<Array<{
-        id: number; item_title: string; fullname: string; start: string; end: string;
-        approval_status: number; approval_comment: string | null; canapprove: number; recurrence_id: string | null;
-      }>>(query);
-      list.replaceChildren();
-      if (bookings.length === 0) {
-        list.textContent = i18next.t('booking-no-requests');
+      // Fetch the full recurrence, so both its count and its first occurrence are correct.
+      const bookings = await ApiC.getJson<BookingRequest[]>(`events?approval_view=${kind}&start=2012-12-31&end=9999-12-31`);
+      const groups = new Map<string, BookingRequestRow>();
+      for (const booking of bookings) {
+        const key = booking.recurrence_id ?? `event:${booking.id}`;
+        const row = groups.get(key);
+        if (!row) {
+          groups.set(key, { ...booking, occurrences: 1, lastStart: booking.start });
+        } else {
+          row.occurrences++;
+          if (booking.start > row.lastStart) row.lastStart = booking.start;
+          if (booking.start < row.start) Object.assign(row, booking, { occurrences: row.occurrences, lastStart: row.lastStart });
+        }
+      }
+      const rows = Array.from(groups.values());
+      if (bookingGrids[kind]) {
+        bookingGrids[kind]!.setGridOption('rowData', rows);
         return;
       }
-      const element = <T extends keyof HTMLElementTagNameMap>(tag: T, className: string, text?: string): HTMLElementTagNameMap[T] => {
-        const node = document.createElement(tag);
-        node.className = className;
-        if (text !== undefined) node.textContent = text;
-        return node;
-      };
-      for (const booking of bookings) {
-        const status = Number(booking.approval_status);
-        const statusText = [
-          i18next.t('booking-status-pending'),
-          i18next.t('booking-status-approved'),
-          i18next.t('booking-status-rejected'),
-          i18next.t('booking-status-expired'),
-        ][status] ?? i18next.t('booking-status-unknown');
-        const badgeColors = [
-          ['lightgold', 'darkgold', 'gold'],
-          ['primary', 'primary-fg', 'primary'],
-          ['lightred', 'darkred', 'dangerred'],
-          ['firstlevel', 'mediumstrong', 'secondlevel'],
-        ][status] ?? ['firstlevel', 'mediumstrong', 'secondlevel'];
-        const row = element('div', 'box mb-3');
-        const layout = element('div', 'd-flex justify-content-between align-items-center flex-wrap');
-        const summary = element('div', 'd-flex align-items-start flex-grow-1 mr-3 mb-2 mb-md-0');
-        const icon = element('i', 'far fa-calendar-alt fa-fw fa-lg');
-        const iconBackground = element('span', 'badge badge-secondary rounded-circle p-2 mr-3');
-        iconBackground.style.backgroundColor = 'var(--firstlevel)';
-        icon.style.color = 'var(--mediumstrong)';
-        iconBackground.appendChild(icon);
-        const details = element('div', '');
-        details.append(element('strong', 'd-block mb-1', booking.item_title));
-        if (kind === 'pending') {
-          details.append(element('div', '', `${i18next.t('booking-requested-by')}: ${booking.fullname}`));
-        }
-        const locale = i18next.language.replace('_', '-');
-        const startTime = DateTime.fromSQL(booking.start).setLocale(locale);
-        const endTime = DateTime.fromSQL(booking.end).setLocale(locale);
-        const minutes = Math.max(0, Math.round(endTime.diff(startTime, 'minutes').minutes));
-        const duration = ([
-          ['day', Math.floor(minutes / 1440)],
-          ['hour', Math.floor((minutes % 1440) / 60)],
-          ['minute', minutes % 60],
-        ] as const)
-          .filter(([, value]) => value > 0)
-          .map(([unit, value]) => new Intl.NumberFormat(locale, { style: 'unit', unit, unitDisplay: 'long' }).format(value))
-          .join(' ') || new Intl.NumberFormat(locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(0);
-        const endLabel = endTime.hasSame(startTime, 'day')
-          ? endTime.toLocaleString(DateTime.TIME_SIMPLE)
-          : endTime.toLocaleString(DateTime.DATETIME_MED);
-        const dates = element('div', '');
-        dates.append(
-          element('i', 'far fa-clock fa-fw mr-1'),
-          element('strong', 'mr-2', duration),
-          element('span', 'smallgray', `${startTime.toLocaleString(DateTime.DATETIME_MED)} → ${endLabel}`),
-        );
-        details.appendChild(dates);
-
-        const badge = element('span', 'badge p-2 mr-2');
-        badge.style.backgroundColor = `var(--${badgeColors[0]})`;
-        badge.style.color = `var(--${badgeColors[1]})`;
-        badge.style.border = `1px solid var(--${badgeColors[2]})`;
-        const statusIcon = element('i', `fas fa-fw fa-${['clock', 'check-circle', 'times-circle', 'hourglass-end'][status] ?? 'question-circle'} mr-1`);
-        statusIcon.style.color = 'inherit';
-        badge.append(statusIcon, document.createTextNode(statusText));
-        if (kind === 'pending') {
-          badge.classList.add('mt-2');
-          details.appendChild(badge);
-        }
-        if (kind === 'my' && status === 2 && booking.approval_comment) {
-          const reason = element('div', 'mt-2');
-          reason.append(element('i', 'fas fa-info-circle fa-fw mr-1'), document.createTextNode(`${i18next.t('booking-reason')}: ${booking.approval_comment}`));
-          details.appendChild(reason);
-        }
-        summary.append(iconBackground, details);
-        layout.appendChild(summary);
-
-        const actions = element('div', 'd-flex align-items-center flex-wrap');
-        if (kind === 'my') actions.appendChild(badge);
-        if (kind === 'pending' && Number(booking.canapprove) === 1) {
-          for (const [action, style] of [
-            ['booking-approve', 'btn-primary'],
-            ['booking-reject', 'btn-danger-ghost'],
-          ]) {
-            const button = element('button', `btn btn-sm ml-2 ${style}`);
-            button.type = 'button';
-            button.dataset.action = action;
-            button.dataset.eventid = String(booking.id);
-            button.textContent = i18next.t(action);
-            actions.appendChild(button);
-          }
-        }
-        if (kind === 'my' && status === 0) {
-          const cancel = element('button', 'btn btn-sm btn-danger-ghost ml-2', i18next.t('booking-cancel-request'));
-          cancel.type = 'button';
-          cancel.addEventListener('click', async () => {
-            if (!window.confirm(i18next.t('booking-cancel-confirm'))) return;
-            const endpoint = booking.recurrence_id
-              ? `event/${booking.id}/recurrences?recursive=1`
-              : `event/${booking.id}`;
-            try {
-              await ApiC.delete(endpoint);
-              calendar.refetchEvents();
-              void loadBookingRequests('my');
-            } catch {
-              // ApiC already notifies the user.
-            }
-          });
-          actions.appendChild(cancel);
-        }
-        layout.appendChild(actions);
-        row.appendChild(layout);
-        list.appendChild(row);
-      }
+      list.replaceChildren();
+      list.className = getAgGridTheme();
+      const statusNames = ['booking-status-pending', 'booking-status-approved', 'booking-status-rejected', 'booking-status-expired'];
+      const statusColors = [
+        ['lightgold', 'darkgold', 'gold'],
+        ['primary', 'primary-fg', 'primary'],
+        ['lightred', 'darkred', 'dangerred'],
+        ['firstlevel', 'mediumstrong', 'secondlevel'],
+      ];
+      const columnDefs: ColDef<BookingRequestRow>[] = [
+        { field: 'item_title', headerName: i18next.t('item'), flex: 1, minWidth: 160 },
+        ...(kind === 'pending' ? [{ field: 'fullname', headerName: i18next.t('booking-requested-by'), flex: 1, minWidth: 150 }] : []),
+        { field: 'start', headerName: i18next.t('booking-when'), flex: 2, minWidth: 350,
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingSchedule(data) : null },
+        { field: 'approval_status', headerName: i18next.t('status'), width: 155,
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
+            if (!data) return null;
+            const colors = statusColors[Number(data.approval_status)] ?? statusColors[3];
+            const badge = element('span', 'badge p-2', i18next.t(statusNames[Number(data.approval_status)] ?? 'booking-status-unknown'));
+            badge.style.backgroundColor = `var(--${colors[0]})`;
+            badge.style.color = `var(--${colors[1]})`;
+            badge.style.border = `1px solid var(--${colors[2]})`;
+            return badge;
+          } },
+        { colId: 'actions', headerName: i18next.t('action'), width: kind === 'pending' ? 195 : 175, sortable: false, filter: false,
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingActions(data, kind) : null },
+      ];
+      bookingGrids[kind] = createGrid<BookingRequestRow>(list, {
+        theme: 'legacy',
+        columnDefs,
+        rowData: rows,
+        getRowId: params => params.data.recurrence_id ?? `event:${params.data.id}`,
+        domLayout: 'autoHeight',
+        getRowHeight: params => params.data?.recurrence_id ? (params.data.recurrence_rule?.weekdays?.length ? 132 : 108) : 54,
+        defaultColDef: { sortable: true, resizable: true, filter: true },
+        overlayNoRowsTemplate: i18next.t('booking-no-requests'),
+      });
     } catch {
-      list.textContent = i18next.t('error-booking-requests-load');
+      if (!bookingGrids[kind]) list.textContent = i18next.t('error-booking-requests-load');
       // ApiC already displays the API error; avoid a duplicate notification.
     }
   }

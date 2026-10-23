@@ -18,7 +18,7 @@ CREATE TABLE `items_booking_validators` (
 -- Existing bookings are approved, keeping legacy behavior unchanged.
 ALTER TABLE `team_events`
     ADD COLUMN `approval_status` TINYINT UNSIGNED NOT NULL DEFAULT 1,
-    ADD COLUMN `approval_decided_by` INT UNSIGNED NULL DEFAULT NULL,
-    ADD COLUMN `approval_decided_at` DATETIME NULL DEFAULT NULL,
+    ADD COLUMN `approved_by` INT UNSIGNED NULL DEFAULT NULL,
+    ADD COLUMN `approved_at` DATETIME NULL DEFAULT NULL,
     ADD COLUMN `approval_comment` TEXT NULL DEFAULT NULL,
     ADD INDEX `idx_team_events_approval` (`item`, `approval_status`, `start`);

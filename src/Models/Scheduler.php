@@ -182,16 +182,16 @@ final class Scheduler extends AbstractRest
             $selfApproved = $status === BookingApprovalStatus::Approved
                 && (int) $this->Items->entityData['requires_validation'] !== 0;
 
-            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule, approval_status, approval_decided_by, approval_decided_at)
-                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_id, :recurrence_index, :recurrence_frequency, :recurrence_interval, :recurrence_rule, :approval_status, :approval_decided_by, :approval_decided_at)';
+            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule, approval_status, approved_by, approved_at)
+                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_id, :recurrence_index, :recurrence_frequency, :recurrence_interval, :recurrence_rule, :approval_status, :approved_by, :approved_at)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
             $req->bindValue(':title', $this->filterTitle($reqBody['title'] ?? ''));
             $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindValue(':approval_status', $status->value, PDO::PARAM_INT);
-            $req->bindValue(':approval_decided_by', $selfApproved ? $actorId : null, $selfApproved ? PDO::PARAM_INT : PDO::PARAM_NULL);
-            $req->bindValue(':approval_decided_at', $selfApproved ? date('Y-m-d H:i:s') : null, $selfApproved ? PDO::PARAM_STR : PDO::PARAM_NULL);
+            $req->bindValue(':approved_by', $selfApproved ? $actorId : null, $selfApproved ? PDO::PARAM_INT : PDO::PARAM_NULL);
+            $req->bindValue(':approved_at', $selfApproved ? date('Y-m-d H:i:s') : null, $selfApproved ? PDO::PARAM_STR : PDO::PARAM_NULL);
             $req->bindValue(':recurrence_id', $recurrenceId, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $req->bindValue(':recurrence_frequency', $recurrenceFrequency, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $req->bindValue(':recurrence_interval', $recurrenceInterval, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
@@ -298,8 +298,8 @@ final class Scheduler extends AbstractRest
                 team_events.created_at,
                 team_events.modified_at,
                 team_events.approval_status,
-                team_events.approval_decided_by,
-                team_events.approval_decided_at,
+                team_events.approved_by,
+                team_events.approved_at,
                 %s AS approval_comment,
                 team_events.recurrence_id,
                 team_events.recurrence_index,
@@ -755,8 +755,8 @@ final class Scheduler extends AbstractRest
                 team_events.experiment,
                 team_events.item_link,
                 team_events.approval_status,
-                team_events.approval_decided_by,
-                team_events.approval_decided_at,
+                team_events.approved_by,
+                team_events.approved_at,
                 team_events.approval_comment,
                 team_events.created_at,
                 team_events.modified_at,

@@ -147,7 +147,7 @@ final class BookingApproval
             $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
             $this->Db->execute($req);
             $pendingEvents = $req->fetchAll(PDO::FETCH_ASSOC);
-            $req = $this->Db->prepare('UPDATE team_events SET approval_status = :approved, approval_decided_at = NOW(), approval_decided_by = :actor WHERE item = :item AND approval_status = :pending');
+            $req = $this->Db->prepare('UPDATE team_events SET approval_status = :approved, approved_at = NOW(), approved_by = :actor WHERE item = :item AND approval_status = :pending');
             $req->bindValue(':approved', BookingApprovalStatus::Approved->value, PDO::PARAM_INT);
             $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
             $req->bindValue(':actor', $this->actor->userid, PDO::PARAM_INT);
@@ -217,7 +217,7 @@ final class BookingApproval
                     }
                 }
             }
-            $sql = 'UPDATE team_events SET approval_status = :status, approval_decided_by = :actor, approval_decided_at = NOW(), approval_comment = :comment WHERE item = :item AND approval_status = :pending AND ';
+            $sql = 'UPDATE team_events SET approval_status = :status, approved_by = :actor, approved_at = NOW(), approval_comment = :comment WHERE item = :item AND approval_status = :pending AND ';
             $sql .= $recurrenceId === null ? 'id = :id' : 'recurrence_id = :recurrence';
             $req = $this->Db->prepare($sql);
             $req->bindValue(':status', $status->value, PDO::PARAM_INT);

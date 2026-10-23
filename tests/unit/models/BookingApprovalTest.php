@@ -238,7 +238,7 @@ final class BookingApprovalTest extends TestCase
         $event = (new Scheduler(new Items($requester, $item->id), $id))->readOne();
         self::assertSame(BookingApprovalStatus::Rejected->value, (int) $event['approval_status']);
         self::assertSame('Maintenance', $event['approval_comment']);
-        self::assertSame((int) $validator->userid, (int) $event['approval_decided_by']);
+        self::assertSame((int) $validator->userid, (int) $event['approved_by']);
 
         // Rejected requests no longer occupy a slot.
         $replacement = $scheduler->postAction(Action::Create, $params);

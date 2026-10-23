@@ -1455,11 +1455,11 @@ components:
           type: integer
           enum: [0, 1, 2, 3]
           description: 0 pending, 1 approved, 2 rejected, 3 expired (reserved).
-        approval_decided_by:
+        approved_by:
           type: integer
           nullable: true
           description: User ID of the person who made the approval decision.
-        approval_decided_at:
+        approved_at:
           type: string
           nullable: true
           description: Timestamp of the approval decision.

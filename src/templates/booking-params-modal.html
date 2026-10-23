@@ -37,6 +37,24 @@
                 <span class='slider'></span>
               </label>
             </div>
+            <hr>
+            <h4>{{ 'Booking approval'|trans }}</h4>
+            <div class='d-flex justify-content-between'>
+              <label for='requiresApprovalSwitch'>{{ 'Require approval for bookings'|trans }}</label>
+              <label class='switch' title='{{ 'Require approval for bookings'|trans }}'>
+                <input type='checkbox' id='requiresApprovalSwitch' data-ignore='1' {{ Entity.entityData.requires_booking_approval == 1 ? 'checked="checked"' }}>
+                <span class='slider'></span>
+              </label>
+            </div>
+            <p class='smallgray'>{{ 'Pending requests block the time slot.'|trans }}</p>
+            <label for='bookApprovalUsers'>{{ 'Approvers (one or more users)'|trans }}</label>
+            {% set selectedBookingApprovers = Entity.getBookingApproverIds() %}
+            <select id='bookApprovalUsers' data-ignore='1' class='form-control mb-2' multiple autocomplete='off' aria-label="{{ 'Search approvers'|trans }}" {{ Entity.entityData.requires_booking_approval == 0 or Entity.entityData.is_bookable == 0 ? 'disabled' }}>
+              {% for user in usersArr %}
+                <option value='{{ user.userid }}' {{ user.userid in selectedBookingApprovers ? 'selected' }}>{{ user.fullname }}</option>
+              {% endfor %}
+            </select>
+            <p class='smallgray'>{{ 'Approvers can book without approval.'|trans }}</p>
 
             <hr>
             <h4>{{ 'Cancellation rules'|trans }}</h4>

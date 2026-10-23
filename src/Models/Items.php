@@ -25,12 +25,14 @@ use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Scope;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Services\BookingApproval;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
+use Throwable;
 
 use function _;
 
@@ -44,6 +46,39 @@ final class Items extends AbstractConcreteEntity
     protected const string FORCE_TEMPLATE_KEY = 'force_res_tpl';
 
     public EntityType $entityType = EntityType::Items;
+
+    /** The configured individual approvers, for the resource settings UI. */
+    public function getBookingApproverIds(): array
+    {
+        return (new BookingApproval($this->Users))->getDesignatedUserIds($this->id ?? 0);
+    }
+
+    #[Override]
+    public function patch(Action $action, array $params): array
+    {
+        if ($action === Action::Update && isset($params['requires_booking_approval'])) {
+            $this->canOrExplode(AccessType::Write);
+            $this->ExclusiveEditMode->canPatchOrExplode($action);
+            $approvalParams = $params;
+            unset($params['requires_booking_approval'], $params['userids'], $params['action']);
+
+            // Save booking settings and approvers together or roll back both.
+            $this->Db->beginTransaction();
+            try {
+                (new BookingApproval($this->Users))->configure($this, $approvalParams);
+                if ($params) {
+                    parent::patch($action, $params);
+                }
+                $this->Db->commit();
+            } catch (Throwable $e) {
+                $this->Db->rollBack();
+                throw $e;
+            }
+            $this->setId($this->id);
+            return $this->readOne();
+        }
+        return parent::patch($action, $params);
+    }
 
     #[Override]
     public function create(

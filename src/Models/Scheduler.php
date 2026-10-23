@@ -24,6 +24,7 @@ use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Notifications\BookingApprovalUpdated;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\BookingApproval;
@@ -425,6 +426,7 @@ final class Scheduler extends AbstractRest
         $this->Db->beginTransaction();
         try {
             $result = $this->deleteEvent($event);
+            $this->notifyApproversOfCancellation($event);
             $this->notifyAdminsOfDeletion($event);
             $this->Db->commit();
             return $result;
@@ -455,6 +457,24 @@ final class Scheduler extends AbstractRest
             if ($totalMinutes < $event['book_cancel_minutes']) {
                 throw new ImproperActionException(sprintf(_('Cannot cancel slot less than %d minutes before its start.'), $event['book_cancel_minutes']));
             }
+        }
+    }
+
+    public function notifyApproversOfCancellation(array $event): void
+    {
+        if ((int) $event['approval_status'] !== BookingApprovalStatus::Pending->value
+            || (int) $event['userid'] !== (int) $this->Items->Users->userid) {
+            return;
+        }
+        $details = array(
+            'status' => 'cancelled',
+            'requester_fullname' => $this->Items->Users->userData['fullname'],
+            'item_title' => $this->Items->entityData['title'],
+            'start' => $event['start'],
+            'end' => $event['end'],
+        );
+        foreach ((new BookingApproval($this->Items->Users))->getApprovers($this->Items->entityData) as $userid) {
+            (new BookingApprovalUpdated(new Users($userid), $details))->create();
         }
     }
 

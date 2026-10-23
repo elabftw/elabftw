@@ -206,6 +206,7 @@ final class EventsRecurrence extends AbstractRest
                 $req->bindValue(':recurrence_index', $event['recurrence_index'], PDO::PARAM_INT);
             }
             $result = $this->Db->execute($req);
+            $this->Scheduler->notifyApproversOfCancellation($event);
             // A recurring cancellation produces one administrator notification, not one per occurrence.
             $this->Scheduler->notifyAdminsOfDeletion($event);
             $this->Db->commit();

@@ -58,9 +58,14 @@ final class Transform
                 ),
             Notifications::BookingApprovalUpdated =>
                 sprintf(
-                    '<span data-action="ack-notif" data-id="%d" data-href="scheduler.php?tab=2">%s</span>' . $relativeMoment,
+                    '<span data-action="ack-notif" data-id="%d" data-href="scheduler.php?tab=%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
-                    sprintf(_('Booking request status: %s'), htmlspecialchars($notif['body']['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')),
+                    $notif['body']['status'] === 'cancelled' ? 3 : 2,
+                    $notif['body']['status'] === 'cancelled'
+                        ? sprintf(_('%s cancelled a pending booking for %s.'),
+                            htmlspecialchars($notif['body']['requester_fullname'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                            htmlspecialchars($notif['body']['item_title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'))
+                        : sprintf(_('Booking request status: %s'), htmlspecialchars($notif['body']['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')),
                     $notif['created_at'],
                 ),
             Notifications::EventDeleted =>

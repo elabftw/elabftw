@@ -33,6 +33,7 @@ final class BookingApprovalUpdated extends AbstractNotifications implements Mail
             'pending' => _('Your booking request is pending approval'),
             'approved' => _('A booking request has been approved'),
             'rejected' => _('A booking request has been rejected'),
+            'cancelled' => _('A pending booking request has been cancelled'),
             default => _('Booking request updated'),
         };
         $body = sprintf(
@@ -41,7 +42,7 @@ final class BookingApprovalUpdated extends AbstractNotifications implements Mail
             $this->details['start'],
             $this->details['end'],
             $status,
-            sprintf('%s/scheduler.php?tab=2', Env::asUrl('SITE_URL')),
+            sprintf('%s/scheduler.php?tab=%d', Env::asUrl('SITE_URL'), $status === 'cancelled' ? 3 : 2),
         );
         if (!empty($this->details['comment'])) {
             $body .= sprintf("\n\n%s: %s", _('Comment'), $this->details['comment']);

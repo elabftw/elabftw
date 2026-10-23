@@ -789,8 +789,27 @@ if (calendarEl) {
         if (kind === 'pending') {
           details.append(element('div', '', `${i18next.t('booking-requested-by')}: ${booking.fullname}`));
         }
+        const locale = i18next.language.replace('_', '-');
+        const startTime = DateTime.fromSQL(booking.start).setLocale(locale);
+        const endTime = DateTime.fromSQL(booking.end).setLocale(locale);
+        const minutes = Math.max(0, Math.round(endTime.diff(startTime, 'minutes').minutes));
+        const duration = ([
+          ['day', Math.floor(minutes / 1440)],
+          ['hour', Math.floor((minutes % 1440) / 60)],
+          ['minute', minutes % 60],
+        ] as const)
+          .filter(([, value]) => value > 0)
+          .map(([unit, value]) => new Intl.NumberFormat(locale, { style: 'unit', unit, unitDisplay: 'long' }).format(value))
+          .join(' ') || new Intl.NumberFormat(locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(0);
+        const endLabel = endTime.hasSame(startTime, 'day')
+          ? endTime.toLocaleString(DateTime.TIME_SIMPLE)
+          : endTime.toLocaleString(DateTime.DATETIME_MED);
         const dates = element('div', '');
-        dates.append(element('i', 'far fa-clock fa-fw mr-1'), document.createTextNode(`${booking.start.slice(0, 16)} → ${booking.end.slice(0, 16)}`));
+        dates.append(
+          element('i', 'far fa-clock fa-fw mr-1'),
+          element('strong', 'mr-2', duration),
+          element('span', 'smallgray', `${startTime.toLocaleString(DateTime.DATETIME_MED)} → ${endLabel}`),
+        );
         details.appendChild(dates);
 
         const badge = element('span', 'badge p-2 mr-2');

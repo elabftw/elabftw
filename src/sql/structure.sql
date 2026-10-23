@@ -697,7 +697,7 @@ CREATE TABLE `items` (
   `timestamped_at` timestamp NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `is_bookable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
-  `requires_approval` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `requires_booking_approval` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_slots` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_can_overlap` TINYINT UNSIGNED NOT NULL DEFAULT 1,

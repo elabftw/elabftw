@@ -861,7 +861,7 @@ on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   }
   const params = collectForm(form);
   if (requiredInput) {
-    Object.assign(params, { requires_approval: requiredInput.checked ? 1 : 0, userids });
+    Object.assign(params, { requires_booking_approval: requiredInput.checked ? 1 : 0, userids });
   }
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
   reloadElements(['topToolbar', 'permissionsDiv']);

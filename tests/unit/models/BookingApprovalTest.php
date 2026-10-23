@@ -29,7 +29,7 @@ final class BookingApprovalTest extends TestCase
         $approver = $this->getUserInTeam(2);
         $admin = $this->getUserInTeam(2, admin: 1);
         $item->patch(Action::Update, array(
-            'requires_approval' => 1,
+            'requires_booking_approval' => 1,
             'userids' => array($approver->userid),
         ));
 
@@ -64,7 +64,7 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshBookableItem(2);
         $approver = $this->getUserInTeam(2);
         $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => array($approver->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => array($approver->userid)));
         $start = new DateTimeImmutable('+4 days 10:00');
         $params = array('start' => $start->format('c'), 'end' => $start->modify('+1 hour')->format('c'));
         $scheduler = new Scheduler(new Items($requester, $item->id));
@@ -79,7 +79,7 @@ final class BookingApprovalTest extends TestCase
         }
 
         $item->patch(Action::Update, array(
-            'requires_approval' => 0,
+            'requires_booking_approval' => 0,
             'userids' => array($approver->userid),
         ));
         self::assertSame(BookingApprovalStatus::Approved->value, (int) (new Scheduler(new Items($requester, $item->id), $eventId))->readOne()['approval_status']);
@@ -94,12 +94,12 @@ final class BookingApprovalTest extends TestCase
 
         $writerItem = new Items($writer, $item->id);
         $writerItem->patch(Action::Update, array(
-            'requires_approval' => 1,
+            'requires_booking_approval' => 1,
             'userids' => array($writer->userid),
         ));
 
         self::assertSame(array((int) $writer->userid), $writerItem->getBookingApproverIds());
-        self::assertSame(1, (int) (new Items($owner, $item->id))->entityData['requires_approval']);
+        self::assertSame(1, (int) (new Items($owner, $item->id))->entityData['requires_booking_approval']);
     }
 
     public function testBookingSettingsAndApproversAreSavedInOnePatch(): void
@@ -108,13 +108,13 @@ final class BookingApprovalTest extends TestCase
         $approver = $this->getUserInTeam(2);
         $item->patch(Action::Update, array(
             'book_max_slots' => 3,
-            'requires_approval' => 1,
+            'requires_booking_approval' => 1,
             'userids' => array($approver->userid),
         ));
 
         $updated = new Items($item->Users, $item->id);
         self::assertSame(3, (int) $updated->entityData['book_max_slots']);
-        self::assertSame(1, (int) $updated->entityData['requires_approval']);
+        self::assertSame(1, (int) $updated->entityData['requires_booking_approval']);
         self::assertSame(array((int) $approver->userid), $updated->getBookingApproverIds());
     }
 
@@ -128,7 +128,7 @@ final class BookingApprovalTest extends TestCase
             $item->patch(Action::Update, array(
                 'book_max_slots' => 3,
                 'invalid_setting' => 'x',
-                'requires_approval' => 1,
+                'requires_booking_approval' => 1,
                 'userids' => array($approver->userid),
             ));
             self::fail('The PATCH should reject an invalid resource parameter.');
@@ -138,7 +138,7 @@ final class BookingApprovalTest extends TestCase
 
         $updated = new Items($item->Users, $item->id);
         self::assertSame($originalSlots, (int) $updated->entityData['book_max_slots']);
-        self::assertSame(0, (int) $updated->entityData['requires_approval']);
+        self::assertSame(0, (int) $updated->entityData['requires_booking_approval']);
         self::assertSame(array(), $updated->getBookingApproverIds());
     }
 
@@ -147,7 +147,7 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshBookableItem(2);
         $approver = $this->getUserInTeam(2);
         $item->patch(Action::Update, array(
-            'requires_approval' => 1,
+            'requires_booking_approval' => 1,
             'userids' => array($approver->userid),
         ));
 
@@ -168,7 +168,7 @@ final class BookingApprovalTest extends TestCase
 
         $this->expectException(ForbiddenException::class);
         (new Items($otherUser, $item->id))->patch(Action::Update, array(
-            'requires_approval' => 1,
+            'requires_booking_approval' => 1,
             'userids' => array($otherUser->userid),
         ));
     }
@@ -178,7 +178,7 @@ final class BookingApprovalTest extends TestCase
         $owner = $this->getUserInTeam(2);
         $item = $this->getFreshItemWithGivenUser($owner);
         $this->expectException(ImproperActionException::class);
-        $item->patch(Action::Update, array('requires_approval' => 3, 'userids' => array($owner->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 3, 'userids' => array($owner->userid)));
     }
 
     public function testApprovalConfigurationRequiresApproverArray(): void
@@ -186,7 +186,7 @@ final class BookingApprovalTest extends TestCase
         $owner = $this->getUserInTeam(2);
         $item = $this->getFreshItemWithGivenUser($owner);
         $this->expectException(ImproperActionException::class);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => 'invalid'));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => 'invalid'));
     }
 
     public function testApprovalConfigurationRequiresAnActiveApprover(): void
@@ -194,7 +194,7 @@ final class BookingApprovalTest extends TestCase
         $owner = $this->getUserInTeam(2);
         $item = $this->getFreshItemWithGivenUser($owner);
         $this->expectException(ImproperActionException::class);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => array(PHP_INT_MAX)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => array(PHP_INT_MAX)));
     }
 
     public function testApprovalCannotBeEnabledWithoutApprovers(): void
@@ -202,7 +202,7 @@ final class BookingApprovalTest extends TestCase
         $owner = $this->getUserInTeam(2);
         $item = $this->getFreshItemWithGivenUser($owner);
         $this->expectException(ImproperActionException::class);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => array()));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => array()));
     }
 
     public function testConfiguringApproversRemovesDuplicatesAndCanBeDisabled(): void
@@ -211,12 +211,12 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshItemWithGivenUser($owner);
         $approval = new BookingApproval($owner);
         $item->patch(Action::Update, array(
-            'requires_approval' => 1,
+            'requires_booking_approval' => 1,
             'userids' => array($owner->userid, $owner->userid),
         ));
         self::assertSame(array((int) $owner->userid), $approval->getDesignatedUserIds((int) $item->id));
 
-        $item->patch(Action::Update, array('requires_approval' => 0, 'userids' => array()));
+        $item->patch(Action::Update, array('requires_booking_approval' => 0, 'userids' => array()));
         $updated = new Items($owner, $item->id);
         self::assertSame(array(), $approval->getDesignatedUserIds((int) $item->id));
         self::assertSame(BookingApprovalStatus::Approved, $approval->initialStatus($updated->entityData, (int) $owner->userid));
@@ -228,7 +228,7 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshBookableItem(2);
         $approver = $this->getUserInTeam(2);
         $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => array($approver->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => array($approver->userid)));
         $start = new DateTimeImmutable('+6 days 10:00');
         $params = array('start' => $start->format('c'), 'end' => $start->modify('+1 hour')->format('c'));
         $scheduler = new Scheduler(new Items($requester, $item->id));
@@ -250,7 +250,7 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshBookableItem(2);
         $approver = $this->getUserInTeam(2);
         $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => array($approver->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => array($approver->userid)));
         $start = new DateTimeImmutable('+7 days 10:00');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(
             'start' => $start->format('c'),
@@ -284,7 +284,7 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshBookableItem(2);
         $approver = $this->getUserInTeam(2);
         $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => array($approver->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => array($approver->userid)));
         $start = new DateTimeImmutable('+8 days 10:00');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(
             'start' => $start->format('c'),
@@ -302,7 +302,7 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshBookableItem(2);
         $approver = $this->getUserInTeam(2);
         $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => array($approver->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => array($approver->userid)));
         $start = new DateTimeImmutable('+9 days 10:00');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(
             'start' => $start->format('c'),
@@ -321,7 +321,7 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshBookableItem(2);
         $approver = $this->getUserInTeam(2);
         $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => array($approver->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => array($approver->userid)));
         $start = new DateTimeImmutable('+10 days 10:00');
         $end = $start->modify('+1 hour');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(
@@ -345,7 +345,7 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshBookableItem(2);
         $approver = $this->getUserInTeam(2);
         $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_approval' => 1, 'userids' => array($approver->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'userids' => array($approver->userid)));
         $start = new DateTimeImmutable('+11 days 10:00');
         $end = $start->modify('+1 hour');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(

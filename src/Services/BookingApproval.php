@@ -51,7 +51,7 @@ final class BookingApproval
     /** Admin role never bypasses the resource-specific approver list. */
     public function canApprove(array $item, int $userid): bool
     {
-        if ((int) $item['requires_approval'] !== 1) {
+        if ((int) $item['requires_booking_approval'] !== 1) {
             return false;
         }
         $helper = new TeamsHelper((int) $item['team']);
@@ -61,7 +61,7 @@ final class BookingApproval
 
     public function initialStatus(array $item, int $userid): BookingApprovalStatus
     {
-        if ((int) $item['requires_approval'] !== 1) {
+        if ((int) $item['requires_booking_approval'] !== 1) {
             return BookingApprovalStatus::Approved;
         }
         $approvers = $this->getApprovers($item);
@@ -97,9 +97,9 @@ final class BookingApproval
         }
         $team = (int) $Item->entityData['team'];
         $helper = new TeamsHelper($team);
-        $requiresApproval = filter_var($params['requires_approval'] ?? null, FILTER_VALIDATE_INT);
+        $requiresApproval = filter_var($params['requires_booking_approval'] ?? null, FILTER_VALIDATE_INT);
         if ($requiresApproval !== 0 && $requiresApproval !== 1) {
-            throw new ImproperActionException('Invalid requires_approval value.');
+            throw new ImproperActionException('Invalid requires_booking_approval value.');
         }
         if (!isset($params['userids']) || !is_array($params['userids'])) {
             throw new ImproperActionException('Expected an array of approver user IDs.');
@@ -116,7 +116,7 @@ final class BookingApproval
             throw new ImproperActionException('Select at least one approver.');
         }
 
-        $req = $this->Db->prepare('SELECT requires_approval FROM items WHERE id = :id AND team = :team FOR UPDATE');
+        $req = $this->Db->prepare('SELECT requires_booking_approval FROM items WHERE id = :id AND team = :team FOR UPDATE');
         $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
         $req->bindValue(':team', $team, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -125,7 +125,7 @@ final class BookingApproval
             throw new ImproperActionException('Resource not found.');
         }
         $oldApprovers = $this->getApprovers($Item->entityData);
-        $req = $this->Db->prepare('UPDATE items SET requires_approval = :required WHERE id = :id AND team = :team');
+        $req = $this->Db->prepare('UPDATE items SET requires_booking_approval = :required WHERE id = :id AND team = :team');
         $req->bindValue(':required', $requiresApproval, PDO::PARAM_INT);
         $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
         $req->bindValue(':team', $team, PDO::PARAM_INT);

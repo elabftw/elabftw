@@ -9,4 +9,4 @@ CALL DropColumn('team_events', 'approved_at');
 CALL DropColumn('team_events', 'approved_by');
 CALL DropColumn('team_events', 'approval_status');
 DROP TABLE IF EXISTS `items_booking_approvers`;
-CALL DropColumn('items', 'requires_approval');
+CALL DropColumn('items', 'requires_booking_approval');

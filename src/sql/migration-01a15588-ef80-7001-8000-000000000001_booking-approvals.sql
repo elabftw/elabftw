@@ -1,7 +1,7 @@
 -- booking approval migration 01a15588-ef80-7001-8000-000000000001: approval of resource bookings
 -- Approval required (0: no, 1: yes); approvers defined in the linking table
 ALTER TABLE `items`
-    ADD COLUMN `requires_approval` TINYINT UNSIGNED NOT NULL DEFAULT 0;
+    ADD COLUMN `requires_booking_approval` TINYINT UNSIGNED NOT NULL DEFAULT 0;
 
 -- Many-to-many relation: each resource can have multiple user approvers,
 -- and each user can approve bookings for multiple resources.

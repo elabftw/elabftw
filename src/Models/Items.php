@@ -56,11 +56,11 @@ final class Items extends AbstractConcreteEntity
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        if ($action === Action::Update && isset($params['requires_approval'])) {
+        if ($action === Action::Update && isset($params['requires_booking_approval'])) {
             $this->canOrExplode(AccessType::Write);
             $this->ExclusiveEditMode->canPatchOrExplode($action);
             $approvalParams = $params;
-            unset($params['requires_approval'], $params['userids'], $params['action']);
+            unset($params['requires_booking_approval'], $params['userids'], $params['action']);
 
             // Save booking settings and approvers together or roll back both.
             $this->Db->beginTransaction();

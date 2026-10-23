@@ -181,7 +181,7 @@ final class Scheduler extends AbstractRest
             $actorId = (int) $this->Items->Users->userData['userid'];
             $status = (new BookingApproval($this->Items->Users))->initialStatus($this->Items->entityData, $actorId);
             $selfApproved = $status === BookingApprovalStatus::Approved
-                && (int) $this->Items->entityData['requires_approval'] !== 0;
+                && (int) $this->Items->entityData['requires_booking_approval'] !== 0;
 
             $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule, approval_status, approved_by, approved_at)
                 VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_id, :recurrence_index, :recurrence_frequency, :recurrence_interval, :recurrence_rule, :approval_status, :approved_by, :approved_at)';
@@ -312,7 +312,7 @@ final class Scheduler extends AbstractRest
                 CONCAT('[', items.title, '] ', team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title,
                 items.title AS item_title,
                 items.book_is_cancellable,
-                items.requires_approval,
+                items.requires_booking_approval,
                 items.booking_hourly_rate_notax,
                 items.booking_hourly_rate_tax,
                 (items.booking_hourly_rate_notax * TIMESTAMPDIFF(MINUTE, team_events.start, team_events.end)) / 60.0 AS booking_cost_notax,
@@ -558,7 +558,7 @@ final class Scheduler extends AbstractRest
     public function checkCandidateOverlaps(array $occurrences): void
     {
         if ($this->Items->entityData['book_can_overlap'] === 1
-            && (int) $this->Items->entityData['requires_approval'] === 0) {
+            && (int) $this->Items->entityData['requires_booking_approval'] === 0) {
             return;
         }
         $ordered = $occurrences;
@@ -679,7 +679,7 @@ final class Scheduler extends AbstractRest
             $end = $this->normalizeDate($params['end'], true);
             $event = $this->readOne();
             // Changing dates would bypass the approval granted for the original slot.
-            if ((int) $this->Items->entityData['requires_approval'] !== 0
+            if ((int) $this->Items->entityData['requires_booking_approval'] !== 0
                 && ($start !== $event['start'] || $end !== $event['end'])) {
                 throw new ImproperActionException('The time of an approval-controlled booking cannot be changed.');
             }
@@ -847,8 +847,8 @@ final class Scheduler extends AbstractRest
         }
 
         $TargetItems = new Items($this->Items->Users, $itemId);
-        if ((int) $this->Items->entityData['requires_approval'] !== 0
-            || (int) ($TargetItems->entityData['requires_approval'] ?? 0) !== 0) {
+        if ((int) $this->Items->entityData['requires_booking_approval'] !== 0
+            || (int) ($TargetItems->entityData['requires_booking_approval'] ?? 0) !== 0) {
             throw new ImproperActionException('Approval-controlled reservations cannot change resource.');
         }
         if ((int) ($TargetItems->entityData['is_bookable'] ?? 0) !== 1 || !$TargetItems->canBook()) {
@@ -948,7 +948,7 @@ final class Scheduler extends AbstractRest
     ): void {
         // Approval-controlled resources cannot overlap, even when book_can_overlap is enabled.
         if ($this->Items->entityData['book_can_overlap'] === 1
-            && (int) $this->Items->entityData['requires_approval'] === 0) {
+            && (int) $this->Items->entityData['requires_booking_approval'] === 0) {
             return;
         }
         $sql = 'SELECT id FROM team_events WHERE :start < end AND :end > start AND item = :item AND approval_status IN (0, 1)';

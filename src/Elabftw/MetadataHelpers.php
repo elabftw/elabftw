@@ -19,7 +19,10 @@ use JsonException;
 
 use function _;
 use function array_key_exists;
+use function array_column;
+use function array_diff_key;
 use function array_map;
+use function array_search;
 use function explode;
 use function in_array;
 use function is_array;
@@ -29,6 +32,7 @@ use function is_numeric;
 use function is_scalar;
 use function json_decode;
 use function json_encode;
+use function max;
 use function sprintf;
 use function str_replace;
 use function trim;
@@ -37,6 +41,54 @@ use function date_parse;
 
 final class MetadataHelpers
 {
+    /**
+     * Add missing template fields without changing any existing field or value.
+     * Only the groups needed by the new fields are copied from the template.
+     */
+    public static function mergeMetadataAdditive(?string $existing, string $template): string
+    {
+        $metadata = self::decodeMetadata($existing);
+        $source = self::decodeMetadata($template);
+        $fields = array_diff_key(self::getExtraFields($source), self::getExtraFields($metadata));
+        $groups = $metadata['elabftw']['extra_fields_groups'] ?? array();
+        $sourceGroups = array_column($source['elabftw']['extra_fields_groups'] ?? array(), null, 'id');
+        $groupMap = array();
+
+        foreach ($fields as &$field) {
+            $sourceId = (int) ($field['group_id'] ?? -1);
+            if ($sourceId === -1) {
+                continue;
+            }
+            if (!isset($sourceGroups[$sourceId])) {
+                // An undefined template group must not match an unrelated entry group.
+                unset($field['group_id']);
+                continue;
+            }
+            if (!isset($groupMap[$sourceId])) {
+                $group = $sourceGroups[$sourceId];
+                $existingId = array_search($group['name'], array_column($groups, 'name', 'id'), true);
+                if ($existingId !== false) {
+                    $groupMap[$sourceId] = (int) $existingId;
+                } else {
+                    $ids = array_column($groups, 'id');
+                    $group['id'] = in_array($sourceId, $ids, true) ? max(0, ...$ids) + 1 : $sourceId;
+                    $groupMap[$sourceId] = $group['id'];
+                    $groups[] = $group;
+                }
+            }
+            $field['group_id'] = $groupMap[$sourceId];
+        }
+        unset($field);
+        if ($groups !== array()) {
+            $metadata['elabftw']['extra_fields_groups'] = $groups;
+        }
+
+        return self::mergeMetadata(
+            json_encode($metadata, JSON_THROW_ON_ERROR),
+            json_encode(array('extra_fields' => $fields), JSON_THROW_ON_ERROR),
+        );
+    }
+
     public static function mergeMetadata(?string $source, string $incoming): string
     {
         $sourceMetadata = self::decodeMetadata($source);

@@ -14,6 +14,24 @@ import { Action, Model } from './interfaces';
 import { collectForm, reloadElements } from './misc';
 import { notify } from './notify';
 
+on(Action.UpdateEntries, (el: HTMLButtonElement) => {
+  if (el.disabled || !confirm(el.dataset.confirm)) {
+    return;
+  }
+  el.disabled = true;
+  el.setAttribute('aria-busy', 'true');
+  ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.UpdateEntries, notifOnSaved: 0})
+    .then(response => response.json())
+    .then((result: { updated: number; skipped: number }) => {
+      notify.success('template-entries-updated', {updated: result.updated, skipped: result.skipped});
+    })
+    .catch(() => { /* ApiC displays the error. */ })
+    .finally(() => {
+      el.disabled = false;
+      el.removeAttribute('aria-busy');
+    });
+});
+
 on(Action.Duplicate, () => {
   const copyFiles = (document.getElementById('duplicateKeepFilesSelect') as HTMLInputElement);
   const linkToOriginalExperiment = (document.getElementById('duplicateLinkToOriginal') as HTMLInputElement);

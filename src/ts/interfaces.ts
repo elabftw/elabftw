@@ -113,6 +113,7 @@ enum Action {
   Timestamp = 'timestamp',
   Unarchive = 'unarchive',
   Unreference = 'unreference',
+  UpdateEntries = 'updateentries',
   UpdateMetadataField = 'updatemetadatafield',
   UpdatePassword = 'updatepassword',
   UpdateTag = 'updatetag',

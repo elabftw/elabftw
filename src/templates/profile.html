@@ -115,29 +115,29 @@
       {% set byFilesize = Orderby.Filesize.value %}
       {% set byCreated = Orderby.CreatedAt.value %}
       {% set byFilename = Orderby.Filename.value %}
-      <select name='orderby' class='form-control ml-2' aria-label='{{ 'Order by'|trans }}'>
-        <option value='' data-action='clear'>{{ 'Order by'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilesize }}' {{ currentOrderBy == byFilesize ? 'selected' }}>{{ 'File size'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byCreated }}' {{ currentOrderBy == byCreated ? 'selected' }}>{{ 'Creation date'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='order' value='{{ byFilename }}' {{ currentOrderBy == byFilename ? 'selected' }}>{{ 'File name'|trans }}</option>
+      <select name='orderby' class='form-control ml-2' aria-label='{{ 'Order by'|trans }}' data-change-action='insert-param-and-reload' data-reload='attachedFilesTable,countDisplay' data-target='order'>
+        <option value=''>{{ 'Order by'|trans }}</option>
+        <option value='{{ byFilesize }}' {{ currentOrderBy == byFilesize ? 'selected' }}>{{ 'File size'|trans }}</option>
+        <option value='{{ byCreated }}' {{ currentOrderBy == byCreated ? 'selected' }}>{{ 'Creation date'|trans }}</option>
+        <option value='{{ byFilename }}' {{ currentOrderBy == byFilename ? 'selected' }}>{{ 'File name'|trans }}</option>
       </select>
 
       {# SORT FILTER #}
       {% set sortAsc = enum('Elabftw\\Enums\\Sort').Asc.value %}
       {% set sortDesc = enum('Elabftw\\Enums\\Sort').Desc.value %}
-      <select name='sort' class='form-control ml-2' aria-label='{{ 'Sort'|trans }}'>
-        <option value='' data-action='clear'>{{ 'Sort'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='sort' value='{{ sortAsc }}' {{ currentSort == sortAsc ? 'selected' }}>{{ 'Asc'|trans }}</option>
-        <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='sort' value='{{ sortDesc }}' {{ currentSort == sortDesc ? 'selected' }}>{{ 'Desc'|trans }}</option>
+      <select name='sort' class='form-control ml-2' aria-label='{{ 'Sort'|trans }}' data-change-action='insert-param-and-reload' data-reload='attachedFilesTable,countDisplay' data-target='sort'>
+        <option value=''>{{ 'Sort'|trans }}</option>
+        <option value='{{ sortAsc }}' {{ currentSort == sortAsc ? 'selected' }}>{{ 'Asc'|trans }}</option>
+        <option value='{{ sortDesc }}' {{ currentSort == sortDesc ? 'selected' }}>{{ 'Desc'|trans }}</option>
       </select>
 
       {# LIMIT NUMBER OF RESULTS #}
-      <select name='limit' class='form-control ml-2' aria-label='{{ 'Results per page'|trans }}'>
-        <option value='' data-action='clear'>{{ 'Results per page'|trans }}</option>
+      <select name='limit' class='form-control ml-2' aria-label='{{ 'Results per page'|trans }}' data-change-action='insert-param-and-reload' data-reload='attachedFilesTable,countDisplay' data-target='limit'>
+        <option value=''>{{ 'Results per page'|trans }}</option>
         {% for option in limitOptions(75) %}
-          <option data-reload='attachedFilesTable,countDisplay' data-action='insert-param-and-reload' data-target='limit' value='{{ option }}' {{ currentLimit == option ? 'selected' }}>{{ option }}</option>
+          <option value='{{ option }}' {{ currentLimit == option ? 'selected' }}>{{ option }}</option>
         {% endfor %}
-        <option data-action='insert-param-and-reload' data-target='limit' value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
+        <option value='{{ uploadsTotal }}' {{ currentLimit == uploadsTotal ? 'selected' }}>{{ 'Show all'|trans }}</option>
       </select>
     </div>
 

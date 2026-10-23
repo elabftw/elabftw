@@ -220,7 +220,7 @@ components:
               - $ref: "#/components/schemas/entity_editable"
 
     PatchItem:
-      description: Parameters for patching an item, including optional booking approval settings.
+      description: Parameters for patching an item.
       required: true
       content:
         application/json:

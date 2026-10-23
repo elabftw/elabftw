@@ -671,7 +671,7 @@ class Eln extends AbstractZip
             }
         }
         if ($lockedAt !== null) {
-            $this->Entity->update(new ContentParams('locked_at', $lockedAt->format('Y-m-d H:i:s')));
+            $this->Entity->update(new ContentParams('locked_at', date('Y-m-d H:i:s', $lockedAt->getTimestamp())));
         }
         return $result;
     }

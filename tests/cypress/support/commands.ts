@@ -79,12 +79,14 @@ Cypress.Commands.add('createEntity', (
   title = `Cypress ${type} ${Date.now()}`,
 ) => {
   const config = {
-    experiment: { page: '/experiments.php', modal: '#createModal' },
-    item: { page: '/database.php', modal: '#createModal' },
+    experiment: { page: '/experiments.php', modal: '#createModal', entityType: 'experiments' },
+    item: { page: '/database.php', modal: '#createModal', entityType: 'items' },
   }[type];
   cy.visit(config.page);
-  cy.get('[data-action="toggle-create-modal"]').last().click();
+  cy.get('#createNewDropdown').click();
+  cy.get(`#navbar-create-dropdown [data-action="toggle-create-modal"][data-type="${config.entityType}"]`).click();
   cy.get(config.modal).should('be.visible');
+  cy.get('#createNewType').should('have.value', config.entityType);
   // create modal -> enter title & confirm
   // do not use .type() here or for some reason the title won't be complete...
   cy.get('#createNewFormTitle')

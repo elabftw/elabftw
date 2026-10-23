@@ -22,3 +22,9 @@ ALTER TABLE `team_events`
     ADD COLUMN `approved_at` DATETIME NULL DEFAULT NULL,
     ADD COLUMN `approval_comment` TEXT NULL DEFAULT NULL,
     ADD INDEX `idx_team_events_approval` (`item`, `approval_status`, `start`);
+-- User preferences for booking approval notifications
+ALTER TABLE `users`
+    ADD COLUMN `notif_booking_approval_requested` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    ADD COLUMN `notif_booking_approval_requested_email` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    ADD COLUMN `notif_booking_approval_updated` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    ADD COLUMN `notif_booking_approval_updated_email` TINYINT UNSIGNED NOT NULL DEFAULT 1;

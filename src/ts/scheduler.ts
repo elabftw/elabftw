@@ -818,7 +818,7 @@ if (calendarEl) {
   }
 
   function renderBookingActions(booking: BookingRequestRow, kind: 'my' | 'pending'): HTMLElement {
-    const actions = element('div', 'd-flex align-items-center justify-content-center h-100');
+    const actions = element('div', 'd-flex align-items-center pt-2');
     if (kind === 'pending' && Number(booking.canapprove) === 1) {
       for (const [action, style] of [['booking-approve', 'btn-primary'], ['booking-reject', 'btn-danger-ghost']]) {
         const button = element('button', `btn btn-sm mr-2 ${style}`, i18next.t(action));
@@ -886,7 +886,6 @@ if (calendarEl) {
         { field: 'start', headerName: i18next.t('booking-when'), flex: 2, minWidth: 350,
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingSchedule(data) : null },
         { field: 'approval_status', headerName: i18next.t('status'), width: 155,
-          cellStyle: { display: 'flex', alignItems: 'center' },
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
             if (!data) return null;
             const colors = statusColors[Number(data.approval_status)] ?? statusColors[3];
@@ -894,10 +893,11 @@ if (calendarEl) {
             badge.style.backgroundColor = `var(--${colors[0]})`;
             badge.style.color = `var(--${colors[1]})`;
             badge.style.border = `1px solid var(--${colors[2]})`;
-            return badge;
+            const wrapper = element('div', 'd-flex align-items-center pt-2');
+            wrapper.appendChild(badge);
+            return wrapper;
           } },
         { colId: 'actions', headerName: i18next.t('action'), width: kind === 'pending' ? 195 : 175, sortable: false, filter: false,
-          cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingActions(data, kind) : null },
       ];
       bookingGrids[kind] = createGrid<BookingRequestRow>(list, {

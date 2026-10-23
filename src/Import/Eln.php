@@ -15,7 +15,6 @@ namespace Elabftw\Import;
 use DateTimeImmutable;
 use Elabftw\Elabftw\CreateUploadFromFs;
 use Elabftw\Elabftw\Env;
-use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
@@ -36,6 +35,7 @@ use Elabftw\Models\Compounds;
 use Elabftw\Models\UploadGroups;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\ContentParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\TagParam;
 use Elabftw\Services\Filter;
@@ -641,7 +641,7 @@ class Eln extends AbstractZip
             $state === State::Archived => $this->Entity->patch(Action::Archive, array()),
             $state === State::Deleted => $this->Entity->patch(Action::Update, array('state' => $state->value)),
             // Restore locked/unlocked condition.
-            ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->Entity->patch(Action::Lock, array()),
+            ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->restoreLock($dataset),
             default => null,
         };
 
@@ -652,6 +652,28 @@ class Eln extends AbstractZip
                 'changes' => $this->updateActionsToChangelog($dataset['subjectOf']),
             );
         }
+    }
+
+    private function restoreLock(array $dataset): array
+    {
+        $result = $this->Entity->patch(Action::Lock, array());
+        $lockedAt = null;
+        foreach ($dataset['subjectOf'] ?? array() as $action) {
+            if (($action['object'] ?? '') !== 'locked'
+               || ($action['result'] ?? '') !== 'Locked'
+               || !is_string($action['startTime'] ?? null)
+            ) {
+                continue;
+            }
+            $startTime = new DateTimeImmutable($action['startTime']);
+            if ($lockedAt === null || $startTime > $lockedAt) {
+                $lockedAt = $startTime;
+            }
+        }
+        if ($lockedAt !== null) {
+            $this->Entity->update(new ContentParams('locked_at', date('Y-m-d H:i:s', $lockedAt->getTimestamp())));
+        }
+        return $result;
     }
 
     /**

@@ -674,6 +674,8 @@ if (calendarEl) {
       const bookedBy = booker ? (modalLabel.dataset.bookedBy ?? '%s').replace('%s', booker) : '';
       document.getElementById('eventModalResourceTitle')!.textContent = resourceTitle;
       document.getElementById('eventModalResourceMeta')!.textContent = [categoryTitle, bookedBy].filter(Boolean).join(' · ');
+      const requiresBookingApproval = Number(info.event.extendedProps.requires_booking_approval) === 1;
+      document.getElementById('eventModalApprovalHelp')!.classList.toggle('d-none', !requiresBookingApproval);
 
       // Preselect the resource currently reserved by this event
       const itemId = String(info.event.extendedProps.items_id);
@@ -681,10 +683,15 @@ if (calendarEl) {
         eventResourceSelect.addOption({ value: itemId, text: resourceTitle });
       }
       eventResourceSelect.setValue(itemId, true);
+      if (requiresBookingApproval) {
+        eventResourceSelect.disable();
+      } else {
+        eventResourceSelect.enable();
+      }
       changeEventResourceBtn.dataset.id = info.event.id;
       changeEventResourceBtn.dataset.itemId = itemId;
       changeEventResourceBtn.disabled = true;
-      changeEventResourceBtn.classList.toggle('d-none', Number(info.event.extendedProps.requires_booking_approval) !== 0);
+      changeEventResourceBtn.classList.toggle('d-none', requiresBookingApproval);
       viewBookedResource.href = `database.php?mode=view&id=${itemId}`;
 
       // set the event id on the various elements
@@ -702,6 +709,8 @@ if (calendarEl) {
       // start and end inputs values
       startInput.valueAsNumber = toDateTimeInputValueNumber(info.event.start);
       endInput.valueAsNumber = toDateTimeInputValueNumber(info.event.end);
+      startInput.disabled = requiresBookingApproval;
+      endInput.disabled = requiresBookingApproval;
       // also adjust the event id so the change listener will send a correct query
       startInput.dataset.eventid = info.event.id;
       endInput.dataset.eventid = info.event.id;
@@ -709,7 +718,7 @@ if (calendarEl) {
 
       // The event modal is reused, so reset recurrence visibility and scope selection on every open
       const isRecurring = Boolean(info.event.extendedProps.recurrence_id);
-      document.getElementById('eventResourceRecurrenceHelp')?.classList.toggle('d-none', !isRecurring);
+      document.getElementById('eventResourceRecurrenceHelp')?.classList.toggle('d-none', !isRecurring || requiresBookingApproval);
       const viewRecurrence = document.getElementById('viewRecurrence')!;
       const viewRecurrenceText = document.getElementById('viewRecurrenceText')!;
       viewRecurrence.classList.toggle('d-none', !isRecurring);
@@ -991,28 +1000,30 @@ if (calendarEl) {
       notify.error('form-validation-error');
       return;
     }
-    const startVal = startInput.valueAsNumber;
-    const endVal = endInput.valueAsNumber;
+    if (!startInput.disabled) {
+      const startVal = startInput.valueAsNumber;
+      const endVal = endInput.valueAsNumber;
 
-    if (isNaN(startVal) || isNaN(endVal)) {
-      notify.error('Invalid date values.');
-      return;
+      if (isNaN(startVal) || isNaN(endVal)) {
+        notify.error('Invalid date values.');
+        return;
+      }
+      // Validate start < end
+      if (endVal < startVal) {
+        notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
+        return;
+      }
+      // Convert to Luxon DateTime
+      const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
+      const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
+      if (!startDt.isValid || !endDt.isValid) {
+        notify.error('invalid-info');
+        return;
+      }
+      // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
+      params['start'] = startDt.toISO({ suppressMilliseconds: true });
+      params['end'] = endDt.toISO({ suppressMilliseconds: true });
     }
-    // Validate start < end
-    if (endVal < startVal) {
-      notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
-      return;
-    }
-    // Convert to Luxon DateTime
-    const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
-    const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
-    if (!startDt.isValid || !endDt.isValid) {
-      notify.error('invalid-info');
-      return;
-    }
-    // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
-    params['start'] = startDt.toISO({ suppressMilliseconds: true });
-    params['end'] = endDt.toISO({ suppressMilliseconds: true });
     params['target'] = 'datetime';
     const endpoint = scope === 'event'
       ? `event/${eventId}`

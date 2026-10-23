@@ -366,11 +366,12 @@ if (userPrefs.scDisabled === '0') {
 }
 
 // SIDE PANEL STATE
+// Login and register pages do not render side panels.
 const openedSidePanel = localStorage.getItem('opened-sidepanel');
-if (openedSidePanel === Model.FavTag) {
+if (openedSidePanel === Model.FavTag && document.getElementById(FavTagC.panelId)) {
   FavTagC.toggle();
 }
-if (openedSidePanel === Model.Todolist) {
+if (openedSidePanel === Model.Todolist && document.getElementById(TodolistC.panelId)) {
   TodolistC.toggle();
 }
 

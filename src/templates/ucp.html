@@ -455,7 +455,7 @@
       </div>
     </div>
     <p>{{ 'Signature keys are a highly secure public-key signature system that allows you to cryptographically sign experiments or resources. Signing an entry will generate an immutable archive.'|trans }}</p>
-    <p class='smallgray'>{{ 'To learn more about signature keys, have a look at the %scomplete documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/docs/usage/user-guide/misc#signatures'>", "</a>")|raw }}</p>
+    <p class='smallgray'>{{ 'To learn more about signature keys, have a look at the %scomplete documentation%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://doc.elabftw.net/docs/usage/traceability-and-auditability#advanced-cryptographic-signatures'>", "</a>")|raw }}</p>
     {% if not App.Users.userData.sig_privkey %}
       {{ 'You do not have a key pair associated with your account yet.'|trans|msg('warning', false) }}
       <form id='sigPassphraseForm' aria-label='{{ 'Generate signature keys'|trans }}'>

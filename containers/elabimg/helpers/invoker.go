@@ -117,6 +117,8 @@ func handleConnection(conn net.Conn, mu *sync.Mutex, psk string) {
 		// split received command into arguments before passing it to exec.Command
 		args := strings.Fields(actualCmd)
 		cmd := exec.Command("/usr/bin/php", append([]string{"/elabftw/bin/console"}, args...)...)
+		// Use a working directory allowed by PHP's open_basedir (#7626).
+		cmd.Dir = "/elabftw"
 		output, err := cmd.CombinedOutput()
 		// stop timer
 		elapsed := time.Since(start)

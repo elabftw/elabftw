@@ -132,9 +132,9 @@ yarn install
 yarn buildall
 ~~~
 
-Other commands exist, see `builder.js` (webpack), the `scripts` part of `package.json` (yarn). If you just want to rebuild the CSS, use `yarn buildcss`.
+Other commands exist, see `builder.js` (webpack), the `scripts` part of `package.json` (yarn). The main stylesheet (`src/scss/main.scss`) is bundled by webpack together with the JavaScript. `yarn buildcss` only builds the stylesheet used for the PDF export (`src/scss/pdf.scss`).
 
-When working on the code, it is best to have `yarn watchjs` and `yarn watchcss` running so changes are immediately picked up.
+When working on the code, it is best to have `yarn watchjs` running so changes to the TypeScript and SCSS files are immediately picked up. If you work on `src/scss/pdf.scss`, use `yarn watchpdfcss`.
 
 ## Tests
 
@@ -207,18 +207,18 @@ git checkout -b my-feature
 
 ## Adding a new term for js i18n
 
-* Add the new term to src/Elabftw/i8n4Js.php in the `getTerms()` function returned array
+* Add the new term to src/Elabftw/i18n4Js.php in the `getTerms()` function returned array
 * Run `bin/console dev:i18n4js`
 
 ## Accessing Docker MySQL database with phpmyadmin
 
-You might be used to access your local MySQL dev database with PHPMyadmin. Just uncomment the part related to phpmyadmin in the config file and `elabctl restart`.
+You might be used to access your local MySQL dev database with PHPMyadmin. The dev environment already starts a phpmyadmin container (see `containers/elabdev/docker-compose.yml`), so there is nothing to uncomment.
 
-This will launch a docker container with phpmyadmin that you can reach on port 8080. Go to [localhost:8080](http://localhost:8080). Login with your mysql user (elabftw by default) and your mysql password found in the .yml configuration file. You should see the `elabftw` database now.
+You can reach it on port 8082. Go to [localhost:8082](http://localhost:8082). Login with your mysql user (elabftw by default) and your mysql password found in the `mysql` service of the .yml configuration file. You should see the `elabftw` database now.
 
 ## How to test external auth
 
-To easily test external authentication, edit in the container `/etc/php8/php-fpm.d/elabpool.conf` and at the end add:
+To easily test external authentication, edit in the container `/run/php/elabpool.conf` (it is generated from a template each time the container starts) and at the end add:
 
 ~~~proto
 env[auth_user] = ntesla
@@ -228,7 +228,7 @@ env[auth_email] = "nico@example.com"
 env[auth_team] = "Alpha"
 ~~~
 
-Restart the php process with: `s6-svc -r /var/run/s6/services/php`.
+Restart the php process with: `reload php`.
 
 Next, configure the correct keys in the Sysconfig panel and external authentication should be working as expected.
 

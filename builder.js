@@ -158,6 +158,8 @@ module.exports = (env, argv) => {
         util: require.resolve('util/'),
       },
       alias: {
+        // Yarn peer contexts must share one React DOM renderer, including /client.
+        'react-dom': path.dirname(require.resolve('react-dom/package.json')),
         'paper$': 'paper/dist/paper-core.js',
       },
     },

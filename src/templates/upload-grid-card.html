@@ -38,6 +38,15 @@
         </div>
       {% endif %}
 
+    {# CHEM EDITOR: edit compatible files directly, like spreadsheets. #}
+    {% elseif mode == 'edit' and ext in constant('Elabftw\\Elabftw\\Extensions::CHEM_EDITOR') %}
+      <span class='icon-overlay edit-overlay'
+        data-action='chem-load-file'
+        data-uploadid='{{ upload.id }}'
+        data-name='{{ upload.real_name|e('html_attr') }}'>
+        <i class='fas fa-file-alt thumb rounded mx-auto d-block text-center' aria-hidden='true'></i>
+      </span>
+
     {# MOLECULES #}
     {% elseif ext in constant('Elabftw\\Elabftw\\Extensions::MOLECULE') %}
       {# build control dropdown to change the representation style #}

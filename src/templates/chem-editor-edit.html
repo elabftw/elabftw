@@ -6,6 +6,10 @@
   <div id='chemEditorDiv' class='m-2' hidden data-save-hidden='chemEditorDiv'>
 <div id='ketcher-root' class='my-2'></div>
 <div id='ketcher-actions'>
+  <div class='my-2'>
+    <button type='button' id='chemSaveAttachment' class='btn btn-primary mr-2' data-cy='chem-save-attachment' disabled><i class='fas fa-paperclip fa-fw mr-1'></i>{{ 'Save as...'|trans }}</button>
+    <button type='button' id='chemLoadAttachment' class='btn btn-secondary' data-cy='chem-load-attachment' disabled><i class='fas fa-folder-open fa-fw mr-1'></i>{{ 'Load attachment'|trans }}</button>
+  </div>
   <div class='input-group my-2'>
     <button type='button' {{ App.Users.userData.can_manage_compounds == 0 and App.Config.configArr.compounds_require_edit_rights == 1 ? 'disabled' }} class='btn btn-primary mr-2' data-action='create-compound-from-editor'>{{ 'Add to compounds database'|trans }}</button>
     <div class='input-group-append'>
@@ -24,3 +28,55 @@
 </div>
   </div>
 </section>
+
+<div class='modal fade' id='chemSaveAttachmentModal' tabindex='-1' role='dialog' aria-labelledby='chemSaveAttachmentModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <form class='modal-content' id='chemSaveAttachmentForm' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/uploads' data-extensions='{{ constant('Elabftw\\Elabftw\\Extensions::CHEM_EDITOR')|json_encode|e('html_attr') }}'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='chemSaveAttachmentModalLabel'>{{ 'Save as attachment'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'><span aria-hidden='true'>&times;</span></button>
+      </div>
+      <div class='modal-body'>
+        <div class='form-group'>
+          <label for='chemAttachmentFilename'>{{ 'Filename'|trans }}</label>
+          <input type='text' class='form-control' id='chemAttachmentFilename' name='filename' value='structure' maxlength='128' required data-cy='chem-attachment-filename'>
+        </div>
+        <div class='form-group'>
+          <label for='chemAttachmentFormat'>{{ 'Format'|trans }}</label>
+          <select class='form-control' id='chemAttachmentFormat' name='format' required data-cy='chem-attachment-format'></select>
+        </div>
+        <p class='text-muted'>{{ 'Use KET to keep an editable copy of the drawing.'|trans }}</p>
+        <p class='alert alert-danger' id='chemSaveAttachmentError' role='alert' hidden></p>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='submit' class='btn btn-primary' data-cy='chem-save-attachment-submit'>{{ 'Save as attachment'|trans }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class='modal fade' id='chemLoadAttachmentModal' tabindex='-1' role='dialog' aria-labelledby='chemLoadAttachmentModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <form class='modal-content' id='chemLoadAttachmentForm' data-confirm='{{ 'Replace the current drawing with this attachment?'|trans }}' data-error='{{ 'Could not load this attachment as a chemical structure.'|trans }}'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='chemLoadAttachmentModalLabel'>{{ 'Load attachment'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'><span aria-hidden='true'>&times;</span></button>
+      </div>
+      <div class='modal-body'>
+        <div class='form-group'>
+          <label for='chemAttachmentSelect'>{{ 'Attachment'|trans }}</label>
+          <select class='form-control' id='chemAttachmentSelect' name='attachment' required data-cy='chem-attachment-select'></select>
+        </div>
+        <p id='chemAttachmentsLoading' role='status'>{{ 'Loading...'|trans }}</p>
+        <p id='chemAttachmentsEmpty' role='status' hidden>{{ 'No compatible attachments found.'|trans }}</p>
+        <p class='text-muted'>{{ 'Loading an attachment replaces the current drawing.'|trans }}</p>
+        <p class='alert alert-danger' id='chemLoadAttachmentError' role='alert' hidden></p>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='submit' class='btn btn-primary' data-cy='chem-load-attachment-submit' disabled>{{ 'Load'|trans }}</button>
+      </div>
+    </form>
+  </div>
+</div>

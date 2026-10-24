@@ -55,6 +55,19 @@ final class Extensions
         'odt',
     );
 
+    // Text formats that can be loaded in the chemical editor.
+    public const array CHEM_EDITOR = array(
+        'cdxml',
+        'cml',
+        'inchi',
+        'ket',
+        'mol',
+        'rxn',
+        'sdf',
+        'smi',
+        'smiles',
+    );
+
     public const array IMAGE = array(
         'gif',
         'heic',
@@ -80,12 +93,10 @@ final class Extensions
         'gro',
         'mcif',
         'mmtf',
-        'mol',
         'mol2',
         'pdb',
         'pqr',
         'prmtop',
-        'sdf',
         'vasp',
         'xyz',
     );

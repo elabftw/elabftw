@@ -138,8 +138,7 @@ final class Reactions extends AbstractRest
             $this->Db->execute($req);
             $deleted = array_replace($current, $this->readRow($this->id ?? 0, true));
             $deleted['scheme'] = $current['scheme'];
-            $this->recordRevision($deleted);
-            $this->changed('Deleted', $current['title']);
+            $this->recordChange($deleted, 'Deleted');
             $this->Db->commit();
             return true;
         } catch (Throwable $e) {
@@ -213,8 +212,7 @@ final class Reactions extends AbstractRest
                 $this->insert('reaction_components', array_merge($component, array('reaction_id' => $this->id, 'ordering' => $ordering)));
             }
             $reaction = $this->readOne();
-            $this->recordRevision($reaction);
-            $this->changed($creating ? 'Created' : 'Updated', $reaction['title']);
+            $this->recordChange($reaction, $creating ? 'Created' : 'Updated');
             $this->Db->commit();
             return $this->id ?? throw new ImproperActionException('Missing reaction id.');
         } catch (Throwable $e) {
@@ -273,7 +271,7 @@ final class Reactions extends AbstractRest
         return $reaction;
     }
 
-    private function recordRevision(array $reaction): void
+    private function recordChange(array $reaction, string $verb): void
     {
         $this->insert('reaction_revisions', array(
             'reaction_id' => $reaction['id'],
@@ -281,6 +279,8 @@ final class Reactions extends AbstractRest
             'snapshot' => json_encode($reaction, JSON_THROW_ON_ERROR),
             'created_by' => $this->Entity->Users->userData['userid'],
         ));
+        $this->Entity->touch();
+        new Changelog($this->Entity)->create(new ContentParams('reactions', sprintf('%s reaction "%s" with id: %d', $verb, htmlspecialchars($reaction['title'], ENT_QUOTES), $this->id ?? 0)));
     }
 
     private function readHistory(int $id): array
@@ -293,12 +293,6 @@ final class Reactions extends AbstractRest
             $row['snapshot'] = json_decode($row['snapshot'], true, 512, JSON_THROW_ON_ERROR);
             return $row;
         }, $req->fetchAll());
-    }
-
-    private function changed(string $verb, string $title): void
-    {
-        $this->Entity->touch();
-        new Changelog($this->Entity)->create(new ContentParams('reactions', sprintf('%s reaction "%s" with id: %d', $verb, htmlspecialchars($title, ENT_QUOTES), $this->id ?? 0)));
     }
 
     /** Only called with internal table/column names, never request keys. */

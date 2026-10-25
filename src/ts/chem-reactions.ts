@@ -4,10 +4,11 @@
  * @package elabftw
  */
 import $ from 'jquery';
-import { ChemicalMimeType, KetcherAsyncEvents } from 'ketcher-core';
+import { ChemicalMimeType } from 'ketcher-core';
 import type { Ketcher } from 'ketcher-core';
 import Autocomplete from './Autocomplete.class';
 import { ApiC } from './api';
+import { loadChemDrawing } from './chem-drawing';
 import { ensureTogglableSectionIsOpen, reloadElements } from './misc';
 import { notify } from './notify';
 import { emptyComponent, quantityUnits, reactionFromKetcher, replaceReactionDrawing } from './reaction';
@@ -264,14 +265,9 @@ export function initChemReactions(ketcher: Ketcher): void {
         const saved = await ApiC.getJson<Reaction>(`${endpoint}/${id}`);
         if (button.dataset.reactionAction === 'edit') open(saved);
         else {
-          const previous = await ketcher.getKet();
-          if (JSON.parse(previous).root.nodes.length && !confirm(form.dataset.confirmLoad)) return;
-          let failed = false;
-          const failure = () => failed = true;
-          ketcher.eventBus.once(KetcherAsyncEvents.FAILURE, failure);
-          try { await ketcher.setMolecule(saved.scheme ? JSON.stringify(saved.scheme) : saved.rxn); }
-          finally { ketcher.eventBus.off(KetcherAsyncEvents.FAILURE, failure); }
-          if (failed) { await ketcher.setMolecule(previous); throw new Error('Could not load this reaction.'); }
+          if (!await loadChemDrawing(ketcher, saved.scheme ? JSON.stringify(saved.scheme) : saved.rxn, {
+            confirm: form.dataset.confirmLoad, error: 'Could not load this reaction.',
+          })) return;
           ensureTogglableSectionIsOpen('chemEditorIcon', 'chemEditorDiv');
         }
       }

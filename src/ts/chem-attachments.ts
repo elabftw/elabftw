@@ -6,10 +6,10 @@
  * @package elabftw
  */
 import type { Ketcher } from 'ketcher-core';
-import { KetcherAsyncEvents } from 'ketcher-core';
 import type { Upload } from './interfaces';
 import $ from 'jquery';
 import { ApiC } from './api';
+import { loadChemDrawing } from './chem-drawing';
 import { adjustHiddenState, ensureTogglableSectionIsOpen, reloadElements } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
@@ -148,24 +148,7 @@ export function initChemAttachments(ketcher: Ketcher): void {
     try {
       const response = await ApiC.get(`${endpoint}/${uploadId}`, { format: 'binary', notifOnError: 0 });
       const content = await response.text();
-      // KET covers both molecules and macromolecules, including drawing objects.
-      const previousDrawing = await ketcher.getKet();
-      const drawing = JSON.parse(previousDrawing);
-      if (drawing.root.nodes.length > 0 && !confirm(loadForm.dataset.confirm)) return;
-      // setMolecule swallows import errors; listen for its failure event instead.
-      let failed = false;
-      const onFailure = () => failed = true;
-      ketcher.eventBus.once(KetcherAsyncEvents.FAILURE, onFailure);
-      try {
-        await ketcher.setMolecule(content);
-      } finally {
-        ketcher.eventBus.off(KetcherAsyncEvents.FAILURE, onFailure);
-      }
-      if (failed) {
-        // In macromolecule mode Ketcher clears the canvas before parsing.
-        await ketcher.setMolecule(previousDrawing);
-        throw new Error(loadForm.dataset.error);
-      }
+      if (!await loadChemDrawing(ketcher, content, { confirm: loadForm.dataset.confirm, error: loadForm.dataset.error })) return;
       filename.value = name.replace(/\.[^.]+$/, '');
       busy = false;
       loadModal.modal('hide');

@@ -6,8 +6,21 @@ describe('Chemical editor attachments', () => {
   const setDrawing = (smiles: string) => cy.window().its('ketcher')
     .then((ketcher: Ketcher) => ketcher.setMolecule(smiles));
 
-  const expectDrawing = (smiles: string) => cy.window().its('ketcher')
-    .then((ketcher: Ketcher) => ketcher.getSmiles()).should('eq', smiles);
+  const expectDrawing = (smiles: string) => {
+    cy.get('[data-cy="chem-load-attachment"]').should('be.enabled');
+    return cy.window().its('ketcher')
+      .then((ketcher: Ketcher) => ketcher.getSmiles()).should('eq', smiles);
+  };
+
+  const openAttachmentModal = (action: 'save' | 'load') => {
+    const selector = action === 'save' ? '#chemSaveAttachmentModal' : '#chemLoadAttachmentModal';
+    cy.window().its('jQuery').then(($: JQueryStatic) => {
+      $(selector).one('shown.bs.modal', cy.stub().as('attachmentModalShown'));
+    });
+    cy.get(`[data-cy="chem-${action}-attachment"]`).click();
+    // Bootstrap ignores dismissals while the opening fade is still running.
+    cy.get('@attachmentModalShown').should('have.been.calledOnce');
+  };
 
   const attach = (name: string, content: string) => cy.request({
     method: 'POST',
@@ -33,7 +46,7 @@ describe('Chemical editor attachments', () => {
   it('saves an editable KET attachment with the chosen filename', () => {
     setDrawing('CCO');
     cy.intercept('POST', `**/api/v2/experiments/${entityId}/uploads`).as('saveDrawing');
-    cy.get('[data-cy="chem-save-attachment"]').click();
+    openAttachmentModal('save');
     cy.get('[data-cy="chem-attachment-format"]').should('have.value', 'ket');
     cy.get('[data-cy="chem-attachment-filename"]').clear().type('ethanol.ket');
     cy.get('[data-cy="chem-save-attachment-submit"]').click();
@@ -50,7 +63,7 @@ describe('Chemical editor attachments', () => {
     });
     setDrawing('CC');
     cy.window().then(win => cy.stub(win, 'confirm').returns(true));
-    cy.get('[data-cy="chem-load-attachment"]').click();
+    openAttachmentModal('load');
     cy.get('[data-cy="chem-attachment-select"]').should('contain.text', 'ethanol.ket');
     cy.get('[data-cy="chem-load-attachment-submit"]').should('be.enabled').click();
     cy.get('#chemLoadAttachmentModal').should('not.be.visible');
@@ -58,7 +71,7 @@ describe('Chemical editor attachments', () => {
   });
 
   it('refreshes compatible attachments and allows cancelling canvas replacement', () => {
-    cy.get('[data-cy="chem-load-attachment"]').click();
+    openAttachmentModal('load');
     cy.get('#chemAttachmentsEmpty').should('be.visible');
     cy.get('[data-cy="chem-load-attachment-submit"]').should('be.disabled');
     cy.get('#chemLoadAttachmentModal [data-dismiss="modal"]').last().click();
@@ -69,7 +82,7 @@ describe('Chemical editor attachments', () => {
     attach('ethane.SMI', 'CC');
     setDrawing('CCO');
     cy.window().then(win => cy.stub(win, 'confirm').returns(false).as('replaceDrawing'));
-    cy.get('[data-cy="chem-load-attachment"]').click();
+    openAttachmentModal('load');
     cy.get('[data-cy="chem-attachment-select"] option').should('have.length', 1).and('have.text', 'ethane.SMI');
     cy.get('[data-cy="chem-load-attachment-submit"]').should('be.enabled').click();
     cy.get('@replaceDrawing').should('have.been.calledOnce');
@@ -85,7 +98,7 @@ describe('Chemical editor attachments', () => {
     attach('broken.ket', 'This is not a chemical structure.\nInvalid content.');
     setDrawing('CCO');
     cy.window().then(win => cy.stub(win, 'confirm').returns(true));
-    cy.get('[data-cy="chem-load-attachment"]').click();
+    openAttachmentModal('load');
     cy.get('[data-cy="chem-load-attachment-submit"]').should('be.enabled').click();
     cy.get('#chemLoadAttachmentError').should('be.visible').and('not.be.empty');
     cy.get('[data-cy="chem-load-attachment-submit"]').should('be.enabled');
@@ -98,7 +111,7 @@ describe('Chemical editor attachments', () => {
       statusCode: 503,
       body: { description: 'Upload temporarily unavailable' },
     });
-    cy.get('[data-cy="chem-save-attachment"]').click();
+    openAttachmentModal('save');
     cy.get('[data-cy="chem-save-attachment-submit"]').click();
     cy.get('#chemSaveAttachmentError').should('be.visible').and('contain.text', 'Upload temporarily unavailable');
     cy.get('[data-cy="chem-save-attachment-submit"]').should('be.enabled').click();
@@ -146,7 +159,7 @@ describe('Chemical editor attachments', () => {
           if (!$editor[0].hidden) cy.get('#chem-editor [data-action="toggle-next"]').click();
         });
         cy.get(`#uploadDiv_${uploadId} .viewer_3Dmoljs`).should('not.exist');
-        cy.get(`#uploadDiv_${uploadId} button.icon-overlay[data-action="chem-load-file"]`)
+        cy.get(`#uploadDiv_${uploadId} .icon-overlay[data-action="chem-load-file"]`)
           .should('have.class', 'edit-overlay').click();
         cy.get('#chemEditorDiv').should('be.visible');
         expectDrawing('CO');

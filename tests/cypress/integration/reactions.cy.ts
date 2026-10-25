@@ -35,6 +35,7 @@ describe('Structured reactions', () => {
     cy.get('#reactionModal').should('not.be.visible');
     cy.contains('#reactionsList article', 'Ethanol oxidation').should('contain.text', '80');
     cy.reload();
+    cy.get('[data-cy="chem-create-reaction"]', { timeout: 60000 }).should('be.enabled');
     cy.contains('#reactionsList article', 'Ethanol oxidation').find('[data-reaction-action="edit"]').click();
     cy.get('#reactionComponents > tr').eq(0).find('[data-field="actual_value"]').should('have.value', '0.010000000000');
     cy.request(`/api/v2/experiments/${entityId}/reactions`).then(response => {

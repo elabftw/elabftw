@@ -8,6 +8,7 @@
 import { Editor } from 'ketcher-react';
 import 'ketcher-react/dist/index.css';
 import { initChemAttachments } from './chem-attachments';
+import { initChemReactions } from './chem-reactions';
 
 /**
  * The structServiceProvider is remote but using a proxied server on eLab main URL
@@ -30,6 +31,7 @@ const KetcherEditor = () => {
         onInit={(ketcher) => {
           window.ketcher = ketcher;
           initChemAttachments(ketcher);
+          initChemReactions(ketcher);
         }}
       />
     </div>

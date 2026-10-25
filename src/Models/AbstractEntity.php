@@ -706,6 +706,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = new Steps($this)->readAll();
         $this->entityData['step_groups'] = new StepGroups($this)->readAll();
+        $this->entityData['reactions'] = new Reactions($this)->readAll();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
@@ -771,6 +772,7 @@ abstract class AbstractEntity extends AbstractRest
     {
         $base = $this->readOne();
         $base['revisions'] = (new Revisions($this))->readAll();
+        $base['reaction_history'] = new Reactions($this)->readAllHistory();
         // we want to include ALL uploaded files
         $base['uploads'] = (new Uploads($this))->readAll(
             $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
@@ -1137,6 +1139,7 @@ abstract class AbstractEntity extends AbstractRest
         LinksFactory::getCompoundsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getContainersLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         $stepsMap = new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
+        new Reactions($sourceEntity)->duplicate($fresh);
         // step links in the body point at the source entry and its steps: point them at the copy
         $body = (string) $fresh->entityData['body'];
         if ($stepsMap !== array() && str_contains($body, 'highlightstep')) {

@@ -236,6 +236,150 @@ components:
       description: The Authorization header value must contain an API Key.
 
   schemas:
+    reaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        version:
+          type: integer
+          description: The last read version is required for PATCH.
+        title:
+          type: string
+          maxLength: 255
+        scheme:
+          type: object
+          nullable: true
+          description: Ketcher KET document.
+        rxn:
+          type: string
+          description: RXN representation of the drawing.
+        preview_png:
+          type: string
+          description: Base64 PNG, without a data URL prefix; maximum 1 MB encoded and 4000 pixels per dimension.
+        temperature_c:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        duration_s:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        pressure_pa:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        atmosphere:
+          type: string
+        conditions_notes:
+          type: string
+        reference_component_key:
+          type: string
+          format: uuid
+          nullable: true
+        yield_basis_component_key:
+          type: string
+          format: uuid
+          nullable: true
+        components:
+          type: array
+          maxItems: 128
+          items:
+            $ref: '#/components/schemas/reaction_component'
+    reaction_component:
+      type: object
+      properties:
+        component_key:
+          type: string
+          format: uuid
+          description: Stable within this reaction; generated when omitted on creation.
+        role:
+          type: string
+          enum:
+          - reactant
+          - reagent
+          - catalyst
+          - solvent
+          - product
+        name:
+          type: string
+        molfile:
+          type: string
+        smiles:
+          type: string
+        inchi_key:
+          type: string
+        molecular_formula:
+          type: string
+        molecular_weight:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        purity_percent:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        density_g_ml:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        concentration_mol_l:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        coefficient:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        planned_value:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        actual_value:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        compound_id:
+          type: integer
+          nullable: true
+        item_id:
+          type: integer
+          nullable: true
+        material_form:
+          type: string
+          enum:
+          - neat
+          - solution
+        planned_unit:
+          type: string
+          enum: [g, mg, mL, uL, mol, mmol, eq]
+        actual_unit:
+          type: string
+          enum: [g, mg, mL, uL, mol, mmol]
+        planned_basis:
+          type: string
+          enum:
+          - mass
+          - volume
+          - amount
+          - equivalents
+        actual_basis:
+          type: string
+          enum:
+          - mass
+          - volume
+          - amount
+        planned:
+          type: object
+          readOnly: true
+          description: Calculated mass_g, volume_ml, amount_mol, equivalents, theoretical_amount_mol and yield_percent;
+            unknown values are null.
+        actual:
+          type: object
+          readOnly: true
+          description: Calculated actual quantities, in the same units as planned.
+
     Error:
       type: object
       required: [code, message, description]
@@ -9809,6 +9953,197 @@ paths:
       responses:
         '204':
           description: The webhook was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /{entity_type}/{id}/reactions:
+    parameters:
+    - name: entity_type
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - experiments
+        - items
+        - experiments_templates
+        - items_types
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      tags:
+      - Reactions
+      operationId: read-reactions
+      summary: Read current reactions or immutable revision snapshots.
+      parameters:
+      - name: history_of
+        in: query
+        schema:
+          type: integer
+        description: Read revision snapshots of this reaction, including deleted records; scoped to the owning entry.
+      responses:
+        '200':
+          description: Reaction records or revision snapshots.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+      - Reactions
+      operationId: create-reaction
+      summary: Create a reaction owned by this entry.
+      description: Requires write access to an unlocked entry. No changes are made to the shared Compounds database
+        or inventory.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reaction'
+      responses:
+        '201':
+          description: Created.
+          headers:
+            Location:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Reactions
+      operationId: calculate-reaction
+      summary: Calculate quantities without persisting changes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/reaction'
+              - type: object
+                required:
+                - action
+                properties:
+                  action:
+                    type: string
+                    enum:
+                    - calculate
+      responses:
+        '200':
+          description: Object with calculated components.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /{entity_type}/{id}/reactions/{subid}:
+    parameters:
+    - name: entity_type
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - experiments
+        - items
+        - experiments_templates
+        - items_types
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    - name: subid
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      tags:
+      - Reactions
+      operationId: read-reaction
+      summary: Read a reaction belonging to this entry.
+      responses:
+        '200':
+          description: Reaction record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reaction'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Reactions
+      operationId: update-reaction
+      summary: Update a reaction using its last read version.
+      description: Omitted fields are retained. A supplied components array replaces the component list atomically.
+        A stale version returns 400. A revision snapshot is retained.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reaction'
+      responses:
+        '200':
+          description: Updated reaction record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reaction'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+      - Reactions
+      operationId: delete-reaction
+      summary: Soft delete a reaction, retaining its revision snapshots.
+      responses:
+        '204':
+          description: Deleted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':

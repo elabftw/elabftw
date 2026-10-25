@@ -29,6 +29,7 @@ use Elabftw\Models\Comments;
 use Elabftw\Models\Config;
 use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\Compounds;
@@ -543,6 +544,11 @@ class Eln extends AbstractZip
                         if (!empty($tag)) {
                             $Tags->create(new TagParam($this->transformIfNecessary($tag)), true);
                         }
+                    }
+                    break;
+                case 'https://www.elabftw.net/ns#reactions':
+                    foreach ($value['@value'] ?? array() as $reaction) {
+                        new Reactions($this->Entity)->import($reaction);
                     }
                     break;
                 case 'compounds_links':

@@ -1,0 +1,37 @@
+{% if reaction.preview_png %}
+  <img class='img-fluid mb-2' src='data:image/png;base64,{{ reaction.preview_png }}' alt='{{ 'Reaction scheme'|trans }}'>
+{% endif %}
+<p>
+  {% if reaction.temperature_c is not null %}{{ reaction.temperature_c + 0 }} °C; {% endif %}
+  {% if reaction.duration_s is not null %}{{ reaction.duration_s + 0 }} s; {% endif %}
+  {% if reaction.pressure_pa is not null %}{{ reaction.pressure_pa + 0 }} Pa ({{ 'absolute'|trans }}); {% endif %}
+  {{ reaction.atmosphere }}
+</p>
+{% if reaction.conditions_notes %}<p>{{ reaction.conditions_notes|nl2br }}</p>{% endif %}
+<div class='table-responsive'>
+  <table class='table table-sm'>
+    <thead>
+      <tr>
+        <th scope='col'>{{ 'Component'|trans }}</th><th scope='col'>{{ 'Role'|trans }}</th>
+        <th scope='col'>{{ 'Molar mass'|trans }} (g/mol)</th><th scope='col'>{{ 'Planned'|trans }}</th>
+        <th scope='col'>{{ 'Actual'|trans }}</th><th scope='col'>{{ 'Amount'|trans }} (mmol)</th>
+        <th scope='col'>{{ 'Equivalents'|trans }}</th><th scope='col'>{{ 'Isolated yield'|trans }} (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set roles = {'reactant': 'Reactant'|trans, 'reagent': 'Reagent'|trans, 'catalyst': 'Catalyst'|trans, 'solvent': 'Solvent'|trans, 'product': 'Product'|trans} %}
+      {% for component in reaction.components %}
+        <tr>
+          <td>{{ component.name|default(component.molecular_formula)|default(component.smiles) }}{% if component.component_key == reaction.reference_component_key %} (1 eq){% endif %}{% if component.component_key == reaction.yield_basis_component_key %} ({{ 'yield basis'|trans }}){% endif %}</td>
+          <td>{{ roles[component.role] }}</td>
+          <td>{{ component.molecular_weight is null ? '' : component.molecular_weight + 0 }}</td>
+          <td>{{ component.planned_value is null ? '' : (component.planned_value + 0) ~ ' ' ~ component.planned_unit|replace({'uL': 'µL'}) }}</td>
+          <td>{{ component.actual_value is null ? '' : (component.actual_value + 0) ~ ' ' ~ component.actual_unit|replace({'uL': 'µL'}) }}</td>
+          <td>{{ component.actual.amount_mol is null ? '' : (component.actual.amount_mol * 1000)|round(5) }}</td>
+          <td>{{ component.actual.equivalents is null ? '' : component.actual.equivalents|round(3) }}</td>
+          <td>{{ component.actual.yield_percent is null ? '' : component.actual.yield_percent|round(2) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

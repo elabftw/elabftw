@@ -232,6 +232,7 @@ final class Compounds extends AbstractRest
         $sql = 'SELECT
           CASE
             WHEN EXISTS(SELECT 1 FROM compounds2experiments             WHERE compound_id = :compound_id)
+              OR EXISTS(SELECT 1 FROM reaction_components               WHERE compound_id = :compound_id)
               OR EXISTS(SELECT 1 FROM compounds2items                   WHERE compound_id = :compound_id)
               OR EXISTS(SELECT 1 FROM compounds2experiments_templates   WHERE compound_id = :compound_id)
               OR EXISTS(SELECT 1 FROM compounds2items_types             WHERE compound_id = :compound_id)

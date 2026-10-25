@@ -1,0 +1,27 @@
+{% set editReactions = editReactions|default(false) %}
+{% if editReactions or Entity.entityData.reactions %}
+<section id='reactionsSection' class='mt-3' aria-label='{{ 'Reactions'|trans }}'>
+  <h3>{{ 'Reactions'|trans }}</h3>
+  <div id='reactionsList'>
+    {% for reaction in Entity.entityData.reactions|default([]) %}
+      <article class='border rounded p-3 mb-3' data-reaction-id='{{ reaction.id }}'>
+        <div class='d-flex align-items-center justify-content-between'>
+          <h4>{{ reaction.title }}</h4>
+          {% if editReactions %}
+            <div class='btn-group'>
+              <button type='button' class='btn btn-sm btn-secondary' data-reaction-action='load'>{{ 'Load in editor'|trans }}</button>
+              <button type='button' class='btn btn-sm btn-primary' data-reaction-action='edit'>{{ 'Edit'|trans }}</button>
+              <button type='button' class='btn btn-sm btn-danger' data-reaction-action='delete' aria-label='{{ 'Delete reaction'|trans }}'><i class='fas fa-trash-alt'></i></button>
+            </div>
+          {% endif %}
+        </div>
+        {% include 'reaction-summary.html' %}
+      </article>
+    {% endfor %}
+  </div>
+  {% if editReactions %}
+    <p class='text-muted'>{{ 'Draw a reaction in the chemical editor, then select Create reaction to register its components and quantities.'|trans }}</p>
+    {% include 'reaction-edit-modal.html' %}
+  {% endif %}
+</section>
+{% endif %}

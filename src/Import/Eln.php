@@ -44,16 +44,18 @@ use Elabftw\Services\OpenBabelFingerprinter;
 use GuzzleHttp\Client;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\UnableToReadFile;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
+use ZipArchive;
 
 use function array_find;
+use function array_is_list;
 use function array_values;
 use function basename;
 use function is_array;
 use function json_decode;
+use function min;
 use function rawurlencode;
 use function sprintf;
 use function strtr;
@@ -80,7 +82,7 @@ class Eln extends AbstractZip
 {
     protected const string TAGS_SEPARATOR = ',';
 
-    // path where the metadata.json file lives (first folder found in archive)
+    // archive directory containing ro-crate-metadata.json
     private string $root;
 
     // complete graph: all nodes from metadata json
@@ -130,7 +132,6 @@ class Eln extends AbstractZip
             $fs,
             $logger,
         );
-        $this->count = $this->preProcess();
         // we might have been forced to cast to int a null value, so bring it back to null
         if ($this->category === 0) {
             $this->category = null;
@@ -151,6 +152,114 @@ class Eln extends AbstractZip
 
     #[Override]
     public function import(): int
+    {
+        try {
+            $this->prepare();
+            return $this->importDatasets();
+        } finally {
+            $this->cleanup();
+        }
+    }
+
+    protected function getEntityType(array $dataset): EntityType
+    {
+        // if it is present in the object, it means we force the entityType
+        if ($this->entityType !== null) {
+            return $this->entityType;
+        }
+        // otherwise try looking into "genre" attribute
+        if (!empty($dataset['genre'])) {
+            return match ($dataset['genre']) {
+                'experiment', 'experiments' => EntityType::Experiments,
+                'experiment template', 'protocol', 'protocols', 'template' => EntityType::Templates,
+                'resource template' => EntityType::ItemsTypes,
+                // everything else is a Resource
+                default => EntityType::Items,
+            };
+        }
+        // not sure if best to throw an Exception here or have a default
+        $this->logger->notice('Could not find entity type (genre), falling back to Resource');
+        return EntityType::Items;
+
+    }
+
+    #[Override]
+    protected function readArchiveMetadata(ZipArchive $archive): void
+    {
+        $metadataFile = 'ro-crate-metadata.json';
+        $metadataIndex = null;
+        for ($index = 0; $index < $archive->numFiles; $index++) {
+            $name = $archive->getNameIndex($index, ZipArchive::FL_UNCHANGED);
+            if ($name === false) {
+                continue;
+            }
+            $path = str_replace('//', '/', $name);
+            $parts = explode('/', $path);
+            if (count($parts) === 2 && $parts[1] === $metadataFile) {
+                if ($metadataIndex !== null) {
+                    throw new ImproperActionException('The ELN archive contains more than one metadata file.');
+                }
+                $metadataIndex = $index;
+                $this->root = $parts[0];
+            }
+        }
+        if ($metadataIndex === null) {
+            throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $metadataFile));
+        }
+        $input = $archive->getStreamIndex($metadataIndex, ZipArchive::FL_UNCHANGED);
+        if ($input === false) {
+            throw new ImproperActionException('Could not read the ELN metadata.');
+        }
+        $limited = new LimitedReadStream(
+            $input,
+            $this->enforceLimits ? min($this->limits->maxMetadataBytes, $this->limits->maxMemberBytes, $this->limits->maxTotalBytes) : null,
+        );
+        try {
+            $json = json_decode($limited->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new ImproperActionException($e->getMessage());
+        } finally {
+            $limited->close();
+        }
+        if (!is_array($json) || !isset($json['@graph']) || !is_array($json['@graph']) || !array_is_list($json['@graph'])) {
+            throw new ImproperActionException('The ELN metadata must contain an @graph array.');
+        }
+        foreach ($json['@graph'] as $node) {
+            if (!is_array($node) || !isset($node['@id']) || !is_string($node['@id'])) {
+                throw new ImproperActionException('The ELN metadata contains an invalid graph node.');
+            }
+        }
+        $this->graph = $json['@graph'];
+        $this->count = $this->preProcess();
+    }
+
+    protected function getNodeFromId(string $id): array
+    {
+        $result = array_find(
+            $this->graph,
+            function (array $node) use ($id) {
+                return $node['@id'] === $id;
+            }
+        );
+        // looking up a node by id should always return something, otherwise there is something seriously wrong
+        if ($result === null) {
+            $this->logger->error(sprintf('Error looking up the node id %s', $id));
+            return array();
+        }
+        return $result;
+    }
+
+    protected function getAuthor(array $dataset): Users
+    {
+        return $this->targetUser;
+    }
+
+    protected function getChangelogAuthor(array $action): Users
+    {
+        return $this->requester;
+    }
+
+    private function importDatasets(): int
     {
         // loop over each hasPart of the root node
         // this is the main import loop
@@ -221,54 +330,6 @@ class Eln extends AbstractZip
         return $this->getInserted();
     }
 
-    protected function getNodeFromId(string $id): array
-    {
-        $result = array_find(
-            $this->graph,
-            function (array $node) use ($id) {
-                return $node['@id'] === $id;
-            }
-        );
-        // looking up a node by id should always return something, otherwise there is something seriously wrong
-        if ($result === null) {
-            $this->logger->error(sprintf('Error looking up the node id %s', $id));
-            return array();
-        }
-        return $result;
-    }
-
-    protected function getAuthor(array $dataset): Users
-    {
-        return $this->targetUser;
-    }
-
-    protected function getChangelogAuthor(array $action): Users
-    {
-        return $this->requester;
-    }
-
-    protected function getEntityType(array $dataset): EntityType
-    {
-        // if it is present in the object, it means we force the entityType
-        if ($this->entityType !== null) {
-            return $this->entityType;
-        }
-        // otherwise try looking into "genre" attribute
-        if (!empty($dataset['genre'])) {
-            return match ($dataset['genre']) {
-                'experiment', 'experiments' => EntityType::Experiments,
-                'experiment template', 'protocol', 'protocols', 'template' => EntityType::Templates,
-                'resource template' => EntityType::ItemsTypes,
-                // everything else is a Resource
-                default => EntityType::Items,
-            };
-        }
-        // not sure if best to throw an Exception here or have a default
-        $this->logger->notice('Could not find entity type (genre), falling back to Resource');
-        return EntityType::Items;
-
-    }
-
     private function getChangelogLinkReplacements(): array
     {
         $replacements = array();
@@ -316,9 +377,6 @@ class Eln extends AbstractZip
 
     private function preProcess(): int
     {
-        $this->root = $this->getRootDirectory();
-        $this->graph = $this->getGraph();
-
         foreach ($this->graph as $node) {
             // find the node describing the crate
             if ($node['@id'] === './') {
@@ -343,34 +401,6 @@ class Eln extends AbstractZip
             }
         }
         return count($this->crateNodeHasPart);
-    }
-
-    // figure out the path to the root of the eln (where the metadata file lives)
-    // folder name is variable, so list folders and pick the first one found (there should be only one)
-    private function getRootDirectory(): string
-    {
-        $listing = $this->tmpFs->listContents($this->tmpDir);
-        foreach ($listing as $item) {
-            if ($item->isDir()) {
-                $this->logger->debug(sprintf('Found root directory in archive: %s', basename($item->path())));
-                return $item->path();
-            }
-        }
-        throw new ImproperActionException('Could not find a directory in the ELN archive!');
-    }
-
-    private function getGraph(): array
-    {
-        $metadataFile = 'ro-crate-metadata.json';
-        try {
-            $content = $this->tmpFs->read($this->root . '/' . $metadataFile);
-            $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        } catch (UnableToReadFile) {
-            throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $metadataFile));
-        } catch (JsonException $e) {
-            throw new ImproperActionException($e->getMessage());
-        }
-        return $json['@graph'];
     }
 
     /**
@@ -814,11 +844,17 @@ class Eln extends AbstractZip
 
     private function importFile(array $file): void
     {
-        if (isset($this->importedUploads[$file['@id']])) {
+        $id = (string) $file['@id'];
+        try {
+            $this->assertArchivePathIsSafe($id);
+        } catch (ImproperActionException) {
+            $this->logger->error(sprintf('Skipping file with unsafe @id: %s', $id));
             return;
         }
-        // note: we cannot have path transversal vuln here because we use a temporary filesystem that cannot be escaped
-        $filepath = $this->tmpDir . '/' . basename($this->root) . '/' . $file['@id'];
+        if (isset($this->importedUploads[$id])) {
+            return;
+        }
+        $filepath = $this->tmpDir . '/' . basename($this->root) . '/' . $id;
         $this->logger->debug(sprintf('Importing file: %s', $filepath));
         // fix for bloxberg attachments containing : character
         $filepath = strtr($filepath, ':', '_');

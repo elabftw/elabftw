@@ -41,7 +41,7 @@ import { DateTime } from 'luxon';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { Action } from './interfaces';
-import { collectForm, TomSelect } from './misc';
+import { collectForm, toRelative, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
 import { rebuildTomSelectOptions } from './misc';
@@ -790,20 +790,22 @@ if (calendarEl) {
       ['minute', minutes % 60],
     ] as const)
       .filter(([, value]) => value > 0)
-      .map(([unit, value]) => new Intl.NumberFormat(bookingLocale, { style: 'unit', unit, unitDisplay: 'long' }).format(value))
-      .join(' ') || new Intl.NumberFormat(bookingLocale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(0);
+      .map(([unit, value]) => new Intl.NumberFormat(bookingLocale, { style: 'unit', unit, unitDisplay: 'narrow' }).format(value))
+      .join(' ') || new Intl.NumberFormat(bookingLocale, { style: 'unit', unit: 'minute', unitDisplay: 'narrow' }).format(0);
   };
 
   function renderBookingSchedule(booking: BookingRequestRow): HTMLElement {
     const start = DateTime.fromSQL(booking.start).setLocale(bookingLocale);
     const end = DateTime.fromSQL(booking.end).setLocale(bookingLocale);
-    const endLabel = end.hasSame(start, 'day') ? end.toLocaleString(DateTime.TIME_SIMPLE) : end.toLocaleString(DateTime.DATETIME_MED);
+    const dateLabel = start.toLocaleString({ weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+    const startLabel = `${dateLabel.charAt(0).toLocaleUpperCase(bookingLocale)}${dateLabel.slice(1)}, ${start.toFormat('HH:mm')}`;
+    const endLabel = end.hasSame(start, 'day') ? end.toFormat('HH:mm') : end.toLocaleString(DateTime.DATETIME_MED);
     const container = element('div', 'd-flex flex-column justify-content-center h-100');
     container.style.lineHeight = '1.5';
     const slot = element('div');
-    slot.append(element('strong', 'mr-2', formatBookingDuration(start, end)),
-      element('span', 'smallgray', `${start.toLocaleString(DateTime.DATETIME_MED)} → ${endLabel}`));
-    container.appendChild(slot);
+    slot.append(element('strong', 'mr-2', `${startLabel} - ${endLabel}`),
+      element('span', 'smallgray', `(${formatBookingDuration(start, end)})`));
+    container.append(slot, element('div', 'smallgray', toRelative(booking.start, bookingLocale)));
     if (booking.recurrence_id) {
       const cadenceUnits = { daily: 'day', weekly: 'week', monthly: 'month' } as const;
       const unit = booking.recurrence_frequency ? cadenceUnits[booking.recurrence_frequency] : null;
@@ -938,7 +940,7 @@ if (calendarEl) {
         rowData: rows,
         getRowId: params => params.data.recurrence_id ?? `event:${params.data.id}`,
         domLayout: 'autoHeight',
-        getRowHeight: params => params.data?.recurrence_id ? (params.data.recurrence_rule?.weekdays?.length ? 110 : 90) : 54,
+        getRowHeight: params => params.data?.recurrence_id ? (params.data.recurrence_rule?.weekdays?.length ? 132 : 112) : 76,
         defaultColDef: { sortable: true, resizable: true, filter: true },
         overlayNoRowsTemplate: i18next.t('booking-no-requests'),
       });

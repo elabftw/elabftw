@@ -83,10 +83,8 @@ final class MetadataHelpers
             $metadata['elabftw']['extra_fields_groups'] = $groups;
         }
 
-        return self::mergeMetadata(
-            json_encode($metadata, JSON_THROW_ON_ERROR),
-            json_encode(array('extra_fields' => $fields), JSON_THROW_ON_ERROR),
-        );
+        $metadata['extra_fields'] = self::getExtraFields($metadata) + $fields;
+        return json_encode($metadata, JSON_THROW_ON_ERROR);
     }
 
     public static function mergeMetadata(?string $source, string $incoming): string

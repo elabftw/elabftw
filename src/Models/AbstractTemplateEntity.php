@@ -153,11 +153,19 @@ abstract class AbstractTemplateEntity extends AbstractEntity
                             $links = $key === 'experiments_links'
                                 ? LinksFactory::getExperimentsLinks($entry, $linkId)
                                 : LinksFactory::getItemsLinks($entry, $linkId);
-                            $links->create();
+                            try {
+                                $links->create();
+                            } catch (ForbiddenException | ResourceNotFoundException) {
+                                // The requester may not be able to read every template link target.
+                                continue;
+                            }
                         }
                     }
                     $this->Db->commit();
                     ++$result['updated'];
+                } catch (ForbiddenException | ImproperActionException | ResourceNotFoundException | UnprocessableContentException) {
+                    $this->Db->rollBack();
+                    ++$result['skipped'];
                 } catch (Throwable $e) {
                     $this->Db->rollBack();
                     throw $e;

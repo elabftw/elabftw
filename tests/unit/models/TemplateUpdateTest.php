@@ -182,6 +182,38 @@ class TemplateUpdateTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testInvalidEntryMetadataDoesNotInterruptUpdates(): void
+    {
+        $user = $this->getUserInTeam(1);
+        foreach (array(EntityType::Templates, EntityType::ItemsTypes) as $type) {
+            $template = $type->toInstance($user);
+            $template->setId($template->create(metadata: '{"extra_fields":{"New":{"value":"new"}}}'));
+            new Tags($template)->create(new TagParam('new'), true);
+            $entries = array();
+            foreach (array(null, '{"extra_fields":{"Invalid":"legacy value"}}', null) as $metadata) {
+                $entry = $type->toConcreteEntity($user);
+                $entry->setId($entry->create(
+                    metadata: $metadata,
+                    createdFromType: $type,
+                    createdFromId: $template->id,
+                ));
+                $entries[] = $entry;
+            }
+            $before = $entries[1]->readOne();
+
+            $this->assertSame(array('updated' => 2, 'skipped' => 1), $template->patch(Action::UpdateEntries, array()));
+            foreach (array($entries[0], $entries[2]) as $entry) {
+                $after = $entry->readOne();
+                $this->assertSame('new', json_decode($after['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields']['New']['value']);
+                $this->assertSame(array('new'), array_column(new Tags($entry)->readAll(), 'tag'));
+            }
+            $after = $entries[1]->readOne();
+            $this->assertSame($before['metadata'], $after['metadata']);
+            $this->assertSame($before['changelog'], $after['changelog']);
+            $this->assertSame(array(), new Tags($entries[1])->readAll());
+        }
+    }
+
     public function testRequiresTemplateWriteAccess(): void
     {
         $user = $this->getUserInTeam(1);

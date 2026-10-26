@@ -62,9 +62,11 @@ final class Transform
                     (int) $notif['id'],
                     $notif['body']['status'] === 'cancelled' ? 3 : 2,
                     $notif['body']['status'] === 'cancelled'
-                        ? sprintf(_('%s cancelled a pending booking for %s.'),
+                        ? sprintf(
+                            _('%s cancelled a pending booking for %s.'),
                             htmlspecialchars($notif['body']['requester_fullname'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
-                            htmlspecialchars($notif['body']['item_title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'))
+                            htmlspecialchars($notif['body']['item_title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                        )
                         : sprintf(_('Booking request status: %s'), htmlspecialchars($notif['body']['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')),
                     $notif['created_at'],
                 ),

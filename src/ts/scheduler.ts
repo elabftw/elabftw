@@ -74,6 +74,7 @@ type BookingRequest = {
   fullname: string;
   start: string;
   end: string;
+  modified_at: string;
   approval_status: number;
   approval_comment: string | null;
   canapprove: number;
@@ -872,10 +873,13 @@ if (calendarEl) {
         } else {
           row.occurrences++;
           if (booking.start > row.lastStart) row.lastStart = booking.start;
+          // by default, display by the last updated event
+          const modifiedAt = row.modified_at > booking.modified_at ? row.modified_at : booking.modified_at;
           if (booking.start < row.start) Object.assign(row, booking, { occurrences: row.occurrences, lastStart: row.lastStart });
+          row.modified_at = modifiedAt;
         }
       }
-      const rows = Array.from(groups.values());
+      const rows = Array.from(groups.values()).sort((a, b) => b.modified_at.localeCompare(a.modified_at));
       if (bookingGrids[kind]) {
         bookingGrids[kind]!.setGridOption('rowData', rows);
         return;

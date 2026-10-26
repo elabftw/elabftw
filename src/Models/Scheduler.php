@@ -247,7 +247,7 @@ final class Scheduler extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $query = $queryParams?->getQuery();
-        $statuses = $query?->get('approval_status', '') ?? '';
+        $statuses = $query?->getString('approval_status') ?? '';
         if ($statuses !== '' && !preg_match('/^[0-3](,[0-3])*$/', $statuses)) {
             throw new ImproperActionException('Invalid approval_status filter.');
         }
@@ -356,7 +356,7 @@ final class Scheduler extends AbstractRest
             implode(' ', $this->filterSqlParts)
         );
         $req = $this->Db->prepare($sql);
-        $allDates = $isRequestList && !$query?->has('start') && !$query?->has('end');
+        $allDates = $isRequestList && !$query->has('start') && !$query->has('end');
         $req->bindValue(':start', $allDates ? '1000-01-01 00:00:00' : $this->normalizeDate($this->start));
         $req->bindValue(':end', $allDates ? '9999-12-31 23:59:59' : $this->normalizeDate($this->end, true));
         $req->bindValue(':requester_actor', $this->Items->Users->userid, PDO::PARAM_INT);

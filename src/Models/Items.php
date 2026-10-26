@@ -50,7 +50,7 @@ final class Items extends AbstractConcreteEntity
     /** The configured individual approvers, for the resource settings UI. */
     public function getBookingApproverIds(): array
     {
-        return (new BookingApproval($this->Users))->getApprobators($this->id ?? 0);
+        return $this->id === null ? array() : (new BookingApproval($this->Users))->getApprovers($this->entityData);
     }
 
     #[Override]
@@ -60,7 +60,7 @@ final class Items extends AbstractConcreteEntity
             $this->canOrExplode(AccessType::Write);
             $this->ExclusiveEditMode->canPatchOrExplode($action);
             $approvalParams = $params;
-            unset($params['requires_booking_approval'], $params['approbators'], $params['action']);
+            unset($params['requires_booking_approval'], $params['approvers'], $params['action']);
 
             // Save booking settings and approvers together or roll back both.
             $this->Db->beginTransaction();

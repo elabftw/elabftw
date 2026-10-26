@@ -865,7 +865,7 @@ if (calendarEl) {
       // Fetch the full recurrence, so both its count and its first occurrence are correct.
       const query = kind === 'my'
         ? `events?approval_status=1,2,3&userid=${currentUserId}`
-        : `events?approval_status=1&approbator=${currentUserId}`;
+        : `events?approval_status=1&approver=${currentUserId}`;
       const bookings = await ApiC.getJson<BookingRequest[]>(query);
       const groups = new Map<string, BookingRequestRow>();
       for (const booking of bookings) {

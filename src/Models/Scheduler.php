@@ -252,13 +252,13 @@ final class Scheduler extends AbstractRest
             throw new ImproperActionException('Invalid approval_status filter.');
         }
         $userid = $query?->getInt('userid') ?? 0;
-        $approbator = $query?->getInt('approbator') ?? 0;
-        $isRequestList = $statuses !== '' || $userid > 0 || $approbator > 0;
+        $approver = $query?->getInt('approver') ?? 0;
+        $isRequestList = $statuses !== '' || $userid > 0 || $approver > 0;
         // By default exclude rejected bookings from the calendar.
         $this->filterSqlParts[] = 'AND team_events.approval_status IN (' . ($statuses ?: '0,1,2') . ')';
         $this->appendFilterSql('team_events.userid', 'booking_userid', $userid);
-        if ($approbator > 0) {
-            $this->filterBindings['approbator'] = $approbator;
+        if ($approver > 0) {
+            $this->filterBindings['approver'] = $approver;
         }
         // prepare filters for the scheduler view
         if ($queryParams !== null) {
@@ -350,7 +350,7 @@ final class Scheduler extends AbstractRest
             $boundSelects['experiment'],
             $boundSelects['item_link'],
             $canBookExpr,
-            $approbator > 0 ? 'INNER JOIN items_booking_approvers AS requested_approver ON (requested_approver.item_id = items.id AND requested_approver.userid = :approbator)
+            $approver > 0 ? 'INNER JOIN items_booking_approvers AS requested_approver ON (requested_approver.item_id = items.id AND requested_approver.userid = :approver)
                 INNER JOIN users2teams AS requested_team ON (requested_team.users_id = requested_approver.userid AND requested_team.teams_id = items.team AND requested_team.is_archived = 0)
                 INNER JOIN users AS requested_user ON (requested_user.userid = requested_approver.userid AND requested_user.validated = 1 AND (requested_user.valid_until IS NULL OR requested_user.valid_until > NOW()))' : '',
             implode(' ', $this->filterSqlParts)

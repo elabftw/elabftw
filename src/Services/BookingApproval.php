@@ -27,11 +27,9 @@ use Elabftw\Models\Users\Users;
 use PDO;
 use Throwable;
 
-use function array_filter;
 use function array_map;
 use function array_merge;
 use function array_unique;
-use function array_values;
 use function count;
 use function filter_var;
 use function in_array;
@@ -53,9 +51,7 @@ final class BookingApproval
         if ((int) $item['requires_booking_approval'] !== 1) {
             return false;
         }
-        $helper = new TeamsHelper((int) $item['team']);
-        return $helper->isActiveUserInTeam($userid)
-            && $this->isDesignatedUser((int) $item['id'], $userid);
+        return in_array($userid, $this->getApprovers($item), true);
     }
 
     public function initialStatus(array $item, int $userid): BookingApprovalStatus
@@ -72,20 +68,18 @@ final class BookingApproval
             : BookingApprovalStatus::Pending;
     }
 
-    public function getApprobators(int $itemId): array
-    {
-        $req = $this->Db->prepare('SELECT userid FROM items_booking_approvers WHERE item_id = :item ORDER BY userid');
-        $req->bindValue(':item', $itemId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return array_map('intval', $req->fetchAll(PDO::FETCH_COLUMN));
-    }
-
     /** Active designated approvers belonging to the resource team. */
     public function getApprovers(array $item): array
     {
-        $ids = $this->getApprobators((int) $item['id']);
-        $helper = new TeamsHelper((int) $item['team']);
-        return array_values(array_filter($ids, static fn(int $id): bool => $helper->isActiveUserInTeam($id)));
+        $req = $this->Db->prepare('SELECT a.userid FROM items_booking_approvers AS a
+            INNER JOIN users2teams AS ut ON (ut.users_id = a.userid AND ut.teams_id = :team AND ut.is_archived = 0)
+            INNER JOIN users AS u ON (u.userid = a.userid AND u.validated = 1
+                AND (u.valid_until IS NULL OR u.valid_until > NOW()))
+            WHERE a.item_id = :item ORDER BY a.userid');
+        $req->bindValue(':item', $item['id'], PDO::PARAM_INT);
+        $req->bindValue(':team', $item['team'], PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return array_map('intval', $req->fetchAll(PDO::FETCH_COLUMN));
     }
 
     /** Configure booking approval within the resource PATCH transaction. */
@@ -100,18 +94,18 @@ final class BookingApproval
         if ($requiresApproval !== 0 && $requiresApproval !== 1) {
             throw new ImproperActionException('Invalid requires_booking_approval value.');
         }
-        if (!isset($params['approbators']) || !is_array($params['approbators'])) {
+        if (!isset($params['approvers']) || !is_array($params['approvers'])) {
             throw new ImproperActionException('Expected an array of approver user IDs.');
         }
-        $approbators = array();
-        foreach ($params['approbators'] as $id) {
+        $approvers = array();
+        foreach ($params['approvers'] as $id) {
             $id = filter_var($id, FILTER_VALIDATE_INT);
             if ($id === false || $id < 1 || !$helper->isActiveUserInTeam($id)) {
                 throw new ImproperActionException('All approvers must be active members of the resource team.');
             }
-            $approbators[$id] = $id;
+            $approvers[$id] = $id;
         }
-        if ($requiresApproval === 1 && !$approbators) {
+        if ($requiresApproval === 1 && !$approvers) {
             throw new ImproperActionException('Select at least one approver.');
         }
 
@@ -133,7 +127,7 @@ final class BookingApproval
         $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $req = $this->Db->prepare('INSERT INTO items_booking_approvers(item_id, userid) VALUES(:item, :userid)');
-        foreach ($approbators as $userid) {
+        foreach ($approvers as $userid) {
             $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $req->bindValue(':userid', $userid, PDO::PARAM_INT);
             $this->Db->execute($req);
@@ -282,14 +276,5 @@ final class BookingApproval
     private function getRequestKey(array $event): string
     {
         return $event['recurrence_id'] ?? ('event:' . $event['id']);
-    }
-
-    private function isDesignatedUser(int $itemId, int $userid): bool
-    {
-        $req = $this->Db->prepare('SELECT 1 FROM items_booking_approvers WHERE item_id = :item AND userid = :userid');
-        $req->bindValue(':item', $itemId, PDO::PARAM_INT);
-        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->fetchColumn() !== false;
     }
 }

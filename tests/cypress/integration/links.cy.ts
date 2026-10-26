@@ -20,7 +20,7 @@
 //    cy.request({ method: 'POST', url: '/api/v2/experiments', body: { title } });
 //    // add link to the new experiment
 //    cy.get('#addLinkExpInput').type(title);
-//    cy.get('.ui-menu-item-wrapper').contains(title).click();
+//    cy.get('.elab-autocomplete:visible [role="option"]').contains(title).click();
 //    cy.get('button[aria-label="Add link to an experiment"]').click();
 //    cy.get('#experimentsLinksDiv').should('contain.text', title);
 //    // remove link to the new experiment
@@ -31,7 +31,7 @@
 //  const linkItem = (title: string) => {
 //    cy.request({ method: 'POST', url: '/api/v2/items', body: { title } });
 //    cy.get('#addLinkItemsInput').type(title);
-//    cy.get('.ui-menu-item-wrapper').contains(title).click();
+//    cy.get('.elab-autocomplete:visible [role="option"]').contains(title).click();
 //    cy.get('button[aria-label="Add link to a resource"]').click();
 //    cy.get('#itemsLinksDiv').should('contain.text', title);
 //    cy.get('#linksDiv [data-action="destroy-link"][data-endpoint="items_links"]').first().click();
@@ -41,7 +41,7 @@
 //  const linkCompound = (title: string) => {
 //    cy.request({ method: 'POST', url: '/api/v2/compounds', body: { name: title } });
 //    cy.get('#addCompoundInput').type(title);
-//    cy.get('.ui-menu-item-wrapper').contains(title).click();
+//    cy.get('.elab-autocomplete:visible [role="option"]').contains(title).click();
 //    cy.get('button[aria-label="Add link to a compound"]').click();
 //    cy.get('#compoundDiv').should('contain.text', title);
 //    cy.get('#compoundDiv [data-action="delete-compound-link"]').first().click();

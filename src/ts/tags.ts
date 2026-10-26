@@ -5,11 +5,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import 'jquery-ui/ui/widgets/autocomplete';
 import { Malle } from '@deltablot/malle';
 import FavTag from './FavTag.class';
 import i18next from './i18n';
-import { addAutocompleteToTagInputs, reloadElements } from './misc';
+import { reloadElements } from './misc';
 import { Action, Model } from './interfaces';
 import { ApiC } from './api';
 import { entity } from './getEntity';
@@ -64,13 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   // END CREATE FAVORITE TAG
-
-  // AUTOCOMPLETE
-  addAutocompleteToTagInputs();
-  if (document.getElementById('favtagsPanel')) {
-    new MutationObserver(() => addAutocompleteToTagInputs())
-      .observe(document.getElementById('favtagsPanel'), {childList: true, subtree: true});
-  }
 
   // make the tag editable (on admin page)
   const malleableTags = new Malle({

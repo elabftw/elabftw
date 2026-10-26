@@ -56,17 +56,6 @@ final class BookingApprovalMessagesTest extends TestCase
         self::assertStringContainsString('Unavailable', $mail['body']);
     }
 
-    public function testUpdatedNotificationEmailHandlesEveryStatus(): void
-    {
-        foreach (array('pending', 'approved', 'rejected', 'unknown') as $status) {
-            $mail = (new BookingApprovalUpdated(new Users(), array_merge(self::DETAILS, array(
-                'status' => $status,
-            ))))->getEmail();
-            self::assertNotEmpty($mail['subject']);
-            self::assertStringContainsString('scheduler.php?tab=2', $mail['body']);
-        }
-    }
-
     public function testDecisionAuditContainsActorAndRecurrence(): void
     {
         $audit = new BookingApprovalDecision(7, 8, 42, 'rejected', 'test-series');

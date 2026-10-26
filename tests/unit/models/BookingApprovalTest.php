@@ -11,6 +11,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BookingApprovalStatus;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\BookingApproval;
 use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
@@ -25,13 +26,7 @@ final class BookingApprovalTest extends TestCase
 
     public function testConfiguredApproverCanApproveButTeamAdminCannotOverride(): void
     {
-        $item = $this->getFreshBookableItem(2);
-        $approver = $this->getUserInTeam(2);
-        $admin = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array(
-            'requires_booking_approval' => 1,
-            'approvers' => array($approver->userid),
-        ));
+        [$item, $approver, $admin] = $this->getApprovalFixture();
 
         $policy = new BookingApproval($approver);
         self::assertTrue($policy->canApprove($item->entityData, $approver->userid));
@@ -61,10 +56,7 @@ final class BookingApprovalTest extends TestCase
 
     public function testPendingRequestBlocksSlotAndDisablingApprovalConfirmsIt(): void
     {
-        $item = $this->getFreshBookableItem(2);
-        $approver = $this->getUserInTeam(2);
-        $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approver->userid)));
+        [$item, $approver, $requester] = $this->getApprovalFixture();
         $start = new DateTimeImmutable('+4 days 10:00');
         $params = array('start' => $start->format('c'), 'end' => $start->modify('+1 hour')->format('c'));
         $scheduler = new Scheduler(new Items($requester, $item->id));
@@ -226,10 +218,7 @@ final class BookingApprovalTest extends TestCase
 
     public function testRejectedBookingRetainsReasonAndFreesSlot(): void
     {
-        $item = $this->getFreshBookableItem(2);
-        $approver = $this->getUserInTeam(2);
-        $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approver->userid)));
+        [$item, $approver, $requester] = $this->getApprovalFixture();
         $start = new DateTimeImmutable('+6 days 10:00');
         $params = array('start' => $start->format('c'), 'end' => $start->modify('+1 hour')->format('c'));
         $scheduler = new Scheduler(new Items($requester, $item->id));
@@ -248,10 +237,7 @@ final class BookingApprovalTest extends TestCase
 
     public function testRecurringBookingDecisionAppliesToAllOccurrences(): void
     {
-        $item = $this->getFreshBookableItem(2);
-        $approver = $this->getUserInTeam(2);
-        $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approver->userid)));
+        [$item, $approver, $requester] = $this->getApprovalFixture();
         $start = new DateTimeImmutable('+7 days 10:00');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(
             'start' => $start->format('c'),
@@ -282,10 +268,7 @@ final class BookingApprovalTest extends TestCase
 
     public function testBookingDecisionCannotBeRepeated(): void
     {
-        $item = $this->getFreshBookableItem(2);
-        $approver = $this->getUserInTeam(2);
-        $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approver->userid)));
+        [$item, $approver, $requester] = $this->getApprovalFixture();
         $start = new DateTimeImmutable('+8 days 10:00');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(
             'start' => $start->format('c'),
@@ -300,10 +283,7 @@ final class BookingApprovalTest extends TestCase
 
     public function testOverduePendingBookingCanStillBeApproved(): void
     {
-        $item = $this->getFreshBookableItem(2);
-        $approver = $this->getUserInTeam(2);
-        $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approver->userid)));
+        [$item, $approver, $requester] = $this->getApprovalFixture();
         $start = new DateTimeImmutable('+9 days 10:00');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(
             'start' => $start->format('c'),
@@ -319,10 +299,7 @@ final class BookingApprovalTest extends TestCase
 
     public function testMyRequestsShowsRejectedBookingsAndTheRejectionReason(): void
     {
-        $item = $this->getFreshBookableItem(2);
-        $approver = $this->getUserInTeam(2);
-        $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approver->userid)));
+        [$item, $approver, $requester] = $this->getApprovalFixture();
         $start = new DateTimeImmutable('+10 days 10:00');
         $end = $start->modify('+1 hour');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(
@@ -343,10 +320,7 @@ final class BookingApprovalTest extends TestCase
 
     public function testPendingListContainsOnlyBookingsAssignedToTheApprover(): void
     {
-        $item = $this->getFreshBookableItem(2);
-        $approver = $this->getUserInTeam(2);
-        $requester = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approver->userid)));
+        [$item, $approver, $requester] = $this->getApprovalFixture();
         $start = new DateTimeImmutable('+11 days 10:00');
         $end = $start->modify('+1 hour');
         $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, array(
@@ -369,5 +343,15 @@ final class BookingApprovalTest extends TestCase
         $otherRequests = $otherScheduler->readAll($otherQuery);
         self::assertCount(1, $otherRequests);
         self::assertSame(0, (int) $otherRequests[0]['canapprove']);
+    }
+
+    /** @return array{Items, Users, Users} */
+    private function getApprovalFixture(): array
+    {
+        $item = $this->getFreshBookableItem(2);
+        $approver = $this->getUserInTeam(2);
+        $requester = $this->getUserInTeam(2, admin: 1);
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approver->userid)));
+        return array($item, $approver, $requester);
     }
 }

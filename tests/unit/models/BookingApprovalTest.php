@@ -98,7 +98,7 @@ final class BookingApprovalTest extends TestCase
             'approvers' => array($writer->userid),
         ));
 
-        self::assertSame(array((int) $writer->userid), $writerItem->getBookingApproverIds());
+        self::assertSame(array((int) $writer->userid), $writerItem->readOne()['approvers']);
         self::assertSame(1, (int) (new Items($owner, $item->id))->entityData['requires_booking_approval']);
     }
 
@@ -115,7 +115,6 @@ final class BookingApprovalTest extends TestCase
         $updated = new Items($item->Users, $item->id);
         self::assertSame(3, (int) $updated->entityData['book_max_slots']);
         self::assertSame(1, (int) $updated->entityData['requires_booking_approval']);
-        self::assertSame(array((int) $approver->userid), $updated->getBookingApproverIds());
         self::assertSame(array((int) $approver->userid), $updated->readOne()['approvers']);
     }
 
@@ -140,7 +139,7 @@ final class BookingApprovalTest extends TestCase
         $updated = new Items($item->Users, $item->id);
         self::assertSame($originalSlots, (int) $updated->entityData['book_max_slots']);
         self::assertSame(0, (int) $updated->entityData['requires_booking_approval']);
-        self::assertSame(array(), $updated->getBookingApproverIds());
+        self::assertSame(array(), $updated->readOne()['approvers']);
     }
 
     public function testApprovalRequiredAlsoPreventsOverlappingRecurrenceOccurrences(): void

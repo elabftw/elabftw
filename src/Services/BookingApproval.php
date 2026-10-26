@@ -117,7 +117,8 @@ final class BookingApproval
         if ($previousRequired === false) {
             throw new ImproperActionException('Resource not found.');
         }
-        $oldApprovers = $this->getApprovers($Item->entityData);
+        $oldApprovers = (int) $previousRequired === 1 && $requiresApproval === 0
+            ? $this->getApprovers($Item->entityData) : array();
         $req = $this->Db->prepare('UPDATE items SET requires_booking_approval = :required WHERE id = :id AND team = :team');
         $req->bindValue(':required', $requiresApproval, PDO::PARAM_INT);
         $req->bindValue(':id', $Item->id, PDO::PARAM_INT);

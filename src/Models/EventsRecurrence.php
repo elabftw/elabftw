@@ -84,9 +84,6 @@ final class EventsRecurrence extends AbstractRest
             ? $this->Scheduler->filterTitle((string) $params['title'])
             : null;
         $changeDateTime = array_key_exists('start', $params) || array_key_exists('end', $params);
-        if ($changeDateTime && (int) $event['approval_status'] !== 0) {
-            throw new ImproperActionException('Approval-controlled reservations cannot change time.');
-        }
         if ($newTitle === null && !$changeDateTime) {
             return $this->Scheduler->readOne();
         }
@@ -102,6 +99,9 @@ final class EventsRecurrence extends AbstractRest
             $recurrenceId = $event['recurrence_id'];
             if ($recurrenceId === null) {
                 throw new ImproperActionException(_('This reservation no longer belongs to a recurrence.'));
+            }
+            if ($changeDateTime && (int) $event['approval_status'] !== 0) {
+                throw new ImproperActionException('Approval-controlled reservations cannot change time.');
             }
             $allEvents = $this->readRecurrenceEvents($recurrenceId);
             $this->assertRecurrenceOwnership($allEvents, $event);

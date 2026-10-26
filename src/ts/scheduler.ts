@@ -918,7 +918,7 @@ if (calendarEl) {
             const overdue = Number(data.approval_status) === 1 && DateTime.fromSQL(data.start).toMillis() < DateTime.now().toMillis();
             const colors = overdue ? ['lightred', 'darkred', 'dangerred'] : (statusColors[Number(data.approval_status)] ?? statusColors[3]);
             const badge = element('span', 'badge p-2', overdue
-              ? i18next.t('booking-status-overdue', { defaultValue: 'Overdue' })
+              ? i18next.t('booking-status-overdue')
               : i18next.t(statusNames[Number(data.approval_status)] ?? 'booking-status-unknown'));
             badge.style.backgroundColor = `var(--${colors[0]})`;
             badge.style.color = `var(--${colors[1]})`;

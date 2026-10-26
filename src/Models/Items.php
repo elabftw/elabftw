@@ -47,17 +47,11 @@ final class Items extends AbstractConcreteEntity
 
     public EntityType $entityType = EntityType::Items;
 
-    /** The configured individual approvers, for the resource settings UI. */
-    public function getBookingApproverIds(): array
-    {
-        return $this->id === null ? array() : (new BookingApproval($this->Users))->getApprovers($this->entityData);
-    }
-
     #[Override]
     public function readOne(): array
     {
         $this->entityData = parent::readOne();
-        $this->entityData['approvers'] = $this->getBookingApproverIds();
+        $this->entityData['approvers'] = (new BookingApproval($this->Users))->getApprovers($this->entityData);
         return $this->entityData;
     }
 
@@ -82,7 +76,6 @@ final class Items extends AbstractConcreteEntity
                 $this->Db->rollBack();
                 throw $e;
             }
-            $this->setId($this->id);
             return $this->readOne();
         }
         return parent::patch($action, $params);

@@ -246,6 +246,8 @@ final class Scheduler extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $this->filterSqlParts = array();
+        $this->filterBindings = array();
         $query = $queryParams?->getQuery();
         $statuses = $query?->getString('approval_status') ?? '';
         if ($statuses !== '' && !preg_match('/^[0-3](,[0-3])*$/', $statuses)) {
@@ -260,19 +262,15 @@ final class Scheduler extends AbstractRest
         if ($approver > 0) {
             $this->filterBindings['approver'] = $approver;
         }
-        // prepare filters for the scheduler view
-        if ($queryParams !== null) {
-            $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('category'));
-            $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
-            // handle multiple items
-            $itemParams = $queryParams->getQuery()->all('items');
-            $ids = array_filter(array_map('intval', $itemParams)); // force numeric IDs
-            $this->appendItemsIdsToSql($ids);
+        $itemParams = $query?->all('items') ?? array();
+        if ($query !== null) {
+            $this->appendFilterSql('items.category', 'category', $query->getInt('category'));
+            $this->appendFilterSql('team_events.userid', 'ownerid', $query->getInt('eventOwner'));
+            $this->appendItemsIdsToSql(array_filter(array_map('intval', $itemParams)));
         }
-        // apply scope for events
-        $itemParams = $queryParams?->getQuery()->all('items');
-        $itemId = !empty($itemParams) ? (int) $itemParams[0] : 0;
-        $scopeInt = $this->getScope($itemId);
+        // if an item is selected, we force the events scope to 'Everything'
+        $scopeInt = (int) ($itemParams[0] ?? 0) > 0 ? Scope::Everything->value
+            : ($this->Items->Users->userData['scope_events'] ?? Scope::Everything->value);
         // Explicit booking filters bypass the saved scheduler scope.
         if (!$isRequestList && $scopeInt === Scope::User->value) {
             $this->appendFilterSql('team_events.userid', 'scope_userid', $this->Items->Users->userData['userid']);
@@ -699,15 +697,6 @@ final class Scheduler extends AbstractRest
             $this->filterBindings[$key] = $id;
         }
         $this->filterSqlParts[] = 'AND items.id IN (' . implode(',', $placeholders) . ')';
-    }
-
-    private function getScope(int $queryParamsItem): int
-    {
-        // if there is an item selected, we force the events scope to everything
-        if ($queryParamsItem > 0) {
-            return Scope::Everything->value;
-        }
-        return $this->Items->Users->userData['scope_events'] ?? Scope::Everything->value;
     }
 
     /**

@@ -1450,11 +1450,11 @@ components:
         canapprove:
           type: integer
           enum: [0, 1]
-          description: Whether the current user is a designated active approver for this pending event.
+          description: Whether the authenticated user may approve this pending booking.
         approval_status:
           type: integer
           enum: [0, 1, 2, 3]
-          description: 0 pending, 1 approved, 2 rejected, 3 expired (reserved).
+          description: 0 no approval required, 1 pending, 2 approved, 3 rejected. Overdue is a UI label for past pending events, not a stored status.
         approved_by:
           type: integer
           nullable: true
@@ -1466,11 +1466,7 @@ components:
         approval_comment:
           type: string
           nullable: true
-          description: Reason for rejection, visible in the user's own booking requests.
-        requires_booking_approval:
-          type: integer
-          enum: [0, 1]
-          description: Whether bookings of this resource require approval.
+          description: Optional decision reason; restricted to the booking owner in event listings.
         created_at:
           type: string
           format: date-time
@@ -1902,12 +1898,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/entity'
         - $ref: '#/components/schemas/item_editable'
-        - type: object
-          properties:
-            requires_booking_approval:
-              type: integer
-              enum: [0, 1]
-              description: Whether bookings of this resource require approval.
     link:
       type: object
       properties:
@@ -5459,24 +5449,37 @@ paths:
     summary: For scheduler booking.
     get:
       tags: ['Events']
-      summary: Read all events in the team.
+      summary: Read bookable resource events.
       operationId: read-events
       parameters:
-        - name: approval_view
+        - name: approval_status
           in: query
-          description: 'my: current user booking history; pending: requests awaiting a decision from the current designated approver.'
+          description: Comma-separated statuses (0 no approval, 1 pending, 2 approved, 3 rejected). Defaults to 0,1,2; explicit booking filters include history.
           schema:
             type: string
-            enum: [my, pending]
+            pattern: '^[0-3](,[0-3])*$'
+          example: '1,2,3'
+        - name: userid
+          in: query
+          description: Filter by booking owner user ID; independent of the authenticated user's ID.
+          schema:
+            type: integer
+            minimum: 1
+        - name: approver
+          in: query
+          description: Filter by active designated approver user ID. This does not grant approval permissions to the requester.
+          schema:
+            type: integer
+            minimum: 1
         - name: start
           in: query
-          description: Beginning of the requested date range (YYYY-MM-DD).
+          description: Beginning of the date range (YYYY-MM-DD). Without a date range, booking filters cover all dates.
           schema:
             type: string
             format: date
         - name: end
           in: query
-          description: End of the requested date range (YYYY-MM-DD).
+          description: End of the date range (YYYY-MM-DD). Without a date range, booking filters cover all dates.
           schema:
             type: string
             format: date

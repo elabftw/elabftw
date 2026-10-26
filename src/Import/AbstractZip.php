@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Elabftw\Tools;
-use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use League\Flysystem\FilesystemOperator;
@@ -160,6 +159,34 @@ abstract class AbstractZip extends AbstractImport
     }
 
     /**
+     * Reject paths which can escape the per-import directory on any supported backend.
+     */
+    final protected function assertArchivePathIsSafe(string $rawPath): void
+    {
+        // Decode repeatedly so double-encoded traversal cannot become dangerous
+        // if another storage layer decodes the path in the future.
+        $decodedPath = $rawPath;
+        do {
+            $previousPath = $decodedPath;
+            $decodedPath = rawurldecode($decodedPath);
+        } while ($decodedPath !== $previousPath);
+
+        // ZIP member names use forward slashes. Backslashes are rejected instead
+        // of normalized so their meaning cannot vary between storage backends.
+        $normalizedPath = str_replace('\\', '/', $decodedPath);
+        if (
+            $normalizedPath === ''
+            || str_contains($decodedPath, "\0")
+            || str_contains($decodedPath, '\\')
+            || str_starts_with($normalizedPath, '/')
+            || preg_match('/^[a-zA-Z]:/', $normalizedPath) === 1
+            || in_array('..', explode('/', $normalizedPath), true)
+        ) {
+            throw new ImproperActionException('The archive contains an unsafe path.');
+        }
+    }
+
+    /**
      * Check the complete archive before writing anything. ZIP sizes are only
      * an early rejection check; extraction also checks actual stream bytes.
      */
@@ -186,7 +213,7 @@ abstract class AbstractZip extends AbstractImport
                 throw new ImproperActionException('The archive exceeds the total uncompressed size limit.');
             }
             $totalBytes += $stat['size'];
-            if ($stat['size'] / max(1, $stat['comp_size']) > $this->limits->maxCompressionRatio) {
+            if ($stat['size'] > 1024 * 1024 && $stat['size'] / max(1, $stat['comp_size']) > $this->limits->maxCompressionRatio) {
                 throw new ImproperActionException('An archive member exceeds the compression ratio limit.');
             }
         }
@@ -239,34 +266,6 @@ abstract class AbstractZip extends AbstractImport
             } finally {
                 $limited->close();
             }
-        }
-    }
-
-    /**
-     * Reject paths which can escape the per-import directory on any supported backend.
-     */
-    private function assertArchivePathIsSafe(string $rawPath): void
-    {
-        // Decode repeatedly so double-encoded traversal cannot become dangerous
-        // if another storage layer decodes the path in the future.
-        $decodedPath = $rawPath;
-        do {
-            $previousPath = $decodedPath;
-            $decodedPath = rawurldecode($decodedPath);
-        } while ($decodedPath !== $previousPath);
-
-        // ZIP member names use forward slashes. Backslashes are rejected instead
-        // of normalized so their meaning cannot vary between storage backends.
-        $normalizedPath = str_replace('\\', '/', $decodedPath);
-        if (
-            $normalizedPath === ''
-            || str_contains($decodedPath, "\0")
-            || str_contains($decodedPath, '\\')
-            || str_starts_with($normalizedPath, '/')
-            || preg_match('/^[a-zA-Z]:/', $normalizedPath) === 1
-            || in_array('..', explode('/', $normalizedPath), true)
-        ) {
-            throw new ImproperActionException('The archive contains an unsafe path.');
         }
     }
 }

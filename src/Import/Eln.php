@@ -844,11 +844,17 @@ class Eln extends AbstractZip
 
     private function importFile(array $file): void
     {
-        if (isset($this->importedUploads[$file['@id']])) {
+        $id = (string) $file['@id'];
+        try {
+            $this->assertArchivePathIsSafe($id);
+        } catch (ImproperActionException) {
+            $this->logger->error(sprintf('Skipping file with unsafe @id: %s', $id));
             return;
         }
-        // note: we cannot have path transversal vuln here because we use a temporary filesystem that cannot be escaped
-        $filepath = $this->tmpDir . '/' . basename($this->root) . '/' . $file['@id'];
+        if (isset($this->importedUploads[$id])) {
+            return;
+        }
+        $filepath = $this->tmpDir . '/' . basename($this->root) . '/' . $id;
         $this->logger->debug(sprintf('Importing file: %s', $filepath));
         // fix for bloxberg attachments containing : character
         $filepath = strtr($filepath, ':', '_');

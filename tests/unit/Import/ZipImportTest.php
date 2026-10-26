@@ -11,6 +11,7 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\UnableToWriteFile;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ReflectionClass;
 use ReflectionMethod;
@@ -59,8 +60,77 @@ class ZipImportTest extends TestCase
             'directories count as members' => array(new ZipLimits(maxMembers: 1), array('root/' => '', 'root/file' => 'a'), 'member count'),
             'member bytes' => array(new ZipLimits(maxMemberBytes: 4), array('root/file' => '12345'), 'member exceeds'),
             'total bytes across members' => array(new ZipLimits(maxMemberBytes: 4, maxTotalBytes: 7), array('root/a' => '1234', 'root/b' => '5678'), 'total uncompressed'),
-            'compression ratio' => array(new ZipLimits(maxCompressionRatio: 2), array('root/file' => str_repeat('a', 65536)), 'compression ratio'),
+            'compression ratio' => array(new ZipLimits(maxCompressionRatio: 2), array('root/file' => str_repeat('a', 1024 * 1024 + 1)), 'compression ratio'),
             'unsafe path' => array(new ZipLimits(), array('../outside' => 'a'), 'unsafe path'),
+        );
+    }
+
+    /**
+     * @dataProvider smallMemberSizeProvider
+     */
+    public function testSmallMembersAreExemptFromCompressionRatioLimit(int $size): void
+    {
+        $fs = new Filesystem(new InMemoryFilesystemAdapter());
+        $payload = str_repeat('a', $size);
+        $importer = $this->createImporter(
+            $this->archive(array('root/ro-crate-metadata.json' => '{"@graph":[]}', 'root/payload' => $payload)),
+            $fs,
+            new ZipLimits(maxCompressionRatio: 2),
+        );
+        try {
+            $importer->prepare();
+            $directory = new ReflectionProperty(AbstractZip::class, 'tmpDir')->getValue($importer);
+            $this->assertSame($payload, $fs->read($directory . '/root/payload'));
+        } finally {
+            $importer->cleanup();
+        }
+    }
+
+    public static function smallMemberSizeProvider(): array
+    {
+        return array(
+            'below 1 MiB' => array(65536),
+            'exactly 1 MiB' => array(1024 * 1024),
+        );
+    }
+
+    /**
+     * @dataProvider unsafeFileIdProvider
+     */
+    public function testRejectsUnsafeFileIdBeforeReadingStorage(string $id): void
+    {
+        foreach (array(Eln::class, TrustedEln::class) as $class) {
+            $fs = $this->createMock(FilesystemOperator::class);
+            $fs->expects($this->never())->method('readStream');
+            $logger = $this->createMock(LoggerInterface::class);
+            $logger->expects($this->once())->method('error')->with('Skipping file with unsafe @id: ' . $id);
+            $importer = new ReflectionClass($class)->newInstanceWithoutConstructor();
+            new ReflectionProperty(AbstractZip::class, 'tmpFs')->setValue($importer, $fs);
+            new ReflectionProperty(AbstractZip::class, 'logger')->setValue($importer, $logger);
+            new ReflectionProperty(AbstractZip::class, 'tmpDir')->setValue($importer, 'workspace');
+            new ReflectionProperty(Eln::class, 'root')->setValue($importer, 'crate');
+
+            new ReflectionMethod(Eln::class, 'importFile')->invoke($importer, array('@id' => $id));
+        }
+    }
+
+    public static function unsafeFileIdProvider(): array
+    {
+        return array(
+            'empty' => array(''),
+            'NUL' => array("file\0name"),
+            'parent traversal' => array('../../known-export'),
+            'nested parent traversal' => array('uploads/../../../known-export'),
+            'backslash traversal' => array('..\\..\\known-export'),
+            'backslash separator' => array('uploads\\known-export'),
+            'absolute path' => array('/known-export'),
+            'Windows drive path' => array('C:/known-export'),
+            'Windows drive-relative path' => array('C:known-export'),
+            'encoded traversal' => array('%2e%2e/%2e%2e/known-export'),
+            'double encoded traversal' => array('%252e%252e/%252e%252e/known-export'),
+            'encoded absolute path' => array('%2fknown-export'),
+            'encoded backslash' => array('uploads%5cknown-export'),
+            'encoded NUL' => array('file%00name'),
         );
     }
 

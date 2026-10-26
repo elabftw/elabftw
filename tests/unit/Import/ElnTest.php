@@ -111,7 +111,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->assertIsString($archivePath);
         $archive = new ZipArchive();
         $this->assertTrue($archive->open($archivePath, ZipArchive::OVERWRITE));
-        $this->assertTrue($archive->addFromString('ro-crate-metadata.json', '{}'));
+        $this->assertTrue($archive->addFromString('crate/ro-crate-metadata.json', '{"@graph":[]}'));
         $this->assertTrue($archive->addFromString(sprintf($unsafePath, $target), 'poisoned export'));
         $this->assertTrue($archive->close());
 
@@ -128,13 +128,14 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 new Users(1, 1),
                 new Users(1, 1),
                 $uploadedFile,
-                $this->fs,
+                $exportsFs,
                 $this->logger,
                 EntityType::Experiments,
             );
             $Import->prepare();
             $this->fail('An ELN archive containing an unsafe path was accepted.');
-        } catch (ImproperActionException) {
+        } catch (ImproperActionException $e) {
+            $this->assertSame('The archive contains an unsafe path.', $e->getMessage());
             $this->assertSame('original export', $exportsFs->read($target));
         } finally {
             $exportsFs->delete($target);

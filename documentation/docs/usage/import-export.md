@@ -51,7 +51,7 @@ To protect server resources, `.eln` imports through the web interface enforce th
 | Archive members (files and directories) | 10,000 | `IMPORT_MAX_MEMBERS` |
 | Uncompressed size of a single file | 1 GiB | `IMPORT_MAX_MEMBER_BYTES` |
 | Total uncompressed size | 1 GiB | `IMPORT_MAX_TOTAL_BYTES` |
-| Compression ratio of a single file | 1,000:1 | `IMPORT_MAX_COMPRESSION_RATIO` |
+| Compression ratio (files larger than 1 MiB) | 1,000:1 | `IMPORT_MAX_COMPRESSION_RATIO` |
 | Size of `ro-crate-metadata.json` | 32 MiB | `IMPORT_MAX_METADATA_BYTES` |
 
 Sysadmins can adjust these limits through the corresponding environment variables. The compressed upload must also fit the server's upload size limit.

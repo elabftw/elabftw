@@ -890,7 +890,18 @@ if (calendarEl) {
         ['firstlevel', 'mediumstrong', 'secondlevel'],
       ];
       const columnDefs: ColDef<BookingRequestRow>[] = [
-        { field: 'item_title', headerName: i18next.t('item'), flex: 1, minWidth: 160 },
+        { field: 'item_title', headerName: i18next.t('item'), flex: 1, minWidth: 160,
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
+            if (!data) return null;
+            if (kind !== 'my' || Number(data.approval_status) !== 2 || !data.approval_comment) return data.item_title;
+            const container = element('div', 'd-flex flex-column justify-content-center h-100');
+            container.style.lineHeight = '1.5';
+            container.appendChild(element('div', 'text-truncate', data.item_title));
+            const reason = element('div', 'smallgray text-truncate', `${i18next.t('booking-reason')}: ${data.approval_comment}`);
+            reason.title = data.approval_comment;
+            container.appendChild(reason);
+            return container;
+          } },
         ...(kind === 'pending' ? [{ field: 'fullname' as const, headerName: i18next.t('booking-requested-by'), flex: 1, minWidth: 150 }] : []),
         { field: 'start', headerName: i18next.t('booking-when'), flex: 2, minWidth: 350,
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingSchedule(data) : null },

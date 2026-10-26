@@ -54,6 +54,14 @@ final class Items extends AbstractConcreteEntity
     }
 
     #[Override]
+    public function readOne(): array
+    {
+        $this->entityData = parent::readOne();
+        $this->entityData['approvers'] = $this->getBookingApproverIds();
+        return $this->entityData;
+    }
+
+    #[Override]
     public function patch(Action $action, array $params): array
     {
         if ($action === Action::Update && isset($params['requires_booking_approval'])) {

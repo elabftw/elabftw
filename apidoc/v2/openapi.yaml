@@ -1837,11 +1837,11 @@ components:
         requires_booking_approval:
           type: integer
           enum: [0, 1]
-          description: Require booking approval. When updating this field, also supply userids; disabling it approves pending requests.
-        userids:
+          description: Require booking approval. When updating this field, also supply approvers; disabling it approves pending requests.
+        approvers:
           type: array
           uniqueItems: true
-          description: PATCH-only list of active team-member approver IDs, with at least one if approval is enabled. Requires resource write access.
+          description: Active approver user IDs, returned by GET /items/{id} and accepted by PATCH (at least one when approval is enabled). Updating requires resource write access.
           items:
             type: integer
             minimum: 1

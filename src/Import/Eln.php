@@ -35,6 +35,7 @@ use Elabftw\Models\Compounds;
 use Elabftw\Models\UploadGroups;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\ContentParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\TagParam;
 use Elabftw\Services\Filter;
@@ -43,16 +44,18 @@ use Elabftw\Services\OpenBabelFingerprinter;
 use GuzzleHttp\Client;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
-use League\Flysystem\UnableToReadFile;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
+use ZipArchive;
 
 use function array_find;
+use function array_is_list;
 use function array_values;
 use function basename;
 use function is_array;
 use function json_decode;
+use function min;
 use function rawurlencode;
 use function sprintf;
 use function strtr;
@@ -67,7 +70,6 @@ use function is_string;
 use function json_encode;
 use function parse_str;
 use function parse_url;
-use function preg_replace;
 use function str_replace;
 use function str_starts_with;
 use function ucfirst;
@@ -80,7 +82,7 @@ class Eln extends AbstractZip
 {
     protected const string TAGS_SEPARATOR = ',';
 
-    // path where the metadata.json file lives (first folder found in archive)
+    // archive directory containing ro-crate-metadata.json
     private string $root;
 
     // complete graph: all nodes from metadata json
@@ -105,6 +107,9 @@ class Eln extends AbstractZip
 
     private array $importedUploads = array();
 
+    /** @var list<array{changelog: Changelog, changes: array}> */
+    private array $changelogsToRestore = array();
+
     public function __construct(
         protected Users $requester,
         protected Users $targetUser,
@@ -127,7 +132,6 @@ class Eln extends AbstractZip
             $fs,
             $logger,
         );
-        $this->count = $this->preProcess();
         // we might have been forced to cast to int a null value, so bring it back to null
         if ($this->category === 0) {
             $this->category = null;
@@ -149,75 +153,12 @@ class Eln extends AbstractZip
     #[Override]
     public function import(): int
     {
-        // loop over each hasPart of the root node
-        // this is the main import loop
-        $current = 1;
-        foreach ($this->crateNodeHasPart as $part) {
-            $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $this->count));
-            $this->importRootDataset($this->getNodeFromId($part['@id']));
-            $current++;
+        try {
+            $this->prepare();
+            return $this->importDatasets();
+        } finally {
+            $this->cleanup();
         }
-
-        // NOW CREATE THE LINKS
-        // TODO avoid having 2 foreach loops...
-        $result = array();
-        foreach ($this->linksToCreate as $link) {
-            foreach ($this->insertedEntities as $entity) {
-                if ($link['link_@id'] === $entity['item_@id']) {
-                    // grab the link node so we can get its url
-                    $linkNode = $this->getNodeFromId($link['link_@id']);
-                    $result[] = array(
-                        'origin_entity_type' => $link['origin_entity_type'],
-                        'origin_id' => $link['origin_id'],
-                        'link_id' => $entity['id'],
-                        'link_previous_url' => $linkNode['url'],
-                        'link_entity_type' => $entity['entity_type'],
-                        'link_original_id' => $link['link_@id'],
-                    );
-                    break;
-                }
-            }
-        }
-
-        foreach ($result as $linkToCreate) {
-            $entity = $linkToCreate['origin_entity_type']->toInstance($this->Entity->Users, $linkToCreate['origin_id'], true, true);
-            if ($linkToCreate['link_entity_type'] === EntityType::Experiments) {
-                $entity->ExperimentsLinks->setId($linkToCreate['link_id']);
-                $entity->ExperimentsLinks->postAction(Action::Create, array());
-            } else {
-                $entity->ItemsLinks->setId($linkToCreate['link_id']);
-                $entity->ItemsLinks->postAction(Action::Create, array());
-            }
-            // now update the body with links to old id that should now point to the new id
-            $linkPreviousId = $this->grabIdFromUrl($linkToCreate['link_previous_url'] ?? '');
-            if ($linkPreviousId) {
-                $body = preg_replace(sprintf('/(?:experiments|database)\.php\?mode=view&amp;id=(%d)/', $linkPreviousId), $linkToCreate['link_entity_type']->toPage() . '?mode=view&amp;id=' . $linkToCreate['link_id'], $entity->entityData['body'] ?? '');
-                /** @psalm-suppress PossiblyInvalidCast */
-                $entity->update(new EntityParams('body', (string) $body));
-            }
-        }
-        return $this->getInserted();
-    }
-
-    protected function getNodeFromId(string $id): array
-    {
-        $result = array_find(
-            $this->graph,
-            function (array $node) use ($id) {
-                return $node['@id'] === $id;
-            }
-        );
-        // looking up a node by id should always return something, otherwise there is something seriously wrong
-        if ($result === null) {
-            $this->logger->error(sprintf('Error looking up the node id %s', $id));
-            return array();
-        }
-        return $result;
-    }
-
-    protected function getAuthor(array $dataset): Users
-    {
-        return $this->targetUser;
     }
 
     protected function getEntityType(array $dataset): EntityType
@@ -242,28 +183,200 @@ class Eln extends AbstractZip
 
     }
 
-    private function grabIdFromUrl(string $url): ?int
+    #[Override]
+    protected function readArchiveMetadata(ZipArchive $archive): void
     {
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return null;
+        $metadataFile = 'ro-crate-metadata.json';
+        $metadataIndex = null;
+        for ($index = 0; $index < $archive->numFiles; $index++) {
+            $name = $archive->getNameIndex($index, ZipArchive::FL_UNCHANGED);
+            if ($name === false) {
+                continue;
+            }
+            $path = str_replace('//', '/', $name);
+            $parts = explode('/', $path);
+            if (count($parts) === 2 && $parts[1] === $metadataFile) {
+                if ($metadataIndex !== null) {
+                    throw new ImproperActionException('The ELN archive contains more than one metadata file.');
+                }
+                $metadataIndex = $index;
+                $this->root = $parts[0];
+            }
         }
-        $parsedUrl = parse_url($url);
-        if (!isset($parsedUrl['query'])) {
-            return null;
+        if ($metadataIndex === null) {
+            throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $metadataFile));
         }
-        $queryParams = array();
-        parse_str($parsedUrl['query'], $queryParams);
-        if ($queryParams['id']) {
-            return (int) $queryParams['id'];
+        $input = $archive->getStreamIndex($metadataIndex, ZipArchive::FL_UNCHANGED);
+        if ($input === false) {
+            throw new ImproperActionException('Could not read the ELN metadata.');
         }
-        return null;
+        $limited = new LimitedReadStream(
+            $input,
+            $this->enforceLimits ? min($this->limits->maxMetadataBytes, $this->limits->maxMemberBytes, $this->limits->maxTotalBytes) : null,
+        );
+        try {
+            $json = json_decode($limited->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new ImproperActionException($e->getMessage());
+        } finally {
+            $limited->close();
+        }
+        if (!is_array($json) || !isset($json['@graph']) || !is_array($json['@graph']) || !array_is_list($json['@graph'])) {
+            throw new ImproperActionException('The ELN metadata must contain an @graph array.');
+        }
+        foreach ($json['@graph'] as $node) {
+            if (!is_array($node) || !isset($node['@id']) || !is_string($node['@id'])) {
+                throw new ImproperActionException('The ELN metadata contains an invalid graph node.');
+            }
+        }
+        $this->graph = $json['@graph'];
+        $this->count = $this->preProcess();
+    }
+
+    protected function getNodeFromId(string $id): array
+    {
+        $result = array_find(
+            $this->graph,
+            function (array $node) use ($id) {
+                return $node['@id'] === $id;
+            }
+        );
+        // looking up a node by id should always return something, otherwise there is something seriously wrong
+        if ($result === null) {
+            $this->logger->error(sprintf('Error looking up the node id %s', $id));
+            return array();
+        }
+        return $result;
+    }
+
+    protected function getAuthor(array $dataset): Users
+    {
+        return $this->targetUser;
+    }
+
+    protected function getChangelogAuthor(array $action): Users
+    {
+        return $this->requester;
+    }
+
+    private function importDatasets(): int
+    {
+        // loop over each hasPart of the root node
+        // this is the main import loop
+        $current = 1;
+        foreach ($this->crateNodeHasPart as $part) {
+            $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $this->count));
+            $this->importRootDataset($this->getNodeFromId($part['@id']));
+            $current++;
+        }
+
+        // All imported entities now have their target IDs
+        $linkReplacements = $this->getChangelogLinkReplacements();
+
+        // Rewrite each body once, before restoring its original history.
+        foreach ($this->insertedEntities as $inserted) {
+            $entity = $inserted['entity_type']->toInstance(
+                $this->Entity->Users,
+                $inserted['id'],
+                true,
+                true,
+            );
+
+            $oldBody = $entity->entityData['body'] ?? '';
+            $body = strtr($oldBody, $linkReplacements);
+
+            if ($body !== $oldBody) {
+                $entity->update(new EntityParams('body', $body));
+            }
+        }
+        // Restore the original changelog before creating links
+        foreach ($this->changelogsToRestore as $pending) {
+            $changes = $pending['changes'];
+
+            foreach ($changes as $index => $change) {
+                if (in_array($change['target'], array('links', 'created', 'body', 'bodyappend'), true)) {
+                    $changes[$index]['content'] = strtr($change['content'], $linkReplacements);
+                }
+            }
+            $pending['changelog']->replaceAll($changes);
+        }
+        // NOW CREATE THE LINKS
+        // TODO avoid having 2 foreach loops...
+        $result = array();
+        foreach ($this->linksToCreate as $link) {
+            foreach ($this->insertedEntities as $entity) {
+                if ($link['link_@id'] === $entity['item_@id']) {
+                    $result[] = array(
+                        'origin_entity_type' => $link['origin_entity_type'],
+                        'origin_id' => $link['origin_id'],
+                        'link_id' => $entity['id'],
+                        'link_entity_type' => $entity['entity_type'],
+                    );
+                    break;
+                }
+            }
+        }
+
+        foreach ($result as $linkToCreate) {
+            $entity = $linkToCreate['origin_entity_type']->toInstance($this->Entity->Users, $linkToCreate['origin_id'], true, true);
+            if ($linkToCreate['link_entity_type'] === EntityType::Experiments) {
+                $entity->ExperimentsLinks->setId($linkToCreate['link_id']);
+                $entity->ExperimentsLinks->createForImport();
+            } else {
+                $entity->ItemsLinks->setId($linkToCreate['link_id']);
+                $entity->ItemsLinks->createForImport();
+            }
+        }
+        return $this->getInserted();
+    }
+
+    private function getChangelogLinkReplacements(): array
+    {
+        $replacements = array();
+        foreach ($this->insertedEntities as $entity) {
+            $dataset = $this->getNodeFromId($entity['item_@id']);
+            $url = $dataset['url'] ?? null;
+            if (!is_string($url)) {
+                continue;
+            }
+            $source = parse_url($url);
+            if (!isset($source['path'], $source['query'])) {
+                continue;
+            }
+
+            $query = array();
+            parse_str($source['query'], $query);
+            $sourceId = filter_var($query['id'] ?? null, FILTER_VALIDATE_INT);
+            if ($sourceId === false) {
+                continue;
+            }
+            $sourcePage = basename($source['path']);
+            $sourceType = match ($sourcePage) {
+                'experiments.php' => EntityType::Experiments,
+                'database.php' => EntityType::Items,
+                'templates.php' => EntityType::Templates,
+                'resources-templates.php' => EntityType::ItemsTypes,
+                default => null,
+            };
+            if ($sourceType === null) {
+                continue;
+            }
+            $targetPage = $entity['entity_type']->toPage();
+            $targetType = $entity['entity_type']->value;
+            $targetId = $entity['id'];
+
+            // Entity links
+            $replacements[sprintf('%s?mode=view&amp;id=%d', $sourcePage, $sourceId)] = sprintf('%s?mode=view&amp;id=%d', $targetPage, $targetId);
+            // Entity revisions
+            $replacements[sprintf('revisions.php?type=%s&amp;item_id=%d', $sourceType->value, $sourceId)] = sprintf('revisions.php?type=%s&amp;item_id=%d', $targetType, $targetId);
+            // URL in the body.
+            $replacements[sprintf('%s?id=%d&amp;mode=view', $sourcePage, $sourceId)] = sprintf('%s?mode=view&amp;id=%d', $targetPage, $targetId);
+        }
+        return $replacements;
     }
 
     private function preProcess(): int
     {
-        $this->root = $this->getRootDirectory();
-        $this->graph = $this->getGraph();
-
         foreach ($this->graph as $node) {
             // find the node describing the crate
             if ($node['@id'] === './') {
@@ -288,34 +401,6 @@ class Eln extends AbstractZip
             }
         }
         return count($this->crateNodeHasPart);
-    }
-
-    // figure out the path to the root of the eln (where the metadata file lives)
-    // folder name is variable, so list folders and pick the first one found (there should be only one)
-    private function getRootDirectory(): string
-    {
-        $listing = $this->tmpFs->listContents($this->tmpDir);
-        foreach ($listing as $item) {
-            if ($item->isDir()) {
-                $this->logger->debug(sprintf('Found root directory in archive: %s', basename($item->path())));
-                return $item->path();
-            }
-        }
-        throw new ImproperActionException('Could not find a directory in the ELN archive!');
-    }
-
-    private function getGraph(): array
-    {
-        $metadataFile = 'ro-crate-metadata.json';
-        try {
-            $content = $this->tmpFs->read($this->root . '/' . $metadataFile);
-            $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        } catch (UnableToReadFile) {
-            throw new ImproperActionException(sprintf(_('Error: could not read archive file properly! (missing %s)'), $metadataFile));
-        } catch (JsonException $e) {
-            throw new ImproperActionException($e->getMessage());
-        }
-        return $json['@graph'];
     }
 
     /**
@@ -586,14 +671,39 @@ class Eln extends AbstractZip
             $state === State::Archived => $this->Entity->patch(Action::Archive, array()),
             $state === State::Deleted => $this->Entity->patch(Action::Update, array('state' => $state->value)),
             // Restore locked/unlocked condition.
-            ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->Entity->patch(Action::Lock, array()),
+            ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->restoreLock($dataset),
             default => null,
         };
 
-        // remove all changelog created by the import (e.g., lock actions) and restore the initial entry's changelog
+        // Prepare the original changelog; restore it once all imported entity IDs are known
         if (!empty($dataset['subjectOf'])) {
-            new Changelog($this->Entity)->replaceAll($this->updateActionsToChangelog($dataset['subjectOf']));
+            $this->changelogsToRestore[] = array(
+                'changelog' => new Changelog($this->Entity),
+                'changes' => $this->updateActionsToChangelog($dataset['subjectOf']),
+            );
         }
+    }
+
+    private function restoreLock(array $dataset): array
+    {
+        $result = $this->Entity->patch(Action::Lock, array());
+        $lockedAt = null;
+        foreach ($dataset['subjectOf'] ?? array() as $action) {
+            if (($action['object'] ?? '') !== 'locked'
+               || ($action['result'] ?? '') !== 'Locked'
+               || !is_string($action['startTime'] ?? null)
+            ) {
+                continue;
+            }
+            $startTime = new DateTimeImmutable($action['startTime']);
+            if ($lockedAt === null || $startTime > $lockedAt) {
+                $lockedAt = $startTime;
+            }
+        }
+        if ($lockedAt !== null) {
+            $this->Entity->update(new ContentParams('locked_at', date('Y-m-d H:i:s', $lockedAt->getTimestamp())));
+        }
+        return $result;
     }
 
     /**
@@ -663,18 +773,18 @@ class Eln extends AbstractZip
             }
             $target = is_string($action['object'] ?? null) ? $action['object'] : 'import';
             $content = is_string($action['result'] ?? null) ? $action['result'] : '';
+            $Author = $this->getChangelogAuthor($action);
 
             // These targets are rendered as raw HTML in changelog-table.html. Imported
             // history is untrusted and must pass through the same filter as entity bodies.
             if (in_array($target, array('body', 'links', 'created'), true)) {
                 $content = Filter::body($content);
             }
-
             $changelog[] = array(
                 'created_at' => new DateTimeImmutable($action['startTime'])->format('Y-m-d H:i:s'),
                 'target' => $target,
                 'content' => $content,
-                'userid' => $this->requester->getUserid(),
+                'userid' => $Author->getUserid(),
             );
         }
         return $changelog;
@@ -734,11 +844,17 @@ class Eln extends AbstractZip
 
     private function importFile(array $file): void
     {
-        if (isset($this->importedUploads[$file['@id']])) {
+        $id = (string) $file['@id'];
+        try {
+            $this->assertArchivePathIsSafe($id);
+        } catch (ImproperActionException) {
+            $this->logger->error(sprintf('Skipping file with unsafe @id: %s', $id));
             return;
         }
-        // note: we cannot have path transversal vuln here because we use a temporary filesystem that cannot be escaped
-        $filepath = $this->tmpDir . '/' . basename($this->root) . '/' . $file['@id'];
+        if (isset($this->importedUploads[$id])) {
+            return;
+        }
+        $filepath = $this->tmpDir . '/' . basename($this->root) . '/' . $id;
         $this->logger->debug(sprintf('Importing file: %s', $filepath));
         // fix for bloxberg attachments containing : character
         $filepath = strtr($filepath, ':', '_');

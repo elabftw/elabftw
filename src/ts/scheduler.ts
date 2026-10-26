@@ -909,7 +909,6 @@ if (calendarEl) {
             container.appendChild(reason);
             return container;
           } },
-        ...(kind === 'pending' ? [{ field: 'fullname' as const, headerName: i18next.t('booking-requested-by'), flex: 1, minWidth: 150 }] : []),
         { field: 'start', headerName: i18next.t('booking-when'), flex: 2, minWidth: 350,
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingSchedule(data) : null },
         { field: 'approval_status', headerName: i18next.t('status'), width: 155,
@@ -930,6 +929,9 @@ if (calendarEl) {
         { colId: 'actions', headerName: i18next.t('action'), width: kind === 'pending' ? 195 : 175, sortable: false, filter: false,
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingActions(data, kind) : null },
       ];
+      if (kind === 'pending') {
+        columnDefs.splice(1, 0, { field: 'fullname', headerName: i18next.t('booking-requested-by'), flex: 1, minWidth: 150 });
+      }
       bookingGrids[kind] = createGrid<BookingRequestRow>(list, {
         theme: 'legacy',
         columnDefs,

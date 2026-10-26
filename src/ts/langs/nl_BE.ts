@@ -167,6 +167,7 @@ const t = {
     "table-options": "Table options",
     "team": "Team",
     "teams": "Teams",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "Sjabloon titel",
     "text-color": "Tekstkleur",
     "is-timestamped": "Is van een tijdstempel voorzien",

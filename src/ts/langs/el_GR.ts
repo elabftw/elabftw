@@ -167,6 +167,7 @@ const t = {
     "table-options": "Table options",
     "team": "Ομάδα",
     "teams": "Ομάδες",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "Τίτλος προτύπου",
     "text-color": "Χρώμα κειμένου",
     "is-timestamped": "Έχει χρονοσφραγιστεί",

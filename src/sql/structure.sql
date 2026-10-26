@@ -1308,7 +1308,8 @@ CREATE TABLE `team_events` (
   `item_link` int(10) UNSIGNED DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `approval_status` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  -- 0: no approval, 1: pending, 2: approved, 3: rejected (Overdue is UI-only)
+  `approval_status` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `approved_by` INT UNSIGNED NULL DEFAULT NULL,
   `approved_at` DATETIME NULL DEFAULT NULL,
   `approval_comment` TEXT NULL DEFAULT NULL,

@@ -1,4 +1,4 @@
--- revert booking approval migration 01a15588-ef80-7001-8000-000000000001
+-- revert the single booking approval migration 01a15588-ef80-7001-8000-000000000001
 CALL DropColumn('users', 'notif_booking_approval_updated_email');
 CALL DropColumn('users', 'notif_booking_approval_updated');
 CALL DropColumn('users', 'notif_booking_approval_requested_email');

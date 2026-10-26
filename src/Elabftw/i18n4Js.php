@@ -81,7 +81,7 @@ final class i18n4Js
             'booking-repeats-every' => _('Every {{interval}}'),
             'booking-on-weekdays' => _('On {{days}}'),
             'booking-status-approved' => _('Approved'),
-            'booking-status-expired' => _('Expired'),
+            'booking-status-overdue' => _('Overdue'),
             'booking-status-pending' => _('Pending approval'),
             'booking-status-rejected' => _('Rejected'),
             'booking-status-unknown' => _('Unknown'),

@@ -33,7 +33,6 @@ use function array_merge;
 use function array_unique;
 use function array_values;
 use function count;
-use function date;
 use function filter_var;
 use function in_array;
 use function is_array;
@@ -62,7 +61,7 @@ final class BookingApproval
     public function initialStatus(array $item, int $userid): BookingApprovalStatus
     {
         if ((int) $item['requires_booking_approval'] !== 1) {
-            return BookingApprovalStatus::Approved;
+            return BookingApprovalStatus::NoApproval;
         }
         $approvers = $this->getApprovers($item);
         if (!$approvers) {
@@ -73,7 +72,7 @@ final class BookingApproval
             : BookingApprovalStatus::Pending;
     }
 
-    public function getDesignatedUserIds(int $itemId): array
+    public function getApprobators(int $itemId): array
     {
         $req = $this->Db->prepare('SELECT userid FROM items_booking_approvers WHERE item_id = :item ORDER BY userid');
         $req->bindValue(':item', $itemId, PDO::PARAM_INT);
@@ -84,7 +83,7 @@ final class BookingApproval
     /** Active designated approvers belonging to the resource team. */
     public function getApprovers(array $item): array
     {
-        $ids = $this->getDesignatedUserIds((int) $item['id']);
+        $ids = $this->getApprobators((int) $item['id']);
         $helper = new TeamsHelper((int) $item['team']);
         return array_values(array_filter($ids, static fn(int $id): bool => $helper->isActiveUserInTeam($id)));
     }
@@ -101,18 +100,18 @@ final class BookingApproval
         if ($requiresApproval !== 0 && $requiresApproval !== 1) {
             throw new ImproperActionException('Invalid requires_booking_approval value.');
         }
-        if (!isset($params['userids']) || !is_array($params['userids'])) {
+        if (!isset($params['approbators']) || !is_array($params['approbators'])) {
             throw new ImproperActionException('Expected an array of approver user IDs.');
         }
-        $users = array();
-        foreach ($params['userids'] as $id) {
+        $approbators = array();
+        foreach ($params['approbators'] as $id) {
             $id = filter_var($id, FILTER_VALIDATE_INT);
             if ($id === false || $id < 1 || !$helper->isActiveUserInTeam($id)) {
                 throw new ImproperActionException('All approvers must be active members of the resource team.');
             }
-            $users[$id] = $id;
+            $approbators[$id] = $id;
         }
-        if ($requiresApproval === 1 && !$users) {
+        if ($requiresApproval === 1 && !$approbators) {
             throw new ImproperActionException('Select at least one approver.');
         }
 
@@ -134,7 +133,7 @@ final class BookingApproval
         $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $req = $this->Db->prepare('INSERT INTO items_booking_approvers(item_id, userid) VALUES(:item, :userid)');
-        foreach ($users as $userid) {
+        foreach ($approbators as $userid) {
             $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $req->bindValue(':userid', $userid, PDO::PARAM_INT);
             $this->Db->execute($req);
@@ -198,25 +197,6 @@ final class BookingApproval
                 throw new ImproperActionException('This booking request is no longer pending.');
             }
             $recurrenceId = $event['recurrence_id'];
-            $sql = 'SELECT * FROM team_events WHERE item = :item AND approval_status = :pending AND ';
-            $sql .= $recurrenceId === null ? 'id = :id' : 'recurrence_id = :recurrence';
-            $req = $this->Db->prepare($sql);
-            $req->bindValue(':item', $itemId, PDO::PARAM_INT);
-            $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
-            if ($recurrenceId === null) {
-                $req->bindValue(':id', $eventId, PDO::PARAM_INT);
-            } else {
-                $req->bindValue(':recurrence', $recurrenceId);
-            }
-            $this->Db->execute($req);
-            $events = $req->fetchAll(PDO::FETCH_ASSOC);
-            if ($status === BookingApprovalStatus::Approved) {
-                foreach ($events as $candidate) {
-                    if ($candidate['start'] <= date('Y-m-d H:i:s')) {
-                        throw new ImproperActionException('A booking cannot be approved after it starts.');
-                    }
-                }
-            }
             $sql = 'UPDATE team_events SET approval_status = :status, approved_by = :actor, approved_at = NOW(), approval_comment = :comment WHERE item = :item AND approval_status = :pending AND ';
             $sql .= $recurrenceId === null ? 'id = :id' : 'recurrence_id = :recurrence';
             $req = $this->Db->prepare($sql);

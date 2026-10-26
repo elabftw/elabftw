@@ -37,7 +37,7 @@ const t = {
     "booking-repeats-every": "Every {{interval}}",
     "booking-on-weekdays": "On {{days}}",
     "booking-status-approved": "Approved",
-    "booking-status-expired": "Expired",
+    "booking-status-overdue": "Overdue",
     "booking-status-pending": "Pending approval",
     "booking-status-rejected": "Rejected",
     "booking-status-unknown": "Unknown",

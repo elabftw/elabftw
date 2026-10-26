@@ -15,8 +15,8 @@ namespace Elabftw\Enums;
 
 enum BookingApprovalStatus: int
 {
-    case Pending = 0;
-    case Approved = 1;
-    case Rejected = 2;
-    case Expired = 3;
+    case NoApproval = 0;
+    case Pending = 1;
+    case Approved = 2;
+    case Rejected = 3;
 }

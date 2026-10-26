@@ -20,6 +20,7 @@ use Elabftw\Models\Scheduler;
 use Override;
 
 use function date;
+use function in_array;
 use function array_filter;
 use function array_values;
 
@@ -38,7 +39,7 @@ final class MakeSchedulerReport extends AbstractMakeCsv
         // Pending bookings block availability but are not confirmed usage.
         $this->rows = array_values(array_filter(
             $scheduler->readAll($queryParams),
-            static fn(array $event): bool => (int) $event['approval_status'] === BookingApprovalStatus::Approved->value,
+            static fn(array $event): bool => in_array((int) $event['approval_status'], array(BookingApprovalStatus::NoApproval->value, BookingApprovalStatus::Approved->value), true),
         ));
         if (empty($this->rows)) {
             throw(new ImproperActionException('There are no events to report'));

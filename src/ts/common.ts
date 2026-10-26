@@ -853,16 +853,16 @@ on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
   const requiredInput = document.getElementById('requiresApprovalSwitch') as HTMLInputElement | null;
   const usersInput = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
-  const userids = usersInput?.tomselect
+  const approbators = usersInput?.tomselect
     ? usersInput.tomselect.items.map(Number)
     : Array.from(usersInput?.selectedOptions ?? [], option => Number(option.value));
-  if (requiredInput?.checked && userids.length === 0) {
+  if (requiredInput?.checked && approbators.length === 0) {
     notify.error('error-approver-required');
     return;
   }
   const params = collectForm(form);
   if (requiredInput) {
-    Object.assign(params, { requires_booking_approval: requiredInput.checked ? 1 : 0, userids });
+    Object.assign(params, { requires_booking_approval: requiredInput.checked ? 1 : 0, approbators });
   }
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
   reloadElements(['topToolbar', 'permissionsDiv']);

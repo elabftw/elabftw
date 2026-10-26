@@ -14,10 +14,10 @@ CREATE TABLE `items_booking_approvers` (
     CONSTRAINT `fk_items_booking_approvers_user` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- 0: pending, 1: approved, 2: rejected, 3: expired (reserved for follow-up)
--- Existing bookings are approved, keeping legacy behavior unchanged.
+-- 0: no approval, 1: pending, 2: approved, 3: rejected. Overdue is display-only.
+-- Existing bookings do not require approval.
 ALTER TABLE `team_events`
-    ADD COLUMN `approval_status` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    ADD COLUMN `approval_status` TINYINT UNSIGNED NOT NULL DEFAULT 0,
     ADD COLUMN `approved_by` INT UNSIGNED NULL DEFAULT NULL,
     ADD COLUMN `approved_at` DATETIME NULL DEFAULT NULL,
     ADD COLUMN `approval_comment` TEXT NULL DEFAULT NULL,

@@ -840,7 +840,7 @@ if (calendarEl) {
         actions.appendChild(button);
       }
     } else if (kind === 'my' && Number(booking.approval_status) === 1) {
-      const cancel = element('button', 'btn btn-sm btn-danger-ghost', i18next.t('booking-cancel-request'));
+      const cancel = element('button', 'btn btn-sm btn-danger-ghost', i18next.t('cancel'));
       cancel.type = 'button';
       cancel.addEventListener('click', async () => {
         if (!window.confirm(i18next.t('booking-cancel-confirm'))) return;

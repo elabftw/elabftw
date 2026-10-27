@@ -20,7 +20,6 @@ const t = {
     "back-to-top": "Natrag na vrh",
     "booking-approve": "Approve",
     "booking-cancel-confirm": "Cancel this booking request?",
-    "booking-cancel-request": "Cancel request",
     "booking-every-day": "Every day",
     "booking-every-month": "Every month",
     "booking-every-week": "Every week",

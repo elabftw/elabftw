@@ -64,7 +64,6 @@ final class i18n4Js
             'back-to-top' => _('Back to top'),
             'booking-approve' => _('Approve'),
             'booking-cancel-confirm' => _('Cancel this booking request?'),
-            'booking-cancel-request' => _('Cancel request'),
             'booking-every-day' => _('Every day'),
             'booking-every-month' => _('Every month'),
             'booking-every-week' => _('Every week'),

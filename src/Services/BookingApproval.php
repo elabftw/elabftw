@@ -83,7 +83,7 @@ final class BookingApproval
         }
     }
 
-    /** Apply a booking decision once; approve or reject */
+    /** Approve or reject a booking */
     public function decide(int $eventId, string $decision, ?string $comment = null): void
     {
         $status = match ($decision) {
@@ -91,23 +91,23 @@ final class BookingApproval
             'rejected' => BookingApprovalStatus::Rejected,
             default => throw new ImproperActionException('Invalid booking decision.'),
         };
-        $itemId = $this->getEventItemId($eventId);
         $this->Db->beginTransaction();
         try {
-            $item = $this->getItemForDecision($itemId);
-            if (!$this->canApprove($itemId, (int) $this->actor->userid)) {
+            $event = $this->getEventForDecision($eventId);
+            $itemId = (int) $event['item'];
+            if (!$this->canApprove($itemId, $this->actor->getUserid())) {
                 throw new ForbiddenException();
             }
-            $event = $this->getLockedEvent($eventId, $itemId);
-            if ($event['approval_status'] === $status->value) {
+            $currentStatus = (int) $event['approval_status'];
+            if ($currentStatus === $status->value) {
                 $this->Db->commit();
                 return;
             }
-            if ($event['approval_status'] !== BookingApprovalStatus::Pending->value) {
+            if ($currentStatus !== BookingApprovalStatus::Pending->value) {
                 throw new ImproperActionException('This booking request is no longer pending.');
             }
             $this->updateDecision($itemId, $event, $status, $comment);
-            $this->finalizeRequest($item, $event, $status, $comment);
+            $this->finalizeRequest($event, $status, $comment);
             $this->Db->commit();
         } catch (Throwable $e) {
             $this->Db->rollback();
@@ -115,30 +115,12 @@ final class BookingApproval
         }
     }
 
-    /** Get the resource ID linked to a booking. */
-    private function getEventItemId(int $eventId): int
+    /** Lock one booking and retrieve only the fields needed for its decision. */
+    private function getEventForDecision(int $eventId): array
     {
-        $req = $this->Db->prepare('SELECT item FROM team_events WHERE id = :id');
+        $req = $this->Db->prepare('SELECT e.id, e.item, e.userid, e.start, e.end, e.recurrence_id, e.approval_status, i.title AS item_title
+            FROM team_events AS e INNER JOIN items AS i ON i.id = e.item WHERE e.id = :id FOR UPDATE');
         $req->bindValue(':id', $eventId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return (int) $this->Db->fetch($req)['item'];
-    }
-
-    /** Read only the resource fields needed for notifications. */
-    private function getItemForDecision(int $itemId): array
-    {
-        $req = $this->Db->prepare('SELECT id, title FROM items WHERE id = :item');
-        $req->bindValue(':item', $itemId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $this->Db->fetch($req);
-    }
-
-    /** Lock and retrieve the booking fields needed for the decision. */
-    private function getLockedEvent(int $eventId, int $itemId): array
-    {
-        $req = $this->Db->prepare('SELECT id, userid, start, end, recurrence_id, approval_status FROM team_events WHERE id = :id AND item = :item FOR UPDATE');
-        $req->bindValue(':id', $eventId, PDO::PARAM_INT);
-        $req->bindValue(':item', $itemId, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->Db->fetch($req);
     }
@@ -210,16 +192,16 @@ final class BookingApproval
     }
 
     /** Notify the requester and current approvers of a decision and record its audit event. */
-    private function finalizeRequest(array $item, array $event, BookingApprovalStatus $status, ?string $comment): void
+    private function finalizeRequest(array $event, BookingApprovalStatus $status, ?string $comment): void
     {
         $data = array(
-            'item_title' => $item['title'],
+            'item_title' => $event['item_title'],
             'start' => $event['start'],
             'end' => $event['end'],
             'status' => $status === BookingApprovalStatus::Approved ? 'approved' : 'rejected',
             'comment' => $comment,
         );
-        $recipients = array_unique(array_merge(array((int) $event['userid']), $this->getApprovers((int) $item['id'])));
+        $recipients = array_unique(array_merge(array((int) $event['userid']), $this->getApprovers((int) $event['item'])));
         foreach ($recipients as $userid) {
             $data['tab'] = (int) $userid === (int) $event['userid'] ? 2 : 3;
             new BookingApprovalUpdated(new Users($userid), $data)->create();

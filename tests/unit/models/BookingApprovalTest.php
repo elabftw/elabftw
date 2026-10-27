@@ -29,10 +29,10 @@ final class BookingApprovalTest extends TestCase
         [$item, $approver, $admin] = $this->getApprovalFixture();
 
         $policy = new BookingApproval($approver);
-        self::assertTrue($policy->canApprove($item->entityData, $approver->userid));
-        self::assertFalse($policy->canApprove($item->entityData, $admin->userid));
-        self::assertSame(BookingApprovalStatus::Approved, $policy->initialStatus($item->entityData, $approver->userid));
-        self::assertSame(BookingApprovalStatus::Pending, $policy->initialStatus($item->entityData, $admin->userid));
+        self::assertTrue($policy->canApprove($item->id, $approver->userid));
+        self::assertFalse($policy->canApprove($item->id, $admin->userid));
+        self::assertSame(BookingApprovalStatus::Approved, $policy->initialStatus($item->id, $item->entityData['requires_booking_approval'], $approver->userid));
+        self::assertSame(BookingApprovalStatus::Pending, $policy->initialStatus($item->id, $item->entityData['requires_booking_approval'], $admin->userid));
 
         $start = new DateTimeImmutable('+3 days 10:00');
         $eventId = (new Scheduler(new Items($admin, $item->id)))->postAction(Action::Create, array(
@@ -189,8 +189,8 @@ final class BookingApprovalTest extends TestCase
         try {
             $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approverId)));
             $approval = new BookingApproval($item->Users);
-            self::assertSame(array($approverId), $approval->getApprovers($item->entityData));
-            self::assertTrue($approval->canApprove($item->entityData, $approverId));
+            self::assertSame(array($approverId), $approval->getApprovers((int) $item->id));
+            self::assertTrue($approval->canApprove((int) $item->id, $approverId));
         } finally {
             $req = $Db->prepare('UPDATE users SET validated = :validated WHERE userid = :userid');
             $req->bindValue(':validated', $previousValidated, PDO::PARAM_INT);
@@ -216,7 +216,7 @@ final class BookingApprovalTest extends TestCase
             'requires_booking_approval' => 1,
             'approvers' => array($owner->userid, $owner->userid),
         ));
-        self::assertSame(array((int) $owner->userid), $approval->getApprovers($item->entityData));
+        self::assertSame(array((int) $owner->userid), $approval->getApprovers((int) $item->id));
     }
 
     public function testUpdatingApproversReplacesPreviousSelection(): void

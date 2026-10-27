@@ -179,9 +179,9 @@ final class Scheduler extends AbstractRest
             }
             $this->checkCandidateOverlaps($occurrences);
             $this->checkMaxSlots(count($occurrences));
-            $actorId = (int) $this->Items->Users->userData['userid'];
+            $actorId = $this->Items->Users->userData['userid'];
             $approval = new BookingApproval($this->Items->Users);
-            $status = $approval->initialStatus($this->Items->entityData, $actorId);
+            $status = $approval->initialStatus($this->Items->id, (bool) $this->Items->entityData['requires_booking_approval'], $actorId);
             $selfApproved = $status === BookingApprovalStatus::Approved;
 
             $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule, approval_status, approved_by, approved_at)
@@ -461,8 +461,8 @@ final class Scheduler extends AbstractRest
             'start' => $event['start'],
             'end' => $event['end'],
         );
-        foreach ((new BookingApproval($this->Items->Users))->getApprovers($this->Items->entityData) as $userid) {
-            (new BookingApprovalUpdated(new Users($userid), $details))->create();
+        foreach (new BookingApproval($this->Items->Users)->getApprovers((int) $this->Items->id) as $userid) {
+            new BookingApprovalUpdated(new Users($userid), $details)->create();
         }
     }
 

@@ -44,33 +44,28 @@ final class BookingApproval
         $this->Db = Db::getConnection();
     }
 
-    // Only designated users may approve bookings on approval-controlled resources
-    public function canApprove(array $item, int $userid): bool
+    /** Check whether a user is a designated approver for a resource. */
+    public function canApprove(int $itemId, int $userid): bool
     {
-        return (int) $item['requires_booking_approval'] === 1
-            && in_array($userid, $this->getApprovers($item), true);
+        return in_array($userid, $this->getApprovers($itemId), true);
     }
 
     /** Determine the status assigned when a new booking is created. */
-    public function initialStatus(array $item, int $userid): BookingApprovalStatus
+    public function initialStatus(int $itemId, bool $requiresApproval, int $userid): BookingApprovalStatus
     {
-        if ((int) $item['requires_booking_approval'] !== 1) {
+        if (!$requiresApproval) {
             return BookingApprovalStatus::NoApproval;
         }
-        $approvers = $this->getApprovers($item);
-        if (!$approvers) {
-            throw new ImproperActionException('No approver is configured for this resource.');
-        }
-        return in_array($userid, $approvers, true)
+        return $this->canApprove($itemId, $userid)
             ? BookingApprovalStatus::Approved
             : BookingApprovalStatus::Pending;
     }
 
     /** Return the list of users designated as approvers for a resource */
-    public function getApprovers(array $item): array
+    public function getApprovers(int $itemId): array
     {
         $req = $this->Db->prepare('SELECT userid FROM items_booking_approvers WHERE entity_id = :item ORDER BY userid');
-        $req->bindValue(':item', $item['id'], PDO::PARAM_INT);
+        $req->bindValue(':item', $itemId, PDO::PARAM_INT);
         $this->Db->execute($req);
         return array_map('intval', $req->fetchAll(PDO::FETCH_COLUMN));
     }
@@ -108,7 +103,7 @@ final class BookingApproval
             $req->bindValue(':item', $itemId, PDO::PARAM_INT);
             $this->Db->execute($req);
             $item = $req->fetch(PDO::FETCH_ASSOC);
-            if (!$item || !$this->canApprove($item, (int) $this->actor->userid)) {
+            if (!$item || !$this->canApprove((int) $itemId, (int) $this->actor->userid)) {
                 throw new ForbiddenException();
             }
             $req = $this->Db->prepare('SELECT * FROM team_events WHERE id = :id AND item = :item FOR UPDATE');
@@ -154,7 +149,7 @@ final class BookingApproval
             'occurrences' => count($occurrences),
             'status' => 'pending',
         );
-        foreach ($this->getApprovers($item) as $approverId) {
+        foreach ($this->getApprovers((int) $item['id']) as $approverId) {
             new BookingApprovalRequested(new Users($approverId), $data)->create();
         }
         new BookingApprovalUpdated($this->actor, $data)->create();
@@ -196,7 +191,7 @@ final class BookingApproval
             'status' => $status === BookingApprovalStatus::Approved ? 'approved' : 'rejected',
             'comment' => $comment,
         );
-        $recipients = array_unique(array_merge(array((int) $event['userid']), $this->getApprovers($item)));
+        $recipients = array_unique(array_merge(array((int) $event['userid']), $this->getApprovers((int) $item['id'])));
         foreach ($recipients as $userid) {
             $data['tab'] = (int) $userid === (int) $event['userid'] ? 2 : 3;
             new BookingApprovalUpdated(new Users($userid), $data)->create();

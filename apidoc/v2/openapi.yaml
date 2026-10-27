@@ -1839,7 +1839,7 @@ components:
         requires_booking_approval:
           type: integer
           enum: [0, 1]
-          description: Require booking approval. When updating this field, also supply approvers; disabling it approves pending requests.
+          description: Require approval for new bookings. Include approvers when updating; disabling approval does not change pending requests or remove configured approvers.
         approvers:
           type: array
           uniqueItems: true

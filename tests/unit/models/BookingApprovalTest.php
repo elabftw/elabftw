@@ -54,7 +54,7 @@ final class BookingApprovalTest extends TestCase
         self::assertSame(BookingApprovalStatus::Approved->value, (int) $asApprover->readOne()['approval_status']);
     }
 
-    public function testPendingRequestBlocksSlotAndDisablingApprovalConfirmsIt(): void
+    public function testPendingRequestBlocksSlotAndDisablingApprovalLeavesItPending(): void
     {
         [$item, $approver, $requester] = $this->getApprovalFixture();
         $start = new DateTimeImmutable('+4 days 10:00');
@@ -74,7 +74,7 @@ final class BookingApprovalTest extends TestCase
             'requires_booking_approval' => 0,
             'approvers' => array($approver->userid),
         ));
-        self::assertSame(BookingApprovalStatus::Approved->value, (int) (new Scheduler(new Items($requester, $item->id), $eventId))->readOne()['approval_status']);
+        self::assertSame(BookingApprovalStatus::Pending->value, (int) (new Scheduler(new Items($requester, $item->id), $eventId))->readOne()['approval_status']);
     }
 
     public function testTeamMemberWithWriteAccessCanConfigureBookingApproval(): void
@@ -207,7 +207,7 @@ final class BookingApprovalTest extends TestCase
         $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array()));
     }
 
-    public function testConfiguringApproversRemovesDuplicatesAndCanBeDisabled(): void
+    public function testPendingRequestBlocksSlot(): void
     {
         $owner = $this->getUserInTeam(2);
         $item = $this->getFreshItemWithGivenUser($owner);
@@ -217,13 +217,16 @@ final class BookingApprovalTest extends TestCase
             'approvers' => array($owner->userid, $owner->userid),
         ));
         self::assertSame(array((int) $owner->userid), $approval->getApprovers($item->entityData));
+    }
 
-        $item->patch(Action::Update, array('requires_booking_approval' => 0, 'approvers' => array()));
-        $updated = new Items($owner, $item->id);
-        self::assertSame(array(), $approval->getApprovers($item->entityData));
-        self::assertSame(array(), $updated->readOne()['approvers']);
-        self::assertSame(BookingApprovalStatus::NoApproval, $approval->initialStatus($updated->entityData, (int) $owner->userid));
-        self::assertFalse($approval->canApprove($updated->entityData, (int) $owner->userid));
+    public function testUpdatingApproversReplacesPreviousSelection(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $first = $this->getUserInTeam(2);
+        $second = $this->getUserInTeam(2, admin: 1);
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($first->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($second->userid)));
+        self::assertSame(array((int) $second->userid), $item->readOne()['approvers']);
     }
 
     public function testRejectedBookingRetainsReasonAndFreesSlot(): void

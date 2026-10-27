@@ -16,7 +16,6 @@ namespace Elabftw\Services;
 use Elabftw\AuditEvent\BookingApprovalDecision;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\BookingApprovalStatus;
-use Elabftw\Enums\Notifications;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AuditLogs;
@@ -33,7 +32,6 @@ use function array_merge;
 use function array_unique;
 use function count;
 use function in_array;
-use function is_int;
 
 /** Resource booking approval rules. Administrators do not bypass configured approvers. */
 final class BookingApproval
@@ -78,58 +76,33 @@ final class BookingApproval
     /** Configure booking approval within the resource PATCH transaction. */
     public function configure(Items $Item, bool $requiresApproval, array $approvers): void
     {
-        $team = (int) $Item->entityData['team'];
-        $approvers = array_unique($approvers);
         if ($requiresApproval) {
             Guard::ensureArrayNotEmpty('approvers', $approvers);
         }
-        $req = $this->Db->prepare('SELECT requires_booking_approval FROM items WHERE id = :id AND team = :team FOR UPDATE');
-        $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
-        $req->bindValue(':team', $team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $previousRequired = $req->fetchColumn();
-        if ($previousRequired === false) {
-            throw new ImproperActionException('Resource not found.');
+        $this->updateRequiredApproval($Item, $requiresApproval);
+        if ($requiresApproval) {
+            $this->replaceApprovers($Item, array_unique($approvers));
         }
-        $oldApprovers = (int) $previousRequired === 1 && !$requiresApproval
-            ? $this->getApprovers($Item->entityData) : array();
-        $req = $this->Db->prepare('UPDATE items SET requires_booking_approval = :required WHERE id = :id AND team = :team');
+    }
+
+    private function updateRequiredApproval(Items $Item, bool $requiresApproval): void
+    {
+        $req = $this->Db->prepare('UPDATE items SET requires_booking_approval = :required WHERE id = :id');
         $req->bindValue(':required', $requiresApproval, PDO::PARAM_BOOL);
         $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
-        $req->bindValue(':team', $team, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    private function replaceApprovers(Items $Item, array $approvers): void
+    {
         $req = $this->Db->prepare('DELETE FROM items_booking_approvers WHERE entity_id = :item');
         $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $req = $this->Db->prepare('INSERT INTO items_booking_approvers(entity_id, userid) VALUES(:item, :userid)');
-        foreach ($validApprovers as $userid) {
+        foreach ($approvers as $userid) {
             $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $req->bindValue(':userid', $userid, PDO::PARAM_INT);
             $this->Db->execute($req);
-        }
-        // Agreement: disabling approval explicitly approves pending requests.
-        // Resolve recipients before changing statuses, and enqueue inside this transaction.
-        if ((int) $previousRequired === 1 && !$requiresApproval) {
-            $req = $this->Db->prepare('SELECT * FROM team_events WHERE item = :item AND approval_status = :pending ORDER BY start');
-            $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
-            $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $pendingEvents = $req->fetchAll(PDO::FETCH_ASSOC);
-            $req = $this->Db->prepare('UPDATE team_events SET approval_status = :approved, approved_at = NOW(), approved_by = :actor WHERE item = :item AND approval_status = :pending');
-            $req->bindValue(':approved', BookingApprovalStatus::Approved->value, PDO::PARAM_INT);
-            $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
-            $req->bindValue(':actor', $this->actor->userid, PDO::PARAM_INT);
-            $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $notified = array();
-            foreach ($pendingEvents as $pendingEvent) {
-                $key = $this->getRequestKey($pendingEvent);
-                if (isset($notified[$key])) {
-                    continue;
-                }
-                $notified[$key] = true;
-                $this->finalizeRequest($Item->entityData, $pendingEvent, BookingApprovalStatus::Approved, null, $oldApprovers);
-            }
         }
     }
 
@@ -206,14 +179,9 @@ final class BookingApproval
         (new BookingApprovalUpdated($this->actor, $data))->create();
     }
 
-    /** Notify booker and all current approvers; suppress undelivered obsolete requests. */
-    private function finalizeRequest(array $item, array $event, BookingApprovalStatus $status, ?string $comment, ?array $notifyApprovers = null): void
+    /** Notify the booker and current approvers. */
+    private function finalizeRequest(array $item, array $event, BookingApprovalStatus $status, ?string $comment): void
     {
-        $key = $this->getRequestKey($event);
-        $req = $this->Db->prepare('UPDATE notifications SET send_email = 0, is_ack = 1 WHERE category = :category AND email_sent = 0 AND body->>"$.request_key" = :request_key');
-        $req->bindValue(':category', Notifications::BookingApprovalRequested->value, PDO::PARAM_INT);
-        $req->bindValue(':request_key', $key);
-        $this->Db->execute($req);
         $data = array(
             'item_title' => $item['title'],
             'start' => $event['start'],
@@ -221,7 +189,7 @@ final class BookingApproval
             'status' => $status === BookingApprovalStatus::Approved ? 'approved' : 'rejected',
             'comment' => $comment,
         );
-        $recipients = array_unique(array_merge(array((int) $event['userid']), $notifyApprovers ?? $this->getApprovers($item)));
+        $recipients = array_unique(array_merge(array((int) $event['userid']), $this->getApprovers($item)));
         foreach ($recipients as $userid) {
             $data['tab'] = (int) $userid === (int) $event['userid'] ? 2 : 3;
             (new BookingApprovalUpdated(new Users($userid), $data))->create();
@@ -233,10 +201,5 @@ final class BookingApproval
             $data['status'],
             $event['recurrence_id'],
         ));
-    }
-
-    private function getRequestKey(array $event): string
-    {
-        return $event['recurrence_id'] ?? ('event:' . $event['id']);
     }
 }

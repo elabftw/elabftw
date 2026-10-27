@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "另存為附件",
     "saved": "已儲存",
     "search": "搜尋",
-    "search-approvers": "Search approvers...",
     "select-resource": "選擇資源",
     "session-expiring": "由於閒置過久，您的工作階段即將到期。",
     "session-expiring-title": "eLabFTW 工作階段即將到期",

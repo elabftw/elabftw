@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Зберегти як вкладення",
     "saved": "Збережено",
     "search": "Пошук",
-    "search-approvers": "Search approvers...",
     "select-resource": "Виберіть ресурс",
     "session-expiring": "Ваш сеанс незабаром завершиться через бездіяльність.",
     "session-expiring-title": "Сеанс eLabFTW завершується",

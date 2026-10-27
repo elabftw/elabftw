@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Enregistrer en tant que pièce jointe",
     "saved": "Enregistré",
     "search": "Recherche",
-    "search-approvers": "Search approvers...",
     "select-resource": "Sélectionner une ressource",
     "session-expiring": "Votre session expirera bientôt en raison d’une inactivité.",
     "session-expiring-title": "Expiration de la session eLabFTW",

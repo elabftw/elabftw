@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Als Anhang speichern",
     "saved": "Gespeichert",
     "search": "Suche",
-    "search-approvers": "Search approvers...",
     "select-resource": "Ressource auswählen",
     "session-expiring": "Ihre Sitzung läuft aufgrund von Inaktivität bald ab.",
     "session-expiring-title": "eLabFTW-Sitzung läuft ab",

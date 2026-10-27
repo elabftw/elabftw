@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Desa com a fitxer adjunt",
     "saved": "Guardat",
     "search": "Buscar",
-    "search-approvers": "Search approvers...",
     "select-resource": "Seleccioneu un recurs",
     "session-expiring": "La vostra sessió caducarà aviat per inactivitat.",
     "session-expiring-title": "La sessió d'eLabFTW està a punt de caducar",

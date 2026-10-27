@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Ilova sifatida saqlang",
     "saved": "Saqlangan",
     "search": "Qidirmoq",
-    "search-approvers": "Search approvers...",
     "select-resource": "Resurs tanlang",
     "session-expiring": "Faolsizlik sababli seansingiz tez orada tugaydi.",
     "session-expiring-title": "eLabFTW seansi tugamoqda",

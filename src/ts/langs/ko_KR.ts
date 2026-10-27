@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "첨부 파일로 저장",
     "saved": "저장됨",
     "search": "검색",
-    "search-approvers": "Search approvers...",
     "select-resource": "리소스 선택",
     "session-expiring": "활동이 없어 세션이 곧 만료됩니다.",
     "session-expiring-title": "eLabFTW 세션 만료 예정",

@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Salvesta manusena",
     "saved": "Salvestatud",
     "search": "Otsi",
-    "search-approvers": "Search approvers...",
     "select-resource": "Valige ressurss",
     "session-expiring": "Teie seanss aegub peagi tegevusetuse tõttu.",
     "session-expiring-title": "eLabFTW seanss aegub",

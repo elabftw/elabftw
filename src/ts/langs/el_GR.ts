@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Αποθήκευση ως συνημμένο",
     "saved": "Αποθηκεύτηκε",
     "search": "Αναζήτηση",
-    "search-approvers": "Search approvers...",
     "select-resource": "Επιλέξτε έναν πόρο",
     "session-expiring": "Η συνεδρία σας θα λήξει σύντομα λόγω αδράνειας.",
     "session-expiring-title": "Η συνεδρία eLabFTW λήγει",

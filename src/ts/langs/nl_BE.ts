@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Opslaan als bijlage",
     "saved": "Opgeslagen",
     "search": "Zoek",
-    "search-approvers": "Search approvers...",
     "select-resource": "Selecteer een bron",
     "session-expiring": "Uw sessie verloopt binnenkort wegens inactiviteit.",
     "session-expiring-title": "eLabFTW-sessie verloopt",

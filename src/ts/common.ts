@@ -825,7 +825,7 @@ $(document).on('shown.bs.modal', '#bookingParamsModal', () => {
     maxOptions: null,
     hideSelected: false,
     plugins: ['checkbox_options', 'dropdown_input', 'remove_button'],
-    placeholder: i18next.t('search-approvers'),
+    placeholder: i18next.t('search'),
   });
   syncBookingApproversState();
 });

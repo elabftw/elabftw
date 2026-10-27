@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Simpan sebagai lampiran",
     "saved": "Tersimpan",
     "search": "Cari",
-    "search-approvers": "Search approvers...",
     "select-resource": "Memilih sumber daya",
     "session-expiring": "Sesi Anda akan segera berakhir karena tidak ada aktivitas.",
     "session-expiring-title": "Sesi eLabFTW akan berakhir",

@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Tallenna liitteenä",
     "saved": "Tallennettu",
     "search": "Hae",
-    "search-approvers": "Search approvers...",
     "select-resource": "Valitse resurssi",
     "session-expiring": "Istuntosi vanhenee pian käyttämättömyyden vuoksi.",
     "session-expiring-title": "eLabFTW-istunto vanhenee",

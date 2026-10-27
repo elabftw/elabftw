@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Shrani kot prilogo",
     "saved": "Shranjeno",
     "search": "Išči",
-    "search-approvers": "Search approvers...",
     "select-resource": "Izberite vir",
     "session-expiring": "Vaša seja bo zaradi nedejavnosti kmalu potekla.",
     "session-expiring-title": "Seja eLabFTW bo potekla",

@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Uložiť ako prílohu",
     "saved": "Uložené",
     "search": "Vyhľadávanie",
-    "search-approvers": "Search approvers...",
     "select-resource": "Vyberte zdroj",
     "session-expiring": "Vaša relácia čoskoro vyprší z dôvodu neaktivity.",
     "session-expiring-title": "Relácia eLabFTW čoskoro vyprší",

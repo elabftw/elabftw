@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Spara som bilaga",
     "saved": "Sparad",
     "search": "Sök",
-    "search-approvers": "Search approvers...",
     "select-resource": "Välj en resurs",
     "session-expiring": "Din session upphör snart på grund av inaktivitet.",
     "session-expiring-title": "eLabFTW-sessionen håller på att upphöra",

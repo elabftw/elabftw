@@ -172,7 +172,6 @@ const t = {
     "save-attachment": "Salva come allegato",
     "saved": "Salvato",
     "search": "Cerca",
-    "search-approvers": "Search approvers...",
     "select-resource": "Seleziona una risorsa",
     "session-expiring": "La sessione scadrà presto a causa dell'inattività.",
     "session-expiring-title": "La sessione eLabFTW sta per scadere",

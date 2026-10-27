@@ -901,7 +901,7 @@ if (calendarEl) {
       const columnDefs: ColDef<BookingRequestRow>[] = [
         { field: 'item_title', headerName: i18next.t('item'), flex: 1, minWidth: 160,
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
-            if (!data) return null;
+            if (!data) return '';
             if (kind !== 'my' || Number(data.approval_status) !== 3 || !data.approval_comment) return data.item_title;
             const container = element('div', 'd-flex flex-column justify-content-center h-100');
             container.style.lineHeight = '1.5';
@@ -912,10 +912,10 @@ if (calendarEl) {
             return container;
           } },
         { field: 'start', headerName: i18next.t('booking-when'), flex: 2, minWidth: 350,
-          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingSchedule(data) : null },
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingSchedule(data) : '' },
         { field: 'approval_status', headerName: i18next.t('status'), width: 155,
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
-            if (!data) return null;
+            if (!data) return '';
             const overdue = Number(data.approval_status) === 1 && DateTime.fromSQL(data.start).toMillis() < DateTime.now().toMillis();
             const colors = overdue ? ['lightred', 'darkred', 'dangerred'] : (statusColors[Number(data.approval_status)] ?? statusColors[3]);
             const badge = element('span', 'badge p-2', overdue
@@ -929,7 +929,7 @@ if (calendarEl) {
             return wrapper;
           } },
         { colId: 'actions', headerName: i18next.t('action'), width: kind === 'pending' ? 195 : 175, sortable: false, filter: false,
-          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingActions(data, kind) : null },
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingActions(data, kind) : '' },
       ];
       if (kind === 'pending') {
         columnDefs.splice(1, 0, { field: 'fullname', headerName: i18next.t('requested-by'), flex: 1, minWidth: 150 });

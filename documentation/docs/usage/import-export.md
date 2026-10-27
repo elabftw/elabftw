@@ -42,6 +42,22 @@ Head to the "Import" tab of your Profile page by selecting "Import" from the top
 
 Select a `.eln` file to display import options. Then click Import.
 
+#### Import limits
+
+To protect server resources, `.eln` imports through the web interface enforce the following default limits:
+
+| Limit | Default | Environment variable |
+| --- | --- | --- |
+| Archive members (files and directories) | 10,000 | `IMPORT_MAX_MEMBERS` |
+| Uncompressed size of a single file | 1 GiB | `IMPORT_MAX_MEMBER_BYTES` |
+| Total uncompressed size | 1 GiB | `IMPORT_MAX_TOTAL_BYTES` |
+| Compression ratio (files larger than 1 MiB) | 1,000:1 | `IMPORT_MAX_COMPRESSION_RATIO` |
+| Size of `ro-crate-metadata.json` | 32 MiB | `IMPORT_MAX_METADATA_BYTES` |
+
+Sysadmins can adjust these limits through the corresponding environment variables. The compressed upload must also fit the server's upload size limit.
+
+For large archives, use [CLI import](#importing-through-cli) whenever possible. `bin/console import:eln` bypasses all of these archive limits, including during `--dry-run`.
+
 ### Importing through CLI
 
 :::note

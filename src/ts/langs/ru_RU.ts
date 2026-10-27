@@ -194,6 +194,7 @@ const t = {
     "table-options": "Table options",
     "team": "Команда",
     "teams": "Команды",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "Название шаблона",
     "text-color": "Цвет текста",
     "is-timestamped": "Отмечено временем",

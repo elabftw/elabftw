@@ -20,6 +20,46 @@ use function sprintf;
 
 class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
 {
+    public function testAdditiveMergePreservesExistingFieldsAndValues(): void
+    {
+        $existing = '{"custom":{"keep":true},"extra_fields":{"Text":{"type":"text","value":"  keep spaces  "},"Empty":{"value":""},"Zero":{"value":0},"Multi":{"value":[]},"Local":{"value":"local"}}}';
+        $template = '{"custom":{"keep":false},"extra_fields":{"Text":{"type":"number","value":"42"},"Empty":{"value":"default"},"Zero":{"value":"42"},"Multi":{"value":"default"},"New":{"type":"text","value":"default"}}}';
+        $merged = json_decode(MetadataHelpers::mergeMetadataAdditive($existing, $template), true, 512, JSON_THROW_ON_ERROR);
+        $original = json_decode($existing, true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertSame($original['custom'], $merged['custom']);
+        foreach ($original['extra_fields'] as $name => $field) {
+            $this->assertSame($field, $merged['extra_fields'][$name]);
+        }
+        $this->assertSame(array('type' => 'text', 'value' => 'default'), $merged['extra_fields']['New']);
+        $this->assertSame($merged, json_decode(MetadataHelpers::mergeMetadataAdditive(json_encode($merged, JSON_THROW_ON_ERROR), $template), true));
+    }
+
+    public function testAdditiveMergeWithNullMetadata(): void
+    {
+        $template = '{"extra_fields":{"New":{"type":"text","value":"default"}}}';
+        $this->assertJsonStringEqualsJsonString($template, MetadataHelpers::mergeMetadataAdditive(null, $template));
+    }
+
+    public function testAdditiveMergeRemapsGroupsWithoutChangingExistingGroups(): void
+    {
+        $existing = '{"elabftw":{"display_main_text":false,"extra_fields_groups":[{"id":1,"name":"Local"},{"id":5,"name":"Shared"}]},"extra_fields":{"Local":{"value":"kept","group_id":1}}}';
+        $template = '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Template"},{"id":2,"name":"Shared"},{"id":3,"name":"Unused"}]},"extra_fields":{"New":{"value":"new","group_id":1},"Second":{"value":"second","group_id":1},"Shared":{"value":"shared","group_id":2},"Undefined":{"value":"undefined","group_id":5}}}';
+        $merged = json_decode(MetadataHelpers::mergeMetadataAdditive($existing, $template), true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertFalse($merged['elabftw']['display_main_text']);
+        $this->assertSame(array(
+            array('id' => 1, 'name' => 'Local'),
+            array('id' => 5, 'name' => 'Shared'),
+            array('id' => 6, 'name' => 'Template'),
+        ), $merged['elabftw']['extra_fields_groups']);
+        $this->assertSame(1, $merged['extra_fields']['Local']['group_id']);
+        $this->assertSame(6, $merged['extra_fields']['New']['group_id']);
+        $this->assertSame(6, $merged['extra_fields']['Second']['group_id']);
+        $this->assertSame(5, $merged['extra_fields']['Shared']['group_id']);
+        $this->assertArrayNotHasKey('group_id', $merged['extra_fields']['Undefined']);
+    }
+
     public function testMergeMetadataWithEmptySource(): void
     {
         $incoming = '{"extra_fields":{"Website":{"type":"url","value":"https://example.org"}}}';

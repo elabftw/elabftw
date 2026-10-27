@@ -194,6 +194,7 @@ const t = {
     "table-options": "Table options",
     "team": "Tim",
     "teams": "Tim",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "Judul templat",
     "text-color": "Warna teks",
     "is-timestamped": "Sudah diberi stempel waktu",

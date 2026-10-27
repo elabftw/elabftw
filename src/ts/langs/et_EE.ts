@@ -194,6 +194,7 @@ const t = {
     "table-options": "Table options",
     "team": "Meeskond",
     "teams": "Meeskonnad",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "Malli pealkiri",
     "text-color": "Teksti värv",
     "is-timestamped": "On ajatempliga",

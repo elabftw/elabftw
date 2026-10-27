@@ -167,6 +167,13 @@
       <a data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'items' }}' data-tplid='{{ Entity.id }}' href='#' class='btn btn-primary ml-2' title='{{ 'Create entry from template'|trans }}' aria-label='{{ 'Create entry from template'|trans }}'>
         <i class='fas fa-file-circle-plus fa-fw'></i>
       </a>
+      {% if not App.isAnonymous() and not Entity.isReadOnly and Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
+        <button type='button' class='btn btn-transparent ml-2' data-action='updateentries'
+          data-confirm='{{ 'Add missing tags, links and custom fields to all entries created from this template? Existing values will be preserved. Entries you cannot edit will be skipped.'|trans }}'
+          title='{{ 'Update entries'|trans }}' aria-label='{{ 'Update entries'|trans }}'>
+          <i class='fas fa-arrows-rotate fa-fw'></i>
+        </button>
+      {% endif %}
     {% endif %}
 
     <div class='vertical-separator'></div>

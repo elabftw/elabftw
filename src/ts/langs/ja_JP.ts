@@ -194,6 +194,7 @@ const t = {
     "table-options": "Table options",
     "team": "チーム",
     "teams": "チーム",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "テンプレートタイトル",
     "text-color": "文字色",
     "is-timestamped": "タイムスタンプ済み",

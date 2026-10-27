@@ -67,7 +67,7 @@ final class BookingApprovalTest extends TestCase
             $scheduler->postAction(Action::Create, $params);
             self::fail('A pending booking should block this slot.');
         } catch (ImproperActionException) {
-            // Expected overlap, even when book_can_overlap is configured on the resource.
+            // Expected overlap.
         }
 
         $item->patch(Action::Update, array(

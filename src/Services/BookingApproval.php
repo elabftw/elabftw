@@ -217,23 +217,19 @@ final class BookingApproval
     /** Called by Scheduler after a pending booking is inserted, before transaction commit. */
     public function notifySubmission(array $item, int $eventId, array $occurrences, ?string $recurrenceId): void
     {
-        $user = $this->actor;
         $data = array(
             'request_key' => $recurrenceId ?? 'event:' . $eventId,
-            'event_id' => $eventId,
-            'item_id' => (int) $item['id'],
             'item_title' => $item['title'],
-            'requester_fullname' => $user->userData['fullname'],
+            'requester_fullname' => $this->actor->userData['fullname'],
             'start' => $occurrences[0]['start'],
             'end' => $occurrences[0]['end'],
             'occurrences' => count($occurrences),
             'status' => 'pending',
-            'comment' => null,
         );
         foreach ($this->getApprovers($item) as $approverId) {
             (new BookingApprovalRequested(new Users($approverId), $data))->create();
         }
-        (new BookingApprovalUpdated(new Users((int) $user->userid), $data))->create();
+        (new BookingApprovalUpdated($this->actor, $data))->create();
     }
 
     /** Notify booker and all current approvers; suppress undelivered obsolete requests. */
@@ -244,21 +240,11 @@ final class BookingApproval
         $req->bindValue(':category', Notifications::BookingApprovalRequested->value, PDO::PARAM_INT);
         $req->bindValue(':request_key', $key);
         $this->Db->execute($req);
-        $owner = new Users((int) $event['userid']);
         $data = array(
-            'request_key' => $key,
-            'event_id' => (int) $event['id'],
-            'item_id' => (int) $event['item'],
             'item_title' => $item['title'],
-            'requester_fullname' => $owner->userData['fullname'],
             'start' => $event['start'],
             'end' => $event['end'],
-            'occurrences' => 1,
-            'status' => match ($status) {
-                BookingApprovalStatus::Approved => 'approved',
-                BookingApprovalStatus::Rejected => 'rejected',
-                default => 'pending',
-            },
+            'status' => $status === BookingApprovalStatus::Approved ? 'approved' : 'rejected',
             'comment' => $comment,
         );
         $recipients = array_unique(array_merge(array((int) $event['userid']), $notifyApprovers ?? $this->getApprovers($item)));

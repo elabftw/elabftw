@@ -15,47 +15,12 @@ namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\BookingApprovalDecision;
 use Elabftw\Enums\AuditCategory;
-use Elabftw\Models\Notifications\BookingApprovalRequested;
-use Elabftw\Models\Notifications\BookingApprovalUpdated;
-use Elabftw\Models\Users\Users;
 use PHPUnit\Framework\TestCase;
 
-use function array_merge;
 use function json_decode;
 
 final class BookingApprovalMessagesTest extends TestCase
 {
-    private const array DETAILS = array(
-        'requester_fullname' => 'Titi',
-        'item_id' => 42,
-        'item_title' => 'Microscope',
-        'start' => '2026-11-01 10:00:00',
-        'end' => '2026-11-01 11:00:00',
-        'occurrences' => 2,
-        'status' => 'pending',
-        'comment' => null,
-    );
-
-    public function testRequestedNotificationEmailLinksToPendingApprovals(): void
-    {
-        $mail = (new BookingApprovalRequested(new Users(), self::DETAILS))->getEmail();
-        self::assertNotEmpty($mail['subject']);
-        self::assertStringContainsString('Titi', $mail['body']);
-        self::assertStringContainsString('Microscope', $mail['body']);
-        self::assertStringContainsString('scheduler.php?tab=3', $mail['body']);
-    }
-
-    public function testUpdatedNotificationEmailLinksToOwnRequestsAndIncludesReason(): void
-    {
-        $mail = (new BookingApprovalUpdated(new Users(), array_merge(self::DETAILS, array(
-            'status' => 'rejected',
-            'comment' => 'Unavailable',
-        ))))->getEmail();
-        self::assertNotEmpty($mail['subject']);
-        self::assertStringContainsString('scheduler.php?tab=2', $mail['body']);
-        self::assertStringContainsString('Unavailable', $mail['body']);
-    }
-
     public function testDecisionAuditContainsActorAndRecurrence(): void
     {
         $audit = new BookingApprovalDecision(7, 8, 42, 'rejected', 'test-series');

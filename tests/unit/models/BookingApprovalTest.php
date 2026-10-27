@@ -31,8 +31,8 @@ final class BookingApprovalTest extends TestCase
         $policy = new BookingApproval($approver);
         self::assertTrue($policy->canApprove($item->id, $approver->userid));
         self::assertFalse($policy->canApprove($item->id, $admin->userid));
-        self::assertSame(BookingApprovalStatus::Approved, $policy->initialStatus($item->id, $item->entityData['requires_booking_approval'], $approver->userid));
-        self::assertSame(BookingApprovalStatus::Pending, $policy->initialStatus($item->id, $item->entityData['requires_booking_approval'], $admin->userid));
+        self::assertSame(BookingApprovalStatus::Approved, $policy->initialStatus($item->id, (bool) $item->entityData['requires_booking_approval'], $approver->userid));
+        self::assertSame(BookingApprovalStatus::Pending, $policy->initialStatus($item->id, (bool) $item->entityData['requires_booking_approval'], $admin->userid));
 
         $start = new DateTimeImmutable('+3 days 10:00');
         $eventId = (new Scheduler(new Items($admin, $item->id)))->postAction(Action::Create, array(
@@ -224,7 +224,8 @@ final class BookingApprovalTest extends TestCase
         $item = $this->getFreshBookableItem(2);
         $first = $this->getUserInTeam(2);
         $second = $this->getUserInTeam(2, admin: 1);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($first->userid)));
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($first->userid, $second->userid)));
+        self::assertEqualsCanonicalizing(array((int) $first->userid, (int) $second->userid), $item->readOne()['approvers']);
         $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($second->userid)));
         self::assertSame(array((int) $second->userid), $item->readOne()['approvers']);
     }

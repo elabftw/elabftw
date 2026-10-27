@@ -244,7 +244,7 @@ final class Scheduler extends AbstractRest
      * Return an array with events for all items of the team
      */
     #[Override]
-    public function readAll(?QueryParamsInterface $queryParams = null): array
+    public function readAll(?QueryParamsInterface $queryParams = null, bool $maskPending = true): array
     {
         $this->filterSqlParts = array();
         $this->filterBindings = array();
@@ -368,7 +368,7 @@ final class Scheduler extends AbstractRest
             $req->fetchAll(),
         );
         // Pending reservations are non-interactive ghost events in the calendar.
-        if (!$isRequestList) {
+        if (!$isRequestList && $maskPending) {
             foreach ($events as &$event) {
                 if ((int) $event['approval_status'] === BookingApprovalStatus::Pending->value) {
                     $event['title'] = _('Pending approval');

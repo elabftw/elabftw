@@ -75,7 +75,7 @@ final class BookingApproval
             INNER JOIN users2teams AS ut ON (ut.users_id = a.userid AND ut.teams_id = :team AND ut.is_archived = 0)
             INNER JOIN users AS u ON (u.userid = a.userid AND u.validated = 1
                 AND (u.valid_until IS NULL OR u.valid_until > NOW()))
-            WHERE a.item_id = :item ORDER BY a.userid');
+            WHERE a.entity_id = :item ORDER BY a.userid');
         $req->bindValue(':item', $item['id'], PDO::PARAM_INT);
         $req->bindValue(':team', $item['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -124,10 +124,10 @@ final class BookingApproval
         $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
         $req->bindValue(':team', $team, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $req = $this->Db->prepare('DELETE FROM items_booking_approvers WHERE item_id = :item');
+        $req = $this->Db->prepare('DELETE FROM items_booking_approvers WHERE entity_id = :item');
         $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $req = $this->Db->prepare('INSERT INTO items_booking_approvers(item_id, userid) VALUES(:item, :userid)');
+        $req = $this->Db->prepare('INSERT INTO items_booking_approvers(entity_id, userid) VALUES(:item, :userid)');
         foreach ($approvers as $userid) {
             $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $req->bindValue(':userid', $userid, PDO::PARAM_INT);

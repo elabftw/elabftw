@@ -1556,11 +1556,11 @@ CREATE TABLE `users2team_groups` (
 
 -- Many-to-many approvers: a user may approve bookings on several resources.
 CREATE TABLE `items_booking_approvers` (
-  `item_id` INT UNSIGNED NOT NULL,
+  `entity_id` INT UNSIGNED NOT NULL,
   `userid` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`item_id`, `userid`),
+  PRIMARY KEY (`entity_id`, `userid`),
   INDEX `idx_items_booking_approvers_userid` (`userid`),
-  CONSTRAINT `fk_items_booking_approvers_item` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_items_booking_approvers_item` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_items_booking_approvers_user` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

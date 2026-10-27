@@ -1,4 +1,4 @@
--- booking approval migration 01a15588-ef80-7001-8000-000000000001: approval of resource bookings
+-- booking approval migration 01a15588-ef80-7001-8000-000000000001
 -- Approval required (0: no, 1: yes); approvers defined in the linking table
 ALTER TABLE `items`
     ADD COLUMN `requires_booking_approval` TINYINT UNSIGNED NOT NULL DEFAULT 0;
@@ -6,11 +6,11 @@ ALTER TABLE `items`
 -- Many-to-many relation: each resource can have multiple user approvers,
 -- and each user can approve bookings for multiple resources.
 CREATE TABLE `items_booking_approvers` (
-    `item_id` INT UNSIGNED NOT NULL,
+    `entity_id` INT UNSIGNED NOT NULL,
     `userid` INT UNSIGNED NOT NULL,
-    PRIMARY KEY (`item_id`, `userid`),
+    PRIMARY KEY (`entity_id`, `userid`),
     INDEX `idx_items_booking_approvers_userid` (`userid`),
-    CONSTRAINT `fk_items_booking_approvers_item` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_items_booking_approvers_item` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_items_booking_approvers_user` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

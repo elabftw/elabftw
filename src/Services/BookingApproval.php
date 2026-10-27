@@ -249,6 +249,7 @@ final class BookingApproval
         );
         $recipients = array_unique(array_merge(array((int) $event['userid']), $notifyApprovers ?? $this->getApprovers($item)));
         foreach ($recipients as $userid) {
+            $data['tab'] = (int) $userid === (int) $event['userid'] ? 2 : 3;
             (new BookingApprovalUpdated(new Users($userid), $data))->create();
         }
         AuditLogs::create(new BookingApprovalDecision(

@@ -60,7 +60,7 @@ final class Transform
                 sprintf(
                     '<span data-action="ack-notif" data-id="%d" data-href="scheduler.php?tab=%d">%s</span>' . $relativeMoment,
                     (int) $notif['id'],
-                    $notif['body']['status'] === 'cancelled' ? 3 : 2,
+                    $notif['body']['tab'] ?? ($notif['body']['status'] === 'cancelled' ? 3 : 2),
                     $notif['body']['status'] === 'cancelled'
                         ? sprintf(
                             _('%s cancelled a pending booking for %s.'),

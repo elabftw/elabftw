@@ -72,6 +72,8 @@ use function str_replace;
 use function str_starts_with;
 use function ucfirst;
 use function usort;
+use function fwrite;
+use function print_r;
 
 /**
  * Import a .eln file.
@@ -87,6 +89,8 @@ class Eln extends AbstractZip
     private array $graph;
 
     private array $linksToCreate = array();
+
+    private array $metadataReferencesToResolve = array();
 
     private array $insertedEntities = array();
 
@@ -159,6 +163,24 @@ class Eln extends AbstractZip
             $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $this->count));
             $this->importRootDataset($this->getNodeFromId($part['@id']));
             $current++;
+        }
+
+        foreach ($this->metadataReferencesToResolve as $ref) {
+            foreach ($this->insertedEntities as $inserted) {
+                if ($ref['target_@id'] !== $inserted['item_@id']) {
+                    continue;
+                }
+                $entity = $ref['origin_entity_type']->toInstance(
+                    $this->targetUser,
+                    $ref['origin_id'],
+                    true,
+                    true,
+                );
+                $entity->patch(Action::UpdateMetadataField, array(
+                    $ref['property_id'] => $inserted['id'],
+                ));
+                break;
+            }
         }
 
         // All imported entities now have their target IDs
@@ -502,10 +524,20 @@ class Eln extends AbstractZip
                         } else {
                             // INTERNAL_ELN_VERSION >= 103
                             $node = $this->getNodeFromId($propval['@id']);
+                            fwrite(STDERR, print_r($node, true));
                             if ($node['propertyID'] === 'elabftw_metadata') {
                                 $this->Entity->update(new EntityParams('metadata', $node['value']));
-                                break;
+                                continue;
                             }
+                            if (in_array($node['valueReference'] ?? '', array('experiments', 'items'), true) && isset($node['value']['@id'])) {
+                                $this->metadataReferencesToResolve[] = array(
+                                    'origin_entity_type' => $this->Entity->entityType,
+                                    'origin_id' => $this->Entity->id,
+                                    'property_id' => $node['propertyID'],
+                                    'target_@id' => $node['value']['@id'],
+                                );
+                            }
+                            fwrite(STDERR, print_r($this->metadataReferencesToResolve, true));
                         }
                     }
                     break;

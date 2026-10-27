@@ -211,14 +211,13 @@ final class Scheduler extends AbstractRest
                 $this->Db->execute($req);
                 $eventId = $eventId ?: $this->Db->lastInsertId();
             }
-            if ($status === BookingApprovalStatus::Pending) {
-                $approval->notifySubmission(
-                    $this->Items->entityData,
-                    $eventId,
-                    $occurrences,
-                    $recurrenceId,
-                );
-            }
+            $approval->notifySubmission(
+                $this->Items->entityData,
+                $eventId,
+                $occurrences,
+                $recurrenceId,
+                $status,
+            );
             $this->Db->commit();
             return $eventId;
         } catch (Throwable $e) {

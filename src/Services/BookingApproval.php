@@ -33,6 +33,7 @@ use function array_merge;
 use function array_unique;
 use function count;
 use function in_array;
+use function strtolower;
 
 /** Resource booking approval rules. Administrators do not bypass configured approvers. */
 final class BookingApproval
@@ -82,7 +83,7 @@ final class BookingApproval
         }
     }
 
-    /** Approve or reject a pending booking and its recurrence, if any. */
+    /** Apply a booking decision once; approve or reject */
     public function decide(int $eventId, string $decision, ?string $comment = null): void
     {
         $status = match ($decision) {
@@ -90,45 +91,22 @@ final class BookingApproval
             'rejected' => BookingApprovalStatus::Rejected,
             default => throw new ImproperActionException('Invalid booking decision.'),
         };
-        $req = $this->Db->prepare('SELECT item FROM team_events WHERE id = :id');
-        $req->bindValue(':id', $eventId, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $itemId = $req->fetchColumn();
-        if ($itemId === false) {
-            throw new ImproperActionException('Reservation not found.');
-        }
+        $itemId = $this->getEventItemId($eventId);
         $this->Db->beginTransaction();
         try {
-            $req = $this->Db->prepare('SELECT * FROM items WHERE id = :item FOR UPDATE');
-            $req->bindValue(':item', $itemId, PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $item = $req->fetch(PDO::FETCH_ASSOC);
-            if (!$item || !$this->canApprove((int) $itemId, (int) $this->actor->userid)) {
+            $item = $this->getItemForDecision($itemId);
+            if (!$this->canApprove($itemId, (int) $this->actor->userid)) {
                 throw new ForbiddenException();
             }
-            $req = $this->Db->prepare('SELECT * FROM team_events WHERE id = :id AND item = :item FOR UPDATE');
-            $req->bindValue(':id', $eventId, PDO::PARAM_INT);
-            $req->bindValue(':item', $itemId, PDO::PARAM_INT);
-            $this->Db->execute($req);
-            $event = $req->fetch(PDO::FETCH_ASSOC);
-            if (!$event || (int) $event['approval_status'] !== BookingApprovalStatus::Pending->value) {
+            $event = $this->getLockedEvent($eventId, $itemId);
+            if ($event['approval_status'] === $status->value) {
+                $this->Db->commit();
+                return;
+            }
+            if ($event['approval_status'] !== BookingApprovalStatus::Pending->value) {
                 throw new ImproperActionException('This booking request is no longer pending.');
             }
-            $recurrenceId = $event['recurrence_id'];
-            $sql = 'UPDATE team_events SET approval_status = :status, approved_by = :actor, approved_at = NOW(), approval_comment = :comment WHERE item = :item AND approval_status = :pending AND ';
-            $sql .= $recurrenceId === null ? 'id = :id' : 'recurrence_id = :recurrence';
-            $req = $this->Db->prepare($sql);
-            $req->bindValue(':status', $status->value, PDO::PARAM_INT);
-            $req->bindValue(':actor', $this->actor->userid, PDO::PARAM_INT);
-            $req->bindValue(':comment', $comment, $comment === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
-            $req->bindValue(':item', $itemId, PDO::PARAM_INT);
-            $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
-            if ($recurrenceId === null) {
-                $req->bindValue(':id', $eventId, PDO::PARAM_INT);
-            } else {
-                $req->bindValue(':recurrence', $recurrenceId);
-            }
-            $this->Db->execute($req);
+            $this->updateDecision($itemId, $event, $status, $comment);
             $this->finalizeRequest($item, $event, $status, $comment);
             $this->Db->commit();
         } catch (Throwable $e) {
@@ -137,9 +115,59 @@ final class BookingApproval
         }
     }
 
-    /** Notify approvers and the requester when a booking is submitted for approval. */
-    public function notifySubmission(array $item, int $eventId, array $occurrences, ?string $recurrenceId): void
+    /** Get the resource ID linked to a booking. */
+    private function getEventItemId(int $eventId): int
     {
+        $req = $this->Db->prepare('SELECT item FROM team_events WHERE id = :id');
+        $req->bindValue(':id', $eventId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return (int) $this->Db->fetch($req)['item'];
+    }
+
+    /** Read only the resource fields needed for notifications. */
+    private function getItemForDecision(int $itemId): array
+    {
+        $req = $this->Db->prepare('SELECT id, title FROM items WHERE id = :item');
+        $req->bindValue(':item', $itemId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->fetch($req);
+    }
+
+    /** Lock and retrieve the booking fields needed for the decision. */
+    private function getLockedEvent(int $eventId, int $itemId): array
+    {
+        $req = $this->Db->prepare('SELECT id, userid, start, end, recurrence_id, approval_status FROM team_events WHERE id = :id AND item = :item FOR UPDATE');
+        $req->bindValue(':id', $eventId, PDO::PARAM_INT);
+        $req->bindValue(':item', $itemId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->fetch($req);
+    }
+
+    /** Update only pending occurrences of the selected booking or recurrence. */
+    private function updateDecision(int $itemId, array $event, BookingApprovalStatus $status, ?string $comment): void
+    {
+        $sql = 'UPDATE team_events SET approval_status = :status, approved_by = :actor, approved_at = NOW(), approval_comment = :comment WHERE item = :item AND approval_status = :pending AND ';
+        $sql .= $event['recurrence_id'] === null ? 'id = :id' : 'recurrence_id = :recurrence';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':status', $status->value, PDO::PARAM_INT);
+        $req->bindValue(':actor', $this->actor->userid, PDO::PARAM_INT);
+        $req->bindValue(':comment', $comment, $comment === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $req->bindValue(':item', $itemId, PDO::PARAM_INT);
+        $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
+        if ($event['recurrence_id'] === null) {
+            $req->bindValue(':id', $event['id'], PDO::PARAM_INT);
+        } else {
+            $req->bindValue(':recurrence', $event['recurrence_id']);
+        }
+        $this->Db->execute($req);
+    }
+
+    /** Notify approvers and the requester only for pending submissions. */
+    public function notifySubmission(array $item, int $eventId, array $occurrences, ?string $recurrenceId, BookingApprovalStatus $status): void
+    {
+        if ($status !== BookingApprovalStatus::Pending) {
+            return;
+        }
         $data = array(
             'request_key' => $recurrenceId ?? 'event:' . $eventId,
             'item_title' => $item['title'],
@@ -147,7 +175,7 @@ final class BookingApproval
             'start' => $occurrences[0]['start'],
             'end' => $occurrences[0]['end'],
             'occurrences' => count($occurrences),
-            'status' => 'pending',
+            'status' => strtolower($status->name),
         );
         foreach ($this->getApprovers((int) $item['id']) as $approverId) {
             new BookingApprovalRequested(new Users($approverId), $data)->create();

@@ -274,7 +274,7 @@ final class BookingApprovalTest extends TestCase
         (new BookingApproval($this->getUserInTeam(2)))->decide(1, 'postponed');
     }
 
-    public function testBookingDecisionCannotBeRepeated(): void
+    public function testBookingDecisionIsIdempotentButCannotBeReversed(): void
     {
         [$item, $approver, $requester] = $this->getApprovalFixture();
         $start = new DateTimeImmutable('+8 days 10:00');
@@ -285,8 +285,9 @@ final class BookingApprovalTest extends TestCase
 
         $approval = new BookingApproval($approver);
         $approval->decide($id, 'rejected');
-        $this->expectException(ImproperActionException::class);
         $approval->decide($id, 'rejected');
+        $this->expectException(ImproperActionException::class);
+        $approval->decide($id, 'approved');
     }
 
     public function testOverduePendingBookingCanStillBeApproved(): void

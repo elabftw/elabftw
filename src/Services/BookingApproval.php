@@ -75,15 +75,15 @@ final class BookingApproval
         return array_map('intval', $req->fetchAll(PDO::FETCH_COLUMN));
     }
 
-    /** Update approval Requirement AND selected approvers */
+    /** Update the approval requirement and replace the selected approvers. */
     public function updateSettings(Items $Item, bool $requiresApproval, array $approvers): void
     {
         if ($requiresApproval) {
             Guard::ensureArrayNotEmpty('approvers', $approvers);
-        }
-        $Item->update(new EntityParams('requires_booking_approval', $requiresApproval));
-        if ($requiresApproval) {
             $this->replaceApprovers($Item, array_unique($approvers));
+        }
+        if ((bool) $Item->entityData['requires_booking_approval'] !== $requiresApproval) {
+            $Item->update(new EntityParams('requires_booking_approval', $requiresApproval));
         }
     }
 
@@ -155,20 +155,32 @@ final class BookingApproval
             'status' => 'pending',
         );
         foreach ($this->getApprovers($item) as $approverId) {
-            (new BookingApprovalRequested(new Users($approverId), $data))->create();
+            new BookingApprovalRequested(new Users($approverId), $data)->create();
         }
-        (new BookingApprovalUpdated($this->actor, $data))->create();
+        new BookingApprovalUpdated($this->actor, $data)->create();
     }
 
-    /** Replace stored approver assignments with the selected user IDs. */
+    /** Replace the stored approver list with the selected user IDs. */
     private function replaceApprovers(Items $Item, array $approvers): void
+    {
+        $this->removeApprovers($Item);
+        $this->addApprovers($Item, $approvers);
+    }
+
+    /** Remove all approver for the resource. */
+    private function removeApprovers(Items $Item): void
     {
         $req = $this->Db->prepare('DELETE FROM items_booking_approvers WHERE entity_id = :item');
         $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+    }
+
+    /** Store the selected approver for the resource. */
+    private function addApprovers(Items $Item, array $approvers): void
+    {
         $req = $this->Db->prepare('INSERT INTO items_booking_approvers(entity_id, userid) VALUES(:item, :userid)');
+        $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
         foreach ($approvers as $userid) {
-            $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $req->bindValue(':userid', $userid, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
@@ -187,7 +199,7 @@ final class BookingApproval
         $recipients = array_unique(array_merge(array((int) $event['userid']), $this->getApprovers($item)));
         foreach ($recipients as $userid) {
             $data['tab'] = (int) $userid === (int) $event['userid'] ? 2 : 3;
-            (new BookingApprovalUpdated(new Users($userid), $data))->create();
+            new BookingApprovalUpdated(new Users($userid), $data)->create();
         }
         AuditLogs::create(new BookingApprovalDecision(
             (int) $this->actor->userid,

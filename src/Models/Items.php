@@ -52,7 +52,7 @@ final class Items extends AbstractConcreteEntity
     public function readOne(): array
     {
         $this->entityData = parent::readOne();
-        $this->entityData['approvers'] = (new BookingApproval($this->Users))->getApprovers($this->entityData);
+        $this->entityData['approvers'] = new BookingApproval($this->Users)->getApprovers($this->entityData);
         return $this->entityData;
     }
 

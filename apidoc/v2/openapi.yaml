@@ -5455,12 +5455,12 @@ paths:
     summary: For scheduler booking.
     get:
       tags: ['Events']
-      summary: Read bookable resource events.
+      summary: Read all events in the team.
       operationId: read-events
       parameters:
         - name: approval_status
           in: query
-          description: Comma-separated statuses (0 no approval, 1 pending, 2 approved, 3 rejected). Defaults to 0,1,2; explicit booking filters include history.
+          description: Comma-separated statuses (0 no approval, 1 pending, 2 approved, 3 rejected). Defaults to 0,1,2.
           schema:
             type: string
             pattern: '^[0-3](,[0-3])*$'

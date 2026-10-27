@@ -815,7 +815,7 @@ if (calendarEl) {
         : interval ? i18next.t('booking-repeats-every', { interval }) : null;
       container.appendChild(element('div', 'smallgray', [
         i18next.t('booking-recurring'),
-        i18next.t(booking.occurrences === 1 ? 'booking-one-occurrence' : 'booking-occurrences', { num: booking.occurrences }),
+        i18next.t('booking-occurrences', { num: booking.occurrences }),
         ...(cadence ? [cadence] : []),
       ].join(' · ')));
       if (booking.recurrence_rule?.weekdays?.length) {

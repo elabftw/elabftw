@@ -27,7 +27,7 @@ FROM alpine:3.24 AS nginx-builder
 ENV NGINX_VERSION=1.30.6
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
-ENV NGX_BROTLI_COMMIT=a71f9312c2deb28875acc7bacfdd5695a111aa53
+ENV NGX_BROTLI_COMMIT=53e0fb55f250f48fe80c0ddbf6c0f7103cdbaae1
 # https://github.com/openresty/headers-more-nginx-module/tags
 ENV HEADERS_MORE_VERSION=v0.39
 # releases can be signed by any key on this page https://nginx.org/en/pgp_keys.html

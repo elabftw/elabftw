@@ -4492,7 +4492,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/entity'
+                $ref: '#/components/schemas/item'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

@@ -1472,7 +1472,7 @@ components:
         approval_comment:
           type: string
           nullable: true
-          description: Optional decision reason; restricted to the booking owner in event listings.
+          description: Optional decision reason.
         created_at:
           type: string
           format: date-time
@@ -1843,7 +1843,7 @@ components:
         approvers:
           type: array
           uniqueItems: true
-          description: Active approver user IDs, returned by GET /items/{id} and accepted by PATCH (at least one when approval is enabled). Updating requires resource write access.
+          description: Active approver user IDs.
           items:
             type: integer
             minimum: 1
@@ -5467,7 +5467,7 @@ paths:
           example: '1,2,3'
         - name: userid
           in: query
-          description: Filter by booking owner user ID; independent of the authenticated user's ID.
+          description: Filter by booking owner user ID.
           schema:
             type: integer
             minimum: 1
@@ -5634,7 +5634,7 @@ paths:
               oneOf:
                 - type: object
                   required: [action, target, decision]
-                  description: Approve or reject a pending request. Only its designated active approvers may decide.
+                  description: Approve or reject a pending request. Only its designated approvers may decide.
                   properties:
                     action:
                       type: string
@@ -5647,7 +5647,7 @@ paths:
                       enum: [approved, rejected]
                     comment:
                       type: string
-                      description: Optional reason for the decision, especially rejection.
+                      description: Optional reason for the decision./
                 - type: object
                   required: [target, start, end]
                   properties:

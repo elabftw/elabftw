@@ -23,6 +23,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Scope;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Services\BookingApproval;
@@ -61,13 +62,17 @@ final class Items extends AbstractConcreteEntity
         if ($action === Action::Update && isset($params['requires_booking_approval'])) {
             $this->canOrExplode(AccessType::Write);
             $this->ExclusiveEditMode->canPatchOrExplode($action);
-            $approvalParams = $params;
+            $requiresApproval = BinaryValue::tryFrom($params['requires_booking_approval']);
+            if ($requiresApproval === null) {
+                throw new ImproperActionException('Invalid requires_booking_approval value.');
+            }
+            $approvers = $params['approvers'];
             unset($params['requires_booking_approval'], $params['approvers'], $params['action']);
 
             // Save booking settings and approvers together or roll back both.
             $this->Db->beginTransaction();
             try {
-                (new BookingApproval($this->Users))->configure($this, $approvalParams);
+                (new BookingApproval($this->Users))->configure($this, $requiresApproval->toBoolean(), $approvers);
                 if ($params) {
                     parent::patch($action, $params);
                 }

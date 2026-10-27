@@ -24,6 +24,7 @@ use Elabftw\Models\Items;
 use Elabftw\Models\Notifications\BookingApprovalRequested;
 use Elabftw\Models\Notifications\BookingApprovalUpdated;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\Guard;
 use PDO;
 use Throwable;
 
@@ -31,9 +32,8 @@ use function array_map;
 use function array_merge;
 use function array_unique;
 use function count;
-use function filter_var;
 use function in_array;
-use function is_array;
+use function is_int;
 
 /** Resource booking approval rules. Administrators do not bypass configured approvers. */
 final class BookingApproval
@@ -81,27 +81,19 @@ final class BookingApproval
     }
 
     /** Configure booking approval within the resource PATCH transaction. */
-    public function configure(Items $Item, array $params): void
+    public function configure(Items $Item, bool $requiresApproval, array $approvers): void
     {
         $team = (int) $Item->entityData['team'];
         $helper = new TeamsHelper($team);
-        $requiresApproval = filter_var($params['requires_booking_approval'] ?? null, FILTER_VALIDATE_INT);
-        if ($requiresApproval !== 0 && $requiresApproval !== 1) {
-            throw new ImproperActionException('Invalid requires_booking_approval value.');
-        }
-        if (!isset($params['approvers']) || !is_array($params['approvers'])) {
-            throw new ImproperActionException('Expected an array of approver user IDs.');
-        }
-        $approvers = array();
-        foreach ($params['approvers'] as $id) {
-            $id = filter_var($id, FILTER_VALIDATE_INT);
-            if ($id === false || $id < 1 || !$helper->isActiveUserInTeam($id)) {
+        $validApprovers = array();
+        foreach ($approvers as $id) {
+            if (!is_int($id) || $id < 1 || !$helper->isActiveUserInTeam($id)) {
                 throw new ImproperActionException('All approvers must be active members of the resource team.');
             }
-            $approvers[$id] = $id;
+            $validApprovers[$id] = $id;
         }
-        if ($requiresApproval === 1 && !$approvers) {
-            throw new ImproperActionException('Select at least one approver.');
+        if ($requiresApproval) {
+            Guard::ensureArrayNotEmpty('approvers', $validApprovers);
         }
 
         $req = $this->Db->prepare('SELECT requires_booking_approval FROM items WHERE id = :id AND team = :team FOR UPDATE');
@@ -112,10 +104,10 @@ final class BookingApproval
         if ($previousRequired === false) {
             throw new ImproperActionException('Resource not found.');
         }
-        $oldApprovers = (int) $previousRequired === 1 && $requiresApproval === 0
+        $oldApprovers = (int) $previousRequired === 1 && !$requiresApproval
             ? $this->getApprovers($Item->entityData) : array();
         $req = $this->Db->prepare('UPDATE items SET requires_booking_approval = :required WHERE id = :id AND team = :team');
-        $req->bindValue(':required', $requiresApproval, PDO::PARAM_INT);
+        $req->bindValue(':required', $requiresApproval, PDO::PARAM_BOOL);
         $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
         $req->bindValue(':team', $team, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -123,14 +115,14 @@ final class BookingApproval
         $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         $req = $this->Db->prepare('INSERT INTO items_booking_approvers(entity_id, userid) VALUES(:item, :userid)');
-        foreach ($approvers as $userid) {
+        foreach ($validApprovers as $userid) {
             $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $req->bindValue(':userid', $userid, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
         // Agreement: disabling approval explicitly approves pending requests.
         // Resolve recipients before changing statuses, and enqueue inside this transaction.
-        if ((int) $previousRequired === 1 && $requiresApproval === 0) {
+        if ((int) $previousRequired === 1 && !$requiresApproval) {
             $req = $this->Db->prepare('SELECT * FROM team_events WHERE item = :item AND approval_status = :pending ORDER BY start');
             $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
             $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);

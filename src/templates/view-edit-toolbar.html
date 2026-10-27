@@ -47,7 +47,11 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
-        <p>{{ 'With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key.'|trans }}</p>
+        {% if App.Config.configArr.ts_authority == 'scimatic' %}
+          <p>{{ 'With SciMatic Proof, a cryptographic hash of your data is sent to SciMatic. They reply with a receipt containing the time it was recorded, signed with their private key, and later record it in a Merkle tree whose root is written to the SciChain blockchain. This is not an eIDAS-qualified timestamp.'|trans }}</p>
+        {% else %}
+          <p>{{ 'With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key.'|trans }}</p>
+        {% endif %}
       </div>
       <div class='timestamp-error'></div>
       <div class='modal-footer'>

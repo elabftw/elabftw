@@ -48,10 +48,8 @@ final class BookingApproval
     /** Admin role never bypasses the resource-specific approver list. */
     public function canApprove(array $item, int $userid): bool
     {
-        if ((int) $item['requires_booking_approval'] !== 1) {
-            return false;
-        }
-        return in_array($userid, $this->getApprovers($item), true);
+        return (int) $item['requires_booking_approval'] === 1
+            && in_array($userid, $this->getApprovers($item), true);
     }
 
     public function initialStatus(array $item, int $userid): BookingApprovalStatus
@@ -85,9 +83,6 @@ final class BookingApproval
     /** Configure booking approval within the resource PATCH transaction. */
     public function configure(Items $Item, array $params): void
     {
-        if ($Item->id === null) {
-            throw new ImproperActionException('A resource is required.');
-        }
         $team = (int) $Item->entityData['team'];
         $helper = new TeamsHelper($team);
         $requiresApproval = filter_var($params['requires_booking_approval'] ?? null, FILTER_VALIDATE_INT);

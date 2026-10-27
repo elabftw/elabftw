@@ -180,9 +180,9 @@ final class Scheduler extends AbstractRest
             $this->checkCandidateOverlaps($occurrences);
             $this->checkMaxSlots(count($occurrences));
             $actorId = (int) $this->Items->Users->userData['userid'];
-            $status = (new BookingApproval($this->Items->Users))->initialStatus($this->Items->entityData, $actorId);
-            $selfApproved = $status === BookingApprovalStatus::Approved
-                && (int) $this->Items->entityData['requires_booking_approval'] !== 0;
+            $approval = new BookingApproval($this->Items->Users);
+            $status = $approval->initialStatus($this->Items->entityData, $actorId);
+            $selfApproved = $status === BookingApprovalStatus::Approved;
 
             $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule, approval_status, approved_by, approved_at)
                 VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_id, :recurrence_index, :recurrence_frequency, :recurrence_interval, :recurrence_rule, :approval_status, :approved_by, :approved_at)';
@@ -212,7 +212,7 @@ final class Scheduler extends AbstractRest
                 $eventId = $eventId ?: $this->Db->lastInsertId();
             }
             if ($status === BookingApprovalStatus::Pending) {
-                (new BookingApproval($this->Items->Users))->notifySubmission(
+                $approval->notifySubmission(
                     $this->Items->entityData,
                     $eventId,
                     $occurrences,

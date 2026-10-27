@@ -822,11 +822,8 @@ $(document).on('shown.bs.modal', '#bookingParamsModal', () => {
     return;
   }
   new TomSelect(select, {
-    maxItems: null,
     maxOptions: null,
-    create: false,
     hideSelected: false,
-    closeAfterSelect: false,
     plugins: ['checkbox_options', 'dropdown_input', 'remove_button'],
     placeholder: i18next.t('search-approvers'),
   });

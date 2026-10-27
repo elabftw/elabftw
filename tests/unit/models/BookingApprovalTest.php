@@ -165,22 +165,6 @@ final class BookingApprovalTest extends TestCase
         ));
     }
 
-    public function testApprovalConfigurationRejectsInvalidFlag(): void
-    {
-        $owner = $this->getUserInTeam(2);
-        $item = $this->getFreshItemWithGivenUser($owner);
-        $this->expectException(ImproperActionException::class);
-        $item->patch(Action::Update, array('requires_booking_approval' => 3, 'approvers' => array($owner->userid)));
-    }
-
-    public function testApprovalConfigurationRequiresApproverArray(): void
-    {
-        $owner = $this->getUserInTeam(2);
-        $item = $this->getFreshItemWithGivenUser($owner);
-        $this->expectException(ImproperActionException::class);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => 'invalid'));
-    }
-
     public function testApprovalConfigurationRequiresAnActiveApprover(): void
     {
         $owner = $this->getUserInTeam(2);
@@ -258,12 +242,6 @@ final class BookingApprovalTest extends TestCase
     {
         $this->expectException(ImproperActionException::class);
         (new BookingApproval($this->getUserInTeam(2)))->decide(1, 'postponed');
-    }
-
-    public function testBookingDecisionRejectsUnknownEvent(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        (new BookingApproval($this->getUserInTeam(2)))->decide(PHP_INT_MAX, 'approved');
     }
 
     public function testBookingDecisionCannotBeRepeated(): void

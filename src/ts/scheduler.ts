@@ -862,7 +862,7 @@ if (calendarEl) {
 
   async function loadBookingRequests(kind: 'my' | 'pending'): Promise<void> {
     const list = document.getElementById(kind === 'my' ? 'bookingRequestsMyList' : 'bookingRequestsPendingList')!;
-    if (!bookingGrids[kind]) list.textContent = i18next.t('booking-loading');
+    if (!bookingGrids[kind]) list.textContent = i18next.t('loading');
     try {
       // Fetch the full recurrence, so both its count and its first occurrence are correct.
       const query = kind === 'my'
@@ -891,7 +891,7 @@ if (calendarEl) {
       }
       list.replaceChildren();
       list.className = getAgGridTheme();
-      const statusNames = ['booking-status-approved', 'booking-status-pending', 'booking-status-approved', 'booking-status-rejected'];
+      const statusNames = ['approved', 'pending-approval', 'approved', 'rejected'];
       const statusColors = [
         ['primary', 'primary-fg', 'primary'],
         ['lightgold', 'darkgold', 'gold'],
@@ -906,7 +906,7 @@ if (calendarEl) {
             const container = element('div', 'd-flex flex-column justify-content-center h-100');
             container.style.lineHeight = '1.5';
             container.appendChild(element('div', 'text-truncate', data.item_title));
-            const reason = element('div', 'smallgray text-truncate', `${i18next.t('booking-reason')}: ${data.approval_comment}`);
+            const reason = element('div', 'smallgray text-truncate', `${i18next.t('reason')}: ${data.approval_comment}`);
             reason.title = data.approval_comment;
             container.appendChild(reason);
             return container;
@@ -919,8 +919,8 @@ if (calendarEl) {
             const overdue = Number(data.approval_status) === 1 && DateTime.fromSQL(data.start).toMillis() < DateTime.now().toMillis();
             const colors = overdue ? ['lightred', 'darkred', 'dangerred'] : (statusColors[Number(data.approval_status)] ?? statusColors[3]);
             const badge = element('span', 'badge p-2', overdue
-              ? i18next.t('booking-status-overdue')
-              : i18next.t(statusNames[Number(data.approval_status)] ?? 'booking-status-unknown'));
+              ? i18next.t('overdue')
+              : i18next.t(statusNames[Number(data.approval_status)]));
             badge.style.backgroundColor = `var(--${colors[0]})`;
             badge.style.color = `var(--${colors[1]})`;
             badge.style.border = `1px solid var(--${colors[2]})`;
@@ -932,7 +932,7 @@ if (calendarEl) {
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingActions(data, kind) : null },
       ];
       if (kind === 'pending') {
-        columnDefs.splice(1, 0, { field: 'fullname', headerName: i18next.t('booking-requested-by'), flex: 1, minWidth: 150 });
+        columnDefs.splice(1, 0, { field: 'fullname', headerName: i18next.t('requested-by'), flex: 1, minWidth: 150 });
       }
       bookingGrids[kind] = createGrid<BookingRequestRow>(list, {
         theme: 'legacy',

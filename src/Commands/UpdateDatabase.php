@@ -12,13 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Elabftw\Update;
 use Elabftw\Models\Config;
-use League\Flysystem\Filesystem as Fs;
-use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -27,7 +25,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Override;
 
-use function dirname;
 use function sprintf;
 
 /**
@@ -36,6 +33,13 @@ use function sprintf;
 #[AsCommand(name: 'db:update')]
 final class UpdateDatabase extends Command
 {
+    public function __construct(
+        private readonly FilesystemOperator $sqlFs,
+        private readonly bool $useBuildInfo,
+    ) {
+        parent::__construct();
+    }
+
     #[Override]
     protected function configure(): void
     {
@@ -60,11 +64,10 @@ final class UpdateDatabase extends Command
             ));
 
             $Config = Config::getConfig();
-            $sqlFs = new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'));
-            $Migrations = new Migrations($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE'));
+            $Migrations = new Migrations($this->sqlFs, $this->useBuildInfo);
             $Update = new Update(
                 (int) $Config->configArr['schema'],
-                new Sql($sqlFs, $output),
+                new Sql($this->sqlFs, $output),
                 $Migrations,
             );
             $newSchema = $Update->runUpdateScript($input->getOption('force'));

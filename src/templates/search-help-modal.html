@@ -9,11 +9,11 @@
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
         <h3>{{ 'Simple search'|trans }}</h3>
-        <p>{{ 'When searching a term in the search bar, results will contain this term in the title, main text, date or elabid.'|trans }}</p>
+        <p>{{ 'When searching a term in the search bar, results will contain this term in the title, main text, date, elabid or custom field values.'|trans }}</p>
         <h3>{{ 'Advanced search'|trans }}</h3>
         {% set fieldValue = "<code><span class='token keyword'>%s</span><span class='token punctuation'>:</span><span class='token string'>%s</span></code>"|format('field'|trans, 'value'|trans) %}
         <p>{{ 'The search bar supports searching with specific constraints such as "title:Something" and "category:Tests" (%s). You can combine them with logical expressions (AND, OR, NOT...) and group with parenthesis.'|trans|format(fieldValue)|raw }}</p>
-        <p>{{ 'To search in custom fields (metadata), use the dedicated helper to build your query. For example, to search all entries where "Temperature" is 37, you would use: "extrafield:Temperature:37" in the search bar.'|trans }}</p>
+        <p>{{ 'To search a specific custom field (metadata), use the dedicated helper to build your query. For example, to search all entries where "Temperature" is 37, you would use: "extrafield:Temperature:37" in the search bar.'|trans }}</p>
         <h4>{{ 'Available fields'|trans }}</h4>
         <div class='row'>
           <div class='col-md-6'>

@@ -1226,6 +1226,7 @@ abstract class AbstractEntity extends AbstractRest
         $tagsByItemId = $this->getTagsHydrationData($entityIds);
 
         foreach ($entities as &$entity) {
+            unset($entity['metadata_search']);
             $itemId = (int) $entity['id'];
             $tagData = $tagsByItemId[$itemId] ?? null;
 
@@ -1247,6 +1248,7 @@ abstract class AbstractEntity extends AbstractRest
 
     protected function hydrateTag(array $entity): array
     {
+        unset($entity['metadata_search']);
         $itemId = (int) $entity['id'];
         $tagsByItemId = $this->getTagsHydrationData(array($itemId));
         $tagData = $tagsByItemId[$itemId] ?? null;
@@ -1514,10 +1516,12 @@ abstract class AbstractEntity extends AbstractRest
 
     private function addSimpleQueryBindValues(string $query): void
     {
-        $this->extendedValues[] = array(
-            'param' => ':simpleQuery',
-            'value' => '%' . $query . '%',
-        );
+        if ($this->hasShortFulltextToken($query)) {
+            $this->extendedValues[] = array(
+                'param' => ':simpleQuery',
+                'value' => '%' . $query . '%',
+            );
+        }
         $this->extendedValues[] = array(
             'param' => ':simpleQueryCustomId',
             'value' => $query,
@@ -1553,7 +1557,7 @@ abstract class AbstractEntity extends AbstractRest
         $sql = sprintf(
             'SELECT search_entity.id
             FROM %1$s AS search_entity
-            WHERE MATCH(search_entity.title, search_entity.body, search_entity.elabid)
+            WHERE MATCH(search_entity.title, search_entity.body, search_entity.elabid, search_entity.metadata_search)
                 AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
             UNION
             SELECT search_entity.id
@@ -1569,7 +1573,8 @@ abstract class AbstractEntity extends AbstractRest
                 FROM %1$s AS search_entity
                 WHERE search_entity.title LIKE :simpleQuery
                     OR search_entity.date LIKE :simpleQuery
-                    OR search_entity.elabid LIKE :simpleQuery',
+                    OR search_entity.elabid LIKE :simpleQuery
+                    OR search_entity.metadata_search LIKE :simpleQuery',
                 $table,
             );
         }

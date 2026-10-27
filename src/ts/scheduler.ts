@@ -832,7 +832,7 @@ if (calendarEl) {
   function renderBookingActions(booking: BookingRequestRow, kind: 'my' | 'pending'): HTMLElement {
     const actions = element('div', 'd-flex align-items-center pt-2');
     if (kind === 'pending' && Number(booking.canapprove) === 1) {
-      for (const [action, style] of [['booking-approve', 'btn-primary'], ['booking-reject', 'btn-danger-ghost']]) {
+      for (const [action, style] of [['approve', 'btn-primary'], ['reject', 'btn-danger-ghost']]) {
         const button = element('button', `btn btn-sm mr-2 ${style}`, i18next.t(action));
         button.type = 'button';
         button.dataset.action = action;

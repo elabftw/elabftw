@@ -72,7 +72,7 @@ final class Items extends AbstractConcreteEntity
             // Save booking settings and approvers together or roll back both.
             $this->Db->beginTransaction();
             try {
-                (new BookingApproval($this->Users))->configure($this, $requiresApproval->toBoolean(), $approvers);
+                new BookingApproval($this->Users)->updateSettings($this, $requiresApproval->toBoolean(), $approvers);
                 if ($params) {
                     parent::patch($action, $params);
                 }

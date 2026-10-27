@@ -23,6 +23,7 @@ use Elabftw\Models\Items;
 use Elabftw\Models\Notifications\BookingApprovalRequested;
 use Elabftw\Models\Notifications\BookingApprovalUpdated;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\EntityParams;
 use Elabftw\Params\Guard;
 use PDO;
 use Throwable;
@@ -43,13 +44,14 @@ final class BookingApproval
         $this->Db = Db::getConnection();
     }
 
-    /** Admin role never bypasses the resource-specific approver list. */
+    // Only designated users may approve bookings on approval-controlled resources
     public function canApprove(array $item, int $userid): bool
     {
         return (int) $item['requires_booking_approval'] === 1
             && in_array($userid, $this->getApprovers($item), true);
     }
 
+    /** Determine the status assigned when a new booking is created. */
     public function initialStatus(array $item, int $userid): BookingApprovalStatus
     {
         if ((int) $item['requires_booking_approval'] !== 1) {
@@ -64,7 +66,7 @@ final class BookingApproval
             : BookingApprovalStatus::Pending;
     }
 
-    // Designated approvers
+    /** Return the list of users designated as approvers for a resource */
     public function getApprovers(array $item): array
     {
         $req = $this->Db->prepare('SELECT userid FROM items_booking_approvers WHERE entity_id = :item ORDER BY userid');
@@ -73,40 +75,19 @@ final class BookingApproval
         return array_map('intval', $req->fetchAll(PDO::FETCH_COLUMN));
     }
 
-    /** Configure booking approval within the resource PATCH transaction. */
-    public function configure(Items $Item, bool $requiresApproval, array $approvers): void
+    /** Update approval Requirement AND selected approvers */
+    public function updateSettings(Items $Item, bool $requiresApproval, array $approvers): void
     {
         if ($requiresApproval) {
             Guard::ensureArrayNotEmpty('approvers', $approvers);
         }
-        $this->updateRequiredApproval($Item, $requiresApproval);
+        $Item->update(new EntityParams('requires_booking_approval', $requiresApproval));
         if ($requiresApproval) {
             $this->replaceApprovers($Item, array_unique($approvers));
         }
     }
 
-    private function updateRequiredApproval(Items $Item, bool $requiresApproval): void
-    {
-        $req = $this->Db->prepare('UPDATE items SET requires_booking_approval = :required WHERE id = :id');
-        $req->bindValue(':required', $requiresApproval, PDO::PARAM_BOOL);
-        $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-    }
-
-    private function replaceApprovers(Items $Item, array $approvers): void
-    {
-        $req = $this->Db->prepare('DELETE FROM items_booking_approvers WHERE entity_id = :item');
-        $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $req = $this->Db->prepare('INSERT INTO items_booking_approvers(entity_id, userid) VALUES(:item, :userid)');
-        foreach ($approvers as $userid) {
-            $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
-            $req->bindValue(':userid', $userid, PDO::PARAM_INT);
-            $this->Db->execute($req);
-        }
-    }
-
-    /** POST/PATCH decision for one booking or its entire recurrence. */
+    /** Approve or reject a pending booking and its recurrence, if any. */
     public function decide(int $eventId, string $decision, ?string $comment = null): void
     {
         $status = match ($decision) {
@@ -161,7 +142,7 @@ final class BookingApproval
         }
     }
 
-    /** Called by Scheduler after a pending booking is inserted, before transaction commit. */
+    /** Notify approvers and the requester when a booking is submitted for approval. */
     public function notifySubmission(array $item, int $eventId, array $occurrences, ?string $recurrenceId): void
     {
         $data = array(
@@ -179,7 +160,21 @@ final class BookingApproval
         (new BookingApprovalUpdated($this->actor, $data))->create();
     }
 
-    /** Notify the booker and current approvers. */
+    /** Replace stored approver assignments with the selected user IDs. */
+    private function replaceApprovers(Items $Item, array $approvers): void
+    {
+        $req = $this->Db->prepare('DELETE FROM items_booking_approvers WHERE entity_id = :item');
+        $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $req = $this->Db->prepare('INSERT INTO items_booking_approvers(entity_id, userid) VALUES(:item, :userid)');
+        foreach ($approvers as $userid) {
+            $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
+            $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+            $this->Db->execute($req);
+        }
+    }
+
+    /** Notify the requester and current approvers of a decision and record its audit event. */
     private function finalizeRequest(array $item, array $event, BookingApprovalStatus $status, ?string $comment): void
     {
         $data = array(

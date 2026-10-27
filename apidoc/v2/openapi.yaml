@@ -1843,7 +1843,7 @@ components:
         approvers:
           type: array
           uniqueItems: true
-          description: Active approver user IDs.
+          description: Approver user IDs. Users may belong to any team or be archived or unvalidated.
           items:
             type: integer
             minimum: 1
@@ -5473,7 +5473,7 @@ paths:
             minimum: 1
         - name: approver
           in: query
-          description: Filter by active designated approver user ID. This does not grant approval permissions to the requester.
+          description: Filter by designated approver user ID. This does not grant approval permissions to the requester.
           schema:
             type: integer
             minimum: 1

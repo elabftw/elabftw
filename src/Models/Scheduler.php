@@ -328,7 +328,7 @@ final class Scheduler extends AbstractRest
                 %s,
                 CASE WHEN %s THEN 1 ELSE 0 END AS canbook,
                 CASE WHEN team_events.approval_status = 1 AND items.requires_booking_approval = 1
-                    AND approver_user.userid IS NOT NULL THEN 1 ELSE 0 END AS canapprove
+                    AND actor_approver.userid IS NOT NULL THEN 1 ELSE 0 END AS canapprove
             FROM team_events
             LEFT JOIN teams ON (team_events.team = teams.id)
             LEFT JOIN experiments ON (team_events.experiment = experiments.id)
@@ -338,8 +338,6 @@ final class Scheduler extends AbstractRest
             LEFT JOIN users AS u ON (team_events.userid = u.userid)
             LEFT JOIN users2teams ON (users2teams.users_id = items.userid AND users2teams.teams_id = :team)
             LEFT JOIN items_booking_approvers AS actor_approver ON (actor_approver.entity_id = items.id AND actor_approver.userid = :actor_approver)
-            LEFT JOIN users2teams AS approver_team ON (approver_team.users_id = actor_approver.userid AND approver_team.teams_id = items.team AND approver_team.is_archived = 0)
-            LEFT JOIN users AS approver_user ON (approver_user.userid = approver_team.users_id AND approver_user.validated = 1 AND (approver_user.valid_until IS NULL OR approver_user.valid_until > NOW()))
             %s
             WHERE 1 = 1
                 AND team_events.start <= :end
@@ -348,9 +346,7 @@ final class Scheduler extends AbstractRest
             $boundSelects['experiment'],
             $boundSelects['item_link'],
             $canBookExpr,
-            $approver > 0 ? 'INNER JOIN items_booking_approvers AS requested_approver ON (requested_approver.entity_id = items.id AND requested_approver.userid = :approver)
-                INNER JOIN users2teams AS requested_team ON (requested_team.users_id = requested_approver.userid AND requested_team.teams_id = items.team AND requested_team.is_archived = 0)
-                INNER JOIN users AS requested_user ON (requested_user.userid = requested_approver.userid AND requested_user.validated = 1 AND (requested_user.valid_until IS NULL OR requested_user.valid_until > NOW()))' : '',
+            $approver > 0 ? 'INNER JOIN items_booking_approvers AS requested_approver ON (requested_approver.entity_id = items.id AND requested_approver.userid = :approver)' : '',
             implode(' ', $this->filterSqlParts)
         );
         $req = $this->Db->prepare($sql);

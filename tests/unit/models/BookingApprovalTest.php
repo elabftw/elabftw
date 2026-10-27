@@ -165,12 +165,38 @@ final class BookingApprovalTest extends TestCase
         ));
     }
 
-    public function testApprovalConfigurationRequiresAnActiveApprover(): void
+    public function testApproverMayBeOutsideResourceTeamAndUnvalidated(): void
     {
-        $owner = $this->getUserInTeam(2);
-        $item = $this->getFreshItemWithGivenUser($owner);
-        $this->expectException(ImproperActionException::class);
-        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array(PHP_INT_MAX)));
+        $item = $this->getFreshBookableItem(2);
+        $Db = Db::getConnection();
+        $req = $Db->prepare('SELECT u.userid FROM users AS u
+            WHERE NOT EXISTS (SELECT 1 FROM users2teams AS ut WHERE ut.users_id = u.userid AND ut.teams_id = :team)
+            LIMIT 1');
+        $req->bindValue(':team', $item->entityData['team'], PDO::PARAM_INT);
+        $Db->execute($req);
+        $approverId = $req->fetchColumn();
+        self::assertNotFalse($approverId);
+        $approverId = (int) $approverId;
+
+        // An unvalidated user outside the resource team may still be designated.
+        $req = $Db->prepare('SELECT validated FROM users WHERE userid = :userid');
+        $req->bindValue(':userid', $approverId, PDO::PARAM_INT);
+        $Db->execute($req);
+        $previousValidated = (int) $req->fetchColumn();
+        $req = $Db->prepare('UPDATE users SET validated = 0 WHERE userid = :userid');
+        $req->bindValue(':userid', $approverId, PDO::PARAM_INT);
+        $Db->execute($req);
+        try {
+            $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($approverId)));
+            $approval = new BookingApproval($item->Users);
+            self::assertSame(array($approverId), $approval->getApprovers($item->entityData));
+            self::assertTrue($approval->canApprove($item->entityData, $approverId));
+        } finally {
+            $req = $Db->prepare('UPDATE users SET validated = :validated WHERE userid = :userid');
+            $req->bindValue(':validated', $previousValidated, PDO::PARAM_INT);
+            $req->bindValue(':userid', $approverId, PDO::PARAM_INT);
+            $Db->execute($req);
+        }
     }
 
     public function testApprovalCannotBeEnabledWithoutApprovers(): void

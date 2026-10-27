@@ -49,7 +49,7 @@
             <p class='smallgray'>{{ 'Pending requests block the time slot.'|trans }}</p>
             <label for='bookApprovalUsers'>{{ 'Approvers (one or more users)'|trans }}</label>
             <select id='bookApprovalUsers' data-ignore='1' class='form-control mb-2' multiple autocomplete='off' aria-label="{{ 'Search approvers'|trans }}" {{ Entity.entityData.requires_booking_approval == 0 or Entity.entityData.is_bookable == 0 ? 'disabled' }}>
-              {% for user in usersArr %}
+              {% for user in approversArr %}
                 <option value='{{ user.userid }}' {{ user.userid in Entity.entityData.approvers ? 'selected' }}>{{ user.fullname }}</option>
               {% endfor %}
             </select>

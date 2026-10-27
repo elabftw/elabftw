@@ -59,23 +59,18 @@ final class BookingApproval
         }
         $approvers = $this->getApprovers($item);
         if (!$approvers) {
-            throw new ImproperActionException('No active approver is configured for this resource.');
+            throw new ImproperActionException('No approver is configured for this resource.');
         }
         return in_array($userid, $approvers, true)
             ? BookingApprovalStatus::Approved
             : BookingApprovalStatus::Pending;
     }
 
-    /** Active designated approvers belonging to the resource team. */
+    // Designated approvers
     public function getApprovers(array $item): array
     {
-        $req = $this->Db->prepare('SELECT a.userid FROM items_booking_approvers AS a
-            INNER JOIN users2teams AS ut ON (ut.users_id = a.userid AND ut.teams_id = :team AND ut.is_archived = 0)
-            INNER JOIN users AS u ON (u.userid = a.userid AND u.validated = 1
-                AND (u.valid_until IS NULL OR u.valid_until > NOW()))
-            WHERE a.entity_id = :item ORDER BY a.userid');
+        $req = $this->Db->prepare('SELECT userid FROM items_booking_approvers WHERE entity_id = :item ORDER BY userid');
         $req->bindValue(':item', $item['id'], PDO::PARAM_INT);
-        $req->bindValue(':team', $item['team'], PDO::PARAM_INT);
         $this->Db->execute($req);
         return array_map('intval', $req->fetchAll(PDO::FETCH_COLUMN));
     }
@@ -84,18 +79,10 @@ final class BookingApproval
     public function configure(Items $Item, bool $requiresApproval, array $approvers): void
     {
         $team = (int) $Item->entityData['team'];
-        $helper = new TeamsHelper($team);
-        $validApprovers = array();
-        foreach ($approvers as $id) {
-            if (!is_int($id) || $id < 1 || !$helper->isActiveUserInTeam($id)) {
-                throw new ImproperActionException('All approvers must be active members of the resource team.');
-            }
-            $validApprovers[$id] = $id;
-        }
+        $approvers = array_unique($approvers);
         if ($requiresApproval) {
-            Guard::ensureArrayNotEmpty('approvers', $validApprovers);
+            Guard::ensureArrayNotEmpty('approvers', $approvers);
         }
-
         $req = $this->Db->prepare('SELECT requires_booking_approval FROM items WHERE id = :id AND team = :team FOR UPDATE');
         $req->bindValue(':id', $Item->id, PDO::PARAM_INT);
         $req->bindValue(':team', $team, PDO::PARAM_INT);

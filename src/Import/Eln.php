@@ -72,8 +72,6 @@ use function str_replace;
 use function str_starts_with;
 use function ucfirst;
 use function usort;
-use function fwrite;
-use function print_r;
 
 /**
  * Import a .eln file.
@@ -166,21 +164,30 @@ class Eln extends AbstractZip
         }
 
         foreach ($this->metadataReferencesToResolve as $ref) {
-            foreach ($this->insertedEntities as $inserted) {
-                if ($ref['target_@id'] !== $inserted['item_@id']) {
-                    continue;
+            $targetId = null;
+            if ($ref['target_type'] === 'users') {
+                $targetId = $this->getMetadataUserReference($ref['target_@id']);
+            } else {
+                foreach ($this->insertedEntities as $inserted) {
+                    if ($ref['target_@id'] !== $inserted['item_@id']) {
+                        continue;
+                    }
+                    $targetId = $inserted['id'];
+                    break;
                 }
-                $entity = $ref['origin_entity_type']->toInstance(
-                    $this->targetUser,
-                    $ref['origin_id'],
-                    true,
-                    true,
-                );
-                $entity->patch(Action::UpdateMetadataField, array(
-                    $ref['property_id'] => $inserted['id'],
-                ));
-                break;
             }
+            if ($targetId === null) {
+                continue;
+            }
+            $entity = $ref['origin_entity_type']->toInstance(
+                $this->targetUser,
+                $ref['origin_id'],
+                true,
+                true,
+            );
+            $entity->patch(Action::UpdateMetadataField, array(
+                $ref['property_id'] => $targetId,
+            ));
         }
 
         // All imported entities now have their target IDs
@@ -267,6 +274,11 @@ class Eln extends AbstractZip
     protected function getChangelogAuthor(array $action): Users
     {
         return $this->requester;
+    }
+
+    protected function getMetadataUserReference(string $personId): int
+    {
+        return $this->targetUser->getUserid();
     }
 
     protected function getEntityType(array $dataset): EntityType
@@ -524,20 +536,19 @@ class Eln extends AbstractZip
                         } else {
                             // INTERNAL_ELN_VERSION >= 103
                             $node = $this->getNodeFromId($propval['@id']);
-                            fwrite(STDERR, print_r($node, true));
                             if ($node['propertyID'] === 'elabftw_metadata') {
                                 $this->Entity->update(new EntityParams('metadata', $node['value']));
                                 continue;
                             }
-                            if (in_array($node['valueReference'] ?? '', array('experiments', 'items'), true) && isset($node['value']['@id'])) {
+                            if (in_array($node['valueReference'] ?? '', array('experiments', 'items', 'users'), true) && isset($node['value']['@id'])) {
                                 $this->metadataReferencesToResolve[] = array(
                                     'origin_entity_type' => $this->Entity->entityType,
                                     'origin_id' => $this->Entity->id,
                                     'property_id' => $node['propertyID'],
                                     'target_@id' => $node['value']['@id'],
+                                    'target_type' => $node['valueReference'],
                                 );
                             }
-                            fwrite(STDERR, print_r($this->metadataReferencesToResolve, true));
                         }
                     }
                     break;

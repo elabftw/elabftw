@@ -511,7 +511,7 @@ class MakeEln extends AbstractMakeEln
             $pv['propertyID'] = $name;
             $pv['valueReference'] = $props['type'];
             $pv['value'] = $props['value'] ?? '';
-            if (in_array($props['type'], array('compounds', 'experiments', 'items'), true) && !empty($props['value'])) {
+            if (in_array($props['type'], array('compounds', 'experiments', 'items', 'users'), true) && !empty($props['value'])) {
                 $sourceId = (int) $props['value'];
                 $reference = $metadataReferences[$props['type']][$sourceId] ?? null;
                 if ($reference !== null) {
@@ -581,9 +581,6 @@ class MakeEln extends AbstractMakeEln
         $metadata = json_decode($strMetadata, true, 42, JSON_THROW_ON_ERROR);
         foreach ($metadata[Metadata::ExtraFields->value] ?? array() as $props) {
             $type = $props['type'] ?? '';
-            if (!in_array($type, array('compounds', 'experiments', 'items'), true) || empty($props['value'])) {
-                continue;
-            }
             $sourceId = (int) $props['value'];
             if (isset($references[$type][$sourceId])) {
                 continue;
@@ -591,13 +588,20 @@ class MakeEln extends AbstractMakeEln
             $reference = match ($type) {
                 'compounds' => $this->processMetadataCompounds($sourceId),
                 'experiments' => $this->processMetadataEntity($sourceId, EntityType::Experiments),
-                default => $this->processMetadataEntity($sourceId, EntityType::Items),
+                'items' => $this->processMetadataEntity($sourceId, EntityType::Items),
+                'users' => $this->processMetadataUser($sourceId),
+                default => null,
             };
             if ($reference !== null) {
                 $references[$type][$sourceId] = $reference;
             }
         }
         return $references;
+    }
+
+    private function processMetadataUser(int $userId): array
+    {
+        return array('@id' => $this->getAuthorId(new Users($userId)));
     }
 
     private function processMetadataEntity(int $entityId, EntityType $entityType): ?array

@@ -35,7 +35,6 @@ use Override;
 use PDO;
 use Throwable;
 
-use function preg_match;
 use function preg_replace;
 use function ksort;
 use function _;
@@ -58,6 +57,9 @@ use function trim;
 use function usort;
 use function array_values;
 use function date;
+use function array_column;
+use function array_diff;
+use function explode;
 
 /**
  * All about the team's scheduler

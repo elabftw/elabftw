@@ -213,6 +213,7 @@ final class i18n4Js
             'table-options' => _('Table options'),
             'team' => _('Team'),
             'teams' => _('Teams'),
+            'template-entries-updated' => _('{{updated, number}} entries updated; {{skipped, number}} entries skipped.'),
             'template-title' => _('Template title'),
             'text-color' => _('Text color'),
             'is-timestamped' => _('Is timestamped'),

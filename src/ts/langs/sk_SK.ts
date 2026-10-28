@@ -167,6 +167,7 @@ const t = {
     "table-options": "Table options",
     "team": "Tím",
     "teams": "Timy",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "Názov šablóny",
     "text-color": "Farba textu",
     "is-timestamped": "Má časovú pečiatku",

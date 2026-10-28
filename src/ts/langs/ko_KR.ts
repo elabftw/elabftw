@@ -167,6 +167,7 @@ const t = {
     "table-options": "Table options",
     "team": "팀",
     "teams": "팀",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "템플릿 제목",
     "text-color": "텍스트 색상",
     "is-timestamped": "타임스탬프됨",

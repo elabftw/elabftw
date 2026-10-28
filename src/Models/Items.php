@@ -61,21 +61,10 @@ final class Items extends AbstractConcreteEntity
     #[Override]
     public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
     {
-        $items = parent::readShow($displayParams, $extended, $can);
-        foreach ($items as $index => $item) {
-            $items[$index] = $this->hydrateApprovers($item);
-        }
-        return $items;
-    }
-
-    private function hydrateApprovers(array $item): array
-    {
-        if (!isset($item['approvers'])) {
-            return $item;
-        }
-        $item['approvers'] = json_decode($item['approvers'], true, flags: JSON_THROW_ON_ERROR);
-        sort($item['approvers'], SORT_NUMERIC);
-        return $item;
+        return array_map(
+            $this->hydrateApprovers(...),
+            parent::readShow($displayParams, $extended, $can),
+        );
     }
 
     #[Override]
@@ -273,5 +262,15 @@ final class Items extends AbstractConcreteEntity
     protected function getCreatePermissionKey(): string
     {
         return 'users_canwrite_resources';
+    }
+
+    private function hydrateApprovers(array $item): array
+    {
+        if (!isset($item['approvers'])) {
+            return $item;
+        }
+        $item['approvers'] = json_decode($item['approvers'], true, flags: JSON_THROW_ON_ERROR);
+        sort($item['approvers'], SORT_NUMERIC);
+        return $item;
     }
 }

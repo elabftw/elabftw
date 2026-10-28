@@ -92,6 +92,10 @@ class Eln extends AbstractZip
 
     private array $insertedEntities = array();
 
+    private array $insertedCompounds = array();
+
+    private array $entityStatesToRestore = array();
+
     private array $crateNodeHasPart = array();
 
     private AbstractEntity $Entity;
@@ -163,20 +167,18 @@ class Eln extends AbstractZip
             $current++;
         }
 
+        $insertedEntitiesIds = array();
+        foreach ($this->insertedEntities as $inserted) {
+            $insertedEntitiesIds[$inserted['item_@id']] = $inserted['id'];
+        }
         foreach ($this->metadataReferencesToResolve as $ref) {
-            $targetId = null;
-            if ($ref['target_type'] === 'users') {
-                $targetId = $this->getMetadataUserReference($ref['target_@id']);
-            } else {
-                foreach ($this->insertedEntities as $inserted) {
-                    if ($ref['target_@id'] !== $inserted['item_@id']) {
-                        continue;
-                    }
-                    $targetId = $inserted['id'];
-                    break;
-                }
-            }
+            $targetId = match ($ref['target_type']) {
+                'users' => $this->getMetadataUserReference($ref['target_@id']),
+                'compounds' => $this->insertedCompounds[$ref['target_@id']] ?? null,
+                default => $insertedEntitiesIds[$ref['target_@id']] ?? null,
+            };
             if ($targetId === null) {
+                $this->logger->warning(sprintf('Could not resolve metadata reference %s.', $ref['target_@id']));
                 continue;
             }
             $entity = $ref['origin_entity_type']->toInstance(
@@ -247,6 +249,10 @@ class Eln extends AbstractZip
                 $entity->ItemsLinks->createForImport();
             }
         }
+
+        // Restore entity state (normal, archived, deleted).
+        $this->restoreEntityStates();
+
         return $this->getInserted();
     }
 
@@ -540,7 +546,7 @@ class Eln extends AbstractZip
                                 $this->Entity->update(new EntityParams('metadata', $node['value']));
                                 continue;
                             }
-                            if (in_array($node['valueReference'] ?? '', array('experiments', 'items', 'users'), true) && isset($node['value']['@id'])) {
+                            if (in_array($node['valueReference'] ?? '', array('compounds', 'experiments', 'items', 'users'), true) && isset($node['value']['@id'])) {
                                 $this->metadataReferencesToResolve[] = array(
                                     'origin_entity_type' => $this->Entity->entityType,
                                     'origin_id' => $this->Entity->id,
@@ -631,10 +637,10 @@ class Eln extends AbstractZip
                             casNumber: $casNumber,
                             pubchemCid: $pubchemCid,
                         );
+                        $this->insertedCompounds[$compoundLink['@id']] = $compoundId;
                         $CompoundsLinks = LinksFactory::getCompoundsLinks($this->Entity, $compoundId);
                         $CompoundsLinks->postAction(Action::Create, array());
                     }
-
                     break;
                 default:
             }
@@ -677,16 +683,11 @@ class Eln extends AbstractZip
         }
         $this->restoreUploadOrdering();
 
-        // Restore entity state (normal, archived, deleted).
-        $state = State::fromName($dataset['status'] ?? State::Normal->name);
-        // we use match(true) to be able to match a State and the Locked pseudo-state in the same match
-        match (true) {
-            $state === State::Archived => $this->Entity->patch(Action::Archive, array()),
-            $state === State::Deleted => $this->Entity->patch(Action::Update, array('state' => $state->value)),
-            // Restore locked/unlocked condition.
-            ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->restoreLock($dataset),
-            default => null,
-        };
+        $this->entityStatesToRestore[] = array(
+            'entity_type' => $this->Entity->entityType,
+            'entity_id' => $this->Entity->id,
+            'dataset' => $dataset,
+        );
 
         // Prepare the original changelog; restore it once all imported entity IDs are known
         if (!empty($dataset['subjectOf'])) {
@@ -697,9 +698,31 @@ class Eln extends AbstractZip
         }
     }
 
-    private function restoreLock(array $dataset): array
+    private function restoreEntityStates(): void
     {
-        $result = $this->Entity->patch(Action::Lock, array());
+        foreach ($this->entityStatesToRestore as $pending) {
+            $entity = $pending['entity_type']->toInstance(
+                $this->targetUser,
+                $pending['entity_id'],
+                true,
+                true,
+            );
+            $dataset = $pending['dataset'];
+            $state = State::fromName($dataset['status'] ?? State::Normal->name);
+            // we use match(true) to be able to match a State and the Locked pseudo-state in the same match
+            match (true) {
+                $state === State::Archived => $entity->patch(Action::Archive, array()),
+                $state === State::Deleted => $entity->patch(Action::Update, array('state' => $state->value)),
+                // Restore locked/unlocked condition.
+                ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->restoreLock($entity, $dataset),
+                default => null,
+            };
+        }
+    }
+
+    private function restoreLock(AbstractEntity $entity, array $dataset): array
+    {
+        $result = $entity->patch(Action::Lock, array());
         $lockedAt = null;
         foreach ($dataset['subjectOf'] ?? array() as $action) {
             if (($action['object'] ?? '') !== 'locked'
@@ -714,7 +737,7 @@ class Eln extends AbstractZip
             }
         }
         if ($lockedAt !== null) {
-            $this->Entity->update(new ContentParams('locked_at', date('Y-m-d H:i:s', $lockedAt->getTimestamp())));
+            $entity->update(new ContentParams('locked_at', date('Y-m-d H:i:s', $lockedAt->getTimestamp())));
         }
         return $result;
     }

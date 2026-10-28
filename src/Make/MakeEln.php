@@ -582,7 +582,7 @@ class MakeEln extends AbstractMakeEln
         foreach ($metadata[Metadata::ExtraFields->value] ?? array() as $props) {
             $type = $props['type'] ?? '';
             $sourceId = (int) $props['value'];
-            if (isset($references[$type][$sourceId])) {
+            if ($sourceId < 1 || isset($references[$type][$sourceId])) {
                 continue;
             }
             $reference = match ($type) {
@@ -606,16 +606,26 @@ class MakeEln extends AbstractMakeEln
 
     private function processMetadataEntity(int $entityId, EntityType $entityType): ?array
     {
-        $Entity = $entityType->toInstance(
-            $this->requester,
-            $entityId,
-            $this->bypassReadPermission,
-        );
-        $datasetFolder = $this->processEntity($Entity);
-        if ($datasetFolder === false) {
+        try {
+            $Entity = $entityType->toInstance(
+                $this->requester,
+                $entityId,
+                $this->bypassReadPermission,
+            );
+            $datasetFolder = $this->processEntity($Entity);
+            if ($datasetFolder === false) {
+                return null;
+            }
+            return array('@id' => './' . $datasetFolder);
+        } catch (ForbiddenException $e) {
+            $this->logger->warning(sprintf(
+                'Skipping metadata reference %s: %d during ELN export: %s',
+                $entityType->value,
+                $entityId,
+                $e->getMessage()
+            ));
             return null;
         }
-        return array('@id' => './' . $datasetFolder);
     }
 
     private function processMetadataCompounds(int $compoundId): array

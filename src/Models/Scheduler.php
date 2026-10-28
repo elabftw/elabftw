@@ -249,7 +249,7 @@ final class Scheduler extends AbstractRest
         $this->filterBindings = array();
         $query = $queryParams?->getQuery();
         $statuses = $query?->getString('approval_status') ?? '';
-        if ($statuses !== '' && !preg_match('/^[0-3](,[0-3])*$/', $statuses)) {
+        if ($statuses !== '' && array_diff(explode(',', $statuses), array_column(BookingApprovalStatus::cases(), 'value'))) {
             throw new ImproperActionException('Invalid approval_status filter.');
         }
         $userid = $query?->getInt('userid') ?? 0;
@@ -460,7 +460,8 @@ final class Scheduler extends AbstractRest
             'start' => $event['start'],
             'end' => $event['end'],
         );
-        foreach (new BookingApproval($this->Items->Users)->getApprovers((int) $this->Items->id) as $userid) {
+        $approvers = new BookingApproval($this->Items->Users)->getApprovers((int) $this->Items->id);
+        foreach ($approvers as $userid) {
             new BookingApprovalUpdated(new Users($userid), $details)->create();
         }
     }
@@ -544,8 +545,7 @@ final class Scheduler extends AbstractRest
 
     public function checkCandidateOverlaps(array $occurrences): void
     {
-        if ($this->Items->entityData['book_can_overlap'] === 1
-            && (int) $this->Items->entityData['requires_booking_approval'] === 0) {
+        if ($this->Items->entityData['book_can_overlap'] === 1) {
             return;
         }
         $ordered = $occurrences;

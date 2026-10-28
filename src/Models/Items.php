@@ -62,16 +62,17 @@ final class Items extends AbstractConcreteEntity
     public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
     {
         $items = parent::readShow($displayParams, $extended, $can);
-        if (isset($items[0]['approvers'])) {
-            foreach ($items as $index => $item) {
-                $items[$index] = $this->hydrateApprovers($item);
-            }
+        foreach ($items as $index => $item) {
+            $items[$index] = $this->hydrateApprovers($item);
         }
         return $items;
     }
 
     private function hydrateApprovers(array $item): array
     {
+        if (!isset($item['approvers'])) {
+            return $item;
+        }
         $item['approvers'] = json_decode($item['approvers'], true, flags: JSON_THROW_ON_ERROR);
         sort($item['approvers'], SORT_NUMERIC);
         return $item;

@@ -73,11 +73,11 @@ final class BookingApproval
     }
 
     /** Update the approval requirement and replace the selected approvers. */
-    public function updateSettings(Items $Item, bool $requiresApproval, array $approvers): void
+    public function updateSettings(int $itemId, bool $requiresApproval, array $approvers): void
     {
         if ($requiresApproval) {
             Guard::ensureArrayNotEmpty('approvers', $approvers);
-            $this->replaceApprovers($Item, array_unique($approvers));
+            $this->replaceApprovers($itemId, array_unique($approvers));
         }
         if ((bool) $Item->entityData['requires_booking_approval'] !== $requiresApproval) {
             $Item->update(new EntityParams('requires_booking_approval', $requiresApproval));
@@ -167,28 +167,28 @@ final class BookingApproval
     }
 
     /** Replace the stored approver list with the selected user IDs. */
-    private function replaceApprovers(Items $Item, array $approvers): void
+    private function replaceApprovers(int $itemId, array $approvers): void
     {
-        $this->removeApprovers($Item);
-        $this->addApprovers($Item, $approvers);
+        $this->removeApprovers($itemId);
+        $this->addApprovers($itemId, $approvers);
     }
 
     /** Remove all approver for the resource. */
-    private function removeApprovers(Items $Item): void
+    private function removeApprovers(int $itemId): void
     {
         $req = $this->Db->prepare('DELETE FROM items_booking_approvers WHERE entity_id = :item');
-        $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
+        $req->bindValue(':item', $itemId, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 
     /** Store the selected approver for the resource. */
-    private function addApprovers(Items $Item, array $approvers): void
+    private function addApprovers(int $itemId, array $approvers): void
     {
         $values = array();
         $params = array();
         foreach ($approvers as $userid) {
             $values[] = '(?, ?)';
-            $params[] = $Item->id;
+            $params[] = $itemId;
             $params[] = $userid;
         }
         $sql = 'INSERT INTO items_booking_approvers(entity_id, userid) VALUES ' . implode(', ', $values);

@@ -82,7 +82,7 @@ $Application->add(new ExportCommand($exportsFs));
 $Application->add(new ExportEln($exportsFs));
 $Application->add(new ImportEln($exportsFs));
 $Application->add(new ImportCompoundsCsv($exportsFs));
-$Application->add(new UpdateDatabase());
+$Application->add(new UpdateDatabase($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')));
 $Application->add(new StatusDatabase($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')));
 $Application->add(new RevertSchema($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')));
 $Application->add(new UpdateTo3());

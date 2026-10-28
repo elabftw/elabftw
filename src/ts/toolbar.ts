@@ -14,6 +14,24 @@ import { Action, Model } from './interfaces';
 import { collectForm, reloadElements } from './misc';
 import { notify } from './notify';
 
+on(Action.UpdateEntries, (el: HTMLButtonElement) => {
+  if (el.disabled || !confirm(el.dataset.confirm)) {
+    return;
+  }
+  el.disabled = true;
+  el.setAttribute('aria-busy', 'true');
+  ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.UpdateEntries, notifOnSaved: 0})
+    .then(response => response.json())
+    .then((result: { updated: number; skipped: number }) => {
+      notify.success('template-entries-updated', {updated: result.updated, skipped: result.skipped});
+    })
+    .catch(() => { /* ApiC displays the error. */ })
+    .finally(() => {
+      el.disabled = false;
+      el.removeAttribute('aria-busy');
+    });
+});
+
 on(Action.Duplicate, () => {
   const copyFiles = (document.getElementById('duplicateKeepFilesSelect') as HTMLInputElement);
   const linkToOriginalExperiment = (document.getElementById('duplicateLinkToOriginal') as HTMLInputElement);
@@ -145,12 +163,13 @@ on('export-to', (el: HTMLElement) => {
   window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?${params}`, '_blank');
 });
 
-on('export-to-qrpng', (el: HTMLElement) => {
-  const size = (document.getElementById('qrpng_exportSize') as HTMLInputElement).value;
-  const title = (document.getElementById('qrpng_exportTitle') as HTMLInputElement).checked ? 1: 0;
-  const titleLines = (document.getElementById('qrpng_exportTitleLines') as HTMLInputElement).value;
-  const titleChars = (document.getElementById('qrpng_exportTitleChars') as HTMLInputElement).value;
-  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrpng&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}`, '_blank');
+on('export-to-qrsvg', (el: HTMLElement) => {
+  const size = (document.getElementById('qrsvg_exportSize') as HTMLInputElement).value;
+  const title = (document.getElementById('qrsvg_exportTitle') as HTMLInputElement).checked ? 1: 0;
+  const titleLines = (document.getElementById('qrsvg_exportTitleLines') as HTMLInputElement).value;
+  const titleChars = (document.getElementById('qrsvg_exportTitleChars') as HTMLInputElement).value;
+  const titleFontSize = (document.getElementById('qrsvg_exportTitleFontSize') as HTMLInputElement).value;
+  window.open(`/api/v2/${el.dataset.type}/${el.dataset.id}?format=qrsvg&size=${size}&withTitle=${title}&titleLines=${titleLines}&titleChars=${titleChars}&titleFontSize=${titleFontSize}`, '_blank');
 });
 
 on(Action.Destroy, () => {

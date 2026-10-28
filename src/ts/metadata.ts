@@ -5,10 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import {
-  addAutocompleteToExtraFieldsKeyInputs,
-  normalizeFieldName,
-} from './misc';
+import { normalizeFieldName } from './misc';
 import { autoResize, Metadata } from './Metadata.class';
 import { ExtraFieldInputType } from './metadataInterfaces';
 import type { ValidMetadata } from './metadataInterfaces';
@@ -189,8 +186,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
       document.getElementById('newFieldContentDiv_text').hidden = false;
       clearForm();
     });
-
-    addAutocompleteToExtraFieldsKeyInputs();
 
     // when the type is selected, the default value input's type is changed to match
     document.getElementById('newFieldTypeSelect').addEventListener('change', event => {

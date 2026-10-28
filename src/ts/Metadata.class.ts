@@ -332,11 +332,6 @@ export class Metadata {
         const row = this.buildMultiValueRow(name, properties, '', holder);
         holder.insertBefore(row, addButton);
         const input = row.querySelector<HTMLElement>('[data-metadata-value="true"], [data-purpose="radio-holder"] input');
-        // Linked fields initialize their autocomplete from their click handler.
-        // Initialize it before focusing a newly added row so typing works immediately.
-        if (input?.dataset.action === 'autocomplete') {
-          input.click();
-        }
         input?.focus();
       });
       holder.append(addButton);

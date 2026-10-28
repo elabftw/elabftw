@@ -143,6 +143,9 @@ The simple search field searches the following content of experiments and resour
 - Title
 - Main text
 - eLabID
+- Custom field values, including fields with multiple values
+
+Custom field names, descriptions, available options, and other metadata settings are not searched.
 
 The search uses full-text word matching. Search terms are treated as word prefixes, meaning that a term can only match from the beginning of a word.
 
@@ -171,4 +174,4 @@ will search for entries containing a word beginning with cell and a word beginni
 
 The simple search also recognizes an exact custom ID when the search term corresponds to one.
 
-Very short search terms (one or two characters) receive special handling because they cannot normally be used by the full-text index. In that case, eLabFTW also performs a substring search against the title, date, and eLabID fields.
+Very short search terms (one or two characters) receive special handling because they cannot normally be used by the full-text index. In that case, eLabFTW also performs a substring search against the title, date, eLabID, and custom field values.

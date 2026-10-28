@@ -34,6 +34,7 @@ use function array_unique;
 use function count;
 use function in_array;
 use function strtolower;
+use function implode;
 
 /** Resource booking approval rules. Administrators do not bypass configured approvers. */
 final class BookingApproval
@@ -183,12 +184,19 @@ final class BookingApproval
     /** Store the selected approver for the resource. */
     private function addApprovers(Items $Item, array $approvers): void
     {
-        $req = $this->Db->prepare('INSERT INTO items_booking_approvers(entity_id, userid) VALUES(:item, :userid)');
-        $req->bindValue(':item', $Item->id, PDO::PARAM_INT);
+        $values = array();
+        $params = array();
         foreach ($approvers as $userid) {
-            $req->bindValue(':userid', $userid, PDO::PARAM_INT);
-            $this->Db->execute($req);
+            $values[] = '(?, ?)';
+            $params[] = $Item->id;
+            $params[] = $userid;
         }
+        $sql = 'INSERT INTO items_booking_approvers(entity_id, userid) VALUES ' . implode(', ', $values);
+        $req = $this->Db->prepare($sql);
+        foreach ($params as $index => $value) {
+            $req->bindValue($index + 1, $value, PDO::PARAM_INT);
+        }
+        $this->Db->execute($req);
     }
 
     /** Notify the requester and current approvers of a decision and record its audit event. */

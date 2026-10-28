@@ -174,12 +174,12 @@ class Eln extends AbstractZip
         }
         foreach ($this->metadataReferencesToResolve as $ref) {
             $targetId = match ($ref['target_type']) {
-                'users' => $this->getMetadataUserReference($ref['target_@id']),
-                'compounds' => $this->insertedCompounds[$ref['target_@id']] ?? null,
-                default => $insertedEntitiesIds[$ref['target_@id']] ?? null,
+                'users' => $this->getMetadataUserReference($ref['target_@ids']),
+                'compounds' => $this->insertedCompounds[$ref['target_@ids']] ?? null,
+                default => $insertedEntitiesIds[$ref['target_@ids']] ?? null,
             };
             if ($targetId === null) {
-                $this->logger->warning(sprintf('Could not resolve metadata reference %s.', $ref['target_@id']));
+                $this->logger->warning(sprintf('Could not resolve metadata reference %s.', $ref['target_@ids']));
                 continue;
             }
             $entity = $ref['origin_entity_type']->toInstance(

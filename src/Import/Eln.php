@@ -642,7 +642,7 @@ class Eln extends AbstractZip
                             }
                             $type = $node['valueReference'] ?? '';
                             $value = $node['value'] ?? null;
-                            if (in_array($type, array('compounds', 'experiments', 'items', 'users'), true) && isset($value)) {
+                            if (in_array($type, array('compounds', 'experiments', 'items', 'users'), true) && is_array($value)) {
                                 $isMultiple = array_is_list($value);
                                 $referenceValues = $isMultiple ? $value : array($value);
                                 $targetAtIds = array();

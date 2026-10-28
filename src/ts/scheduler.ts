@@ -835,7 +835,7 @@ if (calendarEl) {
       for (const [action, style] of [['approve', 'btn-primary'], ['reject', 'btn-danger-ghost']]) {
         const button = element('button', `btn btn-sm mr-2 ${style}`, i18next.t(action));
         button.type = 'button';
-        button.dataset.action = action;
+        button.dataset.action = `booking-${action}`;
         button.dataset.eventid = String(booking.id);
         actions.appendChild(button);
       }

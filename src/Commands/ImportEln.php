@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Enums\EntityType;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Import\TrustedEln;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Users\UltraAdmin;
@@ -94,6 +95,7 @@ final class ImportEln extends Command
             category: $defaultCategory,
             verifyChecksum: (bool) $input->getOption('checksum'),
             checksumErrorSkip: (bool) $input->getOption('checksum-error-skip'),
+            Compounds: CompoundsFactory::create($user),
         );
         if ($input->getOption('dry-run')) {
             // this is necessary so -vv isn't required to get dry run info

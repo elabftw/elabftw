@@ -20,10 +20,10 @@ use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Hash\FileHash;
+use Elabftw\Interfaces\CompoundInterface;
 use Elabftw\Models\AbstractEntity;
-use Elabftw\Models\Compounds;
-use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Items;
@@ -31,12 +31,9 @@ use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
-use Elabftw\Services\HttpGetter;
-use Elabftw\Services\OpenBabelFingerprinter;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\TwigTrait;
 use League\Flysystem\UnableToReadFile;
-use GuzzleHttp\Client;
 use ZipStream\ZipStream;
 use Override;
 use Psr\Log\LoggerInterface;
@@ -84,6 +81,7 @@ class MakeEln extends AbstractMakeEln
         protected Users2Rors $users2Rors,
         protected bool $includeLinkedEntities = true,
         protected bool $includeChangelog = true,
+        protected ?CompoundInterface $Compounds = null,
     ) {
         parent::__construct($Zip, $instance2Rors);
     }
@@ -649,19 +647,7 @@ class MakeEln extends AbstractMakeEln
 
     private function processMetadataCompounds(int $compoundId): array
     {
-        // Initialize the model only when a compound needs to be loaded.
-        $Config = Config::getConfig();
-        $httpGetter = new HttpGetter(
-            new Client(),
-            $Config->configArr['proxy'],
-            !Env::asBool('DEV_MODE'),
-        );
-        $Compounds = new Compounds(
-            $httpGetter,
-            $this->requester,
-            new OpenBabelFingerprinter(),
-        );
-
+        $Compounds = $this->Compounds ??= CompoundsFactory::create($this->requester);
         $Compounds->setId($compoundId);
         return $this->compoundToJsonLd($Compounds->readOne());
     }

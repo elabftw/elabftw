@@ -21,6 +21,7 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\CompoundInterface;
 use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\AnonymousUser;
@@ -51,7 +52,7 @@ use function trim;
 /**
  * Compounds are chemical entities stored in the `compounds` SQL table
  */
-final class Compounds extends AbstractRest
+final class Compounds extends AbstractRest implements CompoundInterface
 {
     use SetIdTrait;
 
@@ -485,6 +486,7 @@ final class Compounds extends AbstractRest
         return $id;
     }
 
+    #[Override]
     public function createFromCompound(Compound $compound): int
     {
         return $this->create(

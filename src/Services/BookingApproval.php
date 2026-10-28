@@ -115,6 +115,27 @@ final class BookingApproval
         }
     }
 
+    /** Notify approvers and the requester only for pending submissions. */
+    public function notifySubmission(array $item, int $eventId, array $occurrences, ?string $recurrenceId, BookingApprovalStatus $status): void
+    {
+        if ($status !== BookingApprovalStatus::Pending) {
+            return;
+        }
+        $data = array(
+            'request_key' => $recurrenceId ?? 'event:' . $eventId,
+            'item_title' => $item['title'],
+            'requester_fullname' => $this->actor->userData['fullname'],
+            'start' => $occurrences[0]['start'],
+            'end' => $occurrences[0]['end'],
+            'occurrences' => count($occurrences),
+            'status' => strtolower($status->name),
+        );
+        foreach ($this->getApprovers((int) $item['id']) as $approverId) {
+            new BookingApprovalRequested(new Users($approverId), $data)->create();
+        }
+        new BookingApprovalUpdated($this->actor, $data)->create();
+    }
+
     /** Lock one booking and retrieve only the fields needed for its decision. */
     private function getEventForDecision(int $eventId): array
     {
@@ -142,27 +163,6 @@ final class BookingApproval
             $req->bindValue(':recurrence', $event['recurrence_id']);
         }
         $this->Db->execute($req);
-    }
-
-    /** Notify approvers and the requester only for pending submissions. */
-    public function notifySubmission(array $item, int $eventId, array $occurrences, ?string $recurrenceId, BookingApprovalStatus $status): void
-    {
-        if ($status !== BookingApprovalStatus::Pending) {
-            return;
-        }
-        $data = array(
-            'request_key' => $recurrenceId ?? 'event:' . $eventId,
-            'item_title' => $item['title'],
-            'requester_fullname' => $this->actor->userData['fullname'],
-            'start' => $occurrences[0]['start'],
-            'end' => $occurrences[0]['end'],
-            'occurrences' => count($occurrences),
-            'status' => strtolower($status->name),
-        );
-        foreach ($this->getApprovers((int) $item['id']) as $approverId) {
-            new BookingApprovalRequested(new Users($approverId), $data)->create();
-        }
-        new BookingApprovalUpdated($this->actor, $data)->create();
     }
 
     /** Replace the stored approver list with the selected user IDs. */

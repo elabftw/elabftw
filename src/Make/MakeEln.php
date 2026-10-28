@@ -529,14 +529,14 @@ class MakeEln extends AbstractMakeEln
                 if ($resolveRefs !== array()) {
                     $pv['value'] = is_array($value) ? $resolveRefs : $resolveRefs[0];
                 }
-                if (!empty($props['description'])) {
-                    $pv['description'] = $props['description'];
-                }
-                if (!empty($props['unit'])) {
-                    $pv['unitText'] = $props['unit'];
-                }
-                $res['nodes'][] = $pv;
             }
+            if (!empty($props['description'])) {
+                $pv['description'] = $props['description'];
+            }
+            if (!empty($props['unit'])) {
+                $pv['unitText'] = $props['unit'];
+            }
+            $res['nodes'][] = $pv;
         }
         return $res;
     }

@@ -49,15 +49,7 @@ class RequestActionsAuthorizationTest extends \PHPUnit\Framework\TestCase
         $this->Db->rollBack();
     }
 
-    public static function entityTypes(): array
-    {
-        return array(
-            'experiments' => array(EntityType::Experiments),
-            'resources' => array(EntityType::Items),
-        );
-    }
-
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testRejectsTargetWithoutReadAccess(EntityType $type): void
     {
         $Entity = $this->createEntity($type, BasePermissions::UserOnly);
@@ -66,7 +58,7 @@ class RequestActionsAuthorizationTest extends \PHPUnit\Framework\TestCase
         $this->assertRejectedWithoutSideEffects($Entity, $this->target->getUserid());
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testRejectsOtherTeamWithoutReadAccess(EntityType $type): void
     {
         $target = $this->getUserInTeam(2);
@@ -75,7 +67,7 @@ class RequestActionsAuthorizationTest extends \PHPUnit\Framework\TestCase
         $this->assertRejectedWithoutSideEffects($Entity, $target->getUserid());
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testAllowsOtherTeamWithReadAccess(EntityType $type): void
     {
         $target = $this->getUserInTeam(2);
@@ -90,7 +82,7 @@ class RequestActionsAuthorizationTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testRejectsArchivedTarget(EntityType $type): void
     {
         $Entity = $this->createEntity($type, BasePermissions::Team);
@@ -100,7 +92,7 @@ class RequestActionsAuthorizationTest extends \PHPUnit\Framework\TestCase
         $this->assertRejectedWithoutSideEffects($Entity, $this->target->getUserid());
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testDoesNotReuseRequesterPermissionsOrBypassFlags(EntityType $type): void
     {
         $Entity = $this->createEntity($type, BasePermissions::Team);
@@ -110,7 +102,7 @@ class RequestActionsAuthorizationTest extends \PHPUnit\Framework\TestCase
         $this->assertRejectedWithoutSideEffects($Entity, $this->target->getUserid());
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testAllowsReadableEntitiesInCurrentTeam(EntityType $type): void
     {
         foreach (array(BasePermissions::Team, BasePermissions::Organization) as $base) {
@@ -126,7 +118,7 @@ class RequestActionsAuthorizationTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testAllowsExplicitlySharedEntity(EntityType $type): void
     {
         foreach (array($this->target, $this->getUserInTeam(2)) as $target) {
@@ -145,7 +137,7 @@ class RequestActionsAuthorizationTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testUsesTargetMembershipInEntityTeam(EntityType $type): void
     {
         $this->Db->q(sprintf('INSERT IGNORE INTO users2teams (users_id, teams_id) VALUES (%d, 2)', $this->target->getUserid()));

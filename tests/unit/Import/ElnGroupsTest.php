@@ -195,6 +195,56 @@ final class ElnGroupsTest extends TestCase
         }
     }
 
+    public function testMetadataReferences(): void
+    {
+        $First = $this->createEntity(EntityType::Experiments);
+        $Second = $this->createEntity(EntityType::Experiments);
+        $Resource = $this->createEntity(EntityType::Items);
+        $Source = $this->createEntity(EntityType::Experiments);
+
+        foreach (array(
+            'First' => $First,
+            'Second' => $Second,
+            'Resource' => $Resource,
+            'Source' => $Source,
+        ) as $title => $entity) {
+            $entity->patch(Action::Update, array('title' => $title));
+        }
+
+        $Source->patch(Action::Update, array('metadata' => json_encode(array(
+            'extra_fields' => array(
+                'Experiment' => array('type' => 'experiments', 'value' => $First->id),
+                'Experiments' => array(
+                    'type' => 'experiments',
+                    'value' => array($Second->id, $First->id),
+                    'allow_multi_values' => true,
+                ),
+                'Resource' => array('type' => 'items', 'value' => $Resource->id),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        [$path] = $this->export(array($Source));
+
+        try {
+            $imported = array();
+            foreach ($this->import($path) as $entity) {
+                $imported[$entity->readOne()['title']] = $entity;
+            }
+
+            $fields = json_decode($imported['Source']->readOne()['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
+
+            $this->assertNotSame($First->id, $imported['First']->id);
+            $this->assertSame($imported['First']->id, $fields['Experiment']['value']);
+            $this->assertSame(
+                array($imported['Second']->id, $imported['First']->id),
+                $fields['Experiments']['value'],
+            );
+            $this->assertSame($imported['Resource']->id, $fields['Resource']['value']);
+        } finally {
+            unlink($path);
+        }
+    }
+
     private function createEntity(EntityType $type): AbstractEntity
     {
         $Entity = $type->toInstance(new Users(1, 1));

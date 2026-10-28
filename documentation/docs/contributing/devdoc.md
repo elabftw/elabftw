@@ -186,6 +186,10 @@ git checkout -b my-feature
 # go to github.com and create a pull request
 ~~~
 
+:::note
+All code you submit in a PR **MUST** be reviewed by a human, and changes **MUST** be tested by you. Autonomous AI submissions must be disclosed and are discouraged.
+:::
+
 
 ## Adding a lang
 

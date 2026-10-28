@@ -108,6 +108,10 @@ final class BookingApprovalTest extends TestCase
         self::assertSame(3, (int) $updated->entityData['book_max_slots']);
         self::assertSame(1, (int) $updated->entityData['requires_booking_approval']);
         self::assertSame(array((int) $approver->userid), $updated->readOne()['approvers']);
+
+        $listed = $updated->readAll($updated->getQueryParams(new InputBag(array('full' => 1, 'extended' => 'id:' . $item->id))));
+        self::assertCount(1, $listed);
+        self::assertSame(array((int) $approver->userid), $listed[0]['approvers']);
     }
 
     public function testInvalidBookingSettingsRollBackApproversAndResourceChanges(): void

@@ -24,6 +24,7 @@ use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Services\BookingApproval;
@@ -36,6 +37,8 @@ use Override;
 use Throwable;
 
 use function _;
+use function json_decode;
+use function sort;
 
 /**
  * All about the database items
@@ -51,9 +54,27 @@ final class Items extends AbstractConcreteEntity
     #[Override]
     public function readOne(): array
     {
-        $this->entityData = parent::readOne();
-        $this->entityData['approvers'] = new BookingApproval($this->Users)->getApprovers((int) $this->id);
+        $this->entityData = $this->hydrateApprovers(parent::readOne());
         return $this->entityData;
+    }
+
+    #[Override]
+    public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
+    {
+        $items = parent::readShow($displayParams, $extended, $can);
+        if (isset($items[0]['approvers'])) {
+            foreach ($items as $index => $item) {
+                $items[$index] = $this->hydrateApprovers($item);
+            }
+        }
+        return $items;
+    }
+
+    private function hydrateApprovers(array $item): array
+    {
+        $item['approvers'] = json_decode($item['approvers'], true, flags: JSON_THROW_ON_ERROR);
+        sort($item['approvers'], SORT_NUMERIC);
+        return $item;
     }
 
     #[Override]

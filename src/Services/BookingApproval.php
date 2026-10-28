@@ -73,12 +73,13 @@ final class BookingApproval
     }
 
     /** Update the approval requirement and replace the selected approvers. */
-    public function updateSettings(int $itemId, bool $requiresApproval, array $approvers): void
+    public function updateSettings(Items $Item, bool $requiresApproval, array $approvers): void
     {
         if ($requiresApproval) {
             Guard::ensureArrayNotEmpty('approvers', $approvers);
-            $this->replaceApprovers($itemId, array_unique($approvers));
+            $this->replaceApprovers($Item->id, array_unique($approvers));
         }
+
         if ((bool) $Item->entityData['requires_booking_approval'] !== $requiresApproval) {
             $Item->update(new EntityParams('requires_booking_approval', $requiresApproval));
         }

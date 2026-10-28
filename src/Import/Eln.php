@@ -72,6 +72,7 @@ use function str_replace;
 use function str_starts_with;
 use function ucfirst;
 use function usort;
+use function array_is_list;
 
 /**
  * Import a .eln file.
@@ -546,14 +547,31 @@ class Eln extends AbstractZip
                                 $this->Entity->update(new EntityParams('metadata', $node['value']));
                                 continue;
                             }
-                            if (in_array($node['valueReference'] ?? '', array('compounds', 'experiments', 'items', 'users'), true) && isset($node['value']['@id'])) {
-                                $this->metadataReferencesToResolve[] = array(
-                                    'origin_entity_type' => $this->Entity->entityType,
-                                    'origin_id' => $this->Entity->id,
-                                    'property_id' => $node['propertyID'],
-                                    'target_@id' => $node['value']['@id'],
-                                    'target_type' => $node['valueReference'],
-                                );
+                            $type = $node['valueReference'] ?? '';
+                            $value = $node['value'] ?? null;
+                            if (in_array($type, array('compounds', 'experiments', 'items', 'users'), true) && isset($value)) {
+                                $isMultiple = array_is_list($value);
+                                $referenceValues = $isMultiple ? $value : array($value);
+                                $targetAtIds = array();
+                                foreach ($referenceValues as $referenceValue) {
+                                    if (!is_array($referenceValue)) {
+                                        continue;
+                                    }
+                                    $targetAtId = $referenceValue['@id'] ?? null;
+                                    if (is_string($targetAtId)) {
+                                        $targetAtIds[] = $targetAtId;
+                                    }
+                                }
+                                if ($targetAtIds !== array()) {
+                                    $this->metadataReferencesToResolve[] = array(
+                                        'origin_entity_type' => $this->Entity->entityType,
+                                        'origin_id' => $this->Entity->id,
+                                        'property_id' => $node['propertyID'],
+                                        'target_@ids' => $targetAtIds,
+                                        'target_type' => $type,
+                                        'is_multiple' => $isMultiple,
+                                    );
+                                }
                             }
                         }
                     }

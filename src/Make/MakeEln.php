@@ -64,6 +64,8 @@ use function sprintf;
 use function strtr;
 use function array_map;
 use function array_values;
+use function is_array;
+use function is_scalar;
 
 /**
  * Make an ELN archive
@@ -510,21 +512,31 @@ class MakeEln extends AbstractMakeEln
             $pv['@id'] = $id;
             $pv['propertyID'] = $name;
             $pv['valueReference'] = $props['type'];
-            $pv['value'] = $props['value'] ?? '';
-            if (in_array($props['type'], array('compounds', 'experiments', 'items', 'users'), true) && !empty($props['value'])) {
-                $sourceId = (int) $props['value'];
-                $reference = $metadataReferences[$props['type']][$sourceId] ?? null;
-                if ($reference !== null) {
-                    $pv['value'] = $reference;
+            $value = $props['value'] ?? null;
+            $pv['value'] = $value;
+            if (in_array($props['type'], array('compounds', 'experiments', 'items', 'users'), true) && !empty($value)) {
+                $sourceIds = is_array($value) ? $value : array($value);
+                $resolveRefs = array();
+                foreach ($sourceIds as $sourceId) {
+                    if (!is_scalar($sourceId)) {
+                        continue;
+                    }
+                    $reference = $metadataReferences[$props['type']][(int) $sourceId] ?? null;
+                    if ($reference !== null) {
+                        $resolveRefs[] = $reference;
+                    }
                 }
+                if ($resolveRefs !== array()) {
+                    $pv['value'] = is_array($value) ? $resolveRefs : $resolveRefs[0];
+                }
+                if (!empty($props['description'])) {
+                    $pv['description'] = $props['description'];
+                }
+                if (!empty($props['unit'])) {
+                    $pv['unitText'] = $props['unit'];
+                }
+                $res['nodes'][] = $pv;
             }
-            if (!empty($props['description'])) {
-                $pv['description'] = $props['description'];
-            }
-            if (!empty($props['unit'])) {
-                $pv['unitText'] = $props['unit'];
-            }
-            $res['nodes'][] = $pv;
         }
         return $res;
     }
@@ -581,19 +593,26 @@ class MakeEln extends AbstractMakeEln
         $metadata = json_decode($strMetadata, true, 42, JSON_THROW_ON_ERROR);
         foreach ($metadata[Metadata::ExtraFields->value] ?? array() as $props) {
             $type = $props['type'] ?? '';
-            $sourceId = (int) $props['value'];
-            if ($sourceId < 1 || isset($references[$type][$sourceId])) {
-                continue;
-            }
-            $reference = match ($type) {
-                'compounds' => $this->processMetadataCompounds($sourceId),
-                'experiments' => $this->processMetadataEntity($sourceId, EntityType::Experiments),
-                'items' => $this->processMetadataEntity($sourceId, EntityType::Items),
-                'users' => $this->processMetadataUser($sourceId),
-                default => null,
-            };
-            if ($reference !== null) {
-                $references[$type][$sourceId] = $reference;
+            $value = $props['value'] ?? null;
+            $sourceIds = is_array($value) ? $value : array($value);
+            foreach ($sourceIds as $value) {
+                if (!is_scalar($value)) {
+                    continue;
+                }
+                $sourceId = (int) $value;
+                if ($sourceId < 1 || isset($references[$type][$sourceId])) {
+                    continue;
+                }
+                $reference = match ($type) {
+                    'compounds' => $this->processMetadataCompounds($sourceId),
+                    'experiments' => $this->processMetadataEntity($sourceId, EntityType::Experiments),
+                    'items' => $this->processMetadataEntity($sourceId, EntityType::Items),
+                    'users' => $this->processMetadataUser($sourceId),
+                    default => null,
+                };
+                if ($reference !== null) {
+                    $references[$type][$sourceId] = $reference;
+                }
             }
         }
         return $references;

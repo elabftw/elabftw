@@ -39,6 +39,7 @@ use Throwable;
 use function _;
 use function json_decode;
 use function sort;
+use function array_map;
 
 /**
  * All about the database items

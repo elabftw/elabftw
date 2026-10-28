@@ -265,13 +265,12 @@ final class Items extends AbstractConcreteEntity
         return 'users_canwrite_resources';
     }
 
-    private function hydrateApprovers(array $item): array
+    private function hydrateApprovers(array &$item): void
     {
         if (!isset($item['approvers'])) {
-            return $item;
+            return;
         }
         $item['approvers'] = json_decode($item['approvers'], true, flags: JSON_THROW_ON_ERROR);
         sort($item['approvers'], SORT_NUMERIC);
-        return $item;
     }
 }

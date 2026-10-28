@@ -18,7 +18,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\RequestableAction;
-use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -171,7 +171,7 @@ class RequestActionsAuthorizationTest extends \PHPUnit\Framework\TestCase
                 'target_action' => RequestableAction::Archive->value,
             ));
             $this->fail('An unauthorized action request was accepted.');
-        } catch (ForbiddenException) {
+        } catch (ImproperActionException) {
             $this->assertSame($before, $this->sideEffects($Entity));
         }
     }

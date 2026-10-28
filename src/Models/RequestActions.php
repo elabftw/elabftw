@@ -17,7 +17,6 @@ use Elabftw\Elabftw\Permissions;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\ActionRequested;
@@ -114,7 +113,7 @@ final class RequestActions extends AbstractRest
         }
         // Check the target's own permissions, without inheriting the requester's bypass flags.
         if (!new Permissions($targetUser, $entityData)->forEntity()->read) {
-            throw new ForbiddenException();
+            throw new ImproperActionException(_('Recipient user does not have read access to this entry.'));
         }
 
         $sql = sprintf(

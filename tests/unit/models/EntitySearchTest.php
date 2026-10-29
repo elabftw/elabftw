@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Codeception\Attribute\DataProvider;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
@@ -21,7 +22,6 @@ use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
-use function array_map;
 use function bin2hex;
 use function json_encode;
 use function random_bytes;
@@ -32,14 +32,7 @@ class EntitySearchTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
 
-    public static function entityTypes(): array
-    {
-        return array_map(static fn(EntityType $type): array => array($type), EntityType::cases());
-    }
-
-    /**
-     * @dataProvider entityTypes
-     */
+    #[DataProvider('entityTypes')]
     public function testCustomFieldValues(EntityType $entityType): void
     {
         $user = $this->getRandomUserInTeam(1, admin: 1);
@@ -110,9 +103,7 @@ class EntitySearchTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @dataProvider entityTypes
-     */
+    #[DataProvider('entityTypes')]
     public function testCustomFieldSearchRespectsPermissions(EntityType $entityType): void
     {
         $owner = $this->getUserInTeam(2, admin: 1);

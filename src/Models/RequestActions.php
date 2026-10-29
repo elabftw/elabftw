@@ -13,20 +13,24 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\AuditEvent\ActionRequested as AuditEventActionRequested;
+use Elabftw\Elabftw\Permissions;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Notifications\ActionRequested;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
+use Elabftw\Params\Guard;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
 use function _;
 use function array_map;
+use function in_array;
 use function preg_replace;
 use function sprintf;
 use function strtolower;
@@ -100,6 +104,18 @@ final class RequestActions extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        $entityData = $this->entity->readOne();
+        $targetUserId = Guard::getNonZeroPositiveIntValueOfRequiredParam('target_userid', $reqBody);
+        $targetUser = new AuthenticatedUser($targetUserId);
+        // Use the entity's team context only if the target has an active membership in it.
+        if (in_array($entityData['team'], $targetUser->getActiveTeamIds(), true)) {
+            $targetUser = new AuthenticatedUser($targetUserId, $entityData['team']);
+        }
+        // Check the target's own permissions, without inheriting the requester's bypass flags.
+        if (!new Permissions($targetUser, $entityData)->forEntity()->read) {
+            throw new ImproperActionException(_('Recipient user does not have read access to this entry.'));
+        }
+
         $sql = sprintf(
             'SELECT CAST(count(*) AS UNSIGNED) AS `count`
                 FROM  %s_request_actions
@@ -112,7 +128,7 @@ final class RequestActions extends AbstractRest
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':requester_userid', $this->requester->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':target_userid', $reqBody['target_userid'], PDO::PARAM_INT);
+        $req->bindValue(':target_userid', $targetUserId, PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
         $req->bindParam(':action', $reqBody['target_action'], PDO::PARAM_INT);
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
@@ -128,7 +144,7 @@ final class RequestActions extends AbstractRest
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':requester_userid', $this->requester->userData['userid'], PDO::PARAM_INT);
-        $req->bindParam(':target_userid', $reqBody['target_userid'], PDO::PARAM_INT);
+        $req->bindValue(':target_userid', $targetUserId, PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->entity->id, PDO::PARAM_INT);
         $req->bindParam(':action', $reqBody['target_action'], PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -136,8 +152,6 @@ final class RequestActions extends AbstractRest
 
         $action = RequestableAction::from((int) $reqBody['target_action']);
 
-        $targetUserId = (int) $reqBody['target_userid'];
-        $targetUser = new Users($targetUserId);
         $Notifications = new ActionRequested(
             $targetUser,
             $this->requester,
@@ -145,9 +159,9 @@ final class RequestActions extends AbstractRest
             $this->entity,
         );
         $Notifications->create();
-        $event = new AuditEventActionRequested($this->requester->userData['userid'], (int) $reqBody['target_userid'], $this->entity->id, $this->entity->entityType, $action);
+        $event = new AuditEventActionRequested($this->requester->userData['userid'], $targetUserId, $this->entity->id, $this->entity->entityType, $action);
         AuditLogs::create($event);
-        $changelogValue = sprintf('%s (target userid: %d)', $event->getBody(), (int) $reqBody['target_userid']);
+        $changelogValue = sprintf('%s (target userid: %d)', $event->getBody(), $targetUserId);
         new Changelog($this->entity)->create(new ContentParams('action_requested', $changelogValue));
 
         return $actionId;

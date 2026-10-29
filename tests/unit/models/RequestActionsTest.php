@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -32,13 +33,14 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $Users = new Users(1, 1);
-        $this->Experiments = $this->getFreshExperiment();
+        $this->Experiments = new Experiments($Users);
+        $this->Experiments->setId($this->Experiments->create(canreadBase: BasePermissions::Team));
         $this->RequestActions = new RequestActions($Users, $this->Experiments);
     }
 
     public function testPostAction(): void
     {
-        $targetUser = $this->getUserInTeam(2);
+        $targetUser = $this->getUserInTeam(1);
         $reqBody = array(
             'target_userid' => $targetUser->userid,
             'target_action' => RequestableAction::Archive->value,
@@ -77,7 +79,7 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testRemove(): void
     {
-        $targetUser = $this->getUserInTeam(2);
+        $targetUser = $this->getUserInTeam(1);
         $reqBody = array(
             'target_userid' => $targetUser->userid,
             'target_action' => RequestableAction::Archive->value,
@@ -95,7 +97,7 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadOne(): void
     {
-        $targetUser = $this->getUserInTeam(2);
+        $targetUser = $this->getUserInTeam(1);
         $reqBody = array(
             'target_userid' => $targetUser->userid,
             'target_action' => RequestableAction::Archive->value,
@@ -110,7 +112,7 @@ class RequestActionsTest extends \PHPUnit\Framework\TestCase
 
     public function testCannotReadOneFromAnotherExperiment(): void
     {
-        $targetUser = $this->getUserInTeam(2);
+        $targetUser = $this->getUserInTeam(1);
         $reqBody = array(
             'target_userid' => $targetUser->userid,
             'target_action' => RequestableAction::Archive->value,

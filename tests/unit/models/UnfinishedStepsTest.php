@@ -18,6 +18,7 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 
 use function array_column;
 use function json_decode;
@@ -25,6 +26,8 @@ use function json_encode;
 
 class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Users $Users;
 
     private Db $Db;
@@ -41,14 +44,6 @@ class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
         $this->Db->rollBack();
     }
 
-    public static function entityTypes(): array
-    {
-        return array(
-            'experiments' => array(EntityType::Experiments),
-            'resources' => array(EntityType::Items),
-        );
-    }
-
     public function testReadStepsUser(): void
     {
         $this->assertIsArray((new UnfinishedSteps($this->Users))->readAll());
@@ -59,7 +54,7 @@ class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray((new UnfinishedSteps($this->Users, true))->readAll());
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testArchivedTeamMembershipDoesNotGrantReadAccess(EntityType $model): void
     {
         $this->Db->q('INSERT IGNORE INTO users2teams (users_id, teams_id) VALUES (2, 2)');
@@ -80,7 +75,7 @@ class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
         $model->toInstance($viewer, $Entity->id);
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testTeamScopeChecksOwnerAndAdmin(EntityType $model): void
     {
         $viewer = new Users(2, 1);
@@ -110,7 +105,7 @@ class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testTeamScopeAllowsExplicitShares(EntityType $model): void
     {
         $viewer = new Users(2, 1);
@@ -130,7 +125,7 @@ class UnfinishedStepsTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    #[DataProvider('entityTypes')]
+    #[DataProvider('concreteEntityTypes')]
     public function testTeamScopeUsesCanreadBaseColumn(EntityType $model): void
     {
         $viewer = new Users(2, 1);

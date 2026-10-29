@@ -13,6 +13,7 @@ namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Experiments;
@@ -24,9 +25,23 @@ use Elabftw\Models\Users\Users;
 use PDO;
 
 use function array_rand;
+use function array_map;
 
 trait TestsUtilsTrait
 {
+    public static function entityTypes(): array
+    {
+        return array_map(static fn(EntityType $type): array => array($type), EntityType::cases());
+    }
+
+    public static function concreteEntityTypes(): array
+    {
+        return array(
+            'experiments' => array(EntityType::Experiments),
+            'resources' => array(EntityType::Items),
+        );
+    }
+
     protected function getUserInTeam(int $team, int $admin = 0, int $archived = 0): AuthenticatedUser
     {
         $Db = Db::getConnection();

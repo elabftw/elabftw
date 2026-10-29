@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Instance2Rors;
@@ -21,7 +23,6 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Storage\Cache\ElabCache;
 use League\Flysystem\FilesystemOperator;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use ReflectionProperty;
@@ -39,6 +40,7 @@ use function basename;
 use function dirname;
 use function json_decode;
 use function json_encode;
+use function random_int;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
@@ -197,33 +199,40 @@ final class ElnGroupsTest extends TestCase
 
     public function testMetadataReferences(): void
     {
-        $First = $this->createEntity(EntityType::Experiments);
-        $Second = $this->createEntity(EntityType::Experiments);
+        $firstExp = $this->createEntity(EntityType::Experiments);
+        $secondExp = $this->createEntity(EntityType::Experiments);
         $Resource = $this->createEntity(EntityType::Items);
-        $Source = $this->createEntity(EntityType::Experiments);
+        $exportedExp = $this->createEntity(EntityType::Experiments);
+        $Compounds = CompoundsFactory::create(new Users(1, 1));
+        $compoundId = $Compounds->createFromCompound(new Compound(
+            cid: random_int(100000000, 999999999),
+            name: 'Test compound',
+            molecularWeight: 18.0,
+        ));
 
         foreach (array(
-            'First' => $First,
-            'Second' => $Second,
+            'firstExp' => $firstExp,
+            'secondExp' => $secondExp,
             'Resource' => $Resource,
-            'Source' => $Source,
+            'exportedExp' => $exportedExp,
         ) as $title => $entity) {
             $entity->patch(Action::Update, array('title' => $title));
         }
 
-        $Source->patch(Action::Update, array('metadata' => json_encode(array(
+        $exportedExp->patch(Action::Update, array('metadata' => json_encode(array(
             'extra_fields' => array(
-                'Experiment' => array('type' => 'experiments', 'value' => $First->id),
+                'Experiment' => array('type' => 'experiments', 'value' => $firstExp->id),
                 'Experiments' => array(
                     'type' => 'experiments',
-                    'value' => array($Second->id, $First->id),
+                    'value' => array($secondExp->id, $firstExp->id),
                     'allow_multi_values' => true,
                 ),
                 'Resource' => array('type' => 'items', 'value' => $Resource->id),
+                'Compound' => array('type' => 'compounds', 'value' => $compoundId),
             ),
         ), JSON_THROW_ON_ERROR)));
 
-        [$path] = $this->export(array($Source));
+        [$path] = $this->export(array($exportedExp));
 
         try {
             $imported = array();
@@ -231,15 +240,16 @@ final class ElnGroupsTest extends TestCase
                 $imported[$entity->readOne()['title']] = $entity;
             }
 
-            $fields = json_decode($imported['Source']->readOne()['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
+            $fields = json_decode($imported['exportedExp']->readOne()['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
 
-            $this->assertNotSame($First->id, $imported['First']->id);
-            $this->assertSame($imported['First']->id, $fields['Experiment']['value']);
+            $this->assertNotSame($firstExp->id, $imported['firstExp']->id);
+            $this->assertSame($imported['firstExp']->id, $fields['Experiment']['value']);
             $this->assertSame(
-                array($imported['Second']->id, $imported['First']->id),
+                array($imported['secondExp']->id, $imported['firstExp']->id),
                 $fields['Experiments']['value'],
             );
             $this->assertSame($imported['Resource']->id, $fields['Resource']['value']);
+            $this->assertSame($compoundId, $fields['Compound']['value']);
         } finally {
             unlink($path);
         }

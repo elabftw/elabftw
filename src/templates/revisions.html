@@ -24,8 +24,9 @@
         <div>
           <input autocomplete='off' type='checkbox' data-action='checkbox-revision' data-id='{{ Entity.id }}' data-revid='{{ revision.id }}' data-type='{{ Entity.entityType.value }}' aria-label='{{ 'Select'|trans }}' class='mr-2' />
           <span title='{{ 'Revision ID'|trans }}' class='badge badge-secondary mr-2'>{{ revision.id }}</span>
-          <button type='button' aria-label='{{ 'Toggle content '|trans }}' class='btn btn-ghost border-0' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' data-revid={{ revision.id }} data-randid={{ randomId }} data-action='toggle-body' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Toggle content'|trans }}'>
-            <i class='fas fa-square-plus fa-fw'></i>
+          <button type='button' aria-label='{{ 'Toggle content '|trans }}' class='btn btn-ghost border-0 tooltip-trigger' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' data-revid={{ revision.id }} data-randid={{ randomId }} data-action='toggle-body' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' >
+            <i class='fas fa-square-plus fa-fw' aria-hidden='true'></i>
+            <span role='tooltip'>{{ 'Toggle content'|trans }}</span>
           </button>
           <span class='relative-moment' title='{{ revision.created_at }}'></span> {{ 'by'|trans }} {{ revision.fullname }}
         </div>

@@ -2,13 +2,15 @@
 <tr class='countable' id='uploadDiv_{{ upload.id }}'>
   <td>
     {% if mode == 'edit' and uploadGroups is not empty %}
-      <button type='button' class='btn btn-transparent draggable upload-sortable-handle mr-1' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+      <button type='button' class='btn btn-transparent draggable upload-sortable-handle mr-1 tooltip-trigger' aria-label='{{ 'Drag to reorder'|trans }}'>
         <i class='fas fa-sort'></i>
+        <span role='tooltip'>{{ 'Drag to reorder'|trans }}</span>
       </button>
     {% endif %}
     {# keep btn-ghost border-0 here because in table with zebra #}
-    <button type='button' class='btn btn-ghost border-0 mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
+    <button type='button' class='btn btn-ghost border-0 mr-1 tooltip-trigger' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' aria-label='{{ 'More information'|trans }}'>
       <i class='fas fa-caret-right fa-fw'></i>
+      <span role='tooltip'>{{ 'More information'|trans }}</span>
     </button>
     {% if upload.state == enum('Elabftw\\Enums\\State').Archived.value %}
       {# use a span as title doesn't work directly on i element #}
@@ -30,8 +32,9 @@
     {% if upload.id == upload.latest_upload_id %}
       <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
     {% endif %}
-    <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn btn-ghost'>
+    <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}' rel='noopener' aria-label='{{ 'Download'|trans }}' class='btn btn-ghost tooltip-trigger'>
       <i class='fas fa-download fa-fw'></i>
+        <span role='tooltip'>{{ 'Download'|trans }}</span>
     </a>
     {% if not upload.immutable %}
       {% if mode == 'edit' %}

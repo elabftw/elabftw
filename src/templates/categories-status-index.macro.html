@@ -64,7 +64,10 @@
                       <span class='slider'></span>
                   </label>
               </div>
-              <button type='button' data-id='{{ cat.id }}' data-endpoint='{{ type }}' data-action='destroy-catstat' class='btn btn-danger-ghost' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-fw fa-trash-alt'></i></button>
+              <button type='button' data-id='{{ cat.id }}' data-endpoint='{{ type }}' data-action='destroy-catstat' class='btn btn-danger-ghost tooltip-trigger' aria-label='{{ 'Delete'|trans }}'>
+                <i class='fas fa-fw fa-trash-alt'></i>
+                <span role='tooltip'>{{ 'Delete'|trans }}</span>
+              </button>
           </li>
         </ul>
       </li>
@@ -101,7 +104,10 @@
             <div class='d-flex justify-content-between'>
               <label for='createCatStatColor' class='col-form-label'>{{ 'Color'|trans }}</label>
               <div class='d-flex flex-row'>
-                <button aria-label='{{ 'Change color'|trans }}' title='{{ 'Change color'|trans }}' type='button' class='btn btn-ghost mr-1' data-action='reload-color'><i class='fas fa-rotate'></i></button>
+                <button aria-label='{{ 'Change color'|trans }}' type='button' class='btn btn-ghost mr-1 tooltip-trigger' data-action='reload-color'>
+                  <i class='fas fa-rotate'></i>
+                  <span role='tooltip'>{{ 'Change color'|trans }}</span>
+                </button>
                 <input class='form-control randomColor col-md-6 color-input' type='color' name='color' id='createCatStatColor' />
               </div>
             </div>

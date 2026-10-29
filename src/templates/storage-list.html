@@ -20,9 +20,13 @@
   {# how full this location is, against its limit when it declares one #}
   {% macro render_occupancy(unit, is_full) %}
     {% if unit.capacity is not null %}
-      <span class='storage-occupancy {{ is_full ? 'storage-full' }} ml-1' title='{{ 'Containers stored here, out of the maximum this location accepts'|trans }}'><i class='fas fa-box mr-1'></i>{{ unit.occupancy }} / {{ unit.capacity }}</span>
+      <span class='storage-occupancy {{ is_full ? 'storage-full' }} ml-1 tooltip-trigger' aria-label='{{ 'Containers stored here, out of the maximum this location accepts'|trans }}'>
+        <i class='fas fa-box mr-1'></i><span role='tooltip'>{{ 'Containers stored here, out of the maximum this location accepts'|trans }}</span>{{ unit.occupancy }} / {{ unit.capacity }}
+      </span>
     {% elseif unit.occupancy > 0 %}
-      <span class='storage-occupancy ml-1' title='{{ 'Containers already stored here'|trans }}'><i class='fas fa-box mr-1'></i>{{ unit.occupancy }}</span>
+      <span class='storage-occupancy ml-1 tooltip-trigger' aria-label='{{ 'Containers already stored here'|trans }}'>
+        <i class='fas fa-box mr-1'></i><span role='tooltip'>{{ 'Containers already stored here'|trans }}</span>{{ unit.occupancy }}
+      </span>
     {% endif %}
   {% endmacro %}
   {# stepper used in the entity-create flow to pick how many containers go in this location #}
@@ -99,10 +103,13 @@
         </div>
         {% if storage_editable %}
           <div class='ml-auto'>
-            <button type='button' class='btn btn-secondary btn-sm' title='{{ 'Add children to %s'|trans|format(root.name) }}' aria-label='{{ 'Add children to %s'|trans|format(root.name) }}' data-parent-id='{{ root.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle'></i></button>
+            <button type='button' class='btn btn-secondary btn-sm tooltip-trigger' aria-label='{{ 'Add children to %s'|trans|format(root.name) }}' data-parent-id='{{ root.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle'></i>
+            <span role='tooltip'>{{ 'Add children to %s'|trans|format(root.name) }}</span></button>
             {# search with name instead of id for parent #}
-            <a class='btn btn-secondary btn-sm' title='{{ 'Display content'|trans }}' href='?q={{ root.name }}'><i class='fas fa-magnifying-glass'></i></a>
-            <a class='btn btn-danger btn-sm' data-action='delete-storage-root' data-id='{{ root.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-xmark'></i></a>
+            <a class='btn btn-secondary btn-sm tooltip-trigger' href='?q={{ root.name }}'><i class='fas fa-magnifying-glass'></i>
+            <span role='tooltip'>{{ 'Display content'|trans }}</span></a>
+            <a class='btn btn-danger btn-sm tooltip-trigger' data-action='delete-storage-root' data-id='{{ root.id }}' ><i class='fas fa-xmark'></i>
+            <span role='tooltip'>{{ 'Delete'|trans }}</span></a>
           </div>
         {% endif %}
         {% if is_move_storage %}

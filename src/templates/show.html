@@ -31,7 +31,7 @@
     >
       <div
         id='searchBar'
-        data-name='q'
+        data-name='searchBar'
         data-value='{{ App.Request.query.get('q') ? App.Request.query.get('q')|trim|e('html_attr') : '' }}'
         data-placeholder='{{ 'Search'|trans }}'
         data-aria-label='{{ 'Search'|trans }}'
@@ -40,7 +40,7 @@
         <div class='input-group w-100 search-bar-input-group search-bar-fallback'>
           <input
             id='extendedArea'
-            name='q'
+            name='searchBar'
             type='text'
             class='form-control'
             placeholder='{{ 'Search'|trans }}'
@@ -50,12 +50,12 @@
           />
           <div class='input-group-append'>
             <button
-              class='btn btn-secondary'
+              class='btn btn-secondary tooltip-trigger'
               type='submit'
               aria-label='{{ 'Search'|trans }}'
-              title='{{ 'Search'|trans }}'
             >
               <i class='fas fa-magnifying-glass'></i>
+              <span role='tooltip'>{{ 'Search'|trans }}</span>
             </button>
           </div>
         </div>
@@ -65,18 +65,19 @@
     <div class='d-flex'>
       <button
         type='button'
-        class='btn btn-neutral ml-2'
+        class='btn btn-neutral ml-2 tooltip-trigger'
         aria-label='{{ 'Show full syntax'|trans }}'
-        title='{{ 'Show full syntax'|trans }}'
         data-action='toggle-modal'
         data-target='advancedSearchModal'
       >
         <i class='color-medium fa-regular fa-circle-question'></i>
+        <span role='tooltip'>{{ 'Show full syntax'|trans }}</span>
       </button>
       {# MORE FILTERS POPUP #}
       <details closed class='suggested-tags ml-1' data-cy='moreFiltersMenu'>
-        <summary class='btn btn-secondary' aria-label='{{ 'Show more filters'|trans }}' title='{{ 'Show more filters'|trans }}'>
+        <summary class='btn btn-secondary tooltip-trigger' aria-label='{{ 'Show more filters'|trans }}'>
           <i class='fas fa-filter'></i>
+          <span role='tooltip'>{{ 'Show more filters'|trans }}</span>
         </summary>
 
         <div class='show-more-filters-popover'>
@@ -109,14 +110,9 @@
               />
 
               <div class='input-group-append'>
-                <button
-                  type='button'
-                  class='btn btn-secondary'
-                  data-action='search-empty-extrafield'
-                  aria-label='{{ 'Search for empty value'|trans }}'
-                  title='{{ 'Search for empty value'|trans }}'
-                >
+                <button type='button' class='btn btn-secondary tooltip-trigger' data-action='search-empty-extrafield' aria-label='{{ 'Search for empty value'|trans }}' >
                   <i class='fas fa-ban'></i>
+                  <span role='tooltip'>{{ 'Search for empty value'|trans }}</span>
                 </button>
               </div>
             </div>
@@ -225,13 +221,13 @@
   {# FIRST LINE: ALWAYS ON FILTERS: CATEGORY, STATUS, OWNER, TAGS #}
     <div class='d-flex form-group form-inline'>
       <form id='queryForm' aria-label='{{ 'Query filters'|trans }}'>
-        <input type='hidden' name='q' value='{{ DisplayParams.queryString|e('html_attr') }}' />
+        <input type='hidden' name='searchBar' value='{{ DisplayParams.queryString|e('html_attr') }}' />
         {% if App.Request.query.get('related') %}
           <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
           <input type='hidden' name='related_origin' value='{{ App.Request.query.getAlpha('related_origin') }}' />
         {% endif %}
         {# WCAG/h32 - form needs a submit button #}
-        <button type='submit' hidden></button>
+        <button type='submit' hidden aria-label='{{ 'Submit'|trans }}'></button>
       </form>
 
     {# END ALWAYS VISIBLE FILTERS #}
@@ -246,15 +242,17 @@
     {# LEFT #}
     <div class='d-flex'>
       {% if App.Users.userData.display_mode == 'it' %}
-        <a title='{{ 'Select all'|trans }}' aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn btn-transparent'>
-          <i class='far fa-square'></i>
+        <a aria-label='{{ 'Select all'|trans }}' data-action='toggle-select-all-entities' data-target='select' href='#' class='btn btn-transparent tooltip-trigger'>
+          <i class='far fa-square'></i><span role='tooltip'>{{ 'Select all'|trans }}</span>
         </a>
-        <a hidden title='{{ 'Invert selection'|trans }}' aria-label='{{ 'Invert selection'|trans }}' data-action='invert-entities-selection' href='#' class='ml-2 btn btn-transparent'>
+        <a hidden aria-label='{{ 'Invert selection'|trans }}' data-action='invert-entities-selection' href='#' class='ml-2 btn btn-transparent tooltip-trigger'>
           <i class='fas fa-arrows-turn-to-dots'></i>
+          <span role='tooltip'>{{ 'Invert selection'|trans }}</span>
         </a>
         <div class='vertical-separator'></div>
-        <a title='{{ 'Toggle main text'|trans }}' aria-label='{{ 'Toggle main text'|trans }}' data-action='expand-all-entities' data-status='closed' href='#' class='btn btn-transparent'>
+        <a aria-label='{{ 'Toggle main text'|trans }}' data-action='expand-all-entities' data-status='closed' href='#' class='btn btn-transparent tooltip-trigger'>
           <i class='fas fa-maximize'></i>
+          <span role='tooltip'>{{ 'Toggle main text'|trans }}</span>
         </a>
       {% endif %}
     </div>
@@ -459,16 +457,20 @@
     <div class='vertical-separator'></div>
     <div class='d-flex'>
       {# SWITCH LAYOUT #}
-      <button title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' type='button' class='btn btn-transparent mr-1' data-action='toggle-items-layout'>
+      <button aria-label='{{ 'Switch layout'|trans }}' type='button' class='btn btn-transparent mr-1 tooltip-trigger' data-action='toggle-items-layout'>
         <i class='fas fa-fw fa-list'></i>
         <i class='fas fa-fw fa-table'></i>
+        <span role='tooltip'>{{ 'Switch layout'|trans }}</span>
       </button>
     <div class='vertical-separator'></div>
 
     <div class='d-flex'>
       {# ORDER (Sort) #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle btn-transparent' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' title='{{ 'Sort'|trans }}'><i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle btn-transparent tooltip-trigger' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Sort'|trans }}' >
+          <i class='fas fa-arrow-down-wide-short fa-fw mr-1'></i>
+          <span role='tooltip'>{{ 'Sort'|trans }}</span>
+        </button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Sort'|trans }}</h6>
           <button type='button' class='btn btn-dropdown-item dropdown-item {{- (App.Request.query.get('order') == 'date' and App.Request.query.get('sort') == 'desc') ? ' active' }}' data-action='query' data-target='date-desc'>{{ 'Newest'|trans }}</button>
@@ -494,7 +496,10 @@
       </div>
       {# LIMIT if there is nothing in the query params, take the user configured one #}
       <div class='btn-group'>
-        <button class='btn btn-sm dropdown-toggle btn-transparent' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' title='{{ 'Results per page'|trans }}'><i class='fas fa-list-ol fa-fw mr-1'></i></button>
+        <button class='btn btn-sm dropdown-toggle btn-transparent tooltip-trigger' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Results per page'|trans }}' >
+          <i class='fas fa-list-ol fa-fw mr-1'></i>
+          <span role='tooltip'>{{ 'Results per page'|trans }}</span>
+        </button>
         <div class='dropdown-menu dropdown-menu-right'>
           <h6 class='dropdown-header'>{{ 'Results per page'|trans }}</h6>
         {% for option in limitOptions(DisplayParams.limit) %}
@@ -536,13 +541,13 @@
               <option value='json'>{{ 'JSON'|trans }}</option>
             </select>
             {# Action buttons #}
-            <button data-action='patch-selected-entities' data-what='forcelock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Lock the selected entities'|trans }}' title='{{ 'Lock the selected entities'|trans }}'>{{ 'Lock'|trans }}</button>
-            <button data-action='patch-selected-entities' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Unlock the selected entities'|trans }}' title='{{ 'Unlock the selected entities'|trans }}'>{{ 'Unlock'|trans }}</button>
-            <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Timestamp the selected entities'|trans }}' title='{{ 'Timestamp the selected entities'|trans }}'>{{ 'Timestamp'|trans }}</button>
-            <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Archive the selected entities'|trans }}' title='{{ 'Archive the selected entities'|trans }}'>{{ 'Archive'|trans }}</button>
-            <button data-action='patch-selected-entities' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Unarchive the selected entities'|trans }}' title='{{ 'Unarchive the selected entities'|trans }}'>{{ 'Unarchive'|trans }}</button>
-            <button data-action='toggle-modal' data-target='deleteSelectedEntitiesModal' type='button' class='btn btn-danger-ghost mr-1 mb-2' aria-label='{{ 'Delete the selected entities'|trans }}' title='{{ 'Delete the selected entities'|trans }}'>{{ 'Delete'|trans }}</button>
-            <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Restore the selected entities'|trans }}' title='{{ 'Restore the selected entities'|trans }}'>{{ 'Restore'|trans }}</button>
+            <button data-action='patch-selected-entities' data-what='forcelock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Lock the selected entities'|trans }}'>{{ 'Lock'|trans }}</button>
+            <button data-action='patch-selected-entities' data-what='forceunlock' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Unlock the selected entities'|trans }}'>{{ 'Unlock'|trans }}</button>
+            <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Timestamp the selected entities'|trans }}'>{{ 'Timestamp'|trans }}</button>
+            <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Archive the selected entities'|trans }}'>{{ 'Archive'|trans }}</button>
+            <button data-action='patch-selected-entities' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Unarchive the selected entities'|trans }}'>{{ 'Unarchive'|trans }}</button>
+            <button data-action='toggle-modal' data-target='deleteSelectedEntitiesModal' type='button' class='btn btn-danger-ghost mr-1 mb-2' aria-label='{{ 'Delete the selected entities'|trans }}'>{{ 'Delete'|trans }}</button>
+            <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Restore the selected entities'|trans }}'>{{ 'Restore'|trans }}</button>
           </div>
 
           <form id='multiChangesForm' class='row mx-0 form-inline'>

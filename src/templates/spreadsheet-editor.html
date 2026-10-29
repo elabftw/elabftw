@@ -9,10 +9,13 @@
       <button type='button' id='spreadsheetSaveAsAttachment' class='btn btn-primary mr-2'>
         <i class='fas fa-paperclip fa-fw mr-1'></i>{{ 'Save as attachment'|trans }}
       </button>
-      <button type='button' id='spreadsheetReplaceAttachment' class='btn btn-secondary mr-2' title='{{ 'Replace attachment'|trans }}' aria-label='{{ 'Replace attachment'|trans }}' disabled>
+      <button type='button' id='spreadsheetReplaceAttachment' class='btn btn-secondary mr-2' aria-label='{{ 'Replace attachment'|trans }}' disabled>
         <i class='fas fa-rotate fa-fw mr-1'></i>{{ 'Replace attachment'|trans }}
       </button>
-      <a class='btn btn-ghost external-link' href='https://doc.elabftw.net/docs/usage/user-guide/experiments#spreadsheet-editor' target='_blank' rel='noopener' title='{{ 'Documentation'|trans }}' aria-label='{{ 'Documentation'|trans }}'><i class='fas fa-circle-question fa-fw'></i></a>
+      <a class='btn btn-ghost external-link tooltip-trigger' href='https://doc.elabftw.net/docs/usage/user-guide/experiments#spreadsheet-editor' target='_blank' rel='noopener' aria-label='{{ 'Documentation'|trans }}'>
+        <i class='fas fa-circle-question fa-fw'></i>
+        <span role='tooltip'>{{ 'Documentation'|trans }}</span>
+      </a>
     </div>
   </div>
     {% if App.devMode -%}

@@ -1,22 +1,29 @@
 <footer>
   <p class='footer-left'>
-    <a title='{{ 'Connect with us on the fediverse!'|trans }}' aria-label='{{ 'Connect with us on the fediverse!'|trans }}' href='https://pouet.chapril.org/@deltablot'>⁂
+    <a class='tooltip-trigger' aria-label='{{ 'Connect with us on the fediverse!'|trans }}' href='https://pouet.chapril.org/@deltablot'>⁂
+      <span role="tooltip">{{ 'Connect with us on the fediverse!'|trans }}</span>
     </a>
 
-    <a title='{{ 'Code repository on GitHub'|trans }}' aria-label='{{ 'Code repository on GitHub'|trans }}' href='https://github.com/elabftw/elabftw'>
-      <i title='GitHub' class='fab fa-github fa-lg'></i>
+    <a class='tooltip-trigger' aria-label='{{ 'Code repository on GitHub'|trans }}' href="https://github.com/elabftw/elabftw">
+      <i class="fab fa-github fa-lg" aria-hidden="true"></i>
+      <span role="tooltip">{{ 'Code repository on GitHub'|trans }}</span>
     </a>
 
-    <a title='{{ 'Join the discussion on Gitter'|trans }}' aria-label='{{ 'Join the discussion on Gitter'|trans }}' href='https://gitter.im/elabftw/elabftw'>
-      <i title='Gitter' class='fas fa-comment-dots fa-lg'></i>
+    <a class='tooltip-trigger' aria-label='{{ 'Join the discussion on Gitter'|trans }}' href='https://gitter.im/elabftw/elabftw'>
+      <i class='fas fa-comment-dots fa-lg' aria-hidden="true"></i>
+      <span role="tooltip">{{ 'Join the discussion on Gitter'|trans }}</span>
     </a>
 
-    <a title='{{ 'Submit feedback'|trans }}' aria-label='{{ 'Report bug'|trans }}' data-action='report-bug' href='#'>
-      <i title='Report bug' class='fas fa-bug fa-lg'></i>
+    <a class='tooltip-trigger' aria-label='{{ 'Report bug'|trans }}' data-action='report-bug' href='#'>
+      <i class='fas fa-bug fa-lg' aria-hidden="true"></i>
+      <span role='tooltip'>{{ 'Report bug'|trans }}</span>
     </a>
 
     {% if App.devMode -%}
-      <a title='{{ 'Interface'|trans }}' aria-label='{{ 'Interface'|trans }}' href='/interface.php'><i title='Interface' class='fa-solid fa-palette fa-fw'></i></a>
+      <a class='tooltip-trigger' aria-label='{{ 'Interface'|trans }}' href='/interface.php'>
+        <i class='fa-solid fa-palette fa-fw' aria-hidden="true"></i>
+        <span role='tooltip'>{{ 'Interface'|trans }}</span>
+      </a>
     {%- endif %}
 
     <span>

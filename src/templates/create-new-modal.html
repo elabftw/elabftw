@@ -52,7 +52,9 @@
             <p class='smallgray'>{{ 'Adjust the scope and select a category to filter results.'|trans }}</p>
               <div class='d-flex flex-row justify-content-between mb-2'>
                 <div id='createNewScopeSelect' class='btn-group mr-1'>
-                  <button class='btn btn-ghost dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' title='{{ 'Scope'|trans }}' aria-expanded='false'>{{ 'Scope'|trans }}<i class='fas fa-user fa-fw mx-1'></i></button>
+                  <button class='btn btn-ghost dropdown-toggle tooltip-trigger' type='button' data-toggle='dropdown' aria-haspopup='true' aria-label='{{ 'Scope'|trans }}' aria-expanded='false'>
+                    {{ 'Scope'|trans }} <i class='fas fa-user fa-fw mx-1'></i> <span role='tooltip'>{{ 'Scope'|trans }}</span>
+                  </button>
                   <div class='dropdown-menu'>
                     <h6 class='dropdown-header'>{{ 'Scope'|trans }}</h6>
                     <button type='button' data-value='1' class='btn btn-dropdown-item dropdown-item createNewScopeBtn active'>
@@ -104,9 +106,12 @@
                   <td></td>
                   <td><span class='sr-only'>{{ 'Actions'|trans }}</span>
                     <div class='d-flex flex-nowrap'>
-                      <button type='submit' class='btn btn-primary mr-1' data-action='create-entity' title='{{ 'Create from template'|trans }}' data-type='' data-tplid='' ><i class='fas fa-file-circle-plus'></i></button>
-                      <a href='replacedinjs' class='btn btn-ghost' title='{{ 'View template'|trans }}' aria-label='{{ 'View template'|trans }}'>
+                      <button type='submit' class='btn btn-primary mr-1 tooltip-trigger' data-action='create-entity' data-type='' data-tplid='' ><i class='fas fa-file-circle-plus'></i>
+                          <span role='tooltip'>{{ 'Create from template'|trans }}</span>
+                      </button>
+                      <a href='replacedinjs' class='btn btn-ghost tooltip-trigger' aria-label='{{ 'View template'|trans }}'>
                         <i class='fas fa-eye fa-fw'></i>
+                        <span role='tooltip'>{{ 'View template'|trans }}</span>
                       </a>
                     </div>
                   </td>

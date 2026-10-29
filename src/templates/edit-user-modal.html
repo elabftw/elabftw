@@ -4,7 +4,7 @@
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='editUserModalTitle'><i class='fas fa-fw fa-pencil'></i> {{ 'Edit user'|trans }}</h5>
+        <h5 class='modal-title' id='editUserModalTitle'><i class='fas fa-fw fa-pencil' aria-hidden='true'></i> {{ 'Edit user'|trans }}</h5>
         {# the clear-form action is repeated on the x icon or it would only work when clicking just next to the x, on the button element #}
         <button type='button' class='close' data-dismiss='modal' data-action='clear-form' data-target='editUserInputs' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true' data-action='clear-form' data-target='editUserInputs'>&times;</span>
@@ -73,7 +73,7 @@
 
               {% if App.Users.userData.is_sysadmin == 1 or App.Users.userData.can_manage_users2teams %}
                 <div id='addTeamDiv'>
-                  <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next' data-opened-icon='fa-minus-circle' data-closed-icon='fa-plus-circle'><i class='text-light fas fa-plus-circle'></i> {{ 'Add team'|trans }}</span>
+                  <span class='px-2 py-1 rounded mr-2 mt-2 btn btn-primary' data-action='toggle-next' data-opened-icon='fa-minus-circle' data-closed-icon='fa-plus-circle'><i class='text-light fas fa-plus-circle' aria-hidden='true'></i> {{ 'Add team'|trans }}</span>
                   <span class='form-group form-inline mt-2' hidden>
                     {# options will be populated by js #}
                     <select class='form-control' id='addTeamSelect' aria-label='{{ 'Add team'|trans }}'></select>
@@ -94,10 +94,16 @@
             <summary>{{ 'Set user password'|trans }}</summary>
             <div class='pl-3'>
               <div class='input-group my-2' id='resetUserPasswordForm'>
-                <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' required name='resetPassword' title='{{ 'Minimum password length: %d.'|trans|format(App.Config.configArr.min_password_length) }}' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' />
+                <input class='form-control' minlength='{{ App.Config.configArr.min_password_length }}' name='resetPassword' placeholder='{{ 'Set new password'|trans }}' type='password' id='resetUserPasswordInput_{{ userid }}' autocomplete='new-password' pattern='{{ passwordInputPattern|e('html_attr') }}' /></div>
                 <div class='input-group-append'>
-                  <button type='button' class='btn btn-ghost' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
-                  <span class='btn btn-primary' tabindex='-1' title='{{ 'Save'|trans }}' data-action='reset-user-password'><i class='fas fa-floppy-disk' aria-hidden='true'></i></span>
+                  <button type='button' class='btn btn-ghost tooltip-trigger' data-action='toggle-password' aria-label='{{ 'Show password'|trans }}'>
+                    <i class='fas fa-eye' aria-hidden='true'></i>
+                    <span role='tooltip'>{{ 'Show password'|trans }}</span>
+                </button>
+                <button type='button' class='btn btn-primary tooltip-trigger' data-action='reset-user-password'>
+                  <i class='fas fa-floppy-disk' aria-hidden='true'></i>
+                  <span role='tooltip'>{{ 'Save'|trans }}</span>
+                </button>
                 </div>
               </div>
               <h6>{{ 'Minimum password length'|trans }}</h6>
@@ -109,15 +115,15 @@
 
         <hr>
         <button type='button' class='btn btn-ghost' id='validateUserBtn' data-action='validate-user' data-userid='{{ user.userid }}'>
-          <i class='fas fa-fw fa-check mr-1'></i>{{ 'Validate user'|trans }}
+          <i class='fas fa-fw fa-check mr-1' aria-hidden='true'></i>{{ 'Validate user'|trans }}
         </button>
         {% if App.Users.userData.is_sysadmin %}
           {# DISABLE 2FA: only for sysadmin if user has 2fa enabled #}
           <button id='disable2faBtn' type='button' class='btn btn-ghost' data-action='remove-user-2fa'>
-            <i class='fas fa-fw fa-user-shield mr-1'></i>{{ 'Disable 2FA'|trans }}
+            <i class='fas fa-fw fa-user-shield mr-1' aria-hidden='true'></i>{{ 'Disable 2FA'|trans }}
           </button>
           <button type='button' class='btn btn-ghost hover-danger' id='deleteUserBtn' data-action='destroy-user' data-userid='{{ user.userid }}'>
-            <i class='fas fa-fw fa-trash-alt mr-1'></i>{{ 'Delete user'|trans }}
+            <i class='fas fa-fw fa-trash-alt mr-1' aria-hidden='true'></i>{{ 'Delete user'|trans }}
           </button>
         {% endif %}
       </div>

@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 
 {% macro batchTransferOwnership(target, param, users) %}
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batch{{ param }}Div' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button class='btn btn-ghost tooltip-trigger' type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' aria-expanded='false' aria-controls='batch{{ param }}Div'>
+    <i class='fas fa-caret-right fa-fw'></i>
+    <span role='tooltip'>{{ 'Toggle display'|trans }}</span>
+    {{ target|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})
+  </button>
   <div hidden class='mt-2' id='batch{{ param }}Div'>
     {% for user in users %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -206,8 +210,9 @@
       {% endif %}
       {% for teamGroup in teamGroupsArr %}
         <div class='box team-group-filter-item'>
-          <button type='button' class='btn btn-danger-ghost float-right' data-action='destroy-teamgroup' data-id='{{ teamGroup.id }}' title='{{ 'Delete'|trans }}'>
+          <button type='button' class='btn btn-danger-ghost float-right tooltip-trigger' data-action='destroy-teamgroup' data-id='{{ teamGroup.id }}'>
             <i class='fas fa-trash-alt'></i>
+            <span role='tooltip'>{{ 'Delete'|trans }}</span>
           </button>
           {% if App.devMode -%}
             <!-- [html-validate-disable-block prefer-native-element] -->
@@ -216,7 +221,12 @@
           <hr>
           <div class='d-flex flex-wrap'>
             {% for user in teamGroup.users %}
-            <div class='user-badge mr-2'>{{ user.fullname }} <span title='{{ 'Delete'|trans }}' class='m-1 btn btn-danger-ghost btn-sm' data-action='rmuser-teamgroup' data-userid='{{ user.userid }}' data-groupid='{{ teamGroup.id }}'><i class='fas fa-xmark'></i></span></div>
+            <div class='user-badge mr-2'>{{ user.fullname }}
+              <span class='m-1 btn btn-danger-ghost btn-sm tooltip-trigger' data-action='rmuser-teamgroup' data-userid='{{ user.userid }}' data-groupid='{{ teamGroup.id }}'>
+              <i class='fas fa-xmark'></i>
+              <span role='tooltip'>{{ 'Delete'|trans }}</span>
+              </span>
+            </div>
             {% endfor %}
           </div>
           {# ADD USER #}
@@ -353,17 +363,22 @@
               <th data-label='{{ 'Tag'|trans }}' scope='row' class='border-right-0'><button type='button' class='btn tag editable hl-hover lh-normal border-0' data-id='{{ tag.id }}'>{{ tag.tag }}</button></th>
               <td data-label='{{ 'Occurrence'|trans }}' class='align-middle'>{{ tag.item_count }}</td>
               <td data-label='{{ 'Show tagged experiments'|trans }}'>
-                <a title='{{ 'Show tagged experiments'|trans }}' aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}&amp;scope=3' class='btn btn-ghost btn-sm'>
+                <a aria-label='{{ 'Show tagged experiments'|trans }}' href='experiments.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}&amp;scope=3' class='btn btn-ghost btn-sm tooltip-trigger'>
                   <i class='fas fa-flask'></i>
+                  <span role='tooltip'>{{ 'Show tagged experiments'|trans }}</span>
                 </a>
               </td>
               <td data-label='{{ 'Show tagged resources'|trans }}'>
-                <a title='{{ 'Show tagged resources'|trans }}' aria-label='{{ 'Show tagged resources'|trans }}' href='database.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}&amp;scope=3' class='btn btn-ghost btn-sm'>
+                <a aria-label='{{ 'Show tagged resources'|trans }}' href='database.php?mode=show&amp;tags%5B%5D={{ tag.tag|url_encode }}&amp;scope=3' class='btn btn-ghost btn-sm tooltip-trigger'>
                   <i class='fas fa-cubes-stacked'></i>
+                  <span role='tooltip'>{{ 'Show tagged resources'|trans }}</span>
                 </a>
               </td>
               <td data-label='{{ 'Delete'|trans }}'>
-                <button type='button' class='btn btn-danger-ghost btn-sm' data-action='destroy-tag' data-tagid='{{ tag.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
+                <button type='button' class='btn btn-danger-ghost btn-sm tooltip-trigger' data-action='destroy-tag' data-tagid='{{ tag.id }}' aria-label='{{ 'Delete'|trans }}'>
+                  <i class='fas fa-trash-alt'></i>
+                  <span role='tooltip'>{{ 'Delete'|trans }}</span>
+                </button>
               </td>
             </tr>
           {% endfor %}
@@ -377,7 +392,10 @@
 <div data-tabcontent='6' id='batchActions' hidden>
   <p>{{ 'From here you can perform actions on entire group of entries at once.'|trans }}</p>
   <hr>
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchCategoriesDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchCategoriesDiv' class='btn btn-ghost tooltip-trigger'>
+    <i class='fas fa-caret-right fa-fw'></i>{{ 'Resources by category'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})
+    <span role='tooltip'>{{ 'Toggle display'|trans }}</span>
+  </button>
   <div hidden class='mt-2' id='batchCategoriesDiv'>
   {% for itemsCategory in App.itemsCategoryArr %}
     <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -391,7 +409,10 @@
   </div>
   <hr>
 
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resource status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' aria-expanded='false' aria-controls='batchStatusDiv' class='btn btn-ghost tooltip-trigger'>
+    <i class='fas fa-caret-right fa-fw'></i>{{ 'Resource status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})]
+    <span role='tooltip'>{{ 'Toggle display'|trans }}</span>
+  </button>
   <div hidden class='mt-2' id='batchStatusDiv'>
   {% for status in itemsStatusArr %}
     <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -405,7 +426,10 @@
   </div>
   <hr>
 
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchTagsDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchTagsDiv' class='btn btn-ghost tooltip-trigger'>
+    <i class='fas fa-caret-right fa-fw'></i>{{ 'Resources tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})
+    <span role='tooltip'>{{ 'Toggle display'|trans }}</span>
+  </button>
   <div hidden class='mt-2' id='batchTagsDiv'>
     {# for this tab, sort the tags in alphabetical order, case-insensitive #}
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
@@ -421,7 +445,10 @@
   </div>
   <hr>
 
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpCatDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiment categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpCatDiv' class='btn btn-ghost tooltip-trigger'>
+    <i class='fas fa-caret-right fa-fw'></i>{{ 'Experiment categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})
+    <span role="tooltip">{{ 'Toggle display'|trans }}</span>
+  </button>
   <div hidden class='mt-2' id='batchExpCatDiv'>
     {% for experimentsCategory in App.experimentsCategoryArr %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -435,7 +462,15 @@
   </div>
   <hr>
 
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpStatusDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiment status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' aria-label='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpCatDiv' class='btn btn-ghost tooltip-trigger'>
+    <i class='fas fa-caret-right fa-fw'></i>{{ 'Experiment categories'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})
+    <span role="tooltip">{{ 'Toggle display'|trans }}</span>
+  </button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' aria-expanded='false' aria-controls='batchExpStatusDiv' class='btn btn-ghost tooltip-trigger'>
+    <i class='fas fa-caret-right fa-fw'></i>{{ 'Experiment status'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})
+
+    <span role='tooltip'>{{ 'Toggle display'|trans }}</span>
+</button>
   <div hidden class='mt-2' id='batchExpStatusDiv'>
     {% for status in statusArr %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>
@@ -449,7 +484,10 @@
   </div>
   <hr>
 
-  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' title='{{ 'Toggle display'|trans }}' aria-expanded='false' aria-controls='batchExpTagsDiv' class='btn btn-ghost'><i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})</button>
+  <button type='button' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' aria-expanded='false' aria-controls='batchExpTagsDiv' class='btn btn-ghost tooltip-trigger'>
+    <i class='fas fa-caret-right fa-fw'></i>{{ 'Experiments tags'|trans }} (<span class='counterValue'>0</span> {{ 'selected'|trans }})
+    <span role='tooltip'>{{ 'Toggle display'|trans }}</span>
+  </button>
   <div hidden class='mt-2' id='batchExpTagsDiv'>
     {% for tag in tagsArr|sort((a, b) => a.tag|lower <=> b.tag|lower) %}
       <div class='d-flex flex-justify-between hl-hover-superlight p-2 rounded'>

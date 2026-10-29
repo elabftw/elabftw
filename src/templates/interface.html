@@ -13,23 +13,25 @@ This page exists to have a single page holding all buttons, links and notificati
 
 <div class='my-3'>
 {% include 'interface-buttons.html' %}
-<a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-primary p-2 mr-2 rounded lh-normal border-0 disabled'>
+<a aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-primary p-2 mr-2 rounded lh-normal border-0 disabled tooltip-trigger'>
   <i class='fas fa-pencil fa-fw mr-1'></i>primary disabled
+  <span role='tooltip'>{{ 'Edit'|trans }}</span>
 </a>
-<a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-secondary p-2 mr-2 rounded lh-normal border-0 disabled'>
+<a aria-label='{{ 'Edit'|trans }}' href='#' class='btn btn-secondary p-2 mr-2 rounded lh-normal border-0 disabled tooltip-trigger'>
   <i class='fas fa-pencil fa-fw mr-1'></i>secondary disabled
+  <span role='tooltip'>{{ 'Edit'|trans }}</span>
 </a>
 <button type='button' class='btn btn-neutral'><i class='fas fa-pencil mr-1'></i>Neutral button</button>
 <button type='button' class='btn btn-transparent'><i class='fas fa-pencil mr-1'></i>btn-transparent</button>
 </div>
 
-{{ 'Informational message %s'|format("<a href='#'>(link)</a>")|raw|msg('ok') }}
-{{ 'Warning message %s'|format("<a href='#'>(link)</a>")|raw|msg('warning') }}
-{{ 'Error message %s'|format("<a href='#'>(link)</a>")|raw|msg('ko') }}
+{{ 'Informational message %s'|format('<a href="#">(link)</a>')|raw|msg('ok') }}
+{{ 'Warning message %s'|format('<a href="#">(link)</a>')|raw|msg('warning') }}
+{{ 'Error message %s'|format('<a href="#">(link)</a>')|raw|msg('ko') }}
 
 <div class='my-3'>
   <div class='dropdown'>
-    <button type='button' class='btn btn-primary' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='Dropdown menu' aria-label='Dropdown menu'>
+    <button type='button' class='btn btn-primary' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='Dropdown menu'>
       <i class='far fa-square-caret-down mr-1'></i>Dropdown menu
     </button>
     <div class='overlay overlay-warning mt-2'><p>Warning notification</p></div>

@@ -17,7 +17,9 @@
         {# RESOURCES SCOPE #}
         {# If an item is selected, it's forced to 'Everything' and disabled #}
         <div id='scopeItemsLocked' class='btn-group' hidden>
-          <button disabled class='btn dropdown-toggle' type='button' aria-label='Scope' title='Scope'><i class='fas fa-globe fa-fw mr-1'></i></button>
+          <button disabled class='btn dropdown-toggle' type='button' aria-label='{{ 'Scope'|trans }}'>
+            <i class='fas fa-globe fa-fw mr-1'></i> <span role='tooltip'>{{ 'Scope'|trans }}</span>
+          </button>
         </div>
         {% include 'scope-button.html' with {'reload': 'page', 'target': 'scope_items'} %}
         {# FILTERS GROUP CATEGORY AND RESOURCE #}
@@ -32,7 +34,9 @@
         {# EVENTS SCOPE #}
         {# If an item is selected, it's forced to 'Everything' and disabled #}
         <div id='scopeLocked' class='btn-group' hidden>
-          <button disabled class='btn dropdown-toggle' type='button' aria-label='Scope' title='Scope'><i class='fas fa-globe fa-fw mr-1'></i></button>
+          <button disabled class='btn dropdown-toggle' type='button' aria-label='{{ 'Scope'|trans }}'>
+            <i class='fas fa-globe fa-fw mr-1'></i> <span role='tooltip'>{{ 'Scope'|trans }}</span>
+          </button>
         </div>
         {% include 'scope-button.html' with {'btnId': 'scopeEventBtn', 'reload': 'page', 'target': 'scope_events'} %}
         <div class='input-group ml-2'>
@@ -40,7 +44,10 @@
           <input type='text' aria-label='{{ 'Filter owner'|trans }}' placeholder='{{ 'Filter events by owner'|trans }}' id='eventOwnerSelect' class='form-control' data-identifier='eventOwnerSelect' data-action='autocomplete' data-target='users'>
           <div id='autocompleteAnchorDiv_eventOwnerSelect'></div>
           <div class='input-group-append'>
-            <button class='btn btn-secondary' type='button' aria-label='{{ 'Filter owner'|trans }}' data-action='filter-owner' title='{{ 'Filter owner'|trans }}'><i class='fas fa-magnifying-glass'></i></button>
+            <button class='btn btn-secondary tooltip-trigger' type='button' aria-label='{{ 'Filter owner'|trans }}' data-action='filter-owner'>
+              <i class='fas fa-magnifying-glass'></i>
+              <span role='tooltip'>{{ 'Filter owner'|trans }}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -49,12 +56,10 @@
     {# RIGHT PART: SETTINGS #}
     {# div is necessary to prevent the link being too high, align-self-end to put it at bottom #}
     <div class='align-self-end'>
-      <button type='button' class='btn btn-ghost' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}' title='{{ 'Settings'|trans }}' >
-        <i class='fas fa-cogs fa-fw'></i>
+      <button type='button' class='btn btn-ghost tooltip-trigger' data-action='toggle-modal' data-target='schedulerSettingsModal' aria-label='{{ 'Settings'|trans }}'>
+        <i class='fas fa-cogs fa-fw'></i> <span role='tooltip'>{{ 'Settings'|trans }}</span>
       </button>
-      <button type='button' data-action='toggle-modal' data-target='schedulerExportsModal' data-cy='schedulerExportsModal' class='btn btn-secondary' aria-label='{{ 'Export'|trans }}' title='{{ 'Export'|trans }}'>
-        {{ 'Export'|trans }}
-      </button>
+      <button type='button' data-action='toggle-modal' data-target='schedulerExportsModal' data-cy='schedulerExportsModal' class='btn btn-secondary' aria-label='{{ 'Export'|trans }}' >{{ 'Export'|trans }}</button>
     </div>
   </div>
   <div id='selectedItemsContainer' class='m-4 d-none'>

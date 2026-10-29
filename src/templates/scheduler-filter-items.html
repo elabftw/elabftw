@@ -1,6 +1,9 @@
 <div class='input-group ml-2'>
   <div class='input-group-prepend'>
-    <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
+    <span class='input-group-text tooltip-trigger' aria-label='{{ 'Filter controls'|trans }}'>
+      <i class='fas fa-magnifying-glass' aria-hidden='true'></i>
+      <span role='tooltip'>{{ 'Filter controls'|trans }}</span>
+    </span>
   </div>
   {% if App.devMode -%}
     <!-- [html-validate-disable-block input-missing-label, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->

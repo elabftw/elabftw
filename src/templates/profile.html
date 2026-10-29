@@ -304,11 +304,15 @@
         <li class='list-group-item py-3 px-2 m-1'>
           <span class='d-flex flew-wrap'>
             <span>
-              <button type='button' class='btn btn-ghost border-0 mr-2' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' title='{{ 'Show more'|trans }}' aria-label='{{ 'Show more'|trans }}'><i class='fas fa-square-plus fa-fw link-like'></i></button>
+              <button type='button' class='btn btn-ghost border-0 mr-2 tooltip-trigger' data-toggle-target='showMoreDiv_{{ file.id }}' data-action='toggle-next' data-opened-icon='fa-square-minus' data-closed-icon='fa-square-plus' aria-label='{{ 'Show more'|trans }}'>
+                <i class='fas fa-square-plus fa-fw link-like' aria-hidden='true'></i>
+                <span role='tooltip'>{{ 'Show more'|trans }}</span>
+              </button>
               <span class='state-indicator' data-state='{{ file.state }}' data-id='{{ file.id }}'>●</span>
               {% if file.real_name %}
-                <a title='{{ 'Download'|trans }}' target='_blank' href='/api/v2/exports/{{ file.id }}?format=binary' class='btn btn-ghost'>
+                <a target='_blank' href='/api/v2/exports/{{ file.id }}?format=binary' class='btn btn-ghost tooltip-trigger' aria-label="{{ 'Download'|trans }}: {{ file.real_name }}" >
                   {{ file.real_name }} <span class='small'>{{ file.filesize|default(0)|formatBytes }}</span>
+                  <span role='tooltip'>{{ 'Download'|trans }}</span>
                 </a>
                 <span class='smallgray relative-moment ml-1' title='{{ file.created_at }}'></span>
               {% else %}
@@ -321,7 +325,10 @@
               {% if file.json %}<span class='p-1 rounded smallgray border'>{{ 'JSON'|trans|upper }}</span>{% endif %}
               </span>
             </span>
-          <button type='button' class='btn btn-danger-ghost border-0 ml-auto' data-action='destroy-export' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-id='{{ file.id }}'><i class='fas fa-trash-alt fa-fw'></i></button>
+          <button type='button' class='btn btn-danger-ghost border-0 ml-auto tooltip-trigger' data-action='destroy-export' aria-label='{{ 'Delete'|trans }}' data-id='{{ file.id }}'>
+            <i class='fas fa-trash-alt fa-fw' aria-hidden='true'></i>
+            <span role='tooltip'>{{ 'Delete'|trans }}</span>
+          </button>
           </span>
           {# SHOW MORE #}
           <div id='showMoreDiv_{{ file.id }}' class='mt-2' hidden>

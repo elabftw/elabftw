@@ -1,7 +1,8 @@
 {% import _self as ui %}
 {% macro action_btn(action, icon, label, uploadId, extra='') %}
-  <button type='button' class='btn btn-ghost {{ extra }}' data-action='{{ action }}' data-uploadid='{{ uploadId }}' title='{{ label }}'>
+  <button type='button' class='btn btn-ghost tooltip-trigger {{ extra }}' data-action='{{ action }}' data-uploadid='{{ uploadId }}'>
     <i class='fas fa-fw fa-{{ icon }}'></i>
+    <span role='tooltip'>{{ label }}</span>
   </button>
 {% endmacro %}
 {% macro dropdown_item(action, icon, label, uploadId, extra='') %}
@@ -23,8 +24,9 @@
 
 {# Dropdown list is always present #}
 <div class='dropdown d-inline'>
-  <button type='button' class='btn btn-ghost {{ not isGrid ? 'float-right' }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
+  <button type='button' class='btn btn-ghost {{ not isGrid ? 'float-right' }} tooltip-trigger' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'More options'|trans }}'>
     <i class='fas fa-ellipsis-v fa-fw'></i>
+    <span role='tooltip'>{{ 'More options'|trans }}</span>
   </button>
   <div class='dropdown-menu dropdown-menu-right'>
     {# table mode: primary actions are in dropdown too #}

@@ -111,7 +111,9 @@
               <div class='input-group'>
                 <input class='form-control' type='password' required name='passphrase' minlength='{{ App.Config.configArr.min_password_length }}' autocomplete='off' id='sigPassphraseInput' />
                 <div class='input-group-append'>
-                  <button type='button' class='btn btn-transparent' data-action='toggle-password' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+                  <button type='button' class='btn btn-transparent tooltip-trigger' data-action='toggle-password' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i>
+                    <span role='tooltip'>{{ 'Show password'|trans }}</span>
+                  </button>
                 </div>
               </div>
           {% endif %}
@@ -164,14 +166,13 @@
     {% include 'back-to-previous.html' %}
     {# for templates: create from button #}
     {% if Entity.entityType.value == 'experiments_templates' or Entity.entityType.value == 'items_types' %}
-      <a data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'items' }}' data-tplid='{{ Entity.id }}' href='#' class='btn btn-primary ml-2' title='{{ 'Create entry from template'|trans }}' aria-label='{{ 'Create entry from template'|trans }}'>
+      <a data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'items' }}' data-tplid='{{ Entity.id }}' href='#' class='btn btn-primary ml-2 tooltip-trigger' aria-label='{{ 'Create entry from template'|trans }}'>
         <i class='fas fa-file-circle-plus fa-fw'></i>
       </a>
       {% if not App.isAnonymous() and not Entity.isReadOnly and Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
-        <button type='button' class='btn btn-transparent ml-2' data-action='updateentries'
-          data-confirm='{{ 'Add missing tags, links and custom fields to all entries created from this template? Existing values will be preserved. Entries you cannot edit will be skipped.'|trans }}'
-          title='{{ 'Update entries'|trans }}' aria-label='{{ 'Update entries'|trans }}'>
-          <i class='fas fa-arrows-rotate fa-fw'></i>
+        <button type='button' class='btn btn-transparent ml-2 tooltip-trigger' data-action='updateentries' data-confirm='{{ 'Add missing tags, links and custom fields to all entries created from this template? Existing values will be preserved. Entries you cannot edit will be skipped.'|trans }}' aria-label='{{ 'Update entries'|trans }}'>
+          <i class='fas fa-arrows-rotate fa-fw ' aria-hidden='true'></i>
+          <span role='tooltip'>{{ 'Update entries'|trans }}</span>
         </button>
       {% endif %}
     {% endif %}
@@ -180,38 +181,45 @@
 
     {% if mode == 'edit' %}
       {# VIEW button #}
-        <button type='button' title='{{ 'Save'|trans }}' data-action='update-entity-body' aria-label='{{ 'Save'|trans }}' class='btn btn-primary mr-2'>
-          <i class='fas fa-save'></i>
+        <button type='button' data-action='update-entity-body' aria-label='{{ 'Save'|trans }}' class='btn btn-primary mr-2 tooltip-trigger'>
+          <i class='fas fa-save' aria-hidden='true'></i>
+          <span role='tooltip'>{{ 'Save'|trans }}</span>
         </button>
-      <button type='button' title='{{ 'Save and view'|trans }}' aria-label='{{ 'Save and view'|trans }}' data-action='update-entity-body' data-redirect='view' class='btn btn-transparent mr-2'>
-        <i class='fas fa-eye fa-fw'></i>
+      <button type='button' aria-label='{{ 'Save and view'|trans }}' data-action='update-entity-body' data-redirect='view' class='btn btn-transparent mr-2 tooltip-trigger'>
+        <i class='fas fa-eye fa-fw' aria-hidden='true'></i>
+        <span role='tooltip'>{{ 'Save and view'|trans }}</span>
       </button>
     {% else %}
       {# EDIT button #}
-      <a title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn btn-primary mr-2 {{ Entity.isReadOnly ? 'disabled' }}'>
-        <i class='fas fa-pencil fa-fw'></i>
+      <a aria-label='{{ 'Edit'|trans }}' href='?mode=edit&amp;id={{ Entity.id }}' class='btn btn-primary mr-2 {{ Entity.isReadOnly ? 'disabled' }} tooltip-trigger'>
+        <i class='fas fa-pencil fa-fw' aria-hidden='true'></i>
+        <span role='tooltip'>{{ 'Edit'|trans }}</span>
       </a>
     {% endif %}
 
     {% if not App.isAnonymous() %}
 
       {# DUPLICATE #}
-      <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' data-action='toggle-modal' data-target='duplicateModal' class='btn btn-transparent mr-2'>
-        <i class='fas fa-clone fa-fw'></i>
-      </button>
+      <button type='button' aria-label='{{ 'Duplicate'|trans }}' data-action='toggle-modal' data-target='duplicateModal' class='btn btn-transparent mr-2 tooltip-trigger'>
+        <i class='fas fa-clone fa-fw' aria-hidden='true'></i>
+        <span role='tooltip'>{{ 'Duplicate'|trans }}</span>
+    </button>
 
       {# Calendar booking #}
       {% if Entity.entityType.value == 'items' and (Entity.entityData.is_bookable or not Entity.isReadOnly) %}
         {% if Entity.entityData.is_bookable %}
-          <a class='btn mr-2 btn-transparent' title='{{ 'Book item'|trans }}' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?items[]={{ Entity.id }}'>
-            <i class='fas fa-calendar-plus fa-fw'></i>
+          <a class='btn mr-2 btn-transparent tooltip-trigger' aria-label='{{ 'Book item'|trans }}' href='scheduler.php?items[]={{ Entity.id }}'>
+            <i class='fas fa-calendar-plus fa-fw' aria-hidden='true'></i>
+            <span role='tooltip'>{{ 'Book item'|trans }}</span>
           </a>
-          <button type='button' class='btn btn-transparent mr-2' aria-label='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' title='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' data-action='toggle-modal' data-target='sendBookingsEmailModal'>
-            <i class='fas fa-fw fa-envelope'></i>
+          <button type='button' class='btn btn-transparent mr-2 tooltip-trigger' aria-label='{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}' data-action='toggle-modal' data-target='sendBookingsEmailModal'>
+            <i class='fas fa-fw fa-envelope' aria-hidden='true'></i>
+            <span role='tooltip'>{{ 'Send an email to users who have booked this resource within the 4 last & upcoming months.'|trans }}</span>
           </button>
         {% else %}
-          <button type='button' class='btn mr-2 btn-transparent' aria-label='{{ 'Modify booking parameters'|trans }}' title='{{ 'Modify booking parameters'|trans }}' data-action='toggle-modal' data-target='bookingParamsModal'>
-            <i class='fas fa-calendar-plus color-disabled fa-fw'></i>
+          <button type='button' class='btn mr-2 btn-transparent tooltip-trigger' aria-label='{{ 'Modify booking parameters'|trans }}' data-action='toggle-modal' data-target='bookingParamsModal'>
+            <i class='fas fa-calendar-plus color-disabled fa-fw' aria-hidden='true'></i>
+            <span role='tooltip'>{{ 'Modify booking parameters'|trans }}</span>
           </button>
         {% endif %}
       {% endif %}
@@ -219,19 +227,23 @@
 
   {% if not App.isAnonymous() %}
     {# SIGN #}
-    <button type='button' id='actionButton-sign' title='{{ 'Add signature'|trans }}' aria-label='{{ 'Add signature'|trans }}' data-action='toggle-modal' data-target='addSignatureModal' class='btn btn-transparent mr-2'>
+    <button type='button' id='actionButton-sign' aria-label='{{ 'Add signature'|trans }}' data-action='toggle-modal' data-target='addSignatureModal' class='btn btn-transparent mr-2 tooltip-trigger'>
       <i class='fas fa-signature fa-fw'></i>
+      <span role='tooltip'>{{ 'Add signature'|trans }}</span>
     </button>
 
       {# TIMESTAMP #}
-      <button type='button' title='{{ 'Timestamp'|trans }}' aria-label='{{ 'Timestamp'|trans }}' data-action='do-requestable-action' data-target='timestamp' class='btn btn-transparent mr-2'>
+      <button type='button' aria-label='{{ 'Timestamp'|trans }}' data-action='do-requestable-action' data-target='timestamp' class='btn btn-transparent mr-2 tooltip-trigger'>
         <i class='fas fa-calendar-check fa-fw'></i>
-      </button>
+
+    <span role='tooltip'>{{ 'Timestamp'|trans }}</span>
+</button>
 
       {# BLOXBERG TIMESTAMP #}
       {% if App.Config.configArr.blox_enabled %}
-        <button type='button' title='{{ 'Add to blockchain'|trans }}' aria-label='{{ 'Add to blockchain'|trans }}' data-action='toggle-modal' data-target='blocktimestampModal' class='btn btn-transparent mr-2'>
+        <button type='button' aria-label='{{ 'Add to blockchain'|trans }}' data-action='toggle-modal' data-target='blocktimestampModal' class='btn btn-transparent mr-2 tooltip-trigger'>
           <i class='fas fa-cubes fa-fw'></i>
+          <span role='tooltip'>{{ 'Add to blockchain'|trans }}</span>
         </button>
       {% endif %}
     {% endif %}
@@ -287,8 +299,9 @@
 
       {# REQUEST ACTION #}
       {% if not App.isAnonymous() %}
-        <button type='button' class='btn btn-transparent mr-2' title='{{ 'Request action'|trans }}' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal'>
-          <i class='fas fa-person-circle-exclamation fa-fw' title='{{ 'Request action'|trans }}'></i>
+        <button type='button' class='btn btn-transparent mr-2 tooltip-trigger' aria-label='{{ 'Request action'|trans }}' data-action='toggle-modal' data-target='requestActionModal'>
+          <i class='fas fa-person-circle-exclamation fa-fw' aria-hidden='true'></i>
+          <span role='tooltip'>{{ 'Request action'|trans }}</span>
         </button>
       {% endif %}
 
@@ -296,31 +309,36 @@
 
       {# MORE OPTIONS #}
       <div class='dropdown'>
-        <button data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}' type='button' class='btn btn-transparent'>
-          <i class='fas fa-fw fa-ellipsis-v'></i>
+        <button data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'More options'|trans }}' type='button' class='btn btn-transparent tooltip-trigger'>
+          <i class='fas fa-fw fa-ellipsis-v' aria-hidden='true'></i>
+          <span role='tooltip'>{{ 'More options'|trans }}</span>
         </button>
 
         <div class='dropdown-menu dropdown-menu-right'>
           {% if Entity.entityType.value == 'items' %}
             {# BOOKING PARAMS #}
-            <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='bookingParamsModal'><i class='fas fa-calendar-plus fa-fw' title='{{ 'Modify booking parameters'|trans }}'></i> {{ 'Modify booking parameters'|trans }}</button>
+            <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='bookingParamsModal'>
+              <i class='fas fa-calendar-plus fa-fw' aria-hidden='true'></i> {{ 'Modify booking parameters'|trans }}
+            </button>
 
             {# PROCUREMENT #}
-            <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='procurementParamsModal'><i class='fas fa-cart-shopping fa-fw' title='{{ 'Modify procurement parameters'|trans }}'></i> {{ 'Modify procurement parameters'|trans }}</button>
+            <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='procurementParamsModal'>
+              <i class='fas fa-cart-shopping fa-fw' aria-hidden='true'></i> {{ 'Modify procurement parameters'|trans }}
+            </button>
           {% endif %}
 
           {# TRANSFER OWNERSHIP #}
           {% set canTransfer = Entity.entityData.userid == App.Users.userData.userid or App.Users.isAdmin %}
           <button type='button' class='dropdown-item {{ (not canTransfer or Entity.isReadOnly) ? 'disabled' }}'
             {% if canTransfer %}data-action='toggle-modal' data-target='ownerModal'{% endif %}>
-            <i class='fas fa-people-arrows fa-fw {{ (not canTransfer or Entity.isReadOnly) ? 'color-weak' }}' title='{{ 'Transfer ownership'|trans }}'></i> {{ 'Transfer ownership'|trans }}
+            <i class='fas fa-people-arrows fa-fw {{ (not canTransfer or Entity.isReadOnly) ? 'color-weak' }}' ></i> {{ 'Transfer ownership'|trans }}
           </button>
 
           {# CONVERT TO TEMPLATE #}
           {# for entities(experiments & items): create template from entity #}
           {% if Entity.entityType.value == 'experiments' or Entity.entityType.value == 'items' %}
-            <button type='button' class='dropdown-item {{ Entity.isReadOnly ? 'disabled' }}' data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments' ? 'experiments_templates' : 'items_types' }}' data-entityid='{{ Entity.id }}' title='{{ 'Create template from entry'|trans }}'>
-              <i class='fas fa-file-circle-plus fa-fw'></i> {{ 'Create template from entry'|trans }}
+            <button type='button' class='dropdown-item {{ Entity.isReadOnly ? 'disabled' }}' data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments' ? 'experiments_templates' : 'items_types' }}' data-entityid='{{ Entity.id }}' >
+              <i class='fas fa-file-circle-plus fa-fw' aria-hidden='true'></i> {{ 'Create template from entry'|trans }}
             </button>
           {% endif %}
 
@@ -328,7 +346,7 @@
           <a class='dropdown-item' href='revisions.php?type={{ Entity.entityType.value }}&amp;item_id={{ Entity.id }}'><i class='fas fa-history fa-fw'></i> {{ 'See revisions'|trans }}</a>
 
           {# CHANGELOG #}
-          <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw' title='{{ 'See changelog'|trans }}'></i> {{ 'See changelog'|trans }}</a>
+          <a class='dropdown-item' href='?id={{ Entity.id }}&amp;mode=changelog'><i class='fas fa-list fa-fw' aria-hidden='true' ></i> {{ 'See changelog'|trans }}</a>
 
           {# HIDE MAIN TEXT #}
           {% set icon = Entity.entityData.hide_main_text ? 'fa-eye' : 'fa-eye-slash' %}
@@ -341,11 +359,11 @@
             {# ARCHIVE / UNARCHIVE #}
             {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
               <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='archive'>
-                <i class='fas fa-fw fa-box-archive' title='{{ 'Archive'|trans }}'></i> {{ 'Archive'|trans }}
+                <i class='fas fa-fw fa-box-archive' aria-hidden='true' ></i> {{ 'Archive'|trans }}
               </button>
             {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Archived.value %}
               <button type='button' class='dropdown-item hover-warning' data-action='do-requestable-action' data-target='unarchive'>
-                <i class='fas fa-fw fa-box-archive' title='{{ 'Unarchive'|trans }}'></i> {{ 'Unarchive'|trans }}
+                <i class='fas fa-fw fa-box-archive' aria-hidden='true' ></i> {{ 'Unarchive'|trans }}
               </button>
             {% endif %}
           {% endif %}
@@ -353,10 +371,12 @@
           {# DELETE / RESTORE #}
           {% if Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value and not App.isAnonymous() %}
             <div class='dropdown-divider'></div>
-            <button type='button' class='dropdown-item hover-danger' data-action='toggle-modal' data-target='deleteSelectedEntitiesModal'><i class='fas fa-trash-alt fa-fw' title='{{ 'Delete'|trans }}'></i> {{ 'Delete'|trans }}</button>
+            <button type='button' class='dropdown-item hover-danger' data-action='toggle-modal' data-target='deleteSelectedEntitiesModal'>
+              <i class='fas fa-trash-alt fa-fw' aria-hidden='true'></i> {{ 'Delete'|trans }}</button>
           {% elseif Entity.entityData.state == enum('Elabftw\\Enums\\State').Deleted.value %}
             <div class='dropdown-divider'></div>
-            <button type='button' class='dropdown-item hover-danger' data-action='restore'><i class='fas fa-trash-can-arrow-up fa-fw' title='{{ 'Restore entry'|trans }}'></i> {{ 'Restore entry'|trans }}</button>
+            <button type='button' class='dropdown-item hover-danger' data-action='restore'>
+              <i class='fas fa-trash-can-arrow-up fa-fw' aria-hidden='true'></i> {{ 'Restore entry'|trans }}</button>
           {% endif %}
         </div>
       </div>

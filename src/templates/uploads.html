@@ -4,17 +4,21 @@
 
 {% macro groupHeader(groupId, suffix, title, count, mode) %}
   <div class='step-group-header d-flex align-items-center px-2 py-2'>
-    <button class='btn btn-transparent mr-2' data-action='toggle-next' data-toggle-target='upload_group_body_{{ suffix }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='upload_group_body_{{ suffix }}' title='{{ 'Toggle visibility'|trans }}'>
+    <button class='btn btn-transparent mr-2 tooltip-trigger' data-action='toggle-next' data-toggle-target='upload_group_body_{{ suffix }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='upload_group_body_{{ suffix }}' >
       <i class='fas fa-caret-down fa-fw'></i>
-    </button>
+
+    <span role='tooltip'>{{ 'Toggle visibility'|trans }}</span>
+</button>
     <strong class='{{ groupId is not null and mode == 'edit' ? 'upload-group-title editable hl-hover rounded' }}' {% if groupId is not null %}data-groupid='{{ groupId }}'{% endif %}>{{ title }}</strong>
     <span class='text-muted ml-2'>{{ count }} {{ 'Attached files'|trans|lower }}</span>
     {% if groupId is not null and mode == 'edit' %}
-      <button type='button' class='btn btn-transparent draggable upload-group-sortable-handle ml-auto mr-2' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+      <button type='button' class='btn btn-transparent draggable upload-group-sortable-handle ml-auto mr-2 tooltip-trigger' aria-label='{{ 'Drag to reorder'|trans }}'>
         <i class='fas fa-sort'></i>
+        <span role='tooltip'>{{ 'Drag to reorder'|trans }}</span>
       </button>
-      <button class='btn btn-danger-ghost' data-action='destroy-upload-group' data-id='{{ groupId }}' title='{{ 'Delete group'|trans }}' aria-label='{{ 'Delete group'|trans }}' type='button'>
+      <button class='btn btn-danger-ghost tooltip-trigger' data-action='destroy-upload-group' data-id='{{ groupId }}' aria-label='{{ 'Delete group'|trans }}' type='button'>
         <i class='fas fa-trash-alt'></i>
+        <span role='tooltip'>{{ 'Delete group'|trans }}</span>
       </button>
     {% endif %}
   </div>
@@ -23,8 +27,9 @@
 {% macro groupUploadButton(groupId, suffix, mode) %}
   {% if mode == 'edit' %}
     <div class='mt-2'>
-      <button type='button' class='btn btn-transparent' data-action='upload-file-to-group' data-inputid='upload_group_file_{{ suffix }}' title='{{ 'Upload file'|trans }}' aria-label='{{ 'Upload file'|trans }}'>
+      <button type='button' class='btn btn-transparent tooltip-trigger' data-action='upload-file-to-group' data-inputid='upload_group_file_{{ suffix }}' aria-label='{{ 'Upload file'|trans }}'>
         <i class='fas fa-upload fa-fw mr-1'></i>{{ 'Upload file'|trans }}
+        <span role='tooltip'>{{ 'Upload file'|trans }}</span>
       </button>
       <input hidden multiple type='file' class='upload-group-file-input' id='upload_group_file_{{ suffix }}' data-groupid='{{ groupId is not null ? groupId : '' }}' aria-label='{{ 'Upload file'|trans }}'>
     </div>
@@ -68,7 +73,7 @@
 <div id='filesDiv'>
   <div class='d-flex justify-content-between'>
     <div>{# necessary div for flex #}
-      <h3 title='{{ 'Toggle visibility'|trans }}' data-scroll-btn='fa-file-arrow-up' data-scroll-btn-label='{{ 'Attachments'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='uploadsDiv' class='d-inline togglable-section-title' tabindex='0' role='button'>
+      <h3 data-scroll-btn='fa-file-arrow-up' data-scroll-btn-label='{{ 'Attachments'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='uploadsDiv' class='d-inline togglable-section-title' tabindex='0' role='button'>
         <i class='fas fa-caret-down fa-fw mr-2'></i>{% trans %}Attached file
         {% plural Entity.entityData.uploads|length %}
         Attached files
@@ -79,12 +84,14 @@
 
   <div class='row mt-2 mx-0' id='uploadsDiv' data-count-for='uploadsCount' data-save-hidden='uploadsDiv'>
     <div id='uploadsViewToggler' class='w-100 text-right'>
-      <button type='button' title='{{ 'Switch layout'|trans }}' aria-label='{{ 'Switch layout'|trans }}' class='btn btn-transparent' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
+      <button type='button' aria-label='{{ 'Switch layout'|trans }}' class='btn btn-transparent tooltip-trigger' data-action='toggle-uploads-layout' data-target-layout='{{ App.Users.userData.uploads_layout ? 0 : 1 }}'>
         <i class='fas fa-fw fa-list fa-flip-horizontal'></i>
         <i class='fas fa-fw fa-table-cells'></i>
+        <span role='tooltip'>{{ 'Switch layout'|trans }}</span>
       </button>
-      <button type='button' title='{{ 'Show archived'|trans }}' aria-label='{{ 'Show archived'|trans }}' class='btn {{ App.Request.query.has('state') ? 'btn-secondary' : 'btn-transparent' }}' data-action='toggle-uploads-show-archived'>
+      <button type='button' aria-label='{{ 'Show archived'|trans }}' class='btn {{ App.Request.query.has('state') ? 'btn-secondary' : 'btn-transparent' }} tooltip-trigger' data-action='toggle-uploads-show-archived'>
         <i class='fas fa-fw fa-box-archive'></i>
+        <span role='tooltip'>{{ 'Show archived'|trans }}</span>
       </button>
     </div>
 

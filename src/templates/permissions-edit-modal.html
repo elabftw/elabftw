@@ -139,7 +139,10 @@
           <div {{ not Entity.entityData.access_key ? 'hidden' }} id='anonymousAccessUrlDiv' class='mt-2'>
             <div class='input-group'>
               <div class='input-group-prepend'>
-                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='anonymousAccessUrlInput'><i class='fas fa-clone'></i></button>
+                <button aria-label='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost tooltip-trigger' type='button' data-action='copy-to-clipboard' data-target='anonymousAccessUrlInput'>
+                  <i class='fas fa-clone' aria-hidden='true'></i>
+                  <span role='tooltip'>{{ 'Copy to clipboard'|trans }}</span>
+              </button>
               </div>
               <input type='url' class='form-control' readonly id='anonymousAccessUrlInput' value='{{ Entity.entityData.sharelink }}' aria-label='Anonymous access url input'>
             </div>

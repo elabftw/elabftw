@@ -4,8 +4,16 @@
   <button type='button' class='btn btn-ghost mr-2 mb-2'><i class='fas fa-eye mr-1'></i>Ghost button</button>
   <button type='button' class='btn btn-danger-ghost mr-2 mb-2'><i class='fas fa-trash-alt mr-1'></i>Danger button</button>
   {# toolbar buttons #}
-  <button type='button' title='{{ 'Save'|trans }}' aria-label='{{ 'Save'|trans }}' class='btn btn-primary mr-2 mb-2'><i class='fas fa-save'></i></button>
-  <button type='button' title='{{ 'Edit'|trans }}' aria-label='{{ 'Edit'|trans }}' class='btn btn-secondary mr-2 mb-2'><i class='fas fa-pencil'></i></button>
-  <button type='button' title='{{ 'View'|trans }}' aria-label='{{ 'View'|trans }}' class='btn btn-transparent mr-2 mb-2'><i class='fas fa-eye fa-fw'></i></button>
-  <button type='button' title='{{ 'Duplicate'|trans }}' aria-label='{{ 'Duplicate'|trans }}' class='btn btn-transparent mr-2 mb-2'><i class='fas fa-clone fa-fw'></i></button>
+  <button type='button' aria-label='{{ 'Save'|trans }}' class='btn btn-primary mr-2 mb-2 tooltip-trigger'><i class='fas fa-save'></i>
+      <span role='tooltip'>{{ 'Save'|trans }}</span>
+  </button>
+  <button type='button' aria-label='{{ 'Edit'|trans }}' class='btn btn-secondary mr-2 mb-2 tooltip-trigger'><i class='fas fa-pencil'></i>
+      <span role='tooltip'>{{ 'Edit'|trans }}</span>
+  </button>
+  <button type='button' aria-label='{{ 'View'|trans }}' class='btn btn-transparent mr-2 mb-2 tooltip-trigger'><i class='fas fa-eye fa-fw'></i>
+      <span role='tooltip'>{{ 'View'|trans }}</span>
+  </button>
+  <button type='button' aria-label='{{ 'Duplicate'|trans }}' class='btn btn-transparent mr-2 mb-2 tooltip-trigger'><i class='fas fa-clone fa-fw'></i>
+      <span role='tooltip'>{{ 'Duplicate'|trans }}</span>
+  </button>
 </div>

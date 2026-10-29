@@ -5,7 +5,7 @@
 {% if App.Teams.teamArr.capture_container_deletion_reason %}
   {% include 'container-deletion-reason-modal.html' %}
 {% endif %}
-<h3 title='{{ 'Toggle visibility'|trans }}' data-scroll-btn='fa-flask-vial' data-scroll-btn-label='{{ 'Storage'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='storageDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Storage'|trans }} (<span id='containersCount'>{{ Entity.entityData.containers|length }}</span>)</h3>
+<h3 aria-label='{{ 'Toggle visibility'|trans }}' data-scroll-btn='fa-flask-vial' data-scroll-btn-label='{{ 'Storage'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='storageDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Storage'|trans }} (<span id='containersCount'>{{ Entity.entityData.containers|length }}</span>)</h3>
 <div class='row mt-2' id='storageDivContent' data-save-hidden='storageDivContent' data-count-for='containersCount'>
   <div class='ml-3 mt-3 col-md-12'>
       {% if Entity.entityData.containers %}
@@ -14,11 +14,18 @@
             <li class='list-group-item countable'>
               <div class='d-flex flex align-items-center'>
                 <div>
-                  <span class='mr-2'><span class='malleableColumn hl-hover p-1 rounded' data-ma-type='float' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}' data-target='qty_stored'>{{ container.qty_stored }}</span></span> <span class='mr-2'><span class='malleableQtyUnit hl-hover p-1 rounded' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}'>{{ container.qty_unit }}</span> {{ 'in'|trans }} {% if Entity.isReadOnly %}{{ container.full_path }}{% else %}<button type='button' class='btn btn-transparent m-2' data-action='move-container' data-id='{{ container.id }}' data-current-storage-id='{{ container.storage_id }}' title='{{ 'Move to another storage location'|trans }}'>{{ container.full_path }}</button>{% endif %}</span>
+                  <span class='mr-2'><span class='malleableColumn hl-hover p-1 rounded' data-ma-type='float' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}' data-target='qty_stored'>{{ container.qty_stored }}</span></span> <span class='mr-2'><span class='malleableQtyUnit hl-hover p-1 rounded' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/containers' data-id='{{ container.id }}'>{{ container.qty_unit }}</span> {{ 'in'|trans }} {% if Entity.isReadOnly %}{{ container.full_path }}{% else %}<button type='button' class='btn btn-transparent m-2 tooltip-trigger' data-action='move-container' data-id='{{ container.id }}' data-current-storage-id='{{ container.storage_id }}' >{{ container.full_path }}
+                    <span role='tooltip'>{{ 'Move to another storage location'|trans }}</span></button>
+                    {% endif %}
+                  </span>
                 </div>
                 <div class='ml-auto'>
-                  <a href='inventory.php?storage_unit={{ container.storage_id }}' class='btn btn-ghost' aria-label='{{ 'Go to inventory'|trans }}' title='{{ 'Go to inventory'|trans }}'><i class='fas fa-magnifying-glass'></i></a>
-                  <button type='button' data-action='destroy-container' data-id='{{ container.id }}' class='btn btn-danger-ghost' aria-label='{{ 'Delete'|trans }}' title='{{ 'Delete'|trans }}'><i class='fas fa-trash-alt'></i></button>
+                  <a href='inventory.php?storage_unit={{ container.storage_id }}' class='btn btn-ghost tooltip-trigger' aria-label='{{ 'Go to inventory'|trans }}' ><i class='fas fa-magnifying-glass'></i>
+                    <span role='tooltip'>{{ 'Go to inventory'|trans }}</span>
+                  </a>
+                  <button type='button' data-action='destroy-container' data-id='{{ container.id }}' class='btn btn-danger-ghost tooltip-trigger' aria-label='{{ 'Delete'|trans }}' ><i class='fas fa-trash-alt'></i>
+                    <span role='tooltip'>{{ 'Delete'|trans }}</span>
+                  </button>
                 </div>
               </div>
             </li>
@@ -29,8 +36,9 @@
     {% endif %}
     {% if not Entity.isReadOnly %}
       <div>
-        <button type='button' title='{{ 'Add container'|trans }}' aria-label='{{ 'Add container'|trans }}' class='btn btn-ghost my-2' data-action='toggle-modal' data-target='storageModal'>
+        <button type='button' aria-label='{{ 'Add container'|trans }}' class='btn btn-ghost my-2 tooltip-trigger' data-action='toggle-modal' data-target='storageModal'>
           <i class='fas fa-fw fa-square-plus mr-2'></i>{{ 'Add container'|trans }}
+          <span role='tooltip'>{{ 'Add container'|trans }}</span>
         </button>
       </div>
     {% endif %}

@@ -6,8 +6,9 @@
         <img class='ghs-pictogram' src='assets/images/ghs/GHS{{ code }}.svg' alt='{{ label|trans|e('html_attr') }}' title='{{ label|trans|e('html_attr') }}'/>
       {% endif %}
       {% if icon %}
-        <span title='{{ label|trans }}'>
-          <i class='ml-2 mr-1 fas fa-{{ icon }}'></i>
+        <span class='tooltip-trigger'>
+          <i class='ml-2 mr-1 fas fa-{{ icon }}' aria-hidden='true'></i>
+          <span role='tooltip'>{{ label|trans }}</span>
         </span>
       {% endif %}
       {{ label|trans }}</label>
@@ -23,7 +24,10 @@
   <label for='compoundInput-{{ target }}' {{ required ? "class='required-label'" }}>{{ label }}</label>
   <div class='input-group mb-2'>
     <div class='input-group-prepend'>
-      <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'><i class='fas fa-clone'></i></button>
+      <button class='btn btn-ghost tooltip-trigger' type='button' data-action='copy-to-clipboard' data-target='compoundInput-{{ target }}'>
+        <i class='fas fa-clone'></i>
+        <span role='tooltip'>{{ 'Copy to clipboard'|trans }}</span>
+      </button>
     </div>
     <input name='{{ target }}' {{ disabled ? 'readonly' }} {{ type == 'number' ? "type='number' step='0.01'" }} placeholder='{{ placeholder }}' {{ required }} class='form-control' id='compoundInput-{{ target }}' />
   </div>
@@ -36,7 +40,7 @@
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h5 class='modal-title' id='editCompoundModalTitle'><i class='fas fa-fw fa-pencil'></i> {{ 'Edit compound'|trans }}</h5>
+        <h5 class='modal-title' id='editCompoundModalTitle'><i class='fas fa-fw fa-pencil' aria-hidden='true'></i> {{ 'Edit compound'|trans }}</h5>
         {# the clear-form action is repeated on the x icon or it would only work when clicking just next to the x, on the button element #}
         <button type='button' class='close' data-dismiss='modal' data-action='clear-form' data-target='editCompoundInputs' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true' data-action='clear-form' data-target='editCompoundInputs'>&times;</span>
@@ -50,8 +54,8 @@
           </div>
 
           <div class='mt-1'>
-            <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='items' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-cubes-stacked fa-fw mr-1'></i>{{ 'Create resource linked to compound'|trans }}</button>
-            <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='experiments' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Create experiment linked to compound'|trans }}</button>
+            <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='items' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-cubes-stacked fa-fw mr-1' aria-hidden='true'></i>{{ 'Create resource linked to compound'|trans }}</button>
+            <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='experiments' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-flask fa-fw mr-1' aria-hidden='true'></i>{{ 'Create experiment linked to compound'|trans }}</button>
           </div>
           <hr>
           <div class='my-2' id='editCompoundInputs'>
@@ -61,14 +65,18 @@
             <label for='compoundInput-cas_number'>{{ 'CAS number'|trans }}</label>
             <div class='input-group mb-2'>
               <div class='input-group-prepend'>
-                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='compoundInput-cas_number'><i class='fas fa-clone'></i></button>
+                <button class='btn btn-ghost tooltip-trigger' type='button' data-action='copy-to-clipboard' data-target='compoundInput-cas_number'><i class='fas fa-clone'></i>
+                    <span role='tooltip'>{{ 'Copy to clipboard'|trans }}</span>
+                </button>
               </div>
               <input name='cas_number' {{ compoundsDisabled ? 'readonly' }} pattern='^\d{2,7}-\d{2}-\d$' inputmode='numeric' title='{{ 'Please enter a valid CAS number (e.g., 58-08-2)'|trans }}' placeholder='58-08-2' class='form-control' id='compoundInput-cas_number' />
             </div>
             <label for='compoundInput-ec_number'>{{ 'EC number'|trans }}</label>
             <div class='input-group mb-2'>
               <div class='input-group-prepend'>
-                <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i></button>
+                <button class='btn btn-ghost tooltip-trigger' type='button' data-action='copy-to-clipboard' data-target='compoundInput-ec_number'><i class='fas fa-clone'></i>
+                    <span role='tooltip'>{{ 'Copy to clipboard'|trans }}</span>
+                </button>
               </div>
               <input name='ec_number' {{ compoundsDisabled ? 'readonly' }} pattern='^\d{3}-\d{3}-\d$' inputmode='numeric' title='{{ 'Please enter a valid EC number (e.g., 200-362-1)'|trans }}' placeholder='200-362-1' class='form-control' id='compoundInput-ec_number' />
             </div>

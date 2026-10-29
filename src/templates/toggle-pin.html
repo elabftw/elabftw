@@ -3,6 +3,7 @@
 {% set is_pinned = is_pinned|default(Entity.entityData.is_pinned) %}
 {% set id = id|default(Entity.id) %}
 
-<button type='button' title='{{ 'Toggle pin'|trans }}' aria-label='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' data-id='{{ id }}' class='btn {{ is_pinned ? 'btn-secondary' : 'btn-transparent' }} mr-{{ padding }}'>
+<button type='button' aria-label='{{ 'Toggle pin'|trans }}' data-action='toggle-pin' data-id='{{ id }}' class='btn {{ is_pinned ? 'btn-secondary' : 'btn-transparent' }} mr-{{ padding }} tooltip-trigger'>
   <i class='fas fa-thumbtack {{ not is_pinned ? 'color-weak' }} fa-fw'></i>
+    <span role='tooltip'>{{ 'Toggle pin'|trans }}</span>
 </button>

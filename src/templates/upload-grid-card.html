@@ -5,8 +5,9 @@
   {% endif %}
   <div class='thumbnail box {{ upload.state == enum('Elabftw\\Enums\\State').Archived.value ? 'bg-light' }}' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}' style='overflow: visible'>
     {% if mode == 'edit' and uploadGroups is not empty %}
-      <button type='button' class='btn btn-transparent draggable upload-sortable-handle' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+      <button type='button' class='btn btn-transparent draggable upload-sortable-handle tooltip-trigger' aria-label='{{ 'Drag to reorder'|trans }}'>
         <i class='fas fa-sort'></i>
+        <span role='tooltip'>{{ 'Drag to reorder'|trans }}</span>
       </button>
     {% endif %}
     {% include('upload-dropdown-menu.html') with {layout: 'dropdown'} %}

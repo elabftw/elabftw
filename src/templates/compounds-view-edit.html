@@ -2,7 +2,10 @@
         <li class='list-group-item'><label for='{{ key }}'>{{ label }}</label>
           <div class='input-group'>
             <div class='input-group-prepend'>
-              <button title='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='{{ key }}'><i class='fas fa-clone'></i></button>
+              <button class='btn btn-ghost tooltip-trigger' type='button' data-action='copy-to-clipboard' data-target='{{ key }}'>
+                <i class='fas fa-clone' aria-hidden='true'></i>
+                <span role='tooltip'>{{ 'Copy to clipboard'|trans }}</span>
+              </button>
             </div>
             <input readonly class='form-control' id='{{ key }}' value='{{ value }}' />
           </div>
@@ -46,16 +49,16 @@
         } %}
         {% for property, data in hazards2 %}
           {% if attribute(compound, property) %}
-            {# wrapped in a <span> to allow the tooltip to appear on hover #}
-            <span title='{{ data.alt|trans }}'>
-              <i class='fas fa-2x fa-{{ data.icon }} mr-2'></i>
+            <span class='tooltip-trigger'>
+              <i class='fas fa-2x fa-{{ data.icon }} mr-2' aria-hidden='true'></i>
+              <span role='tooltip'>{{ data.alt|trans }}</span>
             </span>
           {% endif %}
         {% endfor %}
 {% endmacro %}
 
 {# COMPOUNDS #}
-<h4 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='ml-3 d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Compounds'|trans }} (<span id='compoundsCount'>{{ Entity.entityData.compounds_links|length }}</span>)</h4>
+<h4 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='ml-3 d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2' aria-hidden='true'></i>{{ 'Compounds'|trans }} (<span id='compoundsCount'>{{ Entity.entityData.compounds_links|length }}</span>)</h4>
 <div data-save-hidden='compoundDiv' data-count-for='compoundsCount' class='ml-4'>
   <div class='mb-2' id='compoundDiv'>
     {% if Entity.entityData.compounds_links %}
@@ -92,7 +95,10 @@
         </details>
         {# DELETE #}
         {% if not Entity.isReadOnly %}
-          <button type='button' data-action='delete-compound-link'  aria-label='{{ 'Remove compound'|trans }}' data-id='{{ fp.id }}' class='btn btn-danger-ghost'><i class='fas fa-fw fa-lg fa-trash-alt'></i></button>
+          <button type='button' data-action='delete-compound-link'  aria-label='{{ 'Remove compound'|trans }}' data-id='{{ fp.id }}' class='btn btn-danger-ghost tooltip-trigger'>
+            <i class='fas fa-fw fa-lg fa-trash-alt' aria-hidden='true'></i>
+            <span role='tooltip'>{{ 'Remove compound'|trans }}</span>
+          </button>
         {% endif %}
         </div>
       {% endfor %}
@@ -102,7 +108,10 @@
   {% if mode == 'edit' %}
   <div class='input-group'>
     <div class='input-group-prepend'>
-      <span class='input-group-text'><i class='fas fa-magnifying-glass'></i></span>
+      <span class='input-group-text tooltip-trigger'>
+        <i class='fas fa-magnifying-glass' aria-hidden='true'></i>
+        <span role='tooltip'>{{ 'Search'|trans }}</span>
+      </span>
     </div>
     <input aria-label='{{ 'Link with compound'|trans }}' type='text' data-endpoint='compounds_links' data-autocomplete='compounds' id='addCompoundInput' class='form-control linkinput' data-id='{{ Entity.id }}' placeholder='{{ 'Search in local compounds database'|trans }}' />
     <div class='input-group-append'>

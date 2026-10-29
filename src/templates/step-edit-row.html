@@ -2,26 +2,30 @@
 <div class='input-group mb-2 countable' id='step_{{ step.id }}'>
   <div class='input-group-prepend'>
     {% set disabled = step.is_immutable == 1 and (Entity.entityType.value in ['experiments', 'items']) %}
-    <button {{ disabled ? 'disabled="disabled"' : '' }} type='button' class='btn btn-ghost draggable sortableHandle' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+    <button {{ disabled ? 'disabled="disabled"' : '' }} type='button' class='btn btn-ghost draggable sortableHandle tooltip-trigger' aria-label='{{ 'Drag to reorder'|trans }}'>
       <i class='fas fa-sort'></i>
-    </button>
+      <span role='tooltip'>{{ 'Drag to reorder'|trans }}</span>
+  </button>
   </div>
   {# LOCK/UNLOCK A STEP #}
   {% set steps_table = '%s/%d/steps'|format(Entity.entityType.value, Entity.id) %}
   {% if Entity.entityType.value in ['experiments_templates', 'items_types'] %}
   {% set label = (step.is_immutable ? 'Unlock' : 'Lock')|trans %}
   <div class='input-group-prepend'>
-    <label class='btn btn-ghost d-flex align-items-center mb-0' title='{{ label }}'>
+    <label class='btn btn-ghost d-flex align-items-center mb-0 tooltip-trigger'>
       <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ steps_table ~ '/' ~ step.id }}' data-target='is_immutable' id='stepIsImmutable_{{ step.id }}' {{ step.is_immutable ? 'checked' }} data-reload='step_{{ step.id }}' class='d-none'>
       <i class='fas fa-lock {{ not step.is_immutable ? 'd-none' }}'></i>
       <i class='fas fa-lock-open {{ step.is_immutable ? 'd-none' }}'></i>
+      <span class='sr-only'>{{ label }}</span>
+      <span role='tooltip'>{{ label }}</span>
     </label>
   </div>
   {% endif %}
   {# DESTROY #}
   <div class='input-group-prepend'>
-    <button {{ disabled ? 'disabled="disabled"' : '' }} class='btn btn-ghost' data-action='destroy-step' data-id='{{ step.id }}' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' type='button'>
+    <button {{ disabled ? 'disabled="disabled"' : '' }} class='btn btn-ghost tooltip-trigger' data-action='destroy-step' data-id='{{ step.id }}' aria-label='{{ 'Delete'|trans }}' type='button'>
       <i class='fas fa-trash-alt'></i>
+      <span role='tooltip'>{{ 'Delete'|trans }}</span>
     </button>
   </div>
   {# FINISH/UNFINISH #}
@@ -37,8 +41,9 @@
       {{ 'completed'|trans }} <span title='{{ step.finished_time }}' class='relative-moment'></span>
     </span>
     {% endif %}
-    <button class='btn btn-transparent ml-auto mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='false' title='{{ 'More options'|trans }}' aria-label='{{ 'More options'|trans }}'>
+    <button class='btn btn-transparent ml-auto mr-1 tooltip-trigger' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='false' aria-label='{{ 'More options'|trans }}'>
       <i class='fas fa-caret-right fa-fw'></i>
+      <span role='tooltip'>{{ 'More options'|trans }}</span>
     </button>
     <div hidden data-save-hidden='extendedStep_{{ step.id }}' class='w-100'>
     {{ 'Completion time:'|trans }}
@@ -54,8 +59,9 @@
         {{ 'Deadline:'|trans }}
         {# here the data-ma-input-value is formatted so it works with the datetime-local input type, and the displayed one is formatted differently to be more readable #}
         <span data-stepid='{{ step.id }}' data-target='deadline' data-ma-type='datetime-local' data-ma-input-value='{{ step.deadline|date('Y-m-d\\TH:i') }}' class='step editable hl-hover p-1 rounded'>{{ step.deadline|format_datetime() }}</span>
-        <button class='btn btn-danger-ghost ml-2' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' title='{{ 'Clear deadline'|trans }}' aria-label='{{ 'Clear deadline'|trans }}'>
+        <button class='btn btn-danger-ghost ml-2 tooltip-trigger' data-action='step-destroy-deadline' data-stepid='{{ step.id }}' aria-label='{{ 'Clear deadline'|trans }}'>
           <i class='fas fa-trash-alt'></i>
+          <span role='tooltip'>{{ 'Clear deadline'|trans }}</span>
         </button>
       {% else %}
         <button data-action='replace-with-next' type='button' class='btn btn-sm btn-secondary'>{{ 'Add a deadline'|trans }}</button>

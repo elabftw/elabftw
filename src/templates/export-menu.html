@@ -24,7 +24,7 @@
           <div>
             <label class='d-inline mr-1' for='qrsvg_exportTitle'>{{ 'Include title'|trans }}</label>
           </div>
-          <label class='switch' title='{{ 'Include title'|trans }}'><span class='sr-only'>{{ 'Include title'|trans }}</span>
+          <label class='switch'><span class='sr-only'>{{ 'Include title'|trans }}</span>
             <input type='checkbox' checked='checked' id='qrsvg_exportTitle'>
             <span class='slider'></span>
           </label>
@@ -71,9 +71,11 @@
 
 {# requires Entity #}
 <div class='dropdown'>
-  <button class='btn btn-transparent' title='{{ 'Export'|trans }}' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' type='button'>
+  <button class='btn btn-transparent tooltip-trigger' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' aria-label='{{ 'Export'|trans }}' type='button'>
     <i class='fas fa-download fa-fw'></i>
-  </button>
+
+    <span role='tooltip'>{{ 'Export'|trans }}</span>
+</button>
   <div class='dropdown-menu'>
     <button type='button' class='dropdown-item' data-action='toggle-modal' data-target='exportModal' data-format='pdf'>
       <i class='fas fa-file-pdf fa-fw'></i> {{ 'PDF File'|trans }}

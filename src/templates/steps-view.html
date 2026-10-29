@@ -4,7 +4,7 @@
 <div id='stepsDiv'>
 {% set showStepInBody = Entity.entityData.body_html is defined and Entity.entityData.body_html != '' and not Entity.entityData.hide_main_text %}
 {% if Entity.entityData.steps or stepGroups %}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }} ({{ Entity.entityData.steps|length }})</h3>
+  <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='stepsDivContent'><i class='fas fa-caret-down mr-2 fa-fw'></i>{{ 'Steps'|trans }} ({{ Entity.entityData.steps|length }})</h3>
   <div class='row mt-2' id='stepsDivContent' data-save-hidden='stepsDivContent'>
     <div class='ml-3 mt-3 col-md-12'>
       {% if stepGroups is empty %}
@@ -16,9 +16,11 @@
         {% if ungroupedSteps is not empty %}
           <div class='step-group mb-3'>
             <div class='step-group-header d-flex align-items-center rounded px-2 py-2 mb-1'>
-              <button class='btn btn-transparent p-0 mr-1' data-action='toggle-next' data-toggle-target='step_group_view_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_view_general' title='{{ 'Toggle visibility'|trans }}'>
+              <button class='btn btn-transparent p-0 mr-1 tooltip-trigger' data-action='toggle-next' data-toggle-target='step_group_view_general' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' type='button' aria-expanded='true' aria-controls='step_group_view_general' >
                 <i class='fas fa-caret-down fa-fw'></i>
-              </button>
+
+    <span role='tooltip'>{{ 'Toggle visibility'|trans }}</span>
+</button>
               <strong>{{ 'Default group'|trans }}</strong>
               <span class='text-muted ml-2'>{{ ungroupedSteps|filter(s => s.finished)|length }}/{{ ungroupedSteps|length }}</span>
             </div>

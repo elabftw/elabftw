@@ -30,12 +30,6 @@ ENV NGINX_VERSION=1.30.6
 ENV NGX_BROTLI_COMMIT=53e0fb55f250f48fe80c0ddbf6c0f7103cdbaae1
 # https://github.com/openresty/headers-more-nginx-module/tags
 ENV HEADERS_MORE_VERSION=v0.39
-# releases can be signed by any key on this page https://nginx.org/en/pgp_keys.html
-# so this might need to be updated for a new release
-# available keys: mdounin, maxim, sb, thresh
-# the "signing key" is used for linux packages, see https://trac.nginx.org/nginx/ticket/205
-# do not use KEY in the env name to avoid warning by getSecretsRegex() from buildkit
-ENV PGP_SIGNING_PUBK_OWNER=thresh
 
 # install dependencies: here we use brotli-dev, newer brotli versions we can remove that and build it
 RUN apk add --no-cache git libc-dev pcre2-dev make gcc zlib-dev openssl-dev binutils gnupg cmake brotli-dev
@@ -70,12 +64,15 @@ RUN git clone --depth 1 -b $HEADERS_MORE_VERSION https://github.com/openresty/he
 ADD --chown=builder:builder https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz nginx.tgz
 # get nginx signature file
 ADD --chown=builder:builder https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc nginx.tgz.asc
-# get the corresponding public key
-ADD --chown=builder:builder https://nginx.org/keys/$PGP_SIGNING_PUBK_OWNER.key nginx-signing.key
-# import it and verify the tarball
-RUN gpg --import nginx-signing.key
-# only run on amd64 because it fails on arm64 for some weird unknown reason
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then gpg --verify nginx.tgz.asc; fi
+# get all developer keys listed at https://nginx.org/en/pgp_keys.html
+# nginx_signing.key is only used for packages and repositories
+ADD --chown=builder:builder https://nginx.org/keys/arut.key nginx-arut.key
+ADD --chown=builder:builder https://nginx.org/keys/pluknet.key nginx-pluknet.key
+ADD --chown=builder:builder https://nginx.org/keys/sb.key nginx-sb.key
+ADD --chown=builder:builder https://nginx.org/keys/thresh.key nginx-thresh.key
+# import them and verify the tarball
+RUN gpg --batch --import nginx-arut.key nginx-pluknet.key nginx-sb.key nginx-thresh.key \
+    && gpg --batch --verify nginx.tgz.asc nginx.tgz
 # all good now untar and build!
 RUN tar xzf nginx.tgz
 WORKDIR /build/nginx-$NGINX_VERSION

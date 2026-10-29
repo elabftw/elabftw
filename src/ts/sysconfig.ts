@@ -17,6 +17,7 @@ import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
 import { on } from './handlers';
 import { showModalAndFocusFirstInput } from './common';
+import TomSelect from 'tom-select/base';
 
 function updateTsFieldsVisibility(select: HTMLSelectElement) {
   const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
@@ -238,6 +239,14 @@ const defaultBrandingAssets: Record<string, string> = {
 if (window.location.pathname === '/sysconfig.php') {
 
   checkForUpdate();
+
+  new TomSelect('#allowed_unauthenticated_languages', { plugins: ['remove_button'] });
+
+  on('save-unauthenticated-languages', () => {
+    const select = document.getElementById('allowed_unauthenticated_languages') as HTMLSelectElement;
+    const languages = Array.from(select.selectedOptions, option => option.value).join(',');
+    ApiC.patch(Model.Config, { allowed_unauthenticated_languages: languages });
+  });
 
   document.addEventListener('change', async event => {
     const input = event.target;

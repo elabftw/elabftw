@@ -35,7 +35,8 @@ class SciMaticProofClientTest extends \PHPUnit\Framework\TestCase
     // SHA-256 of the data of test vector 1 in the receipt specification
     private const string HASH = '01db50ca303870137c61f537562b894aeab390d92bb3af263cc8646f07461715';
 
-    private const string API_KEY = 'prf_test_not_a_real_key';
+    // a sandbox key's form, not a real key
+    private const string API_KEY = 'prf_test_0000000000000000000000000000000000000000';
 
     private MockHandler $mock;
 
@@ -77,6 +78,22 @@ class SciMaticProofClientTest extends \PHPUnit\Framework\TestCase
             // nothing left the instance
             $this->assertNull($this->mock->getLastRequest());
         }
+    }
+
+    public function testAnotherServicePasswordIsNeverSent(): void
+    {
+        $this->mock = new MockHandler(array(new Response(201, array(), $this->successResponse)));
+        $getter = new HttpGetter(new Client(array('handler' => HandlerStack::create($this->mock))));
+        foreach (array('universign-password', 'prf_test_tooshort', ' ' . self::API_KEY, 'prf_other_0000000000000000000000000000000000000000') as $password) {
+            try {
+                new SciMaticProofClient($getter, $password)->createReceipt(self::HASH);
+                $this->fail('No exception thrown');
+            } catch (ImproperActionException $e) {
+                $this->assertStringContainsString('does not hold a SciMatic Proof API key', $e->getMessage());
+            }
+        }
+        // nothing left the instance
+        $this->assertNull($this->mock->getLastRequest());
     }
 
     public function testInvalidApiKey(): void

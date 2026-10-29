@@ -37,7 +37,7 @@ class MakeSciMaticProofTest extends \PHPUnit\Framework\TestCase
     private array $configArr = array(
         'proxy' => '',
         'ts_limit' => '0',
-        'ts_password' => 'prf_test_not_a_real_key',
+        'ts_password' => 'prf_test_0000000000000000000000000000000000000000',
     );
 
     private MockHandler $mock;

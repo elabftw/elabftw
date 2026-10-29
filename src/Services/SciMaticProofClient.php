@@ -41,7 +41,17 @@ final class SciMaticProofClient
 
     private const string RECORDED_AT_REGEX = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/';
 
-    public function __construct(private HttpGetter $getter, #[SensitiveParameter] private string $apiKey) {}
+    // the form of every SciMatic Proof API key, live or sandbox
+    private const string API_KEY_REGEX = '/^prf_(live|test)_[A-Za-z0-9]{40}$/';
+
+    public function __construct(private HttpGetter $getter, #[SensitiveParameter] private string $apiKey)
+    {
+        // the password field is shared by all timestamping services: if it still holds another service's
+        // password after switching to SciMatic Proof, refuse here so that password is never sent to SciMatic
+        if (preg_match(self::API_KEY_REGEX, $apiKey) !== 1) {
+            throw new ImproperActionException('SciMatic Proof: the password field does not hold a SciMatic Proof API key (prf_live_… or prf_test_…), so nothing was sent. Enter the key in the password field.');
+        }
+    }
 
     /**
      * Send the hash and get back the receipt issued for it

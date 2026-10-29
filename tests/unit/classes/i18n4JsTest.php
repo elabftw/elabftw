@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\Language;
 use Elabftw\Enums\Storage;
 
 class i18n4JsTest extends \PHPUnit\Framework\TestCase
@@ -20,6 +21,11 @@ class i18n4JsTest extends \PHPUnit\Framework\TestCase
         $fs = Storage::MEMORY->getStorage()->getFs();
         $i18n4Js = new i18n4Js($fs);
         $i18n4Js->generate();
-        $this->assertTrue($fs->fileExists('fr_FR.ts'));
+        foreach (Language::cases() as $language) {
+            $content = $fs->read($language->value . '.ts');
+            $this->assertStringContainsString('"template-entries-updated":', $content);
+            $this->assertStringContainsString('{{updated, number}}', $content);
+            $this->assertStringContainsString('{{skipped, number}}', $content);
+        }
     }
 }

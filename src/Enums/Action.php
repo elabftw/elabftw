@@ -51,6 +51,7 @@ enum Action: string
     case Unarchive = 'unarchive';
     case Unreference = 'unreference';
     case Update = 'update';
+    case UpdateEntries = 'updateentries';
     case UpdateMetadataField = 'updatemetadatafield';
     case UpdateOwner = 'updateowner';
     case UpdatePassword = 'updatepassword';

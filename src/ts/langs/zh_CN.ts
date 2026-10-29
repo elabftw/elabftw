@@ -167,6 +167,7 @@ const t = {
     "table-options": "Table options",
     "team": "团队",
     "teams": "团队",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "模板标题",
     "text-color": "文本颜色",
     "is-timestamped": "已加盖时间戳",

@@ -167,6 +167,7 @@ const t = {
     "table-options": "Table options",
     "team": "Jamoa",
     "teams": "Jamoalar",
+    "template-entries-updated": "{{updated, number}} entries updated; {{skipped, number}} entries skipped.",
     "template-title": "Shablon sarlavhasi",
     "text-color": "Matn rangi",
     "is-timestamped": "Vaqt tamg‘asi qo‘yilgan",

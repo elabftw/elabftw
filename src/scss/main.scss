@@ -283,6 +283,39 @@ select.form-control {
   color: var(--primary-fg);
 }
 
+/* ACCESSIBLE TOOLTIPS
+ * Positioning and triggering/dismissal logic in a11y_utils.ts */
+
+.tooltip-trigger {
+  position: relative;
+  //text-indent: 0em;
+
+  span[role='tooltip'] {
+    background: var(--primary-fg);
+    border-radius: 6px;
+    color: var(--black);
+    display: none;
+    font-size: 1em;
+    font-weight: bold;
+    max-width: min(250px, 50vw);
+    overflow-wrap: break-word;
+    padding: 5px 8px;
+    position: absolute;
+    text-align: center;
+    white-space: normal;
+    width: max-content;
+    z-index: 1000;
+  }
+
+  span[role='tooltip'].tooltip-visible {
+    display: inline-block;
+  }
+  
+  span[role='tooltip'].tooltip-left {
+    right: calc(70% + 8px);
+  }
+}
+
 /* BLOCKQUOTE */
 blockquote {
   background: var(--superlight);

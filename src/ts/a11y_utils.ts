@@ -5,13 +5,16 @@
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
- *
+ */
+ 
+/**
  * WCAG contrast ratio utilities.
  *
  * Contrast ratio is calculated according to the W3C Web Content Accessibility Guidelines (WCAG)
  * relative luminance algorithm: https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html
  * Formula: https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
  */
+
 import i18next from './i18n';
 
 export interface ContrastResult {
@@ -86,3 +89,51 @@ export const getContrastResult = (
     icon: '✖',
   };
 };
+
+/**
+ * Accessible tooltip behaviour.
+ * Supports WCAG 2.2 "Content on Hover or Focus" criterion 
+ */
+
+// ESC dissmissal
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    document
+      .querySelectorAll<HTMLElement>('[role="tooltip"]')
+      .forEach(tooltip => {
+        tooltip.classList.remove('tooltip-visible');
+      });
+  }
+});
+
+// Show tooltip: default to the right, switch to left if no space left
+function showTooltip(trigger: Element, tooltip: HTMLElement): void {
+  tooltip.classList.remove('tooltip-left');
+  tooltip.classList.add('tooltip-visible');
+  const triggerRect = trigger.getBoundingClientRect();
+  const tooltipWidth = tooltip.offsetWidth;
+  const spaceRight = window.innerWidth - triggerRect.right;
+  if (spaceRight < tooltipWidth + 10) {
+    tooltip.classList.add('tooltip-left');
+  }
+}
+
+// Hover and focus behaviour
+document.querySelectorAll('.tooltip-trigger').forEach(parent => {
+  const tooltip = parent.querySelector<HTMLElement>('[role="tooltip"]');
+  if (!tooltip) {
+    return;
+  }
+  parent.addEventListener('mouseenter', () => {
+    showTooltip(parent, tooltip);
+  });
+  parent.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('tooltip-visible');
+  });
+  parent.addEventListener('focusin', () => {
+    showTooltip(parent, tooltip);
+  });
+  parent.addEventListener('focusout', () => {
+    tooltip.classList.remove('tooltip-visible');
+  });
+});

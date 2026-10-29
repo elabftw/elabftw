@@ -6,12 +6,15 @@ package main
 import (
 	"bufio"
 	"context"
+	"crypto/subtle"
+	"errors"
 	"fmt"
 	"log"
 	"net"
 	"os"
 	"os/exec"
 	"os/signal"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -35,10 +38,9 @@ func main() {
 	}
 
 	// Listen on the Unix socket
-	listener, err := net.Listen("unix", socketPath)
+	listener, err := listenUnix(socketPath)
 	if err != nil {
-		fmt.Println("error listening on Unix socket:", err)
-		return
+		log.Fatalf("error listening on Unix socket: %v", err)
 	}
 	defer listener.Close()
 
@@ -92,34 +94,64 @@ wait:
 
 }
 
+func listenUnix(socketPath string) (net.Listener, error) {
+	// Restrict access from creation, before chmod can run.
+	previousMask := syscall.Umask(0077)
+	listener, err := net.Listen("unix", socketPath)
+	syscall.Umask(previousMask)
+	if err != nil {
+		return nil, err
+	}
+	if err := os.Chmod(socketPath, 0600); err != nil {
+		listener.Close()
+		return nil, fmt.Errorf("restricting socket permissions: %w", err)
+	}
+	return listener, nil
+}
+
+func parseCommand(message, psk string) ([]string, error) {
+	receivedPSK, actualCmd, ok := strings.Cut(message, "|")
+	if !ok || psk == "" || subtle.ConstantTimeCompare([]byte(receivedPSK), []byte(psk)) != 1 {
+		return nil, errors.New("invalid or missing PSK")
+	}
+
+	// Exports are the only tasks currently submitted by the PHP Invoker.
+	// Match the complete command and its arguments, never a console prefix.
+	args := strings.Fields(actualCmd)
+	if len(args) != 2 || args[0] != "export:process" {
+		return nil, errors.New("command not allowed")
+	}
+	id, err := strconv.ParseInt(args[1], 10, 64)
+	if err != nil || id <= 0 || strconv.FormatInt(id, 10) != args[1] {
+		return nil, errors.New("invalid export ID")
+	}
+	return args, nil
+}
+
 func handleConnection(conn net.Conn, mu *sync.Mutex, psk string) {
 	defer conn.Close()
 	scanner := bufio.NewScanner(conn)
 
 	for scanner.Scan() {
-		cmdStr := scanner.Text()
-
-		// Extract the PSK from the message
-		parts := strings.SplitN(cmdStr, "|", 2)
-		if len(parts) != 2 || parts[0] != psk {
-			log.Println("invalid or missing PSK")
-			continue
+		args, err := parseCommand(scanner.Text(), psk)
+		if err != nil {
+			log.Printf("rejected command: %v", err)
+			fmt.Fprintln(conn, "error: command rejected")
+			return
 		}
 
-		// Extract the actual command
-		actualCmd := parts[1]
+		actualCmd := strings.Join(args, " ")
 		log.Printf("received command: %s", actualCmd)
 
 		// track the time it takes to run the command, so start a timer
 		start := time.Now()
 		// we only want to process one command at the time
 		mu.Lock()
-		// split received command into arguments before passing it to exec.Command
-		args := strings.Fields(actualCmd)
 		cmd := exec.Command("/usr/bin/php", append([]string{"/elabftw/bin/console"}, args...)...)
 		// Use a working directory allowed by PHP's open_basedir (#7626).
 		cmd.Dir = "/elabftw"
-		output, err := cmd.CombinedOutput()
+		// Console output can contain sensitive data. The PHP client does not use it.
+		err = cmd.Run()
 		// stop timer
 		elapsed := time.Since(start)
 		elapsedFormatted := fmt.Sprintf("%dm%02ds", int(elapsed.Minutes()), int(elapsed.Seconds())%60)
@@ -127,9 +159,10 @@ func handleConnection(conn net.Conn, mu *sync.Mutex, psk string) {
 		mu.Unlock()
 
 		if err != nil {
-			fmt.Fprintf(conn, "error executing command: %v\n", err)
+			log.Printf("error executing command %s: %v", actualCmd, err)
+			fmt.Fprintln(conn, "error executing command")
 		} else {
-			fmt.Fprintf(conn, "output:\n%s\n", output)
+			fmt.Fprintln(conn, "ok")
 		}
 	}
 

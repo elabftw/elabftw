@@ -183,6 +183,12 @@ RUN cmake -S . -B build \
 FROM alpine:3.24 AS s6-builder
 
 ARG S6_OVERLAY_VERSION=3.2.1.0
+# Pin the published archive checksums; update them together with S6_OVERLAY_VERSION.
+# https://github.com/just-containers/s6-overlay/releases/tag/v3.2.1.0
+ARG S6_OVERLAY_NOARCH_SHA256=42e038a9a00fc0fef70bf0bc42f625a9c14f8ecdfe77d4ad93281edf717e10c5
+ARG S6_OVERLAY_X86_64_SHA256=8bcbc2cada58426f976b159dcc4e06cbb1454d5f39252b3bb0c778ccf71c9435
+ARG S6_OVERLAY_ARM_SHA256=1fc849a1a4f099f25b2ebfc6c6fc107a3d8284d1c36a1948c10430b95939409a
+ARG S6_OVERLAY_AARCH64_SHA256=c8fd6b1f0380d399422fc986a1e6799f6a287e2cfa24813ad0b6a4fb4fa755cc
 # using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
 ARG TARGETPLATFORM
 ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
@@ -192,9 +198,18 @@ RUN apk add --no-cache curl xz
 # ADD cannot be used cleanly here because the architecture-specific URL needs a shell-computed
 # mapping from Docker's TARGETPLATFORM to the architecture names used by s6-overlay.
 RUN mkdir -p /s6-root \
-    && if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=x86_64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=arm; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=aarch64; else ARCHITECTURE=amd64; fi \
-    && curl -sS -L -o /tmp/s6-overlay-arch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCHITECTURE}.tar.xz" \
-    && curl -sS -L -o /tmp/s6-overlay-noarch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
+    && case "$TARGETPLATFORM" in \
+        linux/amd64) ARCHITECTURE=x86_64; S6_OVERLAY_ARCH_SHA256="$S6_OVERLAY_X86_64_SHA256" ;; \
+        linux/arm/v7) ARCHITECTURE=arm; S6_OVERLAY_ARCH_SHA256="$S6_OVERLAY_ARM_SHA256" ;; \
+        linux/arm64) ARCHITECTURE=aarch64; S6_OVERLAY_ARCH_SHA256="$S6_OVERLAY_AARCH64_SHA256" ;; \
+        *) echo "Unsupported TARGETPLATFORM: $TARGETPLATFORM" >&2; exit 1 ;; \
+    esac \
+    && curl -fsSL -o /tmp/s6-overlay-arch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCHITECTURE}.tar.xz" \
+    && curl -fsSL -o /tmp/s6-overlay-noarch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
+    && printf '%s  %s\n' \
+        "$S6_OVERLAY_ARCH_SHA256" /tmp/s6-overlay-arch.tar.xz \
+        "$S6_OVERLAY_NOARCH_SHA256" /tmp/s6-overlay-noarch.tar.xz \
+        | sha256sum -c - \
     && tar xpJf /tmp/s6-overlay-arch.tar.xz -C /s6-root \
     && tar xpJf /tmp/s6-overlay-noarch.tar.xz -C /s6-root
 

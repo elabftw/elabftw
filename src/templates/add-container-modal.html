@@ -1,16 +1,18 @@
 {# Add a container modal #}
-<div class='modal fade' id='storageModal' tabindex='-1' role='dialog' aria-labelledby='storageModalLabel'>
+{# var: withSelected bool — when true, the distribution is applied to every entity selected on the show page #}
+{% set withSelected = withSelected|default(false) %}
+<div class='modal fade' id='storageModal' tabindex='-1' role='dialog' aria-labelledby='storageModalLabel' {{ withSelected ? 'data-with-selected="1"' }}>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h4 class='modal-title' id='storageModalLabel'><i class='fas fa-fw fa-warehouse'></i> {{ 'Add container'|trans }}</h4>
+        <h4 class='modal-title' id='storageModalLabel'><i class='fas fa-fw fa-warehouse'></i> {{ withSelected ? 'Add container to selected entries'|trans : 'Add container'|trans }}</h4>
         <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
           <span aria-hidden='true'>&times;</span>
         </button>
       </div>
       <div class='modal-body'>
         {# STORAGE #}
-        <div class='mb-2'>
+        <div class='mb-2' id='containerDistributeSection'>
           <h5><label for='containerQtyStoredInput'>{{ 'Adjust container capacity and unit'|trans }}</label></h5>
           <div class='input-group mb-2'>
             {# set default value to 1 instead of 0 as we probably want to add at least one thing #}
@@ -23,9 +25,13 @@
               </select>
             </div>
           </div>
-          <h5><label for='containerMultiplierInput'>{{ 'Total number of containers to distribute'|trans }}</label></h5>
+          <h5><label for='containerMultiplierInput'>{{ withSelected ? 'Number of containers to distribute per selected entry'|trans : 'Total number of containers to distribute'|trans }}</label></h5>
           <input type='number' value='1' min='1' step='1' id='containerMultiplierInput' autocomplete='off' class='form-control' />
           <div class='sticky-top py-2 mb-2 mt-2' style='top:0; z-index:1'>
+            {% if withSelected %}
+              {# filled by the js, as the entry count is only known client side #}
+              <p class='smallgray mb-1' id='containerBatchSummary'></p>
+            {% endif %}
             {# shown when the target can never be assigned because the locations are too full #}
             <p class='smallgray' id='containerCapacityNotice' hidden>{{ 'There is not enough room left in these locations for that many containers.'|trans }}</p>
             <div class='d-flex align-items-center'>
@@ -39,6 +45,14 @@
           <h5 class='mt-2'>{{ 'Distribute containers across the storage locations below'|trans }}</h5>
           {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': true} %}
         </div>
+        {% if withSelected %}
+          {# takes the place of the section above once a batch did not go through in full: the
+             containers that were made cannot be taken back, so each entry reports what it got #}
+          <div id='containerBatchReport' hidden>
+            <p id='containerBatchReportSummary'></p>
+            <ul class='list-group' id='containerBatchReportList'></ul>
+          </div>
+        {% endif %}
       </div>
 
       <div class='modal-footer'>

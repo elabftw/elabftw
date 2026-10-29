@@ -18,8 +18,6 @@ isTrue() {
     esac
 }
 
-# get env values
-# and unset the sensitive ones so they cannot be accessed by a rogue process
 getEnv() {
     tls_cert_path="${TLS_CERT_PATH:-}"
     tls_key_path="${TLS_KEY_PATH:-}"

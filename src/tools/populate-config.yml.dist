@@ -413,6 +413,26 @@ teams:
           <h2>Conclusion</h2>
           <p>Elution fractions 2 and 3 contained the strongest target-protein signal and were selected for pooling. The pooled sample can now proceed to buffer exchange and downstream characterization.</p>
 
+      - title: ELN metadata references
+        category: Demo
+        body: '<p>Experiment with a lot of custom fields: signle and multiple</p>'
+        tags:
+          - eln
+          - imaging
+          - generated from yml
+        metadata: |
+          {
+            "extra_fields": {
+              "Single experiment" : {"type": "experiments", "value": 24},
+              "Multiple experiments": {"type": "experiments", "value": [24, 25], "allow_multi_values": true},
+              "Single resource": {"type": "items", "value": 1},
+              "Multiple resources": {"type": "items", "value": [21, 22], "allow_multi_values": true},
+              "Single user": {"type": "users", "value": 1},
+              "Multiple users": {"type": "users", "value": [1, 2], "allow_multi_values": true},
+              "Single compound": {"type": "compounds", "value": 1},
+              "Multiple compounds": {"type": "compounds", "value": [1, 2], "allow_multi_values": true}
+            }
+          }
 
     user_groups:
       - name: Super secret project

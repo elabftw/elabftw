@@ -20,7 +20,6 @@ use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
-use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Hash\FileHash;
 use Elabftw\Interfaces\CompoundInterface;
 use Elabftw\Models\AbstractEntity;
@@ -79,9 +78,9 @@ class MakeEln extends AbstractMakeEln
         protected Instance2Rors $instance2Rors,
         protected Teams2Rors $teams2Rors,
         protected Users2Rors $users2Rors,
+        protected CompoundInterface $Compounds,
         protected bool $includeLinkedEntities = true,
         protected bool $includeChangelog = true,
-        protected ?CompoundInterface $Compounds = null,
     ) {
         parent::__construct($Zip, $instance2Rors);
     }
@@ -647,9 +646,8 @@ class MakeEln extends AbstractMakeEln
 
     private function processMetadataCompounds(int $compoundId): array
     {
-        $Compounds = $this->Compounds ??= CompoundsFactory::getCompounds($this->requester);
-        $Compounds->setId($compoundId);
-        return $this->compoundToJsonLd($Compounds->readOne());
+        $this->Compounds->setId($compoundId);
+        return $this->compoundToJsonLd($this->Compounds->readOne());
     }
 
     private function compoundToJsonLd(array $compound): array

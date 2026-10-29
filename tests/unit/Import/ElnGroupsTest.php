@@ -203,7 +203,7 @@ final class ElnGroupsTest extends TestCase
         $secondExp = $this->createEntity(EntityType::Experiments);
         $Resource = $this->createEntity(EntityType::Items);
         $exportedExp = $this->createEntity(EntityType::Experiments);
-        $Compounds = CompoundsFactory::create(new Users(1, 1));
+        $Compounds = CompoundsFactory::getCompounds(new Users(1, 1));
         $compoundId = $Compounds->createFromCompound(new Compound(
             cid: random_int(100000000, 999999999),
             name: 'Test compound',
@@ -305,7 +305,7 @@ final class ElnGroupsTest extends TestCase
             $Entity->readOne();
         }
         $Users = new Users(1, 1);
-        $Make = new MakeEln($this->logger, $this->createStub(ZipStream::class), $Users, $entities, new Instance2Rors(), new Teams2Rors(1), new Users2Rors(1), includeLinkedEntities: false);
+        $Make = new MakeEln($this->logger, $this->createStub(ZipStream::class), $Users, $entities, new Instance2Rors(), new Teams2Rors(1), new Users2Rors(1), CompoundsFactory::getCompounds($Users), includeLinkedEntities: false);
         $path = tempnam(sys_get_temp_dir(), 'elabftw-eln-groups-');
         $this->assertIsString($path);
         $Make->writeToFile($path);

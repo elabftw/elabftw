@@ -8,6 +8,7 @@ use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Instance2Rors;
@@ -319,7 +320,7 @@ final class ElnGroupsTest extends TestCase
     private function import(string $path): array
     {
         $Users = new Users(1, 1);
-        $Import = new Eln($Users, $Users, new UploadedFile($path, 'groups.eln', test: true), $this->fs, $this->logger);
+        $Import = new Eln($Users, $Users, new UploadedFile($path, 'groups.eln', test: true), $this->fs, $this->logger, CompoundsFactory::getCompounds($Users));
         $Import->import();
         $inserted = new ReflectionProperty(Eln::class, 'insertedEntities')->getValue($Import);
         return array_map(static fn(array $entity): AbstractEntity => $entity['entity_type']->toInstance($Users, $entity['id']), $inserted);

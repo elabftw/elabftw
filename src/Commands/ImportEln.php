@@ -92,11 +92,11 @@ final class ImportEln extends Command
             $UploadedFile,
             Storage::EXPORTS->getStorage()->getFs(),
             $logger,
+            CompoundsFactory::getCompounds($user),
             $entityType,
             category: $defaultCategory,
             verifyChecksum: (bool) $input->getOption('checksum'),
             checksumErrorSkip: (bool) $input->getOption('checksum-error-skip'),
-            Compounds: CompoundsFactory::create($user),
         );
         try {
             $Importer->prepare();

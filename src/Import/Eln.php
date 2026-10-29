@@ -22,7 +22,6 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Hash\FileHash;
 use Elabftw\Interfaces\CompoundInterface;
@@ -120,6 +119,7 @@ class Eln extends AbstractZip
         protected UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
+        protected CompoundInterface $Compounds,
         protected ?EntityType $entityType = null,
         protected ?int $category = null,
         protected BasePermissions $canreadBase = BasePermissions::Team,
@@ -129,7 +129,6 @@ class Eln extends AbstractZip
         protected string $canwrite = AbstractEntity::EMPTY_CAN_JSON,
         private bool $verifyChecksum = true,
         private bool $checksumErrorSkip = false,
-        protected ?CompoundInterface $Compounds = null,
     ) {
         parent::__construct(
             $requester,
@@ -396,8 +395,7 @@ class Eln extends AbstractZip
         if (($node['@type'] ?? null) !== 'MolecularEntity') {
             return null;
         }
-        $Compounds = $this->Compounds ??= CompoundsFactory::create($this->requester);
-        $compoundId = $Compounds->createFromCompound($this->compoundFromJsonLd($node));
+        $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node));
         $this->insertedCompounds[$id] = $compoundId;
         return $compoundId;
     }

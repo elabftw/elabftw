@@ -647,7 +647,7 @@ class MakeEln extends AbstractMakeEln
 
     private function processMetadataCompounds(int $compoundId): array
     {
-        $Compounds = $this->Compounds ??= CompoundsFactory::create($this->requester);
+        $Compounds = $this->Compounds ??= CompoundsFactory::getCompounds($this->requester);
         $Compounds->setId($compoundId);
         return $this->compoundToJsonLd($Compounds->readOne());
     }

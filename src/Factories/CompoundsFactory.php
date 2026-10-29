@@ -23,7 +23,7 @@ use GuzzleHttp\Client;
 
 final class CompoundsFactory
 {
-    public static function create(Users $requester): CompoundInterface
+    public static function getCompounds(Users $requester): CompoundInterface
     {
         $Config = Config::getConfig();
         $httpGetter = new HttpGetter(

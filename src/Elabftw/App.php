@@ -199,7 +199,7 @@ final class App
         if (array_key_exists($default, $languages)) {
             return $default;
         }
-        return array_key_first($languages) ?? Language::EnglishGB->value;
+        return (string) (array_key_first($languages) ?? Language::EnglishGB->value);
     }
 
     public function getLanguages(): array

@@ -106,15 +106,31 @@ document.addEventListener('keydown', event => {
   }
 });
 
-// Show tooltip: default to the right, switch to left if no space left
+// Show tooltip with appropriate positioning
 function showTooltip(trigger: Element, tooltip: HTMLElement): void {
   tooltip.classList.remove('tooltip-left');
+  tooltip.classList.remove('tooltip-right');
+  tooltip.classList.remove('tooltip-above');
   tooltip.classList.add('tooltip-visible');
+
   const triggerRect = trigger.getBoundingClientRect();
+  const tooltipHeight = tooltip.offsetHeight;
   const tooltipWidth = tooltip.offsetWidth;
+
   const spaceRight = window.innerWidth - triggerRect.right;
+  const spaceLeft = triggerRect.left;
+  const spaceBelow = window.innerHeight - triggerRect.bottom;
+
   if (spaceRight < tooltipWidth + 10) {
     tooltip.classList.add('tooltip-left');
+  }
+
+  if (spaceLeft < tooltipWidth + 10) {
+    tooltip.classList.add('tooltip-right');
+  }
+
+  if (spaceBelow < tooltipHeight + 40) {
+    tooltip.classList.add('tooltip-above');
   }
 }
 

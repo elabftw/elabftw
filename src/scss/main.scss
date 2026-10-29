@@ -288,12 +288,11 @@ select.form-control {
 
 .tooltip-trigger {
   position: relative;
-  //text-indent: 0em;
 
   span[role='tooltip'] {
-    background: var(--primary-fg);
+    background: var(--firstlevel);
     border-radius: 6px;
-    color: var(--black);
+    color: var(--strongest);
     display: none;
     font-size: 1em;
     font-weight: bold;
@@ -302,9 +301,10 @@ select.form-control {
     padding: 5px 8px;
     position: absolute;
     text-align: center;
+    top: 75%;
     white-space: normal;
     width: max-content;
-    z-index: 1000;
+    z-index: calc(infinity);
   }
 
   span[role='tooltip'].tooltip-visible {
@@ -312,7 +312,15 @@ select.form-control {
   }
   
   span[role='tooltip'].tooltip-left {
-    right: calc(70% + 8px);
+    right: 50%;
+  }
+
+  span[role='tooltip'].tooltip-right {
+    left: 50%;
+  }
+
+  span[role='tooltip'].tooltip-above {
+    top: -75%;
   }
 }
 

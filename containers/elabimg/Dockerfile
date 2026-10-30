@@ -5,8 +5,8 @@
 ###############################
 # GO BUILDER: CHRONOS/INVOKER #
 ###############################
-# https://hub.docker.com/layers/library/golang/1.26.6-alpine3.24/images/sha256-648921a68c7179241dd09daf8000fbfddc9e5ea9c1a24e7d0fe05b259dff2b5c
-FROM golang@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83 AS go-builder
+# https://hub.docker.com/layers/library/golang/1.27.3-alpine3.24/images/sha256-7eadb9cbb0aab2649418025b8472a770195e9a94921309519896514de85bba7f
+FROM golang@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS go-builder
 
 # using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
 ARG TARGETPLATFORM
@@ -22,7 +22,8 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
 # NGINX BUILDER #
 #################
 # build nginx with only the bare minimum of features or modules
-FROM alpine:3.24 AS nginx-builder
+# https://hub.docker.com/layers/library/alpine/3.24.3/images/sha256-6708ca119efec5c3fdcad5dc95d8a28a529aad8debc95872b7e12b3941882f55
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS nginx-builder
 
 ENV NGINX_VERSION=1.30.6
 # pin nginx modules versions
@@ -133,7 +134,8 @@ RUN make install
 #####################
 # OPENBABEL BUILDER #
 #####################
-FROM alpine:3.24 AS openbabel-builder
+# https://hub.docker.com/layers/library/alpine/3.24.3/images/sha256-6708ca119efec5c3fdcad5dc95d8a28a529aad8debc95872b7e12b3941882f55
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS openbabel-builder
 
 # Version 3.2.1
 # https://github.com/openbabel/openbabel/releases/tag/openbabel-3-2-1
@@ -180,7 +182,8 @@ RUN cmake -S . -B build \
 ##############
 # S6 BUILDER #
 ##############
-FROM alpine:3.24 AS s6-builder
+# https://hub.docker.com/layers/library/alpine/3.24.3/images/sha256-6708ca119efec5c3fdcad5dc95d8a28a529aad8debc95872b7e12b3941882f55
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS s6-builder
 
 ARG S6_OVERLAY_VERSION=3.2.1.0
 # Pin the published archive checksums; update them together with S6_OVERLAY_VERSION.
@@ -216,7 +219,8 @@ RUN mkdir -p /s6-root \
 ################
 # RUNTIME BASE #
 ################
-FROM alpine:3.24 AS runtime-base
+# https://hub.docker.com/layers/library/alpine/3.24.3/images/sha256-6708ca119efec5c3fdcad5dc95d8a28a529aad8debc95872b7e12b3941882f55
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS runtime-base
 
 # set build version with --build-arg ELABFTW_VERSION=X.Y.Z
 ARG ELABFTW_VERSION=dev
@@ -438,6 +442,7 @@ RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/nginx/dependencies
 RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/php/dependencies
 # invoker needs /run/elabftw folder created by entrypoint
 RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/invoker/dependencies
+RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/chronos/dependencies
 
 COPY ./containers/elabimg/entrypoint/docker-entrypoint.sh /usr/sbin/docker-entrypoint.sh
 # END DOCKER-ENTRYPOINT.SH

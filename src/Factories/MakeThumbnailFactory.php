@@ -44,7 +44,8 @@ final class MakeThumbnailFactory
             'image/bmp',
             'image/x-bmp',
             'image/png',
-            'image/svg+xml' => new MakeThumbnail($mime, $sourceFile, $longName, $storageFs),
+            'image/svg+xml',
+            'image/webp' => new MakeThumbnail($mime, $sourceFile, $longName, $storageFs),
             default => new MakeNullThumbnail($mime, $sourceFile, $longName, $storageFs),
         };
     }

@@ -42,6 +42,20 @@ After downloading the configuration file, open it in your preferred text editor 
 
 For usage of eLabFTW, see [documentation](https://doc.elabftw.net).
 
+## ImageMagick security policy
+
+The image installs an explicit policy at `/etc/ImageMagick-7/policy.xml`, shared by Imagick and ImageMagick command-line tools. It denies modules, coders, external delegates, and filters by default, then permits the formats needed for image previews. JPEG and PNG are the only output formats, used for thumbnails, QR labels, and rasterized MathJax.
+
+PDF, EPS/PostScript, and TIFF input remain enabled because `MakeThumbnailFactory` supports them. Ghostscript is retained for document thumbnails, with ImageMagick 7.1.2-33 or newer required for its scene-selection limit fix. SVG rendering uses Alpine's linked librsvg; external SVG converters, HTTP(S) coders, MSL, MVG, TEXT, EPHEMERAL, and XPS remain disabled. PNM formats are permitted as intermediate Ghostscript output.
+
+Each ImageMagick process is limited to 256 MiB of pixel-cache memory, 512 MiB of mapped cache, 1 GiB of disk cache, 64 open cache files, two threads, and 60 seconds. Width and height are capped at 16,384 pixels, and image sequences at 128 frames/pages. The 32 MP area limit moves larger images to disk-backed cache; it is not a maximum pixel count. Uploads that exceed these limits are still stored, but their thumbnail generation is skipped by the existing error handler.
+
+Inspect the policy loaded in a running container with:
+
+~~~bash
+docker exec elabftw magick identify -list policy
+~~~
+
 ## Reloading services
 
 If for some reason you wish to reload a service without restarting the container (for instance when trying configuration changes), you can use ``reload``:

@@ -56,6 +56,7 @@ class MakeThumbnail implements MakeThumbnailInterface
         $image = new Imagick();
         // set temporary files path to this folder which should be bind-mounted on the host
         $image->setRegistry('temporary-path', NginxCache::getFolder());
+        $image->setFilename('[0]');
         $image->readImageFile($this->sourceFile);
         $image->setIteratorIndex(0);
         $image->setBackgroundColor('white');

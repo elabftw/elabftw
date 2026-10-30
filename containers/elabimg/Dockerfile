@@ -247,8 +247,13 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 RUN apk upgrade -U -a && apk add --no-cache \
     bash \
     ghostscript \
+    imagemagick \
     imagemagick-heic \
+    imagemagick-jpeg \
+    imagemagick-pdf \
     imagemagick-svg \
+    imagemagick-tiff \
+    imagemagick-webp \
     nodejs \
     openssl \
     php84 \
@@ -283,6 +288,11 @@ RUN apk upgrade -U -a && apk add --no-cache \
 RUN ln -f /usr/bin/php84 /usr/bin/php
 
 ENV TMPDIR=/var/cache/elabftw/php/tmp
+
+# Apply the same ImageMagick policy to PHP/Imagick and command-line conversions.
+COPY ./containers/elabimg/imagemagick/policy.xml /etc/ImageMagick-7/policy.xml
+# Use linked librsvg directly, without trying a prohibited external SVG delegate.
+RUN sed -i '/decode="svg[:"]/d' /etc/ImageMagick-7/delegates.xml
 
 ###################
 # ELABFTW BUILDER #

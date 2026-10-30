@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policymap>
+  <!-- Pixel-cache budgets and hard limits for untrusted uploads. -->
+  <policy domain="resource" name="memory" value="256MiB"/>
+  <policy domain="resource" name="map" value="512MiB"/>
+  <policy domain="resource" name="disk" value="1GiB"/>
+  <policy domain="resource" name="area" value="32MP"/>
+  <policy domain="resource" name="width" value="16384"/>
+  <policy domain="resource" name="height" value="16384"/>
+  <policy domain="resource" name="file" value="64"/>
+  <policy domain="resource" name="thread" value="2"/>
+  <policy domain="resource" name="time" value="60"/>
+  <policy domain="resource" name="list-length" value="128"/>
+
+  <!-- PDF/PostScript thumbnails need Ghostscript; no other programs may run. -->
+  <policy domain="delegate" rights="none" pattern="*"/>
+  <policy domain="delegate" rights="execute" pattern="{gs,/usr/bin/gs,ps:alpha,ps:cmyk,ps:color,ps:mono}"/>
+  <policy domain="filter" rights="none" pattern="*"/>
+  <policy domain="path" rights="none" pattern="@*"/>
+  <policy domain="path" rights="none" pattern="|*"/>
+  <policy domain="system" name="svg" rights="none" pattern="substitute-entities"/>
+
+  <!-- Deny unknown modules/coders, including MSL, MVG, TEXT, URL and XPS. -->
+  <policy domain="module" rights="none" pattern="*"/>
+  <!-- Loading a module requires both rights; coder rules restrict its I/O. -->
+  <policy domain="module" rights="read | write" pattern="{BMP,GIF,HEIC,JPEG,PDF,PNG,PNM,PS,SVG,TIFF,WEBP}"/>
+  <policy domain="coder" rights="none" pattern="*"/>
+  <policy domain="coder" rights="read" pattern="{BMP,BMP2,BMP3,GIF,HEIC,HEIF,WEBP,TIFF,TIFF64}"/>
+  <!-- SVG uses Alpine's linked librsvg, without an external converter. -->
+  <policy domain="coder" rights="read" pattern="{SVG,SVGZ,MSVG,RSVG,PDF,PS,EPS,EPSF,EPSI}"/>
+  <!-- Ghostscript can return these intermediate raster formats. -->
+  <policy domain="coder" rights="read" pattern="{PAM,PBM,PGM,PNM,PPM}"/>
+  <!-- Thumbnails are JPEG; QR labels and rasterized MathJax are PNG. -->
+  <policy domain="coder" rights="read | write" pattern="{JPEG,JPG,PNG,PNG00,PNG8,PNG24,PNG32,PNG48,PNG64}"/>
+</policymap>

@@ -28,6 +28,7 @@ A TSA is a trusted timestamping service that will be used to request a token. Se
 - Sectigo (free)
 - GlobalSign (free)
 - Evidency (eIDAS qualified, requires account)
+- SciMatic Proof (not RFC 3161, not eIDAS qualified, requires account, see [SciMatic Proof receipts](#scimatic-proof-receipts))
 - Custom: you can define your own service if necessary
 
 When you click this button, a timestamp archive is created. This is a signed, legally binding snapshot of the entry that is stored alongside the attached files in an immutable archive. Timestamping an entry involves generating a full JSON export of the entry and creating a cryptographic hash of that data. This hash is then sent to a trusted third party: the TimeStamping Authority (TSA).
@@ -100,6 +101,35 @@ This timestamping method uses the [Bloxberg consortium](https://bloxberg.org) bl
 2. we pass it through a cryptographic hash function to get its fingerprint
 3. we add it to the Ethereum-based blockchain
 4. we store the JSON file along with a PDF certifying our data in an immutable ZIP archive (visible if you display archived attachments of a timestamped entry)
+
+### SciMatic Proof receipts
+
+[SciMatic Proof](https://proof.scimatic.net) is a hosted service run by ZincirX Inc. A Sysadmin selects it in the list of timestamping authorities, but it is not an RFC 3161 service. Here is how it works:
+
+1. we first generate a JSON export of the entity (or its PDF when Keeex is enabled), like for trusted timestamps
+2. we compute its SHA-256 hash and send only this hash to `https://api.scimatic.net/v1/receipts`
+3. SciMatic replies with a receipt: a JSON document with the hash and the time it was recorded, signed with ML-DSA-44 (NIST FIPS 204). Receipts are then batched in a Merkle tree whose root is written to the SciChain blockchain, about once a minute
+4. we store the data file (`X-timestamped.json`, or `X-timestamped.pdf` when Keeex is enabled), the receipt (`X-timestamped.receipt.json`) and a `README.txt` with the link to the public receipt page in an immutable ZIP archive
+
+This is **not** an eIDAS-qualified timestamp, and the service is a pilot without a service level agreement. If you need a qualified timestamp, select a qualified TSA instead.
+
+The API key (`prf_live_…` or `prf_test_…`) goes in the password field. If the field holds anything else, for example the password of the service selected before, nothing is sent. Keys starting with `prf_test_` are sandbox keys: their receipts are labelled TEST, are never anchored and are never charged, so they are only for trying the integration.
+
+#### Checking a SciMatic Proof receipt
+
+Anyone can check a receipt offline, without asking SciMatic, with the published keys, the [specification](https://proof.scimatic.net/spec/receipt-v1) and its open-source verifier:
+
+~~~bash
+# the receipt is about the data file in the archive: both commands print the same hash
+sha256sum X-timestamped.json    # X-timestamped.pdf when Keeex is enabled
+jq -r .body.hash.value X-timestamped.receipt.json
+# key, signature and Merkle path (Node.js, see the instructions at the top of verify-receipt.mjs)
+curl -O https://proof.scimatic.net/tools/verify-receipt.mjs
+curl -o keys.json https://proof.scimatic.net/.well-known/scimatic-receipt-keys.json
+node verify-receipt.mjs X-timestamped.receipt.json --keys keys.json
+~~~
+
+The receipt in the archive is the one issued at request time, so its `anchor` is `null` and the verifier reports it as not anchored yet. Once its Merkle root is on chain, the same receipt with its anchor block can be downloaded from the receipt page linked in `README.txt` (`https://proof.scimatic.net/r/<id>/receipt.json`); add `--onchain` to also check the root on SciChain.
 
 
 ## Electronic signatures

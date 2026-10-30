@@ -21,7 +21,11 @@ import TomSelect from 'tom-select/base';
 
 function updateTsFieldsVisibility(select: HTMLSelectElement) {
   const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
-  const accountTsa = ['universign', 'dgn', 'evidency', 'deltablot'];
+  const accountTsa = ['universign', 'dgn', 'evidency', 'deltablot', 'scimatic'];
+  // SciMatic Proof only needs an API key (the password field) and has its own help text
+  const isSciMatic = select.value === 'scimatic';
+  document.getElementById('ts_logindiv').toggleAttribute('hidden', isSciMatic);
+  document.getElementById('ts_scimaticdiv').toggleAttribute('hidden', !isSciMatic);
   if (noAccountTsa.includes(select.value)) {
     // mask all
     document.getElementById('ts_loginpass').toggleAttribute('hidden', true);

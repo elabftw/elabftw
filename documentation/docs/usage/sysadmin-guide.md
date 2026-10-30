@@ -109,6 +109,8 @@ So if you need a stronger certification, you should go with a commercial solutio
 
 You can select from the list of pre-configured TSA or use a custom one by providing the URL and login/password.
 
+SciMatic Proof can also be selected in this list. It is not an RFC 3161 service and only needs an API key, entered in the password field. See [SciMatic Proof receipts](traceability-and-auditability.md#scimatic-proof-receipts).
+
 Remember: no data is sent to the `TSA (TimeStampingAuthority)`, only the hash of the data is sent, so no information can leak!
 
 #### Configure automatic timestamping
@@ -390,6 +392,7 @@ If you are running eLabFTW behind a proxy blocking all outgoing connections, you
 
 - your timestamping service (for example, Universign will be https://ws.universign.eu)
 - for blockchain timestamps: https://certify.bloxberg.org
+- for SciMatic Proof receipts: https://api.scimatic.net
 
 You'll also want to make sure the eLabFTW container can connect to `chem-plugin` and `opencloning` services if they are not hosted on the same network or are firewalled out.
 

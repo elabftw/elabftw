@@ -58,6 +58,7 @@ use Elabftw\Make\MakeEvidencyTimestamp;
 use Elabftw\Make\MakeEvidencyTimestampDev;
 use Elabftw\Make\MakeFullJson;
 use Elabftw\Make\MakeGlobalSignTimestamp;
+use Elabftw\Make\MakeSciMaticProof;
 use Elabftw\Make\MakeSectigoTimestamp;
 use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
@@ -1039,18 +1040,24 @@ abstract class AbstractEntity extends AbstractRest
             $dataFormat = ExportFormat::Pdf;
         }
 
-        // select the timestamp service and do the timestamp request to TSA
-        $Maker = $this->getTimestampMaker($Config->configArr, $dataFormat);
-        $TimestampUtils = $Maker->getTimestampUtils();
-
-        // save the token and data in a zip archive
-        $zipName = $Maker->getFileName();
         $zipPath = FsTools::getCacheFile() . '.zip';
         $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
-        $Maker->saveTimestamp(
-            $TimestampUtils->timestamp(),
-            new CreateUploadFromLocalFile($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
-        );
+        // SciMatic Proof is not an RFC 3161 service: it answers with a signed JSON receipt instead of a token
+        if ($Config->configArr['ts_authority'] === 'scimatic') {
+            $Maker = $this->getSciMaticProofMaker($Config->configArr, $dataFormat);
+            $Maker->timestamp(new CreateUploadFromLocalFile($Maker->getFileName(), $zipPath, $comment, immutable: 1, state: State::Archived));
+        } else {
+            // select the timestamp service and do the timestamp request to TSA
+            $Maker = $this->getTimestampMaker($Config->configArr, $dataFormat);
+            $TimestampUtils = $Maker->getTimestampUtils();
+
+            // save the token and data in a zip archive
+            $zipName = $Maker->getFileName();
+            $Maker->saveTimestamp(
+                $TimestampUtils->timestamp(),
+                new CreateUploadFromLocalFile($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
+            );
+        }
 
         // decrement the balance
         $Config->decrementTsBalance();
@@ -1377,6 +1384,12 @@ abstract class AbstractEntity extends AbstractRest
             'custom' => new MakeCustomTimestamp($this->Users, $this, $config, $dataFormat),
             default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
         };
+    }
+
+    protected function getSciMaticProofMaker(array $config, ExportFormat $dataFormat): MakeSciMaticProof
+    {
+        $HttpGetter = new HttpGetter(new Client(), $config['proxy'], !Env::asBool('DEV_MODE'));
+        return new MakeSciMaticProof($this->Users, $this, $config, $dataFormat, $HttpGetter);
     }
 
     protected function sign(string $passphrase, Meaning $meaning): array

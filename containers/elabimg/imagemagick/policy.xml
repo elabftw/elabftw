@@ -26,7 +26,7 @@
   <policy domain="module" rights="read | write" pattern="{BMP,GIF,HEIC,JPEG,PDF,PNG,PNM,PS,SVG,TIFF,WEBP}"/>
   <policy domain="coder" rights="none" pattern="*"/>
   <policy domain="coder" rights="read" pattern="{BMP,BMP2,BMP3,GIF,HEIC,HEIF,WEBP,TIFF,TIFF64}"/>
-  <!-- SVG uses Alpine's linked librsvg, without an external converter. -->
+  <!-- SVG uses linked librsvg, without an external converter. -->
   <policy domain="coder" rights="read" pattern="{SVG,SVGZ,MSVG,RSVG,PDF,PS,EPS,EPSF,EPSI}"/>
   <!-- Ghostscript can return these intermediate raster formats. -->
   <policy domain="coder" rights="read" pattern="{PAM,PBM,PGM,PNM,PPM}"/>

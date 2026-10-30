@@ -179,6 +179,128 @@ RUN cmake -S . -B build \
         --parallel "$(getconf _NPROCESSORS_ONLN)" \
     && strip -s build/bin/obabel
 
+#######################
+# IMAGEMAGICK BUILDER #
+#######################
+# Keep the builder and runtime on the same Alpine release and architecture.
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS imagemagick-builder
+
+# Update each version together with its archive checksum.
+# https://github.com/ImageMagick/ImageMagick/releases/tag/7.1.2-34
+ARG IMAGEMAGICK_VERSION=7.1.2-34
+ARG IMAGEMAGICK_SHA256=55fe0ec246245b46c429f9e6bc65294ad4a78a66b88abd9817971ca157856323
+# https://pecl.php.net/package/imagick/3.8.1
+ARG IMAGICK_VERSION=3.8.1
+ARG IMAGICK_SHA256=3a3587c0a524c17d0dad9673a160b90cd776e836838474e173b549ed864352ee
+
+# PIC for shared objects, stack/format/fortify checks, full RELRO and a non-executable stack.
+ENV CFLAGS="-O2 -g0 -fPIC -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security" \
+    LDFLAGS="-Wl,-z,relro,-z,now,-z,noexecstack,--as-needed"
+# With modules enabled, these are the only image parsers compiled and installed.
+# Keep this list in sync with policy.xml and MakeThumbnailFactory.
+ENV IMAGEMAGICK_CODERS="coders/bmp.la coders/gif.la coders/heic.la coders/jpeg.la coders/pdf.la coders/png.la coders/pnm.la coders/ps.la coders/svg.la coders/tiff.la coders/webp.la"
+
+RUN apk add --no-cache \
+    autoconf build-base curl fontconfig-dev freetype-dev ghostscript lcms2-dev \
+    libheif-dev libjpeg-turbo-dev libpng-dev libraqm-dev librsvg-dev libtool \
+    libwebp-dev libxml2-dev php84-dev tiff-dev xz-dev zlib-dev
+
+RUN addgroup -S -g 3148 builder && adduser -D -S -G builder -u 3148 builder \
+    && mkdir /build && chown builder:builder /build
+WORKDIR /build
+USER builder
+
+RUN curl -fsSL -o imagemagick.tar.xz "https://github.com/ImageMagick/ImageMagick/releases/download/${IMAGEMAGICK_VERSION}/ImageMagick-${IMAGEMAGICK_VERSION}.tar.xz" \
+    && curl -fsSL -o imagick.tgz "https://pecl.php.net/get/imagick-${IMAGICK_VERSION}.tgz" \
+    && printf '%s  %s\n' "$IMAGEMAGICK_SHA256" imagemagick.tar.xz "$IMAGICK_SHA256" imagick.tgz | sha256sum -c - \
+    && tar xf imagemagick.tar.xz \
+    && tar xf imagick.tgz
+
+WORKDIR /build/ImageMagick-${IMAGEMAGICK_VERSION}
+# Retain Alpine's Q16 HDRI pixel representation and text/color rendering support.
+# Ghostscript runs as a separate process; its library is never loaded into PHP.
+# Module enumeration uses magick.la as a directory marker; use the retained PNG module.
+RUN sed -i 's/TagToCoderModuleName("magick",filename)/TagToCoderModuleName("png",filename)/' MagickCore/module.c \
+    && ./configure \
+        --prefix=/usr \
+        --sysconfdir=/etc \
+        --enable-shared \
+        --disable-static \
+        --disable-docs \
+        --disable-openmp \
+        --disable-opencl \
+        --disable-dpc \
+        --disable-pipes \
+        --disable-cipher \
+        --enable-hdri \
+        --with-quantum-depth=16 \
+        --with-modules \
+        --with-fontconfig \
+        --with-freetype \
+        --with-raqm \
+        --with-heic \
+        --with-jpeg \
+        --with-lcms \
+        --with-lzma \
+        --with-png \
+        --with-rsvg \
+        --with-tiff \
+        --with-webp \
+        --with-xml \
+        --with-zlib \
+        --without-autotrace \
+        --without-bzlib \
+        --without-djvu \
+        --without-dmr \
+        --without-fftw \
+        --without-flif \
+        --without-fpx \
+        --without-gslib \
+        --without-gvc \
+        --without-jbig \
+        --without-jxl \
+        --without-lqr \
+        --without-magick-plus-plus \
+        --without-openexr \
+        --without-openjp2 \
+        --without-pango \
+        --without-perl \
+        --without-raw \
+        --without-uhdr \
+        --without-wmf \
+        --without-x \
+        --without-zip \
+        --without-zstd \
+    && make -j"$(getconf _NPROCESSORS_ONLN)" coders_LTLIBRARIES="$IMAGEMAGICK_CODERS" filters_LTLIBRARIES=
+
+USER root
+# Install headers in the builder for Imagick, then stage only runtime artifacts.
+RUN make coders_LTLIBRARIES="$IMAGEMAGICK_CODERS" filters_LTLIBRARIES= install-strip \
+    && make coders_LTLIBRARIES="$IMAGEMAGICK_CODERS" filters_LTLIBRARIES= DESTDIR=/imagemagick-root install-strip \
+    && rm -rf /imagemagick-root/usr/include /imagemagick-root/usr/lib/pkgconfig /imagemagick-root/usr/share/doc /imagemagick-root/usr/share/man \
+    && rm -f /imagemagick-root/usr/lib/*.la /imagemagick-root/usr/lib/libMagick*.so \
+    && find /imagemagick-root/usr/bin -mindepth 1 ! -name magick -delete \
+    && install -Dm644 LICENSE /imagemagick-root/usr/share/licenses/imagemagick/LICENSE \
+    && sed -n '/<delegatemap>/p; /<delegate decode="ps:\(alpha\|cmyk\|color\|mono\)"/p; /<\/delegatemap>/p' \
+        config/delegates.xml > /imagemagick-root/etc/ImageMagick-7/delegates.xml
+
+WORKDIR /build/imagick-${IMAGICK_VERSION}
+USER builder
+# Alpine's php84-pecl-imagick depends on the stock imagemagick package.
+# Imagick 3.8.1 probes OpenMP independently of ImageMagick; omit that unused dependency.
+RUN sed -i '/AC_MSG_CHECKING(omp_pause_resource_all usability)/,/^  PHP_SUBST(IMAGICK_SHARED_LIBADD)/c\  PHP_SUBST(IMAGICK_SHARED_LIBADD)' config.m4 \
+    && phpize84 \
+    && ./configure --with-php-config=/usr/bin/php-config84 --with-imagick=/usr \
+    && make -j"$(getconf _NPROCESSORS_ONLN)" \
+    && strip --strip-unneeded modules/imagick.so
+
+USER root
+RUN install -Dm755 modules/imagick.so "/imagemagick-root$(php-config84 --extension-dir)/imagick.so" \
+    && mkdir -p /imagemagick-root/etc/php84/conf.d \
+    && printf 'extension=imagick.so\n' > /imagemagick-root/etc/php84/conf.d/imagick.ini \
+    && install -Dm644 LICENSE /imagemagick-root/usr/share/licenses/imagick/LICENSE
+COPY ./containers/elabimg/imagemagick/policy.xml /imagemagick-root/etc/ImageMagick-7/policy.xml
+
 ##############
 # S6 BUILDER #
 ##############
@@ -241,19 +363,24 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # php8-gd is required by mpdf for transparent png
 # php8-iconv is required by LdapRecord php library
 # php84-xmlwriter is required for multipart uploads with S3
-# imagemagick-svg is for mathjax support in pdfs
-# imagemagick-heic is for support for heic/heif
+# ImageMagick codec/font libraries remain Alpine packages so apk upgrade updates them.
 # don't put line comments inside this instruction
 RUN apk upgrade -U -a && apk add --no-cache \
     bash \
+    fontconfig \
+    freetype \
     ghostscript \
-    imagemagick \
-    imagemagick-heic \
-    imagemagick-jpeg \
-    imagemagick-pdf \
-    imagemagick-svg \
-    imagemagick-tiff \
-    imagemagick-webp \
+    lcms2 \
+    libheif \
+    libjpeg-turbo \
+    libltdl \
+    libpng \
+    libraqm \
+    librsvg \
+    libwebp \
+    libwebpdemux \
+    libwebpmux \
+    libxml2 \
     nodejs \
     openssl \
     php84 \
@@ -274,7 +401,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-opcache \
     php84-openssl \
     php84-pdo_mysql \
-    php84-pecl-imagick \
     php84-redis \
     php84-simplexml \
     php84-session \
@@ -282,17 +408,24 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-xml \
     php84-xmlwriter \
     php84-zip \
-    tzdata
+    tiff \
+    tzdata \
+    xz-libs \
+    zlib
 
 # add a symlink to php8
 RUN ln -f /usr/bin/php84 /usr/bin/php
 
 ENV TMPDIR=/var/cache/elabftw/php/tmp
 
-# Apply the same ImageMagick policy to PHP/Imagick and command-line conversions.
-COPY ./containers/elabimg/imagemagick/policy.xml /etc/ImageMagick-7/policy.xml
-# Use linked librsvg directly, without trying a prohibited external SVG delegate.
-RUN sed -i '/decode="svg[:"]/d' /etc/ImageMagick-7/delegates.xml
+# Install the matching libraries, restricted modules, policy and PHP extension together.
+COPY --from=imagemagick-builder /imagemagick-root/ /
+# Exercise the installed stack without leaving test fixtures in the image.
+RUN --mount=type=bind,source=containers/elabimg/imagemagick,target=/tmp/imagemagick-test \
+    --mount=type=bind,source=tests/_data/dfn.pdf,target=/tmp/imagemagick-test.pdf \
+    ! apk info --exists imagemagick \
+    && magick -version \
+    && TMPDIR=/tmp php84 /tmp/imagemagick-test/smoke-test.php /tmp/imagemagick-test.pdf /usr/share/ghostscript/Resource/Font/NimbusSans-Regular
 
 ###################
 # ELABFTW BUILDER #

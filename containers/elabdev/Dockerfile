@@ -22,5 +22,5 @@ RUN apk add --no-cache \
 
 # COMPOSER
 ENV COMPOSER_HOME=/var/cache/elabftw/composer
-# 2.10.2
-COPY --from=composer@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 /usr/bin/composer /usr/local/bin/composer
+# https://github.com/composer/composer/releases/tag/2.11.0
+COPY --from=composer@sha256:278dfc7bd35169965d03f87194816f43bf4e6b6ea61707c2114e52ad12fe24ce /usr/bin/composer /usr/local/bin/composer

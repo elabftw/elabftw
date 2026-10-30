@@ -18,6 +18,14 @@ isTrue() {
     esac
 }
 
+normalizeBool() {
+    if isTrue "${1:-}"; then
+        printf '%s' true
+    else
+        printf '%s' false
+    fi
+}
+
 getEnv() {
     tls_cert_path="${TLS_CERT_PATH:-}"
     tls_key_path="${TLS_KEY_PATH:-}"
@@ -257,14 +265,11 @@ phpfpmConf() {
     # allow using more memory for php-fpm
     sed -i -e "s/%PHP_MAX_MEMORY%/$(escape_sed_repl "${max_php_memory}")/" $f
     # external services, we want to easily know from php app if they are available
-    sed -i -e "s/%USE_FINGERPRINTER%/$(escape_sed_repl "${use_fingerprinter}")/" $f
-    sed -i -e "s/%FINGERPRINTER_USE_PROXY%/$(escape_sed_repl "${fingerprinter_use_proxy}")/" $f
-    sed -i -e "s/%FINGERPRINTER_URL%/$(escape_sed_repl "${fingerprinter_url}")/" $f
-    sed -i -e "s/%USE_OPENCLONING%/$(escape_sed_repl "${use_opencloning}")/" $f
+    sed -i -e "s/%USE_OPENCLONING%/$(normalizeBool "${use_opencloning}")/" $f
     # persistent mysql connection setting
-    sed -i -e "s/%USE_PERSISTENT_MYSQL_CONN%/$(escape_sed_repl "${use_persistent_mysql_conn}")/" $f
-    sed -i -e "s/%DEV_MODE%/$(escape_sed_repl "${dev_mode}")/" $f
-    sed -i -e "s/%DEMO_MODE%/$(escape_sed_repl "${demo_mode}")/" $f
+    sed -i -e "s/%USE_PERSISTENT_MYSQL_CONN%/$(normalizeBool "${use_persistent_mysql_conn}")/" $f
+    sed -i -e "s/%DEV_MODE%/$(normalizeBool "${dev_mode}")/" "$f"
+    sed -i -e "s/%DEMO_MODE%/$(normalizeBool "${demo_mode}")/" $f
     # pubchem urls
     sed -i -e "s/%PUBCHEM_PUG_URL%/$(escape_sed_repl "${pubchem_pug_url}")/" $f
     sed -i -e "s/%PUBCHEM_PUG_VIEW_URL%/$(escape_sed_repl "${pubchem_pug_view_url}")/" $f

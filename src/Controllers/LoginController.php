@@ -492,7 +492,7 @@ final class LoginController implements ControllerInterface
             return new RedirectResponse('/login.php');
         }
         return $this->handleLoginStep(
-            $this->loginFlow->afterPasswordRenewal($authentication),
+            $this->loginFlow->afterMfa($authentication),
         );
     }
 

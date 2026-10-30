@@ -139,8 +139,8 @@ final class Permissions
     private function getWrite(): bool
     {
         // locked entity cannot be written to
-        // only the locker can unlock an entity
-        if (($this->item['locked'] ?? false) && ($this->item['lockedby'] !== $this->Users->userData['userid']) && !$this->Users->isAdmin) {
+        // only the locker or an Admin of the entity team can unlock an entity
+        if (($this->item['locked'] ?? false) && ($this->item['lockedby'] !== $this->Users->userData['userid']) && !$this->Users->isAdminOfTeam($this->item['team'])) {
             return false;
         }
         return $this->getCan($this->canwriteBase, $this->canwrite);

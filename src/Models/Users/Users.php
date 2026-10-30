@@ -913,6 +913,18 @@ class Users extends AbstractRest
         return $this->isAdmin === true;
     }
 
+    /**
+     * Is the user Admin of a given team? The isAdmin property only applies to the team the user is logged in,
+     * so use this when acting on something that belongs to a team, like an entity or a category
+     */
+    public function isAdminOfTeam(int $team): bool
+    {
+        if ($team === $this->team) {
+            return $this->isAdmin;
+        }
+        return new TeamsHelper($team)->isAdminInTeam($this->userData['userid'] ?? 0);
+    }
+
     public function isAdminOrExplode(): void
     {
         if (!$this->isSysadmin() && !$this->isAdmin()) {

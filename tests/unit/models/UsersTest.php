@@ -23,6 +23,8 @@ use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users\AnonymousUser;
+use Elabftw\Models\Users\UltraAdmin;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\TeamsHelper;
@@ -256,6 +258,18 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $admin2 = $this->getUserInTeam(team: 2, admin: 1);
         $this->assertTrue($this->Users->isAdminOf($admin2->userid));
         $this->assertFalse($admin2->isAdminOf(2));
+    }
+
+    public function testIsAdminOfTeam(): void
+    {
+        // logged in team 2, where this user is Admin, but they are not Admin of team 1
+        $admin2 = $this->getUserInTeam(team: 2, admin: 1);
+        $this->assertTrue($admin2->isAdmin);
+        $this->assertTrue($admin2->isAdminOfTeam(2));
+        $this->assertFalse($admin2->isAdminOfTeam(1));
+        $this->assertFalse(new AnonymousUser(1)->isAdminOfTeam(2));
+        // cli user has full rights on everything
+        $this->assertTrue(new UltraAdmin(team: 2)->isAdminOfTeam(1));
     }
 
     public function testArchivedRequesterIsNotAnAdmin(): void

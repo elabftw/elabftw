@@ -3,9 +3,16 @@
 # © 2020 Nicolas CARPi
 # https://www.deltablot.com/elabftw
 
+isTrue() {
+    case "${1:-}" in
+        [Tt][Rr][Uu][Ee]|[Yy][Ee][Ss]|[Oo][Nn]|1) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
 # HTTPS is enabled by default unless DISABLE_HTTPS=true
 protocol='https'
-if [ "${DISABLE_HTTPS:-false}" = 'true' ]; then
+if isTrue "$DISABLE_HTTPS"; then
     protocol='http'
 fi
 

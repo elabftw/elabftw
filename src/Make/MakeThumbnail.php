@@ -56,11 +56,12 @@ class MakeThumbnail implements MakeThumbnailInterface
         $image = new Imagick();
         // set temporary files path to this folder which should be bind-mounted on the host
         $image->setRegistry('temporary-path', NginxCache::getFolder());
+        $image->setFilename('[0]');
         $image->readImageFile($this->sourceFile);
         $image->setIteratorIndex(0);
         $image->setBackgroundColor('white');
         // fix pdf with black background and png
-        if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript' || $this->mime === 'image/png') {
+        if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript' || $this->mime === 'image/png' || $this->mime === 'image/webp') {
             $image->setResolution(300, 300);
             $image->setImageFormat('jpg');
             $image->scaleImage(500, 500, true);

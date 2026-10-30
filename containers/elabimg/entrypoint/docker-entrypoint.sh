@@ -10,8 +10,21 @@
 # It will get config from env and adjust configuration files and system accordingly
 set -e
 
-# get env values
-# and unset the sensitive ones so they cannot be accessed by a rogue process
+isTrue() {
+    case "${1:-}" in
+        [Tt][Rr][Uu][Ee]|[Yy][Ee][Ss]|[Oo][Nn]|1) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+normalizeBool() {
+    if isTrue "${1:-}"; then
+        printf '%s' true
+    else
+        printf '%s' false
+    fi
+}
+
 getEnv() {
     tls_cert_path="${TLS_CERT_PATH:-}"
     tls_key_path="${TLS_KEY_PATH:-}"
@@ -102,12 +115,12 @@ nginxConf() {
     server_conf="${conf}/server.conf"
 
     # HTTP
-    if $disable_https; then
+    if isTrue "$disable_https"; then
         cp -v /etc/nginx/http.conf "$server_conf"
     else
         cp -v /etc/nginx/https.conf "$server_conf"
 
-        if $generate_tls_cert; then
+        if isTrue "$generate_tls_cert"; then
             generateTlsCert
             tls_cert_path="/run/nginx/certs/server.pem"
             tls_key_path="/run/nginx/certs/server-key.pem"
@@ -136,7 +149,7 @@ nginxConf() {
     fi
 
     # for maintenance mode we replace common.conf with maintenance.conf
-    if ($maintenance_mode); then
+    if isTrue "$maintenance_mode"; then
         ln -fs /etc/nginx/maintenance.conf /run/nginx/common.conf
     fi
 
@@ -151,7 +164,7 @@ nginxConf() {
     sed -i -e "s/%CLIENT_MAX_BODY_SIZE%/$(escape_sed_repl "${max_upload_size}")/" /run/nginx/nginx.conf
 
     # ADJUST PLUGINS
-    if [ "$opencloning_url" != "false" ] && [ -n "$opencloning_url" ] && [ "$use_opencloning" != "false" ] && [ -n "$use_opencloning" ]; then
+    if [ "$opencloning_url" != "false" ] && [ -n "$opencloning_url" ] && isTrue "$use_opencloning"; then
         cp -v /etc/nginx/opencloning.conf.tpl /run/nginx/opencloning.conf
         # remove the trailing / if it exists, or it doesn't work
         oc_url=${opencloning_url%/}
@@ -160,7 +173,7 @@ nginxConf() {
     fi
 
     # SET REAL IP CONFIG
-    if ($set_real_ip); then
+    if isTrue "$set_real_ip"; then
         # read the IP addresses from env
         IFS=', ' read -r -a ip_arr <<< "${set_real_ip_from}"
         conf_string=""
@@ -179,7 +192,7 @@ nginxConf() {
 
     # DEV MODE
     # we don't want to serve brotli compressed assets in dev (or we would need to recompress them after every change!)
-    if ($dev_mode); then
+    if isTrue "$dev_mode"; then
         rm -f /run/nginx/conf.d/brotli.conf
     fi
     sed -i -e "s/%CUSTOM_CONNECT_SRC%/$(escape_sed_repl "${custom_connect_src}")/" /run/nginx/common.conf
@@ -251,14 +264,11 @@ phpfpmConf() {
     # allow using more memory for php-fpm
     sed -i -e "s/%PHP_MAX_MEMORY%/$(escape_sed_repl "${max_php_memory}")/" $f
     # external services, we want to easily know from php app if they are available
-    sed -i -e "s/%USE_FINGERPRINTER%/$(escape_sed_repl "${use_fingerprinter}")/" $f
-    sed -i -e "s/%FINGERPRINTER_USE_PROXY%/$(escape_sed_repl "${fingerprinter_use_proxy}")/" $f
-    sed -i -e "s/%FINGERPRINTER_URL%/$(escape_sed_repl "${fingerprinter_url}")/" $f
-    sed -i -e "s/%USE_OPENCLONING%/$(escape_sed_repl "${use_opencloning}")/" $f
+    sed -i -e "s/%USE_OPENCLONING%/$(normalizeBool "${use_opencloning}")/" $f
     # persistent mysql connection setting
-    sed -i -e "s/%USE_PERSISTENT_MYSQL_CONN%/$(escape_sed_repl "${use_persistent_mysql_conn}")/" $f
-    sed -i -e "s/%DEV_MODE%/$(escape_sed_repl "${dev_mode}")/" $f
-    sed -i -e "s/%DEMO_MODE%/$(escape_sed_repl "${demo_mode}")/" $f
+    sed -i -e "s/%USE_PERSISTENT_MYSQL_CONN%/$(normalizeBool "${use_persistent_mysql_conn}")/" $f
+    sed -i -e "s/%DEV_MODE%/$(normalizeBool "${dev_mode}")/" "$f"
+    sed -i -e "s/%DEMO_MODE%/$(normalizeBool "${demo_mode}")/" $f
     # pubchem urls
     sed -i -e "s/%PUBCHEM_PUG_URL%/$(escape_sed_repl "${pubchem_pug_url}")/" $f
     sed -i -e "s/%PUBCHEM_PUG_VIEW_URL%/$(escape_sed_repl "${pubchem_pug_view_url}")/" $f
@@ -320,7 +330,7 @@ phpConf() {
     sess_save_handler="files"
     sess_save_path="/run/elabftw/sessions"
     # if we use redis then sessions are handled differently
-    if ($use_redis); then
+    if isTrue "$use_redis"; then
         sess_save_handler="redis"
         sess_save_path=$(getRedisUri)
     else
@@ -342,7 +352,7 @@ phpConf() {
     # for /run/s6-rc... see elabftw/elabftw#5249
     open_basedir="/.dockerenv:/elabftw/:/var/lib/elabftw/:/var/cache/elabftw/php:/run/elabftw:/var/cache/elabftw/nginx:/etc/ssl/cert.pem:/run/s6-rc/servicedirs/s6rc-oneshot-runner"
     # DEV MODE
-    if ($dev_mode); then
+    if isTrue "$dev_mode"; then
         # we don't want to use opcache as we want our changes to be immediately visible
         sed -i -e "s/opcache\.enable=1/opcache\.enable=0/" $f
         # completely remove open_basedir in dev because it's a pita with phpstan for instance
@@ -406,7 +416,7 @@ populatePhpEnv() {
 # display a friendly message with running versions
 startupMessage() {
     nginx_version=$(/usr/sbin/nginx -v 2>&1)
-    http_mode=$([ "$disable_https" = true ] && echo "HTTP" || echo "HTTPS")
+    http_mode=$(isTrue "$disable_https" && echo "HTTP" || echo "HTTPS")
     say "info: eLabFTW version: ${ELABFTW_VERSION}"
     say "info: ${nginx_version}"
     say "info: runtime configuration successfully finished"
@@ -415,7 +425,7 @@ startupMessage() {
 
 # Automatically initialize the database structure
 dbInit() {
-    if ($auto_db_init); then
+    if isTrue "$auto_db_init"; then
         say "info: initializing database structure"
         /elabftw/bin/init db:install
     fi
@@ -423,7 +433,7 @@ dbInit() {
 
 # Automatically update the database schema
 dbUpdate() {
-    if ($auto_db_update); then
+    if isTrue "$auto_db_update"; then
         say "info: updating database structure"
         /elabftw/bin/console db:update
     fi

@@ -5,8 +5,8 @@
 ###############################
 # GO BUILDER: CHRONOS/INVOKER #
 ###############################
-# https://hub.docker.com/layers/library/golang/1.26.6-alpine3.24/images/sha256-648921a68c7179241dd09daf8000fbfddc9e5ea9c1a24e7d0fe05b259dff2b5c
-FROM golang@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83 AS go-builder
+# https://hub.docker.com/layers/library/golang/1.27.3-alpine3.24/images/sha256-7eadb9cbb0aab2649418025b8472a770195e9a94921309519896514de85bba7f
+FROM golang@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb AS go-builder
 
 # using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
 ARG TARGETPLATFORM
@@ -22,7 +22,8 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
 # NGINX BUILDER #
 #################
 # build nginx with only the bare minimum of features or modules
-FROM alpine:3.24 AS nginx-builder
+# https://hub.docker.com/layers/library/alpine/3.24.3/images/sha256-6708ca119efec5c3fdcad5dc95d8a28a529aad8debc95872b7e12b3941882f55
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS nginx-builder
 
 ENV NGINX_VERSION=1.30.6
 # pin nginx modules versions
@@ -30,12 +31,6 @@ ENV NGINX_VERSION=1.30.6
 ENV NGX_BROTLI_COMMIT=53e0fb55f250f48fe80c0ddbf6c0f7103cdbaae1
 # https://github.com/openresty/headers-more-nginx-module/tags
 ENV HEADERS_MORE_VERSION=v0.39
-# releases can be signed by any key on this page https://nginx.org/en/pgp_keys.html
-# so this might need to be updated for a new release
-# available keys: mdounin, maxim, sb, thresh
-# the "signing key" is used for linux packages, see https://trac.nginx.org/nginx/ticket/205
-# do not use KEY in the env name to avoid warning by getSecretsRegex() from buildkit
-ENV PGP_SIGNING_PUBK_OWNER=thresh
 
 # install dependencies: here we use brotli-dev, newer brotli versions we can remove that and build it
 RUN apk add --no-cache git libc-dev pcre2-dev make gcc zlib-dev openssl-dev binutils gnupg cmake brotli-dev
@@ -70,12 +65,15 @@ RUN git clone --depth 1 -b $HEADERS_MORE_VERSION https://github.com/openresty/he
 ADD --chown=builder:builder https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz nginx.tgz
 # get nginx signature file
 ADD --chown=builder:builder https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc nginx.tgz.asc
-# get the corresponding public key
-ADD --chown=builder:builder https://nginx.org/keys/$PGP_SIGNING_PUBK_OWNER.key nginx-signing.key
-# import it and verify the tarball
-RUN gpg --import nginx-signing.key
-# only run on amd64 because it fails on arm64 for some weird unknown reason
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then gpg --verify nginx.tgz.asc; fi
+# get all developer keys listed at https://nginx.org/en/pgp_keys.html
+# nginx_signing.key is only used for packages and repositories
+ADD --chown=builder:builder https://nginx.org/keys/arut.key nginx-arut.key
+ADD --chown=builder:builder https://nginx.org/keys/pluknet.key nginx-pluknet.key
+ADD --chown=builder:builder https://nginx.org/keys/sb.key nginx-sb.key
+ADD --chown=builder:builder https://nginx.org/keys/thresh.key nginx-thresh.key
+# import them and verify the tarball
+RUN gpg --batch --import nginx-arut.key nginx-pluknet.key nginx-sb.key nginx-thresh.key \
+    && gpg --batch --verify nginx.tgz.asc nginx.tgz
 # all good now untar and build!
 RUN tar xzf nginx.tgz
 WORKDIR /build/nginx-$NGINX_VERSION
@@ -136,7 +134,8 @@ RUN make install
 #####################
 # OPENBABEL BUILDER #
 #####################
-FROM alpine:3.24 AS openbabel-builder
+# https://hub.docker.com/layers/library/alpine/3.24.3/images/sha256-6708ca119efec5c3fdcad5dc95d8a28a529aad8debc95872b7e12b3941882f55
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS openbabel-builder
 
 # Version 3.2.1
 # https://github.com/openbabel/openbabel/releases/tag/openbabel-3-2-1
@@ -183,9 +182,16 @@ RUN cmake -S . -B build \
 ##############
 # S6 BUILDER #
 ##############
-FROM alpine:3.24 AS s6-builder
+# https://hub.docker.com/layers/library/alpine/3.24.3/images/sha256-6708ca119efec5c3fdcad5dc95d8a28a529aad8debc95872b7e12b3941882f55
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS s6-builder
 
 ARG S6_OVERLAY_VERSION=3.2.1.0
+# Pin the published archive checksums; update them together with S6_OVERLAY_VERSION.
+# https://github.com/just-containers/s6-overlay/releases/tag/v3.2.1.0
+ARG S6_OVERLAY_NOARCH_SHA256=42e038a9a00fc0fef70bf0bc42f625a9c14f8ecdfe77d4ad93281edf717e10c5
+ARG S6_OVERLAY_X86_64_SHA256=8bcbc2cada58426f976b159dcc4e06cbb1454d5f39252b3bb0c778ccf71c9435
+ARG S6_OVERLAY_ARM_SHA256=1fc849a1a4f099f25b2ebfc6c6fc107a3d8284d1c36a1948c10430b95939409a
+ARG S6_OVERLAY_AARCH64_SHA256=c8fd6b1f0380d399422fc986a1e6799f6a287e2cfa24813ad0b6a4fb4fa755cc
 # using an explicit default argument for TARGETPLATFORM will override the buildx implicit value
 ARG TARGETPLATFORM
 ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
@@ -195,16 +201,26 @@ RUN apk add --no-cache curl xz
 # ADD cannot be used cleanly here because the architecture-specific URL needs a shell-computed
 # mapping from Docker's TARGETPLATFORM to the architecture names used by s6-overlay.
 RUN mkdir -p /s6-root \
-    && if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=x86_64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=arm; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCHITECTURE=aarch64; else ARCHITECTURE=amd64; fi \
-    && curl -sS -L -o /tmp/s6-overlay-arch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCHITECTURE}.tar.xz" \
-    && curl -sS -L -o /tmp/s6-overlay-noarch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
+    && case "$TARGETPLATFORM" in \
+        linux/amd64) ARCHITECTURE=x86_64; S6_OVERLAY_ARCH_SHA256="$S6_OVERLAY_X86_64_SHA256" ;; \
+        linux/arm/v7) ARCHITECTURE=arm; S6_OVERLAY_ARCH_SHA256="$S6_OVERLAY_ARM_SHA256" ;; \
+        linux/arm64) ARCHITECTURE=aarch64; S6_OVERLAY_ARCH_SHA256="$S6_OVERLAY_AARCH64_SHA256" ;; \
+        *) echo "Unsupported TARGETPLATFORM: $TARGETPLATFORM" >&2; exit 1 ;; \
+    esac \
+    && curl -fsSL -o /tmp/s6-overlay-arch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCHITECTURE}.tar.xz" \
+    && curl -fsSL -o /tmp/s6-overlay-noarch.tar.xz "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
+    && printf '%s  %s\n' \
+        "$S6_OVERLAY_ARCH_SHA256" /tmp/s6-overlay-arch.tar.xz \
+        "$S6_OVERLAY_NOARCH_SHA256" /tmp/s6-overlay-noarch.tar.xz \
+        | sha256sum -c - \
     && tar xpJf /tmp/s6-overlay-arch.tar.xz -C /s6-root \
     && tar xpJf /tmp/s6-overlay-noarch.tar.xz -C /s6-root
 
 ################
 # RUNTIME BASE #
 ################
-FROM alpine:3.24 AS runtime-base
+# https://hub.docker.com/layers/library/alpine/3.24.3/images/sha256-6708ca119efec5c3fdcad5dc95d8a28a529aad8debc95872b7e12b3941882f55
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS runtime-base
 
 # set build version with --build-arg ELABFTW_VERSION=X.Y.Z
 ARG ELABFTW_VERSION=dev
@@ -231,8 +247,13 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 RUN apk upgrade -U -a && apk add --no-cache \
     bash \
     ghostscript \
+    imagemagick \
     imagemagick-heic \
+    imagemagick-jpeg \
+    imagemagick-pdf \
     imagemagick-svg \
+    imagemagick-tiff \
+    imagemagick-webp \
     nodejs \
     openssl \
     php84 \
@@ -267,6 +288,11 @@ RUN apk upgrade -U -a && apk add --no-cache \
 RUN ln -f /usr/bin/php84 /usr/bin/php
 
 ENV TMPDIR=/var/cache/elabftw/php/tmp
+
+# Apply the same ImageMagick policy to PHP/Imagick and command-line conversions.
+COPY ./containers/elabimg/imagemagick/policy.xml /etc/ImageMagick-7/policy.xml
+# Use linked librsvg directly, without trying a prohibited external SVG delegate.
+RUN sed -i '/decode="svg[:"]/d' /etc/ImageMagick-7/delegates.xml
 
 ###################
 # ELABFTW BUILDER #
@@ -426,6 +452,7 @@ RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/nginx/dependencies
 RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/php/dependencies
 # invoker needs /run/elabftw folder created by entrypoint
 RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/invoker/dependencies
+RUN echo "entrypoint" > /etc/s6-overlay/s6-rc.d/chronos/dependencies
 
 COPY ./containers/elabimg/entrypoint/docker-entrypoint.sh /usr/sbin/docker-entrypoint.sh
 # END DOCKER-ENTRYPOINT.SH

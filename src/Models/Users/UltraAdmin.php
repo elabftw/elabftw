@@ -39,4 +39,10 @@ final class UltraAdmin extends Users
     {
         return $this->userid ?? 1;
     }
+
+    #[Override]
+    public function isAdminOfTeam(int $team): bool
+    {
+        return true;
+    }
 }

@@ -982,12 +982,12 @@ abstract class AbstractEntity extends AbstractRest
             $content = Mh::mergeMetadataValues($this->readColumn('metadata'), $content);
         }
         // ensure no changes happen on entries with immutable permissions
-        // admins can override the immutability of an entity's permissions. See #5800
+        // admins of the entity team can override the immutability of an entity's permissions. See #5800
         if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite' || $params->getTarget() === 'canread_base' || $params->getTarget() === 'canwrite_base') {
             $immutableKey = str_replace('_base', '', $params->getTarget()) . '_is_immutable';
             if (($this->entityData[$immutableKey] ?? 0) === 1
                 && !($this instanceof AbstractTemplateEntity)
-                && !($this->Users->isAdmin)
+                && !$this->Users->isAdminOfTeam($this->entityData['team'])
             ) {
                 throw new UnprocessableContentException(_('Cannot modify permissions on entry with immutable permissions.'));
             }
@@ -1314,16 +1314,16 @@ abstract class AbstractEntity extends AbstractRest
     protected function checkToggleLockPermissions(): void
     {
         $this->getPermissions();
-        // if the entry is locked, only an admin or the locker can unlock it
+        // if the entry is locked, only an admin of the entity team or the locker can unlock it
         // it is no longer necessary to be an admin or owner to lock something
-        if ($this->entityData['locked'] === 1 && (!$this->Users->isAdmin && $this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
+        if ($this->entityData['locked'] === 1 && (!$this->Users->isAdminOfTeam($this->entityData['team']) && $this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
             throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
         }
     }
 
     protected function checkUnlockPermissions(): void
     {
-        if (!$this->Users->isAdmin && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
+        if (!$this->Users->isAdminOfTeam($this->entityData['team']) && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
             $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);

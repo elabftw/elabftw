@@ -134,7 +134,7 @@ The ELN format is a new file format based on RO-Crate specification. It contains
   <figcaption>Example of a pinned experiment in the index page.</figcaption>
 </figure>
 
-9. **Lock/unlock entry**: Use this to lock the entry and prevent further editing. Only the user who locked an experiment or an Admin can unlock it.
+9. **Lock/unlock entry**: Use this to lock the entry and prevent further editing. Only the user who locked an experiment or an Admin of the team of the experiment can unlock it.
 <figure>
   <img src="/img/experiment-locked.webp" alt="example of a locked experiment" />
   <figcaption>Example of a locked experiment.</figcaption>

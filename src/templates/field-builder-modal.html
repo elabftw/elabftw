@@ -99,6 +99,11 @@
               <input aria-labelledby='choicesInputLabel' type='text' class='form-control mb-1' autocomplete='off'>
             </div>
             <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
+            {# start with no choice selected #}
+            <div class='form-check mt-2'>
+              <input type='checkbox' class='form-check-input' autocomplete='off' id='newFieldEmptyValueCheckbox'>
+              <label class='form-check-label' for='newFieldEmptyValueCheckbox'>{{ 'Start with empty value'|trans }}</label>
+            </div>
           </div>
 
           {# UNITS for NUMBER #}

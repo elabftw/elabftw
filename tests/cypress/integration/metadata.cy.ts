@@ -137,4 +137,87 @@ describe('Metadata Extra fields', () => {
       });
     });
   });
+
+  it('Highlights empty required dropdown and radio fields', () => {
+    const metadata = JSON.stringify({
+      extra_fields: {
+        'Required radio': {
+          type: 'radio',
+          options: ['x', 'y'],
+          value: '',
+          required: true,
+        },
+        'Required dropdown': {
+          type: 'select',
+          options: ['x', 'y'],
+          value: '',
+          required: true,
+        },
+        'Optional radio': {
+          type: 'radio',
+          options: ['x', 'y'],
+          value: '',
+          required: false,
+        },
+        'Optional dropdown': {
+          type: 'select',
+          options: ['x', 'y'],
+          value: '',
+          required: false,
+        },
+      },
+    });
+
+    cy.request({
+      method: 'POST',
+      url: '/api/v2/experiments',
+      body: { title: `Cypress required fields ${Date.now()}` },
+    }).then(createResponse => {
+      expect(createResponse.status).to.eq(201);
+      cy.extractIdFromLocation(createResponse).then(experimentId => {
+        cy.request({
+          method: 'PATCH',
+          url: `/api/v2/experiments/${experimentId}`,
+          body: { metadata },
+        }).its('status').should('eq', 200);
+
+        cy.visit(`/experiments.php?mode=edit&id=${experimentId}`);
+        const radios = '#metadataDiv input[type="radio"][data-field="Required radio"]';
+        const dropdown = '#metadataDiv select[data-field="Required dropdown"]';
+
+        // empty required fields are invalid, which the stylesheet highlights
+        cy.get(radios).should('have.length', 2).each(radio => {
+          cy.wrap(radio).should('have.attr', 'required');
+          cy.wrap(radio).should('match', ':invalid');
+        });
+        cy.get(dropdown).should('match', ':invalid');
+
+        // required: false must not make the field required
+        cy.get('#metadataDiv input[type="radio"][data-field="Optional radio"]').should('have.length', 2).each(radio => {
+          cy.wrap(radio).should('not.have.attr', 'required');
+        });
+        cy.get('#metadataDiv select[data-field="Optional dropdown"]').should('not.have.attr', 'required');
+
+        // choosing an option makes the whole radio group valid
+        cy.get(`${radios}[value="x"]`).check();
+        cy.get(`${radios}:invalid`).should('have.length', 0);
+      });
+    });
+  });
+
+  it('Creates a dropdown field with an empty value from the builder', () => {
+    const fieldName = 'Empty dropdown';
+    cy.createEntity();
+    cy.get('[data-cy="addMetadataField"]').first().click();
+    cy.get('#fieldBuilderModal').should('be.visible');
+    cy.get('#newFieldTypeSelect').select('select');
+    cy.get('#newFieldKeyInput').wait(500).type(fieldName);
+    cy.get('#choicesInputDiv input').eq(0).type('x');
+    cy.get('#choicesInputDiv input').eq(1).type('y');
+    cy.get('#newFieldEmptyValueCheckbox').check();
+    cy.get('[data-action="save-new-field"]').click();
+    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+    // no option selected: jQuery val() gives null, so check the DOM property
+    cy.get(`#metadataDiv select[data-field="${fieldName}"]`).should('have.prop', 'value', '');
+  });
 });

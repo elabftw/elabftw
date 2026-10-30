@@ -194,7 +194,9 @@ ARG IMAGICK_VERSION=3.8.1
 ARG IMAGICK_SHA256=3a3587c0a524c17d0dad9673a160b90cd776e836838474e173b549ed864352ee
 
 # PIC for shared objects, stack/format/fortify checks, full RELRO and a non-executable stack.
-ENV CFLAGS="-O2 -g0 -fPIC -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security" \
+# Also probe large stack allocations, zero-initialize stack variables, check dynamically sized buffers (_FORTIFY_SOURCE=3),
+# and keep the checks the optimizer could remove by assuming there is no undefined behavior (null pointers, overflows, aliasing).
+ENV CFLAGS="-O2 -g0 -fPIC -fstack-protector-strong -fstack-clash-protection -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -Wformat -Werror=format-security" \
     LDFLAGS="-Wl,-z,relro,-z,now,-z,noexecstack,--as-needed"
 # With modules enabled, these are the only image parsers compiled and installed.
 # Keep this list in sync with policy.xml and MakeThumbnailFactory.
@@ -203,12 +205,16 @@ ENV IMAGEMAGICK_CODERS="coders/bmp.la coders/gif.la coders/heic.la coders/jpeg.l
 RUN apk add --no-cache \
     autoconf build-base curl fontconfig-dev freetype-dev ghostscript lcms2-dev \
     libheif-dev libjpeg-turbo-dev libpng-dev libraqm-dev librsvg-dev libtool \
-    libwebp-dev libxml2-dev php84-dev tiff-dev xz-dev zlib-dev
+    libwebp-dev php84-dev tiff-dev xz-dev zlib-dev
 
 RUN addgroup -S -g 3148 builder && adduser -D -S -G builder -u 3148 builder \
     && mkdir /build && chown builder:builder /build
 WORKDIR /build
 USER builder
+
+# On aarch64, also sign return addresses, on CPUs with pointer authentication.
+# -fcf-protection is not used on x86_64: musl does not enable shadow stacks, and Linux has no user space branch tracking.
+RUN if [ "$(uname -m)" = aarch64 ]; then echo '-mbranch-protection=standard'; fi > cflags-arch
 
 RUN curl -fsSL -o imagemagick.tar.xz "https://github.com/ImageMagick/ImageMagick/releases/download/${IMAGEMAGICK_VERSION}/ImageMagick-${IMAGEMAGICK_VERSION}.tar.xz" \
     && curl -fsSL -o imagick.tgz "https://pecl.php.net/get/imagick-${IMAGICK_VERSION}.tgz" \
@@ -217,11 +223,17 @@ RUN curl -fsSL -o imagemagick.tar.xz "https://github.com/ImageMagick/ImageMagick
     && tar xf imagick.tgz
 
 WORKDIR /build/ImageMagick-${IMAGEMAGICK_VERSION}
+# ImageMagick loads the policy.xml of every directory of its search path, and the last matching rule wins.
+# Remove $XDG_CONFIG_HOME/ImageMagick and $HOME/.config/ImageMagick from that path: a writable home could relax the policy.
+RUN test "$(grep -c -E 'GetEnvironmentValue\("(XDG_CONFIG_)?HOME"\)' MagickCore/configure.c)" -eq 2 \
+    && sed -i -E 's/GetEnvironmentValue\("(XDG_CONFIG_)?HOME"\)/(char *) NULL/' MagickCore/configure.c
 # Retain Alpine's Q16 HDRI pixel representation and text/color rendering support.
 # Ghostscript runs as a separate process; its library is never loaded into PHP.
 # Module enumeration uses magick.la as a directory marker; use the retained PNG module.
+# Without libxml2, the internal SVG renderer (MSVG) is not built: SVG files are only rendered by librsvg.
 RUN sed -i 's/TagToCoderModuleName("magick",filename)/TagToCoderModuleName("png",filename)/' MagickCore/module.c \
     && ./configure \
+        CFLAGS="$CFLAGS $(cat /build/cflags-arch)" \
         --prefix=/usr \
         --sysconfdir=/etc \
         --enable-shared \
@@ -246,7 +258,6 @@ RUN sed -i 's/TagToCoderModuleName("magick",filename)/TagToCoderModuleName("png"
         --with-rsvg \
         --with-tiff \
         --with-webp \
-        --with-xml \
         --with-zlib \
         --without-autotrace \
         --without-bzlib \
@@ -269,6 +280,7 @@ RUN sed -i 's/TagToCoderModuleName("magick",filename)/TagToCoderModuleName("png"
         --without-uhdr \
         --without-wmf \
         --without-x \
+        --without-xml \
         --without-zip \
         --without-zstd \
     && make -j"$(getconf _NPROCESSORS_ONLN)" coders_LTLIBRARIES="$IMAGEMAGICK_CODERS" filters_LTLIBRARIES=
@@ -281,8 +293,9 @@ RUN make coders_LTLIBRARIES="$IMAGEMAGICK_CODERS" filters_LTLIBRARIES= install-s
     && rm -f /imagemagick-root/usr/lib/*.la /imagemagick-root/usr/lib/libMagick*.so \
     && find /imagemagick-root/usr/bin -mindepth 1 ! -name magick -delete \
     && install -Dm644 LICENSE /imagemagick-root/usr/share/licenses/imagemagick/LICENSE \
-    && sed -n '/<delegatemap>/p; /<delegate decode="ps:\(alpha\|cmyk\|color\|mono\)"/p; /<\/delegatemap>/p' \
-        config/delegates.xml > /imagemagick-root/etc/ImageMagick-7/delegates.xml
+    && sed -n 's#&apos;gs&apos;#\&apos;/usr/local/bin/imagemagick-gs\&apos;#; /<delegatemap>/p; /<delegate decode="ps:\(alpha\|cmyk\|color\|mono\)"/p; /<\/delegatemap>/p' \
+        config/delegates.xml > /imagemagick-root/etc/ImageMagick-7/delegates.xml \
+    && test "$(grep -c "&apos;/usr/local/bin/imagemagick-gs&apos;" /imagemagick-root/etc/ImageMagick-7/delegates.xml)" -eq 4
 
 WORKDIR /build/imagick-${IMAGICK_VERSION}
 USER builder
@@ -290,7 +303,7 @@ USER builder
 # Imagick 3.8.1 probes OpenMP independently of ImageMagick; omit that unused dependency.
 RUN sed -i '/AC_MSG_CHECKING(omp_pause_resource_all usability)/,/^  PHP_SUBST(IMAGICK_SHARED_LIBADD)/c\  PHP_SUBST(IMAGICK_SHARED_LIBADD)' config.m4 \
     && phpize84 \
-    && ./configure --with-php-config=/usr/bin/php-config84 --with-imagick=/usr \
+    && ./configure CFLAGS="$CFLAGS $(cat /build/cflags-arch)" --with-php-config=/usr/bin/php-config84 --with-imagick=/usr \
     && make -j"$(getconf _NPROCESSORS_ONLN)" \
     && strip --strip-unneeded modules/imagick.so
 
@@ -300,6 +313,8 @@ RUN install -Dm755 modules/imagick.so "/imagemagick-root$(php-config84 --extensi
     && printf 'extension=imagick.so\n' > /imagemagick-root/etc/php84/conf.d/imagick.ini \
     && install -Dm644 LICENSE /imagemagick-root/usr/share/licenses/imagick/LICENSE
 COPY ./containers/elabimg/imagemagick/policy.xml /imagemagick-root/etc/ImageMagick-7/policy.xml
+# The delegates run Ghostscript through this wrapper, which limits its CPU time.
+COPY --chmod=555 ./containers/elabimg/imagemagick/imagemagick-gs /imagemagick-root/usr/local/bin/imagemagick-gs
 
 ##############
 # S6 BUILDER #
@@ -380,7 +395,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
     libwebp \
     libwebpdemux \
     libwebpmux \
-    libxml2 \
     nodejs \
     openssl \
     php84 \

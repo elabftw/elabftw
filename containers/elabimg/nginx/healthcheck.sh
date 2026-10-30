@@ -4,9 +4,8 @@
 # https://www.deltablot.com/elabftw
 
 isTrue() {
-    local value="${1:-}"
-    case "${value,,}" in
-        true|yes|on|1) return 0 ;;
+    case "${1:-}" in
+        [Tt][Rr][Uu][Ee]|[Yy][Ee][Ss]|[Oo][Nn]|1) return 0 ;;
         *) return 1 ;;
     esac
 }

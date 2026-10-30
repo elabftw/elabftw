@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Elabftw\Compound;
+use Codeception\Attribute\DataProvider;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
@@ -22,6 +23,7 @@ use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Storage\Cache\ElabCache;
+use Elabftw\Traits\TestsUtilsTrait;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -47,6 +49,8 @@ use function unlink;
 
 final class ElnGroupsTest extends TestCase
 {
+    use TestsUtilsTrait;
+
     private FilesystemOperator $fs;
 
     private LoggerInterface $logger;
@@ -57,19 +61,7 @@ final class ElnGroupsTest extends TestCase
         $this->logger = $this->createStub(LoggerInterface::class);
     }
 
-    public static function entityTypes(): array
-    {
-        return array(
-            'experiment' => array(EntityType::Experiments),
-            'resource' => array(EntityType::Items),
-            'experiment template' => array(EntityType::Templates),
-            'resource template' => array(EntityType::ItemsTypes),
-        );
-    }
-
-    /**
-     * @dataProvider entityTypes
-     */
+    #[DataProvider('entityTypes')]
     public function testGroupsRoundTrip(EntityType $type): void
     {
         $Source = $this->createEntity($type);

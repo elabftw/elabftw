@@ -13,6 +13,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\S3Config;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\Language;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 
@@ -71,6 +72,18 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     public function testRestoreDefaults(): void
     {
         $this->assertTrue($this->Config->destroy());
+    }
+
+    public function testAllowedUnauthenticatedLanguages(): void
+    {
+        self::assertSame(Language::getAllHuman(), $this->Config->getAllowedUnauthenticatedLanguages());
+        $result = $this->Config->patch(Action::Update, array('allowed_unauthenticated_languages' => 'en_GB,de_DE'));
+
+        self::assertSame('en_GB,de_DE', $result['allowed_unauthenticated_languages']);
+        self::assertSame(array('en_GB' => 'English (UK/GB)', 'de_DE' => 'German'), $this->Config->getAllowedUnauthenticatedLanguages());
+
+        $this->Config->patch(Action::Update, array('allowed_unauthenticated_languages' => ''));
+        self::assertSame(Language::getAllHuman(), $this->Config->getAllowedUnauthenticatedLanguages());
     }
 
     public function testDecrementTsBalance(): void

@@ -12,9 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
-use Elabftw\Elabftw\Db;
-use Elabftw\Enums\State;
+use Elabftw\Auth\UploadDownloadValidator;
+use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Models\Users\Users;
 use Elabftw\Services\Filter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToReadFile;
@@ -24,14 +26,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Override;
-use PDO;
 
 use function basename;
 use function fopen;
 use function fread;
 use function fseek;
 use function in_array;
-use function str_ends_with;
 use function str_starts_with;
 use function stream_copy_to_stream;
 use function strlen;
@@ -60,8 +60,17 @@ final class DownloadController implements ControllerInterface
 
     private string $longName;
 
-    public function __construct(private Filesystem $fs, string $longName, ?string $realName = null, private bool $forceDownload = false)
-    {
+    /**
+     * @param ?Users $requester Null only for non-upload files authorized by their caller.
+     */
+    public function __construct(
+        private Filesystem $fs,
+        string $longName,
+        ?string $realName = null,
+        private bool $forceDownload = false,
+        private ?Users $requester = null,
+        private ?int $storage = null,
+    ) {
         // Remove any path info to avoid hacking by adding relative path, etc.
         $this->longName = Filter::forFilesystem(basename($longName));
         // get the first two letters to get the folder
@@ -91,8 +100,15 @@ final class DownloadController implements ControllerInterface
         }
 
         // Check before cache validators, Range handling, or any filesystem access.
-        if ($this->isDeletedUpload()) {
-            return new Response('', Response::HTTP_NOT_FOUND, array('Cache-Control' => 'private, no-store'));
+        try {
+            new UploadDownloadValidator()->validate(
+                $this->requester,
+                $this->longName,
+                $this->storage,
+                $request?->query->getString('access_key') ?? '',
+            );
+        } catch (ForbiddenException | ResourceNotFoundException $e) {
+            return new Response('', $e->getHttpCode(), array('Cache-Control' => 'private, no-store'));
         }
 
         $filePath = $this->getFilePath();
@@ -173,25 +189,6 @@ final class DownloadController implements ControllerInterface
         $Response->headers->set('Content-Disposition', $dispositionHeader);
 
         return $Response;
-    }
-
-    private function isDeletedUpload(): bool
-    {
-        // Thumbnails inherit the state of their original upload.
-        // Ignore case: the storage can be case-insensitive, and so is the long_name collation.
-        $longName = str_ends_with(strtolower($this->longName), '_th.jpg')
-            ? mb_substr($this->longName, 0, -7)
-            : $this->longName;
-        $shardedName = mb_substr($longName, 0, 2) . '/' . $longName;
-        $Db = Db::getConnection();
-        // Match both current and legacy filenames. Exports have no uploads row.
-        $req = $Db->prepare('SELECT 1 FROM uploads
-            WHERE state = :state AND long_name IN (:long_name, :sharded_name) LIMIT 1');
-        $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-        $req->bindValue(':long_name', $longName);
-        $req->bindValue(':sharded_name', $shardedName);
-        $Db->execute($req);
-        return $req->fetchColumn() !== false;
     }
 
     /**

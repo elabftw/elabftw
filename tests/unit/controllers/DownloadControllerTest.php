@@ -16,7 +16,13 @@ use Aws\Result;
 use Aws\S3\S3Client;
 use Codeception\Attribute\DataProvider;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
+use Elabftw\Enums\Storage;
+use Elabftw\Models\Items;
+use Elabftw\Models\Users\AnonymousUser;
+use Elabftw\Services\AccessKeyHelper;
+use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Psr7\Utils;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
@@ -42,6 +48,8 @@ use function sys_get_temp_dir;
 
 class DownloadControllerTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private Filesystem $fs;
 
     protected function setUp(): void
@@ -84,17 +92,11 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
             $longName = 'aa' . bin2hex(random_bytes(8)) . '.mp4';
             $storedName = $legacy ? $longName : 'aa/' . $longName;
             $this->fs->write($storedName . $suffix, 'deleted content');
-            $req = $Db->prepare('INSERT INTO uploads (real_name, long_name, userid, type, state)
-                VALUES (:real_name, :long_name, 1, :type, :state)');
-            $req->bindValue(':real_name', 'deleted.mp4');
-            $req->bindValue(':long_name', $storedName);
-            $req->bindValue(':type', 'items');
-            $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-            $Db->execute($req);
+            $Entity = $this->createUpload($storedName);
             $id = $Db->lastInsertId();
             $update = $Db->prepare('UPDATE uploads SET state = :state WHERE id = :id');
             $update->bindValue(':id', $id, PDO::PARAM_INT);
-            $controller = new DownloadController($this->fs, $storedName . $suffix);
+            $controller = new DownloadController($this->fs, $storedName . $suffix, requester: $Entity->Users, storage: Storage::LOCAL->value);
 
             foreach (array(State::Normal, State::Archived) as $state) {
                 $update->bindValue(':state', $state->value, PDO::PARAM_INT);
@@ -115,7 +117,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
             }
             // Reuse the same name with either spelling accepted by download.php.
             foreach (array($longName . $suffix, $storedName . $suffix) as $requestedName) {
-                $controller = new DownloadController($fs, $requestedName);
+                $controller = new DownloadController($fs, $requestedName, requester: $Entity->Users, storage: Storage::LOCAL->value);
                 foreach (array('GET', 'HEAD') as $method) {
                     $request = Request::create('/download', $method);
                     $request->headers->set('If-None-Match', '"' . $longName . $suffix . '"');
@@ -143,6 +145,80 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
             'legacy file' => array(true, ''),
             'legacy thumbnail' => array(true, '_th.jpg'),
         );
+    }
+
+    public function testParentPermissionsAreCheckedBeforeFilesystemAccess(): void
+    {
+        $Db = Db::getConnection();
+        $Db->beginTransaction();
+        try {
+            $longName = 'aa' . bin2hex(random_bytes(8)) . '.mp4';
+            $this->createUpload('aa/' . $longName);
+            $fs = $this->createMock(Filesystem::class);
+            foreach (array('fileExists', 'mimeType', 'fileSize', 'readStream') as $method) {
+                $fs->expects($this->never())->method($method);
+            }
+            foreach (array(new AnonymousUser(1), $this->getUserInTeam(2)) as $requester) {
+                foreach (array('', '_th.jpg', '_TH.JPG') as $suffix) {
+                    $controller = new DownloadController($fs, $longName . $suffix, requester: $requester, storage: Storage::LOCAL->value);
+                    foreach (array('GET', 'HEAD') as $method) {
+                        $request = Request::create('/download', $method);
+                        $request->headers->set('If-None-Match', '"' . $longName . $suffix . '"');
+                        $request->headers->set('Range', 'bytes=0-3');
+                        $before = $Db->getNumberOfQueries();
+                        $response = $this->getResponse($controller, $request);
+                        $this->assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+                        $this->assertSame('', $response->getContent());
+                        $this->assertNull($response->getEtag());
+                        $this->assertTrue($response->headers->hasCacheControlDirective('no-store'));
+                        // One upload lookup and one parent lookup, with no separate deletion query.
+                        $this->assertSame(2, $Db->getNumberOfQueries() - $before);
+                    }
+                    $this->assertSame(Response::HTTP_FORBIDDEN, $this->getResponse($controller)->getStatusCode());
+                }
+            }
+        } finally {
+            $Db->rollBack();
+        }
+    }
+
+    public function testAccessKeyIsPassedToUploadValidator(): void
+    {
+        $Db = Db::getConnection();
+        $Db->beginTransaction();
+        try {
+            $longName = 'aa/' . 'aa' . bin2hex(random_bytes(8)) . '.txt';
+            $Entity = $this->createUpload($longName);
+            $accessKey = new AccessKeyHelper(EntityType::Items, $Entity->id)->toggleAccessKey();
+            $this->fs->write($longName, 'shared content');
+            $controller = new DownloadController($this->fs, $longName, requester: new AnonymousUser(1), storage: Storage::LOCAL->value);
+            $request = Request::create('/download', 'GET', array('access_key' => $accessKey));
+            $before = $Db->getNumberOfQueries();
+            $response = $this->getResponse($controller, $request);
+            $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
+            $this->assertSame(2, $Db->getNumberOfQueries() - $before);
+            ob_start();
+            $response->sendContent();
+            $this->assertSame('shared content', ob_get_contents());
+            ob_end_clean();
+            $this->assertSame(Response::HTTP_FORBIDDEN, $this->getResponse($controller)->getStatusCode());
+        } finally {
+            $Db->rollBack();
+        }
+    }
+
+    public function testUnknownUploadIsNotTreatedAsAnExport(): void
+    {
+        $fs = $this->createMock(Filesystem::class);
+        foreach (array('fileExists', 'mimeType', 'fileSize', 'readStream') as $method) {
+            $fs->expects($this->never())->method($method);
+        }
+        $controller = new DownloadController($fs, 'aa' . bin2hex(random_bytes(8)) . '.zip', requester: new AnonymousUser(1));
+        $request = Request::create('/download');
+        $request->headers->set('If-None-Match', '*');
+        $response = $this->getResponse($controller, $request);
+        $this->assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        $this->assertTrue($response->headers->hasCacheControlDirective('no-store'));
     }
 
     #[DataProvider('provideConditionalRequests')]
@@ -399,6 +475,23 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertEquals('400', $response->headers->get('Content-Length'));
         $this->assertStringContainsString('inline', $response->headers->get('Content-Disposition'));
+    }
+
+    private function createUpload(string $longName): Items
+    {
+        $Entity = $this->getFreshItem();
+        $Db = Db::getConnection();
+        $req = $Db->prepare('INSERT INTO uploads (real_name, long_name, item_id, userid, type, storage, state)
+            VALUES (:real_name, :long_name, :item_id, :userid, :type, :storage, :state)');
+        $req->bindValue(':real_name', 'download-test');
+        $req->bindValue(':long_name', $longName);
+        $req->bindValue(':item_id', $Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':userid', $Entity->Users->userid, PDO::PARAM_INT);
+        $req->bindValue(':type', EntityType::Items->value);
+        $req->bindValue(':storage', Storage::LOCAL->value, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $Db->execute($req);
+        return $Entity;
     }
 
     private function getResponse(DownloadController $controller, ?Request $request = null): Response

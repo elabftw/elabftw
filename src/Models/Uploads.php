@@ -315,6 +315,8 @@ final class Uploads extends AbstractRest
             $this->uploadData['long_name'],
             $this->uploadData['real_name'],
             forceDownload: false,
+            requester: $this->Entity->Users,
+            storage: $this->uploadData['storage'],
         );
         return $DownloadController->getResponse();
     }

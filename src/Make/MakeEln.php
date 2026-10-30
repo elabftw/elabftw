@@ -20,6 +20,7 @@ use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Hash\FileHash;
 use Elabftw\Interfaces\CompoundInterface;
 use Elabftw\Models\AbstractEntity;
@@ -600,13 +601,18 @@ class MakeEln extends AbstractMakeEln
                 if ($sourceId < 1 || isset($references[$type][$sourceId])) {
                     continue;
                 }
-                $reference = match ($type) {
-                    'compounds' => $this->processMetadataCompounds($sourceId),
-                    'experiments' => $this->processMetadataEntity($sourceId, EntityType::Experiments),
-                    'items' => $this->processMetadataEntity($sourceId, EntityType::Items),
-                    'users' => $this->processMetadataUser($sourceId),
-                    default => null,
-                };
+                try {
+                    $reference = match ($type) {
+                        'compounds' => $this->processMetadataCompounds($sourceId),
+                        'experiments' => $this->processMetadataEntity($sourceId, EntityType::Experiments),
+                        'items' => $this->processMetadataEntity($sourceId, EntityType::Items),
+                        'users' => $this->processMetadataUser($sourceId),
+                        default => null,
+                    };
+                } catch (ResourceNotFoundException) {
+                    $this->logger->warning(sprintf('Skipping metadata reference %s: %d during ELN export: not found', $type, $sourceId));
+                    continue;
+                }
                 if ($reference !== null) {
                     $references[$type][$sourceId] = $reference;
                 }
@@ -615,8 +621,15 @@ class MakeEln extends AbstractMakeEln
         return $references;
     }
 
-    private function processMetadataUser(int $userId): array
+    private function processMetadataUser(int $userId): ?array
     {
+        if (!$this->requester->isAdminOf($userId)) {
+            $this->logger->warning(sprintf(
+                'Skipping metadata reference users: %d during ELN export: insufficient permissions',
+                $userId
+            ));
+            return null;
+        }
         return array('@id' => $this->getAuthorId(new Users($userId)));
     }
 

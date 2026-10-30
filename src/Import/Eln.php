@@ -300,7 +300,7 @@ class Eln extends AbstractZip
                 $targetIds[] = $targetId;
             }
             $entity = $ref['origin_entity_type']->toInstance(
-                $this->targetUser,
+                $ref['users'],
                 $ref['origin_id'],
                 true,
                 true,
@@ -640,8 +640,8 @@ class Eln extends AbstractZip
                             }
                             $type = $node['valueReference'] ?? '';
                             $value = $node['value'] ?? null;
-                            if (in_array($type, array('compounds', 'experiments', 'items', 'users'), true) && is_array($value)) {
-                                $isMultiple = array_is_list($value);
+                            if (in_array($type, array('compounds', 'experiments', 'items', 'users'), true) && !empty($value)) {
+                                $isMultiple = is_array($value) && array_is_list($value);
                                 $referenceValues = $isMultiple ? $value : array($value);
                                 $targetAtIds = array();
                                 foreach ($referenceValues as $referenceValue) {
@@ -653,16 +653,15 @@ class Eln extends AbstractZip
                                         $targetAtIds[] = $targetAtId;
                                     }
                                 }
-                                if ($targetAtIds !== array()) {
-                                    $this->metadataReferencesToResolve[] = array(
-                                        'origin_entity_type' => $this->Entity->entityType,
-                                        'origin_id' => $this->Entity->id,
-                                        'property_id' => $node['propertyID'],
-                                        'target_@ids' => $targetAtIds,
-                                        'target_type' => $type,
-                                        'is_multiple' => $isMultiple,
-                                    );
-                                }
+                                $this->metadataReferencesToResolve[] = array(
+                                    'origin_entity_type' => $this->Entity->entityType,
+                                    'origin_id' => $this->Entity->id,
+                                    'users' => $this->Entity->Users,
+                                    'property_id' => $node['propertyID'],
+                                    'target_@ids' => $targetAtIds,
+                                    'target_type' => $type,
+                                    'is_multiple' => $isMultiple,
+                                );
                             }
                         }
                     }
@@ -762,6 +761,7 @@ class Eln extends AbstractZip
         $this->entityStatesToRestore[] = array(
             'entity_type' => $this->Entity->entityType,
             'entity_id' => $this->Entity->id,
+            'users' => $this->Entity->Users,
             'dataset' => $dataset,
         );
 
@@ -778,7 +778,7 @@ class Eln extends AbstractZip
     {
         foreach ($this->entityStatesToRestore as $pending) {
             $entity = $pending['entity_type']->toInstance(
-                $this->targetUser,
+                $pending['users'],
                 $pending['entity_id'],
                 true,
                 true,

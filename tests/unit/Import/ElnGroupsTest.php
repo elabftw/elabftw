@@ -221,6 +221,12 @@ final class ElnGroupsTest extends TestCase
                 ),
                 'Resource' => array('type' => 'items', 'value' => $Resource->id),
                 'Compound' => array('type' => 'compounds', 'value' => $compoundId),
+                'Missing experiment' => array('type' => 'experiments', 'value' => 999999998),
+                'Missing experiments' => array(
+                    'type' => 'experiments',
+                    'value' => array(999999998, 999999999),
+                    'allow_multi_values' => true,
+                ),
             ),
         ), JSON_THROW_ON_ERROR)));
 
@@ -242,6 +248,34 @@ final class ElnGroupsTest extends TestCase
             );
             $this->assertSame($imported['Resource']->id, $fields['Resource']['value']);
             $this->assertSame($compoundId, $fields['Compound']['value']);
+            $this->assertSame('', $fields['Missing experiment']['value']);
+            $this->assertSame(array(), $fields['Missing experiments']['value']);
+        } finally {
+            unlink($path);
+        }
+    }
+
+    public function testMetadataUserReferenceDoesNotExposeUnauthorizedUser(): void
+    {
+        $requester = new Users(2, 1);
+        $referencedUser = new Users(1, 1);
+        $this->assertFalse($requester->isSysadmin());
+        $this->assertFalse($requester->isAdminOf($referencedUser->getUserid()));
+        $Exported = EntityType::Experiments->toInstance($requester);
+        $Exported->setId($Exported->create());
+        $Exported->patch(Action::Update, array('metadata' => json_encode(array(
+            'extra_fields' => array(
+                'User' => array('type' => 'users', 'value' => $referencedUser->getUserid()),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        [$path, , $crate] = $this->export(array($Exported), $requester);
+
+        try {
+            $this->assertStringNotContainsString(
+                $referencedUser->userData['email'],
+                json_encode($crate, JSON_THROW_ON_ERROR),
+            );
         } finally {
             unlink($path);
         }
@@ -291,13 +325,15 @@ final class ElnGroupsTest extends TestCase
         )));
     }
 
-    private function export(array $entities): array
+    private function export(array $entities, ?Users $Users = null): array
     {
         foreach ($entities as $Entity) {
             $Entity->readOne();
         }
-        $Users = new Users(1, 1);
-        $Make = new MakeEln($this->logger, $this->createStub(ZipStream::class), $Users, $entities, new Instance2Rors(), new Teams2Rors(1), new Users2Rors(1), CompoundsFactory::getCompounds($Users), includeLinkedEntities: false);
+        if ($Users === null) {
+            $Users = new Users(1, 1);
+        }
+        $Make = new MakeEln($this->logger, $this->createStub(ZipStream::class), $Users, $entities, new Instance2Rors(), new Teams2Rors($Users->getTeam()), new Users2Rors($Users->getUserid()), CompoundsFactory::getCompounds($Users), includeLinkedEntities: false);
         $path = tempnam(sys_get_temp_dir(), 'elabftw-eln-groups-');
         $this->assertIsString($path);
         $Make->writeToFile($path);

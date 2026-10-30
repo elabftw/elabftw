@@ -413,7 +413,7 @@ teams:
           <h2>Conclusion</h2>
           <p>Elution fractions 2 and 3 contained the strongest target-protein signal and were selected for pooling. The pooled sample can now proceed to buffer exchange and downstream characterization.</p>
 
-      - title: ELN metadata references
+      - title: Custom fields
         category: Demo
         body: '<p>Experiment with a lot of custom fields: signle and multiple</p>'
         tags:

@@ -69,7 +69,13 @@ final class AppLanguageTest extends \PHPUnit\Framework\TestCase
         $App = $this->getApp('de_DE,en_GB', 'fr_FR');
 
         self::assertSame('en_GB', $App->getLang());
+    }
+
+    public function testDisallowedSessionAndInstanceDefaultFallBackToFirstAllowedLanguage(): void
+    {
+        $App = $this->getApp('de_DE,en_GB', 'fr_FR');
         $App->Session->set('lang', 'fr_FR');
+
         self::assertSame('en_GB', $App->getLang());
     }
 

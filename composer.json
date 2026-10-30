@@ -88,7 +88,10 @@
     ],
     "psalm": "./vendor/bin/psalm --no-progress -c=src/tools/psalm.xml",
     "psalm-clear-cache": "./vendor/bin/psalm --clear-cache -c=src/tools/psalm.xml",
-    "phpstan": "@php -d disable_functions=exec,passthru,shell_exec,system ./vendor/bin/phpstan analyse --no-progress --memory-limit 4G -c src/tools/phpstan.neon"
+    "phpstan": [
+      "@putenv PHP_INI_SCAN_DIR=:src/tools",
+      "php ./vendor/bin/phpstan analyse --no-progress --memory-limit 4G -c src/tools/phpstan.neon"
+    ]
   },
   "config": {
     "allow-plugins": {

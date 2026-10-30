@@ -1419,6 +1419,7 @@ CREATE TABLE `uploads` (
   `immutable` tinyint UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `idx_uploads_group_id` (`group_id`),
+  KEY `idx_uploads_long_name_state` (`long_name`(64), `state`),
   CONSTRAINT `fk_uploads_group_id` FOREIGN KEY (`group_id`) REFERENCES `upload_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

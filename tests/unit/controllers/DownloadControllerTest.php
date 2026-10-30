@@ -15,12 +15,15 @@ use Aws\CommandInterface;
 use Aws\Result;
 use Aws\S3\S3Client;
 use Codeception\Attribute\DataProvider;
+use Elabftw\Elabftw\Db;
+use Elabftw\Enums\State;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Psr7\Utils;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use PDO;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -70,6 +73,76 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
         $content = ob_get_contents();
         ob_end_clean();
         $this->assertEquals('blah', $content);
+    }
+
+    #[DataProvider('provideDeletedUploads')]
+    public function testDeletedUploadsAreNotStreamed(bool $legacy, string $suffix): void
+    {
+        $Db = Db::getConnection();
+        $Db->beginTransaction();
+        try {
+            $longName = 'aa' . bin2hex(random_bytes(8)) . '.mp4';
+            $storedName = $legacy ? $longName : 'aa/' . $longName;
+            $this->fs->write($storedName . $suffix, 'deleted content');
+            $req = $Db->prepare('INSERT INTO uploads (real_name, long_name, userid, type, state)
+                VALUES (:real_name, :long_name, 1, :type, :state)');
+            $req->bindValue(':real_name', 'deleted.mp4');
+            $req->bindValue(':long_name', $storedName);
+            $req->bindValue(':type', 'items');
+            $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+            $Db->execute($req);
+            $id = $Db->lastInsertId();
+            $update = $Db->prepare('UPDATE uploads SET state = :state WHERE id = :id');
+            $update->bindValue(':id', $id, PDO::PARAM_INT);
+            $controller = new DownloadController($this->fs, $storedName . $suffix);
+
+            foreach (array(State::Normal, State::Archived) as $state) {
+                $update->bindValue(':state', $state->value, PDO::PARAM_INT);
+                $Db->execute($update);
+                $response = $this->getResponse($controller);
+                $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
+                ob_start();
+                $response->sendContent();
+                $this->assertSame('deleted content', ob_get_contents());
+                ob_end_clean();
+            }
+
+            $update->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+            $Db->execute($update);
+            $fs = $this->createMock(Filesystem::class);
+            foreach (array('fileExists', 'mimeType', 'fileSize', 'readStream') as $method) {
+                $fs->expects($this->never())->method($method);
+            }
+            // Reuse the same name with either spelling accepted by download.php.
+            foreach (array($longName . $suffix, $storedName . $suffix) as $requestedName) {
+                $controller = new DownloadController($fs, $requestedName);
+                foreach (array('GET', 'HEAD') as $method) {
+                    $request = Request::create('/download', $method);
+                    $request->headers->set('If-None-Match', '"' . $longName . $suffix . '"');
+                    $request->headers->set('Range', 'bytes=0-3');
+                    $response = $this->getResponse($controller, $request);
+                    $this->assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+                    $this->assertSame('', $response->getContent());
+                    $this->assertNull($response->getEtag());
+                    $this->assertTrue($response->headers->hasCacheControlDirective('no-store'));
+                }
+                // Also cover API downloads, which pass no Request.
+                $this->assertSame(Response::HTTP_NOT_FOUND, $this->getResponse($controller)->getStatusCode());
+            }
+        } finally {
+            $Db->rollBack();
+        }
+    }
+
+    public static function provideDeletedUploads(): array
+    {
+        return array(
+            'sharded file' => array(false, ''),
+            'sharded thumbnail' => array(false, '_th.jpg'),
+            'sharded thumbnail with another case' => array(false, '_TH.JPG'),
+            'legacy file' => array(true, ''),
+            'legacy thumbnail' => array(true, '_th.jpg'),
+        );
     }
 
     #[DataProvider('provideConditionalRequests')]

@@ -375,7 +375,13 @@ export function getTinymceBaseConfig(page: string): object {
         ApiC.post(`${entity.type}/${entity.id}/${endpoint}/${selected.id}`)
           .then(() => reloadElements(['linksDiv']));
         const category = selected.category_title ? `${selected.category_title} - `: '';
-        return `<span><a href='${selected.page}?mode=view&id=${selected.id}'>${category}${selected.title}</a></span>`;
+        const span = document.createElement('span');
+        const link = document.createElement('a');
+        const page = selected.type === EntityType.Item ? 'database.php' : 'experiments.php';
+        link.setAttribute('href', `${page}?mode=view&id=${encodeURIComponent(selected.id)}`);
+        link.textContent = `${category}${selected.title}`;
+        span.append(link);
+        return span.outerHTML;
       },
     },
     mobile: {

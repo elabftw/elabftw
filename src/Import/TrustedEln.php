@@ -68,6 +68,12 @@ final class TrustedEln extends Eln
         return $Author;
     }
 
+    #[Override]
+    protected function getMetadataUserReference(string $personId): int
+    {
+        return $this->getOrCreateUser($personId)->getUserid();
+    }
+
     private function getOrCreateUser(string $personId): Users
     {
         $person = $this->getNodeFromId($personId);

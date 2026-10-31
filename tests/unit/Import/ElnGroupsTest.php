@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Elabftw\Compound;
 use Codeception\Attribute\DataProvider;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Instance2Rors;
@@ -40,6 +42,7 @@ use function basename;
 use function dirname;
 use function json_decode;
 use function json_encode;
+use function random_int;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
@@ -186,6 +189,98 @@ final class ElnGroupsTest extends TestCase
         }
     }
 
+    public function testMetadataReferences(): void
+    {
+        $firstExp = $this->createEntity(EntityType::Experiments);
+        $secondExp = $this->createEntity(EntityType::Experiments);
+        $Resource = $this->createEntity(EntityType::Items);
+        $exportedExp = $this->createEntity(EntityType::Experiments);
+        $Compounds = CompoundsFactory::getCompounds(new Users(1, 1));
+        $compoundId = $Compounds->createFromCompound(new Compound(
+            cid: random_int(100000000, 999999999),
+            name: 'Test compound',
+            molecularWeight: 18.0,
+        ));
+
+        foreach (array(
+            'firstExp' => $firstExp,
+            'secondExp' => $secondExp,
+            'Resource' => $Resource,
+            'exportedExp' => $exportedExp,
+        ) as $title => $entity) {
+            $entity->patch(Action::Update, array('title' => $title));
+        }
+
+        $exportedExp->patch(Action::Update, array('metadata' => json_encode(array(
+            'extra_fields' => array(
+                'Experiment' => array('type' => 'experiments', 'value' => $firstExp->id),
+                'Experiments' => array(
+                    'type' => 'experiments',
+                    'value' => array($secondExp->id, $firstExp->id),
+                    'allow_multi_values' => true,
+                ),
+                'Resource' => array('type' => 'items', 'value' => $Resource->id),
+                'Compound' => array('type' => 'compounds', 'value' => $compoundId),
+                'Missing experiment' => array('type' => 'experiments', 'value' => 999999998),
+                'Missing experiments' => array(
+                    'type' => 'experiments',
+                    'value' => array(999999998, 999999999),
+                    'allow_multi_values' => true,
+                ),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        [$path] = $this->export(array($exportedExp));
+
+        try {
+            $imported = array();
+            foreach ($this->import($path) as $entity) {
+                $imported[$entity->readOne()['title']] = $entity;
+            }
+
+            $fields = json_decode($imported['exportedExp']->readOne()['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
+
+            $this->assertNotSame($firstExp->id, $imported['firstExp']->id);
+            $this->assertSame($imported['firstExp']->id, $fields['Experiment']['value']);
+            $this->assertSame(
+                array($imported['secondExp']->id, $imported['firstExp']->id),
+                $fields['Experiments']['value'],
+            );
+            $this->assertSame($imported['Resource']->id, $fields['Resource']['value']);
+            $this->assertSame($compoundId, $fields['Compound']['value']);
+            $this->assertSame('', $fields['Missing experiment']['value']);
+            $this->assertSame(array(), $fields['Missing experiments']['value']);
+        } finally {
+            unlink($path);
+        }
+    }
+
+    public function testMetadataUserReferenceDoesNotExposeUnauthorizedUser(): void
+    {
+        $requester = new Users(2, 1);
+        $referencedUser = new Users(1, 1);
+        $this->assertFalse($requester->isSysadmin());
+        $this->assertFalse($requester->isAdminOf($referencedUser->getUserid()));
+        $Exported = EntityType::Experiments->toInstance($requester);
+        $Exported->setId($Exported->create());
+        $Exported->patch(Action::Update, array('metadata' => json_encode(array(
+            'extra_fields' => array(
+                'User' => array('type' => 'users', 'value' => $referencedUser->getUserid()),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        [$path, , $crate] = $this->export(array($Exported), $requester);
+
+        try {
+            $this->assertStringNotContainsString(
+                $referencedUser->userData['email'],
+                json_encode($crate, JSON_THROW_ON_ERROR),
+            );
+        } finally {
+            unlink($path);
+        }
+    }
+
     private function createEntity(EntityType $type): AbstractEntity
     {
         $Entity = $type->toInstance(new Users(1, 1));
@@ -230,13 +325,15 @@ final class ElnGroupsTest extends TestCase
         )));
     }
 
-    private function export(array $entities): array
+    private function export(array $entities, ?Users $Users = null): array
     {
         foreach ($entities as $Entity) {
             $Entity->readOne();
         }
-        $Users = new Users(1, 1);
-        $Make = new MakeEln($this->logger, $this->createStub(ZipStream::class), $Users, $entities, new Instance2Rors(), new Teams2Rors(1), new Users2Rors(1), includeLinkedEntities: false);
+        if ($Users === null) {
+            $Users = new Users(1, 1);
+        }
+        $Make = new MakeEln($this->logger, $this->createStub(ZipStream::class), $Users, $entities, new Instance2Rors(), new Teams2Rors($Users->getTeam()), new Users2Rors($Users->getUserid()), CompoundsFactory::getCompounds($Users), includeLinkedEntities: false);
         $path = tempnam(sys_get_temp_dir(), 'elabftw-eln-groups-');
         $this->assertIsString($path);
         $Make->writeToFile($path);
@@ -260,7 +357,7 @@ final class ElnGroupsTest extends TestCase
     private function import(string $path): array
     {
         $Users = new Users(1, 1);
-        $Import = new Eln($Users, $Users, new UploadedFile($path, 'groups.eln', test: true), $this->fs, $this->logger);
+        $Import = new Eln($Users, $Users, new UploadedFile($path, 'groups.eln', test: true), $this->fs, $this->logger, CompoundsFactory::getCompounds($Users));
         $Import->import();
         $inserted = new ReflectionProperty(Eln::class, 'insertedEntities')->getValue($Import);
         return array_map(static fn(array $entity): AbstractEntity => $entity['entity_type']->toInstance($Users, $entity['id']), $inserted);

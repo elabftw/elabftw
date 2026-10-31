@@ -22,6 +22,7 @@ use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Interfaces\ImportInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractRest;
@@ -105,6 +106,7 @@ final class Handler extends AbstractRest
                     $reqBody['file'],
                     Storage::EXPORTS->getStorage()->getFs(),
                     $this->logger,
+                    CompoundsFactory::getCompounds($this->requester),
                     EntityType::tryFrom((string) ($reqBody['entity_type'] ?? '')),
                     category: (int) ($reqBody['category'] ?? 0),
                     canreadBase: $canreadBase,

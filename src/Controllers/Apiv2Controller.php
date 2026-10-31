@@ -269,6 +269,13 @@ final class Apiv2Controller extends AbstractApiController
 
     private function getArray(): array
     {
+        if ($this->Model instanceof Users && $this->id > 0 && $this->requester->getUserid() !== $this->id && !$this->requester->isSysadmin() && (!$this->requester->isAdmin || !$this->requester->isAdminOf($this->id))) {
+            return array(
+                'firstname' => $this->Model->userData['firstname'],
+                'lastname' => $this->Model->userData['lastname'],
+                'email' => Users::maskEmail($this->Model->userData['email']),
+            );
+        }
         if (($this->id !== null && !$this->hasSubmodel) || ($this->subId !== null && $this->hasSubmodel)) {
             return $this->Model->readOne();
         }

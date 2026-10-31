@@ -956,6 +956,25 @@ class Users extends AbstractRest
         return $teamIds;
     }
 
+    public static function maskEmail(string $email): string
+    {
+        $separatorPosition = strrpos($email, '@');
+        if ($separatorPosition === false) {
+            return '***';
+        }
+        $localPart = substr($email, 0, $separatorPosition);
+        $domain = substr($email, $separatorPosition + 1);
+        $length = strlen($localPart);
+
+        $maskedLocalPart = match (true) {
+            $length <= 1 => '*',
+            $length === 2 => $localPart[0] . '***',
+            $length >= 8 => substr($localPart, 0, 2) . '***' . substr($localPart, -2),
+            default => $localPart[0] . '***' . substr($localPart, -1),
+        };
+        return sprintf('%s@%s', $maskedLocalPart, $domain);
+    }
+
     protected static function search(UsersColumn $column, string $term, bool $filterValidated = false): self
     {
         $Db = Db::getConnection();
@@ -1095,24 +1114,5 @@ class Users extends AbstractRest
             $Notifications = $isValidated ? new UserCreated($adminUser, $userid, $team) : new UserNeedValidation($adminUser, $userid, $team);
             $Notifications->create();
         }
-    }
-
-    private static function maskEmail(string $email): string
-    {
-        $separatorPosition = strrpos($email, '@');
-        if ($separatorPosition === false) {
-            return '***';
-        }
-        $localPart = substr($email, 0, $separatorPosition);
-        $domain = substr($email, $separatorPosition + 1);
-        $length = strlen($localPart);
-
-        $maskedLocalPart = match (true) {
-            $length <= 1 => '*',
-            $length === 2 => $localPart[0] . '***',
-            $length >= 8 => substr($localPart, 0, 2) . '***' . substr($localPart, -2),
-            default => $localPart[0] . '***' . substr($localPart, -1),
-        };
-        return sprintf('%s@%s', $maskedLocalPart, $domain);
     }
 }

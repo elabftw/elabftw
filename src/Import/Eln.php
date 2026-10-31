@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\CreateUploadFromFs;
-use Elabftw\Elabftw\Env;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
@@ -24,14 +24,13 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Hash\FileHash;
+use Elabftw\Interfaces\CompoundInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Comments;
-use Elabftw\Models\Config;
 use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Changelog;
-use Elabftw\Models\Compounds;
 use Elabftw\Models\UploadGroups;
 use Elabftw\Models\Uploads;
 use Elabftw\Models\Users\Users;
@@ -39,9 +38,6 @@ use Elabftw\Params\ContentParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Params\TagParam;
 use Elabftw\Services\Filter;
-use Elabftw\Services\HttpGetter;
-use Elabftw\Services\OpenBabelFingerprinter;
-use GuzzleHttp\Client;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -67,6 +63,7 @@ use function explode;
 use function filter_var;
 use function in_array;
 use function is_string;
+use function is_numeric;
 use function json_encode;
 use function parse_str;
 use function parse_url;
@@ -90,7 +87,13 @@ class Eln extends AbstractZip
 
     private array $linksToCreate = array();
 
+    private array $metadataReferencesToResolve = array();
+
     private array $insertedEntities = array();
+
+    private array $insertedCompounds = array();
+
+    private array $entityStatesToRestore = array();
 
     private array $crateNodeHasPart = array();
 
@@ -116,6 +119,7 @@ class Eln extends AbstractZip
         protected UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
+        protected CompoundInterface $Compounds,
         protected ?EntityType $entityType = null,
         protected ?int $category = null,
         protected BasePermissions $canreadBase = BasePermissions::Team,
@@ -259,6 +263,11 @@ class Eln extends AbstractZip
         return $this->requester;
     }
 
+    protected function getMetadataUserReference(string $personId): int
+    {
+        return $this->targetUser->getUserid();
+    }
+
     private function importDatasets(): int
     {
         // loop over each hasPart of the root node
@@ -268,6 +277,47 @@ class Eln extends AbstractZip
             $this->logger->debug(sprintf('Processing Dataset %d/%d', $current, $this->count));
             $this->importRootDataset($this->getNodeFromId($part['@id']));
             $current++;
+        }
+
+        $insertedEntitiesIds = array();
+        foreach ($this->insertedEntities as $inserted) {
+            $insertedEntitiesIds[$inserted['item_@id']] = $inserted['id'];
+        }
+        foreach ($this->metadataReferencesToResolve as $ref) {
+            $targetIds = array();
+            $resolved = true;
+            foreach ($ref['target_@ids'] as $target) {
+                $targetId = match ($ref['target_type']) {
+                    'users' => $this->getMetadataUserReference($target),
+                    'compounds' => $this->getOrCreateCompound($target),
+                    default => $insertedEntitiesIds[$target] ?? null,
+                };
+                if ($targetId === null) {
+                    $this->logger->warning(sprintf('Could not resolve metadata reference %s.', $target));
+                    $resolved = false;
+                    break;
+                }
+                $targetIds[] = $targetId;
+            }
+            $entity = $ref['origin_entity_type']->toInstance(
+                $ref['users'],
+                $ref['origin_id'],
+                true,
+                true,
+            );
+            if (!$resolved || $targetIds === array()) {
+                $entity->patch(Action::UpdateMetadataField, array(
+                    $ref['property_id'] => array(
+                        'value' => $ref['is_multiple'] ? array() : '',
+                        'value_labels' => null,
+                    ),
+                ));
+                continue;
+            }
+            $entity->patch(
+                Action::UpdateMetadataField,
+                array($ref['property_id'] => $ref['is_multiple'] ? $targetIds : $targetIds[0])
+            );
         }
 
         // All imported entities now have their target IDs
@@ -327,7 +377,59 @@ class Eln extends AbstractZip
                 $entity->ItemsLinks->createForImport();
             }
         }
+
+        // Restore entity state (normal, archived, deleted).
+        $this->restoreEntityStates();
+
         return $this->getInserted();
+    }
+
+    // Retrieve compound id from graph JSON-LD instead of sql
+    private function getOrCreateCompound(string $id): ?int
+    {
+        if (isset($this->insertedCompounds[$id])) {
+            return $this->insertedCompounds[$id];
+        }
+
+        $node = $this->getNodeFromId($id);
+        if (($node['@type'] ?? null) !== 'MolecularEntity') {
+            return null;
+        }
+        $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node));
+        $this->insertedCompounds[$id] = $compoundId;
+        return $compoundId;
+    }
+
+    private function compoundFromJsonLd(array $node): Compound
+    {
+        $casNumber = null;
+        $pubchemCid = null;
+
+        foreach ($node['identifier'] ?? array() as $identifier) {
+            if (!is_array($identifier)) {
+                continue;
+            }
+            if (($identifier['propertyID'] ?? null) === 'CAS Registry Number') {
+                $casNumber = $identifier['value'] ?? null;
+            }
+            if (($identifier['propertyID'] ?? null) === 'PubChem CID') {
+                $value = $identifier['value'] ?? null;
+                if (is_numeric($value) && (int) $value > 0) {
+                    $pubchemCid = (int) $value;
+                }
+            }
+        }
+        return new Compound(
+            cas: $casNumber,
+            cid: $pubchemCid,
+            inChI: $node['inChI'] ?? null,
+            inChIKey: $node['inChIKey'] ?? null,
+            name: $node['name'] ?? null,
+            iupacName: $node['iupacName'] ?? null,
+            smiles: $node['smiles'] ?? null,
+            molecularFormula: $node['molecularFormula'] ?? null,
+            molecularWeight: isset($node['molecularWeight']) ? (float) $node['molecularWeight'] : null,
+        );
     }
 
     private function getChangelogLinkReplacements(): array
@@ -534,7 +636,32 @@ class Eln extends AbstractZip
                             $node = $this->getNodeFromId($propval['@id']);
                             if ($node['propertyID'] === 'elabftw_metadata') {
                                 $this->Entity->update(new EntityParams('metadata', $node['value']));
-                                break;
+                                continue;
+                            }
+                            $type = $node['valueReference'] ?? '';
+                            $value = $node['value'] ?? null;
+                            if (in_array($type, array('compounds', 'experiments', 'items', 'users'), true) && !empty($value)) {
+                                $isMultiple = is_array($value) && array_is_list($value);
+                                $referenceValues = $isMultiple ? $value : array($value);
+                                $targetAtIds = array();
+                                foreach ($referenceValues as $referenceValue) {
+                                    if (!is_array($referenceValue)) {
+                                        continue;
+                                    }
+                                    $targetAtId = $referenceValue['@id'] ?? null;
+                                    if (is_string($targetAtId)) {
+                                        $targetAtIds[] = $targetAtId;
+                                    }
+                                }
+                                $this->metadataReferencesToResolve[] = array(
+                                    'origin_entity_type' => $this->Entity->entityType,
+                                    'origin_id' => $this->Entity->id,
+                                    'users' => $this->Entity->Users,
+                                    'property_id' => $node['propertyID'],
+                                    'target_@ids' => $targetAtIds,
+                                    'target_type' => $type,
+                                    'is_multiple' => $isMultiple,
+                                );
                             }
                         }
                     }
@@ -576,52 +703,19 @@ class Eln extends AbstractZip
                     }
                     break;
                 case 'compounds_links':
-                    $Config = Config::getConfig();
-                    $httpGetter = new HttpGetter(
-                        new Client(),
-                        $Config->configArr['proxy'],
-                        !Env::asBool('DEV_MODE'),
-                    );
-
-                    $Compounds = new Compounds(
-                        $httpGetter,
-                        $this->requester,
-                        new OpenBabelFingerprinter(),
-                    );
                     foreach ($value as $compoundLink) {
-                        $compound = $this->getNodeFromId($compoundLink['@id']);
-                        $inchi = $compound['inChI'];
-                        $inchiKey = $compound['inChIKey'];
-                        $name = $compound['name'];
-                        $iupacName = $compound['iupacName'];
-                        $smiles = $compound['smiles'];
-                        $molecularFormula = $compound['molecularFormula'];
-                        $molecularWeight = $compound['molecularWeight'];
-                        $casNumber = null;
-                        $pubchemCid = null;
-                        foreach ($compound['identifier'] as $identifier) {
-                            if ($identifier['propertyID'] === 'CAS Registry Number') {
-                                $casNumber = $identifier['value'];
-                            }
-                            if ($identifier['propertyID'] === 'PubChem CID') {
-                                $pubchemCid = $identifier['value'];
-                            }
+                        $id = $compoundLink['@id'] ?? null;
+                        if (!is_string($id)) {
+                            continue;
                         }
-                        $compoundId = $Compounds->create(
-                            inchi: $inchi,
-                            inchiKey: $inchiKey,
-                            smiles: $smiles,
-                            name: $name,
-                            molecularFormula: $molecularFormula,
-                            molecularWeight: (float) $molecularWeight,
-                            iupacName: $iupacName,
-                            casNumber: $casNumber,
-                            pubchemCid: $pubchemCid,
-                        );
+                        $compoundId = $this->getOrCreateCompound($id);
+                        if ($compoundId === null) {
+                            $this->logger->warning(sprintf('Could not resolve compound %s during ELN import.', $id));
+                            continue;
+                        }
                         $CompoundsLinks = LinksFactory::getCompoundsLinks($this->Entity, $compoundId);
                         $CompoundsLinks->postAction(Action::Create, array());
                     }
-
                     break;
                 default:
             }
@@ -664,16 +758,12 @@ class Eln extends AbstractZip
         }
         $this->restoreUploadOrdering();
 
-        // Restore entity state (normal, archived, deleted).
-        $state = State::fromName($dataset['status'] ?? State::Normal->name);
-        // we use match(true) to be able to match a State and the Locked pseudo-state in the same match
-        match (true) {
-            $state === State::Archived => $this->Entity->patch(Action::Archive, array()),
-            $state === State::Deleted => $this->Entity->patch(Action::Update, array('state' => $state->value)),
-            // Restore locked/unlocked condition.
-            ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->restoreLock($dataset),
-            default => null,
-        };
+        $this->entityStatesToRestore[] = array(
+            'entity_type' => $this->Entity->entityType,
+            'entity_id' => $this->Entity->id,
+            'users' => $this->Entity->Users,
+            'dataset' => $dataset,
+        );
 
         // Prepare the original changelog; restore it once all imported entity IDs are known
         if (!empty($dataset['subjectOf'])) {
@@ -684,9 +774,31 @@ class Eln extends AbstractZip
         }
     }
 
-    private function restoreLock(array $dataset): array
+    private function restoreEntityStates(): void
     {
-        $result = $this->Entity->patch(Action::Lock, array());
+        foreach ($this->entityStatesToRestore as $pending) {
+            $entity = $pending['entity_type']->toInstance(
+                $pending['users'],
+                $pending['entity_id'],
+                true,
+                true,
+            );
+            $dataset = $pending['dataset'];
+            $state = State::fromName($dataset['status'] ?? State::Normal->name);
+            // we use match(true) to be able to match a State and the Locked pseudo-state in the same match
+            match (true) {
+                $state === State::Archived => $entity->patch(Action::Archive, array()),
+                $state === State::Deleted => $entity->patch(Action::Update, array('state' => $state->value)),
+                // Restore locked/unlocked condition.
+                ($dataset['conditionsOfAccess'] ?? '') === 'Locked' => $this->restoreLock($entity, $dataset),
+                default => null,
+            };
+        }
+    }
+
+    private function restoreLock(AbstractEntity $entity, array $dataset): array
+    {
+        $result = $entity->patch(Action::Lock, array());
         $lockedAt = null;
         foreach ($dataset['subjectOf'] ?? array() as $action) {
             if (($action['object'] ?? '') !== 'locked'
@@ -701,7 +813,7 @@ class Eln extends AbstractZip
             }
         }
         if ($lockedAt !== null) {
-            $this->Entity->update(new ContentParams('locked_at', date('Y-m-d H:i:s', $lockedAt->getTimestamp())));
+            $entity->update(new ContentParams('locked_at', date('Y-m-d H:i:s', $lockedAt->getTimestamp())));
         }
         return $result;
     }

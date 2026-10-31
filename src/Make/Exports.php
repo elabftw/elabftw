@@ -21,6 +21,7 @@ use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\AbstractRest;
@@ -273,6 +274,7 @@ final class Exports extends AbstractRest
                         $instance2Rors,
                         $teams2Rors,
                         $users2Rors,
+                        CompoundsFactory::getCompounds($this->requester),
                     );
                 } else {
                     $Maker = new MakeBackupZip($ZipStream, $this->requester, $entityArr, $usePdfa, $includeChangelog, $includeJson);

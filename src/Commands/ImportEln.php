@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Enums\EntityType;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Enums\Storage;
 use Elabftw\Import\TrustedEln;
 use Elabftw\Interfaces\StorageInterface;
@@ -91,6 +92,7 @@ final class ImportEln extends Command
             $UploadedFile,
             Storage::EXPORTS->getStorage()->getFs(),
             $logger,
+            CompoundsFactory::getCompounds($user),
             $entityType,
             category: $defaultCategory,
             verifyChecksum: (bool) $input->getOption('checksum'),

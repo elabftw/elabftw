@@ -196,7 +196,6 @@ const mountEntityListSv = (target: HTMLElement, order: string, sort: string): vo
       selectedEntities,
       currentUserId: core.currentUserid,
       currentTeam: core.currentTeam,
-      isAdmin: core.isAdmin,
       isAnon: core.isAnon,
       onInitialLoadDone: handleInitialLoadDone,
     },

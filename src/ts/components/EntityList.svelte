@@ -48,6 +48,8 @@
     timestampedby?: number;
     next_step?: string | null;
     locked?: boolean;
+    // computed by the backend: can the current user write to this entity
+    has_write_access?: boolean;
     modified_at?: string | null;
     date?: string | null;
     created_at?: string | null;
@@ -68,7 +70,6 @@
     selectedEntities = [],
     currentUserId = null,
     currentTeam = null,
-    isAdmin = false,
     isAnon = false,
     onInitialLoadDone,
   } = $props<{
@@ -81,7 +82,6 @@
     selectedEntities: Writable<string[]>;
     currentUserId?: number | null;
     currentTeam?: number | null;
-    isAdmin?: boolean;
     isAnon?: boolean;
     onInitialLoadDone?: () => void;
   }>();
@@ -556,7 +556,7 @@
   }
 
   function canEditEntity(entity: EntityListItem): boolean {
-    return entity.userid === currentUserId || entityType === 'items' || isAdmin;
+    return Boolean(entity.has_write_access);
   }
 
   onMount(() => {

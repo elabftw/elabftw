@@ -89,13 +89,16 @@ $info = getimagesizefromstring($image->getImageBlob());
 check(is_array($info) && $info[0] === 20 && $info[1] === 10 && $info['mime'] === 'image/png', 'SVG rasterization failed.');
 $image->clear();
 
+// Without showpage, nothing is rendered and the PS coder runs Ghostscript again with "-c showpage".
 foreach (array('%!PS-Adobe-3.0', '%!PS-Adobe-3.0 EPSF-3.0') as $header) {
-    $source = fopen('php://temp', 'w+b');
-    check(is_resource($source), 'Cannot create fixture stream.');
-    fwrite($source, $header . "\n%%BoundingBox: 0 0 4 2\n1 0 0 setrgbcolor\n0 0 4 2 rectfill\nshowpage\n");
-    rewind($source);
-    checkThumbnail($source);
-    fclose($source);
+    foreach (array("showpage\n", '') as $showpage) {
+        $source = fopen('php://temp', 'w+b');
+        check(is_resource($source), 'Cannot create fixture stream.');
+        fwrite($source, $header . "\n%%BoundingBox: 0 0 4 2\n1 0 0 setrgbcolor\n0 0 4 2 rectfill\n" . $showpage);
+        rewind($source);
+        checkThumbnail($source);
+        fclose($source);
+    }
 }
 $source = fopen($argv[1], 'rb');
 check(is_resource($source), 'Cannot read PDF fixture.');
@@ -118,6 +121,9 @@ $image->clear();
 foreach (array('xc:white', 'label:eLabFTW', 'caption:eLabFTW', 'gradient:black-white') as $source) {
     expectRejection(static fn() => (new Imagick())->readImage($source));
 }
+// Without libxml2, the internal SVG renderer (MSVG) is not built: SVG is only rendered by librsvg.
+$delegates = explode(' ', Imagick::getConfigureOptions('DELEGATES')['DELEGATES'] ?? '');
+check(in_array('rsvg', $delegates, true) && !in_array('xml', $delegates, true), 'ImageMagick must use librsvg and not libxml2.');
 foreach (array('BMP', 'GIF', 'HEIC', 'WEBP', 'TIFF', 'PDF', 'PS', 'SVG', 'MIFF') as $format) {
     expectRejection(static function () use ($format): void {
         $image = new Imagick();

@@ -1,0 +1,6 @@
+#!/bin/sh
+# Ghostscript delegate of ImageMagick, see the delegates.xml step of the Dockerfile
+# Ghostscript runs in its own process, not in the PHP worker, so PHP time limits do not stop it:
+# give it the same CPU time as ImageMagick operations get in policy.xml.
+ulimit -t 60
+exec /usr/bin/gs "$@"

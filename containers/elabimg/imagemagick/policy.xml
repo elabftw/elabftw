@@ -12,9 +12,10 @@
   <policy domain="resource" name="time" value="60"/>
   <policy domain="resource" name="list-length" value="128"/>
 
-  <!-- PDF/PostScript thumbnails need Ghostscript; no other programs may run. -->
+  <!-- PDF/PostScript thumbnails need Ghostscript, run through imagemagick-gs; no other programs may run. -->
+  <!-- Every bare word of a delegate command must be allowed too: the PS coder adds "-c showpage" when nothing was rendered. -->
   <policy domain="delegate" rights="none" pattern="*"/>
-  <policy domain="delegate" rights="execute" pattern="{gs,/usr/bin/gs,ps:alpha,ps:cmyk,ps:color,ps:mono}"/>
+  <policy domain="delegate" rights="execute" pattern="{/usr/local/bin/imagemagick-gs,ps:alpha,ps:cmyk,ps:color,ps:mono,showpage}"/>
   <policy domain="filter" rights="none" pattern="*"/>
   <policy domain="path" rights="none" pattern="@*"/>
   <policy domain="path" rights="none" pattern="|*"/>
@@ -26,8 +27,8 @@
   <policy domain="module" rights="read | write" pattern="{BMP,GIF,HEIC,JPEG,PDF,PNG,PNM,PS,SVG,TIFF,WEBP}"/>
   <policy domain="coder" rights="none" pattern="*"/>
   <policy domain="coder" rights="read" pattern="{BMP,BMP2,BMP3,GIF,HEIC,HEIF,WEBP,TIFF,TIFF64}"/>
-  <!-- SVG uses linked librsvg, without an external converter. -->
-  <policy domain="coder" rights="read" pattern="{SVG,SVGZ,MSVG,RSVG,PDF,PS,EPS,EPSF,EPSI}"/>
+  <!-- SVG uses linked librsvg, without an external converter; the internal MSVG renderer is not built. -->
+  <policy domain="coder" rights="read" pattern="{SVG,RSVG,PDF,PS,EPS,EPSF,EPSI}"/>
   <!-- Ghostscript can return these intermediate raster formats. -->
   <policy domain="coder" rights="read" pattern="{PAM,PBM,PGM,PNM,PPM}"/>
   <!-- Thumbnails are JPEG; QR labels and rasterized MathJax are PNG. -->

@@ -23,16 +23,23 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Scope;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Services\BookingApproval;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
+use Throwable;
 
 use function _;
+use function json_decode;
+use function sort;
+use function array_map;
 
 /**
  * All about the database items
@@ -44,6 +51,53 @@ final class Items extends AbstractConcreteEntity
     protected const string FORCE_TEMPLATE_KEY = 'force_res_tpl';
 
     public EntityType $entityType = EntityType::Items;
+
+    #[Override]
+    public function readOne(): array
+    {
+        $this->entityData = parent::readOne();
+        $this->hydrateApprovers($this->entityData);
+        return $this->entityData;
+    }
+
+    #[Override]
+    public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
+    {
+        return array_map(
+            $this->hydrateApprovers(...),
+            parent::readShow($displayParams, $extended, $can),
+        );
+    }
+
+    #[Override]
+    public function patch(Action $action, array $params): array
+    {
+        if ($action === Action::Update && isset($params['requires_booking_approval'])) {
+            $this->canOrExplode(AccessType::Write);
+            $this->ExclusiveEditMode->canPatchOrExplode($action);
+            $requiresApproval = BinaryValue::tryFrom($params['requires_booking_approval']);
+            if ($requiresApproval === null) {
+                throw new ImproperActionException('Invalid requires_booking_approval value.');
+            }
+            $approvers = $params['approvers'];
+            unset($params['requires_booking_approval'], $params['approvers'], $params['action']);
+
+            // Save booking settings and approvers together or roll back both.
+            $this->Db->beginTransaction();
+            try {
+                new BookingApproval($this->Users)->updateSettings($this, $requiresApproval->toBoolean(), $approvers);
+                if ($params) {
+                    parent::patch($action, $params);
+                }
+                $this->Db->commit();
+            } catch (Throwable $e) {
+                $this->Db->rollBack();
+                throw $e;
+            }
+            return $this->readOne();
+        }
+        return parent::patch($action, $params);
+    }
 
     #[Override]
     public function create(
@@ -210,5 +264,14 @@ final class Items extends AbstractConcreteEntity
     protected function getCreatePermissionKey(): string
     {
         return 'users_canwrite_resources';
+    }
+
+    private function hydrateApprovers(array &$item): void
+    {
+        if (!isset($item['approvers'])) {
+            return;
+        }
+        $item['approvers'] = json_decode($item['approvers'], true, flags: JSON_THROW_ON_ERROR);
+        sort($item['approvers'], SORT_NUMERIC);
     }
 }

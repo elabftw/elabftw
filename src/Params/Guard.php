@@ -70,4 +70,11 @@ final class Guard
             }
         }
     }
+
+    public static function ensureArrayNotEmpty(string $name, array $values): void
+    {
+        if ($values === array()) {
+            throw new ImproperActionException(sprintf("The array '%s' should not be empty", $name));
+        }
+    }
 }

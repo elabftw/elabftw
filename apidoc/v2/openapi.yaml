@@ -1453,6 +1453,26 @@ components:
           type: integer
           description: Whether the event is bookable (1 = yes, 0 = no)
           example: 1
+        canapprove:
+          type: integer
+          enum: [0, 1]
+          description: Whether the authenticated user may approve this pending booking.
+        approval_status:
+          type: integer
+          enum: [0, 1, 2, 3]
+          description: 0 no approval required, 1 pending, 2 approved, 3 rejected. Overdue is a UI label for past pending events, not a stored status.
+        approved_by:
+          type: integer
+          nullable: true
+          description: User ID of the person who made the approval decision.
+        approved_at:
+          type: string
+          nullable: true
+          description: Timestamp of the approval decision.
+        approval_comment:
+          type: string
+          nullable: true
+          description: Optional decision reason.
         created_at:
           type: string
           format: date-time
@@ -1816,6 +1836,17 @@ components:
       properties:
         is_bookable:
           type: integer
+        requires_booking_approval:
+          type: integer
+          enum: [0, 1]
+          description: Require approval for new bookings. Include approvers when updating; disabling approval does not change pending requests or remove configured approvers.
+        approvers:
+          type: array
+          uniqueItems: true
+          description: Approver user IDs. Users may belong to any team or be archived or unvalidated.
+          items:
+            type: integer
+            minimum: 1
         canbook_base:
           type: number
           description: |
@@ -4461,7 +4492,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/entity'
+                $ref: '#/components/schemas/item'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -5426,6 +5457,38 @@ paths:
       tags: ['Events']
       summary: Read all events in the team.
       operationId: read-events
+      parameters:
+        - name: approval_status
+          in: query
+          description: Comma-separated statuses (0 no approval, 1 pending, 2 approved, 3 rejected). Defaults to 0,1,2.
+          schema:
+            type: string
+            pattern: '^[0-3](,[0-3])*$'
+          example: '1,2,3'
+        - name: userid
+          in: query
+          description: Filter by booking owner user ID.
+          schema:
+            type: integer
+            minimum: 1
+        - name: approver
+          in: query
+          description: Filter by designated approver user ID. This does not grant approval permissions to the requester.
+          schema:
+            type: integer
+            minimum: 1
+        - name: start
+          in: query
+          description: Beginning of the date range (YYYY-MM-DD). Without a date range, booking filters cover all dates.
+          schema:
+            type: string
+            format: date
+        - name: end
+          in: query
+          description: End of the date range (YYYY-MM-DD). Without a date range, booking filters cover all dates.
+          schema:
+            type: string
+            format: date
       responses:
         '200':
           description: A list of booked slots.
@@ -5569,6 +5632,22 @@ paths:
           application/json:
             schema:
               oneOf:
+                - type: object
+                  required: [action, target, decision]
+                  description: Approve or reject a pending request. Only its designated approvers may decide.
+                  properties:
+                    action:
+                      type: string
+                      enum: [update]
+                    target:
+                      type: string
+                      enum: [approval]
+                    decision:
+                      type: string
+                      enum: [approved, rejected]
+                    comment:
+                      type: string
+                      description: Optional reason for the decision./
                 - type: object
                   required: [target, start, end]
                   properties:

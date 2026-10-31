@@ -30,17 +30,25 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
+import { ClientSideRowModelModule, createGrid, ModuleRegistry, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import type { ColDef, GridApi, ICellRendererParams } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import $ from 'jquery';
 import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { Action } from './interfaces';
-import { collectForm, TomSelect } from './misc';
+import { collectForm, toRelative, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
 import { rebuildTomSelectOptions } from './misc';
 import { showModal, showModalAndFocusFirstInput } from './common';
+import { getAgGridTheme } from './theme';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, NumberFilterModule, TextFilterModule]);
 
 type CancelNotificationPayload = {
   action: Action;
@@ -60,6 +68,23 @@ type Recurrence = {
   until?: string;
   weekdays?: number[];
 };
+type BookingRequest = {
+  id: number;
+  item_title: string;
+  fullname: string;
+  start: string;
+  end: string;
+  modified_at: string;
+  approval_status: number;
+  approval_comment: string | null;
+  canapprove: number;
+  recurrence_id: string | null;
+  recurrence_frequency: 'daily' | 'weekly' | 'monthly' | null;
+  recurrence_interval: number | null;
+  recurrence_rule: Recurrence | null;
+};
+
+type BookingRequestRow = BookingRequest & { occurrences: number; lastStart: string };
 type Range = 'day' | 'week' | 'month';
 type SavedView = Range | 'listWeek';
 const GRID_VIEWS: Record<Range, string> = {
@@ -509,7 +534,10 @@ if (calendarEl) {
       const canBook = Number(info.event.extendedProps.canbook);
       const eventOwnerId = Number(info.event.extendedProps.userid);
       const classNames = ['scheduler-event-colored'];
-      if (canBook === 0 && currentUserId !== eventOwnerId) {
+      if (Number(info.event.extendedProps.approval_status) === 1) {
+        classNames.push('scheduler-event-pending');
+      }
+      if (canBook === 0 && currentUserId !== eventOwnerId && Number(info.event.extendedProps.canapprove) !== 1) {
         classNames.push('calendar-event-disabled');
       }
       return classNames;
@@ -519,8 +547,9 @@ if (calendarEl) {
       const eventColor = info.event.backgroundColor || info.event.borderColor || '#0c58ab';
       info.el.style.setProperty('--scheduler-event-color', eventColor);
     },
-    // prevent any actions on disabled events
-    eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1,
+    // Pending approval cannot be moved by drag and drop.
+    eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1
+      && Number(event.extendedProps.approval_status) === 0,
     // selection
     select: function(info): void {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
@@ -631,7 +660,8 @@ if (calendarEl) {
     eventClick: function(info): void {
       const canBook = Number(info.event.extendedProps.canbook);
       const eventOwnerId = Number(info.event.extendedProps.userid);
-      if (canBook === 0 && currentUserId !== eventOwnerId) {
+      const isPending = Number(info.event.extendedProps.approval_status) === 1;
+      if (isPending || (canBook === 0 && currentUserId !== eventOwnerId)) {
         return;
       }
       setSchedulerMode('view');
@@ -645,6 +675,8 @@ if (calendarEl) {
       const bookedBy = booker ? (modalLabel.dataset.bookedBy ?? '%s').replace('%s', booker) : '';
       document.getElementById('eventModalResourceTitle')!.textContent = resourceTitle;
       document.getElementById('eventModalResourceMeta')!.textContent = [categoryTitle, bookedBy].filter(Boolean).join(' · ');
+      const requiresBookingApproval = Number(info.event.extendedProps.approval_status) !== 0;
+      document.getElementById('eventModalApprovalHelp')!.classList.toggle('d-none', !requiresBookingApproval);
 
       // Preselect the resource currently reserved by this event
       const itemId = String(info.event.extendedProps.items_id);
@@ -652,9 +684,15 @@ if (calendarEl) {
         eventResourceSelect.addOption({ value: itemId, text: resourceTitle });
       }
       eventResourceSelect.setValue(itemId, true);
+      if (requiresBookingApproval) {
+        eventResourceSelect.disable();
+      } else {
+        eventResourceSelect.enable();
+      }
       changeEventResourceBtn.dataset.id = info.event.id;
       changeEventResourceBtn.dataset.itemId = itemId;
       changeEventResourceBtn.disabled = true;
+      changeEventResourceBtn.classList.toggle('d-none', requiresBookingApproval);
       viewBookedResource.href = `database.php?mode=view&id=${itemId}`;
 
       // set the event id on the various elements
@@ -672,6 +710,8 @@ if (calendarEl) {
       // start and end inputs values
       startInput.valueAsNumber = toDateTimeInputValueNumber(info.event.start);
       endInput.valueAsNumber = toDateTimeInputValueNumber(info.event.end);
+      startInput.disabled = requiresBookingApproval;
+      endInput.disabled = requiresBookingApproval;
       // also adjust the event id so the change listener will send a correct query
       startInput.dataset.eventid = info.event.id;
       endInput.dataset.eventid = info.event.id;
@@ -679,7 +719,7 @@ if (calendarEl) {
 
       // The event modal is reused, so reset recurrence visibility and scope selection on every open
       const isRecurring = Boolean(info.event.extendedProps.recurrence_id);
-      document.getElementById('eventResourceRecurrenceHelp')?.classList.toggle('d-none', !isRecurring);
+      document.getElementById('eventResourceRecurrenceHelp')?.classList.toggle('d-none', !isRecurring || requiresBookingApproval);
       const viewRecurrence = document.getElementById('viewRecurrence')!;
       const viewRecurrenceText = document.getElementById('viewRecurrenceText')!;
       viewRecurrence.classList.toggle('d-none', !isRecurring);
@@ -733,6 +773,217 @@ if (calendarEl) {
     calendar.updateSize();
   }
 
+  // The API returns one event per occurrence; approvals already apply to the whole recurrence.
+  const bookingGrids: Partial<Record<'my' | 'pending', GridApi<BookingRequestRow>>> = {};
+  const bookingLocale = i18next.language.replace('_', '-');
+  const element = <T extends keyof HTMLElementTagNameMap>(tag: T, className = '', text?: string): HTMLElementTagNameMap[T] => {
+    const node = document.createElement(tag);
+    node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  };
+  const formatBookingDuration = (start: DateTime, end: DateTime): string => {
+    const minutes = Math.max(0, Math.round(end.diff(start, 'minutes').minutes));
+    return ([
+      ['day', Math.floor(minutes / 1440)],
+      ['hour', Math.floor((minutes % 1440) / 60)],
+      ['minute', minutes % 60],
+    ] as const)
+      .filter(([, value]) => value > 0)
+      .map(([unit, value]) => new Intl.NumberFormat(bookingLocale, { style: 'unit', unit, unitDisplay: 'narrow' }).format(value))
+      .join(' ') || new Intl.NumberFormat(bookingLocale, { style: 'unit', unit: 'minute', unitDisplay: 'narrow' }).format(0);
+  };
+
+  function renderBookingSchedule(booking: BookingRequestRow): HTMLElement {
+    const start = DateTime.fromSQL(booking.start).setLocale(bookingLocale);
+    const end = DateTime.fromSQL(booking.end).setLocale(bookingLocale);
+    const dateLabel = start.toLocaleString({ weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+    const startLabel = `${dateLabel.charAt(0).toLocaleUpperCase(bookingLocale)}${dateLabel.slice(1)}, ${start.toFormat('HH:mm')}`;
+    const endLabel = end.hasSame(start, 'day') ? end.toFormat('HH:mm') : end.toLocaleString(DateTime.DATETIME_MED);
+    const container = element('div', 'd-flex flex-column justify-content-center h-100');
+    container.style.lineHeight = '1.5';
+    const slot = element('div');
+    slot.append(element('strong', 'mr-2', `${startLabel} - ${endLabel}`),
+      element('span', 'smallgray', `(${formatBookingDuration(start, end)})`));
+    container.append(slot, element('div', 'smallgray', toRelative(booking.start, bookingLocale)));
+    if (booking.recurrence_id) {
+      const cadenceUnits = { daily: 'day', weekly: 'week', monthly: 'month' } as const;
+      const unit = booking.recurrence_frequency ? cadenceUnits[booking.recurrence_frequency] : null;
+      const interval = unit ? new Intl.NumberFormat(bookingLocale, { style: 'unit', unit, unitDisplay: 'long' }).format(booking.recurrence_interval || 1) : null;
+      const cadence = unit && booking.recurrence_interval === 1
+        ? i18next.t(`booking-every-${unit}`)
+        : interval ? i18next.t('booking-repeats-every', { interval }) : null;
+      container.appendChild(element('div', 'smallgray', [
+        i18next.t('booking-recurring'),
+        i18next.t('booking-occurrences', { num: booking.occurrences }),
+        ...(cadence ? [cadence] : []),
+      ].join(' · ')));
+      if (booking.recurrence_rule?.weekdays?.length) {
+        const monday = DateTime.fromISO('2026-09-14').setLocale(bookingLocale);
+        const weekdays = booking.recurrence_rule.weekdays.map(day => monday.plus({ days: day - 1 }).toFormat('ccc'));
+        container.appendChild(element('div', 'smallgray', i18next.t('booking-on-weekdays', { days: new Intl.ListFormat(bookingLocale, { type: 'conjunction' }).format(weekdays) })));
+      }
+      const last = DateTime.fromSQL(booking.lastStart).setLocale(bookingLocale);
+      container.appendChild(element('div', 'smallgray', i18next.t('booking-last-occurrence', { date: last.toLocaleString(DateTime.DATETIME_MED) })));
+    }
+    return container;
+  }
+
+  function renderBookingActions(booking: BookingRequestRow, kind: 'my' | 'pending'): HTMLElement {
+    const actions = element('div', 'd-flex align-items-center pt-2');
+    if (kind === 'pending' && Number(booking.canapprove) === 1) {
+      for (const [action, style] of [['approve', 'btn-primary'], ['reject', 'btn-danger-ghost']]) {
+        const button = element('button', `btn btn-sm mr-2 ${style}`, i18next.t(action));
+        button.type = 'button';
+        button.dataset.action = `booking-${action}`;
+        button.dataset.eventid = String(booking.id);
+        actions.appendChild(button);
+      }
+    } else if (kind === 'my' && Number(booking.approval_status) === 1) {
+      const cancel = element('button', 'btn btn-sm btn-danger-ghost', i18next.t('cancel'));
+      cancel.type = 'button';
+      cancel.addEventListener('click', async () => {
+        if (!window.confirm(i18next.t('booking-cancel-confirm'))) return;
+        const endpoint = booking.recurrence_id
+          ? `event/${booking.id}/recurrences?recursive=1`
+          : `event/${booking.id}`;
+        try {
+          await ApiC.delete(endpoint);
+          calendar.refetchEvents();
+          void loadBookingRequests('my');
+        } catch {
+          // ApiC already notifies the user.
+        }
+      });
+      actions.appendChild(cancel);
+    }
+    return actions;
+  }
+
+  async function loadBookingRequests(kind: 'my' | 'pending'): Promise<void> {
+    const list = document.getElementById(kind === 'my' ? 'bookingRequestsMyList' : 'bookingRequestsPendingList')!;
+    if (!bookingGrids[kind]) list.textContent = i18next.t('loading');
+    try {
+      // Fetch the full recurrence, so both its count and its first occurrence are correct.
+      const query = kind === 'my'
+        ? `events?approval_status=1,2,3&userid=${currentUserId}`
+        : `events?approval_status=1&approver=${currentUserId}`;
+      const bookings = await ApiC.getJson<BookingRequest[]>(query);
+      const groups = new Map<string, BookingRequestRow>();
+      for (const booking of bookings) {
+        const key = booking.recurrence_id ?? `event:${booking.id}`;
+        const row = groups.get(key);
+        if (!row) {
+          groups.set(key, { ...booking, occurrences: 1, lastStart: booking.start });
+        } else {
+          row.occurrences++;
+          if (booking.start > row.lastStart) row.lastStart = booking.start;
+          // by default, display by the last updated event
+          const modifiedAt = row.modified_at > booking.modified_at ? row.modified_at : booking.modified_at;
+          if (booking.start < row.start) Object.assign(row, booking, { occurrences: row.occurrences, lastStart: row.lastStart });
+          row.modified_at = modifiedAt;
+        }
+      }
+      const rows = Array.from(groups.values()).sort((a, b) => b.modified_at.localeCompare(a.modified_at));
+      if (bookingGrids[kind]) {
+        bookingGrids[kind]!.setGridOption('rowData', rows);
+        return;
+      }
+      list.replaceChildren();
+      list.className = getAgGridTheme();
+      const statusNames = ['approved', 'pending-approval', 'approved', 'rejected'];
+      const statusColors = [
+        ['primary', 'primary-fg', 'primary'],
+        ['lightgold', 'darkgold', 'gold'],
+        ['primary', 'primary-fg', 'primary'],
+        ['lightred', 'darkred', 'dangerred'],
+      ];
+      const columnDefs: ColDef<BookingRequestRow>[] = [
+        { field: 'item_title', headerName: i18next.t('item'), flex: 1, minWidth: 160,
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
+            if (!data) return '';
+            if (kind !== 'my' || Number(data.approval_status) !== 3 || !data.approval_comment) return data.item_title;
+            const container = element('div', 'd-flex flex-column justify-content-center h-100');
+            container.style.lineHeight = '1.5';
+            container.appendChild(element('div', 'text-truncate', data.item_title));
+            const reason = element('div', 'smallgray text-truncate', `${i18next.t('reason')}: ${data.approval_comment}`);
+            reason.title = data.approval_comment;
+            container.appendChild(reason);
+            return container;
+          } },
+        { field: 'start', headerName: i18next.t('booking-when'), flex: 2, minWidth: 350,
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingSchedule(data) : '' },
+        { field: 'approval_status', headerName: i18next.t('status'), width: 155,
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
+            if (!data) return '';
+            const overdue = Number(data.approval_status) === 1 && DateTime.fromSQL(data.start).toMillis() < DateTime.now().toMillis();
+            const colors = overdue ? ['lightred', 'darkred', 'dangerred'] : (statusColors[Number(data.approval_status)] ?? statusColors[3]);
+            const badge = element('span', 'badge p-2', overdue
+              ? i18next.t('overdue')
+              : i18next.t(statusNames[Number(data.approval_status)]));
+            badge.style.backgroundColor = `var(--${colors[0]})`;
+            badge.style.color = `var(--${colors[1]})`;
+            badge.style.border = `1px solid var(--${colors[2]})`;
+            const wrapper = element('div', 'd-flex align-items-center pt-2');
+            wrapper.appendChild(badge);
+            return wrapper;
+          } },
+        { colId: 'actions', headerName: i18next.t('action'), width: kind === 'pending' ? 195 : 175, sortable: false, filter: false,
+          cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => data ? renderBookingActions(data, kind) : '' },
+      ];
+      if (kind === 'pending') {
+        columnDefs.splice(1, 0, { field: 'fullname', headerName: i18next.t('requested-by'), flex: 1, minWidth: 150 });
+      }
+      bookingGrids[kind] = createGrid<BookingRequestRow>(list, {
+        theme: 'legacy',
+        columnDefs,
+        rowData: rows,
+        getRowId: params => params.data.recurrence_id ?? `event:${params.data.id}`,
+        domLayout: 'autoHeight',
+        getRowHeight: params => params.data?.recurrence_id ? (params.data.recurrence_rule?.weekdays?.length ? 132 : 112) : 76,
+        defaultColDef: { sortable: true, resizable: true, filter: true },
+        overlayNoRowsTemplate: i18next.t('booking-no-requests'),
+      });
+    } catch {
+      if (!bookingGrids[kind]) list.textContent = i18next.t('error-booking-requests-load');
+      // ApiC already displays the API error; avoid a duplicate notification.
+    }
+  }
+
+  // The standard Tab helper handles content visibility and URL state.
+  // Fetch only the active list and resize FullCalendar when returning to it.
+  document.querySelectorAll<HTMLButtonElement>('.tabbed-menu [data-tabtarget]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = Number(tab.dataset.tabtarget);
+      if (target === 1) {
+        window.requestAnimationFrame(() => calendar.updateSize());
+      } else if (target === 2 || target === 3) {
+        void loadBookingRequests(target === 2 ? 'my' : 'pending');
+      }
+    });
+  });
+  const initialTab = new URLSearchParams(window.location.search).get('tab');
+  if (initialTab === '2' || initialTab === '3') {
+    void loadBookingRequests(initialTab === '2' ? 'my' : 'pending');
+  }
+
+  async function decideBooking(el: HTMLElement, decision: 'approved' | 'rejected', comment?: string): Promise<void> {
+    try {
+      await ApiC.patch(`event/${el.dataset.eventid}`, { action: Action.Update, target: 'approval', decision, comment });
+      $('#eventModal').modal('hide');
+      calendar.refetchEvents();
+      void loadBookingRequests('pending');
+    } catch {
+      // ApiC already notifies the user.
+    }
+  }
+
+  on('booking-approve', (el: HTMLElement) => decideBooking(el, 'approved'));
+  on('booking-reject', (el: HTMLElement) => {
+    const reason = window.prompt(i18next.t('booking-rejection-reason'));
+    if (reason !== null) return decideBooking(el, 'rejected', reason);
+  });
+
   on('cancel-event', (el: HTMLElement) => {
     const scope = (document.querySelector('input[name="deleteRecurrenceScope"]:checked') as HTMLInputElement).value;
     const endpoint = scope === 'event'
@@ -774,28 +1025,30 @@ if (calendarEl) {
       notify.error('form-validation-error');
       return;
     }
-    const startVal = startInput.valueAsNumber;
-    const endVal = endInput.valueAsNumber;
+    if (!startInput.disabled) {
+      const startVal = startInput.valueAsNumber;
+      const endVal = endInput.valueAsNumber;
 
-    if (isNaN(startVal) || isNaN(endVal)) {
-      notify.error('Invalid date values.');
-      return;
+      if (isNaN(startVal) || isNaN(endVal)) {
+        notify.error('Invalid date values.');
+        return;
+      }
+      // Validate start < end
+      if (endVal < startVal) {
+        notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
+        return;
+      }
+      // Convert to Luxon DateTime
+      const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
+      const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
+      if (!startDt.isValid || !endDt.isValid) {
+        notify.error('invalid-info');
+        return;
+      }
+      // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
+      params['start'] = startDt.toISO({ suppressMilliseconds: true });
+      params['end'] = endDt.toISO({ suppressMilliseconds: true });
     }
-    // Validate start < end
-    if (endVal < startVal) {
-      notify.error(`End time ${endInput.value} cannot be inferior to start time ${startInput.value}.`);
-      return;
-    }
-    // Convert to Luxon DateTime
-    const startDt = DateTime.fromISO(startInput.value, { zone: 'system' });
-    const endDt = DateTime.fromISO(endInput.value, { zone: 'system' });
-    if (!startDt.isValid || !endDt.isValid) {
-      notify.error('invalid-info');
-      return;
-    }
-    // convert both inputs to proper ISO with timezone. also suppress milliseconds for cleaner payload
-    params['start'] = startDt.toISO({ suppressMilliseconds: true });
-    params['end'] = endDt.toISO({ suppressMilliseconds: true });
     params['target'] = 'datetime';
     const endpoint = scope === 'event'
       ? `event/${eventId}`

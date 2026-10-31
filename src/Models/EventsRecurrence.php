@@ -100,6 +100,9 @@ final class EventsRecurrence extends AbstractRest
             if ($recurrenceId === null) {
                 throw new ImproperActionException(_('This reservation no longer belongs to a recurrence.'));
             }
+            if ($changeDateTime && (int) $event['approval_status'] !== 0) {
+                throw new ImproperActionException('Approval-controlled reservations cannot change time.');
+            }
             $allEvents = $this->readRecurrenceEvents($recurrenceId);
             $this->assertRecurrenceOwnership($allEvents, $event);
             $future = (bool) ($params['future'] ?? false);
@@ -203,6 +206,7 @@ final class EventsRecurrence extends AbstractRest
                 $req->bindValue(':recurrence_index', $event['recurrence_index'], PDO::PARAM_INT);
             }
             $result = $this->Db->execute($req);
+            $this->Scheduler->notifyApproversOfCancellation($event);
             // A recurring cancellation produces one administrator notification, not one per occurrence.
             $this->Scheduler->notifyAdminsOfDeletion($event);
             $this->Db->commit();

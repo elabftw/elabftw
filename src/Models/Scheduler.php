@@ -18,13 +18,16 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\EntitySqlBuilder;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BookingApprovalStatus;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Notifications\BookingApprovalUpdated;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\BookingApproval;
 use Elabftw\Services\Filter;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\EntityTrait;
@@ -53,6 +56,10 @@ use function str_replace;
 use function trim;
 use function usort;
 use function array_values;
+use function date;
+use function array_column;
+use function array_diff;
+use function explode;
 
 /**
  * All about the team's scheduler
@@ -174,14 +181,21 @@ final class Scheduler extends AbstractRest
             }
             $this->checkCandidateOverlaps($occurrences);
             $this->checkMaxSlots(count($occurrences));
+            $actorId = $this->Items->Users->userData['userid'];
+            $approval = new BookingApproval($this->Items->Users);
+            $status = $approval->initialStatus($this->Items->id, (bool) $this->Items->entityData['requires_booking_approval'], $actorId);
+            $selfApproved = $status === BookingApprovalStatus::Approved;
 
-            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule)
-                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_id, :recurrence_index, :recurrence_frequency, :recurrence_interval, :recurrence_rule)';
+            $sql = 'INSERT INTO team_events(team, item, start, end, userid, title, recurrence_id, recurrence_index, recurrence_frequency, recurrence_interval, recurrence_rule, approval_status, approved_by, approved_at)
+                VALUES(:team, :item, :start, :end, :userid, :title, :recurrence_id, :recurrence_index, :recurrence_frequency, :recurrence_interval, :recurrence_rule, :approval_status, :approved_by, :approved_at)';
             $req = $this->Db->prepare($sql);
             $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
             $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
             $req->bindValue(':title', $this->filterTitle($reqBody['title'] ?? ''));
             $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
+            $req->bindValue(':approval_status', $status->value, PDO::PARAM_INT);
+            $req->bindValue(':approved_by', $selfApproved ? $actorId : null, $selfApproved ? PDO::PARAM_INT : PDO::PARAM_NULL);
+            $req->bindValue(':approved_at', $selfApproved ? date('Y-m-d H:i:s') : null, $selfApproved ? PDO::PARAM_STR : PDO::PARAM_NULL);
             $req->bindValue(':recurrence_id', $recurrenceId, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $req->bindValue(':recurrence_frequency', $recurrenceFrequency, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $req->bindValue(':recurrence_interval', $recurrenceInterval, $recurrenceId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
@@ -199,6 +213,13 @@ final class Scheduler extends AbstractRest
                 $this->Db->execute($req);
                 $eventId = $eventId ?: $this->Db->lastInsertId();
             }
+            $approval->notifySubmission(
+                $this->Items->entityData,
+                $eventId,
+                $occurrences,
+                $recurrenceId,
+                $status,
+            );
             $this->Db->commit();
             return $eventId;
         } catch (Throwable $e) {
@@ -224,24 +245,37 @@ final class Scheduler extends AbstractRest
      * Return an array with events for all items of the team
      */
     #[Override]
-    public function readAll(?QueryParamsInterface $queryParams = null): array
+    public function readAll(?QueryParamsInterface $queryParams = null, bool $maskPending = true): array
     {
-        // prepare filters for the scheduler view
-        if ($queryParams !== null) {
-            $this->appendFilterSql(column: 'items.category', paramName: 'category', value: $queryParams->getQuery()->getInt('category'));
-            $this->appendFilterSql(column: 'team_events.userid', paramName: 'ownerid', value: $queryParams->getQuery()->getInt('eventOwner'));
-            // handle multiple items
-            $itemParams = $queryParams->getQuery()->all('items');
-            $ids = array_filter(array_map('intval', $itemParams)); // force numeric IDs
-            $this->appendItemsIdsToSql($ids);
+        $this->filterSqlParts = array();
+        $this->filterBindings = array();
+        $query = $queryParams?->getQuery();
+        $statuses = $query?->getString('approval_status') ?? '';
+        if ($statuses !== '' && array_diff(explode(',', $statuses), array_column(BookingApprovalStatus::cases(), 'value'))) {
+            throw new ImproperActionException('Invalid approval_status filter.');
         }
-        // apply scope for events
-        $itemParams = $queryParams?->getQuery()->all('items');
-        $itemId = !empty($itemParams) ? (int) $itemParams[0] : 0;
-        $scopeInt = $this->getScope($itemId);
-        if ($scopeInt === Scope::User->value) {
-            $this->appendFilterSql('team_events.userid', 'userid', $this->Items->Users->userData['userid']);
-        } elseif ($scopeInt === Scope::Team->value) {
+        $userid = $query?->getInt('userid') ?? 0;
+        $approver = $query?->getInt('approver') ?? 0;
+        $isRequestList = $statuses !== '' || $userid > 0 || $approver > 0;
+        // By default exclude rejected bookings from the calendar.
+        $this->filterSqlParts[] = 'AND team_events.approval_status IN (' . ($statuses ?: '0,1,2') . ')';
+        $this->appendFilterSql('team_events.userid', 'booking_userid', $userid);
+        if ($approver > 0) {
+            $this->filterBindings['approver'] = $approver;
+        }
+        $itemParams = $query?->all('items') ?? array();
+        if ($query !== null) {
+            $this->appendFilterSql('items.category', 'category', $query->getInt('category'));
+            $this->appendFilterSql('team_events.userid', 'ownerid', $query->getInt('eventOwner'));
+            $this->appendItemsIdsToSql(array_filter(array_map('intval', $itemParams)));
+        }
+        // if an item is selected, we force the events scope to 'Everything'
+        $scopeInt = (int) ($itemParams[0] ?? 0) > 0 ? Scope::Everything->value
+            : ($this->Items->Users->userData['scope_events'] ?? Scope::Everything->value);
+        // Explicit booking filters bypass the saved scheduler scope.
+        if (!$isRequestList && $scopeInt === Scope::User->value) {
+            $this->appendFilterSql('team_events.userid', 'scope_userid', $this->Items->Users->userData['userid']);
+        } elseif (!$isRequestList && $scopeInt === Scope::Team->value) {
             $this->appendFilterSql('team_events.team', 'team', $this->Items->Users->userData['team']);
         }
 
@@ -269,6 +303,10 @@ final class Scheduler extends AbstractRest
                 team_events.userid,
                 team_events.created_at,
                 team_events.modified_at,
+                team_events.approval_status,
+                team_events.approved_by,
+                team_events.approved_at,
+                CASE WHEN team_events.userid = :requester_actor THEN team_events.approval_comment ELSE NULL END AS approval_comment,
                 team_events.recurrence_id,
                 team_events.recurrence_index,
                 team_events.recurrence_frequency,
@@ -289,7 +327,9 @@ final class Scheduler extends AbstractRest
                 items.category AS items_category,
                 items.id AS items_id,
                 %s,
-                CASE WHEN %s THEN 1 ELSE 0 END AS canbook
+                CASE WHEN %s THEN 1 ELSE 0 END AS canbook,
+                CASE WHEN team_events.approval_status = 1 AND items.requires_booking_approval = 1
+                    AND actor_approver.userid IS NOT NULL THEN 1 ELSE 0 END AS canapprove
             FROM team_events
             LEFT JOIN teams ON (team_events.team = teams.id)
             LEFT JOIN experiments ON (team_events.experiment = experiments.id)
@@ -298,6 +338,8 @@ final class Scheduler extends AbstractRest
             LEFT JOIN items_categories ON (items.category = items_categories.id)
             LEFT JOIN users AS u ON (team_events.userid = u.userid)
             LEFT JOIN users2teams ON (users2teams.users_id = items.userid AND users2teams.teams_id = :team)
+            LEFT JOIN items_booking_approvers AS actor_approver ON (actor_approver.entity_id = items.id AND actor_approver.userid = :actor_approver)
+            %s
             WHERE 1 = 1
                 AND team_events.start <= :end
                 AND team_events.end >= :start
@@ -305,24 +347,51 @@ final class Scheduler extends AbstractRest
             $boundSelects['experiment'],
             $boundSelects['item_link'],
             $canBookExpr,
+            $approver > 0 ? 'INNER JOIN items_booking_approvers AS requested_approver ON (requested_approver.entity_id = items.id AND requested_approver.userid = :approver)' : '',
             implode(' ', $this->filterSqlParts)
         );
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':start', $this->normalizeDate($this->start));
-        $req->bindValue(':end', $this->normalizeDate($this->end, true));
+        $allDates = $isRequestList && $query !== null && !$query->has('start') && !$query->has('end');
+        $req->bindValue(':start', $allDates ? '1000-01-01 00:00:00' : $this->normalizeDate($this->start));
+        $req->bindValue(':end', $allDates ? '9999-12-31 23:59:59' : $this->normalizeDate($this->end, true));
+        $req->bindValue(':requester_actor', $this->Items->Users->userid, PDO::PARAM_INT);
+        $req->bindValue(':actor_approver', $this->Items->Users->userid, PDO::PARAM_INT);
         foreach ($this->filterBindings as $param => $value) {
             $req->bindValue(":$param", $value, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
-        return array_map(
+        $events = array_map(
             fn(array $event): array => $this->decodeRecurrenceRule($event),
             $req->fetchAll(),
         );
+        // Pending reservations are non-interactive ghost events in the calendar.
+        if (!$isRequestList && $maskPending) {
+            foreach ($events as &$event) {
+                if ((int) $event['approval_status'] === BookingApprovalStatus::Pending->value) {
+                    $event['title'] = _('Pending approval');
+                    $event['title_only'] = '';
+                    $event['fullname'] = '';
+                }
+            }
+            unset($event);
+        }
+        return $events;
     }
 
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        if (($params['target'] ?? null) === 'approval') {
+            if ($this->id === null || $action !== Action::Update) {
+                throw new ImproperActionException('An event and Update action are required for booking approval.');
+            }
+            (new BookingApproval($this->Items->Users))->decide(
+                $this->id,
+                (string) ($params['decision'] ?? ''),
+                isset($params['comment']) ? (string) $params['comment'] : null,
+            );
+            return $this->readOne();
+        }
         $this->canWriteOrExplode();
         match ($params['target']) {
             'experiment' => $this->bind('experiment', $params['id']),
@@ -346,6 +415,7 @@ final class Scheduler extends AbstractRest
         $this->Db->beginTransaction();
         try {
             $result = $this->deleteEvent($event);
+            $this->notifyApproversOfCancellation($event);
             $this->notifyAdminsOfDeletion($event);
             $this->Db->commit();
             return $result;
@@ -358,6 +428,9 @@ final class Scheduler extends AbstractRest
     // Ensure the current user is allowed to delete this booking
     public function assertCanDestroy(array $event): void
     {
+        if ((int) $event['approval_status'] === BookingApprovalStatus::Pending->value) {
+            return; // a request is not yet an approved reservation
+        }
         $createdAt = new DateTimeImmutable($event['created_at']);
         $start = new DateTimeImmutable($event['start']);
         $this->isEditableOrExplode($createdAt, $start);
@@ -373,6 +446,25 @@ final class Scheduler extends AbstractRest
             if ($totalMinutes < $event['book_cancel_minutes']) {
                 throw new ImproperActionException(sprintf(_('Cannot cancel slot less than %d minutes before its start.'), $event['book_cancel_minutes']));
             }
+        }
+    }
+
+    public function notifyApproversOfCancellation(array $event): void
+    {
+        if ((int) $event['approval_status'] !== BookingApprovalStatus::Pending->value
+            || (int) $event['userid'] !== (int) $this->Items->Users->userid) {
+            return;
+        }
+        $details = array(
+            'status' => 'cancelled',
+            'requester_fullname' => $this->Items->Users->userData['fullname'],
+            'item_title' => $this->Items->entityData['title'],
+            'start' => $event['start'],
+            'end' => $event['end'],
+        );
+        $approvers = new BookingApproval($this->Items->Users)->getApprovers((int) $this->Items->id);
+        foreach ($approvers as $userid) {
+            new BookingApprovalUpdated(new Users($userid), $details)->create();
         }
     }
 
@@ -534,21 +626,28 @@ final class Scheduler extends AbstractRest
 
     private function update(array $params): void
     {
-        $updates = array();
-        $bindings = array();
-        $this->updateTitle($params, $updates, $bindings);
-        $this->updateDateTime($params, $updates, $bindings);
-        if (empty($updates)) {
-            return; // nothing to update
+        $this->Db->beginTransaction();
+        try {
+            $this->lockItemForBooking();
+            $updates = array();
+            $bindings = array();
+            $this->updateTitle($params, $updates, $bindings);
+            $this->updateDateTime($params, $updates, $bindings);
+            if (!empty($updates)) {
+                $sql = 'UPDATE team_events SET ' . implode(', ', $updates) . ' WHERE team = :team AND id = :id';
+                $req = $this->Db->prepare($sql);
+                foreach ($bindings as $key => $value) {
+                    $req->bindValue($key, $value);
+                }
+                $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
+                $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+                $this->Db->execute($req);
+            }
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollback();
+            throw $e;
         }
-        $sql = 'UPDATE team_events SET ' . implode(', ', $updates) . ' WHERE team = :team AND id = :id';
-        $req = $this->Db->prepare($sql);
-        foreach ($bindings as $key => $value) {
-            $req->bindValue($key, $value);
-        }
-        $req->bindParam(':team', $this->Items->Users->userData['team'], PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 
     private function updateTitle(array $params, array &$updates, array &$bindings): void
@@ -567,6 +666,12 @@ final class Scheduler extends AbstractRest
             }
             $start = $this->normalizeDate($params['start']);
             $end = $this->normalizeDate($params['end'], true);
+            $event = $this->readOne();
+            // Changing dates would bypass the approval granted for the original slot.
+            if ((int) $event['approval_status'] !== BookingApprovalStatus::NoApproval->value
+                && ($start !== $event['start'] || $end !== $event['end'])) {
+                throw new ImproperActionException('The time of an approval-controlled booking cannot be changed.');
+            }
             $this->isFutureOrExplode(new DateTimeImmutable($start));
             $this->isFutureOrExplode(new DateTimeImmutable($end));
             $this->checkConstraints($start, $end);
@@ -589,15 +694,6 @@ final class Scheduler extends AbstractRest
             $this->filterBindings[$key] = $id;
         }
         $this->filterSqlParts[] = 'AND items.id IN (' . implode(',', $placeholders) . ')';
-    }
-
-    private function getScope(int $queryParamsItem): int
-    {
-        // if there is an item selected, we force the events scope to everything
-        if ($queryParamsItem > 0) {
-            return Scope::Everything->value;
-        }
-        return $this->Items->Users->userData['scope_events'] ?? Scope::Everything->value;
     }
 
     /**
@@ -625,7 +721,8 @@ final class Scheduler extends AbstractRest
             LEFT JOIN users2teams ON (users2teams.users_id = :userid AND users2teams.teams_id = team_events.team)
             WHERE team_events.item = :item
                 AND team_events.start <= :end
-                AND team_events.end >= :start",
+                AND team_events.end >= :start
+                AND team_events.approval_status IN (0, 1, 2)",
             $boundSelects['experiment'],
             $boundSelects['item_link'],
         );
@@ -657,6 +754,10 @@ final class Scheduler extends AbstractRest
                 team_events.userid,
                 team_events.experiment,
                 team_events.item_link,
+                team_events.approval_status,
+                team_events.approved_by,
+                team_events.approved_at,
+                team_events.approval_comment,
                 team_events.created_at,
                 team_events.modified_at,
                 team_events.recurrence_id,
@@ -726,6 +827,10 @@ final class Scheduler extends AbstractRest
         }
 
         $TargetItems = new Items($this->Items->Users, $itemId);
+        if ((int) $event['approval_status'] !== BookingApprovalStatus::NoApproval->value
+            || (int) ($TargetItems->entityData['requires_booking_approval'] ?? 0) !== 0) {
+            throw new ImproperActionException('Approval-controlled reservations cannot change resource.');
+        }
         if ((int) ($TargetItems->entityData['is_bookable'] ?? 0) !== 1 || !$TargetItems->canBook()) {
             throw new ImproperActionException(_('The selected resource cannot be booked.'));
         }
@@ -782,7 +887,7 @@ final class Scheduler extends AbstractRest
         if ($this->Items->entityData['book_max_slots'] === 0) {
             return;
         }
-        $sql = 'SELECT count(id) FROM team_events WHERE start > NOW() AND item = :item AND userid = :userid';
+        $sql = 'SELECT count(id) FROM team_events WHERE start > NOW() AND item = :item AND userid = :userid AND approval_status IN (0, 1, 2)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item', $this->Items->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
@@ -821,10 +926,12 @@ final class Scheduler extends AbstractRest
         ?string $excludedRecurrenceId = null,
         bool $includeOccurrence = false,
     ): void {
-        if ($this->Items->entityData['book_can_overlap'] === 1) {
+        // Approval-controlled resources cannot overlap, even when book_can_overlap is enabled.
+        if ($this->Items->entityData['book_can_overlap'] === 1
+            && (int) $this->Items->entityData['requires_booking_approval'] === 0) {
             return;
         }
-        $sql = 'SELECT id FROM team_events WHERE :start < end AND :end > start AND item = :item';
+        $sql = 'SELECT id FROM team_events WHERE :start < end AND :end > start AND item = :item AND approval_status IN (0, 1, 2)';
         if ($this->id !== null) {
             $sql .= ' AND id != :id';
         }

@@ -183,6 +183,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'requestableActionArr' => $this->requestableActionArr,
             'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
+            'approversArr' => $this->Entity->entityType === EntityType::Items && !$this->Entity->isReadOnly && !$this->App->isAnonymous() ? $this->App->Users->readFromQuery() : array(),
             'visibilityArr' => $this->visibilityArr,
         );
 
@@ -244,6 +245,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'templatesArr' => $Templates->readAllSimple($DisplayParamsTemplates),
             'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
+            'approversArr' => $this->Entity->entityType === EntityType::Items ? $this->App->Users->readFromQuery() : array(),
             'visibilityArr' => $this->visibilityArr,
         );
 

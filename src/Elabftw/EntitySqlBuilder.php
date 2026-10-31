@@ -484,6 +484,11 @@ final class EntitySqlBuilder implements SqlBuilderInterface
             $eventsColumn = 'experiment';
         } elseif ($this->entity instanceof Items) {
             $this->selectSql[] = 'entity.is_bookable';
+            $this->selectSql[] = 'COALESCE((
+                SELECT JSON_ARRAYAGG(userid)
+                FROM items_booking_approvers
+                WHERE entity_id = entity.id
+            ), JSON_ARRAY()) AS approvers';
             $eventsColumn = 'item_link = entity.id OR team_events.item';
         } elseif ($this->entity instanceof AbstractTemplateEntity) {
             return;

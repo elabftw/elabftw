@@ -13,8 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use DateTime;
-use Elabftw\Models\TeamGroups;
-use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -115,10 +113,13 @@ final class TwigFunctions
         return false;
     }
 
-    public static function canToHuman(string $json): array
+    /**
+     * Resolve the ids of a permissions json for display, as seen by the requester: use it as canToHuman(App.Users)
+     * Without a requester, fall back to a user without any rights: emails masked and only visible teams resolved.
+     * Templates compiled before the requester argument existed call it with the json only, so it must stay optional.
+     */
+    public static function canToHuman(string $json, ?Users $requester = null): array
     {
-        $PermissionsHelper = new PermissionsHelper();
-        $Users = new Users();
-        return $PermissionsHelper->translate(new Teams($Users), new TeamGroups($Users), $json);
+        return new PermissionsHelper()->translate($requester ?? new Users(), $json);
     }
 }

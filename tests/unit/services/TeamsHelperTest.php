@@ -14,6 +14,7 @@ namespace Elabftw\Services;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Usergroup;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -38,6 +39,24 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
         $team = $Teams->postAction(Action::Create, array('name' => 'New team'));
         $TeamsHelper = new TeamsHelper($team);
         $this->assertEquals(Usergroup::Admin, $TeamsHelper->getGroup());
+    }
+
+    public function testIsVisible(): void
+    {
+        $this->assertTrue($this->TeamsHelper->isVisible());
+        $this->assertFalse(new TeamsHelper(999999)->isVisible());
+
+        $Teams = new Teams(new Users(1, 1));
+        $id = $Teams->postAction(Action::Create, array('name' => 'Hidden team for isVisible'));
+        $HiddenTeam = new Teams(new Users(1, 1), $id);
+        $HiddenTeam->patch(Action::Update, array('visible' => 0));
+        try {
+            $this->assertFalse(new TeamsHelper($id)->isVisible());
+            $this->expectException(ForbiddenException::class);
+            new TeamsHelper($id)->teamIsVisibleOrExplode();
+        } finally {
+            $HiddenTeam->destroy();
+        }
     }
 
     public function testArchivedMembershipDoesNotGrantTeamAuthorization(): void

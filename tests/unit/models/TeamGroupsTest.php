@@ -14,10 +14,16 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
+
+use function array_column;
 
 class TeamGroupsTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
     private TeamGroups $TeamGroups;
 
     private Users $Users;
@@ -52,6 +58,42 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         $res = $this->TeamGroups->readNamesFromIds(array($id, $id2));
         $this->assertEquals('yep', $res[0]['name']);
         $this->assertEquals('yop', $res[1]['name']);
+    }
+
+    public function testGroupsOfHiddenTeamsAreNotDisclosed(): void
+    {
+        $teamId = new Teams($this->Users)->postAction(Action::Create, array('name' => 'Hidden team with a group'));
+        $HiddenTeam = new Teams($this->Users, $teamId);
+        $HiddenTeam->patch(Action::Update, array('visible' => 0));
+        // create a group in that hidden team
+        $groupId = new TeamGroups(new Users(1, $teamId))->create('Secret group');
+
+        try {
+            $user = $this->getUserInTeam(2);
+            $TeamGroups = new TeamGroups($user);
+            $this->assertEmpty($TeamGroups->readNamesFromIds(array($groupId)));
+            $this->assertNotContains($groupId, array_column($TeamGroups->readAllEverything(), 'id'));
+            $TeamGroups->setId($groupId);
+            try {
+                $TeamGroups->readOne();
+                $this->fail('A group of a hidden team was read by a user outside of that team.');
+            } catch (ResourceNotFoundException) {
+                $this->addToAssertionCount(1);
+            }
+
+            // Sysadmin still sees it
+            $this->assertSame('Secret group', $this->TeamGroups->readNamesFromIds(array($groupId))[0]['name']);
+            $this->assertContains($groupId, array_column($this->TeamGroups->readAllEverything(), 'id'));
+
+            // and so does a member of that group
+            new TeamGroups($this->Users, $groupId)->updateMember(array('how' => Action::Add->value, 'userid' => $user->userid));
+            $this->assertSame('Secret group', $TeamGroups->readNamesFromIds(array($groupId))[0]['name']);
+            $this->assertContains($groupId, array_column($TeamGroups->readAllEverything(), 'id'));
+            $this->assertSame($groupId, $TeamGroups->readOne()['id']);
+        } finally {
+            // the group is removed by the foreign key
+            $HiddenTeam->destroy();
+        }
     }
 
     public function testReadScopedTeamgroups(): void

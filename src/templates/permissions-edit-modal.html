@@ -120,7 +120,7 @@
           <div class='ts-wrapper'>
             {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
             <select id='{{ identifier }}_select_users' multiple class='form-control' autocomplete='off' aria-label='{{ 'Search for users'|trans }}' data-tom-select='1'>
-              {% set humanCan = permissionsJson|canToHuman %}
+              {% set humanCan = permissionsJson|canToHuman(App.Users) %}
               {% for user in humanCan.users %}
                 <option value='user:{{ user.userid }}' selected>
                   {{ user.fullname }} ({{ user.email }})

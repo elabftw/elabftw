@@ -27,6 +27,7 @@ use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
+use PDOStatement;
 
 use function array_diff;
 use function trim;
@@ -202,16 +203,23 @@ final class Teams extends AbstractRest
         if (empty($onlyIds)) {
             return array();
         }
-        $requester = $this->Users->requester;
-        $visibilitySql = '';
-        if (!$requester->isSysadmin()) {
-            $visibilitySql = ' AND (teams.visible = 1 OR teams.id IN (SELECT users2teams.teams_id FROM users2teams WHERE users2teams.users_id = :userid))';
-        }
-        $sql = 'SELECT teams.name FROM teams WHERE teams.id IN (' . implode(',', $onlyIds) . ')' . $visibilitySql . ' ORDER BY teams.name ASC';
+        $sql = 'SELECT teams.name FROM teams WHERE teams.id IN (' . implode(',', $onlyIds) . ')' . $this->getVisibilitySql() . ' ORDER BY teams.name ASC';
         $req = $this->Db->prepare($sql);
-        if ($visibilitySql !== '') {
-            $req->bindValue(':userid', $requester->userid ?? 0, PDO::PARAM_INT);
-        }
+        $this->bindVisibility($req);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * Id and name of the teams the requester can know about: visible teams and the teams they are part of
+     * A Sysadmin gets all the teams
+     */
+    public function readAllForRequester(): array
+    {
+        $sql = 'SELECT teams.id, teams.name FROM teams WHERE 1 = 1' . $this->getVisibilitySql() . ' ORDER BY teams.name ASC';
+        $req = $this->Db->prepare($sql);
+        $this->bindVisibility($req);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -396,6 +404,26 @@ final class Teams extends AbstractRest
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Restrict teams to the ones the requester can know about: visible teams and teams they are part of
+     * Without this, the name of hidden teams is disclosed to anyone. Sysadmins see all the teams.
+     */
+    private function getVisibilitySql(): string
+    {
+        if ($this->Users->requester->isSysadmin()) {
+            return '';
+        }
+        return ' AND (teams.visible = 1 OR teams.id IN (SELECT users2teams.teams_id FROM users2teams WHERE users2teams.users_id = :visibility_userid))';
+    }
+
+    private function bindVisibility(PDOStatement $req): void
+    {
+        if ($this->Users->requester->isSysadmin()) {
+            return;
+        }
+        $req->bindValue(':visibility_userid', $this->Users->requester->userid ?? 0, PDO::PARAM_INT);
     }
 
     private function sendOnboardingEmails(array $userids): void

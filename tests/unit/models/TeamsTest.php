@@ -141,6 +141,36 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testReadAllForRequesterSkipsHiddenTeams(): void
+    {
+        $id = $this->Teams->postAction(Action::Create, array('name' => 'Hidden team for readAllForRequester'));
+        $HiddenTeam = new Teams(new Users(1, 1), $id);
+        $HiddenTeam->patch(Action::Update, array('visible' => 0));
+        $user = $this->getUserInTeam(2);
+        $Users2Teams = new Users2Teams(new Users(1, 1));
+
+        try {
+            // Sysadmin gets all the teams
+            $this->assertCount(count($this->Teams->selectAll()), $this->Teams->readAllForRequester());
+            $this->assertContains($id, array_column($this->Teams->readAllForRequester(), 'id'));
+            // a user outside of it gets the visible teams and their own teams, but not the hidden one
+            $ids = array_column(new Teams($user)->readAllForRequester(), 'id');
+            $this->assertNotContains($id, $ids);
+            $this->assertContains(2, $ids);
+            foreach ($this->Teams->readAllVisible() as $visibleTeam) {
+                $this->assertContains($visibleTeam['id'], $ids);
+            }
+            // once part of it, they get it
+            $Users2Teams->create($user->getUserid(), $id);
+            $this->assertContains($id, array_column(new Teams($user)->readAllForRequester(), 'id'));
+        } finally {
+            if (new TeamsHelper($id)->isUserInTeam($user->getUserid())) {
+                $Users2Teams->rmUserFromTeams($user->getUserid(), array($id));
+            }
+            $HiddenTeam->destroy();
+        }
+    }
+
     public function testRead(): void
     {
         $this->assertIsArray($this->Teams->readOne());

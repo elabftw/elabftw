@@ -233,6 +233,30 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testReadAllTeamFilterHidesHiddenTeamsFromAdmins(): void
+    {
+        $teamId = new Teams($this->Users)->postAction(Action::Create, array('name' => 'Hidden team for users list filter'));
+        $HiddenTeam = new Teams($this->Users, $teamId);
+        $HiddenTeam->patch(Action::Update, array('visible' => 0));
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $member = $this->getUserInTeam(team: 2);
+        $Users2Teams = new Users2Teams($this->Users);
+        $Users2Teams->create($member->getUserid(), $teamId);
+        try {
+            $_GET['team'] = (string) $teamId;
+            // Sysadmins and members of the hidden team can list it
+            $this->assertCount(1, $this->Users->readAll());
+            $this->assertCount(1, new Users(null, null, $member)->readAll());
+            // but not an Admin of another team
+            $this->expectException(ForbiddenException::class);
+            new Users(null, null, $admin)->readAll();
+        } finally {
+            unset($_GET['team']);
+            $Users2Teams->rmUserFromTeams($member->getUserid(), array($teamId));
+            $HiddenTeam->destroy();
+        }
+    }
+
     public function testReadNamesFromIdsMasksEmails(): void
     {
         $user = $this->getUserInTeam(2);

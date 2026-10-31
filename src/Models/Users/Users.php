@@ -1111,18 +1111,23 @@ class Users extends AbstractRest
     }
 
     /**
-     * Filtering the users list on a team discloses its members (including for hidden teams),
-     * so it is reserved to members of that team, Admins (who can transfer ownership and import users across teams) and Sysadmins
+     * Filtering the users list on a team discloses its members, so it is reserved to Sysadmins, members of that team,
+     * and Admins (who can transfer ownership across teams) but only for visible teams: a hidden team stays hidden from Admins of other teams.
+     * A hidden team and a team that does not exist get the same response.
      */
     private function canListTeamMembersOrExplode(int $team): void
     {
-        if ($team <= 0 || $this->requester->isSysadmin() || $this->requester->isAdmin) {
+        if ($team <= 0 || $this->requester->isSysadmin()) {
             return;
         }
-        if ($this->requester->userid !== null && new TeamsHelper($team)->isUserInTeam($this->requester->userid)) {
+        $TeamsHelper = new TeamsHelper($team);
+        if ($this->requester->userid !== null && $TeamsHelper->isUserInTeam($this->requester->userid)) {
             return;
         }
-        throw new ForbiddenException('Cannot list the users of a team if not part of that team or not Admin!');
+        if ($this->requester->isAdmin && $TeamsHelper->isVisible()) {
+            return;
+        }
+        throw new ForbiddenException('Cannot list the users of a team you are not part of (Admins can only list visible teams)!');
     }
 
     private function requesterCanSeeEmailOf(int $userid): bool

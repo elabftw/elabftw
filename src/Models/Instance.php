@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EmailTarget;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
@@ -44,6 +45,7 @@ final class Instance extends AbstractRest
     #[Override]
     public function postAction(Action $action, array $reqBody): int
     {
+        // these actions are open to all users, so they must do their own permission checks
         if (!in_array($action, array(Action::EmailBookers, Action::EmailTeam), true)) {
             $this->requester->isSysadminOrExplode();
         }
@@ -77,7 +79,7 @@ final class Instance extends AbstractRest
         $targetId = $this->requester->userData['team'];
         $targetType = EmailTarget::Team;
         if (str_starts_with($target, 'teamgroup')) {
-            $targetId = (int) explode('_', $target)[1];
+            $targetId = $this->getTeamGroupTargetId((int) (explode('_', $target)[1] ?? 0));
             $targetType = EmailTarget::TeamGroup;
         }
         $replyTo = new Address($this->requester->userData['email'], $this->requester->userData['fullname']);
@@ -89,5 +91,18 @@ final class Instance extends AbstractRest
             $replyTo,
             $this->emailSendGrouped,
         );
+    }
+
+    /**
+     * Only allow targeting a team group of the team the requester is currently logged in
+     */
+    private function getTeamGroupTargetId(int $targetId): int
+    {
+        // throws if the id is invalid or if the team group does not exist
+        $teamGroup = (new TeamGroups($this->requester, $targetId))->readOne();
+        if ($teamGroup['team'] !== $this->requester->userData['team']) {
+            throw new ForbiddenException();
+        }
+        return $targetId;
     }
 }

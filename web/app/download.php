@@ -52,6 +52,8 @@ try {
         $longName,
         $App->Request->query->getString('name'),
         $App->Request->query->has('forceDownload'),
+        requester: $App->Users,
+        storage: $storage,
     );
     $Response = $DownloadController->getResponse($App->Request);
     $Response->prepare($App->Request);

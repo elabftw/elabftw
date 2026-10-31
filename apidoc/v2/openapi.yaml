@@ -1186,6 +1186,10 @@ components:
               type: string
             fullname:
               type: string
+            has_write_access:
+              type: integer
+              enum: [ 0, 1 ]
+              description: Only present when listing entries. Set to 1 if the requester can modify the entry, 0 otherwise.
             hide_main_text:
               type: integer
               enum: [ 0, 1 ]

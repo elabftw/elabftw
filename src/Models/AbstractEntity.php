@@ -771,7 +771,10 @@ abstract class AbstractEntity extends AbstractRest
     public function readOneFull(): array
     {
         $base = $this->readOne();
-        $base['revisions'] = (new Revisions($this))->readAll();
+        // anonymous users cannot access revisions
+        $base['revisions'] = $this->Users instanceof AnonymousUser
+            ? array()
+            : (new Revisions($this))->readAll();
         // we want to include ALL uploaded files
         $base['uploads'] = (new Uploads($this))->readAll(
             $this->getQueryParams(new InputBag(array('state' => '1,2,3')))

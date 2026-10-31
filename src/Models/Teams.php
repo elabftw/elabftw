@@ -31,8 +31,10 @@ use PDO;
 use function array_diff;
 use function trim;
 use function array_column;
+use function array_filter;
 use function array_intersect;
 use function array_map;
+use function array_values;
 use function implode;
 use function is_array;
 
@@ -190,14 +192,26 @@ final class Teams extends AbstractRest
         return $req->fetchAll();
     }
 
+    /**
+     * Resolve team ids (from a permissions json) into names for display
+     * A hidden team is only resolved for its members and for Sysadmins
+     */
     public function readNamesFromIds(array $idArr): array
     {
-        if (empty($idArr)) {
+        $onlyIds = array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
+        if (empty($onlyIds)) {
             return array();
         }
-        $onlyIds = array_map('intval', $idArr);
-        $sql = 'SELECT teams.name FROM teams WHERE id IN (' . implode(',', $onlyIds) . ') ORDER BY name ASC';
+        $requester = $this->Users->requester;
+        $visibilitySql = '';
+        if (!$requester->isSysadmin()) {
+            $visibilitySql = ' AND (teams.visible = 1 OR teams.id IN (SELECT users2teams.teams_id FROM users2teams WHERE users2teams.users_id = :userid))';
+        }
+        $sql = 'SELECT teams.name FROM teams WHERE teams.id IN (' . implode(',', $onlyIds) . ')' . $visibilitySql . ' ORDER BY teams.name ASC';
         $req = $this->Db->prepare($sql);
+        if ($visibilitySql !== '') {
+            $req->bindValue(':userid', $requester->userid ?? 0, PDO::PARAM_INT);
+        }
         $this->Db->execute($req);
 
         return $req->fetchAll();

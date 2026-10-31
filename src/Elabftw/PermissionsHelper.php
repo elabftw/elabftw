@@ -17,6 +17,7 @@ use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Config;
 use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Users\Users;
 
 use function array_flip;
 use function array_map;
@@ -30,15 +31,17 @@ final class PermissionsHelper
 {
     /**
      * Make the permissions json string an array with human readable content, translate the ids
+     * The json can contain arbitrary ids, so what gets resolved (and how) depends on the requester:
+     * hidden teams and their groups are skipped, and emails are masked, see the readNamesFromIds() functions
      */
-    public function translate(Teams $Teams, TeamGroups $TeamGroups, string $json): array
+    public function translate(Users $requester, string $json): array
     {
         $permArr = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         $result = array();
 
-        $result['teams'] = $Teams->readNamesFromIds($permArr['teams'] ?? array());
-        $result['teamgroups'] = $TeamGroups->readNamesFromIds($permArr['teamgroups'] ?? array());
-        $result['users'] = $Teams->Users->readNamesFromIds($permArr['users'] ?? array());
+        $result['teams'] = new Teams($requester)->readNamesFromIds($permArr['teams'] ?? array());
+        $result['teamgroups'] = new TeamGroups($requester)->readNamesFromIds($permArr['teamgroups'] ?? array());
+        $result['users'] = $requester->readNamesFromIds($permArr['users'] ?? array());
 
         return $result;
     }

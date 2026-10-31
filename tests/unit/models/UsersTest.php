@@ -208,6 +208,56 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayNotHasKey('teams', $res[0]);
     }
 
+    public function testReadAllTeamFilterRequiresMembership(): void
+    {
+        // a team that the users below are not part of
+        $Teams = new Teams($this->Users);
+        $teamId = $Teams->postAction(Action::Create, array('name' => 'Team for users list filter'));
+        $user = $this->getUserInTeam(2);
+        $Users = new Users(null, null, $user);
+        try {
+            // own team
+            $_GET['team'] = '2';
+            $this->assertNotEmpty($Users->readAll());
+            // Admins and Sysadmins can list any team
+            $_GET['team'] = (string) $teamId;
+            $admin = $this->getUserInTeam(team: 2, admin: 1);
+            $this->assertIsArray(new Users(null, null, $admin)->readAll());
+            $this->assertIsArray($this->Users->readAll());
+            // a user cannot list the members of a team they are not part of
+            $this->expectException(ForbiddenException::class);
+            $Users->readAll();
+        } finally {
+            unset($_GET['team']);
+            new Teams($this->Users, $teamId)->destroy();
+        }
+    }
+
+    public function testReadNamesFromIdsMasksEmails(): void
+    {
+        $user = $this->getUserInTeam(2);
+        $this->assertFalse($user->isAdminOf(1));
+        $ids = array(1, $user->getUserid());
+
+        // a user sees their own email but not the one of a user they are not Admin of
+        $res = array_column($user->readNamesFromIds($ids), 'email', 'userid');
+        $this->assertSame($user->userData['email'], $res[$user->getUserid()]);
+        $this->assertNotSame($this->Users->userData['email'], $res[1]);
+        $this->assertStringContainsString('***', $res[1]);
+
+        // Sysadmin sees all emails
+        $res = array_column($this->Users->readNamesFromIds($ids), 'email', 'userid');
+        $this->assertSame($user->userData['email'], $res[$user->getUserid()]);
+        $this->assertSame($this->Users->userData['email'], $res[1]);
+
+        // no requester: everything is masked
+        $res = array_column(new Users()->readNamesFromIds($ids), 'email', 'userid');
+        $this->assertNotSame($user->userData['email'], $res[$user->getUserid()]);
+
+        // invalid ids are ignored
+        $this->assertEmpty($this->Users->readNamesFromIds(array(0, -42)));
+    }
+
     public function testReadAllTeamAssociationsFollowAdminImportSetting(): void
     {
         $admin = $this->getUserInTeam(team: 2, admin: 1);

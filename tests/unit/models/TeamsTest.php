@@ -116,6 +116,29 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     public function testReadNamesFromIds(): void
     {
         $this->assertCount(3, $this->Teams->readNamesFromIds(array(1, 2, 3)));
+        $this->assertEmpty($this->Teams->readNamesFromIds(array(0, -1)));
+    }
+
+    public function testReadNamesFromIdsSkipsHiddenTeams(): void
+    {
+        $name = 'Hidden team for readNamesFromIds';
+        $id = $this->Teams->postAction(Action::Create, array('name' => $name));
+        $HiddenTeam = new Teams(new Users(1, 1), $id);
+        $HiddenTeam->patch(Action::Update, array('visible' => 0));
+
+        try {
+            // Sysadmin resolves it
+            $this->assertSame(array($name), array_column($this->Teams->readNamesFromIds(array($id)), 'name'));
+            // a user that is not part of it does not, but still gets visible teams
+            $user = $this->getUserInTeam(2);
+            $Teams = new Teams($user);
+            $this->assertEmpty($Teams->readNamesFromIds(array($id)));
+            $this->assertCount(1, $Teams->readNamesFromIds(array($id, 1)));
+            // anonymous context
+            $this->assertEmpty(new Teams(new Users())->readNamesFromIds(array($id)));
+        } finally {
+            $HiddenTeam->destroy();
+        }
     }
 
     public function testRead(): void

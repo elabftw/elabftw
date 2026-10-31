@@ -62,7 +62,9 @@ use Throwable;
 use function _;
 use function array_column;
 use function array_diff;
+use function array_filter;
 use function array_map;
+use function array_values;
 use function implode;
 use function in_array;
 use function json_decode;
@@ -499,6 +501,8 @@ class Users extends AbstractRest
         $currentTeam = $Request->query->getInt('currentTeam');
         if ($currentTeam === 1) {
             $team = $this->requester->team ?? 0;
+        } else {
+            $this->canListTeamMembersOrExplode($team);
         }
         $users = $this->readFromQuery(
             $Request->query->getString('q'),
@@ -554,17 +558,26 @@ class Users extends AbstractRest
         return $userData;
     }
 
+    /**
+     * Resolve user ids (from a permissions json) into names for display
+     * The email is masked unless the requester could already see it in clear (self, Admin of that user or Sysadmin)
+     */
     public function readNamesFromIds(array $idArr): array
     {
-        if (empty($idArr)) {
+        $onlyIds = array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
+        if (empty($onlyIds)) {
             return array();
         }
-        $onlyIds = array_map('intval', $idArr);
         $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS fullname, userid, email FROM users WHERE userid IN (" . implode(',', $onlyIds) . ') ORDER BY fullname ASC';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
 
-        return $req->fetchAll();
+        return array_map(function (array $user): array {
+            if (!$this->requesterCanSeeEmailOf((int) $user['userid'])) {
+                $user['email'] = self::maskEmail($user['email']);
+            }
+            return $user;
+        }, $req->fetchAll());
     }
 
     public function isAdminSomewhere(): bool
@@ -1095,6 +1108,31 @@ class Users extends AbstractRest
             $Notifications = $isValidated ? new UserCreated($adminUser, $userid, $team) : new UserNeedValidation($adminUser, $userid, $team);
             $Notifications->create();
         }
+    }
+
+    /**
+     * Filtering the users list on a team discloses its members (including for hidden teams),
+     * so it is reserved to members of that team, Admins (who can transfer ownership and import users across teams) and Sysadmins
+     */
+    private function canListTeamMembersOrExplode(int $team): void
+    {
+        if ($team <= 0 || $this->requester->isSysadmin() || $this->requester->isAdmin) {
+            return;
+        }
+        if ($this->requester->userid !== null && new TeamsHelper($team)->isUserInTeam($this->requester->userid)) {
+            return;
+        }
+        throw new ForbiddenException('Cannot list the users of a team if not part of that team or not Admin!');
+    }
+
+    private function requesterCanSeeEmailOf(int $userid): bool
+    {
+        // anonymous requesters have no userid and never see emails
+        if ($this->requester->userid === null) {
+            return false;
+        }
+        // isAdminOf() also covers the requester themselves and can_manage_users2teams
+        return $this->requester->isSysadmin() || $this->requester->isAdminOf($userid);
     }
 
     private static function maskEmail(string $email): string

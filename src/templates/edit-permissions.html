@@ -2,15 +2,15 @@
 {# 'can' and 'can_base' vars are used in view-permissions-details.html #}
 <div class='d-flex mb-2 align-items-center'>
   {# CANREAD #}
-  {% include 'view-permissions.html' with {rw: 'canread', can_base: Entity.entityData.canread_base_human, can: Entity.entityData.canread|canToHuman} %}
+  {% include 'view-permissions.html' with {rw: 'canread', can_base: Entity.entityData.canread_base_human, can: Entity.entityData.canread|canToHuman(App.Users)} %}
 </div>
 <div class='d-flex mb-2 align-items-center'>
   {# CANWRITE #}
-  {% include 'view-permissions.html' with {rw: 'canwrite', can_base: Entity.entityData.canwrite_base_human, can: Entity.entityData.canwrite|canToHuman} %}
+  {% include 'view-permissions.html' with {rw: 'canwrite', can_base: Entity.entityData.canwrite_base_human, can: Entity.entityData.canwrite|canToHuman(App.Users)} %}
 </div>
 {# CANBOOK #}
 {% if Entity.entityData.is_bookable %}
   <div class='d-flex mb-2 align-items-center'>
-    {% include 'view-permissions.html' with {rw: 'canbook', can_base: Entity.entityData.canbook_base_human, can: Entity.entityData.canbook|canToHuman} %}
+    {% include 'view-permissions.html' with {rw: 'canbook', can_base: Entity.entityData.canbook_base_human, can: Entity.entityData.canbook|canToHuman(App.Users)} %}
   </div>
 {% endif %}

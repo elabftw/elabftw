@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Config;
 use Elabftw\Models\Links\Containers2ItemsLinks;
+use Elabftw\Models\Revisions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -159,6 +162,28 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             $res = $Controller->getResponse();
 
             self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+        }
+    }
+
+    public function testAnonymousUserCannotReadRevisions(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        foreach (array(EntityType::Experiments, EntityType::Items) as $entityType) {
+            $Entity = $entityType->toInstance($user);
+            $Entity->setId($Entity->create(canreadBase: BasePermissions::Full));
+            $revisionId = new Revisions($Entity)->dbInsert('Previous body');
+            $entityUri = sprintf('/%s%d', $Entity->getApiPath(), $Entity->id);
+
+            $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create($entityUri));
+            self::assertSame(Response::HTTP_OK, $Controller->getResponse()->getStatusCode(), $entityUri);
+
+            foreach (array($entityUri . '/revisions', sprintf('%s/revisions/%d', $entityUri, $revisionId)) as $uri) {
+                $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create($uri));
+                self::assertSame(Response::HTTP_FORBIDDEN, $Controller->getResponse()->getStatusCode(), $uri);
+
+                $Controller = new Apiv2Controller($user, Request::create($uri));
+                self::assertSame(Response::HTTP_OK, $Controller->getResponse()->getStatusCode(), $uri);
+            }
         }
     }
 

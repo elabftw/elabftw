@@ -61,6 +61,10 @@
       {% set isSheet = ext in constant('Elabftw\\Elabftw\\Extensions::SPREADSHEET') %}
       <button type='button' class='dropdown-item' {% if not isSheet %}disabled{% endif %} data-action='xls-load-file' data-uploadid='{{ upload.id }}' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}' data-name='{{ upload.real_name|e('html_attr') }}'><i class='fas fa-fw fa-file-excel mr-1'></i>{{ 'Spreadsheet editor'|trans }}</button>
 
+      {# CHEM EDITOR #}
+      {% set isChem = ext in constant('Elabftw\\Elabftw\\Extensions::CHEM_EDITOR') %}
+      <button type='button' class='dropdown-item' {% if not isChem %}disabled{% endif %} data-action='chem-load-file' data-uploadid='{{ upload.id }}' data-name='{{ upload.real_name|e('html_attr') }}'><i class='fas fa-fw fa-flask mr-1'></i>{{ 'Load in chemical editor'|trans }}</button>
+
       {# NMRium #}
       {% set isJdx = ext matches '/jdx$/i' %}
       <button type='button' class='dropdown-item' {% if not isJdx %}disabled{% endif %} data-action='open-in-nmrium' data-uploadid='{{ upload.id }}'><i class='fas fa-fw fa-square-poll-vertical mr-1'></i>{{ 'Open in NMRium'|trans }}</button>

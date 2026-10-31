@@ -477,6 +477,7 @@ COPY ./.yarnrc.yml /elabftw
 COPY ./src/tools/yarn-plugin-tinymce.js /elabftw/src/tools/yarn-plugin-tinymce.js
 COPY ./src/scss/_tinymce.scss /elabftw/src/scss/_tinymce.scss
 RUN mkdir -p /elabftw/web/assets
+COPY ./src/patches /elabftw/src/patches
 
 # install JS dependencies before copying the rest of the application source
 RUN if [ "$BUILD_ALL" = "1" ]; then \

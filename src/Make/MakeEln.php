@@ -367,6 +367,11 @@ class MakeEln extends AbstractMakeEln
             }
             $datasetNode['about'] = array('@id' => $categoryAtId);
         }
+        // JSON-LD's @json preserves nested local snapshots without interpreting
+        // their installation-local ids as references to other crate nodes.
+        if (!empty($e['reactions'])) {
+            $datasetNode['https://www.elabftw.net/ns#reactions'] = array('@type' => '@json', '@value' => $e['reactions']);
+        }
         // METADATA (extra fields)
         if ($e['metadata']) {
             $processedMetadata = $this->metadataToJsonLd($e['metadata']);

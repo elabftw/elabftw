@@ -6221,7 +6221,7 @@ __metadata:
     jspreadsheet-ce: "npm:^5.0.4"
     jsuites: "npm:^5.13.5"
     ketcher-core: "npm:3.17.2"
-    ketcher-react: "npm:3.17.2"
+    ketcher-react: "patch:ketcher-react@npm%3A3.17.2#~/src/patches/ketcher-react-npm-3.17.2-ea8e2927f9.patch"
     ketcher-standalone: "npm:^3.17.2"
     lodash-es: "npm:^4.18.1"
     luxon: "npm:^3.7.2"
@@ -7619,10 +7619,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"indigo-ketcher@npm:1.45.1":
-  version: 1.45.1
-  resolution: "indigo-ketcher@npm:1.45.1"
-  checksum: 10c0/11f100e88cf62e2279a89d901fbe891ab2d4e7d72e628e241f7365702ccaaca2f6bdf3fa2b3f10c313092a5e7469d51aa0dd3d53b770de8ed80e0d2cccc840c6
+"indigo-ketcher@npm:1.46.0":
+  version: 1.46.0
+  resolution: "indigo-ketcher@npm:1.46.0"
+  checksum: 10c0/2de9cfbe5b0a18836400668f4ddd46b1cb714daddc1d06c14d8351a262380345a057267a7f528280279f6ed2257059330db3d20f925ad390aabb07a42aeba040
   languageName: node
   linkType: hard
 
@@ -8338,14 +8338,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ketcher-standalone@npm:^3.17.2":
+"ketcher-react@patch:ketcher-react@npm%3A3.17.2#~/src/patches/ketcher-react-npm-3.17.2-ea8e2927f9.patch":
   version: 3.17.2
-  resolution: "ketcher-standalone@npm:3.17.2"
+  resolution: "ketcher-react@patch:ketcher-react@npm%3A3.17.2#~/src/patches/ketcher-react-npm-3.17.2-ea8e2927f9.patch::version=3.17.2&hash=3ecdeb"
   dependencies:
     "@babel/runtime": "npm:^7.26.10"
-    indigo-ketcher: "npm:1.45.1"
+    "@emotion/react": "npm:^11.7.1"
+    "@emotion/styled": "npm:^11.14.1"
+    "@lexical/react": "npm:^0.40.0"
+    "@lexical/rich-text": "npm:^0.40.0"
+    "@lexical/selection": "npm:^0.40.0"
+    "@mui/material": "npm:^5.18.0"
+    cfb: "npm:^1.2.2"
+    clsx: "npm:^1.1.1"
+    dpdm: "npm:^4.2.0"
+    element-closest-polyfill: "npm:^1.0.2"
+    file-saver: "npm:^2.0.2"
+    font-face-observer: "npm:^1.0.0"
+    hoist-non-react-statics: "npm:^3.3.2"
+    intersection-observer: "npm:^0.12.2"
+    jsonschema: "npm:^1.5.0"
     ketcher-core: "npm:*"
-  checksum: 10c0/2fd05293fb78e08ceb4a8cc98fcb9a2a9b331ed3ba1fd718d31191b8c3bed4bc5f971a1d4323771fb813cf17235178e53bb6f74ad89a264c5eebdd64f57991bd
+    lexical: "npm:^0.40.0"
+    lodash: "npm:^4.18.1"
+    miew-react: "npm:0.11.0"
+    paper: "npm:^0.12.18"
+    react-colorful: "npm:^5.4.0"
+    react-contexify: "npm:^6.0.0"
+    react-device-detect: "npm:^2.2.2"
+    react-dropzone: "npm:^11.7.1"
+    react-intersection-observer: "npm:^9.16.0"
+    react-redux: "npm:^9.2.0"
+    react-virtualized: "npm:^9.22.6"
+    redux: "npm:^5.0.1"
+    redux-logger: "npm:^3.0.6"
+    redux-thunk: "npm:^3.1.0"
+    regenerator-runtime: "npm:^0.13.7"
+    remark-gfm: "npm:^1.0.0"
+    remark-parse: "npm:^9.0.0"
+    reselect: "npm:^4.0.0"
+    subscription: "npm:^3.0.0"
+    url-search-params-polyfill: "npm:^8.1.1"
+    use-resize-observer: "npm:^7.0.0"
+    whatwg-fetch: "npm:^3.4.1"
+  peerDependencies:
+    react: ^18.2.0 || ^19.0.0
+    react-dom: ^18.2.0 || ^19.0.0
+  checksum: 10c0/c7c0c074fb88667c42615c047b7ab4183928f8eb3374f1df4b32f173eff2a0acba28ba1522f1a14e15f20ee3c5dcb06f14b6c4813dc96231de1a3879d4aac98b
+  languageName: node
+  linkType: hard
+
+"ketcher-standalone@npm:^3.17.2":
+  version: 3.18.0
+  resolution: "ketcher-standalone@npm:3.18.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.26.10"
+    indigo-ketcher: "npm:1.46.0"
+    ketcher-core: "npm:*"
+    lodash: "npm:^4.18.1"
+  checksum: 10c0/91c851b4b432d72bce42ce82f73f00e4aab642d535cf79860004667c991578d3b32bb20bdc2fe22b523d5d5b239c2e69a3fc8cf8d45ea5261ae6745cc5e40cc1
   languageName: node
   linkType: hard
 

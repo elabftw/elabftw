@@ -39,6 +39,7 @@ use function sprintf;
 use function strlen;
 use function vsprintf;
 use function preg_match;
+use function strtolower;
 
 /**
  * Toolbelt full of useful functions
@@ -117,7 +118,7 @@ final class Tools
             return 'unknown';
         }
 
-        return $ext;
+        return strtolower($ext);
     }
 
     public static function getIdFilterSql(array $idArr): string

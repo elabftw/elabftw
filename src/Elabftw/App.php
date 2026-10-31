@@ -99,6 +99,11 @@ final class App
     ): void {
         $this->handleSessionExpiration();
 
+        if ($this->Session->get('is_anon') === 1 && !$this->Config->configArr['anon_users']) {
+            $this->Session->invalidate();
+            throw new UnauthorizedException();
+        }
+
         if ($requestUser !== null) {
             $this->loadUser($requestUser);
         } else {

@@ -41,12 +41,35 @@ function checkThumbnail($source): void
     $image->clear();
 }
 
+/**
+ * Run the PDF renderer like MakeThumbnail does: PDF on stdin, PNG on stdout.
+ *
+ * @return array{int, string} exit code and output
+ */
+function renderPdf(string $pdf): array
+{
+    $process = proc_open(
+        array('/usr/local/bin/pdf-thumbnail'),
+        array(0 => array('pipe', 'r'), 1 => array('pipe', 'w'), 2 => array('pipe', 'w')),
+        $pipes,
+    );
+    check(is_resource($process), 'Cannot start the PDF renderer.');
+    // pdftoppm reads its whole input before writing, so this cannot block on a full output pipe.
+    fwrite($pipes[0], $pdf);
+    fclose($pipes[0]);
+    $png = (string) stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+    stream_get_contents($pipes[2]);
+    fclose($pipes[2]);
+    return array(proc_close($process), $png);
+}
+
 check(extension_loaded('imagick'), 'The Imagick extension did not load.');
 
-foreach (array('BMP', 'GIF', 'HEIC', 'HEIF', 'JPEG', 'PDF', 'PNG', 'PNM', 'PS', 'EPS', 'SVG', 'TIFF', 'WEBP') as $format) {
+foreach (array('BMP', 'GIF', 'HEIC', 'HEIF', 'JPEG', 'PNG', 'SVG', 'TIFF', 'WEBP') as $format) {
     check(Imagick::queryFormats($format) === array($format), 'Missing format: ' . $format);
 }
-foreach (array('MSL', 'MVG', 'HTTP', 'HTTPS', 'URL', 'TEXT', 'LABEL', 'CAPTION', 'XC', 'GRADIENT', 'MIFF', 'PSD', 'XPS', 'VIDEO') as $format) {
+foreach (array('PDF', 'PS', 'EPS', 'PNM', 'MSL', 'MVG', 'HTTP', 'HTTPS', 'URL', 'TEXT', 'LABEL', 'CAPTION', 'XC', 'GRADIENT', 'MIFF', 'PSD', 'XPS', 'VIDEO') as $format) {
     check(Imagick::queryFormats($format) === array(), 'Unexpected parser: ' . $format);
 }
 
@@ -89,21 +112,25 @@ $info = getimagesizefromstring($image->getImageBlob());
 check(is_array($info) && $info[0] === 20 && $info[1] === 10 && $info['mime'] === 'image/png', 'SVG rasterization failed.');
 $image->clear();
 
-// Without showpage, nothing is rendered and the PS coder runs Ghostscript again with "-c showpage".
-foreach (array('%!PS-Adobe-3.0', '%!PS-Adobe-3.0 EPSF-3.0') as $header) {
-    foreach (array("showpage\n", '') as $showpage) {
-        $source = fopen('php://temp', 'w+b');
-        check(is_resource($source), 'Cannot create fixture stream.');
-        fwrite($source, $header . "\n%%BoundingBox: 0 0 4 2\n1 0 0 setrgbcolor\n0 0 4 2 rectfill\n" . $showpage);
-        rewind($source);
-        checkThumbnail($source);
-        fclose($source);
-    }
-}
-$source = fopen($argv[1], 'rb');
-check(is_resource($source), 'Cannot read PDF fixture.');
+// PDF files are rendered by Poppler, then ImageMagick only reads the PNG.
+$pdf = file_get_contents($argv[1]);
+check(is_string($pdf), 'Cannot read PDF fixture.');
+[$status, $png] = renderPdf($pdf);
+check($status === 0 && str_starts_with($png, "\x89PNG\r\n\x1a\n"), 'PDF rendering failed.');
+$source = fopen('php://temp', 'w+b');
+check(is_resource($source), 'Cannot create fixture stream.');
+fwrite($source, $png);
+rewind($source);
 checkThumbnail($source);
 fclose($source);
+echo "PDF thumbnail OK\n";
+[$status, $png] = renderPdf('not a PDF');
+check($status !== 0 && $png === '', 'The PDF renderer accepted an invalid file.');
+
+// ImageMagick itself must not read PDF or PostScript: there is neither a coder nor Ghostscript.
+foreach (array($pdf, "%!PS-Adobe-3.0\n%%BoundingBox: 0 0 4 2\n0 0 4 2 rectfill\nshowpage\n", "%!PS-Adobe-3.0 EPSF-3.0\n%%BoundingBox: 0 0 4 2\n0 0 4 2 rectfill\n") as $blob) {
+    expectRejection(static fn() => (new Imagick())->readImageBlob($blob));
+}
 
 // QR labels use direct font annotation, even though the LABEL coder is absent.
 check(is_file($argv[2]), 'No font available for QR labels.');

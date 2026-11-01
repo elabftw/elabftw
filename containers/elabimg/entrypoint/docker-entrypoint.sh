@@ -454,6 +454,10 @@ warnDeprecated() {
 }
 
 # SCRIPT START
+if [ "$(id -u)" -eq 0 ]; then
+    echo "entrypoint: fatal: this image must run as a non-root user, set 'user: UID:GID' (see docker-compose example)" >&2
+    exit 1
+fi
 getEnv
 checkSiteUrl
 copyConf

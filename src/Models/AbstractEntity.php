@@ -420,6 +420,7 @@ abstract class AbstractEntity extends AbstractRest
             $extended,
             $displayParams->getRelatedOrigin(),
             $withCompounds,
+            withWriteAccess: true,
         );
 
         $sql .= ' WHERE 1=1 ';
@@ -1518,7 +1519,7 @@ abstract class AbstractEntity extends AbstractRest
             '%s INNER JOIN (%s) AS page
                 ON page.id = entity.id
             ORDER BY page.is_pinned DESC, page.modified_at DESC, page.id DESC',
-            $EntitySqlBuilder->getReadSqlBeforeWhere(),
+            $EntitySqlBuilder->getReadSqlBeforeWhere(withWriteAccess: true),
             $pageSql,
         );
 

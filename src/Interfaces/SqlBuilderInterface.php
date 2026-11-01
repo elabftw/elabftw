@@ -20,6 +20,7 @@ interface SqlBuilderInterface
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
         bool $withCompounds = false,
+        bool $withWriteAccess = false,
     ): string;
 
     public function getCanFilter(string $can): string;

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
@@ -36,6 +37,9 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected array $joinsSql = array();
 
     private string $searchJoinSql = '';
+
+    // ids of the team groups of the user, only fetched once even if several access types are checked
+    private ?array $teamgroupsOfUser = null;
 
     public function __construct(private AbstractEntity $entity) {}
 
@@ -147,15 +151,21 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      *
      * @param bool $fullSelect select all the columns of entity
      * @param null|EntityType $relatedOrigin Are we looking for related entries, what is the origin, experiments or items?
+     * @param bool $withWriteAccess add a has_write_access column telling if the user can write to each entity
      */
     #[Override]
     public function getReadSqlBeforeWhere(
         bool $fullSelect = false,
         ?EntityType $relatedOrigin = null,
         bool $withCompounds = false,
+        bool $withWriteAccess = false,
     ): string {
         $this->entitySelect($fullSelect);
         $this->userTeamMembership();
+
+        if ($withWriteAccess) {
+            $this->writeAccess();
+        }
 
         if ($withCompounds) {
             $this->compounds();
@@ -197,16 +207,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         }
         $sql .= sprintf(
             ' AND (%s %s)',
-            implode(' OR ', array(
-                $this->canBasePub($can),
-                $this->canBaseOrg($can),
-                $this->canBaseTeam($can),
-                $this->canBaseUser($can),
-                $this->canBaseUserOnly($can),
-                $this->canTeams($can),
-                $this->canTeamGroups($can),
-                $this->canUsers($can),
-            )),
+            $this->getCanSql($can),
             $this->entity->alwaysShowOwned ? 'OR entity.userid = :userid' : '',
         );
 
@@ -441,8 +442,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      */
     protected function canTeamGroups(string $can): string
     {
-        $TeamGroups = new TeamGroups($this->entity->Users);
-        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
+        $teamgroupsOfUser = $this->getTeamgroupsOfUser();
         if (!empty($teamgroupsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
@@ -461,6 +461,68 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected function canUsers(string $can): string
     {
         return ":userid MEMBER OF (entity.$can->>'$.users')";
+    }
+
+    /**
+     * Get the conditions granting an access type (canread, canwrite, canbook) on the entity
+     */
+    private function getCanSql(string $can): string
+    {
+        return implode(' OR ', array(
+            $this->canBasePub($can),
+            $this->canBaseOrg($can),
+            $this->canBaseTeam($can),
+            $this->canBaseUser($can),
+            $this->canBaseUserOnly($can),
+            $this->canTeams($can),
+            $this->canTeamGroups($can),
+            $this->canUsers($can),
+        ));
+    }
+
+    private function getTeamgroupsOfUser(): array
+    {
+        if ($this->teamgroupsOfUser === null) {
+            $TeamGroups = new TeamGroups($this->entity->Users);
+            $this->teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
+        }
+        return $this->teamgroupsOfUser;
+    }
+
+    /**
+     * When listing entities, we only know that we can read them, so also compute if we can write to them
+     * This way the correct action buttons can be displayed. It follows the logic of Permissions::getWrite()
+     * Note: it relies on the users2teams join from userTeamMembership()
+     */
+    private function writeAccess(): void
+    {
+        // anonymous users cannot write anything
+        if ($this->entity->Users instanceof AnonymousUser) {
+            $this->selectSql[] = '0 AS has_write_access';
+            return;
+        }
+        $this->selectSql[] = sprintf(
+            'CASE WHEN (%s) AND (%s OR entity.userid = :userid) THEN 1 ELSE 0 END AS has_write_access',
+            $this->canWriteIfLocked(),
+            $this->getCanSql(AccessType::Write->value),
+        );
+    }
+
+    /**
+     * A locked entity can only be written to by the user who locked it or by an Admin of the entity team
+     */
+    private function canWriteIfLocked(): string
+    {
+        return 'entity.locked = 0
+            OR entity.lockedby = :userid
+            OR EXISTS (
+                SELECT 1
+                FROM users2teams AS admin_u2t
+                WHERE admin_u2t.users_id = :userid
+                    AND admin_u2t.teams_id = entity.team
+                    AND admin_u2t.is_admin = 1
+                    AND admin_u2t.is_archived = 0
+            )';
     }
 
     private function userTeamMembership(): void

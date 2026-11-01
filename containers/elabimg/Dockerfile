@@ -413,6 +413,7 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # php8-gd is required by mpdf for transparent png
 # php8-iconv is required by LdapRecord php library
 # php84-xmlwriter is required for multipart uploads with S3
+# php84-pecl-zstd stores the body revisions as compressed deltas
 # ImageMagick codec/font libraries remain Alpine packages so apk upgrade updates them.
 # poppler-utils provides pdftoppm, which renders PDF thumbnails; Ghostscript is not installed
 # don't put line comments inside this instruction
@@ -434,6 +435,7 @@ RUN apk upgrade -U -a && apk add --no-cache \
     openssl \
     php84 \
     php84-pecl-apcu \
+    php84-pecl-zstd \
     php84-bcmath \
     php84-curl \
     php84-ctype \

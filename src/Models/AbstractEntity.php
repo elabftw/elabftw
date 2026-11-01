@@ -775,7 +775,7 @@ abstract class AbstractEntity extends AbstractRest
         // anonymous users cannot access revisions
         $base['revisions'] = $this->Users instanceof AnonymousUser
             ? array()
-            : (new Revisions($this))->readAll();
+            : new BodyRevisions($this)->readAll();
         // we want to include ALL uploaded files
         $base['uploads'] = (new Uploads($this))->readAll(
             $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
@@ -968,7 +968,7 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
-    // Update an entity. The revision is saved before so it can easily compare old and new body.
+    // Update an entity. A new body is recorded in the revisions once it is saved.
     public function update(ContentParamsInterface $params): bool
     {
         if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
@@ -1001,18 +1001,6 @@ abstract class AbstractEntity extends AbstractRest
             throw new UnprocessableContentException(_('Cannot modify permissions immutability settings.'));
         }
 
-        // save a revision for body target
-        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
-            $Config = Config::getConfig();
-            $Revisions = new Revisions(
-                $this,
-                (int) $Config->configArr['max_revisions'],
-                (int) $Config->configArr['min_delta_revisions'],
-                (int) $Config->configArr['min_days_revisions'],
-            );
-            $Revisions->create((string) $content);
-        }
-
         $Changelog = new Changelog($this);
         $Changelog->create($params);
         // getColumn cannot be malicious here because of the previous switch
@@ -1023,13 +1011,20 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         // custom_id could be used twice unintentionally
         try {
-            return $this->Db->execute($req);
+            $res = $this->Db->execute($req);
         } catch (DatabaseErrorException $e) {
             if ($params->getColumn() === 'custom_id' && $e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
                 throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
             }
             throw $e;
         }
+
+        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
+            new BodyRevisions($this)->create((string) $content);
+            // a later body update in the same request must be compared with this body
+            $this->entityData['body'] = $content;
+        }
+        return $res;
     }
 
     public function timestamp(): array
@@ -1070,14 +1065,8 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Timestamp);
 
-        // force create a revision
-        $Revisions = new Revisions(
-            $this,
-            (int) $Config->configArr['max_revisions'],
-            (int) $Config->configArr['min_delta_revisions'],
-            (int) $Config->configArr['min_days_revisions'],
-        );
-        $Revisions->dbInsert($this->entityData['body']);
+        // the timestamped body must be in the revisions
+        new BodyRevisions($this)->create((string) ($this->entityData['body'] ?? ''));
 
         return $this->readOne();
     }
@@ -1433,9 +1422,8 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
-        // force create a revision
-        $Revisions = new Revisions($this, 9000, 0, 0);
-        $Revisions->dbInsert($this->entityData['body']);
+        // the signed body must be in the revisions
+        new BodyRevisions($this)->create((string) ($this->entityData['body'] ?? ''));
         return $this->readOne();
     }
 

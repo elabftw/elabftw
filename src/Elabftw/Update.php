@@ -16,6 +16,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use PDO;
+use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 use function bin2hex;
 use function random_bytes;
@@ -34,6 +36,8 @@ use function preg_match;
  * 2. Edit the generated .sql and .down.sql files.
  * 3. Run `bin/console db:update` to test the migration.
  * 4. Reflect the final structure in src/sql/structure.sql (or Models/Config.php for config entries).
+ * 5. If SQL cannot move the data (compression for instance), implement DataMigrationInterface
+ *    and return it for the migration in Migrations::getDataStep().
  */
 final class Update
 {
@@ -43,6 +47,7 @@ final class Update
         private int $currentSchema,
         private readonly Sql $Sql,
         private readonly Migrations $Migrations,
+        private readonly OutputInterface $output = new NullOutput(),
     ) {
         $this->Db = Db::getConnection();
     }
@@ -107,6 +112,8 @@ final class Update
 
             $batch = $this->Migrations->nextBatch();
             foreach ($pending as $migration => $filename) {
+                // data first: the sql can then drop what the data step read
+                Migrations::getDataStep($migration, $this->output)?->up();
                 // Never mark a partially applied migration as successful, even with --force.
                 $this->Sql->execFileWithRollback(
                     $filename,

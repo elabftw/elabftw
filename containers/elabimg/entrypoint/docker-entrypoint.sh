@@ -245,7 +245,8 @@ nginxConf() {
         status_password=$(openssl rand -hex 16)
     fi
     # instead of installing htpasswd, use openssl that is already here
-    printf "elabftw:%s\n" "$(openssl passwd -apr1 "$status_password")" > /run/nginx/passwords
+    # SHA-512 crypt, which nginx checks with crypt(3); pass the password on stdin so it does not appear in the process list
+    printf "elabftw:%s\n" "$(printf '%s\n' "$status_password" | openssl passwd -6 -stdin)" > /run/nginx/passwords
     chmod 400 /run/nginx/passwords
 }
 

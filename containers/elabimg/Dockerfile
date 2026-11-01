@@ -13,10 +13,21 @@ ARG TARGETPLATFORM
 ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
 WORKDIR /app
 COPY containers/elabimg/helpers .
-# allow building for ARM, disable CGO to have full static build, target linux, add -s and -w ldflags to remove debug symbols
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCH=arm; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCH=arm64; else ARCH=amd64; fi \
-    && CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH go build -ldflags="-s -w" -o invoker invoker.go \
-    && go build -ldflags="-s -w" -o chronos chronos.go
+# allow building for ARM, disable CGO, target linux, add -s and -w ldflags to remove debug symbols
+# export the settings so they apply to both builds
+# -trimpath removes local paths from the binaries
+# -buildmode=pie makes position-independent executables, which need the musl dynamic loader of the Alpine runtime:
+# set it explicitly (-I), or a cross-compiled binary would get the glibc one.
+# Without cgo, Go cannot build PIE for 32-bit arm, which keeps a static executable.
+RUN case "$TARGETPLATFORM" in \
+        linux/arm/v7) ARCH=arm; LOADER= ;; \
+        linux/arm64) ARCH=arm64; LOADER=/lib/ld-musl-aarch64.so.1 ;; \
+        *) ARCH=amd64; LOADER=/lib/ld-musl-x86_64.so.1 ;; \
+    esac \
+    && if [ -n "$LOADER" ]; then set -- -buildmode=pie -ldflags="-s -w -I $LOADER"; else set -- -ldflags="-s -w"; fi \
+    && export CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH \
+    && go build -trimpath "$@" -o invoker invoker.go \
+    && go build -trimpath "$@" -o chronos chronos.go
 
 #################
 # NGINX BUILDER #
@@ -379,7 +390,9 @@ ENV ELABFTW_VERSION=$ELABFTW_VERSION
 COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=nginx-builder /etc/nginx/mime.types /etc/nginx/mime.types
 COPY --from=nginx-builder /etc/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
-RUN echo 'fastcgi_param ELABFTW_REQUEST_ID $request_id;' >> /etc/nginx/fastcgi.conf
+RUN echo 'fastcgi_param ELABFTW_REQUEST_ID $request_id;' >> /etc/nginx/fastcgi.conf \
+    && echo '# httpoxy: do not pass the client Proxy header to PHP as HTTP_PROXY' >> /etc/nginx/fastcgi.conf \
+    && echo 'fastcgi_param HTTP_PROXY "";' >> /etc/nginx/fastcgi.conf
 # END NGINX
 
 # OPENBABEL
@@ -542,7 +555,7 @@ WORKDIR /elabftw
 
 LABEL org.opencontainers.image.description="eLabFTW web service" \
     org.opencontainers.image.documentation="https://github.com/elabftw/elabftw/blob/master/containers/elabimg/README.md" \
-    org.opencontainers.image.license="AGPL-3.0-only" \
+    org.opencontainers.image.licenses="AGPL-3.0-only" \
     org.opencontainers.image.source="https://github.com/elabftw/elabftw" \
     org.opencontainers.image.title="eLabFTW" \
     org.opencontainers.image.url="https://www.elabftw.net" \

@@ -26,20 +26,35 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
 FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS nginx-builder
 
 ENV NGINX_VERSION=1.30.6
+# The build verifies the release signature, then this pinned checksum: update it together with NGINX_VERSION.
+# 1.30.6 is signed by Sergey Kandaurov: D6786CE303D9A9022998DC6CC8464D549AF75C0A
+ARG NGINX_SHA256=3cf46f5ed7504d460125866b7bea99fb357f31d887e2e63b35503310e9b8b6c8
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
 ENV NGX_BROTLI_COMMIT=53e0fb55f250f48fe80c0ddbf6c0f7103cdbaae1
+# Tags can be moved: pin the commit of the v0.39 tag
 # https://github.com/openresty/headers-more-nginx-module/tags
-ENV HEADERS_MORE_VERSION=v0.39
+ENV HEADERS_MORE_COMMIT=2b1debde426783b8f42246149d3638644a6347cb
+
+# Same hardening as the ImageMagick builder: position-independent code, stack protector, stack clash protection,
+# fortified functions that also check dynamically sized buffers (_FORTIFY_SOURCE=3), zero-initialized stack variables,
+# format-security checks, and keep the checks the optimizer could remove by assuming there is no undefined behavior
+# (null pointers, overflows, aliasing). The linker flags give a PIE with full RELRO and a non-executable stack.
+ENV HARDENING_CFLAGS="-fPIE -fstack-protector-strong -fstack-clash-protection -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -Wformat -Werror=format-security" \
+    HARDENING_LDFLAGS="-pie -Wl,-z,relro,-z,now,-z,noexecstack"
 
 # install dependencies: here we use brotli-dev, newer brotli versions we can remove that and build it
-RUN apk add --no-cache git libc-dev pcre2-dev make gcc zlib-dev openssl-dev binutils gnupg cmake brotli-dev
+# fortify-headers implements _FORTIFY_SOURCE for musl: without it, the define has no effect
+RUN apk add --no-cache git libc-dev fortify-headers pcre2-dev make gcc zlib-dev openssl-dev binutils gnupg cmake brotli-dev
 
 # create a builder user and group
 RUN addgroup -S -g 3148 builder && adduser -D -S -G builder -u 3148 builder
 RUN mkdir /build && chown builder:builder /build
 WORKDIR /build
 USER builder
+
+# On aarch64, also sign return addresses, on CPUs with pointer authentication.
+RUN if [ "$(uname -m)" = aarch64 ]; then echo '-mbranch-protection=standard'; fi > cflags-arch
 
 # build brotli
 RUN git clone https://github.com/google/ngx_brotli \
@@ -52,13 +67,17 @@ RUN git clone https://github.com/google/ngx_brotli \
     && cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_SHARED_LIBS=OFF \
-        -DCMAKE_C_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections" \
-        -DCMAKE_CXX_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections" \
+        -DCMAKE_C_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections $HARDENING_CFLAGS $(cat /build/cflags-arch)" \
+        -DCMAKE_CXX_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections $HARDENING_CFLAGS $(cat /build/cflags-arch)" \
         -DCMAKE_EXE_LINKER_FLAGS="-Wl,--gc-sections" \
         .. \
     && cmake --build . --config Release --target brotlienc
 
-RUN git clone --depth 1 -b $HEADERS_MORE_VERSION https://github.com/openresty/headers-more-nginx-module
+RUN git init headers-more-nginx-module \
+    && cd headers-more-nginx-module \
+    && git remote add origin https://github.com/openresty/headers-more-nginx-module.git \
+    && git fetch --depth 1 origin "$HEADERS_MORE_COMMIT" \
+    && git checkout --detach FETCH_HEAD
 
 # now start the build
 # get nginx source
@@ -71,30 +90,24 @@ ADD --chown=builder:builder https://nginx.org/keys/arut.key nginx-arut.key
 ADD --chown=builder:builder https://nginx.org/keys/pluknet.key nginx-pluknet.key
 ADD --chown=builder:builder https://nginx.org/keys/sb.key nginx-sb.key
 ADD --chown=builder:builder https://nginx.org/keys/thresh.key nginx-thresh.key
-# import them and verify the tarball
+# import them and verify the tarball, then check it against the pinned checksum
 RUN gpg --batch --import nginx-arut.key nginx-pluknet.key nginx-sb.key nginx-thresh.key \
-    && gpg --batch --verify nginx.tgz.asc nginx.tgz
+    && gpg --batch --verify nginx.tgz.asc nginx.tgz \
+    && printf '%s  %s\n' "$NGINX_SHA256" nginx.tgz | sha256sum -c -
 # all good now untar and build!
 RUN tar xzf nginx.tgz
 WORKDIR /build/nginx-$NGINX_VERSION
-# Compilation flags
+# Compilation flags, in addition to HARDENING_CFLAGS and HARDENING_LDFLAGS:
 # -g0: Disable debugging symbols generation (decreases binary size)
 # -O3: Enable aggressive optimization level 3 (improves code execution speed)
-# -fstack-protector-strong: Enable stack protection mechanisms (prevents stack-based buffer overflows)
-# -flto: Enable Link Time Optimization (LTO) (allows cross-source-file optimization)
-# -pie: Generate position-independent executables (PIE) (enhances security)
-# --param=ssp-buffer-size=4: Set the size of the stack buffer for stack smashing protection to 4 bytes
-# -Wformat -Werror=format-security: Enable warnings for potentially insecure usage of format strings (treats them as errors)
-# -D_FORTIFY_SOURCE=2: Enable additional security features provided by fortified library functions
-# -Wl,-z,relro,-z,now: Enforce memory protections at runtime:
-#    - Mark the Global Offset Table (GOT) as read-only after relocation
-#    - Resolve all symbols at load time, making them harder to manipulate
-# -Wl,-z,noexecstack: Mark the stack as non-executable (prevents execution of code placed on the stack)
-# -fPIC: Generate position-independent code (PIC) (suitable for building shared libraries)
+# -flto: Enable Link Time Optimization (LTO) (allows cross-source-file optimization), at compile and link time
+# nginx only passes --with-ld-opt to the linker: linker flags in --with-cc-opt would be ignored.
+# nginx compiles with -Werror, so a new compiler warning stops the build.
 RUN ./configure \
         --prefix=/var/lib/nginx \
         --sbin-path=/usr/sbin/nginx \
-        --with-cc-opt='-g0 -O3 -fstack-protector-strong -flto -pie --param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2 -Wl,-z,relro,-z,now -Wl,-z,noexecstack -fPIC'\
+        --with-cc-opt="-g0 -O3 -flto $HARDENING_CFLAGS $(cat /build/cflags-arch)" \
+        --with-ld-opt="-flto $HARDENING_LDFLAGS" \
         --modules-path=/usr/lib/nginx/modules \
         --conf-path=/etc/nginx/nginx.conf \
         --pid-path=/run/nginx/nginx.pid \
@@ -200,10 +213,12 @@ ENV CFLAGS="-O2 -g0 -fPIC -fstack-protector-strong -fstack-clash-protection -U_F
     LDFLAGS="-Wl,-z,relro,-z,now,-z,noexecstack,--as-needed"
 # With modules enabled, these are the only image parsers compiled and installed.
 # Keep this list in sync with policy.xml and MakeThumbnailFactory.
-ENV IMAGEMAGICK_CODERS="coders/bmp.la coders/gif.la coders/heic.la coders/jpeg.la coders/pdf.la coders/png.la coders/pnm.la coders/ps.la coders/svg.la coders/tiff.la coders/webp.la"
+# There is no PDF or PostScript coder: PDF thumbnails are rendered by Poppler, see pdf-thumbnail.
+ENV IMAGEMAGICK_CODERS="coders/bmp.la coders/gif.la coders/heic.la coders/jpeg.la coders/png.la coders/svg.la coders/tiff.la coders/webp.la"
 
+# font-dejavu is only a fixture for the runtime smoke test, it is not installed in the image.
 RUN apk add --no-cache \
-    autoconf build-base curl fontconfig-dev freetype-dev ghostscript lcms2-dev \
+    autoconf build-base curl font-dejavu fontconfig-dev freetype-dev lcms2-dev \
     libheif-dev libjpeg-turbo-dev libpng-dev libraqm-dev librsvg-dev libtool \
     libwebp-dev php84-dev tiff-dev xz-dev zlib-dev
 
@@ -228,7 +243,7 @@ WORKDIR /build/ImageMagick-${IMAGEMAGICK_VERSION}
 RUN test "$(grep -c -E 'GetEnvironmentValue\("(XDG_CONFIG_)?HOME"\)' MagickCore/configure.c)" -eq 2 \
     && sed -i -E 's/GetEnvironmentValue\("(XDG_CONFIG_)?HOME"\)/(char *) NULL/' MagickCore/configure.c
 # Retain Alpine's Q16 HDRI pixel representation and text/color rendering support.
-# Ghostscript runs as a separate process; its library is never loaded into PHP.
+# Ghostscript is neither linked nor installed.
 # Module enumeration uses magick.la as a directory marker; use the retained PNG module.
 # Without libxml2, the internal SVG renderer (MSVG) is not built: SVG files are only rendered by librsvg.
 RUN sed -i 's/TagToCoderModuleName("magick",filename)/TagToCoderModuleName("png",filename)/' MagickCore/module.c \
@@ -293,9 +308,8 @@ RUN make coders_LTLIBRARIES="$IMAGEMAGICK_CODERS" filters_LTLIBRARIES= install-s
     && rm -f /imagemagick-root/usr/lib/*.la /imagemagick-root/usr/lib/libMagick*.so \
     && find /imagemagick-root/usr/bin -mindepth 1 ! -name magick -delete \
     && install -Dm644 LICENSE /imagemagick-root/usr/share/licenses/imagemagick/LICENSE \
-    && sed -n 's#&apos;gs&apos;#\&apos;/usr/local/bin/imagemagick-gs\&apos;#; /<delegatemap>/p; /<delegate decode="ps:\(alpha\|cmyk\|color\|mono\)"/p; /<\/delegatemap>/p' \
-        config/delegates.xml > /imagemagick-root/etc/ImageMagick-7/delegates.xml \
-    && test "$(grep -c "&apos;/usr/local/bin/imagemagick-gs&apos;" /imagemagick-root/etc/ImageMagick-7/delegates.xml)" -eq 4
+    && printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<!-- No external delegate is used: policy.xml denies all of them, including the built-in ones. -->' '<delegatemap/>' \
+        > /imagemagick-root/etc/ImageMagick-7/delegates.xml
 
 WORKDIR /build/imagick-${IMAGICK_VERSION}
 USER builder
@@ -313,8 +327,6 @@ RUN install -Dm755 modules/imagick.so "/imagemagick-root$(php-config84 --extensi
     && printf 'extension=imagick.so\n' > /imagemagick-root/etc/php84/conf.d/imagick.ini \
     && install -Dm644 LICENSE /imagemagick-root/usr/share/licenses/imagick/LICENSE
 COPY ./containers/elabimg/imagemagick/policy.xml /imagemagick-root/etc/ImageMagick-7/policy.xml
-# The delegates run Ghostscript through this wrapper, which limits its CPU time.
-COPY --chmod=555 ./containers/elabimg/imagemagick/imagemagick-gs /imagemagick-root/usr/local/bin/imagemagick-gs
 
 ##############
 # S6 BUILDER #
@@ -379,12 +391,12 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # php8-iconv is required by LdapRecord php library
 # php84-xmlwriter is required for multipart uploads with S3
 # ImageMagick codec/font libraries remain Alpine packages so apk upgrade updates them.
+# poppler-utils provides pdftoppm, which renders PDF thumbnails; Ghostscript is not installed
 # don't put line comments inside this instruction
 RUN apk upgrade -U -a && apk add --no-cache \
     bash \
     fontconfig \
     freetype \
-    ghostscript \
     lcms2 \
     libheif \
     libjpeg-turbo \
@@ -422,6 +434,7 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-xml \
     php84-xmlwriter \
     php84-zip \
+    poppler-utils \
     tiff \
     tzdata \
     xz-libs \
@@ -434,12 +447,17 @@ ENV TMPDIR=/var/cache/elabftw/php/tmp
 
 # Install the matching libraries, restricted modules, policy and PHP extension together.
 COPY --from=imagemagick-builder /imagemagick-root/ /
+# MakeThumbnail renders the first page of PDF files with Poppler through this wrapper, which limits its resources.
+COPY --chmod=555 ./containers/elabimg/poppler/pdf-thumbnail /usr/local/bin/pdf-thumbnail
 # Exercise the installed stack without leaving test fixtures in the image.
+# Also make sure that no package brought Ghostscript back.
 RUN --mount=type=bind,source=containers/elabimg/imagemagick,target=/tmp/imagemagick-test \
     --mount=type=bind,source=tests/_data/dfn.pdf,target=/tmp/imagemagick-test.pdf \
+    --mount=type=bind,from=imagemagick-builder,source=/usr/share/fonts/dejavu/DejaVuSans.ttf,target=/tmp/imagemagick-test-font.ttf \
     ! apk info --exists imagemagick \
+    && ! apk info --exists ghostscript \
     && magick -version \
-    && TMPDIR=/tmp php84 /tmp/imagemagick-test/smoke-test.php /tmp/imagemagick-test.pdf /usr/share/ghostscript/Resource/Font/NimbusSans-Regular
+    && TMPDIR=/tmp php84 /tmp/imagemagick-test/smoke-test.php /tmp/imagemagick-test.pdf /tmp/imagemagick-test-font.ttf
 
 ###################
 # ELABFTW BUILDER #

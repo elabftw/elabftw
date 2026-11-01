@@ -26,20 +26,18 @@ final class MakeThumbnailFactory
      * Do some sane white-listing. In theory, gmagick handles almost all image formats,
      * but the processing of rarely used formats may be less tested/stable or may have security issues
      * when adding new mime types take care of ambiguities:
-     * e.g. image/eps may be a valid application/postscript; image/bmp may also be image/x-bmp or
-     * image/x-ms-bmp
+     * e.g. image/bmp may also be image/x-bmp or image/x-ms-bmp
+     * PostScript and EPS files get no thumbnail: Ghostscript is not installed in the container
      */
     /** @param resource $sourceFile */
     public static function getMaker(string $mime, $sourceFile, string $longName, Filesystem $storageFs): MakeThumbnailInterface
     {
         return match ($mime) {
             'application/pdf',
-            'application/postscript',
             'image/gif',
             'image/heic',
             'image/heif',
             'image/tiff',
-            'image/x-eps',
             'image/jpeg',
             'image/bmp',
             'image/x-bmp',

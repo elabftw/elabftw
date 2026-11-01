@@ -230,6 +230,9 @@
           <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
           <input type='hidden' name='related_origin' value='{{ App.Request.query.getAlpha('related_origin') }}' />
         {% endif %}
+        {% if App.Request.query.get('compound') %}
+          <input type='hidden' name='compound' value='{{ App.Request.query.getInt('compound') }}' />
+        {% endif %}
         {# WCAG/h32 - form needs a submit button #}
         <button type='submit' hidden></button>
       </form>

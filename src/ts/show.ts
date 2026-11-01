@@ -13,7 +13,7 @@ import {
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
-import { Action, Model, LinkSubModel } from './interfaces';
+import { Action, Model, LinkSubModel, REACTION_SEARCH_PARAMS } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from './i18n';
 import { ApiC } from './api';
@@ -81,20 +81,89 @@ function updateUrlFromStores(filters = get(entityFilters)): void {
 }
 
 function setEntityFilterParam(param: string, value: string): void {
+  setEntityFilterParams({ [param]: value });
+}
+
+// change several params at once, so the entries are only reloaded once
+function setEntityFilterParams(values: Record<string, string>): void {
   entityFilters.update(currentParams => {
     const nextParams = new URLSearchParams(currentParams);
 
     nextParams.delete('offset');
 
-    if (value === '') {
-      nextParams.delete(param);
-    } else {
-      nextParams.set(param, value);
+    for (const [param, value] of Object.entries(values)) {
+      if (value === '') {
+        nextParams.delete(param);
+      } else {
+        nextParams.set(param, value);
+      }
     }
 
     updateUrlFromStores(nextParams);
 
     return nextParams;
+  });
+}
+
+function initReactionSearch(): void {
+  const form = document.getElementById('reactionSearchForm') as HTMLFormElement | null;
+  if (!form) {
+    return;
+  }
+  const errorEl = document.getElementById('reactionSearchError');
+  const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
+  const readForm = (): Record<string, string> => ({
+    reaction_q: field('reaction_q').value.trim(),
+    reaction_structure: field('reaction_structure').value.trim(),
+    reaction_role: field('reaction_role').value,
+    reaction_exact: (field('reaction_exact') as HTMLInputElement).checked ? '1' : '',
+  });
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    errorEl.hidden = true;
+    const values = readForm();
+    // the entries list hides failed queries, so check a structure first to tell what is wrong with it
+    if (values.reaction_structure !== '') {
+      const params: Record<string, string | number> = { limit: 1, notifOnError: 0 };
+      for (const param of REACTION_SEARCH_PARAMS) {
+        const value = values[param] ?? new URLSearchParams(window.location.search).get(param) ?? '';
+        if (value !== '') {
+          params[param] = value;
+        }
+      }
+      try {
+        await ApiC.getJson(entity.type, params);
+      } catch (error) {
+        errorEl.textContent = error instanceof Error ? error.message : String(error);
+        errorEl.hidden = false;
+        return;
+      }
+    }
+    setEntityFilterParams(values);
+  });
+
+  form.addEventListener('click', event => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-reaction-search-clear]');
+    if (!button) {
+      return;
+    }
+    errorEl.hidden = true;
+    const param = button.dataset.reactionSearchClear;
+    if (param === 'all') {
+      form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select').forEach(input => {
+        if (input instanceof HTMLInputElement && input.type === 'checkbox') {
+          input.checked = false;
+        } else {
+          input.value = '';
+        }
+      });
+      form.querySelectorAll('#reactionSearchLinks [data-reaction-search-clear]').forEach(el => el.remove());
+      setEntityFilterParams(Object.fromEntries(REACTION_SEARCH_PARAMS.map(name => [name, ''])));
+      return;
+    }
+    button.remove();
+    setEntityFilterParam(param, '');
   });
 }
 
@@ -318,6 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   preventReactiveSearchFormSubmit();
   hydrateFilterAutoControlsFromUrl();
+  initReactionSearch();
 
   // TomSelect for extra fields & owner search select
   const metakeySelect = document.getElementById('metakey');

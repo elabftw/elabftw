@@ -1,0 +1,88 @@
+<div class='modal fade' id='reactionModal' tabindex='-1' role='dialog' aria-labelledby='reactionModalLabel'>
+  <div class='modal-dialog modal-xl' role='document'>
+    <form id='reactionForm' class='modal-content' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/reactions'
+      data-confirm-delete='{{ 'Delete this reaction? Its history will be retained.'|trans }}'
+      data-confirm-replace='{{ 'Replace the saved drawing with the current editor contents? Quantities are retained for matching structures. Changed or removed structures lose their previous quantities.'|trans }}'
+      data-confirm-load='{{ 'Replace the current drawing with this reaction?'|trans }}'
+      data-confirm-discard='{{ 'Discard unsaved reaction changes?'|trans }}'
+      data-mismatch='{{ 'This compound has a different structure. Choose a matching compound or update the drawing first.'|trans }}'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='reactionModalLabel'>{{ 'Reaction'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'><span aria-hidden='true'>&times;</span></button>
+      </div>
+      <div class='modal-body'>
+        <div class='form-group'>
+          <label for='reactionTitle'>{{ 'Title'|trans }}</label>
+          <input id='reactionTitle' name='title' class='form-control' maxlength='255' required>
+        </div>
+        <img id='reactionPreview' class='img-fluid mb-2' alt='{{ 'Reaction scheme'|trans }}'>
+        <button type='button' id='reactionReplaceDrawing' class='btn btn-sm btn-secondary mb-3'>{{ 'Use current editor drawing'|trans }}</button>
+        <div class='row'>
+          {% for condition in [['temperature_c', 'Temperature'|trans, '°C', '-273.15'], ['duration_s', 'Duration'|trans, 's', '0'], ['pressure_pa', 'Absolute pressure'|trans, 'Pa', '0']] %}
+            <div class='form-group col-md-4'>
+              <label for='reaction_{{ condition[0] }}'>{{ condition[1] }} ({{ condition[2] }})</label>
+              <input id='reaction_{{ condition[0] }}' name='{{ condition[0] }}' class='form-control' type='number' min='{{ condition[3] }}' max='999999999999' step='any'>
+            </div>
+          {% endfor %}
+          <div class='form-group col-md-12'>
+            <label for='reactionAtmosphere'>{{ 'Atmosphere'|trans }}</label>
+            <input id='reactionAtmosphere' name='atmosphere' class='form-control' maxlength='255'>
+          </div>
+        </div>
+        <div class='form-group'>
+          <label for='reactionConditions'>{{ 'Conditions and observations'|trans }}</label>
+          <textarea id='reactionConditions' name='conditions_notes' class='form-control' rows='2'></textarea>
+        </div>
+        <div class='row'>
+          <div class='form-group col-md-6'><label for='reactionReference'>{{ 'Reference for equivalents (1 eq)'|trans }}</label><select id='reactionReference' name='reference_component_key' class='form-control'></select></div>
+          <div class='form-group col-md-6'><label for='reactionYieldBasis'>{{ 'Yield basis (limiting material)'|trans }}</label><select id='reactionYieldBasis' name='yield_basis_component_key' class='form-control'></select></div>
+        </div>
+        <p class='small text-muted'>{{ 'Planned and actual quantities are independent. Solution calculations use stock molarity; neat materials use molar mass, purity and density. Unknown values are left blank.'|trans }}</p>
+        <div class='table-responsive'>
+          <table class='table table-sm'>
+            <thead><tr><th scope='col'>{{ 'Component and properties'|trans }}</th><th scope='col'>{{ 'Role'|trans }}</th><th scope='col'>{{ 'Planned quantity'|trans }}</th><th scope='col'>{{ 'Actual quantity'|trans }}</th><th scope='col'>{{ 'Calculated'|trans }}</th><th scope='col'>{{ 'Remove'|trans }}</th></tr></thead>
+            <tbody id='reactionComponents'></tbody>
+          </table>
+        </div>
+        <button type='button' id='reactionAddComponent' class='btn btn-sm btn-secondary'>{{ 'Add component'|trans }}</button>
+        <p id='reactionError' class='alert alert-danger mt-2' role='alert' hidden></p>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='submit' class='btn btn-primary' data-cy='reaction-save'>{{ 'Save reaction'|trans }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+<template id='reactionComponentTemplate'>
+  <tr>
+    <td>
+      <input class='form-control form-control-sm' data-field='name' aria-label='{{ 'Component name'|trans }}' maxlength='1024'>
+      <small data-formula></small>
+      <details class='mt-1'>
+        <summary>{{ 'Properties and links'|trans }}</summary>
+        {% for property in [['molecular_weight', 'Molar mass (g/mol)'|trans, '0', '999999999'], ['purity_percent', 'Purity (%)'|trans, '0', '100'], ['density_g_ml', 'Density (g/mL)'|trans, '0', '999999999999'], ['concentration_mol_l', 'Stock molarity (mol/L)'|trans, '0', '999999999999'], ['coefficient', 'Stoichiometric coefficient'|trans, '0.000001', '999999']] %}
+          <label class='d-block small mb-1'>{{ property[1] }}<input class='form-control form-control-sm' type='number' min='{{ property[2] }}' max='{{ property[3] }}' step='any' data-field='{{ property[0] }}' {{ property[0] in ['purity_percent', 'coefficient'] ? 'required' }}></label>
+        {% endfor %}
+        <label class='d-block small'>{{ 'Material form'|trans }}<select class='form-control form-control-sm' data-field='material_form'><option value='neat'>{{ 'Neat material'|trans }}</option><option value='solution'>{{ 'Solution'|trans }}</option></select></label>
+        <label class='d-block small'>{{ 'Link compound (name or CAS)'|trans }}<input class='form-control form-control-sm' data-link='compound' placeholder='{{ 'Search'|trans }}'></label>
+        <label class='d-block small'>{{ 'Link resource or sample'|trans }}<input class='form-control form-control-sm' data-link='item' placeholder='{{ 'Search'|trans }}'></label>
+      </details>
+    </td>
+    <td><select class='form-control form-control-sm' data-field='role'>
+      {% for value, label in {'reactant': 'Reactant'|trans, 'reagent': 'Reagent'|trans, 'catalyst': 'Catalyst'|trans, 'solvent': 'Solvent'|trans, 'product': 'Product'|trans} %}<option value='{{ value }}'>{{ label }}</option>{% endfor %}
+    </select></td>
+    {% for phase, label in {'planned': 'Planned'|trans, 'actual': 'Actual'|trans} %}
+      <td><input class='form-control form-control-sm' data-field='{{ phase }}_value' type='number' min='0' max='999999999999' step='any' aria-label='{{ label }}'>
+        <select class='form-control form-control-sm' data-field='{{ phase }}_unit' aria-label='{{ label }} {{ 'unit'|trans }}'>
+          <option value='g'>g</option><option value='mg'>mg</option><option value='mL'>mL</option><option value='uL'>µL</option><option value='mol'>mol</option><option value='mmol'>mmol</option>{% if phase == 'planned' %}<option value='eq'>eq</option>{% endif %}
+        </select>
+      </td>
+    {% endfor %}
+    <td class='small'>
+      <div>{{ 'Planned'|trans }}: <output data-result='planned'></output></div>
+      <div>{{ 'Actual'|trans }}: <output data-result='actual'></output></div>
+    </td>
+    <td><button type='button' class='btn btn-sm btn-danger' data-remove-component aria-label='{{ 'Remove component'|trans }}'><i class='fas fa-times'></i></button></td>
+  </tr>
+</template>

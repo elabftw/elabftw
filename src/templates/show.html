@@ -219,6 +219,56 @@
 
   {# END SEARCH BAR #}
 
+  {# REACTION SEARCH #}
+  {% set rquery = App.Request.query %}
+  {% set reactionSearchActive = rquery.get('reaction_q') or rquery.get('reaction_structure') or rquery.get('reaction_key') or rquery.get('reaction_compound') or rquery.get('reaction_item') %}
+  <details id='reactionSearch' class='mt-2' {{ reactionSearchActive ? 'open' }}>
+    <summary class='btn btn-ghost btn-sm' data-cy='reactionSearchToggle'><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Search reactions'|trans }}</summary>
+    <form id='reactionSearchForm' class='form-row align-items-end mt-2' aria-label='{{ 'Search reactions'|trans }}'>
+      <div class='col-md-4 mb-2'>
+        <label for='reactionSearchText' class='font-weight-bold mb-1'>{{ 'Reaction or component'|trans }}</label>
+        <input id='reactionSearchText' name='reaction_q' type='search' class='form-control' maxlength='255' placeholder='{{ 'Title, conditions, name or formula'|trans }}' value='{{ rquery.get('reaction_q')|e('html_attr') }}' data-cy='reactionSearchText' />
+      </div>
+      <div class='col-md-4 mb-2'>
+        <label for='reactionSearchStructure' class='font-weight-bold mb-1'>{{ 'Structure'|trans }}</label>
+        <input id='reactionSearchStructure' name='reaction_structure' type='search' class='form-control' spellcheck='false' autocomplete='off' placeholder='{{ 'SMILES or InChIKey'|trans }}' value='{{ rquery.get('reaction_structure')|e('html_attr') }}' data-cy='reactionSearchStructure' />
+      </div>
+      <div class='col-md-2 mb-2'>
+        <label for='reactionSearchRole' class='font-weight-bold mb-1'>{{ 'Role'|trans }}</label>
+        <select id='reactionSearchRole' name='reaction_role' class='form-control'>
+          <option value=''>{{ 'Any role'|trans }}</option>
+          {% for value, label in {'reactant': 'Reactant'|trans, 'reagent': 'Reagent'|trans, 'catalyst': 'Catalyst'|trans, 'solvent': 'Solvent'|trans, 'product': 'Product'|trans} %}
+            <option value='{{ value }}' {{- rquery.get('reaction_role') == value ? ' selected' }}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class='col-md-2 mb-2'>
+        <div class='form-check mb-2'>
+          <input id='reactionSearchExact' name='reaction_exact' type='checkbox' value='1' class='form-check-input' {{- rquery.get('reaction_exact') ? ' checked' }} />
+          <label for='reactionSearchExact' class='form-check-label'>{{ 'Exact structure'|trans }}</label>
+        </div>
+      </div>
+      {# criteria set from a link, without a field of their own: show them so they can be removed #}
+      <div class='col-12 mb-2' id='reactionSearchLinks'>
+        {% if rquery.get('reaction_key') %}
+          <button type='button' class='btn btn-sm btn-ghost mr-2' data-reaction-search-clear='reaction_key'>{{ 'Same transformation as a reaction'|trans }} <span aria-hidden='true'>&times;</span></button>
+        {% endif %}
+        {% if rquery.get('reaction_compound') %}
+          <button type='button' class='btn btn-sm btn-ghost mr-2' data-reaction-search-clear='reaction_compound'>{{ 'Linked to compound'|trans }} #{{ rquery.getInt('reaction_compound') }} <span aria-hidden='true'>&times;</span></button>
+        {% endif %}
+        {% if rquery.get('reaction_item') %}
+          <button type='button' class='btn btn-sm btn-ghost mr-2' data-reaction-search-clear='reaction_item'>{{ 'Linked to resource'|trans }} #{{ rquery.getInt('reaction_item') }} <span aria-hidden='true'>&times;</span></button>
+        {% endif %}
+      </div>
+      <div class='col-12 mb-2'>
+        <button type='submit' class='btn btn-primary' data-cy='reactionSearchSubmit'>{{ 'Search'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-reaction-search-clear='all'>{{ 'Clear'|trans }}</button>
+        <small class='text-muted ml-2'>{{ 'A SMILES finds components containing this substructure, an InChIKey finds the same molecule including its stereoisomers. Check "Exact structure" to only find the same structure. The role applies to the structure and to linked compounds or resources.'|trans }}</small>
+      </div>
+      <p id='reactionSearchError' class='col-12 alert alert-danger' role='alert' hidden></p>
+    </form>
+  </details>
+
   {# QUERY FILTERS #}
   <div class='d-flex flex-column'>
 

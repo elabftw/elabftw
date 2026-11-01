@@ -194,6 +194,9 @@
 {% include 'json-editor.html' %}
 <hr>
 
+{% include 'chem-editor-edit.html' %}
+{% include 'reactions.html' with {'editReactions': true} %}
+
 <div id='info'
     data-page='edit'
     data-type='{{ Entity.entityType.value }}'

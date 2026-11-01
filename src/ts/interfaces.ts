@@ -227,6 +227,9 @@ export {
   Target,
 };
 
+// query params of the reaction search in show mode, read by ReactionSearch on the server
+export const REACTION_SEARCH_PARAMS = ['reaction_q', 'reaction_structure', 'reaction_exact', 'reaction_role', 'reaction_compound', 'reaction_item', 'reaction_key'];
+
 export type PasswordLabels = {
   length: string;
   letters: string;

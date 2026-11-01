@@ -34,7 +34,7 @@ abstract class AbstractMakeCsv extends AbstractMake implements StringMakerInterf
      * Spreadsheet applications evaluate a cell starting with one of these characters as a formula
      * @see https://owasp.org/www-community/attacks/CSV_Injection
      */
-    private const array FORMULA_TRIGGERS = array('=', '+', '-', '@', "\t", "\r");
+    private const array FORMULA_TRIGGERS = array('=', '+', '-', '@', "\t", "\r", "\n");
 
     protected string $contentType = 'text/csv; charset=UTF-8';
 

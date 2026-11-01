@@ -621,6 +621,8 @@ RUN sed -i -e "s/%REPLACED_AT_BUILD_TIME%/$(openssl rand -hex 4)/" /elabftw/web/
 
 # necessary for s6 if running with read-only flag
 ENV S6_READ_ONLY_ROOT=1
+# stops the container if it doesn't start fine
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 
 # start s6
 ENTRYPOINT ["/init"]

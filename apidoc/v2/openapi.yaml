@@ -68,6 +68,18 @@ components:
           summary: The related entry is an experiment.
           value: experiments
 
+    SearchCompound:
+      name: compound
+      in: query
+      schema:
+        type: integer
+      description: |
+        Look only for entries linked to this compound id.
+      examples:
+        first:
+          summary: Look for entries linked to compound with id 42.
+          value: 42
+
     Category:
       name: category
       in: query
@@ -2794,6 +2806,7 @@ x-parameterGroups:
     - $ref: "#/components/parameters/SearchExtended"
     - $ref: '#/components/parameters/SearchRelated'
     - $ref: '#/components/parameters/SearchRelatedOrigin'
+    - $ref: '#/components/parameters/SearchCompound'
     - $ref: '#/components/parameters/Category'
     - $ref: '#/components/parameters/Status'
     - $ref: '#/components/parameters/Tags'

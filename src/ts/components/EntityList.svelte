@@ -131,6 +131,7 @@
     currentSort: string;
     currentRelated: number | null;
     currentRelatedOrigin: string;
+    currentCompound: number | null;
   };
 
   let fullnames = $state<Record<number, string>>({});
@@ -295,6 +296,7 @@
       currentSort: getCurrentUrlParamOrFallback('sort', sort),
       currentRelated: getCurrentUrlNumberParam('related'),
       currentRelatedOrigin: getCurrentUrlParam('related_origin'),
+      currentCompound: getCurrentUrlNumberParam('compound'),
     };
   }
 
@@ -317,6 +319,7 @@
       context.currentSort,
       context.currentRelated,
       context.currentRelatedOrigin,
+      context.currentCompound,
       currentReloadVersion,
     ]);
   }
@@ -398,6 +401,7 @@
       currentSort,
       currentRelated,
       currentRelatedOrigin,
+      currentCompound,
     } = context;
     const seq = ++requestSeq;
     error = '';
@@ -462,6 +466,10 @@
 
       if (currentRelatedOrigin.length > 0) {
         params['related_origin'] = currentRelatedOrigin;
+      }
+
+      if (currentCompound !== null) {
+        params['compound'] = currentCompound;
       }
 
       // don't display errors

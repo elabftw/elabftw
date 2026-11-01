@@ -83,7 +83,7 @@ class LegacyRevisionsMigrationTest extends \PHPUnit\Framework\TestCase
         $legacy = array();
         $text = '';
         for ($i = 0; $i < BodyRevisionsStore::KEYFRAME_INTERVAL + 10; $i++) {
-            $text .= sprintf('<p>Mesure %d : %d mg — échantillon «%s» ✓</p>', $i, $i * 3, str_repeat('é', $i % 5));
+            $text .= sprintf('<p>Measure %d : %d mg — sample «%s» ✓</p>', $i, $i * 3, str_repeat('é', $i % 5));
             $legacy[] = $this->insertLegacy(EntityType::Experiments, $this->Experiments->id ?? 0, $text, $this->getDate($i), 1 + $i % 2);
         }
         $Items = $this->getFreshItemWithGivenUser(new Users(1, 1));

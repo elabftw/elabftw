@@ -22,6 +22,7 @@ use Elabftw\Enums\State;
 use Elabftw\Models\Tags2Entity;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Check;
+use Elabftw\Services\ReactionSearch;
 use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
@@ -52,6 +53,8 @@ final class DisplayParams extends BaseQueryParams
     public ?EntityType $relatedOrigin = null;
 
     protected string $orderIsPinnedSql = 'is_pinned DESC,';
+
+    private ?string $reactionFilterSql = null;
 
     public function __construct(
         private Users $requester,
@@ -132,7 +135,7 @@ final class DisplayParams extends BaseQueryParams
     #[Override]
     public function getFilterSql(): string
     {
-        return $this->filterSql;
+        return $this->filterSql . $this->getReactionFilterSql();
     }
 
     #[Override]
@@ -209,6 +212,19 @@ final class DisplayParams extends BaseQueryParams
         $this->filterSql .= $this->getSqlIn('entity.timestamped', $query->getString('timestamped'));
         // RATING FILTER
         $this->filterSql .= $this->getSqlIn('entity.rating', $query->getString('rating'));
+    }
+
+    /**
+     * Computed on first use only: DisplayParams are also built from the request when reading a single entry,
+     * and that must not run the reaction search
+     */
+    private function getReactionFilterSql(): string
+    {
+        if ($this->reactionFilterSql === null) {
+            $ReactionSearch = new ReactionSearch($this->entityType, $this->getQuery());
+            $this->reactionFilterSql = $ReactionSearch->isActive() ? Tools::getIdFilterSql($ReactionSearch->getEntityIds()) : '';
+        }
+        return $this->reactionFilterSql;
     }
 
     /**

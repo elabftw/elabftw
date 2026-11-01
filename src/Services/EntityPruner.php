@@ -71,6 +71,21 @@ final class EntityPruner implements CleanerInterface
             }
             $this->Db->execute($tagsReq);
 
+            // reactions are owned by their entry but only the link row cascades on entity deletion:
+            // remove the reactions themselves, their components and revisions cascade from them
+            $reactionsSql = 'DELETE reactions FROM reactions
+                JOIN reactions2' . $entityTable . ' AS links ON links.reaction_id = reactions.id
+                WHERE links.entity_id IN (SELECT id FROM ' . $entityTable . $baseWhere . ')';
+            $reactionsReq = $this->Db->prepare($reactionsSql);
+            $reactionsReq->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
+            foreach ($binds as $key => $bindData) {
+                $reactionsReq->bindValue($key, $bindData[0], $bindData[1]);
+            }
+            if ($this->since !== null) {
+                $reactionsReq->bindValue(':since', $this->parseSince($this->since));
+            }
+            $this->Db->execute($reactionsReq);
+
             // delete the entity rows (same WHERE, so restored entities are skipped)
             $entitySql = 'DELETE FROM ' . $entityTable . $baseWhere;
             $entityReq = $this->Db->prepare($entitySql);

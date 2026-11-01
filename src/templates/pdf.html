@@ -63,6 +63,11 @@
 
 {{ body|raw }}
 
+{% for reaction in entityData.reactions|default([]) %}
+  <h3>{{ reaction.title }}</h3>
+  {% include 'reaction-summary.html' %}
+{% endfor %}
+
 {% if entityData.metadata %}
 <section class='no-break no-list-style'>
   {{ entityData.metadata|formatMetadata }}

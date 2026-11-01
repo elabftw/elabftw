@@ -36,6 +36,7 @@ enum ApiSubModels: string
     case Recurrences = 'recurrences';
     case ProcurementRequests = 'procurement_requests';
     case RequestActions = 'request_actions';
+    case Reactions = 'reactions';
     case Revisions = 'revisions';
     case Rors = 'rors';
     case SigKeys = 'sig_keys';
@@ -74,6 +75,7 @@ enum ApiSubModels: string
                 self::CompoundsLinks,
                 self::ItemsLinks,
                 self::RequestActions,
+                self::Reactions,
                 self::Revisions,
                 self::StepGroups,
                 self::Steps,

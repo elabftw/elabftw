@@ -9,6 +9,7 @@
   import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import { ApiC } from '../api';
+  import { REACTION_SEARCH_PARAMS } from '../interfaces';
   import i18next from '../i18n';
   import { State, type StateValue } from '../state.auto';
   import { relativeMoment } from "../misc";
@@ -131,7 +132,20 @@
     currentSort: string;
     currentRelated: number | null;
     currentRelatedOrigin: string;
+    currentReactionParams: Record<string, string>;
   };
+
+  // reaction search filters, see initReactionSearch() in show.ts
+  function getCurrentReactionParams(): Record<string, string> {
+    const params: Record<string, string> = {};
+    for (const param of REACTION_SEARCH_PARAMS) {
+      const value = getCurrentUrlParam(param);
+      if (value.length > 0) {
+        params[param] = value;
+      }
+    }
+    return params;
+  }
 
   let fullnames = $state<Record<number, string>>({});
   const loadingFullnames = new Set<number>();
@@ -295,6 +309,7 @@
       currentSort: getCurrentUrlParamOrFallback('sort', sort),
       currentRelated: getCurrentUrlNumberParam('related'),
       currentRelatedOrigin: getCurrentUrlParam('related_origin'),
+      currentReactionParams: getCurrentReactionParams(),
     };
   }
 
@@ -317,6 +332,7 @@
       context.currentSort,
       context.currentRelated,
       context.currentRelatedOrigin,
+      context.currentReactionParams,
       currentReloadVersion,
     ]);
   }
@@ -398,6 +414,7 @@
       currentSort,
       currentRelated,
       currentRelatedOrigin,
+      currentReactionParams,
     } = context;
     const seq = ++requestSeq;
     error = '';
@@ -463,6 +480,8 @@
       if (currentRelatedOrigin.length > 0) {
         params['related_origin'] = currentRelatedOrigin;
       }
+
+      Object.assign(params, currentReactionParams);
 
       // don't display errors
       params['notifOnError'] = 0;

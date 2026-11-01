@@ -60,6 +60,7 @@ use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
@@ -420,6 +421,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::CompoundsLinks => LinksFactory::getCompoundsLinks($this->Model, $this->subId),
                 ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),
+                ApiSubModels::Reactions => new Reactions($this->Model, $this->subId),
                 ApiSubModels::Revisions => new Revisions(
                     $this->Model,
                     (int) $Config->configArr['max_revisions'],

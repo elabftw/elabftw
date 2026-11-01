@@ -572,6 +572,35 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->Users->destroy();
     }
 
+    public function testRegisterInFullyArchivedTeamDoesNotGrantAdmin(): void
+    {
+        $teamId = $this->getFreshFullyArchivedTeam();
+        $originalAdminValidate = $this->Config->configArr['admin_validate'];
+        try {
+            $this->Config->patch(Action::Update, array('admin_validate' => 1));
+            // same call as the register page: no usergroup and no automatic validation
+            $Users = new Users();
+            $userid = $Users->createOne(
+                'newcomer-' . bin2hex(random_bytes(8)) . '@example.com',
+                array($teamId),
+                new NullLocalPassword(),
+                'New',
+                'Comer',
+            );
+
+            $TeamsHelper = new TeamsHelper($teamId);
+            self::assertTrue($TeamsHelper->isUserInTeam($userid));
+            self::assertFalse($TeamsHelper->isAdmin($userid));
+            self::assertTrue($Users->needValidation);
+            self::assertSame(0, (new Users($userid))->userData['validated']);
+        } finally {
+            $this->Config->patch(
+                Action::Update,
+                array('admin_validate' => $originalAdminValidate),
+            );
+        }
+    }
+
     private function createTeamlessValidatedUser(): int
     {
         $userid = $this->Users->createOne(

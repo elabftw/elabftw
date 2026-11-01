@@ -208,7 +208,7 @@ class Users extends AbstractRest
         $this->Db->execute($req);
         $this->userid = $this->Db->lastInsertId();
 
-        // check if the team is empty before adding the user to the team
+        // check if the team never had any member (archived ones included) before adding the user to the team
         $isFirstUser = $TeamsHelper->isFirstUserInTeam();
         // now add the user to the team
         $Users2Teams = new Users2Teams($this->requester);

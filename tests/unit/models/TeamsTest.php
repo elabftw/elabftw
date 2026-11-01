@@ -155,6 +155,26 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testSynchronizeDoesNotMakeUserAdminOfFullyArchivedTeam(): void
+    {
+        $user = $this->getUserInTeam(1);
+        $userid = $user->getUserid();
+        $originalTeams = (new UsersHelper($userid))->getTeamsFromUserid();
+        $teamId = $this->getFreshFullyArchivedTeam();
+        $teams = $originalTeams;
+        $teams[] = array('id' => $teamId);
+
+        try {
+            $this->Teams->synchronize($userid, $teams);
+
+            $TeamsHelper = new TeamsHelper($teamId);
+            $this->assertTrue($TeamsHelper->isUserInTeam($userid));
+            $this->assertFalse($TeamsHelper->isAdminInTeam($userid));
+        } finally {
+            $this->Teams->synchronize($userid, $originalTeams);
+        }
+    }
+
     public function testSendOnboardingEmails(): void
     {
         $userids = array('userids' => array(1, 2, 3, 4, 5));

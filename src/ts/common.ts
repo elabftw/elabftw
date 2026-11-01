@@ -234,45 +234,107 @@ on('delete-selected-entities', async () => {
   });
 });
 
-// code to hide navbar on scroll down, and show it on scroll up.
+// Fixed desktop sidebar/topbar and responsive mobile navigation share one height offset.
 const root = document.documentElement;
 const navbar = document.getElementById('main-navbar');
+const hasFixedNavigation = document.getElementById('container')?.classList.contains('has-main-nav') ?? false;
+const fixedNavigationHeight = (): number => 52;
+const entityToolbar = document.getElementById('entityToolbar');
 
 if (navbar) {
-  const navbarHeight = `${navbar.offsetHeight}px`;
-  root.style.setProperty('--navbar-height', navbarHeight);
-  let lastScroll = Math.max(0, window.scrollY);
-  let ticking = false;
-  let isNavbarHidden = false;
-
-  window.addEventListener('scroll', () => {
-    if (ticking) {
-      return;
-    }
-
-    ticking = true;
-
-    window.requestAnimationFrame(() => {
-      const currentScroll = Math.max(0, window.scrollY);
-      const shouldHide = currentScroll > 0 && currentScroll > lastScroll;
-
-      if (shouldHide !== isNavbarHidden) {
-        navbar.classList.toggle('hidden', shouldHide);
-        root.style.setProperty('--navbar-height', shouldHide ? '0px' : navbarHeight);
-        isNavbarHidden = shouldHide;
+  if (hasFixedNavigation) {
+    const updateFixedOffsets = (): void => {
+      const height = fixedNavigationHeight();
+      root.style.setProperty('--navbar-height', `${height}px`);
+      if (entityToolbar) {
+        root.style.setProperty('--step-scroll-offset', `${height + entityToolbar.offsetHeight}px`);
       }
+    };
+    updateFixedOffsets();
+    window.addEventListener('resize', updateFixedOffsets, { passive: true });
+  } else {
+    const navbarHeight = `${navbar.offsetHeight}px`;
+    root.style.setProperty('--navbar-height', navbarHeight);
+    let lastScroll = Math.max(0, window.scrollY);
+    let ticking = false;
+    let isNavbarHidden = false;
 
-      lastScroll = currentScroll;
-      ticking = false;
-    });
-  }, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        const currentScroll = Math.max(0, window.scrollY);
+        const shouldHide = currentScroll > 0 && currentScroll > lastScroll;
+        if (shouldHide !== isNavbarHidden) {
+          navbar.classList.toggle('hidden', shouldHide);
+          root.style.setProperty('--navbar-height', shouldHide ? '0px' : navbarHeight);
+          isNavbarHidden = shouldHide;
+        }
+        lastScroll = currentScroll;
+        ticking = false;
+      });
+    }, { passive: true });
+  }
 }
 
-const entityToolbar = document.getElementById('entityToolbar');
-if (entityToolbar) {
-  // Scrolling up reveals the navbar, so reserve its height even while it is hidden.
+if (entityToolbar && !hasFixedNavigation) {
   const offset = (navbar?.offsetHeight ?? 0) + entityToolbar.offsetHeight;
   root.style.setProperty('--step-scroll-offset', `${offset}px`);
+}
+
+// Move existing category/status buttons instead of rendering duplicate controls.
+// The original location is restored when the viewport becomes narrow.
+const topbarEntityMeta = document.getElementById('navbarEntityMeta');
+const categoryRow = document.getElementById('categoryBtn')?.parentElement;
+if (topbarEntityMeta && categoryRow) {
+  const originalPosition = document.createComment('category and status position');
+  categoryRow.before(originalPosition);
+  const idLabel = categoryRow.querySelector('span');
+  if (idLabel) idLabel.textContent = `ID: ${idLabel.textContent?.trim() ?? ''}`;
+  const updateCategoryPosition = (): void => {
+    if (window.matchMedia('(min-width: 1200px)').matches) {
+      topbarEntityMeta.replaceChildren(categoryRow);
+    } else {
+      originalPosition.after(categoryRow);
+    }
+  };
+  updateCategoryPosition();
+  window.addEventListener('resize', updateCategoryPosition, { passive: true });
+}
+
+// Reuse the actual editable title in the topbar on desktop, and restore it to
+// the page on mobile. No duplicate #documentTitle or edit control is created.
+const sourceTitle = document.getElementById('documentTitle');
+const topbarTitle = document.getElementById('navbarEntityTitle');
+const titleHeading = sourceTitle?.closest('h1');
+if (sourceTitle && topbarTitle && titleHeading) {
+  const originalPosition = document.createComment('original editable title position');
+  titleHeading.classList.add('original-entity-title');
+  titleHeading.before(originalPosition);
+  const positionTitle = (): void => {
+    if (window.matchMedia('(min-width: 1200px)').matches) {
+      if (!topbarTitle.contains(titleHeading)) topbarTitle.replaceChildren(titleHeading);
+    } else if (originalPosition.nextSibling !== titleHeading) {
+      originalPosition.after(titleHeading);
+      // Preserve the server-rendered heading when switching back to desktop.
+      topbarTitle.textContent = sourceTitle.textContent ?? '';
+    }
+  };
+  positionTitle();
+  window.addEventListener('resize', positionTitle, { passive: true });
+  new MutationObserver(() => {
+    topbarTitle.closest('.navbar-entity-heading')?.setAttribute('title', sourceTitle.textContent ?? '');
+  }).observe(sourceTitle, { childList: true, characterData: true, subtree: true });
+}
+
+// Reuse the real Favorite Tags/Todolist panels in the sidebar accordion.
+const sidebarPanels = document.querySelector('.navbar-side-bottom');
+if (sidebarPanels) {
+  for (const id of ['favtagsPanel', 'todolistPanel']) {
+    const panel = document.getElementById(id);
+    const opener = document.getElementById(`${id}Opener`);
+    if (panel && opener) opener.after(panel);
+  }
 }
 
 const container = document.getElementById('container')!;

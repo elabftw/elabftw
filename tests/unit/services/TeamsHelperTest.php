@@ -38,6 +38,7 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
         $Teams = new Teams(new Users(1));
         $team = $Teams->postAction(Action::Create, array('name' => 'New team'));
         $TeamsHelper = new TeamsHelper($team);
+        $this->assertTrue($TeamsHelper->isFirstUserInTeam());
         $this->assertEquals(Usergroup::Admin, $TeamsHelper->getGroup());
     }
 
@@ -57,6 +58,16 @@ class TeamsHelperTest extends \PHPUnit\Framework\TestCase
         } finally {
             $HiddenTeam->destroy();
         }
+    }
+
+    public function testFullyArchivedTeamDoesNotGrantAdmin(): void
+    {
+        $TeamsHelper = new TeamsHelper($this->getFreshFullyArchivedTeam());
+        // no active member is left in the team...
+        $this->assertSame(0, $TeamsHelper->getUsersCount());
+        // ...but it is not a new team, so the next user to join must not become its Admin
+        $this->assertFalse($TeamsHelper->isFirstUserInTeam());
+        $this->assertSame(Usergroup::User, $TeamsHelper->getGroup());
     }
 
     public function testArchivedMembershipDoesNotGrantTeamAuthorization(): void

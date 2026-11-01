@@ -32,14 +32,21 @@ final class TeamsHelper
      */
     public function teamIsVisibleOrExplode(): void
     {
-        $sql = 'SELECT id, visible FROM teams WHERE id = :team_id';
+        if (!$this->isVisible()) {
+            throw new ForbiddenException("There is no visible team with ID $this->team .");
+        }
+    }
+
+    /**
+     * Does the team exist and is it visible (not hidden by a Sysadmin)
+     */
+    public function isVisible(): bool
+    {
+        $sql = 'SELECT visible FROM teams WHERE id = :team_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':team_id', $this->team, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $team = $req->fetch();
-        if ($team == false || $team['visible'] !== 1) {
-            throw new ForbiddenException("There is no visible team with ID $this->team .");
-        }
+        return $req->fetchColumn() === 1;
     }
 
     /**

@@ -77,7 +77,7 @@ final class BookingApproval
     {
         if ($requiresApproval) {
             Guard::ensureArrayNotEmpty('approvers', $approvers);
-            $this->replaceApprovers($Item->id, array_unique($approvers));
+            $this->replaceApprovers($Item->id ?? 0, array_unique($approvers));
         }
 
         if ((bool) $Item->entityData['requires_booking_approval'] !== $requiresApproval) {

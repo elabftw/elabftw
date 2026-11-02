@@ -547,7 +547,9 @@ final class Scheduler extends AbstractRest
 
     public function checkCandidateOverlaps(array $occurrences): void
     {
-        if ($this->Items->entityData['book_can_overlap'] === 1) {
+        // Same rule as checkOverlap(): approval-controlled resources cannot overlap, even when book_can_overlap is enabled.
+        if ($this->Items->entityData['book_can_overlap'] === 1
+            && $this->Items->entityData['requires_booking_approval'] === 0) {
             return;
         }
         $ordered = $occurrences;

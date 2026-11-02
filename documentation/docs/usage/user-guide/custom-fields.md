@@ -178,7 +178,7 @@ Here is a list and description of the properties that `extra_fields` objects can
 ### value (required)
 The field that will hold the selected/input value. You can set a default value here or leave it empty. It is the only required attribute for an `extra_field`. A single-value field stores a string or number.
 
-When `allow_multi_values` is `true`, `value` is stored as an array of strings or numbers. For example, a multi-value text field can use `"value": ["first", "second"]`. Use an empty array (`"value": []`) when the field has no values. Arrays are rejected for fields that do not enable `allow_multi_values`.
+When `allow_multi_values` is `true`, `value` is stored as an array of strings or numbers. For example, a multi-value text field can use `"value": ["first", "second"]`. Use an empty array (`"value": []`) when the field has no values. Arrays are rejected for fields that do not enable `allow_multi_values`. For a `multifield`, `value` is always an array of rows: each row is an object with one entry per filled sub-field, empty sub-field values are omitted, and every row is stored, even an empty one (as an empty object).
 
 ### type (optional)
 
@@ -193,6 +193,9 @@ A date and time input.
 
 #### email
 An email input: only a valid email address will be accepted.
+
+#### multifield
+A table of values, with the columns defined by `sub_fields`. The `value` is an array of rows, one object per row, with one entry per filled sub-field. Sub-fields are ordered by their `position`. With `allow_multi_values` set to `true`, rows can be added or removed; otherwise the table holds at most a single row. An empty `value` shows no row.
 
 #### number
 A text input that only accepts a number as the value.
@@ -214,6 +217,16 @@ A text input that only accepts a valid URL. In view mode, the link will be click
 
 #### options (for type = select)
 An array of strings (`[]`) with different options for the dropdown element.
+
+### sub_fields (for type = multifield)
+An object defining the columns of a `multifield`. Each key is a sub-field name and each value an object with the properties of a regular field: `type`, `position` (orders the columns), `options` (for type = select), `default` and `description` (shown as a tooltip next to the column name).
+
+~~~json
+"sub_fields": {
+  "temperature": { "type": "number", "position": 0 },
+  "unit": { "type": "select", "options": ["°C", "K"], "position": 1 }
+}
+~~~
 
 ### allow_multi_values
 A `boolean` attribute, which defaults to `false`, for allowing any custom field type to hold multiple values. The `value` property is stored as an array when enabled. Dropdown fields use a native multi-select input; other field types display repeatable inputs that can be added or removed individually.

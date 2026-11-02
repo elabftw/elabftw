@@ -22,8 +22,10 @@ require_once dirname(__DIR__) . '/init.inc.php';
 $Response = new JsonResponse();
 // also deal with setting lang in session with a GET ?lang=fr_FR
 if ($App->Request->query->has('lang')) {
-    $lang = Language::tryFrom($App->Request->query->getString('lang')) ?? Language::EnglishGB;
-    $App->Session->set('lang', $lang->value);
+    $lang = Language::tryFrom($App->Request->query->getString('lang'));
+    if ($lang !== null) {
+        $App->setLang($lang);
+    }
 }
 $Response->setData(array(
     'privacy' => $App->Config->configArr['privacy_policy'],

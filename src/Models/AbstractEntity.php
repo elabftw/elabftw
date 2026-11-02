@@ -58,6 +58,7 @@ use Elabftw\Make\MakeEvidencyTimestamp;
 use Elabftw\Make\MakeEvidencyTimestampDev;
 use Elabftw\Make\MakeFullJson;
 use Elabftw\Make\MakeGlobalSignTimestamp;
+use Elabftw\Make\MakeSciMaticProof;
 use Elabftw\Make\MakeSectigoTimestamp;
 use Elabftw\Make\MakeUniversignTimestamp;
 use Elabftw\Make\MakeUniversignTimestampDev;
@@ -111,6 +112,7 @@ use function ucfirst;
 use function array_fill;
 use function array_map;
 use function count;
+use function ctype_digit;
 use function array_replace;
 use function trim;
 use function array_filter;
@@ -404,6 +406,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $displayFilterSql = $displayParams->getFilterSql();
         $withCompounds = $this->needsCompoundsJoin($displayFilterSql);
+        $withUploads = $this->needsUploadsJoin();
 
         $EntitySqlBuilder = $this->getSqlBuilder();
         if ($searchJoinSql !== '' && $EntitySqlBuilder instanceof EntitySqlBuilder) {
@@ -411,7 +414,7 @@ abstract class AbstractEntity extends AbstractRest
         }
         if (
             $EntitySqlBuilder instanceof EntitySqlBuilder
-            && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds)
+            && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds, $withUploads)
         ) {
             return $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can);
         }
@@ -419,6 +422,8 @@ abstract class AbstractEntity extends AbstractRest
             $extended,
             $displayParams->getRelatedOrigin(),
             $withCompounds,
+            withWriteAccess: true,
+            withUploads: $withUploads,
         );
 
         $sql .= ' WHERE 1=1 ';
@@ -770,7 +775,10 @@ abstract class AbstractEntity extends AbstractRest
     public function readOneFull(): array
     {
         $base = $this->readOne();
-        $base['revisions'] = (new Revisions($this))->readAll();
+        // anonymous users cannot access revisions
+        $base['revisions'] = $this->Users instanceof AnonymousUser
+            ? array()
+            : (new Revisions($this))->readAll();
         // we want to include ALL uploaded files
         $base['uploads'] = (new Uploads($this))->readAll(
             $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
@@ -981,12 +989,12 @@ abstract class AbstractEntity extends AbstractRest
             $content = Mh::mergeMetadataValues($this->readColumn('metadata'), $content);
         }
         // ensure no changes happen on entries with immutable permissions
-        // admins can override the immutability of an entity's permissions. See #5800
+        // admins of the entity team can override the immutability of an entity's permissions. See #5800
         if ($params->getTarget() === 'canread' || $params->getTarget() === 'canwrite' || $params->getTarget() === 'canread_base' || $params->getTarget() === 'canwrite_base') {
             $immutableKey = str_replace('_base', '', $params->getTarget()) . '_is_immutable';
             if (($this->entityData[$immutableKey] ?? 0) === 1
                 && !($this instanceof AbstractTemplateEntity)
-                && !($this->Users->isAdmin)
+                && !$this->Users->isAdminOfTeam($this->entityData['team'])
             ) {
                 throw new UnprocessableContentException(_('Cannot modify permissions on entry with immutable permissions.'));
             }
@@ -1039,18 +1047,24 @@ abstract class AbstractEntity extends AbstractRest
             $dataFormat = ExportFormat::Pdf;
         }
 
-        // select the timestamp service and do the timestamp request to TSA
-        $Maker = $this->getTimestampMaker($Config->configArr, $dataFormat);
-        $TimestampUtils = $Maker->getTimestampUtils();
-
-        // save the token and data in a zip archive
-        $zipName = $Maker->getFileName();
         $zipPath = FsTools::getCacheFile() . '.zip';
         $comment = sprintf(_('Timestamp archive by %s'), $this->Users->userData['fullname']);
-        $Maker->saveTimestamp(
-            $TimestampUtils->timestamp(),
-            new CreateUploadFromLocalFile($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
-        );
+        // SciMatic Proof is not an RFC 3161 service: it answers with a signed JSON receipt instead of a token
+        if ($Config->configArr['ts_authority'] === 'scimatic') {
+            $Maker = $this->getSciMaticProofMaker($Config->configArr, $dataFormat);
+            $Maker->timestamp(new CreateUploadFromLocalFile($Maker->getFileName(), $zipPath, $comment, immutable: 1, state: State::Archived));
+        } else {
+            // select the timestamp service and do the timestamp request to TSA
+            $Maker = $this->getTimestampMaker($Config->configArr, $dataFormat);
+            $TimestampUtils = $Maker->getTimestampUtils();
+
+            // save the token and data in a zip archive
+            $zipName = $Maker->getFileName();
+            $Maker->saveTimestamp(
+                $TimestampUtils->timestamp(),
+                new CreateUploadFromLocalFile($zipName, $zipPath, $comment, immutable: 1, state: State::Archived),
+            );
+        }
 
         // decrement the balance
         $Config->decrementTsBalance();
@@ -1307,16 +1321,16 @@ abstract class AbstractEntity extends AbstractRest
     protected function checkToggleLockPermissions(): void
     {
         $this->getPermissions();
-        // if the entry is locked, only an admin or the locker can unlock it
+        // if the entry is locked, only an admin of the entity team or the locker can unlock it
         // it is no longer necessary to be an admin or owner to lock something
-        if ($this->entityData['locked'] === 1 && (!$this->Users->isAdmin && $this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
+        if ($this->entityData['locked'] === 1 && (!$this->Users->isAdminOfTeam($this->entityData['team']) && $this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
             throw new ImproperActionException(_("You don't have the rights to lock/unlock this."));
         }
     }
 
     protected function checkUnlockPermissions(): void
     {
-        if (!$this->Users->isAdmin && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
+        if (!$this->Users->isAdminOfTeam($this->entityData['team']) && ($this->entityData['lockedby'] !== $this->Users->userData['userid'])) {
             // Get the first name of the locker to show in error message
             $sql = 'SELECT firstname FROM users WHERE userid = :userid';
             $req = $this->Db->prepare($sql);
@@ -1377,6 +1391,12 @@ abstract class AbstractEntity extends AbstractRest
             'custom' => new MakeCustomTimestamp($this->Users, $this, $config, $dataFormat),
             default => throw new ImproperActionException('Incorrect timestamp authority configuration.'),
         };
+    }
+
+    protected function getSciMaticProofMaker(array $config, ExportFormat $dataFormat): MakeSciMaticProof
+    {
+        $HttpGetter = new HttpGetter(new Client(), $config['proxy'], !Env::asBool('DEV_MODE'));
+        return new MakeSciMaticProof($this->Users, $this, $config, $dataFormat, $HttpGetter);
     }
 
     protected function sign(string $passphrase, Meaning $meaning): array
@@ -1466,6 +1486,7 @@ abstract class AbstractEntity extends AbstractRest
         bool $extended,
         string $searchJoinSql,
         bool $withCompounds,
+        bool $withUploads,
     ): bool {
         return $displayParams instanceof DisplayParams
             && !($this->Users instanceof AnonymousUser)
@@ -1475,6 +1496,7 @@ abstract class AbstractEntity extends AbstractRest
             && !$displayParams->isFull()
             && $displayParams->getRelatedOrigin() === null
             && !$withCompounds
+            && !$withUploads
             && $this->filterSql === ''
             && $displayParams->orderby === Orderby::Lastchange
             && $displayParams->sort === Sort::Desc
@@ -1502,7 +1524,7 @@ abstract class AbstractEntity extends AbstractRest
             '%s INNER JOIN (%s) AS page
                 ON page.id = entity.id
             ORDER BY page.is_pinned DESC, page.modified_at DESC, page.id DESC',
-            $EntitySqlBuilder->getReadSqlBeforeWhere(),
+            $EntitySqlBuilder->getReadSqlBeforeWhere(withWriteAccess: true),
             $pageSql,
         );
 
@@ -1522,11 +1544,13 @@ abstract class AbstractEntity extends AbstractRest
                 'value' => '%' . $query . '%',
             );
         }
-        $this->extendedValues[] = array(
-            'param' => ':simpleQueryCustomId',
-            'value' => $query,
-            'type' => PDO::PARAM_INT,
-        );
+        if (ctype_digit($query)) {
+            $this->extendedValues[] = array(
+                'param' => ':simpleQueryCustomId',
+                'value' => $query,
+                'type' => PDO::PARAM_INT,
+            );
+        }
         $this->extendedValues[] = array(
             'param' => ':simpleQueryFulltext',
             'value' => $this->toBooleanFulltextQuery($query),
@@ -1536,7 +1560,7 @@ abstract class AbstractEntity extends AbstractRest
     private function isAdvancedSearchQuery(string $query): bool
     {
         return preg_match(
-            '/(?:^|\s)(?:author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
+            '/(?:^|\s)(?:attachment|author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
             $query,
         ) === 1
             || preg_match('/\b(?:AND|OR|NOT)\b|[()!&|"\']/', $query) === 1;
@@ -1558,13 +1582,20 @@ abstract class AbstractEntity extends AbstractRest
             'SELECT search_entity.id
             FROM %1$s AS search_entity
             WHERE MATCH(search_entity.title, search_entity.body, search_entity.elabid, search_entity.metadata_search)
-                AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
-            UNION
-            SELECT search_entity.id
-            FROM %1$s AS search_entity
-            WHERE search_entity.custom_id = :simpleQueryCustomId',
+                AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)',
             $table,
         );
+
+        // only look at custom_id for integer queries: MySQL casts a string like "81-30-1" (a CAS number) to 81
+        if (ctype_digit($query)) {
+            $sql .= sprintf(
+                ' UNION
+                SELECT search_entity.id
+                FROM %1$s AS search_entity
+                WHERE search_entity.custom_id = :simpleQueryCustomId',
+                $table,
+            );
+        }
 
         if ($this->hasShortFulltextToken($query)) {
             $sql .= sprintf(
@@ -1587,6 +1618,12 @@ abstract class AbstractEntity extends AbstractRest
         return $this->sqlReferencesCompounds($this->extendedFilter)
             || $this->sqlReferencesCompounds($this->filterSql)
             || $this->sqlReferencesCompounds($displayFilterSql);
+    }
+
+    // joining uploads is expensive, so only do it when the query searches attachments
+    private function needsUploadsJoin(): bool
+    {
+        return str_contains($this->extendedFilter, 'uploads.');
     }
 
     private function sqlReferencesCompounds(string $sql): bool

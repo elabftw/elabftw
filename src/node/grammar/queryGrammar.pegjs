@@ -69,7 +69,7 @@ Fields
   / FieldMetadata
 
 Field
-  = field:('author'i / 'body'i / 'category'i / 'elabid'i
+  = field:('attachment'i / 'author'i / 'body'i / 'category'i / 'elabid'i
       / 'group'i / 'owner'i / 'state'i / 'status'i / 'title'i / 'visibility'i
     ) ':' strict:StrictOperator term:(List / LiteralInField)
   {

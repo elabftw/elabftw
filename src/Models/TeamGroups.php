@@ -24,8 +24,11 @@ use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
+use PDOStatement;
 
+use function array_filter;
 use function array_map;
+use function array_values;
 use function json_decode;
 use function trim;
 use function sprintf;
@@ -138,8 +141,11 @@ final class TeamGroups extends AbstractRest
     public function readAllEverything(): array
     {
         $sql = 'SELECT team_groups.id, team_groups.name, teams.name AS team_name
-            FROM team_groups LEFT JOIN teams ON (team_groups.team = teams.id) ORDER BY teams.name, team_groups.name ASC';
+            FROM team_groups LEFT JOIN teams ON (team_groups.team = teams.id)
+            WHERE 1 = 1' . $this->getVisibilitySql() . '
+            ORDER BY teams.name, team_groups.name ASC';
         $req = $this->Db->prepare($sql);
+        $this->bindVisibility($req);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -160,22 +166,33 @@ final class TeamGroups extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM team_groups WHERE id = :id';
+        $sql = 'SELECT team_groups.* FROM team_groups
+            LEFT JOIN teams ON (team_groups.team = teams.id)
+            WHERE team_groups.id = :id' . $this->getVisibilitySql();
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->bindVisibility($req);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
     }
 
+    /**
+     * Resolve team group ids (from a permissions json) into names for display
+     * Only groups the requester can know about are resolved, see getVisibilitySql()
+     */
     public function readNamesFromIds(array $idArr): array
     {
-        if (empty($idArr)) {
+        $onlyIds = array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
+        if (empty($onlyIds)) {
             return array();
         }
-        $onlyIds = array_map('intval', $idArr);
-        $sql = 'SELECT team_groups.name FROM team_groups WHERE id IN (' . implode(',', $onlyIds) . ') ORDER BY name ASC';
+        $sql = 'SELECT team_groups.name FROM team_groups
+            LEFT JOIN teams ON (team_groups.team = teams.id)
+            WHERE team_groups.id IN (' . implode(',', $onlyIds) . ')' . $this->getVisibilitySql() . '
+            ORDER BY team_groups.name ASC';
         $req = $this->Db->prepare($sql);
+        $this->bindVisibility($req);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -321,6 +338,29 @@ final class TeamGroups extends AbstractRest
         $req->bindValue(':groupid', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->readOne();
+    }
+
+    /**
+     * Restrict team_groups (joined with teams) to the ones the requester can know about:
+     * groups of a visible team, groups of a team the requester is part of, and groups the requester is a member of.
+     * Without this, groups of hidden teams (and the name of these teams) are disclosed to anyone.
+     */
+    private function getVisibilitySql(): string
+    {
+        if ($this->Users->isSysadmin()) {
+            return '';
+        }
+        return ' AND (teams.visible = 1
+            OR team_groups.team IN (SELECT users2teams.teams_id FROM users2teams WHERE users2teams.users_id = :visibility_userid)
+            OR team_groups.id IN (SELECT users2team_groups.groupid FROM users2team_groups WHERE users2team_groups.userid = :visibility_userid))';
+    }
+
+    private function bindVisibility(PDOStatement $req): void
+    {
+        if ($this->Users->isSysadmin()) {
+            return;
+        }
+        $req->bindValue(':visibility_userid', (int) ($this->Users->userData['userid'] ?? 0), PDO::PARAM_INT);
     }
 
     private function update(TeamGroupParams $params): bool

@@ -78,6 +78,37 @@ class AbstractCategoryTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
+    public function testAdminOfAnotherTeamCannotCreateCategoryIfTeamSettingDisallowsIt(): void
+    {
+        // this user is Admin in team 2, but not in team 1
+        $user = $this->getUserInTeam(team: 2, admin: 1);
+        $Teams = new Teams($user, 1);
+        $Teams->teamArr['users_canwrite_experiments_categories'] = 0;
+
+        $Category = new ExperimentsCategories($Teams);
+
+        $this->expectException(ForbiddenException::class);
+
+        $Category->postAction(Action::Create, array(
+            'name' => 'Forbidden category',
+            'color' => '#29aeb9',
+        ));
+    }
+
+    public function testAdminCanCreateCategoryIfTeamSettingDisallowsIt(): void
+    {
+        $user = $this->getUserInTeam(team: 1, admin: 1);
+        $Teams = new Teams($user, 1);
+        $Teams->teamArr['users_canwrite_experiments_categories'] = 0;
+
+        $Category = new ExperimentsCategories($Teams);
+
+        $this->assertIsInt($Category->postAction(Action::Create, array(
+            'name' => 'Admin category',
+            'color' => '#29aeb9',
+        )));
+    }
+
     public function testNormalUserCannotModifyIsPrivate(): void
     {
         $user = $this->getUserInTeam(1);

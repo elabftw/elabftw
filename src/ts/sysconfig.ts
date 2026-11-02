@@ -17,10 +17,15 @@ import $ from 'jquery';
 import { SemverCompare } from './SemverCompare.class';
 import { on } from './handlers';
 import { showModalAndFocusFirstInput } from './common';
+import TomSelect from 'tom-select/base';
 
 function updateTsFieldsVisibility(select: HTMLSelectElement) {
   const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
-  const accountTsa = ['universign', 'dgn', 'evidency', 'deltablot'];
+  const accountTsa = ['universign', 'dgn', 'evidency', 'deltablot', 'scimatic'];
+  // SciMatic Proof only needs an API key (the password field) and has its own help text
+  const isSciMatic = select.value === 'scimatic';
+  document.getElementById('ts_logindiv').toggleAttribute('hidden', isSciMatic);
+  document.getElementById('ts_scimaticdiv').toggleAttribute('hidden', !isSciMatic);
   if (noAccountTsa.includes(select.value)) {
     // mask all
     document.getElementById('ts_loginpass').toggleAttribute('hidden', true);
@@ -238,6 +243,14 @@ const defaultBrandingAssets: Record<string, string> = {
 if (window.location.pathname === '/sysconfig.php') {
 
   checkForUpdate();
+
+  new TomSelect('#allowed_unauthenticated_languages', { plugins: ['remove_button'] });
+
+  on('save-unauthenticated-languages', () => {
+    const select = document.getElementById('allowed_unauthenticated_languages') as HTMLSelectElement;
+    const languages = Array.from(select.selectedOptions, option => option.value).join(',');
+    ApiC.patch(Model.Config, { allowed_unauthenticated_languages: languages });
+  });
 
   document.addEventListener('change', async event => {
     const input = event.target;

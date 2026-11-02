@@ -1462,13 +1462,10 @@ on('search-pubchem', (el: HTMLElement) => {
 });
 
 on('search-entity-from-compound', (el: HTMLElement) => {
-  // try and grab the CAS for the search
-  let query = (document.getElementById('compoundInput-cas_number') as HTMLInputElement).value;
-  // if no cas, use the name
-  if (!query) {
-    query = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
-  }
-  window.location.href = `${el.dataset.page}.php?q="${encodeURIComponent(query)}"`;
+  // filter on the actual links to the compound: a text search on CAS or name gives false positives
+  const compoundId = (document.getElementById('compoundInput-id') as HTMLInputElement).value;
+  const params = new URLSearchParams({ mode: 'show', compound: compoundId });
+  window.location.href = `${el.dataset.page}.php?${params.toString()}`;
 });
 
 on('import-compound', (el: HTMLElement) => {

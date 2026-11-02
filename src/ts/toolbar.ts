@@ -105,7 +105,7 @@ on(Action.RequestAction, (_, event: Event) => {
   }).then(() => {
     reloadElements(['requestActionsDiv']);
     $('#requestActionModal').modal('hide');
-  }).catch(error => notify.error(error));
+  });
 });
 
 on('do-requestable-action', (el: HTMLElement) => {

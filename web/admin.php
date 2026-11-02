@@ -123,7 +123,7 @@ try {
         'remoteDirectoryUsersArr' => $remoteDirectoryUsersArr,
         'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'teamStats' => $teamStats,
-        'teamsArr' => $App->Teams->selectAll(),
+        'teamsArr' => $App->Teams->readAllForRequester(),
         'visibleTeamsArr' => $App->Teams->readAllVisible(),
         'unvalidatedUsersArr' => $unvalidatedUsersArr,
         'usersArr' => $usersArr,

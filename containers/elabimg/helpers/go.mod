@@ -1,3 +1,3 @@
 module github.com/elabftw/elabftw
 
-go 1.22.3
+go 1.27.0

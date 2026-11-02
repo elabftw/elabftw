@@ -50,8 +50,8 @@ class EmailNotifications
     public function sendEmails(OutputInterface $output): int
     {
         // Lock before reading pending notifications so concurrent containers cannot send the same emails.
-        // Hash the database name to keep the database-specific lock below MySQL's 64-character limit.
-        $lock = $this->Db->q("SELECT GET_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())), 0)")->fetchColumn();
+        // Hash the database name (SHA1() is gone in MySQL 9.7) and truncate to stay within MySQL's 64-character lock name limit.
+        $lock = $this->Db->q("SELECT GET_LOCK(LEFT(CONCAT('elabftw:notifications:', SHA2(DATABASE(), 256)), 64), 0)")->fetchColumn();
         if ($lock === null || $lock === false) {
             throw new RuntimeException('Could not acquire the email notifications lock.');
         }
@@ -100,7 +100,7 @@ class EmailNotifications
             return $count;
         } finally {
             // Named locks are connection-scoped, so release explicitly even with persistent connections.
-            $this->Db->q("SELECT RELEASE_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())))");
+            $this->Db->q("SELECT RELEASE_LOCK(LEFT(CONCAT('elabftw:notifications:', SHA2(DATABASE(), 256)), 64))");
         }
     }
 

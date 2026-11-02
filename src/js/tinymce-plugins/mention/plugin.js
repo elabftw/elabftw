@@ -211,6 +211,8 @@ class AutoComplete {
   }
 
   highlighter(text) {
+    const fragment = document.createDocumentFragment();
+    let offset = 0;
     if (this.query.trim() && this.query.length > 0) {
       const re = new RegExp(
         this.query.split(' ')
@@ -222,18 +224,19 @@ class AutoComplete {
           // remove empty strings
           .filter(word => word)
           .join('|'),
-        'igd',
+        'ig',
       );
       let result;
-      const positions = [];
       while ((result = re.exec(text)) !== null) {
-        positions.push(result.indices[0]);
+        fragment.append(document.createTextNode(text.substring(offset, result.index)));
+        const strong = document.createElement('strong');
+        strong.textContent = result[0];
+        fragment.append(strong);
+        offset = re.lastIndex;
       }
-      positions.reverse().forEach(([start, stop]) => {
-        text = text.substring(0, start) + '<strong>' + text.substring(start, stop) + '</strong>' + text.substring(stop);
-      });
     }
-    return text;
+    fragment.append(document.createTextNode(text.substring(offset)));
+    return fragment;
   }
 
   show() {
@@ -252,22 +255,19 @@ class AutoComplete {
     const result = [];
     const items = this.sorter(data.filter(item => this.matcher(item))).slice(0, this.options.items);
 
-    $.each(items, (i, item) => {
+    for (const item of items) {
       const $element = $(this.render(item));
-      $element.html($element.html().replace($element.text(), this.highlighter($element.text())));
       $element.find('a').prepend(this.addCustomId(item));
       $element.find('a').prepend(this.addCategory(item));
       // final list entry will be: {category} - {custom id} {title}
 
-      $.each(items[i], (key, val) => {
-        $element.attr('data-' + key, val);
-      });
-
-      result.push($element[0].outerHTML);
-    });
+      // Keep raw API values in memory instead of serializing them as HTML attributes.
+      $element.data(item);
+      result.push($element[0]);
+    }
 
     if (result.length) {
-      this.$dropdown.html(result.join('')).show();
+      this.$dropdown.empty().append(result).show();
       this.positionDropdown();
     } else {
       this.$dropdown.hide();
@@ -279,23 +279,34 @@ class AutoComplete {
   }
 
   render(item) {
-    return `<li><a href="javascript:;" class='dropdown-item'><span>${item[this.options.queryBy]}</span></a></li>`;
+    const $element = $('<li><a href="#" class="dropdown-item"><span></span></a></li>');
+    $element.find('span').append(this.highlighter(item[this.options.queryBy]));
+    return $element;
   }
 
   addCustomId(item) {
+    const fragment = document.createDocumentFragment();
     if (item.custom_id) {
       if (item.custom_id === parseInt(this.query, 10)) {
-        return `<strong>${item.custom_id}</strong> `;
+        const strong = document.createElement('strong');
+        strong.textContent = item.custom_id;
+        fragment.append(strong, ' ');
+      } else {
+        fragment.append(document.createTextNode(`${item.custom_id} `));
       }
-      return `${item.custom_id} `;
     }
-    return '';
+    return fragment;
   }
 
   addCategory(item) {
-    return item.category_title
-      ? `<span style='color:#${item.category_color}'>${item.category_title}</span> - `
-      : '';
+    const fragment = document.createDocumentFragment();
+    if (item.category_title) {
+      const span = document.createElement('span');
+      span.style.color = `#${item.category_color}`;
+      span.textContent = item.category_title;
+      fragment.append(span, ' - ');
+    }
+    return fragment;
   }
 
   autoCompleteClick(e) {
@@ -331,7 +342,9 @@ class AutoComplete {
 
   // Note: not used, overridden in options
   insert(item) {
-    return '<span>' + item.category + ' ' + item[this.options.queryBy] + '</span>&nbsp;';
+    const span = document.createElement('span');
+    span.textContent = item.category + ' ' + item[this.options.queryBy];
+    return span.outerHTML + '&nbsp;';
   }
 
   cleanUp(rollback) {
@@ -346,7 +359,7 @@ class AutoComplete {
     if (rollback) {
       const text = this.query;
       const $selection = $(this.editor.dom.select('#data-tiny-complete'));
-      const replacement = $('<p>' + this.options.delimiter + text + '</p>')[0].firstChild;
+      const replacement = this.editor.getDoc().createTextNode(this.options.delimiter + text);
       const focus = $(this.editor.selection.getNode()).offset()?.top === ($selection.offset().top + (($selection.outerHeight() - $selection.height()) / 2));
 
       this.editor.dom.replace(replacement, $selection[0]);

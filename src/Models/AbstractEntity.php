@@ -1674,18 +1674,26 @@ abstract class AbstractEntity extends AbstractRest
             }
         }
 
+        // the value of a multifield is an array of rows, not a flat list of link ids
+        $isMultifield = ($extraFields[$key]['type'] ?? '') === 'multifield';
+
         $Changelog = new Changelog($this);
-        $valueAsString = is_array($value) ? implode(', ', $value) : (string) $value;
+        // the rows of a multifield have no meaningful string representation
+        $valueAsString = $isMultifield
+            ? json_encode($value, JSON_THROW_ON_ERROR)
+            : (is_array($value) ? implode(', ', $value) : (string) $value);
 
         // Either ExperimentsLinks or ItemsLinks could be used here.
         // Check every value independently so arrays cannot bypass the self-link protection.
-        $values = is_array($value) ? $value : array($value);
-        foreach ($values as $targetId) {
-            if (
-                $this->id === intval((string) $targetId)
-                && $this->ExperimentsLinks->isSelfLinkViaMetadata($key, (string) $targetId)
-            ) {
-                throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
+        if (!$isMultifield) {
+            $values = is_array($value) ? $value : array($value);
+            foreach ($values as $targetId) {
+                if (
+                    $this->id === intval((string) $targetId)
+                    && $this->ExperimentsLinks->isSelfLinkViaMetadata($key, (string) $targetId)
+                ) {
+                    throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
+                }
             }
         }
 

@@ -273,12 +273,13 @@ class TwigFiltersTest extends \PHPUnit\Framework\TestCase
               },
               "value": [
                 {"first": "a<b", "second": "b"},
-                {"second": "only second"}
+                {"second": "only second"},
+                {}
               ]
             }
           }
         }';
-        $expected = '<div><h4 data-action=\'toggle-next\' data-opened-icon=\'fa-caret-down\' data-closed-icon=\'fa-caret-right\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Default group</h4><ul class="list-group"><li class="list-group-item"><h5 class="mb-0">MyMulti</h5><h6><table class="table table-sm table-borderless mb-0"><thead><tr><th>first<span class="infotip-icon ml-1" title="first column"><i class="fas fa-circle-question" aria-hidden="true"></i></span></th><th>second</th></tr></thead><tbody><tr><td>a&lt;b</td><td>b</td></tr><tr><td></td><td>only second</td></tr></tbody></table></h6></li></ul></div>';
+        $expected = '<div><h4 data-action=\'toggle-next\' data-opened-icon=\'fa-caret-down\' data-closed-icon=\'fa-caret-right\' class=\'mt-4 d-inline togglable-section-title\'><i class=\'fas fa-caret-down fa-fw mr-2\'></i>Default group</h4><ul class="list-group"><li class="list-group-item"><h5 class="mb-0">MyMulti</h5><h6><table class="table table-sm table-borderless mb-0"><thead><tr><th>first<span class="infotip-icon ml-1" title="first column"><i class="fas fa-circle-question" aria-hidden="true"></i></span></th><th>second</th></tr></thead><tbody><tr><td>a&lt;b</td><td>b</td></tr><tr><td></td><td>only second</td></tr><tr><td></td><td></td></tr></tbody></table></h6></li></ul></div>';
 
         $this->assertEquals($expected, TwigFilters::formatMetadata($metadataJson));
     }

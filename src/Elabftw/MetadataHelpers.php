@@ -16,6 +16,7 @@ use DateMalformedStringException;
 use DateTimeImmutable;
 use Elabftw\Exceptions\ImproperActionException;
 use JsonException;
+use stdClass;
 
 use function _;
 use function array_key_exists;
@@ -253,10 +254,9 @@ final class MetadataHelpers
                         $normalizedRow[$subFieldName] = $normalizedValue;
                     }
                 }
-                // a row without any value is dropped, like the interface does
-                if ($normalizedRow !== array()) {
-                    $normalizedRows[] = $normalizedRow;
-                }
+                // every row is kept, even one without any value;
+                // an empty row is encoded as an object, not as an empty list
+                $normalizedRows[] = $normalizedRow === array() ? new stdClass() : $normalizedRow;
             }
 
             return $normalizedRows;
@@ -369,8 +369,7 @@ final class MetadataHelpers
     private static function isMultiValueField(array $field): bool
     {
         return ($field['allow_multi_values'] ?? false) === true
-            || ($field['type'] ?? '') === 'select-multi'
-            || ($field['type'] ?? '') === 'multifield';
+            || ($field['type'] ?? '') === 'select-multi';
     }
 
     private static function guardMetadataSchemaCompatibility(string $name, array $baseField, array $incomingField): void

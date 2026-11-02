@@ -602,11 +602,11 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
     }
 
-    public function testMergeMetadataDropsMultifieldRowsWithoutValues(): void
+    public function testMergeMetadataKeepsMultifieldRowsWithoutValues(): void
     {
         $source = '{"extra_fields":{"MyMulti":{"type":"multifield","allow_multi_values":true,"sub_fields":{"a":{"type":"text","position":0}},"value":[]}}}';
         $incoming = '{"extra_fields":{"MyMulti":{"value":[{"a":""},{"a":"kept"}]}}}';
-        $expected = '{"extra_fields":{"MyMulti":{"type":"multifield","allow_multi_values":true,"sub_fields":{"a":{"type":"text","position":0}},"value":[{"a":"kept"}]}}}';
+        $expected = '{"extra_fields":{"MyMulti":{"type":"multifield","allow_multi_values":true,"sub_fields":{"a":{"type":"text","position":0}},"value":[{},{"a":"kept"}]}}}';
 
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
     }
@@ -664,7 +664,7 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
     {
         $source = '{"extra_fields":{"MyMulti":{"type":"multifield","sub_fields":{"choice":{"type":"select","position":0}},"value":[]}}}';
         $incoming = '{"extra_fields":{"MyMulti":{"value":[{"choice":""}]}}}';
-        $expected = '{"extra_fields":{"MyMulti":{"type":"multifield","sub_fields":{"choice":{"type":"select","position":0}},"value":[]}}}';
+        $expected = '{"extra_fields":{"MyMulti":{"type":"multifield","sub_fields":{"choice":{"type":"select","position":0}},"value":[{}]}}}';
 
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
     }

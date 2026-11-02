@@ -11,7 +11,7 @@ import { Action, EntityType } from './interfaces';
 import type { Entity } from './interfaces';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { ExtraFieldInputType } from './metadataInterfaces';
-import type { ExtraFieldProperties, ExtraFieldsGroup, SubField, ValidMetadata } from './metadataInterfaces';
+import type { ExtraFieldProperties, ExtraFieldsGroup, SubField, SubFieldProperties, ValidMetadata } from './metadataInterfaces';
 import { adjustHiddenState, makeSortableGreatAgain, reloadElements, replaceWithTitle } from './misc';
 import { notify } from './notify';
 
@@ -307,6 +307,33 @@ export class Metadata {
     return element;
   }
 
+  // order the sub-field names as defined by the position of each sub-field
+  getOrderedSubFieldNames(subFields: SubField): string[] {
+    return Object.keys(subFields).sort((a, b) => {
+      const posA = subFields[a]?.position ?? 0;
+      const posB = subFields[b]?.position ?? 0;
+      return posA - posB;
+    });
+  }
+
+  // build a header cell for a sub-field column, with the description as tooltip on a question mark icon
+  buildSubFieldHeaderCell(subFieldName: string, subField: SubFieldProperties): HTMLTableCellElement {
+    const th = document.createElement('th');
+    th.textContent = subFieldName;
+    // the icons have pointer-events: none (see main.scss), so the title attribute
+    // must be on a wrapping element for the tooltip to appear on hover
+    if (subField.description) {
+      const descSpan = document.createElement('span');
+      descSpan.classList.add('infotip-icon', 'ml-1');
+      descSpan.setAttribute('title', subField.description);
+      const descIcon = document.createElement('i');
+      descIcon.classList.add('fas', 'fa-circle-question');
+      descSpan.append(descIcon);
+      th.append(descSpan);
+    }
+    return th;
+  }
+
   buildMultifieldInput(name: string, properties: ExtraFieldProperties): HTMLElement {
     const holder = document.createElement('div');
     holder.dataset.purpose = 'multifield-holder';
@@ -315,11 +342,7 @@ export class Metadata {
 
     const subFields = properties.sub_fields || {};
     // order the columns as defined by the position of each sub-field
-    const subFieldNames = Object.keys(subFields).sort((a, b) => {
-      const posA = subFields[a]?.position ?? 0;
-      const posB = subFields[b]?.position ?? 0;
-      return posA - posB;
-    });
+    const subFieldNames = this.getOrderedSubFieldNames(subFields);
 
     // If no sub-fields defined, show a warning
     if (subFieldNames.length === 0) {
@@ -334,17 +357,14 @@ export class Metadata {
     // the default matches the server side: no allow_multi_values key means single row
     const allowMultiple = properties.allow_multi_values === true;
 
-    // the value is an array of rows, one object per row
+    // the value is an array of rows, one object per row;
+    // an empty value shows no row: rows are only added with the button below
     let values = (Array.isArray(properties.value) ? properties.value : [])
       .filter(v => typeof v === 'object' && v !== null && !Array.isArray(v)) as Array<Record<string, string|number>>;
 
     // If not allowing multiple values, ensure only one row
     if (!allowMultiple && values.length > 1) {
       values = [values[0]];
-    }
-
-    if (values.length === 0) {
-      values.push(this.getMultifieldDefaultRow(subFields, subFieldNames));
     }
 
     // Create the table structure for the multifield
@@ -361,22 +381,7 @@ export class Metadata {
 
     // Create headers for each sub-field
     subFieldNames.forEach(subFieldName => {
-      const subField = subFields[subFieldName];
-      const th = document.createElement('th');
-      th.textContent = subFieldName;
-      // show the description of the sub-field as tooltip on a question mark icon
-      // the icons have pointer-events: none (see main.scss), so the title attribute
-      // must be on a wrapping element for the tooltip to appear on hover
-      if (subField.description) {
-        const descSpan = document.createElement('span');
-        descSpan.classList.add('infotip-icon', 'ml-1');
-        descSpan.setAttribute('title', subField.description);
-        const descIcon = document.createElement('i');
-        descIcon.classList.add('fas', 'fa-circle-question');
-        descSpan.append(descIcon);
-        th.append(descSpan);
-      }
-      headerRow.append(th);
+      headerRow.append(this.buildSubFieldHeaderCell(subFieldName, subFields[subFieldName]));
     });
 
     thead.append(headerRow);
@@ -386,7 +391,7 @@ export class Metadata {
 
     // Create a row for each value
     for (const rowValue of values) {
-      tbody.append(this.buildMultifieldRow(name, properties, rowValue, holder, allowMultiple));
+      tbody.append(this.buildMultifieldRow(name, properties, rowValue, holder, subFieldNames, allowMultiple));
     }
 
     table.append(tbody);
@@ -407,6 +412,7 @@ export class Metadata {
           properties,
           this.getMultifieldDefaultRow(subFields, subFieldNames),
           holder,
+          subFieldNames,
           allowMultiple,
         );
         tbody.append(row);
@@ -416,6 +422,8 @@ export class Metadata {
           firstInput.click();
         }
         firstInput?.focus();
+        // save immediately, so the new row (even empty or with only default values) is stored
+        this.saveMultifieldHolder(holder);
       });
       holder.append(addButton);
     }
@@ -440,18 +448,13 @@ export class Metadata {
     properties: ExtraFieldProperties,
     rowValue: Record<string, string|number>,
     holder: HTMLElement,
+    subFieldNames: string[],
     allowMultiple: boolean = true,
   ): HTMLElement {
     const tr = document.createElement('tr');
     tr.dataset.purpose = 'multifield-row';
 
     const subFields = properties.sub_fields || {};
-    // order the columns as defined by the position of each sub-field
-    const subFieldNames = Object.keys(subFields).sort((a, b) => {
-      const posA = subFields[a]?.position ?? 0;
-      const posB = subFields[b]?.position ?? 0;
-      return posA - posB;
-    });
 
     // First cell holds the remove row button, only if rows can be removed
     const controlCell = document.createElement('td');
@@ -485,7 +488,6 @@ export class Metadata {
         value: rowValue[subFieldName] ?? '',
         options: subField.options,
         allow_multi_values: false,
-        description: subField.description,
         readonly: properties.readonly,
       };
       const input = this.generateSingleInput(subFieldName, subFieldProps);
@@ -523,16 +525,14 @@ export class Metadata {
         if (!subFieldName) continue;
 
         const value = this.getInputValue(input);
-        // Sparse storage: only include non-empty values
+        // sparse storage: empty cell values are not stored
         if (value !== null && value !== '') {
           rowValue[subFieldName] = value;
         }
       }
 
-      // Only push row if it has at least one non-empty value
-      if (Object.keys(rowValue).length > 0) {
-        values.push(rowValue);
-      }
+      // every row is stored, even one without any value
+      values.push(rowValue);
     }
 
     return this.updateMetadataField(fieldName, values);
@@ -817,19 +817,14 @@ export class Metadata {
     const container = document.createElement('div');
     container.classList.add('multifield-view-container');
 
-    const rows = Array.isArray(values) ? values : [];
-    if (rows.length === 0) {
+    if (values.length === 0) {
       container.innerText = '—';
       return container;
     }
 
     const subFields = properties.sub_fields || {};
     // order the columns as defined by the position of each sub-field
-    const subFieldNames = Object.keys(subFields).sort((a, b) => {
-      const posA = subFields[a]?.position ?? 0;
-      const posB = subFields[b]?.position ?? 0;
-      return posA - posB;
-    });
+    const subFieldNames = this.getOrderedSubFieldNames(subFields);
 
     if (subFieldNames.length === 0) {
       container.innerText = '—';
@@ -844,22 +839,7 @@ export class Metadata {
 
     // Headers for each sub-field
     subFieldNames.forEach(subFieldName => {
-      const subField = subFields[subFieldName];
-      const th = document.createElement('th');
-      th.textContent = subFieldName;
-      // show the description of the sub-field as tooltip on a question mark icon
-      // the icons have pointer-events: none (see main.scss), so the title attribute
-      // must be on a wrapping element for the tooltip to appear on hover
-      if (subField.description) {
-        const descSpan = document.createElement('span');
-        descSpan.classList.add('infotip-icon', 'ml-1');
-        descSpan.setAttribute('title', subField.description);
-        const descIcon = document.createElement('i');
-        descIcon.classList.add('fas', 'fa-circle-question');
-        descSpan.append(descIcon);
-        th.append(descSpan);
-      }
-      headerRow.append(th);
+      headerRow.append(this.buildSubFieldHeaderCell(subFieldName, subFields[subFieldName]));
     });
 
     thead.append(headerRow);
@@ -867,7 +847,7 @@ export class Metadata {
 
     const tbody = document.createElement('tbody');
 
-    for (const rowValue of rows) {
+    for (const rowValue of values) {
       const tr = document.createElement('tr');
 
       // Cells for each sub-field value
@@ -879,7 +859,6 @@ export class Metadata {
           type: subField.type,
           value: subFieldValue,
           options: subField.options,
-          description: subField.description,
         };
         const valueEl = this.generateViewableValue(subFieldProps, subFieldValue as string|number);
         // render links to experiments and resources as clickable links, like the php view mode does

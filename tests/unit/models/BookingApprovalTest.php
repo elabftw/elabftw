@@ -74,7 +74,9 @@ final class BookingApprovalTest extends TestCase
             'requires_booking_approval' => 0,
             'approvers' => array($approver->userid),
         ));
-        self::assertSame(BookingApprovalStatus::Pending->value, (int) (new Scheduler(new Items($requester, $item->id), $eventId))->readOne()['approval_status']);
+        // use a new variable: repeating the exact expression asserted above makes phpstan consider it already narrowed
+        $afterDisable = new Scheduler(new Items($requester, $item->id), $eventId);
+        self::assertSame(BookingApprovalStatus::Pending->value, (int) $afterDisable->readOne()['approval_status']);
     }
 
     public function testTeamMemberWithWriteAccessCanConfigureBookingApproval(): void

@@ -21,6 +21,7 @@ interface SqlBuilderInterface
         ?EntityType $relatedOrigin = null,
         bool $withCompounds = false,
         bool $withWriteAccess = false,
+        bool $withUploads = false,
     ): string;
 
     public function getCanFilter(string $can): string;

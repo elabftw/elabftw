@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\SqlBuilderInterface;
 use Elabftw\Models\AbstractEntity;
@@ -152,6 +153,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      * @param bool $fullSelect select all the columns of entity
      * @param null|EntityType $relatedOrigin Are we looking for related entries, what is the origin, experiments or items?
      * @param bool $withWriteAccess add a has_write_access column telling if the user can write to each entity
+     * @param bool $withUploads join the uploads table, only needed when searching attachments
      */
     #[Override]
     public function getReadSqlBeforeWhere(
@@ -159,6 +161,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         ?EntityType $relatedOrigin = null,
         bool $withCompounds = false,
         bool $withWriteAccess = false,
+        bool $withUploads = false,
     ): string {
         $this->entitySelect($fullSelect);
         $this->userTeamMembership();
@@ -169,6 +172,10 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
         if ($withCompounds) {
             $this->compounds();
+        }
+
+        if ($withUploads) {
+            $this->uploads();
         }
 
         $this->status();
@@ -277,6 +284,15 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     {
         $this->joinsSql[] = 'LEFT JOIN compounds2%1$s AS compoundslinks ON compoundslinks.entity_id = entity.id
             LEFT JOIN compounds ON compoundslinks.compound_id = compounds.id';
+    }
+
+    protected function uploads(): void
+    {
+        $this->joinsSql[] = sprintf(
+            'LEFT JOIN uploads ON (uploads.item_id = entity.id AND uploads.type = \'%%1$s\' AND uploads.state IN (%d, %d))',
+            State::Normal->value,
+            State::Archived->value,
+        );
     }
 
     protected function status(): void

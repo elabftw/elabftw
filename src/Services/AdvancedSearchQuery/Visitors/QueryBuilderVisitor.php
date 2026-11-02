@@ -260,6 +260,7 @@ final class QueryBuilderVisitor implements Visitor
     #[Override]
     public function visitField(Field $field, VisitorParameters $parameters): WhereCollector
     {
+        // Attachment:   uploads.real_name OR uploads.comment (uploads table is only joined when this field is used)
         // Author:       CONCAT(users.firstname, ' ', users.lastname)
         // Body:         entity.body
         // Category:     categoryt.title
@@ -381,6 +382,19 @@ final class QueryBuilderVisitor implements Visitor
                 'param' => $param,
                 'value' => $searchTerm,
                 'type' => $PdoParamConst,
+            )),
+        );
+    }
+
+    private function visitFieldAttachment(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
+    {
+        $param = $this->getUniqueID();
+        return new WhereCollector(
+            sprintf('(uploads.real_name LIKE %1$s OR uploads.comment LIKE %1$s)', $param),
+            array(array(
+                'param' => $param,
+                'value' => $affix . $searchTerm . $affix,
+                'type' => PDO::PARAM_STR,
             )),
         );
     }

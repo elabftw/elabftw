@@ -406,6 +406,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $displayFilterSql = $displayParams->getFilterSql();
         $withCompounds = $this->needsCompoundsJoin($displayFilterSql);
+        $withUploads = $this->needsUploadsJoin();
 
         $EntitySqlBuilder = $this->getSqlBuilder();
         if ($searchJoinSql !== '' && $EntitySqlBuilder instanceof EntitySqlBuilder) {
@@ -413,7 +414,7 @@ abstract class AbstractEntity extends AbstractRest
         }
         if (
             $EntitySqlBuilder instanceof EntitySqlBuilder
-            && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds)
+            && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds, $withUploads)
         ) {
             return $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can);
         }
@@ -422,6 +423,7 @@ abstract class AbstractEntity extends AbstractRest
             $displayParams->getRelatedOrigin(),
             $withCompounds,
             withWriteAccess: true,
+            withUploads: $withUploads,
         );
 
         $sql .= ' WHERE 1=1 ';
@@ -1484,6 +1486,7 @@ abstract class AbstractEntity extends AbstractRest
         bool $extended,
         string $searchJoinSql,
         bool $withCompounds,
+        bool $withUploads,
     ): bool {
         return $displayParams instanceof DisplayParams
             && !($this->Users instanceof AnonymousUser)
@@ -1493,6 +1496,7 @@ abstract class AbstractEntity extends AbstractRest
             && !$displayParams->isFull()
             && $displayParams->getRelatedOrigin() === null
             && !$withCompounds
+            && !$withUploads
             && $this->filterSql === ''
             && $displayParams->orderby === Orderby::Lastchange
             && $displayParams->sort === Sort::Desc
@@ -1556,7 +1560,7 @@ abstract class AbstractEntity extends AbstractRest
     private function isAdvancedSearchQuery(string $query): bool
     {
         return preg_match(
-            '/(?:^|\s)(?:author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
+            '/(?:^|\s)(?:attachment|author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
             $query,
         ) === 1
             || preg_match('/\b(?:AND|OR|NOT)\b|[()!&|"\']/', $query) === 1;
@@ -1614,6 +1618,12 @@ abstract class AbstractEntity extends AbstractRest
         return $this->sqlReferencesCompounds($this->extendedFilter)
             || $this->sqlReferencesCompounds($this->filterSql)
             || $this->sqlReferencesCompounds($displayFilterSql);
+    }
+
+    // joining uploads is expensive, so only do it when the query searches attachments
+    private function needsUploadsJoin(): bool
+    {
+        return str_contains($this->extendedFilter, 'uploads.');
     }
 
     private function sqlReferencesCompounds(string $sql): bool

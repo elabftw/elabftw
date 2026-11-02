@@ -50,6 +50,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             ' TEST TEST1 AND TEST2 OR TEST3 NOT TEST4 & TEST5',
             '| TEST6 AND ! TEST7 (TEST8 or TEST9) "T E S T 1 0"',
             '\'T E S T 1 1\' "chinese 汉语 漢語 中文" "japanese 日本語 ひらがな 平仮名 カタカナ 片仮名"',
+            'attachment:"file.txt" attachment:s:comment',
             'author:"Toto Le sysadmin" body:"some text goes here"',
             'elabid:7bebdd3512dc6cbee0b1 locked:yes rating:5 rating:unrated',
             'status:"only meaningful with experiments but no error"',

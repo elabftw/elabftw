@@ -9,9 +9,9 @@
       <div class='align-self-center flex-grow-1 mr-2'>
         {# CUSTOM ID #}
         {# TITLE #}
-        <h1>
+        <h1 class='entity-title'>
           {% if Entity.entityData.custom_id %}
-            <span title='{{ 'Custom ID'|trans }}'>{{ Entity.entityData.custom_id }}</span>
+            <span class='custom-id-badge mr-2' title='{{ 'Custom ID'|trans }}'>{{ Entity.entityData.custom_id }}</span>
           {% endif %}
            <!-- [html-validate-disable-block prefer-native-element: suppress error from malle] -->
           <span id='documentTitle' class='breakable malleable-title malleable rounded py-1' data-target='title' data-endpoint='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ Entity.entityData.title }}</span>

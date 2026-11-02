@@ -211,6 +211,29 @@ final class BookingApprovalTest extends TestCase
         $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array()));
     }
 
+    public function testApprovalCanBeDisabledWithoutSendingApprovers(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $item->patch(Action::Update, array('requires_booking_approval' => '0'));
+        self::assertSame(0, (int) new Items($item->Users, $item->id)->entityData['requires_booking_approval']);
+    }
+
+    public function testInvalidApproverIdIsRejected(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $this->expectException(ImproperActionException::class);
+        $item->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array('abc')));
+    }
+
+    public function testReadShowKeepsRows(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $listed = $item->readAll($item->getQueryParams(new InputBag(array('extended' => 'id:' . $item->id))));
+        self::assertCount(1, $listed);
+        self::assertIsArray($listed[0]);
+        self::assertSame($item->id, (int) $listed[0]['id']);
+    }
+
     public function testPendingRequestBlocksSlot(): void
     {
         $owner = $this->getUserInTeam(2);

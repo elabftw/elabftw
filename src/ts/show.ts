@@ -780,6 +780,20 @@ document.addEventListener('DOMContentLoaded', () => {
       // collectForm reports the invalid field to the user already
       return;
     }
+    // link inputs expect an "id - title" value from the autocomplete, not free text
+    for (const key of Object.values(LinkSubModel)) {
+      if (key in params) {
+        const linkId = parseInt(params[key], 10);
+        if (Number.isNaN(linkId) || linkId <= 0) {
+          const input = form.querySelector<HTMLInputElement>(`[name="${key}"]`);
+          input?.classList.add('border-danger');
+          input?.focus();
+          notify.error('invalid-info');
+          return;
+        }
+        params[key] = linkId;
+      }
+    }
     clearForm(form);
     (el as HTMLButtonElement).disabled = true;
     checked.forEach(chk => {
@@ -790,7 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ajaxs.push(ApiC.post(`${entity.type}/${chk}/${Model.Tag}`, {notifOnSaved: 0, tag: paramsCopy[key]}));
           delete paramsCopy[key];
         } else if (Object.values(LinkSubModel).includes(key as LinkSubModel)) {
-          ajaxs.push(ApiC.post(`${entity.type}/${chk}/${key}/${parseInt(paramsCopy[key], 10)}`));
+          ajaxs.push(ApiC.post(`${entity.type}/${chk}/${key}/${paramsCopy[key]}`));
           delete paramsCopy[key];
         }
       }

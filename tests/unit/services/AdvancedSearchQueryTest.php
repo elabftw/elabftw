@@ -90,6 +90,21 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $this->assertStringEndsWith(')', $whereClause['where']);
     }
 
+    // the OR of a != date must not leak out of its term when combined with AND (#7698)
+    public function testTimestampNotEqualIsGrouped(): void
+    {
+        $advancedSearchQuery = new AdvancedSearchQuery('created_at:!=20221209 title:Aspirin', new VisitorParameters(
+            'experiments',
+            $this->groups,
+        ));
+        $whereClause = $advancedSearchQuery->getWhereClause();
+        $this->assertIsArray($whereClause);
+        $this->assertMatchesRegularExpression(
+            '/\(entity\.created_at < :\w+ OR entity\.created_at > :\w+\) AND /',
+            $whereClause['where'],
+        );
+    }
+
     public function testSyntaxError(): void
     {
         $query = 'AND AND AND';

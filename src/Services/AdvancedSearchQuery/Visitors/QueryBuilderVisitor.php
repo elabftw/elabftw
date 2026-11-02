@@ -205,7 +205,8 @@ final class QueryBuilderVisitor implements Visitor
                     $query = $column . ' BETWEEN ' . $paramMin . ' AND ' . $paramMax;
                 }
                 if ($timestampField->getOperator() === '!=') {
-                    $query = $column . ' < ' . $paramMin . ' OR ' . $column . ' > ' . $paramMax;
+                    // parentheses are needed because this fragment can be joined with AND
+                    $query = '(' . $column . ' < ' . $paramMin . ' OR ' . $column . ' > ' . $paramMax . ')';
                 }
                 $bindValues[] = array(
                     'param' => $paramMin,

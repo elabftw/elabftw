@@ -74,9 +74,14 @@
         </button>
         <div class='dropdown-menu dropdown-menu-right'>
           {# SWITCH EDITOR #}
-          <button type='button' class='btn btn-dropdown-item dropdown-item' data-action='switch-editor'>
-            <i class='mr-1 fas fa-pencil-alt fa-fw'></i> {{ Entity.entityData.content_type == 1 ? 'Switch to markdown editor'|trans : 'Switch to rich text editor'|trans }}
-          </button>
+          {# markdown and html are not interchangeable, so only allow switching on an empty entry. See #7583 #}
+          {% set canSwitchEditor = Entity.entityData.body is empty %}
+          {# wrapper holds the tooltip because a disabled dropdown-item has pointer-events: none #}
+          <span class='d-block' title='{{ canSwitchEditor ? '' : 'Switching editor can only be done on an empty entry.'|trans }}'>
+            <button type='button' class='btn btn-dropdown-item dropdown-item' {{ canSwitchEditor ? "data-action='switch-editor'" : "disabled aria-disabled='true'" }}>
+              <i class='mr-1 fas fa-pencil-alt fa-fw'></i> {{ Entity.entityData.content_type == 1 ? 'Switch to markdown editor'|trans : 'Switch to rich text editor'|trans }}
+            </button>
+          </span>
         </div>
       </div>
     </div>

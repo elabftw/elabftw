@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Ali želite izbrisati ta korak?",
     "step-unfinish-warning": "Ali ste prepričani, da želite razveljaviti ta korak?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Želite izbrisati to oznako?",
     "tags": "Oznake",

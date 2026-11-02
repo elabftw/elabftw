@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Bu qadam oʻchirilsinmi?",
     "step-unfinish-warning": "Haqiqatan ham bu qadamni bekor qilmoqchimisiz?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Bu teg oʻchirilsinmi?",
     "tags": "Teglar",

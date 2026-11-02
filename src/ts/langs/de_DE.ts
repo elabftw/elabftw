@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Diesen Schritt löschen?",
     "step-unfinish-warning": "Sind Sie sicher, dass Sie diesen Schritt rückgängig machen wollen?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Diesen Tag löschen?",
     "tags": "Tags",

@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Usunąć ten krok?",
     "step-unfinish-warning": "Czy na pewno chcesz cofnąć ten krok?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Usunąć ten tag?",
     "tags": "Tagi",

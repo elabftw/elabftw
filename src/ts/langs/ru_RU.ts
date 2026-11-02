@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Удалить этот этап?",
     "step-unfinish-warning": "Вы уверены, что хотите отменить этот шаг?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Удалить этот тег?",
     "tags": "Теги",

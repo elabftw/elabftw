@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "删除此步骤？",
     "step-unfinish-warning": "确实要撤消此步骤吗？",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "删除这个标签？",
     "tags": "标签",

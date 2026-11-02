@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Διαγραφή αυτού του βήματος;",
     "step-unfinish-warning": "Είστε βέβαιοι ότι θέλετε να αναιρέσετε αυτό το βήμα;",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Διαγραφή αυτής της ετικέτας;",
     "tags": "Ετικέτες",

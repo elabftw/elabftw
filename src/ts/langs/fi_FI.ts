@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Poistetaanko tämä vaihe?",
     "step-unfinish-warning": "Haluatko varmasti kumota tämän vaiheen?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Poistetaanko tämä tunniste?",
     "tags": "Tunnisteet",

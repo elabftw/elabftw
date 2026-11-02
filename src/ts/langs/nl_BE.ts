@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Deze stap verwijderen?",
     "step-unfinish-warning": "Ben je zeker dat je deze stap ongedaan wil maken?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Dit label verwijderen?",
     "tags": "Labels",

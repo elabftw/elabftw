@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Kas kustutada see samm?",
     "step-unfinish-warning": "Kas oled kindel, et soovid selle sammu tagasi võtta?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Kas kustutada see silt?",
     "tags": "Sildid",

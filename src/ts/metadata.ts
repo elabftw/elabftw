@@ -59,12 +59,12 @@ function toggleContentDiv(key: string) {
 // returns an object keyed by sub-field name, or an empty object if no row has a name
 // also returns a map of renamed sub-fields (original name -> new name),
 // so the keys of the stored values can be remapped on save,
-// and the names that are used more than once, if any
-function collectMultifieldSubFields(): { subFields: Record<string, Record<string, unknown>>, renames: Record<string, string>, duplicates: string[] } {
+// and the i18n keys of the validation errors, if any
+function collectMultifieldSubFields(): { subFields: Record<string, Record<string, unknown>>, renames: Record<string, string>, errors: string[] } {
   const subFields: Record<string, Record<string, unknown>> = {};
   // a map without a prototype, so a lookup for a name like "constructor" cannot hit an inherited property
   const renames: Record<string, string> = Object.create(null);
-  const duplicates: string[] = [];
+  const errors: string[] = [];
   const seen = new Set<string>();
   let position = 0;
   document.querySelectorAll('.multifield-subfield-row').forEach(row => {
@@ -73,9 +73,14 @@ function collectMultifieldSubFields(): { subFields: Record<string, Record<string
     if (!name) {
       return;
     }
+    // a sub-field named "__proto__" cannot be stored as a regular property of an object
+    if (name === '__proto__') {
+      errors.push('subfield-name-not-allowed');
+      return;
+    }
     // a name used twice would silently overwrite the value of the first sub-field with that name
     if (seen.has(name)) {
-      duplicates.push(name);
+      errors.push('subfield-names-must-be-unique');
       return;
     }
     seen.add(name);
@@ -109,7 +114,19 @@ function collectMultifieldSubFields(): { subFields: Record<string, Record<string
     }
     subFields[name] = subField;
   });
-  return { subFields, renames, duplicates };
+  return { subFields, renames, errors };
+}
+
+// build the first row of a multifield from the default values of its sub-fields
+// sub-fields without a default are left unset
+function buildMultifieldDefaultRow(subFields: Record<string, Record<string, unknown>>): Record<string, string|number> {
+  const row: Record<string, string|number> = {};
+  for (const [name, subField] of Object.entries(subFields)) {
+    if (subField.default !== undefined) {
+      row[name] = subField.default as string|number;
+    }
+  }
+  return row;
 }
 
 function addMultifieldSubFieldRow(name = '', type = ExtraFieldInputType.Text, options?: string[], defaultValue = '', description = ''): void {
@@ -154,6 +171,10 @@ function addMultifieldSubFieldRow(name = '', type = ExtraFieldInputType.Text, op
     typeSelect.appendChild(option);
   });
   typeSelect.value = type;
+  // a stored type that is not a valid sub-field type (e.g. from hand-edited json) falls back to text
+  if (typeSelect.value !== type) {
+    typeSelect.value = ExtraFieldInputType.Text;
+  }
   inputGroup.appendChild(typeSelect);
 
   // Default value input
@@ -199,16 +220,13 @@ function addMultifieldSubFieldRow(name = '', type = ExtraFieldInputType.Text, op
   choicesDiv.appendChild(choicesContainer);
 
   // Add initial choice inputs
-  const choiceInputs = [];
   if (options && options.length > 0) {
     options.forEach(opt => {
       const input = document.createElement('input');
       input.type = 'text';
       input.className = 'form-control mb-1 multifield-subfield-choice-input';
       input.value = opt;
-      input.dataset.purpose = 'choice';
       choicesContainer.appendChild(input);
-      choiceInputs.push(input);
     });
   } else {
     // Add two default inputs
@@ -216,7 +234,6 @@ function addMultifieldSubFieldRow(name = '', type = ExtraFieldInputType.Text, op
       const input = document.createElement('input');
       input.type = 'text';
       input.className = 'form-control mb-1 multifield-subfield-choice-input';
-      input.dataset.purpose = 'choice';
       choicesContainer.appendChild(input);
     }
   }
@@ -230,7 +247,6 @@ function addMultifieldSubFieldRow(name = '', type = ExtraFieldInputType.Text, op
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'form-control mb-1 multifield-subfield-choice-input';
-    input.dataset.purpose = 'choice';
     choicesContainer.appendChild(input);
     input.focus();
   });
@@ -371,7 +387,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
               });
           }
           // Add at least one empty row if no sub-fields
-          if (!fieldData.sub_fields || Object.keys(fieldData.sub_fields || {}).length === 0) {
+          if (!fieldData.sub_fields || Object.keys(fieldData.sub_fields).length === 0) {
             addMultifieldSubFieldRow();
           }
         } else {
@@ -526,9 +542,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
 
           if (field['type'] === ExtraFieldInputType.Multifield) {
             // a multifield is defined by its sub-fields
-            const { subFields, duplicates } = collectMultifieldSubFields();
-            if (duplicates.length > 0) {
-              notify.error('subfield-names-must-be-unique');
+            const { subFields, errors } = collectMultifieldSubFields();
+            if (errors.length > 0) {
+              notify.error(errors[0]);
               return;
             }
             field['sub_fields'] = subFields;
@@ -566,8 +582,8 @@ if (document.getElementById('metadataDiv') && entity.id) {
           }
           const allowMultiValues = (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked;
           if (field['type'] === ExtraFieldInputType.Multifield) {
-            // a new multifield starts with a single empty row
-            field['value'] = [{}];
+            // a new multifield starts with a single row holding the default values of the sub-fields
+            field['value'] = [buildMultifieldDefaultRow(field['sub_fields'] as Record<string, Record<string, unknown>>)];
             // allow_multi_values controls if rows can be added or removed
             field['allow_multi_values'] = allowMultiValues;
           } else {
@@ -679,9 +695,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
             field['value'] = (document.getElementById('newFieldCheckboxDefaultSelect') as HTMLSelectElement).value === 'checked' ? 'on' : '';
           } else if (field['type'] === ExtraFieldInputType.Multifield) {
             // a multifield is defined by its sub-fields
-            const { subFields, renames, duplicates } = collectMultifieldSubFields();
-            if (duplicates.length > 0) {
-              notify.error('subfield-names-must-be-unique');
+            const { subFields, renames, errors } = collectMultifieldSubFields();
+            if (errors.length > 0) {
+              notify.error(errors[0]);
               return;
             }
             field['sub_fields'] = subFields;
@@ -697,14 +713,31 @@ if (document.getElementById('metadataDiv') && entity.id) {
               .filter((row): row is Record<string, string|number> => typeof row === 'object' && row !== null && !Array.isArray(row))
               .map((row): Record<string, string|number> => {
                 const remappedRow: Record<string, string|number> = {};
-                for (const key of Object.keys(row)) {
-                  remappedRow[renames[key] ?? key] = row[key] as string|number;
+                const keys = Object.keys(row);
+                // the names that are the target of a rename
+                const renamedTargets = new Set(Object.values(renames));
+                // only keep the values of the current sub-fields that are not involved in a rename,
+                // so the value of a removed sub-field cannot be saved under a renamed column
+                for (const key of keys) {
+                  if (!Object.prototype.hasOwnProperty.call(renames, key)
+                    && Object.prototype.hasOwnProperty.call(subFields, key)
+                    && !renamedTargets.has(key)) {
+                    remappedRow[key] = row[key] as string|number;
+                  }
+                }
+                // write the values of the renamed sub-fields last, so they take precedence
+                for (const key of keys) {
+                  if (Object.prototype.hasOwnProperty.call(renames, key)) {
+                    remappedRow[renames[key]] = row[key] as string|number;
+                  }
                 }
                 return remappedRow;
               });
+            // without a valid stored row the value stays empty: no row is displayed
+            // until one is added in edit mode
             field['value'] = prevRows.length > 0
               ? (allowMulti ? prevRows : [prevRows[0]])
-              : [{}];
+              : [];
           }
           // deal with modal SWITCHES (key: id, value: field's 'value')
           const switches: Record<string, string> = {

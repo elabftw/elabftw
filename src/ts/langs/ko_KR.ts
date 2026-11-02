@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "이 단계를 삭제하시겠습니까?",
     "step-unfinish-warning": "이 단계를 되돌리시겠습니까?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "이 태그를 삭제하시겠습니까?",
     "tags": "태그",

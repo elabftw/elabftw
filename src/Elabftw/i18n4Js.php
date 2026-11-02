@@ -221,6 +221,7 @@ final class i18n4Js
             'step-delete-warning' => _('Delete this step?'),
             'step-unfinish-warning' => _('Are you sure you want to undo this step?'),
             'sub-field-name' => _('Sub-field name'),
+            'subfield-name-not-allowed' => _('This sub-field name is not allowed.'),
             'subfield-names-must-be-unique' => _('Sub-field names must be unique.'),
             'tag-delete-warning' => _('Delete this tag?'),
             'tags' => _('Tags'),

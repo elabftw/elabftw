@@ -48,7 +48,7 @@ export interface SubFieldProperties {
 
 export interface ExtraFieldProperties {
   type?: ExtraFieldInputType;
-  value: string|number|Array<string|number>|Array<Record<string, string|number>>;  // Map more appropriate than Record conceptually, but Record works better for JSON
+  value: string|number|Array<string|number>|Array<Record<string, string|number>>;
   group_id?: number;
   position?: number;
   options?: string[];

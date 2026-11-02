@@ -175,6 +175,7 @@ const t = {
     "step-delete-warning": "Ta bort det här steget?",
     "step-unfinish-warning": "Är du säker på att du vill ångra det här steget?",
     "sub-field-name": "Sub-field name",
+    "subfield-name-not-allowed": "This sub-field name is not allowed.",
     "subfield-names-must-be-unique": "Sub-field names must be unique.",
     "tag-delete-warning": "Ta bort den här taggen?",
     "tags": "Taggar",

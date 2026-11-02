@@ -1991,6 +1991,28 @@ input:user-invalid {
   padding: 1px;
 }
 
+// h1 holding the custom id badge and the malleable title
+.entity-title {
+  align-items: center;
+  display: flex;
+
+  // malle replaces the title span with a block form, which would otherwise wrap below the custom id
+  > form {
+    flex-grow: 1;
+  }
+}
+
+.custom-id-badge {
+  background-color: var(--superlight);
+  border: 1px solid var(--firstlevel);
+  border-radius: 0.25rem;
+  color: var(--medium);
+  flex-shrink: 0;
+  font-size: 0.75em;
+  line-height: 1;
+  padding: 0.15em 0.4em;
+}
+
 .active-filter-badge {
   background-color: var(--firstlevel);
   border: 1px solid var(--secondlevel);

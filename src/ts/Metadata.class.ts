@@ -79,10 +79,14 @@ export class Metadata {
       return false;
     }
 
-    // prevent self links
-    if (el.dataset.target === document.getElementById('info').dataset.type
-      && parseInt(el.value, 10) === parseInt(document.getElementById('info').dataset.id, 10)
-    ) {
+    const multifieldHolder = el.closest('[data-purpose="multifield-holder"]') as HTMLElement | null;
+
+    // prevent self links; in a multifield, saveMultifieldHolder clears the cell
+    // with this warning and still saves the other cells
+    if (this.isSelfLinkInput(el)) {
+      if (multifieldHolder) {
+        return this.saveMultifieldHolder(multifieldHolder);
+      }
       notify.error('no-self-links');
       return false;
     }
@@ -92,7 +96,12 @@ export class Metadata {
       value = Array.from(el.selectedOptions, option => option.value);
     } else {
       const inputValue = this.getInputValue(el);
+      // an invalid value in a multifield cell is cleared with a warning by
+      // saveMultifieldHolder, which still saves the other cells
       if (inputValue === null) {
+        if (multifieldHolder) {
+          return this.saveMultifieldHolder(multifieldHolder);
+        }
         return false;
       }
       value = inputValue;
@@ -113,12 +122,17 @@ export class Metadata {
       return this.saveMultiValueHolder(multiValueHolder);
     }
 
-    const multifieldHolder = el.closest('[data-purpose="multifield-holder"]') as HTMLElement | null;
     if (multifieldHolder) {
       return this.saveMultifieldHolder(multifieldHolder);
     }
 
     return this.updateMetadataField(fieldName, value);
+  }
+
+  // a link input targeting an entry of the same type as the current entity, with the id of the current entity
+  isSelfLinkInput(element: HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement): boolean {
+    return element.dataset.target === document.getElementById('info').dataset.type
+      && parseInt(element.value, 10) === parseInt(document.getElementById('info').dataset.id, 10);
   }
 
   getInputValue(element: HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement): string|number|null {
@@ -358,7 +372,8 @@ export class Metadata {
     const allowMultiple = properties.allow_multi_values === true;
 
     // the value is an array of rows, one object per row;
-    // an empty value shows no row: rows are only added with the button below
+    // an empty value shows no row when multiple values are allowed (rows are
+    // added with the button below), or a single default row otherwise
     let values = (Array.isArray(properties.value) ? properties.value : [])
       .filter(v => typeof v === 'object' && v !== null && !Array.isArray(v)) as Array<Record<string, string|number>>;
 
@@ -497,6 +512,11 @@ export class Metadata {
         readonly: properties.readonly,
       };
       const input = this.generateSingleInput(subFieldName, subFieldProps);
+      // form-check-input is absolutely positioned for the .form-check wrapper of a
+      // top-level field; a bare checkbox in a table cell is centered by text-center
+      if (subField.type === ExtraFieldInputType.Checkbox) {
+        (input as HTMLInputElement).classList.remove('form-check-input');
+      }
       // Set data attributes to identify this as a sub-field within a multifield.
       // For link fields and other wrapped inputs, the actual input might be nested.
       const actualInput = input.tagName === 'INPUT' || input.tagName === 'SELECT' || input.tagName === 'TEXTAREA'
@@ -522,7 +542,7 @@ export class Metadata {
     const rows = Array.from(holder.querySelectorAll<HTMLElement>('[data-purpose="multifield-row"]'));
     const values: Array<Record<string, string|number>> = [];
 
-    for (const row of rows) {
+    for (const [rowIndex, row] of rows.entries()) {
       const rowValue: Record<string, string|number> = {};
       const inputs = Array.from(row.querySelectorAll<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>('[data-multifield]'));
 
@@ -530,11 +550,21 @@ export class Metadata {
         const subFieldName = input.dataset.subFieldName;
         if (!subFieldName) continue;
 
+        // prevent self links in link sub-fields, like for a top-level field:
+        // warn, clear the cell and save the other cells
+        if (this.isSelfLinkInput(input)) {
+          notify.error('no-self-links');
+          input.value = '';
+          continue;
+        }
+
         const value = this.getInputValue(input);
-        // an invalid value (e.g. unresolved link text) aborts the save of the whole field,
-        // so the other cells cannot silently lose their stored value
+        // an invalid value (e.g. unresolved link text) is cleared with a warning and not stored,
+        // so the other cells of the field can still be saved
         if (value === null) {
-          return false;
+          notify.error(i18next.t('multifield-invalid-cell', { field: fieldName, column: subFieldName, row: rowIndex + 1 }));
+          input.value = '';
+          continue;
         }
         // sparse storage: empty cell values are not stored
         if (value !== '') {
@@ -826,7 +856,6 @@ export class Metadata {
 
   generateViewableMultifield(properties: ExtraFieldProperties, values: Array<Record<string, string|number>>): HTMLElement {
     const container = document.createElement('div');
-    container.classList.add('multifield-view-container');
 
     if (values.length === 0) {
       container.innerText = '—';

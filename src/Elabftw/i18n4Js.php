@@ -116,6 +116,7 @@ final class i18n4Js
             'error-no-filename' => _('File name is missing.'),
             'error-fetch-request' => _('There was an error while fetching the requested data: {{error}}'),
             'error-parsing-metadata' => _('There was an error while parsing metadata (custom fields). Full error has been logged to the browser console.'),
+            'error-saving-metadata' => _('There was an error while saving metadata (custom fields).'),
             'excellent-accessibility' => _('Excellent accessibility'),
             'existing-ror-associations' => _('Existing ROR associations'),
             'experiment' => ngettext('Experiment', 'Experiments', 1),
@@ -162,6 +163,7 @@ final class i18n4Js
             'modified-at' => _('Modified at'),
             // https://www.i18next.com/translation-function/formatting
             'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
+            'multifield-invalid-cell' => _('Invalid value in column {{column, string}} of row {{row, number}} of field {{field, string}}. The cell was cleared and not saved.'),
             'multifield-needs-subfields' => _('A multifield requires at least one sub-field with a name.'),
             'multifield-no-subfields' => _('No sub-fields defined. Edit the field to add sub-fields.'),
             'my-teams' => _('My teams'),

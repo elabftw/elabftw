@@ -733,8 +733,8 @@ if (document.getElementById('metadataDiv') && entity.id) {
                 }
                 return remappedRow;
               });
-            // without a valid stored row the value stays empty: no row is displayed
-            // until one is added in edit mode
+            // without a stored row the value stays empty; edit mode shows a
+            // single default row when multiple values are not allowed
             field['value'] = prevRows.length > 0
               ? (allowMulti ? prevRows : [prevRows[0]])
               : [];

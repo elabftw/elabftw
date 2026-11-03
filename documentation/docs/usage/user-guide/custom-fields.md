@@ -195,7 +195,7 @@ A date and time input.
 An email input: only a valid email address will be accepted.
 
 #### multifield
-A table of values, with the columns defined by `sub_fields`. The `value` is an array of rows, one object per row, with one entry per filled sub-field. Sub-fields are ordered by their `position`. With `allow_multi_values` set to `true`, rows can be added or removed; otherwise the table holds at most a single row. An empty `value` shows no row.
+A table of values, with the columns defined by `sub_fields`. The `value` is an array of rows, one object per row, with one entry per filled sub-field. Sub-fields are ordered by their `position`. With `allow_multi_values` set to `true`, rows can be added or removed; otherwise the table holds at most a single row. An empty `value` shows no row; in edit mode a single row with the default values remains available for editing when `allow_multi_values` is false.
 
 #### number
 A text input that only accepts a number as the value.

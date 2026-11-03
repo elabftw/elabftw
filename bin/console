@@ -23,6 +23,7 @@ use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
+use PDOException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 use Symfony\Component\Mailer\Mailer;
@@ -35,13 +36,20 @@ use function dirname;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
+// exit codes from sysexits.h: chronos relies on them to stay quiet while the database cannot be used yet
+const EXIT_DB_NOT_INSTALLED = 69;
+const EXIT_DB_UNREACHABLE = 75;
+
 $Application = new Application();
 $logger = new ConsoleLogger(new ConsoleOutput());
 try {
     $Config = Config::getConfig();
+} catch (PDOException $e) {
+    $logger->error('Cannot connect to the database: ' . $e->getMessage());
+    exit(EXIT_DB_UNREACHABLE);
 } catch (DatabaseErrorException $e) {
     $logger->error('Database is not yet installed. Run bin/init db:install.');
-    exit;
+    exit(EXIT_DB_NOT_INSTALLED);
 } catch (AppException $e) {
     $logger->error($e->getMessage());
     exit;

@@ -700,6 +700,30 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         ));
     }
 
+    public function testUpdateJsonFieldRejectsSelfLinkInMultifieldRow(): void
+    {
+        $metadata = json_encode(array(
+            'extra_fields' => array(
+                'mymulti' => array(
+                    'type' => 'multifield',
+                    'value' => array(),
+                    'allow_multi_values' => true,
+                    'sub_fields' => array(
+                        'linked' => array('type' => 'experiments', 'position' => 0),
+                    ),
+                ),
+            ),
+        ), JSON_THROW_ON_ERROR);
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Linking an item to itself is not allowed. Please select a different target.');
+        $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'mymulti' => array(array('linked' => $this->Experiments->id)),
+        ));
+    }
+
     public function testUpdateExtraFieldsOrdering(): void
     {
         // create some metadata first

@@ -1685,8 +1685,24 @@ abstract class AbstractEntity extends AbstractRest
 
         // Either ExperimentsLinks or ItemsLinks could be used here.
         // Check every value independently so arrays cannot bypass the self-link protection.
-        if (!$isMultifield) {
-            $values = is_array($value) ? $value : array($value);
+        $values = is_array($value) ? $value : array($value);
+        if ($isMultifield) {
+            // the self-link protection also applies to the link sub-fields of every row
+            $subFields = $extraFields[$key]['sub_fields'] ?? array();
+            foreach ($values as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                foreach ($row as $subFieldName => $subFieldValue) {
+                    if (
+                        $this->id === intval((string) $subFieldValue)
+                        && $this->entityType->value === ($subFields[$subFieldName]['type'] ?? '')
+                    ) {
+                        throw new ImproperActionException(_('Linking an item to itself is not allowed. Please select a different target.'));
+                    }
+                }
+            }
+        } else {
             foreach ($values as $targetId) {
                 if (
                     $this->id === intval((string) $targetId)

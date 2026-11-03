@@ -288,6 +288,15 @@ type TomSelectWithAllOptions = ToggleableTomSelect & {
 type AnyTS = TomSelectWithAllOptions & {
   _showArchived?: boolean;
 };
+
+type OwnerTomSelect = AnyTS & {
+  _showAll?: boolean;
+};
+
+type UserSearchResult = {
+  userid: number;
+  fullname: string;
+};
 const bound = new WeakSet<Element>();
 
 // DOM
@@ -381,15 +390,41 @@ document.addEventListener('DOMContentLoaded', () => {
       plugins: {
         dropdown_header: {
           title: 'Users',
-          html: buildDropdownToggleHeaderHtml(i18next.t('users'), 'ts-toggle-archived', i18next.t('show-archived')),
+          html: buildDropdownToggleHeaderHtml(i18next.t('users'), [
+            { checkboxClass: 'ts-toggle-archived', label: i18next.t('show-archived') },
+            { checkboxClass: 'ts-toggle-show-all', label: i18next.t('show-all') },
+          ]),
         },
         remove_button: {},
       },
 
-      onInitialize(this: AnyTS) {
+      onInitialize(this: OwnerTomSelect) {
         this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
         this._showArchived = false;
+        this._showAll = get(entityFilters).get('scope') === '3';
         applyToggleFilter(this, '_showArchived', isArchivedOption);
+      },
+
+      // users outside of the team are not rendered in the page, so search them on the instance with the API
+      // only when "Show all" is ticked, and only with a few characters, to avoid listing every user at once
+      shouldLoad(this: OwnerTomSelect, query) {
+        return !!this._showAll && query.trim().length >= 2;
+      },
+
+      load(this: OwnerTomSelect, query, callback) {
+        // team members are already known (archived ones may just be hidden), don't add them twice
+        const knownIds = new Set((this._allOptions ?? []).map(opt => String(opt.value)));
+        ApiC.getJson<UserSearchResult[]>(Model.User, { q: query.trim() })
+          .then(users => {
+            callback(users
+              .filter(user => !knownIds.has(String(user.userid)) && !this.options[String(user.userid)])
+              .map(user => ({
+                value: String(user.userid),
+                text: user.fullname,
+                isOtherTeam: true,
+              })), []);
+          })
+          .catch(() => callback([], []));
       },
 
       onChange(value: string | string[] | null | undefined) {
@@ -412,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
         },
       },
-    }) as AnyTS;
+    }) as OwnerTomSelect;
 
     filterControls.push({
       control,
@@ -424,12 +459,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bindExternalFilterRequest(control, 'owner');
 
-    control.on('dropdown_open', () => {
+    const bindOwnerToggles = (): void => {
       bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
         applyToggleFilter(control, '_showArchived', isArchivedOption);
         control.open();
       });
-    });
+      bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', checked => {
+        setEntityFilterParam('scope', checked ? '3' : '');
+        if (checked) {
+          // search right away with what is already typed
+          const query = control.inputValue();
+          if (control.settings.shouldLoad.call(control, query)) {
+            control.load(query);
+          }
+        } else {
+          removeOtherTeamOptions(control);
+        }
+        control.open();
+      });
+    };
+
+    control.on('dropdown_open', bindOwnerToggles);
 
     if (dropdownRoot) {
       $(dropdownRoot).on('shown.bs.dropdown', function() {
@@ -440,10 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
           input?.focus();
         });
 
-        bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
-          applyToggleFilter(control, '_showArchived', isArchivedOption);
-          control.open();
-        });
+        bindOwnerToggles();
       });
 
       $(dropdownRoot).on('hide.bs.dropdown', function() {
@@ -1019,20 +1066,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function buildDropdownToggleHeaderHtml(
     title: string,
-    checkboxClass: string,
-    label: string,
+    toggles: { checkboxClass: string; label: string }[],
   ) {
+    const togglesHtml = toggles.map(({ checkboxClass, label }, index) => `
+          <label style="${index === 0 ? 'margin-left:auto; ' : ''}display:flex; align-items:center; gap:6px; font-weight:normal;">
+            <input type="checkbox" class="${checkboxClass}">
+            ${label}
+          </label>`).join('');
     return (data: { headerClass: string; titleRowClass: string }) => `
       <div class="${data.headerClass}">
         <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
-          <div>${title}</div>
-          <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
-            <input type="checkbox" class="${checkboxClass}">
-            ${label}
-          </label>
+          <div>${title}</div>${togglesHtml}
         </div>
       </div>
     `;
+  }
+
+  // drop the users fetched from outside the team, but keep the selected ones so the filter stays consistent
+  function removeOtherTeamOptions(control: TomSelectWithAllOptions): void {
+    const selected = new Set(control.items.map(String));
+    for (const [id, opt] of Object.entries(control.options)) {
+      if (opt.isOtherTeam && !selected.has(id)) {
+        control.removeOption(id);
+      }
+    }
+    // TomSelect remembers the queries it already loaded, forget them so ticking "Show all" again searches again
+    control.loadedSearches = {};
+    control.refreshOptions(false);
   }
 
   function getOptionFlag(opt: TomSelectOptionLike | undefined | null, attr: string): boolean {
@@ -1230,7 +1290,9 @@ document.addEventListener('DOMContentLoaded', () => {
       plugins: {
         dropdown_header: {
           title: cfg.title,
-          html: buildDropdownToggleHeaderHtml(cfg.title, 'ts-toggle-show-all', i18next.t('show-all')),
+          html: buildDropdownToggleHeaderHtml(cfg.title, [
+            { checkboxClass: 'ts-toggle-show-all', label: i18next.t('show-all') },
+          ]),
         },
         remove_button: {},
       },

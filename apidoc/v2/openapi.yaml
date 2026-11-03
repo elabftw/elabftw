@@ -2442,6 +2442,9 @@ components:
             created_at:
               type: string
               description: Account creation timestamp.
+            modified_at:
+              type: string
+              description: Last time the user row was modified, including logins and settings changes. Only visible to Sysadmins.
             validated:
               type: integer
             valid_until:
@@ -7020,7 +7023,6 @@ paths:
                       email: lara@tombraider.com
                       validated: 1
                       created_at: "1996-10-25 20:34:04"
-                      last_login: "2025-02-14 12:23:45"
                       valid_until: "2025-08-29"
                       is_sysadmin: 0
                       fullname: Lara Croft

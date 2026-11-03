@@ -368,6 +368,7 @@ class Users extends AbstractRest
           u.firstname,
           u.lastname,
           u.created_at,
+          u.modified_at,
           u.orgid,
           u.email,
           (u.mfa_secret IS NOT NULL)       AS has_mfa_enabled,
@@ -422,6 +423,7 @@ class Users extends AbstractRest
           u.firstname,
           u.lastname,
           u.created_at,
+          u.modified_at,
           u.orgid,
           u.email,
           has_mfa_enabled,
@@ -517,8 +519,9 @@ class Users extends AbstractRest
             $removeKeys = array_diff($removeKeys, array('teams'));
         }
         return array_map(function (array $user) use ($isSysadmin, $removeKeys): array {
+            // modified_at changes on every login, so it is as sensitive as last_login
             if (!$isSysadmin) {
-                unset($user['last_login']);
+                unset($user['last_login'], $user['modified_at']);
             }
             if ($isSysadmin || $this->requester->isAdminOf($user['userid'])) {
                 return $user;
@@ -548,8 +551,9 @@ class Users extends AbstractRest
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token_hash']);
+        // modified_at changes on every login, so it is as sensitive as last_login
         if (!$this->requester->isSysadmin()) {
-            unset($userData['last_login']);
+            unset($userData['last_login'], $userData['modified_at']);
         }
         // keep sig_privkey in response if requester is target
         if ($this->requester->getUserid() !== $this->getUserid()) {

@@ -367,6 +367,12 @@ export class Metadata {
       values = [values[0]];
     }
 
+    // without allow_multi_values a single row is always available for editing,
+    // so an empty value gets one row with the default values of the sub-fields
+    if (!allowMultiple && values.length === 0) {
+      values = [this.getMultifieldDefaultRow(subFields, subFieldNames)];
+    }
+
     // Create the table structure for the multifield
     const table = document.createElement('table');
     table.classList.add('table', 'table-sm', 'table-borderless', 'mb-2');
@@ -525,8 +531,13 @@ export class Metadata {
         if (!subFieldName) continue;
 
         const value = this.getInputValue(input);
+        // an invalid value (e.g. unresolved link text) aborts the save of the whole field,
+        // so the other cells cannot silently lose their stored value
+        if (value === null) {
+          return false;
+        }
         // sparse storage: empty cell values are not stored
-        if (value !== null && value !== '') {
+        if (value !== '') {
           rowValue[subFieldName] = value;
         }
       }

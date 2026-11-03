@@ -214,7 +214,8 @@ describe('Metadata Extra fields', () => {
     cy.get('#newFieldKeyInput').wait(500).type(fieldName);
     cy.get('#choicesInputDiv input').eq(0).type('x');
     cy.get('#choicesInputDiv input').eq(1).type('y');
-    cy.get('#newFieldEmptyValueCheckbox').check();
+    // the switch input is visually hidden by the slider
+    cy.get('#newFieldEmptyValueCheckbox').check({ force: true });
     cy.get('[data-action="save-new-field"]').click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     // no option selected: jQuery val() gives null, so check the DOM property

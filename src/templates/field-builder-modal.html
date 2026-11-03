@@ -99,11 +99,6 @@
               <input aria-labelledby='choicesInputLabel' type='text' class='form-control mb-1' autocomplete='off'>
             </div>
             <button type='button' class='btn btn-secondary btn-sm' data-action='new-field-add-option'>{{ 'Add another choice'|trans }}</button>
-            {# start with no choice selected #}
-            <div class='form-check mt-2'>
-              <input type='checkbox' class='form-check-input' autocomplete='off' id='newFieldEmptyValueCheckbox'>
-              <label class='form-check-label' for='newFieldEmptyValueCheckbox'>{{ 'Start with empty value'|trans }}</label>
-            </div>
           </div>
 
           {# UNITS for NUMBER #}
@@ -149,6 +144,16 @@
                 <label for='newFieldAllowMultiSelect'>{{ 'Allow multiple values?'|trans }}</label>
                 <label title='{{ 'Allow multiple values?'|trans }}' class='switch'><span class='sr-only'>{{ 'Allow multiple values?'|trans }}</span>
                   <input type='checkbox' autocomplete='off' id='newFieldAllowMultiSelect'>
+                  <span class='slider'></span>
+                </label>
+              </div>
+            </div>
+            {# start with no choice selected (dropdown and radio only) #}
+            <div id='emptyValueDiv' hidden>
+              <div class='d-flex justify-content-between align-items-center'>
+                <label for='newFieldEmptyValueCheckbox'>{{ 'Start with empty value'|trans }}</label>
+                <label title='{{ 'Start with empty value'|trans }}' class='switch'><span class='sr-only'>{{ 'Start with empty value'|trans }}</span>
+                  <input type='checkbox' autocomplete='off' id='newFieldEmptyValueCheckbox'>
                   <span class='slider'></span>
                 </label>
               </div>

@@ -41,6 +41,8 @@ function toggleContentDiv(key: string) {
   keys.filter(k => k !== key).forEach(k => {
     document.getElementById('newFieldContentDiv_' + k).toggleAttribute('hidden', true);
   });
+  // the empty value switch only applies to dropdown and radio
+  document.getElementById('emptyValueDiv').toggleAttribute('hidden', key !== 'selectradio');
 }
 
 if (document.getElementById('metadataDiv') && entity.id) {
@@ -184,6 +186,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           (div as HTMLDivElement).hidden = true;
         });
       document.getElementById('newFieldContentDiv_text').hidden = false;
+      document.getElementById('emptyValueDiv').hidden = true;
       clearForm();
     });
 
@@ -382,6 +385,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if (fieldDescriptionInput.value) {
             field['description'] = fieldDescriptionInput.value.trim();
           }
+          // start empty means no value at all, so the previous selection is not kept
+          const startEmpty = [ExtraFieldInputType.Select, ExtraFieldInputType.Radio].includes(field['type'])
+            && (document.getElementById('newFieldEmptyValueCheckbox') as HTMLInputElement).checked;
           // handle values depending on type
           if (field['type'] === ExtraFieldInputType.Text) {
             field['value'] = textAreaField.value.trim();
@@ -401,7 +407,6 @@ if (document.getElementById('metadataDiv') && entity.id) {
               if (val) field['options'].push(val);
             });
             // keep old value if no new option is provided
-            const startEmpty = (document.getElementById('newFieldEmptyValueCheckbox') as HTMLInputElement).checked;
             field['value'] = startEmpty ? '' : (field['options'].includes(prevVal) ? prevVal : (field['options'][0] || ''));
           } else if (field['type'] === ExtraFieldInputType.Number) {
             const prevVal = Array.isArray(prevField?.value) ? prevField.value[0] ?? '' : (prevField?.value || '');
@@ -434,7 +439,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           const allowMultiValues = (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked;
           const firstValue = Array.isArray(field['value']) ? field['value'][0] ?? '' : (field['value'] ?? '');
           if (allowMultiValues) {
-            if (Array.isArray(prevField?.value) && (prevField.type ?? ExtraFieldInputType.Text) === field['type']) {
+            if (!startEmpty && Array.isArray(prevField?.value) && (prevField.type ?? ExtraFieldInputType.Text) === field['type']) {
               let values = [...prevField.value];
               if (values.length === 0) {
                 values.push(firstValue);

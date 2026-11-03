@@ -797,6 +797,21 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $Scheduler->destroy();
     }
 
+    public function testCancelMoreThanADayAway(): void
+    {
+        $Items = $this->getFreshBookableItem(2);
+        $Items->patch(Action::Update, array('book_cancel_minutes' => 60));
+        $Scheduler = new Scheduler($Items);
+        // 1 day and 30 minutes away: must not be seen as 30 minutes away
+        $d = new DateTime('+1 day +30 minutes');
+        $start = $d->format('c');
+        $d->add(new DateInterval('PT2H'));
+        $end = $d->format('c');
+        $id = $Scheduler->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'Yep'));
+        $Scheduler->setId($id);
+        $this->assertTrue($Scheduler->destroy());
+    }
+
     public function testSlotTime(): void
     {
         $Items = $this->getFreshBookableItem(2);

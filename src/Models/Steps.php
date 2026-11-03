@@ -523,9 +523,20 @@ final class Steps extends AbstractRest
 
     private function toggleNotif(): bool
     {
-        $this->getStepDeadline($this->readOne()['deadline'])->create();
+        $step = $this->readOne();
+        // base the toggle on the stored flag so the column and the notifications table cannot drift apart
+        if ($step['deadline_notif'] === 1) {
+            return $this->destroyNotif();
+        }
+        if ($step['deadline'] === null) {
+            throw new ImproperActionException(_('A deadline is required to enable a notification for this step.'));
+        }
+        $StepDeadline = $this->getStepDeadline($step['deadline']);
+        // remove any leftover notification first, as StepDeadline::create() would otherwise treat it as a toggle off
+        $StepDeadline->destroy();
+        $StepDeadline->create();
 
-        return $this->setDeadlineNotif('!deadline_notif');
+        return $this->setDeadlineNotif('1');
     }
 
     private function destroyNotif(): bool

@@ -17,7 +17,7 @@
   {% endif %}
   {% if step.deadline %}
     <span class='mr-2 text-muted'>
-      {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime() }}
+      {{ 'Deadline:'|trans }} {{ step.deadline|format_datetime('medium', 'short') }} (<span title='{{ step.deadline }}' class='relative-moment'></span>)
     </span>
   {% endif %}
 </div>

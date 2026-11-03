@@ -97,6 +97,9 @@ use Override;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 
+use function _;
+use function array_intersect;
+use function array_keys;
 use function dirname;
 use function implode;
 use function in_array;
@@ -504,6 +507,8 @@ final class Apiv2Controller extends AbstractApiController
     {
         $this->applyAnonymousRestrictions();
 
+        $this->applyImpersonationRestrictions();
+
         if (($this->Model instanceof Config) && $this->requester->userData['is_sysadmin'] !== 1) {
             throw new ForbiddenException('Non sysadmin user tried to use a restricted api endpoint.');
         }
@@ -527,6 +532,39 @@ final class Apiv2Controller extends AbstractApiController
         // only accept json content-type unless it's GET or DELETE (also prevents csrf!)
         if (!in_array($this->Request->getMethod(), array(Request::METHOD_GET, Request::METHOD_DELETE), true) && $contentType !== 'application/json') {
             throw new ImproperActionException('Incorrect content-type header.');
+        }
+    }
+
+    /**
+     * While impersonating, the impersonator must not be able to take over the account (credentials, identity)
+     * or keep a way to act as that user once the impersonation is over (api keys, signature keys, webhooks)
+     */
+    private function applyImpersonationRestrictions(): void
+    {
+        if ($this->requester->impersonatorId === null || $this->Request->getMethod() === Request::METHOD_GET) {
+            return;
+        }
+        if (
+            $this->Model instanceof ApiKeys
+            || $this->Model instanceof SigKeys
+            || $this->Model instanceof UsersWebhooks
+        ) {
+            throw new ForbiddenException(_('This action is not possible while impersonating a user.'));
+        }
+        if (
+            $this->endpoint !== ApiEndpoint::Users
+            || $this->hasSubmodel
+            || $this->id !== $this->requester->userData['userid']
+        ) {
+            return;
+        }
+        $forbiddenKeys = array('email', 'firstname', 'lastname', 'orgid', 'orcid', 'password', 'current_password', 'mfa_secret');
+        if (
+            $this->Request->getMethod() !== Request::METHOD_PATCH
+            || !in_array($this->action, array(Action::Create, Action::Update), true)
+            || array_intersect(array_keys($this->reqBody), $forbiddenKeys) !== array()
+        ) {
+            throw new ForbiddenException(_('This action is not possible while impersonating a user.'));
         }
     }
 

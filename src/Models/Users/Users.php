@@ -94,6 +94,12 @@ class Users extends AbstractRest
      */
     public ?int $apiKeyId = null;
 
+    /**
+     * Userid of the Sysadmin or Admin currently impersonating this user, if any.
+     * Only set for session based requests, it lets us refuse actions that must stay in the hands of the real user.
+     */
+    public ?int $impersonatorId = null;
+
     public function __construct(public ?int $userid = null, public ?int $team = null, ?self $requester = null)
     {
         parent::__construct();

@@ -12,11 +12,13 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Auth\Impersonation;
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\ThemeVariant;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\AuthenticatedUser;
@@ -118,6 +120,7 @@ final class App
                         throw new ForbiddenException();
                     }
                     $this->loadUser(new AuthenticatedUser($userid, $team));
+                    $this->loadImpersonation();
                 }
             } catch (ForbiddenException) {
                 $this->Session->invalidate();
@@ -304,6 +307,27 @@ final class App
 
         $this->sessionExpiresAt = $now + $autologoutTime;
         $this->Session->set('session_expires_at', $this->sessionExpiresAt);
+    }
+
+    /**
+     * If a Sysadmin/Admin is impersonating the loaded user, make sure it is still allowed and keep track of it
+     */
+    private function loadImpersonation(): void
+    {
+        $Impersonation = new Impersonation(
+            $this->Session,
+            $this->Config->configArr[Impersonation::CONFIG_KEY] === '1',
+        );
+        if (!$Impersonation->isActive()) {
+            return;
+        }
+        try {
+            $Impersonation->validate();
+        } catch (ImproperActionException) {
+            // treat any reason to stop as a permission issue: the session will be killed
+            throw new ForbiddenException();
+        }
+        $this->Users->impersonatorId = $Impersonation->getImpersonatorId();
     }
 
     /**

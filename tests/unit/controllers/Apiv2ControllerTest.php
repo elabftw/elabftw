@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Codeception\Attribute\DataProvider;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -28,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function basename;
 use function json_decode;
+use function json_encode;
 use function sprintf;
 
 class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
@@ -365,6 +367,50 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(
             'Unknown "action" value. Expected one of: getcollections, gettypes.',
             $data['message']
+        );
+    }
+
+    #[DataProvider('provideImpersonationForbiddenRequests')]
+    public function testImpersonationRestrictions(string $method, string $uri, array $body): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $user->impersonatorId = 1;
+        $Controller = new Apiv2Controller($user, $this->getJsonRequest($uri, $method, $body));
+        $Controller->canWrite = true;
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $Controller->getResponse()->getStatusCode());
+    }
+
+    public static function provideImpersonationForbiddenRequests(): array
+    {
+        return array(
+            'create api key' => array(Request::METHOD_POST, '/api/v2/apikeys', array('name' => 'persist', 'canwrite' => 1)),
+            'create sig keys' => array(Request::METHOD_POST, '/api/v2/users/me/sig_keys', array('passphrase' => 'some passphrase')),
+            'create webhook' => array(Request::METHOD_POST, '/api/v2/users/me/webhooks', array('url' => 'https://example.org')),
+            'change password' => array(Request::METHOD_PATCH, '/api/v2/users/me', array('action' => 'updatepassword', 'password' => 'newpassword123')),
+            'disable 2fa' => array(Request::METHOD_PATCH, '/api/v2/users/me', array('action' => 'disable2fa')),
+            'change email' => array(Request::METHOD_PATCH, '/api/v2/users/me', array('email' => 'evil@example.org')),
+        );
+    }
+
+    public function testImpersonationAllowsPreferences(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $user->impersonatorId = 1;
+        $Controller = new Apiv2Controller($user, $this->getJsonRequest('/api/v2/users/me', Request::METHOD_PATCH, array('limit_nb' => 15)));
+        $Controller->canWrite = true;
+        $this->assertEquals(Response::HTTP_OK, $Controller->getResponse()->getStatusCode());
+        // reading is always fine
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/apikeys', Request::METHOD_GET));
+        $this->assertEquals(Response::HTTP_OK, $Controller->getResponse()->getStatusCode());
+    }
+
+    private function getJsonRequest(string $uri, string $method, array $body): Request
+    {
+        return Request::create(
+            $uri,
+            $method,
+            server: array('CONTENT_TYPE' => 'application/json'),
+            content: json_encode($body, JSON_THROW_ON_ERROR),
         );
     }
 }

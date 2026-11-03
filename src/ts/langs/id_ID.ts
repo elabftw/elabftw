@@ -78,6 +78,7 @@ const t = {
     "is-admin": "Apakah Admin",
     "is-archived": "Diarsipkan",
     "is-owner": "Adalah Pemilik",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Adalah Sysadmin",
     "item": "Sumber daya",
     "item-type": "Template sumber daya",

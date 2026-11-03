@@ -78,6 +78,7 @@ const t = {
     "is-admin": "Är administratör",
     "is-archived": "Är arkiverad",
     "is-owner": "Är ägare",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Är systemadministratör",
     "item": "Resurs",
     "item-type": "Resursmall",

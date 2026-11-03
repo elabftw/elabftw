@@ -40,7 +40,7 @@ const enabledDisabled = v => v === 1 ? i18next.t('enabled') : i18next.t('disable
 const lastLoginText = v => v === null ? i18next.t('never') : v;
 const validUntilText = v => v === null ? i18next.t('forever') : v;
 // allow filtering for "admin" as well as team name
-const teamsText = teams => teams?.map(t => `${t.name} ${t.is_admin ? i18next.t('admin') : i18next.t('user')}`).join(' ') ?? '';
+const teamsText = teams => teams?.map(t => `${t.name} ${t.is_admin ? i18next.t('admin') : i18next.t('user')}${t.is_restricted ? ` ${i18next.t('is-restricted')}` : ''}`).join(' ') ?? '';
 
 async function toggleUserModal(user) {
   const textParams = ['userid', 'firstname', 'lastname', 'email', 'valid_until', 'orgid'];
@@ -125,7 +125,10 @@ const GridExample = () => {
   const TeamsRenderer = ({ value }) => {
     return (
       <span>{value.map(team => (
-        <span key={team.id} data-id={team.id} className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'color-disabled' : ''}`}>{team.name}</span>))}
+        <span key={team.id} data-id={team.id} className={`mr-2 ${team.is_admin ? 'admin' : 'user'}-badge ${team.is_archived ? 'color-disabled' : ''}`}>
+          {team.name}
+          {team.is_restricted ? <i className='fas fa-user-lock ml-1' title={i18next.t('is-restricted')} aria-label={i18next.t('is-restricted')}></i> : null}
+        </span>))}
       </span>
     );
   };

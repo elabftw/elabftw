@@ -78,6 +78,7 @@ const t = {
     "is-admin": "Admin hisoblanadi",
     "is-archived": "Arxivlangan",
     "is-owner": "Egasi",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Sysadmin",
     "item": "Manba",
     "item-type": "Resurs shabloni",

@@ -192,6 +192,21 @@ final class Users2Teams
             ->setArchived($content)->value;
     }
 
+    // Admins of the team can restrict a user (e.g. a student) so they only see their own entries and explicitly shared ones
+    private function patchIsRestricted(int $userid, int $teamid, BinaryValue $isRestricted): int
+    {
+        $this->requesterCanModifyInTeamOrExplode($teamid);
+        $sql = 'UPDATE users2teams SET is_restricted = :is_restricted WHERE `users_id` = :userid AND `teams_id` = :team';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':is_restricted', $isRestricted->value, PDO::PARAM_INT);
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $req->bindValue(':team', $teamid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        /** @psalm-suppress PossiblyNullArgument */
+        AuditLogs::create(new PermissionLevelChanged($this->requester->userid, $userid, Users2TeamsTargets::IsRestricted, $isRestricted->value, $teamid));
+        return $isRestricted->value;
+    }
+
     private function patchIsSomething(Users2TeamsTargets $what, int $userid, int $teamid, BinaryValue $content): int
     {
         if ($what === Users2TeamsTargets::IsAdmin) {
@@ -199,6 +214,9 @@ final class Users2Teams
         }
         if ($what === Users2TeamsTargets::IsArchived) {
             return $this->patchIsArchived($userid, $teamid, $content);
+        }
+        if ($what === Users2TeamsTargets::IsRestricted) {
+            return $this->patchIsRestricted($userid, $teamid, $content);
         }
         // only sysdamin can do that
         if (!$this->requester->isSysadmin()) {

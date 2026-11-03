@@ -78,6 +78,7 @@ const t = {
     "is-admin": "Administrator je",
     "is-archived": "Arhiviran je",
     "is-owner": "Vlasnik je",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Administrator sustava je",
     "item": "Resurs",
     "item-type": "Predložak resursa",

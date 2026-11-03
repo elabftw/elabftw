@@ -78,6 +78,7 @@ const t = {
     "is-admin": "È Admin",
     "is-archived": "È archiviato",
     "is-owner": "È proprietario",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "È amministratore di sistema",
     "item": "Risorsa",
     "item-type": "Modello per risorse",

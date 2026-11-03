@@ -960,6 +960,7 @@ export async function populateUserModal(user: Record<string, string|number>) {
     teamBadge.appendChild(generateIsSomethingElement('owner', team, Boolean(requester.is_sysadmin)));
     teamBadge.appendChild(generateIsSomethingElement('admin', team));
     teamBadge.appendChild(generateIsSomethingElement('archived', team));
+    teamBadge.appendChild(generateIsSomethingElement('restricted', team));
 
     manageTeamsDiv.appendChild(teamBadge);
   });
@@ -1005,7 +1006,7 @@ export async function populateUserModal(user: Record<string, string|number>) {
   mountRors({ force: true });
 }
 
-// generate the slider element to toggle isAdmin and isOwner for a given user in a given team
+// generate the slider element to toggle isAdmin, isOwner, isArchived or isRestricted for a given user in a given team
 function generateIsSomethingElement(what: string, team: Record<string, string|number>, isSysadmin: boolean = false) {
   const isSomething = document.createElement('div');
   isSomething.classList.add('d-flex', 'justify-content-between');

@@ -78,6 +78,7 @@ const t = {
     "is-admin": "És Administrador",
     "is-archived": "Està arxivat",
     "is-owner": "És Propietari",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "És Sysadmin",
     "item": "Recurs",
     "item-type": "Plantilla de recurs",

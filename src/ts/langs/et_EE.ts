@@ -78,6 +78,7 @@ const t = {
     "is-admin": "On administraator",
     "is-archived": "On arhiveeritud",
     "is-owner": "Omanik",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Süsteemiadministraator",
     "item": "Ressurss",
     "item-type": "Ressursimall",

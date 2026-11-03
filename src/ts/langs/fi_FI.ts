@@ -78,6 +78,7 @@ const t = {
     "is-admin": "On Admin",
     "is-archived": "On arkistoitu",
     "is-owner": "On omistaja",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "On Sysadmin",
     "item": "Resurssi",
     "item-type": "Resurssin mallipohja",

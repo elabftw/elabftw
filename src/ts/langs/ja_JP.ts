@@ -78,6 +78,7 @@ const t = {
     "is-admin": "管理者",
     "is-archived": "アーカイブ",
     "is-owner": "オーナー",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "システム管理者",
     "item": "リソース",
     "item-type": "リソーステンプレート",

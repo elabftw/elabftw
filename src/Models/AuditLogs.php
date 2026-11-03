@@ -14,15 +14,26 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\AuditCategory;
 use Elabftw\Interfaces\AuditEventInterface;
+use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Users\Users;
+use Override;
 use PDO;
+
+use function array_map;
 
 /**
  * Deal with auditable events stored in audit_logs table
  */
-final class AuditLogs
+final class AuditLogs extends AbstractRest
 {
     public const int DEFAULT_LIMIT = 50;
+
+    public function __construct(private Users $requester)
+    {
+        parent::__construct();
+    }
 
     public static function create(AuditEventInterface $event): int
     {
@@ -53,5 +64,49 @@ final class AuditLogs
         $Db->execute($req);
 
         return $req->fetchAll();
+    }
+
+    #[Override]
+    public function getApiPath(): string
+    {
+        return 'api/v2/audit_logs/';
+    }
+
+    /**
+     * Read events with the names of involved users, most recent first
+     * A limit of 0 (the default when no limit query parameter is given) means no limit
+     */
+    #[Override]
+    public function readAll(?QueryParamsInterface $queryParams = null): array
+    {
+        $this->requester->isSysadminOrExplode();
+        $limit = $queryParams?->getLimit() ?? 0;
+        $offset = $queryParams?->getOffset() ?? 0;
+        // sort on id too, as several events can share the same created_at second
+        $sql = "SELECT audit_logs.id, audit_logs.created_at, audit_logs.category,
+            audit_logs.requester_userid, audit_logs.target_userid, audit_logs.body,
+            CONCAT(requester.firstname, ' ', requester.lastname) AS requester_fullname,
+            CONCAT(target.firstname, ' ', target.lastname) AS target_fullname
+            FROM audit_logs
+            LEFT JOIN users AS requester ON (requester.userid = audit_logs.requester_userid)
+            LEFT JOIN users AS target ON (target.userid = audit_logs.target_userid)
+            ORDER BY audit_logs.created_at DESC, audit_logs.id DESC";
+        if ($limit > 0) {
+            $sql .= ' LIMIT :limit OFFSET :offset';
+        }
+        $req = $this->Db->prepare($sql);
+        if ($limit > 0) {
+            $req->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $req->bindValue(':offset', $offset, PDO::PARAM_INT);
+        }
+        $this->Db->execute($req);
+
+        return array_map(
+            static function (array $event): array {
+                $event['category_name'] = AuditCategory::tryFrom((int) $event['category'])->name ?? (string) $event['category'];
+                return $event;
+            },
+            $req->fetchAll(),
+        );
     }
 }

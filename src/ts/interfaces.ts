@@ -126,6 +126,7 @@ enum Action {
 
 enum Model {
   Apikey = 'apikeys',
+  AuditLogs = 'audit_logs',
   Comment = 'comments',
   Compounds = 'compounds',
   Config = 'config',

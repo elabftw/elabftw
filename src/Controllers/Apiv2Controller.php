@@ -35,6 +35,7 @@ use Elabftw\Make\ReportsHandler;
 use Elabftw\Make\Exports;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Batch;
 use Elabftw\Models\Branding;
 use Elabftw\Models\Comments;
@@ -323,6 +324,7 @@ final class Apiv2Controller extends AbstractApiController
     {
         return match ($this->endpoint) {
             ApiEndpoint::ApiKeys => new ApiKeys($this->requester, $this->id),
+            ApiEndpoint::AuditLogs => new AuditLogs($this->requester),
             ApiEndpoint::Batch => new Batch($this->requester),
             ApiEndpoint::Compounds => (
                 function () {

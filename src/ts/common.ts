@@ -814,25 +814,14 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     });
 });
 
-// Searchable multiple booking approvers using TomSelect's existing plugins.
-// Keep the original select in sync so booking settings use the selected users.
-$(document).on('shown.bs.modal', '#bookingParamsModal', () => {
-  const select = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
-  if (!select || select.tomselect) {
-    return;
-  }
-  new TomSelect(select, {
-    maxOptions: null,
-    hideSelected: false,
-    plugins: ['checkbox_options', 'dropdown_input', 'remove_button'],
-    placeholder: i18next.t('search'),
-  });
-  syncBookingApproversState();
-});
+// The approvers select is a regular users TomSelect (see initPermissionsTomSelects).
+// Keep its enabled state in sync with the booking switches: selections are preserved when disabled.
+function getBookingApproversSelect(): (HTMLSelectElement & { tomselect?: TomSelect }) | null {
+  return document.getElementById('bookingApprovers_select_users') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
+}
 
-// Preserve selections when disabled so they are restored when approval is re-enabled.
 function syncBookingApproversState(): void {
-  const select = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
+  const select = getBookingApproversSelect();
   if (!select?.tomselect) return;
   const required = document.getElementById('requiresApprovalSwitch') as HTMLInputElement | null;
   const bookable = document.getElementById('isBookableSwitch') as HTMLInputElement | null;
@@ -843,16 +832,20 @@ function syncBookingApproversState(): void {
   }
 }
 
+$(document).on('shown.bs.modal', '#bookingParamsModal', syncBookingApproversState);
 $(document).on('change', '#requiresApprovalSwitch, #isBookableSwitch', syncBookingApproversState);
 
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
   const requiredInput = document.getElementById('requiresApprovalSwitch') as HTMLInputElement | null;
-  const usersInput = document.getElementById('bookApprovalUsers') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
-  const approvers = usersInput?.tomselect
-    ? usersInput.tomselect.items.map(Number)
-    : Array.from(usersInput?.selectedOptions ?? [], option => Number(option.value));
+  const usersInput = getBookingApproversSelect();
+  // values are in the 'user:<userid>' format used by the permissions selects
+  const approvers = (usersInput?.tomselect
+    ? usersInput.tomselect.items
+    : Array.from(usersInput?.selectedOptions ?? [], option => option.value))
+    .map(value => Number(String(value).replace('user:', '')))
+    .filter(userid => userid > 0);
   if (requiredInput?.checked && approvers.length === 0) {
     notify.error('error-approver-required');
     return;

@@ -20,17 +20,17 @@ use function array_merge;
 use function json_encode;
 use function sprintf;
 
-/** Audit the decision, including the actor, owner and affected recurrence. */
+/** Audit the decision, including the approver, the booking owner and the affected recurrence. */
 final class BookingApprovalDecision extends AbstractAuditEvent
 {
     public function __construct(
-        int $actorUserid,
+        int $requesterUserid,
         int $ownerUserid,
         private int $eventId,
         private string $decision,
         private ?string $recurrenceId = null,
     ) {
-        parent::__construct($actorUserid, $ownerUserid);
+        parent::__construct($requesterUserid, $ownerUserid);
     }
 
     #[Override]

@@ -257,7 +257,7 @@ export function collectForm(form: HTMLElement): object {
   let params = {};
   inputs.forEach(input => {
     const el = input;
-    // TomSelect checkbox_options inserts inputs without a name attribute.
+    // TomSelect search inputs have no name attribute and must not be collected.
     if (!el.name) {
       return;
     }

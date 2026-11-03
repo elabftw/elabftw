@@ -5664,7 +5664,7 @@ paths:
                       enum: [approved, rejected]
                     comment:
                       type: string
-                      description: Optional reason for the decision./
+                      description: Optional reason for the decision.
                 - type: object
                   required: [target, start, end]
                   properties:

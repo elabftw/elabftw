@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BookingApprovalStatus;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -100,7 +101,7 @@ final class EventsRecurrence extends AbstractRest
             if ($recurrenceId === null) {
                 throw new ImproperActionException(_('This reservation no longer belongs to a recurrence.'));
             }
-            if ($changeDateTime && (int) $event['approval_status'] !== 0) {
+            if ($changeDateTime && (int) $event['approval_status'] !== BookingApprovalStatus::NoApproval->value) {
                 throw new ImproperActionException('Approval-controlled reservations cannot change time.');
             }
             $allEvents = $this->readRecurrenceEvents($recurrenceId);

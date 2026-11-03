@@ -16,6 +16,7 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Enums\Notifications;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Notifications\BookingApprovalUpdated;
 
 use function sprintf;
 use function _;
@@ -67,7 +68,11 @@ final class Transform
                             htmlspecialchars($notif['body']['requester_fullname'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
                             htmlspecialchars($notif['body']['item_title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
                         )
-                        : sprintf(_('Booking request status: %s'), htmlspecialchars($notif['body']['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')),
+                        : sprintf(
+                            _('Booking request for %s: %s'),
+                            htmlspecialchars($notif['body']['item_title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                            htmlspecialchars(BookingApprovalUpdated::translateStatus($notif['body']['status']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                        ),
                     $notif['created_at'],
                 ),
             Notifications::EventDeleted =>

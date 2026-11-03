@@ -40,7 +40,7 @@ import 'bootstrap/js/src/modal.js';
 import { DateTime } from 'luxon';
 import { ApiC } from './api';
 import i18next from './i18n';
-import { Action } from './interfaces';
+import { Action, BookingApprovalStatus } from './interfaces';
 import { collectForm, toRelative, TomSelect } from './misc';
 import { notify } from './notify';
 import { on } from './handlers';
@@ -75,7 +75,7 @@ type BookingRequest = {
   start: string;
   end: string;
   modified_at: string;
-  approval_status: number;
+  approval_status: BookingApprovalStatus;
   approval_comment: string | null;
   canapprove: number;
   recurrence_id: string | null;
@@ -534,7 +534,7 @@ if (calendarEl) {
       const canBook = Number(info.event.extendedProps.canbook);
       const eventOwnerId = Number(info.event.extendedProps.userid);
       const classNames = ['scheduler-event-colored'];
-      if (Number(info.event.extendedProps.approval_status) === 1) {
+      if (Number(info.event.extendedProps.approval_status) === BookingApprovalStatus.Pending) {
         classNames.push('scheduler-event-pending');
       }
       if (canBook === 0 && currentUserId !== eventOwnerId && Number(info.event.extendedProps.canapprove) !== 1) {
@@ -549,7 +549,7 @@ if (calendarEl) {
     },
     // Pending approval cannot be moved by drag and drop.
     eventAllow: (info, event) => Number(event.extendedProps.canbook) === 1
-      && Number(event.extendedProps.approval_status) === 0,
+      && Number(event.extendedProps.approval_status) === BookingApprovalStatus.NoApproval,
     // selection
     select: function(info): void {
       const itemSelectEl = document.getElementById('itemSelect') as HTMLSelectElement & { tomselect?: TomSelect };
@@ -660,7 +660,7 @@ if (calendarEl) {
     eventClick: function(info): void {
       const canBook = Number(info.event.extendedProps.canbook);
       const eventOwnerId = Number(info.event.extendedProps.userid);
-      const isPending = Number(info.event.extendedProps.approval_status) === 1;
+      const isPending = Number(info.event.extendedProps.approval_status) === BookingApprovalStatus.Pending;
       if (isPending || (canBook === 0 && currentUserId !== eventOwnerId)) {
         return;
       }
@@ -675,7 +675,7 @@ if (calendarEl) {
       const bookedBy = booker ? (modalLabel.dataset.bookedBy ?? '%s').replace('%s', booker) : '';
       document.getElementById('eventModalResourceTitle')!.textContent = resourceTitle;
       document.getElementById('eventModalResourceMeta')!.textContent = [categoryTitle, bookedBy].filter(Boolean).join(' · ');
-      const requiresBookingApproval = Number(info.event.extendedProps.approval_status) !== 0;
+      const requiresBookingApproval = Number(info.event.extendedProps.approval_status) !== BookingApprovalStatus.NoApproval;
       document.getElementById('eventModalApprovalHelp')!.classList.toggle('d-none', !requiresBookingApproval);
 
       // Preselect the resource currently reserved by this event
@@ -839,22 +839,12 @@ if (calendarEl) {
         button.dataset.eventid = String(booking.id);
         actions.appendChild(button);
       }
-    } else if (kind === 'my' && Number(booking.approval_status) === 1) {
+    } else if (kind === 'my' && Number(booking.approval_status) === BookingApprovalStatus.Pending) {
       const cancel = element('button', 'btn btn-sm btn-danger-ghost', i18next.t('cancel'));
       cancel.type = 'button';
-      cancel.addEventListener('click', async () => {
-        if (!window.confirm(i18next.t('booking-cancel-confirm'))) return;
-        const endpoint = booking.recurrence_id
-          ? `event/${booking.id}/recurrences?recursive=1`
-          : `event/${booking.id}`;
-        try {
-          await ApiC.delete(endpoint);
-          calendar.refetchEvents();
-          void loadBookingRequests('my');
-        } catch {
-          // ApiC already notifies the user.
-        }
-      });
+      cancel.dataset.action = 'booking-cancel-request';
+      cancel.dataset.eventid = String(booking.id);
+      cancel.dataset.recurring = booking.recurrence_id ? '1' : '0';
       actions.appendChild(cancel);
     }
     return actions;
@@ -866,8 +856,8 @@ if (calendarEl) {
     try {
       // Fetch the full recurrence, so both its count and its first occurrence are correct.
       const query = kind === 'my'
-        ? `events?approval_status=1,2,3&userid=${currentUserId}`
-        : `events?approval_status=1&approver=${currentUserId}`;
+        ? `events?approval_status=${[BookingApprovalStatus.Pending, BookingApprovalStatus.Approved, BookingApprovalStatus.Rejected].join(',')}&userid=${currentUserId}`
+        : `events?approval_status=${BookingApprovalStatus.Pending}&approver=${currentUserId}`;
       const bookings = await ApiC.getJson<BookingRequest[]>(query);
       const groups = new Map<string, BookingRequestRow>();
       for (const booking of bookings) {
@@ -891,18 +881,25 @@ if (calendarEl) {
       }
       list.replaceChildren();
       list.className = getAgGridTheme();
-      const statusNames = ['approved', 'pending-approval', 'approved', 'rejected'];
-      const statusColors = [
-        ['primary', 'primary-fg', 'primary'],
-        ['lightgold', 'darkgold', 'gold'],
-        ['primary', 'primary-fg', 'primary'],
-        ['lightred', 'darkred', 'dangerred'],
-      ];
+      // i18n key and badge colors (background, text, border) for each status
+      const statusNames: Record<BookingApprovalStatus, string> = {
+        [BookingApprovalStatus.NoApproval]: 'approved',
+        [BookingApprovalStatus.Pending]: 'pending-approval',
+        [BookingApprovalStatus.Approved]: 'approved',
+        [BookingApprovalStatus.Rejected]: 'rejected',
+      };
+      const dangerColors = ['lightred', 'darkred', 'dangerred'];
+      const statusColors: Record<BookingApprovalStatus, string[]> = {
+        [BookingApprovalStatus.NoApproval]: ['primary', 'primary-fg', 'primary'],
+        [BookingApprovalStatus.Pending]: ['lightgold', 'darkgold', 'gold'],
+        [BookingApprovalStatus.Approved]: ['primary', 'primary-fg', 'primary'],
+        [BookingApprovalStatus.Rejected]: dangerColors,
+      };
       const columnDefs: ColDef<BookingRequestRow>[] = [
         { field: 'item_title', headerName: i18next.t('item'), flex: 1, minWidth: 160,
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
             if (!data) return '';
-            if (kind !== 'my' || Number(data.approval_status) !== 3 || !data.approval_comment) return data.item_title;
+            if (kind !== 'my' || Number(data.approval_status) !== BookingApprovalStatus.Rejected || !data.approval_comment) return data.item_title;
             const container = element('div', 'd-flex flex-column justify-content-center h-100');
             container.style.lineHeight = '1.5';
             container.appendChild(element('div', 'text-truncate', data.item_title));
@@ -916,11 +913,12 @@ if (calendarEl) {
         { field: 'approval_status', headerName: i18next.t('status'), width: 155,
           cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
             if (!data) return '';
-            const overdue = Number(data.approval_status) === 1 && DateTime.fromSQL(data.start).toMillis() < DateTime.now().toMillis();
-            const colors = overdue ? ['lightred', 'darkred', 'dangerred'] : (statusColors[Number(data.approval_status)] ?? statusColors[3]);
+            const status = Number(data.approval_status) as BookingApprovalStatus;
+            const overdue = status === BookingApprovalStatus.Pending && DateTime.fromSQL(data.start).toMillis() < DateTime.now().toMillis();
+            const colors = overdue ? dangerColors : (statusColors[status] ?? dangerColors);
             const badge = element('span', 'badge p-2', overdue
               ? i18next.t('overdue')
-              : i18next.t(statusNames[Number(data.approval_status)]));
+              : i18next.t(statusNames[status] ?? 'rejected'));
             badge.style.backgroundColor = `var(--${colors[0]})`;
             badge.style.color = `var(--${colors[1]})`;
             badge.style.border = `1px solid var(--${colors[2]})`;
@@ -977,6 +975,21 @@ if (calendarEl) {
       // ApiC already notifies the user.
     }
   }
+
+  on('booking-cancel-request', async (el: HTMLElement) => {
+    if (!window.confirm(i18next.t('booking-cancel-confirm'))) return;
+    // a pending recurring request is cancelled as a whole, like it is approved or rejected as a whole
+    const endpoint = el.dataset.recurring === '1'
+      ? `event/${el.dataset.eventid}/recurrences?recursive=1`
+      : `event/${el.dataset.eventid}`;
+    try {
+      await ApiC.delete(endpoint);
+      calendar.refetchEvents();
+      void loadBookingRequests('my');
+    } catch {
+      // ApiC already notifies the user.
+    }
+  });
 
   on('booking-approve', (el: HTMLElement) => decideBooking(el, 'approved'));
   on('booking-reject', (el: HTMLElement) => {

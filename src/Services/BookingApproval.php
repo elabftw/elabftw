@@ -41,7 +41,7 @@ final class BookingApproval
 {
     private Db $Db;
 
-    public function __construct(private readonly Users $actor)
+    public function __construct(private readonly Users $requester)
     {
         $this->Db = Db::getConnection();
     }
@@ -85,7 +85,7 @@ final class BookingApproval
         }
     }
 
-    /** Approve or reject a booking */
+    /** Approve or reject a booking. For a recurring request, the decision applies to all its pending occurrences. */
     public function decide(int $eventId, string $decision, ?string $comment = null): void
     {
         $status = match ($decision) {
@@ -97,7 +97,7 @@ final class BookingApproval
         try {
             $event = $this->getEventForDecision($eventId);
             $itemId = (int) $event['item'];
-            if (!$this->canApprove($itemId, $this->actor->getUserid())) {
+            if (!$this->canApprove($itemId, $this->requester->getUserid())) {
                 throw new ForbiddenException();
             }
             $currentStatus = (int) $event['approval_status'];
@@ -108,11 +108,11 @@ final class BookingApproval
             if ($currentStatus !== BookingApprovalStatus::Pending->value) {
                 throw new ImproperActionException('This booking request is no longer pending.');
             }
-            $this->updateDecision($itemId, $event, $status, $comment);
-            $this->finalizeRequest($event, $status, $comment);
+            $occurrences = $this->updateDecision($itemId, $event, $status, $comment);
+            $this->finalizeRequest($event, $status, $comment, $occurrences);
             $this->Db->commit();
         } catch (Throwable $e) {
-            $this->Db->rollback();
+            $this->Db->rollBack();
             throw $e;
         }
     }
@@ -126,7 +126,7 @@ final class BookingApproval
         $data = array(
             'request_key' => $recurrenceId ?? 'event:' . $eventId,
             'item_title' => $item['title'],
-            'requester_fullname' => $this->actor->userData['fullname'],
+            'requester_fullname' => $this->requester->userData['fullname'],
             'start' => $occurrences[0]['start'],
             'end' => $occurrences[0]['end'],
             'occurrences' => count($occurrences),
@@ -135,7 +135,7 @@ final class BookingApproval
         foreach ($this->getApprovers((int) $item['id']) as $approverId) {
             new BookingApprovalRequested(new Users($approverId), $data)->create();
         }
-        new BookingApprovalUpdated($this->actor, $data)->create();
+        new BookingApprovalUpdated($this->requester, $data)->create();
     }
 
     /** Lock one booking and retrieve only the fields needed for its decision. */
@@ -148,14 +148,14 @@ final class BookingApproval
         return $this->Db->fetch($req);
     }
 
-    /** Update only pending occurrences of the selected booking or recurrence. */
-    private function updateDecision(int $itemId, array $event, BookingApprovalStatus $status, ?string $comment): void
+    /** Update only pending occurrences of the selected booking or recurrence and return how many were decided. */
+    private function updateDecision(int $itemId, array $event, BookingApprovalStatus $status, ?string $comment): int
     {
-        $sql = 'UPDATE team_events SET approval_status = :status, approved_by = :actor, approved_at = NOW(), approval_comment = :comment WHERE item = :item AND approval_status = :pending AND ';
+        $sql = 'UPDATE team_events SET approval_status = :status, approved_by = :requester, approved_at = NOW(), approval_comment = :comment WHERE item = :item AND approval_status = :pending AND ';
         $sql .= $event['recurrence_id'] === null ? 'id = :id' : 'recurrence_id = :recurrence';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':status', $status->value, PDO::PARAM_INT);
-        $req->bindValue(':actor', $this->actor->userid, PDO::PARAM_INT);
+        $req->bindValue(':requester', $this->requester->userid, PDO::PARAM_INT);
         $req->bindValue(':comment', $comment, $comment === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $req->bindValue(':item', $itemId, PDO::PARAM_INT);
         $req->bindValue(':pending', BookingApprovalStatus::Pending->value, PDO::PARAM_INT);
@@ -165,6 +165,7 @@ final class BookingApproval
             $req->bindValue(':recurrence', $event['recurrence_id']);
         }
         $this->Db->execute($req);
+        return $req->rowCount();
     }
 
     /** Replace the stored approver list with the selected user IDs. */
@@ -174,7 +175,7 @@ final class BookingApproval
         $this->addApprovers($itemId, $approvers);
     }
 
-    /** Remove all approver for the resource. */
+    /** Remove all approvers for the resource. */
     private function removeApprovers(int $itemId): void
     {
         $req = $this->Db->prepare('DELETE FROM items_booking_approvers WHERE entity_id = :item');
@@ -182,7 +183,7 @@ final class BookingApproval
         $this->Db->execute($req);
     }
 
-    /** Store the selected approver for the resource. */
+    /** Store the selected approvers for the resource in a single query. */
     private function addApprovers(int $itemId, array $approvers): void
     {
         $values = array();
@@ -200,14 +201,16 @@ final class BookingApproval
         $this->Db->execute($req);
     }
 
-    /** Notify the requester and current approvers of a decision and record its audit event. */
-    private function finalizeRequest(array $event, BookingApprovalStatus $status, ?string $comment): void
+    /** Notify the booking owner and current approvers of a decision and record its audit event. */
+    private function finalizeRequest(array $event, BookingApprovalStatus $status, ?string $comment, int $occurrences): void
     {
         $data = array(
             'item_title' => $event['item_title'],
             'start' => $event['start'],
             'end' => $event['end'],
-            'status' => $status === BookingApprovalStatus::Approved ? 'approved' : 'rejected',
+            // a decision on a recurring request applies to all its pending occurrences
+            'occurrences' => $occurrences,
+            'status' => strtolower($status->name),
             'comment' => $comment,
         );
         $recipients = array_unique(array_merge(array((int) $event['userid']), $this->getApprovers((int) $event['item'])));
@@ -216,7 +219,7 @@ final class BookingApproval
             new BookingApprovalUpdated(new Users($userid), $data)->create();
         }
         AuditLogs::create(new BookingApprovalDecision(
-            (int) $this->actor->userid,
+            (int) $this->requester->userid,
             (int) $event['userid'],
             (int) $event['id'],
             $data['status'],

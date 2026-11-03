@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * @author Nicolas CARPi / Deltablot
+ * @author Moustapha / Deltablot
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
 declare(strict_types=1);
 
 namespace Elabftw\Models;
@@ -9,6 +18,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BookingApprovalStatus;
+use Elabftw\Enums\Notifications;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
@@ -18,7 +28,10 @@ use PDO;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_fill;
 use function array_map;
+use function implode;
+use function json_decode;
 
 final class BookingApprovalTest extends TestCase
 {
@@ -57,9 +70,12 @@ final class BookingApprovalTest extends TestCase
     public function testPendingRequestBlocksSlotAndDisablingApprovalLeavesItPending(): void
     {
         [$item, $approver, $requester] = $this->getApprovalFixture();
+        // approval rules take precedence over overlapping slots being allowed on the resource
+        $item->patch(Action::Update, array('book_can_overlap' => 1));
         $start = new DateTimeImmutable('+4 days 10:00');
         $params = array('start' => $start->format('c'), 'end' => $start->modify('+1 hour')->format('c'));
         $scheduler = new Scheduler(new Items($requester, $item->id));
+        self::assertSame(1, (int) $scheduler->Items->entityData['book_can_overlap']);
         $eventId = $scheduler->postAction(Action::Create, $params);
         self::assertSame(BookingApprovalStatus::Pending->value, (int) (new Scheduler(new Items($requester, $item->id), $eventId))->readOne()['approval_status']);
 
@@ -294,7 +310,16 @@ final class BookingApprovalTest extends TestCase
         Db::getConnection()->execute($req);
         $statuses = array_map('intval', $req->fetchAll(PDO::FETCH_COLUMN));
         self::assertCount(3, $statuses);
-        self::assertSame(array(2, 2, 2), $statuses);
+        self::assertSame(array_fill(0, 3, BookingApprovalStatus::Approved->value), $statuses);
+
+        // the booking owner is notified once, for the whole recurrence
+        $req = Db::getConnection()->prepare('SELECT body FROM notifications WHERE userid = :userid AND category = :category ORDER BY id DESC LIMIT 1');
+        $req->bindValue(':userid', $requester->userid, PDO::PARAM_INT);
+        $req->bindValue(':category', Notifications::BookingApprovalUpdated->value, PDO::PARAM_INT);
+        Db::getConnection()->execute($req);
+        $body = json_decode((string) $req->fetchColumn(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame('approved', $body['status']);
+        self::assertSame(3, $body['occurrences']);
     }
 
     public function testBookingDecisionRejectsUnknownDecision(): void
@@ -381,6 +406,54 @@ final class BookingApprovalTest extends TestCase
         $otherRequests = $otherScheduler->readAll($otherQuery);
         self::assertCount(1, $otherRequests);
         self::assertSame(0, (int) $otherRequests[0]['canapprove']);
+    }
+
+    public function testPendingListExcludesBookingsAssignedToAnotherApprover(): void
+    {
+        [$item, $approver, $requester] = $this->getApprovalFixture();
+        // getUserInTeam() always returns the same user, so pick a distinct approver explicitly
+        $otherApprover = $this->getOtherUser(array($approver->userid, $requester->userid));
+        $otherItem = $this->getFreshBookableItem(2);
+        $otherItem->patch(Action::Update, array('requires_booking_approval' => 1, 'approvers' => array($otherApprover->userid)));
+        $start = new DateTimeImmutable('+12 days 10:00');
+        $end = $start->modify('+1 hour');
+        $params = array('start' => $start->format('c'), 'end' => $end->format('c'));
+        $id = (new Scheduler(new Items($requester, $item->id)))->postAction(Action::Create, $params);
+        $otherId = (new Scheduler(new Items($requester, $otherItem->id)))->postAction(Action::Create, $params);
+
+        foreach (array(array($approver, $id), array($otherApprover, $otherId)) as [$user, $expectedId]) {
+            // the approver may not be able to read the resource: the pending list does not need it loaded
+            $scheduler = new Scheduler(new Items($user), null, $start->format('c'), $end->format('c'));
+            $requests = $scheduler->readAll($scheduler->getQueryParams(new InputBag(array(
+                'approval_status' => (string) BookingApprovalStatus::Pending->value,
+                'approver' => $user->userid,
+                'items' => array($item->id, $otherItem->id),
+            ))));
+            self::assertCount(1, $requests);
+            self::assertSame($expectedId, (int) $requests[0]['id']);
+            self::assertSame(1, (int) $requests[0]['canapprove']);
+        }
+    }
+
+    public function testInvalidApprovalStatusFilterIsRejected(): void
+    {
+        $item = $this->getFreshBookableItem(2);
+        $scheduler = new Scheduler($item);
+        $this->expectException(ImproperActionException::class);
+        $scheduler->readAll($scheduler->getQueryParams(new InputBag(array('approval_status' => '1,4'))));
+    }
+
+    /** Get a validated, non archived user that is not one of the excluded users */
+    private function getOtherUser(array $excludedUserids): Users
+    {
+        $req = Db::getConnection()->prepare('SELECT users.userid, users2teams.teams_id FROM users
+            INNER JOIN users2teams ON (users2teams.users_id = users.userid AND users2teams.is_archived = 0)
+            WHERE users.validated = 1 AND users.userid NOT IN (' . implode(', ', array_map('intval', $excludedUserids)) . ')
+            ORDER BY users.userid LIMIT 1');
+        Db::getConnection()->execute($req);
+        $user = $req->fetch();
+        self::assertIsArray($user);
+        return new Users((int) $user['userid'], (int) $user['teams_id']);
     }
 
     /** @return array{Items, Users, Users} */

@@ -43,6 +43,7 @@ use function array_map;
 use function array_values;
 use function is_array;
 use function is_numeric;
+use function is_string;
 
 /**
  * All about the database items
@@ -59,7 +60,7 @@ final class Items extends AbstractConcreteEntity
     public function readOne(): array
     {
         $this->entityData = parent::readOne();
-        $this->hydrateApprovers($this->entityData);
+        $this->decodeApprovers($this->entityData);
         return $this->entityData;
     }
 
@@ -67,9 +68,9 @@ final class Items extends AbstractConcreteEntity
     public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
     {
         $items = parent::readShow($displayParams, $extended, $can);
-        // hydrateApprovers() works by reference and returns void: it cannot be used as an array_map() callback
+        // decodeApprovers() works by reference and returns void: it cannot be used as an array_map() callback
         foreach ($items as &$item) {
-            $this->hydrateApprovers($item);
+            $this->decodeApprovers($item);
         }
         unset($item);
         return $items;
@@ -283,9 +284,9 @@ final class Items extends AbstractConcreteEntity
         return 'users_canwrite_resources';
     }
 
-    private function hydrateApprovers(array &$item): void
+    private function decodeApprovers(array &$item): void
     {
-        if (!isset($item['approvers'])) {
+        if (!isset($item['approvers']) || !is_string($item['approvers'])) {
             return;
         }
         $item['approvers'] = json_decode($item['approvers'], true, flags: JSON_THROW_ON_ERROR);

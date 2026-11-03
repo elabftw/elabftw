@@ -21,7 +21,7 @@ use function json_decode;
 
 final class BookingApprovalMessagesTest extends TestCase
 {
-    public function testDecisionAuditContainsActorAndRecurrence(): void
+    public function testDecisionAuditContainsRequesterAndRecurrence(): void
     {
         $audit = new BookingApprovalDecision(7, 8, 42, 'rejected', 'test-series');
         $data = json_decode($audit->getJsonBody(), true, 512, JSON_THROW_ON_ERROR);

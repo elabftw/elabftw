@@ -506,7 +506,9 @@ export class Metadata {
       }
       const subFieldProps: ExtraFieldProperties = {
         type: subField.type,
-        value: rowValue[subFieldName] ?? '',
+        // an own-property check: a column named e.g. "constructor" must not read
+        // the inherited Object property when the row has no value for it
+        value: Object.hasOwn(rowValue, subFieldName) ? rowValue[subFieldName] : '',
         options: subField.options,
         allow_multi_values: false,
         readonly: properties.readonly,
@@ -894,7 +896,8 @@ export class Metadata {
       subFieldNames.forEach(subFieldName => {
         const subField = subFields[subFieldName];
         const cell = document.createElement('td');
-        const subFieldValue = rowValue[subFieldName] ?? '';
+        // an own-property check, like in buildMultifieldRow
+        const subFieldValue = Object.hasOwn(rowValue, subFieldName) ? rowValue[subFieldName] : '';
         const subFieldProps: ExtraFieldProperties = {
           type: subField.type,
           value: subFieldValue,

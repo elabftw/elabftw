@@ -626,6 +626,84 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    // other software can link several nodes in `about`: the first one resolving to a named node is the category
+    public function testImportMultipleAbout(): void
+    {
+        $title = 'Dataset with several about references';
+        $crate = array(
+            '@context' => 'https://w3id.org/ro/crate/1.2/context',
+            '@graph' => array(
+                array(
+                    '@id' => 'ro-crate-metadata.json',
+                    '@type' => 'CreativeWork',
+                    'about' => array('@id' => './'),
+                    'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.2'),
+                ),
+                array(
+                    '@id' => './',
+                    '@type' => 'Dataset',
+                    'name' => 'Export from another tool',
+                    'hasPart' => array(array('@id' => './record/')),
+                ),
+                array(
+                    '@id' => './record/',
+                    '@type' => 'Dataset',
+                    'name' => $title,
+                    'about' => array(
+                        array('@id' => '#not-in-graph'),
+                        array('@id' => '#collection-a'),
+                        array('@id' => '#collection-b'),
+                    ),
+                ),
+                array(
+                    '@id' => '#collection-a',
+                    '@type' => 'Thing',
+                    'name' => 'Imported collection A',
+                ),
+                array(
+                    '@id' => '#collection-b',
+                    '@type' => 'Thing',
+                    'name' => 'Imported collection B',
+                    'color' => '29aeb9',
+                ),
+            ),
+        );
+
+        $archivePath = tempnam(sys_get_temp_dir(), 'elabftw-multiple-about-eln-');
+        $this->assertIsString($archivePath);
+        $archive = new ZipArchive();
+        $this->assertTrue($archive->open($archivePath, ZipArchive::OVERWRITE));
+        $json = json_encode($crate, JSON_THROW_ON_ERROR);
+        $this->assertTrue($archive->addFromString('multiple-about/ro-crate-metadata.json', $json));
+        $this->assertTrue($archive->close());
+
+        $uploadedFile = new UploadedFile(
+            $archivePath,
+            'multiple-about.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        try {
+            $Import = new Eln(
+                new Users(1, 1),
+                new Users(1, 1),
+                $uploadedFile,
+                $this->fs,
+                $this->logger,
+                EntityType::Experiments,
+            );
+            $Import->import();
+            $this->assertSame(1, $Import->getInserted());
+
+            $Experiment = $this->getExperimentFromTitle($title);
+            $this->assertSame('Imported collection A', $Experiment->entityData['category_title']);
+        } finally {
+            unlink($archivePath);
+        }
+    }
+
     // test import keeps the state for archived/locked/deleted entries
     public function testImportRestoresLifecycle(): void
     {

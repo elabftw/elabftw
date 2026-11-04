@@ -2075,6 +2075,9 @@ components:
           description: Only editable via templates. Immutability persists on derived experiments or resources.
           enum: [ 0, 1 ]
           type: integer
+        created_at:
+          type: string
+          description: Step creation timestamp. Steps created before this field existed carry the time of the database upgrade.
     step_group:
       type: object
       properties:

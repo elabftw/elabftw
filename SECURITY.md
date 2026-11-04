@@ -1,140 +1,102 @@
-# Security Policies and Procedures
+# Security Policy
 
-This document outlines security procedures and general policies for **eLabFTW**.
+This document explains how to report a vulnerability in **eLabFTW**, what we do to keep it secure, and what you can do to keep your instance secure.
 
-## Reporting a security issue
+## Reporting a vulnerability
 
-See our [Responsible Disclosure Policy](https://www.deltablot.com/security/).
+Please **do not open a public issue** for a security problem. Follow our [Responsible Disclosure Policy](https://www.deltablot.com/security/) instead.
 
-## Steps taken in the development process
+Only the latest release receives security fixes, so check that the issue is still present on it before reporting.
 
-### Code quality
+### Reports made with AI tools
 
-The code itself is checked by various static analyzers to try and detect bugs sooner. And best practices are used to prevent SQL injection (with prepared statements), XSS (with a Content-Security-Policy header), and other nasty things.
+Using AI tools to find bugs is fine. Sending us their raw output is not. A useful report:
 
-If you scan the live demo for good practices and security headers, you'll find that eLabFTW scores very very high:
+- is reproduced by you, on a current version, with a working proof of concept;
+- explains the actual impact, not just that a pattern looks dangerous;
+- is short and written for a human reader.
 
-[![observatory score a+](https://i.imgur.com/58rThaM.png)](https://developer.mozilla.org/en-US/observatory/analyze?host=demo.elabftw.net)
+Unverified, generated reports cost maintainer time and will be closed without a detailed answer. The same applies to code contributions: AI-assisted code is welcome, but it must be reviewed and tested by a human who can explain it, and it goes through the same review as any other pull request.
 
-### Best practices
+## Development
 
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2766/badge)](https://bestpractices.coreinfrastructure.org/projects/2766)
+- **Safe defaults in the code**: prepared statements against SQL injection, a strict Content-Security-Policy against XSS, CSRF tokens, and authorization checks enforced in the models.
+- **Static analysis and tests**: phpstan, psalm, CodeQL, unit, API and end-to-end tests run on every pull request.
+- **Human review**: every change is reviewed by a maintainer before it is merged.
+- **Dependencies**: Dependabot reports vulnerable versions, and [roave/security-advisories](https://github.com/Roave/SecurityAdvisories) prevents installing a PHP dependency with a known vulnerability.
+- **Best practices**: eLabFTW holds the [OpenSSF Best Practices badge](https://www.bestpractices.dev/projects/2766).
 
-**eLabFTW** follows the best practices edicted by The Linux Foundation [Core Infrastructure Initiative](https://bestpractices.coreinfrastructure.org/en).
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/2766/badge)](https://www.bestpractices.dev/projects/2766)
 
-You can see the criteria [on this page](https://bestpractices.coreinfrastructure.org/en/projects/2766).
+The live demo also scores very high on the [Mozilla Observatory](https://developer.mozilla.org/en-US/observatory/analyze?host=demo.elabftw.net).
 
-## Steps taken during the release process
+## Build and release
 
-### Dependencies scans
+- **Transparent builds**: the Docker image is built by GitHub Actions from this repository, with public logs. Actions are pinned to a commit hash.
+- **Network allow-list during build**: [Cimon](https://github.com/CycodeLabs/cimon-action) blocks any connection to a host that is not on a short list, to stop supply chain attacks during the build.
+- **Pinned inputs**: base images are pinned by digest. nginx, ImageMagick, Imagick, s6-overlay and the nginx modules are pinned to an exact version or commit and checked against a SHA-256 checksum. The nginx release is also verified with the GPG keys of its developers.
+- **Provenance and SBOM**: each release has a signed [build provenance attestation](https://github.com/elabftw/elabftw/attestations) and a Software Bill of Materials. Verify an image with:
 
-GitHub/Dependabot as well as Snyk.io are regularly scanning the dependencies and will report if a version used has a known vulnerability. [roave/security-advisories](https://github.com/Roave/SecurityAdvisories) is present as `devDependencies` and will prevent use of a PHP dependency with known vulnerability.
+```bash
+gh attestation verify oci://docker.io/elabftw/elabimg:<version> --owner elabftw
+```
 
-### Docker image
+- **Signed tags**: release tags are signed with GPG, and GitHub shows them as verified.
 
-The Docker image is built by a GitHub Action, so the build process is transparent, as logs are public. [Ci/mon](https://cycode.com/cimon-build-hardening/) is configured to prevent supply chain attacks during build: a pre-defined list of allowed external domain names is controlling the build process.
+Image vulnerability scans with Trivy are currently paused, following the compromise of the Trivy GitHub Action. They will be added back once it can be used safely.
 
-The build provenance can be verified thanks to an attestation, see: [Build attestations](https://github.com/elabftw/elabftw/attestations). [Learn more about In-Toto Attestations...](https://docs.sigstore.dev/cosign/verifying/attestation/).
+## Container image
 
-After the main step of the build, a full scan of the Alpine Linux container is done with [Trivy](https://github.com/aquasecurity/trivy-action) vulnerability scanner.
+The image (`elabftw/elabimg`) is built to have as little attack surface as possible. Its full description is in [containers/elabimg/README.md](containers/elabimg/README.md).
 
-## Container security
+### Small runtime
 
-The container image (elabftw/elabimg) is built with many custom instructions. It uses multi-stages build so building dependencies are not present in the final image.
+- Multi-stage build: compilers, build tools and headers stay in the build stages and never reach the final image.
+- Only what is needed is compiled in. Programs built from source are stripped of debug symbols.
+- **Ghostscript is not installed.** PDF thumbnails are rendered by Poppler (`pdftoppm`), which has no PostScript or JavaScript interpreter, through a wrapper that limits its CPU time and memory.
 
-### Nginx
+### Hardened compilation
 
-**nginx** (the webserver) is built from the sources in a dedicated build layer:
+nginx, Brotli, ImageMagick and Imagick are compiled from source with:
 
-#### Before compilation
+- position-independent executables, full RELRO and a non-executable stack;
+- stack protector, stack clash protection and zero-initialized stack variables;
+- `_FORTIFY_SOURCE=3`, with musl's fortify headers so it actually applies;
+- `-Werror=format-security`, and no optimizations that rely on undefined behavior (`-fno-strict-overflow`, `-fno-delete-null-pointer-checks`, `-fno-strict-aliasing`);
+- return address signing on arm64.
 
-* installation of build dependencies
-* creation of a `builder` user and working directory
-* download of `ngx_brotli` and `headers-more-nginx-module` modules at specific versions
-* download from nginx.org of a specific release
-* verification of correct GPG signature of the archive
+The Go helpers (`invoker` and `chronos`) are built as position-independent executables, without debug symbols or local paths.
 
-#### Compilation
+### Services
 
-**nginx** is compiled without the modules that are not needed. It also uses the following compilation flags:
+- **nginx**: built with only the modules the configuration uses (no gzip, SSI, autoindex, upstream balancing, memcached, uwsgi, scgi…). PHP is only executed for an explicit list of files. The `Proxy` request header is not passed to PHP ([httpoxy](https://httpoxy.org/)).
+- **PHP**: a custom `php.ini` and php-fpm pool with dangerous functions disabled, `open_basedir` restrictions and strict session settings.
+- **ImageMagick**: a custom build with only the BMP, GIF, HEIC, JPEG, PNG, SVG, TIFF and WebP coders. It cannot read PDF or PostScript, uses no external delegate, and a strict `policy.xml` denies everything else and limits memory, disk, time and image size. It ignores policy files from the user's home directory. A smoke test checks all of this at every build.
+- **invoker** (background tasks): listens on a socket only its user can access, checks a pre-shared key in constant time, and only runs an exact list of commands with validated arguments.
+- **chronos** (scheduled tasks): each run has a timeout, and runs of the same task never overlap.
+- **JavaScript and PHP dependencies**: installed from the lockfiles only, without development dependencies.
 
-* -g0: Disable debugging symbols generation (decreases binary size)
-* -O3: Enable aggressive optimization level 3 (improves code execution speed)
-* -fstack-protector-strong: Enable stack protection mechanisms (prevents stack-based buffer overflows)
-* -flto: Enable Link Time Optimization (LTO) (allows cross-source-file optimization)
-* -pie: Generate position-independent executables (PIE) (enhances security)
-* --param=ssp-buffer-size=4: Set the size of the stack buffer for stack smashing protection to 4 bytes
-* -Wformat -Werror=format-security: Enable warnings for potentially insecure usage of format strings (treats them as errors)
-* -D_FORTIFY_SOURCE=2: Enable additional security features provided by fortified library functions
-* -Wl,-z,relro,-z,now: Enforce memory protections at runtime:
-*    - Mark the Global Offset Table (GOT) as read-only after relocation
-*    - Resolve all symbols at load time, making them harder to manipulate
-* -Wl,-z,noexecstack: Mark the stack as non-executable (prevents execution of code placed on the stack)
-* -fPIC: Generate position-independent code (PIC) (suitable for building shared libraries)
+### Runtime
 
-#### Configuration
+- The container **refuses to start as root**. It runs as an unprivileged user, and s6 stops the container if a service fails to start.
+- The example [docker-compose.yml](containers/elabimg/docker-compose.yml-EXAMPLE) runs it with a read-only filesystem, all capabilities dropped, `no-new-privileges`, and a limit on the number of processes.
 
-**nginx** is configured to serve php files from a list of allowed php files, which prevents running php from unknown locations.
+## Running an instance securely
 
-### php and php-fpm
+- **Use the example configuration**: keep its security settings (non-root user, `read_only`, `cap_drop`, `no-new-privileges`, `pids_limit`).
+- **Limit exposure**: only expose the eLabFTW service, ideally only to the networks that need it.
+- **Use a reverse proxy**: it lets you add a Web Application Firewall, and with external authentication (_e.g._ `mod_auth_mellon`), unauthenticated users never reach eLabFTW.
+- **Enforce 2FA**: TOTP can be required for Sysadmins, Admins or all users. Encourage password managers and long, unique passwords.
+- **Using SSO?** Disable local registration and login. A Sysadmin with database access can re-enable them if the IdP fails.
+- **Prevent identity changes**: since [version 5.1.0](https://www.deltablot.com/posts/release-50100/#new-sysconfig-setting-to-prevent-users-from-changing-their-identity), Sysadmins can stop users from changing their name or email. Unless it is required, disable it.
+- **Keep optional features off** unless you need them (_e.g._ link sharing).
+- **Separate instances, not just teams**: sensitive research and short-lived student projects should not share an instance. Separate instances limit the impact of a bug and allow different settings for access, logging and backups.
+- **Update quickly**: subscribe to the [newsletter](http://eepurl.com/bTjcMj) or to GitHub release notifications, and pin an explicit image version (`elabftw/elabimg:X.Y.Z`).
+- **Back up**: see the [backup documentation](https://doc.elabftw.net/docs/install/backups), and keep backups on storage with immutable snapshots.
 
-**PHP-fpm** is configured with a customized configuration file, and **php** is configured with a customized `php.ini` file changing many parameters to increase security (increase session id entropy, secure sessions directory, disable functions, use openbasedir restrictions, etc...).
+## Hall of fame
 
-### Javascript dependencies
-
-The dependencies are installed with the `--pure-lockfile` flag, so only the known, specific, tested versions can be downloaded and installed. Only the productiion dependencies are installed (`--prod`).
-
-### Trivy scan
-
-Once the image is built, a scan is performed by Trivy Vulnerability Scanner and a found vulnerability will prevent the push to the registry.
-
-## Running an eLabFTW instance securely
-
-Here is a list of steps you should follow to increase the security of your instance.
-
-### Prevent external access
-
-Only exposing the eLabFTW service is a good way to avoid having the whole world attacking it.
-
-### Add a reverse proxy
-
-A reverse proxy in front of an eLabFTW container can allow you to enable additional mitigation strategies such as Apache's modsecurity or a Web Application Firewall. By using eLabFTW's external authentication mechanism in conjunction with _e.g._ `mod_auth_mellon`, the risk of unauthenticated users even reaching the system can be mitigated further (while allowing authentication information to propagate).
-
-### Enable 2FA
-
-You can enforce multi factor authentication (with TOTP mechanism) for Sysadmins, Admins or all users. It is also important to educate users on the importance of password managers and the use of unique and long passwords.
-
-### Using single sign-on? Turn off local user (password) registration and login
-
-If eLabFTW is set up to use some external source of identity information (such as SAML auth or external auth), you can turn off the ability to log in or register using local accounts. This can be re-enabled by an administrator with direct database access, in case the IDP setup fails.
-
-### Prevent users from changing their identity
-
-Allowing users to change their email or name can be convenient, but can have implications when it comes to identity management or when interpreting changelogs. As of [version 5.1.0](https://www.deltablot.com/posts/release-50100/#new-sysconfig-setting-to-prevent-users-from-changing-their-identity), sysadmins can restrict these identity changes. Check if it is currently allowed on your system. Unless it is strictly required, consider disabling it.
-
-### Turn on optional features only if required
-
-There are multiple optional features in eLabFTW. In a conservative setup, do consider keeping them disabled (_e.g._ prevent link-sharing unless you have investigated the ramifications of allowing it).
-
-### Segment at the system level, not just teams
-
-The eLabFTW model makes it easy to spin up new and separate systems (instances). Consider if sensitive research needs to coexist with ephemeral student projects in a single system, or if different research groups need to share an instance. Segmenting at the instance level limits the damage in case security relevant bugs are found, but also allows for more varied settings, different levels of access restriction, and different settings for logging and backups.
-
-### Stay updated
-
-Subscribe to the [Newsletter](http://eepurl.com/bTjcMj) to receive a notification on a new release. Or use GitHub's notification system (you can elect to be notified only on new releases). And update your instance to the latest version quickly!
-
-### Have backups
-
-See [Backup Documentation](https://doc.elabftw.net/docs/install/backups). And secure your backups on a filesystem with immutable snapshots! ;)
-
-### Verifying releases
-
-Releases are tagged with a GPG key, and GitHub displays a green check macaron next to the tag.
-
-# Responsible disclosure hall of fame
-
-These users reported vulnerabilities responsibly:
+Thank you to these people for reporting vulnerabilities responsibly:
 
 - Alexander Haller
 - Anders Märak Leffler (@anargam)
@@ -142,7 +104,7 @@ These users reported vulnerabilities responsibly:
 - HuajiHD
 - @krastanoel
 - Rafal Lykowski (@mgrRaf)
-- Piyush Patil (@xoffense).
+- Piyush Patil (@xoffense)
 - @xskullboyx
 - Harinder Singh
 - Mahadi Xion

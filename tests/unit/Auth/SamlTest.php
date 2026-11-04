@@ -573,6 +573,56 @@ final class SamlTest extends TestCase
         $this->assertIdpResponse($samlUserdata, $config);
     }
 
+    public function testNewUserCanSelectTeamWhenNoProvidedTeamExistsAndCreationIsDisabled(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-unknown-team-select@example.com';
+        $samlUserdata['User.team'] = array('SAML nonexistent team only');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_team_create'] = '0';
+        $config['saml_team_default'] = '-1';
+
+        $result = $this->assertIdpResponse($samlUserdata, $config);
+
+        self::assertInstanceOf(InitialTeamSelectionRequired::class, $result);
+        self::assertSame('saml-unknown-team-select@example.com', $result->email);
+    }
+
+    public function testNewUserCanSelectTeamWhenIdpSendsEmptyTeamValues(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-empty-team-values-select@example.com';
+        $samlUserdata['User.team'] = array('', ' ');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_team_default'] = '-1';
+
+        $result = $this->assertIdpResponse($samlUserdata, $config);
+
+        self::assertInstanceOf(InitialTeamSelectionRequired::class, $result);
+    }
+
+    public function testNewUserUsesExistingIdpTeamWhenSelectionIsEnabledAndCreationIsDisabled(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-existing-team-select-enabled@example.com';
+        $samlUserdata['User.team'] = array('Alpha');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_team_create'] = '0';
+        $config['saml_team_default'] = '-1';
+
+        $authentication = $this->assertAuthentication(
+            $this->assertIdpResponse($samlUserdata, $config),
+        );
+
+        self::assertSame(array('Alpha'), $this->getTeamNames($authentication->userid));
+    }
+
     public function testTeamCreationDefaultsToEnabled(): void
     {
         $teamName = 'SAML automatically created team';

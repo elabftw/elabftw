@@ -34,7 +34,7 @@ The live demo also scores very high on the [Mozilla Observatory](https://develop
 
 - **Transparent builds**: the Docker image is built by GitHub Actions from this repository, with public logs. Actions are pinned to a commit hash.
 - **Network allow-list during build**: [Cimon](https://github.com/CycodeLabs/cimon-action) blocks any connection to a host that is not on a short list, to stop supply chain attacks during the build.
-- **Pinned inputs**: base images are pinned by digest. nginx, ImageMagick, Imagick, s6-overlay and the nginx modules are pinned to an exact version or commit and checked against a SHA-256 checksum. The nginx release is also verified with the GPG keys of its developers.
+- **Pinned inputs**: base images are pinned by digest. The nginx, ImageMagick, Imagick and s6-overlay archives are pinned to an exact version and checked against a SHA-256 checksum, and the nginx release is also verified with the GPG keys of its developers. The nginx modules (`ngx_brotli` and `headers-more`) are pinned to an exact Git commit.
 - **Provenance and SBOM**: each release has a signed [build provenance attestation](https://github.com/elabftw/elabftw/attestations) and a Software Bill of Materials. Verify an image with:
 
 ```bash
@@ -65,7 +65,7 @@ nginx, Brotli, ImageMagick and Imagick are compiled from source with:
 - `-Werror=format-security`, and no optimizations that rely on undefined behavior (`-fno-strict-overflow`, `-fno-delete-null-pointer-checks`, `-fno-strict-aliasing`);
 - return address signing on arm64.
 
-The Go helpers (`invoker` and `chronos`) are built as position-independent executables, without debug symbols or local paths.
+The Go helpers (`invoker` and `chronos`) are built without debug symbols or local paths, and as position-independent executables on amd64 and arm64 (Go cannot build them as PIE without cgo on 32-bit arm).
 
 ### Services
 
@@ -91,7 +91,7 @@ The Go helpers (`invoker` and `chronos`) are built as position-independent execu
 - **Prevent identity changes**: since [version 5.1.0](https://www.deltablot.com/posts/release-50100/#new-sysconfig-setting-to-prevent-users-from-changing-their-identity), Sysadmins can stop users from changing their name or email. Unless it is required, disable it.
 - **Keep optional features off** unless you need them (_e.g._ link sharing).
 - **Separate instances, not just teams**: sensitive research and short-lived student projects should not share an instance. Separate instances limit the impact of a bug and allow different settings for access, logging and backups.
-- **Update quickly**: subscribe to the [newsletter](http://eepurl.com/bTjcMj) or to GitHub release notifications, and pin an explicit image version (`elabftw/elabimg:X.Y.Z`).
+- **Update quickly**: subscribe to the [newsletter](https://eepurl.com/bTjcMj) or to GitHub release notifications, and pin an explicit image version (`elabftw/elabimg:X.Y.Z`).
 - **Back up**: see the [backup documentation](https://doc.elabftw.net/docs/install/backups), and keep backups on storage with immutable snapshots.
 
 ## Hall of fame

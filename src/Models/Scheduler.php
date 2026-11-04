@@ -566,6 +566,9 @@ final class Scheduler extends AbstractRest
             if (!isset($params['start'], $params['end'])) {
                 throw new ImproperActionException('Start and end must both be provided.');
             }
+            // the current slot must be checked too, or a past booking could be moved to the future and then deleted
+            $event = $this->readOne();
+            $this->isEditableOrExplode(new DateTimeImmutable($event['created_at']), new DateTimeImmutable($event['start']));
             $start = $this->normalizeDate($params['start']);
             $end = $this->normalizeDate($params['end'], true);
             $this->isFutureOrExplode(new DateTimeImmutable($start));

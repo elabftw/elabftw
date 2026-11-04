@@ -1425,6 +1425,50 @@ on('search-entity-from-compound', (el: HTMLElement) => {
   window.location.href = `${el.dataset.page}.php?${params.toString()}`;
 });
 
+on('show-compound-molecule', async (el: HTMLElement) => {
+  const target = getSafeElementById(el.dataset.target);
+  const cid = (document.getElementById('compoundInput-pubchem_cid') as HTMLInputElement).value.trim();
+  const smiles = (document.getElementById('compoundInput-smiles') as HTMLInputElement).value.trim();
+  // prefer the CID as it is the canonical PubChem depiction, fallback to SMILES for manually created compounds
+  let req: Promise<Response>;
+  if (/^\d+$/.test(cid)) {
+    req = fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/PNG`);
+  } else if (smiles) {
+    // POST so SMILES characters like / or # don't break the URL
+    req = fetch('https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/PNG', {
+      method: 'POST',
+      body: new URLSearchParams({ smiles }),
+    });
+  } else {
+    notify.error('A PubChem CID or a SMILES is required to display the molecule.');
+    return;
+  }
+  const elOldHTML = mkSpin(el);
+  try {
+    const res = await req;
+    if (!res.ok) {
+      throw new Error(`PubChem error: ${res.status} ${res.statusText}`);
+    }
+    const blob = await res.blob();
+    let img = target.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      img.classList.add('img-fluid', 'rounded', 'border', 'bg-white');
+      target.appendChild(img);
+    }
+    if (img.src.startsWith('blob:')) {
+      URL.revokeObjectURL(img.src);
+    }
+    img.src = URL.createObjectURL(blob);
+    img.alt = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+    target.hidden = false;
+  } catch (err) {
+    notify.error(err);
+  } finally {
+    mkSpinStop(el, elOldHTML);
+  }
+});
+
 on('import-compound', (el: HTMLElement) => {
   const elOldHTML = mkSpin(el);
   const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate};

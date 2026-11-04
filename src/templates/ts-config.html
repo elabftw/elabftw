@@ -11,18 +11,28 @@
     <option value='globalsign' {{ App.Config.configArr.ts_authority == 'globalsign' ? 'selected' }}>GlobalSign.com {{ '(free, no account required)'|trans }}</option>
     <option value='evidency' {{ App.Config.configArr.ts_authority == 'evidency' ? 'selected' }}>Evidency.io {{ '(requires account)'|trans }}</option>
     <option value='deltablot' {{ App.Config.configArr.ts_authority == 'deltablot' ? 'selected' }}>Evidency through Deltablot {{ '(requires account)'|trans }}</option>
+    <option value='scimatic' {{ App.Config.configArr.ts_authority == 'scimatic' ? 'selected' }}>SciMatic Proof {{ '(requires account)'|trans }}</option>
     <option value='custom' {{ App.Config.configArr.ts_authority == 'custom' ? 'selected' }}>{{ 'Custom TSA'|trans }}</option>
   </select>
 </div>
 <hr>
 
-<div id='ts_loginpass' {{ App.Config.configArr.ts_authority == 'dfn' or App.Config.configArr.ts_authority == 'digicert' or App.Config.configArr.ts_authority == 'sectigo' or App.Config.configArr.ts_authority == 'globalsign' ? 'hidden' : '' }}>
-  <div class='d-flex justify-content-between'>
-    {# TIMESTAMP LOGIN #}
-    <label for='ts_login' class='col-form-label'>{{ 'Login for external timestamping service'|trans }}</label>
-    <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_login' type='text' value='{{ App.Config.configArr.ts_login }}' id='ts_login' autocomplete='off' />
-  </div>
+<div id='ts_scimaticdiv' {{ App.Config.configArr.ts_authority != 'scimatic' ? 'hidden' : '' }}>
+  <p class='smallgray'>{{ 'SciMatic Proof is not an RFC 3161 service. Only the SHA-256 hash of the data is sent, and the receipt it returns, signed with ML-DSA-44, is stored in the timestamp archive. Anyone can check a receipt offline with the published keys and the %sopen specification%s.'|trans|format("<a class='external-link' target='_blank' rel='noopener' href='https://proof.scimatic.net/spec/receipt-v1'>", "</a>")|raw }}</p>
+  <p class='smallgray'>{{ 'It is not an eIDAS-qualified timestamp, and the service is a pilot without a service level agreement. Enter the API key in the password field: test keys (prf_test_…) give TEST receipts that are never anchored and must not be used as evidence.'|trans }}</p>
   <hr>
+</div>
+
+<div id='ts_loginpass' {{ App.Config.configArr.ts_authority == 'dfn' or App.Config.configArr.ts_authority == 'digicert' or App.Config.configArr.ts_authority == 'sectigo' or App.Config.configArr.ts_authority == 'globalsign' ? 'hidden' : '' }}>
+  {# SciMatic Proof only needs an API key, stored as the password #}
+  <div id='ts_logindiv' {{ App.Config.configArr.ts_authority == 'scimatic' ? 'hidden' : '' }}>
+    <div class='d-flex justify-content-between'>
+      {# TIMESTAMP LOGIN #}
+      <label for='ts_login' class='col-form-label'>{{ 'Login for external timestamping service'|trans }}</label>
+      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='ts_login' type='text' value='{{ App.Config.configArr.ts_login }}' id='ts_login' autocomplete='off' />
+    </div>
+    <hr>
+  </div>
 
   <div class='d-flex justify-content-between'>
     {# TIMESTAMP PASSWORD #}

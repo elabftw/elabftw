@@ -178,7 +178,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
             $this->assertSame(0, new EmailNotifications($email)->sendEmails($output));
             $this->assertStringContainsString('Another process is sending notifications; skipping.', $output->fetch());
             $this->assertSame(0, $this->getNotificationEmailSent($id));
-            $connection->exec("DO RELEASE_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())))");
+            $connection->exec("DO RELEASE_LOCK(LEFT(CONCAT('elabftw:notifications:', SHA2(DATABASE(), 256)), 64))");
 
             $email = $this->createMock(Email::class);
             $email->expects($this->once())->method('sendEmail')->willReturnCallback(function () use ($connection): bool {
@@ -193,7 +193,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
             // Both the successful run and the empty run must release their lock.
             $this->assertSame(1, $this->acquireNotificationsLock($connection));
         } finally {
-            $connection->exec("DO RELEASE_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())))");
+            $connection->exec("DO RELEASE_LOCK(LEFT(CONCAT('elabftw:notifications:', SHA2(DATABASE(), 256)), 64))");
         }
     }
 
@@ -215,7 +215,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
             try {
                 $this->assertSame(1, $this->acquireNotificationsLock($connection));
             } finally {
-                $connection->exec("DO RELEASE_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())))");
+                $connection->exec("DO RELEASE_LOCK(LEFT(CONCAT('elabftw:notifications:', SHA2(DATABASE(), 256)), 64))");
                 // The failed notification remains pending and can be retried.
                 $this->stubEmail();
             }
@@ -239,7 +239,7 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
 
     private function acquireNotificationsLock(PDO $connection): int
     {
-        $req = $connection->query("SELECT GET_LOCK(CONCAT('elabftw:notifications:', SHA1(DATABASE())), 0)");
+        $req = $connection->query("SELECT GET_LOCK(LEFT(CONCAT('elabftw:notifications:', SHA2(DATABASE(), 256)), 64), 0)");
         $this->assertNotFalse($req);
         return (int) $req->fetchColumn();
     }

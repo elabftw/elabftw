@@ -73,6 +73,29 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         Check::visibility('{"teams": "yep"}');
     }
 
+    public function testVisibilityOnlyAcceptsIds(): void
+    {
+        $valid = '{"teams": [1, 2], "teamgroups": [3], "users": [4, 5]}';
+        $this->assertSame($valid, Check::visibility($valid));
+        $invalid = array(
+            '{"teams": [], "teamgroups": [], "users": ["1"]}',
+            '{"teams": [0], "teamgroups": [], "users": []}',
+            '{"teams": [], "teamgroups": [-3], "users": []}',
+            '{"teams": [], "teamgroups": [[1]], "users": []}',
+            '{"teams": [], "teamgroups": [], "users": [1.5]}',
+            '{"teams": [], "teamgroups": [], "users": [null]}',
+            '{"teams": [], "teamgroups": [], "users": {"a": 1}}',
+        );
+        foreach ($invalid as $json) {
+            try {
+                Check::visibility($json);
+                $this->fail('Invalid permissions json was accepted: ' . $json);
+            } catch (ImproperActionException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
     public function testAk(): void
     {
         $uuidV1 = '4da7ac2a-a3f0-11ed-bb95-0242ac160008';

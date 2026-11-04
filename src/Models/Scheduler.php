@@ -369,7 +369,8 @@ final class Scheduler extends AbstractRest
             $now = new DateTimeImmutable();
             $eventStart = new DateTimeImmutable($event['start']);
             $interval = $now->diff($eventStart);
-            $totalMinutes = ($interval->h * 60) + $interval->i;
+            // h and i only hold what remains after whole days, so days must be counted too
+            $totalMinutes = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
             if ($totalMinutes < $event['book_cancel_minutes']) {
                 throw new ImproperActionException(sprintf(_('Cannot cancel slot less than %d minutes before its start.'), $event['book_cancel_minutes']));
             }

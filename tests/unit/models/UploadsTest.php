@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function count;
 use function dirname;
+use function ob_start;
 
 class UploadsTest extends \PHPUnit\Framework\TestCase
 {
@@ -137,6 +138,16 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
         $this->Entity->Uploads->setId($id);
         $this->assertInstanceOf(Response::class, $this->Entity->Uploads->readBinary());
+    }
+
+    public function testReadBinaryOfDeletedUpload(): void
+    {
+        $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('deleted.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $this->Entity->Uploads->setId($id);
+        $this->Entity->Uploads->destroy();
+        // The download controller closes one output buffer.
+        ob_start();
+        $this->assertSame(Response::HTTP_NOT_FOUND, $this->Entity->Uploads->readBinary()->getStatusCode());
     }
 
     public function testPatch(): void

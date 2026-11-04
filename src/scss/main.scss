@@ -2121,4 +2121,42 @@ div > .sticky-navbar {
       min-width: 220px;
     }
   }
+
+  // the gear and the button to add columns from custom fields, side by side
+  // in a flex container so the second one never overlaps the first, whatever its width
+  .entities-table-actions {
+    align-items: center;
+    bottom: 2px;
+    display: flex;
+    gap: 4px;
+    left: 8px;
+    position: absolute;
+    z-index: 4;
+
+    // the container is positioned instead, but keep it relative for its dropup menu
+    .ag-grid-table-options {
+      inset: auto;
+      position: relative;
+    }
+  }
+
+  .entities-table-extra-fields-menu {
+    max-width: min(360px, calc(100vw - 32px));
+    min-width: 280px;
+  }
+
+  .entities-table-extra-fields-list {
+    max-height: 260px;
+    overflow-y: auto;
+  }
+}
+
+.entities-table-wrapper .ag-paging-panel {
+  // reserve room for the gear (~56px with its caret) and the icon only custom fields button with its badge
+  padding-left: 136px;
+
+  @media (min-width: 1200px) {
+    // the label of the custom fields button is only shown on large screens
+    padding-left: 380px;
+  }
 }

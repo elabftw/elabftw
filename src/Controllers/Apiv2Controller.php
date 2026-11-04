@@ -371,6 +371,7 @@ final class Apiv2Controller extends AbstractApiController
                 $this->requester,
                 trim($this->Request->query->getString('q')),
                 $this->Request->query->getInt('limit'),
+                EntityType::tryFrom($this->Request->query->getString('type')),
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
             ApiEndpoint::Reports => new ReportsHandler($this->requester),

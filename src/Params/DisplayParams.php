@@ -31,6 +31,11 @@ use function trim;
 use function implode;
 use function strtolower;
 use function array_unique;
+use function array_slice;
+use function array_values;
+use function is_array;
+use function is_string;
+use function mb_strlen;
 
 /**
  * This class holds the values for limit, offset, order and sort
@@ -38,6 +43,12 @@ use function array_unique;
  */
 final class DisplayParams extends BaseQueryParams
 {
+    // how many custom fields can be requested as additional columns at once
+    public const int MAX_EXTRA_FIELDS_COLUMNS = 20;
+
+    // custom fields keys are stored in a VARCHAR(255) column of the generated JSON_TABLE
+    public const int MAX_EXTRA_FIELD_NAME_LENGTH = 255;
+
     public string $filterSql = '';
 
     // the search from the top right search bar on experiments/database
@@ -52,6 +63,9 @@ final class DisplayParams extends BaseQueryParams
     public ?EntityType $relatedOrigin = null;
 
     protected string $orderIsPinnedSql = 'is_pinned DESC,';
+
+    // names of the custom fields (metadata.extra_fields keys) to include as additional columns
+    private array $extraFieldsColumns = array();
 
     public function __construct(
         private Users $requester,
@@ -141,6 +155,11 @@ final class DisplayParams extends BaseQueryParams
         $this->skipOrderPinned = $value;
     }
 
+    public function getExtraFieldsColumns(): array
+    {
+        return $this->extraFieldsColumns;
+    }
+
     /**
      * Adjust the settings based on the Request
      */
@@ -220,6 +239,30 @@ final class DisplayParams extends BaseQueryParams
         $this->filterSql .= $this->getSqlIn('entity.timestamped', $query->getString('timestamped'));
         // RATING FILTER
         $this->filterSql .= $this->getSqlIn('entity.rating', $query->getString('rating'));
+        // CUSTOM FIELDS COLUMNS
+        $this->extraFieldsColumns = $this->getExtraFieldsColumnsFromQuery($query);
+    }
+
+    /**
+     * Read the extra_fields[] query parameter. It is lenient: invalid names are ignored
+     * instead of failing the whole listing, as they only add optional columns.
+     */
+    private function getExtraFieldsColumnsFromQuery(InputBag $query): array
+    {
+        // don't use $query->all('extra_fields') as it throws if a scalar is sent
+        $input = $query->all()['extra_fields'] ?? array();
+        if (!is_array($input)) {
+            $input = array($input);
+        }
+        $names = array();
+        foreach ($input as $name) {
+            // keys are matched as is, so no trimming here
+            if (!is_string($name) || trim($name) === '' || mb_strlen($name) > self::MAX_EXTRA_FIELD_NAME_LENGTH) {
+                continue;
+            }
+            $names[] = $name;
+        }
+        return array_slice(array_values(array_unique($names)), 0, self::MAX_EXTRA_FIELDS_COLUMNS);
     }
 
     /**

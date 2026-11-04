@@ -23,13 +23,19 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
 import { getAgGridTheme } from './theme';
 import AgGridTableOptions from './ag-grid-table-options';
+import {
+  ExtraFieldsColumnsPicker,
+  getStoredExtraFieldsColumns,
+  makeExtraFieldColumnDef,
+  storeExtraFieldsColumns,
+} from './entities-table-extra-fields';
 
 const COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
 
@@ -156,6 +162,14 @@ const EntitiesTable = ({
 }) => {
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
+  const entityType = useMemo(() => getEntityTypeFromPage(window.location), []);
+  // columns built from custom fields, they are part of the column defs from the start
+  // so the stored column state (width, order, sort) applies to them too
+  const [extraFieldsColumns, setExtraFieldsColumns] = useState(() => getStoredExtraFieldsColumns(entityType));
+  // fetchData needs the current value without being recreated, as it is used in event listeners
+  const extraFieldsColumnsRef = useRef(extraFieldsColumns);
+  // remember the last filters so adding a column refetches the same entries
+  const lastFilterEventRef = useRef(undefined);
 
   const onGridReady = event => {
     const columnState = getStoredColumnState();
@@ -238,7 +252,7 @@ const EntitiesTable = ({
     );
   };
 
-  const [columnDefs] = useState([
+  const [baseColumnDefs] = useState([
     { field: 'title', headerName: i18next.t('title') },
     { field: 'team_name', headerName: i18next.t('team') },
     { field: 'date', headerName: i18next.t('started-on'), valueGetter: p => lastLoginText(p.data.date), filterValueGetter: p => lastLoginText(p.data.date), cellRenderer: PastDateRenderer},
@@ -255,6 +269,11 @@ const EntitiesTable = ({
     { field: 'next_step', headerName: i18next.t('next-step'),  cellRenderer: ({ value }) => value ? value.split('|')[0] : null }
   ]);
 
+  const columnDefs = useMemo(
+    () => [...baseColumnDefs, ...extraFieldsColumns.map(makeExtraFieldColumnDef)],
+    [baseColumnDefs, extraFieldsColumns],
+  );
+
   const getResolvedEntityFilterParams = useCallback(event => {
     const params = getEntityFilterParams(event);
 
@@ -263,12 +282,18 @@ const EntitiesTable = ({
     applyNumberParamFallback(params, 'related', related);
     applyStringParamFallback(params, 'related_origin', relatedOrigin);
 
+    params.delete('extra_fields[]');
+    extraFieldsColumnsRef.current.forEach(name => params.append('extra_fields[]', name));
+
     return params;
   }, [order, sort, related, relatedOrigin]);
 
   // all the entries are loaded in the table, which does client side pagination
   const fetchData = useCallback(async event => {
-    const params = getResolvedEntityFilterParams(event);
+    if (event !== undefined) {
+      lastFilterEventRef.current = event;
+    }
+    const params = getResolvedEntityFilterParams(lastFilterEventRef.current);
     const queryString = params.toString();
 
     try {
@@ -301,6 +326,26 @@ const EntitiesTable = ({
       window.removeEventListener('entity-filters-changed', handleEntityFiltersChanged);
     };
   }, [fetchData]);
+
+  const updateExtraFieldsColumns = names => {
+    extraFieldsColumnsRef.current = names;
+    setExtraFieldsColumns(names);
+    storeExtraFieldsColumns(entityType, names);
+  };
+
+  const addExtraFieldColumn = name => {
+    if (extraFieldsColumnsRef.current.includes(name)) {
+      return;
+    }
+    updateExtraFieldsColumns([...extraFieldsColumnsRef.current, name]);
+    // the values of a custom field are only sent when requested
+    fetchData();
+  };
+
+  // no need to refetch here: the values of the removed column are simply not displayed anymore
+  const removeExtraFieldColumn = name => {
+    updateExtraFieldsColumns(extraFieldsColumnsRef.current.filter(column => column !== name));
+  };
 
   // when a row is selected with the checkbox
   const selectionChanged = (event) => {
@@ -352,7 +397,7 @@ const EntitiesTable = ({
 
   return (
     <>
-      <div className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`} style={{ height: 650 }}>
+      <div className={`ag-grid-table-wrapper entities-table-wrapper position-relative ${getAgGridTheme()}`} style={{ height: 650 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}
@@ -368,9 +413,18 @@ const EntitiesTable = ({
           rowSelection={rowSelection}
           onCellClicked={cellClicked}
           onSelectionChanged={selectionChanged}
+          maintainColumnOrder={true}
           {...DEFAULT_AG_GRID_PAGINATION}
         />
-        <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
+        <div className='entities-table-actions'>
+          <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
+          <ExtraFieldsColumnsPicker
+            entityType={entityType}
+            columns={extraFieldsColumns}
+            onAdd={addExtraFieldColumn}
+            onRemove={removeExtraFieldColumn}
+          />
+        </div>
       </div>
     </>
   );

@@ -120,6 +120,22 @@ components:
       description: |
         An array of tags for filtering results containing all of these tags.
 
+    ExtraFields:
+      name: extra_fields[]
+      in: query
+      schema:
+        type: array
+        maxItems: 20
+        items:
+          type: string
+          maxLength: 255
+      description: |
+        Names of custom fields (keys of metadata.extra_fields) to include in the response. Each entry will then have an `extra_fields_values` object, with the requested names as keys, holding the `value` (multiple values are joined with a comma), `unit` and `type` of that custom field. Entries without the custom field won't have that key. This parameter does not filter the results.
+      examples:
+        first:
+          summary: Include the values of the "Concentration" and "Solvent" custom fields.
+          value: ["Concentration", "Solvent"]
+
     Limit:
       name: limit
       in: query
@@ -2816,6 +2832,7 @@ x-parameterGroups:
     - $ref: '#/components/parameters/Category'
     - $ref: '#/components/parameters/Status'
     - $ref: '#/components/parameters/Tags'
+    - $ref: '#/components/parameters/ExtraFields'
     - $ref: '#/components/parameters/Limit'
     - $ref: '#/components/parameters/Offset'
     - $ref: '#/components/parameters/Owner'
@@ -9133,6 +9150,13 @@ paths:
         schema:
           type: integer
           default: 0
+      - name: type
+        in: query
+        description: |
+          Only look for custom fields keys in experiments or in items (resources). By default, both are used.
+        schema:
+          type: string
+          enum: ['experiments', 'items']
 
     get:
       tags: ['Custom Fields Keys']

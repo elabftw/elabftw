@@ -39,6 +39,8 @@ use function random_bytes;
 use function sprintf;
 use function str_replace;
 use function json_encode;
+use function array_filter;
+use function reset;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -123,6 +125,50 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $DisplayParams->getQuery()->add(array('fastq' => 1));
         $fast = $this->Experiments->readAll($DisplayParams);
         $this->assertNotEmpty($fast);
+    }
+
+    public function testReadWithExtraFieldsColumns(): void
+    {
+        $title = 'extraFieldsColumns' . bin2hex(random_bytes(8));
+        $this->Experiments->setId($this->Experiments->create(title: $title));
+        $this->Experiments->patch(Action::Update, array('metadata' => json_encode(array(
+            'extra_fields' => array(
+                'Concentration' => array('type' => 'number', 'value' => '12.5', 'unit' => 'mM'),
+                'Solvents' => array('type' => 'select', 'value' => array('water', 'ethanol'), 'allow_multi_values' => true),
+                'with "quotes"' => array('type' => 'text', 'value' => 'quoted'),
+            ),
+        ))));
+        $requested = array('Concentration', 'Solvents', 'with "quotes"', 'concentration', 'Not there');
+
+        // search path
+        $all = $this->Experiments->readAll(new DisplayParams(
+            $this->Users,
+            EntityType::Experiments,
+            new InputBag(array('q' => $title, 'extra_fields' => $requested)),
+        ));
+        $this->assertCount(1, $all);
+        $values = (array) $all[0]['extra_fields_values'];
+        $this->assertSame(array('value' => '12.5', 'unit' => 'mM', 'type' => 'number'), $values['Concentration']);
+        $this->assertSame('water, ethanol', $values['Solvents']['value']);
+        $this->assertSame('quoted', $values['with "quotes"']['value']);
+        // keys are matched exactly, and missing fields are absent
+        $this->assertArrayNotHasKey('concentration', $values);
+        $this->assertArrayNotHasKey('Not there', $values);
+
+        // default page path
+        $all = $this->Experiments->readAll(new DisplayParams(
+            requester: $this->Users,
+            entityType: EntityType::Experiments,
+            query: new InputBag(array('extra_fields' => array('Concentration'))),
+            limit: 50,
+        ));
+        $found = array_filter($all, fn(array $entity): bool => $entity['id'] === $this->Experiments->id);
+        $this->assertCount(1, $found);
+        $this->assertSame('12.5', ((array) reset($found)['extra_fields_values'])['Concentration']['value']);
+
+        // without the parameter, nothing is added
+        $all = $this->Experiments->readAll(new DisplayParams($this->Users, EntityType::Experiments, new InputBag(array('q' => $title))));
+        $this->assertArrayNotHasKey('extra_fields_values', $all[0]);
     }
 
     public function testDefaultReadPaginatesPinnedEntitiesFirst(): void

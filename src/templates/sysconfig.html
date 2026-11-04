@@ -593,6 +593,8 @@
     <p class='smallgray'>{{ 'Force certain accounts to enable multi-factor authentication.'|trans }}</p>
     <hr>
 
+    {% include 'binary-setting.html' with {'label': 'Enforce 2FA only for local authentication'|trans, 'slug': 'enforce_mfa_local_only', 'help': 'If enabled, users logging in with another method (SAML, LDAP, external authentication) will not be forced to use 2FA. Useful when your identity provider already enforces MFA. Users that have enabled 2FA themselves will still be asked for it.'|trans} %}
+
     <div class='d-flex justify-content-between'>
       <label for='email_domain' class='col-form-label'>{{ 'Enforce a domain name for emails'|trans }}</label>
       <input id='email_domain' class='form-control col-md-3' type='text' placeholder='example.de' value='{{ App.Config.configArr.email_domain }}' data-trigger='blur' data-model='config' data-target='email_domain' />

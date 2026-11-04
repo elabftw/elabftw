@@ -282,6 +282,11 @@ services:
         # default value: false
         #- AUTO_DB_UPDATE=false
 
+        # optional: when AUTO_DB_INIT or AUTO_DB_UPDATE is enabled, wait up to this number of seconds
+        # for the database to be reachable before running the init/update step
+        # default value: 120
+        #- DB_WAIT_TIMEOUT=120
+
         # set to true to set the instance in demo mode, with autologin for demo users
         # default value: false
         #- DEMO_MODE=false

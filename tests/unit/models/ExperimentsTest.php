@@ -455,6 +455,25 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $new->Uploads->readAll());
     }
 
+    public function testDuplicateWithoutFilesCopiesFilesLinkedInBody(): void
+    {
+        $id = $this->Experiments->create(title: 'linked files');
+        $Experiment = new Experiments($this->Users, $id);
+        $linkedId = $Experiment->Uploads->createFromString(FileFromString::Json, 'linked.json', '{}');
+        $Experiment->Uploads->createFromString(FileFromString::Json, 'not-linked.json', '{}');
+        $longName = new Uploads($Experiment, $linkedId)->uploadData['long_name'];
+        $Experiment->patch(Action::Update, array('body' => sprintf("<p><img src='app/download.php?f=%s&storage=1'></p>", $longName)));
+        $newId = $Experiment->postAction(Action::Duplicate, array('copyFiles' => 0));
+        $new = new Experiments($this->Users, $newId);
+        $uploads = $new->Uploads->readAll();
+        $this->assertCount(1, $uploads);
+        $this->assertSame('linked.json', $uploads[0]['real_name']);
+        // the body now points to the copy, not to the file of the source entry
+        $body = (string) $new->entityData['body'];
+        $this->assertStringNotContainsString($longName, $body);
+        $this->assertStringContainsString($uploads[0]['long_name'], $body);
+    }
+
     public function testInsertTags(): void
     {
         $this->assertIsInt($this->Experiments->create(tags: array('tag-bbbtbtbt', 'tag-auristearuiset')));

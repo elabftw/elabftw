@@ -705,6 +705,7 @@ export function replaceWithTitle(): void {
       const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';
       const userDisplayName =
         String(json.fullname ?? '').trim() ||
+        `${json.firstname ?? ''} ${json.lastname ?? ''}`.trim() ||
         String(json.email ?? '').trim() ||
         String(json.userid ?? '');
       if (!(el instanceof HTMLInputElement)) {
@@ -722,7 +723,7 @@ export function replaceWithTitle(): void {
         // EDIT MODE (input): default = 'id - entity title'
         switch (el.dataset.endpoint) {
         case Model.User:
-          value = `${json.userid} - ${userDisplayName}`;
+          value = `${el.dataset.id} - ${userDisplayName}`;
           break;
         case Model.Compounds:
           value = `${json.id} - ${json.name}` + casNumber;

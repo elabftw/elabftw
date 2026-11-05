@@ -17,6 +17,12 @@ with `DEV_MODE=true`. The repo is bind-mounted into the container at `/elabftw`.
 If the container isn't running, start it before doing anything else. Don't work around a missing
 container by installing tools on the host.
 
+If you are running inside the `elabftw` container (started with `containers/elabdev/claude.sh`:
+working directory `/elabftw`, no `docker` command), run the commands below directly, without the
+`docker exec elabftw` prefix. Outbound network access is limited to
+`containers/elabdev/egress-firewall/allowed-domains.txt`: if a download fails, ask instead of
+looking for a workaround.
+
 ## Common tasks
 
 | Task | Command |

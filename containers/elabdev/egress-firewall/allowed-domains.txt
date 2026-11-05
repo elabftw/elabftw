@@ -1,0 +1,24 @@
+# Destinations the elabftw dev container can reach while the egress firewall runs
+# One domain name, IPv4 address or IPv4 CIDR per line
+# Domains are resolved to IPv4 addresses every REFRESH_INTERVAL seconds
+# Changes are picked up on the next refresh, no restart needed
+# The docker network of the stack (mysql, opencloning…) is always reachable
+
+# Claude Code (API key auth)
+api.anthropic.com
+# Anthropic API addresses, so a DNS change does not lock Claude out until the next refresh
+160.79.104.0/23
+
+# yarn install, corepack
+registry.npmjs.org
+registry.yarnpkg.com
+repo.yarnpkg.com
+
+# composer install (dist archives are downloaded from GitHub)
+repo.packagist.org
+api.github.com
+codeload.github.com
+objects.githubusercontent.com
+
+# uncomment to allow git over https (fetch, but also push to any repository)
+#github.com

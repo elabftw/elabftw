@@ -89,6 +89,42 @@ services:
     networks:
       - elabftw-net
 
+  # restricts outbound traffic of the web container to egress-firewall/allowed-domains.txt
+  # opt-in: started by containers/elabdev/claude.sh, or with --profile claude
+  # the rules stay in place when it stops: recreate the web container to remove them
+  egress-firewall:
+    profiles:
+      - claude
+    image: elabftw/elabdev-egress-firewall:local
+    build:
+      context: ./egress-firewall
+    container_name: elabftw-egress-firewall
+    # share the network namespace of the web container: rules set here apply there,
+    # so the web container keeps running without any capability
+    network_mode: service:web
+    depends_on:
+      - web
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - REFRESH_INTERVAL=300
+    volumes:
+      - ./egress-firewall/allowed-domains.txt:/etc/egress-firewall/allowed-domains.txt:ro
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/ready"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
   mysql:
     image: mysql:8.4
     restart: always

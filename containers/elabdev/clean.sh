@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 
-WORKER_UID=$(id -u) WORKER_GID=$(id -g) docker compose -f containers/elabdev/docker-compose.yml down
+WORKER_UID=$(id -u) WORKER_GID=$(id -g) docker compose -f containers/elabdev/docker-compose.yml --profile claude down
 docker rmi elabftw-elabimg elabftw/elabdev:edge || true
 
 sudo rm -rv -- "${HOME:?HOME must be set}/.local/share/elabdev"

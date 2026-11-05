@@ -21,4 +21,4 @@ codeload.github.com
 objects.githubusercontent.com
 
 # uncomment to allow git over https (fetch, but also push to any repository)
-#github.com
+github.com

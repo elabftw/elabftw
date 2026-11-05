@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import i18next from './i18n';
-import { clearForm, collectForm, delayConfirmation, getInput, populateUserModal, reloadElements } from './misc';
+import { clearForm, collectForm, delayConfirmation, getChangedTeamToggles, getInput, populateUserModal, reloadElements } from './misc';
 import { ApiC } from './api';
 import { Action, Model } from './interfaces';
 import $ from 'jquery';
@@ -77,16 +77,24 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
 
   // EDIT USER
   } else if (el.matches('[data-action="save-user"]')) {
+    if (!el.dataset.userid) {
+      return;
+    }
     try {
-      if (el.dataset.userid) { // edit
-        const form = document.getElementById('editUserInputs');
-        const params = collectForm(form);
-        ApiC.patch(`users/${el.dataset.userid}`, params).then(() => {
-          document.dispatchEvent(new CustomEvent('dataReload'));
-          $('#editUserModal').modal('hide');
-          clearForm(form);
+      const form = document.getElementById('editUserInputs');
+      await ApiC.patch(`users/${el.dataset.userid}`, collectForm(form));
+      // per-team toggles (owner, admin, archived) are only applied on save, like the other fields
+      for (const toggle of getChangedTeamToggles()) {
+        await ApiC.patch(`${Model.User}/${el.dataset.userid}`, {
+          action: Action.PatchUser2Team,
+          team: toggle.dataset.team,
+          target: toggle.dataset.target,
+          content: toggle.checked ? '1' : '0',
         });
       }
+      document.dispatchEvent(new CustomEvent('dataReload'));
+      $('#editUserModal').modal('hide');
+      clearForm(form);
     } catch (err) {
       notify.error('Something went wrong: ', {err});
       return;
@@ -167,7 +175,7 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
     const selectEl = (el.previousElementSibling as HTMLSelectElement);
     const team = parseInt(selectEl.options[selectEl.selectedIndex].value, 10);
     ApiC.patch(`${Model.User}/${userid}`, {action: Action.Add, team: team})
-      .then(response => response.json()).then(user => populateUserModal(user));
+      .then(response => response.json()).then(user => populateUserModal(user, true));
   } else if (el.matches('[data-action="import-users-in-team"]')) {
     const idList = el.dataset.target.split(',');
     if (!confirm(`Add ${idList.length} user(s) to your team?`)) {
@@ -203,7 +211,7 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
     el.setAttribute('disabled', 'disabled');
     try {
       const response = await ApiC.patch(`${Model.User}/${userid}`, {action: Action.Unreference, team});
-      await populateUserModal(await response.json());
+      await populateUserModal(await response.json(), true);
       document.dispatchEvent(new CustomEvent('dataReload'));
       $('#destroyUser2teamModal').modal('hide');
     } catch (error) {

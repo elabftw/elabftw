@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import 'jquery-ui/ui/widgets/sortable';
-import { Action, EntityType, Model, Target, FileType } from './interfaces';
+import { EntityType, Model, Target, FileType } from './interfaces';
 import type { CheckableItem, Entity } from './interfaces';
 import { DateTime } from 'luxon';
 import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
@@ -99,8 +99,6 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
   // for a checkbox element, look at the checked attribute, not the value
   let value: string | number = isCheckbox ? (el.checked ? '1' : '0') : el.value;
 
-  const userid = document.getElementById('editUserModal')?.dataset.userid ?? el.dataset.userid;
-
   // CUSTOM ACTIONS not doing API calls
   // Idea: maybe have a data-dispatch with the custom event name in data-target
   if (el.dataset.customAction === 'show-all-users') {
@@ -118,18 +116,6 @@ async function triggerHandler(event: Event, el: HTMLInputElement): Promise<void>
 
   // use a run function to be able to have a single error handler
   const run = async () => {
-    if (el.dataset.customAction === 'patch-user2team-is') {
-      await ApiC.patch(`${Model.User}/${userid}`, {
-        action: Action.PatchUser2Team,
-        team: el.dataset.team,
-        target: el.dataset.target,
-        content: value,
-      });
-      // success side-effect for this path
-      document.dispatchEvent(new CustomEvent('dataReload'));
-      return;
-    }
-
     const params: Record<string, unknown> = {};
     params[el.dataset.target as string] = value;
 
@@ -926,7 +912,14 @@ export function delayConfirmation(button: HTMLButtonElement, delay = 2000): void
   }, delay));
 }
 
-export async function populateUserModal(user: Record<string, string|number>) {
+// the per-team toggles modified in the modal but not saved yet
+export function getChangedTeamToggles(): HTMLInputElement[] {
+  return Array.from(document.querySelectorAll<HTMLInputElement>('#manageTeamsDiv input[data-user2team-toggle]'))
+    .filter(input => input.checked !== input.defaultChecked);
+}
+
+// keepPending: keep the toggles changed but not saved yet (when the modal is refreshed after adding/removing a team)
+export async function populateUserModal(user: Record<string, string|number>, keepPending = false) {
   const manageTeamsDiv = document.getElementById('manageTeamsDiv');
   if (!manageTeamsDiv) {
     return;
@@ -937,6 +930,7 @@ export async function populateUserModal(user: Record<string, string|number>) {
   // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
   document.getElementById('editUserModal').dataset.userid = String(user.userid);
   // manage teams block
+  const pending = keepPending ? getChangedTeamToggles().map(input => input.id) : [];
   // remove previous content
   manageTeamsDiv.innerHTML = '';
   userTeams.forEach(team => {
@@ -967,7 +961,13 @@ export async function populateUserModal(user: Record<string, string|number>) {
 
     manageTeamsDiv.appendChild(teamBadge);
   });
-  listenTrigger(manageTeamsDiv.id);
+  // a pending change is a toggle that differs from its default, so re-apply it by flipping it
+  pending.forEach(id => {
+    const input = document.getElementById(id) as HTMLInputElement | null;
+    if (input) {
+      input.checked = !input.defaultChecked;
+    }
+  });
   // add team section
   // we need to generate the teams that are addable for this user
   const teams = await ApiC.getJson('teams');
@@ -1029,11 +1029,12 @@ function generateIsSomethingElement(what: string, team: Record<string, string|nu
     isSomethingSwitch.classList.add('disabled');
     isSomethingSwitch.title = i18next.t('only-a-sysadmin');
   }
-  isSomethingInput.dataset.trigger = 'change';
-  isSomethingInput.dataset.customAction = 'patch-user2team-is';
+  // not applied on change: the changes are sent when the user clicks Save in the modal, see editusers.ts
+  isSomethingInput.dataset.user2teamToggle = '1';
   isSomethingInput.dataset.target= `is_${what}`;
   isSomethingInput.dataset.team = String(team.id);
-  isSomethingInput.checked = team[`is_${what}`] === 1;
+  // defaultChecked holds the server value, so a pending change is simply checked !== defaultChecked
+  isSomethingInput.defaultChecked = team[`is_${what}`] === 1;
   isSomethingInput.id = `is${what}Team_${team.id}`;
   const slider = document.createElement('span');
   slider.classList.add('slider');

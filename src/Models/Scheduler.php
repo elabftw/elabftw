@@ -258,7 +258,7 @@ final class Scheduler extends AbstractRest
         $approver = $query?->getInt('approver') ?? 0;
         $isRequestList = $statuses !== '' || $userid > 0 || $approver > 0;
         // By default exclude rejected bookings from the calendar.
-        $this->filterSqlParts[] = 'AND team_events.approval_status IN (' . ($statuses ?: BookingApprovalStatus::slotBlockingSqlList()) . ')';
+        $this->filterSqlParts[] = 'AND team_events.approval_status IN (' . ($statuses !== '' ? $statuses : BookingApprovalStatus::slotBlockingSqlList()) . ')';
         $this->appendFilterSql('team_events.userid', 'booking_userid', $userid);
         if ($approver > 0) {
             $this->filterBindings['approver'] = $approver;
@@ -334,7 +334,7 @@ final class Scheduler extends AbstractRest
                 items.id AS items_id,
                 %s,
                 CASE WHEN %s THEN 1 ELSE 0 END AS canbook,
-                CASE WHEN team_events.approval_status = :pending_status AND items.requires_booking_approval = 1
+                CASE WHEN team_events.approval_status = :pending_status
                     AND requester_approver.userid IS NOT NULL THEN 1 ELSE 0 END AS canapprove
             FROM team_events
             LEFT JOIN teams ON (team_events.team = teams.id)
@@ -770,7 +770,7 @@ final class Scheduler extends AbstractRest
                 team_events.approval_status,
                 team_events.approved_by,
                 team_events.approved_at,
-                team_events.approval_comment,
+                CASE WHEN team_events.userid = :requester THEN team_events.approval_comment ELSE NULL END AS approval_comment,
                 team_events.created_at,
                 team_events.modified_at,
                 team_events.recurrence_id,

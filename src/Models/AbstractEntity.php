@@ -1560,7 +1560,7 @@ abstract class AbstractEntity extends AbstractRest
     private function isAdvancedSearchQuery(string $query): bool
     {
         return preg_match(
-            '/(?:^|\s)(?:attachment|author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
+            '/(?:^|\s)(?:attachment|author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|tag|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
             $query,
         ) === 1
             || preg_match('/\b(?:AND|OR|NOT)\b|[()!&|"\']/', $query) === 1;

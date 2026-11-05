@@ -1133,7 +1133,7 @@ async function loadBookingRequests(kind: 'my' | 'pending'): Promise<void> {
         cellRenderer: ({ data }: ICellRendererParams<BookingRequestRow>) => {
           if (!data) return '';
           // return a node, not a string: AG Grid would render a string as HTML
-        if (kind !== 'my' || Number(data.approval_status) !== BookingApprovalStatus.Rejected || !data.approval_comment) return element('span', '', data.item_title);
+          if (kind !== 'my' || Number(data.approval_status) !== BookingApprovalStatus.Rejected || !data.approval_comment) return element('span', '', data.item_title);
           const container = element('div', 'd-flex flex-column justify-content-center h-100');
           container.style.lineHeight = '1.5';
           container.appendChild(element('div', 'text-truncate', data.item_title));

@@ -19,6 +19,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\ExtraFieldReference;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
@@ -45,6 +46,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Override;
 use ZipArchive;
 
+use function array_column;
 use function array_find;
 use function array_is_list;
 use function array_values;
@@ -87,13 +89,12 @@ class Eln extends AbstractZip
 
     private array $linksToCreate = array();
 
+    /** @var list<array{entity_type: EntityType, id: int, field: string, type: ExtraFieldReference, targets: list<string>, is_multiple: bool}> */
     private array $metadataReferencesToResolve = array();
 
     private array $insertedEntities = array();
 
     private array $insertedCompounds = array();
-
-    private array $entityStatesToRestore = array();
 
     private array $crateNodeHasPart = array();
 
@@ -263,9 +264,13 @@ class Eln extends AbstractZip
         return $this->requester;
     }
 
-    protected function getMetadataUserReference(string $personId): int
+    /**
+     * A Person node cannot be safely mapped to a local user here, so the field is emptied.
+     * TrustedEln overrides this to look up or create the user from its email.
+     */
+    protected function getMetadataUserReference(string $personId): ?int
     {
-        return $this->targetUser->getUserid();
+        return null;
     }
 
     private function importDatasets(): int
@@ -279,48 +284,9 @@ class Eln extends AbstractZip
             $current++;
         }
 
-        $insertedEntitiesIds = array();
-        foreach ($this->insertedEntities as $inserted) {
-            $insertedEntitiesIds[$inserted['item_@id']] = $inserted['id'];
-        }
-        foreach ($this->metadataReferencesToResolve as $ref) {
-            $targetIds = array();
-            $resolved = true;
-            foreach ($ref['target_@ids'] as $target) {
-                $targetId = match ($ref['target_type']) {
-                    'users' => $this->getMetadataUserReference($target),
-                    'compounds' => $this->getOrCreateCompound($target),
-                    default => $insertedEntitiesIds[$target] ?? null,
-                };
-                if ($targetId === null) {
-                    $this->logger->warning(sprintf('Could not resolve metadata reference %s.', $target));
-                    $resolved = false;
-                    break;
-                }
-                $targetIds[] = $targetId;
-            }
-            $entity = $ref['origin_entity_type']->toInstance(
-                $ref['users'],
-                $ref['origin_id'],
-                true,
-                true,
-            );
-            if (!$resolved || $targetIds === array()) {
-                $entity->patch(Action::UpdateMetadataField, array(
-                    $ref['property_id'] => array(
-                        'value' => $ref['is_multiple'] ? array() : '',
-                        'value_labels' => null,
-                    ),
-                ));
-                continue;
-            }
-            $entity->patch(
-                Action::UpdateMetadataField,
-                array($ref['property_id'] => $ref['is_multiple'] ? $targetIds : $targetIds[0])
-            );
-        }
-
         // All imported entities now have their target IDs
+        $this->resolveMetadataReferences();
+
         $linkReplacements = $this->getChangelogLinkReplacements();
 
         // Rewrite each body once, before restoring its original history.
@@ -339,6 +305,8 @@ class Eln extends AbstractZip
                 $entity->update(new EntityParams('body', $body));
             }
         }
+        // Restore state (archived, deleted, locked) before the changelog, so the changes it creates are replaced
+        $this->restoreEntityStates();
         // Restore the original changelog before creating links
         foreach ($this->changelogsToRestore as $pending) {
             $changes = $pending['changes'];
@@ -378,13 +346,69 @@ class Eln extends AbstractZip
             }
         }
 
-        // Restore entity state (normal, archived, deleted).
-        $this->restoreEntityStates();
-
         return $this->getInserted();
     }
 
-    // Retrieve compound id from graph JSON-LD instead of sql
+    /**
+     * Extra fields of type experiments/items/users/compounds hold database ids, which are meaningless here.
+     * The exported PropertyValue references the target node instead: keep it to resolve once everything is imported.
+     */
+    private function queueMetadataReference(array $node): void
+    {
+        $type = ExtraFieldReference::tryFrom((string) ($node['valueReference'] ?? ''));
+        $value = $node['value'] ?? null;
+        if ($type === null || empty($value)) {
+            return;
+        }
+        $isMultiple = is_array($value) && array_is_list($value);
+        $targetAtIds = array();
+        foreach ($isMultiple ? $value : array($value) as $reference) {
+            if (is_array($reference) && is_string($reference['@id'] ?? null)) {
+                $targetAtIds[] = $reference['@id'];
+            }
+        }
+        $this->metadataReferencesToResolve[] = array(
+            'entity_type' => $this->Entity->entityType,
+            'id' => (int) $this->Entity->id,
+            'field' => (string) $node['propertyID'],
+            'type' => $type,
+            'targets' => $targetAtIds,
+            'is_multiple' => $isMultiple,
+        );
+    }
+
+    private function resolveMetadataReferences(): void
+    {
+        $insertedIds = array_column($this->insertedEntities, 'id', 'item_@id');
+        foreach ($this->metadataReferencesToResolve as $ref) {
+            $targetIds = array();
+            foreach ($ref['targets'] as $targetAtId) {
+                $targetId = match ($ref['type']) {
+                    ExtraFieldReference::Users => $this->getMetadataUserReference($targetAtId),
+                    ExtraFieldReference::Compounds => $this->getOrCreateCompound($targetAtId),
+                    ExtraFieldReference::Experiments, ExtraFieldReference::Items => $insertedIds[$targetAtId] ?? null,
+                };
+                if ($targetId === null) {
+                    $this->logger->warning(sprintf('Could not resolve metadata reference %s in field %s.', $targetAtId, $ref['field']));
+                    continue;
+                }
+                $targetIds[] = $targetId;
+            }
+            $entity = $ref['entity_type']->toInstance($this->Entity->Users, $ref['id'], true, true);
+            if ($targetIds === array()) {
+                // nothing could be resolved: do not keep ids pointing to unrelated entries of this instance
+                $entity->patch(Action::UpdateMetadataField, array(
+                    $ref['field'] => array('value' => $ref['is_multiple'] ? array() : '', 'value_labels' => null),
+                ));
+                continue;
+            }
+            $entity->patch(Action::UpdateMetadataField, array(
+                $ref['field'] => $ref['is_multiple'] ? $targetIds : $targetIds[0],
+            ));
+        }
+    }
+
+    // Use the MolecularEntity node of the crate: the compound id is only valid on the source instance
     private function getOrCreateCompound(string $id): ?int
     {
         if (isset($this->insertedCompounds[$id])) {
@@ -638,31 +662,7 @@ class Eln extends AbstractZip
                                 $this->Entity->update(new EntityParams('metadata', $node['value']));
                                 continue;
                             }
-                            $type = $node['valueReference'] ?? '';
-                            $value = $node['value'] ?? null;
-                            if (in_array($type, array('compounds', 'experiments', 'items', 'users'), true) && !empty($value)) {
-                                $isMultiple = is_array($value) && array_is_list($value);
-                                $referenceValues = $isMultiple ? $value : array($value);
-                                $targetAtIds = array();
-                                foreach ($referenceValues as $referenceValue) {
-                                    if (!is_array($referenceValue)) {
-                                        continue;
-                                    }
-                                    $targetAtId = $referenceValue['@id'] ?? null;
-                                    if (is_string($targetAtId)) {
-                                        $targetAtIds[] = $targetAtId;
-                                    }
-                                }
-                                $this->metadataReferencesToResolve[] = array(
-                                    'origin_entity_type' => $this->Entity->entityType,
-                                    'origin_id' => $this->Entity->id,
-                                    'users' => $this->Entity->Users,
-                                    'property_id' => $node['propertyID'],
-                                    'target_@ids' => $targetAtIds,
-                                    'target_type' => $type,
-                                    'is_multiple' => $isMultiple,
-                                );
-                            }
+                            $this->queueMetadataReference($node);
                         }
                     }
                     break;
@@ -758,13 +758,6 @@ class Eln extends AbstractZip
         }
         $this->restoreUploadOrdering();
 
-        $this->entityStatesToRestore[] = array(
-            'entity_type' => $this->Entity->entityType,
-            'entity_id' => $this->Entity->id,
-            'users' => $this->Entity->Users,
-            'dataset' => $dataset,
-        );
-
         // Prepare the original changelog; restore it once all imported entity IDs are known
         if (!empty($dataset['subjectOf'])) {
             $this->changelogsToRestore[] = array(
@@ -776,14 +769,9 @@ class Eln extends AbstractZip
 
     private function restoreEntityStates(): void
     {
-        foreach ($this->entityStatesToRestore as $pending) {
-            $entity = $pending['entity_type']->toInstance(
-                $pending['users'],
-                $pending['entity_id'],
-                true,
-                true,
-            );
-            $dataset = $pending['dataset'];
+        foreach ($this->insertedEntities as $inserted) {
+            $entity = $inserted['entity_type']->toInstance($this->Entity->Users, $inserted['id'], true, true);
+            $dataset = $this->getNodeFromId($inserted['item_@id']);
             $state = State::fromName($dataset['status'] ?? State::Normal->name);
             // we use match(true) to be able to match a State and the Locked pseudo-state in the same match
             match (true) {

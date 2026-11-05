@@ -13,8 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Enums\EntityType;
-use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Enums\Storage;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Import\TrustedEln;
 use Elabftw\Interfaces\StorageInterface;
 use Elabftw\Models\Users\UltraAdmin;

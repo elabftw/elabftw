@@ -545,10 +545,13 @@ class Users extends AbstractRest
     public function readOne(): array
     {
         $userData = $this->readOneFull();
+        // other users only get what is needed to display them, like readNamesFromIds()
         if (!$this->canReadFullProfile()) {
             return array(
+                'userid' => $userData['userid'],
                 'firstname' => $userData['firstname'],
                 'lastname' => $userData['lastname'],
+                'fullname' => $userData['fullname'],
                 'email' => self::maskEmail($userData['email']),
             );
         }

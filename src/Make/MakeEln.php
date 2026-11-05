@@ -16,6 +16,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\ExtraFieldReference;
 use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
@@ -218,19 +219,15 @@ class MakeEln extends AbstractMakeEln
             );
         }
 
-        $metadataReferences = array(
-            'compounds' => array(),
-            'experiments' => array(),
-            'items' => array(),
-            'users' => array(),
-        );
+        // extra fields pointing to other entries, by type and database id
+        $metadataReferences = array();
 
         // COMPOUNDS
         $compounds = array();
         foreach ($e['compounds_links'] ?? array() as $compound) {
             $reference = $this->compoundToJsonLd($compound);
             $compounds[] = $reference;
-            $metadataReferences['compounds'][$compound['id']] = $reference;
+            $metadataReferences[ExtraFieldReference::Compounds->value][$compound['id']] = $reference;
         }
 
         // TAGS
@@ -510,22 +507,18 @@ class MakeEln extends AbstractMakeEln
             $pv['@id'] = $id;
             $pv['propertyID'] = $name;
             $pv['valueReference'] = $props['type'];
-            $value = $props['value'] ?? null;
-            $pv['value'] = $value;
-            if (in_array($props['type'], array('compounds', 'experiments', 'items', 'users'), true) && !empty($value)) {
-                $sourceIds = is_array($value) ? $value : array($value);
-                $resolveRefs = array();
-                foreach ($sourceIds as $sourceId) {
-                    if (!is_scalar($sourceId)) {
-                        continue;
-                    }
-                    $reference = $metadataReferences[$props['type']][(int) $sourceId] ?? null;
-                    if ($reference !== null) {
-                        $resolveRefs[] = $reference;
+            $pv['value'] = $props['value'] ?? '';
+            // replace the database ids by references to nodes of the crate, when they could be exported
+            $referenceType = ExtraFieldReference::tryFrom((string) ($props['type'] ?? ''));
+            if ($referenceType !== null && !empty($props['value'])) {
+                $resolvedRefs = array();
+                foreach (is_array($props['value']) ? $props['value'] : array($props['value']) as $sourceId) {
+                    if (is_scalar($sourceId) && isset($metadataReferences[$referenceType->value][(int) $sourceId])) {
+                        $resolvedRefs[] = $metadataReferences[$referenceType->value][(int) $sourceId];
                     }
                 }
-                if ($resolveRefs !== array()) {
-                    $pv['value'] = is_array($value) ? $resolveRefs : $resolveRefs[0];
+                if ($resolvedRefs !== array()) {
+                    $pv['value'] = is_array($props['value']) ? $resolvedRefs : $resolvedRefs[0];
                 }
             }
             if (!empty($props['description'])) {
@@ -590,35 +583,41 @@ class MakeEln extends AbstractMakeEln
     {
         $metadata = json_decode($strMetadata, true, 42, JSON_THROW_ON_ERROR);
         foreach ($metadata[Metadata::ExtraFields->value] ?? array() as $props) {
-            $type = $props['type'] ?? '';
-            $value = $props['value'] ?? null;
-            $sourceIds = is_array($value) ? $value : array($value);
-            foreach ($sourceIds as $value) {
+            $type = ExtraFieldReference::tryFrom((string) ($props['type'] ?? ''));
+            if ($type === null) {
+                continue;
+            }
+            $values = $props['value'] ?? array();
+            foreach (is_array($values) ? $values : array($values) as $value) {
                 if (!is_scalar($value)) {
                     continue;
                 }
                 $sourceId = (int) $value;
-                if ($sourceId < 1 || isset($references[$type][$sourceId])) {
+                if ($sourceId < 1 || isset($references[$type->value][$sourceId])) {
                     continue;
                 }
-                try {
-                    $reference = match ($type) {
-                        'compounds' => $this->processMetadataCompounds($sourceId),
-                        'experiments' => $this->processMetadataEntity($sourceId, EntityType::Experiments),
-                        'items' => $this->processMetadataEntity($sourceId, EntityType::Items),
-                        'users' => $this->processMetadataUser($sourceId),
-                        default => null,
-                    };
-                } catch (ResourceNotFoundException) {
-                    $this->logger->warning(sprintf('Skipping metadata reference %s: %d during ELN export: not found', $type, $sourceId));
-                    continue;
-                }
+                $reference = $this->processMetadataReference($type, $sourceId);
                 if ($reference !== null) {
-                    $references[$type][$sourceId] = $reference;
+                    $references[$type->value][$sourceId] = $reference;
                 }
             }
         }
         return $references;
+    }
+
+    private function processMetadataReference(ExtraFieldReference $type, int $sourceId): ?array
+    {
+        try {
+            return match ($type) {
+                ExtraFieldReference::Compounds => $this->processMetadataCompounds($sourceId),
+                ExtraFieldReference::Experiments => $this->processMetadataEntity($sourceId, EntityType::Experiments),
+                ExtraFieldReference::Items => $this->processMetadataEntity($sourceId, EntityType::Items),
+                ExtraFieldReference::Users => $this->processMetadataUser($sourceId),
+            };
+        } catch (ResourceNotFoundException) {
+            $this->logger->warning(sprintf('Skipping metadata reference %s: %d during ELN export: not found', $type->value, $sourceId));
+            return null;
+        }
     }
 
     private function processMetadataUser(int $userId): ?array

@@ -415,7 +415,7 @@ teams:
 
       - title: Custom fields
         category: Demo
-        body: '<p>Experiment with a lot of custom fields: signle and multiple</p>'
+        body: '<p>Experiment with a lot of custom fields: single and multiple</p>'
         tags:
           - eln
           - imaging

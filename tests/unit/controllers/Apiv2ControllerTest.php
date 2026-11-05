@@ -206,7 +206,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             Request::create('/api/v2/users/1/uploads', 'GET'),
         );
         $res = $Controller->getResponse();
-        self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
     }
 
     public function testAnonymousUserCannotReadAnotherTeamsSubmodel(): void

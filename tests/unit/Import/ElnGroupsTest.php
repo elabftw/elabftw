@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
-use Elabftw\Elabftw\Compound;
 use Codeception\Attribute\DataProvider;
+use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
@@ -227,6 +227,12 @@ final class ElnGroupsTest extends TestCase
                     'value' => array(999999998, 999999999),
                     'allow_multi_values' => true,
                 ),
+                'Partly missing experiments' => array(
+                    'type' => 'experiments',
+                    'value' => array(999999998, $secondExp->id),
+                    'allow_multi_values' => true,
+                ),
+                'User' => array('type' => 'users', 'value' => 1),
             ),
         ), JSON_THROW_ON_ERROR)));
 
@@ -250,6 +256,9 @@ final class ElnGroupsTest extends TestCase
             $this->assertSame($compoundId, $fields['Compound']['value']);
             $this->assertSame('', $fields['Missing experiment']['value']);
             $this->assertSame(array(), $fields['Missing experiments']['value']);
+            $this->assertSame(array($imported['secondExp']->id), $fields['Partly missing experiments']['value']);
+            // a non trusted import cannot map a person to a local user
+            $this->assertSame('', $fields['User']['value']);
         } finally {
             unlink($path);
         }

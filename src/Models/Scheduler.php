@@ -375,7 +375,7 @@ final class Scheduler extends AbstractRest
         if (!$isRequestList && $maskPending) {
             foreach ($events as &$event) {
                 if ((int) $event['approval_status'] === BookingApprovalStatus::Pending->value) {
-                    $event['title'] = _('Pending approval');
+                    $event['title'] = sprintf('[%s] %s', _('Pending approval'), $event['title']);
                     $event['title_only'] = '';
                     $event['fullname'] = '';
                 }

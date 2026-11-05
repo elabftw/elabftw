@@ -31,13 +31,9 @@ export async function uploadFileToEntity(file: Blob, filename: string): Promise<
 
 // office suites put a rendering of the copied cells/text as image next to the text: the text is what the user wants
 // but "Copy Image" in a browser gives an html <img> pointing to the remote url (blocked by CSP) and/or that url as text: the image data is what we want
+// only look at text/plain: parsing the clipboard html would feed untrusted markup to an html parser (XSS sink),
+// and every source that puts html with real text in the clipboard also puts that text as text/plain
 function hasRealText(data: DataTransfer): boolean {
-  const html = data.getData('text/html');
-  if (html) {
-    // DOMParser documents are inert: remote images are not fetched
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    return (doc.body.textContent ?? '').trim() !== '';
-  }
   const text = data.getData('text/plain').trim();
   return text !== '' && !/^(https?|file|data):\S*$/.test(text);
 }

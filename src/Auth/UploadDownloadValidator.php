@@ -15,6 +15,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
@@ -30,7 +31,7 @@ use function strtolower;
 
 final class UploadDownloadValidator
 {
-    public function validate(?Users $requester, string $longName, ?int $storage = null, string $accessKey = ''): void
+    public function validate(Users $requester, string $longName, Storage $storage, string $accessKey = ''): void
     {
         // Match DownloadController's path normalization before resolving the parent.
         $longName = Filter::forFilesystem(basename($longName));
@@ -45,19 +46,8 @@ final class UploadDownloadValidator
         $req->bindValue(':legacy_long_name', $longName);
         $Db->execute($req);
         $upload = $req->fetch();
-        if ($upload === false) {
-            // Exports are authorized by their caller and have no upload record.
-            if ($requester === null) {
-                return;
-            }
+        if ($upload === false || $upload['state'] === State::Deleted->value || $upload['storage'] !== $storage->value) {
             throw new ResourceNotFoundException();
-        }
-        if ($upload['state'] === State::Deleted->value || ($storage !== null && $upload['storage'] !== $storage)) {
-            throw new ResourceNotFoundException();
-        }
-        // An upload always needs a requester, even when the caller expected an export.
-        if ($requester === null) {
-            throw new ForbiddenException();
         }
         $type = EntityType::tryFrom($upload['type']) ?? throw new ResourceNotFoundException();
         if (empty($upload['item_id'])) {

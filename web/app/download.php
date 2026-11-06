@@ -55,10 +55,10 @@ try {
     $DownloadController = new DownloadController(
         $storageFs,
         $longName,
+        $App->Users,
+        $storageEnum,
         $App->Request->query->getString('name'),
         $App->Request->query->has('forceDownload'),
-        requester: $App->Users,
-        storage: $storage,
     );
     $Response = $DownloadController->getResponse($App->Request);
     $Response->prepare($App->Request);

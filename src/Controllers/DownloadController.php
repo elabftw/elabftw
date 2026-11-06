@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Auth\UploadDownloadValidator;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
@@ -60,16 +61,13 @@ final class DownloadController implements ControllerInterface
 
     private string $longName;
 
-    /**
-     * @param ?Users $requester Null only for non-upload files authorized by their caller.
-     */
     public function __construct(
         private Filesystem $fs,
         string $longName,
+        private Users $requester,
+        private Storage $storage,
         ?string $realName = null,
         private bool $forceDownload = false,
-        private ?Users $requester = null,
-        private ?int $storage = null,
     ) {
         // Remove any path info to avoid hacking by adding relative path, etc.
         $this->longName = Filter::forFilesystem(basename($longName));
@@ -101,12 +99,15 @@ final class DownloadController implements ControllerInterface
 
         // Check before cache validators, Range handling, or any filesystem access.
         try {
-            new UploadDownloadValidator()->validate(
-                $this->requester,
-                $this->longName,
-                $this->storage,
-                $request?->query->getString('access_key') ?? '',
-            );
+            // Exports have no uploads row: Exports::readOne() already restricts them to their requester.
+            if ($this->storage !== Storage::EXPORTS) {
+                new UploadDownloadValidator()->validate(
+                    $this->requester,
+                    $this->longName,
+                    $this->storage,
+                    $request?->query->getString('access_key') ?? '',
+                );
+            }
         } catch (ForbiddenException | ResourceNotFoundException $e) {
             return new Response('', $e->getHttpCode(), array('Cache-Control' => 'private, no-store'));
         }

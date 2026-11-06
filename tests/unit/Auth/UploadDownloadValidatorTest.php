@@ -68,7 +68,7 @@ final class UploadDownloadValidatorTest extends TestCase
         if (!$allowed) {
             $this->expectException(ForbiddenException::class);
         }
-        new UploadDownloadValidator()->validate($requester, $upload['long_name'], Storage::LOCAL->value);
+        new UploadDownloadValidator()->validate($requester, $upload['long_name'], Storage::LOCAL);
         $this->addToAssertionCount(1);
     }
 
@@ -77,7 +77,7 @@ final class UploadDownloadValidatorTest extends TestCase
     {
         $upload = $this->createUpload($type, owner: $this->getUserInTeam(1, 1));
         $this->expectException(ForbiddenException::class);
-        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'], Storage::LOCAL->value);
+        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'], Storage::LOCAL);
     }
 
     #[DataProvider('entityTypes')]
@@ -87,9 +87,9 @@ final class UploadDownloadValidatorTest extends TestCase
             $upload = $this->createUpload($type, legacy: $legacy);
             foreach (array($upload['long_name'], basename($upload['long_name'])) as $name) {
                 foreach (array($name, $name . '_th.jpg', $name . '_TH.JPG') as $path) {
-                    new UploadDownloadValidator()->validate($this->owner, $path, Storage::LOCAL->value);
+                    new UploadDownloadValidator()->validate($this->owner, $path, Storage::LOCAL);
                     try {
-                        new UploadDownloadValidator()->validate(new AnonymousUser(1), $path, Storage::LOCAL->value);
+                        new UploadDownloadValidator()->validate(new AnonymousUser(1), $path, Storage::LOCAL);
                         $this->fail('An anonymous user downloaded a private attachment or thumbnail.');
                     } catch (ForbiddenException) {
                         $this->addToAssertionCount(1);
@@ -105,7 +105,7 @@ final class UploadDownloadValidatorTest extends TestCase
         $requester = $this->getUserInTeam(2);
         foreach (array('users' => $requester->userid, 'teams' => 2) as $key => $id) {
             $upload = $this->createUpload($type, canread: json_encode(array($key => array($id)), JSON_THROW_ON_ERROR));
-            new UploadDownloadValidator()->validate($requester, $upload['long_name'], Storage::LOCAL->value);
+            new UploadDownloadValidator()->validate($requester, $upload['long_name'], Storage::LOCAL);
             $this->addToAssertionCount(1);
         }
     }
@@ -117,12 +117,12 @@ final class UploadDownloadValidatorTest extends TestCase
         $accessKey = new AccessKeyHelper($type, $upload['item_id'])->toggleAccessKey();
         $requester = new AnonymousUser(1);
         $validator = new UploadDownloadValidator();
-        $validator->validate($requester, $upload['long_name'], Storage::LOCAL->value, $accessKey);
-        $validator->validate($requester, $upload['long_name'] . '_th.jpg', Storage::LOCAL->value, $accessKey);
+        $validator->validate($requester, $upload['long_name'], Storage::LOCAL, $accessKey);
+        $validator->validate($requester, $upload['long_name'] . '_th.jpg', Storage::LOCAL, $accessKey);
 
         $otherUpload = $this->createUpload($type);
         $this->expectException(ForbiddenException::class);
-        $validator->validate($requester, $otherUpload['long_name'], Storage::LOCAL->value, $accessKey);
+        $validator->validate($requester, $otherUpload['long_name'], Storage::LOCAL, $accessKey);
     }
 
     #[DataProvider('entityTypes')]
@@ -133,7 +133,7 @@ final class UploadDownloadValidatorTest extends TestCase
         $accessKey = $helper->toggleAccessKey();
         $helper->toggleAccessKey();
         $this->expectException(ForbiddenException::class);
-        new UploadDownloadValidator()->validate(new AnonymousUser(1), $upload['long_name'], Storage::LOCAL->value, $accessKey);
+        new UploadDownloadValidator()->validate(new AnonymousUser(1), $upload['long_name'], Storage::LOCAL, $accessKey);
     }
 
     #[DataProvider('entityTypes')]
@@ -142,40 +142,26 @@ final class UploadDownloadValidatorTest extends TestCase
         $upload = $this->createUpload($type, BasePermissions::Full);
         $requester = new AnonymousUser(1);
         $validator = new UploadDownloadValidator();
-        $validator->validate($requester, $upload['long_name'], Storage::LOCAL->value);
+        $validator->validate($requester, $upload['long_name'], Storage::LOCAL);
         $req = $this->Db->prepare('UPDATE ' . $type->value . ' SET canread_base = :base WHERE id = :id');
         $req->bindValue(':base', BasePermissions::UserOnly->value, PDO::PARAM_INT);
         $req->bindValue(':id', $upload['item_id'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $this->expectException(ForbiddenException::class);
-        $validator->validate($requester, $upload['long_name'], Storage::LOCAL->value);
+        $validator->validate($requester, $upload['long_name'], Storage::LOCAL);
     }
 
     public function testRejectsUnknownFiles(): void
     {
         $this->expectException(ResourceNotFoundException::class);
-        new UploadDownloadValidator()->validate($this->owner, Tools::getUuidv4() . '.txt', Storage::LOCAL->value);
-    }
-
-    public function testNonUploadFilesAreAllowedWithoutRequester(): void
-    {
-        $before = $this->Db->getNumberOfQueries();
-        new UploadDownloadValidator()->validate(null, Tools::getUuidv4() . '.zip');
-        $this->assertSame(1, $this->Db->getNumberOfQueries() - $before);
-    }
-
-    public function testUploadsRequireRequesterEvenWhenPublic(): void
-    {
-        $upload = $this->createUpload(EntityType::Experiments, BasePermissions::Full);
-        $this->expectException(ForbiddenException::class);
-        new UploadDownloadValidator()->validate(null, $upload['long_name']);
+        new UploadDownloadValidator()->validate($this->owner, Tools::getUuidv4() . '.txt', Storage::LOCAL);
     }
 
     public function testStorageCannotBeChangedToAnotherBackend(): void
     {
         $upload = $this->createUpload(EntityType::Experiments);
         $this->expectException(ResourceNotFoundException::class);
-        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'], Storage::EXPORTS->value);
+        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'], Storage::EXPORTS);
     }
 
     #[DataProvider('entityTypes')]
@@ -187,7 +173,7 @@ final class UploadDownloadValidatorTest extends TestCase
         $req->bindValue(':state', State::Archived->value, PDO::PARAM_INT);
         $req->bindValue(':long_name', $upload['long_name']);
         $this->Db->execute($req);
-        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'], Storage::S3->value);
+        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'], Storage::S3);
         $this->addToAssertionCount(1);
     }
 
@@ -201,7 +187,7 @@ final class UploadDownloadValidatorTest extends TestCase
         $req->bindValue(':id', $upload['item_id'], PDO::PARAM_INT);
         $this->Db->execute($req);
         $this->expectException(ResourceNotFoundException::class);
-        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'], Storage::LOCAL->value, $accessKey);
+        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'], Storage::LOCAL, $accessKey);
     }
 
     public function testDeletedAttachmentIsRejected(): void
@@ -212,7 +198,7 @@ final class UploadDownloadValidatorTest extends TestCase
         $req->bindValue(':long_name', $upload['long_name']);
         $this->Db->execute($req);
         $this->expectException(ResourceNotFoundException::class);
-        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'] . '_th.jpg', Storage::LOCAL->value);
+        new UploadDownloadValidator()->validate($this->owner, $upload['long_name'] . '_th.jpg', Storage::LOCAL);
     }
 
     public static function downloadPermissions(): array

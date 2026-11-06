@@ -66,7 +66,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     {
         $longName = 'aa/aabb.txt';
         $this->fs->write($longName, 'blah');
-        $controller = new DownloadController($this->fs, $longName);
+        $controller = $this->getExportController($this->fs, $longName);
         $this->assertInstanceOf(StreamedResponse::class, $this->getResponse($controller));
     }
 
@@ -74,7 +74,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     {
         $longName = 'aa/aacc.docx';
         $this->fs->write($longName, 'blah');
-        $controller = new DownloadController($this->fs, $longName);
+        $controller = $this->getExportController($this->fs, $longName);
         $response = $this->getResponse($controller);
         ob_start();
         $response->sendContent();
@@ -96,7 +96,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
             $id = $Db->lastInsertId();
             $update = $Db->prepare('UPDATE uploads SET state = :state WHERE id = :id');
             $update->bindValue(':id', $id, PDO::PARAM_INT);
-            $controller = new DownloadController($this->fs, $storedName . $suffix, requester: $Entity->Users, storage: Storage::LOCAL->value);
+            $controller = new DownloadController($this->fs, $storedName . $suffix, $Entity->Users, Storage::LOCAL);
 
             foreach (array(State::Normal, State::Archived) as $state) {
                 $update->bindValue(':state', $state->value, PDO::PARAM_INT);
@@ -117,7 +117,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
             }
             // Reuse the same name with either spelling accepted by download.php.
             foreach (array($longName . $suffix, $storedName . $suffix) as $requestedName) {
-                $controller = new DownloadController($fs, $requestedName, requester: $Entity->Users, storage: Storage::LOCAL->value);
+                $controller = new DownloadController($fs, $requestedName, $Entity->Users, Storage::LOCAL);
                 foreach (array('GET', 'HEAD') as $method) {
                     $request = Request::create('/download', $method);
                     $request->headers->set('If-None-Match', '"' . $longName . $suffix . '"');
@@ -160,7 +160,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
             }
             foreach (array(new AnonymousUser(1), $this->getUserInTeam(2)) as $requester) {
                 foreach (array('', '_th.jpg', '_TH.JPG') as $suffix) {
-                    $controller = new DownloadController($fs, $longName . $suffix, requester: $requester, storage: Storage::LOCAL->value);
+                    $controller = new DownloadController($fs, $longName . $suffix, $requester, Storage::LOCAL);
                     foreach (array('GET', 'HEAD') as $method) {
                         $request = Request::create('/download', $method);
                         $request->headers->set('If-None-Match', '"' . $longName . $suffix . '"');
@@ -191,7 +191,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
             $Entity = $this->createUpload($longName);
             $accessKey = new AccessKeyHelper(EntityType::Items, $Entity->id)->toggleAccessKey();
             $this->fs->write($longName, 'shared content');
-            $controller = new DownloadController($this->fs, $longName, requester: new AnonymousUser(1), storage: Storage::LOCAL->value);
+            $controller = new DownloadController($this->fs, $longName, new AnonymousUser(1), Storage::LOCAL);
             $request = Request::create('/download', 'GET', array('access_key' => $accessKey));
             $before = $Db->getNumberOfQueries();
             $response = $this->getResponse($controller, $request);
@@ -213,7 +213,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
         foreach (array('fileExists', 'mimeType', 'fileSize', 'readStream') as $method) {
             $fs->expects($this->never())->method($method);
         }
-        $controller = new DownloadController($fs, 'aa' . bin2hex(random_bytes(8)) . '.zip', requester: new AnonymousUser(1));
+        $controller = new DownloadController($fs, 'aa' . bin2hex(random_bytes(8)) . '.zip', new AnonymousUser(1), Storage::LOCAL);
         $request = Request::create('/download');
         $request->headers->set('If-None-Match', '*');
         $response = $this->getResponse($controller, $request);
@@ -225,7 +225,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     public function testConditionalRequests(string $method, array $headers, int $status): void
     {
         $this->fs->write('aa/aafile.txt', 'blah');
-        $controller = new DownloadController($this->fs, 'aafile.txt');
+        $controller = $this->getExportController($this->fs, 'aafile.txt');
         $initial = $this->getResponse($controller);
         $this->assertSame('"aafile.txt"', $initial->getEtag());
         $this->assertNull($initial->getLastModified());
@@ -274,7 +274,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
         $fs->expects($this->never())->method('mimeType');
         $request = Request::create('/download');
         $request->headers->set('If-None-Match', '"aafile.txt"');
-        $response = $this->getResponse(new DownloadController($fs, 'aafile.txt'), $request);
+        $response = $this->getResponse($this->getExportController($fs, 'aafile.txt'), $request);
         $this->assertSame(Response::HTTP_NOT_MODIFIED, $response->getStatusCode());
         $response->sendContent();
     }
@@ -291,7 +291,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
         try {
             // Also cover legacy files that are not stored in a two-letter subdirectory.
             $fs->write('aafile.txt', 'first');
-            $controller = new DownloadController($fs, 'aafile.txt');
+            $controller = $this->getExportController($fs, 'aafile.txt');
             $initial = $this->getResponse($controller);
             $this->assertSame('"aafile.txt"', $initial->getEtag());
             $this->assertNull($initial->getLastModified());
@@ -336,7 +336,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
             },
         ));
         $fs = new Filesystem(new AwsS3V3Adapter($client, 'test-bucket', 'prefix'));
-        $controller = new DownloadController($fs, 'aafile.png');
+        $controller = $this->getExportController($fs, 'aafile.png');
         $initial = $this->getResponse($controller);
         $this->assertSame('"aafile.png"', $initial->getEtag());
         $this->assertNull($initial->getLastModified());
@@ -365,7 +365,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
         $request = Request::create('/download');
         $request->headers->set('If-None-Match', '*');
         $request->headers->set('If-Modified-Since', 'Fri, 01 Jan 2100 00:00:00 GMT');
-        $response = $this->getResponse(new DownloadController($fs, 'aafile.txt'), $request);
+        $response = $this->getResponse($this->getExportController($fs, 'aafile.txt'), $request);
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
         $this->assertNull($response->getEtag());
         $this->assertNull($response->getLastModified());
@@ -374,7 +374,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     public function testConditionalVideoRequestIsCheckedBeforeRange(): void
     {
         $this->fs->write('aa/aavideo.mp4', str_repeat('x', 1000));
-        $controller = new DownloadController($this->fs, 'aavideo.mp4');
+        $controller = $this->getExportController($this->fs, 'aavideo.mp4');
         $initial = $this->getResponse($controller);
         $request = Request::create('/download');
         $request->headers->set('If-None-Match', $initial->getEtag());
@@ -387,7 +387,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     public function testVideoIfRange(): void
     {
         $this->fs->write('aa/aavideo.mp4', str_repeat('x', 1000));
-        $controller = new DownloadController($this->fs, 'aavideo.mp4');
+        $controller = $this->getExportController($this->fs, 'aavideo.mp4');
         $initial = $this->getResponse($controller);
         foreach (array($initial->getEtag(), '"changed"', 'W/' . $initial->getEtag(), 'Wed, 01 Jan 1997 00:00:00 GMT') as $ifRange) {
             $request = Request::create('/download');
@@ -407,7 +407,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     {
         $longName = 'aa/aavideo.mp4';
         $this->fs->write($longName, str_repeat('x', 1000));
-        $controller = new DownloadController($this->fs, $longName, 'test.mp4');
+        $controller = $this->getExportController($this->fs, $longName, 'test.mp4');
 
         $request = Request::create('/download');
         $request->headers->set('Range', 'bytes=0-499');
@@ -424,7 +424,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     {
         $longName = 'aa/aasuffix.mp4';
         $this->fs->write($longName, str_repeat('y', 500));
-        $controller = new DownloadController($this->fs, $longName, 'suffix.mp4');
+        $controller = $this->getExportController($this->fs, $longName, 'suffix.mp4');
 
         $request = Request::create('/download');
         $request->headers->set('Range', 'bytes=-100');
@@ -439,7 +439,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     {
         $longName = 'aa/aaunsatisfiable.mp4';
         $this->fs->write($longName, str_repeat('z', 200));
-        $controller = new DownloadController($this->fs, $longName, 'bad.mp4');
+        $controller = $this->getExportController($this->fs, $longName, 'bad.mp4');
 
         $request = Request::create('/download');
         $request->headers->set('Range', 'bytes=300-400');
@@ -453,7 +453,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     {
         $longName = 'aa/aaforced.mp4';
         $this->fs->write($longName, str_repeat('w', 300));
-        $controller = new DownloadController($this->fs, $longName, 'forced.mp4', forceDownload: true);
+        $controller = $this->getExportController($this->fs, $longName, 'forced.mp4', forceDownload: true);
 
         $request = Request::create('/download');
         $request->headers->set('Range', 'bytes=0-99');
@@ -467,7 +467,7 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
     {
         $longName = 'aa/aanorange.mp4';
         $this->fs->write($longName, str_repeat('v', 400));
-        $controller = new DownloadController($this->fs, $longName, 'norange.mp4');
+        $controller = $this->getExportController($this->fs, $longName, 'norange.mp4');
 
         $request = Request::create('/download');
 
@@ -492,6 +492,14 @@ class DownloadControllerTest extends \PHPUnit\Framework\TestCase
         $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
         $Db->execute($req);
         return $Entity;
+    }
+
+    /**
+     * These files have no uploads row, so stream them like exports to skip upload authorization.
+     */
+    private function getExportController(Filesystem $fs, string $longName, ?string $realName = null, bool $forceDownload = false): DownloadController
+    {
+        return new DownloadController($fs, $longName, new AnonymousUser(1), Storage::EXPORTS, $realName, $forceDownload);
     }
 
     private function getResponse(DownloadController $controller, ?Request $request = null): Response

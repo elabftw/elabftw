@@ -45,11 +45,18 @@ try {
         // we fallback on the instance's configured storage
         $storage = (int) Config::getConfig()->configArr['uploads_storage'];
     }
-    $storageFs = Storage::from($storage)->getStorage()->getFs();
+    $storageEnum = Storage::tryFrom($storage);
+    // Only uploads are served here: other storages (exports, cache…) have no uploads row to authorize against.
+    if ($storageEnum !== Storage::LOCAL && $storageEnum !== Storage::S3) {
+        throw new ImproperActionException('Invalid storage for download');
+    }
+    $storageFs = $storageEnum->getStorage()->getFs();
 
     $DownloadController = new DownloadController(
         $storageFs,
         $longName,
+        $App->Users,
+        $storageEnum,
         $App->Request->query->getString('name'),
         $App->Request->query->has('forceDownload'),
     );

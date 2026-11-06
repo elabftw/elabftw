@@ -53,6 +53,11 @@
             <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='items' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-cubes-stacked fa-fw mr-1'></i>{{ 'Create resource linked to compound'|trans }}</button>
             <button type='button' class='btn btn-primary btn-sm' data-action='toggle-create-modal' data-type='experiments' data-get-compound-id-from='editCompoundModalSaveBtn'><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Create experiment linked to compound'|trans }}</button>
           </div>
+
+          <div class='mt-1'>
+            <button type='button' class='btn btn-secondary btn-sm' data-action='show-compound-molecule' data-target='compoundMoleculeDiv'><i class='fas fa-atom fa-fw mr-1'></i>{{ 'Show molecule structure'|trans }}</button>
+            <div id='compoundMoleculeDiv' class='mt-2' hidden></div>
+          </div>
           <hr>
           <div class='my-2' id='editCompoundInputs'>
             {{ _self.textParam('name', 'Name'|trans, compoundsDisabled, 'required') }}

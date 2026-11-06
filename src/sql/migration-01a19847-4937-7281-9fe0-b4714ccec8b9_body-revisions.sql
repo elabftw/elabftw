@@ -5,6 +5,7 @@
 -- or without dictionary for keyframes (parent_id IS NULL, depth 0).
 -- users_id is SET NULL on user deletion: deleting a row would break every revision chained to it.
 -- The legacy *_revisions tables are kept untouched.
+-- (entity_id, created_at, id) serves the latest revision lookup done on every save, and the history listing.
 
 CREATE TABLE IF NOT EXISTS `experiments_body_revisions` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `experiments_body_revisions` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_experiments_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_experiments_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
   CONSTRAINT `fk_experiments_body_revisions_experiments_id`
     FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
@@ -38,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `items_body_revisions` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_items_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_items_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
   CONSTRAINT `fk_items_body_revisions_items_id`
     FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
@@ -58,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `experiments_templates_body_revisions` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_experiments_templates_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_experiments_templates_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
   CONSTRAINT `fk_experiments_templates_body_revisions_experiments_templates_id`
     FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
@@ -78,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `items_types_body_revisions` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_items_types_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_items_types_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
   CONSTRAINT `fk_items_types_body_revisions_items_types_id`
     FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,

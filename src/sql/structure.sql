@@ -2650,6 +2650,7 @@ CREATE TABLE `experiments_body_revisions` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_experiments_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_experiments_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
   CONSTRAINT `fk_experiments_body_revisions_experiments_id`
     FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2674,6 +2675,7 @@ CREATE TABLE `items_body_revisions` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_items_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_items_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
   CONSTRAINT `fk_items_body_revisions_items_id`
     FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2698,6 +2700,7 @@ CREATE TABLE `experiments_templates_body_revisions` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_experiments_templates_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_experiments_templates_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
   CONSTRAINT `fk_experiments_templates_body_revisions_experiments_templates_id`
     FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,
@@ -2722,6 +2725,7 @@ CREATE TABLE `items_types_body_revisions` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_items_types_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_items_types_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
   CONSTRAINT `fk_items_types_body_revisions_items_types_id`
     FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`)
     ON DELETE CASCADE ON UPDATE CASCADE,

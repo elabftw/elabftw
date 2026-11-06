@@ -100,6 +100,7 @@ const t = {
     "is-admin": "Είναι Διαχειριστής",
     "is-archived": "Είναι αρχειοθετημένο",
     "is-owner": "Είναι ιδιοκτήτης",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Είναι ο Sysadmin",
     "item": "Πόρος",
     "item-type": "Πρότυπο πόρου",

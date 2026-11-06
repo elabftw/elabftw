@@ -100,6 +100,7 @@ const t = {
     "is-admin": "Je administrátor",
     "is-archived": "Je archivované",
     "is-owner": "Je majiteľ",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Je Sysadmin",
     "item": "Zdroj",
     "item-type": "Šablóna zdroja",

@@ -100,6 +100,7 @@ const t = {
     "is-admin": "是管理员",
     "is-archived": "已归档",
     "is-owner": "所有者",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "系统管理员",
     "item": "资源",
     "item-type": "资源模板",

@@ -35,6 +35,17 @@ final class CanSqlBuilder
         if ($this->requester instanceof AnonymousUser) {
             $sql .= ' AND ' . $this->canAnon();
         }
+        // a restricted user only gets access through ownership or explicit sharing with them or one of their teamgroups
+        if ($this->requester->isRestricted()) {
+            return sprintf(
+                ' AND (%s)',
+                implode(' OR ', array(
+                    sprintf('entity.userid = %d', $this->requester->userid ?? 0),
+                    $this->canTeamGroups(),
+                    $this->canUsers(),
+                )),
+            );
+        }
         $sql .= sprintf(
             ' AND (%s)',
             implode(' OR ', array(
@@ -133,7 +144,7 @@ final class CanSqlBuilder
      */
     protected function canTeams(): string
     {
-        $teamsOfUser = $this->requester->getActiveTeamIds();
+        $teamsOfUser = $this->requester->getTeamIdsForSharing();
         if (!empty($teamsOfUser)) {
             // grant access when the entity is explicitly shared with at least
             // one team in which the requester still has an active membership

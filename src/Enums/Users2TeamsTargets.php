@@ -19,6 +19,7 @@ enum Users2TeamsTargets: string
     case IsAdmin = 'is_admin';
     case IsArchived = 'is_archived';
     case IsOwner = 'is_owner';
+    case IsRestricted = 'is_restricted';
 
     public function toHuman(): string
     {
@@ -26,6 +27,7 @@ enum Users2TeamsTargets: string
             self::IsAdmin => _('Admin'),
             self::IsArchived => _('Archived'),
             self::IsOwner => _('Owner'),
+            self::IsRestricted => _('Restricted user'),
         };
     }
 }

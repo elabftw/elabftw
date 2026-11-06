@@ -2552,6 +2552,9 @@ components:
                     type: integer
                   is_archived:
                     type: integer
+                  is_restricted:
+                    type: integer
+                    description: While acting in this team, the user only sees entries they own or that are explicitly shared with them (user or teamgroup). Modified by an Admin of the team or a Sysadmin.
 
     # WEBHOOKS
     webhook:
@@ -7260,7 +7263,7 @@ paths:
                       description: Target userid
                     target:
                       type: string
-                      enum: ['is_admin', 'is_owner', 'is_archived']
+                      enum: ['is_admin', 'is_owner', 'is_archived', 'is_restricted']
                       description: The attribute to modify
                     content:
                       type: integer

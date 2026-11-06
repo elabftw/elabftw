@@ -100,6 +100,7 @@ const t = {
     "is-admin": "Est Admin",
     "is-archived": "Est archivé",
     "is-owner": "Est propriétaire",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Est Sysadmin",
     "item": "Ressource",
     "item-type": "Modèle de ressources",

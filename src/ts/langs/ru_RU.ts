@@ -100,6 +100,7 @@ const t = {
     "is-admin": "Администратор",
     "is-archived": "Заархивированно",
     "is-owner": "Владелец",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Сисадмин",
     "item": "Ресурс",
     "item-type": "Шаблон ресурса",

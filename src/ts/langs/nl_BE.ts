@@ -100,6 +100,7 @@ const t = {
     "is-admin": "Is beheerder",
     "is-archived": "Is gearchiveerd",
     "is-owner": "Is Eigenaar",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Is Systeembeheerder",
     "item": "Artikel",
     "item-type": "Resourcetemplate",

@@ -432,8 +432,8 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      */
     protected function canTeams(string $can): string
     {
-        // cross-team permissions must only consider active memberships
-        $teamsOfUser = $this->entity->Users->getActiveTeamIds();
+        // cross-team permissions must only consider active memberships where the user is not restricted
+        $teamsOfUser = $this->entity->Users->getTeamIdsForSharing();
         // UltraAdmin used by cli exports has no regular team membership data
         // so preserve the current team as a fallback for that special case
         if ($this->entity->Users->userid === null && $this->entity->Users->team !== null) {
@@ -484,6 +484,14 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      */
     private function getCanSql(string $can): string
     {
+        // a restricted user only gets access through ownership or explicit sharing with them or one of their teamgroups
+        if ($this->entity->Users->isRestricted()) {
+            return implode(' OR ', array(
+                'entity.userid = :userid',
+                $this->canTeamGroups($can),
+                $this->canUsers($can),
+            ));
+        }
         return implode(' OR ', array(
             $this->canBasePub($can),
             $this->canBaseOrg($can),

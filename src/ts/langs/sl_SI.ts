@@ -100,6 +100,7 @@ const t = {
     "is-admin": "Je Administrator",
     "is-archived": "Je Arhiviran",
     "is-owner": "Je lastnik",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Je sistemski skrbnik",
     "item": "Vir",
     "item-type": "Predloga vira",

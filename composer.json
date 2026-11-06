@@ -23,7 +23,7 @@
     "mpdf/mpdf": "^8.1.0",
     "onelogin/php-saml": "^4.0.0",
     "guzzlehttp/guzzle": "^7.4.5",
-    "symfony/http-foundation": "^6.3",
+    "symfony/http-foundation": "^6.0",
     "twig/twig": "^3.21.1",
     "monolog/monolog": "^3.1.0",
     "maennchen/zipstream-php": "^3.0.0",

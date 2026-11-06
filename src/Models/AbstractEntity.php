@@ -1169,9 +1169,8 @@ abstract class AbstractEntity extends AbstractRest
         foreach (array_column(new Tags($sourceEntity)->readAll(), 'tag') as $tag) {
             $freshTags->postAction(Action::Create, array('tag' => $tag));
         }
-        if ($copyFiles) {
-            $sourceEntity->Uploads->duplicate($fresh);
-        }
+        // files shown in the body are always copied, or the copy would display files it doesn't own (#6187)
+        $sourceEntity->Uploads->duplicate($fresh, onlyLinkedInBody: !$copyFiles);
         return $newId;
     }
 

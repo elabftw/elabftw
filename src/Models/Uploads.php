@@ -46,6 +46,7 @@ use Symfony\Component\HttpFoundation\Response;
 use function mb_substr;
 use function _;
 use function array_column;
+use function array_filter;
 use function array_key_exists;
 use function array_map;
 use function is_array;
@@ -248,12 +249,26 @@ final class Uploads extends AbstractRest
         return $uploadId;
     }
 
-    // entity is target entity
-    public function duplicate(AbstractEntity $entity): void
+    /**
+     * Copy uploads to the target entity and rewrite their links in its body
+     *
+     * @param bool $onlyLinkedInBody only copy the uploads that the body links to: the copy must not depend on the files of its source
+     */
+    public function duplicate(AbstractEntity $entity, bool $onlyLinkedInBody = false): void
     {
-        $groupMap = new UploadGroups($this->Entity)->duplicate($entity);
-        $uploads = $this->selectAll(array(State::Normal));
         $body = $entity->entityData['body'];
+        $uploads = $this->selectAll(array(State::Normal));
+        if ($onlyLinkedInBody) {
+            if ($body === null || $body === '') {
+                return;
+            }
+            $uploads = array_filter($uploads, fn(array $upload): bool => str_contains($body, (string) $upload['long_name']));
+            if ($uploads === array()) {
+                return;
+            }
+        }
+        // groups are only meaningful when all the uploads are copied
+        $groupMap = $onlyLinkedInBody ? array() : new UploadGroups($this->Entity)->duplicate($entity);
         foreach ($uploads as $upload) {
             $param = $this->makeCreateUploadParam($upload);
             $groupId = $upload['group_id'] === null ? null : ($groupMap[(int) $upload['group_id']] ?? null);

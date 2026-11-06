@@ -20,6 +20,7 @@ import { Uploader } from './uploader';
 import { clearLocalStorage } from './localStorage';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import { enableMarkdownImagePaste } from './pasteImage';
 
 // remove exclusive edit mode when leaving the page
 window.onbeforeunload = function() {
@@ -37,6 +38,10 @@ if (editor.type === 'md') {
       updateEntityBody(false);
     }
   });
+  const bodyArea = document.getElementById('body_area') as HTMLTextAreaElement | null;
+  if (bodyArea) {
+    enableMarkdownImagePaste(bodyArea);
+  }
 }
 
 // initialize the file uploader

@@ -746,8 +746,7 @@ abstract class AbstractEntity extends AbstractRest
         );
 
         if (
-            $this->Users instanceof AnonymousUser
-            && $accessKey !== ''
+            $accessKey !== ''
             && $entityAccessKey !== ''
             && hash_equals($entityAccessKey, $accessKey)
         ) {

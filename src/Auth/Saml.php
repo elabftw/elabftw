@@ -40,11 +40,13 @@ use OneLogin\Saml2\Auth as SamlAuthLib;
 use Symfony\Component\Clock\NativeClock;
 
 use function _;
+use function array_filter;
 use function array_values;
 use function implode;
 use function is_array;
 use function is_string;
 use function sprintf;
+use function trim;
 
 /**
  * Process a SAML assertion and resolve it to a local authentication.
@@ -287,7 +289,7 @@ final class Saml
     /**
      * Return teams for a new local user.
      *
-     * A null return means the IdP did not provide teams and the instance is
+     * A null return means the IdP did not provide a usable team and the instance is
      * configured to let the user choose their initial team.
      *
      * @return list<mixed>|null
@@ -301,12 +303,28 @@ final class Saml
             $teams = $this->samlUserdata[$teamAttribute] ?? null;
         }
 
-        if (empty($teams)) {
-            $teamId = (int) ($this->configArr['saml_team_default'] ?? 0);
+        if (is_string($teams)) {
+            $teams = array($teams);
+        }
 
+        if ($teams !== null && !is_array($teams)) {
+            throw new ImproperActionException(
+                _('Invalid team attribute returned by IDP.'),
+            );
+        }
+
+        // SAML attributes are multi-valued, so an IdP with nothing to send can still send array('')
+        $teams = array_values(array_filter(
+            $teams ?? array(),
+            static fn(mixed $team): bool => !is_string($team) || trim($team) !== '',
+        ));
+
+        $teamId = (int) ($this->configArr['saml_team_default'] ?? 0);
+
+        if (empty($teams)) {
             if ($teamId === 0) {
                 throw new ImproperActionException(
-                    'Could not find team ID to assign user!',
+                    _('Could not find team ID to assign user!'),
                 );
             }
 
@@ -317,17 +335,26 @@ final class Saml
             return array($teamId);
         }
 
-        if (is_string($teams)) {
-            return array($teams);
+        // The team attribute is often prefilled from federation metadata: when its value matches no team
+        // and teams cannot be created, let the user pick one instead of failing the login
+        if ($teamId === -1 && !$this->allowTeamCreation() && !$this->anyTeamExists($teams)) {
+            return null;
         }
 
-        if (!is_array($teams)) {
-            throw new ImproperActionException(
-                'Invalid team attribute returned by IDP.',
-            );
-        }
+        return $teams;
+    }
 
-        return array_values($teams);
+    /**
+     * @param list<mixed> $teams
+     */
+    private function anyTeamExists(array $teams): bool
+    {
+        try {
+            new Teams(new Users())->getTeamsFromIdOrNameOrOrgidArray($teams);
+        } catch (ImproperActionException) {
+            return false;
+        }
+        return true;
     }
 
     private function synchronizeTeams(Users $user): void

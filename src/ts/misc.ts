@@ -20,6 +20,7 @@ import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
+import { storeRecoveryData } from './recovery';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
@@ -781,10 +782,7 @@ export async function updateEntityBody(redirect = true): Promise<void> {
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)
     // store the modifications in local storage to prevent any data loss
-    localStorage.setItem('body', editor.getContent());
-    localStorage.setItem('id', String(entity.id));
-    localStorage.setItem('type', entity.type);
-    localStorage.setItem('date', new Date().toLocaleString());
+    storeRecoveryData(entity.type, entity.id, editor.getContent());
     // reload the page so user gets redirected to the login page
     location.reload();
   });

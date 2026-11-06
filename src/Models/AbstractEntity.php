@@ -122,6 +122,8 @@ use function strlen;
 use function hash_equals;
 use function preg_replace_callback;
 use function rawurlencode;
+use function is_scalar;
+use function array_values;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -416,7 +418,10 @@ abstract class AbstractEntity extends AbstractRest
             $EntitySqlBuilder instanceof EntitySqlBuilder
             && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds, $withUploads)
         ) {
-            return $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can);
+            return $this->hydrateExtraFields(
+                $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can),
+                $displayParams,
+            );
         }
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
@@ -459,7 +464,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $entities = $req->fetchAll();
 
-        return $this->hydrateTags($entities);
+        return $this->hydrateExtraFields($this->hydrateTags($entities), $displayParams);
     }
 
     /**
@@ -1259,6 +1264,60 @@ abstract class AbstractEntity extends AbstractRest
         return $entities;
     }
 
+    /**
+     * Add the values of the custom fields requested with extra_fields[] to each entity,
+     * so they can be displayed as additional columns in the show mode table.
+     * The requested names are turned into a generated JSON_TABLE, so they are bound as a parameter
+     * and matched exactly against the keys of metadata.extra_fields (JSON paths are case sensitive).
+     * This runs on the already selected entities, so it doesn't change filtering, ordering or permissions.
+     */
+    protected function hydrateExtraFields(array $entities, QueryParamsInterface $displayParams): array
+    {
+        if (!$displayParams instanceof DisplayParams || empty($entities)) {
+            return $entities;
+        }
+        $names = $displayParams->getExtraFieldsColumns();
+        if (empty($names)) {
+            return $entities;
+        }
+
+        $entityIds = array_map(static fn(array $entity): int => (int) $entity['id'], $entities);
+        $sql = sprintf(
+            'SELECT entity.id, requested.field_name,
+                JSON_EXTRACT(entity.metadata, CONCAT(\'$.extra_fields.\', JSON_QUOTE(requested.field_name))) AS field
+            FROM %s AS entity
+            JOIN JSON_TABLE(
+                CAST(:names AS JSON),
+                \'$[*]\' COLUMNS (field_name VARCHAR(%d) PATH \'$\')
+            ) AS requested
+            WHERE entity.id IN (%s)
+            HAVING field IS NOT NULL',
+            $this->entityType->value,
+            DisplayParams::MAX_EXTRA_FIELD_NAME_LENGTH,
+            implode(',', $entityIds),
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':names', json_encode($names, JSON_THROW_ON_ERROR));
+        $this->Db->execute($req);
+
+        $valuesById = array();
+        foreach ($req->fetchAll() as $row) {
+            $field = json_decode((string) $row['field'], true);
+            if (!is_array($field)) {
+                continue;
+            }
+            $valuesById[(int) $row['id']][(string) $row['field_name']] = $this->formatExtraFieldForTable($field);
+        }
+
+        foreach ($entities as &$entity) {
+            // cast to object so it is always a JSON object, even if empty or with numeric keys
+            $entity['extra_fields_values'] = (object) ($valuesById[(int) $entity['id']] ?? array());
+        }
+        unset($entity);
+
+        return $entities;
+    }
+
     protected function hydrateTag(array $entity): array
     {
         unset($entity['metadata_search']);
@@ -1533,6 +1592,27 @@ abstract class AbstractEntity extends AbstractRest
         $this->Db->execute($req);
 
         return $this->hydrateTags($req->fetchAll());
+    }
+
+    /**
+     * Flatten an extra field into something a table cell can display, sort and filter
+     */
+    private function formatExtraFieldForTable(array $field): array
+    {
+        $value = $field[MetadataEnum::Value->value] ?? '';
+        if (is_array($value)) {
+            $value = implode(', ', array_map(
+                static fn(mixed $item): string => is_scalar($item) ? (string) $item : '',
+                array_values($value),
+            ));
+        }
+        $type = $field[MetadataEnum::Type->value] ?? 'text';
+        $unit = $field['unit'] ?? '';
+        return array(
+            'value' => is_scalar($value) ? (string) $value : '',
+            'unit' => is_scalar($unit) ? (string) $unit : '',
+            'type' => is_string($type) ? $type : 'text',
+        );
     }
 
     private function addSimpleQueryBindValues(string $query): void

@@ -101,10 +101,6 @@ function parseFileToWorkbook(buffer: ArrayBuffer, fileType: FileType): Spreadshe
 export async function loadInSpreadsheetEditor(storage: string, path: string, name: string, uploadId: number): Promise<boolean> {
   try {
     const params = new URLSearchParams({ f: path, storage });
-    const accessKey = new URLSearchParams(window.location.search).get('access_key');
-    if (accessKey) {
-      params.set('access_key', accessKey);
-    }
     const res = await fetch(`app/download.php?${params.toString()}`, {
       headers: new Headers({ 'cache-control': 'no-cache' }),
     });

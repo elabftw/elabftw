@@ -78,9 +78,7 @@ export default class JsonEditorHelper {
   loadFile(link: string, name: string, uploadid: string): void {
     const headers = new Headers();
     headers.append('cache-control', 'no-cache');
-    const accessKey = new URLSearchParams(window.location.search).get('access_key');
-    const accessKeyParam = accessKey ? `&access_key=${encodeURIComponent(accessKey)}` : '';
-    fetch(`app/download.php?f=${link}${accessKeyParam}`, { headers: headers })
+    fetch(`app/download.php?f=${link}`, { headers: headers })
       .then(response => {
         if (!response.ok) {
           throw new Error('An unexpected error occurred!');

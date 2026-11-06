@@ -24,8 +24,11 @@ use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
+use function array_fill;
 use function array_filter;
+use function array_merge;
 use function sprintf;
+use function str_repeat;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
@@ -179,6 +182,33 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $resultsNumber = $this->StorageUnits->createImmutable($locations);
         // a second time to ensure we get the same number
         $this->assertEquals($resultsNumber, $this->StorageUnits->createImmutable($locations));
+    }
+
+    public function testCreateImmutableRejectsTooManyLevels(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->createImmutable(array_fill(0, 33, 'Level'));
+    }
+
+    public function testCreateRejectsTooLongName(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->create(str_repeat('a', 256));
+    }
+
+    public function testHierarchyWithPathLongerThanAName(): void
+    {
+        // a path longer than storage_units.name must not break the instance-wide hierarchy queries
+        $root = str_repeat('B', 252);
+        $leafId = $this->StorageUnits->createImmutable(array($root, 'X', str_repeat('Y', 255)));
+        $expectedPath = $root . ' > X > ' . str_repeat('Y', 255);
+
+        $paths = array_column(array_merge(...$this->StorageUnits->readAllRecursive()), 'full_path');
+        $this->assertContains($expectedPath, $paths);
+
+        $this->StorageUnits->setId($leafId);
+        $this->assertSame($expectedPath, $this->StorageUnits->readOne()['full_path']);
+        $this->assertIsArray($this->StorageUnits->readAllFromStorage($leafId));
     }
 
     public function testMoveToAnotherParent(): void

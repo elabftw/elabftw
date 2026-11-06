@@ -58,7 +58,7 @@ final class BodyRevisionsStore
      */
     public function readLatest(int $entityId): ?array
     {
-        $sql = sprintf('SELECT id, depth, body_sha256, content_type FROM %s WHERE entity_id = :entity_id ORDER BY id DESC LIMIT 1', $this->table);
+        $sql = sprintf('SELECT id, depth, body_sha256, content_type FROM %s WHERE entity_id = :entity_id ORDER BY created_at DESC, id DESC LIMIT 1', $this->table);
         $req = $this->Db->prepare($sql);
         $req->bindValue(':entity_id', $entityId, PDO::PARAM_INT);
         $this->Db->execute($req);

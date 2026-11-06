@@ -23,6 +23,7 @@ use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\Config;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Notifications\MathjaxFailed;
 use Elabftw\Models\Notifications\PdfAppendmentFailed;
@@ -296,6 +297,7 @@ class MakePdf extends AbstractMakePdf
             'isSigned' => $isSigned,
             'signedAt' => $signedAt,
             'formattedSignedAt' => $formattedSignedAt ?? '',
+            'pdfFooterText' => Config::getConfig()->configArr['pdf_footer_text'] ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],
             'rors' => $this->getRors($this->Entity->entityData['team'], $this->Entity->entityData['userid']),
             // TODO fix for templates
